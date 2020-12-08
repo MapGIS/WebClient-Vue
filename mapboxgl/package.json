@@ -1,0 +1,64 @@
+{
+  "name": "@mapgis/webclient-vue-mapboxgl",
+  "version": "1.0.11",
+  "description": "中地数码webclient-vue-mapboxgl",
+  "main": "dist/webclient-vue-mapboxgl.umd.1.js",
+  "module": "src/main.js",
+  "scripts": {
+    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
+    "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js --watch",
+    "lint": "vue-cli-service lint",
+    "docs:serve": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@mapbox/mapbox-gl-draw": "1.2.0",
+    "@mapgis/mapbox-gl": "^1.9.3",
+    "@mapgis/webclient-store": "^1.0.0",
+    "@turf/turf": "^5.1.6",
+    "ant-design-vue": "^1.6.5",
+    "echarts": "^4.7.0",
+    "map-promisified": "0.4.0",
+    "mapbox-gl-compare": "^0.4.0",
+    "mapbox-gl-draw-circle": "^1.1.2",
+    "mapbox-gl-draw-rectangle-mode": "1.0.4",
+    "mapv": "^2.0.56",
+    "postcss-inline-svg": "^4.1.0",
+    "quasar": "^1.14.2",
+    "sass": "^1.26.10",
+    "sass-loader": "^10.0.1",
+    "vuepress": "^1.3.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-plugin-eslint": "^3.2.1",
+    "@vue/cli-service": "^3.2.0",
+    "@vue/eslint-config-prettier": "^4.0.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "2.1.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-vue": "^6.1.2",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "vue": "^2.6.6",
+    "vue-template-compiler": "^2.6.6"
+  },
+  "keywords": [
+    "vue",
+    "mapbox"
+  ],
+  "author": "zondy",
+  "license": "ISC"
+}
