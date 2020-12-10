@@ -1,3 +1,15 @@
+# mapboxgl
+mapboxgl/node_modules/
+
+# cesium
+cesium/node_modules/
+
+# leaflet
+leaflet/node_modules/
+
+# openlayers
+openlayers/node_modules/
+
 # Logs
 logs
 *.log
