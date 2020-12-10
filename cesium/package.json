@@ -1,0 +1,58 @@
+{
+  "name": "@mapgis/webclient-vue-cesium",
+  "version": "1.0.5",
+  "description": "mapgis webclient-vue-cesium",
+  "main": "dist/webclient-vue-cesium.umd.1.js",
+  "module": "src/index.js",
+  "scripts": {
+    "build": "vue-cli-service build --target lib --name webclient-vue-cesium src/index.js",
+    "serve": "vue-cli-service build --target lib --name webclient-vue-cesium src/index.js --watch",
+    "lint": "vue-cli-service lint",
+    "docs:serve": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "@mapgis/cesium": "^1.0.0",
+    "@mapgis/webclient-store": "^1.0.0",
+    "@turf/turf": "^5.1.6",
+    "compression-webpack-plugin": "^6.1.1",
+    "echarts": "^4.7.0",
+    "mapv": "^2.0.56",
+    "node-sass": "^4.14.0",
+    "sass-loader": "^8.0.2",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "vuepress": "^1.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-plugin-eslint": "^3.2.1",
+    "@vue/cli-service": "^3.2.0",
+    "@vue/eslint-config-prettier": "^4.0.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-loader": "2.1.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-vue": "^6.1.2",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "vue": "^2.6.6",
+    "vue-template-compiler": "^2.6.6"
+  },
+  "keywords": [
+    "vue",
+    "cesium"
+  ],
+  "author": "zondy",
+  "license": "ISC"
+}

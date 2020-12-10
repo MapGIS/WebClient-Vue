@@ -1,0 +1,20 @@
+export default {
+  imageryProvider: { type: Object, required: true },
+  rectangle: Object,
+  alpha: { type: Number | Function, default: 1.0 },
+  brightness: { type: Number | Function, default: 1.0 },
+  contrast: { type: Number | Function, default: 1.0 },
+  hue: { type: Number | Function, default: 0.0 },
+  saturation: { type: Number | Function, default: 1.0 },
+  gamma: { type: Number | Function, default: 1.0 },
+  splitDirection: Number,
+  minificationFilter: Number,
+  magnificationFilter: Number,
+  show: { type: Boolean, default: true },
+  maximumAnisotropy: Number,
+  minimumTerrainLevel: Number,
+  maximumTerrainLevel: Number,
+  cutoutRectangle: Object,
+  colorToAlpha: Object,
+  colorToAlphaThreshold: { type: Number, default: 0.004 }
+};
