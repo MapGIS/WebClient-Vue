@@ -111,6 +111,9 @@ export default {
   beforeDestroy () {
     this.$nextTick(() => {
       if (this.webGlobe) {
+        this.webGlobe.viewer.scene.primitives.removeAll();
+        this.webGlobe.viewer.scene.primitives.destroy();
+        this.webGlobe.viewer.entities.removeAll();
         this.webGlobe.viewer.destroy();
         // this.webGlobe = null;
         // this.viewer = null;

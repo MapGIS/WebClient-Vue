@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "中地数码webclient-vue-mapboxgl",
   "main": "dist/webclient-vue-mapboxgl.umd.1.js",
   "module": "src/main.js",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "1.2.0",
-    "@mapgis/mapbox-gl": "^1.9.3",
+    "@mapgis/mapbox-gl": "^1.9.6",
     "@mapgis/webclient-store": "^1.0.0",
     "@turf/turf": "^5.1.6",
     "ant-design-vue": "^1.6.5",
