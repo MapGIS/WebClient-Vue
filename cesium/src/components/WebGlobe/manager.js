@@ -33,6 +33,8 @@ export function initManager() {
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
   window.CesiumZondy.DragEditManager =
     window.CesiumZondy.DragEditManager || new DragEditManager();
+  window.CesiumZondy.VectorTileManager =
+    window.CesiumZondy.VectorTileManager || new VectorTileManager();
 }
 
 export class BaseManager {
@@ -107,3 +109,4 @@ export class EntityManager extends BaseManager {}
 export class DragEditManager extends BaseManager {}
 export class PopupManager extends BaseManager {}
 export class OGCWMTSManager extends BaseManager {}
+export class VectorTileManager extends BaseManager {}

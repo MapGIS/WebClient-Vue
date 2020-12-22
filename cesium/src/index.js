@@ -11,6 +11,9 @@ import IgsTileLayer from "./components/Layer/IGServer/IgsTileLayer.vue";
 import RasterLayer from "./components/Layer/RasterTile/BaseRasterLayer.vue";
 import OgcWmtsLayer from "./components/Layer/OGC/OGCWMTSLayer.vue";
 
+// 矢量瓦片
+import VectorTileLayer from "./components/Layer/VectorTile/VectorTileLayer.vue";
+
 // 模型
 import FileM3d from "./components/M3D/M3dFile.vue";
 import IgsM3d from "./components/M3D/M3d.vue";
@@ -51,6 +54,8 @@ export const CesiumIgsDocLayer = IgsDocLayer;
 export const CesiumIgsTileLayer = IgsTileLayer;
 export const CesiumOgcWmtsLayer = OgcWmtsLayer;
 
+export const CesiumVectorTileLayer = VectorTileLayer;
+
 export const CesiumTerrainProvider = TerrainProvider;
 
 export const Cesium3dTileset = Tileset;
@@ -73,6 +78,8 @@ const Components = [
   CesiumIgsDocLayer,
   CesiumIgsTileLayer,
   CesiumOgcWmtsLayer,
+
+  CesiumVectorTileLayer,
 
   CesiumTerrainProvider,
 

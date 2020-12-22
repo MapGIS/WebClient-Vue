@@ -4,14 +4,14 @@ export default {
    * @description 该key的主要作用市用来记录Cesium的Source,primitive,
    * entity的内存中的引用数组的引用，从而避免vue对cesium的内存劫持
    */
-  vueKey: { typs: String, default: "default" },
+  vueKey: { type: String, default: "default" },
   /**
    * @type String
    * @description 该key的主要作用市用来记录Cesium的Source,primitive,
    * entity的内存中的引用数组的下标，从而避免vue对cesium的内存劫持
    */
   vueIndex: {
-    typs: String | Number,
+    type: String | Number,
     default: (Math.random() * 10000).toFixed(0)
   },
   /**
@@ -20,14 +20,14 @@ export default {
    */
   headers: {},
   url: { required: true },
-  show: { typs: Boolean, default: true },
-  autoReset: { typs: Boolean, default: true },
+  show: { type: Boolean, default: true },
+  autoReset: { type: Boolean, default: true },
 
   /**
    * @type Cesium.Matrix4
    * @default Matrix4.IDENTITY
    */
-  /* modelMatrix: { typs: Object, default: undefined }, */
+  /* modelMatrix: { type: Object, default: undefined }, */
   /**
    * @type Cesium.ShadowMode
    * @default ShadowMode.ENABLED
@@ -37,22 +37,22 @@ export default {
   maximumScreenSpaceError: { type: Number, default: 16 },
   maximumMemoryUsage: { type: Number, default: 512 },
 
-  cullWithChildrenBounds: { typs: Boolean, default: true },
-  cullRequestsWhileMoving: { typs: Boolean, default: true },
+  cullWithChildrenBounds: { type: Boolean, default: true },
+  cullRequestsWhileMoving: { type: Boolean, default: true },
   cullRequestsWhileMovingMultiplier: { type: Number, default: 60.0 },
 
-  preloadWhenHidden: { typs: Boolean, default: false },
-  preloadFlightDestinations: { typs: Boolean, default: true },
-  preferLeaves: { typs: Boolean, default: false },
+  preloadWhenHidden: { type: Boolean, default: false },
+  preloadFlightDestinations: { type: Boolean, default: true },
+  preferLeaves: { type: Boolean, default: false },
 
-  dynamicScreenSpaceError: { typs: Boolean, default: false },
+  dynamicScreenSpaceError: { type: Boolean, default: false },
   dynamicScreenSpaceErrorDensity: { type: Number, default: 0.00278 },
   dynamicScreenSpaceErrorFactor: { type: Number, default: 4.0 },
   dynamicScreenSpaceErrorHeightFalloff: { type: Number, default: 0.25 },
 
   progressiveResolutionHeightFraction: { type: Number, default: 0.3 },
 
-  foveatedScreenSpaceError: { typs: Boolean, default: true },
+  foveatedScreenSpaceError: { type: Boolean, default: true },
   foveatedConeSize: { type: Number, default: 0.1 },
   foveatedMinimumScreenSpaceErrorRelaxation: { type: Number, default: 0.0 },
   /**
@@ -62,38 +62,38 @@ export default {
   /* foveatedInterpolationCallback: { type: Function, default: undefined }, */
   foveatedTimeDelay: { type: Number, default: 0.2 },
 
-  skipLevelOfDetail: { typs: Boolean, default: false },
+  skipLevelOfDetail: { type: Boolean, default: false },
   baseScreenSpaceError: { type: Number, default: 1024 },
   skipScreenSpaceErrorFactor: { type: Number, default: 16 },
   skipLevels: { type: Number, default: 1 },
 
-  immediatelyLoadDesiredLevelOfDetail: { typs: Boolean, default: false },
-  loadSiblings: { typs: Boolean, default: false },
+  immediatelyLoadDesiredLevelOfDetail: { type: Boolean, default: false },
+  loadSiblings: { type: Boolean, default: false },
 
   /**
    * @type Cesium.ClippingPlaneCollection
    */
-  /* clippingPlanes: { typs: Object, default: undefined }, */
+  /* clippingPlanes: { type: Object, default: undefined }, */
   /**
    * @type Cesium.ClassificationType
    */
-  /* classificationType: { typs: Object, default: undefined }, */
+  /* classificationType: { type: Object, default: undefined }, */
   /**
    * @type Cesium.Ellipsoid
    * @default Ellipsoid.WGS84
    */
-  /* ellipsoid: { typs: Object, default: undefined }, */
+  /* ellipsoid: { type: Object, default: undefined }, */
 
-  /* pointCloudShading: { typs: Object, default: undefined }, */
+  /* pointCloudShading: { type: Object, default: undefined }, */
   /**
    * @type Cartesian2
    * @default new Cartesian2(1.0, 1.0)
    */
-  /* imageBasedLightingFactor: { typs: Object, default: undefined }, */
+  /* imageBasedLightingFactor: { type: Object, default: undefined }, */
   /**
    * @type Cartesian3
    */
-  /* lightColor: { typs: Object, default: undefined }, */
+  /* lightColor: { type: Object, default: undefined }, */
   luminanceAtZenith: { type: Number, default: 0.2 },
   /**
    * @type Array.<Cartesian3>
@@ -102,14 +102,14 @@ export default {
   specularEnvironmentMaps: { type: String, default: "" },
 
   debugHeatmapTilePropertyName: { type: String, default: "" },
-  debugFreezeFrame: { typs: Boolean, default: false },
-  debugColorizeTiles: { typs: Boolean, default: false },
-  debugWireframe: { typs: Boolean, default: false },
-  debugShowBoundingVolume: { typs: Boolean, default: false },
-  debugShowContentBoundingVolume: { typs: Boolean, default: false },
-  debugShowViewerRequestVolume: { typs: Boolean, default: false },
-  debugShowGeometricError: { typs: Boolean, default: false },
-  debugShowRenderingStatistics: { typs: Boolean, default: false },
-  debugShowMemoryUsage: { typs: Boolean, default: false },
-  debugShowUrl: { typs: Boolean, default: false }
+  debugFreezeFrame: { type: Boolean, default: false },
+  debugColorizeTiles: { type: Boolean, default: false },
+  debugWireframe: { type: Boolean, default: false },
+  debugShowBoundingVolume: { type: Boolean, default: false },
+  debugShowContentBoundingVolume: { type: Boolean, default: false },
+  debugShowViewerRequestVolume: { type: Boolean, default: false },
+  debugShowGeometricError: { type: Boolean, default: false },
+  debugShowRenderingStatistics: { type: Boolean, default: false },
+  debugShowMemoryUsage: { type: Boolean, default: false },
+  debugShowUrl: { type: Boolean, default: false }
 };

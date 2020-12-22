@@ -26,7 +26,6 @@ export default {
       }
     },
     mount() {
-      const vm = this;
       const { webGlobe, autoReset, vueIndex, vueKey } = this;
       const viewer = webGlobe.viewer;
       if (viewer.isDestroyed()) return;
