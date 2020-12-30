@@ -175,7 +175,7 @@ class StateControl {
   }
 }
 </script>
-<style lang="scss">
+<style>
 .mapgis-state-bar {
   width: 100%;
 }

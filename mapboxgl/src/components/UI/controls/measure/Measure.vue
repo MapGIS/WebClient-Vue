@@ -8,7 +8,7 @@
   </div>
 </template>
 
-<style lang="scss"></style>
+<style></style>
 
 <script>
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";

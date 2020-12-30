@@ -13,6 +13,10 @@ export default {
       return `map-${("" + Math.random()).split(".")[1]}`;
     }
   },
+  mapClass: {
+    type: String,
+    default: "mapbox-default-map"
+  },
   crs: {
     type: String,
     default: "EPSG:3857"

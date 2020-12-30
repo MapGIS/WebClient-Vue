@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Compare from 'mapbox-gl-compare';
+import Compare from '@mapgis/mapbox-gl-compare';
 // const Compare = require('mapbox-gl-compare');
 import controlMixin from "../controlMixin";
 
@@ -56,7 +56,7 @@ export default {
     compare (a, b, container, options) {
       console.log('对比', Compare);
       console.log('参数', a, b, container, options);
-      this.$compare = Compare(a, b, container, options);
+      this.$compare = new Compare(a, b, container, options);
       this.enable = true
     },
     remove () {
@@ -104,7 +104,7 @@ class CompareControl {
 }
 
 </script>
-<style lang="scss">
+<style>
 .mapgis-compare-bar {
 }
 </style>

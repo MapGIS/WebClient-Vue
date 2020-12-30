@@ -1,17 +1,16 @@
 <template>
-  <div class="mapboxgl-map-wrapper">
-    <div
-      v-once
-      :id="container"
-      ref="container"
-    />
+  <div
+    :class="mapClass"
+    :id="container"
+    ref="container"
+  >
     <slot v-if="initialized" />
   </div>
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import 'mapbox-gl-compare/dist/mapbox-gl-compare.css'
+import '@mapgis/mapbox-gl-compare/mapbox-gl-compare.css'
 
 import withEvents from "../../lib/withEvents";
 import mapEvents from "./events";
@@ -134,10 +133,15 @@ export default {
 }
 
 .mapboxgl-map-wrapper .mapboxgl-map {
-  height: 100%;
-  left: 0;
   position: absolute;
-  top: 0;
+  height: 100%;
   width: 100%;
+  top: 0;
+  left: 0;
+}
+
+.mapbox-default-map .mapboxgl-canvas-container {
+  width: 100% !important;
+  height: 100% !important;
 }
 </style>
