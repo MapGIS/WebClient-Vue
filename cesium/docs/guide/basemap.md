@@ -55,6 +55,52 @@ export default {
 </script>
 ```
 
+### Vue组件
+
+```md
+::: demo
+<template>
+    <button class="animated shake infinite" @click="onClick">Click me!</button>
+</template>
+
+<script>
+export default {
+    methods: {
+        onClick: () => { window.alert(1) },
+    },
+}
+</script>
+
+<style>
+button {
+    color: blue;
+}
+</style>
+:::
+```
+
+### 结果
+
+::: demo
+<template>
+    <button class="animated shake infinite" @click="onClick">Click me!</button>
+</template>
+
+<script>
+export default {
+    methods: {
+        onClick: () => { window.alert(1) },
+    },
+}
+</script>
+
+<style>
+button {
+    color: blue;
+}
+</style>
+:::
+
 ### 通过 Props 来交互地图属性
 
 你可以通过 props 来控制地图的一些参数如 zoom(缩放级别), bearing(方位), pitch(倾斜)等.

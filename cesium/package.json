@@ -1,11 +1,11 @@
 {
   "name": "@mapgis/webclient-vue-cesium",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "mapgis webclient-vue-cesium",
   "main": "dist/webclient-vue-cesium.umd.1.js",
   "module": "src/index.js",
   "scripts": {
-    "build": "vue-cli-service build --target lib --name webclient-vue-cesium src/index.js",
+    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium src/index.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-cesium src/index.js --watch",
     "lint": "vue-cli-service lint",
     "docs:serve": "vuepress dev docs",
@@ -24,15 +24,18 @@
   },
   "dependencies": {
     "@mapgis/cesium": "^1.0.0",
-    "@mapgis/webclient-store": "^1.0.0",
+    "@mapgis/webclient-store": "^1.0.13-fix",
     "@turf/turf": "^5.1.6",
+    "@vuepress/plugin-active-header-links": "^1.7.1",
+    "@vuepress/plugin-nprogress": "^1.7.1",
     "compression-webpack-plugin": "^6.1.1",
     "echarts": "^4.7.0",
     "mapv": "^2.0.56",
     "node-sass": "^4.14.0",
     "sass-loader": "^8.0.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "vuepress": "^1.4.0"
+    "vuepress": "^1.7.1",
+    "vuepress-plugin-demo-code": "^0.5.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

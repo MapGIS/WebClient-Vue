@@ -1,9 +1,13 @@
+const demoCode = require("vuepress-plugin-demo-code");
+
 module.exports = {
-  title: "VueMapbox",
+  title: "VueCesium",
   // description: "Combine powers of Mapbox GL JS and Vue.js",
   dest: "dist/docs",
   // head: [["link", { rel: "icon", href: "/favicon.ico" }]],
   // base: "/vue-mapbox/",
+  evergreen: true,
+  serviceWorker: true,
 
   locales: {
     "/": {
@@ -55,62 +59,42 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
-              ["/guide/basemap.md", "基础地图"],
-              ["/guide/composition.md", "结构"],
-              ["/guide/controls.md", "控制视图"],
-              ["/guide/markers&popups.md", "注记视图"],
-              ["/guide/draw.md", "绘制视图"],
-              ["/guide/layers&sources.md", "图层与数据源"]
-            ]
-          },
-          {
-            title: "API",
-            collapsable: false,
-            children: [
-              ["/api/", "WebGlobe"],
-              /* ["/api/controls.md", "Controls"], */
-              ["/api/popup.md", "Popup"],
-/*               ["/api/Layers/", "Layer commons"],
-              ["/api/Layers/geojsonlayer.md", "GeojsonLayer"],
-              ["/api/Layers/vectorlayer.md", "VectorLayer"],
-              ["/api/Layers/rasterlayer.md", "RasterLayer"],
-              ["/api/Layers/imagelayer.md", "ImageLayer"],
-              ["/api/Layers/videolayer.md", "VideoLayer"],
-              ["/api/Layers/canvaslayer.md", "CanvasLayer"],
-              ["/api/Layers/igserver/igsDocLayer.md", "IgsDocLayer"],
-              ["/api/Layers/igserver/igsTileLayer.md", "IgsTileLayer"],
-              ["/api/Layers/igserver/igsVectorLayer.md", "IgsVectorLayer"],
-              ["/api/Layers/igserver/igsWmsLayer.md", "IgsWmsLayer"],
-              ["/api/Layers/igserver/igsWmtsLayer.md", "IgsWmtsLayer"],
-              ["/api/Layers/igserver/igsTdtLayer.md", "IgsTdtLayer"],
-              ["/api/Measure/measure.md", "Measure"] */
-            ]
-          },
-          {
-            title: "源码分析",
-            collapsable: true,
-            children: [
-              ["/code/basemap.md", "基础地图"],
-              ["/code/controls.md", "控制视图"],
-              ["/code/markers&popups.md", "注记视图"],
-              ["/code/layers&sources.md", "图层与数据源"]
-            ]
-          },
-          {
-            title: "插件组件",
-            collapsable: false,
-            children: [
-              ["/plugin_components/", "使用插件组件"],
-              [
-                "/plugin_components/plugin_components_development.md",
-                "创建插件组件"
-              ]
+              ["/guide/basemap.md", "基础地图"]
             ]
           }
-          // ['/plugins/', 'Plugins'],
         ]
-        // search: false
       }
     }
-  }
+  },
+  plugins: [
+    ["demo-code"],  
+    [
+      /*       demoCode,
+      {
+        jsLibs: [
+          // umd
+          "http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.umd.min.js"
+        ],
+        cssLibs: ["https://unpkg.com/animate.css@3.7.0/animate.min.css"],
+        showText: "show code",
+        hideText: "hide",
+        styleStr: "text-decoration: underline;",
+        minHeight: 200,
+        onlineBtns: {
+          codepen: true,
+          jsfiddle: true,
+          codesandbox: true
+        },
+        codesandbox: {
+          deps: { lodash: "latest" },
+          json: "",
+          query: "",
+          embed: ""
+        },
+        demoCodeMark: "demo-code"
+      }
+ */
+    ],
+
+  ]
 };

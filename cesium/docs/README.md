@@ -67,6 +67,4 @@ export default {
 
 ::: tip 目的
 > 用于开发Vue版本的一张图 `Vue-OneMap`
-
-> 用于开发Vue版本的工作空间 `Vue-WorkSpace`
 :::
