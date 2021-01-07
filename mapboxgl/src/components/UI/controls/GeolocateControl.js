@@ -10,7 +10,7 @@ const geolocationEvents = {
 };
 
 export default {
-  name: "GeolocateControl",
+  name: "mapbox-geolocate-control",
   mixins: [withEvents, withSelfEvents, controlMixin],
 
   props: {

@@ -10,10 +10,9 @@ import ScaleControl from "./components/UI/controls/ScaleControl";
 import StateControl from "./components/UI/controls/state/StateControl";
 import SearchControl from "./components/UI/controls/search/SearchControl";
 import CompareControl from "./components/UI/controls/compare/CompareControl";
-
+import FpsControl from "./components/UI/controls/fps/FpsControl";
 import BaseDraw from "./components/UI/controls/draw/BaseDraw";
 import BaseDrawItem from "./components/UI/controls/draw/BaseDrawItem";
-
 import Measure from "./components/UI/controls/measure/Measure";
 
 import Marker from "./components/UI/Marker.vue";
@@ -70,6 +69,7 @@ export const MapboxScaleControl = ScaleControl;
 export const MapboxStateControl = StateControl;
 export const MapboxSearchControl = SearchControl;
 export const MapboxCompareControl = CompareControl;
+export const MapboxFpsControl = FpsControl;
 
 export const MapboxBaseDraw = BaseDraw;
 export const MapboxBaseDrawItem = BaseDrawItem;
@@ -110,6 +110,7 @@ const Components = [
   MapboxStateControl,
   MapboxSearchControl,
   MapboxCompareControl,
+  MapboxFpsControl,
 
   MapboxBaseDraw,
   MapboxBaseDrawItem,

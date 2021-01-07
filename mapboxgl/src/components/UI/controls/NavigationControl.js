@@ -1,7 +1,7 @@
 import controlMixin from "./controlMixin";
 
 export default {
-  name: "NavigationControl",
+  name: "mapbox-navigation-control",
   mixins: [controlMixin],
 
   props: {
