@@ -2,7 +2,7 @@ import rasterLayer from "./RasterLayer";
 import layerEvents from "../../lib/layerEvents";
 
 export default {
-  name: "ArcgisLayer",
+  name: "mapbox-arcgis-layer",
   mixins: [rasterLayer],
   props: {
     url: {

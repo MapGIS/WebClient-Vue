@@ -2,7 +2,7 @@ import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 
 export default {
-  name: "VectorLayer",
+  name: "mapbox-vector-layer",
   mixins: [mixin],
 
   computed: {

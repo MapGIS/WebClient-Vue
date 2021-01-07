@@ -2,7 +2,7 @@ import mixin from "./layerMixin";
 import layerEvents from "../../lib/layerEvents";
 
 export default {
-  name: "ImageLayer",
+  name: "mapbox-image-layer",
   mixins: [mixin],
 
   created() {

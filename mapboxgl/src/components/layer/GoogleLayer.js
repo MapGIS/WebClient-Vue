@@ -2,7 +2,7 @@ import rasterLayer from "./RasterLayer";
 import layerEvents from "../../lib/layerEvents";
 
 export default {
-  name: "GoogleLayer",
+  name: "mapbox-google-layer",
   mixins: [rasterLayer],
   props: {
     url: {

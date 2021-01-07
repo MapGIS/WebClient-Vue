@@ -2,7 +2,7 @@ import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 
 export default {
-  name: "CanvasLayer",
+  name: "mapbox-canvas-layer",
   mixins: [mixin],
 
   inject: ["mapbox", "map"],

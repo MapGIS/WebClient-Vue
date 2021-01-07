@@ -2,7 +2,7 @@ import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 
 export default {
-  name: "GeojsonLayer",
+  name: "mapbox-geojson-layer",
   mixins: [mixin],
 
   computed: {
