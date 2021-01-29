@@ -1,0 +1,64 @@
+{
+  "name": "storybook",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "cesium": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium cesium/src/index.js",
+    "mapboxgl": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl mapboxgl/src/index.js",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.2.0",
+    "@mapgis/cesium": "^1.59.0",
+    "@mapgis/mapbox-gl": "^1.9.7",
+    "@mapgis/mapbox-gl-compare": "^0.4.0",
+    "@mapgis/webclient-store": "^1.0.14",
+    "@turf/turf": "^6.3.0",
+    "ant-design-vue": "^1.7.2",
+    "core-js": "^3.6.5",
+    "echarts": "^5.0.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "http-proxy-middleware": "^1.0.6",
+    "mapbox-gl-draw-circle": "^1.1.2",
+    "mapbox-gl-draw-rectangle-mode": "^1.0.4",
+    "mapv": "^2.0.62",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@storybook/addon-actions": "^6.1.15",
+    "@storybook/addon-essentials": "^6.1.15",
+    "@storybook/addon-links": "^6.1.15",
+    "@storybook/vue": "^6.1.15",
+    "@vue/cli-plugin-babel": "^4.5.0",
+    "@vue/cli-plugin-eslint": "^4.5.0",
+    "@vue/cli-service": "^4.5.0",
+    "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
