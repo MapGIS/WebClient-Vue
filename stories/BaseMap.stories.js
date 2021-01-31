@@ -1,7 +1,7 @@
 import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 
 export default {
-  title: "地图/基础地图",
+  title: "地图/基础地图-二维",
   component: ZondyWebMap,
   argTypes: {
     mapStyle: {
@@ -17,16 +17,19 @@ export default {
         },
       ],
     },
-    mapZoom: 10,
-    outerCenter: [114.3, 30.5],
-    mapCrs: "EPSG:3857",
+    zoom: 10,
+    center: [114.3, 30.5],
+    crs: "EPSG:4326",
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { ZondyWebMap },
-  template: '<zondy-web-map style="height:400px; width:100%" v-bind="$props" />',
+  template: `<zondy-web-map v-bind="$props" >
+    <zondy-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+  </zondy-web-map>
+  `
 });
 
 export const EmptyMap = Template.bind({});
@@ -44,7 +47,7 @@ EmptyMap.args = {
       },
     ],
   },
-  mapZoom: 10,
-  outerCenter: [114.3, 30.5],
-  mapCrs: "EPSG:3857",
+  zoom: 3,
+  center: [114.3, 30.5],
+  crs: "EPSG:4326",
 };
