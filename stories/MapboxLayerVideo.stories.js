@@ -1,10 +1,10 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ZondyRasterLayer from "../mapboxgl/src/components/layer/RasterLayer.js";
-import ZondyVideoLayer from "../mapboxgl/src/components/layer/VideoLayer.js";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisRasterLayer from "../mapboxgl/src/components/layer/RasterLayer.js";
+import MapgisVideoLayer from "../mapboxgl/src/components/layer/VideoLayer.js";
 
 export default {
-  title: "图层/视频图层",
-  component: ZondyVideoLayer,
+  title: "二维/图层-视频",
+  component: MapgisVideoLayer,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
   excludeStories: /.*Data$/,
@@ -19,12 +19,12 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap, ZondyRasterLayer, ZondyVideoLayer },
+  components: { MapgisWebMap, MapgisRasterLayer, MapgisVideoLayer },
   methods: actionsData,
-  template: `<zondy-web-map crs="EPSG:4326" :center="[-122.514426, 37.562984]" :zoom="17">
-    <zondy-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <zondy-video-layer v-bind="$props" @added="handCanvasLoad" />
-  </zondy-web-map>`,
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[-122.514426, 37.562984]" :zoom="17">
+    <mapgis-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+    <mapgis-video-layer v-bind="$props" @added="handCanvasLoad" />
+  </mapgis-web-map>`,
 });
 
 export const Canvas = Template.bind({});

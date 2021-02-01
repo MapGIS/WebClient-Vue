@@ -1,9 +1,9 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ZondyGeojsonLayer from "../mapboxgl/src/components/layer/GeojsonLayer.js";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisGeojsonLayer from "../mapboxgl/src/components/layer/GeojsonLayer.js";
 
 export default {
-  title: "图层/GeoJSON",
-  component: ZondyGeojsonLayer,
+  title: "二维/图层-GeoJSON",
+  component: MapgisGeojsonLayer,
   argTypes: {
     layer: {},
     layerId: "geojson_layer_id",
@@ -14,10 +14,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap, ZondyGeojsonLayer },
-  template: `<zondy-web-map crs="EPSG:4326" :center="[114.3, 30.5]" :zoom="10">
-    <zondy-geojson-layer v-bind="$props" />
-  </zondy-web-map>`,
+  components: { MapgisWebMap, MapgisGeojsonLayer },
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[114.3, 30.5]" :zoom="10">
+    <mapgis-geojson-layer v-bind="$props" />
+  </mapgis-web-map>`,
 });
 
 const geojson = {

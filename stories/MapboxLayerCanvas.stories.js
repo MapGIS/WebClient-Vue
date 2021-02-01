@@ -1,10 +1,10 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ZondyRasterLayer from "../mapboxgl/src/components/layer/RasterLayer.js";
-import ZondyCanvasLayer from "../mapboxgl/src/components/layer/CanvasLayer.js";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisRasterLayer from "../mapboxgl/src/components/layer/RasterLayer.js";
+import MapgisCanvasLayer from "../mapboxgl/src/components/layer/CanvasLayer.js";
 
 export default {
-  title: "图层/画布图层",
-  component: ZondyCanvasLayer,
+  title: "二维/图层-画布",
+  component: MapgisCanvasLayer,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
   excludeStories: /.*Data$/,
@@ -19,13 +19,13 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap, ZondyRasterLayer, ZondyCanvasLayer },
+  components: { MapgisWebMap, MapgisRasterLayer, MapgisCanvasLayer },
   methods: actionsData,
-  template: `<zondy-web-map crs="EPSG:4326" :center="[116.3, 40.5]" :zoom="5">
-    <zondy-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.3, 40.5]" :zoom="5">
+    <mapgis-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <canvas id="canvasID" width="400" height="400">Canvas not supported</canvas>
-    <zondy-canvas-layer v-bind="$props" @added="handCanvasLoad" />
-  </zondy-web-map>`,
+    <mapgis-canvas-layer v-bind="$props" @added="handCanvasLoad" />
+  </mapgis-web-map>`,
 });
 
 export const Canvas = Template.bind({});

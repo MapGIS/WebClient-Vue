@@ -1,9 +1,9 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ZondyOgcWmsLayer from "../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisOgcWmsLayer from "../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
 
 export default {
-  title: "OGC/WMS",
-  component: ZondyOgcWmsLayer,
+  title: "二维/OGC-WMS",
+  component: MapgisOgcWmsLayer,
   argTypes: {
     layer: {},
     layerId: "igsLayer_layerId",
@@ -15,17 +15,16 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap, ZondyOgcWmsLayer },
-  template: `<zondy-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="7.5">
-    <zondy-ogc-wms-layer v-bind="$props" />
-  </zondy-web-map>`,
+  components: { MapgisWebMap, MapgisOgcWmsLayer },
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="7.5">
+    <mapgis-ogc-wms-layer v-bind="$props" />
+  </mapgis-web-map>`,
 });
 
 export const Common = Template.bind({});
 Common.args = {
   layerId: "mapgis_ogc_wms",
-  url:
-    "http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer?service=WMS&request=GetMap&layers=北京市,绿地_1&styles=&format=image/jpeg&transparent=false&version=1.1.1&height=512&width=512&srs=EPSG:4326&bbox={bbox}",
+  url: "http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer",
 };
 
 export const ReverseBbox = Template.bind({});

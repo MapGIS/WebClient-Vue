@@ -1,8 +1,8 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 
 export default {
-  title: "地图/基础地图-二维",
-  component: ZondyWebMap,
+  title: "二维/基础地图",
+  component: MapgisWebMap,
   argTypes: {
     mapStyle: {
       version: 8,
@@ -25,10 +25,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap },
-  template: `<zondy-web-map v-bind="$props" >
-    <zondy-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-  </zondy-web-map>
+  components: { MapgisWebMap },
+  template: `<mapgis-web-map v-bind="$props" >
+    <mapgis-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+  </mapgis-web-map>
   `
 });
 

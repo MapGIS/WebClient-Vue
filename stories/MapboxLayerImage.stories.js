@@ -1,9 +1,9 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ZondyImageLayer from "../mapboxgl/src/components/layer/ImageLayer.js";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisImageLayer from "../mapboxgl/src/components/layer/ImageLayer.js";
 
 export default {
-  title: "图层/图像图层",
-  component: ZondyImageLayer,
+  title: "二维/图层-图像",
+  component: MapgisImageLayer,
   argTypes: {
     layer: {},
     layerId: "geojson_layer_id",
@@ -14,10 +14,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap, ZondyImageLayer },
-  template: `<zondy-web-map crs="EPSG:4326" :center="[116.3, 40.5]" :zoom="5">
-    <zondy-image-layer v-bind="$props" />
-  </zondy-web-map>`,
+  components: { MapgisWebMap, MapgisImageLayer },
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.3, 40.5]" :zoom="5">
+    <mapgis-image-layer v-bind="$props" />
+  </mapgis-web-map>`,
 });
 
 export const Image = Template.bind({});

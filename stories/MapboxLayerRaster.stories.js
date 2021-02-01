@@ -1,9 +1,9 @@
-import ZondyWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ZondyRasterLayer from "../mapboxgl/src/components/layer/RasterLayer.js";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+import MapgisRasterLayer from "../mapboxgl/src/components/layer/RasterLayer.js";
 
 export default {
-  title: "图层/标准栅格",
-  component: ZondyRasterLayer,
+  title: "二维/图层-栅格",
+  component: MapgisRasterLayer,
   argTypes: {
     layer: {},
     layerId: "igsLayer_layerId",
@@ -15,10 +15,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { ZondyWebMap, ZondyRasterLayer },
-  template: `<zondy-web-map crs="EPSG:4326" :center="[110, 30]" :zoom="3">
-    <zondy-raster-layer v-bind="$props" />
-  </zondy-web-map>`,
+  components: { MapgisWebMap, MapgisRasterLayer },
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[110, 30]" :zoom="3">
+    <mapgis-raster-layer v-bind="$props" />
+  </mapgis-web-map>`,
 });
 
 export const Image = Template.bind({});
