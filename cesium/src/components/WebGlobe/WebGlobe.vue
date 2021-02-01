@@ -39,6 +39,9 @@ export default {
       get Cesium () {
         return self.Cesium;
       },
+      get CesiumZondy () {
+        return self.CesiumZondy;
+      },
       get webGlobe () {
         return self.webGlobe;
       },
@@ -88,6 +91,7 @@ export default {
     const { vueKey, vueIndex } = this;
     this.$_loadScript().then((Cesium) => {
       this.Cesium = Cesium;
+      this.CesiumZondy = window.CesiumZondy;
       const webGlobe = new Cesium.WebSceneControl(this.$refs.container, {
         ...this._props,
       });
@@ -103,8 +107,13 @@ export default {
       this.$_bindPropsUpdateEvents(); */
       this.initialized = true;
       // 这里禁止吧cesium示例化后的webGlobe传上去，此处会发生vue劫持操作，导致内存溢出
-      this.$emit("load", { component: this, Cesium: Cesium });
-      document.getElementById(this.container).style.height = "100%";
+      this.$emit("load", { component: this, Cesium: Cesium, CesiumZondy: window.CesiumZondy });
+      if (this.container) {
+        let dom = document.getElementById(this.container);
+        if (dom) {
+          dom.style.height = "100%";
+        }        
+      }
     });
   },
 

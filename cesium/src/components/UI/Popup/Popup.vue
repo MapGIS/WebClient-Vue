@@ -105,7 +105,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style>
 .cesium-popup {
   position: absolute;
   text-align: center;

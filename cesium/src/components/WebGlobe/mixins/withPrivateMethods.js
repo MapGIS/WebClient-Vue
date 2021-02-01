@@ -74,7 +74,7 @@ export default {
             if (global.Cesium) {
               $scriptPlugin.src =
                 self.pluginPath ||
-                "http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
+                "http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
               $scriptPlugin.onload = () => {
                 if (global.Cesium) {
                   self.globalLoad = true;

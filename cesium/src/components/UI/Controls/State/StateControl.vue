@@ -10,6 +10,7 @@
 <script>
 import { Ellipsoid, Geometry } from "@mapgis/webclient-store";
 
+console.warn('Ellipsoid', Ellipsoid);
 const { Scale } = Ellipsoid;
 const { Lnglat } = Geometry;
 

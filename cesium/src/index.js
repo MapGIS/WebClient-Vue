@@ -1,8 +1,9 @@
 import WebGlobe from "./components/WebGlobe/WebGlobe.vue";
 
 // 工具
-import StateControl from "./components/UI/Controls/State/StateControl.vue";
+// import StateControl from "./components/UI/Controls/State/StateControl.vue";
 import Link from "./components/UI/Controls/Link/Link.vue";
+import BaseDraw from "./components/UI/Controls/Draw/Draw";
 
 // 影像
 import ImageryLayer from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -10,6 +11,7 @@ import IgsDocLayer from "./components/Layer/IGServer/IgsDocLayer.vue";
 import IgsTileLayer from "./components/Layer/IGServer/IgsTileLayer.vue";
 import RasterLayer from "./components/Layer/RasterTile/BaseRasterLayer.vue";
 import OgcWmtsLayer from "./components/Layer/OGC/OGCWMTSLayer.vue";
+import OgcWmsLayer from "./components/Layer/OGC/OGCWMSLayer.vue";
 
 // 矢量瓦片
 import VectorTileLayer from "./components/Layer/VectorTile/VectorTileLayer.vue";
@@ -45,14 +47,16 @@ import CzmlDataSource from "./components/DataSource/Czml/CzmlDataSource";
 }; */
 
 export const CesiumWebGlobe = WebGlobe;
-export const CesiumStateControl = StateControl;
+// export const CesiumStateControl = StateControl;
 export const CesiumLink = Link;
+export const CesiumBaseDraw = BaseDraw;
 
 export const CesiumImageryLayer = ImageryLayer;
 export const CesiumRasterLayer = RasterLayer;
 export const CesiumIgsDocLayer = IgsDocLayer;
 export const CesiumIgsTileLayer = IgsTileLayer;
 export const CesiumOgcWmtsLayer = OgcWmtsLayer;
+export const CesiumOgcWmsLayer = OgcWmsLayer;
 
 export const CesiumVectorTileLayer = VectorTileLayer;
 
@@ -70,14 +74,16 @@ export const CesiumPopup = Popup;
 
 const Components = [
   CesiumWebGlobe,
-  CesiumStateControl,
+  // CesiumStateControl,
   CesiumLink,
+  CesiumBaseDraw,
 
   CesiumImageryLayer,
   CesiumRasterLayer,
   CesiumIgsDocLayer,
   CesiumIgsTileLayer,
   CesiumOgcWmtsLayer,
+  CesiumOgcWmsLayer,
 
   CesiumVectorTileLayer,
 
