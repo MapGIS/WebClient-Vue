@@ -25,6 +25,7 @@ export default {
     },
 
     $_removeSource(source) {
+      if (!this.map) return;
       if (this.map.getSource(source)) {
         const { layers } = this.map.getStyle();
 
@@ -40,22 +41,22 @@ export default {
     $_addDrawControl(control) {
       if (!control) return;
       this.$_removeDrawControl();
+      this.$_removeMeasureControl();
       window.mapboxDom.draw = control;
       this.map && this.map.addControl(control);
     },
 
     $_removeDrawControl() {
+      this.$_removeSource(DrawSources.HOT);
+      this.$_removeSource(DrawSources.COLD);
       if (
         window.mapboxDom.draw &&
         window.mapboxDom.draw.onAdd &&
         window.mapboxDom.draw.onRemove
       ) {
         if (!this.map) return;
-
-        this.$_removeSource(DrawSources.HOT);
-        this.$_removeSource(DrawSources.COLD);
-
         this.map.removeControl(window.mapboxDom.draw);
+        window.mapboxDom.draw = undefined;
       }
     },
 
@@ -79,12 +80,16 @@ export default {
 
     $_addMeasureControl(control) {
       if (!control) return;
+      this.$_removeDrawControl();
       this.$_removeMeasureControl();
       window.mapboxDom.measure = control;
       this.map && this.map.addControl(control);
     },
 
     $_removeMeasureControl() {
+      this.$_removeSource(DrawSources.HOT);
+      this.$_removeSource(DrawSources.COLD);
+
       if (
         window.mapboxDom.measure &&
         window.mapboxDom.measure.onAdd &&
@@ -92,10 +97,8 @@ export default {
       ) {
         if (!this.map) return;
 
-        this.$_removeSource(DrawSources.HOT);
-        this.$_removeSource(DrawSources.COLD);
-
         this.map.removeControl(window.mapboxDom.measure);
+        window.mapboxDom.measure = undefined;
       }
     },
 

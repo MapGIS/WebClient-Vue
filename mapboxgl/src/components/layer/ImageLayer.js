@@ -2,7 +2,7 @@ import mixin from "./layerMixin";
 import layerEvents from "../../lib/layerEvents";
 
 export default {
-  name: "mapbox-image-layer",
+  name: "mapgis-image-layer",
   mixins: [mixin],
 
   created() {

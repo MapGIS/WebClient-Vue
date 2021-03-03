@@ -1,7 +1,8 @@
 import IgsBaseLayer from "./OgcBaseLayer";
+import { OGC } from "@mapgis/webclient-es6-service";
 
 export default {
-  name: "mapbox-ogc-wms-layer",
+  name: "mapgis-ogc-wms-layer",
   mixins: [IgsBaseLayer],
   props: {
     serverType: {
@@ -36,6 +37,14 @@ export default {
       type: String,
       default: null
     },
+    height: {
+      type: Number,
+      default: 512
+    },
+    width: {
+      type: Number,
+      default: 512
+    },
     reversebbox: {
       type: Boolean,
       default: false
@@ -52,11 +61,13 @@ export default {
       this.$_init();
       this.mapSource.tiles = [this._url];
     },
-    $_init() {
+    async $_init() {
       if (this.url) {
         this._url = this.url;
-        if (this._url.indexOf("reversebbox") < 0) {
-          this._url += `&reversebbox=${this.reversebbox}`;
+        let wms = new OGC.WMS(this.$props);
+        if (wms.isBaseUrl()) {
+          let url = await wms.makeFullUrl();
+          this._url = url + "&bbox={bbox}";
         }
       } else if (this.baseUrl) {
         if (!this.layers) {
@@ -69,13 +80,26 @@ export default {
           } else {
             _baseUrl = this.baseUrl;
           }
+        } else {
+          let domain = this.domain;
+          if (!domain) {
+            domain = this.protocol + "://" + this.ip + ":" + this.port;
+          }
+          // 兼容中地特有规则
+          _baseUrl =
+            domain +
+            "/igs/rest/ogc/" +
+            this.serverType +
+            "/" +
+            this.serverName +
+            "/WMSServer";
         }
         _baseUrl += "?service=WMS&request=GetMap";
         const partUrl = this.$_initAllRequestParams().join("&");
         this._url = encodeURI(_baseUrl + "&" + partUrl) + "&bbox={bbox}";
-        if (this._url.indexOf("reversebbox") < 0) {
-          this._url += `&reversebbox=${this.reversebbox}`;
-        }
+      }
+      if (this._url.indexOf("reversebbox") < 0) {
+        this._url += `&reversebbox=${this.reversebbox}`;
       }
     },
     $_initAllRequestParams() {

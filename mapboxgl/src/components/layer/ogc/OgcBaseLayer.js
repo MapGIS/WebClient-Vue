@@ -24,8 +24,8 @@ export default {
     }
   },
   methods: {
-    $_deferredMount() {
-      this.$_init();
+    async $_deferredMount() {
+      await this.$_init();
       let source = {
         type: "raster",
         tiles: [this._url],
@@ -36,11 +36,11 @@ export default {
 
       this.map.on("dataloading", this.$_watchSourceLoading);
       try {
-        this.map.addSource(this.sourceId, source);
+        this.map.addSource(this.sourceId || this.layerId, source);
       } catch (err) {
         if (this.replaceSource) {
-          this.map.removeSource(this.sourceId);
-          this.map.addSource(this.sourceId, source);
+          this.map.removeSource(this.sourceId || this.layerId);
+          this.map.addSource(this.sourceId || this.layerId, source);
         }
       }
       this.$_addLayer();
@@ -50,7 +50,7 @@ export default {
     },
     $_deferredUnMount() {
       this.map.removeLayer(this.layerId);
-      this.map.removeSource(this.sourceId);
+      this.map.removeSource(this.sourceId || this.layerId);
       this.initial = true;
     }
   }

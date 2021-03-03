@@ -2,7 +2,7 @@ import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 
 export default {
-  name: "mapbox-canvas-layer",
+  name: "mapgis-canvas-layer",
   mixins: [mixin],
 
   inject: ["mapbox", "map"],
@@ -15,6 +15,10 @@ export default {
     layer: {
       type: Object,
       default: null
+    },
+    delay: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -28,6 +32,11 @@ export default {
     coordinates(val) {
       if (this.initial) return;
       this.mapSource.setCoordinates(val);
+    },
+    delay(val) {
+      if (val === true) {
+        this.$_delayAddLayer();
+      }
     }
   },
 
@@ -51,12 +60,19 @@ export default {
           this.map.addSource(this.sourceId, source);
         }
       }
-      this.$_addLayer();
-      this.$_bindLayerEvents(layerEvents);
-      this.initial = false;
+      if (!this.delay) {
+        this.$_addLayer();
+        this.$_bindLayerEvents(layerEvents);
+        this.initial = false;
+      } else {
+        this.$_emitEvent("added", {
+          component: this
+        });
+      }
     },
 
     $_addLayer() {
+      const vm = this;
       let existed = this.map.getLayer(this.layerId);
       if (existed) {
         if (this.replace) {
@@ -72,11 +88,18 @@ export default {
         type: "raster",
         ...this.layer
       };
+
       this.map.addLayer(layer, this.before);
       this.$_emitEvent("added", {
         layerId: this.layerId,
         canvas: this.canvasElement
       });
+    },
+
+    $_delayAddLayer() {
+      this.$_addLayer();
+      this.$_bindLayerEvents(layerEvents);
+      this.initial = false;
     }
   }
 };

@@ -3,7 +3,7 @@ import layerEvents from "../../../lib/layerEvents";
 import igsOptions from "./igsOptions";
 
 export default {
-  name: "mapbox-igs-tdt-layer",
+  name: "mapgis-igs-tdt-layer",
   mixins: [mixin],
   props: {
     ...igsOptions,

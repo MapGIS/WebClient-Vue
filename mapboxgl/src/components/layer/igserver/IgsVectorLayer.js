@@ -4,12 +4,12 @@ import { newGuid } from "../../util";
 import igsOptions from "./igsOptions";
 
 export default {
-  name: "mapbox-igs-vector-layer",
+  name: "mapgis-igs-vector-layer",
   mixins: [rasterLayer],
   props: {
     ...igsOptions,
     gdbps: {
-      type: String,
+      type: String | Array,
       require: true
     },
     filters: {
@@ -26,7 +26,7 @@ export default {
     },
     guid: {
       type: String,
-      default: newGuid()
+      default: new Date().getTime().toString()
     },
     keepCache: {
       type: Boolean,
@@ -58,7 +58,13 @@ export default {
     },
     $_initAllRequestParams() {
       let params = [];
-      params.push("gdbps=" + this.gdbps);
+      let gdbps;
+      if (typeof this.gdbps === "string") {
+        gdbps = this.gdbps;
+      } else {
+        gdbps = this.gdbps.toString();
+      }
+      params.push("gdbps=" + gdbps);
       params.push("f=" + this.f);
       params.push("guid=" + this.guid);
 
@@ -90,11 +96,11 @@ export default {
 
       this.map.on("dataloading", this.$_watchSourceLoading);
       try {
-        this.map.addSource(this.sourceId, source);
+        this.map.addSource(this.sourceId || this.layerId, source);
       } catch (err) {
         if (this.replaceSource) {
-          this.map.removeSource(this.sourceId);
-          this.map.addSource(this.sourceId, source);
+          this.map.removeSource(this.sourceId || this.layerId);
+          this.map.addSource(this.sourceId || this.layerId, source);
         }
       }
       this.$_addLayer();

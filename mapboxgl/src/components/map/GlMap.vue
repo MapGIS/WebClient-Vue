@@ -20,7 +20,7 @@ import withPrivateMethods from "./mixins/withPrivateMethods";
 // import withAsyncActions from "./mixins/withAsyncActions";
 
 export default {
-  name: "mapbox-map",
+  name: "mapgis-web-map",
 
   mixins: [withWatchers, /* withAsyncActions, */ withPrivateMethods, withEvents],
 
@@ -142,6 +142,6 @@ export default {
 
 .mapbox-default-map .mapboxgl-canvas-container {
   width: 100% !important;
-  height: 100% !important;
+  height: 100vh !important;
 }
 </style>

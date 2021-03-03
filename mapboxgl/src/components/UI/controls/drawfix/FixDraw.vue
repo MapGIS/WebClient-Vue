@@ -2,6 +2,20 @@
   <div>
     <!-- slot for toolbar -->
     <slot name="toolbar" />
+    <div class="fixdraw-toolbar-wrapper">
+      <div @click="togglePoint">
+        <slot name="point" />
+      </div>
+      <div @click="togglePolyline">
+        <slot name="line" />
+      </div>
+      <div @click="togglePolygon">
+        <slot name="polygon" />
+      </div>
+      <div @click="toggleDelete">
+        <slot name="delete" />
+      </div>
+    </div>
     <!-- slot for toolbar-item -->
     <slot v-if="drawer" />
   </div>
@@ -10,10 +24,10 @@
 <style></style>
 
 <script>
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
+import "./mapbox-gl-draw.css";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 // import { CircleMode, DragCircleMode } from "mapbox-gl-draw-circle";
-import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
+import * as MapboxDrawCom from "./mapbox-gl-draw";
 const modes = MapboxDrawCom.default.modes;
 const MapboxDraw = MapboxDrawCom.default;
 modes.draw_rectangle = DrawRectangle;
@@ -47,7 +61,7 @@ const drawEvents = {
 };
 
 export default {
-  name: "mapgis-draw",
+  name: "mapbox-fix-draw",
   mixins: [drawMixin, controlMixin],
 
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5
@@ -89,12 +103,12 @@ export default {
       type: Object,
       default: () => {
         return {
-          point: false,
-          line_string: false,
-          polygon: false,
-          trash: false,
-          combine_features: false,
-          uncombine_features: false
+          point: true,
+          line_string: true,
+          polygon: true,
+          trash: true,
+          combine_features: true,
+          uncombine_features: true
         };
       }
     },
@@ -146,6 +160,7 @@ export default {
 
     this.initial = false;
     // this.$_addControl();
+    this.enableDrawer();
   },
 
   beforeDestroy () {
@@ -197,7 +212,33 @@ export default {
       this.removeSource("mapbox-gl-draw-cold");
 
       this.$_emitEvent("removed");
-    }
+    },
+
+    togglePoint: (e) => {
+      console.log('poitn', e, this)
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_point");
+    },
+    togglePolyline: (e) => {
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_line_string");
+    },
+    togglePolygon: (e) => {
+      this.genableDrawer();
+      this.drawer && this.drawer.changeMode("draw_polygon");
+    },
+    toggleDelete: (e) => {
+      this.enableDrawer();
+      this.drawer && this.drawer.deleteAll();
+    },
   }
 };
 </script>
+
+<style>
+.fixdraw-toolbar-wrapper {
+  position: absolute;
+  z-index: 9999;
+  display: inline-flex;
+}
+</style>

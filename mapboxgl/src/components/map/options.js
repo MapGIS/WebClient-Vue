@@ -13,6 +13,10 @@ export default {
       return `map-${("" + Math.random()).split(".")[1]}`;
     }
   },
+  serverUrl: {
+    type: String,
+    default: "https://develop.smaryun.com:6163"
+  },
   mapClass: {
     type: String,
     default: "mapbox-default-map"
@@ -35,7 +39,21 @@ export default {
   },
   mapStyle: {
     type: [String, Object],
-    required: true
+    default: () => {
+      return {
+        version: 8,
+        sources: {},
+        layers: [
+          {
+            id: "背景",
+            type: "background",
+            paint: {
+              "background-color": "rgba(0, 0, 0, 1)"
+            }
+          }
+        ]
+      };
+    }
   },
   hash: {
     type: Boolean,

@@ -25,7 +25,7 @@ const markerDOMEvents = {
 };
 
 export default {
-  name: "mapbox-marker",
+  name: "mapgis-marker",
   mixins: [withEvents, withSelfEvents],
 
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5

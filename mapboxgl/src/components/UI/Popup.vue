@@ -19,7 +19,7 @@ const popupEvents = {
  * @see See [Mapbox Gl JS Popup](https://www.mapbox.com/mapbox-gl-js/api/#popup)
  */
 export default {
-  name: "mapbox-popup",
+  name: "mapgis-popup",
   mixins: [withEvents, withSelfEvents],
 
   inject: {

@@ -1,7 +1,7 @@
 import OgcBaseLayer from "./OgcBaseLayer";
 
 export default {
-  name: "mapbox-ogc-wmts-layer",
+  name: "mapgis-ogc-wmts-layer",
   mixins: [OgcBaseLayer],
   props: {
     wmtsLayer: {

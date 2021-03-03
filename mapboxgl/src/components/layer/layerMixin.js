@@ -1,10 +1,21 @@
 // import withRegistration from "../../lib/withRegistration";
 import withEvents from "../../lib/withEvents";
 
+const mapgisCustomProps = {
+  url: {
+    type: String,
+    default: null
+  },
+  mapgisOffset: {
+    type: Number,
+    default: 0
+  }
+};
+
 const mapboxSourceProps = {
   sourceId: {
     type: String,
-    required: true
+    default: undefined
   },
   source: {
     type: [Object, String],
@@ -19,7 +30,9 @@ const mapboxLayerStyleProps = {
   },
   layer: {
     type: Object,
-    required: true
+    default: () => {
+      return {};
+    }
   },
   before: {
     type: String,
@@ -47,7 +60,8 @@ export default {
   props: {
     ...mapboxSourceProps,
     ...mapboxLayerStyleProps,
-    ...componentProps
+    ...componentProps,
+    ...mapgisCustomProps
   },
 
   inject: ["mapbox", "map"],
@@ -60,13 +74,17 @@ export default {
 
   computed: {
     sourceLoaded() {
-      return this.map ? this.map.isSourceLoaded(this.sourceId) : false;
+      return this.map
+        ? this.map.isSourceLoaded(this.sourceId || this.layerId)
+        : false;
     },
     mapLayer() {
       return this.map ? this.map.getLayer(this.layerId) : null;
     },
     mapSource() {
-      return this.map ? this.map.getSource(this.sourceId) : null;
+      return this.map
+        ? this.map.getSource(this.sourceId || this.layerId)
+        : null;
     }
   },
 
@@ -133,16 +151,16 @@ export default {
         this.map.removeLayer(this.layerId);
       } catch (err) {
         this.$_emitEvent("layer-does-not-exist", {
-          layerId: this.sourceId,
+          layerId: this.sourceId || this.layerId,
           error: err
         });
       }
       if (this.clearSource) {
         try {
-          this.map.removeSource(this.sourceId);
+          this.map.removeSource(this.sourceId || this.layerId);
         } catch (err) {
           this.$_emitEvent("source-does-not-exist", {
-            sourceId: this.sourceId,
+            sourceId: this.sourceId || this.layerId,
             error: err
           });
         }
@@ -172,8 +190,9 @@ export default {
     },
 
     $_watchSourceLoading(data) {
-      if (data.dataType === "source" && data.sourceId === this.sourceId) {
-        this.$_emitEvent("layer-source-loading", { sourceId: this.sourceId });
+      const sourceId = this.sourceId || this.layerId;
+      if (data.dataType === "source" && data.sourceId === sourceId) {
+        this.$_emitEvent("layer-source-loading", { sourceId: sourceId });
         this.map.off("dataloading", this.$_watchSourceLoading);
       }
     },
@@ -188,7 +207,7 @@ export default {
 
     remove() {
       this.map.removeLayer(this.layerId);
-      this.map.removeSource(this.sourceId);
+      this.map.removeSource(this.sourceId || this.layerId);
       this.$_emitEvent("layer-removed", { layerId: this.layerId });
       this.$destroy();
     }

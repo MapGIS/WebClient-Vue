@@ -37,7 +37,7 @@ const measureModes = {
 };
 
 export default {
-  name: "mapbox-base-measure",
+  name: "mapgis-measure",
   mixins: [measureMixin, controlMixin],
 
   provide () {

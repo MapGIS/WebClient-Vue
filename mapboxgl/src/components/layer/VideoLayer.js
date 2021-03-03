@@ -2,7 +2,7 @@ import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 
 export default {
-  name: "mapbox-video-layer",
+  name: "mapgis-video-layer",
   mixins: [mixin],
 
   computed: {
