@@ -3,17 +3,20 @@
 </template>
 
 <script>
-import xml from 'fast-xml-parser';
 import VueOption from "../../Base/Vue/VueOptions";
+import { OGC } from '@mapgis/webclient-es6-service';
 
 export default {
-  name: "zondy-3d-ogc-wms-layer",
+  name: "mapgis-3d-ogc-wms-layer",
   inject: ["Cesium", "webGlobe"],
   props: {
-    layers: { type: String, default: '0' },
+    layers: { type: String },
     url: { type: String, required: true },
     options: {
       type: Object,
+      default: () => {
+        return {};
+      }
     },
     ...VueOption,
   },
@@ -29,11 +32,16 @@ export default {
   },
   watch: {},
   methods: {
-    createCesiumObject () {
-      const { url, layers, options = {} } = this;
+    async createCesiumObject () {
+      let { url, layers, options = {} } = this;
       const { headers } = options;
 
       let urlSource = undefined;
+      let wms = new OGC.WMS({ url: url })
+      if (wms.isBaseUrl()) {
+        let json = await wms.getCapabilities();
+        layers = json.WMT_MS_Capabilities.Capability.Layer.Layer.map(l => l.Name);
+      }
 
       if (headers) {
         urlSource = new Cesium.Resource({ url: url, headers: headers });
@@ -50,21 +58,23 @@ export default {
           opt.tilingScheme === "EPSG:4214"
         ) {
           opt.tilingScheme = new Cesium.GeographicTilingScheme();
+        } else if (opt.tilingScheme === "EPSG:3857") {
+          opt.tilingScheme = new Cesium.WebMercatorTilingScheme();
         } else if (opt.tilingScheme) {
           opt.tilingScheme = opt.tilingScheme;
         } else {
-          opt.tilingScheme = new Cesium.WebMercatorTilingScheme();
+          opt.tilingScheme = new Cesium.GeographicTilingScheme();
         }
       }
       return new Cesium.WebMapServiceImageryProvider(opt);
     },
-    mount () {
+    async mount () {
       const { webGlobe, options, vueIndex, vueKey } = this;
       const { viewer } = webGlobe;
       const { imageryLayers } = viewer;
       const { saturation, hue } = options;
       window.Zondy = window.Zondy || window.CesiumZondy;
-      let provider = this.createCesiumObject();
+      let provider = await this.createCesiumObject();
       let imageLayer = imageryLayers.addImageryProvider(provider);
       if (saturation !== undefined) {
         imageLayer.saturation = saturation;
@@ -76,8 +86,6 @@ export default {
       window.CesiumZondy.OGCWMSManager.addSource(vueKey, vueIndex, imageLayer);
 
       this.$emit("load", this.layer, this);
-      let tObj = xml.getTraversalObj(xmlData,options);
-      let jsonObj = xml.convertToJson(tObj,options);
     },
     unmount () {
       let { webGlobe, vueKey, vueIndex } = this;

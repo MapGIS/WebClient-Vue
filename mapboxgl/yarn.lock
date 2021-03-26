@@ -1077,6 +1077,13 @@
   resolved "https://registry.npmjs.org/@mapgis/mapbox-gl/-/mapbox-gl-1.9.6.tgz#96af0d56cb24be10965ae4bd54f1372e8fdc96df"
   integrity sha512-xSOU+R9yK+nvgXZeLydQT461hxNDu/1VZ2srEqn94drz6Bz8gMfz8ggkXLIZT2aEEkMFzTzCRZuXfxFDPqh0gQ==
 
+"@mapgis/webclient-es6-service@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@mapgis/webclient-es6-service/-/webclient-es6-service-1.0.3.tgz#7f4d27436dbee3e395dc23b70b9922a00eb3b901"
+  integrity sha512-cnkct6OO/0bIVy9jOVq2qEPEWw1EgaYkYUFt/tyhWMqMrnMgTaOQku/NyJdP5Nphpn9YHxUsgL+uplaV9AbjZw==
+  dependencies:
+    qs "^6.9.4"
+
 "@mapgis/webclient-store@^1.0.0":
   version "1.0.11"
   resolved "https://registry.npmjs.org/@mapgis/webclient-store/-/webclient-store-1.0.11.tgz#31b66a9ed7cc295400f2cde4411ef5b9e31a6035"
@@ -10010,6 +10017,11 @@ qs@6.7.0:
   version "6.7.0"
   resolved "https://registry.npmjs.org/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
+
+qs@^6.9.4:
+  version "6.9.6"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.6.tgz#26ed3c8243a431b2924aca84cc90471f35d5a0ee"
+  integrity sha512-TIRk4aqYLNoJUbd+g2lEdz5kLWIuTMRagAXxl78Q0RiVjAOugHmeKNGdd3cwo/ktpf9aL9epCfFqWDEKysUlLQ==
 
 qs@~6.5.2:
   version "6.5.2"

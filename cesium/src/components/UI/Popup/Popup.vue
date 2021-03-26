@@ -7,11 +7,11 @@
 import PopupOptions from "./PopupOptions";
 
 export default {
-  name: "cesium-popup",
+  name: "mapgis-3d-popup",
   props: {
     ...PopupOptions,
   },
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
     position: {
       deep: true,
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     createCesiumObject () {
-      let { webGlobe, position, options, container } = this;
+      let { webGlobe, CesiumZondy, position, options, container } = this;
 
       if (this.$slots.default) {
         if (this.$slots.default[0].elm) {
@@ -80,9 +80,9 @@ export default {
       return !viewer.isDestroyed();
     },
     update () {
-      const { webGlobe, vueIndex, vueKey } = this;
+      const { webGlobe, CesiumZondy, vueIndex, vueKey } = this;
       let popup;
-      let find = window.CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
+      let find = CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
       if (find) {
         popup = find.source;
       }
@@ -91,16 +91,17 @@ export default {
         popup.remove();
         popup = undefined;
       }
-
+      console.log('popup update 1');
       if (this.showed) {
         popup = this.createCesiumObject();
         this.$emit('load', { popup: popup });
         if (vueKey && (vueIndex || vueIndex === 0)) {
-          window.CesiumZondy.PopupManager.addSource(vueKey, vueIndex, popup);
+          CesiumZondy.PopupManager.addSource(vueKey, vueIndex, popup);
         }
-
+        console.log('popup update 2');
         this.mount();
       }
+      console.log('popup update 3');
     },
   },
 };

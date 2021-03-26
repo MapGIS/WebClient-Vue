@@ -6,30 +6,32 @@
 import VueOption from "../../Base/Vue/VueOptions";
 
 export default {
-  name: "cesium-ogc-wmts-layer",
+  name: "mapgis-3d-ogc-wmts-layer",
   inject: ["Cesium", "webGlobe"],
   props: {
     layer: Object,
-    index: { type: Number, default: 0 },
     url: { type: String, required: true },
     options: {
       type: Object,
+      default: () => {
+        return {}
+      }
     },
     ...VueOption,
   },
-  data() {
+  data () {
     return {};
   },
-  created() {},
-  mounted() {
+  created () { },
+  mounted () {
     this.mount();
   },
-  destroyed() {
+  destroyed () {
     this.unmount();
   },
   watch: {},
   methods: {
-    createCesiumObject() {
+    createCesiumObject () {
       const { url, options = {} } = this;
       const { headers } = options;
 
@@ -50,14 +52,18 @@ export default {
           opt.tilingScheme === "EPSG:4214"
         ) {
           opt.tilingScheme = new Cesium.GeographicTilingScheme();
-        } else {
+        } else if (opt.tilingScheme === "EPSG:3857") {
           opt.tilingScheme = new Cesium.WebMercatorTilingScheme();
+        } else if (opt.tilingScheme) {
+          opt.tilingScheme = opt.tilingScheme;
+        } else {
+          opt.tilingScheme = new Cesium.GeographicTilingScheme();
         }
       }
       return new Cesium.WebMapTileServiceImageryProvider(opt);
     },
-    mount() {
-      const { webGlobe, options, layer, vueIndex, vueKey } = this;
+    mount () {
+      const { webGlobe, options, vueIndex, vueKey } = this;
       const { viewer } = webGlobe;
       const { imageryLayers } = viewer;
       const { saturation, hue } = options;
@@ -75,7 +81,7 @@ export default {
 
       this.$emit("load", this.layer, this);
     },
-    unmount() {
+    unmount () {
       let { webGlobe, vueKey, vueIndex } = this;
       const { viewer } = webGlobe;
       const { imageryLayers } = viewer;

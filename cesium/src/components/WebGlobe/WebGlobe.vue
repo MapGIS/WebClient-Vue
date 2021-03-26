@@ -19,7 +19,7 @@ import { initManager } from "./manager";
 import options from "./options";
 
 export default {
-  name: "cesium-web-globe",
+  name: "mapgis-web-scene",
 
   mixins: [withEvents, withPrivateMethods],
 

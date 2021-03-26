@@ -17,7 +17,7 @@ const drawEvents = {
   drawcreate: "draw.create",
 }
 export default {
-  name: "cesium-base-draw",
+  name: "mapgis-3d-draw",
   mixins: [],
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
 

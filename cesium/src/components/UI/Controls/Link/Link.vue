@@ -4,7 +4,8 @@
 
 <script>
 export default {
-  name: 'cesium-link',
+  name: 'mapgis-3d-link',
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     enable: { type: Boolean, default: false },
     index: { type: String | Number },
@@ -27,15 +28,16 @@ export default {
   },
   methods: {
     initHandler () {
-      const { vueKey, vueIndex } = this;
-      let find = window.CesiumZondy.GlobesManager.findSource(vueKey, vueIndex);
+      const { vueKey, vueIndex, CesiumZondy } = this;
+      let find = CesiumZondy.GlobesManager.findSource(vueKey, vueIndex);
       if (find) {
         return find.options.ScreenSpaceEventHandler
       }
       return undefined;
     },
     addHandler () {
-      let sources = window.CesiumZondy.GlobesManager.findAllSource();
+      const { CesiumZondy } = this;
+      let sources = CesiumZondy.GlobesManager.findAllSource();
       let _self = this;
 
       sources.forEach((s, i) => {
@@ -57,34 +59,18 @@ export default {
             }
           });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        /* s.options.ScreenSpaceEventHandler.setInputAction(function (movement) {
-          let _camerca = s.source.viewer.camera;
-          sources.forEach((other, j) => {
-            if (i != j) {
-              other.source.viewer.camera.setView({
-                destination: _camerca.position,
-                orientation: {
-                  direction: _camerca._direction,
-                  up: _camerca.up,
-                  heading: _camerca.heading,
-                  pitch: _camerca.pitch,
-                  roll: _camerca.roll
-                }
-              });
-            }
-          });
-        }, Cesium.ScreenSpaceEventType.WHEEL); */
       });
 
     },
     deleteHandler () {
+      const { CesiumZondy } = this;
       let handler = this.initHandler();
       if (handler) {
         handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         handler.removeInputAction(Cesium.ScreenSpaceEventType.WHEEL);
         handler.destroy();
       }
-      let sources = window.CesiumZondy.GlobesManager.findAllSource();
+      let sources = CesiumZondy.GlobesManager.findAllSource();
       sources.forEach((s, i) => {
         if (s.options.ScreenSpaceEventHandler) {
           s.options.ScreenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
