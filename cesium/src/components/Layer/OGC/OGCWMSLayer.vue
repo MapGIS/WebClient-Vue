@@ -10,6 +10,7 @@ export default {
   name: "mapgis-3d-ogc-wms-layer",
   inject: ["Cesium", "webGlobe"],
   props: {
+    layerIndex: Number,  
     layers: { type: String },
     url: { type: String, required: true },
     options: {
@@ -69,13 +70,13 @@ export default {
       return new Cesium.WebMapServiceImageryProvider(opt);
     },
     async mount () {
-      const { webGlobe, options, vueIndex, vueKey } = this;
+      const { webGlobe, options, vueIndex, vueKey, layerIndex } = this;
       const { viewer } = webGlobe;
       const { imageryLayers } = viewer;
       const { saturation, hue } = options;
       window.Zondy = window.Zondy || window.CesiumZondy;
       let provider = await this.createCesiumObject();
-      let imageLayer = imageryLayers.addImageryProvider(provider);
+      let imageLayer = imageryLayers.addImageryProvider(provider, layerIndex);
       if (saturation !== undefined) {
         imageLayer.saturation = saturation;
       }

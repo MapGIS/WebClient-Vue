@@ -1,6 +1,8 @@
 export default {
   url: { type: String, default: null },
-
+  layerIndex: {
+    type: Number
+  },
   domain: {
     type: String,
     default: null

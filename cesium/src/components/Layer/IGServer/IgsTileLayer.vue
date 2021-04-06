@@ -3,6 +3,7 @@ import IgsLayer from "../RasterLayer";
 export default {
   name: "cesium-igs-tile-layer",
   mixins: [IgsLayer],
+  inject: ["Cesium", "webGlobe"],
   props: {
     serverName: {
       type: String,
@@ -23,8 +24,12 @@ export default {
     },
     createCesiumObject () {
       const url = this.initUrl();
-      const { $props } = this;
-      const options = { ...$props, url };
+      const { $props, Cesium } = this;
+      let tilingScheme = new Cesium.GeographicTilingScheme({
+        numberOfLevelZeroTilesX: 2,
+        numberOfLevelZeroTilesY: 1,
+      });
+      const options = { ...$props, url, tilingScheme };
       const provider = CesiumZondy.Provider.IgsTileProvider(options);
       return new Cesium.ImageryLayer(provider || {});
     },

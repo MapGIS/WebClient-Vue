@@ -10,6 +10,7 @@ export default {
   inject: ["Cesium", "webGlobe"],
   props: {
     layer: Object,
+    layerIndex: Number,
     url: { type: String, required: true },
     options: {
       type: Object,
@@ -63,13 +64,13 @@ export default {
       return new Cesium.WebMapTileServiceImageryProvider(opt);
     },
     mount () {
-      const { webGlobe, options, vueIndex, vueKey } = this;
+      const { webGlobe, options, vueIndex, vueKey, layerIndex } = this;
       const { viewer } = webGlobe;
       const { imageryLayers } = viewer;
       const { saturation, hue } = options;
       window.Zondy = window.Zondy || window.CesiumZondy;
       let provider = this.createCesiumObject();
-      let imageLayer = imageryLayers.addImageryProvider(provider);
+      let imageLayer = imageryLayers.addImageryProvider(provider, layerIndex);
       if (saturation !== undefined) {
         imageLayer.saturation = saturation;
       }

@@ -32,9 +32,9 @@ export default {
       }
     },
     mount() {
-      const { webGlobe, imageryLayer } = this;
+      const { webGlobe, imageryLayer, layerIndex } = this;
       const viewer = webGlobe.viewer;
-      viewer.imageryLayers.add(imageryLayer);
+      viewer.imageryLayers.add(imageryLayer, layerIndex);
       return (
         !viewer.isDestroyed() && viewer.imageryLayers.contains(imageryLayer)
       );
