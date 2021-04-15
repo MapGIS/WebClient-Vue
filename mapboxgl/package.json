@@ -5,7 +5,7 @@
   "main": "dist/webclient-vue-mapboxgl.umd.1.js",
   "module": "src/main.js",
   "scripts": {
-    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js",
+    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js --watch",
     "lint": "vue-cli-service lint",
     "docs:serve": "vuepress dev docs",
