@@ -1,174 +1,242 @@
 <template>
-  <div>
-    <slot
-      v-if="control"
-      v-bind:state="state"
-    />
+  <div class="mapgis-web-scene-statebar">
+    <span>
+      经度:{{ longitude }}°，纬度:{{ latitude }}°， 海拔高度:{{
+        height
+      }}米，相机视角高度:{{ cameraHeight }}米
+    </span>
+    <span v-if="showHpr"></span>
+    <span v-if="showSelectTileInfo"></span>
+    <span v-if="showViewLevelInfo"></span>
   </div>
 </template>
 
 <script>
-import { Ellipsoid, Geometry } from "@mapgis/webclient-store";
-
-console.warn('Ellipsoid', Ellipsoid);
-const { Scale } = Ellipsoid;
-const { Lnglat } = Geometry;
-
-const StateEvents = {
-  update: "update"
-};
+import VueOptions from "../../../Base/Vue/VueOptions";
 
 export default {
-  name: "CesiumStateControl",
+  name: "mapgis-3d-statebar",
   mixins: [],
   inject: ["Cesium", "webGlobe"],
   props: {
-    default: {
+    ...VueOptions,
+    showHpr: {
       type: Boolean,
-      default: true
+      default: false,
     },
-    scale: {
+    showSelectTileInfo: {
       type: Boolean,
-      default: true
+      default: false,
     },
-    level: {
+    showViewLevelInfo: {
       type: Boolean,
-      default: true
+      default: false,
     },
-    lng: {
-      type: Boolean,
-      default: true
-    },
-    lat: {
-      type: Boolean,
-      default: true
-    }
   },
 
-  computed: {
-    state: function () {
-      return this.control.value;
-    }
-  },
+  computed: {},
 
-  data () {
+  data() {
     return {
       initial: true,
-      control: undefined
+      control: undefined,
+      viewLevel: 0,
+      longitude: 0,
+      latitude: 0,
+      cameraHeight: 0,
+      height: 0,
+      selectedTile: undefined,
     };
   },
 
-  created () {
-    this.control = new StateControl(this.$props);
-    this.control.onAdd(this.webGlobe);
+  created() {},
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
   },
 
   methods: {
-  }
+    mount() {
+      this.showPosition();
+    },
+    unmount() {
+      const { webGlobe, vueKey, vueIndex } = this;
+      let find = window.CesiumZondy.EventHandlerManager.findSource(
+        vueKey,
+        vueIndex
+      );
+      if (find) {
+        find.source.destroy && find.source.destroy();
+      }
+      window.CesiumZondy.EventHandlerManager.deleteSource(vueKey, vueIndex);
+    },
+    showPosition() {
+      const vm = this;
+      let { Cesium, webGlobe, vueIndex, vueKey } = this;
+
+      const { viewer } = webGlobe;
+
+      if (vueKey && vueIndex) {
+        let screenSpaceMouseEventHandler = new Cesium.ScreenSpaceEventHandler(
+          viewer.scene.canvas
+        );
+
+        screenSpaceMouseEventHandler.setInputAction((movement) => {
+          vm.updateViewLevel();
+          vm.selectTile(movement.endPosition);
+          // vm.selectedTile = vm.selectTile(movement.endPosition);
+          vm.updateShowInfo(movement.endPosition);
+          lastScreenPos = movement.endPosition;
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        screenSpaceMouseEventHandler.setInputAction(() => {
+          vm.updateViewLevel();
+          vm.selectTile(lastScreenPos);
+          // vm.selectedTile = vm.selectTile(lastScreenPos);
+          vm.updateShowInfo(lastScreenPos);
+        }, Cesium.ScreenSpaceEventType.WHEEL);
+        window.CesiumZondy.EventHandlerManager.addSource(
+          vueKey,
+          vueIndex,
+          screenSpaceMouseEventHandler
+        );
+      }
+
+      let lastScreenPos;
+
+      viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
+        vm.updateViewLevel();
+      });
+      viewer.camera.changed.addEventListener(() => {
+        vm.updateViewLevel();
+      });
+    },
+    selectTile(e) {
+      let { Cesium, webGlobe } = this;
+      let selectedTileTmp;
+      const { viewer } = webGlobe;
+      const ellipsoid = viewer.scene.globe.ellipsoid;
+
+      let cartesian = viewer.scene.camera.pickEllipsoid(e, ellipsoid);
+      if (Cesium.defined(cartesian)) {
+        const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        const tilesRendered =
+          viewer.scene.globe._surface.tileProvider._tilesToRenderByTextureCount;
+        for (
+          let textureCount = 0;
+          !selectedTileTmp && textureCount < tilesRendered.length;
+          textureCount += 1
+        ) {
+          const tilesRenderedByTextureCount = tilesRendered[textureCount];
+          if (Cesium.defined(tilesRenderedByTextureCount)) {
+            for (
+              let tileIndex = 0;
+              !selectedTileTmp &&
+              tileIndex < tilesRenderedByTextureCount.length;
+              tileIndex += 1
+            ) {
+              const tile = tilesRenderedByTextureCount[tileIndex];
+              if (Cesium.Rectangle.contains(tile.rectangle, cartographic)) {
+                selectedTileTmp = tile;
+              }
+            }
+          }
+        }
+      }
+      return selectedTileTmp;
+    },
+    updateViewLevel() {
+      let { Cesium, webGlobe } = this;
+      const { viewer } = webGlobe;
+      const tilesToRender =
+        viewer.scene.globe._surface.tileProvider._tilesToRenderByTextureCount;
+      for (let i = 0; i < tilesToRender.length; i += 1) {
+        if (tilesToRender[i]) {
+          for (
+            let tileIndex = 0;
+            tileIndex < tilesToRender[i].length;
+            tileIndex += 1
+          ) {
+            if (
+              Cesium.Rectangle.contains(
+                tilesToRender[i][tileIndex].rectangle,
+                viewer.camera.positionCartographic
+              )
+            ) {
+              this.viewLevel = tilesToRender[i][tileIndex]._level;
+            }
+          }
+        }
+      }
+    },
+    updateShowInfo(screenPos) {
+      let {
+        viewLevel,
+        height,
+        Cesium,
+        webGlobe,
+        showHpr,
+        showSelectTileInfo,
+        showViewLevelInfo,
+      } = this;
+
+      let vm = this;
+
+      const { viewer } = webGlobe;
+      let cartesian = viewer.getCartesian3Position(screenPos, cartesian);
+      const ellipsoid = viewer.scene.globe.ellipsoid;
+      const { camera } = viewer;
+      let longlatHeight = "";
+      if (cartesian) {
+        const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        this.longitude = Cesium.Math.toDegrees(cartographic.longitude).toFixed(
+          4
+        );
+        this.latitude = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+        this.cameraHeight = Math.ceil(
+          camera.positionCartographic.height
+        ).toFixed(0);
+        this.height = Math.max(
+          viewer.scene.globe.getHeight(cartographic),
+          cartographic.height
+        ).toFixed(0);
+      }
+      /* let strHpr = "";
+      if (showHpr) {
+        strHpr = ` heading：${Cesium.Math.toDegrees(camera.heading).toFixed(
+          1
+        )} pitch：${Cesium.Math.toDegrees(camera.pitch).toFixed(
+          1
+        )} roll：${Cesium.Math.toDegrees(camera.roll).toFixed(1)}`;
+      }
+      let selectTileInfo = "";
+      if (showSelectTileInfo && selectedTile) {
+        selectTileInfo = `，瓦片X:${selectedTile.x}，瓦片Y:${selectedTile.y}，瓦片级别:${selectedTile.level}，`;
+      }
+      if (height === undefined || height < -7000) {
+        height = 0;
+      }
+      let level = "";
+      if (showViewLevelInfo) {
+        level = `当前地图级别:${viewLevel}`;
+      }
+      const iHtml = longlatHeight + strHpr + selectTileInfo + level;
+      document.getElementById(elementId).innerHTML = iHtml; */
+    },
+  },
 };
-
-class StateControl {
-  constructor(option) {
-    this.option = option || { level: true, lng: true, lat: true };
-    this.value = {
-      scale: 0,
-      level: 0,
-      lng: 0,
-      lat: 0
-    };
-  }
-
-  initDom (dom) {
-    dom.className = "mapboxgl-ctrl mapboxgl-state-bar";
-    dom.style.display = "flex";
-
-    const controls = ["scale", "level", "lng", "lat"];
-
-    controls.map(c => {
-      this[c] = document.createElement("div");
-      this[c].id = "mapboxgl-state-bar-" + c;
-      this[c].width = "100";
-
-      this[c].style.width = "80px";
-      if (c === "scale") this[c].style.width = "120px";
-      this[c].style.height = "30px";
-      this[c].style.float = "right";
-      this[c].style.textOverflow = "ellipsis";
-      this[c].style.overflow = "hidden";
-      this[c].whiteSpace = "nowrap";
-
-      this[c].style.background = "white";
-      this[c].style.boxShadow = "0 3px 4px rgba(0, 0, 0, 0.4)";
-      this[c].style.padding = "2px";
-      this[c].style.paddingTop = "4px";
-      this[c].style.marginRight = "4px";
-      this[c].style.textAlign = "center";
-      this[c].style.borderRadius = "6px";
-
-      if (this.option[c] && this.option.default) dom.appendChild(this[c]);
-    });
-  }
-
-  bindEvent () {
-    this.handler.setInputAction(this.handleWheel.bind(this), Cesium.ScreenSpaceEventType.WHEEL);
-    this.handler.setInputAction(this.handleMouseMove.bind(this), Cesium.ScreenSpaceEventType.LEFT_UP);
-  }
-
-  unbindEvent () {
-    this.handler.destroy();
-  }
-
-  handleMouseMove (e) {
-    let rect = this._map.viewer.camera.computeViewRectangle();
-    const south = Cesium.Math.toDegrees(rect.south)
-    const north = Cesium.Math.toDegrees(rect.north)
-    const east = Cesium.Math.toDegrees(rect.east)
-    const west = Cesium.Math.toDegrees(rect.west)
-
-    const centerx = (east + west) / 2;
-    const centery = (south + north) / 2;
-
-    this.lng.textContent = /* "经度:" + */ centerx;
-    this.lat.textContent = /* "纬度:" + */ centery;
-    this.value.lng = centerx;
-    this.value.lat = centery;
-  }
-
-  handleWheel (e) {
-    let { target } = e;
-
-    let rect = this._map.viewer.camera.computeViewRectangle();
-    const south = Cesium.Math.toDegrees(rect.south)
-    const north = Cesium.Math.toDegrees(rect.north)
-    const east = Cesium.Math.toDegrees(rect.east)
-    const west = Cesium.Math.toDegrees(rect.west)
-
-    let sw = new Lnglat(west, south);
-    let ne = new Lnglat(east, north);
-    let level =  webGlobe.viewer.scene._globe._surface._tilesToRender[0].level;
-
-    let scale = new Scale().getScaleByLonlat(sw, ne);
-    this.level.textContent = "级别:" + level;
-    this.scale.textContent = "1 : " + parseInt(scale);
-
-    this.value.scale = scale;
-    this.value.level = level;
-  }
-
-  onAdd (map) {
-    this._map = map;
-    this.handler = new window.Cesium.ScreenSpaceEventHandler(map.viewer.scene.canvas);
-    this._container = document.createElement("div");
-    this._container.className = "cesium-ctrl";
-    this.initDom(this._container);
-    this.bindEvent();
-    return this._container;
-  }
-
-  onRemove () {
-    this.unbindEvent();
-    this._container.parentNode.removeChild(this._container);
-    this._map = undefined;
-  }
-}
 </script>
+
+<style>
+.mapgis-web-scene-statebar {
+  position: absolute;
+  height: fit-content;
+  bottom: 0px;
+  z-index: 9999;
+  color: #f0efef;
+  line-height: 30px;
+  margin-left: 30%;
+  font-size: 80%;
+}
+</style>
