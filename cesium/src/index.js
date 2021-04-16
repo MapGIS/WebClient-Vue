@@ -1,7 +1,7 @@
 import WebGlobe from "./components/WebGlobe/WebGlobe.vue";
 
 // 工具
-// import StateControl from "./components/UI/Controls/State/StateControl.vue";
+import StateControl from "./components/UI/Controls/State/StateControl.vue";
 import Link from "./components/UI/Controls/Link/Link.vue";
 import BaseDraw from "./components/UI/Controls/Draw/Draw";
 
@@ -47,7 +47,7 @@ import CzmlDataSource from "./components/DataSource/Czml/CzmlDataSource";
 }; */
 
 export const CesiumWebGlobe = WebGlobe;
-// export const CesiumStateControl = StateControl;
+export const CesiumStateControl = StateControl;
 export const CesiumLink = Link;
 export const CesiumBaseDraw = BaseDraw;
 
@@ -74,7 +74,7 @@ export const CesiumPopup = Popup;
 
 const Components = [
   CesiumWebGlobe,
-  // CesiumStateControl,
+  CesiumStateControl,
   CesiumLink,
   CesiumBaseDraw,
 

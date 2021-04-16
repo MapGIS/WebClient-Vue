@@ -41,6 +41,8 @@ export function initManager() {
     window.CesiumZondy.AdvancedAnalysisManager || new AdvancedAnalysisManager();
   window.CesiumZondy.DrawToolManager =
     window.CesiumZondy.DrawToolManager || new DrawToolManager();
+  window.CesiumZondy.EventHandlerManager =
+    window.CesiumZondy.EventHandlerManager || new EventHandlerManager();
 }
 
 export class BaseManager {
@@ -119,3 +121,4 @@ export class OGCWMSManager extends BaseManager {}
 export class VectorTileManager extends BaseManager {}
 export class AdvancedAnalysisManager extends BaseManager {}
 export class DrawToolManager extends BaseManager {}
+export class EventHandlerManager extends BaseManager {}
