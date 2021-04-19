@@ -1,40 +1,21 @@
 <template>
     <div class="mapgis-compare-bar">
-        <slot v-if="control" />
         <mapbox-map
             id="left"
             class="map"
             ref="leftmap"
-            :map-style="leftMapOptions.mapStyle"
-            :zoom="leftMapOptions.mapZoom"
-            :center="leftMapOptions.outerCenter"
-            :crs="leftMapOptions.mapCrs"
+            v-bind="{ ...leftMapOptions }"
             v-on:load="handleLeftMapLoad"
         >
-            <mapbox-ogc-wmts-layer
-                :layer="leftMapOptions.layerWmts"
-                :layer-id="leftMapOptions.layerWmtsId"
-                :source-id="leftMapOptions.sourceWmtsId"
-                :url="leftMapOptions.wmtsurl"
-            >
-            </mapbox-ogc-wmts-layer>
+            <slot name="leftMap"></slot>
         </mapbox-map>
         <mapbox-map
             id="right"
             class="map"
-            :map-style="rightMapOptions.mapStyle"
-            :zoom="rightMapOptions.mapZoom"
-            :center="rightMapOptions.outerCenter"
-            :crs="rightMapOptions.mapCrs"
+            v-bind="{ ...rightMapOptions }"
             v-on:load="handleRightMapLoad"
         >
-            <mapbox-ogc-wmts-layer
-                :layer="rightMapOptions.layerWmts"
-                :layer-id="rightMapOptions.layerWmtsId"
-                :source-id="rightMapOptions.sourceWmtsId"
-                :url="rightMapOptions.wmtsurl"
-            >
-            </mapbox-ogc-wmts-layer>
+            <slot name="rightMap"></slot>
         </mapbox-map>
     </div>
 </template>
@@ -45,7 +26,6 @@ import Compare from "@mapgis/mapbox-gl-compare";
 import controlMixin from "../controlMixin";
 
 import MapboxMap from "../../../map/GlMap.vue";
-import MapboxOgcWmtsLayer from "../../../layer/ogc/OgcWmtsLayer.js";
 
 var leftMap, rightMap;
 
@@ -61,25 +41,31 @@ export default {
             type: Boolean,
             default: true,
         },
+        orientation: {
+            type: String,
+            default: "vertical",
+        },
         leftMapOptions: {
             type: Object,
-            required: true,
+            default: function () {
+                return {};
+            },
         },
         rightMapOptions: {
             type: Object,
-            required: true,
+            default: function () {
+                return {};
+            },
         },
     },
     components: {
         MapboxMap,
-        MapboxOgcWmtsLayer,
     },
 
     data() {
         return {
             initial: true,
             control: undefined,
-            enable: false,
         };
     },
 
@@ -109,33 +95,26 @@ export default {
             console.log("对比", Compare);
             console.log("参数", a, b, container, options);
             this.$compare = new Compare(a, b, container, options);
-            this.enable = true;
-        },
-        remove() {
-            if (this.enable) {
-                this.$compare && this.$compare.remove();
-                this.$compare = undefined;
-            }
-            this.enable = false;
         },
         handleLeftMapLoad(payload) {
             leftMap = payload.map;
-        },
-        handleRightMapLoad(payload) {
-            rightMap = payload.map;
-        },
-        handleEnable(e) {
-            let enable = this.enable;
-            console.log('compare', this);
-            if (enable) {
-                this.remove();
-            } else {
-                var container = "#comparison-container";
+            if (rightMap) {
                 let parent = this.$refs.leftmap.$parent.$el;
                 this.compare(leftMap, rightMap, parent, {
                     // Set this to enable comparing two maps by mouse movement:
                     // mousemove: true,
-                    // orientation: 'horizontal'
+                    orientation: this.orientation,
+                });
+            }
+        },
+        handleRightMapLoad(payload) {
+            rightMap = payload.map;
+            if (leftMap) {
+                let parent = this.$refs.leftmap.$parent.$el;
+                this.compare(leftMap, rightMap, parent, {
+                    // Set this to enable comparing two maps by mouse movement:
+                    // mousemove: true,
+                    orientation: this.orientation,
                 });
             }
         },
