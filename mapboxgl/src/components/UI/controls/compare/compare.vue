@@ -39,19 +39,6 @@ export default {
     },
     data() {
         return {
-            MapOptions: {
-                mapStyle: {
-                    //设置版本号，一定要设置
-                    version: 8,
-                    //添加来源
-                    sources: {},
-                    //设置加载并显示来源的图层信息
-                    layers: [],
-                }, // 地图样式
-                mapZoom: 2, // 地图初始化级数
-                outerCenter: [116.39, 40.2], // 地图显示中心
-                mapCrs: "EPSG:4326",
-            },
             leftMapOptions: {
                 mapStyle: {
                     //设置版本号，一定要设置
