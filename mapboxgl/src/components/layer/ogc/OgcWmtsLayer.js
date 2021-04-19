@@ -23,6 +23,17 @@ export default {
       default: "image/png"
     }
   },
+  created() {
+    //创建tileMatrixSet监听器
+    let me = this,replace = "tileMatrixSet";
+    this.$watch(replace, function() {
+      let replaceUpper = replace.toUpperCase();
+      let urlStr = me.url;
+      let startIndex = urlStr.indexOf(replaceUpper);
+      let endIndex = urlStr.indexOf("&",startIndex);
+      me.url = urlStr.substr(0,startIndex + replace.length + 1) + this[replace] + urlStr.substr(endIndex,urlStr.length);
+    });
+  },
   methods: {
     $_init() {
       let { url, wmtsLayer, tileMatrixSet } = this;
