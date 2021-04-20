@@ -98,18 +98,16 @@ export default {
         },
         handleLeftMapLoad(payload) {
             leftMap = payload.map;
-            if (rightMap) {
-                let parent = this.$refs.leftmap.$parent.$el;
-                this.compare(leftMap, rightMap, parent, {
-                    // Set this to enable comparing two maps by mouse movement:
-                    // mousemove: true,
-                    orientation: this.orientation,
-                });
-            }
+            this.handleMap();
         },
         handleRightMapLoad(payload) {
             rightMap = payload.map;
-            if (leftMap) {
+            this.handleMap();
+        },
+        handleMap() {
+            if (leftMap && rightMap) {
+                this.$compare && this.$compare.remove();
+                this.$compare = undefined;
                 let parent = this.$refs.leftmap.$parent.$el;
                 this.compare(leftMap, rightMap, parent, {
                     // Set this to enable comparing two maps by mouse movement:
@@ -154,6 +152,12 @@ class CompareControl {
 }
 </script>
 <style>
+.mapgis-compare-bar {
+    margin: 0 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
 .map {
     position: absolute;
     /* 只能是绝对布局 */
