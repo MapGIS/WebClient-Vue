@@ -1,4 +1,5 @@
 import MapgisCompare from "../mapboxgl/src/components/UI/controls/compare/CompareControl.vue";
+import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue"
 import MapgisOgcWmtsLayer from "../mapboxgl/src/components/layer/ogc/OgcWmtsLayer.js";
 
 export default {
@@ -6,29 +7,42 @@ export default {
     component: MapgisCompare
 };
 
+var map = [];
 const Vertical = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisCompare, MapgisOgcWmtsLayer },
+    components: { MapgisCompare, MapgisWebMap, MapgisOgcWmtsLayer },
+    methods: {
+        handleBeforeMapLoad(payload) {
+            map[0] = payload.map;
+            this.$refs.compare.handleMap(map, this.$refs.compare.$el);
+        },
+        handleAfterMapLoad(payload) {
+            map[1] = payload.map;
+            this.$refs.compare.handleMap(map, this.$refs.compare.$el);
+        },
+    },
     template: `
-        <mapgis-compare :orientation="orientation">
-            <template v-slot:leftMap>
+        <mapgis-compare ref="compare" :orientation="orientation">
+            <mapgis-web-map
+                style="position: absolute;top: 0;bottom: 0;width: 100%;height: 100%;"
+                v-bind="{ ...beforeMapOptions }"
+                v-on:load="handleBeforeMapLoad"
+            >
                 <mapgis-ogc-wmts-layer
-                    :layer="layerWmts"
-                    :layer-id="layerWmtsId"
-                    :source-id="sourceWmtsId"
-                    :url="wmtsurl1"
+                    v-bind="{ ...beforeLayerOptions }"
                 >
                 </mapgis-ogc-wmts-layer>
-            </template>
-            <template v-slot:rightMap>
+            </mapgis-web-map>
+            <mapgis-web-map
+                style="position: absolute;top: 0;bottom: 0;width: 100%;height: 100%;"
+                v-bind="{ ...afterMapOptions }"
+                v-on:load="handleAfterMapLoad"
+            >
                 <mapgis-ogc-wmts-layer
-                    :layer="layerWmts"
-                    :layer-id="layerWmtsId"
-                    :source-id="sourceWmtsId"
-                    :url="wmtsurl2"
+                    v-bind="{ ...afterLayerOptions }"
                 >
                 </mapgis-ogc-wmts-layer>
-            </template >
+            </mapgis-web-map>
         </mapgis-compare>
         `
 });
@@ -36,65 +50,51 @@ const Vertical = (args, { argTypes }) => ({
 export const VerticalMode = Vertical.bind({});
 VerticalMode.args = {
     orientation: "vertical",
-    layerWmts: {},
-    layerWmtsId: "ogcwmts_layerId",
-    sourceWmtsId: "ogcwmts_sourceId",
-    wmtsurl1:
-        "http://t0.tianditu.com/DataServer?T=ter_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-    wmtsurl2:
-        "http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
+    beforeMapOptions: {
+        mapStyle: {
+            //设置版本号，一定要设置
+            version: 8,
+            //添加来源
+            sources: {},
+            //设置加载并显示来源的图层信息
+            layers: [],
+        }, // 地图样式
+        zoom: 2, // 地图初始化级数
+        center: [116.39, 40.2], // 地图显示中心
+        crs: "EPSG:4326",
+    },
+    beforeLayerOptions: {
+        layer: {},
+        layerId: "ogcwmts_layerId",
+        sourceId: "ogcwmts_sourceId",
+        url:
+            "http://t0.tianditu.com/DataServer?T=ter_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
+    },
+    afterMapOptions: {
+        mapStyle: {
+            //设置版本号，一定要设置
+            version: 8,
+            //添加来源
+            sources: {},
+            //设置加载并显示来源的图层信息
+            layers: [],
+        }, // 地图样式
+        zoom: 2, // 地图初始化级数
+        center: [116.39, 40.2], // 地图显示中心
+        crs: "EPSG:4326"
+    },
+    afterLayerOptions: {
+        layer: {},
+        layerId: "ogcwmts_layerId",
+        sourceId: "ogcwmts_sourceId",
+        url:
+            "http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
+    }
 };
 
-const Horizontal = (args, { argTypes }) => ({
-    props: Object.keys(argTypes),
-    components: { MapgisCompare },
-    template: `<mapgis-compare :left-map-options="leftMapOptions" :right-map-options="rightMapOptions" :orientation="orientation"></mapgis-compare>`,
-});
 
-export const HorizontalMode = Horizontal.bind({});
+export const HorizontalMode = Vertical.bind({});
 HorizontalMode.args = {
-    leftMapOptions: {
-        mapStyle: {
-            //设置版本号，一定要设置
-            version: 8,
-            //添加来源
-            sources: {},
-            //设置加载并显示来源的图层信息
-          layers: [
-                            {
-                    id: "背景",
-                    type: "background",
-                    paint: {
-                        "background-color": "rgba(255, 0, 0, 1)"
-                    }
-                }
-
-            ],
-        }, // 地图样式
-        zoom: 2, // 地图初始化级数
-        center: [116.39, 40.2], // 地图显示中心
-        crs: "EPSG:4326"
-    },
-    rightMapOptions: {
-        mapStyle: {
-            //设置版本号，一定要设置
-            version: 8,
-            //添加来源
-            sources: {},
-            //设置加载并显示来源的图层信息
-            layers: [
-                {
-                    id: "背景",
-                    type: "background",
-                    paint: {
-                        "background-color": "rgba(0, 255, 0, 1)"
-                    }
-                }
-            ],
-        }, // 地图样式
-        zoom: 2, // 地图初始化级数
-        center: [116.39, 40.2], // 地图显示中心
-        crs: "EPSG:4326"
-    },
-    orientation: "horizontal"
-};
+    ...VerticalMode.args,
+    orientation: "horizontal",
+}
