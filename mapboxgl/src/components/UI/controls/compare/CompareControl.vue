@@ -1,22 +1,6 @@
 <template>
     <div class="mapgis-compare-bar">
-        <mapbox-map
-            id="left"
-            class="map"
-            ref="leftmap"
-            v-bind="{ ...leftMapOptions }"
-            v-on:load="handleLeftMapLoad"
-        >
-            <slot name="leftMap"></slot>
-        </mapbox-map>
-        <mapbox-map
-            id="right"
-            class="map"
-            v-bind="{ ...rightMapOptions }"
-            v-on:load="handleRightMapLoad"
-        >
-            <slot name="rightMap"></slot>
-        </mapbox-map>
+        <slot></slot>
     </div>
 </template>
 
@@ -24,10 +8,6 @@
 import Compare from "@mapgis/mapbox-gl-compare";
 // const Compare = require('mapbox-gl-compare');
 import controlMixin from "../controlMixin";
-
-import MapboxMap from "../../../map/GlMap.vue";
-
-var leftMap, rightMap;
 
 const StateEvents = {
     update: "update",
@@ -45,22 +25,8 @@ export default {
             type: String,
             default: "vertical",
         },
-        leftMapOptions: {
-            type: Object,
-            default: function () {
-                return {};
-            },
-        },
-        rightMapOptions: {
-            type: Object,
-            default: function () {
-                return {};
-            },
-        },
     },
-    components: {
-        MapboxMap,
-    },
+    components: {},
 
     data() {
         return {
@@ -96,20 +62,13 @@ export default {
             console.log("参数", a, b, container, options);
             this.$compare = new Compare(a, b, container, options);
         },
-        handleLeftMapLoad(payload) {
-            leftMap = payload.map;
-            this.handleMap();
-        },
-        handleRightMapLoad(payload) {
-            rightMap = payload.map;
-            this.handleMap();
-        },
-        handleMap() {
-            if (leftMap && rightMap) {
-                this.$compare && this.$compare.remove();
-                this.$compare = undefined;
-                let parent = this.$refs.leftmap.$parent.$el;
-                this.compare(leftMap, rightMap, parent, {
+        handleMap(map, parent) {
+            if (map[0] && map[1]) {
+                if (this.$compare) {
+                    this.$compare && this.$compare.remove();
+                    this.$compare = undefined;
+                }
+                this.compare(map[0], map[1], parent, {
                     // Set this to enable comparing two maps by mouse movement:
                     // mousemove: true,
                     orientation: this.orientation,
@@ -153,17 +112,7 @@ class CompareControl {
 </script>
 <style>
 .mapgis-compare-bar {
-    margin: 0 0;
-    width: 100vw;
+    position: relative;
     height: 100vh;
-    overflow: hidden;
-}
-.map {
-    position: absolute;
-    /* 只能是绝对布局 */
-    top: 0;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
 }
 </style>
