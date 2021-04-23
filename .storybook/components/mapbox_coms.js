@@ -10,6 +10,7 @@ export { default as MapgisScaleControl } from "../../mapboxgl/src/components/UI/
 export { default as MapgisStateControl } from "../../mapboxgl/src/components/UI/controls/state/StateControl";
 export { default as MapgisSearchControl } from "../../mapboxgl/src/components/UI/controls/search/SearchControl";
 export { default as MapgisCompareControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareControl";
+export { default as MapgisCompareInnerControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "../../mapboxgl/src/components/UI/controls/fps/FpsControl";
 // export { default as MapgisDraw } from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw";
 // export { default as MapgisMeasure } from "../../mapboxgl/src/components/UI/controls/measure/Measure";

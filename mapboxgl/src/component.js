@@ -10,12 +10,13 @@ export { default as MapgisScaleControl } from "./components/UI/controls/ScaleCon
 export { default as MapgisStateControl } from "./components/UI/controls/state/StateControl";
 export { default as MapgisSearchControl } from "./components/UI/controls/search/SearchControl";
 export { default as MapgisCompareControl } from "./components/UI/controls/compare/CompareControl";
+export { default as MapgisCompareInnerControl } from "./components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "./components/UI/controls/fps/FpsControl";
-// export { default as MapgisDraw } from "./components/UI/controls/draw/BaseDraw";
-// export { default as MapgisMeasure } from "./components/UI/controls/measure/Measure";
+export { default as MapgisDraw } from "./components/UI/controls/draw/BaseDraw";
+export { default as MapgisMeasure } from "./components/UI/controls/measure/Measure";
 // export { default as BaseDrawItem from "./components/UI/controls/draw/BaseDrawItem";
 // https://gist.github.com/godismyjudge95/a4ea43263db53b90b05511c911cd0034
-// export { default as MapgisFixDraw } from "./components/UI/controls/drawfix/FixDraw";
+export { default as MapgisFixDraw } from "./components/UI/controls/drawfix/FixDraw";
 
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";

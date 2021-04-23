@@ -1,13 +1,13 @@
 <script>
 import Compare from "@mapgis/mapbox-gl-compare";
+import "@mapgis/mapbox-gl-compare/mapbox-gl-compare.css";
 
 export default {
   name: "mapgis-compare",
-  // mixins: [controlMixin],
   props: {
     target: {
       type: String,
-      default: "mapgis-compare-default-root"
+      default: "mapgis-compare-root"
     },
     default: {
       type: Boolean,
@@ -20,12 +20,20 @@ export default {
   },
   components: {},
 
+  watch: {
+    orientation() {
+      this.removeMap();
+      this.initMap();
+    }
+  },
+
   data() {
     return {
       initial: true,
       control: undefined,
       beforeMap: undefined,
-      afterMap: undefined
+      afterMap: undefined,
+      com: undefined
     };
   },
 
@@ -51,9 +59,7 @@ export default {
      * @see [Swipe between maps](https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-compare/)
      */
     compare(a, b, container, options) {
-      console.log("对比", Compare);
-      console.log("参数", a, b, container, options);
-      this.$compare = new Compare(a, b, container, options);
+      return new Compare(a, b, container, options);
     },
     bindEvent() {
       if (this.$slots.beforeMap && this.$slots.afterMap) {
@@ -71,20 +77,24 @@ export default {
     },
     handleBeforeMapLoad(payload) {
       this.beforeMap = payload.map;
-      this.handleMap();
+      this.initMap();
     },
     handleAfterMapLoad(payload) {
       this.afterMap = payload.map;
-      this.handleMap();
+      this.initMap();
     },
-    handleMap() {
+    initMap() {
       if (this.beforeMap && this.afterMap) {
         let parent = document.getElementById(this.target);
-        this.compare(this.beforeMap, this.afterMap, parent, {
-          // Set this to enable comparing two maps by mouse movement:
+        this.com = this.compare(this.beforeMap, this.afterMap, parent, {
           // mousemove: true,
           orientation: this.orientation
         });
+      }
+    },
+    removeMap() {
+      if (this.com) {
+        com.remove();
       }
     }
   },
@@ -117,6 +127,7 @@ export default {
   position: absolute;
   top: 0;
   bottom: 0;
+  height: 100%;
   width: 100%;
 }
 </style>

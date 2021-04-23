@@ -1,4 +1,5 @@
 import * as MapComponents from "./component";
+
 const install = function(Vue, options) {
   for (let name in MapComponents) {
     const com = MapComponents[name];
