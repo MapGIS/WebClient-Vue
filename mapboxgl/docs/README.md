@@ -24,10 +24,7 @@ If you like long story, check out [blog post](https://soal.red/reasoning-behind-
     :accessToken="accessToken"
     :mapStyle="mapStyle"
   >
-    <MglMarker
-      :coordinates.sync="markerCoordinates"
-      color='green'
-    />
+    <MglMarker :coordinates.sync="markerCoordinates" color="green" />
     <MglGeojsonLayer
       type="fill"
       :sourceId="sourceId"
@@ -36,7 +33,7 @@ If you like long story, check out [blog post](https://soal.red/reasoning-behind-
       @click="handleClick"
     />
   </MglMap>
-</temaplate>
+</template>
 
 <script>
 import {

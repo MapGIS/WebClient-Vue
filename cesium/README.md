@@ -32,7 +32,7 @@ footer: MIT Licensed
       :url="layer.url"
     />
   </cesium-web-globe>
-</temaplate>
+</template>
 
 <script>
 import {

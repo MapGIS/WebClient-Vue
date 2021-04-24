@@ -29,10 +29,7 @@ footer: MIT Licensed
     :accessToken="accessToken"
     :mapStyle="mapStyle"
   >
-    <mapbox-marker
-      :coordinates.sync="markerCoordinates"
-      color='green'
-    />
+    <mapbox-marker :coordinates.sync="markerCoordinates" color="green" />
     <mapbox-geojson-layer
       type="fill"
       :sourceId="sourceId"
@@ -41,7 +38,7 @@ footer: MIT Licensed
       @click="handleClick"
     />
   </mapox-map>
-</temaplate>
+</template>
 
 <script>
 import {
