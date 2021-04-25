@@ -16,7 +16,11 @@ export default {
   },
   components: {},
 
-  watch: {},
+  watch: {
+      orientation() {
+          this.initMap();
+      }
+  },
 
   data() {
     return {
@@ -85,7 +89,7 @@ export default {
     },
     removeMap() {
       if (this.com) {
-        com.remove();
+        this.com.remove();
       }
     }
   },
