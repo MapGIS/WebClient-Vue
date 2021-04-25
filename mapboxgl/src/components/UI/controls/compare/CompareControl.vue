@@ -5,10 +5,6 @@ import "@mapgis/mapbox-gl-compare/mapbox-gl-compare.css";
 export default {
   name: "mapgis-compare",
   props: {
-    target: {
-      type: String,
-      default: "mapgis-compare-root"
-    },
     default: {
       type: Boolean,
       default: true
@@ -20,12 +16,7 @@ export default {
   },
   components: {},
 
-  watch: {
-    orientation() {
-      this.removeMap();
-      this.initMap();
-    }
-  },
+  watch: {},
 
   data() {
     return {
@@ -40,7 +31,6 @@ export default {
   created() {},
 
   mounted() {
-    this.bindEvent();
   },
 
   methods: {
@@ -84,8 +74,9 @@ export default {
       this.initMap();
     },
     initMap() {
+      this.removeMap();
       if (this.beforeMap && this.afterMap) {
-        let parent = document.getElementById(this.target);
+        let parent = this.$refs.compare;
         this.com = this.compare(this.beforeMap, this.afterMap, parent, {
           // mousemove: true,
           orientation: this.orientation
@@ -109,9 +100,7 @@ export default {
       "div",
       {
         class: "mapgis-compare-bar",
-        attrs: {
-          id: this.target
-        }
+        ref: "compare"
       },
       children
     );
