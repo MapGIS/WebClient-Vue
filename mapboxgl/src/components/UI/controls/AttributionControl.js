@@ -1,7 +1,7 @@
 import controlMixin from "./controlMixin";
 
 export default {
-  name: "mapbox-attribution-control",
+  name: "mapgis-attribution",
   mixins: [controlMixin],
   props: {
     compact: {

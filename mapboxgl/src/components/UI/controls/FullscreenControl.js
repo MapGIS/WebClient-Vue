@@ -1,7 +1,7 @@
 import controlMixin from "./controlMixin";
 
 export default {
-  name: "mapbox-fullscreen-control",
+  name: "mapgis-fullscreen",
   mixins: [controlMixin],
 
   props: {

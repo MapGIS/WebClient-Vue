@@ -11,7 +11,7 @@
 import controlMixin from "../controlMixin";
 
 export default {
-  name: "FullscreenControl",
+  name: "mapgis-search",
   mixins: [controlMixin],
 
   props: {

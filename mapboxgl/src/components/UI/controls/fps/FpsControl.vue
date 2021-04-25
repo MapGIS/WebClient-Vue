@@ -11,7 +11,7 @@
 import controlMixin from "../controlMixin";
 
 export default {
-  name: "mapbox-fps-control",
+  name: "mapgis-fps",
   mixins: [controlMixin],
 
   props: {
