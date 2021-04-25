@@ -73,8 +73,8 @@ VerticalMode.args = {
   },
 };
 
-/* export const HorizontalMode = Vertical.bind({});
+export const HorizontalMode = Vertical.bind({});
 HorizontalMode.args = {
   ...VerticalMode.args,
   orientation: "horizontal",
-}; */
+};
