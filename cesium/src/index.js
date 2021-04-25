@@ -30,22 +30,6 @@ import TerrainProvider from "./components/Provider/TerrainProvider/TerrainProvid
 import GeoJsonDataSource from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
 import CzmlDataSource from "./components/DataSource/Czml/CzmlDataSource";
 
-/* export {
-  WebGlobe,
-  StateControl,
-  Link,
-  RasterLayer,
-  ImageryLayer,
-  IgsDocLayer,
-  IgsTileLayer,
-  Popup,
-  MapvLayer,
-  GeoJsonDataSource,
-  Tileset,
-  IgsM3d,
-  FileM3d
-}; */
-
 export const CesiumWebGlobe = WebGlobe;
 export const CesiumStateControl = StateControl;
 export const CesiumLink = Link;
@@ -58,7 +42,7 @@ export const CesiumIgsTileLayer = IgsTileLayer;
 export const CesiumOgcWmtsLayer = OgcWmtsLayer;
 export const CesiumOgcWmsLayer = OgcWmsLayer;
 
-export const CesiumVectorTileLayer = VectorTileLayer;
+export const MapgisVectorTileLayer = VectorTileLayer;
 
 export const CesiumTerrainProvider = TerrainProvider;
 
@@ -66,8 +50,8 @@ export const Cesium3dTileset = Tileset;
 export const CesiumIgsM3d = IgsM3d;
 export const CesiumFileM3d = FileM3d;
 
-export const CesiumGeojsonDatasource = GeoJsonDataSource;
-export const CesiumCzmlDatasource = CzmlDataSource;
+export const MapgisGeojsonDatasource = GeoJsonDataSource;
+export const MapgisCzmlDatasource = CzmlDataSource;
 export const CesiumPopup = Popup;
 
 // export const CesiumMapvLayer = MapvLayer;
@@ -85,7 +69,7 @@ const Components = [
   CesiumOgcWmtsLayer,
   CesiumOgcWmsLayer,
 
-  CesiumVectorTileLayer,
+  MapgisVectorTileLayer,
 
   CesiumTerrainProvider,
 
@@ -94,7 +78,7 @@ const Components = [
   CesiumFileM3d,
 
   CesiumGeojsonDatasource,
-  CesiumCzmlDatasource,
+  MapgisCzmlDatasource,
   CesiumPopup
 
   /* CesiumMapvLayer */

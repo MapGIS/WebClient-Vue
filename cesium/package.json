@@ -5,8 +5,8 @@
   "main": "dist/webclient-vue-cesium.umd.1.js",
   "module": "src/index.js",
   "scripts": {
-    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium src/index.js",
-    "serve": "vue-cli-service build --target lib --name webclient-vue-cesium src/index.js --watch",
+    "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium src/main.js",
+    "serve": "vue-cli-service build --target lib --name webclient-vue-cesium src/main.js --watch",
     "lint": "vue-cli-service lint",
     "docs:serve": "vuepress dev docs",
     "docs:build": "vuepress build docs"

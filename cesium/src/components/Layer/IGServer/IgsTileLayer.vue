@@ -1,7 +1,7 @@
 <script>
 import IgsLayer from "../RasterLayer";
 export default {
-  name: "cesium-igs-tile-layer",
+  name: "mapgis-3d-igs-tile-layer",
   mixins: [IgsLayer],
   inject: ["Cesium", "webGlobe"],
   props: {

@@ -7,7 +7,7 @@ import BaseDatasource from '../BaseDatasource'
 import CzmlOptions from './CzmlOptions'
 
 export default {
-  name: 'cesium-czml-datasource',
+  name: 'mapgis-3d-czml-datasource',
   mixins: [BaseDatasource],
   props: {
     ...CzmlOptions,
