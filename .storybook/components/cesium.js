@@ -1,4 +1,4 @@
-import * as MapComponents from "./cesium_coms";
+import * as MapComponents from "./mapbox_coms";
 
 const install = function (Vue, options) {
   for (let name in MapComponents) {

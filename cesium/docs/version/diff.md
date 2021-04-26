@@ -10,11 +10,11 @@
 | Layer\IGServer\IgsTileLayer.vue          | 改名 | mapgis-3d-igs-tile-layer     | cesium-igs-tile-layer     | Mapgis3dIgsTileLayer    |                         | 无   |
 | Layer\OGC\OGCWMSLayer.vue                | 改名 | mapgis-3d-ogc-wms-layer      |                           | Mapgis3dOgcWmsLayer     |                         | 无   |
 | Layer\OGC\OGCWMTSLayer.vue               | 改名 | mapgis-3d-ogc-wmts-layer     |                           | Mapgis3dOgcWmtsLayer    |                         | 无   |
-| Layer\RasterTile\BaseRasterLayer.vue     | 改名 | mapgis-3d-rastertile-layer   |                           | Mapgis3dRasterLayer     |                         | 无   |
+| Layer\RasterTile\BaseRasterLayer.vue     | 改名 | mapgis-3d-raster-layer       |                           | Mapgis3dRasterLayer     |                         | 无   |
 | Layer\VectorTile\VectorTileLayer.vue     | 改名 | mapgis-3d-vectortile-layer   |                           | Mapgis3dVectortileLayer |                         | 无   |
 | M3D\3dTileset.vue                        | 改名 | mapgis-3d-tileset            | cesium-3d-tileset         | Mapgis3dTileset         |                         | 无   |
-| M3D\M3d.vue                              | 改名 | mapgis-igs-m3d               | cesium-igs-m3d            | Mapgis3dIgsM3d          |                         | 无   |
-| M3D\M3dFile.vue                          | 改名 | mapgis-file-m3d              | cesium-file-m3d           | Mapgis3dFileM3d         |                         | 无   |
+| M3D\M3d.vue                              | 改名 | mapgis-3d-igs-m3d            | cesium-igs-m3d            | Mapgis3dIgsM3d          |                         | 无   |
+| M3D\M3dFile.vue                          | 改名 | mapgis-3d-file-m3d           | cesium-file-m3d           | Mapgis3dFileM3d         |                         | 无   |
 | UI\Controls\Draw\Draw.vue                | 改名 | mapgis-3d-draw               |                           | Mapgis3dDraw            |                         | 无   |
 | UI\Controls\Link\Link.vue                | 改名 | mapgis-3d-link               |                           | Mapgis3dLink            |                         | 无   |
 | UI\Controls\State\StateControl.vue       | 新增 | mapgis-3d-statebar           |                           | Mapgis3dState           |                         | 无   |

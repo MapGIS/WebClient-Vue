@@ -77,7 +77,7 @@ const Components = [
   CesiumIgsM3d,
   CesiumFileM3d,
 
-  CesiumGeojsonDatasource,
+  MapgisGeojsonDatasource,
   MapgisCzmlDatasource,
   CesiumPopup
 
