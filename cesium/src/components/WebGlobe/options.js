@@ -11,7 +11,7 @@ export default {
    * entity的内存中的引用数组的下标，从而避免vue对cesium的内存劫持
    */
   vueIndex: {
-    typs: String | Number,
+    typs: [String, Number],
     default: (Math.random() * 10000).toFixed(0)
   },
   container: {
