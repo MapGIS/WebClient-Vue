@@ -84,15 +84,15 @@ export default {
         );
 
         screenSpaceMouseEventHandler.setInputAction((movement) => {
-          vm.updateViewLevel();
-          vm.selectTile(movement.endPosition);
+          // vm.updateViewLevel();
+          // vm.selectTile(movement.endPosition);
           // vm.selectedTile = vm.selectTile(movement.endPosition);
           vm.updateShowInfo(movement.endPosition);
           lastScreenPos = movement.endPosition;
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         screenSpaceMouseEventHandler.setInputAction(() => {
-          vm.updateViewLevel();
-          vm.selectTile(lastScreenPos);
+          // vm.updateViewLevel();
+          // vm.selectTile(lastScreenPos);
           // vm.selectedTile = vm.selectTile(lastScreenPos);
           vm.updateShowInfo(lastScreenPos);
         }, Cesium.ScreenSpaceEventType.WHEEL);

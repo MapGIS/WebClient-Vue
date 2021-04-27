@@ -24,6 +24,7 @@ export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 // export { default as { MapvLayer }} from "./components/Overlay";
 
+export { default as Mapgis3dIGSTerrainProvider } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
 
 // 数据源

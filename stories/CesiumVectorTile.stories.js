@@ -1,21 +1,23 @@
-import MapgisWebGlobe from "../cesium/src/components/WebGlobe/WebGlobe.vue";
+import MapgisVectorTileLayer from "../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
 export default {
-  title: "三维/基础地图",
-  component: MapgisWebGlobe,
+  title: "三维/矢量瓦片",
+  component: MapgisVectorTileLayer,
   argTypes: {
+    styleUrl: {},
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebGlobe },
-  template: `<mapgis-web-globe v-bind="$props" >
-    <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=cia_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-  </mapgis-web-globe>`
+  components: { MapgisVectorTileLayer },
+  template: `<mapgis-web-scene  >
+    <mapgis-3d-vectortile-layer v-bind="$props" />
+  </mapgis-web-scene>`,
 });
 
-export const EmptyGlobe = Template.bind({});
-EmptyGlobe.args = {
+export const VectorTile = Template.bind({});
+VectorTile.args = {
+  styleUrl:
+    "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/蓝色-墨卡托.json",
 };

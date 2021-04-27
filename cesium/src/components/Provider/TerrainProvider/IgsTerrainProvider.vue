@@ -1,7 +1,6 @@
 <script>
-import Tileset from "./3DTileset";
 export default {
-  name: "mapgis-3d-igs-m3d",
+  name: "mapgis-3d-igs-terrain",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     show: {
@@ -23,13 +22,12 @@ export default {
   methods: {
     createCesiumObject() {
       const { $props, url, CesiumZondy, webGlobe } = this;
-      let m3dLayer = new CesiumZondy.Layer.M3DLayer({
+      var terrianlayer = new CesiumZondy.Layer.TerrainLayer({
         viewer: webGlobe.viewer,
       });
-      return m3dLayer;
+      return terrianlayer;
     },
     watchProp() {},
-    onM3dLoaded(e) {},
     mount() {
       const { webGlobe, vueIndex, vueKey, $props } = this;
       const viewer = webGlobe.viewer;
@@ -37,35 +35,33 @@ export default {
       if (viewer.isDestroyed()) return;
       this.$emit("load", this);
 
-      let m3dLayer = this.createCesiumObject();
-
-      let m3ds = m3dLayer.append(`${this.url}`, {
-        ...$props,
-        loaded: () => {
-          if (vueKey && vueIndex) {
-            window.CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
-          }
-        },
-      });
+      let terrianlayer = this.createCesiumObject();
+      let terrainLayers = terrianlayer.append(`${this.url}`, { ...$props });
+      if (vueKey && vueIndex) {
+        window.CesiumZondy.IgsTerrainManager.addSource(
+          vueKey,
+          vueIndex,
+          terrainLayers
+        );
+      }
     },
     unmount() {
       const { webGlobe, vueKey, vueIndex } = this;
       const viewer = webGlobe.viewer;
-      let find = window.CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      let find = window.CesiumZondy.IgsTerrainManager.findSource(
+        vueKey,
+        vueIndex
+      );
       if (find) {
-        let m3ds = find.source;
-        !viewer.isDestroyed() &&
-          m3ds &&
-          m3ds.forEach((l) => {
-            l.destroy();
-          });
+        let terrains = find.source;
+        !viewer.isDestroyed() && terrains && terrains.forEach(l => {l.destroy();})
       }
-      window.CesiumZondy.VectorTileManager.deleteSource(vueKey, vueIndex);
+      window.CesiumZondy.IgsTerrainManager.deleteSource(vueKey, vueIndex);
     },
   },
   render(h) {
     return h("span", {
-      class: "mapgis-3d-igs-m3d",
+      class: "mapgis-3d-igs-terrain",
       ref: "m3d",
     });
   },

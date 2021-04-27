@@ -1,7 +1,7 @@
 # 对比分析 
 ## 1.07 vs 4.25
 
-| 文件                                     | 类型 | 10.5.2   (2021-01-07)        | 1.0.13  (2020-12)         | 10.5.2(按需引入)        | 1.0.13(按需引入)        | 备注 |
+| 文件                                     | 类型 | 10.5.2   (2021-04)        | 1.0.13  (2020-12)         | 10.5.2(按需引入)        | 1.0.13(按需引入)        | 备注 |
 | :--------------------------------------- | :--- | :--------------------------- | :------------------------ | :---------------------- | :---------------------- | :--- |
 | WebGlobe\WebGlobe.vue                    | 改名 | mapgis-web-scene             | cesium-web-globe          | MapgisWebScene          |                         | 无   |
 | DataSource\Czml\CzmlDataSource.vue       | 改名 | mapgis-3d-czml-datasource    | cesium-czml-datasource    | MapgisCzmlDatasource    | CesiumCzmlDatasource    | 无   |
