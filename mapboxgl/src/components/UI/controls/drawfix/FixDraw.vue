@@ -12,9 +12,6 @@
       <div @click="togglePolygon">
         <slot name="polygon" />
       </div>
-      <div @click="toggleCircle">
-        <slot name="circle" />
-      </div>
       <div @click="toggleDelete">
         <slot name="delete" />
       </div>
@@ -31,11 +28,10 @@ import "./mapbox-gl-draw.css";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 // import { CircleMode, DragCircleMode } from "mapbox-gl-draw-circle";
 import * as MapboxDrawCom from "./mapbox-gl-draw";
-import RadiusMode from "./radius-mode";
 const modes = MapboxDrawCom.default.modes;
 const MapboxDraw = MapboxDrawCom.default;
 modes.draw_rectangle = DrawRectangle;
-modes.draw_circle = RadiusMode;
+// modes.draw_circle = CircleMode;
 // modes.drag_circle = DragCircleMode;
 
 import drawMixin from "./drawMixin";
@@ -218,23 +214,20 @@ export default {
       this.$_emitEvent("removed");
     },
 
-    togglePoint (e) {
+    togglePoint: (e) => {
+      console.log('poitn', e, this)
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_point");
     },
-    togglePolyline (e) {
+    togglePolyline: (e) => {
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_line_string");
     },
-    togglePolygon (e) {
-      this.enableDrawer();
+    togglePolygon: (e) => {
+      this.genableDrawer();
       this.drawer && this.drawer.changeMode("draw_polygon");
     },
-    toggleCircle (e) {
-      this.enableDrawer();
-      this.drawer && this.drawer.changeMode("draw_circle");
-    },
-    toggleDelete (e) {
+    toggleDelete: (e) => {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
     },
