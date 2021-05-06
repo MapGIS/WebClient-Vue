@@ -3,7 +3,7 @@ import MapgisIgsDocLayer from "../mapboxgl/src/components/layer/igserver/IgsDocL
 import FeatureLayer from "./component/FeatureLayerIgserver";
 
 export default {
-  title: "二维/OGC-WFS",
+  title: "二维/要素查询",
   component: MapgisIgsDocLayer,
   argTypes: {
     layer: {},

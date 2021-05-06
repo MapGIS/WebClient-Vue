@@ -5,10 +5,12 @@ export default {
   mixins: [OgcBaseLayer],
   props: {
     wmtsLayer: {
-      type: String
+      type: String,
+      default: ""
     },
     tileMatrixSet: {
-      type: String
+      type: String,
+      default: ""
     },
     version: {
       type: String,
@@ -21,30 +23,40 @@ export default {
     format: {
       type: String,
       default: "image/png"
+    },
+    zoomOffset: {
+      type: Number,
+      default: 0
     }
   },
   created() {
     //创建tileMatrixSet监听器
-    let me = this,watchArr = ["wmtsLayer","tileMatrixSet","version","wmtsStyle","format"];
+    let watchArr = ["wmtsLayer","tileMatrixSet","version","wmtsStyle","format"];
     for (let i = 0;i < watchArr.length; i++){
       this.$watch(watchArr[i], function() {
-        if(me.url){
+        if(this.url){
           //REST方式，目前还是采用KVP的格式
-          me.$_initUrl(me[watchArr[i]],watchArr[i]);
-        }else  if (me.baseUrl){
+          this.$_initUrl(this[watchArr[i]],watchArr[i]);
+        }else  if (this.baseUrl){
+          if (!this.tileMatrixSet || this.tileMatrixSet.length === 0) {
+            return;
+          }
           //KVP方式
-          this.$_initBaseUrl(me.wmtsLayer, me[watchArr[i]]);
+          this.$_initBaseUrl();
         }
       });
     }
   },
   methods: {
     $_init() {
-      let { url, wmtsLayer, tileMatrixSet } = this;
+      let { url, wmtsLayer, tileMatrixSet,baseUrl,_url } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
-        this._url = url;
-      } else if (this.baseUrl) {
+        _url = url;
+      } else if (baseUrl) {
+        if (wmtsLayer.length === 0 || tileMatrixSet.length === 0) {
+          return;
+        }
         //KVP方式
         this.$_initBaseUrl(wmtsLayer, tileMatrixSet);
       }
@@ -67,10 +79,7 @@ export default {
         this._url = this.url;
       }
     },
-    $_initBaseUrl(wmtsLayer,tileMatrixSet){
-      if (!wmtsLayer || !tileMatrixSet) {
-        return;
-      }
+    $_initBaseUrl(){
       let _baseUrl = this.baseUrl;
       if (this.baseUrl) {
         if (this.baseUrl.indexOf("?") > -1) {
@@ -79,15 +88,11 @@ export default {
           _baseUrl = this.baseUrl;
         }
       }
-      this._zoomOffset = this.zoomOffset;
       if (_baseUrl.toLowerCase().indexOf("ime-cloud") > -1) {
         //吉威的数据
         _baseUrl += "?service=WMTS&REQUEST=GetTile";
       } else {
         _baseUrl += "?service=WMTS&request=GetTile";
-        if (this.map.getCRS().epsgCode.includes("4326")) {
-          this._zoomOffset = -1;
-        }
       }
       const partUrl = this.$_initAllRequestParams().join("&");
       this._url =
