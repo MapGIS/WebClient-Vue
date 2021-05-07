@@ -5,10 +5,12 @@ export default {
   mixins: [OgcBaseLayer],
   props: {
     wmtsLayer: {
-      type: String
+      type: String,
+      default: ""
     },
     tileMatrixSet: {
-      type: String
+      type: String,
+      default: ""
     },
     version: {
       type: String,
@@ -21,57 +23,83 @@ export default {
     format: {
       type: String,
       default: "image/png"
+    },
+    zoomOffset: {
+      type: Number,
+      default: 0
     }
   },
   created() {
     //创建tileMatrixSet监听器
-    let me = this,replace = "tileMatrixSet";
-    this.$watch(replace, function() {
-      let replaceUpper = replace.toUpperCase();
-      let urlStr = me.url;
-      let startIndex = urlStr.indexOf(replaceUpper);
-      let endIndex = urlStr.indexOf("&",startIndex);
-      me.url = urlStr.substr(0,startIndex + replace.length + 1) + this[replace];
-      if(endIndex >= 0){
-        me.url += urlStr.substr(endIndex,urlStr.length);
-      }
-      me._url = me.url;
-    });
+    let watchArr = ["wmtsLayer","tileMatrixSet","version","wmtsStyle","format"];
+    for (let i = 0;i < watchArr.length; i++){
+      this.$watch(watchArr[i], function() {
+        if(this.url){
+          //REST方式，目前还是采用KVP的格式
+          this.$_initUrl(this[watchArr[i]],watchArr[i]);
+        }else  if (this.baseUrl){
+          if (!this.tileMatrixSet || this.tileMatrixSet.length === 0) {
+            return;
+          }
+          //KVP方式
+          this.$_initBaseUrl();
+        }
+      });
+    }
   },
   methods: {
     $_init() {
-      let { url, wmtsLayer, tileMatrixSet } = this;
+      let { url, wmtsLayer, tileMatrixSet,baseUrl,_url } = this;
       if (url) {
-        this._url = url;
-      } else if (this.baseUrl) {
-        if (!wmtsLayer || !tileMatrixSet) {
+        //REST方式，目前还是采用KVP的格式
+        _url = url;
+      } else if (baseUrl) {
+        if (wmtsLayer.length === 0 || tileMatrixSet.length === 0) {
           return;
         }
-        let _baseUrl = this.baseUrl;
-        if (this.baseUrl) {
-          if (this.baseUrl.indexOf("?") > -1) {
-            _baseUrl = this.baseUrl.split("?")[0];
-          } else {
-            _baseUrl = this.baseUrl;
-          }
+        //KVP方式
+        this.$_initBaseUrl(wmtsLayer, tileMatrixSet);
+      }
+    },
+    $_initUrl(propValue,propName){
+      let propNameLowerCase = propName.toLowerCase();
+      if(propName === "wmtsStyle"){
+        propNameLowerCase = "style";
+      }else if(propName === "wmtsLayer"){
+        propNameLowerCase = "layer"
+      }
+      let urlStr = this.url,urlLowerCase = this.url.toLowerCase();
+      let startIndex = urlLowerCase.indexOf(propNameLowerCase);
+      if(startIndex > -1){
+        let endIndex = urlLowerCase.indexOf("&",startIndex);
+        this.url = urlStr.substr(0,startIndex + propNameLowerCase.length + 1) + this[propName];
+        if(endIndex > 0){
+          this.url += urlStr.substr(endIndex,urlStr.length);
         }
-        this._zoomOffset = this.zoomOffset;
-        if (_baseUrl.toLowerCase().indexOf("ime-cloud") > -1) {
-          //吉威的数据
-          _baseUrl += "?service=WMTS&REQUEST=GetTile";
+        this._url = this.url;
+      }
+    },
+    $_initBaseUrl(){
+      let _baseUrl = this.baseUrl;
+      if (this.baseUrl) {
+        if (this.baseUrl.indexOf("?") > -1) {
+          _baseUrl = this.baseUrl.split("?")[0];
         } else {
-          _baseUrl += "?service=WMTS&request=GetTile";
-          if (this.map.getCRS().epsgCode.includes("4326")) {
-            this._zoomOffset = -1;
-          }
+          _baseUrl = this.baseUrl;
         }
-        const partUrl = this.$_initAllRequestParams().join("&");
-        this._url =
+      }
+      if (_baseUrl.toLowerCase().indexOf("ime-cloud") > -1) {
+        //吉威的数据
+        _baseUrl += "?service=WMTS&REQUEST=GetTile";
+      } else {
+        _baseUrl += "?service=WMTS&request=GetTile";
+      }
+      const partUrl = this.$_initAllRequestParams().join("&");
+      this._url =
           encodeURI(_baseUrl) +
           "&" +
           partUrl +
           "&tileMatrix={z}&tileRow={y}&tileCol={x}";
-      }
     },
     $_initAllRequestParams() {
       let params = [];
