@@ -1,7 +1,7 @@
 <script>
 import Tileset from "./3DTileset";
 export default {
-  name: "cesium-3d-tileset",
+  name: "mapgis-3d-tileset",
   mixins: [Tileset],
   methods: {
     createCesiumObject() {

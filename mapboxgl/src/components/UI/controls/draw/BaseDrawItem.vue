@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: "BaseDrawItem",
+  name: "mapgis-basedraw-item",
   inject: ["mapbox", "map", "drawer"],
 
   data() {

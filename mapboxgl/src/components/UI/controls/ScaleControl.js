@@ -1,7 +1,7 @@
 import controlMixin from "./controlMixin";
 
 export default {
-  name: "mapbox-scale-control",
+  name: "mapgis-scale",
 
   mixins: [controlMixin],
 

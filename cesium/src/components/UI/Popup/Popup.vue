@@ -91,17 +91,15 @@ export default {
         popup.remove();
         popup = undefined;
       }
-      console.log('popup update 1');
+
       if (this.showed) {
         popup = this.createCesiumObject();
         this.$emit('load', { popup: popup });
         if (vueKey && (vueIndex || vueIndex === 0)) {
           CesiumZondy.PopupManager.addSource(vueKey, vueIndex, popup);
         }
-        console.log('popup update 2');
         this.mount();
       }
-      console.log('popup update 3');
     },
   },
 };

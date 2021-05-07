@@ -6,22 +6,22 @@ export default {
   component: MapgisIgsDocLayer,
   argTypes: {
     layer: {},
-    layerId: "igs_layer_layerid",
-    sourceId: "igs_layer_sourceid",
-    url: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+    layerId: "wuhan_WFS_4326",
+    sourceId: "wuhan_WFS_4326",
+    url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326",
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisIgsDocLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[(113.69534616+115.07406408)/2, (29.969811+31.36330098)/2]" :zoom="8">
     <mapgis-igs-doc-layer v-bind="$props" />
   </mapgis-web-map>`,
 });
 
 export const Doc = Template.bind({});
 Doc.args = {
-  layerId: "igs_layer_layerid",
-  url: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+  layerId: "wuhan_WFS_4326",
+  url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326",
 };

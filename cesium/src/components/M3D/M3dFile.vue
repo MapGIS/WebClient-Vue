@@ -1,7 +1,7 @@
 <script>
 import Tileset from "./3DTileset";
 export default {
-  name: "cesium-file-m3d",
+  name: "mapgis-3d-file-m3d",
   mixins: [Tileset],
   props: {
     layerRenderIndex: {

@@ -1,7 +1,7 @@
 <script>
 import IgsLayer from "../RasterLayer";
 export default {
-  name: "cesium-igs-doc-layer",
+  name: "mapgis-3d-igs-doc-layer",
   mixins: [IgsLayer],
   props: {
     serverName: {

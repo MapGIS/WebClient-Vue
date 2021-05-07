@@ -61,7 +61,7 @@ const drawEvents = {
 };
 
 export default {
-  name: "mapbox-fix-draw",
+  name: "mapgis-fixdraw",
   mixins: [drawMixin, controlMixin],
 
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5

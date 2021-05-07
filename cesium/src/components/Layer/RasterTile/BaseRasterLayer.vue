@@ -1,7 +1,7 @@
 <script>
 import RasterLayer from "../RasterLayer";
 export default {
-  name: "mapgis-3d-rastertile-layer",
+  name: "mapgis-3d-raster-layer",
   mixins: [RasterLayer],
   methods: {
     createCesiumObject () {

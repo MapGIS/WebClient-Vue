@@ -6,7 +6,7 @@
 import BaseDatasource from '../BaseDatasource'
 
 export default {
-  name: 'cesium-geojson-datasource',
+  name: 'mapgis-3d-geojson-datasource',
   mixins: [BaseDatasource],
   props: {
     material: Object,

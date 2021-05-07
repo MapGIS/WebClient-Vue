@@ -1,4 +1,4 @@
-import { extractChildren } from './VueHelpers'
+import { extractChildren } from "./VueHelpers";
 
 /**
  * Renders stub VNode for component.
@@ -8,38 +8,39 @@ export default {
    * @param {function} h
    * @returns {VNode}
    */
-  render (h) {
-    const options = this.$options.stubVNode || {}
+  render(h) {
+    const options = this.$options.stubVNode || {};
     // render as HTML comment
     if (options.empty) {
-      const vnode = h()
-      if (typeof options.empty === 'string') {
-        vnode.text = options.empty
-      } else if (typeof options.empty === 'function') {
-        vnode.text = options.empty.call(this)
+      const vnode = h();
+      if (typeof options.empty === "string") {
+        vnode.text = options.empty;
+      } else if (typeof options.empty === "function") {
+        vnode.text = options.empty.call(this);
       }
 
-      return vnode
+      return vnode;
     }
 
-    let children
+    let children;
     if (options.slots === false) {
-      children = undefined
+      children = undefined;
     } else {
-      children = extractChildren(this.$slots, options.slots)
+      children = extractChildren(this.$slots, options.slots);
     }
 
-    const attrs = typeof options.attrs === 'function'
-      ? options.attrs.call(this)
-      : options.attrs
+    const attrs =
+      typeof options.attrs === "function"
+        ? options.attrs.call(this)
+        : options.attrs;
 
     const data = {
       attrs,
       style: {
-        display: 'none !important'
-      }
-    }
+        display: "none !important",
+      },
+    };
 
-    return h(options.tag || 'i', data, children)
-  }
-}
+    return h(options.tag || "i", data, children);
+  },
+};

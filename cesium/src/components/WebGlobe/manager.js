@@ -1,20 +1,17 @@
 export function initManager() {
   window.CesiumZondy = window.CesiumZondy || {};
   window.CesiumZondy.TerrainManager = window.CesiumZondy.TerrainManager || {
-    default: []
+    default: [],
   };
   window.CesiumZondy.RasterManager = window.CesiumZondy.RasterManager || {
-    default: []
+    default: [],
   };
   window.CesiumZondy.LabelManager = window.CesiumZondy.LabelManager || {
-    default: []
+    default: [],
   };
 
-  window.CesiumZondy.M3DIgsManager = window.CesiumZondy.M3DIgsManager || {
-    default: []
-  };
   window.CesiumZondy.M3DFileManager = window.CesiumZondy.M3DFileManager || {
-    default: []
+    default: [],
   };
 
   window.CesiumZondy.GlobesManager =
@@ -22,7 +19,6 @@ export function initManager() {
 
   window.CesiumZondy.Tileset3DManager =
     window.CesiumZondy.Tileset3DManager || new BaseManager();
-
   window.CesiumZondy.EntityManager =
     window.CesiumZondy.EntityManager || new EntityManager();
   window.CesiumZondy.GeojsonManager =
@@ -43,6 +39,10 @@ export function initManager() {
     window.CesiumZondy.DrawToolManager || new DrawToolManager();
   window.CesiumZondy.EventHandlerManager =
     window.CesiumZondy.EventHandlerManager || new EventHandlerManager();
+  window.CesiumZondy.IgsTerrainManager =
+    window.CesiumZondy.IgsTerrainManager || new EventHandlerManager();
+  window.CesiumZondy.M3DIgsManager =
+    window.CesiumZondy.M3DIgsManager || new EventHandlerManager();
 }
 
 export class BaseManager {
@@ -61,7 +61,7 @@ export class BaseManager {
     this[vueKey].push({
       key: vueIndex,
       source: source,
-      options: options
+      options: options,
     });
   }
 
@@ -100,7 +100,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index
+        index: index,
       };
     }
     return findSource;
@@ -122,3 +122,5 @@ export class VectorTileManager extends BaseManager {}
 export class AdvancedAnalysisManager extends BaseManager {}
 export class DrawToolManager extends BaseManager {}
 export class EventHandlerManager extends BaseManager {}
+export class IgsTerrainManager extends BaseManager {}
+export class M3DIgsManager extends BaseManager {}

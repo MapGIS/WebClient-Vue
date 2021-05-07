@@ -17,7 +17,7 @@ const StateEvents = {
 };
 
 export default {
-  name: "StateControl",
+  name: "mapgis-state",
   mixins: [controlMixin],
   props: {
     default: {

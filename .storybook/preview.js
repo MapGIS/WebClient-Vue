@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 import '@mapgis/mapbox-gl/dist/mapbox-gl.css';
 import MapgisMapboxComponents from './components/mapbox';
-import MapgisCesiumComponents from '../cesium/src/index';
+import MapgisCesiumComponents from './components/cesium';
 
 Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
