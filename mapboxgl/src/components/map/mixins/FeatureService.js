@@ -161,7 +161,7 @@ export default {
       });
       //初始化zondy前端接口的查询参数
       if(layers.length <= 0){
-        console.error(new Error("请填写您要查询的图层"));
+        throw new Error("请填写您要查询的图层");
       }else if(typeof Number(layers[0]) === "number"){
         queryParam = new QueryParameter();
         //初始化要素服务
@@ -177,7 +177,7 @@ export default {
           port: vm._port
         });
       }else {
-        console.error(new Error("请填写正确的图层Id或gdbp地址"));
+        throw new Error("请填写正确的图层Id或gdbp地址");
       }
       //如果有几何查询条件，则传给queryParam
       if(geometry){
@@ -209,6 +209,13 @@ export default {
     * return 要素集合
     * */
     _getFeatureSet(result,features){
+
+      let fldType = [];
+      let FldType = result.FieldAtt.FldType;
+      for (let i = 0;i < FldType.length;i++){
+        fldType.push(FldType[i].substr(3,FldType[i].length).toLowerCase());
+      }
+      result.FieldAtt.FldType = fldType;
       //初始化要素集合
       let featureSet = new FeatureSet({
         AttStruct: new CAttStruct(result.FieldAtt)
@@ -216,7 +223,7 @@ export default {
       //循环处理要素
       for(let i = 0;i < features.length;i++){
         //确定是否含有集合对象
-        let hasGeometry = features[i].hasOwnProperty("geometry") && features[i].geometry;
+        let hasGeometry = features[i].hasOwnProperty("geometry") && features[i].geometry,geometry,geometryArr,polyline;
         //初始化字段值数组
         let attValue = [];
         //如果某个字段有值，则加入数组，否则放入null
@@ -230,15 +237,21 @@ export default {
         //初始化一个要素对象
         let feature = new Feature({
           AttValue: attValue
-        });
+        }),ftype;
         //如果有几何对象，根据类型（点线面等）进行处理，并设置
         if(hasGeometry){
-          let geomType = features[i].geometry.type,
-              coordinates = features[i].geometry.coordinates,fGeom,webGraphicInfo,styleInfo,anyLine,points,arc,gRegion;
+          let geomType = features[i].geometryType,
+              fGeom,webGraphicInfo,styleInfo,anyLine,point,points,arc,gRegion;
+          geometry = features[i].geometry;
           switch (geomType){
             case "Point":
-              let point = new GPoint(coordinates[0],coordinates[1]);
-              fGeom = new FeatureGeometry({ PntGeom: [point] });
+              geometryArr = [];
+              for(let j = 0;j < geometry.length;j++){
+                point = new GPoint(geometry[j].coordinates[0],geometry[j].coordinates[1]);
+                geometryArr.push(point);
+              }
+              fGeom = new FeatureGeometry({ PntGeom: geometryArr });
+              ftype = 1;
               if(features[i].style){
                 styleInfo = new CPointInfo(features[i].style);
                 webGraphicInfo = new WebGraphicsInfo({
@@ -247,14 +260,19 @@ export default {
               }
               break;
             case "LineString":
-              points = [];
-              for (let j = 0;j < coordinates.length;j++){
-                points.push(new Point2D(coordinates[i][0],coordinates[i][1]));
+              geometryArr = [];
+              for (let j = 0;j < geometry.length;j++){
+                points = [];
+                for(let k = 0;k < geometry[j].coordinates.length;k++){
+                  points.push(new Point2D(geometry[j].coordinates[k].x,geometry[j].coordinates[k].y));
+                }
+                arc = new Arc(points);
+                anyLine = new AnyLine([arc]);
+                polyline = new GLine(anyLine);
+                geometryArr.push(polyline);
               }
-              arc = new Arc(points);
-              anyLine = new AnyLine([arc]);
-              let polyline = new GLine(anyLine);
-              fGeom = new FeatureGeometry({ LinGeom: [polyline] });
+              fGeom = new FeatureGeometry({ LinGeom: geometryArr });
+              ftype = 2;
               if(features[i].style){
                 styleInfo = new CLineInfo(features[i].style);
                 webGraphicInfo = new WebGraphicsInfo({
@@ -263,40 +281,26 @@ export default {
               }
               break;
             case "Polygon":
-              arc = [];
-              for (let j = 0;j < coordinates.length;j++){
-                let circle = [];
-                for (let k = 0;k < coordinates[j].length;k++){
-                  circle.push(new Point2D(coordinates[j][k][0],coordinates[j][k][1]));
+              geometryArr = [];
+              for(let j = 0;j < geometry.length;j++){
+                anyLine = [];
+                let exteriorArr = [];
+                for (let k = 0;k < geometry[j].exterior.length;k++){
+                  exteriorArr.push(new Point2D(geometry[j].exterior[k].x,geometry[j].exterior[k].y));
                 }
-                arc.push(new Arc(circle));
-              }
-              anyLine = new AnyLine(arc);
-              gRegion = new GRegion([anyLine]);
-              fGeom = new FeatureGeometry({ RegGeom: [gRegion] });
-              if(features[i].style){
-                styleInfo = new CRegionInfo(features[i].style);
-                webGraphicInfo = new WebGraphicsInfo({
-                  InfoType: 3, RegInfo: styleInfo
-                });
-              }
-              break;
-            case "MultiPolygon":
-              let polygon = [];
-              for (let j = 0;j < coordinates.length;j++){
-                arc = [];
-                for (let k = 0;k < coordinates[j].length;k++){
-                  let circle = [];
-                  for(let m = 0;m < coordinates[j][k].length;m++){
-                    circle.push(new Point2D(coordinates[j][k][m][0],coordinates[j][k][m][1]));
+                anyLine.push(new AnyLine([new Arc(exteriorArr)]));
+                for (let k = 0;k < geometry[j].interior.length;k++){
+                  let interiorArr = []
+                  for (let m = 0;m < geometry[j].interior[k].length;m++){
+                    interiorArr.push(new Point2D(geometry[j].interior[k][m].x,geometry[j].interior[k][m].y));
                   }
-                  arc.push(new Arc(circle));
+                  anyLine.push(new AnyLine([new Arc(interiorArr)]));
                 }
-                anyLine = new AnyLine(arc);
-                gRegion = new GRegion([anyLine]);
-                polygon.push(gRegion);
+                gRegion = new GRegion(anyLine);
+                geometryArr.push(gRegion);
               }
-              fGeom = new FeatureGeometry({ RegGeom: polygon });
+              fGeom = new FeatureGeometry({ RegGeom: geometryArr });
+              ftype = 3;
               if(features[i].style){
                 styleInfo = new CRegionInfo(features[i].style);
                 webGraphicInfo = new WebGraphicsInfo({
@@ -307,6 +311,7 @@ export default {
           }
           feature.fGeom = fGeom;
           feature.GraphicInfo = webGraphicInfo;
+          feature.ftype = ftype;
         }
         //更新时，需要FID，新增时不需要
         if(features[i].FID){
@@ -347,7 +352,7 @@ export default {
     _add(features,layer,onSuccess,onError){
       let me = this,service;
       //取得数据库字段信息
-      this._getFieldAtt(layer,function (result) {
+      this.$_getFieldAtt(layer,function (result) {
         //获取要素集合
         let featureSet = me._getFeatureSet(result,features);
         //获取服务
@@ -366,7 +371,7 @@ export default {
     $_updateFeature(features,layer,onSuccess,onError){
       let me = this,service;
       //取得数据库字段信息
-      this._getFieldAtt(layer,function (result) {
+      this.$_getFieldAtt(layer,function (result) {
         //获取要素集合
         let featureSet = me._getFeatureSet(result,features);
         //获取服务
@@ -387,12 +392,12 @@ export default {
       let service = this._getFeatureService(layer);
       service.deletes(objectIds,onSuccess,onError);
     },
-    /*取得单个图层信息
+    /*取得单个图层所对应的数据库信息
     * author 杨琨
     * param layer Number 图层编号，从0开始
     * param callback Function 回调函数
     * */
-    _getLayerInfo(layer,callback){
+    $_getLayerInfo(layer,callback){
       this.get("http://" + this._ip + ":" + this._port + "/igs/rest/mrcs/docs/" + this._mapId + "/0/" + layer + "?f=json",function (result) {
         result = JSON.parse(result);
         let url = result.URL;
@@ -404,7 +409,7 @@ export default {
     * param layer String 数据库地址，例如gdbp://MapGISLocalPlus/wuhan_new/sfcls/武汉市
     * param callback Function 回调函数
     * */
-    _getGDBPInfo(url,callback){
+    $_getGDBPInfo(url,callback){
       this.get("http://" + this._ip + ":" + this._port + "/igs/rest/mrcs/layerinfo?gdbpUrl=" + url,function (result) {
         result = JSON.parse(result);
         callback(result);
@@ -415,15 +420,15 @@ export default {
     * param layer String 图层Id或数据库地址
     * param callback Function 回调函数
     * */
-    _getFieldAtt(layer,callback){
+    $_getFieldAtt(layer,callback){
       let me = this;
       if(layer.indexOf("gdbp") >= 0){
         //取得图层对应的数据库信息
-        this._getGDBPInfo(layer,callback);
+        this.$_getGDBPInfo(layer,callback);
       }else {
         //取得图层信息
-        this._getLayerInfo(layer,function (url) {
-          me._getGDBPInfo(url,callback)
+        this.$_getLayerInfo(layer,function (url) {
+          me.$_getGDBPInfo(url,callback)
         });
       }
     },
@@ -445,11 +450,13 @@ export default {
     },
     //对外方法，根据ObjectIds查询要素
     $_queryByObjectIds(objectIdsParameter,onSuccess,onError){
-      if(this._url.indexOf("WFSServer") > -1){
-        this.$_queryByObjectIdsWFS(objectIdsParameter,onSuccess,onError);
-      }else {
-        this._queryByObjectIds(objectIdsParameter,onSuccess,onError);
-      }
+      this.$_FSCheckParam(objectIdsParameter,onSuccess,onError,function (objectIdsParameter,onSuccess,onError) {
+        if(this._url.indexOf("WFSServer") > -1){
+          this.$_queryByObjectIdsWFS(objectIdsParameter,onSuccess,onError);
+        }else {
+          this._queryByObjectIds(objectIdsParameter,onSuccess,onError);
+        }
+      });
     },
     //对外方法，根据几何查询要素
     $_queryByGeometry(geometryParameter,onSuccess,onError){
@@ -483,9 +490,40 @@ export default {
       }
     },
     $_FSCheckParam(param,onSuccess,onError,callback){
-      if(!(onSuccess instanceof Function) || !(onError instanceof Function)){
-        throw new Error("回调方法为非Fun");
+      function check(param){
+        let checkObj = {
+          layers: "Array",
+          pageIndex: "Number",
+          pagination: "Number",
+          resultFormat: "String",
+          IncludeAttribute: "Boolean",
+          IncludeGeometry: "Boolean",
+          IncludeWebGraphic: "Boolean",
+          orderBy: "String",
+          isAsc: "Boolean",
+          proj: "String",
+          fields: "String",
+          coordPrecision: "Number"
+        }
+        Object.keys(checkObj).forEach(function (key) {
+          if(param.hasOwnProperty(key)){
+            if(!(param[key] instanceof checkObj[key])){
+              throw new Error(key + "的类型错误，必须为" + checkObj[key]);
+            }
+          }
+        });
       }
+      if(!(onSuccess instanceof Function) || !(onError instanceof Function)){
+        throw new Error("回调方法不是函数");
+      }
+      if(!param){
+        throw new Error("查询参数不能为空");
+      }
+      if(!(param instanceof Object)){
+        throw new Error("查询参数类型非法，必须为Object对象");
+      }
+      check(param);
+      callback(param,onSuccess,onError);
     }
   }
 };

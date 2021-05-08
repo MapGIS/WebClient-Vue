@@ -7,85 +7,62 @@ import {MultiPolygon} from "./MultiPolygon";
 class Feature {
     constructor(options) {
         this.geometry = undefined;
+        this.geometryType = undefined;
         this.attributes = undefined;
         this.style = undefined;
         this.FID = undefined;
 
         extend(this,options);
     }
-    static fromQueryResult = function (FeatureSet) {
-        function getPolygon(Ring) {
-            let geometry = new Polygon();
-            let exteriorDots = Ring.Arcs[0].Dots,exterior = [];
-            for (let k = 0;k < exteriorDots.length;k++){
-                exterior.push([exteriorDots[k].x,exteriorDots[k].y]);
-            }
-            geometry.exterior = exterior;
-            if(Ring.Arcs.length > 1){
-                let Arcs = Ring.Arcs;
-                let interiorDots = Arcs.splice(1,Arcs.length - 1),interior,interiors=[];
-                for (let m = 0;m < interiorDots.length;m++){
-                    interior = [];
-                    console.log("interiorDots[m]",interiorDots[m])
-                    for (let t = 0;t < interiorDots[m].Dots.length;t++){
-                        interior.push([interiorDots[m].Dots[t].x,interiorDots[m].Dots[t].y]);
-                    }
-                    interiors.push(interior);
-                }
-                geometry.interior = interiors;
-
-            }
-            return geometry;
+    static fromQueryResult = function (result) {
+        if(!result.hasOwnProperty("SFEleArray") || !result.hasOwnProperty("AttStruct")
+            || (result.hasOwnProperty("SFEleArray") && !result.SFEleArray)|| (result.hasOwnProperty("AttStruct") && !result.AttStruct)){
+            throw new Error("请确保输入的对象含有SFEleArray以及FldAlias");
         }
-        if(!FeatureSet.hasOwnProperty("SFEleArray") || !FeatureSet.hasOwnProperty("AttStruct")
-            || (FeatureSet.hasOwnProperty("SFEleArray") && !FeatureSet.SFEleArray)|| (FeatureSet.hasOwnProperty("AttStruct") && !FeatureSet.AttStruct)){
-            console.error(new Error("请确保输入的对象含有SFEleArray以及FldAlias"));
-            return
-        }
-        let SFEleArray = FeatureSet.SFEleArray;
-        let AttStruct = FeatureSet.AttStruct;
+        let SFEleArray = result.SFEleArray;
+        let AttStruct = result.AttStruct;
         let features = [],feature;
         for (let i = 0;i < SFEleArray.length;i++){
-            let attributes = {},geometry;
+            let attributes = {},geometry = [],geometryType;
             for(let j = 0;j < SFEleArray[i].AttValue.length;j++){
                 if(SFEleArray[i].AttValue[j] !== ""){
                     attributes[AttStruct.FldName[j]] = SFEleArray[i].AttValue[j];
                 }
             }
-            Object.keys(SFEleArray[i].fGeom).forEach(function (key) {
-                if(SFEleArray[i].fGeom[key] instanceof Array && SFEleArray[i].fGeom[key].length > 0){
-                    switch (key){
-                        case "PntGeom":
-                            let pointDots = SFEleArray[i].fGeom[key][0].Dot;
-                            geometry = new Point({
-                                coordinates: [pointDots.x,pointDots.y]
-                            });
-                            break
-                        case "LinGeom":
-                            let lineDots = SFEleArray[i].fGeom[key][0].Line.Arcs[0].Dots,line = [];
-                            for(let k = 0;k < lineDots.length;k++){
-                                line.push([lineDots[k].x,lineDots[k].y]);
-                            }
-                            geometry = new Polyline({
-                                coordinates:line
-                            });
-                            break
-                        case "RegGeom":
-                            if(SFEleArray[i].fGeom[key].length > 1){
-                                let RegGeoms = SFEleArray[i].fGeom[key],polygons=[];
-                                for (let k = 0;k < RegGeoms.length;k++){
-                                    polygons.push(getPolygon(RegGeoms[k].Rings[0]));
-                                }
-                                geometry = new MultiPolygon({
-                                    polygons: polygons
-                                });
-                            }else {
-                                geometry = getPolygon(SFEleArray[i].fGeom[key][0].Rings[0]);
-                            }
-                            break
+            switch (SFEleArray[i].ftype){
+                case 1:
+                    let PntGeom = SFEleArray[i].fGeom.PntGeom;
+                    for(let k = 0;k < PntGeom.length;k++){
+                        let point = new Point({
+                            coordinates: [PntGeom[k].Dot.x,PntGeom[k].Dot.y]
+                        })
+                        geometry.push(point);
+                        geometryType = "Point";
                     }
-                }
-            });
+                    break
+                case 2:
+                    let LinGeom = SFEleArray[i].fGeom.LinGeom;
+                    for(let k = 0;k < LinGeom.length;k++){
+                        let polyline = new Polyline({
+                            coordinates: LinGeom[k].Line.Arcs[0].Dots
+                        });
+                        geometry.push(polyline)
+                        geometryType = "LineString";
+                    }
+                    break
+                case 3:
+                    let RegGeom = SFEleArray[i].fGeom.RegGeom;
+                    for(let k = 0;k < RegGeom.length;k++){
+                        let polygon = new Polygon();
+                        polygon.exterior = RegGeom[k].Rings[0].Arcs[0].Dots;
+                        for (let m = 1; m < RegGeom[k].Rings.length;m++){
+                            polygon.interior.push(RegGeom[k].Rings[m].Arcs[0].Dots);
+                        }
+                        geometry.push(polygon);
+                        geometryType = "Polygon";
+                    }
+                    break
+            }
             let style;
             if(SFEleArray[i].GraphicInfo){
                 let GraphicInfo = SFEleArray[i].GraphicInfo;
@@ -106,6 +83,7 @@ class Feature {
                 attributes: attributes,
                 FID: SFEleArray[i].FID,
                 geometry: geometry,
+                geometryType: geometryType,
                 style: style
             });
             features.push(feature);
@@ -115,7 +93,7 @@ class Feature {
     static fromGeoJSON = function (geoJSON) {
         let feature,features=[];
         if(!geoJSON.hasOwnProperty("type")){
-            console.error(new Error("请输入正确的geoJSON"));
+            throw new Error("请输入正确的geoJSON");
         }
         if(geoJSON.type === "Feature"){
             feature = new Feature({
@@ -134,7 +112,7 @@ class Feature {
             }
             return features;
         }else {
-            console.error(new Error("不支持的geoJSON类型  "));
+            throw new Error("不支持的geoJSON类型");
         }
     }
 }

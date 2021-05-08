@@ -22,17 +22,7 @@ const Template = (args, { argTypes }) => ({
   components: { MapgisWebMap, MapgisOgcWmtsLayer },
   template: `<mapgis-web-map crs="EPSG:4326">
     <mapgis-ogc-wmts-layer v-bind="$props" />
-    <button @click="test" style="position: absolute;left: 0;top: 0;z-index: 999;">改值</button>
-    <button @click="test2" style="position: absolute;left: 60px;top: 0;z-index: 999;">改值</button>
-  </mapgis-web-map>`,
-  methods:{
-    test(){
-      this.$props.wmtsStyle = "qqqqq"
-    },
-    test2(){
-      this.$props.wmtsStyle = "default"
-    }
-  }
+  </mapgis-web-map>`
 });
 
 export const Image = Template.bind({});
