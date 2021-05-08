@@ -1,15 +1,15 @@
-import MapgisLegend from "../mapboxgl/src/components/UI/controls/legend/Legend.vue";
+import ArcgisLegend from "../mapboxgl/src/components/UI/controls/legend/Legend.vue";
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 import ArcgisTileLayer from "../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer.js";
 
 export default {
     title: "二维/交互-图例",
-    component: MapgisLegend
+    component: ArcgisLegend
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisLegend, MapgisWebMap, ArcgisTileLayer },
+    components: { ArcgisLegend, MapgisWebMap, ArcgisTileLayer },
     data() {
         return {
             mapOptions: {
@@ -77,7 +77,7 @@ const Template = (args, { argTypes }) => ({
     template: `
     <mapgis-web-map v-bind="{...mapOptions}">
         <arcgis-tile-layer v-bind="{...layerOptions}"></arcgis-tile-layer>
-        <mapgis-legend :url="url"></mapgis-legend>
+        <arcgis-legend :url="url"></arcgis-legend>
     </mapgis-web-map>
     `
 });
