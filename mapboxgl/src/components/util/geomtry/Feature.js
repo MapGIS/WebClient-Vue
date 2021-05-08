@@ -5,15 +5,7 @@ import {Polyline} from "./Polyline";
 import {MultiPolygon} from "./MultiPolygon";
 
 class Feature {
-    constructor(options) {
-        this.geometry = undefined;
-        this.attributes = undefined;
-        this.style = undefined;
-        this.FID = undefined;
-
-        extend(this,options);
-    }
-    static fromQueryResult = function (FeatureSet) {
+    static fromQueryResult(FeatureSet) {
         function getPolygon(Ring) {
             let geometry = new Polygon();
             let exteriorDots = Ring.Arcs[0].Dots,exterior = [];
@@ -112,7 +104,7 @@ class Feature {
         }
         return features;
     }
-    static fromGeoJSON = function (geoJSON) {
+    static fromGeoJSON (geoJSON) {
         let feature,features=[];
         if(!geoJSON.hasOwnProperty("type")){
             console.error(new Error("请输入正确的geoJSON"));
@@ -136,6 +128,15 @@ class Feature {
         }else {
             console.error(new Error("不支持的geoJSON类型  "));
         }
+    }
+    
+    constructor(options) {
+        this.geometry = undefined;
+        this.attributes = undefined;
+        this.style = undefined;
+        this.FID = undefined;
+
+        extend(this,options);
     }
 }
 

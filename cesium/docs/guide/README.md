@@ -2,42 +2,26 @@
 
 ::: demo
 <template>
-<div>123</div>
+
+  <div id="app">
+    <mapgis-web-scene @load="handleLoad">
+        <div>地图显示内容</div>
+    </mapgis-web-scene>
+  </div>
 </template>
 <style>
-    #map {
+    #app {
+        height: 80px;
         width: 100%;
-        height: 500px;
     }
 </style>
 <script type="module">
 export default {
     data() {
-        return {
-            mapStyle: {
-                version: 8,
-                sources: {},
-                layers: [],
-            },
-            mapZoom: 3,
-            outerCenter: [116.39, 40.20],
-            mapCrs: 'EPSG:4326',
-            layerWmts: {},
-            layerWmtsId: 'ogcwmts_layerId',
-            sourceWmtsId: 'ogcwmts_sourceId',
-            wmtsurl: 'http://t0.tianditu.com/DataServer?T=img_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752',
-            layerRaster: {},
-            sourceRaster: {
-                type: 'raster',
-                tiles: ['http://t0.tianditu.com/DataServer?T=cia_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752']
-            },
-            layerRasterId: 'raster_layerId',
-            sourceRasterId: 'raster_sourceId'
-        };
+        return { };
     },
     methods: {
         handleMapLoad(payload) {
-            this.map = payload.map;
         }
     }
 }
