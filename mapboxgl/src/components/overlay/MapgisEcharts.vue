@@ -30,10 +30,9 @@ export default {
       return new EchartsLayer(map, this.options);
     },
     watchProp() {
-      // this.$watch("options", function (next) {
-      //   if (this.initial) return;
-      //   console.log(next);
-      // });
+      this.$watch("options", function (next) {
+        this.echartsLayer.update(next);
+      });
     },
     mount() {
       this.echartsLayer = this.createMapboxObject();
