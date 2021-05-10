@@ -117,6 +117,7 @@ export default {
 
   methods: {
     enableMeasure () {
+      this.$_unbindDrawEvents();
       this.$_addMeasureControl(this.measure);
       this.$_emitEvent("added", { measure: this.measure });
       const eventNames = Object.keys(measureEvents);

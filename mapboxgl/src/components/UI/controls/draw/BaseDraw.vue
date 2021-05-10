@@ -155,6 +155,7 @@ export default {
 
   methods: {
     enableDrawer () {
+      this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
       this.$_emitEvent("added", { drawer: this.drawer });
       const eventNames = Object.keys(drawEvents);
