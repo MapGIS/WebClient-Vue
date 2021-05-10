@@ -214,15 +214,7 @@ export default {
 
     remove () {
       this.$_unbindMeasureEvents();
-
-      if (this.measure) {
-        this.measure.deleteAll();
-        this.measure.trash();
-        this.measure = undefined;
-      }
-
-      this.removeSource("mapbox-gl-draw-hot");
-      this.removeSource("mapbox-gl-draw-cold");
+      this.$_removeMeasureControl();
 
       this.$_emitEvent("removed");
     }

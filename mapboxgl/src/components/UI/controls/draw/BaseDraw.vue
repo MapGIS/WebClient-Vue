@@ -186,17 +186,7 @@ export default {
 
     remove () {
       this.$_unbindDrawEvents();
-
-      if (this.drawer) {
-        this.drawer.deleteAll();
-        this.drawer.trash();
-        this.drawer = undefined;
-      }
-
-      // this.drawer.changeMode(Draw.modes.DIRECT_SELECT);
-
-      this.removeSource("mapbox-gl-draw-hot");
-      this.removeSource("mapbox-gl-draw-cold");
+      this.$_removeDrawControl();
 
       this.$_emitEvent("removed");
     }
