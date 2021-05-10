@@ -90,7 +90,7 @@ class Feature {
         }
         return features;
     }
-    static fromGeoJSON = function (geoJSON) {
+    static fromGeoJSON (geoJSON) {
         let feature,features=[];
         if(!geoJSON.hasOwnProperty("type")){
             throw new Error("请输入正确的geoJSON");
@@ -114,6 +114,15 @@ class Feature {
         }else {
             throw new Error("不支持的geoJSON类型");
         }
+    }
+    
+    constructor(options) {
+        this.geometry = undefined;
+        this.attributes = undefined;
+        this.style = undefined;
+        this.FID = undefined;
+
+        extend(this,options);
     }
 }
 

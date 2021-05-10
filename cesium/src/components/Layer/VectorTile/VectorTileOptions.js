@@ -11,7 +11,7 @@ export default {
    * entity的内存中的引用数组的下标，从而避免vue对cesium的内存劫持
    */
   vueIndex: {
-    type: String | Number,
+    type: [String, Number],
     default: (Math.random() * 10000).toFixed(0)
   },
   /**
@@ -39,7 +39,9 @@ export default {
    * @description 样式json文件路径或者MVT-JSON对象，当为url时等于styleUrl；
    * 当为vectortilejson等于vectortilejson
    */
-  mvtStyle: { type: String | Object },
+  mvtStyle: {
+    type: [String, Object]
+  },
 
   /**
    * @description 样式json文件路径,有styleUrl就可以直接读取styleUrl里的信息;不然就是加载中地发布的矢量瓦片，使用ip，port和layerName先拼接styleUrl路径再进行查询。

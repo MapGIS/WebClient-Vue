@@ -35,6 +35,10 @@ const measureModes = {
   measureLength: "measure-length",
   measureArea: "measure-area",
 };
+const measureMethods = {
+    geography: "geography",
+    projection: "projection"
+}
 
 export default {
   name: "mapgis-measure",
@@ -55,6 +59,10 @@ export default {
       type: String,
       required: true,
       default: 'measure-length'
+    },
+    measureMethod: {
+        type: String,
+        default: "geography" //geography按照地理坐标系计算长度和面积，projection按照投影坐标系计算长度和面积
     }
   },
 
@@ -74,6 +82,9 @@ export default {
         // measure.trash();
       }
     },
+    measureMethod () {
+        this._updateLengthOrArea();
+    }
   },
 
   mounted () {
@@ -153,20 +164,46 @@ export default {
       let data = this.measure.getAll();
       let perimeter, area, center;
       if (data.features.length > 0) {
-        let coordinates =
-          data.features[data.features.length - 1].geometry.coordinates;
+        let coordinates = data.features[data.features.length - 1].geometry.coordinates;
+        let mercatorData = turf.toMercator(data);
+        let mercatorCoordinate = mercatorData.features[mercatorData.features.length - 1].geometry.coordinates;
         if (this.measureMode === measureModes.measureLength) {
-          perimeter = turf.length(data);
-          center = turf.centroid(turf.lineString(coordinates));
+            center = turf.centroid(turf.lineString(coordinates));
+            if(this.measureMethod === measureMethods.geography) {
+                perimeter = turf.length(data) * 1000;
+            } else if(this.measureMethod === measureMethods.projection) {
+                perimeter = 0;
+                for(let i = 1; i < mercatorCoordinate.length; i++) {
+                    let x = mercatorCoordinate[i][0] - mercatorCoordinate[i-1][0];
+                    let y = mercatorCoordinate[i][1] - mercatorCoordinate[i-1][1];
+                    perimeter += Math.sqrt(x * x + y * y);
+                }
+            }
         } else if (this.measureMode === measureModes.measureArea) {
-          perimeter = turf.length(data);
-          area = turf.area(data);
-          center = turf.centroid(turf.polygon(coordinates));
+            center = turf.centroid(turf.polygon(coordinates));
+            if(this.measureMethod === measureMethods.geography) {
+                perimeter = turf.length(data) * 1000;
+                area = turf.area(data);
+            } else if(this.measureMethod === measureMethods.projection) {
+                mercatorCoordinate = mercatorCoordinate[mercatorCoordinate.length - 1];
+                perimeter = 0;
+                for(let i = 1; i < mercatorCoordinate.length; i++) {
+                    let x = mercatorCoordinate[i][0] - mercatorCoordinate[i-1][0];
+                    let y = mercatorCoordinate[i][1] - mercatorCoordinate[i-1][1];
+                    perimeter += Math.sqrt(x * x + y * y);
+                }
+                area = 0;
+                for(let j = 1; j < mercatorCoordinate.length; j++) {
+                    let s1 = mercatorCoordinate[j-1][0] * mercatorCoordinate[j][1];
+                    let s2 = mercatorCoordinate[j][0] * mercatorCoordinate[j-1][1];
+                    area += (s1-s2) / 2;
+                }
+                area = Math.abs(area);
+            }
         }
-
         // turf计算结果单位，长度默认是千米，面积默认是平方米；本组件对外输出结果长度统一为米，面积统一为平方米
         return {
-          perimeter: perimeter * 1000,
+          perimeter: perimeter,
           area: area,
           coordinates: coordinates,
           center: center
