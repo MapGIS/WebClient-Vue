@@ -29,6 +29,7 @@ export { default as MapgisImageLayer } from "../../mapboxgl/src/components/layer
 export { default as MapgisCanvasLayer } from "../../mapboxgl/src/components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../../mapboxgl/src/components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "../../mapboxgl/src/components/layer/VectorLayer";
+export { default as MapgisMvtStyleLayer } from "../../mapboxgl/src/components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisRasterLayer } from "../../mapboxgl/src/components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "../../mapboxgl/src/components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "../../mapboxgl/src/components/layer/igserver/IgsDocLayer";
