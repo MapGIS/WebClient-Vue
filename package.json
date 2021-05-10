@@ -16,6 +16,7 @@
     "@mapgis/cesium": "^1.59.0",
     "@mapgis/mapbox-gl": "^1.9.7",
     "@mapgis/mapbox-gl-compare": "^0.4.0",
+    "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/webclient-es6-service": "^1.0.3",
     "@mapgis/webclient-store": "^1.0.14",
     "@turf/turf": "^6.3.0",
