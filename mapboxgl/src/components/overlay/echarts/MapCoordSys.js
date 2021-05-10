@@ -1,5 +1,6 @@
 import mapboxgl from "@mapgis/mapbox-gl";
-import echarts from "echarts";
+// import echarts from "echarts";
+import * as echarts from "echarts";
 
 export function MapCoordSys(MapboxGLMap, api) {
   this._MapboxGLMap = MapboxGLMap;
