@@ -1,5 +1,5 @@
 export default {
-    /**
+  /**
    * @type String
    * @description 该key的主要作用市用来记录Cesium的Source,primitive,
    * entity的内存中的引用数组的引用，从而避免vue对cesium的内存劫持
@@ -53,21 +53,21 @@ export default {
     default: false
   },
   /**
-   * @description If set to false, the BaseLayerPicker widget will not be created.
+   * @description 默认图层选择器不显示
    */
   baseLayerPicker: {
     type: Boolean,
     default: false
   },
   /**
-   * @description If set to false, the FullscreenButton widget will not be created.
+   * @description 默认全屏控件不显示
    */
   fullscreenButton: {
     type: Boolean,
     default: false
   },
   /**
-   * @description If set to true, the VRButton widget will be created.
+   * @description 默认VR控件不显示
    */
   vrButton: {
     type: Boolean,

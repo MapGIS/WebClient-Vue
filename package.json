@@ -22,7 +22,7 @@
     "@turf/turf": "^6.3.0",
     "ant-design-vue": "^1.7.3",
     "core-js": "^3.6.5",
-    "echarts": "^4.7.0",
+    "echarts": "^5.0.2",
     "eslint-plugin-prettier": "^3.3.1",
     "fast-xml-parser": "^3.19.0",
     "http-proxy-middleware": "^1.0.6",

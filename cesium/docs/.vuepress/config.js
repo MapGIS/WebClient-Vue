@@ -61,40 +61,46 @@ module.exports = {
               ["/guide/", "快速上手"],
               ["/guide/basemap.md", "基础地图"]
             ]
+          },
+          {
+            title: "API",
+            collapsable: false,
+            children: [
+              ["/api/", "地图场景"],
+              ["/api/popup.md", "气泡"],
+              ["/api/vectortile.md", "矢量瓦片"]
+            ]
           }
         ]
       }
     }
   },
-  plugins: [
-    ["demo-code"],  
+  head: [
     [
-      /*       demoCode,
+      "script",
+      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
+    ],
+    ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
+    // http://develop.smaryun.com/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.umd.min.js
+    [
+      "script",
+      {
+        src:
+          "http://localhost:8081/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
+      }
+    ]
+  ],
+  plugins: [
+    [
+      "demo-code",
       {
         jsLibs: [
           // umd
-          "http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.umd.min.js"
-        ],
-        cssLibs: ["https://unpkg.com/animate.css@3.7.0/animate.min.css"],
-        showText: "show code",
-        hideText: "hide",
-        styleStr: "text-decoration: underline;",
-        minHeight: 200,
-        onlineBtns: {
-          codepen: true,
-          jsfiddle: true,
-          codesandbox: true
-        },
-        codesandbox: {
-          deps: { lodash: "latest" },
-          json: "",
-          query: "",
-          embed: ""
-        },
-        demoCodeMark: "demo-code"
+          "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js",
+          "http://localhost:8081/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
+        ]
       }
- */
-    ],
-
+    ]
+    /* 'demo-block', */
   ]
 };
