@@ -5,16 +5,7 @@ import {Polyline} from "./Polyline";
 import {MultiPolygon} from "./MultiPolygon";
 
 class Feature {
-    constructor(options) {
-        this.geometry = undefined;
-        this.geometryType = undefined;
-        this.attributes = undefined;
-        this.style = undefined;
-        this.FID = undefined;
-
-        extend(this,options);
-    }
-    static fromQueryResult = function (result) {
+    static fromQueryResult (result) {
         if(!result.hasOwnProperty("SFEleArray") || !result.hasOwnProperty("AttStruct")
             || (result.hasOwnProperty("SFEleArray") && !result.SFEleArray)|| (result.hasOwnProperty("AttStruct") && !result.AttStruct)){
             throw new Error("请确保输入的对象含有SFEleArray以及FldAlias");
@@ -118,6 +109,7 @@ class Feature {
     
     constructor(options) {
         this.geometry = undefined;
+        this.geometryType = undefined;
         this.attributes = undefined;
         this.style = undefined;
         this.FID = undefined;
