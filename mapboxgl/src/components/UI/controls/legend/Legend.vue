@@ -16,7 +16,7 @@
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
 export default {
-    name: "arcgis-legend",
+    name: "mapgis-arcserver-legend",
     props: {
         url: {
             type: String,
@@ -39,7 +39,8 @@ export default {
             let onError = function (err) {
                 console.log(err);
             };
-            let service = new BaseServer.IgsServiceBase(this.url, {
+            let legendUrl = this.url + '/legend?f=pjson';
+            let service = new BaseServer.IgsServiceBase(legendUrl, {
                 eventListeners: {
                     scope: this,
                     processCompleted: onSuccess,
