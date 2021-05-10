@@ -66,10 +66,11 @@ export default {
     right: 20px;
     bottom: 20px;
 }
-li {
-    display: flex;
+.mapgis-legend li {
+  display: flex;
 }
-img {
+
+.mapgis-legend img {
     height: 20px;
     width: 20px;
 }
