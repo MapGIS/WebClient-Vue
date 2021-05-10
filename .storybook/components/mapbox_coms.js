@@ -12,6 +12,7 @@ export { default as MapgisSearchControl } from "../../mapboxgl/src/components/UI
 export { default as MapgisCompareControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareControl";
 export { default as MapgisCompareInnerControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "../../mapboxgl/src/components/UI/controls/fps/FpsControl";
+export { default as MapgisArcserverLegend } from "../../mapboxgl/src/components/UI/controls/legend/Legend";
 // export { default as MapgisDraw } from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw";
 // export { default as MapgisMeasure } from "../../mapboxgl/src/components/UI/controls/measure/Measure";
 // export { default as BaseDrawItem from "../../mapboxgl/src/components/UI/controls/draw/BaseDrawItem";
