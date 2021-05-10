@@ -27,7 +27,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `layers`
 
-- **类型:** `Array`
+- **类型:** `String`
 - **默认值:** `null`
 - **Non-Synced**
 - **描述:** 指定需要被取图的图层序列号数组，以“，”分隔。默认为依据文档原始图层状态进行设置。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）。
@@ -35,7 +35,8 @@ All common [layers props](/zh/api/Layers/README.md#props)
   2、hide ：显示除 hide 参数指定图层外所有的图层；
   3、include：除显示默认图层（地图文档内图层状态为可见的图层）外，另追加这些被指定的图层显示，追加的这些图层必须为地图中包含的图层；
   4、exclude: 从默认图层列表里删除这些被指定的图层后，进行显示。
-- **示例:** `show:1,2`
+- **示例:** `"show:1,2,3"`
+- **注意:** `若不传入开头的[show|hide|include|exclude],则默认是显示所有图层，eg:"1,2,3"，显示的是所有图层,并非图层1、2、3`
 
 ### `width`
 
@@ -113,7 +114,7 @@ export default {
       outerCenter: "[116.39,40.2]",
       layerId: "arcgismap_layerid",
       baseUrl: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-      layers: "0,2,4,7,9,10,11,12"
+      layers: "show:0,2,4,7,9,10,11,12"
     };
   },
 

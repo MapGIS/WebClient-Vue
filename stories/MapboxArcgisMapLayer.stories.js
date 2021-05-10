@@ -23,7 +23,7 @@ const Template = (args, {argTypes}) => ({
 
 export const  exportMap = Template.bind({});
 exportMap.args = {
-    layers: "0,2,4,7,9,10,11,12",
+    layers: "show:0,2,4,7,9,10,11,12",
     baseUrl: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
     //http://219.142.81.85/arcgis/rest/services/10wanZL/MapServer
     layerId: "arcgismap_layerid",
