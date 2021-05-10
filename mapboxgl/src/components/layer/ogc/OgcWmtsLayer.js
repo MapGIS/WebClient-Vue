@@ -52,7 +52,7 @@ export default {
       let { url, wmtsLayer, tileMatrixSet,baseUrl,_url } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
-        _url = url;
+        this._url = url;
       } else if (baseUrl) {
         if (wmtsLayer.length === 0 || tileMatrixSet.length === 0) {
           return;

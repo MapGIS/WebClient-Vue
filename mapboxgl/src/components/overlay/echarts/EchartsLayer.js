@@ -1,7 +1,8 @@
-import echarts from "echarts";
-import { MapCoordSys } from "./echarts/MapCoordSys";
+// import echarts from "echarts";
+import * as echarts from "echarts";
+import { MapCoordSys } from "./MapCoordSys";
 
-/**
+/**npm install echarts@5.0.2
  * mapboxgl的echars 4.0的实现
  * @author 基础平台/创新中心 潘卓然 ParnDeedlit
  * @class mapboxgl.zondy.EchartsLayer

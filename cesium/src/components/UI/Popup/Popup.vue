@@ -43,7 +43,7 @@ export default {
           container = this.$slots.default[0].context.$children[0].$el.innerHTML;
         }
       }
-
+      // new CesiumZondy.Overlayer.PopupManage  popups []
       return new CesiumZondy.Overlayer.PopupLayer(
         webGlobe.viewer,
         position,
@@ -101,6 +101,13 @@ export default {
         this.mount();
       }
     },
+    removeAll () {
+      let popups = window.CesiumZondy.PopupManager.findAllSource();
+      popups.forEach(p => {
+        let popup = p.source;
+        popup && popup.remove();
+      });
+    }
   },
 };
 </script>

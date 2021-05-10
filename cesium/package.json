@@ -52,7 +52,8 @@
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
     "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.6"
+    "vue-template-compiler": "^2.6.6",
+    "vuepress-plugin-demo-block": "^0.7.2"
   },
   "keywords": [
     "vue",
