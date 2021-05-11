@@ -11,7 +11,7 @@ export default {
    * entity的内存中的引用数组的下标，从而避免vue对cesium的内存劫持
    */
   vueIndex: {
-    type: String | Number,
+    type: [String, Number],
     default: (Math.random() * 10000).toFixed(0)
   },
   /**
@@ -19,7 +19,7 @@ export default {
    * @example headers: { "szvsud-license-key": '3AE2IROq5nGn5K/+zQlUxSoHoNdjCoS1l5567rK5SKjHfRbQIvhtbInd7S9X6bFl' },
    */
   headers: {},
-  url: { required: true },
+  url: { type: String, required: true },
   show: { type: Boolean, default: true },
   autoReset: { type: Boolean, default: true },
 

@@ -1,16 +1,11 @@
 <script>
-import Tileset from "./3DTileset";
+import Tileset3dOptions from "./3DTilesetOptions";
+
 export default {
   name: "mapgis-3d-igs-m3d",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    show: {
-      type: Boolean,
-      default: true,
-    },
-    url: {
-      type: String,
-    },
+    ...Tileset3dOptions
   },
   created() {},
   mounted() {
@@ -22,46 +17,59 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { $props, url, CesiumZondy, webGlobe } = this;
+      const { CesiumZondy, webGlobe } = this;
       let m3dLayer = new CesiumZondy.Layer.M3DLayer({
         viewer: webGlobe.viewer,
       });
       return m3dLayer;
     },
-    watchProp() {},
+    watchProp() {
+      let { show } = this;
+      if (show) {
+        this.$watch("show", function(next) {
+          if (this.initial) return;
+          this.changeShow(next);
+        });
+      }
+    },
     onM3dLoaded(e) {},
     mount() {
+      const vm = this;
       const { webGlobe, vueIndex, vueKey, $props } = this;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
-      this.$emit("load", this);
+      this.$emit("load", { component: this });
 
       let m3dLayer = this.createCesiumObject();
-
       let m3ds = m3dLayer.append(`${this.url}`, {
         ...$props,
         loaded: () => {
           if (vueKey && vueIndex) {
-            window.CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+            CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+            !vm.show && m3ds && m3ds.forEach(m3d => m3d.show = vm.show);
           }
         },
       });
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
       const viewer = webGlobe.viewer;
-      let find = window.CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
-        !viewer.isDestroyed() &&
-          m3ds &&
-          m3ds.forEach((l) => {
-            l.destroy();
-          });
+        !viewer.isDestroyed() && m3ds && m3ds.forEach((l) => { l.destroy(); });
       }
-      window.CesiumZondy.VectorTileManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", { component: this });
+      CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
+    changeShow(show) {
+      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      if (find) {
+        let m3ds = find.source;
+        m3ds && m3ds.forEach(m3d => {m3d.show = show; console.log(m3d.show)});
+      }
+    }
   },
   render(h) {
     return h("span", {
