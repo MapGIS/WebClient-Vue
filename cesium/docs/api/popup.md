@@ -61,7 +61,7 @@
 ### `showed`
 
 - **Type**: `Boolean`
-- **non-synced** watch 属性
+- **synced** watch 属性
 - **Default:** `true`
 - - **Description:** 是否显示
 
