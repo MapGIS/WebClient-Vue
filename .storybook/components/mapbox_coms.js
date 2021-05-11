@@ -12,7 +12,6 @@ export { default as MapgisSearchControl } from "../../mapboxgl/src/components/UI
 export { default as MapgisCompareControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareControl";
 export { default as MapgisCompareInnerControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "../../mapboxgl/src/components/UI/controls/fps/FpsControl";
-export { default as MapgisArcgisMaplayer } from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisHawkeye } from "../../mapboxgl/src/components/UI/controls/hawkeye/Hawkeye";
 export { default as MapgisArcserverLegend } from "../../mapboxgl/src/components/UI/controls/legend/Legend";
 
