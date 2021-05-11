@@ -117,6 +117,7 @@ export default {
 
   methods: {
     enableMeasure () {
+      this.$_unbindDrawEvents();
       this.$_addMeasureControl(this.measure);
       this.$_emitEvent("added", { measure: this.measure });
       const eventNames = Object.keys(measureEvents);
@@ -213,15 +214,7 @@ export default {
 
     remove () {
       this.$_unbindMeasureEvents();
-
-      if (this.measure) {
-        this.measure.deleteAll();
-        this.measure.trash();
-        this.measure = undefined;
-      }
-
-      this.removeSource("mapbox-gl-draw-hot");
-      this.removeSource("mapbox-gl-draw-cold");
+      this.$_removeMeasureControl();
 
       this.$_emitEvent("removed");
     }

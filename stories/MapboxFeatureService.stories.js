@@ -1,6 +1,6 @@
-import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import MapgisIgsDocLayer from "../mapboxgl/src/components/layer/igserver/IgsDocLayer";
-import FeatureLayer from "./component/FeatureLayerIgserver";
+// import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
+// import MapgisIgsDocLayer from "../mapboxgl/src/components/layer/igserver/IgsDocLayer";
+// import FeatureLayer from "./component/FeatureLayerIgserver";
 
 export default {
   title: "二维/要素查询",
@@ -15,7 +15,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebMap, MapgisIgsDocLayer,FeatureLayer },
+  components: { MapgisWebMap, MapgisIgsDocLayer/* ,FeatureLayer */ },
   template: `<mapgis-web-map crs="EPSG:4326" :center="[(113.69534616+115.07406408)/2, (29.969811+31.36330098)/2]" :zoom="8">
   <mapgis-igs-doc-layer v-bind="$props" />
   <FeatureLayer v-bind="$props"></FeatureLayer>

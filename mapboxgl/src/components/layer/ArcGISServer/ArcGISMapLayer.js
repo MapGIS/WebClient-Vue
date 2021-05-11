@@ -27,10 +27,6 @@ export default {
       type: Number,
       default: 256
     },
-    zoomOffset: {
-      type: Number,
-      default: 0
-    },
     format: {
       type: String,
       default: "png"

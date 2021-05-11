@@ -1,4 +1,4 @@
-import FeatureTable from "../mapboxgl/src/components/UI/FeatureTable";
+// import FeatureTable from "../mapboxgl/src/components/UI/FeatureTable";
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 
 export default {
@@ -13,7 +13,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { FeatureTable,MapgisWebMap },
+  components: { /* FeatureTable, */MapgisWebMap },
   template: '<mapgis-web-map ref="wmap" crs="EPSG:4326" :center="[(113.69534616+115.07406408)/2, (29.969811+31.36330098)/2]" :zoom="8">' +
       '<mapgis-igs-doc-layer v-bind="$props" />' +
       '<feature-table v-on:loaded = "load" v-bind="$props"></feature-table>' +

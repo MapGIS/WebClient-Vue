@@ -1,15 +1,15 @@
-import ArcgisLegend from "../mapboxgl/src/components/UI/controls/legend/Legend.vue";
+import MapgisArcserverLegend from "../mapboxgl/src/components/UI/controls/legend/Legend.vue";
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 import ArcgisTileLayer from "../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer.js";
 
 export default {
     title: "二维/交互-图例",
-    component: ArcgisLegend
+    component: MapgisArcserverLegend
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { ArcgisLegend, MapgisWebMap, ArcgisTileLayer },
+    components: { MapgisArcserverLegend, MapgisWebMap, ArcgisTileLayer },
     data() {
         return {
             mapOptions: {
@@ -77,12 +77,12 @@ const Template = (args, { argTypes }) => ({
     template: `
     <mapgis-web-map v-bind="{...mapOptions}">
         <arcgis-tile-layer v-bind="{...layerOptions}"></arcgis-tile-layer>
-        <arcgis-legend :url="url"></arcgis-legend>
+        <mapgis-arcserver-legend :url="url"></mapgis-arcserver-legend>
     </mapgis-web-map>
     `
 });
 
 export const Legend = Template.bind({});
 Legend.args = {
-    url: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer/legend?f=pjson"
+    url: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer"
 }

@@ -1,6 +1,6 @@
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 import MapgisIgsDocLayer from "../mapboxgl/src/components/layer/igserver/IgsDocLayer";
-import FeatureLayer from "./component/FeatureLayerIgserver";
+// import FeatureLayer from "./component/FeatureLayerIgserver";
 
 export default {
   title: "二维/OGC-WFS",
