@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import { MapgisWebMap, MapgisHawkeye } from "@mapgis/webclient-vue-mapboxgl";
-
 export default {
   data() {
     return {
@@ -76,7 +74,6 @@ export default {
       map: undefined
     };
   },
-  components: { MapgisWebMap, MapgisHawkeye },
   methods: {
     handleMapLoad(payload) {
       this.map = payload.map;

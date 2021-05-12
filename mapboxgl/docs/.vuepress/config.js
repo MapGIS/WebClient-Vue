@@ -179,6 +179,7 @@ module.exports = {
               ["/zh/api/UI/Measure/measure.md", "Measure"],
               ["/zh/api/UI/Legend/legend.md", "Legend"],
               ["/zh/api/UI/Hawkeye/hawkeye.md", "Hawkeye"],
+              ["/zh/api/UI/Compare/compare.md", "Compare"],
               [
                 "/zh/api/Layers/ArcGISServer/ArcGISMapLayer.md",
                 "ArcGISMapLayer"

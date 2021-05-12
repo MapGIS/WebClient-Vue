@@ -20,12 +20,6 @@
 </template>
 
 <script>
-import {
-  MapgisWebMap,
-  ArcgisTileLayer,
-  MapgisArcserverLegend
-} from "@mapgis/webclient-vue-mapboxgl";
-
 export default {
   data() {
     return {
@@ -93,11 +87,6 @@ export default {
       },
       url: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer"
     };
-  },
-  components: {
-    MapgisWebMap,
-    ArcgisTileLayer,
-    MapgisArcserverLegend
   }
 };
 </script>
