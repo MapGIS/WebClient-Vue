@@ -39,7 +39,7 @@ export { default as MapgisArcgisLayer } from "./components/layer/ArcgisLayer";
 export { default as MapgisGoogleLayer } from "./components/layer/GoogleLayer";
 export { default as MapgisOgcWmsLayer } from "./components/layer/ogc/OgcWmsLayer";
 export { default as MapgisOgcWmtsLayer } from "./components/layer/ogc/OgcWmtsLayer";
-export { default as MapgisArcgisMaplayer } from "./components/layer/ArcGISServer/ArcGISMapLayer";
+export { default as MapgisArcgisMapLayer } from "./components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServer/ArcGISTileLayer";
 export { default as MapgisEcharts } from "./components/overlay/MapgisEcharts";
 
