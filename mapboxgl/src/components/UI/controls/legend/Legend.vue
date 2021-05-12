@@ -39,7 +39,13 @@ export default {
             let onError = function (err) {
                 console.log(err);
             };
-            let legendUrl = this.url + '/legend?f=pjson';
+            let reg = new RegExp(/\/legend\?f=pjson/);
+            let legendUrl;
+            if(reg.test(this.url)) {
+                legendUrl = this.url;
+            } else {
+                legendUrl = this.url + '/legend?f=pjson';
+            }
             let service = new BaseServer.IgsServiceBase(legendUrl, {
                 eventListeners: {
                     scope: this,
