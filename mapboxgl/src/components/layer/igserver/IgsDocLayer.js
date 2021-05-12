@@ -53,17 +53,31 @@ export default {
       default: null
     }
   },
-  watch: {
-    layers(next) {
-      if (this.initial) return;
-      if (next !== "") {
-        this.mapSource.tiles = [this._url + "&layers=" + next];
-      } else {
-        this.mapSource.tiles = [this._url];
-      }
+  created() {
+    this.$watch("layers",function () {
+      this.$_updateLayer();
+    })
+    this.$watch("cache",function () {
+      this.$_updateLayer();
+    })
+    this.$watch("filters",function () {
+      console.log("dasdasdsa")
+      this.$_updateLayer();
+    })
+  },
+  data(){
+    return {
+      newGuid: undefined
     }
   },
   methods: {
+    $_updateLayer(){
+      this.newGuid = newGuid();
+      this.$_init();
+      //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
+      this.$_deferredUnMount();
+      this.$_deferredMount();
+    },
     $_init() {
       if (this.url) {
         let url = this.url;
@@ -88,7 +102,11 @@ export default {
       let params = [];
 
       params.push("f=" + this.f);
-      params.push("guid=" + this.guid);
+      if(this.newGuid){
+        params.push("guid=" + this.newGuid);
+      }else{
+        params.push("guid=" + this.guid);
+      }
 
       let width, height;
       width = height = this.tileSize;

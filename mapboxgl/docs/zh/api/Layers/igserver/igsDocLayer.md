@@ -66,6 +66,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `Array`
 - **默认值:** `null`
 - **Non-Synced**
+- **watched**
 - **描述:** 指定需要被取图的图层序列号数组，以“，”分隔。默认为依据文档原始图层状态进行设置。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）。
   1、show：仅仅显示指定了图层序号的图层；
   2、hide ：显示除 hide 参数指定图层外所有的图层；
@@ -78,6 +79,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `String`
 - **默认值:** `null`
 - **Non-Synced**
+- **watched**
 - **描述:** 用户指定的图层过滤条件，它由多个键值对组成，值为过滤条件。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）。
 - **示例:** `1:ID>4,3:ID>1`
 
@@ -116,6 +118,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `Boolean`
 - **默认值:** `false`
 - **Non-Synced**
+- **watched**
 - **描述:** 是否使用动态裁图功能。
 
 ### `isAntialiasing`
