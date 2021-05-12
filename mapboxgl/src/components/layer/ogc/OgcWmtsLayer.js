@@ -43,6 +43,9 @@ export default {
           }
           //KVP方式
           this.$_initBaseUrl();
+          //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
+          this.$_deferredUnMount();
+          this.$_deferredMount();
         }
       });
     }
