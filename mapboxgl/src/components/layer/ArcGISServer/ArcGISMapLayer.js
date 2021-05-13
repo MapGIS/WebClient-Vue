@@ -44,6 +44,28 @@ export default {
       default: false
     }
   },
+  created() {
+    this.$_deferredMount();
+
+    if (this.baseUrl) {
+      this.$watch("baseUrl", function(next) {
+        if (this.initial) return;
+        if (next !== "") {
+          this.$_deferredUnMount();
+          this.$_deferredMount();
+        }
+      });
+    }
+    if (this.layers) {
+      this.$watch("layers", function(next) {
+        if (this.initial) return;
+        if (next !== "") {
+          this.$_deferredUnMount();
+          this.$_deferredMount();
+        }
+      });
+    }
+  },
   methods: {
     $_init() {
       if (this.baseUrl) {
