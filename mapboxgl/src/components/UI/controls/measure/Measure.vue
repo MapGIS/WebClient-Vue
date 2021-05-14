@@ -37,7 +37,8 @@ const measureModes = {
 };
 const measureMethods = {
     geography: "geography",
-    projection: "projection"
+    projection: "projection",
+    both: "both"
 }
 
 export default {
@@ -62,7 +63,7 @@ export default {
     },
     measureMethod: {
         type: String,
-        default: "geography" //geography按照地理坐标系计算长度和面积，projection按照投影坐标系计算长度和面积
+        default: "both" //geography按照地理坐标系计算长度和面积，projection按照投影坐标系计算长度和面积，both返回两种坐标系的计算结果
     }
   },
 
@@ -163,52 +164,64 @@ export default {
     _updateLengthOrArea () {
       if (!this.measure) return;
       let data = this.measure.getAll();
-      let perimeter, area, center;
+      let geographyPerimeter, geographyArea, projectionPerimeter, projectionArea, center;
       if (data.features.length > 0) {
         let coordinates = data.features[data.features.length - 1].geometry.coordinates;
         let mercatorData = turf.toMercator(data);
         let mercatorCoordinate = mercatorData.features[mercatorData.features.length - 1].geometry.coordinates;
         if (this.measureMode === measureModes.measureLength) {
             center = turf.centroid(turf.lineString(coordinates));
-            if(this.measureMethod === measureMethods.geography) {
-                perimeter = turf.length(data) * 1000;
-            } else if(this.measureMethod === measureMethods.projection) {
-                perimeter = 0;
+                geographyPerimeter = turf.length(data) * 1000;
+                projectionPerimeter = 0;
                 for(let i = 1; i < mercatorCoordinate.length; i++) {
                     let x = mercatorCoordinate[i][0] - mercatorCoordinate[i-1][0];
                     let y = mercatorCoordinate[i][1] - mercatorCoordinate[i-1][1];
-                    perimeter += Math.sqrt(x * x + y * y);
+                    projectionPerimeter += Math.sqrt(x * x + y * y);
                 }
-            }
         } else if (this.measureMode === measureModes.measureArea) {
             center = turf.centroid(turf.polygon(coordinates));
-            if(this.measureMethod === measureMethods.geography) {
-                perimeter = turf.length(data) * 1000;
-                area = turf.area(data);
-            } else if(this.measureMethod === measureMethods.projection) {
+                geographyPerimeter = turf.length(data) * 1000;
+                geographyArea = turf.area(data);
                 mercatorCoordinate = mercatorCoordinate[mercatorCoordinate.length - 1];
-                perimeter = 0;
+                projectionPerimeter = 0;
                 for(let i = 1; i < mercatorCoordinate.length; i++) {
                     let x = mercatorCoordinate[i][0] - mercatorCoordinate[i-1][0];
                     let y = mercatorCoordinate[i][1] - mercatorCoordinate[i-1][1];
-                    perimeter += Math.sqrt(x * x + y * y);
+                    projectionPerimeter += Math.sqrt(x * x + y * y);
                 }
-                area = 0;
+                projectionArea = 0;
                 for(let j = 1; j < mercatorCoordinate.length; j++) {
                     let s1 = mercatorCoordinate[j-1][0] * mercatorCoordinate[j][1];
                     let s2 = mercatorCoordinate[j][0] * mercatorCoordinate[j-1][1];
-                    area += (s1-s2) / 2;
+                    projectionArea += (s1-s2) / 2;
                 }
-                area = Math.abs(area);
-            }
+                projectionArea = Math.abs(projectionArea);
         }
         // turf计算结果单位，长度默认是千米，面积默认是平方米；本组件对外输出结果长度统一为米，面积统一为平方米
-        return {
-          perimeter: perimeter,
-          area: area,
+        if(this.measureMethod === measureMethods.geography) {
+          return {
+          geographyPerimeter: geographyPerimeter,
+          geographyArea: geographyArea,
           coordinates: coordinates,
           center: center
-        };
+          };
+        } else if(this.measureMethod === measureMethods.projection) {
+          return {
+          projectionPerimeter: projectionPerimeter,
+          projectionArea: projectionArea,
+          coordinates: coordinates,
+          center: center
+          };
+        } else if(this.measureMethod === measureMethods.both) {
+          return {
+            geographyPerimeter: geographyPerimeter,
+            geographyArea: geographyArea,
+            projectionPerimeter: projectionPerimeter,
+            projectionArea: projectionArea,
+            coordinates: coordinates,
+            center: center
+          }
+        }
       }
     },
 
