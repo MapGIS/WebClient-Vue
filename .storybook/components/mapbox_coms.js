@@ -42,5 +42,5 @@ export { default as MapgisOgcWmsLayer } from "../../mapboxgl/src/components/laye
 export { default as MapgisOgcWmtsLayer } from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer";
 export { default as MapgisArcgisMapLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisArcgisTileLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
-export { default as MapgisEcharts} from "../../mapboxgl/src/components/overlay/MapgisEcharts";
-export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/Mapv.vue";
+export { default as MapgisEchartsLayer} from "../../mapboxgl/src/components/overlay/EchartsLayer";
+export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/MapvLayer";

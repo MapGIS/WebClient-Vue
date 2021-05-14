@@ -1,4 +1,4 @@
-import EchartsLayer from "./Echarts.vue";
-import MapvLayer from "./Mapv.vue";
+import MapgisEchartsLayer from "./EchartsLayer.vue";
+import MapgisMapvLayer from "./MapvLayer.vue";
 
-export { MapvLayer, EchartsLayer };
+export { MapgisEchartsLayer, MapgisMapvLayer };

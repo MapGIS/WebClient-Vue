@@ -1,11 +1,12 @@
 <template>
-  <span />
+  <span/>
 </template>
 <script>
-import { DataSet } from "mapv";
-import { MapvLayer } from "./mapv/MapvLayer";
+import {DataSet} from "mapv";
+import {MapvLayer} from "./mapv/MapvLayer";
+
 export default {
-  name: "mapbox-mapv-layer",
+  name: "mapgis-mapv-layer",
   props: {
     geojson: {
       type: Object,
@@ -17,7 +18,7 @@ export default {
     },
     options: {
       type: Object,
-      default () {
+      default() {
         return {
           context: "2d",
           draw: "heatmap"
@@ -29,7 +30,7 @@ export default {
   watch: {
     geojson: {
       deep: true,
-      handler () {
+      handler() {
         this.dataSet = this.initData(this.geojson);
         if (!this.dataSet && this.mapvLayer) {
           this.mapvLayer.destroy();
@@ -44,7 +45,7 @@ export default {
     },
     options: {
       deep: true,
-      handler () {
+      handler() {
         if (!this.mapvLayer) {
           return;
         }
@@ -53,15 +54,15 @@ export default {
     }
   },
   methods: {
-    createMapboxObject () {
-      const { map } = this;
+    createMapboxObject() {
+      const {map} = this;
       this.dataset = this.initData();
       if (!this.dataset) {
         return;
       }
       return new MapvLayer(map, this.dataset, this.options);
     },
-    initData (geojson) {
+    initData(geojson) {
       let data = [];
       geojson = geojson || this.geojson;
       // 构造数据
@@ -74,64 +75,57 @@ export default {
         const fType = feature.geometry.type;
         const coordinates = feature.geometry.coordinates;
         if (fType === "Point") {
-          data.push({
-            geometry: {
-              type: "Point",
-              coordinates: coordinates
-            },
-            count: feature.properties[this.countField] || 1
-          });
+          let obj = Object.assign(
+              {
+                geometry: {
+                  type: "Point",
+                  coordinates: coordinates
+                }
+              }, feature.properties
+          );
+          data.push(obj);
         } else if (fType === "LineString") {
-          for (let j = 0; j < coordinates.length; j++) {
-            data.push({
-              geometry: {
-                type: "Point",
-                coordinates: coordinates[j]
-              },
-              count: feature.properties[this.countField] || 1
-            });
-          }
+          let obj = Object.assign(
+              {
+                geometry: {
+                  type: "LineString",
+                  coordinates: coordinates
+                },
+                count: feature.properties[this.countField] || 1,
+              }, feature.properties
+          );
+          data.push(obj);
         } else if (fType === "Polygon") {
-          for (let j = 0; j < coordinates[0].length; j++) {
-            data.push({
-              geometry: {
-                type: "Point",
-                coordinates: coordinates[0][j]
-              },
-              count: feature.properties[this.countField] || 1
-            });
-          }
+          let obj = Object.assign(
+              {
+                geometry: {
+                  type: "Polygon",
+                  coordinates: coordinates
+                },
+                count: feature.properties[this.countField] || 1,
+              }, feature.properties
+          );
+          data.push(obj);
         }
       }
       var dataSet = new DataSet(data);
       return dataSet;
     },
-    // watchProp () { //?这个函数未生效改成了vue的watch
-    //   let { geojson, options, mapvLayer } = this;
-    //   if (geojson && options && mapvLayer) {
-    //     this.$watch("geojson", function (next) {
-    //       console.log(this.geojson)
-    //       const data = this.initData(next)
-    //       console.log(data)
-    //       mapvLayer.updateData(data,this.options);
-    //     });
-    //   }
-    // },
-    mount () {
+    mount() {
       this.mapvLayer = this.createMapboxObject();
     },
-    unmount () {
-      const { map, mapvLayer } = this;
+    unmount() {
+      const {map, mapvLayer} = this;
       return map && mapvLayer.destroy();
     }
   },
-  beforeDestroy () {
+  beforeDestroy() {
     if (this.mapvLayer) {
       this.mapvLayer.destroy();
       this.mapvLayer = undefined;
     }
   },
-  created () {
+  created() {
     this.mount();
     // this.watchProp();
   }
