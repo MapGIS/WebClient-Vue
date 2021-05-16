@@ -1,21 +1,12 @@
 # Legend
 
-## Props
-
-### `url`
-
-- **类型:** `String`
-- **Required**
-- **Non-Synced**
-- **描述:** 该图例信息所在的图层的 url 地址
-
 ## Example
 
 ```vue
 <template>
   <mapgis-web-map v-bind="{ ...mapOptions }">
     <arcgis-tile-layer v-bind="{ ...layerOptions }"></arcgis-tile-layer>
-    <mapgis-arcserver-legend :url="url"></mapgis-arcserver-legend>
+    <mapgis-arcserver-legend></mapgis-arcserver-legend>
   </mapgis-web-map>
 </template>
 
@@ -84,8 +75,7 @@ export default {
           mapgisOffset: -1
         },
         paint: {}
-      },
-      url: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer"
+      }
     };
   }
 };
