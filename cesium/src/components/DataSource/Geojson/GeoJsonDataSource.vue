@@ -3,52 +3,64 @@
 </template>
 
 <script>
-import BaseDatasource from '../BaseDatasource'
+import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
-  name: 'mapgis-3d-geojson-datasource',
-  mixins: [BaseDatasource],
+  name: "mapgis-3d-geojson-datasource",
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    material: Object,
-    hightligt: String,
-  },
-  watch: {
-    heightlight (news) {
-      
-    }
-  },
-  methods: {
-    async createCesiumObject () {
-      const { url, options } = this
-      return new Cesium.GeoJsonDataSource.load(url)
+    ...VueOptions,
+    url: {
+      type: [String, Object],
+      required: true
     },
-    /* async */ mount () {
-      const { webGlobe, datasource } = this;
-      const { viewer } = webGlobe;
-      const { dataSources } = viewer;
-      const vm = this;
-      datasource.then(function (dataSource) {
-        viewer.dataSources.add(dataSource);
-        vm.datasourceEntity = dataSource;
-        /*         let entities = dataSource.entities.values;
-                for (let i = 0; i < entities.length; i++) {
-                  let entity = entities[i];
-                  let name = entity.name;
-                  entity.polygon.material = new Cesium.PolylineGlowMaterialProperty({
-                     "color": new Cesium.Color(0, 170 / 255, 238 / 255, 1.0),
-                     "glowPower": 0.1
-                   });
-                } */
-      })
-    },
-    /* async */ unmount () {
-      let { webGlobe, datasourceEntity } = this;
-      const { viewer } = webGlobe;
-      const { dataSources } = viewer;
-      if (dataSources) {
-        dataSources.remove(datasourceEntity, true);
+    options: {
+      type: Object,
+      default: () => {
+        return {
+          markerSize: 48,
+          strokeWidth: 2,
+          clampToGround: true
+        };
       }
     }
+  },
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
+  },
+  methods: {
+    async createCesiumObject() {
+      const { url, options } = this;
+      return new Cesium.GeoJsonDataSource.load(url, options);
+    },
+    mount() {
+      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer } = webGlobe;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function(dataSource) {
+        // viewer.zoomTo(dataSource);
+        viewer.dataSources.add(dataSource);
+        vm.$emit("load", { component: this });
+        CesiumZondy.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {});
+      });
+    },
+    unmount() {
+      let { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer } = webGlobe;
+      const { dataSources } = viewer;
+      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      if (find) {
+        if (dataSources) {
+          dataSources.remove(find.source, true);
+        }
+      }
+      CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
+    }
   }
-}
+};
 </script>

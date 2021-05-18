@@ -16,6 +16,8 @@ export default {
 
   beforeDestroy() {
     if (this.map && this.drawer) {
+      // 这里后面除非找到了能够在组件内部解决事件冲突的方式，
+      // 否则都通过$_removeDrawControl()来释放绘制组件
       // this.map.removeControl(this.drawer);
     }
   },

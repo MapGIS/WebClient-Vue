@@ -60,6 +60,11 @@ export default {
 
       this.map.addLayer(layer, this.before);
       this.$_emitEvent("added", { layerId: this.layerId });
+    },
+    $_deferredUnMount() {
+      this.map.removeLayer(this.layerId);
+      this.map.removeSource(this.sourceId || this.layerId);
+      this.initial = true;
     }
   }
 };

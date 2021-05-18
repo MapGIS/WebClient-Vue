@@ -9,6 +9,12 @@
 - **Non-Synced**
 - **描述:** 测量方式。measure-length(长度测量) | measure-area(面积测量)
 
+### `measureMethod`
+
+- **类型:** `String`
+- **默认值:** `geography`
+- **描述:** 计算方法。geography(按照地理坐标系计算) | projection(按照投影坐标系计算)
+
 ## Slots
 
 ### `measureTool`
@@ -51,6 +57,7 @@
       class="custom-draw-wrapper"
       position="bottom-left"
       :measureMode="measureMode"
+      measureMethod="geography"
       @added="handleAdded"
       @measureResult="getMeasureResult"
     >

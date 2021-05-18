@@ -176,7 +176,19 @@ module.exports = {
               ["/zh/api/Layers/igserver/igsWmsLayer.md", "IgsWmsLayer"],
               ["/zh/api/Layers/igserver/igsWmtsLayer.md", "IgsWmtsLayer"],
               ["/zh/api/Layers/igserver/igsTdtLayer.md", "IgsTdtLayer"],
-              ["/zh/api/Measure/measure.md", "Measure"]
+              ["/zh/api/UI/Measure/measure.md", "Measure"],
+              ["/zh/api/UI/Legend/legend.md", "Legend"],
+              ["/zh/api/UI/Hawkeye/hawkeye.md", "Hawkeye"],
+              ["/zh/api/UI/Compare/compare.md", "Compare"],
+              [
+                "/zh/api/Layers/ArcGISServer/ArcGISMapLayer.md",
+                "ArcGISMapLayer"
+              ],
+              [
+                "/zh/api/Layers/ArcGISServer/ArcGISTileLayer.md",
+                "ArcGISTileLayer"
+              ],
+              ["/zh/api/Overlay/Echarts.md", "Echarts"]
             ]
           },
           {

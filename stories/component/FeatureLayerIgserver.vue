@@ -109,13 +109,13 @@
 import featureService from "../../mapboxgl/src/components/map/mixins/FeatureService";
 import {RectangleParameter,SQLParameter,
   ObjectIdsParameter,Point,GeometryParameter,Polyline,Polygon,MultiPoint,Feature,MultiPolygon} from "../../mapboxgl/src/components/util"
-import BaseDraw from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw"
+// import BaseDraw from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw"
 import {pointData,polylineData,polygonData,multiPolygonData} from "./geometry";
 
 export default {
   name: "mapgis-test-layer",
   mixins: [featureService],
-  components: {BaseDraw},
+  // components: {BaseDraw},
   inject:["map"],
   props:{
     url: {

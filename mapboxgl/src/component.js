@@ -17,6 +17,8 @@ export { default as MapgisMeasure } from "./components/UI/controls/measure/Measu
 // export { default as BaseDrawItem from "./components/UI/controls/draw/BaseDrawItem";
 // https://gist.github.com/godismyjudge95/a4ea43263db53b90b05511c911cd0034
 export { default as MapgisFixDraw } from "./components/UI/controls/drawfix/FixDraw";
+export { default as MapgisHawkeye } from "./components/UI/controls/hawkeye/Hawkeye";
+export { default as MapgisArcserverLegend } from "./components/UI/controls/legend/Legend";
 
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
@@ -27,6 +29,7 @@ export { default as MapgisImageLayer } from "./components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "./components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "./components/layer/VectorLayer";
+export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisRasterLayer } from "./components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "./components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "./components/layer/igserver/IgsDocLayer";
@@ -36,8 +39,11 @@ export { default as MapgisArcgisLayer } from "./components/layer/ArcgisLayer";
 export { default as MapgisGoogleLayer } from "./components/layer/GoogleLayer";
 export { default as MapgisOgcWmsLayer } from "./components/layer/ogc/OgcWmsLayer";
 export { default as MapgisOgcWmtsLayer } from "./components/layer/ogc/OgcWmtsLayer";
+export { default as MapgisArcgisMapLayer } from "./components/layer/ArcGISServer/ArcGISMapLayer";
+export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServer/ArcGISTileLayer";
+export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 
-export { default as MapgisMapvLayer } from "./components/overlay/Mapv.vue";
+export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 
 /* 
 import withEventsMixin from "./lib/withEvents";

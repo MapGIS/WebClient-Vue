@@ -68,7 +68,9 @@ module.exports = {
             children: [
               ["/api/", "地图场景"],
               ["/api/popup.md", "气泡"],
-              ["/api/vectortile.md", "矢量瓦片"]
+              ["/api/geojson.md", "GeoJSON"],
+              ["/api/vectortile.md", "矢量瓦片"],
+              ["/api/m3d.md", "M3D"]
             ]
           }
         ]

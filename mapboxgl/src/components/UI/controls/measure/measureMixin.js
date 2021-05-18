@@ -16,7 +16,9 @@ export default {
 
   beforeDestroy() {
     if (this.map && this.measure) {
-      this.map.removeControl(this.measure);
+      // 这里后面除非找到了能够在组件内部解决事件冲突的方式，
+      // 否则都通过$_removeMeasureControl()来释放测量组件
+      // this.map.removeControl(this.measure);
     }
   },
 

@@ -9,31 +9,31 @@ import PopupOptions from "./PopupOptions";
 export default {
   name: "mapgis-3d-popup",
   props: {
-    ...PopupOptions,
+    ...PopupOptions
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
     position: {
       deep: true,
-      handler () {
+      handler() {
         this.update();
-      },
+      }
     },
     showed: {
       deep: true,
-      handler () {
+      handler() {
         this.update();
-      },
-    },
+      }
+    }
   },
-  mounted () {
+  mounted() {
     this.update();
   },
-  destroyed () {
+  destroyed() {
     this.unmount();
   },
   methods: {
-    createCesiumObject () {
+    createCesiumObject() {
       let { webGlobe, CesiumZondy, position, options, container } = this;
 
       if (this.$slots.default) {
@@ -43,7 +43,6 @@ export default {
           container = this.$slots.default[0].context.$children[0].$el.innerHTML;
         }
       }
-      // new CesiumZondy.Overlayer.PopupManage  popups []
       return new CesiumZondy.Overlayer.PopupLayer(
         webGlobe.viewer,
         position,
@@ -51,7 +50,7 @@ export default {
         container
       );
     },
-    mount () {
+    mount() {
       const { webGlobe, vueKey, vueIndex } = this;
       const viewer = webGlobe.viewer;
       let popup;
@@ -63,7 +62,7 @@ export default {
 
       return !viewer.isDestroyed() && popup && popup.show();
     },
-    unmount () {
+    unmount() {
       const { webGlobe, vueKey, vueIndex } = this;
       const viewer = webGlobe.viewer;
       let popup;
@@ -79,7 +78,7 @@ export default {
       }
       return !viewer.isDestroyed();
     },
-    update () {
+    update() {
       const { webGlobe, CesiumZondy, vueIndex, vueKey } = this;
       let popup;
       let find = CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
@@ -87,28 +86,28 @@ export default {
         popup = find.source;
       }
 
-      if (popup) {
+      if (popup && popup.remove) {
         popup.remove();
         popup = undefined;
       }
 
       if (this.showed) {
         popup = this.createCesiumObject();
-        this.$emit('load', { popup: popup });
+        this.$emit("load", { popup: popup });
         if (vueKey && (vueIndex || vueIndex === 0)) {
           CesiumZondy.PopupManager.addSource(vueKey, vueIndex, popup);
         }
         this.mount();
       }
     },
-    removeAll () {
+    removeAll() {
       let popups = window.CesiumZondy.PopupManager.findAllSource();
       popups.forEach(p => {
         let popup = p.source;
         popup && popup.remove();
       });
     }
-  },
+  }
 };
 </script>
 <style>

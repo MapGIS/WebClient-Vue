@@ -59,6 +59,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `String`
 - **Required**
 - **Non-Synced**
+- **watched**
 - **描述:** 图层的 gdbps 地址，允许多个图层，以“,”隔开
 
 ### `filters`
@@ -66,6 +67,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `String`
 - **默认值:** `null`
 - **Non-Synced**
+- **watched**
 - **描述:** 用户指定的图层过滤条件，它由多个键值对组成，值为过滤条件。
 - **示例:** `1:ID>4,3:ID>1`
 

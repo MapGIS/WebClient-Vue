@@ -43,6 +43,9 @@ export default {
           }
           //KVP方式
           this.$_initBaseUrl();
+          //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
+          this.$_deferredUnMount();
+          this.$_deferredMount();
         }
       });
     }
@@ -52,7 +55,7 @@ export default {
       let { url, wmtsLayer, tileMatrixSet,baseUrl,_url } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
-        _url = url;
+        this._url = url;
       } else if (baseUrl) {
         if (wmtsLayer.length === 0 || tileMatrixSet.length === 0) {
           return;

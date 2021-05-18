@@ -12,8 +12,9 @@ export { default as MapgisSearchControl } from "../../mapboxgl/src/components/UI
 export { default as MapgisCompareControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareControl";
 export { default as MapgisCompareInnerControl } from "../../mapboxgl/src/components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "../../mapboxgl/src/components/UI/controls/fps/FpsControl";
-export { default as MapgisLegendControl } from "../../mapboxgl/src/components/UI/controls/legend/Legend";
-export { default as MapgisArcgisMaplayer } from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISMapLayer";
+export { default as MapgisHawkeye } from "../../mapboxgl/src/components/UI/controls/hawkeye/Hawkeye";
+export { default as MapgisArcserverLegend } from "../../mapboxgl/src/components/UI/controls/legend/Legend";
+
 // export { default as MapgisDraw } from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw";
 // export { default as MapgisMeasure } from "../../mapboxgl/src/components/UI/controls/measure/Measure";
 // export { default as BaseDrawItem from "../../mapboxgl/src/components/UI/controls/draw/BaseDrawItem";
@@ -29,6 +30,7 @@ export { default as MapgisImageLayer } from "../../mapboxgl/src/components/layer
 export { default as MapgisCanvasLayer } from "../../mapboxgl/src/components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../../mapboxgl/src/components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "../../mapboxgl/src/components/layer/VectorLayer";
+export { default as MapgisMvtStyleLayer } from "../../mapboxgl/src/components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisRasterLayer } from "../../mapboxgl/src/components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "../../mapboxgl/src/components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "../../mapboxgl/src/components/layer/igserver/IgsDocLayer";
@@ -38,5 +40,7 @@ export { default as MapgisArcgisLayer } from "../../mapboxgl/src/components/laye
 export { default as MapgisGoogleLayer } from "../../mapboxgl/src/components/layer/GoogleLayer";
 export { default as MapgisOgcWmsLayer } from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer";
 export { default as MapgisOgcWmtsLayer } from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer";
-
-export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/Mapv.vue";
+export { default as MapgisArcgisMapLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISMapLayer";
+export { default as MapgisArcgisTileLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
+export { default as MapgisEchartsLayer} from "../../mapboxgl/src/components/overlay/EchartsLayer";
+export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/MapvLayer";
