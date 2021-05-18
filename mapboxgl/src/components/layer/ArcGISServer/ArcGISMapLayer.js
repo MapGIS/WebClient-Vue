@@ -2,7 +2,7 @@ import rasterLayer from "../RasterLayer";
 import layerEvents from "../../../lib/layerEvents";
 
 export default {
-  name: "mapgis-arcgis-maplayer",
+  name: "mapgis-arcgis-map-layer",
   mixins: [rasterLayer],
   props: {
     baseUrl: {
@@ -42,6 +42,28 @@ export default {
     transparent: {
       type: Boolean,
       default: false
+    }
+  },
+  created() {
+    this.$_deferredMount();
+
+    if (this.baseUrl) {
+      this.$watch("baseUrl", function(next) {
+        if (this.initial) return;
+        if (next !== "") {
+          this.$_deferredUnMount();
+          this.$_deferredMount();
+        }
+      });
+    }
+    if (this.layers) {
+      this.$watch("layers", function(next) {
+        if (this.initial) return;
+        if (next !== "") {
+          this.$_deferredUnMount();
+          this.$_deferredMount();
+        }
+      });
     }
   },
   methods: {

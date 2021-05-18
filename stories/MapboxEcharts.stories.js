@@ -1,17 +1,17 @@
-import MapgisEcharts from "../mapboxgl/src/components/overlay/MapgisEcharts.vue";
+import MapgisEchartsLayer from "../mapboxgl/src/components/overlay/EchartsLayer.vue";
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 import { BaseServer } from "@mapgis/webclient-es6-service";
 import * as echarts from 'echarts';
 
 export default {
     title:"二维/echarts-5.0.2升级",
-    component:MapgisEcharts,
+    component:MapgisEchartsLayer,
     argTypes:{}
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisWebMap, MapgisEcharts, BaseServer},
+    components: { MapgisWebMap, MapgisEchartsLayer, BaseServer},
     data(){
         return{
            mapStyle: 'mapbox://styles/mapbox/dark-v9',
@@ -108,7 +108,7 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle">
-      <mapgis-echarts :options="option"></mapgis-echarts>
+      <mapgis-echarts-layer :options.sync="option"></mapgis-echarts-layer>
     </mapgis-web-map>`
 });
 

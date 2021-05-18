@@ -17,29 +17,26 @@ import { BaseServer } from "@mapgis/webclient-es6-service";
 
 export default {
     name: "mapgis-arcserver-legend",
-    props: {
-        url: {
-            type: String,
-            required: true,
-        },
-    },
+    inject: ["mapbox", "map"],
+    props: {},
     data() {
         return {
             layers: [],
         };
     },
+    watch: {},
     mounted() {
-        this.$_init();
+        this.getLegendUrl();
     },
     methods: {
-        $_init() {
+        getLegendInfo(url) {
             let onSuccess = function (res) {
-                this.layers = res.layers;
+                this.layers = this.layers.concat(res.layers);
             };
             let onError = function (err) {
                 console.log(err);
             };
-            let legendUrl = this.url + '/legend?f=pjson';
+            let legendUrl = url.replace(/(?<=MapServer).*/, "/legend?f=pjson");
             let service = new BaseServer.IgsServiceBase(legendUrl, {
                 eventListeners: {
                     scope: this,
@@ -48,6 +45,21 @@ export default {
                 },
             });
             service.processAsync();
+        },
+        getLegendUrl() {
+            const { map } = this;
+            const style = map.getStyle();
+            const { sources } = style;
+            let tiles = [];
+            sources &&
+                Object.keys(sources).forEach((key) => {
+                    tiles = tiles.concat(sources[key].tiles);
+                });
+            tiles.forEach((url) => {
+                if (/\/arcgis\/rest\/services/.test(url)) {
+                    this.getLegendInfo(url);
+                }
+            });
         },
     },
 };
@@ -67,7 +79,7 @@ export default {
     bottom: 20px;
 }
 .mapgis-legend li {
-  display: flex;
+    display: flex;
 }
 
 .mapgis-legend img {
