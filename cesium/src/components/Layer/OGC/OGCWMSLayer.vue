@@ -11,8 +11,15 @@ export default {
   inject: ["Cesium", "webGlobe"],
   props: {
     layerIndex: Number,  
-    layers: { type: String },
+    layers: { type: String, required: true },
     url: { type: String, required: true },
+    crs: { type: String },
+    srs: { type: String },
+    wmsStyle: { type: String },
+    width: { type: Number },
+    height: { type: Number },
+    tilingScheme: { type: String, required: true  },
+    show: { type: Boolean },
     options: {
       type: Object,
       default: () => {
@@ -24,14 +31,28 @@ export default {
   data () {
     return {};
   },
-  created () { },
+  created () {},
   mounted () {
     this.mount();
   },
   destroyed () {
     this.unmount();
   },
-  watch: {},
+  watch: {
+    layers: {
+      handler:function () {
+        this.unmount();
+        this.mount();
+      }
+    },
+    show: {
+      handler:function () {
+        let { vueKey, vueIndex } = this;
+        let layer = window.CesiumZondy.OGCWMSManager.findSource(vueKey, vueIndex);
+        layer.source.show = this.show;
+      }
+    }
+  },
   methods: {
     async createCesiumObject () {
       let { url, layers, options = {} } = this;
@@ -39,9 +60,11 @@ export default {
 
       let urlSource = undefined;
       let wms = new OGC.WMS({ url: url })
-      if (wms.isBaseUrl()) {
+
+      if (!layers && wms.isBaseUrl()) {
         let json = await wms.getCapabilities();
         layers = json.WMT_MS_Capabilities.Capability.Layer.Layer.map(l => l.Name);
+        layers = layers.join(",");
       }
 
       if (headers) {
@@ -50,7 +73,18 @@ export default {
         urlSource = url;
       }
 
-      let opt = { ...options, url: urlSource, layers: layers };
+      let wmsOpt = {},vm = this;
+      Object.keys(this.$props).forEach(function (key) {
+        if(key !== "options"){
+          if(key === "wmsStyle"){
+            wmsOpt["style"] = vm.$props[key];
+          }else {
+            wmsOpt[key] = vm.$props[key];
+          }
+        }
+      });
+
+      let opt = { ...options, ...wmsOpt };
       if (opt.tilingScheme) {
         if (
           opt.tilingScheme === "EPSG:4326" ||

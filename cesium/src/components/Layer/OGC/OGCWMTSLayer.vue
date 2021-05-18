@@ -12,6 +12,14 @@ export default {
     layer: Object,
     layerIndex: Number,
     url: { type: String, required: true },
+    wmtsLayer: { type: String, required: true },
+    tileMatrixSet: { type: String, required: true },
+    tilingScheme: { type: String, required: true },
+    wmtsStyle: { type: String, default: "default" },
+    format: { type: String, default: "image/png" },
+    version: { type: String, default: "1.0.0" },
+    tileMatrixLabels: { type: Array},
+    show: { type: Boolean },
     options: {
       type: Object,
       default: () => {
@@ -30,7 +38,45 @@ export default {
   destroyed () {
     this.unmount();
   },
-  watch: {},
+  watch: {
+    wmtsLayer:{
+      handler:function () {
+        this.unmount();
+        this.mount();
+      }
+    },
+    tileMatrixSet:{
+      handler:function () {
+        this.unmount();
+        this.mount();
+      }
+    },
+    tilingScheme:{
+      handler:function () {
+        this.unmount();
+        this.mount();
+      }
+    },
+    wmtsStyle:{
+      handler:function () {
+        this.unmount();
+        this.mount();
+      }
+    },
+    version:{
+      handler:function () {
+        this.unmount();
+        this.mount();
+      }
+    },
+    show: {
+      handler:function () {
+        let { vueKey, vueIndex } = this;
+        let layer = window.CesiumZondy.OGCWMTSManager.findSource(vueKey, vueIndex);
+        layer.source.show = this.show;
+      }
+    }
+  },
   methods: {
     createCesiumObject () {
       const { url, options = {} } = this;
@@ -44,7 +90,21 @@ export default {
         urlSource = url;
       }
 
-      let opt = { ...options, url: urlSource };
+      let wmtsOpt = {},vm = this;
+      Object.keys(this.$props).forEach(function (key) {
+        if(key !== "options"){
+          if(key === "tileMatrixSet"){
+            wmtsOpt["tileMatrixSetID"] = vm.$props[key];
+          }else if(key === "wmtsLayer"){
+            wmtsOpt["layer"] = vm.$props[key];
+          }else if(key === "wmtsStyle"){
+            wmtsOpt["style"] = vm.$props[key];
+          }else {
+            wmtsOpt[key] = vm.$props[key];
+          }
+        }
+      });
+      let opt = { ...options, ...wmtsOpt };
       if (opt.tilingScheme) {
         if (
           opt.tilingScheme === "EPSG:4326" ||
@@ -61,6 +121,7 @@ export default {
           opt.tilingScheme = new Cesium.GeographicTilingScheme();
         }
       }
+      console.log("opt",opt)
       return new Cesium.WebMapTileServiceImageryProvider(opt);
     },
     mount () {
