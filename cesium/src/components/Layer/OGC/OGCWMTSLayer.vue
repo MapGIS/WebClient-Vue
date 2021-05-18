@@ -121,7 +121,6 @@ export default {
           opt.tilingScheme = new Cesium.GeographicTilingScheme();
         }
       }
-      console.log("opt",opt)
       return new Cesium.WebMapTileServiceImageryProvider(opt);
     },
     mount () {
