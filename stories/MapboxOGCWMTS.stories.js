@@ -20,7 +20,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisOgcWmtsLayer },
-  template: `<mapgis-web-map crs="EPSG:4326">
+  template: `<mapgis-web-map crs="EPSG:4326" style="height:60vh">
     <mapgis-ogc-wmts-layer v-bind="$props" />
   </mapgis-web-map>`
 });

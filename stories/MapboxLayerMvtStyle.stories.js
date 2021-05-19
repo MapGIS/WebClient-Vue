@@ -14,7 +14,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisMvtStyleLayer },
   methods: {},
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-mvt-style-layer v-bind="$props" />
     </mapgis-web-map>`,

@@ -16,7 +16,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisIgsDocLayer,FeatureLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[(113.69534616+115.07406408)/2, (29.969811+31.36330098)/2]" :zoom="8">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[(113.69534616+115.07406408)/2, (29.969811+31.36330098)/2]" :zoom="8" style="height:60vh">
   <mapgis-igs-doc-layer v-bind="$props" />
   <FeatureLayer v-bind="$props"></FeatureLayer>
   </mapgis-web-map>`,

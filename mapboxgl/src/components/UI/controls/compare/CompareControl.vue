@@ -78,6 +78,7 @@ export default {
       this.initMap();
     },
     initMap() {
+      debugger;
       this.removeMap();
       if (this.beforeMap && this.afterMap) {
         let parent = this.$refs.compare;
