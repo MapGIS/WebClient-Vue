@@ -5,11 +5,14 @@ export default {
   title: "三维/OGC-WMTS",
   component: MapgisOgcWmtsLayer,
   argTypes: {
-    url: "http://t0.tianditu.gov.cn/img_w/wmts",
-    options: {
-      tilingScheme: "EPSG:3857",
-      tileMatrixLabels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-    },
+    url:"http://localhost:6163/igs/rest/ogc/武汉_专题图_4327/WMTSServer",
+    tilingScheme: "EPSG:4326",
+    tileMatrixLabels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+    wmtsLayer: "武汉_专题图_4327",
+    wmtsStyle: "default",
+    format: "image/png",
+    version: "1.0.0",
+    tileMatrixSet : "武汉_专题图_4327"
   },
 };
 
@@ -17,25 +20,30 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebGlobe, MapgisOgcWmtsLayer },
   template: `<mapgis-web-globe >
-    <mapgis-3d-ogc-wmts-layer v-bind="$props"/>
+    <mapgis-3d-ogc-wmts-layer :show="flag" v-bind="$props"/>
+    <button @click="showMap">隐藏</button>
   </mapgis-web-globe>`,
+  data(){
+    return {
+      flag:true
+    }
+  },
+  methods:{
+    showMap(){
+      this.flag = !this.flag;
+    }
+  }
 });
 
 export const EPSG_4326 = Template.bind({});
 EPSG_4326.args = {
-  url:
-    "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
-  options: {
-    tilingScheme: "EPSG:4326",
-    tileMatrixLabels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-  },
+  url:"http://localhost:6163/igs/rest/ogc/武汉_专题图_4327/WMTSServer",
+  tilingScheme: "EPSG:4326",
+  tileMatrixLabels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+  wmtsLayer: "武汉_专题图_4327",
+  wmtsStyle: "default",
+  format: "image/png",
+  version: "1.0.0",
+  tileMatrixSet : "武汉_专题图_4327"
 };
 
-export const EPSG_3857 = Template.bind({});
-EPSG_3857.args = {
-  url:
-    "http://t0.tianditu.com/DataServer?T=img_w&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
-  options: {
-    tilingScheme: "EPSG:3857",
-  },
-};
