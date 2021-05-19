@@ -21,8 +21,8 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisRasterLayer, MapgisVideoLayer },
   methods: actionsData,
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[-122.514426, 37.562984]" :zoom="17">
-    <mapgis-raster-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[-122.514426, 37.562984]" :zoom="17" style="height:60vh">
+    <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-video-layer v-bind="$props" @added="handCanvasLoad" />
   </mapgis-web-map>`,
 });

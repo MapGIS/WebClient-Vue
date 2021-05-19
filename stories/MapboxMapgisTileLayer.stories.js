@@ -15,7 +15,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisIgsTileLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:60vh">
     <mapgis-igs-tile-layer v-bind="$props" />
   </mapgis-web-map>`,
 });

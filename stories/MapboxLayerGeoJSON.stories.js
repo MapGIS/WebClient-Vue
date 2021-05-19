@@ -15,7 +15,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisGeojsonLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[114.3, 30.5]" :zoom="10">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[114.3, 30.5]" :zoom="10" style="height:60vh">
     <mapgis-geojson-layer v-bind="$props" />
   </mapgis-web-map>`,
 });

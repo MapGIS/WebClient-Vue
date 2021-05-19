@@ -107,7 +107,7 @@ const Template = (args, { argTypes }) => ({
       }
     },
     template: `
-    <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle">
+    <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:60vh">
       <mapgis-echarts-layer :options.sync="option"></mapgis-echarts-layer>
     </mapgis-web-map>`
 });

@@ -14,7 +14,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisIgsVectorLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[112.247175, 30.152892]" :zoom="6">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[112.247175, 30.152892]" :zoom="6" style="height:60vh">
     <mapgis-igs-vector-layer :filters="filters" :gdbps="gdbps" v-bind="$props" />
     <button style="position: absolute;z-index: 1;left:0;top:0;" @click="edit('filters','0:ID>4')">修改filter</button>
     <button style="position: absolute;z-index: 1;left:80px;top:0;" @click="edit('filters','')">置空filter</button>

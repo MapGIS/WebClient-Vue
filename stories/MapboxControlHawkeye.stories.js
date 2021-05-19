@@ -15,7 +15,7 @@ const Template = (args, { argTypes }) => ({
         }
     },
     template: `
-    <mapgis-web-map v-bind="{...mapOptions}" @load="handleMapLoad">
+    <mapgis-web-map v-bind="{...mapOptions}" @load="handleMapLoad" style="height:60vh">
         <mapgis-hawkeye :map="map"></mapgis-hawkeye>
     </mapgis-web-map>
     `
