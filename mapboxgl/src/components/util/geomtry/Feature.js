@@ -109,10 +109,7 @@ class Feature {
     
     constructor(options) {
         this.geometry = undefined;
-<<<<<<< HEAD
-=======
         this.geometryType = undefined;
->>>>>>> main
         this.attributes = undefined;
         this.style = undefined;
         this.FID = undefined;
