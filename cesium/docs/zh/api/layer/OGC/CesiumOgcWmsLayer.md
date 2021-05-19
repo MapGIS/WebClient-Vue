@@ -10,7 +10,13 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **必传**
 - **Non-Synced**
 - **watch**
-- **描述:** 服务基地址,因为 REST 模式填写非常繁琐，因此推荐使用 KVP 模式
+- **描述:** 服务基地址,因为 REST 模式填写非常繁琐，因此推荐使用 KVP 模式,
+  当请求天地图时，请在 url 后面添加 token，例如：
+
+```
+http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
+```
+
 - **示例:**
 
 ```

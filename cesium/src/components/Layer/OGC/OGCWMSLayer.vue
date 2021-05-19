@@ -4,7 +4,6 @@
 
 <script>
 import VueOption from "../../Base/Vue/VueOptions";
-import {OGC} from '@mapgis/webclient-es6-service';
 
 export default {
   name: "mapgis-3d-ogc-wms-layer",
@@ -76,13 +75,6 @@ export default {
       const {headers} = options;
 
       let urlSource = undefined;
-      let wms = new OGC.WMS({url: url})
-
-      if ((!layers || layers.length === 0) && wms.isBaseUrl()) {
-        let json = await wms.getCapabilities();
-        layers = json.WMT_MS_Capabilities.Capability.Layer.Layer.map(l => l.Name);
-        layers = layers.join(",");
-      }
 
       if (headers) {
         urlSource = new Cesium.Resource({url: url, headers: headers});

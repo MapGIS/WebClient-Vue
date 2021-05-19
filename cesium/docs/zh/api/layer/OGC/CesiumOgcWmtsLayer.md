@@ -10,7 +10,12 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **必传**
 - **Non-Synced**
 - **watch**
-- **描述:** 基地址.
+- **描述:** 基地址，当请求天地图时，请在 url 后面添加 token，例如：
+
+```
+http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
+```
+
 - **示例:**
 
 ```
@@ -206,6 +211,47 @@ export default {
     isShow() {
       this.show = !this.show;
     }
+  }
+};
+</script>
+
+<style lang="css">
+.main {
+  height: 600px;
+  width: 100%;
+}
+</style>
+```
+
+### 加载天地图，请在 url 地址后面加 token
+
+```vue
+<template>
+  <mapgis-web-globe>
+    <mapgis-3d-ogc-wmts-layer :url="url" :tileMatrixSet="tileMatrixSet" />
+  </mapgis-web-globe>
+</template>
+
+<script>
+import Cesium from "@mapgis/cesium";
+import {
+  MapgisWebGlobe,
+  MapgisOgcWmtsLayer
+} from "@mapgis/webclient-vue-cesium";
+
+export default {
+  components: {
+    MapgisWebGlobe,
+    MapgisOgcWmtsLayer
+  },
+  data() {
+    return {
+      //天地图地址，请在url地址后面加token
+      url:
+        "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
+      //参考系
+      tileMatrixSet: "EPSG:4326"
+    };
   }
 };
 </script>
