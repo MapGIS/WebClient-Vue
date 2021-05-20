@@ -77,60 +77,40 @@ EPSG:4214
 EPSG:3857
 ```
 
-### `tileWidth`
+### `styles`
 
 - **类型:** `Number`
 - **可选**
 - **Non-Synced**
 - **默认值** `256`
-- **描述:** 瓦片宽度
+- **描述:** 图层样式，多个图层样式以逗号分隔，igs 目前不支持
 
-### `tileHeight`
+### `layerStyle`
 
-- **类型:** `Number`
-- **可选**
-- **Non-Synced**
-- **默认值** `256`
-- **描述:** 瓦片高度
-
-### `show`
-
-- **类型:** `Boolean`
+- **类型:** `Object`
 - **可选**
 - **watch**
 - **Non-Synced**
-- **默认值** `true`
-- **描述:** 图层的显示或隐藏，true：显示，false：隐藏
+- **描述:** 图层样式，有如下值：
 
-### `layerIndex`
-
-- **类型:** `Number`
-- **可选**
-- **Non-Synced**
-- **描述:** 图层的堆叠顺序
+```
+    visible Boolean 控制图层显示或隐藏，不会重新加载图层，true：显示图层、fales：隐藏图层
+    opacity Number 控制图层透明度，会重新加载图层，0 - 1之间的数字，0：隐藏，1：显示
+    zIndex Number 控制图层顺序，会重新加载图层，类似css里面的z-index，从0开始的数字
+```
 
 ### `options`
 
 - **类型:** `Object`
 - **可选**
 - **Non-Synced**
-- **描述:** Cesium 的进阶参数
+- **描述:** Cesium 的进阶参数，另外不属于 cesium 的如下参数也在 options 中：
+  ```
+    vueKey String 默认值default 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+    vueIndex String 默认值(Math.random() * 100000000).toFixed(0) 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+  ```
 - **参考:** <br>
   `WMTS参数` in [WebMapTileServiceImageryProvider](http://develop.smaryun.com:8899/docs/other/mapgis-cesium/WebMapTileServiceImageryProvider.html?classFilter=web)
-
-### `vueKey`
-
-- **类型:** `String`
-- **可选**
-- **Non-Synced**
-- **描述:** 多线程时使用，该 key 的主要作用是用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
-
-### `vueIndex`
-
-- **类型:** `String | Number`
-- **可选**
-- **Non-Synced**
-- **描述:** 多线程时使用，该 key 的主要作用是用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ## Events
 
@@ -161,17 +141,7 @@ All common layer [events](/zh/api/Layers/#events)
 </template>
 
 <script>
-import Cesium from "@mapgis/cesium";
-import {
-  MapgisWebGlobe,
-  MapgisOgcWmsLayer
-} from "@mapgis/webclient-vue-cesium";
-
 export default {
-  components: {
-    MapgisWebGlobe,
-    MapgisOgcWmsLayer
-  },
   data() {
     return {
       //服务基地址
@@ -203,17 +173,7 @@ export default {
 </template>
 
 <script>
-import Cesium from "@mapgis/cesium";
-import {
-  MapgisWebGlobe,
-  MapgisOgcWmsLayer
-} from "@mapgis/webclient-vue-cesium";
-
 export default {
-  components: {
-    MapgisWebGlobe,
-    MapgisOgcWmsLayer
-  },
   data() {
     return {
       //服务基地址
@@ -244,28 +204,24 @@ export default {
 </style>
 ```
 
-### 控制可见性
+### 控制可见性，控制透明度，以及改变图层顺序
 
 ```vue
 <template>
   <mapgis-web-globe>
-    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" :show="show" />
+    <mapgis-3d-ogc-wms-layer
+      :url="url"
+      :layers="layers"
+      :layerStyle="layerStyle"
+    />
   </mapgis-web-globe>
   <button @click="isShow">是否可见</button>
+  <button @click="changeOpacity">改变透明度</button>
+  <button @click="changeIndex">改变图层顺序</button>
 </template>
 
 <script>
-import Cesium from "@mapgis/cesium";
-import {
-  MapgisWebGlobe,
-  MapgisOgcWmsLayer
-} from "@mapgis/webclient-vue-cesium";
-
 export default {
-  components: {
-    MapgisWebGlobe,
-    MapgisOgcWmsLayer
-  },
   data() {
     return {
       //服务基地址
@@ -273,12 +229,22 @@ export default {
         "http://localhost:6163/igs/rest/ogc/doc/武汉_专题图_4328_wms/WMSServer",
       //要显示的图层名称
       layers: "武汉市",
-      show: true
+      layerStyle: {
+        visible: true,
+        opacity: 0.6,
+        zIndex: 2
+      }
     };
   },
   methods: {
     isShow() {
-      this.show = !this.show;
+      this.layerStyle.visible = !this.visible;
+    },
+    changeOpacity() {
+      this.layerStyle.opacity = 0.5;
+    },
+    changeIndex() {
+      this.layerStyle.zIndex = 2;
     }
   }
 };
