@@ -2,17 +2,15 @@ const demoCode = require("vuepress-plugin-demo-code");
 
 module.exports = {
   title: "VueCesium",
-  // description: "Combine powers of Mapbox GL JS and Vue.js",
   dest: "dist/docs",
-  // head: [["link", { rel: "icon", href: "/favicon.ico" }]],
-  // base: "/vue-mapbox/",
-  evergreen: true,
-  serviceWorker: true,
+
+  /*   evergreen: true,
+  serviceWorker: true, */
 
   locales: {
     "/": {
-      lang: "zh-CN", // 将会被设置为 <html> 的 lang 属性
-      title: "中地数码",
+      lang: "zh-CN",
+      title: "MapGIS",
       description: "@mapgis/webclient-vue-cesium"
     }
   },
@@ -48,10 +46,6 @@ module.exports = {
             link: "http://develop.smaryun.com:8899/#/index"
           },
           { text: "开源", link: "https://github.com/soal/vue-mapbox" }
-          /* {
-            text: "map-promisified",
-            link: "https://github.com/soal/map-promisified"
-          } */
         ],
         sidebar: [
           {
@@ -67,10 +61,10 @@ module.exports = {
             collapsable: false,
             children: [
               ["/api/", "地图场景"],
-              ["/api/popup.md", "气泡"],
-              ["/api/geojson.md", "GeoJSON"],
-              ["/api/vectortile.md", "矢量瓦片"],
-              ["/api/m3d.md", "M3D"]
+              ["/api/ui/popup.md", "气泡"],
+              ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
+              ["/api/m3d/m3d.md", "M3D"]
             ]
           }
         ]

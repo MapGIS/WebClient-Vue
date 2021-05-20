@@ -60,7 +60,7 @@
 - **non-synced** 非-watch 属性
 - **Default:** `16`
 - **Description:** 这个最大屏幕几何异常 [英文原文](https://prismic-io.s3.amazonaws.com/cesium/5f705923-8ff1-410e-990a-0018157e8086_3d-tiles-overview.pdf)， [中文链接](https://www.cnblogs.com/onsummer/p/13357226.html)
-- ![几何异常](../image/maximumScreenSpaceError.png)
+- ![几何异常](./image/maximumScreenSpaceError.png)
 
 ### `maximumMemoryUsage`
 
