@@ -70,7 +70,8 @@ module.exports = {
               ["/api/popup.md", "气泡"],
               ["/api/geojson.md", "GeoJSON"],
               ["/api/vectortile.md", "矢量瓦片"],
-              ["/api/m3d.md", "M3D"]
+              ["/api/m3d.md", "M3D"],
+              ["/zh/api/UI/Compare.md", "Compare"]
             ]
           }
         ]
