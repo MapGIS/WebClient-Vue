@@ -43,6 +43,9 @@ export function initManager() {
     window.CesiumZondy.IgsTerrainManager || new EventHandlerManager();
   window.CesiumZondy.M3DIgsManager =
     window.CesiumZondy.M3DIgsManager || new EventHandlerManager();
+  window.CesiumZondy.arcgisManager =
+      window.CesiumZondy.arcgisManager || new EventHandlerManager();
+
 }
 
 export class BaseManager {
@@ -124,3 +127,4 @@ export class DrawToolManager extends BaseManager {}
 export class EventHandlerManager extends BaseManager {}
 export class IgsTerrainManager extends BaseManager {}
 export class M3DIgsManager extends BaseManager {}
+export class arcgisManager extends BaseManager {}
