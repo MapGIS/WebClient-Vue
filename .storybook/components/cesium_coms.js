@@ -12,7 +12,7 @@ export { default as Mapgis3dIgsTileLayer } from "../../cesium/src/components/Lay
 export { default as Mapgis3dRasterLayer } from "../../cesium/src/components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
-
+export { default as Mapgis3dArcgisTileLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "../../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
