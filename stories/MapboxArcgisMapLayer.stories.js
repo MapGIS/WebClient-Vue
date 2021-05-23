@@ -16,7 +16,7 @@ const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
     components: {MapgisWebMap,MapgisArcgisMapLayer},
     methods:{},
-    template:`<mapgis-web-map crs="EPSG:4326" :center="[116.39,40.2]" :zoom="3">
+    template:`<mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
     <mapgis-arcgis-map-layer v-bind="$props" />
     </mapgis-web-map>`,
 });
@@ -24,7 +24,6 @@ const Template = (args, {argTypes}) => ({
 export const  exportMap = Template.bind({});
 exportMap.args = {
     layers: "show:0,2,4,7,9,10,11,12",
-    baseUrl: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-    //http://219.142.81.85/arcgis/rest/services/10wanZL/MapServer
+    baseUrl: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
     layerId: "arcgismap_layerid",
 }
