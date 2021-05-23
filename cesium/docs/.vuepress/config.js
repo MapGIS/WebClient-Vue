@@ -61,10 +61,11 @@ module.exports = {
             collapsable: false,
             children: [
               ["/api/", "地图场景"],
-              ["/api/ui/popup.md", "气泡"],
-              ["/api/datasource/geojson.md", "GeoJSON"],
-              ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
-              ["/api/m3d/m3d.md", "M3D"]
+              ["/api/popup.md", "气泡"],
+              ["/api/geojson.md", "GeoJSON"],
+              ["/api/vectortile.md", "矢量瓦片"],
+              ["/api/m3d.md", "M3D"],
+              ["/zh/api/UI/Compare.md", "Compare"]
             ]
           }
         ]
