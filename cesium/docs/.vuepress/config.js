@@ -66,6 +66,17 @@ module.exports = {
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
               ["/api/m3d/m3d.md", "M3D"]
             ]
+          },
+          {
+            title: "组件开发",
+            collapsable: false,
+            children: [
+              ["/plugin_components/", "使用组件"],
+              [
+                "/plugin_components/plugin_components_development.md",
+                "创建组件"
+              ]
+            ]
           }
         ]
       }
