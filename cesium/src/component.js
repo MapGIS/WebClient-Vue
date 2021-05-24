@@ -13,6 +13,7 @@ export { default as Mapgis3dRasterLayer } from "./components/Layer/RasterTile/Ba
 export { default as Mapgis3dOgcWmtsLayer } from "./components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "./components/Layer/OGC/OGCWMSLayer.vue";
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
+export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
 
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";

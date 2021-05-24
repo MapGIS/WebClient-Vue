@@ -1,11 +1,11 @@
 <template>
-  <span />
+  <span></span>
 </template>
 <script>
 import VueOption from "../../Base/Vue/VueOptions";
 
 export default {
-  name: "mapgis-3d-arcgis-tile-layer",
+  name: "mapgis-3d-arcgis-map-layer",
   props: {
     url: {
       type: String,
@@ -13,6 +13,9 @@ export default {
     },
     srs: {
       type: String,
+    },
+    layers: {
+      type: String
     },
     options: {
       type: Object,
@@ -33,7 +36,6 @@ export default {
   },
   data(){
     return {
-
     }
   },
   inject: ["Cesium", "webGlobe","CesiumZondy"],
@@ -58,8 +60,15 @@ export default {
         this.mount();
       }
     },
+    layers: {
+      handler: function () {
+        this.unmount();
+        this.mount();
+      }
+    },
     layerStyle: {
       handler: function () {
+        debugger
         let {vueKey, vueIndex, CesiumZondy} = this;
         let layer = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
         if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
@@ -87,7 +96,9 @@ export default {
   methods: {
     initUrl() {
       if (this.url) {
-        return this.url;
+        let baseUrl = this.url;
+        const url = baseUrl + "/export?";
+        return url;
       }
     },
     createCesiumObject() {
@@ -101,17 +112,16 @@ export default {
       let provider = this.createCesiumObject();
       this.layerStyleCopy = Object.assign({}, this.layerStyle);
       let {webGlobe, layerStyle} = this;
-      const {vueIndex, vueKey, CesiumZondy} = this;
       const {zIndex, visible, opacity} = layerStyle;
+      const {vueIndex, vueKey,CesiumZondy} = this;
       layerStyle = this.$_initLayerStyle(layerStyle);
+
       const viewer = webGlobe.viewer;
-      const {imageryLayers} = viewer;
-      let imageLayer = imageryLayers.addImageryProvider(provider, zIndex);
+      let imageLayer = viewer.imageryLayers.addImageryProvider(provider, zIndex);
 
       CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer);
       let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
-
-      if(find && find.source) {
+      if (find && find.source){
         if (visible) {
           find.source.show = visible;
         }
@@ -119,13 +129,12 @@ export default {
           find.source.alpha = opacity;
         }
       }
-
       return (
-          !viewer.isDestroyed() // && viewer.imageryLayers.contains(imageLayer)
+          !viewer.isDestroyed()
       );
     },
     unmount() {
-      let {webGlobe, vueKey, vueIndex,CesiumZondy} = this;
+      let {webGlobe, vueKey, vueIndex, CesiumZondy} = this;
       const {viewer} = webGlobe;
       const {imageryLayers} = viewer;
       let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
@@ -133,8 +142,8 @@ export default {
       CesiumZondy.arcgisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
-
     $_initOptions(options) {
+      //切片规则：
       if (this.srs) {
         options.tilingScheme = this.srs
         if (

@@ -17,7 +17,7 @@ const Template = (args, { argTypes }) => ({
     template: `
     <mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
     <arcgis-tile-layer v-bind="$props" />
-    <mapgis-arcserver-legend :url="url"></mapgis-legend>
+    <mapgis-arcserver-legend :url="url"></mapgis-arcserver-legend>
     </mapgis-web-map>`,
 });
 

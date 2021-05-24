@@ -20,15 +20,12 @@ const Template = (args, { argTypes }) => ({
 
 export const Tile = Template.bind({});
 Tile.args = {
-    url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-    // url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
-    show:false,
-    layers:"2,4,6",
+    // url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
+    url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
     layerStyle: {
         visible: true,
         opacity: 1,
         zIndex: 2
     },
     srs:"EPSG:4326"
-    // tileMatrixSet:"EPSG:4326"
 };
