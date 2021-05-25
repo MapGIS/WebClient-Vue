@@ -16,32 +16,32 @@ footer: © 2020 云生态圈, all rights reserved.<a href="http://www.beian.miit
 
 If you like long story, check out [blog post](https://soal.red/reasoning-behind-vue-mapbox/)
 
+```javascript
+// main.js
+import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
+Vue.use(Mapgis2d);
+```
+
 ```vue
 <template>
-  <MglMap
+  <mapgis-web-map
     container="map-test"
     :center.sync="center"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
   >
-    <MglMarker :coordinates.sync="markerCoordinates" color="green" />
-    <MglGeojsonLayer
+    <mapgis-marker :coordinates.sync="markerCoordinates" color="green" />
+    <mapgis-geojson-layer
       type="fill"
       :sourceId="sourceId"
       :layerId="layerId"
       :source="geojson"
       @click="handleClick"
     />
-  </MglMap>
+  </mapgis-web-map>
 </template>
 
 <script>
-import {
-  MglMap,
-  MglMarker,
-  MglGeojsonLayer
-} from 'vue-mapbox'
-
 export default {
   name: 'App',
   data() {

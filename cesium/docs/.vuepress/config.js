@@ -1,4 +1,4 @@
-const demoCode = require("vuepress-plugin-demo-code");
+// const demoCode = require("vuepress-plugin-demo-code");
 
 module.exports = {
   title: "VueCesium",
@@ -10,7 +10,7 @@ module.exports = {
   locales: {
     "/": {
       lang: "zh-CN",
-      title: "MapGIS",
+      title: "中地数码",
       description: "@mapgis/webclient-vue-cesium"
     }
   },
@@ -61,11 +61,13 @@ module.exports = {
             collapsable: false,
             children: [
               ["/api/", "地图场景"],
-              ["/api/popup.md", "气泡"],
-              ["/api/geojson.md", "GeoJSON"],
-              ["/api/vectortile.md", "矢量瓦片"],
-              ["/api/m3d.md", "M3D"],
-              ["/zh/api/UI/Compare.md", "Compare"]
+              ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
+              ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
+              ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
+              ["/api/m3d/m3d.md", "M3D"],
+              ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/compare.md", "卷帘"]
             ]
           },
           {
@@ -78,6 +80,11 @@ module.exports = {
                 "创建组件"
               ]
             ]
+          },
+          {
+            title: "版本",
+            collapsable: false,
+            children: [["/version/diff.md", "版本对比"]]
           }
         ]
       }
@@ -89,7 +96,6 @@ module.exports = {
       { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
     ],
     ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
-    // http://develop.smaryun.com/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.umd.min.js
     [
       "script",
       {
@@ -103,12 +109,10 @@ module.exports = {
       "demo-code",
       {
         jsLibs: [
-          // umd
           "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js",
           "http://localhost:8081/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
         ]
       }
     ]
-    /* 'demo-block', */
   ]
 };

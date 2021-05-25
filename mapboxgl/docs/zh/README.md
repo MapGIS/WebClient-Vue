@@ -21,32 +21,32 @@ footer: MIT Licensed
 ~ 快速提示，刚接触一定要看完指南部分和自定义插件部分。 熟悉后可以直接查看 API。
 :::
 
+```javascript
+// main.js
+import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
+Vue.use(Mapgis2d);
+```
+
 ```vue
 <template>
-  <mapox-map
+  <mapgis-web-map
     container="map-test"
     :center.sync="center"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
   >
-    <mapbox-marker :coordinates.sync="markerCoordinates" color="green" />
-    <mapbox-geojson-layer
+    <mapgis-marker :coordinates.sync="markerCoordinates" color="green" />
+    <mapgis-geojson-layer
       type="fill"
       :sourceId="sourceId"
       :layerId="layerId"
       :source="geojson"
       @click="handleClick"
     />
-  </mapox-map>
+  </mapgis-web-map>
 </template>
 
 <script>
-import {
-  MapboxMap,
-  MapboxMarker,
-  MapboxGeojsonLayer
-} from '@mapgis/webclient-vue-mapboxgl'
-
 export default {
   name: 'App',
   data() {

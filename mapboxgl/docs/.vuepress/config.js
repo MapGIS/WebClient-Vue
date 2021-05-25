@@ -7,12 +7,12 @@ module.exports = {
 
   locales: {
     "/": {
-      lang: "en-US", // 将会被设置为 <html> 的 lang 属性
+      lang: "en-US",
       title: "MapGIS",
       description: "@mapgis/webclient-vue-mapboxgl"
     },
     "/zh/": {
-      lang: "zh-CN", // 将会被设置为 <html> 的 lang 属性
+      lang: "zh-CN",
       title: "中地数码",
       description: "@mapgis/webclient-vue-mapboxgl"
     }
@@ -211,7 +211,14 @@ module.exports = {
                 "创建插件组件"
               ]
             ]
-          }
+          },
+          {
+            title: "版本",
+            collapsable: false,
+            children: [
+              ["/zh/version/diff.md", "版本对比"],
+            ]
+          },
           // ['/plugins/', 'Plugins'],
         ]
         // search: false
