@@ -61,12 +61,25 @@ module.exports = {
             collapsable: false,
             children: [
               ["/api/", "地图场景"],
-              ["/api/ui/popup.md", "气泡"],
               ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/IGServer/IgsVectorLayer.md", "IgsVectorLayer"],
+              ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
+              ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
               ["/api/m3d/m3d.md", "M3D"],
-              ["/zh/api/UI/Compare.md", "Compare"],
-              ["/api/layer/IGServer/IgsVectorLayer.md", "IgsVectorLayer"]
+              ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/compare.md", "卷帘"]
+            ]
+          },
+          {
+            title: "组件开发",
+            collapsable: false,
+            children: [
+              ["/plugin_components/", "使用组件"],
+              [
+                "/plugin_components/plugin_components_development.md",
+                "创建组件"
+              ]
             ]
           }
         ]
