@@ -1,31 +1,24 @@
-# Composition
+# 结构
 
-You can use Mapbox GL feature as Vue component and compose it as a child of GlMap. During creation all components waits until map properly initialized.
+你可以类似Vue组建的方式使用MapboxGL的特性。 每个组件都可以作为 `<mapgis-web-map>` 组件的子组件。只有 `<mapgis-web-map>` 组件正确加载了，其子组件才会被创建，渲染。
 
-For example, adding map controls:
+例如，添加地图控制组件
 
 ```vue
 <template>
 <div id="#app">
-  <MglMap
+  <mapgis-web-map
     :accessToken="accessToken"
     :mapStyle.sync="mapStyle"
   >
-    <MglNavigationControl position="top-right"/>
-    <MglGeolocateControl position="top-right" />
-  </mgl-map>
+    <mapgis-navigation-control position="top-right"/>
+    <mapgis-geolocate-control position="top-right" />
+  </mapgis-web-map>
 </div>
 </template>
 
 <script>
-import { MglMap, MglNavigationControl, MglGeolocateControl } from "vue-mapbox";
-
 export default {
-  components: {
-    MglMap,
-    MglNavigationControl,
-    MglGeolocateControl
-  },
   data() {
     return {
       accessToken: "some_token",
@@ -36,36 +29,23 @@ export default {
 </script>
 ```
 
-Adding a popup:
+添加popup:
 
 ```vue
 <template>
   <div id="#app">
-    <MglMap :accessToken="accessToken" :mapStyle.sync="mapStyle">
-      <MglNavigationControl position="top-right" />
-      <MglGeolocateControl position="top-right" />
-      <MglPopup :coordinates="popupCoordinates">
+    <mapgis-web-map :accessToken="accessToken" :mapStyle.sync="mapStyle">
+      <mapgis-navigation-control position="top-right" />
+      <mapgis-geolocate-control position="top-right" />
+      <mapgis-popup :coordinates="popupCoordinates">
         <span>Hello world!</span>
-      </MglPopup>
-    </MglMap>
+      </mapgis-popup>
+    </mapgis-web-map>
   </div>
 </template>
 
 <script>
-import {
-  MglMap,
-  MglNavigationControl,
-  MglGeolocateControl,
-  MglPopup
-} from "vue-mapbox";
-
 export default {
-  components: {
-    MglMap,
-    MglNavigationControl,
-    MglGeolocateControl,
-    MglPopup
-  },
   data() {
     return {
       accessToken: "some_token",
@@ -77,29 +57,24 @@ export default {
 </script>
 ```
 
-Vue-mapbox component will work even if it wrapped in another component as long as they in components sub-tree of base map component.
+webclient-vue-mapboxgl的组件照样能再其他的自己写的Vue组件中使用，只要Vue组件在`<mapgis-web-map>`的子组件树下面
 
-For example:
+例如:
 
-**_Popup wrapper_**:
+**_Popup 包装类_**:
 
 ```vue
 <template>
   <div class="popup-wrapper">
-    <MglPopup :coordinates="popupCoordinates">
+    <mapgis-popup :coordinates="popupCoordinates">
       <span>Hello world from wrapped popup!</span>
-    </MglPopup>
+    </mapgis-popup>
   </div>
 </template>
 
 <script>
-import { MglPopup } from 'vue-mapbox';
-
 export default {
   name: 'PopupWrapper'
-  components: {
-    MglPopup
-  },
   computed() {
     popupCoordinates() {
       // Here we can do some work for calculate proper coordinates
@@ -111,25 +86,23 @@ export default {
 </script>
 ```
 
-**_Main component_**:
+**_主组件_**:
 
 ```vue
 <template>
   <div id="#app">
-    <MglMap :accessToken="accessToken" :mapStyle.sync="mapStyle">
+    <mapgis-web-map :accessToken="accessToken" :mapStyle.sync="mapStyle">
       <PopupWrapper />
       <!-- works! -->
-    </MglMap>
+    </mapgis-web-map>
   </div>
 </template>
 
 <script>
-import { MglMap } from "vue-mapbox";
 import PopupWrapper from "PopupWrapper"; // wrapper for popup
 
 export default {
   components: {
-    MglMap,
     PopupWrapper // wrapper for popup
   },
   data() {
@@ -143,7 +116,27 @@ export default {
 ```
 
 ::: tip
-VueMapbox internally use dependency injection mechanism (`provide/inject` in Vue [docs](https://vuejs.org)). It means that any component in `MglMap` sub-tree can access to `map`, `mapbox` and `actions` through `inject` property.
+weblient-vue-mapboxgl使用独立的注入机制[provide/inject](https://cn.vuejs.org/v2/api/#provide-inject)
+
+这意味着 所有的在 `<mapgis-web-map>` 结构子树下的组件都能够通过`inject`属性获得： `map`对象, `mapbox`原始对象 and `actions`行为
 :::
 
-After successful mount all components emits `added` envent with Vue component object and additional data, such as corresponding Mapbox GL JS object or object containing layer id in payload.
+成功挂载后，所有组件都会发送 `added` 事件， 每个事件的回调payload类似下面结构。 
+``` json
+{
+  //标准 payload
+  map: mapboxgl.Map,
+  component: this.component,
+  data: {}  
+}
+
+{
+  //弹出框 payload
+  popup: this.popup
+}
+
+{
+  //图层 payload
+  layerId: this.layerId
+}
+```

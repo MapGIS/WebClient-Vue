@@ -1,6 +1,6 @@
 # 绘制&交互
 
-绘制视图的属性请看[API](/zh/api/draw.md).
+绘制视图的属性请看[API](/api/UI/Draw/draw.md).
 
 ## 绘制视图
 
@@ -8,24 +8,19 @@
 
 ```vue
 <template>
-  <mapbox-map :accessToken="accessToken" :mapStyle.sync="mapStyle">
-    <mapbox-base-draw
+  <mapgis-web-map :accessToken="accessToken" :mapStyle.sync="mapStyle">
+    <mapgis-draw
       class="custom-draw-wrapper"
       position="bottom-left"
       @added="handleAdded"
       @drawCreate="handleCreate"
     >
-    </mapbox-base-draw>
-  </mapbox-map>
+    </mapgis-draw>
+  </mapgis-web-map>
 </template>
 <script>
-import { MapboxMap, MapboxBaseDraw } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
-  components: {
-    MapboxMap,
-    MapboxBaseDraw
-  },
   data() {
     return {
       accessToken: "some_token",
@@ -70,11 +65,11 @@ toggleQueryByPolygon(e) {
 ![自定义视图](./custom_draw.png)
 
 ::: tip
-实现自定义绘制组件的核心是 `<mapbox-base-draw>` 内部的插槽，这里提供了支持任意 UI 的插槽方式。
+实现自定义绘制组件的核心是 `<mapgis-draw>` 内部的插槽，这里提供了支持任意 UI 的插槽方式。
 关键代码如下 3 处：
 
-1. `<mapbox-base-draw>`组件监听 @added="handleAdded" 获取整个绘制组件的对象
-1. `<mapbox-base-draw>`组件监听 @drawCreate="handleCreate" 获取整个绘制图元的对象
+1. `<mapgis-draw>`组件监听 @added="handleAdded" 获取整个绘制组件的对象
+1. `<mapgis-draw>`组件监听 @drawCreate="handleCreate" 获取整个绘制图元的对象
 1. 自定义 UI 的 @click="toggleSimple" 触发绘制组建的方法
    :::
 
@@ -96,14 +91,15 @@ toggleSimple(e) {
 
 ```vue
 <template>
-  <mapbox-base-draw
+  <mapgis-draw
     class="custom-draw-wrapper"
     position="bottom-left"
     :controls="controls"
     @added="handleAdded"
     @drawCreate="handleCreate"
+    ref="drawref"
   >
-    <!--  <mapbox-base-draw-item v-for="item in buttons"> -->
+    <!--  <mapgis-draw-item v-for="item in buttons"> -->
     <el-button-group>
       <el-tooltip
         v-for="item in buttons"
@@ -117,8 +113,8 @@ toggleSimple(e) {
         </el-button>
       </el-tooltip>
     </el-button-group>
-    <!--     </mapbox-base-draw-item> -->
-  </mapbox-base-draw>
+    <!--     </mapgis-draw-item> -->
+  </mapgis-draw>
 </template>
 
 <style lang="scss">
@@ -132,14 +128,10 @@ toggleSimple(e) {
 
 <script>
 import IconFont from "@/components/IconFont/Icon";
-import {
-  MapboxBaseDraw,
-  MapboxBaseDrawItem
-} from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   name: "CustomDraw",
-  components: { MapboxBaseDraw, MapboxBaseDrawItem, IconFont },
+  components: { IconFont },
   data() {
     return {
       buttons: [
@@ -216,6 +208,12 @@ export default {
     };
   },
   methods: {
+    enableDrawer() {
+        const component = this.$refs.drawref;
+        if (component) {
+            component.enableDrawer();
+        }
+    },
     handleAdded(e, data) {
       let { drawer, map } = e;
       this.drawer = drawer;
@@ -227,6 +225,7 @@ export default {
       }
     },
     toggleSimple(e) {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("simple_select");
     },
     toggleDirect(e) {
@@ -236,15 +235,19 @@ export default {
         });
     },
     togglePoint(e) {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_point");
     },
     togglePolyline() {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_line_string");
     },
     toggleRect() {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_rectangle");
     },
     togglePolygon() {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_polygon");
     },
     toggleCombine() {},
@@ -256,10 +259,12 @@ export default {
       this.drawer && this.drawer.deleteAll();
     },
     toggleQueryByRect(e) {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_rectangle");
       this.mode = "QueryByRect";
     },
     toggleQueryByPolygon(e) {
+      this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_polygon");
       this.mode = "QueryByPolygon";
     }
