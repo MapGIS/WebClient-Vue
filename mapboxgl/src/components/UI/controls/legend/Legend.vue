@@ -25,10 +25,10 @@
 <script>
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
-import Vue from "vue";
+/* import Vue from "vue";
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
-Vue.use(Antd);
+Vue.use(Antd); */
 
 export default {
     name: "mapgis-arcserver-legend",
