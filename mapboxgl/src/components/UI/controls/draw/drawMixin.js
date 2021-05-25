@@ -1,7 +1,6 @@
 // import withRegistration from "../../../lib/withRegistration";
 import withEvents from "../../../../lib/withEvents";
 import withSelfEvents from "../../withSelfEvents";
-import DefaultDrawStyle from "./DefaultDrawStyle";
 
 export default {
   mixins: [withEvents, withSelfEvents],
@@ -13,10 +12,6 @@ export default {
       type: String,
       default: "top-right"
     }
-  },
-
-  data() {
-    return {};
   },
 
   beforeDestroy() {

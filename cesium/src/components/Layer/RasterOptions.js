@@ -26,8 +26,8 @@ export default {
    * @description 用来描述igserver发布的瓦片错级的问题,常用于自定义切图
    */
   offset: { type: Number, default: 0 },
-  show: { type: Boolean, default: true },
-  alpha: { type: Number, default: 1.0 },
+  show: { typs: Boolean, default: true },
+  alpha: { typs: Number, default: 1.0 },
   proxy: { type: String, default: undefined },
   /**
    * @example
