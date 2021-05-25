@@ -1,20 +1,25 @@
 ---
 home: true
 heroImage: /logo.svg
-actionText: Get Started →
+actionText: 快速上手 →
 actionLink: /guide/
 features:
-  - title: Declarative style
-    details: You can use map elements like layers, markers, popups as Vue components and control them via synchronized props
-  - title: Vuefied
-    details: Map elements declared as components respect Vue lifecycle, emit map events like Vue events and can be used in OOP-style
+  - title: 组件式风格
+    details: 通过Vue的组件方式调用layers, markers, popups， 并且使用同步props synchronized props来控制状态
 
-  - title: Promisified async actions
-    details: You can do async map operations and get results in Promise without messing with map events and figuring out what action cause it
-footer: © 2020 云生态圈, all rights reserved.<a href="http://www.beian.miit.gov.cn/" target="_blank">ICP证：鄂B2-20190047</a><a><img src="http://oss-smaryun-new.oss-cn-beijing.aliyuncs.com/images/police_icon.png" style="height:18px;">鄂公网安备 42018502000503号</a><a href="http://wljg.scjgj.wuhan.gov.cn:80/whwjww/indexquery/indexqueryAction!dizviewjk.dhtml?webId=2ec48b653aa55ca194b9df62cc4e45fe" target="_blank"><img src="http://oss-smaryun-new.oss-cn-beijing.aliyuncs.com/images/govIcon.gif" style="height:20px;" title="武汉网监电子标识">工商电子标识</a>
+  - title: Vue控制
+    details: 面向对象编程：地图元素拥有Vue的生命周期，将原生地图事件封装成Vue的事件
+
+  - title: 同步的Promise Actions
+    details: 原先异步的地图操作变成同步操作，并且采取Promise的方式进行开发避免大量的地图事件回调导致代码逻辑混乱，能够清晰的知道是什么行为导致地图的变化。
+footer: MIT Licensed
 ---
 
-If you like long story, check out [blog post](https://soal.red/reasoning-behind-vue-mapbox/)
+![核心框架](./images/framework/webclient-vue-mapboxgl.png)
+
+::: warning
+~ 快速提示，刚接触一定要看完指南部分和自定义插件部分。 熟悉后可以直接查看 API。
+:::
 
 ```javascript
 // main.js
@@ -58,16 +63,19 @@ export default {
 </script>
 ```
 
-::: tip Dependencies
+::: tip 依赖
 [Vue.js 2.5+](https://github.com/vuejs/vue)  
-[Mapbox GL JS 1.9.2+](https://github.com/mapbox/mapbox-gl-js)  
-[map-promisified](https://github.com/soal/map-promisified)
+[MapGIS/Mapbox GL JS 0.54+](https://github.com/mapbox/mapbox-gl-js)  
+[MapGIS/WebClient-MapboxGL](https://github.com/mapbox/mapbox-gl-js)  
 :::
 
-::: tip Size
-~ 15 kB minified and gzipped
+::: tip 简洁，易于传输
+~ 压缩后 15 kB 左右
 :::
 
-::: warning Browser compatibility
-_Coming soon_
-:::
+::: tip 目的
+
+> 用于开发 Vue 版本的一张图 `Vue-OneMap`
+
+> 用于开发 Vue 版本的工作空间 `Vue-WorkSpace`
+> :::

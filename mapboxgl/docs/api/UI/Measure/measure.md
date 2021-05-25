@@ -89,14 +89,6 @@
 </template>
 
 <script>
-import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import Mapbox from "@mapgis/mapbox-gl";
-import {
-  MapboxMap,
-  MapboxMeasure,
-  MapboxMarker
-} from "@mapgis/webclient-vue-mapboxgl";
-import IconFont from "./components/iconfont/iconfront";
 
 const measureModes = {
   measureLength: "measure-length",
