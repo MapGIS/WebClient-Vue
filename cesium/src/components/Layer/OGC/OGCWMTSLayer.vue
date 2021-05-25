@@ -9,12 +9,12 @@ export default {
   inject: ["Cesium", "webGlobe"],
   mixins:[ServiceLayer],
   props: {
-    url: {type: String, required: true},
+    url: {type: String},
     layer: {type: String},
     tileMatrixSetID: {type: String},
+    wmtsStyle: {type: String, default: "default"},
     srs: {type: String},
     id: {type: String,default:""},
-    wmtsStyle: {type: String, default: "default"},
     layerStyle: {type: Object,default:function () {
         return {}
       }},
