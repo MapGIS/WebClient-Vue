@@ -85,6 +85,8 @@ export default {
     removeEntities () {
       let { webGlobe, vueKey, vueIndex, CesiumZondy } = this;
       let find = CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+      let tool = find.source;
+      tool && tool.deactiveTool();
       let { entityController, mouseEventManager } = find.options;
       mouseEventManager.unRegisterMouseEvent('LEFT_CLICK');
       mouseEventManager.unRegisterMouseEvent('MOUSE_MOVE');

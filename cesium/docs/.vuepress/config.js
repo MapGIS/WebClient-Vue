@@ -43,9 +43,9 @@ module.exports = {
           },
           {
             text: "WebClient",
-            link: "http://develop.smaryun.com:8899/#/index"
+            link: "http://develop.smaryun.com"
           },
-          { text: "开源", link: "https://github.com/soal/vue-mapbox" }
+          { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" }
         ],
         sidebar: [
           {
