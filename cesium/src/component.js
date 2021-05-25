@@ -13,13 +13,18 @@ export { default as Mapgis3dIgsTileLayer } from "./components/Layer/IGServer/Igs
 export { default as Mapgis3dRasterLayer } from "./components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "./components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "./components/Layer/OGC/OGCWMSLayer.vue";
+
 export { default as Mapgis3dIgsVectorLayer } from "./components/Layer/IGServer/IgsVectorLayer.vue";
+
+export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
+export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
 
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";
 
 // 模型
 export { default as Mapgis3dFileM3d } from "./components/M3D/M3dFile.vue";
+
 export { default as Mapgis3dIgsM3d } from "./components/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 

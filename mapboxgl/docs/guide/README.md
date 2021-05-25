@@ -1,29 +1,36 @@
-# Quickstart
+# 快速上手
 
-## Using as ES module
+![核心框架](../images/framework/webclient-vue-mapboxgl.png)
 
-### Installation
+## ES6 方式
 
-You can install vue-mapbox via npm. Take note that you need to install mapbox-gl as peer dependency:
+### 中地版本安装 `建议使用`
+
+> 由于 mapbox 本身`不支持 EPSG：4326`， 公司内部修改版实现`支持 EPSG：4326`
+
+@mapgis/webclient-vue-mapboxgl 支持一层封装，除了本身需要安装以外，会内置安装 @mapgis/mapbox-gl的依赖
 
 ```bash
-npm install --save vue-mapbox mapbox-gl
+# 支持 4326的坐标系的使用方式
+npm install --save @mapgis/webclient-vue-mapboxgl
+# 或者
+yarn add @mapgis/webclient-vue-mapboxgl
 ```
 
-Add mapbox CSS file to `<head></head>` block of your HTML file (e.g. `index.html`)
+在 main.js 中加入样式文件
 
-```html
-<link
-  href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
-  rel="stylesheet"
-/>
+```js
+import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
+Vue.use(Mapgis2d);
 ```
 
-## Using in browser
+## 浏览器使用
 
-### Installation
+### 安装
 
-Add Vue, MapboxGL and Vue-mapbox scripts on your page:
+添加 vue, mapbox-gl, 和 vue-mapbox 脚本到页面中
+
+> 由于公司的 cdn 包不在公网上发布，统一在[司马云](http://www.smaryun.com)上获取，下面展示的是开源的脚本
 
 ```html
 <!DOCTYPE html>
@@ -32,41 +39,28 @@ Add Vue, MapboxGL and Vue-mapbox scripts on your page:
     <!-- ... -->
     <!-- Mapbox GL CSS -->
     <link
-      href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
+      href="http://develop.smaryun.com/static/libs/cdn/mapboxgl/mapbox-gl.css"
       rel="stylesheet"
     />
     <!-- Vue-mapbox CSS -->
     <link
-      href="https://cdn.jsdelivr.net/npm/vue-mapbox@latest/dist/vue-mapbox.css"
+      href="http://develop.smaryun.com/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.css"
       rel="stylesheet"
     />
     <!-- Mapbox GL JS -->
-    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js"></script>
+    <script src="http://develop.smaryun.com/static/libs/cdn/mapboxgl/mapbox-gl.js"></script>
     <!-- VueJS -->
     <script src="https://cdn.jsdelivr.net/npm/vue@latest/dist/vue.min.js"></script>
     <!-- Vue-mapbox -->
     <script
       type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/vue-mapbox@latest/dist/vue-mapbox.min.js"
+      src="http://develop.smaryun.com/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.umd.min.js"
     ></script>
     <!-- ... -->
   </head>
 </html>
 ```
 
-All components will be placed in global VueMapbox object (`VueMapbox.MglMap` etc.)
-
-## Migration from version 0.1.x
-
-In version `0.2` you don't need to register VueMapbox as Vue plugin.
-
-So you don't need this code anymore:
-
-```js
-import VueMapbox from "vue-mapbox";
-import Mapbox from "mapbox-gl";
-
-Vue.use(VueMapbox, { mapboxgl: Mapbox });
-```
-
-Now you're ready for mapping. See how to [create a map](/guide/basemap.md).
+::: tip 目的
+所有的组件都是在 既可以全局引入，也可以按需引入。 推荐全局使用。
+:::
