@@ -1,17 +1,17 @@
 export function initManager() {
   window.CesiumZondy = window.CesiumZondy || {};
   window.CesiumZondy.TerrainManager = window.CesiumZondy.TerrainManager || {
-    default: [],
+    default: []
   };
   window.CesiumZondy.RasterManager = window.CesiumZondy.RasterManager || {
-    default: [],
+    default: []
   };
   window.CesiumZondy.LabelManager = window.CesiumZondy.LabelManager || {
-    default: [],
+    default: []
   };
 
   window.CesiumZondy.M3DFileManager = window.CesiumZondy.M3DFileManager || {
-    default: [],
+    default: []
   };
 
   window.CesiumZondy.GlobesManager =
@@ -43,6 +43,8 @@ export function initManager() {
     window.CesiumZondy.IgsTerrainManager || new EventHandlerManager();
   window.CesiumZondy.M3DIgsManager =
     window.CesiumZondy.M3DIgsManager || new EventHandlerManager();
+  window.CesiumZondy.arcgisManager =
+    window.CesiumZondy.arcgisManager || new EventHandlerManager();
 }
 
 export class BaseManager {
@@ -61,7 +63,7 @@ export class BaseManager {
     this[vueKey].push({
       key: vueIndex,
       source: source,
-      options: options,
+      options: options
     });
   }
 
@@ -100,7 +102,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index,
+        index: index
       };
     }
     return findSource;
@@ -124,3 +126,4 @@ export class DrawToolManager extends BaseManager {}
 export class EventHandlerManager extends BaseManager {}
 export class IgsTerrainManager extends BaseManager {}
 export class M3DIgsManager extends BaseManager {}
+export class arcgisManager extends BaseManager {}

@@ -39,6 +39,13 @@
 - **Type**: `String`
 - **non-synced** 非 watch 属性
 - - **Description:** 样式 json 文件路径,有 styleUrl 就可以直接读取 styleUrl 里的信息;不然就是加载中地发布的矢量瓦片，使用 ip，port 和 layerName 先拼接 styleUrl 路径再进行查询。
+- **Example**
+
+```js
+<mapgis-web-scene>
+  <mapgis-3d-vectortile-layer styleUrl="http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/蓝色-墨卡托.json" />
+</mapgis-web-scene>
+```
 
 ### `vectortilejson`
 
