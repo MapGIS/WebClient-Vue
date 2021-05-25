@@ -1,8 +1,9 @@
 <template>
-  <span />
+  <span/>
 </template>
 <script>
 import VueOption from "../../Base/Vue/VueOptions";
+import ServiceLayer from "../ServiceLayer";
 
 export default {
   name: "mapgis-3d-arcgis-tile-layer",
@@ -10,6 +11,9 @@ export default {
     url: {
       type: String,
       default: null
+    },
+    id: {
+      type: String
     },
     srs: {
       type: String,
@@ -31,12 +35,13 @@ export default {
     },
     ...VueOption,
   },
-  data(){
+  data() {
     return {
-
+      initial: true,
     }
   },
-  inject: ["Cesium", "webGlobe","CesiumZondy"],
+  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  mixins: [ServiceLayer],
   created() {
   },
   mounted() {
@@ -69,8 +74,7 @@ export default {
           layer.source.alpha = this.layerStyle.opacity;
         }
         if (this.layerStyleCopy.zIndex !== this.layerStyle.zIndex) {
-          this.unmount();
-          this.mount();
+          this.$_moveLayer();
         }
         this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
       },
@@ -82,6 +86,13 @@ export default {
         this.mount();
       },
       deep: true
+    },
+    id: {
+      handler: function (next) {
+        const {vueIndex, vueKey, CesiumZondy} = this;
+        let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+        find.source.id = next;
+      }
     }
   },
   methods: {
@@ -108,24 +119,33 @@ export default {
       const {imageryLayers} = viewer;
       let imageLayer = imageryLayers.addImageryProvider(provider, zIndex);
 
-      CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer);
-      let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
-
-      if(find && find.source) {
+      CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer, {zIndex: zIndex});
+      // let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+      if (imageLayer && this.initial) {
         if (visible) {
-          find.source.show = visible;
+          imageLayer.show = visible;
         }
         if (opacity >= 0) {
-          find.source.alpha = opacity;
+          imageLayer.alpha = opacity;
+        }
+        if (this.id) {
+          imageLayer.id = this.id;
+        } else {
+          imageLayer.id = vueIndex;
         }
       }
+      if (this.initial) {
+        this.$_initLayerIndex();
+      }
+      this.initial = false;
+      this.$emit("load", imageLayer, this);
 
       return (
           !viewer.isDestroyed() // && viewer.imageryLayers.contains(imageLayer)
       );
     },
     unmount() {
-      let {webGlobe, vueKey, vueIndex,CesiumZondy} = this;
+      let {webGlobe, vueKey, vueIndex, CesiumZondy} = this;
       const {viewer} = webGlobe;
       const {imageryLayers} = viewer;
       let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
@@ -154,7 +174,7 @@ export default {
       }
       return options;
     },
-    $_initLayerStyle(layerStyle){
+    $_initLayerStyle(layerStyle) {
       if (layerStyle.zIndex == null && layerStyle.zIndex === undefined) {
         layerStyle.zIndex = this.vueIndex;
       }

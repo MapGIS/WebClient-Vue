@@ -14,7 +14,7 @@
 - **类型:** `String`
 - **可选**
 - **watch**
-- **Non-Synced**
+- **Synced**
 - **描述:** 空间坐标参考系,目前支持如下值：
 
 ```
@@ -24,6 +24,13 @@ EPSG:4610
 EPSG:4214
 EPSG:3857
 ```
+
+### `id`
+
+- **类型：** `String`
+- **默认值:** `null`
+- **Synced**
+- **描述：** 指定组件图层的 id 值。
 
 ### `layers`
 
@@ -114,6 +121,87 @@ export default {
       } else {
         this.layerStyle.zIndex = 1;
       }
+    }
+  }
+};
+</script>
+<style lang="css">
+.main {
+  height: 600px;
+  width: 100%;
+}
+</style>
+```
+
+### 控制多张地图显示的 zIndex
+
+```vue
+<template>
+  <mapgis-web-scene class="main">
+    <mapgis-3d-arcgis-map-layer :url="url" :layerStyle="layerStyle" />
+    <mapgis-3d-arcgis-tile-layer
+      v-if="show"
+      :url="url2"
+      :layerStyle="layerStyle2"
+    ></mapgis-3d-arcgis-tile-layer>
+    <button @click="changeOpacity">改变透明度</button>
+    <button @click="changeIndex">改变图层顺序</button>
+    <button @click="changeLayers">改变图层顺序</button>
+    <button @click="addMap">新增地图</button>
+  </mapgis-web-scene>
+</template>
+
+<script>
+export default {
+  name: "arcgisMapLayer",
+  data() {
+    return {
+      url:
+        "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      url2:
+        "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
+      layers: "",
+      layerStyle: {
+        visible: true,
+        opacity: 1,
+        zIndex: 2000
+      },
+      layerStyle2: {
+        visible: true,
+        opacity: 1,
+        zIndex: 2001
+      },
+      options: {
+        tileWidth: 256,
+        tileHeight: 256
+      },
+      id: "2",
+      show: false
+
+      // srs: "EPSG:4326"
+    };
+  },
+  methods: {
+    addMap() {
+      this.show = !this.show;
+    },
+    changeOpacity() {
+      console.log(this.layerStyle.opacity);
+      if (this.layerStyle.opacity > 1) {
+        this.layerStyle.opacity = 0;
+      } else {
+        this.layerStyle.opacity += 0.1;
+      }
+    },
+    changeIndex() {
+      if (this.layerStyle.zIndex === 3) {
+        this.layerStyle.zIndex = 5;
+      } else {
+        this.layerStyle.zIndex = 1;
+      }
+    },
+    changeLayers() {
+      this.layers = "1,2,4,6,7,8,10";
     }
   }
 };

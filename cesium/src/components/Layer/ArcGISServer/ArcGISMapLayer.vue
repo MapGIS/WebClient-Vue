@@ -1,8 +1,10 @@
+<script src="../../Base/Vue/VueOptions.js"></script>
 <template>
   <span></span>
 </template>
 <script>
 import VueOption from "../../Base/Vue/VueOptions";
+import ServiceLayer from "../ServiceLayer";
 
 export default {
   name: "mapgis-3d-arcgis-map-layer",
@@ -15,6 +17,9 @@ export default {
       type: String,
     },
     layers: {
+      type: String
+    },
+    id: {
       type: String
     },
     options: {
@@ -34,11 +39,13 @@ export default {
     },
     ...VueOption,
   },
-  data(){
+  data() {
     return {
+      initial: true,
     }
   },
-  inject: ["Cesium", "webGlobe","CesiumZondy"],
+  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  mixins: [ServiceLayer],
   created() {
   },
   mounted() {
@@ -62,13 +69,13 @@ export default {
     },
     layers: {
       handler: function () {
+        debugger
         this.unmount();
         this.mount();
       }
     },
     layerStyle: {
       handler: function () {
-        debugger
         let {vueKey, vueIndex, CesiumZondy} = this;
         let layer = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
         if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
@@ -78,8 +85,7 @@ export default {
           layer.source.alpha = this.layerStyle.opacity;
         }
         if (this.layerStyleCopy.zIndex !== this.layerStyle.zIndex) {
-          this.unmount();
-          this.mount();
+          this.$_moveLayer();
         }
         this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
       },
@@ -91,6 +97,13 @@ export default {
         this.mount();
       },
       deep: true
+    },
+    id: {
+      handler: function (next) {
+        const {vueIndex, vueKey, CesiumZondy} = this;
+        let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+        find.source.id = next;
+      }
     }
   },
   methods: {
@@ -113,22 +126,32 @@ export default {
       this.layerStyleCopy = Object.assign({}, this.layerStyle);
       let {webGlobe, layerStyle} = this;
       const {zIndex, visible, opacity} = layerStyle;
-      const {vueIndex, vueKey,CesiumZondy} = this;
+      const {vueIndex, vueKey, CesiumZondy} = this;
       layerStyle = this.$_initLayerStyle(layerStyle);
 
       const viewer = webGlobe.viewer;
       let imageLayer = viewer.imageryLayers.addImageryProvider(provider, zIndex);
 
-      CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer);
-      let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
-      if (find && find.source){
+      CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer, {zIndex: zIndex});
+      // let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+      if (imageLayer && this.initial) {
         if (visible) {
-          find.source.show = visible;
+          imageLayer.show = visible;
         }
         if (opacity >= 0) {
-          find.source.alpha = opacity;
+          imageLayer.alpha = opacity;
+        }
+        if (this.id) {
+          imageLayer.id = this.id;
+        } else {
+          imageLayer.id = vueIndex;
         }
       }
+      if (this.initial) {
+        this.$_initLayerIndex();
+      }
+      this.initial = false;
+      this.$emit("load", imageLayer, this);
       return (
           !viewer.isDestroyed()
       );
@@ -163,7 +186,7 @@ export default {
       }
       return options;
     },
-    $_initLayerStyle(layerStyle){
+    $_initLayerStyle(layerStyle) {
       if (layerStyle.zIndex == null && layerStyle.zIndex === undefined) {
         layerStyle.zIndex = this.vueIndex;
       }

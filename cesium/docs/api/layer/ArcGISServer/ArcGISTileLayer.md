@@ -25,6 +25,13 @@ EPSG:4214
 EPSG:3857
 ```
 
+### `id`
+
+- **类型：** `String`
+- **默认值:** `null`
+- **Synced**
+- **描述：** 指定组件图层的 id 值。
+
 ### `layerStyle`
 
 - **类型:** `Object`
