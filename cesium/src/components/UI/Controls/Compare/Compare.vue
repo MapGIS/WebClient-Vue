@@ -6,6 +6,20 @@
 export default {
     name: "mapgis-3d-compare",
     inject: ["Cesium", "webGlobe"],
+    props: {
+        beforeLayers: {
+            type: Array,
+            default: function () {
+                return [];
+            },
+        },
+        afterLayers: {
+            type: Array,
+            default: function () {
+                return [];
+            },
+        },
+    },
     data() {
         return {};
     },
@@ -19,10 +33,22 @@ export default {
             let viewer = this.webGlobe;
             let layers = this.webGlobe.layers._layers;
 
-            layers[layers.length - 2].splitDirection =
-                Cesium.ImagerySplitDirection.LEFT;
-            layers[layers.length - 1].splitDirection =
-                Cesium.ImagerySplitDirection.RIGHT;
+            if (this.beforeLayers.length && this.afterLayers.length) {
+                layers.forEach((layer) => {
+                    if (this.beforeLayers.includes(layer.id)) {
+                        layer.splitDirection =
+                            Cesium.ImagerySplitDirection.LEFT;
+                    } else if (this.afterLayers.includes(layer.id)) {
+                        layer.splitDirection =
+                            Cesium.ImagerySplitDirection.RIGHT;
+                    }
+                });
+            } else {
+                layers[layers.length - 2].splitDirection =
+                    Cesium.ImagerySplitDirection.LEFT;
+                layers[layers.length - 1].splitDirection =
+                    Cesium.ImagerySplitDirection.RIGHT;
+            }
 
             let slider = this.$refs.slider;
             viewer.scene.imagerySplitPosition =
