@@ -1,14 +1,28 @@
+import ArcgisTileLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
+import ArcgisMapLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
+
 export default {
     title: "三维/交互-卷帘"
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
+    components: { ArcgisTileLayer, ArcgisMapLayer },
+    data() {
+        return {
+            tileUrl: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+            tileId: "asdasdasdsafasf",
+            mapUrl: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
+            mapId: "fhjoghjgfjhg",
+            beforeLayers: ["asdasdasdsafasf"],
+            afterLayers: ["fhjoghjgfjhg"]
+        }
+    },
     template: `
     <mapgis-web-scene>
-        <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" /> 
-        <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=cia_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-        <mapgis-3d-compare></mapgis-3d-compare>
+        <arcgis-tile-layer :url="tileUrl" :id="tileId" />
+        <arcgis-map-layer :url="mapUrl" :id="mapId" />
+        <mapgis-3d-compare :beforeLayers="beforeLayers" :afterLayers="afterLayers"></mapgis-3d-compare>
     </mapgis-web-scene>
     `
 });
