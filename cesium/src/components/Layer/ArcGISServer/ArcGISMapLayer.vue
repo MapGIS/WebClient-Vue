@@ -11,7 +11,7 @@ export default {
   props: {
     url: {
       type: String,
-      default: null
+      required:true
     },
     srs: {
       type: String,
@@ -69,7 +69,6 @@ export default {
     },
     layers: {
       handler: function () {
-        debugger
         this.unmount();
         this.mount();
       }
