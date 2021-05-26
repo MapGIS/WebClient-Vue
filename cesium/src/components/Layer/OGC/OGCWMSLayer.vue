@@ -10,8 +10,8 @@ export default {
   inject: ["Cesium", "webGlobe"],
   mixins:[ServiceLayer],
   props: {
-    url: {type: String},
-    layers: {type: String},
+    url: {type: String, required: true},
+    layers: {type: String, required: true},
     styles: {type: String},
     crs: {type: String},
     srs: {type: String},
