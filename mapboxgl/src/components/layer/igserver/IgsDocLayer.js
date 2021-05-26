@@ -54,24 +54,23 @@ export default {
     }
   },
   created() {
-    this.$watch("layers",function () {
+    this.$watch("layers", function() {
       this.$_updateLayer();
-    })
-    this.$watch("cache",function () {
+    });
+    this.$watch("cache", function() {
       this.$_updateLayer();
-    })
-    this.$watch("filters",function () {
-      console.log("dasdasdsa")
+    });
+    this.$watch("filters", function() {
       this.$_updateLayer();
-    })
+    });
   },
-  data(){
+  data() {
     return {
       newGuid: undefined
-    }
+    };
   },
   methods: {
-    $_updateLayer(){
+    $_updateLayer() {
       this.newGuid = newGuid();
       this.$_init();
       //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
@@ -94,17 +93,22 @@ export default {
       if (!domain) {
         domain = this.protocol + "://" + this.ip + ":" + this.port;
       }
-      let baseUrl = domain + "/igs/rest/mrms/docs/" + this.serverName;
-      let partUrl = this.$_initAllRequestParams().join("&");
-      this._url = encodeURI(baseUrl + "?" + partUrl) + "&bbox={bbox}";
+      let { serverName, tileSize } = this;
+      if (this.cache) {
+        this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
+      } else {
+        let baseUrl = domain + "/igs/rest/mrms/docs/" + this.serverName;
+        let partUrl = this.$_initAllRequestParams().join("&");
+        this._url = encodeURI(baseUrl + "?" + partUrl) + "&bbox={bbox}";
+      }
     },
     $_initAllRequestParams() {
       let params = [];
 
       params.push("f=" + this.f);
-      if(this.newGuid){
+      if (this.newGuid) {
         params.push("guid=" + this.newGuid);
-      }else{
+      } else {
         params.push("guid=" + this.guid);
       }
 

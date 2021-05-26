@@ -8,7 +8,7 @@ export default {
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
     domain: "http://develop.smaryun.com:6163",
-    serverName : "北京市"
+    serverName: "北京市",
   },
 };
 
@@ -24,23 +24,44 @@ const Template = (args, { argTypes }) => ({
   <button style="position: absolute;z-index: 1;left:330px;top:0;" @click="edit('cache',true)">修改cache</button>
   <button style="position: absolute;z-index: 1;left:420px;top:0;" @click="edit('cache',false)">还原cache</button>
   </mapgis-web-map>`,
-  data(){
+  data() {
     return {
-      filters:"",
-      layers:"show:0",
-      cache:false
-    }
+      filters: "",
+      layers: "show:0",
+      cache: false,
+    };
   },
-  methods:{
-    edit(name,value){
+  methods: {
+    edit(name, value) {
       this[name] = value;
-    }
-  }
+    },
+  },
 });
 
-export const Doc = Template.bind({});
-Doc.args = {
+export const 地图文档 = Template.bind({});
+地图文档.args = {
   layerId: "igs_layer_layerid",
   domain: "http://develop.smaryun.com:6163",
-  serverName : "北京市"
+  serverName: "北京市",
 };
+
+const TemplateTile = (args, { argTypes }) => ({
+  props: Object.keys(args),
+  components: { MapgisWebMap, MapgisIgsDocLayer },
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:60vh">
+  <mapgis-igs-doc-layer v-bind="$props" />
+  </mapgis-web-map>`,
+  data() {
+    return {};
+  },
+  methods: {},
+});
+
+export const 动态切片 = TemplateTile.bind({});
+动态切片.args = {
+  layerId: "igs_layer_layerid",
+  domain: "http://localhost:6163",
+  serverName: "EPSG_4326_CHINA",
+  cache: true,
+};
+
