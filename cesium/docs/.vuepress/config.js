@@ -62,6 +62,9 @@ module.exports = {
             children: [
               ["/api/", "地图场景"],
               ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/IGServer/IgsVectorLayer.md", "IGS-二维矢量"],
+              ["/api/layer/ArcGISServer/ArcGISMapLayer.md", "ArcGIS-Map"],
+              ["/api/layer/ArcGISServer/ArcGISTileLayer.md", "ArcGIS-Tile"],
               ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
               ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],

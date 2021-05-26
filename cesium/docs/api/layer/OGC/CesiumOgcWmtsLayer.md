@@ -8,7 +8,6 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **必传**
-- **Non-Synced**
 - **watch**
 - **描述:** 基地址，当请求天地图时，请在 url 后面添加 token，例如：
 
@@ -33,12 +32,18 @@ http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
 - **Non-Synced**
 - **描述:** 地图文档名称，根据发布的 WMTS 服务信息设置
 
-### `tileMatrixSet`
+### `tileMatrixSetID`
 
 - **类型:** `String`
-- **必传:**
+- **必传**
 - **watch**
-- **Non-Synced**
+- **描述:** 地图比例尺名称
+
+### `srs`
+
+- **类型:** `String`
+- **可选**
+- **watch**
 - **描述:** 地图参考系，目前支持如下值：
 
 ```
@@ -53,9 +58,8 @@ EPSG:3857
 
 - **类型:** `String`
 - **默认值:** `default`
-- **可选**
+- **必传**
 - **watch**
-- **Non-Synced**
 - **描述:** 地图样式,style 为 vue 关键字，因此改名
 
 ### `layerStyle`
@@ -63,20 +67,26 @@ EPSG:3857
 - **类型:** `Object`
 - **可选**
 - **watch**
-- **Non-Synced**
 - **描述:** 图层样式，有如下值：
 
 ```
     visible Boolean 控制图层显示或隐藏，不会重新加载图层，true：显示图层、fales：隐藏图层
     opacity Number 控制图层透明度，会重新加载图层，0 - 1之间的数字，0：隐藏，1：显示
-    zIndex Number 控制图层顺序，会重新加载图层，类似css里面的z-index，从0开始的数字
+    zIndex Number 控制图层顺序，会重新加载图层，类似css里面的z-index，从1开始的数字
 ```
+
+### `id`
+
+- **类型:** `String`
+- **可选**
+- **watch**
+- **描述:** 图层唯一标识符，如果不传，以 vueIndex 代替
 
 ### `options`
 
 - **类型:** `Object`
 - **可选**
-- **Non-Synced**
+- **watch**
 - **描述:** Cesium 的进阶参数，另外不属于 cesium 的如下参数也在 options 中：
   ```
     vueKey String 默认值default 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
@@ -108,13 +118,13 @@ All common layer [events](/zh/api/Layers/#events)
 
 ```vue
 <template>
-  <mapgis-web-globe>
+  <mapgis-web-scene>
     <mapgis-3d-ogc-wmts-layer
       :url="url"
       :layer="layer"
-      :tileMatrixSet="tileMatrixSet"
+      :tileMatrixSetID="tileMatrixSetID"
     />
-  </mapgis-web-globe>
+  </mapgis-web-scene>
 </template>
 
 <script>
@@ -122,11 +132,12 @@ export default {
   data() {
     return {
       //服务基地址
-      url: "http://localhost:6163/igs/rest/ogc/WMTSServer",
+      url:
+        "http://develop.smaryun.com:6163/igs/rest/ogc/WORLDMKTTILE2/WMTSServer",
       //地图文档名称
-      layer: "武汉_专题图_4327",
-      //空间参考系
-      tileMatrixSet: "EPSG:4326"
+      layer: "WORLDMKTTILE2",
+      //地图比例尺
+      tileMatrixSetID: "GoogleMapsCompatible_GB"
     };
   }
 };
@@ -144,14 +155,22 @@ export default {
 
 ```vue
 <template>
-  <mapgis-web-globe>
+  <mapgis-web-scene>
     <mapgis-3d-ogc-wmts-layer
       :url="url"
       :layer="layer"
-      :tileMatrixSet="tileMatrixSet"
+      :tileMatrixSetID="tileMatrixSetID"
       :layerStyle="layerStyle"
     />
-  </mapgis-web-globe>
+    <mapgis-3d-ogc-wms-layer
+      v-if="show"
+      :url="url2"
+      :layers="layers"
+      :srs="srs2"
+      :layerStyle="layerStyle2"
+    />
+  </mapgis-web-scene>
+  <button @click="add">添加地图</button>
   <button @click="isShow">是否可见</button>
   <button @click="changeOpacity">改变透明度</button>
   <button @click="changeIndex">改变图层顺序</button>
@@ -162,27 +181,51 @@ export default {
   data() {
     return {
       //服务基地址
-      url: "http://localhost:6163/igs/rest/ogc/WMTSServer",
+      url:
+        "http://develop.smaryun.com:6163/igs/rest/ogc/WORLDMKTTILE2/WMTSServer",
       //地图文档名称
-      layer: "武汉_专题图_4327",
-      //空间参考系
-      tileMatrixSet: "EPSG:4326",
+      layer: "WORLDMKTTILE2",
+      //地图比例尺
+      tileMatrixSetID: "GoogleMapsCompatible_GB",
+      //样式信息
       layerStyle: {
         visible: true,
         opacity: 1,
-        zIndex: 0
-      }
+        zIndex: 105
+      },
+      //服务基地址
+      url2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      //要显示的图层名称
+      layers: "武汉市,武汉市_行人道路",
+      //空间参考系
+      srs2: "EPSG:4326",
+      //样式信息
+      layerStyle2: {
+        zIndex: 50
+      },
+      show: false
     };
   },
   methods: {
+    add() {
+      //通过v-if方式添加一个地图
+      this.show = !this.show;
+    },
     isShow() {
-      this.layerStyle.visible = !this.visible;
+      //地图的显示或隐藏，会重新加载地图
+      this.layerStyle.visible = !this.layerStyle.visible;
     },
     changeOpacity() {
+      //地图的透明度选项，不会重新加载地图
       this.layerStyle.opacity = 0.5;
     },
     changeIndex() {
-      this.layerStyle.zIndex = 2;
+      //更改地图顺序
+      if (this.layerStyle.zIndex === 105) {
+        this.layerStyle.zIndex = 10;
+      } else {
+        this.layerStyle.zIndex = 105;
+      }
     }
   }
 };
@@ -200,9 +243,9 @@ export default {
 
 ```vue
 <template>
-  <mapgis-web-globe>
-    <mapgis-3d-ogc-wmts-layer :url="url" :tileMatrixSet="tileMatrixSet" />
-  </mapgis-web-globe>
+  <mapgis-web-scene>
+    <mapgis-3d-ogc-wmts-layer :url="url" :srs="srs" />
+  </mapgis-web-scene>
 </template>
 
 <script>
@@ -212,8 +255,8 @@ export default {
       //天地图地址，请在url地址后面加token
       url:
         "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
-      //参考系
-      tileMatrixSet: "EPSG:4326"
+      //地图空间坐标系
+      srs: "EPSG:4326"
     };
   }
 };
