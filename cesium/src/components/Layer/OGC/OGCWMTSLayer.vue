@@ -9,11 +9,11 @@ export default {
   inject: ["Cesium", "webGlobe"],
   mixins:[ServiceLayer],
   props: {
-    url: {type: String},
-    layer: {type: String},
-    tileMatrixSetID: {type: String},
+    url: {type: String, required: true},
+    layer: {type: String, required: true},
+    tileMatrixSetID: {type: String, required: true},
     wmtsStyle: {type: String, default: "default"},
-    srs: {type: String},
+    srs: {type: String, required: true},
     id: {type: String,default:""},
     layerStyle: {type: Object,default:function () {
         return {}
@@ -175,7 +175,9 @@ export default {
       //当srs为4326时，tileMatrixLabels为必要值，因此给一个默认值
       let checkTileMatrixLabels = this.$_checkValue(opt, "tileMatrixLabels", "");
       if (checkTileMatrixLabels === "null" && opt.srs === "EPSG:4326") {
-        opt.tileMatrixLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+        if(this.url.indexOf("tianditu") > -1){
+          opt.tileMatrixLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+        }
       }
 
       //vueKey为必要值，但是不需要暴露出去，因此给一个默认值
