@@ -36,7 +36,7 @@ export default {
       type: String,
       default: newGuid()
     },
-    cache: {
+    dynamicTile: {
       type: Boolean,
       default: false
     },
@@ -57,7 +57,7 @@ export default {
     this.$watch("layers", function() {
       this.$_updateLayer();
     });
-    this.$watch("cache", function() {
+    this.$watch("dynamicTile", function() {
       this.$_updateLayer();
     });
     this.$watch("filters", function() {
@@ -94,7 +94,7 @@ export default {
         domain = this.protocol + "://" + this.ip + ":" + this.port;
       }
       let { serverName, tileSize } = this;
-      if (this.cache) {
+      if (this.dynamicTile) {
         this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
       } else {
         let baseUrl = domain + "/igs/rest/mrms/docs/" + this.serverName;
@@ -135,8 +135,8 @@ export default {
       if (this.isAntialiasing !== null) {
         params.push("isAntialiasing=" + this.isAntialiasing);
       }
-      if (this.cache !== null && this.isAntialiasing !== null) {
-        params.push("cache=" + this.cache);
+      if (this.dynamicTile !== null && this.isAntialiasing !== null) {
+        params.push("cache=" + this.dynamicTile);
       }
       if (this.update !== null && this.isAntialiasing !== null) {
         params.push("update=" + this.update);

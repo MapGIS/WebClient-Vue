@@ -62,6 +62,6 @@ export const 动态切片 = TemplateTile.bind({});
   layerId: "igs_layer_layerid",
   domain: "http://localhost:6163",
   serverName: "EPSG_4326_CHINA",
-  cache: true,
+  dynamicTile: true,
 };
 
