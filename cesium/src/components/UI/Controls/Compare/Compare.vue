@@ -23,10 +23,23 @@ export default {
     data() {
         return {};
     },
+    watch: {
+        beforeLayers: {
+            handler(val) {
+                this.initCompare();
+            },
+            deep: true,
+        },
+        afterLayers: {
+            handler(val) {
+                this.initCompare();
+            },
+            deep: true,
+        },
+    },
     mounted() {
         this.initCompare();
     },
-
     methods: {
         initCompare() {
             let Cesium = this.Cesium;
@@ -34,15 +47,18 @@ export default {
             let layers = this.webGlobe.layers._layers;
 
             if (this.beforeLayers.length && this.afterLayers.length) {
-                layers.forEach((layer) => {
-                    if (this.beforeLayers.includes(layer.id)) {
-                        layer.splitDirection =
+                for(let i = 1; i < layers.length; i++) {
+                    layers[i].show = true;
+                    if (this.beforeLayers.includes(layers[i].id)) {
+                        layers[i].splitDirection =
                             Cesium.ImagerySplitDirection.LEFT;
-                    } else if (this.afterLayers.includes(layer.id)) {
-                        layer.splitDirection =
+                    } else if (this.afterLayers.includes(layers[i].id)) {
+                        layers[i].splitDirection =
                             Cesium.ImagerySplitDirection.RIGHT;
+                    } else {
+                        layers[i].show = false;
                     }
-                });
+                }
             } else {
                 layers[layers.length - 2].splitDirection =
                     Cesium.ImagerySplitDirection.LEFT;
@@ -96,6 +112,12 @@ export default {
                 Cesium.ScreenSpaceEventType.PINCH_MOVE
             );
         },
+    },
+    destroyed() {
+        layers.forEach((layer) => {
+            layer.show = true;
+            layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+        });
     },
 };
 </script>
