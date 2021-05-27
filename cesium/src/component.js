@@ -36,3 +36,6 @@ export { default as Mapgis3dTerrainProvider } from "./components/Provider/Terrai
 // 数据源
 export { default as Mapgis3dGeoJsonDataSource } from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
 export { default as Mapgis3dCzmlDataSource } from "./components/DataSource/Czml/CzmlDataSource";
+
+//三维空间分析
+export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue";
