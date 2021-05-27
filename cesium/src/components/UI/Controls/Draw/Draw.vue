@@ -151,13 +151,10 @@ export default {
             material: Cesium.Material.fromType('Color', {
               color: new Cesium.Color(1.0, 0.0, 0.0, 1.0)
             }),
-            outline: true,
-            outlineWidth: 100
           });
           window.drawEntity = webGlobe.viewer.scene.primitives.add(polygon);
           vm.$emit('drawCreate', positions,degreeArr);
           vm.$emit('drawcreate', positions,degreeArr);
-          polygon.setEditable();
           drawElement.stopDrawing();
         }
       });
