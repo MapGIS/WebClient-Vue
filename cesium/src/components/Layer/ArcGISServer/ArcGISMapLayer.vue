@@ -3,6 +3,7 @@
   <span></span>
 </template>
 <script>
+import VueOption from "../../Base/Vue/VueOptions";
 import ServiceLayer from "../ServiceLayer";
 
 export default {
@@ -10,18 +11,16 @@ export default {
   props: {
     url: {
       type: String,
-      required: true
+      required:true
     },
     srs: {
       type: String,
-      EPSG: 4326
     },
     layers: {
       type: String
     },
     id: {
-      type: String,
-      default: ""
+      type: String
     },
     options: {
       type: Object,
@@ -38,26 +37,10 @@ export default {
         }
       }
     },
+    ...VueOption,
   },
   data() {
     return {
-      //监测props
-      checkType: {
-        visible: "boolean",
-        opacity: "number",
-        zIndex: "number",
-        rectangle: "object",
-        tilingScheme: "object",
-        ellipsoid: "object",
-        tileWidth: "number",
-        tileHeight: "number",
-        maximumLevel: "number",
-        credit: "object|String",
-        vueKey: "string",
-        vueIndex: "string | Number",
-      },
-      //layerStyle的副本，供watch使用
-      layerStyleCopy: {},
       initial: true,
     }
   },
@@ -134,20 +117,13 @@ export default {
       const url = this.initUrl();
       let {options, layers, Cesium} = this;
       options = this.$_initOptions(options);
-      if (layers) {
-        if (layers.indexOf("show") >= 0 ) {
-          layers = this.layers.replace("show:", "");
-        }
-      }
       const allOptions = {...options, layers, url};
       return new Cesium.ArcGisMapServerImageryProvider(allOptions);
     },
     mount() {
-      //检测参数类型是否正确，不正确不会往下执行
-      this.$_check();
       let provider = this.createCesiumObject();
+      this.layerStyleCopy = Object.assign({}, this.layerStyle);
       let {webGlobe, layerStyle} = this;
-      this.layerStyleCopy = Object.assign({}, layerStyle);
       const {zIndex, visible, opacity} = layerStyle;
       const {vueIndex, vueKey, CesiumZondy} = this;
       layerStyle = this.$_initLayerStyle(layerStyle);
@@ -158,7 +134,7 @@ export default {
       CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer, {zIndex: zIndex});
       // let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
       if (imageLayer && this.initial) {
-        if (typeof visible == "boolean") {
+        if (visible) {
           imageLayer.show = visible;
         }
         if (opacity >= 0) {
@@ -206,17 +182,6 @@ export default {
         } else {
           options.tilingScheme = new Cesium.GeographicTilingScheme();
         }
-      }
-      //vueKey为必要值，但是不需要暴露出去，因此给一个默认值
-      let checkVueKey = this.$_checkValue(options, "vueKey", "");
-      if (checkVueKey === "null") {
-        this.vueKey = "default";
-      }
-
-      //vueIndex为必要值，但是不需要暴露出去，因此给一个默认值
-      let checkVueIndex = this.$_checkValue(options, "vueIndex", "");
-      if (checkVueIndex === "null") {
-        this.vueIndex = (Math.random() * 100000000).toFixed(0);
       }
       return options;
     },

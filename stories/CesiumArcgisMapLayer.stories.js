@@ -21,8 +21,8 @@ const Template = (args, { argTypes }) => ({
 export const exportMap = Template.bind({});
 exportMap.args = {
     // url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-    url:"http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-    layers: "show:0,2,4,7,9,10,11,12",
+    url:"http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
+    layers: "0,2,4,7,9,10,11,12",
     layerStyle: {
         visible: true,
         opacity: 1,

@@ -27,5 +27,5 @@ Tile.args = {
         opacity: 1,
         zIndex: 2
     },
-    srs:"EPSG:3857"
+    srs:"EPSG:4326"
 };
