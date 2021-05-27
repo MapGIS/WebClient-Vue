@@ -47,7 +47,7 @@ export default {
             let layers = this.webGlobe.layers._layers;
 
             if (this.beforeLayers.length && this.afterLayers.length) {
-                for(let i = 1; i < layers.length; i++) {
+                for (let i = 1; i < layers.length; i++) {
                     layers[i].show = true;
                     if (this.beforeLayers.includes(layers[i].id)) {
                         layers[i].splitDirection =
@@ -114,6 +114,7 @@ export default {
         },
     },
     destroyed() {
+        let layers = this.webGlobe.layers._layers;
         layers.forEach((layer) => {
             layer.show = true;
             layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
