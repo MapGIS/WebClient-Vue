@@ -70,7 +70,8 @@ module.exports = {
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
               ["/api/m3d/m3d.md", "M3D"],
               ["/api/ui/popup.md", "气泡"],
-              ["/api/ui/compare.md", "卷帘"]
+              ["/api/ui/compare.md", "卷帘"],
+              ["/api/ui/legend.md", "图例"]
             ]
           },
           {
