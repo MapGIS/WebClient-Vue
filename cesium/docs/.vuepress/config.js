@@ -71,7 +71,8 @@ module.exports = {
               ["/api/m3d/m3d.md", "M3D"],
               ["/api/analysis/Viewshed.md", "可视域"]
               ["/api/ui/popup.md", "气泡"],
-              ["/api/ui/compare.md", "卷帘"]
+              ["/api/ui/compare.md", "卷帘"],
+              ["/api/ui/legend.md", "图例"]
             ]
           },
           {

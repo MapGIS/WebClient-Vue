@@ -5,6 +5,7 @@ export { default as Mapgis3dState } from "../../cesium/src/components/UI/Control
 export { default as Mapgis3dLink } from "../../cesium/src/components/UI/Controls/Link/Link.vue";
 export { default as Mapgis3dDraw } from "../../cesium/src/components/UI/Controls/Draw/Draw";
 export { default as Mapgis3dCompare } from "../../cesium/src/components/UI/Controls/Compare/Compare.vue";
+export { default as Mapgis3dArcserverLegend } from "../../cesium/src/components/UI/Controls/Legend/Legend.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "../../cesium/src/components/Provider/ImageProvider/ImageryLayer.vue";
