@@ -1,4 +1,4 @@
-const demoCode = require("vuepress-plugin-demo-code");
+// const demoCode = require("vuepress-plugin-demo-code");
 
 module.exports = {
   title: "VueCesium",
@@ -10,7 +10,7 @@ module.exports = {
   locales: {
     "/": {
       lang: "zh-CN",
-      title: "MapGIS",
+      title: "中地数码",
       description: "@mapgis/webclient-vue-cesium"
     }
   },
@@ -43,9 +43,9 @@ module.exports = {
           },
           {
             text: "WebClient",
-            link: "http://develop.smaryun.com:8899/#/index"
+            link: "http://develop.smaryun.com"
           },
-          { text: "开源", link: "https://github.com/soal/vue-mapbox" }
+          { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" }
         ],
         sidebar: [
           {
@@ -61,12 +61,34 @@ module.exports = {
             collapsable: false,
             children: [
               ["/api/", "地图场景"],
-              ["/api/ui/popup.md", "气泡"],
               ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/IGServer/IgsVectorLayer.md", "IGS-二维矢量"],
+              ["/api/layer/ArcGISServer/ArcGISMapLayer.md", "ArcGIS-Map"],
+              ["/api/layer/ArcGISServer/ArcGISTileLayer.md", "ArcGIS-Tile"],
+              ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
+              ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
               ["/api/m3d/m3d.md", "M3D"],
               ["/api/analysis/Viewshed.md", "可视域"]
+              ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/compare.md", "卷帘"]
             ]
+          },
+          {
+            title: "组件开发",
+            collapsable: false,
+            children: [
+              ["/plugin_components/", "使用组件"],
+              [
+                "/plugin_components/plugin_components_development.md",
+                "创建组件"
+              ]
+            ]
+          },
+          {
+            title: "版本",
+            collapsable: false,
+            children: [["/version/diff.md", "版本对比"]]
           }
         ]
       }
@@ -78,7 +100,6 @@ module.exports = {
       { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
     ],
     ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
-    // http://develop.smaryun.com/static/libs/cdn/zondyclient/vue/webclient-vue-mapboxgl.umd.min.js
     [
       "script",
       {
@@ -92,12 +113,10 @@ module.exports = {
       "demo-code",
       {
         jsLibs: [
-          // umd
           "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js",
           "http://localhost:8081/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
         ]
       }
     ]
-    /* 'demo-block', */
   ]
 };

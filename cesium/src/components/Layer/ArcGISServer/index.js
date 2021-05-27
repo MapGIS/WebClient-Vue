@@ -1,2 +1,2 @@
 import ArcGISTileLayer from "./ArcGISTileLayer";
-export {ArcGISTileLayer};
+export { ArcGISTileLayer };

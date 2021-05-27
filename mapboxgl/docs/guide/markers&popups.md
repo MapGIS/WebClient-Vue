@@ -2,27 +2,21 @@
 
 ## Marker
 
-The Marker component is a wrapper around the [Mapbox GL Marker API](https://docs.mapbox.com/mapbox-gl-js/api/#marker).
+Marker组件主要是封装了 [Mapbox GL Marker API](https://docs.mapbox.com/mapbox-js/api/#marker).
 
 ```vue
 <template>
-  <MglMap
+  <mapgis-web-map
     :accessToken="mapboxAccessToken"
     :mapStyle.sync="mapStyle"
     :center="coordinates"
   >
-    <MglMarker :coordinates="coordinates" color="blue" />
-  </MglMap>
+    <mapgis-marker :coordinates="coordinates" color="blue" />
+  </mapgis-web-map>
 </template>
 
 <script>
-import { MglMap, MglMarker } from "vue-mapbox";
-
 export default {
-  components: {
-    MglMap,
-    MglMarker
-  },
   data() {
     return {
       mapStyle: "mapbox://styles/mapbox/basic-v10",
@@ -35,42 +29,34 @@ export default {
 
 ### Props
 
-- `color {String}` Set the color of the default marker (not applicable when using the `marker` slot)
-- `coordinates {Array}` The GeoJSON coordinates for marker placement on the map
-- `offset {Object, Array}` Display the marker at an offset distance from the coordinates
+- `color {String}` 设置默认的颜色 (当使用`marker` slot时不生效)
+- `coordinates {Array}` GeoJSON格式的coordinates部分, 用于标注位置
+- `offset {Object, Array}` 相对显示位置的偏移
 
-Full list of props you cab see on [API page](/api/marker.md#props)
+完整的参数请看 [API](/zh/api/marker.md#props)
 
-### Slots
-
-The Marker component has two slots: the `marker` slot and default slot used for popup.
+### 插槽
+Marker组件有2中插槽： `marker` 插槽和用于Marker上popup的 `默认` 插槽
 
 #### The `marker` slot
 
-The `marker` slot allows you to customize the look of the marker. Here is an example of using the [Vuetify `v-icon` component](https://vuetifyjs.com/en/components/icons) instead of the default marker icon:
+marker插槽 `marker` 可以自定义marker的内部html样式. 请参考 [IconFont](https://www.iconfont.cn/help/detail?spm=a313x.7781069.1998910419.16&helptype=code) 替代默认的icon图形:
 
 ```vue
 <template>
-  <MglMap
+  <mapgis-web-map
     :accessToken="mapboxAccessToken"
     :mapStyle.sync="mapStyle"
     :center="coordinates"
   >
-    <MglMarker :coordinates="coordinates">
-      <v-icon slot="marker">mdi-map-marker</v-icon>
-    </MglMarker>
-  </MglMap>
+    <mapgis-marker :coordinates="coordinates">
+      <iconfont slot="marker">mdi-map-marker</iconfont>
+    </mapgis-marker>
+  </mapgis-web-map>
 </template>
 
 <script>
-import { MglMap, MglMarker } from "vue-mapbox";
-
 export default {
-  components: {
-    MglMap,
-    MglMarker
-  },
-
   data() {
     return {
       mapStyle: "mapbox://styles/mapbox/basic-v10",
@@ -81,38 +67,97 @@ export default {
 </script>
 ```
 
-### Default slot
+``` vue
+<template >
+  <div class="iconfont-wrapper">
+    <svg v-if="iconId" class="icon" aria-hidden="true" @click="click()">
+      <use :xlink:href="iconId" />
+    </svg>
+    <div class="iconfont-text" v-if="name">{{ name }}</div>
+    <div class="iconfont-text-none" v-else />
+  </div>
+</template>
 
-Default slot allows you to specify content to display in a Mapbox popup when the marker is clicked. See [below](#markers-popups-together)
+<script>
+import "./iconfont.js";
+
+export default {
+  name: "iconfont",
+  props: {
+    type: {
+      type: String,
+      default: ""
+    },
+    name: String
+  },
+  computed: {
+    iconId() {
+      return this.type ? `#${this.type}` : "";
+    }
+  },
+  methods: {
+    click() {
+      this.$emit("click");
+    }
+  }
+};
+</script>
+<style lang="scss">
+.iconfont-wrapper {
+  display: inline;
+
+  .icon {
+    width: 1.15em;
+    height: 1.15em;
+    vertical-align: -0.25em;
+    line-height: 16px;
+    fill: currentColor;
+    overflow: hidden;
+  }
+
+  .iconfont-text {
+    display: inline;
+    margin-left: 12px;
+    // line-height: 12px;
+    font-size: 14px;
+  }
+
+  .iconfont-text-none {
+    display: none;
+    margin-left: 12px;
+    // line-height: 12px;
+    font-size: 14px;
+  }
+}
+</style>
+```
+
+
+### 默认插槽
+默认的插槽允许定制 当点击一个Marker后弹出的Popup的样式。请看 [Markder&Popups](#MarkersPopups)
 
 ## Popup
 
-The Popup component is wrapper around the [Mapbox GL Popup API](https://docs.mapbox.com/mapbox-gl-js/api/#popup).
+Popup组件是对[Mapbox GL Popup API](https://docs.mapbox.com/mapbox-gl-js/api/#popup)的封装.
+你可以直接HTML或者Vue组件设置popup的内部的样式.
 
-You can specify content inside popup in default slot. It can be HTML or Vue component.
-In this example [Vuetify card component](https://vuetifyjs.com/en/components/cards) used as a content for popup:
+如下所示 [Element-Card](https://element.eleme.cn/#/zh-CN/component/card) 作为内容:
 
 ```vue
 <template>
-  <MglMap
+  <mapgis-web-map
     :accessToken="mapboxAccessToken"
     :mapStyle.sync="mapStyle"
     :center="coordinates"
   >
-    <MglPopup :coordinates="coordinates" anchor="top">
-      <VCard> <div>Hello, I'm popup!</div> </VCard>
-    </MglPopup>
-  </MglMap>
+    <mapgis-popup :coordinates="coordinates" anchor="top">
+      <el-card class="box-card"> <div>Hello, I'm popup!</div> </el-card>
+    </mapgis-popup>
+  </mapgis-web-map>
 </template>
 
 <script>
-import { MglMap, MglPopup } from "vue-mapbox";
-
 export default {
-  components: {
-    MglMap,
-    MglPopup
-  },
   data() {
     return {
       mapStyle: "mapbox://styles/mapbox/basic-v10",
@@ -123,55 +168,47 @@ export default {
 </script>
 ```
 
-If you set `onlyText` prop to `true` content in Popup default slot will be treated as plain text. It can be useful if you loading popup content from external untrusted source.
+如果你设置 `onlyText` 属性为 `true`, 内容被统一当做文本处理. 一般用于从一个不信任的数据源获取对应的显示html内容，防止注入。
 
-Popups added to the map is hidden by default. If you want to show the popup immediately you need to set the prop `showed` to `true`
+通常Popup被添加到地图上是默认隐藏的，如果你想加载的时候立即展示，你需要设置`showed` 属性为 `true`。
 
 ### Props
 
-- `showed {Boolean}` If `true`, the popup shows immediately after component is created.
+- `showed {Boolean}` 如果是 `true`, 在组件创建后会立即显示。
 
-- `closeButton {Boolean}` If `true`, a close button will appear in the top right corner of the popup.
+- `closeButton {Boolean}` 如果 `true`, 右上角出现关闭按钮。
 
-- `closeOnClick {Boolean}` If true, the popup will closed when the map is clicked.
+- `closeOnClick {Boolean}` 如果 `true`, 当点击地图的时候，该popup会消失。
 
-- `coordinates {Array}` The GeoJSON coordinates for popup placement on the map. If popup used inside marker this prop will be ignored.
+- `coordinates {Array}` GeoJSON格式的coordinates参数.如果popup用于markder内部忽略该参数，使用marker的位置。
 
-- `anchor {string}` prop specifies the part of the Popup that should be positioned closest to the coordinates point.
+- `anchor {string}` 指定了popup出现的位置是在设置的那个方位。
 
-Full list of props you can see on [API page](/api/popup.md#props)
+完整的参数列表请看 [API](/zh/api/popup.md#props)
 
-## Markers & Popups together
+## MarkersPopups
 
-Popup often used inside of map markers. You can achive this by passing Popup inside Marker in default slot:
+Popup通常使用内部的地图注记Marker. 你可以将Popup组件作为子组件内嵌在Marker组件中。
 
 ```vue
 <template>
-  <MglMap
+  <mapgis-web-map
     :accessToken="mapboxAccessToken"
     :mapStyle.sync="mapStyle"
     :center="coordinates"
   >
-    <MglMarker :coordinates="coordinates">
-      <MglPopup>
-        <VCard>
+    <mapgis-marker :coordinates="coordinates">
+      <mapgis-popup>
+        <el-card>
           <div>Hello, I'm popup!</div>
-        </VCard>
-      </MglPopup>
-    </MglMarker>
-  </MglMap>
+        </el-card>
+      </mapgis-popup>
+    </mapgis-marker>
+  </mapgis-web-map>
 </template>
 
 <script>
-import { MglMap, MglPopup, MglMarker } from "vue-mapbox";
-
 export default {
-  components: {
-    MglMap,
-    MglMarker,
-    MglPopup
-  },
-
   data() {
     return {
       mapStyle: "mapbox://styles/mapbox/basic-v10",
@@ -181,6 +218,7 @@ export default {
 };
 </script>
 ```
+在该场景下，Popup会自动的挂载到Marker上。你可以使用`togglePopup`方法控制popup的可见与不可见。
 
-In this case, Popup will be automatically bound to Marker. You can use `togglePopup` Marker method to toggle visibility of bound Popup.
-Take note that Popup `coordinates` prop will be ignored.
+> 在该场景下, Popup的 `coordinates`属性会被忽略
+

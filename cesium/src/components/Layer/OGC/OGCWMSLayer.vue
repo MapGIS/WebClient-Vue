@@ -3,16 +3,22 @@
 </template>
 
 <script>
+import ServiceLayer from "../ServiceLayer";
+
 export default {
   name: "mapgis-3d-ogc-wms-layer",
   inject: ["Cesium", "webGlobe"],
+  mixins:[ServiceLayer],
   props: {
     url: {type: String, required: true},
     layers: {type: String, required: true},
     styles: {type: String},
     crs: {type: String},
     srs: {type: String},
-    layerStyle: {type: Object},
+    id: {type: String,default:""},
+    layerStyle: {type: Object,default:function () {
+        return {}
+      }},
     options: {
       type: Object,
       default: () => {
@@ -101,8 +107,7 @@ export default {
           layer.source.alpha = this.layerStyle.opacity;
         }
         if(this.layerStyleCopy.zIndex !== this.layerStyle.zIndex){
-          this.unmount();
-          this.mount();
+          this.$_moveLayer();
         }
         this.layerStyleCopy = Object.assign(this.layerStyleCopy,this.layerStyle);
       },
@@ -114,66 +119,18 @@ export default {
         this.mount();
       },
       deep: true
+    },
+    id:{
+      handler: function () {
+        const {vueIndex, vueKey} = this;
+        let layer = window.CesiumZondy.OGCWMTSManager.findSource(vueKey, vueIndex);
+        layer.source.id = this.id;
+      }
     }
   },
   methods: {
-    $_check(){
-      let opt = {...this.options, ...this.layerStyle}
-      this.$_checkProps(opt, this.checkType);
-    },
-    /*检查对象里面的属性是否是需要的类型，如果不是则抛出错误
-    * author 杨琨
-    * param param checkObj 需要被检查的对象
-    * param param checkType 属性类型集合
-    * */
-    $_checkProps(checkObj, checkType) {
-      let vm = this;
-      if (checkObj&&checkType) {
-        Object.keys(checkObj).forEach(function (key) {
-          let result;
-          if (checkType.hasOwnProperty(key) && typeof key === 'string') {
-            result = vm.$_checkValue(checkObj, key, checkType[key]);
-            if (result === "wrongType") {
-              throw new Error(key + "的类型错误，应为" + checkType[key] + "类型");
-            }
-          }
-        });
-      }
-    },
-    /*检查属性是否存在或者类型是否正确，优先检查是否为空
-    * author 杨琨
-    * param param obj 需要被检查的对象
-    * param param name 要检查的属性名
-    * param param type 要检查的属性的类型
-    * return "null" 或者 "wrongType"
-    * */
-    $_checkValue(obj, name, type) {
-      let flag = "";
-      if (typeof type === 'string') {
-        let typeArr = type.split("|");
-        for (let i = 0; i < typeArr.length; i++) {
-          typeArr[i] = typeArr[i].replace(/\s*/g, "");
-          if (obj.hasOwnProperty(name)) {
-            if (obj[name] === null || obj[name] === undefined) {
-              flag = "null";
-            } else if (typeof obj[name] === 'object') {
-              if (typeArr[i] === "array") {
-                flag = !(obj[name] instanceof Array) ? "wrongType" : "";
-              } else if (typeArr[i] !== "object") {
-                flag = "wrongType";
-              }
-            } else if (!(typeof obj[name] === typeArr[i])) {
-              flag = "wrongType";
-            }
-          } else {
-            flag = "null";
-          }
-        }
-      }
-      return flag;
-    },
     async createCesiumObject() {
-      let {url, layers, options = {}} = this;
+      let {url, options = {}} = this;
       const {headers} = options;
 
       let urlSource = undefined;
@@ -231,7 +188,7 @@ export default {
       //检测参数类型是否正确，不正确不会往下执行
       this.$_check();
       const {webGlobe, options, layerStyle} = this;
-      const {zIndex, visible, opacity} = layerStyle;
+      const {visible, opacity} = layerStyle;
       const {viewer} = webGlobe;
       const {imageryLayers} = viewer;
       const {saturation, hue} = options;
@@ -242,6 +199,13 @@ export default {
       window.Zondy = window.Zondy || window.CesiumZondy;
       let provider = await this.createCesiumObject();
       const {vueIndex, vueKey} = this;
+      //zIndex为空时，将vueIndex赋值给zIndex
+      let checkZIndex = this.$_checkValue(layerStyle, "zIndex", ""),zIndex;
+      if (checkZIndex === "null") {
+        zIndex = vueIndex;
+      }else {
+        zIndex = this.layerStyle.zIndex;
+      }
       //通过zIndex确定图层层级
       let imageLayer = imageryLayers.addImageryProvider(provider, zIndex);
       if (saturation !== undefined) {
@@ -251,19 +215,27 @@ export default {
         imageLayer.hue = hue;
       }
 
-      window.CesiumZondy.OGCWMSManager.addSource(vueKey, vueIndex, imageLayer);
-      let layer = window.CesiumZondy.OGCWMSManager.findSource(vueKey, vueIndex);
+      if(this.id.length === 0){
+        imageLayer.id = vueIndex;
+      }else {
+        imageLayer.id = this.id;
+      }
+
+      window.CesiumZondy.OGCWMSManager.addSource(vueKey, vueIndex, imageLayer,{zIndex:zIndex});
 
       //如果第一次初始化，有layerStyle，则赋值，以后都走watch
       if (this.$_checkValue(layerStyle, "visible", "") !== "null" && !this.initial) {
-        layer.source.show = visible;
+        imageLayer.show = visible;
       }
       if (this.$_checkValue(layerStyle, "opacity", "") !== "null" && !this.initial) {
-        layer.source.alpha = opacity;
+        imageLayer.alpha = opacity;
+      }
+      if(!this.initial){
+        this.$_initLayerIndex();
       }
       this.initial = true;
 
-      this.$emit("load", layer, this);
+      this.$emit("load", imageLayer, this);
     },
     unmount() {
       let {webGlobe, vueKey, vueIndex} = this;

@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-cesium",
-  "version": "1.0.6",
+  "version": "10.5.4",
   "description": "mapgis webclient-vue-cesium",
   "main": "dist/webclient-vue-cesium.umd.1.js",
   "module": "src/main.js",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@mapgis/cesium": "^1.0.0",
-    "@mapgis/webclient-store": "^1.0.13-fix",
+    "@mapgis/webclient-store": "^1.0.14",
     "@turf/turf": "^5.1.6",
     "@vuepress/plugin-active-header-links": "^1.7.1",
     "@vuepress/plugin-nprogress": "^1.7.1",

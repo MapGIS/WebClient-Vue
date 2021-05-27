@@ -1,6 +1,9 @@
+<template>
+  <span/>
+</template>
 <script>
 import VueOption from "../../Base/Vue/VueOptions";
-import RasterLayer from "../RasterLayer";
+import ServiceLayer from "../ServiceLayer";
 
 export default {
   name: "mapgis-3d-arcgis-tile-layer",
@@ -9,12 +12,11 @@ export default {
       type: String,
       default: null
     },
+    id: {
+      type: String
+    },
     srs: {
       type: String,
-      default: "EPSG:4326"
-    },
-    layers: {
-      type: String
     },
     options: {
       type: Object,
@@ -33,18 +35,20 @@ export default {
     },
     ...VueOption,
   },
-  data(){
+  data() {
     return {
-
+      initial: true,
     }
   },
-  inject: ["Cesium", "webGlobe"],
-  mixins: [RasterLayer],
+  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  mixins: [ServiceLayer],
   created() {
   },
   mounted() {
-    this.layerStyleCopy = Object.assign({}, this.layerStyle);
     this.mount();
+  },
+  destroyed() {
+    this.unmount();
   },
   watch: {
     url: {
@@ -59,16 +63,10 @@ export default {
         this.mount();
       }
     },
-    layers: {
-      handler: function () {
-        this.unmount();
-        this.mount();
-      }
-    },
     layerStyle: {
       handler: function () {
-        let {vueKey, vueIndex} = this;
-        let layer = window.CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+        let {vueKey, vueIndex, CesiumZondy} = this;
+        let layer = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
         if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
           layer.source.show = this.layerStyle.visible;
         }
@@ -76,8 +74,7 @@ export default {
           layer.source.alpha = this.layerStyle.opacity;
         }
         if (this.layerStyleCopy.zIndex !== this.layerStyle.zIndex) {
-          this.unmount();
-          this.mount();
+          this.$_moveLayer();
         }
         this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
       },
@@ -89,6 +86,13 @@ export default {
         this.mount();
       },
       deep: true
+    },
+    id: {
+      handler: function (next) {
+        const {vueIndex, vueKey, CesiumZondy} = this;
+        let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+        find.source.id = next;
+      }
     }
   },
   methods: {
@@ -99,25 +103,57 @@ export default {
     },
     createCesiumObject() {
       const url = this.initUrl();
-      let {options, layerStyle, layers, Cesium} = this;
+      let {options, layers, Cesium} = this;
       options = this.$_initOptions(options);
-      layerStyle = this.$_initLayerStyle(layerStyle);
-      const allOptions = {...options, ...layerStyle, layers, url};
-      const provider = new Cesium.ArcGisMapServerImageryProvider(allOptions);
-      return new Cesium.ImageryLayer(provider || {});
+      const allOptions = {...options, layers, url};
+      return new Cesium.ArcGisMapServerImageryProvider(allOptions);
     },
     mount() {
-      this.createCesiumObject();
-      const {webGlobe, imageryLayer, layerStyle} = this;
-      const {vueIndex, vueKey} = this;
-      window.CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageryLayer);
+      let provider = this.createCesiumObject();
+      this.layerStyleCopy = Object.assign({}, this.layerStyle);
+      let {webGlobe, layerStyle} = this;
+      const {vueIndex, vueKey, CesiumZondy} = this;
+      const {zIndex, visible, opacity} = layerStyle;
+      layerStyle = this.$_initLayerStyle(layerStyle);
       const viewer = webGlobe.viewer;
-      const zIndex = layerStyle.zIndex;
-      viewer.imageryLayers.add(imageryLayer, zIndex);
+      const {imageryLayers} = viewer;
+      let imageLayer = imageryLayers.addImageryProvider(provider, zIndex);
+
+      CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer, {zIndex: zIndex});
+      // let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+      if (imageLayer && this.initial) {
+        if (visible) {
+          imageLayer.show = visible;
+        }
+        if (opacity >= 0) {
+          imageLayer.alpha = opacity;
+        }
+        if (this.id) {
+          imageLayer.id = this.id;
+        } else {
+          imageLayer.id = vueIndex;
+        }
+      }
+      if (this.initial) {
+        this.$_initLayerIndex();
+      }
+      this.initial = false;
+      this.$emit("load", imageLayer, this);
+
       return (
-          !viewer.isDestroyed() && viewer.imageryLayers.contains(imageryLayer)
+          !viewer.isDestroyed() // && viewer.imageryLayers.contains(imageLayer)
       );
     },
+    unmount() {
+      let {webGlobe, vueKey, vueIndex, CesiumZondy} = this;
+      const {viewer} = webGlobe;
+      const {imageryLayers} = viewer;
+      let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
+      imageryLayers.remove(find.source, true);
+      CesiumZondy.arcgisManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
+    },
+
     $_initOptions(options) {
       if (this.srs) {
         options.tilingScheme = this.srs
@@ -136,8 +172,9 @@ export default {
           options.tilingScheme = new Cesium.GeographicTilingScheme();
         }
       }
+      return options;
     },
-    $_initLayerStyle(layerStyle){
+    $_initLayerStyle(layerStyle) {
       if (layerStyle.zIndex == null && layerStyle.zIndex === undefined) {
         layerStyle.zIndex = this.vueIndex;
       }

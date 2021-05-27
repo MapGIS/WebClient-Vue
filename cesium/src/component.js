@@ -4,6 +4,7 @@ export { default as MapgisWebScene } from "./components/WebGlobe/WebGlobe.vue";
 export { default as Mapgis3dState } from "./components/UI/Controls/State/StateControl.vue";
 export { default as Mapgis3dLink } from "./components/UI/Controls/Link/Link.vue";
 export { default as Mapgis3dDraw } from "./components/UI/Controls/Draw/Draw";
+export { default as Mapgis3dCompare } from "./components/UI/Controls/Compare/Compare.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -12,7 +13,11 @@ export { default as Mapgis3dIgsTileLayer } from "./components/Layer/IGServer/Igs
 export { default as Mapgis3dRasterLayer } from "./components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "./components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "./components/Layer/OGC/OGCWMSLayer.vue";
+
+export { default as Mapgis3dIgsVectorLayer } from "./components/Layer/IGServer/IgsVectorLayer.vue";
+
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
+export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
 
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";

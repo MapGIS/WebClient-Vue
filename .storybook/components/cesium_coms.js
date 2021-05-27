@@ -4,6 +4,7 @@ export { default as MapgisWebScene } from "../../cesium/src/components/WebGlobe/
 export { default as Mapgis3dState } from "../../cesium/src/components/UI/Controls/State/StateControl.vue";
 export { default as Mapgis3dLink } from "../../cesium/src/components/UI/Controls/Link/Link.vue";
 export { default as Mapgis3dDraw } from "../../cesium/src/components/UI/Controls/Draw/Draw";
+export { default as Mapgis3dCompare } from "../../cesium/src/components/UI/Controls/Compare/Compare.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "../../cesium/src/components/Provider/ImageProvider/ImageryLayer.vue";
@@ -12,7 +13,7 @@ export { default as Mapgis3dIgsTileLayer } from "../../cesium/src/components/Lay
 export { default as Mapgis3dRasterLayer } from "../../cesium/src/components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
-export { default as Mapgis3dArcgisTileLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
+
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "../../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
