@@ -1,5 +1,5 @@
 export default {
-    title: "三维/可视域分析"
+    title: "三维/分析-可视域"
 }
 
 const Template = (args, { argTypes }) => ({

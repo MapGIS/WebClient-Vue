@@ -1,5 +1,10 @@
 <template>
-    <div :class="['edit-wrapper-vshed', {right: position === 'right', left: position === 'left'}]">
+    <div
+        :class="[
+            'edit-wrapper-vshed',
+            { right: position === 'right', left: position === 'left' },
+        ]"
+    >
         <div
             class="card-title"
             :style="{
@@ -22,7 +27,7 @@
                         :step="0.0001"
                         :max="startLonMax"
                         :min="startLonMin"
-                        :value="startLonMin + (startLonMax - startLonMin) / 2"
+                        :value="parseFloat(form.startLon)"
                         @change="setInput($event, 'startLon')"
                     />
                 </div>
@@ -35,7 +40,7 @@
                         :step="0.0001"
                         :max="startLatMax"
                         :min="startLatMin"
-                        :value="startLatMin + (startLatMax - startLatMin) / 2"
+                        :value="parseFloat(form.startLat)"
                         @change="setInput($event, 'startLat')"
                     />
                 </div>
@@ -48,7 +53,7 @@
                         :step="10"
                         :max="startAltMax"
                         :min="startAltMin"
-                        :value="startAltMin + (startAltMax - startAltMin) / 2"
+                        :value="parseFloat(form.startAlt)"
                         @change="setInput($event, 'startAlt')"
                     />
                 </div>
@@ -64,7 +69,7 @@
                         :step="0.0001"
                         :max="endLonMax"
                         :min="endLonMin"
-                        :value="endLonMin + (endLonMax - endLonMin) / 2"
+                        :value="parseFloat(form.endLon)"
                         @change="setInput($event, 'endLon')"
                     />
                 </div>
@@ -77,7 +82,7 @@
                         :step="0.0001"
                         :max="endLatMax"
                         :min="endLatMin"
-                        :value="endLatMin + (endLatMax - endLatMin) / 2"
+                        :value="parseFloat(form.endLat)"
                         @change="setInput($event, 'endLat')"
                     />
                 </div>
@@ -90,7 +95,7 @@
                         :step="10"
                         :max="endAltMax"
                         :min="endAltMin"
-                        :value="endAltMin + (endAltMax - endAltMin) / 2"
+                        :value="parseFloat(form.endAlt)"
                         @change="setInput($event, 'endAlt')"
                     />
                 </div>
@@ -117,14 +122,14 @@ Vue.use(Antd);
 export default {
     name: "mapgis-3d-viewshed",
     props: {
-        index: { 
+        index: {
             type: Number,
-            default: 0 
+            default: 0,
         },
         position: {
             type: String,
-            default: "right"
-        }
+            default: "right",
+        },
     },
     inject: ["Cesium", "CesiumZondy", "webGlobe"],
     data() {
@@ -163,16 +168,20 @@ export default {
                 let find = this.findSource();
                 let vshed3d = window.viewshed3d[this.index][find.index];
                 if (vshed3d !== null && typeof vshed3d !== "undefined") {
-                    vshed3d.viewPosition = Cesium.Cartesian3.fromDegrees(
-                        val.startLon,
-                        val.startLat,
-                        val.startAlt
-                    );
-                    vshed3d.targetPosition = Cesium.Cartesian3.fromDegrees(
-                        val.endLon,
-                        val.endLat,
-                        val.endAlt
-                    );
+                    if (val.startLon && val.startLat && val.startAlt) {
+                        vshed3d.viewPosition = Cesium.Cartesian3.fromDegrees(
+                            val.startLon,
+                            val.startLat,
+                            val.startAlt
+                        );
+                    }
+                    if (val.endLon && val.endLat && val.endAlt) {
+                        vshed3d.targetPosition = Cesium.Cartesian3.fromDegrees(
+                            val.endLon,
+                            val.endLat,
+                            val.endAlt
+                        );
+                    }
                 }
             },
         },
@@ -202,7 +211,6 @@ export default {
             function left(movement) {
                 let find = that.findSource();
                 let vshed3d = window.viewshed3d[that.index][find.index];
-                console.log(window.viewshed3d);
                 that.webGlobe.viewer.scene.globe.enableTransparent = false;
                 // window.webGlobe.viewer.scene.globe
                 if (that.viewshedAn) {
@@ -229,46 +237,25 @@ export default {
                             that.form.startLon = lng;
                             that.form.startLat = lat;
                             that.form.startAlt = height;
-                            //设置观察点坐标
-                            vshed3d.viewPosition = cartesian;
+                            // //设置观察点坐标
+                            // vshed3d.viewPosition = cartesian;
                             //添加可视域分析结果显示
                             viewer.scene.VisualAnalysisManager.add(vshed3d);
                             that.viewshed3ding = true;
-                        } else {
-                            //设置可视域结果点
-                            vshed3d.targetPosition = cartesian;
-
-                            let cartographic = Cesium.Cartographic.fromCartesian(
-                                cartesian
-                            );
-                            let lng = Cesium.Math.toDegrees(
-                                cartographic.longitude
-                            );
-                            let lat = Cesium.Math.toDegrees(
-                                cartographic.latitude
-                            );
-                            //模型高度
-                            let height = cartographic.height;
-                            that.form.endLon = lng;
-                            that.form.endLat = lat;
-                            that.form.endAlt = height;
-                            that.viewshed3daction = false;
-                            that.viewshed3ding = false;
 
                             that.startLonMin = that.form.startLon - 0.001;
                             that.startLatMin = that.form.startLat - 0.001;
                             that.startAltMin = that.form.startAlt - 100;
-                            that.endLonMin = that.form.endLon - 0.001;
-                            that.endLatMin = that.form.endLat - 0.001;
-                            that.endAltMin = that.form.endAlt - 100;
                             that.startLonMax = that.form.startLon + 0.001;
                             that.startLatMax = that.form.startLat + 0.001;
                             that.startAltMax = that.form.startAlt + 100;
-                            that.endLonMax = that.form.endLon + 0.001;
-                            that.endLatMax = that.form.endLat + 0.001;
-                            that.endAltMax = that.form.endAlt + 100;
+                        } else {
+                            // //设置可视域结果点
+                            // vshed3d.targetPosition = cartesian;
+
+                            that.viewshed3daction = false;
+                            that.viewshed3ding = false;
                         }
-                        //viewshed3ding = true;
                     }
                 }
             }
@@ -277,41 +264,7 @@ export default {
                 let find = that.findSource();
                 let vshed3d = window.viewshed3d[that.index][find.index];
                 if (that.viewshed3ding) {
-                    let cartesian = viewer.getCartesian3Position(
-                        movement.position,
-                        cartesian
-                    );
                     if (that.viewshedAn) {
-                        if (cartesian) {
-                            //设置可视域结果点
-                            vshed3d.targetPosition = cartesian;
-                        } else {
-                            vshed3d.targetPoint = cartesian;
-                        }
-
-                        let cartographic = Cesium.Cartographic.fromCartesian(
-                            cartesian
-                        );
-                        let lng = Cesium.Math.toDegrees(cartographic.longitude);
-                        let lat = Cesium.Math.toDegrees(cartographic.latitude);
-                        //模型高度
-                        let height = cartographic.height;
-                        that.form.endLon = lng;
-                        that.form.endLat = lat;
-                        that.form.endAlt = height;
-
-                        that.startLonMin = that.form.startLon - 0.001;
-                        that.startLatMin = that.form.startLat - 0.001;
-                        that.startAltMin = that.form.startAlt - 100;
-                        that.endLonMin = that.form.endLon - 0.001;
-                        that.endLatMin = that.form.endLat - 0.001;
-                        that.endAltMin = that.form.endAlt - 100;
-                        that.startLonMax = that.form.startLon + 0.001;
-                        that.startLatMax = that.form.startLat + 0.001;
-                        that.startAltMax = that.form.startAlt + 100;
-                        that.endLonMax = that.form.endLon + 0.001;
-                        that.endLatMax = that.form.endLat + 0.001;
-                        that.endAltMax = that.form.endAlt + 100;
                         that.viewshed3daction = false;
                         that.viewshed3ding = false;
                     }
@@ -338,6 +291,13 @@ export default {
                         that.form.endLon = lng;
                         that.form.endLat = lat;
                         that.form.endAlt = height;
+
+                        that.endLonMin = that.form.endLon - 0.001;
+                        that.endLatMin = that.form.endLat - 0.001;
+                        that.endAltMin = that.form.endAlt - 100;
+                        that.endLonMax = that.form.endLon + 0.001;
+                        that.endLatMax = that.form.endLat + 0.001;
+                        that.endAltMax = that.form.endAlt + 100;
                     }
                 }
             }
@@ -400,8 +360,6 @@ export default {
         },
     },
     mounted() {
-        // const { window.webGlobe, Cesium } = this
-        // let that = this
         window.viewshed3d = window.viewshed3d || [[], []];
     },
     destroyed() {
