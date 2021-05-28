@@ -133,7 +133,7 @@ export default {
       CesiumZondy.arcgisManager.addSource(vueKey, vueIndex, imageLayer, {zIndex: zIndex});
       // let find = CesiumZondy.arcgisManager.findSource(vueKey, vueIndex);
       if (imageLayer && this.initial) {
-        if (visible) {
+        if (typeof visible == "boolean") {
           imageLayer.show = visible;
         }
         if (opacity >= 0) {
