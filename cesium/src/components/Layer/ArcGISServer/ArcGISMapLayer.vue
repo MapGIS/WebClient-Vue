@@ -14,7 +14,7 @@ export default {
     },
     srs: {
       type: String,
-      EPSG: 4326
+      defalut:"EPSG:4326"
     },
     layers: {
       type: String

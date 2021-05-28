@@ -91,7 +91,7 @@ export default {
     return {
       url:
         "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
-      layers: "2,4,6",
+      layers: "show:0",
       layerStyle: {
         visible: true,
         opacity: 1,
