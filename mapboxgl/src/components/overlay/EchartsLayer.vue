@@ -46,14 +46,16 @@ export default {
       this.echartsLayer.addTo(this.map);
     },
     unmount() {
-      const {webGlobe, echartsLayer} = this;
-      const viewer = webGlobe.viewer;
-      return !viewer.isDestroyed() && echartsLayer.destroy();
+      const { echartsLayer} = this;
+      return echartsLayer.remove();
     }
   },
   created() {
     this.mount();
     this.watchProp();
+  },
+  destroyed() {
+    this.unmount();
   }
 };
 </script>
