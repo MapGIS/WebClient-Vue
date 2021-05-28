@@ -14,7 +14,8 @@ export { default as Mapgis3dIgsTileLayer } from "../../cesium/src/components/Lay
 export { default as Mapgis3dRasterLayer } from "../../cesium/src/components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
-
+export { default as Mapgis3dArcgisTileLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
+export { default as Mapgis3dArcgisMapLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "../../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
@@ -25,6 +26,8 @@ export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTi
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 // export { default as { MapvLayer }} from "../../cesium/src/components/Overlay";
+export { default as Mapgis3dMapvLayer} from "../../cesium/src/components/Overlay/MapvLayer.vue";
+export { default as Mapgis3dEchartsLayer} from "../../cesium/src/components/Overlay/Echarts.vue";
 
 export { default as Mapgis3dTerrainProvider } from "../../cesium/src/components/Provider/TerrainProvider/TerrainProvider.vue";
 
