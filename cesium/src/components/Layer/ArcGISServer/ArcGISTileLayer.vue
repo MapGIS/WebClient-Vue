@@ -10,13 +10,10 @@ export default {
   props: {
     url: {
       type: String,
-      default: null
+      required:true
     },
     id: {
       type: String
-    },
-    srs: {
-      type: String,
     },
     options: {
       type: Object,
@@ -33,11 +30,18 @@ export default {
         }
       }
     },
-    ...VueOption,
   },
   data() {
     return {
       initial: true,
+      //监测props
+      checkType: {
+        visible: "boolean",
+        opacity: "number",
+        zIndex: "number",
+        vueKey: "string",
+        vueIndex: "string | Number",
+      },
     }
   },
   inject: ["Cesium", "webGlobe", "CesiumZondy"],
@@ -52,12 +56,6 @@ export default {
   },
   watch: {
     url: {
-      handler: function () {
-        this.unmount();
-        this.mount();
-      }
-    },
-    srs: {
       handler: function () {
         this.unmount();
         this.mount();
@@ -104,11 +102,24 @@ export default {
     createCesiumObject() {
       const url = this.initUrl();
       let {options, layers, Cesium} = this;
-      options = this.$_initOptions(options);
+
+      //vueKey为必要值，但是不需要暴露出去，因此给一个默认值
+      let checkVueKey = this.$_checkValue(options, "vueKey", "");
+      if (checkVueKey === "null") {
+        this.vueKey = "default";
+      }
+
+      //vueIndex为必要值，但是不需要暴露出去，因此给一个默认值
+      let checkVueIndex = this.$_checkValue(options, "vueIndex", "");
+      if (checkVueIndex === "null") {
+        this.vueIndex = (Math.random() * 100000000).toFixed(0);
+      }
       const allOptions = {...options, layers, url};
       return new Cesium.ArcGisMapServerImageryProvider(allOptions);
     },
     mount() {
+      //检测参数类型是否正确，不正确不会往下执行
+      this.$_check();
       let provider = this.createCesiumObject();
       this.layerStyleCopy = Object.assign({}, this.layerStyle);
       let {webGlobe, layerStyle} = this;
@@ -139,7 +150,6 @@ export default {
       }
       this.initial = false;
       this.$emit("load", imageLayer, this);
-
       return (
           !viewer.isDestroyed() // && viewer.imageryLayers.contains(imageLayer)
       );
@@ -154,26 +164,6 @@ export default {
       this.$emit("unload", this);
     },
 
-    $_initOptions(options) {
-      if (this.srs) {
-        options.tilingScheme = this.srs
-        if (
-            options.tilingScheme === "EPSG:4326" ||
-            options.tilingScheme === "EPSG:4490" ||
-            options.tilingScheme === "EPSG:4610" ||
-            options.tilingScheme === "EPSG:4214"
-        ) {
-          options.tilingScheme = new Cesium.GeographicTilingScheme();
-        } else if (options.tilingScheme === "EPSG:3857") {
-          options.tilingScheme = new Cesium.WebMercatorTilingScheme();
-        } else if (this.options.tilingScheme) {
-          options.tilingScheme = options.tilingScheme;
-        } else {
-          options.tilingScheme = new Cesium.GeographicTilingScheme();
-        }
-      }
-      return options;
-    },
     $_initLayerStyle(layerStyle) {
       if (layerStyle.zIndex == null && layerStyle.zIndex === undefined) {
         layerStyle.zIndex = this.vueIndex;

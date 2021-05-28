@@ -30,7 +30,7 @@ EPSG:3857
 - **类型：** `String`
 - **默认值:** `null`
 - **Synced**
-- **描述：** 指定组件图层的 id 值。
+- **描述：** 图层唯一标识符，如果不传，以 vueIndex 代替。
 
 ### `layers`
 
@@ -38,7 +38,8 @@ EPSG:3857
 - **默认值:** `null`
 - **Synced**
 - **描述:** 指定需要被取图的图层序列号数组，以“，”分隔。默认为依据文档原始图层状态进行设置。
-- **示例:** `"1,2,3"`
+        show：仅仅显示指定了图层序号的图层；
+- **示例:** `"show:1,2,3"`
 - **注意:** 若不传该参数,则默认显示所有图层。
 
 ```
@@ -65,20 +66,12 @@ layers:"1,2,3"
 - **可选**
 - **Synced**
 - **描述:** Cesium 的进阶参数，另外不属于 cesium 的如下参数也在 options 中：
-
-- **参考:** <br>
-  `Arcgis参数` in [ArcGisMapServerImageryProvider](http://develop.smaryun.com:8899/docs/other/mapgis-cesium/ArcGisMapServerImageryProvider.html?classFilter=ArcGisMapServerImageryProvider)
-
-### `VueOption`
-
-- **类型:** `Object`
-- **可选**
-- 参数如下：
-  - **描述:** 有如下值：
   ```
     vueKey String 默认值default 该 key 的主要作用是用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
-    vueIndex String 默认值(Math.random() * 100000000).toFixed(0) 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+    vueIndex String 默认值(Math.random() * 100000000).toFixed(0) 该 key 的主要作用是用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
   ```
+- **参考:** <br>
+  `Arcgis参数` in [ArcGisMapServerImageryProvider](http://develop.smaryun.com:8899/docs/other/mapgis-cesium/ArcGisMapServerImageryProvider.html?classFilter=ArcGisMapServerImageryProvider)
 
 ## Example
 
@@ -98,7 +91,7 @@ export default {
     return {
       url:
         "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
-      layers: "2,4,6",
+      layers: "show:0",
       layerStyle: {
         visible: true,
         opacity: 1,
