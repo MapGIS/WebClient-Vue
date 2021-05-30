@@ -41,7 +41,7 @@
 <script>
 import withEvents from "../../../lib/withEvents";
 import withSelfEvents from "../withSelfEvents";
-import DocumentUtil from "./DocumentUtil";
+import Document from "./DocumentViewModel";
 import LayerMenu from "./contextmenu/LayerMenu";
 import { directive, Contextmenu } from "v-contextmenu";
 import "v-contextmenu/dist/index.css";
@@ -132,7 +132,8 @@ export default {
   },
 
   created() {
-    this.document = new DocumentUtil(this.map);
+    const { map, layers } = this;
+    this.document = new Document(map, layers);
   },
 
   mounted() {
@@ -159,6 +160,7 @@ export default {
               icon, // 组件图标
               scopedSlots: { icon: "custom", title: "title" }
             });
+            vm.document.setLayers(vm.layers);
             vm.checkedKeys.push(id);
           }
         });

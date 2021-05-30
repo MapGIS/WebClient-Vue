@@ -14,7 +14,7 @@ export default {
       // require: true
     },
     layers: {
-      type: Array
+      type: [Array, String]
       // require: true
     },
     version: {

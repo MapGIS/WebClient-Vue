@@ -20,9 +20,15 @@ export const LayerType = {
   ]
 };
 
-export class DocumentUtil {
-  constructor(map) {
+export class Document {
+  constructor(options) {
+    const { map, layers } = options;
     this.map = map;
+    this.layers = layers || [];
+  }
+
+  setLayers(layers) {
+    this.layers = layers || [];
   }
 
   flatLayers(layers, filterGroup = true) {
@@ -80,4 +86,4 @@ export class DocumentUtil {
   }
 }
 
-export default DocumentUtil;
+export default Document;

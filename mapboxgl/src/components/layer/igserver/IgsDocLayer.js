@@ -78,7 +78,10 @@ export default {
       this.$_deferredMount();
     },
     $_init() {
-      if (this.url) {
+      let { url, domain, baseUrl, protocol, ip, port } = this;
+      let { serverName, tileSize, dynamicTile } = this;
+      let fixBaseUrl, docParam;
+      if (url) {
         let url = this.url;
         if (url.indexOf("?") === -1) {
           url += "?";
@@ -88,18 +91,27 @@ export default {
         }
         this._url = url;
         return;
+      } else if (baseUrl) {
+        if (!this.layers) {
+          return;
+        }
+        if (baseUrl.indexOf("?") > -1) {
+          fixBaseUrl = this.baseUrl.split("?")[0];
+        } else {
+          fixBaseUrl = this.baseUrl;
+        }
+      } else if (domain) {
+        fixBaseUrl = `${domain}/igs/rest/mrms/docs/${serverName}`;
+      } else {
+        domain = `${protocol}://${ip}:${port}`;
+        fixBaseUrl = `${domain}/igs/rest/mrms/docs/${serverName}`;
       }
-      let domain = this.domain;
-      if (!domain) {
-        domain = this.protocol + "://" + this.ip + ":" + this.port;
-      }
-      let { serverName, tileSize } = this;
-      if (this.dynamicTile) {
+
+      if (dynamicTile) {
         this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
       } else {
-        let baseUrl = domain + "/igs/rest/mrms/docs/" + this.serverName;
-        let partUrl = this.$_initAllRequestParams().join("&");
-        this._url = encodeURI(baseUrl + "?" + partUrl) + "&bbox={bbox}";
+        docParam = this.$_initAllRequestParams().join("&");
+        this._url = encodeURI(fixBaseUrl + "?" + docParam) + "&bbox={bbox}";
       }
     },
     $_initAllRequestParams() {

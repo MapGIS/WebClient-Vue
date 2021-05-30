@@ -26,9 +26,9 @@
       </contextmenu-item>
     </contextmenu-submenu>
     <contextmenu-item divider />
-    <contextmenu-item>
+    <!-- <contextmenu-item>
       <mapgis-iconfont type="mapgis-dilishujuyuan" />元数据信息
-    </contextmenu-item>
+    </contextmenu-item> -->
 
     <contextmenu-item>
       <mapgis-iconfont type="mapgis-chexiao" />关闭
