@@ -35,8 +35,6 @@ export default {
       }
     },
     id: { type: String, default: "" },
-    webSceneKey: { type: String, default: "default" },
-    webSceneIndex: { type: Number },
     options: {
       type: Object,
       default: () => {
@@ -323,13 +321,10 @@ export default {
     },
     $_getWebGlobe() {
       let webGlobeObj;
-      //如果this.webSceneKey && this.webSceneIndex，则从GlobesManager中取得webGlobeObj
-      if (this.webSceneKey && this.webSceneIndex) {
-        let GlobesManager = window.CesiumZondy.GlobesManager.findSource(
-          this.webSceneKey,
-          this.webSceneIndex
-        );
-        webGlobeObj = GlobesManager.source;
+      //如果this.vueKey，则从GlobesManager中取得webGlobeObj
+      if (this.vueKey) {
+        let GlobesManager = window.CesiumZondy.GlobesManager;
+        webGlobeObj = GlobesManager[this.vueKey][0].source;
       } else {
         //否则取this.webGlobe
         webGlobeObj = this.webGlobe;
