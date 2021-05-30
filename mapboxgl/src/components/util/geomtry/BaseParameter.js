@@ -14,6 +14,7 @@ class BaseParameter {
         this.proj = undefined;
         this.fields = undefined;
         this.coordPrecision = undefined;
+        this.cursorType = "backward";
     }
     static formatParam(param){
         let arr = ["IncludeAttribute","IncludeGeometry","IncludeWebGraphic","isAsc","compareRectOnly","enableDisplayCondition"];

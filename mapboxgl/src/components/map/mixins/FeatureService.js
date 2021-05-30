@@ -11,7 +11,8 @@ import {Point2D, PolyLine, Rectangle,Polygon,MultiPolygon,GPoint,
   FeatureGeometry,CPointInfo,WebGraphicsInfo,Feature,FeatureSet,
   CAttStruct,GLine,CLineInfo,Arc,AnyLine,GRegion,CRegionInfo} from "@mapgis/webclient-es6-service/common";
 import {extend} from "@mapgis/webclient-es6-service/common";
-import {BaseParameter} from "../../util";
+import {BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,
+  VFeature,VPoint,VMultiPoint,VPolyline,VMultiPolyline,VPolygon,VMultiPolygon} from "../../util";
 
 export default {
   name: "mapgis-feature-service",
@@ -19,12 +20,19 @@ export default {
   created() {
     this._initParam();
   },
+  render(createElement, context) {
+  },
+  props:{
+    url:{
+      type: String
+    }
+  },
   mounted() {
     let vm = this;
-    // this._initParam();
-    this.$watch("MapUrl",function () {
+    this.$watch("url",function () {
       vm._initParam();
     })
+    this.$emit("loaded",this);
   },
   methods: {
     get(url, fn,error){
@@ -44,7 +52,7 @@ export default {
     },
     _initParam(){
       //取得ip，port，mapId（地图文档名称）
-      this._url = this.MapUrl;
+      this._url = this.url;
       this._ip = this._url.substr(7,this._url.indexOf(":") + 5);
       this._port = this._url.substr(this._url.indexOf(this._ip) + this._ip.length + 1,this._url.indexOf("/igs") - this._url.indexOf(this._ip) - this._ip.length - 1);
       this._mapId = this._url.substr(this._url.indexOf("doc") + 5);
@@ -160,9 +168,10 @@ export default {
         IncludeWebGraphic: param.IncludeWebGraphic
       });
       //初始化zondy前端接口的查询参数
+      let reg = new RegExp('^[0-9]+$');
       if(layers.length <= 0){
         throw new Error("请填写您要查询的图层");
-      }else if(typeof Number(layers[0]) === "number"){
+      }else if(reg.test(layers[0])){
         queryParam = new QueryParameter();
         //初始化要素服务
         queryService = new QueryDocFeature(queryParam,this._mapId,layers.join(","),{
@@ -415,6 +424,14 @@ export default {
         callback(result);
       });
     },
+    $_getDocInfo(callback,docId){
+      docId = !docId ? "0" : docId;
+      debugger
+      this.get("http://" + this._ip + ":" + this._port + "/igs/rest/mrcs/docs/" + this._mapId + "/" + docId + "/layers?f=json",function (result) {
+        result = JSON.parse(result);
+        callback(result);
+      });
+    },
     /*取得数据库字段信息，新增要素或更新要素要使用到
     * author 杨琨
     * param layer String 图层Id或数据库地址
@@ -450,13 +467,11 @@ export default {
     },
     //对外方法，根据ObjectIds查询要素
     $_queryByObjectIds(objectIdsParameter,onSuccess,onError){
-      this.$_FSCheckParam(objectIdsParameter,onSuccess,onError,function (objectIdsParameter,onSuccess,onError) {
-        if(this._url.indexOf("WFSServer") > -1){
-          this.$_queryByObjectIdsWFS(objectIdsParameter,onSuccess,onError);
-        }else {
-          this._queryByObjectIds(objectIdsParameter,onSuccess,onError);
-        }
-      });
+      if(this._url.indexOf("WFSServer") > -1){
+        this.$_queryByObjectIdsWFS(objectIdsParameter,onSuccess,onError);
+      }else {
+        this._queryByObjectIds(objectIdsParameter,onSuccess,onError);
+      }
     },
     //对外方法，根据几何查询要素
     $_queryByGeometry(geometryParameter,onSuccess,onError){
@@ -524,6 +539,66 @@ export default {
       }
       check(param);
       callback(param,onSuccess,onError);
+    },
+    $_getGeometryParameter(options){
+      return new GeometryParameter(options);
+    },
+    $_getSQLParameter(options){
+      return new SQLParameter(options);
+    },
+    $_getObjectIdsParameter(options){
+      return new ObjectIdsParameter(options);
+    },
+    $_getRectangleParameter(options){
+      return new RectangleParameter(options);
+    },
+    $_getFeature(options){
+      return new VFeature(options);
+    },
+    $_fromGeoJSON(geoJSON){
+      return VFeature.fromGeoJSON(geoJSON);
+    },
+    $_fromQueryResult(result){
+      return VFeature.fromQueryResult(result);
+    },
+    $_toAntTableData(result){
+      return VFeature.toAntTableData(result);
+    },
+    $_getPoint(options){
+      return new VPoint(options);
+    },
+    $_getMultiPoint(options){
+      return new VMultiPoint(options);
+    },
+    $_getPolyline(options){
+      return new VPolyline(options);
+    },
+    $_getMultiPolyline(options){
+      return new VMultiPolyline(options);
+    },
+    $_getPolygon(options){
+      return new VPolygon(options);
+    },
+    $_getMultiPolygon(options){
+      return new VMultiPolygon(options);
+    },
+    $_getPolylinesCoordinates(Features){
+      return new VPolyline.getPolylinesCoordinates(Features);
+    },
+    $_getPolylinesCenter(lineArr){
+      return new VPolyline.getPolylinesCenter(lineArr);
+    },
+    $_getPointsCoordinates(Features){
+      return new VPoint.getPointsCoordinates(Features);
+    },
+    $_getPointsCenter(pointsArr){
+      return new VPoint.getPointsCenter(pointsArr);
+    },
+    $_getPolygonsCoordinates(Features){
+      return new VPolygon.getPolygonsCoordinates(Features);
+    },
+    $_getPolygonsCenter(polygonsArr){
+      return new VPolygon.getPolygonsCenter(polygonsArr);
     }
   }
 };

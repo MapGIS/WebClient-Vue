@@ -1,7 +1,7 @@
 import {Geometry}  from "./Geometry";
 import {extend} from "@mapgis/webclient-es6-service/common";
 
-class MultiPoint extends Geometry{
+class VMultiPoint extends Geometry{
     constructor(options) {
         super();
         this.type = "MultiPoint";
@@ -9,4 +9,4 @@ class MultiPoint extends Geometry{
     }
 }
 
-export {MultiPoint}
+export {VMultiPoint}
