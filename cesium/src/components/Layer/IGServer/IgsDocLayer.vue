@@ -1,34 +1,54 @@
+<template>
+  <span/>
+</template>
 <script>
-import IgsLayer from "../RasterLayer";
+import ServiceLayer from "../ServiceLayer";
+
 export default {
   name: "mapgis-3d-igs-doc-layer",
-  mixins: [IgsLayer],
+  mixins: [ServiceLayer],
   props: {
-    serverName: {
+    layers: {
       type: String,
       default: null
-    },
+    }
+  },
+  watch: {
+    layers: {
+      handler: function () {
+        this.$_unmount();
+        this.$_mount();
+      }
+    }
+  },
+  data(){
+    return {
+      managerName: "igsDocLayerManager",
+      providerName: "MapGIS2DDocMapProvider",
+      checkType:{
+        tileWidth:"number",
+        tileHeight:"number",
+        minimumLevel:"number",
+        maximumLevel:"number"
+      }
+    }
+  },
+  mounted() {
+    this.mount();
   },
   methods: {
-    initUrl () {
-      let _url = this.url;
-      if (!this.url) {
-        let domain = this.domain;
-        if (!domain) {
-          domain = this.protocol + "://" + this.ip + ":" + this.port;
-        }
-        _url = domain + "/igs/rest/mrms/docs/" + this.serverName;
-      }
-      return _url
+    mount(){
+      //处理独有参数
+      const url = this.$_initUrl("/igs/rest/mrms/docs/");
+      this.$_mount({url:url});
     },
-    createCesiumObject () {
-      const url = this.initUrl();
-      const { $props } = this;
-      const options = { ...$props, url };
-      const provider = CesiumZondy.Provider.IgsDocProvider(options);
-      return new Cesium.ImageryLayer(provider);
-    },
+    unmount(){
+      this.$_unmount();
+    }
   },
+  destroyed() {
+    this.unmount();
+  }
 
 };
 </script>
