@@ -77,7 +77,6 @@ export default {
   },
 
   props: {
-    // mapbox drawer options
     wrapperStyle: {
       type: Object,
       default: () => {
@@ -143,10 +142,22 @@ export default {
   beforeDestroy() {},
 
   methods: {
+    getMapComponents(component) {
+      if (!component) return undefined;
+      let parent = component.$parent;
+      if (parent) {
+        const { tag } = parent.$vnode;
+        if (tag.match("mapgis-web-map")) {
+          return parent;
+        }
+      }
+      return this.getMapComponents(parent);
+    },
     getParentLayer() {
       const vm = this;
       if (this.map) {
-        let children = this.$parent.$children;
+        let parent = this.getMapComponents(this);
+        let children = parent.$children;
         children.forEach(child => {
           let node = child.$vnode;
           if (node.tag && node.tag.match("-layer")) {

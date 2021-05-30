@@ -1,4 +1,4 @@
-export const RasterLayerNames = [
+const RasterLayerNames = [
   "mapgis-arcgis-map-layer",
   "mapgis-arcgis-tile-layer",
   "mapgis-igs-doc-layer",
@@ -7,10 +7,10 @@ export const RasterLayerNames = [
   "mapgis-ogc-wms-layer"
 ];
 
-export const LayerComNames = [].concat(RasterLayerNames);
+const LayerComNames = [].concat(RasterLayerNames);
 
-export const LayerType = {
-  Raster: [
+const LayerType = {
+  raster: [
     "mapgis-arcgis-map-layer",
     "mapgis-arcgis-tile-layer",
     "mapgis-igs-doc-layer",
@@ -33,21 +33,6 @@ export class Document {
 
   flatLayers(layers, filterGroup = true) {
     // LayerComNames
-  }
-
-  getLayerType(name) {
-    let types = Object.keys(LayerType);
-    for (let i = 0; i < types; i++) {
-      const type = types[i];
-      const layers = LayerType[type];
-      for (let j = 0; j < layers; j++) {
-        const layer = layers[j];
-        if (layer.match(name)) {
-          return type;
-        }
-      }
-    }
-    return undefined;
   }
 
   getLayerComInfo(tag) {
@@ -76,6 +61,21 @@ export class Document {
       layer.name = "mapgis-ogc-wms-layer";
     }
     return layer;
+  }
+
+  getLayerMapType(name) {
+    let types = Object.keys(LayerType);
+    for (let i = 0; i < types; i++) {
+      const type = types[i];
+      const layers = LayerType[type];
+      for (let j = 0; j < layers; j++) {
+        const layer = layers[j];
+        if (layer.match(name)) {
+          return type;
+        }
+      }
+    }
+    return undefined;
   }
 
   getLayerMapInfo(layerId) {
