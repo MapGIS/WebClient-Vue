@@ -13,7 +13,7 @@
                 color: 'white',
             }"
         >
-            可视域分析
+            通视分析
         </div>
         <a-card class="box-card-vshed attr-table">
             <div class="starting">
@@ -100,13 +100,13 @@
                     />
                 </div>
             </div>
-            <a-button class="content" type="primary" @click="startViewshed"
+            <a-button class="content" type="primary" @click="initSightline"
                 >点击绘制</a-button
             >
             <a-button
                 class="content-clear"
                 type="primary"
-                @click="clearViewshed"
+                @click="clearSightline"
                 >清除</a-button
             >
         </a-card>
@@ -114,13 +114,9 @@
 </template>
 
 <script>
-import Vue from "vue";
-import Antd from "ant-design-vue";
-import "ant-design-vue/dist/antd.css";
-Vue.use(Antd);
-
 export default {
-    name: "mapgis-3d-viewshed",
+    name: "mapgis-3d-sightline",
+    inject: ["Cesium", "CesiumZondy", "webGlobe"],
     props: {
         index: {
             type: Number,
@@ -131,13 +127,12 @@ export default {
             default: "right",
         },
     },
-    inject: ["Cesium", "CesiumZondy", "webGlobe"],
     data() {
         return {
-            //定义鼠标事件类
-            viewshedAn: false,
-            viewshed3daction: false,
-            viewshed3ding: false,
+            //定义是否正在执行通视分析
+            visiblitying: false,
+            visiblityAn: false,
+            visiblity3daction: false,
 
             startLonMin: 0,
             startLatMin: 0,
@@ -166,17 +161,17 @@ export default {
             deep: true,
             handler: function (val) {
                 let find = this.findSource();
-                let vshed3d = window.viewshed3d[this.index][find.index];
-                if (vshed3d !== null && typeof vshed3d !== "undefined") {
+                let visiblity = window.visiblity[this.index][find.index];
+                if (visiblity !== null && typeof visiblity !== "undefined") {
                     if (val.startLon && val.startLat && val.startAlt) {
-                        vshed3d.viewPosition = Cesium.Cartesian3.fromDegrees(
+                        visiblity.viewPosition = Cesium.Cartesian3.fromDegrees(
                             val.startLon,
                             val.startLat,
                             val.startAlt
                         );
                     }
                     if (val.endLon && val.endLat && val.endAlt) {
-                        vshed3d.targetPosition = Cesium.Cartesian3.fromDegrees(
+                        visiblity.targetPosition = Cesium.Cartesian3.fromDegrees(
                             val.endLon,
                             val.endLat,
                             val.endAlt
@@ -193,10 +188,10 @@ export default {
         findSource() {
             const vm = this;
             let index = -1;
-            let find = window.viewshed3d[this.index].find((s, i) => {
+            let find = window.visiblity[this.index].find((s, i) => {
                 let result = false;
                 let { layer } = vm;
-                if (s instanceof Cesium.ViewshedAnalysis) {
+                if (s instanceof Cesium.VisiblityAnalysis) {
                     index = i;
                     result = true;
                 }
@@ -204,57 +199,56 @@ export default {
             });
             return { index: index, value: find };
         },
-        startViewshed() {
+        initSightline() {
+            const { webGlobe } = this;
+            let viewer = webGlobe.viewer;
             let that = this;
-            let viewer = that.webGlobe.viewer;
             viewer.scene.globe.depthTestAgainstTerrain = true;
+            //注册鼠标左键点击事件
             function left(movement) {
                 let find = that.findSource();
-                let vshed3d = window.viewshed3d[that.index][find.index];
-                that.webGlobe.viewer.scene.globe.enableTransparent = false;
-                // window.webGlobe.viewer.scene.globe
-                if (that.viewshedAn) {
-                    // 可视域分析
-                    if (that.viewshed3daction) {
-                        //获取鼠标位置
-                        let cartesian = viewer.getCartesian3Position(
-                            movement.position,
+                let visiblity = window.visiblity[that.index][find.index];
+                viewer.scene.globe.enableTransparent = false;
+                //判断是否初始化过通视分析类
+                if (that.visiblity3daction) {
+                    //获取鼠标点击位置
+                    var cartesian = viewer.getCartesian3Position(
+                        movement.position,
+                        cartesian
+                    );
+                    //第一个点
+                    if (cartesian != undefined && !that.visiblitying) {
+                        //设置通视分析观察点
+                        // visiblity.viewPosition = cartesian;
+
+                        let cartographic = Cesium.Cartographic.fromCartesian(
                             cartesian
                         );
-                        if (cartesian !== undefined && !that.viewshed3ding) {
-                            cartesian.x += 3.6;
-                            let cartographic = Cesium.Cartographic.fromCartesian(
-                                cartesian
-                            );
-                            let lng = Cesium.Math.toDegrees(
-                                cartographic.longitude
-                            );
-                            let lat = Cesium.Math.toDegrees(
-                                cartographic.latitude
-                            );
-                            //模型高度
-                            let height = cartographic.height;
-                            that.form.startLon = lng;
-                            that.form.startLat = lat;
-                            that.form.startAlt = height;
-                            // //设置观察点坐标
-                            // vshed3d.viewPosition = cartesian;
-                            //添加可视域分析结果显示
-                            viewer.scene.VisualAnalysisManager.add(vshed3d);
-                            that.viewshed3ding = true;
+                        let lng = Cesium.Math.toDegrees(cartographic.longitude);
+                        let lat = Cesium.Math.toDegrees(cartographic.latitude);
+                        //模型高度
+                        let height = cartographic.height;
+                        that.form.startLon = lng;
+                        that.form.startLat = lat;
+                        that.form.startAlt = height;
 
-                            that.startLonMin = that.form.startLon - 0.001;
-                            that.startLatMin = that.form.startLat - 0.001;
-                            that.startAltMin = that.form.startAlt - 100;
-                            that.startLonMax = that.form.startLon + 0.001;
-                            that.startLatMax = that.form.startLat + 0.001;
-                            that.startAltMax = that.form.startAlt + 100;
-                        } else {
-                            // //设置可视域结果点
-                            // vshed3d.targetPosition = cartesian;
+                        viewer.scene.VisualAnalysisManager.add(visiblity);
+                        //设置为正在通视分析
+                        that.visiblitying = true;
 
-                            that.viewshed3daction = false;
-                            that.viewshed3ding = false;
+                        that.startLonMin = that.form.startLon - 0.001;
+                        that.startLatMin = that.form.startLat - 0.001;
+                        that.startAltMin = that.form.startAlt - 100;
+                        that.startLonMax = that.form.startLon + 0.001;
+                        that.startLatMax = that.form.startLat + 0.001;
+                        that.startAltMax = that.form.startAlt + 100;
+                    } else {
+                        if (that.visiblitying) {
+                            //设置通视分析结果点
+                            // visiblity.targetPosition = cartesian;
+                            //设置为不在通视分析
+                            that.visiblitying = false;
+                            that.visiblity3daction = false;
                         }
                     }
                 }
@@ -262,25 +256,31 @@ export default {
             //鼠标右键结束
             function right(movement) {
                 let find = that.findSource();
-                let vshed3d = window.viewshed3d[that.index][find.index];
-                if (that.viewshed3ding) {
-                    if (that.viewshedAn) {
-                        that.viewshed3daction = false;
-                        that.viewshed3ding = false;
-                    }
+                let visiblity = window.visiblity[that.index][find.index];
+                //判断是否正在通视分析
+                if (that.visiblitying) {
+                    //设置通视分析结果点
+                    // visiblity.targetPosition = cartesian;
+                    //设置不在通视分析
+                    that.visiblitying = false;
+                    that.visiblity3daction = false;
                 }
             }
-
+            //鼠标移动事件
             function move(movement) {
                 let find = that.findSource();
-                let vshed3d = window.viewshed3d[that.index][find.index];
-                if (that.viewshed3ding) {
-                    let cartesian = viewer.getCartesian3Position(
+                let visiblity = window.visiblity[that.index][find.index];
+                //判断是否正在通视分析
+                if (that.visiblitying) {
+                    //获取鼠标位置
+                    var cartesian = viewer.getCartesian3Position(
                         movement.endPosition,
                         cartesian
                     );
                     if (cartesian) {
-                        vshed3d.targetPosition = cartesian;
+                        //设置通视分析结果点
+                        // visiblity.targetPosition = cartesian;
+
                         let cartographic = Cesium.Cartographic.fromCartesian(
                             cartesian
                         );
@@ -301,42 +301,39 @@ export default {
                     }
                 }
             }
-            if (that.viewshedAn === false) {
-                //获取三位场景视图对象
-                that.viewshedAn = true;
-                //可视域分析（新）
-
-                window.viewshed3d[that.index].push(
-                    new Cesium.ViewshedAnalysis(viewer.scene)
+            if (that.visiblityAn === false) {
+                window.visiblity[that.index].push(
+                    new Cesium.VisiblityAnalysis(viewer.scene)
                 );
-                that.viewshed3daction = true;
-                that.viewshed3ding = false;
-
+                //获取三位场景视图对象
+                that.visiblityAn = true;
+                that.visiblitying = false;
+                that.visiblity3daction = true;
                 //注册事件
-                that.webGlobe.registerMouseEvent("LEFT_CLICK", left);
-                that.webGlobe.registerMouseEvent("RIGHT_CLICK", right);
-                that.webGlobe.registerMouseEvent("MOUSE_MOVE", move);
+                webGlobe.registerMouseEvent("LEFT_CLICK", left);
+                webGlobe.registerMouseEvent("RIGHT_CLICK", right);
+                webGlobe.registerMouseEvent("MOUSE_MOVE", move);
             }
         },
-        clearViewshed() {
+        clearSightline() {
+            const { webGlobe } = this;
             let that = this;
-            let viewer = that.webGlobe.viewer;
             let find = that.findSource();
-            viewer.scene.globe.depthTestAgainstTerrain = true;
-            if (that.viewshedAn === true) {
-                that.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-                that.webGlobe.unRegisterMouseEvent("MOUSE_MOVE");
-                that.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
-
-                // window.webGlobe.viewer.entities.removeById("vshedPos");
-                viewer.scene.VisualAnalysisManager.remove(
-                    window.viewshed3d[this.index][find.index]
+            webGlobe.viewer.scene.globe.depthTestAgainstTerrain = true;
+            if (that.visiblityAn === true) {
+                //注销事件
+                webGlobe.unRegisterMouseEvent("LEFT_CLICK");
+                webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
+                webGlobe.unRegisterMouseEvent("MOUSE_MOVE");
+                //移除通视分析结果
+                webGlobe.viewer.scene.VisualAnalysisManager.remove(
+                    window.visiblity[this.index][find.index]
                 );
-                that.viewshedAn = false;
-                that.viewshed3daction = false;
-                that.viewshed3ding = false;
-                //定义可视域分析类
-                delete window.viewshed3d[this.index][find.index];
+                that.visiblityAn = false;
+                that.visiblitying = false;
+                that.visiblity3daction = false;
+                //销毁通视分析类
+                delete window.visiblity[this.index][find.index];
                 that.form.endLon = 0;
                 that.form.endLat = 0;
                 that.form.endAlt = 0;
@@ -360,15 +357,14 @@ export default {
         },
     },
     mounted() {
-        window.viewshed3d = window.viewshed3d || [[], []];
+        window.visiblity = window.visiblity || [[], []];
     },
     destroyed() {
-        delete window.viewshed3d;
-        window.viewshed3d = [[], []];
+        delete window.visiblity;
+        window.visiblity = [[], []];
     },
 };
 </script>
-
 
 <style scoped>
 ::v-deep .ant-card-body {

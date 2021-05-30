@@ -14,7 +14,7 @@ export default {
       // require: true
     },
     layers: {
-      type: [Array, String]
+      type: String
       // require: true
     },
     version: {
@@ -24,10 +24,6 @@ export default {
     crs: {
       type: String,
       default: "EPSG:4326"
-    },
-    wmtsStyle: {
-      type: String,
-      default: ""
     },
     format: {
       type: String,
@@ -114,7 +110,6 @@ export default {
       } else if (this.version === "1.3.0") {
         params.push("crs=" + this.crs);
       }
-      params.push("styles=" + this.wmtsStyle);
       if (this.token) {
         params.push("token=" + this.token);
       }

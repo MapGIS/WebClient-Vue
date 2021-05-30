@@ -2,7 +2,30 @@
 
 ## 属性
 
-`无`
+### `webSceneKey`
+
+- **类型:** `String`
+- **可选**
+- **默认值** `default`
+- **描述:** Cesiumd 多线程的标识符
+
+### `webSceneIndex`
+
+- **类型:** `Number`
+- **可选**
+- **描述:** 当页面同时拥有多个 webScene 时，webScene 的唯一标识符，
+  使用时请先设置 mapgis-web-scene 的 vueIndex，之后将 mapgis-web-scene 的
+  vueIndex 传给 mapgis-3d-draw 的 webSceneIndex
+- **示例:**
+
+```
+  <mapgis-web-scene
+    :vueIndex="vueIndexWebScene">
+    <mapgis-3d-draw
+      :webSceneIndex="vueIndexWebScene">
+    </mapgis-3d-draw>
+  </mapgis-web-scene>
+```
 
 ## 槽
 
