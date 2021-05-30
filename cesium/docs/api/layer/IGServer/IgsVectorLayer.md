@@ -78,7 +78,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 
 ### `gdbps`
 
-- **类型:** `Array`
+- **类型:** `Array | String`
 - **必传**
 - **Non-Synced**
 - **描述:** gdbp地址，允许多个图层

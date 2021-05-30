@@ -1,35 +1,65 @@
 <template>
-  <div :style="wrapperStyle">
-    <slot name="document" />
+  <div class="mapgis-document-wrapper" :style="wrapperStyle">
+    <div class="document-header-title">
+      <mapgis-iconfont type="mapgis-tucengjiancheng" />
+      <span>地图文档树</span>
+    </div>
+    <a-input-search
+      style="margin-bottom: 8px"
+      placeholder="搜索"
+      @change="onChange"
+    />
+    <a-tree
+      checkable
+      showIcon
+      v-model="checkedKeys"
+      :expanded-keys="expandedKeys"
+      :auto-expand-parent="autoExpandParent"
+      :tree-data="layers"
+      @expand="onExpand"
+    >
+      <template slot="custom" slot-scope="{ icon }">
+        <mapgis-iconfont :type="icon" />
+      </template>
+      <template slot="title" slot-scope="{ title }">
+        <span v-contextmenu:LayerMenu :title="title">
+          <span v-if="title.indexOf(searchValue) > -1">
+            {{ title.substr(0, title.indexOf(searchValue)) }}
+            <span style="color: #f50">{{ searchValue }}</span>
+            {{ title.substr(title.indexOf(searchValue) + searchValue.length) }}
+          </span>
+          <span v-else> {{ title }} </span>
+        </span>
+      </template>
+    </a-tree>
+    <contextmenu ref="LayerMenu" @contextmenu="handleMenuOpen">
+      <layer-menu :layerId="selectLayer" @reverse="onReveseClick" />
+    </contextmenu>
   </div>
 </template>
-
-<style></style>
 
 <script>
 import withEvents from "../../../lib/withEvents";
 import withSelfEvents from "../withSelfEvents";
+import DocumentUtil from "./DocumentUtil";
+import LayerMenu from "./contextmenu/LayerMenu";
+import { directive, Contextmenu } from "v-contextmenu";
+import "v-contextmenu/dist/index.css";
 
-const drawEvents = {
-  drawCreate: "draw.create",
-  drawDelete: "draw.delete",
-  drawCombine: "draw.combine"
+const documentEvents = {
+  // es6
+  documentCreate: "documentCreate"
 };
 
-// const drawDOMEvents = {};
-
 export default {
-  name: "MapgisDocument",
+  name: "mapgis-document",
   mixins: [withEvents, withSelfEvents],
-  components: {},
+  components: { Contextmenu, LayerMenu },
 
-  inject: {
-    theme: {
-      default: ""
-    },
-    color: {
-      default: ""
-    }
+  inject: ["mapbox", "map"],
+
+  directives: {
+    contextmenu: directive
   },
 
   provide() {
@@ -42,14 +72,6 @@ export default {
       get layers() {
         // 提供给子组件或者插槽
         return self.document.layers;
-      },
-      get theme() {
-        // 提供给子组件或者插槽
-        return self.theme;
-      },
-      get color() {
-        // 提供给子组件或者插槽
-        return self.color;
       }
     };
   },
@@ -58,80 +80,172 @@ export default {
     // mapbox drawer options
     wrapperStyle: {
       type: Object,
-      default: () => {}
-    },
-    document: {
-      type: Object,
-      default: () => {}
-      //required: true
-    },
-    map: {
-      type: Object,
-      default: () => {}
+      default: () => {
+        return {
+          position: "absolute",
+          background: "#ffffff",
+          top: "20px",
+          left: "20px",
+          zIndex: 10,
+          borderRadius: "6px"
+        };
+      }
     }
   },
 
   data() {
     return {
-      initial: true
+      initial: true,
+      showIcon: true,
+      checkedKeys: [],
+      expandedKeys: [],
+      searchValue: "",
+      autoExpandParent: true,
+      layers: [],
+      selectLayer: undefined
     };
   },
 
   watch: {
-    draggable() {}
+    checkedKeys(checks) {
+      const vm = this;
+      const { map, layers } = this;
+      if (map) {
+        let unvisible = layers.filter(l => {
+          let find = checks.find(check => check == l.key);
+          return !find;
+        });
+        let visible = layers.filter(l => {
+          let find = checks.find(check => check == l.key);
+          return find;
+        });
+        visible.forEach(l => {
+          map.getLayer(l.key) &&
+            map.setLayoutProperty(l.key, "visibility", "visible");
+        });
+        unvisible.forEach(l => {
+          map.getLayer(l.key) &&
+            map.setLayoutProperty(l.key, "visibility", "none");
+        });
+      }
+    }
+  },
+
+  created() {
+    this.document = new DocumentUtil(this.map);
   },
 
   mounted() {
-    /* const draweroptions = {
-      ...this.$props
-    };
-
-    const eventNames = Object.keys(drawEvents);
-    this.$_bindSelfEvents(eventNames);
-
-    this.initial = false;
-    this.$_addControl(); */
+    this.getParentLayer();
   },
 
   beforeDestroy() {},
 
   methods: {
-    $_addMarker() {
-      this.$_emitEvent("added", { drawer: this.drawer });
-    },
-
-    $_bindSelfEvents(events) {
-      // asControl 本身是拥有 $_bindSelfEvents 方法的，但是这里的draw组件并不是遵循的mapbox-gl.js的事件机制，
-      // 因此我们需要覆盖该方法, 按照对应的业务方式实现
+    getParentLayer() {
       const vm = this;
-      // 使用vue的this.$listeners方式来订阅用户指定的事件
-      Object.keys(this.$listeners).forEach(eventName => {
-        if (events.includes(eventName)) {
-          this.map.on(
-            drawEvents[eventName],
-            vm.$_emitDrawEvent.bind(vm, eventName)
-          );
-        }
-      });
-    },
-
-    $_unbindSelfEvents(events) {
-      let vm = this;
-      if (events.length === 0) return;
-
-      events.forEach(eventName => {
-        vm.map.off(drawEvents[eventName], this.$_emitDrawEvent);
-      });
-    },
-
-    // 按照@mapgis/webclient-vue-mapboxgl的规范 发送事件 ，其实就是用{type：eventName}包装事件名
-    $_emitDrawEvent(eventName, eventData) {
-      return this.$_emitSelfEvent({ type: eventName }, eventData);
+      if (this.map) {
+        let children = this.$parent.$children;
+        children.forEach(child => {
+          let node = child.$vnode;
+          if (node.tag && node.tag.match("-layer")) {
+            let id = child.$props.layerId;
+            let info = vm.document.getLayerComInfo(node.tag);
+            const { name, icon } = info;
+            vm.layers.push({
+              key: id, // antd-vue 保留关键字
+              title: id, // antd-vue 保留关键字
+              name, // 组件名称
+              icon, // 组件图标
+              scopedSlots: { icon: "custom", title: "title" }
+            });
+            vm.checkedKeys.push(id);
+          }
+        });
+      } else {
+        // 后面处理外部传入props outmap
+      }
     },
 
     remove() {
       this.$_emitEvent("removed");
+    },
+
+    onExpand(expandedKeys) {
+      this.expandedKeys = expandedKeys;
+      this.autoExpandParent = false;
+    },
+
+    onReveseClick(paylod) {
+      const { layerId } = paylod;
+      this.checkedKeys = [layerId];
+    },
+
+    getParentKey(key, tree) {
+      let parentKey;
+      for (let i = 0; i < tree.length; i++) {
+        const node = tree[i];
+        if (node.children) {
+          if (node.children.some(item => item.key === key)) {
+            parentKey = node.key;
+          } else if (this.getParentKey(key, node.children)) {
+            parentKey = this.getParentKey(key, node.children);
+          }
+        }
+      }
+      return parentKey;
+    },
+
+    onChange(e) {
+      let { layers } = this;
+      const dataList = [];
+      const generateList = data => {
+        for (let i = 0; i < data.length; i++) {
+          const node = data[i];
+          const key = node.key;
+          dataList.push({ key, title: key });
+          if (node.children) {
+            generateList(node.children);
+          }
+        }
+      };
+      generateList(layers);
+
+      const value = e.target.value;
+      const expandedKeys = dataList
+        .map(item => {
+          if (item.title.indexOf(value) > -1) {
+            return this.getParentKey(item.key, layers);
+          }
+          return null;
+        })
+        .filter((item, i, self) => item && self.indexOf(item) === i);
+      Object.assign(this, {
+        expandedKeys,
+        searchValue: value,
+        autoExpandParent: true
+      });
+    },
+
+    handleMenuOpen(e) {
+      this.selectLayer = e.elm.title;
     }
   }
 };
 </script>
+
+<style lang="css">
+.mapgis-document-wrapper {
+  /* position: absolute; */
+}
+
+.document-header-title {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 6px 12px;
+  line-height: 20px;
+}
+.document-header-title span {
+  margin-left: 12px;
+}
+</style>

@@ -7,7 +7,7 @@
 <script>
 import "./iconfont"; // 移动到public的asset目录下
 export default {
-  name: "iconfont",
+  name: "mapgis-iconfont",
   props: {
     type: {
       type: String,
