@@ -1,20 +1,11 @@
 # Hawkeye
 
-## Props
-
-### `map`
-
-- **类型:** `Object`
-- **Required**
-- **Non-Synced**
-- **描述:** 外部创建的地图对象
-
 ## Example
 
 ```vue
 <template>
-  <mapgis-web-map v-bind="{ ...mapOptions }" @load="handleMapLoad">
-    <mapgis-hawkeye :map="map"></mapgis-hawkeye>
+  <mapgis-web-map v-bind="{ ...mapOptions }">
+    <mapgis-hawkeye></mapgis-hawkeye>
   </mapgis-web-map>
 </template>
 
@@ -70,14 +61,8 @@ export default {
         },
         zoom: 7.5,
         center: [116.39, 40.2]
-      },
-      map: undefined
+      }
     };
-  },
-  methods: {
-    handleMapLoad(payload) {
-      this.map = payload.map;
-    }
   }
 };
 </script>
