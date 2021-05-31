@@ -9,8 +9,8 @@ export default {
   inject: ["Cesium", "webGlobe"],
   mixins:[ServiceLayer],
   props: {
-    layer: {type: String, required: true},
-    tileMatrixSetID: {type: String, required: true},
+    wmtsLayer: {type: String, required: true},
+    tileMatrixSet: {type: String, required: true},
     wmtsStyle: {type: String, default: "default"},
     srs: {type: String, required: true}
   },
@@ -36,7 +36,7 @@ export default {
         subdomains: "string|array",
         startLevel: "number",
         vueKey: "string",
-        vueIndex: "string|number",
+        vueIndex: "number",
       },
       managerName: "OGCWMTSManager",
       providerName: "WebMapTileServiceImageryProvider",
@@ -49,13 +49,13 @@ export default {
     this.unmount();
   },
   watch: {
-    layer: {
+    wmtsLayer: {
       handler: function () {
         this.unmount();
         this.mount();
       }
     },
-    tileMatrixSetID: {
+    tileMatrixSet: {
       handler: function () {
         this.unmount();
         this.mount();
@@ -90,10 +90,13 @@ export default {
       //处理天地图的wmts
       let checkTileMatrixLabels = this.$_checkValue(this.options, "tileMatrixLabels", "");
       if (checkTileMatrixLabels === "null" && this.srs === "EPSG:4326") {
-        if(this.url.indexOf("tianditu") > -1){
+        if(this.baseUrl.indexOf("tianditu") > -1){
           options.tileMatrixLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
         }
       }
+
+      //将wmtsLayer转为layer
+      options.layer = this.wmtsLayer;
 
       this.$_mount(options);
     },

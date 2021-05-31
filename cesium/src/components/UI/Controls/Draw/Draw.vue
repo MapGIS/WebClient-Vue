@@ -22,12 +22,13 @@ export default {
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
 
   props: {
-    webSceneKey:{
+    vueKey:{
       type: String,
       default: "default"
     },
-    webSceneIndex:{
-      type: Number
+    vueIndex:{
+      type: Number,
+      default: Number((Math.random() * 10000).toFixed(0))
     }
   },
 
@@ -89,9 +90,9 @@ export default {
       let webGlobeDraw;
       //当webSceneKey以及webSceneIndex存在时，通过这两个值寻找webGlobe
       //拥有多个webGlobe时使用
-      if(this.webSceneKey && this.webSceneIndex){
-        let webScene = window.CesiumZondy.GlobesManager.findSource(this.webSceneKey,this.webSceneIndex);
-        webGlobeDraw = webScene.source;
+      if(this.vueKey){
+        let GlobesManager = window.CesiumZondy.GlobesManager;
+        webGlobeDraw = GlobesManager[this.vueKey][0].source;
       }else {
         //否则使用注入的webGlobe
         webGlobeDraw = this.webGlobe;

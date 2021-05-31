@@ -1,8 +1,8 @@
 import {BaseParameter} from "./index";
 import {extend} from "@mapgis/webclient-es6-service/common";
-import {Point} from "./Point"
-import {Polyline} from "./Polyline"
-import {Polygon} from "./Polygon"
+import {VPoint} from "./Point"
+import {VPolyline} from "./Polyline"
+import {VPolygon} from "./Polygon"
 
 class GeometryParameter extends BaseParameter{
     constructor(options) {
@@ -19,23 +19,25 @@ class GeometryParameter extends BaseParameter{
 }
 
 GeometryParameter.prototype.fromGeoJSON = function (geoJSON) {
-    let me = this;
-    switch (geoJSON.geometry.type){
-        case "Point":
-            me.geometry = new Point({
-                coordinates: geoJSON.geometry.coordinates
-            });
-            break;
-        case "LineString":
-            me.geometry = new Polyline({
-                coordinates: geoJSON.geometry.coordinates
-            });
-            break;
-        case "Polygon":
-            me.geometry = new Polygon({
-                coordinates: geoJSON.geometry.coordinates[0]
-            });
-            break;
+    if(geoJSON){
+        let me = this;
+        switch (geoJSON.geometry.type){
+            case "Point":
+                me.geometry = new VPoint({
+                    coordinates: geoJSON.geometry.coordinates
+                });
+                break;
+            case "LineString":
+                me.geometry = new VPolyline({
+                    coordinates: geoJSON.geometry.coordinates
+                });
+                break;
+            case "Polygon":
+                me.geometry = new VPolygon({
+                    coordinates: geoJSON.geometry.coordinates[0]
+                });
+                break;
+        }
     }
 }
 

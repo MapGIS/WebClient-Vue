@@ -23,6 +23,9 @@ export { default as MapgisArcserverLegend } from "./components/UI/controls/legen
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
 
+export { default as MapgisBaseTable } from "./components/UI/controls/table/BaseTable";
+export { default as MapgisFeatureTable } from "./components/UI/controls/table/FeatureTable";
+
 export { default as MapgisArrayLayer } from "./components/layer/ArrayLayer";
 export { default as MapgisGeojsonLayer } from "./components/layer/GeojsonLayer";
 export { default as MapgisImageLayer } from "./components/layer/ImageLayer";
@@ -44,6 +47,7 @@ export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServe
 export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
+export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 
 /* 
 import withEventsMixin from "./lib/withEvents";

@@ -33,27 +33,7 @@ export default {
       default: true
     }
   },
-  data(){
-    return {
-      newGuid: undefined
-    }
-  },
-  created() {
-    this.$watch("gdbps",function () {
-      this.$_updateLayer();
-    })
-    this.$watch("filters",function () {
-      this.$_updateLayer();
-    })
-  },
   methods: {
-    $_updateLayer(){
-      this.newGuid = newGuid();
-      this.$_init();
-      //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
-      this.$_deferredUnMount();
-      this.$_deferredMount();
-    },
     $_init() {
       if (this.url) {
         let url = this.url;
@@ -86,13 +66,7 @@ export default {
       }
       params.push("gdbps=" + gdbps);
       params.push("f=" + this.f);
-
-      if(this.newGuid){
-        params.push("guid=" + this.newGuid);
-      }else{
-        params.push("guid=" + this.guid);
-      }
-
+      params.push("guid=" + this.guid);
 
       let width, height;
       width = height = this.tileSize;

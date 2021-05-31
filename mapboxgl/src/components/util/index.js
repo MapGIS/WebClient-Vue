@@ -1,6 +1,6 @@
 import { newGuid } from "./util";
-import { BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,Point,Polyline,Polygon,MultiPoint,MultiLineString,MultiPolygon,Feature } from "./geomtry"
+import { BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,VPoint,VPolyline,VPolygon,VMultiPoint,VMultiPolyline,VMultiPolygon,VFeature } from "./geomtry"
 
 export { newGuid };
-export { BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,Point,Polyline,Polygon,MultiPoint,MultiLineString,MultiPolygon,Feature };
+export { BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,VPoint,VPolyline,VPolygon,VMultiPoint,VMultiPolyline,VMultiPolygon,VFeature };
 

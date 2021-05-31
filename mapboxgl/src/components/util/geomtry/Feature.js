@@ -1,14 +1,13 @@
 import {extend} from "@mapgis/webclient-es6-service/common";
-import {Polygon} from "./Polygon";
-import {Point} from "./Point";
-import {Polyline} from "./Polyline";
-import {MultiPolygon} from "./MultiPolygon";
+import {VPolygon} from "./Polygon";
+import {VPoint} from "./Point";
+import {VPolyline} from "./Polyline";
 
-class Feature {
-    static fromQueryResult (result) {
+class VFeature {
+    static fromQueryResult = function (result) {
         if(!result.hasOwnProperty("SFEleArray") || !result.hasOwnProperty("AttStruct")
             || (result.hasOwnProperty("SFEleArray") && !result.SFEleArray)|| (result.hasOwnProperty("AttStruct") && !result.AttStruct)){
-            throw new Error("请确保输入的对象含有SFEleArray以及FldAlias");
+            return [];
         }
         let SFEleArray = result.SFEleArray;
         let AttStruct = result.AttStruct;
@@ -20,39 +19,41 @@ class Feature {
                     attributes[AttStruct.FldName[j]] = SFEleArray[i].AttValue[j];
                 }
             }
-            switch (SFEleArray[i].ftype){
-                case 1:
-                    let PntGeom = SFEleArray[i].fGeom.PntGeom;
-                    for(let k = 0;k < PntGeom.length;k++){
-                        let point = new Point({
-                            coordinates: [PntGeom[k].Dot.x,PntGeom[k].Dot.y]
-                        })
-                        geometry.push(point);
-                        geometryType = "Point";
-                    }
-                    break
-                case 2:
-                    let LinGeom = SFEleArray[i].fGeom.LinGeom;
-                    for(let k = 0;k < LinGeom.length;k++){
-                        let polyline = new Polyline({
-                            coordinates: LinGeom[k].Line.Arcs[0].Dots
-                        });
-                        geometry.push(polyline)
-                        geometryType = "LineString";
-                    }
-                    break
-                case 3:
-                    let RegGeom = SFEleArray[i].fGeom.RegGeom;
-                    for(let k = 0;k < RegGeom.length;k++){
-                        let polygon = new Polygon();
-                        polygon.exterior = RegGeom[k].Rings[0].Arcs[0].Dots;
-                        for (let m = 1; m < RegGeom[k].Rings.length;m++){
-                            polygon.interior.push(RegGeom[k].Rings[m].Arcs[0].Dots);
+            if(SFEleArray[i].fGeom){
+                switch (SFEleArray[i].ftype){
+                    case 1:
+                        let PntGeom = SFEleArray[i].fGeom.PntGeom;
+                        for(let k = 0;k < PntGeom.length;k++){
+                            let point = new VPoint({
+                                coordinates: [PntGeom[k].Dot.x,PntGeom[k].Dot.y]
+                            })
+                            geometry.push(point);
+                            geometryType = "Point";
                         }
-                        geometry.push(polygon);
-                        geometryType = "Polygon";
-                    }
-                    break
+                        break
+                    case 2:
+                        let LinGeom = SFEleArray[i].fGeom.LinGeom;
+                        for(let k = 0;k < LinGeom.length;k++){
+                            let polyline = new VPolyline({
+                                coordinates: LinGeom[k].Line.Arcs[0].Dots
+                            });
+                            geometry.push(polyline)
+                            geometryType = "LineString";
+                        }
+                        break
+                    case 3:
+                        let RegGeom = SFEleArray[i].fGeom.RegGeom;
+                        for(let k = 0;k < RegGeom.length;k++){
+                            let polygon = new VPolygon();
+                            polygon.exterior = RegGeom[k].Rings[0].Arcs[0].Dots;
+                            for (let m = 1; m < RegGeom[k].Rings.length;m++){
+                                polygon.interior.push(RegGeom[k].Rings[m].Arcs[0].Dots);
+                            }
+                            geometry.push(polygon);
+                            geometryType = "Polygon";
+                        }
+                        break
+                }
             }
             let style;
             if(SFEleArray[i].GraphicInfo){
@@ -70,7 +71,7 @@ class Feature {
                 }
             }
 
-            feature = new Feature({
+            feature = new VFeature({
                 attributes: attributes,
                 FID: SFEleArray[i].FID,
                 geometry: geometry,
@@ -81,23 +82,62 @@ class Feature {
         }
         return features;
     }
-    static fromGeoJSON (geoJSON) {
+    static fromGeoJSON = function (geoJSON) {
         let feature,features=[];
         if(!geoJSON.hasOwnProperty("type")){
             throw new Error("请输入正确的geoJSON");
         }
         if(geoJSON.type === "Feature"){
-            feature = new Feature({
-                geometry: Feature.geometry,
+            feature = new VFeature({
+                geometry: VFeature.geometry,
                 attributes: geoJSON.properties
             });
             return feature;
         }else if(geoJSON.type === "FeatureCollection"){
-            let featureCollection = geoJSON.features;
+            let featureCollection = geoJSON.features,geometry,coordinates,fCoordinates;
             for(let i = 0;i < featureCollection.length;i++){
-                feature = new Feature({
-                    geometry: featureCollection[i].geometry,
-                    attributes: featureCollection[i].properties
+                geometry = [];
+                fCoordinates = featureCollection[i].geometry.coordinates;
+                switch (featureCollection[i].geometry.type){
+                    case "Point" :
+                        geometry.push(featureCollection[i].geometry);
+                        break;
+                    case "LineString" :
+                        coordinates = [];
+                        for (let j = 0;j < fCoordinates.length;j++){
+                            coordinates.push({
+                                x:Number(fCoordinates[j][0]),
+                                y:Number(fCoordinates[j][1])
+                            })
+                        }
+                        featureCollection[i].geometry.coordinates = coordinates;
+                        geometry.push(featureCollection[i].geometry);
+                        break;
+                    case "Polygon" :
+                        let polygon = new VPolygon();
+                        for (let j = 0;j < fCoordinates[0].length;j++){
+                            polygon.exterior.push({
+                                x:Number(fCoordinates[0][j][0]),
+                                y:Number(fCoordinates[0][j][1])
+                            })
+                        }
+                        for(let j = 1;j < fCoordinates.length;j++){
+                            let ext = [];
+                            for (let k = 0;k < fCoordinates[j].length;k++){
+                                ext.push({
+                                    x:Number(fCoordinates[j][k][0]),
+                                    y:Number(fCoordinates[j][k][1])
+                                })
+                            }
+                            polygon.exterior.push(ext);
+                        }
+                        geometry.push(polygon);
+                        break;
+                }
+                feature = new VFeature({
+                    geometry: geometry,
+                    attributes: featureCollection[i].properties,
+                    geometryType: featureCollection[i].geometry.type
                 });
                 features.push(feature);
             }
@@ -106,7 +146,14 @@ class Feature {
             throw new Error("不支持的geoJSON类型");
         }
     }
-    
+    static toAntTableData = function (result) {
+        let data = [];
+        let featureSet = VFeature.fromQueryResult(result);
+        for (let i = 0; i < featureSet.length; i++) {
+            data.push(Object.assign(featureSet[i].attributes, {key: featureSet[i].FID ? featureSet[i].FID : i}));
+        }
+        return data;
+    }
     constructor(options) {
         this.geometry = undefined;
         this.geometryType = undefined;
@@ -118,4 +165,4 @@ class Feature {
     }
 }
 
-export {Feature}
+export {VFeature}
