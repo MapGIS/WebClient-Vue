@@ -181,11 +181,11 @@
 </template>
 
 <script>
-import Vue from "vue"
+/* import Vue from "vue"
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
-Vue.use(Antd);
+Vue.use(Antd); */
 
 import featureService from "../../../map/mixins/FeatureService"
 import BaseDraw from "../draw/BaseDraw"

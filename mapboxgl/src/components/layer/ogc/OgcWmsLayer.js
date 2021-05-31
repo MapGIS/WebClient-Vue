@@ -25,6 +25,10 @@ export default {
       type: String,
       default: "EPSG:4326"
     },
+    styles: {
+      type: String,
+      default: ""
+    },
     format: {
       type: String,
       default: "image/png"
@@ -54,8 +58,8 @@ export default {
   },
   methods: {
     changelayers() {
-      this.$_init();
-      this.mapSource.tiles = [this._url];
+      this.$_deferredUnMount();
+      this.$_deferredMount();
     },
     async $_init() {
       if (this.url) {
@@ -103,6 +107,7 @@ export default {
       params.push("version=" + this.version);
       params.push("layers=" + this.layers);
       params.push("format=" + this.format);
+      params.push("styles=" + this.styles);
       params.push("width=" + this.tileSize);
       params.push("height=" + this.tileSize);
       if (this.version === "1.1.1") {

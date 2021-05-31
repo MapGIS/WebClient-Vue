@@ -56,14 +56,14 @@ export default {
   watch: {
     layers(next) {
       if (this.initial) return;
-      if (next !== "") {
-        this.mapSource.tiles = [this._url + "&layers=" + next];
-      } else {
-        this.mapSource.tiles = [this._url];
-      }
+      this.changelayers();
     }
   },
   methods: {
+    changelayers() {
+      this.$_deferredUnMount();
+      this.$_deferredMount();
+    },
     $_init() {
       let { url, domain, baseUrl, protocol, ip, port } = this;
       let { serverName, tileSize, dynamicTile } = this;
@@ -161,6 +161,11 @@ export default {
       this.$_bindLayerEvents(layerEvents);
       this.map.off("dataloading", this.$_watchSourceLoading);
       this.initial = false;
+    },
+    $_deferredUnMount() {
+      this.map.removeLayer(this.layerId);
+      this.map.removeSource(this.sourceId || this.layerId);
+      this.initial = true;
     }
   }
 };

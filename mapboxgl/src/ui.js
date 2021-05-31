@@ -14,13 +14,13 @@ let InputPassword = Input.Password;
 
 import { default as Card } from "ant-design-vue/es/card";
 
-import { default as button } from "ant-design-vue/es/button";
+import { default as Button } from "ant-design-vue/es/button";
 
 export { Slider };
 export { Select, SelectOption, SelectOptGroup };
 export { Input, InputGroup, InputSearch, InputTextArea, InputPassword };
 export { Card };
-export { button };
+export { Button };
 
 export { default as Tree } from "ant-design-vue/es/tree/Tree";
 export { default as DirectoryTree } from "ant-design-vue/es/tree/DirectoryTree";

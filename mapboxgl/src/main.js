@@ -1,3 +1,4 @@
+import "ant-design-vue/dist/antd.css";
 import antDirective from "ant-design-vue/es/_util/antDirective";
 
 import * as MapComponents from "./component";
