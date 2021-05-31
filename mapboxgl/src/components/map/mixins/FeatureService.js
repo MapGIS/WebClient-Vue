@@ -53,9 +53,11 @@ export default {
     _initParam(){
       //取得ip，port，mapId（地图文档名称）
       this._url = this.url;
-      this._ip = this._url.substr(7,this._url.indexOf(":") + 5);
-      this._port = this._url.substr(this._url.indexOf(this._ip) + this._ip.length + 1,this._url.indexOf("/igs") - this._url.indexOf(this._ip) - this._ip.length - 1);
-      this._mapId = this._url.substr(this._url.indexOf("doc") + 5);
+      let urls = this._url.split("http://");
+      this._ip = urls[1].split(":")[0];
+      let arr = urls[1].split(":")[1].split("/");
+      this._port = arr[0];
+      this._mapId = arr[arr.length - 1];
     },
     //通过OID查询要素
     _queryByObjectIds(objectIdsParameter,onSuccess,onError){
