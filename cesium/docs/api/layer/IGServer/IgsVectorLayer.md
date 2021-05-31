@@ -90,6 +90,14 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **Synced**
 - **描述:** gdbp地址，允许多个图层
 
+```
+gdbps: ["layer1","layer2","layer3"]
+```
+
+```
+gdbps: "layer1,layer2,layer3"
+```
+
 ## Example
 
 ```vue
