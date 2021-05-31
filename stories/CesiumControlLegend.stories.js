@@ -13,8 +13,8 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-scene>
-        <arcgis-tile-layer url="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer" />
-        <arcgis-map-layer url="http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer" />
+        <arcgis-tile-layer baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer" />
+        <arcgis-map-layer baseUrl="http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer" />
         <mapgis-3d-arcgis-legend></mapgis-3d-arcgis-legend>
     </mapgis-web-scene>
     `

@@ -21,8 +21,8 @@
 ```vue
 <template>
     <mapgis-web-scene>
-        <mapgis-3d-arcgis-tile-layer :url="tileUrl" :id="tileId" />
-        <mapgis-3d-arcgis-map-layer :url="mapUrl" :id="mapId" />
+        <mapgis-3d-arcgis-tile-layer :baseUrl="tileUrl" :id="tileId" />
+        <mapgis-3d-arcgis-map-layer :baseUrl="mapUrl" :id="mapId" />
         <mapgis-3d-compare
             :beforeLayers="beforeLayers"
             :afterLayers="afterLayers"

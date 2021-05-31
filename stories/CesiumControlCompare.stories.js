@@ -22,9 +22,9 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-scene>
-        <arcgis-map-layer :url="mapUrl2" :id="mapId2" />
-        <arcgis-tile-layer :url="tileUrl" :id="tileId" />
-        <arcgis-map-layer :url="mapUrl1" :id="mapId1" />
+        <arcgis-map-layer :baseUrl="mapUrl2" :id="mapId2" />
+        <arcgis-tile-layer :baseUrl="tileUrl" :id="tileId" />
+        <arcgis-map-layer :baseUrl="mapUrl1" :id="mapId1" />
         <mapgis-3d-compare :beforeLayers="beforeLayers" :afterLayers="afterLayers"></mapgis-3d-compare>
     </mapgis-web-scene>
     `

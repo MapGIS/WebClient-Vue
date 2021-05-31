@@ -25,11 +25,6 @@
 <script>
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
-import Vue from "vue";
-import Antd from "ant-design-vue";
-import "ant-design-vue/dist/antd.css";
-Vue.use(Antd);
-
 export default {
     name: "mapgis-3d-arcgis-legend",
     inject: ["Cesium", "webGlobe", "CesiumZondy"],
@@ -68,9 +63,9 @@ export default {
         getLegendUrl() {
             const { CesiumZondy } = this;
             let layers = [];
-            Object.keys(CesiumZondy.arcgisManager).forEach((key) => {
+            Object.keys(CesiumZondy.ArcgisManager).forEach((key) => {
                 if (key !== "vueKey") {
-                    layers = layers.concat(CesiumZondy.arcgisManager[key]);
+                    layers = layers.concat(CesiumZondy.ArcgisManager[key]);
                 }
             });
             layers.forEach((layer) => {

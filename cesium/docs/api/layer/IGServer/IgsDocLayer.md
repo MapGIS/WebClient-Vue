@@ -2,7 +2,7 @@
 
 ## Props
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **可选**
@@ -70,7 +70,7 @@ http://{ip}:{port}/igs/rest/mrms/docs
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-igs-doc-layer :url="url" />
+    <mapgis-3d-igs-doc-layer :baseUrl="baseUrl" />
   </mapgis-web-scene>
 </template>
 
@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       //要加载的url
-      url: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328"
+      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328"
     };
   }
 };
@@ -93,7 +93,7 @@ export default {
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-igs-doc-layer :url="url" :layerStyle="layerStyle" />
+    <mapgis-3d-igs-doc-layer :baseUrl="baseUrl" :layerStyle="layerStyle" />
   </mapgis-web-scene>
 </template>
 
@@ -102,7 +102,7 @@ export default {
   data() {
     return {
       //要加载的url
-      url: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
       //图层样式
       layerStyle: {
         opacity: 0.5,
@@ -120,7 +120,7 @@ export default {
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-igs-doc-layer :url="url" :layers="layers" />
+    <mapgis-3d-igs-doc-layer :baseUrl="baseUrl" :layers="layers" />
   </mapgis-web-scene>
 </template>
 
@@ -129,7 +129,7 @@ export default {
   data() {
     return {
       //要加载的url
-      url: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
       //要显示的子图层
       layers: "show:1,2"
     };
@@ -144,7 +144,7 @@ export default {
 <template>
   <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wmts-layer
-      :url="urlWmts"
+      :baseUrl="baseUrlWmts"
       :layer="layerWmts"
       :tileMatrixSetID="tileMatrixSetIDWmts"
       :srs="srsWmts"
@@ -152,7 +152,7 @@ export default {
       :vueKey="vueKey"
     />
     <mapgis-3d-igs-doc-layer
-      :url="urlDoc"
+      :baseUrl="baseUrlDoc"
       :layers="layers"
       :layerStyle="layerStyleDoc"
       :vueKey="vueKey"
@@ -166,7 +166,7 @@ export default {
 export default {
   data() {
     return {
-      urlWmts:
+      baseUrlWmts:
         "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
       layerWmts: "",
       tileMatrixSetIDWmts: "",
@@ -175,7 +175,7 @@ export default {
         zIndex: 100
       },
       //要加载的url
-      urlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
       //要显示的子图层
       layers: "show:1,2",
       //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe

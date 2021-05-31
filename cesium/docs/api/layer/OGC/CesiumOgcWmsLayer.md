@@ -4,7 +4,7 @@
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **必传**
@@ -140,7 +140,7 @@ All common layer [events](/zh/api/Layers/#events)
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" :srs="srs" />
+    <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :layers="layers" :srs="srs" />
   </mapgis-web-scene>
 </template>
 
@@ -149,7 +149,7 @@ export default {
   data() {
     return {
       //服务基地址
-      url: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
       layers: "武汉市,武汉市_行人道路",
       //地图坐标系
@@ -172,7 +172,7 @@ export default {
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" />
+    <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :layers="layers" />
   </mapgis-web-scene>
 </template>
 
@@ -181,7 +181,7 @@ export default {
   data() {
     return {
       //服务基地址
-      url:
+      baseUrl:
         "http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer",
       //要显示的图层Id,arcgis要传Id而不是名称
       layers: "0"
@@ -203,7 +203,7 @@ export default {
 ```vue
 <template>
   <mapgis-web-globe>
-    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" :srs="srs" />
+    <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :layers="layers" :srs="srs" />
   </mapgis-web-globe>
   <button @click="changeProjection">动态投影</button>
 </template>
@@ -213,7 +213,7 @@ export default {
   data() {
     return {
       //服务基地址
-      url: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
       layers: "武汉市,武汉市_行人道路",
       srs: "EPSG:4326"
@@ -246,14 +246,14 @@ export default {
 <template>
   <mapgis-web-scene>
     <mapgis-3d-ogc-wmts-layer
-      :url="url"
+      :baseUrl="baseUrl"
       :layer="layer"
       :tileMatrixSetID="tileMatrixSetID"
       :layerStyle="layerStyle"
     />
     <mapgis-3d-ogc-wms-layer
       v-if="show"
-      :url="url2"
+      :baseUrl="baseUrl2"
       :layers="layers"
       :srs="srs2"
       :layerStyle="layerStyle2"
@@ -270,7 +270,7 @@ export default {
   data() {
     return {
       //服务基地址
-      url:
+      baseUrl:
         "http://develop.smaryun.com:6163/igs/rest/ogc/WORLDMKTTILE2/WMTSServer",
       //地图文档名称
       layer: "WORLDMKTTILE2",
@@ -283,7 +283,7 @@ export default {
         zIndex: 105
       },
       //服务基地址
-      url2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
       layers: "武汉市,武汉市_行人道路",
       //空间参考系
@@ -334,13 +334,13 @@ export default {
 <template>
   <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wms-layer
-      :url="urlWms"
+      :baseUrl="baseUrlWms"
       :layer="layersWms"
       :tileMatrixSetID="layerStyleWms"
       :vueKey="vueKey"
     />
     <mapgis-3d-igs-doc-layer
-      :url="urlDoc"
+      :baseUrl="baseUrlDoc"
       :layers="layers"
       :layerStyle="layerStyleDoc"
       :vueKey="vueKey"
@@ -355,14 +355,14 @@ export default {
   data() {
     return {
       //服务地址
-      urlWms: "http://localhost:6163/igs/rest/ogc/doc/wuhan_3860/WMSServer",
+      baseUrlWms: "http://localhost:6163/igs/rest/ogc/doc/wuhan_3860/WMSServer",
       //要显示的图层
       layersWms: "武汉市_3857,武汉市_医疗服务_3857",
       layerStyleWms: {
         zIndex: 100
       },
       //要加载的url
-      urlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
       //要显示的子图层
       layers: "show:1,2",
       //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe

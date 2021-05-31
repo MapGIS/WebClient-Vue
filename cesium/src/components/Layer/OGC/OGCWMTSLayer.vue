@@ -98,6 +98,9 @@ export default {
       //将wmtsLayer转为layer
       options.layer = this.wmtsLayer;
 
+      //将tileMatrixSet转为tileMatrixSetID
+      options.tileMatrixSetID = this.tileMatrixSet;
+
       this.$_mount(options);
     },
     unmount() {
