@@ -5,6 +5,7 @@ export { default as Mapgis3dState } from "./components/UI/Controls/State/StateCo
 export { default as Mapgis3dLink } from "./components/UI/Controls/Link/Link.vue";
 export { default as Mapgis3dDraw } from "./components/UI/Controls/Draw/Draw";
 export { default as Mapgis3dCompare } from "./components/UI/Controls/Compare/Compare.vue";
+export { default as Mapgis3dArcgisLegend } from "./components/UI/Controls/Legend/Legend.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "./components/Provider/ImageProvider/ImageryLayer.vue";
