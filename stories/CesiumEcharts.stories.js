@@ -12,10 +12,6 @@ const Template = (args, {argTypes}) => ({
     components: {MapgisWebScene, BaseServer, Mapgis3dArcgisTileLayer},
     data() {
         return {
-            mapStyle: 'mapbox://styles/mapbox/dark-v9',
-            accessToken: 'pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA',
-            center: [116.46, 39.92],
-            zoom: 10,
             busLines: {},
             option: {}
         }
@@ -25,17 +21,6 @@ const Template = (args, {argTypes}) => ({
     },
     methods: {
         handleMapLoad() {
-            // let { webGlobe } = window;
-            // let sceneManager = new CesiumZondy.Manager.SceneManager({
-            //     viewer: webGlobe.viewer,
-            // });
-            //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
-            // sceneManager.flyToEx(114.299039, 30.594797, {
-            //     height: 320,
-            //     heading: -38,
-            //     pitch: -22,
-            //     roll: 0,
-            // });
             let spec = {
                 destination: {
                     x: -2409221.7854387695,
@@ -131,31 +116,32 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-scene style="height:60vh" @load="handleMapLoad">
-      <mapgis-3d-arcgis-tile-layer :url="url" :layer-style="layerStyle" :srs="srs"/>
-      <mapgis-3d-echarts-layer :options.sync="option" :center="center"></mapgis-3d-echarts-layer>
+      <mapgis-web-scene style="height:60vh"  :cameraView = "cameraView">
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs" />
+      <mapgis-3d-echarts-layer :options.sync="option"></mapgis-3d-echarts-layer>
       </mapgis-web-scene>`
 });
 
 export const mapEcharts = Template.bind({});
 let busLines = {};
 mapEcharts.args = {
-    url: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+    baseUrl: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
     layerStyle: {
         visible: true,
         opacity: 1,
         zIndex: 2
     },
     srs: "EPSG:4326",
-    cameraView: {
-        destination:
-            {
-                // x: -2211984.1977517945,
-                // y: 4535239.698163201,
-                // z: 4206543.0941376835
-                x:114.299039,
-                y:30.594797,
-                z:10
-            }
+    cameraView:{
+        destination: {
+            x: -2409221.7854387695,
+            y: 4705113.697479787,
+            z: 4500333.6696071755
+        },
+        orientation: {
+            heading: 3.2694614177406143,
+            pitch: -1.4832321184766042,
+            roll: 3.1369303868636838
+        },
     }
 };

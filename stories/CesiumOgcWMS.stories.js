@@ -12,7 +12,8 @@ export default {
       opacity: 1,
       zIndex: 10
     },
-    vueIndex: 1
+    vueIndex: 1,
+    options: {}
   },
 };
 
@@ -35,5 +36,6 @@ OGCWMS.args = {
     opacity: 1,
     zIndex: 10
   },
-  vueIndex: 1
+  vueIndex: 1,
+  options: {}
 };

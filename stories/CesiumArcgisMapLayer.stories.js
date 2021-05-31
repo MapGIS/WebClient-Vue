@@ -8,14 +8,13 @@ const Template = (args, { argTypes }) => ({
     components: { MapgisWebGlobe },
     template: `
     <mapgis-web-globe>
-    <mapgis-3d-arcgis-map-layer v-bind="$props" />
+    <mapgis-3d-arcgis-map-layer v-bind="$props"/>
     </mapgis-web-globe >`,
 });
 
 export const exportMap = Template.bind({});
 exportMap.args = {
-    // url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-    url:"http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
+    baseUrl:"http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
     layers: "show:0,2,4,7,9,10,11,12",
     layerStyle: {
         visible: true,
