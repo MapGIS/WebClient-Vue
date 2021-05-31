@@ -68,9 +68,9 @@ export default {
         getLegendUrl() {
             const { CesiumZondy } = this;
             let layers = [];
-            Object.keys(CesiumZondy.arcgisManager).forEach((key) => {
+            Object.keys(CesiumZondy.ArcgisManager).forEach((key) => {
                 if (key !== "vueKey") {
-                    layers = layers.concat(CesiumZondy.arcgisManager[key]);
+                    layers = layers.concat(CesiumZondy.ArcgisManager[key]);
                 }
             });
             layers.forEach((layer) => {
