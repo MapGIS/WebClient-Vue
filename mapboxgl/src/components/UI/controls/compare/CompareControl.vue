@@ -5,10 +5,6 @@ import "@mapgis/mapbox-gl-compare/mapbox-gl-compare.css";
 export default {
   name: "mapgis-compare",
   props: {
-    default: {
-      type: Boolean,
-      default: true
-    },
     orientation: {
       type: String,
       default: "vertical"
@@ -24,8 +20,6 @@ export default {
 
   data() {
     return {
-      initial: true,
-      control: undefined,
       beforeMap: undefined,
       afterMap: undefined,
       com: undefined
@@ -111,7 +105,7 @@ export default {
   }
 };
 </script>
-<style lang="css">
+<style scoped>
 .mapgis-compare-bar {
   position: relative;
   height: 100vh;
