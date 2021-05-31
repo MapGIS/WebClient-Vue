@@ -1,0 +1,34 @@
+{
+  "$version": "10.5.4",
+  "components": [
+    "mapgis-arcgis-map-layer",
+    "mapgis-arcgis-tile-layer",
+    "mapgis-igs-doc-layer",
+    "mapgis-igs-tile-layer",
+    "mapgis-ogc-wmts-layer",
+    "mapgis-ogc-wms-layer"
+  ],
+  "sublayers": [
+    "mapgis-arcgis-map-layer",
+    "mapgis-igs-doc-layer",
+    "mapgis-ogc-wms-layer"
+  ],
+  "mapgis-arcgis-map-layer": {
+    "type": {
+      "required": true,
+      "type": "string",
+      "default": "raster",
+      "doc": "ArcGIS的地图文档图层,针对mapboxgl-raster图层的封装"
+    },
+    "layers": {
+      "type": "string",
+      "default": "",
+      "doc": "指定需要被取图的图层序列号数组，以“，”分隔。默认为依据文档原始图层状态进行设置。"
+    }
+  },
+  "mapgis-arcgis-tile-layer": {},
+  "mapgis-igs-doc-layer": {},
+  "mapgis-igs-tile-layer": {},
+  "mapgis-ogc-wmts-layer": {},
+  "mapgis-ogc-wms-layer": {}
+}

@@ -2,7 +2,7 @@
 
 ## Props
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **可选**
@@ -25,7 +25,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `String`
 - **可选**
 - **Non-Synced**
-- **默认值** `location.protocol.split(":")[0] || "http"`
+- **默认值:** `location.protocol.split(":")[0] || "http"`
 - **描述:** 网络协议。【url，domain和（protocol，ip，port）三选一】
 
 ### `ip`
@@ -33,7 +33,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `String`
 - **可选**
 - **Non-Synced**
-- **默认值** `localhost`
+- **默认值:** `localhost`
 - **描述:** 地图服务ip。【url，domain和（protocol，ip，port）三选一】
 
 ### `port`
@@ -41,7 +41,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `String`
 - **可选**
 - **Non-Synced**
-- **默认值** `6163`
+- **默认值:** `6163`
 - **描述:** 地图服务端口。【url，domain和（protocol，ip，port）三选一】
 
 ### `tileWidth`
@@ -49,7 +49,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `Number`
 - **可选**
 - **Non-Synced**
-- **默认值** `256`
+- **默认值:** `256`
 - **描述:** 瓦片宽度
 
 ### `tileHeight`
@@ -57,7 +57,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `Number`
 - **可选**
 - **Non-Synced**
-- **默认值** `256`
+- **默认值:** `256`
 - **描述:** 瓦片高度
 
 ### `minimumLevel`
@@ -65,7 +65,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `Number`
 - **可选**
 - **Non-Synced**
-- **默认值** `0`
+- **默认值:** `0`
 - **描述:** 瓦片最小级别
 
 ### `maximumLevel`
@@ -73,15 +73,30 @@ http://{ip}:{port}/igs/rest/mrms/layers
 - **类型:** `Number`
 - **可选**
 - **Non-Synced**
-- **默认值** `20`
+- **默认值:** `20`
 - **描述:** 瓦片最大级别
+
+### `id`
+
+- **类型:** `String`
+- **默认值:** `""`
+- **Non-Synced**
+- **描述:** 图层id，区别不同图层
 
 ### `gdbps`
 
-- **类型:** `Array`
+- **类型:** `Array | String`
 - **必传**
-- **Non-Synced**
+- **Synced**
 - **描述:** gdbp地址，允许多个图层
+
+```
+gdbps: ["layer1","layer2","layer3"]
+```
+
+```
+gdbps: "layer1,layer2,layer3"
+```
 
 ## Example
 
@@ -93,7 +108,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
     >
         <mapgis-3d-igs-vector-layer
             :gdbps="gdbps"
-            :domain="domain"
+            :baseUrl="baseUrl"
         ></mapgis-3d-igs-vector-layer>
     </mapgis-web-scene>
 </template>
@@ -106,7 +121,7 @@ export default {
                 "gdbp://MapGisLocal/OpenLayerVecterMap/sfcls/武汉市",
                 "gdbp://MapGisLocal/OpenLayerVecterMap/sfcls/overLayByLayerAnalysisResultLayer2021-04-22-165404",
             ],
-            domain: "http://localhost:6163",
+            baseUrl: "http://localhost:6163/igs/rest/mrms/layers",
         };
     },
 };

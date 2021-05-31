@@ -12,8 +12,9 @@
 ### `measureMethod`
 
 - **类型:** `String`
-- **默认值:** `geography`
-- **描述:** 计算方法。geography(按照地理坐标系计算) | projection(按照投影坐标系计算)
+- **默认值:** `both`
+- **Synced**
+- **描述:** 计算方法。both（返回两种方式计算的结果） | geography(按照地理坐标系计算) | projection(按照投影坐标系计算)
 
 ## Slots
 
@@ -89,7 +90,6 @@
 </template>
 
 <script>
-
 const measureModes = {
   measureLength: "measure-length",
   measureArea: "measure-area"

@@ -1,9 +1,9 @@
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import ArcgisTileLayer from "../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
+import MapgisArcgisTileLayer from "../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
 
 export default {
     title: "二维/ArcGISServer-瓦片图层",
-    component: ArcgisTileLayer,
+    component: MapgisArcgisTileLayer,
     argTypes: {
         layerId: "",
         sourceId: "test",
@@ -13,11 +13,11 @@ export default {
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisWebMap, ArcgisTileLayer },
+    components: { MapgisWebMap, MapgisArcgisTileLayer },
     template: `
     <mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
-    <arcgis-tile-layer v-bind="$props" />
-    <mapgis-arcserver-legend :url="url"></mapgis-legend>
+    <mapgis-arcgis-tile-layer v-bind="$props" />
+    <mapgis-arcserver-legend :url="url"></mapgis-arcserver-legend>
     </mapgis-web-map>`,
 });
 

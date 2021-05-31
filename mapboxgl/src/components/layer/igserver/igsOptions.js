@@ -3,6 +3,10 @@ export default {
     type: String,
     default: null
   },
+  baseUrl: {
+    type: String,
+    default: null
+  },
   domain: {
     type: String,
     default: null

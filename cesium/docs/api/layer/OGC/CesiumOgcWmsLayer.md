@@ -36,11 +36,14 @@ http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
 - **类型:** `String`
 - **必传**
 - **watch**
-- **描述:** 图层名称，多个值以逗号分隔，不传时默认显示全部图层
+- **描述:** 图层名称或 Id，igs 使用地图名称，arcgis 使用 id，从 0 开始，多个值以逗号分隔，不传时默认显示全部图层
 
 ```
 layers = "" 显示全部图层
+igs使用名称
 layers = "武汉,武汉_地铁" 仅显示武汉和武汉_地铁图层
+arcgis使用id
+layers =  “0,1,2”
 ```
 
 ### `srs`
@@ -132,7 +135,7 @@ All common layer [events](/zh/api/Layers/#events)
 
 ## Example
 
-### KVP 格式，请求地图
+### 加载 WMS 地图 - IGS - 4326
 
 ```vue
 <template>
@@ -164,12 +167,43 @@ export default {
 </style>
 ```
 
+### 加载 WMS 地图 - ArcGis - 3857
+
+```vue
+<template>
+  <mapgis-web-scene>
+    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" />
+  </mapgis-web-scene>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      //服务基地址
+      url:
+        "http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer",
+      //要显示的图层Id,arcgis要传Id而不是名称
+      layers: "0"
+    };
+  }
+};
+</script>
+
+<style lang="css">
+.main {
+  height: 600px;
+  width: 100%;
+}
+</style>
+```
+
 ### 动态投影,wms 服务版本为 1.1.1 时请使用 srs，版本为 1.3.0 时请使用 crs
 
 ```vue
 <template>
   <mapgis-web-globe>
-    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" />
+    <mapgis-3d-ogc-wms-layer :url="url" :layers="layers" :srs="srs" />
   </mapgis-web-globe>
   <button @click="changeProjection">动态投影</button>
 </template>
@@ -181,7 +215,8 @@ export default {
       //服务基地址
       url: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
-      layers: "武汉市,武汉市_行人道路"
+      layers: "武汉市,武汉市_行人道路",
+      srs: "EPSG:4326"
     };
   },
   methods: {
@@ -291,4 +326,62 @@ export default {
   width: 100%;
 }
 </style>
+```
+
+## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueIndex，并将此 vueIndex 传给此组件的 vueIndex
+
+```vue
+<template>
+  <mapgis-web-scene :vueKey="vueKey">
+    <mapgis-3d-ogc-wms-layer
+      :url="urlWms"
+      :layer="layersWms"
+      :tileMatrixSetID="layerStyleWms"
+      :vueKey="vueKey"
+    />
+    <mapgis-3d-igs-doc-layer
+      :url="urlDoc"
+      :layers="layers"
+      :layerStyle="layerStyleDoc"
+      :vueKey="vueKey"
+    />
+    <button @click="changeIndex">改变图层顺序</button>
+  </mapgis-web-scene>
+  <mapgis-web-scene :vueKey="vueKey2" />
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      //服务地址
+      urlWms: "http://localhost:6163/igs/rest/ogc/doc/wuhan_3860/WMSServer",
+      //要显示的图层
+      layersWms: "武汉市_3857,武汉市_医疗服务_3857",
+      layerStyleWms: {
+        zIndex: 100
+      },
+      //要加载的url
+      urlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      //要显示的子图层
+      layers: "show:1,2",
+      //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe
+      vueKey: "webSceneOne",
+      vueKey2: "webSceneTwo",
+      layerStyleDoc: {
+        zIndex: 1000
+      }
+    };
+  },
+  methods: {
+    changeIndex() {
+      if (this.layerStyleDoc.zIndex === 1000) {
+        this.layerStyleDoc.zIndex = 50;
+      } else {
+        this.layerStyleDoc.zIndex = 1000;
+      }
+    }
+  }
+};
+</script>
 ```

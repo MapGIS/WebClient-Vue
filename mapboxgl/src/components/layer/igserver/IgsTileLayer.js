@@ -14,25 +14,35 @@ export default {
   },
   methods: {
     $_init() {
-      if (this.url) {
+      let { url, domain, baseUrl, protocol, ip, port } = this;
+      let { serverName, zoomOffset } = this;
+      let fixBaseUrl;
+      if (url) {
         this._url = this.url;
         if (this.url.indexOf("{z}") < 0) {
           this._url += "/{z}/{y}/{x}";
         }
-        this._zoomOffset = this.zoomOffset;
+        this._zoomOffset = zoomOffset;
         if (this.map.getCRS().epsgCode.includes("4326")) {
           this._zoomOffset = -1;
         }
         return;
+      } else if (baseUrl) {
+        if (baseUrl.indexOf("?") > -1) {
+          fixBaseUrl = this.baseUrl.split("?")[0];
+        } else {
+          fixBaseUrl = this.baseUrl;
+        }
+      } else if (domain) {
+        fixBaseUrl = `${domain}/igs/rest/mrms/tile/${serverName}`;
+      } else {
+        domain = `${protocol}://${ip}:${port}`;
+        fixBaseUrl = `${domain}/igs/rest/mrms/tile/${serverName}`;
       }
-      let domain = this.domain;
-      if (!domain) {
-        domain = this.protocol + "://" + this.ip + ":" + this.port;
-      }
-      this._url =
-        encodeURI(domain + "/igs/rest/mrms/tile/" + this.serverName) +
-        "/{z}/{y}/{x}";
+
+      this._url = encodeURI(fixBaseUrl) + "/{z}/{y}/{x}";
       this._zoomOffset = this.zoomOffset;
+
       if (this.map.getCRS().epsgCode.includes("4326")) {
         this._zoomOffset = -1;
       }

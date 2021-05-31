@@ -6,23 +6,65 @@
 export default {
     name: "mapgis-3d-compare",
     inject: ["Cesium", "webGlobe"],
+    props: {
+        beforeLayers: {
+            type: Array,
+            default: function () {
+                return [];
+            },
+        },
+        afterLayers: {
+            type: Array,
+            default: function () {
+                return [];
+            },
+        },
+    },
     data() {
         return {};
+    },
+    watch: {
+        beforeLayers: {
+            handler(val) {
+                this.initCompare();
+            },
+            deep: true,
+        },
+        afterLayers: {
+            handler(val) {
+                this.initCompare();
+            },
+            deep: true,
+        },
     },
     mounted() {
         this.initCompare();
     },
-
     methods: {
         initCompare() {
             let Cesium = this.Cesium;
             let viewer = this.webGlobe;
             let layers = this.webGlobe.layers._layers;
 
-            layers[layers.length - 2].splitDirection =
-                Cesium.ImagerySplitDirection.LEFT;
-            layers[layers.length - 1].splitDirection =
-                Cesium.ImagerySplitDirection.RIGHT;
+            if (this.beforeLayers.length && this.afterLayers.length) {
+                for (let i = 1; i < layers.length; i++) {
+                    layers[i].show = true;
+                    if (this.beforeLayers.includes(layers[i].id)) {
+                        layers[i].splitDirection =
+                            Cesium.ImagerySplitDirection.LEFT;
+                    } else if (this.afterLayers.includes(layers[i].id)) {
+                        layers[i].splitDirection =
+                            Cesium.ImagerySplitDirection.RIGHT;
+                    } else {
+                        layers[i].show = false;
+                    }
+                }
+            } else {
+                layers[layers.length - 2].splitDirection =
+                    Cesium.ImagerySplitDirection.LEFT;
+                layers[layers.length - 1].splitDirection =
+                    Cesium.ImagerySplitDirection.RIGHT;
+            }
 
             let slider = this.$refs.slider;
             viewer.scene.imagerySplitPosition =
@@ -71,10 +113,17 @@ export default {
             );
         },
     },
+    destroyed() {
+        let layers = this.webGlobe.layers._layers;
+        layers.forEach((layer) => {
+            layer.show = true;
+            layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+        });
+    },
 };
 </script>
 
-<style lang="css">
+<style scoped>
 .slider {
     position: absolute;
     left: 50%;
