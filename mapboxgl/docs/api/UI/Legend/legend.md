@@ -5,8 +5,10 @@
 ```vue
 <template>
   <mapgis-web-map v-bind="{ ...mapOptions }">
-    <arcgis-tile-layer v-bind="{ ...layerOptions }"></arcgis-tile-layer>
-    <mapgis-arcserver-legend></mapgis-arcserver-legend>
+    <mapgis-arcgis-tile-layer
+      v-bind="{ ...layerOptions }"
+    ></mapgis-arcgis-tile-layer>
+    <mapgis-arcgis-legend></mapgis-arcgis-legend>
   </mapgis-web-map>
 </template>
 

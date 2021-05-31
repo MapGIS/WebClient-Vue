@@ -87,7 +87,7 @@ export default {
     type: Object,
     default: function() {
       return {
-        destination: {
+        /* destination: {
           x: -5087907.392038159,
           y: 14207074.175879652,
           z: 3655215.2541255946
@@ -96,7 +96,7 @@ export default {
           heading: 6.1827568973283045,
           pitch: -1.2409374391413084,
           roll: 0.0003114284469649675
-        }
+        } */
       };
     }
   }

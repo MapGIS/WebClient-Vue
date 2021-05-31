@@ -89,6 +89,7 @@ export default {
       if (popup && popup.remove) {
         popup.remove();
         popup = undefined;
+        CesiumZondy.PopupManager.deleteSource(vueKey, vueIndex);
       }
 
       if (this.showed) {

@@ -15,12 +15,7 @@ import * as turf from "@turf/turf";
 var map, miniMap;
 export default {
     name: "mapgis-hawkeye",
-    props: {
-        map: {
-            type: Object,
-            required: true,
-        },
-    },
+    inject: ["map"],
     components: { MapgisWebMap },
     data() {
         return {
@@ -109,7 +104,6 @@ export default {
         // 矩形实时变化
         extent() {
             let polygon = this.getPolygon();
-            console.log(polygon);
             miniMap.getSource("extent").setData({
                 type: "FeatureCollection",
                 features: [polygon],
@@ -119,16 +113,16 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-hawkeye-wrap {
     z-index: 200;
     position: absolute;
     bottom: 20px;
     right: 20px;
-    width: 296px;
-    height: 296px;
+    width: 300px;
+    height: 200px;
     background-color: #fff;
-    border: 1px solid #555;
+    border: 1px solid #333;
     border-radius: 3px;
 }
 

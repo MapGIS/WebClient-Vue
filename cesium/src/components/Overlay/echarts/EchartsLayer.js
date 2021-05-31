@@ -1,8 +1,6 @@
-import echarts from 'echarts';
+import * as echarts from "echarts";
 
-import {
-    MapCoordSys
-} from './MapCoordSys';
+import { MapCoordSys } from "./MapCoordSys";
 
 var echartsIdIndex = 0;
 
@@ -13,7 +11,7 @@ var echartsIdIndex = 0;
  * @param map - {Object} 传入的leaflet的地图对象
  * @param options - {Object} echarts.options
  * @param container - {Element} 外部传入的div;外接的方式使用mapv<br>
- * 
+ *
  * @see http://echarts.baidu.com/api.html#echarts
  * @example 这里唯一要注意的是我们中地数码的ceisum的右键事件不是放大缩小而是旋转视角
  */
@@ -96,7 +94,7 @@ export class EchartsLayer {
         //canvas.id = this.layerId;
         canvas.className = 'cesium-echarts-layer';
         canvas.setAttribute('class', 'cesium-echarts-layer');
-        
+
         canvas.style.position = 'absolute';
         canvas.style.top = "0px";
         canvas.style.left = "0px";
@@ -134,7 +132,7 @@ export class EchartsLayer {
 
             var width = parseInt(map.canvas.width) + "px";
             var height = parseInt(map.canvas.height) + "px";
-    
+
             canvas.width = width;
             canvas.height = height
             canvas.style.width = width;
@@ -179,7 +177,7 @@ export class EchartsLayer {
                     viewportRoot.style.top = mapOffset[1] + 'px'
 
                     coordSys.setMapOffset(mapOffset)
-                    
+
                     mapModel.__mapOffset = mapOffset
                     //mapModel.__mapViewRect = cesiumMap.scene.camera.computeViewRectangle();
 
@@ -227,7 +225,7 @@ export class EchartsLayer {
                 }
 
                 var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
-                
+
                 if (self.initStats == false) {
                     self.initStats = true;
                     handler.setInputAction(zoomStartHandler, Cesium.ScreenSpaceEventType.WHEEL);

@@ -5,14 +5,14 @@
 ### `beforeLayers`
 
 - **类型:** `Array`
-- **non-synced**
+- **synced**
 - **默认值:** `[]`
 - **描述:** 卷帘左边图层的id，允许多个图层
 
 ### `afterLayers`
 
 - **类型:** `Array`
-- **non-synced**
+- **synced**
 - **默认值:** `[]`
 - **描述:** 卷帘右边图层的id，允许多个图层
 
@@ -41,7 +41,7 @@ export default {
                 "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
             mapId: "fhjoghjgfjhg",
             beforeLayers: ["asdasdasdsafasf"],
-            afterLayers: [],
+            afterLayers: ["fhjoghjgfjhg"],
         };
     },
 };

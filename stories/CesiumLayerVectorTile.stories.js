@@ -1,7 +1,7 @@
 import MapgisVectorTileLayer from "../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
 export default {
-  title: "三维/矢量瓦片",
+  title: "三维/图层-矢量瓦片",
   component: MapgisVectorTileLayer,
   argTypes: {
     styleUrl: {},

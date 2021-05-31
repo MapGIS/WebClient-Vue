@@ -5,7 +5,7 @@ import {BaseServer} from "@mapgis/webclient-es6-service";
 
 
 export default {
-    title: "二维/mapv-2.0.56升级",
+    title: "二维/覆盖物-MapV",
     component: MapgisMapv,
     argTypes: {}
 };

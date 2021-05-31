@@ -63,7 +63,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `layers`
 
-- **类型:** `Array`
+- **类型:** `String`
 - **默认值:** `null`
 - **Non-Synced**
 - **watched**

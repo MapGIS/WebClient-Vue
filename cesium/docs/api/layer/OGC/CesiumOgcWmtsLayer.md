@@ -114,7 +114,7 @@ All common layer [events](/zh/api/Layers/#events)
 
 ## Example
 
-### KVP 格式，请求地图
+### 加载 WMTS 地图 - IGS - 4326
 
 ```vue
 <template>
@@ -123,6 +123,46 @@ All common layer [events](/zh/api/Layers/#events)
       :url="url"
       :layer="layer"
       :tileMatrixSetID="tileMatrixSetID"
+      :srs="srs"
+    />
+  </mapgis-web-scene>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      //服务基地址
+      url: "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
+      //地图文档名称
+      layer: "beijing",
+      //地图比例尺名称
+      tileMatrixSetID: "EPSG:4326_北京市_028mm_GB",
+      //空间参考系
+      srs: "EPSG:4326"
+    };
+  }
+};
+</script>
+
+<style lang="css">
+.main {
+  height: 600px;
+  width: 100%;
+}
+</style>
+```
+
+### 加载 WMTS 地图 - ArcGis - 3857
+
+```vue
+<template>
+  <mapgis-web-scene>
+    <mapgis-3d-ogc-wmts-layer
+      :url="url"
+      :layer="layer"
+      :tileMatrixSetID="tileMatrixSetID"
+      :srs="srs"
     />
   </mapgis-web-scene>
 </template>
@@ -133,11 +173,13 @@ export default {
     return {
       //服务基地址
       url:
-        "http://develop.smaryun.com:6163/igs/rest/ogc/WORLDMKTTILE2/WMTSServer",
+        "http://219.142.81.85/arcgis/rest/services/矿产地数据库2019/ferrous_metal/MapServer/WMTS",
       //地图文档名称
-      layer: "WORLDMKTTILE2",
-      //地图比例尺
-      tileMatrixSetID: "GoogleMapsCompatible_GB"
+      layer: "矿产地数据库2019_ferrous_metal",
+      //地图比例尺名称
+      tileMatrixSetID: "default028mm",
+      //空间参考系
+      srs: "EPSG:3857"
     };
   }
 };
@@ -255,7 +297,7 @@ export default {
       //天地图地址，请在url地址后面加token
       url:
         "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
-      //地图空间坐标系
+      //地图空间坐标系,4326必传
       srs: "EPSG:4326"
     };
   }
@@ -268,4 +310,68 @@ export default {
   width: 100%;
 }
 </style>
+```
+
+## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueKey，并将此 vueKey 传给此组件的 vueKey
+
+```vue
+<template>
+  <mapgis-web-scene :vueKey="vueKey">
+    <mapgis-3d-ogc-wmts-layer
+      :url="urlWmts"
+      :layer="layerWmts"
+      :tileMatrixSetID="tileMatrixSetIDWmts"
+      :srs="srsWmts"
+      :layerStyle="layerStyleWmts"
+      :vueKey="vueKey"
+    />
+    <mapgis-3d-igs-doc-layer
+      :url="urlDoc"
+      :layers="layers"
+      :layerStyle="layerStyleDoc"
+      :vueKey="vueKey"
+    />
+    <button @click="changeIndex">改变图层顺序</button>
+  </mapgis-web-scene>
+  <mapgis-web-scene :vueKey="vueKey2" />
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      //要加载的url
+      urlWmts:
+        "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
+      //天地图就传空值
+      layerWmts: "",
+      tileMatrixSetIDWmts: "",
+      //空间参考系
+      srsWmts: "EPSG:4326",
+      layerStyleWmts: {
+        zIndex: 100
+      },
+      //要加载的url
+      urlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      //要显示的子图层
+      layers: "show:1,2",
+      //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe
+      vueKey: "vueKeyOne",
+      vueKey2: "vueKeyTwo",
+      layerStyleDoc: {
+        zIndex: 1000
+      }
+    };
+  },
+  methods: {
+    changeIndex() {
+      if (this.layerStyleDoc.zIndex === 1000) {
+        this.layerStyleDoc.zIndex = 50;
+      } else {
+        this.layerStyleDoc.zIndex = 1000;
+      }
+    }
+  }
+};
+</script>
 ```

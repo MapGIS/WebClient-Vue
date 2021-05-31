@@ -36,7 +36,7 @@ export default {
       type: String,
       default: newGuid()
     },
-    dynamicTile: {
+    cache: {
       type: Boolean,
       default: false
     },
@@ -53,32 +53,22 @@ export default {
       default: null
     }
   },
-  created() {
-    this.$watch("layers", function() {
-      this.$_updateLayer();
-    });
-    this.$watch("dynamicTile", function() {
-      this.$_updateLayer();
-    });
-    this.$watch("filters", function() {
-      this.$_updateLayer();
-    });
-  },
-  data() {
-    return {
-      newGuid: undefined
-    };
+  watch: {
+    layers(next) {
+      if (this.initial) return;
+      if (next !== "") {
+        this.mapSource.tiles = [this._url + "&layers=" + next];
+      } else {
+        this.mapSource.tiles = [this._url];
+      }
+    }
   },
   methods: {
-    $_updateLayer() {
-      this.newGuid = newGuid();
-      this.$_init();
-      //因为OgcBaseLayer只监听了url，因此这里主动调用重绘和绘制方法
-      this.$_deferredUnMount();
-      this.$_deferredMount();
-    },
     $_init() {
-      if (this.url) {
+      let { url, domain, baseUrl, protocol, ip, port } = this;
+      let { serverName, tileSize, dynamicTile } = this;
+      let fixBaseUrl, docParam;
+      if (url) {
         let url = this.url;
         if (url.indexOf("?") === -1) {
           url += "?";
@@ -88,29 +78,34 @@ export default {
         }
         this._url = url;
         return;
+      } else if (baseUrl) {
+        if (!this.layers) {
+          return;
+        }
+        if (baseUrl.indexOf("?") > -1) {
+          fixBaseUrl = this.baseUrl.split("?")[0];
+        } else {
+          fixBaseUrl = this.baseUrl;
+        }
+      } else if (domain) {
+        fixBaseUrl = `${domain}/igs/rest/mrms/docs/${serverName}`;
+      } else {
+        domain = `${protocol}://${ip}:${port}`;
+        fixBaseUrl = `${domain}/igs/rest/mrms/docs/${serverName}`;
       }
-      let domain = this.domain;
-      if (!domain) {
-        domain = this.protocol + "://" + this.ip + ":" + this.port;
-      }
-      let { serverName, tileSize } = this;
-      if (this.dynamicTile) {
+
+      if (dynamicTile) {
         this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
       } else {
-        let baseUrl = domain + "/igs/rest/mrms/docs/" + this.serverName;
-        let partUrl = this.$_initAllRequestParams().join("&");
-        this._url = encodeURI(baseUrl + "?" + partUrl) + "&bbox={bbox}";
+        docParam = this.$_initAllRequestParams().join("&");
+        this._url = encodeURI(fixBaseUrl + "?" + docParam) + "&bbox={bbox}";
       }
     },
     $_initAllRequestParams() {
       let params = [];
 
       params.push("f=" + this.f);
-      if (this.newGuid) {
-        params.push("guid=" + this.newGuid);
-      } else {
-        params.push("guid=" + this.guid);
-      }
+      params.push("guid=" + this.guid);
 
       let width, height;
       width = height = this.tileSize;
@@ -135,8 +130,8 @@ export default {
       if (this.isAntialiasing !== null) {
         params.push("isAntialiasing=" + this.isAntialiasing);
       }
-      if (this.dynamicTile !== null && this.isAntialiasing !== null) {
-        params.push("cache=" + this.dynamicTile);
+      if (this.cache !== null && this.isAntialiasing !== null) {
+        params.push("cache=" + this.cache);
       }
       if (this.update !== null && this.isAntialiasing !== null) {
         params.push("update=" + this.update);

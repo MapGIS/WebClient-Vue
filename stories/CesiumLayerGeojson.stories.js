@@ -2,7 +2,7 @@ import MapgisWebScene from "../cesium/src/components/WebGlobe/WebGlobe.vue";
 import GeoJsonDataSource from "../cesium/src/components/DataSource/Geojson/GeoJsonDataSource.vue";
 
 export default {
-  title: "三维/矢量-GeoJSON",
+  title: "三维/图层-GeoJSON",
   component: GeoJsonDataSource,
   argTypes: {
     url: "",
