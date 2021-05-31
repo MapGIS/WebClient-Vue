@@ -10,14 +10,6 @@ export default {
 const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
     components: {MapgisWebScene, BaseServer,Mapgis3dArcgisTileLayer},
-    data() {
-        return {
-            mapStyle: 'mapbox://styles/mapbox/dark-v9',
-            accessToken: 'pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA',
-            center: [114.321317, 30.398428],
-            zoom: 3,
-        }
-    },
     mounted() {
         this.initData();
     },
@@ -45,7 +37,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene>
-      <mapgis-3d-arcgis-tile-layer :url="url" :layer-style="layerStyle" :srs="srs"/>
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs"/>
       <mapgis-3d-mapv-layer v-bind="$props"></mapgis-3d-mapv-layer>
       </mapgis-web-scene>
     `
@@ -53,7 +45,7 @@ const Template = (args, {argTypes}) => ({
 
 export const mapv = Template.bind({});
 mapv.args = {
-    url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+    baseUrl:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
     layerStyle: {
         visible: true,
         opacity: 1,
