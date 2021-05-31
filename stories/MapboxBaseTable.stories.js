@@ -1,4 +1,4 @@
-import {Feature, SQLParameter} from "../mapboxgl/src/components/util";
+import {VFeature, SQLParameter} from "../mapboxgl/src/components/util";
 import {polygonData} from "./component/geometry";
 
 export default {
@@ -52,7 +52,9 @@ const Template = (args, { argTypes }) => ({
     //获取数据
     getData(type){
       //获取数据
-      this.query(0,10,undefined,undefined,true,"zondy");
+      // this.query(0,10,undefined,undefined,true,"zondy");
+      // this.query(0,10,undefined,undefined,true,"Feature");
+      this.query(0,10,undefined,undefined,true,"Feature");
     },
     query(pageIndex,pagination,orderBy,isAsc,initial,type){
       let vm = this;
@@ -66,12 +68,26 @@ const Template = (args, { argTypes }) => ({
       })
       //zondy格式
       vm.service.$_queryBySQL(sql,function (result) {
-        vm.dataSource = result;
+        if(type === "zondy"){
+          vm.dataSource = result;
+        }else if(type === "Feature"){
+          vm.dataSource = VFeature.fromQueryResult(result);
+        }
         if(initial){
           vm.columns = [{
+            title: "mpArea",
+            key: "mpArea",
+            checked: true
+          },{
             title: "mpPerimeter",
             key: "mpPerimeter",
-            width: 120
+            width: 120,
+            checked: true
+          },{
+            title: "mpLayer",
+            key: "mpLayer",
+            width: 120,
+            checked: true
           }];
           vm.pagination.total = result.TotalCount;
         }
@@ -87,8 +103,8 @@ const Template = (args, { argTypes }) => ({
       this.table = table;
     },
     //编辑完成事件
-    edited(index,key,value,row,allRow){
-      console.log("编辑完成",index,key,value,row,allRow)
+    edited(row){
+      console.log("编辑完成",row);
     },
     deleteRow(OID,row){
       console.log(OID,row)
@@ -101,7 +117,8 @@ const Template = (args, { argTypes }) => ({
       }else if(sorter.order === "") {
         sorter.columnKey = "";
       }
-      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false);
+      // this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"zondy");
+      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
     },
     sorted(sorter,pagination){
       //默认降序
@@ -111,10 +128,16 @@ const Template = (args, { argTypes }) => ({
       }else if(sorter.order === "") {
         sorter.columnKey = "";
       }
-      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false);
+      // this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"zondy");
+      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
     },
-    selected(){},
-    selectAll(){},
+    selected(row,selectRows){
+      console.log("选择一行",row);
+      console.log("已选择数据",selectRows);
+    },
+    selectAll(selectRows){
+      console.log("已选择数据",selectRows);
+    },
     fullScreen(){},
     originScreen(){}
   }
