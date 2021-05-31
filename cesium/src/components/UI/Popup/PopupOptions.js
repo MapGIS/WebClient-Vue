@@ -12,7 +12,7 @@ export default {
    */
   vueIndex: {
     typs: [String, Number],
-    default: (Math.random() * 10000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0)
   },
   /**
    * @param {Entity} [position.entity]  实体,内部获取坐标点cartesian, 输入此参数可忽略下面的，cartesian，longitude,latitude
