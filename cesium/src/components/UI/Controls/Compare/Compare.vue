@@ -123,7 +123,7 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style scoped>
 .slider {
     position: absolute;
     left: 50%;
