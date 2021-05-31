@@ -9,13 +9,8 @@ const Template = (args, { argTypes }) => ({
             map: undefined
         }
     },
-    methods: {
-        handleMapLoad(payload) {
-            this.map = payload.map;
-        }
-    },
     template: `
-    <mapgis-web-map v-bind="{...mapOptions}" @load="handleMapLoad" style="height:60vh">
+    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
         <mapgis-hawkeye :map="map"></mapgis-hawkeye>
     </mapgis-web-map>
     `

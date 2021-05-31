@@ -16,14 +16,14 @@ export default {
   watch: {
     layers: {
       handler: function () {
-        this.$_unmount();
-        this.$_mount();
+        this.unmount();
+        this.mount();
       }
     }
   },
   data(){
     return {
-      managerName: "igsDocLayerManager",
+      managerName: "IgsDocLayerManager",
       providerName: "MapGIS2DDocMapProvider",
       checkType:{
         tileWidth:"number",
@@ -39,8 +39,8 @@ export default {
   methods: {
     mount(){
       //处理独有参数
-      const url = this.$_initUrl("/igs/rest/mrms/docs/");
-      this.$_mount({url:url});
+      const baseUrl = this.$_initUrl("/igs/rest/mrms/docs/");
+      this.$_mount({baseUrl:baseUrl});
     },
     unmount(){
       this.$_unmount();

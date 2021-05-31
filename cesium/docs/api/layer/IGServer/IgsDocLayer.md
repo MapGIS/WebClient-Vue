@@ -138,31 +138,28 @@ export default {
 </script>
 ```
 
-## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueIndex，并将此 vueIndex 传给此组件的 webSceneIndex
+## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueKey，并将此 vueKey 传给此组件的 vueKey
 
 ```vue
 <template>
-  <mapgis-web-scene
-    libPath="cesium/Cesium.js"
-    pluginPath="cesium/webclient-cesium-plugin.min.js"
-    :vueIndex="index"
-  >
+  <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wmts-layer
       :url="urlWmts"
       :layer="layerWmts"
       :tileMatrixSetID="tileMatrixSetIDWmts"
       :srs="srsWmts"
       :layerStyle="layerStyleWmts"
-      :webSceneIndex="index"
+      :vueKey="vueKey"
     />
     <mapgis-3d-igs-doc-layer
       :url="urlDoc"
       :layers="layers"
       :layerStyle="layerStyleDoc"
-      :webSceneIndex="index"
+      :vueKey="vueKey"
     />
     <button @click="changeIndex">改变图层顺序</button>
   </mapgis-web-scene>
+  <mapgis-web-scene :vueKey2="vueKeyTwo" />
 </template>
 
 <script>
@@ -182,7 +179,8 @@ export default {
       //要显示的子图层
       layers: "show:1,2",
       //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe
-      vueIndex: 2001245,
+      vueKey: "vueKeyOne",
+      vueKey2: "vueKeyTwo",
       layerStyleDoc: {
         zIndex: 1000
       }

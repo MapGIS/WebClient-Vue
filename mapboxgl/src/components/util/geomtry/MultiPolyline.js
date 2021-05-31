@@ -1,12 +1,12 @@
 import { Geometry } from "./Geometry";
 import { extend } from "@mapgis/webclient-es6-service/common";
 
-class VMultiPoint extends Geometry {
+class VMultiPolyline extends Geometry {
   constructor(options) {
     super();
-    this.type = "MultiPoint";
+    this.type = "MultiLineString";
     extend(this, options);
   }
 }
 
-export { VMultiPoint };
+export { VMultiPolyline };

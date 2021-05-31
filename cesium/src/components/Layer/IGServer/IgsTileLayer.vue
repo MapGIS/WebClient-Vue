@@ -1,39 +1,49 @@
+<template>
+  <span />
+</template>
+
 <script>
-import IgsLayer from "../RasterLayer";
+import ServiceLayer from "../ServiceLayer";
+
 export default {
   name: "mapgis-3d-igs-tile-layer",
-  mixins: [IgsLayer],
-  inject: ["Cesium", "webGlobe"],
+  mixins: [ServiceLayer],
   props: {
-    serverName: {
+    srs: {
       type: String,
-      default: null
-    },
+      default: "EPSG:4326"
+    }
+  },
+  data() {
+    return {
+      managerName: "IgsTilecLayerManager",
+      providerName: "MapGISMapProvider",
+      checkType: {
+        tileWidth: "number",
+        tileHeight: "number",
+        minimumLevel: "number",
+        maximumLevel: "number"
+      }
+    };
+  },
+  mounted() {
+    this.mount();
   },
   methods: {
-    initUrl () {
-      let _url = this.url;
-      if (!this.url) {
-        let domain = this.domain;
-        if (!domain) {
-          domain = this.protocol + "://" + this.ip + ":" + this.port;
-        }
-        _url = domain + "/igs/rest/mrms/tile/" + this.serverName;
-      }
-      return _url
+    mount() {
+      //处理独有参数
+      const { srs } = this;
+      let url = this.$_initUrl("/igs/rest/mrms/tile");
+      url += "/{level}/{row}/{col}";
+      let tilingScheme = this.$_setTilingScheme(srs);
+      this.$_mount({ baseUrl: url, srs, tilingScheme });
     },
-    createCesiumObject () {
-      const url = this.initUrl();
-      const { $props, Cesium } = this;
-      let tilingScheme = new Cesium.GeographicTilingScheme({
-        numberOfLevelZeroTilesX: 2,
-        numberOfLevelZeroTilesY: 1,
-      });
-      const options = { ...$props, url, tilingScheme };
-      const provider = CesiumZondy.Provider.IgsTileProvider(options);
-      return new Cesium.ImageryLayer(provider || {});
-    },
+    unmount() {
+      this.$_unmount();
+    }
   },
-
+  destroyed() {
+    this.unmount();
+  }
 };
 </script>
