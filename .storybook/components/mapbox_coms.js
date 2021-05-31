@@ -16,7 +16,8 @@ export { default as MapgisCompareInnerControl } from "../../mapboxgl/src/compone
 export { default as MapgisFpsControl } from "../../mapboxgl/src/components/UI/controls/fps/FpsControl";
 export { default as MapgisHawkeye } from "../../mapboxgl/src/components/UI/controls/hawkeye/Hawkeye";
 export { default as MapgisArcgisLegend } from "../../mapboxgl/src/components/UI/controls/legend/Legend";
-
+export { default as MapgisBaseTable } from "../../mapboxgl/src/components/UI/controls/table/BaseTable";
+export { default as MapgisFeatureService } from "../../mapboxgl/src/components/map/mixins/FeatureService";
 // export { default as MapgisDraw } from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw";
 // export { default as MapgisMeasure } from "../../mapboxgl/src/components/UI/controls/measure/Measure";
 // export { default as BaseDrawItem from "../../mapboxgl/src/components/UI/controls/draw/BaseDrawItem";

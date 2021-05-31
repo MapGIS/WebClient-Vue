@@ -15,6 +15,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
     <mapgis-web-map crs="EPSG:4326" :center="[116.3909, 39.9148]" :zoom="8">
+      <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
       <mapgis-igs-doc-layer v-bind="$props" />
       <mapgis-base-table
           :dataSource="dataSource"
@@ -50,24 +51,31 @@ const Template = (args, { argTypes }) => ({
   methods:{
     //获取数据
     getData(type){
+      //获取数据
+      this.query(0,10,undefined,undefined,true,"zondy");
+    },
+    query(pageIndex,pagination,orderBy,isAsc,initial,type){
       let vm = this;
       let sql = new SQLParameter({
-        layers: "2",
+        layers: "1",
         where: '',
-        pageIndex: 0,
-        pagination: 10
+        pageIndex: pageIndex,
+        pagination: pagination,
+        orderBy: orderBy,
+        isAsc: isAsc
       })
-      //获取数据
-      if(type === "zondy"){
-        //zondy格式
-        vm.service.$_queryBySQL(sql,function (result) {
-          console.log("result",result)
-          vm.dataSource = result;
+      //zondy格式
+      vm.service.$_queryBySQL(sql,function (result) {
+        vm.dataSource = result;
+        if(initial){
+          vm.columns = [{
+            title: "mpPerimeter",
+            key: "mpPerimeter",
+            width: 120
+          }];
           vm.pagination.total = result.TotalCount;
-        },function () {
-          
-        })
-      }
+        }
+      },function () {})
     },
     //要素服务加载完毕事件
     serviceLoaded(service){
@@ -82,21 +90,10 @@ const Template = (args, { argTypes }) => ({
     edited(index,key,value,row,allRow){
       console.log("编辑完成",index,key,value,row,allRow)
     },
-    //取得表格里的数据
-    getTableData(){
-      alert("数据已取出，并在控制台打印")
-      console.log("表格里的属性数据：",this.table)
-      console.log("表格里的属性数据：",this.table.$_getDataSource())
-      console.log("表格里的所有数据：",this.table.$_getAllAttrData())
-    },
     deleteRow(OID,row){
       console.log(OID,row)
     },
-    clk(index,key,value,row,allRow){
-      console.log(index,key,value,row,allRow)
-    },
     pageChanged(pagination,sorter){
-      let vm = this;
       //默认降序
       let isAsc = false;
       if(sorter.order === "ascend"){
@@ -104,20 +101,18 @@ const Template = (args, { argTypes }) => ({
       }else if(sorter.order === "") {
         sorter.columnKey = "";
       }
-      let sql = vm.service.$_getSQLParameter({
-        layers: "2",
-        where: '',
-        pageIndex: pagination.current - 1,
-        pagination: pagination.pageSize,
-        orderBy: sorter.columnKey,
-        isAsc: isAsc
-      })
-      vm.service.$_queryBySQL(sql,function (result) {
-        console.log("result",result)
-        vm.dataSource = result;
-      })
+      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false);
     },
-    sorted(){},
+    sorted(sorter,pagination){
+      //默认降序
+      let isAsc = false;
+      if(sorter.order === "ascend"){
+        isAsc = true;
+      }else if(sorter.order === "") {
+        sorter.columnKey = "";
+      }
+      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false);
+    },
     selected(){},
     selectAll(){},
     fullScreen(){},
