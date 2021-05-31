@@ -1,5 +1,5 @@
 <template>
-  <span/>
+  <span />
 </template>
 
 <script>
@@ -10,10 +10,10 @@ export default {
   inject: ["Cesium", "webGlobe"],
   mixins: [ServiceLayer],
   props: {
-    layers: {type: String, required: true},
-    styles: {type: String},
-    crs: {type: String},
-    srs: {type: String}
+    layers: { type: String, required: true },
+    styles: { type: String },
+    crs: { type: String },
+    srs: { type: String }
   },
   data() {
     return {
@@ -39,10 +39,10 @@ export default {
         times: "object",
         proxy: "object",
         vueKey: "string",
-        vueIndex: "string|number",
+        vueIndex: "string|number"
       },
       managerName: "OGCWMSManager",
-      providerName: "WebMapServiceImageryProvider",
+      providerName: "WebMapServiceImageryProvider"
     };
   },
   mounted() {
@@ -53,25 +53,25 @@ export default {
   },
   watch: {
     layers: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     },
     styles: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     },
     srs: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
     },
     crs: {
-      handler: function () {
+      handler: function() {
         this.unmount();
         this.mount();
       }
@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     mount() {
-      let { srs,crs } = this;
+      let { srs, crs, options } = this;
       let opt = {};
       //处理独有参数
       //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到

@@ -85,6 +85,7 @@ export default {
 
   mounted() {
     const { vueKey, vueIndex } = this;
+    const { cameraView } = this;
     this.$_loadScript().then((Cesium) => {
       this.Cesium = Cesium;
       this.CesiumZondy = window.CesiumZondy;
@@ -93,6 +94,9 @@ export default {
         ...this._props,
       });
       this.webGlobe = webGlobe;
+      if (cameraView) {
+        webGlobe.viewer.scene.camera.setView(cameraView);
+      }
       window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, webGlobe, {
         ScreenSpaceEventHandler: undefined,
       });

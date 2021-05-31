@@ -32,7 +32,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
         age: 32,
         address: 'Sidney No. 1 Lake Park',
         tags: ['cool', 'teacher'],
-      }  
+      }
     ]
   二：[Feature]: Feature数组格式，使用此格式时不建议自己拼装，
     而是直接调动Feature组件的fromQueryResult或fromGeoJSON方法返回数据，
@@ -98,27 +98,27 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值:** []
 - **watch**
 - **描述:** 表格的字段集合，格式如下：
-    ```
-       [
+  ```
+     [
+       {
+         dataIndex: 'name',
+         key: 'name',
+         slots: { title: 'customTitle' },
+         scopedSlots: { customRender: 'name' },
+         },
          {
-           dataIndex: 'name',
-           key: 'name',
-           slots: { title: 'customTitle' },
-           scopedSlots: { customRender: 'name' },
-           },
-           {
-             title: 'Age',
-             dataIndex: 'age',
-             key: 'age',
-           },
-           {
-             title: 'Address',
-             dataIndex: 'address',
-             key: 'address',
-           }  
+           title: 'Age',
+           dataIndex: 'age',
+           key: 'age',
+         },
+         {
+           title: 'Address',
+           dataIndex: 'address',
+           key: 'address',
          }
-       ] 
-    ```
+       }
+     ]
+  ```
 - **参考:** `AntDesign` in [AntDesign Vue table](https://www.antdv.com/components/table-cn/)
 
 ### `editable`
@@ -133,6 +133,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `Object`
 - **watched**
 - **描述:** 表格分页信息。
+
 ```
   {
     disabled: 禁用分页,
@@ -145,12 +146,12 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `Number`
 - **watched**
-- **描述:** 表格高度，默认不指定时，会根据pageSize来计算表格的高度，显示与pageSize相同条数的数据。
+- **描述:** 表格高度，默认不指定时，会根据 pageSize 来计算表格的高度，显示与 pageSize 相同条数的数据。
 
 ### `select`
 
 - **类型:** `Number`
-- **默认值**  `true`
+- **默认值** `true`
 - **watched**
 - **描述:** 是否显示左侧的复选框，默认显示。
 
@@ -162,7 +163,6 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **返回值** `{ table }` <br>
   `table` 整个表格对象
 
-
 ### `@edited`
 
 - **描述:** 表格的编辑完成事件
@@ -172,20 +172,19 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `@delete`
 
 - **描述:** 删除一条数据
-- **返回值** `{ OID,record }` <br> 
-  `OID`要素的OID <br>
+- **返回值** `{ OID,record }` <br>
+  `OID`要素的 OID <br>
   `record` 被删除的一条数据
 
 ### `@click`
 
 - **描述:** 点击单元格事件
 - **返回值** `{ index,key,value,row,allRow }` <br>
-  `index` 单元格所在行号，从0开始 <br>
-  `key` 单元格中数据的key <br>
-  `value` 单元格中数据的value <br>
+  `index` 单元格所在行号，从 0 开始 <br>
+  `key` 单元格中数据的 key <br>
+  `value` 单元格中数据的 value <br>
   `row` 被点击单元格所在行的属性数据 <br>
   `allRow` 被点击单元格所在行的所有数据 <br>
-
 
 ## Example
 

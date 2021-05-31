@@ -9,7 +9,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `String`
 - **Non-Synced**
 - **watch**
-- **描述:** 地图文档的url地址，格式如下http://{ip}:{port}/igs/rest/mrms/docs/{docname}
+- **描述:** 地图文档的 url 地址，格式如下http://{ip}:{port}/igs/rest/mrms/docs/{docname}
 
 ### `geometry`
 
@@ -35,18 +35,19 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **描述:** 是否启用编辑，默认启用。
 
 ## Events
+
 ### `@loaded`
 
 - **描述:** 要素表格加载完成
 - **返回值** `{ table }` <br>
   `table` 表格对象
-  
+
 ### `@addSuccess`
 
 - **描述:** 表格新增要素成功事件
 - **返回值** `{ result }` <br>
   `result` 新增接口的执行结果
-  
+
 ### `@addFailure`
 
 - **描述:** 表格新增要素失败事件
@@ -56,8 +57,8 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `@deleteSuccess`
 
 - **描述:** 删除要素成功事件
-- **返回值** `{ OID,record }` <br> 
-  `OID`要素的OID <br>
+- **返回值** `{ OID,record }` <br>
+  `OID`要素的 OID <br>
   `record` 被删除的一条数据
 
 ### `@deleteFailure`

@@ -12,4 +12,18 @@ import { VMultiPolyline } from "./MultiPolyline";
 import { VMultiPolygon } from "./MultiPolygon";
 import { VFeature } from "./Feature";
 
-export { BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,Geometry,VPoint,VPolyline,VPolygon,VMultiPoint,VMultiPolyline,VMultiPolygon,VFeature };
+export {
+  BaseParameter,
+  GeometryParameter,
+  SQLParameter,
+  ObjectIdsParameter,
+  RectangleParameter,
+  Geometry,
+  VPoint,
+  VPolyline,
+  VPolygon,
+  VMultiPoint,
+  VMultiPolyline,
+  VMultiPolygon,
+  VFeature
+};

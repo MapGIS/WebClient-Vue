@@ -61,6 +61,14 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    },
+    vueKey:{
+      type: String,
+      default: "default"
+    },
+    vueIndex: {
+      type: Number,
+      default: () => Number((Math.random() * 100000000).toFixed(0))
     }
   },
   data() {
