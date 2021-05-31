@@ -49,6 +49,10 @@
    - **默认值** `20`
    - **描述:** 瓦片最大级别
 
+::: warning
+~ 后面请统一使用baseUrl的方式进行组件调用，补充的组件都以baseUrl + 对应的协议的kvp的传参方式实现对应的补充，后面domain、protocol、ip、port的方式会逐步移除
+:::
+
 
 ## Example
 
