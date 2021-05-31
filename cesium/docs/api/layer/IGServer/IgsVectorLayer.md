@@ -2,7 +2,7 @@
 
 ## Props
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **可选**
@@ -93,7 +93,7 @@ http://{ip}:{port}/igs/rest/mrms/layers
     >
         <mapgis-3d-igs-vector-layer
             :gdbps="gdbps"
-            :domain="domain"
+            :baseUrl="baseUrl"
         ></mapgis-3d-igs-vector-layer>
     </mapgis-web-scene>
 </template>
@@ -106,7 +106,7 @@ export default {
                 "gdbp://MapGisLocal/OpenLayerVecterMap/sfcls/武汉市",
                 "gdbp://MapGisLocal/OpenLayerVecterMap/sfcls/overLayByLayerAnalysisResultLayer2021-04-22-165404",
             ],
-            domain: "http://localhost:6163",
+            baseUrl: "http://localhost:6163/igs/rest/mrms/layers",
         };
     },
 };
