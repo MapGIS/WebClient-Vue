@@ -171,10 +171,18 @@ export default {
     //将传入的数据转化为ant-table识别的数据
     $_initSource(){
       if(this.dataSource instanceof Array){
-        // if(this.$_isFeatureSet(this.dataSource)){
-        //   //Feature集合
-        //   this.$_featureSetToDataSource(this.dataSource,this.columns);
-        // }else {
+        if(this.$_isFeatureSet(this.dataSource)){
+          //Feature集合
+          this.$_getColumnsCopyByFeatureSet(this.dataSource);
+          this.$_applyColumnsToColumnsCopy();
+          this.$_initPlainOptions();
+          this.$_initCheckedList();
+          this.$_addOperationColumns();
+          this.featureSet = this.dataSource;
+          this.$_featureSetToDataSource(this.featureSet);
+          this.$_drawTable();
+        }
+        // else {
         //   //是原始的antdesign-table的datasource格式
         //   if(!this.pagination){
         //     this.paginationCopy.total = this.dataSource.length;
@@ -186,7 +194,6 @@ export default {
         if (this.$_isZondyResult(this.dataSource)) {
           //this.columnsCopy.length为0表示第一次加载数据，需要初始化表头
           if (this.columnsCopy.length === 0) {
-            console.log("this.columns",this.columns)
             this.$_getColumnsCopyByZondySource(this.dataSource);
             this.$_applyColumnsToColumnsCopy();
             this.$_initPlainOptions();
@@ -210,6 +217,7 @@ export default {
     },
     /*
     * 从zondy数据源中取得表头信息
+    * @param Source 数据源
     * **/
     $_getColumnsCopyByZondySource(Source){
       let FldName = Source.AttStruct.FldName;
@@ -229,9 +237,29 @@ export default {
       this.columnsCopy = columns;
     },
     /*
+    * 从featureSet里面去的columns
+    * @param Source 数据源
+    * **/
+    $_getColumnsCopyByFeatureSet(Source){
+      let columns = [];
+      Object.keys(Source[0].attributes).forEach(function (key) {
+        columns.push({
+          title: key,
+          dataIndex: key,
+          key: key,
+          scopedSlots: {customRender: key},
+          align: "left",
+          ellipsis: true,
+          sorter: function () {},
+          width: 100
+        });
+      });
+      this.columnsCopy = columns;
+    },
+    /*
     * 将[feature]转化为ant-table数据源
     * **/
-    $_featureSetToDataSource(featureSet,columns){
+    $_featureSetToDataSource(featureSet){
       //线存一份原始数据
       this.allDataSource = featureSet;
       //清空dataSourceCopy
@@ -257,7 +285,6 @@ export default {
     * **/
     $_initPagination(){
       this.paginationCopy = JSON.parse(JSON.stringify(this.pagination));
-      console.log("this.paginationCopy",this.paginationCopy)
     },
     /*
     * 将用户自定义的columns覆盖原本的columns
@@ -272,7 +299,6 @@ export default {
           }
         }
       }
-      console.log("this.columnsCopy",this.columnsCopy)
       this.columnsSave = this.columnsCopy;
       this.columnsWidthSave = JSON.parse(JSON.stringify(this.columnsCopy));
     },
@@ -359,6 +385,7 @@ export default {
           if(this.columnsCopy[i].checked){
             columns.push(this.columnsCopy[i]);
             columnsWidth += this.columnsCopy[i].width;
+            this.checkedList.push(this.columnsCopy[i].title);
           }
         }
         //如果用户没有指定要显示的列，则
@@ -449,14 +476,32 @@ export default {
       return node;
     },
     /*
-    * 是否是zondy查询方法返回的值
-    * **/
-    $_isZondyResult(result){
+    * 判断是否上zondy格式
+    * @param source 数据源
+    **/
+    $_isZondyResult(source){
       let flag = true;
-      if(!(result.hasOwnProperty("AttStruct")
-          && result.hasOwnProperty("SFEleArray")
-          && result.hasOwnProperty("TotalCount"))){
+      if(!(source.hasOwnProperty("AttStruct")
+          && source.hasOwnProperty("SFEleArray")
+          && source.hasOwnProperty("TotalCount"))){
         flag = false;
+      }
+      return flag;
+    },
+    /*
+    * 判断是否是要素集合
+    * @param source 数据源
+    **/
+    $_isFeatureSet(source){
+      let flag = true;
+      //这里无法使用instanceof进行比较，因为datasource可能由feture派生出来
+      for (let i = 0;i < source.length;i++){
+        if(!(source[i].hasOwnProperty("geometry") && source[i].hasOwnProperty("geometryType") &&
+            source[i].hasOwnProperty("attributes") && source[i].hasOwnProperty("style") &&
+            source[i].hasOwnProperty("FID"))){
+          flag = false;
+          break;
+        }
       }
       return flag;
     },
@@ -615,7 +660,7 @@ export default {
           data = this.$_removeNullData(data);
           let AllAttrData = this.$_getAllAttrData();
           AllAttrData[dataIndex].attributes = data;
-          this.$emit("edited",data,AllAttrData[dataIndex]);
+          this.$emit("edited",AllAttrData[dataIndex]);
         }
         this.editRowAndCol = "";
       }
@@ -646,7 +691,7 @@ export default {
       for (let i = 0;i < this.checkedList.length;i++){
         for (let j = 0;j < this.columnsSave.length;j++){
           if(this.checkedList[i] === this.columnsSave[j].title) {
-            columns.push(this.columnsSave[j]);
+            columns.push(Object.assign(this.columnsSave[j],{width:this.columnsWidthSave[i].width}));
           }
         }
       }
