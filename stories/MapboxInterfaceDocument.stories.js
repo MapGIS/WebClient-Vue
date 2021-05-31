@@ -1,7 +1,7 @@
 import MapgisDocument from "../mapboxgl/src/components/UI/document/Document.vue";
 
 export default {
-  title: "二维/地图文档",
+  title: "二维/交互-地图文档",
   component: MapgisDocument,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法

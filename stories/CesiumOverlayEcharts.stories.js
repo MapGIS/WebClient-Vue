@@ -4,7 +4,7 @@ import {BaseServer} from "@mapgis/webclient-es6-service";
 import * as echarts from 'echarts';
 
 export default {
-    title: "三维/echarts-5.0.2升级",
+    title: "三维/覆盖物-Echarts",
 };
 
 const Template = (args, {argTypes}) => ({

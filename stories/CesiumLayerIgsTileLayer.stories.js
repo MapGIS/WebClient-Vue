@@ -1,7 +1,7 @@
 import Mapgis3dIgsTileLayer from "../cesium/src/components/Layer/IGServer/IgsTileLayer.vue";
 
 export default {
-  title: "三维/IGServer-瓦片图层",
+  title: "三维/图层-IGServer瓦片",
   // component: Mapgis3dIgsTileLayer,
   argTypes: {
     id: "IGServer-Tle-Layer",

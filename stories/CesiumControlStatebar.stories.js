@@ -2,7 +2,7 @@ import MapgisWebGlobe from "../cesium/src/components/WebGlobe/WebGlobe.vue";
 import MapgisStatebar from "../cesium/src/components/UI/Controls/State/StateControl.vue";
 
 export default {
-  title: "三维/地图状态",
+  title: "三维/交互-地图状态",
   component: MapgisStatebar,
   argTypes: {
   },

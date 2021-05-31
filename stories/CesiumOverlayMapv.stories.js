@@ -1,26 +1,15 @@
-import MapgisMapv from "../mapboxgl/src/components/overlay/MapvLayer.vue";
-import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import MapgisNavigationControl from "../mapboxgl/src/components/UI/controls/NavigationControl"
+import MapgisWebScene from "../cesium/src/components/WebGlobe/WebGlobe.vue";
+import Mapgis3dArcgisTileLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
 import {BaseServer} from "@mapgis/webclient-es6-service";
 
 
 export default {
-    title: "二维/mapv-2.0.56升级",
-    component: MapgisMapv,
-    argTypes: {}
+    title: "三维/覆盖物-MapV",
 };
 
 const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
-    components: {MapgisWebMap, MapgisMapv, BaseServer, MapgisNavigationControl},
-    data() {
-        return {
-            mapStyle: 'mapbox://styles/mapbox/dark-v9',
-            accessToken: 'pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA',
-            center: [114.321317, 30.398428],
-            zoom: 3,
-        }
-    },
+    components: {MapgisWebScene, BaseServer,Mapgis3dArcgisTileLayer},
     mounted() {
         this.initData();
     },
@@ -47,15 +36,22 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:60vh">
-      <mapgis-navigation-control position="top-right"/>
-      <mapgis-mapv v-bind="$props"></mapgis-mapv>
-      </mapgis-web-map>
+      <mapgis-web-scene>
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs"/>
+      <mapgis-3d-mapv-layer v-bind="$props"></mapgis-3d-mapv-layer>
+      </mapgis-web-scene>
     `
 });
 
 export const mapv = Template.bind({});
 mapv.args = {
+    baseUrl:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+    layerStyle: {
+        visible: true,
+        opacity: 1,
+        zIndex: 2
+    },
+    srs:"EPSG:4326",
     options: {
         context: '2d',
         fillStyle: 'rgba(55, 50, 250, 0.8)',
