@@ -58,7 +58,6 @@ Vue.use(Antd);
 
 export default {
   name: "mapgis-base-table",
-  components:{iconfont},
   props:{
     //数据源
     dataSource:{
@@ -187,6 +186,7 @@ export default {
         if (this.$_isZondyResult(this.dataSource)) {
           //this.columnsCopy.length为0表示第一次加载数据，需要初始化表头
           if (this.columnsCopy.length === 0) {
+            console.log("this.columns",this.columns)
             this.$_getColumnsCopyByZondySource(this.dataSource);
             this.$_applyColumnsToColumnsCopy();
             this.$_initPlainOptions();
@@ -222,7 +222,7 @@ export default {
           scopedSlots: {customRender: FldName[i]},
           align: "left",
           ellipsis: true,
-          sorter: (a, b) => a[FldName[i]] > b[FldName[i]],
+          sorter: function () {},
           width: 100
         });
       }
@@ -251,13 +251,13 @@ export default {
         }
         this.dataSourceCopy.push(Object.assign(data, {key: featureSet[i].FID ? featureSet[i].FID : i + 1}));
       }
-      this.paginationCopy.pageSize = this.dataSourceCopy.length;
     },
     /*
     * 初始化分页信息
     * **/
     $_initPagination(){
       this.paginationCopy = JSON.parse(JSON.stringify(this.pagination));
+      console.log("this.paginationCopy",this.paginationCopy)
     },
     /*
     * 将用户自定义的columns覆盖原本的columns
@@ -272,7 +272,7 @@ export default {
           }
         }
       }
-
+      console.log("this.columnsCopy",this.columnsCopy)
       this.columnsSave = this.columnsCopy;
       this.columnsWidthSave = JSON.parse(JSON.stringify(this.columnsCopy));
     },
@@ -338,8 +338,19 @@ export default {
     * 确定要显示的表头，如果用户传入columns则使用，不传则自动填满表格，不包含operation
     * **/
     $_initCheckedList(){
+      function fillTableWithColumns() {
+        for(let i = 0;i < vm.columnsCopy.length;i++){
+          columnsWidth += vm.columnsCopy[i].width;
+          if(columnsWidth < offsetWidth){
+            vm.checkedList.push(vm.columnsCopy[i].title);
+            columns.push(vm.columnsCopy[i]);
+          }else {
+            break
+          }
+        }
+      }
       this.checkedList = [];
-      let columns = [],columnsWidth = 0;
+      let columns = [],columnsWidth = 0,vm = this;
       //取得有效宽度
       let offsetWidth = this.$_getTableEffectiveWidth();
       if(this.columns.length > 0){
@@ -350,17 +361,13 @@ export default {
             columnsWidth += this.columnsCopy[i].width;
           }
         }
+        //如果用户没有指定要显示的列，则
+        if(columns.length === 0){
+          fillTableWithColumns();
+        }
       }else {
         //如果没有columns，则自动填满表格
-        for(let i = 0;i < this.columnsCopy.length;i++){
-          columnsWidth += this.columnsCopy[i].width;
-          if(columnsWidth < offsetWidth){
-            this.checkedList.push(this.columnsCopy[i].title);
-            columns.push(this.columnsCopy[i]);
-          }else {
-            break
-          }
-        }
+        fillTableWithColumns();
       }
       //根据每个column的width，以及剔除选择和操作列后剩余的宽度，计算最终填满table每列需要的宽度
       for (let i = 0;i < columns.length;i++){
@@ -783,7 +790,7 @@ export default {
 }
 
 .mapgis-baseTable-tableTd {
-  padding: 2px 15px;
+  padding: 2px 16px;
   width: 100%;
   height: 32px;
   cursor: pointer;
