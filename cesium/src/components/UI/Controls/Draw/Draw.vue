@@ -196,35 +196,16 @@ export default {
           drawElement.stopDrawing();
           let radianPoints = [positions.west,positions.north,positions.east,positions.south];
           let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(radianPoints,webGlobeDraw.ellipsoid);
-          console.log("Cartesian3Points",Cartesian3Points)
-          function lonLat2Mercator(lonlat){
-            let mercator = {
-              x:0,
-              y:0
-            };
-            let earthRad = 6378137.0;
-            mercator.x = lonlat.lng * Math.PI / 180 * earthRad;
-            let a = lonlat.lat * Math.PI / 180;
-            mercator.y = earthRad / 2 * Math.log((1.0 + Math.sin(a)) / (1.0 - Math.sin(a)));
-            return mercator;
-          }
-          let degreeArr = [], meterArr = [];
+          let degreeArr = [];
           for (let i = 0;i < Cartesian3Points.length;i++){
             let cartographic = Cesium.Cartographic.fromCartesian(Cartesian3Points[i]);
             let lng = Cesium.Math.toDegrees(cartographic.longitude);
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
-            let meter = lonLat2Mercator({
-              lng:lng,lat:lat
-            });
-            meterArr.push({
-              x: meter.x,
-              y: meter.y,
-              z: Cartesian3Points[i].z
-            });
-            degreeArr.push([lng,lat,Cartesian3Points[i].z]);
+            let height = cartographic.height;
+            degreeArr.push([lng,lat,height]);
           }
-          vm.$emit('drawCreate', meterArr,degreeArr);
-          vm.$emit('drawcreate', meterArr,degreeArr);
+          vm.$emit('drawCreate', Cartesian3Points, degreeArr);
+          vm.$emit('drawcreate', Cartesian3Points, degreeArr);
         }
       });
     }
