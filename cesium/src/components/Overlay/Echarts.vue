@@ -36,7 +36,8 @@ export default {
           if (!this.echartsLayer) {
             return;
           }
-          // this.echartsLayer.update(next);
+          this.unmount();
+          this.mount();
         },
         deep:true,
         immediate:true

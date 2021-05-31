@@ -71,7 +71,8 @@ export default {
     },
     mount() {
       //先处理相关参数：
-      let {options, layers} = this;
+      let options = {};
+      let {layers} = this;
       if (layers) {
         if (layers.indexOf("show") >= 0 ) {
           layers = this.layers.replace("show:", "");
