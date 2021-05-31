@@ -11,14 +11,6 @@ export default {
 const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
     components: {MapgisWebScene, BaseServer,Mapgis3dArcgisTileLayer},
-    data() {
-        return {
-            mapStyle: 'mapbox://styles/mapbox/dark-v9',
-            accessToken: 'pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA',
-            center: [114.321317, 30.398428],
-            zoom: 3
-        }
-    },
     mounted() {
         this.initData();
     },
@@ -189,8 +181,8 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-scene :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:60vh">
-      <mapgis-3d-arcgis-tile-layer :url="url" :layer-style="layerStyle" :srs="srs"/>
+      <mapgis-web-scene style="height:60vh">
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs"/>
       <mapgis-3d-mapv-layer v-bind="{...mapvGeojson}"></mapgis-3d-mapv-layer>
       <mapgis-3d-mapv-layer v-bind="{...mapvText}"></mapgis-3d-mapv-layer>
       <mapgis-3d-mapv-layer v-bind="{...mapvLine}"></mapgis-3d-mapv-layer>
@@ -202,7 +194,7 @@ const Template = (args, {argTypes}) => ({
 
 export const mapv = Template.bind({});
 mapv.args = {
-    url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+    baseUrl:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
     layerStyle: {
         visible: true,
         opacity: 1,

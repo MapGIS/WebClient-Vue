@@ -2,7 +2,7 @@
 
 ## Props
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **默认值:** `null`
