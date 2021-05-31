@@ -204,8 +204,8 @@ export default {
             let height = cartographic.height;
             degreeArr.push([lng,lat,height]);
           }
-          vm.$emit('drawCreate', Cartesian3Points,degreeArr);
-          vm.$emit('drawcreate', Cartesian3Points,degreeArr);
+          vm.$emit('drawCreate', Cartesian3Points, degreeArr);
+          vm.$emit('drawcreate', Cartesian3Points, degreeArr);
         }
       });
     }
