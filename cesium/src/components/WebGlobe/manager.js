@@ -47,6 +47,8 @@ export function initManager() {
     window.CesiumZondy.arcgisManager || new EventHandlerManager();
   window.CesiumZondy.IgsDocLayerManager =
     window.CesiumZondy.IgsDocLayerManager || new IgsDocLayerManager();
+  window.CesiumZondy.IgsserverManager =
+    window.CesiumZondy.IgsserverManager || new EventHandlerManager();
 }
 
 export class BaseManager {
@@ -130,3 +132,4 @@ export class IgsTerrainManager extends BaseManager {}
 export class M3DIgsManager extends BaseManager {}
 export class arcgisManager extends BaseManager {}
 export class IgsDocLayerManager extends BaseManager {}
+export class IgsserverManager extends BaseManager {}

@@ -69,8 +69,11 @@ module.exports = {
               ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
               ["/api/m3d/m3d.md", "M3D"],
+              ["/api/analysis/Viewshed.md", "可视域"],
+              ["/api/analysis/Sightline.md", "通视"],
               ["/api/ui/popup.md", "气泡"],
-              ["/api/ui/compare.md", "卷帘"]
+              ["/api/ui/compare.md", "卷帘"],
+              ["/api/ui/legend.md", "图例"]
             ]
           },
           {

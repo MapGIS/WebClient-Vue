@@ -12,7 +12,7 @@ export default {
             require: true,
         },
         gdbps: {
-            type: Array,
+            type: [Array, String] ,
             require: true,
         },
         options: {
@@ -85,6 +85,9 @@ export default {
         createCesiumObject() {
             const url = this.initUrl();
             let { options, gdbps, Cesium } = this;
+            if (typeof gdbps === "string") {
+                gdbps = [gdbps];
+            }
             options = this.$_initOptions(options);
             const allOptions = { ...options, gdbps, url };
             return new Cesium.MapGIS2DDocMapProvider(allOptions);

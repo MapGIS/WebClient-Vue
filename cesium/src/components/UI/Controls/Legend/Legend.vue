@@ -25,10 +25,14 @@
 <script>
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
+import Vue from "vue";
+import Antd from "ant-design-vue";
+import "ant-design-vue/dist/antd.css";
+Vue.use(Antd);
+
 export default {
-    name: "mapgis-arcserver-legend",
-    inject: ["mapbox", "map"],
-    props: {},
+    name: "mapgis-3d-arcserver-legend",
+    inject: ["Cesium", "webGlobe", "CesiumZondy"],
     data() {
         return {
             layers: [],
@@ -36,7 +40,6 @@ export default {
             allLegends: [],
         };
     },
-    watch: {},
     mounted() {
         this.getLegendUrl();
     },
@@ -63,15 +66,15 @@ export default {
             service.processAsync();
         },
         getLegendUrl() {
-            const { map } = this;
-            const style = map.getStyle();
-            const { sources } = style;
-            let tiles = [];
-            sources &&
-                Object.keys(sources).forEach((key) => {
-                    tiles = tiles.concat(sources[key].tiles);
-                });
-            tiles.forEach((url) => {
+            const { CesiumZondy } = this;
+            let layers = [];
+            Object.keys(CesiumZondy.arcgisManager).forEach((key) => {
+                if (key !== "vueKey") {
+                    layers = layers.concat(CesiumZondy.arcgisManager[key]);
+                }
+            });
+            layers.forEach((layer) => {
+                let url = layer.source._imageryProvider.url;
                 if (/\/arcgis\/rest\/services/.test(url)) {
                     this.getLegendInfo(url);
                 }

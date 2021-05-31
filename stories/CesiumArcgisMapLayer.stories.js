@@ -1,28 +1,22 @@
 import MapgisWebGlobe from "../cesium/src/components/WebGlobe/WebGlobe.vue";
-import ArcgisMapLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
-
 export default {
-    title: "三维/ArcGISServer-地图图层",
-    component: ArcgisMapLayer,
-    argTypes: {
-        // url: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer",
-    },
+    title: "三维/ArcGISServer-地图图层"
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisWebGlobe, ArcgisMapLayer },
+    components: { MapgisWebGlobe },
     template: `
     <mapgis-web-globe>
-    <arcgis-map-layer v-bind="$props" />
+    <mapgis-3d-arcgis-map-layer v-bind="$props" />
     </mapgis-web-globe >`,
 });
 
 export const exportMap = Template.bind({});
 exportMap.args = {
     // url: "http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
-    url:"http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
-    layers: "0,2,4,7,9,10,11,12",
+    url:"http://219.142.81.85/arcgis/rest/services/20wanZL/MapServer",
+    layers: "show:0,2,4,7,9,10,11,12",
     layerStyle: {
         visible: true,
         opacity: 1,
