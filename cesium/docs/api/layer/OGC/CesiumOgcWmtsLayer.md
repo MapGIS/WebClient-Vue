@@ -4,7 +4,7 @@
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **必传**
@@ -24,7 +24,7 @@ http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
     http://{host}:{port}/igs/rest/ogc/WMTSServer?service=WMTS&request=GetTile&version={version}&layer={layer}&format={format}&TileMatrixSet={TileMatrixSet}&TileMatrix={级数}&TileRow={行号}&TileCol={列号}
 ```
 
-### `layer`
+### `wmtsLayer`
 
 - **类型:** `String`
 - **必传**
@@ -32,7 +32,7 @@ http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
 - **Non-Synced**
 - **描述:** 地图文档名称，根据发布的 WMTS 服务信息设置
 
-### `tileMatrixSetID`
+### `tileMatrixSet`
 
 - **类型:** `String`
 - **必传**
@@ -120,9 +120,9 @@ All common layer [events](/zh/api/Layers/#events)
 <template>
   <mapgis-web-scene>
     <mapgis-3d-ogc-wmts-layer
-      :url="url"
-      :layer="layer"
-      :tileMatrixSetID="tileMatrixSetID"
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tileMatrixSet="tileMatrixSet"
       :srs="srs"
     />
   </mapgis-web-scene>
@@ -133,11 +133,12 @@ export default {
   data() {
     return {
       //服务基地址
-      url: "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
+      baseUrl:
+        "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
       //地图文档名称
-      layer: "beijing",
+      wmtsLayer: "beijing",
       //地图比例尺名称
-      tileMatrixSetID: "EPSG:4326_北京市_028mm_GB",
+      tileMatrixSet: "EPSG:4326_北京市_028mm_GB",
       //空间参考系
       srs: "EPSG:4326"
     };
@@ -159,9 +160,9 @@ export default {
 <template>
   <mapgis-web-scene>
     <mapgis-3d-ogc-wmts-layer
-      :url="url"
-      :layer="layer"
-      :tileMatrixSetID="tileMatrixSetID"
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tileMatrixSet="tileMatrixSet"
       :srs="srs"
     />
   </mapgis-web-scene>
@@ -172,12 +173,12 @@ export default {
   data() {
     return {
       //服务基地址
-      url:
+      baseUrl:
         "http://219.142.81.85/arcgis/rest/services/矿产地数据库2019/ferrous_metal/MapServer/WMTS",
       //地图文档名称
-      layer: "矿产地数据库2019_ferrous_metal",
+      wmtsLayer: "矿产地数据库2019_ferrous_metal",
       //地图比例尺名称
-      tileMatrixSetID: "default028mm",
+      tileMatrixSet: "default028mm",
       //空间参考系
       srs: "EPSG:3857"
     };
@@ -199,15 +200,15 @@ export default {
 <template>
   <mapgis-web-scene>
     <mapgis-3d-ogc-wmts-layer
-      :url="url"
-      :layer="layer"
-      :tileMatrixSetID="tileMatrixSetID"
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tileMatrixSet="tileMatrixSet"
       :layerStyle="layerStyle"
     />
     <mapgis-3d-ogc-wms-layer
       v-if="show"
-      :url="url2"
-      :layers="layers"
+      :baseUrl="baseUrl2"
+      :wmtsLayer="wmtsLayer2"
       :srs="srs2"
       :layerStyle="layerStyle2"
     />
@@ -223,12 +224,12 @@ export default {
   data() {
     return {
       //服务基地址
-      url:
+      baseUrl:
         "http://develop.smaryun.com:6163/igs/rest/ogc/WORLDMKTTILE2/WMTSServer",
       //地图文档名称
-      layer: "WORLDMKTTILE2",
+      wmtsLayer: "WORLDMKTTILE2",
       //地图比例尺
-      tileMatrixSetID: "GoogleMapsCompatible_GB",
+      tileMatrixSet: "GoogleMapsCompatible_GB",
       //样式信息
       layerStyle: {
         visible: true,
@@ -236,9 +237,9 @@ export default {
         zIndex: 105
       },
       //服务基地址
-      url2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
-      layers: "武汉市,武汉市_行人道路",
+      wmtsLayer2: "武汉市,武汉市_行人道路",
       //空间参考系
       srs2: "EPSG:4326",
       //样式信息
@@ -286,7 +287,12 @@ export default {
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-ogc-wmts-layer :url="url" :srs="srs" />
+    <mapgis-3d-ogc-wmts-layer
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tileMatrixSet="tileMatrixSet"
+      :srs="srs"
+    />
   </mapgis-web-scene>
 </template>
 
@@ -295,10 +301,14 @@ export default {
   data() {
     return {
       //天地图地址，请在url地址后面加token
-      url:
+      baseUrl:
         "http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35",
-      //地图空间坐标系,4326必传
-      srs: "EPSG:4326"
+      //地图空间坐标系
+      srs: "EPSG:4326",
+      //可以是任意值但是不能不传
+      tileMatrixSet: "",
+      //可以是任意值但是不能不传
+      wmtsLayer: ""
     };
   }
 };
