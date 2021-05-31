@@ -35,7 +35,8 @@ export default {
       const { srs } = this;
       let url = this.$_initUrl("/igs/rest/mrms/tile");
       url += "/{level}/{row}/{col}";
-      this.$_mount({ baseUrl: url, srs: srs });
+      let tilingScheme = this.$_setTilingScheme(srs);
+      this.$_mount({ baseUrl: url, srs, tilingScheme });
     },
     unmount() {
       this.$_unmount();

@@ -18,10 +18,13 @@ export { default as MapgisMeasure } from "./components/UI/controls/measure/Measu
 // https://gist.github.com/godismyjudge95/a4ea43263db53b90b05511c911cd0034
 export { default as MapgisFixDraw } from "./components/UI/controls/drawfix/FixDraw";
 export { default as MapgisHawkeye } from "./components/UI/controls/hawkeye/Hawkeye";
-export { default as MapgisArcserverLegend } from "./components/UI/controls/legend/Legend";
+export { default as MapgisArcgisLegend } from "./components/UI/controls/legend/Legend";
 
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
+
+export { default as MapgisBaseTable } from "./components/UI/controls/table/BaseTable";
+export { default as MapgisFeatureTable } from "./components/UI/controls/table/FeatureTable";
 
 export { default as MapgisArrayLayer } from "./components/layer/ArrayLayer";
 export { default as MapgisGeojsonLayer } from "./components/layer/GeojsonLayer";
@@ -44,6 +47,7 @@ export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServe
 export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
+export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 
 /* 
 import withEventsMixin from "./lib/withEvents";

@@ -38,7 +38,28 @@ export default {
     options: {
       type: Object,
       default: () => {
-        return {};
+        return {
+          proxy: undefined,
+          tilingScheme: undefined,
+          rectangle: undefined,
+          tileDiscardPolicy: undefined,
+          tileHeight: 256,
+          tileWidth: 256,
+          enablePickFeatures: undefined,
+          minimumLevel: 0,
+          maximumLevel: 20,
+          credit: undefined
+        };
+      }
+    },
+    vueKey: {
+      type: String,
+      default: "default"
+    },
+    vueIndex: {
+      type: Number,
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
       }
     },
     vueKey:{
@@ -128,41 +149,26 @@ export default {
      *   }
      *   this.$_mount(options);
      * }
+     *
+     * @param addOpt 需要额外添加的参数
+     * @param CesiumZondyLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
      * **/
-    $_mount(addOpt) {
+    $_mount(addOpt, CesiumZondyLayer) {
       //类型检测
       this.$_check();
       let opt = {},
         options = {};
 
       //取得除options、layerStyle和id之外的必要参数
-      const { $props,vueIndex,vueKey } = this;
+      const { $props, vueIndex, vueKey } = this;
       Object.keys($props).forEach(function(key) {
         if (key !== "options" && key !== "layerStyle" && key !== "id") {
           opt[key] = $props[key];
         }
       });
 
-      //设置通用的参数
-      let defaultOptions = {
-        proxy: undefined,
-        tilingScheme: undefined,
-        rectangle: undefined,
-        tileDiscardPolicy: undefined,
-        tileHeight: 256,
-        tileWidth: 256,
-        enablePickFeatures: undefined,
-        minimumLevel: 0,
-        maximumLevel: 20,
-        credit: undefined
-      };
-
       //组合参数
-      options = { ...defaultOptions, ...this.options, ...opt, ...addOpt };
-
-      if (opt.srs) {
-        options.tilingScheme = this.$_setTilingScheme(opt.srs);
-      }
+      options = { ...this.options, ...opt, ...addOpt };
 
       //设置Headers
       let checkHeaders = this.$_checkValue(this.options, "headers", ""),
@@ -187,8 +193,12 @@ export default {
       const { visible, opacity, zIndex } = layerStyle;
       const { imageryLayers } = webGlobeObj.viewer;
 
-      window.Zondy = window.Zondy || window.CesiumZondy;
-      let provider = new Cesium[this.providerName](options);
+      let provider;
+      if (CesiumZondyLayer) {
+        provider = new CesiumZondyLayer(options);
+      } else {
+        provider = new Cesium[this.providerName](options);
+      }
 
       //如果第一次初始化，有layerStyle，则赋值，以后都走watch
       if (!zIndex) {
@@ -255,7 +265,6 @@ export default {
       );
       imageryLayers.remove(find.source, true);
       window.CesiumZondy[this.managerName].deleteSource(vueKey, vueIndex);
-
       this.$emit("unload", this);
     },
     $_getManager() {
@@ -267,7 +276,7 @@ export default {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
           if (window.CesiumZondy[key].hasOwnProperty("vueKey")) {
-            if(window.CesiumZondy[key].hasOwnProperty(vm.vueKey)){
+            if (window.CesiumZondy[key].hasOwnProperty(vm.vueKey)) {
               Manager = Manager.concat(window.CesiumZondy[key][vm.vueKey]);
             }
           }

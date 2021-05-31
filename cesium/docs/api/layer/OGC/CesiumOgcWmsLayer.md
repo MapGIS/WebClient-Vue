@@ -103,31 +103,6 @@ EPSG:3857
 - **watch**
 - **描述:** 图层唯一标识符，如果不传，以 vueIndex 代替
 
-### `webSceneKey`
-
-- **类型:** `String`
-- **可选**
-- **默认值** `default`
-- **描述:** Cesiumd 多线程的标识符
-
-### `webSceneIndex`
-
-- **类型:** `Number`
-- **可选**
-- **描述:** 当页面同时拥有多个 webScene 时，webScene 的唯一标识符，
-  使用时请先设置 mapgis-web-scene 的 vueIndex，之后将 mapgis-web-scene 的
-  vueIndex 传给 mapgis-3d-ogc-wms-layer 的 webSceneIndex
-- **示例:**
-
-```
-  <mapgis-web-scene
-    :vueIndex="vueIndexWebScene">
-    <mapgis-3d-ogc-wms-layer
-      :webSceneIndex="vueIndexWebScene">
-    </mapgis-3d-ogc-wms-layer>
-  </mapgis-web-scene>
-```
-
 ### `options`
 
 - **类型:** `Object`
@@ -353,25 +328,26 @@ export default {
 </style>
 ```
 
-## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueIndex，并将此 vueIndex 传给此组件的 webSceneIndex
+## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueIndex，并将此 vueIndex 传给此组件的 vueIndex
 
 ```vue
 <template>
-  <mapgis-web-scene :vueIndex="index">
+  <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wms-layer
       :url="urlWms"
       :layer="layersWms"
       :tileMatrixSetID="layerStyleWms"
-      :webSceneIndex="index"
+      :vueKey="vueKey"
     />
     <mapgis-3d-igs-doc-layer
       :url="urlDoc"
       :layers="layers"
       :layerStyle="layerStyleDoc"
-      :webSceneIndex="index"
+      :vueKey="vueKey"
     />
     <button @click="changeIndex">改变图层顺序</button>
   </mapgis-web-scene>
+  <mapgis-web-scene :vueKey="vueKey2" />
 </template>
 
 <script>
@@ -390,7 +366,8 @@ export default {
       //要显示的子图层
       layers: "show:1,2",
       //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe
-      vueIndex: 2001245,
+      vueKey: "webSceneOne",
+      vueKey2: "webSceneTwo",
       layerStyleDoc: {
         zIndex: 1000
       }

@@ -4,12 +4,26 @@ import { SQLParameter } from "./SQLParameter";
 import { ObjectIdsParameter } from "./ObjectIdsParameter";
 import { RectangleParameter } from "./RectangleParameter";
 import { Geometry } from "./Geometry";
-import { Point } from "./Point";
-import { Polyline } from "./Polyline";
-import { Polygon } from "./Polygon";
-import { MultiPoint } from "./MultiPoint";
-import { MultiLineString } from "./MultiLineString";
-import { MultiPolygon } from "./MultiPolygon";
-import { Feature } from "./Feature";
+import { VPoint } from "./Point";
+import { VPolyline } from "./Polyline";
+import { VPolygon } from "./Polygon";
+import { VMultiPoint } from "./MultiPoint";
+import { VMultiPolyline } from "./MultiPolyline";
+import { VMultiPolygon } from "./MultiPolygon";
+import { VFeature } from "./Feature";
 
-export { BaseParameter,GeometryParameter,SQLParameter,ObjectIdsParameter,RectangleParameter,Geometry,Point,Polyline,Polygon,MultiPoint,MultiLineString,MultiPolygon,Feature };
+export {
+  BaseParameter,
+  GeometryParameter,
+  SQLParameter,
+  ObjectIdsParameter,
+  RectangleParameter,
+  Geometry,
+  VPoint,
+  VPolyline,
+  VPolygon,
+  VMultiPoint,
+  VMultiPolyline,
+  VMultiPolygon,
+  VFeature
+};

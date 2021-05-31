@@ -85,7 +85,7 @@ export default {
       //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
       if (srs || crs) {
         let tileMatrixSetName = srs ? srs : crs;
-        options.tilingScheme = this.$_setTilingScheme(tileMatrixSetName);
+        opt.tilingScheme = this.$_setTilingScheme(tileMatrixSetName);
       }
       this.$_mount(opt);
     },

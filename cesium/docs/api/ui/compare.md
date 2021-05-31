@@ -41,7 +41,7 @@ export default {
                 "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
             mapId: "fhjoghjgfjhg",
             beforeLayers: ["asdasdasdsafasf"],
-            afterLayers: [],
+            afterLayers: ["fhjoghjgfjhg"],
         };
     },
 };

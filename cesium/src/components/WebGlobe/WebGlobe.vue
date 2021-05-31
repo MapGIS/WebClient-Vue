@@ -126,6 +126,8 @@ export default {
   beforeDestroy() {
     this.$nextTick(() => {
       if (this.webGlobe) {
+        const {vueKey, vueIndex} = this;
+        window.CesiumZondy.GlobesManager.deleteSource(vueKey, vueIndex)
         this.webGlobe.viewer.scene.primitives.removeAll();
         this.webGlobe.viewer.scene.primitives.destroy();
         this.webGlobe.viewer.entities.removeAll();
@@ -135,7 +137,7 @@ export default {
         this.initialized = false;
       }
     });
-  },
+  }
 };
 </script>
 

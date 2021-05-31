@@ -26,7 +26,7 @@
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
 export default {
-    name: "mapgis-arcserver-legend",
+    name: "mapgis-arcgis-legend",
     inject: ["mapbox", "map"],
     props: {},
     data() {
@@ -92,7 +92,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-legend {
     z-index: 100;
     position: absolute;
@@ -101,9 +101,9 @@ export default {
     width: fit-content;
     height: fit-content;
     padding: 12px;
-    border: 1px #333 solid;
-    border-radius: 6px;
-    background: #ffffff;
+    border: 1px solid #333;
+    border-radius: 3px;
+    background: #fff;
     overflow: auto;
 }
 
@@ -121,5 +121,10 @@ export default {
 .mapgis-legend .legend-area li img {
     height: 20px;
     width: 20px;
+}
+
+.mapgis-legend .legend-area li span {
+    text-align: left;
+    word-break: break-all;
 }
 </style>
