@@ -1,5 +1,5 @@
 <template>
-  <svg v-if="iconId" class="icon" aria-hidden="true" @click="click()">
+  <svg v-if="iconId" class="mapgis-iconfont" aria-hidden="true" @click="click()">
     <use :xlink:href="iconId"></use>
   </svg>
 </template>
@@ -27,7 +27,7 @@ export default {
 };
 </script>
 <style>
-.icon {
+.mapgis-iconfont {
   width: 1.25em;
   height: 1.25em;
   vertical-align: -0.25em;
