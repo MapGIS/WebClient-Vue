@@ -8,42 +8,43 @@ All common [layers props](/api/Layers/README.md#props)
 
 - **类型:** `Object | String`
 - **非侦听属性**
-- **描述:** A vector tile source.
-- **查看:** `Vector source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-vector)
+- **描述:** 矢量瓦片源。
+- **参考:** `Vector source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-vector)
 
-## 计算属性
+## Computed getters 计算属性
 
 ### `getSourceFeatures(filter?)`
 
 - **参数:**
-  - `filter` `Array` A filter to limit query results.
-- **描述** Returns an array of GeoJSON Feature objects from assosiated source filtered by `filter`.
-- **查看** `.querySourceFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#querysourcefeatures)
+- `filter` `Array` 限制了查询结果的过滤条件，数组类型。
+- **描述** 通过所关联的过滤条件返回一个包含 GeoJSON 要素对象的数组。
+- **参考** `.querySourceFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#querysourcefeatures)
 
 ### `getRenderedFeatures(geometry, filter)`
 
 - **参数:**
-  - `filter` `Array` A filter to limit query results.
-  - `geometry` `Array | Object` The geometry of the query region.
-- **描述** Returns an array of visible GeoJSON Feature objects from assosiated source filtered by `filter`.
-- **查看** `.queryRenderedFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#queryrenderedfeatures)
+- `filter` `Array`限制了查询结果的过滤条件，数组类型。
+- `geometry` `Array | Object` 查询区间的几何图形。
+- **描述** 通过所关联的过滤条件返回一个可见的 GeoJSON 要素对象的数组。
+- **参考** `.queryRenderedFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#queryrenderedfeatures)
 
-## 方法
+## Methods 方法
+
 
 ### `setFeatureState(featureId, state)`
 
 - **参数:**
-  - `featureId` `String | Number` Feature identifier.
-  - `state` `Object` A set of key-value pairs. The values should be valid JSON types.
-- **描述** Sets the state of a feature. The state object is merged in with the existing state of the feature.
-- **查看** `.setFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#setfeaturestate)
+  - `featureId` `String | Number` Feature id。
+  - `state` `Object` 一组键值对。值应该是有效的 JSON 类型对象。
+- **描述** 设置要素的状态。状态对象将与要素的现有状态合并。
+- **参考** `.setFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#setfeaturestate)
 
 ### `getFeatureState(featureId)`
 
 - **参数:**
-  - `featureId` `String | Number` Feature identifier.
-- **描述** Gets the state of a feature.
-- **查看** `.getFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#getfeaturestate)
+  - `featureId` `String | Number` Feature id。
+- **描述** 获取一个要素的状态。
+- **参考** `.getFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#getfeaturestate)
 
 ## 事件
 
