@@ -76,7 +76,9 @@ module.exports = {
               ["/api/analysis/Sightline.md", "通视"],
               ["/api/ui/popup.md", "气泡"],
               ["/api/ui/compare.md", "卷帘"],
-              ["/api/ui/legend.md", "图例"]
+              ["/api/ui/legend.md", "图例"],
+              ["/api/Overlay/Echarts.md", "Echarts"],
+              ["/api/Overlay/Mapv.md", "MapV"],  
             ]
           },
           {

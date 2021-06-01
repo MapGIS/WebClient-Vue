@@ -2,7 +2,6 @@ import MapgisWebScene from "../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dArcgisTileLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
 import {BaseServer} from "@mapgis/webclient-es6-service";
 
-
 export default {
     title: "三维/覆盖物-MapV",
 };
@@ -38,7 +37,7 @@ const Template = (args, {argTypes}) => ({
     template: `
       <mapgis-web-scene>
       <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs"/>
-      <mapgis-3d-mapv-layer v-bind="$props"></mapgis-3d-mapv-layer>
+      <mapgis-3d-mapv-layer :options="options" :geojson="geojson"></mapgis-3d-mapv-layer>
       </mapgis-web-scene>
     `
 });

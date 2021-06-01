@@ -9,16 +9,16 @@
          :style="{overflowY: plainOptions.length > 8 ? 'scroll' : 'hidden',
          top: filterTop + 'px',
          position: filterPosition}" v-show="showFilter">
-      <a-row>
-        <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="$_checkAll">
+      <Row>
+        <Checkbox :indeterminate="indeterminate" :checked="checkAll" @change="$_checkAll">
           全选
-        </a-checkbox>
-      </a-row>
-      <a-row>
-        <a-checkbox-group v-model="checkedList" :options="plainOptions" @change="$_check"/>
-      </a-row>
+        </Checkbox>
+      </Row>
+      <Row>
+        <CheckboxGroup v-model="checkedList" :options="plainOptions" @change="$_check"/>
+      </Row>
     </div>
-    <a-table :id="tableId"
+    <Table :id="tableId"
              :data-source="dataSourceCopy"
              :columns="columnsCopy"
              :pagination="paginationCopy"
@@ -32,18 +32,18 @@
           <p :style="{fontStyle:text === 'null' ? 'italic' : 'normal'}" class="mapgis-baseTable-content" :title="text" v-if="editRowAndCol !== column.key + '_' + record.key">
             {{ text }}
           </p>
-          <a-input v-if="editRowAndCol === column.key + '_' + record.key"
+          <Input v-if="editRowAndCol === column.key + '_' + record.key"
                    v-model="record[column.key]"/>
         </div>
       </div>
       <template v-if="editable" slot="operation" slot-scope="text, record">
-        <a-popconfirm
+        <Popconfirm
             @confirm="$_deleteFeature(record)"
         >
           删除
-        </a-popconfirm>
+        </Popconfirm>
       </template>
-    </a-table>
+    </Table>
   </div>
 </template>
 
@@ -52,10 +52,12 @@
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css'; */
 import {VFeature} from "../../../util";
+import {Table,Row,Checkbox,CheckboxGroup,Input,Popconfirm} from "../../../../ui"
 // Vue.use(Antd);
 
 export default {
   name: "mapgis-base-table",
+  components:{Table,Row,Checkbox,CheckboxGroup,Input,Popconfirm},
   props:{
     //数据源
     dataSource:{
