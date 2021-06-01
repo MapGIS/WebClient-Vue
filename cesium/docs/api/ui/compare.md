@@ -1,6 +1,6 @@
 # Compare
 
-## Props
+## 属性
 
 ### `beforeLayers`
 
@@ -16,7 +16,7 @@
 - **默认值:** `[]`
 - **描述:** 卷帘右边图层的id，允许多个图层
 
-## Example
+## 示例
 
 ```vue
 <template>

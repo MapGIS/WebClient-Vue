@@ -1,6 +1,6 @@
 # IgsVectorLayer
 
-## Props
+## 属性
 
 ### `baseUrl`
 
@@ -83,7 +83,7 @@ gdbps: ["layer1","layer2","layer3"]
 gdbps: "layer1,layer2,layer3"
 ```
 
-## Example
+## 示例
 
 ```vue
 <template>

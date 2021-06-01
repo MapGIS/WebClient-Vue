@@ -1,6 +1,6 @@
 # IgsVectorLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -57,7 +57,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `gdbps`
 
 - **类型:** `String`
-- **Required**
+- **必传**
 - **非侦听属性**
 - **watched**
 - **描述:** 图层的 gdbps 地址，允许多个图层，以“,”隔开
@@ -100,11 +100,11 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **非侦听属性**
 - **描述:** 当 keepCache 设置为 true 时，优先从客户端缓存中取瓦片，否则不从客户端缓存中提取
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
-## Example
+## 示例
 
 ```vue
 <template>

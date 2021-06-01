@@ -3,9 +3,9 @@
 ## 语义
 ::: tip layers 参数的语义
 > 下面三类图层会设计子图层的可见性控制性，三者的参数都是通过 `layers` 参数来控制的
- 1. OGC-WMS WMS图层,通过layers来控制子图层的`显示`  [OGC-WMS](/api/Layers/OGC/ogcWmsLayer.md#props)
- 2. IGServer-Doc 地图文档,通过layers来控制子图层的`显示`、`隐藏`、`包含`、`排除`  [IGServer-Doc](/api/Layers/igserver/igsDocLayer.md#props)
- 3. ArcServer-Map 地图文档,通过layers来控制子图层的`显示`、`隐藏`、`包含`、`排除`  [OGC-WMS](/api/Layers/ArcGISServer/ArcGISMapLayer.md#props)
+ 1. OGC-WMS WMS图层,通过layers来控制子图层的`显示`  [OGC-WMS](/api/Layer/OGC/CesiumOgcWmsLayer.md#props)
+ 2. IGServer-Doc 地图文档,通过layers来控制子图层的`显示`、`隐藏`、`包含`、`排除`  [IGServer-Doc](/api/Layer/IGServer/IgsDocLayer.md#props)
+ 3. ArcServer-Map 地图文档,通过layers来控制子图层的`显示`、`隐藏`、`包含`、`排除`  [OGC-WMS](/api/Layer/ArcGISServer/ArcGISMapLayer.md#props)
 :::
 
 ## 类型 

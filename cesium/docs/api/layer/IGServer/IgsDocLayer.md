@@ -1,6 +1,6 @@
 # IgsDocLayer
 
-## Props
+## 属性
 
 ### `baseUrl`
 
@@ -53,8 +53,8 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ```
 当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
 ```
-
-## 加载 4326 地图
+## 示例
+### 加载 4326 地图
 
 ```vue
 <template>
@@ -75,9 +75,9 @@ export default {
 </script>
 ```
 
-## 加载 3857 地图 -- 目前不支持
+### 加载 3857 地图 -- 目前不支持
 
-## 设置样式 - 透明度、可见性、zIndex
+### 设置样式 - 透明度、可见性、zIndex
 
 ```vue
 <template>
@@ -104,7 +104,7 @@ export default {
 </script>
 ```
 
-## 设置子图层
+### 设置子图层
 
 ```vue
 <template>

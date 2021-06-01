@@ -1,4 +1,4 @@
-## Methods
+## 方法
 
 ### `newGuid()`
 

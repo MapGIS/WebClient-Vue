@@ -1,8 +1,6 @@
 # CesiumOgcWmtsLayer
 
-## Props
-
-All common [layers props](/zh/api/Layers/README.md#props)
+## 属性
 
 ### `baseUrl`
 
@@ -115,7 +113,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
 ```
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
@@ -132,7 +130,7 @@ All common layer [events](/zh/api/Layers/#events)
 - **返回值** `{ vue }` <br>
   `vue` vue 对象 <br>
 
-## Example
+## 示例
 
 ### 加载 WMTS 地图 - IGS - 4326
 

@@ -39,6 +39,19 @@ webclient-vue-cesium 支持一层封装，除了本身需要安装以外，你�
 ```bash
 # 不同时安装@mapgis/cesium的原因在于这个对外的是非高级版本，事业部一般全内部使用高级版本开发
 npm install --save @mapgis/webclient-vue-cesium
+# 或者
+yarn add @mapgis/webclient-vue-cesium
+```
+在 main.js 中加入样式文件
+
+```js
+// 外部全局引入了ant-design-vue库
+import Mapgis3d from "@mapgis/webclient-vue-cesium";
+Vue.use(Mapgis3d);
+
+// 外部没有引入ant-design-vue库，使用内部封装的组件库
+import Mapgis3d from "@mapgis/webclient-vue-cesium";
+Vue.use(Mapgis3d， { ui: "ant-design-vue" });
 ```
 
 ::: danger

@@ -184,6 +184,6 @@ export default {
 </script>
 ```
 
-### Events
+### 事件
 
 全部的地图行为请看 [API](/zh/api/#events) 页面.

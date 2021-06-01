@@ -1,6 +1,6 @@
 # Hawkeye
 
-## Example
+## 示例
 
 ```vue
 <template>

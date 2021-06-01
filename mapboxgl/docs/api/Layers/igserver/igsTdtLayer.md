@@ -1,13 +1,13 @@
 # IgsTdtLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `source`
 
 - **类型:** `Object | String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** A raster tile source.
 - **参考:** `Raster source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)
 
@@ -15,21 +15,21 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 完整的地图请求路径。当 url 不为空时，除了 tileSize，其他参数无效
 
 ### `tileSize`
 
 - **类型:** `Number`
 - **默认值:** `512`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出瓦片大小。
 
 ### `domain`
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务域名。(domain 和（protocol，ip，port）二选一)
 - **示例:** `http://localhost:6163`
 
@@ -37,84 +37,84 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `location.protocol.split(":")[0] || "http"`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务网络协议。(domain 和（protocol，ip，port）二选一)
 
 ### `ip`
 
 - **类型:** `String`
 - **默认值:** `localhost`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 ip。(domain 和（protocol，ip，port）二选一)
 
 ### `port`
 
 - **类型:** `String`
 - **默认值:** `6163`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 port。(domain 和（protocol，ip，port）二选一)
 
 ### `layerType`
 
 - **类型:** `String`
 - **默认值:** `vec`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 图层类型。vec：天地图矢量数据；img：天地图影像数据；cva：天地图矢量注记数据；cia：天地图影像注记数据；vec_igs：天地图矢量数据(通过 IGS)；img_igs：天地图影像数据(通过 IGS)；cva_igs：天地图矢量注记数据(通过 IGS)；cia_igs：天地图影像注记数据(通过 IGS)
 
 ### `token`
 
 - **类型:** `String`
-- **Required**
-- **Non-Synced**
+- **必传**
+- **非侦听属性**
 - **描述:** 请求天地图的 key 值
 
 ### `baseURL`
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 请求的基地址。
 
 ### `crs`
 
 - **类型:** `String`
 - **默认值:** `EPSG:4326`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 空间坐标参考系。
 
 ### `isLabel`
 
 - **类型:** `Boolean`
 - **默认值:** `false`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 是否为标签图层。
 
 ### `version`
 
 - **类型:** `String`
 - **默认值:** `1.0.0`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 请求的版本号，支持 1.0.0 版本
 
 ### `tdtStyle`
 
 - **类型:** `String`
 - **默认值:** `default`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 天地图样式
 
 ### `format`
 
 - **类型:** `String`
 - **默认值:** `tiles`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出格式
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
-## Example
+## 示例
 
 ```vue
 <template>

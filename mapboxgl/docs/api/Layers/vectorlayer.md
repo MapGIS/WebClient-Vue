@@ -1,50 +1,50 @@
 # VectorLayer
 
-## Props
+## 属性
 
 All common [layers props](/api/Layers/README.md#props)
 
 ### `source`
 
-- **Type:** `Object | String`
-- **Non-Synced**
-- **Description:** A vector tile source.
-- **See:** `Vector source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-vector)
+- **类型:** `Object | String`
+- **非侦听属性**
+- **描述:** A vector tile source.
+- **查看:** `Vector source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-vector)
 
-## Computed getters
+## 计算属性
 
 ### `getSourceFeatures(filter?)`
 
-- **Arguments:**
+- **参数:**
   - `filter` `Array` A filter to limit query results.
-- **Description** Returns an array of GeoJSON Feature objects from assosiated source filtered by `filter`.
-- **See** `.querySourceFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#querysourcefeatures)
+- **描述** Returns an array of GeoJSON Feature objects from assosiated source filtered by `filter`.
+- **查看** `.querySourceFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#querysourcefeatures)
 
 ### `getRenderedFeatures(geometry, filter)`
 
-- **Arguments:**
+- **参数:**
   - `filter` `Array` A filter to limit query results.
   - `geometry` `Array | Object` The geometry of the query region.
-- **Description** Returns an array of visible GeoJSON Feature objects from assosiated source filtered by `filter`.
-- **See** `.queryRenderedFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#queryrenderedfeatures)
+- **描述** Returns an array of visible GeoJSON Feature objects from assosiated source filtered by `filter`.
+- **查看** `.queryRenderedFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#queryrenderedfeatures)
 
-## Methods
+## 方法
 
 ### `setFeatureState(featureId, state)`
 
-- **Arguments:**
+- **参数:**
   - `featureId` `String | Number` Feature identifier.
   - `state` `Object` A set of key-value pairs. The values should be valid JSON types.
-- **Description** Sets the state of a feature. The state object is merged in with the existing state of the feature.
-- **See** `.setFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#setfeaturestate)
+- **描述** Sets the state of a feature. The state object is merged in with the existing state of the feature.
+- **查看** `.setFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#setfeaturestate)
 
 ### `getFeatureState(featureId)`
 
-- **Arguments:**
+- **参数:**
   - `featureId` `String | Number` Feature identifier.
-- **Description** Gets the state of a feature.
-- **See** `.getFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#getfeaturestate)
+- **描述** Gets the state of a feature.
+- **查看** `.getFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#getfeaturestate)
 
-## Events
+## 事件
 
 All common layer [events](/api/Layers/#events)

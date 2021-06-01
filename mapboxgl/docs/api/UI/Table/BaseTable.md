@@ -1,6 +1,6 @@
 # BaseTable
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -155,7 +155,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **watched**
 - **描述:** 是否显示左侧的复选框，默认显示。
 
-## Events
+## 事件
 
 ### `@handleCreated`
 
@@ -186,7 +186,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
   `row` 被点击单元格所在行的属性数据 <br>
   `allRow` 被点击单元格所在行的所有数据 <br>
 
-## Example
+## 示例
 
 ```vue
 <template>

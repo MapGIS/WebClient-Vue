@@ -1,6 +1,6 @@
 # ArcGISTileLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -25,7 +25,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **非侦听属性**
 - **描述:** 层级偏移量
 
-## Example
+## 示例
 
 ```vue
 <template>

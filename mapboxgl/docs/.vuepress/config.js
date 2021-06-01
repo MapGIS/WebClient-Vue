@@ -183,6 +183,8 @@ module.exports = {
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
 
+              ["/api/UI/Table/BaseTable.md", "表格"],
+              ["/api/UI/Table/FeatureTable.md", "要素表格"],
               ["/api/map/mixin/FeatureService.md", "要素服务"]
             ]
           },

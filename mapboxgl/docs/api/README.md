@@ -1,300 +1,300 @@
 # GlMap
 
-## Props
+## 属性
 
 ### `mapboxGl`
 
-- **Type**: `Object`
+- **类型**: `Object`
 - **Default:** `null`
-- - **Description:** Mapboxgl-js implementation. Useful for lazy-loading. If omitted, VueMapbox imports Mapbox-gl-js dynamically.
+- - **描述:** Mapboxgl-js implementation. Useful for lazy-loading. If omitted, VueMapbox imports Mapbox-gl-js dynamically.
 
 ### `mapStyle`
 
-- **Type**: `String`, `Object`
-- **Required**
-- **Synced**
-- **Description:** The map's Mapbox style. This must be an a JSON object conforming to the schema described in the Mapbox Style Specification , or a URL to such JSON.
-- **See:** `options.style` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **类型**: `String`, `Object`
+- **必传**
+- **侦听属性**
+- **描述:** The map's Mapbox style. This must be an a JSON object conforming to the schema described in the Mapbox Style Specification , or a URL to such JSON.
+- **查看:** `options.style` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `container`
 
-- **Type:** `String`, `HTMLElement`
+- **类型:** `String`, `HTMLElement`
 - **Default:** `#map-{random number}`
-- **Non-Synced**
-- **Description:** The HTML element in which Mapbox GL JS will render the map
-- **See:** `options.container` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** The HTML element in which Mapbox GL JS will render the map
+- **查看:** `options.container` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `accessToken`
 
-- **Type:** `String`
+- **类型:** `String`
 - **Default:** `undefined`
-- **Non-Synced**
-- **Description:** Token for access Mapbox map
-- **See:** [accessToken](https://docs.mapbox.com/mapbox-gl-js/api/#accesstoken)
+- **非侦听属性**
+- **描述:** Token for access Mapbox map
+- **查看:** [accessToken](https://docs.mapbox.com/mapbox-gl-js/api/#accesstoken)
 
 ### `minZoom`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `0`
-- **Synced**
-- **Description:** Minimum zoom level of the map (0-24)
-- **See:** `options.minZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** Minimum zoom level of the map (0-24)
+- **查看:** `options.minZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `maxZoom`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `22`
-- **Synced**
-- **Description:** Maximum zoom level of the map (0-24)
-- **See:** `options.maxZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** Maximum zoom level of the map (0-24)
+- **查看:** `options.maxZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `hash`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Synced**
-- **Description:** If true, the map's position (zoom, center latitude, center longitude, bearing, and pitch) will be synced with the hash fragment of the page's URL
-- **See:** `options.hash` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** If true, the map's position (zoom, center latitude, center longitude, bearing, and pitch) will be synced with the hash fragment of the page's URL
+- **查看:** `options.hash` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `interactive`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If false, no mouse, touch, or keyboard listeners will be attached to the map, so it will not respond to interaction
-- **See:** `options.interactive` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If false, no mouse, touch, or keyboard listeners will be attached to the map, so it will not respond to interaction
+- **查看:** `options.interactive` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `bearingSnap`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `7`
-- **Non-Synced**
-- **Description:** The threshold, measured in degrees, that determines when the map's bearing will snap to north
-- **See:** `options.bearingSnap` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** The threshold, measured in degrees, that determines when the map's bearing will snap to north
+- **查看:** `options.bearingSnap` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `attributionControl`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, an AttributionControl will be added to the map
-- **See:** `options.attributionControl` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, an AttributionControl will be added to the map
+- **查看:** `options.attributionControl` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `logoPosition`
 
-- **Type:** `String`, `top-left`, `top-right`, `bottom-right`, `bottom-left`
+- **类型:** `String`, `top-left`, `top-right`, `bottom-right`, `bottom-left`
 - **Default:** `bottom-left`
-- **Non-Synced**
-- **Description:** A string representing the position of the Mapbox wordmark on the map
-- **See:** `options.logoPosition` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** A string representing the position of the Mapbox wordmark on the map
+- **查看:** `options.logoPosition` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `failIfMajorPerformanceCaveat`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Non-Synced**
-- **Description:** If true, map creation will fail if the performance of Mapbox GL JS would be dramatically worse than expected (i.e. a software renderer would be used)
-- **See:** `options.failIfMajorPerformanceCaveat` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, map creation will fail if the performance of Mapbox GL JS would be dramatically worse than expected (i.e. a software renderer would be used)
+- **查看:** `options.failIfMajorPerformanceCaveat` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `crossSourceCollisions`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, symbols from multiple sources can collide with each other during collision detection. If false , collision detection is run separately for the symbols in each source.
-- **See:** `options.crossSourceCollisions` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, symbols from multiple sources can collide with each other during collision detection. If false , collision detection is run separately for the symbols in each source.
+- **查看:** `options.crossSourceCollisions` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `fadeDuration`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `300`
-- **Non-Synced**
-- **Description:** Controls the duration of the fade-in/fade-out animation for label collisions, in milliseconds. This setting affects all symbol layers. This setting does not affect the duration of runtime styling transitions or raster tile cross-fading.
-- **See:** `options.fadeDuration` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** Controls the duration of the fade-in/fade-out animation for label collisions, in milliseconds. This setting affects all symbol layers. This setting does not affect the duration of runtime styling transitions or raster tile cross-fading.
+- **查看:** `options.fadeDuration` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `preserveDrawingBuffer`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Non-Synced**
-- **Description:** If true, the map's canvas can be exported to a PNG using map.getCanvas().toDataURL()
-- **See:** `options.preserveDrawingBuffer` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the map's canvas can be exported to a PNG using map.getCanvas().toDataURL()
+- **查看:** `options.preserveDrawingBuffer` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `refreshExpiredTiles`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the map won't attempt to re-request tiles once they expire per their HTTP cacheControl / expires headers.
-- **See:** `options.refreshExpiredTiles` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the map won't attempt to re-request tiles once they expire per their HTTP cacheControl / expires headers.
+- **查看:** `options.refreshExpiredTiles` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `maxBounds`
 
-- **Type:** `Array`, `LngLatBoundsLike object`
+- **类型:** `Array`, `LngLatBoundsLike object`
 - **Default:** `undefined`
-- **Synced**
-- **Description:** If set, the map will be constrained to the given bounds
-- **See:** `options.maxBounds` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** If set, the map will be constrained to the given bounds
+- **查看:** `options.maxBounds` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `scrollZoom`
 
-- **Type:** `Boolean`, `Object`
+- **类型:** `Boolean`, `Object`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the "scroll to zoom" interaction is enabled. An Object value is passed as options to ScrollZoomHandler#enable
-- **See:** `options.scrollZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the "scroll to zoom" interaction is enabled. An Object value is passed as options to ScrollZoomHandler#enable
+- **查看:** `options.scrollZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `boxZoom`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the "box zoom" interaction is enabled
-- **See:** `options.boxZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the "box zoom" interaction is enabled
+- **查看:** `options.boxZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `dragRotate`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the "drag to rotate" interaction is enabled
-- **See:** `options.dragRotate` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the "drag to rotate" interaction is enabled
+- **查看:** `options.dragRotate` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `keyboard`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, keyboard shortcuts are enabled
-- **See:** `options.keyboard` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, keyboard shortcuts are enabled
+- **查看:** `options.keyboard` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `doubleClickZoom`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the "double click to zoom" interaction is enabled
-- **See:** `options.doubleClickZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the "double click to zoom" interaction is enabled
+- **查看:** `options.doubleClickZoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `touchZoomRotate`
 
-- **Type:** `Boolean`, `Object`
+- **类型:** `Boolean`, `Object`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the "pinch to rotate and zoom" interaction is enabled. An Object value is passed as options to TouchZoomRotateHandler#enable
-- **See:** `options.touchZoomRotate` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the "pinch to rotate and zoom" interaction is enabled. An Object value is passed as options to TouchZoomRotateHandler#enable
+- **查看:** `options.touchZoomRotate` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `trackResize`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true, the map will automatically resize when the browser window resizes.
-- **See:** `options.trackResize` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true, the map will automatically resize when the browser window resizes.
+- **查看:** `options.trackResize` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `center`
 
-- **Type:** `Array, LngLatLike Object`
+- **类型:** `Array, LngLatLike Object`
 - **Default:** `undefined`
-- **Synced**
-- **Description:** Geographical centerpoint of the map. If center is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object.If it is not specified in the style, either, it will default to `[0, 0]`
-- **See:** `options.center` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** Geographical centerpoint of the map. If center is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object.If it is not specified in the style, either, it will default to `[0, 0]`
+- **查看:** `options.center` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `zoom`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `undefined`
-- **Synced**
-- **Description:** Zoom level of the map. If zoom is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object. If it is not specified in the style, either, it will default to `0`
-- **See:** `options.zoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** Zoom level of the map. If zoom is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object. If it is not specified in the style, either, it will default to `0`
+- **查看:** `options.zoom` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `bearing`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `undefined`
-- **Synced**
-- **Description:** Bearing (rotation) of the map, measured in degrees counter-clockwise from north. If bearing is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object. If it is not specified in the style, either, it will default to `0`
-- **See:** `options.bearing` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** Bearing (rotation) of the map, measured in degrees counter-clockwise from north. If bearing is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object. If it is not specified in the style, either, it will default to `0`
+- **查看:** `options.bearing` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `pitch`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `undefined`
-- **Synced**
-- **Description:** Pitch (tilt) of the map, measured in degrees away from the plane of the screen (0-60). If pitch is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object. If it is not specified in the style, either, it will default to `0`
-- **See:** `options.pitch` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **侦听属性**
+- **描述:** Pitch (tilt) of the map, measured in degrees away from the plane of the screen (0-60). If pitch is not specified in the constructor options, Mapbox GL JS will look for it in the map's style object. If it is not specified in the style, either, it will default to `0`
+- **查看:** `options.pitch` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `renderWorldCopies`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true , multiple copies of the world will be rendered, when zoomed out
-- **See:** `options.renderWorldCopies` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If true , multiple copies of the world will be rendered, when zoomed out
+- **查看:** `options.renderWorldCopies` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `light`
 
-- **Type:** `Object`
+- **类型:** `Object`
 - **Default:** `undefined`
-- **Synced**
-- **Description:** Light properties. Must conform to the Mapbox Style Specification
-- **See:** See [setLight](https://docs.mapbox.com/mapbox-gl-js/api/#map#setlight) Map method
+- **侦听属性**
+- **描述:** Light properties. Must conform to the Mapbox Style Specification
+- **查看:** See [setLight](https://docs.mapbox.com/mapbox-gl-js/api/#map#setlight) Map method
 
 ### `tileBoundaries`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Synced**
-- **Description:** A Boolean indicating whether the map will render an outline around each tile. These tile boundaries are useful for debugging
-- **See:** See [showTileBoundaries](https://docs.mapbox.com/mapbox-gl-js/api/#map#showtileboundaries) Map property
+- **侦听属性**
+- **描述:** A Boolean indicating whether the map will render an outline around each tile. These tile boundaries are useful for debugging
+- **查看:** See [showTileBoundaries](https://docs.mapbox.com/mapbox-gl-js/api/#map#showtileboundaries) Map property
 
 ### `collisionBoxes`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Synced**
-- **Description:** A Boolean indicating whether the map will render boxes around all symbols in the data source, revealing which symbols were rendered or which were hidden due to collisions. This information is useful for debugging
-- **See:** See [showCollisionBoxes](https://docs.mapbox.com/mapbox-gl-js/api/#map#showcollisionboxes) Map property
+- **侦听属性**
+- **描述:** A Boolean indicating whether the map will render boxes around all symbols in the data source, revealing which symbols were rendered or which were hidden due to collisions. This information is useful for debugging
+- **查看:** See [showCollisionBoxes](https://docs.mapbox.com/mapbox-gl-js/api/#map#showcollisionboxes) Map property
 
 ### `repaint`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Synced**
-- **Description:** A Boolean indicating whether the map will continuously repaint. This information is useful for analyzing performance.
-- **See:** See [repaint](https://docs.mapbox.com/mapbox-gl-js/api/#map#repaint) Map property
+- **侦听属性**
+- **描述:** A Boolean indicating whether the map will continuously repaint. This information is useful for analyzing performance.
+- **查看:** See [repaint](https://docs.mapbox.com/mapbox-gl-js/api/#map#repaint) Map property
 
 ### `transformRequest`
 
-- **Type:** `Function`
+- **类型:** `Function`
 - **Default:** `null`
-- **Non-Synced**
-- **Description:** A callback run before the Map makes a request for an external URL. The callback can be used to modify the url, set headers, or set the credentials property for cross-origin requests. Expected to return an object with a `url` property and optionally `headers` and `credentials` properties.
-- **See:** `options.transformRequest` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** A callback run before the Map makes a request for an external URL. The callback can be used to modify the url, set headers, or set the credentials property for cross-origin requests. Expected to return an object with a `url` property and optionally `headers` and `credentials` properties.
+- **查看:** `options.transformRequest` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `localIdeographFontFamily`
 
-- **Type:** `String`
+- **类型:** `String`
 - **Default:** `null`
-- **Non-Synced**
-- **Description:** If specified, defines a CSS font-family for locally overriding generation of glyphs in the 'CJK Unified Ideographs' and 'Hangul Syllables' ranges. In these ranges, font settings from the map's style will be ignored, except for font-weight keywords (light/regular/medium/bold). The purpose of this option is to avoid bandwidth-intensive glyph server requests.
-- **See:** `options.localIdeographFontFamily` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **非侦听属性**
+- **描述:** If specified, defines a CSS font-family for locally overriding generation of glyphs in the 'CJK Unified Ideographs' and 'Hangul Syllables' ranges. In these ranges, font settings from the map's style will be ignored, except for font-weight keywords (light/regular/medium/bold). The purpose of this option is to avoid bandwidth-intensive glyph server requests.
+- **查看:** `options.localIdeographFontFamily` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `bounds`
 
-- **Type:** `Array`, `LngLatBoundsLike object`
+- **类型:** `Array`, `LngLatBoundsLike object`
 - **Default:** `undefined`
-- **Description:** The initial bounds of the map. If set, it overrides `center` and `zoom` construction options
-- **See:** `options.bounds` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **描述:** The initial bounds of the map. If set, it overrides `center` and `zoom` construction options
+- **查看:** `options.bounds` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
 ### `fitBoundsOptions`
 
-- **Type:** `fitBounds object`
+- **类型:** `fitBounds object`
 - **Default:** `undefined`
-- **Description:** A `fitBounds` object to use only when fitting the initial `bounds` provided above
-- **See:** `options.fitBoundsOptions` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **描述:** A `fitBounds` object to use only when fitting the initial `bounds` provided above
+- **查看:** `options.fitBoundsOptions` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
-## Actions
+## 行为
 
 Asynchronous actions exposed via `GlMap.actions`
 
@@ -304,98 +304,98 @@ Asynchronous actions exposed via `GlMap.actions`
 
 ### `.stop(eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Stops all animations on the map
+- **描述:** Stops all animations on the map
 - **Returns:** `{Promise<{ pitch, zoom, bearing, center }>}`
   Promise that resolves object with map parameters on the moment of call `stop()`
 
 ### `.panBy(offset, options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `offset` `{Point | number[]}` x and y coordinates by which to pan the map
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Pans the map by the specified offest
+- **描述:** Pans the map by the specified offest
 - **Returns:** `{Promise<{ eventData, center }>}`
   Promise that resolves object with event data and new center of the map when animation ends
-- **See:** [panBy](https://docs.mapbox.com/mapbox-gl-js/api/#map#panby) Map method
+- **查看:** [panBy](https://docs.mapbox.com/mapbox-gl-js/api/#map#panby) Map method
 
 ### `.panTo(coordinates, options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `coordinates` `{LngLat | number[][]}` The location to pan the map to. See also: [LngLat](https://docs.mapbox.com/mapbox-gl-js/api/#lnglat)
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Pans the map to the specified location, with an animated transition
+- **描述:** Pans the map to the specified location, with an animated transition
 - **Returns:** `{Promise<{ eventData, center }>}`
   Promise that resolves object with event data and new center of the map when animation ends
-- **See:** [panTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#panto) Map method
+- **查看:** [panTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#panto) Map method
 
 ### `.zoomTo(zoom, options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `zoom` `{number}` The zoom level to transition to
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Zooms the map to the specified zoom level, with an animated transition
+- **描述:** Zooms the map to the specified zoom level, with an animated transition
 - **Returns:** `{Promise<{ eventData, zoom }>}`
   Promise that resolves object with event data and new zoom level of the map when animation ends
-- **See:** [zoomTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomto) Map method
+- **查看:** [zoomTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomto) Map method
 
 ### `.zoomIn(options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Increases the map's zoom level by 1
+- **描述:** Increases the map's zoom level by 1
 - **Returns:** `{Promise<{ eventData, zoom }>}`
   Promise that resolves object with event data and new zoom level of the map when animation ends
-- **See:** [zoomIn](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomin) Map method
+- **查看:** [zoomIn](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomin) Map method
 
 ### `.zoomOut(options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Decreases the map's zoom level by 1
+- **描述:** Decreases the map's zoom level by 1
 - **Returns:** `{Promise<{ eventData, zoom }>}`
   Promise that resolves object with event data and new zoom level of the map when animation ends
-- **See:** [zoomOut](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomOut) Map method
+- **查看:** [zoomOut](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomOut) Map method
 
 ### `.rotateTo(bearing, options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `bearing` `{number}` The desired bearing
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Rotates the map to the specified bearing, with an animated transition. The bearing is the compass direction that is \"up\"; for example, a bearing of 90° orients the map so that east is up.
+- **描述:** Rotates the map to the specified bearing, with an animated transition. The bearing is the compass direction that is \"up\"; for example, a bearing of 90° orients the map so that east is up.
 - **Returns:** `{Promise<{ eventData, bearing }>}`
   Promise that resolves object with event data and new bearing of the map when animation ends
-- **See:** [rotateTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#rotateto) Map method
+- **查看:** [rotateTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#rotateto) Map method
 
 ### `.resetNorth(options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
-- **Description:** Rotates the map so that north is up (0° bearing), with an animated transition
+- **描述:** Rotates the map so that north is up (0° bearing), with an animated transition
 - **Returns:** `{Promise<{ eventData, bearing }>}`
   Promise that resolves object with event data and new bearing of the map when animation ends
-- **See:** [resetNorth](https://docs.mapbox.com/mapbox-gl-js/api/#map#resetnorth) Map method
+- **查看:** [resetNorth](https://docs.mapbox.com/mapbox-gl-js/api/#map#resetnorth) Map method
 
 ### `.snapToNorth(options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Snaps the map so that north is up (0° bearing), if the current bearing is close enough to it (i.e. within the `bearingSnap` prop threshold).
+- **描述:** Snaps the map so that north is up (0° bearing), if the current bearing is close enough to it (i.e. within the `bearingSnap` prop threshold).
 - **Returns:** `{Promise<{ eventData, bearing }>}`
   Promise that resolves object with event data and new bearing of the map when animation ends
-- **See:** [snapToNorth](https://docs.mapbox.com/mapbox-gl-js/api/#map#snaptonorth) Map method
+- **查看:** [snapToNorth](https://docs.mapbox.com/mapbox-gl-js/api/#map#snaptonorth) Map method
 
 ### `.fitBounds(bounds, options?, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `bounds` `{ number[][] | LngLatBounds }` Center these bounds in the viewport and use the highest zoom level up to and including `maxZoom` that fits them in the viewport
   - `options` `{Object}`
     - `options.padding?` `{number}` The amount of padding in pixels to add to the given bounds
@@ -404,14 +404,14 @@ Asynchronous actions exposed via `GlMap.actions`
     - `options.offset` `{ number[] | Point }` _default:_ `[0, 0]` The center of the given bounds relative to the map's center, measured in pixels
     - `options.maxZoom?` `{number}` The maximum zoom level to allow when the map view transitions to the specified bounds
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Pans and zooms the map to contain its visible area within the specified geographical bounds. This function will also reset the map's bearing to 0 if bearing is nonzero
+- **描述:** Pans and zooms the map to contain its visible area within the specified geographical bounds. This function will also reset the map's bearing to 0 if bearing is nonzero
 - **Returns:** `{Promise<{ eventData, bounds }>}`
   Promise that resolves object with event data and new bounds of the map when animation ends
-- **See:** [fitBounds](https://docs.mapbox.com/mapbox-gl-js/api/#map#fitbounds) Map method
+- **查看:** [fitBounds](https://docs.mapbox.com/mapbox-gl-js/api/#map#fitbounds) Map method
 
 ### `.jumpTo(options, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `options` `{Object}` See [CameraOptions](https://docs.mapbox.com/mapbox-gl-js/api/#cameraoptions)
     - `options.pitch?` `{number}` The desired pitch, in degrees
     - `options.zoom?` `{number}` The desired zoom level
@@ -419,14 +419,14 @@ Asynchronous actions exposed via `GlMap.actions`
     - `options.bearing?` `{number}` The desired bearing, in degrees
     - `options.around?` `{number[] | LngLat}` If `zoom` is specified, `around` determines the point around which the zoom is centered.
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Changes any combination of center, zoom, bearing, and pitch, without an animated transition. The map will retain its current values for any details not specified in options
+- **描述:** Changes any combination of center, zoom, bearing, and pitch, without an animated transition. The map will retain its current values for any details not specified in options
 - **Returns:** `{Promise<{ eventData, pitch, zoom, center, bearing }>}`
   Promise that resolves object with event data and new pitch, zoom, center and bearing of the map
-- **See:** [jumpTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#jumpto) Map method
+- **查看:** [jumpTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#jumpto) Map method
 
 ### `.easeTo(options, eventData?)`
 
-- **Arguments:**
+- **参数:**
 
   - `options` `{Object}` Combination of [CameraOptions](https://docs.mapbox.com/mapbox-gl-js/api/#cameraoptions) and [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
 
@@ -442,14 +442,14 @@ Asynchronous actions exposed via `GlMap.actions`
 
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 
-- **Description:** Changes any combination of center, zoom, bearing, and pitch, with an animated transition between old and new values. The map will retain its current values for any details not specified in `options`
+- **描述:** Changes any combination of center, zoom, bearing, and pitch, with an animated transition between old and new values. The map will retain its current values for any details not specified in `options`
 - **Returns:** `{Promise<{ eventData, pitch, zoom, center, bearing }>}`
   Promise that resolves object with event data and new pitch, zoom, center and bearing of the map when animations ends
-- **See:** [easeTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#easeto) Map method
+- **查看:** [easeTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#easeto) Map method
 
 ### `.flyTo(options, eventData?)`
 
-- **Arguments:**
+- **参数:**
   - `options` `{Object}`
     - `options.curve?` `{number}` _default_ `1.42` The zooming "curve" that will occur along the flight path. A high value maximizes zooming for an exaggerated animation, while a low value minimizes zooming for an effect closer to Map#easeTo. 1.42 is the average value selected by participants in the user study discussed in van Wijk (2003). A value of Math.pow(6, 0.25) would be equivalent to the root mean squared average velocity. A value of 1 would produce a circular motion
     - `options.minZoom?` `{number}` The zero-based zoom level at the peak of the flight path. If `options.curve` is specified, this option is ignored
@@ -457,12 +457,12 @@ Asynchronous actions exposed via `GlMap.actions`
     - `options.screenSpeed?` `{number}` The average speed of the animation measured in screenfuls per second, assuming a linear timing curve. If `options.speed` is specified, this option is ignored
     - `options.maxDuration?` `{number}` The animation's maximum duration, measured in milliseconds. If duration exceeds maximum duration, it resets to 0
   - `eventData` `{Object}` Custom data passed to corresponfing event.
-- **Description:** Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight. The animation seamlessly incorporates zooming and panning to help the user maintain her bearings even after traversing a great distance
+- **描述:** Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight. The animation seamlessly incorporates zooming and panning to help the user maintain her bearings even after traversing a great distance
 - **Returns:** `{Promise<{ eventData, pitch, zoom, center, bearing }>}`
   Promise that resolves object with event data and new pitch, zoom, center and bearing of the map when animations ends
-- **See:** [flyTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#flyto) Map method
+- **查看:** [flyTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#flyto) Map method
 
-## Events
+## 事件
 
 Payload of events contains object with properties:
 
@@ -472,7 +472,7 @@ Payload of events contains object with properties:
 
 ### `@load`
 
-- **Description:** Fires after map fully loaded
+- **描述:** Fires after map fully loaded
 - **Payload** `{ map, component }` `map` is Mapbox Gl JS Map object, `component` is instance of GlMap component
 
 GlMap passes all Mapbox GL JS Map events. Full list of map events see [here](https://docs.mapbox.com/mapbox-gl-js/api/#map.event:resize)

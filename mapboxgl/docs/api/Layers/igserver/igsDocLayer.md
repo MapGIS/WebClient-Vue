@@ -1,6 +1,6 @@
 # IgsDocLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -105,33 +105,33 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **非侦听属性**
 - **描述:** 模式，如果是快显取图（hiRender,fast_display），文档为只读，只有 bbox,w,h 有效。
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
-## Example
+## 示例
 
 ```vue
 <template>
   <mapgis-web-map
-          id="map"
-          v-bind:map-style="mapStyle"
-          v-bind:zoom="mapZoom"
-          v-bind:center="outerCenter"
-          v-bind:crs="mapCrs"
-          v-on:load="handleMapLoad">
+    id="map"
+    v-bind:map-style="mapStyle"
+    v-bind:zoom="mapZoom"
+    v-bind:center="outerCenter"
+    v-bind:crs="mapCrs"
+    v-on:load="handleMapLoad"
+  >
     <mapgis-igs-doc-layer
-            v-bind:layers="layers"
-            v-bind:layer-id="layerRasterId"
-            v-bind:source-id="sourceRasterId"
-            v-bind:baseUrl="baseUrl"
+      v-bind:layers="layers"
+      v-bind:layer-id="layerRasterId"
+      v-bind:source-id="sourceRasterId"
+      v-bind:baseUrl="baseUrl"
     >
     </mapgis-igs-doc-layer>
   </mapgis-web-map>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -141,16 +141,16 @@ export default {
         //添加来源
         sources: {},
         //设置加载并显示来源的图层信息
-        layers: [],
+        layers: []
       }, // 地图样式
       mapZoom: 8, // 地图初始化级数
-      outerCenter: [116.39, 40.20], // 地图显示中心
-      mapCrs: 'EPSG:4326',
-      layers: 'show:1,2',
-      layerRasterId: 'raster_layerId',
-      sourceRasterId: 'raster_sourceId',
-      baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市'
-    }
+      outerCenter: [116.39, 40.2], // 地图显示中心
+      mapCrs: "EPSG:4326",
+      layers: "show:1,2",
+      layerRasterId: "raster_layerId",
+      sourceRasterId: "raster_sourceId",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
+    };
   },
 
   created() {

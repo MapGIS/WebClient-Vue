@@ -1,20 +1,20 @@
 # Mapv
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `geojson`
 
 - **类型:** `Object`
-- **Synced**
+- **侦听属性**
 - **描述:** 必填项，标准的 geojson 地理数据结构。
 
 ### `options`
 
 - **类型:** `Object`
 - **默认值:** `{ mapboxgl: { roam: true }, series: [{ coordinateSystem: 'mapboxgl', type: 'lines' }] }`
-- **Synced**
+- **侦听属性**
 - **描述:** options 参数参考 Mapv 框架的原生 API 创建。
 - **默认值:**
 
@@ -28,11 +28,11 @@ All common [layers props](/zh/api/Layers/README.md#props)
   ### `countField`
 
 - **类型:** `String`
-- **Synced**
+- **侦听属性**
 - **默认值:** "count"
 - **描述:** countField 是 geojson 对象中的 count 属性的属性名称，若不传入 countField，则默认 geojson 对象中 count 属性名称为“count”。
 
-## Example
+## 示例
 
 ```vue
 <template>

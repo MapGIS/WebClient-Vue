@@ -1,13 +1,13 @@
 # IgsWmsLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `source`
 
 - **类型:** `Object | String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** A raster tile source.
 - **参考:** `Raster source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)
 
@@ -15,7 +15,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **Watch**
 - **描述:** 完整的地图请求路径。当 url 不为空时，除了 tileSize，其他参数无效
 
@@ -23,14 +23,14 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `Number`
 - **默认值:** `512`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出瓦片大小。
 
 ### `domain`
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务域名。(domain 和（protocol，ip，port）二选一)
 - **示例:** `http://localhost:6163`
 
@@ -38,84 +38,84 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `location.protocol.split(":")[0] || "http"`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务网络协议。(domain 和（protocol，ip，port）二选一)
 
 ### `ip`
 
 - **类型:** `String`
 - **默认值:** `localhost`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 ip。(domain 和（protocol，ip，port）二选一)
 
 ### `port`
 
 - **类型:** `String`
 - **默认值:** `6163`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 port。(domain 和（protocol，ip，port）二选一)
 
 ### `serverType`
 
 - **类型:** `String`
-- **Required**
-- **Non-Synced**
+- **必传**
+- **非侦听属性**
 - **描述:** 服务类型。doc | layer,其中 doc 表示基于 IGServer 地图文档发布的 wms，layer 表示基于 IGServer 图层发布的 wms
 
 ### `serverName`
 
 - **类型:** `String`
-- **Required**
-- **Non-Synced**
+- **必传**
+- **非侦听属性**
 - **描述:** 服务名
 
 ### `layers`
 
 - **类型:** `Array`
-- **Required**
-- **Non-Synced**
+- **必传**
+- **非侦听属性**
 - **描述:** 请求的图层名集合
 
 ### `version`
 
 - **类型:** `String`
 - **默认值:** `1.1.1`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 请求的版本号。1.1.1|1.3.0
 
 ### `crs`
 
 - **类型:** `String`
 - **默认值:** `EPSG:4326`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 空间坐标参考系。
 
 ### `format`
 
 - **类型:** `String`
 - **默认值:** `image/png`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出图象的类型。image/gif | image/png | image/jpeg
 
 ### `width`
 
 - **类型:** `Number`
 - **默认值:** `512`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出地图图片的象素宽
 
 ### `height`
 
 - **类型:** `Number`
 - **默认值:** `512`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出地图图片的象素高
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
-## Example
+## 示例
 
 ### 中地格式
 

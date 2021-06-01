@@ -1,6 +1,6 @@
 # Legend
 
-## Example
+## 示例
 
 ```vue
 <template>

@@ -10,14 +10,14 @@
 </mapgis-web-map>
 ```
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `wrapperStyle`
 
 - **类型:** `String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 外部传入样式，用来自定义样式
 - **默认值**
   ```json
