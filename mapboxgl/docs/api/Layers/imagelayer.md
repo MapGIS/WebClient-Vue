@@ -1,21 +1,21 @@
 # ImageLayer
 
-## Props
+## 属性
 
-All common [layers props](/api/Layers/README.md#props)
+公共属性 [layers props](/api/Layers/README.md#props)
 
 ### `source`
 
-- **Type:** `Object | String`
-- **Non-Synced**
-- **Description:** A data source containing an image.
-- **See:** `ImageSource` in [Mapbox API Docs](https://docs.mapbox.com/mapbox-gl-js/api/#imagesource)
+- **类型:** `Object | String`
+- **非侦听属性**
+- **描述:** A data source containing an image.
+- **查看:** `ImageSource` in [Mapbox API Docs](https://docs.mapbox.com/mapbox-gl-js/api/#imagesource)
 
 ::: tip Reactivity
 `coordinates` and `url` fields of the `source` prop are reactive.
 If you change their value, changes automatically applied to the map.
 :::
 
-## Events
+## 事件
 
-All common layer [events](/api/Layers/#events)
+公共图层事件 [events](/api/Layers/#events)

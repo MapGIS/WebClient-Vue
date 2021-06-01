@@ -5,10 +5,10 @@ Mapbox GL JS docs:
 [CanvasSource](https://docs.mapbox.com/mapbox-gl-js/api/#canvassource)
 :::
 
-## Props
+## 属性
 
-All common [layers props](/api/Layers/README.md#props)
+请查看公共属性 [layers props](/api/Layers/README.md#props)
 
-## Events
+## 事件
 
-All common layer [events](/api/Layers/#events)
+请查看公共图层事件 [events](/api/Layers/#events)
