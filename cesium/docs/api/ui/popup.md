@@ -1,27 +1,35 @@
-# 地图场景 mapgis-3d-popup
+# 气泡
+> mapgis-3d-popup
 
 ## 属性
-
 ### `vueKey`
 
-- **Type**: `String`
-- **non-synced** 非 watch 属性
-- **Default:** `default`
-- - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+- **类型:** `String`
+- **可选**
+- **非侦听属性**
+- **默认值:** `default`
+- **描述:** 
+```
+mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
+同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
+```
 
 ### `vueIndex`
 
-- **Type**: `[String, Number]`
-- **non-synced** 非 watch 属性
-- **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
-- - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+- **类型:** `Number`
+- **可选**
+- **非侦听属性**
+- **描述:** 
+```
+当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
+```
 
 ### `position`
 
-- **Type**: `Object`
-- **Required**
-- **synced** watch 属性
-- **Default:**
+- ***类型**: `Object`
+- **必传**
+- **侦听属性** watch 属性
+- **默认值**
   ```js
   {
    entity: Cesium.Entity,
@@ -31,16 +39,16 @@
    height: 0
   }
   ```
-- - **Description:** 显示位置，3 种不同的传参使用方式
+- - **描述** 显示位置，3 种不同的传参使用方式
     1. Cesium.Entity 绑定到 Cesium.Entity 上鼠标点击/移入弹出，鼠标移出消失
     2. Cesium.Cartesian3 绑定到 Cesium.Cartesian3 笛卡尔坐标上
     3. Cesium.long lat height 绑定到经纬度和高度上
 
 ### `options`
 
-- **Type**: `Object`
-- **non-synced** 非 watch 属性
-- **Default:**
+- ***类型**: `Object`
+- **非侦听属性** 非 watch 属性
+- **默认值**
   ```js
   {
    postRender: true, // 实时渲染
@@ -49,35 +57,33 @@
    showClose: true,  // 是否显示关闭按钮
   }
   ```
-- - **Description:** 额外参数
+- - **描述** 额外参数
 
 ### `container`
 
-- **Type**: `String`
-- **non-synced** 非 watch 属性
-- **Default:** `<div>空</div>`
-- - **Description:** 外部传入的 div 的字符串描述方式，一般是文字或者 echarts 的 div;
+- ***类型**: `String`
+- **非侦听属性** 非 watch 属性
+- **默认值** `<div>空</div>`
+- - **描述** 外部传入的 div 的字符串描述方式，一般是文字或者 echarts 的 div;
 
 ### `showed`
 
-- **Type**: `Boolean`
-  <<<<<<< HEAD
-- # **non-synced** watch 属性
-- **synced** watch 属性
-  > > > > > > > main
-- **Default:** `true`
-- - **Description:** 是否显示
+- ***类型**: `Boolean`
+- # **非侦听属性** watch 属性
+- **侦听属性** watch 属性
+- **默认值** `true`
+- - **描述** 是否显示
 
 ## 槽
 
 ### `default`
 
-- **Description:** Popup 的自定义槽的实现，可以自定义各类视图
+- **描述** Popup 的自定义槽的实现，可以自定义各类视图
 
 ## 事件
 
 ### `@load`
 
-- **Description:** 在 Popup 加载完毕后发送该事件
+- **描述** 在 Popup 加载完毕后发送该事件
 - **Payload** `{ popup }`
 - - `popup` Popup 对象
