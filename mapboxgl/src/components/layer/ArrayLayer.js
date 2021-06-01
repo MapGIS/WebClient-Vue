@@ -4,7 +4,7 @@ import MapboxRasterLayer from "./RasterLayer";
  * @description 本身是想实现图层间的拖拽，后面还是发现无法摆脱Vue的数组渲染机制
  */
 export default {
-  name: "ArrayLayer",
+  name: "mapgis-array-layer",
   components: {
     MapboxRasterLayer
   },
