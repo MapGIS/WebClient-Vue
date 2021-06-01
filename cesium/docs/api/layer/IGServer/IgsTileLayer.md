@@ -1,60 +1,84 @@
 # IgsTileLayer
 
-## Props
+## 属性
 
 ### `id`
 
 - **类型:** `String`
 - **可选**
-- **Non-Synced**
-- **描述:** 服务基地址
-- **示例** `http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市`
-- 
+- **非侦听属性**
+- **描述:** 图层id
 ### `baseUrl`
 
 - **类型:** `String`
 - **可选**
-- **Non-Synced**
-- **描述:** 服务基地址
-- **示例** `http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市`
+- **非侦听属性**
+- **描述:** Igsever发布的瓦片服务基地址
+- **示例**
+  ```
+  http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市
+  ```
+
+### `vueKey`
+
+- **类型:** `String`
+- **可选**
+- **非侦听属性**
+- **默认值:** `default`
+- **描述:** 
+```
+mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
+同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
+```
+
+### `vueIndex`
+
+- **类型:** `Number`
+- **可选**
+- **非侦听属性**
+- **描述:** 
+```
+当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
+```
 
 ### `options`  Cesium原生高级参数
+- **类型:** `Object`
+- **可选**
+- **非侦听属性**
+- **描述:** Cesium 的进阶参数
+- **参考:** <br>
+  `MapGISTile参数` in [appendMapGISTile](http://develop.smaryun.com/docs/cesium/module-%25E5%25AE%25A2%25E6%2588%25B7%25E7%25AB%25AF%25E6%2595%25B0%25E6%258D%25AE%25E6%259C%258D%25E5%258A%25A1.TilesLayer.html#appendMapGISTile)
 
-1. `tileWidth`
-    - **类型:** `Number`
-    - **可选**
-    - **Non-Synced**
-    - **默认值** `256`
-    - **描述:** 瓦片宽度
+  1. `tileWidth`
+      - **类型:** `Number`
+      - **可选**
+      - **非侦听属性**
+      - **默认值** `256`
+      - **描述:** 瓦片宽度
 
-2. `tileHeight`
-   - **类型:** `Number`
-   - **可选**
-   - **Non-Synced**
-   - **默认值** `256`
-   - **描述:** 瓦片高度
+  2. `tileHeight`
+     - **类型:** `Number`
+     - **可选**
+     - **非侦听属性**
+     - **默认值** `256`
+     - **描述:** 瓦片高度
 
-3. `minimumLevel`
-   - **类型:** `Number`
-   - **可选**
-   - **Non-Synced**
-   - **默认值** `0`
-   - **描述:** 瓦片最小级别,目前ceisum本身的机制不支持设置大于0的值，否则会触发渲染错误
-   - ![渲染错误](../../../images/layer/minzoom-error.png)
+  3. `minimumLevel`
+     - **类型:** `Number`
+     - **可选**
+     - **非侦听属性**
+     - **默认值** `0`
+     - **描述:** 瓦片最小级别,目前ceisum本身的机制不支持设置大于0的值，否则会触发渲染错误
+     - ![渲染错误](../../../images/layer/minzoom-error.png)
 
-4. `maximumLevel`
-   - **类型:** `Number`
-   - **可选**
-   - **Non-Synced**
-   - **默认值** `20`
-   - **描述:** 瓦片最大级别
+  4. `maximumLevel`
+     - **类型:** `Number`
+     - **可选**
+     - **非侦听属性**
+     - **默认值** `20`
+     - **描述:** 瓦片最大级别
 
-::: warning
-~ 后面请统一使用baseUrl的方式进行组件调用，补充的组件都以baseUrl + 对应的协议的kvp的传参方式实现对应的补充，后面domain、protocol、ip、port的方式会逐步移除
-:::
-
-
-## Example
+## 示例
 
 ```vue
 <template>

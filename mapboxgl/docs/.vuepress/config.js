@@ -133,7 +133,8 @@ module.exports = {
               ["/guide/controls.md", "控制视图"],
               ["/guide/markers&popups.md", "注记视图"],
               ["/guide/draw.md", "绘制视图"],
-              ["/guide/layers&sources.md", "图层与数据源"]
+              ["/guide/layers&sources.md", "图层与数据源"],
+              ["/guide/wms&map&doc.md", "子图层控制"]
             ]
           },
           {
@@ -166,6 +167,7 @@ module.exports = {
               ["/api/Layers/igserver/igsTileLayer.md", "IgsTileLayer"],
               ["/api/Layers/igserver/igsVectorLayer.md", "IgsVectorLayer"],
               ["/api/Layers/OGC/ogcWmtsLayer.md", "OGC-WMTS"],
+              ["/api/Layers/OGC/ogcWmsLayer.md", "OGC-WMS"],
               ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGISMapLayer"],
               [
                 "/api/Layers/ArcGISServer/ArcGISTileLayer.md",
@@ -181,6 +183,8 @@ module.exports = {
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
 
+              ["/api/UI/Table/BaseTable.md", "表格"],
+              ["/api/UI/Table/FeatureTable.md", "要素表格"],
               ["/api/map/mixin/FeatureService.md", "要素服务"]
             ]
           },

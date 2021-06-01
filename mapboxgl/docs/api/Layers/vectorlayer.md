@@ -1,6 +1,6 @@
 # VectorLayer
 
-## Props
+## 属性
 
 All common [layers props](/api/Layers/README.md#props)
 
@@ -16,19 +16,20 @@ All common [layers props](/api/Layers/README.md#props)
 ### `getSourceFeatures(filter?)`
 
 - **参数:**
-  - `filter` `Array` 限制了查询结果的过滤条件，数组类型。
+- `filter` `Array` 限制了查询结果的过滤条件，数组类型。
 - **描述** 通过所关联的过滤条件返回一个包含 GeoJSON 要素对象的数组。
 - **参考** `.querySourceFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#querysourcefeatures)
 
 ### `getRenderedFeatures(geometry, filter)`
 
 - **参数:**
-  - `filter` `Array`限制了查询结果的过滤条件，数组类型。
-  - `geometry` `Array | Object` 查询区间的几何图形。
+- `filter` `Array`限制了查询结果的过滤条件，数组类型。
+- `geometry` `Array | Object` 查询区间的几何图形。
 - **描述** 通过所关联的过滤条件返回一个可见的 GeoJSON 要素对象的数组。
 - **参考** `.queryRenderedFeatures()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#queryrenderedfeatures)
 
 ## Methods 方法
+
 
 ### `setFeatureState(featureId, state)`
 
@@ -45,6 +46,6 @@ All common [layers props](/api/Layers/README.md#props)
 - **描述** 获取一个要素的状态。
 - **参考** `.getFeatureState()` [map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#getfeaturestate)
 
-## Events
+## 事件
 
 All common layer [events](/api/Layers/#events)

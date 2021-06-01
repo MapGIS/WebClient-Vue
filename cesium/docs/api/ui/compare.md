@@ -1,22 +1,22 @@
 # Compare
 
-## Props
+## 属性
 
 ### `beforeLayers`
 
 - **类型:** `Array`
-- **synced**
+- **侦听属性**
 - **默认值:** `[]`
 - **描述:** 卷帘左边图层的id，允许多个图层
 
 ### `afterLayers`
 
 - **类型:** `Array`
-- **synced**
+- **侦听属性**
 - **默认值:** `[]`
 - **描述:** 卷帘右边图层的id，允许多个图层
 
-## Example
+## 示例
 
 ```vue
 <template>

@@ -2,7 +2,7 @@
 
 ::: tip
 Mapbox GL JS Style:  
-[Mapbox矢量瓦片样式MVT](https://docs.mapbox.com/help/glossary/style/)
+[Mapbox 矢量瓦片样式 MVT](https://docs.mapbox.com/help/glossary/style/)
 :::
 
 ## 属性
@@ -10,17 +10,17 @@ Mapbox GL JS Style:
 ### `mvtStyle`
 
 - **类型:** `Object | String`
-- **Synced** watch属性
-- **描述:** Mapbox矢量瓦片样式.
-- **See:** `Mvt` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec)
+- **侦听属性** watch 属性
+- **描述:** Mapbox 矢量瓦片样式.
+- **查看:** `Mvt` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec)
 
 ### `mode`
 
 - **类型:** `String`
-- **Non-Synced** 非watch属性
-- **描述:** 样式显示模式 
-  - add-追加. 在当前样式上追加Mvt样式，内部会自动对比图层进行覆盖
-    ``` js
+- **非侦听属性** 非 watch 属性
+- **描述:** 样式显示模式
+  - add-追加. 在当前样式上追加 Mvt 样式，内部会自动对比图层进行覆盖
+    ```js
     let mvtStyle = async compareStyle(mvtStyle) {
       let oldStyle = this.map.getStyle();
       let newStyle = await this.$_getStyleObject(mvtStyle);
@@ -36,11 +36,11 @@ Mapbox GL JS Style:
     this.map.setStyle(mvtStyle, { diff: true });
     ```
   - set-覆盖.
-    ``` js
+    ```js
     this.map.setStyle(mvtStyle, { diff: true });
     ```
 
-## 事件 
+## 事件
 
 ### `@added`
 

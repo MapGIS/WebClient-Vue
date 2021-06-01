@@ -1,6 +1,6 @@
 # Mapgis3dEchartsLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -30,7 +30,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
   };
   ```
 
-## Example
+## 示例
 
 ```vue
 <template>

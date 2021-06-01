@@ -41,7 +41,7 @@ export default {
 
 通常Popup被添加到地图上是默认隐藏的，如果你想加载的时候立即展示，你需要设置`showed` 属性为 `true`。
 
-### Props
+### 属性
 
 - `position {Object}` 提供三种不同的方式实现对应的位置的传参方式
   - `entity`, 传入任意一个Cesiumd的Entity实体，然后根据该实体的中心点position显示对应的popup

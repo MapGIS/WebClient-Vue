@@ -8,7 +8,7 @@
 
 > 由于 mapbox 本身`不支持 EPSG：4326`， 公司内部修改版实现`支持 EPSG：4326`
 
-@mapgis/webclient-vue-mapboxgl 支持一层封装，除了本身需要安装以外，会内置安装 @mapgis/mapbox-gl的依赖
+@mapgis/webclient-vue-mapboxgl 支持一层封装，除了本身需要安装以外，会内置安装 @mapgis/mapbox-gl 的依赖
 
 ```bash
 # 支持 4326的坐标系的使用方式
@@ -20,8 +20,13 @@ yarn add @mapgis/webclient-vue-mapboxgl
 在 main.js 中加入样式文件
 
 ```js
+// 外部全局引入了ant-design-vue库
 import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
 Vue.use(Mapgis2d);
+
+// 外部没有引入ant-design-vue库，使用内部封装的组件库
+import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
+Vue.use(Mapgis2d， { ui: "ant-design-vue" });
 ```
 
 ## 浏览器使用

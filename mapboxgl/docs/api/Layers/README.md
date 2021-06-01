@@ -1,41 +1,41 @@
 # Layers common
 
-## Props
+## 属性
 
-#### Props for Mapbox GL source
+#### 属性 for Mapbox GL source
 
 ### `sourceId`
 
-- **Type:** `String`
-- **Required**
-- **Non-Synced**
-- **Description:** ID of the source to add. Must not conflict with existing sources.
-- **See:** `.addSource()` [Map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource)
+- **类型:** `String`
+- **必传**
+- **非侦听属性**
+- **描述:** ID of the source to add. Must not conflict with existing sources.
+- **查看:** `.addSource()` [Map method](https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource)
 
 ### `source`
 
-- **Type:** `Object | String`
-- **Non-Synced** A source for layer or URL to it.
-- **Description:**
-- **See:** `sources` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources)
+- **类型:** `Object | String`
+- **非侦听属性** A source for layer or URL to it.
+- **描述:**
+- **查看:** `sources` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources)
 
-#### Props for Mapbox GL layer
+#### 属性 for Mapbox GL layer
 
 ### `layerId`
 
-- **Type** `String`
-- **Description:** ID of the layer to add. Must not conflict with existing layers.
-- **Required**
-- **Non-Synced**
-- **See:** `id` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layer-id)
+- **类型** `String`
+- **描述:** ID of the layer to add. Must not conflict with existing layers.
+- **必传**
+- **非侦听属性**
+- **查看:** `id` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layer-id)
 
 ### `layer`
 
-- **Type** `String`
-- **Description:** Layer configuration object.
-- **Required**
-- **Non-Synced**
-- **See:** `layers` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)
+- **类型** `String`
+- **描述:** Layer configuration object.
+- **必传**
+- **非侦听属性**
+- **查看:** `layers` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)
 
 ::: tip Reactivity
 `minzoom`, `maxzoom`, `paint`, `layout` and `filter` fields of `layer` prop are reactive. If you change their value, changes automatically applied to the map.
@@ -43,69 +43,69 @@
 
 ### `before`
 
-- **Type:** `String`
+- **类型:** `String`
 - **Default:** `undefined`
-- **Non-Synced**
-- **Description:** The ID of an existing layer to insert the new layer before.
-- **See:** `metadata` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layer-metadata)
+- **非侦听属性**
+- **描述:** The ID of an existing layer to insert the new layer before.
+- **查看:** `metadata` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layer-metadata)
 
-#### Props for Vue-Mapbox component
+#### 属性 for Vue-Mapbox component
 
 ### `clearSource`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If `true`, component will remove layer source from map on component destruction.
+- **非侦听属性**
+- **描述:** If `true`, component will remove layer source from map on component destruction.
 
 ### `replaceSource`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Non-Synced**
-- **Description:** If source passed to `source` prop of layer component already added ot the map, it will be ignored and existed `source` will be used. If `replaceSource` is `true` source will be replaced with new instead.
+- **非侦听属性**
+- **描述:** If source passed to `source` prop of layer component already added ot the map, it will be ignored and existed `source` will be used. If `replaceSource` is `true` source will be replaced with new instead.
 
 ### `replace`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Non-Synced**
-- **Description:** If `true`, replaces existing layer with same id. Otherwise, error returns.
+- **非侦听属性**
+- **描述:** If `true`, replaces existing layer with same id. Otherwise, error returns.
 
-## Computed properties
+## 计算属性
 
 ### `sourceLoaded`
 
-- **Type** `Boolean`
-- **Description** Flag that indicated if layer source already loaded.
+- **类型** `Boolean`
+- **描述** Flag that indicated if layer source already loaded.
 
 ### `mapLayer`
 
-- **Type** `Object`
-- **Description** Mapbox GL layer object.
-- **See** [`.getLayer()`](https://docs.mapbox.com/mapbox-gl-js/api/#map#getlayer) map method
+- **类型** `Object`
+- **描述** Mapbox GL layer object.
+- **查看** [`.getLayer()`](https://docs.mapbox.com/mapbox-gl-js/api/#map#getlayer) map method
 
 ### `mapSource`
 
-- **Type** `Object`
-- **Description** Source for this layer.
-- **See** [`Mapbox GL source`](https://docs.mapbox.com/mapbox-gl-js/api/#sources)
+- **类型** `Object`
+- **描述** Source for this layer.
+- **查看** [`Mapbox GL source`](https://docs.mapbox.com/mapbox-gl-js/api/#sources)
 
-## Methods
+## 方法
 
 ### `.move(beforeId?)`
 
-- **Arguments:**
+- **参数:**
 - `beforeId` `String` The ID of an existing layer to insert the new layer before. If this argument is omitted, the layer will be appended to the end of the layers array.
-- **Description** Moves a layer to a different z-position.
-- **See** [`.moveLayer()`](https://docs.mapbox.com/mapbox-gl-js/api/#map#movelayer) map method
+- **描述** Moves a layer to a different z-position.
+- **查看** [`.moveLayer()`](https://docs.mapbox.com/mapbox-gl-js/api/#map#movelayer) map method
 
 ### `.remove()`
 
-- **Description** Removes the layer with and source assosiated with it.
-- **See** [`.removeLayer()`](https://docs.mapbox.com/mapbox-gl-js/api/#map#removelayer) map method
+- **描述** Removes the layer with and source assosiated with it.
+- **查看** [`.removeLayer()`](https://docs.mapbox.com/mapbox-gl-js/api/#map#removelayer) map method
 
-## Events
+## 事件
 
 Payload of events contains object with properties:
 

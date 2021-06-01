@@ -1,22 +1,22 @@
 # Viewshed
 
-## Props
+## 属性
 
 ### `index`
 
 - **类型:** `Number`
 - **默认值:** `0`
-- **non-synced**
+- **非侦听属性**
 - **描述:** 图层的索引值，表示第几个图层
 
 ### `position`
 
 - **类型:** `String`
 - **默认值:** `right`
-- **non-synced**
+- **非侦听属性**
 - **描述:** 分析面板的位置（right:右边 | left: 左边）
 
-## Example
+## 示例
 
 ```vue
 <template>

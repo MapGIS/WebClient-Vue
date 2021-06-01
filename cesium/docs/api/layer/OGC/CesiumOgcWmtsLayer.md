@@ -1,49 +1,43 @@
 # CesiumOgcWmtsLayer
 
-## Props
-
-All common [layers props](/zh/api/Layers/README.md#props)
+## 属性
 
 ### `baseUrl`
 
 - **类型:** `String`
 - **必传**
-- **watch**
-- **描述:** 基地址，当请求天地图时，请在 url 后面添加 token，例如：
+- **非侦听属性**
+- **描述:** 服务基地址，当请求天地图时，请在 url 后面添加 tk
+- **示例:**<br/>
 
 ```
-http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
-```
-
-- **示例:**
-
-```
-    KVP模式：
-    http://{ip}:{port}/igs/rest/ogc/WMTSServer
-    REST模式
-    http://{host}:{port}/igs/rest/ogc/WMTSServer?service=WMTS&request=GetTile&version={version}&layer={layer}&format={format}&TileMatrixSet={TileMatrixSet}&TileMatrix={级数}&TileRow={行号}&TileCol={列号}
+igs服务：
+http://{ip}:{port}/igs/rest/ogc/WMTSServer
+arcgis服务：
+http://219.142.81.85/arcgis/rest/services/20wanHT/MapServer/WMTS
+天地图，请在url后面添加tk：
+http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}&tk=f5347cab4b28410a6e8ba5143e3d5a35
 ```
 
 ### `wmtsLayer`
 
 - **类型:** `String`
 - **必传**
-- **watch**
-- **Non-Synced**
+- **侦听属性**
 - **描述:** 地图文档名称，根据发布的 WMTS 服务信息设置
 
 ### `tileMatrixSet`
 
 - **类型:** `String`
 - **必传**
-- **watch**
+- **侦听属性**
 - **描述:** 地图比例尺名称
 
 ### `srs`
 
 - **类型:** `String`
-- **可选**
-- **watch**
+- **必传**
+- **侦听属性**
 - **描述:** 地图参考系，目前支持如下值：
 
 ```
@@ -59,14 +53,14 @@ EPSG:3857
 - **类型:** `String`
 - **默认值:** `default`
 - **必传**
-- **watch**
+- **侦听属性**
 - **描述:** 地图样式,style 为 vue 关键字，因此改名
 
 ### `layerStyle`
 
 - **类型:** `Object`
 - **可选**
-- **watch**
+- **侦听属性**
 - **描述:** 图层样式，有如下值：
 
 ```
@@ -79,14 +73,14 @@ EPSG:3857
 
 - **类型:** `String`
 - **可选**
-- **watch**
+- **侦听属性**
 - **描述:** 图层唯一标识符，如果不传，以 vueIndex 代替
 
 ### `options`
 
 - **类型:** `Object`
 - **可选**
-- **watch**
+- **侦听属性**
 - **描述:** Cesium 的进阶参数，另外不属于 cesium 的如下参数也在 options 中：
   ```
     vueKey String 默认值default 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
@@ -95,7 +89,31 @@ EPSG:3857
 - **参考:** <br>
   `WMTS参数` in [WebMapTileServiceImageryProvider](http://develop.smaryun.com:8899/docs/other/mapgis-cesium/WebMapTileServiceImageryProvider.html?classFilter=web)
 
-## Events
+### `vueKey`
+
+- **类型:** `String`
+- **可选**
+- **非侦听属性**
+- **默认值:** `default`
+- **描述:**
+
+```
+mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
+同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
+```
+
+### `vueIndex`
+
+- **类型:** `Number`
+- **可选**
+- **非侦听属性**
+- **描述:**
+
+```
+当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
+```
+
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
@@ -112,7 +130,7 @@ All common layer [events](/zh/api/Layers/#events)
 - **返回值** `{ vue }` <br>
   `vue` vue 对象 <br>
 
-## Example
+## 示例
 
 ### 加载 WMTS 地图 - IGS - 4326
 
@@ -322,21 +340,21 @@ export default {
 </style>
 ```
 
-## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueKey，并将此 vueKey 传给此组件的 vueKey
+### 多个 mapgis-web-scene
 
 ```vue
 <template>
   <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wmts-layer
-      :url="urlWmts"
-      :layer="layerWmts"
-      :tileMatrixSetID="tileMatrixSetIDWmts"
+      :baseUrl="urlWmts"
+      :wmtsLayer="layerWmts"
+      :tileMatrixSet="tileMatrixSetIDWmts"
       :srs="srsWmts"
       :layerStyle="layerStyleWmts"
       :vueKey="vueKey"
     />
     <mapgis-3d-igs-doc-layer
-      :url="urlDoc"
+      :baseUrl="urlDoc"
       :layers="layers"
       :layerStyle="layerStyleDoc"
       :vueKey="vueKey"

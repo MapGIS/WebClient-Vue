@@ -5,5 +5,5 @@
 ### `coordinates`
 
 - **类型:** Array
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 点坐标数组

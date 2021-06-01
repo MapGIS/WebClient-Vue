@@ -12,13 +12,13 @@
 
 ```vue
 <template>
-    <mapgis-web-map
-      :crs="crs"
-      :mapStyle="mapStyle"
-      :center="center"
-      :zoom="zoom"
-      @load="handleMapLoad"
-    >
+  <mapgis-web-map
+    :crs="crs"
+    :mapStyle="mapStyle"
+    :center="center"
+    :zoom="zoom"
+    @load="handleMapLoad"
+  >
     <mapgis-rastertile-layer
       layerId="tdt"
       url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
@@ -34,35 +34,33 @@
 </style>
 
 <script>
-
 export default {
   data() {
     return {
-        mapStyle: {
-          version: 8,
-          sources: {},
-          layers: [
-            {
-              id: "背景",
-              type: "background",
-              paint: {
-                "background-color": "rgba(0, 0, 0, 0.5)",
-              },
-            },
-          ],
-        },
-        zoom: 3,
-        center: [114.3, 30.5],
-        crs: "EPSG:4326",
-      };
+      mapStyle: {
+        version: 8,
+        sources: {},
+        layers: [
+          {
+            id: "背景",
+            type: "background",
+            paint: {
+              "background-color": "rgba(0, 0, 0, 0.5)"
+            }
+          }
+        ]
+      },
+      zoom: 3,
+      center: [114.3, 30.5],
+      crs: "EPSG:4326"
+    };
   },
-  created() {
-  },
-   methods: {
+  created() {},
+  methods: {
     handleMapLoad(payload) {
       console.log(payload);
     }
-   }
+  }
 };
 </script>
 ```
@@ -215,6 +213,6 @@ export deafult {
 
 方法 `.stop()` 会停止所有的地图动画行为（flyTo,zoomTo....）, 同时采取新的属性 来更新 props，并且返回`.stop()`调用时间的地图当前参数.
 
-### Events
+### 事件
 
 全部的地图行为请看 [API](/zh/api/#events) 页面.

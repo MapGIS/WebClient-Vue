@@ -1,6 +1,6 @@
 # CanvasLayer
 
-## Props
+## 属性
 
 All common [layers props](/api/Layers/README.md#props)
 
@@ -16,7 +16,7 @@ All common [layers props](/api/Layers/README.md#props)
 如果更改其值，更改将自动应用于地图。
 :::
 
-## Computed getters 计算属性
+## 计算属性
 
 ### `video`
 

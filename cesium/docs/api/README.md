@@ -5,14 +5,14 @@
 ### `libPath`
 
 - **Type**: `String`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `http://develop.smaryun.com:8899/static/libs/cdn/cesium/Cesium.js`
 - - **Description:** cesium 原生 js 实现. 一般是指定为用户代码 public 的`path/to/cesium`的路径。
 
 ### `pluginPath`
 
 - **Type**: `String`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js`
 - - **Description:** cesium 中地插件增强实现， 一般是指定为用户代码 public 的`path/to/cesium`的路径。
 - `path/to/cesium`的目录下一般是成对存在
@@ -28,84 +28,84 @@
 ### `vueKey`
 
 - **Type**: `String`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `default`
 - - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ### `vueIndex`
 
 - **Type**: `[String, Number]`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
 - - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ### `container`
 
 - **Type**: `[String, HTMLElement]`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
 - - **Description:** Cesium-WebGlobe 绑定的 Dom 元素对象
 
 ### `keyEventEnable`
 
 - **Type**: `Boolean`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `true`
 - - **Description:** Cesium 键盘事件是否激活
 
 ### `viewerMode`
 
 - **Type**: `String`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `3D`
 - - **Description:** 初始视图模式默认为三维球视图 '2D'表示二维视图 'COLUMBUS_VIEW' 表示三维平面视图
 
 ### `showInfo`
 
 - **Type**: `Boolean`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `false`
 - - **Description:** 是否显示默认的属性信息框
 
 ### `animation`
 
 - **Type**: `Boolean`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `false`
 - - **Description:** 默认动画控制不显示
 
 ### `timeline`
 
 - **Type**: `Boolean`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `false`
 - - **Description:** 默认时间轴控制不显示
 
 ### `baseLayerPicker`
 
 - **Type**: `Boolean`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `false`
 - - **Description:** 默认图层选择器不实现
 
 ### `fullscreenButton`
 
 - **Type**: `Object`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `null`
 - - **Description:** 默认全屏控件不显示
 
 ### `vrButton`
 
 - **Type**: `Object`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:** `null`
 - - **Description:** 默认 VR 控件不显示
 
 ### `contextOptions`
 
 - **Type**: `Object`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:**
   ```js
   {
@@ -119,7 +119,7 @@
 ### `cameraView`
 
 - **Type**: `Object`
-- **non-synced** 非 watch 属性
+- **非侦听属性** 非 watch 属性
 - **Default:**
   ```js
   {

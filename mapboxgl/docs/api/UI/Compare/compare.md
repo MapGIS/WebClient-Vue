@@ -1,15 +1,15 @@
 # Compare
 
-## Props
+## 属性
 
 ### `orientation`
 
 - **类型:** `String`
-- **Synced**
+- **侦听属性**
 - **默认值:** `vertical`
 - **描述:** 卷帘显示方向。vertical(垂直方向) | horizontal(水平方向)
 
-## Example
+## 示例
 
 ```vue
 <template>

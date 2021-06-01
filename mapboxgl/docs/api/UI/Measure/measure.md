@@ -1,22 +1,22 @@
 # Measure
 
-## Props
+## 属性
 
 ### `measureMode`
 
 - **类型:** `String`
-- **Required**
-- **Non-Synced**
+- **必传**
+- **非侦听属性**
 - **描述:** 测量方式。measure-length(长度测量) | measure-area(面积测量)
 
 ### `measureMethod`
 
 - **类型:** `String`
 - **默认值:** `both`
-- **Synced**
+- **侦听属性**
 - **描述:** 计算方法。both（返回两种方式计算的结果） | geography(按照地理坐标系计算) | projection(按照投影坐标系计算)
 
-## Slots
+## 槽
 
 ### `measureTool`
 
@@ -26,7 +26,7 @@
 
 - **描述:** 自定义测量组件标注插槽
 
-## Events
+## 事件
 
 ### `@added`
 
@@ -42,7 +42,7 @@
 
 - **描述:** 当移除绘制组件后，通知父组件已移除绘制组件
 
-## Example
+## 示例
 
 ```vue
 <template>

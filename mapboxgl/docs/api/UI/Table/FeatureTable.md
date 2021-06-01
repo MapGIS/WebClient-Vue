@@ -1,13 +1,13 @@
 # FeatureTable
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `MapUrl`
 
 - **类型:** `String`
-- **Non-Synced**
+- **非侦听属性**
 - **watch**
 - **描述:** 地图文档的 url 地址，格式如下http://{ip}:{port}/igs/rest/mrms/docs/{docname}
 
@@ -15,26 +15,26 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `Boolean`
 - **默认值:** false
-- **Non-Synced**
+- **非侦听属性**
 - **watch**
 - **描述:** 是否启用图形工具，默认不显示
 
 ### `styles`
 
 - **类型:** `Object`
-- **Non-Synced**
+- **非侦听属性**
 - **watched**
 - **描述:** 图形工具的样式。
 
 ### `editable`
 
 - **类型:** `Boolean`
-- **Non-Synced**
+- **非侦听属性**
 - **watched**
 - **默认值:** true
 - **描述:** 是否启用编辑，默认启用。
 
-## Events
+## 事件
 
 ### `@loaded`
 
@@ -88,7 +88,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **描述:** 查询要素失败事件
 - **返回值** `{ 无 }` <br>
 
-## Example
+## 示例
 
 ```vue
 <template>

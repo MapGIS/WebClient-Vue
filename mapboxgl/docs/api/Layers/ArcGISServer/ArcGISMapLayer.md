@@ -1,6 +1,6 @@
 # ArcGISMapLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -83,7 +83,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
   生效。
   可选值：true | false。
 
-## Example
+## 示例
 
 ```vue
 <template>

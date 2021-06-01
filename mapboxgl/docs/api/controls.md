@@ -4,119 +4,119 @@
 
 An AttributionControl control presents the map's attribution information.
 
-### Props
+### 属性
 
 ### `compact`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true force a compact attribution
-- **See:** `options.compact` in [AttributionControl](https://docs.mapbox.com/mapbox-gl-js/api/#attributioncontrol)
+- **非侦听属性**
+- **描述:** If true force a compact attribution
+- **查看:** `options.compact` in [AttributionControl](https://docs.mapbox.com/mapbox-gl-js/api/#attributioncontrol)
 
 ### `customAttribution`
 
-- **Type:** `string, Array<string>?`
+- **类型:** `string, Array<string>?`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** String or strings to show in addition to any other attributions.
-- **See:** `options.customAttribution` in [AttributionControl](https://docs.mapbox.com/mapbox-gl-js/api/#attributioncontrol)
+- **非侦听属性**
+- **描述:** String or strings to show in addition to any other attributions.
+- **查看:** `options.customAttribution` in [AttributionControl](https://docs.mapbox.com/mapbox-gl-js/api/#attributioncontrol)
 
 ## FullscreenControl
 
 Creates a button on the map to toggle fulscreen mode.
 
-### Props
+### 属性
 
 ### `container`
 
-- **Type:** `HTMLElement`
-- **Non-Synced**
-- **Description:** DOM element which should be made full screen. By default, the map container element will be made full screen.
-- **See:** `options.container` in [FullscreenControl](https://docs.mapbox.com/mapbox-gl-js/api/#fullscreencontrol)
+- **类型:** `HTMLElement`
+- **非侦听属性**
+- **描述:** DOM element which should be made full screen. By default, the map container element will be made full screen.
+- **查看:** `options.container` in [FullscreenControl](https://docs.mapbox.com/mapbox-gl-js/api/#fullscreencontrol)
 
 ## GeolocateControl
 
 Provides a button that uses the browser's geolocation API to locate the user on the map.
 
-### Props
+### 属性
 
 ### `positionOptions`
 
-- **Type:** `Object`
+- **类型:** `Object`
 - **Default:** `{ enableHighAccuracy: false, timeout: 6000}`
-- **Non-Synced**
-- **Description:** A Geolocation API PositionOptions object.
-- **See:** `options.positionOptions` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
+- **非侦听属性**
+- **描述:** A Geolocation API PositionOptions object.
+- **查看:** `options.positionOptions` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
 
 ### `fitBoundsOptions`
 
-- **Type:** `Object`
+- **类型:** `Object`
 - **Default:** `{ maxZoom:15 }`
-- **Non-Synced**
-- **Description:** A fitBounds options object to use when the map is panned and zoomed to the user's location.
-- **See:** `options.fitBoundsOptions` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
+- **非侦听属性**
+- **描述:** A fitBounds options object to use when the map is panned and zoomed to the user's location.
+- **查看:** `options.fitBoundsOptions` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
 
 ### `trackUserLocation`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `false`
-- **Non-Synced**
-- **Description:** If true the Geolocate Control becomes a toggle button and when active the map will receive updates to the user's location as it changes.to the user's location.
-- **See:** `options.trackUserLocation` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
+- **非侦听属性**
+- **描述:** If true the Geolocate Control becomes a toggle button and when active the map will receive updates to the user's location as it changes.to the user's location.
+- **查看:** `options.trackUserLocation` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
 
 ### `showUserLocation`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** By default a dot will be shown on the map at the user's location. Set to false to disable.
-- **See:** `options.showUserLocation` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
+- **非侦听属性**
+- **描述:** By default a dot will be shown on the map at the user's location. Set to false to disable.
+- **查看:** `options.showUserLocation` in [GeolocateControl](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol)
 
-### Methods
+### 方法
 
 ### `.trigger()`
 
-- **Description:** Trigger a geolocation
+- **描述:** Trigger a geolocation
 - **Returns:** `boolean`
-- **See:** [trigger](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol#trigger) GeolocateControl method
+- **查看:** [trigger](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol#trigger) GeolocateControl method
 
 ## NavigationControl
 
-### Props
+### 属性
 
 ### `showCompass`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true the compass button is included.
-- **See:** `options.showCompass` in [NavigationControl](https://docs.mapbox.com/mapbox-gl-js/api/#navigationcontrol)
+- **非侦听属性**
+- **描述:** If true the compass button is included.
+- **查看:** `options.showCompass` in [NavigationControl](https://docs.mapbox.com/mapbox-gl-js/api/#navigationcontrol)
 
 ### `showZoom`
 
-- **Type:** `Boolean`
+- **类型:** `Boolean`
 - **Default:** `true`
-- **Non-Synced**
-- **Description:** If true the zoom-in and zoom-out buttons are included.
-- **See:** `options.showZoom` in [NavigationControl](https://docs.mapbox.com/mapbox-gl-js/api/#navigationcontrol)
+- **非侦听属性**
+- **描述:** If true the zoom-in and zoom-out buttons are included.
+- **查看:** `options.showZoom` in [NavigationControl](https://docs.mapbox.com/mapbox-gl-js/api/#navigationcontrol)
 
 ## ScaleControl
 
-### Props
+### 属性
 
 ### `maxWidth`
 
-- **Type:** `Number`
+- **类型:** `Number`
 - **Default:** `100`
-- **Non-Synced**
-- **Description:** The maximum length of the scale control in pixels.
-- **See:** `options.maxWidth` in [ScaleControl](https://docs.mapbox.com/mapbox-gl-js/api/#scalecontrol)
+- **非侦听属性**
+- **描述:** The maximum length of the scale control in pixels.
+- **查看:** `options.maxWidth` in [ScaleControl](https://docs.mapbox.com/mapbox-gl-js/api/#scalecontrol)
 
 ### `unit`
 
-- **Type:** `String, "imperial" | "metric" | "nautical"`
+- **类型:** `String, "imperial" | "metric" | "nautical"`
 - **Default:** `metric`
-- **Non-Synced**
-- **Description:** Unit of the distance
-- **See:** `options.unit` in [ScaleControl](https://docs.mapbox.com/mapbox-gl-js/api/#scalecontrol)
+- **非侦听属性**
+- **描述:** Unit of the distance
+- **查看:** `options.unit` in [ScaleControl](https://docs.mapbox.com/mapbox-gl-js/api/#scalecontrol)

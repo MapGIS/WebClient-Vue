@@ -1,6 +1,6 @@
 # RasterLayer
 
-## Props
+## 属性
 
 All common [layers props](/api/Layers/README.md#props)
 
@@ -11,6 +11,6 @@ All common [layers props](/api/Layers/README.md#props)
 - **描述:** 栅格瓦片源
 - **参考:** `Raster source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)
 
-## Events
+## 事件
 
 All common layer [events](/api/Layers/#events)

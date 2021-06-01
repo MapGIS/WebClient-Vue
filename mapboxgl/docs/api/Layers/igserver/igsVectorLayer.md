@@ -1,35 +1,35 @@
 # IgsVectorLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `source`
 
 - **类型:** `Object | String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** A raster tile source.
 - **参考:** `Raster source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)
 
-### `url`
+### `baseUrl`
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
-- **描述:** 完整的地图请求路径。当 url 不为空时，除了 tileSize，其他参数无效
+- **非侦听属性**
+- **描述:** 服务基地址。
 
 ### `tileSize`
 
 - **类型:** `Number`
 - **默认值:** `512`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出瓦片大小。
 
 ### `domain`
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务域名。(domain 和（protocol，ip，port）二选一)
 - **示例:** `http://localhost:6163`
 
@@ -37,28 +37,28 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `location.protocol.split(":")[0] || "http"`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务网络协议。(domain 和（protocol，ip，port）二选一)
 
 ### `ip`
 
 - **类型:** `String`
 - **默认值:** `localhost`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 ip。(domain 和（protocol，ip，port）二选一)
 
 ### `port`
 
 - **类型:** `String`
 - **默认值:** `6163`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 port。(domain 和（protocol，ip，port）二选一)
 
 ### `gdbps`
 
 - **类型:** `String`
-- **Required**
-- **Non-Synced**
+- **必传**
+- **非侦听属性**
 - **watched**
 - **描述:** 图层的 gdbps 地址，允许多个图层，以“,”隔开
 
@@ -66,7 +66,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **watched**
 - **描述:** 用户指定的图层过滤条件，它由多个键值对组成，值为过滤条件。
 - **示例:** `1:ID>4,3:ID>1`
@@ -75,7 +75,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `Object`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 用户指定的图层显示样式，每个 gdbp 对应一个 style，style 为 CDisplayStyleExtend 的 json 序列化形式，多个 style 之间用“，”隔开。
 - **示例:** `[{index:0,symbleshow:true,followscale:true},{index:1,symbleshow:true,FollowScale:true}]`
 
@@ -83,28 +83,28 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `png`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 矢量图片的格式。
 
 ### `guid`
 
 - **类型:** `String`
 - **默认值:** `newGuid()`in [Util](/zh/api/Util/util)
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 唯一 ID，用户标识地图图层。
 
 ### `keepCache`
 
 - **类型:** `Boolean`
 - **默认值:** `true`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 当 keepCache 设置为 true 时，优先从客户端缓存中取瓦片，否则不从客户端缓存中提取
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
-## Example
+## 示例
 
 ```vue
 <template>

@@ -1,13 +1,13 @@
 # IgsWmtsLayer
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
 ### `source`
 
 - **类型:** `Object | String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** A raster tile source.
 - **参考:** `Raster source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)
 
@@ -15,21 +15,21 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 完整的地图请求路径。当 url 不为空时，除了 tileSize 和 zoomOffset，其他参数无效
 
 ### `tileSize`
 
 - **类型:** `Number`
 - **默认值:** `512`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 输出瓦片大小。
 
 ### `domain`
 
 - **类型:** `String`
 - **默认值:** `null`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务域名。(domain 和（protocol，ip，port）二选一)
 - **示例:** `http://localhost:6163`
 
@@ -37,33 +37,33 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `location.protocol.split(":")[0] || "http"`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务网络协议。(domain 和（protocol，ip，port）二选一)
 
 ### `ip`
 
 - **类型:** `String`
 - **默认值:** `localhost`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 ip。(domain 和（protocol，ip，port）二选一)
 
 ### `port`
 
 - **类型:** `String`
 - **默认值:** `6163`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** igs 服务 port。(domain 和（protocol，ip，port）二选一)
 
 ### `wmtsLayer`
 
 - **类型:** `String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 瓦片数据名称，根据发布的 WMTS 服务信息设置
 
 ### `tileMatrixSet`
 
 - **类型:** `String`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 块阵集，即瓦片矩阵名称，主要由坐标系唯一确定
 - **示例:** `EPSG:4610_CHINAXY_2_arcgis_GB`
 
@@ -71,28 +71,28 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `1.0.0`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 请求的版本号，支持 1.0.0 版本
 
 ### `format`
 
 - **类型:** `String`
 - **默认值:** `image/png`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 图块输出格式。image/png | image/jpeg
 
 ### `zoomOffset`
 
 - **类型:** `Number`
 - **默认值:** `0`
-- **Non-Synced**
+- **非侦听属性**
 - **描述:** 级数偏差数。igs 经纬度瓦片 zoomOffset 取值为 1，igs 墨卡托瓦片 zoomOffset 取值为 0。以支持非标准裁剪的瓦片（这里的非标准不是指任意裁剪瓦片，而是当前瓦片的 0 级不是 mapbox 定义的瓦片的 0 级，中间相差 zoomOffset 级）
 
-## Events
+## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
-## Example
+## 示例
 
 ### 中地格式
 

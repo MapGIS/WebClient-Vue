@@ -1,6 +1,6 @@
 # Mapgis3dMapv
 
-## Props
+## 属性
 
 All common [layers props](/zh/api/Layers/README.md#props)
 
@@ -32,7 +32,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值:** "count"
 - **描述:** countField 是 geojson 对象中的 count 属性的属性名称，若不传入 countField，则默认 geojson 对象中 count 属性名称为“count”。
 
-## Example
+## 示例
 
 ```vue
 <template>

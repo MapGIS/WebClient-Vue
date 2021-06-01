@@ -5,11 +5,13 @@ import * as MapComponents from "./component";
 import * as UIComponents from "./ui";
 
 const install = function(Vue, options) {
-  Vue.use(antDirective);
-
-  for (let name in UIComponents) {
-    const ui = UIComponents[name];
-    Vue.component(ui.options ? ui.options.name : ui.name, ui);
+  const { ui } = options;
+  if (ui) {
+    Vue.use(antDirective);
+    for (let name in UIComponents) {
+      const ui = UIComponents[name];
+      Vue.component(ui.options ? ui.options.name : ui.name, ui);
+    }
   }
 
   for (let name in MapComponents) {
