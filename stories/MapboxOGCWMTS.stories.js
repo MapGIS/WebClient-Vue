@@ -5,35 +5,57 @@ export default {
   title: "二维/OGC-WMTS",
   component: MapgisOgcWmtsLayer,
   argTypes: {
-    layer: {},
-    baseUrl:
-        "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
+    wmtsLayer: 'beijing',
+    layerId: 'ogcwmts_layerId',
+    sourceId: 'ogcwmts_sourceId',
     tileMatrixSet:"EPSG:4326_北京市_arcgis_GB",
-    wmtsLayer:"beijing",
-    version:"1.0.0",
-    wmtsStyle:"default",
-    format:"image/png",
-    zoomOffset:-1
+    baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer',
+    //因为司马云是用的老版本的igs服务，因此offset必须传-1
+    zoomOffset: -1
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisOgcWmtsLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:4326" :zoom="mapZoom" :center="outerCenter" style="height:60vh">
     <mapgis-ogc-wmts-layer v-bind="$props" />
-  </mapgis-web-map>`
+  </mapgis-web-map>`,
+  data(){
+    return {
+      mapStyle: {
+        //设置版本号，一定要设置
+        version: 8,
+        //添加来源
+        sources: {},
+        //设置加载并显示来源的图层信息
+        layers: [],
+      }, // 地图样式
+      mapZoom: 8, // 地图初始化级数
+      outerCenter: [116.39, 40.20], // 地图显示中心
+      mapCrs: 'EPSG:4326',
+    }
+  }
 });
 
-export const Image = Template.bind({});
-Image.args = {
-  layerId: "tdt",
-  baseUrl:
-    "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
+export const Igs_4326 = Template.bind({});
+Igs_4326.args = {
+  wmtsLayer: 'beijing',
+  layerId: 'ogcwmts_layerId',
+  sourceId: 'ogcwmts_sourceId',
   tileMatrixSet:"EPSG:4326_北京市_arcgis_GB",
-  wmtsLayer:"beijing",
-  version:"1.0.0",
-  wmtsStyle:"default",
-  format:"image/png",
-  zoomOffset:-1
+  baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer',
+  //因为司马云是用的老版本的igs服务，因此offset必须传-1
+  zoomOffset: -1
 };
+
+export const ArcGis_4326 = Template.bind({});
+ArcGis_4326.args = {
+  wmtsLayer: '10wanZH',
+  layerId: 'ogcwmts_layerId',
+  sourceId: 'ogcwmts_sourceId',
+  tileMatrixSet:"default",
+  baseUrl:'http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer/WMTS',
+  zoomOffset: -1
+};
+

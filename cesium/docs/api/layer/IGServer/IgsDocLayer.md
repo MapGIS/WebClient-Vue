@@ -5,51 +5,16 @@
 ### `baseUrl`
 
 - **类型:** `String`
-- **可选**
-- **描述:** 服务基地址。【url，domain 和（protocol，ip，port）三选一】
-
-```
-http://{ip}:{port}/igs/rest/mrms/docs
-```
-
-### `domain`
-
-- **类型:** `String`
-- **可选**
-- **描述:** 域名。【url，domain 和（protocol，ip，port）三选一】
-
-### `protocol`
-
-- **类型:** `String`
-- **可选**
-- **默认值** `http://`
-- **描述:** 网络协议。【url，domain 和（protocol，ip，port）三选一】
-
-### `ip`
-
-- **类型:** `String`
-- **可选**
-- **默认值** `localhost`
-- **描述:** 地图服务 ip。【url，domain 和（protocol，ip，port）三选一】
-
-### `port`
-
-- **类型:** `String`
-- **可选**
-- **默认值** `6163`
-- **描述:** 地图服务端口。【url，domain 和（protocol，ip，port）三选一】
-
-### `serverName`
-
-- **类型:** `String`
-- **可选**
-- **描述:** 地图文档名称。【domain 和（protocol，ip，port）使用】
+- **必填**
+- **非侦听属性**
+- **描述:** 服务基地址。
+- **示例:** `http://{ip}:{port}/igs/rest/mrms/docs`
 
 ### `layers`
 
 - **类型:** `String`
 - **可选**
-- **watch**
+- **侦听属性**
 - **描述:** 指定需要被取图的图层序列号数组，编号从 0 开始，多个图层以“，”分隔
 
 ```
@@ -63,6 +28,30 @@ http://{ip}:{port}/igs/rest/mrms/docs
 
 ```
    layers = show:1,2//仅显示第1、2个图层
+```
+
+### `vueKey`
+
+- **类型:** `String`
+- **可选**
+- **非侦听属性**
+- **默认值:** `default`
+- **描述:**
+
+```
+mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
+同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
+```
+
+### `vueIndex`
+
+- **类型:** `Number`
+- **可选**
+- **非侦听属性**
+- **描述:**
+
+```
+当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
 ```
 
 ## 加载 4326 地图
@@ -138,15 +127,15 @@ export default {
 </script>
 ```
 
-## 当有多个 mapgis-web-scene，例如使用分屏以及卷帘组件时，请设置 mapgis-web-scene 的 vueKey，并将此 vueKey 传给此组件的 vueKey
+### 多个 mapgis-web-scene
 
 ```vue
 <template>
   <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wmts-layer
       :baseUrl="baseUrlWmts"
-      :layer="layerWmts"
-      :tileMatrixSetID="tileMatrixSetIDWmts"
+      :wmtsLayer="layerWmts"
+      :tileMatrixSet="tileMatrixSetIDWmts"
       :srs="srsWmts"
       :layerStyle="layerStyleWmts"
       :vueKey="vueKey"
@@ -159,7 +148,7 @@ export default {
     />
     <button @click="changeIndex">改变图层顺序</button>
   </mapgis-web-scene>
-  <mapgis-web-scene :vueKey2="vueKeyTwo" />
+  <mapgis-web-scene :vueKey="vueKey2" />
 </template>
 
 <script>
