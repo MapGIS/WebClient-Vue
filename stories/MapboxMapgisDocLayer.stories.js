@@ -41,7 +41,7 @@ const Template = (args, { argTypes }) => ({
 export const 地图文档 = Template.bind({});
 地图文档.args = {
   layerId: "igs_layer_layerid",
-  domain: "http://develop.smaryun.com:6163",
+  domain: "develop.smaryun.com:6163",
   serverName: "北京市",
 };
 
@@ -60,8 +60,8 @@ const TemplateTile = (args, { argTypes }) => ({
 export const 动态切片 = TemplateTile.bind({});
 动态切片.args = {
   layerId: "igs_layer_layerid",
-  domain: "http://localhost:6163",
-  serverName: "EPSG_4326_CHINA",
+  domain: "http://develop.smaryun.com:6163",
+  serverName: "北京市",
   dynamicTile: true,
 };
 

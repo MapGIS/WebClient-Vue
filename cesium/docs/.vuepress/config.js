@@ -53,7 +53,8 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
-              ["/guide/basemap.md", "基础地图"]
+              ["/guide/basemap.md", "基础地图"],
+              ["/guide/wms&map&doc.md", "子图层控制"]
             ]
           },
           {
