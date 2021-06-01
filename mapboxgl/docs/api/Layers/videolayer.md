@@ -6,19 +6,19 @@ All common [layers props](/api/Layers/README.md#props)
 
 ### `source`
 
-- **Type:** `Object | String`
-- **Non-Synced**
-- **Description:** A data source containing video.
-- **See:** `Video source` in [Mapbox API Docs](https://docs.mapbox.com/mapbox-gl-js/api/#videosource)
+- **类型:** `Object | String`
+- **非侦听属性**
+- **描述:** 包含 video 的数据源
+- **参考:** `Video source` in [Mapbox API Docs](https://docs.mapbox.com/mapbox-gl-js/api/#videosource)
 
-::: tip Reactivity
+::: 提示
 `coordinates` field of the `source` prop is reactive.
-If you change it's value, changes automatically applied to the map.
+如果更改其值，更改将自动应用于地图。
 :::
 
-## Computed getters
+## Computed getters 计算属性
 
 ### `video`
 
-- **Description** Returns the HTML video element.
-- **See** `.getVideo()` [method](https://docs.mapbox.com/mapbox-gl-js/api/#videosource#getvideo)
+- **描述** 返回 HTML video 元素.
+- **参考** `.getVideo()` [method](https://docs.mapbox.com/mapbox-gl-js/api/#videosource#getvideo)
