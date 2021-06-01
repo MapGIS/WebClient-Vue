@@ -16,11 +16,21 @@ import { default as Card } from "ant-design-vue/es/card";
 
 import { default as Button } from "ant-design-vue/es/button";
 
+import { default as Table } from "ant-design-vue/es/table";
+import { default as Row } from "ant-design-vue/es/row";
+import { default as Checkbox } from "ant-design-vue/es/checkbox";
+let CheckboxGroup = Checkbox.Group;
+import { default as Popconfirm } from "ant-design-vue/es/popconfirm";
+
 export { Slider };
 export { Select, SelectOption, SelectOptGroup };
 export { Input, InputGroup, InputSearch, InputTextArea, InputPassword };
 export { Card };
 export { Button };
+export { Table };
+export { Row };
+export { Checkbox,CheckboxGroup };
+export { Popconfirm };
 
 export { default as Tree } from "ant-design-vue/es/tree/Tree";
 export { default as DirectoryTree } from "ant-design-vue/es/tree/DirectoryTree";

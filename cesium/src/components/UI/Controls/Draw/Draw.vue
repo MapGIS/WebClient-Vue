@@ -78,6 +78,11 @@ export default {
         this.removeEntities();
         CesiumZondy.DrawToolManager.deleteSource(vueKey, vueIndex);
       }
+      //清空drawElement
+      if(window.drawElement){
+        window.drawElement.stopDrawing();
+      }
+      delete window.drawElement;
       //抛出unload事件
       this.$emit("unload", this);
     },
@@ -102,13 +107,20 @@ export default {
       webGlobeDraw.viewer.entities.remove(window.drawEntity);
       return webGlobeDraw;
     },
+    getDrawElement(webGlobe){
+      if (window.drawElement){
+        window.drawElement.stopDrawing();
+      }
+      window.drawElement = new Cesium.DrawElement(webGlobe.viewer);
+      return window.drawElement;
+    },
     enableDrawPoint () {
       let webGlobeDraw = this.getWebGlobe();
       const vm = this;
       let { vueKey, vueIndex, CesiumZondy } = this;
       let find = CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
       let { entityController } = find.options;
-      let drawElement = new Cesium.DrawElement(webGlobeDraw.viewer);
+      let drawElement = this.getDrawElement(webGlobeDraw);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
         callback: function (position) {
@@ -129,7 +141,8 @@ export default {
     },
     enableDrawLine () {
       let webGlobeDraw = this.getWebGlobe();
-      let drawElement = new Cesium.DrawElement(webGlobeDraw.viewer),vm = this;
+      let vm = this;
+      let drawElement = this.getDrawElement(webGlobeDraw);
       drawElement.startDrawingPolyline({
         callback: function (positions) {
           positions.splice(positions.length - 1,1);
@@ -156,7 +169,8 @@ export default {
     },
     enableDrawPolygon () {
       let webGlobeDraw = this.getWebGlobe();
-      let drawElement = new Cesium.DrawElement(webGlobeDraw.viewer),vm = this;
+      let vm = this;
+      let drawElement = this.getDrawElement(webGlobeDraw);
       drawElement.startDrawingPolygon({
         callback: function (positions) {
           let degreeArr = [];
@@ -183,7 +197,8 @@ export default {
 
     enableDrawRectangle(){
       let webGlobeDraw = this.getWebGlobe();
-      let drawElement = new Cesium.DrawElement(webGlobeDraw.viewer),vm = this;
+      let vm = this;
+      let drawElement = this.getDrawElement(webGlobeDraw);
       drawElement.startDrawingExtent({
         callback: function (positions) {
           window.drawEntity = webGlobeDraw.viewer.entities.add({
@@ -201,8 +216,7 @@ export default {
             let cartographic = Cesium.Cartographic.fromCartesian(Cartesian3Points[i]);
             let lng = Cesium.Math.toDegrees(cartographic.longitude);
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
-            let height = cartographic.height;
-            degreeArr.push([lng,lat,height]);
+            degreeArr.push([lng,lat,Cartesian3Points[i].z]);
           }
           vm.$emit('drawCreate', Cartesian3Points, degreeArr);
           vm.$emit('drawcreate', Cartesian3Points, degreeArr);
