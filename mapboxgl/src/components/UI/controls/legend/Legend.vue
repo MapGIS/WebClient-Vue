@@ -7,14 +7,14 @@
         >
             <a-select-option value="全部"> 全部 </a-select-option>
             <a-select-option
-                :value="layer.layerName"
-                v-for="layer in layers"
-                :key="layer.layerId"
+                :value="index"
+                v-for="(layer, index) in layers"
+                :key="index"
                 >{{ layer.layerName }}
             </a-select-option>
         </a-select>
         <div class="legend-area">
-            <li v-for="legend in legends" :key="legend.url">
+            <li v-for="(legend, index) in legends" :key="index">
                 <img :src="'data:image/png;base64,' + legend.imageData" />
                 <span>{{ legend.label }}</span>
             </li>
@@ -44,7 +44,7 @@ export default {
         getLegendInfo(url) {
             let onSuccess = function (res) {
                 this.layers = this.layers.concat(res.layers);
-                this.layers.forEach((layer) => {
+                res.layers.forEach((layer) => {
                     this.allLegends = this.allLegends.concat(layer.legend);
                 });
                 this.legends = this.allLegends;
@@ -52,7 +52,7 @@ export default {
             let onError = function (err) {
                 console.log(err);
             };
-            let legendUrl = url.replace(/(?<=MapServer).*/, "/legend?f=pjson");
+            let legendUrl = url.replace(/(?<=MapServer).*/i, "/legend?f=pjson");
             let service = new BaseServer.IgsServiceBase(legendUrl, {
                 eventListeners: {
                     scope: this,
@@ -72,7 +72,7 @@ export default {
                     tiles = tiles.concat(sources[key].tiles);
                 });
             tiles.forEach((url) => {
-                if (/\/arcgis\/rest\/services/.test(url)) {
+                if (/\/arcgis\/rest\/services/i.test(url)) {
                     this.getLegendInfo(url);
                 }
             });
@@ -81,11 +81,7 @@ export default {
             if (value === "全部") {
                 this.legends = this.allLegends;
             } else {
-                this.layers.forEach((layer) => {
-                    if (value === layer.layerName) {
-                        this.legends = layer.legend;
-                    }
-                });
+                this.legends = this.layers[value].legend;
             }
         },
     },
