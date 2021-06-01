@@ -39,7 +39,7 @@ http://{ip}:{port}/igs/rest/ogc/WMTSServer&tk=您的token值
 - **描述:** 图层名称或 Id，igs 使用地图名称，arcgis 使用 id，从 0 开始，多个值以逗号分隔，不传时默认显示全部图层
 
 ```
-layers = "" 显示全部图层
+目前暂不支持layers传空值的情况，请使用时传需要显示的图层名称或id
 igs使用名称
 layers = "武汉,武汉_地铁" 仅显示武汉和武汉_地铁图层
 arcgis使用id
