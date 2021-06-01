@@ -8,7 +8,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `Object`
 - **默认值:** `{ cesium: { roam: true }, series: [{ coordinateSystem: 'cesium', type: 'lines' }] }`
-- **Synced**
+- **侦听属性**
 - **描述:** 参数 options 与 echarts 方法 setOption 中一致。echarts.options 使用 option
   来描述其对图表的各种需求，包括：有什么数据、要画什么图表、图表长什么样子、含有什么组件、组件能操作什么事情等等。简而言之，option 表述了：数据、数据如何映射成图形、交互行为。
 - **注意:** mapbox 的地图在使用的时候需要设置对应的坐标系，以 mapboxgl 举例，关键代码如下：
@@ -34,9 +34,9 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ```vue
 <template>
-  <mapgis-web-scene style="height:60vh">
-    <mapgis-3d-arcgis-tile-layer :url="url" :layer-style="layerStyle" :srs="srs"/>
-    <mapgis-3d-echarts-layer :options.sync="option" :center="center"></mapgis-3d-echarts-layer>
+  <mapgis-web-scene style="height:60vh" :cameraView = "cameraView">
+    <mapgis-3d-arcgis-tile-layer :baseUrl="url" :layer-style="layerStyle" :srs="srs"/>
+    <mapgis-3d-echarts-layer :options.sync="option"></mapgis-3d-echarts-layer>
   </mapgis-web-scene>
 </template>
 <script>
@@ -49,7 +49,26 @@ export default {
   data() {
     return {
       busLines: {},
-      option: {}
+      option: {},
+      url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      layerStyle: {
+        visible: true,
+        opacity: 1,
+        zIndex: 2
+      },
+      srs: "EPSG:4326",
+      cameraView:{
+        destination: {
+          x: -2409221.7854387695,
+          y: 4705113.697479787,
+          z: 4500333.6696071755
+        },
+        orientation: {
+          heading: 3.2694614177406143,
+          pitch: -1.4832321184766042,
+          roll: 3.1369303868636838
+        },
+      }
     };
   },
   mounted() {
