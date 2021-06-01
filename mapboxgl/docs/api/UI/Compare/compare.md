@@ -5,7 +5,7 @@
 ### `orientation`
 
 - **类型:** `String`
-- **侦听**
+- **侦听属性**
 - **默认值:** `vertical`
 - **描述:** 卷帘显示方向。vertical(垂直方向) | horizontal(水平方向)
 
