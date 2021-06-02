@@ -3,9 +3,6 @@ export function initManager() {
   window.CesiumZondy.TerrainManager = window.CesiumZondy.TerrainManager || {
     default: [],
   };
-  window.CesiumZondy.RasterManager = window.CesiumZondy.RasterManager || {
-    default: [],
-  };
   window.CesiumZondy.LabelManager = window.CesiumZondy.LabelManager || {
     default: [],
   };
@@ -51,6 +48,8 @@ export function initManager() {
     window.CesiumZondy.IgsTilecLayerManager || new IgsTilecLayerManager();
   window.CesiumZondy.IgsserverManager =
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
+  window.CesiumZondy.RasterManager =
+    window.CesiumZondy.RasterManager || new RasterManager();
 }
 
 export class BaseManager {
@@ -120,6 +119,7 @@ export class BaseManager {
   }
 }
 
+export class RasterManager extends BaseManager {}
 export class GeojsonManager extends BaseManager {}
 export class EntityManager extends BaseManager {}
 export class DragEditManager extends BaseManager {}
