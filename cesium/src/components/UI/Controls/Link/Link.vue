@@ -8,12 +8,19 @@ export default {
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     enable: { type: Boolean, default: false },
-    index: { type: [String, Number] },
-    vueKey: { type: [String, Number] },
+    vueKey: {
+      type: String,
+      default: "default",
+    },
+    vueIndex: {
+      type: Number,
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      },
+    },
   },
   watch: {
     enable: function (news) {
-      // this.deleteHandler();
       if (news) {
         this.addHandler();
       } else {
@@ -27,13 +34,13 @@ export default {
     }
   },
   methods: {
-    initHandler() {
-      const { vueKey, vueIndex, CesiumZondy } = this;
-      let find = CesiumZondy.GlobesManager.findSource(vueKey, vueIndex);
-      if (find) {
-        return find.options.ScreenSpaceEventHandler;
+    getInstanceOptions() {
+      let instanceOptions;
+      const { vueKey, CesiumZondy } = this;
+      if (vueKey !== "default") {
+        instanceOptions = CesiumZondy.GlobesManager[vueKey][0].options;
       }
-      return undefined;
+      return instanceOptions;
     },
     addHandler() {
       const { CesiumZondy } = this;
@@ -61,16 +68,41 @@ export default {
             }
           });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        s.options.ScreenSpaceEventHandler.setInputAction(function (movement) {
+          let _camerca = s.source.viewer.camera;
+          sources.forEach((other, j) => {
+            if (i != j) {
+              other.source.viewer.camera.setView({
+                destination: _camerca.position,
+                orientation: {
+                  direction: _camerca._direction,
+                  up: _camerca.up,
+                  heading: _camerca.heading,
+                  pitch: _camerca.pitch,
+                  roll: _camerca.roll,
+                },
+              });
+            }
+          });
+        }, Cesium.ScreenSpaceEventType.WHEEL);
       });
     },
     deleteHandler() {
       const { CesiumZondy } = this;
-      let handler = this.initHandler();
-      if (handler) {
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        handler.removeInputAction(Cesium.ScreenSpaceEventType.WHEEL);
-        handler.destroy();
+      /* 这段代码要结合WebGlobe里面的如下代码才能明白
+      window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, webGlobe, {
+        ScreenSpaceEventHandler: undefined,
+      }); */
+      const instance = this.getInstanceOptions();
+      if (instance) {
+        const handler = instance.ScreenSpaceEventHandler;
+        if (handler) {
+          handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+          handler.removeInputAction(Cesium.ScreenSpaceEventType.WHEEL);
+          handler.destroy();
+        }
       }
+
       let sources = CesiumZondy.GlobesManager.findAllSource();
       sources.forEach((s, i) => {
         if (s.options.ScreenSpaceEventHandler) {
