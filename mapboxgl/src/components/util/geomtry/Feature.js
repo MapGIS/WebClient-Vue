@@ -169,6 +169,47 @@ class VFeature {
     }
     return data;
   };
+  static resultToGeojson = function(result) {
+    let geo = VFeature.fromQueryResult(result);
+    let featureSet = [];
+    geo = JSON.parse(
+      JSON.stringify(geo)
+        .replace(/attributes/g, "properties")
+        .replace(/geometryType/g, "type")
+    );
+    let feature;
+    for (let i = 0; i < geo.length; i++) {
+      feature = VFeature.polygonToGeojson(geo[i]);
+      featureSet = featureSet.concat(feature);
+    }
+    let geojson = {
+      type: "feature",
+      features: featureSet
+    };
+    return geojson;
+  };
+  static polygonToGeojson = function(VFeature) {
+    let feature,
+      features = [];
+    let geomArr = VFeature.geometry;
+    let properties = VFeature.properties;
+
+    for (let i = 0; i < geomArr.length; i++) {
+      feature = {};
+      //处理数据coordinates
+      if (geomArr[i].type === "Polygon") {
+        geomArr[i].coordinates = geomArr[i].coordinates.concat(
+          geomArr[i].exterior,
+          geomArr[i].interior
+        );
+      }
+      feature.geometry = geomArr[i];
+      feature.properties = properties;
+      features.push(feature);
+    }
+    return features;
+  };
+
   constructor(options) {
     this.geometry = undefined;
     this.geometryType = undefined;
