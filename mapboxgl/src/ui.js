@@ -17,7 +17,7 @@ import { default as Card } from "ant-design-vue/es/card";
 import { default as Button } from "ant-design-vue/es/button";
 
 import { default as Table } from "ant-design-vue/es/table";
-import { default as Row } from "ant-design-vue/es/row";
+import { Row, Col } from "ant-design-vue/es/grid";
 import { default as Checkbox } from "ant-design-vue/es/checkbox";
 let CheckboxGroup = Checkbox.Group;
 import { default as Popconfirm } from "ant-design-vue/es/popconfirm";
@@ -28,7 +28,7 @@ export { Input, InputGroup, InputSearch, InputTextArea, InputPassword };
 export { Card };
 export { Button };
 export { Table };
-export { Row };
+export { Row, Col };
 export { Checkbox, CheckboxGroup };
 export { Popconfirm };
 
