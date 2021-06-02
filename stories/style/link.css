@@ -1,0 +1,38 @@
+.mapgis-link-test {
+  height: 90vh;
+  width: 100%;
+}
+.item {
+  position: absolute;
+  height: 50vh;
+  width: 32vw;
+}
+.top-left {
+  top: 0px;
+  left: 0px;
+}
+.top-right {
+  top: 0px;
+  right: 0px;
+}
+.bottom-left {
+  bottom: 0px;
+  left: 0px;
+}
+.bottom-right {
+  bottom: 0px;
+  right: 0px;
+}
+.control {
+  position: absolute;
+  z-index: 9999;
+  background: #ffffff;
+  top: 47.2vh;
+  left: 27.5vw;
+  width: 5vw;
+  height: 5vh;
+  border-radius: 12px;
+}
+.active {
+  background: #41b883;
+}
