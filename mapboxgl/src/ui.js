@@ -29,7 +29,7 @@ export { Card };
 export { Button };
 export { Table };
 export { Row };
-export { Checkbox,CheckboxGroup };
+export { Checkbox, CheckboxGroup };
 export { Popconfirm };
 
 export { default as Tree } from "ant-design-vue/es/tree/Tree";
