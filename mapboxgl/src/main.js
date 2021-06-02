@@ -5,6 +5,7 @@ import * as MapComponents from "./component";
 import * as UIComponents from "./ui";
 
 const install = function(Vue, options) {
+  options = options || {};
   const { ui } = options;
   if (ui) {
     Vue.use(antDirective);

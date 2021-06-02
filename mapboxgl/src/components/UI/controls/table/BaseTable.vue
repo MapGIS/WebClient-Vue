@@ -1,63 +1,99 @@
 <template>
   <div class="mapgis-baseTable">
-    <div :id="toolbarId" :style="{bottom: toolbarBottom}" class="mapgis-baseTable-toolbar" v-if="toolbar">
-      <div class="toolbar-num">总共{{paginationCopy.total}}条，已选{{selectData.length}}条</div>
-      <button class="toolbar-button" style="right: 80px;" @click="$_fullScreen">全屏</button>
-      <button class="toolbar-button" @click="$_fieldFilter">字段过滤</button>
-    </div>
-    <div :id="columnFilterId" class="mapgis-baseTable-fieldFilter"
-         :style="{overflowY: plainOptions.length > 8 ? 'scroll' : 'hidden',
-         top: filterTop + 'px',
-         position: filterPosition}" v-show="showFilter">
-      <Row>
-        <Checkbox :indeterminate="indeterminate" :checked="checkAll" @change="$_checkAll">
-          全选
-        </Checkbox>
-      </Row>
-      <Row>
-        <CheckboxGroup v-model="checkedList" :options="plainOptions" @change="$_check"/>
-      </Row>
-    </div>
-    <Table :id="tableId"
-             :data-source="dataSourceCopy"
-             :columns="columnsCopy"
-             :pagination="paginationCopy"
-             :scroll="scroll"
-             :row-selection="rowSelection"
-             @change="$_change"
+    <div
+      :id="toolbarId"
+      :style="{ bottom: toolbarBottom }"
+      class="mapgis-baseTable-toolbar"
+      v-if="toolbar"
     >
-      <div v-for="(column,index) in columnsCopy" :key="index" :slot="column.dataIndex" slot-scope="text,record,index">
-        <div class="mapgis-baseTable-tableTd" @click="$_onceClick(record.key,column.key,false,record)"
-             @dblclick="$_doubleClick(record.key,column.key,record)">
-          <p :style="{fontStyle:text === 'null' ? 'italic' : 'normal'}" class="mapgis-baseTable-content" :title="text" v-if="editRowAndCol !== column.key + '_' + record.key">
+      <div class="toolbar-num">
+        总共{{ paginationCopy.total }}条，已选{{ selectData.length }}条
+      </div>
+      <a-button
+        class="toolbar-button"
+        style="right: 80px;"
+        @click="$_fullScreen"
+        >全屏</a-button
+      >
+      <a-button class="toolbar-button" @click="$_fieldFilter"
+        >字段过滤</a-button
+      >
+    </div>
+    <div
+      :id="columnFilterId"
+      class="mapgis-baseTable-fieldFilter"
+      :style="{
+        overflowY: plainOptions.length > 8 ? 'scroll' : 'hidden',
+        top: filterTop + 'px',
+        position: filterPosition
+      }"
+      v-show="showFilter"
+    >
+      <a-row>
+        <a-checkbox
+          :indeterminate="indeterminate"
+          :checked="checkAll"
+          @change="$_checkAll"
+        >
+          全选
+        </a-checkbox>
+      </a-row>
+      <a-row>
+        <a-checkbox-group
+          v-model="checkedList"
+          :options="plainOptions"
+          @change="$_check"
+        />
+      </a-row>
+    </div>
+    <a-table
+      :id="tableId"
+      :data-source="dataSourceCopy"
+      :columns="columnsCopy"
+      :pagination="paginationCopy"
+      :scroll="scroll"
+      :row-selection="rowSelection"
+      @change="$_change"
+    >
+      <div
+        v-for="(column, index) in columnsCopy"
+        :key="index"
+        :slot="column.dataIndex"
+        slot-scope="text, record, index"
+      >
+        <div
+          class="mapgis-baseTable-tableTd"
+          @click="$_onceClick(record.key, column.key, false, record)"
+          @dblclick="$_doubleClick(record.key, column.key, record)"
+        >
+          <p
+            :style="{ fontStyle: text === 'null' ? 'italic' : 'normal' }"
+            class="mapgis-baseTable-content"
+            :title="text"
+            v-if="editRowAndCol !== column.key + '_' + record.key"
+          >
             {{ text }}
           </p>
-          <Input v-if="editRowAndCol === column.key + '_' + record.key"
-                   v-model="record[column.key]"/>
+          <a-input
+            v-if="editRowAndCol === column.key + '_' + record.key"
+            v-model="record[column.key]"
+          />
         </div>
       </div>
       <template v-if="editable" slot="operation" slot-scope="text, record">
-        <Popconfirm
-            @confirm="$_deleteFeature(record)"
-        >
+        <a-popconfirm @confirm="$_deleteFeature(record)">
           删除
-        </Popconfirm>
+        </a-popconfirm>
       </template>
-    </Table>
+    </a-table>
   </div>
 </template>
 
 <script>
-/* import Vue from "vue"
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css'; */
 import {VFeature} from "../../../util";
-import {Table,Row,Checkbox,CheckboxGroup,Input,Popconfirm} from "../../../../ui"
-// Vue.use(Antd);
 
 export default {
   name: "mapgis-base-table",
-  components:{Table,Row,Checkbox,CheckboxGroup,Input,Popconfirm},
   props:{
     //数据源
     dataSource:{
@@ -825,7 +861,7 @@ export default {
 </script>
 
 <style>
-.mapgis-baseTable{
+.mapgis-baseTable {
   width: 100%;
   position: absolute;
   bottom: 0;
@@ -847,7 +883,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-.mapgis-baseTable .ant-table{
+.mapgis-baseTable .ant-table {
   border-bottom: 1px solid #e8e8e8;
   line-height: 2;
 }
@@ -869,18 +905,18 @@ export default {
   height: 15px;
   width: 80px;
 }
-.mapgis-baseTable.addFeature{
+.mapgis-baseTable.addFeature {
   bottom: 64px;
   left: 23px;
   width: 90%;
 }
 
-.mapgis-baseTable .ant-spin-container{
+.mapgis-baseTable .ant-spin-container {
   border: 1px solid #e8e8e8;
-  border-radius: 4px 4px 0 0
+  border-radius: 4px 4px 0 0;
 }
 
-.mapgis-baseTable-toolbar{
+.mapgis-baseTable-toolbar {
   width: 100%;
   height: 40px;
   position: absolute;
@@ -890,20 +926,20 @@ export default {
   bottom: 427px;
 }
 
-.mapgis-baseTable-toolbar .toolbar-button{
+.mapgis-baseTable-toolbar .toolbar-button {
   position: absolute;
   right: 6px;
   top: 6px;
 }
 
-.mapgis-baseTable-toolbar .toolbar-num{
+.mapgis-baseTable-toolbar .toolbar-num {
   position: absolute;
   min-width: 120px;
   left: 6px;
   top: 10px;
 }
 
-.mapgis-baseTable-fieldFilter{
+.mapgis-baseTable-fieldFilter {
   position: absolute;
   z-index: 2;
   right: 6px;
@@ -917,19 +953,19 @@ export default {
   padding-top: 8px;
 }
 
-.mapgis-baseTable-fieldFilter .ant-checkbox-wrapper{
+.mapgis-baseTable-fieldFilter .ant-checkbox-wrapper {
   float: left;
 }
 
-.mapgis-baseTable-fieldFilter .ant-checkbox-wrapper{
+.mapgis-baseTable-fieldFilter .ant-checkbox-wrapper {
   padding-left: 10px;
 }
-.mapgis-baseTable .ant-table-pagination{
+.mapgis-baseTable .ant-table-pagination {
   position: absolute;
   bottom: 5px;
   right: 10px;
 }
-.mapgis-baseTable-fullScreen{
+.mapgis-baseTable-fullScreen {
   position: fixed;
   left: 0;
   background: white;
