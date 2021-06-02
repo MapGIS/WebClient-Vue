@@ -4,6 +4,7 @@
 <script>
 import {DataSet} from "mapv";
 import {MapvLayer} from "./mapv/MapvLayer";
+import {VFeature} from "../../components/util/geomtry/Feature";
 
 export default {
   name: "mapgis-mapv-layer",
@@ -65,6 +66,9 @@ export default {
     initData(geojson) {
       let data = [];
       geojson = geojson || this.geojson;
+      if (!(geojson.hasOwnProperty("geometry"))){
+        geojson = this.$_convertData(geojson);
+      };
       // 构造数据
       var features = geojson.features;
       if (!features) {
@@ -80,8 +84,11 @@ export default {
                 geometry: {
                   type: "Point",
                   coordinates: coordinates
-                }
-              }, feature.properties
+                },
+                count: 30 * Math.random(),
+                time: 100 * Math.random()
+              },
+              feature.properties
           );
           data.push(obj);
         } else if (fType === "LineString") {
@@ -92,6 +99,7 @@ export default {
                   coordinates: coordinates
                 },
                 count: feature.properties[this.countField] || 1,
+                time: 100 * Math.random()
               }, feature.properties
           );
           data.push(obj);
@@ -103,6 +111,7 @@ export default {
                   coordinates: coordinates
                 },
                 count: feature.properties[this.countField] || 1,
+                time: 100 * Math.random()
               }, feature.properties
           );
           data.push(obj);
@@ -110,6 +119,10 @@ export default {
       }
       var dataSet = new DataSet(data);
       return dataSet;
+    },
+    $_convertData(geojson){
+        let data = VFeature.resultToGeojson(geojson);
+        return data;
     },
     mount() {
       this.mapvLayer = this.createMapboxObject();
