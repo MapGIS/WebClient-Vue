@@ -7,8 +7,8 @@ export default {
   argTypes: {
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
-    domain: "http://develop.smaryun.com:6163",
-    serverName: "北京市",
+    baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
+    layers: 'show:0,1,2,3,4,5,6,7',
   },
 };
 
@@ -20,7 +20,7 @@ const Template = (args, { argTypes }) => ({
   <button style="position: absolute;z-index: 1;left:0;top:0;" @click="edit('filters','0:ID>4')">修改filter</button>
   <button style="position: absolute;z-index: 1;left:80px;top:0;" @click="edit('filters','')">置空filter</button>
   <button style="position: absolute;z-index: 1;left:160px;top:0;" @click="edit('layers','show:0,1')">修改layers</button>
-  <button style="position: absolute;z-index: 1;left:240px;top:0;" @click="edit('layers','show:0')">还原layers</button>
+  <button style="position: absolute;z-index: 1;left:240px;top:0;" @click="edit('layers','show:0,1,2,3,4,5,6,7')">还原layers</button>
   <button style="position: absolute;z-index: 1;left:330px;top:0;" @click="edit('cache',true)">修改cache</button>
   <button style="position: absolute;z-index: 1;left:420px;top:0;" @click="edit('cache',false)">还原cache</button>
   </mapgis-web-map>`,
@@ -41,8 +41,8 @@ const Template = (args, { argTypes }) => ({
 export const 地图文档 = Template.bind({});
 地图文档.args = {
   layerId: "igs_layer_layerid",
-  domain: "develop.smaryun.com:6163",
-  serverName: "北京市",
+  baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
+  layers: 'show:0,1,2,3,4,5,6,7',
 };
 
 const TemplateTile = (args, { argTypes }) => ({
@@ -60,8 +60,8 @@ const TemplateTile = (args, { argTypes }) => ({
 export const 动态切片 = TemplateTile.bind({});
 动态切片.args = {
   layerId: "igs_layer_layerid",
-  domain: "http://develop.smaryun.com:6163",
-  serverName: "北京市",
+  baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
+  layers: 'show:0,1,2,3,4,5,6,7',
   dynamicTile: true,
 };
 

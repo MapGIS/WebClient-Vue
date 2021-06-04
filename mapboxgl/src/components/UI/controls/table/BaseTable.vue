@@ -11,7 +11,7 @@
       </div>
       <a-button
         class="toolbar-button"
-        style="right: 80px;"
+        style="right: 100px;"
         @click="$_fullScreen"
         >全屏</a-button
       >

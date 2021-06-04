@@ -8,7 +8,7 @@ export default {
     layer: {},
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
-    url: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
+    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
   },
 };
 
@@ -23,5 +23,5 @@ const Template = (args, { argTypes }) => ({
 export const Tile = Template.bind({});
 Tile.args = {
   layerId: "igs_layer_layerid",
-  url: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
+  baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
 };

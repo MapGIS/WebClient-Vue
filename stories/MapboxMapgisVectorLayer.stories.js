@@ -7,7 +7,7 @@ export default {
   argTypes: {
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
-    domain:"http://develop.smaryun.com:6163"
+    baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/layers"
   },
 };
 
@@ -52,5 +52,5 @@ export const Vector = Template.bind({});
 Vector.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
-  domain:"http://develop.smaryun.com:6163"
+  baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/layers"
 };

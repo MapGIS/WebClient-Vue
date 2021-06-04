@@ -10,7 +10,7 @@ export default {
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     ...VueOptions,
-    url: {
+    baseUrl: {
       type: [String, Object],
       required: true
     },
@@ -33,8 +33,8 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const { url, options } = this;
-      return new Cesium.GeoJsonDataSource.load(url, options);
+      const { baseUrl, options } = this;
+      return new Cesium.GeoJsonDataSource.load(baseUrl, options);
     },
     mount() {
       const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;

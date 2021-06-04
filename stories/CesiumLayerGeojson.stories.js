@@ -5,7 +5,7 @@ export default {
   title: "三维/图层-GeoJSON",
   component: GeoJsonDataSource,
   argTypes: {
-    url: "",
+    baseUrl: "",
     options: {
       markerSize: 48,
       strokeWidth: 2,
@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
 
 export const GeoJSON = Template.bind({});
 GeoJSON.args = {
-  url: "http://develop.smaryun.com/static/data/geojson/wuhan_bounds.geojson",
+  baseUrl: "http://develop.smaryun.com/static/data/geojson/wuhan_bounds.geojson",
   options: {
     markerSize: 48,
     strokeWidth: 2,
