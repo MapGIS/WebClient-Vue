@@ -79,9 +79,6 @@ export default {
         this._url = url;
         return;
       } else if (baseUrl) {
-        if (!this.layers) {
-          return;
-        }
         if (baseUrl.indexOf("?") > -1) {
           fixBaseUrl = this.baseUrl.split("?")[0];
         } else {

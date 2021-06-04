@@ -66,8 +66,9 @@ export default {
         this.initial = true;
       }
 
+      let webGlobeDraw = this.getWebGlobe()
       //抛出load事件
-      this.$emit("load", this);
+      this.$emit("load", this, webGlobeDraw);
     },
 
     unmount () {
@@ -134,8 +135,8 @@ export default {
               new Cesium.Color(255 / 255, 255 / 255, 0 / 255, 1),
               2);
           drawElement.stopDrawing();
-          vm.$emit('drawCreate', position, [lng, lat, height]);
-          vm.$emit('drawcreate', position, [lng, lat, height]);
+          vm.$emit('drawCreate', position, [lng, lat, height],webGlobeDraw);
+          vm.$emit('drawcreate', position, [lng, lat, height],webGlobeDraw);
         }
       });
     },
@@ -161,8 +162,8 @@ export default {
             geodesic: true
           });
           window.drawEntity = webGlobeDraw.viewer.scene.primitives.add(polyline);
-          vm.$emit('drawCreate', positions,degreeArr);
-          vm.$emit('drawcreate', positions,degreeArr);
+          vm.$emit('drawCreate', positions,degreeArr,webGlobeDraw);
+          vm.$emit('drawcreate', positions,degreeArr,webGlobeDraw);
           drawElement.stopDrawing();
         }
       });
@@ -188,8 +189,8 @@ export default {
             }),
           });
           window.drawEntity = webGlobeDraw.viewer.scene.primitives.add(polygon);
-          vm.$emit('drawCreate', positions,degreeArr);
-          vm.$emit('drawcreate', positions,degreeArr);
+          vm.$emit('drawCreate', positions,degreeArr,webGlobeDraw);
+          vm.$emit('drawcreate', positions,degreeArr,webGlobeDraw);
           drawElement.stopDrawing();
         }
       });
@@ -218,8 +219,8 @@ export default {
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
             degreeArr.push([lng,lat,Cartesian3Points[i].z]);
           }
-          vm.$emit('drawCreate', Cartesian3Points, degreeArr);
-          vm.$emit('drawcreate', Cartesian3Points, degreeArr);
+          vm.$emit('drawCreate', Cartesian3Points, degreeArr,webGlobeDraw);
+          vm.$emit('drawcreate', Cartesian3Points, degreeArr,webGlobeDraw);
         }
       });
     }

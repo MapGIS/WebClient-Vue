@@ -3,7 +3,7 @@ import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 import ArcgisTileLayer from "../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer.js";
 
 export default {
-    title: "二维/交互-图例",
+    title: "二维/交互-arcgis图例",
     component: MapgisArcserverLegend
 };
 
