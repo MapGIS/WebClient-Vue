@@ -17,8 +17,9 @@
 ### `@load`
 
 - **Description:** 在 Draw 加载完毕后发送该事件
-- **Payload** `{ Draw }`
+- **Payload** `{ Draw ,webGlobe }`
 - `Draw` Draw 对象
+- `webGlobe` 当前绘制组件所在的 webGlobe
 
 ### `@unload`
 
@@ -29,16 +30,18 @@
 ### `@drawCreate`
 
 - **Description:** 在 Draw 绘制图形完毕后发送该事件
-- **Payload** `{ cartoCoordinate ,degreeCoordinate }`
+- **Payload** `{ cartoCoordinate ,degreeCoordinate ,webGlobe}`
 - `cartoCoordinate` 笛卡尔坐标集合
 - `degreeCoordinate` 经纬度坐标集合
+- `webGlobe` 当前绘制组件所在的 webGlobe
 
 ### `@drawcreate`
 
 - **Description:** 使用 CDN 的方式引入，会使用全小写的方式，在 Draw 绘制图形完毕后发送该事件
-- **Payload** `{ cartoCoordinate ,degreeCoordinate }`
+- **Payload** `{ cartoCoordinate ,degreeCoordinate ,webGlobe}`
 - `cartoCoordinate` 笛卡尔坐标集合
 - `degreeCoordinate` 经纬度坐标集合
+- `webGlobe` 当前绘制组件所在的 webGlobe
 
 ### 使用方法
 
