@@ -1,11 +1,9 @@
-<template>
-    <div class="slider" ref="slider"></div>
-</template>
+<template></template>
 
 <script>
 export default {
     name: "mapgis-3d-compare",
-    inject: ["Cesium", "webGlobe"],
+    // inject: ["Cesium", "webGlobe"],
     props: {
         beforeLayers: {
             type: Array,
@@ -19,9 +17,16 @@ export default {
                 return [];
             },
         },
+        vueKey: {
+            type: String,
+            default: "default",
+        },
     },
     data() {
-        return {};
+        return {
+            webGlobe: null,
+            container: null,
+        };
     },
     watch: {
         beforeLayers: {
@@ -36,15 +41,33 @@ export default {
             },
             deep: true,
         },
+        vueKey() {
+            this.polling();
+        },
     },
     mounted() {
-        this.initCompare();
+        this.polling();
     },
     methods: {
+        polling() {
+            const timer = setInterval(() => {
+                if (
+                    window.CesiumZondy.GlobesManager.hasOwnProperty(this.vueKey)
+                ) {
+                    clearInterval(timer);
+                    this.webGlobe =
+                        window.CesiumZondy.GlobesManager[this.vueKey][0].source;
+                    this.initCompare();
+                }
+            }, 50);
+        },
         initCompare() {
-            let Cesium = this.Cesium;
-            let viewer = this.webGlobe;
-            let layers = this.webGlobe.layers._layers;
+            let webGlobe = this.webGlobe;
+            let slider = document.createElement("div");
+            slider.className = "slider";
+            this.container = webGlobe.elementID.parentNode;
+            this.container.appendChild(slider);
+            let layers = webGlobe.layers._layers;
 
             if (this.beforeLayers.length && this.afterLayers.length) {
                 for (let i = 1; i < layers.length; i++) {
@@ -66,8 +89,8 @@ export default {
                     Cesium.ImagerySplitDirection.RIGHT;
             }
 
-            let slider = this.$refs.slider;
-            viewer.scene.imagerySplitPosition =
+            // let slider = this.slider;
+            webGlobe.scene.imagerySplitPosition =
                 slider.offsetLeft / slider.parentElement.offsetWidth;
 
             let handler = new Cesium.ScreenSpaceEventHandler(slider);
@@ -82,7 +105,7 @@ export default {
                     (slider.offsetLeft + relativeOffset) /
                     slider.parentElement.offsetWidth;
                 slider.style.left = 100.0 * splitPosition + "%";
-                viewer.scene.imagerySplitPosition = splitPosition;
+                webGlobe.scene.imagerySplitPosition = splitPosition;
             }
 
             //鼠标左键按下事件
@@ -119,12 +142,14 @@ export default {
             layer.show = true;
             layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
         });
+        let slider = document.getElementsByClassName("slider");
+        this.container.removeChild(slider[0]);
     },
 };
 </script>
 
-<style scoped>
-.slider {
+<style>
+.cesium-map-wrapper .slider {
     position: absolute;
     left: 50%;
     top: 0;
@@ -134,7 +159,7 @@ export default {
     z-index: 9999;
 }
 
-.slider:hover {
+.cesium-map-wrapper .slider:hover {
     cursor: ew-resize;
 }
 </style>
