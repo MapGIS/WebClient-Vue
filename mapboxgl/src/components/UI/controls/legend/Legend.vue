@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import { BaseServer } from "@mapgis/webclient-es6-service";
-
 export default {
     name: "mapgis-arcgis-legend",
     inject: ["mapbox", "map"],
