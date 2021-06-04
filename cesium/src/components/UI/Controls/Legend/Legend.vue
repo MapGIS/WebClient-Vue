@@ -40,25 +40,21 @@ export default {
     },
     methods: {
         getLegendInfo(url) {
-            let onSuccess = function (res) {
-                this.layers = this.layers.concat(res.layers);
-                res.layers.forEach((layer) => {
-                    this.allLegends = this.allLegends.concat(layer.legend);
-                });
-                this.legends = this.allLegends;
-            };
-            let onError = function (err) {
-                console.log(err);
-            };
             let legendUrl = url.replace(/(?<=MapServer).*/i, "/legend?f=pjson");
-            let service = new BaseServer.IgsServiceBase(legendUrl, {
-                eventListeners: {
-                    scope: this,
-                    processCompleted: onSuccess,
-                    processFailed: onError,
-                },
-            });
-            service.processAsync();
+            fetch(legendUrl)
+                .then((res) => {
+                    return res.json();
+                })
+                .then((res) => {
+                    this.layers = this.layers.concat(res.layers);
+                    res.layers.forEach((layer) => {
+                        this.allLegends = this.allLegends.concat(layer.legend);
+                    });
+                    this.legends = this.allLegends;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         },
         getLegendUrl() {
             const { CesiumZondy } = this;
