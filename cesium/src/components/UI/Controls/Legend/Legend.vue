@@ -23,8 +23,6 @@
 </template>
 
 <script>
-import { BaseServer } from "@mapgis/webclient-es6-service";
-
 export default {
     name: "mapgis-3d-arcgis-legend",
     inject: ["Cesium", "webGlobe", "CesiumZondy"],
