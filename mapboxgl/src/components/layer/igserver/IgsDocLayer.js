@@ -34,9 +34,9 @@ export default {
     },
     guid: {
       type: String,
-      default: newGuid()
+      default: undefined
     },
-    cache: {
+    dynamicTile: {
       type: Boolean,
       default: false
     },
@@ -55,6 +55,14 @@ export default {
   },
   watch: {
     layers(next) {
+      if (this.initial) return;
+      this.changelayers();
+    },
+    dynamicTile(next) {
+      if (this.initial) return;
+      this.changelayers();
+    },
+    filters(next) {
       if (this.initial) return;
       this.changelayers();
     }
@@ -102,7 +110,8 @@ export default {
       let params = [];
 
       params.push("f=" + this.f);
-      params.push("guid=" + this.guid);
+      let guid = newGuid();
+      params.push(("guid=" + this.guid) | guid);
 
       let width, height;
       width = height = this.tileSize;
@@ -127,8 +136,8 @@ export default {
       if (this.isAntialiasing !== null) {
         params.push("isAntialiasing=" + this.isAntialiasing);
       }
-      if (this.cache !== null && this.isAntialiasing !== null) {
-        params.push("cache=" + this.cache);
+      if (this.dynamicTile !== null && this.isAntialiasing !== null) {
+        params.push("cache=" + this.dynamicTile);
       }
       if (this.update !== null && this.isAntialiasing !== null) {
         params.push("update=" + this.update);
