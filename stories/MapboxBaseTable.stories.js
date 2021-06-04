@@ -6,8 +6,7 @@ export default {
   argTypes: {
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
-    domain: "http://develop.smaryun.com:6163",
-    serverName: "北京市"
+    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
   },
 };
 
@@ -147,7 +146,6 @@ export const Doc = Template.bind({});
 Doc.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
-  domain: "http://develop.smaryun.com:6163",
-  serverName: "北京市"
+  baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
 };
 
