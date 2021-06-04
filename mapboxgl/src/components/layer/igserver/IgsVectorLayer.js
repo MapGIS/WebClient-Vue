@@ -35,7 +35,10 @@ export default {
   },
   methods: {
     $_init() {
-      if (this.url) {
+      if(this.baseUrl){
+        let partUrl = this.$_initAllRequestParams().join("&");
+        this._url = encodeURI(this.baseUrl + "?" + partUrl) + "&bbox={bbox}";
+      }else if (this.url) {
         let url = this.url;
         if (url.indexOf("?") === -1) {
           url += "?";
@@ -47,14 +50,15 @@ export default {
         url += partUrl;
         this._url = url;
         return;
+      }else {
+        let domain = this.domain;
+        if (!domain) {
+          domain = this.protocol + "://" + this.ip + ":" + this.port;
+        }
+        let tempUrl = domain + "/igs/rest/mrms/layers";
+        let partUrl = this.$_initAllRequestParams().join("&");
+        this._url = encodeURI(tempUrl + "?" + partUrl) + "&bbox={bbox}";
       }
-      let domain = this.domain;
-      if (!domain) {
-        domain = this.protocol + "://" + this.ip + ":" + this.port;
-      }
-      let tempUrl = domain + "/igs/rest/mrms/layers";
-      let partUrl = this.$_initAllRequestParams().join("&");
-      this._url = encodeURI(tempUrl + "?" + partUrl) + "&bbox={bbox}";
     },
     $_initAllRequestParams() {
       let params = [];
