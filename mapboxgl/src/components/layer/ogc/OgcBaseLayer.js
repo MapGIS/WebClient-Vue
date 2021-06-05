@@ -24,8 +24,8 @@ export default {
     }
   },
   methods: {
-    async $_deferredMount() {
-      await this.$_init();
+    $_deferredMount() {
+      this.$_init();
       let source = {
         type: "raster",
         tiles: [this._url],
