@@ -22,16 +22,16 @@ export default {
     ...VueOptions,
     showHpr: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showSelectTileInfo: {
       type: Boolean,
-      default: false,
+      default: false
     },
     showViewLevelInfo: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   computed: {},
@@ -45,7 +45,7 @@ export default {
       latitude: 0,
       cameraHeight: 0,
       height: 0,
-      selectedTile: undefined,
+      selectedTile: undefined
     };
   },
 
@@ -83,7 +83,7 @@ export default {
           viewer.scene.canvas
         );
 
-        screenSpaceMouseEventHandler.setInputAction((movement) => {
+        screenSpaceMouseEventHandler.setInputAction(movement => {
           // vm.updateViewLevel();
           // vm.selectTile(movement.endPosition);
           // vm.selectedTile = vm.selectTile(movement.endPosition);
@@ -178,7 +178,7 @@ export default {
         webGlobe,
         showHpr,
         showSelectTileInfo,
-        showViewLevelInfo,
+        showViewLevelInfo
       } = this;
 
       let vm = this;
@@ -223,8 +223,8 @@ export default {
       }
       const iHtml = longlatHeight + strHpr + selectTileInfo + level;
       document.getElementById(elementId).innerHTML = iHtml; */
-    },
-  },
+    }
+  }
 };
 </script>
 

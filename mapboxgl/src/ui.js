@@ -1,5 +1,3 @@
-export { MapgisIconfont } from "./components/UI/iconfont";
-
 import { default as Slider } from "ant-design-vue/es/slider";
 
 import { default as Select } from "ant-design-vue/es/select";

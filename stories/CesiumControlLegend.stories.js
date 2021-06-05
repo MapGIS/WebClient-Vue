@@ -2,7 +2,7 @@ import ArcgisTileLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGIST
 import ArcgisMapLayer from "../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
 
 export default {
-    title: "三维/交互-图例"
+    title: "三维/交互-arcgis图例"
 };
 
 const Template = (args, { argTypes }) => ({
@@ -13,8 +13,7 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-scene>
-        <arcgis-tile-layer baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer" />
-        <arcgis-map-layer baseUrl="http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer" />
+        <arcgis-tile-layer srs="EPSG:3857" baseUrl="http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer" />
         <mapgis-3d-arcgis-legend></mapgis-3d-arcgis-legend>
     </mapgis-web-scene>
     `
