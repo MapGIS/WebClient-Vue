@@ -52,6 +52,9 @@ const componentProps = {
   replace: {
     type: Boolean,
     default: false
+  },
+  token: {
+    type: String
   }
 };
 
