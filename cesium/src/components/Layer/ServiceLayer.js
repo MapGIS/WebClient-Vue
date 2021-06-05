@@ -201,6 +201,8 @@ export default {
         //如果没有设置layerStyle.zIndex，则layer的zIndex统一设置为0，并且按照初始化的顺序向上叠放
         providerZIndex = 0;
       } else {
+        //确定zIndex不能重复
+        this.$_checkZIndex(imageryLayers);
         //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
         providerZIndex = zIndex;
       }
@@ -272,6 +274,19 @@ export default {
       imageryLayers.remove(find.source, true);
       window.CesiumZondy[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
+    },
+    $_checkZIndex(imageryLayers) {
+      let layers = this.$_getLayers();
+      let _layers = imageryLayers._layers;
+      for (let i = 0; i < _layers.length; i++) {
+        for (let j = 0; j < layers.length; j++) {
+          if (layers[j].options.id === _layers[i].id) {
+            if (layers[j].options.zIndex === this.layerStyle.zIndex) {
+              throw new Error("该zIndex值已被使用，请重新赋值");
+            }
+          }
+        }
+      }
     },
     $_getCurrentLayer(imageryLayers) {
       let currentLayer, index;
@@ -352,6 +367,9 @@ export default {
       const { _layers } = imageryLayers;
       let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
       let index = this.$_getCurrentLayer(imageryLayers).index;
+
+      //确定zIndex不能重复
+      this.$_checkZIndex(imageryLayers);
 
       //如果当前未被设置zIndex的layer有了zIndex，则一直上升，直到zIndex小于上一个layer的zIndex
       if (!this.layerStyleCopy.zIndex) {
