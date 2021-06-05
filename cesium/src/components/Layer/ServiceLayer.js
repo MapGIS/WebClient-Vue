@@ -81,7 +81,8 @@ export default {
         parameters: "object"//确定parameters为object
         }
       **/
-      checkType: undefined
+      checkType: undefined,
+      layerId: undefined
     };
   },
   watch: {
@@ -146,7 +147,6 @@ export default {
      * @param CesiumZondyLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
      * **/
     $_mount(addOpt, CesiumZondyLayer) {
-      console.log("layerStyle", this.layerStyle);
       //类型检测
       this.$_check();
       let opt = {},
@@ -193,41 +193,30 @@ export default {
         provider = new Cesium[this.providerName](options);
       }
 
-      //如果第一次初始化，有layerStyle，则赋值，以后都走watch
-      //规则为如果一开始没有图层，则将zIndex设为1，有图层，则zIndex为最上层图层的zIndex + 1
-      let Layers = this.$_getLayers(),
-        hasZIndex = false;
-      if (!zIndex) {
-        if (Layers.length === 0) {
-          layerStyle.zIndex = 1;
-        } else {
-          layerStyle.zIndex = Number(
-            Layers[Layers.length - 1].options.zIndex + 1
-          );
-        }
-        for (let i = 0; i < Layers.length; i++) {
-          if (Layers[i].options.hasZIndex === true) {
-            throw new Error(
-              "当您使用了zIndex时，请确保所有图层都设置的zIndex，否则会造成图层顺序混乱"
-            );
-          }
-        }
+      //初始化imageryLayers.addImageryProvider需要的index
+      let providerZIndex;
+      if (zIndex <= 0) {
+        throw new Error("zIndex不能为0或负数，请从1开始设值");
+      } else if (!zIndex) {
+        //如果没有设置layerStyle.zIndex，则layer的zIndex统一设置为0，并且按照初始化的顺序向上叠放
+        providerZIndex = 0;
       } else {
-        hasZIndex = true;
-        for (let i = 0; i < Layers.length; i++) {
-          if (Layers[i].options.hasZIndex === false) {
-            throw new Error(
-              "当您使用了zIndex时，请确保所有图层都设置的zIndex，否则会造成图层顺序混乱"
-            );
-          }
-        }
+        //确定zIndex不能重复
+        this.$_checkZIndex(imageryLayers);
+        //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
+        providerZIndex = zIndex;
       }
 
-      //通过zIndex确定图层层级
+      //不管有没有设置zIndex先同意往上面叠放
       let imageryLayer = imageryLayers.addImageryProvider(
         provider,
-        layerStyle.zIndex
+        imageryLayers._layers.length
       );
+
+      //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
+      //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
+      //只会根据imageryLayers排序，不会影响其他图层
+      this.$_initLayerIndex();
 
       if (saturation !== undefined) {
         imageryLayer.saturation = saturation;
@@ -240,8 +229,6 @@ export default {
       if (typeof visible === "boolean") {
         imageryLayer.show = visible;
       }
-      console.log("imageryLayer", imageryLayer);
-      console.log("webGlobeObj", webGlobeObj);
 
       //设置涂层的透明度
       if (typeof opacity === "number") {
@@ -258,19 +245,19 @@ export default {
         imageryLayer.id = this.id;
       }
 
+      //保存layerId，方便找到zIndex
+      this.layerId = imageryLayer.id;
+
       //将图层加入对应的manager
       window.CesiumZondy[this.managerName].addSource(
         vueKey,
         vueIndex,
         imageryLayer,
         {
-          zIndex: layerStyle.zIndex,
-          hasZIndex: hasZIndex
+          zIndex: providerZIndex,
+          id: imageryLayer.id
         }
       );
-
-      //根据this.$props.layerStyle.zIndex设置图层顺序
-      this.$_initLayerIndex();
 
       //抛出load事件
       this.$emit("load", imageryLayer, this);
@@ -287,6 +274,34 @@ export default {
       imageryLayers.remove(find.source, true);
       window.CesiumZondy[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
+    },
+    $_checkZIndex(imageryLayers) {
+      let layers = this.$_getLayers();
+      let _layers = imageryLayers._layers;
+      for (let i = 0; i < _layers.length; i++) {
+        for (let j = 0; j < layers.length; j++) {
+          if (layers[j].options.id === _layers[i].id) {
+            if (layers[j].options.zIndex === this.layerStyle.zIndex) {
+              throw new Error("该zIndex值已被使用，请重新赋值");
+            }
+          }
+        }
+      }
+    },
+    $_getCurrentLayer(imageryLayers) {
+      let currentLayer, index;
+      let _layers = imageryLayers._layers;
+      for (let i = 0; i < _layers.length; i++) {
+        if (_layers[i].id === this.layerId) {
+          currentLayer = _layers[i];
+          index = i;
+          break;
+        }
+      }
+      return {
+        currentLayer: currentLayer,
+        index: index
+      };
     },
     $_getLayers() {
       let Layers = [],
@@ -323,13 +338,18 @@ export default {
     },
     $_getWebGlobe() {
       let webGlobeObj;
+      const { vueKey, webGlobe } = this;
       //如果this.vueKey，则从GlobesManager中取得webGlobeObj
-      if (this.vueKey) {
-        let GlobesManager = window.CesiumZondy.GlobesManager;
-        webGlobeObj = GlobesManager[this.vueKey][0].source;
+      if (vueKey) {
+        if (vueKey === "default") {
+          webGlobeObj = webGlobe;
+        } else {
+          let GlobesManager = window.CesiumZondy.GlobesManager;
+          webGlobeObj = GlobesManager[this.vueKey][0].source;
+        }
       } else {
         //否则取this.webGlobe
-        webGlobeObj = this.webGlobe;
+        webGlobeObj = webGlobe;
       }
       return webGlobeObj;
     },
@@ -337,41 +357,66 @@ export default {
      * 当zIndex改变时，调用此方法，在watch中使用
      * **/
     $_moveLayer() {
+      if (this.layerStyle.zIndex <= 0) {
+        throw new Error("zIndex不能为0或负数，请从1开始设值");
+      }
       //取得webGlobe对象
       let webGlobeObj = this.$_getWebGlobe();
       const { viewer } = webGlobeObj;
       const { imageryLayers } = viewer;
-      //取得所有拥有zIndex的图层，且在同一个webGlobe下的图层，放入Manager对象数组中
-      let Layers = this.$_getLayers();
-      let length = Layers.length;
-      let layerIndex = this.$_getLayerIndex(Layers);
-      //取得当前图层对象
-      let imageryLayer = Layers[layerIndex].source;
-      //如果当前图层所在的Manager数组中右边有值，[...,当前图层,右边有图层,...]
-      if (layerIndex + 1 <= length - 1) {
-        //如果当前图层的zIndex比右边的大，则向右边遍历
-        if (this.layerStyle.zIndex > Layers[layerIndex + 1].options.zIndex) {
-          for (let i = layerIndex + 1; i <= length - 1; i++) {
-            //如果zIndex比右边的图层大，则当前图层向上升一位
-            if (this.layerStyle.zIndex > Layers[i].options.zIndex) {
-              imageryLayers.raise(imageryLayer);
-            }
+      const { _layers } = imageryLayers;
+      let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
+      let index = this.$_getCurrentLayer(imageryLayers).index;
+
+      //确定zIndex不能重复
+      this.$_checkZIndex(imageryLayers);
+
+      //如果当前未被设置zIndex的layer有了zIndex，则一直上升，直到zIndex小于上一个layer的zIndex
+      if (!this.layerStyleCopy.zIndex) {
+        for (let i = index + 1; i < _layers.length; i++) {
+          let nextIndex = this.$_getZIndexById(_layers[i].id);
+          if (nextIndex === 0) {
+            imageryLayers.raise(currentLayer);
+          } else if (this.layerStyle.zIndex > nextIndex) {
+            imageryLayers.raise(currentLayer);
           }
         }
-      } else if (layerIndex - 1 >= 0) {
-        //如果当前图层所在的Layers数组中左边有值，[...,左边有图层,当前图层,...]
-        if (this.layerStyle.zIndex < Layers[layerIndex - 1].options.zIndex) {
-          //如果当前图层的zIndex比左边的小，则向左边遍历
-          for (let j = layerIndex - 1; j >= 0; j--) {
-            //如果zIndex比左边的图层大，则当前图层向下降一位
-            if (this.layerStyle.zIndex < Layers[j].options.zIndex) {
-              imageryLayers.lower(imageryLayer);
+      } else {
+        let nextIndex = index + 1;
+        let prevIndex = index - 1;
+        if (nextIndex <= _layers.length - 1) {
+          if (
+            this.layerStyle.zIndex > this.$_getZIndexById(_layers[nextIndex].id)
+          ) {
+            for (let i = nextIndex; i < _layers.length; i++) {
+              let nextIndex = this.$_getZIndexById(_layers[i].id);
+              if (this.layerStyle.zIndex > nextIndex) {
+                imageryLayers.raise(currentLayer);
+              }
+            }
+          }
+        } else if (prevIndex > 0) {
+          let pIndex = this.$_getZIndexById(_layers[prevIndex].id);
+          if (pIndex > 0 && this.layerStyle.zIndex < pIndex) {
+            for (let i = prevIndex; i > 0; i--) {
+              let prevIndex = this.$_getZIndexById(_layers[i].id);
+              if (this.layerStyle.zIndex < prevIndex) {
+                imageryLayers.lower(currentLayer);
+              }
             }
           }
         }
       }
-      //更新图层zIndex
-      Layers[layerIndex].options.zIndex = this.layerStyle.zIndex;
+      this.$_updateLayerManager();
+    },
+    $_updateLayerManager() {
+      let layers = this.$_getLayers();
+      for (let i = 0; i < layers.length; i++) {
+        if (this.layerId === layers[i].options.id) {
+          layers[i].options.zIndex = this.layerStyle.zIndex;
+          break;
+        }
+      }
     },
     /*
      * 根据zIndex初始化图层顺序
@@ -381,20 +426,33 @@ export default {
       let webGlobeObj = this.$_getWebGlobe();
       const { viewer } = webGlobeObj;
       const { imageryLayers } = viewer;
-      let Layers = this.$_getLayers();
-      let layerIndex = this.$_getLayerIndex(Layers);
-      let layer = Layers.splice(layerIndex, 1)[0];
-      //初始化时，新加的图层总是放在数组最后一位，因此只考虑下降一层的情况
-      for (let i = Layers.length - 1; i >= 0; i--) {
-        if (layer.options.zIndex < Layers[i].options.zIndex) {
-          if (
-            imageryLayers.indexOf(layer.source) >
-            imageryLayers.indexOf(Layers[i].source)
-          ) {
-            imageryLayers.lower(layer.source);
+      let _layers = imageryLayers._layers;
+      let length = _layers.length;
+      let currentLayer = _layers[length - 1];
+      if (this.layerStyle.zIndex) {
+        for (let i = length - 2; i > 0; i--) {
+          if (this.layerStyle.zIndex < this.$_getZIndexById(_layers[i].id)) {
+            imageryLayers.lower(currentLayer);
+          }
+        }
+      } else {
+        for (let i = length - 2; i > 0; i--) {
+          if (this.$_getZIndexById(_layers[i].id) > 0) {
+            imageryLayers.lower(currentLayer);
           }
         }
       }
+    },
+    $_getZIndexById(id) {
+      let layers = this.$_getLayers();
+      let zIndex;
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].options.id === id) {
+          zIndex = layers[i].options.zIndex;
+          break;
+        }
+      }
+      return zIndex;
     },
     /*检查属性是否存在或者类型是否正确，优先检查是否为空
      * author 杨琨

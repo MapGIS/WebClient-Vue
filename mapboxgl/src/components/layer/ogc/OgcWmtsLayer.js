@@ -112,7 +112,11 @@ export default {
       params.push("format=" + this.format);
       params.push("layer=" + this.wmtsLayer);
       if (this.token) {
-        params.push("token=" + this.token);
+        if(this.baseUrl.indexOf("tianditu") > -1){
+          params.push("tk=" + this.token);
+        }else {
+          params.push("token=" + this.token);
+        }
       }
       return params;
     }
