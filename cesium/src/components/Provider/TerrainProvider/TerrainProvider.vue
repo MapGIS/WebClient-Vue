@@ -3,26 +3,13 @@
 </template>
 
 <script>
+import VueOptions from '../../Base/Vue/VueOptions';
+
 export default {
-  name: "cesium-terrain-provider",
+  name: "mapgis-3d-terrain-provider",
   inject: ["Cesium", "webGlobe"],
   props: {
     layer: Object,
-    /**
-     * @type String
-     * @description 该key的主要作用市用来记录Cesium的Source,primitive,
-     * entity的内存中的引用数组的引用，从而避免vue对cesium的内存劫持
-     */
-    vueKey: { typs: String, default: "default" },
-    /**
-     * @type String
-     * @description 该key的主要作用市用来记录Cesium的Source,primitive,
-     * entity的内存中的引用数组的下标，从而避免vue对cesium的内存劫持
-     */
-    vueIndex: {
-      typs: [String, Number],
-      default: (Math.random() * 10000).toFixed(0),
-    },
     url: { type: [String, Object], required: true },
     options: {
       type: Object,
@@ -30,6 +17,7 @@ export default {
         return {};
       },
     },
+    ...VueOptions
   },
   data() {
     return {};
