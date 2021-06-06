@@ -253,14 +253,8 @@ export default {
       //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
       //如果之后给了zIndex，然后又删除了或者置空，则layer放最后一个包含zIndex的layer的下面，并按照zeroIndex排序
       if (providerZIndex === 0) {
-        let layers = this.$_getLayers();
-        let length = 0;
-        for (let i = 0; i < layers.length; i++) {
-          if (layers[i].options.hasOwnProperty("zeroIndex")) {
-            ++length;
-          }
-        }
-        manageOptions.zeroIndex = length + 1;
+        let maxZeroIndex = this.$_getMaxZeroIndex();
+        manageOptions.zeroIndex = maxZeroIndex + 1;
       }
 
       //将图层加入对应的manager
@@ -306,6 +300,19 @@ export default {
           }
         }
       }
+    },
+    $_getMaxZeroIndex() {
+      let layers = this.$_getLayers();
+      let zeroIndex = 0;
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].options.hasOwnProperty("zeroIndex")) {
+          zeroIndex =
+            layers[i].options.zeroIndex > zeroIndex
+              ? layers[i].options.zeroIndex
+              : zeroIndex;
+        }
+      }
+      return zeroIndex;
     },
     $_getCurrentLayer(imageryLayers) {
       let currentLayer, index;
@@ -436,7 +443,8 @@ export default {
             let nextZeroIndex = this.$_getIndexById(_layers[i].id, "zeroIndex");
             //如果没有，则更新layer的zeroIndex，并停止下降
             if (!currentZeroIndex) {
-              this.$_updateLayerManager("zeroIndex", nextZeroIndex + 1);
+              let maxZeroIndex = this.$_getMaxZeroIndex();
+              this.$_updateLayerManager("zeroIndex", maxZeroIndex + 1);
               break;
             } else {
               //如果有ZeroIndex，则按照值排序
