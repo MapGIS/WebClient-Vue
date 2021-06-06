@@ -12,7 +12,8 @@ export default {
     wmtsLayer: {type: String, required: true},
     tileMatrixSet: {type: String, required: true},
     wmtsStyle: {type: String, default: "default"},
-    srs: {type: String, required: true}
+    srs: {type: String, required: true},
+    format: {type: String, default: 'image/png'},
   },
   data() {
     return {

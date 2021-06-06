@@ -1,4 +1,6 @@
 <script>
+import VueOptions from '../../Base/Vue/VueOptions';
+
 export default {
   name: "mapgis-3d-igs-terrain",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
@@ -10,6 +12,7 @@ export default {
     url: {
       type: String,
     },
+    ...VueOptions
   },
   created() {},
   mounted() {

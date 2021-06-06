@@ -19,7 +19,7 @@
             <div class="starting">
                 起始点:
                 <div class="inputs">
-                    <a-input v-model="form.startLon">
+                    <a-input v-model="form.startLon" :disabled="!form.startLon">
                         <span slot="prefix">经度:</span>
                     </a-input>
                     <a-slider
@@ -27,12 +27,13 @@
                         :step="0.0001"
                         :max="startLonMax"
                         :min="startLonMin"
+                        :disabled="!form.startLon"
                         :value="parseFloat(form.startLon)"
                         @change="setInput($event, 'startLon')"
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.startLat">
+                    <a-input v-model="form.startLat" :disabled="!form.startLat">
                         <span slot="prefix">纬度:</span>
                     </a-input>
                     <a-slider
@@ -40,12 +41,13 @@
                         :step="0.0001"
                         :max="startLatMax"
                         :min="startLatMin"
+                        :disabled="!form.startLat"
                         :value="parseFloat(form.startLat)"
                         @change="setInput($event, 'startLat')"
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.startAlt">
+                    <a-input v-model="form.startAlt" :disabled="!form.startAlt">
                         <span slot="prefix">高度:</span>
                     </a-input>
                     <a-slider
@@ -53,6 +55,7 @@
                         :step="10"
                         :max="startAltMax"
                         :min="startAltMin"
+                        :disabled="!form.startAlt"
                         :value="parseFloat(form.startAlt)"
                         @change="setInput($event, 'startAlt')"
                     />
@@ -61,7 +64,7 @@
             <div class="ending">
                 结束点:
                 <div class="inputs">
-                    <a-input v-model="form.endLon">
+                    <a-input v-model="form.endLon" :disabled="!form.endLon">
                         <span slot="prefix">经度:</span>
                     </a-input>
                     <a-slider
@@ -69,12 +72,13 @@
                         :step="0.0001"
                         :max="endLonMax"
                         :min="endLonMin"
+                        :disabled="!form.endLon"
                         :value="parseFloat(form.endLon)"
                         @change="setInput($event, 'endLon')"
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.endLat">
+                    <a-input v-model="form.endLat" :disabled="!form.endLat">
                         <span slot="prefix">纬度:</span>
                     </a-input>
                     <a-slider
@@ -82,12 +86,13 @@
                         :step="0.0001"
                         :max="endLatMax"
                         :min="endLatMin"
+                        :disabled="!form.endLat"
                         :value="parseFloat(form.endLat)"
                         @change="setInput($event, 'endLat')"
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.endAlt">
+                    <a-input v-model="form.endAlt" :disabled="!form.endAlt">
                         <span slot="prefix">高度:</span>
                     </a-input>
                     <a-slider
@@ -95,6 +100,7 @@
                         :step="10"
                         :max="endAltMax"
                         :min="endAltMin"
+                        :disabled="!form.endAlt"
                         :value="parseFloat(form.endAlt)"
                         @change="setInput($event, 'endAlt')"
                     />
@@ -358,6 +364,11 @@ export default {
         window.viewshed3d = window.viewshed3d || [[], []];
     },
     destroyed() {
+        const { webGlobe } = this;
+        let find = this.findSource();
+        webGlobe.viewer.scene.VisualAnalysisManager.remove(
+            window.viewshed3d[this.index][find.index]
+        );
         delete window.viewshed3d;
         window.viewshed3d = [[], []];
     },

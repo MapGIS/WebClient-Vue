@@ -7,8 +7,9 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-storybook": "build-storybook",
-    "cesium": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium cesium/src/main.js",
-    "mapboxgl": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl mapboxgl/src/main.js",
+    "build-cesium-umd": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium cesium/src/main.js",
+    "build-cesium-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium cesium/src/cdn/main.js",
+    "build-mapboxgl-umd": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl mapboxgl/src/main.js",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {

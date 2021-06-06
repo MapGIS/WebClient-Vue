@@ -286,7 +286,7 @@ export default {
       let _layers = imageryLayers._layers;
       for (let i = 0; i < _layers.length; i++) {
         for (let j = 0; j < layers.length; j++) {
-          if (layers[j].options.id === _layers[i].id) {
+          if (layers[j].options && layers[j].options.id === _layers[i].id) {
             if (
               layers[j].options.zIndex &&
               layers[j].options.zIndex === this.layerStyle.zIndex
@@ -347,7 +347,10 @@ export default {
 
       //对数组进行排序
       Layers.sort(function(a, b) {
-        return a.options.zIndex - b.options.zIndex;
+        if (a.options && b.options) {
+          return a.options.zIndex - b.options.zIndex;
+        }
+        return 0;
       });
       return Layers;
     },

@@ -1,4 +1,5 @@
 export { default as MapgisWebMap } from "./components/map/GlMap.vue";
+export { MapgisIconfont } from "./components/UI/iconfont";
 
 export { default as MapgisDocument } from "./components/UI/document/Document";
 
