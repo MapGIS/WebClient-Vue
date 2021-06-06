@@ -192,8 +192,8 @@ export default {
 
       //初始化imageryLayers.addImageryProvider需要的index
       let providerZIndex;
-      if (zIndex <= 0) {
-        throw new Error("zIndex不能为0或负数，请从1开始设值");
+      if (zIndex < 0) {
+        throw new Error("zIndex不能为负数");
       } else if (!zIndex) {
         //如果没有设置layerStyle.zIndex，则layer的zIndex统一设置为0，并且按照初始化的顺序向上叠放
         providerZIndex = 0;
@@ -253,7 +253,14 @@ export default {
       //如果providerZIndex为0，表示初始化地图时，没有设置zIndex，因此会按照初始化的顺序向上叠放
       //如果之后给了zIndex，然后又删除了或者置空，则layer放最后一个包含zIndex的layer的下面，并按照zeroIndex排序
       if (providerZIndex === 0) {
-        manageOptions.zeroIndex = imageryLayers._layers.length - 1;
+        let layers = this.$_getLayers();
+        let length = 0;
+        for (let i = 0; i < layers.length; i++) {
+          if (layers[i].options.hasOwnProperty("zeroIndex")) {
+            ++length;
+          }
+        }
+        manageOptions.zeroIndex = length + 1;
       }
 
       //将图层加入对应的manager
@@ -286,8 +293,15 @@ export default {
       for (let i = 0; i < _layers.length; i++) {
         for (let j = 0; j < layers.length; j++) {
           if (layers[j].options.id === _layers[i].id) {
-            if (layers[j].options.zIndex === this.layerStyle.zIndex) {
-              throw new Error("该zIndex值已被使用，请重新赋值");
+            if (
+              layers[j].options.zIndex &&
+              layers[j].options.zIndex === this.layerStyle.zIndex
+            ) {
+              throw new Error(
+                "该zIndex值：" +
+                  layers[j].options.zIndex +
+                  "已被使用，请重新赋值"
+              );
             }
           }
         }
@@ -330,6 +344,17 @@ export default {
       });
       return Layers;
     },
+    $_getCurrentLayerManage() {
+      let layers = this.$_getLayers();
+      let layer;
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].options.id === this.layerId) {
+          layer = layers[i];
+          break;
+        }
+      }
+      return layer;
+    },
     $_getLayerIndex(Layers) {
       let layerIndex;
       //根据this.layerStyleCopy.zIndex，从当前的Layers数组中，图层所在index
@@ -365,8 +390,8 @@ export default {
       const { layerStyle, layerStyleCopy } = this;
       const { zIndex } = layerStyle;
       let zIndexCopy = layerStyleCopy.zIndex;
-      if (zIndex <= 0) {
-        throw new Error("zIndex不能为0或负数，请从1开始设值");
+      if (zIndex < 0) {
+        throw new Error("zIndex不能为负数");
       }
       //取得webGlobe对象
       let webGlobeObj = this.$_getWebGlobe();
@@ -375,7 +400,6 @@ export default {
       const { _layers } = imageryLayers;
       let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
       let index = this.$_getCurrentLayer(imageryLayers).index;
-
       //确定zIndex不能重复
       this.$_checkZIndex(imageryLayers);
 
@@ -389,8 +413,12 @@ export default {
             imageryLayers.raise(currentLayer);
           }
         }
+        this.$_updateLayerManager("zIndex", this.layerStyle.zIndex);
       } else if (zIndexCopy && !zIndex) {
-        //如果当前的zIndex被删除或为undefined或null，则将layer放到所有含有zIndex的layer的最下方，并按照zeroIndex的值排序
+        //如果当前的zIndex被删除或为undefined或null或0，则将zIndex变为0
+        let currentLayerManage = this.$_getCurrentLayerManage();
+        currentLayerManage.options.zIndex = 0;
+        //如果当前的zIndex被删除或为undefined或null或0，则将layer放到所有含有zIndex的layer的最下方，并按照zeroIndex的值排序
         let current = this.$_getCurrentLayer(imageryLayers);
         let currentLayer = current.currentLayer;
         let currentIndex = current.index;
@@ -405,21 +433,22 @@ export default {
               this.layerId,
               "zeroIndex"
             );
+            let nextZeroIndex = this.$_getIndexById(_layers[i].id, "zeroIndex");
             //如果没有，则更新layer的zeroIndex，并停止下降
             if (!currentZeroIndex) {
-              this.$_updateLayerManager("zeroIndex", i + 1);
+              this.$_updateLayerManager("zeroIndex", nextZeroIndex + 1);
               break;
             } else {
               //如果有ZeroIndex，则按照值排序
-              let nextZeroIndex = this.$_getIndexById(
-                _layers[i].id,
-                "zeroIndex"
-              );
               if (currentZeroIndex < nextZeroIndex) {
                 imageryLayers.lower(currentLayer);
               }
             }
           }
+        }
+        //当下面没有layer时，zeroIndex设为1
+        if (currentIndex - 1 === 0) {
+          this.$_updateLayerManager("zeroIndex", 1);
         }
       } else {
         //正常的zIndex排序
@@ -447,8 +476,8 @@ export default {
             }
           }
         }
+        this.$_updateLayerManager("zIndex", this.layerStyle.zIndex);
       }
-      this.$_updateLayerManager("zIndex", this.layerStyle.zIndex);
     },
     $_updateLayerManager(key, value) {
       let layers = this.$_getLayers();
