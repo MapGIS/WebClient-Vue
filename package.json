@@ -11,7 +11,7 @@
     "build-mapboxgl-all": "cd mapboxgl && npm run docs:build && npm run build-cdn",
     "build-mapboxgl-docs": "cd mapboxgl && npm run docs:build",
     "build-mapboxgl-umd": "cd mapboxgl && npm run build",
-    "build-mapboxgl-cdn": "cd mapboxgl && npm run build",
+    "build-mapboxgl-cdn": "cd mapboxgl && npm run build-cdn",
     "build-storybook": "build-storybook -o storybook",
     "storybook": "start-storybook -p 6006"
   },
