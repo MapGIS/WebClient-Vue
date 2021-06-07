@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "build-storybook": "build-storybook -o storybook",
-    "build-cesium-umd": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium cesium/src/main.js",
-    "build-cesium-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium cesium/src/cdn/main.js",
-    "build-mapboxgl-umd": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl mapboxgl/src/main.js",
-    "build-mapboxgl-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl mapboxgl/src/main.js",
+    "build-cesium-umd": "cd cesium && npm run build",
+    "build-cesium-cdn": "cd cesium && npm run build-cdn",
+    "build-mapboxgl-umd": "cd mapboxgl && npm run build",
+    "build-mapboxgl-cdn": "cd mapboxgl && npm run build",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {
