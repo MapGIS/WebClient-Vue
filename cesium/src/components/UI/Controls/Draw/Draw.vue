@@ -97,8 +97,12 @@ export default {
       //当webSceneKey以及webSceneIndex存在时，通过这两个值寻找webGlobe
       //拥有多个webGlobe时使用
       if(this.vueKey){
-        let GlobesManager = window.CesiumZondy.GlobesManager;
-        webGlobeDraw = GlobesManager[this.vueKey][0].source;
+        if (this.vueKey === "default") {
+          webGlobeDraw = webGlobe;
+        } else {
+          let GlobesManager = window.CesiumZondy.GlobesManager;
+          webGlobeDraw = GlobesManager[this.vueKey][0].source;
+        }
       }else {
         //否则使用注入的webGlobe
         webGlobeDraw = this.webGlobe;
