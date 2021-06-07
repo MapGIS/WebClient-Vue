@@ -94,14 +94,16 @@ export default {
     },
     getWebGlobe(){
       let webGlobeDraw;
+      const {vueKey, webGlobe} = this;
       //当webSceneKey以及webSceneIndex存在时，通过这两个值寻找webGlobe
       //拥有多个webGlobe时使用
-      if(this.vueKey){
+      if(vueKey && vueKey !== 'default'){
         let GlobesManager = window.CesiumZondy.GlobesManager;
-        webGlobeDraw = GlobesManager[this.vueKey][0].source;
+        webGlobeDraw = GlobesManager[vueKey][0].source;
       }else {
-        //否则使用注入的webGlobe
-        webGlobeDraw = this.webGlobe;
+        // 否则使用注入的webGlobe
+        // codemirror使用的时候不能支持多屏，也无法获取.CesiumZondy.GlobesManager对象
+        webGlobeDraw = webGlobe;
       }
       //取得webGlobe后，清空当前绘制
       webGlobeDraw.viewer.scene.primitives.remove(window.drawEntity);
