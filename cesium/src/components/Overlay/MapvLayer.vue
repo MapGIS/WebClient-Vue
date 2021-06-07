@@ -4,6 +4,7 @@
 <script>
 import {DataSet,canvasClear} from "mapv";
 import {MapvLayer} from "./mapv/MapvLayer";
+import {VFeature} from "../../../../mapboxgl/src/components/util";
 
 export default {
   name: "mapgis-3d-mapv-layer",
@@ -66,6 +67,9 @@ export default {
     initData(geojson) {
       let data = [];
       geojson = geojson || this.geojson;
+      if (!(geojson.hasOwnProperty("features"))){
+        geojson = this.$_convertData(geojson);
+      };
       // 构造数据
       var features = geojson.features;
       if (!features) {
@@ -111,6 +115,10 @@ export default {
       }
       var dataSet = new DataSet(data);
       return dataSet;
+    },
+    $_convertData(geojson){
+      let data = VFeature.resultToGeojson(geojson);
+      return data;
     },
     mount() {
       this.mapvLayer = this.createCesiumObject();

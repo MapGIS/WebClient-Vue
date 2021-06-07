@@ -66,7 +66,7 @@ export default {
     initData(geojson) {
       let data = [];
       geojson = geojson || this.geojson;
-      if (!(geojson.hasOwnProperty("geometry"))){
+      if (!(geojson.hasOwnProperty("features"))){
         geojson = this.$_convertData(geojson);
       };
       // 构造数据
