@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build-storybook": "build-storybook -o storybook",
+    "build-all": "npm run build-storybook && cd cesium && npm run docs:build && npm run build-cdn && cd ../mapboxgl && npm run docs:build && npm run build-cdn",
+    "build-cesium-all": "cd cesium && npm run docs:build && npm run build-cdn",
+    "build-cesium-docs": "cd cesium && npm run docs:build",
     "build-cesium-umd": "cd cesium && npm run build",
     "build-cesium-cdn": "cd cesium && npm run build-cdn",
+    "build-mapboxgl-all": "cd mapboxgl && npm run docs:build && npm run build-cdn",
+    "build-mapboxgl-docs": "cd mapboxgl && npm run docs:build",
     "build-mapboxgl-umd": "cd mapboxgl && npm run build",
     "build-mapboxgl-cdn": "cd mapboxgl && npm run build",
+    "build-storybook": "build-storybook -o storybook",
     "storybook": "start-storybook -p 6006"
   },
   "dependencies": {

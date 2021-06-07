@@ -2,7 +2,7 @@
 
 module.exports = {
   title: "VueCesium",
-  dest: "dist/docs",
+  dest: "dist-docs",
 
   /*   evergreen: true,
   serviceWorker: true, */

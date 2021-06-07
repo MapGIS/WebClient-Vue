@@ -1,5 +1,6 @@
 module.exports = {
   productionSourceMap: false,
+  outputDir: "dist-libs",
   configureWebpack: {
     externals: {
       "mapbox-gl": {

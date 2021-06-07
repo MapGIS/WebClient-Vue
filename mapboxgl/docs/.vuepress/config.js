@@ -1,7 +1,7 @@
 module.exports = {
   title: "VueMapbox",
   // description: "Combine powers of Mapbox GL JS and Vue.js",
-  dest: "dist/docs",
+  dest: "dist-docs",
   // head: [["link", { rel: "icon", href: "/favicon.ico" }]],
   // base: "/vue-mapbox/",
 
