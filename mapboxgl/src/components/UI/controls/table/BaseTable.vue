@@ -1,82 +1,82 @@
 <template>
   <div class="mapgis-baseTable">
     <div
-      :id="toolbarId"
-      :style="{ bottom: toolbarBottom }"
-      class="mapgis-baseTable-toolbar"
-      v-if="toolbar"
+        :id="toolbarId"
+        :style="{ bottom: toolbarBottom }"
+        class="mapgis-baseTable-toolbar"
+        v-if="toolbar"
     >
       <div class="toolbar-num">
         总共{{ paginationCopy.total }}条，已选{{ selectData.length }}条
       </div>
       <a-button
-        class="toolbar-button"
-        style="right: 100px;"
-        @click="$_fullScreen"
-        >全屏</a-button
+          class="toolbar-button"
+          style="right: 100px;"
+          @click="$_fullScreen"
+      >全屏</a-button
       >
       <a-button class="toolbar-button" @click="$_fieldFilter"
-        >字段过滤</a-button
+      >字段过滤</a-button
       >
     </div>
     <div
-      :id="columnFilterId"
-      class="mapgis-baseTable-fieldFilter"
-      :style="{
+        :id="columnFilterId"
+        class="mapgis-baseTable-fieldFilter"
+        :style="{
         overflowY: plainOptions.length > 8 ? 'scroll' : 'hidden',
         top: filterTop + 'px',
         position: filterPosition
       }"
-      v-show="showFilter"
+        v-show="showFilter"
     >
       <a-row>
         <a-checkbox
-          :indeterminate="indeterminate"
-          :checked="checkAll"
-          @change="$_checkAll"
+            :indeterminate="indeterminate"
+            :checked="checkAll"
+            @change="$_checkAll"
         >
           全选
         </a-checkbox>
       </a-row>
       <a-row>
         <a-checkbox-group
-          v-model="checkedList"
-          :options="plainOptions"
-          @change="$_check"
+            v-model="checkedList"
+            :options="plainOptions"
+            @change="$_check"
         />
       </a-row>
     </div>
     <a-table
-      :id="tableId"
-      :data-source="dataSourceCopy"
-      :columns="columnsCopy"
-      :pagination="paginationCopy"
-      :scroll="scroll"
-      :row-selection="rowSelection"
-      @change="$_change"
+        :id="tableId"
+        :data-source="dataSourceCopy"
+        :columns="columnsCopy"
+        :pagination="paginationCopy"
+        :scroll="scroll"
+        :row-selection="rowSelection"
+        @change="$_change"
     >
       <div
-        v-for="(column, index) in columnsCopy"
-        :key="index"
-        :slot="column.dataIndex"
-        slot-scope="text, record, index"
+          v-for="(column, index) in columnsCopy"
+          :key="index"
+          :slot="column.dataIndex"
+          slot-scope="text, record, index"
       >
         <div
-          class="mapgis-baseTable-tableTd"
-          @click="$_onceClick(record.key, column.key, false, record)"
-          @dblclick="$_doubleClick(record.key, column.key, record)"
+            class="mapgis-baseTable-tableTd"
+            @click="$_onceClick(record.key, column.key, false, record)"
+            @dblclick="$_doubleClick(record.key, column.key, record)"
         >
           <p
-            :style="{ fontStyle: text === 'null' ? 'italic' : 'normal' }"
-            class="mapgis-baseTable-content"
-            :title="text"
-            v-if="editRowAndCol !== column.key + '_' + record.key"
+              :style="{ fontStyle: text === 'null' ? 'italic' : 'normal' }"
+              class="mapgis-baseTable-content"
+              :title="text"
+              v-if="editRowAndCol !== column.key + '_' + record.key"
           >
             {{ text }}
           </p>
           <a-input
-            v-if="editRowAndCol === column.key + '_' + record.key"
-            v-model="record[column.key]"
+              v-if="editRowAndCol === column.key + '_' + record.key"
+              v-model="record[column.key]"
           />
         </div>
       </div>
@@ -156,6 +156,7 @@ export default {
       rowSelection: {
         onChange: (selectedRowKeys, selectedRows) => {
           this.$emit("selectedChange",selectedRowKeys, selectedRows);
+          this.$emit("selectedchange",selectedRowKeys, selectedRows);
         },
         onSelect: (record, selected) => {
           this.$_select(record, selected);
@@ -180,7 +181,8 @@ export default {
       //分页高度
       pageHeight: 0,
       filterTop: 6,
-      filterPosition: "absolute"
+      filterPosition: "absolute",
+      pageSize: 10
     }
   },
   watch:{
@@ -483,6 +485,7 @@ export default {
       let containerHeight = (this.paginationCopy.pageSize + 1.5) * this.rowHeight
           + this.pageHeight;
       container.style.height = containerHeight + "px";
+      tableBody.style.height = containerHeight + "px";
       this.$_drawToolBar(containerHeight);
     },
     /*
@@ -649,6 +652,7 @@ export default {
         }
       }
       this.$emit("selectAll", this.selectData, selected);
+      this.$emit("selectall", this.selectData, selected);
     },
     /*
     * 分页或排序回调
@@ -657,12 +661,13 @@ export default {
       if(!this.pageInfo){
         if(!sorter.hasOwnProperty("columnKey")){
           this.$emit("pageChanged",pagination, sorter, currentDataSource );
+          this.$emit("pagechanged",pagination, sorter, currentDataSource );
         }else {
           this.$emit("sorted", sorter, pagination, currentDataSource );
         }
       }else {
         if(pagination.current !== this.pageInfo.current){
-          this.$emit("pageChanged",pagination, sorter, currentDataSource );
+          this.$emit("pagechanged",pagination, sorter, currentDataSource );
         }else{
           if(!sorter.hasOwnProperty("order")){
             sorter.order = "";
@@ -716,6 +721,7 @@ export default {
         this.currentRecord = record;
       }
       this.$emit("doubleClick",index-1,key,value,data,AllAttrData[index-1]);
+      this.$emit("doubleclick",index-1,key,value,data,AllAttrData[index-1]);
     },
     /*
     * 选择要显示或隐藏的列
@@ -806,8 +812,10 @@ export default {
         }else {
           delete this.scroll.x;
         }
+        this.pageSize = this.pagination.pageSize;
         let fullNum = parseInt((tHeight - this.pageHeight - toolbar.offsetHeight) / this.rowHeight);
         this.$emit("fullScreen",this.$_getPageInfo(fullNum - 2),this.sorterInfo);
+        this.$emit("fullscreen",this.$_getPageInfo(fullNum - 2),this.sorterInfo);
         this.fullScreen = true;
       }else {
         table.removeAttribute("style");
@@ -838,7 +846,8 @@ export default {
             delete this.scroll.x;
           }
         });
-        this.$emit("originScreen",this.$_getPageInfo(this.pagination.pageSize),this.sorterInfo);
+        this.$emit("originScreen",this.$_getPageInfo(this.pageSize),this.sorterInfo);
+        this.$emit("originscreen",this.$_getPageInfo(this.pageSize),this.sorterInfo);
         this.fullScreen = false;
       }
     },
