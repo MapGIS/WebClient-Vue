@@ -142,6 +142,9 @@ export default {
       if (this.update !== null && this.isAntialiasing !== null) {
         params.push("update=" + this.update);
       }
+      if (this.token) {
+        params.push(this.token.key + "=" + this.token.value);
+      }
       return params;
     },
     $_deferredMount() {
