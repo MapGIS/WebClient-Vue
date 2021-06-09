@@ -50,6 +50,12 @@ export default {
         if (!this.mapvLayer) {
           return;
         }
+        if (!this.options.cesium){
+          this.options.cesium = {
+            postRender: true,
+            postRenderFrame: 0
+          }
+        }
         this.mapvLayer.updateData(this.dataSet, this.options);
       }
     }
@@ -61,6 +67,12 @@ export default {
       this.dataset = this.initData();
       if (!this.dataset) {
         return;
+      }
+      if (!this.options.cesium){
+        this.options.cesium = {
+          postRender: true,
+          postRenderFrame: 0
+        }
       }
       return new MapvLayer(viewer, this.dataset, this.options);
     },
@@ -86,6 +98,8 @@ export default {
                   type: "Point",
                   coordinates: coordinates
                 }
+                count: 30 * Math.random(),
+                time: 100 * Math.random()
               }, feature.properties
           );
           data.push(obj);
@@ -97,6 +111,7 @@ export default {
                   coordinates: coordinates
                 },
                 count: feature.properties[this.countField] || 1,
+                time: 100 * Math.random()
               }, feature.properties
           );
           data.push(obj);
@@ -108,6 +123,7 @@ export default {
                   coordinates: coordinates
                 },
                 count: feature.properties[this.countField] || 1,
+                time: 100 * Math.random()
               }, feature.properties
           );
           data.push(obj);

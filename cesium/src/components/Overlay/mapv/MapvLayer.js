@@ -46,6 +46,13 @@ export class MapvLayer {
     this.canvas = this._creteWidgetCanvas(); //this._createCanvas();
 
     this.render = this.render.bind(this);
+    this.postRenderTime = 0;
+
+    let cesiumOpt = mapVOptions.cesium;
+    if (cesiumOpt) {
+      this.postRender = cesiumOpt.postRender || false;
+      this.postRenderFrame = cesiumOpt.postRenderFrame || 30;
+    }
 
     if (container != undefined) {
       this.container = container;
@@ -83,45 +90,42 @@ export class MapvLayer {
     this.innnerZoomStart = this.zoomStartEvent.bind(this);
     this.innnerZoomEnd = this.zoomEndEvent.bind(this);
 
+    this.postStartEvent = this.postStartEvent.bind(this);
+    this.postEndEvent = this.postEndEvent.bind(this);
+
     var handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
     //handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    handler.setInputAction(
-      this.innerMoveEnd,
-      Cesium.ScreenSpaceEventType.WHEEL
-    );
+    if (this.postRender) {
+      // this.scene.postRender.addEventListener(this.postEventHandle);
+      this.scene.camera.moveStart.addEventListener(this.postStartEvent, this);
+      this.scene.camera.moveEnd.addEventListener(this.postEndEvent, this);
+    } else {
+      handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.WHEEL);
+      handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+      handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.LEFT_UP);
+      handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
+      handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.RIGHT_UP);
 
-    handler.setInputAction(
-      this.innerMoveStart,
-      Cesium.ScreenSpaceEventType.LEFT_DOWN
-    );
-    handler.setInputAction(
-      this.innerMoveEnd,
-      Cesium.ScreenSpaceEventType.LEFT_UP
-    );
-    handler.setInputAction(
-      this.innerMoveStart,
-      Cesium.ScreenSpaceEventType.RIGHT_DOWN
-    );
-    handler.setInputAction(
-      this.innerMoveEnd,
-      Cesium.ScreenSpaceEventType.RIGHT_UP
-    );
-
-    map.scene.camera.moveEnd.addEventListener(function() {
-      //获取当前相机高度
-      self.innerMoveEnd();
-    });
+      map.scene.camera.moveEnd.addEventListener(function () {
+        //获取当前相机高度
+        self.innerMoveEnd();
+      });
+    }
   }
 
   unbindEvent() {
     var map = this.map;
+    if (this.postRender) {
+      this.scene.camera.moveStart.removeEventListener(this.postStartEvent, this);
+      this.scene.camera.moveEnd.removeEventListener(this.postEndEvent, this);
+    }
   }
 
   moveStartEvent() {
     if (this.mapvBaseLayer) {
       this.mapvBaseLayer.animatorMovestartEvent();
     }
-    this._unvisiable();
+      this._unvisiable();
   }
 
   moveEndEvent() {
@@ -137,6 +141,22 @@ export class MapvLayer {
   }
   zoomEndEvent() {
     this._unvisiable();
+  }
+  postStartEvent() {
+    if (this.mapvBaseLayer) {
+      this.mapvBaseLayer.animatorMovestartEvent();
+      this.scene.postRender.addEventListener(this._reset, this);
+    }
+    this._visiable();
+  }
+
+  postEndEvent() {
+    if (this.mapvBaseLayer) {
+      this.mapvBaseLayer.animatorMoveendEvent();
+      this.scene.postRender.removeEventListener(this._reset, this);
+    }
+    this._reset();
+    this._visiable();
   }
 
   //-----------------------------------Start Data Operation---------------------------------

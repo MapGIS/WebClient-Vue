@@ -27,7 +27,7 @@ export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTi
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 // export { default as { MapvLayer }} from "../../cesium/src/components/Overlay";
-export { default as Mapgis3dMapvLayer} from "../../cesium/src/components/Overlay/MapvLayer.vue";
+export { default as Mapgis3dMapvLayer} from "../../cesium/src/components/Overlay/Mapv3dLayer.vue";
 export { default as Mapgis3dEchartsLayer} from "../../cesium/src/components/Overlay/Echarts.vue";
 
 export { default as Mapgis3dTerrainProvider } from "../../cesium/src/components/Provider/TerrainProvider/TerrainProvider.vue";
@@ -39,3 +39,4 @@ export { default as Mapgis3dCzmlDataSource } from "../../cesium/src/components/D
 //三维空间分析
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "../../cesium/src/components/Analysis/Sightline.vue";
+export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";
