@@ -97,7 +97,7 @@ export default {
                 geometry: {
                   type: "Point",
                   coordinates: coordinates
-                }
+                },
                 count: 30 * Math.random(),
                 time: 100 * Math.random()
               }, feature.properties
