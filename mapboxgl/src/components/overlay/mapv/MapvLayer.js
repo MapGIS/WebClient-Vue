@@ -108,7 +108,8 @@ export class MapvLayer {
 
   moveStartEvent() {
     this.mapvBaseLayer.animatorMovestartEvent();
-    this._unvisiable();
+    this._reset();
+    // this._unvisiable();
   }
 
   moveEndEvent() {
@@ -118,7 +119,8 @@ export class MapvLayer {
   }
 
   zoomStartEvent() {
-    this._unvisiable();
+    this._reset();
+    // this._unvisiable();
   }
   zoomEndEvent() {
     this._unvisiable();
@@ -126,7 +128,8 @@ export class MapvLayer {
 
   rotateStartEvent() {
     this.mapvBaseLayer.animatorMovestartEvent();
-    this._unvisiable();
+    this._reset();
+    // this._unvisiable();
   }
   rotateEndEvent() {
     this.mapvBaseLayer.animatorMoveendEvent();
