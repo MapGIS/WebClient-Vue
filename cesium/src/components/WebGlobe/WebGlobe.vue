@@ -26,7 +26,10 @@ export default {
     pluginPath: {
       type: String,
     },
-    ...options,
+    height: {
+      type: Number
+    },
+    ...options
   },
 
   provide() {
@@ -49,7 +52,17 @@ export default {
       initialized: false,
     };
   },
-
+  watch: {
+    height: {
+      handler: function() {
+        //解决分屏时，cesium无限拉长的问题，要给一个固定高度
+        this.$nextTick(function () {
+          let webGlobe = window.CesiumZondy.getWebGlobe(this.vueKey);
+          webGlobe.viewer.container.style.height = this.height + "px";
+        })
+      }
+    }
+  },
   methods: {
     async loadScript() {
       await this.$_loadScript();
@@ -93,6 +106,14 @@ export default {
       const webGlobe = new Cesium.WebSceneControl(container, {
         ...this._props,
       });
+
+      //解决分屏时，cesium无限拉长的问题，要给一个固定高度
+      if(this.height){
+        this.$nextTick(function () {
+          webGlobe.viewer.container.style.height = this.height + "px";
+        })
+      }
+
       this.webGlobe = webGlobe;
       if (cameraView) {
         webGlobe.viewer.scene.camera.setView(cameraView);

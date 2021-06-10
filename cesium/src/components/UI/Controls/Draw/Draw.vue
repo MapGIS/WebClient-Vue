@@ -48,27 +48,16 @@ export default {
   watch: {},
   methods: {
     mount () {
-      const { webGlobe, vueIndex, vueKey } = this;
-      const { viewer } = webGlobe;
-      //构造几何绘制控制对象
-      let entityController = new CesiumZondy.Manager.EntityController({
-        viewer: viewer
-      });
-
-      //将Draw组件放入DrawToolManager
-      CesiumZondy.DrawToolManager.addSource(vueKey, vueIndex, undefined, {
-        entityController
-      });
-
-      //如果组件加载完毕，开放插槽
-      let find = CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
-      if (find) {
-        this.initial = true;
-      }
-
-      let webGlobeDraw = this.getWebGlobe()
-      //抛出load事件
-      this.$emit("load", this, webGlobeDraw);
+      let vm = this;
+      //轮询，知道webGlobe有值，才会显示slot，这是为了保证draw组件不在webscene组件里面也能正常使用
+      let interval = setInterval(function () {
+        let webGlobe = vm.getWebGlobe();
+        if(webGlobe){
+          clearInterval(interval);
+          vm.initial = true;
+          vm.$emit("load",vm);
+        }
+      },50);
     },
 
     unmount () {
@@ -124,9 +113,10 @@ export default {
     enableDrawPoint () {
       let webGlobeDraw = this.getWebGlobe();
       const vm = this;
-      let { vueKey, vueIndex, CesiumZondy } = this;
-      let find = CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
-      let { entityController } = find.options;
+      let { CesiumZondy } = this;
+      let entityController = new CesiumZondy.Manager.EntityController({
+        viewer: webGlobeDraw.viewer
+      });
       let drawElement = this.getDrawElement(webGlobeDraw);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
