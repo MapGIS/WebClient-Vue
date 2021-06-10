@@ -63,7 +63,8 @@ const Template = (args, { argTypes }) => ({
         pageIndex: pageIndex,
         pagination: pagination,
         orderBy: orderBy,
-        isAsc: isAsc
+        isAsc: isAsc,
+        IncludeGeometry: false
       })
       //zondy格式
       vm.service.$_queryBySQL(sql,function (result) {

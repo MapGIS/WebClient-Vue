@@ -1,14 +1,14 @@
 export function initManager() {
   window.CesiumZondy = window.CesiumZondy || {};
   window.CesiumZondy.TerrainManager = window.CesiumZondy.TerrainManager || {
-    default: [],
+    default: []
   };
   window.CesiumZondy.LabelManager = window.CesiumZondy.LabelManager || {
-    default: [],
+    default: []
   };
 
   window.CesiumZondy.M3DFileManager = window.CesiumZondy.M3DFileManager || {
-    default: [],
+    default: []
   };
 
   window.CesiumZondy.GlobesManager =
@@ -50,6 +50,17 @@ export function initManager() {
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
   window.CesiumZondy.RasterManager =
     window.CesiumZondy.RasterManager || new RasterManager();
+
+  //在window.CesiumZondy下添加取得WebGlobe对象的方法
+  window.CesiumZondy.getWebGlobe = function(vueKey) {
+    if (!vueKey) {
+      vueKey = "default";
+    }
+    let GlobesManager = window.CesiumZondy.GlobesManager,
+      webGlobeObj;
+    webGlobeObj = GlobesManager[vueKey][0].source;
+    return webGlobeObj;
+  };
 }
 
 export class BaseManager {
@@ -68,7 +79,7 @@ export class BaseManager {
     this[vueKey].push({
       key: vueIndex,
       source: source,
-      options: options,
+      options: options
     });
   }
 
@@ -107,7 +118,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index,
+        index: index
       };
     }
     return findSource;
