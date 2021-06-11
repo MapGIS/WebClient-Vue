@@ -106,6 +106,9 @@ export default {
       if (this.layers) {
         params.push("layers=" + this.layers);
       }
+      if (this.token) {
+        params.push(this.token.key + "=" + this.token.value);
+      }
       return params;
     },
 

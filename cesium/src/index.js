@@ -4,6 +4,7 @@ import WebGlobe from "./components/WebGlobe/WebGlobe.vue";
 import StateControl from "./components/UI/Controls/State/StateControl.vue";
 import Link from "./components/UI/Controls/Link/Link.vue";
 import BaseDraw from "./components/UI/Controls/Draw/Draw";
+import Measure from "./components/UI/Controls/Measure/Measure";
 
 // 影像
 import ImageryLayer from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -34,6 +35,7 @@ export const CesiumWebGlobe = WebGlobe;
 export const CesiumStateControl = StateControl;
 export const CesiumLink = Link;
 export const CesiumBaseDraw = BaseDraw;
+export const CesiumMeasure = Measure;
 
 export const CesiumImageryLayer = ImageryLayer;
 export const CesiumRasterLayer = RasterLayer;
@@ -61,6 +63,7 @@ const Components = [
   CesiumStateControl,
   CesiumLink,
   CesiumBaseDraw,
+  CesiumMeasure,
 
   CesiumImageryLayer,
   CesiumRasterLayer,
