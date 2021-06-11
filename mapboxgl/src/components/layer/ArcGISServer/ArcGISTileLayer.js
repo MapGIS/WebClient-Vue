@@ -32,7 +32,7 @@ export default {
     $_deferredMount() {
       this.$_init();
 
-      if(this.token){
+      if (this.token) {
         this._url += "/" + this.token.value;
       }
 

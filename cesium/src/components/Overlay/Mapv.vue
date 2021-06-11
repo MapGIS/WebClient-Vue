@@ -30,9 +30,7 @@ export default {
     geojson: {
       deep: true,
       handler() {
-        console.log(this.geojson)
         const data = this.initData(this.geojson)
-        console.log(data)
         if(!data&&this.mapvLayer){
           this.mapvLayer.destroy()
           this.mapvLayer = undefined

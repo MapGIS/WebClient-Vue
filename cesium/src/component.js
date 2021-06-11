@@ -45,3 +45,5 @@ export { default as Mapgis3dCzmlDataSource } from "./components/DataSource/Czml/
 export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 // export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
+
+export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";

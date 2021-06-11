@@ -31,8 +31,8 @@ export { default as Mapgis3dIgsM3d } from "../components/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "../components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "../components/UI/Popup/Popup.vue";
-export { default as Mapgis3dMapvLayer } from "../components/Overlay/Mapv3dLayer.vue";
-export { default as Mapgis3dEchartsLayer } from "../components/Overlay/Echarts.vue";
+export { default as Mapgis3dMapvLayer} from "../components/Overlay/Mapv3dLayer.vue";
+export { default as Mapgis3dEchartsLayer} from "../components/Overlay/Echarts.vue";
 
 export { default as Mapgis3dIGSTerrainProvider } from "../components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "../components/Provider/TerrainProvider/TerrainProvider.vue";

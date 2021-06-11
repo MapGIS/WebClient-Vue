@@ -31,13 +31,19 @@ export default {
   },
   created() {
     //创建tileMatrixSet监听器
-    let watchArr = ["wmtsLayer","tileMatrixSet","version","wmtsStyle","format"];
-    for (let i = 0;i < watchArr.length; i++){
+    let watchArr = [
+      "wmtsLayer",
+      "tileMatrixSet",
+      "version",
+      "wmtsStyle",
+      "format"
+    ];
+    for (let i = 0; i < watchArr.length; i++) {
       this.$watch(watchArr[i], function() {
-        if(this.url){
+        if (this.url) {
           //REST方式，目前还是采用KVP的格式
-          this.$_initUrl(this[watchArr[i]],watchArr[i]);
-        }else  if (this.baseUrl){
+          this.$_initUrl(this[watchArr[i]], watchArr[i]);
+        } else if (this.baseUrl) {
           if (!this.tileMatrixSet || this.tileMatrixSet.length === 0) {
             return;
           }
@@ -52,7 +58,7 @@ export default {
   },
   methods: {
     $_init() {
-      let { url, wmtsLayer, tileMatrixSet,baseUrl,_url } = this;
+      let { url, wmtsLayer, tileMatrixSet, baseUrl, _url } = this;
       if (url) {
         //REST方式，目前还是采用KVP的格式
         this._url = url;
@@ -64,25 +70,28 @@ export default {
         this.$_initBaseUrl(wmtsLayer, tileMatrixSet);
       }
     },
-    $_initUrl(propValue,propName){
+    $_initUrl(propValue, propName) {
       let propNameLowerCase = propName.toLowerCase();
-      if(propName === "wmtsStyle"){
+      if (propName === "wmtsStyle") {
         propNameLowerCase = "style";
-      }else if(propName === "wmtsLayer"){
-        propNameLowerCase = "layer"
+      } else if (propName === "wmtsLayer") {
+        propNameLowerCase = "layer";
       }
-      let urlStr = this.url,urlLowerCase = this.url.toLowerCase();
+      let urlStr = this.url,
+        urlLowerCase = this.url.toLowerCase();
       let startIndex = urlLowerCase.indexOf(propNameLowerCase);
-      if(startIndex > -1){
-        let endIndex = urlLowerCase.indexOf("&",startIndex);
-        this.url = urlStr.substr(0,startIndex + propNameLowerCase.length + 1) + this[propName];
-        if(endIndex > 0){
-          this.url += urlStr.substr(endIndex,urlStr.length);
+      if (startIndex > -1) {
+        let endIndex = urlLowerCase.indexOf("&", startIndex);
+        this.url =
+          urlStr.substr(0, startIndex + propNameLowerCase.length + 1) +
+          this[propName];
+        if (endIndex > 0) {
+          this.url += urlStr.substr(endIndex, urlStr.length);
         }
         this._url = this.url;
       }
     },
-    $_initBaseUrl(){
+    $_initBaseUrl() {
       let _baseUrl = this.baseUrl;
       if (this.baseUrl) {
         if (this.baseUrl.indexOf("?") > -1) {
@@ -99,10 +108,10 @@ export default {
       }
       const partUrl = this.$_initAllRequestParams().join("&");
       this._url =
-          encodeURI(_baseUrl) +
-          "&" +
-          partUrl +
-          "&tileMatrix={z}&tileRow={y}&tileCol={x}";
+        encodeURI(_baseUrl) +
+        "&" +
+        partUrl +
+        "&tileMatrix={z}&tileRow={y}&tileCol={x}";
     },
     $_initAllRequestParams() {
       let params = [];
