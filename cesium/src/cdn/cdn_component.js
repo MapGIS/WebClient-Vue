@@ -4,6 +4,7 @@ export { default as MapgisWebScene } from "../components/WebGlobe/WebGlobe.vue";
 export { default as Mapgis3dStatebar } from "../components/UI/Controls/State/StateControl.vue";
 export { default as Mapgis3dLink } from "../components/UI/Controls/Link/Link.vue";
 export { default as Mapgis3dDraw } from "../components/UI/Controls/Draw/Draw";
+export { default as Mapgis3dMeasure } from "../components/UI/Controls/Measure/Measure";
 export { default as Mapgis3dCompare } from "../components/UI/Controls/Compare/cdn/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "../components/UI/Controls/Legend/Legend.vue";
 

@@ -4,6 +4,7 @@ export { default as MapgisWebScene } from "../../cesium/src/components/WebGlobe/
 export { default as Mapgis3dState } from "../../cesium/src/components/UI/Controls/State/StateControl.vue";
 export { default as Mapgis3dLink } from "../../cesium/src/components/UI/Controls/Link/Link.vue";
 export { default as Mapgis3dDraw } from "../../cesium/src/components/UI/Controls/Draw/Draw";
+export { default as Mapgis3dMeasure } from "../../cesium/src/components/UI/Controls/Measure/Measure";
 export { default as Mapgis3dCompare } from "../../cesium/src/components/UI/Controls/Compare/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "../../cesium/src/components/UI/Controls/Legend/Legend.vue";
 
@@ -39,4 +40,5 @@ export { default as Mapgis3dCzmlDataSource } from "../../cesium/src/components/D
 //三维空间分析
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "../../cesium/src/components/Analysis/Sightline.vue";
+// export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";
 export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";

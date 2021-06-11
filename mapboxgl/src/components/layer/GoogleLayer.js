@@ -30,6 +30,11 @@ export default {
     },
     $_deferredMount() {
       this.$_init();
+
+      if (this.token) {
+        this._url += "&" + this.token.key + "=" + this.token.value;
+      }
+
       let source = {
         type: "raster",
         tiles: [this._url],

@@ -1,108 +1,101 @@
 <template>
   <div>
-    <slot v-if="measure"></slot>
-    <!-- slot for measureTool -->
-    <slot name="measureTool" />
-    <!-- slot for measureMarker -->
-    <slot name="measureMarker" />
+    <slot v-if="initial"></slot>
   </div>
 </template>
 
 <style></style>
 
 <script>
-import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
-import * as turf from "@turf/turf";
-
-let MapboxDraw = require("@mapbox/mapbox-gl-draw");
-
-import measureMixin from "./measureMixin";
-import controlMixin from "../withControlEvents";
-
-const measureEvents = {
-  drawCreate: "draw.create"
-  /*drawDelete: "draw.delete",
-   drawUpdate: "draw.update" */
-};
-
-const measureModes = {
-  measureLength: "measure-length",
-  measureArea: "measure-area"
-};
-
-const measureEvent = {
-  measureResult: "measureResult"
-};
+import ServiceLayer from "../ServiceLayer";
 
 export default {
-  name: "Measure",
-  mixins: [measureMixin, controlMixin],
-
-  provide () {
-    const self = this;
-    return {
-      get measure () {
-        // 提供给子组件popup或者插槽
-        return self.measure;
-      }
-    };
-  },
-
+  name: "mapgis-3d-measure",
+  mixins: [ServiceLayer],
   props: {
-    measureMode: {
-      type: String,
-      require: true
+    styles:{
+      type: Object,
+      default(){
+        return {
+          lineColor: "black"
+        }
+      }
     }
   },
-
   data () {
     return {
-      measure: undefined
+      measure: undefined,
+      initial: false,
+      measureStyles: {},
+      waitManagerName: "GlobesManager"
     };
   },
-
-  watch: {
-    measureMode () {
-      this.measure.deleteAll();
-      this.measure.trash();
+  watch:{
+    styles: {
+      handler: function() {
+        this.initStyles();
+      },
+      deep: true
     }
   },
-
   mounted () {
-    let draweroptions = {
-      displayControlsDefault: true,
-      defaultMode: "simple_select",
-      controls: {
-        point: false,
-        line_string: false,
-        polygon: false,
-        trash: false,
-        combine_features: false,
-        uncombine_features: false
-      }
-    };
-
-    this.measure = new MapboxDraw(draweroptions);
-    // const eventNames = Object.keys(measureEvents);
+    let vm = this;
+    this.$_init(function () {
+      vm.initStyles();
+      vm.initial = true;
+      vm.$emit("load",vm);
+    })
   },
-
+  destroyed() {
+    this.deleteMeasure();
+    vm.$emit("unload");
+  },
   methods: {
-    enableMeasure () {
-      this.$_addDrawControl(this.measure);
-      this.$_emitEvent("added", { measure: this.measure });
-      const eventNames = Object.keys(measureEvents);
-      this.$_unbindDrawEvents();
-      // this.$_unbindSelfEvents(eventNames);
-      this.$_bindSelfEvents(eventNames);
+    initStyles(){
+      this.measureStyles.lineColor = Cesium.Color.fromCssColorString(this.styles.lineColor,this.measureStyles.lineColor);
     },
+    measureCallBack(result){
+      if(result instanceof Array){
+        for (let i = 0; i < result.length; i++) {
+          result[i] = result[i] / 1000;
+        }
+      }
+      this.$emit("measured",result);
+    },
+    enableMeasureLength(){
+      this.$_enableMeasure("MeasureLengthTool");
 
-    $_bindSelfEvents (events) {
-      if (events.length === 0) return;
-      this.$_bindDrawEvents(
-        measureEvents.drawCreate,
-        this._updateLengthOrArea.bind(this)
-      );
     },
+    enableMeasureArea(){
+      this.$_enableMeasure("MeasureAreaTool");
+    },
+    enableMeasureTriangle(){
+      this.$_enableMeasure("TriangulationTool");
+    },
+    enableMeasureSlope(){
+      this.$_enableMeasure("MeasureSlopeTool");
+    },
+    $_enableMeasure(MeasureName){
+      const { vueKey,vueIndex } = this;
+      let webGlobe = this.$_getObject(this.waitManagerName,this.deleteMeasure);
+      let measure = new Cesium[MeasureName](webGlobe.viewer,{
+        lineColor: this.measureStyles.lineColor,
+        callBack: this.measureCallBack
+      });
+      window.CesiumZondy.MeasureToolManager.addSource(
+          vueKey,
+          vueIndex,
+          measure
+      );
+      measure.startTool();
+    },
+    deleteMeasure(){
+      this.$_deleteManger("MeasureToolManager",function (manager) {
+        if(manager.source){
+          manager.source.stopTool();
+        }
+      });
+    }
   }
 };
 </script>

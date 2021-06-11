@@ -34,6 +34,8 @@ export function initManager() {
     window.CesiumZondy.AdvancedAnalysisManager || new AdvancedAnalysisManager();
   window.CesiumZondy.DrawToolManager =
     window.CesiumZondy.DrawToolManager || new DrawToolManager();
+  window.CesiumZondy.MeasureToolManager =
+    window.CesiumZondy.MeasureToolManager || new MeasureToolManager();
   window.CesiumZondy.EventHandlerManager =
     window.CesiumZondy.EventHandlerManager || new EventHandlerManager();
   window.CesiumZondy.IgsTerrainManager =
@@ -140,6 +142,7 @@ export class OGCWMSManager extends BaseManager {}
 export class VectorTileManager extends BaseManager {}
 export class AdvancedAnalysisManager extends BaseManager {}
 export class DrawToolManager extends BaseManager {}
+export class MeasureToolManager extends BaseManager {}
 export class EventHandlerManager extends BaseManager {}
 export class IgsTerrainManager extends BaseManager {}
 export class M3DIgsManager extends BaseManager {}

@@ -1,6 +1,6 @@
 {
-  "name": "storybook",
-  "version": "0.1.0",
+  "name": "@mapgis/webclient-vue",
+  "version": "10.5.4",
   "private": true,
   "scripts": {
     "build-all": "npm run build-storybook && cd cesium && npm run docs:build && npm run build-cdn && cd ../mapboxgl && npm run docs:build && npm run build-cdn",
@@ -12,6 +12,8 @@
     "build-mapboxgl-docs": "cd mapboxgl && npm run docs:build",
     "build-mapboxgl-umd": "cd mapboxgl && npm run build",
     "build-mapboxgl-cdn": "cd mapboxgl && npm run build-cdn",
+    "build-ui-umd": "cd ui && npm run build",
+    "build-ui-cdn": "cd ui && npm run build-cdn",
     "build-storybook": "build-storybook -o storybook",
     "storybook": "start-storybook -p 6006"
   },
@@ -24,7 +26,7 @@
     "@mapgis/webclient-es6-service": "^1.0.3",
     "@mapgis/webclient-store": "^1.0.14",
     "@turf/turf": "^6.3.0",
-    "ant-design-vue": "^1.7.3",
+    "ant-design-vue": "^1.7.5",
     "core-js": "^3.6.5",
     "echarts": "^5.0.2",
     "eslint-plugin-prettier": "^3.3.1",

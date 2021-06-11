@@ -1,10 +1,11 @@
 <template>
-  <span/>
+  <span />
 </template>
 <script>
-import {DataSet,canvasClear} from "mapv";
-import {MapvLayer} from "./mapv/MapvLayer";
-import {VFeature} from "../../../../mapboxgl/src/components/util";
+import { DataSet, canvasClear } from "mapv";
+import { MapvLayer } from "./mapv/MapvLayer";
+import { MRFS } from "@mapgis/webclient-es6-service";
+const { VFeature } = MRFS;
 
 export default {
   name: "mapgis-3d-mapv-layer",
@@ -50,11 +51,11 @@ export default {
         if (!this.mapvLayer) {
           return;
         }
-        if (!this.options.cesium){
+        if (!this.options.cesium) {
           this.options.cesium = {
             postRender: true,
             postRenderFrame: 0
-          }
+          };
         }
         this.mapvLayer.updateData(this.dataSet, this.options);
       }
@@ -62,26 +63,26 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const {webGlobe} = this;
+      const { webGlobe } = this;
       const viewer = webGlobe.viewer;
       this.dataset = this.initData();
       if (!this.dataset) {
         return;
       }
-      if (!this.options.cesium){
+      if (!this.options.cesium) {
         this.options.cesium = {
           postRender: true,
           postRenderFrame: 0
-        }
+        };
       }
       return new MapvLayer(viewer, this.dataset, this.options);
     },
     initData(geojson) {
       let data = [];
       geojson = geojson || this.geojson;
-      if (!(geojson.hasOwnProperty("features"))){
+      if (!geojson.hasOwnProperty("features")) {
         geojson = this.$_convertData(geojson);
-      };
+      }
       // 构造数据
       var features = geojson.features;
       if (!features) {
@@ -93,38 +94,41 @@ export default {
         const coordinates = feature.geometry.coordinates;
         if (fType === "Point") {
           let obj = Object.assign(
-              {
-                geometry: {
-                  type: "Point",
-                  coordinates: coordinates
-                }
-                count: 30 * Math.random(),
-                time: 100 * Math.random()
-              }, feature.properties
+            {
+              geometry: {
+                type: "Point",
+                coordinates: coordinates
+              },
+              count: 30 * Math.random(),
+              time: 100 * Math.random()
+            },
+            feature.properties
           );
           data.push(obj);
         } else if (fType === "LineString") {
           let obj = Object.assign(
-              {
-                geometry: {
-                  type: "LineString",
-                  coordinates: coordinates
-                },
-                count: feature.properties[this.countField] || 1,
-                time: 100 * Math.random()
-              }, feature.properties
+            {
+              geometry: {
+                type: "LineString",
+                coordinates: coordinates
+              },
+              count: feature.properties[this.countField] || 1,
+              time: 100 * Math.random()
+            },
+            feature.properties
           );
           data.push(obj);
         } else if (fType === "Polygon") {
           let obj = Object.assign(
-              {
-                geometry: {
-                  type: "Polygon",
-                  coordinates: coordinates
-                },
-                count: feature.properties[this.countField] || 1,
-                time: 100 * Math.random()
-              }, feature.properties
+            {
+              geometry: {
+                type: "Polygon",
+                coordinates: coordinates
+              },
+              count: feature.properties[this.countField] || 1,
+              time: 100 * Math.random()
+            },
+            feature.properties
           );
           data.push(obj);
         }
@@ -132,7 +136,7 @@ export default {
       var dataSet = new DataSet(data);
       return dataSet;
     },
-    $_convertData(geojson){
+    $_convertData(geojson) {
       let data = VFeature.resultToGeojson(geojson);
       return data;
     },
@@ -146,7 +150,7 @@ export default {
     }
   },
   beforeDestroy() {
-    let {mapvLayer} = this;
+    let { mapvLayer } = this;
     if (mapvLayer) {
       // canvasClear(this.mapvLayer.mapVOptions.context)
       mapvLayer.remove();
