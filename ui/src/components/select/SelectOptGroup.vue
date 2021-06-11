@@ -9,7 +9,7 @@ export const selectOptGroupTypes = {
 };
 
 export default {
-  name: "MapgisUiSelectOptGroup",
+  name: "mapgis-ui-select-opt-group",
   wrapperUI: Select.OptGroup,
   isSelectOptGroup: true,
   mixins: [AntdMixin],

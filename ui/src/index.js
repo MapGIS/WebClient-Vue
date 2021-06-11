@@ -1,9 +1,11 @@
-import "ant-design-vue/dist/antd.css";
+// import "ant-design-vue/dist/antd.css";
 import antDirective from "ant-design-vue/es/_util/antDirective";
 
 import * as UIComponents from "./component";
 
 const install = function(Vue, options) {
+  // require("./style.scss");
+  require("./util/style/theme/antd.less");
   require("./style.scss");
   Vue.use(antDirective);
   for (let name in UIComponents) {

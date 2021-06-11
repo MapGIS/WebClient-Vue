@@ -2,7 +2,8 @@
   "name": "@mapgis/webclient-vue-ui",
   "version": "10.5.4",
   "description": "中地数码webclient-vue-ui",
-  "main": "dist-libs/webclient-vue-ui.umd.min.js",
+  "main1": "dist-libs/webclient-vue-ui.umd.min.js",
+  "module": "src/index.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/index.js",
     "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/cdn/index.js"
@@ -19,8 +20,8 @@
     ]
   },
   "dependencies": {
-    "ant-design-vue": "^1.7.5",
-    "sass-loader": "10.1.1"
+    "@ant-design/icons": "2.1.1",
+    "ant-design-vue": "^1.7.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
@@ -33,10 +34,15 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-vue": "^6.1.2",
     "husky": "^1.2.0",
+    "less": "3.12.2",
+    "less-loader": "7.0.2",
     "lint-staged": "^8.1.0",
     "node-sass": "^4.11.0",
+    "sass-loader": "10.1.1",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.6"
+    "vue-template-compiler": "^2.6.6",
+    "webpack-bundle-analyzer": "^4.4.2"
   },
   "keywords": [
     "vue",

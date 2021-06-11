@@ -11,7 +11,7 @@ export const selectOptionTypes = {
 };
 
 export default {
-  name: "MapgisUiSelectOption",
+  name: "mapgis-ui-select-option",
   wrapperUI: Select.Option,
   isSelectOption: true,
   mixins: [AntdMixin],

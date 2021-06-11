@@ -1,7 +1,33 @@
+const path = require("path");
+const { IgnorePlugin } = require("webpack");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+
 module.exports = {
   productionSourceMap: false,
   outputDir: "dist-libs",
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          modifyVars: {},
+          javascriptEnabled: true
+        }
+      }
+    }
+  },
   configureWebpack: {
+    plugins: [
+      // new BundleAnalyzerPlugin(),
+      // new IgnorePlugin(/^\.\/locale$/, /moment$/)
+    ],
+    resolve: {
+      /* alias: {
+        "@ant-design/icons/lib/dist$": path.resolve(
+          "./src/components/icons/index.js"
+        )
+      } */
+    },
     externals: {
       "mapbox-gl": {
         commonjs: "mapbox-gl",

@@ -11,7 +11,7 @@ export const selectTypes = {
 };
 
 export default {
-  name: "MapgisUiSelect",
+  name: "mapgis-ui-select",
   wrapperUI: Select,
   mixins: [AntdMixin],
   inheritAttrs: false,

@@ -10,7 +10,7 @@ export const emptyProps = {
 
 export default {
   name: "MapgisUiEmpty",
-  defaultComponent: Empty,
+  wrapperUI: Empty,
   mixins: [AntdMixin],
   inheritAttrs: false,
   props: emptyProps,
