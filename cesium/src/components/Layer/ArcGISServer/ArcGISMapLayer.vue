@@ -65,7 +65,7 @@ export default {
     initUrl() {
       if (this.baseUrl) {
         let url = this.baseUrl;
-        const _url = url + "/export?";
+        const _url = url + "/export";
         return _url;
       }
     },

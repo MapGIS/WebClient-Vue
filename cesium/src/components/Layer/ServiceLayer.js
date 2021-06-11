@@ -35,6 +35,9 @@ export default {
       }
     },
     id: { type: String, default: "" },
+    token: {
+      type: Object
+    },
     options: {
       type: Object,
       default: () => {
@@ -159,6 +162,10 @@ export default {
 
       //组合参数
       options = { ...this.options, ...opt, ...addOpt };
+
+      if (this.token) {
+        options.baseUrl += "?" + this.token.key + "=" + this.token.value;
+      }
 
       //设置Headers
       let checkHeaders = this.$_checkValue(this.options, "headers", ""),

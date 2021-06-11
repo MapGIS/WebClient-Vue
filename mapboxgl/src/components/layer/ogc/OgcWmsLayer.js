@@ -126,7 +126,7 @@ export default {
         params.push("crs=" + this.crs);
       }
       if (this.token) {
-        params.push("token=" + this.token);
+        params.push(this.token.key + "=" + this.token.value);
       }
       params.push("transparent=true");
       return params;
