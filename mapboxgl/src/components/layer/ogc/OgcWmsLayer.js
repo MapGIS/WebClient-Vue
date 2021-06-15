@@ -33,10 +33,6 @@ export default {
       type: String,
       default: "image/png"
     },
-    token: {
-      type: String,
-      default: null
-    },
     height: {
       type: Number,
       default: 512

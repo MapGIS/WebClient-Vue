@@ -54,7 +54,7 @@ const componentProps = {
     default: false
   },
   token: {
-    type: String
+    type: Object
   }
 };
 
