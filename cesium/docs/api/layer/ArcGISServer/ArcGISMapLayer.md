@@ -9,7 +9,7 @@
 - **非侦听属性**
 - **描述:** arcgis 地图请求的基地址路径。
 
-### `srs`
+### `tilingScheme`
 
 - **类型:** `String`
 - **可选**
@@ -117,7 +117,7 @@ export default {
         tileWidth: 216,
         tileHeight: 216
       },
-      srs: "EPSG:4326"
+      tilingScheme: "EPSG:4326"
     };
   },
   methods: {

@@ -40,5 +40,4 @@ export { default as Mapgis3dCzmlDataSource } from "../../cesium/src/components/D
 //三维空间分析
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "../../cesium/src/components/Analysis/Sightline.vue";
-// export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";
-// export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";
+export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";
