@@ -117,7 +117,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene style="height:60vh"  :cameraView = "cameraView">
-      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs" />
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle"/>
       <mapgis-3d-echarts-layer :options.sync="option"></mapgis-3d-echarts-layer>
       </mapgis-web-scene>`
 });
@@ -131,7 +131,6 @@ mapEcharts.args = {
         opacity: 1,
         zIndex: 2
     },
-    srs: "EPSG:4326",
     cameraView:{
         destination: {
             x: -2409221.7854387695,
