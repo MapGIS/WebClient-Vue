@@ -12,7 +12,7 @@ export default {
     wmtsLayer: {type: String, required: true},
     tileMatrixSet: {type: String, required: true},
     wmtsStyle: {type: String, default: "default"},
-    srs: {type: String, required: true},
+    tilingScheme: {type: String, required: true},
     format: {type: String, default: 'image/png'},
   },
   data() {
@@ -62,7 +62,7 @@ export default {
         this.mount();
       }
     },
-    srs: {
+    tilingScheme: {
       handler: function () {
         this.unmount();
         this.mount();
@@ -83,14 +83,14 @@ export default {
       //设置wmts服务的style
       options.style = this.wmtsStyle;
 
-      //如果srs存在，则生成tilingScheme对象
-      if (this.srs) {
-        options.tilingScheme = this.$_setTilingScheme(this.srs);
+      //如果tilingScheme存在，则生成tilingScheme对象
+      if (this.tilingScheme) {
+        options.tilingScheme = this.$_setTilingScheme(this.tilingScheme);
       }
 
       //处理天地图的wmts
       let checkTileMatrixLabels = this.$_checkValue(this.options, "tileMatrixLabels", "");
-      if (checkTileMatrixLabels === "null" && this.srs === "EPSG:4326") {
+      if (checkTileMatrixLabels === "null" && this.tilingScheme === "EPSG:4326") {
         if(this.baseUrl.indexOf("tianditu") > -1){
           options.tileMatrixLabels = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
         }

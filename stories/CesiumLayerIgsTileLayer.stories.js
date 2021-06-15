@@ -11,7 +11,7 @@ export default {
       opacity: 1,
       zIndex: 2,
     },
-    srs: "EPSG:4326",
+    tilingScheme: "EPSG:4326",
   },
 };
 
@@ -43,5 +43,5 @@ Tile.args = {
     opacity: 1,
     zIndex: 2,
   },
-  srs: "EPSG:4326",
+  tilingScheme: "EPSG:4326",
 };

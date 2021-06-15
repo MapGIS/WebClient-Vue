@@ -8,7 +8,7 @@ export default {
     baseUrl:"http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
     wmtsLayer: "beijing",
     tileMatrixSet : "EPSG:4326_北京市_028mm_GB",
-    srs : "EPSG:4326",
+    tilingScheme : "EPSG:4326",
     layerStyle: {
       visible: true,
       opacity: 1,
@@ -38,7 +38,7 @@ OGCWMTS.args = {
   baseUrl:"http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
   wmtsLayer: "beijing",
   tileMatrixSet : "EPSG:4326_北京市_028mm_GB",
-  srs : "EPSG:4326",
+  tilingScheme : "EPSG:4326",
   layerStyle: {
     visible: true,
     opacity: 1,
