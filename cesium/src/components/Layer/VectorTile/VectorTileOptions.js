@@ -57,7 +57,7 @@ export default {
    * @type Cesium.TilingScheme
    * @description 矢量瓦片瓦片切分规则：经纬度还是墨卡托
    */
-  tilingScheme: { type: Object },
+  tilingScheme: { type: [String, Object] },
 
   /**
    * @description 第三方需要的token，比如mapbox

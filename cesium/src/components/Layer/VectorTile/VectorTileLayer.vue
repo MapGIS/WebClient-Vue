@@ -3,7 +3,7 @@ import VectorTileOptions from "./VectorTileOptions";
 export default {
   name: "mapgis-3d-vectortile-layer",
   props: { ...VectorTileOptions },
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "webGlobe", "CesiumZondy"],
   created() {},
   mounted() {
     this.mount();
@@ -14,12 +14,39 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { $props, webGlobe } = this;
+      const { $props, webGlobe, CesiumZondy } = this;
+      const { tilingScheme } = $props;
       const viewer = webGlobe.viewer;
-      return new window.CesiumZondy.Overlayer.VectorTileLayer(viewer, $props);
+      let tileScheme;
+      
+      if (typeof tilingScheme === 'string') {
+        tileScheme = this.checkTiling(tilingScheme);
+      } else {
+        tileScheme = tilingScheme;
+      }
+
+      const opt = {...$props, tilingScheme: tileScheme}
+      return new CesiumZondy.Overlayer.VectorTileLayer(viewer, opt);
+    },
+    checkTiling(tileMatrixSetName) {
+      let tilingScheme;
+      if (
+        tileMatrixSetName === "EPSG:4326" ||
+        tileMatrixSetName === "EPSG:4490" ||
+        tileMatrixSetName === "EPSG:4610" ||
+        tileMatrixSetName === "EPSG:4214"
+      ) {
+        tilingScheme = new Cesium.GeographicTilingScheme();
+      } else if (tileMatrixSetName === "EPSG:3857") {
+        tilingScheme = new Cesium.WebMercatorTilingScheme();
+      } else {
+        tilingScheme = new Cesium.GeographicTilingScheme();
+      }
+      return tilingScheme;
     },
     watchProp() {
       const {
+        CesiumZondy,
         webGlobe,
         vueKey,
         vueIndex,
@@ -28,7 +55,7 @@ export default {
         vectortilejson,
       } = this;
       const viewer = webGlobe.viewer;
-      let find = window.CesiumZondy.VectorTileManager.findSource(
+      let find = CesiumZondy.VectorTileManager.findSource(
         vueKey,
         vueIndex
       );
@@ -66,7 +93,7 @@ export default {
       this.$vectortile.updateStyle(style);
     },
     mount() {
-      const { webGlobe, vueIndex, vueKey } = this;
+      const { webGlobe, vueIndex, vueKey, CesiumZondy } = this;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
@@ -76,7 +103,7 @@ export default {
       this.$vectortile = vectortile;
 
       if (vueKey && vueIndex) {
-        window.CesiumZondy.VectorTileManager.addSource(
+        CesiumZondy.VectorTileManager.addSource(
           vueKey,
           vueIndex,
           vectortile
@@ -84,16 +111,16 @@ export default {
       }
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      const { webGlobe, vueKey, vueIndex, CesiumZondy } = this;
       const viewer = webGlobe.viewer;
-      let find = window.CesiumZondy.VectorTileManager.findSource(
+      let find = CesiumZondy.VectorTileManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         !viewer.isDestroyed() && find.source.destroy();
       }
-      window.CesiumZondy.VectorTileManager.deleteSource(vueKey, vueIndex);
+      CesiumZondy.VectorTileManager.deleteSource(vueKey, vueIndex);
     },
   },
   render(createElement) {
