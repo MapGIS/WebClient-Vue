@@ -26,6 +26,9 @@ export default {
       }
     }
   },
+  updated() {
+    this.update();
+  },
   mounted() {
     this.update();
   },
