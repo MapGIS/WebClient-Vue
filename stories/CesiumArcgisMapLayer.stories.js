@@ -25,5 +25,5 @@ exportMap.args = {
         tileWidth:256,
         tileHeight:256,
     },
-    tilingScheme:"EPSG:4326"
+    srs:"EPSG:4326"
 };

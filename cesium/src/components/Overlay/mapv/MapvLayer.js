@@ -247,7 +247,7 @@ export class MapvLayer {
   }
 
   _creteWidgetCanvas() {
-    console.log("devicePixelRatio", this.devicePixelRatio);
+    // console.log("devicePixelRatio", this.devicePixelRatio);
     var canvas = document.createElement("canvas");
 
     canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
