@@ -130,6 +130,16 @@ export class BaseManager {
     vueKey = vueKey ? vueKey : this.vueKey;
     return this[vueKey];
   }
+
+  flatAllSource() {
+    let flat = [];
+    Object.keys(this).forEach(k => {
+      if (k !== 'vueKey') {
+        flat = flat.concat(this[k]);
+      }
+    });
+    return flat;
+  }
 }
 
 export class RasterManager extends BaseManager {}

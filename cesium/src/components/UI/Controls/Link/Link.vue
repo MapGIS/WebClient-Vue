@@ -36,15 +36,17 @@ export default {
   methods: {
     getInstanceOptions() {
       let instanceOptions;
-      const { vueKey, CesiumZondy } = this;
+      let { vueKey, CesiumZondy } = this;
+      CesiumZondy = CesiumZondy || window.CesiumZondy;
       if (vueKey !== "default") {
         instanceOptions = CesiumZondy.GlobesManager[vueKey][0].options;
       }
       return instanceOptions;
     },
     addHandler() {
-      const { CesiumZondy } = this;
-      let sources = CesiumZondy.GlobesManager.findAllSource();
+      let { CesiumZondy } = this;
+      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let sources = CesiumZondy.GlobesManager.flatAllSource();
       let _self = this;
 
       sources.forEach((s, i) => {
