@@ -12,7 +12,8 @@ export default {
   props: {
     layers: { type: String, required: true },
     styles: { type: String },
-    tilingScheme: { type: String }
+    // crs: { type: String },
+    srs: { type: String }
   },
   data() {
     return {
@@ -63,21 +64,27 @@ export default {
         this.mount();
       }
     },
-    tilingScheme: {
+    srs: {
       handler: function() {
         this.unmount();
         this.mount();
       }
-    }
+    },
+    // crs: {
+    //   handler: function() {
+    //     this.unmount();
+    //     this.mount();
+    //   }
+    // }
   },
   methods: {
     mount() {
-      let { tilingScheme } = this;
+      let { srs } = this;
       let opt = {};
       //处理独有参数
-      //如果tilingScheme存在，则生成tilingScheme对象，动态投影会用到
-      if (tilingScheme) {
-        opt.tilingScheme = this.$_setTilingScheme(tilingScheme);
+      //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
+      if (srs) {
+        opt.tilingScheme = this.$_setTilingScheme(srs);
       }
       this.$_mount(opt);
     },
