@@ -8,7 +8,7 @@ import ServiceLayer from "../ServiceLayer";
 export default {
   name: "mapgis-3d-arcgis-map-layer",
   props: {
-    tilingScheme: {
+    srs: {
       type: String,
       defalut:"EPSG:4326"
     },
@@ -48,7 +48,7 @@ export default {
     this.unmount();
   },
   watch: {
-    tilingScheme: {
+    srs: {
       handler: function () {
         this.unmount();
         this.mount();
@@ -80,8 +80,8 @@ export default {
       }
       const baseUrl = this.initUrl();
       //tilingScheme，则生成tilingScheme对象
-      if (this.tilingScheme) {
-        options.tilingScheme = this.$_setTilingScheme(this.tilingScheme);
+      if (this.srs) {
+        options.tilingScheme = this.$_setTilingScheme(this.srs);
       };
       const allOptions = {...options, layers, baseUrl};
 
