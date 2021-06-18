@@ -101,6 +101,7 @@ export default {
       //取得webGlobe后，清空当前绘制
       webGlobeDraw.viewer.scene.primitives.remove(window.drawEntity);
       webGlobeDraw.viewer.entities.remove(window.drawEntity);
+      window.drawEntity = undefined;
       return webGlobeDraw;
     },
     getDrawElement(webGlobe){
@@ -213,7 +214,8 @@ export default {
             let cartographic = Cesium.Cartographic.fromCartesian(Cartesian3Points[i]);
             let lng = Cesium.Math.toDegrees(cartographic.longitude);
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
-            degreeArr.push([lng,lat,Cartesian3Points[i].z]);
+            let height = positions.height;
+            degreeArr.push([lng,lat,height]);
           }
           vm.$emit('drawCreate', Cartesian3Points, degreeArr,webGlobeDraw);
           vm.$emit('drawcreate', Cartesian3Points, degreeArr,webGlobeDraw);
