@@ -108,7 +108,9 @@ export default {
       if (window.drawElement){
         window.drawElement.stopDrawing();
       }
-      window.drawElement = new Cesium.DrawElement(webGlobe.viewer);
+      if(!window.drawElement){
+        window.drawElement = new Cesium.DrawElement(webGlobe.viewer);
+      }
       return window.drawElement;
     },
     enableDrawPoint () {
