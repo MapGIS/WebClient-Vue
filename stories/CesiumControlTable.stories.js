@@ -1,5 +1,3 @@
-import {G3D} from "@mapgis/webclient-es6-service"
-window.G3D = G3D;
 export default {
   title: "三维/交互-表格",
   argTypes: {
@@ -45,7 +43,7 @@ const Template = (args, { argTypes }) => ({
     getData(){
       let vm = this;
       let inter = setInterval(function () {
-        if(CesiumZondy.Query){
+        if(Zondy.Catalog){
           clearInterval(inter);
           vm.query("0",10);
         }

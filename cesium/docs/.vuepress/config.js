@@ -78,8 +78,9 @@ module.exports = {
               ["/api/ui/compare.md", "卷帘"],
               ["/api/ui/link.md", "多屏联动"],
               ["/api/ui/legend.md", "图例"],
+              ["/api/ui/table.md", "表格"],
               ["/api/Overlay/Echarts.md", "Echarts"],
-              ["/api/Overlay/Mapv.md", "MapV"],  
+              ["/api/Overlay/Mapv.md", "MapV"]
             ]
           },
           {
