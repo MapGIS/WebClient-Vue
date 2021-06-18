@@ -59,11 +59,11 @@
           v-for="(column, index) in columnsCopy"
           :key="index"
           :slot="column.dataIndex"
-          slot-scope="text, record, index"
+          slot-scope="text, record"
       >
         <div
             class="mapgis-baseTable-tableTd"
-            @click="$_onceClick(record.key, column.key, false, record)"
+            @click="$_onceClick(record.key, column.key)"
             @dblclick="$_doubleClick(record.key, column.key, record)"
         >
           <p
@@ -168,7 +168,10 @@ export default {
       //用于分页回调
       pageInfo: undefined,
       //用于排序回调
-      sorterInfo: undefined,
+      sorterInfo: {
+        orderField: "",
+        isASC: false
+      },
       indeterminate: true,
       checkAll: false,
       plainOptions: [],
@@ -203,9 +206,19 @@ export default {
 
   },
   mounted() {
+    this.$_initTable();
     this.$_registerMouseLeave();
   },
   methods:{
+    $_initTable(){
+      if(this.pagination){
+        this.paginationCopy = this.pagination;
+        this.pageSize = this.pagination.pageSize;
+      }
+      if(this.dataSource){
+        this.$_initSource();
+      }
+    },
     //将传入的数据转化为ant-table识别的数据
     $_initSource(){
       if(this.dataSource instanceof Array){
@@ -573,7 +586,8 @@ export default {
     * 删除一条数据
     * **/
     $_deleteFeature(record){
-
+      let data = this.$_getDataByKey(record.key);
+      this.$emit("deleted",data);
     },
     /*
     * 选择一条数据
@@ -629,7 +643,7 @@ export default {
                 insertIndex++;
               }
             }
-            AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
+            // AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
             this.selectData.splice(insertIndex,0,AllAttrData[i]);
           }
         }
@@ -646,7 +660,7 @@ export default {
         this.selectData = [];
         for (let i = 0;i < selectData.length;i++){
           if(selectData[i].length !== 0){
-            AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
+            // AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
             this.selectData.push(selectData[i]);
           }
         }
@@ -658,53 +672,70 @@ export default {
     * 分页或排序回调
     * **/
     $_change(pagination, filters, sorter,currentDataSource){
+      if(!sorter.hasOwnProperty("order")){
+        sorter.order = "";
+      }
+      let sorterObj = {};
+      sorterObj.orderField = sorter.field;
+      if(sorter.order === "ascend"){
+        sorterObj.isAsc = true;
+      }else if(sorter.order === "descend"){
+        sorterObj.isAsc = false;
+      } else if(sorter.order === ""){
+        sorterObj.isAsc = false;
+        sorterObj.orderField = "";
+      }
       if(!this.pageInfo){
         if(!sorter.hasOwnProperty("columnKey")){
-          this.$emit("pageChanged",pagination, sorter, currentDataSource );
-          this.$emit("pagechanged",pagination, sorter, currentDataSource );
+          this.$emit("pageChanged",pagination, sorterObj, currentDataSource );
+          this.$emit("pagechanged",pagination, sorterObj, currentDataSource );
         }else {
-          this.$emit("sorted", sorter, pagination, currentDataSource );
+          this.$emit("sorted", sorterObj, pagination, currentDataSource );
         }
       }else {
         if(pagination.current !== this.pageInfo.current){
-          this.$emit("pagechanged",pagination, sorter, currentDataSource );
+          this.$emit("pageChanged",pagination, sorterObj, currentDataSource );
+          this.$emit("pagechanged",pagination, sorterObj, currentDataSource );
         }else{
-          if(!sorter.hasOwnProperty("order")){
-            sorter.order = "";
-          }
-          this.$emit("sorted", sorter, pagination, currentDataSource );
+          this.$emit("sorted", sorterObj, pagination, currentDataSource );
         }
       }
       this.pageInfo = pagination;
-      this.sorterInfo = sorter;
-      this.$emit("changed",pagination, filters, sorter,currentDataSource );
+      this.sorterInfo = sorterObj;
+      this.$emit("changed",pagination, filters, sorterObj,currentDataSource );
     },
     /*
     * 要素table的单次点击事件
     * **/
-    $_onceClick(index, key,forceClick){
-      let dataIndex;
-      //index即为行，key为列，当行列号不是当前要编辑的table单元格时，取消当前的编辑行为
-      if ((this.editable || forceClick)&& this.editRowAndCol !== key + "_" + index) {
+    $_onceClick(index, key){
+      //index即为行，key为列
+      if (this.editRowAndCol !== key + "_" + index) {
         if(this.editRowAndCol.length>0){
           let arr = this.editRowAndCol.split("_");
           let datakey = arr[arr.length - 1];
-          for(let i = 0;i < this.dataSourceCopy.length;i++){
-            if(Number(datakey) === this.dataSourceCopy[i].key){
-              dataIndex = i;
-              break;
-            }
-          }
-          let data = JSON.parse(JSON.stringify(this.dataSourceCopy[dataIndex]));
-          delete data.key;
-          this.dataSourceCopy[dataIndex].attributes = data;
-          data = this.$_removeNullData(data);
-          let AllAttrData = this.$_getAllAttrData();
-          AllAttrData[dataIndex].attributes = data;
-          this.$emit("edited",AllAttrData[dataIndex]);
+          let data = this.$_getDataByKey(datakey);
+          this.$emit("edited",data);
         }
         this.editRowAndCol = "";
       }
+      let data = this.$_getDataByKey(index);
+      this.$emit("click",data, key);
+    },
+    $_getDataByKey(key){
+      let dataIndex;
+      for(let i = 0;i < this.dataSourceCopy.length;i++){
+        if(Number(key) === this.dataSourceCopy[i].key){
+          dataIndex = i;
+          break;
+        }
+      }
+      let data = JSON.parse(JSON.stringify(this.dataSourceCopy[dataIndex]));
+      delete data.key;
+      this.dataSourceCopy[dataIndex].attributes = data;
+      data = this.$_removeNullData(data);
+      let AllAttrData = this.$_getAllAttrData();
+      AllAttrData[dataIndex].attributes = data;
+      return AllAttrData[dataIndex];
     },
     /*
     * 要素table的双击事件，双击开启编辑
@@ -786,7 +817,6 @@ export default {
       let toolbar = document.getElementById(this.toolbarId);
       let table = document.getElementById(this.tableId);
       if(!this.fullScreen){
-
         let tHeight = Number(document.body.scrollHeight);
         table.style.height = tHeight + "px";
         table.style.top = toolbar.offsetHeight + "px";
