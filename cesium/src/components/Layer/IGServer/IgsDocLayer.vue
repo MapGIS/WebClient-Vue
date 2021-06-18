@@ -11,6 +11,10 @@ export default {
     layers: {
       type: String,
       default: null
+    },
+    srs: {
+      type: String,
+      default: "EPSG:4326"
     }
   },
   watch: {
@@ -39,8 +43,12 @@ export default {
   methods: {
     mount(){
       //处理独有参数
+      let tilingScheme = this.$_setTilingScheme(this.srs);
       const baseUrl = this.$_initUrl("/igs/rest/mrms/docs/");
-      this.$_mount({baseUrl:baseUrl});
+      this.$_mount({
+        baseUrl:baseUrl,
+        tilingScheme: tilingScheme
+      });
     },
     unmount(){
       this.$_unmount();
