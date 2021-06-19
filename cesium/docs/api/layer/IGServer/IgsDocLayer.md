@@ -10,6 +10,21 @@
 - **描述:** 服务基地址。
 - **示例:** `http://{ip}:{port}/igs/rest/mrms/docs`
 
+### `srs`
+
+- **类型:** `String`
+- **可选**
+- **非侦听属性**
+- **描述:** 地图的坐标参考系，暂不支持动态投影，支持如下值：
+
+```
+EPSG:4326
+EPSG:4490
+EPSG:4610
+EPSG:4214
+EPSG:3857
+```
+
 ### `layers`
 
 - **类型:** `String`
@@ -53,7 +68,9 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ```
 当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
 ```
+
 ## 示例
+
 ### 加载 4326 地图
 
 ```vue

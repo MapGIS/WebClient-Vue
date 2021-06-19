@@ -90,10 +90,12 @@
 </template>
 
 <script>
-import {VFeature} from "../../../util";
+import {MRFS} from "@mapgis/webclient-es6-service";
+
+const {VFeature} = MRFS;
 
 export default {
-  name: "mapgis-base-table",
+  name: "mapgis-3d-table",
   props:{
     //数据源
     dataSource:{
