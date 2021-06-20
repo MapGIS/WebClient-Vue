@@ -90,7 +90,8 @@ export default {
       });
     },
     deleteHandler() {
-      const { CesiumZondy } = this;
+      let { CesiumZondy } = this;
+      CesiumZondy = CesiumZondy || window.CesiumZondy;
       /* 这段代码要结合WebGlobe里面的如下代码才能明白
       window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, webGlobe, {
         ScreenSpaceEventHandler: undefined,
@@ -105,7 +106,7 @@ export default {
         }
       }
 
-      let sources = CesiumZondy.GlobesManager.findAllSource();
+      let sources = CesiumZondy.GlobesManager.flatAllSource();
       sources.forEach((s, i) => {
         if (s.options.ScreenSpaceEventHandler) {
           s.options.ScreenSpaceEventHandler.removeInputAction(

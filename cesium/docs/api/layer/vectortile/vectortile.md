@@ -64,7 +64,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 ### `tilingScheme`
 
-- **类型**: `Cesium.TilingScheme`
+- **类型**: `[String, Cesium.TilingScheme]`
 - **非侦听属性** 非 watch 属性
 - - **描述** 矢量瓦片瓦片切分规则：经纬度还是墨卡托
 
