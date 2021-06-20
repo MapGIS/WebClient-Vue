@@ -54,7 +54,7 @@ export default {
   vectortilejson: { type: Object },
 
   /**
-   * @type Cesium.TilingScheme
+   * @type String | Cesium.TilingScheme
    * @description 矢量瓦片瓦片切分规则：经纬度还是墨卡托
    */
   tilingScheme: { type: [String, Object] },

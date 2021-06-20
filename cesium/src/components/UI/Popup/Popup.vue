@@ -83,7 +83,8 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      let { webGlobe, vueKey, vueIndex } = this;
+      webGlobe = webGlobe || this.getWebGlobe();
       const viewer = webGlobe.viewer;
       let popup;
 
@@ -95,7 +96,8 @@ export default {
       return !viewer.isDestroyed() && popup && popup.show();
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      let { webGlobe, vueKey, vueIndex } = this;
+      webGlobe = webGlobe || this.getWebGlobe();
       const viewer = webGlobe.viewer;
       CesiumZondy = CesiumZondy || window.CesiumZondy;
       let popup;
@@ -112,7 +114,7 @@ export default {
       return !viewer.isDestroyed();
     },
     update() {
-      let { webGlobe, CesiumZondy, vueIndex, vueKey } = this;
+      let { CesiumZondy, vueIndex, vueKey } = this;
       CesiumZondy = CesiumZondy || window.CesiumZondy;
       let popup;
       let find = CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
