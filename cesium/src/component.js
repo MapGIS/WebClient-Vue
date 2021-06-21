@@ -7,6 +7,7 @@ export { default as Mapgis3dDraw } from "./components/UI/Controls/Draw/Draw";
 export { default as Mapgis3dMeasure } from "./components/UI/Controls/Measure/Measure";
 export { default as Mapgis3dCompare } from "./components/UI/Controls/Compare/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "./components/UI/Controls/Legend/Legend.vue";
+export { default as Mapgis3dTable } from "./components/UI/Controls/Table/BaseTable.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "./components/Provider/ImageProvider/ImageryLayer.vue";

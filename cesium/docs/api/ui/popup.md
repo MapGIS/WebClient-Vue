@@ -66,13 +66,20 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **默认值** `<div>空</div>`
 - - **描述** 外部传入的 div 的字符串描述方式，一般是文字或者 echarts 的 div;
 
-### `showed`
+### `visible`
 
 - ***类型**: `Boolean`
-- # **非侦听属性** watch 属性
+- **v-Model属性** 双向属性
 - **侦听属性** watch 属性
 - **默认值** `true`
 - - **描述** 是否显示
+  
+### `destroyOnClose`
+
+- ***类型**: `Boolean`
+- **非侦听属性**
+- **默认值** `false`
+- - **描述** 是否销毁时、更新DOM的时候更新UI
 
 ## 槽
 

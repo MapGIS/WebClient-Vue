@@ -33,7 +33,7 @@ http://t0.tianditu.com/DataServer?T=vec_c&L={TileMatrix}&Y={TileRow}&X={TileCol}
 - **侦听属性**
 - **描述:** 地图比例尺名称
 
-### `srs`
+### `tilingScheme`
 
 - **类型:** `String`
 - **必传**

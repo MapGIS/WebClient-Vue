@@ -47,8 +47,19 @@ export default {
     default: "<div>空</div>"
   },
 
-  showed: {
+  /**
+   *  @param {Boolean} visible(v-model) 对话框是否可见
+   */
+  visible: {
     type: Boolean,
     default: true
+  },
+
+  /**
+   * @param {Boolean} destroyOnClose 关闭时销毁 Modal 里的子元素
+   */
+  destroyOnClose: {
+    type: Boolean,
+    default: false
   }
 };

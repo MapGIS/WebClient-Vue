@@ -40,7 +40,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 ### `mvtStyle`
 * **Type**: `[String, Object]`
-* **侦听属性** watch 属性
+* **伪侦听属性** 伪 watch 属性,当且仅当mvtStyle是生成新的Object对象的时候才生效
 * - **描述** 样式 json 文件路径或者 MVT-JSON 对象，当为 String / url 时等于 styleUrl；当为 Object /mvt style 等于 vectortilejson
 
 ### `styleUrl`
@@ -64,7 +64,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 ### `tilingScheme`
 
-- **类型**: `Cesium.TilingScheme`
+- **类型**: `[String, Cesium.TilingScheme]`
 - **非侦听属性** 非 watch 属性
 - - **描述** 矢量瓦片瓦片切分规则：经纬度还是墨卡托
 

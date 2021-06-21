@@ -1,6 +1,7 @@
-# BaseTable
+# 表格组件 mapgis-3d-table
 
 ## 属性
+
 ### `dataSource`
 
 - **类型:** `Array | Object`
@@ -70,13 +71,13 @@
 
 - **类型:** `Boolean`
 - **默认值:** `true`
-- **侦听属性ed**
+- **侦听属性 ed**
 - **描述:** 是否启用表格编辑。
 
 ### `pagination`
 
 - **类型:** `Object`
-- **侦听属性ed**
+- **侦听属性 ed**
 - **描述:** 表格分页信息。
 
 ```
@@ -111,7 +112,7 @@
 
 - **描述:** 双击单元格事件
 - **返回值** `{ rowIndex,columnKey,value,record }` <br>
-  `rowIndex` 行号，从0开始<br>
+  `rowIndex` 行号，从 0 开始<br>
   `columnKey` 列名 <br>
   `value` 单元格数据 <br>
   `record` 一行的数据 <br>
@@ -149,7 +150,7 @@
 
 - **描述:** 全屏事件
 - **返回值** `{ pagination,sorter }` <br>
-  `pagination` 分页信息，其中的pageSize为铺满全屏的数据条数 <br>
+  `pagination` 分页信息，其中的 pageSize 为铺满全屏的数据条数 <br>
   `sorter` 排序信息 <br>
 
 ### `@originScreen` 或 `@originscreen`
@@ -163,56 +164,144 @@
 
 ```vue
 <template>
-  <mapbox-map
-    class="main"
-    :accessToken="accessToken"
-    :mapStyle="mapStyle"
-    :zoom="mapZoom"
-    :center="outerCenter"
-    :crs="mapCrs"
-  >
-    <mapbox-igs-tdt-layer
-      :layer="layer"
-      :layerId="layerId"
-      :sourceId="sourceId"
-      :baseURL="baseURL"
-      :token="token"
-      :crs="mapCrs"
-    >
-    </mapbox-igs-tdt-layer>
-  </mapbox-map>
+  <mapgis-web-scene style="height: 800px">
+    <mapgis-3d-igs-m3d :url="url"> </mapgis-3d-igs-m3d>
+    <mapgis-3d-table
+      :dataSource="dataSource"
+      :pagination="pagination"
+      @pageChanged="pageChanged"
+      @selectAll="selectAll"
+      @fullScreen="fullScreen"
+      @originScreen="originScreen"
+      @edited="edited"
+      @click="click"
+      @deleted="deleted"
+      @sorted="sorted"
+      @selected="selected"
+    ></mapgis-3d-table>
+  </mapgis-web-scene>
 </template>
 
 <script>
-import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsTdtLayer } from "@mapgis/webclient-vue-mapboxgl";
+import { Mapgis3dTable, Mapgis3dIgsM3d } from "@mapgis/webclient-vue-cesium";
 
 export default {
   components: {
-    MapboxMap,
-    MapboxIgsTdtLayer
+    Mapgis3dTable,
+    Mapgis3dIgsM3d
   },
   data() {
     return {
-      accessToken:
-        "pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA", // 使用mapbox样式需要的秘钥
-      mapStyle: "mapbox://styles/mapbox/light-v9", // 地图样式
-      mapZoom: 3, // 地图初始化级数
-      outerCenter: [130, 30], // 地图显示中心
-      mapCrs: "EPSG:4326",
-
-      layerId: "igsLayer_layerId",
-      sourceId: "igsLayer_sourceId",
-      layer: {}, // 图层配置信息
-      baseURL: "http://t2.tianditu.gov.cn/vec_c/wmts", // 请求基地址
-      token: "2ddaabf906d4b5418aed0078e1657029" // 请求天地图的key值
+      url: "http://develop.smaryun.com:6163/igs/rest/g3d/ModelM3D",
+      dataSource: undefined,
+      pagination: {
+        total: 0,
+        pageSize: 10
+      }
     };
   },
-
-  created() {
-    // 在组件中使用mapbox-gl.js的脚本库功能
-    this.mapbox = Mapbox;
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      let vm = this;
+      let inter = setInterval(function() {
+        if (Zondy.Catalog) {
+          clearInterval(inter);
+          vm.query("0", 10);
+        }
+      }, 20);
+    },
+    query(page, pageCount, orderField, isAsc) {
+      let vm = this;
+      //初始化参数对象
+      let queryParam = new Zondy.Catalog.G3DMapDoc();
+      //查询图层的URL路径
+      queryParam.gdbp =
+        "gdbp://MapGisLocal/示例数据/ds/三维示例/sfcls/景观_模型";
+      //设置查询结果结构
+      queryParam.structs = {
+        IncludeAttribute: true,
+        IncludeGeometry: false,
+        IncludeWebGraphic: false
+      };
+      //属性查询
+      queryParam.where = "";
+      //分页信息
+      queryParam.page = page;
+      queryParam.pageCount = pageCount;
+      //服务器的ip
+      queryParam.ip = "develop.smaryun.com";
+      queryParam.port = "6163";
+      //排序设置
+      queryParam.orderField = orderField ? orderField : "";
+      queryParam.isAsc = isAsc ? isAsc : false;
+      //查询服务
+      queryParam.GetFeature(
+        function(result) {
+          console.log("result", result);
+          vm.dataSource = result;
+          vm.pagination.total = result.TotalCount;
+        },
+        function(e) {
+          console.log("e", e);
+        }
+      );
+    },
+    pageChanged(pagination, sorter) {
+      //分页事件
+      console.log("pageChanged", pagination);
+      this.query(
+        pagination.current - 1,
+        pagination.pageSize,
+        sorter.orderField,
+        sorter.isAsc
+      );
+    },
+    selectAll(selectData) {
+      //全选事件
+      console.log("selectAll", selectData);
+    },
+    selected(selectData, allDate) {
+      //选择单个数据事件
+      console.log("selected", selectData);
+      console.log("allDate", allDate);
+    },
+    fullScreen(pagination, sorter) {
+      //全屏事件
+    },
+    originScreen(pagination, sorter) {
+      //还原屏幕事件
+      this.pagination.pageSize = pagination.pageSize;
+      this.query(
+        pagination.current - 1,
+        pagination.pageSize,
+        sorter.orderField,
+        sorter.isAsc
+      );
+    },
+    edited(result) {
+      //编辑完成事件
+      console.log("edited", result);
+    },
+    click(result, key) {
+      //单击事件
+      console.log("click", result, key);
+    },
+    deleted(result) {
+      //删除事件
+      console.log("deleted", result);
+    },
+    sorted(sorter, pagination) {
+      //排序事件
+      this.query(
+        pagination.current - 1,
+        pagination.pageSize,
+        sorter.orderField,
+        sorter.isAsc
+      );
+    }
   }
 };
 </script>

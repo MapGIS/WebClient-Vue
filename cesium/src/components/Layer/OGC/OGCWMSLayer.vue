@@ -12,7 +12,7 @@ export default {
   props: {
     layers: { type: String, required: true },
     styles: { type: String },
-    crs: { type: String },
+    // crs: { type: String },
     srs: { type: String }
   },
   data() {
@@ -70,22 +70,21 @@ export default {
         this.mount();
       }
     },
-    crs: {
-      handler: function() {
-        this.unmount();
-        this.mount();
-      }
-    }
+    // crs: {
+    //   handler: function() {
+    //     this.unmount();
+    //     this.mount();
+    //   }
+    // }
   },
   methods: {
     mount() {
-      let { srs, crs, options } = this;
+      let { srs } = this;
       let opt = {};
       //处理独有参数
       //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
-      if (srs || crs) {
-        let tileMatrixSetName = srs ? srs : crs;
-        opt.tilingScheme = this.$_setTilingScheme(tileMatrixSetName);
+      if (srs) {
+        opt.tilingScheme = this.$_setTilingScheme(srs);
       }
       this.$_mount(opt);
     },

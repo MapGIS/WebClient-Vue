@@ -36,7 +36,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene>
-      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs"/>
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
       <mapgis-3d-mapv-layer :options="options" :geojson="geojson"></mapgis-3d-mapv-layer>
       </mapgis-web-scene>
     `
@@ -50,7 +50,7 @@ mapv.args = {
         opacity: 1,
         zIndex: 2
     },
-    srs:"EPSG:4326",
+    tilingScheme:"EPSG:4326",
     options: {
         context: '2d',
         fillStyle: 'rgba(55, 50, 250, 0.8)',

@@ -346,7 +346,19 @@ export default {
           //取出含有与webScene组件相同vueKey的Manager对象
           if (window.CesiumZondy[key].hasOwnProperty("vueKey")) {
             if (window.CesiumZondy[key].hasOwnProperty(vm.vueKey)) {
-              Layers = Layers.concat(window.CesiumZondy[key][vm.vueKey]);
+              let layerManagers = window.CesiumZondy[key][vm.vueKey];
+              for (let i = 0; i < layerManagers.length; i++) {
+                //确保拥有options并且options里面含有zIndex
+                if (
+                  layerManagers[i].hasOwnProperty("options") &&
+                  layerManagers[i].options &&
+                  layerManagers[i].options.hasOwnProperty("zIndex") &&
+                  layerManagers[i].options.zIndex !== undefined &&
+                  layerManagers[i].options.zIndex !== null
+                ) {
+                  Layers.push(layerManagers[i]);
+                }
+              }
             }
           }
         }
