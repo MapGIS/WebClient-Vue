@@ -50,8 +50,10 @@ export function initManager() {
     window.CesiumZondy.IgsTilecLayerManager || new IgsTilecLayerManager();
   window.CesiumZondy.IgsserverManager =
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
-  window.CesiumZondy.RasterManager =
-    window.CesiumZondy.RasterManager || new RasterManager();
+  window.CesiumZondy.ExcavateAnalysisManager =
+  window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
+
+
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -150,3 +152,5 @@ export class ArcgisManager extends BaseManager {}
 export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
+export class ExcavateAnalysisManager extends BaseManager {}
+
