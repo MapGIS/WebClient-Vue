@@ -22,9 +22,11 @@
   "dependencies": {
     "@ant-design/icons": "2.1.1",
     "ant-design-vue": "^1.7.5",
+    "css-vars-ponyfill": "^2.4.5",
     "lodash": "^4.17.21",
     "lodash.uniqueid": "^4.0.1",
-    "resize-detector": "^0.3.0"
+    "resize-detector": "^0.3.0",
+    "tinycolor2": "^1.4.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
