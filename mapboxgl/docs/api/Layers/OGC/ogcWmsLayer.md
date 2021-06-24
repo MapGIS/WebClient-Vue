@@ -16,8 +16,18 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **类型:** `String`
 - **默认值:** `null`
 - **侦听属性**
-- **描述:** 指定需要被取图的图层序列号/图层名数组，以“，”分隔。默认为依据文档原始图层状态进行设置。特别注意如果是对接 mapgis 的 wms 服务，这个地方只能是"图层名字,图层名字" 而不是 "图层顺序,图层顺序"。
-- **示例:** `1,2`
+- **描述:** 图层名称或 Id
+  > 图层名称或 Id，多个值以逗号分隔，不传时不显示地图 <br/>
+  > igs 使用地图名称 <br/>
+  > arcgis 根据版本不同，可使用 id 或名称，具体请看 arcgis 的 wms 服务的 xml 文档，例如： <br/>
+  > http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WMSServer?request=GetCapabilities&service=WMS <br/>
+  > ... <br/>
+  > \<Layer queryable="1"\> <br/>
+  > \<Name>0\</Name> <br/>
+  > ... <br/>
+  > \</Layer\> <br/>
+  > ... <br/>
+  > 在此文档中找到 Layer 下面的\<Name\>0\</Name\>属性，这里指定图层名称为 0，因此按 id 来查询，若指定名称为英文或汉字则按名称查询
 
 ### `version`
 
