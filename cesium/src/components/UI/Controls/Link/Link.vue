@@ -33,6 +33,9 @@ export default {
       this.addHandler();
     }
   },
+  destroyed() {
+    this.deleteHandler();    
+  },
   methods: {
     getInstanceOptions() {
       let instanceOptions;
