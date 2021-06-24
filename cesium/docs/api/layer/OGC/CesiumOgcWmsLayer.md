@@ -7,90 +7,56 @@
 - **类型:** `String`
 - **必传**
 - **非侦听属性**
-- **描述:** 服务基地址,当请求天地图时，请在 url 后面添加 token
+- **描述:** 服务基地址
 - **示例:** <br/>
-
-```
-请求igs时：
-http://{ip}:{port}/igs/rest/ogc/doc/{mapName}/WMSServer
-请求arcgis时：
-http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer
-```
+  > 请求 igs 时： <br/>
+  > http://{ip}:{port}/igs/rest/ogc/doc/{mapName}/WMSServer <br/>
+  > 请求 arcgis 时： <br/>
+  > http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer <br/>
 
 ### `layers`
 
 - **类型:** `String`
 - **必传**
 - **侦听属性**
-- **描述:** <br/>
-
-```
-图层名称或Id，多个值以逗号分隔，不传时不显示地图
-igs使用地图名称
-arcgis根据版本不同，可使用id或名称，具体请看arcgis的wms服务的xml文档，例如：
-http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WMSServer?request=GetCapabilities&service=WMS
-在此文档中找到Layer下面的<Name>0</Name>属性，这里指定图层名称为0，因此按id来查询，若指定名称为英文或汉字则按名称查询
-```
-
-- **示例:** <br/>
-
-```
-目前暂不支持layers传空值的情况，请使用时传需要显示的图层名称或id
-igs使用名称
-layers = "武汉,武汉_地铁" 仅显示武汉和武汉_地铁图层
-arcgis使用id
-layers =  “0,1,2”
-```
+- **描述:** 图层名称或 Id
+  > 图层名称或 Id，多个值以逗号分隔，不传时不显示地图 <br/>
+  > igs 使用地图名称 <br/>
+  > arcgis 根据版本不同，可使用 id 或名称，具体请看 arcgis 的 wms 服务的 xml 文档，例如： <br/>
+  > http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WMSServer?request=GetCapabilities&service=WMS <br/>
+  > ... <br/>
+  > \<Layer queryable="1"\> <br/>
+  > \<Name>0\</Name> <br/>
+  > ... <br/>
+  > \</Layer\> <br/>
+  > ... <br/>
+  > 在此文档中找到 Layer 下面的\<Name\>0\</Name\>属性，这里指定图层名称为 0，因此按 id 来查询，若指定名称为英文或汉字则按名称查询
 
 ### `srs`
 
 - **类型:** `String`
 - **必传**
 - **侦听属性**
-- **描述:** 空间坐标参考系，只在版本 1.1.1 中有效，目前支持如下值：
-
-```
-EPSG:4326
-EPSG:4490
-EPSG:4610
-EPSG:4214
-EPSG:3857
-```
-
-### `crs`
-
-- **类型:** `String`
-- **必传**
-- **侦听属性**
-- **描述:** 空间坐标参考系，只在版本 1.3.0 中有效，目前支持如下值：
-
-```
-EPSG:4326
-EPSG:4490
-EPSG:4610
-EPSG:4214
-EPSG:3857
-```
+- **描述:** WMS 标准中的 srs(1.1.0 版本)或 crs(1.3.0 版本)，即坐标参考系，可通过改变 srs 的值(4326 与 3857 切换)，来实现动态投影，目前支持如下值：
+  > 经纬度方式请填写:EPSG:4326 <br/>
+  > web 墨卡托方式请填写:EPSG:3857
 
 ### `styles`
 
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 图层样式，多个图层样式以逗号分隔，igs 目前不支持
+- **描述:** WMS 标准中的 styles，即图层样式
 
 ### `layerStyle`
 
 - **类型:** `Object`
 - **可选**
 - **侦听属性**
-- **描述:** 图层样式，有如下值：
-
-```
-    visible Boolean 控制图层显示或隐藏，不会重新加载图层，true：显示图层、fales：隐藏图层
-    opacity Number 控制图层透明度，会重新加载图层，0 - 1之间的数字，0：隐藏，1：显示
-    zIndex Number 控制图层顺序，会重新加载图层，类似css里面的z-index，从1开始的数字
-```
+- **描述:** 控制地图的显隐、透明度以及顺序，有如下值：
+  > visible Boolean 控制图层显示或隐藏，不会重新加载图层，true：显示图层、fales：隐藏图层 <br/>
+  > opacity Number 控制图层透明度，会重新加载图层，0 - 1 之间的数字，0：隐藏，1：显示 <br/>
+  > zIndex Number 控制图层顺序，会重新加载图层，类似 css 里面的 z-index，从 1 开始的数字 <br/>
 
 ### `id`
 
@@ -105,12 +71,10 @@ EPSG:3857
 - **可选**
 - **侦听属性**
 - **描述:** Cesium 的进阶参数，另外不属于 cesium 的如下参数也在 options 中：
-  ```
-    vueKey String 默认值default 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
-    vueIndex String 默认值(Math.random() * 100000000).toFixed(0) 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
-  ```
+  > vueKey String 默认值 default 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持 <br/>
+  > vueIndex String 默认值(Math.random() \* 100000000).toFixed(0) 该 key 的主要作用市用来记录 Cesium 的 Source,primitive, entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 - **参考:** <br>
-  `WMTS参数` in [WebMapTileServiceImageryProvider](http://develop.smaryun.com:8899/docs/other/mapgis-cesium/WebMapTileServiceImageryProvider.html?classFilter=web)
+  `Cesium的WMS参数` in [WebMapTileServiceImageryProvider](http://develop.smaryun.com:8899/docs/other/mapgis-cesium/WebMapServiceImageryProvider.html?classFilter=web)
 
 ### `vueKey`
 
@@ -119,11 +83,8 @@ EPSG:3857
 - **非侦听属性**
 - **默认值:** `default`
 - **描述:**
-
-```
-mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
-同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
-```
+  > mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件， <br/>
+  > 同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。
 
 ### `vueIndex`
 
@@ -131,10 +92,19 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **可选**
 - **非侦听属性**
 - **描述:**
+  > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
-```
-当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
-```
+### `token`
+
+- **类型:** `Object`
+- **可选**
+- **非侦听属性**
+- **描述:** token 信息
+  > 要传 token 时，请以如下方式传递 <br/>
+  > token:{ <br/>
+  > key: "token", <br/>
+  > value: "9c157e9585486c02edf817d2ecbc7752" <br/>
+  > }
 
 ## 事件
 
@@ -172,7 +142,7 @@ export default {
       baseUrl: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
       layers: "武汉市,武汉市_行人道路",
-      //地图坐标系
+      //坐标参考系
       srs: "EPSG:4326"
     };
   }
@@ -192,7 +162,7 @@ export default {
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :layers="layers" />
+    <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :srs="srs" :layers="layers" />
   </mapgis-web-scene>
 </template>
 
@@ -203,8 +173,10 @@ export default {
       //服务基地址
       baseUrl:
         "http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer",
-      //要显示的图层Id,arcgis要传Id而不是名称
-      layers: "0"
+      //要显示的图层Id
+      layers: "0",
+      //坐标参考系
+      srs: "EPSG:3857"
     };
   }
 };
@@ -236,6 +208,7 @@ export default {
       baseUrl: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
       layers: "武汉市,武汉市_行人道路",
+      //坐标参考系
       srs: "EPSG:4326"
     };
   },
@@ -268,14 +241,16 @@ export default {
     <mapgis-3d-ogc-wmts-layer
       :baseUrl="baseUrl"
       :wmtsLayer="layer"
-      :tileMatrixSet="tileMatrixSetID"
+      :tileMatrixSet="tileMatrixSet"
+      :tilingScheme="tilingScheme"
+      :format="format"
       :layerStyle="layerStyle"
     />
     <mapgis-3d-ogc-wms-layer
       v-if="show"
       :baseUrl="baseUrl2"
       :layers="layers"
-      :srs="srs2"
+      :srs="srs"
       :layerStyle="layerStyle2"
     />
   </mapgis-web-scene>
@@ -295,7 +270,11 @@ export default {
       //地图文档名称
       layer: "WORLDMKTTILE2",
       //地图比例尺
-      tileMatrixSetID: "GoogleMapsCompatible_GB",
+      tileMatrixSet: "GoogleMapsCompatible_GB",
+      //Cesium的瓦片切图方式
+      tilingScheme: "EPSG:4326",
+      //返回格式
+      format: "image/png",
       //样式信息
       layerStyle: {
         visible: true,
@@ -306,8 +285,8 @@ export default {
       baseUrl2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
       //要显示的图层名称
       layers: "武汉市,武汉市_行人道路",
-      //空间参考系
-      srs2: "EPSG:4326",
+      //坐标参考系
+      srs: "EPSG:4326",
       //样式信息
       layerStyle2: {
         zIndex: 50
@@ -355,8 +334,8 @@ export default {
   <mapgis-web-scene :vueKey="vueKey">
     <mapgis-3d-ogc-wms-layer
       :baseUrl="baseUrlWms"
-      :wmtsLayer="layersWms"
-      :tileMatrixSet="layerStyleWms"
+      :layers="layersWms"
+      :srs="srs"
       :vueKey="vueKey"
     />
     <mapgis-3d-igs-doc-layer
@@ -378,6 +357,8 @@ export default {
       baseUrlWms: "http://localhost:6163/igs/rest/ogc/doc/wuhan_3860/WMSServer",
       //要显示的图层
       layersWms: "武汉市_3857,武汉市_医疗服务_3857",
+      //坐标参考系
+      srs: "EPSG:4326",
       layerStyleWms: {
         zIndex: 100
       },

@@ -1,32 +1,30 @@
 # 气泡
+
 > mapgis-3d-popup
 
 ## 属性
+
 ### `vueKey`
 
 - **类型:** `String`
 - **可选**
 - **非侦听属性**
 - **默认值:** `default`
-- **描述:** 
-```
-mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
-同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
-```
+- **描述:**
+  > mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件，<br/>
+  > 同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。
 
 ### `vueIndex`
 
 - **类型:** `Number`
 - **可选**
 - **非侦听属性**
-- **描述:** 
-```
-当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
-```
+- **描述:**
+  > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
 ### `position`
 
-- ***类型**: `Object`
+- **\*类型**: `Object`
 - **必传**
 - **侦听属性** watch 属性
 - **默认值**
@@ -46,7 +44,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 ### `options`
 
-- ***类型**: `Object`
+- **\*类型**: `Object`
 - **非侦听属性** 非 watch 属性
 - **默认值**
   ```js
@@ -61,25 +59,25 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 ### `container`
 
-- ***类型**: `String`
+- **\*类型**: `String`
 - **非侦听属性** 非 watch 属性
 - **默认值** `<div>空</div>`
 - - **描述** 外部传入的 div 的字符串描述方式，一般是文字或者 echarts 的 div;
 
 ### `visible`
 
-- ***类型**: `Boolean`
-- **v-Model属性** 双向属性
+- **\*类型**: `Boolean`
+- **v-Model 属性** 双向属性
 - **侦听属性** watch 属性
 - **默认值** `true`
 - - **描述** 是否显示
-  
+
 ### `destroyOnClose`
 
-- ***类型**: `Boolean`
+- **\*类型**: `Boolean`
 - **非侦听属性**
 - **默认值** `false`
-- - **描述** 是否销毁时、更新DOM的时候更新UI
+- - **描述** 是否销毁时、更新 DOM 的时候更新 UI
 
 ## 槽
 

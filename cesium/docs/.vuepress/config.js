@@ -79,6 +79,8 @@ module.exports = {
               ["/api/ui/link.md", "多屏联动"],
               ["/api/ui/legend.md", "图例"],
               ["/api/ui/table.md", "表格"],
+              ["/api/ui/draw.md", "绘制"],
+              ["/api/ui/measure.md", "量算"],
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"]
             ]
