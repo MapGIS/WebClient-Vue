@@ -117,6 +117,7 @@ export default {
       }
 
       this.webGlobe = webGlobe;
+      webGlobe.vueKey = vueKey;
       if (cameraView) {
         webGlobe.viewer.scene.camera.setView(cameraView);
       }
