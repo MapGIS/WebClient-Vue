@@ -12,8 +12,8 @@ export default {
     ...PopupOptions
   },
   model: {
-    prop: 'visible',
-    event: 'change'
+    prop: "visible",
+    event: "change"
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
@@ -31,7 +31,7 @@ export default {
     }
   },
   updated() {
-    if(this.destroyOnClose) {
+    if (this.forceRender) {
       this.update();
     }
   },
@@ -54,7 +54,7 @@ export default {
     },
     createCesiumObject() {
       const vm = this;
-      let { CesiumZondy, position, options, container } = this;
+      let { CesiumZondy, position, options, container, destroyOnClose } = this;
       CesiumZondy = CesiumZondy || window.CesiumZondy;
 
       if (this.$slots.default) {
@@ -68,10 +68,18 @@ export default {
       options = {
         ...options,
         callback: {
-          onShow: () => vm.$emit('change', true),
-          onHide: () => vm.$emit('change', false)
+          onShow: () => {
+            vm.$emit("change", true);
+          },
+          onHide: () => {
+            vm.$emit("change", false);
+            if (vm.destroyOnClose) {
+              // 这里其实是无效的，本质上是通过update来实现的
+              // vm.unmount();
+            }
+          }
         }
-      }
+      };
 
       let webGlobe = this.getWebGlobe();
 

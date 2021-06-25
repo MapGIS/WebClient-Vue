@@ -79,7 +79,16 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - ***类型**: `Boolean`
 - **非侦听属性**
 - **默认值** `false`
-- - **描述** 是否销毁时、更新DOM的时候更新UI
+- - **描述** 关闭popup的时候销毁Dom元素
+
+### `forceRender`
+
+- ***类型**: `Boolean`
+- **非侦听属性**
+- **默认值** `false`
+- - **描述** 强制渲染poup显示的Dom元素
+> 该参数的使用场景是外部动态改变slot的前提下需要Popup更新内部的UI
+> 一旦该参数设置为true,任何触发vue-updated生命周期的函数都会强制刷新该参数
 
 ## 槽
 

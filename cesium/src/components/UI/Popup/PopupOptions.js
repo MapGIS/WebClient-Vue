@@ -61,5 +61,13 @@ export default {
   destroyOnClose: {
     type: Boolean,
     default: false
+  },
+
+  /**
+   * @param {Boolean} forceRender 强制渲染poup显示的Dom元素
+   */  
+  forceRender: {
+    type: Boolean,
+    default: false
   }
 };
