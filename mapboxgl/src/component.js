@@ -45,8 +45,10 @@ export { default as MapgisOgcWmsLayer } from "./components/layer/ogc/OgcWmsLayer
 export { default as MapgisOgcWmtsLayer } from "./components/layer/ogc/OgcWmtsLayer";
 export { default as MapgisArcgisMapLayer } from "./components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServer/ArcGISTileLayer";
-export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 
+export { default as MapgisTrackerLayer } from "./components/layer/tracker/TrackerLayer";
+
+export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 

@@ -57,11 +57,11 @@ export default {
      */
     $_loadMap() {
       // mapboxPromise = Promise.resolve(this.mapboxGl)
-      return this.mapboxPromise.then(mapbox => {
-        this.mapbox = mapbox.default ? mapbox.default : mapbox;
+      return this.mapboxPromise.then(mapboxgl => {
+        this.mapboxgl = mapboxgl.default ? mapboxgl.default : mapboxgl;
         return new Promise(resolve => {
-          if (this.accessToken) this.mapbox.accessToken = this.accessToken;
-          const map = new this.mapbox.Map({
+          if (this.accessToken) this.mapboxgl.accessToken = this.accessToken;
+          const map = new this.mapboxgl.Map({
             ...this._props,
             container: this.$refs.container,
             style: this.mapStyle
