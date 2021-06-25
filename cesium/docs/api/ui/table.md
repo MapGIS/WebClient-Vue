@@ -7,33 +7,31 @@
 - **类型:** `Array | Object`
 - **侦听属性**
 - **描述:** 表格的数据源，支持如下格式：
-  ```
-  一：[Feature]: Feature数组格式，使用此格式时不建议自己拼装，
-    而是直接调动Feature组件的fromQueryResult或fromGeoJSON方法返回数据，
-    建议如此使用:
-    将Zondy.Service.QueryDocFeature.query方法查询到的result转为[Feature]
-    let featureSet = Feature.fromQueryResult(result);
-    将GEOJSON格式的JSON转为[Feature]
-    let featureSet = Feature.fromGeoJSON(GEOJSON);
-    格式：
-    [
-      {
-        geometry:"",
-        geometryType:"",
-        attributes:"",
-        style:"",
-        FID:""
-      },
-      Feature2,
-      Feature3
-    ]
-  二：Zondy: 使用Zondy的API做查询返回的格式
-    {
-      AttStruct:{...},
-      SFEleArray:{...},
-      TotalCount:""
-    }
-  ```
+  > 一：[Feature]: Feature 数组格式 <br/>
+  > 使用此格式时不建议自己拼装，
+  > 而是直接调动 Feature 组件的 fromQueryResult 或 fromGeoJSON 方法返回数据，
+  > 建议如此使用: <br/>
+  > 将 Zondy.Service.QueryDocFeature.query 方法查询到的 result 转为[Feature] <br/>
+  > let featureSet = Feature.fromQueryResult(result); <br/>
+  > 将 GEOJSON 格式的 JSON 转为[Feature] <br/>
+  > let featureSet = Feature.fromGeoJSON(GEOJSON); <br/>
+  > 格式： <br/>
+  > [{ <br/>
+  > geometry:"", <br/>
+  > geometryType:"", <br/>
+  > attributes:"", <br/>
+  > style:"", <br/>
+  > FID:"" <br/>
+  > }, <br/>
+  > Feature2, <br/>
+  > Feature3 <br/>
+  > ] <br/>
+  > 二：Zondy: 使用 Zondy 的 API 做查询返回的格式 <br/>
+  > { <br/>
+  > AttStruct:{...}, <br/>
+  > SFEleArray:{...}, <br/>
+  > TotalCount:"" <br/>
+  > }
 - **参考:** <br>
   `[Feature]` in [Feature](/zh/api/Util/geomtry/Feature.md) <br>
   `Zondy` in [Zondy](http://develop.smaryun.com:8899/#/demo/mapboxgl/mapgis-igserver/feature/feature-search) <br>
@@ -79,13 +77,10 @@
 - **类型:** `Object`
 - **侦听属性 ed**
 - **描述:** 表格分页信息。
-
-```
-  {
-    pageSize: 每页条数,
-    total: 所有记录数,
-  }
-```
+  > { <br/>
+  > pageSize: 每页条数,<br/>
+  > total: 所有记录数,<br/>
+  > }
 
 ## 事件
 
