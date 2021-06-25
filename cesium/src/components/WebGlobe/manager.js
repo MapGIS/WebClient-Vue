@@ -101,6 +101,7 @@ export class BaseManager {
       this[vueKey] = [];
     }
     this[vueKey].push({
+      parent: vueKey,
       key: vueIndex,
       source: source,
       options: options
