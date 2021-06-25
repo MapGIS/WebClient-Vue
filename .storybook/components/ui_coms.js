@@ -2,6 +2,8 @@ import "ant-design-vue/dist/antd.css";
 
 export { MapgisIconfont } from "../../mapboxgl/src/components/UI/iconfont";
 
+import { MapgisUiBorder } from "../../ui/src/component";
+
 import { default as Slider } from "ant-design-vue/es/slider";
 
 import { default as Select } from "ant-design-vue/es/select";
@@ -36,3 +38,5 @@ export { Popconfirm };
 
 export { default as Tree } from "ant-design-vue/es/tree/Tree";
 export { default as DirectoryTree } from "ant-design-vue/es/tree/DirectoryTree";
+
+export { MapgisUiBorder };

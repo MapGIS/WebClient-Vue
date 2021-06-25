@@ -17,6 +17,10 @@ export default {
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: selectTypes,
+  model: {
+    prop: "value",
+    event: "change"
+  },
   methods: {}
 };
 </script>
