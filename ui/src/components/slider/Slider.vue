@@ -17,6 +17,16 @@ export default {
     prop: "value",
     event: "change"
   },
-  props: sliderProps
+  props: sliderProps,
+  computed: {
+    addListeners() {
+      const vm = this;
+      return {
+        change: function(value) {
+          vm.$emit("change", value);
+        }
+      };
+    }
+  }
 };
 </script>
