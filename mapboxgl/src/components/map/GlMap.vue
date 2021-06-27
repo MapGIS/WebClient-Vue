@@ -1,16 +1,12 @@
 <template>
-  <div
-    :class="mapClass"
-    :id="container"
-    ref="container"
-  >
+  <div :class="mapClass" :id="container" ref="container">
     <slot v-if="initialized" />
   </div>
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import '@mapgis/mapbox-gl-compare/mapbox-gl-compare.css'
+import "@mapgis/mapbox-gl-compare/mapbox-gl-compare.css";
 
 import withEvents from "../../lib/withEvents";
 import mapEvents from "./events";
@@ -19,10 +15,17 @@ import withWatchers from "./mixins/withWatchers";
 import withPrivateMethods from "./mixins/withPrivateMethods";
 // import withAsyncActions from "./mixins/withAsyncActions";
 
+import { addListener, removeListener } from "resize-detector";
+import debounce from "lodash/debounce";
+
 export default {
   name: "mapgis-web-map",
 
-  mixins: [withWatchers, /* withAsyncActions, */ withPrivateMethods, withEvents],
+  mixins: [
+    withWatchers,
+    /* withAsyncActions, */ withPrivateMethods,
+    withEvents
+  ],
 
   props: {
     mapboxGl: {
@@ -32,61 +35,65 @@ export default {
     ...options
   },
 
-  provide () {
+  provide() {
     const self = this;
     return {
-      get mapbox () {
+      get mapbox() {
         return self.mapbox;
       },
-      get map () {
+      get map() {
         return self.map;
       },
-      get actions () {
+      get actions() {
         return self.actions;
       },
-      get theme () {
+      get theme() {
         return self.theme;
       },
-      get color () {
+      get color() {
         return self.color;
+      },
+      get resize() {
+        return this.resizeEvent;
       }
     };
   },
 
-  data () {
+  data() {
     return {
-      initialized: false
+      initialized: false,
+      resizeEvent: undefined
     };
   },
 
   computed: {
-    loaded () {
+    loaded() {
       return this.map ? this.map.loaded() : false;
     },
-    version () {
+    version() {
       return this.map ? this.map.version : null;
     },
-    isStyleLoaded () {
+    isStyleLoaded() {
       return this.map ? this.map.isStyleLoaded() : false;
     },
-    areTilesLoaded () {
+    areTilesLoaded() {
       return this.map ? this.map.areTilesLoaded() : false;
     },
-    isMoving () {
+    isMoving() {
       return this.map ? this.map.isMoving() : false;
     },
-    canvas () {
+    canvas() {
       return this.map ? this.map.getCanvas() : null;
     },
-    canvasContainer () {
+    canvasContainer() {
       return this.map ? this.map.getCanvasContainer() : null;
     },
-    images () {
+    images() {
       return this.map ? this.map.listImages() : null;
     }
   },
 
-  created () {
+  created() {
     this.map = null;
     this.propsIsUpdating = {};
     this.mapboxPromise = this.mapboxGl
@@ -94,7 +101,7 @@ export default {
       : import("@mapgis/mapbox-gl");
   },
 
-  mounted () {
+  mounted() {
     this.$_loadMap().then(map => {
       const { actions, mapbox } = this;
       this.map = map;
@@ -110,17 +117,41 @@ export default {
       this.$_bindPropsUpdateEvents();
       this.initialized = true;
       this.$emit("load", { map, component: this, actions, mapbox });
+      this.bindSize();
     });
   },
 
-  beforeDestroy () {
+  beforeDestroy() {
     this.$nextTick(() => {
       if (this.map) {
+        this.unbindSize();
         this.map.remove();
         this.initialized = false;
         this.map = null;
       }
     });
+  },
+
+  methods: {
+    bindSize() {
+      this.resizeEvent = debounce(
+        () => {
+          this.resize();
+        },
+        100,
+        { leading: true }
+      );
+      addListener(this.$el, this.resizeEvent);
+    },
+    unbindSize() {
+      removeListener(this.$el, this.resizeEvent);
+    },
+    resize() {
+      const {autoResize, map} = this;
+      if (autoResize && map) {
+        map.resize();
+      }
+    }
   }
 };
 </script>
