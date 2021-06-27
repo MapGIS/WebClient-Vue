@@ -51,9 +51,7 @@ export function initManager() {
   window.CesiumZondy.IgsserverManager =
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
   window.CesiumZondy.ExcavateAnalysisManager =
-  window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
-
-
+    window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -78,7 +76,10 @@ export function initManager() {
     let GlobesManager = window.CesiumZondy.GlobesManager,
       webGlobeObj;
     let interval = setInterval(function() {
-      if (GlobesManager[vueKey].length > 0) {
+      if (
+        GlobesManager.hasOwnProperty(vueKey) &&
+        GlobesManager[vueKey].length > 0
+      ) {
         clearInterval(interval);
         webGlobeObj = GlobesManager[vueKey][0].source;
         callback(webGlobeObj);
@@ -101,6 +102,7 @@ export class BaseManager {
       this[vueKey] = [];
     }
     this[vueKey].push({
+      parent: vueKey,
       key: vueIndex,
       source: source,
       options: options
@@ -183,4 +185,3 @@ export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
-

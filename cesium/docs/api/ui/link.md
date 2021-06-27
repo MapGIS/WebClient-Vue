@@ -1,15 +1,93 @@
 # 多屏联动
+
 > mapgis-3d-link
 
 ## 属性
 
 ### `enable`
+
 - **类型:** `Boolean`
 - **非侦听属性**
 - **默认值:** `false`
 - **描述:** 
+
+> 这个属性刚开始的时候只能是false,多个场景的生命周期是不同步的。由于无法获取多个场景最后加载完毕的时刻，因此只能后面手动激活为true。
+
+### `view`
+- **类型:** `Object`
+- **伪V-Model属性**
+- **默认值:** `undefined`
+- **描述:** 
+> 当前联动的地图场景的视图范围，该属性为伪`v-model`属性，只能场景内部的视图范围带动vue组件的的属性更新，不能支持外部的view的变化来更新场景的视图范围，该属性是单向的。
+1. 3d属性
+``` json
+{
+  "destination": {
+    "x": -2357352.339898985,
+    "y": 5265849.383811235,
+    "z": 3222357.1044067424
+  },
+  "orientation": {
+    "direction": {
+      "x": 0.4160883949944302,
+      "y": -0.9003657415245255,
+      "z": -0.1273262700307768
+    },
+    "up": {
+      "x": 0.07867247478982513,
+      "y": -0.10385364386338627,
+      "z": 0.9914762036311014
+    },
+    "heading": 6.251507435365607,
+    "pitch": -1.1860759562972296,
+    "roll": 6.283171031875163
+  }
+}
 ```
-这个属性刚开始的时候只能是false,多个场景的生命周期是不同步的。由于无法获取多个场景最后加载完毕的时刻，因此只能后面手动激活为true。
+2. 2d属性
+``` json
+{
+    "east":115.90076343423289,
+    "north":31.359409016591904,
+    "south":29.36758036258932,
+    "west":112.18827644621057
+}
+```
+
+### `includes`
+- **类型:** `Array`
+- **非侦听属性**
+- **默认值:** `[]`
+- **描述:** 
+
+> 外部指定的`联动`的三维场景的vueKey值，如果是空则联动所有的加载的三维场景。否则只联动指定的数组里面的值。
+> 请不要将includes excludes同时使用
+
+``` vue
+<mapgis-web-scene vueKey="one" />
+<mapgis-web-scene vueKey="two" />
+<mapgis-web-scene vueKey="three" />
+<mapgis-web-scene vueKey="forth" />
+
+<mapgis-3d-link :includes="['one', 'two']" :enable="enable" />
+```
+
+### `excludes`
+- **类型:** `Array`
+- **非侦听属性**
+- **默认值:** `[]`
+- **描述:** 
+
+> 外部指定`排除联动`的三维场景的vueKey值，如果是空则联动所有的加载的三维场景。否则只联动指定的数组里面的值。
+> 请不要将includes excludes同时使用
+
+``` vue
+<mapgis-web-scene vueKey="one" />
+<mapgis-web-scene vueKey="two" />
+<mapgis-web-scene vueKey="three" />
+<mapgis-web-scene vueKey="forth" />
+
+<mapgis-3d-link :excludes="['one', 'two']" :enable="enable" />
 ```
 
 ### `vueKey`
@@ -18,18 +96,14 @@
 - **可选**
 - **非侦听属性**
 - **默认值:** `default`
-- **描述:** 
-```
-mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
-同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
-```
+- **描述:**
+  > mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件，<br/>
+  > 同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。
 
 ### `vueIndex`
 
 - **类型:** `Number`
 - **可选**
 - **非侦听属性**
-- **描述:** 
-```
-当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
-```
+- **描述:**
+  > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。

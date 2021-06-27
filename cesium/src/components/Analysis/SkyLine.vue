@@ -100,6 +100,7 @@ export default {
             window.skyline[this.index][find.index]
         );
         delete window.skyline[this.index][find.index];
+        that.skyLineAn = false;
       }
     }
 

@@ -78,6 +78,7 @@ export default {
       return new MapvLayer(viewer, this.dataset, this.options);
     },
     initData(geojson) {
+      let vm = this;
       let data = [];
       geojson = geojson || this.geojson;
       if (!geojson.hasOwnProperty("features")) {
@@ -92,6 +93,7 @@ export default {
         const feature = features[i];
         const fType = feature.geometry.type;
         const coordinates = feature.geometry.coordinates;
+        let count = feature.properties[this.countField];
         if (fType === "Point") {
           let obj = Object.assign(
             {
@@ -99,7 +101,7 @@ export default {
                 type: "Point",
                 coordinates: coordinates
               },
-              count: 30 * Math.random(),
+              count: vm.isNumber(count) ? count : Number(count) || 1,
               time: 100 * Math.random()
             },
             feature.properties
@@ -112,7 +114,7 @@ export default {
                 type: "LineString",
                 coordinates: coordinates
               },
-              count: feature.properties[this.countField] || 1,
+              count: vm.isNumber(count) ? count : Number(count) || 1,
               time: 100 * Math.random()
             },
             feature.properties
@@ -125,7 +127,7 @@ export default {
                 type: "Polygon",
                 coordinates: coordinates
               },
-              count: feature.properties[this.countField] || 1,
+              count: vm.isNumber(count) ? count : Number(count) || 1,
               time: 100 * Math.random()
             },
             feature.properties
@@ -135,6 +137,9 @@ export default {
       }
       var dataSet = new DataSet(data);
       return dataSet;
+    },
+    isNumber(obj){
+      typeof obj === "number" && !isNaN(obj)
     },
     $_convertData(geojson) {
       let data = VFeature.resultToGeojson(geojson);

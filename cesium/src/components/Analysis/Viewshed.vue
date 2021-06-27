@@ -213,7 +213,6 @@ export default {
                 let find = that.findSource();
                 let vshed3d = window.viewshed3d[that.index][find.index];
                 that.webGlobe.viewer.scene.globe.enableTransparent = false;
-                // window.webGlobe.viewer.scene.globe
                 if (that.viewshedAn) {
                     // 可视域分析
                     if (that.viewshed3daction) {
@@ -223,7 +222,7 @@ export default {
                             cartesian
                         );
                         if (cartesian !== undefined && !that.viewshed3ding) {
-                            cartesian.x += 3.6;
+                            cartesian.z += 3.6;
                             let cartographic = Cesium.Cartographic.fromCartesian(
                                 cartesian
                             );
@@ -238,8 +237,8 @@ export default {
                             that.form.startLon = lng;
                             that.form.startLat = lat;
                             that.form.startAlt = height;
-                            // //设置观察点坐标
-                            // vshed3d.viewPosition = cartesian;
+                            //设置观察点坐标
+                            vshed3d.viewPosition = cartesian;
                             //添加可视域分析结果显示
                             viewer.scene.VisualAnalysisManager.add(vshed3d);
                             that.viewshed3ding = true;
@@ -252,8 +251,7 @@ export default {
                             that.startAltMax = that.form.startAlt + 100;
                         } else {
                             // //设置可视域结果点
-                            // vshed3d.targetPosition = cartesian;
-
+                            vshed3d.targetPosition = cartesian;
                             that.viewshed3daction = false;
                             that.viewshed3ding = false;
                         }
@@ -378,7 +376,7 @@ export default {
 
 <style scoped>
 ::v-deep .ant-card-body {
-    max-height: 300px;
+    max-height: 530px;
     overflow: auto;
 }
 ::v-deep .ant-input-affix-wrapper .ant-input:not(:first-child) {
