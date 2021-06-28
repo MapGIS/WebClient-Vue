@@ -1,5 +1,8 @@
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
 
+// Navigation
+export { default as MapgisUiAffix } from "./components/affix/Affix.vue";
+
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 
 export { default as MapgisUiSelect } from "./components/select/Select.vue";
