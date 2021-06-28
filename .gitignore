@@ -7,6 +7,7 @@ mapboxgl/node_modules
 cesium/dist-docs
 cesium/dist-libs
 cesium/node_modules
+ui/dist-libs
 dist
 package-lock.json
 
