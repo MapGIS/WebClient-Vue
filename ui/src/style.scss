@@ -1,7 +1,18 @@
 @import "./util/style/common/common.scss";
 /** antd */
+@import "./components/avatar/style/avatar.scss";
 @import "./components/border/style/border.scss";
 @import "./components/card/style/card.scss";
 @import "./components/select/style/select.scss";
 @import "./components/tree/style/tree.scss";
 @import "./components/slider/style/slider.scss";
+@import "./components/input/style/input.scss";
+@import "./components/checkbox/style/checkbox.scss";
+@import "./components/switch/style/switch.scss";
+@import "./components/tabs/style/tabs.scss";
+@import "./components/button/style/button.scss";
+@import "./components/radio/style/radio.scss";
+@import "./components/tooltip/style/tooltip.scss";
+// @import "./components/message/style/message.scss";
+@import "./components/spin/style/spin.scss";
+@import "./components/modal/style/modal.scss";
