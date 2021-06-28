@@ -4,11 +4,7 @@ import MapgisArcgisTileLayer from "../mapboxgl/src/components/layer/ArcGISServer
 export default {
     title: "二维/ArcGISServer-瓦片图层",
     component: MapgisArcgisTileLayer,
-    argTypes: {
-        layerId: "",
-        sourceId: "test",
-        baseUrl: "http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer",
-    },
+    argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
@@ -17,7 +13,7 @@ const Template = (args, { argTypes }) => ({
     template: `
     <mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
     <mapgis-arcgis-tile-layer v-bind="$props" />
-    <mapgis-arcgis-legend :url="url"></mapgis-arcgis-legend>
+    <mapgis-arcgis-legend :url="baseUrl"></mapgis-arcgis-legend>
     </mapgis-web-map>`,
 });
 

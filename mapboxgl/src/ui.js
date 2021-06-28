@@ -10,6 +10,8 @@ let InputSearch = Input.Search;
 let InputTextArea = Input.TextArea;
 let InputPassword = Input.Password;
 
+import { default as InputNumber } from "ant-design-vue/es/input-number";
+
 import { default as Card } from "ant-design-vue/es/card";
 
 import { default as Button } from "ant-design-vue/es/button";
@@ -23,6 +25,7 @@ import { default as Popconfirm } from "ant-design-vue/es/popconfirm";
 export { Slider };
 export { Select, SelectOption, SelectOptGroup };
 export { Input, InputGroup, InputSearch, InputTextArea, InputPassword };
+export { InputNumber };
 export { Card };
 export { Button };
 export { Table };

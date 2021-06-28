@@ -100,7 +100,11 @@ export default {
       }
 
       if (dynamicTile) {
-        this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
+        if (baseUrl) {
+          this._url = baseUrl + `/{z}/{y}/{x}?size=${tileSize}`;
+        } else {
+          this._url = `${domain}/igs/rest/mrms/tile/${serverName}/{z}/{y}/{x}?size=${tileSize}`;
+        }
       } else {
         docParam = this.$_initAllRequestParams().join("&");
         this._url = encodeURI(fixBaseUrl + "?" + docParam) + "&bbox={bbox}";
