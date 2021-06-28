@@ -45,23 +45,23 @@ export const 地图文档 = Template.bind({});
   layers: 'show:0,1,2,3,4,5,6,7',
 };
 
-const TemplateTile = (args, { argTypes }) => ({
-  props: Object.keys(args),
-  components: { MapgisWebMap, MapgisIgsDocLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:60vh">
-  <mapgis-igs-doc-layer v-bind="$props" />
-  </mapgis-web-map>`,
-  data() {
-    return {};
-  },
-  methods: {},
-});
-
-export const 动态切片 = TemplateTile.bind({});
-动态切片.args = {
-  layerId: "igs_layer_layerid",
-  baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
-  layers: 'show:0,1,2,3,4,5,6,7',
-  dynamicTile: true,
-};
+// const TemplateTile = (args, { argTypes }) => ({
+//   props: Object.keys(args),
+//   components: { MapgisWebMap, MapgisIgsDocLayer },
+//   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:60vh">
+//   <mapgis-igs-doc-layer v-bind="$props" />
+//   </mapgis-web-map>`,
+//   data() {
+//     return {};
+//   },
+//   methods: {},
+// });
+//
+// export const 动态切片 = TemplateTile.bind({});
+// 动态切片.args = {
+//   layerId: "igs_layer_layerid",
+//   baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市',
+//   layers: 'show:0,1,2,3,4,5,6,7',
+//   dynamicTile: true,
+// };
 

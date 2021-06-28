@@ -45,15 +45,19 @@ TDT_3857.args = {
   format:"tiles",
   layerId: 'ogcwmts_layerId',
   sourceId: 'ogcwmts_sourceId',
-  token:"f5347cab4b28410a6e8ba5143e3d5a35"
+  // token:"f5347cab4b28410a6e8ba5143e3d5a35"
+  token:{
+    key:'tk',
+    value:'f5347cab4b28410a6e8ba5143e3d5a35'
+  }
 };
 
 export const ArcGis_3857 = Template.bind({});
 ArcGis_3857.args = {
-  wmtsLayer: '矿产地数据库2019_ferrous_metal',
+  wmtsLayer: 'ChinaOnlineCommunity',
   layerId: 'ogcwmts_layerId',
   sourceId: 'ogcwmts_sourceId',
   tileMatrixSet:"default028mm",
-  baseUrl:'http://219.142.81.85/arcgis/rest/services/矿产地数据库2019/ferrous_metal/MapServer/WMTS'
+  baseUrl:'http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/WMTS'
 };
 
