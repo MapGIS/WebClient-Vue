@@ -1,6 +1,14 @@
 /** components */
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
 
+// Navigation
+export { default as MapgisUiAffix } from "./components/affix/Affix.vue";
+export { default as MapgisUiBreadcrumb } from "./components/breadcrumb/Breadcrumb.vue";
+export { default as MapgisUiBreadcrumbItem } from "./components/breadcrumb/BreadcrumbItem.vue";
+export { default as MapgisUiBreadcrumbSeparator } from "./components/breadcrumb/BreadcrumbSeparator.vue";
+export { default as MapgisUiDropdown } from "./components/dropdown/Dropdown.vue";
+export { default as MapgisUiDropdownButton } from "./components/dropdown/DropdownButton.vue";
+
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 
 export { default as MapgisUiSelect } from "./components/select/Select.vue";

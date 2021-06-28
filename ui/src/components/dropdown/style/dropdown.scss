@@ -1,0 +1,10 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(dropdown) {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  z-index: $zindex-dropdown;
+  display: block;
+}
