@@ -18,16 +18,16 @@ export default {
     prop: "checkedKeys",
     event: "check"
   },
-  props: treeProps
-  /*   computed: {
+  props: treeProps,
+  computed: {
     addListeners() {
       const vm = this;
       return {
-        check: function() {
-          vm.$emit("check", ...arguments);
+        'check': function () {
+          vm.$emit('check', ...arguments);
         }
       };
     }
-  } */
+  }
 };
 </script>

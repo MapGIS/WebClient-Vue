@@ -31,6 +31,16 @@ export default {
   model: {
     prop: 'activeKey',
     event: 'change'
+  },
+  computed: {
+    addListeners() {
+      const vm = this;
+      return {
+        change: function(value) {
+          vm.$emit('change', value);
+        }
+      };
+    }
   }
 };
 </script>

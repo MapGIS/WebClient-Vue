@@ -12,6 +12,8 @@ export { default as MapgisUiEmpty } from "./components/empty/Empty.vue";
 export { default as MapgisUiTree } from "./components/tree/Tree.vue";
 
 export { default as MapgisUiCard } from "./components/card/Card.vue";
+export { default as MapgisUiCardGrid } from "./components/card/Grid.vue";
+export { default as MapgisUiCardMeta } from "./components/card/Meta.vue";
 
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
 
@@ -39,8 +41,22 @@ export { default as MapgisUiRadioButton } from "./components/radio/Button.vue";
 
 export { default as MapgisUiTooltip } from "./components/tooltip/Tooltip.vue";
 
-export { default as MapgisUiMessage } from "./components/message/Message.js";
+// export { default as MapgisUiMessage } from "./components/message/Message.js";
 
 export { default as MapgisUiSpin } from "./components/spin/Spin.vue";
 
 export { default as MapgisUiModal } from "./components/modal/Modal.vue";
+
+export { default as MapgisUiDatePicker } from "./components/date-picker/DatePicker.vue";
+export { default as MapgisUiRangePicker } from "./components/date-picker/RangePicker.vue";
+export { default as MapgisUiMonthPicker } from "./components/date-picker/MonthPicker.vue";
+export { default as MapgisUiWeekPicker } from "./components/date-picker/WeekPicker.vue";
+
+export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";
+
+export { default as MapgisUiCollapse } from "./components/collapse/Collapse.vue";
+export { default as MapgisUiCollapsePanel } from "./components/collapse/Panel.vue";
+
+export { default as MapgisUiTable } from "./components/table/Table.vue";
+export { default as MapgisUiTableColumn } from "./components/table/Column.vue";
+export { default as MapgisUiTableColumnGroup } from "./components/table/ColumnGroup.vue";
