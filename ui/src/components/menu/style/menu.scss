@@ -21,220 +21,99 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     list-style: none;
   }
 
-  @include e(hidden, "-") {
+  &-hidden {
     display: none;
   }
 
-  @include e(item, "-") {
-    position: relative;
-    display: block;
-    margin: 0;
-    padding: 0 20px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: color 0.3s $ease-in-out, border-color 0.3s $ease-in-out,
-      $menu-bg 0.3s $ease-in-out, padding 0.15s $ease-in-out;
-
-    &-group-title {
-      padding: 8px 16px;
-      color: $menu-item-group-title-color;
-      font-size: $font-size-base;
-      line-height: $line-height-base;
-      transition: all 0.3s;
-    }
-    &:active {
-      background: $menu-item-active-bg;
-    }
-    a {
-      display: block;
-      color: $menu-item-color;
-      &:hover {
-        color: $menu-highlight-color;
-      }
-      &::before {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background-color: transparent;
-        content: "";
-      }
-    }
-    @include b(badge) {
-      a {
-        color: $menu-item-color;
-        &:hover {
-          color: $menu-highlight-color;
-        }
-      }
-    }
-    &-divider {
-      height: 1px;
-      overflow: hidden;
-      line-height: 0;
-      background-color: $border-color-split;
-    }
-    &:hover,
-    &-active {
-      color: $menu-highlight-color;
-    }
-    &-selected {
-      color: $menu-highlight-color;
-      > a,
-      > a:hover {
-        color: $menu-highlight-color;
-      }
-    }
+  &-item-group-title {
+    padding: 8px 16px;
+    color: $menu-item-group-title-color;
+    font-size: $font-size-base;
+    line-height: $line-height-base;
+    transition: all 0.3s;
   }
 
-  @include e(sub, "-") {
-    cursor: initial;
-    transition: $menu-bg 0.3s $ease-in-out, padding 0.3s $ease-in-out;
-  }
-
-  @include e(submenu, "-") {
-    cursor: initial;
-    transition: $menu-bg 0.3s $ease-in-out, padding 0.3s $ease-in-out;
+  &-submenu,
+  &-submenu-inline {
     transition: border-color 0.3s $ease-in-out, $menu-bg 0.3s $ease-in-out,
       padding 0.15s $ease-in-out;
-    &-inline {
-      transition: border-color 0.3s $ease-in-out, $menu-bg 0.3s $ease-in-out,
-        padding 0.15s $ease-in-out;
-    }
-    &-selected {
+  }
+
+  &-submenu-selected {
+    color: $menu-highlight-color;
+  }
+
+  &-item:active,
+  &-submenu-title:active {
+    background: $menu-item-active-bg;
+  }
+
+  &-submenu &-sub {
+    cursor: initial;
+    transition: $menu-bg 0.3s $ease-in-out, padding 0.3s $ease-in-out;
+  }
+
+  &-item > a {
+    display: block;
+    color: $menu-item-color;
+    &:hover {
       color: $menu-highlight-color;
     }
-    &-title {
-      position: relative;
-      display: block;
-      margin: 0;
-      padding: 0 20px;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: color 0.3s $ease-in-out, border-color 0.3s $ease-in-out,
-        $menu-bg 0.3s $ease-in-out, padding 0.15s $ease-in-out;
-    }
-    &-title:active {
-      background: $menu-item-active-bg;
-    }
-    &-open,
-    &-active,
-    &-title:hover {
-      color: $menu-highlight-color;
-    }
-    &-popup {
+    &::before {
       position: absolute;
-      z-index: $zindex-dropdown;
-      border-radius: $border-radius-base;
-
-      .submenu-title-wrapper {
-        padding-right: 20px;
-      }
-
-      &::before {
-        position: absolute;
-        top: -7px;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        opacity: 0.0001;
-        content: " ";
-      }
-    }
-    > .#{$menu-prefix-cls} {
-      background-color: $menu-bg;
-      border-radius: $border-radius-base;
-      &-submenu-title::after {
-        transition: transform 0.3s $ease-in-out;
-      }
-    }
-
-    &-vertical,
-    &-vertical-left,
-    &-vertical-right,
-    &-inline {
-      > .#{$menu-prefix-cls}-submenu-title .#{$menu-prefix-cls}-submenu-arrow {
-        position: absolute;
-        top: 50%;
-        right: 16px;
-        width: 10px;
-        transition: transform 0.3s $ease-in-out;
-        &::before,
-        &::after {
-          position: absolute;
-          width: 6px;
-          height: 1.5px;
-          // background + background-image to makes before & after cross have same color.
-          // Since `linear-gradient` not work on IE9, we should hack it.
-          // ref: https://github.com/ant-design/ant-design/issues/15910
-          background: $menu-bg;
-          background-image: linear-gradient(
-            to right,
-            $menu-item-color,
-            $menu-item-color
-          );
-          border-radius: 2px;
-          transition: $menu-bg 0.3s $ease-in-out, transform 0.3s $ease-in-out,
-            top 0.3s $ease-in-out;
-          content: "";
-        }
-        &::before {
-          transform: rotate(45deg) translateY(-2px);
-        }
-        &::after {
-          transform: rotate(-45deg) translateY(2px);
-        }
-      }
-      > .#{$menu-prefix-cls}-submenu-title:hover
-        .#{$menu-prefix-cls}-submenu-arrow {
-        &::after,
-        &::before {
-          background: linear-gradient(
-            to right,
-            $menu-highlight-color,
-            $menu-highlight-color
-          );
-        }
-      }
-    }
-
-    &-inline
-      > .#{$menu-prefix-cls}-submenu-title
-      .#{$menu-prefix-cls}-submenu-arrow {
-      &::before {
-        transform: rotate(-45deg) translateX(2px);
-      }
-      &::after {
-        transform: rotate(45deg) translateX(-2px);
-      }
-    }
-
-    &-open {
-      &.#{$menu-prefix-cls}-submenu-inline
-        > .#{$menu-prefix-cls}-submenu-title
-        .#{$menu-prefix-cls}-submenu-arrow {
-        transform: translateY(-2px);
-        &::after {
-          transform: rotate(-45deg) translateX(-2px);
-        }
-        &::before {
-          transform: rotate(45deg) translateX(2px);
-        }
-      }
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: transparent;
+      content: "";
     }
   }
 
-  @include e(horizontal, "-") {
-    &-item,
-    &-submenu {
-      margin-top: -1px;
+  // https://github.com/ant-design/ant-design/issues/19809
+  &-item > .#{$ant-prefix}-badge > a {
+    color: $menu-item-color;
+    &:hover {
+      color: $menu-highlight-color;
     }
-    > &-item:hover,
-    > &-item-active,
-    > &-submenu &-submenu-title:hover {
-      background-color: transparent;
+  }
+
+  &-item-divider {
+    height: 1px;
+    overflow: hidden;
+    line-height: 0;
+    background-color: $border-color-split;
+  }
+
+  &-item:hover,
+  &-item-active,
+  &:not(&-inline) &-submenu-open,
+  &-submenu-active,
+  &-submenu-title:hover {
+    color: $menu-highlight-color;
+  }
+
+  &-horizontal &-item,
+  &-horizontal &-submenu {
+    margin-top: -1px;
+  }
+
+  &-horizontal > &-item:hover,
+  &-horizontal > &-item-active,
+  &-horizontal > &-submenu &-submenu-title:hover {
+    background-color: transparent;
+  }
+
+  &-item-selected {
+    color: $menu-highlight-color;
+    > a,
+    > a:hover {
+      color: $menu-highlight-color;
     }
+  }
+
+  &:not(&-horizontal) &-item-selected {
+    background-color: $menu-item-active-bg;
   }
 
   &-inline,
@@ -509,3 +388,5 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     }
   }
 }
+
+@import "./dark.scss";
