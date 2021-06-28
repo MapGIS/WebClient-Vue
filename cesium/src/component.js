@@ -47,3 +47,4 @@ export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue"
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
+export { default as Mapgis3dFlood } from "./components/Analysis/Flood";

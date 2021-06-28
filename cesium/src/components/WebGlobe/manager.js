@@ -24,6 +24,8 @@ export function initManager() {
     window.CesiumZondy.PopupManager || new PopupManager();
   window.CesiumZondy.OGCWMTSManager =
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
+  window.CesiumZondy.FloodAnalyseManager =
+    window.CesiumZondy.FloodAnalyseManager || new FloodAnalyseManager();
   window.CesiumZondy.OGCWMSManager =
     window.CesiumZondy.OGCWMSManager || new OGCWMSManager();
   window.CesiumZondy.DragEditManager =
@@ -185,3 +187,4 @@ export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
+export class FloodAnalyseManager extends BaseManager {}
