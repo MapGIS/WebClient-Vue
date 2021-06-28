@@ -29,6 +29,17 @@ export default {
   model: {
     prop: 'checked',
     event: 'change'
+  },
+  computed: {
+    addListeners() {
+      const vm = this;
+      return {
+        // 这里确保组件配合 `v-model` 的工作
+        'change.value': function(value) {
+          vm.$emit('change.value', value);
+        }
+      };
+    }
   }
 };
 </script>

@@ -1,0 +1,10 @@
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
+
+@include b(collapse) {
+  background-color: $collapse-header-bg;
+
+  @include e(borderless, '-') {
+    background-color: $collapse-header-bg;
+  }
+}

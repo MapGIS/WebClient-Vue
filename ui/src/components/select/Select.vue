@@ -21,6 +21,16 @@ export default {
     prop: "value",
     event: "change"
   },
-  methods: {}
+  methods: {},
+  computed: {
+    addListeners() {
+      const vm = this;
+      return {
+        change: function(value) {
+          vm.$emit('change', value);
+        }
+      };
+    }
+  }
 };
 </script>
