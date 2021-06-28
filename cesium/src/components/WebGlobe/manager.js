@@ -51,9 +51,7 @@ export function initManager() {
   window.CesiumZondy.IgsserverManager =
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
   window.CesiumZondy.ExcavateAnalysisManager =
-  window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
-
-
+    window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -64,6 +62,29 @@ export function initManager() {
       webGlobeObj;
     webGlobeObj = GlobesManager[vueKey][0].source;
     return webGlobeObj;
+  };
+
+  /**
+   * 通过轮询的方式取得webGlobeObj
+   * @param callback 回调函数
+   * @param vueKey vueKey，唯一标识webscene组件
+   * */
+  window.CesiumZondy.getWebGlobeByInterval = function(callback, vueKey) {
+    if (!vueKey) {
+      vueKey = "default";
+    }
+    let GlobesManager = window.CesiumZondy.GlobesManager,
+      webGlobeObj;
+    let interval = setInterval(function() {
+      if (
+        GlobesManager.hasOwnProperty(vueKey) &&
+        GlobesManager[vueKey].length > 0
+      ) {
+        clearInterval(interval);
+        webGlobeObj = GlobesManager[vueKey][0].source;
+        callback(webGlobeObj);
+      }
+    }, 50);
   };
 }
 
@@ -81,6 +102,7 @@ export class BaseManager {
       this[vueKey] = [];
     }
     this[vueKey].push({
+      parent: vueKey,
       key: vueIndex,
       source: source,
       options: options
@@ -132,6 +154,16 @@ export class BaseManager {
     vueKey = vueKey ? vueKey : this.vueKey;
     return this[vueKey];
   }
+
+  flatAllSource() {
+    let flat = [];
+    Object.keys(this).forEach(k => {
+      if (k !== "vueKey") {
+        flat = flat.concat(this[k]);
+      }
+    });
+    return flat;
+  }
 }
 
 export class RasterManager extends BaseManager {}
@@ -153,4 +185,3 @@ export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
-

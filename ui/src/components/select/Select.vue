@@ -2,6 +2,7 @@
 import Select, { SelectProps } from "ant-design-vue/es/select";
 import PropTypes from "../../util/vue-types";
 import AntdMixin from "../../mixin/AntdMixin";
+import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const selectTypes = {
   ...SelectProps,
@@ -13,7 +14,7 @@ export const selectTypes = {
 export default {
   name: "mapgis-ui-select",
   wrapperUI: Select,
-  mixins: [AntdMixin],
+  mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: selectTypes,
   methods: {}

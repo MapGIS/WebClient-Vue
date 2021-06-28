@@ -56,10 +56,12 @@ export default {
     height: {
       handler: function() {
         //解决分屏时，cesium无限拉长的问题，要给一个固定高度
-        this.$nextTick(function () {
-          let webGlobe = window.CesiumZondy.getWebGlobe(this.vueKey);
-          webGlobe.viewer.container.style.height = this.height + "px";
-        })
+        let vm = this;
+        window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+          vm.$nextTick(function () {
+            webGlobe.viewer.container.style.height = this.height + "px";
+          })
+        },this.vueKey)
       }
     }
   },
@@ -115,6 +117,7 @@ export default {
       }
 
       this.webGlobe = webGlobe;
+      webGlobe.vueKey = vueKey;
       if (cameraView) {
         webGlobe.viewer.scene.camera.setView(cameraView);
       }

@@ -182,7 +182,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene style="height:60vh">
-      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :srs="srs"/>
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
       <mapgis-3d-mapv-layer v-bind="{...mapvGeojson}"></mapgis-3d-mapv-layer>
       <mapgis-3d-mapv-layer v-bind="{...mapvText}"></mapgis-3d-mapv-layer>
       <mapgis-3d-mapv-layer v-bind="{...mapvLine}"></mapgis-3d-mapv-layer>
@@ -200,7 +200,7 @@ mapv.args = {
         opacity: 1,
         zIndex: 2
     },
-    srs:"EPSG:4326",
+    tilingScheme:"EPSG:4326",
     mapvGeojson: {
         options: {
             gradient: {

@@ -7,6 +7,10 @@ export default {
     type: String,
     default: "blue-grey-11"
   },
+  autoResize: {
+    type: Boolean,
+    default: true
+  },
   container: {
     type: [String, HTMLElement],
     default() {

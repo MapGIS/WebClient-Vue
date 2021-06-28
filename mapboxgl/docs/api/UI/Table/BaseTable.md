@@ -1,40 +1,13 @@
 # BaseTable
 
 ## 属性
-
-All common [layers props](/zh/api/Layers/README.md#props)
-
 ### `dataSource`
 
 - **类型:** `Array | Object`
-- **watch**
+- **侦听属性**
 - **描述:** 表格的数据源，支持如下格式：
   ```
-  一：AntDesign: AntDesign-Vue中table的datasouce格式
-    [
-      {
-        key: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-      },
-      {
-        key: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-      },
-      {
-        key: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-      }
-    ]
-  二：[Feature]: Feature数组格式，使用此格式时不建议自己拼装，
+  一：[Feature]: Feature数组格式，使用此格式时不建议自己拼装，
     而是直接调动Feature组件的fromQueryResult或fromGeoJSON方法返回数据，
     建议如此使用:
     将Zondy.Service.QueryDocFeature.query方法查询到的result转为[Feature]
@@ -53,50 +26,22 @@ All common [layers props](/zh/api/Layers/README.md#props)
       Feature2,
       Feature3
     ]
-  三：Zondy: 使用Zondy的API做查询返回的格式
+  二：Zondy: 使用Zondy的API做查询返回的格式
     {
       AttStruct:{...},
       SFEleArray:{...},
       TotalCount:""
     }
-    四：GEOJSON: 标准的GEOJSON格式
-    单个feature：
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [125.6, 10.1]
-      },
-      "properties": {
-        "name": "Dinagat Islands"
-      }
-    }
-    feature集合：
-    {
-      "type": "FeatureCollection",
-      "features": [{
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [114.31, 30.81]
-        },
-        "properties": {
-          "Name": "点测试"
-        }
-      }]
-    }
   ```
 - **参考:** <br>
-  `AntDesign` in [AntDesign Vue table](https://www.antdv.com/components/table-cn/) <br>
   `[Feature]` in [Feature](/zh/api/Util/geomtry/Feature.md) <br>
   `Zondy` in [Zondy](http://develop.smaryun.com:8899/#/demo/mapboxgl/mapgis-igserver/feature/feature-search) <br>
-  `GEOJSON` in [GEOJSON](https://geojson.org/)
 
 ### `columns`
 
 - **类型:** `Array`
 - **默认值:** []
-- **watch**
+- **侦听属性**
 - **描述:** 表格的字段集合，格式如下：
   ```
      [
@@ -125,43 +70,23 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `Boolean`
 - **默认值:** `true`
-- **watched**
+- **侦听属性ed**
 - **描述:** 是否启用表格编辑。
 
 ### `pagination`
 
 - **类型:** `Object`
-- **watched**
+- **侦听属性ed**
 - **描述:** 表格分页信息。
 
 ```
   {
-    disabled: 禁用分页,
     pageSize: 每页条数,
     total: 所有记录数,
   }
 ```
 
-### `height`
-
-- **类型:** `Number`
-- **watched**
-- **描述:** 表格高度，默认不指定时，会根据 pageSize 来计算表格的高度，显示与 pageSize 相同条数的数据。
-
-### `select`
-
-- **类型:** `Number`
-- **默认值** `true`
-- **watched**
-- **描述:** 是否显示左侧的复选框，默认显示。
-
 ## 事件
-
-### `@handleCreated`
-
-- **描述:** 表格加载完成事件
-- **返回值** `{ table }` <br>
-  `table` 整个表格对象
 
 ### `@edited`
 
@@ -169,22 +94,70 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **返回值** `{ dataSource }` <br>
   `dataSource` 表格的所有数据
 
-### `@delete`
+### `@deleted`
 
-- **描述:** 删除一条数据
-- **返回值** `{ OID,record }` <br>
-  `OID`要素的 OID <br>
+- **描述:** 删除一条数据事件
+- **返回值** `{ record }` <br>
   `record` 被删除的一条数据
 
 ### `@click`
 
-- **描述:** 点击单元格事件
-- **返回值** `{ index,key,value,row,allRow }` <br>
-  `index` 单元格所在行号，从 0 开始 <br>
-  `key` 单元格中数据的 key <br>
-  `value` 单元格中数据的 value <br>
-  `row` 被点击单元格所在行的属性数据 <br>
-  `allRow` 被点击单元格所在行的所有数据 <br>
+- **描述:** 单击单元格事件
+- **返回值** `{ record,columnKey }` <br>
+  `record` 被点击的一行数据<br>
+  `columnKey` 被点击的单元格所在的列名 <br>
+
+### `@doubleClick` 或 `@doubleclick`
+
+- **描述:** 双击单元格事件
+- **返回值** `{ rowIndex,columnKey,value,record }` <br>
+  `rowIndex` 行号，从0开始<br>
+  `columnKey` 列名 <br>
+  `value` 单元格数据 <br>
+  `record` 一行的数据 <br>
+
+### `@selected`
+
+- **描述:** 多选框中，选择一行事件
+- **返回值** `{ record,selectData,selected }` <br>
+  `record` 被选择的一行数据<br>
+  `selectData` 已选的所有数据 <br>
+  `selected` 是否选中该行 <br>
+
+### `@selectAll` 或 `@selectall`
+
+- **描述:** 多选框中，算中一页中的所有数据事件
+- **返回值** `{ selectData,selected }` <br>
+  `selectData` 已选的所有数据 <br>
+  `selected` 是否全选 <br>
+
+### `@pageChanged` 或 `@pagechanged`
+
+- **描述:** 分页点击事件
+- **返回值** `{ pagination,sorter }` <br>
+  `pagination` 分页信息 <br>
+  `sorter` 排序信息 <br>
+
+### `@sorted`
+
+- **描述:** 排序事件
+- **返回值** `{ sorter,pagination }` <br>
+  `sorter` 排序信息 <br>
+  `pagination` 分页信息 <br>
+
+### `@fullScreen` 或 `@fullscreen`
+
+- **描述:** 全屏事件
+- **返回值** `{ pagination,sorter }` <br>
+  `pagination` 分页信息，其中的pageSize为铺满全屏的数据条数 <br>
+  `sorter` 排序信息 <br>
+
+### `@originScreen` 或 `@originscreen`
+
+- **描述:** 还原全屏事件
+- **返回值** `{ pagination,sorter }` <br>
+  `pagination` 分页信息 <br>
+  `sorter` 排序信息 <br>
 
 ## 示例
 

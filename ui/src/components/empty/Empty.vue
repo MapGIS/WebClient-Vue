@@ -2,6 +2,7 @@
 import Empty, { EmptyProps } from "ant-design-vue/es/empty/index";
 import PropTypes from "../../util/vue-types";
 import AntdMixin from "../../mixin/AntdMixin";
+import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const emptyProps = {
   ...EmptyProps(),
@@ -11,7 +12,7 @@ export const emptyProps = {
 export default {
   name: "MapgisUiEmpty",
   wrapperUI: Empty,
-  mixins: [AntdMixin],
+  mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: emptyProps,
   computed: {

@@ -34,11 +34,13 @@
     "ant-design-vue": "^1.7.5",
     "echarts": "^5.0.2",
     "map-promisified": "0.4.0",
+    "mapbox-gl": "^2.3.1",
     "mapbox-gl-draw-circle": "^1.1.2",
     "mapbox-gl-draw-rectangle-mode": "1.0.4",
     "mapv": "^2.0.62",
     "node-sql-parser": "^3.2.0",
     "postcss-inline-svg": "^4.1.0",
+    "resize-detector": "^0.3.0",
     "v-contextmenu": "^2.9.0",
     "vue-runtime-helpers": "^1.1.2",
     "vuepress": "^1.8.2"

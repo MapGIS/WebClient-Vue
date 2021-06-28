@@ -2,11 +2,15 @@
 import antDirective from "ant-design-vue/es/_util/antDirective";
 
 import * as UIComponents from "./component";
+import { setTheme } from "./util/style/theme/set-theme";
 
 const install = function(Vue, options) {
+  options = options || {};
+  let theme = options.theme || "light";
   // require("./style.scss");
   require("./util/style/theme/antd.less");
   require("./style.scss");
+  setTheme(theme);
   Vue.use(antDirective);
   for (let name in UIComponents) {
     const ui = UIComponents[name];
@@ -15,11 +19,12 @@ const install = function(Vue, options) {
 };
 
 if (typeof window !== "undefined" && window["Vue"]) {
-  install(window["Vue"], {});
+  install(window["Vue"], { theme: "light" });
 }
 
 export * from "./component";
 
 export default {
+  setTheme,
   install
 };

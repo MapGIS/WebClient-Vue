@@ -1,0 +1,18 @@
+@import '../../../util/style/mixins/mixins.scss';
+
+@include b(border) {
+  position: relative;
+  box-sizing: border-box;
+  border-style: solid;
+  @include e(content) {
+    position: absolute;
+    > * {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .mapgis-ui-chart .mapgis-ui-collapse-card__content {
+    width: 100%;
+    height: 100%;
+  }
+}

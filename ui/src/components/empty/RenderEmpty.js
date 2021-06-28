@@ -22,7 +22,7 @@ const RenderEmpty = {
       const props = {
         image: defaultImage,
         description: localeData.description,
-        prefixCls: prefix || "sm-component-empty"
+        prefixCls: prefix || "mapgis-ui-empty"
       };
       switch (componentName) {
         case "Select":

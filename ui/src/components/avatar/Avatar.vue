@@ -2,6 +2,7 @@
 import Avatar from "ant-design-vue/es/avatar/Avatar";
 import PropTypes from "../../util/vue-types";
 import AntdMixin from "../../mixin/AntdMixin";
+import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const avatarTypes = {
   prefixCls: {
@@ -33,7 +34,7 @@ export const avatarTypes = {
 export default {
   name: "MapgisUiAvatar",
   wrapperUI: Avatar,
-  mixins: [AntdMixin],
+  mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: avatarTypes,
   methods: {

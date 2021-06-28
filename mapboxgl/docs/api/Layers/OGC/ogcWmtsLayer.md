@@ -17,7 +17,13 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值:** ``
 - **watch**
 - **非侦听属性**
-- **描述:** 地图文档名称。
+- **描述:** wmts 标准中的 layer 属性，即图层名称
+  > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
+  > 这里得到的是一个 XML 文档。<br/>
+  > ... <br/> > \<Layer\> <br/> > \<ows:Title\>beijing\</ows:Title\> <br/> > \<ows:Identifier\>beijing</ows:Identifier\>//这个值 beijing 就是 wmtsLayer 属性所需要的值 <br/>
+  > ... <br/> > \</Layer\> <br/>
+  > ... <br/>
+  > 全文搜索\<Layer\>关键字，在 Layer 下找到\<ows:Identifier\>属性，里面的值"beijing"就是 wmtsLayer 属性所需要的
 
 ### `tileMatrixSet`
 
@@ -25,7 +31,13 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值:** ``
 - **watch**
 - **非侦听属性**
-- **描述:** 缩放等级
+- **描述:** wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合
+  > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
+  > 这里得到的是一个 XML 文档。<br/>
+  > ... <br/> > \<TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
+  > ... <br/> > \<TileMatrixSet\> <br/>
+  > ... <br/>
+  > 全文搜索\<TileMatrixSet\>关键字，在\<TileMatrixSet\>下找到\<ows:Identifier\>属性，里面的值"EPSG:4326*北京市\_arcgis_GB"就是 tileMatrixSet 属性所需要的
 
 ### `version`
 
@@ -41,7 +53,12 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值:** `default`
 - **watch**
 - **非侦听属性**
-- **描述:** 地图样式
+- **描述:** wmts 标准中的 style 属性，即地图样式
+  > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
+  > 这里得到的是一个 XML 文档。 <br/>
+  > ... <br/> > \<Style isDefault="true"\> <br/> > \<ows:Title\>Default Style\</ows:Title\> <br/> > \<ows:Identifier\>default\</ows:Identifier\>//里面的"default"就是 wmtsStyle 的值 <br/> > \</Style\> <br/>
+  > ... <br/>
+  > 全文搜索 Style 关键字，地图可以有多个 style，这里以 default，默认值为例，在\<Style isDefault="true"\>下找到\<ows:Identifier\>属性，里面的"default"就是 wmtsStyle 的值
 
 ### `format`
 
@@ -49,7 +66,12 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值:** `image/png`
 - **watch**
 - **非侦听属性**
-- **描述:** 返回格式
+- **描述:** wmts 标准中的 format 属性，即请求的图片的返回格式
+  > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
+  > 这里得到的是一个 XML 文档。 <br/>
+  > ... <br/> > \<Format\>image/png\</Format\> <br/>
+  > ... <br/>
+  > 全文搜索\<Format\>关键字，里面的值"image/png"就是 format 属性所需要的
 
 ### `zoomOffset`
 

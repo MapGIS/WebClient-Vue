@@ -63,7 +63,6 @@ export default {
       type: Number,
       defalut: 3
     }
-
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   mixins: [ServiceLayer],
@@ -240,6 +239,5 @@ export default {
   top: 20px;
   left: 20px;
 }
-
 
 </style>
