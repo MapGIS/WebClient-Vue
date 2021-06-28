@@ -48,4 +48,3 @@ export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vu
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
-export { default as colorPicker } from "vcolorpicker";
