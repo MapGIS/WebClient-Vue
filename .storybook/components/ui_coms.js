@@ -4,6 +4,8 @@ export { MapgisIconfont } from "../../mapboxgl/src/components/UI/iconfont";
 
 import { default as Slider } from "ant-design-vue/es/slider";
 
+import { default as InputNumber } from "ant-design-vue/es/input-number";
+
 import { default as Select } from "ant-design-vue/es/select";
 let SelectOption = Select.Option;
 let SelectOptGroup = Select.OptGroup;
@@ -25,6 +27,7 @@ let CheckboxGroup = Checkbox.Group;
 import { default as Popconfirm } from "ant-design-vue/es/popconfirm";
 
 export { Slider };
+export { InputNumber };
 export { Select, SelectOption, SelectOptGroup };
 export { Input, InputGroup, InputSearch, InputTextArea, InputPassword };
 export { Card };

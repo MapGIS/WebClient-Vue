@@ -17,7 +17,7 @@
                   @change="setInput" :value="parseFloat(excavateDepth)"/>
       </a-row>
       <a-row :span="10">
-        <a-input-number v-model="excavateDepth" :min="mindepth" :max="maxdepth" style="marginLeft: 16px"/>
+        <a-input-number v-model="excavateDepth" :min="mindepth" :max="maxdepth" :style="{marginLeft: '16px'}"/>
       </a-row>
     </a-card>
   </div>
@@ -83,7 +83,6 @@ export default {
     vm.$_init(vm.getM3d);
   },
   unmount() {
-    debugger
     let {CesiumZondy, vueKey, vueIndex} = this;
     let find = CesiumZondy.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
     if (find) {
@@ -105,19 +104,18 @@ export default {
       let vm = this
       let {CesiumZondy, webGlobe} = this;
       let find = vm.$_getObject();
-      vm.boundingVolume = find.source[0]._root._boundingVolume.boundingVolume;
-      console.log("11111111111",find.source[0]);
+      vm._boundingVolume = find.source[0]._root._boundingVolume;
       // 模型包围盒的世界坐标系的中心、东北角、西南角
-      const center = vm.boundingVolume.center;
-      const northeastCornerCartesian = find.source[0]._root._boundingVolume.northeastCornerCartesian;
-      const southwestCornerCartesian = find.source[0]._root._boundingVolume.southwestCornerCartesian;
+      const center = vm._boundingVolume.boundingVolume.center;
+      const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
+      const southwestCornerCartesian = vm._boundingVolume.southwestCornerCartesian;
 
       //这里：东南角和西北角在外包盒子的同一平面上
       let p1 = this.degreefromCartesian(southwestCornerCartesian);
       let p2 = this.degreefromCartesian(northeastCornerCartesian);
       let centerDegree = this.degreefromCartesian(center);
-      this.drawPoint(p1);
-      this.drawPoint(p2);
+      // this.drawPoint(p1);
+      // this.drawPoint(p2);
       let p3 = {}, p4 = {};
       p3.longitude = p1.longitude;
       p3.latitude = p2.latitude;
@@ -131,14 +129,14 @@ export default {
       //求出平面的长和宽，再求出distance
       let length = Cesium.Cartesian3.distance(p4Caetesian, southwestCornerCartesian);
       let width = Cesium.Cartesian3.distance(p3Caetesian, southwestCornerCartesian);
-      debugger
       const beforeAfterDistance = length / 2;
       const leftRightDistance = width / 2;
       //求外包盒的高度
-      let depth = Math.abs(centerDegree.height - p1.height) * 2;
+      let depth = Math.abs(vm._boundingVolume.maximumHeight - vm._boundingVolume.minimumHeight);
+      // let depth = Math.abs(centerDegree.height - p1.height) * 2;
       //将滑动条的最大开挖深度值设置为depth
-      vm.mindepth = -depth;
-      vm.maxdepth = depth;
+      vm.mindepth = Math.round(vm._boundingVolume.minimumHeight);
+      vm.maxdepth = Math.round(vm._boundingVolume.maximumHeight);
       vm.excavateDepth = vm.maxdepth;
       //开挖面设置，原点在法向相反的方向，所以distance为负值。
       var planes = [
