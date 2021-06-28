@@ -152,7 +152,6 @@ export default {
       return params;
     },
     $_deferredMount() {
-      debugger;
       this.$_init();
       let source = {
         type: "raster",
