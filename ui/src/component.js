@@ -8,6 +8,11 @@ export { default as MapgisUiBreadcrumbItem } from "./components/breadcrumb/Bread
 export { default as MapgisUiBreadcrumbSeparator } from "./components/breadcrumb/BreadcrumbSeparator.vue";
 export { default as MapgisUiDropdown } from "./components/dropdown/Dropdown.vue";
 export { default as MapgisUiDropdownButton } from "./components/dropdown/DropdownButton.vue";
+export { default as MapgisUiMenu } from "./components/menu/Menu.vue";
+export { default as MapgisUiMenuDivider } from "./components/menu/MenuDivider.vue";
+export { default as MapgisUiMenuItem } from "./components/menu/MenuItem.vue";
+export { default as MapgisUiMenuItemGroup } from "./components/menu/MenuItemGroup.vue";
+export { default as MapgisUiMenuSubMenu } from "./components/menu/MenuSubMenu.vue";
 
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 

@@ -5,6 +5,16 @@ $ant-prefix: mapgis-ui;
 $iconfont-css-prefix: anticon;
 $iconfont-class-prefix: mapgis-ui-icon;
 
+// font
+$font-variant-base: tabular-nums;
+$font-feature-settings-base: 'tnum';
+$font-size-base: 14px;
+$font-size-lg: $font-size-base + 2px;
+$font-size-sm: 12px;
+$line-height-base: 1.5;
+$border-radius-base: 4px;
+$border-radius-sm: 2px;
+
 // An override for the html selector for theme prefixes
 $html-selector: html;
 
@@ -73,6 +83,22 @@ $danger-5: var(--danger-5);
 $danger-6: var(--danger-6); // equal $danger-color
 $danger-7: var(--danger-7);
 
+// Animation
+$ease-base-out: cubic-bezier(0.7, 0.3, 0.1, 1);
+$ease-base-in: cubic-bezier(0.9, 0, 0.3, 0.7);
+$ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+$ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+$ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+$ease-out-back: cubic-bezier(0.12, 0.4, 0.29, 1.46);
+$ease-in-back: cubic-bezier(0.71, -0.46, 0.88, 0.6);
+$ease-in-out-back: cubic-bezier(0.71, -0.46, 0.29, 1.46);
+$ease-out-circ: cubic-bezier(0.08, 0.82, 0.17, 1);
+$ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.34);
+$ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
+$ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+$ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+$ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+
 // Background color for `<body>`
 $body-background: var(--background);
 $body-background-without-opacity: var(--background-without-opacity);
@@ -106,6 +132,8 @@ $link-active-color: $primary-7;
 $border-color-base: var(--border-color-base); // base border outline a component
 $border-color-split: var(--border-color-split); // split border inside a component
 $border-color-inverse: $white;
+$border-width-base: 1px; // width of the border for a component
+$border-style-base: solid; // style of a components border
 
 // Outline
 $outline-color: $primary-6;
@@ -260,14 +288,23 @@ $progress-default-color: $processing-color;
 $progress-remaining-color: $background-color-base;
 $progress-text-color: $text-color;
 
-
 // Menu
+$menu-inline-toplevel-item-height: 40px;
+$menu-item-height: 40px;
+$menu-collapsed-width: 80px;
 $menu-bg: $component-background;
 $menu-popup-bg: $component-background;
 $menu-item-color: $text-color;
 $menu-highlight-color: $primary-6;
 $menu-item-active-bg: $item-active-bg;
+$menu-item-active-border-width: 3px;
 $menu-item-group-title-color: $text-color-secondary;
+$menu-icon-size: $font-size-base;
+$menu-icon-size-lg: $font-size-lg;
+
+$menu-item-vertical-margin: 4px;
+$menu-item-font-size: $font-size-base;
+$menu-item-boundary-margin: 8px;
 
 // dark theme
 $menu-dark-color: $text-color-secondary-dark;
