@@ -93,7 +93,18 @@ export default {
         const feature = features[i];
         const fType = feature.geometry.type;
         const coordinates = feature.geometry.coordinates;
-        let count = feature.properties[this.countField];
+        let countValue = feature.properties[this.countField];
+        if (countValue){
+          countValue = vm.isNumber(countValue) ? countValue : Number(countValue);
+        } else {
+          countValue = 30 * Math.random()
+        }
+        let timeValue = feature.properties[time];
+        if (timeValue){
+          timeValue = vm.isNumber(timeValue) ? timeValue : Number(timeValue);
+        } else {
+          timeValue = 100 * Math.random()
+        }
         if (fType === "Point") {
           let obj = Object.assign(
             {
@@ -101,8 +112,8 @@ export default {
                 type: "Point",
                 coordinates: coordinates
               },
-              count: vm.isNumber(count) ? count : Number(count) || 1,
-              time: 100 * Math.random()
+              count: countValue,
+              time: timeValue
             },
             feature.properties
           );
@@ -114,8 +125,8 @@ export default {
                 type: "LineString",
                 coordinates: coordinates
               },
-              count: vm.isNumber(count) ? count : Number(count) || 1,
-              time: 100 * Math.random()
+              count: countValue,
+              time: timeValue
             },
             feature.properties
           );
@@ -127,8 +138,8 @@ export default {
                 type: "Polygon",
                 coordinates: coordinates
               },
-              count: vm.isNumber(count) ? count : Number(count) || 1,
-              time: 100 * Math.random()
+              count: countValue,
+              time: timeValue
             },
             feature.properties
           );
