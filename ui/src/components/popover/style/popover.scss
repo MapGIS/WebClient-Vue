@@ -1,15 +1,15 @@
-@import '../../style/themes/index';
-@import '../../style/mixins/index';
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
 
-@popover-prefix-cls: ~'@{ant-prefix}-popover';
+$popover-prefix-cls: $ant-prefix + "-popover";
 
-.@{popover-prefix-cls} {
-  .reset-component;
+.#{popover-prefix-cls} {
+  // .reset-component;
 
   position: absolute;
   top: 0;
   left: 0;
-  z-index: @zindex-popover;
+  z-index: $zindex-popover;
   font-weight: normal;
   white-space: normal;
   text-align: left;
@@ -18,7 +18,7 @@
 
   &::after {
     position: absolute;
-    background: fade(@white, 1%);
+    background: fade($white, 1%);
     content: '';
   }
 
@@ -30,70 +30,70 @@
   &-placement-top,
   &-placement-topLeft,
   &-placement-topRight {
-    padding-bottom: @popover-distance;
+    padding-bottom: $popover-distance;
   }
 
   &-placement-right,
   &-placement-rightTop,
   &-placement-rightBottom {
-    padding-left: @popover-distance;
+    padding-left: $popover-distance;
   }
 
   &-placement-bottom,
   &-placement-bottomLeft,
   &-placement-bottomRight {
-    padding-top: @popover-distance;
+    padding-top: $popover-distance;
   }
 
   &-placement-left,
   &-placement-leftTop,
   &-placement-leftBottom {
-    padding-right: @popover-distance;
+    padding-right: $popover-distance;
   }
 
   &-inner {
-    background-color: @popover-bg;
+    background-color: $popover-bg;
     background-clip: padding-box;
-    border-radius: @border-radius-base;
-    box-shadow: @box-shadow-base;
-    box-shadow: ~'0 0 8px @{shadow-color} \9';
+    border-radius: $border-radius-base;
+    box-shadow: $box-shadow-base;
+    box-shadow: '0 0 8px ${shadow-color} \9';
   }
 
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     /* IE10+ */
     &-inner {
-      box-shadow: @box-shadow-base;
+      box-shadow: $box-shadow-base;
     }
   }
 
   &-title {
-    min-width: @popover-min-width;
+    min-width: $popover-min-width;
     min-height: 32px;
     margin: 0; // reset heading margin
-    padding: 5px @padding-md 4px;
-    color: @heading-color;
+    padding: 5px $padding-md 4px;
+    color: $heading-color;
     font-weight: 500;
-    border-bottom: 1px solid @border-color-split;
+    border-bottom: 1px solid $border-color-split;
   }
 
   &-inner-content {
-    padding: 12px @padding-md;
-    color: @popover-color;
+    padding: 12px $padding-md;
+    color: $popover-color;
   }
 
   &-message {
     position: relative;
     padding: 4px 0 12px;
-    color: @popover-color;
-    font-size: @font-size-base;
-    > .@{iconfont-css-prefix} {
+    color: $popover-color;
+    font-size: $font-size-base;
+    > .#{iconfont-css-prefix} {
       position: absolute;
       top: 8px; // 4px for padding-top, 4px for vertical middle;
-      color: @warning-color;
-      font-size: @font-size-base;
+      color: $warning-color;
+      font-size: $font-size-base;
     }
     &-title {
-      padding-left: @font-size-base + 8px;
+      padding-left: $font-size-base + 8px;
     }
   }
 
@@ -108,26 +108,26 @@
   // Arrows
   // .popover-arrow is outer, .popover-arrow:after is inner
 
-  &-arrow {
-    position: absolute;
-    display: block;
-    width: sqrt(@popover-arrow-width * @popover-arrow-width * 2);
-    height: sqrt(@popover-arrow-width * @popover-arrow-width * 2);
-    background: transparent;
-    border-style: solid;
-    border-width: sqrt(@popover-arrow-width * @popover-arrow-width * 2) / 2;
-    transform: rotate(45deg);
-  }
+  // &-arrow {
+  //   position: absolute;
+  //   display: block;
+  //   width: sqrt($popover-arrow-width * $popover-arrow-width * 2);
+  //   height: sqrt($popover-arrow-width * $popover-arrow-width * 2);
+  //   background: transparent;
+  //   border-style: solid;
+  //   border-width: sqrt($popover-arrow-width * $popover-arrow-width * 2) / 2;
+  //   transform: rotate(45deg);
+  // }
 
   &-placement-top > &-content > &-arrow,
   &-placement-topLeft > &-content > &-arrow,
   &-placement-topRight > &-content > &-arrow {
-    bottom: @popover-distance - @popover-arrow-width + 2.2px;
+    bottom: $popover-distance - $popover-arrow-width + 2.2px;
     border-top-color: transparent;
-    border-right-color: @popover-bg;
-    border-bottom-color: @popover-bg;
+    border-right-color: $popover-bg;
+    border-bottom-color: $popover-bg;
     border-left-color: transparent;
-    box-shadow: 3px 3px 7px fade(@black, 7%);
+    box-shadow: 3px 3px 7px fade($black, 7%);
   }
   &-placement-top > &-content > &-arrow {
     left: 50%;
@@ -143,12 +143,12 @@
   &-placement-right > &-content > &-arrow,
   &-placement-rightTop > &-content > &-arrow,
   &-placement-rightBottom > &-content > &-arrow {
-    left: @popover-distance - @popover-arrow-width + 2px;
+    left: $popover-distance - $popover-arrow-width + 2px;
     border-top-color: transparent;
     border-right-color: transparent;
-    border-bottom-color: @popover-bg;
-    border-left-color: @popover-bg;
-    box-shadow: -3px 3px 7px fade(@black, 7%);
+    border-bottom-color: $popover-bg;
+    border-left-color: $popover-bg;
+    box-shadow: -3px 3px 7px fade($black, 7%);
   }
   &-placement-right > &-content > &-arrow {
     top: 50%;
@@ -164,12 +164,12 @@
   &-placement-bottom > &-content > &-arrow,
   &-placement-bottomLeft > &-content > &-arrow,
   &-placement-bottomRight > &-content > &-arrow {
-    top: @popover-distance - @popover-arrow-width + 2px;
-    border-top-color: @popover-bg;
+    top: $popover-distance - $popover-arrow-width + 2px;
+    border-top-color: $popover-bg;
     border-right-color: transparent;
     border-bottom-color: transparent;
-    border-left-color: @popover-bg;
-    box-shadow: -2px -2px 5px fade(@black, 6%);
+    border-left-color: $popover-bg;
+    box-shadow: -2px -2px 5px fade($black, 6%);
   }
   &-placement-bottom > &-content > &-arrow {
     left: 50%;
@@ -185,12 +185,12 @@
   &-placement-left > &-content > &-arrow,
   &-placement-leftTop > &-content > &-arrow,
   &-placement-leftBottom > &-content > &-arrow {
-    right: @popover-distance - @popover-arrow-width + 2px;
-    border-top-color: @popover-bg;
-    border-right-color: @popover-bg;
+    right: $popover-distance - $popover-arrow-width + 2px;
+    border-top-color: $popover-bg;
+    border-right-color: $popover-bg;
     border-bottom-color: transparent;
     border-left-color: transparent;
-    box-shadow: 3px -3px 7px fade(@black, 7%);
+    box-shadow: 3px -3px 7px fade($black, 7%);
   }
   &-placement-left > &-content > &-arrow {
     top: 50%;

@@ -1,11 +1,11 @@
-@import '../../style/themes/index';
-@import '../../style/mixins/index';
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
 
-@badge-prefix-cls: ~'@{ant-prefix}-badge';
-@number-prefix-cls: ~'@{ant-prefix}-scroll-number';
+$badge-prefix-cls: $ant-prefix + "-badge";
+$number-prefix-cls: $ant-prefix + "-scroll-number";
 
-.@{badge-prefix-cls} {
-  .reset-component;
+.#{badge-prefix-cls} {
+  // .reset-component;
 
   position: relative;
   display: inline-block;
@@ -13,21 +13,21 @@
   line-height: 1;
 
   &-count {
-    min-width: @badge-height;
-    height: @badge-height;
+    min-width: $badge-height;
+    height: $badge-height;
     padding: 0 6px;
-    color: @badge-text-color;
-    font-weight: @badge-font-weight;
-    font-size: @badge-font-size;
-    line-height: @badge-height;
+    color: $badge-text-color;
+    font-weight: $badge-font-weight;
+    font-size: $badge-font-size;
+    line-height: $badge-height;
     white-space: nowrap;
     text-align: center;
-    background: @highlight-color;
-    border-radius: @badge-height / 2;
-    box-shadow: 0 0 0 1px @shadow-color-inverse;
+    background: $highlight-color;
+    border-radius: $badge-height / 2;
+    box-shadow: 0 0 0 1px $shadow-color-inverse;
     a,
     a:hover {
-      color: @badge-text-color;
+      color: $badge-text-color;
     }
   }
 
@@ -36,20 +36,20 @@
   }
 
   &-dot {
-    width: @badge-dot-size;
-    height: @badge-dot-size;
-    background: @highlight-color;
+    width: $badge-dot-size;
+    height: $badge-dot-size;
+    background: $highlight-color;
     border-radius: 100%;
-    box-shadow: 0 0 0 1px @shadow-color-inverse;
+    box-shadow: 0 0 0 1px $shadow-color-inverse;
   }
 
   &-count,
   &-dot,
-  .@{number-prefix-cls}-custom-component {
+  .#{number-prefix-cls}-custom-component {
     position: absolute;
     top: 0;
     right: 0;
-    z-index: @zindex-badge;
+    z-index: $zindex-badge;
     transform: translate(50%, -50%);
     transform-origin: 100% 0%;
   }
@@ -62,80 +62,80 @@
       position: relative;
       top: -1px;
       display: inline-block;
-      width: @badge-status-size;
-      height: @badge-status-size;
+      width: $badge-status-size;
+      height: $badge-status-size;
       vertical-align: middle;
       border-radius: 50%;
     }
     &-success {
-      background-color: @success-color;
+      background-color: $success-color;
     }
     &-processing {
       position: relative;
-      background-color: @processing-color;
+      background-color: $processing-color;
       &::after {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        border: 1px solid @processing-color;
+        border: 1px solid $processing-color;
         border-radius: 50%;
         animation: antStatusProcessing 1.2s infinite ease-in-out;
         content: '';
       }
     }
     &-default {
-      background-color: @normal-color;
+      background-color: $normal-color;
     }
     &-error {
-      background-color: @error-color;
+      background-color: $error-color;
     }
     &-warning {
-      background-color: @warning-color;
+      background-color: $warning-color;
     }
 
     // mixin to iterate over colors and create CSS class for each one
-    .make-color-classes(@i: length(@preset-colors)) when (@i > 0) {
-      .make-color-classes(@i - 1);
-      @color: extract(@preset-colors, @i);
-      @darkColor: '@{color}-6';
-      &-@{color} {
-        background: @@darkColor;
-      }
-    }
-    .make-color-classes();
+    // .make-color-classes(@i: length(@preset-colors)) when (@i > 0) {
+    //   .make-color-classes(@i - 1);
+    //   @color: extract(@preset-colors, @i);
+    //   @darkColor: '@{color}-6';
+    //   &-@{color} {
+    //     background: @@darkColor;
+    //   }
+    // }
+    // .make-color-classes();
 
     &-text {
       margin-left: 8px;
-      color: @text-color;
-      font-size: @font-size-base;
+      color: $text-color;
+      font-size: $font-size-base;
     }
   }
 
   &-zoom-appear,
   &-zoom-enter {
-    animation: antZoomBadgeIn 0.3s @ease-out-back;
+    animation: antZoomBadgeIn 0.3s $ease-out-back;
     animation-fill-mode: both;
   }
 
   &-zoom-leave {
-    animation: antZoomBadgeOut 0.3s @ease-in-back;
+    animation: antZoomBadgeOut 0.3s $ease-in-back;
     animation-fill-mode: both;
   }
 
   &-not-a-wrapper {
-    &:not(.@{badge-prefix-cls}-status) {
+    &:not(.#{badge-prefix-cls}-status) {
       vertical-align: middle;
     }
 
-    .@{ant-prefix}-scroll-number {
+    .#{ant-prefix}-scroll-number {
       position: relative;
       top: auto;
       display: block;
     }
 
-    .@{badge-prefix-cls}-count {
+    .#{badge-prefix-cls}-count {
       transform: none;
     }
   }
@@ -152,14 +152,14 @@
   }
 }
 
-.@{number-prefix-cls} {
+.#{number-prefix-cls} {
   overflow: hidden;
   &-only {
     display: inline-block;
-    height: @badge-height;
-    transition: all 0.3s @ease-in-out;
-    > p.@{number-prefix-cls}-only-unit {
-      height: @badge-height;
+    height: $badge-height;
+    transition: all 0.3s $ease-in-out;
+    > p.#{number-prefix-cls}-only-unit {
+      height: $badge-height;
       margin: 0;
     }
   }

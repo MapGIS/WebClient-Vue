@@ -1,24 +1,24 @@
-@import '../../style/themes/index';
-@import '../../style/mixins/index';
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
 
-@tag-prefix-cls: ~'@{ant-prefix}-tag';
+$tag-prefix-cls: $ant-prefix + "-tag";
 
-.@{tag-prefix-cls} {
-  .reset-component;
+.#{tag-prefix-cls} {
+  // .reset-component;
 
   display: inline-block;
   height: auto;
   margin-right: 8px;
   padding: 0 7px;
-  font-size: @tag-font-size;
+  font-size: $tag-font-size;
   line-height: 20px;
   white-space: nowrap;
-  background: @tag-default-bg;
-  border: @border-width-base @border-style-base @border-color-base;
-  border-radius: @border-radius-base;
+  background: $tag-default-bg;
+  border: $border-width-base $border-style-base $border-color-base;
+  border-radius: $border-radius-base;
   cursor: default;
   opacity: 1;
-  transition: all 0.3s @ease-in-out-circ;
+  transition: all 0.3s $ease-in-out-circ;
 
   &:hover {
     opacity: 0.85;
@@ -27,7 +27,7 @@
   &,
   a,
   a:hover {
-    color: @tag-default-color;
+    color: $tag-default-color;
   }
 
   > a:first-child:last-child {
@@ -36,17 +36,17 @@
     padding: 0 8px;
   }
 
-  .@{iconfont-css-prefix}-close {
-    .iconfont-size-under-12px(10px);
+  .#{iconfont-css-prefix}-close {
+    // .iconfont-size-under-12px(10px);
 
     margin-left: 3px;
-    color: @text-color-secondary;
+    color: $text-color-secondary;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s @ease-in-out-circ;
+    transition: all 0.3s $ease-in-out-circ;
 
     &:hover {
-      color: @heading-color;
+      color: $heading-color;
     }
   }
 
@@ -55,9 +55,9 @@
     &,
     a,
     a:hover,
-    .@{iconfont-css-prefix}-close,
-    .@{iconfont-css-prefix}-close:hover {
-      color: @text-color-inverse;
+    .#{iconfont-css-prefix}-close,
+    .#{iconfont-css-prefix}-close:hover {
+      color: $text-color-inverse;
     }
   }
 
@@ -65,17 +65,17 @@
     background-color: transparent;
     border-color: transparent;
     &:not(&-checked):hover {
-      color: @primary-color;
+      color: $primary-color;
     }
     &:active,
     &-checked {
-      color: @text-color-inverse;
+      color: $text-color-inverse;
     }
     &-checked {
-      background-color: @primary-6;
+      background-color: $primary-6;
     }
     &:active {
-      background-color: @primary-7;
+      background-color: $primary-7;
     }
   }
 
@@ -84,23 +84,23 @@
   }
 
   // mixin to iterate over colors and create CSS class for each one
-  .make-color-classes(@i: length(@preset-colors)) when (@i > 0) {
-    .make-color-classes(@i - 1);
-    @color: extract(@preset-colors, @i);
-    @lightColor: '@{color}-1';
-    @lightBorderColor: '@{color}-3';
-    @darkColor: '@{color}-6';
-    &-@{color} {
-      color: @@darkColor;
-      background: @@lightColor;
-      border-color: @@lightBorderColor;
-    }
-    &-@{color}-inverse {
-      color: @text-color-inverse;
-      background: @@darkColor;
-      border-color: @@darkColor;
-    }
-  }
+  // .make-color-classes(@i: length(@preset-colors)) when (@i > 0) {
+  //   .make-color-classes(@i - 1);
+  //   @color: extract(@preset-colors, @i);
+  //   @lightColor: '@{color}-1';
+  //   @lightBorderColor: '@{color}-3';
+  //   @darkColor: '@{color}-6';
+  //   &-@{color} {
+  //     color: @@darkColor;
+  //     background: @@lightColor;
+  //     border-color: @@lightBorderColor;
+  //   }
+  //   &-@{color}-inverse {
+  //     color: @text-color-inverse;
+  //     background: @@darkColor;
+  //     border-color: @@darkColor;
+  //   }
+  // }
 
-  .make-color-classes();
+  // .make-color-classes();
 }

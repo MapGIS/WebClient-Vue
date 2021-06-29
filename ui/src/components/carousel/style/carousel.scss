@@ -1,8 +1,8 @@
-@import '../../style/themes/index';
-@import '../../style/mixins/index';
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
 
-.@{ant-prefix}-carousel {
-  .reset-component;
+.#{ant-prefix}-carousel {
+  // .reset-component;
 
   .slick-slider {
     position: relative;
@@ -32,16 +32,16 @@
       pointer-events: none;
 
       // https://github.com/ant-design/ant-design/issues/23294
-      input.@{ant-prefix}-radio-input,
-      input.@{ant-prefix}-checkbox-input {
+      input.#{ant-prefix}-radio-input,
+      input.#{ant-prefix}-checkbox-input {
         visibility: hidden;
       }
 
       &.slick-active {
         pointer-events: auto;
 
-        input.@{ant-prefix}-radio-input,
-        input.@{ant-prefix}-checkbox-input {
+        input.#{ant-prefix}-radio-input,
+        input.#{ant-prefix}-checkbox-input {
           visibility: visible;
         }
       }
@@ -103,7 +103,7 @@
   .slick-vertical .slick-slide {
     display: block;
     height: auto;
-    border: @border-width-base @border-style-base transparent;
+    border: $border-width-base $border-style-base transparent;
   }
   .slick-arrow.slick-hidden {
     display: none;
@@ -159,7 +159,7 @@
     position: absolute;
     display: block;
     width: 100%;
-    height: @carousel-dot-height;
+    height: $carousel-dot-height;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -179,12 +179,12 @@
       vertical-align: top;
       button {
         display: block;
-        width: @carousel-dot-width;
-        height: @carousel-dot-height;
+        width: $carousel-dot-width;
+        height: $carousel-dot-height;
         padding: 0;
         color: transparent;
         font-size: 0;
-        background: @component-background;
+        background: $component-background;
         border: 0;
         border-radius: 1px;
         outline: none;
@@ -197,8 +197,8 @@
         }
       }
       &.slick-active button {
-        width: @carousel-dot-active-width;
-        background: @component-background;
+        width: $carousel-dot-active-width;
+        background: $component-background;
         opacity: 1;
         &:hover,
         &:focus {
@@ -209,11 +209,11 @@
   }
 }
 
-.@{ant-prefix}-carousel-vertical {
+.#{ant-prefix}-carousel-vertical {
   .slick-dots {
     top: 50%;
     bottom: auto;
-    width: @carousel-dot-height;
+    width: $carousel-dot-height;
     height: auto;
     transform: translateY(-50%);
     &-left {
@@ -226,12 +226,12 @@
       margin: 0 2px;
       vertical-align: baseline;
       button {
-        width: @carousel-dot-height;
-        height: @carousel-dot-width;
+        width: $carousel-dot-height;
+        height: $carousel-dot-width;
       }
       &.slick-active button {
-        width: @carousel-dot-height;
-        height: @carousel-dot-active-width;
+        width: $carousel-dot-height;
+        height: $carousel-dot-active-width;
       }
     }
   }

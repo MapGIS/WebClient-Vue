@@ -1,10 +1,10 @@
-@import '../../style/themes/index';
-@import '../../style/mixins/index';
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
 
-@list-prefix-cls: ~'@{ant-prefix}-list';
+$list-prefix-cls: $ant-prefix + "-list";
 
-.@{list-prefix-cls} {
-  .reset-component;
+.#{list-prefix-cls} {
+  // .reset-component;
 
   position: relative;
 
@@ -17,7 +17,7 @@
     text-align: right;
 
     // https://github.com/ant-design/ant-design/issues/20037
-    .@{ant-prefix}-pagination-options {
+    .#{ant-prefix}-pagination-options {
       text-align: left;
     }
   }
@@ -37,9 +37,9 @@
   }
 
   &-empty-text {
-    padding: @list-empty-text-padding;
-    color: @disabled-color;
-    font-size: @font-size-base;
+    padding: $list-empty-text-padding;
+    color: $disabled-color;
+    font-size: $font-size-base;
     text-align: center;
   }
 
@@ -53,10 +53,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: @list-item-padding;
+    padding: $list-item-padding;
 
     &-content {
-      color: @text-color;
+      color: $text-color;
     }
 
     &-meta {
@@ -65,27 +65,27 @@
       align-items: flex-start;
       font-size: 0;
       &-avatar {
-        margin-right: @list-item-meta-avatar-margin-right;
+        margin-right: $list-item-meta-avatar-margin-right;
       }
       &-content {
         flex: 1 0;
       }
       &-title {
         margin-bottom: 4px;
-        color: @text-color;
-        font-size: @font-size-base;
+        color: $text-color;
+        font-size: $font-size-base;
         line-height: 22px;
         > a {
-          color: @text-color;
+          color: $text-color;
           transition: all 0.3s;
           &:hover {
-            color: @primary-color;
+            color: $primary-color;
           }
         }
       }
       &-description {
-        color: @text-color-secondary;
-        font-size: @font-size-base;
+        color: $text-color-secondary;
+        font-size: $font-size-base;
         line-height: 22px;
       }
     }
@@ -99,8 +99,8 @@
         position: relative;
         display: inline-block;
         padding: 0 8px;
-        color: @text-color-secondary;
-        font-size: @font-size-base;
+        color: $text-color-secondary;
+        font-size: $font-size-base;
         line-height: 22px;
         text-align: center;
         cursor: pointer;
@@ -115,17 +115,17 @@
         width: 1px;
         height: 14px;
         margin-top: -7px;
-        background-color: @border-color-split;
+        background-color: $border-color-split;
       }
     }
   }
 
   &-header {
-    background: @list-header-background;
+    background: $list-header-background;
   }
 
   &-footer {
-    background: @list-footer-background;
+    background: $list-footer-background;
   }
 
   &-header,
@@ -136,28 +136,28 @@
 
   &-empty {
     padding: 16px 0;
-    color: @text-color-secondary;
+    color: $text-color-secondary;
     font-size: 12px;
     text-align: center;
   }
 
   &-split &-item {
-    border-bottom: 1px solid @border-color-split;
+    border-bottom: 1px solid $border-color-split;
     &:last-child {
       border-bottom: none;
     }
   }
 
   &-split &-header {
-    border-bottom: 1px solid @border-color-split;
+    border-bottom: 1px solid $border-color-split;
   }
 
   &-loading &-spin-nested-loading {
     min-height: 32px;
   }
 
-  &-something-after-last-item .@{ant-prefix}-spin-container > &-items > &-item:last-child {
-    border-bottom: 1px solid @border-color-split;
+  &-something-after-last-item .#{ant-prefix}-spin-container > &-items > &-item:last-child {
+    border-bottom: 1px solid $border-color-split;
   }
 
   &-lg &-item {
@@ -183,18 +183,18 @@
     }
 
     &-meta {
-      margin-bottom: @list-item-meta-margin-bottom;
+      margin-bottom: $list-item-meta-margin-bottom;
 
       &-title {
-        margin-bottom: @list-item-meta-title-margin-bottom;
-        color: @heading-color;
-        font-size: @font-size-lg;
+        margin-bottom: $list-item-meta-title-margin-bottom;
+        color: $heading-color;
+        font-size: $font-size-lg;
         line-height: 24px;
       }
     }
 
     &-action {
-      margin-top: @padding-md;
+      margin-top: $padding-md;
       margin-left: auto;
 
       > li {
@@ -206,7 +206,7 @@
     }
   }
 
-  &-grid .@{ant-prefix}-col > &-item {
+  &-grid .#{ant-prefix}-col > &-item {
     display: block;
     max-width: 100%;
     margin-bottom: 16px;
@@ -221,14 +221,14 @@
   }
 
   // Horizontal
-  &:not(.@{list-prefix-cls}-vertical) {
-    .@{list-prefix-cls}-item-no-flex {
-      .@{list-prefix-cls}-item-action {
+  &:not(.#{list-prefix-cls}-vertical) {
+    .#{list-prefix-cls}-item-no-flex {
+      .#{list-prefix-cls}-item-action {
         float: right;
       }
     }
   }
 }
 
-@import './bordered';
-@import './responsive';
+@import "./bordered.scss";
+@import "./responsive.scss";
