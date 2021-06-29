@@ -91,7 +91,19 @@ $heading-color-dark: rgba($white, 1);
 $text-color-dark: rgba($white, 0.85);
 $text-color-secondary-dark: rgba($white, 0.65);
 $text-selection-bg: $primary-color;
+$font-size-base: 14px;
+$font-size-sm: 12px;
+$border-radius-base: 4px;
 
+// vertical paddings
+$padding-lg: 24px; // containers
+$padding-md: 16px; // small containers and buttons
+$padding-sm: 12px; // Form controls and items
+$padding-xs: 8px; // small items
+
+// vertical padding for all form controls
+$control-padding-horizontal: $padding-sm;
+$control-padding-horizontal-sm: $padding-xs;
 // The background colors for active and hover states for things like
 // list items or table cells.
 $item-active-bg: $primary-1;
@@ -106,6 +118,8 @@ $link-active-color: $primary-7;
 $border-color-base: var(--border-color-base); // base border outline a component
 $border-color-split: var(--border-color-split); // split border inside a component
 $border-color-inverse: $white;
+$border-width-base: 1px; // width of the border for a component
+$border-style-base: solid; // style of a components border
 
 // Outline
 $outline-color: $primary-6;
@@ -194,6 +208,12 @@ $layout-sider-background-light: #fff;
 $layout-trigger-background-light: #fff;
 $layout-trigger-color-light: $text-color;
 
+//Dropdown
+$dropdown-vertical-padding: 5px;
+$dropdown-edge-child-vertical-padding: 4px;
+$dropdown-font-size: $font-size-base;
+$dropdown-line-height: 22px;
+
 // Input
 $input-placeholder-color: var(--placeholder-color);
 $input-color: $text-color;
@@ -217,11 +237,19 @@ $form-error-input-bg: $input-bg;
 // Select
 $select-border-color: $border-color-base;
 $select-item-selected-color: $text-color-without-opacity;
+$select-item-selected-font-weight: 600;
 $select-dropdown-bg: var(--select-dropdown-background);
 $select-item-selected-bg: $selected-color;
 $select-item-active-bg: $selected-color;
 $select-item-hover-bg: var(--select-item-hover-bg);
 $select-background: $component-background;
+
+// Cascader
+// ----
+$cascader-dropdown-vertical-padding: $dropdown-vertical-padding;
+$cascader-dropdown-edge-child-vertical-padding: $dropdown-edge-child-vertical-padding;
+$cascader-dropdown-font-size: $dropdown-font-size;
+$cascader-dropdown-line-height: $dropdown-line-height;
 
 // Anchor
 $anchor-border-color: $border-color-split;
