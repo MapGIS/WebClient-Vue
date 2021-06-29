@@ -39,7 +39,7 @@ export default {
     const self = this;
     return {
       get mapbox() {
-        return self.mapbox;
+        return self.mapbox || self.mapboxPromise._value;
       },
       get map() {
         return self.map;
