@@ -14,8 +14,19 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<mapgis-ui-dropdown>
     <a class="ant-dropdown-link" @click="e => e.preventDefault()">
-      Hover me <mapgis-ui-iconfont type="mapgis-tucengjiancheng" />
+      鼠标移动到此处 <mapgis-ui-iconfont type="mapgis-tucengjiancheng" />
     </a>
+    <mapgis-ui-menu slot="overlay">
+    <mapgis-ui-menu-item>
+      <a href="javascript:;">菜单一</a>
+    </mapgis-ui-menu-item>
+    <mapgis-ui-menu-item>
+      <a href="javascript:;">菜单二</a>
+    </mapgis-ui-menu-item>
+    <mapgis-ui-menu-item>
+      <a href="javascript:;">菜单三</a>
+    </mapgis-ui-menu-item>
+  </mapgis-ui-menu>
   </mapgis-ui-dropdown>`,
 });
 
