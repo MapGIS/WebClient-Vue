@@ -1,7 +1,7 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
-$pageheader-prefix-cls: $ant-prefix + "-page-header";
+// $pageheader-prefix-cls: $ant-prefix + "-page-header";
 
 @include b(page-header) {
   position: relative;

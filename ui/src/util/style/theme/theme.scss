@@ -5,38 +5,6 @@ $ant-prefix: mapgis-ui;
 $iconfont-css-prefix: anticon;
 $iconfont-class-prefix: mapgis-ui-icon;
 
-
-// Background color for `<body>`
-$body-background: #fff;
-// Base background color for most components
-$component-background: #fff;
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol';
-$code-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-$text-color: fade($black, 65%);
-$text-color-secondary: fade($black, 45%);
-$text-color-inverse: $white;
-$icon-color: inherit;
-$icon-color-hover: fade($black, 75%);
-$heading-color: fade(#000, 85%);
-$heading-color-dark: fade($white, 100%);
-$text-color-dark: fade($white, 85%);
-$text-color-secondary-dark: fade($white, 65%);
-$text-selection-bg: $primary-color;
-$font-variant-base: tabular-nums;
-$font-feature-settings-base: 'tnum';
-$font-size-base: 14px;
-$font-size-lg: $font-size-base + 2px;
-$font-size-sm: 12px;
-$heading-1-size: ceil($font-size-base * 2.71);
-$heading-2-size: ceil($font-size-base * 2.14);
-$heading-3-size: ceil($font-size-base * 1.71);
-$heading-4-size: ceil($font-size-base * 1.42);
-$line-height-base: 1.5;
-$border-radius-base: 4px;
-$border-radius-sm: 2px;
-
 // An override for the html selector for theme prefixes
 $html-selector: html;
 
@@ -105,6 +73,38 @@ $danger-5: var(--danger-5);
 $danger-6: var(--danger-6); // equal $danger-color
 $danger-7: var(--danger-7);
 
+
+// Background color for `<body>`
+$body-background: #fff;
+// Base background color for most components
+$component-background: #fff;
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+  'Segoe UI Emoji', 'Segoe UI Symbol';
+$code-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+$text-color: fade($black, 65%);
+$text-color-secondary: fade($black, 45%);
+$text-color-inverse: $white;
+$icon-color: inherit;
+$icon-color-hover: fade($black, 75%);
+$heading-color: fade(#000, 85%);
+$heading-color-dark: fade($white, 100%);
+$text-color-dark: fade($white, 85%);
+$text-color-secondary-dark: fade($white, 65%);
+$text-selection-bg: $primary-color;
+$font-variant-base: tabular-nums;
+$font-feature-settings-base: 'tnum';
+$font-size-base: 14px;
+$font-size-lg: $font-size-base + 2px;
+$font-size-sm: 12px;
+$heading-1-size: ceil($font-size-base * 2.71);
+$heading-2-size: ceil($font-size-base * 2.14);
+$heading-3-size: ceil($font-size-base * 1.71);
+$heading-4-size: ceil($font-size-base * 1.42);
+$line-height-base: 1.5;
+$border-radius-base: 4px;
+$border-radius-sm: 2px;
+
 // Animation
 $ease-base-out: cubic-bezier(0.7, 0.3, 0.1, 1);
 $ease-base-in: cubic-bezier(0.9, 0, 0.3, 0.7);
@@ -120,6 +120,16 @@ $ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
 $ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
 $ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
 $ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+
+// vertical paddings
+$padding-lg: 24px; // containers
+$padding-md: 16px; // small containers and buttons
+$padding-sm: 12px; // Form controls and items
+$padding-xs: 8px; // small items
+
+// vertical padding for all form controls
+$control-padding-horizontal: $padding-sm;
+$control-padding-horizontal-sm: $padding-xs;
 
 // Background color for `<body>`
 $body-background: var(--background);
@@ -231,6 +241,38 @@ $radio-button-color: $text-color;
 $radio-button-hover-color: $primary-5;
 $radio-button-active-color: $primary-7;
 
+// Media queries breakpoints
+// Extra small screen / phone
+$screen-xs: 480px;
+$screen-xs-min: $screen-xs;
+
+// Small screen / tablet
+$screen-sm: 576px;
+$screen-sm-min: $screen-sm;
+
+// Medium screen / desktop
+$screen-md: 768px;
+$screen-md-min: $screen-md;
+
+// Large screen / wide desktop
+$screen-lg: 992px;
+$screen-lg-min: $screen-lg;
+
+// Extra large screen / full hd
+$screen-xl: 1200px;
+$screen-xl-min: $screen-xl;
+
+// Extra extra large screen / large desktop
+$screen-xxl: 1600px;
+$screen-xxl-min: $screen-xxl;
+
+// provide a maximum
+$screen-xs-max: ($screen-sm-min - 1px);
+$screen-sm-max: ($screen-md-min - 1px);
+$screen-md-max: ($screen-lg-min - 1px);
+$screen-lg-max: ($screen-xl-min - 1px);
+$screen-xl-max: ($screen-xxl-min - 1px);
+
 // Layout
 $layout-body-background: #f0f2f5;
 $layout-header-background: #001529;
@@ -257,6 +299,30 @@ $input-number-handler-bg: $component-background;
 $input-number-handler-border-color: $border-color-base;
 $input-addon-bg: $background-color-light;
 $input-disabled-bg: $disabled-bg;
+
+$input-height-base: 32px;
+$input-height-lg: 40px;
+$input-height-sm: 24px;
+$input-padding-horizontal: $control-padding-horizontal - 1px;
+$input-padding-horizontal-base: $input-padding-horizontal;
+$input-padding-horizontal-sm: $control-padding-horizontal-sm - 1px;
+$input-padding-horizontal-lg: $input-padding-horizontal;
+$input-padding-vertical-base: 4px;
+$input-padding-vertical-sm: 1px;
+$input-padding-vertical-lg: 6px;
+$input-placeholder-color: hsv(0, 0, 75%);
+$input-color: $text-color;
+$input-border-color: $border-color-base;
+$input-bg: $component-background;
+$input-number-hover-border-color: $input-hover-border-color;
+$input-number-handler-active-bg: #f4f4f4;
+$input-number-handler-hover-bg: $primary-5;
+$input-number-handler-bg: $component-background;
+$input-number-handler-border-color: $border-color-base;
+$input-addon-bg: $background-color-light;
+$input-hover-border-color: $primary-5;
+$input-disabled-bg: $disabled-bg;
+$input-outline-offset: 0 0;
 
 // Form
 $label-required-color: $highlight-color;
@@ -411,9 +477,11 @@ $switch-shadow-color: rgba(#00230b, 0.2);
 $switch-after-bg: #fff;
 
 // Pagination
-$pagination-border-default-color: var(--pagination-border-default-color);
-$pagination-disabled-active-bg-color: var(--disabled-darken-bg-color10);
-$pagination-item-bg-active: $primary-6;
+$pagination-item-size: 32px;
+$pagination-item-size-sm: 24px;
+$pagination-font-family: Arial;
+$pagination-font-weight-active: 500;
+$pagination-item-bg-active: $component-background;
 
 // PageHeader
 $page-header-padding: 24px;

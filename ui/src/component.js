@@ -14,6 +14,9 @@ export { default as MapgisUiMenuItem } from "./components/menu/MenuItem.vue";
 export { default as MapgisUiMenuItemGroup } from "./components/menu/MenuItemGroup.vue";
 export { default as MapgisUiMenuSubMenu } from "./components/menu/MenuSubMenu.vue";
 export { default as MapgisUiPageHeader } from "./components/pageheader/PageHeader.vue";
+export { default as MapgisUiPagination } from "./components/pagination/Pagination.vue";
+export { default as MapgisUiSteps } from "./components/steps/Steps.vue";
+export { default as MapgisUiStep } from "./components/steps/Step.vue";
 
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 
