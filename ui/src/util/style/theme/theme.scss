@@ -120,6 +120,9 @@ $ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
 $ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
 $ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
 $ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+$animation-duration-slow: 0.3s; // Modal
+$animation-duration-base: 0.2s;
+$animation-duration-fast: 0.1s; // Tooltip
 
 // vertical paddings
 $padding-lg: 24px; // containers
@@ -138,6 +141,9 @@ $body-background-without-opacity: var(--background-without-opacity);
 // Base background/text color for most components
 $component-background: var(--component-background);
 $component-background-without-opacity: var(--component-background-without-opacity);
+$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+  'Segoe UI Emoji', 'Segoe UI Symbol';
 $text-color: var(--text-color);
 $text-color-secondary: var(--text-color-secondary);
 $text-color-inverse: $white;
@@ -150,6 +156,15 @@ $text-color-dark: rgba($white, 0.85);
 $text-color-secondary-dark: rgba($white, 0.65);
 $text-selection-bg: $primary-color;
 
+// vertical paddings
+$padding-lg: 24px; // containers
+$padding-md: 16px; // small containers and buttons
+$padding-sm: 12px; // Form controls and items
+$padding-xs: 8px; // small items
+
+// vertical padding for all form controls
+$control-padding-horizontal: $padding-sm;
+$control-padding-horizontal-sm: $padding-xs;
 // The background colors for active and hover states for things like
 // list items or table cells.
 $item-active-bg: $primary-1;
@@ -286,7 +301,23 @@ $layout-sider-background-light: #fff;
 $layout-trigger-background-light: #fff;
 $layout-trigger-color-light: $text-color;
 
+//Dropdown
+$dropdown-vertical-padding: 5px;
+$dropdown-edge-child-vertical-padding: 4px;
+$dropdown-font-size: $font-size-base;
+$dropdown-line-height: 22px;
+
 // Input
+$input-height-base: 32px;
+$input-height-lg: 40px;
+$input-height-sm: 24px;
+$input-padding-horizontal: $control-padding-horizontal - 1px;
+$input-padding-horizontal-base: $input-padding-horizontal;
+$input-padding-horizontal-sm: $control-padding-horizontal-sm - 1px;
+$input-padding-horizontal-lg: $input-padding-horizontal;
+$input-padding-vertical-base: 4px;
+$input-padding-vertical-sm: 1px;
+$input-padding-vertical-lg: 6px;
 $input-placeholder-color: var(--placeholder-color);
 $input-color: $text-color;
 $input-border-color: $border-color-base;
@@ -333,11 +364,19 @@ $form-error-input-bg: $input-bg;
 // Select
 $select-border-color: $border-color-base;
 $select-item-selected-color: $text-color-without-opacity;
+$select-item-selected-font-weight: 600;
 $select-dropdown-bg: var(--select-dropdown-background);
 $select-item-selected-bg: $selected-color;
 $select-item-active-bg: $selected-color;
 $select-item-hover-bg: var(--select-item-hover-bg);
 $select-background: $component-background;
+
+// Cascader
+// ----
+$cascader-dropdown-vertical-padding: $dropdown-vertical-padding;
+$cascader-dropdown-edge-child-vertical-padding: $dropdown-edge-child-vertical-padding;
+$cascader-dropdown-font-size: $dropdown-font-size;
+$cascader-dropdown-line-height: $dropdown-line-height;
 
 // Anchor
 $anchor-border-color: $border-color-split;
@@ -355,11 +394,17 @@ $tooltip-arrow-color: $tooltip-bg;
 $popover-bg: $component-background;
 // Popover text color
 $popover-color: $text-color;
+// Popover maximum width
+$popover-min-width: 177px;
+// Popover arrow width
+$popover-arrow-width: 6px;
 // Popover arrow color
 $popover-arrow-color: $popover-bg;
 // Popover outer arrow width
 // Popover outer arrow color
 $popover-arrow-outer-color: $popover-bg;
+// Popover distance with trigger
+$popover-distance: $popover-arrow-width + 4px;
 
 // Modal
 $modal-background: var(--modal-background);
@@ -424,12 +469,24 @@ $table-header-filter-active-bg: var(--table-header-filter-active-bg);
 // Tag
 $tag-default-bg: $background-color-light;
 $tag-default-color: $text-color;
+$tag-font-size: $font-size-sm;
 
 // TimePicker
 $time-picker-selected-bg: $background-color-base;
 
 // Badge
+$badge-height: 20px;
+$badge-dot-size: 6px;
+$badge-font-size: $font-size-sm;
+$badge-font-weight: normal;
+$badge-status-size: 6px;
 $badge-text-color: $component-background;
+
+// Statistic
+$statistic-title-font-size: $font-size-base;
+$statistic-content-font-size: 24px;
+$statistic-unit-font-size: 16px;
+$statistic-font-family: $font-family;
 
 // Rate
 // $rate-star-color: $yellow-6;
@@ -553,9 +610,16 @@ $alert-error-icon-color: $error-color;
 // List
 $list-header-background: transparent;
 $list-footer-background: transparent;
+$list-empty-text-padding: $padding-md;
+$list-item-padding: $padding-sm 0;
+$list-item-meta-margin-bottom: $padding-md;
+$list-item-meta-avatar-margin-right: $padding-md;
+$list-item-meta-title-margin-bottom: $padding-sm;
 
 // Timeline
+$timeline-width: 2px;
 $timeline-color: $border-color-split;
+$timeline-dot-border-width: 2px;
 $timeline-dot-color: $primary-6;
 $timeline-dot-bg: $component-background;
 
@@ -575,3 +639,58 @@ $zindex-affix: 10;
 
 // dropdown
 $zindex-dropdown: 1050;
+
+// Carousel
+$carousel-dot-width: 16px;
+$carousel-dot-height: 3px;
+$carousel-dot-active-width: 24px;
+
+// z-index list, order by `z-index`
+$zindex-badge: 1;
+$zindex-table-fixed: 1;
+$zindex-back-top: 10;
+$zindex-picker-panel: 10;
+$zindex-popup-close: 10;
+$zindex-modal: 1000;
+$zindex-modal-mask: 1000;
+$zindex-message: 1010;
+$zindex-notification: 1010;
+$zindex-popover: 1030;
+$zindex-picker: 1050;
+$zindex-tooltip: 1060;
+
+// Media queries breakpoints
+// Extra small screen / phone
+$screen-xs: 480px;
+$screen-xs-min: $screen-xs;
+
+// Small screen / tablet
+$screen-sm: 576px;
+$screen-sm-min: $screen-sm;
+
+// Medium screen / desktop
+$screen-md: 768px;
+$screen-md-min: $screen-md;
+
+// Large screen / wide desktop
+$screen-lg: 992px;
+$screen-lg-min: $screen-lg;
+
+// Extra large screen / full hd
+$screen-xl: 1200px;
+$screen-xl-min: $screen-xl;
+
+// Extra extra large screen / large desktop
+$screen-xxl: 1600px;
+$screen-xxl-min: $screen-xxl;
+
+// provide a maximum
+$screen-xs-max: ($screen-sm-min - 1px);
+$screen-sm-max: ($screen-md-min - 1px);
+$screen-md-max: ($screen-lg-min - 1px);
+$screen-lg-max: ($screen-xl-min - 1px);
+$screen-xl-max: ($screen-xxl-min - 1px);
+
+// Drawer
+$drawer-header-padding: 16px 24px;
+$drawer-body-padding: 24px;
