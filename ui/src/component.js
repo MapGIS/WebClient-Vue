@@ -85,3 +85,6 @@ export { default as MapgisUiSkeleton } from "./components/skeleton/Skeleton.vue"
 export { default as MapgisUiSpin } from "./components/spin/Spin.vue";
 
 // Other
+export { default as MapgisUiConfigProvider } from "./components/config-provider/ConfigProvider.vue";
+export { default as MapgisUiDivider } from "./components/divider/Divider.vue";
+export { default as MapgisUiLocaleProvider } from "./components/locale-provider/LocaleProvider.vue";

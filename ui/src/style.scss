@@ -9,7 +9,7 @@
 @import "./components/affix/style/affix.scss";
 @import "./components/breadcrumb/style/breadcrumb.scss";
 @import "./components/dropdown/style/dropdown.scss";
-// @import "./components/menu/style/menu.scss";
+@import "./components/menu/style/menu.scss";
 
 /* MapGIS Design - Data Entry */
 @import "./components/cascader/style/cascader.scss";
@@ -26,7 +26,7 @@
 
 /* MapGIS Design - Data Display */
 @import "./components/avatar/style/avatar.scss";
-// @import "./components/badge/style/badge.scss";
+@import "./components/badge/style/badge.scss";
 @import "./components/card/style/card.scss";
 @import "./components/calendar/style/calendar.scss";
 @import "./components/carousel/style/carousel.scss";
@@ -52,3 +52,6 @@
 @import "./components/spin/style/spin.scss";
 
 /* MapGIS Design - Other */
+@import "./components/config-provider/style/config-provider.scss";
+@import "./components/divider/style/divider.scss";
+@import "./components/locale-provider/style/locale-provider.scss";
