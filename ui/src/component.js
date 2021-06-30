@@ -80,12 +80,12 @@ export { default as MapgisUiTree } from "./components/tree/Tree.vue";
 
 // Feedback
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
-// export { default as MapgisUiMessage } from "./components/message/Message.js";
 export { default as MapgisUiModal } from "./components/modal/Modal.vue";
-// export { default as MapgisUiNotification } from "./components/notification/Notification.js";
 export { default as MapgisUiProgress } from "./components/progress/Progress.vue";
 export { default as MapgisUiResult } from "./components/result/Result.vue";
 export { default as MapgisUiSkeleton } from "./components/skeleton/Skeleton.vue";
 export { default as MapgisUiSpin } from "./components/spin/Spin.vue";
 
 // Other
+
+
