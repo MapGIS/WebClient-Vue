@@ -17,6 +17,10 @@ export { default as MapgisUiMenuDivider } from "./components/menu/MenuDivider.vu
 export { default as MapgisUiMenuItem } from "./components/menu/MenuItem.vue";
 export { default as MapgisUiMenuItemGroup } from "./components/menu/MenuItemGroup.vue";
 export { default as MapgisUiMenuSubMenu } from "./components/menu/MenuSubMenu.vue";
+export { default as MapgisUiPageHeader } from "./components/pageheader/PageHeader.vue";
+export { default as MapgisUiPagination } from "./components/pagination/Pagination.vue";
+export { default as MapgisUiSteps } from "./components/steps/Steps.vue";
+export { default as MapgisUiStep } from "./components/steps/Step.vue";
 
 // Data Entry
 export { default as MapgisUiCascader } from "./components/cascader/Cascader.vue";
@@ -76,9 +80,7 @@ export { default as MapgisUiTree } from "./components/tree/Tree.vue";
 
 // Feedback
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
-// export { default as MapgisUiMessage } from "./components/message/Message.js";
 export { default as MapgisUiModal } from "./components/modal/Modal.vue";
-// export { default as MapgisUiNotification } from "./components/notification/Notification.js";
 export { default as MapgisUiProgress } from "./components/progress/Progress.vue";
 export { default as MapgisUiResult } from "./components/result/Result.vue";
 export { default as MapgisUiSkeleton } from "./components/skeleton/Skeleton.vue";

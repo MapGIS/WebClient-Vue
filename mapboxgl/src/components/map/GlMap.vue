@@ -86,12 +86,19 @@ export default {
     }
   },
 
-  created () {
+  created() {
+    const { company } = this;    
     this.map = null;
     this.propsIsUpdating = {};
-    this.mapboxPromise = this.mapboxGl
-      ? Promise.resolve(this.mapboxGl)
-      : import("@mapgis/mapbox-gl");
+    if (company.indexOf("mapgis") >= 0) {
+      this.mapboxPromise = this.mapboxGl
+        ? Promise.resolve(this.mapboxGl)
+        : import("@mapgis/mapbox-gl");
+    } else {
+      this.mapboxPromise = this.mapboxGl
+        ? Promise.resolve(this.mapboxGl)
+        : import("mapbox-gl");
+    }
   },
 
   mounted () {
@@ -121,6 +128,28 @@ export default {
         this.map = null;
       }
     });
+  },
+
+  methods: {
+    bindSize() {
+      this.resizeEvent = debounce(
+        () => {
+          this.resize();
+        },
+        100,
+        { leading: true }
+      );
+      addListener(this.$el, this.resizeEvent);
+    },
+    unbindSize() {
+      removeListener(this.$el, this.resizeEvent);
+    },
+    resize() {
+      const { autoResize, map } = this;
+      if (autoResize && map) {
+        map.resize();
+      }
+    }
   }
 };
 </script>
