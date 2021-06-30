@@ -33,7 +33,7 @@ export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.vue";
-export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
+// export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 
 export { default as Mapgis3dIGSTerrainProvider } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
@@ -47,4 +47,8 @@ export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue"
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
+
+//融合组件
+export { default as Mapgis3dComponentMix} from "./components/UI/mixComponent/GeojsonCom";
+export { default as Mapgis3dComponentLegend} from "./components/UI/mixComponent/Legend";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
