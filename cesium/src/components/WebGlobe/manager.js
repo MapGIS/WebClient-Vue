@@ -114,16 +114,18 @@ export class BaseManager {
   deleteSource(vueKey, vueIndex) {
     let index = -1;
     vueIndex = `${vueIndex}`;
-    this[vueKey].find((s, i) => {
-      let result = false;
-      if (s && s.key === vueIndex) {
-        index = i;
-        result = true;
+    if (this[vueKey] instanceof Array) {
+      this[vueKey].find((s, i) => {
+        let result = false;
+        if (s && s.key === vueIndex) {
+          index = i;
+          result = true;
+        }
+        return result;
+      });
+      if (index >= 0) {
+        this[vueKey].splice(index, 1);
       }
-      return result;
-    });
-    if (index >= 0) {
-      this[vueKey].splice(index, 1);
     }
   }
 

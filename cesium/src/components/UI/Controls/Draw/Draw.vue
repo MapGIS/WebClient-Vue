@@ -31,7 +31,9 @@ export default {
     },
     vueIndex:{
       type: Number,
-      default: Number((Math.random() * 10000).toFixed(0))
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      }
     }
   },
 
@@ -265,7 +267,6 @@ export default {
       drawElement.startDrawingExtent({
         callback: function (positions) {
           let drawEntity = webGlobeDraw.viewer.entities.add({
-            id:"rectangle",
             rectangle: {
               coordinates: positions,
               material: Cesium.Color.RED.withAlpha(0.5)

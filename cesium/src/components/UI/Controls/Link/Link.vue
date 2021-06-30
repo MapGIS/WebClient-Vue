@@ -21,6 +21,10 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    },
+    interval: {
+      type: Number,
+      default: 60
     }
   },
   model: {
@@ -30,7 +34,6 @@ export default {
   data() {
     return {
       time: 0,
-      timestep: 60
     };
   },
   watch: {
@@ -82,21 +85,20 @@ export default {
         this.setView(viewer, camera);
       }
     },
-    setView(viewer, camera) {
-      let { time, timestep } = this;
-      let view3d = {
-        destination: deepCopy(camera.position),
-        orientation: {
-          direction: deepCopy(camera._direction),
-          up: deepCopy(camera.up),
-          heading: deepCopy(camera.heading),
-          pitch: deepCopy(camera.pitch),
-          roll: deepCopy(camera.roll)
-        }
-      };
-      viewer.camera.setView(view3d);
+    updateView(camera) {
+      let { interval } = this;
       // 一秒60帧，每秒更新一次，减少无效更新
-      if (++this.time % timestep === 0) {
+      if (++this.time % interval === 0) {
+        let view3d = {
+          destination: deepCopy(camera.position),
+          orientation: {
+            direction: deepCopy(camera._direction),
+            up: deepCopy(camera.up),
+            heading: deepCopy(camera.heading),
+            pitch: deepCopy(camera.pitch),
+            roll: deepCopy(camera.roll)
+          }
+        };
         let rect = camera.computeViewRectangle();
         let rect2d = { west: 0, east: 0, north: 0, south: 0 };
         rect2d.west = Cesium.Math.toDegrees(rect.west);
@@ -109,6 +111,19 @@ export default {
         });
       }
       if (this.time > 1000000) this.time = 0;
+    },
+    setView(viewer, camera) {
+      let view3d = {
+        destination: deepCopy(camera.position),
+        orientation: {
+          direction: deepCopy(camera._direction),
+          up: deepCopy(camera.up),
+          heading: deepCopy(camera.heading),
+          pitch: deepCopy(camera.pitch),
+          roll: deepCopy(camera.roll)
+        }
+      };
+      viewer.camera.setView(view3d);
     },
     addHandler() {
       let { CesiumZondy, includes, excludes } = this;
@@ -134,6 +149,7 @@ export default {
           s.source.viewer.scene.canvas
         );
         s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
+          vm.updateView(s.source.viewer.camera);
           let _camerca = s.source.viewer.camera;
           sources.forEach((other, j) => {
             if (i != j) {
@@ -142,6 +158,7 @@ export default {
           });
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
+          vm.updateView(s.source.viewer.camera);
           let _camerca = s.source.viewer.camera;
           sources.forEach((other, j) => {
             if (i != j) {
