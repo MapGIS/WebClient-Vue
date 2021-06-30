@@ -13,6 +13,7 @@ export { default as MapgisUiMenuDivider } from "./components/menu/MenuDivider.vu
 export { default as MapgisUiMenuItem } from "./components/menu/MenuItem.vue";
 export { default as MapgisUiMenuItemGroup } from "./components/menu/MenuItemGroup.vue";
 export { default as MapgisUiMenuSubMenu } from "./components/menu/MenuSubMenu.vue";
+export { default as MapgisUiPageHeader } from "./components/pageheader/PageHeader.vue";
 
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 
