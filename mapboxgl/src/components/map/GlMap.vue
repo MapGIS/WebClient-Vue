@@ -39,7 +39,7 @@ export default {
     const self = this;
     return {
       get mapbox() {
-        return self.mapbox;
+        return self.mapbox || self.mapboxPromise._value;
       },
       get map() {
         return self.map;
@@ -94,11 +94,18 @@ export default {
   },
 
   created() {
+    const { company } = this;    
     this.map = null;
     this.propsIsUpdating = {};
-    this.mapboxPromise = this.mapboxGl
-      ? Promise.resolve(this.mapboxGl)
-      : import("@mapgis/mapbox-gl");
+    if (company.indexOf("mapgis") >= 0) {
+      this.mapboxPromise = this.mapboxGl
+        ? Promise.resolve(this.mapboxGl)
+        : import("@mapgis/mapbox-gl");
+    } else {
+      this.mapboxPromise = this.mapboxGl
+        ? Promise.resolve(this.mapboxGl)
+        : import("mapbox-gl");
+    }
   },
 
   mounted() {
@@ -147,7 +154,7 @@ export default {
       removeListener(this.$el, this.resizeEvent);
     },
     resize() {
-      const {autoResize, map} = this;
+      const { autoResize, map } = this;
       if (autoResize && map) {
         map.resize();
       }

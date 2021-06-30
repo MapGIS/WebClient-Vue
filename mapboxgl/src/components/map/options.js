@@ -1,4 +1,8 @@
 export default {
+  company: {
+    type: String,
+    default: "mapgis-1.10-dev"
+  },
   theme: {
     type: String,
     default: "bg-accent text-white"
