@@ -2,7 +2,10 @@ import * as MapComponents from "./cdn_component";
 
 const install = function(Vue, options) {
   for (let name in MapComponents) {
-    const com = MapComponents[name];
+    let com = MapComponents[name];
+    if (name === "colorPicker") {
+      com = MapComponents[name][name];
+    }
     Vue.component(com.options ? com.options.name : com.name, com);
   }
 };

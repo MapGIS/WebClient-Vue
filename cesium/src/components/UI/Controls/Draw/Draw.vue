@@ -267,7 +267,6 @@ export default {
       drawElement.startDrawingExtent({
         callback: function (positions) {
           let drawEntity = webGlobeDraw.viewer.entities.add({
-            id:"rectangle",
             rectangle: {
               coordinates: positions,
               material: Cesium.Color.RED.withAlpha(0.5)
