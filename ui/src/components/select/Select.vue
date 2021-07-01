@@ -17,6 +17,20 @@ export default {
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: selectTypes,
-  methods: {}
+  model: {
+    prop: "value",
+    event: "change"
+  },
+  methods: {},
+  computed: {
+    addListeners() {
+      const vm = this;
+      return {
+        change: function(value) {
+          vm.$emit('change', value);
+        }
+      };
+    }
+  }
 };
 </script>

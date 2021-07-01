@@ -43,14 +43,25 @@ export default {
       }
     };
   },
+  computed: {
+    addProps: function() {
+      return {};
+    },
+    addListeners: function() {
+      return {};
+    },
+    uiProps: function() {
+      return { ...getOptionProps(this), ...this.addProps };
+    },
+    uiListeners: function() {
+      return { ...this.$listeners, ...this.addListeners };
+    },
+    uiStyle: function() {
+      return null;
+    }
+  },
   data() {
-    return {
-      addProps: {},
-      addListeners: {},
-      uiProps: { ...getOptionProps(this), ...this.addProps },
-      uiListeners: { ...this.$listeners, ...this.addListeners },
-      uiStyle: null
-    };
+    return {};
   },
   render(h) {
     const Component = this.getWrapperUI();
