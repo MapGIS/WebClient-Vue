@@ -72,6 +72,38 @@
 - **侦听属性**
 - **描述:** 水纹频率
 
+## 方法
+
+### `startAnalyse`
+
+- **Description:** 开始洪水淹没分析
+
+### `stopAnalyse`
+
+- **Description:** 停止洪水淹没分析
+
+### `up`
+
+- **Description:** 上升洪水水平面，最高为 maxHeight
+
+### `down`
+
+- **Description:** 下降洪水水平面，最低为 minHeight
+
+### `pause`
+
+- **Description:** 暂停降洪水水平面的上升或下降
+
+### `playAnalyse(start,end,forward,rate,timeDiff)`
+
+- **Description:** 自定义水平面上升或下降
+- **param:** <br/>
+  > start: 上升或下降的起始位置，即最高点的位置
+  > end: 上升或下降的结束位置，即最低点的位置
+  > forward: 升降的方向，上升为数字 1，下降为数字-1
+  > rate: 刷新频率，默认不用传
+  > timeDiff: Cesium 与浏览器时间倍数，默认不用传
+
 ## 事件
 
 ### `@load`

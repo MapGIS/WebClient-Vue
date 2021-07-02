@@ -1,16 +1,21 @@
 <template>
   <div>
     <slot>
-      <div class="flood-analyse-box" v-if="initial">
+      <div class="flood-analyse-box" v-show="showOptionsPannel">
         <a-row>
           <a-col :span="8">
             <p class="flood-title">最大淹没高度(米):</p>
           </a-col>
-          <a-col :span="12">
-            <a-slider v-model="currentHeightCopy" :min="0" :max="Number(maxHeightCopy)" :disabled="disabled"/>
-          </a-col>
-          <a-col :span="4">
+          <a-col :span="16">
             <a-input v-model="maxHeightCopy"/>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col :span="8">
+            <p class="flood-title">最小淹没高度(米):</p>
+          </a-col>
+          <a-col :span="16">
+            <a-input v-model="startHeightCopy"/>
           </a-col>
         </a-row>
         <a-row>
@@ -79,12 +84,32 @@
         <!--        </a-col>-->
         <!--      </a-row>-->
         <a-row>
+          <a-button class="flood-button start" type="primary" @click="$_startAnalyse" :disabled="!disabled">开始分析
+          </a-button>
+        </a-row>
+      </div>
+      <div class="flood-analyse-box" style="height: 127px;" v-show="showResultPannel">
+        <a-row>
           <a-col :span="8">
-            <a-button class="flood-button" type="primary" @click="$_startAnalyse" :disabled="!disabled">开始分析</a-button>
+            <p class="flood-title">最大淹没高度(米):</p>
           </a-col>
+          <a-col :span="16">
+            <a-input v-model="maxHeightCopy"/>
+          </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="8">
-            <a-button class="flood-button flood-button-stop" @click="$_stopAnalyse" :disabled="disabled">停止分析</a-button>
+            <p class="flood-title">高度选择(米):</p>
           </a-col>
+          <a-col :span="16">
+            <a-slider v-model="currentHeightCopy" :min="Number(startHeightCopyTwo)" :max="Number(maxHeightCopy)"
+                      :disabled="disabled"/>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-button class="flood-button back" style="right: 168px;" type="primary" @click="$_up" :disabled="upDisabled">{{upTitle}}</a-button>
+          <a-button class="flood-button back" style="right: 95px;" type="primary" @click="$_down" :disabled="downDisabled">{{downTitle}}</a-button>
+          <a-button class="flood-button back" @click="$_stopAnalyseToStart">停止分析</a-button>
         </a-row>
       </div>
     </slot>
@@ -150,9 +175,8 @@ export default {
         if (this.isFlood) {
           const {vueKey, vueIndex} = this;
           let webGlobe = window.CesiumZondy.getWebGlobe(vueKey);
-          let floodAnalyseManager = window.CesiumZondy.FloodAnalyseManager.findSource(vueKey,vueIndex);
-          if(floodAnalyseManager && floodAnalyseManager.hasOwnProperty("source") && floodAnalyseManager.source){
-            let floodAnalyse = floodAnalyseManager.source;
+          let floodAnalyse = window.floodAnalyse;
+          if (floodAnalyse) {
             floodAnalyse.maxHeight = Number(this.currentHeightCopy);
             floodAnalyse.floodSpeed = Number(this.floodSpeedCopy);
             floodAnalyse.frequency = Number(this.frequencyCopy);
@@ -160,9 +184,17 @@ export default {
             floodAnalyse.amplitude = Number(this.amplitudeCopy);
             floodAnalyse.specularIntensity = Number(this.specularIntensityCopy);
             floodAnalyse.isDownFlood = Number(this.floodHeightCopyTwo) > Number(this.currentHeightCopy);
-            webGlobe.scene.requestRender();
             //存储高度，方便下一次比较
-            this.floodHeightCopyTwo = this.currentHeightCopy;
+            this.floodHeightCopyTwo = Number(this.currentHeightCopy);
+          }
+          if(this.currentHeightCopy === this.maxHeightCopy){
+            this.upTitle = "上升";
+            this.upDisabled = true;
+            this.downDisabled = false;
+          }else if(this.currentHeightCopy === this.startHeightCopyTwo){
+            this.downTitle = "下降";
+            this.upDisabled = false;
+            this.downDisabled = true;
           }
         }
       }
@@ -214,7 +246,15 @@ export default {
     },
     currentHeight: {
       handler: function () {
-        this.currentHeightCopy = this.currentHeight;
+        this.currentHeightCopy = Number(this.currentHeight);
+      }
+    },
+    maxHeightCopy: {
+      handler: function () {
+        if(Number(this.maxHeightCopy) <= Number(this.currentHeightCopy)){
+          this.maxHeightCopy = Number(this.currentHeightCopy);
+          this.upDisabled = true;
+        }
       }
     }
   },
@@ -229,9 +269,11 @@ export default {
       //   name: "startDrawingExtent",
       //   value: "矩形工具"
       // }],
-      initial:false,
+      showOptionsPannel: false,
+      showResultPannel: false,
       startHeightCopy: 0,
       minHeightCopy: 0,
+      startHeightCopyTwo: 0,
       currentHeightCopy: 0,
       currentHeightCopyTwo: 0,
       maxHeightCopy: 0,
@@ -242,16 +284,22 @@ export default {
       animationSpeedCopy: 0,
       frequencyCopy: 0,
       disabled: true,
-      isFlood: false
+      isFlood: false,
+      isPlayer: false,
+      upTitle: "上升",
+      downTitle: "下降",
+      playHeight: 0,
+      upDisabled: false,
+      downDisabled: false,
     }
   },
   mounted() {
     let vm = this;
     window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
       vm.$_init();
-      vm.initial = true;
-      vm.$emit("load",vm,webGlobe);
-    },this.vueKey)
+      vm.showOptionsPannel = true;
+      vm.$emit("load", vm, webGlobe);
+    }, this.vueKey)
   },
   methods: {
     //对外的开始分析方法
@@ -282,19 +330,32 @@ export default {
       this.isFlood = false;
       //如果没有注入Cesium，则取得window上面的
       let {Cesium, vueKey, vueIndex} = this;
+      let vm = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       //开始分析前，删除上一次分析
       if (webGlobe.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
         webGlobe.scene.VisualAnalysisManager.removeAll();
-        window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey,vueIndex);
+        window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vueIndex);
       }
       //将笛卡尔坐标转为经纬度坐标
       let cartographics = [], height = 0;
       for (let i = 0; i < positions.length; i++) {
         cartographics.push(Cesium.Cartographic.fromCartesian(positions[i]));
-        height += Cesium.Cartographic.fromCartesian(positions[i]).height;
+        let cat = Cesium.Cartographic.fromCartesian(positions[i]);
+        height += cat.height;
+        if (Number(this.startHeightCopy) === 0) {
+          if (i === 0) {
+            this.startHeightCopyTwo = cat.height;
+          } else {
+            if (cat.height < this.startHeightCopyTwo) {
+              this.startHeightCopyTwo = cat.height;
+            }
+          }
+        } else {
+          this.startHeightCopyTwo = this.startHeightCopy;
+        }
       }
       //极端洪水淹没平均高度
       this.currentHeightCopy = height / cartographics.length;
@@ -302,7 +363,7 @@ export default {
       //初始化新的洪水淹没分析
       let floodAnalyse = new Cesium.FloodAnalysis(webGlobe.viewer, positions, {
         //设置洪水淹没水体起始高度
-        startHeight: Number(this.startHeightCopy),
+        startHeight: Number(this.startHeightCopyTwo),
         //设置洪水淹没区域动画最低高度
         minHeight: Number(this.minHeightCopy),
         //设置洪水淹没区域最高高度
@@ -319,13 +380,17 @@ export default {
         // 指定光线强度
         specularIntensity: Number(this.specularIntensityCopy),
       });
-      window.CesiumZondy.FloodAnalyseManager.addSource(vueKey,vueIndex,floodAnalyse);
+      window.floodAnalyse = floodAnalyse;
       //设置深度检测
       webGlobe.viewer.scene.globe.depthTestAgainstTerrain = true;
       //添加洪水淹没结果显示
       webGlobe.scene.VisualAnalysisManager.add(floodAnalyse);
       //一定是在下一帧，开启对currentHeightCopy的监听操作
       this.$nextTick(function () {
+        this.showResultPannel = true;
+        this.showOptionsPannel = false;
+        //停止绘制
+        window.drawElement.stopDrawing();
         this.isFlood = true;
       })
     },
@@ -335,13 +400,109 @@ export default {
       this.disabled = false;
       this.$_initAnalysis(this.drawToolName, "$_floodAnalyse");
     },
+    $_stopAnalyseToStart() {
+      this.$_stopAnalyse();
+      this.showResultPannel = false;
+      this.showOptionsPannel = true;
+      this.startHeightCopyTwo = 0;
+      this.isPlayer = true;
+    },
+    $_up(){
+      switch (this.upTitle){
+        case "上升":
+          this.$_playAnalyse(this.currentHeightCopy,this.maxHeightCopy,1);
+          this.downDisabled = true;
+          this.upTitle = "暂停";
+          break;
+        case "暂停":
+          this.$_pause();
+          this.downDisabled = false;
+          this.upTitle = "上升";
+          break;
+        default:
+          break;
+      }
+    },
+    $_down(){
+      switch (this.downTitle){
+        case "下降":
+          this.$_playAnalyse(this.startHeightCopyTwo,this.currentHeightCopy,-1);
+          this.upDisabled = true;
+          this.downTitle = "暂停";
+          break;
+        case "暂停":
+          this.$_pause();
+          this.upDisabled = false;
+          this.downTitle = "下降";
+          break;
+        default:
+          break;
+      }
+    },
+    $_pause(){
+      this.isPlayer = false;
+    },
+    //对外的playAnalyse
+    playAnalyse(start,end,forward,rate,timeDiff){
+      this.$_playAnalyse(start,end,forward,rate,timeDiff);
+    },
+    //对外的上升方法
+    up(){
+      this.$_playAnalyse(this.currentHeightCopy,this.maxHeightCopy,1);
+    },
+    //对外的下降方法
+    down(){
+      this.$_playAnalyse(this.startHeightCopyTwo,this.currentHeightCopy,-1);
+    },
+    //对外暂停听方法
+    pause(){
+      this.$_pause();
+    },
+    /**
+     * 洪水分析上升或下降方法
+     * @param start 起始点
+     * @param end 结束点
+     * @param start forward 向上为1，向下为-1
+     * @param rate 上升或下降频率
+     * @param timeDiff Cesium和现实时间的倍率
+     * */
+    $_playAnalyse(start,end,forward,rate,timeDiff){
+      rate = rate || 20;
+      timeDiff = timeDiff || 1.5;
+      let i = 0;
+      let vm = this;
+      let distance = end - start;
+      let speed = this.floodSpeedCopy / rate;
+      let time = Math.ceil(distance / speed);
+      speed = distance / time;
+      let timeOut = parseInt(parseInt(((distance / this.floodSpeedCopy) / time) * 1000));
+      //因为Cesium的事件计算和现实不一样，这里试出来大概是1.5倍
+      timeOut = timeOut * timeDiff;
+      this.isPlayer = true;
+      this.playHeight = Number(this.currentHeightCopy);
+      let interval = setInterval(function () {
+        i++;
+        vm.currentHeightCopy = Number((vm.currentHeightCopy + speed * forward).toFixed(4));
+        if(!vm.isPlayer){
+          vm.isPlayer = true;
+          clearInterval(interval);
+        }
+        if(i === time){
+          vm.currentHeightCopy = forward > 0 ? Number(end) : Number(start);
+          clearInterval(interval);
+        }
+      },timeOut)
+    },
     //停止洪水淹没分析
     $_stopAnalyse() {
+      const {vueKey, vyeIndex} = this;
       if (webGlobe.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
         //删除淹没分析
         webGlobe.scene.VisualAnalysisManager.removeAll();
         //停止绘制
         window.drawElement.stopDrawing();
+        //删除管理对象
+        window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vyeIndex);
         //启用开始分析按钮
         this.disabled = true;
         //高度置零
@@ -359,7 +520,7 @@ export default {
   top: 10px;
   left: 10px;
   width: 376px;
-  height: 326px;
+  height: 364px;
   background: white;
   border-radius: 5px;
   padding: 10px;
@@ -397,5 +558,23 @@ export default {
 
 .flood-analyse-box .ant-slider {
   margin: 10px 6px 10px;
+}
+
+.flood-analyse-box .currentHeight {
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+  text-align: left;
+}
+
+.flood-analyse-box .start {
+  position: absolute;
+  right: 1px;
+  bottom: -32px;
+}
+
+.flood-analyse-box .back {
+  position: absolute;
+  right: -1px;
+  bottom: -28px;
 }
 </style>
