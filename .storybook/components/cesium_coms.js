@@ -28,6 +28,7 @@ export { default as Mapgis3dIgsM3d } from "../../cesium/src/components/M3D/M3d.v
 export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
+export { default as Mapgis3dMarker } from "../../cesium/src/components/UI/Marker/Marker";
 // export { default as { MapvLayer }} from "../../cesium/src/components/Overlay";
 export { default as Mapgis3dMapvLayer} from "../../cesium/src/components/Overlay/Mapv3dLayer.vue";
 export { default as Mapgis3dEchartsLayer} from "../../cesium/src/components/Overlay/Echarts.vue";
