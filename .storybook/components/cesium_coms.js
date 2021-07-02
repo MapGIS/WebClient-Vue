@@ -42,5 +42,6 @@ export { default as Mapgis3dCzmlDataSource } from "../../cesium/src/components/D
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "../../cesium/src/components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";
+export { default as Mapgis3dModelFlatten } from "../../cesium/src/components/Analysis/ModelFlatten";
 export { default as Mapgis3dExcavate } from "../../cesium/src/components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "../../cesium/src/components/Analysis/Flood";
