@@ -32,6 +32,7 @@ export { default as Mapgis3dIgsM3d } from "./components/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
+export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
 export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.vue";
 // export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 
@@ -50,6 +51,6 @@ export { default as Mapgis3dModelFlatten } from "./components/Analysis/ModelFlat
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 
 //融合组件
-export { default as Mapgis3dComponentMix} from "./components/UI/mixComponent/GeojsonCom";
-export { default as Mapgis3dComponentLegend} from "./components/UI/mixComponent/Legend";
+export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
+export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
