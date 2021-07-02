@@ -88,7 +88,7 @@ const Template3 = (args, { argTypes }) => ({
         <mapgis-ui-step status="process" title="current process" />
         <mapgis-ui-step status="wait" title="wait" disabled />
       </mapgis-ui-steps>
-    <div>`,
+    </div>`,
 });
 
 export const 导航步骤 = Template3.bind({});
