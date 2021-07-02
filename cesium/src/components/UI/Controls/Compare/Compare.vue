@@ -54,6 +54,9 @@ export default {
         if(slider.length === 0){
           slider = document.createElement("div");
           slider.className = "slider";
+          let swiper = document.createElement("div");
+          swiper.className = "compare-swiper";
+          slider.appendChild(swiper);
         }else {
           slider = slider[0];
         }
@@ -151,13 +154,30 @@ export default {
   position: absolute;
   left: 50%;
   top: 0;
-  background-color: #d3d3d3;
-  width: 5px;
+  background-color: #fff;
+  width: 2px;
   height: 100%;
   z-index: 9999;
 }
 
 .cesium-map-wrapper .slider:hover {
   cursor: ew-resize;
+}
+
+.cesium-map-wrapper .compare-swiper{
+  background-color: #3887be;
+  -webkit-box-shadow: inset 0 0 0 2px #fff;
+  box-shadow: inset 0 0 0 2px #fff;
+  display: inline-block;
+  border-radius: 50%;
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  left: -30px;
+  margin: -30px 1px 0;
+  color: #fff;
+  cursor: ew-resize;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PHBhdGggZD0iTTI1IDI0bC05IDYgOSA2VjI0em0xMCAwdjEybDktNi05LTZ6IiBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);
 }
 </style>

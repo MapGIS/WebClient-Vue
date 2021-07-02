@@ -11,9 +11,12 @@ export default {
   mixins: [ServiceLayer],
   props: {
     layers: { type: String, required: true },
-    styles: { type: String },
+    styles: { type: String,default: "" },
     // crs: { type: String },
-    srs: { type: String }
+    srs: { type: String },
+    format:{ type: String , default: "image/png"},
+    transparent:{ type: Boolean , default: true},
+    version:{ type: String , default: "1.1.1"},
   },
   data() {
     return {
@@ -85,6 +88,12 @@ export default {
       //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
       if (srs) {
         opt.tilingScheme = this.$_setTilingScheme(srs);
+      }
+      opt.parameters = {
+        transparent: this.transparent,
+        format: this.format,
+        version: this.version,
+        styles: this.styles
       }
       this.$_mount(opt);
     },

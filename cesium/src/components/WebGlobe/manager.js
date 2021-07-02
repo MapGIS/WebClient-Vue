@@ -22,6 +22,8 @@ export function initManager() {
     window.CesiumZondy.GeojsonManager || new GeojsonManager();
   window.CesiumZondy.PopupManager =
     window.CesiumZondy.PopupManager || new PopupManager();
+  window.CesiumZondy.MarkerManager =
+    window.CesiumZondy.MarkerManager || new MarkerManager();
   window.CesiumZondy.OGCWMTSManager =
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
   window.CesiumZondy.FloodAnalyseManager =
@@ -193,4 +195,5 @@ export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
 export class FloodAnalyseManager extends BaseManager {}
+export class MarkerManager extends BaseManager {}
 export class AnalysisModelFlattenManager extends BaseManager {}
