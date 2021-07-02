@@ -96,6 +96,7 @@ export default {
       CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     changeShow(show) {
+      const {vueKey, vueIndex} = this;
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
