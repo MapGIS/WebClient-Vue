@@ -17,6 +17,7 @@ export { default as Mapgis3dRasterLayer } from "./components/Layer/RasterTile/Ba
 export { default as Mapgis3dRasterTileLayer } from "./components/Layer/RasterTile/RasterTileLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "./components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "./components/Layer/OGC/OGCWMSLayer.vue";
+export { default as Mapgis3dOgcReveserWmsLayer } from "./components/Layer/OGC/OGCReveserWMSLayer.vue";
 
 export { default as Mapgis3dIgsVectorLayer } from "./components/Layer/IGServer/IgsVectorLayer.vue";
 
