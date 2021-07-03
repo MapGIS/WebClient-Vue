@@ -4,7 +4,7 @@ import { VPoint } from "./Point";
 import { VPolyline } from "./Polyline";
 
 class VFeature {
-  static fromQueryResult = function(result) {
+  static fromQueryResult(result) {
     if (
       !result.hasOwnProperty("SFEleArray") ||
       !result.hasOwnProperty("AttStruct") ||
@@ -88,8 +88,8 @@ class VFeature {
       features.push(feature);
     }
     return features;
-  };
-  static fromGeoJSON = function(geoJSON) {
+  }
+  static fromGeoJSON(geoJSON) {
     let feature,
       features = [];
     if (!geoJSON.hasOwnProperty("type")) {
@@ -156,8 +156,8 @@ class VFeature {
     } else {
       throw new Error("不支持的geoJSON类型");
     }
-  };
-  static toAntTableData = function(result) {
+  }
+  static toAntTableData(result) {
     let data = [];
     let featureSet = VFeature.fromQueryResult(result);
     for (let i = 0; i < featureSet.length; i++) {
@@ -168,8 +168,8 @@ class VFeature {
       );
     }
     return data;
-  };
-  static resultToGeojson = function(result) {
+  }
+  static resultToGeojson(result) {
     let geo = VFeature.fromQueryResult(result);
     let featureSet = [];
     geo = JSON.parse(
@@ -187,8 +187,8 @@ class VFeature {
       features: featureSet
     };
     return geojson;
-  };
-  static polygonToGeojson = function(VFeature) {
+  }
+  static polygonToGeojson(VFeature) {
     let feature,
       features = [];
     let geomArr = VFeature.geometry;
@@ -208,7 +208,7 @@ class VFeature {
       features.push(feature);
     }
     return features;
-  };
+  }
 
   constructor(options) {
     this.geometry = undefined;
