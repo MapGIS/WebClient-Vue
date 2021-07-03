@@ -7,6 +7,7 @@ module.exports = {
     "@storybook/preset-scss",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
+    '@storybook/addon-knobs',
   ],
   webpackFinal: async (config, { configType }) => {
     config.module.rules.push({
