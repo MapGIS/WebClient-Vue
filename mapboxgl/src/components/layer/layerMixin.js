@@ -69,6 +69,14 @@ export default {
 
   inject: ["mapbox", "map"],
 
+  watch: {
+    before(val) {
+      // 特别声明，这个before的监听行为必须在replaceSource=false
+      // &&replace=false 的前提下才能成立，这是先决条件
+      this.move(val);
+    }
+  },
+
   data() {
     return {
       initial: true

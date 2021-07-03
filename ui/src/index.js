@@ -4,6 +4,10 @@ import antDirective from "ant-design-vue/es/_util/antDirective";
 import * as UIComponents from "./component";
 import { setTheme } from "./util/style/theme/set-theme";
 
+import { default as MapgisUiMessage } from "./components/message/Message.js";
+import { default as MapgisUiNotification } from "./components/notification/Notification.js";
+import { default as ModalInstance } from "./components/modal";
+
 const install = function(Vue, options) {
   options = options || {};
   let theme = options.theme || "light";
@@ -16,6 +20,15 @@ const install = function(Vue, options) {
     const ui = UIComponents[name];
     Vue.component(ui.options ? ui.options.name : ui.name, ui);
   }
+
+  Vue.prototype.$message = MapgisUiMessage;
+  Vue.prototype.$notification = MapgisUiNotification;
+  Vue.prototype.$info = ModalInstance.info;
+  Vue.prototype.$success = ModalInstance.success;
+  Vue.prototype.$error = ModalInstance.error;
+  Vue.prototype.$warning = ModalInstance.warning;
+  Vue.prototype.$confirm = ModalInstance.confirm;
+  Vue.prototype.$destroyAll = ModalInstance.destroyAll;
 };
 
 if (typeof window !== "undefined" && window["Vue"]) {
@@ -24,6 +37,7 @@ if (typeof window !== "undefined" && window["Vue"]) {
 
 export * from "./component";
 
+export { MapgisUiMessage, MapgisUiNotification, ModalInstance };
 export default {
   setTheme,
   install

@@ -1,0 +1,52 @@
+@import "../../../util/style/mixins/mixins.scss";
+
+$grid-columns: 24;
+$grid-gutter-width: 0;
+
+// mixins for grid system
+// ------------------------
+@mixin make-row($gutter: $grid-gutter-width) {
+  position: relative;
+  height: auto;
+  margin-right: ($gutter / -2);
+  margin-left: ($gutter / -2);
+  @include clearfix();
+}
+
+@mixin make-col() {
+  position: relative;
+  padding-right: ($grid-gutter-width / 2);
+  padding-left: ($grid-gutter-width / 2);
+}
+
+@mixin make-grid-columns() {
+  @for $index from 1 through $grid-columns {
+    $item: #{$ant-prefix}-col-#{$index}, #{$ant-prefix}-col-xs-#{$index},
+      #{$ant-prefix}-col-sm-#{$index}, #{$ant-prefix}-col-md-#{$index},
+      #{$ant-prefix}-col-lg-#{$index};
+    .#{$item} {
+      @include make-col();
+    }
+  }
+}
+
+/* @mixin float-grid-columns($class) {
+  .col(@index) {
+    // initial
+    @item: ~'.@{ant-prefix}-col@{class}-@{index}';
+    .col((@index + 1), @item);
+  }
+  .col(@index, @list) when (@index =< @grid-columns) {
+    // general
+    @item: ~'.@{ant-prefix}-col@{class}-@{index}';
+    .col((@index + 1), ~'@{list}, @{item}');
+  }
+  .col(@index, @list) when (@index > @grid-columns) {
+    // terminal
+    @{list} {
+      flex: 0 0 auto;
+      float: left;
+    }
+  }
+  .col(1); // kickstart it
+} */

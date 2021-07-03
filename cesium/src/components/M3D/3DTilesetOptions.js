@@ -12,7 +12,7 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: (Math.random() * 10000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0)
   },
   /**
    * @type Cesium.Resource.headers
@@ -22,6 +22,34 @@ export default {
   url: { type: String, required: true },
   show: { type: Boolean, default: true },
   autoReset: { type: Boolean, default: true },
+
+  /**
+   * @type Object
+   * @description 模型的偏移方向，主要用来抬高/降低模型
+   * @example
+   * {
+      longitude: 0,
+      latitude: 0,
+      height: 0
+    }
+   */
+  offset: {
+    type: Object
+  },
+
+  /**
+   * @type Object
+   * @description 模型的缩放比例，用来缩放模型
+   * @example 
+   * {
+      x: 1.0,
+      y: 1.0,
+      z: 1.0
+    }
+   */
+  scale: {
+    type: Object
+  },
 
   /**
    * @type Cesium.Matrix4

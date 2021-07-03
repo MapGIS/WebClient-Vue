@@ -1,7 +1,64 @@
 @import "./util/style/common/common.scss";
-/** antd */
+/* MapGIS Design */
+
+/* MapGIS Design - Layout */
+@import "./components/grid/style/grid.scss";
+@import "./components/layout/style/layout.scss";
+@import "./components/space/style/space.scss";
+
+/* MapGIS Design - General */
+@import "./components/button/style/button.scss";
 @import "./components/border/style/border.scss";
-@import "./components/card/style/card.scss";
+
+/* MapGIS Design - Navigation */
+@import "./components/affix/style/affix.scss";
+@import "./components/breadcrumb/style/breadcrumb.scss";
+@import "./components/dropdown/style/dropdown.scss";
+@import "./components/menu/style/menu.scss";
+@import "./components/pageheader/style/pageheader.scss";
+@import "./components/pagination/style/pagination.scss";
+
+/* MapGIS Design - Data Entry */
+@import "./components/cascader/style/cascader.scss";
+@import "./components/checkbox/style/checkbox.scss";
+@import "./components/date-picker/style/date-picker.scss";
+@import "./components/input/style/input.scss";
+@import "./components/mentions/style/mentions.scss";
+@import "./components/radio/style/radio.scss";
+@import "./components/rate/style/rate.scss";
 @import "./components/select/style/select.scss";
-@import "./components/tree/style/tree.scss";
 @import "./components/slider/style/slider.scss";
+@import "./components/switch/style/switch.scss";
+@import "./components/transfer/style/transfer.scss";
+
+/* MapGIS Design - Data Display */
+@import "./components/avatar/style/avatar.scss";
+@import "./components/badge/style/badge.scss";
+@import "./components/card/style/card.scss";
+@import "./components/calendar/style/calendar.scss";
+@import "./components/carousel/style/carousel.scss";
+@import "./components/collapse/style/collapse.scss";
+@import "./components/list/style/list.scss";
+@import "./components/popover/style/popover.scss";
+@import "./components/statistic/style/statistic.scss";
+@import "./components/table/style/table.scss";
+@import "./components/tabs/style/tabs.scss";
+@import "./components/tag/style/tag.scss";
+@import "./components/timeline/style/timeline.scss";
+@import "./components/tooltip/style/tooltip.scss";
+@import "./components/tree/style/tree.scss";
+
+/* MapGIS Design - Feedback */
+@import "./components/drawer/style/drawer.scss";
+@import "./components/message/style/message.scss";
+@import "./components/modal/style/modal.scss";
+@import "./components/notification/style/notification.scss";
+@import "./components/progress/style/progress.scss";
+@import "./components/result/style/result.scss";
+@import "./components/skeleton/style/skeleton.scss";
+@import "./components/spin/style/spin.scss";
+
+/* MapGIS Design - Other */
+@import "./components/config-provider/style/config-provider.scss";
+@import "./components/divider/style/divider.scss";
+@import "./components/locale-provider/style/locale-provider.scss";

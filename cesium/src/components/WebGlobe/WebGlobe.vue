@@ -88,7 +88,6 @@ export default {
     this.$_registerAsyncActions(map);
     this.$_bindPropsUpdateEvents(); */
     this.initialized = false;
-
     // const cesiumLib = import("@mapgis/cesium");
     // Cesium.buildModuleUrl.setBaseUrl('./cesium/');
 
@@ -101,6 +100,7 @@ export default {
   mounted() {
     const { vueKey, vueIndex } = this;
     const { cameraView } = this;
+    let vm = this;
     this.$_loadScript().then((Cesium) => {
       this.Cesium = Cesium;
       this.CesiumZondy = window.CesiumZondy;
@@ -126,6 +126,9 @@ export default {
       });
 
       window.webGlobe = window.webGlobe || webGlobe;
+      webGlobe.viewer.cesiumWidget.readyPromise.then(function(globe) {
+        vm.$emit("webGlobeLoaded",globe);
+      });
       // window.webGlobe = webGlobe;
       /*     const eventNames = Object.keys(mapEvents);
       this.$_bindMapEvents(eventNames);

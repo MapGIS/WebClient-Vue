@@ -22,6 +22,8 @@ export function initManager() {
     window.CesiumZondy.GeojsonManager || new GeojsonManager();
   window.CesiumZondy.PopupManager =
     window.CesiumZondy.PopupManager || new PopupManager();
+  window.CesiumZondy.MarkerManager =
+    window.CesiumZondy.MarkerManager || new MarkerManager();
   window.CesiumZondy.OGCWMTSManager =
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
   window.CesiumZondy.FloodAnalyseManager =
@@ -54,6 +56,9 @@ export function initManager() {
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
   window.CesiumZondy.ExcavateAnalysisManager =
     window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
+  window.CesiumZondy.AnalysisModelFlattenManager =
+    window.CesiumZondy.AnalysisModelFlattenManager ||
+    new AnalysisModelFlattenManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -190,3 +195,5 @@ export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
 export class FloodAnalyseManager extends BaseManager {}
+export class MarkerManager extends BaseManager {}
+export class AnalysisModelFlattenManager extends BaseManager {}

@@ -1,0 +1,28 @@
+#components-layout-demo-basic {
+  text-align: center;
+}
+.mapgis-ui-layout-header,
+.mapgis-ui-layout-footer {
+  background: #7dbcea;
+  color: #fff;
+}
+.mapgis-ui-layout-footer {
+  line-height: 1.5;
+}
+.mapgis-ui-layout-sider {
+  background: #3ba0e9;
+  color: #fff;
+  line-height: 120px;
+}
+.mapgis-ui-layout-content {
+  background: rgba(16, 142, 233, 1);
+  color: #fff;
+  min-height: 120px;
+  line-height: 120px;
+}
+#components-layout-demo-basic > .mapgis-ui-layout {
+  margin-bottom: 48px;
+}
+#components-layout-demo-basic > .mapgis-ui-layout:last-child {
+  margin: 0;
+}
