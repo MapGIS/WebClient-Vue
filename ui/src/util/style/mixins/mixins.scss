@@ -1,4 +1,7 @@
 @import "./config";
+@import "./clearfix";
+
+// http://www.a4z.cn/fe/2018/11/12/sass-scss/
 
 // b 的主要功能是包裹一层特定命名前缀（mapgis-ui）的封装类
 @mixin b($block) {

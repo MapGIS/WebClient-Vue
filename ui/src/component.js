@@ -1,6 +1,16 @@
 /** components */
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
 
+// Layout
+export { default as MapgisUiRow } from "./components/grid/Row.vue";
+export { default as MapgisUiCol } from "./components/grid/Col.vue";
+
+export { default as MapgisUiLayout } from "./components/layout/Layout.vue";
+export { default as MapgisUiLayoutContent } from "./components/layout/LayoutContent.vue";
+export { default as MapgisUiLayoutHeader } from "./components/layout/LayoutHeader.vue";
+export { default as MapgisUiLayoutFooter } from "./components/layout/LayoutFooter.vue";
+export { default as MapgisUiLayoutSider } from "./components/layout/LayoutSider.vue";
+
 // General
 export { default as MapgisUiButton } from "./components/button/Button.vue";
 export { default as MapgisUiButtonGroup } from "./components/button/Group.vue";

@@ -1,6 +1,10 @@
 @import "./util/style/common/common.scss";
 /* MapGIS Design */
 
+/* MapGIS Design - Layout */
+@import "./components/grid/style/grid.scss";
+@import "./components/layout/style/layout.scss";
+
 /* MapGIS Design - General */
 @import "./components/button/style/button.scss";
 @import "./components/border/style/border.scss";
