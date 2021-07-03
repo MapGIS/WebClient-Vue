@@ -10,6 +10,7 @@ export { default as MapgisUiLayoutContent } from "./components/layout/LayoutCont
 export { default as MapgisUiLayoutHeader } from "./components/layout/LayoutHeader.vue";
 export { default as MapgisUiLayoutFooter } from "./components/layout/LayoutFooter.vue";
 export { default as MapgisUiLayoutSider } from "./components/layout/LayoutSider.vue";
+export { default as MapgisUiSpace } from "./components/space/Space.vue";
 
 // General
 export { default as MapgisUiButton } from "./components/button/Button.vue";
