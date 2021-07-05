@@ -7,18 +7,18 @@
   </div>
 </template>
 <script>
-import borderConfigs from './assets/border.config.json';
-import UniqueId from 'lodash.uniqueid';
-import { addListener, removeListener } from 'resize-detector';
-import debounce from 'lodash/debounce';
+import borderConfigs from "./assets/border.config.json";
+import UniqueId from "lodash.uniqueid";
+import { addListener, removeListener } from "resize-detector";
+import debounce from "lodash/debounce";
 
 export default {
-  name: 'mapgis-ui-border',
+  name: "mapgis-ui-border",
   props: {
     // border的类型
     type: {
       type: [String],
-      default: 'border1'
+      default: "border1"
     },
     customBorder: {
       type: Object
@@ -47,25 +47,31 @@ export default {
       }
     },
     borderImage() {
-      if ((!this.customBorder || !this.customBorder.src) && this.type) {
-        return require(`./assets/image/${this.type}.png`);
+      const { customBorder, type } = this;
+      if ((!customBorder || !customBorder.src) && type) {
+        return require(`./assets/image/${type}.png`);
       } else {
-        return `${this.customBorder.src}`;
+        return `${customBorder.src}`;
       }
     },
     borderStyle() {
-      let borderImageSlice = this.borderWidth.join(' ') + ' fill';
-      let borderWidth = this.borderWidth.join('px ') + 'px';
+      let borderImageSlice = this.borderWidth.join(" ") + " fill";
+      let borderWidth = this.borderWidth.join("px ") + "px";
       return {
         borderWidth,
         // 当图片大小超过8KB, webpack就不会转换成base64, 直接引入时路径出错（此时的图片路径在index.html下？）
-        borderImage: 'url(' + this.borderImage + ') ' + borderImageSlice + ' / 1 / 0 stretch'
+        borderImage:
+          "url(" +
+          this.borderImage +
+          ") " +
+          borderImageSlice +
+          " / 1 / 0 stretch"
       };
     },
     contentStyle() {
       let contentStyle = Object.assign({}, this.position);
       for (let key in contentStyle) {
-        contentStyle[key] = contentStyle[key] + 'px';
+        contentStyle[key] = contentStyle[key] + "px";
       }
       return contentStyle;
     }
@@ -109,7 +115,7 @@ export default {
     },
     // 设置宽高
     setWidthHeight() {
-      const element = this.$refs[this.borderId]
+      const element = this.$refs[this.borderId];
       if (element) {
         this.width = element.offsetWidth;
         this.height = element.offsetHeight;
