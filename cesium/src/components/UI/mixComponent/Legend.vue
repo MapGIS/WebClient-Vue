@@ -54,7 +54,7 @@
               @change="onSingleChange"
           />
           <div :style="{ background: l.color }" class="legend-item-color"/>
-          <div class="legend-item-text">
+          <div class="legend-item-text" @click="onLengendItemClick">
             {{ l.name }}
           </div>
           <div class="legend-item-count-text">
@@ -96,7 +96,6 @@ export default {
       type: String | Number,
       default: (Math.random() * 10000).toFixed(0)
     },
-    activeTitle:{type:Array}
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   mixins: [ServiceLayer],
@@ -116,7 +115,8 @@ export default {
       curindex: -1,
       viewInfo: true,
       rules:"",
-      innerActive:[]
+      innerActive:[],
+      activeMode:""
     }
   },
   computed: {
@@ -132,10 +132,14 @@ export default {
   },
   watch:{
     curcheck: function (news) {
-      this.checkChange(news);
+      if (this.activeMode !== "tabChange"){
+        this.checkChange(news);
+      }
     },
     curindex: function (news) {
+      this.activeMode = "tabChange";
       this.parseCheck(news);
+
       if (news === -1) {
         this.changeLegendColors(false, -1);
       } else {
@@ -152,11 +156,6 @@ export default {
     getManager(){
       let vm = this;
       this.$_init(vm.initData);
-      // vm.initData();
-      // let {CesiumZondy, vueKey, vueIndex} = this;
-      // let findSource = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
-      // return findSource;
-      // console.log("findSource",findSource);
     },
     areaString(area) {
       let allArea = String(area);
@@ -198,8 +197,6 @@ export default {
         }
       }
 
-      console.log("dataseries", dataseries);
-
       //二级分类的地类名称的series(name和value)
       let a;
       vm.rules.rule.forEach((sub) => {
@@ -223,7 +220,6 @@ export default {
       });
 
       //数据转换，allArea求总面积
-      console.log("rules", vm.rules);
       vm.echartdata = vm.rules;
       vm.showtab = this.echartdata.hasSecond ? true : false;
       vm.allArea = 0;
@@ -233,7 +229,6 @@ export default {
         }
       });
       vm.curdata = vm.rules.series;
-      console.log("this.curdata", this.curdata);
 
       //初始化 curlegend:即图例大类的图例信息
       vm.curlegend = vm.rules.series.map((l) => {
@@ -251,14 +246,12 @@ export default {
         return l;
       });
       vm.curlegend = vm.curlegend.filter((l) => l.count > 0);
-      console.log("this.curlegend",vm.curlegend);
 
       this.onInitIndex()
 
     },
     onInitIndex() {
       this.curindex = -1;
-      this.changeLegendColors(false, -1);
     },
     scrollTab(direction) {
       switch (direction) {
@@ -275,6 +268,7 @@ export default {
     },
     onAllChange(node) {
       let vm = this;
+      vm.activeMode = "checkboxChange"
       let checked = node.target.checked;
       if (checked) {
         vm.curcheck = vm.curlegend.map((l) => l.name);
@@ -284,6 +278,7 @@ export default {
     },
     onSingleChange(node) {
       let vm = this;
+      vm.activeMode = "checkboxChange"
       let key = node.target.value;
       let checked = node.target.checked;
       if (checked) {
@@ -324,7 +319,6 @@ export default {
         vm.curlegend = vm.curlegend.filter((l) => l.count > 0);
         vm.curcheck = echartdata.rule.map((sub) => sub.title);
       } else {
-        console.log("echartdata-------",echartdata);
         const title = echartdata.rule[index].title;
         echartdata.rule.forEach((subrule) => {
           if (title === subrule.title) {
@@ -358,32 +352,33 @@ export default {
             vm.curlegend = vm.curlegend.filter((l) => l.count > 0);
 
             vm.curcheck = subrule.series.map((l) => l.name);
-            console.log("vm.curlegend",vm.curlegend);
-            console.log("vm.curcheck",vm.curcheck);
           }
         });
       }
     },
 
     checkChange(curcheck) {
-      let {vueKey, vueIndex} = this;
       const { echartdata } = this;
       let tempSeries = JSON.parse(JSON.stringify(echartdata));
       let trueChecks = [];
+      let map = [];
       if (curcheck && curcheck.length >= 0) {
         tempSeries.rule.forEach((subrule) => {
           if (curcheck.indexOf(subrule.title) >= 0) {
             //当前为一级分类
             subrule.rule.forEach((rule) => rule.color = subrule.color)
             trueChecks = trueChecks.concat(subrule.rule);
-            console.log("trueChecks",trueChecks);
-          } else {
-            trueChecks = [].concat(curcheck);
+          }
+          if (curcheck.indexOf(subrule.title) < 0){
+            for (let i=0;i<curcheck.length;i++){
+              map = this.curlegend.filter((c) => c.name == curcheck[i]);
+              trueChecks = trueChecks.concat(map);
+            }
           }
         });
       }
       this.innerActive = trueChecks;
-      this.$emit("update",this.innerActive);
+      this.$emit("colorChange",this.innerActive);
     },
 
     changeLegendColors(ischild, childindex) {
@@ -403,25 +398,63 @@ export default {
         });
       } else {
         colors = vm.curlegend;
-        // colors = colors.concat(echartdata.series);
-        // echartdata.rule.forEach((subrule, i) => {
-        //   if (i !== childindex) {
-        //     colors = colors.concat(subrule.series);
-        //   } else {
-        //     // colors = [];
-        //     colors = colors.concat(
-        //         subrule.series.map((l) => {
-        //           let n = {...l};
-        //           n.color = echartdata.series[i].color;
-        //           return n;
-        //         })
-        //     );
-        //   }
-        // });
       }
       this.innerActive = colors;
-      this.$emit("update",this.innerActive);
-    }
+      this.$emit("colorChange",this.innerActive);
+    },
+    onLengendItemClick(event) {
+      debugger
+      let { echartdata } = this;
+      const vm = this;
+      let inFirst = false;
+      vm.showtab = echartdata.hasSecond ? true : false;
+      echartdata.rule.forEach((subrule, i) => {
+        if (event.currentTarget.innerText === subrule.title) {
+          inFirst = true;
+          if (subrule.rule && subrule.rule.length > 0) {
+            vm.allArea = 0;
+            subrule.series.forEach((s) => {
+              if (s && s.value) {
+                vm.allArea +=
+                    typeof s.value === "string" ? parseFloat(s.value) : s.value;
+              }
+            });
+            vm.curdata = subrule.series;
+            vm.curlegend = subrule.series.map((l) => {
+              let find = vm.curdata.find((i) => {
+                return i.name === l.name;
+              });
+              if (find) {
+                l.count = find.value;
+                l.percent = find.value / vm.allArea;
+              } else {
+                l.count = 0;
+                l.percent = 0;
+              }
+              return l;
+            });
+
+            vm.curlegend = vm.curlegend.filter((l) => l.count > 0);
+
+            vm.curindex = i;
+            vm.changeLegendColors(true, i);
+          } else if (subrule.rule && subrule.rule.length === 0) {
+            this.$store.commit("SET_LEGEND_HIGHTLIGHTS", {
+              index: this.index,
+              highlights: [subrule.title],
+            });
+          }
+        }
+      });
+      if (!inFirst) {
+        this.$emit("highlight",[event.currentTarget.innerText]);
+        // this.$store.commit("SET_LEGEND_HIGHTLIGHTS", {
+        //   index: this.index,
+        //   highlights: [event.currentTarget.innerText],
+        // });
+      }
+    },
+
   }
 }
 
