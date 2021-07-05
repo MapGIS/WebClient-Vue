@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import ServiceLayer from "../Controls/ServiceLayer";
+import BaseMixin from "./BaseMixin";
 import Mapgis3dComponentLegend from "../mixComponent/Legend";
 import * as turf from "@turf/turf";
 
@@ -12,7 +12,7 @@ let analysisManager;
 export default {
   name: "mapgis-3d-component-mix",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
-  mixins: [ServiceLayer],
+  mixins: [BaseMixin],
   components: { Mapgis3dComponentLegend },
   props: {
     geoJson: { type: Object },
@@ -104,33 +104,34 @@ export default {
       const { dataSources, scene } = viewer;
       // let findSource = vm.$_getObject(vm.waitManagerName);
 
-      let datasource = this.createCesiumObject();
+      let cesiumobj = this.createCesiumObject();
       //intersect 求相交：本例是倾斜摄影和矢量图层的相交圆
 
-      datasource.then(function(datasource) {
+      cesiumobj.then(function(origin) {
         // viewer.zoomTo(dataSource);
         if (activeCircle) {
-          let intersection = vm.intersect(datasource);
-          let clipdatasource = new Cesium.GeoJsonDataSource.load(intersection);
-          dataSources.add(clipdatasource).then(() => {
-            window.CesiumZondy.GeojsonManager.addSource(
-              vueKey,
-              vueIndex,
-              clipdatasource.entities.values,
-              { outline: undefined, rule: ruleJson }
-            );
+          let intersection = vm.intersect(origin);
+          let clipCesiumobj = new Cesium.GeoJsonDataSource.load(intersection);
+          clipCesiumobj.then(function(clip) {
+            dataSources.add(clip).then(() => {
+              window.CesiumZondy.GeojsonManager.addSource(
+                vueKey,
+                vueIndex,
+                clip.entities.values,
+                { outline: undefined, rule: ruleJson }
+              );
+            });
           });
         } else {
-          dataSources.add(datasource).then(() => {
+          dataSources.add(origin).then(() => {
             window.CesiumZondy.GeojsonManager.addSource(
               vueKey,
               vueIndex,
-              datasource.entities.values,
+              origin.entities.values,
               { outline: undefined, rule: ruleJson }
             );
           });
         }
-        
       });
 
       vm.pickModel();
@@ -414,39 +415,17 @@ export default {
     },
     intersect(datasource) {
       let vm = this;
-      const { webGlobe } = this;
-      const { viewer } = webGlobe;
-      let intersection;
       let findSource = vm.$_getObject(vm.waitManagerName);
-      console.log(
-        "source[0].boundingSphere",
-        findSource.source[0].boundingSphere
-      );
       let centerCartesian = findSource.source[0].boundingSphere.center;
       //笛卡尔转化经纬度
       let center = [];
       let cartographic = Cesium.Cartographic.fromCartesian(centerCartesian);
       center.push(Cesium.Math.toDegrees(cartographic.longitude));
       center.push(Cesium.Math.toDegrees(cartographic.latitude));
-      console.log("center", center);
       //求倾斜摄影的圆：circle 返回polygon
       let radius = 1;
       let options = { steps: 64, units: "kilometers" };
       let circle = turf.circle(center, radius, options);
-
-      //绘制多边形
-      // let hier = [];
-      // for (let c=0; c<circle.geometry.coordinates[0].length;c++){
-      //   for (let d=0;d<circle.geometry.coordinates[0][c].length;d++){
-      //     hier.push(circle.geometry.coordinates[0][c][d]);
-      //   }
-      // }
-      // viewer.entities.add({
-      //   polygon: {
-      //     hierarchy: Cesium.Cartesian3.fromDegreesArray(hier),
-      //     material: Cesium.Color.RED.withAlpha(0.5),
-      //   }
-      // });
 
       //矢量图层的polygon
       let val = datasource.entities.values;
@@ -501,11 +480,9 @@ export default {
         // });
         mutiPolygon.push(polygon);
       }
-
-      let vectorPolygon = turf.multiPolygon([mutiPolygon]);
-
+      /* let vectorPolygon = turf.multiPolygon([mutiPolygon]);
       //求相交部分：
-      intersection = turf.intersect(vectorPolygon, circle);
+      intersection = turf.intersect(vectorPolygon, circle); */
 
       return geojsoncolltion;
     }
