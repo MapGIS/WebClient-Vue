@@ -1,5 +1,5 @@
 <template>
-  <span/>
+  <span />
   <!--  <div class="custom-geojson-layer"></div>-->
 </template>
 
@@ -13,10 +13,10 @@ export default {
   name: "mapgis-3d-component-mix",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   mixins: [ServiceLayer],
-  components: {Mapgis3dComponentLegend},
+  components: { Mapgis3dComponentLegend },
   props: {
-    geoJson: {type: Object},
-    vueKey: {type: String, default: "default"},
+    geoJson: { type: Object },
+    vueKey: { type: String, default: "default" },
     vueIndex: {
       type: String | Number,
       default: () => (Math.random() * 10000000).toFixed(0)
@@ -25,11 +25,12 @@ export default {
       type: String | Object,
       required: true
     },
-    options: {type: Object},
-    layerStyle: {type: Object},
-    ruleJson: {type: Object},
-    activeTitle: {type: Array},
-    highLight: {}
+    options: { type: Object },
+    layerStyle: { type: Object },
+    ruleJson: { type: Object },
+    activeTitle: { type: Array },
+    highLight: {},
+    activeCircle: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -38,17 +39,16 @@ export default {
       position: {
         longitude: 0,
         latitude: 0,
-        height: 0,
+        height: 0
       },
       //单体化模型信息对象
       current: {
         feature: undefined,
         originalColor: new Cesium.Color()
-      },
+      }
     };
   },
-  created() {
-  },
+  created() {},
   mounted() {
     let vm = this;
     this.$_init(vm.mount);
@@ -57,12 +57,12 @@ export default {
     this.unmount();
   },
   watch: {
-    activeTitle: function (news) {
+    activeTitle: function(news) {
       if (news) {
         this.changeColor(news);
       }
     },
-    highLight: function (news) {
+    highLight: function(news) {
       if (news) {
         this.highlightColor(news);
       }
@@ -70,12 +70,12 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const {url} = this;
+      const { url } = this;
       return new Cesium.GeoJsonDataSource.load(url);
     },
     findSource() {
       const vm = this;
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       let index = -1;
       let find = window.CesiumZondy.GeojsonManager[vueKey].find((s, i) => {
         let result = false;
@@ -86,7 +86,7 @@ export default {
         return result;
       });
       let source = find ? find.source : undefined;
-      return {index: index, source: source};
+      return { index: index, source: source };
     },
     mount() {
       let vm = this;
@@ -97,37 +97,49 @@ export default {
         ruleJson,
         url,
         vueKey,
-        vueIndex
+        vueIndex,
+        activeCircle
       } = this;
-      const {viewer} = webGlobe;
-      const {dataSources, scene} = viewer;
+      const { viewer } = webGlobe;
+      const { dataSources, scene } = viewer;
       // let findSource = vm.$_getObject(vm.waitManagerName);
 
       let datasource = this.createCesiumObject();
       //intersect 求相交：本例是倾斜摄影和矢量图层的相交圆
 
-      datasource.then(function (datasource) {
+      datasource.then(function(datasource) {
         // viewer.zoomTo(dataSource);
-        let intersection = vm.intersect(datasource);
-
-        dataSources.add(datasource).then(() => {
-          console.log("datasource.entities.values",datasource.entities.values);
-          window.CesiumZondy.GeojsonManager.addSource(
+        if (activeCircle) {
+          let intersection = vm.intersect(datasource);
+          let clipdatasource = new Cesium.GeoJsonDataSource.load(intersection);
+          dataSources.add(clipdatasource).then(() => {
+            window.CesiumZondy.GeojsonManager.addSource(
+              vueKey,
+              vueIndex,
+              clipdatasource.entities.values,
+              { outline: undefined, rule: ruleJson }
+            );
+          });
+        } else {
+          dataSources.add(datasource).then(() => {
+            window.CesiumZondy.GeojsonManager.addSource(
               vueKey,
               vueIndex,
               datasource.entities.values,
-              {outline: undefined, rule: ruleJson}
-          );
-        });
+              { outline: undefined, rule: ruleJson }
+            );
+          });
+        }
+        
       });
 
       vm.pickModel();
     },
     unmount() {
-      let {webGlobe, vueKey, vueIndex} = this;
+      let { webGlobe, vueKey, vueIndex } = this;
       console.log("vueKey", vueKey, vueIndex);
-      const {viewer} = webGlobe;
-      const {dataSources, scene} = viewer;
+      const { viewer } = webGlobe;
+      const { dataSources, scene } = viewer;
       let find = window.CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
         // scene.primitives.remove(find.options.labels);
@@ -144,9 +156,9 @@ export default {
       let find = this.findSource();
       if (!find || !find.source) return;
       let entities = find.source;
-      let {options, ruleJson, layerStyle} = this;
-      let {type, clampToGround} = options;
-      let {width, alpha} = layerStyle;
+      let { options, ruleJson, layerStyle } = this;
+      let { type, clampToGround } = options;
+      let { width, alpha } = layerStyle;
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         if (!type) continue;
@@ -159,7 +171,7 @@ export default {
             let findsubrule = secondRule.find(r => r.name === regionName);
             if (findsubrule) {
               let pc = new Cesium.Color.fromCssColorString(
-                  firstColor
+                firstColor
               ).withAlpha(alpha);
               entity.polygon.material = pc;
             }
@@ -175,7 +187,7 @@ export default {
       }
       // this.initColor();
       let entities = find.source;
-      let {options, ruleJson, layerStyle} = this;
+      let { options, ruleJson, layerStyle } = this;
       let {
         outlineColor,
         type,
@@ -183,7 +195,7 @@ export default {
         taperPower,
         clampToGround
       } = options;
-      let {width, alpha} = layerStyle;
+      let { width, alpha } = layerStyle;
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         if (!type) continue;
@@ -201,7 +213,7 @@ export default {
               let cssColor = activeRule[j].color; // ;
               if (cssColor) {
                 let pc = new Cesium.Color.fromCssColorString(
-                    cssColor
+                  cssColor
                 ).withAlpha(alpha);
                 entity.polygon.material = pc;
                 entity.polygon.outlineColor = pc;
@@ -209,7 +221,7 @@ export default {
               if (clampToGround) {
                 entity.polygon.clampToGround = clampToGround;
                 entity.polygon.classificationType =
-                    Cesium.ClassificationType.BOTH;
+                  Cesium.ClassificationType.BOTH;
               }
               break;
             }
@@ -217,7 +229,7 @@ export default {
           if (!isPatch) {
             let cssColor = "#000000";
             entity.polygon.material = new Cesium.Color.fromCssColorString(
-                cssColor
+              cssColor
             ).withAlpha(0.0);
           }
         }
@@ -225,7 +237,7 @@ export default {
     },
     pickModel() {
       let vm = this;
-      let {webGlobe} = this;
+      let { webGlobe } = this;
       webGlobe.registerMouseEvent("LEFT_CLICK", vm.highlightPicking);
       // webGlobe.registerMouseEvent("RIGHT_CLICK", vm.stopPick);
       //构造分析功能管理对象
@@ -236,21 +248,30 @@ export default {
     // 鼠标左键单击事件回调：模型高亮
     highlightPicking(movement) {
       let vm = this;
-      const {webGlobe, vueKey, vueIndex} = this;
-      const {viewer} = webGlobe;
+      const { webGlobe, vueKey, vueIndex } = this;
+      const { viewer } = webGlobe;
       //根据鼠标点击位置选择对象
       let pickedFeature = webGlobe.scene.pick(movement.position);
 
       //判断current对象（即上一次鼠标选中要素）中要素有值，该值和鼠标点击位置不相同,
       // 则要移除上一次的要素高亮和popup
-      if (Cesium.defined(vm.current.feature) && (vm.current.feature !== pickedFeature)) {
-        let find = window.CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      if (
+        Cesium.defined(vm.current.feature) &&
+        vm.current.feature !== pickedFeature
+      ) {
+        let find = window.CesiumZondy.GeojsonManager.findSource(
+          vueKey,
+          vueIndex
+        );
         webGlobe.viewer.entities.remove(find.options.popup);
         if (find.options.id && find.options.originColor) {
           const entities = find.source;
           for (let i = 0; i < entities.length; i++) {
             let entity = entities[i];
-            if (entity.id === find.options.id && find.options.name === entity.properties.地类名称._value) {
+            if (
+              entity.id === find.options.id &&
+              find.options.name === entity.properties.地类名称._value
+            ) {
               entity.polygon.material.color = find.options.originColor;
             }
           }
@@ -259,7 +280,10 @@ export default {
       }
 
       //判断点击位置是否有值，该值和鼠标点击位置不相同
-      if (Cesium.defined(pickedFeature) && (vm.current.feature !== pickedFeature)) {
+      if (
+        Cesium.defined(pickedFeature) &&
+        vm.current.feature !== pickedFeature
+      ) {
         vm.current.feature = pickedFeature;
         //获取要素的瓦片集
         let currentLayer;
@@ -269,7 +293,10 @@ export default {
         //获取唯一性的id
         let ID = currentLayer[0].id;
 
-        let find = window.CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+        let find = window.CesiumZondy.GeojsonManager.findSource(
+          vueKey,
+          vueIndex
+        );
         let originColor;
         //判断查找的点在矢量图层的哪个区域
         if (find && find.source) {
@@ -290,7 +317,9 @@ export default {
               let polygon = [];
               for (let j = 0; j < coordinates.length; j++) {
                 let point = [];
-                let cartographic = Cesium.Cartographic.fromCartesian(coordinates[j]);
+                let cartographic = Cesium.Cartographic.fromCartesian(
+                  coordinates[j]
+                );
                 const longitude = Cesium.Math.toDegrees(cartographic.longitude);
                 const latitude = Cesium.Math.toDegrees(cartographic.latitude);
                 point.push(longitude);
@@ -305,65 +334,78 @@ export default {
 
               vm.position.longitude = point[0];
               vm.position.latitude = point[1];
-              vm.position.height = area < 100000 ? Math.log(area) * 4
-                  : Math.log(area) * 20;
+              vm.position.height =
+                area < 100000 ? Math.log(area) * 4 : Math.log(area) * 20;
 
               var b = parseInt(area).toString();
               var len = b.length;
               if (len > 3) {
                 var r = len % 3;
                 b =
-                    r > 0
-                        ? b.slice(0, r) + "," + b.slice(r, len).match(/\d{3}/g).join(",")
-                        : b.slice(r, len).match(/\d{3}/g).join(",");
+                  r > 0
+                    ? b.slice(0, r) +
+                      "," +
+                      b
+                        .slice(r, len)
+                        .match(/\d{3}/g)
+                        .join(",")
+                    : b
+                        .slice(r, len)
+                        .match(/\d{3}/g)
+                        .join(",");
               }
               console.log("viewer.entities", viewer.entities);
               let popup = viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(
-                    vm.position.longitude,
-                    vm.position.latitude,
-                    vm.position.height
+                  vm.position.longitude,
+                  vm.position.latitude,
+                  vm.position.height
                 ),
                 label: {
                   text:
-                      "地块名称：" +
-                      regionName +
-                      "\r\n" +
-                      "地块面积：" +
-                      b +
-                      "m²",
+                    "地块名称：" +
+                    regionName +
+                    "\r\n" +
+                    "地块面积：" +
+                    b +
+                    "m²",
                   showBackground: true,
                   font: "16px bold 微软雅黑",
                   backgroundColor: Cesium.Color.GREY.withAlpha(0.7),
                   verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                  show: true,
+                  show: true
                 },
                 polyline: {
                   positions: [
                     Cesium.Cartesian3.fromDegrees(
-                        vm.position.longitude,
-                        vm.position.latitude,
-                        0
+                      vm.position.longitude,
+                      vm.position.latitude,
+                      0
                     ),
                     Cesium.Cartesian3.fromDegrees(
-                        vm.position.longitude,
-                        vm.position.latitude,
-                        vm.position.height
-                    ),
+                      vm.position.longitude,
+                      vm.position.latitude,
+                      vm.position.height
+                    )
                   ],
                   material: Cesium.PolylineGlowMaterialProperty({
                     color: Cesium.Color.GREY,
-                    dashLength: 32.0,
-                  }),
-                },
+                    dashLength: 32.0
+                  })
+                }
               });
               window.CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
 
               window.CesiumZondy.GeojsonManager.addSource(
-                  vueKey,
-                  vueIndex,
-                  entities,
-                  {popup: popup, originColor: originColor, id: ID, name: regionName}
+                vueKey,
+                vueIndex,
+                entities,
+                {
+                  popup: popup,
+                  originColor: originColor,
+                  id: ID,
+                  name: regionName
+                }
               );
             }
           }
@@ -372,21 +414,24 @@ export default {
     },
     intersect(datasource) {
       let vm = this;
-      const {webGlobe} = this;
-      const {viewer} = webGlobe;
+      const { webGlobe } = this;
+      const { viewer } = webGlobe;
       let intersection;
       let findSource = vm.$_getObject(vm.waitManagerName);
-      console.log("source[0].boundingSphere", findSource.source[0].boundingSphere);
+      console.log(
+        "source[0].boundingSphere",
+        findSource.source[0].boundingSphere
+      );
       let centerCartesian = findSource.source[0].boundingSphere.center;
       //笛卡尔转化经纬度
       let center = [];
       let cartographic = Cesium.Cartographic.fromCartesian(centerCartesian);
       center.push(Cesium.Math.toDegrees(cartographic.longitude));
       center.push(Cesium.Math.toDegrees(cartographic.latitude));
-      console.log("center", center)
+      console.log("center", center);
       //求倾斜摄影的圆：circle 返回polygon
       let radius = 1;
-      let options = {steps: 64, units: 'kilometers'};
+      let options = { steps: 64, units: "kilometers" };
       let circle = turf.circle(center, radius, options);
 
       //绘制多边形
@@ -405,6 +450,10 @@ export default {
 
       //矢量图层的polygon
       let val = datasource.entities.values;
+      let geojsoncolltion = {
+        type: "FeatureCollection",
+        features: []
+      };
 
       let mutiPolygon = [];
 
@@ -424,46 +473,43 @@ export default {
           point.push(latitude);
           polygon.push(point);
         }
-         let polygonTurf = turf.polygon([polygon]);
+        let polygonTurf = turf.polygon([polygon]);
 
-        if (turf.intersect( circle,polygonTurf)){
-          let inter = turf.intersect(circle,polygonTurf);
+        if (turf.intersect(circle, polygonTurf)) {
+          let inter = turf.intersect(circle, polygonTurf);
           inter.properties = val[i].properties;
-          console.log("turf.intersect(circle,polygonTurf)",inter);
+          geojsoncolltion.features.push(inter);
           //有交集
-          if (inter.geometry.type === "Polygon"){
-
-          } else if (inter.geometry.type === "MultiPolygon"){
-
+          if (inter.geometry.type === "Polygon") {
+          } else if (inter.geometry.type === "MultiPolygon") {
           }
         }
         //
-       //  绘制多边形
-       //
-       //  let hier2 = [];
-       //  for (let c=0; c<polygon.length;c++){
-       //    for (let d=0;d<polygon[c].length;d++){
-       //      hier2.push(polygon[c][d]);
-       //    }
-       //  }
-       // viewer.entities.add({
-       //   polygon: {
-       //     hierarchy: Cesium.Cartesian3.fromDegreesArray(hier2),
-       //     material: Cesium.Color.DARKMAGENTA.withAlpha(0.5),
-       //   }
-       // });
+        //  绘制多边形
+        //
+        //  let hier2 = [];
+        //  for (let c=0; c<polygon.length;c++){
+        //    for (let d=0;d<polygon[c].length;d++){
+        //      hier2.push(polygon[c][d]);
+        //    }
+        //  }
+        // viewer.entities.add({
+        //   polygon: {
+        //     hierarchy: Cesium.Cartesian3.fromDegreesArray(hier2),
+        //     material: Cesium.Color.DARKMAGENTA.withAlpha(0.5),
+        //   }
+        // });
         mutiPolygon.push(polygon);
       }
 
       let vectorPolygon = turf.multiPolygon([mutiPolygon]);
 
       //求相交部分：
-      intersection = turf.intersect(vectorPolygon,circle);
+      intersection = turf.intersect(vectorPolygon, circle);
 
-      return intersection;
+      return geojsoncolltion;
     }
-  },
-
+  }
 };
 </script>
 <style scoped>

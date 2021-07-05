@@ -126,6 +126,7 @@ export default {
       });
 
       window.webGlobe = window.webGlobe || webGlobe;
+      webGlobe.viewer.cesiumWidget.readyPromise && 
       webGlobe.viewer.cesiumWidget.readyPromise.then(function(globe) {
         vm.$emit("webGlobeLoaded",globe);
       });
