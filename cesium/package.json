@@ -1,8 +1,8 @@
 {
   "name": "@mapgis/webclient-vue-cesium",
-  "version": "10.5.4",
+  "version": "10.5.4-1",
   "description": "mapgis webclient-vue-cesium",
-  "main": "dist/webclient-vue-cesium.umd.1.js",
+  "main": "dist-libs/webclient-vue-cesium.umd.min.js",
   "module": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-cesium src/main.js",
