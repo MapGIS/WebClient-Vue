@@ -1,4 +1,6 @@
-<template></template>
+<template>
+  <span/>
+</template>
 
 <script>
 export default {
