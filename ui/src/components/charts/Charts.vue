@@ -4,13 +4,16 @@
     :ref="chartId"
     :option="echartOptions"
     :style="wrapperStyle"
-  >
-  </div>
+  ></div>
 </template>
 
 <script>
+import { addListener, removeListener } from "resize-detector";
+import debounce from "lodash/debounce";
 import UniqueId from "lodash.uniqueid";
 import theme from "./style/theme.json";
+import china from "./style/china.json";
+import EchartsMixin from "./ChartsMixin";
 // import DefaultTheme from "./style/theme";
 
 import * as echarts from "echarts/core";
@@ -22,23 +25,47 @@ import * as echarts from "echarts/core";
   connect,
   disconnect
 } from "echarts/core"; */
-import { BarChart, PieChart } from "echarts/charts";
+import {
+  BarChart,
+  PieChart,
+  LineChart,
+  SankeyChart,
+  PictorialBarChart,
+  EffectScatterChart,
+  MapChart,
+  CustomChart
+} from "echarts/charts";
+
 import {
   GridComponent,
   LegendComponent,
   TooltipComponent,
+  PolarComponent,
+  DataZoomComponent,
+  GeoComponent,
   TitleComponent
 } from "echarts/components";
 // 注意，新的接口中默认不再包含 Canvas 渲染器，需要显示引入，如果需要使用 SVG 渲染模式则使用 SVGRenderer
 import { CanvasRenderer } from "echarts/renderers";
 
 echarts.use([
+  LineChart,
   BarChart,
   PieChart,
+  SankeyChart,
+  CustomChart,
+  EffectScatterChart,
+  PictorialBarChart,
+  MapChart,
+
   GridComponent,
   LegendComponent,
   TooltipComponent,
+  DataZoomComponent,
   TitleComponent,
+  PolarComponent,
+  GeoComponent,
+
   CanvasRenderer
 ]);
 
@@ -87,6 +114,7 @@ export default {
   /*  provide: {
     [THEME_KEY]: "dark"
   }, */
+  mixins: [EchartsMixin],
   props: {
     headerTitle: {
       type: String,
@@ -99,7 +127,9 @@ export default {
   },
   data() {
     return {
-      chartId: UniqueId(`${this.$options.name.toLowerCase()}-`)
+      chartId: UniqueId(`${this.$options.name.toLowerCase()}-`),
+      resizeEvent: undefined,
+      mapgisChart: undefined
     };
   },
   computed: {
@@ -110,15 +140,29 @@ export default {
       };
     }
   },
+  provide() {
+    return {
+      get resize() {
+        return this.resizeEvent;
+      }
+    };
+  },
   created() {
-    // echarts.registerTheme("mapgis-theme", theme);
+    echarts.registerTheme("mapgis-theme", theme);
+    echarts.registerMap("china", china);
+    this.extendEcharts();
+  },
+  destroyed() {
+    this.unbindResize();
   },
   mounted() {
     let mapgisChartDom = this.$refs[this.chartId];
-    let mapgisChart = echarts.init(mapgisChartDom/* , "mapgis-theme" */);
+    let mapgisChart = echarts.init(mapgisChartDom, "mapgis-theme");
     mapgisChart.setOption(this.echartOptions);
+    this.mapgisChart = mapgisChart;
 
     const vm = this;
+    this.bindResize();
     ECHARTS_EVENTS.forEach(event => {
       /* mapgisChart.$on(event, params => {
         if (event === "click") {
@@ -126,11 +170,31 @@ export default {
         vm.$emit(event, params);
       }); */
     });
+    this.resize();
   },
   methods: {
     // 获取echart实例
     _getEchart() {
       return this.mapgisChart;
+    },
+    resize() {
+      const { width, height } = this.$el.style;
+      const { offsetHeight, offsetWidth } = this.$el;
+      this.mapgisChart.resize();
+    },
+    bindResize() {
+      const vm = this;
+      this.resizeEvent = debounce(
+        () => {
+          vm.resize();
+        },
+        100,
+        { leading: true }
+      );
+      addListener(this.$el, this.resizeEvent);
+    },
+    unbindResize() {
+      removeListener(this.$el, this.resizeEvent);
     }
   }
 };
