@@ -4,6 +4,7 @@
 
 <script>
 import withEvents from "../../../lib/withEvents";
+import { deepEqual } from "../../util/util";
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -16,7 +17,7 @@ export default {
     },
     mode: {
       type: String,
-      default: "add" // add set
+      default: "merge" // add set merge
     },
     before: {
       type: String
@@ -26,10 +27,11 @@ export default {
   watch: {
     mvtStyle: {
       handler(next) {
-        this.remove();
-        this.$_initStyle(this.mode, next);
-      },
-      deep: true
+        if (!deepEqual(next, this.mvtStyle)) {
+          this.remove();
+          this.$_initStyle(this.mode, next);
+        }
+      }
     }
   },
 
@@ -69,12 +71,24 @@ export default {
     async compareStyle(mvtStyle) {
       let oldStyle = this.map.getStyle();
       let newStyle = await this.$_getStyleObject(mvtStyle);
+      let newLayer = [];
+      switch (this.mode) {
+        case "add":
+          newLayer = this.addLayers(oldStyle.layers, newStyle.layers);
+          break;
+        case "merge":
+          newLayer = this.mergeLayers(oldStyle.layers, newStyle.layers);
+          break;
+      }
+
+      console.log("news", newLayer);
+
       let style = {
         version: oldStyle.version || newStyle.version,
         sprite: oldStyle.sprite || newStyle.sprite,
         glyphs: oldStyle.glyphs || newStyle.glyphs,
         sources: { ...oldStyle.sources, ...newStyle.sources },
-        layers: this.mergeLayers(oldStyle.layers, newStyle.layers)
+        layers: newLayer
       };
       return style;
     },
@@ -93,7 +107,7 @@ export default {
       return style;
     },
 
-    mergeLayers(olds, news) {
+    addLayers(olds, news) {
       news = news || [];
       if (!olds) return [].concat(news);
       let filters = olds.filter(layer => {
@@ -103,9 +117,24 @@ export default {
       return filters.concat(news);
     },
 
+    mergeLayers(olds, news) {
+      news = news || [];
+      if (!olds) return [].concat(news);
+      let merges = olds.map(layer => {
+        let find = news.find(l => l.id === layer.id);
+        return find ? find : layer;
+      });
+      console.log("merges", news, merges);
+      let unmerges = news.filter(layer => {
+        let find = merges.find(l => l.id === layer.id);
+        return find ? false : true;
+      });
+      return merges.concat(unmerges);
+    },
+
     $_initStyle(mode, style) {
       mode = mode || this.mode;
-      if (mode === "add") {
+      if (mode === "add" || mode === "merge") {
         this.$_addStyle(style);
       } else if (mode == "set") {
         this.$_setStyle(style);
