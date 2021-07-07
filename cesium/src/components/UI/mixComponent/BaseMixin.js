@@ -82,7 +82,7 @@ export default {
       );
       if (manager) {
         callback(manager);
-        window.CesiumZondy.MeasureToolManager.deleteSource(vueKey, vueIndex);
+        window.CesiumZondy[managerName].deleteSource(vueKey, vueIndex);
       }
     }
   }
