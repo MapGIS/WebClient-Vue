@@ -50,3 +50,5 @@ export { default as Mapgis3dExcavate } from "../components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "../components/Analysis/Flood";
 export { default as Mapgis3dFloodNoSlot } from "../components/Analysis/FloodNoSlot";
 export { default as colorPicker } from "vcolorpicker";
+export { default as Mapgis3dDynamicCutting } from "../components/Analysis/DynamicCutting";
+export { default as Mapgis3dFill } from "../components/Analysis/Fill";
