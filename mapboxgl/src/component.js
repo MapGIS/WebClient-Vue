@@ -50,6 +50,8 @@ export { default as MapgisTrackerLayer } from "./components/layer/tracker/Tracke
 
 export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
+export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
+
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 
 /* 

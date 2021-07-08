@@ -3,10 +3,12 @@
   "version": "10.5.4",
   "description": "中地数码webclient-vue-ui",
   "main": "dist-libs/webclient-vue-ui.umd.min.js",
-  "module1": "src/index.js",
+  "module": "src/index.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/index.js",
-    "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/cdn/index.js"
+    "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/cdn/index.js",
+    "docs:serve": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "husky": {
     "hooks": {
@@ -21,12 +23,20 @@
   },
   "dependencies": {
     "@ant-design/icons": "2.1.1",
+    "@vue/composition-api": "^1.0.0-rc.13",
+    "@vuepress/plugin-active-header-links": "^1.8.2",
+    "@vuepress/plugin-nprogress": "^1.8.2",
     "ant-design-vue": "^1.7.5",
     "css-vars-ponyfill": "^2.4.5",
+    "echarts": "^5.1.2",
     "lodash": "^4.17.21",
     "lodash.uniqueid": "^4.0.1",
     "resize-detector": "^0.3.0",
-    "tinycolor2": "^1.4.2"
+    "tinycolor2": "^1.4.2",
+    "vue-echarts": "^6.0.0-rc.6",
+    "vuepress": "^1.8.2",
+    "vuepress-plugin-demo-block": "^0.7.2",
+    "vuepress-plugin-demo-code": "^0.6.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
