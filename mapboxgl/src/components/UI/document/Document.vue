@@ -4,12 +4,12 @@
       <mapgis-iconfont type="mapgis-tucengjiancheng" />
       <span>地图文档树</span>
     </div>
-    <a-input-search
+    <mapgis-ui-input-search
       style="margin-bottom: 8px"
       placeholder="搜索"
       @change="onChange"
     />
-    <a-tree
+    <mapgis-ui-tree
       checkable
       showIcon
       v-model="checkedKeys"
@@ -31,7 +31,7 @@
           <span v-else> {{ title }} </span>
         </span>
       </template>
-    </a-tree>
+    </mapgis-ui-tree>
     <contextmenu ref="LayerMenu" @contextmenu="handleMenuOpen">
       <layer-menu :layerId="selectLayer" @reverse="onReveseClick" />
     </contextmenu>
