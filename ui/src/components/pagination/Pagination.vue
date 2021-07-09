@@ -10,7 +10,7 @@ export default {
   wrapperUI: Pagination,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: PaginationProps,
+  props: PaginationProps(),
     model: {
     prop: 'current',
     event: 'change.current'

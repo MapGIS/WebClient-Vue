@@ -62,6 +62,8 @@ export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOpt
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";
+export { default as MapgisUiTreeSelect } from "./components/tree-select/TreeSelect.vue";
+export { default as MapgisUiTreeSelectNode } from "./components/tree-select/TreeNode.vue";
 
 // Data Display
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
