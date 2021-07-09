@@ -118,6 +118,8 @@ export default {
       let vm = this;
       CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
         vm.$_getM3DByInterval(function (m3d) {
+          //模型加载完毕，抛出lioaded事件
+          vm.$emit("loaded",vm);
           //进行剖切分析的面，从上往下切，Cesium.Cartesian3中第一个参数是左右，第二个参数是前后，第三个参数是上下
           let xDirect = 0;
           let yDirect = 0;

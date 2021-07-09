@@ -135,7 +135,6 @@ export default {
       this.$_initAnalysis("startDrawingPolygon","$_volumeAnalyse");
     },
     $_selectChange(value){
-      console.log("value",value)
       this.type = value;
       if(value === "cut"){
         this.cutTitle = "开挖高度(米):";
@@ -189,7 +188,6 @@ export default {
         height = wallHeight;
       }
       height = Number(height);
-      console.log("height",height)
       //创建填挖方实例
       let cutFill = advancedAnalysisManager.createCutFill(0.0, {
         //设置x方向采样点个数
@@ -200,10 +198,8 @@ export default {
         height: height,
         //返回结果的回调函数
         callback: function(result) {
-          console.log("result",result)
           vm.showResult = true;
           vm.volume = vm.type === "cut" ? result.cutVolume : result.fillVolume;
-          console.log("vm.volume",vm.volume)
           vm.surfaceArea = result.surfaceArea;
           vm.heightCopy = height;
           vm.volumeTitle = vm.type === "cut" ? "开挖高度(米):" : "填方高度(米):";
@@ -236,7 +232,6 @@ export default {
       return center;
     },
     $_addEntity(webGlobe,center,positions,wallHeight){
-      console.log("wallHeight",wallHeight)
       const {vueKey,vueIndex} = this;
       let Cesium= getCesiumBaseObject(this,"Cesium");
       //添加填挖方分析显示实体
