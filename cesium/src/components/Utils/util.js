@@ -350,3 +350,19 @@ export function getAllAttribution (viewer) {
   )
   return credits.map(credit => credit.html)
 }
+
+/**
+ * 取得Cesium、CesiumZondy或webGlobe对象，如果有注入就用注入，没有就用window上的
+ * @param vm Object 组件的this对象
+ * @param name String 对象名称
+ * */
+export function getCesiumBaseObject(vm,name){
+  let baseObject = vm[name];
+  if(!baseObject) {
+    baseObject = window[name];
+    if(!baseObject){
+      throw new Error("未找到可用的" + name + "对象！");
+    }
+  }
+  return baseObject;
+}
