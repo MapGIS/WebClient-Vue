@@ -24,7 +24,8 @@
     ]
   },
   "dependencies": {
-    "@mapgis/cesium": "^1.0.0",
+    "@mapgis/cesium": "^1.59.3",
+    "@mapgis/webclient-es6-service": "^10.5.4",
     "@mapgis/webclient-store": "^1.0.14",
     "@mapgis/webclient-es6-service": "^10.5.4",
     "@turf/turf": "^5.1.6",
