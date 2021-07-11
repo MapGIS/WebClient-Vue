@@ -4,6 +4,10 @@ export { default as MapgisUiBorder } from "./components/border/Border.vue";
 // 目前echart 5.0 和 vue-echarts 6.0 冲突过大，等官方解决后再接入，目前是自己封装echarts5.0
 export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 
+// IconFont
+export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
+
 // Layout
 export { default as MapgisUiRow } from "./components/grid/Row.vue";
 export { default as MapgisUiCol } from "./components/grid/Col.vue";
@@ -104,3 +108,7 @@ export { default as MapgisUiSpin } from "./components/spin/Spin.vue";
 export { default as MapgisUiConfigProvider } from "./components/config-provider/ConfigProvider.vue";
 export { default as MapgisUiDivider } from "./components/divider/Divider.vue";
 export { default as MapgisUiLocaleProvider } from "./components/locale-provider/LocaleProvider.vue";
+
+// Pro
+export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
+export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
