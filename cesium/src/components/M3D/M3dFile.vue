@@ -33,9 +33,11 @@ export default {
       return tileset;
     },
     mount() {
-      const { webGlobe, tileset, autoReset } = this;
+      const { webGlobe, autoReset } = this;
       const viewer = webGlobe.viewer;
       if (viewer.isDestroyed()) return;
+
+      let tileset = this.createCesiumObject();
 
       tileset.readyPromise
         .then(function (primitives) {
