@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import MapgisUI from "@mapgis/webclient-vue-ui";
+import { setTheme } from "../../util/style/theme/set-theme";
 import BlockCheckBox from "./SettingDrawer/BlockCheckbox";
 import light from "./SettingDrawer/style/light.svg";
 import dark from "./SettingDrawer/style/dark.svg";
@@ -73,7 +73,7 @@ export default {
     },
     onThemeChange(theme) {
       this.defaultTheme = theme;
-      MapgisUI.setTheme(theme);
+      setTheme(theme);
     }
   }
 };

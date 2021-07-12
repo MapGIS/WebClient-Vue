@@ -1,5 +1,10 @@
 <template>
   <mapgis-ui-layout>
+    <template name="left-sider">
+      <mapgis-ui-layout-sider theme="light" v-model="collapsed" collapsible>
+        
+      </mapgis-ui-layout-sider>
+    </template>
     <mapgis-ui-layout>
       <mapgis-ui-layout-header :style="headStyle">
         <slot name="header" />
@@ -39,6 +44,6 @@ export default {
   padding: 0px;
 }
 .mapgis-ui-layout-content {
-  height: calc(100vh - 64px - 24px);
+  height: calc(100vh - 64px - 48px);
 }
 </style>
