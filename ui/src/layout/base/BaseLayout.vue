@@ -22,7 +22,7 @@ export default {
   components: { BaseSetting },
   props: {
     headStyle: { padding: "0px" },
-    contentStyle: { padding: "0px", height: "100vh" },
+    contentStyle: { padding: "0px" },
     footerStyle: { padding: "0px" }
   },
   data() {

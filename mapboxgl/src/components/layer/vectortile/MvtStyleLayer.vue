@@ -27,10 +27,12 @@ export default {
   watch: {
     mvtStyle: {
       handler(next) {
-        if (!deepEqual(next, this.mvtStyle)) {
+        this.remove();
+        this.$_initStyle(this.mode, next);
+        /* if (!deepEqual(next, this.mvtStyle)) {
           this.remove();
           this.$_initStyle(this.mode, next);
-        }
+        } */
       }
     }
   },
