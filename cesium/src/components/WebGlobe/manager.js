@@ -59,6 +59,15 @@ export function initManager() {
   window.CesiumZondy.AnalysisModelFlattenManager =
     window.CesiumZondy.AnalysisModelFlattenManager ||
     new AnalysisModelFlattenManager();
+  window.CesiumZondy.DynamicCuttingManager =
+      window.CesiumZondy.DynamicCuttingManager ||
+      new DynamicCuttingManager();
+  window.CesiumZondy.AnalysisManager =
+      window.CesiumZondy.AnalysisManager ||
+      new AnalysisManager();
+  window.CesiumZondy.AnalysisManager =
+      window.CesiumZondy.AnalysisManager ||
+      new AnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -197,3 +206,5 @@ export class ExcavateAnalysisManager extends BaseManager {}
 export class FloodAnalyseManager extends BaseManager {}
 export class MarkerManager extends BaseManager {}
 export class AnalysisModelFlattenManager extends BaseManager {}
+export class DynamicCuttingManager extends BaseManager {}
+export class AnalysisManager extends BaseManager {}

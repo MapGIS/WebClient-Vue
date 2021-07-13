@@ -1,5 +1,7 @@
+import {getCesiumBaseObject} from "../Utils/util";
+
 export default {
-  inject: ["webGlobe", "Cesium"],
+  inject: ["webGlobe", "Cesium","CesiumZondy"],
   props: {
     vueKey: {
       type: String,
@@ -158,7 +160,68 @@ export default {
         if (callback) {
           callback(manager);
         }
-        window.CesiumZondy[managerName].deleteSource(vueKey, vueIndex);
+        window.CesiumZondy.MeasureToolManager.deleteSource(vueKey, vueIndex);
+      }
+    },
+    $_getM3DByInterval(callback,vueKey,vueIndex){
+      vueKey = vueKey || this.vueKey;
+      vueIndex = vueIndex || this.vueIndex;
+      if(!(vueIndex instanceof Array)){
+        vueIndex = [vueIndex];
+      }
+      let CesiumZondy = getCesiumBaseObject(this,"CesiumZondy");
+      let m3d = undefined;
+      let m3dArr = []
+      let interval = setInterval(function () {
+        let allLoaded = true;
+        for (let i = 0;i < vueIndex.length;i++){
+          m3d = CesiumZondy.M3DIgsManager.findSource(vueKey,vueIndex[i]);
+          if(!m3d || !m3d.hasOwnProperty("source") || !m3d.source){
+            allLoaded = false;
+          }
+        }
+        if(allLoaded){
+          for (let i = 0;i < vueIndex.length;i++){
+            m3d = CesiumZondy.M3DIgsManager.findSource(vueKey,vueIndex[i]);
+            m3dArr.push(m3d);
+          }
+          callback(m3dArr);
+          clearInterval(interval);
+        }
+      },50);
+    },
+    $_degreeFromCartesian(p){
+      let point = {};
+      let cartographic = Cesium.Cartographic.fromCartesian(p);
+      point.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+      point.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+      point.height = cartographic.height; //模型高度
+      return point;
+    },
+    $_getM3DBox(m3d){
+      const northeastCornerCartesian = m3d._root.boundingVolume.northeastCornerCartesian;
+      const southwestCornerCartesian = m3d._root.boundingVolume.southwestCornerCartesian;
+      //这里：东南角和西北角在外包盒子的同一平面上
+      let p1 = this.$_degreeFromCartesian(southwestCornerCartesian);
+      let p2 = this.$_degreeFromCartesian(northeastCornerCartesian);
+      let p3 = {}, p4 = {};
+      p3.longitude = p1.longitude;
+      p3.latitude = p2.latitude;
+      p3.height = p1.height;
+      p4.longitude = p2.longitude;
+      p4.latitude = p1.latitude;
+      p4.height = p2.height;
+      //p3,p4的笛卡尔坐标
+      let p3Caetesian = Cesium.Cartesian3.fromDegrees(p3.longitude, p3.latitude, p3.height);
+      let p4Caetesian = Cesium.Cartesian3.fromDegrees(p4.longitude, p4.latitude, p4.height);
+      //求出平面的长和宽，再求出distance
+      let length = Cesium.Cartesian3.distance(p4Caetesian, southwestCornerCartesian);
+      let width = Cesium.Cartesian3.distance(p3Caetesian, southwestCornerCartesian);
+      let height = m3d._root.boundingVolume.maximumHeight - m3d._root.boundingVolume.minimumHeight;
+      return {
+        length: length,
+        width: width,
+        height: height
       }
     }
   }

@@ -1,94 +1,94 @@
 <template>
   <div class="flood-analyse-box" v-if="initial">
-    <a-row>
-      <a-col :span="8">
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">最大淹没高度(米):</p>
-      </a-col>
-      <a-col :span="12">
-        <a-slider v-model="currentHeightCopy" :min="0" :max="Number(maxHeightCopy)" :disabled="disabled"/>
-      </a-col>
-      <a-col :span="4">
-        <a-input v-model="maxHeightCopy"/>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col :span="8">
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-slider v-model="currentHeightCopy" :min="0" :max="Number(maxHeightCopy)" :disabled="disabled"/>
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="4">
+        <mapgis-ui-input v-model="maxHeightCopy"/>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">颜色:</p>
-      </a-col>
-      <a-col :span="12">
-        <a-input class="flood-input" v-model="floodColorCopy"/>
-      </a-col>
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-input class="flood-input" v-model="floodColorCopy"/>
+      </mapgis-ui-col>
       <div class="flood-color-picker">
         <colorPicker v-model="floodColorCopy" v-on:change="headleChangeColor"/>
       </div>
-    </a-row>
-    <a-row>
-      <a-col :span="8">
+    </mapgis-ui-row>
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">洪水淹没速度:</p>
-      </a-col>
-      <a-col :span="12">
-        <a-input class="flood-input" v-model="floodSpeedCopy"/>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col :span="8">
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-input class="flood-input" v-model="floodSpeedCopy"/>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">反射光强度:</p>
-      </a-col>
-      <a-col :span="12">
-        <a-input class="flood-input" v-model="specularIntensityCopy"/>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col :span="8">
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-input class="flood-input" v-model="specularIntensityCopy"/>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">水波高度:</p>
-      </a-col>
-      <a-col :span="12">
-        <a-input class="flood-input" v-model="amplitudeCopy"/>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col :span="8">
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-input class="flood-input" v-model="amplitudeCopy"/>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">水纹速度:</p>
-      </a-col>
-      <a-col :span="12">
-        <a-input class="flood-input" v-model="animationSpeedCopy"/>
-      </a-col>
-    </a-row>
-    <a-row>
-      <a-col :span="8">
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-input class="flood-input" v-model="animationSpeedCopy"/>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
         <p class="flood-title">水纹频率:</p>
-      </a-col>
-      <a-col :span="12">
-        <a-input class="flood-input" v-model="frequencyCopy"/>
-      </a-col>
-    </a-row>
-    <!--      <a-row>-->
-    <!--        <a-col :span="8">-->
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-input class="flood-input" v-model="frequencyCopy"/>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <!--      <mapgis-ui-row>-->
+    <!--        <mapgis-ui-col :span="8">-->
     <!--          <p class="flood-title">绘制工具:</p>-->
-    <!--        </a-col>-->
-    <!--        <a-col :span="8">-->
-    <!--          <a-select-->
+    <!--        </mapgis-ui-col>-->
+    <!--        <mapgis-ui-col :span="8">-->
+    <!--          <mapgis-ui-select-->
     <!--              class="flood-select"-->
     <!--              :default-value="selectDefault"-->
     <!--              @change="$_selectChange"-->
     <!--          >-->
-    <!--            <a-select-option v-for="(tool,index) in tools" :key="tool.name">{{ tool.value }}</a-select-option>-->
-    <!--          </a-select>-->
-    <!--        </a-col>-->
-    <!--      </a-row>-->
-    <a-row>
-      <a-col :span="8">
-        <a-button class="flood-button" type="primary" @click="$_startAnalyse" :disabled="!disabled">开始分析</a-button>
-      </a-col>
-      <a-col :span="8">
-        <a-button class="flood-button flood-button-stop" @click="$_stopAnalyse" :disabled="disabled">停止分析</a-button>
-      </a-col>
-    </a-row>
+    <!--            <mapgis-ui-select-option v-for="(tool,index) in tools" :key="tool.name">{{ tool.value }}</mapgis-ui-select-option>-->
+    <!--          </mapgis-ui-select>-->
+    <!--        </mapgis-ui-col>-->
+    <!--      </mapgis-ui-row>-->
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="8">
+        <mapgis-ui-button class="flood-button" type="primary" @click="$_startAnalyse" :disabled="!disabled">开始分析</mapgis-ui-button>
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="8">
+        <mapgis-ui-button class="flood-button flood-button-stop" @click="$_stopAnalyse" :disabled="disabled">停止分析</mapgis-ui-button>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
   </div>
 </template>
 
 <script>
-import ServiceLayer from "./ServiceLayer";
+import ServiceLayer from "./BaseLayer";
 
 export default {
   name: "mapgis-3d-flood-no-slot",

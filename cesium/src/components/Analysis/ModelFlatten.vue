@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import BaseMixin from "./ServiceLayer";
+import BaseMixin from "./BaseLayer";
 
 const Managger = "AnalysisModelFlattenManager";
 export default {
@@ -72,6 +72,7 @@ export default {
         var tool = new Cesium.DrawElement(viewer);
         // 激活交互式绘制工具
         tool.startDrawingPolygon({ callback: this.getDrawResult });
+        console.log("tool", tool);
         let m3ds = this.$_getManager("M3DIgsManager");
         if (m3ds && m3ds.source && m3ds.source.length > 0) {
           m3d = m3ds.source[0];

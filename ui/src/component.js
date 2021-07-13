@@ -82,6 +82,7 @@ export { default as MapgisUiList } from "./components/list/List.vue";
 export { default as MapgisUiListItem } from "./components/list/Item.vue";
 export { default as MapgisUiListItemMeta } from "./components/list/Meta.vue";
 export { default as MapgisUiPopover } from "./components/popover/Popover.vue";
+export { default as MapgisUiPopconfirm } from "./components/popconfirm/Popconfirm.vue";
 export { default as MapgisUiStatistic } from "./components/statistic/Statistic.vue";
 export { default as MapgisUiStatisticCountdown } from "./components/statistic/Countdown.vue";
 export { default as MapgisUiTable } from "./components/table/Table.vue";

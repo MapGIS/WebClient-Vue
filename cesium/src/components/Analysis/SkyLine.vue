@@ -10,16 +10,16 @@
     >
       天际线分析
     </div>
-    <a-card>
-    <a-button class="content" type="primary" @click="startSkyLine"
-    >开始绘制</a-button
+    <mapgis-ui-card>
+    <mapgis-ui-button class="content" type="primary" @click="startSkyLine"
+    >开始绘制</mapgis-ui-button
     >
-    <a-button
+    <mapgis-ui-button
         class="content-clear"
         type="primary"
         @click="clearSkyLine"
-    >清除</a-button>
-    </a-card>
+    >清除</mapgis-ui-button>
+    </mapgis-ui-card>
   </div>
 </template>
 

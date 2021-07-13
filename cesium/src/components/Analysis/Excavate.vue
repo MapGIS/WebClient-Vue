@@ -10,16 +10,16 @@
     >
       开挖分析
     </div>
-    <a-card>
+    <mapgis-ui-card>
       <span slot="prefix">开挖深度:</span>
-      <a-row :span="12">
-        <a-slider v-model="excavateDepth" :step="10" :min="mindepth" :max="maxdepth" :disabled="excavateAn"
+      <mapgis-ui-row :span="12">
+        <mapgis-ui-slider v-model="excavateDepth" :step="10" :min="mindepth" :max="maxdepth" :disabled="excavateAn"
                   @change="setInput" :value="parseFloat(excavateDepth)"/>
-      </a-row>
-      <a-row :span="10">
-        <a-input-number v-model="excavateDepth" :min="mindepth" :max="maxdepth" :style="{marginLeft: '16px'}"/>
-      </a-row>
-    </a-card>
+      </mapgis-ui-row>
+      <mapgis-ui-row :span="10">
+        <mapgis-ui-input-number v-model="excavateDepth" :min="mindepth" :max="maxdepth" :style="{marginLeft: '16px'}"/>
+      </mapgis-ui-row>
+    </mapgis-ui-card>
   </div>
 </template>
 

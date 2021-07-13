@@ -15,14 +15,14 @@
         >
             通视分析
         </div>
-        <a-card class="box-card-vshed attr-table">
+        <mapgis-ui-card class="box-card-vshed attr-table">
             <div class="starting">
                 起始点:
                 <div class="inputs">
-                    <a-input v-model="form.startLon" :disabled="!form.startLon">
+                    <mapgis-ui-input v-model="form.startLon" :disabled="!form.startLon">
                         <span slot="prefix">经度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="startLonMax"
@@ -33,10 +33,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.startLat" :disabled="!form.startLat">
+                    <mapgis-ui-input v-model="form.startLat" :disabled="!form.startLat">
                         <span slot="prefix">纬度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="startLatMax"
@@ -47,10 +47,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.startAlt" :disabled="!form.startAlt">
+                    <mapgis-ui-input v-model="form.startAlt" :disabled="!form.startAlt">
                         <span slot="prefix">高度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="10"
                         :max="startAltMax"
@@ -64,10 +64,10 @@
             <div class="ending">
                 结束点:
                 <div class="inputs">
-                    <a-input v-model="form.endLon" :disabled="!form.endLon">
+                    <mapgis-ui-input v-model="form.endLon" :disabled="!form.endLon">
                         <span slot="prefix">经度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="endLonMax"
@@ -78,10 +78,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.endLat" :disabled="!form.endLat">
+                    <mapgis-ui-input v-model="form.endLat" :disabled="!form.endLat">
                         <span slot="prefix">纬度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="endLatMax"
@@ -92,10 +92,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.endAlt" :disabled="!form.endAlt">
+                    <mapgis-ui-input v-model="form.endAlt" :disabled="!form.endAlt">
                         <span slot="prefix">高度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="10"
                         :max="endAltMax"
@@ -106,16 +106,16 @@
                     />
                 </div>
             </div>
-            <a-button class="content" type="primary" @click="initSightline"
-                >点击绘制</a-button
+            <mapgis-ui-button class="content" type="primary" @click="initSightline"
+                >点击绘制</mapgis-ui-button
             >
-            <a-button
+            <mapgis-ui-button
                 class="content-clear"
                 type="primary"
                 @click="clearSightline"
-                >清除</a-button
+                >清除</mapgis-ui-button
             >
-        </a-card>
+        </mapgis-ui-card>
     </div>
 </template>
 
