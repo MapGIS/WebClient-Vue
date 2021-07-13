@@ -53,6 +53,8 @@ export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
 
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
+export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
+export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 
 /* 
 import withEventsMixin from "./lib/withEvents";
