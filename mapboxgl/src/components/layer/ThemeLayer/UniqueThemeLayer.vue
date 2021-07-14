@@ -4,12 +4,16 @@
         :data-source="dataSource"
         :fields="fields"
         :colors="colors"
+        :dataType="dataType"
+        :checkBoxArr="checkBoxArr"
         @change="$_selectChange"
         @checked="$_checked"
         @gradientChange="$_gradientChange"
         @lineColorChanged="$_lineColorChanged"
         @opacityChanged="$_opacityChanged"
         @oneColorChanged="$_oneColorChanged"
+        @radiusChanged="$_radiusChanged"
+        @lineWidthChanged="$_lineWidthChanged"
     ></ThemePanel>
     <mapgis-vector-layer
         v-if="showVector"
@@ -117,17 +121,25 @@ export default {
   components: {
     ThemePanel
   },
-  props:{
+  props: {
     baseUrl: {
-      type: String,
-      required: true
+      type: String
+    },
+    sourceId: {
+      type: String
+    },
+    sourceLayer: {
+      type: String
     }
   },
   data() {
     return {
       dataSource: [],
+      checkBoxArr: [],
       fields: [],
       colors: [],
+      originColors: [],
+      allOriginColors: {},
       dataType: "",
       dataCopy: undefined,
       selectKey: "",
@@ -144,24 +156,73 @@ export default {
     }
   },
   mounted() {
-    this.$_getVector();
+    if (this.sourceId && this.sourceLayer) {
+      this.$_getFromSource();
+    } else {
+      this.$_getFromGeoJSON();
+    }
   },
   methods: {
-    $_oneColorChanged(index, color) {
-      switch (this.dataType){
+    $_lineWidthChanged(lineWidth) {
+      this.$set(this.layerVector.paint, "line-width", lineWidth);
+    },
+    $_radiusChanged(radius) {
+      this.$set(this.layerVector.paint, "circle-radius", radius);
+    },
+    $_getColorsFromOrigin(index, color) {
+      let colors;
+      let fillName = "";
+      switch (this.dataType) {
         case "fill":
-          if (this.layerVector.paint["fill-color"].hasOwnProperty("stops")) {
-            this.$set(this.layerVector.paint["fill-color"].stops[index], 1, color);
-          } else if (!this.layerVector.paint["fill-color"].hasOwnProperty("stops") && this.layerVector.paint["fill-color"].indexOf("match") === 0) {
-            this.$set(this.layerVector.paint["fill-color"], (index + 1) * 2 + 1, color);
-          }
+          fillName = "fill-color";
           break;
         case "circle":
-          if (this.layerVector.paint["circle-color"].hasOwnProperty("stops")) {
-            this.$set(this.layerVector.paint["circle-color"].stops[index], 1, color);
-          } else if (!this.layerVector.paint["circle-color"].hasOwnProperty("stops") && this.layerVector.paint["fill-color"].indexOf("match") === 0) {
-            this.$set(this.layerVector.paint["circle-color"], (index + 1) * 2 + 1, color);
+          fillName = "circle-color";
+          break;
+        case "line":
+          fillName = "line-color";
+          break;
+      }
+      if (this.originColors.colors.hasOwnProperty("stops")) {
+        colors = {};
+        if(index !== null & index !== undefined){
+          this.$set(this.originColors.colors.stops[index], 1, color);
+        }
+        let stops = [];
+        for (let i = 0; i < this.originColors.checkArr.length; i++) {
+          if (this.originColors.checkArr[i]) {
+            stops.push(this.originColors.colors.stops[i]);
           }
+        }
+        colors.stops = stops;
+        colors.property = this.originColors.colors.property;
+      } else if (this.originColors.colors.indexOf("match") === 0) {
+        if(index !== null & index !== undefined){
+          this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
+        }
+        this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
+        colors = []
+        colors.push(this.originColors.colors[0], this.originColors.colors[1]);
+        for (let i = 0; i < this.originColors.checkArr.length; i++) {
+          if (this.originColors.checkArr[i]) {
+            colors.push(this.originColors.colors[(i + 1) * 2], this.originColors.colors[(i + 1) * 2 + 1]);
+          }
+        }
+        colors.push("#FFF");
+      }
+      return colors;
+    },
+    $_oneColorChanged(index, color) {
+      let colors = this.$_getColorsFromOrigin(index, color);
+      switch (this.dataType) {
+        case "fill":
+          this.layerVector.paint["fill-color"] = colors
+          break;
+        case "circle":
+          this.layerVector.paint["circle-color"] = colors;
+          break;
+        case "line":
+          this.layerVector.paint["line-color"] = colors;
           break;
       }
       this.showVector = false;
@@ -169,19 +230,23 @@ export default {
     },
     $_opacityChanged(e) {
       this.showVector = false;
-      switch (this.dataType){
+      switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-opacity"] = e;
           break;
         case "circle":
           this.layerVector.paint["circle-opacity"] = e;
+          this.layerVector.paint["circle-stroke-opacity"] = e;
+          break;
+        case "line":
+          this.layerVector.paint["line-opacity"] = e;
           break;
       }
       this.showVector = true;
     },
     $_lineColorChanged(e) {
       this.showVector = false;
-      switch (this.dataType){
+      switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-outline-color"] = e;
           break
@@ -196,49 +261,129 @@ export default {
       this.startColor = startColor;
       this.endColor = endColor;
       let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
-      this.layerVector.paint["fill-color"] = colors;
-      this.showVector = true;
-    },
-    $_checked(checkBoxArr) {
-      let colors = [];
-      for (let i = 0; i < checkBoxArr.length; i++) {
-        if (checkBoxArr[i]) {
-          colors.push(this.colors[i]);
-        }
+      switch (this.dataType) {
+        case "fill":
+          this.layerVector.paint["fill-color"] = colors;
+          break;
+        case "circle":
+          this.layerVector.paint["circle-color"] = colors;
+          break;
+        case "line":
+          this.layerVector.paint["line-color"] = colors;
+          break;
       }
-      this.showVector = false;
-      this.layerVector.paint["fill-color"] = colors;
       this.showVector = true;
     },
-    $_selectChange(value) {
-      if (value !== "") {
-        this.showVector = false;
-        let datas = this.$_getData(this.dataCopy.features, value);
-        this.dataSource = datas;
-        let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
-        console.log("colors",colors)
-        this.selectKey = value;
-        switch (this.dataType){
+    $_checked(checkBoxArr, index, checkColor) {
+      let colors = {}, newColors,
+          next = false;
+      if (this.originColors.colors.hasOwnProperty("stops")) {
+        newColors = [];
+        for (let i = 0; i < checkBoxArr.length; i++) {
+          if (checkBoxArr[i]) {
+            if (i === index) {
+              this.originColors.colors.stops[i][1] = checkColor;
+            }
+            if (this.originColors.colors.stops[i]) {
+              newColors.push(this.originColors.colors.stops[i]);
+            }
+          } else {
+            this.originColors.checkArr[i] = false;
+          }
+        }
+        colors.stops = newColors;
+        colors.property = this.originColors.colors.property;
+        console.log("this.originColors", this.originColors)
+        console.log("colors", colors)
+        next = colors.stops.length > 0;
+      } else {
+        newColors = [];
+        newColors.push(this.originColors.colors[0], this.originColors.colors[1]);
+        for (let i = 0; i < checkBoxArr.length; i++) {
+          if (checkBoxArr[i]) {
+            if (this.originColors.colors[(i + 1) * 2]) {
+              newColors.push(this.originColors.colors[(i + 1) * 2]);
+            }
+            if (this.originColors.colors[(i + 1) * 2 + 1]) {
+              if (i === index) {
+                newColors.push(checkColor);
+              } else {
+                newColors.push(this.originColors.colors[(i + 1) * 2 + 1]);
+              }
+            }
+          } else {
+            this.originColors.checkArr[i] = false;
+          }
+        }
+        if (newColors.length % 2 === 0) {
+          newColors.push("#FFFFFF");
+        }
+        colors = newColors;
+        next = colors.length > 2;
+        console.log("checkArr", checkBoxArr)
+        console.log("colors", colors)
+        console.log("this.originColors", this.originColors)
+      }
+
+      this.showVector = false;
+      if (next) {
+        switch (this.dataType) {
           case "fill":
             this.layerVector.paint["fill-color"] = colors;
             break;
           case "circle":
             this.layerVector.paint["circle-color"] = colors;
             break;
+          case "line":
+            this.layerVector.paint["line-color"] = colors;
+            break;
         }
         this.showVector = true;
       }
     },
-    $_getData(features, value) {
-      let datas = [];
-      for (let i = 0; i < features.length; i++) {
-        if (datas.indexOf(features[i].properties[value]) < 0) {
-          datas.push(features[i].properties[value]);
+    $_selectChange(value) {
+      if (value !== "") {
+        let datas = this.$_getData(this.dataCopy.features, value);
+        this.dataSource = datas;
+        let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
+        this.checkBoxArr = this.originColors.checkArr;
+        this.selectKey = value;
+        if(this.checkBoxArr.indexOf(true) < 0){
+          this.showVector = false;
+        }else {
+          this.showVector = false;
+          switch (this.dataType) {
+            case "fill":
+              this.layerVector.paint["fill-color"] = colors;
+              break;
+            case "circle":
+              this.layerVector.paint["circle-color"] = colors;
+              break;
+            case "line":
+              this.layerVector.paint["line-color"] = colors;
+              break;
+          }
+          this.showVector = true;
         }
       }
-      datas.sort(function (a, b) {
-        return a - b;
-      })
+    },
+    $_getData(features, value) {
+      let datas = [], isSort = true;
+      for (let i = 0; i < features.length; i++) {
+        if (datas.indexOf(features[i].properties[value]) < 0) {
+          if (typeof features[i].properties[value] !== 'number') {
+            isSort = false;
+          }
+          if ((features[i].properties[value] || typeof features[i].properties[value] === 'number') && features[i].properties[value] !== "") {
+            datas.push(features[i].properties[value]);
+          }
+        }
+      }
+      if (isSort) {
+        datas.sort(function (a, b) {
+          return a - b;
+        });
+      }
       return datas;
     },
     $_getFields(features) {
@@ -248,75 +393,124 @@ export default {
       });
       return fields;
     },
-    $_getColors(dataSource, startColor, endColor, key) {
-      let iSString = false;
-      for (let i = 0; i < dataSource.length; i++) {
-        if (typeof dataSource[i] === 'string') {
-          iSString = true;
-          break;
-        }
-      }
-      let gradient = new gradientColor(startColor, endColor, dataSource.length);
+    $_getColors(dataSource, startColor, endColor, key, noColor) {
       let colors;
-      if (iSString) {
-        colors = ['match', ['get', key]];
+      if(this.allOriginColors.hasOwnProperty(key)){
+        this.originColors = this.allOriginColors[key];
+        colors = this.$_getColorsFromOrigin();
+      }else{
+        let iSString = false, checkArr = [];
         for (let i = 0; i < dataSource.length; i++) {
-          if (dataSource[i] !== "") {
-            colors.push(dataSource[i]);
-            colors.push(gradient[i]);
+          if (typeof dataSource[i] === 'string') {
+            iSString = true;
+            break;
           }
         }
-        colors.push("#FFFFFF");
-      } else {
-        colors = {
-          "property": key,
-          "stops": []
-        };
-        for (let i = 0; i < dataSource.length; i++) {
-          colors.stops.push([dataSource[i], gradient[i]]);
+        let gradient = new gradientColor(startColor, endColor, dataSource.length),colorList = [];
+        if (iSString) {
+          colors = ['match', ['get', key]];
+          for (let i = 0; i < dataSource.length; i++) {
+            if (dataSource[i] !== "") {
+              colors.push(dataSource[i]);
+              colors.push(gradient[i]);
+              colorList.push(gradient[i]);
+              checkArr.push(true);
+            }
+          }
+          colors.push("#FFFFFF");
+        } else {
+          colors = {
+            "property": key,
+            "stops": []
+          };
+          for (let i = 0; i < dataSource.length; i++) {
+            colors.stops.push([dataSource[i], gradient[i]]);
+            colorList.push(gradient[i]);
+            checkArr.push(true);
+          }
         }
+        this.originColors = {
+          checkArr: checkArr,
+          colors: colors,
+          colorList: colorList
+        }
+        this.allOriginColors[key] = this.originColors;
       }
-      this.colors = gradient;
+      if (!noColor) {
+        this.colors = this.originColors.colorList;
+      }
       return colors;
     },
-    $_getVector() {
+    $_initTheme(geojson) {
+      this.sourceVector.data = geojson;
+      this.dataCopy = geojson;
+      this.showVector = true;
+      this.fields = this.$_getFields(geojson.features[0]);
+      this.selectKey = this.fields[0];
+      this.dataSource = this.$_getData(geojson.features, this.selectKey);
+      let fillColors = this.$_getColors(this.dataSource, "#FFFFFF", "#FF0000", this.selectKey);
+      this.checkBoxArr = this.originColors.checkArr;
+      if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
+        this.dataType = 'fill';
+        this.layerVector = {
+          type: 'fill',
+          source: 'vector_source_id', //必须和上面的layerVectorId一致
+          paint: {
+            'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
+            'fill-color': fillColors, //颜色
+            'fill-opacity': 1.0, //透明度
+            'fill-outline-color': '#000' //边线颜色，没错,确实没有边线宽度这个选项
+          }
+        }
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
+        this.dataType = 'circle';
+        this.layerVector = {
+          type: 'circle',
+          source: 'vector_source_id', //必须和上面的layerVectorId一致
+          paint: {
+            'circle-color': fillColors, //颜色
+            'circle-opacity': 1.0, //透明度
+            'circle-stroke-opacity': 1.0, //透明度
+            'circle-radius': 12.0, //透明度
+            'circle-stroke-color': '#000',//边线颜色，没错,确实没有边线宽度这个选项
+            'circle-stroke-width': 1
+          }
+        }
+      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+        this.dataType = 'line';
+        this.layerVector = {
+          type: 'line',
+          source: 'vector_source_id', //必须和上面的layerVectorId一致
+          paint: {
+            'line-color': fillColors, //颜色
+            'line-opacity': 1.0, //透明度
+            'line-width': 5
+          }
+        }
+        console.log("layerVector", this.layerVector)
+      }
+    },
+    $_getFromSource() {
+      let features = this.map.queryRenderedFeatures({layers: [this.sourceLayer]});
+      let featureCollection = {
+        features: [],
+        type: "FeatureCollection"
+      };
+      for (let i = 0; i < features.length; i++) {
+        featureCollection.features.push({
+          geometry: features[i].geometry,
+          properties: features[i].properties,
+          type: "Feature"
+        });
+      }
+      this.$_initTheme(featureCollection);
+    },
+    $_getFromGeoJSON() {
       let vm = this;
       FeatureService.get(this.baseUrl, function (result) {
         result = JSON.parse(result);
-        console.log("result",result)
-        vm.sourceVector.data = result;
-        vm.dataCopy = result;
-        vm.showVector = true;
-        vm.fields = vm.$_getFields(result.features[0]);
-        vm.selectKey = vm.fields[0];
-        vm.dataSource = vm.$_getData(result.features, vm.selectKey);
-        let colors = vm.$_getColors(vm.dataSource, "#FFFFFF", "#FF0000", vm.selectKey);
-        if(result.features.length > 0 && (result.features[0].geometry.type === "MultiPolygon" || result.features[0].geometry.type === "Polygon")){
-          vm.dataType = 'fill';
-          vm.layerVector = {
-            type: 'fill',
-            source: 'vector_source_id', //必须和上面的layerVectorId一致
-            paint: {
-              'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
-              'fill-color': colors, //颜色
-              'fill-opacity': 1.0, //透明度
-              'fill-outline-color': '#000' //边线颜色，没错,确实没有边线宽度这个选项
-            }
-          }
-        }else if(result.features.length > 0 && (result.features[0].geometry.type === "MultiPoint" || result.features[0].geometry.type === "Point")){
-          vm.dataType = 'circle';
-          vm.layerVector = {
-            type: 'circle',
-            source: 'vector_source_id', //必须和上面的layerVectorId一致
-            paint: {
-              'circle-color': colors, //颜色
-              'circle-opacity': 1.0, //透明度
-              'circle-radius': 2.0, //透明度
-              'circle-stroke-color': '#000' ,//边线颜色，没错,确实没有边线宽度这个选项
-              'circle-stroke-width': 1
-            }
-          }
-        }
+        console.log("result", result)
+        vm.$_initTheme(result);
       }, function (e) {
         console.log(e);
       });
