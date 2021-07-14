@@ -340,8 +340,9 @@ export class MapvLayer {
     canvas.style.left = "0px";
     canvas.width = parseInt(this.map.canvas.width);
     canvas.height = parseInt(this.map.canvas.height);
-    //canvas.style.width = this.map.canvas.style.width;
-    //canvas.style.height = this.map.canvas.style.height;
+    //初始化的时候style会覆盖后面的动态设置的height width  在一些特定场景 初始化的style宽高不正确
+    canvas.style.width = this.map.canvas.style.width;
+    canvas.style.height = this.map.canvas.style.height;
     var devicePixelRatio = this.devicePixelRatio;
     if (this.mapVOptions.context == "2d") {
       canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
