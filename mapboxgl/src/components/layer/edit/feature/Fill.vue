@@ -11,7 +11,8 @@ const FillRules = [
     title: "颜色",
     type: "color",
     layerprop: "fill-color",
-    layertype: "paint"
+    layertype: "paint",
+    default: "#000000"
   },
   {
     title: "符号",
@@ -23,13 +24,17 @@ const FillRules = [
     title: "抗锯齿",
     type: "boolean",
     layerprop: "fill-antialias",
-    layertype: "paint"
+    layertype: "paint",
+    default: true
   },
   {
     title: "透明度",
     type: "number",
     layerprop: "fill-opacity",
-    layertype: "paint"
+    layertype: "paint",
+    default: 1,
+    minimum: 0,
+    maximum: 1
   },
   {
     title: "边线颜色",

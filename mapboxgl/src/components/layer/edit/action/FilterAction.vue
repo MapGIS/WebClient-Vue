@@ -30,16 +30,19 @@
 </template>
 
 <script>
+import EditMixin from "../EditMixin";
 import VJsoneditor from "v-jsoneditor";
 
 export default {
   name: "mapgis-mvt-action-filter",
   components: { VJsoneditor },
+  mixins: [EditMixin],
+  inject: ["map", "mapbox"],
   data() {
     return {
       enable: true,
       type: "properties",
-      json: ["all"],
+      json: this.getValue(),
       options: {
         search: false,
         mode: "code"
@@ -49,14 +52,40 @@ export default {
   watch: {
     enable(next) {
       if (next) {
-        this.json = ["all"];
+        this.json = this.getValue();
       } else {
+        this.onFilterChange(["all"]);
       }
+    },
+    json(next) {
+      this.onFilterChange(next);
     }
   },
   methods: {
-    onJsonError(error) {
-      console.log("json error", error);
+    onJsonError(error) {},
+    onFilterChange(json) {
+      const { map, layerid } = this;
+      if (layerid) {
+        map.setFilter(layerid, json);
+        let event = {
+          layertype: "root",
+          layerprop: "filter",
+          layervalue: json
+        };
+        this.$_emitEvent(event);
+      }
+    },
+    getValue(id) {
+      const { map, layerid } = this;
+      let value = ["all"];
+      id = id || layerid;
+      if (map && layerid) {
+        const layer = this.$_getLayer(layerid);
+        if (layer && layer.filter) {
+          value = layer.filter;
+        }
+      }
+      return value;
     }
   }
 };

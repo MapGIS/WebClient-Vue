@@ -24,7 +24,7 @@
         @edit-change="onEditChange"
       />
     </div>
-    <filter-action />
+    <filter-action :layerid="layerid"/>
   </div>
 </template>
 
@@ -48,18 +48,23 @@ export default {
   data() {
     return {
       enable: true,
-      type: undefined
+      type: this.getType()
     };
   },
   watch: {
     layerid: function(id) {
-      const layer = this.$_getLayer(id);
-      this.type = layer.type;
+      this.type = this.getType(id);
     }
   },
   methods: {
     onEditChange(event) {
       this.$_emitEvent(event);
+    },
+    getType(id) {
+      id = id || this.layerid;
+      const layer = this.$_getLayer(id);
+      let type = layer ? layer.type : undefined;
+      return type;
     }
   }
 };

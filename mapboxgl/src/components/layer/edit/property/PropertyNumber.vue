@@ -4,8 +4,8 @@
     <mapgis-ui-input-number
       class="mapgis-property-number-right"
       v-model="value"
-      :min="min"
-      :max="max"
+      :min="minimum"
+      :max="maximum"
       @change="onChange"
     />
   </mapgis-ui-row>
@@ -19,16 +19,21 @@ export default {
   inject: ["map"],
   props: {
     rule: Object,
-    min: { type: Number, default: 0 },
-    max: { type: Number, default: 100 }
+    minimum: { type: Number, default: 0 },
+    maximum: { type: Number, default: 1000 }
   },
   model: {
     prop: "number",
     event: "change"
   },
+  watch: {
+    layerid(next) {
+      this.value = this.getValue(next);
+    }
+  },
   data() {
     return {
-      value: 0
+      value: this.getValue()
     };
   },
   methods: {
@@ -43,6 +48,20 @@ export default {
           this.$_emitEvent(event);
         }
       }
+    },
+    getValue(id) {
+      const { map, layerid, rule } = this;
+      let value = undefined;
+      id = id || layerid;
+      if (map && layerid && rule) {
+        const { layertype, layerprop } = rule;
+        value = rule.default;
+        const layer = this.$_getLayer(layerid);
+        if (layer && layer[layertype] && layer[layertype][layerprop]) {
+          value = layer[layertype][layerprop];
+        }
+      }
+      return value;
     }
   }
 };

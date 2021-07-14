@@ -13,7 +13,14 @@
           @openSucker="openSucker"
         />
       </a>
-      <mapgis-ui-input class="mapgis-property-color-right" v-model="value" />
+      <mapgis-ui-input class="mapgis-property-color-right" v-model="value">
+        <mapgis-ui-button
+          size="small"
+          shape="round"
+          slot="addonAfter"
+          :style="{ background: value }"
+        />
+      </mapgis-ui-input>
     </mapgis-ui-popover>
   </mapgis-ui-row>
 </template>
@@ -36,10 +43,15 @@ export default {
     prop: "color",
     event: "change"
   },
+  watch: {
+    layerid(next) {
+      this.value = this.getValue(next);
+    }
+  },
   data() {
     return {
       visible: false,
-      value: "#ffffff",
+      value: this.getValue(),
       suckerCanvas: null,
       suckerArea: [],
       isSucking: false
@@ -63,6 +75,20 @@ export default {
     openSucker() {},
     hide() {
       this.visible = false;
+    },
+    getValue(id) {
+      const { map, layerid, rule } = this;
+      let value = undefined;
+      id = id || layerid;
+      if (map && layerid && rule) {
+        const { layertype, layerprop } = rule;
+        value = rule.default;
+        const layer = this.$_getLayer(layerid);
+        if (layer && layer[layertype] && layer[layertype][layerprop]) {
+          value = layer[layertype][layerprop];
+        }
+      }
+      return value;
     }
   }
 };

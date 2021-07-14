@@ -11,7 +11,12 @@ export default {
       const { map, layerid } = this;
       id = id || layerid;
       if (!map) return undefined;
-      return map.getLayer(layerid);
+      const style = map.getStyle();
+      const { layers } = style;
+      let find = layers.find(l => {
+        return l.id == id;
+      });
+      return find ? find : map.getLayer(layerid);
     },
     $_emitEvent(event) {
       const { layerid } = this;

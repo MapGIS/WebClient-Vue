@@ -5,7 +5,7 @@
     title="设置显示样式"
     class="mapgis-mvt-editor-card"
   >
-    <a slot="extra" href="#">x</a>
+    <a slot="extra" @click="handleClose">x</a>
     <mapgis-ui-radio-group v-model="action" button-style="solid">
       <mapgis-ui-radio-button class="action-type" value="single">
         单级别配置
@@ -44,22 +44,30 @@ export default {
         };
       }
     },
-    visible: {
-      type: Boolean,
-      default: true
-    },
     layerid: {
       type: String
+    },
+    visible: {
+      type: Boolean
     }
+  },
+  model: {
+    prop: "visible",
+    event: "change"
   },
   data() {
     return {
-      action: "single"
+      action: "single",
+      show: true
     };
   },
   methods: {
     onEditChange(event) {
       this.$_emitEvent(event);
+    },
+    handleClose() {
+      // this.show = false;
+      this.$emit("change", false);
     }
   }
 };
