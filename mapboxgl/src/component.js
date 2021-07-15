@@ -8,6 +8,7 @@ export { default as MapgisGeolocateControl } from "./components/UI/controls/Geol
 export { default as MapgisFullscreenControl } from "./components/UI/controls/FullscreenControl";
 export { default as MapgisAttributionControl } from "./components/UI/controls/AttributionControl";
 export { default as MapgisScaleControl } from "./components/UI/controls/ScaleControl";
+export { default as MapgisCustomScaleControl } from "./components/UI/controls/scale/CustomScale.vue";
 export { default as MapgisStateControl } from "./components/UI/controls/state/StateControl";
 export { default as MapgisSearchControl } from "./components/UI/controls/search/SearchControl";
 export { default as MapgisCompareControl } from "./components/UI/controls/compare/CompareControl";
