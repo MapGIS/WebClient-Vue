@@ -48,7 +48,8 @@ export default {
       type: String
     },
     visible: {
-      type: Boolean
+      type: Boolean,
+      default: false
     }
   },
   model: {

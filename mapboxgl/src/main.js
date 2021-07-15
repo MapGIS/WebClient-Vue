@@ -4,6 +4,8 @@ import antDirective from "ant-design-vue/es/_util/antDirective";
 import * as MapComponents from "./component";
 import * as UIComponents from "./ui";
 
+import vcolorpicker from "vcolorpicker";
+
 const install = function(Vue, options) {
   options = options || {};
   const { ui } = options;
@@ -15,6 +17,8 @@ const install = function(Vue, options) {
       Vue.component(ui.options ? ui.options.name : ui.name, ui);
     }
   }
+
+  Vue.use(vcolorpicker);
 
   for (let name in MapComponents) {
     const com = MapComponents[name];

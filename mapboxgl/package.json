@@ -47,6 +47,7 @@
     "three": "^0.130.0",
     "v-contextmenu": "^2.9.0",
     "v-jsoneditor": "^1.4.4",
+    "vcolorpicker": "^1.1.0",
     "vue-runtime-helpers": "^1.1.2",
     "vuepress": "^1.8.2"
   },
