@@ -1,5 +1,7 @@
 import wfsService from "./OgcWfsServic";
-import {
+import { MRFS, Common } from "@mapgis/webclient-es6-service";
+
+const {
   QueryDocFeature,
   QueryFeatureRule,
   QueryFeatureStruct,
@@ -8,8 +10,9 @@ import {
   EditDocFeature,
   QueryLayerFeature,
   EditLayerFeature
-} from "@mapgis/webclient-es6-service/MRFS";
-import {
+} = MRFS;
+
+const {
   Point2D,
   PolyLine,
   Rectangle,
@@ -27,9 +30,10 @@ import {
   Arc,
   AnyLine,
   GRegion,
-  CRegionInfo
-} from "@mapgis/webclient-es6-service/common";
-import { extend } from "@mapgis/webclient-es6-service/common";
+  CRegionInfo,
+  extend
+} = Common;
+
 import {
   BaseParameter,
   GeometryParameter,

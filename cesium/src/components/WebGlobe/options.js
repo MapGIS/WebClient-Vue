@@ -12,7 +12,7 @@ export default {
    */
   vueIndex: {
     typs: [String, Number],
-    default: (Math.random() * 10000).toFixed(0)
+    default: () => (Math.random() * 1000000).toFixed(0)
   },
   container: {
     type: [String, HTMLElement],

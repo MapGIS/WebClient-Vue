@@ -4,6 +4,7 @@
 
 <script>
 import withEvents from "../../../lib/withEvents";
+import { deepEqual } from "../../util/util";
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -16,20 +17,25 @@ export default {
     },
     mode: {
       type: String,
-      default: "add" // add set
+      default: "merge" // add set merge
     },
     before: {
       type: String
     }
   },
 
+  data() {
+    return {};
+  },
+
   watch: {
     mvtStyle: {
-      handler(next) {
-        this.remove();
-        this.$_initStyle(this.mode, next);
-      },
-      deep: true
+      handler(next, old) {
+        if (!deepEqual(next, old)) {
+          this.remove(old);
+          this.$_initStyle(this.mode, next);
+        }
+      }
     }
   },
 
@@ -44,13 +50,42 @@ export default {
   methods: {
     $_deferredMount() {
       this.$_initStyle(this.mode, this.mvtStyle);
+      this.initStyle = this.mvtStyle;
       this.initial = false;
     },
 
-    async remove() {
+    async $_initStyle(mode, style) {
+      let mvtStyle;
+      if (typeof style === "string") {
+        mvtStyle = await this.$_getStyleObjectAsync(style);
+      } else {
+        mvtStyle = style;
+      }
+      mode = mode || this.mode;
+      if (mode === "add" || mode === "merge") {
+        this.$_addStyle(mvtStyle);
+      } else if (mode == "set") {
+        this.$_setStyle(mvtStyle);
+      }
+    },
+
+    $_addStyle(mvtStyle, before) {
+      before = before || this.before;
+      let newStyle = this.compareStyle(mvtStyle);
+      this.map.setStyle(newStyle, { diff: true });
+      this.$_emitEvent("added", this);
+    },
+
+    $_setStyle(mvtStyle, before) {
+      mvtStyle = mvtStyle || this.mvtStyle;
+      before = before || this.before;
+      this.map.setStyle(mvtStyle, { diff: true });
+      this.$_emitEvent("added", this);
+    },
+
+    remove(oldStyle) {
       let vm = this;
       let mapStyle = this.map.getStyle();
-      const oldStyle = await this.$_getStyleObject(this.mvtStyle);
       const { layers, sources } = oldStyle;
       if (!layers) return;
       layers.forEach(layer => {
@@ -66,34 +101,45 @@ export default {
       });
     },
 
-    async compareStyle(mvtStyle) {
-      let oldStyle = this.map.getStyle();
-      let newStyle = await this.$_getStyleObject(mvtStyle);
+    compareStyle(mvtStyle) {
+      let currentStyle = this.map.getStyle();
+      let oldStyle = currentStyle;
+
+      let newStyle = this.$_getStyleObject(mvtStyle);
+      let newLayer = [];
+
+      switch (this.mode) {
+        case "add":
+          newLayer = this.addLayers(oldStyle.layers, newStyle.layers);
+          break;
+        case "merge":
+          newLayer = this.mergeLayers(oldStyle.layers, newStyle.layers);
+          break;
+      }
+
       let style = {
         version: oldStyle.version || newStyle.version,
         sprite: oldStyle.sprite || newStyle.sprite,
         glyphs: oldStyle.glyphs || newStyle.glyphs,
         sources: { ...oldStyle.sources, ...newStyle.sources },
-        layers: this.mergeLayers(oldStyle.layers, newStyle.layers)
+        layers: newLayer
       };
       return style;
     },
 
-    async $_getStyleObject(mvtStyle) {
+    $_getStyleObject(mvtStyle) {
+      return mvtStyle || this.mvtStyle;
+    },
+
+    async $_getStyleObjectAsync(mvtStyle) {
       let style = {};
       mvtStyle = mvtStyle || this.mvtStyle;
-
-      if (typeof mvtStyle === "string") {
-        let response = await fetch(mvtStyle);
-        style = await response.json();
-      } else {
-        style = mvtStyle;
-      }
-
+      let response = await fetch(mvtStyle);
+      style = await response.json();
       return style;
     },
 
-    mergeLayers(olds, news) {
+    addLayers(olds, news) {
       news = news || [];
       if (!olds) return [].concat(news);
       let filters = olds.filter(layer => {
@@ -103,27 +149,18 @@ export default {
       return filters.concat(news);
     },
 
-    $_initStyle(mode, style) {
-      mode = mode || this.mode;
-      if (mode === "add") {
-        this.$_addStyle(style);
-      } else if (mode == "set") {
-        this.$_setStyle(style);
-      }
-    },
-
-    async $_addStyle(mvtStyle, before) {
-      before = before || this.before;
-      let newStyle = await this.compareStyle(mvtStyle);
-      this.map.setStyle(newStyle, { diff: true });
-      this.$_emitEvent("added", this);
-    },
-
-    $_setStyle(mvtStyle, before) {
-      mvtStyle = mvtStyle || this.mvtStyle;
-      before = before || this.before;
-      this.map.setStyle(mvtStyle, { diff: true });
-      this.$_emitEvent("added", this);
+    mergeLayers(olds, news) {
+      news = news || [];
+      if (!olds) return [].concat(news);
+      let merges = olds.map(layer => {
+        let find = news.find(l => l.id === layer.id);
+        return find ? find : layer;
+      });
+      let unmerges = news.filter(layer => {
+        let find = merges.find(l => l.id === layer.id);
+        return find ? false : true;
+      });
+      return merges.concat(unmerges);
     }
   }
 };

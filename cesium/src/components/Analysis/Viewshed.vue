@@ -15,14 +15,14 @@
         >
             可视域分析
         </div>
-        <a-card class="box-card-vshed attr-table">
+        <mapgis-ui-card class="box-card-vshed attr-table">
             <div class="starting">
                 起始点:
                 <div class="inputs">
-                    <a-input v-model="form.startLon" :disabled="!form.startLon">
+                    <mapgis-ui-input v-model="form.startLon" :disabled="!form.startLon">
                         <span slot="prefix">经度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="startLonMax"
@@ -33,10 +33,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.startLat" :disabled="!form.startLat">
+                    <mapgis-ui-input v-model="form.startLat" :disabled="!form.startLat">
                         <span slot="prefix">纬度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="startLatMax"
@@ -47,10 +47,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.startAlt" :disabled="!form.startAlt">
+                    <mapgis-ui-input v-model="form.startAlt" :disabled="!form.startAlt">
                         <span slot="prefix">高度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="10"
                         :max="startAltMax"
@@ -64,10 +64,10 @@
             <div class="ending">
                 结束点:
                 <div class="inputs">
-                    <a-input v-model="form.endLon" :disabled="!form.endLon">
+                    <mapgis-ui-input v-model="form.endLon" :disabled="!form.endLon">
                         <span slot="prefix">经度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="endLonMax"
@@ -78,10 +78,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.endLat" :disabled="!form.endLat">
+                    <mapgis-ui-input v-model="form.endLat" :disabled="!form.endLat">
                         <span slot="prefix">纬度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="0.0001"
                         :max="endLatMax"
@@ -92,10 +92,10 @@
                     />
                 </div>
                 <div class="inputs">
-                    <a-input v-model="form.endAlt" :disabled="!form.endAlt">
+                    <mapgis-ui-input v-model="form.endAlt" :disabled="!form.endAlt">
                         <span slot="prefix">高度:</span>
-                    </a-input>
-                    <a-slider
+                    </mapgis-ui-input>
+                    <mapgis-ui-slider
                         class="input"
                         :step="10"
                         :max="endAltMax"
@@ -106,16 +106,16 @@
                     />
                 </div>
             </div>
-            <a-button class="content" type="primary" @click="startViewshed"
-                >点击绘制</a-button
+            <mapgis-ui-button class="content" type="primary" @click="startViewshed"
+                >点击绘制</mapgis-ui-button
             >
-            <a-button
+            <mapgis-ui-button
                 class="content-clear"
                 type="primary"
                 @click="clearViewshed"
-                >清除</a-button
+                >清除</mapgis-ui-button
             >
-        </a-card>
+        </mapgis-ui-card>
     </div>
 </template>
 
@@ -213,7 +213,6 @@ export default {
                 let find = that.findSource();
                 let vshed3d = window.viewshed3d[that.index][find.index];
                 that.webGlobe.viewer.scene.globe.enableTransparent = false;
-                // window.webGlobe.viewer.scene.globe
                 if (that.viewshedAn) {
                     // 可视域分析
                     if (that.viewshed3daction) {
@@ -223,7 +222,7 @@ export default {
                             cartesian
                         );
                         if (cartesian !== undefined && !that.viewshed3ding) {
-                            cartesian.x += 3.6;
+                            cartesian.z += 3.6;
                             let cartographic = Cesium.Cartographic.fromCartesian(
                                 cartesian
                             );
@@ -238,8 +237,8 @@ export default {
                             that.form.startLon = lng;
                             that.form.startLat = lat;
                             that.form.startAlt = height;
-                            // //设置观察点坐标
-                            // vshed3d.viewPosition = cartesian;
+                            //设置观察点坐标
+                            vshed3d.viewPosition = cartesian;
                             //添加可视域分析结果显示
                             viewer.scene.VisualAnalysisManager.add(vshed3d);
                             that.viewshed3ding = true;
@@ -252,8 +251,7 @@ export default {
                             that.startAltMax = that.form.startAlt + 100;
                         } else {
                             // //设置可视域结果点
-                            // vshed3d.targetPosition = cartesian;
-
+                            vshed3d.targetPosition = cartesian;
                             that.viewshed3daction = false;
                             that.viewshed3ding = false;
                         }
@@ -378,7 +376,7 @@ export default {
 
 <style scoped>
 ::v-deep .ant-card-body {
-    max-height: 300px;
+    max-height: 530px;
     overflow: auto;
 }
 ::v-deep .ant-input-affix-wrapper .ant-input:not(:first-child) {

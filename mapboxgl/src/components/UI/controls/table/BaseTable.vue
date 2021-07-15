@@ -9,14 +9,14 @@
       <div class="toolbar-num">
         总共{{ paginationCopy.total }}条，已选{{ selectData.length }}条
       </div>
-      <a-button
+      <mapgis-ui-button
           class="toolbar-button"
           style="right: 100px;"
           @click="$_fullScreen"
-      >全屏</a-button
+      >全屏</mapgis-ui-button
       >
-      <a-button class="toolbar-button" @click="$_fieldFilter"
-      >字段过滤</a-button
+      <mapgis-ui-button class="toolbar-button" @click="$_fieldFilter"
+      >字段过滤</mapgis-ui-button
       >
     </div>
     <div
@@ -29,24 +29,24 @@
       }"
         v-show="showFilter"
     >
-      <a-row>
-        <a-checkbox
+      <mapgis-ui-row>
+        <mapgis-ui-checkbox
             :indeterminate="indeterminate"
             :checked="checkAll"
             @change="$_checkAll"
         >
           全选
-        </a-checkbox>
-      </a-row>
-      <a-row>
-        <a-checkbox-group
+        </mapgis-ui-checkbox>
+      </mapgis-ui-row>
+      <mapgis-ui-row>
+        <mapgis-ui-checkbox-group
             v-model="checkedList"
             :options="plainOptions"
             @change="$_check"
         />
-      </a-row>
+      </mapgis-ui-row>
     </div>
-    <a-table
+    <mapgis-ui-table
         :id="tableId"
         :data-source="dataSourceCopy"
         :columns="columnsCopy"
@@ -59,11 +59,11 @@
           v-for="(column, index) in columnsCopy"
           :key="index"
           :slot="column.dataIndex"
-          slot-scope="text, record, index"
+          slot-scope="text, record"
       >
         <div
             class="mapgis-baseTable-tableTd"
-            @click="$_onceClick(record.key, column.key, false, record)"
+            @click="$_onceClick(record.key, column.key)"
             @dblclick="$_doubleClick(record.key, column.key, record)"
         >
           <p
@@ -74,18 +74,18 @@
           >
             {{ text }}
           </p>
-          <a-input
+          <mapgis-ui-input
               v-if="editRowAndCol === column.key + '_' + record.key"
               v-model="record[column.key]"
           />
         </div>
       </div>
       <template v-if="editable" slot="operation" slot-scope="text, record">
-        <a-popconfirm @confirm="$_deleteFeature(record)">
+        <mapgis-ui-popconfirm @confirm="$_deleteFeature(record)">
           删除
-        </a-popconfirm>
+        </mapgis-ui-popconfirm>
       </template>
-    </a-table>
+    </mapgis-ui-table>
   </div>
 </template>
 
@@ -125,11 +125,11 @@ export default {
   },
   data(){
     return {
-      //转化后ant-table需要的数据源
+      //转化后mapgis-ui-table需要的数据源
       dataSourceCopy: [],
       //dataSource转成的feature对象集合
       featureSet: [],
-      //转化后ant-table需要的表头
+      //转化后mapgis-ui-table需要的表头
       columnsCopy: [],
       //保存一份columns
       columnsSave: [],
@@ -168,7 +168,10 @@ export default {
       //用于分页回调
       pageInfo: undefined,
       //用于排序回调
-      sorterInfo: undefined,
+      sorterInfo: {
+        orderField: "",
+        isASC: false
+      },
       indeterminate: true,
       checkAll: false,
       plainOptions: [],
@@ -203,10 +206,20 @@ export default {
 
   },
   mounted() {
+    this.$_initTable();
     this.$_registerMouseLeave();
   },
   methods:{
-    //将传入的数据转化为ant-table识别的数据
+    $_initTable(){
+      if(this.pagination){
+        this.paginationCopy = this.pagination;
+        this.pageSize = this.pagination.pageSize;
+      }
+      if(this.dataSource){
+        this.$_initSource();
+      }
+    },
+    //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(){
       if(this.dataSource instanceof Array){
         if(this.$_isFeatureSet(this.dataSource)){
@@ -279,23 +292,25 @@ export default {
     * @param Source 数据源
     * **/
     $_getColumnsCopyByFeatureSet(Source){
-      let columns = [];
-      Object.keys(Source[0].attributes).forEach(function (key) {
-        columns.push({
-          title: key,
-          dataIndex: key,
-          key: key,
-          scopedSlots: {customRender: key},
-          align: "left",
-          ellipsis: true,
-          sorter: function () {},
-          width: 100
+      if(Source.length > 0){
+        let columns = [];
+        Object.keys(Source[0].attributes).forEach(function (key) {
+          columns.push({
+            title: key,
+            dataIndex: key,
+            key: key,
+            scopedSlots: {customRender: key},
+            align: "left",
+            ellipsis: true,
+            sorter: function () {},
+            width: 100
+          });
         });
-      });
-      this.columnsCopy = columns;
+        this.columnsCopy = columns;
+      }
     },
     /*
-    * 将[feature]转化为ant-table数据源
+    * 将[feature]转化为mapgis-ui-table数据源
     * **/
     $_featureSetToDataSource(featureSet){
       //线存一份原始数据
@@ -462,7 +477,9 @@ export default {
       }else {
         delete this.scroll.x;
         this.$nextTick(function () {
-          this.$_drawTableHeight();
+          if(this.dataSourceCopy.length > 0){
+            this.$_drawTableHeight();
+          }
         });
       }
     },
@@ -472,11 +489,11 @@ export default {
     * **/
     $_drawTableHeight(scrollHeight){
       let table = document.getElementById(this.tableId);
-      let tableBody = this.$_queryTag(table.childNodes,"ant-table-body","div");
-      let tr = this.$_queryTag(tableBody.childNodes,"ant-table-row-level-0","tr");
-      let container = this.$_queryTag(table.childNodes,"ant-spin-container","div");
+      let tableBody = this.$_queryTag(table.childNodes,"mapgis-ui-table-body","div");
+      let tr = this.$_queryTag(tableBody.childNodes,"mapgis-ui-table-row-level-0","tr");
+      let container = this.$_queryTag(table.childNodes,"mapgis-ui-spin-container","div");
       this.rowHeight = tr.offsetHeight;
-      let page = this.$_queryTag(table.childNodes,"ant-pagination","ul");
+      let page = this.$_queryTag(table.childNodes,"mapgis-ui-pagination","ul");
       let pageStyle = window.getComputedStyle(page)
       let pageMarginTop = pageStyle.marginTop.replace("px","");
       let pageMarginBottom = pageStyle.marginBottom.replace("px","");
@@ -573,7 +590,8 @@ export default {
     * 删除一条数据
     * **/
     $_deleteFeature(record){
-
+      let data = this.$_getDataByKey(record.key);
+      this.$emit("deleted",data);
     },
     /*
     * 选择一条数据
@@ -629,7 +647,7 @@ export default {
                 insertIndex++;
               }
             }
-            AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
+            // AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
             this.selectData.splice(insertIndex,0,AllAttrData[i]);
           }
         }
@@ -646,7 +664,7 @@ export default {
         this.selectData = [];
         for (let i = 0;i < selectData.length;i++){
           if(selectData[i].length !== 0){
-            AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
+            // AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
             this.selectData.push(selectData[i]);
           }
         }
@@ -658,53 +676,70 @@ export default {
     * 分页或排序回调
     * **/
     $_change(pagination, filters, sorter,currentDataSource){
+      if(!sorter.hasOwnProperty("order")){
+        sorter.order = "";
+      }
+      let sorterObj = {};
+      sorterObj.orderField = sorter.field;
+      if(sorter.order === "ascend"){
+        sorterObj.isAsc = true;
+      }else if(sorter.order === "descend"){
+        sorterObj.isAsc = false;
+      } else if(sorter.order === ""){
+        sorterObj.isAsc = false;
+        sorterObj.orderField = "";
+      }
       if(!this.pageInfo){
         if(!sorter.hasOwnProperty("columnKey")){
-          this.$emit("pageChanged",pagination, sorter, currentDataSource );
-          this.$emit("pagechanged",pagination, sorter, currentDataSource );
+          this.$emit("pageChanged",pagination, sorterObj, currentDataSource );
+          this.$emit("pagechanged",pagination, sorterObj, currentDataSource );
         }else {
-          this.$emit("sorted", sorter, pagination, currentDataSource );
+          this.$emit("sorted", sorterObj, pagination, currentDataSource );
         }
       }else {
         if(pagination.current !== this.pageInfo.current){
-          this.$emit("pagechanged",pagination, sorter, currentDataSource );
+          this.$emit("pageChanged",pagination, sorterObj, currentDataSource );
+          this.$emit("pagechanged",pagination, sorterObj, currentDataSource );
         }else{
-          if(!sorter.hasOwnProperty("order")){
-            sorter.order = "";
-          }
-          this.$emit("sorted", sorter, pagination, currentDataSource );
+          this.$emit("sorted", sorterObj, pagination, currentDataSource );
         }
       }
       this.pageInfo = pagination;
-      this.sorterInfo = sorter;
-      this.$emit("changed",pagination, filters, sorter,currentDataSource );
+      this.sorterInfo = sorterObj;
+      this.$emit("changed",pagination, filters, sorterObj,currentDataSource );
     },
     /*
     * 要素table的单次点击事件
     * **/
-    $_onceClick(index, key,forceClick){
-      let dataIndex;
-      //index即为行，key为列，当行列号不是当前要编辑的table单元格时，取消当前的编辑行为
-      if ((this.editable || forceClick)&& this.editRowAndCol !== key + "_" + index) {
+    $_onceClick(index, key){
+      //index即为行，key为列
+      if (this.editRowAndCol !== key + "_" + index) {
         if(this.editRowAndCol.length>0){
           let arr = this.editRowAndCol.split("_");
           let datakey = arr[arr.length - 1];
-          for(let i = 0;i < this.dataSourceCopy.length;i++){
-            if(Number(datakey) === this.dataSourceCopy[i].key){
-              dataIndex = i;
-              break;
-            }
-          }
-          let data = JSON.parse(JSON.stringify(this.dataSourceCopy[dataIndex]));
-          delete data.key;
-          this.dataSourceCopy[dataIndex].attributes = data;
-          data = this.$_removeNullData(data);
-          let AllAttrData = this.$_getAllAttrData();
-          AllAttrData[dataIndex].attributes = data;
-          this.$emit("edited",AllAttrData[dataIndex]);
+          let data = this.$_getDataByKey(datakey);
+          this.$emit("edited",data);
         }
         this.editRowAndCol = "";
       }
+      let data = this.$_getDataByKey(index);
+      this.$emit("click",data, key);
+    },
+    $_getDataByKey(key){
+      let dataIndex;
+      for(let i = 0;i < this.dataSourceCopy.length;i++){
+        if(Number(key) === this.dataSourceCopy[i].key){
+          dataIndex = i;
+          break;
+        }
+      }
+      let data = JSON.parse(JSON.stringify(this.dataSourceCopy[dataIndex]));
+      delete data.key;
+      this.dataSourceCopy[dataIndex].attributes = data;
+      data = this.$_removeNullData(data);
+      let AllAttrData = this.$_getAllAttrData();
+      AllAttrData[dataIndex].attributes = data;
+      return AllAttrData[dataIndex];
     },
     /*
     * 要素table的双击事件，双击开启编辑
@@ -786,7 +821,6 @@ export default {
       let toolbar = document.getElementById(this.toolbarId);
       let table = document.getElementById(this.tableId);
       if(!this.fullScreen){
-
         let tHeight = Number(document.body.scrollHeight);
         table.style.height = tHeight + "px";
         table.style.top = toolbar.offsetHeight + "px";
@@ -892,25 +926,25 @@ export default {
   text-overflow: ellipsis;
 }
 
-.mapgis-baseTable .ant-table {
+.mapgis-baseTable .mapgis-ui-table {
   border-bottom: 1px solid #e8e8e8;
   line-height: 2;
 }
 
-.mapgis-baseTable .ant-table-tbody > tr > td {
+.mapgis-baseTable .mapgis-ui-table-tbody > tr > td {
   padding: 0;
 }
 
-.mapgis-baseTable .ant-table-thead > tr > th {
+.mapgis-baseTable .mapgis-ui-table-thead > tr > th {
   padding: 2px 16px;
 }
 
-.mapgis-baseTable td.ant-table-row-cell-break-word > span {
+.mapgis-baseTable td.mapgis-ui-table-row-cell-break-word > span {
   cursor: pointer;
   color: #0088ff;
 }
 
-.mapgis-baseTable .ant-input {
+.mapgis-baseTable .mapgis-ui-input {
   height: 15px;
   width: 80px;
 }
@@ -920,7 +954,7 @@ export default {
   width: 90%;
 }
 
-.mapgis-baseTable .ant-spin-container {
+.mapgis-baseTable .mapgis-ui-spin-container {
   border: 1px solid #e8e8e8;
   border-radius: 4px 4px 0 0;
 }
@@ -962,14 +996,14 @@ export default {
   padding-top: 8px;
 }
 
-.mapgis-baseTable-fieldFilter .ant-checkbox-wrapper {
+.mapgis-baseTable-fieldFilter .mapgis-ui-checkbox-wrapper {
   float: left;
 }
 
-.mapgis-baseTable-fieldFilter .ant-checkbox-wrapper {
+.mapgis-baseTable-fieldFilter .mapgis-ui-checkbox-wrapper {
   padding-left: 10px;
 }
-.mapgis-baseTable .ant-table-pagination {
+.mapgis-baseTable .mapgis-ui-table-pagination {
   position: absolute;
   bottom: 5px;
   right: 10px;

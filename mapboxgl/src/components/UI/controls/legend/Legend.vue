@@ -1,18 +1,18 @@
 <template>
     <div class="mapgis-legend">
-        <a-select
+        <mapgis-ui-select
             default-value="全部"
             style="width: 100%"
             @change="handleChange"
         >
-            <a-select-option value="全部"> 全部 </a-select-option>
-            <a-select-option
+            <mapgis-ui-select-option value="全部"> 全部 </mapgis-ui-select-option>
+            <mapgis-ui-select-option
                 :value="index"
                 v-for="(layer, index) in layers"
                 :key="index"
                 >{{ layer.layerName }}
-            </a-select-option>
-        </a-select>
+            </mapgis-ui-select-option>
+        </mapgis-ui-select>
         <div class="legend-area">
             <li v-for="(legend, index) in legends" :key="index">
                 <img :src="'data:image/png;base64,' + legend.imageData" />

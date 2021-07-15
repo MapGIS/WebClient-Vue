@@ -8,11 +8,13 @@ export { default as MapgisGeolocateControl } from "./components/UI/controls/Geol
 export { default as MapgisFullscreenControl } from "./components/UI/controls/FullscreenControl";
 export { default as MapgisAttributionControl } from "./components/UI/controls/AttributionControl";
 export { default as MapgisScaleControl } from "./components/UI/controls/ScaleControl";
+export { default as MapgisCustomScaleControl } from "./components/UI/controls/scale/CustomScale.vue";
 export { default as MapgisStateControl } from "./components/UI/controls/state/StateControl";
 export { default as MapgisSearchControl } from "./components/UI/controls/search/SearchControl";
 export { default as MapgisCompareControl } from "./components/UI/controls/compare/CompareControl";
 export { default as MapgisCompareInnerControl } from "./components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "./components/UI/controls/fps/FpsControl";
+export { default as MapgisPrint } from "./components/UI/controls/print/Print";
 export { default as MapgisDraw } from "./components/UI/controls/draw/BaseDraw";
 export { default as MapgisMeasure } from "./components/UI/controls/measure/Measure";
 // export { default as BaseDrawItem from "./components/UI/controls/draw/BaseDrawItem";
@@ -34,7 +36,12 @@ export { default as MapgisImageLayer } from "./components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "./components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "./components/layer/VectorLayer";
+
 export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
+export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
+export { default as MapgisMvtScale } from "./components/layer/edit/Scale";
+export { default as MapgisMvtLegend } from "./components/UI/controls/legend/LegendMvt";
+
 export { default as MapgisRasterLayer } from "./components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "./components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "./components/layer/igserver/IgsDocLayer";
@@ -46,10 +53,16 @@ export { default as MapgisOgcWmsLayer } from "./components/layer/ogc/OgcWmsLayer
 export { default as MapgisOgcWmtsLayer } from "./components/layer/ogc/OgcWmtsLayer";
 export { default as MapgisArcgisMapLayer } from "./components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServer/ArcGISTileLayer";
-export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 
+export { default as MapgisTrackerLayer } from "./components/layer/tracker/TrackerLayer";
+
+export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
+export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
+
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
+export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
+export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 
 /* 
 import withEventsMixin from "./lib/withEvents";

@@ -183,6 +183,13 @@ export default {
 }
 ```
 
+``` json
+{
+  "default": [{...Layer1},{...Layer2}],
+  "custom_key": [{...Layer1}]
+}
+```
+
 ::: warning
 可能看完上面的源码分析，可能会存在一个疑问，为什么不采取 vue 的 data 属性来控制 Cesium 的图层对象，而是实现了一个 CesiumZondy.XXXXManager 来实现对应的生命周期管理。本质原因在于：
 

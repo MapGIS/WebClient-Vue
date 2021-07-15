@@ -44,67 +44,46 @@ All common layer [events](/zh/api/Layers/#events)
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map
     class="main"
-    :accessToken="accessToken"
     :mapStyle="mapStyle"
     :zoom="mapZoom"
     :center="outerCenter"
     :crs="mapCrs"
   >
-    <mapbox-igs-tile-layer
-      :layer="layer"
-      :layerId="layerId"
-      :sourceId="sourceId"
-      :ip="igsTileIp"
-      :port="igsTilePort"
-      :serverName="igsTileName"
-      :zoomOffset="zoomOffset"
-    >
-    </mapbox-igs-tile-layer>
-  </mapbox-map>
+    <mapgis-igs-tile-layer :layer-id="layerId" :base-url="baseUrl">
+    </mapgis-igs-tile-layer>
+  </mapgis-web-map>
 </template>
 
 <script>
-import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsTileLayer } from "@mapgis/webclient-vue-mapboxgl";
-
 export default {
-  components: {
-    MapboxMap,
-    MapboxIgsTileLayer
-  },
+  name: "test",
   data() {
     return {
-      accessToken:
-        "pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA", // 使用mapbox样式需要的秘钥
-      mapStyle: "mapbox://styles/mapbox/light-v9", // 地图样式
+      mapStyle: {
+        //设置版本号，一定要设置
+        version: 8,
+        //添加来源
+        sources: {},
+        //设置加载并显示来源的图层信息
+        layers: []
+      }, // 地图样式
       mapZoom: 3, // 地图初始化级数
-      outerCenter: [130, 30], // 地图显示中心
-      mapCrs: "EPSG:3857",
+      outerCenter: [116.39, 40.2], // 地图显示中心
+      mapCrs: "EPSG:4326",
 
       layerId: "igsLayer_layerId",
-      sourceId: "igsLayer_sourceId",
-      layer: {}, // 图层配置信息
-      igsTileIp: "localhost", // igs服务ip
-      igsTilePort: "6163", // igs服务port
-      igsTileName: "省级行政区墨卡托", // igs地图服务名
-      zoomOffset: 0 // 级数偏差
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市"
     };
   },
-
-  created() {
-    // 在组件中使用mapbox-gl.js的脚本库功能
-    this.mapbox = Mapbox;
+  methods: {
+    handleMapLoad(payload) {
+      this.map = payload.map;
+    }
   }
 };
 </script>
 
-<style lang="css">
-.main {
-  height: 600px;
-  width: 100%;
-}
-</style>
+<style scoped></style>
 ```

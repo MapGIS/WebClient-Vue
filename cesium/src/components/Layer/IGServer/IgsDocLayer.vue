@@ -11,6 +11,10 @@ export default {
     layers: {
       type: String,
       default: null
+    },
+    srs: {
+      type: String,
+      default: "EPSG:4326"
     }
   },
   watch: {
@@ -39,8 +43,27 @@ export default {
   methods: {
     mount(){
       //处理独有参数
+      let tilingScheme = this.$_setTilingScheme(this.srs),extensions = [];
+      if (
+          this.srs === "EPSG:4326" ||
+          this.srs === "EPSG:4490" ||
+          this.srs === "EPSG:4610" ||
+          this.srs === "EPSG:4214"
+      ) {
+        extensions = [
+          { key: 'proj', value: 'WGS1984_度' }
+        ]
+      } else if (this.srs === "EPSG:3857") {
+        extensions = [
+          { key: 'proj', value: 'Web墨卡托_WGS1984' }
+        ]
+      }
       const baseUrl = this.$_initUrl("/igs/rest/mrms/docs/");
-      this.$_mount({baseUrl:baseUrl});
+      this.$_mount({
+        baseUrl:baseUrl,
+        tilingScheme: tilingScheme,
+        extensions: extensions
+      });
     },
     unmount(){
       this.$_unmount();

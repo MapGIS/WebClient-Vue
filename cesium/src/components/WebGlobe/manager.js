@@ -22,8 +22,12 @@ export function initManager() {
     window.CesiumZondy.GeojsonManager || new GeojsonManager();
   window.CesiumZondy.PopupManager =
     window.CesiumZondy.PopupManager || new PopupManager();
+  window.CesiumZondy.MarkerManager =
+    window.CesiumZondy.MarkerManager || new MarkerManager();
   window.CesiumZondy.OGCWMTSManager =
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
+  window.CesiumZondy.FloodAnalyseManager =
+    window.CesiumZondy.FloodAnalyseManager || new FloodAnalyseManager();
   window.CesiumZondy.OGCWMSManager =
     window.CesiumZondy.OGCWMSManager || new OGCWMSManager();
   window.CesiumZondy.DragEditManager =
@@ -51,9 +55,19 @@ export function initManager() {
   window.CesiumZondy.IgsserverManager =
     window.CesiumZondy.IgsserverManager || new EventHandlerManager();
   window.CesiumZondy.ExcavateAnalysisManager =
-  window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
-
-
+    window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
+  window.CesiumZondy.AnalysisModelFlattenManager =
+    window.CesiumZondy.AnalysisModelFlattenManager ||
+    new AnalysisModelFlattenManager();
+  window.CesiumZondy.DynamicCuttingManager =
+      window.CesiumZondy.DynamicCuttingManager ||
+      new DynamicCuttingManager();
+  window.CesiumZondy.AnalysisManager =
+      window.CesiumZondy.AnalysisManager ||
+      new AnalysisManager();
+  window.CesiumZondy.AnalysisManager =
+      window.CesiumZondy.AnalysisManager ||
+      new AnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -64,6 +78,29 @@ export function initManager() {
       webGlobeObj;
     webGlobeObj = GlobesManager[vueKey][0].source;
     return webGlobeObj;
+  };
+
+  /**
+   * 通过轮询的方式取得webGlobeObj
+   * @param callback 回调函数
+   * @param vueKey vueKey，唯一标识webscene组件
+   * */
+  window.CesiumZondy.getWebGlobeByInterval = function(callback, vueKey) {
+    if (!vueKey) {
+      vueKey = "default";
+    }
+    let GlobesManager = window.CesiumZondy.GlobesManager,
+      webGlobeObj;
+    let interval = setInterval(function() {
+      if (
+        GlobesManager.hasOwnProperty(vueKey) &&
+        GlobesManager[vueKey].length > 0
+      ) {
+        clearInterval(interval);
+        webGlobeObj = GlobesManager[vueKey][0].source;
+        callback(webGlobeObj);
+      }
+    }, 50);
   };
 }
 
@@ -81,6 +118,7 @@ export class BaseManager {
       this[vueKey] = [];
     }
     this[vueKey].push({
+      parent: vueKey,
       key: vueIndex,
       source: source,
       options: options
@@ -90,16 +128,18 @@ export class BaseManager {
   deleteSource(vueKey, vueIndex) {
     let index = -1;
     vueIndex = `${vueIndex}`;
-    this[vueKey].find((s, i) => {
-      let result = false;
-      if (s && s.key === vueIndex) {
-        index = i;
-        result = true;
+    if (this[vueKey] instanceof Array) {
+      this[vueKey].find((s, i) => {
+        let result = false;
+        if (s && s.key === vueIndex) {
+          index = i;
+          result = true;
+        }
+        return result;
+      });
+      if (index >= 0) {
+        this[vueKey].splice(index, 1);
       }
-      return result;
-    });
-    if (index >= 0) {
-      this[vueKey].splice(index, 1);
     }
   }
 
@@ -132,6 +172,16 @@ export class BaseManager {
     vueKey = vueKey ? vueKey : this.vueKey;
     return this[vueKey];
   }
+
+  flatAllSource() {
+    let flat = [];
+    Object.keys(this).forEach(k => {
+      if (k !== "vueKey") {
+        flat = flat.concat(this[k]);
+      }
+    });
+    return flat;
+  }
 }
 
 export class RasterManager extends BaseManager {}
@@ -153,4 +203,8 @@ export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
-
+export class FloodAnalyseManager extends BaseManager {}
+export class MarkerManager extends BaseManager {}
+export class AnalysisModelFlattenManager extends BaseManager {}
+export class DynamicCuttingManager extends BaseManager {}
+export class AnalysisManager extends BaseManager {}

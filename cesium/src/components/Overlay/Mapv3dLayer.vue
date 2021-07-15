@@ -99,7 +99,7 @@ export default {
         } else {
           countValue = 30 * Math.random()
         }
-        let timeValue = feature.properties[time];
+        let timeValue = feature.properties.time;
         if (timeValue){
           timeValue = vm.isNumber(timeValue) ? timeValue : Number(timeValue);
         } else {

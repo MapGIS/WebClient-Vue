@@ -2,6 +2,7 @@
 import Card from "ant-design-vue/es/card/Card";
 import PropTypes from "../../util/vue-types";
 import AntdMixin from "../../mixin/AntdMixin";
+import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const cardProps = {
   prefixCls: PropTypes.string,
@@ -25,7 +26,7 @@ export const cardProps = {
 export default {
   name: "mapgis-ui-card",
   wrapperUI: Card,
-  mixins: [AntdMixin],
+  mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: cardProps
 };

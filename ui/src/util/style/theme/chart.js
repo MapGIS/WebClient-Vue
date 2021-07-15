@@ -1,5 +1,19 @@
-import { getColorWithOpacity } from "../../util";
 import cloneDeep from "lodash.clonedeep";
+
+export function getColorWithOpacity(color, opacity, isStack = true) {
+  if (!color) {
+    return color;
+  }
+  const originColor = tinyColor(color);
+  const originOpacity = originColor.getAlpha();
+  if (isStack) {
+    originColor.setAlpha(originOpacity * opacity);
+  } else {
+    originColor.setAlpha(opacity);
+  }
+  const nextColor = originColor.toRgbString();
+  return nextColor;
+}
 
 export const handleMultiGradient = (colorGroupsData, dataLength) => {
   let startColors = [];

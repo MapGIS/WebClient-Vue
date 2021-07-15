@@ -9,7 +9,7 @@ export default {
   name: "mapgis-3d-igs-tile-layer",
   mixins: [ServiceLayer],
   props: {
-    srs: {
+    tilingScheme: {
       type: String,
       default: "EPSG:4326"
     }
@@ -32,11 +32,10 @@ export default {
   methods: {
     mount() {
       //处理独有参数
-      const { srs } = this;
       let url = this.$_initUrl("/igs/rest/mrms/tile");
       url += "/{level}/{row}/{col}";
-      let tilingScheme = this.$_setTilingScheme(srs);
-      this.$_mount({ baseUrl: url, srs, tilingScheme });
+      let tilingScheme = this.$_setTilingScheme(this.tilingScheme);
+      this.$_mount({ baseUrl: url, srs : this.tilingScheme, tilingScheme });
     },
     unmount() {
       this.$_unmount();

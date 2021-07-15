@@ -5,6 +5,7 @@ import StateControl from "./components/UI/Controls/State/StateControl.vue";
 import Link from "./components/UI/Controls/Link/Link.vue";
 import BaseDraw from "./components/UI/Controls/Draw/Draw";
 import Measure from "./components/UI/Controls/Measure/Measure";
+import Table from "./components/UI/Controls/Table/BaseTable";
 
 // 影像
 import ImageryLayer from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -36,6 +37,7 @@ export const CesiumStateControl = StateControl;
 export const CesiumLink = Link;
 export const CesiumBaseDraw = BaseDraw;
 export const CesiumMeasure = Measure;
+export const CesiumTable = Table;
 
 export const CesiumImageryLayer = ImageryLayer;
 export const CesiumRasterLayer = RasterLayer;
@@ -64,6 +66,7 @@ const Components = [
   CesiumLink,
   CesiumBaseDraw,
   CesiumMeasure,
+  CesiumTable,
 
   CesiumImageryLayer,
   CesiumRasterLayer,

@@ -1,134 +1,134 @@
 <template>
   <div>
     <div class="ft_toolbar" style="bottom: 331px">
-      <a-checkbox :checked="readOnly" @change="$_readOnly">
+      <mapgis-ui-checkbox :checked="readOnly" @change="$_readOnly">
         只读
-      </a-checkbox>
-      <a-checkbox @change="">
+      </mapgis-ui-checkbox>
+      <mapgis-ui-checkbox @change="">
         图属联动
-      </a-checkbox>
-      <a-checkbox @change="">
+      </mapgis-ui-checkbox>
+      <mapgis-ui-checkbox @change="">
         仅显示选中
-      </a-checkbox>
-      <a-button class="editable-add-btn" @click="$_togglePoint">
+      </mapgis-ui-checkbox>
+      <mapgis-ui-button class="editable-add-btn" @click="$_togglePoint">
         点
-      </a-button>
-      <a-button class="editable-add-btn" @click="$_togglePolyline">
+      </mapgis-ui-button>
+      <mapgis-ui-button class="editable-add-btn" @click="$_togglePolyline">
         线
-      </a-button>
-<!--      <a-button class="editable-add-btn" @click="$_togglePolygon">-->
+      </mapgis-ui-button>
+<!--      <mapgis-ui-button class="editable-add-btn" @click="$_togglePolygon">-->
 <!--        矩形-->
-<!--      </a-button>-->
-      <a-button class="editable-add-btn" @click="$_togglePolygon">
+<!--      </mapgis-ui-button>-->
+      <mapgis-ui-button class="editable-add-btn" @click="$_togglePolygon">
         多边形
-      </a-button>
-      <a-button class="editable-add-btn" @click="$_showFilter">
+      </mapgis-ui-button>
+      <mapgis-ui-button class="editable-add-btn" @click="$_showFilter">
         查询条件
-      </a-button>
-      <a-button class="editable-add-btn" @click="$_query">
+      </mapgis-ui-button>
+      <mapgis-ui-button class="editable-add-btn" @click="$_query">
         查询
-      </a-button>
-      <a-button class="editable-add-btn" @click="">
+      </mapgis-ui-button>
+      <mapgis-ui-button class="editable-add-btn" @click="">
         新增数据
-      </a-button>
-      <a-button class="editable-add-btn" @click="$_updateTable">
+      </mapgis-ui-button>
+      <mapgis-ui-button class="editable-add-btn" @click="$_updateTable">
         更新数据
-      </a-button>
-      <a-button class="editable-add-btn" @click="">
+      </mapgis-ui-button>
+      <mapgis-ui-button class="editable-add-btn" @click="">
         删除数据
-      </a-button>
-      <a-modal
+      </mapgis-ui-button>
+      <mapgis-ui-modal
           title="输入查询条件"
           :visible="visible"
           @ok="$_showFilter"
           @cancel="$_showFilter"
       >
-        <a-row>
-          <a-col :span="8">
-            <a-list bordered :data-source="FldName" class="ft_attributeList">
-              <a-list-item @dblclick="$_addKeyToSQL(item)" @click="$_clickFldNameShowAttributes(item)" class="ft_fldListItem" slot="renderItem" slot-scope="item, index">
+        <mapgis-ui-row>
+          <mapgis-ui-col :span="8">
+            <mapgis-ui-list bordered :datmapgis-ui-source="FldName" class="ft_attributeList">
+              <mapgis-ui-list-item @dblclick="$_addKeyToSQL(item)" @click="$_clickFldNameShowAttributes(item)" class="ft_fldListItem" slot="renderItem" slot-scope="item, index">
                 {{ item }}
-              </a-list-item>
+              </mapgis-ui-list-item>
               <div slot="header">
                 字段信息
               </div>
-            </a-list>
-          </a-col>
-          <a-col :span="8">
+            </mapgis-ui-list>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="8">
             <div class="ft_operation">
-              <a-tag @click="$_addKeyToSQL(operate)" v-for="(operate,index) in operations" :key="index">{{ operate }}</a-tag>
+              <mapgis-ui-tag @click="$_addKeyToSQL(operate)" v-for="(operate,index) in operations" :key="index">{{ operate }}</mapgis-ui-tag>
             </div>
             <div>
-              <a-select style="width: 120px" @change="">
-                <a-select-option @click="$_addKeyToSQL(func)" v-for="(func,index) in functions" :key="index">
+              <mapgis-ui-select style="width: 120px" @change="">
+                <mapgis-ui-select-option @click="$_addKeyToSQL(func)" v-for="(func,index) in functions" :key="index">
                   {{ func }}
-                </a-select-option>
-              </a-select>
+                </mapgis-ui-select-option>
+              </mapgis-ui-select>
             </div>
-          </a-col>
-          <a-col :span="8">
-            <a-list bordered :data-source="FldNameToAttributes" class="ft_attributeList">
-              <a-list-item @dblclick="$_addKeyToSQL('\'' + item + '\'')" slot="renderItem" slot-scope="item, index" class="ft_fldListItem">
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="8">
+            <mapgis-ui-list bordered :datmapgis-ui-source="FldNameToAttributes" class="ft_attributeList">
+              <mapgis-ui-list-item @dblclick="$_addKeyToSQL('\'' + item + '\'')" slot="renderItem" slot-scope="item, index" class="ft_fldListItem">
                 {{ item }}
-              </a-list-item>
+              </mapgis-ui-list-item>
               <div slot="header">
                 属性信息
               </div>
-            </a-list>
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="20">
-            <a-input id="SQL" placeholder="Basic usage" v-model="SQL"/>
-          </a-col>
-          <a-col :span="4">
-            <a-button @click="$_clearSQL" class="editable-add-btn">
+            </mapgis-ui-list>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+        <mapgis-ui-row>
+          <mapgis-ui-col :span="20">
+            <mapgis-ui-input id="SQL" placeholder="Basic usage" v-model="SQL"/>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="4">
+            <mapgis-ui-button @click="$_clearSQL" class="editable-add-btn">
               清空
-            </a-button>
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="4">
-            <a-modal
+            </mapgis-ui-button>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+        <mapgis-ui-row>
+          <mapgis-ui-col :span="4">
+            <mapgis-ui-modal
                 title="Title"
                 :visible="showSQL"
                 @ok="$_showSQL"
                 @cancel="$_showSQL"
             >
               <div style="width: 400px;height: 200px;">
-                <a-table style="width: 400px;height: 200px;left: 20px;bottom: 53px;" :columns="SQLModelColumns" :data-source="SQLModelData">
+                <mapgis-ui-table style="width: 400px;height: 200px;left: 20px;bottom: 53px;" :columns="SQLModelColumns" :data-source="SQLModelData">
                   <template slot="SQLText" slot-scope="text,record">
                     <p @dblclick="$_chooseSQL(record.SQL)" style="cursor: pointer">{{text}}</p>
                   </template>
-                </a-table>
+                </mapgis-ui-table>
               </div>
-            </a-modal>
-            <a-button class="editable-add-btn" @click="$_getSQL">
+            </mapgis-ui-modal>
+            <mapgis-ui-button class="editable-add-btn" @click="$_getSQL">
               SQL模板
-            </a-button>
-          </a-col>
-          <a-col :span="4">
-            <a-modal
+            </mapgis-ui-button>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="4">
+            <mapgis-ui-modal
                 title="模板名称"
                 :visible="saveSQL"
                 @ok="$_saveSQL"
                 @cancel="$_showSaveSQL"
             >
-              <a-input placeholder="请输入模板名称" v-model="SQLName"/>
-            </a-modal>
-            <a-button class="editable-add-btn" @click="$_showSaveSQL">
+              <mapgis-ui-input placeholder="请输入模板名称" v-model="SQLName"/>
+            </mapgis-ui-modal>
+            <mapgis-ui-button class="editable-add-btn" @click="$_showSaveSQL">
               保存SQL模板
-            </a-button>
-          </a-col>
-        </a-row>
-      </a-modal>
+            </mapgis-ui-button>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+      </mapgis-ui-modal>
     </div>
     <div class="ft_toolbar">
-      <a-tabs v-model="activeKey" type="editable-card" @edit="$_closeTab" @change="$_changeTab(activeKey)">
-        <a-tab-pane v-for="(pane,index) in panes" :key="pane.key" :tab="pane.title" :closable="pane.closable">
+      <mapgis-ui-tabs v-model="activeKey" type="editable-card" @edit="$_closeTab" @change="$_changeTab(activeKey)">
+        <mapgis-ui-tab-pane v-for="(pane,index) in panes" :key="pane.key" :tab="pane.title" :closable="pane.closable">
           {{ pane.content }}
-        </a-tab-pane>
-      </a-tabs>
+        </mapgis-ui-tab-pane>
+      </mapgis-ui-tabs>
     </div>
     <base-draw
         v-bind:controls="controls"
@@ -136,14 +136,14 @@
         v-on:drawcreate="$_handleCreate"
         ref="draw"
     ></base-draw>
-    <a-table style="width: 100%" ref="atable" bordered :data-source="featureData" :columns="columns" :scroll="{ x: 400}">
+    <mapgis-ui-table style="width: 100%" ref="atable" bordered :data-source="featureData" :columns="columns" :scroll="{ x: 400}">
       <template slot="text" slot-scope="text,record">
         <div @click="$_onceClick(record.key,$_returnKey(text,record))" @dblclick="$_doubleClick(record.key,$_returnKey(text,record))">
           <p class="ft_content" v-if="isEdit !== $_returnKey(text,record) + '_' + record.key">{{text}}</p>
-          <a-input v-if="isEdit === $_returnKey(text,record) + '_' + record.key" v-model="record[$_returnKey(text,record)]"/>
+          <mapgis-ui-input v-if="isEdit === $_returnKey(text,record) + '_' + record.key" v-model="record[$_returnKey(text,record)]"/>
         </div>
       </template>
-    </a-table>
+    </mapgis-ui-table>
   </div>
 </template>
 

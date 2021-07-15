@@ -95,9 +95,19 @@ export default {
     onlyText: {
       type: Boolean,
       default: false
-    },
+    },        
 
     showed: {
+      type: Boolean,
+      default: false
+    },
+
+    visible: {
+      type: Boolean,
+      default: true
+    },
+
+    destroyOnClose: {
       type: Boolean,
       default: false
     }
@@ -148,6 +158,10 @@ export default {
 
   created () {
     this.popup = new this.mapbox.Popup(this.$props);
+  },
+
+  updated() {
+
   },
 
   mounted () {

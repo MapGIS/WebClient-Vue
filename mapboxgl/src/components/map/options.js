@@ -1,4 +1,8 @@
 export default {
+  company: {
+    type: String,
+    default: "mapgis-1.10-dev"
+  },
   theme: {
     type: String,
     default: "bg-accent text-white"
@@ -6,6 +10,10 @@ export default {
   color: {
     type: String,
     default: "blue-grey-11"
+  },
+  autoResize: {
+    type: Boolean,
+    default: true
   },
   container: {
     type: [String, HTMLElement],

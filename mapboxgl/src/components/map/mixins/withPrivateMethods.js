@@ -57,18 +57,34 @@ export default {
      */
     $_loadMap() {
       // mapboxPromise = Promise.resolve(this.mapboxGl)
-      return this.mapboxPromise.then(mapbox => {
-        this.mapbox = mapbox.default ? mapbox.default : mapbox;
-        return new Promise(resolve => {
-          if (this.accessToken) this.mapbox.accessToken = this.accessToken;
-          const map = new this.mapbox.Map({
-            ...this._props,
-            container: this.$refs.container,
-            style: this.mapStyle
+      const { company } = this;
+      if (company.indexOf("mapgis") >= 0) {
+        return this.mapboxPromise.then(mapboxgl => {
+          this.mapbox = mapboxgl.default ? mapboxgl.default : mapboxgl;
+          return new Promise(resolve => {
+            const map = new mapboxgl.Map({
+              ...this._props,
+              preserveDrawingBuffer: true, //特别注意，打印的时候必须启动该配置项
+              container: this.$refs.container,
+              style: this.mapStyle
+            });
+            map.on("load", () => resolve(map));
           });
-          map.on("load", () => resolve(map));
         });
-      });
+      } else {
+        return this.mapboxPromise.then(mapboxgl => {
+          this.mapboxgl = mapboxgl.default ? mapboxgl.default : mapboxgl;
+          return new Promise(resolve => {
+            if (this.accessToken) this.mapboxgl.accessToken = this.accessToken;
+            const map = new mapboxgl.Map({
+              ...this._props,
+              container: this.$refs.container,
+              style: this.mapStyle
+            });
+            map.on("load", () => resolve(map));
+          });
+        });
+      }
     },
 
     $_RTLTextPluginError(error) {

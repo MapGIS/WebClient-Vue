@@ -1,0 +1,104 @@
+<template>
+  <div>
+    <mapgis-ui-button
+      v-show="!visible"
+      :class="{ 'mapgis-ui-setting-pro': true, active: visible }"
+      @click="showSetting"
+    >
+      <mapgis-ui-iconfont type="mapgis-jieshutiaozheng" class="setting" />
+    </mapgis-ui-button>
+    <mapgis-ui-drawer
+      class="mapgis-ui-pro-setting-drawer"
+      title="设置工具"
+      :placement="placement"
+      :closable="false"
+      :visible="visible"
+      @close="hideSetting"
+    >
+      <mapgis-ui-divider>
+        主题切换
+      </mapgis-ui-divider>
+      <block-check-box
+        :list="themes"
+        :value="defaultTheme"
+        @change="onThemeChange"
+      />
+      <mapgis-ui-divider>
+        颜色切换
+      </mapgis-ui-divider>
+      <mapgs-ui-color-simple-picker />
+    </mapgis-ui-drawer>
+  </div>
+</template>
+
+<script>
+import { setTheme } from "../../util/style/theme/set-theme";
+import BlockCheckBox from "./SettingDrawer/BlockCheckbox";
+import light from "./SettingDrawer/style/light.svg";
+import dark from "./SettingDrawer/style/dark.svg";
+
+export default {
+  name: "mapgis-ui-layout-pro",
+  components: { BlockCheckBox },
+  props: {
+    headStyle: { padding: "0px" },
+    contentStyle: { padding: "0px", height: "100vh" },
+    footerStyle: { padding: "0px" }
+  },
+  data() {
+    return {
+      visible: false,
+      placement: "right",
+      defaultTheme: "light",
+      themes: [
+        {
+          key: "light",
+          url: light,
+          title: "浅色"
+        },
+        {
+          key: "dark",
+          url: dark,
+          title: "黑暗"
+        }
+      ]
+    };
+  },
+  methods: {
+    showSetting() {
+      this.visible = true;
+    },
+    hideSetting() {
+      this.visible = false;
+    },
+    onThemeChange(theme) {
+      this.defaultTheme = theme;
+      setTheme(theme);
+    }
+  }
+};
+</script>
+
+<style scoped>
+.mapgis-ui-setting-pro {
+  position: absolute;
+  z-index: 9999;
+  right: 0px;
+  top: 40vh;
+  width: 48px;
+  height: 48px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.active {
+  right: 240px;
+  visibility: hidden;
+}
+
+.setting {
+  font-size: 22px;
+}
+</style>
