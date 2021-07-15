@@ -2,8 +2,8 @@
     <div>
       <slot name="content" v-bind:currentLayerInfo="currentLayerInfo">
         <div class="PropertiesTabs">
-          <a-tabs v-model="activeKey" :active-key="activeKey" :tab-position="mode" @tabClick="changePane">
-            <a-tab-pane v-for="(f,i) in currentLayerInfo" :key="i" :tab="f.layer.id">
+          <mapgis-ui-tabs v-model="activeKey" :active-key="activeKey" :tab-position="mode" @tabClick="changePane">
+            <mapgis-ui-tab-pane v-for="(f,i) in currentLayerInfo" :key="i" :tab="f.layer.id">
               <div v-for="(value,key) in f.properties" class="proStyle">
                 <div class="keyCss">
                   <span style="padding-right: 5px">{{ key }}</span>
@@ -16,8 +16,8 @@
                 </div>
               </div>
               <br/>
-            </a-tab-pane>
-          </a-tabs>
+            </mapgis-ui-tab-pane>
+          </mapgis-ui-tabs>
         </div>
       </slot>
     </div>
@@ -25,12 +25,11 @@
 
 <script>
 import mapboxgl from '@mapgis/mapbox-gl';
-
-let MapboxInspect = require('mapbox-gl-inspect');
+const MapboxInspect = require('mapbox-gl-inspect');
 
 export default {
   name: 'mapgis-inspect',
-  inject: ["map"],
+  inject: ["map", "mapbox"],
   mounted() {
     this.enableInspect();
   },
@@ -84,8 +83,7 @@ export default {
           checkedLayer.push(vm.currentLayerInfo[i]);
         }
       }
-      console.log("checkedLayer", checkedLayer);
-      vm.$emit("callback", checkedLayer);
+      vm.$emit("select-layer", checkedLayer[0]);
     }
   }
 }

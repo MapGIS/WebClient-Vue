@@ -177,8 +177,8 @@ export default {
 
 .upper_firstpiece {
   top: 0%;
-  left: -0.05%;
-  width: 25%;
+  left: -0.5%;
+  width: 26%;
 }
 
 .upper_secondpiece {
@@ -202,7 +202,7 @@ export default {
 .mapgis-custom-scale-ruler-block {
   overflow: hidden;
   position: absolute;
-  height: 52%;
+  height: 55%;
   background-color: #444444;
 }
 

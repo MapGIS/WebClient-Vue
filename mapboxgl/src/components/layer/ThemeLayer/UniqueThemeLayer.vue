@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import {UniqueThemeLayer, ThemeStyle} from "@mapgis/webclient-es6-mapboxgl"
 import {MRFS} from "@mapgis/webclient-es6-service"
 import ThemePanel from "./ThemePanel";
 
