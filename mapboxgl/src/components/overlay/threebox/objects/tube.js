@@ -1,199 +1,175 @@
 var utils = require("../utils/utils.js");
 var material = require("../utils/material.js");
-var Objects = require('./objects.js');
+var Objects = require("./objects.js");
 var THREE = require("../three.js");
 
-function tube(obj, world){
+function tube(obj, world) {
+  // validate and prep input geometry
+  var obj = utils._validate(obj, Objects.prototype._defaults.tube);
+  var straightProject = utils.lnglatsToWorld(obj.geometry);
+  var normalized = utils.normalizeVertices(straightProject);
 
-	// validate and prep input geometry
-	var obj = utils._validate(obj, Objects.prototype._defaults.tube);
-    var straightProject = utils.lnglatsToWorld(obj.geometry);
-	var normalized = utils.normalizeVertices(straightProject);
+  var crossSection = tube.prototype.defineCrossSection(obj);
+  var vertices = tube.prototype.buildVertices(
+    crossSection,
+    normalized.vertices,
+    world
+  );
+  var geom = tube.prototype.buildFaces(vertices, normalized.vertices, obj);
 
-	var crossSection = tube.prototype.defineCrossSection(obj);
-	var vertices = tube.prototype.buildVertices(crossSection, normalized.vertices, world);
-	var geom = tube.prototype.buildFaces(vertices, normalized.vertices, obj);
+  var mat = material(obj);
 
-	var mat = material(obj);
+  var mesh = new THREE.Mesh(geom, mat);
+  mesh.position.copy(normalized.position);
 
-    var mesh = new THREE.Mesh( geom, mat );
-    mesh.position.copy(normalized.position);
-
-    return mesh
-
+  return mesh;
 }
 
 tube.prototype = {
+  buildVertices: function(crossSection, spine, world) {
+    //create reusable plane for intersection calculations
+    var geometry = new THREE.PlaneBufferGeometry(99999999999, 9999999999);
+    var m = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      side: THREE.DoubleSide
+    });
+    m.opacity = 0;
+    var plane = new THREE.Mesh(geometry, m);
+    // world.add( plane );
 
-	buildVertices: function (crossSection, spine, world){
+    var geom = new THREE.Geometry();
+    var lastElbow = false;
 
-		//create reusable plane for intersection calculations
-		var geometry = new THREE.PlaneBufferGeometry(99999999999, 9999999999);
-		var m = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
-		m.opacity = 0
-		var plane = new THREE.Mesh( geometry, m );
-		// world.add( plane );
+    // BUILD VERTICES: iterate through points in spine and position each vertex in cross section
 
-		var geom = new THREE.Geometry(); 
-		var lastElbow = false;
+    // get normalized vectors for each spine segment
+    var spineSegments = [spine[0].clone().normalize()];
 
+    for (i in spine) {
+      i = parseFloat(i);
 
-		// BUILD VERTICES: iterate through points in spine and position each vertex in cross section
+      var segment;
 
+      if (spine[i + 1]) {
+        segment = new THREE.Vector3()
+          .subVectors(spine[i + 1], spine[i])
+          .normalize();
+      }
 
-		// get normalized vectors for each spine segment
-		var spineSegments = [spine[0].clone().normalize()];
+      spineSegments.push(segment);
+    }
 
-		for (i in spine) {
+    spineSegments.push(new THREE.Vector3());
 
-			i = parseFloat(i);
+    for (i in spine) {
+      i = parseFloat(i);
+      var lineVertex = spine[i];
 
-			var segment;
+      // ROTATE cross section
 
-			if (spine[i+1]){
-				segment = new THREE.Vector3()
-					.subVectors( spine[i+1], spine[i])
-					.normalize();
+      var humerus = spineSegments[i];
 
-			}
+      var forearm = spineSegments[i + 1];
 
-			spineSegments.push(segment);
-		}
+      var midpointToLookAt = humerus
+        .clone()
+        .add(forearm)
+        .normalize();
 
-		spineSegments.push(new THREE.Vector3());
+      if (i === 0) midpointToLookAt = forearm;
+      else if (i === spine.length - 1) midpointToLookAt = humerus;
 
-		for (i in spine) {
+      // if first point in input line, rotate and translate it to position
+      if (!lastElbow) {
+        var elbow = crossSection.clone();
 
-			i = parseFloat(i);
-			var lineVertex = spine[i];
+        elbow.lookAt(midpointToLookAt);
 
-			// ROTATE cross section
+        elbow.vertices.forEach(function(vertex) {
+          geom.vertices.push(vertex.add(lineVertex));
+        });
 
-			var humerus = spineSegments[i]
+        lastElbow = elbow.vertices;
+      } else {
+        var elbow = [];
+        plane.position.copy(lineVertex);
+        plane.lookAt(midpointToLookAt.clone().add(lineVertex));
+        plane.updateMatrixWorld();
 
-			var forearm = spineSegments[i+1]
+        lastElbow.forEach(function(v3) {
+          var raycaster = new THREE.Raycaster(v3, humerus);
 
-			var midpointToLookAt = humerus.clone()
-				.add(forearm)
-				.normalize();
+          var intersection = raycaster.intersectObject(plane)[0];
 
-			if (i === 0) midpointToLookAt = forearm;
-			
-			else if (i === spine.length - 1) midpointToLookAt = humerus;
+          if (intersection) {
+            geom.vertices.push(intersection.point);
+            elbow.push(intersection.point);
+          } else console.error("Tube geometry failed at vertex " + i + ". Consider reducing tube radius, or smoothening out the sharp angle at this vertex");
+        });
 
-						
-			// if first point in input line, rotate and translate it to position
-			if (!lastElbow) {
+        lastElbow = elbow;
+      }
+    }
 
-				var elbow = crossSection.clone();
+    world.remove(plane);
 
-				elbow
-					.lookAt(midpointToLookAt)
+    return geom;
+  },
 
-				elbow.vertices.forEach(function(vertex){
-					geom.vertices
-						.push(vertex.add(lineVertex));
-				})
+  defineCrossSection: function(obj) {
+    var crossSection = new THREE.Geometry();
+    var count = obj.sides;
 
-				lastElbow = elbow.vertices;
+    for (var i = 0; i < count; i++) {
+      var l = obj.radius;
+      var a = ((i + 0.5) / count) * Math.PI;
 
-			}
+      crossSection.vertices.push(
+        new THREE.Vector3(-Math.sin(2 * a), Math.cos(2 * a), 0).multiplyScalar(
+          l
+        )
+      );
+    }
 
-			else {
+    return crossSection;
+  },
 
-				var elbow = [];
-				plane.position.copy(lineVertex);
-				plane.lookAt(midpointToLookAt.clone().add(lineVertex));
-				plane.updateMatrixWorld();
+  //build faces between vertices
 
-				lastElbow.forEach(function(v3){
+  buildFaces: function(geom, spine, obj) {
+    for (var i in spine) {
+      i = parseFloat(i);
+      var vertex = spine[i];
 
-					var raycaster = new THREE.Raycaster(v3, humerus);
+      if (i < spine.length - 1) {
+        for (var p = 0; p < obj.sides; p++) {
+          var b1 = i * obj.sides + p;
+          var b2 = i * obj.sides + ((p + 1) % obj.sides);
+          var t1 = b1 + obj.sides;
+          var t2 = b2 + obj.sides;
 
-					var intersection = raycaster
-						.intersectObject(plane)[0];
-
-					if (intersection) {
-						geom.vertices.push(intersection.point);
-						elbow.push(intersection.point);
-					}
-
-					else console.error('Tube geometry failed at vertex '+i+'. Consider reducing tube radius, or smoothening out the sharp angle at this vertex')
-				})
-
-				lastElbow = elbow
-			}
-
-		}
-
-		world.remove(plane);
-
-		return geom
-	},
-
-	defineCrossSection: function(obj){
-        var crossSection = new THREE.Geometry();
-        var count = obj.sides;
-
-        for ( var i = 0; i < count; i ++ ) {
-
-            var l = obj.radius;
-            var a = (i+0.5) / count * Math.PI;
-
-            crossSection.vertices.push( 
-            	new THREE.Vector3 ( 
-            		-Math.sin( 2 * a ), 
-            		Math.cos( 2 * a ),
-            		0
-            	)
-            	.multiplyScalar(l)
-            );
+          var triangle1 = new THREE.Face3(t1, b1, b2);
+          var triangle2 = new THREE.Face3(t1, b2, t2);
+          geom.faces.push(triangle1, triangle2);
         }
+      }
+    }
 
-        return crossSection
-	},
+    //add endcaps
+    var v = geom.vertices.length;
 
-	//build faces between vertices
+    for (var c = 0; c + 2 < obj.sides; c++) {
+      var tri1 = new THREE.Face3(0, c + 2, c + 1);
+      var tri2 = new THREE.Face3(v - 1, v - 1 - (c + 2), v - 1 - (c + 1));
+      geom.faces.push(tri1, tri2);
+    }
 
-	buildFaces: function(geom, spine, obj){
+    //compute normals to get shading to work properly
+    geom.computeFaceNormals();
 
-		for (var i in spine) {
-
-			i = parseFloat(i);
-			var vertex = spine[i];
-
-			if (i < spine.length - 1) {
-
-				for (var p = 0; p < obj.sides; p++) {
-
-					var b1 = i * obj.sides + p;
-					var b2 = i * obj.sides + (p+1) % obj.sides
-					var t1 = b1 + obj.sides
-					var t2 = b2 + obj.sides;
-
-					var triangle1 = new THREE.Face3(t1, b1, b2);
-					var triangle2 = new THREE.Face3(t1, b2, t2);
-					geom.faces.push(triangle1, triangle2)
-				}				
-			}
-		}
-
-		//add endcaps
-		var v = geom.vertices.length;
-
-		for (var c = 0; c+2<obj.sides; c++) {
-			var tri1 = new THREE.Face3(0, c+2, c+1);
-			var tri2 = new THREE.Face3(v-1, v-1-(c+2), v-1-(c+1))
-			geom.faces.push(tri1, tri2)
-		}
-
-		//compute normals to get shading to work properly
-		geom.computeFaceNormals();
-
-		var bufferGeom = new THREE.BufferGeometry().fromGeometry(geom);
-		return geom
-	}
-}
+    var bufferGeom = new THREE.BufferGeometry().fromGeometry(geom);
+    return geom;
+  }
+};
 
 module.exports = exports = tube;
-

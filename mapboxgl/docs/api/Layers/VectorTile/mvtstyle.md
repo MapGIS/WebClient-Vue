@@ -19,7 +19,8 @@ Mapbox GL JS Style:
 - **类型:** `String`
 - **非侦听属性** 非 watch 属性
 - **默认值** `merge`
-- **描述:** 样式显示模式    ['merge', 'add', 'set']
+- **描述:** 样式显示模式 ['merge', 'add', 'set']
+
   - `merge`-合并. 在当前样式上合并 Mvt 样式，内部会自动对比图层进行覆盖
     ```js
     mergeLayers(olds, news) {
@@ -50,6 +51,7 @@ Mapbox GL JS Style:
     this.map.setStyle(mvtStyle, { diff: true });
     ```
   - `add`-追加. 在当前样式上追加 Mvt 样式，内部会自动对比图层进行覆盖
+
     ```js
     addLayers(olds, news) {
       news = news || [];

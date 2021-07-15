@@ -45,16 +45,13 @@ All common layer [events](/zh/api/Layers/#events)
 ```vue
 <template>
   <mapgis-web-map
-          class="main"
-          :mapStyle="mapStyle"
-          :zoom="mapZoom"
-          :center="outerCenter"
-          :crs="mapCrs"
+    class="main"
+    :mapStyle="mapStyle"
+    :zoom="mapZoom"
+    :center="outerCenter"
+    :crs="mapCrs"
   >
-    <mapgis-igs-tile-layer
-          :layer-id="layerId"
-          :base-url="baseUrl"
-    >
+    <mapgis-igs-tile-layer :layer-id="layerId" :base-url="baseUrl">
     </mapgis-igs-tile-layer>
   </mapgis-web-map>
 </template>
@@ -70,11 +67,11 @@ export default {
         //添加来源
         sources: {},
         //设置加载并显示来源的图层信息
-        layers: [],
+        layers: []
       }, // 地图样式
       mapZoom: 3, // 地图初始化级数
-      outerCenter: [116.39, 40.20], // 地图显示中心
-      mapCrs: 'EPSG:4326',
+      outerCenter: [116.39, 40.2], // 地图显示中心
+      mapCrs: "EPSG:4326",
 
       layerId: "igsLayer_layerId",
       baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市"
@@ -85,9 +82,8 @@ export default {
       this.map = payload.map;
     }
   }
-}
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
 ```

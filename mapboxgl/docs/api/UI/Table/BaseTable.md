@@ -1,6 +1,7 @@
 # BaseTable
 
 ## 属性
+
 ### `dataSource`
 
 - **类型:** `Array | Object`
@@ -70,13 +71,13 @@
 
 - **类型:** `Boolean`
 - **默认值:** `true`
-- **侦听属性ed**
+- **侦听属性 ed**
 - **描述:** 是否启用表格编辑。
 
 ### `pagination`
 
 - **类型:** `Object`
-- **侦听属性ed**
+- **侦听属性 ed**
 - **描述:** 表格分页信息。
 
 ```
@@ -111,7 +112,7 @@
 
 - **描述:** 双击单元格事件
 - **返回值** `{ rowIndex,columnKey,value,record }` <br>
-  `rowIndex` 行号，从0开始<br>
+  `rowIndex` 行号，从 0 开始<br>
   `columnKey` 列名 <br>
   `value` 单元格数据 <br>
   `record` 一行的数据 <br>
@@ -149,7 +150,7 @@
 
 - **描述:** 全屏事件
 - **返回值** `{ pagination,sorter }` <br>
-  `pagination` 分页信息，其中的pageSize为铺满全屏的数据条数 <br>
+  `pagination` 分页信息，其中的 pageSize 为铺满全屏的数据条数 <br>
   `sorter` 排序信息 <br>
 
 ### `@originScreen` 或 `@originscreen`

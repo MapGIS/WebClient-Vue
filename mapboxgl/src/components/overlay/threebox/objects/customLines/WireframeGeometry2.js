@@ -3,30 +3,27 @@
  *
  */
 
-THREE.WireframeGeometry2 = function ( geometry ) {
+THREE.WireframeGeometry2 = function(geometry) {
+  THREE.LineSegmentsGeometry.call(this);
 
-	THREE.LineSegmentsGeometry.call( this );
+  this.type = "WireframeGeometry2";
 
-	this.type = 'WireframeGeometry2';
+  this.fromWireframeGeometry(new THREE.WireframeGeometry(geometry));
 
-	this.fromWireframeGeometry( new THREE.WireframeGeometry( geometry ) );
-
-	// set colors, maybe
-
+  // set colors, maybe
 };
 
-THREE.WireframeGeometry2.prototype = Object.assign( Object.create( THREE.LineSegmentsGeometry.prototype ), {
+THREE.WireframeGeometry2.prototype = Object.assign(
+  Object.create(THREE.LineSegmentsGeometry.prototype),
+  {
+    constructor: THREE.WireframeGeometry2,
 
-	constructor: THREE.WireframeGeometry2,
+    isWireframeGeometry2: true,
 
-	isWireframeGeometry2: true,
+    copy: function(source) {
+      // todo
 
-	copy: function ( source ) {
-
-		// todo
-
-		return this;
-
-	}
-
-} );
+      return this;
+    }
+  }
+);
