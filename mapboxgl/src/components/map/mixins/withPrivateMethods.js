@@ -64,6 +64,7 @@ export default {
           return new Promise(resolve => {
             const map = new mapboxgl.Map({
               ...this._props,
+              preserveDrawingBuffer: true, //特别注意，打印的时候必须启动该配置项
               container: this.$refs.container,
               style: this.mapStyle
             });
