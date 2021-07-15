@@ -1,6 +1,14 @@
 @import '../../../util/style/mixins/mixins.scss';
 @import '../../../util/style/theme/theme.scss';
 
+.mapboxgl-popup-content {
+  background-color: $popup-background !important;
+}
+
+.mapboxgl-popup-header {
+  background-color: $popup-background !important;
+}
+
 $popover-prefix-cls: $ant-prefix + "-popover";
 
 .#{popover-prefix-cls} {
@@ -52,7 +60,7 @@ $popover-prefix-cls: $ant-prefix + "-popover";
   }
 
   &-inner {
-    background-color: $popover-bg;
+    background-color: $popover-background;
     background-clip: padding-box;
     border-radius: $border-radius-base;
     box-shadow: $box-shadow-base;

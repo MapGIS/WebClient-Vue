@@ -34,11 +34,12 @@
 <script>
 import { setTheme } from "../../util/style/theme/set-theme";
 import BlockCheckBox from "./SettingDrawer/BlockCheckbox";
+
 import light from "./SettingDrawer/style/light.svg";
 import dark from "./SettingDrawer/style/dark.svg";
 
 export default {
-  name: "mapgis-ui-layout-pro",
+  name: "mapgis-ui-layout-pro-setting",
   components: { BlockCheckBox },
   props: {
     headStyle: { padding: "0px" },
@@ -53,13 +54,13 @@ export default {
       themes: [
         {
           key: "light",
-          url: light,
-          title: "浅色"
+          url: require("./SettingDrawer/style/light.svg"),
+          title: "浅色主题"
         },
         {
           key: "dark",
-          url: dark,
-          title: "黑暗"
+          url: require("./SettingDrawer/style/dark.svg"),
+          title: "黑暗主题"
         }
       ]
     };
