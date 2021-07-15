@@ -1,46 +1,40 @@
 <template>
-  <mapgis-ui-card
-    v-show="visible"
-    :style="outStyle"
-    title="设置专题图"
-    class="mapgis-mvt-theme-card"
-  >
-    <a slot="extra" @click="handleClose">x</a>
+  <div>
     <ThemePanel
-      :data-source="dataSource"
-      :fields="fields"
-      :colors="colors"
-      :dataType="dataType"
-      :checkBoxArr="checkBoxArr"
-      @change="$_selectChange"
-      @checked="$_checked"
-      @gradientChange="$_gradientChange"
-      @lineColorChanged="$_lineColorChanged"
-      @opacityChanged="$_opacityChanged"
-      @oneColorChanged="$_oneColorChanged"
-      @radiusChanged="$_radiusChanged"
-      @lineWidthChanged="$_lineWidthChanged"
+        :data-source="dataSource"
+        :fields="fields"
+        :colors="colors"
+        :dataType="dataType"
+        :checkBoxArr="checkBoxArr"
+        @change="$_selectChange"
+        @checked="$_checked"
+        @gradientChange="$_gradientChange"
+        @lineColorChanged="$_lineColorChanged"
+        @opacityChanged="$_opacityChanged"
+        @oneColorChanged="$_oneColorChanged"
+        @radiusChanged="$_radiusChanged"
+        @lineWidthChanged="$_lineWidthChanged"
     ></ThemePanel>
     <mapgis-vector-layer
-      v-if="showVector"
-      :layer="layerVector"
-      :layer-id="layerVectorId"
-      :source="sourceVector"
-      :source-id="sourceVectorId"
+        v-if="showVector"
+        :layer="layerVector"
+        :layer-id="layerVectorId"
+        :source="sourceVector"
+        :source-id="sourceVectorId"
     >
     </mapgis-vector-layer>
-  </mapgis-ui-card>
+  </div>
 </template>
 
 <script>
-import { UniqueThemeLayer, ThemeStyle } from "@mapgis/webclient-es6-mapboxgl";
-import { MRFS } from "@mapgis/webclient-es6-service";
+import {UniqueThemeLayer, ThemeStyle} from "@mapgis/webclient-es6-mapboxgl"
+import {MRFS} from "@mapgis/webclient-es6-service"
 import ThemePanel from "./ThemePanel";
 
-const { FeatureService } = MRFS;
+const {FeatureService} = MRFS;
 
 function gradientColor(startColor, endColor, step) {
-  let startRGB = colorRgb(startColor); //转换为rgb数组模式
+  let startRGB = colorRgb(startColor);//转换为rgb数组模式
   let startR = startRGB[0];
   let startG = startRGB[1];
   let startB = startRGB[2];
@@ -50,22 +44,14 @@ function gradientColor(startColor, endColor, step) {
   let endG = endRGB[1];
   let endB = endRGB[2];
 
-  let sR = (endR - startR) / step; //总差值
+  let sR = (endR - startR) / step;//总差值
   let sG = (endG - startG) / step;
   let sB = (endB - startB) / step;
 
   let colorArr = [];
   for (let i = 0; i < step; i++) {
     //计算每一步的hex值
-    let hex = colorHex(
-      "rgb(" +
-        parseInt(sR * i + startR) +
-        "," +
-        parseInt(sG * i + startG) +
-        "," +
-        parseInt(sB * i + startB) +
-        ")"
-    );
+    let hex = colorHex('rgb(' + parseInt((sR * i + startR)) + ',' + parseInt((sG * i + startG)) + ',' + parseInt((sB * i + startB)) + ')');
     colorArr.push(hex);
   }
   return colorArr;
@@ -92,7 +78,7 @@ function colorRgb(sColor) {
   } else {
     return sColor;
   }
-}
+};
 
 // 将rgb表示方式转换为hex表示方式
 function colorHex(rgb) {
@@ -103,7 +89,7 @@ function colorHex(rgb) {
     let strHex = "#";
     for (let i = 0; i < aColor.length; i++) {
       let hex = Number(aColor[i]).toString(16);
-      hex = hex < 10 ? 0 + "" + hex : hex; // 保证每个rgb的值为2位
+      hex = hex < 10 ? 0 + '' + hex : hex;// 保证每个rgb的值为2位
       if (hex === "0") {
         hex += hex;
       }
@@ -120,7 +106,7 @@ function colorHex(rgb) {
     } else if (aNum.length === 3) {
       let numHex = "#";
       for (let i = 0; i < aNum.length; i += 1) {
-        numHex += aNum[i] + aNum[i];
+        numHex += (aNum[i] + aNum[i]);
       }
       return numHex;
     }
@@ -136,19 +122,6 @@ export default {
     ThemePanel
   },
   props: {
-    outStyle: {
-      type: Object,
-      default: () => {
-        return {
-          left: "10px",
-          top: "10px"
-        };
-      }
-    },
-    visible: {
-      type: Boolean,
-      default: false
-    },
     baseUrl: {
       type: String
     },
@@ -158,10 +131,6 @@ export default {
     sourceLayer: {
       type: String
     }
-  },
-  model: {
-    prop: "visible",
-    event: "change-visible"
   },
   data() {
     return {
@@ -177,25 +146,47 @@ export default {
       showVector: false,
       startColor: "#FFFFFF",
       endColor: "#FF0000",
-      sourceVectorId: "vector_source_id",
-      layerVectorId: "china_bound_id",
+      sourceVectorId: 'unique_theme_source',
+      layerVectorId: 'unique_theme_layer',
       sourceVector: {
-        type: "geojson",
+        type: 'geojson',
         data: undefined
       },
-      layerVector: {}
-    };
+      layerVector: {},
+      showLayer: true
+    }
+  },
+  watch:{
+    baseUrl:{
+      handler:function () {
+        this.$_getFromGeoJSON();
+      }
+    },
+    sourceId: {
+      handler:function () {
+        if(!this.sourceLayer){
+          throw new Error("sourceLayer不能为空！");
+        }else {
+          this.$_getFromSource();
+        }
+      }
+    }
   },
   mounted() {
     if (this.sourceId && this.sourceLayer) {
       this.$_getFromSource();
-    } else {
+    } else if(this.baseUrl) {
       this.$_getFromGeoJSON();
     }
   },
   methods: {
-    handleClose() {
-      this.$emit("change-visible", false);
+    toggleLayer(){
+      this.$_toggleLayer();
+    },
+    $_toggleLayer(){
+      let show = this.showLayer ? "none" : "visible";
+      this.showLayer = !this.showLayer;
+      this.map.setLayoutProperty(this.layerVectorId, 'visibility', show);
     },
     $_lineWidthChanged(lineWidth) {
       this.$set(this.layerVector.paint, "line-width", lineWidth);
@@ -219,7 +210,7 @@ export default {
       }
       if (this.originColors.colors.hasOwnProperty("stops")) {
         colors = {};
-        if ((index !== null) & (index !== undefined)) {
+        if(index !== null & index !== undefined){
           this.$set(this.originColors.colors.stops[index], 1, color);
         }
         let stops = [];
@@ -231,18 +222,15 @@ export default {
         colors.stops = stops;
         colors.property = this.originColors.colors.property;
       } else if (this.originColors.colors.indexOf("match") === 0) {
-        if ((index !== null) & (index !== undefined)) {
+        if(index !== null & index !== undefined){
           this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
         }
         this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
-        colors = [];
+        colors = []
         colors.push(this.originColors.colors[0], this.originColors.colors[1]);
         for (let i = 0; i < this.originColors.checkArr.length; i++) {
           if (this.originColors.checkArr[i]) {
-            colors.push(
-              this.originColors.colors[(i + 1) * 2],
-              this.originColors.colors[(i + 1) * 2 + 1]
-            );
+            colors.push(this.originColors.colors[(i + 1) * 2], this.originColors.colors[(i + 1) * 2 + 1]);
           }
         }
         colors.push("#FFF");
@@ -253,7 +241,7 @@ export default {
       let colors = this.$_getColorsFromOrigin(index, color);
       switch (this.dataType) {
         case "fill":
-          this.layerVector.paint["fill-color"] = colors;
+          this.layerVector.paint["fill-color"] = colors
           break;
         case "circle":
           this.layerVector.paint["circle-color"] = colors;
@@ -286,10 +274,10 @@ export default {
       switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-outline-color"] = e;
-          break;
+          break
         case "circle":
           this.layerVector.paint["circle-stroke-color"] = e;
-          break;
+          break
       }
       this.showVector = true;
     },
@@ -297,12 +285,7 @@ export default {
       this.showVector = false;
       this.startColor = startColor;
       this.endColor = endColor;
-      let colors = this.$_getColors(
-        this.dataSource,
-        startColor,
-        endColor,
-        this.selectKey
-      );
+      let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false,true);
       switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-color"] = colors;
@@ -317,9 +300,8 @@ export default {
       this.showVector = true;
     },
     $_checked(checkBoxArr, index, checkColor) {
-      let colors = {},
-        newColors,
-        next = false;
+      let colors = {}, newColors,
+          next = false;
       if (this.originColors.colors.hasOwnProperty("stops")) {
         newColors = [];
         for (let i = 0; i < checkBoxArr.length; i++) {
@@ -336,15 +318,10 @@ export default {
         }
         colors.stops = newColors;
         colors.property = this.originColors.colors.property;
-        console.log("this.originColors", this.originColors);
-        console.log("colors", colors);
         next = colors.stops.length > 0;
       } else {
         newColors = [];
-        newColors.push(
-          this.originColors.colors[0],
-          this.originColors.colors[1]
-        );
+        newColors.push(this.originColors.colors[0], this.originColors.colors[1]);
         for (let i = 0; i < checkBoxArr.length; i++) {
           if (checkBoxArr[i]) {
             if (this.originColors.colors[(i + 1) * 2]) {
@@ -366,9 +343,6 @@ export default {
         }
         colors = newColors;
         next = colors.length > 2;
-        console.log("checkArr", checkBoxArr);
-        console.log("colors", colors);
-        console.log("this.originColors", this.originColors);
       }
 
       this.showVector = false;
@@ -391,17 +365,12 @@ export default {
       if (value !== "") {
         let datas = this.$_getData(this.dataCopy.features, value);
         this.dataSource = datas;
-        let colors = this.$_getColors(
-          this.dataSource,
-          this.startColor,
-          this.endColor,
-          value
-        );
+        let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
         this.checkBoxArr = this.originColors.checkArr;
         this.selectKey = value;
-        if (this.checkBoxArr.indexOf(true) < 0) {
+        if(this.checkBoxArr.indexOf(true) < 0){
           this.showVector = false;
-        } else {
+        }else {
           this.showVector = false;
           switch (this.dataType) {
             case "fill":
@@ -419,24 +388,19 @@ export default {
       }
     },
     $_getData(features, value) {
-      let datas = [],
-        isSort = true;
+      let datas = [], isSort = true;
       for (let i = 0; i < features.length; i++) {
         if (datas.indexOf(features[i].properties[value]) < 0) {
-          if (typeof features[i].properties[value] !== "number") {
+          if (typeof features[i].properties[value] !== 'number') {
             isSort = false;
           }
-          if (
-            (features[i].properties[value] ||
-              typeof features[i].properties[value] === "number") &&
-            features[i].properties[value] !== ""
-          ) {
+          if ((features[i].properties[value] || typeof features[i].properties[value] === 'number') && features[i].properties[value] !== "") {
             datas.push(features[i].properties[value]);
           }
         }
       }
       if (isSort) {
-        datas.sort(function(a, b) {
+        datas.sort(function (a, b) {
           return a - b;
         });
       }
@@ -444,33 +408,27 @@ export default {
     },
     $_getFields(features) {
       let fields = [];
-      Object.keys(features.properties).forEach(function(key) {
+      Object.keys(features.properties).forEach(function (key) {
         fields.push(key);
       });
       return fields;
     },
-    $_getColors(dataSource, startColor, endColor, key, noColor) {
+    $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
       let colors;
-      if (this.allOriginColors.hasOwnProperty(key)) {
+      if(this.allOriginColors.hasOwnProperty(key) && !clearColor){
         this.originColors = this.allOriginColors[key];
         colors = this.$_getColorsFromOrigin();
-      } else {
-        let iSString = false,
-          checkArr = [];
+      }else{
+        let iSString = false, checkArr = [];
         for (let i = 0; i < dataSource.length; i++) {
-          if (typeof dataSource[i] === "string") {
+          if (typeof dataSource[i] === 'string') {
             iSString = true;
             break;
           }
         }
-        let gradient = new gradientColor(
-            startColor,
-            endColor,
-            dataSource.length
-          ),
-          colorList = [];
+        let gradient = new gradientColor(startColor, endColor, dataSource.length),colorList = [];
         if (iSString) {
-          colors = ["match", ["get", key]];
+          colors = ['match', ['get', key]];
           for (let i = 0; i < dataSource.length; i++) {
             if (dataSource[i] !== "") {
               colors.push(dataSource[i]);
@@ -482,8 +440,8 @@ export default {
           colors.push("#FFFFFF");
         } else {
           colors = {
-            property: key,
-            stops: []
+            "property": key,
+            "stops": []
           };
           for (let i = 0; i < dataSource.length; i++) {
             colors.stops.push([dataSource[i], gradient[i]]);
@@ -495,7 +453,7 @@ export default {
           checkArr: checkArr,
           colors: colors,
           colorList: colorList
-        };
+        }
         this.allOriginColors[key] = this.originColors;
       }
       if (!noColor) {
@@ -510,68 +468,53 @@ export default {
       this.fields = this.$_getFields(geojson.features[0]);
       this.selectKey = this.fields[0];
       this.dataSource = this.$_getData(geojson.features, this.selectKey);
-      let fillColors = this.$_getColors(
-        this.dataSource,
-        "#FFFFFF",
-        "#FF0000",
-        this.selectKey
-      );
+      let fillColors = this.$_getColors(this.dataSource, "#FFFFFF", "#FF0000", this.selectKey);
       this.checkBoxArr = this.originColors.checkArr;
-      if (
-        geojson.features.length > 0 &&
-        (geojson.features[0].geometry.type === "MultiPolygon" ||
-          geojson.features[0].geometry.type === "Polygon")
-      ) {
-        this.dataType = "fill";
+      if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
+        this.dataType = 'fill';
         this.layerVector = {
-          type: "fill",
-          source: "vector_source_id", //必须和上面的layerVectorId一致
+          type: 'fill',
+          source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
-            "fill-antialias": true, //抗锯齿，true表示针对边界缝隙进行填充
-            "fill-color": fillColors, //颜色
-            "fill-opacity": 1.0, //透明度
-            "fill-outline-color": "#000" //边线颜色，没错,确实没有边线宽度这个选项
+            'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
+            'fill-color': fillColors, //颜色
+            'fill-opacity': 1.0, //透明度
+            'fill-outline-color': '#000' //边线颜色，没错,确实没有边线宽度这个选项
           }
-        };
-      } else if (
-        geojson.features.length > 0 &&
-        (geojson.features[0].geometry.type === "MultiPoint" ||
-          geojson.features[0].geometry.type === "Point")
-      ) {
-        this.dataType = "circle";
+        }
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
+        this.dataType = 'circle';
         this.layerVector = {
-          type: "circle",
-          source: "vector_source_id", //必须和上面的layerVectorId一致
+          type: 'circle',
+          source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
-            "circle-color": fillColors, //颜色
-            "circle-opacity": 1.0, //透明度
-            "circle-stroke-opacity": 1.0, //透明度
-            "circle-radius": 12.0, //透明度
-            "circle-stroke-color": "#000", //边线颜色，没错,确实没有边线宽度这个选项
-            "circle-stroke-width": 1
+            'circle-color': fillColors, //颜色
+            'circle-opacity': 1.0, //透明度
+            'circle-stroke-opacity': 1.0, //透明度
+            'circle-radius': 12.0, //透明度
+            'circle-stroke-color': '#000',//边线颜色，没错,确实没有边线宽度这个选项
+            'circle-stroke-width': 1
           }
-        };
-      } else if (
-        geojson.features.length > 0 &&
-        geojson.features[0].geometry.type === "LineString"
-      ) {
-        this.dataType = "line";
+        }
+      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+        this.dataType = 'line';
         this.layerVector = {
-          type: "line",
-          source: "vector_source_id", //必须和上面的layerVectorId一致
+          type: 'line',
+          source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
-            "line-color": fillColors, //颜色
-            "line-opacity": 1.0, //透明度
-            "line-width": 5
+            'line-color': fillColors, //颜色
+            'line-opacity': 1.0, //透明度
+            'line-width': 5
           }
-        };
-        console.log("layerVector", this.layerVector);
+        }
       }
+      this.$emit("loaded",this);
     },
     $_getFromSource() {
-      let features = this.map.queryRenderedFeatures({
-        layers: [this.sourceLayer]
-      });
+      let features = this.map.queryRenderedFeatures({layers: [this.sourceLayer]});
+      if(features.length === 0){
+        return;
+      }
       let featureCollection = {
         features: [],
         type: "FeatureCollection"
@@ -587,27 +530,16 @@ export default {
     },
     $_getFromGeoJSON() {
       let vm = this;
-      FeatureService.get(
-        this.baseUrl,
-        function(result) {
-          result = JSON.parse(result);
-          console.log("result", result);
-          vm.$_initTheme(result);
-        },
-        function(e) {
-          console.log(e);
-        }
-      );
+      FeatureService.get(this.baseUrl, function (result) {
+        result = JSON.parse(result);
+        vm.$_initTheme(result);
+      }, function (e) {
+        console.log(e);
+      });
     }
   }
-};
+}
 </script>
 
-<style>
-.mapgis-mvt-theme-card {
-  position: absolute;
-  width: 100%;
-  z-index: 1000;
-  overflow-y: scroll;
-}
+<style scoped>
 </style>
