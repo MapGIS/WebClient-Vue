@@ -142,7 +142,7 @@ import {
   addGisCurrent
 } from "../../../../util/emit/upload";
 
-import UploadMixin from '../../../../mixin/UploaderMixin';
+import UploadMixin from "../../../../mixin/UploaderMixin";
 
 let globalCurrentFiles = [];
 let self;
@@ -222,7 +222,6 @@ export default {
         accept: ACCEPT_CONFIG.csv
       },
       panelShow: false, // 选择文件后，展示上传panel
-      clickFlag: -1,
       timeId: -1
     };
   },
@@ -250,12 +249,12 @@ export default {
     params() {
       if (
         this.$refs.uploadBtn &&
-        this.$refs.uploadBtnFolder &&
-        this.$store.state.upload.clickFlag > this.clickFlag
+        this.$refs.uploadBtnFolder
+        // && this.$store.state.upload.clickFlag > this.clickFlag
       ) {
-        this.clickFlag = this.$store.state.upload.clickFlag;
-        let isFolder = this.$store.state.upload.isFolder;
-        let type = this.$store.state.upload.param.type;
+        // this.clickFlag = this.$store.state.upload.clickFlag;
+        let { isFolder, param } = this;
+        let type = param.type;
         if (isFolder) {
           document.getElementById("global-uploader-btn-folder").click();
         } else {
@@ -278,28 +277,30 @@ export default {
         }
       }
 
-      return this.$store.state.upload.param;
+      return this.param;
     },
     visible() {
       if (this.$refs.uploadDiv) {
-        if (this.$store.state.upload.visible) {
+        if (this.visible) {
           document.getElementById("global-uploader").style.zIndex = 100;
         } else {
           document.getElementById("global-uploader").style.zIndex = -100;
         }
       }
-      return this.$store.state.upload.visible;
+      return this.visible;
     }
   },
   methods: {
     updatePrecess() {
-      let uploadingCount = this.$store.state.upload.count;
-      let uploadedCount = this.$store.state.complete.uploadCount;
+      let uploadingCount = this.count;
+      let uploadedCount = this.uploadCount;
       let percent = (uploadedCount / (uploadedCount + uploadingCount)) * 100;
       this.percent = percent > 100 ? 100 : percent < 0 ? 0 : percent;
     },
     getSetting() {
-      let mode = this.$store.state.setting.mode;
+      // @date 2021/07/16 潘卓然 后面检查一下
+      // let mode = this.$store.state.setting.mode;
+      let mode = "mapgis";
       if (mode === "mapgis") {
         let serveMapgisIp = window.sessionStorage.getItem("server_mapgis_ip");
         let { mapgis } = this.$store.state.setting;
@@ -328,8 +329,8 @@ export default {
     },
     onFileProgress(rootFile, file, chunk) {
       changeUploadProcess({ process: file.progress() });
-      let uploadingCount = self.$store.state.upload.count;
-      let uploadedCount = self.$store.state.complete.uploadCount;
+      let uploadingCount = self.count;
+      let uploadedCount = self.uploadCount;
       self.percent = (uploadedCount / (uploadedCount + uploadingCount)) * 100;
       console.log(
         "上传中" +
@@ -356,10 +357,10 @@ export default {
       // 如果服务端返回需要合并
       if (res.data.needMerge) {
         console.log("need meger", res);
-        let type = self.$store.state.upload.param.type;
-        let isCache = self.$store.state.upload.param.isCache;
+        let type = self.param.type;
+        let isCache = self.param.isCache;
         let gisFormat = type === "tiff" ? "raster" : "vector";
-        let formdata = {
+        let formdata = { // @date 2021/07/16
           folderDir: this.$store.state.path.current.uri,
           totalSize: file.size,
           type: file.fileType,
@@ -419,7 +420,7 @@ export default {
     },
     importFile(uri, name) {
       let self = this;
-      let isCache = this.$store.state.upload.param.isCache;
+      let isCache = this.param.isCache;
       dirnavigation(encodeURI(uri))
         .then(res => {
           if (res.status === 200) {
