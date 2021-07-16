@@ -1,22 +1,49 @@
 <template>
-  <mapgis-ui-card
-    size="small"
-    v-show="visible"
-    :style="outStyle"
-    class="mapgis-mvt-legend-card"
+  <mapgis-ui-modal
+    title="打印设置"
+    :maskClosable="maskClosable"
+    v-model="visible"
+    :footer="null"
+    @cancel="handleClose"
   >
-    <span slot="extra">
-      <mapgis-ui-iconfont
-        class="mapgis-mvt-legend-card-toolbar"
-        type="mapgis-yingyan"
-      />
-      <mapgis-ui-iconfont
-        class="mapgis-mvt-legend-card-toolbar"
-        type="mapgis-dayinP"
+    <mapgis-ui-spin :spinning="loading">
+      <mapgis-ui-row>
+        <mapgis-ui-col span="6">
+          <span> 主标题 </span>
+        </mapgis-ui-col>
+        <mapgis-ui-col span="18">
+          <mapgis-ui-input v-model="info.baseinfo.title" />
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+      <mapgis-ui-row>
+        <mapgis-ui-col span="6">
+          <span> 作者 </span>
+        </mapgis-ui-col>
+        <mapgis-ui-col span="18">
+          <mapgis-ui-input v-model="info.baseinfo.author" />
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+      <mapgis-ui-row>
+        <mapgis-ui-col span="6">
+          <span> 时间 </span>
+        </mapgis-ui-col>
+        <mapgis-ui-col span="18">
+          <mapgis-ui-input v-model="info.baseinfo.date" />
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+      <mapgis-ui-divider />
+      <mapgis-ui-button
         @click="print"
-      />
-    </span>
-  </mapgis-ui-card>
+        class="mapgis-brower-print-button"
+        type="primary"
+      >
+        <mapgis-ui-iconfont
+          class="mapgis-mvt-legend-card-toolbar"
+          type="mapgis-dayinP"
+        />打印出图
+      </mapgis-ui-button>
+    </mapgis-ui-spin>
+  </mapgis-ui-modal>
 </template>
 
 <script>
@@ -46,6 +73,8 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      maskClosable: false,
       info: {
         baseinfo: {
           title: "地图标题",
@@ -67,9 +96,12 @@ export default {
     handleClose() {
       this.$emit("change-visible", false);
     },
-    handlePrintEnd() {},
+    handlePrintEnd() {
+      this.loading = false;
+    },
     print() {
       const { map, info } = this;
+      this.loading = true;
       printCanvas(map, this.handlePrintEnd, info);
     }
   }
@@ -77,32 +109,7 @@ export default {
 </script>
 
 <style>
-.mapgis-mvt-legend-card {
-  position: absolute;
-  z-index: 1000;
-  overflow-y: scroll;
-  width: fit-content;
-}
-
-.mapgis-mvt-legend-card-toolbar {
-  margin-right: 6px !important;
-}
-
-.mapgis-mvt-legend-row {
-  display: inline;
-}
-
-.mapgis-mvt-legend-image {
-  height: 16px;
-  width: 16px;
-  margin-right: 12px;
-}
-
-span.mapgis-mvt-legend-label {
-  width: 120px;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+.mapgis-brower-print-button {
+  width: 100%;
 }
 </style>

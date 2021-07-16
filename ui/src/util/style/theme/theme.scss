@@ -161,6 +161,7 @@ $grid-columns: 24;
 $grid-gutter-width: 0;
 
 // Layout
+$layout-background: var(--layout-background);
 $layout-body-background: #f0f2f5;
 $layout-header-background: #001529;
 $layout-footer-background: $layout-body-background;
@@ -413,7 +414,8 @@ $tooltip-arrow-color: $tooltip-bg;
 
 // Popover
 // Popover body background color
-$popover-bg: $component-background;
+$popover-background: var(--popover-background);
+$popover-bg: $popover-background;
 // Popover text color
 $popover-color: $text-color;
 // Popover maximum width
@@ -515,12 +517,18 @@ $statistic-font-family: $font-family;
 $rate-star-bg: $border-color-split;
 
 // Card
+$card-background: var(--card-background);
 $card-head-color: $heading-color;
-$card-head-background: transparent;
+$card-head-background: $card-background;
+$card-body-background: $card-background;
+$card-head-padding: 16px;
+$card-inner-head-padding: 12px;
+$card-padding-base: 24px;
 $card-actions-background: $background-color-light;
 $card-skeleton-bg: #cfd8dc;
-$card-background: $component-background;
+$card-background: $card-background;
 $card-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+$card-radius: $border-radius-sm;
 
 // Comment
 $comment-author-name-color: $text-color-secondary;
@@ -714,5 +722,9 @@ $screen-lg-max: ($screen-xl-min - 1px);
 $screen-xl-max: ($screen-xxl-min - 1px);
 
 // Drawer
+$drawer-background: var(--drawer-background);
 $drawer-header-padding: 16px 24px;
 $drawer-body-padding: 24px;
+
+// Mapbox Popup
+$popup-background: var(--popup-background);

@@ -4,6 +4,14 @@
 @include b(card) {
   $card-prefix: &;
 
+  @include e(body, '-') {
+    background-color: $card-head-background;
+  }
+
+  @include e(head, '-') {
+    background-color: $card-body-background;
+  }  
+
   @include e(actions, '-') {
     background: $card-actions-background;
     > li {

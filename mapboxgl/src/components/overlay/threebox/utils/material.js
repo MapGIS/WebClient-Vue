@@ -9,43 +9,42 @@ var utils = require("../utils/utils.js");
 var THREE = require("../three.js");
 
 var defaults = {
-	material: 'MeshBasicMaterial',
-	color: 'black',
-	opacity: 1
+  material: "MeshBasicMaterial",
+  color: "black",
+  opacity: 1
 };
 
+function material(options) {
+  var output;
 
-function material (options) {
+  if (options) {
+    options = utils._validate(options, defaults);
 
-	var output;
+    // check if user provided material object
+    if (options.material && options.material.isMaterial)
+      output = options.material;
+    // check if user provided any material parameters. create new material object based on that.
+    else if (options.material || options.color || options.opacity) {
+      output = new THREE[options.material]({
+        color: options.color,
+        transparent: options.opacity < 1
+      });
+    }
 
-	if (options) {
+    // if neither, return default material
+    else output = generateDefaultMaterial();
 
-		options = utils._validate(options, defaults);
+    output.opacity = options.opacity;
+  }
 
-		// check if user provided material object
-		if (options.material && options.material.isMaterial) output = options.material;
+  // if no options, return default
+  else output = generateDefaultMaterial();
 
-		// check if user provided any material parameters. create new material object based on that.
-		else if (options.material || options.color || options.opacity){
-		    output = new THREE[options.material]({color: options.color, transparent: options.opacity<1});
-		}
+  function generateDefaultMaterial() {
+    return new THREE[defaults.material]({ color: defaults.color });
+  }
 
-		// if neither, return default material
-		else output = generateDefaultMaterial();
-
-		output.opacity = options.opacity;
-
-	}
-
-	// if no options, return default
-	else output = generateDefaultMaterial();
-
-	function generateDefaultMaterial(){
-		return new THREE[defaults.material]({color: defaults.color});
-	}
-
-	return output
+  return output;
 }
 
 module.exports = exports = material;

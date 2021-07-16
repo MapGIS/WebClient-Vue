@@ -12,195 +12,195 @@ var Object3D = require("./objects/Object3D.js");
 var line = require("./objects/line.js");
 var tube = require("./objects/tube.js");
 
-function Threebox(map, glContext, options){
-
-    this.init(map, glContext, options);
-
-};
+function Threebox(map, glContext, options) {
+  this.init(map, glContext, options);
+}
 
 Threebox.prototype = {
+  repaint: function() {
+    this.map.repaint = true;
+  },
 
-    repaint: function(){
-        this.map.repaint = true;
-    },
+  init: function(map, glContext, options) {
+    this.map = map;
 
-    init: function (map, glContext, options){
+    // Set up a THREE.js scene
+    this.renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      canvas: map.getCanvas(),
+      context: glContext
+    });
 
-        this.map = map;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.autoClear = false;
 
-        // Set up a THREE.js scene
-        this.renderer = new THREE.WebGLRenderer( { 
-            alpha: true, 
-            antialias: true,
-            canvas: map.getCanvas(),
-            context: glContext
-        } );
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(
+      28,
+      window.innerWidth / window.innerHeight,
+      0.000000000001,
+      Infinity
+    );
+    //------------
+    const light1 = new THREE.DirectionalLight(0xffffff, 0.5);
+    light1.position.set(1, 1, 1);
+    this.scene.add(light1);
 
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.autoClear = false;
+    const light2 = new THREE.DirectionalLight(0xffffff, 1.5);
+    light2.position.set(0, -1, 0);
+    this.scene.add(light2);
 
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 0.000000000001, Infinity);
-//------------ 
-        const light1 = new THREE.DirectionalLight( 0xffffff, 0.5 );
-    	light1.position.set( 1, 1, 1 );
-		this.scene.add( light1 );
+    // this.scene.background = new THREE.Color( 0x050505 );
+    this.scene.fog = new THREE.Fog(0x050505, 2000, 3500);
+    this.scene.add(new THREE.AmbientLight(0x444444));
+    //------------
 
-		const light2 = new THREE.DirectionalLight( 0xffffff, 1.5 );
-		light2.position.set( 0, - 1, 0 );
-		this.scene.add( light2 );
+    // The CameraSync object will keep the Mapbox and THREE.js camera movements in sync.
+    // It requires a world group to scale as we zoom in. Rotation is handled in the camera's
+    // projection matrix itself (as is field of view and near/far clipping)
+    // It automatically registers to listen for move events on the map so we don't need to do that here
+    this.world = new THREE.Group();
+    this.scene.add(this.world);
 
-        // this.scene.background = new THREE.Color( 0x050505 );
-        this.scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
-        this.scene.add( new THREE.AmbientLight( 0x444444 ) );        
-//------------ 
+    this.cameraSync = new CameraSync(this.map, this.camera, this.world);
 
-        // The CameraSync object will keep the Mapbox and THREE.js camera movements in sync.
-        // It requires a world group to scale as we zoom in. Rotation is handled in the camera's
-        // projection matrix itself (as is field of view and near/far clipping)
-        // It automatically registers to listen for move events on the map so we don't need to do that here
-        this.world = new THREE.Group();
-        this.scene.add(this.world);
+    //raycaster for mouse events
+    this.raycaster = new THREE.Raycaster();
 
-        this.cameraSync = new CameraSync(this.map, this.camera, this.world);
+    // apply starter options
 
-        //raycaster for mouse events
-        this.raycaster = new THREE.Raycaster();
+    this.options = utils._validate(options || {}, defaultOptions);
+    if (this.options.defaultLights) this.defaultLights();
+  },
 
-        // apply starter options
-        
-        this.options = utils._validate(options || {}, defaultOptions);
-        if (this.options.defaultLights) this.defaultLights();
-        
-    },
+  // Objects
 
-    // Objects
+  objects: new Objects(AnimationManager),
 
-    objects: new Objects(AnimationManager),
+  sphere: sphere,
 
-    sphere: sphere,
+  line: line,
 
-    line: line,
+  tube: function(obj) {
+    return tube(obj, this.world);
+  },
 
-    tube: function(obj){
-        return tube(obj, this.world)
-    },
+  Object3D: function(obj, o) {
+    return Object3D(obj, o);
+  },
 
-    Object3D: function(obj, o) {
-        return Object3D(obj, o)
-    },
+  loadObj: loadObj,
 
-    loadObj: loadObj,
+  // Material
 
+  material: function(o) {
+    return material(o);
+  },
 
-    // Material
+  utils: utils,
 
-    material: function(o){
-        return material(o)
-    },
+  projectToWorld: function(coords) {
+    return this.utils.projectToWorld(coords);
+  },
 
-    utils: utils,
+  unprojectFromWorld: function(v3) {
+    return this.utils.unprojectFromWorld(v3);
+  },
 
-    projectToWorld: function(coords) {
-        return this.utils.projectToWorld(coords)
-    },
+  projectedUnitsPerMeter: function(lat) {
+    return this.utils.projectedUnitsPerMeter(lat);
+  },
 
-    unprojectFromWorld: function(v3) {
-        return this.utils.unprojectFromWorld(v3)
-    },
+  queryRenderedFeatures: function(point) {
+    var mouse = new THREE.Vector2();
 
-    projectedUnitsPerMeter: function(lat) {
-        return this.utils.projectedUnitsPerMeter(lat)
-    },
+    // // scale mouse pixel position to a percentage of the screen's width and height
+    mouse.x = (point.x / this.map.transform.width) * 2 - 1;
+    mouse.y = 1 - (point.y / this.map.transform.height) * 2;
 
-    queryRenderedFeatures: function(point){
+    this.raycaster.setFromCamera(mouse, this.camera);
 
-        var mouse = new THREE.Vector2();
-        
-        // // scale mouse pixel position to a percentage of the screen's width and height
-        mouse.x = ( point.x / this.map.transform.width ) * 2 - 1;
-        mouse.y = 1 - ( point.y / this.map.transform.height ) * 2;
+    // calculate objects intersecting the picking ray
+    var intersects = this.raycaster.intersectObjects(this.world.children, true);
 
-        this.raycaster.setFromCamera(mouse, this.camera);
+    return intersects;
+  },
 
-        // calculate objects intersecting the picking ray
-        var intersects = this.raycaster.intersectObjects(this.world.children, true);
+  update: function() {
+    if (this.map.repaint) this.map.repaint = false;
 
-        return intersects
-    },
+    var timestamp = Date.now();
 
-    update: function() {
-        
-        if (this.map.repaint) this.map.repaint = false
+    // Update any animations
+    this.objects.animationManager.update(timestamp);
 
-        var timestamp = Date.now();
+    this.renderer.state.reset();
 
-        // Update any animations
-        this.objects.animationManager.update(timestamp);
-        
-        this.renderer.state.reset();
+    // Render the scene and repaint the map
+    this.renderer.render(this.scene, this.camera);
 
-        // Render the scene and repaint the map
-        this.renderer.render( this.scene, this.camera );
+    if (this.options.passiveRendering === false) this.map.triggerRepaint();
+  },
 
-        if (this.options.passiveRendering === false) this.map.triggerRepaint();
-    },
+  add: function(obj) {
+    this.world.add(obj);
+  },
 
-    add: function(obj) {
-        this.world.add(obj);
-    },
+  remove: function(obj) {
+    this.world.remove(obj);
+  },
 
-    remove: function(obj) {
-        this.world.remove(obj);
-    },
+  defaultLights: function() {
+    this.scene.add(new THREE.AmbientLight(0xffffff));
+    var sunlight = new THREE.DirectionalLight(0xffffff, 0.25);
+    sunlight.position.set(0, 80000000, 100000000);
+    sunlight.matrixWorldNeedsUpdate = true;
+    this.world.add(sunlight);
+  },
 
+  memory: function() {
+    return this.renderer.info.memory;
+  },
 
-    defaultLights: function(){
+  version: "0.3.0",
 
-        this.scene.add( new THREE.AmbientLight( 0xffffff ) );
-        var sunlight = new THREE.DirectionalLight(0xffffff, 0.25);
-        sunlight.position.set(0,80000000,100000000);
-        sunlight.matrixWorldNeedsUpdate = true;
-        this.world.add(sunlight);
+  // DEPRECATED METHODS
 
-    },
+  setupDefaultLights: function() {
+    console.warn(
+      '.setupDefaultLights() has been moved to a "defaultLights" option inside Threebox()'
+    );
+    this.defaultLights();
+  },
 
-    memory: function (){ return this.renderer.info.memory},
+  addAtCoordinate: function(obj, lnglat, options) {
+    console.warn(
+      "addAtCoordinate() has been deprecated. Check out the and threebox.add() Object.setCoords() methods instead."
+    );
 
-    version: '0.3.0',
+    obj = this.Object3D({ obj: obj });
 
-    // DEPRECATED METHODS
+    obj.setCoords(lnglat);
+    this.add(obj);
 
-    setupDefaultLights: function() {
-        console.warn('.setupDefaultLights() has been moved to a "defaultLights" option inside Threebox()')
-        this.defaultLights();
-    },
+    return obj;
+  },
 
-    addAtCoordinate: function(obj, lnglat, options) {
-        
-        console.warn('addAtCoordinate() has been deprecated. Check out the and threebox.add() Object.setCoords() methods instead.')
-        
-        obj = this.Object3D({obj:obj});
+  moveToCoordinate: function(obj, lnglat, options) {
+    console.warn(
+      "addAtCoordinate() has been deprecated. Check out the Object.setCoords() and threebox.add() methods instead."
+    );
 
-        obj.setCoords(lnglat)
-        this.add(obj);
+    if (!obj.setCoords) obj = this.Object3D(obj);
+    obj.setCoords(lnglat, options);
 
-        return obj;
-    },
-
-    moveToCoordinate: function(obj, lnglat, options) {
-        console.warn('addAtCoordinate() has been deprecated. Check out the Object.setCoords() and threebox.add() methods instead.')
-
-        if (!obj.setCoords) obj = this.Object3D(obj);
-        obj.setCoords(lnglat, options);
-
-        return obj;
-    }
-}
+    return obj;
+  }
+};
 
 var defaultOptions = {
-    defaultLights: false,
-    passiveRendering: true
-}
+  defaultLights: false,
+  passiveRendering: true
+};
 module.exports = exports = Threebox;
-

@@ -13,25 +13,21 @@
  */
 
 THREE.UniformsLib.line = {
-
-	linewidth: { value: 1 },
-	resolution: { value: new THREE.Vector2( 1, 1 ) },
-	dashScale: { value: 1 },
-	dashSize: { value: 1 },
-	gapSize: { value: 1 } // todo FIX - maybe change to totalSize
-
+  linewidth: { value: 1 },
+  resolution: { value: new THREE.Vector2(1, 1) },
+  dashScale: { value: 1 },
+  dashSize: { value: 1 },
+  gapSize: { value: 1 } // todo FIX - maybe change to totalSize
 };
 
-THREE.ShaderLib[ 'line' ] = {
+THREE.ShaderLib["line"] = {
+  uniforms: THREE.UniformsUtils.merge([
+    THREE.UniformsLib.common,
+    THREE.UniformsLib.fog,
+    THREE.UniformsLib.line
+  ]),
 
-	uniforms: THREE.UniformsUtils.merge( [
-		THREE.UniformsLib.common,
-		THREE.UniformsLib.fog,
-		THREE.UniformsLib.line
-	] ),
-
-	vertexShader:
-		`
+  vertexShader: `
 		#include <common>
 		#include <color_pars_vertex>
 		#include <fog_pars_vertex>
@@ -177,8 +173,7 @@ THREE.ShaderLib[ 'line' ] = {
 		}
 		`,
 
-	fragmentShader:
-		`
+  fragmentShader: `
 		uniform vec3 diffuse;
 		uniform float opacity;
 
@@ -237,155 +232,110 @@ THREE.ShaderLib[ 'line' ] = {
 		`
 };
 
-THREE.LineMaterial = function ( parameters ) {
+THREE.LineMaterial = function(parameters) {
+  THREE.ShaderMaterial.call(this, {
+    type: "LineMaterial",
 
-	THREE.ShaderMaterial.call( this, {
+    uniforms: THREE.UniformsUtils.clone(THREE.ShaderLib["line"].uniforms),
 
-		type: 'LineMaterial',
+    vertexShader: THREE.ShaderLib["line"].vertexShader,
+    fragmentShader: THREE.ShaderLib["line"].fragmentShader
+  });
 
-		uniforms: THREE.UniformsUtils.clone( THREE.ShaderLib[ 'line' ].uniforms ),
+  this.dashed = false;
 
-		vertexShader: THREE.ShaderLib[ 'line' ].vertexShader,
-		fragmentShader: THREE.ShaderLib[ 'line' ].fragmentShader
+  Object.defineProperties(this, {
+    color: {
+      enumerable: true,
 
-	} );
+      get: function() {
+        return this.uniforms.diffuse.value;
+      },
 
-	this.dashed = false;
+      set: function(value) {
+        this.uniforms.diffuse.value = value;
+      }
+    },
 
-	Object.defineProperties( this, {
+    linewidth: {
+      enumerable: true,
 
-		color: {
+      get: function() {
+        return this.uniforms.linewidth.value;
+      },
 
-			enumerable: true,
+      set: function(value) {
+        this.uniforms.linewidth.value = value;
+      }
+    },
 
-			get: function () {
+    dashScale: {
+      enumerable: true,
 
-				return this.uniforms.diffuse.value;
+      get: function() {
+        return this.uniforms.dashScale.value;
+      },
 
-			},
+      set: function(value) {
+        this.uniforms.dashScale.value = value;
+      }
+    },
 
-			set: function ( value ) {
+    dashSize: {
+      enumerable: true,
 
-				this.uniforms.diffuse.value = value;
+      get: function() {
+        return this.uniforms.dashSize.value;
+      },
 
-			}
+      set: function(value) {
+        this.uniforms.dashSize.value = value;
+      }
+    },
 
-		},
+    gapSize: {
+      enumerable: true,
 
-		linewidth: {
+      get: function() {
+        return this.uniforms.gapSize.value;
+      },
 
-			enumerable: true,
+      set: function(value) {
+        this.uniforms.gapSize.value = value;
+      }
+    },
 
-			get: function () {
+    resolution: {
+      enumerable: true,
 
-				return this.uniforms.linewidth.value;
+      get: function() {
+        return this.uniforms.resolution.value;
+      },
 
-			},
+      set: function(value) {
+        this.uniforms.resolution.value.copy(value);
+      }
+    }
+  });
 
-			set: function ( value ) {
-
-				this.uniforms.linewidth.value = value;
-
-			}
-
-		},
-
-		dashScale: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.dashScale.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashScale.value = value;
-
-			}
-
-		},
-
-		dashSize: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.dashSize.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.dashSize.value = value;
-
-			}
-
-		},
-
-		gapSize: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.gapSize.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.gapSize.value = value;
-
-			}
-
-		},
-
-		resolution: {
-
-			enumerable: true,
-
-			get: function () {
-
-				return this.uniforms.resolution.value;
-
-			},
-
-			set: function ( value ) {
-
-				this.uniforms.resolution.value.copy( value );
-
-			}
-
-		}
-
-	} );
-
-	this.setValues( parameters );
-
+  this.setValues(parameters);
 };
 
-THREE.LineMaterial.prototype = Object.create( THREE.ShaderMaterial.prototype );
+THREE.LineMaterial.prototype = Object.create(THREE.ShaderMaterial.prototype);
 THREE.LineMaterial.prototype.constructor = THREE.LineMaterial;
 
 THREE.LineMaterial.prototype.isLineMaterial = true;
 
-THREE.LineMaterial.prototype.copy = function ( source ) {
+THREE.LineMaterial.prototype.copy = function(source) {
+  THREE.ShaderMaterial.prototype.copy.call(this, source);
 
-	THREE.ShaderMaterial.prototype.copy.call( this, source );
+  this.color.copy(source.color);
 
-	this.color.copy( source.color );
+  this.linewidth = source.linewidth;
 
-	this.linewidth = source.linewidth;
+  this.resolution = source.resolution;
 
-	this.resolution = source.resolution;
+  // todo
 
-	// todo
-
-	return this;
-
+  return this;
 };
-

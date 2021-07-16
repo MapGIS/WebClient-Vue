@@ -1,6 +1,12 @@
 @import '../../../util/style/mixins/mixins.scss';
 @import '../../../util/style/theme/theme.scss';
 
+@include b (drawer) {
+  @include e(content, '-') {
+    background-color: $drawer-background;
+  }
+}
+
 // Preserve the typo for compatibility
 // https://github.com/ant-design/ant-design/issues/14628
 $dawer-prefix-cls: $ant-prefix + "-drawer";
