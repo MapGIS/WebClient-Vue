@@ -3,9 +3,76 @@ import FeatureService from "../../map/mixins/FeatureService";
 export default {
   inject: ["mapbox", "map"],
   props: {
+    baseUrl: {
+      type: String
+    },
+    sourceId: {
+      type: String
+    },
+    layerId: {
+      type: String
+    },
+    sourceLayer: {
+      type: String
+    },
+    useOriginLayer: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    baseUrl: {
+      handler: function () {
+        this.$_removeLayer();
+        this.$_getFromGeoJSON();
+      }
+    },
+    sourceId: {
+      handler: function () {
+        if (!this.sourceLayer) {
+          throw new Error("sourceLayer不能为空！");
+        } else if (this.useOriginLayer) {
+          throw new Error("请将useOriginLayer设为false！");
+        } else {
+          this.$_removeLayer();
+          this.$_getFromSource(this.sourceLayer);
+        }
+      }
+    },
+    layerId: {
+      handler: function () {
+        if (!this.useOriginLayer) {
+          throw new Error("请将useOriginLayer设为true！");
+        } else {
+          this.$_getFromSource(this.layerId);
+        }
+      }
+    }
   },
   data() {
-    return {};
+    return {
+      colors: [],
+      originColors: [],
+      startColor: "#FFFFFF",
+      endColor: "#FF0000",
+      showLayer: true,
+      showPanel: true,
+      sourceVector: {
+        type: 'geojson',
+        data: undefined
+      },
+      dataCopy: undefined,
+      showVector: false,
+      fields: [],
+      selectKey: undefined,
+      dataSource: [],
+      checkBoxArr: [],
+      sourceVectorId: 'theme_source',
+      layerVectorId: 'theme_layer',
+      allOriginColors: {},
+      layerVector: {},
+      dataType: "",
+    };
   },
   methods: {
     $_gradientColor(startColor, endColor, step){
@@ -164,6 +231,194 @@ export default {
       }, function (e) {
         console.log(e);
       });
-    }
+    },
+    $_initTheme(geojson,startColor,endColor) {
+      startColor = startColor || "#FFFFFF";
+      endColor = endColor || "#FF0000";
+      this.sourceVector.data = geojson;
+      this.dataCopy = geojson;
+      this.showVector = true;
+      this.fields = this.$_getFields(geojson.features[0]);
+      this.selectKey = this.fields[0];
+      this.dataSource = this.$_getData(geojson.features, this.selectKey);
+      let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
+      this.checkBoxArr = this.originColors.checkArr;
+      if(this.$_initThemeCallBack){
+        this.$_initThemeCallBack(geojson,fillColors);
+      }else {
+        throw new Error("请设置$_initTheme方法的回到函数！");
+      }
+      let layer = {...this.layerVector, ...this.$props};
+      this.$_changeOriginLayer();
+      this.$emit("loaded", this, layer);
+    },
+    $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
+      let colors;
+      if (this.allOriginColors.hasOwnProperty(key) && !clearColor) {
+        this.originColors = this.allOriginColors[key];
+        colors = this.$_getColorsFromOrigin();
+      } else {
+        let originColors;
+        if(this.$_getColorsCallBack){
+          originColors = this.$_getColorsCallBack(colors,dataSource,startColor, endColor, key);
+        }else {
+          throw new Error("请设置$_getColors方法的回到函数！");
+        }
+
+        if(!originColors){
+          throw new Error("请返回一个originColor对象，该对象包含checkArr、colors以及colorList三个属性！");
+        }
+        this.originColors = originColors;
+        colors = originColors.colors;
+        this.allOriginColors[key] = this.originColors;
+      }
+      if (!noColor) {
+        this.colors = this.originColors.colorList;
+      }
+      return colors;
+    },
+    $_getData(features, value) {
+      let datas = [], isSort = true;
+      for (let i = 0; i < features.length; i++) {
+        if (datas.indexOf(features[i].properties[value]) < 0) {
+          if (typeof features[i].properties[value] !== 'number') {
+            isSort = false;
+          }
+          if ((features[i].properties[value] || typeof features[i].properties[value] === 'number') && features[i].properties[value] !== "") {
+            datas.push(features[i].properties[value]);
+          }
+        }
+      }
+      if (isSort) {
+        datas.sort(function (a, b) {
+          return a - b;
+        });
+      }
+      return datas;
+    },
+    $_selectChange(value) {
+      if (value !== "") {
+        let datas = this.$_getData(this.dataCopy.features, value);
+        this.dataSource = datas;
+        let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
+        this.checkBoxArr = this.originColors.checkArr;
+        this.selectKey = value;
+        if (this.checkBoxArr.indexOf(true) < 0) {
+          this.showVector = false;
+        } else {
+          this.showVector = false;
+          if(this.$_selectChangeCallBack){
+            this.$_selectChangeCallBack(colors);
+          }else{
+            throw new Error("请设置$_selectChange方法的回到函数！");
+          }
+          this.$_changeOriginLayer();
+          this.showVector = true;
+        }
+      }
+    },
+    $_gradientChange(startColor, endColor) {
+      this.showVector = false;
+      this.startColor = startColor;
+      this.endColor = endColor;
+      let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false, true);
+      switch (this.dataType) {
+        case "fill":
+          this.layerVector.paint["fill-color"] = colors;
+          break;
+        case "circle":
+          this.layerVector.paint["circle-color"] = colors;
+          break;
+        case "line":
+          this.layerVector.paint["line-color"] = colors;
+          break;
+      }
+      this.$_changeOriginLayer();
+      this.showVector = true;
+    },
+    $_lineColorChanged(e) {
+      this.showVector = false;
+      switch (this.dataType) {
+        case "fill":
+          this.layerVector.paint["fill-outline-color"] = e;
+          break
+        case "circle":
+          this.layerVector.paint["circle-stroke-color"] = e;
+          break
+      }
+      this.$_changeOriginLayer();
+      this.showVector = true;
+    },
+    $_opacityChanged(e) {
+      this.showVector = false;
+      if(this.$_opacityChangedCallBack){
+        this.$_opacityChangedCallBack(e);
+      }else {
+        throw new Error("请设置$_opacityChanged方法的回到函数！");
+      }
+      this.$_changeOriginLayer();
+      this.showVector = true;
+    },
+    $_oneColorChanged(index, color) {
+      let colors = this.$_getColorsFromOrigin(index, color);
+      if(this.$_oneColorChangedCallBack){
+        this.$_oneColorChangedCallBack(colors);
+      }else {
+        throw new Error("请设置$_oneColorChanged方法的回到函数！");
+      }
+      this.$_changeOriginLayer();
+      this.showVector = false;
+      this.showVector = true;
+    },
+    $_getColorsFromOrigin(index, color) {
+      let colors;
+      if(this.$_getColorsFromOriginCallBack){
+        colors = this.$_getColorsFromOriginCallBack(index, color);
+        if(!colors){
+          throw new Error("请返回一个colors对象");
+        }
+      }else {
+        let fillName = "";
+        switch (this.dataType) {
+          case "fill":
+            fillName = "fill-color";
+            break;
+          case "circle":
+            fillName = "circle-color";
+            break;
+          case "line":
+            fillName = "line-color";
+            break;
+        }
+        if (this.originColors.colors.hasOwnProperty("stops")) {
+          colors = {};
+          if (index !== null & index !== undefined) {
+            this.$set(this.originColors.colors.stops[index], 1, color);
+          }
+          let stops = [];
+          for (let i = 0; i < this.originColors.checkArr.length; i++) {
+            if (this.originColors.checkArr[i]) {
+              stops.push(this.originColors.colors.stops[i]);
+            }
+          }
+          colors.stops = stops;
+          colors.property = this.originColors.colors.property;
+        } else if (this.originColors.colors.indexOf("match") === 0) {
+          if (index !== null & index !== undefined) {
+            this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
+          }
+          this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
+          colors = []
+          colors.push(this.originColors.colors[0], this.originColors.colors[1]);
+          for (let i = 0; i < this.originColors.checkArr.length; i++) {
+            if (this.originColors.checkArr[i]) {
+              colors.push(this.originColors.colors[(i + 1) * 2], this.originColors.colors[(i + 1) * 2 + 1]);
+            }
+          }
+          colors.push("#FFF");
+        }
+      }
+      return colors;
+    },
   }
 };
