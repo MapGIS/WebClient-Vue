@@ -1,15 +1,19 @@
 <template>
   <div class="layout-model-folder">
-    <mapgis-ui-spin v-show="isLoading">
-      <mapgis-ui-tree
-        v-show="!isLoading"
-        class="layout-tree-company"
-        ref="folderTree"
-        :loadData="loadCompany"
-        :treeData="data"
-      >
-      </mapgis-ui-tree>
-      <!-- <Tree
+    <!-- <mapgis-ui-spin v-show="isLoading"> -->
+    <mapgis-ui-tree
+      v-show="!isLoading"
+      class="layout-tree-company"
+      ref="folderTree"
+      :loadData="loadCompany"
+      :treeData="data"
+    >
+      <template slot="title" slot-scope="{ title, icon }">
+        <mapgis-ui-iconfont :type="icon" />
+        <span> {{ title }} </span>
+      </template>
+    </mapgis-ui-tree>
+    <!-- <Tree
       :selected="true"
       :show-checkbox="isMulti"
       :select-node="isMulti"
@@ -17,7 +21,7 @@
       @on-check-change="selectTiff"
     >
     </Tree> -->
-    </mapgis-ui-spin>
+    <!-- </mapgis-ui-spin> -->
   </div>
 </template>
 <script>
@@ -128,9 +132,9 @@ export default {
                   groupId: -1
                 };
                 vm.data = [{ ...nullData }];
-                this.$Notice.error({
-                  title: errorCode,
-                  desc: msg
+                this.$notification.error({
+                  message: errorCode,
+                  description: msg
                 });
                 vm.isLoading = false;
               } else {
@@ -152,11 +156,6 @@ export default {
                   }
                   commonData.push(ele.resInfo);
                 });
-                // this.commonData.forEach(ele => {
-                //   if (ele.isfolder) {
-                //     this.loadCommon(ele, this.handleCatalog)
-                //   }
-                // })
                 commonData = this.checkSelected(url, "", commonData);
                 let newDefaultData = {
                   title: "目录",
@@ -174,7 +173,11 @@ export default {
             }
           })
           .catch(error => {
-            this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+            console.log("error", error);
+            this.$notification.error({
+              message: "网络异常,请检查链接",
+              description: error
+            });
             vm.isLoading = false;
           });
       } else if (url === -100) {
@@ -205,7 +208,6 @@ export default {
                   d.icon = getFileIcon(d.ext);
                   if (d.isfolder) {
                     d.loading = false;
-                    d.children = [];
                     d.disabled = true;
                   } else {
                     d.expand = false;
@@ -268,44 +270,52 @@ export default {
       }
     },
     loadCompany(item) {
-      return new Promise(resolve => {
-        resolve();
-      });
-    },
-    loadCompany1(item, callback) {
-      dirnavigation(item.url)
-        .then(res => {
-          if (res.status === 200) {
-            let result = res.data;
-            let { data, errorCode, msg } = result;
-            if (errorCode < 0) {
-              this.$Notice.error({ title: errorCode, desc: msg });
-            } else {
-              let items = this.onlyFolder
-                ? data.filter(item => item.isfolder === true)
-                : data;
-              items = items.map(d => {
-                d.commonUrl = item.commonUrl;
-                d.icon = getFileIcon(d.ext);
-                if (d.isfolder) {
-                  d.loading = false;
-                  d.children = [];
-                  d.disabled = true;
-                } else {
-                  d.expand = false;
-                  delete d.loading;
-                }
-                return d;
-              });
-              items = this.checkSelected(this.url, item.url, items);
-              // console.warn(items)
-              callback(items, item);
-            }
-          }
-        })
-        .catch(error => {
-          this.$notice.error({ title: "网络异常,请检查链接", desc: error });
+      if (item.dataRef.children) {
+        return new Promise(resolve => {
+          resolve();
         });
+      } else {
+        return new Promise(resolve => {
+          dirnavigation(item.url)
+            .then(res => {
+              if (res.status === 200) {
+                let result = res.data;
+                let { data, errorCode, msg } = result;
+                if (errorCode < 0) {
+                  this.$Notice.error({ title: errorCode, desc: msg });
+                } else {
+                  let items = this.onlyFolder
+                    ? data.filter(item => item.isfolder === true)
+                    : data;
+                  items = items.map(d => {
+                    d.commonUrl = item.commonUrl;
+                    d.icon = getFileIcon(d.ext);
+                    if (d.isfolder) {
+                      d.loading = false;
+                      d.children = [];
+                      d.disabled = true;
+                    } else {
+                      d.expand = false;
+                      delete d.loading;
+                    }
+                    return d;
+                  });
+                  items = this.checkSelected(this.url, item.url, items);
+                  // item.dataRef.children = items;
+                  vm.data = [...vm.data];
+                  // callback(items, item);
+                  resolve();
+                }
+              }
+            })
+            .catch(error => {
+              this.$notification.error({
+                message: "网络异常,请检查链接",
+                description: error
+              });
+            });
+        });
+      }
     },
     selectTiff(selects) {
       // let result = ''
