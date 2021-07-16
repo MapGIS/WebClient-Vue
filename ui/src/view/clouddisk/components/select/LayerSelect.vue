@@ -10,7 +10,7 @@
       </mapgis-ui-col>
 
       <mapgis-ui-col :span="15" class="demo-split-pane">
-        <!-- <folder
+        <mapgis-ui-clouddisk-folder
           ref="folder"
           :url="url"
           :isMulti="isMulti"
@@ -19,7 +19,7 @@
           :onlyFolder="onlyFolder"
           @select="handleSelect"
           @handleSelectsInfo="handleSelectsInfo"
-        /> -->
+        />
       </mapgis-ui-col>
     </mapgis-ui-row>
     <mapgis-ui-row>
@@ -35,6 +35,7 @@
 
 <script>
 import MapgisUiClouddiskCompany from "./LayerCompany.vue";
+import MapgisUiClouddiskFolder from "./LayerFolder.vue";
 /* import folder from './folder.vue'
 import shareaim from './shareaim.vue'
 import ShowShareList from './showShareList.vue' */
@@ -42,7 +43,8 @@ import ShowShareList from './showShareList.vue' */
 export default {
   name: "mapgis-ui-clouddisk-layerselect",
   components: {
-    MapgisUiClouddiskCompany
+    MapgisUiClouddiskCompany,
+    MapgisUiClouddiskFolder
     /* company,
     folder,
     shareaim,

@@ -2,7 +2,7 @@ import API from "./API";
 import axios from "axios";
 import md5 from "js-md5";
 
-import { getMapGISUrl, getMapgisToken, getMapgisPath } from "../../config/mapgis";
+import { getMapGISUrl, getMapgisToken, getMapgisPath } from "../config/mapgis";
 
 export function dirnavigation(folderDir) {
   const api = new API();

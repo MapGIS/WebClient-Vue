@@ -20,7 +20,7 @@ import {
   OWNERSHIP_OTHER_SHARE_TO_USER
 } from "../../util/codeType";
 
-import { getFilesByOrganization, getFileByRecycle } from "../axios/files";
+import { getFilesByOrganization, getFileByRecycle } from "../../axios/files";
 
 const ReadFromCloudDisk = [
   {
