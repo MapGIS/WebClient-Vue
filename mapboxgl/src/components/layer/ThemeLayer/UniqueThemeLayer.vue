@@ -16,7 +16,8 @@
         @oneColorChanged="$_oneColorChanged"
         @radiusChanged="$_radiusChanged"
         @lineWidthChanged="$_lineWidthChanged"
-    ></ThemePanel>
+    >
+    </ThemePanel>
     <mapgis-vector-layer
         v-if="showVector && !useOriginLayer"
         :layer="layerVector"
@@ -39,78 +40,6 @@ export default {
   components: {
     ThemePanel
   },
-  props: {
-    baseUrl: {
-      type: String
-    },
-    sourceId: {
-      type: String
-    },
-    layerId: {
-      type: String
-    },
-    sourceLayer: {
-      type: String
-    },
-    useOriginLayer: {
-      type: Boolean,
-      default: true
-    }
-  },
-  data() {
-    return {
-      dataSource: [],
-      checkBoxArr: [],
-      fields: [],
-      colors: [],
-      originColors: [],
-      allOriginColors: {},
-      dataType: "",
-      dataCopy: undefined,
-      selectKey: "",
-      showVector: false,
-      startColor: "#FFFFFF",
-      endColor: "#FF0000",
-      sourceVectorId: 'unique_theme_source',
-      layerVectorId: 'unique_theme_layer',
-      sourceVector: {
-        type: 'geojson',
-        data: undefined
-      },
-      layerVector: {},
-      showLayer: true,
-      showPanel: true
-    }
-  },
-  watch: {
-    baseUrl: {
-      handler: function () {
-        this.$_removeLayer();
-        this.$_getFromGeoJSON();
-      }
-    },
-    sourceId: {
-      handler: function () {
-        if (!this.sourceLayer) {
-          throw new Error("sourceLayer不能为空！");
-        } else if (this.useOriginLayer) {
-          throw new Error("请将useOriginLayer设为false！");
-        } else {
-          this.$_removeLayer();
-          this.$_getFromSource(this.sourceLayer);
-        }
-      }
-    },
-    layerId: {
-      handler: function () {
-        if (!this.useOriginLayer) {
-          throw new Error("请将useOriginLayer设为true！");
-        } else {
-          this.$_getFromSource(this.layerId);
-        }
-      }
-    }
-  },
   mounted() {
     this.$_mount();
   },
@@ -124,7 +53,12 @@ export default {
     toggleLayer() {
       this.$_toggleLayer();
     },
-    $_getColorsFromOrigin(index, color) {
+    /*
+    * 从data里面获取colors信息，如果index, color有值，则更新colors，此方法必须被重载
+    * @param index 被改变颜色的数据index
+    * @param color 被改变的颜色
+    * **/
+    $_getColorsFromOriginCallBack(index, color){
       let colors;
       let fillName = "";
       switch (this.dataType) {
@@ -140,7 +74,7 @@ export default {
       }
       if (this.originColors.colors.hasOwnProperty("stops")) {
         colors = {};
-        if (index !== null & index !== undefined) {
+        if (index !== null && index !== undefined) {
           this.$set(this.originColors.colors.stops[index], 1, color);
         }
         let stops = [];
@@ -152,7 +86,7 @@ export default {
         colors.stops = stops;
         colors.property = this.originColors.colors.property;
       } else if (this.originColors.colors.indexOf("match") === 0) {
-        if (index !== null & index !== undefined) {
+        if (index !== null && index !== undefined) {
           this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
         }
         this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
@@ -167,8 +101,11 @@ export default {
       }
       return colors;
     },
-    $_oneColorChanged(index, color) {
-      let colors = this.$_getColorsFromOrigin(index, color);
+    /*
+    * 修改单一属性的颜色的回调方法
+    * @param colors 颜色信息
+    * **/
+    $_oneColorChangedCallBack(colors){
       switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-color"] = colors
@@ -180,59 +117,31 @@ export default {
           this.layerVector.paint["line-color"] = colors;
           break;
       }
-      this.$_changeOriginLayer();
-      this.showVector = false;
-      this.showVector = true;
     },
-    $_opacityChanged(e) {
-      this.showVector = false;
+    /*
+    * 改变透明度的回调方法
+    * @param opacity 透明度
+    * **/
+    $_opacityChangedCallBack(opacity){
       switch (this.dataType) {
         case "fill":
-          this.layerVector.paint["fill-opacity"] = e;
+          this.layerVector.paint["fill-opacity"] = opacity;
           break;
         case "circle":
-          this.layerVector.paint["circle-opacity"] = e;
-          this.layerVector.paint["circle-stroke-opacity"] = e;
+          this.layerVector.paint["circle-opacity"] = opacity;
+          this.layerVector.paint["circle-stroke-opacity"] = opacity;
           break;
         case "line":
-          this.layerVector.paint["line-opacity"] = e;
+          this.layerVector.paint["line-opacity"] = opacity;
           break;
       }
-      this.$_changeOriginLayer();
-      this.showVector = true;
     },
-    $_lineColorChanged(e) {
-      this.showVector = false;
-      switch (this.dataType) {
-        case "fill":
-          this.layerVector.paint["fill-outline-color"] = e;
-          break
-        case "circle":
-          this.layerVector.paint["circle-stroke-color"] = e;
-          break
-      }
-      this.$_changeOriginLayer();
-      this.showVector = true;
-    },
-    $_gradientChange(startColor, endColor) {
-      this.showVector = false;
-      this.startColor = startColor;
-      this.endColor = endColor;
-      let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false, true);
-      switch (this.dataType) {
-        case "fill":
-          this.layerVector.paint["fill-color"] = colors;
-          break;
-        case "circle":
-          this.layerVector.paint["circle-color"] = colors;
-          break;
-        case "line":
-          this.layerVector.paint["line-color"] = colors;
-          break;
-      }
-      this.$_changeOriginLayer();
-      this.showVector = true;
-    },
+    /*
+    * 多选框业务实现
+    * @param checkBoxArr 多选框的选中状态数组，true为选中，false为未选中
+    * @param index 当前点被点击的复选框的index
+    * @param checkColor 当前点击的复选框的颜色
+    * **/
     $_checked(checkBoxArr, index, checkColor) {
       let colors = {}, newColors,
           next = false;
@@ -296,109 +205,74 @@ export default {
         this.showVector = true;
       }
     },
-    $_selectChange(value) {
-      if (value !== "") {
-        let datas = this.$_getData(this.dataCopy.features, value);
-        this.dataSource = datas;
-        let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
-        this.checkBoxArr = this.originColors.checkArr;
-        this.selectKey = value;
-        if (this.checkBoxArr.indexOf(true) < 0) {
-          this.showVector = false;
-        } else {
-          this.showVector = false;
-          switch (this.dataType) {
-            case "fill":
-              this.layerVector.paint["fill-color"] = colors;
-              break;
-            case "circle":
-              this.layerVector.paint["circle-color"] = colors;
-              break;
-            case "line":
-              this.layerVector.paint["line-color"] = colors;
-              break;
-          }
-          this.$_changeOriginLayer();
-          this.showVector = true;
-        }
+    /*
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数this.layerVector.paint
+    * @param colors 针对该字段的颜色信息
+    * **/
+    $_selectChangeCallBack(colors) {
+      switch (this.dataType) {
+        case "fill":
+          this.layerVector.paint["fill-color"] = colors;
+          break;
+        case "circle":
+          this.layerVector.paint["circle-color"] = colors;
+          break;
+        case "line":
+          this.layerVector.paint["line-color"] = colors;
+          break;
       }
     },
-    $_getData(features, value) {
-      let datas = [], isSort = true;
-      for (let i = 0; i < features.length; i++) {
-        if (datas.indexOf(features[i].properties[value]) < 0) {
-          if (typeof features[i].properties[value] !== 'number') {
-            isSort = false;
-          }
-          if ((features[i].properties[value] || typeof features[i].properties[value] === 'number') && features[i].properties[value] !== "") {
-            datas.push(features[i].properties[value]);
-          }
+    /*
+    * 取得color列表的方法，该方法必须返回一个originColors对象
+    * @param colors 一个空的mapbox绘制规则对象，调用者需要自行指定绘制规则
+    * @param dataSource 要素信息，绘制规则使用
+    * @param startColor 渐变开始颜色，可自行指定
+    * @param endColor 渐变结束颜色，可自行指定
+    * @param key 绘制规则针对的关键字
+    * **/
+    $_getColorsCallBack(colors, dataSource, startColor, endColor, key) {
+      let iSString = false, checkArr = [], colorList = [];
+      for (let i = 0; i < dataSource.length; i++) {
+        if (typeof dataSource[i] === 'string') {
+          iSString = true;
+          break;
         }
       }
-      if (isSort) {
-        datas.sort(function (a, b) {
-          return a - b;
-        });
-      }
-      return datas;
-    },
-    $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
-      let colors;
-      if (this.allOriginColors.hasOwnProperty(key) && !clearColor) {
-        this.originColors = this.allOriginColors[key];
-        colors = this.$_getColorsFromOrigin();
-      } else {
-        let iSString = false, checkArr = [];
+      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      if (iSString) {
+        colors = ['match', ['get', key]];
         for (let i = 0; i < dataSource.length; i++) {
-          if (typeof dataSource[i] === 'string') {
-            iSString = true;
-            break;
-          }
-        }
-        let gradient = this.$_gradientColor(startColor, endColor, dataSource.length), colorList = [];
-        if (iSString) {
-          colors = ['match', ['get', key]];
-          for (let i = 0; i < dataSource.length; i++) {
-            if (dataSource[i] !== "") {
-              colors.push(dataSource[i]);
-              colors.push(gradient[i]);
-              colorList.push(gradient[i]);
-              checkArr.push(true);
-            }
-          }
-          colors.push("#FFFFFF");
-        } else {
-          colors = {
-            "property": key,
-            "stops": []
-          };
-          for (let i = 0; i < dataSource.length; i++) {
-            colors.stops.push([dataSource[i], gradient[i]]);
+          if (dataSource[i] !== "") {
+            colors.push(dataSource[i]);
+            colors.push(gradient[i]);
             colorList.push(gradient[i]);
             checkArr.push(true);
           }
         }
-        this.originColors = {
-          checkArr: checkArr,
-          colors: colors,
-          colorList: colorList
+        colors.push("#FFFFFF");
+      } else {
+        colors = {
+          "property": key,
+          "stops": []
+        };
+        for (let i = 0; i < dataSource.length; i++) {
+          colors.stops.push([dataSource[i], gradient[i]]);
+          colorList.push(gradient[i]);
+          checkArr.push(true);
         }
-        this.allOriginColors[key] = this.originColors;
       }
-      if (!noColor) {
-        this.colors = this.originColors.colorList;
+      return {
+        checkArr: checkArr,
+        colors: colors,
+        colorList: colorList
       }
-      return colors;
     },
-    $_initTheme(geojson) {
-      this.sourceVector.data = geojson;
-      this.dataCopy = geojson;
-      this.showVector = true;
-      this.fields = this.$_getFields(geojson.features[0]);
-      this.selectKey = this.fields[0];
-      this.dataSource = this.$_getData(geojson.features, this.selectKey);
-      let fillColors = this.$_getColors(this.dataSource, "#FFFFFF", "#FF0000", this.selectKey);
-      this.checkBoxArr = this.originColors.checkArr;
+    /*
+    * 初始化专题图样式的业务逻辑
+    * @param geojson geojson数据
+    * @fillColors 处理好的颜色信息
+    * **/
+    $_initThemeCallBack(geojson, fillColors) {
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
         this.layerVector = {
@@ -437,13 +311,6 @@ export default {
           }
         }
       }
-      let layer = {
-        layerId: this.layerVectorId,
-        sourceId: this.sourceVectorId,
-      }
-      layer = {...this.layerVector, ...layer};
-      this.$_changeOriginLayer();
-      this.$emit("loaded", this, layer);
     }
   }
 }
