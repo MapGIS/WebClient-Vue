@@ -1,18 +1,29 @@
 <template>
   <div>
     <slot :currentLayerInfo="currentLayerInfo" name="content">
-      <div class="PropertiesTabs">
-        <mapgis-ui-tabs v-model="activeKey" :active-key="activeKey" :tab-position="mode" @tabClick="changePane">
-          <mapgis-ui-tab-pane v-for="(f,i) in currentLayerInfo" :key="i" :tab="f.layer.id">
-            <div v-for="(value,key) in f.properties" class="proStyle" :key="key">
-              <div class="keyCss">
+      <div class="mapgis-inspect-prop-tabs">
+        <mapgis-ui-tabs
+          v-model="activeKey"
+          :active-key="activeKey"
+          :tab-position="mode"
+          @tabClick="changePane"
+        >
+          <mapgis-ui-tab-pane
+            v-for="(f, i) in currentLayerInfo"
+            :key="i"
+            :tab="f.layer.id"
+          >
+            <div
+              v-for="(value, key) in f.properties"
+              class="mapgis-inspect-prop-style"
+              :key="key"
+            >
+              <div class="mapgis-inspect-prop-key">
                 <span style="padding-right: 5px">{{ key }}</span>
               </div>
-              <div>
-                {{ value }} ({{ typeof value }})
-              </div>
+              <div>{{ value }} ({{ typeof value }})</div>
             </div>
-            <br/>
+            <br />
           </mapgis-ui-tab-pane>
         </mapgis-ui-tabs>
       </div>
@@ -21,11 +32,11 @@
 </template>
 
 <script>
-import mapboxgl from '@mapgis/mapbox-gl';
-const MapboxInspect = require('mapbox-gl-inspect');
+import mapboxgl from "@mapgis/mapbox-gl";
+const MapboxInspect = require("mapbox-gl-inspect");
 
 export default {
-  name: 'mapgis-inspect',
+  name: "mapgis-inspect",
   inject: ["map", "mapbox"],
   mounted() {
     this.enableInspect();
@@ -41,19 +52,19 @@ export default {
       selectdType: [],
       mode: "left",
       activeKey: ""
-    }
+    };
   },
   methods: {
     enableInspect() {
       const vm = this;
-      const {map} = this;
+      const { map } = this;
       if (!map || !map.getStyle()) {
         return;
       }
       const inspect = new MapboxInspect({
         popup: new mapboxgl.Popup({
           closeOnClick: false,
-          closeButton: false,
+          closeButton: false
         }),
         // showInspectMap: true,
         showMapPopup: true,
@@ -81,10 +92,10 @@ export default {
       vm.$emit("select-layer", checkedLayer);
     }
   }
-}
+};
 </script>
 <style>
-.PropertiesTabs {
+.mapgis-inspect-prop-tabs {
   max-width: 600px !important;
 }
 
@@ -97,21 +108,22 @@ export default {
   max-width: 600px !important;
 }
 
-.proStyle {
+.mapgis-inspect-prop-style {
   display: flex;
   justify-content: space-between;
   border-bottom: 2px dotted #bccbd7;
   padding: 5px;
 }
 
-.keyCss {
+.mapgis-inspect-prop-key {
   font-weight: 700;
   padding-right: 10px;
   display: flex;
   justify-content: flex-start;
 }
 
-.mapgis-ui-tabs .mapgis-ui-tabs-left-bar .mapgis-ui-tabs-tab, .mapgis-ui-tabs .mapgis-ui-tabs-right-bar .mapgis-ui-tabs-tab {
+.mapgis-ui-tabs .mapgis-ui-tabs-left-bar .mapgis-ui-tabs-tab,
+.mapgis-ui-tabs .mapgis-ui-tabs-right-bar .mapgis-ui-tabs-tab {
   padding: 9px !important;
   margin: 0 0 10px 0 !important;
   text-align: left !important;

@@ -30,23 +30,32 @@ export class MvtLegend {
     const style = map.getStyle();
     const { layers } = style;
     layers.forEach(layer => {
-      const layerName = layer["source-layer"];
       if (this.checkVectorLayer(layer)) {
-        if (layerName) {
-          if (!layerObj[layerName]) {
-            layerObj[layerName] = {
+        let title = layer["source-layer"] || layer.id;
+        if (title) {
+          if (!layerObj[title]) {
+            layerObj[title] = {
               layer,
               layerId: uuid(),
-              layerName,
+              layerName: title,
               legend: [],
               maxScale: 99999999,
               minScale: 0
             };
           }
-          const item = this.getLegendItemByMap(layer);
-          if (layerObj[layerName]) {
-            layerObj[layerName].legend.push(item);
-          }
+        } else if (layer.id) {
+          layerObj[layer.id] = {
+            layer,
+            layerId: uuid(),
+            layerName: title,
+            legend: [],
+            maxScale: 99999999,
+            minScale: 0
+          };
+        }
+        const item = this.getLegendItemByMap(layer);
+        if (layerObj[title]) {
+          layerObj[title].legend.push(item);
         }
       }
     });
