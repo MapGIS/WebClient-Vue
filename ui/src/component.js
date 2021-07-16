@@ -115,3 +115,6 @@ export { default as MapgisUiLocaleProvider } from "./components/locale-provider/
 // Pro
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
+
+// CloudDisk
+export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
