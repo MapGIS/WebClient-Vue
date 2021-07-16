@@ -5,7 +5,8 @@
       <!--标题-->
       <mapgis-ui-row>
         <mapgis-ui-col :span="24" class="theme-panel-type theme-panel-type-title">
-          单值专题图
+          <p class="theme-panel-title">单值专题图</p>
+          <p class="theme-panel-title-close" @click="$_close">X</p>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <!--字段信息-->
@@ -15,7 +16,7 @@
         </mapgis-ui-col>
         <mapgis-ui-col :span="18">
           <mapgis-ui-select
-              style="width: 255px"
+              style="width: 182px"
               v-if="fields.length > 0"
               :default-value="defaultValue"
               @change="$_selectChange"
@@ -84,7 +85,7 @@
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="6">
-          <p class="theme-panel-p">透明度</p>
+          <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
         </mapgis-ui-col>
         <mapgis-ui-col :span="18">
           <mapgis-ui-slider class="theme-panel-slider-opacity" v-model="opacity" :marks="marks"/>
@@ -94,7 +95,7 @@
           v-if="dataType !== 'line'"
       >
         <mapgis-ui-col :span="6">
-          <p class="theme-panel-p ">描边颜色</p>
+          <p class="theme-panel-p" style="margin-top: 0.8em;">描边颜色</p>
         </mapgis-ui-col>
         <mapgis-ui-col :span="18">
           <colorPicker
@@ -147,13 +148,13 @@
                   @change="$_checked">
               </mapgis-ui-checkbox>
             </div>
-            <div class="theme-panel-td theme-panel-td-border-right" @click="$_selectColor(colors[index])">
+            <div class="theme-panel-td theme-panel-td-border-right">
               <div class="theme-panel-color-picker">
                 <colorPicker class="picker" v-model="colors[index]" v-on:change="$_changeColor(index)"/>
               </div>
             </div>
             <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right">
-              {{ selectValue }}
+              {{ selectValue.toString().length > 6 ? String(selectValue).substr(0, 6) + "..." : (selectValue === "" ? "其他" : selectValue) }}
             </div>
             <div class="theme-panel-td theme-panel-td-value">
               {{ item.toString().length > 12 ? String(item).substr(0, 12) + "..." : (item === "" ? "其他" : item) }}
@@ -277,7 +278,8 @@ export default {
   mounted() {
   },
   methods: {
-    $_selectColor(color) {
+    $_close() {
+      this.$emit("closePanel");
     },
     $_selectLineColor(e) {
       this.lineColorChanged = e;
@@ -331,12 +333,13 @@ export default {
 <style scoped>
 .theme-panel {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0;
+  left: 0;
   z-index: 1000;
-  width: 400px;
-  height: 500px;
-  overflow: scroll;
+  width: 300px;
+  height: calc((100vh - 64px) - 24px);
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .theme-panel-tab {
@@ -375,22 +378,27 @@ export default {
   right: 6px;
 }
 
+.theme-panel-color-picker .picker .colorBtn{
+  margin-left: 20px;
+}
+
 .theme-panel-td {
   position: relative;
   display: inline-block;
-  width: 30px;
+  text-align: center;
+  width: 10%;
   height: 30px;
   line-height: 2;
 }
 
 .theme-panel-td-key {
-  width: 100px;
+  width: 25%;
   padding: 0 4px;
   cursor: pointer;
 }
 
 .theme-panel-td-value {
-  width: 115px;
+  width: 45%;
 }
 
 .theme-panel-td-border-right {
@@ -413,7 +421,7 @@ export default {
 }
 
 .theme-panel-gradient {
-  width: 210px;
+  width: 138px;
   height: 15px;
   margin: 8px 4px 0;
   border-radius: 3px;
@@ -428,7 +436,7 @@ export default {
 }
 
 .theme-panel-slider-opacity{
-  width: 242px;
+  width: 169px;
   margin-left: 7px;
 }
 .theme-panel-input-number{
@@ -436,18 +444,34 @@ export default {
   margin-left: 0px;
 }
 /deep/ .theme-panel-line-color .colorBtn{
-  width: 190px!important;
+  width: 183px!important;
   height: 33px!important;
   margin-left: 3px;
+  border-radius: 3px;
 }
 
 .theme-panel-type-title{
   border-bottom: 1px solid rgb(228,228,228);
-  width: 393px;
+  width: 300px;
+  height: 26px;
   margin-left: -24px;
+  margin-top: -14px;
   padding-left: 24px;
-  padding-bottom: 24px;
-  font-size: 20px;
-  font-weight: bolder;
+  padding-bottom: 40px;
+  font-size: 16px;
+}
+
+.theme-panel-title{
+  display: inline-block;
+}
+
+.theme-panel-title-close{
+  display: inline-block;
+  color: #40a9ff;
+  font-size: 12px;
+  position: absolute;
+  right: 16px;
+  top: 4px;
+  cursor: pointer;
 }
 </style>

@@ -1,11 +1,13 @@
 <template>
   <div>
     <ThemePanel
+        v-show="showPanel"
         :data-source="dataSource"
         :fields="fields"
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
+        @closePanel="$_closePanel"
         @change="$_selectChange"
         @checked="$_checked"
         @gradientChange="$_gradientChange"
@@ -27,7 +29,6 @@
 </template>
 
 <script>
-import {UniqueThemeLayer, ThemeStyle} from "@mapgis/webclient-es6-mapboxgl"
 import {MRFS} from "@mapgis/webclient-es6-service"
 import ThemePanel from "./ThemePanel";
 
@@ -130,6 +131,10 @@ export default {
     },
     sourceLayer: {
       type: String
+    },
+    useOriginLayer: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -153,12 +158,14 @@ export default {
         data: undefined
       },
       layerVector: {},
-      showLayer: true
+      showLayer: true,
+      showPanel: true
     }
   },
   watch:{
     baseUrl:{
       handler:function () {
+        this.$_removeLayer();
         this.$_getFromGeoJSON();
       }
     },
@@ -167,6 +174,7 @@ export default {
         if(!this.sourceLayer){
           throw new Error("sourceLayer不能为空！");
         }else {
+          this.$_removeLayer();
           this.$_getFromSource();
         }
       }
@@ -179,7 +187,23 @@ export default {
       this.$_getFromGeoJSON();
     }
   },
+  destroyed() {
+    this.$_removeLayer();
+  },
   methods: {
+    removeLayer(){
+      this.$_removeLayer();
+    },
+    $_removeLayer(){
+      let layer = this.map.getLayer(this.layerVectorId);
+      if(layer){
+        this.map.removeLayer(this.layerVectorId);
+      }
+    },
+    $_closePanel(){
+      this.showPanel = false;
+      this.$_toggleLayer();
+    },
     toggleLayer(){
       this.$_toggleLayer();
     },
@@ -448,6 +472,13 @@ export default {
             colorList.push(gradient[i]);
             checkArr.push(true);
           }
+          if(key === "adcode"){
+            colors.stops = [
+                [100000,"#FF0000"],
+                [200000,"#00FF00"],
+                [300000,"#FF00FF"],
+            ];
+          }
         }
         this.originColors = {
           checkArr: checkArr,
@@ -508,7 +539,12 @@ export default {
           }
         }
       }
-      this.$emit("loaded",this);
+      let layer = {
+        layerId: this.layerVectorId,
+        sourceId: this.sourceVectorId,
+      }
+      layer = {...this.layerVector,...layer};
+      this.$emit("loaded",this,layer);
     },
     $_getFromSource() {
       let features = this.map.queryRenderedFeatures({layers: [this.sourceLayer]});
