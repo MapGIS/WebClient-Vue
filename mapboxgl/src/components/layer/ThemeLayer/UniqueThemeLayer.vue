@@ -18,7 +18,7 @@
         @lineWidthChanged="$_lineWidthChanged"
     ></ThemePanel>
     <mapgis-vector-layer
-        v-if="showVector"
+        v-if="showVector && !useOriginLayer"
         :layer="layerVector"
         :layer-id="layerVectorId"
         :source="sourceVector"
@@ -129,6 +129,9 @@ export default {
     sourceId: {
       type: String
     },
+    layerId: {
+      type: String
+    },
     sourceLayer: {
       type: String
     },
@@ -162,28 +165,49 @@ export default {
       showPanel: true
     }
   },
-  watch:{
-    baseUrl:{
-      handler:function () {
+  watch: {
+    baseUrl: {
+      handler: function () {
         this.$_removeLayer();
         this.$_getFromGeoJSON();
       }
     },
     sourceId: {
-      handler:function () {
-        if(!this.sourceLayer){
+      handler: function () {
+        if (!this.sourceLayer) {
           throw new Error("sourceLayer不能为空！");
-        }else {
+        } else if (this.useOriginLayer) {
+          throw new Error("请将useOriginLayer设为false！");
+        } else {
           this.$_removeLayer();
-          this.$_getFromSource();
+          this.$_getFromSource(this.sourceLayer);
+        }
+      }
+    },
+    layerId: {
+      handler: function () {
+        if (!this.useOriginLayer) {
+          throw new Error("请将useOriginLayer设为true！");
+        } else {
+          this.$_getFromSource(this.layerId);
         }
       }
     }
   },
   mounted() {
     if (this.sourceId && this.sourceLayer) {
-      this.$_getFromSource();
-    } else if(this.baseUrl) {
+      if (this.useOriginLayer) {
+        throw new Error("请将useOriginLayer设为false！");
+      } else {
+        this.$_getFromSource(this.sourceLayer);
+      }
+    } else if (this.layerId) {
+      if (!this.useOriginLayer) {
+        throw new Error("请将useOriginLayer设为true！");
+      } else {
+        this.$_getFromSource(this.layerId);
+      }
+    } else if (this.baseUrl) {
       this.$_getFromGeoJSON();
     }
   },
@@ -191,23 +215,23 @@ export default {
     this.$_removeLayer();
   },
   methods: {
-    removeLayer(){
+    removeLayer() {
       this.$_removeLayer();
     },
-    $_removeLayer(){
+    $_removeLayer() {
       let layer = this.map.getLayer(this.layerVectorId);
-      if(layer){
+      if (layer) {
         this.map.removeLayer(this.layerVectorId);
       }
     },
-    $_closePanel(){
+    $_closePanel() {
       this.showPanel = false;
       this.$_toggleLayer();
     },
-    toggleLayer(){
+    toggleLayer() {
       this.$_toggleLayer();
     },
-    $_toggleLayer(){
+    $_toggleLayer() {
       let show = this.showLayer ? "none" : "visible";
       this.showLayer = !this.showLayer;
       this.map.setLayoutProperty(this.layerVectorId, 'visibility', show);
@@ -234,7 +258,7 @@ export default {
       }
       if (this.originColors.colors.hasOwnProperty("stops")) {
         colors = {};
-        if(index !== null & index !== undefined){
+        if (index !== null & index !== undefined) {
           this.$set(this.originColors.colors.stops[index], 1, color);
         }
         let stops = [];
@@ -246,7 +270,7 @@ export default {
         colors.stops = stops;
         colors.property = this.originColors.colors.property;
       } else if (this.originColors.colors.indexOf("match") === 0) {
-        if(index !== null & index !== undefined){
+        if (index !== null & index !== undefined) {
           this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
         }
         this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
@@ -274,6 +298,7 @@ export default {
           this.layerVector.paint["line-color"] = colors;
           break;
       }
+      this.$_changeOriginLayer();
       this.showVector = false;
       this.showVector = true;
     },
@@ -291,6 +316,7 @@ export default {
           this.layerVector.paint["line-opacity"] = e;
           break;
       }
+      this.$_changeOriginLayer();
       this.showVector = true;
     },
     $_lineColorChanged(e) {
@@ -303,13 +329,14 @@ export default {
           this.layerVector.paint["circle-stroke-color"] = e;
           break
       }
+      this.$_changeOriginLayer();
       this.showVector = true;
     },
     $_gradientChange(startColor, endColor) {
       this.showVector = false;
       this.startColor = startColor;
       this.endColor = endColor;
-      let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false,true);
+      let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false, true);
       switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-color"] = colors;
@@ -321,6 +348,7 @@ export default {
           this.layerVector.paint["line-color"] = colors;
           break;
       }
+      this.$_changeOriginLayer();
       this.showVector = true;
     },
     $_checked(checkBoxArr, index, checkColor) {
@@ -382,6 +410,7 @@ export default {
             this.layerVector.paint["line-color"] = colors;
             break;
         }
+        this.$_changeOriginLayer();
         this.showVector = true;
       }
     },
@@ -392,9 +421,9 @@ export default {
         let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
         this.checkBoxArr = this.originColors.checkArr;
         this.selectKey = value;
-        if(this.checkBoxArr.indexOf(true) < 0){
+        if (this.checkBoxArr.indexOf(true) < 0) {
           this.showVector = false;
-        }else {
+        } else {
           this.showVector = false;
           switch (this.dataType) {
             case "fill":
@@ -407,6 +436,7 @@ export default {
               this.layerVector.paint["line-color"] = colors;
               break;
           }
+          this.$_changeOriginLayer();
           this.showVector = true;
         }
       }
@@ -439,10 +469,10 @@ export default {
     },
     $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
       let colors;
-      if(this.allOriginColors.hasOwnProperty(key) && !clearColor){
+      if (this.allOriginColors.hasOwnProperty(key) && !clearColor) {
         this.originColors = this.allOriginColors[key];
         colors = this.$_getColorsFromOrigin();
-      }else{
+      } else {
         let iSString = false, checkArr = [];
         for (let i = 0; i < dataSource.length; i++) {
           if (typeof dataSource[i] === 'string') {
@@ -450,7 +480,7 @@ export default {
             break;
           }
         }
-        let gradient = new gradientColor(startColor, endColor, dataSource.length),colorList = [];
+        let gradient = new gradientColor(startColor, endColor, dataSource.length), colorList = [];
         if (iSString) {
           colors = ['match', ['get', key]];
           for (let i = 0; i < dataSource.length; i++) {
@@ -472,13 +502,6 @@ export default {
             colorList.push(gradient[i]);
             checkArr.push(true);
           }
-          if(key === "adcode"){
-            colors.stops = [
-                [100000,"#FF0000"],
-                [200000,"#00FF00"],
-                [300000,"#FF00FF"],
-            ];
-          }
         }
         this.originColors = {
           checkArr: checkArr,
@@ -491,6 +514,14 @@ export default {
         this.colors = this.originColors.colorList;
       }
       return colors;
+    },
+    $_changeOriginLayer() {
+      let vm = this;
+      if (this.useOriginLayer) {
+        Object.keys(this.layerVector.paint).forEach(function (key) {
+          vm.map.setPaintProperty(vm.layerId, key, vm.layerVector.paint[key]);
+        });
+      }
     },
     $_initTheme(geojson) {
       this.sourceVector.data = geojson;
@@ -543,12 +574,13 @@ export default {
         layerId: this.layerVectorId,
         sourceId: this.sourceVectorId,
       }
-      layer = {...this.layerVector,...layer};
-      this.$emit("loaded",this,layer);
+      layer = {...this.layerVector, ...layer};
+      this.$_changeOriginLayer();
+      this.$emit("loaded", this, layer);
     },
-    $_getFromSource() {
-      let features = this.map.queryRenderedFeatures({layers: [this.sourceLayer]});
-      if(features.length === 0){
+    $_getFromSource(layerId) {
+      let features = this.map.queryRenderedFeatures({layers: [layerId]});
+      if (features.length === 0) {
         return;
       }
       let featureCollection = {
