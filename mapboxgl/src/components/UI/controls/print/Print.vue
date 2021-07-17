@@ -38,7 +38,7 @@
         type="primary"
       >
         <mapgis-ui-iconfont
-          class="mapgis-mvt-legend-card-toolbar"
+          class="mapgis-ui-modal-print-toolbar"
           type="mapgis-dayinP"
         />打印出图
       </mapgis-ui-button>
