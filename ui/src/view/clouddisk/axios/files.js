@@ -1,5 +1,4 @@
 import API from "./API";
-import axios from "axios";
 import md5 from "js-md5";
 
 import { getMapGISUrl, getMapgisToken, getMapgisPath } from "../config/mapgis";
@@ -25,7 +24,7 @@ export function createfolder(folderDir) {
   api.setAuthorization(token);
   api.setContentType("application/json");
 
-  return axios({
+  /* return axios({
     method: "post",
     data: {
       folderDir: folderDir
@@ -35,7 +34,7 @@ export function createfolder(folderDir) {
       "Content-Type": "application/json"
     },
     url: url + "/clouddisk/rest/file/createfolder"
-  });
+  }); */
 }
 
 // 重命名

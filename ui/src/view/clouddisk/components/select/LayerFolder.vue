@@ -155,11 +155,6 @@ export default {
                   }
                   commonData.push(ele.resInfo);
                 });
-                // this.commonData.forEach(ele => {
-                //   if (ele.isfolder) {
-                //     this.loadCommon(ele, this.handleCatalog)
-                //   }
-                // })
                 commonData = this.checkSelected(url, "", commonData);
                 let newDefaultData = {
                   title: "目录",

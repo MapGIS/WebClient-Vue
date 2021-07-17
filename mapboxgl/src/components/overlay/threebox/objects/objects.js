@@ -36,10 +36,10 @@ Objects.prototype = {
 
   extrusion: function(options) {},
 
-  _addMethods: function(obj, static) {
+  _addMethods: function(obj, staticObj) {
     var root = this;
 
-    if (static) {
+    if (staticObj) {
     } else {
       if (!obj.coordinates) obj.coordinates = [0, 0, 0];
 
@@ -78,7 +78,7 @@ Objects.prototype = {
 
     obj.add = function() {
       root.world.add(obj);
-      if (!static) obj.set({ position: obj.coordinates });
+      if (!staticObj) obj.set({ position: obj.coordinates });
       return obj;
     };
 
