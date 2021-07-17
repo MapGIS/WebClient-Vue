@@ -24,7 +24,7 @@
     </mapgis-ui-row>
     <mapgis-ui-row>
       <mapgis-ui-input
-        readonly
+        read-only
         class="treefolder-url"
         :value="select"
         size="small"
@@ -71,7 +71,7 @@ export default {
     },
     isMulti: {
       type: Boolean,
-      default: false
+      default: true
     },
     tiffListsObj: {
       type: Object,

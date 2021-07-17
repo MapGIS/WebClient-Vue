@@ -45,7 +45,7 @@
     <mapgis-ui-row>
       <mapgis-ui-input
         v-if="!isShare()"
-        readonly
+        read-only
         class="treefolder-url"
         :value="select"
         size="small"

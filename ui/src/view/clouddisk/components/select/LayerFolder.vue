@@ -1,12 +1,16 @@
 <template>
   <div class="layout-model-folder">
-    <mapgis-ui-spin v-show="isLoading">
+    <!-- <mapgis-ui-spin v-show="isLoading"> -->
       <mapgis-ui-tree
         v-show="!isLoading"
         class="layout-tree-company"
         ref="folderTree"
         :loadData="loadCompany"
         :treeData="data"
+        :checkable="isMulti"
+        :checkStrictly="true"
+        @check="selectTiff"
+        @expand="handelExpand"
       >
       </mapgis-ui-tree>
       <!-- <Tree
@@ -17,7 +21,7 @@
       @on-check-change="selectTiff"
     >
     </Tree> -->
-    </mapgis-ui-spin>
+    <!-- </mapgis-ui-spin> -->
   </div>
 </template>
 <script>
@@ -90,7 +94,7 @@ export default {
     }
   },
   mounted() {
-    // this.showDirFiles(this.url)
+    this.showDirFiles(this.url)
   },
   methods: {
     updataFolder() {
@@ -106,9 +110,10 @@ export default {
           loading: false,
           expand: false,
           // children: [],
-          groupId: -1
+          groupId: -1,
+          key: '0-1'
         };
-        vm.data = [{ ...nullData }];
+        vm.data = [nullData];
         vm.isLoading = false;
       } else if (url === -98 || url === -97) {
         let isShareToMe = url === -97; // 选我的接收文件时，isShareToMe为true，isInnerPublic为false
@@ -125,13 +130,11 @@ export default {
                   loading: false,
                   expand: false,
                   // children: [],
-                  groupId: -1
+                  groupId: -1,
+                  key: '0-2'
                 };
                 vm.data = [{ ...nullData }];
-                this.$Notice.error({
-                  title: errorCode,
-                  desc: msg
-                });
+                this.$notification.error({ message: errorCode, description: msg });
                 vm.isLoading = false;
               } else {
                 let commonData = [];
@@ -143,9 +146,9 @@ export default {
                   ele.resInfo.isPublic = ele.allInnerUser;
                   ele.resInfo.icon = getFileIcon(ele.resInfo.ext);
                   if (ele.resInfo.isfolder) {
-                    ele.resInfo.children = [];
+                    // ele.resInfo.children = [];
                     ele.resInfo.loading = false;
-                    ele.resInfo.disabled = true;
+                    ele.resInfo.disableCheckbox = true;
                     // ele.resInfo.disableCheckbox = true
                   } else {
                     delete ele.resInfo.loading;
@@ -163,22 +166,23 @@ export default {
                   icon: "iconwenjianjia-shouqi-",
                   loading: false,
                   expand: true,
-                  disabled: true,
+                  disableCheckbox: true,
                   children: commonData,
                   groupId: -1,
-                  url: url
+                  url: url,
+                  key: '0-3'
                 };
-                vm.data = [{ ...newDefaultData }];
+                vm.data = [newDefaultData];
                 vm.isLoading = false;
               }
             }
           })
           .catch(error => {
-            this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });            
             vm.isLoading = false;
           });
       } else if (url === -100) {
-        let defaultURL = getMapgisPath() + "/.gis";
+        let defaultURL = getMapgisPath();
         dirnavigation(defaultURL)
           .then(res => {
             if (res.status === 200) {
@@ -191,10 +195,11 @@ export default {
                   loading: false,
                   expand: false,
                   // children: [],
-                  groupId: -1
+                  groupId: -1,
+                  key: '0-4'
                 };
                 vm.data = [{ ...nullData }];
-                this.$Notice.error({ title: errorCode, desc: msg });
+                this.$notification.error({ message: errorCode, description: msg });
                 vm.isLoading = false;
               } else {
                 let items = this.onlyFolder
@@ -205,9 +210,10 @@ export default {
                   d.icon = getFileIcon(d.ext);
                   if (d.isfolder) {
                     d.loading = false;
-                    d.children = [];
-                    d.disabled = true;
+                    // d.children = [];
+                    d.disableCheckbox = true;
                   } else {
+                    d.isLeaf = true;
                     d.expand = false;
                     delete d.loading;
                   }
@@ -219,18 +225,19 @@ export default {
                   icon: "iconwenjianjia-shouqi-",
                   loading: false,
                   expand: true,
-                  disabled: true,
+                  disableCheckbox: true,
                   children: items,
                   groupId: -1,
-                  url: defaultURL
+                  url: defaultURL,
+                  key: '0-5'
                 };
-                vm.data = [{ ...newDefaultData }];
+                vm.data = [newDefaultData];
                 vm.isLoading = false;
               }
             }
           })
           .catch(error => {
-            this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });
             vm.isLoading = false;
           });
       }
@@ -269,17 +276,18 @@ export default {
     },
     loadCompany(item) {
       return new Promise(resolve => {
-        resolve();
-      });
-    },
-    loadCompany1(item, callback) {
-      dirnavigation(item.url)
+        if (item.dataRef.children) {
+          console.warn('进到有children的里面')
+          resolve();
+          return;
+        }
+      dirnavigation(item.dataRef.url)
         .then(res => {
           if (res.status === 200) {
             let result = res.data;
             let { data, errorCode, msg } = result;
             if (errorCode < 0) {
-              this.$Notice.error({ title: errorCode, desc: msg });
+              this.$notification.error({ message: errorCode, description: msg });
             } else {
               let items = this.onlyFolder
                 ? data.filter(item => item.isfolder === true)
@@ -289,36 +297,33 @@ export default {
                 d.icon = getFileIcon(d.ext);
                 if (d.isfolder) {
                   d.loading = false;
-                  d.children = [];
-                  d.disabled = true;
+                  // d.children = [];
+                  d.disableCheckbox = true;
                 } else {
+                  d.isLeaf = true;
                   d.expand = false;
                   delete d.loading;
                 }
                 return d;
               });
               items = this.checkSelected(this.url, item.url, items);
+              item.dataRef.children = items;
+              // vm.data = [...vm.data];
               // console.warn(items)
-              callback(items, item);
+              // callback(items, item);
             }
           }
         })
         .catch(error => {
-          this.$notice.error({ title: "网络异常,请检查链接", desc: error });
+          this.$notification.error({ message: "网络异常,请检查链接", description: error });
         });
+      })
     },
-    selectTiff(selects) {
-      // let result = ''
-      // selects.forEach(select => {
-      //   result += select.url + ','
-      // })
-      // result = result.slice(0, -1)
-      // this.$emit('select', result)
-      // this.$emit('handleSelectsInfo', selects)
-
+    selectTiff(checkedKeys, e) {
+      let selects = e.checkedNodes.map(item => item.data.props);
+      console.warn('复选框', selects, e, this.url, this.selectListsObj);
       this.selectListsObj[this.url] = selects;
       this.$emit("handleSelectsInfo", this.selectListsObj);
-      // console.warn('复选框', selects, this.url, this.selectListsObj)
     },
     checkSelected(url, curUrl, items) {
       let tiffList = this.selectListsObj[url];
@@ -376,6 +381,9 @@ export default {
       //     }
       //   }
       // }
+    },
+    handelExpand (a, b) {
+      console.warn('检查展开', a, b);
     }
   }
 };

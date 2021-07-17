@@ -2,7 +2,7 @@
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
 
 // 目前echart 5.0 和 vue-echarts 6.0 冲突过大，等官方解决后再接入，目前是自己封装echarts5.0
-export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
+// export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 
 // IconFont
 export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
@@ -117,4 +117,4 @@ export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 
 // CloudDisk
-export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
+// export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";

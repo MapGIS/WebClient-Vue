@@ -4,6 +4,7 @@
       :loadData="loadCompany"
       :treeData="data"
       @select="handleSelect"
+      :default-selected-keys="['我的数据']"
     >
       <template slot="title" slot-scope="{ title, icon }">
         <mapgis-ui-iconfont :type="icon" />
@@ -27,26 +28,29 @@ const ReadFromCloudDisk = [
     title: "我的数据",
     key: "我的数据",
     icon: "mapgis-dilishujuyuan",
-    selected: true,
+    // selected: true,
+    isLeaf: true,
     groupId: OWNERSHIP_USER_FOLDER,
     scopedSlots: { icon: "icon", title: "title" }
-  },
-  {
-    title: "公共数据",
-    key: "公共数据",
-    icon: "mapgis-shujuziyuan",
-    selected: false,
-    groupId: OWNERSHIP_PUBLIC_SHARE_TO_USER,
-    scopedSlots: { icon: "icon", title: "title" }
-  },
-  {
-    title: "我的接收文件",
-    key: "我的接收文件",
-    icon: "mapgis-daorumoxinghuancun",
-    selected: false,
-    groupId: OWNERSHIP_OTHER_SHARE_TO_USER,
-    scopedSlots: { icon: "icon", title: "title" }
   }
+  // {
+  //   title: "公共数据",
+  //   key: "公共数据",
+  //   icon: "mapgis-shujuziyuan",
+  //   // selected: false,
+  //   isLeaf: true,
+  //   groupId: OWNERSHIP_PUBLIC_SHARE_TO_USER,
+  //   scopedSlots: { icon: "icon", title: "title" }
+  // },
+  // {
+  //   title: "我的接收文件",
+  //   key: "我的接收文件",
+  //   icon: "mapgis-daorumoxinghuancun",
+  //   // selected: false,
+  //   isLeaf: true,
+  //   groupId: OWNERSHIP_OTHER_SHARE_TO_USER,
+  //   scopedSlots: { icon: "icon", title: "title" }
+  // }
 ];
 
 const SaveToCloudDisk = [
@@ -55,7 +59,7 @@ const SaveToCloudDisk = [
     key: "我的数据",
     icon: "mapgis-dilishujuyuan",
 
-    selected: true,
+    // selected: true,
     groupId: OWNERSHIP_USER_FOLDER,
     scopedSlots: { icon: "icon", title: "title" }
   }
