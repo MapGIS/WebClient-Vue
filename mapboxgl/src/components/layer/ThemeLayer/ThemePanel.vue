@@ -1,5 +1,5 @@
 <template>
-  <mapgis-ui-card class="theme-panel">
+  <mapgis-ui-card class="theme-panel" @click="$_panelClick">
     <!--  专题图面板  -->
     <div v-show="init" class="theme-panel-tab">
       <!--标题-->
@@ -342,6 +342,9 @@ export default {
       this.dataSourceCopy = this.dataSource;
       this.defaultValue = this.defaultValue === "" ? this.fields[0] : this.defaultValue;
       this.selectValue = this.selectValue === "" ? this.fields[0] : this.selectValue;
+    },
+    $_panelClick(){
+      this.$emit("panelClick",this);
     }
   }
 }

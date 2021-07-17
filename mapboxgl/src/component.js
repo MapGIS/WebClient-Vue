@@ -63,6 +63,7 @@ export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
+export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 
 /* 
