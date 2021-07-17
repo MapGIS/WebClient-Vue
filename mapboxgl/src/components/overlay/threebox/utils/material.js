@@ -14,7 +14,7 @@ var defaults = {
   opacity: 1
 };
 
-function material(options) {
+export function material(options) {
   var output;
 
   if (options) {
@@ -47,4 +47,4 @@ function material(options) {
   return output;
 }
 
-module.exports = exports = material;
+export default material;

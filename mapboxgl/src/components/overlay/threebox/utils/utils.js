@@ -2,7 +2,7 @@ var THREE = require("../three.js");
 var Constants = require("./constants.js");
 var validate = require("./validate.js");
 
-var utils = {
+export var utils = {
   prettyPrintMatrix: function(uglymatrix) {
     for (var s = 0; s < 4; s++) {
       var quartet = [
@@ -274,4 +274,4 @@ var utils = {
   ]
 };
 
-module.exports = exports = utils;
+export default utils;

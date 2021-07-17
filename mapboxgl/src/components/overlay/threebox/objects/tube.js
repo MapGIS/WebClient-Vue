@@ -3,7 +3,7 @@ var material = require("../utils/material.js");
 var Objects = require("./objects.js");
 var THREE = require("../three.js");
 
-function tube(obj, world) {
+export function tube(obj, world) {
   // validate and prep input geometry
   var obj = utils._validate(obj, Objects.prototype._defaults.tube);
   var straightProject = utils.lnglatsToWorld(obj.geometry);
@@ -172,4 +172,4 @@ tube.prototype = {
   }
 };
 
-module.exports = exports = tube;
+export default tube;

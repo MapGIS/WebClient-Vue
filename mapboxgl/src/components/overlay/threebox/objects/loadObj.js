@@ -3,7 +3,7 @@ var Objects = require("./objects.js");
 const OBJLoader = require("./loaders/OBJLoader.js");
 const MTLLoader = require("./loaders/MTLLoader.js");
 
-function loadObj(options, cb) {
+export function loadObj(options, cb) {
   if (options === undefined)
     return console.error("Invalid options provided to loadObj()");
 
@@ -61,4 +61,4 @@ function loadObj(options, cb) {
   }
 }
 
-module.exports = exports = loadObj;
+export default loadObj;
