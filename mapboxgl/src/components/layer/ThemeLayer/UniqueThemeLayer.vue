@@ -16,7 +16,8 @@
         @oneColorChanged="$_oneColorChanged"
         @radiusChanged="$_radiusChanged"
         @lineWidthChanged="$_lineWidthChanged"
-    ></ThemePanel>
+    >
+    </ThemePanel>
     <mapgis-vector-layer
         v-if="showVector && !useOriginLayer"
         :layer="layerVector"
@@ -51,54 +52,6 @@ export default {
     },
     toggleLayer() {
       this.$_toggleLayer();
-    },
-    /*
-    * 从data里面获取colors信息，如果index, color有值，则更新colors，此方法必须被重载
-    * @param index 被改变颜色的数据index
-    * @param color 被改变的颜色
-    * **/
-    $_getColorsFromOriginCallBack(index, color){
-      let colors;
-      let fillName = "";
-      switch (this.dataType) {
-        case "fill":
-          fillName = "fill-color";
-          break;
-        case "circle":
-          fillName = "circle-color";
-          break;
-        case "line":
-          fillName = "line-color";
-          break;
-      }
-      if (this.originColors.colors.hasOwnProperty("stops")) {
-        colors = {};
-        if (index !== null & index !== undefined) {
-          this.$set(this.originColors.colors.stops[index], 1, color);
-        }
-        let stops = [];
-        for (let i = 0; i < this.originColors.checkArr.length; i++) {
-          if (this.originColors.checkArr[i]) {
-            stops.push(this.originColors.colors.stops[i]);
-          }
-        }
-        colors.stops = stops;
-        colors.property = this.originColors.colors.property;
-      } else if (this.originColors.colors.indexOf("match") === 0) {
-        if (index !== null & index !== undefined) {
-          this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
-        }
-        this.$set(this.originColors.colors, (index + 1) * 2 + 1, color);
-        colors = []
-        colors.push(this.originColors.colors[0], this.originColors.colors[1]);
-        for (let i = 0; i < this.originColors.checkArr.length; i++) {
-          if (this.originColors.checkArr[i]) {
-            colors.push(this.originColors.colors[(i + 1) * 2], this.originColors.colors[(i + 1) * 2 + 1]);
-          }
-        }
-        colors.push("#FFF");
-      }
-      return colors;
     },
     /*
     * 修改单一属性的颜色的回调方法
@@ -156,6 +109,7 @@ export default {
             }
           } else {
             this.originColors.checkArr[i] = false;
+            newColors.push([this.originColors.colors.stops[i][0], "#FFF"]);
           }
         }
         colors.stops = newColors;
@@ -178,6 +132,8 @@ export default {
             }
           } else {
             this.originColors.checkArr[i] = false;
+            newColors.push(this.originColors.colors[(i + 1) * 2]);
+            newColors.push("#FFF");
           }
         }
         if (newColors.length % 2 === 0) {

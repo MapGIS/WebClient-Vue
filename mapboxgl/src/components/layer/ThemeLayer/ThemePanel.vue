@@ -1,16 +1,16 @@
 <template>
-  <mapgis-ui-card class="theme-panel">
+  <mapgis-ui-card class="theme-panel" @click="$_panelClick">
     <!--  专题图面板  -->
     <div v-show="init" class="theme-panel-tab">
       <!--标题-->
       <mapgis-ui-row>
         <mapgis-ui-col :span="24" class="theme-panel-type theme-panel-type-title">
-          <p class="theme-panel-title">单值专题图</p>
+          <p class="theme-panel-title">{{title}}</p>
           <p class="theme-panel-title-close" @click="$_close">X</p>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <!--字段信息-->
-      <mapgis-ui-row>
+      <mapgis-ui-row v-if="showField">
         <mapgis-ui-col :span="6">
           <p class="theme-panel-p">字段</p>
         </mapgis-ui-col>
@@ -35,7 +35,7 @@
       <!--        </mapgis-ui-collapse>-->
       <!--      </mapgis-ui-row>-->
       <!--专题图样式-->
-      <mapgis-ui-row>
+      <mapgis-ui-row v-if="showGradient">
         <mapgis-ui-col :span="6">
 <!--          <mapgis-ui-select-->
 <!--              style="margin-left: -17px;"-->
@@ -83,7 +83,7 @@
           />
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row>
+      <mapgis-ui-row v-if="showOpacity">
         <mapgis-ui-col :span="6">
           <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
         </mapgis-ui-col>
@@ -92,7 +92,7 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row
-          v-if="dataType !== 'line'"
+          v-if="dataType !== 'line' && showOutLineColor"
       >
         <mapgis-ui-col :span="6">
           <p class="theme-panel-p" style="margin-top: 0.8em;">描边颜色</p>
@@ -125,43 +125,46 @@
           <mapgis-ui-input-number v-model="lineWidth" class="theme-panel-input-number"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
+      <slot name="operation"></slot>
       <!--专题图信息-->
       <mapgis-ui-row>
         <mapgis-ui-col :span="24" class="theme-panel-type">
           图例
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row>
-        <mapgis-ui-list
-            bordered
-            :data-source="dataSourceCopy"
-        >
-          <mapgis-ui-list-item slot="renderItem" slot-scope="item, index">
-            <div class="theme-panel-td theme-panel-td-border-right">
-              {{ index }}
-            </div>
-            <div class="theme-panel-td theme-panel-td-border-right">
-              <mapgis-ui-checkbox
-                  :value="{item:item,color:colors[index]}"
-                  :color="colors[index]"
-                  :checked="checkBoxArr[index]"
-                  @change="$_checked">
-              </mapgis-ui-checkbox>
-            </div>
-            <div class="theme-panel-td theme-panel-td-border-right">
-              <div class="theme-panel-color-picker">
-                <colorPicker class="picker" v-model="colors[index]" v-on:change="$_changeColor(index)"/>
+      <slot name="legend" :selectValue="selectValue">
+        <mapgis-ui-row>
+          <mapgis-ui-list
+              bordered
+              :data-source="dataSourceCopy"
+          >
+            <mapgis-ui-list-item slot="renderItem" slot-scope="item, index">
+              <div class="theme-panel-td theme-panel-td-border-right">
+                {{ index }}
               </div>
-            </div>
-            <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right">
-              {{ selectValue.toString().length > 6 ? String(selectValue).substr(0, 6) + "..." : (selectValue === "" ? "其他" : selectValue) }}
-            </div>
-            <div class="theme-panel-td theme-panel-td-value">
-              {{ item.toString().length > 12 ? String(item).substr(0, 12) + "..." : (item === "" ? "其他" : item) }}
-            </div>
-          </mapgis-ui-list-item>
-        </mapgis-ui-list>
-      </mapgis-ui-row>
+              <div class="theme-panel-td theme-panel-td-border-right">
+                <mapgis-ui-checkbox
+                    :value="{item:item,color:colors[index]}"
+                    :color="colors[index]"
+                    :checked="checkBoxArr[index]"
+                    @change="$_checked">
+                </mapgis-ui-checkbox>
+              </div>
+              <div class="theme-panel-td theme-panel-td-border-right">
+                <div class="theme-panel-color-picker">
+                  <colorPicker class="picker" v-model="colors[index]" v-on:change="$_changeColor(index)"/>
+                </div>
+              </div>
+              <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right">
+                {{ selectValue.toString().length > 6 ? String(selectValue).substr(0, 6) + "..." : (selectValue === "" ? "其他" : selectValue) }}
+              </div>
+              <div class="theme-panel-td theme-panel-td-value">
+                {{ item.toString().length > 12 ? String(item).substr(0, 12) + "..." : (item === "" ? "其他" : item) }}
+              </div>
+            </mapgis-ui-list-item>
+          </mapgis-ui-list>
+        </mapgis-ui-row>
+      </slot>
     </div>
     <!--  loading  -->
     <div v-show="!init" class="theme-panel-tab theme-panel-loading">
@@ -178,14 +181,12 @@
 </template>
 
 <script>
-import {MRFS} from "@mapgis/webclient-es6-service"
-
 export default {
   name: "mapgis-igs-theme-panel",
   props: {
-    loadingTime: {
-      type: Number,
-      default: 0
+    title: {
+      type: String,
+      default: "单值专题图"
     },
     fields: {
       type: Array,
@@ -213,6 +214,22 @@ export default {
     },
     dataType: {
       type: String
+    },
+    showField: {
+      type: Boolean,
+      default: true
+    },
+    showGradient: {
+      type: Boolean,
+      default: true
+    },
+    showOpacity: {
+      type: Boolean,
+      default: true
+    },
+    showOutLineColor: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -325,6 +342,9 @@ export default {
       this.dataSourceCopy = this.dataSource;
       this.defaultValue = this.defaultValue === "" ? this.fields[0] : this.defaultValue;
       this.selectValue = this.selectValue === "" ? this.fields[0] : this.selectValue;
+    },
+    $_panelClick(){
+      this.$emit("panelClick",this);
     }
   }
 }
