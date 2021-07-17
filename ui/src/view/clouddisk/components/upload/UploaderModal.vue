@@ -6,7 +6,7 @@
     :width="width"
     :dialog-style="{ top: '100px' }"
     @cancel="handleCloseImport"
-    :footer="uistatus === 'init' ? null : footer"
+    :footer="null"
   >
     <template slot="footer">
       <mapgis-ui-button

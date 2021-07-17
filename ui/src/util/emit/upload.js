@@ -75,7 +75,7 @@ export const deleteCurrentFile = payload => {
  */
 export const changeCurrentFilename = payload => {
   const { filename = "" } = payload;
-  EventBus.$options.upload.filename = filename;
+  EventBus.$options.upload.fileName = filename;
   EventBus.$emit("change-current-filename", filename);
 };
 
@@ -93,10 +93,10 @@ export const changeUiState = payload => {
  * @description 记录当前单线程文件的上传进度,此过程发生在MD5计算完成后，网络传输的进度
  * @param {Number} process [0 ~ 1]
  */
-export const changeUploadProcess = payload => {
-  const { process = 0 } = payload;
-  EventBus.$options.upload.process = process;
-  EventBus.$emit("change-upload-process", process);
+export const changeUploadProgress = payload => {
+  const { progress = 0 } = payload;
+  EventBus.$options.upload.progress = progress;
+  EventBus.$emit("change-upload-progress", progress);
 };
 
 /**
@@ -111,35 +111,41 @@ export const changeUploadError = payload => {
 
 // -----------------------原始云盘 Complete 模块--------------------
 export const addCompleteUploaderCount = () => {
-  let count = EventBus.$options.upload.uploadCount + 1;
+  let count = EventBus.$options.complete.uploadCount + 1;
   EventBus.$options.upload.uploadCount = count;
+  console.log("add-complete-uploader-count", EventBus.$options);
   EventBus.$emit("add-complete-uploader-count", count);
 };
 
 export const addCompleteUploaderResult = payload => {
-  let uploads = EventBus.$options.upload.uploads.push(payload.file);
-  EventBus.$options.upload.uploads = uploads;
+  let uploads = EventBus.$options.complete.uploads.push(payload.file);
+  EventBus.$options.uploads = uploads;
+  console.log("add-complete-uploader-result", EventBus.$options);
   EventBus.$emit("add-complete-uploader-result", uploads);
 };
 // -----------------------原始云盘 Complete 模块--------------------
 
-// -------------------------原始云盘 Gis 模块-----------------------
+// -------------------------原始云盘sx Gis 模块-----------------------
 export const addGisCurrent = payload => {
-  let giscurrents = EventBus.$options.upload.giscurrents.push(payload);
+  let giscurrents = EventBus.$options.gis.giscurrents.push(payload);
   let giscount = giscurrents.length;
   EventBus.$emit("add-gis-current", giscurrents);
 };
 // -------------------------原始云盘 Gis 模块-----------------------
 
 export const changeWebsocketAction = payload => {
-  state.wsAction = payload.action;
+  EventBus.$options.websocket.WebsocketAction = payload.action;
+  EventBus.$emit("change-websocket-action", payload.action);
 };
 export const changeWebSocketContent = payload => {
-  state.wsContent = payload.content;
+  EventBus.$options.websocket.WebsocketContent = payload.content;
+  EventBus.$emit("change-websocket-content", payload.content);
 };
 export const changeWebSocketContentType = payload => {
-  state.contentType = payload.contentType;
+  EventBus.$options.websocket.WebsocketContentType = payload.contentType;
+  EventBus.$emit("change-websocket-content-type", payload.contentType);
 };
 export const changeWebSocketMsgid = payload => {
-  state.msgid = payload.msgid;
+  EventBus.$options.websocket.WebsocketMessageId = payload.msgid;
+  EventBus.$emit("change-websocket-msgid", payload.msgid);
 };

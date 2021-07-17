@@ -1,5 +1,5 @@
 <script>
-import { Divider } from "ant-design-vue/es/menu/index";
+import Menu from "ant-design-vue/es/menu/index";
 import PropTypes from "../../util/vue-types";
 import AntdMixin from "../../mixin/AntdMixin";
 import ThemeMixin from "../../mixin/ThemeMixin";
@@ -14,7 +14,7 @@ export const MenuDividerProps = {
 
 export default {
   name: "mapgis-ui-menu-divider",
-  wrapperUI: Divider,
+  wrapperUI: Menu.Divider,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
   props: MenuDividerProps,
