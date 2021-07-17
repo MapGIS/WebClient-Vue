@@ -49,35 +49,35 @@
         <div class="file-panel" slot-scope="props" id="global-uploader-list">
           <div class="file-title">
             <span>上传总进度</span>
-            <Progress
+            <mapgis-ui-progress
               class="file-process"
               :percent="percent"
               :stroke-width="13"
-            ></Progress>
+            ></mapgis-ui-progress>
             <div class="operate">
-              <ButtonGroup>
-                <i-button
+              <mapgis-ui-button-group>
+                <mapgis-ui-button
                   @click="handleAllStart"
                   type="default"
                   title="全部开始"
                   size="small"
                   icon="md-play"
-                ></i-button>
-                <i-button
+                ></mapgis-ui-button>
+                <mapgis-ui-button
                   @click="handleAllPause"
                   type="default"
                   title="全部暂停"
                   size="small"
                   icon="md-pause"
-                ></i-button>
-                <i-button
+                ></mapgis-ui-button>
+                <mapgis-ui-button
                   @click="handleAllCancel"
                   type="default"
                   title="全部取消"
                   size="small"
                   icon="md-power"
-                ></i-button>
-              </ButtonGroup>
+                ></mapgis-ui-button>
+              </mapgis-ui-button-group>
             </div>
           </div>
 
@@ -111,7 +111,11 @@
  *            Bus.$on('fileSuccess', fn); 文件上传成功的回调
  */
 import { ACCEPT_CONFIG } from "./globalConfig";
-import { getMapGISUploadUrl, getMapgisToken } from "../../config/mapgis";
+import {
+  getMapGISUploadUrl,
+  getMapgisToken,
+  getWebSocketUrl
+} from "../../config/mapgis";
 import SparkMD5 from "spark-md5";
 import {
   mergeSimpleUpload,
@@ -139,7 +143,11 @@ import {
   changeUploadError,
   addCompleteUploaderCount,
   addCompleteUploaderResult,
-  addGisCurrent
+  addGisCurrent,
+  changeWebsocketAction,
+  changeWebSocketContent,
+  changeWebSocketContentType,
+  changeWebSocketMsgid
 } from "../../../../util/emit/upload";
 
 import UploadMixin from "../../../../mixin/UploaderMixin";
@@ -158,6 +166,9 @@ export default {
     UploaderList,
     UploaderFiles,
     UploaderFile
+  },
+  props: {
+    action: String
   },
   data() {
     return {
@@ -222,14 +233,20 @@ export default {
         accept: ACCEPT_CONFIG.csv
       },
       panelShow: false, // 选择文件后，展示上传panel
-      timeId: -1
+      timeId: -1,
+      BacgroundWebsocketInstance: undefined
     };
   },
   created() {
     self = this;
+    this.initWebsocket();
   },
   mounted() {},
   watch: {
+    clickFlag: function(next) {
+      let target = getMapGISUploadUrl();
+      this.options.target = target;
+    },
     options: function() {
       let target = this.getSetting();
       this.options.target = target;
@@ -298,20 +315,10 @@ export default {
       this.percent = percent > 100 ? 100 : percent < 0 ? 0 : percent;
     },
     getSetting() {
-      // @date 2021/07/16 潘卓然 后面检查一下
-      // let mode = this.$store.state.setting.mode;
-      let mode = "mapgis";
-      if (mode === "mapgis") {
-        let serveMapgisIp = window.sessionStorage.getItem("server_mapgis_ip");
-        let { mapgis } = this.$store.state.setting;
-        let http = mapgis.http || "http";
-        let ip = serveMapgisIp || mapgis.ip || "127.0.0.1";
-        let socket = mapgis.socket || "8082";
-        let uploadUrl =
-          mapgis.uploadUrl || "clouddisk/rest/file/uploader/chunk";
-        let target = http + "://" + ip + ":" + socket + "//" + uploadUrl;
-        return target;
-      }
+      let baseUrl = "http://192.168.199.53:9011";
+      let uploadUrl = "/clouddisk/rest/file/uploader/chunk";
+      let target = baseUrl + uploadUrl;
+      return target;
     },
     onFileAdded(file) {
       changeUiState({ state: "upload" });
@@ -360,7 +367,8 @@ export default {
         let type = self.param.type;
         let isCache = self.param.isCache;
         let gisFormat = type === "tiff" ? "raster" : "vector";
-        let formdata = { // @date 2021/07/16
+        let formdata = {
+          // @date 2021/07/16
           folderDir: this.$store.state.path.current.uri,
           totalSize: file.size,
           type: file.fileType,
@@ -410,10 +418,10 @@ export default {
       } else {
         res = JSON.parse(response);
       }
-      this.$Message.error({
+      this.$message.error({
         content: "文件:" + rootFile.name + "上传失败！"
       });
-      this.$Message.error({
+      this.$message.error({
         content: "错误码:" + res.errorCode + "   失败原因： " + res.msg
       });
       changeUploadError({ uploadError: true });
@@ -557,7 +565,39 @@ export default {
         type: "error",
         duration: 2000
       }); */
-    }
+    },
+
+    initWebsocket() {
+      const wsUrl = getWebSocketUrl();
+      this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
+    },
+    updateWebsocket() {
+      const vm = this;
+      this.BacgroundWebsocketInstance.onmessage = function(event) {
+        let flag = vm.isJSON(event.data);
+        if (flag) {
+          let data = JSON.parse(event.data);
+          let action = data.action;
+          let msgid = data.msgid;
+          let contentStr = data.content;
+          let contentJson = {};
+          let contentType = "";
+          if (vm.isJSON(contentStr)) {
+            contentJson = JSON.parse(contentStr);
+            contentType = Object.keys(contentJson)[0];
+          }
+          if (contentType !== "" && contentJson !== {}) {
+            changeWebsocketAction({ action: action });
+            changeWebSocketContent({ content: contentJson });
+            changeWebSocketContentType({ contentType: contentType });
+            changeWebSocketMsgid({ msgid: msgid });
+          }
+        } else {
+          console.warn("发送成功！", event.data);
+        }
+      };
+    },
+    removeWebsocket() {}
   },
   destroyed() {
     // Bus.$off("openUploader");

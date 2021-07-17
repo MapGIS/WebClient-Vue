@@ -63,12 +63,14 @@
 import Uploader from 'simple-uploader.js'
 import events from '../common/file-events'
 import { secondsToStr } from '../common/utils'
+import UploadMixin from "../../../../../mixin/UploaderMixin";
 // import { task } from '@/axios/gis.js'
 
 const COMPONENT_NAME = 'uploader-file'
 
 export default {
   name: COMPONENT_NAME,
+  mixins: [UploadMixin],
   props: {
     file: {
       type: Object, // Uploader.File @see https://github.com/simple-uploader/Uploader/blob/develop/README_zh-CN.md
@@ -363,7 +365,7 @@ export default {
         }) */
     },
     getFileUrl () {
-      let currentUrl = this.$store.state.upload.param.folderDir
+      let currentUrl = this.param.folderDir
       let gisIndex = currentUrl.indexOf('.gis')
       if (gisIndex >= 0) {
         let temUrl1 = currentUrl.slice(gisIndex + 4)

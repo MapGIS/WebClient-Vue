@@ -1,12 +1,12 @@
 <template>
   <mapgis-ui-modal
     :visible="show"
-    :maskClosable="false"
+    :maskClosable="true"
     title="导入文件"
     :width="width"
     :dialog-style="{ top: '100px' }"
     @cancel="handleCloseImport"
-    :footer="importStatus === 'init' ? null : footer"
+    :footer="uistatus === 'init' ? null : footer"
   >
     <template slot="footer">
       <mapgis-ui-button
@@ -21,13 +21,13 @@
       </mapgis-ui-button>
     </template>
     <mapgis-ui-uploader-data
-      v-if="importStatus === 'init' && show"
+      v-if="uistatus === 'init' && show"
       :curImportUrl="curImportUrl"
       :importDestUrl="importDestUrl"
       @changePathText="changePathText"
     />
     <mapgis-ui-uploader-progress
-      v-if="importStatus === 'upload' && show"
+      v-if="uistatus === 'upload' && show"
       @handleUploadComplete="handleUploadComplete"
     />
   </mapgis-ui-modal>
@@ -64,7 +64,6 @@ export default {
     return {
       curImportUrl: "",
       importDestUrl: "",
-      importStatus: "init",
       continueUpload: false
     };
   },
@@ -73,9 +72,11 @@ export default {
       /* this.curImportUrl = this.$store.state.path.current.uri || "";
       this.importDestUrl = this.importFileInfo(this.curImportUrl);
       this.show = true; */
+      this.$emit("ok", true);
     },
     handleCloseImport() {
       changeUiState({ status: "init" });
+      this.$emit("cancel", false);
       this.$emit("change", false);
       this.continueUpload = false;
     },

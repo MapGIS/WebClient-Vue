@@ -86,14 +86,14 @@ export default {
 
 <style scoped>
 .path {
-  width: 45vw;
+  width: 100%;
   height: 40px;
   background: #f2f5fa;
   margin: 0 auto;
 }
 .path-text {
   display: inline-block;
-  max-width: calc(45vw - 150px);
+  max-width: calc(100% - 150px);
   line-height: 40px;
   margin-left: 10px;
   color: #3d4757;

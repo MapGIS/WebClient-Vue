@@ -42,13 +42,19 @@ export default {
       isFolder: false,
       clickFlag: 0,
       fileName: "",
-      status: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
+      uistatus: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
       progress: 0,
       uploadError: false,
       uploadCount: 0, // 原始云盘的complete模块
       uploads: [], // 原始云盘的complete模块
       giscurrents: [], // 原始云盘的gis模块
-      giscount: [] // 原始云盘的gis模块
+      giscount: [], // 原始云盘的gis模块
+      websocket: { // 原始云盘的websocket模块
+        WebsocketAction: "",
+        WebsocketContentType: "",
+        WebsocketContent: {},
+        WebsocketMessageId: "" // 区分消息
+      }
     };
   },
   created() {
@@ -68,44 +74,57 @@ export default {
 
       this.$emit("themeStyleChanged");
     }); */
+    const vm = this;
     EventBus.$on("open-uploader", payload => {
       const { isFolder, clickFlag, param } = payload;
-      this.isFolder = isFolder;
-      this.clickFlag = clickFlag;
-      this.param = param;
+      vm.isFolder = isFolder;
+      vm.clickFlag = clickFlag;
+      vm.param = param;
     });
     EventBus.$on("add-uploader-count", count => {
-      this.count = count;
+      vm.count = count;
     });
     EventBus.$on("sub-uploader-count", count => {
-      this.count = count;
+      vm.count = count;
     });
     EventBus.$on("clear-uploader-count", count => {
-      this.count = count;
+      vm.count = count;
     });
     EventBus.$on("delete-current-file", current => {
-      this.current = current;
+      vm.current = current;
     });
     EventBus.$on("change-current-filename", filename => {
-      this.filename = filename;
+      vm.filename = filename;
     });
-    EventBus.$on("change-ui-state", state => {
-      this.state = state;
+    EventBus.$on("change-ui-state", uistatus => {
+      vm.uistatus = uistatus;
     });
     EventBus.$on("change-upload-process", process => {
-      this.process = process;
+      vm.process = process;
     });
     EventBus.$on("change-upload-error", uploadError => {
-      this.uploadError = uploadError;
+      vm.uploadError = uploadError;
     });
     EventBus.$on("add-complete-uploader-count", count => {
-      this.count = count;
+      vm.count = count;
     });
     EventBus.$on("add-complete-uploader-result", uploads => {
-      this.uploads = uploads;
+      vm.uploads = uploads;
     });
     EventBus.$on("add-gis-current", giscurrents => {
-      this.giscurrents = giscurrents;
+      vm.giscurrents = giscurrents;
+    });
+    EventBus.$on("change-websocket-action", action => {
+      vm.websocket.WebsocketAction = action;
+    });
+    EventBus.$on("change-websocket-content", content => {
+      vm.websocket.WebsocketContent = content;
+    });
+    EventBus.$on("change-websocket-content-type", contentType => {
+      vm.websocket.WebsocketContentType = contentType;  
+    });
+    EventBus.$on("change-websocket-msgid", msgid => {
+      vm.websocket.WebsocketMessageId = msgid;    
     });
   },
   methods: {

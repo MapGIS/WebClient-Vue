@@ -18,7 +18,13 @@ import EventBus from "../vue-types/event-bus-uploader";
       1 uploadCount: 0, // 原始云盘的complete模块
       1 uploads: [], // 原始云盘的complete模块
       1 giscurrents: [], // 原始云盘的gis模块
-      1 giscount: [] // 原始云盘的gis模块
+      1 giscount: []， // 原始云盘的gis模块
+      websocket: { // 原始云盘的websocket模块
+        WebsocketAction: "",
+        WebsocketContentType: "",
+        WebsocketContent: {},
+        WebsocketMessageId: "" // 区分消息
+      }
   });
  */
 
@@ -36,12 +42,12 @@ export const openUploader = payload => {
 };
 
 export const addUploaderCount = () => {
-  EventBus.$options.upload.count = EventBus.$options.upload.count + 1;
+  let count = ++EventBus.$options.upload.count;
   EventBus.$emit("add-uploader-count", count);
 };
 
 export const subUploaderCount = () => {
-  EventBus.$options.upload.count = EventBus.$options.upload.count - 1;
+  let count = --EventBus.$options.upload.count;
   EventBus.$emit("sub-uploader-count", count);
 };
 
@@ -124,3 +130,16 @@ export const addGisCurrent = payload => {
   EventBus.$emit("add-gis-current", giscurrents);
 };
 // -------------------------原始云盘 Gis 模块-----------------------
+
+export const changeWebsocketAction = payload => {
+  state.wsAction = payload.action;
+};
+export const changeWebSocketContent = payload => {
+  state.wsContent = payload.content;
+};
+export const changeWebSocketContentType = payload => {
+  state.contentType = payload.contentType;
+};
+export const changeWebSocketMsgid = payload => {
+  state.msgid = payload.msgid;
+};
