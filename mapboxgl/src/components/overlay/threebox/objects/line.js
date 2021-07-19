@@ -2,7 +2,7 @@ var THREE = require("../three.js");
 var utils = require("../utils/utils.js");
 var Objects = require("./objects.js");
 
-function line(obj) {
+export function line(obj) {
   obj = utils._validate(obj, Objects.prototype._defaults.line);
 
   // Geometry
@@ -46,7 +46,7 @@ function line(obj) {
   return line;
 }
 
-module.exports = exports = line;
+export default line;
 
 /**
  * custom line shader by WestLangley, sourced from https://github.com/mrdoob/three.js/tree/master/examples/js/lines

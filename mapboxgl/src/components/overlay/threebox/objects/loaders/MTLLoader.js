@@ -6,7 +6,7 @@
 
 const THREE = require("../../three.js");
 
-const MTLLoader = function(manager) {
+export const MTLLoader = function(manager) {
   this.manager = manager !== undefined ? manager : THREE.DefaultLoadingManager;
 };
 
@@ -448,4 +448,4 @@ MTLLoader.MaterialCreator.prototype = {
   }
 };
 
-module.exports = exports = MTLLoader;
+export default MTLLoader;

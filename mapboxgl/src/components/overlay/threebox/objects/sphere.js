@@ -2,7 +2,7 @@ var utils = require("../utils/utils.js");
 var material = require("../utils/material.js");
 var Objects = require("./objects.js");
 
-function Sphere(obj) {
+export function Sphere(obj) {
   obj = utils._validate(obj, Objects.prototype._defaults.sphere);
   var geometry = new THREE.SphereBufferGeometry(
     obj.radius,
@@ -18,4 +18,4 @@ function Sphere(obj) {
   return output;
 }
 
-module.exports = exports = Sphere;
+export default Sphere;

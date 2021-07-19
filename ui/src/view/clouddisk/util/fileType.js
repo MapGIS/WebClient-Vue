@@ -1,76 +1,76 @@
-export const FOLDER = '.folder'
-export const FOLDER1 = 'folder'
-export const FOLDER2 = '文件夹'
+export const FOLDER = ".folder";
+export const FOLDER1 = "folder";
+export const FOLDER2 = "文件夹";
 
-export const DOC = '.doc'
-export const DOC1 = 'doc'
-export const DOCX = '.docx'
-export const DOCX1 = 'docx'
-export const PPT = '.ppt'
-export const PPT1 = 'ppt'
-export const PPTX = '.pptx'
-export const PPTX1 = 'pptx'
-export const XLS = '.xls'
-export const XLS1 = 'xls'
-export const XLSX = '.xlsx'
-export const XLSX1 = 'xlsx'
+export const DOC = ".doc";
+export const DOC1 = "doc";
+export const DOCX = ".docx";
+export const DOCX1 = "docx";
+export const PPT = ".ppt";
+export const PPT1 = "ppt";
+export const PPTX = ".pptx";
+export const PPTX1 = "pptx";
+export const XLS = ".xls";
+export const XLS1 = "xls";
+export const XLSX = ".xlsx";
+export const XLSX1 = "xlsx";
 
-export const PNG = '.png'
-export const PNG1 = 'png'
-export const JPG = '.jpg'
-export const JPG1 = 'jpg'
-export const PDF = '.pdf'
-export const PDF1 = 'pdf'
+export const PNG = ".png";
+export const PNG1 = "png";
+export const JPG = ".jpg";
+export const JPG1 = "jpg";
+export const PDF = ".pdf";
+export const PDF1 = "pdf";
 
-export const TXT = '.txt'
-export const TXT1 = 'txt'
-export const LOG = '.log'
-export const LOG1 = 'log'
+export const TXT = ".txt";
+export const TXT1 = "txt";
+export const LOG = ".log";
+export const LOG1 = "log";
 // export const JSON = 'json' || '.json'
-export const JSON = '.json'
-export const JSON1 = 'json'
+export const JSON = ".json";
+export const JSON1 = "json";
 
-export const MP3 = '.mp3'
-export const MP31 = 'mp3'
-export const WMV = '.wmv'
-export const WMV1 = 'wmv'
-export const MP4 = '.mp4'
-export const MP41 = 'mp4'
+export const MP3 = ".mp3";
+export const MP31 = "mp3";
+export const WMV = ".wmv";
+export const WMV1 = "wmv";
+export const MP4 = ".mp4";
+export const MP41 = "mp4";
 
-export const EXE = '.exe'
-export const EXE1 = 'exe'
+export const EXE = ".exe";
+export const EXE1 = "exe";
 
-export const UNKNOW = '.*'
-export const UNKNOW1 = ''
+export const UNKNOW = ".*";
+export const UNKNOW1 = "";
 
-export const STYLE = '.style'
-export const STYLE1 = 'style'
-export const HDF = '.hdf'
-export const HDF1 = 'hdf'
-export const GEOJSON = '.geojson'
-export const GEOJSON1 = 'geojson'
-export const SHAPEFILE = '.shp'
-export const SHAPEFILE1 = 'shp'
-export const ZIP = '.zip'
-export const ZIP1 = 'zip'
-export const WT = '.wt'
-export const WT1 = 'wt'
-export const WL = '.wl'
-export const WL1 = 'wl'
-export const WP = '.wp'
-export const WP1 = 'wp'
-export const TIFF = '.tiff'
-export const TIFF1 = 'tiff'
-export const TIF = '.tif'
-export const TIF1 = 'tif'
-export const TDF = '.tdf'
-export const TDF1 = 'tdf'
-export const MUT = '.mut'
-export const MUT1 = 'mut'
-export const TABLE = '.table'
-export const TABLE1 = 'table'
-export const MOSA = '.mosa'
-export const GEOTABLE = '.geotable'
+export const STYLE = ".style";
+export const STYLE1 = "style";
+export const HDF = ".hdf";
+export const HDF1 = "hdf";
+export const GEOJSON = ".geojson";
+export const GEOJSON1 = "geojson";
+export const SHAPEFILE = ".shp";
+export const SHAPEFILE1 = "shp";
+export const ZIP = ".zip";
+export const ZIP1 = "zip";
+export const WT = ".wt";
+export const WT1 = "wt";
+export const WL = ".wl";
+export const WL1 = "wl";
+export const WP = ".wp";
+export const WP1 = "wp";
+export const TIFF = ".tiff";
+export const TIFF1 = "tiff";
+export const TIF = ".tif";
+export const TIF1 = "tif";
+export const TDF = ".tdf";
+export const TDF1 = "tdf";
+export const MUT = ".mut";
+export const MUT1 = "mut";
+export const TABLE = ".table";
+export const TABLE1 = "table";
+export const MOSA = ".mosa";
+export const GEOTABLE = ".geotable";
 
 export const FileType = {
   UNKNOW,
@@ -135,25 +135,25 @@ export const FileType = {
   TABLE1,
   MOSA,
   GEOTABLE
-}
+};
 
-export function validTileData (type) {
-  let tile = false
-  type = type.toLowerCase()
+export function validTileData(type) {
+  let tile = false;
+  type = type.toLowerCase();
   switch (type) {
     case TDF:
     case MUT:
     case TDF1:
     case MUT1:
-      tile = true
-      break
+      tile = true;
+      break;
   }
-  return tile
+  return tile;
 }
 
-export function validVectorData (type) {
-  let gis = false
-  type = type.toLowerCase()
+export function validVectorData(type) {
+  let gis = false;
+  type = type.toLowerCase();
   switch (type) {
     case GEOJSON:
     case SHAPEFILE:
@@ -165,15 +165,15 @@ export function validVectorData (type) {
     case WT1:
     case WL1:
     case WP1:
-      gis = true
-      break
+      gis = true;
+      break;
   }
-  return gis
+  return gis;
 }
 
-export function validGeoData (type) {
-  let gis = false
-  type = type.toLowerCase()
+export function validGeoData(type) {
+  let gis = false;
+  type = type.toLowerCase();
   switch (type) {
     case GEOJSON:
     case SHAPEFILE:
@@ -199,15 +199,15 @@ export function validGeoData (type) {
     case JSON1:
     case MOSA:
     case GEOTABLE:
-      gis = true
-      break
+      gis = true;
+      break;
   }
-  return gis
+  return gis;
 }
 
-export function validGisData (type) {
-  let gis = false
-  type = type.toLowerCase()
+export function validGisData(type) {
+  let gis = false;
+  type = type.toLowerCase();
   switch (type) {
     case STYLE:
     case HDF:
@@ -235,92 +235,92 @@ export function validGisData (type) {
     case JSON1:
     case MOSA:
     case GEOTABLE:
-    // case TIFF:
-    // case TIF:
-    // case TIFF1:
-    // case TIF1:
-      gis = true
-      break
+      // case TIFF:
+      // case TIF:
+      // case TIFF1:
+      // case TIF1:
+      gis = true;
+      break;
   }
-  return gis
+  return gis;
 }
 
-export function getFileIcon (name) {
+export function getFileIcon(name) {
   switch (name) {
     case DOC:
     case DOCX:
     case DOC1:
     case DOCX1:
-      return 'icondoc'
+      return "icondoc";
     case PPT:
     case PPTX:
     case PPT1:
     case PPTX1:
-      return 'iconppt'
+      return "iconppt";
     case XLS:
     case XLSX:
     case XLS1:
     case XLSX1:
-      return 'iconxls'
+      return "iconxls";
     case FOLDER:
     case FOLDER1:
     case FOLDER2:
-      return 'iconwenjianjia-shouqi-'
+      return "iconwenjianjia-shouqi-";
     case PNG:
     case JPG:
     case PNG1:
     case JPG1:
-      return 'icontupian'
+      return "icontupian";
     case PDF:
     case PDF1:
-      return 'iconpdf'
+      return "iconpdf";
     case TXT:
     case TXT1:
-      return 'icontxt'
+      return "icontxt";
     case LOG:
     case LOG1:
-      return 'iconlog'
+      return "iconlog";
     case JSON:
     case JSON1:
-      return 'iconjson'
+      return "iconjson";
     case MP3:
     case WMV:
     case MP31:
     case WMV1:
-      return 'iconyinle'
+      return "iconyinle";
     case MP4:
     case MP41:
-      return 'iconshipin'
+      return "iconshipin";
     case EXE:
     case EXE1:
-      return 'iconexe'
+      return "iconexe";
     case GEOJSON:
     case GEOJSON1:
-      return 'iconGeoJson'
+      return "iconGeoJson";
     case SHAPEFILE:
     case SHAPEFILE1:
-      return 'iconS'
+      return "iconS";
     case HDF:
     case HDF1:
-      return 'iconGeometry'
+      return "iconGeometry";
     case WT:
     case WT1:
-      return 'iconvector-point'
+      return "iconvector-point";
     case WL:
     case WL1:
-      return 'iconvectorline'
+      return "iconvectorline";
     case WP:
     case WP1:
-      return 'iconvectorsquare'
+      return "iconvectorsquare";
     case TIF:
     case TIF1:
     case TIFF:
     case TIFF1:
-      return 'icontiff'
+      return "icontiff";
     case TABLE:
     case TABLE1:
-      return 'icongrid'
+      return "icongrid";
     default:
-      return 'iconunknown'
+      return "iconunknown";
   }
 }

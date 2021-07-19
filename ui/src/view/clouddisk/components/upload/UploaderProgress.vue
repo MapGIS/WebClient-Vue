@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import UploadMixin from '../../../../mixin/UploaderMixin';
+import UploadMixin from "../../../../mixin/UploaderMixin";
 
 export default {
   name: "importProgress",
@@ -32,39 +32,44 @@ export default {
     return {
       importStatus: "导入中...",
       importComplete: false,
-      tipText: "后台导入中，当前窗口可关闭"
+      tipText: "后台导入中，当前窗口可关闭",
+      importProgress: 0,
+      importFileName: "上传文件名"
     };
   },
   watch: {
-    handleWsRefresh() {
-      let wsAction = this.$store.state.websocket.wsAction;
-      let contentType = this.$store.state.websocket.contentType;
-      let wsContent = this.$store.state.websocket.wsContent;
-      if (
-        wsAction === "refresh" &&
-        contentType === "dirNavigation" &&
-        wsContent[contentType] !== ""
-      ) {
-        this.importStatus = "导入成功";
-        this.importComplete = true;
-        this.tipText = "导入完成";
-        this.$emit("handleUploadComplete", true);
+    websocket: {
+      handler: function(next) {
+        let wsAction = next.wsAction;
+        let contentType = next.contentType;
+        let wsContent = next.wsContent;
+        if (
+          wsAction === "refresh" &&
+          contentType === "dirNavigation" &&
+          wsContent[contentType] !== ""
+        ) {
+          this.importStatus = "导入成功";
+          this.importComplete = true;
+          this.tipText = "导入完成";
+          this.$emit("handleUploadComplete", true);
+        }
+      },
+      deep: true
+    },
+    progress(next) {
+      if (this.importComplete) {
+        this.importProgress = 100;
+      } else {
+        let uploadProgress = next * 90;
+        uploadProgress = parseInt(uploadProgress);
+        this.importProgress = uploadProgress;
       }
+    },
+    fileName(next) {
+      this.importFileName = next;
     }
   },
   computed: {
-    importFileName() {
-      return this.fileName;
-    },
-    importProgress() {
-      if (this.importComplete) {
-        return 100;
-      } else {
-        let uploadProgress = this.progress * 90;
-        uploadProgress = parseInt(uploadProgress);
-        return uploadProgress;
-      }
-    },
     handleWsRefresh() {
       return this.$store.state.websocket.msgid;
     },

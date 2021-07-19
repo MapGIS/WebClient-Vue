@@ -2,7 +2,7 @@ var THREE = require("../three.js");
 var utils = require("../utils/utils.js");
 var ThreeboxConstants = require("../utils/constants.js");
 
-function CameraSync(map, camera, world) {
+export function CameraSync(map, camera, world) {
   this.map = map;
   this.camera = camera;
   this.active = true;
@@ -133,4 +133,4 @@ CameraSync.prototype = {
   }
 };
 
-module.exports = exports = CameraSync;
+export default CameraSync;

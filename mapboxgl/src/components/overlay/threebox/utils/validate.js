@@ -1,6 +1,6 @@
 // Type validator
 
-function Validate() {}
+export function Validate() {}
 
 Validate.prototype = {
   Coords: function(input) {
@@ -91,4 +91,4 @@ Validate.prototype = {
   }
 };
 
-module.exports = exports = Validate;
+export default Validate;

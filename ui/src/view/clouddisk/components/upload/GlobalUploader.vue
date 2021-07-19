@@ -139,7 +139,7 @@ import {
   deleteCurrentFile,
   changeCurrentFilename,
   changeUiState,
-  changeUploadProcess,
+  changeUploadProgress,
   changeUploadError,
   addCompleteUploaderCount,
   addCompleteUploaderResult,
@@ -323,7 +323,7 @@ export default {
     onFileAdded(file) {
       changeUiState({ state: "upload" });
       changeUploadError({ uploadError: false });
-      changeUploadProcess({ process: 0 });
+      changeUploadProgress({ progress: 0 });
       changeCurrentFilename({ filename: file.name });
 
       globalCurrentFiles.push(file);
@@ -335,7 +335,7 @@ export default {
       // console.log("files add", files, fileList);
     },
     onFileProgress(rootFile, file, chunk) {
-      changeUploadProcess({ process: file.progress() });
+      changeUploadProgress({ progress: file.progress() });
       let uploadingCount = self.count;
       let uploadedCount = self.uploadCount;
       self.percent = (uploadedCount / (uploadedCount + uploadingCount)) * 100;
@@ -360,10 +360,8 @@ export default {
         this.$message({ message: res.message, type: "error" });
         return;
       } */
-      console.log("need meger", res);
       // 如果服务端返回需要合并
       if (res.data.needMerge) {
-        console.log("need meger", res);
         let type = self.param.type;
         let isCache = self.param.isCache;
         let gisFormat = type === "tiff" ? "raster" : "vector";
@@ -401,11 +399,7 @@ export default {
         // 不需要合并 */
       } else {
         console.log("上传成功");
-        // refresh();
-        // 入库 // 这里服务端自动做导入
-        // if (this.$store.state.upload.param.isImport && this.$store.state.upload.param.type !== 'tiff') {
-        //   this.importFile(this.$store.state.upload.param.folderDir, file.name)
-        // }
+        changeUploadProgress({ progress: 1 });
       }
     },
     onFileError(rootFile, file, response, chunk) {
@@ -577,6 +571,7 @@ export default {
         let flag = vm.isJSON(event.data);
         if (flag) {
           let data = JSON.parse(event.data);
+          console.log('websocket', data);
           let action = data.action;
           let msgid = data.msgid;
           let contentStr = data.content;

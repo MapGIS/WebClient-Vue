@@ -58,10 +58,12 @@ export { default as MapgisTrackerLayer } from "./components/layer/tracker/Tracke
 
 export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
-export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
+// es5的依赖过多先不放开
+// export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
 
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
+export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 
 /* 

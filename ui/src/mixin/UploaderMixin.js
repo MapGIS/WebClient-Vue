@@ -1,40 +1,16 @@
-import EventBus, { defaultUpload } from "../util/vue-types/event-bus-uploader";
+import EventBus, {
+  defaultUpload,
+  defaultGis,
+  defaultComplete,
+  defaultWebsocket
+} from "../util/vue-types/event-bus-uploader";
 
 export default {
-  name: "Theme",
-  props: {
-    /* count: 0,
-    visible: false,
-    current: {
-      type: Array,
-      default: () => []
-    },
-    param: {},
-    isFolder: false,
-    clickFlag: 0,
-    fileName: "",
-    status: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
-    progress: 0,
-    uploadError: false,
-    uploadCount: 0, // 原始云盘的complete模块
-    uploads: {
-      // 原始云盘的complete模块
-      type: Array,
-      default: () => []
-    },
-    giscurrents: {
-      // 原始云盘的gis模块
-      type: Array,
-      default: () => []
-    },
-    giscount: {
-      // 原始云盘的gis模块
-      type: Array,
-      default: () => []
-    } */
-  },
+  name: "Uploader",
+  props: {},
   data() {
     return {
+      // 原始云盘的uploader模块
       count: 0,
       visible: false,
       current: [],
@@ -45,16 +21,17 @@ export default {
       uistatus: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
       progress: 0,
       uploadError: false,
-      uploadCount: 0, // 原始云盘的complete模块
-      uploads: [], // 原始云盘的complete模块
-      giscurrents: [], // 原始云盘的gis模块
-      giscount: [], // 原始云盘的gis模块
-      websocket: { // 原始云盘的websocket模块
-        WebsocketAction: "",
-        WebsocketContentType: "",
-        WebsocketContent: {},
-        WebsocketMessageId: "" // 区分消息
-      }
+      // 原始云盘的complete模块
+      uploadCount: 0,
+      uploads: [],
+      // 原始云盘的gis模块
+      giscurrents: [],
+      giscount: [],
+      // 原始云盘的websocket模块
+      WebsocketAction: "",
+      WebsocketContentType: "",
+      WebsocketContent: {},
+      WebsocketMessageId: "" // 区分消息
     };
   },
   created() {
@@ -94,13 +71,13 @@ export default {
       vm.current = current;
     });
     EventBus.$on("change-current-filename", filename => {
-      vm.filename = filename;
+      vm.fileName = filename;
     });
     EventBus.$on("change-ui-state", uistatus => {
       vm.uistatus = uistatus;
     });
-    EventBus.$on("change-upload-process", process => {
-      vm.process = process;
+    EventBus.$on("change-upload-progress", progress => {
+      vm.progress = progress;
     });
     EventBus.$on("change-upload-error", uploadError => {
       vm.uploadError = uploadError;
@@ -121,15 +98,18 @@ export default {
       vm.websocket.WebsocketContent = content;
     });
     EventBus.$on("change-websocket-content-type", contentType => {
-      vm.websocket.WebsocketContentType = contentType;  
+      vm.websocket.WebsocketContentType = contentType;
     });
     EventBus.$on("change-websocket-msgid", msgid => {
-      vm.websocket.WebsocketMessageId = msgid;    
+      vm.websocket.WebsocketMessageId = msgid;
     });
   },
   methods: {
     initUploadData() {
       const upload = EventBus.$options.upload || defaultUpload;
+      const gis = EventBus.$options.gis || defaultGis;
+      const complete = EventBus.$options.complete || defaultComplete;
+      const websocket = EventBus.$options.websocket || defaultWebsocket;
 
       /* const $props = this.getSelfProps();
       $props.forEach(prop => {
@@ -139,6 +119,15 @@ export default {
 
       Object.keys(upload).forEach(key => {
         this[key] = upload[key];
+      });
+      Object.keys(gis).forEach(key => {
+        this[key] = gis[key];
+      });
+      Object.keys(complete).forEach(key => {
+        this[key] = complete[key];
+      });
+      Object.keys(websocket).forEach(key => {
+        this[key] = websocket[key];
       });
     },
 

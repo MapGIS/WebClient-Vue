@@ -1,7 +1,7 @@
 const WORLD_SIZE = 1024000;
 const MERCATOR_A = 6378137.0;
 
-module.exports = exports = {
+export default {
   WORLD_SIZE: WORLD_SIZE,
   PROJECTION_WORLD_SIZE: WORLD_SIZE / (MERCATOR_A * Math.PI * 2),
   MERCATOR_A: MERCATOR_A, // 900913 projection property

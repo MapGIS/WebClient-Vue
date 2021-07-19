@@ -1,4 +1,4 @@
-const ValueGenerator = function(input) {
+export const ValueGenerator = function(input) {
   if (typeof input === "object" && input.property !== undefined)
     // Value name comes from a property in each item
     return f => f.properties[input.property];
@@ -10,4 +10,4 @@ const ValueGenerator = function(input) {
   return undefined;
 };
 
-module.exports = exports = ValueGenerator;
+export default ValueGenerator;

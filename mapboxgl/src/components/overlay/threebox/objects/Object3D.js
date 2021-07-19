@@ -1,7 +1,7 @@
 var Objects = require("./objects.js");
 var utils = require("../utils/utils.js");
 
-function Object3D(options) {
+export function Object3D(options) {
   options = utils._validate(options, Objects.prototype._defaults.Object3D);
 
   var obj = options.obj;
@@ -13,4 +13,4 @@ function Object3D(options) {
   return obj;
 }
 
-module.exports = exports = Object3D;
+export default Object3D;

@@ -2,7 +2,7 @@ var threebox = require("../threebox.js");
 var utils = require("../utils/utils.js");
 var validate = require("../utils/validate.js");
 
-function AnimationManager(map) {
+export function AnimationManager(map) {
   this.map = map;
   this.enrolledObjects = [];
   this.previousFrameTime;
@@ -249,4 +249,4 @@ const defaults = {
     trackHeading: true
   }
 };
-module.exports = exports = AnimationManager;
+export default AnimationManager;

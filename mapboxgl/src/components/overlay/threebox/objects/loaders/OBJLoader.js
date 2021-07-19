@@ -3,7 +3,7 @@
  */
 const THREE = require("../../three.js");
 
-const OBJLoader = function(manager) {
+export const OBJLoader = function(manager) {
   this.manager = manager !== undefined ? manager : THREE.DefaultLoadingManager;
 
   this.materials = null;
@@ -672,4 +672,4 @@ OBJLoader.prototype = {
   }
 };
 
-module.exports = exports = OBJLoader;
+export default OBJLoader;

@@ -10,11 +10,24 @@ export let defaultUpload = {
   fileName: "",
   status: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
   progress: 0,
-  uploadError: false,
-  uploadCount: 0, // 原始云盘的complete模块
-  uploads: [], // 原始云盘的complete模块
+  uploadError: false
+};
+
+export let defaultGis = {
   giscurrents: [], // 原始云盘的gis模块
   giscount: [] // 原始云盘的gis模块
+};
+
+export let defaultComplete = {
+  uploadCount: 0, // 原始云盘的complete模块
+  uploads: [] // 原始云盘的complete模块
+};
+
+export let defaultWebsocket = {
+  WebsocketAction: "",
+  WebsocketContentType: "",
+  WebsocketContent: {},
+  WebsocketMessageId: "" // 区分消息
 };
 
 export default new Vue({
@@ -28,10 +41,20 @@ export default new Vue({
     fileName: "",
     status: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
     progress: 0,
-    uploadError: false,
+    uploadError: false
+  },
+  complete: {
     uploadCount: 0, // 原始云盘的complete模块
-    uploads: [], // 原始云盘的complete模块
+    uploads: [] // 原始云盘的complete模块
+  },
+  gis: {
     giscurrents: [], // 原始云盘的gis模块
     giscount: [] // 原始云盘的gis模块
+  },
+  websocket: {
+    WebsocketAction: "",
+    WebsocketContentType: "",
+    WebsocketContent: {},
+    WebsocketMessageId: "" // 区分消息
   }
 });

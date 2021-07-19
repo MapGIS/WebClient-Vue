@@ -1,14 +1,14 @@
 export const uploaderMixin = {
-  inject: ['uploader']
-}
+  inject: ["uploader"]
+};
 
 export const supportMixin = {
-  data () {
+  data() {
     return {
       support: true
-    }
+    };
   },
-  mounted () {
-    this.support = this.uploader.uploader.support
+  mounted() {
+    this.support = this.uploader.uploader.support;
   }
-}
+};

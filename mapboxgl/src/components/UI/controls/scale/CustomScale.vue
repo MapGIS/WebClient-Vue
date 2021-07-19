@@ -82,6 +82,7 @@ export default {
       map && map.off("move", this.moveEvent);
     },
     fixlonlat(lonlat) {
+      if (!lonlat) return { lng: 0, lat: 0 };
       if (lonlat.lng > 180) {
         lonlat.lng = 179.9999;
       } else if (lonlat.lng < -180) {

@@ -3,7 +3,7 @@ var material = require("../utils/material.js");
 
 const AnimationManager = require("../animation/AnimationManager.js");
 
-function Objects() {}
+export function Objects() {}
 
 Objects.prototype = {
   // standard 1px line with gl
@@ -167,4 +167,4 @@ Objects.prototype = {
   }
 };
 
-module.exports = exports = Objects;
+export default Objects;

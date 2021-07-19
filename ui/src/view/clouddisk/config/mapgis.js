@@ -7,7 +7,7 @@ export function getMapGISUrl() {
   let url = window.localStorage.getItem("mapgis_clouddisk_url");
 
   if (url) return url;
-  
+
   let href = window.location.href;
   let pathname = window.location.pathname;
   if (ip !== null && socket !== null) {

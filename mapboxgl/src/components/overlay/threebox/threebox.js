@@ -12,7 +12,7 @@ var Object3D = require("./objects/Object3D.js");
 var line = require("./objects/line.js");
 var tube = require("./objects/tube.js");
 
-function Threebox(map, glContext, options) {
+export function Threebox(map, glContext, options) {
   this.init(map, glContext, options);
 }
 
@@ -203,4 +203,4 @@ var defaultOptions = {
   defaultLights: false,
   passiveRendering: true
 };
-module.exports = exports = Threebox;
+export default Threebox;
