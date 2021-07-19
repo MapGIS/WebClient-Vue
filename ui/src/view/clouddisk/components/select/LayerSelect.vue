@@ -3,7 +3,7 @@
     <mapgis-ui-row>
       <mapgis-ui-col :span="9" class="demo-split-pane">
         <mapgis-ui-clouddisk-company
-          :isMulti="isMulti"
+          :isMulti="isLayers"
           :tiffListsObj="tiffListsObj"
           @url="handleUrl"
         />
@@ -13,7 +13,7 @@
         <mapgis-ui-clouddisk-folder
           ref="folder"
           :url="url"
-          :isMulti="isMulti"
+          :isMulti="isLayers"
           :curTiffUrl="curTiffUrl"
           :tiffListsObj="tiffListsObj"
           :onlyFolder="onlyFolder"
@@ -30,12 +30,14 @@
         size="small"
       />
     </mapgis-ui-row>
+    <mapgis-ui-clouddisk-transform />
   </div>
 </template>
 
 <script>
 import MapgisUiClouddiskCompany from "./LayerCompany.vue";
 import MapgisUiClouddiskFolder from "./LayerFolder.vue";
+import MapgisUiClouddiskTransform from "./LayerTransform.vue";
 /* import folder from './folder.vue'
 import shareaim from './shareaim.vue'
 import ShowShareList from './showShareList.vue' */
@@ -44,11 +46,8 @@ export default {
   name: "mapgis-ui-clouddisk-layerselect",
   components: {
     MapgisUiClouddiskCompany,
-    MapgisUiClouddiskFolder
-    /* company,
-    folder,
-    shareaim,
-    ShowShareList */
+    MapgisUiClouddiskFolder,
+    MapgisUiClouddiskTransform
   },
   data() {
     return {
@@ -69,16 +68,22 @@ export default {
       type: String,
       default: ""
     },
-    isMulti: {
-      type: Boolean,
-      default: true
-    },
+    // isMulti: {
+    //   type: Boolean,
+    //   default: true
+    // },
     tiffListsObj: {
       type: Object,
       default: () => {
         return {};
       }
-    }
+    },
+    currentDocument: Object,
+    isLayers: {
+      type: Boolean,
+      default: true
+    },
+    handleNewDocument: Function
   },
   watch: {
     select(next) {
@@ -186,6 +191,9 @@ export default {
     updataFolder() {
       this.select = "";
       this.$refs.folder.updataFolder();
+    },
+    handleAddLayer () {
+      console.warn('收到回调并执行')
     }
   }
 };
