@@ -42,22 +42,16 @@
                   </div>
                 </div>
                 <div class="theme-panel-td theme-panel-td-input-num">
-                  <mapgis-ui-input v-if="dataSourceCopy.length > 1 && index === 0" class="range-theme-num"
-                                   @click="$_inputClick(index)"
+                  <mapgis-ui-input v-if="dataSourceCopy.length === 1 || (dataSourceCopy.length > 1 && index === 0)"
+                                   class="range-theme-num"
+                                   @click="$_inputClick('start')"
                                    @change="$_inputStartChange" v-model="startData">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
-                      <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
-                    </mapgis-ui-tooltip>
-                  </mapgis-ui-input>
-                  <mapgis-ui-input v-if="dataSourceCopy.length === 1" class="range-theme-num"
-                                   @click="$_inputClick(index)"
-                                   @change="$_inputStartChange" v-model="dataSourceCopy[index]">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
+                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="startNumWrong">
                       <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                   <mapgis-ui-input v-if="index > 0" class="range-theme-num"
-                                   @click="$_inputClick(index)"
+                                   @click="$_inputClick(index - 1)"
                                    @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
                     <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="(index - 1) === numWrong">
                       <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
@@ -72,25 +66,17 @@
                                    @change="$_inputEndChange"
                                    @click="$_inputClick(index)"
                                    v-model="dataSourceCopy[index]"
-                                   v-if="index < dataSourceCopy.length && dataSourceCopy.length > 1">
+                                   v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
                     <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
                       <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                   <mapgis-ui-input class="range-theme-num"
                                    @change="$_inputEndChange"
-                                   @click="$_inputClick(index)"
+                                   @click="$_inputClick('end')"
                                    v-model="endData"
-                                   v-if="index < dataSourceCopy.length && dataSourceCopy.length === 1">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
-                      <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
-                    </mapgis-ui-tooltip>
-                  </mapgis-ui-input>
-                  <mapgis-ui-input class="range-theme-num"
-                                   @change="$_inputEndChange"
-                                   @click="$_inputClick(index)"
-                                   v-model="endData" v-if="index === dataSourceCopy.length">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
+                                   v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
+                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="endNumWrong">
                       <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
@@ -126,9 +112,10 @@ export default {
   watch: {
     startData: {
       handler: function () {
-        if (Number(this.startData) >= Number(this.dataSourceCopy[0])) {
+        if ((this.dataSourceCopy.length === 1 && Number(this.startData) >= Number(this.endData)) ||
+            (this.dataSourceCopy.length > 1 && Number(this.startData) >= Number(this.dataSourceCopy[0]))) {
           //输入错误，改变输入框样式
-          this.$_inputWrong(0);
+          this.startNumWrong = true;
         } else {
           this.$_removeInputWrong();
         }
@@ -137,9 +124,9 @@ export default {
     endData: {
       handler: function () {
         if ((this.dataSourceCopy.length === 1 && Number(this.startData) >= Number(this.endData)) ||
-            (this.dataSourceCopy.length > 1 && Number(this.startData) >= Number(this.dataSourceCopy[0]))) {
+            (this.dataSourceCopy.length > 1 && Number(this.endData) < Number(this.dataSourceCopy[this.dataSourceCopy.length - 1]))) {
           //输入错误，改变输入框样式
-          this.$_inputWrong(this.dataSourceCopy.length);
+          this.endNumWrong = true;
         } else {
           this.$_removeInputWrong();
         }
@@ -178,7 +165,11 @@ export default {
       numWrong: -1,
       resetNum: true,
       endData: 0,
-      startData: 0
+      endDataCopy: 0,
+      startData: 0,
+      startDataCopy: 0,
+      startNumWrong: false,
+      endNumWrong: false
     }
   },
   mounted() {
@@ -194,19 +185,21 @@ export default {
     toggleLayer() {
       this.$_toggleLayer();
     },
-    $_inputClick(index){
-      console.log("++++++++++++++++++")
-      console.log("index",index)
-      if(index === this.numWrong){
+    $_inputClick(index) {
+      if (index !== 'start' && this.startNumWrong) {
+        this.startNumWrong = false;
+        this.startData = this.startDataCopy;
+      } else if (index !== 'end' && this.endNumWrong) {
+        this.endNumWrong = false;
+        this.endData = this.endDataCopy;
+      } else if (index === this.numWrong && typeof index === 'number') {
         this.resetNum = false;
-      }else {
+      } else {
         this.resetNum = true;
       }
     },
-    $_panelClick(){
-      console.log(this.numWrong)
-      console.log(this.dataSource)
-      if(this.numWrong >= 0 && this.resetNum){
+    $_panelClick() {
+      if (this.numWrong >= 0 && this.resetNum) {
         this.dataSourceCopy[this.numWrong] = this.dataSource[this.numWrong];
         this.numWrong = -1;
       }
@@ -222,6 +215,8 @@ export default {
     },
     $_removeInputWrong() {
       this.numWrong = -1;
+      this.startNumWrong = false;
+      this.endNumWrong = false;
     },
     $_inputWrong(index) {
       this.numWrong = index;
@@ -256,8 +251,6 @@ export default {
     * **/
     $_oneColorChangedCallBack(colors) {
       colors = this.$_editColor(colors);
-      console.log("this.colord", this.colors)
-      console.log("colord", colors)
       switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-color"] = colors
@@ -332,9 +325,7 @@ export default {
         next = colors.stops.length > 0;
       }
       this.showVector = false;
-      console.log("------------------", colors)
       colors = this.$_editColor(colors);
-      console.log("adadadasdasdcolors", colors)
       if (next) {
         switch (this.dataType) {
           case "fill":
@@ -356,7 +347,6 @@ export default {
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
-      console.log("colorsqweqweqw", colors)
       this.dataInit = false;
       let dataSourceCopy = [];
       for (let i = 0; i < this.dataSource.length; i++) {
@@ -367,7 +357,6 @@ export default {
         this.dataInit = true;
       });
       colors = this.$_editColor(colors);
-      console.log("---------", colors)
       switch (this.dataType) {
         case "fill":
           this.layerVector.paint["fill-color"] = colors;
@@ -412,7 +401,6 @@ export default {
     $_getColorsCallBack(colors, dataSource, startColor, endColor, key) {
       let checkArr = [], colorList = [];
       let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
-      console.log("gradient", gradient)
       colors = {
         "property": key,
         "stops": []
@@ -430,22 +418,27 @@ export default {
       }
     },
     $_editData(dataSource) {
-      console.log("--dataSource", dataSource)
       this.dataBack = dataSource;
       let length = dataSource.length, newDataSource = [], rangeLevel = 10;
       let range = dataSource[length - 1] - dataSource[0];
       if (range === 0) {
         newDataSource.push(dataSource[0]);
         this.endData = dataSource[0] + 1;
+        this.endDataCopy = this.endData;
         return newDataSource;
       } else {
         let rangeSect = range / rangeLevel;
-        this.startData = 0;
+        if (dataSource[0] < 0) {
+          this.startData = dataSource[0] - 1;
+        } else {
+          this.startData = 0;
+        }
+        this.startDataCopy = this.startData;
         for (let i = 0; i < rangeLevel; i++) {
           newDataSource.push(dataSource[0] + (i + 1) * rangeSect + 1);
         }
         this.endData = newDataSource[rangeLevel - 1] + rangeSect;
-        console.log("newDataSource", newDataSource)
+        this.endDataCopy = this.endData;
         return newDataSource;
       }
     },
@@ -455,7 +448,6 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource) {
-      console.log("geojson", geojson)
       let dataSourceCopy = [];
       for (let i = 0; i < dataSource.length; i++) {
         dataSourceCopy.push(dataSource[i]);
@@ -516,9 +508,6 @@ export default {
         feature.type = features[i].type;
         Object.keys(features[i].properties).forEach(function (key) {
           if (typeof features[i].properties[key] === 'number') {
-            if (key === "治愈") {
-              console.log(features[i].properties[key])
-            }
             properties[key] = features[i].properties[key];
           }
         });
