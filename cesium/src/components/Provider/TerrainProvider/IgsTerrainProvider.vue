@@ -12,6 +12,14 @@ export default {
     url: {
       type: String,
     },
+    scale: {
+      type: Number,
+      default: 1
+    },
+    requestVertexNormals: {
+      type: Boolean,
+      default: false
+    },
     ...VueOptions
   },
   created() {},
