@@ -41,7 +41,9 @@ export default {
     },
     currentDocument: {
       type: Object,
-      default: {}
+      default: () => {
+        return {};
+      }
     },
     handleNewDocument: Function
   },

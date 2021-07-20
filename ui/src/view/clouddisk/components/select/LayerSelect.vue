@@ -78,10 +78,15 @@ export default {
         return {};
       }
     },
-    currentDocument: Object,
+    currentDocument: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    },
     isLayers: {
       type: Boolean,
-      default: true
+      default: false
     },
     handleNewDocument: Function
   },
@@ -194,8 +199,7 @@ export default {
       this.$refs.folder.updataFolder();
     },
     handleAddLayer () {
-      console.warn('收到回调并执行')
-      // 写 添加到
+      // console.warn('收到回调并执行')
       this.$refs.layerTransform.addLayer()
     }
   }

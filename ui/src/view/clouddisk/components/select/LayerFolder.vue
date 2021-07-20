@@ -11,6 +11,7 @@
         :checkStrictly="true"
         @check="selectTiff"
         @expand="handelExpand"
+        @select="handelClick"
       >
       </mapgis-ui-tree>
       <!-- <Tree
@@ -235,6 +236,23 @@ export default {
             this.$notification.error({ message: "网络异常,请检查链接", description: error });
             vm.isLoading = false;
           });
+      }
+    },
+    handelClick (selectedKeys, e) {
+      console.warn('当前选择', e.node.dataRef.url)
+      if (!this.isMulti) {
+        this.$emit("select", e.node.dataRef.url, e.node.dataRef)
+      } else {
+        // if (data.isfolder) {
+        //   this.$set(data, "expand", !data.expand);
+        //   // data.expand = true
+        //   this.loadCompany(data, this.renewData);
+        // } else {
+        //   this.$set(data, "checked", !data.checked);
+        //   let selects = this.$refs.folderTree.getCheckedNodes();
+        //   this.selectListsObj[this.url] = selects;
+        //   this.$emit("handleSelectsInfo", this.selectListsObj);
+        // }
       }
     },
     clickHander(data, e) {

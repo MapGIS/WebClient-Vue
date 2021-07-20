@@ -120,3 +120,4 @@ export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
 export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
 export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
+export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";

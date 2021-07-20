@@ -184,9 +184,9 @@ export default {
           this.$store.commit("CHANGE_FILES_LOADING", { loading: false });
         });
     },
-    handleSelect(keys, event) {
+    handleSelect(keys, e) {
       if (keys.length > 0) {
-        this.$emit("url", event.node.dataRef.groupId);
+        this.$emit("url", e.node.dataRef.groupId);
       }
     }
   }
