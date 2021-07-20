@@ -30,7 +30,7 @@
         size="small"
       />
     </mapgis-ui-row>
-    <mapgis-ui-clouddisk-transform />
+    <mapgis-ui-clouddisk-transform ref="layerTransform" :selectLists="selectLists" :currentDocument="currentDocument" :handleNewDocument="handleNewDocument"/>
   </div>
 </template>
 
@@ -176,7 +176,8 @@ export default {
       for (let key in selectListsObj) {
         this.selectLists = this.selectLists.concat(selectListsObj[key]);
       }
-      this.$emit("emitSelectInfo", this.selectLists);
+      // 已勾选图层，数组格式
+      // this.$emit("emitSelectInfo", this.selectLists);
 
       let inputResult = "";
       this.selectLists.forEach(select => {
@@ -194,6 +195,8 @@ export default {
     },
     handleAddLayer () {
       console.warn('收到回调并执行')
+      // 写 添加到
+      this.$refs.layerTransform.addLayer()
     }
   }
 };
