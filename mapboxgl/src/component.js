@@ -65,6 +65,7 @@ export { default as MapgisFeatureService } from "./components/map/mixins/Feature
 export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
 export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
+export { default as MapgisHeatThemeLayer} from "./components/layer/ThemeLayer/HeatThemeLayer";
 
 /* 
 import withEventsMixin from "./lib/withEvents";

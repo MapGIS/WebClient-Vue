@@ -83,7 +83,8 @@ module.exports = {
               ["/api/ui/draw.md", "绘制"],
               ["/api/ui/measure.md", "量算"],
               ["/api/Overlay/Echarts.md", "Echarts"],
-              ["/api/Overlay/Mapv.md", "MapV"]
+              ["/api/Overlay/Mapv.md", "MapV"],
+              ["/api/provider/igsterrain.md", "IGS地形"]
             ]
           },
           {
