@@ -196,6 +196,7 @@ export default {
         })
     },
     paraDocument (layers) {
+      let currentLayers = this.currentDocument.layers
       let doc = IDocument.deepclone(this.currentDocument)
       layers.forEach(l => {
         let flag = false
@@ -271,6 +272,23 @@ export default {
           }
         }
       })
+      if (currentLayers.length <= 0) {
+        doc.maxBounds = layers[0].maxBounds
+        doc.current = {
+          id: doc.layers[0].id,
+          name: doc.layers[0].name,
+          type: doc.layers[0].type
+        }
+        doc.center = layers[0].center
+        // doc.sprite = this.http + '://' + this.ip + ':' + this.socket + '/static/sprites/sprite-mapbox'
+        // doc.glyphs = this.http + '://' + this.ip + ':' + this.socket + '/static/font/{fontstack}/{range}.pbf'
+        // if (layers[0].type !== '.mosa') {
+        //   doc.crs = {
+        //     'epsg': 'EPSG_4326',
+        //     'proj': '+proj=longlat +datum=WGS84 +no_defs'
+        //   }
+        // }
+      }
       return doc
     },
     getGisMetadata (item) {
