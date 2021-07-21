@@ -10,132 +10,90 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
       <!--字段信息-->
-      <mapgis-ui-row>
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p">权重字段</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18">
-          <mapgis-ui-select
-              style="width: 182px"
-              v-if="fields.length > 0"
-              :default-value="defaultValue"
-              @change="$_selectChange"
+      <mapgis-ui-collapse accordion>
+        <mapgis-ui-collapse-panel key="1" header="字段信息">
+          <mapgis-ui-row>
+            <p class="theme-panel-p">权重字段</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row :span="18">
+            <mapgis-ui-select
+                v-if="fields.length > 0"
+                :default-value="defaultValue"
+                class="theme-panel-select"
+                @change="$_selectChange"
+            >
+              <mapgis-ui-select-option v-for="(Field,index) in fields" :value="Field">{{ Field }}
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
+
+      <mapgis-ui-collapse accordion>
+        <mapgis-ui-collapse-panel key="1" header="热点">
+          <mapgis-ui-row>
+            <p class="theme-panel-p">热点颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col v-if="gradientValue === 'common'"
+                           :span="25"
+            >
+              <mapgis-ui-select
+                  :default-value="'#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000'"
+                  @change="$_gradientChange"
+              >
+                <mapgis-ui-select-option v-for="(gradient,index) in gradientArr" :value="gradient.key">
+                  <div :style="{background: gradient.value}" class="theme-panel-gradient"></div>
+                </mapgis-ui-select-option>
+              </mapgis-ui-select>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider class="theme-panel-slider" v-model="opacity"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row
+              v-if="dataType==='heatmap'"
           >
-            <mapgis-ui-select-option v-for="(Field,index) in fields" :value="Field">{{ Field }}
-            </mapgis-ui-select-option>
-          </mapgis-ui-select>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <!--字段过滤-->
-      <!--      <mapgis-ui-row>-->
-      <!--        <mapgis-ui-collapse>-->
-      <!--          <mapgis-ui-collapse-panel key="1" header="字段过滤">-->
-      <!--            <p>dasdadadasdasd</p>-->
-      <!--          </mapgis-ui-collapse-panel>-->
-      <!--        </mapgis-ui-collapse>-->
-      <!--      </mapgis-ui-row>-->
-      <!--专题图样式-->
-      <mapgis-ui-row>
-        <mapgis-ui-col :span="6">
-<!--          <mapgis-ui-select-->
-<!--              style="margin-left: -17px;"-->
-<!--              @change="$_changeOption"-->
-<!--              :default-value="gradientValue">-->
-<!--            <mapgis-ui-select-option value="common">-->
-<!--              渐变颜色-->
-<!--            </mapgis-ui-select-option>-->
-<!--            <mapgis-ui-select-option value="customize">-->
-<!--              自定义-->
-<!--            </mapgis-ui-select-option>-->
-<!--          </mapgis-ui-select>-->
-          <p class="theme-panel-p">渐变颜色</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18"
-                       v-if="gradientValue === 'common'"
-        >
-          <mapgis-ui-select
-              :default-value="'#FF0000'"
-              @change="$_gradientChange"
-          >
-            <mapgis-ui-select-option v-for="(gradient,index) in gradientArr" :value="gradient.key">
-              <div class="theme-panel-gradient" :style="{background: gradient.value}"></div>
-            </mapgis-ui-select-option>
-          </mapgis-ui-select>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="9"
-                       v-if="gradientValue === 'customize'"
-        >
-          起始颜色:
-          <colorPicker
-              class="picker"
-              v-model="startColor"
-              @change="$_selectStartColor"
-          />
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="9"
-                       v-if="gradientValue === 'customize'"
-        >
-          结束颜色:
-          <colorPicker
-              class="picker"
-              v-model="endColor"
-              @change="$_selectEndColor"
-          />
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row>
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18">
-          <mapgis-ui-slider class="theme-panel-slider-opacity" v-model="opacity" :marks="marks"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row
-          v-if="dataType !== 'line' && dataType !== 'heatmap'"
-      >
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p" style="margin-top: 0.8em;">描边颜色</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18">
-          <colorPicker
-              class="picker theme-panel-line-color"
-              v-model="lineColor"
-              @change="$_selectLineColor"
-          />
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row
-          v-if="dataType==='circle'"
-      >
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p">半径</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18">
-          <mapgis-ui-input-number v-model="radius" class="theme-panel-input-number"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row
-          v-if="dataType==='heatmap'"
-      >
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p">热力半径</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="12">
-          <mapgis-ui-input-number v-model="heatRadius" class="theme-panel-input-number"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row
-          v-if="dataType==='line'"
-      >
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p">线宽</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18">
-          <mapgis-ui-input-number v-model="lineWidth" class="theme-panel-input-number"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <!--专题图信息-->
+            <mapgis-ui-col :span="6">
+              <p class="theme-panel-p">热力半径</p>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+            <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+              <mapgis-ui-input-number v-model="heatRadius" class="theme-panel-input-radius"/>
+            </mapgis-ui-col>
+            </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
+
+      <mapgis-ui-collapse accordion>
+        <mapgis-ui-collapse-panel key="1" header="自定义">
+          <mapgis-ui-row>
+            <p class="theme-panel-p">自定义颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-for="(color,index) in currentColors" :key="index">
+            <mapgis-ui-row>
+              <p class="theme-panel-p">热力颜色{{ index }}:</p>
+            </mapgis-ui-row>
+            <mapgis-ui-row>
+              <colorPicker
+                  v-model="color.value"
+                  class="picker theme-panel-line-color"
+                  @change="$_selectColor(color)"
+              />
+            </mapgis-ui-row>
+          </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
     </div>
     <!--  loading  -->
     <div v-show="!init" class="theme-panel-tab theme-panel-loading">
@@ -199,22 +157,38 @@ export default {
       gradientValue: "common",
       lineValue: "common",
       radius: 12,
-      heatRadius:12,
+      heatRadius: 12,
       lineWidth: 5,
       opacity: 100,
       defaultValue: "",
       lineColor: "#000000",
       startColor: "#FFF",
       endColor: "#000",
+      currentColors: [{
+        key: "0",
+        value: "#0000FF"
+      }, {
+        key: "1",
+        value: "#00FFFF"
+      }, {
+        key: "2",
+        value: "#00FF00"
+      }, {
+        key: "3",
+        value: "#FFFF00"
+      }, {
+        key: "4",
+        value: "#FF0000"
+      }],
       gradientArr: [{
-        key: "#FF0000",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#FF0000)"
+        key: "#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000",
+        value: "-webkit-linear-gradient(left,#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000)"
       }, {
-        key: "#00FF00",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#00FF00)"
+        key: "#636CEA,#1B1DD5,#BE1C4D,#F79390,#FFFFCC",
+        value: "-webkit-linear-gradient(left,#636CEA,#1B1DD5,#BE1C4D,#F79390,#FFFFCC)"
       }, {
-        key: "#0000FF",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#0000FF)"
+        key: "#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF",
+        value: "-webkit-linear-gradient(left,#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF)"
       }],
       marks: {
         0: '0%',
@@ -244,7 +218,7 @@ export default {
         this.$emit("radiusChanged", Number(this.radius));
       }
     },
-    heatRadius:{
+    heatRadius: {
       handler: function () {
         this.$emit("heatRadiusChanged", Number(this.heatRadius));
       }
@@ -279,8 +253,26 @@ export default {
     $_changeOption(e) {
       this.gradientValue = e;
     },
+    $_selectColor(e) {
+      let colorsArr = [];
+      this.currentColors.forEach((c, index) => {
+        if (c.key === e.key) {
+          c.value = e.value;
+        }
+        colorsArr.push(c.value);
+      })
+      colorsArr.unshift("#FFFFFF");
+      this.$emit("gradientChange", colorsArr);
+    },
     $_gradientChange(e) {
-      this.$emit("gradientChange", "#FFFFFF", e);
+      let colorsArr = [];
+      colorsArr = e.split(",");
+      this.currentColors = [];
+      colorsArr.forEach((color, i) => {
+        this.currentColors.push({key: i, value: color});
+      });
+      colorsArr.unshift("#FFFFFF");
+      this.$emit("gradientChange", colorsArr);
     },
     $_checked(e) {
       let value = e.target.value.item;
@@ -289,7 +281,7 @@ export default {
       if (index >= 0) {
         this.$set(this.checkBoxArr, index, !this.checkBoxArr[index]);
       }
-      this.$emit("checked", this.checkBoxArr,index,color);
+      this.$emit("checked", this.checkBoxArr, index, color);
     },
     // $_changeColor(index) {
     //   this.$emit("oneColorChanged", index, this.colors[index]);
@@ -299,7 +291,7 @@ export default {
       this.$emit("change", value);
     },
     $_initDataSource() {
-      if(this.dataSource.length > 0 && !this.init){
+      if (this.dataSource.length > 0 && !this.init) {
         this.init = true;
       }
       this.dataSourceCopy = this.dataSource;
@@ -327,17 +319,31 @@ export default {
   height: 100%;
 }
 
+.theme-panel-p {
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: left;
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.theme-panel .mapgis-ui-collapse{
+  margin-top: 10px;
+}
+
+/deep/ .theme-panel-noflow .mapgis-ui-collapse-content {
+  overflow: visible !important;
+}
+
+/deep/ .mapgis-ui-collapse-content{
+  overflow: visible !important;
+}
+
 .theme-panel-loading {
   padding-top: 180px;
 }
 
 .theme-panel-type {
-  text-align: left;
-}
-
-.theme-panel-p {
-  margin-top: 0.4em;
-  margin-bottom: 0.6em;
   text-align: left;
 }
 
@@ -352,13 +358,17 @@ export default {
   height: 10px;
 }
 
+.m-colorPicker .colorBtn {
+  width: 130px !important;
+}
+
 .theme-panel-color-picker .picker {
   position: absolute;
   top: 2px;
   right: 6px;
 }
 
-.theme-panel-color-picker .picker .colorBtn{
+.theme-panel-color-picker .picker .colorBtn {
   margin-left: 20px;
 }
 
@@ -401,9 +411,9 @@ export default {
 }
 
 .theme-panel-gradient {
-  width: 138px;
+  width: 202px;
   height: 15px;
-  margin: 8px 4px 0;
+  margin: 8px 0px 0;
   border-radius: 3px;
 }
 
@@ -415,23 +425,25 @@ export default {
   overflow: visible !important;
 }
 
-.theme-panel-slider-opacity{
+.theme-panel-slider-opacity {
   width: 169px;
   margin-left: 7px;
 }
-.theme-panel-input-number{
-  width: 260px;
+
+.theme-panel-input-number {
+  width: 180px;
   margin-left: 0px;
 }
-/deep/ .theme-panel-line-color .colorBtn{
-  width: 183px!important;
-  height: 33px!important;
+
+/deep/ .theme-panel-line-color .colorBtn {
+  width: 233px !important;
+  height: 15px !important;
   margin-left: 3px;
   border-radius: 3px;
 }
 
-.theme-panel-type-title{
-  border-bottom: 1px solid rgb(228,228,228);
+.theme-panel-type-title {
+  border-bottom: 1px solid rgb(228, 228, 228);
   width: 300px;
   height: 26px;
   margin-left: -24px;
@@ -441,11 +453,11 @@ export default {
   font-size: 16px;
 }
 
-.theme-panel-title{
+.theme-panel-title {
   display: inline-block;
 }
 
-.theme-panel-title-close{
+.theme-panel-title-close {
   display: inline-block;
   color: #40a9ff;
   font-size: 12px;
@@ -453,5 +465,25 @@ export default {
   right: 16px;
   top: 4px;
   cursor: pointer;
+}
+.theme-panel-slider {
+  width: 176px;
+  margin-left: 7px;
+}
+/deep/.mapgis-ui-card-body{
+  padding: 24px 4px;
+}
+.theme-panel-select{
+  width: 242px;
+  margin: 7px 0;
+}
+.theme-panel-input-number {
+  width: 47px;
+  margin-left: 0;
+  margin-top: 5px;
+}
+.theme-panel-input-radius{
+  width: 240px;
+  margin-left: 7px;
 }
 </style>

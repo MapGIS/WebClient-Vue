@@ -1,4 +1,5 @@
-import FeatureService from "../../map/mixins/FeatureService";
+import {MRFS} from "@mapgis/webclient-es6-service";
+const {FeatureService} = MRFS;
 
 export default {
     inject: ["mapbox", "map"],
