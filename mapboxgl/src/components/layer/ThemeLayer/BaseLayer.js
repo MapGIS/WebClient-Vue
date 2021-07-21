@@ -65,6 +65,7 @@ export default {
             showVector: false,
             fields: [],
             selectKey: undefined,
+            selectText: undefined,
             dataSource: [],
             checkBoxArr: [],
             sourceVectorId: 'theme_source',
@@ -243,6 +244,7 @@ export default {
             this.showVector = true;
             this.fields = this.$_getFields(geojson.features[0]);
             this.selectKey = this.fields[0];
+            this.selectText = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
             this.checkBoxArr = this.originColors.checkArr;
@@ -372,9 +374,6 @@ export default {
             } else {
                 throw new Error("请设置$_oneColorChanged方法的回到函数！");
             }
-            this.$_changeOriginLayer();
-            this.showVector = false;
-            this.showVector = true;
         },
         $_getColorsFromOrigin(index, color, num) {
             let colors;
