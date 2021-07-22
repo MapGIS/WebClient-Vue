@@ -1,4 +1,5 @@
-import FeatureService from "../../map/mixins/FeatureService";
+import {MRFS} from "@mapgis/webclient-es6-service";
+const {FeatureService} = MRFS;
 
 export default {
     inject: ["mapbox", "map"],
@@ -18,6 +19,10 @@ export default {
         useOriginLayer: {
             type: Boolean,
             default: true
+        },
+        icons: {
+            type: Array,
+            required: true
         }
     },
     watch: {
@@ -73,6 +78,7 @@ export default {
             allOriginColors: {},
             layerVector: {},
             dataType: "",
+            textLayer: undefined
         };
     },
     methods: {
@@ -186,7 +192,41 @@ export default {
             }
         },
         $_lineWidthChanged(lineWidth) {
-            this.$set(this.layerVector.paint, "line-width", lineWidth);
+            this.$_setPaintProperty("line-width", lineWidth);
+        },
+        $_selectTextChanged(value){
+            if(!this.textLayer){
+                this.textLayer = {
+                    'id': 'text_layer_id',
+                    'source': 'vector_source_id',
+                    'type': 'symbol',
+                    'layout': {
+                        "text-field": '{' + value + '}',
+                        'text-size': 11,
+                        'text-letter-spacing': 0.05,
+                        'text-offset': [0,0],
+                        'text-font': [
+                            'Open Sans Bold',
+                            'Arial Unicode MS Bold'
+                        ],
+                        'text-rotate': 0
+                    },
+                    'paint': {
+                        'text-color': '#000000',
+                        "text-halo-color":  '#FFFFFF',
+                        "text-halo-width": 0
+                    },
+                };
+                this.map.addLayer(this.textLayer);
+            }else {
+                this.$_setLayOutProperty("text-field",'{' + value + '}',"text_layer_id",this.textLayer);
+            }
+        },
+        $_setLayOutProperty(key, value, layerId, layerVector) {
+            layerId = layerId || this.layerId;
+            layerVector = layerVector || this.layerVector;
+            layerVector.layout[key] = value;
+            this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
         },
         $_radiusChanged(radius) {
             this.$set(this.layerVector.paint, "circle-radius", radius);
@@ -346,15 +386,15 @@ export default {
         },
         $_lineColorChanged(e) {
             this.showVector = false;
+            debugger
             switch (this.dataType) {
                 case "fill":
-                    this.layerVector.paint["fill-outline-color"] = e;
+                    this.$_setPaintProperty("fill-outline-color",e);
                     break
                 case "circle":
-                    this.layerVector.paint["circle-stroke-color"] = e;
+                    this.$_setPaintProperty("circle-outline-color",e);
                     break
             }
-            this.$_changeOriginLayer();
             this.showVector = true;
         },
         $_opacityChanged(e) {
@@ -374,6 +414,12 @@ export default {
             } else {
                 throw new Error("请设置$_oneColorChanged方法的回到函数！");
             }
+        },
+        $_setPaintProperty(key, value, layerId, layerVector) {
+            layerId = layerId || this.layerId;
+            layerVector = layerVector || this.layerVector;
+            layerVector.paint[key] = value;
+            this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
         },
         $_getColorsFromOrigin(index, color, num) {
             let colors;

@@ -8,6 +8,7 @@
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
+        :icons="icons"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
         @change="$_selectChange"
@@ -16,6 +17,18 @@
         @opacityChanged="$_opacityChanged"
         @radiusChanged="$_radiusChanged"
         @lineWidthChanged="$_lineWidthChanged"
+        @selectTextChanged="$_selectTextChanged"
+        @fontSizeChanged="$_fontSizeChanged"
+        @yOffsetTextChanged="$_yOffsetTextChanged"
+        @xOffsetTextChanged="$_xOffsetTextChanged"
+        @textPaddingChanged="$_textPaddingChanged"
+        @textRotationChanged="$_textRotationChanged"
+        @haloColorChanged="$_haloColorChanged"
+        @haloWidthChanged="$_haloWidthChanged"
+        @clickIcon="$_clickIcon"
+        @singleChanged="$_singleChanged"
+        @fontColorChanged="$_fontColorChanged"
+        @lineStyleChanged="$_lineStyleChanged"
     >
       <div slot="legend" slot-scope="slotProps">
         <mapgis-ui-row>
@@ -169,7 +182,8 @@ export default {
       startData: 0,
       startDataCopy: 0,
       startNumWrong: false,
-      endNumWrong: false
+      endNumWrong: false,
+      offsetText: [0, 0]
     }
   },
   mounted() {
@@ -184,6 +198,59 @@ export default {
     },
     toggleLayer() {
       this.$_toggleLayer();
+    },
+    $_fontSizeChanged(fontSize) {
+      this.$_setLayOutProperty("text-size", fontSize, "text_layer_id", this.textLayer);
+    },
+    $_yOffsetTextChanged(offset) {
+      this.offsetText[1] = offset;
+      this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+    },
+    $_xOffsetTextChanged(offset) {
+      this.offsetText[0] = offset;
+      this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+    },
+    $_textPaddingChanged(textPadding) {
+      this.$_setLayOutProperty("text-letter-spacing", textPadding, "text_layer_id", this.textLayer);
+    },
+    $_textRotationChanged(textRotation) {
+      this.$_setLayOutProperty("text-rotate", textRotation, "text_layer_id", this.textLayer);
+    },
+    $_haloColorChanged(color) {
+      this.$_setPaintProperty("text-halo-color", color, "text_layer_id", this.textLayer);
+    },
+    $_haloWidthChanged(color) {
+      this.$_setPaintProperty("text-halo-width", color, "text_layer_id", this.textLayer);
+    },
+    $_singleChanged(startColor, endColor) {
+      this.$_gradientChange(startColor, endColor);
+    },
+    $_fontColorChanged(color) {
+      this.$_setPaintProperty("text-color", color, "text_layer_id", this.textLayer);
+    },
+    $_lineStyleChanged(lineStyle) {
+      this.$_setPaintProperty("line-dasharray",lineStyle.value);
+    },
+    $_clickIcon(icon) {
+      let hasIcon = this.map.hasImage(icon.name), vm = this;
+      let partten;
+      switch (this.dataType){
+        case "fill":
+          partten = "fill-pattern";
+          break;
+        case "line":
+          partten = "line-pattern";
+          break;
+      }
+      if (!hasIcon) {
+        this.map.loadImage(icon.url, function (error, image) {
+          if (error) throw error;
+          vm.map.addImage(icon.name, image, {'sdf': true});
+          vm.$_setPaintProperty(partten, icon.name);
+        });
+      } else {
+        vm.$_setPaintProperty(partten, icon.name);
+      }
     },
     $_inputClick(index) {
       if (index !== 'start' && this.startNumWrong) {
@@ -253,13 +320,13 @@ export default {
       colors = this.$_editColor(colors);
       switch (this.dataType) {
         case "fill":
-          this.layerVector.paint["fill-color"] = colors
+          this.$_setPaintProperty("fill-color", colors);
           break;
         case "circle":
-          this.layerVector.paint["circle-color"] = colors;
+          this.$_setPaintProperty("circle-color", colors);
           break;
         case "line":
-          this.layerVector.paint["line-color"] = colors;
+          this.$_setPaintProperty("line-color", colors);
           break;
       }
     },
@@ -457,6 +524,13 @@ export default {
         this.dataInit = true;
       });
       fillColors = this.$_editColor(fillColors);
+      // let vm = this;
+      // this.map.loadImage("./icons/life/car.png", function (error, image) {
+      //   if (error) throw error;
+      //   vm.map.addImage("car", image, {'sdf': true});
+      //   console.log("-------------------------")
+      //   vm.$_setPaintProperty("fill-pattern","car");
+      // });
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
         this.layerVector = {
@@ -466,7 +540,7 @@ export default {
             'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
             'fill-color': fillColors, //颜色
             'fill-opacity': 1.0, //透明度
-            'fill-outline-color': '#000' //边线颜色，没错,确实没有边线宽度这个选项
+            'fill-outline-color': '#000', //边线颜色，没错,确实没有边线宽度这个选项
           }
         }
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
@@ -491,7 +565,7 @@ export default {
           paint: {
             'line-color': fillColors, //颜色
             'line-opacity': 1.0, //透明度
-            'line-width': 5
+            'line-width': 5,
           }
         }
       }

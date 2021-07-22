@@ -1,18 +1,17 @@
 <template>
   <div>
-        <ThemePanel
-            :checkBoxArr="checkBoxArr"
-            :colors="colors"
-            :data-source="dataSource"
-            :dataType="dataType"
-            :fields="fields"
-            @change="$_selectChange"
-            @checked="$_checked"
-            @gradientChange="$_gradientChange"
-            @opacityChanged="$_opacityChanged"
-            @heatRadiusChanged="$_heatRadiusChanged"
-        >
-        </ThemePanel>
+    <ThemePanel
+        :checkBoxArr="checkBoxArr"
+        :colors="colors"
+        :data-source="dataSource"
+        :dataType="dataType"
+        :fields="fields"
+        @change="$_selectChange"
+        @gradientChange="$_gradientChange"
+        @heatRadiusChanged="$_heatRadiusChanged"
+        @opacityChanged="$_opacityChanged"
+    >
+    </ThemePanel>
     <mapgis-vector-layer
         v-if="showVector"
         :layer="layerVector"
@@ -72,9 +71,10 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors) {
+    $_initThemeCallBack(geojson) {
       if (this.useOriginLayer) {
         this.map.removeLayer(this.layerId);
+        this.useOriginLayer = false;
       }
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
@@ -105,13 +105,17 @@ export default {
               ["linear"],
               ["heatmap-density"],
               0,
-              "rgba(0, 0, 0, 0)",
-              0.1,
-              "#927903",
-              0.15,
-              "#ffd403",
-              1,
-              "red"
+              "#FFFFFF",
+              0.16,
+              "#0000FF",
+              0.33,
+              "#00FFFF",
+              0.5,
+              "#00FF00",
+              0.66,
+              "#FFFF00",
+              0.83,
+              "#FF0000"
             ],
             // Adjust the heatmap radius by zoom level
             "heatmap-radius": [
@@ -141,9 +145,7 @@ export default {
               10,
               2048,
               11,
-              4096,
-              12,
-              1111111
+              4096
             ],
             // Transition from heatmap to circle layer by zoom level
             "heatmap-opacity": [
@@ -160,41 +162,43 @@ export default {
       }
     },
 
-    $_gradientChange(startColor, endColor) {
-      console.log(startColor, endColor);
-      const { map, layerVectorId } = this;
-      let colors = this.$_gradientColor(startColor, endColor, 10);
+    $_gradientChange(colorsArr) {
+      const {map, layerVectorId} = this;
       let steps = [];
-      colors.forEach((color,i) => { steps.push(i * 0.1); steps.push(color);})
+      let level = 1 / colorsArr.length;
+      colorsArr.forEach((color, i) => {
+        steps.push(i * level);
+        steps.push(color);
+      })
       let colorrules = [
-              "interpolate",
-              ["linear"],
-              ["heatmap-density"],
-            ].concat(steps);
+        "interpolate",
+        ["linear"],
+        ["heatmap-density"],
+      ].concat(steps);
       map.setPaintProperty(layerVectorId, "heatmap-color", colorrules);
     },
 
-    $_heatRadiusChanged(heatRadius){
-      const { map, layerVectorId } = this;
+    $_heatRadiusChanged(heatRadius) {
+      const {map, layerVectorId} = this;
       map.setPaintProperty(layerVectorId, "heatmap-radius", heatRadius);
     },
 
-    $_opacityChanged(opacity){
-      const { map, layerVectorId } = this;
+    $_opacityChanged(opacity) {
+      const {map, layerVectorId} = this;
       map.setPaintProperty(layerVectorId, "heatmap-opacity", opacity);
       this.layerVector.paint["fill-opacity"] = opacity;
     },
 
     $_selectChange(value) {
-      const { map, layerVectorId } = this;
+      const {map, layerVectorId} = this;
       let weightRules = [
         "interpolate",
-          ["linear"],
-          ["get", value],
-          0,
-          0,
-          1000,
-          1
+        ["linear"],
+        ["get", value],
+        0,
+        0,
+        1000,
+        1
       ];
       map.setPaintProperty(layerVectorId, "heatmap-weight", weightRules);
     },
@@ -208,49 +212,49 @@ export default {
     * @param key 绘制规则针对的关键字
     * **/
     $_getColorsCallBack(colors, dataSource, startColor, endColor, key) {
-          let iSString = false, checkArr = [], colorList = [];
-          for (let i = 0; i < dataSource.length; i++) {
-            if (typeof dataSource[i] === 'string') {
-              iSString = true;
-              break;
-            }
+      let iSString = false, checkArr = [], colorList = [];
+      for (let i = 0; i < dataSource.length; i++) {
+        if (typeof dataSource[i] === 'string') {
+          iSString = true;
+          break;
+        }
+      }
+      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      if (iSString) {
+        colors = ['match', ['get', key]];
+        for (let i = 0; i < dataSource.length; i++) {
+          if (dataSource[i] !== "") {
+            colors.push(dataSource[i]);
+            colors.push(gradient[i]);
+            colorList.push(gradient[i]);
+            checkArr.push(true);
           }
-          let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
-          if (iSString) {
-            colors = ['match', ['get', key]];
-            for (let i = 0; i < dataSource.length; i++) {
-              if (dataSource[i] !== "") {
-                colors.push(dataSource[i]);
-                colors.push(gradient[i]);
-                colorList.push(gradient[i]);
-                checkArr.push(true);
-              }
-            }
-            colors.push("#FFFFFF");
-          } else {
-            colors = {
-              "property": key,
-              "stops": []
-            };
-            for (let i = 0; i < dataSource.length; i++) {
-              colors.stops.push([dataSource[i], gradient[i]]);
-              colorList.push(gradient[i]);
-              checkArr.push(true);
-            }
-          }
-          return {
-            checkArr: checkArr,
-            colors: colors,
-            colorList: colorList
-          }
-        },
+        }
+        colors.push("#FFFFFF");
+      } else {
+        colors = {
+          "property": key,
+          "stops": []
+        };
+        for (let i = 0; i < dataSource.length; i++) {
+          colors.stops.push([dataSource[i], gradient[i]]);
+          colorList.push(gradient[i]);
+          checkArr.push(true);
+        }
+      }
+      return {
+        checkArr: checkArr,
+        colors: colors,
+        colorList: colorList
+      }
+    },
 
     /*
    * 从data里面获取colors信息，如果index, color有值，则更新colors，此方法必须被重载
    * @param index 被改变颜色的数据index
    * @param color 被改变的颜色
    * **/
-    $_getColorsFromOriginCallBack(index, color){
+    $_getColorsFromOriginCallBack(index, color) {
       let colors;
       let fillName = "";
       switch (this.dataType) {
