@@ -29,9 +29,11 @@ export default {
   name: "mapgis-ui-clouddisk-transform",
   data() {
     return {
-      GjsonSize: 1000,
-      filterPGFields: ["mpLayer", "mpLength", "mpArea", "mpPerimeter", "mpgmod_time"],
-      onlyOneField: false,
+      GjsonSize: window.localStorage.getItem('mapgis_clouddisk_GjsonSize') || 1000,
+      vectorTileSize: window.localStorage.getItem('mapgis_clouddisk_vectorTileSize') || 500000,
+      onlyOneField: window.localStorage.getItem('mapgis_clouddisk_onlyOneField') || false,
+      mapstudioUrlMark: window.localStorage.getItem('mapgis_clouddisk_mapstudioUrlMark') || '/mapstudioweb/#/?share=',
+      filterPGFields: ["mpLayer", "mpLength", "mpArea", "mpPerimeter", "mpgmod_time"]
     };
   },
   props: {
@@ -282,12 +284,12 @@ export default {
         doc.center = layers[0].center
         // doc.sprite = this.http + '://' + this.ip + ':' + this.socket + '/static/sprites/sprite-mapbox'
         // doc.glyphs = this.http + '://' + this.ip + ':' + this.socket + '/static/font/{fontstack}/{range}.pbf'
-        // if (layers[0].type !== '.mosa') {
-        //   doc.crs = {
-        //     'epsg': 'EPSG_4326',
-        //     'proj': '+proj=longlat +datum=WGS84 +no_defs'
-        //   }
-        // }
+        if (layers[0].type !== '.mosa') {
+          doc.crs = {
+            'epsg': 'EPSG_4326',
+            'proj': '+proj=longlat +datum=WGS84 +no_defs'
+          }
+        }
       }
       return doc
     },
