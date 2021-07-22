@@ -20,13 +20,14 @@ yarn add @mapgis/webclient-vue-mapboxgl
 在 main.js 中加入样式文件
 
 ```js
-// 外部全局引入了ant-design-vue库
-import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
-Vue.use(Mapgis2d);
+import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
+import '@mapgis/webclient-vue-mapboxgl/dist-libs/webclient-vue-mapboxgl.css';
 
-// 外部没有引入ant-design-vue库，使用内部封装的组件库
+import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
-Vue.use(Mapgis2d， { ui: "ant-design-vue" });
+
+Vue.use(MapgisUi);
+Vue.use(Mapgis2d);
 ```
 
 ## 浏览器使用
