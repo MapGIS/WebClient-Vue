@@ -101,7 +101,7 @@ export default {
         folderDir = this.saveForm.saveUrl
         fileName = this.saveForm.fileName + this.fileType
         let json = JSON.parse(this.currentDocumentStr)
-        saveJsonFile(folderDir, fileName, json)
+        saveJsonFile(folderDir, fileName, json) // 自动将最新document以style为类型存回云盘
           .then(res => {
             if (res.status === 200) {
               let result = res.data
