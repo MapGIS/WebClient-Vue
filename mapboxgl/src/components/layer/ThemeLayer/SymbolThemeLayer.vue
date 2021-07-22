@@ -10,6 +10,7 @@
         :checkBoxArr="checkBoxArr"
         :showOutLineColor="false"
         :showRange="showRange"
+        :icons="icons"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"
         @closePanel="$_closePanel"
@@ -32,6 +33,9 @@
         @textPaddingChanged="$_textPaddingChanged"
         @textRotationChanged="$_textRotationChanged"
         @selectTextChanged="$_selectTextChanged"
+        @beginSearch="$_beginSearch"
+        @singleChanged="$_singleChanged"
+        @clickIcon="$_clickIcon"
     >
       <div slot="legend" slot-scope="slotProps" v-if="showRange">
         <mapgis-ui-row>
@@ -196,6 +200,13 @@ export default {
       textRotation: 0,
       haloColor: "#FFFFFF",
       haloWidth: 0,
+      dataType: "symbol"
+    }
+  },
+  props: {
+    icons: {
+      type: Array,
+      required: true
     }
   },
   mounted() {
@@ -211,51 +222,89 @@ export default {
     toggleLayer() {
       this.$_toggleLayer();
     },
-    $_fontColorChanged(color){
-      this.$_setPaintProperty("text-color",color);
+    $_beginSearch(key, operate, value) {
+      let newData = [], colors;
+      switch (operate) {
+        case "=":
+          newData = [];
+          for (let i = 0; i < this.dataSource.length; i++) {
+            if (this.dataSource[i] === value) {
+              newData.push(value);
+            }
+          }
+          break;
+        case "like":
+          newData = [];
+          for (let i = 0; i < this.dataSource.length; i++) {
+            if (this.dataSource[i].indexOf(value) >= 0) {
+              newData.push(this.dataSource[i]);
+            }
+          }
+          break;
+      }
+      this.dataSource = newData;
+      this.dataBack = newData;
+      colors = this.$_editColor();
+      this.$_setPaintProperty("icon-color", colors);
     },
-    $_haloColorChanged(color){
-      this.$_setPaintProperty("text-halo-color",color);
+    $_fontColorChanged(color) {
+      this.$_setPaintProperty("text-color", color);
     },
-    $_haloWidthChanged(color){
-      this.$_setPaintProperty("text-halo-width",color);
+    $_haloColorChanged(color) {
+      this.$_setPaintProperty("text-halo-color", color);
     },
-    $_fontSizeChanged(fontSize){
-      this.$_setLayOutProperty("text-size",fontSize);
+    $_haloWidthChanged(color) {
+      this.$_setPaintProperty("text-halo-width", color);
     },
-    $_yOffsetTextChanged(offset){
+    $_fontSizeChanged(fontSize) {
+      this.$_setLayOutProperty("text-size", fontSize);
+    },
+    $_yOffsetTextChanged(offset) {
       this.offsetText[1] = offset;
-      this.$_setLayOutProperty("text-offset",this.offsetText);
+      this.$_setLayOutProperty("text-offset", this.offsetText);
     },
-    $_xOffsetTextChanged(offset){
+    $_xOffsetTextChanged(offset) {
       this.offsetText[0] = offset;
-      this.$_setLayOutProperty("text-offset",this.offsetText);
+      this.$_setLayOutProperty("text-offset", this.offsetText);
     },
-    $_textPaddingChanged(textPadding){
+    $_textPaddingChanged(textPadding) {
       this.textPadding = textPadding;
-      this.$_setLayOutProperty("text-letter-spacing",textPadding);
+      this.$_setLayOutProperty("text-letter-spacing", textPadding);
     },
-    $_textRotationChanged(textRotation){
+    $_textRotationChanged(textRotation) {
       this.textRotation = textRotation;
-      this.$_setLayOutProperty("text-rotate",textRotation);
+      this.$_setLayOutProperty("text-rotate", textRotation);
     },
-    $_selectTextChanged(value){
+    $_selectTextChanged(value) {
       this.selectText = value;
-      this.$_setLayOutProperty("text-field",'{' + value + '}');
+      this.$_setLayOutProperty("text-field", '{' + value + '}');
     },
     $_radiusChanged(radius) {
-      this.$_setLayOutProperty("icon-size",radius);
+      this.$_setLayOutProperty("icon-size", radius);
     },
     $_rotationChanged(rotation) {
-      this.$_setLayOutProperty("icon-rotate",rotation);
+      this.$_setLayOutProperty("icon-rotate", rotation);
     },
     $_xOffsetChanged(xOffset) {
       this.offset[0] = xOffset;
-      this.$_setLayOutProperty("icon-offset",this.offset);
+      this.$_setLayOutProperty("icon-offset", this.offset);
     },
     $_yOffsetChanged(yOffset) {
       this.offset[1] = yOffset;
-      this.$_setLayOutProperty("icon-offset",this.offset);
+      this.$_setLayOutProperty("icon-offset", this.offset);
+    },
+    $_singleChanged(startColor, endColor){
+      this.$_gradientChange(startColor, endColor);
+    },
+    $_clickIcon(icon){
+      let hasIcon = this.map.hasImage(icon.name),vm = this;
+      if(!hasIcon){
+        this.map.loadImage(icon.url, function (error, image) {
+          if (error) throw error;
+          vm.map.addImage(icon.name, image, {'sdf': true});
+          vm.$_setLayOutProperty("icon-image",icon.name);
+        });
+      }
     },
     $_gradientChange(startColor, endColor) {
       this.showVector = false;
@@ -312,6 +361,7 @@ export default {
     * **/
     $_oneColorChangedCallBack(colors) {
       colors = this.$_editColor();
+      debugger
       this.$_setPaintProperty('icon-color', colors);
     },
     /*
@@ -373,30 +423,31 @@ export default {
         this.dataInit = true;
       });
       let colors = this.$_editColor();
-      this.layerVector.layout["text-field"] = '{' + this.selectKey +'}';
+      this.layerVector.layout["text-field"] = '{' + this.selectKey + '}';
       this.map.setLayoutProperty(this.layerId, "text-field", this.layerVector.layout["text-field"]);
       this.$_setPaintProperty('icon-color', colors);
     },
-    $_editColor() {
+    $_editColor(dataBack) {
+      dataBack = dataBack || this.dataBack;
       let newColors = ['match', ['get', this.selectKey]], Index = 0;
       if (!this.hasString) {
-        for (let i = 0; i < this.dataBack.length; i++) {
-          if (Number(this.dataBack[i]) >= Number(this.dataSourceCopy[Index])) {
+        for (let i = 0; i < dataBack.length; i++) {
+          if (Number(dataBack[i]) >= Number(this.dataSourceCopy[Index])) {
             Index++;
           }
           if (this.checkBoxArr[Index]) {
-            newColors.push(this.dataBack[i], this.colors[Index]);
+            newColors.push(dataBack[i], this.colors[Index]);
           } else {
-            newColors.push(this.dataBack[i], "#FFF");
+            newColors.push(dataBack[i], "#FFF");
           }
         }
         newColors.push("#FFF");
       } else {
-        for (let i = 0; i < this.dataBack.length; i++) {
+        for (let i = 0; i < dataBack.length; i++) {
           if (this.checkBoxArr[i]) {
-            newColors.push(this.dataBack[i], this.colors[i]);
+            newColors.push(dataBack[i], this.colors[i]);
           } else {
-            newColors.push(this.dataBack[i], "#FFF");
+            newColors.push(dataBack[i], "#FFF");
           }
         }
         newColors.push("#FFF");
@@ -487,15 +538,15 @@ export default {
       this.$nextTick(function () {
         this.dataInit = true;
       });
-      fillColors = this.$_editColor(fillColors);
+      fillColors = this.$_editColor();
       this.layerVector = {
         'id': 'china_bound_id',
         'source': 'vector_source_id',
         'type': 'symbol',
         'layout': {
-          'icon-image': 'store-icon',
+          'icon-image': this.icons[0].icons[0].name,
           'icon-size': this.iconSize,
-          "text-field": '{' + this.selectText +'}',
+          "text-field": '{' + this.selectText + '}',
           'text-size': this.fontSize,
           'text-letter-spacing': this.textPadding,
           'text-offset': this.offset,
@@ -513,10 +564,10 @@ export default {
           "text-halo-width": this.haloWidth
         },
       };
-      this.map.loadImage('./shop-15.png', function (error, image) {
+      this.map.loadImage(this.icons[0].icons[0].url, function (error, image) {
         if (error) throw error;
         vm.map.removeLayer('china_bound_id');
-        vm.map.addImage('store-icon', image, {'sdf': true});
+        vm.map.addImage(vm.icons[0].icons[0].name, image, {'sdf': true});
         vm.map.addLayer(vm.layerVector);
       });
     },
