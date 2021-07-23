@@ -7,6 +7,8 @@
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
+        :icons="icons"
+        :panelProps="panelPropsDefault"
         @closePanel="$_closePanel"
         @change="$_selectChange"
         @checked="$_checked"
@@ -14,8 +16,25 @@
         @lineColorChanged="$_lineColorChanged"
         @opacityChanged="$_opacityChanged"
         @oneColorChanged="$_oneColorChanged"
+        @iconSizeChanged="$_radiusChanged"
         @radiusChanged="$_radiusChanged"
         @lineWidthChanged="$_lineWidthChanged"
+        @singleChanged="$_singleChanged"
+        @selectTextChanged="$_selectTextChanged"
+        @fontColorChanged="$_fontColorChanged"
+        @haloColorChanged="$_haloColorChanged"
+        @haloWidthChanged="$_haloWidthChanged"
+        @fontSizeChanged="$_fontSizeChanged"
+        @xOffsetChanged="$_xOffsetChanged"
+        @yOffsetChanged="$_yOffsetChanged"
+        @yOffsetTextChanged="$_yOffsetTextChanged"
+        @xOffsetTextChanged="$_xOffsetTextChanged"
+        @textPaddingChanged="$_textPaddingChanged"
+        @textRotationChanged="$_textRotationChanged"
+        @lineStyleChanged="$_lineStyleChanged"
+        @clickIcon="$_clickIcon"
+        @outerLineOpacityChanged="$_outerLineOpacityChanged"
+        @outerLineColorChanged="$_outerLineColorChanged"
     >
     </ThemePanel>
     <mapgis-vector-layer
@@ -40,6 +59,23 @@ export default {
   components: {
     ThemePanel
   },
+  props: {
+    panelProps: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
+  data(){
+    return {
+      themeType: "unique",
+      panelPropsDefault: {}
+    }
+  },
+  created() {
+    this.$_formatProps();
+  },
   mounted() {
     this.$_mount();
   },
@@ -52,41 +88,6 @@ export default {
     },
     toggleLayer() {
       this.$_toggleLayer();
-    },
-    /*
-    * 修改单一属性的颜色的回调方法
-    * @param colors 颜色信息
-    * **/
-    $_oneColorChangedCallBack(colors){
-      switch (this.dataType) {
-        case "fill":
-          this.layerVector.paint["fill-color"] = colors
-          break;
-        case "circle":
-          this.layerVector.paint["circle-color"] = colors;
-          break;
-        case "line":
-          this.layerVector.paint["line-color"] = colors;
-          break;
-      }
-    },
-    /*
-    * 改变透明度的回调方法
-    * @param opacity 透明度
-    * **/
-    $_opacityChangedCallBack(opacity){
-      switch (this.dataType) {
-        case "fill":
-          this.layerVector.paint["fill-opacity"] = opacity;
-          break;
-        case "circle":
-          this.layerVector.paint["circle-opacity"] = opacity;
-          this.layerVector.paint["circle-stroke-opacity"] = opacity;
-          break;
-        case "line":
-          this.layerVector.paint["line-opacity"] = opacity;
-          break;
-      }
     },
     /*
     * 多选框业务实现
@@ -236,7 +237,7 @@ export default {
           paint: {
             'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
             'fill-color': fillColors, //颜色
-            'fill-opacity': 1.0, //透明度
+            'fill-opacity': this.opacity, //透明度
             'fill-outline-color': '#000' //边线颜色，没错,确实没有边线宽度这个选项
           }
         }
@@ -247,11 +248,12 @@ export default {
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
             'circle-color': fillColors, //颜色
-            'circle-opacity': 1.0, //透明度
-            'circle-stroke-opacity': 1.0, //透明度
-            'circle-radius': 12.0, //透明度
-            'circle-stroke-color': '#000',//边线颜色，没错,确实没有边线宽度这个选项
-            'circle-stroke-width': 1
+            'circle-opacity': this.opacity, //透明度
+            'circle-stroke-opacity': this.outerLineOpacity, //透明度
+            'circle-radius': this.radius, //透明度
+            'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
+            'circle-stroke-width': this.lineWidth,
+            'circle-translate': this.offset,
           }
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
@@ -261,8 +263,8 @@ export default {
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
             'line-color': fillColors, //颜色
-            'line-opacity': 1.0, //透明度
-            'line-width': 5
+            'line-opacity': this.opacity, //透明度
+            'line-width': this.lineWidth,
           }
         }
       }

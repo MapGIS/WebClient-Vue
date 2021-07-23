@@ -39,7 +39,7 @@
       <!--专题图样式-->
       <mapgis-ui-collapse accordion>
         <mapgis-ui-collapse-panel key="2" header="符号">
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType !== 'circle'">
             <mapgis-ui-col :span="4">
               <p class="theme-panel-p">图标</p>
             </mapgis-ui-col>
@@ -130,58 +130,79 @@
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="0"
-                  :max="3"
-                  :step="0.1"
+                  :max="radiusMax"
+                  :step="radiusStep"
                   class="theme-panel-slider"
                   v-model="radius"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
                   :min="0"
-                  :max="3"
-                  :step="0.1"
+                  :max="radiusMax"
+                  :step="radiusStep"
                   class="theme-panel-input-number"
                   v-model="radius"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'symbol'">
-            <p class="theme-panel-p">x轴偏移</p>
+          <mapgis-ui-row v-if="dataType === 'circle'">
+            <p class="theme-panel-p">半径</p>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'symbol'">
+          <mapgis-ui-row v-if="dataType === 'circle'">
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="0"
+                  :max="radiusMax"
+                  :step="radiusStep"
+                  class="theme-panel-slider"
+                  v-model="radius"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="0"
+                  :max="radiusMax"
+                  :step="radiusStep"
+                  class="theme-panel-input-number"
+                  v-model="radius"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
+            <p class="theme-panel-p">x轴偏移</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="xOffsetMin"
+                  :max="xOffsetMax"
+                  :step="xOffsetStep"
                   class="theme-panel-slider"
                   v-model="xOffset"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="xOffsetMin"
+                  :max="xOffsetMax"
+                  :step="xOffsetStep"
                   class="theme-panel-input-number"
                   v-model="xOffset"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'symbol'">
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
             <p class="theme-panel-p">y轴偏移</p>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'symbol'">
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="yOffsetMin"
+                  :max="yOffsetMax"
+                  :step="yOffsetStep"
                   class="theme-panel-slider"
                   v-model="yOffset"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="yOffsetMin"
+                  :max="yOffsetMax"
+                  :step="yOffsetStep"
                   class="theme-panel-input-number"
                   v-model="yOffset"/>
             </mapgis-ui-col>
@@ -194,7 +215,7 @@
               <mapgis-ui-slider
                   :min="0"
                   :max="360"
-                  :step="1"
+                  :step="rotationStep"
                   class="theme-panel-slider"
                   v-model="rotation"/>
             </mapgis-ui-col>
@@ -202,7 +223,7 @@
               <mapgis-ui-input-number
                   :min="0"
                   :max="360"
-                  :step="1"
+                  :step="rotationStep"
                   class="theme-panel-input-number"
                   v-model="rotation"/>
             </mapgis-ui-col>
@@ -210,12 +231,12 @@
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
       <!--边线样式-->
-      <mapgis-ui-collapse accordion>
+      <mapgis-ui-collapse accordion v-if="dataType !== 'symbol'">
         <mapgis-ui-collapse-panel key="5" header="线">
-          <mapgis-ui-row>
-            <p class="theme-panel-p">边线样式{{ lineStyle[0].key }}</p>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <p class="theme-panel-p">边线样式</p>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
             <mapgis-ui-select
                 :default-value="'theme-panel-line-zero'"
                 class="theme-panel-select"
@@ -243,7 +264,7 @@
           <mapgis-ui-row>
             <p class="theme-panel-p">边线颜色</p>
           </mapgis-ui-row>
-          <mapgis-ui-row style="margin-top: 8px;">
+          <mapgis-ui-row style="margin-top: 8px;"  v-if="dataType === 'line' || dataType === 'fill'">
             <mapgis-ui-radio-group
                 v-model="radioMode"
                 :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
@@ -256,7 +277,7 @@
               </mapgis-ui-radio-button>
             </mapgis-ui-radio-group>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line' || dataType === 'fill'">
             <mapgis-ui-select
                 :default-value="'#FF0000'"
                 @change="$_gradientChange"
@@ -273,6 +294,13 @@
                 v-show="radioMode === 'single'"
             />
           </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle'">
+            <colorPicker
+                class="picker theme-panel-line-color"
+                v-model="outerLineColor"
+                @change="$_outerLineColorChanged"
+            />
+          </mapgis-ui-row>
           <mapgis-ui-row>
             <p class="theme-panel-p">边线宽度</p>
           </mapgis-ui-row>
@@ -280,28 +308,37 @@
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="0"
-                  :max="20"
-                  :step="1"
+                  :max="lineWidthMax"
+                  :step="lineWidthStep"
                   class="theme-panel-slider"
                   v-model="lineWidth"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
                   :min="0"
-                  :max="20"
-                  :step="1" class="theme-panel-input-number"
+                  :max="lineWidthMax"
+                  :step="lineWidthStep"
+                  class="theme-panel-input-number"
                   v-model="lineWidth"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
           <mapgis-ui-row>
             <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider class="theme-panel-slider" v-model="opacity"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider class="theme-panel-slider" v-model="outerLineOpacity"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number class="theme-panel-input-number" v-model="outerLineOpacity"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
@@ -360,9 +397,10 @@
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="0"
-                  :max="10"
-                  :step="0.1"
-                  class="theme-panel-slider" v-model="haloWidth"/>
+                  :max="haloWidthMax"
+                  :step="haloWidthStep"
+                  class="theme-panel-slider"
+                  v-model="haloWidth"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number class="theme-panel-input-number" v-model="haloWidth"/>
@@ -389,16 +427,16 @@
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="1"
-                  :max="20"
-                  :step="1"
+                  :max="fontSizeMax"
+                  :step="fontSizeStep"
                   class="theme-panel-slider"
                   v-model="fontSize"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
                   :min="1"
-                  :max="20"
-                  :step="1"
+                  :max="fontSizeMax"
+                  :step="fontSizeStep"
                   class="theme-panel-input-number"
                   v-model="fontSize"/>
             </mapgis-ui-col>
@@ -409,17 +447,17 @@
           <mapgis-ui-row>
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="xOffsetTextMin"
+                  :max="xOffsetTextMax"
+                  :step="xOffsetTextStep"
                   class="theme-panel-slider"
                   v-model="xOffsetText"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="xOffsetTextMin"
+                  :max="xOffsetTextMax"
+                  :step="xOffsetTextStep"
                   class="theme-panel-input-number"
                   v-model="xOffsetText"/>
             </mapgis-ui-col>
@@ -430,17 +468,17 @@
           <mapgis-ui-row>
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="yOffsetTextMin"
+                  :max="yOffsetTextMax"
+                  :step="yOffsetTextStep"
                   class="theme-panel-slider"
                   v-model="yOffsetText"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
-                  :min="-20"
-                  :max="20"
-                  :step="0.1"
+                  :min="yOffsetTextMin"
+                  :max="yOffsetTextMax"
+                  :step="yOffsetTextStep"
                   class="theme-panel-input-number"
                   v-model="yOffsetText"/>
             </mapgis-ui-col>
@@ -452,16 +490,16 @@
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="0"
-                  :max="1"
-                  :step="0.05"
+                  :max="textPaddingMax"
+                  :step="textPaddingStep"
                   class="theme-panel-slider"
                   v-model="textPadding"/>
             </mapgis-ui-col>
             <mapgis-ui-col :span="6">
               <mapgis-ui-input-number
                   :min="0"
-                  :max="1"
-                  :step="0.05"
+                  :max="textPaddingMax"
+                  :step="textPaddingStep"
                   class="theme-panel-input-number"
                   v-model="textPadding"/>
             </mapgis-ui-col>
@@ -474,7 +512,7 @@
               <mapgis-ui-slider
                   :min="0"
                   :max="360"
-                  :step="1"
+                  :step="textRotationStep"
                   class="theme-panel-slider"
                   v-model="textRotation"/>
             </mapgis-ui-col>
@@ -482,23 +520,13 @@
               <mapgis-ui-input-number
                   :min="0"
                   :max="360"
-                  :step="1"
+                  :step="textRotationStep"
                   class="theme-panel-input-number"
                   v-model="textRotation"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
-      <mapgis-ui-row
-          v-if="dataType==='circle'"
-      >
-        <mapgis-ui-col :span="6">
-          <p class="theme-panel-p">半径</p>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="18">
-          <mapgis-ui-input-number v-model="radius" class="theme-panel-input-number"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
       <slot name="operation"></slot>
       <!--专题图信息-->
       <mapgis-ui-collapse accordion @change="$_clickCollapse">
@@ -623,10 +651,59 @@ export default {
     },
     icons: {
       type: Array
+    },
+    panelProps: {
+      type: Object,
+      default() {
+        return {
+        }
+      }
     }
   },
   data() {
     return {
+      defaultValue: "",
+      opacity: 100,
+      radius: 6,
+      radiusMax: 12,
+      radiusStep: 0.1,
+      xOffset: 0,
+      xOffsetMax: 20,
+      xOffsetMin: -20,
+      xOffsetStep: 0.1,
+      yOffset: 0,
+      yOffsetMin: -20,
+      yOffsetMax: 20,
+      yOffsetStep: 0.1,
+      rotation: 0,
+      rotationStep: 0,
+      singleColor: "#000000",
+      outerLineColor: "#000000",
+      lineWidth: 2,
+      lineWidthMax: 10,
+      lineWidthStep: 0.1,
+      outerLineOpacity: 100,
+      fontColor: "#000000",
+      haloColor: "#FFFFFF",
+      haloWidth: 0,
+      haloWidthMax: 10,
+      haloWidthStep: 0.1,
+      fontSize: 11,
+      fontSizeMax: 20,
+      fontSizeStep: 1,
+      xOffsetText: 0,
+      xOffsetTextMin: -20,
+      xOffsetTextMax: 20,
+      xOffsetTextStep: 0.1,
+      yOffsetText: 0,
+      yOffsetTextMin: -20,
+      yOffsetTextMax: 20,
+      yOffsetTextStep: 0.1,
+      textPaddingMax: 1,
+      textPaddingStep: 0.05,
+      textPadding: 0.05,
+      textRotationStep: 1,
+      textRotation: 0,
       init: false,
       loadingTest: "加载中，请稍后...",
       FieldArray: [],
@@ -634,23 +711,7 @@ export default {
       selectValue: "",
       gradientValue: "common",
       lineValue: "common",
-      fontSize: 11,
-      radius: 0.5,
-      xOffset: 0,
-      yOffset: 1.5,
-      xOffsetText: 0,
-      yOffsetText: 0,
-      textPadding: 0.05,
-      rotation: 0,
-      textRotation: 0,
-      lineWidth: 5,
-      haloWidth: 0,
-      opacity: 100,
-      defaultValue: "",
       lineColor: "#000000",
-      fontColor: "#000000",
-      singleColor: "#000000",
-      haloColor: "#FFFFFF",
       startColor: "#FFF",
       endColor: "#000",
       gradientArr: [{
@@ -702,66 +763,6 @@ export default {
         this.$_initDataSource();
       }
     },
-    opacity: {
-      handler: function () {
-        this.$emit("opacityChanged", this.opacity / 100);
-      }
-    },
-    radius: {
-      handler: function () {
-        this.$emit("radiusChanged", Number(this.radius));
-      }
-    },
-    xOffset: {
-      handler: function () {
-        this.$emit("xOffsetChanged", Number(this.xOffset));
-      }
-    },
-    yOffset: {
-      handler: function () {
-        this.$emit("yOffsetChanged", Number(this.yOffset) * -1);
-      }
-    },
-    xOffsetText: {
-      handler: function () {
-        this.$emit("xOffsetTextChanged", Number(this.xOffsetText));
-      }
-    },
-    textPadding: {
-      handler: function () {
-        this.$emit("textPaddingChanged", Number(this.textPadding));
-      }
-    },
-    yOffsetText: {
-      handler: function () {
-        this.$emit("yOffsetTextChanged", Number(this.yOffsetText) * -1);
-      }
-    },
-    rotation: {
-      handler: function () {
-        this.$emit("rotationChanged", Number(this.rotation));
-      }
-    },
-    textRotation: {
-      handler: function () {
-        this.$emit("textRotationChanged", Number(this.textRotation));
-      }
-    },
-    haloWidth: {
-      handler: function () {
-        this.$emit("haloWidthChanged", Number(this.haloWidth));
-      }
-    },
-    fontSize: {
-      handler: function () {
-        this.$emit("fontSizeChanged", Number(this.fontSize));
-      }
-    },
-    lineWidth: {
-      handler: function () {
-        this.$emit("lineWidthChanged", Number(this.lineWidth));
-      }
-    },
     showRange: {
       handler: function () {
         this.$_addScrollEvent();
@@ -784,7 +785,54 @@ export default {
       }
     }
   },
+  created() {
+    let vm = this;
+    Object.keys(this.$data).forEach(function (key) {
+      if(vm.$props.panelProps.hasOwnProperty(key)){
+        vm.$data[key] = vm.$props.panelProps[key];
+      }
+    });
+  },
   mounted() {
+    this.$watch("radius",function () {
+      this.$emit("radiusChanged", Number(this.radius));
+    });
+    this.$watch("opacity",function () {
+      this.$emit("opacityChanged", Number(this.opacity) / 100);
+    });
+    this.$watch("outerLineOpacity",function () {
+      this.$emit("outerLineOpacityChanged", Number(this.outerLineOpacity) / 100);
+    });
+    this.$watch("xOffset",function () {
+      this.$emit("xOffsetChanged", Number(this.xOffset));
+    });
+    this.$watch("yOffset",function () {
+      this.$emit("yOffsetChanged", Number(this.yOffset) * -1);
+    });
+    this.$watch("xOffsetText",function () {
+      this.$emit("xOffsetTextChanged", Number(this.xOffsetText));
+    });
+    this.$watch("textPadding",function () {
+      this.$emit("textPaddingChanged", Number(this.textPadding));
+    });
+    this.$watch("yOffsetText",function () {
+      this.$emit("yOffsetTextChanged", Number(this.yOffsetText) * -1);
+    });
+    this.$watch("rotation",function () {
+      this.$emit("rotationChanged", Number(this.rotation));
+    });
+    this.$watch("textRotation",function () {
+      this.$emit("textRotationChanged", Number(this.textRotation));
+    });
+    this.$watch("haloWidth",function () {
+      this.$emit("haloWidthChanged", Number(this.haloWidth));
+    });
+    this.$watch("fontSize",function () {
+      this.$emit("fontSizeChanged", Number(this.fontSize));
+    });
+    this.$watch("lineWidth",function () {
+      this.$emit("lineWidthChanged", Number(this.lineWidth));
+    });
   },
   methods: {
     $_toggleIcon() {
@@ -877,6 +925,9 @@ export default {
     },
     $_singleChanged(e) {
       this.$emit("singleChanged", e, e);
+    },
+    $_outerLineColorChanged(e) {
+      this.$emit("outerLineColorChanged", e);
     },
     $_selectLineStyleChanged(e) {
       let lineStyle = {};

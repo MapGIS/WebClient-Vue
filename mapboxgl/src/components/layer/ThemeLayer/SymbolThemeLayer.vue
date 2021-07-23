@@ -11,6 +11,7 @@
         :showOutLineColor="false"
         :showRange="showRange"
         :icons="icons"
+        :panelProps="panelPropsDefault"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"
         @closePanel="$_closePanel"
@@ -192,7 +193,7 @@ export default {
       endNumWrong: false,
       hasString: false,
       showRange: false,
-      iconSize: 0.5,
+      radius: 0.5,
       fontSize: 11,
       offset: [0, 1.5],
       offsetText: [0, 0],
@@ -200,14 +201,29 @@ export default {
       textRotation: 0,
       haloColor: "#FFFFFF",
       haloWidth: 0,
-      dataType: "symbol"
+      dataType: "symbol",
+      panelPropsDefault: {
+        "icon-size": 0.5,
+        "icon-size-Max": 3,
+        "icon-size-Step": 0.1,
+      }
     }
   },
   props: {
     icons: {
       type: Array,
       required: true
+    },
+    panelProps: {
+      type: Object,
+      default(){
+        return {
+        }
+      }
     }
+  },
+  created() {
+    this.$_formatProps();
   },
   mounted() {
     this.$_mount();
@@ -293,17 +309,19 @@ export default {
       this.offset[1] = yOffset;
       this.$_setLayOutProperty("icon-offset", this.offset);
     },
-    $_singleChanged(startColor, endColor){
+    $_singleChanged(startColor, endColor) {
       this.$_gradientChange(startColor, endColor);
     },
-    $_clickIcon(icon){
-      let hasIcon = this.map.hasImage(icon.name),vm = this;
-      if(!hasIcon){
+    $_clickIcon(icon) {
+      let hasIcon = this.map.hasImage(icon.name), vm = this;
+      if (!hasIcon) {
         this.map.loadImage(icon.url, function (error, image) {
           if (error) throw error;
           vm.map.addImage(icon.name, image, {'sdf': true});
-          vm.$_setLayOutProperty("icon-image",icon.name);
+          vm.$_setLayOutProperty("icon-image", icon.name);
         });
+      } else {
+        this.$_setLayOutProperty("icon-image", icon.name);
       }
     },
     $_gradientChange(startColor, endColor) {
@@ -361,7 +379,6 @@ export default {
     * **/
     $_oneColorChangedCallBack(colors) {
       colors = this.$_editColor();
-      debugger
       this.$_setPaintProperty('icon-color', colors);
     },
     /*
@@ -369,9 +386,8 @@ export default {
     * @param opacity 透明度
     * **/
     $_opacityChangedCallBack(opacity) {
+      opacity = opacity / 100;
       this.$_setPaintProperty('icon-opacity', opacity);
-      this.layerVector.paint["icon-opacity"] = opacity;
-      this.map.setPaintProperty(this.layerId, "icon-opacity", this.layerVector.paint["icon-opacity"]);
     },
     $_checkboxChecked(e) {
       let value = e.target.value.item;
@@ -545,7 +561,7 @@ export default {
         'type': 'symbol',
         'layout': {
           'icon-image': this.icons[0].icons[0].name,
-          'icon-size': this.iconSize,
+          'icon-size': this.radius,
           "text-field": '{' + this.selectText + '}',
           'text-size': this.fontSize,
           'text-letter-spacing': this.textPadding,
@@ -558,7 +574,7 @@ export default {
         },
         'paint': {
           'icon-color': fillColors,
-          'icon-opacity': 1,
+          'icon-opacity': this.opacity,
           'text-color': '#000000',
           "text-halo-color": this.haloColor,
           "text-halo-width": this.haloWidth
