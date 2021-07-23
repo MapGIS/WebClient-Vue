@@ -54,6 +54,8 @@ export { default as MapgisUiInputSearch } from "./components/input/Search.vue";
 export { default as MapgisUiInputGroup } from "./components/input/Group.vue";
 export { default as MapgisUiInputPassword } from "./components/input/Password.vue";
 export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
+export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
+export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
 export { default as MapgisUiMentions } from "./components/mentions/Mentions.vue";
 export { default as MapgisUiMentionsOption } from "./components/mentions/Option.vue";
 export { default as MapgisUiRadio } from "./components/radio/Radio.vue";
@@ -117,7 +119,7 @@ export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 
 // CloudDisk
-export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
-export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
-export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
-export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";
+// export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
+// export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
+// export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
+// export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";

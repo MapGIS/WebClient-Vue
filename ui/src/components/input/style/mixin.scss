@@ -1,3 +1,5 @@
+$input-affix-width: 19px;
+
 @mixin focus-color($border, $shadow) {
   border-color: $border;
   box-shadow: 0 0 0 2px $shadow;
