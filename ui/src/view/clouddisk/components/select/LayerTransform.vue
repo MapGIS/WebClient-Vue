@@ -17,7 +17,7 @@ import {
   getNewTileUrl
 } from '../../axios/gis'
 import { FileType } from '../../util/fileType'
-import { getMapgisPath } from '../../config/mapgis'
+import { getMapgisPath, getMapGISUrl } from '../../config/mapgis'
 
 
 import { IDocument, Layer, Doc } from '@mapgis/webclient-store' // 这些项在线制图应该也已经添加了依赖，demo界面通过npm link连接
@@ -169,10 +169,12 @@ export default {
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
       // this.handleClose()
       let folderDir = getMapgisPath() + '/工作目录/工程文件Cache'
-      let fileName = doc.layers[0].name + '_自动创建new.style'
+      let fileName = doc.layers[0].name + '_mapstudio自动创建.style'
       let srcUrl = folderDir + '/' + fileName
+      let fileAttribute = JSON.stringify(this.getFileAttr(doc, srcUrl))
+      fileAttribute = encodeURIComponent(fileAttribute)
       // console.warn('路径', folderDir, fileName)
-      saveJsonFile(folderDir, fileName, doc)
+      saveJsonFile(folderDir, fileName, fileAttribute, doc)
         .then(res => {
           if (res.status === 200) {
             let result = res.data
@@ -379,6 +381,26 @@ export default {
       }
       return flag
     },
+    getFileAttr (doc, url) {
+      let fileAttr = {}
+      fileAttr.baseUrl = getMapGISUrl()
+      fileAttr.preview = this.getEncodePreviewUrl(url)
+      fileAttr.crs = doc.crs.epsg || 'EPSG_4326'
+      fileAttr.xmin = doc.maxBounds.west || -180
+      fileAttr.xmax = doc.maxBounds.east || 180
+      fileAttr.ymin = doc.maxBounds.south || -90
+      fileAttr.ymax = doc.maxBounds.north || 90
+      // fileAttr.center = doc.center || [0, 0]
+      return fileAttr
+    },
+    getEncodePreviewUrl (url) {
+      let result
+      let baseProjectUrl = getFileDownloadUrlWithAuth(url, false)
+      let projectUrl = Buffer.from(baseProjectUrl, 'utf-8').toString('base64') // 编码方式
+      projectUrl = encodeURIComponent(projectUrl)
+      result = this.mapstudioUrlMark + projectUrl
+      return result
+    }
   }
 };
 </script>

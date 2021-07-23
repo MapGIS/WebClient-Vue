@@ -342,7 +342,7 @@ export function getSaveStyleUrl(folderDir, fileName, identifier) {
 }
 
 // 保存工程文件的Json格式
-export function saveJsonFile(folderDir, fileName, data) {
+export function saveJsonFile(folderDir, fileName, fileAttribute, data) {
   const url = getMapGISUrl();
   const api = new API();
   const token = getMapgisToken();
@@ -364,6 +364,8 @@ export function saveJsonFile(folderDir, fileName, data) {
       folderDir +
       "&fileName=" +
       fileName +
+      "&attribute=" +
+      fileAttribute +
       "&identifier=" +
       identifier,
     data
