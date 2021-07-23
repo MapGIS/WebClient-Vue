@@ -41,13 +41,13 @@ yarn add @mapgis/webclient-vue-cesium
 在 main.js 中加入样式文件
 
 ```js
-// 外部全局引入了ant-design-vue库
-import Mapgis3d from "@mapgis/webclient-vue-cesium";
-Vue.use(Mapgis3d);
+import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
 
-// 外部没有引入ant-design-vue库，使用内部封装的组件库
+import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
-Vue.use(Mapgis3d， { ui: "ant-design-vue" });
+
+Vue.use(MapgisUi);
+Vue.use(Mapgis3d);
 ```
 
 ### Ceisum 库引入

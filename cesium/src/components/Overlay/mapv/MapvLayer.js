@@ -100,13 +100,28 @@ export class MapvLayer {
       this.scene.camera.moveStart.addEventListener(this.postStartEvent, this);
       this.scene.camera.moveEnd.addEventListener(this.postEndEvent, this);
     } else {
-      handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.WHEEL);
-      handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-      handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.LEFT_UP);
-      handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
-      handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.RIGHT_UP);
+      handler.setInputAction(
+        this.innerMoveEnd,
+        Cesium.ScreenSpaceEventType.WHEEL
+      );
+      handler.setInputAction(
+        this.innerMoveStart,
+        Cesium.ScreenSpaceEventType.LEFT_DOWN
+      );
+      handler.setInputAction(
+        this.innerMoveEnd,
+        Cesium.ScreenSpaceEventType.LEFT_UP
+      );
+      handler.setInputAction(
+        this.innerMoveStart,
+        Cesium.ScreenSpaceEventType.RIGHT_DOWN
+      );
+      handler.setInputAction(
+        this.innerMoveEnd,
+        Cesium.ScreenSpaceEventType.RIGHT_UP
+      );
 
-      map.scene.camera.moveEnd.addEventListener(function () {
+      map.scene.camera.moveEnd.addEventListener(function() {
         //获取当前相机高度
         self.innerMoveEnd();
       });
@@ -116,7 +131,10 @@ export class MapvLayer {
   unbindEvent() {
     var map = this.map;
     if (this.postRender) {
-      this.scene.camera.moveStart.removeEventListener(this.postStartEvent, this);
+      this.scene.camera.moveStart.removeEventListener(
+        this.postStartEvent,
+        this
+      );
       this.scene.camera.moveEnd.removeEventListener(this.postEndEvent, this);
     }
   }
@@ -125,7 +143,7 @@ export class MapvLayer {
     if (this.mapvBaseLayer) {
       this.mapvBaseLayer.animatorMovestartEvent();
     }
-      this._unvisiable();
+    this._unvisiable();
   }
 
   moveEndEvent() {
@@ -233,10 +251,14 @@ export class MapvLayer {
     canvas.style.pointerEvents = "none";
     canvas.style.zIndex = this.mapVOptions.zIndex || 100;
 
-    canvas.width = parseInt(this.map.canvas.width);
-    canvas.height = parseInt(this.map.canvas.height);
-    canvas.style.width = this.map.canvas.style.width;
-    canvas.style.height = this.map.canvas.style.height;
+    canvas.width =
+      parseInt(this.map.canvas.width) ||
+      parseInt(this.map.container.offsetWidth);
+    canvas.height =
+      parseInt(this.map.canvas.height) ||
+      parseInt(this.map.container.offsetHeight);
+    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
     var devicePixelRatio = this.devicePixelRatio;
     if (this.mapVOptions.context == "2d") {
       canvas
@@ -258,10 +280,14 @@ export class MapvLayer {
     canvas.style.pointerEvents = "none";
     canvas.style.zIndex = this.mapVOptions.zIndex || 100;
 
-    canvas.width = parseInt(this.map.canvas.width);
-    canvas.height = parseInt(this.map.canvas.height);
-    //canvas.style.width =  this.map.canvas.style.width;
-    //canvas.style.height =  this.map.canvas.style.height;
+    canvas.width =
+      parseInt(this.map.canvas.width) ||
+      parseInt(this.map.container.offsetWidth);
+    canvas.height =
+      parseInt(this.map.canvas.height) ||
+      parseInt(this.map.container.offsetHeight);
+    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
     var devicePixelRatio = this.devicePixelRatio;
     if (this.mapVOptions.context == "2d") {
       canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
@@ -338,11 +364,14 @@ export class MapvLayer {
     canvas.style.position = "absolute";
     canvas.style.top = "0px";
     canvas.style.left = "0px";
-    canvas.width = parseInt(this.map.canvas.width);
-    canvas.height = parseInt(this.map.canvas.height);
-    //初始化的时候style会覆盖后面的动态设置的height width  在一些特定场景 初始化的style宽高不正确
-    canvas.style.width = this.map.canvas.style.width;
-    canvas.style.height = this.map.canvas.style.height;
+    canvas.width =
+      parseInt(this.map.canvas.width) ||
+      parseInt(this.map.container.offsetWidth);
+    canvas.height =
+      parseInt(this.map.canvas.height) ||
+      parseInt(this.map.container.offsetHeight);
+    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
     var devicePixelRatio = this.devicePixelRatio;
     if (this.mapVOptions.context == "2d") {
       canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
