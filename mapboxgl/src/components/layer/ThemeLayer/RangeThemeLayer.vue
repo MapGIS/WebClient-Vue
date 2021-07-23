@@ -10,6 +10,7 @@
         :checkBoxArr="checkBoxArr"
         :icons="icons"
         :panelProps="panelPropsDefault"
+        :textFonts="textFonts"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
         @change="$_selectChange"
@@ -35,6 +36,7 @@
         @xOffsetChanged="$_xOffsetChanged"
         @yOffsetChanged="$_yOffsetChanged"
         @outerLineColorChanged="$_outerLineColorChanged"
+        @fontChanged="$_fontChanged"
     >
       <div slot="legend" slot-scope="slotProps">
         <mapgis-ui-row>
@@ -217,8 +219,30 @@ export default {
     toggleLayer() {
       this.$_toggleLayer();
     },
+    $_outerLineColorChanged(color) {
+      this.$_setPaintProperty("line-color",color,"line_layer_id", this.lineLayer);
+    },
+    $_fontChanged(font){
+      this.textFont = font;
+      this.$_setLayOutProperty("text-font",[this.textFont],"text_layer_id",this.textLayer);
+    },
+    $_lineWidthChanged(lineWidth) {
+      switch (this.dataType){
+        case "fill":
+          this.$_setPaintProperty("line-width",lineWidth,"line_layer_id", this.lineLayer);
+          break;
+        case "line":
+          this.$_setPaintProperty("line-width", lineWidth);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-width", lineWidth);
+          break;
+      }
+    },
+    $_outerLineOpacityChanged(opacity){
+      this.$_setPaintProperty("line-opacity",opacity,"line_layer_id", this.lineLayer);
+    },
     $_opacityChangedCallBack(opacity) {
-      opacity = opacity / 100;
       let opacityType = "";
       switch (this.dataType) {
         case "fill":
@@ -434,9 +458,10 @@ export default {
             'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
             'fill-color': fillColors, //颜色
             'fill-opacity': this.opacity, //透明度
-            'fill-outline-color': '#000', //边线颜色，没错,确实没有边线宽度这个选项
+            'fill-outline-color': '#fff', //边线颜色，没错,确实没有边线宽度这个选项
           }
         }
+        this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
         this.layerVector = {

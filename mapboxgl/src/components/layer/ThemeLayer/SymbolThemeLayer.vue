@@ -12,6 +12,7 @@
         :showRange="showRange"
         :icons="icons"
         :panelProps="panelPropsDefault"
+        :textFonts="textFonts"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"
         @closePanel="$_closePanel"
@@ -37,6 +38,7 @@
         @beginSearch="$_beginSearch"
         @singleChanged="$_singleChanged"
         @clickIcon="$_clickIcon"
+        @fontChanged="$_fontChanged"
     >
       <div slot="legend" slot-scope="slotProps" v-if="showRange">
         <mapgis-ui-row>
@@ -312,6 +314,10 @@ export default {
     $_singleChanged(startColor, endColor) {
       this.$_gradientChange(startColor, endColor);
     },
+    $_fontChanged(font){
+      this.textFont = font;
+      this.$_setLayOutProperty("text-font",[this.textFont],"china_bound_id",this.layerVector);
+    },
     $_clickIcon(icon) {
       let hasIcon = this.map.hasImage(icon.name), vm = this;
       if (!hasIcon) {
@@ -386,7 +392,6 @@ export default {
     * @param opacity 透明度
     * **/
     $_opacityChangedCallBack(opacity) {
-      opacity = opacity / 100;
       this.$_setPaintProperty('icon-opacity', opacity);
     },
     $_checkboxChecked(e) {
@@ -439,8 +444,10 @@ export default {
         this.dataInit = true;
       });
       let colors = this.$_editColor();
-      this.layerVector.layout["text-field"] = '{' + this.selectKey + '}';
-      this.map.setLayoutProperty(this.layerId, "text-field", this.layerVector.layout["text-field"]);
+      if(this.selectText){
+        this.layerVector.layout["text-field"] = '{' + this.selectText + '}';
+        this.map.setLayoutProperty(this.layerId, "text-field", this.layerVector.layout["text-field"]);
+      }
       this.$_setPaintProperty('icon-color', colors);
     },
     $_editColor(dataBack) {
@@ -562,14 +569,11 @@ export default {
         'layout': {
           'icon-image': this.icons[0].icons[0].name,
           'icon-size': this.radius,
-          "text-field": '{' + this.selectText + '}',
+          "text-field": '',
           'text-size': this.fontSize,
           'text-letter-spacing': this.textPadding,
           'text-offset': this.offset,
-          'text-font': [
-            'Open Sans Bold',
-            'Arial Unicode MS Bold'
-          ],
+          'text-font': [this.textFonts[0]],
           'text-rotate': this.textRotation
         },
         'paint': {

@@ -268,6 +268,7 @@
             <mapgis-ui-radio-group
                 v-model="radioMode"
                 :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
+                v-if="dataType !== 'fill'"
             >
               <mapgis-ui-radio-button value="gradient">
                 渐变颜色
@@ -277,7 +278,7 @@
               </mapgis-ui-radio-button>
             </mapgis-ui-radio-group>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'line' || dataType === 'fill'">
+          <mapgis-ui-row v-if="dataType === 'line'">
             <mapgis-ui-select
                 :default-value="'#FF0000'"
                 @change="$_gradientChange"
@@ -294,7 +295,7 @@
                 v-show="radioMode === 'single'"
             />
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'circle'">
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
             <colorPicker
                 class="picker theme-panel-line-color"
                 v-model="outerLineColor"
@@ -333,7 +334,7 @@
               <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'circle'">
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider class="theme-panel-slider" v-model="outerLineOpacity"/>
             </mapgis-ui-col>
@@ -412,11 +413,12 @@
           <mapgis-ui-row>
             <mapgis-ui-select
                 v-if="fields.length > 0"
-                :default-value="defaultValue"
+                :default-value="textFonts[0]"
                 class="theme-panel-select"
+                @change="$_fontChanged"
             >
-              <mapgis-ui-select-option v-for="(Field,index) in fields" :key="index" :value="Field">
-                {{ Field }}
+              <mapgis-ui-select-option v-for="(font,index) in textFonts" :key="index" :value="font">
+                {{ font }}
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-row>
@@ -652,6 +654,9 @@ export default {
     icons: {
       type: Array
     },
+    textFonts: {
+      type: Array
+    },
     panelProps: {
       type: Object,
       default() {
@@ -835,6 +840,9 @@ export default {
     });
   },
   methods: {
+    $_fontChanged(font){
+      this.$emit("fontChanged",font);
+    },
     $_toggleIcon() {
       this.showIcon = !this.showIcon;
     },

@@ -99,7 +99,10 @@ export default {
             fontSize: 11,
             radius: 6,
             outerLineOpacity: 1,
-            outerLineColor: "#000000"
+            outerLineColor: "#000000",
+            lineLayer: undefined,
+            textFonts: ["黑体","宋体","楷体","微软雅黑","Arial","Calibri","Times New Roman"],
+            textFont: undefined
         };
     },
     methods: {
@@ -388,6 +391,9 @@ export default {
         },
         $_selectTextChanged(value){
             if(!this.textLayer){
+                if(!this.textFont){
+                    this.textFont = this.textFonts[0];
+                }
                 this.textLayer = {
                     'id': 'text_layer_id',
                     'source': 'vector_source_id',
@@ -397,10 +403,7 @@ export default {
                         'text-size': this.fontSize,
                         'text-letter-spacing': this.textPadding,
                         'text-offset': this.offsetText,
-                        'text-font': [
-                            'Open Sans Bold',
-                            'Arial Unicode MS Bold'
-                        ],
+                        'text-font': [this.textFont],
                         'text-rotate': this.textRotation
                     },
                     'paint': {
@@ -522,7 +525,6 @@ export default {
             this.showVector = true;
             this.fields = this.$_getFields(geojson.features[0]);
             this.selectKey = this.fields[0];
-            this.selectText = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
             this.checkBoxArr = this.originColors.checkArr;
@@ -818,5 +820,20 @@ export default {
             }
             return colors;
         },
+        $_addLineLayer(){
+            if(!this.lineLayer){
+                this.lineLayer = {
+                    'id': 'line_layer_id',
+                    'source': 'vector_source_id',
+                    'type': 'line',
+                    'paint': {
+                        'line-color': this.outerLineColor,
+                        'line-opacity': this.outerLineOpacity, //透明度
+                        'line-width': this.lineWidth,
+                    },
+                };
+                this.map.addLayer(this.lineLayer);
+            }
+        }
     }
 };
