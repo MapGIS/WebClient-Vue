@@ -299,13 +299,13 @@ export default {
       colors = this.$_editColor(colors);
       switch (this.dataType) {
         case "fill":
-          this.map.setPaintProperty(this.layerId, "fill-color", colors);
+          this.map.setPaintProperty(this.layerIdCopy, "fill-color", colors);
           break;
         case "circle":
-          this.map.setPaintProperty(this.layerId, "circle-color", colors);
+          this.map.setPaintProperty(this.layerIdCopy, "circle-color", colors);
           break;
         case "line":
-          this.map.setPaintProperty(this.layerId, "line-color", colors);
+          this.map.setPaintProperty(this.layerIdCopy, "line-color", colors);
           break;
       }
       this.dataSource[index] = Number(this.dataSourceCopy[index]);
@@ -372,7 +372,7 @@ export default {
         this.$_changeOriginLayer();
         this.showVector = true;
         this.changeLayerProp = true;
-        this.changeLayerId = this.layerId;
+        this.changeLayerId = this.layerIdCopy;
       }
     },
     /*

@@ -46,12 +46,12 @@ export default {
         },
         layerId: {
             handler: function () {
-                // if (!this.useOriginLayer) {
-                //     throw new Error("请将useOriginLayer设为true！");
-                // } else {
-                //     this.$_getFromSource(this.layerId);
-                // }
-                this.$_getFromSource(this.layerId);
+                if (!this.useOriginLayer) {
+                    throw new Error("请将useOriginLayer设为true！");
+                } else {
+                    this.layerIdCopy = this.layerId;
+                    this.$_getFromSource(this.layerIdCopy);
+                }
             }
         },
         panelProps: {
@@ -108,14 +108,22 @@ export default {
             originLayer: undefined,
             changeLayerProp: false,
             changeLayerId: undefined,
+            layerIdCopy: undefined
         };
     },
     methods: {
+        addThemeLayer(layerId){
+            this.$_addThemeLayer(layerId);
+        },
+        $_addThemeLayer(layerId){
+            this.layerIdCopy = layerId;
+            this.$_getFromSource(layerId);
+        },
         resetLayer(){
             this.$_resetLayer();
         },
         $_resetLayer(){
-            if(this.layerId){
+            if(this.layerIdCopy){
                 this.map.setLayoutProperty("text_layer_id","visibility","none");
                 this.map.setLayoutProperty("line_layer_id","visibility","none");
                 let paint = window.originLayer.paint;
@@ -400,11 +408,13 @@ export default {
                 if (!this.useOriginLayer) {
                     throw new Error("请将useOriginLayer设为true！");
                 } else {
-                    this.$_getFromSource(this.layerId);
+                    this.layerIdCopy = this.layerId;
+                    this.$_getFromSource(this.layerIdCopy);
                 }
             } else if (this.baseUrl) {
                 this.$_getFromGeoJSON();
             }
+            this.$emit("handled", this);
         },
         $_lineWidthChanged(lineWidth) {
             switch (this.dataType) {
@@ -448,7 +458,7 @@ export default {
             }
         },
         $_setLayOutProperty(key, value, layerId, layerVector) {
-            layerId = layerId || this.layerId;
+            layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
             layerVector.layout[key] = value;
             this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
@@ -515,7 +525,7 @@ export default {
             let vm = this;
             if (this.useOriginLayer) {
                 Object.keys(this.layerVector.paint).forEach(function (key) {
-                    vm.map.setPaintProperty(vm.layerId, key, vm.layerVector.paint[key]);
+                    vm.map.setPaintProperty(vm.layerIdCopy, key, vm.layerVector.paint[key]);
                 });
             }
         },
@@ -617,7 +627,6 @@ export default {
             let layer = {...this.layerVector, ...this.$props};
             this.$_changeOriginLayer();
             this.$_loadedLayer();
-            this.$emit("loaded", this, layer);
         },
         $_getAllLayerStyle() {
             let layers = [];
@@ -633,7 +642,7 @@ export default {
                 layer: this.textLayer
             });
 
-            let replaceLayer = this.$_getLayerStyle(this.layerId);
+            let replaceLayer = this.$_getLayerStyle(this.layerIdCopy);
 
             layers.push({
                 action: "replace",
@@ -717,7 +726,7 @@ export default {
                     this.showVector = true;
                 }
                 this.changeLayerProp = true;
-                this.changeLayerId = this.layerId;
+                this.changeLayerId = this.layerIdCopy;
             }
         },
         $_gradientChange(startColor, endColor) {
@@ -739,7 +748,7 @@ export default {
             this.$_changeOriginLayer();
             this.showVector = true;
             this.changeLayerProp = true;
-            this.changeLayerId = this.layerId;
+            this.changeLayerId = this.layerIdCopy;
         },
         $_lineColorChanged(e) {
             this.showVector = false;
@@ -763,7 +772,7 @@ export default {
             this.$_changeOriginLayer();
             this.showVector = true;
             this.changeLayerProp = true;
-            this.changeLayerId = this.layerId;
+            this.changeLayerId = this.layerIdCopy;
         },
         $_oneColorChanged(index, color) {
             let colors = this.$_getColorsFromOrigin(index, color);
@@ -881,7 +890,7 @@ export default {
             }
         },
         $_setPaintProperty(key, value, layerId, layerVector) {
-            layerId = layerId || this.layerId;
+            layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
             layerVector.paint[key] = value;
             this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
@@ -939,7 +948,9 @@ export default {
             return colors;
         },
         $_addLineLayer() {
-            if (!this.lineLayer) {
+            let lineId = "line_layer_" + this.layerIdCopy;
+            let layer = this.map.getLayer(lineId);
+            if (!layer) {
                 this.lineLayer = {
                     'id': 'line_layer_id',
                     'source': this.source_vector_Id,

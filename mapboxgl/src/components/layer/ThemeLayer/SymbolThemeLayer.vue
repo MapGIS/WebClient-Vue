@@ -419,15 +419,15 @@ export default {
       let newColors = this.$_editColor();
       this.$_setPaintProperty('icon-color', newColors);
       this.changeLayerProp = true;
-      this.changeLayerId = this.layerId;
+      this.changeLayerId = this.layerIdCopy;
     },
     $_setPaintProperty(key, value) {
       this.layerVector.paint[key] = value;
-      this.map.setPaintProperty(this.layerId, key, this.layerVector.paint[key]);
+      this.map.setPaintProperty(this.layerIdCopy, key, this.layerVector.paint[key]);
     },
     $_setLayOutProperty(key, value) {
       this.layerVector.layout[key] = value;
-      this.map.setLayoutProperty(this.layerId, key, this.layerVector.layout[key]);
+      this.map.setLayoutProperty(this.layerIdCopy, key, this.layerVector.layout[key]);
     },
     $_changeOriginLayer() {
     },
@@ -448,7 +448,7 @@ export default {
       let colors = this.$_editColor();
       if(this.selectText){
         this.layerVector.layout["text-field"] = '{' + this.selectText + '}';
-        this.map.setLayoutProperty(this.layerId, "text-field", this.layerVector.layout["text-field"]);
+        this.map.setLayoutProperty(this.layerIdCopy, "text-field", this.layerVector.layout["text-field"]);
       }
       this.$_setPaintProperty('icon-color', colors);
     },
