@@ -21,8 +21,7 @@ export default {
             default: true
         },
         icons: {
-            type: Array,
-            required: true
+            type: Array
         },
     },
     watch: {
@@ -102,7 +101,9 @@ export default {
             outerLineColor: "#000000",
             lineLayer: undefined,
             textFonts: ["黑体","宋体","楷体","微软雅黑","Arial","Calibri","Times New Roman"],
-            textFont: undefined
+            textFont: undefined,
+            source_vector_Id: undefined,
+            source_vector_layer_Id: undefined,
         };
     },
     methods: {
@@ -396,7 +397,7 @@ export default {
                 }
                 this.textLayer = {
                     'id': 'text_layer_id',
-                    'source': 'vector_source_id',
+                    'source': this.source_vector_Id,
                     'type': 'symbol',
                     'layout': {
                         "text-field": '{' + value + '}',
@@ -492,6 +493,9 @@ export default {
             if (features.length === 0) {
                 return;
             }
+            let layer = this.map.getLayer(layerId);
+            this.source_vector_Id = layer.source;
+            this.source_vector_layer_Id = layer.sourceLayer;
             let featureCollection = {
                 features: [],
                 type: "FeatureCollection"
@@ -824,7 +828,7 @@ export default {
             if(!this.lineLayer){
                 this.lineLayer = {
                     'id': 'line_layer_id',
-                    'source': 'vector_source_id',
+                    'source': this.source_vector_Id,
                     'type': 'line',
                     'paint': {
                         'line-color': this.outerLineColor,
@@ -832,7 +836,10 @@ export default {
                         'line-width': this.lineWidth,
                     },
                 };
-                this.map.addLayer(this.lineLayer);
+                if(this.source_vector_layer_Id){
+                    this.lineLayer["source-layer"] = this.source_vector_layer_Id;
+                }
+                this.map.addLayer(this.lineLayer,this.layerId);
             }
         }
     }
