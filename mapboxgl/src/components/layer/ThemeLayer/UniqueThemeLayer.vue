@@ -174,8 +174,10 @@ export default {
             this.layerVector.paint["line-color"] = colors;
             break;
         }
-        this.$_changez();
+        this.$_changeOriginLayer();
         this.showVector = true;
+        this.changeLayerProp = true;
+        this.changeLayerId = this.layerId;
       }
     },
     /*

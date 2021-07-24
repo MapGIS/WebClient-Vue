@@ -534,9 +534,9 @@
       <mapgis-ui-collapse accordion @change="$_clickCollapse">
         <mapgis-ui-collapse-panel key="4" header="图例">
           <slot name="legend" :selectValue="selectValue">
-            <mapgis-ui-row>
-              <mapgis-ui-input v-model="search" placeholder="搜索框"/>
-            </mapgis-ui-row>
+<!--            <mapgis-ui-row>-->
+<!--              <mapgis-ui-input v-model="search" placeholder="搜索框"/>-->
+<!--            </mapgis-ui-row>-->
             <mapgis-ui-row>
               <div id="theme-panel-list"
                    class="theme-panel-list"

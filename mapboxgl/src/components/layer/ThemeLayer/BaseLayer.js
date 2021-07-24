@@ -716,6 +716,8 @@ export default {
                     this.$_changeOriginLayer();
                     this.showVector = true;
                 }
+                this.changeLayerProp = true;
+                this.changeLayerId = this.layerId;
             }
         },
         $_gradientChange(startColor, endColor) {
@@ -736,6 +738,8 @@ export default {
             }
             this.$_changeOriginLayer();
             this.showVector = true;
+            this.changeLayerProp = true;
+            this.changeLayerId = this.layerId;
         },
         $_lineColorChanged(e) {
             this.showVector = false;
@@ -758,6 +762,8 @@ export default {
             }
             this.$_changeOriginLayer();
             this.showVector = true;
+            this.changeLayerProp = true;
+            this.changeLayerId = this.layerId;
         },
         $_oneColorChanged(index, color) {
             let colors = this.$_getColorsFromOrigin(index, color);

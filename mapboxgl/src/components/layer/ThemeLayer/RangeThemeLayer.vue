@@ -371,6 +371,8 @@ export default {
         }
         this.$_changeOriginLayer();
         this.showVector = true;
+        this.changeLayerProp = true;
+        this.changeLayerId = this.layerId;
       }
     },
     /*

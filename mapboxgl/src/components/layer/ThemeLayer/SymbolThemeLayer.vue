@@ -418,6 +418,8 @@ export default {
     $_checked() {
       let newColors = this.$_editColor();
       this.$_setPaintProperty('icon-color', newColors);
+      this.changeLayerProp = true;
+      this.changeLayerId = this.layerId;
     },
     $_setPaintProperty(key, value) {
       this.layerVector.paint[key] = value;
