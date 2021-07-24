@@ -440,7 +440,7 @@ export default {
                     this.textFont = this.textFonts[0];
                 }
                 this.textLayer = {
-                    'id': 'text_layer_id',
+                    'id': this.textId,
                     'source': this.source_vector_Id,
                     'type': 'symbol',
                     'layout': {
@@ -463,7 +463,7 @@ export default {
                 this.map.addLayer(this.textLayer);
                 emitMapAddLayer({ layer: this.textLayer});
             } else {
-                this.$_setLayOutProperty("text-field", '{' + value + '}', "text_layer_id", this.textLayer);
+                this.$_setLayOutProperty("text-field", '{' + value + '}', this.textId, this.textLayer);
             }
         },
         $_setLayOutProperty(key, value, layerId, layerVector) {
@@ -484,16 +484,16 @@ export default {
             this.$_gradientChange(startColor, endColor);
         },
         $_fontColorChanged(color) {
-            this.$_setPaintProperty("text-color", color, "text_layer_id", this.textLayer);
+            this.$_setPaintProperty("text-color", color, this.textId, this.textLayer);
         },
         $_haloColorChanged(color) {
-            this.$_setPaintProperty("text-halo-color", color, "text_layer_id", this.textLayer);
+            this.$_setPaintProperty("text-halo-color", color, this.textId, this.textLayer);
         },
         $_haloWidthChanged(color) {
-            this.$_setPaintProperty("text-halo-width", color, "text_layer_id", this.textLayer);
+            this.$_setPaintProperty("text-halo-width", color, this.textId, this.textLayer);
         },
         $_fontSizeChanged(fontSize) {
-            this.$_setLayOutProperty("text-size", fontSize, "text_layer_id", this.textLayer);
+            this.$_setLayOutProperty("text-size", fontSize, this.textId, this.textLayer);
         },
         $_xOffsetChanged(xOffset) {
             this.offset[0] = xOffset;
@@ -505,17 +505,17 @@ export default {
         },
         $_yOffsetTextChanged(offset) {
             this.offsetText[1] = offset;
-            this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+            this.$_setLayOutProperty("text-offset", this.offsetText, this.textId, this.textLayer);
         },
         $_xOffsetTextChanged(offset) {
             this.offsetText[0] = offset;
-            this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+            this.$_setLayOutProperty("text-offset", this.offsetText, this.textId, this.textLayer);
         },
         $_textPaddingChanged(textPadding) {
-            this.$_setLayOutProperty("text-letter-spacing", textPadding, "text_layer_id", this.textLayer);
+            this.$_setLayOutProperty("text-letter-spacing", textPadding, this.textId, this.textLayer);
         },
         $_textRotationChanged(textRotation) {
-            this.$_setLayOutProperty("text-rotate", textRotation, "text_layer_id", this.textLayer);
+            this.$_setLayOutProperty("text-rotate", textRotation, this.textId, this.textLayer);
         },
         $_outerLineOpacityChanged(opacity) {
             this.$_setPaintProperty("circle-stroke-opacity", opacity);
@@ -614,9 +614,9 @@ export default {
             this.map.on('data', function (e) {
                 if (vm.changeLayerProp) {
                     let layer = {};
-                    if(vm.changeLayerId === "line_layer_id"){
+                    if(vm.changeLayerId === vm.lineId){
                         layer = vm.lineLayer;
-                    }else if(vm.changeLayerId === "text_layer_id"){
+                    }else if(vm.changeLayerId === this.textId){
                         layer = vm.textLayer;
                     } else {
                         layer = vm.$_getLayerStyle(vm.changeLayerId);

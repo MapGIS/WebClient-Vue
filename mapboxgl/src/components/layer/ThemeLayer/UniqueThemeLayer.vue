@@ -84,12 +84,12 @@ export default {
       this.$_toggleLayer();
     },
     $_outerLineColorChanged(color) {
-      this.$_setPaintProperty("line-color",color,"line_layer_id", this.lineLayer);
+      this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
     },
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType){
         case "fill":
-          this.$_setPaintProperty("line-width",lineWidth,"line_layer_id", this.lineLayer);
+          this.$_setPaintProperty("line-width",lineWidth,this.lineId, this.lineLayer);
           break;
         case "line":
           this.$_setPaintProperty("line-width", lineWidth);
@@ -100,11 +100,11 @@ export default {
       }
     },
     $_outerLineOpacityChanged(opacity){
-      this.$_setPaintProperty("line-opacity",opacity,"line_layer_id", this.lineLayer);
+      this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],"text_layer_id",this.textLayer);
+      this.$_setLayOutProperty("text-font",[this.textFont],this.textId,this.textLayer);
     },
     /*
     * 多选框业务实现
