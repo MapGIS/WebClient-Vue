@@ -9,12 +9,16 @@
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
         :icons="icons"
+        :panelProps="panelPropsDefault"
+        :textFonts="textFonts"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
         @change="$_selectChange"
         @gradientChange="$_gradientChange"
         @lineColorChanged="$_lineColorChanged"
         @opacityChanged="$_opacityChanged"
+        @outerLineOpacityChanged="$_outerLineOpacityChanged"
+        @iconSizeChanged="$_radiusChanged"
         @radiusChanged="$_radiusChanged"
         @lineWidthChanged="$_lineWidthChanged"
         @selectTextChanged="$_selectTextChanged"
@@ -29,6 +33,10 @@
         @singleChanged="$_singleChanged"
         @fontColorChanged="$_fontColorChanged"
         @lineStyleChanged="$_lineStyleChanged"
+        @xOffsetChanged="$_xOffsetChanged"
+        @yOffsetChanged="$_yOffsetChanged"
+        @outerLineColorChanged="$_outerLineColorChanged"
+        @fontChanged="$_fontChanged"
     >
       <div slot="legend" slot-scope="slotProps">
         <mapgis-ui-row>
@@ -122,6 +130,14 @@ export default {
   components: {
     ThemePanel
   },
+  props: {
+    panelProps: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
+  },
   watch: {
     startData: {
       handler: function () {
@@ -183,8 +199,12 @@ export default {
       startDataCopy: 0,
       startNumWrong: false,
       endNumWrong: false,
-      offsetText: [0, 0]
+      offsetText: [0, 0],
+      panelPropsDefault: {}
     }
+  },
+  created() {
+    this.$_formatProps();
   },
   mounted() {
     this.$_mount();
@@ -199,58 +219,43 @@ export default {
     toggleLayer() {
       this.$_toggleLayer();
     },
-    $_fontSizeChanged(fontSize) {
-      this.$_setLayOutProperty("text-size", fontSize, "text_layer_id", this.textLayer);
+    $_outerLineColorChanged(color) {
+      this.$_setPaintProperty("line-color",color,"line_layer_id", this.lineLayer);
     },
-    $_yOffsetTextChanged(offset) {
-      this.offsetText[1] = offset;
-      this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+    $_fontChanged(font){
+      this.textFont = font;
+      this.$_setLayOutProperty("text-font",[this.textFont],"text_layer_id",this.textLayer);
     },
-    $_xOffsetTextChanged(offset) {
-      this.offsetText[0] = offset;
-      this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
-    },
-    $_textPaddingChanged(textPadding) {
-      this.$_setLayOutProperty("text-letter-spacing", textPadding, "text_layer_id", this.textLayer);
-    },
-    $_textRotationChanged(textRotation) {
-      this.$_setLayOutProperty("text-rotate", textRotation, "text_layer_id", this.textLayer);
-    },
-    $_haloColorChanged(color) {
-      this.$_setPaintProperty("text-halo-color", color, "text_layer_id", this.textLayer);
-    },
-    $_haloWidthChanged(color) {
-      this.$_setPaintProperty("text-halo-width", color, "text_layer_id", this.textLayer);
-    },
-    $_singleChanged(startColor, endColor) {
-      this.$_gradientChange(startColor, endColor);
-    },
-    $_fontColorChanged(color) {
-      this.$_setPaintProperty("text-color", color, "text_layer_id", this.textLayer);
-    },
-    $_lineStyleChanged(lineStyle) {
-      this.$_setPaintProperty("line-dasharray",lineStyle.value);
-    },
-    $_clickIcon(icon) {
-      let hasIcon = this.map.hasImage(icon.name), vm = this;
-      let partten;
+    $_lineWidthChanged(lineWidth) {
       switch (this.dataType){
         case "fill":
-          partten = "fill-pattern";
+          this.$_setPaintProperty("line-width",lineWidth,"line_layer_id", this.lineLayer);
           break;
         case "line":
-          partten = "line-pattern";
+          this.$_setPaintProperty("line-width", lineWidth);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-width", lineWidth);
           break;
       }
-      if (!hasIcon) {
-        this.map.loadImage(icon.url, function (error, image) {
-          if (error) throw error;
-          vm.map.addImage(icon.name, image, {'sdf': true});
-          vm.$_setPaintProperty(partten, icon.name);
-        });
-      } else {
-        vm.$_setPaintProperty(partten, icon.name);
+    },
+    $_outerLineOpacityChanged(opacity){
+      this.$_setPaintProperty("line-opacity",opacity,"line_layer_id", this.lineLayer);
+    },
+    $_opacityChangedCallBack(opacity) {
+      let opacityType = "";
+      switch (this.dataType) {
+        case "fill":
+          opacityType = "fill-opacity";
+          break
+        case "line":
+          opacityType = "line-opacity";
+          break;
+        case "circle":
+          opacityType = "circle-opacity";
+          break;
       }
+      this.$_setPaintProperty(opacityType, opacity);
     },
     $_inputClick(index) {
       if (index !== 'start' && this.startNumWrong) {
@@ -306,47 +311,6 @@ export default {
       this.dataSource[index] = Number(this.dataSourceCopy[index]);
       //自动更细allOriginColors
       this.originColors.colors.stops[index][0] = this.dataSource[index];
-    },
-    /*
-    * 从data里面获取colors信息，如果index, color有值，则更新colors，此方法必须被重载
-    * @param index 被改变颜色的数据index
-    * @param color 被改变的颜色
-    * **/
-    /*
-    * 修改单一属性的颜色的回调方法
-    * @param colors 颜色信息
-    * **/
-    $_oneColorChangedCallBack(colors) {
-      colors = this.$_editColor(colors);
-      switch (this.dataType) {
-        case "fill":
-          this.$_setPaintProperty("fill-color", colors);
-          break;
-        case "circle":
-          this.$_setPaintProperty("circle-color", colors);
-          break;
-        case "line":
-          this.$_setPaintProperty("line-color", colors);
-          break;
-      }
-    },
-    /*
-    * 改变透明度的回调方法
-    * @param opacity 透明度
-    * **/
-    $_opacityChangedCallBack(opacity) {
-      switch (this.dataType) {
-        case "fill":
-          this.layerVector.paint["fill-opacity"] = opacity;
-          break;
-        case "circle":
-          this.layerVector.paint["circle-opacity"] = opacity;
-          this.layerVector.paint["circle-stroke-opacity"] = opacity;
-          break;
-        case "line":
-          this.layerVector.paint["line-opacity"] = opacity;
-          break;
-      }
     },
     $_checkboxChecked(e) {
       let value = e.target.value.item;
@@ -436,27 +400,6 @@ export default {
           break;
       }
     },
-    $_editColor(colors) {
-      let newStops = [], stopIndex = 0;
-      for (let i = 0; i < this.dataBack.length; i++) {
-        if (this.dataBack[i] <= colors.stops[stopIndex][0]) {
-          newStops.push([this.dataBack[i], colors.stops[stopIndex][1]]);
-        } else {
-          stopIndex++;
-          for (let j = stopIndex; j < colors.stops.length; j++) {
-            if (this.dataBack[i] < colors.stops[j][0]) {
-              stopIndex = j;
-              newStops.push([this.dataBack[i], colors.stops[j][1]]);
-              break;
-            }
-          }
-        }
-      }
-      return {
-        "property": colors.property,
-        "stops": newStops
-      }
-    },
     /*
     * 取得color列表的方法，该方法必须返回一个originColors对象
     * @param colors 一个空的mapbox绘制规则对象，调用者需要自行指定绘制规则
@@ -482,31 +425,6 @@ export default {
         checkArr: checkArr,
         colors: colors,
         colorList: colorList
-      }
-    },
-    $_editData(dataSource) {
-      this.dataBack = dataSource;
-      let length = dataSource.length, newDataSource = [], rangeLevel = 10;
-      let range = dataSource[length - 1] - dataSource[0];
-      if (range === 0) {
-        newDataSource.push(dataSource[0]);
-        this.endData = dataSource[0] + 1;
-        this.endDataCopy = this.endData;
-        return newDataSource;
-      } else {
-        let rangeSect = range / rangeLevel;
-        if (dataSource[0] < 0) {
-          this.startData = dataSource[0] - 1;
-        } else {
-          this.startData = 0;
-        }
-        this.startDataCopy = this.startData;
-        for (let i = 0; i < rangeLevel; i++) {
-          newDataSource.push(dataSource[0] + (i + 1) * rangeSect + 1);
-        }
-        this.endData = newDataSource[rangeLevel - 1] + rangeSect;
-        this.endDataCopy = this.endData;
-        return newDataSource;
       }
     },
     /*
@@ -539,10 +457,11 @@ export default {
           paint: {
             'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
             'fill-color': fillColors, //颜色
-            'fill-opacity': 1.0, //透明度
-            'fill-outline-color': '#000', //边线颜色，没错,确实没有边线宽度这个选项
+            'fill-opacity': this.opacity, //透明度
+            'fill-outline-color': '#fff', //边线颜色，没错,确实没有边线宽度这个选项
           }
         }
+        this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
         this.layerVector = {
@@ -550,11 +469,12 @@ export default {
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
             'circle-color': fillColors, //颜色
-            'circle-opacity': 1.0, //透明度
-            'circle-stroke-opacity': 1.0, //透明度
-            'circle-radius': 12.0, //透明度
-            'circle-stroke-color': '#000',//边线颜色，没错,确实没有边线宽度这个选项
-            'circle-stroke-width': 1
+            'circle-opacity': this.opacity, //透明度
+            'circle-stroke-opacity': this.outerLineOpacity, //透明度
+            'circle-radius': this.radius, //透明度
+            'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
+            'circle-stroke-width': this.lineWidth,
+            'circle-translate': this.offset,
           }
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
@@ -564,8 +484,8 @@ export default {
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
             'line-color': fillColors, //颜色
-            'line-opacity': 1.0, //透明度
-            'line-width': 5,
+            'line-opacity': this.opacity, //透明度
+            'line-width': this.lineWidth,
           }
         }
       }

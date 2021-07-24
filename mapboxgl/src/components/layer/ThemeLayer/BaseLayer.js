@@ -21,9 +21,8 @@ export default {
             default: true
         },
         icons: {
-            type: Array,
-            required: true
-        }
+            type: Array
+        },
     },
     watch: {
         baseUrl: {
@@ -52,6 +51,13 @@ export default {
                     this.$_getFromSource(this.layerId);
                 }
             }
+        },
+        panelProps: {
+            type: Object,
+            default(){
+                return {
+                }
+            }
         }
     },
     data() {
@@ -78,10 +84,178 @@ export default {
             allOriginColors: {},
             layerVector: {},
             dataType: "",
-            textLayer: undefined
+            textLayer: undefined,
+            offsetText: [0,0],
+            offset: [0,0],
+            themeType: "range",
+            opacity: 1,
+            lineWidth: 2,
+            fontColor: "#000000",
+            haloColor: "#FFFFFF",
+            haloWidth: 0,
+            textRotation: 0,
+            textPadding: 0.05,
+            fontSize: 11,
+            radius: 6,
+            outerLineOpacity: 1,
+            outerLineColor: "#000000",
+            lineLayer: undefined,
+            textFonts: ["黑体","宋体","楷体","微软雅黑","Arial","Calibri","Times New Roman"],
+            textFont: undefined,
+            source_vector_Id: undefined,
+            source_vector_layer_Id: undefined,
         };
     },
     methods: {
+        $_formatProps(){
+            let formatArr = [
+                {
+                    before: "icon-size",
+                    after: "radius"
+                }, {
+                    before: "icon-size-max",
+                    after: "radiusMax"
+                }, {
+                    before: "icon-size-step",
+                    after: "radiusStep"
+                }, {
+                    before: "icon-offset-x",
+                    after: "xOffset"
+                }, {
+                    before: "icon-offset-x-min",
+                    after: "xOffsetMin"
+                }, {
+                    before: "icon-offset-x-max",
+                    after: "xOffsetMax"
+                }, {
+                    before: "icon-offset-x-step",
+                    after: "xOffsetStep"
+                }, {
+                    before: "icon-offset-y",
+                    after: "yOffset"
+                }, {
+                    before: "icon-offset-y-min",
+                    after: "yOffsetMin"
+                }, {
+                    before: "icon-offset-y-max",
+                    after: "yOffsetMax"
+                }, {
+                    before: "icon-offset-y-step",
+                    after: "yOffsetStep"
+                }, {
+                    before: "icon-rotate",
+                    after: "rotation"
+                }, {
+                    before: "icon-rotate-step",
+                    after: "rotationStep"
+                }, {
+                    before: "text-color",
+                    after: "fontColor"
+                }, {
+                    before: "text-halo-color",
+                    after: "haloColor"
+                }, {
+                    before: "text-halo-width",
+                    after: "haloWidth"
+                }, {
+                    before: "text-halo-width-step",
+                    after: "haloWidthStep"
+                }, {
+                    before: "text-halo-width-max",
+                    after: "haloWidthMax"
+                }, {
+                    before: "text-offset-x",
+                    after: "xOffsetText"
+                }, {
+                    before: "text-offset-x-min",
+                    after: "xOffsetTextMin"
+                }, {
+                    before: "text-offset-x-max",
+                    after: "xOffsetTextMax"
+                }, {
+                    before: "text-offset-x-step",
+                    after: "xOffsetTextStep"
+                }, {
+                    before: "text-offset-y",
+                    after: "yOffsetText"
+                }, {
+                    before: "text-offset-y-min",
+                    after: "yOffsetTextMin"
+                }, {
+                    before: "text-offset-y-max",
+                    after: "yOffsetTextMax"
+                }, {
+                    before: "text-offset-y-step",
+                    after: "yOffsetTextStep"
+                }, {
+                    before: "text-padding",
+                    after: "textPadding"
+                }, {
+                    before: "text-padding-Step",
+                    after: "textPaddingStep"
+                }, {
+                    before: "text-padding-max",
+                    after: "textPaddingMax"
+                }, {
+                    before: "text-rotate",
+                    after: "textRotation"
+                }, {
+                    before: "text-rotate-step",
+                    after: "textRotationStep"
+                }, {
+                    before: "text-size",
+                    after: "fontSize"
+                }, {
+                    before: "icon-opacity",
+                    after: "opacity"
+                }, {
+                    before: "line-width",
+                    after: "lineWidth"
+                }, {
+                    before: "circle-stroke-width",
+                    after: "lineWidth"
+                }, {
+                    before: "line-width-max",
+                    after: "lineWidthMax"
+                }, {
+                    before: "line-width-step",
+                    after: "lineWidthStep"
+                }, {
+                    before: "line-opacity",
+                    after: "opacity"
+                }, {
+                    before: "text-letter-spacing",
+                    after: "textPadding"
+                }, {
+                    before: "circle-opacity",
+                    after: "opacity"
+                }, {
+                    before: "circle-stroke-opacity",
+                    after: "outerLineOpacity"
+                }, {
+                    before: "circle-translate",
+                    after: "offset"
+                }, {
+                    before: "circle-stroke-color",
+                    after: "outerLineColor"
+                }, {
+                    before: "fill-opacity",
+                    after: "opacity"
+                }
+            ];
+            this.panelPropsDefault = Object.assign(this.panelPropsDefault, this.panelProps);
+            let vm = this;
+            for (let i=0;i< formatArr.length;i++){
+                if(this.panelPropsDefault.hasOwnProperty(formatArr[i].before)){
+                    this.panelPropsDefault[formatArr[i].after] = this.panelPropsDefault[formatArr[i].before];
+                }
+            }
+            Object.keys(this.$data).forEach(function (key) {
+                if (vm.panelPropsDefault.hasOwnProperty(key)) {
+                    vm.$data[key] = vm.panelPropsDefault[key];
+                }
+            });
+        },
         $_gradientColor(startColor, endColor, step) {
             let startRGB = this.$_colorRgb(startColor);//转换为rgb数组模式
             let startR = startRGB[0];
@@ -175,6 +349,21 @@ export default {
             }
         },
         $_mount() {
+            if(this.panelPropsDefault.hasOwnProperty("xOffset") && this.panelPropsDefault.xOffset){
+                this.$set(this.offset,0,this.panelPropsDefault.xOffset);
+            }
+            if(this.panelPropsDefault.hasOwnProperty("yOffset") && this.panelPropsDefault.yOffset){
+                this.$set(this.offset,1,this.panelPropsDefault.yOffset * -1);
+            }
+            if(this.panelPropsDefault.hasOwnProperty("xOffsetText") && this.panelPropsDefault.xOffsetText){
+                this.$set(this.offsetText,0,this.panelPropsDefault.xOffsetText);
+            }
+            if(this.panelPropsDefault.hasOwnProperty("yOffsetText") && this.panelPropsDefault.yOffsetText){
+                this.$set(this.offsetText,1,this.panelPropsDefault.yOffsetText * -1);
+            }
+            if(this.panelPropsDefault.hasOwnProperty("opacity") && this.panelPropsDefault.opacity){
+                this.opacity = this.panelPropsDefault.opacity / 100;
+            }
             if (this.sourceId && this.sourceLayer) {
                 if (this.useOriginLayer) {
                     throw new Error("请将useOriginLayer设为false！");
@@ -192,29 +381,36 @@ export default {
             }
         },
         $_lineWidthChanged(lineWidth) {
-            this.$_setPaintProperty("line-width", lineWidth);
+            switch (this.dataType){
+                case "line":
+                    this.$_setPaintProperty("line-width", lineWidth);
+                    break;
+                case "circle":
+                    this.$_setPaintProperty("circle-stroke-width", lineWidth);
+                    break;
+            }
         },
         $_selectTextChanged(value){
             if(!this.textLayer){
+                if(!this.textFont){
+                    this.textFont = this.textFonts[0];
+                }
                 this.textLayer = {
                     'id': 'text_layer_id',
-                    'source': 'vector_source_id',
+                    'source': this.source_vector_Id,
                     'type': 'symbol',
                     'layout': {
                         "text-field": '{' + value + '}',
-                        'text-size': 11,
-                        'text-letter-spacing': 0.05,
-                        'text-offset': [0,0],
-                        'text-font': [
-                            'Open Sans Bold',
-                            'Arial Unicode MS Bold'
-                        ],
-                        'text-rotate': 0
+                        'text-size': this.fontSize,
+                        'text-letter-spacing': this.textPadding,
+                        'text-offset': this.offsetText,
+                        'text-font': [this.textFont],
+                        'text-rotate': this.textRotation
                     },
                     'paint': {
-                        'text-color': '#000000',
-                        "text-halo-color":  '#FFFFFF',
-                        "text-halo-width": 0
+                        'text-color': this.fontColor,
+                        "text-halo-color":  this.haloColor,
+                        "text-halo-width": this.haloWidth
                     },
                 };
                 this.map.addLayer(this.textLayer);
@@ -229,7 +425,53 @@ export default {
             this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
         },
         $_radiusChanged(radius) {
-            this.$set(this.layerVector.paint, "circle-radius", radius);
+            this.$_setPaintProperty("circle-radius", radius);
+        },
+        $_outerLineColorChanged(color) {
+            this.$_setPaintProperty("circle-stroke-color", color);
+        },
+        $_singleChanged(startColor, endColor) {
+            this.$_gradientChange(startColor, endColor);
+        },
+        $_fontColorChanged(color) {
+            this.$_setPaintProperty("text-color", color, "text_layer_id", this.textLayer);
+        },
+        $_haloColorChanged(color) {
+            this.$_setPaintProperty("text-halo-color", color, "text_layer_id", this.textLayer);
+        },
+        $_haloWidthChanged(color) {
+            this.$_setPaintProperty("text-halo-width", color, "text_layer_id", this.textLayer);
+        },
+        $_fontSizeChanged(fontSize) {
+            this.$_setLayOutProperty("text-size", fontSize, "text_layer_id", this.textLayer);
+        },
+        $_xOffsetChanged(xOffset) {
+            this.offset[0] = xOffset;
+            this.$_setPaintProperty("circle-translate", this.offset);
+        },
+        $_yOffsetChanged(yOffset) {
+            this.offset[1] = yOffset;
+            this.$_setPaintProperty("circle-translate", this.offset);
+        },
+        $_yOffsetTextChanged(offset) {
+            this.offsetText[1] = offset;
+            this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+        },
+        $_xOffsetTextChanged(offset) {
+            this.offsetText[0] = offset;
+            this.$_setLayOutProperty("text-offset", this.offsetText, "text_layer_id", this.textLayer);
+        },
+        $_textPaddingChanged(textPadding) {
+            this.$_setLayOutProperty("text-letter-spacing", textPadding, "text_layer_id", this.textLayer);
+        },
+        $_textRotationChanged(textRotation) {
+            this.$_setLayOutProperty("text-rotate", textRotation, "text_layer_id", this.textLayer);
+        },
+        $_outerLineOpacityChanged(opacity){
+            this.$_setPaintProperty("circle-stroke-opacity", opacity);
+        },
+        $_lineStyleChanged(lineStyle) {
+            this.$_setPaintProperty("line-dasharray",lineStyle.value);
         },
         $_getFields(features) {
             let fields = [];
@@ -251,6 +493,9 @@ export default {
             if (features.length === 0) {
                 return;
             }
+            let layer = this.map.getLayer(layerId);
+            this.source_vector_Id = layer.source;
+            this.source_vector_layer_Id = layer.sourceLayer;
             let featureCollection = {
                 features: [],
                 type: "FeatureCollection"
@@ -284,7 +529,6 @@ export default {
             this.showVector = true;
             this.fields = this.$_getFields(geojson.features[0]);
             this.selectKey = this.fields[0];
-            this.selectText = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
             this.checkBoxArr = this.originColors.checkArr;
@@ -339,7 +583,10 @@ export default {
                     return a - b;
                 });
             }
-            if(this.$_editData){
+
+            this.dataBack = datas;
+
+            if(this.themeType === "range"){
                 datas = this.$_editData(datas);
             }
             return datas;
@@ -386,7 +633,6 @@ export default {
         },
         $_lineColorChanged(e) {
             this.showVector = false;
-            debugger
             switch (this.dataType) {
                 case "fill":
                     this.$_setPaintProperty("fill-outline-color",e);
@@ -413,6 +659,113 @@ export default {
                 this.$_oneColorChangedCallBack(colors);
             } else {
                 throw new Error("请设置$_oneColorChanged方法的回到函数！");
+            }
+        },
+        /*
+        * 修改单一属性的颜色的回调方法
+        * @param colors 颜色信息
+        * **/
+        $_oneColorChangedCallBack(colors) {
+            colors = this.$_editColor(colors);
+            switch (this.dataType) {
+                case "fill":
+                    this.$_setPaintProperty("fill-color", colors);
+                    break;
+                case "circle":
+                    this.$_setPaintProperty("circle-color", colors);
+                    break;
+                case "line":
+                    this.$_setPaintProperty("line-color", colors);
+                    break;
+            }
+        },
+        $_editData(dataSource) {
+            let length = dataSource.length, newDataSource = [], rangeLevel = 10;
+            let range = dataSource[length - 1] - dataSource[0];
+            if (range === 0) {
+                newDataSource.push(dataSource[0]);
+                this.endData = dataSource[0] + 1;
+                this.endDataCopy = this.endData;
+                return newDataSource;
+            } else {
+                let rangeSect = range / rangeLevel;
+                if (dataSource[0] < 0) {
+                    this.startData = dataSource[0] - 1;
+                } else {
+                    this.startData = 0;
+                }
+                this.startDataCopy = this.startData;
+                for (let i = 0; i < rangeLevel; i++) {
+                    newDataSource.push(dataSource[0] + (i + 1) * rangeSect + 1);
+                }
+                this.endData = newDataSource[rangeLevel - 1] + rangeSect;
+                this.endDataCopy = this.endData;
+                return newDataSource;
+            }
+        },
+        /*
+        * 改变透明度的回调方法
+        * @param opacity 透明度
+        * **/
+        $_opacityChangedCallBack(opacity){
+            switch (this.dataType) {
+                case "fill":
+                    this.layerVector.paint["fill-opacity"] = opacity;
+                    break;
+                case "circle":
+                    this.layerVector.paint["circle-opacity"] = opacity;
+                    break;
+                case "line":
+                    this.layerVector.paint["line-opacity"] = opacity;
+                    break;
+            }
+        },
+        $_editColor(colors) {
+            let newStops = [], stopIndex = 0, newColor= {};
+            if(this.themeType === "range"){
+                for (let i = 0; i < this.dataBack.length; i++) {
+                    if (this.dataBack[i] <= colors.stops[stopIndex][0]) {
+                        newStops.push([this.dataBack[i], colors.stops[stopIndex][1]]);
+                    } else {
+                        stopIndex++;
+                        for (let j = stopIndex; j < colors.stops.length; j++) {
+                            if (this.dataBack[i] < colors.stops[j][0]) {
+                                stopIndex = j;
+                                newStops.push([this.dataBack[i], colors.stops[j][1]]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                newColor = {
+                    "property": colors.property,
+                    "stops": newStops
+                }
+            }else {
+                newColor = colors;
+            }
+
+            return newColor;
+        },
+        $_clickIcon(icon) {
+            let hasIcon = this.map.hasImage(icon.name), vm = this;
+            let partten;
+            switch (this.dataType){
+                case "fill":
+                    partten = "fill-pattern";
+                    break;
+                case "line":
+                    partten = "line-pattern";
+                    break;
+            }
+            if (!hasIcon) {
+                this.map.loadImage(icon.url, function (error, image) {
+                    if (error) throw error;
+                    vm.map.addImage(icon.name, image, {'sdf': true});
+                    vm.$_setPaintProperty(partten, icon.name);
+                });
+            } else {
+                vm.$_setPaintProperty(partten, icon.name);
             }
         },
         $_setPaintProperty(key, value, layerId, layerVector) {
@@ -471,5 +824,23 @@ export default {
             }
             return colors;
         },
+        $_addLineLayer(){
+            if(!this.lineLayer){
+                this.lineLayer = {
+                    'id': 'line_layer_id',
+                    'source': this.source_vector_Id,
+                    'type': 'line',
+                    'paint': {
+                        'line-color': this.outerLineColor,
+                        'line-opacity': this.outerLineOpacity, //透明度
+                        'line-width': this.lineWidth,
+                    },
+                };
+                if(this.source_vector_layer_Id){
+                    this.lineLayer["source-layer"] = this.source_vector_layer_Id;
+                }
+                this.map.addLayer(this.lineLayer,this.layerId);
+            }
+        }
     }
 };
