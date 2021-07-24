@@ -149,3 +149,10 @@ export const changeWebSocketMsgid = payload => {
   EventBus.$options.websocket.WebsocketMessageId = payload.msgid;
   EventBus.$emit("change-websocket-msgid", payload.msgid);
 };
+
+// -------------------------原始云盘 Path 模块-----------------------
+export const changePathUploaduri= payload => {
+  console.warn("payload", payload);
+  EventBus.$options.path.uploaduri = payload.uri;
+  EventBus.$emit("change-path-uploaduri", payload.uri);
+};

@@ -86,7 +86,8 @@ export default {
     },
     changePathText(url) {
       this.curImportUrl =
-        url === "" ? this.$store.state.path.current.uri || "" : url;
+        url === "" ? this.uploaduri || "" : url;
+      console.warn("this.uploaduri222", this.uploaduri);
       this.importDestUrl = this.importFileInfo(this.curImportUrl);
     },
     handleUploadComplete(flag) {

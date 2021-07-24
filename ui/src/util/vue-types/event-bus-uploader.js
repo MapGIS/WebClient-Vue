@@ -30,6 +30,11 @@ export let defaultWebsocket = {
   WebsocketMessageId: "" // 区分消息
 };
 
+export let defaultPath = {
+  // uri: "",
+  uploaduri: ""
+};
+
 export default new Vue({
   upload: {
     count: 0,
@@ -56,5 +61,9 @@ export default new Vue({
     WebsocketContentType: "",
     WebsocketContent: {},
     WebsocketMessageId: "" // 区分消息
+  },
+  path: {
+    // uri: "",
+    uploaduri: ""
   }
 });

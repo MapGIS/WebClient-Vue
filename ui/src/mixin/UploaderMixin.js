@@ -31,7 +31,9 @@ export default {
       WebsocketAction: "",
       WebsocketContentType: "",
       WebsocketContent: {},
-      WebsocketMessageId: "" // 区分消息
+      WebsocketMessageId: "", // 区分消息
+      // 原始云盘的path模块
+      uploaduri: ""
     };
   },
   created() {
@@ -103,6 +105,12 @@ export default {
     EventBus.$on("change-websocket-msgid", msgid => {
       vm.websocket.WebsocketMessageId = msgid;
     });
+    EventBus.$on("change-path-uploaduri", uri => {
+      // vm.path.uri = uri;
+      // vm.path.uploaduri = uri;
+      vm.uploaduri = uri;
+      console.warn("on change", uri);
+    });
   },
   methods: {
     initUploadData() {
@@ -110,6 +118,7 @@ export default {
       const gis = EventBus.$options.gis || defaultGis;
       const complete = EventBus.$options.complete || defaultComplete;
       const websocket = EventBus.$options.websocket || defaultWebsocket;
+      const path = EventBus.$options.path || defaultPath;
 
       /* const $props = this.getSelfProps();
       $props.forEach(prop => {
@@ -128,6 +137,9 @@ export default {
       });
       Object.keys(websocket).forEach(key => {
         this[key] = websocket[key];
+      });
+      Object.keys(path).forEach(key => {
+        this[key] = path[key];
       });
     },
 
