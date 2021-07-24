@@ -1,8 +1,11 @@
 import {MRFS} from "@mapgis/webclient-es6-service";
+import EventBusMapMixin from '../../../lib/eventbus/EventBusMapMixin';
+import { emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
 
 const {FeatureService} = MRFS;
 
 export default {
+    mixin: [EventBusMapMixin],
     inject: ["mapbox", "map"],
     props: {
         baseUrl: {
@@ -128,6 +131,8 @@ export default {
             if(layerId){
                 this.map.removeLayer(this.lineId);
                 this.map.removeLayer(this.textId);
+                emitMapRemoveLayer(this.lineId);
+                emitMapRemoveLayer(this.textId);
                 let paint = window.originLayer[this.layerIdCopy].paint;
                 let layout = window.originLayer[this.layerIdCopy].layout;
                 for (let key in paint){
@@ -456,6 +461,7 @@ export default {
                     this.textLayer["source-layer"] = this.source_vector_layer_Id;
                 }
                 this.map.addLayer(this.textLayer);
+                emitMapAddLayer({ layer: this.textLayer});
             } else {
                 this.$_setLayOutProperty("text-field", '{' + value + '}', "text_layer_id", this.textLayer);
             }
@@ -975,6 +981,7 @@ export default {
                     this.lineLayer["source-layer"] = this.source_vector_layer_Id;
                 }
                 this.map.addLayer(this.lineLayer);
+                emitMapAddLayer({ layer: this.lineLayer});
             }else {
                 this.lineLayer = this.$_getLayerStyle(this.lineId)
             }
@@ -1008,6 +1015,7 @@ export default {
                     this.textLayer["source-layer"] = this.source_vector_layer_Id;
                 }
                 this.map.addLayer(this.textLayer);
+                emitMapAddLayer({ layer: this.textLayer});
             }else {
                 this.textLayer = this.$_getLayerStyle(this.textId)
             }

@@ -6,9 +6,12 @@
 import withEvents from "../../../lib/withEvents";
 import { deepEqual } from "../../util/util";
 
+import EventBusMapMixin from '../../../lib/eventbus/EventBusMapMixin';
+import { emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
+
 export default {
   name: "mapgis-mvt-style-layer",
-  mixins: [withEvents],
+  mixins: [withEvents, EventBusMapMixin],
   inject: ["mapbox", "map"],
 
   props: {
@@ -161,6 +164,11 @@ export default {
         return find ? false : true;
       });
       return merges.concat(unmerges);
+    },
+
+
+    $_handleMapAddLayer(payload) {
+      console.log('mvt event', payload);
     }
   }
 };
