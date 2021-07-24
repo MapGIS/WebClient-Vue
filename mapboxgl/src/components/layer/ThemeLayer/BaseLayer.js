@@ -108,7 +108,9 @@ export default {
             originLayer: undefined,
             changeLayerProp: false,
             changeLayerId: undefined,
-            layerIdCopy: undefined
+            layerIdCopy: undefined,
+            lineId: undefined,
+            textId: undefined
         };
     },
     methods: {
@@ -119,15 +121,15 @@ export default {
             this.layerIdCopy = layerId;
             this.$_getFromSource(layerId);
         },
-        resetLayer(){
-            this.$_resetLayer();
+        resetLayer(layerId){
+            this.$_resetLayer(layerId);
         },
-        $_resetLayer(){
-            if(this.layerIdCopy){
-                this.map.setLayoutProperty("text_layer_id","visibility","none");
-                this.map.setLayoutProperty("line_layer_id","visibility","none");
-                let paint = window.originLayer.paint;
-                let layout = window.originLayer.layout;
+        $_resetLayer(layerId){
+            if(layerId){
+                this.map.removeLayer(this.lineId);
+                this.map.removeLayer(this.textId);
+                let paint = window.originLayer[this.layerIdCopy].paint;
+                let layout = window.originLayer[this.layerIdCopy].layout;
                 for (let key in paint){
                     if(paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]){
                         this.$_setPaintProperty(key,paint[key]);
@@ -138,6 +140,7 @@ export default {
                         this.$_setPaintProperty(key,paint[layout]);
                     }
                 }
+                delete window.originLayer[this.layerIdCopy];
                 this.$emit("resetLayer");
             }
         },
@@ -538,7 +541,9 @@ export default {
                         let paint = {};
                         for (let pKey in originLayer.paint._values){
                             if(originLayer.paint._values.hasOwnProperty(pKey) && originLayer.paint._values[pKey]){
-                                paint[pKey] = vm.map.getPaintProperty(layerId, pKey);
+                                try {
+                                    paint[pKey] = vm.map.getPaintProperty(layerId, pKey);
+                                }catch (e) {}
                             }
                         }
                         layer[key] = paint;
@@ -547,7 +552,9 @@ export default {
                         let layout = {};
                         for (let lKey in originLayer.layout._values){
                             if(originLayer.layout._values.hasOwnProperty(lKey) && originLayer.layout._values[lKey]){
-                                layout[lKey] = vm.map.getLayoutProperty(layerId, lKey);
+                                try {
+                                    layout[lKey] = vm.map.getLayoutProperty(layerId, lKey);
+                                }catch (e){}
                             }
                         }
                         layer[key] = layout;
@@ -565,7 +572,10 @@ export default {
                 return;
             }
             let originLayer = this.map.getLayer(layerId);
-            window.originLayer = this.$_getLayerStyle(layerId);
+            if(!window.originLayer){
+                window.originLayer = {};
+            }
+            window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
             this.source_vector_Id = originLayer.source;
             this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
@@ -646,7 +656,7 @@ export default {
 
             layers.push({
                 action: "replace",
-                originLayer: window.originLayer,
+                originLayer: window.originLayer[this.layerIdCopy],
                 replaceLayer: replaceLayer
             });
 
@@ -948,11 +958,11 @@ export default {
             return colors;
         },
         $_addLineLayer() {
-            let lineId = "line_layer_" + this.layerIdCopy;
-            let layer = this.map.getLayer(lineId);
+            this.lineId = "line_layer_" + this.layerIdCopy;
+            let layer = this.map.getLayer(this.lineId);
             if (!layer) {
                 this.lineLayer = {
-                    'id': lineId,
+                    'id': this.lineId,
                     'source': this.source_vector_Id,
                     'type': 'line',
                     'paint': {
@@ -965,34 +975,42 @@ export default {
                     this.lineLayer["source-layer"] = this.source_vector_layer_Id;
                 }
                 this.map.addLayer(this.lineLayer);
+            }else {
+                this.lineLayer = this.$_getLayerStyle(this.lineId)
             }
         },
         $_addTextLayer() {
             if (!this.textFont) {
                 this.textFont = this.textFonts[0];
             }
-            this.textLayer = {
-                'id': 'text_layer_id',
-                'source': this.source_vector_Id,
-                'type': 'symbol',
-                'layout': {
-                    "text-field": '',
-                    'text-size': this.fontSize,
-                    'text-letter-spacing': this.textPadding,
-                    'text-offset': this.offsetText,
-                    'text-font': [this.textFont],
-                    'text-rotate': this.textRotation
-                },
-                'paint': {
-                    'text-color': this.fontColor,
-                    "text-halo-color": this.haloColor,
-                    "text-halo-width": this.haloWidth
-                },
-            };
-            if (this.source_vector_layer_Id) {
-                this.textLayer["source-layer"] = this.source_vector_layer_Id;
+            this.textId = "text_layer_" + this.layerIdCopy;
+            let layer = this.map.getLayer(this.textId);
+            if(!layer){
+                this.textLayer = {
+                    'id': this.textId,
+                    'source': this.source_vector_Id,
+                    'type': 'symbol',
+                    'layout': {
+                        "text-field": '',
+                        'text-size': this.fontSize,
+                        'text-letter-spacing': this.textPadding,
+                        'text-offset': this.offsetText,
+                        'text-font': [this.textFont],
+                        'text-rotate': this.textRotation
+                    },
+                    'paint': {
+                        'text-color': this.fontColor,
+                        "text-halo-color": this.haloColor,
+                        "text-halo-width": this.haloWidth
+                    },
+                };
+                if (this.source_vector_layer_Id) {
+                    this.textLayer["source-layer"] = this.source_vector_layer_Id;
+                }
+                this.map.addLayer(this.textLayer);
+            }else {
+                this.textLayer = this.$_getLayerStyle(this.textId)
             }
-            this.map.addLayer(this.textLayer);
         }
     }
 };
