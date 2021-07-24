@@ -489,6 +489,7 @@ export default {
           }
         }
       }
+      this.$_addTextLayer();
     },
     $_editGeoJSON(geojson) {
       let newGeoJSON = {

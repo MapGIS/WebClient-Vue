@@ -39,14 +39,6 @@
         @fontChanged="$_fontChanged"
     >
     </ThemePanel>
-    <mapgis-vector-layer
-        v-if="showVector && !useOriginLayer"
-        :layer="layerVector"
-        :layer-id="layerVectorId"
-        :source="sourceVector"
-        :source-id="sourceVectorId"
-    >
-    </mapgis-vector-layer>
   </div>
 </template>
 
@@ -182,7 +174,7 @@ export default {
             this.layerVector.paint["line-color"] = colors;
             break;
         }
-        this.$_changeOriginLayer();
+        this.$_changez();
         this.showVector = true;
       }
     },
@@ -257,8 +249,9 @@ export default {
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
         this.layerVector = {
+          id: "theme_layer_id",
           type: 'fill',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          source: this.source_vector_Id, //必须和上面的layerVectorId一致
           paint: {
             'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
             'fill-color': fillColors, //颜色
@@ -270,8 +263,9 @@ export default {
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
         this.layerVector = {
+          id: "theme_layer_id",
           type: 'circle',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          source: this.source_vector_Id, //必须和上面的layerVectorId一致
           paint: {
             'circle-color': fillColors, //颜色
             'circle-opacity': this.opacity, //透明度
@@ -285,8 +279,9 @@ export default {
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
         this.layerVector = {
+          id: "theme_layer_id",
           type: 'line',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          source: this.source_vector_Id, //必须和上面的layerVectorId一致
           paint: {
             'line-color': fillColors, //颜色
             'line-opacity': this.opacity, //透明度
@@ -294,6 +289,7 @@ export default {
           }
         }
       }
+      this.$_addTextLayer();
     }
   }
 }

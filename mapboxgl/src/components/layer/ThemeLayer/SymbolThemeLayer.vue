@@ -316,7 +316,7 @@ export default {
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],"china_bound_id",this.layerVector);
+      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",this.layerVector);
     },
     $_clickIcon(icon) {
       let hasIcon = this.map.hasImage(icon.name), vm = this;
@@ -563,8 +563,8 @@ export default {
       });
       fillColors = this.$_editColor();
       this.layerVector = {
-        'id': 'china_bound_id',
-        'source': 'vector_source_id',
+        'id': 'symbol_layer_id',
+        'source': this.source_vector_Id,
         'type': 'symbol',
         'layout': {
           'icon-image': this.icons[0].icons[0].name,
@@ -584,9 +584,12 @@ export default {
           "text-halo-width": this.haloWidth
         },
       };
+      if (this.source_vector_layer_Id) {
+        this.textLayer["source-layer"] = this.source_vector_layer_Id;
+      }
       this.map.loadImage(this.icons[0].icons[0].url, function (error, image) {
         if (error) throw error;
-        vm.map.removeLayer('china_bound_id');
+        vm.map.removeLayer('symbol_layer_id');
         vm.map.addImage(vm.icons[0].icons[0].name, image, {'sdf': true});
         vm.map.addLayer(vm.layerVector);
       });

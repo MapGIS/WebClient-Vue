@@ -1,4 +1,5 @@
 import {MRFS} from "@mapgis/webclient-es6-service";
+
 const {FeatureService} = MRFS;
 
 export default {
@@ -45,18 +46,18 @@ export default {
         },
         layerId: {
             handler: function () {
-                if (!this.useOriginLayer) {
-                    throw new Error("请将useOriginLayer设为true！");
-                } else {
-                    this.$_getFromSource(this.layerId);
-                }
+                // if (!this.useOriginLayer) {
+                //     throw new Error("请将useOriginLayer设为true！");
+                // } else {
+                //     this.$_getFromSource(this.layerId);
+                // }
+                this.$_getFromSource(this.layerId);
             }
         },
         panelProps: {
             type: Object,
-            default(){
-                return {
-                }
+            default() {
+                return {}
             }
         }
     },
@@ -85,8 +86,8 @@ export default {
             layerVector: {},
             dataType: "",
             textLayer: undefined,
-            offsetText: [0,0],
-            offset: [0,0],
+            offsetText: [0, 0],
+            offset: [0, 0],
             themeType: "range",
             opacity: 1,
             lineWidth: 2,
@@ -100,14 +101,39 @@ export default {
             outerLineOpacity: 1,
             outerLineColor: "#000000",
             lineLayer: undefined,
-            textFonts: ["黑体","宋体","楷体","微软雅黑","Arial","Calibri","Times New Roman"],
+            textFonts: ["黑体", "宋体", "楷体", "微软雅黑", "Arial", "Calibri", "Times New Roman"],
             textFont: undefined,
             source_vector_Id: undefined,
             source_vector_layer_Id: undefined,
+            originLayer: undefined,
+            changeLayerProp: false,
+            changeLayerId: undefined,
         };
     },
     methods: {
-        $_formatProps(){
+        resetLayer(){
+            this.$_resetLayer();
+        },
+        $_resetLayer(){
+            if(this.layerId){
+                this.map.setLayoutProperty("text_layer_id","visibility","none");
+                this.map.setLayoutProperty("line_layer_id","visibility","none");
+                let paint = window.originLayer.paint;
+                let layout = window.originLayer.layout;
+                for (let key in paint){
+                    if(paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]){
+                        this.$_setPaintProperty(key,paint[key]);
+                    }
+                }
+                for (let key in layout){
+                    if(layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]){
+                        this.$_setPaintProperty(key,paint[layout]);
+                    }
+                }
+                this.$emit("resetLayer");
+            }
+        },
+        $_formatProps() {
             let formatArr = [
                 {
                     before: "icon-size",
@@ -245,8 +271,8 @@ export default {
             ];
             this.panelPropsDefault = Object.assign(this.panelPropsDefault, this.panelProps);
             let vm = this;
-            for (let i=0;i< formatArr.length;i++){
-                if(this.panelPropsDefault.hasOwnProperty(formatArr[i].before)){
+            for (let i = 0; i < formatArr.length; i++) {
+                if (this.panelPropsDefault.hasOwnProperty(formatArr[i].before)) {
                     this.panelPropsDefault[formatArr[i].after] = this.panelPropsDefault[formatArr[i].before];
                 }
             }
@@ -349,19 +375,19 @@ export default {
             }
         },
         $_mount() {
-            if(this.panelPropsDefault.hasOwnProperty("xOffset") && this.panelPropsDefault.xOffset){
-                this.$set(this.offset,0,this.panelPropsDefault.xOffset);
+            if (this.panelPropsDefault.hasOwnProperty("xOffset") && this.panelPropsDefault.xOffset) {
+                this.$set(this.offset, 0, this.panelPropsDefault.xOffset);
             }
-            if(this.panelPropsDefault.hasOwnProperty("yOffset") && this.panelPropsDefault.yOffset){
-                this.$set(this.offset,1,this.panelPropsDefault.yOffset * -1);
+            if (this.panelPropsDefault.hasOwnProperty("yOffset") && this.panelPropsDefault.yOffset) {
+                this.$set(this.offset, 1, this.panelPropsDefault.yOffset * -1);
             }
-            if(this.panelPropsDefault.hasOwnProperty("xOffsetText") && this.panelPropsDefault.xOffsetText){
-                this.$set(this.offsetText,0,this.panelPropsDefault.xOffsetText);
+            if (this.panelPropsDefault.hasOwnProperty("xOffsetText") && this.panelPropsDefault.xOffsetText) {
+                this.$set(this.offsetText, 0, this.panelPropsDefault.xOffsetText);
             }
-            if(this.panelPropsDefault.hasOwnProperty("yOffsetText") && this.panelPropsDefault.yOffsetText){
-                this.$set(this.offsetText,1,this.panelPropsDefault.yOffsetText * -1);
+            if (this.panelPropsDefault.hasOwnProperty("yOffsetText") && this.panelPropsDefault.yOffsetText) {
+                this.$set(this.offsetText, 1, this.panelPropsDefault.yOffsetText * -1);
             }
-            if(this.panelPropsDefault.hasOwnProperty("opacity") && this.panelPropsDefault.opacity){
+            if (this.panelPropsDefault.hasOwnProperty("opacity") && this.panelPropsDefault.opacity) {
                 this.opacity = this.panelPropsDefault.opacity / 100;
             }
             if (this.sourceId && this.sourceLayer) {
@@ -381,7 +407,7 @@ export default {
             }
         },
         $_lineWidthChanged(lineWidth) {
-            switch (this.dataType){
+            switch (this.dataType) {
                 case "line":
                     this.$_setPaintProperty("line-width", lineWidth);
                     break;
@@ -390,9 +416,9 @@ export default {
                     break;
             }
         },
-        $_selectTextChanged(value){
-            if(!this.textLayer){
-                if(!this.textFont){
+        $_selectTextChanged(value) {
+            if (!this.textLayer) {
+                if (!this.textFont) {
                     this.textFont = this.textFonts[0];
                 }
                 this.textLayer = {
@@ -409,13 +435,16 @@ export default {
                     },
                     'paint': {
                         'text-color': this.fontColor,
-                        "text-halo-color":  this.haloColor,
+                        "text-halo-color": this.haloColor,
                         "text-halo-width": this.haloWidth
                     },
                 };
+                if (this.source_vector_layer_Id) {
+                    this.textLayer["source-layer"] = this.source_vector_layer_Id;
+                }
                 this.map.addLayer(this.textLayer);
-            }else {
-                this.$_setLayOutProperty("text-field",'{' + value + '}',"text_layer_id",this.textLayer);
+            } else {
+                this.$_setLayOutProperty("text-field", '{' + value + '}', "text_layer_id", this.textLayer);
             }
         },
         $_setLayOutProperty(key, value, layerId, layerVector) {
@@ -423,6 +452,8 @@ export default {
             layerVector = layerVector || this.layerVector;
             layerVector.layout[key] = value;
             this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
+            this.changeLayerProp = true;
+            this.changeLayerId = layerId;
         },
         $_radiusChanged(radius) {
             this.$_setPaintProperty("circle-radius", radius);
@@ -467,11 +498,11 @@ export default {
         $_textRotationChanged(textRotation) {
             this.$_setLayOutProperty("text-rotate", textRotation, "text_layer_id", this.textLayer);
         },
-        $_outerLineOpacityChanged(opacity){
+        $_outerLineOpacityChanged(opacity) {
             this.$_setPaintProperty("circle-stroke-opacity", opacity);
         },
         $_lineStyleChanged(lineStyle) {
-            this.$_setPaintProperty("line-dasharray",lineStyle.value);
+            this.$_setPaintProperty("line-dasharray", lineStyle.value);
         },
         $_getFields(features) {
             let fields = [];
@@ -488,14 +519,45 @@ export default {
                 });
             }
         },
+        $_getLayerStyle(layerId) {
+            let layer = {}, vm = this;
+            let originLayer = this.map.getLayer(layerId);
+            Object.keys(originLayer).forEach(function (key) {
+                switch (key) {
+                    case "paint":
+                        let paint = {};
+                        for (let pKey in originLayer.paint._values){
+                            if(originLayer.paint._values.hasOwnProperty(pKey) && originLayer.paint._values[pKey]){
+                                paint[pKey] = vm.map.getPaintProperty(layerId, pKey);
+                            }
+                        }
+                        layer[key] = paint;
+                        break;
+                    case "layout":
+                        let layout = {};
+                        for (let lKey in originLayer.layout._values){
+                            if(originLayer.layout._values.hasOwnProperty(lKey) && originLayer.layout._values[lKey]){
+                                layout[lKey] = vm.map.getLayoutProperty(layerId, lKey);
+                            }
+                        }
+                        layer[key] = layout;
+                        break;
+                    default:
+                        layer[key] = originLayer[key];
+                        break;
+                }
+            });
+            return layer;
+        },
         $_getFromSource(layerId) {
             let features = this.map.queryRenderedFeatures({layers: [layerId]});
             if (features.length === 0) {
                 return;
             }
-            let layer = this.map.getLayer(layerId);
-            this.source_vector_Id = layer.source;
-            this.source_vector_layer_Id = layer.sourceLayer;
+            let originLayer = this.map.getLayer(layerId);
+            window.originLayer = this.$_getLayerStyle(layerId);
+            this.source_vector_Id = originLayer.source;
+            this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
                 features: [],
                 type: "FeatureCollection"
@@ -522,6 +584,21 @@ export default {
             if (this.$_editGeoJSON) {
                 geojson = this.$_editGeoJSON(geojson);
             }
+            let vm = this;
+            this.map.on('data', function (e) {
+                if (vm.changeLayerProp) {
+                    let layer = {};
+                    if(vm.changeLayerId === "line_layer_id"){
+                        layer = vm.lineLayer;
+                    }else if(vm.changeLayerId === "text_layer_id"){
+                        layer = vm.textLayer;
+                    } else {
+                        layer = vm.$_getLayerStyle(vm.changeLayerId);
+                    }
+                    vm.$emit("layerChanged", layer);
+                    vm.changeLayerProp = false;
+                }
+            });
             startColor = startColor || "#FFFFFF";
             endColor = endColor || "#FF0000";
             this.sourceVector.data = geojson;
@@ -539,7 +616,36 @@ export default {
             }
             let layer = {...this.layerVector, ...this.$props};
             this.$_changeOriginLayer();
+            this.$_loadedLayer();
             this.$emit("loaded", this, layer);
+        },
+        $_getAllLayerStyle() {
+            let layers = [];
+            if (this.dataType === 'fill') {
+                layers.push({
+                    action: "add",
+                    layer: this.lineLayer
+                });
+            }
+
+            layers.push({
+                action: "add",
+                layer: this.textLayer
+            });
+
+            let replaceLayer = this.$_getLayerStyle(this.layerId);
+
+            layers.push({
+                action: "replace",
+                originLayer: window.originLayer,
+                replaceLayer: replaceLayer
+            });
+
+            return layers;
+        },
+        $_loadedLayer() {
+            let layers = this.$_getAllLayerStyle();
+            this.$emit("themeLoaded", layers);
         },
         $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
             let colors;
@@ -586,7 +692,7 @@ export default {
 
             this.dataBack = datas;
 
-            if(this.themeType === "range"){
+            if (this.themeType === "range") {
                 datas = this.$_editData(datas);
             }
             return datas;
@@ -635,10 +741,10 @@ export default {
             this.showVector = false;
             switch (this.dataType) {
                 case "fill":
-                    this.$_setPaintProperty("fill-outline-color",e);
+                    this.$_setPaintProperty("fill-outline-color", e);
                     break
                 case "circle":
-                    this.$_setPaintProperty("circle-outline-color",e);
+                    this.$_setPaintProperty("circle-outline-color", e);
                     break
             }
             this.showVector = true;
@@ -707,7 +813,7 @@ export default {
         * 改变透明度的回调方法
         * @param opacity 透明度
         * **/
-        $_opacityChangedCallBack(opacity){
+        $_opacityChangedCallBack(opacity) {
             switch (this.dataType) {
                 case "fill":
                     this.layerVector.paint["fill-opacity"] = opacity;
@@ -721,8 +827,8 @@ export default {
             }
         },
         $_editColor(colors) {
-            let newStops = [], stopIndex = 0, newColor= {};
-            if(this.themeType === "range"){
+            let newStops = [], stopIndex = 0, newColor = {};
+            if (this.themeType === "range") {
                 for (let i = 0; i < this.dataBack.length; i++) {
                     if (this.dataBack[i] <= colors.stops[stopIndex][0]) {
                         newStops.push([this.dataBack[i], colors.stops[stopIndex][1]]);
@@ -741,7 +847,7 @@ export default {
                     "property": colors.property,
                     "stops": newStops
                 }
-            }else {
+            } else {
                 newColor = colors;
             }
 
@@ -750,7 +856,7 @@ export default {
         $_clickIcon(icon) {
             let hasIcon = this.map.hasImage(icon.name), vm = this;
             let partten;
-            switch (this.dataType){
+            switch (this.dataType) {
                 case "fill":
                     partten = "fill-pattern";
                     break;
@@ -773,6 +879,8 @@ export default {
             layerVector = layerVector || this.layerVector;
             layerVector.paint[key] = value;
             this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
+            this.changeLayerProp = true;
+            this.changeLayerId = layerId;
         },
         $_getColorsFromOrigin(index, color, num) {
             let colors;
@@ -802,8 +910,8 @@ export default {
                 for (let i = 0; i < this.originColors.checkArr.length; i++) {
                     if (this.originColors.checkArr[i]) {
                         stops.push(this.originColors.colors.stops[i]);
-                    }else {
-                        stops.push([this.originColors.colors.stops[i][0],"#FFFFFF"]);
+                    } else {
+                        stops.push([this.originColors.colors.stops[i][0], "#FFFFFF"]);
                     }
                 }
                 colors.stops = stops;
@@ -824,23 +932,50 @@ export default {
             }
             return colors;
         },
-        $_addLineLayer(){
-            if(!this.lineLayer){
+        $_addLineLayer() {
+            if (!this.lineLayer) {
                 this.lineLayer = {
                     'id': 'line_layer_id',
                     'source': this.source_vector_Id,
                     'type': 'line',
                     'paint': {
-                        'line-color': this.outerLineColor,
+                        'line-color': "#FF0000",
                         'line-opacity': this.outerLineOpacity, //透明度
                         'line-width': this.lineWidth,
                     },
                 };
-                if(this.source_vector_layer_Id){
+                if (this.source_vector_layer_Id) {
                     this.lineLayer["source-layer"] = this.source_vector_layer_Id;
                 }
-                this.map.addLayer(this.lineLayer,this.layerId);
+                this.map.addLayer(this.lineLayer);
             }
+        },
+        $_addTextLayer() {
+            if (!this.textFont) {
+                this.textFont = this.textFonts[0];
+            }
+            this.textLayer = {
+                'id': 'text_layer_id',
+                'source': this.source_vector_Id,
+                'type': 'symbol',
+                'layout': {
+                    "text-field": '',
+                    'text-size': this.fontSize,
+                    'text-letter-spacing': this.textPadding,
+                    'text-offset': this.offsetText,
+                    'text-font': [this.textFont],
+                    'text-rotate': this.textRotation
+                },
+                'paint': {
+                    'text-color': this.fontColor,
+                    "text-halo-color": this.haloColor,
+                    "text-halo-width": this.haloWidth
+                },
+            };
+            if (this.source_vector_layer_Id) {
+                this.textLayer["source-layer"] = this.source_vector_layer_Id;
+            }
+            this.map.addLayer(this.textLayer);
         }
     }
 };
