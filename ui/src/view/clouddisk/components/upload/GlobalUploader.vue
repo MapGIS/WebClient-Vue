@@ -367,7 +367,7 @@ export default {
         let gisFormat = type === "tiff" ? "raster" : "vector";
         let formdata = {
           // @date 2021/07/16
-          folderDir: this.$store.state.path.current.uri,
+          folderDir: self.uploaduri,
           totalSize: file.size,
           type: file.fileType,
           identifier: file.uniqueIdentifier,

@@ -55,7 +55,7 @@
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { openUploader } from "../../../../util/emit/upload";
+import { openUploader, changePathUploaduri } from "../../../../util/emit/upload";
 
 export default {
   name: "importData",
@@ -95,6 +95,8 @@ export default {
       this.temUrl = url;
     },
     handlePathOk() {
+      changePathUploaduri({uri: this.temUrl});
+      console.warn("this.uploaduri111", this.uploaduri);
       this.$emit("changePathText", this.temUrl);
       this.showPathSelect = false;
       this.resetTree();
