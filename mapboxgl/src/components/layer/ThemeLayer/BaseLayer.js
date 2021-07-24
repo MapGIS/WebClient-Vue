@@ -414,7 +414,7 @@ export default {
             } else if (this.baseUrl) {
                 this.$_getFromGeoJSON();
             }
-            this.$emit("handled", this);
+            this.$emit("loaded", this);
         },
         $_lineWidthChanged(lineWidth) {
             switch (this.dataType) {
@@ -952,7 +952,7 @@ export default {
             let layer = this.map.getLayer(lineId);
             if (!layer) {
                 this.lineLayer = {
-                    'id': 'line_layer_id',
+                    'id': lineId,
                     'source': this.source_vector_Id,
                     'type': 'line',
                     'paint': {

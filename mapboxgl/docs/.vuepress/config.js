@@ -134,7 +134,8 @@ module.exports = {
               ["/guide/markers&popups.md", "注记视图"],
               ["/guide/draw.md", "绘制视图"],
               ["/guide/layers&sources.md", "图层与数据源"],
-              ["/guide/wms&map&doc.md", "子图层控制"]
+              ["/guide/wms&map&doc.md", "子图层控制"],
+              ["/guide/cartography.md", "制图综合"]
             ]
           },
           {
