@@ -543,6 +543,7 @@ export default {
         $_getLayerStyle(layerId) {
             let layer = {}, vm = this;
             let originLayer = this.map.getLayer(layerId);
+            if (!originLayer) return layer;
             Object.keys(originLayer).forEach(function (key) {
                 switch (key) {
                     case "paint":

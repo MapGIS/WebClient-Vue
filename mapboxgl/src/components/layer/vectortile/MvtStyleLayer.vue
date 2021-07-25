@@ -194,11 +194,11 @@ export default {
     },
 
     $_handleMapAddLayer(payload) {
-      console.log("mvt add layer event", payload);
+      
     },
 
     $_handleMapRemoveLayer(payload) {
-      console.log("mvt remove layer event", payload);
+      
     }
   }
 };
