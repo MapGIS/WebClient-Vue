@@ -26,6 +26,19 @@ if (typeof window !== "undefined" && window["Vue"]) {
   install(window["Vue"], {});
 }
 
+/* export {
+  emitMapChangeStyle,
+  emitMapAddLayer,
+  emitMapRemoveLayer,
+  emitMapSetLayerPaint,
+  emitMapSetLayerLayout,
+  emitMapSetLayerFilter,
+  emitMapSetLayerMinzoom,
+  emitMapSetLayerMaxzoom,
+  emitMapActiveThemeLayer,
+  emitMapInactiveThemeLayer
+} from "./lib/eventbus/EmitMap"; */
+
 export * from "./component";
 
 export default {

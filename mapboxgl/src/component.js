@@ -4,6 +4,7 @@ export { default as MapgisWebMap } from "./components/map/GlMap.vue";
 export { MapgisIconfont } from "./components/UI/iconfont";
 
 export { default as MapgisDocument } from "./components/UI/document/Document";
+export { default as MapgisLayerMenuStudio } from "./components/UI/document/contextmenu/LayerMenuStudio.vue";
 
 export { default as MapgisNavigationControl } from "./components/UI/controls/NavigationControl";
 export { default as MapgisGeolocateControl } from "./components/UI/controls/GeolocateControl";

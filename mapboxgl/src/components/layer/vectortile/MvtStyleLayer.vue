@@ -6,8 +6,11 @@
 import withEvents from "../../../lib/withEvents";
 import { deepEqual } from "../../util/util";
 
-import EventBusMapMixin from '../../../lib/eventbus/EventBusMapMixin';
-import { emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
+import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
+import {
+  emitMapAddLayer,
+  emitMapRemoveLayer
+} from "../../../lib/eventbus/EmitMap";
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -16,7 +19,8 @@ export default {
 
   props: {
     mvtStyle: {
-      type: [String, Object]
+      type: [String, Object],
+      default: undefined
     },
     mode: {
       type: String,
@@ -28,17 +32,36 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      lastStyle: undefined
+    };
   },
 
   watch: {
     mvtStyle: {
       handler(next, old) {
+        let deleteStyle = old;
+        let { lastStyle } = this;
         if (!deepEqual(next, old)) {
-          this.remove(old);
+          if (old && !lastStyle) {
+            lastStyle = old; // mvt第一次外部传入改变
+          }
+          if (old && lastStyle) {
+            // 后期多次外部修改mvt样式,这类情况一般是如下场景，
+            // 外部同时使用了MVT组件和其他有修改mapbox样式能力的图层(ThemeLayer)
+            // 初始化MVT组件的时候生成了样式StyleA,然后某个操作触发了ThemeLayer修改样式,
+            // 导致了其他组件修改了mapbox的图层关系后产生的新的样式StyleB无法告诉mvt组件，
+            // 而mvt组件仍然认为当前的样式是StyleA导致再维护的时候出现混乱的情况
+            // 这类情况采取事件总线机制来维护协同组件间的样式关系
+            if (!deepEqual(old, lastStyle)) {
+              
+            }
+          }
+          this.remove(deleteStyle);
           this.$_initStyle(this.mode, next);
         }
-      }
+      },
+      deep: true
     }
   },
 
@@ -59,6 +82,7 @@ export default {
 
     async $_initStyle(mode, style) {
       let mvtStyle;
+      if (!style) return;
       if (typeof style === "string") {
         mvtStyle = await this.$_getStyleObjectAsync(style);
       } else {
@@ -87,8 +111,8 @@ export default {
     },
 
     remove(oldStyle) {
+      if (!oldStyle) return;
       let vm = this;
-      let mapStyle = this.map.getStyle();
       const { layers, sources } = oldStyle;
       if (!layers) return;
       layers.forEach(layer => {
@@ -97,9 +121,12 @@ export default {
         }
       });
       if (!sources) return;
+      let lefts = this.map.getStyle().layers;
+      
       Object.keys(sources).forEach(source => {
         if (vm.map.getSource(source)) {
-          vm.map.removeSource(source);
+          let finds = lefts.find(l => l.source == source);
+          if (!finds) vm.map.removeSource(source);
         }
       });
     },
@@ -166,16 +193,13 @@ export default {
       return merges.concat(unmerges);
     },
 
-    /**
-     * @description 继承自EventBusMapMixin
-     */
     $_handleMapAddLayer(payload) {
-      console.log('mvt add layer event', payload);
+      console.log("mvt add layer event", payload);
     },
 
     $_handleMapRemoveLayer(payload) {
-      console.log('mvt remove layer event', payload);
-    }    
+      console.log("mvt remove layer event", payload);
+    }
   }
 };
 </script>

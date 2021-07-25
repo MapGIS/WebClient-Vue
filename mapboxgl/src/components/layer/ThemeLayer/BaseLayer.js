@@ -1,6 +1,6 @@
 import {MRFS} from "@mapgis/webclient-es6-service";
 import EventBusMapMixin from '../../../lib/eventbus/EventBusMapMixin';
-import { emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
+import { emitMapChangeStyle, emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
 
 const {FeatureService} = MRFS;
 
@@ -133,6 +133,7 @@ export default {
                 this.map.removeLayer(this.textId);
                 emitMapRemoveLayer(this.lineId);
                 emitMapRemoveLayer(this.textId);
+                emitMapChangeStyle(this.map.getStyle());
                 let paint = window.originLayer[this.layerIdCopy].paint;
                 let layout = window.originLayer[this.layerIdCopy].layout;
                 for (let key in paint){
@@ -462,6 +463,7 @@ export default {
                 }
                 this.map.addLayer(this.textLayer);
                 emitMapAddLayer({ layer: this.textLayer});
+                emitMapChangeStyle(this.map.getStyle());
             } else {
                 this.$_setLayOutProperty("text-field", '{' + value + '}', this.textId, this.textLayer);
             }
@@ -982,6 +984,7 @@ export default {
                 }
                 this.map.addLayer(this.lineLayer);
                 emitMapAddLayer({ layer: this.lineLayer});
+                emitMapChangeStyle(this.map.getStyle());
             }else {
                 this.lineLayer = this.$_getLayerStyle(this.lineId)
             }
@@ -1016,6 +1019,7 @@ export default {
                 }
                 this.map.addLayer(this.textLayer);
                 emitMapAddLayer({ layer: this.textLayer});
+                emitMapChangeStyle(this.map.getStyle());
             }else {
                 this.textLayer = this.$_getLayerStyle(this.textId)
             }
