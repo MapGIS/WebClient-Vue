@@ -3,11 +3,15 @@
     <contextmenu-item @click="handleClick('edit')">
       <mapgis-ui-iconfont type="mapgis-yangshikuguanli" />编辑显示样式
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('theme')" v-if="!isTheme">
+    <contextmenu-item divider />
+    <contextmenu-item @click="handleClick('add-theme')" v-if="!isTheme">
       <mapgis-ui-iconfont type="mapgis-zhuantitu" />创建专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('cancel-theme')" v-else>
-      <mapgis-ui-iconfont type="mapgis-zhuantitu" />撤销专题图
+    <contextmenu-item @click="handleClick('edit-theme')" v-if="isTheme">
+      <mapgis-ui-iconfont type="mapgis-zhuantitu" />编辑专题图
+    </contextmenu-item>
+    <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme">
+      <mapgis-ui-iconfont type="mapgis-chexiao" />撤销专题图
     </contextmenu-item>
     <contextmenu-item divider />
     <contextmenu-item>
@@ -46,8 +50,9 @@
 </template>
 <script>
 import {
-  emitMapActiveThemeLayer,
-  emitMapInactiveThemeLayer
+  emitMapAddThemeLayer,
+  emitMapEditThemeLayer,
+  emitMapRemoveThemeLayer
 } from "../../../../lib/eventbus/EmitMap";
 import {
   ContextmenuItem,
@@ -103,13 +108,17 @@ export default {
         case "scale":
           this.$emit("onScale", { type, layerId });
           break;
-        case "theme":
-          this.$emit("onTheme", { type, layerId });
-          emitMapActiveThemeLayer({ type, layerId });
+        case "add-theme":
+          this.$emit("onAddTheme", { type, layerId });
+          emitMapAddThemeLayer({ type, layerId });
           break;
-        case "cancel-theme":
-          this.$emit("onCancelTheme", { type, layerId });
-          emitMapInactiveThemeLayer({ type, layerId });
+        case "edit-theme":
+          this.$emit("onEditTheme", { type, layerId });
+          emitMapEditThemeLayer({ type, layerId });
+          break;
+        case "remove-theme":
+          this.$emit("onRemoveTheme", { type, layerId });
+          emitMapRemoveThemeLayer({ type, layerId });
           break;
         case "up":
           this.$emit("onUp", { type, layerId });
@@ -124,7 +133,7 @@ export default {
 </script>
 
 <style>
-.mapgis-layercontent-studio > .mapgis-iconfont-wrapper {
+.mapgis-layercontent-studio .mapgis-iconfont-wrapper {
   width: 1.25em;
   height: 1.25em;
   margin-right: 12px;

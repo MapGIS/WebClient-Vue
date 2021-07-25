@@ -7,7 +7,7 @@ export default {
     return {
       // 原始云盘的uploader模块
       count: 0,
-      eventBusMvtStyle: undefined,
+      eventBusMvtStyle: undefined
     };
   },
   created() {
@@ -42,12 +42,15 @@ export default {
     EventBus.$on("map-set-layer-filter", payload => {});
     EventBus.$on("map-set-layer-minzoom", payload => {});
     EventBus.$on("map-set-layer-maxzoom", payload => {});
-    
-    EventBus.$on("map-active-theme-layer", payload => {
-      this.$_handleMapActiveThemeLayer(payload);
+
+    EventBus.$on("map-add-theme-layer", payload => {
+      this.$_handleMapAddThemeLayer(payload);
     });
-    EventBus.$on("map-inactive-theme-layer", payload => {
-      this.$_handleMapInactiveThemeLayer(payload);  
+    EventBus.$on("map-edit-theme-layer", payload => {
+      this.$_handleMapEditThemeLayer(payload);
+    });
+    EventBus.$on("map-remove-theme-layer", payload => {
+      this.$_handleMapRemoveThemeLayer(payload);
     });
   },
   methods: {
@@ -90,15 +93,16 @@ export default {
      * @description 激活专题图
      * @param {payload} 专题图载荷
      */
-    $_handleMapActiveThemeLayer(payload) {
-
-    },
+    $_handleMapAddThemeLayer(payload) {},
     /**
      * @description 取消激活专题图
      * @param {payload} 专题图载荷
      */
-    $_handleMapInactiveThemeLayer(payload) {
-
-    }
+    $_handleMapEditThemeLayer(payload) {},
+    /**
+     * @description 取消激活专题图
+     * @param {payload} 专题图载荷
+     */
+    $_handleMapRemoveThemeLayer(payload) {}
   }
 };

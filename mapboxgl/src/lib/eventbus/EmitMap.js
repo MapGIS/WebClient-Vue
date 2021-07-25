@@ -40,12 +40,16 @@ export const emitMapSetLayerMaxzoom = () => {
   EventBus.$emit("map-set-layer-maxzoom", count);
 };
 
-export const emitMapActiveThemeLayer = payload => {
-  EventBus.$emit("map-active-theme-layer", payload);
+export const emitMapAddThemeLayer = payload => {
+  EventBus.$emit("map-add-theme-layer", payload);
 };
 
-export const emitMapInactiveThemeLayer = payload => {
-  EventBus.$emit("map-inactive-theme-layer", payload);
+export const emitMapEditThemeLayer= payload => {
+  EventBus.$emit("map-edit-theme-layer", payload);
+};
+
+export const emitMapRemoveThemeLayer = payload => {
+  EventBus.$emit("map-remove-theme-layer", payload);
 };
 
 export default {
@@ -57,6 +61,6 @@ export default {
   emitMapSetLayerFilter,
   emitMapSetLayerMinzoom,
   emitMapSetLayerMaxzoom,
-  emitMapActiveThemeLayer,
-  emitMapInactiveThemeLayer
+  emitMapAddThemeLayer,
+  emitMapRemoveThemeLayer
 };
