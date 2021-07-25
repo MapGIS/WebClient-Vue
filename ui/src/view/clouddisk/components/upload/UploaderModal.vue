@@ -38,6 +38,7 @@ import MapgisUiUploaderData from "./UploaderData.vue";
 import MapgisUiUploaderProgress from "./UploaderProgress.vue";
 import UploadMixin from "../../../../mixin/UploaderMixin";
 import { changeUiState } from "../../../../util/emit/upload";
+import { getFileByWebsocketCallback } from "../../axios/files";
 
 export default {
   name: "mapgis-ui-upload-modal",
@@ -67,6 +68,14 @@ export default {
       continueUpload: false
     };
   },
+  watch: {
+    WebsocketContent: {
+      handler(next) {
+        this.handleWebsocket(next);
+      },
+      deep: true
+    }
+  },
   methods: {
     handleImport() {
       /* this.curImportUrl = this.$store.state.path.current.uri || "";
@@ -85,9 +94,8 @@ export default {
       this.continueUpload = false;
     },
     changePathText(url) {
-      this.curImportUrl =
-        url === "" ? this.uploaduri || "" : url;
-      console.warn("this.uploaduri222", this.uploaduri);
+      this.curImportUrl = url === "" ? this.uploaduri || "" : url;
+      // console.warn("this.uploaduri222", this.uploaduri);
       this.importDestUrl = this.importFileInfo(this.curImportUrl);
     },
     handleUploadComplete(flag) {
@@ -101,6 +109,30 @@ export default {
         url = "常规文件夹";
       }
       return url;
+    },
+    handleWebsocket(data) {
+      // UploaderData组件触发该行为，将上传的param参数封装
+      const { taskid } = this.param;
+      data = data || {};
+      let { content, msgid } = data;
+      content = JSON.parse(content);
+      let srcUrl = "";
+      if (true|| msgid == taskid) {
+        // let promises = content.map(i => getFileByWebsocketCallback(i.subject));
+        content.forEach((c, i) => {
+          let url;
+          if (c.subject.indexOf("file:") >= 0) {
+            let files = c.subject.split("file:");
+            url = files[1];
+          } else {
+            url = c.subject;
+          }
+          srcUrl += i != content.length - 1 ? `${url},` : `${url}`;
+        });
+        getFileByWebsocketCallback(srcUrl).then(res => {
+          console.log("res", res);
+        });
+      }
     }
   }
 };

@@ -42,15 +42,11 @@ export default {
   },
   methods: {
     initUploadData() {
-      const upload = EventBus.$options.upload || defaultUpload;
-      const gis = EventBus.$options.gis || defaultGis;
-      const complete = EventBus.$options.complete || defaultComplete;
-      const websocket = EventBus.$options.websocket || defaultWebsocket;
-      const path = EventBus.$options.path || defaultPath;
+      /* const upload = EventBus.$options.upload || defaultUpload;
 
       Object.keys(upload).forEach(key => {
         this[key] = upload[key];
-      });
+      }); */
     },
 
     registerPropListener() {

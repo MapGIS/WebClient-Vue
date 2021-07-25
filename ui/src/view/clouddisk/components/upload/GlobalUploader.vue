@@ -564,32 +564,33 @@ export default {
     initWebsocket() {
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
+      this.updateWebsocket();
     },
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
-        let flag = vm.isJSON(event.data);
-        if (flag) {
+        // let flag = vm.isJSON(event.data);
+        /* if (flag) { */
+          console.log('websocket', event);
           let data = JSON.parse(event.data);
-          console.log('websocket', data);
           let action = data.action;
           let msgid = data.msgid;
           let contentStr = data.content;
           let contentJson = {};
           let contentType = "";
-          if (vm.isJSON(contentStr)) {
+          // if (vm.isJSON(contentStr)) {
             contentJson = JSON.parse(contentStr);
             contentType = Object.keys(contentJson)[0];
-          }
+          // }
           if (contentType !== "" && contentJson !== {}) {
             changeWebsocketAction({ action: action });
-            changeWebSocketContent({ content: contentJson });
+            changeWebSocketContent({ content: data });
             changeWebSocketContentType({ contentType: contentType });
             changeWebSocketMsgid({ msgid: msgid });
           }
-        } else {
+        /* } else {
           console.warn("发送成功！", event.data);
-        }
+        } */
       };
     },
     removeWebsocket() {}

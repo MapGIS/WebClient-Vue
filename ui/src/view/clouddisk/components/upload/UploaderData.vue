@@ -56,6 +56,7 @@
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
 import UploadMixin from "../../../../mixin/UploaderMixin";
 import { openUploader, changePathUploaduri } from "../../../../util/emit/upload";
+import { uuid } from '../../util/uuid';
 
 export default {
   name: "importData",
@@ -130,7 +131,8 @@ export default {
           isCache: false,
           type: type,
           gisFormat: gisFormat,
-          isGisImport: true
+          isGisImport: true,
+          taskid: uuid()
         }
       });
     }

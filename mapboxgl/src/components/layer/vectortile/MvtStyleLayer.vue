@@ -166,10 +166,16 @@ export default {
       return merges.concat(unmerges);
     },
 
-
+    /**
+     * @description 继承自EventBusMapMixin
+     */
     $_handleMapAddLayer(payload) {
-      console.log('mvt event', payload);
-    }
+      console.log('mvt add layer event', payload);
+    },
+
+    $_handleMapRemoveLayer(payload) {
+      console.log('mvt remove layer event', payload);
+    }    
   }
 };
 </script>

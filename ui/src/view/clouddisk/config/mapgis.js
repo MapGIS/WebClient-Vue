@@ -19,7 +19,9 @@ export function getMapGISUrl() {
   return url;
 }
 
-export function getWebSocketUrl() {
+export function getWebSocketUrl(payload = {}) {
+  let { client } = payload;
+  const id = window.localStorage.getItem("mapgis_clouddisk_id");
   const ip = window.localStorage.getItem("mapgis_clouddisk_ip");
   const socket = window.localStorage.getItem("mapgis_clouddisk_socket");
   const token = getMapgisToken();
@@ -29,6 +31,8 @@ export function getWebSocketUrl() {
   let hostname = window.location.hostname;
   // let pathname = window.location.pathname
   let port = window.location.port;
+  client =
+    (client || "mapgis_ui_global_upload_websocket_id_") + Math.random() * 1000;
   // let protocol = window.location.protocol
   if (ip !== null && socket !== null) {
     url =
@@ -37,7 +41,7 @@ export function getWebSocketUrl() {
       ip +
       ":" +
       socket +
-      "/message/rest/websocket?Authorization=" +
+      `/message/rest/websocket/${id}/${client}?Authorization=` +
       token;
   } else {
     url =
@@ -46,7 +50,7 @@ export function getWebSocketUrl() {
       hostname +
       ":" +
       port +
-      "/message/rest/websocket?Authorization=" +
+      `/message/rest/websocket/${id}/${client}?Authorization=` +
       token;
   }
   return url;

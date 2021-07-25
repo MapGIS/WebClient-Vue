@@ -94,16 +94,16 @@ export default {
       vm.giscurrents = giscurrents;
     });
     EventBus.$on("change-websocket-action", action => {
-      vm.websocket.WebsocketAction = action;
+      vm.WebsocketAction = action;
     });
     EventBus.$on("change-websocket-content", content => {
-      vm.websocket.WebsocketContent = content;
+      vm.WebsocketContent = content;
     });
     EventBus.$on("change-websocket-content-type", contentType => {
-      vm.websocket.WebsocketContentType = contentType;
+      vm.WebsocketContentType = contentType;
     });
     EventBus.$on("change-websocket-msgid", msgid => {
-      vm.websocket.WebsocketMessageId = msgid;
+      vm.WebsocketMessageId = msgid;
     });
     EventBus.$on("change-path-uploaduri", uri => {
       // vm.path.uri = uri;

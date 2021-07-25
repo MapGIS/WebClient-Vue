@@ -513,3 +513,19 @@ export function getGeoTableData(formdata) {
   api.setAuthorization(token);
   return api.get(url + "/giscore/dataconvert/rest/geodataset/query", formdata);
 }
+
+// 按条件获取文件资源列表
+export function getFileByWebsocketCallback(folderDir) {
+  const url = getMapGISUrl();
+  const api = new API();
+  const token = getMapgisToken();
+  api.setBaseUrl(url);
+  api.setAuthorization(token);
+
+  return api.get(url + "/clouddisk/rest/file/search", {
+    srcUrl: folderDir,
+    pageNo: 1,
+    pageSize: 5000,
+    sorts: "update_time desc"
+  });
+}
