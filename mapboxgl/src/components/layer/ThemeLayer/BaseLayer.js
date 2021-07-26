@@ -27,6 +27,18 @@ export default {
         icons: {
             type: Array
         },
+        themeTypeArr: {
+            type: Array
+        },
+        themeDefaultType: {
+            type: String
+        },
+        panelProps: {
+            type: Object,
+            default() {
+                return {}
+            }
+        }
     },
     watch: {
         baseUrl: {
@@ -57,10 +69,8 @@ export default {
                 }
             }
         },
-        panelProps: {
-            type: Object,
-            default() {
-                return {}
+        themeDefaultType: {
+            handler: function () {
             }
         }
     },
@@ -113,24 +123,58 @@ export default {
             changeLayerId: undefined,
             layerIdCopy: undefined,
             lineId: undefined,
-            textId: undefined
+            textId: undefined,
+            extraLayer: []
         };
     },
+    mounted() {
+        if(!window.originLayer){
+            window.originLayer = {};
+        }
+    },
     methods: {
+       showExtraLayer(){
+            this.$_showExtraLayer();
+        },
+        hideExtraLayer(){
+            this.$_hideExtraLayer();
+        },
+        $_hideExtraLayer(){
+            for (let i = 0;i < this.extraLayer.length;i++){
+                this.$_setLayOutProperty("visibility","none",this.extraLayer[i].value,this[this.extraLayer[i].key]);
+            }
+        },
+        $_showExtraLayer(){
+            for (let i = 0;i < this.extraLayer.length;i++){
+                this.$_setLayOutProperty("visibility","visible",this.extraLayer[i].value,this[this.extraLayer[i].key]);
+            }
+        },
         addThemeLayer(layerId){
             this.$_addThemeLayer(layerId);
         },
         $_addThemeLayer(layerId){
             this.layerIdCopy = layerId;
-            this.$_getFromSource(layerId);
+            let themeId = layerId + "_" +  this.themeType;
+            if(window.originLayer && (!window.originLayer.hasOwnProperty(themeId) || !window.originLayer[themeId])){
+                this.$_getFromSource(layerId);
+            }else {
+                this.$_changeOriginLayer(window.originLayer[themeId]);
+                this.layerVector = window.originLayer[themeId];
+            }
         },
         resetLayer(layerId){
             this.$_resetLayer(layerId);
         },
         $_resetLayer(layerId){
             if(layerId){
-                this.map.removeLayer(this.lineId);
-                this.map.removeLayer(this.textId);
+                let lineLayer = this.map.getLayer(this.lineId);
+                let textLayer = this.map.getLayer(this.textId);
+                if(lineLayer){
+                    this.map.removeLayer(this.lineId);
+                }
+                if(textLayer){
+                    this.map.removeLayer(this.textId);
+                }
                 emitMapRemoveLayer(this.lineId);
                 emitMapRemoveLayer(this.textId);
                 emitMapChangeStyle(this.map.getStyle());
@@ -379,10 +423,29 @@ export default {
         $_toggleLayer() {
             let show = this.showLayer ? "none" : "visible";
             this.showLayer = !this.showLayer;
-            this.map.setLayoutProperty(this.layerVectorId, 'visibility', show);
+            this.map.setLayoutProperty(this.layerIdCopy, 'visibility', show);
+            if(this.map.getLayer(this.lineId)){
+                this.map.setLayoutProperty(this.lineId, 'visibility', show);
+            }
+            if(this.map.getLayer(this.textId)){
+                this.map.setLayoutProperty(this.textId, 'visibility', show);
+            }
+        },
+        toggleLayer(){
+            this.$_toggleLayer();
+        },
+        togglePanel(toggleLayer){
+            this.showPanel = !this.showPanel;
+            if(toggleLayer){
+                this.$_toggleLayer();
+            }
         },
         $_closePanel() {
             this.showPanel = false;
+            this.$_toggleLayer();
+        },
+        $_showPanel() {
+            this.showPanel = true;
             this.$_toggleLayer();
         },
         $_removeLayer() {
@@ -469,10 +532,12 @@ export default {
             }
         },
         $_setLayOutProperty(key, value, layerId, layerVector) {
+            let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
             layerVector.layout[key] = value;
             this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
+            window.originLayer[windowId].layout[key] = value;
             this.changeLayerProp = true;
             this.changeLayerId = layerId;
         },
@@ -532,11 +597,12 @@ export default {
             });
             return fields;
         },
-        $_changeOriginLayer() {
+        $_changeOriginLayer(layerVector) {
+            layerVector = layerVector || this.layerVector;
             let vm = this;
             if (this.useOriginLayer) {
-                Object.keys(this.layerVector.paint).forEach(function (key) {
-                    vm.map.setPaintProperty(vm.layerIdCopy, key, vm.layerVector.paint[key]);
+                Object.keys(layerVector.paint).forEach(function (key) {
+                    vm.map.setPaintProperty(vm.layerIdCopy, key, layerVector.paint[key]);
                 });
             }
         },
@@ -581,10 +647,8 @@ export default {
                 return;
             }
             let originLayer = this.map.getLayer(layerId);
-            if(!window.originLayer){
-                window.originLayer = {};
-            }
             window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
+            window.originLayer[this.layerIdCopy + "_" + this.themeType] = window.originLayer[this.layerIdCopy];
             this.source_vector_Id = originLayer.source;
             this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
@@ -625,6 +689,7 @@ export default {
                         layer = vm.$_getLayerStyle(vm.changeLayerId);
                     }
                     vm.$emit("layerChanged", layer);
+                    emitMapChangeStyle(vm.map.getStyle());
                     vm.changeLayerProp = false;
                 }
             });
@@ -637,6 +702,7 @@ export default {
             this.selectKey = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
+            window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = fillColors;
             this.checkBoxArr = this.originColors.checkArr;
             if (this.$_initThemeCallBack) {
                 this.$_initThemeCallBack(geojson, fillColors, this.dataSource);
@@ -730,6 +796,7 @@ export default {
                 let datas = this.$_getData(this.dataCopy.features, value);
                 this.dataSource = datas;
                 let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
+                window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
                 this.checkBoxArr = this.originColors.checkArr;
                 this.selectKey = value;
                 if (this.checkBoxArr.indexOf(true) < 0) {
@@ -748,11 +815,15 @@ export default {
                 this.changeLayerId = this.layerIdCopy;
             }
         },
+        $_themeTypeChanged(key,value){
+            this.$emit("themeTypeChanged",key,value);
+        },
         $_gradientChange(startColor, endColor) {
             this.showVector = false;
             this.startColor = startColor;
             this.endColor = endColor;
             let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false, true);
+            window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
             switch (this.dataType) {
                 case "fill":
                     this.layerVector.paint["fill-color"] = colors;
@@ -909,10 +980,12 @@ export default {
             }
         },
         $_setPaintProperty(key, value, layerId, layerVector) {
+            let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
             layerVector.paint[key] = value;
             this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
+            window.originLayer[windowId].paint[key] = value;
             this.changeLayerProp = true;
             this.changeLayerId = layerId;
         },
@@ -967,22 +1040,28 @@ export default {
             return colors;
         },
         $_addLineLayer() {
-            this.lineId = "line_layer_" + this.layerIdCopy;
+            this.lineId = "line_layer_" + this.themeType + "_" + this.layerIdCopy;
             let layer = this.map.getLayer(this.lineId);
             if (!layer) {
+                this.extraLayer.push({
+                    key: "lineLayer",
+                    value: this.lineId
+                });
                 this.lineLayer = {
                     'id': this.lineId,
                     'source': this.source_vector_Id,
                     'type': 'line',
                     'paint': {
-                        'line-color': "#FF0000",
+                        'line-color': this.outerLineColor,
                         'line-opacity': this.outerLineOpacity, //透明度
                         'line-width': this.lineWidth,
                     },
+                    "layout":{}
                 };
                 if (this.source_vector_layer_Id) {
                     this.lineLayer["source-layer"] = this.source_vector_layer_Id;
                 }
+                window.originLayer[this.lineId] = this.lineLayer;
                 this.map.addLayer(this.lineLayer);
                 emitMapAddLayer({ layer: this.lineLayer});
                 emitMapChangeStyle(this.map.getStyle());
@@ -994,9 +1073,13 @@ export default {
             if (!this.textFont) {
                 this.textFont = this.textFonts[0];
             }
-            this.textId = "text_layer_" + this.layerIdCopy;
+            this.textId = "text_layer_" + this.themeType + "_" + this.layerIdCopy;
             let layer = this.map.getLayer(this.textId);
             if(!layer){
+                this.extraLayer.push({
+                    key: "textLayer",
+                    value: this.textId
+                });
                 this.textLayer = {
                     'id': this.textId,
                     'source': this.source_vector_Id,
@@ -1018,6 +1101,7 @@ export default {
                 if (this.source_vector_layer_Id) {
                     this.textLayer["source-layer"] = this.source_vector_layer_Id;
                 }
+                window.originLayer[this.textId] = this.textLayer;
                 this.map.addLayer(this.textLayer);
                 emitMapAddLayer({ layer: this.textLayer});
                 emitMapChangeStyle(this.map.getStyle());

@@ -11,6 +11,8 @@
         :icons="icons"
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
+        :themeDefaultType="themeDefaultType"
+        :themeType="themeTypeArr"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
         @change="$_selectChange"
@@ -37,6 +39,7 @@
         @yOffsetChanged="$_yOffsetChanged"
         @outerLineColorChanged="$_outerLineColorChanged"
         @fontChanged="$_fontChanged"
+        @themeTypeChanged="$_themeTypeChanged"
     >
       <div slot="legend" slot-scope="slotProps">
         <mapgis-ui-row>
@@ -136,6 +139,10 @@ export default {
       default() {
         return {}
       }
+    },
+    themeDefaultType: {
+      type: String,
+      default: "分段专题图"
     }
   },
   watch: {
@@ -232,10 +239,10 @@ export default {
           this.$_setPaintProperty("line-width",lineWidth,this.lineId, this.lineLayer);
           break;
         case "line":
-          this.$_setPaintProperty("line-width", lineWidth);
+          this.$_setPaintProperty("line-width", lineWidth,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-width", lineWidth);
+          this.$_setPaintProperty("circle-stroke-width", lineWidth,this.lineId, this.lineLayer);
           break;
       }
     },

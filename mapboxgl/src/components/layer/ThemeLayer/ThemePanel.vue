@@ -9,6 +9,27 @@
           <p class="theme-panel-title-close" @click="$_close">X</p>
         </mapgis-ui-col>
       </mapgis-ui-row>
+      <!--专题图类型-->
+      <mapgis-ui-collapse accordion>
+        <mapgis-ui-collapse-panel key="1" header="专题图类型">
+          <mapgis-ui-row v-if="showField">
+            <p class="theme-panel-p">类型</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-select
+                :default-value="themeType[0].value"
+                v-model="themeDefaultTypeCopy"
+                @change="$_selectThemeType"
+                class="theme-panel-select"
+            >
+              <mapgis-ui-select-option v-for="(theme,index) in themeType" :key="index" :value="theme.key">{{
+                  theme.value
+                }}
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
       <!--字段信息-->
       <mapgis-ui-collapse accordion>
         <mapgis-ui-collapse-panel key="1" header="字段信息">
@@ -264,7 +285,7 @@
           <mapgis-ui-row>
             <p class="theme-panel-p">边线颜色</p>
           </mapgis-ui-row>
-          <mapgis-ui-row style="margin-top: 8px;"  v-if="dataType === 'line' || dataType === 'fill'">
+          <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'line' || dataType === 'fill'">
             <mapgis-ui-radio-group
                 v-model="radioMode"
                 :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
@@ -534,9 +555,9 @@
       <mapgis-ui-collapse accordion @change="$_clickCollapse">
         <mapgis-ui-collapse-panel key="4" header="图例">
           <slot name="legend" :selectValue="selectValue">
-<!--            <mapgis-ui-row>-->
-<!--              <mapgis-ui-input v-model="search" placeholder="搜索框"/>-->
-<!--            </mapgis-ui-row>-->
+            <!--            <mapgis-ui-row>-->
+            <!--              <mapgis-ui-input v-model="search" placeholder="搜索框"/>-->
+            <!--            </mapgis-ui-row>-->
             <mapgis-ui-row>
               <div id="theme-panel-list"
                    class="theme-panel-list"
@@ -657,13 +678,31 @@ export default {
     textFonts: {
       type: Array
     },
+    themeDefaultType: {
+      type: String,
+      default: "单值专题图"
+    },
     panelProps: {
       type: Object,
       default() {
-        return {
-        }
+        return {}
       }
-    }
+    },
+    themeType: {
+      type: Array,
+      default(){
+        return [{
+          key: "unique",
+          value: "单值专题图"
+        }, {
+          key: "range",
+          value: "分段专题图"
+        }, {
+          key: "symbol",
+          value: "等级符号专题图"
+        }];
+      }
+    },
   },
   data() {
     return {
@@ -758,7 +797,8 @@ export default {
       }, {
         key: "theme-panel-line-three",
         value: [10, 3, 2, 3]
-      }]
+      }],
+      themeDefaultTypeCopy: undefined
     }
   },
   watch: {
@@ -766,6 +806,11 @@ export default {
       deep: true,
       handler: function () {
         this.$_initDataSource();
+      }
+    },
+    themeDefaultType: {
+      handler: function () {
+        this.themeDefaultTypeCopy = this.themeDefaultType;
       }
     },
     showRange: {
@@ -793,55 +838,56 @@ export default {
   created() {
     let vm = this;
     Object.keys(this.$data).forEach(function (key) {
-      if(vm.$props.panelProps.hasOwnProperty(key)){
+      if (vm.$props.panelProps.hasOwnProperty(key)) {
         vm.$data[key] = vm.$props.panelProps[key];
       }
     });
   },
   mounted() {
-    this.$watch("radius",function () {
+    this.themeDefaultTypeCopy = this.themeDefaultType;
+    this.$watch("radius", function () {
       this.$emit("radiusChanged", Number(this.radius));
     });
-    this.$watch("opacity",function () {
+    this.$watch("opacity", function () {
       this.$emit("opacityChanged", Number(this.opacity) / 100);
     });
-    this.$watch("outerLineOpacity",function () {
+    this.$watch("outerLineOpacity", function () {
       this.$emit("outerLineOpacityChanged", Number(this.outerLineOpacity) / 100);
     });
-    this.$watch("xOffset",function () {
+    this.$watch("xOffset", function () {
       this.$emit("xOffsetChanged", Number(this.xOffset));
     });
-    this.$watch("yOffset",function () {
+    this.$watch("yOffset", function () {
       this.$emit("yOffsetChanged", Number(this.yOffset) * -1);
     });
-    this.$watch("xOffsetText",function () {
+    this.$watch("xOffsetText", function () {
       this.$emit("xOffsetTextChanged", Number(this.xOffsetText));
     });
-    this.$watch("textPadding",function () {
+    this.$watch("textPadding", function () {
       this.$emit("textPaddingChanged", Number(this.textPadding));
     });
-    this.$watch("yOffsetText",function () {
+    this.$watch("yOffsetText", function () {
       this.$emit("yOffsetTextChanged", Number(this.yOffsetText) * -1);
     });
-    this.$watch("rotation",function () {
+    this.$watch("rotation", function () {
       this.$emit("rotationChanged", Number(this.rotation));
     });
-    this.$watch("textRotation",function () {
+    this.$watch("textRotation", function () {
       this.$emit("textRotationChanged", Number(this.textRotation));
     });
-    this.$watch("haloWidth",function () {
+    this.$watch("haloWidth", function () {
       this.$emit("haloWidthChanged", Number(this.haloWidth));
     });
-    this.$watch("fontSize",function () {
+    this.$watch("fontSize", function () {
       this.$emit("fontSizeChanged", Number(this.fontSize));
     });
-    this.$watch("lineWidth",function () {
+    this.$watch("lineWidth", function () {
       this.$emit("lineWidthChanged", Number(this.lineWidth));
     });
   },
   methods: {
-    $_fontChanged(font){
-      this.$emit("fontChanged",font);
+    $_fontChanged(font) {
+      this.$emit("fontChanged", font);
     },
     $_toggleIcon() {
       this.showIcon = !this.showIcon;
@@ -962,6 +1008,15 @@ export default {
     $_selectChange(value) {
       this.selectValue = value;
       this.$emit("change", value);
+    },
+    $_selectThemeType(key) {
+      let value;
+      for (let i = 0; i < this.themeType.length; i++) {
+        if (this.themeType[i].key === key) {
+          value = this.themeType[i].value;
+        }
+      }
+      this.$emit("themeTypeChanged", key, value);
     },
     $_initDataSource() {
       if (this.dataSource.length > 0 && !this.init) {
