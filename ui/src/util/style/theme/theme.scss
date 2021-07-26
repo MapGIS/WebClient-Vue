@@ -163,8 +163,8 @@ $grid-gutter-width: 0;
 // Layout
 $layout-background: var(--layout-background);
 $layout-body-background: #f0f2f5;
-$layout-header-background: #001529;
-$layout-footer-background: $layout-body-background;
+$layout-header-background: var(--header-background);
+$layout-footer-background: var(--footer-background);
 $layout-header-height: 64px;
 $layout-header-padding: 0 50px;
 $layout-footer-padding: 24px 50px;
@@ -238,7 +238,7 @@ $btn-primary-color: #fff;
 $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
-$btn-default-bg: transparent;
+$btn-default-bg:  var(--button-default-background);
 $btn-default-border: var(--button-border-default-color);
 
 $btn-danger-color: $red-6;
@@ -310,19 +310,6 @@ $screen-sm-max: ($screen-md-min - 1px);
 $screen-md-max: ($screen-lg-min - 1px);
 $screen-lg-max: ($screen-xl-min - 1px);
 $screen-xl-max: ($screen-xxl-min - 1px);
-
-// Layout
-$layout-body-background: #f0f2f5;
-$layout-header-background: #001529;
-$layout-footer-background: $layout-body-background;
-$layout-sider-background: $layout-header-background;
-$layout-trigger-background: #002140;
-$layout-trigger-color: #fff;
-
-// Layout light theme
-$layout-sider-background-light: #fff;
-$layout-trigger-background-light: #fff;
-$layout-trigger-color-light: $text-color;
 
 //Dropdown
 $dropdown-vertical-padding: 5px;

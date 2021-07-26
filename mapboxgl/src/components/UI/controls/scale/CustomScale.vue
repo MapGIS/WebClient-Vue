@@ -159,8 +159,8 @@ export default {
 
 <style scoped>
 .mapgis-custom-scale {
-  z-index: 30;
-  position: absolute;
+  /* z-index: 30;
+  position: absolute; */
   width: fit-content;
   padding: 0px 12px;
   padding-right: 28px;

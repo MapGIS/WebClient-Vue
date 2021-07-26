@@ -13,6 +13,8 @@
         :icons="icons"
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
+        :themeDefaultType="themeDefaultType"
+        :themeType="themeTypeArr"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"
         @closePanel="$_closePanel"
@@ -39,6 +41,7 @@
         @singleChanged="$_singleChanged"
         @clickIcon="$_clickIcon"
         @fontChanged="$_fontChanged"
+        @themeTypeChanged="$_themeTypeChanged"
     >
       <div slot="legend" slot-scope="slotProps" v-if="showRange">
         <mapgis-ui-row>
@@ -213,8 +216,7 @@ export default {
   },
   props: {
     icons: {
-      type: Array,
-      required: true
+      type: Array
     },
     panelProps: {
       type: Object,
@@ -222,6 +224,10 @@ export default {
         return {
         }
       }
+    },
+    themeDefaultType: {
+      type: String,
+      default: "等级符号专题图"
     }
   },
   created() {
@@ -455,7 +461,10 @@ export default {
     $_editColor(dataBack) {
       dataBack = dataBack || this.dataBack;
       let newColors = ['match', ['get', this.selectKey]], Index = 0;
-      if (!this.hasString) {
+      if(dataBack.length === 1){
+        newColors.push(dataBack[0], this.colors[0]);
+        newColors.push("#FFF");
+      }else if (!this.hasString) {
         for (let i = 0; i < dataBack.length; i++) {
           if (Number(dataBack[i]) >= Number(this.dataSourceCopy[Index])) {
             Index++;
@@ -565,7 +574,7 @@ export default {
       });
       fillColors = this.$_editColor();
       this.layerVector = {
-        'id': 'symbol_layer_id',
+        'id': this.layerIdCopy,
         'source': this.source_vector_Id,
         'type': 'symbol',
         'layout': {
@@ -591,7 +600,10 @@ export default {
       }
       this.map.loadImage(this.icons[0].icons[0].url, function (error, image) {
         if (error) throw error;
-        vm.map.removeLayer('symbol_layer_id');
+        let layer = vm.map.getLayer(vm.layerIdCopy);
+        if(layer){
+          vm.map.removeLayer(vm.layerIdCopy);
+        }
         vm.map.addImage(vm.icons[0].icons[0].name, image, {'sdf': true});
         vm.map.addLayer(vm.layerVector);
       });

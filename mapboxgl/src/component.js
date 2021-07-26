@@ -66,8 +66,10 @@ export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
+export { default as MapgisSymbolThemeLayer } from "./components/layer/ThemeLayer/SymbolThemeLayer";
 export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
+export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
 export { default as MapgisHeatThemeLayer} from "./components/layer/ThemeLayer/HeatThemeLayer";
 
 /* 
