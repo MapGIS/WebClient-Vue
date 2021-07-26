@@ -31,7 +31,6 @@ if (typeof window !== "undefined" && window["Vue"]) {
 }
 
 export * from "./component";
-export { MapgisEventBusMapMixin };
 
 export default {
   install
