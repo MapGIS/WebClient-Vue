@@ -83,10 +83,12 @@ export default {
       let { position } = this;
       let className = "mapgis-collapse-card-button ";
       switch (position) {
+        case "right":  
         case "top-right":
         case "bottom-right":
           className += "mapgis-mvt-legend-card-right";
           break;
+        case "left":
         case "top-left":
         case "bottom-left":
           className += "mapgis-mvt-legend-card-left";

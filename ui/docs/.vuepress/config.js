@@ -55,14 +55,15 @@ module.exports = {
               ["/guide/", "快速上手"],
               ["/guide/base.md", "基础组件"]
             ]
-          }
-          /*  {
+          },
+          {
             title: "API",
             collapsable: false,
             children: [
-              ["/api/", "地图场景"],
+              ["/api/iconfont/IconFont.md", "图标"],
+              ["/api/collapsecard/CollapseCard.md", "收缩卡片"]
             ]
-          }, */
+          }
           /* {
             title: "组件开发",
             collapsable: false,
