@@ -10,6 +10,8 @@
         :icons="icons"
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
+        :themeDefaultType="themeDefaultType"
+        :themeType="themeTypeArr"
         @closePanel="$_closePanel"
         @change="$_selectChange"
         @checked="$_checked"
@@ -37,6 +39,7 @@
         @outerLineOpacityChanged="$_outerLineOpacityChanged"
         @outerLineColorChanged="$_outerLineColorChanged"
         @fontChanged="$_fontChanged"
+        @themeTypeChanged="$_themeTypeChanged"
     >
     </ThemePanel>
   </div>
@@ -59,6 +62,10 @@ export default {
       default() {
         return {}
       }
+    },
+    themeDefaultType: {
+      type: String,
+      default: "单值专题图"
     }
   },
   data(){

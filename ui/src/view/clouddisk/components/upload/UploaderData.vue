@@ -55,7 +55,7 @@
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { openUploader, changePathUploaduri } from "../../../../util/emit/upload";
+import { openUploader, changePathUploaduri, changeUploadWebsocketTaskId } from "../../../../util/emit/upload";
 import { uuid } from '../../util/uuid';
 
 export default {
@@ -122,6 +122,7 @@ export default {
       let gisFormat = type === "tiff" ? "raster" : "vector";
       // 本质上这个点击事件什么都不做，通过这个点击操作==>触发隐藏的全局上传空间的点击事件
       // 打开文件选择框
+      let taskid = uuid();
 
       openUploader({
         // 下面哪怕是空的对象也要传入，主要是electron这个框架会截获vuex的状态导致不更新视图，千万别注释了
@@ -132,9 +133,12 @@ export default {
           type: type,
           gisFormat: gisFormat,
           isGisImport: true,
-          taskid: uuid()
+          taskid: taskid
         }
       });
+      changeUploadWebsocketTaskId({
+        webSocketTaskId: taskid
+      })
     }
   },
   destroyed() {}

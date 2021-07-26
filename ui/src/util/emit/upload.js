@@ -109,6 +109,14 @@ export const changeUploadError = payload => {
   EventBus.$emit("change-upload-error", uploadError);
 };
 
+export const changeUploadWebsocketTaskId = payload => {
+  EventBus.$options.upload.webSocketTaskId = payload.webSocketTaskId;
+  EventBus.$emit("change-upload-taskid", payload.webSocketTaskId);
+};
+// handleWebSocketTaskId (state, payload) {
+//   state.webSocketTaskId = payload.webSocketTaskId
+// },
+
 // -----------------------原始云盘 Complete 模块--------------------
 export const addCompleteUploaderCount = () => {
   let count = EventBus.$options.complete.uploadCount + 1;
@@ -140,10 +148,6 @@ export const changeWebsocketAction = payload => {
 export const changeWebSocketContent = payload => {
   EventBus.$options.websocket.WebsocketContent = payload.content;
   EventBus.$emit("change-websocket-content", payload.content);
-};
-export const changeWebSocketContentType = payload => {
-  EventBus.$options.websocket.WebsocketContentType = payload.contentType;
-  EventBus.$emit("change-websocket-content-type", payload.contentType);
 };
 export const changeWebSocketMsgid = payload => {
   EventBus.$options.websocket.WebsocketMessageId = payload.msgid;

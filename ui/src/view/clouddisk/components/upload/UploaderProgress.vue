@@ -27,31 +27,41 @@ import UploadMixin from "../../../../mixin/UploaderMixin";
 export default {
   name: "importProgress",
   mixins: [UploadMixin],
-  props: {},
+  props: {
+    handleCloseUploadModal: Function,
+  },
   data() {
     return {
       importStatus: "导入中...",
       importComplete: false,
       tipText: "后台导入中，当前窗口可关闭",
+      progressState: true,
       importProgress: 0,
       importFileName: "上传文件名"
     };
   },
   watch: {
-    websocket: {
+    WebsocketMessageId: {
       handler: function(next) {
-        let wsAction = next.wsAction;
-        let contentType = next.contentType;
-        let wsContent = next.wsContent;
-        if (
-          wsAction === "refresh" &&
-          contentType === "dirNavigation" &&
-          wsContent[contentType] !== ""
-        ) {
-          this.importStatus = "导入成功";
-          this.importComplete = true;
-          this.tipText = "导入完成";
-          this.$emit("handleUploadComplete", true);
+        if (next === this.webSocketTaskId) { // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
+          let msgResponse = this.WebsocketContent[0]
+          let { errorCode, msg, subjectType } = msgResponse
+          if (subjectType === 'geotools:import') {
+            if (errorCode < 0) {
+              this.importStatus = '导入失败'
+              this.tipText = msg
+              this.progressState = false // 进度条样式改为叉号
+              this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
+            } else {
+              this.importStatus = '导入成功'
+              this.importComplete = true
+              this.tipText = '导入完成'
+              this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
+              if (this.handleCloseUploadModal) {
+                // this.handleCloseUploadModal()
+              }
+            }
+          }
         }
       },
       deep: true
@@ -65,20 +75,29 @@ export default {
         this.importProgress = uploadProgress;
       }
     },
+    importComplete (next) {
+      if (next === true) {
+        this.importProgress = 100;
+      }
+    },
     fileName(next) {
       this.importFileName = next;
     }
   },
   computed: {
+    
     handleWsRefresh() {
       return this.$store.state.websocket.msgid;
     },
     progressStatus() {
       if (this.uploadError === true) {
         this.importStatus = "导入失败";
-        this.tipText = "导入失败";
+        this.tipText = "上传文件失败";
         this.$emit("handleUploadComplete", true);
         return "exception";
+      } else if (this.progressState === false) {
+        this.progressState = true // 进度条样式改为叉号
+        return 'exception'
       } else {
         return null;
       }
