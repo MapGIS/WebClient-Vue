@@ -315,10 +315,11 @@
 - **描述:** 当前绘制组件的绘制模式 [官方模式](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md#modes)
 - 1. simple_select
 - 2. direct_select
-- 3. draw_line_string
-- 4. draw_polygon
-- 5. draw_point
-- 6. draw_circle
+- 3. draw_line_string 画线
+- 4. draw_polygon 画多边形
+- 5. draw_point 画点
+- 6. draw_circle 画圆
+- 7. draw_radius 画支持动态改变半径的圆
 
 ### `modes`
 
@@ -357,12 +358,20 @@
         ref="draw"
       >
         <div id="mapgis-2d-draw-wrapper">
-          <a-button-group>
-            <a-button v-on:click="togglePoint">画点</a-button>
-            <a-button v-on:click="togglePolyline">画线</a-button>
-            <a-button v-on:click="togglePolygon">画区</a-button>
-            <a-button type="primary" v-on:click="toggleDelete">删除</a-button>
-          </a-button-group>
+          <mapgis-ui-button-group>
+            <mapgis-ui-button v-on:click="togglePoint">画点</mapgis-ui-button>
+            <mapgis-ui-button v-on:click="togglePolyline"
+              >画线</mapgis-ui-button
+            >
+            <mapgis-ui-button v-on:click="togglePolygon">画区</mapgis-ui-button>
+            <mapgis-ui-button v-on:click="toggleCircle">画圆</mapgis-ui-button>
+            <mapgis-ui-button v-on:click="toggleRadius"
+              >画半径</mapgis-ui-button
+            >
+            <mapgis-ui-button type="primary" v-on:click="toggleDelete"
+              >删除</mapgis-ui-button
+            >
+          </mapgis-ui-button-group>
         </div>
       </mapgis-draw>
     </mapgis-web-map>
@@ -433,6 +442,16 @@ export default {
       this.type = "polygon";
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_polygon");
+    },
+    toggleCircle() {
+      this.type = "circle";
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_circle");
+    },
+    toggleRadius() {
+      this.type = "radius";
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_radius");
     },
     toggleDelete() {
       this.featureArr = "";

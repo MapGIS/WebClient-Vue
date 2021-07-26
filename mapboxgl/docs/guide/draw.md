@@ -19,7 +19,6 @@
   </mapgis-web-map>
 </template>
 <script>
-
 export default {
   data() {
     return {
@@ -100,19 +99,24 @@ toggleSimple(e) {
     ref="drawref"
   >
     <!--  <mapgis-draw-item v-for="item in buttons"> -->
-    <el-button-group>
-      <el-tooltip
+    <mapgis-ui-button-group>
+      <mapgis-ui-tooltip
         v-for="item in buttons"
         class="item"
         effect="dark"
         :content="item.tip"
         placement="bottom"
       >
-        <el-button circle size="small" :type="item.type" @click="item.click">
+        <mapgis-ui-button
+          circle
+          size="small"
+          :type="item.type"
+          @click="item.click"
+        >
           <icon-font :type="item.icon" />
-        </el-button>
-      </el-tooltip>
-    </el-button-group>
+        </mapgis-ui-button>
+      </mapgis-ui-tooltip>
+    </mapgis-ui-button-group>
     <!--     </mapgis-draw-item> -->
   </mapgis-draw>
 </template>
@@ -172,6 +176,18 @@ export default {
           click: this.togglePolygon
         },
         {
+          icon: "iconbox",
+          type: "primary",
+          tip: "画圆",
+          click: this.toggleCircle
+        },
+        {
+          icon: "iconvector-polygon",
+          type: "primary",
+          tip: "画半径",
+          click: this.toggleRadius
+        },
+        {
           icon: "icontrash",
           type: "primary",
           tip: "删除选中图元",
@@ -209,10 +225,10 @@ export default {
   },
   methods: {
     enableDrawer() {
-        const component = this.$refs.drawref;
-        if (component) {
-            component.enableDrawer();
-        }
+      const component = this.$refs.drawref;
+      if (component) {
+        component.enableDrawer();
+      }
     },
     handleAdded(e, data) {
       let { drawer, map } = e;
@@ -249,6 +265,14 @@ export default {
     togglePolygon() {
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_polygon");
+    },
+    toggleCircle() {
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_circle");
+    },
+    toggleRadius() {
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_radius");
     },
     toggleCombine() {},
     toggleUncombine() {},

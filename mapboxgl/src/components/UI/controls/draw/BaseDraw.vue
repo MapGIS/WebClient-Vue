@@ -15,11 +15,20 @@ import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 // import { CircleMode, DragCircleMode } from "mapbox-gl-draw-circle";
 import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
 import RadiusMode from "@mapgis/mapbox-gl-draw-radius";
+import {
+  CircleMode,
+  DragCircleMode,
+  DirectMode,
+  SimpleSelectMode
+} from "mapbox-gl-draw-circle";
 const modes = MapboxDrawCom.default.modes;
 const MapboxDraw = MapboxDrawCom.default;
 modes.draw_rectangle = DrawRectangle;
 modes.draw_circle = RadiusMode;
-// modes.drag_circle = DragCircleMode;
+modes.draw_radius = CircleMode;
+modes.drag_radius = DragCircleMode;
+modes.direct_select = DirectMode;
+modes.simple_select = SimpleSelectMode;
 
 import drawMixin from "./drawMixin";
 import controlMixin from "../withControlEvents";
