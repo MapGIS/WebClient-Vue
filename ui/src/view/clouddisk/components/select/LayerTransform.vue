@@ -4,6 +4,7 @@
 </template>
 <script>
 
+import axios from 'axios'
 import {
   getGeoMetadata,
   saveJsonFile,
@@ -41,6 +42,12 @@ export default {
       type: Array,
       default: []
     },
+    selectStyle: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    },
     currentDocument: {
       type: Object,
       default: () => {
@@ -51,8 +58,56 @@ export default {
   },
   mounted() {},
   watch: {
+    // selectLists(next) {
+    //   console.warn('监听到变化', next)
+    // }
   },
   methods: {
+    openStyle () {
+      // console.warn('看是否传过来模板（1个）：', this.selectsInfo)
+      if (this.selectStyle) {
+        if (this.selectStyle.isfolder === true) {
+          this.$notification.error({ message: '不可选择文件夹！', description: '请选择专题图模板文件' })
+          // this.loadingModal = false
+          // this.$nextTick(() => {
+          //   this.loadingModal = true
+          // })
+        } else {
+          // console.warn('看是否关闭：', this.selectsInfo)
+          let downloadFileUrl = getFileDownloadUrlWithAuth(this.selectStyle.url, false)
+          axios.get(downloadFileUrl)
+            .then(res => {
+              if (res.status === 200) {
+                let result = res.data
+                let { errorCode, msg } = result
+                if (errorCode < 0) {
+                  this.$notification.error({ message: errorCode, description: msg })
+                  // this.loadingModal = false
+                  // this.$nextTick(() => {
+                  //   this.loadingModal = true
+                  // })
+                } else {
+                  // console.warn('下载结果：', result)
+                  let payload = {
+                    document: result
+                  }
+                  this.handleNewDocument(payload) // 将新生成的template传给在线制图
+                  // this.handleClose()
+                }
+              }
+            })
+            .catch(error => {
+              this.$notification.error({ message: '网络异常,请检查链接', description: error })
+              // this.loadingModal = false
+              // this.$nextTick(() => {
+              //   this.loadingModal = true
+              // })
+            })
+        }
+      } else {
+        // this.handleClose()
+      }
+    },
     addLayer () {
       console.warn('准备添加图层', this.selectLists, this.currentDocument)
       // let payload = {
@@ -169,7 +224,7 @@ export default {
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
       // this.handleClose()
       let folderDir = getMapgisPath() + '/工作目录/工程文件Cache'
-      let fileName = doc.layers[0].name + '_mapstudio自动创建.style'
+      let fileName = doc.layers[0].name + '_自动创建.style'
       let srcUrl = folderDir + '/' + fileName
       let fileAttribute = JSON.stringify(this.getFileAttr(doc, srcUrl))
       fileAttribute = encodeURIComponent(fileAttribute)
@@ -276,23 +331,23 @@ export default {
           }
         }
       })
-      if (currentLayers.length <= 0) {
-        doc.maxBounds = layers[0].maxBounds
-        doc.current = {
-          id: doc.layers[0].id,
-          name: doc.layers[0].name,
-          type: doc.layers[0].type
-        }
-        doc.center = layers[0].center
-        // doc.sprite = this.http + '://' + this.ip + ':' + this.socket + '/static/sprites/sprite-mapbox'
-        // doc.glyphs = this.http + '://' + this.ip + ':' + this.socket + '/static/font/{fontstack}/{range}.pbf'
-        if (layers[0].type !== '.mosa') {
-          doc.crs = {
-            'epsg': 'EPSG_4326',
-            'proj': '+proj=longlat +datum=WGS84 +no_defs'
-          }
+      // if (currentLayers.length <= 0) {
+      doc.maxBounds = layers[0].maxBounds
+      doc.current = {
+        id: doc.layers[0].id,
+        name: doc.layers[0].name,
+        type: doc.layers[0].type
+      }
+      doc.center = layers[0].center
+      // doc.sprite = this.http + '://' + this.ip + ':' + this.socket + '/static/sprites/sprite-mapbox'
+      // doc.glyphs = this.http + '://' + this.ip + ':' + this.socket + '/static/font/{fontstack}/{range}.pbf'
+      if (layers[0].type !== '.mosa') {
+        doc.crs = {
+          'epsg': 'EPSG_4326',
+          'proj': '+proj=longlat +datum=WGS84 +no_defs'
         }
       }
+      // }
       return doc
     },
     getGisMetadata (item) {

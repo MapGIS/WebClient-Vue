@@ -63,6 +63,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isStyle: {
+      type: Boolean,
+      default: false
+    },
     curTiffUrl: {
       type: String,
       default: ""
@@ -201,6 +205,16 @@ export default {
                 let items = this.onlyFolder
                   ? data.filter(item => item.isfolder === true)
                   : data;
+                items = items.filter(item => {
+                  if (item.isfolder) {
+                    return true
+                  } else if (this.isStyle) {
+                    return item.type === '.style'
+                  } else {
+                    let hasImport = item.xattrs && item.xattrs.dataSource && item.xattrs.dataSource !== ''
+                    return hasImport
+                  }
+                })
                 items = items.map(d => {
                   d.commonUrl = defaultURL;
                   d.icon = getFileIcon(d.ext);
@@ -294,42 +308,52 @@ export default {
           resolve();
           return;
         }
-      dirnavigation(item.dataRef.url)
-        .then(res => {
-          if (res.status === 200) {
-            let result = res.data;
-            let { data, errorCode, msg } = result;
-            if (errorCode < 0) {
-              this.$notification.error({ message: errorCode, description: msg });
-            } else {
-              let items = this.onlyFolder
-                ? data.filter(item => item.isfolder === true)
-                : data;
-              items = items.map(d => {
-                d.commonUrl = item.commonUrl;
-                d.icon = getFileIcon(d.ext);
-                if (d.isfolder) {
-                  d.loading = false;
-                  // d.children = [];
-                  d.disableCheckbox = true;
-                } else {
-                  d.isLeaf = true;
-                  d.expand = false;
-                  delete d.loading;
-                }
-                return d;
-              });
-              items = this.checkSelected(this.url, item.url, items);
-              item.dataRef.children = items;
-              // vm.data = [...vm.data];
-              // console.warn(items)
-              // callback(items, item);
+        dirnavigation(item.dataRef.url)
+          .then(res => {
+            if (res.status === 200) {
+              let result = res.data;
+              let { data, errorCode, msg } = result;
+              if (errorCode < 0) {
+                this.$notification.error({ message: errorCode, description: msg });
+              } else {
+                let items = this.onlyFolder
+                  ? data.filter(item => item.isfolder === true)
+                  : data;
+                items = items.filter(item => {
+                  if (item.isfolder) {
+                    return true
+                  } else if (this.isStyle) {
+                    return item.type === '.style'
+                  } else {
+                    let hasImport = item.xattrs && item.xattrs.dataSource && item.xattrs.dataSource !== ''
+                    return hasImport
+                  }
+                })
+                items = items.map(d => {
+                  d.commonUrl = item.commonUrl;
+                  d.icon = getFileIcon(d.ext);
+                  if (d.isfolder) {
+                    d.loading = false;
+                    // d.children = [];
+                    d.disableCheckbox = true;
+                  } else {
+                    d.isLeaf = true;
+                    d.expand = false;
+                    delete d.loading;
+                  }
+                  return d;
+                });
+                items = this.checkSelected(this.url, item.url, items);
+                item.dataRef.children = items;
+                // vm.data = [...vm.data];
+                // console.warn(items)
+                // callback(items, item);
+              }
             }
-          }
-        })
-        .catch(error => {
-          this.$notification.error({ message: "网络异常,请检查链接", description: error });
-        });
+          })
+          .catch(error => {
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });
+          });
       })
     },
     selectTiff(checkedKeys, e) {

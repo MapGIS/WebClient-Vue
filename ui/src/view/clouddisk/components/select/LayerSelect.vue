@@ -14,6 +14,7 @@
           ref="folder"
           :url="url"
           :isMulti="isLayers"
+          :isStyle="isStyle"
           :curTiffUrl="curTiffUrl"
           :tiffListsObj="tiffListsObj"
           :onlyFolder="onlyFolder"
@@ -30,7 +31,7 @@
         size="small"
       />
     </mapgis-ui-row>
-    <mapgis-ui-clouddisk-transform ref="layerTransform" :selectLists="selectLists" :currentDocument="currentDocument" :handleNewDocument="handleNewDocument"/>
+    <mapgis-ui-clouddisk-transform ref="layerTransform" :selectLists="selectLists" :selectStyle="selectStyle" :currentDocument="currentDocument" :handleNewDocument="handleNewDocument"/>
   </div>
 </template>
 
@@ -56,7 +57,8 @@ export default {
       select: "",
       outputusers: "",
       selectLists: [],
-      shareUsers: []
+      shareUsers: [],
+      selectStyle: {}
     };
   },
   props: {
@@ -85,6 +87,10 @@ export default {
       }
     },
     isLayers: {
+      type: Boolean,
+      default: false
+    },
+    isStyle: {
       type: Boolean,
       default: false
     },
@@ -172,8 +178,9 @@ export default {
     },
     handleSelect(select, data) {
       this.select = select;
-      this.$emit("emitSelect", data);
-      this.$emit("emitSelectInfo", [data]);
+      this.selectStyle = data;
+      // this.$emit("emitSelect", data);
+      // this.$emit("emitSelectInfo", [data]);
       // this.$emit('change', select)
     },
     handleSelectsInfo(selectListsObj) {
@@ -201,6 +208,9 @@ export default {
     handleAddLayer () {
       // console.warn('收到回调并执行')
       this.$refs.layerTransform.addLayer()
+    },
+    handleOpenStyle () {
+      this.$refs.layerTransform.openStyle()
     }
   }
 };
