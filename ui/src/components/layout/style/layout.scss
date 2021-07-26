@@ -3,13 +3,13 @@
 
 @include b (layout) {
   @include e(header, '-') {
-    background-color: $layout-background !important;
+    background-color: $layout-header-background !important;
   }
   @include e(content, '-') {
     background-color: $layout-background !important;
   }
   @include e(footer, '-') {
-    background-color: $layout-background !important;
+    background-color: $layout-footer-background !important;
   }
 }
 
