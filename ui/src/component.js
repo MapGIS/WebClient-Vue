@@ -75,6 +75,7 @@ export { default as MapgisUiTreeSelectNode } from "./components/tree-select/Tree
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 export { default as MapgisUiBadge } from "./components/badge/Badge.vue";
 export { default as MapgisUiCalendar } from "./components/calendar/Calendar.vue";
+export { default as MapgisUiCollapseCard } from "./components/collapse-card/CollapseCard.vue";
 export { default as MapgisUiCard } from "./components/card/Card.vue";
 export { default as MapgisUiCardGrid } from "./components/card/Grid.vue";
 export { default as MapgisUiCardMeta } from "./components/card/Meta.vue";
