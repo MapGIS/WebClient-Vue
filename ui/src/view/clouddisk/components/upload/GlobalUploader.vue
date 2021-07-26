@@ -364,6 +364,9 @@ export default {
       if (res.data.needMerge) {
         let type = self.param.type;
         let isCache = self.param.isCache;
+        let isGisImport = self.param.isGisImport
+        let taskid = self.param.taskid
+        console.warn('本次上传对应taskid:', taskid)
         let gisFormat = type === "tiff" ? "raster" : "vector";
         let formdata = {
           // @date 2021/07/16
@@ -374,7 +377,9 @@ export default {
           filename: file.name,
           prelocation: file.relativePath,
           gisFormat: gisFormat,
-          isCache: isCache
+          isCache: isCache,
+          isGisImport: isGisImport || false,
+          taskid: taskid || ''
         };
         console.warn("mergeSimpleUpload 尝试发送", formdata);
         mergeSimpleUpload(formdata)
@@ -569,31 +574,40 @@ export default {
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
-        // let flag = vm.isJSON(event.data);
-        /* if (flag) { */
+        let flag = vm.isJSON(event.data);
+        if (flag) {
           console.log('websocket', event);
           let data = JSON.parse(event.data);
           let action = data.action;
           let msgid = data.msgid;
           let contentStr = data.content;
-          let contentJson = {};
-          let contentType = "";
-          // if (vm.isJSON(contentStr)) {
-            contentJson = JSON.parse(contentStr);
-            contentType = Object.keys(contentJson)[0];
-          // }
-          if (contentType !== "" && contentJson !== {}) {
+          let contentJson = JSON.parse(contentStr);
+          if (contentJson !== {}) {
             changeWebsocketAction({ action: action });
-            changeWebSocketContent({ content: data });
-            changeWebSocketContentType({ contentType: contentType });
+            changeWebSocketContent({ content: contentJson });
             changeWebSocketMsgid({ msgid: msgid });
           }
-        /* } else {
+        } else {
           console.warn("发送成功！", event.data);
-        } */
+        }
       };
     },
-    removeWebsocket() {}
+    removeWebsocket() {},
+    isJSON (str) {
+      if (typeof str === 'string') {
+        try {
+          let obj = JSON.parse(str)
+          if (typeof obj === 'object' && obj) {
+            return true
+          } else {
+            return false
+          }
+        } catch (e) {
+          return false
+        }
+      }
+      return false
+    }
   },
   destroyed() {
     // Bus.$off("openUploader");

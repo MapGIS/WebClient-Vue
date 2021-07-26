@@ -28,14 +28,17 @@
     />
     <mapgis-ui-uploader-progress
       v-if="uistatus === 'upload' && show"
+      :handleCloseUploadModal="handleCloseUploadModal"
       @handleUploadComplete="handleUploadComplete"
     />
+    <mapgis-ui-clouddisk-transform ref="layerTransform" :selectLists="selectLists" :currentDocument="currentDocument" :handleNewDocument="handleNewDocument"/>
   </mapgis-ui-modal>
 </template>
 
 <script>
 import MapgisUiUploaderData from "./UploaderData.vue";
 import MapgisUiUploaderProgress from "./UploaderProgress.vue";
+import MapgisUiClouddiskTransform from "../select/LayerTransform";
 import UploadMixin from "../../../../mixin/UploaderMixin";
 import { changeUiState } from "../../../../util/emit/upload";
 import { getFileByWebsocketCallback } from "../../axios/files";
@@ -45,7 +48,8 @@ export default {
   mixins: [UploadMixin],
   components: {
     MapgisUiUploaderData,
-    MapgisUiUploaderProgress
+    MapgisUiUploaderProgress,
+    MapgisUiClouddiskTransform
   },
   model: {
     prop: "show",
@@ -59,17 +63,26 @@ export default {
     width: {
       type: Number,
       default: 500
-    }
+    },
+    currentDocument: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    },
+    handleNewDocument: Function,
+    handleCloseUploadModal: Function,
   },
   data() {
     return {
       curImportUrl: "",
       importDestUrl: "",
-      continueUpload: false
+      continueUpload: false,
+      selectLists: [],
     };
   },
   watch: {
-    WebsocketContent: {
+    WebsocketMessageId: {
       handler(next) {
         this.handleWebsocket(next);
       },
@@ -110,14 +123,15 @@ export default {
       }
       return url;
     },
-    handleWebsocket(data) {
+    handleWebsocket(msgid) {
       // UploaderData组件触发该行为，将上传的param参数封装
-      const { taskid } = this.param;
-      data = data || {};
-      let { content, msgid } = data;
-      content = JSON.parse(content);
+      // const { taskid } = this.param;
+      // data = data || {};
+      // let { content, msgid } = data;
+      // let content = JSON.parse(content);
       let srcUrl = "";
-      if (true|| msgid == taskid) {
+      let content = this.WebsocketContent
+      if (msgid === this.webSocketTaskId) {
         // let promises = content.map(i => getFileByWebsocketCallback(i.subject));
         content.forEach((c, i) => {
           let url;
@@ -127,10 +141,15 @@ export default {
           } else {
             url = c.subject;
           }
-          srcUrl += i != content.length - 1 ? `${url},` : `${url}`;
+          srcUrl += i !== content.length - 1 ? `${url},` : `${url}`;
         });
         getFileByWebsocketCallback(srcUrl).then(res => {
-          console.log("res", res);
+          // console.log("res", res, res.data.data);
+          this.selectLists = res.data.data;
+          // console.warn('这里可以得到', this.selectLists);
+          setTimeout(() => {
+            this.$refs.layerTransform.addLayer();
+          },100);
         });
       }
     }
