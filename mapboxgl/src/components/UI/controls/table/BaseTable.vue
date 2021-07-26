@@ -13,10 +13,12 @@
           class="toolbar-button"
           style="right: 100px;"
           @click="$_fullScreen"
-      >全屏</mapgis-ui-button
+      >全屏
+      </mapgis-ui-button
       >
       <mapgis-ui-button class="toolbar-button" @click="$_fieldFilter"
-      >字段过滤</mapgis-ui-button
+      >字段过滤
+      </mapgis-ui-button
       >
     </div>
     <div
@@ -91,39 +93,48 @@
 
 <script>
 import {VFeature} from "../../../util";
-
+import {MRFS} from "@mapgis/webclient-es6-service";
+const {FeatureService} = MRFS;
 export default {
   name: "mapgis-base-table",
-  props:{
+  props: {
+    //json数据源url
+    baseUrl: {
+      type: String
+    },
     //数据源
-    dataSource:{
-      type: [Array,Object],
-      require: true
+    dataSource: {
+      type: [Array, Object],
     },
     //用户自定义的表头信息数组
-    columns:{
+    columns: {
       type: Array,
-      default(){
+      default() {
         return [];
       }
     },
     //分页信息
-    pagination:{
+    pagination: {
       type: Object,
-      require: true
+      default() {
+        return {
+          total: 0,
+          pageSize: 10
+        };
+      }
     },
     //是否启用编辑
-    editable:{
+    editable: {
       type: Boolean,
       default: true
     },
     //是否启用选
-    selectable:{
+    selectable: {
       type: Boolean,
       default: true
     }
   },
-  data(){
+  data() {
     return {
       //转化后mapgis-ui-table需要的数据源
       dataSourceCopy: [],
@@ -155,8 +166,8 @@ export default {
       //选择列
       rowSelection: {
         onChange: (selectedRowKeys, selectedRows) => {
-          this.$emit("selectedChange",selectedRowKeys, selectedRows);
-          this.$emit("selectedchange",selectedRowKeys, selectedRows);
+          this.$emit("selectedChange", selectedRowKeys, selectedRows);
+          this.$emit("selectedchange", selectedRowKeys, selectedRows);
         },
         onSelect: (record, selected) => {
           this.$_select(record, selected);
@@ -185,18 +196,25 @@ export default {
       pageHeight: 0,
       filterTop: 6,
       filterPosition: "absolute",
-      pageSize: 10
+      pageSize: 10,
+      baseUrlCopy: undefined
     }
   },
-  watch:{
-    dataSource:{
-      handler:function () {
+  watch: {
+    dataSource: {
+      handler: function () {
         this.$_initSource();
       },
       deep: true
     },
-    pagination:{
-      handler:function () {
+    baseUrl: {
+      handler: function () {
+        this.baseUrlCopy = this.baseUrl;
+        this.$_initTableFromUrl();
+      }
+    },
+    pagination: {
+      handler: function () {
         this.$_initPagination();
       },
       deep: true
@@ -208,61 +226,94 @@ export default {
   mounted() {
     this.$_initTable();
     this.$_registerMouseLeave();
+    this.$emit("loaded",this);
   },
-  methods:{
-    $_initTable(){
-      if(this.pagination){
+  methods: {
+    $_initTable() {
+      if (this.pagination) {
         this.paginationCopy = this.pagination;
         this.pageSize = this.pagination.pageSize;
       }
-      if(this.dataSource){
+      if (this.dataSource) {
         this.$_initSource();
       }
+      if(this.baseUrl){
+        this.baseUrlCopy = this.baseUrl;
+        this.$_initTableFromUrl();
+      }
+    },
+    addTable(dataObj){
+      if(typeof dataObj === 'string'){
+        this.baseUrlCopy = dataObj;
+        this.$_initTableFromUrl();
+      }else if(dataObj instanceof Object){
+        this.$_initSource(dataObj);
+      }else {
+        throw new Error("请传入数据对象或者url！");
+      }
+    },
+    $_initTableFromUrl(){
+      let vm = this;
+      FeatureService.get(this.baseUrlCopy,function (result) {
+        result = JSON.parse(result);
+        vm.$_initSource(result);
+      },function (e) {
+        console.log(e);
+      });
     },
     //将传入的数据转化为mapgis-ui-table识别的数据
-    $_initSource(){
-      if(this.dataSource instanceof Array){
-        if(this.$_isFeatureSet(this.dataSource)){
+    $_initSource(dataSource) {
+      dataSource = dataSource || this.dataSource;
+      if (dataSource instanceof Array) {
+        if (this.$_isFeatureSet(dataSource)) {
           //Feature集合
-          this.$_getColumnsCopyByFeatureSet(this.dataSource);
+          this.$_getColumnsCopyByFeatureSet(dataSource);
           this.$_applyColumnsToColumnsCopy();
           this.$_initPlainOptions();
           this.$_initCheckedList();
           this.$_addOperationColumns();
-          this.featureSet = this.dataSource;
+          this.featureSet = dataSource;
           this.$_featureSetToDataSource(this.featureSet);
           this.$_drawTable();
         }
         // else {
         //   //是原始的antdesign-table的datasource格式
         //   if(!this.pagination){
-        //     this.paginationCopy.total = this.dataSource.length;
+        //     this.paginationCopy.total = dataSource.length;
         //   }
-        //   this.dataSourceCopy = this.dataSource;
+        //   dataSourceCopy = dataSource;
         // }
-      }else if(this.dataSource instanceof Object) {
+      } else if (dataSource instanceof Object) {
         //zondy格式
-        if (this.$_isZondyResult(this.dataSource)) {
+        if (this.$_isZondyResult(dataSource)) {
           //this.columnsCopy.length为0表示第一次加载数据，需要初始化表头
           if (this.columnsCopy.length === 0) {
-            this.$_getColumnsCopyByZondySource(this.dataSource);
+            this.$_getColumnsCopyByZondySource(dataSource);
             this.$_applyColumnsToColumnsCopy();
             this.$_initPlainOptions();
             this.$_initCheckedList();
             this.$_addOperationColumns();
-            this.featureSet = VFeature.fromQueryResult(this.dataSource);
+            this.featureSet = VFeature.fromQueryResult(dataSource);
             this.$_featureSetToDataSource(this.featureSet);
             this.$_drawTable();
           } else {
-            this.featureSet = VFeature.fromQueryResult(this.dataSource);
+            this.featureSet = VFeature.fromQueryResult(dataSource);
             this.$_featureSetToDataSource(this.featureSet);
             this.$nextTick(function () {
               this.$_drawTableHeight();
             });
           }
-        } else if (this.$_isGeoJSON(this.dataSource)) {
+        } else {
           //geoJSON格式
-          // this.$_featureSetToDataSource(VFeature.fromGeoJSON(this.dataSource));
+          let features =  VFeature.fromGeoJSON(dataSource);
+          this.$_getColumnsCopyByFeatureSet(features);
+          this.$_applyColumnsToColumnsCopy();
+          this.$_initPlainOptions();
+          this.$_initCheckedList();
+          this.$_addOperationColumns();
+          this.featureSet = features;
+          this.$_featureSetToDataSource(features);
+          this.$_drawTable()
         }
       }
     },
@@ -270,7 +321,7 @@ export default {
     * 从zondy数据源中取得表头信息
     * @param Source 数据源
     * **/
-    $_getColumnsCopyByZondySource(Source){
+    $_getColumnsCopyByZondySource(Source) {
       let FldName = Source.AttStruct.FldName;
       let columns = [];
       for (let i = 0; i < FldName.length; i++) {
@@ -281,7 +332,8 @@ export default {
           scopedSlots: {customRender: FldName[i]},
           align: "left",
           ellipsis: true,
-          sorter: function () {},
+          sorter: function () {
+          },
           width: 100
         });
       }
@@ -291,8 +343,8 @@ export default {
     * 从featureSet里面去的columns
     * @param Source 数据源
     * **/
-    $_getColumnsCopyByFeatureSet(Source){
-      if(Source.length > 0){
+    $_getColumnsCopyByFeatureSet(Source) {
+      if (Source.length > 0) {
         let columns = [];
         Object.keys(Source[0].attributes).forEach(function (key) {
           columns.push({
@@ -302,7 +354,8 @@ export default {
             scopedSlots: {customRender: key},
             align: "left",
             ellipsis: true,
-            sorter: function () {},
+            sorter: function () {
+            },
             width: 100
           });
         });
@@ -312,42 +365,43 @@ export default {
     /*
     * 将[feature]转化为mapgis-ui-table数据源
     * **/
-    $_featureSetToDataSource(featureSet){
+    $_featureSetToDataSource(featureSet) {
       //线存一份原始数据
       this.allDataSource = featureSet;
       //清空dataSourceCopy
       this.dataSourceCopy = [];
       //将为空的数据设为"null"
       for (let i = 0; i < featureSet.length; i++) {
-        let data = Object.assign(featureSet[i].attributes,{}),vm = this;
-        for (let j = 0;j < this.columnsCopy.length;j++){
-          if(!featureSet[i].attributes.hasOwnProperty(this.columnsCopy[j].dataIndex)){
+        let data = Object.assign(featureSet[i].attributes, {}), vm = this;
+        for (let j = 0; j < this.columnsCopy.length; j++) {
+          if (!featureSet[i].attributes.hasOwnProperty(this.columnsCopy[j].dataIndex)) {
             data[this.columnsCopy[j].dataIndex] = "null";
-          }else{
+          } else {
             let value = featureSet[i].attributes[this.columnsCopy[j].dataIndex];
-            if(value === undefined || value === null || value === ""){
+            if (value === undefined || value === null || value === "") {
               data[this.columnsCopy[j].dataIndex] = "null";
             }
           }
         }
-        this.dataSourceCopy.push(Object.assign(data, {key: featureSet[i].FID ? featureSet[i].FID : i + 1}));
+        featureSet[i].FID = featureSet[i].FID || i + 1;
+        this.dataSourceCopy.push(Object.assign(data, {key: featureSet[i].FID}));
       }
     },
     /*
     * 初始化分页信息
     * **/
-    $_initPagination(){
+    $_initPagination() {
       this.paginationCopy = JSON.parse(JSON.stringify(this.pagination));
     },
     /*
     * 将用户自定义的columns覆盖原本的columns
     * **/
-    $_applyColumnsToColumnsCopy(){
-      if(this.columns.length > 0){
-        for (let i = 0;i < this.columnsCopy.length;i++){
-          for (let j = 0;j < this.columns.length;j++){
-            if(this.columns[j].key === this.columnsCopy[i].key){
-              this.columnsCopy[i] = Object.assign(this.columnsCopy[i],this.columns[j]);
+    $_applyColumnsToColumnsCopy() {
+      if (this.columns.length > 0) {
+        for (let i = 0; i < this.columnsCopy.length; i++) {
+          for (let j = 0; j < this.columns.length; j++) {
+            if (this.columns[j].key === this.columnsCopy[i].key) {
+              this.columnsCopy[i] = Object.assign(this.columnsCopy[i], this.columns[j]);
             }
           }
         }
@@ -358,16 +412,16 @@ export default {
     /*
     * 添加操作列
     * **/
-    $_addOperationColumns(){
-      if(this.editable){
+    $_addOperationColumns() {
+      if (this.editable) {
         let flag = true;
-        for (let i = 0;i < this.columnsCopy.length;i++){
-          if(this.columnsCopy[i].dataIndex === "operation"){
+        for (let i = 0; i < this.columnsCopy.length; i++) {
+          if (this.columnsCopy[i].dataIndex === "operation") {
             flag = false;
             break;
           }
         }
-        if(flag){
+        if (flag) {
           this.columnsCopy.push({
             title: '删除',
             dataIndex: 'operation',
@@ -383,10 +437,10 @@ export default {
     /*
     * 确定显示隐藏表头的数组，不包含operation
     * **/
-    $_initPlainOptions(){
+    $_initPlainOptions() {
       this.plainOptions = [];
-      for(let i = 0;i < this.columnsCopy.length;i++){
-        if(this.columnsCopy[i].dataIndex !== "operation"){
+      for (let i = 0; i < this.columnsCopy.length; i++) {
+        if (this.columnsCopy[i].dataIndex !== "operation") {
           this.plainOptions.push(this.columnsCopy[i].title);
         }
       }
@@ -394,21 +448,21 @@ export default {
     /*
     * 取得表格有效宽度
     * **/
-    $_getTableEffectiveWidth(width){
+    $_getTableEffectiveWidth(width) {
       let offsetWidth;
       //取得table对象
       let table = document.getElementById(this.tableId);
-      if(width){
+      if (width) {
         offsetWidth = width;
-      }else {
+      } else {
         offsetWidth = table.offsetWidth;
       }
       //去掉启用编辑后剔除操作列的宽度
-      if(this.editable){
+      if (this.editable) {
         offsetWidth -= 100;
       }
       //去掉启用选择后剔除选择列的宽度
-      if(this.selectable){
+      if (this.selectable) {
         offsetWidth -= 60;
       }
       return offsetWidth;
@@ -416,41 +470,42 @@ export default {
     /*
     * 确定要显示的表头，如果用户传入columns则使用，不传则自动填满表格，不包含operation
     * **/
-    $_initCheckedList(){
+    $_initCheckedList() {
       function fillTableWithColumns() {
-        for(let i = 0;i < vm.columnsCopy.length;i++){
+        for (let i = 0; i < vm.columnsCopy.length; i++) {
           columnsWidth += vm.columnsCopy[i].width;
-          if(columnsWidth < offsetWidth){
+          if (columnsWidth < offsetWidth) {
             vm.checkedList.push(vm.columnsCopy[i].title);
             columns.push(vm.columnsCopy[i]);
-          }else {
+          } else {
             break
           }
         }
       }
+
       this.checkedList = [];
-      let columns = [],columnsWidth = 0,vm = this;
+      let columns = [], columnsWidth = 0, vm = this;
       //取得有效宽度
       let offsetWidth = this.$_getTableEffectiveWidth();
-      if(this.columns.length > 0){
+      if (this.columns.length > 0) {
         //用户传入columns，则应用
-        for(let i = 0;i < this.columnsCopy.length;i++){
-          if(this.columnsCopy[i].checked){
+        for (let i = 0; i < this.columnsCopy.length; i++) {
+          if (this.columnsCopy[i].checked) {
             columns.push(this.columnsCopy[i]);
             columnsWidth += this.columnsCopy[i].width;
             this.checkedList.push(this.columnsCopy[i].title);
           }
         }
         //如果用户没有指定要显示的列，则
-        if(columns.length === 0){
+        if (columns.length === 0) {
           fillTableWithColumns();
         }
-      }else {
+      } else {
         //如果没有columns，则自动填满表格
         fillTableWithColumns();
       }
       //根据每个column的width，以及剔除选择和操作列后剩余的宽度，计算最终填满table每列需要的宽度
-      for (let i = 0;i < columns.length;i++){
+      for (let i = 0; i < columns.length; i++) {
         columns[i].width = (columns[i].width / columnsWidth) * offsetWidth;
       }
       this.columnsCopy = columns;
@@ -458,26 +513,26 @@ export default {
     /*
     * 根据columns，实际取得的数据绘制table
     * **/
-    $_drawTable(){
+    $_drawTable() {
       let columnsWidth = 0;
       //取得有效宽度
       let offsetWidth = this.$_getTableEffectiveWidth();
-      for(let i = 0;i < this.checkedList.length;i++){
-        for(let j = 0;j < this.columnsCopy.length;j++){
-          if(this.checkedList[i] === this.columnsCopy[j].title){
+      for (let i = 0; i < this.checkedList.length; i++) {
+        for (let j = 0; j < this.columnsCopy.length; j++) {
+          if (this.checkedList[i] === this.columnsCopy[j].title) {
             columnsWidth += this.columnsCopy[j].width;
             break;
           }
         }
       }
-      if(columnsWidth > offsetWidth){
+      if (columnsWidth > offsetWidth) {
         this.scroll = {
           x: columnsWidth
         }
-      }else {
+      } else {
         delete this.scroll.x;
         this.$nextTick(function () {
-          if(this.dataSourceCopy.length > 0){
+          if (this.dataSourceCopy.length > 0) {
             this.$_drawTableHeight();
           }
         });
@@ -487,16 +542,16 @@ export default {
     * 绘制表格高度
     * @param scrollHeight 滚动条高度
     * **/
-    $_drawTableHeight(scrollHeight){
+    $_drawTableHeight(scrollHeight) {
       let table = document.getElementById(this.tableId);
-      let tableBody = this.$_queryTag(table.childNodes,"mapgis-ui-table-body","div");
-      let tr = this.$_queryTag(tableBody.childNodes,"mapgis-ui-table-row-level-0","tr");
-      let container = this.$_queryTag(table.childNodes,"mapgis-ui-spin-container","div");
+      let tableBody = this.$_queryTag(table.childNodes, "mapgis-ui-table-body", "div");
+      let tr = this.$_queryTag(tableBody.childNodes, "mapgis-ui-table-row-level-0", "tr");
+      let container = this.$_queryTag(table.childNodes, "mapgis-ui-spin-container", "div");
       this.rowHeight = tr.offsetHeight;
-      let page = this.$_queryTag(table.childNodes,"mapgis-ui-pagination","ul");
+      let page = this.$_queryTag(table.childNodes, "mapgis-ui-pagination", "ul");
       let pageStyle = window.getComputedStyle(page)
-      let pageMarginTop = pageStyle.marginTop.replace("px","");
-      let pageMarginBottom = pageStyle.marginBottom.replace("px","");
+      let pageMarginTop = pageStyle.marginTop.replace("px", "");
+      let pageMarginBottom = pageStyle.marginBottom.replace("px", "");
       this.pageHeight = page.offsetHeight + Number(pageMarginTop) + Number(pageMarginBottom);
       //页数+页眉+分页的高度
       let containerHeight = (this.paginationCopy.pageSize + 1.5) * this.rowHeight
@@ -508,38 +563,40 @@ export default {
     /*
     * 绘制工具栏
     * **/
-    $_drawToolBar(containerHeight){
+    $_drawToolBar(containerHeight) {
       this.toolbarBottom = containerHeight + "px";
     },
     /*
     * 通过className查询doom元素
     * **/
-    $_queryTag(childNodes,className,tagName){
+    $_queryTag(childNodes, className, tagName) {
       let node;
-      function queryTag(childNodes,className,tagName){
-        for (let i = 0; i < childNodes.length;i++){
-          if(childNodes[i].localName === tagName && typeof childNodes[i].className === "string" && childNodes[i].className.indexOf(className) > -1){
-            if(childNodes[i].className.indexOf(className + "-") < 0){
+
+      function queryTag(childNodes, className, tagName) {
+        for (let i = 0; i < childNodes.length; i++) {
+          if (childNodes[i].localName === tagName && typeof childNodes[i].className === "string" && childNodes[i].className.indexOf(className) > -1) {
+            if (childNodes[i].className.indexOf(className + "-") < 0) {
               node = childNodes[i];
               break;
             }
-          }else {
-            queryTag(childNodes[i].childNodes,className,tagName);
+          } else {
+            queryTag(childNodes[i].childNodes, className, tagName);
           }
         }
       }
-      queryTag(childNodes,className,tagName);
+
+      queryTag(childNodes, className, tagName);
       return node;
     },
     /*
     * 判断是否上zondy格式
     * @param source 数据源
     **/
-    $_isZondyResult(source){
+    $_isZondyResult(source) {
       let flag = true;
-      if(!(source.hasOwnProperty("AttStruct")
+      if (!(source.hasOwnProperty("AttStruct")
           && source.hasOwnProperty("SFEleArray")
-          && source.hasOwnProperty("TotalCount"))){
+          && source.hasOwnProperty("TotalCount"))) {
         flag = false;
       }
       return flag;
@@ -548,13 +605,13 @@ export default {
     * 判断是否是要素集合
     * @param source 数据源
     **/
-    $_isFeatureSet(source){
+    $_isFeatureSet(source) {
       let flag = true;
       //这里无法使用instanceof进行比较，因为datasource可能由feture派生出来
-      for (let i = 0;i < source.length;i++){
-        if(!(source[i].hasOwnProperty("geometry") && source[i].hasOwnProperty("geometryType") &&
+      for (let i = 0; i < source.length; i++) {
+        if (!(source[i].hasOwnProperty("geometry") && source[i].hasOwnProperty("geometryType") &&
             source[i].hasOwnProperty("attributes") && source[i].hasOwnProperty("style") &&
-            source[i].hasOwnProperty("FID"))){
+            source[i].hasOwnProperty("FID"))) {
           flag = false;
           break;
         }
@@ -564,9 +621,9 @@ export default {
     /*
     * 取得当前分页的所有数据
     * **/
-    $_getAllAttrData(){
-      let dataArr = Object.assign(this.featureSet,{}),data;
-      for (let i = 0;i < dataArr.length;i++){
+    $_getAllAttrData() {
+      let dataArr = Object.assign(this.featureSet, {}), data;
+      for (let i = 0; i < dataArr.length; i++) {
         dataArr[i].attributes = this.$_removeNullData(dataArr[i].attributes);
       }
       return dataArr;
@@ -575,12 +632,12 @@ export default {
     * 将“null”转化为null
     * @param data 要转化的数据
     * **/
-    $_removeNullData(data){
+    $_removeNullData(data) {
       let returnData = {};
       Object.keys(data).forEach(function (key) {
-        if(typeof data[key] === "string" && data[key].indexOf("null") > -1){
+        if (typeof data[key] === "string" && data[key].indexOf("null") > -1) {
           returnData[key] = null;
-        }else {
+        } else {
           returnData[key] = data[key];
         }
       });
@@ -589,72 +646,72 @@ export default {
     /*
     * 删除一条数据
     * **/
-    $_deleteFeature(record){
+    $_deleteFeature(record) {
       let data = this.$_getDataByKey(record.key);
-      this.$emit("deleted",data);
+      this.$emit("deleted", data);
     },
     /*
     * 选择一条数据
     * **/
-    $_select(record, selected){
+    $_select(record, selected) {
       let value;
-      for (let i = 0;i < this.featureSet.length;i++){
-        if(record.key === this.featureSet[i].FID){
+      for (let i = 0; i < this.featureSet.length; i++) {
+        if (record.key === this.featureSet[i].FID) {
           value = this.featureSet[i];
           value.attributes = this.$_removeNullData(value.attributes);
           break
         }
       }
-      let index = -1,insertIndex = 0,FIDs = [];
-      for (let i = 0;i < this.selectData.length;i++){
+      let index = -1, insertIndex = 0, FIDs = [];
+      for (let i = 0; i < this.selectData.length; i++) {
         FIDs.push(this.selectData[i].FID);
-        if(this.selectData[i].FID === value.FID){
+        if (this.selectData[i].FID === value.FID) {
           index = i
           break;
         }
       }
-      if(index === -1){
-        for (let i = 0;i < FIDs.length;i++){
-          if(value.FID > FIDs[i]){
+      if (index === -1) {
+        for (let i = 0; i < FIDs.length; i++) {
+          if (value.FID > FIDs[i]) {
             insertIndex++;
           }
         }
-        this.selectData.splice(insertIndex,0,value);
-      }else {
-        this.selectData.splice(index,1);
+        this.selectData.splice(insertIndex, 0, value);
+      } else {
+        this.selectData.splice(index, 1);
       }
-      this.$emit("selected",value,this.selectData,selected);
+      this.$emit("selected", value, this.selectData, selected);
     },
     /*
     * 选择一个分页度所有数据
     * **/
-    $_selectAll(selected){
-      let AllAttrData = this.featureSet,selectData = [];
-      if(selected){
-        for(let i = 0;i < AllAttrData.length;i++){
-          let flag = false,FIDs = [];
-          for (let j = 0;j < this.selectData.length;j++){
+    $_selectAll(selected) {
+      let AllAttrData = this.featureSet, selectData = [];
+      if (selected) {
+        for (let i = 0; i < AllAttrData.length; i++) {
+          let flag = false, FIDs = [];
+          for (let j = 0; j < this.selectData.length; j++) {
             FIDs.push(this.selectData[j].FID);
-            if(this.selectData[j].FID === AllAttrData[i].FID){
+            if (this.selectData[j].FID === AllAttrData[i].FID) {
               flag = true;
               break;
             }
           }
-          if(!flag){
+          if (!flag) {
             let insertIndex = 0;
-            for (let j = 0;j < FIDs.length;j++){
-              if(AllAttrData[i].FID > FIDs[j]){
+            for (let j = 0; j < FIDs.length; j++) {
+              if (AllAttrData[i].FID > FIDs[j]) {
                 insertIndex++;
               }
             }
             // AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
-            this.selectData.splice(insertIndex,0,AllAttrData[i]);
+            this.selectData.splice(insertIndex, 0, AllAttrData[i]);
           }
         }
-      }else {
-        for(let i = 0; i < this.selectData.length;i++){
-          for (let j = 0;j < AllAttrData.length;j++){
-            if(this.selectData[i].FID === AllAttrData[j].FID){
+      } else {
+        for (let i = 0; i < this.selectData.length; i++) {
+          for (let j = 0; j < AllAttrData.length; j++) {
+            if (this.selectData[i].FID === AllAttrData[j].FID) {
               this.selectData[i] = [];
               break;
             }
@@ -662,8 +719,8 @@ export default {
         }
         selectData = [].concat(this.selectData);
         this.selectData = [];
-        for (let i = 0;i < selectData.length;i++){
-          if(selectData[i].length !== 0){
+        for (let i = 0; i < selectData.length; i++) {
+          if (selectData[i].length !== 0) {
             // AllAttrData[i].attributes = this.$_removeNullData(AllAttrData[i].attributes);
             this.selectData.push(selectData[i]);
           }
@@ -675,60 +732,60 @@ export default {
     /*
     * 分页或排序回调
     * **/
-    $_change(pagination, filters, sorter,currentDataSource){
-      if(!sorter.hasOwnProperty("order")){
+    $_change(pagination, filters, sorter, currentDataSource) {
+      if (!sorter.hasOwnProperty("order")) {
         sorter.order = "";
       }
       let sorterObj = {};
       sorterObj.orderField = sorter.field;
-      if(sorter.order === "ascend"){
+      if (sorter.order === "ascend") {
         sorterObj.isAsc = true;
-      }else if(sorter.order === "descend"){
+      } else if (sorter.order === "descend") {
         sorterObj.isAsc = false;
-      } else if(sorter.order === ""){
+      } else if (sorter.order === "") {
         sorterObj.isAsc = false;
         sorterObj.orderField = "";
       }
-      if(!this.pageInfo){
-        if(!sorter.hasOwnProperty("columnKey")){
-          this.$emit("pageChanged",pagination, sorterObj, currentDataSource );
-          this.$emit("pagechanged",pagination, sorterObj, currentDataSource );
-        }else {
-          this.$emit("sorted", sorterObj, pagination, currentDataSource );
+      if (!this.pageInfo) {
+        if (!sorter.hasOwnProperty("columnKey")) {
+          this.$emit("pageChanged", pagination, sorterObj, currentDataSource);
+          this.$emit("pagechanged", pagination, sorterObj, currentDataSource);
+        } else {
+          this.$emit("sorted", sorterObj, pagination, currentDataSource);
         }
-      }else {
-        if(pagination.current !== this.pageInfo.current){
-          this.$emit("pageChanged",pagination, sorterObj, currentDataSource );
-          this.$emit("pagechanged",pagination, sorterObj, currentDataSource );
-        }else{
-          this.$emit("sorted", sorterObj, pagination, currentDataSource );
+      } else {
+        if (pagination.current !== this.pageInfo.current) {
+          this.$emit("pageChanged", pagination, sorterObj, currentDataSource);
+          this.$emit("pagechanged", pagination, sorterObj, currentDataSource);
+        } else {
+          this.$emit("sorted", sorterObj, pagination, currentDataSource);
         }
       }
       this.pageInfo = pagination;
       this.sorterInfo = sorterObj;
-      this.$emit("changed",pagination, filters, sorterObj,currentDataSource );
+      this.$emit("changed", pagination, filters, sorterObj, currentDataSource);
     },
     /*
     * 要素table的单次点击事件
     * **/
-    $_onceClick(index, key){
+    $_onceClick(index, key) {
       //index即为行，key为列
       if (this.editRowAndCol !== key + "_" + index) {
-        if(this.editRowAndCol.length>0){
+        if (this.editRowAndCol.length > 0) {
           let arr = this.editRowAndCol.split("_");
           let datakey = arr[arr.length - 1];
           let data = this.$_getDataByKey(datakey);
-          this.$emit("edited",data);
+          this.$emit("edited", data);
         }
         this.editRowAndCol = "";
       }
       let data = this.$_getDataByKey(index);
-      this.$emit("click",data, key);
+      this.$emit("click", data, key);
     },
-    $_getDataByKey(key){
+    $_getDataByKey(key) {
       let dataIndex;
-      for(let i = 0;i < this.dataSourceCopy.length;i++){
-        if(Number(key) === this.dataSourceCopy[i].key){
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (Number(key) === this.dataSourceCopy[i].key) {
           dataIndex = i;
           break;
         }
@@ -755,25 +812,25 @@ export default {
         this.editRowAndCol = key + "_" + index;
         this.currentRecord = record;
       }
-      this.$emit("doubleClick",index-1,key,value,data,AllAttrData[index-1]);
-      this.$emit("doubleclick",index-1,key,value,data,AllAttrData[index-1]);
+      this.$emit("doubleClick", index - 1, key, value, data, AllAttrData[index - 1]);
+      this.$emit("doubleclick", index - 1, key, value, data, AllAttrData[index - 1]);
     },
     /*
     * 选择要显示或隐藏的列
     * **/
-    $_check(e){
-      this.indeterminate =  this.checkedList.length < this.plainOptions.length;
+    $_check(e) {
+      this.indeterminate = this.checkedList.length < this.plainOptions.length;
       this.checkAll = this.checkedList.length === this.plainOptions.length;
       let columns = [];
-      for (let i = 0;i < this.checkedList.length;i++){
-        for (let j = 0;j < this.columnsSave.length;j++){
-          if(this.checkedList[i] === this.columnsSave[j].title) {
-            columns.push(Object.assign(this.columnsSave[j],{width:this.columnsWidthSave[i].width}));
+      for (let i = 0; i < this.checkedList.length; i++) {
+        for (let j = 0; j < this.columnsSave.length; j++) {
+          if (this.checkedList[i] === this.columnsSave[j].title) {
+            columns.push(Object.assign(this.columnsSave[j], {width: this.columnsWidthSave[i].width}));
           }
         }
       }
       this.columnsCopy = columns;
-      if(this.editable){
+      if (this.editable) {
         this.$_addOperationColumns();
       }
       this.$_drawTable();
@@ -781,46 +838,46 @@ export default {
     /*
     * 全选
     * **/
-    $_checkAll(e){
-      if(e.target.checked){
+    $_checkAll(e) {
+      if (e.target.checked) {
         this.checkedList = this.plainOptions;
         let columns = [];
-        for (let i = 0;i < this.checkedList.length;i++){
-          for (let j = 0;j < this.columnsSave.length;j++){
-            if(this.checkedList[i] === this.columnsSave[j].title) {
+        for (let i = 0; i < this.checkedList.length; i++) {
+          for (let j = 0; j < this.columnsSave.length; j++) {
+            if (this.checkedList[i] === this.columnsSave[j].title) {
               this.columnsSave[j].width = this.columnsWidthSave[j].width;
               columns.push(this.columnsSave[j]);
             }
           }
         }
         this.columnsCopy = columns;
-        if(this.editable){
+        if (this.editable) {
           this.$_addOperationColumns();
         }
         this.$_drawTable();
-      }else {
+      } else {
         this.checkedList = [];
         this.columnsCopy = [];
       }
       this.indeterminate = false;
       this.checkAll = e.target.checked;
     },
-    $_fieldFilter(){
+    $_fieldFilter() {
       this.showFilter = !this.showFilter;
     },
-    $_registerMouseLeave(){
-      let columnFilter = document.getElementById(this.columnFilterId),vm = this;
-      columnFilter.onmouseleave  = function () {
+    $_registerMouseLeave() {
+      let columnFilter = document.getElementById(this.columnFilterId), vm = this;
+      columnFilter.onmouseleave = function () {
         vm.showFilter = false;
       };
     },
     /*
     * 全屏函数
     * **/
-    $_fullScreen(){
+    $_fullScreen() {
       let toolbar = document.getElementById(this.toolbarId);
       let table = document.getElementById(this.tableId);
-      if(!this.fullScreen){
+      if (!this.fullScreen) {
         let tHeight = Number(document.body.scrollHeight);
         table.style.height = tHeight + "px";
         table.style.top = toolbar.offsetHeight + "px";
@@ -832,26 +889,26 @@ export default {
         this.filterPosition = "fixed";
         let offsetWidth = this.$_getTableEffectiveWidth(document.body.scrollWidth);
         let columnsWidth = 0;
-        for (let i = 0;i < this.columnsCopy.length;i++){
-          for (let j = 0;j < this.columnsWidthSave.length;j++){
-            if(this.columnsCopy[i].key === this.columnsWidthSave[j].key){
+        for (let i = 0; i < this.columnsCopy.length; i++) {
+          for (let j = 0; j < this.columnsWidthSave.length; j++) {
+            if (this.columnsCopy[i].key === this.columnsWidthSave[j].key) {
               this.columnsCopy[i].width = this.columnsWidthSave[j].width;
               columnsWidth += this.columnsCopy[i].width;
               break;
             }
           }
         }
-        if(columnsWidth > offsetWidth){
+        if (columnsWidth > offsetWidth) {
           this.scroll.x = offsetWidth;
-        }else {
+        } else {
           delete this.scroll.x;
         }
         this.pageSize = this.pagination.pageSize;
         let fullNum = parseInt((tHeight - this.pageHeight - toolbar.offsetHeight) / this.rowHeight);
-        this.$emit("fullScreen",this.$_getPageInfo(fullNum - 2),this.sorterInfo);
-        this.$emit("fullscreen",this.$_getPageInfo(fullNum - 2),this.sorterInfo);
+        this.$emit("fullScreen", this.$_getPageInfo(fullNum - 2), this.sorterInfo);
+        this.$emit("fullscreen", this.$_getPageInfo(fullNum - 2), this.sorterInfo);
         this.fullScreen = true;
-      }else {
+      } else {
         table.removeAttribute("style");
         table.classList.remove("mapgis-baseTable-fullScreen");
         this.$nextTick(function () {
@@ -861,39 +918,39 @@ export default {
           this.toolbarBottom = table.offsetHeight - 1 + "px";
           toolbar.style.position = "absolute";
           toolbar.style.width = "100%";
-          this.filterTop =  6;
+          this.filterTop = 6;
           this.filterPosition = "absolute";
           let offsetWidth = this.$_getTableEffectiveWidth();
           let columnsWidth = 0;
-          for (let i = 0;i < this.columnsCopy.length;i++){
-            for (let j = 0;j < this.columnsWidthSave.length;j++){
-              if(this.columnsCopy[i].key === this.columnsWidthSave[j].key){
+          for (let i = 0; i < this.columnsCopy.length; i++) {
+            for (let j = 0; j < this.columnsWidthSave.length; j++) {
+              if (this.columnsCopy[i].key === this.columnsWidthSave[j].key) {
                 this.columnsCopy[i].width = this.columnsWidthSave[j].width;
                 columnsWidth += this.columnsCopy[i].width;
                 break;
               }
             }
           }
-          if(columnsWidth > offsetWidth){
+          if (columnsWidth > offsetWidth) {
             this.scroll.x = offsetWidth;
-          }else {
+          } else {
             delete this.scroll.x;
           }
         });
-        this.$emit("originScreen",this.$_getPageInfo(this.pageSize),this.sorterInfo);
-        this.$emit("originscreen",this.$_getPageInfo(this.pageSize),this.sorterInfo);
+        this.$emit("originScreen", this.$_getPageInfo(this.pageSize), this.sorterInfo);
+        this.$emit("originscreen", this.$_getPageInfo(this.pageSize), this.sorterInfo);
         this.fullScreen = false;
       }
     },
     /*
     * 取得pageInfo
     * **/
-    $_getPageInfo(pageSize){
+    $_getPageInfo(pageSize) {
       let pageInfo = {};
-      if(!this.pageInfo){
+      if (!this.pageInfo) {
         pageInfo.current = 1;
         pageInfo.pageSize = pageSize;
-      }else {
+      } else {
         pageInfo = this.pageInfo;
         pageInfo.pageSize = pageSize;
       }
@@ -948,6 +1005,7 @@ export default {
   height: 15px;
   width: 80px;
 }
+
 .mapgis-baseTable.addFeature {
   bottom: 64px;
   left: 23px;
@@ -1003,11 +1061,13 @@ export default {
 .mapgis-baseTable-fieldFilter .mapgis-ui-checkbox-wrapper {
   padding-left: 10px;
 }
+
 .mapgis-baseTable .mapgis-ui-table-pagination {
   position: absolute;
   bottom: 5px;
   right: 10px;
 }
+
 .mapgis-baseTable-fullScreen {
   position: fixed;
   left: 0;
