@@ -1,4 +1,4 @@
-export { default as MapgisEventBusMapMixin } from './lib/eventbus/EventBusMapMixin';
+export { default as MapgisEventBusMapMixin } from "./lib/eventbus/EventBusMapMixin";
 
 export { default as MapgisWebMap } from "./components/map/GlMap.vue";
 export { MapgisIconfont } from "./components/UI/iconfont";

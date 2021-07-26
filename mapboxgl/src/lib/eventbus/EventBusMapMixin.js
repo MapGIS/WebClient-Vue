@@ -1,7 +1,7 @@
 import EventBus from "./EventBusMap";
 
 export default {
-  name: "EventBusMapMixin",
+  name: "mapgis-event-bus-map-mixin",
   props: {},
   data() {
     return {
