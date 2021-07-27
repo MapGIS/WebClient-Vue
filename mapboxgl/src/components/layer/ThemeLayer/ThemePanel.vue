@@ -60,10 +60,10 @@
                            :span="25"
             >
               <mapgis-ui-select
-                  :default-value="'#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000'"
+                  :default-value="0"
                   @change="$_heatGradientChange"
               >
-                <mapgis-ui-select-option v-for="(gradient,index) in heatGradientArr" :key="index" :value="gradient.key">
+                <mapgis-ui-select-option v-for="(gradient,index) in heatGradientArr" :key="index" :value="index">
                   <div :style="{background: gradient.value}" class="theme-panel-gradient"></div>
                 </mapgis-ui-select-option>
               </mapgis-ui-select>
@@ -755,7 +755,7 @@ export default {
     },
     themeType: {
       type: Array,
-      default(){
+      default() {
         return [{
           key: "unique",
           value: "单值专题图"
@@ -853,6 +853,7 @@ export default {
       lineColor: "#000000",
       startColor: "#FFF",
       endColor: "#000",
+      currentColorIndex: 0,
       gradientArr: [{
         key: "#FF0000",
         value: "-webkit-linear-gradient(left,#FFFFFF,#FF0000)"
@@ -1136,7 +1137,9 @@ export default {
     $_panelClick() {
       this.$emit("panelClick", this);
     },
-    $_heatGradientChange(e) {
+    $_heatGradientChange(index) {
+      this.currentColorIndex = index;
+      let e = this.heatGradientArr[index].key;
       let colorsArr = [];
       colorsArr = e.split(",");
       this.currentColors = [];
@@ -1154,6 +1157,11 @@ export default {
         }
         colorsArr.push(c.value);
       })
+      let changeOneColor = {
+        key: colorsArr.toString(),
+        value: "-webkit-linear-gradient(left," + colorsArr.toString() + ")"
+      };
+      this.$set(this.heatGradientArr,this.currentColorIndex,changeOneColor);
       colorsArr.unshift("#FFFFFF");
       this.$emit("gradientChange", colorsArr);
     },
