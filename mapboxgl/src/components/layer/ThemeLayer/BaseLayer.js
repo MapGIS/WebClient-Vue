@@ -38,7 +38,11 @@ export default {
             default() {
                 return {}
             }
-        }
+        },
+        resetAllLayer: {
+            type: Boolean,
+            default: false
+        },
     },
     watch: {
         baseUrl: {
@@ -152,12 +156,12 @@ export default {
         },
         $_addThemeLayer(layerId) {
             this.layerIdCopy = layerId;
+            this.showPanel = true;
             let themeId = layerId + "_" + this.themeType;
             if (window.originLayer && (!window.originLayer.hasOwnProperty(themeId) || !window.originLayer[themeId])) {
                 this.$_getFromSource(layerId);
             } else {
                 this.$_changeOriginLayer(window.originLayer[themeId]);
-                this.layerVector = window.originLayer[themeId];
             }
         },
         resetLayer(layerId) {
@@ -191,15 +195,14 @@ export default {
                 let layout = window.originLayer[layerId].layout;
                 for (let key in paint) {
                     if (paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]) {
-                        this.$_setPaintProperty(key, paint[key]);
+                        this.$_setPaintProperty(key, paint[key],this.layerIdCopy);
                     }
                 }
                 for (let key in layout) {
                     if (layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]) {
-                        this.$_setPaintProperty(key, paint[layout]);
+                        this.$_setPaintProperty(key, paint[layout],this.layerIdCopy);
                     }
                 }
-                delete window.originLayer[layerId];
                 emitMapChangeStyle(this.map.getStyle());
                 this.$emit("resetLayer");
             }
@@ -504,7 +507,11 @@ export default {
         },
         $_closePanel() {
             this.showPanel = false;
-            this.$_toggleLayer();
+            if(this.resetAllLayer){
+                this.$emit("resetAllLayer",this);
+            }else {
+                this.$_resetLayer();
+            }
         },
         $_showPanel() {
             this.showPanel = true;
@@ -716,8 +723,10 @@ export default {
                 return;
             }
             let originLayer = this.map.getLayer(layerId);
-            window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
-            window.originLayer[this.layerIdCopy + "_" + this.themeType] = window.originLayer[this.layerIdCopy];
+            if(!window.originLayer.hasOwnProperty(this.layerIdCopy)){
+                window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
+            }
+            window.originLayer[this.layerIdCopy + "_" + this.themeType] = this.$_getLayerStyle(layerId);
             this.source_vector_Id = originLayer.source;
             this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
@@ -942,7 +951,6 @@ export default {
             } else {
                 throw new Error("请设置$_opacityChanged方法的回到函数！");
             }
-            this.$_changeOriginLayer();
             this.showVector = true;
             this.changeLayerProp = true;
             this.changeLayerId = this.layerIdCopy;
@@ -1004,13 +1012,13 @@ export default {
         $_opacityChangedCallBack(opacity) {
             switch (this.dataType) {
                 case "fill":
-                    this.layerVector.paint["fill-opacity"] = opacity;
+                    this.$_setPaintProperty("fill-opacity",opacity);
                     break;
                 case "circle":
-                    this.layerVector.paint["circle-opacity"] = opacity;
+                    this.$_setPaintProperty("circle-opacity",opacity);
                     break;
                 case "line":
-                    this.layerVector.paint["line-opacity"] = opacity;
+                    this.$_setPaintProperty("line-opacity",opacity);
                     break;
             }
         },
