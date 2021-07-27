@@ -1,14 +1,17 @@
 <template>
-  <div>
+  <div class="mapgis-inspect-content">
     <slot :currentLayerInfo="currentLayerInfo" name="content">
       <div class="mapgis-inspect-prop-tabs">
         <mapgis-ui-tabs
           v-model="activeKey"
+          :style="{ height: '240px' }"
+          size="small"
           :active-key="activeKey"
           :tab-position="mode"
           @tabClick="changePane"
         >
           <mapgis-ui-tab-pane
+            class="mapgis-inspect-prop-content"
             v-for="(f, i) in currentLayerInfo"
             :key="i"
             :tab="f.layer.id"
@@ -95,16 +98,33 @@ export default {
 };
 </script>
 <style>
+.mapgis-inspect-content {
+  position: absolute;
+  height: 240px;
+}
+
+.mapboxgl-popup-content {
+  height: 260px;
+  width: 100%;
+}
+
 .mapgis-inspect-prop-tabs {
   max-width: 600px !important;
+  margin: 4px;
 }
 
 .mapboxgl-popup-content {
   border-radius: 10px !important;
 }
 
+.mapgis-inspect-prop-content {
+  height: 240px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
 .mapboxgl-popup {
-  min-width: 350px !important;
+  min-width: 400px !important;
   max-width: 600px !important;
 }
 

@@ -52,6 +52,9 @@ export default {
     EventBus.$on("map-remove-theme-layer", payload => {
       this.$_handleMapRemoveThemeLayer(payload);
     });
+    EventBus.$on("map-open-table", payload => {
+      this.$_handleMapOpenTable(payload);
+    });
   },
   methods: {
     initUploadData() {
@@ -103,6 +106,11 @@ export default {
      * @description 取消激活专题图
      * @param {payload} 专题图载荷
      */
-    $_handleMapRemoveThemeLayer(payload) {}
+    $_handleMapRemoveThemeLayer(payload) {},
+    /**
+     * @description 激活属性表
+     * @param {payload} 属性表载荷
+     */
+    $_handleMapOpenTable(payload) {}
   }
 };

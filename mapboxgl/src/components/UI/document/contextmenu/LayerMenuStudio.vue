@@ -14,7 +14,7 @@
       <mapgis-ui-iconfont type="mapgis-chexiao" />撤销专题图
     </contextmenu-item>
     <contextmenu-item divider />
-    <contextmenu-item>
+    <contextmenu-item @click="handleClick('open-table')">
       <mapgis-ui-iconfont type="mapgis-zhujishuxingbianji" />查看属性表
     </contextmenu-item>
     <contextmenu-item divider />
@@ -52,7 +52,8 @@
 import {
   emitMapAddThemeLayer,
   emitMapEditThemeLayer,
-  emitMapRemoveThemeLayer
+  emitMapRemoveThemeLayer,
+  emitMapOpenTable
 } from "../../../../lib/eventbus/EmitMap";
 import {
   ContextmenuItem,
@@ -119,6 +120,10 @@ export default {
         case "remove-theme":
           this.$emit("onRemoveTheme", { type, layerId });
           emitMapRemoveThemeLayer({ type, layerId });
+          break;
+        case "open-table":
+          this.$emit("onOpenTable", { type, layerId });
+          emitMapOpenTable({ type, layerId });
           break;
         case "up":
           this.$emit("onUp", { type, layerId });
