@@ -322,14 +322,17 @@ export default {
         } else {
           //geoJSON格式
           let features = VFeature.fromGeoJSON(dataSource);
+          this.paginationCopy.total = features.length;
           this.$_getColumnsCopyByFeatureSet(features);
           this.$_applyColumnsToColumnsCopy();
           this.$_initPlainOptions();
-          this.$_initCheckedList();
-          this.$_addOperationColumns();
-          this.featureSet = features;
-          this.$_featureSetToDataSource(features);
-          this.$_drawTable();
+          this.$nextTick(function () {
+            this.$_initCheckedList();
+            this.$_addOperationColumns();
+            this.featureSet = features;
+            this.$_featureSetToDataSource(features);
+            this.$_drawTable();
+          });
         }
       }
     },
