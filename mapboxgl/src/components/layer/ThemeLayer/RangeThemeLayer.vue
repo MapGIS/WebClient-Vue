@@ -196,6 +196,7 @@ export default {
   data() {
     return {
       title: "分段专题图",
+      themeType: "range",
       dataSourceCopy: undefined,
       dataInit: false,
       numWrong: -1,
