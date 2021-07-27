@@ -12,6 +12,13 @@ import {
   emitMapRemoveLayer
 } from "../../../lib/eventbus/EmitMap";
 
+const DefaultThemeLayers = [
+  "line_layer_unique",
+  "text_layer_unique",
+  "line_layer_random",
+  "text_layer_random"
+];
+
 export default {
   name: "mapgis-mvt-style-layer",
   mixins: [withEvents, EventBusMapMixin],
@@ -28,12 +35,17 @@ export default {
     },
     before: {
       type: String
+    },
+    removeForce: {
+      type: Boolean,
+      default: true
     }
   },
 
   data() {
     return {
-      lastStyle: undefined
+      lastStyle: undefined,
+      themeRules: []
     };
   },
 
@@ -54,7 +66,6 @@ export default {
             // 而mvt组件仍然认为当前的样式是StyleA导致再维护的时候出现混乱的情况
             // 这类情况采取事件总线机制来维护协同组件间的样式关系
             if (!deepEqual(old, lastStyle)) {
-              
             }
           }
           this.remove(deleteStyle);
@@ -110,19 +121,51 @@ export default {
       this.$_emitEvent("added", this);
     },
 
-    remove(oldStyle) {
+    isThemeLayer(name) {
+      let isTheme = false;
+      if (!name) return isTheme;
+      DefaultThemeLayers.forEach(l => {
+        if (name.indexOf(l) >= 0) {
+          isTheme = true;
+        }
+      });
+      return isTheme;
+    },
+
+    remove(oldStyle, removeForce) {
+      removeForce = removeForce === undefined ? true : this.removeForce;
+      let { map } = this;
       if (!oldStyle) return;
       let vm = this;
       const { layers, sources } = oldStyle;
-      if (!layers) return;
+      if (!layers || !map) return;
+      let currentLayers = map.getStyle().layers;
+      this.themeRules = [];
       layers.forEach(layer => {
         if (vm.map.getLayer(layer.id)) {
-          vm.map.removeLayer(layer.id);
+          if (removeForce) {
+            vm.map.removeLayer(layer.id);
+            let themes = currentLayers.filter(l => {
+              let find = l.source == layer.source && vm.isThemeLayer(l.id);
+              return find;
+            });
+            if (themes && themes.length > 0) {
+              // 当前图层激活了专题图图层不能直接暴力删除,记录对应规则
+              this.themeRules.push([].concat(layer).concat(themes));
+            }
+          } else {
+            let others = currentLayers.filter(l => l.source == layer.source);
+            if (others && others.length >= 2) {
+              // 有其他图层同时引用同一个数据源，不删除数据
+            } else {
+              vm.map.removeLayer(layer.id);
+            }
+          }
         }
       });
       if (!sources) return;
       let lefts = this.map.getStyle().layers;
-      
+
       Object.keys(sources).forEach(source => {
         if (vm.map.getSource(source)) {
           let finds = lefts.find(l => l.source == source);
@@ -180,12 +223,35 @@ export default {
     },
 
     mergeLayers(olds, news) {
+      const vm = this;
       news = news || [];
       if (!olds) return [].concat(news);
-      let merges = olds.map(layer => {
+      /* let merges = olds.map(layer => {
         let find = news.find(l => l.id === layer.id);
         return find ? find : layer;
-      });
+      }); */
+      let merges = olds.reduce((total, layer, index, arr) => {
+        let theme = undefined;
+        let beforetheme = undefined;
+        vm.themeRules.forEach(rules => {
+          let findtheme = rules.find(r => r.id == layer.id);
+          if (findtheme) {
+            theme = findtheme;
+            beforetheme = rules[0];
+            let findorigin = total.find(l => l.id == beforetheme.id);
+            if (!findorigin) {
+              total = total.concat(beforetheme);
+            }
+          }
+        });
+
+        let find = news.find(l => l.id === layer.id);
+        if (find) {
+          return total.concat(find);
+        } else {
+          return total.concat(layer);
+        }
+      }, []);
       let unmerges = news.filter(layer => {
         let find = merges.find(l => l.id === layer.id);
         return find ? false : true;
@@ -193,13 +259,9 @@ export default {
       return merges.concat(unmerges);
     },
 
-    $_handleMapAddLayer(payload) {
-      
-    },
+    $_handleMapAddLayer(payload) {},
 
-    $_handleMapRemoveLayer(payload) {
-      
-    }
+    $_handleMapRemoveLayer(payload) {}
   }
 };
 </script>

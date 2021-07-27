@@ -2,6 +2,7 @@
   <div>
     <mapgis-ui-button
       v-show="!visible"
+      size="small"
       :class="{ 'mapgis-ui-setting-pro': true, active: visible }"
       @click="showSetting"
     >
@@ -86,8 +87,8 @@ export default {
   z-index: 9999;
   right: 0px;
   top: 40vh;
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   border-top-right-radius: 0px;
@@ -100,6 +101,6 @@ export default {
 }
 
 .setting {
-  font-size: 22px;
+  font-size: 18px;
 }
 </style>
