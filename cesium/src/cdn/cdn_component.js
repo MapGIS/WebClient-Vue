@@ -52,3 +52,5 @@ export { default as Mapgis3dFloodNoSlot } from "../components/Analysis/FloodNoSl
 export { default as colorPicker } from "vcolorpicker";
 export { default as Mapgis3dDynamicCutting } from "../components/Analysis/DynamicCutting";
 export { default as Mapgis3dFill } from "../components/Analysis/Fill";
+export { default as Mapgis3dHeightlimited } from "../components/Analysis/HeightLimited";
+export { default as Mapgis3dShadow } from "../components/Analysis/Shadow";

@@ -1,0 +1,237 @@
+<template>
+  <div :class="['heightlimited',{ right: position === 'right', left: position === 'left' }]">
+    <div
+        :style="{
+                background: 'rgb(38, 151, 204)',
+                padding: '5px',
+                color: 'white',
+            }"
+        class="card-title"
+    >
+      控高分析
+    </div>
+    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad">
+      <a-card class="a-card">
+        <a-row>
+          <a-col :span="5">分析区域</a-col>
+          <a-col :span="18">
+            <a-button style="padding-right: 5px" @click="drawRectangle">绘制矩形</a-button>
+            <a-button @click="drawPolygon">绘制面</a-button>
+            <a-button @click="toggleDelete">清除</a-button>
+          </a-col>
+        </a-row>
+        <a-row style="padding-top: 10px">
+          <a-col :span="5">
+            <span>限制高度</span>
+          </a-col>
+          <a-col :span="10" style="padding-right: 8px">
+            <a-slider v-model="heightLimit" :disabled="excavateAn" :max="maxdepth" :min="mindepth" :step="10"
+                              :value="parseFloat(heightLimit)" @change="setInput"/>
+          </a-col>
+          <a-col :span="5">
+            <a-input-number v-model="heightLimit" :max="maxdepth" :min="mindepth"
+                                    :style="{marginLeft: '16px'}"/>
+          </a-col>
+        </a-row>
+      </a-card>
+    </mapgis-3d-draw>
+  </div>
+</template>
+
+<script>
+import ServiceLayer from "../UI/Controls/ServiceLayer.js";
+import draw from "../UI/Controls/Draw/Draw";
+import {deepEqual} from "../../../../mapboxgl/src/components/util/util";
+
+export default {
+  name: "mapgis-3d-heightlimited",
+  mixins: [ServiceLayer],
+  props: {
+    position: {
+      type: String,
+      default: "right",
+    },
+    vueKey: {
+      type: String,
+      default: "default"
+    },
+    vueIndex: {
+      type: Number,
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      }
+    },
+  },
+  components: {draw},
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  data() {
+    return {
+      //定义
+      heightLimit: 50,
+      excavateAn: false,
+      maxdepth: 150,
+      mindepth: 0,
+      boundingSphere: "",
+      waitManagerName: "M3DIgsManager",
+      cartesianForHeight:[]
+    }
+  },
+  mounted() {
+    let vm = this;
+    vm.$_init(vm.heightLimitedAnalysis);
+  },
+
+  watch: {
+    heightLimit: {
+      handler(next, old) {
+        if (!deepEqual(next, old)) {
+          this.heightLimitedAnalysis();
+        }
+      }
+    }
+  },
+  methods: {
+    setInput(data) {
+      let vm = this;
+      vm.heightLimit = data;
+      vm.heightLimitedAnalysis();
+    },
+    drawPolygon() {
+      this.drawer && this.drawer.enableDrawPolygon();
+    },
+    drawRectangle() {
+      this.drawer && this.drawer.enableDrawRectangle();
+    },
+    toggleDelete() {
+      this.drawer && this.drawer.removeEntities();
+      this.remove();
+    },
+    handleDrawLoad(drawer) {
+      this.drawer = drawer;
+    },
+    handleCreate(cartesian3, lnglat) {
+      let vm = this;
+      this.drawer && this.drawer.removeEntities(true);
+      vm.cartesian3 = cartesian3;
+      this.heightLimitedAnalysis(cartesian3);
+    },
+    heightLimitedAnalysis(cartesian3) {
+      const vm = this;
+      let {vueKey,vueIndex} = this
+      let {heightLimit, CesiumZondy, webGlobe} = this;
+      let viewer = webGlobe.viewer;
+      let findSource = vm.$_getObject();
+      if (findSource) {
+        if (!cartesian3){
+          let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+          if (find){
+            cartesian3 = find.options;
+            this.remove();
+          } else {
+            vm._boundingVolume = findSource.source[0]._root._boundingVolume;
+            const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
+            const southwestCornerCartesian = vm._boundingVolume.southwestCornerCartesian;
+            cartesian3 = vm.getAllPoint(southwestCornerCartesian,northeastCornerCartesian);
+          }
+        } else {
+          if (cartesian3.length===2){
+            cartesian3 = vm.getAllPoint(cartesian3[0],cartesian3[1]);
+          }
+        }
+        //求相对坐标（笛卡尔）
+        let localCertesian3 = vm.transformToLocal(cartesian3, findSource);
+        let pnts = localCertesian3;
+        var heightLimited = new Cesium.HeightLimited(viewer, {
+          height: heightLimit,
+          transform: findSource.source[0]._root.transform,
+          limitedColor: new Cesium.Color(1, 0, 0, 0.5),
+          blendTransparency: 0.8,
+          posArray: pnts,
+          polygonColor: Cesium.Color.WHITE.withAlpha(0),
+          polygonOutline: false,
+          outlineColor: Cesium.Color.WHITE.withAlpha(0)
+        });
+        webGlobe.addSceneEffect(heightLimited);
+        CesiumZondy.HeightLimitedAnalysisManager.addSource(
+            vm.vueKey,
+            vm.vueIndex,
+            heightLimited,
+            cartesian3
+        );
+      }
+    },
+    transformToLocal(cartesian3, findSource) {
+      let localCertesian3 = [];
+      let transform = findSource.source[0]._root.transform;
+      //求逆矩阵
+      const inverMatrix = Cesium.Matrix4.inverse(transform,new Cesium.Matrix4());
+      //各点的相对坐标
+      for (let i = 0; i < cartesian3.length; i++) {
+        let point = cartesian3[i];
+        let result = Cesium.Matrix4.multiplyByPoint(inverMatrix,point, new Cesium.Cartesian3());
+        localCertesian3.push(result);
+      }
+      return localCertesian3;
+    },
+    getAllPoint(southwest,northeast){
+      let p1 = this.degreefromCartesian(southwest);
+      let p2 = this.degreefromCartesian(northeast);
+      let p3 = {}, p4 = {};
+      p3.longitude = p1.longitude;
+      p3.latitude = p2.latitude;
+      p3.height = p1.height;
+      p4.longitude = p2.longitude;
+      p4.latitude = p1.latitude;
+      p4.height = p2.height;
+      //p3,p4的笛卡尔坐标
+      let p3Caetesian = Cesium.Cartesian3.fromDegrees(p3.longitude, p3.latitude, p3.height);
+      let p4Caetesian = Cesium.Cartesian3.fromDegrees(p4.longitude, p4.latitude, p4.height);
+      let allPoint = [southwest,p4Caetesian,northeast,p3Caetesian];
+      return allPoint;
+    },
+    degreefromCartesian(p) {
+      let point = {};
+      let cartographic = Cesium.Cartographic.fromCartesian(p);
+      point.longitude = Cesium.Math.toDegrees(cartographic.longitude);
+      point.latitude = Cesium.Math.toDegrees(cartographic.latitude);
+      point.height = cartographic.height; //模型高度
+      return point;
+    },
+    remove(){
+      const {vueKey,vueIndex} = this;
+      let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+      if (find && find.source){
+        find.source.remove();
+      }
+      // 这段代码可以认为是对应的vue的获取destroyed生命周期
+      CesiumZondy.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
+    }
+  }
+}
+
+</script>
+
+<style scoped>
+::v-deep .ant-card-body {
+  max-height: 300px;
+  overflow: auto;
+}
+
+.heightlimited.right {
+  width: calc(50vw);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.heightlimited.left {
+  width: calc(50vw);
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+/deep/ .a-card-body {
+  padding: 10px !important;
+}
+</style>
