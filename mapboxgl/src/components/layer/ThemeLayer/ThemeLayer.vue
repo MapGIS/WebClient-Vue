@@ -5,6 +5,9 @@
         :themeDefaultType="themeDefaultType"
         :icons="icons"
         :themeTypeArr="themeType"
+        :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_uniqueLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     ></mapgis-igs-unique-theme-layer>
@@ -13,6 +16,9 @@
         :themeDefaultType="themeDefaultType"
         :icons="icons"
         :themeTypeArr="themeType"
+        :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_symbolLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     >
@@ -22,9 +28,23 @@
         :themeDefaultType="themeDefaultType"
         :icons="icons"
         :themeTypeArr="themeType"
+        :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_rangeLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     ></mapgis-igs-range-theme-layer>
+    <mapgis-igs-heat-theme-layer
+        v-show="showType === 'heatmap'"
+        :themeDefaultType="themeDefaultType"
+        :themeTypeArr="themeType"
+        :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
+        @loaded="$_heatLoaded"
+        @themeTypeChanged="$_themeTypeChanged"
+    >
+    </mapgis-igs-heat-theme-layer>
   </div>
 </template>
 
@@ -32,10 +52,11 @@
 import UniqueThemeLayer from "./UniqueThemeLayer.vue";
 import RangeThemeLayer from "./RangeThemeLayer.vue";
 import SymbolThemeLayer from "./SymbolThemeLayer.vue";
+import HeatThemeLayer from "./HeatThemeLayer.vue";
 
 export default {
   name: "mapgis-igs-theme-layer",
-  components: {UniqueThemeLayer, RangeThemeLayer, SymbolThemeLayer},
+  components: {UniqueThemeLayer, RangeThemeLayer, SymbolThemeLayer,HeatThemeLayer},
   inject: ["map"],
   data() {
     return {
@@ -45,7 +66,9 @@ export default {
       uniqueLayer: undefined,
       symbolLayer: undefined,
       rangeLayer: undefined,
-      themeType: undefined
+      heatmapLayer: undefined,
+      themeType: undefined,
+      resetAllLayer: true
     }
   },
   props: {
@@ -54,16 +77,26 @@ export default {
       default(){
         return []
       }
+    },
+    panelProps: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   mounted() {
     this.$emit("loaded",this);
   },
   methods: {
+    $_resetAllLayer(){
+      this.resetLayer(this.layerId);
+    },
     resetLayer(layerId){
       this.uniqueLayer.deleteExtraLayer();
       this.symbolLayer.deleteExtraLayer();
       this.rangeLayer.deleteExtraLayer();
+      this.heatmapLayer.deleteExtraLayer();
       this.uniqueLayer.resetMainLayer(layerId);
     },
     addThemeLayer(type, layerId){
@@ -76,6 +109,20 @@ export default {
           key: "range",
           value: "分段专题图"
         }]
+      }
+      switch (type) {
+        case "heatmap":
+          this.themeDefaultType = "热力专题图";
+          break;
+        case "unique":
+          this.themeDefaultType = "单值专题图";
+          break;
+        case "range":
+          this.themeDefaultType = "分段专题图";
+          break;
+        case "symbol":
+          this.themeDefaultType = "等级符号专题图";
+          break;
       }
       this.$_addThemeLayer(type, layerId);
     },
@@ -91,6 +138,9 @@ export default {
         case "range":
           this.rangeLayer.addThemeLayer(layerId);
           break;
+        case "heatmap":
+          this.heatmapLayer.addThemeLayer(layerId);
+          break;
       }
       this.showType = type;
     },
@@ -102,6 +152,9 @@ export default {
     },
     $_rangeLoaded(rangeLayer) {
       this.rangeLayer = rangeLayer;
+    },
+    $_heatLoaded(heatmapLayer){
+      this.heatmapLayer = heatmapLayer;
     },
     $_themeTypeChanged(key,value){
       this.themeDefaultType = value;

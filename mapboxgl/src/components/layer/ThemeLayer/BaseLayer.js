@@ -38,7 +38,11 @@ export default {
             default() {
                 return {}
             }
-        }
+        },
+        resetAllLayer: {
+            type: Boolean,
+            default: false
+        },
     },
     watch: {
         baseUrl: {
@@ -76,6 +80,7 @@ export default {
     },
     data() {
         return {
+            defaultValue: undefined,
             colors: [],
             originColors: [],
             startColor: "#FFFFFF",
@@ -111,6 +116,8 @@ export default {
             textPadding: 0.05,
             fontSize: 11,
             radius: 6,
+            heatMapColor:undefined,
+            heatMapRadius:7,
             outerLineOpacity: 1,
             outerLineColor: "#000000",
             lineLayer: undefined,
@@ -149,12 +156,12 @@ export default {
         },
         $_addThemeLayer(layerId) {
             this.layerIdCopy = layerId;
+            this.showPanel = true;
             let themeId = layerId + "_" + this.themeType;
             if (window.originLayer && (!window.originLayer.hasOwnProperty(themeId) || !window.originLayer[themeId])) {
                 this.$_getFromSource(layerId);
             } else {
                 this.$_changeOriginLayer(window.originLayer[themeId]);
-                this.layerVector = window.originLayer[themeId];
             }
         },
         resetLayer(layerId) {
@@ -167,11 +174,17 @@ export default {
                 if (layer) {
                     emitMapRemoveLayer(id);
                     this.map.removeLayer(id);
-                    this[this.extraLayer[i].key] = undefined;
-                    delete window.originLayer[this.extraLayer[i].value];
+                    if(this.hasOwnProperty(this.extraLayer[i].key)){
+                        this[this.extraLayer[i].key] = undefined;
+                    }
+                    if(window.originLayer.hasOwnProperty(this.extraLayer[i].value)){
+                        delete window.originLayer[this.extraLayer[i].value];
+                    }
                 }
             }
-            delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+            if(window.originLayer.hasOwnProperty(this.layerIdCopy + "_" + this.themeType)){
+                delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+            }
         },
         deleteExtraLayer() {
             this.$_deleteExtraLayer();
@@ -182,15 +195,14 @@ export default {
                 let layout = window.originLayer[layerId].layout;
                 for (let key in paint) {
                     if (paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]) {
-                        this.$_setPaintProperty(key, paint[key]);
+                        this.$_setPaintProperty(key, paint[key],this.layerIdCopy);
                     }
                 }
                 for (let key in layout) {
                     if (layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]) {
-                        this.$_setPaintProperty(key, paint[layout]);
+                        this.$_setPaintProperty(key, paint[layout],this.layerIdCopy);
                     }
                 }
-                delete window.originLayer[layerId];
                 emitMapChangeStyle(this.map.getStyle());
                 this.$emit("resetLayer");
             }
@@ -234,6 +246,10 @@ export default {
         },
         $_formatProps() {
             let formatArr = [
+                {
+                    before: "select-value",
+                    after: "defaultValue"
+                },
                 {
                     before: "icon-size",
                     after: "radius"
@@ -366,6 +382,17 @@ export default {
                 }, {
                     before: "fill-opacity",
                     after: "opacity"
+                },{
+                    before: "heatmap-color",
+                    after: "heatMapColor"
+                },
+                {
+                    before: "heatmap-radius",
+                    after: "heatMapRadius"
+                },
+                {
+                    before: "heatmap-opacity",
+                    after: "opacity"
                 }
             ];
             this.panelPropsDefault = Object.assign(this.panelPropsDefault, this.panelProps);
@@ -480,7 +507,11 @@ export default {
         },
         $_closePanel() {
             this.showPanel = false;
-            this.$_toggleLayer();
+            if(this.resetAllLayer){
+                this.$emit("resetAllLayer",this);
+            }else {
+                this.$_resetLayer();
+            }
         },
         $_showPanel() {
             this.showPanel = true;
@@ -576,11 +607,13 @@ export default {
             let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
-            layerVector.layout[key] = value;
-            this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
-            window.originLayer[windowId].layout[key] = value;
-            this.changeLayerProp = true;
-            this.changeLayerId = layerId;
+            if(layerVector && layerVector.hasOwnProperty("layout")){
+                layerVector.layout[key] = value;
+                this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
+                window.originLayer[windowId].layout[key] = value;
+                this.changeLayerProp = true;
+                this.changeLayerId = layerId;
+            }
         },
         $_radiusChanged(radius) {
             this.$_setPaintProperty("circle-radius", radius);
@@ -690,8 +723,10 @@ export default {
                 return;
             }
             let originLayer = this.map.getLayer(layerId);
-            window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
-            window.originLayer[this.layerIdCopy + "_" + this.themeType] = window.originLayer[this.layerIdCopy];
+            if(!window.originLayer.hasOwnProperty(this.layerIdCopy)){
+                window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
+            }
+            window.originLayer[this.layerIdCopy + "_" + this.themeType] = this.$_getLayerStyle(layerId);
             this.source_vector_Id = originLayer.source;
             this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
@@ -742,19 +777,33 @@ export default {
             this.dataCopy = geojson;
             this.showVector = true;
             this.fields = this.$_getFields(geojson.features[0]);
+            this.defaultValue = this.defaultValue === undefined ? this.fields[0] : this.defaultValue;
             this.selectKey = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
-            let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
-            window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = fillColors;
+            let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
+            this.$_setOriginLayer(colors);
             this.checkBoxArr = this.originColors.checkArr;
             if (this.$_initThemeCallBack) {
-                this.$_initThemeCallBack(geojson, fillColors, this.dataSource);
+                this.$_initThemeCallBack(geojson, colors, this.dataSource);
             } else {
                 throw new Error("请设置$_initTheme方法的回到函数！");
             }
             let layer = {...this.layerVector, ...this.$props};
             this.$_changeOriginLayer();
             this.$_loadedLayer();
+        },
+        $_setOriginLayer(colors){
+            switch (this.dataType) {
+                case "fill":
+                    window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
+                    break;
+                case "circle":
+                    window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["circle-color"] = colors;
+                    break;
+                case "line":
+                    window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["line-color"] = colors;
+                    break;
+            }
         },
         $_getAllLayerStyle() {
             let layers = [];
@@ -839,7 +888,7 @@ export default {
                 let datas = this.$_getData(this.dataCopy.features, value);
                 this.dataSource = datas;
                 let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
-                window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
+                this.$_setOriginLayer(colors);
                 this.checkBoxArr = this.originColors.checkArr;
                 this.selectKey = value;
                 if (this.checkBoxArr.indexOf(true) < 0) {
@@ -866,7 +915,7 @@ export default {
             this.startColor = startColor;
             this.endColor = endColor;
             let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false, true);
-            window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
+            this.$_setOriginLayer(colors);
             switch (this.dataType) {
                 case "fill":
                     this.layerVector.paint["fill-color"] = colors;
@@ -902,7 +951,6 @@ export default {
             } else {
                 throw new Error("请设置$_opacityChanged方法的回到函数！");
             }
-            this.$_changeOriginLayer();
             this.showVector = true;
             this.changeLayerProp = true;
             this.changeLayerId = this.layerIdCopy;
@@ -964,13 +1012,13 @@ export default {
         $_opacityChangedCallBack(opacity) {
             switch (this.dataType) {
                 case "fill":
-                    this.layerVector.paint["fill-opacity"] = opacity;
+                    this.$_setPaintProperty("fill-opacity",opacity);
                     break;
                 case "circle":
-                    this.layerVector.paint["circle-opacity"] = opacity;
+                    this.$_setPaintProperty("circle-opacity",opacity);
                     break;
                 case "line":
-                    this.layerVector.paint["line-opacity"] = opacity;
+                    this.$_setPaintProperty("line-opacity",opacity);
                     break;
             }
         },
@@ -1026,11 +1074,13 @@ export default {
             let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
-            layerVector.paint[key] = value;
-            this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
-            window.originLayer[windowId].paint[key] = value;
-            this.changeLayerProp = true;
-            this.changeLayerId = layerId;
+            if(layerVector && layerVector.hasOwnProperty("paint")){
+                layerVector.paint[key] = value;
+                this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
+                window.originLayer[windowId].paint[key] = value;
+                this.changeLayerProp = true;
+                this.changeLayerId = layerId;
+            }
         },
         $_getColorsFromOrigin(index, color, num) {
             let colors;
