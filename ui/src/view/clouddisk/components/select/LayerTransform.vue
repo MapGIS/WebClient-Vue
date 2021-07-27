@@ -34,7 +34,8 @@ export default {
       vectorTileSize: window.localStorage.getItem('mapgis_clouddisk_vectorTileSize') || 500000,
       onlyOneField: window.localStorage.getItem('mapgis_clouddisk_onlyOneField') || false,
       mapstudioUrlMark: window.localStorage.getItem('mapgis_clouddisk_mapstudioUrlMark') || '/mapstudioweb/#/?share=',
-      filterPGFields: ["mpLayer", "mpLength", "mpArea", "mpPerimeter", "mpgmod_time"]
+      filterPGFields: ["mpLayer", "mpLength", "mpArea", "mpPerimeter", "mpgmod_time"],
+      cdToken: window.localStorage.getItem('mapgis_clouddisk_token') || '',
     };
   },
   props: {
@@ -172,14 +173,14 @@ export default {
         } else { // GeoJSON
           let metaPath = null
           if (hasVector && dataSource) { // 每个图层都有各自的边界、中心点
-            path = getNewVectorUrl(dataSource, true, 4326, this.GjsonSize)
+            path = getNewVectorUrl(dataSource, true, 4326, this.GjsonSize) + `&Authorization=${this.cdToken}`
           } else if (!hasVector && tileDataPath) { // 镶嵌数据集
             // path = getTileUrl(storeServiceUrl, tileDataPath)
             if (layer.type === FileType.TIF || layer.type === FileType.TIFF) {
-              path = getTiffUrl(storeServiceUrl, tileDataPath, 4326)
-              metaPath = getTiffMetaUrl(storeServiceUrl, tileDataPath, 0, 0)
+              path = getTiffUrl(storeServiceUrl, tileDataPath, 4326) + `&Authorization=${this.cdToken}`
+              metaPath = getTiffMetaUrl(storeServiceUrl, tileDataPath, 0, 0) + `&Authorization=${this.cdToken}`
             } else {
-              path = getNewTileUrl(storeServiceUrl, tileDataPath, dataSource, 3857)
+              path = getNewTileUrl(storeServiceUrl, tileDataPath, dataSource, 3857) + `&Authorization=${this.cdToken}`
             }
           } else {
             this.$notification.error({ message: '当前选择的某个图层缺少图层信息', description: '请检查所选图层是否导入！' })
@@ -373,9 +374,9 @@ export default {
                 keepField = keepField.slice(0, -1) // 全部属性字段，这两个二选一
                 if (item.isVectorTile) {
                   keepField = this.onlyOneField ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
-                  item.path = item.path1 + keepField + item.path2
+                  item.path = item.path1 + keepField + item.path2 + `&Authorization=${this.cdToken}`
                 } else { // geojson取全部字段
-                  item.path = item.path + '&fields=' + keepField
+                  item.path = item.path + '&fields=' + keepField + `&Authorization=${this.cdToken}`
                 }
 
                 // if (j === 0) {
