@@ -104,7 +104,7 @@ export default {
             "heatmap-weight": [
               "interpolate",
               ["linear"],
-              ["get", "name"],
+              ["get", this.defaultValue],
               0,
               0,
               1000,

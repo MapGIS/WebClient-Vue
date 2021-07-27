@@ -72,11 +72,7 @@ export default {
     panelProps: {
       type: Object,
       default() {
-        return {
-          "circle-opacity": 70,
-          "heatmap-radius": 60,
-          "select-value": "name",
-        }
+        return {}
       }
     }
   },

@@ -76,7 +76,7 @@ export default {
     },
     data() {
         return {
-            selectValue: undefined,
+            defaultValue: undefined,
             colors: [],
             originColors: [],
             startColor: "#FFFFFF",
@@ -600,11 +600,13 @@ export default {
             let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
-            layerVector.layout[key] = value;
-            this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
-            window.originLayer[windowId].layout[key] = value;
-            this.changeLayerProp = true;
-            this.changeLayerId = layerId;
+            if(layerVector && layerVector.hasOwnProperty("layout")){
+                layerVector.layout[key] = value;
+                this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
+                window.originLayer[windowId].layout[key] = value;
+                this.changeLayerProp = true;
+                this.changeLayerId = layerId;
+            }
         },
         $_radiusChanged(radius) {
             this.$_setPaintProperty("circle-radius", radius);
@@ -766,6 +768,7 @@ export default {
             this.dataCopy = geojson;
             this.showVector = true;
             this.fields = this.$_getFields(geojson.features[0]);
+            this.defaultValue = this.defaultValue === undefined ? this.fields[0] : this.defaultValue;
             this.selectKey = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
@@ -1063,11 +1066,13 @@ export default {
             let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
             layerVector = layerVector || this.layerVector;
-            layerVector.paint[key] = value;
-            this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
-            window.originLayer[windowId].paint[key] = value;
-            this.changeLayerProp = true;
-            this.changeLayerId = layerId;
+            if(layerVector && layerVector.hasOwnProperty("paint")){
+                layerVector.paint[key] = value;
+                this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
+                window.originLayer[windowId].paint[key] = value;
+                this.changeLayerProp = true;
+                this.changeLayerId = layerId;
+            }
         },
         $_getColorsFromOrigin(index, color, num) {
             let colors;
