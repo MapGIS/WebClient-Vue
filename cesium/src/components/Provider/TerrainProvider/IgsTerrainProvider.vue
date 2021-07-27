@@ -1,5 +1,5 @@
 <script>
-import VueOptions from '../../Base/Vue/VueOptions';
+import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-igs-terrain",
@@ -7,10 +7,10 @@ export default {
   props: {
     show: {
       type: Boolean,
-      default: true,
+      default: true
     },
     url: {
-      type: String,
+      type: String
     },
     scale: {
       type: Number,
@@ -34,7 +34,7 @@ export default {
     createCesiumObject() {
       const { $props, url, CesiumZondy, webGlobe } = this;
       var terrianlayer = new CesiumZondy.Layer.TerrainLayer({
-        viewer: webGlobe.viewer,
+        viewer: webGlobe.viewer
       });
       return terrianlayer;
     },
@@ -65,16 +65,22 @@ export default {
       );
       if (find) {
         let terrains = find.source;
-        !viewer.isDestroyed() && terrains && terrains.forEach(l => {l.destroy();})
+        if (!viewer.isDestroyed() && terrains) {
+          terrains.forEach(l => {
+            l.destroy && l.destroy();
+          });
+          webGlobe.deleteTerrain();
+          // viewer.scene.terrainProvider = new Cesium.EllipsoidTerrainProvider({});
+        }
       }
       window.CesiumZondy.IgsTerrainManager.deleteSource(vueKey, vueIndex);
-    },
+    }
   },
   render(h) {
     return h("span", {
       class: "mapgis-3d-igs-terrain",
-      ref: "m3d",
+      ref: "m3d"
     });
-  },
+  }
 };
 </script>
