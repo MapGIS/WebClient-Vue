@@ -73,14 +73,14 @@
                                    @click="$_inputClick('start')"
                                    @change="$_inputStartChange" v-model="startData">
                     <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="startNumWrong">
-                      <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
+                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                   <mapgis-ui-input v-if="index > 0" class="range-theme-num"
                                    @click="$_inputClick(index - 1)"
                                    @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
                     <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="(index - 1) === numWrong">
-                      <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
+                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                 </div>
@@ -94,7 +94,7 @@
                                    v-model="dataSourceCopy[index]"
                                    v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
                     <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
-                      <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
+                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                   <mapgis-ui-input class="range-theme-num"
@@ -103,7 +103,7 @@
                                    v-model="endData"
                                    v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
                     <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="endNumWrong">
-                      <mapgis-ui-iconfont type="mapgis-yingyan" style="color: rgba(255,0,0,.45)"/>
+                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                 </div>

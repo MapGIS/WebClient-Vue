@@ -1,6 +1,7 @@
 <template>
   <div>
     <ThemePanel
+        v-show="showPanel"
         :title="title"
         :checkBoxArr="checkBoxArr"
         :colors="colors"

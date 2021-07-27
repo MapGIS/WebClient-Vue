@@ -6,6 +6,8 @@
         :icons="icons"
         :themeTypeArr="themeType"
         :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_uniqueLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     ></mapgis-igs-unique-theme-layer>
@@ -15,6 +17,8 @@
         :icons="icons"
         :themeTypeArr="themeType"
         :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_symbolLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     >
@@ -25,6 +29,8 @@
         :icons="icons"
         :themeTypeArr="themeType"
         :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_rangeLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     ></mapgis-igs-range-theme-layer>
@@ -33,6 +39,8 @@
         :themeDefaultType="themeDefaultType"
         :themeTypeArr="themeType"
         :panelProps="panelProps"
+        :resetAllLayer="resetAllLayer"
+        @resetAllLayer="$_resetAllLayer"
         @loaded="$_heatLoaded"
         @themeTypeChanged="$_themeTypeChanged"
     >
@@ -59,7 +67,8 @@ export default {
       symbolLayer: undefined,
       rangeLayer: undefined,
       heatmapLayer: undefined,
-      themeType: undefined
+      themeType: undefined,
+      resetAllLayer: true
     }
   },
   props: {
@@ -80,6 +89,9 @@ export default {
     this.$emit("loaded",this);
   },
   methods: {
+    $_resetAllLayer(){
+      this.resetLayer(this.layerId);
+    },
     resetLayer(layerId){
       this.uniqueLayer.deleteExtraLayer();
       this.symbolLayer.deleteExtraLayer();
