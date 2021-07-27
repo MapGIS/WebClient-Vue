@@ -943,6 +943,7 @@ export default {
         vm.$data[key] = vm.$props.panelProps[key];
       }
     });
+    console.log("vm.$props.panelProps",vm.$props.panelProps)
   },
   mounted() {
     this.themeDefaultTypeCopy = this.themeDefaultType;
