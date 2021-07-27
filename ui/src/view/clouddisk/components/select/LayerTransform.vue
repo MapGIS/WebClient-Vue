@@ -173,12 +173,12 @@ export default {
         } else { // GeoJSON
           let metaPath = null
           if (hasVector && dataSource) { // 每个图层都有各自的边界、中心点
-            path = getNewVectorUrl(dataSource, true, 4326, this.GjsonSize) + `&Authorization=${this.cdToken}`
+            path = getNewVectorUrl(dataSource, true, 4326, this.GjsonSize)
           } else if (!hasVector && tileDataPath) { // 镶嵌数据集
             // path = getTileUrl(storeServiceUrl, tileDataPath)
             if (layer.type === FileType.TIF || layer.type === FileType.TIFF) {
               path = getTiffUrl(storeServiceUrl, tileDataPath, 4326) + `&Authorization=${this.cdToken}`
-              metaPath = getTiffMetaUrl(storeServiceUrl, tileDataPath, 0, 0) + `&Authorization=${this.cdToken}`
+              metaPath = getTiffMetaUrl(storeServiceUrl, tileDataPath, 0, 0)
             } else {
               path = getNewTileUrl(storeServiceUrl, tileDataPath, dataSource, 3857) + `&Authorization=${this.cdToken}`
             }
