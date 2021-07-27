@@ -61,6 +61,7 @@ module.exports = {
             collapsable: false,
             children: [
               ["/api/iconfont/IconFont.md", "图标"],
+              ["/api/div/Div.md", "区块"],
               ["/api/collapsecard/CollapseCard.md", "收缩卡片"]
             ]
           }

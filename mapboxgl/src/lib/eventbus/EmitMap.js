@@ -44,12 +44,16 @@ export const emitMapAddThemeLayer = payload => {
   EventBus.$emit("map-add-theme-layer", payload);
 };
 
-export const emitMapEditThemeLayer= payload => {
+export const emitMapEditThemeLayer = payload => {
   EventBus.$emit("map-edit-theme-layer", payload);
 };
 
 export const emitMapRemoveThemeLayer = payload => {
   EventBus.$emit("map-remove-theme-layer", payload);
+};
+
+export const emitMapOpenTable = payload => {
+  EventBus.$emit("map-open-table", payload);
 };
 
 export default {
