@@ -9,6 +9,7 @@ export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue"
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 
 // Layout
+export { default as MapgisUiDiv } from "./components/div/Div.vue";
 export { default as MapgisUiRow } from "./components/grid/Row.vue";
 export { default as MapgisUiCol } from "./components/grid/Col.vue";
 
