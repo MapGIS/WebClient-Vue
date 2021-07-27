@@ -1,6 +1,6 @@
 import {MRFS} from "@mapgis/webclient-es6-service";
 import EventBusMapMixin from '../../../lib/eventbus/EventBusMapMixin';
-import { emitMapChangeStyle, emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
+import {emitMapChangeStyle, emitMapAddLayer, emitMapRemoveLayer} from '../../../lib/eventbus/EmitMap';
 
 const {FeatureService} = MRFS;
 
@@ -127,70 +127,108 @@ export default {
             extraLayer: []
         };
     },
-    mounted() {
-        if(!window.originLayer){
-            window.originLayer = {};
-        }
-    },
     methods: {
-       showExtraLayer(){
+        showExtraLayer() {
             this.$_showExtraLayer();
         },
-        hideExtraLayer(){
+        hideExtraLayer() {
             this.$_hideExtraLayer();
         },
-        $_hideExtraLayer(){
-            for (let i = 0;i < this.extraLayer.length;i++){
-                this.$_setLayOutProperty("visibility","none",this.extraLayer[i].value,this[this.extraLayer[i].key]);
+        $_hideExtraLayer() {
+            for (let i = 0; i < this.extraLayer.length; i++) {
+                this.$_setLayOutProperty("visibility", "none", this.extraLayer[i].value, this[this.extraLayer[i].key]);
             }
         },
-        $_showExtraLayer(){
-            for (let i = 0;i < this.extraLayer.length;i++){
-                this.$_setLayOutProperty("visibility","visible",this.extraLayer[i].value,this[this.extraLayer[i].key]);
+        $_showExtraLayer() {
+            for (let i = 0; i < this.extraLayer.length; i++) {
+                this.$_setLayOutProperty("visibility", "visible", this.extraLayer[i].value, this[this.extraLayer[i].key]);
             }
         },
-        addThemeLayer(layerId){
+        addThemeLayer(layerId) {
             this.$_addThemeLayer(layerId);
         },
-        $_addThemeLayer(layerId){
+        $_addThemeLayer(layerId) {
             this.layerIdCopy = layerId;
-            let themeId = layerId + "_" +  this.themeType;
-            if(window.originLayer && (!window.originLayer.hasOwnProperty(themeId) || !window.originLayer[themeId])){
+            let themeId = layerId + "_" + this.themeType;
+            if (window.originLayer && (!window.originLayer.hasOwnProperty(themeId) || !window.originLayer[themeId])) {
                 this.$_getFromSource(layerId);
-            }else {
+            } else {
                 this.$_changeOriginLayer(window.originLayer[themeId]);
                 this.layerVector = window.originLayer[themeId];
             }
         },
-        resetLayer(layerId){
+        resetLayer(layerId) {
             this.$_resetLayer(layerId);
         },
-        $_resetLayer(layerId){
-            if(layerId){
+        $_deleteExtraLayer() {
+            for (let i = 0; i < this.extraLayer.length; i++) {
+                let id = this.extraLayer[i].value;
+                let layer = this.map.getLayer(id);
+                if (layer) {
+                    emitMapRemoveLayer(id);
+                    this.map.removeLayer(id);
+                    this[this.extraLayer[i].key] = undefined;
+                    delete window.originLayer[this.extraLayer[i].value];
+                }
+            }
+            delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+        },
+        deleteExtraLayer() {
+            this.$_deleteExtraLayer();
+        },
+        $_resetMainLayer(layerId) {
+            if (window.originLayer[layerId]) {
+                let paint = window.originLayer[layerId].paint;
+                let layout = window.originLayer[layerId].layout;
+                for (let key in paint) {
+                    if (paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]) {
+                        this.$_setPaintProperty(key, paint[key]);
+                    }
+                }
+                for (let key in layout) {
+                    if (layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]) {
+                        this.$_setPaintProperty(key, paint[layout]);
+                    }
+                }
+                delete window.originLayer[layerId];
+                emitMapChangeStyle(this.map.getStyle());
+                this.$emit("resetLayer");
+            }
+        },
+        resetMainLayer(layerId) {
+            this.$_resetMainLayer(layerId)
+        },
+        $_resetLayer(layerId) {
+            if (layerId) {
                 let lineLayer = this.map.getLayer(this.lineId);
                 let textLayer = this.map.getLayer(this.textId);
-                if(lineLayer){
+                if (lineLayer) {
                     this.map.removeLayer(this.lineId);
+                    this.lineLayer = undefined;
+                    delete window.originLayer[this.lineId];
                 }
-                if(textLayer){
+                if (textLayer) {
                     this.map.removeLayer(this.textId);
+                    this.textLayer = undefined;
+                    delete window.originLayer[this.textId];
                 }
                 emitMapRemoveLayer(this.lineId);
                 emitMapRemoveLayer(this.textId);
                 emitMapChangeStyle(this.map.getStyle());
                 let paint = window.originLayer[this.layerIdCopy].paint;
                 let layout = window.originLayer[this.layerIdCopy].layout;
-                for (let key in paint){
-                    if(paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]){
-                        this.$_setPaintProperty(key,paint[key]);
+                for (let key in paint) {
+                    if (paint.hasOwnProperty(key) && key.indexOf("_") < 0 && paint[key]) {
+                        this.$_setPaintProperty(key, paint[key]);
                     }
                 }
-                for (let key in layout){
-                    if(layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]){
-                        this.$_setPaintProperty(key,paint[layout]);
+                for (let key in layout) {
+                    if (layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]) {
+                        this.$_setPaintProperty(key, paint[layout]);
                     }
                 }
                 delete window.originLayer[this.layerIdCopy];
+                delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
                 this.$emit("resetLayer");
             }
         },
@@ -424,19 +462,19 @@ export default {
             let show = this.showLayer ? "none" : "visible";
             this.showLayer = !this.showLayer;
             this.map.setLayoutProperty(this.layerIdCopy, 'visibility', show);
-            if(this.map.getLayer(this.lineId)){
+            if (this.map.getLayer(this.lineId)) {
                 this.map.setLayoutProperty(this.lineId, 'visibility', show);
             }
-            if(this.map.getLayer(this.textId)){
+            if (this.map.getLayer(this.textId)) {
                 this.map.setLayoutProperty(this.textId, 'visibility', show);
             }
         },
-        toggleLayer(){
+        toggleLayer() {
             this.$_toggleLayer();
         },
-        togglePanel(toggleLayer){
+        togglePanel(toggleLayer) {
             this.showPanel = !this.showPanel;
-            if(toggleLayer){
+            if (toggleLayer) {
                 this.$_toggleLayer();
             }
         },
@@ -455,6 +493,9 @@ export default {
             }
         },
         $_mount() {
+            if (!window.originLayer) {
+                window.originLayer = {};
+            }
             if (this.panelPropsDefault.hasOwnProperty("xOffset") && this.panelPropsDefault.xOffset) {
                 this.$set(this.offset, 0, this.panelPropsDefault.xOffset);
             }
@@ -525,7 +566,7 @@ export default {
                     this.textLayer["source-layer"] = this.source_vector_layer_Id;
                 }
                 this.map.addLayer(this.textLayer);
-                emitMapAddLayer({ layer: this.textLayer});
+                emitMapAddLayer({layer: this.textLayer});
                 emitMapChangeStyle(this.map.getStyle());
             } else {
                 this.$_setLayOutProperty("text-field", '{' + value + '}', this.textId, this.textLayer);
@@ -614,22 +655,24 @@ export default {
                 switch (key) {
                     case "paint":
                         let paint = {};
-                        for (let pKey in originLayer.paint._values){
-                            if(originLayer.paint._values.hasOwnProperty(pKey) && originLayer.paint._values[pKey]){
+                        for (let pKey in originLayer.paint._values) {
+                            if (originLayer.paint._values.hasOwnProperty(pKey) && originLayer.paint._values[pKey]) {
                                 try {
                                     paint[pKey] = vm.map.getPaintProperty(layerId, pKey);
-                                }catch (e) {}
+                                } catch (e) {
+                                }
                             }
                         }
                         layer[key] = paint;
                         break;
                     case "layout":
                         let layout = {};
-                        for (let lKey in originLayer.layout._values){
-                            if(originLayer.layout._values.hasOwnProperty(lKey) && originLayer.layout._values[lKey]){
+                        for (let lKey in originLayer.layout._values) {
+                            if (originLayer.layout._values.hasOwnProperty(lKey) && originLayer.layout._values[lKey]) {
                                 try {
                                     layout[lKey] = vm.map.getLayoutProperty(layerId, lKey);
-                                }catch (e){}
+                                } catch (e) {
+                                }
                             }
                         }
                         layer[key] = layout;
@@ -681,9 +724,9 @@ export default {
             this.map.on('data', function (e) {
                 if (vm.changeLayerProp) {
                     let layer = {};
-                    if(vm.changeLayerId === vm.lineId){
+                    if (vm.changeLayerId === vm.lineId) {
                         layer = vm.lineLayer;
-                    }else if(vm.changeLayerId === this.textId){
+                    } else if (vm.changeLayerId === this.textId) {
                         layer = vm.textLayer;
                     } else {
                         layer = vm.$_getLayerStyle(vm.changeLayerId);
@@ -815,8 +858,8 @@ export default {
                 this.changeLayerId = this.layerIdCopy;
             }
         },
-        $_themeTypeChanged(key,value){
-            this.$emit("themeTypeChanged",key,value);
+        $_themeTypeChanged(key, value) {
+            this.$emit("themeTypeChanged", key, value);
         },
         $_gradientChange(startColor, endColor) {
             this.showVector = false;
@@ -1056,16 +1099,16 @@ export default {
                         'line-opacity': this.outerLineOpacity, //透明度
                         'line-width': this.lineWidth,
                     },
-                    "layout":{}
+                    "layout": {}
                 };
                 if (this.source_vector_layer_Id) {
                     this.lineLayer["source-layer"] = this.source_vector_layer_Id;
                 }
                 window.originLayer[this.lineId] = this.lineLayer;
                 this.map.addLayer(this.lineLayer);
-                emitMapAddLayer({ layer: this.lineLayer});
+                emitMapAddLayer({layer: this.lineLayer});
                 emitMapChangeStyle(this.map.getStyle());
-            }else {
+            } else {
                 this.lineLayer = this.$_getLayerStyle(this.lineId)
             }
         },
@@ -1075,7 +1118,7 @@ export default {
             }
             this.textId = "text_layer_" + this.themeType + "_" + this.layerIdCopy;
             let layer = this.map.getLayer(this.textId);
-            if(!layer){
+            if (!layer) {
                 this.extraLayer.push({
                     key: "textLayer",
                     value: this.textId
@@ -1103,9 +1146,9 @@ export default {
                 }
                 window.originLayer[this.textId] = this.textLayer;
                 this.map.addLayer(this.textLayer);
-                emitMapAddLayer({ layer: this.textLayer});
+                emitMapAddLayer({layer: this.textLayer});
                 emitMapChangeStyle(this.map.getStyle());
-            }else {
+            } else {
                 this.textLayer = this.$_getLayerStyle(this.textId)
             }
         }

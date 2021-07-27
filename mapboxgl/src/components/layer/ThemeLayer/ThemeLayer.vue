@@ -60,6 +60,12 @@ export default {
     this.$emit("loaded",this);
   },
   methods: {
+    resetLayer(layerId){
+      this.uniqueLayer.deleteExtraLayer();
+      this.symbolLayer.deleteExtraLayer();
+      this.rangeLayer.deleteExtraLayer();
+      this.uniqueLayer.resetMainLayer(layerId);
+    },
     addThemeLayer(type, layerId){
       let features = this.map.queryRenderedFeatures({layers: [layerId]});
       if(features.length > 0 && features[0].geometry.type !== "Point"){
