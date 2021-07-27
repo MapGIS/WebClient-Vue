@@ -91,7 +91,7 @@ export default {
     * **/
     $_initThemeCallBack(geojson) {
       //隐藏原图层
-      // this.map.setLayoutProperty(this.layerIdCopy,"visibility","none");
+      this.map.setLayoutProperty(this.layerIdCopy,"visibility","none");
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_" + this.themeType;
