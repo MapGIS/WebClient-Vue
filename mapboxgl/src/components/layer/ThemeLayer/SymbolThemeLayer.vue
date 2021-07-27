@@ -186,6 +186,7 @@ export default {
   data() {
     return {
       title: "分段专题图",
+      themeType: "symbol",
       dataSourceCopy: undefined,
       dataInit: false,
       numWrong: -1,
@@ -208,9 +209,6 @@ export default {
       haloWidth: 0,
       dataType: "symbol",
       panelPropsDefault: {
-        "icon-size": 0.5,
-        "icon-size-Max": 3,
-        "icon-size-Step": 0.1,
       }
     }
   },

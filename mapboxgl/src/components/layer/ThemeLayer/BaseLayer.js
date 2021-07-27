@@ -76,6 +76,7 @@ export default {
     },
     data() {
         return {
+            selectValue: undefined,
             colors: [],
             originColors: [],
             startColor: "#FFFFFF",
@@ -111,6 +112,8 @@ export default {
             textPadding: 0.05,
             fontSize: 11,
             radius: 6,
+            heatMapColor:undefined,
+            heatMapRadius:7,
             outerLineOpacity: 1,
             outerLineColor: "#000000",
             lineLayer: undefined,
@@ -167,11 +170,17 @@ export default {
                 if (layer) {
                     emitMapRemoveLayer(id);
                     this.map.removeLayer(id);
-                    this[this.extraLayer[i].key] = undefined;
-                    delete window.originLayer[this.extraLayer[i].value];
+                    if(this.hasOwnProperty(this.extraLayer[i].key)){
+                        this[this.extraLayer[i].key] = undefined;
+                    }
+                    if(window.originLayer.hasOwnProperty(this.extraLayer[i].value)){
+                        delete window.originLayer[this.extraLayer[i].value];
+                    }
                 }
             }
-            delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+            if(window.originLayer.hasOwnProperty(this.layerIdCopy + "_" + this.themeType)){
+                delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+            }
         },
         deleteExtraLayer() {
             this.$_deleteExtraLayer();
@@ -234,6 +243,10 @@ export default {
         },
         $_formatProps() {
             let formatArr = [
+                {
+                    before: "select-value",
+                    after: "defaultValue"
+                },
                 {
                     before: "icon-size",
                     after: "radius"
@@ -365,6 +378,17 @@ export default {
                     after: "outerLineColor"
                 }, {
                     before: "fill-opacity",
+                    after: "opacity"
+                },{
+                    before: "heatmap-color",
+                    after: "heatMapColor"
+                },
+                {
+                    before: "heatmap-radius",
+                    after: "heatMapRadius"
+                },
+                {
+                    before: "heatmap-opacity",
                     after: "opacity"
                 }
             ];
@@ -744,17 +768,30 @@ export default {
             this.fields = this.$_getFields(geojson.features[0]);
             this.selectKey = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
-            let fillColors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
-            window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = fillColors;
+            let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
+            this.$_setOriginLayer(colors);
             this.checkBoxArr = this.originColors.checkArr;
             if (this.$_initThemeCallBack) {
-                this.$_initThemeCallBack(geojson, fillColors, this.dataSource);
+                this.$_initThemeCallBack(geojson, colors, this.dataSource);
             } else {
                 throw new Error("请设置$_initTheme方法的回到函数！");
             }
             let layer = {...this.layerVector, ...this.$props};
             this.$_changeOriginLayer();
             this.$_loadedLayer();
+        },
+        $_setOriginLayer(colors){
+            switch (this.dataType) {
+                case "fill":
+                    window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
+                    break;
+                case "circle":
+                    window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["circle-color"] = colors;
+                    break;
+                case "line":
+                    window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["line-color"] = colors;
+                    break;
+            }
         },
         $_getAllLayerStyle() {
             let layers = [];
@@ -839,7 +876,7 @@ export default {
                 let datas = this.$_getData(this.dataCopy.features, value);
                 this.dataSource = datas;
                 let colors = this.$_getColors(this.dataSource, this.startColor, this.endColor, value);
-                window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
+                this.$_setOriginLayer(colors);
                 this.checkBoxArr = this.originColors.checkArr;
                 this.selectKey = value;
                 if (this.checkBoxArr.indexOf(true) < 0) {
@@ -866,7 +903,7 @@ export default {
             this.startColor = startColor;
             this.endColor = endColor;
             let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey, false, true);
-            window.originLayer[this.layerIdCopy + "_" + this.themeType].paint["fill-color"] = colors;
+            this.$_setOriginLayer(colors);
             switch (this.dataType) {
                 case "fill":
                     this.layerVector.paint["fill-color"] = colors;

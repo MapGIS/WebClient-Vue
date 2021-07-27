@@ -17,7 +17,7 @@
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-select
-                :default-value="themeType[0].value"
+                :default-value="themeDefaultTypeCopy"
                 v-model="themeDefaultTypeCopy"
                 @change="$_selectThemeType"
                 class="theme-panel-select"
@@ -49,6 +49,72 @@
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
+      <!--热点-->
+      <mapgis-ui-collapse accordion v-if="dataType === 'heatmap'">
+        <mapgis-ui-collapse-panel key="1" header="热点">
+          <mapgis-ui-row>
+            <p class="theme-panel-p">热点颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col v-if="gradientValue === 'common'"
+                           :span="25"
+            >
+              <mapgis-ui-select
+                  :default-value="'#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000'"
+                  @change="$_heatGradientChange"
+              >
+                <mapgis-ui-select-option v-for="(gradient,index) in heatGradientArr" :key="index" :value="gradient.key">
+                  <div :style="{background: gradient.value}" class="theme-panel-gradient"></div>
+                </mapgis-ui-select-option>
+              </mapgis-ui-select>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider class="theme-panel-slider" v-model="opacity"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row
+              v-if="dataType==='heatmap'"
+          >
+            <mapgis-ui-col :span="6">
+              <p class="theme-panel-p">热力半径</p>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+              <mapgis-ui-input-number v-model="heatMapRadius" class="theme-panel-input-radius"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
+      <!--自定义-->
+      <mapgis-ui-collapse accordion v-if="dataType === 'heatmap'">
+        <mapgis-ui-collapse-panel key="1" header="自定义">
+          <mapgis-ui-row>
+            <p class="theme-panel-p">自定义颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-for="(color,index) in currentColors" :key="index">
+            <mapgis-ui-row>
+              <p class="theme-panel-p">热力颜色{{ index }}:</p>
+            </mapgis-ui-row>
+            <mapgis-ui-row>
+              <colorPicker
+                  v-model="color.value"
+                  class="picker theme-panel-line-color"
+                  @change="$_selectColor(color)"
+              />
+            </mapgis-ui-row>
+          </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
       <!--字段过滤-->
       <!--      <mapgis-ui-row>-->
       <!--        <mapgis-ui-collapse>-->
@@ -57,8 +123,8 @@
       <!--          </mapgis-ui-collapse-panel>-->
       <!--        </mapgis-ui-collapse>-->
       <!--      </mapgis-ui-row>-->
-      <!--专题图样式-->
-      <mapgis-ui-collapse accordion>
+      <!--符号-->
+      <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap'">
         <mapgis-ui-collapse-panel key="2" header="符号">
           <mapgis-ui-row v-if="dataType !== 'circle'">
             <mapgis-ui-col :span="4">
@@ -252,7 +318,7 @@
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
       <!--边线样式-->
-      <mapgis-ui-collapse accordion v-if="dataType !== 'symbol'">
+      <mapgis-ui-collapse accordion v-if="dataType !== 'symbol' && dataType !== 'heatmap'">
         <mapgis-ui-collapse-panel key="5" header="线">
           <mapgis-ui-row v-if="dataType === 'line'">
             <p class="theme-panel-p">边线样式</p>
@@ -366,7 +432,7 @@
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
       <!--标签-->
-      <mapgis-ui-collapse accordion>
+      <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap'">
         <mapgis-ui-collapse-panel key="3" header="标签">
           <mapgis-ui-row>
             <p class="theme-panel-p">显示字段</p>
@@ -552,7 +618,7 @@
       </mapgis-ui-collapse>
       <slot name="operation"></slot>
       <!--专题图信息-->
-      <mapgis-ui-collapse accordion @change="$_clickCollapse">
+      <mapgis-ui-collapse accordion @change="$_clickCollapse" v-if="dataType !== 'heatmap'">
         <mapgis-ui-collapse-panel key="4" header="图例">
           <slot name="legend" :selectValue="selectValue">
             <!--            <mapgis-ui-row>-->
@@ -679,8 +745,7 @@ export default {
       type: Array
     },
     themeDefaultType: {
-      type: String,
-      default: "单值专题图"
+      type: String
     },
     panelProps: {
       type: Object,
@@ -700,6 +765,9 @@ export default {
         }, {
           key: "symbol",
           value: "等级符号专题图"
+        }, {
+          key: "heatmap",
+          value: "热力专题图"
         }];
       }
     },
@@ -748,6 +816,33 @@ export default {
       textPadding: 0.05,
       textRotationStep: 1,
       textRotation: 0,
+      heatMapRadius: 12,
+      currentColors: [{
+        key: "0",
+        value: "#0000FF"
+      }, {
+        key: "1",
+        value: "#00FFFF"
+      }, {
+        key: "2",
+        value: "#00FF00"
+      }, {
+        key: "3",
+        value: "#FFFF00"
+      }, {
+        key: "4",
+        value: "#FF0000"
+      }],
+      heatGradientArr: [{
+        key: "#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000",
+        value: "-webkit-linear-gradient(left,#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000)"
+      }, {
+        key: "#636CEA,#1B1DD5,#BE1C4D,#F79390,#FFFFCC",
+        value: "-webkit-linear-gradient(left,#636CEA,#1B1DD5,#BE1C4D,#F79390,#FFFFCC)"
+      }, {
+        key: "#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF",
+        value: "-webkit-linear-gradient(left,#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF)"
+      }],
       init: false,
       loadingTest: "加载中，请稍后...",
       FieldArray: [],
@@ -798,7 +893,8 @@ export default {
         key: "theme-panel-line-three",
         value: [10, 3, 2, 3]
       }],
-      themeDefaultTypeCopy: undefined
+      themeDefaultTypeCopy: undefined,
+
     }
   },
   watch: {
@@ -833,7 +929,12 @@ export default {
           }
         });
       }
-    }
+    },
+    heatMapRadius: {
+      handler: function () {
+        this.$emit("heatRadiusChanged", Number(this.heatMapRadius));
+      }
+    },
   },
   created() {
     let vm = this;
@@ -1034,7 +1135,28 @@ export default {
     },
     $_panelClick() {
       this.$emit("panelClick", this);
-    }
+    },
+    $_heatGradientChange(e) {
+      let colorsArr = [];
+      colorsArr = e.split(",");
+      this.currentColors = [];
+      colorsArr.forEach((color, i) => {
+        this.currentColors.push({key: i, value: color});
+      });
+      colorsArr.unshift("#FFFFFF");
+      this.$emit("gradientChange", colorsArr);
+    },
+    $_selectColor(e) {
+      let colorsArr = [];
+      this.currentColors.forEach((c, index) => {
+        if (c.key === e.key) {
+          c.value = e.value;
+        }
+        colorsArr.push(c.value);
+      })
+      colorsArr.unshift("#FFFFFF");
+      this.$emit("gradientChange", colorsArr);
+    },
   }
 }
 </script>
