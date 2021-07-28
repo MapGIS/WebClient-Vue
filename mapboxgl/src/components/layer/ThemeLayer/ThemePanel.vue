@@ -439,11 +439,11 @@
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-select
-                v-if="fields.length > 0"
+                v-if="labelFields.length > 0"
                 class="theme-panel-select"
                 @change="$_selectTextChange"
             >
-              <mapgis-ui-select-option v-for="(Field,index) in fields" :key="index" :value="Field">
+              <mapgis-ui-select-option v-for="(Field,index) in labelFields" :key="index" :value="Field">
                 {{ Field }}
               </mapgis-ui-select-option>
             </mapgis-ui-select>
@@ -652,12 +652,12 @@
                         <colorPicker class="picker" v-model="colors[index]" v-on:change="$_changeColor(index)"/>
                       </div>
                     </div>
-                    <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right">
+                    <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right" v-bind:title="selectValue">
                       {{
-                        selectValue.toString().length > 6 ? String(selectValue).substr(0, 6) + "..." : (selectValue === "" ? "其他" : selectValue)
+                        selectValue.toString().length > 5 ? String(selectValue).substr(0, 5) + "..." : (selectValue === "" ? "其他" : selectValue)
                       }}
                     </div>
-                    <div class="theme-panel-td theme-panel-td-value">
+                    <div class="theme-panel-td theme-panel-td-value" v-bind:title="item">
                       {{
                         item.toString().length > 12 ? String(item).substr(0, 12) + "..." : (item === "" ? "其他" : item)
                       }}
@@ -693,6 +693,12 @@ export default {
       default: "单值专题图"
     },
     fields: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    labelFields: {
       type: Array,
       default() {
         return []
@@ -915,6 +921,12 @@ export default {
         this.$_addScrollEvent();
       }
     },
+    panelProps: {
+      handler: function () {
+        this.$_formatPanelProps();
+      },
+      deep: true
+    },
     search: {
       handler: function () {
         let vm = this;
@@ -938,12 +950,7 @@ export default {
     },
   },
   created() {
-    let vm = this;
-    Object.keys(this.$data).forEach(function (key) {
-      if (vm.$props.panelProps.hasOwnProperty(key)) {
-        vm.$data[key] = vm.$props.panelProps[key];
-      }
-    });
+    this.$_formatPanelProps();
   },
   mounted() {
     this.themeDefaultTypeCopy = this.themeDefaultType;
@@ -988,6 +995,14 @@ export default {
     });
   },
   methods: {
+    $_formatPanelProps(){
+      let vm = this;
+      Object.keys(this.$data).forEach(function (key) {
+        if (vm.$props.panelProps.hasOwnProperty(key)) {
+          vm.$data[key] = vm.$props.panelProps[key];
+        }
+      });
+    },
     $_fontChanged(font) {
       this.$emit("fontChanged", font);
     },
@@ -1239,6 +1254,7 @@ export default {
 
 .theme-panel-td-value {
   width: 45%;
+  cursor: pointer;
 }
 
 .theme-panel-td-border-right {
@@ -1276,7 +1292,7 @@ export default {
 }
 
 .theme-panel-slider {
-  width: 176px;
+  width: 168px;
   margin-left: 7px;
 }
 

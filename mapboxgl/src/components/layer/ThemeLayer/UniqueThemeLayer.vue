@@ -4,6 +4,7 @@
         v-show="showPanel"
         :data-source="dataSource"
         :fields="fields"
+        :labelFields="fields"
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
@@ -78,6 +79,7 @@ export default {
     this.$_formatProps();
   },
   mounted() {
+    window.map = this.map;
     this.$_mount();
   },
   destroyed() {
@@ -91,7 +93,14 @@ export default {
       this.$_toggleLayer();
     },
     $_outerLineColorChanged(color) {
-      this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy, window.layerVector);
+          break;
+      }
     },
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType){
@@ -107,7 +116,14 @@ export default {
       }
     },
     $_outerLineOpacityChanged(opacity){
-      this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy, window.layerVector);
+          break;
+      }
     },
     $_fontChanged(font){
       this.textFont = font;
@@ -172,13 +188,13 @@ export default {
       if (next) {
         switch (this.dataType) {
           case "fill":
-            this.layerVector.paint["fill-color"] = colors;
+            window.layerVector.paint["fill-color"] = colors;
             break;
           case "circle":
-            this.layerVector.paint["circle-color"] = colors;
+            window.layerVector.paint["circle-color"] = colors;
             break;
           case "line":
-            this.layerVector.paint["line-color"] = colors;
+            window.layerVector.paint["line-color"] = colors;
             break;
         }
         this.$_changeOriginLayer();
@@ -188,19 +204,19 @@ export default {
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数this.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.layerVector.paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
       switch (this.dataType) {
         case "fill":
-          this.layerVector.paint["fill-color"] = colors;
+          window.layerVector.paint["fill-color"] = colors;
           break;
         case "circle":
-          this.layerVector.paint["circle-color"] = colors;
+          window.layerVector.paint["circle-color"] = colors;
           break;
         case "line":
-          this.layerVector.paint["line-color"] = colors;
+          window.layerVector.paint["line-color"] = colors;
           break;
       }
     },
@@ -257,7 +273,7 @@ export default {
     $_initThemeCallBack(geojson, fillColors) {
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        this.layerVector = {
+        window.layerVector = {
           id: "theme_layer_id",
           type: 'fill',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -271,7 +287,7 @@ export default {
         this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        this.layerVector = {
+        window.layerVector = {
           id: "theme_layer_id",
           type: 'circle',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -287,7 +303,7 @@ export default {
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        this.layerVector = {
+        window.layerVector = {
           id: "theme_layer_id",
           type: 'line',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致

@@ -5,6 +5,7 @@
         :title="title"
         :data-source="dataSource"
         :fields="fields"
+        :labelFields="allFields"
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
@@ -208,7 +209,8 @@ export default {
       startNumWrong: false,
       endNumWrong: false,
       offsetText: [0, 0],
-      panelPropsDefault: {}
+      panelPropsDefault: {},
+      allFields: undefined
     }
   },
   created() {
@@ -228,7 +230,14 @@ export default {
       this.$_toggleLayer();
     },
     $_outerLineColorChanged(color) {
-      this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy, window.layerVector);
+          break;
+      }
     },
     $_fontChanged(font){
       this.textFont = font;
@@ -248,7 +257,14 @@ export default {
       }
     },
     $_outerLineOpacityChanged(opacity){
-      this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy, window.layerVector);
+          break;
+      }
     },
     $_opacityChangedCallBack(opacity) {
       let opacityType = "";
@@ -368,13 +384,13 @@ export default {
       if (next) {
         switch (this.dataType) {
           case "fill":
-            this.layerVector.paint["fill-color"] = colors;
+            window.layerVector.paint["fill-color"] = colors;
             break;
           case "circle":
-            this.layerVector.paint["circle-color"] = colors;
+            window.layerVector.paint["circle-color"] = colors;
             break;
           case "line":
-            this.layerVector.paint["line-color"] = colors;
+            window.layerVector.paint["line-color"] = colors;
             break;
         }
         this.$_changeOriginLayer();
@@ -384,7 +400,7 @@ export default {
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数this.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.layerVector.paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
@@ -400,13 +416,13 @@ export default {
       colors = this.$_editColor(colors);
       switch (this.dataType) {
         case "fill":
-          this.layerVector.paint["fill-color"] = colors;
+          window.layerVector.paint["fill-color"] = colors;
           break;
         case "circle":
-          this.layerVector.paint["circle-color"] = colors;
+          window.layerVector.paint["circle-color"] = colors;
           break;
         case "line":
-          this.layerVector.paint["line-color"] = colors;
+          window.layerVector.paint["line-color"] = colors;
           break;
       }
     },
@@ -461,7 +477,7 @@ export default {
       // });
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        this.layerVector = {
+        window.layerVector = {
           type: 'fill',
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
@@ -474,7 +490,7 @@ export default {
         this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        this.layerVector = {
+        window.layerVector = {
           type: 'circle',
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
@@ -489,7 +505,7 @@ export default {
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        this.layerVector = {
+        window.layerVector = {
           type: 'line',
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
           paint: {
@@ -507,6 +523,7 @@ export default {
         type: "FeatureCollection"
       };
       let features = geojson.features;
+      this.allFields = this.$_getFields(features[0]);
       for (let i = 0; i < features.length; i++) {
         let feature = {}, properties = {};
         feature.geometry = features[i].geometry;

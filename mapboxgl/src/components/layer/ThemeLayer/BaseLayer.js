@@ -101,7 +101,6 @@ export default {
             sourceVectorId: 'theme_source',
             layerVectorId: 'theme_layer',
             allOriginColors: {},
-            layerVector: {},
             dataType: "",
             textLayer: undefined,
             offsetText: [0, 0],
@@ -408,6 +407,26 @@ export default {
                 }
             });
         },
+        $_getValidHeatFieldFromGeoJson(GeoJson){
+            let features = GeoJson.features,field = undefined;
+            if(features.length > 0){
+                Object.keys(features[0].properties).forEach(function (key) {
+                    if(field){
+                        return false;
+                    }
+                    let valueArr = [];
+                    for (let i = 0;i < features.length;i++){
+                        if(valueArr.indexOf(features[i].properties[key]) < 0){
+                            valueArr.push(features[i].properties[key]);
+                        }
+                    }
+                    if(valueArr.length > 10){
+                        field = key;
+                    }
+                });
+            }
+            return field;
+        },
         $_gradientColor(startColor, endColor, step) {
             let startRGB = this.$_colorRgb(startColor);//转换为rgb数组模式
             let startR = startRGB[0];
@@ -518,9 +537,9 @@ export default {
             this.$_toggleLayer();
         },
         $_removeLayer() {
-            let layer = this.map.getLayer(this.layerVectorId);
+            let layer = this.map.getLayer(window.layerVectorId);
             if (layer) {
-                this.map.removeLayer(this.layerVectorId);
+                this.map.removeLayer(window.layerVectorId);
             }
         },
         $_mount() {
@@ -606,7 +625,7 @@ export default {
         $_setLayOutProperty(key, value, layerId, layerVector) {
             let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
-            layerVector = layerVector || this.layerVector;
+            layerVector = layerVector || window.layerVector;
             if(layerVector && layerVector.hasOwnProperty("layout")){
                 layerVector.layout[key] = value;
                 this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
@@ -672,7 +691,7 @@ export default {
             return fields;
         },
         $_changeOriginLayer(layerVector) {
-            layerVector = layerVector || this.layerVector;
+            layerVector = layerVector || window.layerVector;
             let vm = this;
             if (this.useOriginLayer) {
                 Object.keys(layerVector.paint).forEach(function (key) {
@@ -726,7 +745,6 @@ export default {
             if(!window.originLayer.hasOwnProperty(this.layerIdCopy)){
                 window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
             }
-            window.originLayer[this.layerIdCopy + "_" + this.themeType] = this.$_getLayerStyle(layerId);
             this.source_vector_Id = originLayer.source;
             this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
@@ -788,9 +806,11 @@ export default {
             } else {
                 throw new Error("请设置$_initTheme方法的回到函数！");
             }
-            let layer = {...this.layerVector, ...this.$props};
-            this.$_changeOriginLayer();
-            this.$_loadedLayer();
+            window.originLayer[this.layerIdCopy + "_" + this.themeType] = window.layerVector;
+            this.$nextTick(function () {
+                this.$_changeOriginLayer();
+                this.$_loadedLayer();
+            });
         },
         $_setOriginLayer(colors){
             switch (this.dataType) {
@@ -918,13 +938,13 @@ export default {
             this.$_setOriginLayer(colors);
             switch (this.dataType) {
                 case "fill":
-                    this.layerVector.paint["fill-color"] = colors;
+                    window.layerVector.paint["fill-color"] = colors;
                     break;
                 case "circle":
-                    this.layerVector.paint["circle-color"] = colors;
+                    window.layerVector.paint["circle-color"] = colors;
                     break;
                 case "line":
-                    this.layerVector.paint["line-color"] = colors;
+                    window.layerVector.paint["line-color"] = colors;
                     break;
             }
             this.$_changeOriginLayer();
@@ -1073,7 +1093,7 @@ export default {
         $_setPaintProperty(key, value, layerId, layerVector) {
             let windowId = layerId ? layerId : this.layerIdCopy + "_" + this.themeType;
             layerId = layerId || this.layerIdCopy;
-            layerVector = layerVector || this.layerVector;
+            layerVector = layerVector || window.layerVector;
             if(layerVector && layerVector.hasOwnProperty("paint")){
                 layerVector.paint[key] = value;
                 this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
@@ -1133,7 +1153,15 @@ export default {
             return colors;
         },
         $_addLineLayer() {
-            this.lineId = "line_layer_" + this.themeType + "_" + this.layerIdCopy;
+            switch (this.themeType) {
+                case "unique":
+                    this.lineId = this.layerIdCopy + "_单值专题图_线";
+                    break;
+                case "range":
+                    this.lineId = this.layerIdCopy + "_分段专题图_线";
+                    break;
+
+            }
             let layer = this.map.getLayer(this.lineId);
             if (!layer) {
                 this.extraLayer.push({
@@ -1166,7 +1194,15 @@ export default {
             if (!this.textFont) {
                 this.textFont = this.textFonts[0];
             }
-            this.textId = "text_layer_" + this.themeType + "_" + this.layerIdCopy;
+            switch (this.themeType) {
+                case "unique":
+                    this.textId = this.layerIdCopy + "_单值专题图_注记";
+                    break;
+                case "range":
+                    this.textId = this.layerIdCopy + "_分段专题图_注记";
+                    break;
+
+            }
             let layer = this.map.getLayer(this.textId);
             if (!layer) {
                 this.extraLayer.push({
