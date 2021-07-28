@@ -320,7 +320,7 @@ export default {
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",this.layerVector);
+      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",window.layerVector);
     },
     $_clickIcon(icon) {
       let hasIcon = this.map.hasImage(icon.name), vm = this;
@@ -426,17 +426,17 @@ export default {
       this.changeLayerId = this.layerIdCopy;
     },
     $_setPaintProperty(key, value) {
-      this.layerVector.paint[key] = value;
-      this.map.setPaintProperty(this.layerIdCopy, key, this.layerVector.paint[key]);
+      window.layerVector.paint[key] = value;
+      this.map.setPaintProperty(this.layerIdCopy, key, window.layerVector.paint[key]);
     },
     $_setLayOutProperty(key, value) {
-      this.layerVector.layout[key] = value;
-      this.map.setLayoutProperty(this.layerIdCopy, key, this.layerVector.layout[key]);
+      window.layerVector.layout[key] = value;
+      this.map.setLayoutProperty(this.layerIdCopy, key, window.layerVector.layout[key]);
     },
     $_changeOriginLayer() {
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数this.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.layerVector.paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack() {
@@ -451,8 +451,8 @@ export default {
       });
       let colors = this.$_editColor();
       if(this.selectText){
-        this.layerVector.layout["text-field"] = '{' + this.selectText + '}';
-        this.map.setLayoutProperty(this.layerIdCopy, "text-field", this.layerVector.layout["text-field"]);
+        window.layerVector.layout["text-field"] = '{' + this.selectText + '}';
+        this.map.setLayoutProperty(this.layerIdCopy, "text-field", window.layerVector.layout["text-field"]);
       }
       this.$_setPaintProperty('icon-color', colors);
     },
@@ -571,7 +571,7 @@ export default {
         this.dataInit = true;
       });
       fillColors = this.$_editColor();
-      this.layerVector = {
+      window.layerVector = {
         'id': this.layerIdCopy,
         'source': this.source_vector_Id,
         'type': 'symbol',

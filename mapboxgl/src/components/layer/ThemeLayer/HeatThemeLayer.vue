@@ -72,17 +72,6 @@ export default {
     this.$_removeLayer();
   },
   methods: {
-    hideExtraLayer() {
-      window.originLayer[this.heatMapLayerId].layout.visibility = "none";
-      this.map.setLayoutProperty(this.heatMapLayerId, "visibility", "none");
-      this.map.setLayoutProperty(this.layerIdCopy, "visibility", "visible");
-    },
-    showExtraLayer() {
-      if (window.originLayer.hasOwnProperty(this.heatMapLayerId)) {
-        window.originLayer[this.heatMapLayerId].layout.visibility = "visible";
-        this.map.setLayoutProperty(this.heatMapLayerId, "visibility", "visible");
-      }
-    },
     $_changeOriginLayer() {
     },
     /*
@@ -91,12 +80,14 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson) {
+      this.defaultValue =  this.$_getValidHeatFieldFromGeoJson(geojson);
+      this.$set(this.panelPropsDefault,"defaultValue",this.defaultValue)
       //隐藏原图层
       this.map.setLayoutProperty(this.layerIdCopy,"visibility","none");
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_" + this.themeType;
-        this.layerVector = {
+        window.layerVector = {
           id: this.heatMapLayerId,
           type: 'heatmap',
           source: this.source_vector_Id, //必须和上面的layerId一致
@@ -182,12 +173,12 @@ export default {
             // ]
           }
         }
-        window.originLayer[this.heatMapLayerId] = this.layerVector;
+        window.originLayer[this.heatMapLayerId] = window.layerVector;
         this.extraLayer.push({
           key: "heatmapLayer",
           value: this.heatMapLayerId
         });
-        this.map.addLayer(this.layerVector);
+        this.map.addLayer(window.layerVector);
       }
     },
 
