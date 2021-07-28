@@ -90,7 +90,14 @@ export default {
   },
   methods: {
     $_resetAllLayer(){
-      this.resetLayer(this.layerId);
+      this.hideLayer(this.layerId);
+    },
+    hideLayer(layerId){
+      this.uniqueLayer.hideExtraLayer();
+      this.symbolLayer.hideExtraLayer();
+      this.rangeLayer.hideExtraLayer();
+      this.heatmapLayer.hideExtraLayer();
+      this.uniqueLayer.resetMainLayer(layerId);
     },
     resetLayer(layerId){
       this.uniqueLayer.deleteExtraLayer();

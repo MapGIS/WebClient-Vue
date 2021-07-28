@@ -72,17 +72,6 @@ export default {
     this.$_removeLayer();
   },
   methods: {
-    hideExtraLayer() {
-      window.originLayer[this.heatMapLayerId].layout.visibility = "none";
-      this.map.setLayoutProperty(this.heatMapLayerId, "visibility", "none");
-      this.map.setLayoutProperty(this.layerIdCopy, "visibility", "visible");
-    },
-    showExtraLayer() {
-      if (window.originLayer.hasOwnProperty(this.heatMapLayerId)) {
-        window.originLayer[this.heatMapLayerId].layout.visibility = "visible";
-        this.map.setLayoutProperty(this.heatMapLayerId, "visibility", "visible");
-      }
-    },
     $_changeOriginLayer() {
     },
     /*

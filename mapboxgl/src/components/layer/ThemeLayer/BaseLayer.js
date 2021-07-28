@@ -199,10 +199,11 @@ export default {
                 }
                 for (let key in layout) {
                     if (layout.hasOwnProperty(key) && key.indexOf("_") < 0 && layout[key]) {
-                        this.$_setPaintProperty(key, paint[layout],this.layerIdCopy);
+                        this.$_setLayOutProperty(key, paint[layout],this.layerIdCopy);
                     }
                 }
                 emitMapChangeStyle(this.map.getStyle());
+                delete window.layerVector;
                 this.$emit("resetLayer");
             }
         },
@@ -695,7 +696,9 @@ export default {
             let vm = this;
             if (this.useOriginLayer) {
                 Object.keys(layerVector.paint).forEach(function (key) {
-                    vm.map.setPaintProperty(vm.layerIdCopy, key, layerVector.paint[key]);
+                    try {
+                        vm.map.setPaintProperty(vm.layerIdCopy, key, layerVector.paint[key]);
+                    }catch (e) {}
                 });
             }
         },
@@ -742,9 +745,6 @@ export default {
                 return;
             }
             let originLayer = this.map.getLayer(layerId);
-            if(!window.originLayer.hasOwnProperty(this.layerIdCopy)){
-                window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(layerId);
-            }
             this.source_vector_Id = originLayer.source;
             this.source_vector_layer_Id = originLayer.sourceLayer;
             let featureCollection = {
@@ -799,14 +799,49 @@ export default {
             this.selectKey = this.fields[0];
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             let colors = this.$_getColors(this.dataSource, startColor, endColor, this.selectKey);
-            this.$_setOriginLayer(colors);
             this.checkBoxArr = this.originColors.checkArr;
             if (this.$_initThemeCallBack) {
                 this.$_initThemeCallBack(geojson, colors, this.dataSource);
             } else {
                 throw new Error("请设置$_initTheme方法的回到函数！");
             }
+            if(!window.originLayer.hasOwnProperty(this.layerIdCopy)){
+                window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(this.layerIdCopy);
+                let paint = window.originLayer[this.layerIdCopy].paint;
+                if(JSON.stringify(paint) === "{}"){
+                    switch (this.dataType) {
+                        case "fill":
+                            window.originLayer[this.layerIdCopy].paint = {
+                                "fill-color": "#000"
+                            };
+                            break;
+                        case "circle":
+                            window.originLayer[this.layerIdCopy].paint = {
+                                "circle-color": "#000"
+                            };
+                            break;
+                        case "line":
+                            window.originLayer[this.layerIdCopy].paint = {
+                                "line-color": "#000"
+                            };
+                            break;
+                    }
+                }
+                let layout = window.originLayer[this.layerIdCopy].layout;
+                if(JSON.stringify(layout) === "{}"){
+                    window.originLayer[this.layerIdCopy].layout = {
+                        "visibility": "visible"
+                    }
+                }
+            }
             window.originLayer[this.layerIdCopy + "_" + this.themeType] = window.layerVector;
+            this.$_setOriginLayer(colors);
+            // setTimeout(function () {
+            //     vm.$nextTick(function () {
+            //         vm.$_changeOriginLayer();
+            //         vm.$_loadedLayer();
+            //     });
+            // },20);
             this.$nextTick(function () {
                 this.$_changeOriginLayer();
                 this.$_loadedLayer();
