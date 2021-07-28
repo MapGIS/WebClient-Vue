@@ -21,6 +21,8 @@ export default {
       uistatus: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
       progress: 0,
       uploadError: false,
+      uploadErrorMsg: '',
+      csvUploadComplete: false,
       webSocketTaskId: '',
       // 原始云盘的complete模块
       uploadCount: 0,
@@ -84,11 +86,17 @@ export default {
     EventBus.$on("change-upload-error", uploadError => {
       vm.uploadError = uploadError;
     });
+    EventBus.$on("change-upload-error-msg", uploadErrorMsg => {
+      vm.uploadErrorMsg = uploadErrorMsg;
+    });
     EventBus.$on("add-complete-uploader-count", count => {
       vm.count = count;
     });
     EventBus.$on("add-complete-uploader-result", uploads => {
       vm.uploads = uploads;
+    });
+    EventBus.$on("change-upload-csv-complete", complete => {
+      vm.csvUploadComplete = complete;
     });
     EventBus.$on("change-upload-taskid", taskid => {
       vm.webSocketTaskId = taskid;

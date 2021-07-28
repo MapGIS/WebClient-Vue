@@ -11,6 +11,8 @@ export let defaultUpload = {
   status: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
   progress: 0,
   uploadError: false,
+  uploadErrorMsg: '',
+  csvUploadComplete: false,
   webSocketTaskId: ''
 };
 
@@ -47,6 +49,8 @@ export default new Vue({
     status: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
     progress: 0,
     uploadError: false,
+    uploadErrorMsg: '',
+    csvUploadComplete: false,
     webSocketTaskId: ''
   },
   complete: {

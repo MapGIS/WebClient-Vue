@@ -28,7 +28,6 @@ export default {
   name: "importProgress",
   mixins: [UploadMixin],
   props: {
-    handleCloseUploadModal: Function,
   },
   data() {
     return {
@@ -57,9 +56,7 @@ export default {
               this.importComplete = true
               this.tipText = '导入完成'
               this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
-              if (this.handleCloseUploadModal) {
-                // this.handleCloseUploadModal()
-              }
+              // this.$emit('closeImport') // 关闭导入文件对话框
             }
           }
         }
@@ -86,13 +83,13 @@ export default {
   },
   computed: {
     
-    handleWsRefresh() {
-      return this.$store.state.websocket.msgid;
-    },
+    // handleWsRefresh() {
+    //   return this.$store.state.websocket.msgid;
+    // },
     progressStatus() {
       if (this.uploadError === true) {
         this.importStatus = "导入失败";
-        this.tipText = "上传文件失败";
+        this.tipText = this.uploadErrorMsg;
         this.$emit("handleUploadComplete", true);
         return "exception";
       } else if (this.progressState === false) {

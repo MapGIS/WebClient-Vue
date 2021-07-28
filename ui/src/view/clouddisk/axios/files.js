@@ -412,6 +412,22 @@ export function exportVector(convertType, srcUrl, destPath, destFileName) {
   );
 }
 
+/**
+ * CSV类型数据预览
+ * @param {*} srcUrl 文件路径
+ * @param {*} charset 文件编码
+ * @param {*} separator 分隔符
+ */
+export function getCSVTableData (srcUrl, charset, separator) {
+  const url = getMapGISUrl()
+  const api = new API()
+  const token = getMapgisToken()
+
+  api.setBaseUrl(url)
+  api.setAuthorization(token)
+  return api.get(url + '/clouddisk/rest/tools/table/preview?srcUrl=' + srcUrl + '&charset=' + charset + '&separator=' + separator + '&count=10')
+}
+
 // 获取外部业务数据表的元数据
 export function getMetadata(srcUrl) {
   const url = getMapGISUrl();

@@ -109,6 +109,28 @@ export const changeUploadError = payload => {
   EventBus.$emit("change-upload-error", uploadError);
 };
 
+/**
+ * @description 监控上传过程过程中的错误信息
+ * @param {String} uploadErrorMsg
+ */
+export const changeUploadErrorMsg = payload => {
+  EventBus.$options.upload.uploadErrorMsg = payload.uploadErrorMsg;
+  EventBus.$emit("change-upload-error-msg", payload.uploadErrorMsg);
+};
+
+/**
+ * @description 表示csv数据的首次上传是否完成
+ * @param {Boolean} csvUploadComplete 
+ */
+export const changeCsvUploadComplete = payload => {
+  EventBus.$options.upload.csvUploadComplete = payload.csvUploadComplete;
+  EventBus.$emit("change-upload-csv-complete", payload.csvUploadComplete);
+};
+
+/**
+ * @description 记录最新一次导入操作的taskId，此taskId与WebSocket消息的MsgId相同时，即表示该消息涉及当前最新一次导入
+ * @param {String} webSocketTaskId 
+ */
 export const changeUploadWebsocketTaskId = payload => {
   EventBus.$options.upload.webSocketTaskId = payload.webSocketTaskId;
   EventBus.$emit("change-upload-taskid", payload.webSocketTaskId);

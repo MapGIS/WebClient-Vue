@@ -141,13 +141,15 @@ import {
   changeUiState,
   changeUploadProgress,
   changeUploadError,
+  changeUploadErrorMsg,
   addCompleteUploaderCount,
   addCompleteUploaderResult,
   addGisCurrent,
   changeWebsocketAction,
   changeWebSocketContent,
   changeWebSocketContentType,
-  changeWebSocketMsgid
+  changeWebSocketMsgid,
+  changeCsvUploadComplete
 } from "../../../../util/emit/upload";
 
 import UploadMixin from "../../../../mixin/UploaderMixin";
@@ -321,7 +323,12 @@ export default {
       return target;
     },
     onFileAdded(file) {
-      changeUiState({ state: "upload" });
+      let fileType = this.param.type;
+      if (fileType === 'csv') {
+        changeUiState({ state: "check" });
+      } else {
+        changeUiState({ state: "upload" });
+      }
       changeUploadError({ uploadError: false });
       changeUploadProgress({ progress: 0 });
       changeCurrentFilename({ filename: file.name });
@@ -366,7 +373,7 @@ export default {
         let isCache = self.param.isCache;
         let isGisImport = self.param.isGisImport
         let taskid = self.param.taskid
-        console.warn('本次上传对应taskid:', taskid)
+        // console.warn('本次上传对应taskid:', taskid)
         let gisFormat = type === "tiff" ? "raster" : "vector";
         let formdata = {
           // @date 2021/07/16
@@ -385,6 +392,7 @@ export default {
         mergeSimpleUpload(formdata)
           .then(res => {
             console.warn("mergeSimpleUpload 成功发送", res);
+            changeCsvUploadComplete({ csvUploadComplete: true });
             // 文件合并成功
             // let data = res.data
             // Notice.success({
@@ -397,7 +405,7 @@ export default {
             //   this.importFile(this.$store.state.upload.param.folderDir, file.name)
             // }
           })
-          .catch(e => {
+          .catch(e => { 
             console.warn("mergeSimpleUpload 失败发送", e);
           });
 
@@ -405,6 +413,7 @@ export default {
       } else {
         console.log("上传成功");
         changeUploadProgress({ progress: 1 });
+        changeCsvUploadComplete({ csvUploadComplete: true });
       }
     },
     onFileError(rootFile, file, response, chunk) {
@@ -424,6 +433,7 @@ export default {
         content: "错误码:" + res.errorCode + "   失败原因： " + res.msg
       });
       changeUploadError({ uploadError: true });
+      changeUploadErrorMsg({ uploadErrorMsg: res.msg });
     },
     importFile(uri, name) {
       let self = this;

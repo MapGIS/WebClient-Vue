@@ -93,6 +93,7 @@ export default {
                     document: result
                   }
                   this.handleNewDocument(payload) // 将新生成的template传给在线制图
+                  this.$emit('closeImport') // 关闭导入文件对话框
                   // this.handleClose()
                 }
               }
@@ -223,6 +224,7 @@ export default {
         document: doc
       }
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
+      this.$emit('closeImport') // 关闭导入文件对话框
       // this.handleClose()
       let folderDir = getMapgisPath() + '/工作目录/工程文件Cache'
       let fileName = doc.layers[0].name + '_自动创建.style'

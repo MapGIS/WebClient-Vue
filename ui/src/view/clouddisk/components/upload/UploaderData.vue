@@ -5,13 +5,16 @@
         <img src="./images/save.png" style="padding-bottom:4px;" />
         导入到：{{ importDestUrl }}
       </p>
-      <mapgis-ui-button
+      <!-- <mapgis-ui-button
         type="link"
         style="line-height:40px;float:right;"
         @click="handleImportUrlModal"
       >
         {{ buttonText }}
-      </mapgis-ui-button>
+      </mapgis-ui-button> -->
+      <span style="line-height:40px;float:right;margin-right:8px;color:#269ff0;cursor:pointer;" @click="handleImportUrlModal">
+        {{buttonText}}
+      </span>
     </div>
     <div class="type-radio">
       <mapgis-ui-radio-group
@@ -25,7 +28,7 @@
         <mapgis-ui-radio-button value="json">
           Geojson数据文件
         </mapgis-ui-radio-button>
-        <mapgis-ui-radio-button value="csv" :disabled="true">
+        <mapgis-ui-radio-button value="csv">
           CSV表格文件
         </mapgis-ui-radio-button>
       </mapgis-ui-radio-group>
@@ -132,7 +135,7 @@ export default {
           isCache: false,
           type: type,
           gisFormat: gisFormat,
-          isGisImport: true,
+          isGisImport: this.importDataType !== 'csv', // csv不可导入
           taskid: taskid
         }
       });
@@ -154,7 +157,7 @@ export default {
 }
 .path-text {
   display: inline-block;
-  max-width: calc(45vw - 130px);
+  max-width: calc(100% - 130px);
   line-height: 40px;
   color: #999999;
   overflow: hidden;
