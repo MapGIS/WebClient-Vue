@@ -580,6 +580,15 @@ export default {
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
+      this.BacgroundWebsocketInstance.onopen = function () {
+        console.warn('【WebSocket连接成功】', wsUrl)
+      };
+      this.BacgroundWebsocketInstance.onerror = function (event) {
+        console.warn('【WebSocket连接错误】', event)
+      };
+      this.BacgroundWebsocketInstance.onclose = function (event) {
+        console.warn('【WebSocket已关闭连接】', event)
+      };
     },
     updateWebsocket() {
       const vm = this;
