@@ -124,7 +124,7 @@ export default {
               ["linear"],
               ["heatmap-density"],
               0,
-              "#FFFFFF",
+              "rgba(255,255,255,0)",
             ].concat(colorGradient),
             // Adjust the heatmap radius by zoom level
             "heatmap-radius": this.heatMapRadius
