@@ -16,25 +16,39 @@
     >
       <uploader-unsupport></uploader-unsupport>
 
-      <uploader-btn id="global-uploader-btn" :attrs="attrs1" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn"
+        :attrs="attrs1"
+        ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-tiff"
         :attrs="attrs2"
         ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-shp" :attrs="attrs3" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-shp"
+        :attrs="attrs3"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-json"
         :attrs="attrs4"
         ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-csv" :attrs="attrs5" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-csv"
+        :attrs="attrs5"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn

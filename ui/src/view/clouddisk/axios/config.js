@@ -60,7 +60,7 @@ export default {
     return Qs.stringify(params, { arrayFormat: 'brackets' })
   }, */
   timeout: 30000,
-  withCredentials: false, // default
+  withCredentials: false, // default // 不能设为true，否则一些请求得不到数据
   responseType: "json", // default
   onUploadProgress: function(progressEvent) {
     // Do whatever you want with the native progress event

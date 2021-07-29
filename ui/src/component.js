@@ -125,3 +125,6 @@ export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/compon
 export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
 export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
 export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";
+
+// Portal
+export { default as MapgisUiPortalDataresource } from "./view/portal/components/select/DataResource.vue";

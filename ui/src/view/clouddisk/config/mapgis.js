@@ -32,7 +32,7 @@ export function getWebSocketUrl(payload = {}) {
   // let pathname = window.location.pathname
   let port = window.location.port;
   client =
-    (client || "mapgis_ui_global_upload_websocket_id") + "_" + Math.random() * 1000;
+    (client || "mapgis_ui_global_upload_websocket_id") + "_" + new Date().getTime();
   // let protocol = window.location.protocol
   if (ip !== null && socket !== null) {
     url =
