@@ -56,10 +56,17 @@ export default {
       show: false
     };
   },
+  watch: {
+    url: function(next) {
+      if (next) this.initSprite();
+    }
+  },
   computed: {},
   created() {},
   mounted() {
-    this.initSprite();
+    if (this.url) {
+      this.initSprite();
+    }
   },
   methods: {
     showModal() {
@@ -67,6 +74,7 @@ export default {
     },
     initSprite() {
       let { url } = this;
+      if (!url) return;
       let vm = this;
 
       let jsonUrl = fetch(`${url}.json`).then(response => response.json());

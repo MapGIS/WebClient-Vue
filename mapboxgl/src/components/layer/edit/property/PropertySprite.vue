@@ -1,12 +1,13 @@
 <template>
   <mapgis-ui-row class="mapgis-property-sprite">
-    <mapgis-ui-col span="6">
+    <mapgis-ui-col span="7">
+      <mapgis-ui-iconfont :type="rule.icon" />
       <span class="mapgis-property-sprite-left">{{ rule.title }} </span>
     </mapgis-ui-col>
-    <mapgis-ui-col span="6">
+    <mapgis-ui-col span="17">
       <mapgis-ui-sprite-select
         v-model="value"
-        url="http://localhost:6163/igs/rest/mrms/vtiles/sprite"
+        :url="sprite"
         @change="onChange"
       />
     </mapgis-ui-col>
@@ -35,8 +36,18 @@ export default {
   },
   data() {
     return {
-      value: this.getValue()
+      value: this.getValue(),
+      sprite: undefined
     };
+  },
+  mounted() {
+    let { map } = this;
+    if (map) {
+      let style = map.getStyle();
+      if (!style) return;
+      let { sprite } = style;
+      this.sprite = sprite;
+    }
   },
   methods: {
     onChange(sprite) {

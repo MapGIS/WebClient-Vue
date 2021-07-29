@@ -9,6 +9,7 @@ import Feature from "./Feature.vue";
 const LineRules = [
   {
     title: "颜色",
+    icon: "mapgis-yansehecheng",
     type: "color",
     layerprop: "line-color",
     layertype: "paint",
@@ -16,12 +17,14 @@ const LineRules = [
   },
   {
     title: "符号",
+    icon: "mapgis-yangshikuguanli",
     type: "sprite",
     layerprop: "line-pattern",
     layertype: "paint"
   },
   {
     title: "透明度",
+    icon: "mapgis-duibidutiaojie",
     type: "number",
     layerprop: "line-opacity",
     layertype: "paint",
@@ -31,6 +34,7 @@ const LineRules = [
   },
   {
     title: "线宽",
+    icon: "mapgis-daolumian",
     type: "number",
     layerprop: "line-width",
     layertype: "paint",
@@ -39,6 +43,7 @@ const LineRules = [
   },
   {
     title: "线头",
+    icon: "mapgis-daolulvdai",
     type: "enum",
     layerprop: "line-cap",
     layertype: "layout",
@@ -46,6 +51,7 @@ const LineRules = [
   },
   {
     title: "拐角",
+    icon: "mapgis-daoluyalifenxi",
     type: "enum",
     layerprop: "line-join",
     layertype: "layout",

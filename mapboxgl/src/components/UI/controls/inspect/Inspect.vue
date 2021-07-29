@@ -113,7 +113,7 @@ export default {
 
 .mapboxgl-popup-content {
   height: 260px;
-  width: 100%;
+  width: 360px;
 }
 
 .mapgis-inspect-prop-tabs {

@@ -1,9 +1,10 @@
 <template>
   <mapgis-ui-row class="mapgis-property-number">
-    <mapgis-ui-col span="6">
+    <mapgis-ui-col span="7">
+      <mapgis-ui-iconfont :type="rule.icon" />
       <span class="mapgis-property-number-left">{{ rule.title }} </span>
     </mapgis-ui-col>
-    <mapgis-ui-col span="18">
+    <mapgis-ui-col span="17">
       <mapgis-ui-input-number
         class="mapgis-property-number-right"
         v-model="value"
@@ -77,13 +78,11 @@ export default {
 }
 
 .mapgis-property-number-left {
-  float: left;
   height: 30px;
   line-height: 30px;
 }
 
 .mapgis-property-number-right {
-  float: right;
-  width: 190px !important;
+  width: 180px !important;
 }
 </style>
