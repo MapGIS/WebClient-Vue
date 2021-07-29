@@ -7,6 +7,9 @@ export default {
   mixins: [rasterLayer],
   props: {
     ...igsOptions,
+    zoomOffset: {
+      type: Number
+    },
     serverName: {
       type: String,
       require: true
@@ -15,7 +18,7 @@ export default {
   methods: {
     $_init() {
       let { url, domain, baseUrl, protocol, ip, port } = this;
-      let { serverName, zoomOffset } = this;
+      let { serverName, zoomOffset = 0 } = this;
       let fixBaseUrl;
       if (url) {
         this._url = this.url;
@@ -24,7 +27,11 @@ export default {
         }
         this._zoomOffset = zoomOffset;
         if (this.map.getCRS().epsgCode.includes("4326")) {
-          this._zoomOffset = -1;
+          if (this.zoomOffset != undefined) {
+            this._zoomOffset = this.zoomOffset;
+          } else {
+            this._zoomOffset = -1;
+          }
         }
         return;
       } else if (baseUrl) {
@@ -44,7 +51,11 @@ export default {
       this._zoomOffset = this.zoomOffset;
 
       if (this.map.getCRS().epsgCode.includes("4326")) {
-        this._zoomOffset = -1;
+        if (this.zoomOffset != undefined) {
+          this._zoomOffset = this.zoomOffset;
+        } else {
+          this._zoomOffset = -1;
+        }
       }
     },
     $_deferredMount() {

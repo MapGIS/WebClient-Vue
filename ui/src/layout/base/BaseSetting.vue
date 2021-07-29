@@ -26,17 +26,15 @@
       <mapgis-ui-divider>
         颜色切换
       </mapgis-ui-divider>
-      <mapgs-ui-color-simple-picker />
+      <mapgs-ui-color-simple-picker @change="onColorChange" />
     </mapgis-ui-drawer>
   </div>
 </template>
 
 <script>
+import themeFactory from "../../util/style/theme/theme.json";
 import { setTheme } from "../../util/style/theme/set-theme";
 import BlockCheckBox from "./SettingDrawer/BlockCheckbox";
-
-import light from "./SettingDrawer/style/light.svg";
-import dark from "./SettingDrawer/style/dark.svg";
 
 export default {
   name: "mapgis-ui-layout-pro-setting",
@@ -72,9 +70,21 @@ export default {
     hideSetting() {
       this.visible = false;
     },
-    onThemeChange(theme) {
-      this.defaultTheme = theme;
-      setTheme(theme);
+    onThemeChange(themename) {
+      this.defaultTheme = themename;
+      let theme = themeFactory.find(t => t.label == themename);
+      if (theme) {
+        setTheme(theme);
+      }
+    },
+    onColorChange(payload) {
+      const { color, colors } = payload;
+      let themename = this.defaultTheme
+      let theme = themeFactory.find(t => t.label == themename);
+      if (theme) {
+        theme.colorGroup = colors;
+        setTheme(theme);
+      }
     }
   }
 };
