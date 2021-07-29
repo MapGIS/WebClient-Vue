@@ -18,6 +18,10 @@
           总共{{ paginationCopy.total }}条，已选{{ selectData.length }}条
         </div>
         <mapgis-ui-button-group class="toolbar-buttons">
+          <mapgis-ui-button @click="$_exportData" size="small">
+            <mapgis-ui-iconfont type="mapgis-daochu" />
+            导出
+          </mapgis-ui-button>
           <mapgis-ui-button @click="$_fieldFilter" size="small">
             <mapgis-ui-iconfont type="mapgis-shiliangtiaojianchaxun" />
             字段过滤
@@ -156,6 +160,7 @@ export default {
       visible: true,
       //转化后mapgis-ui-table需要的数据源
       dataSourceCopy: [],
+      dataSourceOrigin: [],
       //dataSource转成的feature对象集合
       featureSet: [],
       //转化后mapgis-ui-table需要的表头
@@ -285,6 +290,7 @@ export default {
     //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(dataSource) {
       dataSource = dataSource || this.dataSource;
+      this.dataSourceOrigin = dataSource;
       if(!dataSource || !dataSource.features || dataSource.features.length === 0){
         this.hasFeatures = false;
         return;
@@ -872,12 +878,26 @@ export default {
           let arr = this.editRowAndCol.split("_");
           let datakey = arr[arr.length - 1];
           let data = this.$_getDataByKey(datakey);
-          this.$emit("edited", data);
+          this.$emit("edited", data, this.$_getGeoJsonFromData());
         }
         this.editRowAndCol = "";
       }
       let data = this.$_getDataByKey(index);
       this.$emit("click", data, key);
+    },
+    $_getGeoJsonFromData(){
+      let geoJson = {
+        "type": "FeatureCollection",
+        "features": []
+      };
+      for(let i = 0;i < this.dataSourceCopy.length;i++){
+        geoJson.features.push({
+          type: 'Feature',
+          geometry: this.dataSourceOrigin.features[i].geometry,
+          properties: this.dataSourceCopy[i].attributes
+        });
+      }
+      return geoJson;
     },
     $_getDataByKey(key) {
       let dataIndex;
@@ -979,6 +999,9 @@ export default {
     },
     $_fieldFilter() {
       this.showFilter = !this.showFilter;
+    },
+    $_exportData(){
+      this.$emit("exportData",this.$_getGeoJsonFromData());
     },
     showTable() {
       this.visible = true;
