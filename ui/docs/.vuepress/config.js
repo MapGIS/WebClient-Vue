@@ -62,7 +62,8 @@ module.exports = {
             children: [
               ["/api/iconfont/IconFont.md", "图标"],
               ["/api/div/Div.md", "区块"],
-              ["/api/collapsecard/CollapseCard.md", "收缩卡片"]
+              ["/api/collapsecard/CollapseCard.md", "收缩卡片"],
+              ["/api/sprite/Sprite.md", "符号库"]
             ]
           }
           /* {
