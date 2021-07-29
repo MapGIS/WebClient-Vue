@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="hasFeatures">
     <div class="mapgis-table-collapse-wrapper">
       <mapgis-ui-div class="mapgis-table-collapse" v-show="!visible">
         <div @click="showTable">
@@ -145,6 +145,10 @@ export default {
     selectable: {
       type: Boolean,
       default: true
+    },
+    autoEdit: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -211,7 +215,8 @@ export default {
       filterTop: 6,
       filterPosition: "absolute",
       pageSize: 10,
-      baseUrlCopy: undefined
+      baseUrlCopy: undefined,
+      hasFeatures: true
     };
   },
   watch: {
@@ -280,6 +285,11 @@ export default {
     //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(dataSource) {
       dataSource = dataSource || this.dataSource;
+      if(!dataSource || !dataSource.features || dataSource.features.length === 0){
+        this.hasFeatures = false;
+        return;
+      }
+      this.hasFeatures = true;
       if (dataSource instanceof Array) {
         if (this.$_isFeatureSet(dataSource)) {
           //Feature集合
@@ -351,7 +361,9 @@ export default {
           scopedSlots: { customRender: FldName[i] },
           align: "left",
           ellipsis: true,
-          sorter: function() {},
+          sorter: function(a, b) {
+            return a[key] - b[key];
+          },
           width: 100
         });
       }
@@ -372,7 +384,9 @@ export default {
             scopedSlots: { customRender: key },
             align: "left",
             ellipsis: true,
-            sorter: function() {},
+            sorter: function(a, b) {
+              return a[key] - b[key];
+            },
             width: 100
           });
         });
@@ -716,9 +730,10 @@ export default {
      * **/
     $_select(record, selected) {
       let value;
-      for (let i = 0; i < this.featureSet.length; i++) {
-        if (record.key === this.featureSet[i].FID) {
-          value = this.featureSet[i];
+      let AllAttrData = this.$_getDateAuto(this.featureSet);
+      for (let i = 0; i < AllAttrData.length; i++) {
+        if (record.key === AllAttrData[i].FID) {
+          value = AllAttrData[i];
           value.attributes = this.$_removeNullData(value.attributes);
           break;
         }
@@ -745,12 +760,29 @@ export default {
       }
       this.$emit("selected", value, this.selectData, selected);
     },
+    $_getDateAuto(data){
+      let dataArr = [];
+      if(this.autoEdit){
+        if(!this.pageInfo){
+          for (let i = 0; i < this.paginationCopy.pageSize; i++) {
+            dataArr.push(data[i]);
+          }
+        }else {
+          let start = (this.pageInfo.current - 1) * this.pageInfo.pageSize;
+          for (let i = start; i < start + this.pageInfo.pageSize; i++) {
+            dataArr.push(data[i]);
+          }
+        }
+      }
+      return dataArr;
+    },
     /*
      * 选择一个分页度所有数据
      * **/
     $_selectAll(selected) {
       let AllAttrData = this.featureSet,
         selectData = [];
+      AllAttrData = this.$_getDateAuto(AllAttrData);
       if (selected) {
         for (let i = 0; i < AllAttrData.length; i++) {
           let flag = false,
@@ -1203,4 +1235,12 @@ export default {
   position: fixed;
   left: 0;
 }
+
+.mapgis-ui-popover-inner-content {
+  width: 150px;
+}
+
+.mapgis-ui-popover-message > .anticon{
+  top: 21px!important;
+  }
 </style>
