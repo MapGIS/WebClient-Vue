@@ -2,9 +2,10 @@
   <div>
     <ThemePanel
         v-show="showPanel"
+        :title="title"
         :data-source="dataSource"
         :fields="fields"
-        :labelFields="fields"
+        :labelFields="allFields"
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
@@ -72,7 +73,8 @@ export default {
   data(){
     return {
       themeType: "unique",
-      panelPropsDefault: {}
+      panelPropsDefault: {},
+      title: "单值专题图"
     }
   },
   created() {
@@ -314,6 +316,7 @@ export default {
           }
         }
       }
+      this.title = "单值专题图" + "_" + this.layerIdCopy;
       this.$_addTextLayer();
     }
   }

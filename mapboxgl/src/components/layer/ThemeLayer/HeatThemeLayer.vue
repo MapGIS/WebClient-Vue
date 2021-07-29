@@ -8,6 +8,7 @@
         :data-source="dataSource"
         :dataType="dataType"
         :fields="fields"
+        :labelFields="allFields"
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
         :themeDefaultType="themeDefaultType"
@@ -84,7 +85,8 @@ export default {
       this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       //隐藏原图层
-      this.map.setLayoutProperty(this.layerIdCopy, "visibility", "none");
+      this.map.setPaintProperty(this.layerIdCopy,"circle-opacity",0);
+      this.map.setPaintProperty(this.layerIdCopy,"circle-stroke-opacity",0);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_" + this.themeType;
@@ -177,7 +179,9 @@ export default {
           key: "heatmapLayer",
           value: this.heatMapLayerId
         });
-        this.map.addLayer(window.layerVector);
+        window.originLayer[this.layerIdCopy + "_" + this.themeType + "_extraLayer"] = this.extraLayer;
+        this.title = "热力专题图" + "_" + this.layerIdCopy;
+        this.map.addLayer(window.layerVector,this.upLayer);
       }
     },
 
@@ -186,11 +190,9 @@ export default {
       let steps = [];
       let level = 1 / colorsArr.length;
       colorsArr.forEach((color, i) => {
-        debugger
         steps.push(i * level);
         steps.push(color);
       })
-      console.log("steps",steps);
       let colorrules = [
         "interpolate",
         ["linear"],
