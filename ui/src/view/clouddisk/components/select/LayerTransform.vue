@@ -121,6 +121,11 @@ export default {
       for (let i = 0; i < this.selectLists.length; i++) {
         let layer = this.selectLists[i]
         let { xattrs, type, title, url } = layer
+        console.warn('xattrs格式1', typeof xattrs, xattrs)
+        if (typeof xattrs === 'string') {
+          xattrs = JSON.parse(xattrs)
+          console.warn('xattrs格式2', typeof xattrs, xattrs)
+        }
         if (!xattrs) {
           this.$notification.error({ message: "当前选择的某个图层缺少图层信息", description: '请检查所选图层是否导入！' })
           continue
@@ -209,7 +214,7 @@ export default {
         .catch(err => {
           console.warn('错误', err)
           if (err.message) {
-            this.$notification.error(err)
+            // this.$notification.error(err)
           } else {
             this.$notification.error({ message: '前端解析出现错误', description: err })
           }
@@ -219,7 +224,7 @@ export default {
     openPreviewLayers (layers) {
       let doc
       doc = this.paraDocument(layers)
-      // console.warn('看doc', doc)
+      console.warn('返回新的document给在线制图', doc)
       let payload = {
         document: doc
       }
@@ -287,8 +292,10 @@ export default {
             layer.url = l.path
             layer.source = l.uuid
             layer.sourceLayer = l.sourceLayer
-            layer.minZoom = this.previewZoom.minZoom
-            layer.maxZoom = this.previewZoom.maxZoom
+            // layer.minZoom = this.previewZoom.minZoom
+            // layer.maxZoom = this.previewZoom.maxZoom
+            layer.minZoom = 0
+            layer.maxZoom = 24
             switch (l.subtype) {
               case 1:
                 layer.subtype = 'Circle'

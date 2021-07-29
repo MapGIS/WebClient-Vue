@@ -16,25 +16,39 @@
     >
       <uploader-unsupport></uploader-unsupport>
 
-      <uploader-btn id="global-uploader-btn" :attrs="attrs1" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn"
+        :attrs="attrs1"
+        ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-tiff"
         :attrs="attrs2"
         ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-shp" :attrs="attrs3" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-shp"
+        :attrs="attrs3"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-json"
         :attrs="attrs4"
         ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-csv" :attrs="attrs5" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-csv"
+        :attrs="attrs5"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
@@ -580,6 +594,15 @@ export default {
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
+      this.BacgroundWebsocketInstance.onopen = function () {
+        console.warn('【WebSocket连接成功】', wsUrl)
+      };
+      this.BacgroundWebsocketInstance.onerror = function (event) {
+        console.warn('【WebSocket连接错误】', event)
+      };
+      this.BacgroundWebsocketInstance.onclose = function (event) {
+        console.warn('【WebSocket已关闭连接】', event)
+      };
     },
     updateWebsocket() {
       const vm = this;
