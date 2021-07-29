@@ -1235,12 +1235,4 @@ export default {
   position: fixed;
   left: 0;
 }
-
-.mapgis-ui-popover-inner-content {
-  width: 150px;
-}
-
-.mapgis-ui-popover-message > .anticon{
-  top: 21px!important;
-  }
 </style>
