@@ -1,13 +1,17 @@
 <template>
   <mapgis-ui-row class="mapgis-property-number">
-    <span class="mapgis-property-number-left">{{ rule.title }} </span>
-    <mapgis-ui-input-number
-      class="mapgis-property-number-right"
-      v-model="value"
-      :min="minimum"
-      :max="maximum"
-      @change="onChange"
-    />
+    <mapgis-ui-col span="6">
+      <span class="mapgis-property-number-left">{{ rule.title }} </span>
+    </mapgis-ui-col>
+    <mapgis-ui-col span="18">
+      <mapgis-ui-input-number
+        class="mapgis-property-number-right"
+        v-model="value"
+        :min="minimum"
+        :max="maximum"
+        @change="onChange"
+      />
+    </mapgis-ui-col>
   </mapgis-ui-row>
 </template>
 
@@ -80,6 +84,6 @@ export default {
 
 .mapgis-property-number-right {
   float: right;
-  width: 160px;
+  width: 190px !important;
 }
 </style>

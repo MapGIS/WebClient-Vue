@@ -5,6 +5,7 @@
         :title="title"
         :data-source="dataSource"
         :fields="fields"
+        :labelFields="allFields"
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
@@ -185,7 +186,7 @@ export default {
   },
   data() {
     return {
-      title: "分段专题图",
+      title: "等级符号专题图",
       themeType: "symbol",
       dataSourceCopy: undefined,
       dataInit: false,
@@ -425,14 +426,6 @@ export default {
       this.changeLayerProp = true;
       this.changeLayerId = this.layerIdCopy;
     },
-    $_setPaintProperty(key, value) {
-      window.layerVector.paint[key] = value;
-      this.map.setPaintProperty(this.layerIdCopy, key, window.layerVector.paint[key]);
-    },
-    $_setLayOutProperty(key, value) {
-      window.layerVector.layout[key] = value;
-      this.map.setLayoutProperty(this.layerIdCopy, key, window.layerVector.layout[key]);
-    },
     $_changeOriginLayer() {
     },
     /*
@@ -593,6 +586,7 @@ export default {
           "text-halo-width": this.haloWidth
         },
       };
+      this.title = "等级符号" + "_" + this.layerIdCopy;
       if (this.source_vector_layer_Id) {
         this.textLayer["source-layer"] = this.source_vector_layer_Id;
       }

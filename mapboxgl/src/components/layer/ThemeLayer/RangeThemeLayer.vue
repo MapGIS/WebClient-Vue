@@ -210,7 +210,6 @@ export default {
       endNumWrong: false,
       offsetText: [0, 0],
       panelPropsDefault: {},
-      allFields: undefined
     }
   },
   created() {
@@ -515,6 +514,7 @@ export default {
           }
         }
       }
+      this.title = "分段" + "_" + this.layerIdCopy;
       this.$_addTextLayer();
     },
     $_editGeoJSON(geojson) {
@@ -523,7 +523,6 @@ export default {
         type: "FeatureCollection"
       };
       let features = geojson.features;
-      this.allFields = this.$_getFields(features[0]);
       for (let i = 0; i < features.length; i++) {
         let feature = {}, properties = {};
         feature.geometry = features[i].geometry;
