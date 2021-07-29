@@ -14,8 +14,14 @@
             class="mapgis-inspect-prop-content"
             v-for="(f, i) in currentLayerInfo"
             :key="i"
-            :tab="f.layer.id"
           >
+            <div slot="tab" class="mapgis-inspect-layer-name">
+              <mapgis-ui-tooltip :title="f.layer.id">
+                <span>
+                  {{ f.layer.id.substr(0, 12) }}
+                </span>
+              </mapgis-ui-tooltip>
+            </div>
             <div
               v-for="(value, key) in f.properties"
               class="mapgis-inspect-prop-style"
@@ -119,13 +125,19 @@ export default {
 
 .mapgis-inspect-prop-content {
   height: 240px;
+  width: 220px;
   overflow-x: hidden;
   overflow-y: scroll;
 }
 
+.mapgis-inspect-layer-name {
+  width: 80px;
+}
+
 .mapboxgl-popup {
-  min-width: 400px !important;
-  max-width: 600px !important;
+  width: 360px;
+  /* min-width: 300px !important; */
+  /* max-width: 600px !important; */
 }
 
 .mapgis-inspect-prop-style {

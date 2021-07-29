@@ -13,10 +13,16 @@ import {
 } from "../../../lib/eventbus/EmitMap";
 
 const DefaultThemeLayers = [
-  "line_layer_unique",
-  "text_layer_unique",
-  "line_layer_random",
-  "text_layer_random"
+  "_单值专题图_线",
+  "_单值专题图_注记",
+  "_单值专题图_符号",
+  "_分段专题图_线",
+  "_分段专题图_注记",
+  "_分段专题图_符号",
+  "_等级专题图_线",
+  "_等级专题图_注记",
+  "_热力专题图_线",
+  "_热力专题图_注记"
 ];
 
 export default {
@@ -139,6 +145,8 @@ export default {
       let vm = this;
       const { layers, sources } = oldStyle;
       if (!layers || !map) return;
+      /* let oldMapid = oldStyle.id;
+      let newMapid = this.mvtStyle && this.mvtStyle.id ? this.mvtStyle.id : undefined; */
       let currentLayers = map.getStyle().layers;
       this.themeRules = [];
       layers.forEach(layer => {
@@ -252,11 +260,50 @@ export default {
           return total.concat(layer);
         }
       }, []);
-      let unmerges = news.filter(layer => {
-        let find = merges.find(l => l.id === layer.id);
+
+      // 将未直接合并覆盖的图层重新根据原来的顺序进行插入
+      let befores = news.map((u, i) => {
+        u.before = i == news.length - 1 ? undefined : news[i + 1];
+        if (i === news.length - 1) {
+          u.before = undefined;
+          if (i > 0) u.after = news[i - 1].id;
+        } else {
+          u.before = news[i + 1].id;
+        }
+        return u;
+      });
+      let unmerges = befores.filter(layer => {
+        let find = merges.find(l => l.id == layer.id);
         return find ? false : true;
       });
-      return merges.concat(unmerges);
+      let umsorts = unmerges
+        .filter((u, i) => {
+          let index = -1;
+          let { before, after } = u;
+          if (before) {
+            for (let j = 0; j < merges.length; j++) {
+              if (merges[j].id == before) {
+                index = j;
+                break;
+              }
+            }
+            if (index >= 0) {
+              delete u.before;
+              merges.splice(index, 0, u);
+              return false;
+            }
+          } else if (!before && after) {
+            return true;
+          }
+          return true;
+        })
+        .map(u => {
+          delete u.before;
+          delete u.after;
+          return u;
+        });
+
+      return merges.concat(umsorts);
     },
 
     $_handleMapAddLayer(payload) {},

@@ -19,7 +19,7 @@
     </contextmenu-item>
     <contextmenu-item divider />
     <contextmenu-item @click="handleClick('scale')">
-      <mapgis-ui-iconfont type="mapgis-yincangxianshimian" /> 显示比例尺
+      <mapgis-ui-iconfont type="mapgis-yincangxianshimian" /> 显示级别控制
     </contextmenu-item>
 
     <contextmenu-item divider />

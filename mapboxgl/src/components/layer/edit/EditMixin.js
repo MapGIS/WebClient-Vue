@@ -12,6 +12,7 @@ export default {
       id = id || layerid;
       if (!map) return undefined;
       const style = map.getStyle();
+      if (!style) return undefined;
       const { layers } = style;
       let find = layers.find(l => {
         return l.id == id;

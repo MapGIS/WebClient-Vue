@@ -1,27 +1,31 @@
 <template>
   <mapgis-ui-row class="mapgis-property-color">
-    <span class="mapgis-property-color-left">{{ rule.title }} </span>
-    <mapgis-ui-popover v-model="visible" trigger="click">
-      <a slot="content">
-        <color-picker
-          theme="light"
-          :color="value"
-          :sucker-hide="false"
-          :sucker-canvas="suckerCanvas"
-          :sucker-area="suckerArea"
-          @changeColor="onChange"
-          @openSucker="openSucker"
-        />
-      </a>
-      <mapgis-ui-input class="mapgis-property-color-right" v-model="value">
-        <mapgis-ui-button
-          size="small"
-          shape="round"
-          slot="addonAfter"
-          :style="{ background: value }"
-        />
-      </mapgis-ui-input>
-    </mapgis-ui-popover>
+    <mapgis-ui-col span="6">
+      <span class="mapgis-property-color-left">{{ rule.title }} </span>
+    </mapgis-ui-col>
+    <mapgis-ui-col span="18">
+      <mapgis-ui-popover v-model="visible" trigger="click">
+        <a slot="content">
+          <color-picker
+            theme="light"
+            :color="value"
+            :sucker-hide="false"
+            :sucker-canvas="suckerCanvas"
+            :sucker-area="suckerArea"
+            @changeColor="onChange"
+            @openSucker="openSucker"
+          />
+        </a>
+        <mapgis-ui-input v-model="value">
+          <mapgis-ui-button
+            size="small"
+            shape="round"
+            slot="addonAfter"
+            :style="{ background: value }"
+          />
+        </mapgis-ui-input>
+      </mapgis-ui-popover>
+    </mapgis-ui-col>
   </mapgis-ui-row>
 </template>
 
@@ -100,13 +104,7 @@ export default {
 }
 
 .mapgis-property-color-left {
-  float: left;
   height: 30px;
   line-height: 30px;
-}
-
-.mapgis-property-color-right {
-  float: right;
-  width: 160px;
 }
 </style>
