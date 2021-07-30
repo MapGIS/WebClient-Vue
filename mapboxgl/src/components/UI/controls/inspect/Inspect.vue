@@ -7,7 +7,7 @@
           :style="{ height: '240px' }"
           size="small"
           :active-key="activeKey"
-          :tab-position="mode"
+          :tab-position="tabPosition"
           @tabClick="changePane"
         >
           <mapgis-ui-tab-pane
@@ -41,8 +41,11 @@
 </template>
 
 <script>
+import { IDocument, VectorTile } from "@mapgis/webclient-store";
+import cloneDeep from "lodash.clonedeep";
 import mapboxgl from "@mapgis/mapbox-gl";
 const MapboxInspect = require("mapbox-gl-inspect");
+const { Convert } = VectorTile;
 
 export default {
   name: "mapgis-inspect",
@@ -50,27 +53,55 @@ export default {
   mounted() {
     this.enableInspect();
   },
+  props: {
+    mode: {
+      type: String,
+      default: "none" // none, single
+    },
+    document: {
+      type: Object
+    }
+  },
+  watch: {
+    mode: function(next) {
+      // this.updateInspect();
+    },
+    document: {
+      handler(next) {
+        let oldId = this.oldId;
+        let newId = next.current.id;
+        if (oldId != newId) {
+          // this.updateInspect();
+          this.oldId = newId;
+        }
+      },
+      deep: true
+    }
+  },
   data() {
     return {
       currentLayerInfo: [],
-      indeterminate: true,
-      checkAll: false,
-      checkedList: [],
-      checkedInfo: "",
-      check: false,
-      selectdType: [],
-      mode: "left",
+      tabPosition: "left",
       activeKey: "",
-      inspect: undefined
+      oldId: undefined,
+      oldStyle: undefined
     };
+  },
+  beforeDestroy() {
+    const { inspect, map } = this;
+    if (inspect && map) {
+      map.removeControl(inspect);
+    }
   },
   methods: {
     enableInspect() {
       const vm = this;
       const { map } = this;
+
       if (!map || !map.getStyle()) {
         return;
       }
+
       const inspect = new MapboxInspect({
         popup: new mapboxgl.Popup({
           closeOnClick: true,
@@ -79,11 +110,11 @@ export default {
         // showInspectMap: true,
         showMapPopup: true,
         showMapPopupOnHover: false,
-        showInspectMapPopupOnHover: true,
+        showInspectMapPopupOnHover: false,
         showInspectButton: false,
         blockHoverPopupOnClick: false,
-        // buildInspectStyle: (originalMapStyle, coloredLayers) => self.buildInspectStyle(
-        //     originalMapStyle, coloredLayers, self.props.current, self),
+        buildInspectStyle: (originalMapStyle, coloredLayers) =>
+          vm.buildInspectStyle(originalMapStyle, coloredLayers, "", vm),
         renderPopup: features => {
           vm.currentLayerInfo = features;
           return vm.$el;
@@ -100,7 +131,51 @@ export default {
           checkedLayer = vm.currentLayerInfo[i];
         }
       }
-      vm.$emit("select-layer", checkedLayer);
+      this.$emit("select-layer", checkedLayer);
+    },
+    updateInspect() {
+      let { inspect, map, mode } = this;
+      if (!inspect || !map) return;
+      switch (mode) {
+        case "none":
+          inspect.originalStyle = this.oldStyle;
+          inspect.render();
+          break;
+        case "single":
+          if (!this.oldStyle) this.oldStyle = map.getStyle();
+          inspect.toggleInspector();
+          break;
+      }
+    },
+    buildInspectStyle(originalMapStyle, coloredLayers, current, self) {
+      const backgroundLayer = {
+        id: "background",
+        type: "background",
+        paint: {
+          "background-color": "#3b3b3b"
+        }
+      };
+
+      if (!self || !self.map) return;
+
+      let doc = IDocument.deepclone(self.document);
+      let conv = new Convert();
+      coloredLayers = conv.convertInspectMode(doc);
+
+      const sources = {};
+      Object.keys(originalMapStyle.sources).forEach(sourceId => {
+        const source = originalMapStyle.sources[sourceId];
+        if (source.type !== "raster" && source.type !== "raster-dem") {
+          sources[sourceId] = source;
+        }
+      });
+
+      const inspectStyle = {
+        ...originalMapStyle,
+        sources: sources,
+        layers: [backgroundLayer].concat(coloredLayers)
+      };
+      return inspectStyle;
     }
   }
 };
@@ -130,6 +205,9 @@ export default {
   width: 220px;
   overflow-x: hidden;
   overflow-y: scroll;
+  /* 针对火狐浏览器 */
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
 }
 
 .mapgis-inspect-layer-name {

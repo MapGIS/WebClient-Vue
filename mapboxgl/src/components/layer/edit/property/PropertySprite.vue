@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       value: this.getValue(),
-      sprite: undefined
+      sprite: ""
     };
   },
   mounted() {
