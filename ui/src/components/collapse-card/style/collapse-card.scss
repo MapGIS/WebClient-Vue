@@ -1,7 +1,15 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(collapse-card) {
   $collapse-card-prefix: &;
 
+  position: absolute;
+  z-index: 1000;
+  width: fit-content;
+  overflow-y: scroll;
+
+  // 针对火狐浏览器
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
 }

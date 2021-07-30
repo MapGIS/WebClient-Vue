@@ -1,5 +1,5 @@
 <template>
-  <div v-show="visible" :style="outStyle" class="mapgis-collapse-card">
+  <div v-show="visible" :style="outStyle" class="mapgis-ui-collapse-card">
     <mapgis-ui-button
       shape="circle"
       v-if="collapse"
@@ -7,7 +7,7 @@
       ><mapgis-ui-iconfont
         :type="iconfont"
         @click="show"
-        class="mapgis-collapse-card-iconfont"
+        class="mapgis-ui-collapse-card-iconfont"
       />
     </mapgis-ui-button>
     <transition name="bounce">
@@ -81,7 +81,7 @@ export default {
     },
     getPositionClassName() {
       let { position } = this;
-      let className = "mapgis-collapse-card-button ";
+      let className = "mapgis-ui-collapse-card-button ";
       switch (position) {
         case "right":  
         case "top-right":
@@ -100,14 +100,7 @@ export default {
 };
 </script>
 <style>
-.mapgis-collapse-card {
-  position: absolute;
-  z-index: 1000;
-  overflow-y: scroll;
-  width: fit-content;
-}
-
-.mapgis-collapse-card-iconfont {
+.mapgis-ui-collapse-card-iconfont {
   font-size: 22px;
 }
 
@@ -119,7 +112,7 @@ export default {
   float: right;
 }
 
-.mapgis-collapse-card-button {
+.mapgis-ui-collapse-card-button {
 }
 
 .bounce-enter-active {

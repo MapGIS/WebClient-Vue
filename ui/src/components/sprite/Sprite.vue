@@ -42,7 +42,7 @@ export default {
   mixins: [ThemeMixin],
   props: {
     url: {
-      type: String,
+      type: [String],
       required: true
     }
   },
@@ -74,7 +74,7 @@ export default {
     },
     initSprite() {
       let { url } = this;
-      if (!url) return;
+      if (!url || url == undefined) return;
       let vm = this;
 
       let jsonUrl = fetch(`${url}.json`).then(response => response.json());
