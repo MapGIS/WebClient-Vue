@@ -193,7 +193,7 @@ export default {
             break;
         }
         vm.showType = type;
-      },200)
+      },300)
     },
     $_uniqueLoaded(uniqueLayer) {
       this.uniqueLayer = uniqueLayer;
