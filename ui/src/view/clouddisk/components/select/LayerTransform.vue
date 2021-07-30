@@ -66,7 +66,8 @@ export default {
   methods: {
     openStyle () {
       // console.warn('看是否传过来模板（1个）：', this.selectsInfo)
-      if (this.selectStyle) {
+      if (this.selectStyle.url) {
+      console.warn('看是否传过来style：', this.selectStyle)
         if (this.selectStyle.isfolder === true) {
           this.$notification.error({ message: '不可选择文件夹！', description: '请选择专题图模板文件' })
           // this.loadingModal = false
