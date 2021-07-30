@@ -60,7 +60,8 @@ export default {
       check: false,
       selectdType: [],
       mode: "left",
-      activeKey: ""
+      activeKey: "",
+      inspect: undefined
     };
   },
   methods: {
@@ -72,8 +73,8 @@ export default {
       }
       const inspect = new MapboxInspect({
         popup: new mapboxgl.Popup({
-          closeOnClick: false,
-          closeButton: false
+          closeOnClick: true,
+          closeButton: true
         }),
         // showInspectMap: true,
         showMapPopup: true,
@@ -89,6 +90,7 @@ export default {
         }
       });
       map.addControl(inspect);
+      this.inspect = inspect;
     },
     changePane(key) {
       let vm = this;
@@ -111,7 +113,7 @@ export default {
 
 .mapboxgl-popup-content {
   height: 260px;
-  width: 100%;
+  width: 360px;
 }
 
 .mapgis-inspect-prop-tabs {

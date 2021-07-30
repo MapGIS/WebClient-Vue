@@ -1,9 +1,10 @@
 <template>
   <mapgis-ui-row class="mapgis-property-color">
-    <mapgis-ui-col span="6">
+    <mapgis-ui-col span="7">
+      <mapgis-ui-iconfont :type="rule.icon" />
       <span class="mapgis-property-color-left">{{ rule.title }} </span>
     </mapgis-ui-col>
-    <mapgis-ui-col span="18">
+    <mapgis-ui-col span="17">
       <mapgis-ui-popover v-model="visible" trigger="click">
         <a slot="content">
           <color-picker
