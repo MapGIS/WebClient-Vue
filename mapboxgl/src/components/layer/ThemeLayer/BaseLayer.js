@@ -46,6 +46,9 @@ export default {
     resetAllLayer: {
       type: Boolean,
       default: false
+    },
+    iconUrl: {
+      type: String
     }
   },
   watch: {
@@ -183,6 +186,13 @@ export default {
     addThemeLayer(layerId) {
       this.$_addThemeLayer(layerId);
     },
+    $_addLayer(layerId, newId) {
+      newId = newId || layerId;
+      if (this.map.getLayer(layerId)) {
+        this.map.removeLayer(layerId);
+        this.map.addLayer(window.originLayer[newId]);
+      }
+    },
     $_addThemeLayer(layerId) {
       this.layerIdCopy = layerId;
       this.showPanel = true;
@@ -194,18 +204,24 @@ export default {
       ) {
         this.$_getFromSource(layerId);
       } else {
-        let extraLayer =
-          window.originLayer[layerId + "_" + this.themeType + "_extraLayer"];
-        for (let i = 0; i < extraLayer.length; i++) {
-          this.$_setLayOutProperty(
-            "visibility",
-            "visible",
-            extraLayer[i].value,
-            window.originLayer[extraLayer[i].value]
-          );
+        if (this.themeType === "symbol") {
+          this.$_addLayer(layerId, themeId);
+        } else {
+          let extraLayer =
+            window.originLayer[layerId + "_" + this.themeType + "_extraLayer"];
+          if (extraLayer && extraLayer.length > 0) {
+            for (let i = 0; i < extraLayer.length; i++) {
+              this.$_setLayOutProperty(
+                "visibility",
+                "visible",
+                extraLayer[i].value,
+                window.originLayer[extraLayer[i].value]
+              );
+            }
+          }
+          this.$_changeOriginLayer(window.originLayer[themeId]);
         }
         window.layerVector = window.originLayer[themeId];
-        this.$_changeOriginLayer(window.originLayer[themeId]);
       }
     },
     resetLayer(layerId) {
@@ -1005,9 +1021,14 @@ export default {
         throw new Error("请设置$_initTheme方法的回到函数！");
       }
       if (!window.originLayer.hasOwnProperty(this.layerIdCopy)) {
-        window.originLayer[this.layerIdCopy] = this.$_getLayerStyle(
-          this.layerIdCopy
-        );
+        let originStyle = this.$_getLayerStyle(this.layerIdCopy);
+        let originLayer = {};
+        Object.keys(originStyle).forEach(function(key) {
+          if (originStyle.hasOwnProperty(key) && originStyle[key]) {
+            originLayer[key] = originStyle[key];
+          }
+        });
+        window.originLayer[this.layerIdCopy] = originLayer;
         let paint = window.originLayer[this.layerIdCopy].paint;
         if (JSON.stringify(paint) === "{}") {
           switch (this.dataType) {
@@ -1341,8 +1362,9 @@ export default {
 
       return newColor;
     },
+    $_iconLoaded() {},
     $_clickIcon(icon) {
-      let hasIcon = this.map.hasImage(icon.name),
+      let hasIcon = this.map.hasImage(icon),
         vm = this;
       let partten;
       switch (this.dataType) {
@@ -1353,14 +1375,8 @@ export default {
           partten = "line-pattern";
           break;
       }
-      if (!hasIcon) {
-        this.map.loadImage(icon.url, function(error, image) {
-          if (error) throw error;
-          vm.map.addImage(icon.name, image, { sdf: true });
-          vm.$_setPaintProperty(partten, icon.name);
-        });
-      } else {
-        vm.$_setPaintProperty(partten, icon.name);
+      if (hasIcon) {
+        vm.$_setPaintProperty(partten, icon);
       }
     },
     $_setPaintProperty(key, value, layerId, layerVector) {

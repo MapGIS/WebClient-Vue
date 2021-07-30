@@ -8,6 +8,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
+          :iconUrl="iconUrl"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_uniqueLoaded"
           @themeTypeChanged="$_themeTypeChanged"
@@ -19,6 +20,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
+          :iconUrl="iconUrl"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_symbolLoaded"
           @themeTypeChanged="$_themeTypeChanged"
@@ -31,6 +33,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
+          :iconUrl="iconUrl"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_rangeLoaded"
           @themeTypeChanged="$_themeTypeChanged"
@@ -41,6 +44,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
+          :iconUrl="iconUrl"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_heatLoaded"
           @themeTypeChanged="$_themeTypeChanged"
@@ -88,12 +92,16 @@ export default {
       default() {
         return {}
       }
+    },
+    iconUrl: {
+      type: String
     }
   },
   mounted() {
     this.$emit("loaded",this);
   },
   methods: {
+
     $_resetAllLayer(){
       this.hideLayer(this.layerId);
     },
@@ -121,6 +129,11 @@ export default {
         let circleStrokeOpacity = paint.hasOwnProperty("circle-stroke-opacity") ? paint["circle-stroke-opacity"] : 1;
         this.map.setPaintProperty(this.layerId,"circle-opacity",circleOpacity);
         this.map.setPaintProperty(this.layerId,"circle-stroke-opacity",circleStrokeOpacity);
+      }
+    },
+    $_showLayerFromSymbol(layerId){
+      if(this.showType === "symbol") {
+        this.symbolLayer.resetMainLayer(layerId);
       }
     },
     addThemeLayer(type, layerId){
@@ -211,6 +224,7 @@ export default {
       this.themeDefaultType = value;
       this[this.showType + "Layer"].hideExtraLayer(this.layerId);
       this.$_showLayerFromHeatMap();
+      this.$_showLayerFromSymbol(this.layerId);
       this.$_addThemeLayer(key,this.layerId);
       this[this.showType + "Layer"].showExtraLayer(this.layerId);
     }

@@ -16,6 +16,10 @@
         :textFonts="textFonts"
         :themeDefaultType="themeDefaultType"
         :themeType="themeTypeArr"
+        :activeKey="activeKey"
+        :iconUrl="iconUrl"
+        :defaultIconValue="defaultIconValue"
+        @iconLoaded="$_iconLoaded"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"
         @closePanel="$_closePanel"
@@ -210,7 +214,11 @@ export default {
       haloWidth: 0,
       dataType: "symbol",
       panelPropsDefault: {
-      }
+        "icon-size" : 1
+      },
+      activeKey: ['2'],
+      iconsJson: undefined,
+      defaultIconValue: undefined
     }
   },
   props: {
@@ -239,6 +247,9 @@ export default {
     this.$_removeLayer();
   },
   methods: {
+    $_resetMainLayer(layerId){
+      this.$_addLayer(layerId);
+    },
     removeLayer() {
       this.$_removeLayer();
     },
@@ -269,6 +280,9 @@ export default {
       this.dataBack = newData;
       colors = this.$_editColor();
       this.$_setPaintProperty("icon-color", colors);
+    },
+    $_iconLoaded(json){
+      this.iconsJson = json;
     },
     $_fontColorChanged(color) {
       this.$_setPaintProperty("text-color", color);
@@ -324,15 +338,9 @@ export default {
       this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",window.layerVector);
     },
     $_clickIcon(icon) {
-      let hasIcon = this.map.hasImage(icon.name), vm = this;
-      if (!hasIcon) {
-        this.map.loadImage(icon.url, function (error, image) {
-          if (error) throw error;
-          vm.map.addImage(icon.name, image, {'sdf': true});
-          vm.$_setLayOutProperty("icon-image", icon.name);
-        });
-      } else {
-        this.$_setLayOutProperty("icon-image", icon.name);
+      let hasIcon = this.map.hasImage(icon);
+      if (hasIcon) {
+        this.$_setLayOutProperty("icon-image", icon);
       }
     },
     $_gradientChange(startColor, endColor) {
@@ -555,7 +563,7 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource) {
-      let dataSourceCopy = [], vm = this;
+      let dataSourceCopy = [];
       for (let i = 0; i < dataSource.length; i++) {
         dataSourceCopy.push(dataSource[i]);
       }
@@ -564,41 +572,48 @@ export default {
         this.dataInit = true;
       });
       fillColors = this.$_editColor();
-      window.layerVector = {
-        'id': this.layerIdCopy,
-        'source': this.source_vector_Id,
-        'type': 'symbol',
-        'layout': {
-          'icon-image': this.icons[0].icons[0].name,
-          'icon-size': this.radius,
-          "text-field": '',
-          'text-size': this.fontSize,
-          'text-letter-spacing': this.textPadding,
-          'text-offset': this.offset,
-          'text-font': [this.textFonts[0]],
-          'text-rotate': this.textRotation
-        },
-        'paint': {
-          'icon-color': fillColors,
-          'icon-opacity': this.opacity,
-          'text-color': '#000000',
-          "text-halo-color": this.haloColor,
-          "text-halo-width": this.haloWidth
-        },
-      };
-      this.title = "等级符号" + "_" + this.layerIdCopy;
-      if (this.source_vector_layer_Id) {
-        this.textLayer["source-layer"] = this.source_vector_layer_Id;
-      }
-      this.map.loadImage(this.icons[0].icons[0].url, function (error, image) {
-        if (error) throw error;
-        let layer = vm.map.getLayer(vm.layerIdCopy);
-        if(layer){
-          vm.map.removeLayer(vm.layerIdCopy);
+      let vm = this;
+      let interval = setInterval(function () {
+        if(vm.iconsJson){
+          let keyArr = [];
+          Object.keys(vm.iconsJson).forEach(function (key) {
+            keyArr.push(key);
+          });
+          vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
+          window.originLayer[vm.layerIdCopy + "_" + vm.themeType] = window.layerVector = {
+            'id': vm.layerIdCopy,
+            'source': vm.source_vector_Id,
+            'type': 'symbol',
+            'layout': {
+              'icon-image': vm.defaultIconValue,
+              'icon-size': vm.radius,
+              "text-field": '',
+              'text-size': vm.fontSize,
+              'text-letter-spacing': vm.textPadding,
+              'text-offset': vm.offset,
+              'text-font': [vm.textFonts[0]],
+              'text-rotate': vm.textRotation
+            },
+            'paint': {
+              'icon-color': fillColors,
+              'icon-opacity': vm.opacity,
+              'text-color': '#000000',
+              "text-halo-color": vm.haloColor,
+              "text-halo-width": vm.haloWidth
+            },
+          };
+          vm.title = "等级符号" + "_" + vm.layerIdCopy;
+          if (vm.source_vector_layer_Id) {
+            vm.textLayer["source-layer"] = vm.source_vector_layer_Id;
+          }
+          let layer = vm.map.getLayer(vm.layerIdCopy);
+          if(layer){
+            vm.map.removeLayer(vm.layerIdCopy);
+          }
+          vm.map.addLayer(window.layerVector);
+          clearInterval(interval);
         }
-        vm.map.addImage(vm.icons[0].icons[0].name, image, {'sdf': true});
-        vm.map.addLayer(vm.layerVector);
-      });
+      },10);
     },
     $_editGeoJSON(geojson) {
       return geojson;

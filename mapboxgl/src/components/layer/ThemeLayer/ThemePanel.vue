@@ -39,7 +39,6 @@
           <mapgis-ui-row v-if="showField">
             <mapgis-ui-select
                 v-if="fields.length > 0"
-                :default-value="defaultValue"
                 @change="$_selectChange"
                 class="theme-panel-select"
             >
@@ -124,45 +123,51 @@
       <!--        </mapgis-ui-collapse>-->
       <!--      </mapgis-ui-row>-->
       <!--符号-->
-      <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap'">
+      <mapgis-ui-collapse v-model="activeKey" accordion v-if="dataType !== 'heatmap'">
         <mapgis-ui-collapse-panel key="2" header="符号">
           <mapgis-ui-row v-if="dataType !== 'circle'">
             <mapgis-ui-col :span="4">
               <p class="theme-panel-p">图标</p>
             </mapgis-ui-col>
-            <mapgis-ui-col :span="20">
-              <div
-                  class="theme-panel-icon-button"
-                  @click="$_toggleIcon"
-              >
-                <div class="theme-panel-icon-button-inner"></div>
-              </div>
-              <div class="theme-panel-icons"
-                   v-show="showIcon"
-                   @mouseleave="$_closeIcon"
-              >
-                <mapgis-ui-tabs
-                    default-active-key="0"
-                >
-                  <mapgis-ui-tab-pane
-                      v-for="(iconTap,index) in icons"
-                      :key="String(index)"
-                      :tab="iconTap.type">
-                    <img
-                        class="theme-panel-icon"
-                        v-for="(icon,iconIndex) in iconTap.icons"
-                        :src="icon.url"
-                        :key="iconIndex"
-                        @click="$_clickIcon(icon)"
-                    >
-                  </mapgis-ui-tab-pane>
-                </mapgis-ui-tabs>
-              </div>
-            </mapgis-ui-col>
+            <mapgis-ui-sprite-select
+                :url="iconUrl"
+                :defaultValue="defaultIconValue"
+                @change="$_clickIcon"
+                @iconLoaded="$_iconLoaded"
+            ></mapgis-ui-sprite-select>
+            <!--            <mapgis-ui-col :span="20">-->
+            <!--              <div-->
+            <!--                  class="theme-panel-icon-button"-->
+            <!--                  @click="$_toggleIcon"-->
+            <!--              >-->
+            <!--                <div class="theme-panel-icon-button-inner"></div>-->
+            <!--              </div>-->
+            <!--              <div class="theme-panel-icons"-->
+            <!--                   v-show="showIcon"-->
+            <!--                   @mouseleave="$_closeIcon"-->
+            <!--              >-->
+            <!--                <mapgis-ui-tabs-->
+            <!--                    default-active-key="0"-->
+            <!--                >-->
+            <!--                  <mapgis-ui-tab-pane-->
+            <!--                      v-for="(iconTap,index) in icons"-->
+            <!--                      :key="String(index)"-->
+            <!--                      :tab="iconTap.type">-->
+            <!--                    <img-->
+            <!--                        class="theme-panel-icon"-->
+            <!--                        v-for="(icon,iconIndex) in iconTap.icons"-->
+            <!--                        :src="icon.url"-->
+            <!--                        :key="iconIndex"-->
+            <!--                        @click="$_clickIcon(icon)"-->
+            <!--                    >-->
+            <!--                  </mapgis-ui-tab-pane>-->
+            <!--                </mapgis-ui-tabs>-->
+            <!--              </div>-->
+            <!--            </mapgis-ui-col>-->
           </mapgis-ui-row>
           <mapgis-ui-row
               style="margin-top: 8px;"
-              v-if="dataType !== 'line'"
+              v-if="dataType !== 'line' && dataType !== 'symbol'"
           >
             <mapgis-ui-radio-group
                 v-model="radioMode"
@@ -177,7 +182,7 @@
             </mapgis-ui-radio-group>
           </mapgis-ui-row>
           <mapgis-ui-row
-              v-if="dataType !== 'line'"
+              v-if="dataType !== 'line' && dataType !== 'symbol'"
           >
             <mapgis-ui-select
                 :default-value="'#FF0000'"
@@ -652,7 +657,8 @@
                         <colorPicker class="picker" v-model="colors[index]" v-on:change="$_changeColor(index)"/>
                       </div>
                     </div>
-                    <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right" v-bind:title="selectValue">
+                    <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right"
+                         v-bind:title="selectValue">
                       {{
                         selectValue.toString().length > 5 ? String(selectValue).substr(0, 5) + "..." : (selectValue === "" ? "其他" : selectValue)
                       }}
@@ -750,6 +756,18 @@ export default {
     textFonts: {
       type: Array
     },
+    activeKey: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
+    iconUrl: {
+      type: String
+    },
+    defaultIconValue: {
+      type: String
+    },
     themeDefaultType: {
       type: String
     },
@@ -794,7 +812,7 @@ export default {
       yOffsetMax: 20,
       yOffsetStep: 0.1,
       rotation: 0,
-      rotationStep: 0,
+      rotationStep: 1,
       singleColor: "#000000",
       outerLineColor: "#000000",
       lineWidth: 2,
@@ -948,6 +966,9 @@ export default {
         this.$emit("heatRadiusChanged", Number(this.heatMapRadius));
       }
     },
+    defaultIconValue: {
+      handler: function () {}
+    },
   },
   created() {
     this.$_formatPanelProps();
@@ -995,7 +1016,7 @@ export default {
     });
   },
   methods: {
-    $_formatPanelProps(){
+    $_formatPanelProps() {
       let vm = this;
       Object.keys(this.$data).forEach(function (key) {
         if (vm.$props.panelProps.hasOwnProperty(key)) {
@@ -1013,8 +1034,11 @@ export default {
       this.showIcon = false;
     },
     $_clickIcon(icon) {
-      this.showIcon = false;
+      // this.showIcon = false;
       this.$emit("clickIcon", icon);
+    },
+    $_iconLoaded(json) {
+      this.$emit("iconLoaded", json);
     },
     $_debounce(callback, time) {
       time = time || 1500;
@@ -1176,7 +1200,7 @@ export default {
         key: colorsArr.toString(),
         value: "-webkit-linear-gradient(left," + colorsArr.toString() + ")"
       };
-      this.$set(this.heatGradientArr,this.currentColorIndex,changeOneColor);
+      this.$set(this.heatGradientArr, this.currentColorIndex, changeOneColor);
       colorsArr.unshift("#FFFFFF");
       this.$emit("gradientChange", colorsArr);
     },

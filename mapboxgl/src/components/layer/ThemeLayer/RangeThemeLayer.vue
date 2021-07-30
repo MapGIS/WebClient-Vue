@@ -14,6 +14,7 @@
         :textFonts="textFonts"
         :themeDefaultType="themeDefaultType"
         :themeType="themeTypeArr"
+        :iconUrl="iconUrl"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
         @change="$_selectChange"
