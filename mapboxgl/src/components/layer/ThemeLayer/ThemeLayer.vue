@@ -133,66 +133,67 @@ export default {
       if(!hasPanel){
         this.panels.push(layerId);
       }
-      this.$nextTick(function () {
-        let features = this.map.queryRenderedFeatures({layers: [layerId]});
-        if(features.length > 0 && features[0].geometry.type !== "Point"){
-          this.themeType = [{
-            key: "unique",
-            value: "单值专题图"
-          }, {
-            key: "range",
-            value: "分段专题图"
-          }]
-        }else {
-          this.themeType = [{
-            key: "unique",
-            value: "单值专题图"
-          }, {
-            key: "range",
-            value: "分段专题图"
-          }, {
-            key: "symbol",
-            value: "等级符号专题图"
-          }, {
-            key: "heatmap",
-            value: "热力专题图"
-          }];
-        }
-        switch (type) {
-          case "heatmap":
-            this.themeDefaultType = "热力专题图";
-            break;
-          case "unique":
-            this.themeDefaultType = "单值专题图";
-            break;
-          case "range":
-            this.themeDefaultType = "分段专题图";
-            break;
-          case "symbol":
-            this.themeDefaultType = "等级符号专题图";
-            break;
-        }
-        this.$_addThemeLayer(type, layerId);
-      })
-    },
-    $_addThemeLayer(type, layerId) {
-      this.layerId = layerId;
-      this.showPanel = true;
+      let features = this.map.queryRenderedFeatures({layers: [layerId]});
+      if(features.length > 0 && features[0].geometry.type !== "Point"){
+        this.themeType = [{
+          key: "unique",
+          value: "单值专题图"
+        }, {
+          key: "range",
+          value: "分段专题图"
+        }]
+      }else {
+        this.themeType = [{
+          key: "unique",
+          value: "单值专题图"
+        }, {
+          key: "range",
+          value: "分段专题图"
+        }, {
+          key: "symbol",
+          value: "等级符号专题图"
+        }, {
+          key: "heatmap",
+          value: "热力专题图"
+        }];
+      }
       switch (type) {
-        case "unique":
-          this.uniqueLayer.addThemeLayer(layerId);
+        case "heatmap":
+          this.themeDefaultType = "热力专题图";
           break;
-        case "symbol":
-          this.symbolLayer.addThemeLayer(layerId);
+        case "unique":
+          this.themeDefaultType = "单值专题图";
           break;
         case "range":
-          this.rangeLayer.addThemeLayer(layerId);
+          this.themeDefaultType = "分段专题图";
           break;
-        case "heatmap":
-          this.heatmapLayer.addThemeLayer(layerId);
+        case "symbol":
+          this.themeDefaultType = "等级符号专题图";
           break;
       }
-      this.showType = type;
+      this.$_addThemeLayer(type, layerId);
+    },
+    $_addThemeLayer(type, layerId) {
+      let vm = this;
+      setTimeout(function () {
+        vm.layerId = layerId;
+        vm.showPanel = true;
+        switch (type) {
+          case "unique":
+            vm.uniqueLayer.addThemeLayer(layerId);
+            break;
+          case "symbol":
+            vm.symbolLayer.addThemeLayer(layerId);
+            break;
+          case "range":
+            vm.rangeLayer.addThemeLayer(layerId);
+            break;
+          case "heatmap":
+            vm.heatmapLayer.addThemeLayer(layerId);
+            break;
+        }
+        vm.showType = type;
+      },300)
     },
     $_uniqueLoaded(uniqueLayer) {
       this.uniqueLayer = uniqueLayer;
