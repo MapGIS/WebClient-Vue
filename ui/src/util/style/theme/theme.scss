@@ -472,21 +472,23 @@ $menu-dark-selected-item-icon-color: $white;
 $menu-dark-selected-item-text-color: $white;
 $menu-dark-item-hover-bg: transparent;
 
+$table-heading-color: $primary-5;
 $table-header-bg: $background-color-light;
-$table-header-color: $heading-color;
+$table-header-color: $table-heading-color;
 $table-header-sort-bg: $background-color-base;
 $table-body-sort-bg: rgba(0, 0, 0, 0.01);
-$table-row-hover-bg: $select-item-hover-bg;
+$table-row-hover-bg: $primary-4;
 $table-selected-row-color: inherit;
-$table-selected-row-bg: #fafafa;
+$table-selected-row-bg: $primary-4;
 $table-body-selected-sort-bg: $table-selected-row-bg;
-$table-selected-row-hover-bg: $table-selected-row-bg;
+$table-selected-row-hover-bg: $primary-5;
 $table-expanded-row-bg: #fbfbfb;
+$table-padding-vertical: 16px;
+$table-padding-horizontal: 16px;
+$table-border-radius-base: $border-radius-base;
 $table-footer-bg: $background-color-light;
-$table-footer-color: $heading-color;
+$table-footer-color: $table-heading-color;
 $table-header-bg-sm: transparent;
-$table-header-sort-active-bg: var(--table-header-sort-active-bg);
-$table-header-filter-active-bg: var(--table-header-filter-active-bg);
 
 // Tag
 $tag-default-bg: $background-color-light;
@@ -643,6 +645,7 @@ $list-item-padding: $padding-sm 0;
 $list-item-meta-margin-bottom: $padding-md;
 $list-item-meta-avatar-margin-right: $padding-md;
 $list-item-meta-title-margin-bottom: $padding-sm;
+$list-item-hover-bg: $primary-4;
 
 // Timeline
 $timeline-width: 2px;
@@ -726,3 +729,9 @@ $drawer-body-padding: 24px;
 
 // Mapbox Popup
 $popup-background: var(--popup-background);
+
+// Json Editor
+$json-editor-background: var(--card-background);
+$json-editor-color: $primary-6;
+$json-editor-background: $card-background;
+$json-editor-background: $card-background;
