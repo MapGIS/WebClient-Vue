@@ -19,6 +19,11 @@ export function getMapGISUrl() {
   return url;
 }
 
+export function getPortalUrl () {
+  const portalBaseurl = window.localStorage.getItem("mapgis-cloud-portal-baseurl") || "http://192.168.176.1:6160";
+  return portalBaseurl
+}
+
 export function getWebSocketUrl(payload = {}) {
   let { client } = payload;
   const id = window.localStorage.getItem("mapgis_clouddisk_id");
