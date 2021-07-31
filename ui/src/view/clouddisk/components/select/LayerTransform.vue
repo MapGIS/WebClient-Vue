@@ -123,10 +123,10 @@ export default {
         let layer = this.selectLists[i]
         let { xattrs, type, title, url } = layer
         console.warn('xattrs格式1', typeof xattrs, xattrs)
-        if (typeof xattrs === 'string') {
-          xattrs = JSON.parse(xattrs)
-          console.warn('xattrs格式2', typeof xattrs, xattrs)
-        }
+        // if (typeof xattrs === 'string') {
+        //   xattrs = JSON.parse(xattrs)
+        //   console.warn('xattrs格式2', typeof xattrs, xattrs)
+        // }
         if (!xattrs) {
           this.$notification.error({ message: "当前选择的某个图层缺少图层信息", description: '请检查所选图层是否导入！' })
           continue
@@ -155,10 +155,10 @@ export default {
             continue
           }
         }
-        if (!storeServiceUrl) {
-          this.$notification.error({ message: '当前选择的某个图层缺少图层信息', description: '请检查图层！' })
-          continue
-        }
+        // if (!storeServiceUrl) {
+        //   this.$notification.error({ message: '当前选择的某个图层缺少图层信息', description: '请检查图层！' })
+        //   continue
+        // }
         if (vclsinfo && vclsinfo.count > this.GjsonSize) { // 实时矢量瓦片
           if (hasVector && dataSource) {
             let temp = []
@@ -440,7 +440,7 @@ export default {
     },
     checkDuplication (uuid) {
       let flag = false
-      if (this.currentDocument.layers.length > 0) {
+      if (this.currentDocument.layers && this.currentDocument.layers.length > 0) {
         this.currentDocument.layers.forEach(item => {
           if (item.key === uuid) flag = true
         })
