@@ -63,15 +63,34 @@ export default {
     }
   },
   watch: {
-    mode: function(next) {
-      // this.updateInspect();
+    mode: function(newMode) {
+      let oldMode = this.oldMode;
+      if (oldMode == undefined && newMode == "single") {
+        this.recordStyle();
+        this.inspectStyle();
+      } else if (oldMode == undefined && newMode == "none") {
+        this.recordStyle();
+        this.renderStyle();
+      } else if (oldMode == "single" && newMode == "none") {
+        this.restoreStyle();
+        this.inspectStyle();
+      } else {
+        this.inspectStyle();
+      }
+      if (oldMode != newMode) {
+        this.oldMode = newMode;
+      }
     },
     document: {
       handler(next) {
-        let oldId = this.oldId;
+        let { mode, oldId } = this;
         let newId = next.current.id;
         if (oldId != newId) {
-          // this.updateInspect();
+          if (mode == "none") {
+            this.renderStyle();
+          } else if (mode == "single") {
+            this.renderStyle();
+          }
           this.oldId = newId;
         }
       },
@@ -83,6 +102,7 @@ export default {
       currentLayerInfo: [],
       tabPosition: "left",
       activeKey: "",
+      oldMode: undefined,
       oldId: undefined,
       oldStyle: undefined
     };
@@ -133,20 +153,6 @@ export default {
       }
       this.$emit("select-layer", checkedLayer);
     },
-    updateInspect() {
-      let { inspect, map, mode } = this;
-      if (!inspect || !map) return;
-      switch (mode) {
-        case "none":
-          inspect.originalStyle = this.oldStyle;
-          inspect.render();
-          break;
-        case "single":
-          if (!this.oldStyle) this.oldStyle = map.getStyle();
-          inspect.toggleInspector();
-          break;
-      }
-    },
     buildInspectStyle(originalMapStyle, coloredLayers, current, self) {
       const backgroundLayer = {
         id: "background",
@@ -156,7 +162,7 @@ export default {
         }
       };
 
-      if (!self || !self.map) return;
+      if (!self || !self.map || !self.document) return self.map.getStyle();
 
       let doc = IDocument.deepclone(self.document);
       let conv = new Convert();
@@ -176,6 +182,26 @@ export default {
         layers: [backgroundLayer].concat(coloredLayers)
       };
       return inspectStyle;
+    },
+    recordStyle() {
+      const { map } = this;
+      this.oldStyle = cloneDeep(map.getStyle());
+    },
+    restoreStyle() {
+      const { inspect, oldStyle } = this;
+      if (!inspect || !oldStyle) return;
+      inspect.originalStyle = oldStyle;
+      inspect.render();
+    },
+    renderStyle() {
+      let { inspect, map, mode } = this;
+      if (!inspect || !map) return;
+      inspect.render();
+    },
+    inspectStyle() {
+      let { inspect, map, mode } = this;
+      if (!inspect || !map) return;
+      inspect.toggleInspector();
     }
   }
 };

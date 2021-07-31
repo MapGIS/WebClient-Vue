@@ -1179,7 +1179,7 @@ export default {
 
 .mapgis-baseTable td.mapgis-ui-table-row-cell-break-word > span {
   cursor: pointer;
-  color: #0088ff;
+  /* color: #0088ff; */
 }
 
 .mapgis-baseTable .mapgis-ui-input {
