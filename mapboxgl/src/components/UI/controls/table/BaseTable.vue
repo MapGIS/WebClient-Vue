@@ -26,7 +26,11 @@
             <mapgis-ui-iconfont type="mapgis-shiliangtiaojianchaxun" />
             字段过滤
           </mapgis-ui-button>
-          <mapgis-ui-button @click="$_fullScreen" size="small">
+          <mapgis-ui-button @click="$_deleteMassFeature" size="small">
+            <mapgis-ui-iconfont type="mapgis-qingkong1" />
+            批量删除
+          </mapgis-ui-button>
+          <mapgis-ui-button @click="$_fullScreen" size="small" v-show="showFullScene">
             <mapgis-ui-iconfont type="mapgis-quanpingxianshi" />
             全屏
           </mapgis-ui-button>
@@ -36,6 +40,11 @@
           </mapgis-ui-button>
         </mapgis-ui-button-group>
       </mapgis-ui-div>
+      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0">
+        <div style="width: 100%;">
+          暂无数据
+        </div>
+      </div>
       <div
         :id="columnFilterId"
         class="mapgis-baseTable-fieldFilter"
@@ -153,6 +162,10 @@ export default {
     autoEdit: {
       type: Boolean,
       default: true
+    },
+    showFullScene: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -724,12 +737,75 @@ export default {
       });
       return returnData;
     },
+    /**
+     * 输入一个value，从目标数组里面取得index
+     * @param key 输入的key,以某一个key进行比较
+     * @param value 输入的value
+     * @param arrayObj 目标数组
+     * @return Number 数组下标
+     * */
+    $_getIndexFromArray(key,value,arrayObj){
+      let index= undefined;
+      for (let i = 0; i < arrayObj.length; i++) {
+        if(arrayObj[i][key] === value){
+          index = i;
+          break;
+        }
+      }
+      return index;
+    },
     /*
      * 删除一条数据
      * **/
     $_deleteFeature(record) {
       let data = this.$_getDataByKey(record.key);
-      this.$emit("deleted", data);
+      let index = this.$_getIndexFromArray("key",record.key,this.dataSourceCopy);
+
+      let selectIndex = this.$_getIndexFromArray("FID",record.key,this.selectData);
+
+      if(index !== undefined){
+        this.dataSourceCopy.splice(index,1);
+        this.featureSet.splice(index,1);
+        if(selectIndex !== undefined){
+          this.selectData.splice(selectIndex,1);
+        }
+        this.paginationCopy.total = this.dataSourceCopy.length;
+        this.$emit("deleted", data);
+      }
+    },
+    /*
+     * 批量删除一条数据
+     * **/
+    $_deleteMassFeature() {
+      let newData = [],newFeatureSet = [];
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if(!this.$_getObjectFromArray("key",this.dataSourceCopy[i].key,this.selectData)){
+          newData.push(this.dataSourceCopy[i]);
+        }
+      }
+      for (let i = 0; i < this.featureSet.length; i++) {
+        if(!this.$_getObjectFromArray("key",this.featureSet[i].attributes.key,this.selectData)){
+          newFeatureSet.push(this.featureSet[i]);
+        }
+      }
+      this.dataSourceCopy = newData;
+      this.featureSet = newFeatureSet;
+      this.paginationCopy.total = this.dataSourceCopy.length;
+      this.$emit("deleteMass", this.selectData);
+      this.selectData = [];
+    },
+    /**
+     * 根据输入的key，以及value从数组中找到该对象
+     * */
+    $_getObjectFromArray(key,value,arrayObj){
+      let obj = undefined;
+      for (let i=0;i<arrayObj.length;i++){
+        if(value === arrayObj[i].attributes[key]){
+          obj = arrayObj[i];
+          break;
+        }
+      }
+      return obj;
     },
     /*
      * 选择一条数据
@@ -965,10 +1041,31 @@ export default {
         }
       }
       this.columnsCopy = columns;
-      if (this.editable) {
+      if (this.editable && this.columnsCopy.length > 0) {
         this.$_addOperationColumns();
       }
-      this.$_drawTable();
+      this.$_setRowSelect();
+    },
+    /**
+     * 设置是否显示左边的复选框，当没有列被显示时，隐藏左边的复选框
+     * */
+    $_setRowSelect(){
+      if(this.columnsCopy.length === 0){
+        this.rowSelection = undefined;
+      }else {
+        this.rowSelection = {
+          onChange: (selectedRowKeys, selectedRows) => {
+            this.$emit("selectedChange", selectedRowKeys, selectedRows);
+            this.$emit("selectedchange", selectedRowKeys, selectedRows);
+          },
+          onSelect: (record, selected) => {
+            this.$_select(record, selected);
+          },
+          onSelectAll: selected => {
+            this.$_selectAll(selected);
+          }
+        }
+      }
     },
     /*
      * 全选
@@ -986,7 +1083,7 @@ export default {
           }
         }
         this.columnsCopy = columns;
-        if (this.editable) {
+        if (this.editable && this.columnsCopy.length > 0) {
           this.$_addOperationColumns();
         }
         this.$_drawTable();
@@ -996,6 +1093,7 @@ export default {
       }
       this.indeterminate = false;
       this.checkAll = e.target.checked;
+      this.$_setRowSelect();
     },
     $_fieldFilter() {
       this.showFilter = !this.showFilter;
@@ -1141,6 +1239,18 @@ export default {
   bottom: 0px;
   width: 100%;
 }
+.mapgis-baseTable-nonData{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 440px;
+  z-index: 1000;
+  background: white;
+  font-size: 20px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+}
 .mapgis-table-collapse {
   margin: 0 auto;
   background: transparent;
@@ -1179,7 +1289,7 @@ export default {
 
 .mapgis-baseTable td.mapgis-ui-table-row-cell-break-word > span {
   cursor: pointer;
-  /* color: #0088ff; */
+  color: #0088ff;
 }
 
 .mapgis-baseTable .mapgis-ui-input {
@@ -1229,7 +1339,7 @@ export default {
 
 .mapgis-baseTable-fieldFilter {
   position: absolute;
-  z-index: 2;
+  z-index: 1001;
   right: 6px;
   top: 6px;
   width: 150px;
@@ -1238,6 +1348,7 @@ export default {
   border-radius: 3px;
   overflow: hidden;
   padding-top: 8px;
+  background: white;
 }
 
 .mapgis-baseTable-fieldFilter .mapgis-ui-checkbox-wrapper {
