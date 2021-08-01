@@ -72,9 +72,11 @@ export default {
         const { layertype, layerprop } = rule;
         if (rule.layertype === "paint") {
           map.setPaintProperty(layerid, layerprop, color);
-          let event = { layertype, layerprop, layervalue: color };
-          this.$_emitEvent(event);
+        } else if (rule.layertype === "layout") {
+          map.setLayoutProperty(layerid, layerprop, color);
         }
+        let event = { layertype, layerprop, layervalue: color };
+        this.$_emitEvent(event);
       }
     },
     openSucker() {},

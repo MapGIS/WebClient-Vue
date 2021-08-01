@@ -6,21 +6,28 @@
         :rule="r"
         :layerid="layerid"
         class="mapgis-mvt-editor-feature"
-        @edit-change="onEditChange"
+        @change="onEditChange"
+      />
+      <string
+        v-else-if="r.type === 'string'"
+        :rule="r"
+        :layerid="layerid"
+        class="mapgis-mvt-editor-feature"
+        @change="onEditChange"
       />
       <number
         v-else-if="r.type === 'number'"
         :rule="r"
         :layerid="layerid"
         class="mapgis-mvt-editor-feature"
-        @edit-change="onEditChange"
+        @change="onEditChange"
       />
       <sprite
         v-else-if="r.type === 'sprite'"
         :rule="r"
         :layerid="layerid"
         class="mapgis-mvt-editor-feature"
-        @edit-change="onEditChange"
+        @change="onEditChange"
       />
     </div>
   </div>
@@ -30,6 +37,7 @@
 import EditMixin from "../EditMixin";
 
 import color from "../property/PropertyColor.vue";
+import string from "../property/PropertyString.vue";
 import number from "../property/PropertyNumber.vue";
 import sprite from "../property/PropertySprite.vue";
 
@@ -39,6 +47,7 @@ export default {
   components: {
     color,
     number,
+    string,
     sprite
   },
   props: {

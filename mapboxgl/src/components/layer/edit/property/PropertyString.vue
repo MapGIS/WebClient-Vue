@@ -2,14 +2,12 @@
   <mapgis-ui-row class="mapgis-property-number">
     <mapgis-ui-col span="7">
       <mapgis-ui-iconfont :type="rule.icon" />
-      <span class="mapgis-property-number-left">{{ rule.title }} </span>
+      <span class="mapgis-property-string-left">{{ rule.title }} </span>
     </mapgis-ui-col>
     <mapgis-ui-col span="17">
-      <mapgis-ui-input-number
-        class="mapgis-property-number-right"
+      <mapgis-ui-input
+        class="mapgis-property-string-right"
         v-model="value"
-        :min="minimum"
-        :max="maximum"
         @change="onChange"
       />
     </mapgis-ui-col>
@@ -19,16 +17,14 @@
 <script>
 import EditMixin from "../EditMixin";
 export default {
-  name: "mapgis-mvt-editor-property-number",
+  name: "mapgis-mvt-editor-property-string",
   mixins: [EditMixin],
   inject: ["map"],
   props: {
-    rule: Object,
-    minimum: { type: Number, default: 0 },
-    maximum: { type: Number, default: 1000 }
+    rule: Object
   },
   model: {
-    prop: "number",
+    prop: "string",
     event: "change"
   },
   watch: {
@@ -42,17 +38,18 @@ export default {
     };
   },
   methods: {
-    onChange(number) {
+    onChange(e) {
+      let string = e.target.value;
       const { map, rule, layerid } = this;
-      this.$emit("change", number);
+      this.$emit("change", string);
       if (layerid && rule) {
         const { layertype, layerprop } = rule;
         if (rule.layertype === "paint") {
-          map.setPaintProperty(layerid, layerprop, number);
+          map.setPaintProperty(layerid, layerprop, string);
         } else if (rule.layertype === "layout") {
-          map.setLayoutProperty(layerid, layerprop, number);
+          map.setLayoutProperty(layerid, layerprop, string);  
         }
-        let event = { layertype, layerprop, layervalue: number };
+        let event = { layertype, layerprop, layervalue: string };
         this.$_emitEvent(event);
       }
     },
@@ -79,12 +76,12 @@ export default {
   width: 100%;
 }
 
-.mapgis-property-number-left {
+.mapgis-property-string-left {
   height: 30px;
   line-height: 30px;
 }
 
-.mapgis-property-number-right {
-  width: 180px !important;
+.mapgis-property-string-right {
+  width: 100%;
 }
 </style>
