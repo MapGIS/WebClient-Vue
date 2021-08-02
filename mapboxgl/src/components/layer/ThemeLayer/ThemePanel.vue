@@ -39,6 +39,7 @@
           <mapgis-ui-row v-if="showField">
             <mapgis-ui-select
                 v-if="fields.length > 0"
+                :default-value="fields[0]"
                 @change="$_selectChange"
                 class="theme-panel-select"
             >
@@ -444,11 +445,12 @@
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-select
-                v-if="labelFields.length > 0"
+                v-if="labelFieldsCopy.length > 0"
                 class="theme-panel-select"
+                :default-value="labelFieldsCopy[0]"
                 @change="$_selectTextChange"
             >
-              <mapgis-ui-select-option v-for="(Field,index) in labelFields" :key="index" :value="Field">
+              <mapgis-ui-select-option v-for="(Field,index) in labelFieldsCopy" :key="index" :value="Field">
                 {{ Field }}
               </mapgis-ui-select-option>
             </mapgis-ui-select>
@@ -660,7 +662,7 @@
                     <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right"
                          v-bind:title="selectValue">
                       {{
-                        selectValue.toString().length > 5 ? String(selectValue).substr(0, 5) + "..." : (selectValue === "" ? "其他" : selectValue)
+                        selectValue.toString().length > 4 ? String(selectValue).substr(0, 4) + "..." : (selectValue === "" ? "其他" : selectValue)
                       }}
                     </div>
                     <div class="theme-panel-td theme-panel-td-value" v-bind:title="item">
@@ -919,7 +921,7 @@ export default {
         value: [10, 3, 2, 3]
       }],
       themeDefaultTypeCopy: undefined,
-
+      labelFieldsCopy: []
     }
   },
   watch: {
@@ -969,12 +971,22 @@ export default {
     defaultIconValue: {
       handler: function () {}
     },
+    labelFields: {
+      handler: function () {
+        if(this.labelFields.length > 0){
+          this.labelFieldsCopy = ["未设置"].concat(this.labelFields);
+        }
+      }
+    },
   },
   created() {
     this.$_formatPanelProps();
   },
   mounted() {
     this.themeDefaultTypeCopy = this.themeDefaultType;
+    if(this.labelFields.length > 0){
+      this.labelFieldsCopy = ["未设置"].concat(this.labelFields);
+    }
     this.$watch("radius", function () {
       this.$emit("radiusChanged", Number(this.radius));
     });
@@ -1014,6 +1026,7 @@ export default {
     this.$watch("lineWidth", function () {
       this.$emit("lineWidthChanged", Number(this.lineWidth));
     });
+    this.$_initDataSource();
   },
   methods: {
     $_formatPanelProps() {
@@ -1162,6 +1175,8 @@ export default {
     $_initDataSource() {
       if (this.dataSource.length > 0 && !this.init) {
         this.init = true;
+      }else {
+        return;
       }
       let dataArr = [];
       let length = this.dataSource.length > 30 ? 30 : this.dataSource.length;
@@ -1273,13 +1288,13 @@ export default {
 }
 
 .theme-panel-td-key {
-  width: 25%;
+  width: 35%;
   padding: 0 4px;
   cursor: pointer;
 }
 
 .theme-panel-td-value {
-  width: 45%;
+  width: 35%;
   cursor: pointer;
 }
 

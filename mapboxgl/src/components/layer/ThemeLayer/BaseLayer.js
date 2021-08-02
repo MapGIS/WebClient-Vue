@@ -97,6 +97,7 @@ export default {
       endColor: "#FF0000",
       showLayer: true,
       showPanel: true,
+      resetPanel: false,
       sourceVector: {
         type: "geojson",
         data: undefined
@@ -198,6 +199,7 @@ export default {
       }
     },
     $_addThemeLayer(layerId) {
+      this.resetPanel = false;
       this.layerIdCopy = layerId;
       this.showPanel = true;
       let themeId = layerId + "_" + this.themeType;
@@ -282,6 +284,7 @@ export default {
         }
         emitMapChangeStyle(this.map.getStyle());
         delete window.layerVector;
+        this.resetPanel = true;
         this.$emit("resetLayer");
       }
     },
@@ -323,6 +326,7 @@ export default {
         }
         delete window.originLayer[this.layerIdCopy];
         delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+        this.resetPanel = true;
         this.$emit("resetLayer");
       }
     },

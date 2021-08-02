@@ -1,6 +1,7 @@
 <template>
   <div>
     <ThemePanel
+        v-if="!resetPanel"
         v-show="showPanel"
         :title="title"
         :data-source="dataSource"

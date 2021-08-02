@@ -1,6 +1,7 @@
 <template>
   <div>
     <ThemePanel
+        v-if="!resetPanel"
         v-show="showPanel"
         :title="title"
         :checkBoxArr="checkBoxArr"
@@ -85,8 +86,8 @@ export default {
       this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       //隐藏原图层
-      this.map.setPaintProperty(this.layerIdCopy,"circle-opacity",0);
-      this.map.setPaintProperty(this.layerIdCopy,"circle-stroke-opacity",0);
+      this.map.setPaintProperty(this.layerIdCopy, "circle-opacity", 0);
+      this.map.setPaintProperty(this.layerIdCopy, "circle-stroke-opacity", 0);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_" + this.themeType;
@@ -181,7 +182,7 @@ export default {
         });
         window.originLayer[this.layerIdCopy + "_" + this.themeType + "_extraLayer"] = this.extraLayer;
         this.title = "热力专题图" + "_" + this.layerIdCopy;
-        this.map.addLayer(window.layerVector,this.upLayer);
+        this.map.addLayer(window.layerVector, this.upLayer);
       }
     },
 
@@ -323,11 +324,11 @@ export default {
       if (tag) {
         let originColor = ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"];
         let steps = [];
-        for (let i = 0; i < originColor.length-1; i++) {
-          let colors = this.$_gradientColor(originColor[i],originColor[i+1],10);
-          let level = ((i+2)*0.2 - (i+1)*0.2) / colors.length;
+        for (let i = 0; i < originColor.length - 1; i++) {
+          let colors = this.$_gradientColor(originColor[i], originColor[i + 1], 10);
+          let level = ((i + 2) * 0.2 - (i + 1) * 0.2) / colors.length;
           colors.forEach((color, j) => {
-            let stop = (i+1)*0.2 + j * level;
+            let stop = (i + 1) * 0.2 + j * level;
             steps.push(stop);
             steps.push(color);
           })
