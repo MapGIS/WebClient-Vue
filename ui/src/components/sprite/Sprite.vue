@@ -3,6 +3,7 @@
     <mapgis-ui-select
       show-search
       style="minWidth: 160px"
+      :default-value="defaultValue"
       @change="updateSpriteItem"
       @blur="updateSpriteItem"
       @select="handleSpriteSelect"
@@ -42,8 +43,11 @@ export default {
   mixins: [ThemeMixin],
   props: {
     url: {
-      type: [String],
+      type: String,
       required: true
+    },
+    defaultValue: {
+      type: String
     }
   },
   data() {
@@ -59,7 +63,8 @@ export default {
   watch: {
     url: function(next) {
       if (next) this.initSprite();
-    }
+    },
+    defaultValue: function(next) {}
   },
   computed: {},
   created() {},
@@ -74,7 +79,7 @@ export default {
     },
     initSprite() {
       let { url } = this;
-      if (!url || url == undefined) return;
+      if (!url) return;
       let vm = this;
 
       let jsonUrl = fetch(`${url}.json`).then(response => response.json());
@@ -116,6 +121,8 @@ export default {
         vm.width = width + 40;
         vm.height = height + 40;
         ctx.drawImage(image, 0, 0);
+        localStorage.setItem("base64",base64);
+        vm.$emit("iconLoaded",json);
       };
       image.src = base64;
     },
