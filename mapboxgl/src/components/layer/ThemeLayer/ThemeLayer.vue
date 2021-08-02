@@ -10,6 +10,7 @@
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
           :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_uniqueLoaded"
           @closePanel="$_closeAllPanel"
@@ -24,6 +25,7 @@
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
           :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_symbolLoaded"
           @closePanel="$_closeAllPanel"
@@ -39,6 +41,7 @@
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
           :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_rangeLoaded"
           @closePanel="$_closeAllPanel"
@@ -52,6 +55,7 @@
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
           :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_heatLoaded"
           @closePanel="$_closeAllPanel"
@@ -110,7 +114,9 @@ export default {
     this.$emit("loaded",this);
   },
   methods: {
-
+    $_createLayerFailed(message){
+      this.$emit("createLayerFailed",message);
+    },
     $_resetAllLayer(){
       this.hideLayer(this.layerId);
     },

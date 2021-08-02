@@ -952,9 +952,14 @@ export default {
     $_getFromSource(layerId) {
       let features = this.map.queryRenderedFeatures({ layers: [layerId] });
       if (features.length === 0) {
+        this.$emit("createLayerFailed", {
+          message: "专题图",
+          description: "数据量为0!"
+        });
         return;
       }
-      let originLayer = this.map.getLayer(layerId);
+      let originLayer = this.map.getLayer(layerId),
+        nullProperties = true;
       this.source_vector_Id = originLayer.source;
       this.source_vector_layer_Id = originLayer.sourceLayer;
       let featureCollection = {
@@ -962,13 +967,24 @@ export default {
         type: "FeatureCollection"
       };
       for (let i = 0; i < features.length; i++) {
+        if (nullProperties && JSON.stringify(features[i].properties) !== "{}") {
+          nullProperties = false;
+        }
         featureCollection.features.push({
           geometry: features[i].geometry,
           properties: features[i].properties,
           type: "Feature"
         });
       }
-      this.$_initTheme(featureCollection);
+      if (!nullProperties) {
+        this.$_initTheme(featureCollection);
+      } else {
+        this.$emit("createLayerFailed", {
+          message: "专题图",
+          description: "数据中不包含任何属性数据!"
+        });
+        this.showPanel = false;
+      }
     },
     $_getFromGeoJSON() {
       let vm = this;
