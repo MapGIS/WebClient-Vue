@@ -18,7 +18,7 @@ import {
   getNewTileUrl
 } from '../../axios/gis'
 import { FileType } from '../../util/fileType'
-import { getMapgisPath, getMapGISUrl } from '../../config/mapgis'
+import { getMapgisPath, getMapGISUrl, getMapgisGroupPath } from '../../config/mapgis'
 
 
 import { IDocument, Layer, Doc } from '@mapgis/webclient-store' // 这些项在线制图应该也已经添加了依赖，demo界面通过npm link连接
@@ -232,7 +232,7 @@ export default {
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
       this.$emit('closeImport') // 关闭导入文件对话框
       // this.handleClose()
-      let folderDir = getMapgisPath() + '/工作目录/工程文件Cache'
+      let folderDir = getMapgisGroupPath() + '/工作目录/工程文件Cache'
       let fileName = doc.layers[0].name + '_自动创建.style'
       let srcUrl = folderDir + '/' + fileName
       let fileAttribute = JSON.stringify(this.getFileAttr(doc, srcUrl))
