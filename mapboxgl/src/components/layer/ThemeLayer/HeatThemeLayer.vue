@@ -174,7 +174,9 @@ export default {
             // ]
           }
         }
-
+        if(this.source_vector_layer_Id){
+          window.layerVector["source-layer"] = this.source_vector_layer_Id;
+        }
         window.originLayer[this.heatMapLayerId] = window.layerVector;
         this.extraLayer.push({
           key: "heatmapLayer",
