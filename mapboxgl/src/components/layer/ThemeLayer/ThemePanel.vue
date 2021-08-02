@@ -1218,6 +1218,8 @@ export default {
   height: calc((100vh - 64px) - 24px);
   overflow-y: scroll;
   overflow-x: hidden;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
 }
 
 .theme-panel-tab {
