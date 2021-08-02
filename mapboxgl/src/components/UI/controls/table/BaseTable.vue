@@ -9,10 +9,10 @@
     </div>
     <mapgis-ui-div class="mapgis-baseTable">
       <mapgis-ui-div
-        :id="toolbarId"
-        :style="{ bottom: toolbarBottom }"
-        class="mapgis-baseTable-toolbar"
-        v-if="toolbar && visible"
+          :id="toolbarId"
+          :style="{ bottom: toolbarBottom }"
+          class="mapgis-baseTable-toolbar"
+          v-if="toolbar && visible"
       >
         <div class="toolbar-num">
           总共{{ paginationCopy.total }}条，已选{{ selectData.length }}条
@@ -46,64 +46,65 @@
         </div>
       </div>
       <div
-        :id="columnFilterId"
-        class="mapgis-baseTable-fieldFilter"
-        :style="{
+          :id="columnFilterId"
+          class="mapgis-baseTable-fieldFilter"
+          :style="{
           overflowY: plainOptions.length > 8 ? 'scroll' : 'hidden',
           top: filterTop + 'px',
           position: filterPosition
         }"
-        v-show="showFilter && visible"
+          v-show="showFilter && visible"
       >
         <mapgis-ui-row>
           <mapgis-ui-checkbox
-            :indeterminate="indeterminate"
-            :checked="checkAll"
-            @change="$_checkAll"
+              :indeterminate="indeterminate"
+              :checked="checkAll"
+              @change="$_checkAll"
           >
             全选
           </mapgis-ui-checkbox>
         </mapgis-ui-row>
         <mapgis-ui-row>
           <mapgis-ui-checkbox-group
-            v-model="checkedList"
-            :options="plainOptions"
-            @change="$_check"
+              v-model="checkedList"
+              :options="plainOptions"
+              @change="$_check"
           />
         </mapgis-ui-row>
       </div>
       <mapgis-ui-table
-        v-show="visible"
-        :id="tableId"
-        :data-source="dataSourceCopy"
-        :columns="columnsCopy"
-        :pagination="paginationCopy"
-        :scroll="scroll"
-        :row-selection="rowSelection"
-        @change="$_change"
+          v-if="!deletTable"
+          v-show="visible"
+          :id="tableId"
+          :data-source="dataSourceCopy"
+          :columns="columnsCopy"
+          :pagination="paginationCopy"
+          :scroll="scroll"
+          :row-selection="rowSelection"
+          @change="$_change"
       >
         <div
-          v-for="(column, index) in columnsCopy"
-          :key="index"
-          :slot="column.dataIndex"
-          slot-scope="text, record"
+            v-for="(column, index) in columnsCopy"
+            :key="index"
+            :slot="column.dataIndex"
+            slot-scope="text, record"
         >
           <div
-            class="mapgis-baseTable-tableTd"
-            @click="$_onceClick(record.key, column.key)"
-            @dblclick="$_doubleClick(record.key, column.key, record)"
+              class="mapgis-baseTable-tableTd"
+              @click="$_onceClick(record.key, column.key)"
+              @dblclick="$_doubleClick(record.key, column.key, record)"
           >
             <p
-              :style="{ fontStyle: text === 'null' ? 'italic' : 'normal' }"
-              class="mapgis-baseTable-content"
-              :title="text"
-              v-if="editRowAndCol !== column.key + '_' + record.key"
+                :style="{ fontStyle: text === 'null' ? 'italic' : 'normal' }"
+                class="mapgis-baseTable-content"
+                :title="text"
+                v-if="editRowAndCol !== column.key + '_' + record.key"
             >
               {{ text }}
             </p>
             <mapgis-ui-input
-              v-if="editRowAndCol === column.key + '_' + record.key"
-              v-model="record[column.key]"
+                v-if="editRowAndCol === column.key + '_' + record.key"
+                v-model="record[column.key]"
             />
           </div>
         </div>
@@ -202,6 +203,8 @@ export default {
       //选择列
       rowSelection: {
         onChange: (selectedRowKeys, selectedRows) => {
+          this.rowSelection.selectedRowKeys = selectedRowKeys;
+          this.$_tableChanged();
           this.$emit("selectedChange", selectedRowKeys, selectedRows);
           this.$emit("selectedchange", selectedRowKeys, selectedRows);
         },
@@ -210,7 +213,8 @@ export default {
         },
         onSelectAll: selected => {
           this.$_selectAll(selected);
-        }
+        },
+        selectedRowKeys: []
       },
       //用于分页回调
       pageInfo: undefined,
@@ -234,7 +238,10 @@ export default {
       filterPosition: "absolute",
       pageSize: 10,
       baseUrlCopy: undefined,
-      hasFeatures: true
+      hasFeatures: true,
+      currentId: undefined,
+      deletTable: false,
+      sortBack: {}
     };
   },
   watch: {
@@ -257,7 +264,11 @@ export default {
       deep: true
     }
   },
-  created() {},
+  created() {
+    if(!window.tableData){
+      window.tableData = {};
+    }
+  },
   mounted() {
     this.$_initTable();
     this.$_registerMouseLeave();
@@ -277,33 +288,39 @@ export default {
         this.$_initTableFromUrl();
       }
     },
-    addTable(dataObj) {
-      if (typeof dataObj === "string") {
-        this.baseUrlCopy = dataObj;
-        this.$_initTableFromUrl();
-      } else if (dataObj instanceof Object) {
-        this.$_initSource(dataObj);
-      } else {
-        throw new Error("请传入数据对象或者url！");
-      }
+    addTable(dataObj,currentId) {
+      this.deletTable = true;
+      this.currentId = currentId;
+      this.$nextTick(function () {
+        if (typeof dataObj === "string") {
+          this.baseUrlCopy = dataObj;
+          this.$_initTableFromUrl();
+        } else if (dataObj instanceof Object) {
+          this.$_initSource(dataObj);
+        } else {
+          throw new Error("请传入数据对象或者url！");
+        }
+      })
     },
     $_initTableFromUrl() {
       let vm = this;
       FeatureService.get(
-        this.baseUrlCopy,
-        function(result) {
-          result = JSON.parse(result);
-          vm.$_initSource(result);
-        },
-        function(e) {
-          console.log(e);
-        }
+          this.baseUrlCopy,
+          function(result) {
+            result = JSON.parse(result);
+            vm.$_initSource(result);
+          },
+          function(e) {
+            console.log(e);
+          }
       );
     },
     //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(dataSource) {
       dataSource = dataSource || this.dataSource;
       this.dataSourceOrigin = dataSource;
+      this.sortBack = {};
+      this.rowSelection.selectedRowKeys = [];
       if(!dataSource || !dataSource.features || dataSource.features.length === 0){
         this.hasFeatures = false;
         return;
@@ -329,6 +346,18 @@ export default {
         //   dataSourceCopy = dataSource;
         // }
       } else if (dataSource instanceof Object) {
+        if(dataSource.hasOwnProperty("selectedRowKeys")){
+          console.log("dataSource.selectedRowKeys",dataSource.selectedRowKeys)
+          this.rowSelection.selectedRowKeys = dataSource.selectedRowKeys;
+        }
+        if(dataSource.hasOwnProperty("pagination")){
+          this.paginationCopy = {...dataSource.pagination};
+          let current = this.paginationCopy.current;
+          delete this.paginationCopy.current;
+          this.paginationCopy.defaultCurrent = current ? current : 1;
+        }else {
+          this.paginationCopy = this.pagination;
+        }
         //zondy格式
         if (this.$_isZondyResult(dataSource)) {
           //this.columnsCopy.length为0表示第一次加载数据，需要初始化表头
@@ -352,16 +381,30 @@ export default {
           //geoJSON格式
           let features = VFeature.fromGeoJSON(dataSource);
           this.paginationCopy.total = features.length;
-          this.$_getColumnsCopyByFeatureSet(features);
+          this.$_getColumnsCopyByFeatureSet(features,dataSource.sortInfo);
           this.$_applyColumnsToColumnsCopy();
           this.$_initPlainOptions();
-          this.$nextTick(function () {
-            this.$_initCheckedList();
-            this.$_addOperationColumns();
-            this.featureSet = features;
-            this.$_featureSetToDataSource(features);
-            this.$_drawTable();
-          });
+          this.deletTable = false;
+          let table = document.getElementById(this.tableId);
+          if(table){
+            draw(this,features);
+          }else {
+            let vm = this;
+            let interval = setInterval(function () {
+              let table = document.getElementById(vm.tableId);
+              if(table){
+                clearInterval(interval);
+                draw(vm,features,dataSource);
+              }
+            },30);
+          }
+          function draw(vm,features) {
+            vm.$_initCheckedList();
+            vm.featureSet = features;
+            vm.$_featureSetToDataSource(features);
+            vm.$_drawTable();
+            vm.$_addOperationColumns();
+          }
         }
       }
     },
@@ -392,11 +435,11 @@ export default {
      * 从featureSet里面去的columns
      * @param Source 数据源
      * **/
-    $_getColumnsCopyByFeatureSet(Source) {
+    $_getColumnsCopyByFeatureSet(Source,sortInfo) {
       if (Source.length > 0) {
         let columns = [];
         Object.keys(Source[0].attributes).forEach(function(key) {
-          columns.push({
+          let column = {
             title: key,
             dataIndex: key,
             key: key,
@@ -407,7 +450,11 @@ export default {
               return a[key] - b[key];
             },
             width: 100
-          });
+          }
+          if(sortInfo && key === sortInfo.key){
+            column.defaultSortOrder = sortInfo.value;
+          }
+          columns.push(column);
         });
         this.columnsCopy = columns;
       }
@@ -423,12 +470,12 @@ export default {
       //将为空的数据设为"null"
       for (let i = 0; i < featureSet.length; i++) {
         let data = Object.assign(featureSet[i].attributes, {}),
-          vm = this;
+            vm = this;
         for (let j = 0; j < this.columnsCopy.length; j++) {
           if (
-            !featureSet[i].attributes.hasOwnProperty(
-              this.columnsCopy[j].dataIndex
-            )
+              !featureSet[i].attributes.hasOwnProperty(
+                  this.columnsCopy[j].dataIndex
+              )
           ) {
             data[this.columnsCopy[j].dataIndex] = "null";
           } else {
@@ -440,7 +487,7 @@ export default {
         }
         featureSet[i].FID = featureSet[i].FID || i + 1;
         this.dataSourceCopy.push(
-          Object.assign(data, { key: featureSet[i].FID })
+            Object.assign(data, { key: featureSet[i].FID })
         );
       }
     },
@@ -459,8 +506,8 @@ export default {
           for (let j = 0; j < this.columns.length; j++) {
             if (this.columns[j].key === this.columnsCopy[i].key) {
               this.columnsCopy[i] = Object.assign(
-                this.columnsCopy[i],
-                this.columns[j]
+                  this.columnsCopy[i],
+                  this.columns[j]
               );
             }
           }
@@ -545,8 +592,8 @@ export default {
 
       this.checkedList = [];
       let columns = [],
-        columnsWidth = 0,
-        vm = this;
+          columnsWidth = 0,
+          vm = this;
       //取得有效宽度
       let offsetWidth = this.$_getTableEffectiveWidth();
       if (this.columns.length > 0) {
@@ -581,7 +628,7 @@ export default {
       let offsetWidth = this.$_getTableEffectiveWidth();
       for (let i = 0; i < this.checkedList.length; i++) {
         for (let j = 0; j < this.columnsCopy.length; j++) {
-          if (this.checkedList[i] === this.columnsCopy[j].title) {
+          if (this.checkedList[i] === this.columnsCopy[j].title && this.columnsCopy[j].title !== "key") {
             columnsWidth += this.columnsCopy[j].width;
             break;
           }
@@ -607,34 +654,34 @@ export default {
     $_drawTableHeight(scrollHeight) {
       let table = document.getElementById(this.tableId);
       let tableBody = this.$_queryTag(
-        table.childNodes,
-        "mapgis-ui-table-body",
-        "div"
+          table.childNodes,
+          "mapgis-ui-table-body",
+          "div"
       );
       let tr = this.$_queryTag(
-        tableBody.childNodes,
-        "mapgis-ui-table-row-level-0",
-        "tr"
+          tableBody.childNodes,
+          "mapgis-ui-table-row-level-0",
+          "tr"
       );
       let container = this.$_queryTag(
-        table.childNodes,
-        "mapgis-ui-spin-container",
-        "div"
+          table.childNodes,
+          "mapgis-ui-spin-container",
+          "div"
       );
       this.rowHeight = tr.offsetHeight;
       let page = this.$_queryTag(
-        table.childNodes,
-        "mapgis-ui-pagination",
-        "ul"
+          table.childNodes,
+          "mapgis-ui-pagination",
+          "ul"
       );
       let pageStyle = window.getComputedStyle(page);
       let pageMarginTop = pageStyle.marginTop.replace("px", "");
       let pageMarginBottom = pageStyle.marginBottom.replace("px", "");
       this.pageHeight =
-        page.offsetHeight + Number(pageMarginTop) + Number(pageMarginBottom);
+          page.offsetHeight + Number(pageMarginTop) + Number(pageMarginBottom);
       //页数+页眉+分页的高度
       let containerHeight =
-        (this.paginationCopy.pageSize + 1.5) * this.rowHeight + this.pageHeight;
+          (this.paginationCopy.pageSize + 1.5) * this.rowHeight + this.pageHeight;
       container.style.height = containerHeight + "px";
       tableBody.style.height = containerHeight + "px";
       this.$_drawToolBar(containerHeight);
@@ -654,9 +701,9 @@ export default {
       function queryTag(childNodes, className, tagName) {
         for (let i = 0; i < childNodes.length; i++) {
           if (
-            childNodes[i].localName === tagName &&
-            typeof childNodes[i].className === "string" &&
-            childNodes[i].className.indexOf(className) > -1
+              childNodes[i].localName === tagName &&
+              typeof childNodes[i].className === "string" &&
+              childNodes[i].className.indexOf(className) > -1
           ) {
             if (childNodes[i].className.indexOf(className + "-") < 0) {
               node = childNodes[i];
@@ -678,11 +725,11 @@ export default {
     $_isZondyResult(source) {
       let flag = true;
       if (
-        !(
-          source.hasOwnProperty("AttStruct") &&
-          source.hasOwnProperty("SFEleArray") &&
-          source.hasOwnProperty("TotalCount")
-        )
+          !(
+              source.hasOwnProperty("AttStruct") &&
+              source.hasOwnProperty("SFEleArray") &&
+              source.hasOwnProperty("TotalCount")
+          )
       ) {
         flag = false;
       }
@@ -697,13 +744,13 @@ export default {
       //这里无法使用instanceof进行比较，因为datasource可能由feture派生出来
       for (let i = 0; i < source.length; i++) {
         if (
-          !(
-            source[i].hasOwnProperty("geometry") &&
-            source[i].hasOwnProperty("geometryType") &&
-            source[i].hasOwnProperty("attributes") &&
-            source[i].hasOwnProperty("style") &&
-            source[i].hasOwnProperty("FID")
-          )
+            !(
+                source[i].hasOwnProperty("geometry") &&
+                source[i].hasOwnProperty("geometryType") &&
+                source[i].hasOwnProperty("attributes") &&
+                source[i].hasOwnProperty("style") &&
+                source[i].hasOwnProperty("FID")
+            )
         ) {
           flag = false;
           break;
@@ -716,7 +763,7 @@ export default {
      * **/
     $_getAllAttrData() {
       let dataArr = Object.assign(this.featureSet, {}),
-        data;
+          data;
       for (let i = 0; i < dataArr.length; i++) {
         dataArr[i].attributes = this.$_removeNullData(dataArr[i].attributes);
       }
@@ -769,7 +816,13 @@ export default {
         if(selectIndex !== undefined){
           this.selectData.splice(selectIndex,1);
         }
+        let checkIndex = this.rowSelection.selectedRowKeys.indexOf(record.key);
+        if(checkIndex > -1){
+          this.rowSelection.selectedRowKeys.splice(checkIndex,1);
+        }
         this.paginationCopy.total = this.dataSourceCopy.length;
+        this.$_tableChanged();
+        this.$emit("dataChanged", this.$_getGeoJsonFromData());
         this.$emit("deleted", data);
       }
     },
@@ -781,6 +834,11 @@ export default {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         if(!this.$_getObjectFromArray("key",this.dataSourceCopy[i].key,this.selectData)){
           newData.push(this.dataSourceCopy[i]);
+        }else {
+          let checkIndex = this.rowSelection.selectedRowKeys.indexOf(this.dataSourceCopy[i].key);
+          if(checkIndex > -1){
+            this.rowSelection.selectedRowKeys.splice(checkIndex,1);
+          }
         }
       }
       for (let i = 0; i < this.featureSet.length; i++) {
@@ -791,7 +849,9 @@ export default {
       this.dataSourceCopy = newData;
       this.featureSet = newFeatureSet;
       this.paginationCopy.total = this.dataSourceCopy.length;
+      this.$_tableChanged();
       this.$emit("deleteMass", this.selectData);
+      this.$emit("dataChanged", this.$_getGeoJsonFromData());
       this.selectData = [];
     },
     /**
@@ -821,8 +881,8 @@ export default {
         }
       }
       let index = -1,
-        insertIndex = 0,
-        FIDs = [];
+          insertIndex = 0,
+          FIDs = [];
       for (let i = 0; i < this.selectData.length; i++) {
         FIDs.push(this.selectData[i].FID);
         if (this.selectData[i].FID === value.FID) {
@@ -840,6 +900,7 @@ export default {
       } else {
         this.selectData.splice(index, 1);
       }
+      this.$_tableChanged();
       this.$emit("selected", value, this.selectData, selected);
     },
     $_getDateAuto(data){
@@ -863,12 +924,12 @@ export default {
      * **/
     $_selectAll(selected) {
       let AllAttrData = this.featureSet,
-        selectData = [];
+          selectData = [];
       AllAttrData = this.$_getDateAuto(AllAttrData);
       if (selected) {
         for (let i = 0; i < AllAttrData.length; i++) {
           let flag = false,
-            FIDs = [];
+              FIDs = [];
           for (let j = 0; j < this.selectData.length; j++) {
             FIDs.push(this.selectData[j].FID);
             if (this.selectData[j].FID === AllAttrData[i].FID) {
@@ -905,6 +966,7 @@ export default {
           }
         }
       }
+      this.$_tableChanged();
       this.$emit("selectAll", this.selectData, selected);
       this.$emit("selectall", this.selectData, selected);
     },
@@ -912,6 +974,7 @@ export default {
      * 分页或排序回调
      * **/
     $_change(pagination, filters, sorter, currentDataSource) {
+      console.log("sorter",sorter)
       if (!sorter.hasOwnProperty("order")) {
         sorter.order = "";
       }
@@ -923,7 +986,7 @@ export default {
         sorterObj.isAsc = false;
       } else if (sorter.order === "") {
         sorterObj.isAsc = false;
-        sorterObj.orderField = "";
+        sorterObj.noSort = true;
       }
       if (!this.pageInfo) {
         if (!sorter.hasOwnProperty("columnKey")) {
@@ -942,6 +1005,16 @@ export default {
       }
       this.pageInfo = pagination;
       this.sorterInfo = sorterObj;
+      let sortOrder = undefined;
+      if(sorterObj.hasOwnProperty("noSort")){
+        sortOrder = false;
+      }else {
+        sortOrder = sorterObj.isAsc ? "ascend" : "descend";
+      }
+      this.sortBack = {};
+      this.sortBack.key = sorterObj.orderField;
+      this.sortBack.value = sortOrder;
+      this.$_tableChanged();
       this.$emit("changed", pagination, filters, sorterObj, currentDataSource);
     },
     /*
@@ -954,7 +1027,9 @@ export default {
           let arr = this.editRowAndCol.split("_");
           let datakey = arr[arr.length - 1];
           let data = this.$_getDataByKey(datakey);
+          this.$_tableChanged();
           this.$emit("edited", data, this.$_getGeoJsonFromData());
+          this.$emit("dataChanged", this.$_getGeoJsonFromData());
         }
         this.editRowAndCol = "";
       }
@@ -970,7 +1045,7 @@ export default {
         geoJson.features.push({
           type: 'Feature',
           geometry: this.dataSourceOrigin.features[i].geometry,
-          properties: this.dataSourceCopy[i].attributes
+          properties: this.dataSourceCopy[i]
         });
       }
       return geoJson;
@@ -1006,20 +1081,20 @@ export default {
         this.currentRecord = record;
       }
       this.$emit(
-        "doubleClick",
-        index - 1,
-        key,
-        value,
-        data,
-        AllAttrData[index - 1]
+          "doubleClick",
+          index - 1,
+          key,
+          value,
+          data,
+          AllAttrData[index - 1]
       );
       this.$emit(
-        "doubleclick",
-        index - 1,
-        key,
-        value,
-        data,
-        AllAttrData[index - 1]
+          "doubleclick",
+          index - 1,
+          key,
+          value,
+          data,
+          AllAttrData[index - 1]
       );
     },
     /*
@@ -1033,9 +1108,9 @@ export default {
         for (let j = 0; j < this.columnsSave.length; j++) {
           if (this.checkedList[i] === this.columnsSave[j].title) {
             columns.push(
-              Object.assign(this.columnsSave[j], {
-                width: this.columnsWidthSave[i].width
-              })
+                Object.assign(this.columnsSave[j], {
+                  width: this.columnsWidthSave[i].width
+                })
             );
           }
         }
@@ -1055,6 +1130,7 @@ export default {
       }else {
         this.rowSelection = {
           onChange: (selectedRowKeys, selectedRows) => {
+            this.$_tableChanged();
             this.$emit("selectedChange", selectedRowKeys, selectedRows);
             this.$emit("selectedchange", selectedRowKeys, selectedRows);
           },
@@ -1104,12 +1180,25 @@ export default {
     showTable() {
       this.visible = true;
     },
+    $_tableChanged(){
+      let tableData = this.$_getGeoJsonFromData();
+      tableData.selectedRowKeys = [].concat(this.rowSelection.selectedRowKeys);
+      if(!this.pageInfo){
+        tableData.pagination = {...this.paginationCopy};
+        tableData.pagination.current = 1;
+      }else {
+        tableData.pagination = {...this.pageInfo};
+      }
+      tableData.sortInfo = this.sortBack;
+      this.$emit("tableChanged",tableData);
+    },
     hideTable() {
+      this.$emit("hideTable");
       this.visible = false;
     },
     $_registerMouseLeave() {
       let columnFilter = document.getElementById(this.columnFilterId),
-        vm = this;
+          vm = this;
       columnFilter.onmouseleave = function() {
         vm.showFilter = false;
       };
@@ -1131,7 +1220,7 @@ export default {
         this.filterTop = this.rowHeight + 6;
         this.filterPosition = "fixed";
         let offsetWidth = this.$_getTableEffectiveWidth(
-          document.body.scrollWidth
+            document.body.scrollWidth
         );
         let columnsWidth = 0;
         for (let i = 0; i < this.columnsCopy.length; i++) {
@@ -1150,17 +1239,17 @@ export default {
         }
         this.pageSize = this.pagination.pageSize;
         let fullNum = parseInt(
-          (tHeight - this.pageHeight - toolbar.offsetHeight) / this.rowHeight
+            (tHeight - this.pageHeight - toolbar.offsetHeight) / this.rowHeight
         );
         this.$emit(
-          "fullScreen",
-          this.$_getPageInfo(fullNum - 2),
-          this.sorterInfo
+            "fullScreen",
+            this.$_getPageInfo(fullNum - 2),
+            this.sorterInfo
         );
         this.$emit(
-          "fullscreen",
-          this.$_getPageInfo(fullNum - 2),
-          this.sorterInfo
+            "fullscreen",
+            this.$_getPageInfo(fullNum - 2),
+            this.sorterInfo
         );
         this.fullScreen = true;
       } else {
@@ -1193,14 +1282,14 @@ export default {
           }
         });
         this.$emit(
-          "originScreen",
-          this.$_getPageInfo(this.pageSize),
-          this.sorterInfo
+            "originScreen",
+            this.$_getPageInfo(this.pageSize),
+            this.sorterInfo
         );
         this.$emit(
-          "originscreen",
-          this.$_getPageInfo(this.pageSize),
-          this.sorterInfo
+            "originscreen",
+            this.$_getPageInfo(this.pageSize),
+            this.sorterInfo
         );
         this.fullScreen = false;
       }
