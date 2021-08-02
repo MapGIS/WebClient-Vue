@@ -1,0 +1,28 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.ace-jsoneditor .ace_gutter {
+  background: $json-editor-background;
+  color: $json-editor-color;
+}
+
+.ace-jsoneditor .ace_scroller {
+  background: $json-editor-background;
+}
+
+.jsoneditor-menu {
+  background: $json-editor-color;
+  border-bottom: 1px solid $json-editor-color;
+}
+
+.jsoneditor {
+  color: #1a1a1a;
+  border: thin solid $json-editor-color;
+}
+
+.jsoneditor-statusbar {
+  line-height: 26px;
+  height: 26px;
+  color: grey;
+  background-color: $json-editor-color;
+}

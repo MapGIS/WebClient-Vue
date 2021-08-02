@@ -13,6 +13,9 @@
     <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme">
       <mapgis-ui-iconfont type="mapgis-chexiao" />撤销专题图
     </contextmenu-item>
+    <contextmenu-item @click="handleClick('make-symbol')">
+      <mapgis-ui-iconfont type="mapgis-shengchengzhuji" />生成注记
+    </contextmenu-item>
     <contextmenu-item divider />
     <contextmenu-item @click="handleClick('open-table')">
       <mapgis-ui-iconfont type="mapgis-zhujishuxingbianji" />查看属性表
@@ -60,6 +63,7 @@ import {
   ContextmenuGroup,
   ContextmenuSubmenu
 } from "v-contextmenu";
+
 export default {
   name: "mapgis-layercontent-studio",
   components: {
@@ -101,7 +105,7 @@ export default {
       this.$emit("onRename", { id: layerId, name });
     },
     handleClick(type) {
-      const { layerId } = this;
+      const {layerId} = this;
       switch (type) {
         case "edit":
           this.$emit("onEdit", { type, layerId });
@@ -120,6 +124,10 @@ export default {
         case "remove-theme":
           this.$emit("onRemoveTheme", { type, layerId });
           emitMapRemoveThemeLayer({ type, layerId });
+          break;
+        case "make-symbol":
+          this.$emit("onMakeSymbol", { type, layerId });
+          console.log('send-make-symbol');
           break;
         case "open-table":
           this.$emit("onOpenTable", { type, layerId });

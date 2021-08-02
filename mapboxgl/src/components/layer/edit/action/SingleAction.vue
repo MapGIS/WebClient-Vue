@@ -23,8 +23,13 @@
         :layerid="layerid"
         @edit-change="onEditChange"
       />
+      <symbol-style
+        v-else-if="type == 'symbol'"
+        :layerid="layerid"
+        @edit-change="onEditChange"
+      />
     </div>
-    <filter-action :layerid="layerid"/>
+    <filter-action :layerid="layerid" />
   </div>
 </template>
 
@@ -33,11 +38,12 @@ import FilterAction from "./FilterAction.vue";
 import CircleStyle from "../feature/Circle.vue";
 import LineStyle from "../feature/Line.vue";
 import FillStyle from "../feature/Fill.vue";
+import SymbolStyle from "../feature/Symbol.vue";
 import EditMixin from "../EditMixin";
 
 export default {
   name: "mapgis-mvt-action-single",
-  components: { FilterAction, CircleStyle, LineStyle, FillStyle },
+  components: { FilterAction, CircleStyle, LineStyle, FillStyle, SymbolStyle },
   mixins: [EditMixin],
   inject: ["map", "mapbox"],
   props: {

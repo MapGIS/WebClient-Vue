@@ -76,7 +76,7 @@ export default {
     },
     width: {
       type: Number,
-      default: 800
+      default: 600
     },
     currentDocument: {
       type: Object,

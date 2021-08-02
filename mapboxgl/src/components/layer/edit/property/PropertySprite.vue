@@ -57,9 +57,11 @@ export default {
         const { layertype, layerprop } = rule;
         if (rule.layertype === "paint") {
           map.setPaintProperty(layerid, layerprop, sprite);
-          let event = { layertype, layerprop, layervalue: sprite };
-          this.$_emitEvent(event);
+        } else if (rule.layertype === "layout") {
+          map.setLayoutProperty(layerid, layerprop, sprite);
         }
+        let event = { layertype, layerprop, layervalue: sprite };
+        this.$_emitEvent(event);
       }
     },
     getValue(id) {

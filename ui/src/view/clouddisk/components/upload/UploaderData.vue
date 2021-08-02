@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="path">
-      <p class="path-text" :title="importDestUrl">
+    <div class="mapgis-ui-uploader-path">
+      <p class="mapgis-ui-uploader-path-text" :title="importDestUrl">
         <img src="./images/save.png" style="padding-bottom:4px;" />
         导入到：{{ importDestUrl }}
       </p>
@@ -12,8 +12,11 @@
       >
         {{ buttonText }}
       </mapgis-ui-button> -->
-      <span style="line-height:40px;float:right;margin-right:8px;color:#269ff0;cursor:pointer;" @click="handleImportUrlModal">
-        {{buttonText}}
+      <span
+        style="line-height:40px;float:right;margin-right:8px;cursor:pointer;"
+        @click="handleImportUrlModal"
+      >
+        {{ buttonText }}
       </span>
     </div>
     <div class="type-radio">
@@ -58,8 +61,12 @@
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { openUploader, changePathUploaduri, changeUploadWebsocketTaskId } from "../../../../util/emit/upload";
-import { uuid } from '../../util/uuid';
+import {
+  openUploader,
+  changePathUploaduri,
+  changeUploadWebsocketTaskId
+} from "../../../../util/emit/upload";
+import { uuid } from "../../util/uuid";
 
 export default {
   name: "importData",
@@ -99,7 +106,7 @@ export default {
       this.temUrl = url;
     },
     handlePathOk() {
-      changePathUploaduri({uri: this.temUrl});
+      changePathUploaduri({ uri: this.temUrl });
       console.warn("this.uploaduri111", this.uploaduri);
       this.$emit("changePathText", this.temUrl);
       this.showPathSelect = false;
@@ -135,13 +142,13 @@ export default {
           isCache: false,
           type: type,
           gisFormat: gisFormat,
-          isGisImport: this.importDataType !== 'csv', // csv不可导入
+          isGisImport: this.importDataType !== "csv", // csv不可导入
           taskid: taskid
         }
       });
       changeUploadWebsocketTaskId({
         webSocketTaskId: taskid
-      })
+      });
     }
   },
   destroyed() {}
@@ -149,13 +156,12 @@ export default {
 </script>
 
 <style scoped>
-.path {
+.mapgis-ui-uploader-path {
   width: 100%;
   height: 40px;
-  background: #f2f2f2;
   margin: 0 auto;
 }
-.path-text {
+.mapgis-ui-uploader-path-text {
   display: inline-block;
   max-width: calc(100% - 130px);
   line-height: 40px;
@@ -176,7 +182,6 @@ export default {
   margin-bottom: 10px;
   width: 450px;
   height: 180px;
-  background: #ffffff;
   border: 1px dashed #dcdfe6;
   border-radius: 4px;
 }
