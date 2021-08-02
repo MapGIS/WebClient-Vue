@@ -161,9 +161,9 @@ export default {
     importFileInfo(url) {
       let gisindex = url.indexOf("/");
       if (gisindex >= 0) {
-        url = "常规文件夹" + url.slice(gisindex);
+        url = "组织文件夹" + url.slice(gisindex);
       } else {
-        url = "常规文件夹";
+        url = "组织文件夹";
       }
       return url;
     },

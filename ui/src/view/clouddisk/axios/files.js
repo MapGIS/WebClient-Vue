@@ -1,7 +1,7 @@
 import API from "./API";
 import md5 from "js-md5";
 
-import { getMapGISUrl, getMapgisToken, getMapgisPath } from "../config/mapgis";
+import { getMapGISUrl, getMapgisToken, getMapgisPath, getMapgisGroupPath } from "../config/mapgis";
 
 export function dirnavigation(folderDir) {
   const api = new API();
@@ -9,7 +9,7 @@ export function dirnavigation(folderDir) {
   const token = getMapgisToken();
   // const path = getMapgisPath()
   folderDir = folderDir === "" ? "-1" : folderDir;
-  folderDir = folderDir || getMapgisPath();
+  folderDir = folderDir || getMapgisGroupPath();
 
   api.setBaseUrl(url);
   api.setAuthorization(token);

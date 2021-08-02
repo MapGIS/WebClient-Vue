@@ -17,7 +17,7 @@
 </template>
 <script>
 import { dirnavigation } from "../../axios/files";
-import { getMapgisPath } from "../../config/mapgis";
+import { getMapgisPath, getMapgisGroupPath } from "../../config/mapgis";
 import UploadMixin from '../../../../mixin/UploaderMixin';
 
 export default {
@@ -33,12 +33,12 @@ export default {
   mounted() {
     this.treeData = [
       {
-        title: "常规文件夹",
+        title: "组织文件夹",
         key: "0-0",
         scopedSlots: {
           icon: "folderIcon"
         },
-        url: getMapgisPath()
+        url: getMapgisGroupPath()
       }
     ];
   },

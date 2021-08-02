@@ -111,6 +111,11 @@ export function getMapgisPath(path) {
   }
 }
 
+export function getMapgisGroupPath () {
+  const groupPath = window.localStorage.getItem('mapgis_clouddisk_group_path')
+  return groupPath
+}
+
 export function getMapgisEncryptPath(path) {
   const encryptPath = window.localStorage.getItem(
     "mapgis_clouddisk_encryptpath"

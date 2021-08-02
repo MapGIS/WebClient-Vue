@@ -29,7 +29,7 @@
 import { dirnavigation } from "../../axios/files";
 import { getShareList } from "../../axios/share.js";
 import { getFileIcon } from "../../util/fileType";
-import { getMapgisPath } from "../../config/mapgis";
+import { getMapgisPath, getMapgisGroupPath } from "../../config/mapgis";
 
 // const DefaultData = {
 //   title: '目录',
@@ -182,7 +182,7 @@ export default {
             vm.isLoading = false;
           });
       } else if (url === -100) {
-        let defaultURL = getMapgisPath();
+        let defaultURL = getMapgisGroupPath();
         dirnavigation(defaultURL)
           .then(res => {
             if (res.status === 200) {
