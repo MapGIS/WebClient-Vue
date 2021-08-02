@@ -37,6 +37,10 @@ export default {
     themeDefaultType: {
       type: String
     },
+    closeAllPanel: {
+      type: Boolean,
+      default: false
+    },
     panelProps: {
       type: Object,
       default() {
@@ -662,11 +666,15 @@ export default {
       }
     },
     $_closePanel() {
-      this.showPanel = false;
-      if (this.resetAllLayer) {
-        this.$emit("resetAllLayer", this);
+      if (!this.closeAllPanel) {
+        this.showPanel = false;
+        if (this.resetAllLayer) {
+          this.$emit("resetAllLayer", this);
+        } else {
+          this.$_resetLayer();
+        }
       } else {
-        this.$_resetLayer();
+        this.$emit("closePanel");
       }
     },
     $_showPanel() {

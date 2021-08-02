@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="(panel,index) in panels" :key="index" v-show="panel === layerId && showPanel">
+    <div v-for="(panel,index) in panels" :key="index" v-show="panel === layerId && showPanelFlag">
       <mapgis-igs-unique-theme-layer
           v-show="showType === 'unique'"
           :themeDefaultType="themeDefaultType"
@@ -9,8 +9,10 @@
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
+          :closeAllPanel="closeAllPanel"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_uniqueLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       ></mapgis-igs-unique-theme-layer>
       <mapgis-igs-symbol-theme-layer
@@ -21,8 +23,10 @@
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
+          :closeAllPanel="closeAllPanel"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_symbolLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       >
       </mapgis-igs-symbol-theme-layer>
@@ -34,8 +38,10 @@
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
+          :closeAllPanel="closeAllPanel"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_rangeLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       ></mapgis-igs-range-theme-layer>
       <mapgis-igs-heat-theme-layer
@@ -45,8 +51,10 @@
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
           :iconUrl="iconUrl"
+          :closeAllPanel="closeAllPanel"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_heatLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       >
       </mapgis-igs-heat-theme-layer>
@@ -77,7 +85,8 @@ export default {
       themeType: undefined,
       resetAllLayer: true,
       panels: [],
-      showPanel: true
+      showPanelFlag: true,
+      closeAllPanel: true
     }
   },
   props: {
@@ -111,7 +120,7 @@ export default {
       this.rangeLayer.hideExtraLayer(layerId);
       this.heatmapLayer.hideExtraLayer(layerId);
       this.uniqueLayer.resetMainLayer(layerId);
-      this.showPanel = false;
+      this.showPanelFlag = false;
     },
     resetLayer(layerId){
       this.uniqueLayer.deleteExtraLayer(layerId);
@@ -119,7 +128,7 @@ export default {
       this.rangeLayer.deleteExtraLayer(layerId);
       this.heatmapLayer.deleteExtraLayer(layerId);
       this.uniqueLayer.resetMainLayer(layerId);
-      this.showPanel = false;
+      this.showPanelFlag = false;
       this.$_showLayerFromHeatMap();
     },
     $_showLayerFromHeatMap(){
@@ -190,7 +199,7 @@ export default {
       let vm = this;
       setTimeout(function () {
         vm.layerId = layerId;
-        vm.showPanel = true;
+        vm.showPanelFlag = true;
         switch (type) {
           case "unique":
             vm.uniqueLayer.addThemeLayer(layerId);
@@ -219,6 +228,20 @@ export default {
     },
     $_heatLoaded(heatmapLayer){
       this.heatmapLayer = heatmapLayer;
+    },
+    $_closeAllPanel(){
+      this.showPanelFlag = false;
+      this.$emit("closePanel",this.layerId)
+    },
+    closePanel(){
+      this.$_closeAllPanel();
+    },
+    $_showPanel() {
+      this.showPanelFlag = true;
+      this.$emit("showPanel",this.layerId)
+    },
+    showPanel(){
+      this.$_showPanel();
     },
     $_themeTypeChanged(key,value){
       this.themeDefaultType = value;
