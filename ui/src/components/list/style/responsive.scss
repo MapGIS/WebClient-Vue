@@ -1,5 +1,5 @@
 @media screen and (max-width: $screen-md) {
-  .#{list-prefix-cls} {
+  .#{$list-prefix-cls} {
     &-item {
       &-action {
         margin-left: 24px;
@@ -7,8 +7,8 @@
     }
   }
 
-  .#{list-prefix-cls}-vertical {
-    .#{list-prefix-cls}-item {
+  .#{$list-prefix-cls}-vertical {
+    .#{$list-prefix-cls}-item {
       &-extra {
         margin-left: 24px;
       }
@@ -17,7 +17,7 @@
 }
 
 @media screen and (max-width: $screen-sm) {
-  .#{list-prefix-cls} {
+  .#{$list-prefix-cls} {
     &-item {
       flex-wrap: wrap;
       &-action {
@@ -26,8 +26,8 @@
     }
   }
 
-  .#{list-prefix-cls}-vertical {
-    .#{list-prefix-cls}-item {
+  .#{$list-prefix-cls}-vertical {
+    .#{$list-prefix-cls}-item {
       flex-wrap: wrap-reverse;
       &-main {
         min-width: 220px;
