@@ -174,10 +174,10 @@
                 v-model="radioMode"
                 :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
             >
-              <mapgis-ui-radio-button value="gradient">
+              <mapgis-ui-radio-button @click="$_chooseColor('gradient')" value="gradient">
                 渐变颜色
               </mapgis-ui-radio-button>
-              <mapgis-ui-radio-button value="single">
+              <mapgis-ui-radio-button @click="$_chooseColor('single')" value="single">
                 单体颜色
               </mapgis-ui-radio-button>
             </mapgis-ui-radio-group>
@@ -187,6 +187,7 @@
           >
             <mapgis-ui-select
                 :default-value="'#FF0000'"
+                v-model="gradientColor"
                 @change="$_gradientChange"
                 v-show="radioMode === 'gradient'"
             >
@@ -921,7 +922,8 @@ export default {
         value: [10, 3, 2, 3]
       }],
       themeDefaultTypeCopy: undefined,
-      labelFieldsCopy: []
+      labelFieldsCopy: [],
+      gradientColor: "#FF0000"
     }
   },
   watch: {
@@ -1032,6 +1034,13 @@ export default {
     this.$_initDataSource();
   },
   methods: {
+    $_chooseColor(radioMode){
+      if(radioMode === "single" && this.radioMode !== "single"){
+        this.$emit("singleChanged", this.singleColor, this.singleColor);
+      }else if(radioMode === "gradient" && this.radioMode !== "gradient"){
+        this.$emit("gradientChange", "#FFFFFF", this.gradientColor);
+      }
+    },
     $_formatPanelProps() {
       let vm = this;
       Object.keys(this.$data).forEach(function (key) {
