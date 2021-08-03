@@ -1022,6 +1022,23 @@ export default {
       });
       return layer;
     },
+    $_getNullFields(features) {
+      let fields = [];
+      for (let i = 0; i < features.length; i++) {
+        Object.keys(features[i].properties).forEach(function(key) {
+          if (
+            (!features[i].properties[key] ||
+              features[i].properties[key] === "" ||
+              features[i].properties[key] === "undefined" ||
+              features[i].properties[key] === "null") &&
+            fields.indexOf(key) < 0
+          ) {
+            fields.push(key);
+          }
+        });
+      }
+      this.$emit("hasNullProperty", fields);
+    },
     $_getFromSource(layerId) {
       let features;
       if (!window.originLayer.hasOwnProperty(layerId + "_features")) {
@@ -1034,6 +1051,7 @@ export default {
           return;
         }
         window.originLayer[layerId + "_features"] = features;
+        this.$_getNullFields(features);
       } else {
         features = window.originLayer[layerId + "_features"];
       }
@@ -1294,6 +1312,7 @@ export default {
       }
       return datas;
     },
+    $_removeLayer() {},
     $_selectChange(value) {
       if (value !== "") {
         let datas = this.$_getData(this.dataCopy.features, value);
@@ -1316,7 +1335,7 @@ export default {
           } else {
             throw new Error("请设置$_selectChange方法的回到函数！");
           }
-          this.$_changeOriginLayer();
+          this.$_setPaintByType(colors);
           this.showVector = true;
         }
         this.changeLayerProp = true;
@@ -1339,6 +1358,12 @@ export default {
         true
       );
       this.$_setOriginLayer(colors);
+      this.$_setPaintByType(colors);
+      this.showVector = true;
+      this.changeLayerProp = true;
+      this.changeLayerId = this.layerIdCopy;
+    },
+    $_setPaintByType(colors) {
       switch (this.dataType) {
         case "fill":
           this.$_setPaintProperty(
@@ -1365,9 +1390,6 @@ export default {
           );
           break;
       }
-      this.showVector = true;
-      this.changeLayerProp = true;
-      this.changeLayerId = this.layerIdCopy;
     },
     $_lineColorChanged(e) {
       this.showVector = false;

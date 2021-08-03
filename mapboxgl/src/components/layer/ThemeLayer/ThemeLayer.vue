@@ -11,6 +11,7 @@
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_uniqueLoaded"
           @closePanel="$_closeAllPanel"
@@ -26,6 +27,7 @@
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_symbolLoaded"
           @closePanel="$_closeAllPanel"
@@ -42,6 +44,7 @@
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_rangeLoaded"
           @closePanel="$_closeAllPanel"
@@ -56,6 +59,7 @@
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_heatLoaded"
           @closePanel="$_closeAllPanel"
@@ -118,6 +122,9 @@ export default {
   methods: {
     $_createLayerFailed(message){
       this.$emit("createLayerFailed",message);
+    },
+    $_hasNullProperty(fields){
+      this.$emit("hasNullProperty",fields);
     },
     $_resetAllLayer(){
       this.hideLayer(this.layerId);

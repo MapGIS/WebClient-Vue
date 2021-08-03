@@ -667,7 +667,7 @@
                     </div>
                     <div class="theme-panel-td theme-panel-td-value" v-bind:title="item">
                       {{
-                        item.toString().length > 12 ? String(item).substr(0, 12) + "..." : (item === "" ? "其他" : item)
+                        item.toString().length > 8 ? String(item).substr(0, 8) + "..." : (item === "" ? "其他" : item)
                       }}
                     </div>
                   </mapgis-ui-list-item>
@@ -1176,7 +1176,7 @@ export default {
       this.$emit("themeTypeChanged", key, value);
     },
     $_initDataSource() {
-      if (this.dataSource.length > 0 && !this.init) {
+      if (this.dataSource.length > 0) {
         this.init = true;
       }else {
         return;

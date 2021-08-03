@@ -316,13 +316,13 @@ export default {
       colors = this.$_editColor(colors);
       switch (this.dataType) {
         case "fill":
-          this.map.setPaintProperty(this.layerIdCopy, "fill-color", colors);
+          this.map.setPaintProperty(this.layerIdCopy + "_" + this.$_getThemeName(), "fill-color", colors);
           break;
         case "circle":
-          this.map.setPaintProperty(this.layerIdCopy, "circle-color", colors);
+          this.map.setPaintProperty(this.layerIdCopy + "_" + this.$_getThemeName(), "circle-color", colors);
           break;
         case "line":
-          this.map.setPaintProperty(this.layerIdCopy, "line-color", colors);
+          this.map.setPaintProperty(this.layerIdCopy + "_" + this.$_getThemeName(), "line-color", colors);
           break;
       }
       this.dataSource[index] = Number(this.dataSourceCopy[index]);
