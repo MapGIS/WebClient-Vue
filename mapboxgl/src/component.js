@@ -58,6 +58,9 @@ export { default as MapgisArcgisMapLayer } from "./components/layer/ArcGISServer
 export { default as MapgisArcgisTileLayer } from "./components/layer/ArcGISServer/ArcGISTileLayer";
 
 export { default as MapgisTrackerLayer } from "./components/layer/tracker/TrackerLayer";
+export { default as MapgisClusterLayer } from "./components/layer/cluster/ClusterLayer";
+export { default as MapgisHeaterLayer } from "./components/layer/heater/HeaterLayer";
+export { default as MapgisBuildingLayer } from "./components/layer/building/BuildingLayer";
 
 export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
@@ -70,7 +73,7 @@ export { default as MapgisSymbolThemeLayer } from "./components/layer/ThemeLayer
 export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
-export { default as MapgisHeatThemeLayer} from "./components/layer/ThemeLayer/HeatThemeLayer";
+export { default as MapgisHeatThemeLayer } from "./components/layer/ThemeLayer/HeatThemeLayer";
 
 /* 
 import withEventsMixin from "./lib/withEvents";

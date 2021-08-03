@@ -10,7 +10,7 @@ export default {
   name: "mapgis-tracker-layer",
   inject: ["mapbox", "map"],
   props: {
-    url: {
+    geojson: {
       type: [String, Object],
       required: true
     },
@@ -39,16 +39,16 @@ export default {
   },
   methods: {
     getData() {
-      let { url } = this;
+      let { geojson } = this;
       const vm = this;
-      if (typeof url === "string") {
-        fetch(url)
+      if (typeof geojson === "string") {
+        fetch(geojson)
           .then(response => response.json())
           .then(pinRouteGeojson => {
             vm.handleDynamicLine(pinRouteGeojson);
           });
       } else {
-        this.handleDynamicLine(url);
+        this.handleDynamicLine(geojson);
       }
     },
     handleDynamicLine(pinRouteGeojson) {
@@ -124,6 +124,7 @@ export default {
     },
     frame(time) {
       let {
+        map,
         path,
         pathDistance,
         popup,
@@ -147,10 +148,13 @@ export default {
         lng: alongPath[0],
         lat: alongPath[1]
       };
+      let elevation;
+      if (map.queryTerrainElevation) {
+        elevation = Math.floor(
+          map.queryTerrainElevation(lngLat, { exaggerated: false })
+        );
+      }
 
-      const elevation = Math.floor(
-        map.queryTerrainElevation(lngLat, { exaggerated: false })
-      );
       if (this.$slots.popup && this.$slots.popup.length > 0) {
         this.popup.setDOMContent(this.$slots.popup[0].elm);
       } else {
