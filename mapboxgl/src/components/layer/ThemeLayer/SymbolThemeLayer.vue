@@ -16,7 +16,7 @@
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
         :themeDefaultType="themeDefaultType"
-        :themeType="themeTypeArr"
+        :themeType="themeTypeArrCopy"
         :activeKey="activeKey"
         :iconUrl="iconUrl"
         :defaultIconValue="defaultIconValue"
@@ -248,8 +248,11 @@ export default {
     this.$_removeLayer();
   },
   methods: {
-    $_resetMainLayer(layerId){
-      this.$_addLayer(layerId);
+    hideLayer(){
+      this.$_hideLayer();
+    },
+    $_hideLayer(){
+      this.$_setLayOutProperty("visibility","none",this.layerIdCopy + "_symbol",window.originLayer[this.layerIdCopy + "_symbol"]);
     },
     removeLayer() {
       this.$_removeLayer();
@@ -581,8 +584,8 @@ export default {
             keyArr.push(key);
           });
           vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
-          window.originLayer[vm.layerIdCopy + "_" + vm.themeType] = window.layerVector = {
-            'id': vm.layerIdCopy,
+          window.layerVector = {
+            'id': vm.layerIdCopy + "_" + vm.themeType,
             'source': vm.source_vector_Id,
             'type': 'symbol',
             'layout': {
@@ -593,7 +596,8 @@ export default {
               'text-letter-spacing': vm.textPadding,
               'text-offset': vm.offset,
               'text-font': [vm.textFonts[0]],
-              'text-rotate': vm.textRotation
+              'text-rotate': vm.textRotation,
+              'visibility': 'visible'
             },
             'paint': {
               'icon-color': fillColors,
@@ -603,15 +607,13 @@ export default {
               "text-halo-width": vm.haloWidth
             },
           };
+          if(vm.source_vector_layer_Id){
+            window.layerVector["source-layer"] = vm.source_vector_layer_Id;
+          }
+          window.originLayer[vm.layerIdCopy + "_" + vm.themeType] = window.layerVector;
           vm.title = "等级符号" + "_" + vm.layerIdCopy;
-          if (vm.source_vector_layer_Id) {
-            vm.textLayer["source-layer"] = vm.source_vector_layer_Id;
-          }
-          let layer = vm.map.getLayer(vm.layerIdCopy);
-          if(layer){
-            vm.map.removeLayer(vm.layerIdCopy);
-          }
-          vm.map.addLayer(window.layerVector);
+          vm.$_setLayOutProperty("visibility","none",vm.layerIdCopy,window.originLayer[vm.layerIdCopy]);
+          vm.map.addLayer(window.originLayer[vm.layerIdCopy + "_" + vm.themeType]);
           clearInterval(interval);
         }
       },10);

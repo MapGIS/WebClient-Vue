@@ -13,7 +13,7 @@
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
         :themeDefaultType="themeDefaultType"
-        :themeType="themeTypeArr"
+        :themeType="themeTypeArrCopy"
         @change="$_selectChange"
         @gradientChange="$_gradientChange"
         @heatRadiusChanged="$_heatRadiusChanged"
@@ -96,7 +96,9 @@ export default {
           id: this.heatMapLayerId,
           type: 'heatmap',
           source: this.source_vector_Id, //必须和上面的layerId一致
-          layout: {},
+          layout: {
+            'visibility': "visible"
+          },
           paint: {
             "heatmap-weight": [
               "interpolate",

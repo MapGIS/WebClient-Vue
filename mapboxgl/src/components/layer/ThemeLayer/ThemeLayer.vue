@@ -148,7 +148,8 @@ export default {
     },
     $_showLayerFromSymbol(layerId){
       if(this.showType === "symbol") {
-        this.symbolLayer.resetMainLayer(layerId);
+        this.symbolLayer.hideLayer();
+        this.symbolLayer.resetMainLayer(this.layerId);
       }
     },
     addThemeLayer(type, layerId){
@@ -252,6 +253,9 @@ export default {
     $_themeTypeChanged(key,value){
       this.themeDefaultType = value;
       this[this.showType + "Layer"].hideExtraLayer(this.layerId);
+      if((this.showType === "unique" || this.showType === "range") && key === "symbol" && window.originLayer[this.layerId + "_symbol"]){
+        this.map.setLayoutProperty(this.layerId,"visibility","none");
+      }
       this.$_showLayerFromHeatMap();
       this.$_showLayerFromSymbol(this.layerId);
       this.$_addThemeLayer(key,this.layerId);

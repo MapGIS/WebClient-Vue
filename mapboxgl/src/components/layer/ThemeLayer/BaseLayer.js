@@ -86,6 +86,11 @@ export default {
     },
     themeDefaultType: {
       handler: function() {}
+    },
+    themeTypeArr: {
+      handler: function() {
+        this.themeTypeArrCopy = this.themeTypeArr;
+      }
     }
   },
   data() {
@@ -151,7 +156,8 @@ export default {
       textId: undefined,
       extraLayer: [],
       upLayer: undefined,
-      allFields: undefined
+      allFields: undefined,
+      themeTypeArrCopy: undefined
     };
   },
   methods: {
@@ -211,7 +217,12 @@ export default {
         this.$_getFromSource(layerId);
       } else {
         if (this.themeType === "symbol") {
-          this.$_addLayer(layerId, themeId);
+          this.$_setLayOutProperty(
+            "visibility",
+            "visible",
+            themeId,
+            window.originLayer[themeId]
+          );
         } else {
           let extraLayer =
             window.originLayer[layerId + "_" + this.themeType + "_extraLayer"];
@@ -226,6 +237,12 @@ export default {
             }
           }
           this.$_changeOriginLayer(window.originLayer[themeId]);
+          this.$_setLayOutProperty(
+            "visibility",
+            "visible",
+            layerId,
+            window.originLayer[themeId]
+          );
         }
         window.layerVector = window.originLayer[themeId];
       }
@@ -695,6 +712,7 @@ export default {
       if (!window.originLayer) {
         window.originLayer = {};
       }
+      this.themeTypeArrCopy = this.themeTypeArr;
       if (
         this.panelPropsDefault.hasOwnProperty("xOffset") &&
         this.panelPropsDefault.xOffset
@@ -896,6 +914,67 @@ export default {
       });
       return fields;
     },
+    $_getThemeFields(features, key) {
+      let fields;
+      if (features.geometry.type === "Point") {
+        if (typeof features.properties[key] === "string") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            },
+            {
+              key: "symbol",
+              value: "等级符号专题图"
+            },
+            {
+              key: "heatmap",
+              value: "热力专题图"
+            }
+          ];
+        } else if (typeof features.properties[key] === "number") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            },
+            {
+              key: "range",
+              value: "分段专题图"
+            },
+            {
+              key: "symbol",
+              value: "等级符号专题图"
+            },
+            {
+              key: "heatmap",
+              value: "热力专题图"
+            }
+          ];
+        }
+      } else {
+        if (typeof features.properties[key] === "string") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            }
+          ];
+        } else if (typeof features.properties[key] === "number") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            },
+            {
+              key: "range",
+              value: "分段专题图"
+            }
+          ];
+        }
+      }
+      return fields;
+    },
     $_changeOriginLayer(layerVector) {
       layerVector = layerVector || window.layerVector;
       let vm = this;
@@ -1035,6 +1114,11 @@ export default {
       this.defaultValue =
         this.defaultValue === undefined ? this.fields[0] : this.defaultValue;
       this.selectKey = this.fields[0];
+      this.themeTypeArrCopy = this.$_getThemeFields(
+        geojson.features[0],
+        this.selectKey
+      );
+      this.$emit("getThemeType", this.themeTypeArrCopy);
       this.dataSource = this.$_getData(geojson.features, this.selectKey);
       let colors = this.$_getColors(
         this.dataSource,

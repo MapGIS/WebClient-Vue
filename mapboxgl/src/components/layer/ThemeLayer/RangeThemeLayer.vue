@@ -14,7 +14,7 @@
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
         :themeDefaultType="themeDefaultType"
-        :themeType="themeTypeArr"
+        :themeType="themeTypeArrCopy"
         :iconUrl="iconUrl"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
@@ -481,6 +481,9 @@ export default {
         window.layerVector = {
           type: 'fill',
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          layout: {
+            'visibility': "visible"
+          },
           paint: {
             'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
             'fill-color': fillColors, //颜色
@@ -494,6 +497,9 @@ export default {
         window.layerVector = {
           type: 'circle',
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          layout: {
+            'visibility': "visible"
+          },
           paint: {
             'circle-color': fillColors, //颜色
             'circle-opacity': this.opacity, //透明度
@@ -509,12 +515,18 @@ export default {
         window.layerVector = {
           type: 'line',
           source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          layout: {
+            'visibility': "visible"
+          },
           paint: {
             'line-color': fillColors, //颜色
             'line-opacity': this.opacity, //透明度
             'line-width': this.lineWidth,
           }
         }
+      }
+      if(this.source_vector_layer_Id){
+        window.layerVector["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
       this.$_addTextLayer();
