@@ -968,6 +968,9 @@ export default {
         this.$emit("heatRadiusChanged", Number(this.heatMapRadius));
       }
     },
+    themeType: {
+      handler: function () {}
+    },
     defaultIconValue: {
       handler: function () {}
     },
