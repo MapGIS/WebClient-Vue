@@ -82,17 +82,13 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson) {
-      window.map = this.map;
       this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
-      //隐藏原图层
-      this.map.setPaintProperty(this.layerIdCopy, "circle-opacity", 0);
-      this.map.setPaintProperty(this.layerIdCopy, "circle-stroke-opacity", 0);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
-        this.heatMapLayerId = this.layerIdCopy + "_" + this.themeType;
+        this.heatMapLayerId = this.layerIdCopy + "_热力专题图";
         let colorGradient = this.getGradientColors(true);
-        window.layerVector = {
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.heatMapLayerId,
           type: 'heatmap',
           source: this.source_vector_Id, //必须和上面的layerId一致
@@ -177,16 +173,14 @@ export default {
           }
         }
         if(this.source_vector_layer_Id){
-          window.layerVector["source-layer"] = this.source_vector_layer_Id;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
         }
-        window.originLayer[this.heatMapLayerId] = window.layerVector;
         this.extraLayer.push({
           key: "heatmapLayer",
           value: this.heatMapLayerId
         });
-        window.originLayer[this.layerIdCopy + "_" + this.themeType + "_extraLayer"] = this.extraLayer;
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
         this.title = "热力专题图" + "_" + this.layerIdCopy;
-        this.map.addLayer(window.layerVector, this.upLayer);
       }
     },
 

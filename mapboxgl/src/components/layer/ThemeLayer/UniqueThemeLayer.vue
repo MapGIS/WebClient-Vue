@@ -103,7 +103,7 @@ export default {
           this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy, window.layerVector);
+          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -126,7 +126,7 @@ export default {
           this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy, window.layerVector);
+          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -193,13 +193,13 @@ export default {
       if (next) {
         switch (this.dataType) {
           case "fill":
-            window.layerVector.paint["fill-color"] = colors;
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
             break;
           case "circle":
-            window.layerVector.paint["circle-color"] = colors;
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
             break;
           case "line":
-            window.layerVector.paint["line-color"] = colors;
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
             break;
         }
         this.$_changeOriginLayer();
@@ -209,19 +209,19 @@ export default {
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
       switch (this.dataType) {
         case "fill":
-          window.layerVector.paint["fill-color"] = colors;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
           break;
         case "circle":
-          window.layerVector.paint["circle-color"] = colors;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
           break;
         case "line":
-          window.layerVector.paint["line-color"] = colors;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
           break;
       }
     },
@@ -278,8 +278,8 @@ export default {
     $_initThemeCallBack(geojson, fillColors) {
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        window.layerVector = {
-          id: "theme_layer_id",
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+          id: this.layerIdCopy + "_单值专题图",
           type: 'fill',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
@@ -295,8 +295,8 @@ export default {
         this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        window.layerVector = {
-          id: "theme_layer_id",
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+          id:  this.layerIdCopy + "_单值专题图",
           type: 'circle',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
@@ -314,8 +314,8 @@ export default {
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        window.layerVector = {
-          id: "theme_layer_id",
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+          id:  this.layerIdCopy + "_单值专题图",
           type: 'line',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
@@ -329,7 +329,7 @@ export default {
         }
       }
       if(this.source_vector_layer_Id){
-        window.layerVector["source-layer"] = this.source_vector_layer_Id;
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "单值专题图" + "_" + this.layerIdCopy;
       this.$_addTextLayer();

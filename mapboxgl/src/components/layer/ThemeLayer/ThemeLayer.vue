@@ -8,7 +8,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
@@ -23,7 +23,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
@@ -39,7 +39,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
@@ -53,7 +53,7 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanel"
           @createLayerFailed="$_createLayerFailed"
           @resetAllLayer="$_resetAllLayer"
@@ -90,7 +90,8 @@ export default {
       resetAllLayer: true,
       panels: [],
       showPanelFlag: true,
-      closeAllPanel: true
+      closeAllPanel: true,
+      iconUrlCopy: undefined
     }
   },
   props: {
@@ -112,6 +113,7 @@ export default {
   },
   mounted() {
     this.$emit("loaded",this);
+    this.iconUrlCopy = this.map.getStyle().sprite;
   },
   methods: {
     $_createLayerFailed(message){
@@ -135,22 +137,6 @@ export default {
       this.heatmapLayer.deleteExtraLayer(layerId);
       this.uniqueLayer.resetMainLayer(layerId);
       this.showPanelFlag = false;
-      this.$_showLayerFromHeatMap();
-    },
-    $_showLayerFromHeatMap(){
-      if(this.showType === "heatmap") {
-        let paint = window.originLayer[this.layerId].paint;
-        let circleOpacity = paint.hasOwnProperty("circle-opacity") ? paint["circle-opacity"] : 1;
-        let circleStrokeOpacity = paint.hasOwnProperty("circle-stroke-opacity") ? paint["circle-stroke-opacity"] : 1;
-        this.map.setPaintProperty(this.layerId,"circle-opacity",circleOpacity);
-        this.map.setPaintProperty(this.layerId,"circle-stroke-opacity",circleStrokeOpacity);
-      }
-    },
-    $_showLayerFromSymbol(layerId){
-      if(this.showType === "symbol") {
-        this.symbolLayer.hideLayer();
-        this.symbolLayer.resetMainLayer(this.layerId);
-      }
     },
     addThemeLayer(type, layerId){
       let hasPanel = false;
@@ -253,11 +239,6 @@ export default {
     $_themeTypeChanged(key,value){
       this.themeDefaultType = value;
       this[this.showType + "Layer"].hideExtraLayer(this.layerId);
-      if((this.showType === "unique" || this.showType === "range") && key === "symbol" && window.originLayer[this.layerId + "_symbol"]){
-        this.map.setLayoutProperty(this.layerId,"visibility","none");
-      }
-      this.$_showLayerFromHeatMap();
-      this.$_showLayerFromSymbol(this.layerId);
       this.$_addThemeLayer(key,this.layerId);
       this[this.showType + "Layer"].showExtraLayer(this.layerId);
     }

@@ -119,14 +119,6 @@
         </mapgis-ui-row>
       </div>
     </ThemePanel>
-    <mapgis-vector-layer
-        v-if="showVector && !useOriginLayer"
-        :layer="layerVector"
-        :layer-id="layerVectorId"
-        :source="sourceVector"
-        :source-id="sourceVectorId"
-    >
-    </mapgis-vector-layer>
   </div>
 </template>
 
@@ -339,7 +331,7 @@ export default {
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",window.layerVector);
+      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
     },
     $_clickIcon(icon) {
       let hasIcon = this.map.hasImage(icon);
@@ -441,7 +433,7 @@ export default {
     $_changeOriginLayer() {
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack() {
@@ -456,8 +448,8 @@ export default {
       });
       let colors = this.$_editColor();
       if(this.selectText){
-        window.layerVector.layout["text-field"] = '{' + this.selectText + '}';
-        this.map.setLayoutProperty(this.layerIdCopy, "text-field", window.layerVector.layout["text-field"]);
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].layout["text-field"] = '{' + this.selectText + '}';
+        this.map.setLayoutProperty(this.layerIdCopy, "text-field", window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].layout["text-field"]);
       }
       this.$_setPaintProperty('icon-color', colors);
     },
@@ -584,8 +576,8 @@ export default {
             keyArr.push(key);
           });
           vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
-          window.layerVector = {
-            'id': vm.layerIdCopy + "_" + vm.themeType,
+          window.originLayer[vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
+            'id': vm.layerIdCopy + "_等级符号专题图",
             'source': vm.source_vector_Id,
             'type': 'symbol',
             'layout': {
@@ -608,12 +600,10 @@ export default {
             },
           };
           if(vm.source_vector_layer_Id){
-            window.layerVector["source-layer"] = vm.source_vector_layer_Id;
+            window.originLayer[vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
           }
-          window.originLayer[vm.layerIdCopy + "_" + vm.themeType] = window.layerVector;
           vm.title = "等级符号" + "_" + vm.layerIdCopy;
-          vm.$_setLayOutProperty("visibility","none",vm.layerIdCopy,window.originLayer[vm.layerIdCopy]);
-          vm.map.addLayer(window.originLayer[vm.layerIdCopy + "_" + vm.themeType]);
+          vm.map.addLayer(window.originLayer[vm.layerIdCopy + "_" + vm.$_getThemeName()]);
           clearInterval(interval);
         }
       },10);

@@ -114,14 +114,6 @@
         </mapgis-ui-row>
       </div>
     </ThemePanel>
-    <mapgis-vector-layer
-        v-if="showVector && !useOriginLayer"
-        :layer="layerVector"
-        :layer-id="layerVectorId"
-        :source="sourceVector"
-        :source-id="sourceVectorId"
-    >
-    </mapgis-vector-layer>
   </div>
 </template>
 
@@ -236,7 +228,7 @@ export default {
           this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy, window.layerVector);
+          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -263,7 +255,7 @@ export default {
           this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy, window.layerVector);
+          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -385,13 +377,13 @@ export default {
       if (next) {
         switch (this.dataType) {
           case "fill":
-            window.layerVector.paint["fill-color"] = colors;
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
             break;
           case "circle":
-            window.layerVector.paint["circle-color"] = colors;
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
             break;
           case "line":
-            window.layerVector.paint["line-color"] = colors;
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
             break;
         }
         this.$_changeOriginLayer();
@@ -401,7 +393,7 @@ export default {
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
@@ -417,13 +409,13 @@ export default {
       colors = this.$_editColor(colors);
       switch (this.dataType) {
         case "fill":
-          window.layerVector.paint["fill-color"] = colors;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
           break;
         case "circle":
-          window.layerVector.paint["circle-color"] = colors;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
           break;
         case "line":
-          window.layerVector.paint["line-color"] = colors;
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
           break;
       }
     },
@@ -478,9 +470,10 @@ export default {
       // });
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        window.layerVector = {
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+          id:  this.layerIdCopy + "_分段专题图",
           type: 'fill',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
             'visibility': "visible"
           },
@@ -494,9 +487,10 @@ export default {
         this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        window.layerVector = {
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+          id:  this.layerIdCopy + "_分段专题图",
           type: 'circle',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
             'visibility': "visible"
           },
@@ -512,9 +506,10 @@ export default {
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        window.layerVector = {
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+          id:  this.layerIdCopy + "_分段专题图",
           type: 'line',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
+          source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
             'visibility': "visible"
           },
@@ -526,7 +521,7 @@ export default {
         }
       }
       if(this.source_vector_layer_Id){
-        window.layerVector["source-layer"] = this.source_vector_layer_Id;
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
       this.$_addTextLayer();
