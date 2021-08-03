@@ -1200,7 +1200,7 @@ export default {
       colorsArr.forEach((color, i) => {
         this.currentColors.push({key: i, value: color});
       });
-      colorsArr.unshift("#FFFFFF");
+      colorsArr.unshift("rgba(255,255,255,0)");
       this.$emit("gradientChange", colorsArr);
     },
     $_selectColor(e) {
@@ -1216,7 +1216,7 @@ export default {
         value: "-webkit-linear-gradient(left," + colorsArr.toString() + ")"
       };
       this.$set(this.heatGradientArr, this.currentColorIndex, changeOneColor);
-      colorsArr.unshift("#FFFFFF");
+      colorsArr.unshift("rgba(255,255,255,0)");
       this.$emit("gradientChange", colorsArr);
     },
   }
