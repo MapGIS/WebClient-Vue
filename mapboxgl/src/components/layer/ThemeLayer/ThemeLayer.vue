@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="(panel,index) in panels" :key="index" v-show="panel === layerId && showPanel">
+    <div v-for="(panel,index) in panels" :key="index" v-show="panel === layerId && showPanelFlag">
       <mapgis-igs-unique-theme-layer
           v-show="showType === 'unique'"
           :themeDefaultType="themeDefaultType"
@@ -8,9 +8,13 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
+          :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_uniqueLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       ></mapgis-igs-unique-theme-layer>
       <mapgis-igs-symbol-theme-layer
@@ -20,9 +24,13 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
+          :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_symbolLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       >
       </mapgis-igs-symbol-theme-layer>
@@ -33,9 +41,13 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
+          :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_rangeLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       ></mapgis-igs-range-theme-layer>
       <mapgis-igs-heat-theme-layer
@@ -44,9 +56,13 @@
           :themeTypeArr="themeType"
           :panelProps="panelProps"
           :resetAllLayer="resetAllLayer"
-          :iconUrl="iconUrl"
+          :iconUrl="iconUrlCopy"
+          :closeAllPanel="closeAllPanel"
+          @createLayerFailed="$_createLayerFailed"
+          @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
           @loaded="$_heatLoaded"
+          @closePanel="$_closeAllPanel"
           @themeTypeChanged="$_themeTypeChanged"
       >
       </mapgis-igs-heat-theme-layer>
@@ -77,7 +93,9 @@ export default {
       themeType: undefined,
       resetAllLayer: true,
       panels: [],
-      showPanel: true
+      showPanelFlag: true,
+      closeAllPanel: true,
+      iconUrlCopy: undefined
     }
   },
   props: {
@@ -99,9 +117,15 @@ export default {
   },
   mounted() {
     this.$emit("loaded",this);
+    this.iconUrlCopy = this.map.getStyle().sprite;
   },
   methods: {
-
+    $_createLayerFailed(message){
+      this.$emit("createLayerFailed",message);
+    },
+    $_hasNullProperty(fields){
+      this.$emit("hasNullProperty",fields);
+    },
     $_resetAllLayer(){
       this.hideLayer(this.layerId);
     },
@@ -111,7 +135,7 @@ export default {
       this.rangeLayer.hideExtraLayer(layerId);
       this.heatmapLayer.hideExtraLayer(layerId);
       this.uniqueLayer.resetMainLayer(layerId);
-      this.showPanel = false;
+      this.showPanelFlag = false;
     },
     resetLayer(layerId){
       this.uniqueLayer.deleteExtraLayer(layerId);
@@ -119,22 +143,7 @@ export default {
       this.rangeLayer.deleteExtraLayer(layerId);
       this.heatmapLayer.deleteExtraLayer(layerId);
       this.uniqueLayer.resetMainLayer(layerId);
-      this.showPanel = false;
-      this.$_showLayerFromHeatMap();
-    },
-    $_showLayerFromHeatMap(){
-      if(this.showType === "heatmap") {
-        let paint = window.originLayer[this.layerId].paint;
-        let circleOpacity = paint.hasOwnProperty("circle-opacity") ? paint["circle-opacity"] : 1;
-        let circleStrokeOpacity = paint.hasOwnProperty("circle-stroke-opacity") ? paint["circle-stroke-opacity"] : 1;
-        this.map.setPaintProperty(this.layerId,"circle-opacity",circleOpacity);
-        this.map.setPaintProperty(this.layerId,"circle-stroke-opacity",circleStrokeOpacity);
-      }
-    },
-    $_showLayerFromSymbol(layerId){
-      if(this.showType === "symbol") {
-        this.symbolLayer.resetMainLayer(layerId);
-      }
+      this.showPanelFlag = false;
     },
     addThemeLayer(type, layerId){
       let hasPanel = false;
@@ -190,7 +199,7 @@ export default {
       let vm = this;
       setTimeout(function () {
         vm.layerId = layerId;
-        vm.showPanel = true;
+        vm.showPanelFlag = true;
         switch (type) {
           case "unique":
             vm.uniqueLayer.addThemeLayer(layerId);
@@ -220,11 +229,23 @@ export default {
     $_heatLoaded(heatmapLayer){
       this.heatmapLayer = heatmapLayer;
     },
+    $_closeAllPanel(){
+      this.showPanelFlag = false;
+      this.$emit("closePanel",this.layerId)
+    },
+    closePanel(){
+      this.$_closeAllPanel();
+    },
+    $_showPanel() {
+      this.showPanelFlag = true;
+      this.$emit("showPanel",this.layerId)
+    },
+    showPanel(){
+      this.$_showPanel();
+    },
     $_themeTypeChanged(key,value){
       this.themeDefaultType = value;
       this[this.showType + "Layer"].hideExtraLayer(this.layerId);
-      this.$_showLayerFromHeatMap();
-      this.$_showLayerFromSymbol(this.layerId);
       this.$_addThemeLayer(key,this.layerId);
       this[this.showType + "Layer"].showExtraLayer(this.layerId);
     }

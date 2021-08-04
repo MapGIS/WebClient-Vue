@@ -175,6 +175,11 @@ module.exports = {
                 "ArcGISTileLayer"
               ],
 
+              ["/api/Layers/Cluster/cluster.md", "聚类"],
+              ["/api/Layers/Heater/heater.md", "热力"],
+              ["/api/Layers/Building/building.md", "建筑白膜"],
+              ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
+
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],
               ["/api/UI/Legend/legend.md", "图例"],

@@ -39,6 +39,7 @@
           <mapgis-ui-row v-if="showField">
             <mapgis-ui-select
                 v-if="fields.length > 0"
+                :default-value="fields[0]"
                 @change="$_selectChange"
                 class="theme-panel-select"
             >
@@ -173,10 +174,10 @@
                 v-model="radioMode"
                 :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
             >
-              <mapgis-ui-radio-button value="gradient">
+              <mapgis-ui-radio-button @click="$_chooseColor('gradient')" value="gradient">
                 渐变颜色
               </mapgis-ui-radio-button>
-              <mapgis-ui-radio-button value="single">
+              <mapgis-ui-radio-button @click="$_chooseColor('single')" value="single">
                 单体颜色
               </mapgis-ui-radio-button>
             </mapgis-ui-radio-group>
@@ -186,6 +187,7 @@
           >
             <mapgis-ui-select
                 :default-value="'#FF0000'"
+                v-model="gradientColor"
                 @change="$_gradientChange"
                 v-show="radioMode === 'gradient'"
             >
@@ -444,11 +446,12 @@
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-select
-                v-if="labelFields.length > 0"
+                v-if="labelFieldsCopy.length > 0"
                 class="theme-panel-select"
+                :default-value="labelFieldsCopy[0]"
                 @change="$_selectTextChange"
             >
-              <mapgis-ui-select-option v-for="(Field,index) in labelFields" :key="index" :value="Field">
+              <mapgis-ui-select-option v-for="(Field,index) in labelFieldsCopy" :key="index" :value="Field">
                 {{ Field }}
               </mapgis-ui-select-option>
             </mapgis-ui-select>
@@ -660,12 +663,12 @@
                     <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right"
                          v-bind:title="selectValue">
                       {{
-                        selectValue.toString().length > 5 ? String(selectValue).substr(0, 5) + "..." : (selectValue === "" ? "其他" : selectValue)
+                        selectValue.toString().length > 4 ? String(selectValue).substr(0, 4) + "..." : (selectValue === "" ? "其他" : selectValue)
                       }}
                     </div>
                     <div class="theme-panel-td theme-panel-td-value" v-bind:title="item">
                       {{
-                        item.toString().length > 12 ? String(item).substr(0, 12) + "..." : (item === "" ? "其他" : item)
+                        item.toString().length > 8 ? String(item).substr(0, 8) + "..." : (item === "" ? "其他" : item)
                       }}
                     </div>
                   </mapgis-ui-list-item>
@@ -919,7 +922,8 @@ export default {
         value: [10, 3, 2, 3]
       }],
       themeDefaultTypeCopy: undefined,
-
+      labelFieldsCopy: [],
+      gradientColor: "#FF0000"
     }
   },
   watch: {
@@ -966,8 +970,18 @@ export default {
         this.$emit("heatRadiusChanged", Number(this.heatMapRadius));
       }
     },
+    themeType: {
+      handler: function () {}
+    },
     defaultIconValue: {
       handler: function () {}
+    },
+    labelFields: {
+      handler: function () {
+        if(this.labelFields.length > 0){
+          this.labelFieldsCopy = ["未设置"].concat(this.labelFields);
+        }
+      }
     },
   },
   created() {
@@ -975,6 +989,9 @@ export default {
   },
   mounted() {
     this.themeDefaultTypeCopy = this.themeDefaultType;
+    if(this.labelFields.length > 0){
+      this.labelFieldsCopy = ["未设置"].concat(this.labelFields);
+    }
     this.$watch("radius", function () {
       this.$emit("radiusChanged", Number(this.radius));
     });
@@ -1014,8 +1031,16 @@ export default {
     this.$watch("lineWidth", function () {
       this.$emit("lineWidthChanged", Number(this.lineWidth));
     });
+    this.$_initDataSource();
   },
   methods: {
+    $_chooseColor(radioMode){
+      if(radioMode === "single" && this.radioMode !== "single"){
+        this.$emit("singleChanged", this.singleColor, this.singleColor);
+      }else if(radioMode === "gradient" && this.radioMode !== "gradient"){
+        this.$emit("gradientChange", "#FFFFFF", this.gradientColor);
+      }
+    },
     $_formatPanelProps() {
       let vm = this;
       Object.keys(this.$data).forEach(function (key) {
@@ -1160,8 +1185,10 @@ export default {
       this.$emit("themeTypeChanged", key, value);
     },
     $_initDataSource() {
-      if (this.dataSource.length > 0 && !this.init) {
+      if (this.dataSource.length > 0) {
         this.init = true;
+      }else {
+        return;
       }
       let dataArr = [];
       let length = this.dataSource.length > 30 ? 30 : this.dataSource.length;
@@ -1185,7 +1212,7 @@ export default {
       colorsArr.forEach((color, i) => {
         this.currentColors.push({key: i, value: color});
       });
-      colorsArr.unshift("#FFFFFF");
+      colorsArr.unshift("rgba(255,255,255,0)");
       this.$emit("gradientChange", colorsArr);
     },
     $_selectColor(e) {
@@ -1201,7 +1228,7 @@ export default {
         value: "-webkit-linear-gradient(left," + colorsArr.toString() + ")"
       };
       this.$set(this.heatGradientArr, this.currentColorIndex, changeOneColor);
-      colorsArr.unshift("#FFFFFF");
+      colorsArr.unshift("rgba(255,255,255,0)");
       this.$emit("gradientChange", colorsArr);
     },
   }
@@ -1218,6 +1245,8 @@ export default {
   height: calc((100vh - 64px) - 24px);
   overflow-y: scroll;
   overflow-x: hidden;
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
 }
 
 .theme-panel-tab {
@@ -1271,13 +1300,13 @@ export default {
 }
 
 .theme-panel-td-key {
-  width: 25%;
+  width: 35%;
   padding: 0 4px;
   cursor: pointer;
 }
 
 .theme-panel-td-value {
-  width: 45%;
+  width: 35%;
   cursor: pointer;
 }
 

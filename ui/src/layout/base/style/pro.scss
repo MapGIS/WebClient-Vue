@@ -1,0 +1,23 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../../util/style/layout/layout.scss";
+
+@include b(pro-layout) {
+  @include e(header, "-") {
+    height: $pro-header-height;
+    display: $pro-header-display;
+  }
+  @include e(content, "-") {
+    height: $pro-content-height;
+    display: $pro-content-display;
+  }
+  @include e(footer, "-") {
+    height: $pro-footer-height;
+    display: $pro-footer-display;
+  }
+  @include e(leftsider, "-") {
+    background: $layout-background;
+    height: $pro-leftsider-height;
+    display: $pro-leftsider-display;
+  }
+}

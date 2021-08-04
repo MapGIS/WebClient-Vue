@@ -1,10 +1,12 @@
 import colorPalette from "./colorPalette";
+import layoutFactory from "../layout/layout.json";
 import themeFactory from "../theme/theme.json";
 import { isArray } from "../../vue-types/utils";
 import cssVars from "css-vars-ponyfill";
 import tinyColor from "tinycolor2";
 
 const lightTheme = themeFactory && themeFactory[1];
+const standardLayout = layoutFactory && layoutFactory[0];
 
 /* export type ThemeStyleParams = typeof lightTheme;
 
@@ -243,7 +245,7 @@ function setRootStyle(themeData) {
     document.head.insertBefore(antStyleTag, document.head.firstChild);
     const options = {
       include:
-        "style#mapgis-ui-style, link[href*=vue-iclient-mapboxgl], link[href*=styles]",
+        "style#mapgis-ui-style, link[href*=webclient-vue-ui], link[href*=styles]",
       silent: true,
       onlyLegacy: true,
       variables: {},
@@ -257,4 +259,53 @@ function setRootStyle(themeData) {
     cssVars(options);
   }
   antStyleTag.innerHTML = rootStyle;
+}
+
+export function dealWithLayout(nextLayoutStyle) {
+  const defaultLayoutStyle = nextLayoutStyle || "admin";
+  const defaultLayout = layoutFactory.find(
+    item => item.label === defaultLayoutStyle.label
+  );
+  const layoutInfo = Object.assign({}, defaultLayout);
+  const variables = {};
+
+  const layoutKeys = Object.keys(layoutInfo);
+  layoutKeys.forEach(key => {
+    if (!isArray(layoutInfo[key])) {
+      const varKey = `--${key.replace(/[A-Z]/g, "-$&").toLowerCase()}`;
+      variables[varKey] = layoutInfo[key];
+    }
+  });
+
+  const nextLayoutData = {
+    layoutStyle: layoutInfo,
+  }
+
+  const rootStyle = `:root ${JSON.stringify(variables, null, 2)
+    .replace(/(:.+),/g, "$1;")
+    .replace(/"/g, "")}`;
+  const antdLayoutId = "mapgis-ui-layout";
+  let antdLayoutTag = document.getElementById(antdLayoutId);
+  if (!antdLayoutTag) {
+    antdLayoutTag = document.createElement("style");
+    antdLayoutTag.setAttribute("id", antdLayoutId);
+    antdLayoutTag.setAttribute("type", "text/css");
+    document.head.insertBefore(antdLayoutTag, document.head.firstChild);
+    const options = {
+      include:
+        "style#mapgis-ui-layout, link[href*=webclient-vue-ui], link[href*=styles]",
+      silent: true,
+      onlyLegacy: true,
+      variables: {},
+      watch: false
+    };
+    if (!isNativeSupport) {
+      options.onlyLegacy = false;
+      options.watch = true;
+      options.variables = variables;
+    }
+    cssVars(options);
+  }
+  antdLayoutTag.innerHTML = rootStyle;
+  return nextLayoutData;
 }

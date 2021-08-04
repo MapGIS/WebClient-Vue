@@ -1,0 +1,67 @@
+[
+  {
+    "title": "标准管理后台布局",
+    "label": "admin",
+    "headerDisplay": "block",
+    "leftsiderDisplay": "block",
+    "rightsiderDisplay": "none",
+    "contentDisplay": "block",
+    "footerDisplay": "block",
+    "headerHeight": "64px",
+    "contentHeight": "calc(100vh - 64px - 24px)",
+    "footerHeight": "24px",
+    "leftsiderHeight": "calc(100vh - 64px - 24px)"
+  },
+  {
+    "title": "标准三段式布局",
+    "label": "standard",
+    "headerDisplay": "block",
+    "leftsiderDisplay": "none",
+    "rightsiderDisplay": "none",
+    "contentDisplay": "block",
+    "footerDisplay": "block",
+    "headerHeight": "64px",
+    "contentHeight": "calc(100vh - 64px - 24px)",
+    "footerHeight": "24px",
+    "leftsiderHeight": "calc(100vh - 64px - 24px)"
+  },
+  {
+    "title": "无页头",
+    "label": "noheader",
+    "headerDisplay": "none",
+    "leftsiderDisplay": "none",
+    "rightsiderDisplay": "none",
+    "contentDisplay": "block",
+    "footerDisplay": "block",
+    "headerHeight": "0px",
+    "contentHeight": "calc(100vh - 0px - 24px)",
+    "footerHeight": "24px",
+    "leftsiderHeight": "calc(100vh - 0px - 24px)"
+  },
+  {
+    "title": "无页尾",
+    "label": "nofooter",
+    "headerDisplay": "block",
+    "leftsiderDisplay": "none",
+    "rightsiderDisplay": "none",
+    "contentDisplay": "block",
+    "footerDisplay": "none",
+    "headerHeight": "64px",
+    "contentHeight": "calc(100vh - 64px - 0px)",
+    "footerHeight": "24px",
+    "leftsiderHeight": "calc(100vh - 64px - 0px)"
+  },
+  {
+    "title": "空白布局",
+    "label": "content",
+    "headerDisplay": "none",
+    "leftsiderDisplay": "none",
+    "rightsiderDisplay": "none",
+    "contentDisplay": "block",
+    "footerDisplay": "none",
+    "headerHeight": "0px",
+    "contentHeight": "calc(100vh - 0px - 0px)",
+    "footerHeight": "0px",
+    "leftsiderHeight": "calc(100vh - 0px - 0px)"
+  }
+]

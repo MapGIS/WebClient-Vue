@@ -315,6 +315,16 @@ export default {
           }
       );
     },
+    $_nullProperties(features){
+      let nullProperties = true;
+      for (let i = 0; i < features.length; i++) {
+        if(nullProperties && JSON.stringify(features[i].properties) !== "{}"){
+          nullProperties = false;
+          break
+        }
+      }
+      return nullProperties;
+    },
     //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(dataSource) {
       dataSource = dataSource || this.dataSource;
@@ -323,6 +333,11 @@ export default {
       this.rowSelection.selectedRowKeys = [];
       if(!dataSource || !dataSource.features || dataSource.features.length === 0){
         this.hasFeatures = false;
+        this.$emit("createTableFailed","属性表","没有数据!");
+        this.$emit("createLayerFailed",{
+          message: "属性表",
+          description: "数据量为0!"
+        });
         return;
       }
       this.hasFeatures = true;
@@ -378,6 +393,15 @@ export default {
             });
           }
         } else {
+          let nullProperties = this.$_nullProperties(dataSource.features);
+          if(nullProperties){
+            this.$emit("createLayerFailed",{
+              message: "属性表",
+              description: "数据中不包含任何属性数据!"
+            });
+            this.hasFeatures = false;
+            return;
+          }
           //geoJSON格式
           let features = VFeature.fromGeoJSON(dataSource);
           this.paginationCopy.total = features.length;

@@ -37,6 +37,10 @@ export default {
     themeDefaultType: {
       type: String
     },
+    closeAllPanel: {
+      type: Boolean,
+      default: false
+    },
     panelProps: {
       type: Object,
       default() {
@@ -54,7 +58,6 @@ export default {
   watch: {
     baseUrl: {
       handler: function() {
-        this.$_removeLayer();
         this.$_getFromGeoJSON();
       }
     },
@@ -65,7 +68,6 @@ export default {
         } else if (this.useOriginLayer) {
           throw new Error("请将useOriginLayer设为false！");
         } else {
-          this.$_removeLayer();
           this.$_getFromSource(this.sourceLayer);
         }
       }
@@ -82,6 +84,11 @@ export default {
     },
     themeDefaultType: {
       handler: function() {}
+    },
+    themeTypeArr: {
+      handler: function() {
+        this.themeTypeArrCopy = this.themeTypeArr;
+      }
     }
   },
   data() {
@@ -93,6 +100,7 @@ export default {
       endColor: "#FF0000",
       showLayer: true,
       showPanel: true,
+      resetPanel: false,
       sourceVector: {
         type: "geojson",
         data: undefined
@@ -104,8 +112,6 @@ export default {
       selectText: undefined,
       dataSource: [],
       checkBoxArr: [],
-      sourceVectorId: "theme_source",
-      layerVectorId: "theme_layer",
       allOriginColors: {},
       dataType: "",
       textLayer: undefined,
@@ -146,7 +152,8 @@ export default {
       textId: undefined,
       extraLayer: [],
       upLayer: undefined,
-      allFields: undefined
+      allFields: undefined,
+      themeTypeArrCopy: undefined
     };
   },
   methods: {
@@ -158,7 +165,9 @@ export default {
     },
     $_hideExtraLayer(layerId) {
       let extraLayer =
-        window.originLayer[layerId + "_" + this.themeType + "_extraLayer"];
+        window.originLayer[
+          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+        ];
       if (extraLayer) {
         for (let i = 0; i < extraLayer.length; i++) {
           this.$_setLayOutProperty(
@@ -169,6 +178,12 @@ export default {
           );
         }
       }
+      this.$_setLayOutProperty(
+        "visibility",
+        "none",
+        layerId + "_" + this.$_getThemeName(),
+        window.originLayer[layerId + "_" + this.$_getThemeName()]
+      );
     },
     $_showExtraLayer(layerId) {
       let extraLayer = window.originLayer[layerId + "_extraLayer"];
@@ -194,9 +209,10 @@ export default {
       }
     },
     $_addThemeLayer(layerId) {
+      this.resetPanel = false;
       this.layerIdCopy = layerId;
       this.showPanel = true;
-      let themeId = layerId + "_" + this.themeType;
+      let themeId = layerId + "_" + this.$_getThemeName();
       if (
         window.originLayer &&
         (!window.originLayer.hasOwnProperty(themeId) ||
@@ -205,10 +221,17 @@ export default {
         this.$_getFromSource(layerId);
       } else {
         if (this.themeType === "symbol") {
-          this.$_addLayer(layerId, themeId);
+          this.$_setLayOutProperty(
+            "visibility",
+            "visible",
+            themeId,
+            window.originLayer[themeId]
+          );
         } else {
           let extraLayer =
-            window.originLayer[layerId + "_" + this.themeType + "_extraLayer"];
+            window.originLayer[
+              layerId + "_" + this.$_getThemeName() + "_extraLayer"
+            ];
           if (extraLayer && extraLayer.length > 0) {
             for (let i = 0; i < extraLayer.length; i++) {
               this.$_setLayOutProperty(
@@ -219,9 +242,13 @@ export default {
               );
             }
           }
-          this.$_changeOriginLayer(window.originLayer[themeId]);
+          this.$_setLayOutProperty(
+            "visibility",
+            "visible",
+            themeId,
+            window.originLayer[themeId]
+          );
         }
-        window.layerVector = window.originLayer[themeId];
       }
     },
     resetLayer(layerId) {
@@ -229,7 +256,9 @@ export default {
     },
     $_deleteExtraLayer(layerId) {
       let extraLayer =
-        window.originLayer[layerId + "_" + this.themeType + "_extraLayer"];
+        window.originLayer[
+          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+        ];
       if (extraLayer) {
         for (let i = 0; i < extraLayer.length; i++) {
           let id = extraLayer[i].value;
@@ -243,43 +272,28 @@ export default {
             delete window.originLayer[extraLayer[i].value];
           }
         }
-        delete window.originLayer[layerId + "_" + this.themeType];
         delete window.originLayer[
-          layerId + "_" + this.themeType + "_extraLayer"
+          layerId + "_" + this.$_getThemeName() + "_extraLayer"
         ];
+      }
+      if (this.map.getLayer(layerId + "_" + this.$_getThemeName())) {
+        this.map.removeLayer(layerId + "_" + this.$_getThemeName());
+        delete window.originLayer[layerId + "_" + this.$_getThemeName()];
       }
     },
     deleteExtraLayer(layerId) {
       this.$_deleteExtraLayer(layerId);
     },
     $_resetMainLayer(layerId) {
-      if (window.originLayer[layerId]) {
-        let paint = window.originLayer[layerId].paint;
-        let layout = window.originLayer[layerId].layout;
-        for (let key in paint) {
-          if (paint.hasOwnProperty(key) && paint[key]) {
-            this.$_setPaintProperty(
-              key,
-              paint[key],
-              layerId,
-              window.originLayer[layerId]
-            );
-          }
-        }
-        for (let key in layout) {
-          if (layout.hasOwnProperty(key) && layout[key]) {
-            this.$_setLayOutProperty(
-              key,
-              paint[layout],
-              layerId,
-              window.originLayer[layerId]
-            );
-          }
-        }
-        emitMapChangeStyle(this.map.getStyle());
-        delete window.layerVector;
-        this.$emit("resetLayer");
-      }
+      this.$_setLayOutProperty(
+        "visibility",
+        "visible",
+        layerId,
+        window.originLayer[layerId]
+      );
+      emitMapChangeStyle(this.map.getStyle());
+      this.resetPanel = true;
+      this.$emit("resetLayer");
     },
     resetMainLayer(layerId) {
       this.$_resetMainLayer(layerId);
@@ -318,7 +332,10 @@ export default {
           }
         }
         delete window.originLayer[this.layerIdCopy];
-        delete window.originLayer[this.layerIdCopy + "_" + this.themeType];
+        delete window.originLayer[
+          this.layerIdCopy + "_" + this.$_getThemeName()
+        ];
+        this.resetPanel = true;
         this.$emit("resetLayer");
       }
     },
@@ -662,27 +679,26 @@ export default {
       }
     },
     $_closePanel() {
-      this.showPanel = false;
-      if (this.resetAllLayer) {
-        this.$emit("resetAllLayer", this);
+      if (!this.closeAllPanel) {
+        this.showPanel = false;
+        if (this.resetAllLayer) {
+          this.$emit("resetAllLayer", this);
+        } else {
+          this.$_resetLayer();
+        }
       } else {
-        this.$_resetLayer();
+        this.$emit("closePanel");
       }
     },
     $_showPanel() {
       this.showPanel = true;
       this.$_toggleLayer();
     },
-    $_removeLayer() {
-      let layer = this.map.getLayer(window.layerVectorId);
-      if (layer) {
-        this.map.removeLayer(window.layerVectorId);
-      }
-    },
     $_mount() {
       if (!window.originLayer) {
         window.originLayer = {};
       }
+      this.themeTypeArrCopy = this.themeTypeArr;
       if (
         this.panelPropsDefault.hasOwnProperty("xOffset") &&
         this.panelPropsDefault.xOffset
@@ -782,9 +798,11 @@ export default {
     $_setLayOutProperty(key, value, layerId, layerVector) {
       let windowId = layerId
         ? layerId
-        : this.layerIdCopy + "_" + this.themeType;
-      layerId = layerId || this.layerIdCopy;
-      layerVector = layerVector || window.layerVector;
+        : this.layerIdCopy + "_" + this.$_getThemeName();
+      layerId = layerId || this.layerIdCopy + "_" + this.$_getThemeName();
+      layerVector =
+        layerVector ||
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()];
       if (layerVector && layerVector.hasOwnProperty("layout")) {
         layerVector.layout[key] = value;
         this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
@@ -884,8 +902,71 @@ export default {
       });
       return fields;
     },
+    $_getThemeFields(features, key) {
+      let fields;
+      if (features.geometry.type === "Point") {
+        if (typeof features.properties[key] === "string") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            },
+            {
+              key: "symbol",
+              value: "等级符号专题图"
+            },
+            {
+              key: "heatmap",
+              value: "热力专题图"
+            }
+          ];
+        } else if (typeof features.properties[key] === "number") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            },
+            {
+              key: "range",
+              value: "分段专题图"
+            },
+            {
+              key: "symbol",
+              value: "等级符号专题图"
+            },
+            {
+              key: "heatmap",
+              value: "热力专题图"
+            }
+          ];
+        }
+      } else {
+        if (typeof features.properties[key] === "string") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            }
+          ];
+        } else if (typeof features.properties[key] === "number") {
+          fields = [
+            {
+              key: "unique",
+              value: "单值专题图"
+            },
+            {
+              key: "range",
+              value: "分段专题图"
+            }
+          ];
+        }
+      }
+      return fields;
+    },
     $_changeOriginLayer(layerVector) {
-      layerVector = layerVector || window.layerVector;
+      layerVector =
+        layerVector ||
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()];
       let vm = this;
       if (this.useOriginLayer) {
         Object.keys(layerVector.paint).forEach(function(key) {
@@ -941,12 +1022,42 @@ export default {
       });
       return layer;
     },
-    $_getFromSource(layerId) {
-      let features = this.map.queryRenderedFeatures({ layers: [layerId] });
-      if (features.length === 0) {
-        return;
+    $_getNullFields(features) {
+      let fields = [];
+      for (let i = 0; i < features.length; i++) {
+        Object.keys(features[i].properties).forEach(function(key) {
+          if (
+            (!features[i].properties[key] ||
+              features[i].properties[key] === "" ||
+              features[i].properties[key] === "undefined" ||
+              features[i].properties[key] === "null") &&
+            fields.indexOf(key) < 0
+          ) {
+            fields.push(key);
+          }
+        });
       }
-      let originLayer = this.map.getLayer(layerId);
+      this.$emit("hasNullProperty", fields);
+    },
+    $_getFromSource(layerId) {
+      let features;
+      if (!window.originLayer.hasOwnProperty(layerId + "_features")) {
+        features = this.map.queryRenderedFeatures({ layers: [layerId] });
+        if (features.length === 0) {
+          this.$emit("createLayerFailed", {
+            message: "专题图",
+            description: "数据量为0!"
+          });
+          return;
+        }
+        window.originLayer[layerId + "_features"] = features;
+        this.$_getNullFields(features);
+      } else {
+        features = window.originLayer[layerId + "_features"];
+      }
+
+      let originLayer = this.map.getLayer(layerId),
+        nullProperties = true;
       this.source_vector_Id = originLayer.source;
       this.source_vector_layer_Id = originLayer.sourceLayer;
       let featureCollection = {
@@ -954,13 +1065,24 @@ export default {
         type: "FeatureCollection"
       };
       for (let i = 0; i < features.length; i++) {
+        if (nullProperties && JSON.stringify(features[i].properties) !== "{}") {
+          nullProperties = false;
+        }
         featureCollection.features.push({
           geometry: features[i].geometry,
           properties: features[i].properties,
           type: "Feature"
         });
       }
-      this.$_initTheme(featureCollection);
+      if (!nullProperties) {
+        this.$_initTheme(featureCollection);
+      } else {
+        this.$emit("createLayerFailed", {
+          message: "专题图",
+          description: "数据中不包含任何属性数据!"
+        });
+        this.showPanel = false;
+      }
     },
     $_getFromGeoJSON() {
       let vm = this;
@@ -1007,6 +1129,11 @@ export default {
       this.defaultValue =
         this.defaultValue === undefined ? this.fields[0] : this.defaultValue;
       this.selectKey = this.fields[0];
+      this.themeTypeArrCopy = this.$_getThemeFields(
+        geojson.features[0],
+        this.selectKey
+      );
+      this.$emit("getThemeType", this.themeTypeArrCopy);
       this.dataSource = this.$_getData(geojson.features, this.selectKey);
       let colors = this.$_getColors(
         this.dataSource,
@@ -1056,15 +1183,20 @@ export default {
           };
         }
       }
-      window.originLayer[this.layerIdCopy + "_" + this.themeType] =
-        window.layerVector;
       this.$_setOriginLayer(colors);
-      setTimeout(function() {
-        vm.$nextTick(function() {
-          vm.$_changeOriginLayer();
-          vm.$_loadedLayer();
-        });
-      }, 20);
+      this.$_setLayOutProperty(
+        "visibility",
+        "none",
+        this.layerIdCopy,
+        window.originLayer[this.layerIdCopy]
+      );
+      if (this.themeType !== "symbol") {
+        this.map.addLayer(
+          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]
+        );
+      }
+      // this.$_changeOriginLayer();
+      this.$_loadedLayer();
       // this.$nextTick(function () {
       //     this.$_changeOriginLayer();
       //     this.$_loadedLayer();
@@ -1073,19 +1205,19 @@ export default {
     $_setOriginLayer(colors) {
       switch (this.dataType) {
         case "fill":
-          window.originLayer[this.layerIdCopy + "_" + this.themeType].paint[
-            "fill-color"
-          ] = colors;
+          window.originLayer[
+            this.layerIdCopy + "_" + this.$_getThemeName()
+          ].paint["fill-color"] = colors;
           break;
         case "circle":
-          window.originLayer[this.layerIdCopy + "_" + this.themeType].paint[
-            "circle-color"
-          ] = colors;
+          window.originLayer[
+            this.layerIdCopy + "_" + this.$_getThemeName()
+          ].paint["circle-color"] = colors;
           break;
         case "line":
-          window.originLayer[this.layerIdCopy + "_" + this.themeType].paint[
-            "line-color"
-          ] = colors;
+          window.originLayer[
+            this.layerIdCopy + "_" + this.$_getThemeName()
+          ].paint["line-color"] = colors;
           break;
       }
     },
@@ -1180,6 +1312,7 @@ export default {
       }
       return datas;
     },
+    $_removeLayer() {},
     $_selectChange(value) {
       if (value !== "") {
         let datas = this.$_getData(this.dataCopy.features, value);
@@ -1202,7 +1335,7 @@ export default {
           } else {
             throw new Error("请设置$_selectChange方法的回到函数！");
           }
-          this.$_changeOriginLayer();
+          this.$_setPaintByType(colors);
           this.showVector = true;
         }
         this.changeLayerProp = true;
@@ -1225,21 +1358,38 @@ export default {
         true
       );
       this.$_setOriginLayer(colors);
-      switch (this.dataType) {
-        case "fill":
-          window.layerVector.paint["fill-color"] = colors;
-          break;
-        case "circle":
-          window.layerVector.paint["circle-color"] = colors;
-          break;
-        case "line":
-          window.layerVector.paint["line-color"] = colors;
-          break;
-      }
-      this.$_changeOriginLayer();
+      this.$_setPaintByType(colors);
       this.showVector = true;
       this.changeLayerProp = true;
       this.changeLayerId = this.layerIdCopy;
+    },
+    $_setPaintByType(colors) {
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty(
+            "fill-color",
+            colors,
+            this.layerIdCopy + "_" + this.$_getThemeName(),
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]
+          );
+          break;
+        case "circle":
+          this.$_setPaintProperty(
+            "circle-color",
+            colors,
+            this.layerIdCopy + "_" + this.$_getThemeName(),
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]
+          );
+          break;
+        case "line":
+          this.$_setPaintProperty(
+            "line-color",
+            colors,
+            this.layerIdCopy + "_" + this.$_getThemeName(),
+            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]
+          );
+          break;
+      }
     },
     $_lineColorChanged(e) {
       this.showVector = false;
@@ -1382,9 +1532,11 @@ export default {
     $_setPaintProperty(key, value, layerId, layerVector) {
       let windowId = layerId
         ? layerId
-        : this.layerIdCopy + "_" + this.themeType;
-      layerId = layerId || this.layerIdCopy;
-      layerVector = layerVector || window.layerVector;
+        : this.layerIdCopy + "_" + this.$_getThemeName();
+      layerId = layerId || windowId;
+      layerVector =
+        layerVector ||
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()];
       if (layerVector && layerVector.hasOwnProperty("paint")) {
         layerVector.paint[key] = value;
         this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
@@ -1459,15 +1611,31 @@ export default {
       }
       return colors;
     },
+    $_getThemeName() {
+      let theme = "";
+      switch (this.themeType) {
+        case "unique":
+          theme = "单值专题图";
+          break;
+        case "range":
+          theme = "分段专题图";
+          break;
+        case "symbol":
+          theme = "等级符号专题图";
+          break;
+        case "heatmap":
+          theme = "热力专题图";
+          break;
+      }
+      return theme;
+    },
     $_addLineLayer() {
       switch (this.themeType) {
         case "unique":
-          this.lineId =
-            this.layerIdCopy + "_" + this.themeType + "_单值专题图_线";
+          this.lineId = this.layerIdCopy + "_单值专题图_线";
           break;
         case "range":
-          this.lineId =
-            this.layerIdCopy + "_" + this.themeType + "_分段专题图_线";
+          this.lineId = this.layerIdCopy + "_分段专题图_线";
           break;
       }
       let layer = this.map.getLayer(this.lineId);
@@ -1477,7 +1645,7 @@ export default {
           value: this.lineId
         });
         window.originLayer[
-          this.layerIdCopy + "_" + this.themeType + "_extraLayer"
+          this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"
         ] = this.extraLayer;
         this.lineLayer = {
           id: this.lineId,
@@ -1507,12 +1675,10 @@ export default {
       }
       switch (this.themeType) {
         case "unique":
-          this.textId =
-            this.layerIdCopy + "_" + this.themeType + "_单值专题图_注记";
+          this.textId = this.layerIdCopy + "_单值专题图_注记";
           break;
         case "range":
-          this.textId =
-            this.layerIdCopy + "_" + this.themeType + "_分段专题图_注记";
+          this.textId = this.layerIdCopy + "_分段专题图_注记";
           break;
       }
       let layer = this.map.getLayer(this.textId);
@@ -1522,7 +1688,7 @@ export default {
           value: this.textId
         });
         window.originLayer[
-          this.layerIdCopy + "_" + this.themeType + "_extraLayer"
+          this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"
         ] = this.extraLayer;
         this.textLayer = {
           id: this.textId,
