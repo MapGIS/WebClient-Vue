@@ -70,7 +70,7 @@ export default {
         },
         {
           key: "ribbon",
-          url: require("./SettingDrawer/style/admin.svg"),
+          url: require("./SettingDrawer/style/ribbon.svg"),
           title: "Ribbon布局"
         },
         {
