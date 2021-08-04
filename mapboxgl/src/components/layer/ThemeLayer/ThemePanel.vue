@@ -663,12 +663,12 @@
                     <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right"
                          v-bind:title="selectValue">
                       {{
-                        selectValue.toString().length > 4 ? String(selectValue).substr(0, 4) + "..." : (selectValue === "" ? "其他" : selectValue)
+                            $_editStr(selectValue,8)
                       }}
                     </div>
                     <div class="theme-panel-td theme-panel-td-value" v-bind:title="item">
                       {{
-                        item.toString().length > 8 ? String(item).substr(0, 8) + "..." : (item === "" ? "其他" : item)
+                            $_editStr(item,8)
                       }}
                     </div>
                   </mapgis-ui-list-item>
@@ -1034,6 +1034,27 @@ export default {
     this.$_initDataSource();
   },
   methods: {
+    $_editStr(item,strLength){
+      let regString = new RegExp('^[\x00-\xff]');
+      let regNumber = new RegExp('^\d+$');
+      let regOperate = new RegExp('[\+\-\_\.]');
+      let chars = item.split("");
+      let str = "",length = 0;
+      for (let i = 0;i < chars.length;i++){
+        if(regString.test(chars[i]) || regNumber.test(chars[i]) || regOperate.test(chars[i])){
+          length++;
+        }else {
+          length += 2;
+        }
+        if(length > strLength){
+          str += "...";
+          break;
+        }else {
+          str += chars[i];
+        }
+      }
+      return str;
+    },
     $_chooseColor(radioMode){
       if(radioMode === "single" && this.radioMode !== "single"){
         this.$emit("singleChanged", this.singleColor, this.singleColor);
