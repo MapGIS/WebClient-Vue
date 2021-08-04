@@ -1,0 +1,61 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(ribbon) {
+  @include e(multi-group, "-") {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  @include e(group, "-") {
+    width: fit-content;
+    padding: 0px 12px;
+    border-right: 1px solid #e6e6e6;
+
+    &-tools {
+      height: 64px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    &-label {
+      font-size: 11px;
+      text-align: center;
+      line-height: 16px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 99%;
+      color: rgba(0, 0, 0, 0.6);
+      border-top: 1px solid #e6e6e6;
+    }
+  }
+
+  @include e(command, "-") {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px 6px;
+    border: 2px solid transparent;
+
+    &:hover {
+      border: 2px dashed $primary-5;
+      border-radius: 4px;
+    }
+
+    .iconfont {
+      font-size: 26px;
+    }
+
+    &-icon {
+      min-width: 48px;
+      text-align: center;
+    }
+    &-center {
+      min-width: 48px;
+      text-align: center;
+    }
+    &-span {
+      font-size: 11px;
+    }
+  }
+}
