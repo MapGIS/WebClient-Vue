@@ -10,13 +10,13 @@
       @change="handleTableChange"
     >
     </mapgis-ui-table>
-    <mapgis-ui-clouddisk-transform ref="layerTransform" :selectLists="selectLists" :currentDocument="currentDocument" :handleNewDocument="handleNewDocument"/>
+    <mapgis-ui-clouddisk-transform ref="layerTransform" :selectLists="selectLists" :currentDocument="currentDocument" :handleNewDocument="handleNewDocument" @closeDialog="closeDialog"/>
   </div>
 </template>
 
 <script>
 import MapgisUiClouddiskTransform from "../../../clouddisk/components/select/LayerTransform";
-import { getPortalResource } from "../../../clouddisk/axios/portal";
+import { getPortalData } from "../../../clouddisk/axios/portal";
 
 const columns = [
   {
@@ -81,7 +81,7 @@ export default {
       console.warn('当前分页数据', pagination)
       let vm = this
       this.loading = true
-      getPortalResource(1, pagination.current - 1, pagination.pageSize)
+      getPortalData(1, pagination.current - 1, pagination.pageSize)
         .then(res => {
           if (res.status === 200) {
             let result = res.data
@@ -140,6 +140,9 @@ export default {
       dateTime = yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss
       return dateTime
     },
+    closeDialog () {
+      this.$emit('closeDialog') // 关闭从门户选择数据的对话框
+    }
   }
 };
 </script>

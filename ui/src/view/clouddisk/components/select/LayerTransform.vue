@@ -21,7 +21,7 @@ import { FileType } from '../../util/fileType'
 import { getMapgisPath, getMapGISUrl, getMapgisGroupPath } from '../../config/mapgis'
 
 
-import { IDocument, Layer, Doc } from '@mapgis/webclient-store' // 这些项在线制图应该也已经添加了依赖，demo界面通过npm link连接
+import { IDocument, Layer, Doc } from '@mapgis/webclient-store'
 const { GeoJsonLayer, RasterTileLayer, VectorTileLayer } = Layer
 const { defaultDocument } = Doc
 
@@ -231,8 +231,9 @@ export default {
       }
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
       this.$emit('closeImport') // 关闭导入文件对话框
+      this.$emit('closeDialog') // 关闭从门户选择数据的对话框
       // this.handleClose()
-      let folderDir = getMapgisGroupPath() + '/工作目录/工程文件Cache'
+      let folderDir = getMapgisPath() + '/工作目录/工程文件Cache'
       let fileName = doc.layers[0].name + '_自动创建.style'
       let srcUrl = folderDir + '/' + fileName
       let fileAttribute = JSON.stringify(this.getFileAttr(doc, srcUrl))
@@ -379,12 +380,13 @@ export default {
                   return !this.checkFields(item)
                 })
                 fields.forEach(ele => {
-                  keepField += ele.name + ','
+                  keepField = keepField + ele.name + ','
                 })
                 keepField = keepField.slice(0, -1) // 全部属性字段，这两个二选一
                 if (item.isVectorTile) {
-                  keepField = this.onlyOneField ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
+                  // keepField = this.onlyOneField ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
                   item.path = item.path1 + keepField + item.path2 + `&Authorization=${this.cdToken}`
+                  console.warn('打印地址', this.onlyOneField, fields, keepField, item.path)
                 } else { // geojson取全部字段
                   item.path = item.path + '&fields=' + keepField + `&Authorization=${this.cdToken}`
                 }

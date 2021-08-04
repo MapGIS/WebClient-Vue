@@ -53,7 +53,8 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
-              ["/guide/base.md", "基础组件"]
+              ["/guide/base.md", "基础组件"],
+              ["/guide/dev.md", "dev引用方式"]
             ]
           },
           {
@@ -63,7 +64,8 @@ module.exports = {
               ["/api/iconfont/IconFont.md", "图标"],
               ["/api/div/Div.md", "区块"],
               ["/api/collapsecard/CollapseCard.md", "收缩卡片"],
-              ["/api/sprite/Sprite.md", "符号库"]
+              ["/api/sprite/Sprite.md", "符号库"],
+              ["/api/upload/Upload.md", "上传"]
             ]
           }
           /* {
