@@ -2,6 +2,8 @@
 import antDirective from "ant-design-vue/es/_util/antDirective";
 
 import * as UIComponents from "./component";
+
+import { setLayout } from "./util/emit/layout";
 import { setTheme } from "./util/style/theme/set-theme";
 
 import { default as MapgisUiMessage } from "./components/message/Message.js";
@@ -11,9 +13,11 @@ import { default as ModalInstance } from "./components/modal";
 const install = function(Vue, options) {
   options = options || {};
   let theme = options.theme || "light";
+  let layout = options.layout || "admin";
   // require("./style.scss");
   require("./util/style/theme/antd.less");
   require("./style.scss");
+  setLayout(layout);
   setTheme(theme);
   Vue.use(antDirective);
   for (let name in UIComponents) {
@@ -40,5 +44,6 @@ export * from "./component";
 export { MapgisUiMessage, MapgisUiNotification, ModalInstance };
 export default {
   setTheme,
+  setLayout,
   install
 };
