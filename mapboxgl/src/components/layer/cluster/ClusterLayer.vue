@@ -23,24 +23,33 @@ export default {
       type: Number,
       default: 50
     },
-    min: {
-      type: Number,
-      default: 0
-    },
-    max: {
-      type: Number,
-      default: 100
+    cluster: {
+      type: Object,
+      default: () => {
+        return {
+          "circle-color": [
+            "step",
+            ["get", "point_count"],
+            "#51bbd6",
+            10,
+            "#f1f075",
+            100,
+            "#f28cb1"
+          ],
+          "circle-radius": ["step", ["get", "point_count"], 10, 0, 20, 100, 30],
+          "circle-stroke-color": "#FFFFFF",
+          "circle-stroke-width": 2
+        };
+      }
     },
     uncluster: {
       type: Object,
       default: () => {
         return {
-          paint: {
-            "circle-color": "#000000",
-            "circle-radius": 6,
-            "circle-stroke-width": 1,
-            "circle-stroke-color": "#fff"
-          }
+          "circle-color": "#000000",
+          "circle-radius": 6,
+          "circle-stroke-width": 1,
+          "circle-stroke-color": "#fff"
         };
       }
     },
@@ -78,11 +87,10 @@ export default {
     $_deferredMount() {
       let {
         geojson,
-        min,
-        max,
         id,
         clusterMaxZoom,
         clusterRadius,
+        cluster,
         uncluster,
         map
       } = this;
@@ -100,28 +108,7 @@ export default {
         type: "circle",
         source: id,
         filter: ["has", "point_count"],
-        paint: {
-          "circle-color": [
-            "step",
-            ["get", "point_count"],
-            "#51bbd6",
-            (min + max) / 2,
-            "#f1f075",
-            max,
-            "#f28cb1"
-          ],
-          "circle-radius": [
-            "step",
-            ["get", "point_count"],
-            10,
-            min,
-            20,
-            max,
-            30
-          ],
-          "circle-stroke-color": "#FFFFFF",
-          "circle-stroke-width": 2
-        }
+        paint: cluster
       });
       map.addLayer({
         id: id + "_label",
@@ -156,7 +143,7 @@ export default {
           type: "circle",
           source: id,
           filter: ["!", ["has", "point_count"]],
-          paint: uncluster.paint
+          paint: uncluster
         });
       }
 
@@ -190,7 +177,7 @@ export default {
       let { map, id } = this;
       let uncluster_circle = id + "_uncluster_circle";
       // let uncluster_icon = id + "_uncluster_icon";
-      map.on("mouseenter", uncluster_circle, function(e) {
+      map.on("click", uncluster_circle, function(e) {
         if (!e.features || e.features.length <= 0) return;
         var coordinates = e.features[0].geometry.coordinates.slice();
         var properties = e.features[0].properties;
@@ -217,7 +204,7 @@ export default {
     $_unbindEvent() {
       let { map, id } = this;
       let uncluster_circle = id + "_uncluster_circle";
-      map.off("mouseenter", uncluster_circle, function(e) {});
+      map.off("click", uncluster_circle, function(e) {});
     },
     updatePopup() {
       const { map, mapbox, coordinates } = this;

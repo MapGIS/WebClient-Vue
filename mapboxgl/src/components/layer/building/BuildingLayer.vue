@@ -1,9 +1,12 @@
 <template>
-  <div></div>
+  <div>
+    <slot></slot>
+  </div>
 </template>
 
 <script>
 import { uuid } from "../../util/util";
+import * as turf from "@turf/turf";
 
 export default {
   name: "mapgis-building-layer",
@@ -12,27 +15,6 @@ export default {
     geojson: {
       type: [String, Object]
     },
-    /* sourceId: {
-      type: String,
-      default: undefined
-    },
-    source: {
-      type: [Object, String],
-      default: undefined
-    },
-    layerId: {
-      type: String
-    },
-    layer: {
-      type: Object,
-      default: () => {
-        return {};
-      }
-    },
-    before: {
-      type: String,
-      default: undefined
-    }, */
     vectortile: {
       type: Object,
       default: () => {
@@ -49,15 +31,31 @@ export default {
       type: String,
       default: "#ffffff"
     },
+    opacity: {
+      type: [Number, Object],
+      default: 0.85
+    },
     heightScale: {
       type: Number,
       default: 1.0
+    },
+    feature: {
+      geometry: {},
+      properties: { 属性名: "属性值" }
     }
   },
   data() {
     return {
-      id: uuid() + "_fill-extrusion"
+      id: uuid() + "_fill-extrusion",
+      coordinates: [0, 0],
+      properties: {
+        属性名: "属性值"
+      }
     };
+  },
+  model: {
+    prop: "feature",
+    event: "change-feature"
   },
   mounted() {
     this.$_deferredMount();
@@ -68,7 +66,7 @@ export default {
   methods: {
     $_deferredMount() {
       let { geojson, vectortile } = this;
-      let { field, color, id, heightScale, map } = this;
+      let { field, color, opacity, id, heightScale, map } = this;
       let source;
       let layerId = id;
       let sourceId = id;
@@ -88,7 +86,7 @@ export default {
             15.05,
             ["*", ["get", field], heightScale]
           ],
-          "fill-extrusion-opacity": 0.85
+          "fill-extrusion-opacity": opacity
         }
       };
       if (geojson) {
@@ -115,11 +113,51 @@ export default {
       map.addSource(sourceId, source);
       map.addLayer(layer);
       this.$emit("added", { map, component: this, layerId });
+      this.$_bindEvent();
     },
     $_undeferredMount() {
       let { map, id } = this;
       map.removeLayer(id);
       map.removeSource(id);
+      this.$_unbindEvent();
+    },
+    $_bindEvent() {
+      const vm = this;
+      let { map, id } = this;
+      map.on("click", id, function(e) {
+        if (!e.features || e.features.length <= 0) return;
+        var properties = e.features[0].properties;
+
+        let center = turf.centroid(e.features[0]);
+
+        vm.coordinates = center.geometry.coordinates;
+        vm.properties = properties;
+
+        vm.$emit("change-feature", {
+          coordinates: center,
+          properties: properties
+        });
+
+        vm.$nextTick(() => {
+          vm.updatePopup();
+        });
+      });
+    },
+    $_unbindEvent() {
+      let { map, id } = this;
+      map.off("click", id, function(e) {});
+    },
+    updatePopup() {
+      const { map, mapbox, coordinates } = this;
+      if (this.popup) {
+        this.popup.remove();
+      }
+      if (this.$slots.default !== undefined) {
+        this.popup = new mapbox.Popup({ closeButton: true })
+          .setLngLat(coordinates)
+          .setDOMContent(this.$slots.default[0].elm)
+          .addTo(map);
+      }
     }
   }
 };
