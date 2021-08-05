@@ -83,6 +83,7 @@ export default {
     * **/
     $_initThemeCallBack(geojson) {
       this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
+      let weightArray = this.setWeightArr(geojson,this.defaultValue);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
@@ -100,17 +101,7 @@ export default {
               "interpolate",
               ["linear"],
               ["get", this.defaultValue],
-              0,
-              0,
-              1,
-              0.9,
-              2,
-              0.93,
-              3,
-              0.94,
-              4.8,
-              1
-            ],
+            ].concat(weightArray),
             "heatmap-intensity": [
               "interpolate",
               ["linear"],
@@ -172,7 +163,7 @@ export default {
             // ]
           }
         }
-        if(this.source_vector_layer_Id){
+        if (this.source_vector_layer_Id) {
           window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
         }
         this.extraLayer.push({
@@ -211,22 +202,15 @@ export default {
     },
 
     $_selectChange(value) {
+      let geojsonOrigin = window.originLayer[this.layerIdCopy + "_features"];
+
+      let weightArr = this.setWeightArr(geojsonOrigin,value);
       const {heatMapLayerId} = this;
       let weightRules = [
         "interpolate",
         ["linear"],
-        ["get", value],
-        0,
-        0,
-        1,
-        0.9,
-        2,
-        0.93,
-        3,
-        0.94,
-        4.8,
-        1
-      ];
+        ['to-number', ["get", value]],
+      ].concat(weightArr);
       this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[heatMapLayerId]);
     },
 
@@ -339,6 +323,39 @@ export default {
         }
         return steps;
       }
+    },
+    setWeightArr(geojsonOrigin,val) {
+      let max = 0;
+      let min = undefined;
+      // let max = geojsonOrigin[0].properties[value];
+      for (let i = 0; i < geojsonOrigin.length; i++) {
+        let cur = geojsonOrigin[i].properties[val];
+        //排除字符串""
+        if (cur !== ""){
+          cur  = Number(cur);
+          cur > max ? max = cur : null;
+          if (min === undefined){
+            min = max;
+          }
+          cur < min ? min = cur : null;
+        }
+      }
+      let weightArr = [];
+      let n = 5;
+      let weightOrigin = (max-min) / n;
+      let stops = 1 / n;
+      for (let i = 0; i < n; i++) {
+        let weightNum;
+        if (i=== n-1){
+          weightNum = max;
+        } else {
+          weightNum = min + weightOrigin * i;
+        }
+        let stop = stops * i;
+        weightArr.push(weightNum);
+        weightArr.push(stop);
+      }
+      return weightArr;
     }
   }
 }
