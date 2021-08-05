@@ -1,12 +1,12 @@
 <template>
   <div class="mapgis-mvt-action-single">
-    <mapgis-ui-row class="mapgis-mvt-action-single-control">
+    <!-- <mapgis-ui-row class="mapgis-mvt-action-single-control">
       <div class="mapgis-mvt-action-single-left">全部级别</div>
       <div class="mapgis-mvt-action-single-right">
         显示 <mapgis-ui-switch v-model="enable" />
       </div>
     </mapgis-ui-row>
-    <mapgis-ui-divider />
+    <mapgis-ui-divider /> -->
     <div v-if="enable">
       <fill-style
         v-if="type == 'fill'"
