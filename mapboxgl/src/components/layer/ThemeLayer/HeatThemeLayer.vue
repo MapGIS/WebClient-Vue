@@ -218,7 +218,13 @@ export default {
         ["get", value],
         0,
         0,
-        1000,
+        1,
+        0.9,
+        2,
+        0.93,
+        3,
+        0.94,
+        4.8,
         1
       ];
       this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[heatMapLayerId]);

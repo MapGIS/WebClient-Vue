@@ -16,10 +16,12 @@
         :themeDefaultType="themeDefaultType"
         :themeType="themeTypeArrCopy"
         :iconUrl="iconUrl"
+        :isGradient="isGradient"
+        :isSingle="isSingle"
         @closePanel="$_closePanel"
         @panelClick="$_panelClick"
         @change="$_selectChange"
-        @gradientChange="$_gradientChange"
+        @gradientChange="$_singleChangedOut"
         @lineColorChanged="$_lineColorChanged"
         @opacityChanged="$_opacityChanged"
         @outerLineOpacityChanged="$_outerLineOpacityChanged"
@@ -225,37 +227,37 @@ export default {
     $_outerLineColorChanged(color) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-color", color, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
-    $_fontChanged(font){
+    $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],this.textId,this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont], this.textId, this.textLayer);
     },
     $_lineWidthChanged(lineWidth) {
-      switch (this.dataType){
+      switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-width",lineWidth,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
           break;
         case "line":
-          this.$_setPaintProperty("line-width", lineWidth,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-width", lineWidth,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("circle-stroke-width", lineWidth, this.lineId, this.lineLayer);
           break;
       }
     },
-    $_outerLineOpacityChanged(opacity){
+    $_outerLineOpacityChanged(opacity) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-opacity", opacity, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -406,18 +408,6 @@ export default {
       this.$nextTick(function () {
         this.dataInit = true;
       });
-      colors = this.$_editColor(colors);
-      switch (this.dataType) {
-        case "fill":
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
-          break;
-        case "circle":
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
-          break;
-        case "line":
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
-          break;
-      }
     },
     /*
     * 取得color列表的方法，该方法必须返回一个originColors对象
@@ -461,17 +451,10 @@ export default {
         this.dataInit = true;
       });
       fillColors = this.$_editColor(fillColors);
-      // let vm = this;
-      // this.map.loadImage("./icons/life/car.png", function (error, image) {
-      //   if (error) throw error;
-      //   vm.map.addImage("car", image, {'sdf': true});
-      //   console.log("-------------------------")
-      //   vm.$_setPaintProperty("fill-pattern","car");
-      // });
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
         window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id:  this.layerIdCopy + "_分段专题图",
+          id: this.layerIdCopy + "_分段专题图",
           type: 'fill',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
@@ -488,7 +471,7 @@ export default {
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
         window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id:  this.layerIdCopy + "_分段专题图",
+          id: this.layerIdCopy + "_分段专题图",
           type: 'circle',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
@@ -507,7 +490,7 @@ export default {
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
         window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id:  this.layerIdCopy + "_分段专题图",
+          id: this.layerIdCopy + "_分段专题图",
           type: 'line',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
           layout: {
@@ -520,31 +503,14 @@ export default {
           }
         }
       }
-      if(this.source_vector_layer_Id){
+      if (this.source_vector_layer_Id) {
         window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
       this.$_addTextLayer();
     },
     $_editGeoJSON(geojson) {
-      let newGeoJSON = {
-        features: [],
-        type: "FeatureCollection"
-      };
-      let features = geojson.features;
-      for (let i = 0; i < features.length; i++) {
-        let feature = {}, properties = {};
-        feature.geometry = features[i].geometry;
-        feature.type = features[i].type;
-        Object.keys(features[i].properties).forEach(function (key) {
-          if (typeof features[i].properties[key] === 'number') {
-            properties[key] = features[i].properties[key];
-          }
-        });
-        feature.properties = properties;
-        newGeoJSON.features.push(feature);
-      }
-      return newGeoJSON;
+      return geojson;
     }
   }
 }

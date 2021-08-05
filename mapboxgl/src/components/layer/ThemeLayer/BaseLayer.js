@@ -153,7 +153,10 @@ export default {
       extraLayer: [],
       upLayer: undefined,
       allFields: undefined,
-      themeTypeArrCopy: undefined
+      themeTypeArrCopy: undefined,
+      rangeFields: [],
+      isGradient: true,
+      isSingle: true
     };
   },
   methods: {
@@ -818,6 +821,11 @@ export default {
       this.$_setPaintProperty("circle-stroke-color", color);
     },
     $_singleChanged(startColor, endColor) {
+      this.isSingle = true;
+      this.$_gradientChange(startColor, endColor);
+    },
+    $_singleChangedOut(startColor, endColor) {
+      this.isGradient = true;
       this.$_gradientChange(startColor, endColor);
     },
     $_fontColorChanged(color) {
@@ -895,17 +903,61 @@ export default {
     $_lineStyleChanged(lineStyle) {
       this.$_setPaintProperty("line-dasharray", lineStyle.value);
     },
+    $_getNumberFields(features) {
+      if (this.rangeFields.length === 0) {
+        let fields = [],
+          reg = new RegExp("^[0-9]+$"),
+          regFloat = new RegExp("^[.\\d]*$"),
+          fieldsObj = {};
+        Object.keys(features[0].properties).forEach(function(key) {
+          fieldsObj[key] = true;
+        });
+        for (let i = 0; i < features.length; i++) {
+          Object.keys(features[i].properties).forEach(function(key) {
+            if (!fieldsObj[key]) {
+              return;
+            }
+            let value = features[i].properties[key];
+            if (
+              value &&
+              !reg.test(value) &&
+              !regFloat.test(value) &&
+              fieldsObj[key]
+            ) {
+              fieldsObj[key] = false;
+            }
+          });
+        }
+        Object.keys(fieldsObj).forEach(function(key) {
+          if (fieldsObj[key]) {
+            fields.push(key);
+          }
+        });
+        this.rangeFields = fields;
+      }
+    },
     $_getFields(features) {
+      if (this.themeType === "range" || this.themeType === "heatmap") {
+        return this.rangeFields;
+      } else {
+        let fields = [];
+        Object.keys(features[0].properties).forEach(function(key) {
+          fields.push(key);
+        });
+        return fields;
+      }
+    },
+    $_getAllFields(feature) {
       let fields = [];
-      Object.keys(features.properties).forEach(function(key) {
+      Object.keys(feature.properties).forEach(function(key) {
         fields.push(key);
       });
       return fields;
     },
-    $_getThemeFields(features, key) {
+    $_getThemeFields(features) {
       let fields;
       if (features.geometry.type === "Point") {
-        if (typeof features.properties[key] === "string") {
+        if (this.rangeFields.length === 0) {
           fields = [
             {
               key: "unique",
@@ -920,7 +972,7 @@ export default {
               value: "热力专题图"
             }
           ];
-        } else if (typeof features.properties[key] === "number") {
+        } else {
           fields = [
             {
               key: "unique",
@@ -941,14 +993,14 @@ export default {
           ];
         }
       } else {
-        if (typeof features.properties[key] === "string") {
+        if (this.rangeFields.length === 0) {
           fields = [
             {
               key: "unique",
               value: "单值专题图"
             }
           ];
-        } else if (typeof features.properties[key] === "number") {
+        } else {
           fields = [
             {
               key: "unique",
@@ -1103,7 +1155,7 @@ export default {
       if (this.$_editGeoJSON) {
         geojson = this.$_editGeoJSON(geojson);
       }
-      this.allFields = this.$_getFields(geojson.features[0]);
+      this.allFields = this.$_getAllFields(geojson.features[0]);
       let vm = this;
       this.map.on("data", function(e) {
         if (vm.changeLayerProp) {
@@ -1125,14 +1177,12 @@ export default {
       this.sourceVector.data = geojson;
       this.dataCopy = geojson;
       this.showVector = true;
-      this.fields = this.$_getFields(geojson.features[0]);
+      this.$_getNumberFields(geojson.features);
+      this.fields = this.$_getFields(geojson.features);
       this.defaultValue =
         this.defaultValue === undefined ? this.fields[0] : this.defaultValue;
       this.selectKey = this.fields[0];
-      this.themeTypeArrCopy = this.$_getThemeFields(
-        geojson.features[0],
-        this.selectKey
-      );
+      this.themeTypeArrCopy = this.$_getThemeFields(geojson.features[0]);
       this.$emit("getThemeType", this.themeTypeArrCopy);
       this.dataSource = this.$_getData(geojson.features, this.selectKey);
       let colors = this.$_getColors(
@@ -1183,7 +1233,7 @@ export default {
           };
         }
       }
-      this.$_setOriginLayer(colors);
+      // this.$_setOriginLayer(colors);
       this.$_setLayOutProperty(
         "visibility",
         "none",
@@ -1306,7 +1356,6 @@ export default {
       }
 
       this.dataBack = datas;
-
       if (this.themeType === "range") {
         datas = this.$_editData(datas);
       }
@@ -1364,6 +1413,7 @@ export default {
       this.changeLayerId = this.layerIdCopy;
     },
     $_setPaintByType(colors) {
+      colors = this.$_editColor(colors);
       switch (this.dataType) {
         case "fill":
           this.$_setPaintProperty(
@@ -1416,6 +1466,8 @@ export default {
     },
     $_oneColorChanged(index, color) {
       let colors = this.$_getColorsFromOrigin(index, color);
+      this.isGradient = false;
+      this.isSingle = false;
       if (this.$_oneColorChangedCallBack) {
         this.$_oneColorChangedCallBack(colors);
       } else {
@@ -1440,7 +1492,16 @@ export default {
           break;
       }
     },
-    $_editData(dataSource) {
+    $_editData(Source) {
+      let dataSource = [];
+      for (let i = 0; i < Source.length; i++) {
+        if (Number(Source[i])) {
+          dataSource.push(Number(Source[i]));
+        }
+      }
+      dataSource = dataSource.sort(function(a, b) {
+        return a - b;
+      });
       let length = dataSource.length,
         newDataSource = [],
         rangeLevel = 10;
@@ -1484,28 +1545,14 @@ export default {
       }
     },
     $_editColor(colors) {
-      let newStops = [],
-        stopIndex = 0,
-        newColor = {};
+      let newColor;
       if (this.themeType === "range") {
-        for (let i = 0; i < this.dataBack.length; i++) {
-          if (this.dataBack[i] <= colors.stops[stopIndex][0]) {
-            newStops.push([this.dataBack[i], colors.stops[stopIndex][1]]);
-          } else {
-            stopIndex++;
-            for (let j = stopIndex; j < colors.stops.length; j++) {
-              if (this.dataBack[i] < colors.stops[j][0]) {
-                stopIndex = j;
-                newStops.push([this.dataBack[i], colors.stops[j][1]]);
-                break;
-              }
-            }
-          }
+        newColor = ["step", ["to-number", ["get", colors.property]]];
+        for (let i = 0; i < colors.stops.length; i++) {
+          newColor.push(colors.stops[i][1]);
+          newColor.push(colors.stops[i][0]);
         }
-        newColor = {
-          property: colors.property,
-          stops: newStops
-        };
+        newColor.push("#ffffff");
       } else {
         newColor = colors;
       }

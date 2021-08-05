@@ -780,6 +780,14 @@ export default {
         return {}
       }
     },
+    isGradient: {
+      type: Boolean,
+      default: true
+    },
+    isSingle: {
+      type: Boolean,
+      default: true
+    },
     themeType: {
       type: Array,
       default() {
@@ -1035,8 +1043,10 @@ export default {
   },
   methods: {
     $_editStr(item,strLength){
+      item = item || "";
+      item = String(item);
       let regString = new RegExp('^[\x00-\xff]');
-      let regNumber = new RegExp('^\d+$');
+      let regNumber = new RegExp('^[0-9]+$');
       let regOperate = new RegExp('[\+\-\_\.]');
       let chars = item.split("");
       let str = "",length = 0;
@@ -1056,9 +1066,9 @@ export default {
       return str;
     },
     $_chooseColor(radioMode){
-      if(radioMode === "single" && this.radioMode !== "single"){
+      if(radioMode === "single" && this.radioMode !== "single" && this.isSingle){
         this.$emit("singleChanged", this.singleColor, this.singleColor);
-      }else if(radioMode === "gradient" && this.radioMode !== "gradient"){
+      }else if(radioMode === "gradient" && this.radioMode !== "gradient" && this.isGradient){
         this.$emit("gradientChange", "#FFFFFF", this.gradientColor);
       }
     },
