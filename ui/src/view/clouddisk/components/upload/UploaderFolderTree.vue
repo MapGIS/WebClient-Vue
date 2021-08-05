@@ -57,7 +57,7 @@ export default {
               let result = res.data;
               let { data, errorCode, msg } = result;
               if (errorCode < 0) {
-                vm.$Notice.error({ title: errorCode, desc: msg });
+                vm.$notification.error({ message: errorCode, description: msg });
               } else {
                 console.warn("dirnavigation结果");
                 let items = data.filter(item => item.isfolder === true);
@@ -74,7 +74,8 @@ export default {
             }
           })
           .catch(error => {
-            this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+            console.warn("【dirnavigation错误结果】", error);
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });
           });
       });
     },

@@ -139,7 +139,8 @@ export default {
           vclsinfo,
           tileDataPath,
           minLevel,
-          maxLevel
+          maxLevel,
+          renderType
         } = xattrs
         let path
         // let uuid = md5(url)
@@ -159,7 +160,10 @@ export default {
         //   this.$notification.error({ message: '当前选择的某个图层缺少图层信息', description: '请检查图层！' })
         //   continue
         // }
-        if (vclsinfo && vclsinfo.count > this.GjsonSize) { // 实时矢量瓦片
+        let useVectorTile = false
+        useVectorTile = renderType ? renderType === 'vectorTile' : vclsinfo && vclsinfo.count > this.GjsonSize
+        console.warn('检验useVectorTile', useVectorTile)
+        if (vclsinfo && useVectorTile) { // 实时矢量瓦片
           if (hasVector && dataSource) {
             let temp = []
             temp = getCacheVectorTileUrl(storeServiceUrl, dataSourceType, dataSource, 4326, 0.5, 0.5, tileDataPath, minLevel, maxLevel)
@@ -384,7 +388,7 @@ export default {
                 })
                 keepField = keepField.slice(0, -1) // 全部属性字段，这两个二选一
                 if (item.isVectorTile) {
-                  // keepField = this.onlyOneField ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
+                  keepField = this.onlyOneField === true ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
                   item.path = item.path1 + keepField + item.path2 + `&Authorization=${this.cdToken}`
                   console.warn('打印地址', this.onlyOneField, fields, keepField, item.path)
                 } else { // geojson取全部字段
