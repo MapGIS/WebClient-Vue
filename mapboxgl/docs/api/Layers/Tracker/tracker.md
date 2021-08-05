@@ -41,6 +41,10 @@
 </style>
 ```
 
+## 控制器
+
+![轨迹控制](./tracker_time_control.png)
+
 ## 属性
 
 ### `geojson`

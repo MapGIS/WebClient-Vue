@@ -39,8 +39,6 @@ $primary-8: var(--primary-8);
 $primary-9: var(--primary-9);
 $primary-10: var(--primary-10);
 
-
-
 $success-1: var(--success-1);
 $success-2: var(--success-2);
 $success-3: var(--success-3);
@@ -73,15 +71,15 @@ $danger-5: var(--danger-5);
 $danger-6: var(--danger-6); // equal $danger-color
 $danger-7: var(--danger-7);
 
-
 // Background color for `<body>`
 $body-background: #fff;
 // Base background color for most components
 $component-background: #fff;
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol';
-$code-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+  "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial,
+  sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$code-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+  monospace;
 $text-color: fade($black, 65%);
 $text-color-secondary: fade($black, 45%);
 $text-color-inverse: $white;
@@ -93,7 +91,7 @@ $text-color-dark: fade($white, 85%);
 $text-color-secondary-dark: fade($white, 65%);
 $text-selection-bg: $primary-color;
 $font-variant-base: tabular-nums;
-$font-feature-settings-base: 'tnum';
+$font-feature-settings-base: "tnum";
 $font-size-base: 14px;
 $font-size-lg: $font-size-base + 2px;
 $font-size-sm: 12px;
@@ -140,10 +138,12 @@ $body-background-without-opacity: var(--background-without-opacity);
 
 // Base background/text color for most components
 $component-background: var(--component-background);
-$component-background-without-opacity: var(--component-background-without-opacity);
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol';
+$component-background-without-opacity: var(
+  --component-background-without-opacity
+);
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+  "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial,
+  sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $text-color: var(--text-color);
 $text-color-secondary: var(--text-color-secondary);
 $text-color-inverse: $white;
@@ -205,7 +205,9 @@ $link-active-color: $primary-7;
 
 // Border color
 $border-color-base: var(--border-color-base); // base border outline a component
-$border-color-split: var(--border-color-split); // split border inside a component
+$border-color-split: var(
+  --border-color-split
+); // split border inside a component
 $border-color-inverse: $white;
 $border-width-base: 1px; // width of the border for a component
 $border-style-base: solid; // style of a components border
@@ -243,7 +245,7 @@ $btn-primary-color: #fff;
 $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
-$btn-default-bg:  var(--button-default-background);
+$btn-default-bg: var(--button-default-background);
 $btn-default-border: var(--button-border-default-color);
 
 $btn-danger-color: $red-6;
@@ -628,7 +630,7 @@ $alert-success-border-color: $success-3;
 $alert-success-bg-color: $success-1;
 $alert-success-icon-color: $success-color;
 $alert-info-border-color: $info-3;
-$alert-info-bg-color:$info-1;
+$alert-info-bg-color: $info-1;
 $alert-info-icon-color: $info-color;
 $alert-warning-border-color: $warning-3;
 $alert-warning-bg-color: $warning-1;
@@ -738,3 +740,7 @@ $json-editor-background: $card-background;
 
 // content menu
 $content-background: var(--content-background);
+
+// Pro
+$ribbon-background: var(--ribbon-background);
+$ribbon-border-background: fade($ribbon-background, 60%);

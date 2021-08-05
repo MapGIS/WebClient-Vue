@@ -69,6 +69,11 @@ export default {
           title: "标准管理后台布局"
         },
         {
+          key: "ribbon",
+          url: require("./SettingDrawer/style/ribbon.svg"),
+          title: "Ribbon布局"
+        },
+        {
           key: "standard",
           url: require("./SettingDrawer/style/standard.svg"),
           title: "标准三段式布局"

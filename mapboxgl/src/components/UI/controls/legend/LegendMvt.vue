@@ -143,17 +143,16 @@ export default {
   display: inline;
 }
 
+.mapgis-mvt-legend-row > .mapgis-ui-list-item {
+  width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .mapgis-mvt-legend-image {
   height: 16px;
   width: 16px;
   margin-right: 12px;
-}
-
-span.mapgis-mvt-legend-label {
-  width: 120px;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 </style>
