@@ -38,6 +38,8 @@
         @haloWidthChanged="$_haloWidthChanged"
         @clickIcon="$_clickIcon"
         @singleChanged="$_singleChanged"
+        @clickSingle="$_clickSingle"
+        @clickGradient="$_clickGradient"
         @fontColorChanged="$_fontColorChanged"
         @lineStyleChanged="$_lineStyleChanged"
         @xOffsetChanged="$_xOffsetChanged"
@@ -50,7 +52,7 @@
         <mapgis-ui-row>
           <mapgis-ui-list
               bordered
-              :data-source="dataSource"
+              :data-source="dataSourceCopy"
           >
             <mapgis-ui-list-item slot="renderItem" slot-scope="item, index">
               <div class="range-theme-list-item">
@@ -90,7 +92,7 @@
                 <div class="theme-panel-td">
                   ~
                 </div>
-                <div class="theme-panel-td theme-panel-td-input-num">
+                <div class="theme-panel-td theme-panel-td-input-num theme-panel-td-border-right">
                   <mapgis-ui-input class="range-theme-num"
                                    @change="$_inputEndChange"
                                    @click="$_inputClick(index)"
@@ -109,6 +111,9 @@
                       <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
+                </div>
+                <div class="theme-panel-td theme-panel-td-add" @click="$_addRange(index)">
+                  <mapgis-ui-iconfont type="mapgis-tianjiamulu" />
                 </div>
               </div>
             </mapgis-ui-list-item>
@@ -168,22 +173,24 @@ export default {
     dataSourceCopy: {
       handler: function () {
         if (this.dataInit) {
-          let index = 0;
-          for (let i = 0; i < this.dataSource.length; i++) {
-            if (Number(this.dataSource[i]) !== Number(this.dataSourceCopy[i])) {
-              index = i;
+          if(!this.addRange){
+            let index = 0;
+            for (let i = 0; i < this.dataSource.length; i++) {
+              if (Number(this.dataSource[i]) !== Number(this.dataSourceCopy[i])) {
+                index = i;
+              }
             }
-          }
 
-          if (index === 0 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
-            this.$_setPaint(index, this.dataSourceCopy[index]);
-          } else if (index === this.dataSourceCopy.length && Number(this.dataSourceCopy[index]) > Number(this.dataSourceCopy[index - 1]) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
-            this.$_setPaint(index, this.dataSourceCopy[index]);
-          } else if (Number(this.dataSourceCopy[index - 1]) < Number(this.dataSourceCopy[index]) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
-            this.$_setPaint(index, this.dataSourceCopy[index]);
-          } else {
-            //输入错误，改变输入框样式
-            this.$_inputWrong(index);
+            if (index === 0 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
+              this.$_setPaint(index);
+            } else if (index === this.dataSourceCopy.length && Number(this.dataSourceCopy[index]) > Number(this.dataSourceCopy[index - 1]) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
+              this.$_setPaint(index);
+            } else if (Number(this.dataSourceCopy[index - 1]) < Number(this.dataSourceCopy[index]) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
+              this.$_setPaint(index);
+            } else {
+              //输入错误，改变输入框样式
+              this.$_inputWrong(index);
+            }
           }
         }
       },
@@ -206,6 +213,7 @@ export default {
       endNumWrong: false,
       offsetText: [0, 0],
       panelPropsDefault: {},
+      addRange: false
     }
   },
   created() {
@@ -218,6 +226,30 @@ export default {
     this.$_removeLayer();
   },
   methods: {
+    $_addRange(index){
+      this.rangeLevel++;
+      this.addRange = true;
+      let startData = Number(this.dataSourceCopy[index]);
+      let endData = Number(this.dataSourceCopy[index + 1]);
+      if(index < this.dataSourceCopy.length - 1){
+        if( startData < endData){
+          let addNum = (startData + endData)/2;
+          this.dataSourceCopy.splice(index + 1,0,addNum);
+          let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
+          this.colors.splice(index + 1,0,newColors[1]);
+          this.checkBoxArr.splice(index + 1,0,true);
+          this.$_setRangeColor(newColors[1],startData,endData);
+        }
+      }else {
+        let addNum = (endData = startData) + endData;
+        this.colors.push(this.colors[index]);
+        this.checkBoxArr.push(true);
+        this.dataSourceCopy.push(addNum);
+      }
+      this.$nextTick(function () {
+        this.addRange = false;
+      });
+    },
     removeLayer() {
       this.$_removeLayer();
     },
@@ -296,7 +328,8 @@ export default {
       }
     },
     $_changeColor(index) {
-      this.$_oneColorChanged(index, this.colors[index]);
+      this.isGradient = false;
+      this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
     },
     $_inputStartChange() {
       this.direction = "start";
@@ -312,24 +345,11 @@ export default {
     $_inputWrong(index) {
       this.numWrong = index;
     },
-    $_setPaint(index, num) {
+    $_setPaint(index) {
       this.$_removeInputWrong();
-      let colors = this.$_getColorsFromOrigin(index, null, Number(num));
-      colors = this.$_editColor(colors);
-      switch (this.dataType) {
-        case "fill":
-          this.map.setPaintProperty(this.layerIdCopy + "_" + this.$_getThemeName(), "fill-color", colors);
-          break;
-        case "circle":
-          this.map.setPaintProperty(this.layerIdCopy + "_" + this.$_getThemeName(), "circle-color", colors);
-          break;
-        case "line":
-          this.map.setPaintProperty(this.layerIdCopy + "_" + this.$_getThemeName(), "line-color", colors);
-          break;
-      }
+      this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData,true);
+      this.$_setRangeColor(this.colors[index + 1],this.$_getStartEndData(index + 1).startData,this.$_getStartEndData(index + 1).endData);
       this.dataSource[index] = Number(this.dataSourceCopy[index]);
-      //自动更细allOriginColors
-      this.originColors.colors.stops[index][0] = this.dataSource[index];
     },
     $_checkboxChecked(e) {
       let value = e.target.value.item;
@@ -353,45 +373,47 @@ export default {
     * @param checkColor 当前点击的复选框的颜色
     * **/
     $_checked(checkBoxArr, index, checkColor) {
-      let colors = {}, newColors,
-          next = false;
-      if (this.originColors.colors.hasOwnProperty("stops")) {
-        newColors = [];
-        for (let i = 0; i < checkBoxArr.length; i++) {
-          if (checkBoxArr[i]) {
-            if (i === index) {
-              this.originColors.colors.stops[i][1] = checkColor;
-            }
-            if (this.originColors.colors.stops[i]) {
-              newColors.push(this.originColors.colors.stops[i]);
-            }
-          } else {
-            this.originColors.checkArr[i] = false;
-            newColors.push([this.originColors.colors.stops[i][0], "#FFF"]);
-          }
-        }
-        colors.stops = newColors;
-        colors.property = this.originColors.colors.property;
-        next = colors.stops.length > 0;
+      let color;
+      if(!checkBoxArr[index]){
+        color = "#ffffff";
+      }else {
+        color = checkColor;
       }
-      this.showVector = false;
-      colors = this.$_editColor(colors);
-      if (next) {
-        switch (this.dataType) {
-          case "fill":
-            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
-            break;
-          case "circle":
-            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
-            break;
-          case "line":
-            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
-            break;
+      this.$_setRangeColor(color,this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
+      this.showVector = true;
+      this.changeLayerProp = true;
+      this.changeLayerId = this.layerIdCopy;
+    },
+    $_getStartEndData(index){
+      let startData,endData;
+      if(index === 0){
+        startData = this.startData;
+        endData = this.dataSourceCopy[index];
+      }else if(index === this.dataSourceCopy.length){
+        startData = this.dataSourceCopy[index];
+        endData = this.endData;
+      }else {
+        startData = this.dataSourceCopy[index - 1];
+        endData = this.dataSourceCopy[index];
+      }
+      return {
+        startData: Number(startData),
+        endData: Number(endData)
+      }
+    },
+    $_setRangeColor(color,startData,endData,noPaint){
+      let paintColor = window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"];
+      let length = (paintColor.length - 1)/2;
+      for (let i = 0;i <length;i++){
+        if(paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData){
+          paintColor.splice(2 + i * 2,1,color);
         }
-        this.$_changeOriginLayer();
-        this.showVector = true;
-        this.changeLayerProp = true;
-        this.changeLayerId = this.layerIdCopy;
+      }
+      window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = paintColor;
+      if(!noPaint){
+        this.$_setPaintByType(paintColor,true);
+      }else {
+        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"] = paintColor;
       }
     },
     /*
@@ -507,6 +529,7 @@ export default {
         window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
+      window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;
       this.$_addTextLayer();
     },
     $_editGeoJSON(geojson) {
@@ -539,6 +562,10 @@ export default {
   height: 10px;
 }
 
+.theme-panel-td-add{
+  cursor: pointer;
+}
+
 .theme-panel-color-picker .picker {
   position: absolute;
   top: 16px;
@@ -550,7 +577,7 @@ export default {
 }
 
 .range-theme-num {
-  width: 62px;
+  width: 54px;
 }
 
 .range-theme-list-item {
@@ -563,7 +590,7 @@ export default {
 }
 
 .theme-panel-td-input-num {
-  width: 30%;
+  width: 25%;
 }
 
 .theme-panel-td-checkbox, .theme-panel-td-index {

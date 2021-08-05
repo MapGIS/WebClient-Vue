@@ -156,7 +156,8 @@ export default {
       themeTypeArrCopy: undefined,
       rangeFields: [],
       isGradient: true,
-      isSingle: true
+      isSingle: true,
+      rangeLevel: 10
     };
   },
   methods: {
@@ -282,6 +283,7 @@ export default {
       if (this.map.getLayer(layerId + "_" + this.$_getThemeName())) {
         this.map.removeLayer(layerId + "_" + this.$_getThemeName());
         delete window.originLayer[layerId + "_" + this.$_getThemeName()];
+        delete window.originThemeData[layerId];
       }
     },
     deleteExtraLayer(layerId) {
@@ -701,6 +703,9 @@ export default {
       if (!window.originLayer) {
         window.originLayer = {};
       }
+      if (!window.originThemeData) {
+        window.originThemeData = {};
+      }
       this.themeTypeArrCopy = this.themeTypeArr;
       if (
         this.panelPropsDefault.hasOwnProperty("xOffset") &&
@@ -822,11 +827,49 @@ export default {
     },
     $_singleChanged(startColor, endColor) {
       this.isSingle = true;
-      this.$_gradientChange(startColor, endColor);
+      this.$_gradientChange(startColor, endColor, false);
+    },
+    $_clickSingle(startColor, endColor) {
+      if (this.isSingle) {
+        if (!this.isGradient) {
+          window.originThemeData[this.layerIdCopy][
+            this.themeType + "_" + this.selectKey + "_back"
+          ] = {
+            ...window.originThemeData[this.layerIdCopy][
+              this.themeType + "_" + this.selectKey
+            ]
+          };
+        }
+        this.$_gradientChange(startColor, endColor, false);
+      }
+    },
+    $_clickGradient(startColor, endColor) {
+      if (this.isGradient) {
+        this.$_gradientChange(startColor, endColor, false);
+      } else {
+        let colors = this.$_getColors(
+          this.dataSource,
+          startColor,
+          endColor,
+          this.selectKey,
+          false,
+          true
+        );
+        this.$_setPaintByType(
+          window.originThemeData[this.layerIdCopy][
+            this.themeType + "_" + this.selectKey + "_back"
+          ],
+          true
+        );
+        this.changeLayerProp = true;
+        this.changeLayerId = this.layerIdCopy;
+      }
     },
     $_singleChangedOut(startColor, endColor) {
-      this.isGradient = true;
-      this.$_gradientChange(startColor, endColor);
+      if (this.isGradient) {
+        this.$_gradientChange(startColor, endColor);
+      } else {
+      }
     },
     $_fontColorChanged(color) {
       this.$_setPaintProperty("text-color", color, this.textId, this.textLayer);
@@ -1252,25 +1295,6 @@ export default {
       //     this.$_loadedLayer();
       // });
     },
-    $_setOriginLayer(colors) {
-      switch (this.dataType) {
-        case "fill":
-          window.originLayer[
-            this.layerIdCopy + "_" + this.$_getThemeName()
-          ].paint["fill-color"] = colors;
-          break;
-        case "circle":
-          window.originLayer[
-            this.layerIdCopy + "_" + this.$_getThemeName()
-          ].paint["circle-color"] = colors;
-          break;
-        case "line":
-          window.originLayer[
-            this.layerIdCopy + "_" + this.$_getThemeName()
-          ].paint["line-color"] = colors;
-          break;
-      }
-    },
     $_getAllLayerStyle() {
       let layers = [];
       if (this.dataType === "fill") {
@@ -1372,7 +1396,6 @@ export default {
           this.endColor,
           value
         );
-        this.$_setOriginLayer(colors);
         this.checkBoxArr = this.originColors.checkArr;
         this.selectKey = value;
         if (this.checkBoxArr.indexOf(true) < 0) {
@@ -1384,7 +1407,8 @@ export default {
           } else {
             throw new Error("请设置$_selectChange方法的回到函数！");
           }
-          this.$_setPaintByType(colors);
+          colors = this.$_editColor(colors);
+          this.$_setPaintByType(colors, true);
           this.showVector = true;
         }
         this.changeLayerProp = true;
@@ -1394,7 +1418,7 @@ export default {
     $_themeTypeChanged(key, value) {
       this.$emit("themeTypeChanged", key, value);
     },
-    $_gradientChange(startColor, endColor) {
+    $_gradientChange(startColor, endColor, noEdit) {
       this.showVector = false;
       this.startColor = startColor;
       this.endColor = endColor;
@@ -1406,14 +1430,15 @@ export default {
         false,
         true
       );
-      this.$_setOriginLayer(colors);
-      this.$_setPaintByType(colors);
+      this.$_setPaintByType(colors, noEdit);
       this.showVector = true;
       this.changeLayerProp = true;
       this.changeLayerId = this.layerIdCopy;
     },
-    $_setPaintByType(colors) {
-      colors = this.$_editColor(colors);
+    $_setPaintByType(colors, noEdit) {
+      if (!noEdit) {
+        colors = this.$_editColor(colors);
+      }
       switch (this.dataType) {
         case "fill":
           this.$_setPaintProperty(
@@ -1503,8 +1528,7 @@ export default {
         return a - b;
       });
       let length = dataSource.length,
-        newDataSource = [],
-        rangeLevel = 10;
+        newDataSource = [];
       let range = dataSource[length - 1] - dataSource[0];
       if (range === 0) {
         newDataSource.push(dataSource[0]);
@@ -1512,17 +1536,18 @@ export default {
         this.endDataCopy = this.endData;
         return newDataSource;
       } else {
-        let rangeSect = range / rangeLevel;
+        let rangeSect = range / this.rangeLevel;
         if (dataSource[0] < 0) {
           this.startData = dataSource[0] - 1;
         } else {
-          this.startData = 0;
+          let range = dataSource[1] - dataSource[0];
+          this.startData = dataSource[0] - range;
         }
         this.startDataCopy = this.startData;
-        for (let i = 0; i < rangeLevel; i++) {
+        for (let i = 0; i < this.rangeLevel; i++) {
           newDataSource.push(dataSource[0] + (i + 1) * rangeSect + 1);
         }
-        this.endData = newDataSource[rangeLevel - 1] + rangeSect;
+        this.endData = newDataSource[this.rangeLevel - 1] + rangeSect;
         this.endDataCopy = this.endData;
         return newDataSource;
       }
@@ -1547,16 +1572,55 @@ export default {
     $_editColor(colors) {
       let newColor;
       if (this.themeType === "range") {
-        newColor = ["step", ["to-number", ["get", colors.property]]];
-        for (let i = 0; i < colors.stops.length; i++) {
-          newColor.push(colors.stops[i][1]);
-          newColor.push(colors.stops[i][0]);
+        if (!window.originThemeData[this.layerIdCopy]) {
+          window.originThemeData[this.layerIdCopy] = {};
         }
-        newColor.push("#ffffff");
+        if (
+          window.originThemeData[this.layerIdCopy][
+            this.themeType + "_" + this.selectKey
+          ] &&
+          !this.isGradient &&
+          !this.isGradient &&
+          !this.isSingle
+        ) {
+          newColor =
+            window.originThemeData[this.layerIdCopy][
+              this.themeType + "_" + this.selectKey
+            ];
+        } else {
+          newColor = ["step", ["to-number", ["get", colors.property]]];
+          let features = window.originLayer[this.layerIdCopy + "_features"],
+            index = 0,
+            valueArr = [];
+          for (let i = 0; i < features.length; i++) {
+            let value = features[i].properties[this.selectKey];
+            if (value && valueArr.indexOf(Number(value)) < 0) {
+              valueArr.push(Number(value));
+            }
+          }
+          valueArr = valueArr.sort(function(a, b) {
+            return a - b;
+          });
+          for (let i = 0; i < colors.stops.length; i++) {
+            for (let j = index; j < valueArr.length; j++) {
+              let value = valueArr[j];
+              if (Number(value) <= colors.stops[i][0]) {
+                newColor.push(colors.stops[i][1]);
+                newColor.push(Number(value));
+                if (j === valueArr.length - 1) {
+                  index = j + 1;
+                }
+              } else {
+                index = j;
+                break;
+              }
+            }
+          }
+          newColor.push("#ffffff");
+        }
       } else {
         newColor = colors;
       }
-
       return newColor;
     },
     $_iconLoaded() {},
