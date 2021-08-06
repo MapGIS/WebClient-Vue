@@ -128,7 +128,13 @@ export default {
   methods: {
     handleTypeChange () {
       this.serviceForm.serverName = ''
-      getPortalServices(this.serviceForm.serverType || '', 1, 1000)
+      let serviceFormdata = {
+        serviceType: this.serviceForm.serverType || '',
+        page: 1,
+        pageSize: 1000,
+        filter: 'page'
+      }
+      getPortalServices(serviceFormdata)
         .then(res => {
           if (res.status === 200) {
             let result = res.data
@@ -169,6 +175,7 @@ export default {
         let temUrl = portalBaseurl.split('://')[1]
         let portalIp = temUrl.split(':')[0]
         let portalPort = temUrl.split(':')[1]
+        console.warn('打印Extend', Extend, RuleParse)
 
         let parse = new RuleParse()
         let url = parse.GetMap(parseInt(this.serviceForm.serverType), portalIp, portalPort, this.serviceForm.serverName, 'url')
