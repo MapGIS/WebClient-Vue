@@ -61,6 +61,7 @@ export { default as MapgisTrackerLayer } from "./components/layer/tracker/Tracke
 export { default as MapgisClusterLayer } from "./components/layer/cluster/ClusterLayer";
 export { default as MapgisHeaterLayer } from "./components/layer/heater/HeaterLayer";
 export { default as MapgisBuildingLayer } from "./components/layer/building/BuildingLayer";
+export { default as MapgisElasticsearchLayer } from "./components/layer/elasticsearch/ElasticsearchLayer";
 
 export { default as MapgisEchartsLayer } from "./components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
