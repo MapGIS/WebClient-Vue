@@ -134,7 +134,7 @@ export default {
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],this.textId,this.textLayer);
+      this.$_setLayOutProperty("text-font",[this.textFont,this.textFont],this.textId,this.textLayer);
     },
     /*
     * 多选框业务实现

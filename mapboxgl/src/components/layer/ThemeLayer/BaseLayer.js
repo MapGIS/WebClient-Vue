@@ -132,15 +132,7 @@ export default {
       outerLineOpacity: 1,
       outerLineColor: "#000000",
       lineLayer: undefined,
-      textFonts: [
-        "黑体",
-        "宋体",
-        "楷体",
-        "微软雅黑",
-        "Arial",
-        "Calibri",
-        "Times New Roman"
-      ],
+      textFonts: ["宋体", "微软雅黑"],
       textFont: undefined,
       source_vector_Id: undefined,
       source_vector_layer_Id: undefined,
@@ -812,7 +804,7 @@ export default {
             "text-size": this.fontSize,
             "text-letter-spacing": this.textPadding,
             "text-offset": this.offsetText,
-            "text-font": [this.textFont],
+            "text-font": [this.textFont, this.textFont],
             "text-rotate": this.textRotation
           },
           paint: {
@@ -1873,7 +1865,7 @@ export default {
             "text-size": this.fontSize,
             "text-letter-spacing": this.textPadding,
             "text-offset": this.offsetText,
-            "text-font": [this.textFont],
+            "text-font": [this.textFont, this.textFont],
             "text-rotate": this.textRotation
           },
           paint: {
