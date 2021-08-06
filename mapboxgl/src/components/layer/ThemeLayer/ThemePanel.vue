@@ -170,17 +170,18 @@
               style="margin-top: 8px;"
               v-if="dataType !== 'line' && dataType !== 'symbol'"
           >
-            <mapgis-ui-radio-group
-                v-model="radioMode"
-                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
-            >
-              <mapgis-ui-radio-button @click="$_chooseColor('gradient')" value="gradient">
-                渐变颜色
-              </mapgis-ui-radio-button>
-              <mapgis-ui-radio-button @click="$_chooseColor('single')" value="single">
-                单体颜色
-              </mapgis-ui-radio-button>
-            </mapgis-ui-radio-group>
+<!--            <mapgis-ui-radio-group-->
+<!--                v-model="radioMode"-->
+<!--                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"-->
+<!--            >-->
+<!--              <mapgis-ui-radio-button @click="$_chooseColor('gradient')" value="gradient">-->
+<!--                渐变颜色-->
+<!--              </mapgis-ui-radio-button>-->
+<!--              <mapgis-ui-radio-button @click="$_chooseColor('single')" value="single">-->
+<!--                单体颜色-->
+<!--              </mapgis-ui-radio-button>-->
+<!--            </mapgis-ui-radio-group>-->
+            <p class="theme-panel-p">渐变颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row
               v-if="dataType !== 'line' && dataType !== 'symbol'"
@@ -359,18 +360,19 @@
             <p class="theme-panel-p">边线颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'line' || dataType === 'fill'">
-            <mapgis-ui-radio-group
-                v-model="radioMode"
-                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"
-                v-if="dataType !== 'fill'"
-            >
-              <mapgis-ui-radio-button value="gradient">
-                渐变颜色
-              </mapgis-ui-radio-button>
-              <mapgis-ui-radio-button value="single">
-                单体颜色
-              </mapgis-ui-radio-button>
-            </mapgis-ui-radio-group>
+<!--            <mapgis-ui-radio-group-->
+<!--                v-model="radioMode"-->
+<!--                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"-->
+<!--                v-if="dataType !== 'fill'"-->
+<!--            >-->
+<!--              <mapgis-ui-radio-button value="gradient">-->
+<!--                渐变颜色-->
+<!--              </mapgis-ui-radio-button>-->
+<!--              <mapgis-ui-radio-button value="single">-->
+<!--                单体颜色-->
+<!--              </mapgis-ui-radio-button>-->
+<!--            </mapgis-ui-radio-group>-->
+            <p class="theme-panel-p">渐变颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row v-if="dataType === 'line'">
             <mapgis-ui-select
@@ -663,12 +665,12 @@
                     <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right"
                          v-bind:title="selectValue">
                       {{
-                        selectValue.toString().length > 4 ? String(selectValue).substr(0, 4) + "..." : (selectValue === "" ? "其他" : selectValue)
+                            $_editStr(selectValue,8)
                       }}
                     </div>
-                    <div class="theme-panel-td theme-panel-td-value" v-bind:title="item">
+                    <div class="theme-panel-td theme-panel-td-value theme-panel-td-border-right" v-bind:title="item">
                       {{
-                        item.toString().length > 8 ? String(item).substr(0, 8) + "..." : (item === "" ? "其他" : item)
+                            $_editStr(item,8)
                       }}
                     </div>
                   </mapgis-ui-list-item>
@@ -779,6 +781,14 @@ export default {
       default() {
         return {}
       }
+    },
+    isGradient: {
+      type: Boolean,
+      default: true
+    },
+    isSingle: {
+      type: Boolean,
+      default: true
     },
     themeType: {
       type: Array,
@@ -1034,11 +1044,34 @@ export default {
     this.$_initDataSource();
   },
   methods: {
+    $_editStr(item,strLength){
+      item = item || "";
+      item = String(item);
+      let regString = new RegExp('^[\x00-\xff]');
+      let regNumber = new RegExp('^[0-9]+$');
+      let regOperate = new RegExp('[\+\-\_\.]');
+      let chars = item.split("");
+      let str = "",length = 0;
+      for (let i = 0;i < chars.length;i++){
+        if(regString.test(chars[i]) || regNumber.test(chars[i]) || regOperate.test(chars[i])){
+          length++;
+        }else {
+          length += 2;
+        }
+        if(length > strLength){
+          str += "...";
+          break;
+        }else {
+          str += chars[i];
+        }
+      }
+      return str;
+    },
     $_chooseColor(radioMode){
       if(radioMode === "single" && this.radioMode !== "single"){
-        this.$emit("singleChanged", this.singleColor, this.singleColor);
+        this.$emit("clickSingle", this.singleColor, this.singleColor);
       }else if(radioMode === "gradient" && this.radioMode !== "gradient"){
-        this.$emit("gradientChange", "#FFFFFF", this.gradientColor);
+        this.$emit("clickGradient", "#FFFFFF", this.gradientColor);
       }
     },
     $_formatPanelProps() {
