@@ -23,7 +23,7 @@ export function getPortalData(resourceType, page, pageSize) {
 }
 
 
-export function getPortalServices(serviceType, page, pageSize) {
+export function getPortalServices(serviceFormdata) {
   let url = getPortalUrl();
   const api = new API();
   const token = getPortalToken();
@@ -32,7 +32,11 @@ export function getPortalServices(serviceType, page, pageSize) {
   // let token = sessionStorage.getItem("mapgis-cloud-portal-jwt");
   console.warn('【门户】【UI组件】【是否可以获取到token】', token);
   api.setAuthorization(token);
-  return api.get(
-    "/portal/resources/services?serviceType=" + serviceType + "&page=" + page + "&pageSize=" + pageSize + "&filter=page"
-  );
+
+  api.setContentType("application/x-www-form-urlencoded");
+  return api.post(url + "/portal/resources/services", serviceFormdata);
+
+  // return api.post(
+  //   "/portal/resources/services?serviceType=" + serviceType + "&page=" + page + "&pageSize=" + pageSize + "&filter=page"
+  // );
 }
