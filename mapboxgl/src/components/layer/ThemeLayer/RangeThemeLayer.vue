@@ -262,7 +262,7 @@ export default {
           this.$_setPaintProperty("line-color", color, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -289,7 +289,7 @@ export default {
           this.$_setPaintProperty("line-opacity", opacity, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -402,7 +402,7 @@ export default {
       }
     },
     $_setRangeColor(color,startData,endData,noPaint){
-      let paintColor = window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"];
+      let paintColor = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"];
       let length = (paintColor.length - 1)/2;
       for (let i = 0;i <length;i++){
         if(paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData){
@@ -413,11 +413,11 @@ export default {
       if(!noPaint){
         this.$_setPaintByType(paintColor,true);
       }else {
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"] = paintColor;
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"] = paintColor;
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
@@ -475,7 +475,7 @@ export default {
       fillColors = this.$_editColor(fillColors);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.layerIdCopy + "_分段专题图",
           type: 'fill',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -492,7 +492,7 @@ export default {
         this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.layerIdCopy + "_分段专题图",
           type: 'circle',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -511,7 +511,7 @@ export default {
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.layerIdCopy + "_分段专题图",
           type: 'line',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -526,7 +526,7 @@ export default {
         }
       }
       if (this.source_vector_layer_Id) {
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
       window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;

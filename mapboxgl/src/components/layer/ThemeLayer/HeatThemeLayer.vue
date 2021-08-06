@@ -89,7 +89,7 @@ export default {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_热力专题图";
         let colorGradient = this.getGradientColors(true);
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.heatMapLayerId,
           type: 'heatmap',
           source: this.source_vector_Id, //必须和上面的layerId一致
@@ -164,13 +164,13 @@ export default {
           }
         }
         if (this.source_vector_layer_Id) {
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
         }
         this.extraLayer.push({
           key: "heatmapLayer",
           value: this.heatMapLayerId
         });
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
         this.title = "热力专题图" + "_" + this.layerIdCopy;
       }
     },
@@ -188,21 +188,21 @@ export default {
         ["linear"],
         ["heatmap-density"],
       ].concat(steps);
-      this.$_setPaintProperty("heatmap-color", colorrules, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-color", colorrules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_heatRadiusChanged(heatRadius) {
       const {heatMapLayerId} = this;
-      this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_opacityChanged(opacity) {
       const {heatMapLayerId} = this;
-      this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_selectChange(value) {
-      let geojsonOrigin = window.originLayer[this.layerIdCopy + "_features"];
+      let geojsonOrigin = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"];
 
       let weightArr = this.setWeightArr(geojsonOrigin,value);
       const {heatMapLayerId} = this;
@@ -211,7 +211,7 @@ export default {
         ["linear"],
         ['to-number', ["get", value]],
       ].concat(weightArr);
-      this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     /*

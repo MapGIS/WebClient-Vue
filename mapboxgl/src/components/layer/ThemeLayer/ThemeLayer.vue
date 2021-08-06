@@ -120,6 +120,27 @@ export default {
     this.iconUrlCopy = this.map.getStyle().sprite;
   },
   methods: {
+    setAllLayer(allLayer){
+      this.$_setAllLayer(allLayer);
+    },
+    $_setAllLayer(allLayer){
+      window.originLayer[this.layerIdCopy] = {...window.originLayer[this.layerIdCopy],...allLayer};
+      this.addThemeLayer(window.originLayer[this.layerIdCopy].themeType,window.originLayer[this.layerIdCopy].layerId,true);
+    },
+    getAllLayer(){
+      return this.$_getAllLayer();
+    },
+    $_getAllLayer(){
+      let allLayer = {};
+      Object.keys(window.originLayer).forEach(function (key) {
+        if(window.originLayer.hasOwnProperty(key)){
+          allLayer[key] = {...window.originLayer[key]};
+          allLayer[key].layerId = key;
+          delete allLayer[key][key + "_features"];
+        }
+      });
+      return allLayer;
+    },
     $_createLayerFailed(message){
       this.$emit("createLayerFailed",message);
     },
@@ -145,7 +166,7 @@ export default {
       this.uniqueLayer.resetMainLayer(layerId);
       this.showPanelFlag = false;
     },
-    addThemeLayer(type, layerId){
+    addThemeLayer(type, layerId,addLayer){
       let hasPanel = false;
       for (let i = 0;i < this.panels.length;i++){
         if(this.panels[i] === layerId){
@@ -193,25 +214,25 @@ export default {
           this.themeDefaultType = "等级符号专题图";
           break;
       }
-      this.$_addThemeLayer(type, layerId);
+      this.$_addThemeLayer(type, layerId,addLayer);
     },
-    $_addThemeLayer(type, layerId) {
+    $_addThemeLayer(type, layerId,addLayer) {
       let vm = this;
       setTimeout(function () {
         vm.layerId = layerId;
         vm.showPanelFlag = true;
         switch (type) {
           case "unique":
-            vm.uniqueLayer.addThemeLayer(layerId);
+            vm.uniqueLayer.addThemeLayer(layerId,addLayer);
             break;
           case "symbol":
-            vm.symbolLayer.addThemeLayer(layerId);
+            vm.symbolLayer.addThemeLayer(layerId,addLayer);
             break;
           case "range":
-            vm.rangeLayer.addThemeLayer(layerId);
+            vm.rangeLayer.addThemeLayer(layerId,addLayer);
             break;
           case "heatmap":
-            vm.heatmapLayer.addThemeLayer(layerId);
+            vm.heatmapLayer.addThemeLayer(layerId,addLayer);
             break;
         }
         vm.showType = type;
