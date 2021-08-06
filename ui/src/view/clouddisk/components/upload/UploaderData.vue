@@ -135,7 +135,6 @@ export default {
       let taskid = uuid();
 
       openUploader({
-        // 下面哪怕是空的对象也要传入，主要是electron这个框架会截获vuex的状态导致不更新视图，千万别注释了
         param: {
           state: "toggle-click-event", // 传入的参数
           folderDir: this.curImportUrl,

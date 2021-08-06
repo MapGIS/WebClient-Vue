@@ -40,9 +40,9 @@ export default {
     };
   },
   watch: {
-    WebsocketMessageId: {
-      handler: function(next) {
-        if (next === this.webSocketTaskId) { // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
+    WebsocketContent: {
+      handler: function() {
+        if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'refresh') { // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
           let msgResponse = this.WebsocketContent[0]
           let { errorCode, msg, subjectType } = msgResponse
           if (subjectType === 'geotools:import') {
