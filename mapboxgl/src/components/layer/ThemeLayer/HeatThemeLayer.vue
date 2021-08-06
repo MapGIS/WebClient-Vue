@@ -15,6 +15,7 @@
         :themeDefaultType="themeDefaultType"
         :themeType="themeTypeArrCopy"
         @change="$_selectChange"
+        @closePanel="$_closePanel"
         @gradientChange="$_gradientChange"
         @heatRadiusChanged="$_heatRadiusChanged"
         @opacityChanged="$_opacityChanged"
