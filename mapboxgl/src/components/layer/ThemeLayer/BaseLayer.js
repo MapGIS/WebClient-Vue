@@ -277,7 +277,7 @@ export default {
     },
     $_deleteExtraLayer(layerId) {
       let extraLayer =
-        window.originLayer[this.layerIdCopy][
+        window.originLayer[layerId][
           layerId + "_" + this.$_getThemeName() + "_extraLayer"
         ];
       if (extraLayer) {
@@ -290,18 +290,11 @@ export default {
             if (this.hasOwnProperty(extraLayer[i].key)) {
               this[extraLayer[i].key] = undefined;
             }
-            delete window.originLayer[this.layerIdCopy][extraLayer[i].value];
           }
         }
-        delete window.originLayer[this.layerIdCopy][
-          layerId + "_" + this.$_getThemeName() + "_extraLayer"
-        ];
       }
       if (this.map.getLayer(layerId + "_" + this.$_getThemeName())) {
         this.map.removeLayer(layerId + "_" + this.$_getThemeName());
-        delete window.originLayer[this.layerIdCopy][
-          layerId + "_" + this.$_getThemeName()
-        ];
         delete window.originThemeData[layerId];
       }
     },
@@ -313,12 +306,9 @@ export default {
         "visibility",
         "visible",
         layerId,
-        window.originLayer[this.layerIdCopy][layerId]
+        window.originLayer[layerId][layerId]
       );
-      delete window.originLayer[this.layerIdCopy][this.layerIdCopy];
-      delete window.originLayer[this.layerIdCopy][
-        this.layerIdCopy + "_features"
-      ];
+      delete window.originLayer[layerId];
       emitMapChangeStyle(this.map.getStyle());
       this.resetPanel = true;
       this.$emit("resetLayer");
@@ -978,14 +968,19 @@ export default {
         let fields = [],
           reg = new RegExp("^[0-9]+$"),
           regFloat = new RegExp("^[.\\d]*$"),
-          fieldsObj = {};
+          fieldsObj = {},
+          nullFields = {};
         Object.keys(features[0].properties).forEach(function(key) {
           fieldsObj[key] = true;
+          nullFields[key] = false;
         });
         for (let i = 0; i < features.length; i++) {
           Object.keys(features[i].properties).forEach(function(key) {
             if (!fieldsObj[key]) {
               return;
+            }
+            if (features[i].properties[key]) {
+              nullFields[key] = true;
             }
             let value = features[i].properties[key];
             if (
@@ -999,7 +994,7 @@ export default {
           });
         }
         Object.keys(fieldsObj).forEach(function(key) {
-          if (fieldsObj[key]) {
+          if (fieldsObj[key] && nullFields[key]) {
             fields.push(key);
           }
         });
@@ -1014,7 +1009,20 @@ export default {
         Object.keys(features[0].properties).forEach(function(key) {
           fields.push(key);
         });
-        return fields;
+        let newFields = [];
+        for (let i = 0; i < fields.length; i++) {
+          let allNull = true;
+          for (let j = 0; j < features.length; j++) {
+            if (features[j].properties[fields[i]]) {
+              allNull = false;
+              break;
+            }
+          }
+          if (!allNull) {
+            newFields.push(fields[i]);
+          }
+        }
+        return newFields;
       }
     },
     $_getAllFields(feature) {
@@ -1462,6 +1470,25 @@ export default {
     $_themeTypeChanged(key, value) {
       this.$emit("themeTypeChanged", key, value);
     },
+    $_removeIcon() {
+      let themeId = this.layerIdCopy + "_" + this.$_getThemeName();
+      let paintName;
+      switch (this.dataType) {
+        case "fill":
+          paintName = "fill-pattern";
+          break;
+        case "line":
+          paintName = "line-pattern";
+          break;
+      }
+      if (window.originLayer[this.layerIdCopy][themeId].paint[paintName]) {
+        if (this.map.getLayer(themeId)) {
+          this.map.removeLayer(themeId);
+          delete window.originLayer[this.layerIdCopy][themeId].paint[paintName];
+          this.map.addLayer(window.originLayer[this.layerIdCopy][themeId]);
+        }
+      }
+    },
     $_gradientChange(startColor, endColor, noEdit) {
       this.showVector = false;
       this.startColor = startColor;
@@ -1474,6 +1501,7 @@ export default {
         false,
         true
       );
+      this.$_removeIcon();
       this.$_setPaintByType(colors, noEdit);
       this.showVector = true;
       this.changeLayerProp = true;
@@ -1555,6 +1583,7 @@ export default {
      * **/
     $_oneColorChangedCallBack(colors) {
       colors = this.$_editColor(colors);
+      this.$_removeIcon();
       switch (this.dataType) {
         case "fill":
           this.$_setPaintProperty("fill-color", colors);

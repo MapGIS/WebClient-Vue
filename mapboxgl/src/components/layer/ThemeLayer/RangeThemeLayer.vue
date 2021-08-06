@@ -228,6 +228,7 @@ export default {
   methods: {
     $_deleteRange(index){
       if(this.rangeLevel > 2){
+        this.$_removeIcon();
         this.rangeLevel--;
         this.addRange = true;
         if(index === 0){
@@ -252,6 +253,7 @@ export default {
       }
     },
     $_addRange(index){
+      this.$_removeIcon();
       this.rangeLevel++;
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
@@ -354,6 +356,7 @@ export default {
     },
     $_changeColor(index) {
       this.isGradient = false;
+      this.$_removeIcon();
       this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
     },
     $_inputStartChange() {
@@ -371,6 +374,7 @@ export default {
       this.numWrong = index;
     },
     $_setPaint(index) {
+      this.$_removeIcon();
       this.$_removeInputWrong();
       this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData,true);
       this.$_setRangeColor(this.colors[index + 1],this.$_getStartEndData(index + 1).startData,this.$_getStartEndData(index + 1).endData);
@@ -404,6 +408,7 @@ export default {
       }else {
         color = checkColor;
       }
+      this.$_removeIcon();
       this.$_setRangeColor(color,this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
       this.showVector = true;
       this.changeLayerProp = true;

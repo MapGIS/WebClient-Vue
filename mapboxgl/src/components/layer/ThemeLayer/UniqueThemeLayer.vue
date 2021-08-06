@@ -204,7 +204,8 @@ export default {
             window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
             break;
         }
-        this.$_setPaintByType(newColors,true);
+        this.$_removeIcon();
+        this.$_setPaintByType(colors,true);
         this.showVector = true;
         this.changeLayerProp = true;
         this.changeLayerId = this.layerIdCopy;
