@@ -4,8 +4,18 @@
 
 @include b(pro-layout) {
   @include e(header, "-") {
+    padding: 0px;
     height: $pro-header-height;
     display: $pro-header-display;
+  }
+  @include e(ribbon, "-") {
+    background: $ribbon-background;
+    border-bottom: 1px solid $ribbon-border-background;
+    height: $pro-ribbon-height;
+    display: $pro-ribbon-display;
+    .mapgis-ui-tabs-bar {
+      margin: 0 0 8px 0;
+    }
   }
   @include e(content, "-") {
     height: $pro-content-height;

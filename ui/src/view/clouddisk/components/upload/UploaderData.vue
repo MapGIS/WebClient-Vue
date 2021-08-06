@@ -88,8 +88,8 @@ export default {
       importDataType: "shp",
       typeDescriptions: {
         shp: ".zip格式，可包含单个或多个shp文件（建议使用rar压缩软件进行压缩）",
-        json: "Geojson格式文件(.json)",
-        csv: "CSV格式表格文件(.csv)"
+        json: "Geojson格式文件(.json、.geojson)",
+        csv: "CSV格式表格文件(.csv)，支持经纬度和Web墨卡托坐标系"
       },
       showPathSelect: false,
       showFolderTree: true,

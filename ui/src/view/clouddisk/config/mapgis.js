@@ -89,6 +89,15 @@ export function getMapgisToken(token) {
   }
 }
 
+export function getPortalToken (token) {
+  const storeToken = window.localStorage.getItem('mapgis_portal_token')
+  if (token) {
+    return token
+  } else {
+    return storeToken
+  }
+}
+
 export function getMapUser() {
   const name = window.localStorage.getItem("mapgis_clouddisk_user_name") || "";
   const key = window.localStorage.getItem("mapgis_clouddisk_user_key") || "";

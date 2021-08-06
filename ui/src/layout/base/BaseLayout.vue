@@ -3,6 +3,9 @@
     <mapgis-ui-layout>
       <mapgis-ui-layout-header class="mapgis-ui-pro-layout-header">
         <slot name="header" />
+        <mapgis-ui-div class="mapgis-ui-pro-layout-ribbon">
+          <slot name="ribbon" />
+        </mapgis-ui-div>
       </mapgis-ui-layout-header>
       <mapgis-ui-layout>
         <mapgis-ui-layout-sider

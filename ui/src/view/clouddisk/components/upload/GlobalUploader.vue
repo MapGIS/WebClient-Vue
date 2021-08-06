@@ -607,6 +607,7 @@ export default {
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
+        console.warn('【WebSocket接收消息中】', event)
         let flag = vm.isJSON(event.data);
         if (flag) {
           console.log('websocket', event);

@@ -34,6 +34,16 @@ const CircleRules = [
     maximum: 100
   },
   {
+    title: "字体偏移",
+    icon: "mapgis-duibidutiaojie",
+    type: "array-number",
+    layerprop: "text-offset",
+    layertype: "layout",
+    default: [0, 0],
+    minimum: -100,
+    maximum: 100
+  },
+  {
     title: "字体颜色",
     icon: "mapgis-yansehecheng",
     type: "color",
@@ -76,6 +86,16 @@ const CircleRules = [
     default: 1,
     minimum: 0,
     maximum: 10
+  },
+  {
+    title: "符号偏移",
+    icon: "mapgis-duibidutiaojie",
+    type: "array-number",
+    layerprop: "icon-offset",
+    layertype: "layout",
+    default: [0, 0],
+    minimum: -100,
+    maximum: 100
   }
 ];
 

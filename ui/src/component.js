@@ -117,6 +117,10 @@ export { default as MapgisUiConfigProvider } from "./components/config-provider/
 export { default as MapgisUiDivider } from "./components/divider/Divider.vue";
 export { default as MapgisUiLocaleProvider } from "./components/locale-provider/LocaleProvider.vue";
 
+// Ribbon
+export { default as MapgisUiRibbonGroup } from "./components/ribbon/RibbonGroup.vue";
+export { default as MapgisUiRibbonCommand } from "./components/ribbon/RibbonCommand.vue";
+
 // Pro
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
