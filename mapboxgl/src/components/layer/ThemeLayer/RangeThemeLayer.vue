@@ -50,79 +50,74 @@
     >
       <div slot="legend" slot-scope="slotProps">
         <mapgis-ui-row>
-          <mapgis-ui-list
-              bordered
-              :data-source="dataSourceCopy"
-          >
-            <mapgis-ui-list-item slot="renderItem" slot-scope="item, index">
-              <div class="range-theme-list-item">
-                <div class="theme-panel-td theme-panel-td-border-right theme-panel-td-index">
-                  {{ index }}
-                </div>
-                <div class="theme-panel-td theme-panel-td-border-right theme-panel-td-checkbox">
-                  <mapgis-ui-checkbox
-                      :value="{item:item,color:colors[index]}"
-                      :checked="checkBoxArr[index]"
-                      @change="$_checkboxChecked">
-                  </mapgis-ui-checkbox>
-                </div>
-                <div class="theme-panel-td theme-panel-td-border-right">
-                  <div class="theme-panel-color-picker">
-                    <colorPicker class="picker" v-model="colors[index]"
-                                 @change="$_changeColor(index)"/>
-                  </div>
-                </div>
-                <div class="theme-panel-td theme-panel-td-input-num">
-                  <mapgis-ui-input v-if="dataSourceCopy.length === 1 || (dataSourceCopy.length > 1 && index === 0)"
-                                   class="range-theme-num"
-                                   @click="$_inputClick('start')"
-                                   @change="$_inputStartChange" v-model="startData">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="startNumWrong">
-                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                    </mapgis-ui-tooltip>
-                  </mapgis-ui-input>
-                  <mapgis-ui-input v-if="index > 0" class="range-theme-num"
-                                   @click="$_inputClick(index - 1)"
-                                   @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="(index - 1) === numWrong">
-                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                    </mapgis-ui-tooltip>
-                  </mapgis-ui-input>
-                </div>
-                <div class="theme-panel-td" style="width: 3%">
-                  ~
-                </div>
-                <div class="theme-panel-td theme-panel-td-input-num theme-panel-td-border-right">
-                  <mapgis-ui-input class="range-theme-num"
-                                   @change="$_inputEndChange"
-                                   @click="$_inputClick(index)"
-                                   v-model="dataSourceCopy[index]"
-                                   v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
-                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                    </mapgis-ui-tooltip>
-                  </mapgis-ui-input>
-                  <mapgis-ui-input class="range-theme-num"
-                                   @change="$_inputEndChange"
-                                   @click="$_inputClick('end')"
-                                   v-model="endData"
-                                   v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
-                    <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="endNumWrong">
-                      <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                    </mapgis-ui-tooltip>
-                  </mapgis-ui-input>
-                </div>
-                <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
-<!--                  <mapgis-ui-iconfont type="mapgis-tianjiamulu" />-->
-                  <img class="theme-panel-img-add" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABEZJREFUWEe1V01sVUUU/s68vtomxY2BWMVEEwNRU9/rzLxdVVi4EAjGRdlIVARd4EZAILIBE6PBqDX4kxjE/7iAhbHiT2IMGOvGzkxfjaXWhXHhT6CykSZN2r45Zl7ufbnvcu/70Xo3792ZM9/57jlnvjlD6PJxzq313t8khFgP4GZmvgbAvBDiEjNPSinnu4GkTowjp6NCiFFm3tRqDTN/BuDzYrE4XiqVfmuH35JAcMzMxwCMAljbDiw1fxnA+0T0npRyOm9tLoHJyclNQoiTAG7t0nGW+T6l1CtZE5kEjDF7iej19AIi+sp7P0tEF4hoFsCs956ZeWOhUNgYfoko/N6f4eyYUuqZqzDTA9baRwC8kxwnoovM/KxS6rVOomGM2UNEJwD0p+x3KaXebcJOvhhjRonodGrRB729vQeHhoYupp2HGgljWZVvjBkkoi8B3Jlcx8w7tNZn4rFGCpxzJWauppxkhi3YGGMOENHh8J+Zj2utX8qKjrX2KIBQyI2HiMpxYTYIWGtfBrAvYTeulMrKZd3EOXcu3pJEdF5KuTkvPc6555j56cT8mFJqf3ivE5ienl6/srISvv666IvC/r1Xa/1TC9COCQQMa60BoCK8yz09PeWgE3UC1tqDAF6InTHzg1rrj1oVXDcRiHw8DuDNBOZ+pdRYTOB7AJVo8lOl1PZWzrtNQYxljPmFiG6phz5KGznnbmfmmaz8rGYEItInmXlPjNvX1zcYCGxn5k8S4X9Ca/3G/xGBSF3PxdhCiK2BwKPMfCoe9N5vrlQq56O87SSi3Xlkkrughc0ppdSHYb5arW6o1WpzCdtdZK09BOB4PEhE64KwVKvVG2u1WpDbNe2i0Wb+SqFQuK1cLv8+MTGxpr+//++E/aFAoGkHLC4uXjsyMnIlOglDbXR7Cqb5zBPRHeGj8gg0aX84VMrl8s8BJaidEGLbf0mB9/5srJKZKZiamtrivQ9NRP1J1sBq74K8IgxNx6XELngqT9eThLoVomgbvsjMB5L1VhciY8xZItoaCcQZKeWOdoX3bwgYY+aIaEPADq2b1npbTKCpASGiLVLKL1YzBdbaJilm5rreZB5GAL5VSt29ygTyD6NIdJqOYyJqmYpuUuCcO83MobGNn+bjOCqQrhoSa+1OALFk743VLh21jhuSKApPAhhLghDR81LKI1npCGoZxoPKZc1nNCKh+B7TWr/V2AmdMA41ERFpWZgxlnPuvqgDuiuFf1gp1eg76rsui3lWZxzZfRwaKO/9N8Vi8Y+FhYU/w/jAwMDg8vLyDUKIewCUADyQwv0rHGpSyvG0v9yLSU6H3E4erppn5jlm3l2pVL7LWtzuahYK82EAD8X9YhcMFgG8WigUTuTVSG4K0k6ipjXcGULz0u5y+iMRfQ3gbaXUD+0Id3Q7ToLMzMxcv7S0JL336xJHdf16DuDC8PDwr+2cJuf/AZGKXgkO+31+AAAAAElFTkSuQmCC" alt="新增分段">
-                </div>
-                <div class="theme-panel-td theme-panel-td-delete" @click="$_deleteRange(index)">
-<!--                  <mapgis-ui-iconfont type="mapgis-shanchu" />-->
-                  <img class="theme-panel-img-add" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA7lJREFUWEfFV02MFEUU/l737GGJSIzIBXCBgwknd7qK2T2sXOCKikYhKMarJGtI9OJP5CeAF0kIG+BqFAgL/nLGi+5hd6zXs55MPAiiXgBDlkXmsNP9SE26NzU93Ts725tQSV+q3qvv66qv6n1FWGabmppaOzg4uBvAPgAviMh6InrWpovIf0R0D8AfACabzeaNsbGx+eVMTb2CmHk7EY2LyH4Az/SKT8bvE9EVEZlQSv2+VM6SBJj5BIBxAE8vEzgb9gCAJfFpUX4hAWb+GcBLKwTOpv2ilNqZN1cuAWa+C2B9NkFE5omo7ny/JhrYISK19COitTlg95RSz2X7uwgw800AW3ImuNhqtT4bGRmx44VtZmZma6VSOQ7g7ZygW0qprW5/B4EwDK+KyBuZRLsa40qpyX62g5ntaZkA0PHXRHQtCII307kWCSSC+yQDclQpdawf4GwsMx8BcDTTfzIVZpuAPWoApl21i8hNrfW2MuBprjHmTyJyl96ejlF7RNsEwjA8LyLvuWBRFNVqtVpbZGVbvV7f4ft+vWPviS4EQXCIjDHriOgvAOvSABE5rbX+sCywm2+M+YKIPnD65kRkiMIwPCgiXzkDDxcWFraPjo7+s5oEpqenNw0MDNhb8alFARK9Q8z8DYDXHbDCS6MsoZzL7VtLIARQdZZ/Qmv9flmwvHxjzFlbV5yxhtXAbSLa7BB4S2t9udFobInj2B6hd0uSuaSUal9KxpgDRHTJwfrbrsD/ANY4nUNa69vMfA7AoZLgaXr7PjHGPJ8IPu1/1EXA9/1Nw8PD/xZcICvl0yYwOzu7MYoiV9yPurbA87y91Wr1B4vEzNcB7FkpapL3ped5x6rV6q1Go/FqHMffZ7egQ4RE9HkQBB+XBM1ND8PwlIh81CFCZr6S2Ky0/yellLVeq96Y+QaAXc7Ek1YDewF85yzLfBRFL/Yqu/2ys2Xa9/3fMl7hNUrMpr2KXb93USl1sF+QpeKZ+euMR7jfbDaHCosRgP39eoAiAok3sFu92CgtRonau8oxgLtKqQ2rsQrMfCdjTDrLcULCOuAnY0jSv8xzwtaYxHG8r19vYD2A53mTGSNioTqKXZ4pLXLEp1ut1pleZdqW3UqlcjhT+9N/7HLGRba8yBk/BNAQkdnEwk0lM49Zi0VEw0llXaz5joa6HLEdK3yYFDjkFWky64Q7TkOPs/vknmaOMNPH6QHXN/ZYijkiulz6ceqCWPPqed7LIvIKgG0Fz3Nrv3+M4/i61npuOfv1GEgrvUth6rD9AAAAAElFTkSuQmCC" alt="删除分段">
+          <div class="theme-panel-list" v-for="(data,index) in dataSourceCopy" :key="index" :class="{panelListFirst: index === 0,panelListLast: index === dataSourceCopy.length - 1}">
+            <div class="range-theme-list-item">
+              <div class="theme-panel-td theme-panel-td-border-right theme-panel-td-index">
+                {{ index }}
+              </div>
+              <div class="theme-panel-td theme-panel-td-border-right theme-panel-td-checkbox">
+                <mapgis-ui-checkbox
+                    :value="{item:data,color:colors[index]}"
+                    :checked="checkBoxArr[index]"
+                    @change="$_checkboxChecked">
+                </mapgis-ui-checkbox>
+              </div>
+              <div class="theme-panel-td theme-panel-td-border-right">
+                <div class="theme-panel-color-picker">
+                  <colorPicker class="picker" v-model="colors[index]"
+                               @change="$_changeColor(index)"/>
                 </div>
               </div>
-            </mapgis-ui-list-item>
-          </mapgis-ui-list>
+              <div class="theme-panel-td theme-panel-td-input-num">
+                <mapgis-ui-input v-if="dataSourceCopy.length === 1 || (dataSourceCopy.length > 1 && index === 0)"
+                                 class="range-theme-num"
+                                 @click="$_inputClick('start')"
+                                 @change="$_inputStartChange" v-model="startData">
+                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="startNumWrong">
+                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input>
+                <mapgis-ui-input v-if="index > 0" class="range-theme-num"
+                                 @click="$_inputClick(index - 1)"
+                                 @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
+                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="(index - 1) === numWrong">
+                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input>
+              </div>
+              <div class="theme-panel-td" style="width: 3%">
+                ~
+              </div>
+              <div class="theme-panel-td theme-panel-td-input-num theme-panel-td-border-right">
+                <mapgis-ui-input class="range-theme-num"
+                                 @change="$_inputEndChange"
+                                 @click="$_inputClick(index)"
+                                 v-model="dataSourceCopy[index]"
+                                 v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
+                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
+                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input>
+                <mapgis-ui-input class="range-theme-num"
+                                 @change="$_inputEndChange"
+                                 @click="$_inputClick('end')"
+                                 v-model="endData"
+                                 v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
+                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="endNumWrong">
+                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
+                  </mapgis-ui-tooltip>
+                </mapgis-ui-input>
+              </div>
+              <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
+                <!--                  <mapgis-ui-iconfont type="mapgis-tianjiamulu" />-->
+                <img class="theme-panel-img-add" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABEZJREFUWEe1V01sVUUU/s68vtomxY2BWMVEEwNRU9/rzLxdVVi4EAjGRdlIVARd4EZAILIBE6PBqDX4kxjE/7iAhbHiT2IMGOvGzkxfjaXWhXHhT6CykSZN2r45Zl7ufbnvcu/70Xo3792ZM9/57jlnvjlD6PJxzq313t8khFgP4GZmvgbAvBDiEjNPSinnu4GkTowjp6NCiFFm3tRqDTN/BuDzYrE4XiqVfmuH35JAcMzMxwCMAljbDiw1fxnA+0T0npRyOm9tLoHJyclNQoiTAG7t0nGW+T6l1CtZE5kEjDF7iej19AIi+sp7P0tEF4hoFsCs956ZeWOhUNgYfoko/N6f4eyYUuqZqzDTA9baRwC8kxwnoovM/KxS6rVOomGM2UNEJwD0p+x3KaXebcJOvhhjRonodGrRB729vQeHhoYupp2HGgljWZVvjBkkoi8B3Jlcx8w7tNZn4rFGCpxzJWauppxkhi3YGGMOENHh8J+Zj2utX8qKjrX2KIBQyI2HiMpxYTYIWGtfBrAvYTeulMrKZd3EOXcu3pJEdF5KuTkvPc6555j56cT8mFJqf3ivE5ienl6/srISvv666IvC/r1Xa/1TC9COCQQMa60BoCK8yz09PeWgE3UC1tqDAF6InTHzg1rrj1oVXDcRiHw8DuDNBOZ+pdRYTOB7AJVo8lOl1PZWzrtNQYxljPmFiG6phz5KGznnbmfmmaz8rGYEItInmXlPjNvX1zcYCGxn5k8S4X9Ca/3G/xGBSF3PxdhCiK2BwKPMfCoe9N5vrlQq56O87SSi3Xlkkrughc0ppdSHYb5arW6o1WpzCdtdZK09BOB4PEhE64KwVKvVG2u1WpDbNe2i0Wb+SqFQuK1cLv8+MTGxpr+//++E/aFAoGkHLC4uXjsyMnIlOglDbXR7Cqb5zBPRHeGj8gg0aX84VMrl8s8BJaidEGLbf0mB9/5srJKZKZiamtrivQ9NRP1J1sBq74K8IgxNx6XELngqT9eThLoVomgbvsjMB5L1VhciY8xZItoaCcQZKeWOdoX3bwgYY+aIaEPADq2b1npbTKCpASGiLVLKL1YzBdbaJilm5rreZB5GAL5VSt29ygTyD6NIdJqOYyJqmYpuUuCcO83MobGNn+bjOCqQrhoSa+1OALFk743VLh21jhuSKApPAhhLghDR81LKI1npCGoZxoPKZc1nNCKh+B7TWr/V2AmdMA41ERFpWZgxlnPuvqgDuiuFf1gp1eg76rsui3lWZxzZfRwaKO/9N8Vi8Y+FhYU/w/jAwMDg8vLyDUKIewCUADyQwv0rHGpSyvG0v9yLSU6H3E4erppn5jlm3l2pVL7LWtzuahYK82EAD8X9YhcMFgG8WigUTuTVSG4K0k6ipjXcGULz0u5y+iMRfQ3gbaXUD+0Id3Q7ToLMzMxcv7S0JL336xJHdf16DuDC8PDwr+2cJuf/AZGKXgkO+31+AAAAAElFTkSuQmCC" alt="新增分段">
+              </div>
+              <div class="theme-panel-td theme-panel-td-delete" @click="$_deleteRange(index)">
+                <!--                  <mapgis-ui-iconfont type="mapgis-shanchu" />-->
+                <img class="theme-panel-img-add" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA7lJREFUWEfFV02MFEUU/l737GGJSIzIBXCBgwknd7qK2T2sXOCKikYhKMarJGtI9OJP5CeAF0kIG+BqFAgL/nLGi+5hd6zXs55MPAiiXgBDlkXmsNP9SE26NzU93Ts725tQSV+q3qvv66qv6n1FWGabmppaOzg4uBvAPgAviMh6InrWpovIf0R0D8AfACabzeaNsbGx+eVMTb2CmHk7EY2LyH4Az/SKT8bvE9EVEZlQSv2+VM6SBJj5BIBxAE8vEzgb9gCAJfFpUX4hAWb+GcBLKwTOpv2ilNqZN1cuAWa+C2B9NkFE5omo7ny/JhrYISK19COitTlg95RSz2X7uwgw800AW3ImuNhqtT4bGRmx44VtZmZma6VSOQ7g7ZygW0qprW5/B4EwDK+KyBuZRLsa40qpyX62g5ntaZkA0PHXRHQtCII307kWCSSC+yQDclQpdawf4GwsMx8BcDTTfzIVZpuAPWoApl21i8hNrfW2MuBprjHmTyJyl96ejlF7RNsEwjA8LyLvuWBRFNVqtVpbZGVbvV7f4ft+vWPviS4EQXCIjDHriOgvAOvSABE5rbX+sCywm2+M+YKIPnD65kRkiMIwPCgiXzkDDxcWFraPjo7+s5oEpqenNw0MDNhb8alFARK9Q8z8DYDXHbDCS6MsoZzL7VtLIARQdZZ/Qmv9flmwvHxjzFlbV5yxhtXAbSLa7BB4S2t9udFobInj2B6hd0uSuaSUal9KxpgDRHTJwfrbrsD/ANY4nUNa69vMfA7AoZLgaXr7PjHGPJ8IPu1/1EXA9/1Nw8PD/xZcICvl0yYwOzu7MYoiV9yPurbA87y91Wr1B4vEzNcB7FkpapL3ped5x6rV6q1Go/FqHMffZ7egQ4RE9HkQBB+XBM1ND8PwlIh81CFCZr6S2Ky0/yellLVeq96Y+QaAXc7Ek1YDewF85yzLfBRFL/Yqu/2ys2Xa9/3fMl7hNUrMpr2KXb93USl1sF+QpeKZ+euMR7jfbDaHCosRgP39eoAiAok3sFu92CgtRonau8oxgLtKqQ2rsQrMfCdjTDrLcULCOuAnY0jSv8xzwtaYxHG8r19vYD2A53mTGSNioTqKXZ4pLXLEp1ut1pleZdqW3UqlcjhT+9N/7HLGRba8yBk/BNAQkdnEwk0lM49Zi0VEw0llXaz5joa6HLEdK3yYFDjkFWky64Q7TkOPs/vknmaOMNPH6QHXN/ZYijkiulz6ceqCWPPqed7LIvIKgG0Fz3Nrv3+M4/i61npuOfv1GEgrvUth6rD9AAAAAElFTkSuQmCC" alt="删除分段">
+              </div>
+            </div>
+          </div>
         </mapgis-ui-row>
       </div>
     </ThemePanel>
@@ -623,6 +618,23 @@ export default {
 .range-theme-list-item {
   width: 100%;
   height: 44px;
+}
+
+.theme-panel-list{
+  border-top: 1px solid rgb(217, 217, 217);
+  border-left: 1px solid rgb(217, 217, 217);
+  border-right: 1px solid rgb(217, 217, 217);
+}
+
+.panelListFirst{
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.panelListLast{
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: 1px solid rgb(217, 217, 217);
 }
 
 /deep/ .mapgis-ui-list-bordered .mapgis-ui-list-item {
