@@ -576,7 +576,7 @@ export default {
             keyArr.push(key);
           });
           vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
-          window.originLayer[this.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
+          window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
             'id': vm.layerIdCopy + "_等级符号专题图",
             'source': vm.source_vector_Id,
             'type': 'symbol',
@@ -600,10 +600,10 @@ export default {
             },
           };
           if(vm.source_vector_layer_Id){
-            window.originLayer[this.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
+            window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
           }
           vm.title = "等级符号" + "_" + vm.layerIdCopy;
-          vm.map.addLayer(window.originLayer[this.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]);
+          vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]);
           clearInterval(interval);
         }
       },10);
