@@ -1274,7 +1274,7 @@ export default {
   top: 0;
   left: 0;
   z-index: 1000;
-  width: 300px;
+  width: 360px;
   height: calc((100vh - 64px) - 24px);
   overflow-y: scroll;
   overflow-x: hidden;

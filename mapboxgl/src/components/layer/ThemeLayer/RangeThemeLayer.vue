@@ -89,7 +89,7 @@
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                 </div>
-                <div class="theme-panel-td">
+                <div class="theme-panel-td" style="width: 3%">
                   ~
                 </div>
                 <div class="theme-panel-td theme-panel-td-input-num theme-panel-td-border-right">
@@ -112,8 +112,11 @@
                     </mapgis-ui-tooltip>
                   </mapgis-ui-input>
                 </div>
-                <div class="theme-panel-td theme-panel-td-add" @click="$_addRange(index)">
+                <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
                   <mapgis-ui-iconfont type="mapgis-tianjiamulu" />
+                </div>
+                <div class="theme-panel-td theme-panel-td-delete" @click="$_deleteRange(index)">
+                  <mapgis-ui-iconfont type="mapgis-shanchu" />
                 </div>
               </div>
             </mapgis-ui-list-item>
@@ -226,6 +229,31 @@ export default {
     this.$_removeLayer();
   },
   methods: {
+    $_deleteRange(index){
+      if(this.rangeLevel > 2){
+        this.rangeLevel--;
+        this.addRange = true;
+        if(index === 0){
+          let endData = this.dataSourceCopy.splice(index,1);
+          this.colors.splice(index,1);
+          this.checkBoxArr.splice(index,1);
+          this.$_setRangeColor(this.colors[index],this.startData,endData);
+        }else if(index === this.dataSourceCopy.length - 1){
+          this.dataSourceCopy.splice(index,1);
+          this.colors.splice(index,1);
+          this.checkBoxArr.splice(index,1);
+          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 1],this.endData);
+        }else {
+          let endData = this.dataSourceCopy.splice(index,1);
+          this.colors.splice(index,1);
+          this.checkBoxArr.splice(index,1);
+          this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],endData);
+        }
+        this.$nextTick(function () {
+          this.addRange = false;
+        });
+      }
+    },
     $_addRange(index){
       this.rangeLevel++;
       this.addRange = true;
@@ -389,8 +417,8 @@ export default {
       if(index === 0){
         startData = this.startData;
         endData = this.dataSourceCopy[index];
-      }else if(index === this.dataSourceCopy.length){
-        startData = this.dataSourceCopy[index];
+      }else if(index === this.dataSourceCopy.length - 1){
+        startData = this.dataSourceCopy[index - 1];
         endData = this.endData;
       }else {
         startData = this.dataSourceCopy[index - 1];
@@ -563,13 +591,19 @@ export default {
 }
 
 .theme-panel-td-add{
+  width: 9%;
+  cursor: pointer;
+}
+
+.theme-panel-td-delete{
+  width: 7%;
   cursor: pointer;
 }
 
 .theme-panel-color-picker .picker {
   position: absolute;
   top: 16px;
-  right: 4px;
+  right: 7px;
 }
 
 .theme-panel-color-picker .picker .colorBtn {
@@ -577,7 +611,7 @@ export default {
 }
 
 .range-theme-num {
-  width: 54px;
+  width: 64px;
 }
 
 .range-theme-list-item {
