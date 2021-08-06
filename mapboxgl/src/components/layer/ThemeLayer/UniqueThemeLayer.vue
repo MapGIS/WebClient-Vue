@@ -16,10 +16,12 @@
         :themeDefaultType="themeDefaultType"
         :themeType="themeTypeArrCopy"
         :iconUrl="iconUrl"
+        :isGradient="isGradient"
+        :isSingle="isSingle"
         @closePanel="$_closePanel"
         @change="$_selectChange"
         @checked="$_checked"
-        @gradientChange="$_gradientChange"
+        @gradientChange="$_singleChangedOut"
         @lineColorChanged="$_lineColorChanged"
         @opacityChanged="$_opacityChanged"
         @oneColorChanged="$_oneColorChanged"
@@ -103,7 +105,7 @@ export default {
           this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
@@ -126,13 +128,13 @@ export default {
           this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],this.textId,this.textLayer);
+      this.$_setLayOutProperty("text-font",[this.textFont,this.textFont],this.textId,this.textLayer);
     },
     /*
     * 多选框业务实现
@@ -193,35 +195,35 @@ export default {
       if (next) {
         switch (this.dataType) {
           case "fill":
-            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
             break;
           case "circle":
-            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
             break;
           case "line":
-            window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
             break;
         }
-        this.$_changeOriginLayer();
+        this.$_setPaintByType(newColors,true);
         this.showVector = true;
         this.changeLayerProp = true;
         this.changeLayerId = this.layerIdCopy;
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
       switch (this.dataType) {
         case "fill":
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
           break;
         case "circle":
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
           break;
         case "line":
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
           break;
       }
     },
@@ -278,7 +280,7 @@ export default {
     $_initThemeCallBack(geojson, fillColors) {
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.layerIdCopy + "_单值专题图",
           type: 'fill',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -295,7 +297,7 @@ export default {
         this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id:  this.layerIdCopy + "_单值专题图",
           type: 'circle',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -312,9 +314,28 @@ export default {
             'circle-translate': this.offset,
           }
         }
+        window.originLayer[this.layerIdCopy].panelProps = {
+          selectValue: this.fields[0],
+          gradientColor: "",
+          panelProps: {
+            "circle-opacity": this.opacity,
+            "circle-radius": this.radius,
+            "circle-translate": this.offset,
+            "circle-stroke-color": this.outerLineColor,
+            "circle-stroke-width": this.lineWidth,
+            "circle-stroke-opacity": this.outerLineOpacity,
+            "text-field": "",
+            "text-font": "",
+            "text-size": "",
+            "text-offset": "",
+            "text-letter-spacing": "",
+            "text-rotate": ""
+          },
+          checkArr: []
+        }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id:  this.layerIdCopy + "_单值专题图",
           type: 'line',
           source: this.source_vector_Id, //必须和上面的layerVectorId一致
@@ -327,9 +348,25 @@ export default {
             'line-width': this.lineWidth,
           }
         }
+        window.originLayer[this.layerIdCopy].panelProps = {
+          selectValue: this.fields[0],
+          gradientColor: "",
+          panelProps: {
+            "line-color": "",
+            "line-width": "",
+            "line-opacity": "",
+            "text-field": "",
+            "text-font": "",
+            "text-size": "",
+            "text-offset": "",
+            "text-letter-spacing": "",
+            "text-rotate": ""
+          },
+          checkArr: []
+        }
       }
       if(this.source_vector_layer_Id){
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "单值专题图" + "_" + this.layerIdCopy;
       this.$_addTextLayer();

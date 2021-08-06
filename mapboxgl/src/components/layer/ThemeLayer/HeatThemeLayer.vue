@@ -83,12 +83,13 @@ export default {
     * **/
     $_initThemeCallBack(geojson) {
       this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
+      let weightArray = this.setWeightArr(geojson,this.defaultValue);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_热力专题图";
         let colorGradient = this.getGradientColors(true);
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()] = {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
           id: this.heatMapLayerId,
           type: 'heatmap',
           source: this.source_vector_Id, //必须和上面的layerId一致
@@ -100,17 +101,7 @@ export default {
               "interpolate",
               ["linear"],
               ["get", this.defaultValue],
-              0,
-              0,
-              1,
-              0.9,
-              2,
-              0.93,
-              3,
-              0.94,
-              4.8,
-              1
-            ],
+            ].concat(weightArray),
             "heatmap-intensity": [
               "interpolate",
               ["linear"],
@@ -172,14 +163,14 @@ export default {
             // ]
           }
         }
-        if(this.source_vector_layer_Id){
-          window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
+        if (this.source_vector_layer_Id) {
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
         }
         this.extraLayer.push({
           key: "heatmapLayer",
           value: this.heatMapLayerId
         });
-        window.originLayer[this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
         this.title = "热力专题图" + "_" + this.layerIdCopy;
       }
     },
@@ -197,31 +188,30 @@ export default {
         ["linear"],
         ["heatmap-density"],
       ].concat(steps);
-      this.$_setPaintProperty("heatmap-color", colorrules, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-color", colorrules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_heatRadiusChanged(heatRadius) {
       const {heatMapLayerId} = this;
-      this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_opacityChanged(opacity) {
       const {heatMapLayerId} = this;
-      this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[heatMapLayerId]);
+      this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_selectChange(value) {
+      let geojsonOrigin = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"];
+
+      let weightArr = this.setWeightArr(geojsonOrigin,value);
       const {heatMapLayerId} = this;
       let weightRules = [
         "interpolate",
         ["linear"],
-        ["get", value],
-        0,
-        0,
-        1000,
-        1
-      ];
-      this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[heatMapLayerId]);
+        ['to-number', ["get", value]],
+      ].concat(weightArr);
+      this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     /*
@@ -333,6 +323,39 @@ export default {
         }
         return steps;
       }
+    },
+    setWeightArr(geojsonOrigin,val) {
+      let max = 0;
+      let min = undefined;
+      // let max = geojsonOrigin[0].properties[value];
+      for (let i = 0; i < geojsonOrigin.length; i++) {
+        let cur = geojsonOrigin[i].properties[val];
+        //排除字符串""
+        if (cur !== ""){
+          cur  = Number(cur);
+          cur > max ? max = cur : null;
+          if (min === undefined){
+            min = max;
+          }
+          cur < min ? min = cur : null;
+        }
+      }
+      let weightArr = [];
+      let n = 5;
+      let weightOrigin = (max-min) / n;
+      let stops = 1 / n;
+      for (let i = 0; i < n; i++) {
+        let weightNum;
+        if (i=== n-1){
+          weightNum = max;
+        } else {
+          weightNum = min + weightOrigin * i;
+        }
+        let stop = stops * i;
+        weightArr.push(weightNum);
+        weightArr.push(stop);
+      }
+      return weightArr;
     }
   }
 }
