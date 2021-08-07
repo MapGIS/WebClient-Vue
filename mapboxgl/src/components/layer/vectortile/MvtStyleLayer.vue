@@ -10,14 +10,18 @@ import { compareStyle } from "./MvtCompare";
 import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
 
 const DefaultThemeLayers = [
+  "_单值专题图",
   "_单值专题图_线",
   "_单值专题图_注记",
   "_单值专题图_符号",
+  "_分段专题图",
   "_分段专题图_线",
   "_分段专题图_注记",
   "_分段专题图_符号",
+  "_等级专题图",
   "_等级专题图_线",
   "_等级专题图_注记",
+  "_热力专题图",
   "_热力专题图_线",
   "_热力专题图_注记"
 ];
