@@ -62,6 +62,12 @@ export default {
     EventBus.$on("document-remove-theme-layer", payload => {
       this.$_handleDocumentRemoveThemeLayer(payload);
     });
+    EventBus.$on("document-show-theme-layer", payload => {
+      this.$_handleDocumentShowThemeLayer(payload);
+    });
+    EventBus.$on("document-hide-theme-layer", payload => {
+      this.$_handleDocumentHideThemeLayer(payload);
+    });
   },
   methods: {
     ...EmitEvent,
@@ -120,9 +126,25 @@ export default {
      * @param {payload} 属性表载荷
      */
     $_handleMapOpenTable(payload) {},
-
+    /**
+     * @description 文档添加专题图
+     * @param {payload} 载荷
+     */
     $_handleDocumentAddThemeLayer(payload) {},
-
-    $_handleDocumentRemoveThemeLayer(payload) {}
+    /**
+     * @description 文档删除专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentRemoveThemeLayer(payload) {},
+    /**
+     * @description 文档显示专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentShowThemeLayer(payload) {},
+    /**
+     * @description 文档隐藏专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentHideThemeLayer(payload) {}
   }
 };
