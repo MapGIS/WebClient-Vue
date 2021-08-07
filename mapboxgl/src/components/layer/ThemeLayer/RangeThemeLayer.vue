@@ -561,6 +561,11 @@ export default {
       this.title = "分段" + "_" + this.layerIdCopy;
       window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;
       this.$_addTextLayer();
+      if(this.dataType === "fill"){
+        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
+      }else {
+        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.textId];
+      }
     },
     $_editGeoJSON(geojson) {
       return geojson;

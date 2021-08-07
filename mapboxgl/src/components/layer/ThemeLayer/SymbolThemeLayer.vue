@@ -605,6 +605,7 @@ export default {
           vm.title = "等级符号" + "_" + vm.layerIdCopy;
           vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()],this.upLayer);
           window.originLayer[vm.layerIdCopy].layerOrder = [vm.layerIdCopy,vm.layerIdCopy + "_" + vm.$_getThemeName()];
+          vm.$_setLayerOrder();
           clearInterval(interval);
         }
       },10);

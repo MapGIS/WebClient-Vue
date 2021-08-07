@@ -131,15 +131,20 @@ export default {
       return this.$_getAllLayer();
     },
     $_getAllLayer(){
-      let allLayer = {};
-      Object.keys(window.originLayer).forEach(function (key) {
-        if(window.originLayer.hasOwnProperty(key)){
-          allLayer[key] = {...window.originLayer[key]};
-          allLayer[key].layerId = key;
-          delete allLayer[key][key + "_features"];
+      let allLayer = {...window.originLayer},newAllLayer = {};
+      Object.keys(allLayer).forEach(function (key) {
+        if(allLayer[key] instanceof Array){
+          newAllLayer[key] = allLayer[key];
+        }else if(allLayer[key] instanceof Object){
+          newAllLayer[key] = {};
+          Object.keys(allLayer[key]).forEach(function (layerKey) {
+            if(allLayer[key].hasOwnProperty(layerKey) && layerKey.indexOf("_features") < 0){
+              newAllLayer[key][layerKey] = allLayer[key][layerKey];
+            }
+          });
         }
       });
-      return allLayer;
+      return newAllLayer;
     },
     $_createLayerFailed(message){
       this.$emit("createLayerFailed",message);
