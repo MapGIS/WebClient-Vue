@@ -271,6 +271,7 @@ export default {
           }
         }
       }
+      this.$_setLayerOrder();
     },
     resetLayer(layerId) {
       this.$_resetLayer(layerId);
@@ -311,6 +312,7 @@ export default {
       delete window.originLayer[layerId];
       emitMapChangeStyle(this.map.getStyle());
       this.resetPanel = true;
+      this.$_setLayerOrder();
       this.$emit("resetLayer");
     },
     resetMainLayer(layerId) {
@@ -717,6 +719,7 @@ export default {
     $_mount() {
       if (!window.originLayer) {
         window.originLayer = {};
+        window.originLayer.layerOrder = [];
       }
       if (!window.originThemeData) {
         window.originThemeData = {};
@@ -778,6 +781,31 @@ export default {
         case "circle":
           this.$_setPaintProperty("circle-stroke-width", lineWidth);
           break;
+      }
+    },
+    $_setLayerOrder() {
+      window.originLayer.layerOrder = [];
+      let style = this.map.getStyle();
+      let layerIds = [];
+      Object.keys(window.originLayer).forEach(function(key) {
+        if (window.originLayer.hasOwnProperty(key) && key !== "layerOrder") {
+          Object.keys(window.originLayer[key]).forEach(function(layerId) {
+            if (
+              layerId !== "layerId" &&
+              layerId !== "layerOrder" &&
+              layerId !== "panelProps" &&
+              layerId !== "themeType"
+            ) {
+              layerIds.push(layerId);
+            }
+          });
+        }
+      });
+      for (let i = 0; i < style.layers.length; i++) {
+        let id = style.layers[i].id;
+        if (layerIds.indexOf(id) > -1) {
+          window.originLayer.layerOrder.push(id);
+        }
       }
     },
     $_selectTextChanged(value) {
@@ -1294,6 +1322,7 @@ export default {
           }
         });
         window.originLayer[this.layerIdCopy][this.layerIdCopy] = originLayer;
+        this.$_setLayerOrder();
         let paint =
           window.originLayer[this.layerIdCopy][this.layerIdCopy].paint;
         if (JSON.stringify(paint) === "{}") {
@@ -1331,12 +1360,21 @@ export default {
         window.originLayer[this.layerIdCopy][this.layerIdCopy]
       );
       if (this.themeType !== "symbol") {
-        this.map.addLayer(
-          window.originLayer[this.layerIdCopy][
-            this.layerIdCopy + "_" + this.$_getThemeName()
-          ],
-          this.lineId
-        );
+        if (this.dataType === "fill") {
+          this.map.addLayer(
+            window.originLayer[this.layerIdCopy][
+              this.layerIdCopy + "_" + this.$_getThemeName()
+            ],
+            this.lineId
+          );
+        } else {
+          this.map.addLayer(
+            window.originLayer[this.layerIdCopy][
+              this.layerIdCopy + "_" + this.$_getThemeName()
+            ],
+            this.textId
+          );
+        }
       }
       // this.$_changeOriginLayer();
       this.$_loadedLayer();
