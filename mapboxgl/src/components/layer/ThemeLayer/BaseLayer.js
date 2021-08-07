@@ -1334,7 +1334,8 @@ export default {
         this.map.addLayer(
           window.originLayer[this.layerIdCopy][
             this.layerIdCopy + "_" + this.$_getThemeName()
-          ]
+          ],
+          this.lineId
         );
       }
       // this.$_changeOriginLayer();

@@ -371,6 +371,11 @@ export default {
       }
       this.title = "单值专题图" + "_" + this.layerIdCopy;
       this.$_addTextLayer();
+      if(this.dataType === "fill"){
+        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
+      }else {
+        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.textId];
+      }
     }
   }
 }

@@ -173,6 +173,7 @@ export default {
         });
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
         this.title = "热力专题图" + "_" + this.layerIdCopy;
+        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName()];
       }
     },
 
