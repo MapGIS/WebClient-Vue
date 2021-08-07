@@ -356,9 +356,6 @@
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-row>
-          <mapgis-ui-row>
-            <p class="theme-panel-p">边线颜色</p>
-          </mapgis-ui-row>
           <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'line' || dataType === 'fill'">
 <!--            <mapgis-ui-radio-group-->
 <!--                v-model="radioMode"-->
@@ -372,7 +369,7 @@
 <!--                单体颜色-->
 <!--              </mapgis-ui-radio-button>-->
 <!--            </mapgis-ui-radio-group>-->
-            <p class="theme-panel-p">渐变颜色</p>
+            <p class="theme-panel-p">颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row v-if="dataType === 'line'">
             <mapgis-ui-select
@@ -399,7 +396,7 @@
             />
           </mapgis-ui-row>
           <mapgis-ui-row>
-            <p class="theme-panel-p">边线宽度</p>
+            <p class="theme-panel-p">宽度</p>
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-col :span="18">

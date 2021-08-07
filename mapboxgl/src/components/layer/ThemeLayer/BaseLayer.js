@@ -187,7 +187,9 @@ export default {
     },
     $_showExtraLayer(layerId) {
       let extraLayer =
-        window.originLayer[this.layerIdCopy][layerId + "_extraLayer"];
+        window.originLayer[this.layerIdCopy][
+          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+        ];
       if (extraLayer) {
         for (let i = 0; i < this.extraLayer.length; i++) {
           this.$_setLayOutProperty(
