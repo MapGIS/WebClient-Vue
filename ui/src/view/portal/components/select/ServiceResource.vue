@@ -18,18 +18,18 @@
             <mapgis-ui-select-option value="2">
               动态裁图
             </mapgis-ui-select-option>
-            <mapgis-ui-select-option value="3">
+            <!-- <mapgis-ui-select-option value="3">
               二维文档服务
-            </mapgis-ui-select-option>
+            </mapgis-ui-select-option> -->
             <mapgis-ui-select-option value="5">
               瓦片服务
             </mapgis-ui-select-option>
           </mapgis-ui-select-opt-group>
           <mapgis-ui-select-opt-group>
             <span slot="label">其他服务</span>
-            <mapgis-ui-select-option value="8">
+            <!-- <mapgis-ui-select-option value="8">
               WMS服务
-            </mapgis-ui-select-option>
+            </mapgis-ui-select-option> -->
             <mapgis-ui-select-option value="10">
               WMTS服务
             </mapgis-ui-select-option>

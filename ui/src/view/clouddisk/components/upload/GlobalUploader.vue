@@ -311,17 +311,17 @@ export default {
       }
 
       return this.param;
-    },
-    visible() {
-      if (this.$refs.uploadDiv) {
-        if (this.visible) {
-          document.getElementById("global-uploader").style.zIndex = 100;
-        } else {
-          document.getElementById("global-uploader").style.zIndex = -100;
-        }
-      }
-      return this.visible;
     }
+    // visible() {
+    //   if (this.$refs.uploadDiv) {
+    //     if (this.visible) {
+    //       document.getElementById("global-uploader").style.zIndex = 100;
+    //     } else {
+    //       document.getElementById("global-uploader").style.zIndex = -100;
+    //     }
+    //   }
+    //   return this.visible;
+    // }
   },
   methods: {
     updatePrecess() {

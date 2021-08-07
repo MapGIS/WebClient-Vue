@@ -184,7 +184,7 @@ export default {
         } else { // GeoJSON
           let metaPath = null
           if (hasVector && dataSource) { // 每个图层都有各自的边界、中心点
-            path = getNewVectorUrl(dataSource, true, 4326, this.GjsonSize)
+            path = getNewVectorUrl(dataSource, true, 4326, 30000)
           } else if (!hasVector && tileDataPath) { // 镶嵌数据集
             // path = getTileUrl(storeServiceUrl, tileDataPath)
             if (layer.type === FileType.TIF || layer.type === FileType.TIFF) {

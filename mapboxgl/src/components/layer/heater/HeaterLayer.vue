@@ -21,13 +21,37 @@ export default {
       type: Number,
       default: 16
     },
+    heaterColor: {
+      type: [String, Array],
+      default: () => {
+        return [
+          "interpolate",
+          ["linear"],
+          ["heatmap-density"],
+          0,
+          "rgba(139, 246, 106, 0)",
+          0.1,
+          "rgba(139, 246, 106, 0.6)",
+          0.2,
+          "rgb(103,169,207)",
+          0.4,
+          "rgb(209,229,240)",
+          0.6,
+          "rgb(253,219,199)",
+          0.8,
+          "rgb(239,138,98)",
+          1,
+          "rgb(178,24,43)"
+        ];
+      }
+    },
     min: {
       type: Number,
       default: 0
     },
     max: {
       type: Number,
-      default: 100
+      default: 1000
     }
   },
   data() {
@@ -38,12 +62,29 @@ export default {
   mounted() {
     this.$_deferredMount();
   },
+  watch: {
+    geojson: {
+      handler(next) {
+        this.updateData(next);
+      },
+      deep: true
+    }
+  },
   beforeDestroy() {
     this.$_undeferredMount();
   },
   methods: {
     $_deferredMount() {
-      let { geojson, field, min, max, id, heaterRadius } = this;
+      let {
+        geojson,
+        field,
+        min,
+        max,
+        id,
+        heaterRadius,
+        heaterColor,
+        map
+      } = this;
       let source = {
         type: "geojson",
         data: geojson
@@ -64,7 +105,7 @@ export default {
             max,
             1
           ],
-          "heatmap-intensity": [
+          /* "heatmap-intensity": [
             "interpolate",
             ["linear"],
             ["zoom"],
@@ -74,26 +115,8 @@ export default {
             3,
             16,
             6
-          ],
-          "heatmap-color": [
-            "interpolate",
-            ["linear"],
-            ["heatmap-density"],
-            0,
-            "rgba(139, 246, 106, 0)",
-            0.1,
-            "rgba(139, 246, 106, 0.6)",
-            0.2,
-            "rgb(103,169,207)",
-            0.4,
-            "rgb(209,229,240)",
-            0.6,
-            "rgb(253,219,199)",
-            0.8,
-            "rgb(239,138,98)",
-            1,
-            "rgb(178,24,43)"
-          ],
+          ], */
+          "heatmap-color": heaterColor,
           "heatmap-radius": [
             "interpolate",
             ["linear"],
@@ -114,9 +137,9 @@ export default {
             7,
             1,
             9,
-            0.6,
+            0.9,
             20,
-            0
+            0.6
           ]
         }
       });
@@ -126,6 +149,10 @@ export default {
       let { map, id } = this;
       map.removeLayer(id);
       map.removeSource(id);
+    },
+    updateData(geojson) {
+      let { map, id } = this;
+      map.getSource(id).setData(geojson);
     }
   }
 };

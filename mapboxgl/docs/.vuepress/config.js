@@ -179,6 +179,7 @@ module.exports = {
               ["/api/Layers/Heater/heater.md", "热力"],
               ["/api/Layers/Building/building.md", "建筑白膜"],
               ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
+              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
 
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],

@@ -47,7 +47,7 @@ export default {
       default: () => {
         return {
           "circle-color": "#000000",
-          "circle-radius": 6,
+          "circle-radius": 10,
           "circle-stroke-width": 1,
           "circle-stroke-color": "#fff"
         };
@@ -77,6 +77,12 @@ export default {
   watch: {
     coordinates: {
       handler(next) {},
+      deep: true
+    },
+    geojson: {
+      handler(next) {
+        this.updateData(next);
+      },
       deep: true
     }
   },
@@ -177,7 +183,7 @@ export default {
       let { map, id } = this;
       let uncluster_circle = id + "_uncluster_circle";
       // let uncluster_icon = id + "_uncluster_icon";
-      map.on("click", uncluster_circle, function(e) {
+      map.on("mouseenter", uncluster_circle, function(e) {
         if (!e.features || e.features.length <= 0) return;
         var coordinates = e.features[0].geometry.coordinates.slice();
         var properties = e.features[0].properties;
@@ -186,8 +192,6 @@ export default {
           coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
         }
 
-        /* let feature = e.features[0];
-        feature.coordinates = coordinates; */
         vm.coordinates = coordinates;
         vm.properties = properties;
 
@@ -204,7 +208,7 @@ export default {
     $_unbindEvent() {
       let { map, id } = this;
       let uncluster_circle = id + "_uncluster_circle";
-      map.off("click", uncluster_circle, function(e) {});
+      map.off("mouseenter", uncluster_circle, function(e) {});
     },
     updatePopup() {
       const { map, mapbox, coordinates } = this;
@@ -217,6 +221,10 @@ export default {
           .setDOMContent(this.$slots.default[0].elm)
           .addTo(map);
       }
+    },
+    updateData(geojson) {
+      let { map, id } = this;
+      map.getSource(id).setData(geojson);
     }
   }
 };
