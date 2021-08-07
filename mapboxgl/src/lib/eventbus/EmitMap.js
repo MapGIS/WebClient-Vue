@@ -60,6 +60,10 @@ export const emitDocumentAddThemeLayer = payload => {
   EventBus.$emit("document-add-theme-layer", payload);
 };
 
+export const emitDocumentEditThemeLayer = payload => {
+  EventBus.$emit("document-edit-theme-layer", payload);
+};
+
 export const emitDocumentShowThemeLayer = payload => {
   EventBus.$emit("document-show-theme-layer", payload);
 };
@@ -88,6 +92,7 @@ export default {
   emitMapAddThemeLayer,
   emitMapRemoveThemeLayer,
   emitDocumentAddThemeLayer,
+  emitDocumentEditThemeLayer,
   emitDocumentRemoveThemeLayer,
   emitDocumentShowThemeLayer,
   emitDocumentHideThemeLayer,

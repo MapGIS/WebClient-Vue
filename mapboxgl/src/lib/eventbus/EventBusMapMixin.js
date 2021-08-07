@@ -59,6 +59,9 @@ export default {
     EventBus.$on("document-add-theme-layer", payload => {
       this.$_handleDocumentAddThemeLayer(payload);
     });
+    EventBus.$on("document-edit-theme-layer", payload => {
+      this.$_handleDocumentEditThemeLayer(payload);
+    });
     EventBus.$on("document-remove-theme-layer", payload => {
       this.$_handleDocumentRemoveThemeLayer(payload);
     });
@@ -134,6 +137,11 @@ export default {
      * @param {payload} 载荷
      */
     $_handleDocumentAddThemeLayer(payload) {},
+    /**
+     * @description 文档编辑专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentEditThemeLayer(payload) {},
     /**
      * @description 文档删除专题图
      * @param {payload} 载荷
