@@ -204,7 +204,9 @@ export default {
     },
     $_showExtraLayer(layerId) {
       let extraLayer =
-        window.originLayer[this.layerIdCopy][layerId + "_extraLayer"];
+        window.originLayer[this.layerIdCopy][
+          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+        ];
       if (extraLayer) {
         for (let i = 0; i < this.extraLayer.length; i++) {
           this.$_setLayOutProperty(
@@ -224,8 +226,10 @@ export default {
         ]
       );
     },
-    addThemeLayer(layerId, addLayer) {
-      this.$_addThemeLayer(layerId, addLayer);
+    addThemeLayer(layerId, addLayer, minzoom, maxzoom) {
+      minzoom = minzoom || 0;
+      maxzoom = maxzoom || 24;
+      this.$_addThemeLayer(layerId, addLayer, minzoom, maxzoom);
     },
     $_addLayer(layerId, newId) {
       newId = newId || layerId;
@@ -234,7 +238,7 @@ export default {
         this.map.addLayer(window.originLayer[this.layerIdCopy][newId]);
       }
     },
-    $_addThemeLayer(layerId, addLayer) {
+    $_addThemeLayer(layerId, addLayer, minzoom, maxzoom) {
       this.resetPanel = false;
       this.layerIdCopy = layerId;
       this.showPanel = true;
@@ -247,7 +251,7 @@ export default {
         (!window.originLayer[this.layerIdCopy].hasOwnProperty(themeId) ||
           !window.originLayer[this.layerIdCopy][themeId])
       ) {
-        this.$_getFromSource(layerId);
+        this.$_getFromSource(layerId, minzoom, maxzoom);
       } else {
         if (this.themeType === "symbol") {
           this.$_setLayOutProperty(
@@ -328,13 +332,7 @@ export default {
     deleteExtraLayer(layerId) {
       this.$_deleteExtraLayer(layerId);
     },
-    $_resetMainLayer(layerId) {
-      // this.$_setLayOutProperty(
-      //   "visibility",
-      //   "visible",
-      //   layerId,
-      //   window.originLayer[layerId][layerId]
-      // );
+    $_showLayerByOpacity() {
       switch (this.dataType) {
         case "fill":
           this.$_setPaintProperty(
@@ -373,6 +371,15 @@ export default {
           );
           break;
       }
+    },
+    $_resetMainLayer(layerId) {
+      // this.$_setLayOutProperty(
+      //   "visibility",
+      //   "visible",
+      //   layerId,
+      //   window.originLayer[layerId][layerId]
+      // );
+      this.$_showLayerByOpacity();
       delete window.originLayer[layerId];
       emitMapChangeStyle(this.map.getStyle());
       this.resetPanel = true;
@@ -1263,7 +1270,7 @@ export default {
       }
       this.$emit("hasNullProperty", fields);
     },
-    $_getFromSource(layerId) {
+    $_getFromSource(layerId, minzoom, maxzoom) {
       let features;
       if (
         !window.originLayer[this.layerIdCopy].hasOwnProperty(
@@ -1303,7 +1310,13 @@ export default {
         });
       }
       if (!nullProperties) {
-        this.$_initTheme(featureCollection);
+        this.$_initTheme(
+          featureCollection,
+          undefined,
+          undefined,
+          minzoom,
+          maxzoom
+        );
       } else {
         this.$emit("createLayerFailed", {
           message: "专题图",
@@ -1325,7 +1338,7 @@ export default {
         }
       );
     },
-    $_initTheme(geojson, startColor, endColor) {
+    $_initTheme(geojson, startColor, endColor, minzoom, maxzoom) {
       this.extraLayer = [];
       this.upLayer = this.$_getUpLayer();
       if (this.$_editGeoJSON) {
@@ -1369,7 +1382,13 @@ export default {
       );
       this.checkBoxArr = this.originColors.checkArr;
       if (this.$_initThemeCallBack) {
-        this.$_initThemeCallBack(geojson, colors, this.dataSource);
+        this.$_initThemeCallBack(
+          geojson,
+          colors,
+          this.dataSource,
+          minzoom,
+          maxzoom
+        );
       } else {
         throw new Error("请设置$_initTheme方法的回到函数！");
       }
@@ -1991,7 +2010,7 @@ export default {
       }
       return theme;
     },
-    $_addLineLayer() {
+    $_addLineLayer(minzoom, maxzoom) {
       switch (this.themeType) {
         case "unique":
           this.lineId = this.layerIdCopy + "_单值专题图_线";
@@ -2018,7 +2037,9 @@ export default {
             "line-opacity": this.outerLineOpacity, //透明度
             "line-width": this.lineWidth
           },
-          layout: {}
+          layout: {},
+          minzoom: minzoom,
+          maxzoom: maxzoom
         };
         if (this.source_vector_layer_Id) {
           this.lineLayer["source-layer"] = this.source_vector_layer_Id;
@@ -2031,7 +2052,7 @@ export default {
         this.lineLayer = this.$_getLayerStyle(this.lineId);
       }
     },
-    $_addTextLayer() {
+    $_addTextLayer(minzoom, maxzoom) {
       if (!this.textFont) {
         this.textFont = this.textFonts[0];
       }
@@ -2068,7 +2089,9 @@ export default {
             "text-color": this.fontColor,
             "text-halo-color": this.haloColor,
             "text-halo-width": this.haloWidth
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         };
         if (this.source_vector_layer_Id) {
           this.textLayer["source-layer"] = this.source_vector_layer_Id;

@@ -82,7 +82,7 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson) {
+    $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
       this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
       let weightArray = this.setWeightArr(geojson,this.defaultValue);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
@@ -119,49 +119,10 @@ export default {
               0,
               "rgba(255,255,255,0)",
             ].concat(colorGradient),
-            // Adjust the heatmap radius by zoom level
-            "heatmap-radius": this.heatMapRadius
-            //     [
-            //   "interpolate",
-            //   ["linear"],
-            //   ["zoom"],
-            //   0,
-            //   2,
-            //   1,
-            //   4,
-            //   2,
-            //   8,
-            //   3,
-            //   16,
-            //   4,
-            //   32,
-            //   5,
-            //   64,
-            //   6,
-            //   128,
-            //   7,
-            //   256,
-            //   8,
-            //   512,
-            //   9,
-            //   1024,
-            //   10,
-            //   2048,
-            //   11,
-            //   4096
-            // ]
-            ,
-            // Transition from heatmap to circle layer by zoom level
-            "heatmap-opacity": this.opacity
-            //     [
-            //   "interpolate",
-            //   ["linear"],
-            //   ["zoom"],
-            //   5,
-            //   0.95,
-            //   6,
-            //   0
-            // ]
+            "heatmap-radius": this.heatMapRadius,
+            "heatmap-opacity": this.opacity,
+            minzoom: minzoom,
+            maxzoom: maxzoom
           }
         }
         if (this.source_vector_layer_Id) {

@@ -278,7 +278,7 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors) {
+    $_initThemeCallBack(geojson, fillColors,data,minzoom,maxzoom) {
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
@@ -293,9 +293,11 @@ export default {
             'fill-color': fillColors, //颜色
             'fill-opacity': this.opacity, //透明度
             'fill-outline-color': '#fff' //边线颜色，没错,确实没有边线宽度这个选项
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
-        this.$_addLineLayer();
+        this.$_addLineLayer(minzoom,maxzoom);
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
@@ -313,7 +315,9 @@ export default {
             'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
             'circle-stroke-width': this.lineWidth,
             'circle-translate': this.offset,
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
         window.originLayer[this.layerIdCopy].panelProps = {
           selectValue: this.fields[0],
@@ -347,7 +351,9 @@ export default {
             'line-color': fillColors, //颜色
             'line-opacity': this.opacity, //透明度
             'line-width': this.lineWidth,
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
         window.originLayer[this.layerIdCopy].panelProps = {
           selectValue: this.fields[0],
@@ -370,7 +376,7 @@ export default {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "单值专题图" + "_" + this.layerIdCopy;
-      this.$_addTextLayer();
+      this.$_addTextLayer(minzoom,maxzoom);
       if(this.dataType === "fill"){
         window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
       }else {

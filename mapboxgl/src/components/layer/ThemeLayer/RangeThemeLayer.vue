@@ -493,7 +493,7 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors, dataSource) {
+    $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
       let dataSourceCopy = [];
       for (let i = 0; i < dataSource.length; i++) {
         dataSourceCopy.push(dataSource[i]);
@@ -517,9 +517,11 @@ export default {
             'fill-color': fillColors, //颜色
             'fill-opacity': this.opacity, //透明度
             'fill-outline-color': '#fff', //边线颜色，没错,确实没有边线宽度这个选项
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
-        this.$_addLineLayer();
+        this.$_addLineLayer(minzoom,maxzoom);
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
@@ -537,7 +539,9 @@ export default {
             'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
             'circle-stroke-width': this.lineWidth,
             'circle-translate': this.offset,
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
@@ -552,7 +556,9 @@ export default {
             'line-color': fillColors, //颜色
             'line-opacity': this.opacity, //透明度
             'line-width': this.lineWidth,
-          }
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
       }
       if (this.source_vector_layer_Id) {
@@ -560,7 +566,7 @@ export default {
       }
       this.title = "分段" + "_" + this.layerIdCopy;
       window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;
-      this.$_addTextLayer();
+      this.$_addTextLayer(minzoom,maxzoom);
       if(this.dataType === "fill"){
         window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
       }else {

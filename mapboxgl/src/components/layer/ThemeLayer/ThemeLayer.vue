@@ -125,7 +125,7 @@ export default {
     },
     $_setAllLayer(allLayer) {
       window.originLayer[this.layerIdCopy] = {...window.originLayer[this.layerIdCopy], ...allLayer};
-      this.addThemeLayer(window.originLayer[this.layerIdCopy].themeType, window.originLayer[this.layerIdCopy].layerId, true);
+      this.addThemeLayer(window.originLayer[this.layerIdCopy].themeType, window.originLayer[this.layerIdCopy].layerId);
     },
     getAllLayer() {
       return this.$_getAllLayer();
@@ -182,7 +182,7 @@ export default {
       this.uniqueLayer.resetMainLayer(layerId);
       this.showPanelFlag = false;
     },
-    addThemeLayer(type, layerId, addLayer) {
+    addThemeLayer(type, layerId,minzoom,maxzoom) {
       let hasPanel = false;
       for (let i = 0; i < this.panels.length; i++) {
         if (this.panels[i] === layerId) {
@@ -230,25 +230,25 @@ export default {
           this.themeDefaultType = "等级符号专题图";
           break;
       }
-      this.$_addThemeLayer(type, layerId, addLayer);
+      this.$_addThemeLayer(type, layerId,minzoom,maxzoom);
     },
-    $_addThemeLayer(type, layerId, addLayer) {
+    $_addThemeLayer(type, layerId,minzoom,maxzoom) {
       let vm = this;
       setTimeout(function () {
         vm.layerId = layerId;
         vm.showPanelFlag = true;
         switch (type) {
           case "unique":
-            vm.uniqueLayer.addThemeLayer(layerId, addLayer);
+            vm.uniqueLayer.addThemeLayer(layerId,minzoom,maxzoom);
             break;
           case "symbol":
-            vm.symbolLayer.addThemeLayer(layerId, addLayer);
+            vm.symbolLayer.addThemeLayer(layerId,minzoom,maxzoom);
             break;
           case "range":
-            vm.rangeLayer.addThemeLayer(layerId, addLayer);
+            vm.rangeLayer.addThemeLayer(layerId,minzoom,maxzoom);
             break;
           case "heatmap":
-            vm.heatmapLayer.addThemeLayer(layerId, addLayer);
+            vm.heatmapLayer.addThemeLayer(layerId,minzoom,maxzoom);
             break;
         }
         vm.showType = type;

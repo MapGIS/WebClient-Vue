@@ -558,7 +558,7 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors, dataSource) {
+    $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
       let dataSourceCopy = [];
       for (let i = 0; i < dataSource.length; i++) {
         dataSourceCopy.push(dataSource[i]);
@@ -598,6 +598,8 @@ export default {
               "text-halo-color": vm.haloColor,
               "text-halo-width": vm.haloWidth
             },
+            minzoom: minzoom,
+            maxzoom: maxzoom
           };
           if(vm.source_vector_layer_Id){
             window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
