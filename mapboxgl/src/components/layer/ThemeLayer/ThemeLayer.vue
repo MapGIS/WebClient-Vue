@@ -139,7 +139,12 @@ export default {
           newAllLayer[key] = {};
           Object.keys(allLayer[key]).forEach(function (layerKey) {
             if (allLayer[key].hasOwnProperty(layerKey) && layerKey.indexOf("_features") < 0) {
-              newAllLayer[key][layerKey] = allLayer[key][layerKey];
+              newAllLayer[key][layerKey] = {};
+              Object.keys(allLayer[key][layerKey]).forEach(function (paintKey) {
+                if(paintKey.indexOf("_") < 0){
+                  newAllLayer[key][layerKey][paintKey] = newAllLayer[key][layerKey][paintKey];
+                }
+              });
             }
           });
         }
@@ -262,7 +267,6 @@ export default {
       this.heatmapLayer = heatmapLayer;
     },
     $_closeAllPanel() {
-      this.hideCurrentLayer();
       this.showPanelFlag = false;
       this.$emit("closePanel", this.layerId)
     },
