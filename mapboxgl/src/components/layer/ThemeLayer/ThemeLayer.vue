@@ -79,7 +79,7 @@ import HeatThemeLayer from "./HeatThemeLayer.vue";
 
 export default {
   name: "mapgis-igs-theme-layer",
-  components: {UniqueThemeLayer, RangeThemeLayer, SymbolThemeLayer,HeatThemeLayer},
+  components: {UniqueThemeLayer, RangeThemeLayer, SymbolThemeLayer, HeatThemeLayer},
   inject: ["map"],
   data() {
     return {
@@ -101,7 +101,7 @@ export default {
   props: {
     icons: {
       type: Array,
-      default(){
+      default() {
         return []
       }
     },
@@ -116,29 +116,29 @@ export default {
     }
   },
   mounted() {
-    this.$emit("loaded",this);
+    this.$emit("loaded", this);
     this.iconUrlCopy = this.map.getStyle().sprite;
   },
   methods: {
-    setAllLayer(allLayer){
+    setAllLayer(allLayer) {
       this.$_setAllLayer(allLayer);
     },
-    $_setAllLayer(allLayer){
-      window.originLayer[this.layerIdCopy] = {...window.originLayer[this.layerIdCopy],...allLayer};
-      this.addThemeLayer(window.originLayer[this.layerIdCopy].themeType,window.originLayer[this.layerIdCopy].layerId,true);
+    $_setAllLayer(allLayer) {
+      window.originLayer[this.layerIdCopy] = {...window.originLayer[this.layerIdCopy], ...allLayer};
+      this.addThemeLayer(window.originLayer[this.layerIdCopy].themeType, window.originLayer[this.layerIdCopy].layerId, true);
     },
-    getAllLayer(){
+    getAllLayer() {
       return this.$_getAllLayer();
     },
-    $_getAllLayer(){
-      let allLayer = {...window.originLayer},newAllLayer = {};
+    $_getAllLayer() {
+      let allLayer = {...window.originLayer}, newAllLayer = {};
       Object.keys(allLayer).forEach(function (key) {
-        if(allLayer[key] instanceof Array){
+        if (allLayer[key] instanceof Array) {
           newAllLayer[key] = allLayer[key];
-        }else if(allLayer[key] instanceof Object){
+        } else if (allLayer[key] instanceof Object) {
           newAllLayer[key] = {};
           Object.keys(allLayer[key]).forEach(function (layerKey) {
-            if(allLayer[key].hasOwnProperty(layerKey) && layerKey.indexOf("_features") < 0){
+            if (allLayer[key].hasOwnProperty(layerKey) && layerKey.indexOf("_features") < 0) {
               newAllLayer[key][layerKey] = allLayer[key][layerKey];
             }
           });
@@ -146,16 +146,16 @@ export default {
       });
       return newAllLayer;
     },
-    $_createLayerFailed(message){
-      this.$emit("createLayerFailed",message);
+    $_createLayerFailed(message) {
+      this.$emit("createLayerFailed", message);
     },
-    $_hasNullProperty(fields){
-      this.$emit("hasNullProperty",fields);
+    $_hasNullProperty(fields) {
+      this.$emit("hasNullProperty", fields);
     },
-    $_resetAllLayer(){
+    $_resetAllLayer() {
       this.hideLayer(this.layerId);
     },
-    hideLayer(layerId){
+    hideLayer(layerId) {
       this.uniqueLayer.hideExtraLayer(layerId);
       this.symbolLayer.hideExtraLayer(layerId);
       this.rangeLayer.hideExtraLayer(layerId);
@@ -163,7 +163,13 @@ export default {
       this.uniqueLayer.resetMainLayer(layerId);
       this.showPanelFlag = false;
     },
-    resetLayer(layerId){
+    hideCurrentLayer(layerId) {
+      this[window._workspace._layerTypes[layerId] + "Layer"].hideExtraLayer(layerId);
+    },
+    showCurrentLayer(layerId) {
+      this[window._workspace._layerTypes[layerId] + "Layer"].showExtraLayer(layerId);
+    },
+    resetLayer(layerId) {
       this.uniqueLayer.deleteExtraLayer(layerId);
       this.symbolLayer.deleteExtraLayer(layerId);
       this.rangeLayer.deleteExtraLayer(layerId);
@@ -171,18 +177,18 @@ export default {
       this.uniqueLayer.resetMainLayer(layerId);
       this.showPanelFlag = false;
     },
-    addThemeLayer(type, layerId,addLayer){
+    addThemeLayer(type, layerId, addLayer) {
       let hasPanel = false;
-      for (let i = 0;i < this.panels.length;i++){
-        if(this.panels[i] === layerId){
+      for (let i = 0; i < this.panels.length; i++) {
+        if (this.panels[i] === layerId) {
           hasPanel = true;
         }
       }
-      if(!hasPanel){
+      if (!hasPanel) {
         this.panels.push(layerId);
       }
       let features = this.map.queryRenderedFeatures({layers: [layerId]});
-      if(features.length > 0 && features[0].geometry.type !== "Point"){
+      if (features.length > 0 && features[0].geometry.type !== "Point") {
         this.themeType = [{
           key: "unique",
           value: "单值专题图"
@@ -190,7 +196,7 @@ export default {
           key: "range",
           value: "分段专题图"
         }]
-      }else {
+      } else {
         this.themeType = [{
           key: "unique",
           value: "单值专题图"
@@ -219,29 +225,29 @@ export default {
           this.themeDefaultType = "等级符号专题图";
           break;
       }
-      this.$_addThemeLayer(type, layerId,addLayer);
+      this.$_addThemeLayer(type, layerId, addLayer);
     },
-    $_addThemeLayer(type, layerId,addLayer) {
+    $_addThemeLayer(type, layerId, addLayer) {
       let vm = this;
       setTimeout(function () {
         vm.layerId = layerId;
         vm.showPanelFlag = true;
         switch (type) {
           case "unique":
-            vm.uniqueLayer.addThemeLayer(layerId,addLayer);
+            vm.uniqueLayer.addThemeLayer(layerId, addLayer);
             break;
           case "symbol":
-            vm.symbolLayer.addThemeLayer(layerId,addLayer);
+            vm.symbolLayer.addThemeLayer(layerId, addLayer);
             break;
           case "range":
-            vm.rangeLayer.addThemeLayer(layerId,addLayer);
+            vm.rangeLayer.addThemeLayer(layerId, addLayer);
             break;
           case "heatmap":
-            vm.heatmapLayer.addThemeLayer(layerId,addLayer);
+            vm.heatmapLayer.addThemeLayer(layerId, addLayer);
             break;
         }
         vm.showType = type;
-      },300)
+      }, 300)
     },
     $_uniqueLoaded(uniqueLayer) {
       this.uniqueLayer = uniqueLayer;
@@ -252,27 +258,28 @@ export default {
     $_rangeLoaded(rangeLayer) {
       this.rangeLayer = rangeLayer;
     },
-    $_heatLoaded(heatmapLayer){
+    $_heatLoaded(heatmapLayer) {
       this.heatmapLayer = heatmapLayer;
     },
-    $_closeAllPanel(){
+    $_closeAllPanel() {
+      this.hideCurrentLayer();
       this.showPanelFlag = false;
-      this.$emit("closePanel",this.layerId)
+      this.$emit("closePanel", this.layerId)
     },
-    closePanel(){
+    closePanel() {
       this.$_closeAllPanel();
     },
     $_showPanel() {
       this.showPanelFlag = true;
-      this.$emit("showPanel",this.layerId)
+      this.$emit("showPanel", this.layerId)
     },
-    showPanel(){
+    showPanel() {
       this.$_showPanel();
     },
-    $_themeTypeChanged(key,value){
+    $_themeTypeChanged(key, value) {
       this.themeDefaultType = value;
       this[this.showType + "Layer"].hideExtraLayer(this.layerId);
-      this.$_addThemeLayer(key,this.layerId);
+      this.$_addThemeLayer(key, this.layerId);
       this[this.showType + "Layer"].showExtraLayer(this.layerId);
     }
   }

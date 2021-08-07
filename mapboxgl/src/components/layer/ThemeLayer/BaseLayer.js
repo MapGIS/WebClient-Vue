@@ -197,6 +197,14 @@ export default {
           );
         }
       }
+      this.$_setLayOutProperty(
+        "visibility",
+        "visible",
+        layerId + "_" + this.$_getThemeName(),
+        window.originLayer[this.layerIdCopy][
+          layerId + "_" + this.$_getThemeName()
+        ]
+      );
     },
     addThemeLayer(layerId, addLayer) {
       this.$_addThemeLayer(layerId, addLayer);
@@ -1376,6 +1384,11 @@ export default {
           );
         }
       }
+      if (!window._workspace) {
+        window._workspace = {};
+        window._workspace._layerTypes = {};
+      }
+      window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
       // this.$_changeOriginLayer();
       this.$_loadedLayer();
       // this.$nextTick(function () {
@@ -1507,6 +1520,7 @@ export default {
       }
     },
     $_themeTypeChanged(key, value) {
+      window._workspace._layerTypes[this.layerIdCopy] = key;
       this.$emit("themeTypeChanged", key, value);
     },
     $_removeIcon() {
