@@ -5,7 +5,7 @@
       <!--标题-->
       <mapgis-ui-row>
         <mapgis-ui-col :span="24" class="theme-panel-type theme-panel-type-title">
-          <p class="theme-panel-title">{{ title }}</p>
+          <p class="theme-panel-title" :title="title">{{ title }}</p>
           <p class="theme-panel-title-close" @click="$_close">X</p>
         </mapgis-ui-col>
       </mapgis-ui-row>
@@ -1409,6 +1409,10 @@ export default {
 
 .theme-panel-title {
   display: inline-block;
+  width: 313px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .theme-panel-title-close {
