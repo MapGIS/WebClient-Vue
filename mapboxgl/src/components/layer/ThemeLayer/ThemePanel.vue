@@ -181,7 +181,7 @@
 <!--                单体颜色-->
 <!--              </mapgis-ui-radio-button>-->
 <!--            </mapgis-ui-radio-group>-->
-            <p class="theme-panel-p">渐变颜色</p>
+            <p class="theme-panel-p" style="margin-bottom: 7px">渐变颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row
               v-if="dataType !== 'line' && dataType !== 'symbol'"
@@ -1274,7 +1274,7 @@ export default {
   top: 0;
   left: 0;
   z-index: 1000;
-  width: 300px;
+  width: 360px;
   height: calc((100vh - 64px) - 24px);
   overflow-y: scroll;
   overflow-x: hidden;
@@ -1363,9 +1363,9 @@ export default {
 }
 
 .theme-panel-gradient {
-  width: 202px;
+  width: 274px;
   height: 15px;
-  margin: 8px 0px 0;
+  margin: 8px 0 0;
   border-radius: 3px;
 }
 
@@ -1378,18 +1378,18 @@ export default {
 }
 
 .theme-panel-slider {
-  width: 168px;
+  width: 241px;
   margin-left: 7px;
 }
 
 .theme-panel-input-number {
   width: 47px;
-  margin-left: 0;
+  margin-left: 32px;
   margin-top: 5px;
 }
 
 /deep/ .theme-panel-line-color .colorBtn {
-  width: 242px !important;
+  width: 310px !important;
   height: 30px !important;
   margin-left: 3px;
   border-radius: 3px;
@@ -1398,7 +1398,7 @@ export default {
 
 .theme-panel-type-title {
   border-bottom: 1px solid rgb(228, 228, 228);
-  width: 315px;
+  width: 370px;
   height: 26px;
   margin-left: -19px;
   margin-top: -9px;
@@ -1428,7 +1428,7 @@ export default {
 }
 
 .theme-panel-select {
-  width: 242px;
+  width: 313px;
   margin: 7px 0;
 }
 
@@ -1530,5 +1530,9 @@ export default {
   border-top: 5px solid black;
   margin-right: 2%;
   display: inline-block;
+}
+.theme-panel-input-radius{
+  width: 305px;
+  margin-left: 7px;
 }
 </style>

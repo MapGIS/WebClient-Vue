@@ -41,8 +41,11 @@
         <mapgis-ui-input
           :style="{ width: '200px' }"
           :value="layerTitle"
-          @change="handleRename"
+          @change="handleNameChange"
         />
+        <mapgis-ui-button type="primary" @click="handleRename"
+          >确认
+        </mapgis-ui-button>
       </contextmenu-item>
     </contextmenu-submenu>
     <contextmenu-item divider />
@@ -99,13 +102,16 @@ export default {
         this.$emit("onDelete", { layerId });
       }
     },
-    handleRename(event) {
+    handleNameChange(event) {
       let name = event.target.value;
-      let { layerId } = this;
-      this.$emit("onRename", { id: layerId, name });
+      this.layerTitle = name;
+    },
+    handleRename() {
+      let { layerId, layerTitle } = this;
+      this.$emit("onRename", { id: layerId, name: layerTitle });
     },
     handleClick(type) {
-      const {layerId} = this;
+      const { layerId } = this;
       switch (type) {
         case "edit":
           this.$emit("onEdit", { type, layerId });
@@ -127,7 +133,7 @@ export default {
           break;
         case "make-symbol":
           this.$emit("onMakeSymbol", { type, layerId });
-          console.log('send-make-symbol');
+          console.log("send-make-symbol");
           break;
         case "open-table":
           this.$emit("onOpenTable", { type, layerId });
