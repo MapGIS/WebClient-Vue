@@ -68,6 +68,9 @@ export default {
     EventBus.$on("document-hide-theme-layer", payload => {
       this.$_handleDocumentHideThemeLayer(payload);
     });
+    EventBus.$on("document-save-theme-layer", payload => {
+      this.$_handleDocumentSaveThemeLayer(payload);
+    });
   },
   methods: {
     ...EmitEvent,
@@ -145,6 +148,11 @@ export default {
      * @description 文档隐藏专题图
      * @param {payload} 载荷
      */
-    $_handleDocumentHideThemeLayer(payload) {}
+    $_handleDocumentHideThemeLayer(payload) {},
+    /**
+     * @description 文档保存专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentSaveThemeLayer(payload) {}
   }
 };
