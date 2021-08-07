@@ -54,7 +54,7 @@ module.exports = {
             children: [
               ["/guide/", "快速上手"],
               ["/guide/base.md", "基础组件"],
-              ["/guide/dev.md", "dev引用方式"]
+              ["/guide/dev.md", "本地link部署包方式"]
             ]
           },
           {

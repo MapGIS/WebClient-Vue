@@ -1,72 +1,75 @@
-# dev引用方式
+# 本地link部署包
 
-## 步骤1 本地clone代码
+## 步骤1 clone代码
 
-地址：https://github.com/MapGIS/WebClient-Vue
+代码地址：https://github.com/MapGIS/WebClient-Vue
 
-## 步骤2 打包（若已经有包可跳过该步）
+ ``` sh
+git clone https://github.com/MapGIS/WebClient-Vue.git
+```
 
-0. 进入目录
-    ``` sh
-    cd /WebClient-Vue/ui
-    ```
+## 步骤2 link前的准备
 
-1. 安装依赖
-    ``` sh
-    npm install
-    # 或者
-    yarn
-    ```
+### 1. 放入部署包
 
-2. UI组件编译
-    ``` sh
-    npm run build
-    ```
+我们会提供已经打好的部署包，解压后放到对应目录下（路径：**/WebClient-Vue/ui/**）
 
-3. 在 “dist-libs” 文件夹下即可看到打包后的文件
+如图所示：
 
-## 步骤3 在新项目中link
+<img alt="目录示例" src="../assets/images/catalog-show.png" width="40%">
 
-此时本地已经有了UI组件的包，接下来link到另一个项目
+### 2. 修改package.json文件夹（路径：**/WebClient-Vue/ui/package.json**）,具体修改第5-6行如下所示：
 
-0. 检查package.json文件夹（路径：/WebClient-Vue/ui/package.json）,确保第5-6行如下所示：
+``` sh
+5   "main": "dist-libs/webclient-vue-ui.umd.min.js",
+6   "module1": "src/index.js",
+```
 
-    ``` sh
-    5   "main": "dist-libs/webclient-vue-ui.umd.min.js",
-    6   "module1": "src/index.js",
-    ```
+## 步骤3 在其他项目中link
 
-1. 回到UI组件目录下，并link
-    ``` sh
-    cd /WebClient-Vue/ui
-    
-    npm link
-    ```
+### 1. 进入ui文件夹目录下，并link至全局
+``` sh
+cd /WebClient-Vue/ui
 
-2. 其他项目link本组件
-    ``` sh
-    npm link @mapgis/webclient-vue-ui
-    ```
+npm link
+```
 
-## 步骤4 全局引用
+### 2. 进入其他项目（如云门户项目），并link本组件
+``` sh
+cd /需要引用ui组件的其他项目路径下
 
-全局引用方式与前文一致，下面为示例代码：
+npm link @mapgis/webclient-vue-ui
+```
+
+## 步骤4 引用方式（全局引用）
+
+在其他项目中，采用全局引用的方式，下面为示例代码：
 
 ``` javascript
+import Vue from "vue";
+import App from "./App.vue";
 
-  import Vue from "vue";
-  import App from "./App.vue";
+import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
+import MapgisUi from "@mapgis/webclient-vue-ui";
 
-  import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
-  import MapgisUi from "@mapgis/webclient-vue-ui";
+Vue.config.productionTip = false;
 
-  Vue.config.productionTip = false;
+Vue.use(MapgisUi);
 
-  Vue.use(MapgisUi);
-
-  new Vue({
-    render: (h) => h(App),
-  }).$mount("#app");
+new Vue({
+render: (h) => h(App),
+}).$mount("#app");
 
 ```
 
+## 注意事项
+
+### 1、由于link机制问题，其他项目（如云门户项目）在每次执行了npm install或npm uninstall后要重新执行下面命令，即重新link。
+
+``` sh
+npm link @mapgis/webclient-vue-ui
+```
+
+### 2、mockjs问题
+
+待添加...
