@@ -84,5 +84,7 @@ export default {
   emitMapAddThemeLayer,
   emitMapRemoveThemeLayer,
   emitDocumentAddThemeLayer,
-  emitDocumentRemoveThemeLayer
+  emitDocumentRemoveThemeLayer,
+  emitDocumentShowThemeLayer,
+  emitDocumentHideThemeLayer
 };
