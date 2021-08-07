@@ -5,12 +5,9 @@
 <script>
 import withEvents from "../../../lib/withEvents";
 import { deepEqual } from "../../util/util";
+import { compareStyle } from "./MvtCompare";
 
 import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
-import {
-  emitMapAddLayer,
-  emitMapRemoveLayer
-} from "../../../lib/eventbus/EmitMap";
 
 const DefaultThemeLayers = [
   "_单值专题图_线",
@@ -60,7 +57,7 @@ export default {
       handler(next, old) {
         let deleteStyle = old;
         let { lastStyle } = this;
-        if (!deepEqual(next, old)) {
+        if (!compareStyle(next, old)) {
           if (old && !lastStyle) {
             lastStyle = old; // mvt第一次外部传入改变
           }
@@ -71,7 +68,7 @@ export default {
             // 导致了其他组件修改了mapbox的图层关系后产生的新的样式StyleB无法告诉mvt组件，
             // 而mvt组件仍然认为当前的样式是StyleA导致再维护的时候出现混乱的情况
             // 这类情况采取事件总线机制来维护协同组件间的样式关系
-            if (!deepEqual(old, lastStyle)) {
+            if (!compareStyle(old, lastStyle)) {
             }
           }
           this.remove(deleteStyle);

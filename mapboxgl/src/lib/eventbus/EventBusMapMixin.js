@@ -1,4 +1,5 @@
 import EventBus from "./EventBusMap";
+import EmitEvent from "./EmitMap";
 
 export default {
   name: "mapgis-event-bus-map-mixin",
@@ -55,8 +56,15 @@ export default {
     EventBus.$on("map-open-table", payload => {
       this.$_handleMapOpenTable(payload);
     });
+    EventBus.$on("document-add-theme-layer", payload => {
+      this.$_handleDocumentAddThemeLayer(payload);
+    });
+    EventBus.$on("document-remove-theme-layer", payload => {
+      this.$_handleDocumentRemoveThemeLayer(payload);
+    });
   },
   methods: {
+    ...EmitEvent,
     initUploadData() {
       /* const upload = EventBus.$options.upload || defaultUpload;
 
@@ -111,6 +119,10 @@ export default {
      * @description 激活属性表
      * @param {payload} 属性表载荷
      */
-    $_handleMapOpenTable(payload) {}
+    $_handleMapOpenTable(payload) {},
+
+    $_handleDocumentAddThemeLayer(payload) {},
+
+    $_handleDocumentRemoveThemeLayer(payload) {}
   }
 };
