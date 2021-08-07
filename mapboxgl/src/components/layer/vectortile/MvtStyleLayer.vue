@@ -6,25 +6,9 @@
 import withEvents from "../../../lib/withEvents";
 import { deepEqual } from "../../util/util";
 import { compareStyle } from "./MvtCompare";
+import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
 import EventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
-
-const DefaultThemeLayers = [
-  "_单值专题图",
-  "_单值专题图_线",
-  "_单值专题图_注记",
-  "_单值专题图_符号",
-  "_分段专题图",
-  "_分段专题图_线",
-  "_分段专题图_注记",
-  "_分段专题图_符号",
-  "_等级专题图",
-  "_等级专题图_线",
-  "_等级专题图_注记",
-  "_热力专题图",
-  "_热力专题图_线",
-  "_热力专题图_注记"
-];
 
 export default {
   name: "mapgis-mvt-style-layer",
@@ -249,13 +233,15 @@ export default {
             beforetheme = rules[0];
             let findorigin = total.find(l => l.id == beforetheme.id);
             if (!findorigin) {
-              total = total.concat(beforetheme);
+              let newbeforetheme = news.find(l => l.id == beforetheme.id);
+              total = total.concat(newbeforetheme || beforetheme);
             }
           }
         });
 
-        let find = news.find(l => l.id === layer.id);
-        if (find) {
+        let find = news.find(l => l.id == layer.id);
+        let hasold = total.find(l => l.id == layer.id);
+        if (find && !hasold) {
           return total.concat(find);
         } else {
           return total.concat(layer);
