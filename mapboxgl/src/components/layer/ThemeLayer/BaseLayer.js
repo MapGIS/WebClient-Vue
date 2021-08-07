@@ -150,7 +150,8 @@ export default {
       isGradient: true,
       isSingle: true,
       rangeLevel: 10,
-      selectValue: undefined
+      selectValue: undefined,
+      opacityBack: {}
     };
   },
   methods: {
@@ -311,12 +312,50 @@ export default {
       this.$_deleteExtraLayer(layerId);
     },
     $_resetMainLayer(layerId) {
-      this.$_setLayOutProperty(
-        "visibility",
-        "visible",
-        layerId,
-        window.originLayer[layerId][layerId]
-      );
+      // this.$_setLayOutProperty(
+      //   "visibility",
+      //   "visible",
+      //   layerId,
+      //   window.originLayer[layerId][layerId]
+      // );
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty(
+            "fill-opacity",
+            this.opacityBack["fill-opacity"],
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          this.$_setPaintProperty(
+            "fill-outline-color",
+            this.opacityBack["fill-outline-color"],
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          break;
+        case "line":
+          this.$_setPaintProperty(
+            "line-opacity",
+            this.opacityBack["line-opacity"],
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          break;
+        case "circle":
+          this.$_setPaintProperty(
+            "circle-opacity",
+            this.opacityBack["circle-opacity"],
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          this.$_setPaintProperty(
+            "circle-stroke-opacity",
+            this.opacityBack["circle-stroke-opacity"],
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          break;
+      }
       delete window.originLayer[layerId];
       emitMapChangeStyle(this.map.getStyle());
       this.resetPanel = true;
@@ -1361,12 +1400,70 @@ export default {
         }
       }
       // this.$_setOriginLayer(colors);
-      this.$_setLayOutProperty(
-        "visibility",
-        "none",
-        this.layerIdCopy,
-        window.originLayer[this.layerIdCopy][this.layerIdCopy]
-      );
+      // this.$_setLayOutProperty(
+      //   "visibility",
+      //   "none",
+      //   this.layerIdCopy,
+      //   window.originLayer[this.layerIdCopy][this.layerIdCopy]
+      // );
+      switch (this.dataType) {
+        case "fill":
+          this.opacityBack["fill-opacity"] =
+            window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
+              "fill-opacity"
+            ] || 1;
+          this.opacityBack["fill-outline-color"] =
+            window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
+              "fill-outline-color"
+            ] || "rgba(0, 0, 0, 1)";
+          this.$_setPaintProperty(
+            "fill-opacity",
+            0,
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          this.$_setPaintProperty(
+            "fill-outline-color",
+            "rgba(255, 255, 255, 0)",
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          break;
+        case "line":
+          this.opacityBack["line-opacity"] =
+            window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
+              "line-opacity"
+            ] || 1;
+          this.$_setPaintProperty(
+            "line-opacity",
+            0,
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          break;
+        case "circle":
+          this.opacityBack["circle-opacity"] =
+            window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
+              "circle-opacity"
+            ] || 1;
+          this.opacityBack["circle-stroke-opacity"] =
+            window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
+              "circle-stroke-opacity"
+            ] || 1;
+          this.$_setPaintProperty(
+            "circle-opacity",
+            0,
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          this.$_setPaintProperty(
+            "circle-stroke-opacity",
+            0,
+            this.layerIdCopy,
+            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+          );
+          break;
+      }
       if (this.themeType !== "symbol") {
         if (this.dataType === "fill") {
           this.map.addLayer(
