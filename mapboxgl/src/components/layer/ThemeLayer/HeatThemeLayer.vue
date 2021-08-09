@@ -120,10 +120,10 @@ export default {
               "rgba(255,255,255,0)",
             ].concat(colorGradient),
             "heatmap-radius": this.heatMapRadius,
-            "heatmap-opacity": this.opacity,
-            minzoom: minzoom,
-            maxzoom: maxzoom
-          }
+            "heatmap-opacity": this.opacity
+          },
+          minzoom: minzoom,
+          maxzoom: maxzoom
         }
         if (this.source_vector_layer_Id) {
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
