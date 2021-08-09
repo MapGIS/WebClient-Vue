@@ -65,6 +65,14 @@ export default {
     visible: {
       type: Boolean,
       default: true
+    },
+    delay: {
+      type: Boolean,
+      default: false
+    },
+    delayTime: {
+      type: Number,
+      default: 1000
     }
   },
   model: {
@@ -100,9 +108,17 @@ export default {
       this.loading = false;
     },
     print() {
-      const { map, info } = this;
+      const vm = this;
+      const { map, info, delay, delayTime } = this;
       this.loading = true;
-      printCanvas(map, this.handlePrintEnd, info);
+      if (delay) {
+        this.$emit("before-print", {});
+        window.setTimeout(() => {
+          printCanvas(map, this.handlePrintEnd, info);
+        }, delayTime);
+      } else {
+        printCanvas(map, this.handlePrintEnd, info);
+      }
     }
   }
 };
