@@ -372,6 +372,7 @@ export default {
           checkArr: []
         }
       }
+      console.log("this.dataType",this.dataType)
       if(this.source_vector_layer_Id){
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
