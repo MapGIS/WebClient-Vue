@@ -56,6 +56,10 @@ export const emitMapOpenTable = payload => {
   EventBus.$emit("map-open-table", payload);
 };
 
+export const emitMapPrint = payload => {
+  EventBus.$emit("map-print", payload);
+};
+
 export const emitDocumentAddThemeLayer = payload => {
   EventBus.$emit("document-add-theme-layer", payload);
 };
@@ -91,6 +95,8 @@ export default {
   emitMapSetLayerMaxzoom,
   emitMapAddThemeLayer,
   emitMapRemoveThemeLayer,
+  emitMapOpenTable,
+  emitMapPrint,
   emitDocumentAddThemeLayer,
   emitDocumentEditThemeLayer,
   emitDocumentRemoveThemeLayer,

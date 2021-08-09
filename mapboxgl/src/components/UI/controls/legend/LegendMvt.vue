@@ -105,6 +105,11 @@ export default {
       if (this.$refs.collapsecard) {
         this.$refs.collapsecard.hide();
       }
+    },
+    show() {
+      if (this.$refs.collapsecard) {
+        this.$refs.collapsecard.show();
+      }
     }
   }
 };
