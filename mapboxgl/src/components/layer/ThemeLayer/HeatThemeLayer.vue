@@ -103,15 +103,15 @@ export default {
               ["linear"],
               ["get", this.defaultValue],
             ].concat(weightArray),
-            "heatmap-intensity": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              0,
-              3,
-              9,
-              5
-            ],
+            // "heatmap-intensity": [
+            //   "interpolate",
+            //   ["linear"],
+            //   ["zoom"],
+            //   0,
+            //   3,
+            //   9,
+            //   5
+            // ],
             "heatmap-color": [
               "interpolate",
               ["linear"],
