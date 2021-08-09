@@ -253,6 +253,7 @@ export default {
       ) {
         this.$_getFromSource(layerId, minzoom, maxzoom);
       } else {
+        this.dataType = window.originLayer[layerId].dataType;
         if (this.themeType === "symbol") {
           this.$_setLayOutProperty(
             "visibility",
@@ -1064,42 +1065,40 @@ export default {
       this.$_setPaintProperty("line-dasharray", lineStyle.value);
     },
     $_getNumberFields(features) {
-      if (this.rangeFields.length === 0) {
-        let fields = [],
-          reg = new RegExp("^[0-9]+$"),
-          regFloat = new RegExp("^[.\\d]*$"),
-          fieldsObj = {},
-          nullFields = {};
-        Object.keys(features[0].properties).forEach(function(key) {
-          fieldsObj[key] = true;
-          nullFields[key] = false;
-        });
-        for (let i = 0; i < features.length; i++) {
-          Object.keys(features[i].properties).forEach(function(key) {
-            if (!fieldsObj[key]) {
-              return;
-            }
-            if (features[i].properties[key]) {
-              nullFields[key] = true;
-            }
-            let value = features[i].properties[key];
-            if (
-              value &&
-              !reg.test(value) &&
-              !regFloat.test(value) &&
-              fieldsObj[key]
-            ) {
-              fieldsObj[key] = false;
-            }
-          });
-        }
-        Object.keys(fieldsObj).forEach(function(key) {
-          if (fieldsObj[key] && nullFields[key]) {
-            fields.push(key);
+      let fields = [],
+        reg = new RegExp("^[0-9]+$"),
+        regFloat = new RegExp("^[.\\d]*$"),
+        fieldsObj = {},
+        nullFields = {};
+      Object.keys(features[0].properties).forEach(function(key) {
+        fieldsObj[key] = true;
+        nullFields[key] = false;
+      });
+      for (let i = 0; i < features.length; i++) {
+        Object.keys(features[i].properties).forEach(function(key) {
+          if (!fieldsObj[key]) {
+            return;
+          }
+          if (features[i].properties[key]) {
+            nullFields[key] = true;
+          }
+          let value = features[i].properties[key];
+          if (
+            value &&
+            !reg.test(value) &&
+            !regFloat.test(value) &&
+            fieldsObj[key]
+          ) {
+            fieldsObj[key] = false;
           }
         });
-        this.rangeFields = fields;
       }
+      Object.keys(fieldsObj).forEach(function(key) {
+        if (fieldsObj[key] && nullFields[key]) {
+          fields.push(key);
+        }
+      });
+      this.rangeFields = fields;
     },
     $_getFields(features) {
       if (this.themeType === "range" || this.themeType === "heatmap") {
@@ -1395,6 +1394,7 @@ export default {
       }
       window.originLayer[this.layerIdCopy].layerId = this.layerIdCopy;
       window.originLayer[this.layerIdCopy].themeType = this.themeType;
+      window.originLayer[this.layerIdCopy].dataType = this.dataType;
       if (
         !window.originLayer[this.layerIdCopy].hasOwnProperty(this.layerIdCopy)
       ) {

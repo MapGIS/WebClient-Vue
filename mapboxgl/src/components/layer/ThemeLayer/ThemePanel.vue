@@ -1,7 +1,7 @@
 <template>
   <mapgis-ui-card class="theme-panel" @click="$_panelClick">
     <!--  专题图面板  -->
-    <div v-show="init" class="theme-panel-tab">
+    <div class="theme-panel-tab">
       <!--标题-->
       <mapgis-ui-row>
         <mapgis-ui-col :span="24" class="theme-panel-type theme-panel-type-title">
@@ -679,16 +679,16 @@
       </mapgis-ui-collapse>
     </div>
     <!--  loading  -->
-    <div v-show="!init" class="theme-panel-tab theme-panel-loading">
-      <mapgis-ui-row>
-        <mapgis-ui-col :span="24">{{ loadingTest }}</mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row>
-        <mapgis-ui-col :span="24">
-          <mapgis-ui-spin size="small"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-    </div>
+<!--    <div v-show="!init" class="theme-panel-tab theme-panel-loading">-->
+<!--      <mapgis-ui-row>-->
+<!--        <mapgis-ui-col :span="24">{{ loadingTest }}</mapgis-ui-col>-->
+<!--      </mapgis-ui-row>-->
+<!--      <mapgis-ui-row>-->
+<!--        <mapgis-ui-col :span="24">-->
+<!--          <mapgis-ui-spin size="small"/>-->
+<!--        </mapgis-ui-col>-->
+<!--      </mapgis-ui-row>-->
+<!--    </div>-->
   </mapgis-ui-card>
 </template>
 
@@ -877,7 +877,7 @@ export default {
         key: "#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF",
         value: "-webkit-linear-gradient(left,#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF)"
       }],
-      init: false,
+      init: true,
       loadingTest: "加载中，请稍后...",
       FieldArray: [],
       dataSourceCopy: [],
@@ -1218,6 +1218,7 @@ export default {
       if (this.dataSource.length > 0) {
         this.init = true;
       }else {
+        this.init = false;
         return;
       }
       let dataArr = [];
