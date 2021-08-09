@@ -184,6 +184,7 @@ export default {
     },
     addThemeLayer(type, layerId,minzoom,maxzoom) {
       let hasPanel = false;
+      type = type || window.originLayer[layerId].themeType;
       for (let i = 0; i < this.panels.length; i++) {
         if (this.panels[i] === layerId) {
           hasPanel = true;
@@ -283,7 +284,22 @@ export default {
     $_themeTypeChanged(key, value) {
       this.themeDefaultType = value;
       this[this.showType + "Layer"].hideExtraLayer(this.layerId);
-      this.$_addThemeLayer(key, this.layerId);
+      this.showPanelFlag = true;
+      switch (key) {
+        case "unique":
+          this.uniqueLayer.addThemeLayer(this.layerId);
+          break;
+        case "symbol":
+          this.symbolLayer.addThemeLayer(this.layerId);
+          break;
+        case "range":
+          this.rangeLayer.addThemeLayer(this.layerId);
+          break;
+        case "heatmap":
+          this.heatmapLayer.addThemeLayer(this.layerId);
+          break;
+      }
+      this.showType = key;
       this[this.showType + "Layer"].showExtraLayer(this.layerId);
     }
   }
