@@ -83,7 +83,6 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
-      this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
       let weightArray = this.setWeightArr(geojson,this.defaultValue);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
@@ -103,15 +102,6 @@ export default {
               ["linear"],
               ["get", this.defaultValue],
             ].concat(weightArray),
-            // "heatmap-intensity": [
-            //   "interpolate",
-            //   ["linear"],
-            //   ["zoom"],
-            //   0,
-            //   3,
-            //   9,
-            //   5
-            // ],
             "heatmap-color": [
               "interpolate",
               ["linear"],
@@ -290,9 +280,8 @@ export default {
     setWeightArr(geojsonOrigin,val) {
       let max = 0;
       let min = undefined;
-      // let max = geojsonOrigin[0].properties[value];
-      for (let i = 0; i < geojsonOrigin.length; i++) {
-        let cur = geojsonOrigin[i].properties[val];
+      for (let i = 0; i < geojsonOrigin.features.length; i++) {
+        let cur = geojsonOrigin.features[i].properties[val];
         //排除字符串""
         if (cur !== ""){
           cur  = Number(cur);
