@@ -184,6 +184,7 @@ export default {
     },
     addThemeLayer(type, layerId,minzoom,maxzoom) {
       let hasPanel = false;
+      type = type || window.originLayer[layerId].themeType;
       for (let i = 0; i < this.panels.length; i++) {
         if (this.panels[i] === layerId) {
           hasPanel = true;
