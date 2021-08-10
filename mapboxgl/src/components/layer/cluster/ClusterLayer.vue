@@ -140,7 +140,7 @@ export default {
           filter: ["!", ["has", "point_count"]],
           layout: {
             "icon-image": uncluster.icon,
-            "icon-size": 1
+            "icon-size": uncluster.size || 1
           }
         });
       } else {
@@ -180,9 +180,11 @@ export default {
     },
     $_bindEvent() {
       const vm = this;
-      let { map, id } = this;
+      let { map, id, uncluster } = this;
       let uncluster_circle = id + "_uncluster_circle";
-      // let uncluster_icon = id + "_uncluster_icon";
+      if (uncluster && uncluster.icon) {
+        uncluster_circle = id + "_uncluster_icon";
+      }
       map.on("mouseenter", uncluster_circle, function(e) {
         if (!e.features || e.features.length <= 0) return;
         var coordinates = e.features[0].geometry.coordinates.slice();

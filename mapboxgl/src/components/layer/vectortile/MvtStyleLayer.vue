@@ -136,6 +136,9 @@ export default {
       this.themeRules = [];
       layers.forEach(layer => {
         if (vm.map.getLayer(layer.id)) {
+          // 下面地方的处理是针对专题图的显示隐藏特殊处理采取的保留专题图基本的信息前提下更新新的图层可见性
+          let currentThemelayer = map.getStyle().layers.find(l => l.id == layer.id);
+          if (currentThemelayer) layer.paint = currentThemelayer.paint;
           if (removeForce) {
             vm.map.removeLayer(layer.id);
             let themes = currentLayers.filter(l => {
@@ -234,6 +237,7 @@ export default {
             let findorigin = total.find(l => l.id == beforetheme.id);
             if (!findorigin) {
               let newbeforetheme = news.find(l => l.id == beforetheme.id);
+              if (beforetheme) newbeforetheme.paint = beforetheme.paint;
               total = total.concat(newbeforetheme || beforetheme);
             }
           }
