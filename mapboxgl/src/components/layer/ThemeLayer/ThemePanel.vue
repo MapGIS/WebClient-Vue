@@ -835,7 +835,7 @@ export default {
       haloWidthMax: 10,
       haloWidthStep: 0.1,
       fontSize: 11,
-      fontSizeMax: 20,
+      fontSizeMax: 100,
       fontSizeStep: 1,
       xOffsetText: 0,
       xOffsetTextMin: -20,
