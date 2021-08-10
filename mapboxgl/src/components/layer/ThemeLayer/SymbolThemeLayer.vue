@@ -2,7 +2,7 @@
   <div>
     <ThemePanel
         v-if="!resetPanel"
-        v-show="showPanel"
+        v-show="showPanelFlag"
         :title="title"
         :data-source="dataSource"
         :fields="fields"
@@ -331,7 +331,7 @@ export default {
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
+      this.$_setLayOutProperty("text-font",[this.textFont,this.textFont],this.layerIdCopy + "_" + this.$_getThemeName(),window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
     },
     $_clickIcon(icon) {
       let hasIcon = this.map.hasImage(icon);
@@ -576,38 +576,40 @@ export default {
             keyArr.push(key);
           });
           vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
-          window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
-            'id': vm.layerIdCopy + "_等级符号专题图",
-            'source': vm.source_vector_Id,
-            'type': 'symbol',
-            'layout': {
-              'icon-image': vm.defaultIconValue,
-              'icon-size': vm.radius,
-              "text-field": '',
-              'text-size': vm.fontSize,
-              'text-letter-spacing': vm.textPadding,
-              'text-offset': vm.offset,
-              'text-font': [vm.textFonts[0],vm.textFonts[0]],
-              'text-rotate': vm.textRotation,
-              'visibility': 'visible'
-            },
-            'paint': {
-              'icon-color': fillColors,
-              'icon-opacity': vm.opacity,
-              'text-color': '#000000',
-              "text-halo-color": vm.haloColor,
-              "text-halo-width": vm.haloWidth
-            },
-            minzoom: minzoom,
-            maxzoom: maxzoom
-          };
-          if(vm.source_vector_layer_Id){
-            window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
+          if(!window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]){
+            window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
+              'id': vm.layerIdCopy + "_等级符号专题图",
+              'source': vm.source_vector_Id,
+              'type': 'symbol',
+              'layout': {
+                'icon-image': vm.defaultIconValue,
+                'icon-size': vm.radius,
+                "text-field": '',
+                'text-size': vm.fontSize,
+                'text-letter-spacing': vm.textPadding,
+                'text-offset': vm.offset,
+                'text-font': [vm.textFonts[0],vm.textFonts[0]],
+                'text-rotate': vm.textRotation,
+                'visibility': 'visible'
+              },
+              'paint': {
+                'icon-color': fillColors,
+                'icon-opacity': vm.opacity,
+                'text-color': '#000000',
+                "text-halo-color": vm.haloColor,
+                "text-halo-width": vm.haloWidth
+              },
+              minzoom: minzoom,
+              maxzoom: maxzoom
+            };
+            if(vm.source_vector_layer_Id){
+              window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
+            }
+            vm.title = "等级符号" + "_" + vm.layerIdCopy;
+            vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()],this.upLayer);
+            window.originLayer[vm.layerIdCopy].layerOrder = [vm.layerIdCopy,vm.layerIdCopy + "_" + vm.$_getThemeName()];
+            vm.$_setLayerOrder();
           }
-          vm.title = "等级符号" + "_" + vm.layerIdCopy;
-          vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()],this.upLayer);
-          window.originLayer[vm.layerIdCopy].layerOrder = [vm.layerIdCopy,vm.layerIdCopy + "_" + vm.$_getThemeName()];
-          vm.$_setLayerOrder();
           clearInterval(interval);
         }
       },10);

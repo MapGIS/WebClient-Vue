@@ -2,7 +2,7 @@
   <div>
     <ThemePanel
         v-if="!resetPanel"
-        v-show="showPanel"
+        v-show="showPanelFlag"
         :title="title"
         :checkBoxArr="checkBoxArr"
         :colors="colors"
@@ -83,58 +83,50 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
-      this.defaultValue = this.$_getValidHeatFieldFromGeoJson(geojson);
       let weightArray = this.setWeightArr(geojson,this.defaultValue);
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_热力专题图";
         let colorGradient = this.getGradientColors(true);
-        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id: this.heatMapLayerId,
-          type: 'heatmap',
-          source: this.source_vector_Id, //必须和上面的layerId一致
-          layout: {
-            'visibility': "visible"
-          },
-          paint: {
-            "heatmap-weight": [
-              "interpolate",
-              ["linear"],
-              ["get", this.defaultValue],
-            ].concat(weightArray),
-            "heatmap-intensity": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              0,
-              3,
-              9,
-              5
-            ],
-            "heatmap-color": [
-              "interpolate",
-              ["linear"],
-              ["heatmap-density"],
-              0,
-              "rgba(255,255,255,0)",
-            ].concat(colorGradient),
-            "heatmap-radius": this.heatMapRadius,
-            "heatmap-opacity": this.opacity
-          },
-          minzoom: minzoom,
-          maxzoom: maxzoom
+        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.heatMapLayerId,
+            type: 'heatmap',
+            source: this.source_vector_Id, //必须和上面的layerId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              "heatmap-weight": [
+                "interpolate",
+                ["linear"],
+                ["get", this.defaultValue],
+              ].concat(weightArray),
+              "heatmap-color": [
+                "interpolate",
+                ["linear"],
+                ["heatmap-density"],
+                0,
+                "rgba(255,255,255,0)",
+              ].concat(colorGradient),
+              "heatmap-radius": this.heatMapRadius,
+              "heatmap-opacity": this.opacity
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
+          }
+          if (this.source_vector_layer_Id) {
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
+          }
+          this.extraLayer.push({
+            key: "heatmapLayer",
+            value: this.heatMapLayerId
+          });
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
+          this.title = "热力专题图" + "_" + this.layerIdCopy;
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName()];
         }
-        if (this.source_vector_layer_Id) {
-          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
-        }
-        this.extraLayer.push({
-          key: "heatmapLayer",
-          value: this.heatMapLayerId
-        });
-        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
-        this.title = "热力专题图" + "_" + this.layerIdCopy;
-        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName()];
       }
     },
 
@@ -290,9 +282,8 @@ export default {
     setWeightArr(geojsonOrigin,val) {
       let max = 0;
       let min = undefined;
-      // let max = geojsonOrigin[0].properties[value];
-      for (let i = 0; i < geojsonOrigin.length; i++) {
-        let cur = geojsonOrigin[i].properties[val];
+      for (let i = 0; i < geojsonOrigin.features.length; i++) {
+        let cur = geojsonOrigin.features[i].properties[val];
         //排除字符串""
         if (cur !== ""){
           cur  = Number(cur);
