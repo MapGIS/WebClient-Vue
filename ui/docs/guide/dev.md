@@ -2,10 +2,10 @@
 
 ## 步骤1 clone代码
 
-代码地址：https://github.com/MapGIS/WebClient-Vue
+代码地址：https://gitee.com/osmapgis/WebClient-Vue
 
  ``` sh
-git clone https://github.com/MapGIS/WebClient-Vue.git
+git clone https://gitee.com/osmapgis/WebClient-Vue.git
 ```
 
 ## 步骤2 link前的准备
