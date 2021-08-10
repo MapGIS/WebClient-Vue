@@ -331,7 +331,7 @@ export default {
     },
     $_fontChanged(font){
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],"symbol_layer_id",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
+      this.$_setLayOutProperty("text-font",[this.textFont,this.textFont],this.layerIdCopy + "_" + this.$_getThemeName(),window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
     },
     $_clickIcon(icon) {
       let hasIcon = this.map.hasImage(icon);
