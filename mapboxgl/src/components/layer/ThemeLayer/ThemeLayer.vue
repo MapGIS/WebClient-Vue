@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="(panel,index) in panels" :key="index" v-show="panel === layerId && showPanelFlag">
+    <div v-for="(panel,index) in panels" :key="index" v-show="panel === ThemeLayerId && showPanelFlag">
       <mapgis-igs-unique-theme-layer
           v-show="showType === 'unique'"
           :themeDefaultType="themeDefaultType"
@@ -76,16 +76,18 @@ import UniqueThemeLayer from "./UniqueThemeLayer.vue";
 import RangeThemeLayer from "./RangeThemeLayer.vue";
 import SymbolThemeLayer from "./SymbolThemeLayer.vue";
 import HeatThemeLayer from "./HeatThemeLayer.vue";
+import BaseLayer from "./BaseLayer";
 
 export default {
   name: "mapgis-igs-theme-layer",
   components: {UniqueThemeLayer, RangeThemeLayer, SymbolThemeLayer, HeatThemeLayer},
   inject: ["map"],
+  mixins: [BaseLayer],
   data() {
     return {
       showType: "unique",
       themeDefaultType: "单值专题图",
-      layerId: undefined,
+      ThemeLayerId: undefined,
       uniqueLayer: undefined,
       symbolLayer: undefined,
       rangeLayer: undefined,
@@ -120,12 +122,89 @@ export default {
     this.iconUrlCopy = this.map.getStyle().sprite;
   },
   methods: {
-    setAllLayer(allLayer) {
-      this.$_setAllLayer(allLayer);
+    setAllLayer(themes) {
+      let vm = this;
+      vm.$_setAllLayer(themes);
     },
-    $_setAllLayer(allLayer) {
-      window.originLayer[this.layerIdCopy] = {...window.originLayer[this.layerIdCopy], ...allLayer};
-      this.addThemeLayer(window.originLayer[this.layerIdCopy].themeType, window.originLayer[this.layerIdCopy].layerId);
+    $_setAllLayer(themes) {
+      if (!window._workspace) {
+        window._workspace = {};
+        window._workspace._layerTypes = {};
+      }
+      window.originLayer = themes;
+      let layerOrder = window.originLayer.layerOrder;
+      let originLayerIds = [],originLayerId = undefined;
+      for (let i =0;i< layerOrder.length;i++){
+        if(layerOrder[i].indexOf("专题图") < 0){
+          window._workspace._layerTypes[layerOrder[i]] = window.originLayer[layerOrder[i]].themeType;
+          originLayerIds.push(layerOrder[i]);
+          switch (window.originLayer[layerOrder[i]][layerOrder[i]].type) {
+            case "fill":
+              this.$_setPaintProperty(
+                  "fill-opacity",
+                  0,
+                  layerOrder[i],
+                  window.originLayer[layerOrder[i]][layerOrder[i]],
+                  layerOrder[i]
+              );
+              this.$_setPaintProperty(
+                  "fill-outline-color",
+                  "rgba(255, 255, 255, 0)",
+                  layerOrder[i],
+                  window.originLayer[layerOrder[i]][layerOrder[i]],
+                  layerOrder[i]
+              );
+              break;
+            case "line":
+              this.$_setPaintProperty(
+                  "line-opacity",
+                  0,
+                  layerOrder[i],
+                  window.originLayer[layerOrder[i]][layerOrder[i]],
+                  layerOrder[i]
+              );
+              break;
+            case "circle":
+              this.$_setPaintProperty(
+                  "circle-opacity",
+                  0,
+                  layerOrder[i],
+                  window.originLayer[layerOrder[i]][layerOrder[i]],
+                  layerOrder[i]
+              );
+              this.$_setPaintProperty(
+                  "circle-stroke-opacity",
+                  0,
+                  layerOrder[i],
+                  window.originLayer[layerOrder[i]][layerOrder[i]],
+                  layerOrder[i]
+              );
+              break;
+          }
+        }
+      }
+      let vm = this;
+      let interval = setInterval(function () {
+        let initAllSource = true;
+        for (let i = 0;i<originLayerIds.length;i++){
+          let sourceId = window.originLayer[originLayerIds[i]][originLayerIds[i]].source;
+          if(!vm.map.getSource(sourceId)){
+            initAllSource = false;
+          }
+        }
+        if(initAllSource){
+          for (let i =0;i< layerOrder.length;i++){
+            if(layerOrder[i].indexOf("专题图") < 0){
+              originLayerId = layerOrder[i];
+            }else {
+              let index = originLayerIds.indexOf(originLayerId);
+              let beforeLayer = index === originLayerIds.length - 1 ? undefined : originLayerIds[index + 1];
+              vm.map.addLayer(window.originLayer[originLayerId][layerOrder[i]],beforeLayer);
+            }
+          }
+          clearInterval(interval);
+        }
+      },100);
     },
     getAllLayer() {
       return this.$_getAllLayer();
@@ -142,7 +221,7 @@ export default {
               newAllLayer[key][layerKey] = {};
               Object.keys(allLayer[key][layerKey]).forEach(function (paintKey) {
                 if(paintKey.indexOf("_") < 0){
-                  newAllLayer[key][layerKey][paintKey] = newAllLayer[key][layerKey][paintKey];
+                  newAllLayer[key][layerKey][paintKey] = allLayer[key][layerKey][paintKey];
                 }
               });
             }
@@ -158,7 +237,7 @@ export default {
       this.$emit("hasNullProperty", fields);
     },
     $_resetAllLayer() {
-      this.hideLayer(this.layerId);
+      this.hideLayer(this.ThemeLayerId);
     },
     hideLayer(layerId) {
       this.uniqueLayer.hideExtraLayer(layerId);
@@ -169,10 +248,18 @@ export default {
       this.showPanelFlag = false;
     },
     hideCurrentLayer(layerId) {
-      this[window._workspace._layerTypes[layerId] + "Layer"].hideExtraLayer(layerId);
+      if(this[window._workspace._layerTypes[layerId] + "Layer"]){
+        this[window._workspace._layerTypes[layerId] + "Layer"].hideExtraLayer(layerId);
+      }else{
+        this.hideExtraLayer(layerId,window._workspace._layerTypes[layerId]);
+      }
     },
     showCurrentLayer(layerId) {
-      this[window._workspace._layerTypes[layerId] + "Layer"].showExtraLayer(layerId);
+      if(this[window._workspace._layerTypes[layerId] + "Layer"]){
+        this[window._workspace._layerTypes[layerId] + "Layer"].showExtraLayer(layerId);
+      }else {
+        this.showExtraLayer(layerId,window._workspace._layerTypes[layerId]);
+      }
     },
     resetLayer(layerId) {
       this.uniqueLayer.deleteExtraLayer(layerId);
@@ -184,7 +271,7 @@ export default {
     },
     addThemeLayer(type, layerId,minzoom,maxzoom) {
       let hasPanel = false;
-      type = type || window.originLayer[layerId].themeType;
+      type = type || window._workspace._layerTypes[layerId];
       for (let i = 0; i < this.panels.length; i++) {
         if (this.panels[i] === layerId) {
           hasPanel = true;
@@ -236,7 +323,7 @@ export default {
     $_addThemeLayer(type, layerId,minzoom,maxzoom) {
       let vm = this;
       setTimeout(function () {
-        vm.layerId = layerId;
+        vm.ThemeLayerId = layerId;
         vm.showPanelFlag = true;
         switch (type) {
           case "unique":
@@ -269,38 +356,38 @@ export default {
     },
     $_closeAllPanel() {
       this.showPanelFlag = false;
-      this.$emit("closePanel", this.layerId)
+      this.$emit("closePanel", this.ThemeLayerId)
     },
     closePanel() {
       this.$_closeAllPanel();
     },
     $_showPanel() {
       this.showPanelFlag = true;
-      this.$emit("showPanel", this.layerId)
+      this.$emit("showPanel", this.ThemeLayerId)
     },
     showPanel() {
       this.$_showPanel();
     },
     $_themeTypeChanged(key, value) {
       this.themeDefaultType = value;
-      this[this.showType + "Layer"].hideExtraLayer(this.layerId);
+      this[this.showType + "Layer"].hideExtraLayer(this.ThemeLayerId);
       this.showPanelFlag = true;
       switch (key) {
         case "unique":
-          this.uniqueLayer.addThemeLayer(this.layerId);
+          this.uniqueLayer.addThemeLayer(this.ThemeLayerId);
           break;
         case "symbol":
-          this.symbolLayer.addThemeLayer(this.layerId);
+          this.symbolLayer.addThemeLayer(this.ThemeLayerId);
           break;
         case "range":
-          this.rangeLayer.addThemeLayer(this.layerId);
+          this.rangeLayer.addThemeLayer(this.ThemeLayerId);
           break;
         case "heatmap":
-          this.heatmapLayer.addThemeLayer(this.layerId);
+          this.heatmapLayer.addThemeLayer(this.ThemeLayerId);
           break;
       }
       this.showType = key;
-      this[this.showType + "Layer"].showExtraLayer(this.layerId);
+      this[this.showType + "Layer"].showExtraLayer(this.ThemeLayerId);
     }
   }
 }

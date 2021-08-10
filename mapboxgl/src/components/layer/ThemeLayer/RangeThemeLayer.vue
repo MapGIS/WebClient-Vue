@@ -505,72 +505,84 @@ export default {
       fillColors = this.$_editColor(fillColors);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id: this.layerIdCopy + "_分段专题图",
-          type: 'fill',
-          source: this.source_vector_Id, //必须和上面的layerVectorId一致
-          layout: {
-            'visibility': "visible"
-          },
-          paint: {
-            'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
-            'fill-color': fillColors, //颜色
-            'fill-opacity': this.opacity, //透明度
-            'fill-outline-color': '#fff', //边线颜色，没错,确实没有边线宽度这个选项
-          },
-          minzoom: minzoom,
-          maxzoom: maxzoom
+        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.layerIdCopy + "_分段专题图",
+            type: 'fill',
+            source: this.source_vector_Id, //必须和上面的layerVectorId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
+              'fill-color': fillColors, //颜色
+              'fill-opacity': this.opacity, //透明度
+              'fill-outline-color': '#fff', //边线颜色，没错,确实没有边线宽度这个选项
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
+          }
+          this.$_addLineLayer(minzoom,maxzoom);
         }
-        this.$_addLineLayer(minzoom,maxzoom);
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id: this.layerIdCopy + "_分段专题图",
-          type: 'circle',
-          source: this.source_vector_Id, //必须和上面的layerVectorId一致
-          layout: {
-            'visibility': "visible"
-          },
-          paint: {
-            'circle-color': fillColors, //颜色
-            'circle-opacity': this.opacity, //透明度
-            'circle-stroke-opacity': this.outerLineOpacity, //透明度
-            'circle-radius': this.radius, //透明度
-            'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
-            'circle-stroke-width': this.lineWidth,
-            'circle-translate': this.offset,
-          },
-          minzoom: minzoom,
-          maxzoom: maxzoom
+        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.layerIdCopy + "_分段专题图",
+            type: 'circle',
+            source: this.source_vector_Id, //必须和上面的layerVectorId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              'circle-color': fillColors, //颜色
+              'circle-opacity': this.opacity, //透明度
+              'circle-stroke-opacity': this.outerLineOpacity, //透明度
+              'circle-radius': this.radius, //透明度
+              'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
+              'circle-stroke-width': this.lineWidth,
+              'circle-translate': this.offset,
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
+          }
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
-          id: this.layerIdCopy + "_分段专题图",
-          type: 'line',
-          source: this.source_vector_Id, //必须和上面的layerVectorId一致
-          layout: {
-            'visibility': "visible"
-          },
-          paint: {
-            'line-color': fillColors, //颜色
-            'line-opacity': this.opacity, //透明度
-            'line-width': this.lineWidth,
-          },
-          minzoom: minzoom,
-          maxzoom: maxzoom
+        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.layerIdCopy + "_分段专题图",
+            type: 'line',
+            source: this.source_vector_Id, //必须和上面的layerVectorId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              'line-color': fillColors, //颜色
+              'line-opacity': this.opacity, //透明度
+              'line-width': this.lineWidth,
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
+          }
         }
       }
-      if (this.source_vector_layer_Id) {
+      if (this.source_vector_layer_Id && window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
-      window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;
+      if(!window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey]){
+        window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;
+      }
       this.$_addTextLayer(minzoom,maxzoom);
       if(this.dataType === "fill"){
-        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
+        if(!window.originLayer[this.layerIdCopy].layerOrder){
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
+        }
       }else {
-        window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.textId];
+        if(!window.originLayer[this.layerIdCopy].layerOrder){
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.textId];
+        }
       }
     },
     $_editGeoJSON(geojson) {

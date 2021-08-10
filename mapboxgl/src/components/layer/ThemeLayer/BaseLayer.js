@@ -172,16 +172,16 @@ export default {
     };
   },
   methods: {
-    showExtraLayer(layerId) {
-      this.$_showExtraLayer(layerId);
+    showExtraLayer(layerId, themeType) {
+      this.$_showExtraLayer(layerId, themeType);
     },
-    hideExtraLayer(layerId) {
-      this.$_hideExtraLayer(layerId);
+    hideExtraLayer(layerId, themeType) {
+      this.$_hideExtraLayer(layerId, themeType);
     },
-    $_hideExtraLayer(layerId) {
+    $_hideExtraLayer(layerId, themeType) {
       let extraLayer =
         window.originLayer[layerId][
-          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+          layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
         ];
       if (extraLayer) {
         for (let i = 0; i < extraLayer.length; i++) {
@@ -197,15 +197,17 @@ export default {
       this.$_setLayOutProperty(
         "visibility",
         "none",
-        layerId + "_" + this.$_getThemeName(),
-        window.originLayer[layerId][layerId + "_" + this.$_getThemeName()],
+        layerId + "_" + this.$_getThemeName(themeType),
+        window.originLayer[layerId][
+          layerId + "_" + this.$_getThemeName(themeType)
+        ],
         layerId
       );
     },
-    $_showExtraLayer(layerId) {
+    $_showExtraLayer(layerId, themeType) {
       let extraLayer =
         window.originLayer[layerId][
-          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+          layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
         ];
       if (extraLayer) {
         for (let i = 0; i < extraLayer.length; i++) {
@@ -221,8 +223,10 @@ export default {
       this.$_setLayOutProperty(
         "visibility",
         "visible",
-        layerId + "_" + this.$_getThemeName(),
-        window.originLayer[layerId][layerId + "_" + this.$_getThemeName()],
+        layerId + "_" + this.$_getThemeName(themeType),
+        window.originLayer[layerId][
+          layerId + "_" + this.$_getThemeName(themeType)
+        ],
         layerId
       );
     },
@@ -250,6 +254,11 @@ export default {
         window.originLayer[this.layerIdCopy] &&
         (!window.originLayer[this.layerIdCopy].hasOwnProperty(themeId) ||
           !window.originLayer[this.layerIdCopy][themeId])
+      ) {
+        this.$_getFromSource(layerId, minzoom, maxzoom);
+      } else if (
+        window.originLayer[this.layerIdCopy] &&
+        !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"]
       ) {
         this.$_getFromSource(layerId, minzoom, maxzoom);
       } else {
@@ -789,6 +798,10 @@ export default {
       this.$_toggleLayer();
     },
     $_mount() {
+      if (!window._workspace) {
+        window._workspace = {};
+        window._workspace._layerTypes = {};
+      }
       if (!window.originLayer) {
         window.originLayer = {};
         window.originLayer.layerOrder = [];
@@ -1392,9 +1405,15 @@ export default {
       } else {
         throw new Error("请设置$_initTheme方法的回到函数！");
       }
-      window.originLayer[this.layerIdCopy].layerId = this.layerIdCopy;
-      window.originLayer[this.layerIdCopy].themeType = this.themeType;
-      window.originLayer[this.layerIdCopy].dataType = this.dataType;
+      if (!window.originLayer[this.layerIdCopy].layerId) {
+        window.originLayer[this.layerIdCopy].layerId = this.layerIdCopy;
+      }
+      if (!window.originLayer[this.layerIdCopy].themeType) {
+        window.originLayer[this.layerIdCopy].themeType = this.themeType;
+      }
+      if (!window.originLayer[this.layerIdCopy].dataType) {
+        window.originLayer[this.layerIdCopy].dataType = this.dataType;
+      }
       if (
         !window.originLayer[this.layerIdCopy].hasOwnProperty(this.layerIdCopy)
       ) {
@@ -1405,7 +1424,9 @@ export default {
             originLayer[key] = originStyle[key];
           }
         });
-        window.originLayer[this.layerIdCopy][this.layerIdCopy] = originLayer;
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy]) {
+          window.originLayer[this.layerIdCopy][this.layerIdCopy] = originLayer;
+        }
         this.$_setLayerOrder();
         let paint =
           window.originLayer[this.layerIdCopy][this.layerIdCopy].paint;
@@ -1443,6 +1464,43 @@ export default {
       //   this.layerIdCopy,
       //   window.originLayer[this.layerIdCopy][this.layerIdCopy]
       // );
+      this.$_hideLayerByOpacity();
+      if (this.themeType !== "symbol") {
+        if (this.dataType === "fill") {
+          if (
+            !this.map.getLayer(this.layerIdCopy + "_" + this.$_getThemeName())
+          ) {
+            this.map.addLayer(
+              window.originLayer[this.layerIdCopy][
+                this.layerIdCopy + "_" + this.$_getThemeName()
+              ],
+              this.lineId
+            );
+          }
+        } else {
+          if (
+            !this.map.getLayer(this.layerIdCopy + "_" + this.$_getThemeName())
+          ) {
+            this.map.addLayer(
+              window.originLayer[this.layerIdCopy][
+                this.layerIdCopy + "_" + this.$_getThemeName()
+              ],
+              this.textId
+            );
+          }
+        }
+      }
+      if (!window._workspace._layerTypes[this.layerIdCopy]) {
+        window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
+      }
+      // this.$_changeOriginLayer();
+      this.$_loadedLayer();
+      // this.$nextTick(function () {
+      //     this.$_changeOriginLayer();
+      //     this.$_loadedLayer();
+      // });
+    },
+    $_hideLayerByOpacity() {
       switch (this.dataType) {
         case "fill":
           this.opacityBack["fill-opacity"] =
@@ -1501,34 +1559,6 @@ export default {
           );
           break;
       }
-      if (this.themeType !== "symbol") {
-        if (this.dataType === "fill") {
-          this.map.addLayer(
-            window.originLayer[this.layerIdCopy][
-              this.layerIdCopy + "_" + this.$_getThemeName()
-            ],
-            this.lineId
-          );
-        } else {
-          this.map.addLayer(
-            window.originLayer[this.layerIdCopy][
-              this.layerIdCopy + "_" + this.$_getThemeName()
-            ],
-            this.textId
-          );
-        }
-      }
-      if (!window._workspace) {
-        window._workspace = {};
-        window._workspace._layerTypes = {};
-      }
-      window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
-      // this.$_changeOriginLayer();
-      this.$_loadedLayer();
-      // this.$nextTick(function () {
-      //     this.$_changeOriginLayer();
-      //     this.$_loadedLayer();
-      // });
     },
     $_getAllLayerStyle() {
       let layers = [];
@@ -1909,7 +1939,7 @@ export default {
         vm.$_setPaintProperty(partten, icon);
       }
     },
-    $_setPaintProperty(key, value, layerId, layerVector) {
+    $_setPaintProperty(key, value, layerId, layerVector, extId) {
       let windowId = layerId
         ? layerId
         : this.layerIdCopy + "_" + this.$_getThemeName();
@@ -1922,7 +1952,8 @@ export default {
       if (layerVector && layerVector.hasOwnProperty("paint")) {
         layerVector.paint[key] = value;
         this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
-        window.originLayer[this.layerIdCopy][windowId].paint[key] = value;
+        let id = extId || this.layerIdCopy;
+        window.originLayer[id][windowId].paint[key] = value;
         this.changeLayerProp = true;
         this.changeLayerId = layerId;
       }
@@ -1993,9 +2024,10 @@ export default {
       }
       return colors;
     },
-    $_getThemeName() {
+    $_getThemeName(themeType) {
+      themeType = themeType || this.themeType;
       let theme = "";
-      switch (this.themeType) {
+      switch (themeType) {
         case "unique":
           theme = "单值专题图";
           break;
@@ -2101,8 +2133,6 @@ export default {
         this.map.addLayer(this.textLayer, this.upLayer);
         emitMapAddLayer({ layer: this.textLayer });
         emitMapChangeStyle(this.map.getStyle());
-      } else {
-        this.textLayer = this.$_getLayerStyle(this.textId);
       }
     }
   }
