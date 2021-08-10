@@ -3,6 +3,7 @@
     <span class="unvisible-uploader">{{ params }}</span>
     <!-- 上传 -->
     <uploader
+      v-if="initGloablUpload"
       ref="uploader"
       :change="tokenChange"
       :options="options"
@@ -188,6 +189,7 @@ export default {
   },
   data() {
     return {
+      initGloablUpload: false,
       percent: 0,
       showSpin: false,
       showSpinName: "",
@@ -255,7 +257,16 @@ export default {
   },
   created() {
     self = this;
-    this.initWebsocket();
+    let loopToken = window.setInterval(() => {
+      let token = window.localStorage.getItem("mapgis_clouddisk_token");
+      if (token !== null) {
+        this.initGloablUpload = true;
+        let target = getMapGISUploadUrl();
+        this.options.target = target;
+        this.initWebsocket();
+        window.clearInterval(loopToken);
+      }
+    }, 200);
   },
   mounted() {},
   watch: {
