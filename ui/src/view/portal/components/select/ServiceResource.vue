@@ -57,12 +57,14 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 import { Extend } from '@mapgis/webclient-es6-service'
 import { IDocument, Layer, Doc } from '@mapgis/webclient-store'
 import { getPortalServices } from "../../../clouddisk/axios/portal";
 import { getPortalUrl } from "../../../clouddisk/config/mapgis";
 
-const { RuleParse, ContourNoteParam } = Extend
+const { RuleParse } = Extend
 const { GeoJsonLayer, RasterTileLayer, VectorTileLayer } = Layer
 const { defaultDocument } = Doc
 
@@ -110,6 +112,7 @@ export default {
         serverName: '',
         // subType: undefined
       },
+      serviceUrl: ''
     };
   },
   props: {
@@ -175,13 +178,43 @@ export default {
         let temUrl = portalBaseurl.split('://')[1]
         let portalIp = temUrl.split(':')[0]
         let portalPort = temUrl.split(':')[1]
-        console.warn('打印Extend', Extend, RuleParse)
 
         let parse = new RuleParse()
-        let url = parse.GetMap(parseInt(this.serviceForm.serverType), portalIp, portalPort, this.serviceForm.serverName, 'url')
-        console.warn('打印url', url)
-        this.paraDocument(url)
+        let serverType = parseInt(this.serviceForm.serverType) === 2 ? 5 : parseInt(this.serviceForm.serverType)
+        let capability = parse.GetCapabilities(serverType, portalIp, portalPort, this.serviceForm.serverName)
+        this.checkCrs(capability)
+        this.serviceUrl = parse.GetMap(parseInt(this.serviceForm.serverType), portalIp, portalPort, this.serviceForm.serverName, 'url')
+        // console.warn('打印url', url)
+        // this.paraDocument(url)
       }
+    },
+    checkCrs (url) {
+      axios.get(url)
+        .then(res => {
+          if (res.status === 200) {
+            let result = res.data
+            if (typeof result === 'object') {
+              let resolution = this.getTileResolution(result)
+              if (resolution > 2) {
+                this.$message.error('目前服务只支持经纬度坐标，无法添加非经纬度服务')
+                this.serviceUrl = ''
+              } else {
+                this.paraDocument(this.serviceUrl)
+              }
+            } else if (typeof result === 'string') {
+              let checkString = result.substring(result.indexOf('<TileMatrixSet>'),result.indexOf('</TileMatrixSet>'))
+              if (checkString.indexOf('4326') > 0 || checkString.indexOf('4490') > 0) {
+                this.paraDocument(this.serviceUrl)
+              } else {
+                this.$message.error('目前服务只支持经纬度坐标，无法添加非经纬度服务')
+                this.serviceUrl = ''
+              }
+            }
+          }
+        })
+        .catch(error => {
+          this.$notification.error({ message: '网络异常,请检查链接', description: error })
+        })
     },
     paraDocument (url) {
       let serverName = this.serviceForm.serverName
@@ -203,6 +236,15 @@ export default {
       }
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
       this.$emit('closeDialog') // 关闭导入文件对话框
+    },
+    getTileResolution (tile) {
+      let result = -1
+      let { TileInfo2 } = tile
+      if (TileInfo2 && TileInfo2.tileInfo && TileInfo2.tileInfo.lods) {
+        let lods = TileInfo2.tileInfo.lods
+        result = lods.length > 0 ? lods[0].resolution : -1
+      }
+      return result
     }
   }
 };
