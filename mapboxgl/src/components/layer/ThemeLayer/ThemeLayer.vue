@@ -3,13 +3,13 @@
     <div v-for="(panel,index) in panels" :key="index" v-show="panel === ThemeLayerId && showPanelFlag">
       <mapgis-igs-unique-theme-layer
           v-show="showType === 'unique'"
-          :themeDefaultType="themeDefaultType"
+          :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
           :panelProps="panelProps"
-          :resetAllLayer="resetAllLayer"
+          :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
-          :closeAllPanel="closeAllPanel"
+          :closeAllPanel="closeAllPanelProps"
           @createLayerFailed="$_createLayerFailed"
           @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
@@ -19,13 +19,13 @@
       ></mapgis-igs-unique-theme-layer>
       <mapgis-igs-symbol-theme-layer
           v-show="showType === 'symbol'"
-          :themeDefaultType="themeDefaultType"
+          :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
           :panelProps="panelProps"
-          :resetAllLayer="resetAllLayer"
+          :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
-          :closeAllPanel="closeAllPanel"
+          :closeAllPanel="closeAllPanelProps"
           @createLayerFailed="$_createLayerFailed"
           @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
@@ -36,13 +36,13 @@
       </mapgis-igs-symbol-theme-layer>
       <mapgis-igs-range-theme-layer
           v-show="showType === 'range'"
-          :themeDefaultType="themeDefaultType"
+          :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
           :panelProps="panelProps"
-          :resetAllLayer="resetAllLayer"
+          :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
-          :closeAllPanel="closeAllPanel"
+          :closeAllPanel="closeAllPanelProps"
           @createLayerFailed="$_createLayerFailed"
           @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
@@ -52,12 +52,12 @@
       ></mapgis-igs-range-theme-layer>
       <mapgis-igs-heat-theme-layer
           v-show="showType === 'heatmap'"
-          :themeDefaultType="themeDefaultType"
+          :themeDefaultType="themeDefaultTypeFlag"
           :themeTypeArr="themeType"
           :panelProps="panelProps"
-          :resetAllLayer="resetAllLayer"
+          :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
-          :closeAllPanel="closeAllPanel"
+          :closeAllPanel="closeAllPanelProps"
           @createLayerFailed="$_createLayerFailed"
           @hasNullProperty="$_hasNullProperty"
           @resetAllLayer="$_resetAllLayer"
@@ -86,17 +86,17 @@ export default {
   data() {
     return {
       showType: "unique",
-      themeDefaultType: "单值专题图",
+      themeDefaultTypeFlag: "单值专题图",
       ThemeLayerId: undefined,
       uniqueLayer: undefined,
       symbolLayer: undefined,
       rangeLayer: undefined,
       heatmapLayer: undefined,
       themeType: undefined,
-      resetAllLayer: true,
+      resetAllLayerFlag: true,
       panels: [],
       showPanelFlag: true,
-      closeAllPanel: true,
+      closeAllPanelProps: true,
       iconUrlCopy: undefined
     }
   },
@@ -138,49 +138,6 @@ export default {
         if(layerOrder[i].indexOf("专题图") < 0){
           window._workspace._layerTypes[layerOrder[i]] = window.originLayer[layerOrder[i]].themeType;
           originLayerIds.push(layerOrder[i]);
-          switch (window.originLayer[layerOrder[i]][layerOrder[i]].type) {
-            case "fill":
-              this.$_setPaintProperty(
-                  "fill-opacity",
-                  0,
-                  layerOrder[i],
-                  window.originLayer[layerOrder[i]][layerOrder[i]],
-                  layerOrder[i]
-              );
-              this.$_setPaintProperty(
-                  "fill-outline-color",
-                  "rgba(255, 255, 255, 0)",
-                  layerOrder[i],
-                  window.originLayer[layerOrder[i]][layerOrder[i]],
-                  layerOrder[i]
-              );
-              break;
-            case "line":
-              this.$_setPaintProperty(
-                  "line-opacity",
-                  0,
-                  layerOrder[i],
-                  window.originLayer[layerOrder[i]][layerOrder[i]],
-                  layerOrder[i]
-              );
-              break;
-            case "circle":
-              this.$_setPaintProperty(
-                  "circle-opacity",
-                  0,
-                  layerOrder[i],
-                  window.originLayer[layerOrder[i]][layerOrder[i]],
-                  layerOrder[i]
-              );
-              this.$_setPaintProperty(
-                  "circle-stroke-opacity",
-                  0,
-                  layerOrder[i],
-                  window.originLayer[layerOrder[i]][layerOrder[i]],
-                  layerOrder[i]
-              );
-              break;
-          }
         }
       }
       let vm = this;
@@ -200,6 +157,51 @@ export default {
               let index = originLayerIds.indexOf(originLayerId);
               let beforeLayer = index === originLayerIds.length - 1 ? undefined : originLayerIds[index + 1];
               vm.map.addLayer(window.originLayer[originLayerId][layerOrder[i]],beforeLayer);
+            }
+          }
+          for (let i =0;i< originLayerIds.length;i++){
+            switch (window.originLayer[originLayerIds[i]][originLayerIds[i]].type) {
+              case "fill":
+                vm.$_setPaintProperty(
+                    "fill-opacity",
+                    0,
+                    originLayerIds[i],
+                    window.originLayer[originLayerIds[i]][originLayerIds[i]],
+                    originLayerIds[i]
+                );
+                this.$_setPaintProperty(
+                    "fill-outline-color",
+                    "rgba(255, 255, 255, 0)",
+                    originLayerIds[i],
+                    window.originLayer[originLayerIds[i]][originLayerIds[i]],
+                    originLayerIds[i]
+                );
+                break;
+              case "line":
+                vm.$_setPaintProperty(
+                    "line-opacity",
+                    0,
+                    originLayerIds[i],
+                    window.originLayer[originLayerIds[i]][originLayerIds[i]],
+                    originLayerIds[i]
+                );
+                break;
+              case "circle":
+                vm.$_setPaintProperty(
+                    "circle-opacity",
+                    0,
+                    originLayerIds[i],
+                    window.originLayer[originLayerIds[i]][originLayerIds[i]],
+                    originLayerIds[i]
+                );
+                vm.$_setPaintProperty(
+                    "circle-stroke-opacity",
+                    0,
+                    originLayerIds[i],
+                    window.originLayer[originLayerIds[i]][originLayerIds[i]],
+                    originLayerIds[i]
+                );
+                break;
             }
           }
           clearInterval(interval);
@@ -306,16 +308,16 @@ export default {
       }
       switch (type) {
         case "heatmap":
-          this.themeDefaultType = "热力专题图";
+          this.themeDefaultTypeFlag = "热力专题图";
           break;
         case "unique":
-          this.themeDefaultType = "单值专题图";
+          this.themeDefaultTypeFlag = "单值专题图";
           break;
         case "range":
-          this.themeDefaultType = "分段专题图";
+          this.themeDefaultTypeFlag = "分段专题图";
           break;
         case "symbol":
-          this.themeDefaultType = "等级符号专题图";
+          this.themeDefaultTypeFlag = "等级符号专题图";
           break;
       }
       this.$_addThemeLayer(type, layerId,minzoom,maxzoom);
@@ -369,7 +371,7 @@ export default {
       this.$_showPanel();
     },
     $_themeTypeChanged(key, value) {
-      this.themeDefaultType = value;
+      this.themeDefaultTypeFlag = value;
       this[this.showType + "Layer"].hideExtraLayer(this.ThemeLayerId);
       this.showPanelFlag = true;
       switch (key) {

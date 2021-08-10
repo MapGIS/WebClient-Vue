@@ -116,7 +116,7 @@ export default {
       startColor: "#FFFFFF",
       endColor: "#FF0000",
       showLayer: true,
-      showPanel: true,
+      showPanelFlag: true,
       resetPanel: false,
       sourceVector: {
         type: "geojson",
@@ -245,7 +245,7 @@ export default {
     $_addThemeLayer(layerId, addLayer, minzoom, maxzoom) {
       this.resetPanel = false;
       this.layerIdCopy = layerId;
-      this.showPanel = true;
+      this.showPanelFlag = true;
       let themeId = layerId + "_" + this.$_getThemeName();
       if (!window.originLayer[layerId]) {
         window.originLayer[layerId] = {};
@@ -776,14 +776,14 @@ export default {
       this.$_toggleLayer();
     },
     togglePanel(toggleLayer) {
-      this.showPanel = !this.showPanel;
+      this.showPanelFlag = !this.showPanelFlag;
       if (toggleLayer) {
         this.$_toggleLayer();
       }
     },
     $_closePanel() {
       if (!this.closeAllPanel) {
-        this.showPanel = false;
+        this.showPanelFlag = false;
         if (this.resetAllLayer) {
           this.$emit("resetAllLayer", this);
         } else {
@@ -794,7 +794,7 @@ export default {
       }
     },
     $_showPanel() {
-      this.showPanel = true;
+      this.showPanelFlag = true;
       this.$_toggleLayer();
     },
     $_mount() {
@@ -1335,7 +1335,7 @@ export default {
           message: "专题图",
           description: "数据中不包含任何属性数据!"
         });
-        this.showPanel = false;
+        this.showPanelFlag = false;
       }
     },
     $_getFromGeoJSON() {

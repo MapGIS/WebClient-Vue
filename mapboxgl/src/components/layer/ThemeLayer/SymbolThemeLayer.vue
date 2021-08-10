@@ -2,7 +2,7 @@
   <div>
     <ThemePanel
         v-if="!resetPanel"
-        v-show="showPanel"
+        v-show="showPanelFlag"
         :title="title"
         :data-source="dataSource"
         :fields="fields"
