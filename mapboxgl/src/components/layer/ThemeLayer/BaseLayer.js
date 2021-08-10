@@ -258,7 +258,7 @@ export default {
         this.$_getFromSource(layerId, minzoom, maxzoom);
       } else if (
         window.originLayer[this.layerIdCopy] &&
-        !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"]
+        window.originLayer.layerOrder.indexOf(this.layerIdCopy) > -1
       ) {
         this.$_getFromSource(layerId, minzoom, maxzoom);
       } else {
