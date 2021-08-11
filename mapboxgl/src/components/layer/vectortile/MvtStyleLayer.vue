@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import clonedeep from "lodash.clonedeep";
 import withEvents from "../../../lib/withEvents";
 import { deepEqual } from "../../util/util";
 
@@ -117,7 +118,29 @@ export default {
       if (!layers) return;
       layers.forEach(layer => {
         if (vm.map.getLayer(layer.id)) {
-          vm.map.removeLayer(layer.id);
+          // 下面地方的处理是针对专题图的显示隐藏特殊处理采取的保留专题图基本的信息前提下更新新的图层可见性
+          let currentThemelayer = map
+            .getStyle()
+            .layers.find(l => l.id == layer.id);
+          if (currentThemelayer) layer.paint = currentThemelayer.paint;
+          if (removeForce) {
+            vm.map.removeLayer(layer.id);
+            let themes = currentLayers.filter(l => {
+              let find = l.source == layer.source && vm.isThemeLayer(l.id);
+              return find;
+            });
+            if (themes && themes.length > 0) {
+              // 当前图层激活了专题图图层不能直接暴力删除,记录对应规则
+              this.themeRules.push([].concat(layer).concat(themes));
+            }
+          } else {
+            let others = currentLayers.filter(l => l.source == layer.source);
+            if (others && others.length >= 2) {
+              // 有其他图层同时引用同一个数据源，不删除数据
+            } else {
+              vm.map.removeLayer(layer.id);
+            }
+          }
         }
       });
       if (!sources) return;
@@ -186,11 +209,95 @@ export default {
         let find = news.find(l => l.id === layer.id);
         return find ? find : layer;
       });
-      let unmerges = news.filter(layer => {
-        let find = merges.find(l => l.id === layer.id);
+      let merges = olds.reduce((total, layer, index, arr) => {
+        let theme = undefined;
+        let beforetheme = undefined;
+        vm.themeRules.forEach(rules => {
+          let findtheme = rules.find(r => r.id == layer.id);
+          if (findtheme) {
+            theme = findtheme;
+            beforetheme = rules[0];
+            let findorigin = total.find(l => l.id == beforetheme.id);
+            if (!findorigin) {
+              let newbeforetheme = news.find(l => l.id == beforetheme.id);
+              if (beforetheme) newbeforetheme.paint = beforetheme.paint;
+              total = total.concat(newbeforetheme || beforetheme);
+            }
+          }
+        });
+
+        let find = news.find(l => l.id == layer.id);
+        let hasold = total.find(l => l.id == layer.id);
+        if (find && !hasold) {
+          return total.concat(find);
+        } else {
+          return total.concat(layer);
+        }
+      }, []);
+
+      // 将未直接合并覆盖的图层重新根据原来的顺序进行插入
+      let befores = news.map((u, i) => {
+        u.before = i == news.length - 1 ? undefined : news[i + 1];
+        if (i === news.length - 1) {
+          u.before = undefined;
+          if (i > 0) u.after = news[i - 1].id;
+        } else {
+          u.before = news[i + 1].id;
+        }
+        u.zindex = i;
+        return u;
+      });
+      // 考虑 A-B-C-D D在之前已经被合并得情况
+      let unmerges = befores.filter(layer => {
+        let find = merges.find(l => l.id == layer.id);
         return find ? false : true;
       });
-      return merges.concat(unmerges);
+      // 考虑 A-B-C 内部的顺序问题  如实际调整为B-A-C
+      /* const sort = clonedeep(unmerges);
+      sort.forEach((layer, i) => {
+        let { before, after } = layer;
+        if (before) {
+          for (let j = 0; j < unmerges.length; j++) {
+            if (unmerges[j].id == before) {
+              index = j;
+              break;
+            }
+          }
+          if (index >= 0) {
+              delete u.before;
+              unmerges.splice(index, 0, u);
+              return false;
+            }
+        }
+      }); */
+      let umsorts = unmerges
+        .filter((u, i) => {
+          let index = -1;
+          let { before, after } = u;
+          if (before) {
+            for (let j = 0; j < merges.length; j++) {
+              if (merges[j].id == before) {
+                index = j;
+                break;
+              }
+            }
+            if (index >= 0) {
+              delete u.before;
+              merges.splice(index, 0, u);
+              return false;
+            }
+          } else if (!before && after) {
+            return true;
+          }
+          return true;
+        })
+        .map(u => {
+          delete u.before;
+          delete u.after;
+          return u;
+        });
+
+      return merges.concat(umsorts);
     },
 
     $_handleMapAddLayer(payload) {
