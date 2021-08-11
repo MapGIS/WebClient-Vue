@@ -284,11 +284,11 @@ export default {
       }
     },
     resetLayer(layerId) {
-      this.uniqueLayer.deleteExtraLayer(layerId);
-      this.symbolLayer.deleteExtraLayer(layerId);
-      this.rangeLayer.deleteExtraLayer(layerId);
-      this.heatmapLayer.deleteExtraLayer(layerId);
-      this.uniqueLayer.resetMainLayer(layerId);
+      this.deleteExtraLayer(layerId,"unique");
+      this.deleteExtraLayer(layerId,"symbol");
+      this.deleteExtraLayer(layerId,"range");
+      this.deleteExtraLayer(layerId,"heatmap");
+      this.resetMainLayer(layerId);
       this.showPanelFlag = false;
     },
     $_setPanelProps(panelProps){

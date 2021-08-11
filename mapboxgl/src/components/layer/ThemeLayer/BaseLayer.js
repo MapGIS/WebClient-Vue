@@ -344,68 +344,87 @@ export default {
     resetLayer(layerId) {
       this.$_resetLayer(layerId);
     },
-    $_deleteExtraLayer(layerId) {
+    $_deleteExtraLayer(layerId, dataType) {
       let extraLayer =
         window.originLayer[layerId][
-          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+          layerId + "_" + this.$_getThemeName(dataType) + "_extraLayer"
         ];
       if (extraLayer) {
-        for (let i = 0; i < extraLayer.length; i++) {
-          let id = extraLayer[i].value;
-          let layer = this.map.getLayer(id);
-          if (layer) {
-            emitMapRemoveLayer(id);
-            this.map.removeLayer(id);
-            if (this.hasOwnProperty(extraLayer[i].key)) {
-              this[extraLayer[i].key] = undefined;
+        if (extraLayer instanceof Array) {
+          for (let i = 0; i < extraLayer.length; i++) {
+            let id = extraLayer[i].value;
+            let layer = this.map.getLayer(id);
+            if (layer) {
+              emitMapRemoveLayer(id);
+              this.map.removeLayer(id);
+              if (this.hasOwnProperty(extraLayer[i].key)) {
+                this[extraLayer[i].key] = undefined;
+              }
             }
           }
+        } else if (extraLayer instanceof Object) {
+          let vm = this;
+          Object.keys(extraLayer).forEach(function(key) {
+            key = Number(key);
+            let id = extraLayer[key].value;
+            let layer = vm.map.getLayer(id);
+            if (layer) {
+              emitMapRemoveLayer(id);
+              vm.map.removeLayer(id);
+              if (vm.hasOwnProperty(extraLayer[key].key)) {
+                vm[extraLayer[key].key] = undefined;
+              }
+            }
+          });
         }
       }
-      if (this.map.getLayer(layerId + "_" + this.$_getThemeName())) {
-        this.map.removeLayer(layerId + "_" + this.$_getThemeName());
-        delete window.originThemeData[layerId];
+      if (this.map.getLayer(layerId + "_" + this.$_getThemeName(dataType))) {
+        this.map.removeLayer(layerId + "_" + this.$_getThemeName(dataType));
+        if (window.originThemeData && window.originThemeData[layerId]) {
+          delete window.originThemeData[layerId];
+        }
       }
     },
-    deleteExtraLayer(layerId) {
-      this.$_deleteExtraLayer(layerId);
+    deleteExtraLayer(layerId, dataType) {
+      this.$_deleteExtraLayer(layerId, dataType);
     },
-    $_showLayerByOpacity() {
-      switch (this.dataType) {
+    $_showLayerByOpacity(layerId) {
+      let dataType = window.originLayer[layerId].dataType;
+      switch (dataType) {
         case "fill":
           this.$_setPaintProperty(
             "fill-opacity",
-            this.opacityBack["fill-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["fill-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           this.$_setPaintProperty(
             "fill-outline-color",
-            this.opacityBack["fill-outline-color"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["fill-outline-color"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           break;
         case "line":
           this.$_setPaintProperty(
             "line-opacity",
-            this.opacityBack["line-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["line-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           break;
         case "circle":
           this.$_setPaintProperty(
             "circle-opacity",
-            this.opacityBack["circle-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["circle-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           this.$_setPaintProperty(
             "circle-stroke-opacity",
-            this.opacityBack["circle-stroke-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["circle-stroke-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           break;
       }
@@ -417,7 +436,7 @@ export default {
       //   layerId,
       //   window.originLayer[layerId][layerId]
       // );
-      this.$_showLayerByOpacity();
+      this.$_showLayerByOpacity(layerId);
       delete window.originLayer[layerId];
       emitMapChangeStyle(this.map.getStyle());
       this.resetPanel = true;
@@ -1006,7 +1025,9 @@ export default {
           layerVector.layout[key] = value;
         }
         let layerID = extId || this.layerIdCopy;
-        window.originLayer[layerID][windowId].layout[key] = value;
+        if (layerID) {
+          window.originLayer[layerID][windowId].layout[key] = value;
+        }
         this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
         if (layerId.indexOf("专题图") > -1 && key !== "visibility") {
           window.originLayer[this.layerIdCopy].panelProps[
@@ -1579,13 +1600,18 @@ export default {
       // });
     },
     $_hideLayerByOpacity() {
+      if (!window.originLayer[this.layerIdCopy].opacityBack) {
+        window.originLayer[this.layerIdCopy].opacityBack = {};
+      }
       switch (this.dataType) {
         case "fill":
-          this.opacityBack["fill-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack["fill-opacity"] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "fill-opacity"
             ] || 1;
-          this.opacityBack["fill-outline-color"] =
+          window.originLayer[this.layerIdCopy].opacityBack[
+            "fill-outline-color"
+          ] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "fill-outline-color"
             ] || "rgba(0, 0, 0, 1)";
@@ -1603,7 +1629,7 @@ export default {
           );
           break;
         case "line":
-          this.opacityBack["line-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack["line-opacity"] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "line-opacity"
             ] || 1;
@@ -1615,11 +1641,13 @@ export default {
           );
           break;
         case "circle":
-          this.opacityBack["circle-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack["circle-opacity"] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "circle-opacity"
             ] || 1;
-          this.opacityBack["circle-stroke-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack[
+            "circle-stroke-opacity"
+          ] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "circle-stroke-opacity"
             ] || 1;
@@ -2041,7 +2069,9 @@ export default {
         layerVector.paint[key] = value;
         this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
         let id = extId || this.layerIdCopy;
-        window.originLayer[id][windowId].paint[key] = value;
+        if (id) {
+          window.originLayer[id][windowId].paint[key] = value;
+        }
         this.changeLayerProp = true;
         if (layerId.indexOf("专题图") > -1) {
           window.originLayer[this.layerIdCopy].panelProps[
