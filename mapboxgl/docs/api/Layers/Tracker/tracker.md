@@ -52,7 +52,7 @@
 - **类型:** `String | Object`
 - **必传属性**
 - **非侦听属性**
-- **描述:** 聚类的 geojson 格式数据,必须是点数据
+- **描述:** geojson 格式数据,必须是线数据
 - **查看:** [官方聚类文档](https://docs.mapbox.com/mapbox-gl-js/example/heatmap-layer/)
 
 ### `follow`
