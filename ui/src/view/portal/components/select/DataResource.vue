@@ -1,11 +1,21 @@
 <template>
   <div class="mapgis-ui-portal-dataresource">
+    <div style="margin-bottom: 16px">
+      <mapgis-ui-button type="primary" :disabled="!hasSelected" :loading="reSelectLoading" @click="reSelect">
+        重新选择
+      </mapgis-ui-button>
+      <span style="margin-left: 8px">
+        <template v-if="hasSelected">
+          {{ `当前已选 ${selectedRowKeys.length} 个数据资源` }}
+        </template>
+      </span>
+    </div>
     <mapgis-ui-table
       :columns="columns"
       :data-source="resourceData"
       :pagination="pagination"
       :loading="loading"
-      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
+      :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'checkbox' }"
       size="small"
       @change="handleTableChange"
     >
@@ -50,7 +60,9 @@ export default {
       loading: false,
       columns,
       selectedRowKeys: [],
-      selectLists: []
+      selectLists: [],
+      selectedDataCache: [],
+      reSelectLoading: false
     };
   },
   props: {
@@ -75,6 +87,11 @@ export default {
   },
   mounted() {
     this.queryData(this.pagination)
+  },
+  computed: {
+    hasSelected() {
+      return this.selectedRowKeys.length > 0;
+    },
   },
   methods: {
     queryData (pagination) {
@@ -116,14 +133,35 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       console.warn('selectedRowKeys changed: ', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
+      this.selectedDataCache = this.selectedDataCache.concat(selectedRows)
+      let selects = [...new Set(this.selectedDataCache)]
+
       let tmpSelect = []
-      selectedRows.forEach(item => {
-        tmpSelect.push(item.detail)
-      })
+      for (let i = 0; i < this.selectedRowKeys.length; i++) {
+        // selects.forEach(item => {
+        //   if (item.id === this.selectedRowKeys[i]) {
+        //     tmpSelect.push(item.detail)
+        //   }
+        // })
+        for (let j = 0; j < selects.length; j++) {
+          if (selects[j].id === this.selectedRowKeys[i]) {
+            tmpSelect.push(selects[j].detail)
+            break
+          }
+        }
+      }
       console.warn('选择列表', tmpSelect)
       this.selectLists = tmpSelect
     },
-    handleAddDataresource () { // 改函数名
+    reSelect () {
+      this.reSelectLoading = true
+      setTimeout(() => {
+        this.reSelectLoading = false
+        this.selectedRowKeys = []
+        this.selectedDataCache= []
+      }, 300);
+    },
+    handleAddDataresource () {
       this.$refs.layerTransform.addLayer()
     },
     formatTime (timestamp) {

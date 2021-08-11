@@ -11,12 +11,24 @@
         更改位置
       </mapgis-ui-button> -->
     </div>
-    <mapgis-ui-progress
+    <!-- <mapgis-ui-progress
       class="upload-progress"
       type="circle"
       :percent="importProgress"
       :status="progressStatus"
-    />
+    /> -->
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-progress class="upload-progress" type="circle" :percent="importProgress" :status="progressStatus" />
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-timeline class="upload-info">
+          <mapgis-ui-timeline-item v-for="(item, index) in uploadInfos" :key="index" :color="item.state < 1 ? 'red' : 'green'">
+            {{item.info}}
+          </mapgis-ui-timeline-item>
+        </mapgis-ui-timeline>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
     <span style="color:#999999;">{{ tipText }}</span>
   </div>
 </template>
@@ -36,12 +48,17 @@ export default {
       tipText: "后台导入中，当前窗口可关闭",
       progressState: true,
       importProgress: 0,
-      importFileName: "上传文件名"
+      importFileName: "上传文件名",
+      uploadInfos: []
     };
+  },
+  created () {
+    this.uploadInfos = []
   },
   watch: {
     WebsocketContent: {
       handler: function() {
+        let vm = this
         if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'refresh') { // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
           let msgResponse = this.WebsocketContent[0]
           let { errorCode, msg, subjectType } = msgResponse
@@ -58,6 +75,16 @@ export default {
               this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
               // this.$emit('closeImport') // 关闭导入文件对话框
             }
+          }
+        } else if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'info') {
+          let msgResponse = this.WebsocketContent[0]
+          let { errorCode, msg, subject, subjectType } = msgResponse
+          if (subjectType === 'geotools:import') {
+            let uploadInfo = {
+              info: subject,
+              state: errorCode
+            }
+            vm.uploadInfos.push(uploadInfo)
           }
         }
       },
@@ -124,5 +151,10 @@ export default {
 }
 .upload-progress {
   margin: 40px 0 66px 0;
+}
+.upload-info {
+  margin: 30px 30px 50px 0;
+  height: 166px;
+  overflow: auto;
 }
 </style>
