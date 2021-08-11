@@ -122,6 +122,18 @@ export default {
     this.iconUrlCopy = this.map.getStyle().sprite;
   },
   methods: {
+    setLayerZoomRange(layerId,minzoom,maxzoom){
+      if(window.originLayer && window.originLayer.layerOrder){
+        let layerOrder = window.originLayer.layerOrder;
+        for (let i =0;i< layerOrder.length;i++){
+          if(layerOrder[i].indexOf(layerId) > -1 && layerOrder[i] !== layerId){
+            this.map.setLayerZoomRange(layerOrder[i],minzoom,maxzoom);
+            window.originLayer[layerId][layerOrder[i]].minzoom = minzoom;
+            window.originLayer[layerId][layerOrder[i]].maxzoom = maxzoom;
+          }
+        }
+      }
+    },
     setAllLayer(themes) {
       let vm = this;
       vm.$_setAllLayer(themes);

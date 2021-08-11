@@ -158,7 +158,12 @@ export default {
 
     $_selectChange(value) {
       let geojsonOrigin = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"];
-
+      if(!geojsonOrigin.hasOwnProperty("features")){
+        geojsonOrigin = {
+          features: geojsonOrigin,
+          type: "FeatureCollection"
+        };
+      }
       let weightArr = this.setWeightArr(geojsonOrigin,value);
       const {heatMapLayerId} = this;
       let weightRules = [

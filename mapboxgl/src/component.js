@@ -34,11 +34,12 @@ export { default as MapgisFeatureTable } from "./components/UI/controls/table/Fe
 export { default as MapgisInspect } from "./components/UI/controls/inspect/Inspect";
 
 export { default as MapgisArrayLayer } from "./components/layer/ArrayLayer";
-export { default as MapgisGeojsonLayer } from "./components/layer/GeojsonLayer";
+export { default as MapgisGeojsonLayer } from "./components/layer/GeojsonManagerLayer";
 export { default as MapgisImageLayer } from "./components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "./components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "./components/layer/VectorLayer";
+
 
 export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
