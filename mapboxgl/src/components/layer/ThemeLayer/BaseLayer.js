@@ -1609,12 +1609,31 @@ export default {
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "fill-opacity"
             ] || 1;
-          window.originLayer[this.layerIdCopy].opacityBack[
-            "fill-outline-color"
-          ] =
+          let outlineColor =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "fill-outline-color"
-            ] || "rgba(0, 0, 0, 1)";
+            ];
+          if (!outlineColor) {
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ] = "rgba(0, 0, 0, 1)";
+          } else if (outlineColor instanceof String) {
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ] = outlineColor || "rgba(0, 0, 0, 1)";
+          } else if (outlineColor.hasOwnProperty("stops")) {
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ] = {};
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ].stops = [];
+            for (let i = 0; i < outlineColor.stops.length; i++) {
+              window.originLayer[this.layerIdCopy].opacityBack[
+                "fill-outline-color"
+              ].stops.push(outlineColor.stops[i]);
+            }
+          }
           this.$_setPaintProperty(
             "fill-opacity",
             0,
