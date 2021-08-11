@@ -39,7 +39,7 @@
           <mapgis-ui-row v-if="showField">
             <mapgis-ui-select
                 v-if="fields.length > 0"
-                :default-value="fields[0]"
+                v-model="selectValue"
                 @change="$_selectChange"
                 class="theme-panel-select"
             >
@@ -60,7 +60,7 @@
                            :span="25"
             >
               <mapgis-ui-select
-                  :default-value="0"
+                  v-model="selectHeatValue"
                   @change="$_heatGradientChange"
               >
                 <mapgis-ui-select-option v-for="(gradient,index) in heatGradientArr" :key="index" :value="index">
@@ -356,7 +356,7 @@
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-row>
-          <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'line' || dataType === 'fill'">
+          <mapgis-ui-row style="margin-top: 8px;">
 <!--            <mapgis-ui-radio-group-->
 <!--                v-model="radioMode"-->
 <!--                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"-->
@@ -447,7 +447,7 @@
             <mapgis-ui-select
                 v-if="labelFieldsCopy.length > 0"
                 class="theme-panel-select"
-                :default-value="labelFieldsCopy[0]"
+                v-model="labelSelectValue"
                 @change="$_selectTextChange"
             >
               <mapgis-ui-select-option v-for="(Field,index) in labelFieldsCopy" :key="index" :value="Field">
@@ -507,7 +507,7 @@
           <mapgis-ui-row>
             <mapgis-ui-select
                 v-if="fields.length > 0"
-                :default-value="textFonts[0]"
+                v-model="textFontsSelect"
                 class="theme-panel-select"
                 @change="$_fontChanged"
             >
@@ -850,6 +850,7 @@ export default {
       textPadding: 0.05,
       textRotationStep: 1,
       textRotation: 0,
+      textFontsSelect: undefined,
       heatMapRadius: 12,
       currentColors: [{
         key: "0",
@@ -930,7 +931,9 @@ export default {
       }],
       themeDefaultTypeCopy: undefined,
       labelFieldsCopy: [],
-      gradientColor: "#FF0000"
+      gradientColor: "#FF0000",
+      labelSelectValue: undefined,
+      selectHeatValue: 0
     }
   },
   watch: {
@@ -983,10 +986,31 @@ export default {
     defaultIconValue: {
       handler: function () {}
     },
+    textFonts: {
+      handler: function () {
+        if(this.textFonts.length > 0){
+          if(!this.textFontsSelect){
+            this.textFontsSelect = this.textFonts[0];
+          }
+        }
+      }
+    },
+    fields: {
+      handler: function () {
+        if(this.fields.length > 0){
+          if(!this.selectValue){
+            this.selectValue = this.fields[0];
+          }
+        }
+      }
+    },
     labelFields: {
       handler: function () {
         if(this.labelFields.length > 0){
           this.labelFieldsCopy = ["未设置"].concat(this.labelFields);
+          if(!this.labelSelectValue){
+            this.labelSelectValue = this.labelFieldsCopy[0];
+          }
         }
       }
     },
@@ -995,6 +1019,9 @@ export default {
     this.$_formatPanelProps();
   },
   mounted() {
+    if(this.textFonts.length > 0 && !this.textFontsSelect){
+      this.textFontsSelect = this.textFonts[0];
+    }
     this.themeDefaultTypeCopy = this.themeDefaultType;
     if(this.labelFields.length > 0){
       this.labelFieldsCopy = ["未设置"].concat(this.labelFields);
@@ -1075,6 +1102,15 @@ export default {
       let vm = this;
       Object.keys(this.$data).forEach(function (key) {
         if (vm.$props.panelProps.hasOwnProperty(key)) {
+          if(key === "heatGradientArr"){
+            let e = vm.$props.panelProps.heatGradientArr[Number(vm.$props.panelProps.selectHeatValue)].key;
+            let colorsArr = [];
+            colorsArr = e.split(",");
+            vm.currentColors = [];
+            colorsArr.forEach((color, i) => {
+              vm.currentColors.push({key: i, value: color});
+            });
+          }
           vm.$data[key] = vm.$props.panelProps[key];
         }
       });
@@ -1199,7 +1235,7 @@ export default {
       this.$emit("checked", this.checkBoxArr, index, color);
     },
     $_changeColor(index) {
-      this.$emit("oneColorChanged", index, this.colors[index]);
+      this.$emit("oneColorChanged", index, this.colors[index],this.colors);
     },
     $_selectChange(value) {
       this.selectValue = value;
@@ -1244,7 +1280,7 @@ export default {
         this.currentColors.push({key: i, value: color});
       });
       colorsArr.unshift("rgba(255,255,255,0)");
-      this.$emit("gradientChange", colorsArr);
+      this.$emit("gradientChange", colorsArr,index);
     },
     $_selectColor(e) {
       let colorsArr = [];
@@ -1260,7 +1296,7 @@ export default {
       };
       this.$set(this.heatGradientArr, this.currentColorIndex, changeOneColor);
       colorsArr.unshift("rgba(255,255,255,0)");
-      this.$emit("gradientChange", colorsArr);
+      this.$emit("gradientChange", colorsArr,this.heatGradientArr);
     },
   }
 }

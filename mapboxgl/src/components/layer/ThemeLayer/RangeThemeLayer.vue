@@ -356,6 +356,7 @@ export default {
     },
     $_changeColor(index) {
       this.isGradient = false;
+      window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.colors = this.colors;
       this.$_removeIcon();
       this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
     },

@@ -6,7 +6,7 @@
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
-          :panelProps="panelProps"
+          :panelProps="panelPropsObj"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -22,7 +22,7 @@
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
-          :panelProps="panelProps"
+          :panelProps="panelPropsObj"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -39,7 +39,7 @@
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
-          :panelProps="panelProps"
+          :panelProps="panelPropsObj"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -54,7 +54,7 @@
           v-show="showType === 'heatmap'"
           :themeDefaultType="themeDefaultTypeFlag"
           :themeTypeArr="themeType"
-          :panelProps="panelProps"
+          :panelProps="panelPropsObj"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -97,7 +97,9 @@ export default {
       panels: [],
       showPanelFlag: true,
       closeAllPanelProps: true,
-      iconUrlCopy: undefined
+      iconUrlCopy: undefined,
+      importArr: [],
+      panelPropsObj: undefined
     }
   },
   props: {
@@ -105,12 +107,6 @@ export default {
       type: Array,
       default() {
         return []
-      }
-    },
-    panelProps: {
-      type: Object,
-      default() {
-        return {}
       }
     },
     iconUrl: {
@@ -126,10 +122,13 @@ export default {
       if(window.originLayer && window.originLayer.layerOrder){
         let layerOrder = window.originLayer.layerOrder;
         for (let i =0;i< layerOrder.length;i++){
-          if(layerOrder[i].indexOf(layerId) > -1 && layerOrder[i] !== layerId){
-            this.map.setLayerZoomRange(layerOrder[i],minzoom,maxzoom);
-            window.originLayer[layerId][layerOrder[i]].minzoom = minzoom;
-            window.originLayer[layerId][layerOrder[i]].maxzoom = maxzoom;
+          if(layerOrder[i].indexOf(layerId + "_" + this.$_getThemeName("unique")) > -1 || layerOrder[i].indexOf(layerId + "_" + this.$_getThemeName("range")) > -1 ||
+              layerOrder[i].indexOf(layerId + "_" + this.$_getThemeName("symbol")) > -1 || layerOrder[i].indexOf(layerId + "_" + this.$_getThemeName("heatmap")) > -1){
+            if(this.map.getLayer(layerOrder[i])){
+              this.map.setLayerZoomRange(layerOrder[i],minzoom,maxzoom);
+              window.originLayer[layerId][layerOrder[i]].minzoom = minzoom;
+              window.originLayer[layerId][layerOrder[i]].maxzoom = maxzoom;
+            }
           }
         }
       }
@@ -168,6 +167,15 @@ export default {
             }else {
               let index = originLayerIds.indexOf(originLayerId);
               let beforeLayer = index === originLayerIds.length - 1 ? undefined : originLayerIds[index + 1];
+              if(layerOrder[i] === originLayerId + "_单值专题图"){
+                vm.importArr.push(originLayerId + "unique");
+              }else if(layerOrder[i] === originLayerId + "_分段专题图"){
+                vm.importArr.push(originLayerId + "range");
+              }else if(layerOrder[i] === originLayerId + "_等级符号专题图"){
+                vm.importArr.push(originLayerId + "symbol");
+              }else if(layerOrder[i] === originLayerId + "_热力专题图"){
+                vm.importArr.push(originLayerId + "heatmap");
+              }
               vm.map.addLayer(window.originLayer[originLayerId][layerOrder[i]],beforeLayer);
             }
           }
@@ -181,7 +189,7 @@ export default {
                     window.originLayer[originLayerIds[i]][originLayerIds[i]],
                     originLayerIds[i]
                 );
-                this.$_setPaintProperty(
+                vm.$_setPaintProperty(
                     "fill-outline-color",
                     "rgba(255, 255, 255, 0)",
                     originLayerIds[i],
@@ -283,7 +291,49 @@ export default {
       this.uniqueLayer.resetMainLayer(layerId);
       this.showPanelFlag = false;
     },
+    $_setPanelProps(panelProps){
+      if(panelProps && panelProps instanceof Object && JSON.stringify(panelProps) !== "{}"){
+        if(panelProps.hasOwnProperty("text-offset")){
+          panelProps["text-offset-x"] = panelProps["text-offset"][0];
+          panelProps["text-offset-y"] = panelProps["text-offset"][1] * -1;
+        }
+        if(panelProps.hasOwnProperty("icon-offset")){
+          panelProps["icon-offset-x"] = panelProps["icon-offset"][0];
+          panelProps["icon-offset-y"] = panelProps["icon-offset"][1] * -1;
+        }
+        if(panelProps.hasOwnProperty("text-field")){
+          if(panelProps["text-field"].indexOf("{") > -1){
+            panelProps["text-field"] = panelProps["text-field"].substr(1,panelProps["text-field"].length - 2);
+          }
+        }
+        if(panelProps.hasOwnProperty("text-font")){
+          panelProps["text-font"] = panelProps["text-font"][0];
+        }
+        if(panelProps.hasOwnProperty("circle-stroke-opacity")){
+          panelProps["circle-stroke-opacity"] = panelProps["circle-stroke-opacity"] * 100;
+        }
+        if(panelProps.hasOwnProperty("circle-opacity")){
+          panelProps["circle-opacity"] = panelProps["circle-opacity"] * 100;
+        }
+        if(panelProps.hasOwnProperty("heatmap-opacity")){
+          panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+        }
+        if(panelProps.hasOwnProperty("icon-opacity")){
+          panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+        }
+        if(panelProps.hasOwnProperty("circle-translate")){
+          panelProps["circle-translate-x"] = panelProps["circle-translate"][0];
+          panelProps["circle-translate-y"] = panelProps["circle-translate"][1] * -1;
+        }
+        this.panelPropsObj = panelProps;
+      }
+    },
     addThemeLayer(type, layerId,minzoom,maxzoom) {
+      this.panelPropsObj = undefined;
+      if(!type && this.importArr.indexOf(layerId + window._workspace._layerTypes[layerId]) >= 0){
+        let panelProps = window.originLayer[layerId].panelProps[window._workspace._layerTypes[layerId]].panelProps;
+        this.$_setPanelProps(panelProps);
+      }
       let hasPanel = false;
       type = type || window._workspace._layerTypes[layerId];
       for (let i = 0; i < this.panels.length; i++) {
@@ -386,22 +436,33 @@ export default {
       this.themeDefaultTypeFlag = value;
       this[this.showType + "Layer"].hideExtraLayer(this.ThemeLayerId);
       this.showPanelFlag = true;
-      switch (key) {
-        case "unique":
-          this.uniqueLayer.addThemeLayer(this.ThemeLayerId);
-          break;
-        case "symbol":
-          this.symbolLayer.addThemeLayer(this.ThemeLayerId);
-          break;
-        case "range":
-          this.rangeLayer.addThemeLayer(this.ThemeLayerId);
-          break;
-        case "heatmap":
-          this.heatmapLayer.addThemeLayer(this.ThemeLayerId);
-          break;
+      let panelProps;
+      if(window.originLayer[this.ThemeLayerId].panelProps.hasOwnProperty(key)){
+        panelProps = window.originLayer[this.ThemeLayerId].panelProps[key].panelProps;
       }
-      this.showType = key;
-      this[this.showType + "Layer"].showExtraLayer(this.ThemeLayerId);
+      this.panelPropsObj = undefined;
+      if(this.importArr.indexOf(this.ThemeLayerId + key) >= 0 && panelProps && panelProps instanceof Object && JSON.stringify(panelProps) !== "{}"){
+        this.$_setPanelProps(panelProps);
+      }
+      this.$nextTick(function () {
+        switch (key) {
+          case "unique":
+            this.uniqueLayer.addThemeLayer(this.ThemeLayerId);
+            break;
+          case "symbol":
+            this.symbolLayer.addThemeLayer(this.ThemeLayerId);
+            break;
+          case "range":
+            this.rangeLayer.addThemeLayer(this.ThemeLayerId);
+            break;
+          case "heatmap":
+            this.heatmapLayer.addThemeLayer(this.ThemeLayerId);
+            break;
+        }
+        window.originLayer[this.ThemeLayerId].themeType = key;
+        this.showType = key;
+        this[this.showType + "Layer"].showExtraLayer(this.ThemeLayerId);
+      });
     }
   }
 }
