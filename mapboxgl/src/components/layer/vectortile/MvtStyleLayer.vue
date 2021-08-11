@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import clonedeep from "lodash.clonedeep";
 import withEvents from "../../../lib/withEvents";
 import { deepEqual } from "../../util/util";
 import { compareStyle } from "./MvtCompare";
@@ -137,7 +138,9 @@ export default {
       layers.forEach(layer => {
         if (vm.map.getLayer(layer.id)) {
           // 下面地方的处理是针对专题图的显示隐藏特殊处理采取的保留专题图基本的信息前提下更新新的图层可见性
-          let currentThemelayer = map.getStyle().layers.find(l => l.id == layer.id);
+          let currentThemelayer = map
+            .getStyle()
+            .layers.find(l => l.id == layer.id);
           if (currentThemelayer) layer.paint = currentThemelayer.paint;
           if (removeForce) {
             vm.map.removeLayer(layer.id);
@@ -261,12 +264,32 @@ export default {
         } else {
           u.before = news[i + 1].id;
         }
+        u.zindex = i;
         return u;
       });
+      // 考虑 A-B-C-D D在之前已经被合并得情况
       let unmerges = befores.filter(layer => {
         let find = merges.find(l => l.id == layer.id);
         return find ? false : true;
       });
+      // 考虑 A-B-C 内部的顺序问题  如实际调整为B-A-C
+      /* const sort = clonedeep(unmerges);
+      sort.forEach((layer, i) => {
+        let { before, after } = layer;
+        if (before) {
+          for (let j = 0; j < unmerges.length; j++) {
+            if (unmerges[j].id == before) {
+              index = j;
+              break;
+            }
+          }
+          if (index >= 0) {
+              delete u.before;
+              unmerges.splice(index, 0, u);
+              return false;
+            }
+        }
+      }); */
       let umsorts = unmerges
         .filter((u, i) => {
           let index = -1;
