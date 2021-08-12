@@ -1806,8 +1806,8 @@ export default {
             "请返回一个originColor对象，该对象包含checkArr、colors以及colorList三个属性！"
           );
         }
-        this.originColors = originColors;
         colors = originColors.colors;
+        this.originColors = JSON.parse(JSON.stringify(originColors));
         this.allOriginColors[key] = this.originColors;
       }
       if (!noColor) {
@@ -1845,6 +1845,7 @@ export default {
       for (let i = 0; i < features.length; i++) {
         datas.push(features[i].properties[value]);
       }
+      datas = Array.from(new Set(datas));
       this.dataBack = datas;
       if (this.themeType === "range") {
         datas = this.$_editData(datas);
