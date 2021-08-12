@@ -1068,6 +1068,9 @@ export default {
     this.$_initDataSource();
   },
   methods: {
+    setSelectValue(selectValue){
+      this.selectValue = selectValue;
+    },
     $_editStr(item,strLength){
       item = item || "";
       item = String(item);

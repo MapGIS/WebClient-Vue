@@ -325,6 +325,9 @@ export default {
           panelProps["circle-translate-x"] = panelProps["circle-translate"][0];
           panelProps["circle-translate-y"] = panelProps["circle-translate"][1] * -1;
         }
+        panelProps = JSON.parse(JSON.stringify(panelProps));
+        delete panelProps.colors;
+        delete panelProps.checkBoxArr;
         this.panelPropsObj = panelProps;
       }
     },

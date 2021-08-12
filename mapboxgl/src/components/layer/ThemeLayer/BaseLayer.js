@@ -1469,11 +1469,20 @@ export default {
       this.showVector = true;
       this.$_getNumberFields(geojson.features);
       this.fields = this.$_getFields(geojson.features);
+      this.themeTypeArrCopy = this.$_getThemeFields(geojson.features[0]);
+      this.$emit("getThemeType", this.themeTypeArrCopy);
+      if (!this.selectValue) {
+        this.selectValue = this.fields[0];
+      }
       this.defaultValue =
         this.defaultValue === undefined ? this.fields[0] : this.defaultValue;
       this.selectKey = this.fields[0];
-      this.themeTypeArrCopy = this.$_getThemeFields(geojson.features[0]);
-      this.$emit("getThemeType", this.themeTypeArrCopy);
+      if (this.fields.indexOf(this.selectValue) < 0) {
+        this.selectValue = this.selectKey;
+      } else {
+        this.defaultValue = this.selectValue;
+        this.selectKey = this.selectValue;
+      }
       this.dataSource = this.$_getData(geojson.features, this.selectKey);
       let colors = this.$_getColors(
         this.dataSource,
@@ -1481,23 +1490,7 @@ export default {
         endColor,
         this.selectKey
       );
-      let checkBoxArr;
-      if (
-        window.originLayer[this.layerIdCopy] &&
-        window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps")
-      ) {
-        let panelProps =
-          window.originLayer[this.layerIdCopy].panelProps[this.themeType]
-            .panelProps;
-        if (panelProps.hasOwnProperty("checkBoxArr")) {
-          checkBoxArr = panelProps.checkBoxArr;
-        }
-      }
-      if (checkBoxArr) {
-        this.checkBoxArr = checkBoxArr;
-      } else {
-        this.checkBoxArr = this.originColors.checkArr;
-      }
+      this.$_setCheckBoxFromLocal();
       if (this.$_initThemeCallBack) {
         if (!window.originLayer[this.layerIdCopy].panelProps) {
           window.originLayer[this.layerIdCopy].panelProps = {};
@@ -1614,6 +1607,66 @@ export default {
       //     this.$_changeOriginLayer();
       //     this.$_loadedLayer();
       // });
+    },
+    $_setCheckBoxToLocal(checkBoxArr) {
+      if (
+        !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+          .panelProps.checkBoxArr
+      ) {
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps.checkBoxArr = {};
+      }
+      window.originLayer[this.layerIdCopy].panelProps[
+        this.themeType
+      ].panelProps.checkBoxArr[this.selectValue] = checkBoxArr;
+    },
+    $_setColorsToLocal(colors) {
+      // window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.colors = this.colors;
+      if (
+        !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+          .panelProps.colors
+      ) {
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps.colors = {};
+      }
+      window.originLayer[this.layerIdCopy].panelProps[
+        this.themeType
+      ].panelProps.colors[this.selectValue] = colors;
+    },
+    $_setColorsFromLocal() {
+      if (
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps.hasOwnProperty(this.dataType + "-color") &&
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps[this.dataType + "-color"].hasOwnProperty(this.selectValue)
+      ) {
+        window.originLayer[this.layerIdCopy][
+          this.layerIdCopy + "_" + this.$_getThemeName()
+        ].paint[this.dataType + "-color"] =
+          window.originLayer[this.layerIdCopy].panelProps[
+            this.themeType
+          ].panelProps[this.dataType + "-color"][this.selectValue];
+      }
+    },
+    $_getColorsFromLocal() {
+      let colors;
+      if (
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps.hasOwnProperty(this.dataType + "-color") &&
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps[this.dataType + "-color"].hasOwnProperty(this.selectValue)
+      ) {
+        colors =
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+            .panelProps[this.dataType + "-color"][this.selectValue];
+      }
+      return colors;
     },
     $_hideLayerByOpacity() {
       if (!window.originLayer[this.layerIdCopy].opacityBack) {
@@ -1758,8 +1811,29 @@ export default {
         this.allOriginColors[key] = this.originColors;
       }
       if (!noColor) {
-        if (this.panelProps.hasOwnProperty("colors")) {
-          this.colors = this.panelProps.colors;
+        let newColors;
+        if (
+          window.originLayer[this.layerIdCopy] &&
+          window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
+          window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(
+            this.themeType
+          ) &&
+          window.originLayer[this.layerIdCopy].panelProps[
+            this.themeType
+          ].panelProps.hasOwnProperty("colors") &&
+          window.originLayer[this.layerIdCopy].panelProps[
+            this.themeType
+          ].panelProps.colors.hasOwnProperty(this.selectValue)
+        ) {
+          let panelProps =
+            window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+              .panelProps;
+          if (panelProps.hasOwnProperty("colors")) {
+            newColors = panelProps.colors[this.selectValue];
+          }
+        }
+        if (newColors) {
+          this.colors = newColors;
         } else {
           this.colors = this.originColors.colorList;
         }
@@ -1799,8 +1873,38 @@ export default {
       return datas;
     },
     $_removeLayer() {},
+    $_setCheckBoxFromLocal() {
+      let checkBoxArr;
+      if (
+        window.originLayer[this.layerIdCopy] &&
+        window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
+        window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(
+          this.themeType
+        ) &&
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps.hasOwnProperty("checkBoxArr") &&
+        window.originLayer[this.layerIdCopy].panelProps[
+          this.themeType
+        ].panelProps.checkBoxArr.hasOwnProperty(this.selectValue)
+      ) {
+        let panelProps =
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+            .panelProps;
+        if (panelProps.hasOwnProperty("checkBoxArr")) {
+          checkBoxArr = panelProps.checkBoxArr[this.selectValue];
+        }
+      }
+      if (checkBoxArr) {
+        this.checkBoxArr = checkBoxArr;
+      } else {
+        this.checkBoxArr = this.originColors.checkArr;
+      }
+    },
     $_selectChange(value) {
       if (value !== "") {
+        this.selectValue = value;
+        this.rangeLevel = 10;
         let datas = this.$_getData(this.dataCopy.features, value);
         this.dataSource = datas;
         let colors = this.$_getColors(
@@ -1809,7 +1913,7 @@ export default {
           this.endColor,
           value
         );
-        this.checkBoxArr = this.originColors.checkArr;
+        this.$_setCheckBoxFromLocal();
         this.selectKey = value;
         window.originLayer[this.layerIdCopy].panelProps[
           window._workspace._layerTypes[this.layerIdCopy]
@@ -1933,10 +2037,15 @@ export default {
       this.changeLayerId = this.layerIdCopy;
     },
     $_oneColorChanged(index, color, colorsBack) {
-      window.originLayer[this.layerIdCopy].panelProps[
-        window._workspace._layerTypes[this.layerIdCopy]
-      ].panelProps.colors = colorsBack;
-      let colors = this.$_getColorsFromOrigin(index, color);
+      this.$_setColorsToLocal(colorsBack);
+      let localColors = this.$_getColorsFromLocal();
+      let colors;
+      if (localColors) {
+        colors = localColors;
+        colors.splice(2 + (index + 1) * 2 - 1, 1, color);
+      } else {
+        colors = this.$_getColorsFromOrigin(index, color);
+      }
       this.isGradient = false;
       this.isSingle = false;
       if (this.$_oneColorChangedCallBack) {
@@ -2109,9 +2218,27 @@ export default {
         }
         this.changeLayerProp = true;
         if (layerId.indexOf("专题图") > -1) {
-          window.originLayer[this.layerIdCopy].panelProps[
-            this.themeType
-          ].panelProps[key] = value;
+          if (
+            key === "circle-color" ||
+            key === "fill-color" ||
+            key === "line-color"
+          ) {
+            if (
+              !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                .panelProps[key]
+            ) {
+              window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+              ].panelProps[key] = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+              this.themeType
+            ].panelProps[key][this.selectValue] = value;
+          } else {
+            window.originLayer[this.layerIdCopy].panelProps[
+              this.themeType
+            ].panelProps[key] = value;
+          }
         }
         this.changeLayerId = layerId;
       }
