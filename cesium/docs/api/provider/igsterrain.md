@@ -57,3 +57,17 @@
    ![igserver](./igs_vertex.png)
 
 
+## 事件
+
+### `@load`
+
+- **描述** 在 地形组件 加载完毕后发送该事件，返回的组件本身
+- **Payload** `this`
+- - `this (component)` 组件对象this
+
+### `@terrain-loaded`
+
+- **描述** 在 地形组件 加载完毕后发送该事件， 返回的是地形图层数组
+- **Payload** `[layer]`
+- - `[layer]` 地形图层数组
+![图层数组](./terrain_load.png)
