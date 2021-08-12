@@ -184,14 +184,28 @@ export default {
           layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
         ];
       if (extraLayer) {
-        for (let i = 0; i < extraLayer.length; i++) {
-          this.$_setLayOutProperty(
-            "visibility",
-            "none",
-            extraLayer[i].value,
-            window.originLayer[layerId][extraLayer[i].value],
-            layerId
-          );
+        if (extraLayer instanceof Array) {
+          for (let i = 0; i < extraLayer.length; i++) {
+            this.$_setLayOutProperty(
+              "visibility",
+              "none",
+              extraLayer[i].value,
+              window.originLayer[layerId][extraLayer[i].value],
+              layerId
+            );
+          }
+        } else if (extraLayer instanceof Object) {
+          let vm = this;
+          Object.keys(extraLayer).forEach(function(key) {
+            key = Number(key);
+            vm.$_setLayOutProperty(
+              "visibility",
+              "none",
+              extraLayer[key].value,
+              window.originLayer[layerId][extraLayer[key].value],
+              layerId
+            );
+          });
         }
       }
       this.$_setLayOutProperty(
@@ -210,14 +224,28 @@ export default {
           layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
         ];
       if (extraLayer) {
-        for (let i = 0; i < extraLayer.length; i++) {
-          this.$_setLayOutProperty(
-            "visibility",
-            "visible",
-            extraLayer[i].value,
-            window.originLayer[layerId][extraLayer[i].value],
-            layerId
-          );
+        if (extraLayer instanceof Array) {
+          for (let i = 0; i < extraLayer.length; i++) {
+            this.$_setLayOutProperty(
+              "visibility",
+              "visible",
+              extraLayer[i].value,
+              window.originLayer[layerId][extraLayer[i].value],
+              layerId
+            );
+          }
+        } else if (extraLayer instanceof Object) {
+          let vm = this;
+          Object.keys(extraLayer).forEach(function(key) {
+            key = Number(key);
+            vm.$_setLayOutProperty(
+              "visibility",
+              "visible",
+              extraLayer[key].value,
+              window.originLayer[layerId][extraLayer[key].value],
+              layerId
+            );
+          });
         }
       }
       this.$_setLayOutProperty(
@@ -316,68 +344,87 @@ export default {
     resetLayer(layerId) {
       this.$_resetLayer(layerId);
     },
-    $_deleteExtraLayer(layerId) {
+    $_deleteExtraLayer(layerId, dataType) {
       let extraLayer =
         window.originLayer[layerId][
-          layerId + "_" + this.$_getThemeName() + "_extraLayer"
+          layerId + "_" + this.$_getThemeName(dataType) + "_extraLayer"
         ];
       if (extraLayer) {
-        for (let i = 0; i < extraLayer.length; i++) {
-          let id = extraLayer[i].value;
-          let layer = this.map.getLayer(id);
-          if (layer) {
-            emitMapRemoveLayer(id);
-            this.map.removeLayer(id);
-            if (this.hasOwnProperty(extraLayer[i].key)) {
-              this[extraLayer[i].key] = undefined;
+        if (extraLayer instanceof Array) {
+          for (let i = 0; i < extraLayer.length; i++) {
+            let id = extraLayer[i].value;
+            let layer = this.map.getLayer(id);
+            if (layer) {
+              emitMapRemoveLayer(id);
+              this.map.removeLayer(id);
+              if (this.hasOwnProperty(extraLayer[i].key)) {
+                this[extraLayer[i].key] = undefined;
+              }
             }
           }
+        } else if (extraLayer instanceof Object) {
+          let vm = this;
+          Object.keys(extraLayer).forEach(function(key) {
+            key = Number(key);
+            let id = extraLayer[key].value;
+            let layer = vm.map.getLayer(id);
+            if (layer) {
+              emitMapRemoveLayer(id);
+              vm.map.removeLayer(id);
+              if (vm.hasOwnProperty(extraLayer[key].key)) {
+                vm[extraLayer[key].key] = undefined;
+              }
+            }
+          });
         }
       }
-      if (this.map.getLayer(layerId + "_" + this.$_getThemeName())) {
-        this.map.removeLayer(layerId + "_" + this.$_getThemeName());
-        delete window.originThemeData[layerId];
+      if (this.map.getLayer(layerId + "_" + this.$_getThemeName(dataType))) {
+        this.map.removeLayer(layerId + "_" + this.$_getThemeName(dataType));
+        if (window.originThemeData && window.originThemeData[layerId]) {
+          delete window.originThemeData[layerId];
+        }
       }
     },
-    deleteExtraLayer(layerId) {
-      this.$_deleteExtraLayer(layerId);
+    deleteExtraLayer(layerId, dataType) {
+      this.$_deleteExtraLayer(layerId, dataType);
     },
-    $_showLayerByOpacity() {
-      switch (this.dataType) {
+    $_showLayerByOpacity(layerId) {
+      let dataType = window.originLayer[layerId].dataType;
+      switch (dataType) {
         case "fill":
           this.$_setPaintProperty(
             "fill-opacity",
-            this.opacityBack["fill-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["fill-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           this.$_setPaintProperty(
             "fill-outline-color",
-            this.opacityBack["fill-outline-color"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["fill-outline-color"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           break;
         case "line":
           this.$_setPaintProperty(
             "line-opacity",
-            this.opacityBack["line-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["line-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           break;
         case "circle":
           this.$_setPaintProperty(
             "circle-opacity",
-            this.opacityBack["circle-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["circle-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           this.$_setPaintProperty(
             "circle-stroke-opacity",
-            this.opacityBack["circle-stroke-opacity"],
-            this.layerIdCopy,
-            window.originLayer[this.layerIdCopy][this.layerIdCopy]
+            window.originLayer[layerId].opacityBack["circle-stroke-opacity"],
+            layerId,
+            window.originLayer[layerId][layerId]
           );
           break;
       }
@@ -389,7 +436,7 @@ export default {
       //   layerId,
       //   window.originLayer[layerId][layerId]
       // );
-      this.$_showLayerByOpacity();
+      this.$_showLayerByOpacity(layerId);
       delete window.originLayer[layerId];
       emitMapChangeStyle(this.map.getStyle());
       this.resetPanel = true;
@@ -441,6 +488,9 @@ export default {
         this.resetPanel = true;
         this.$emit("resetLayer");
       }
+    },
+    $_setColors(colors) {
+      this.colors = colors;
     },
     $_formatProps() {
       let formatArr = [
@@ -499,6 +549,14 @@ export default {
         {
           before: "icon-rotate-step",
           after: "rotationStep"
+        },
+        {
+          before: "text-field",
+          after: "labelSelectValue"
+        },
+        {
+          before: "text-font",
+          after: "textFontsSelect"
         },
         {
           before: "text-color",
@@ -585,6 +643,10 @@ export default {
           after: "lineWidth"
         },
         {
+          before: "line-opacity",
+          after: "opacity"
+        },
+        {
           before: "circle-stroke-width",
           after: "lineWidth"
         },
@@ -615,6 +677,14 @@ export default {
         {
           before: "circle-translate",
           after: "offset"
+        },
+        {
+          before: "circle-translate-x",
+          after: "xOffset"
+        },
+        {
+          before: "circle-translate-y",
+          after: "yOffset"
         },
         {
           before: "circle-stroke-color",
@@ -919,7 +989,16 @@ export default {
         if (this.source_vector_layer_Id) {
           this.textLayer["source-layer"] = this.source_vector_layer_Id;
         }
-        this.map.addLayer(this.textLayer);
+        if (!this.map.getLayer(this.textId)) {
+          this.map.addLayer(this.textLayer);
+        } else {
+          this.$_setLayOutProperty(
+            "text-field",
+            "{" + value + "}",
+            this.textId,
+            window.originLayer[this.layerIdCopy][this.textId]
+          );
+        }
         emitMapAddLayer({ layer: this.textLayer });
         emitMapChangeStyle(this.map.getStyle());
       } else {
@@ -942,10 +1021,19 @@ export default {
           this.layerIdCopy + "_" + this.$_getThemeName()
         ];
       if (layerVector && layerVector.hasOwnProperty("layout")) {
-        layerVector.layout[key] = value;
-        this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
+        if (layerId.indexOf("注记") < 0) {
+          layerVector.layout[key] = value;
+        }
         let layerID = extId || this.layerIdCopy;
-        window.originLayer[layerID][windowId].layout[key] = value;
+        if (layerID) {
+          window.originLayer[layerID][windowId].layout[key] = value;
+        }
+        this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
+        if (layerId.indexOf("专题图") > -1 && key !== "visibility") {
+          window.originLayer[this.layerIdCopy].panelProps[
+            this.themeType
+          ].panelProps[key] = value;
+        }
         this.changeLayerProp = true;
         this.changeLayerId = layerId;
       }
@@ -997,10 +1085,10 @@ export default {
       }
     },
     $_singleChangedOut(startColor, endColor) {
-      if (this.isGradient) {
-        this.$_gradientChange(startColor, endColor);
-      } else {
-      }
+      this.$_gradientChange(startColor, endColor);
+      window.originLayer[this.layerIdCopy].panelProps[
+        window._workspace._layerTypes[this.layerIdCopy]
+      ].panelProps.gradientColor = endColor;
     },
     $_fontColorChanged(color) {
       this.$_setPaintProperty("text-color", color, this.textId, this.textLayer);
@@ -1395,6 +1483,9 @@ export default {
       );
       this.checkBoxArr = this.originColors.checkArr;
       if (this.$_initThemeCallBack) {
+        if (!window.originLayer[this.layerIdCopy].panelProps) {
+          window.originLayer[this.layerIdCopy].panelProps = {};
+        }
         this.$_initThemeCallBack(
           geojson,
           colors,
@@ -1404,6 +1495,14 @@ export default {
         );
       } else {
         throw new Error("请设置$_initTheme方法的回到函数！");
+      }
+      if (!window.originLayer[this.layerIdCopy].panelProps[this.themeType]) {
+        window.originLayer[this.layerIdCopy].panelProps[this.themeType] = {
+          selectValue: this.fields[0],
+          gradientColor: "",
+          panelProps: {},
+          checkArr: []
+        };
       }
       if (!window.originLayer[this.layerIdCopy].layerId) {
         window.originLayer[this.layerIdCopy].layerId = this.layerIdCopy;
@@ -1501,16 +1600,40 @@ export default {
       // });
     },
     $_hideLayerByOpacity() {
+      if (!window.originLayer[this.layerIdCopy].opacityBack) {
+        window.originLayer[this.layerIdCopy].opacityBack = {};
+      }
       switch (this.dataType) {
         case "fill":
-          this.opacityBack["fill-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack["fill-opacity"] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "fill-opacity"
             ] || 1;
-          this.opacityBack["fill-outline-color"] =
+          let outlineColor =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "fill-outline-color"
-            ] || "rgba(0, 0, 0, 1)";
+            ];
+          if (!outlineColor) {
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ] = "rgba(0, 0, 0, 1)";
+          } else if (outlineColor instanceof String) {
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ] = outlineColor || "rgba(0, 0, 0, 1)";
+          } else if (outlineColor.hasOwnProperty("stops")) {
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ] = {};
+            window.originLayer[this.layerIdCopy].opacityBack[
+              "fill-outline-color"
+            ].stops = [];
+            for (let i = 0; i < outlineColor.stops.length; i++) {
+              window.originLayer[this.layerIdCopy].opacityBack[
+                "fill-outline-color"
+              ].stops.push(outlineColor.stops[i]);
+            }
+          }
           this.$_setPaintProperty(
             "fill-opacity",
             0,
@@ -1525,7 +1648,7 @@ export default {
           );
           break;
         case "line":
-          this.opacityBack["line-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack["line-opacity"] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "line-opacity"
             ] || 1;
@@ -1537,11 +1660,13 @@ export default {
           );
           break;
         case "circle":
-          this.opacityBack["circle-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack["circle-opacity"] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "circle-opacity"
             ] || 1;
-          this.opacityBack["circle-stroke-opacity"] =
+          window.originLayer[this.layerIdCopy].opacityBack[
+            "circle-stroke-opacity"
+          ] =
             window.originLayer[this.layerIdCopy][this.layerIdCopy].paint[
               "circle-stroke-opacity"
             ] || 1;
@@ -1617,7 +1742,11 @@ export default {
         this.allOriginColors[key] = this.originColors;
       }
       if (!noColor) {
-        this.colors = this.originColors.colorList;
+        if (this.panelProps.hasOwnProperty("colors")) {
+          this.colors = this.panelProps.colors;
+        } else {
+          this.colors = this.originColors.colorList;
+        }
       }
       return colors;
     },
@@ -1666,6 +1795,9 @@ export default {
         );
         this.checkBoxArr = this.originColors.checkArr;
         this.selectKey = value;
+        window.originLayer[this.layerIdCopy].panelProps[
+          window._workspace._layerTypes[this.layerIdCopy]
+        ].panelProps.selectValue = value;
         if (this.checkBoxArr.indexOf(true) < 0) {
           this.showVector = false;
         } else {
@@ -1784,7 +1916,10 @@ export default {
       this.changeLayerProp = true;
       this.changeLayerId = this.layerIdCopy;
     },
-    $_oneColorChanged(index, color) {
+    $_oneColorChanged(index, color, colorsBack) {
+      window.originLayer[this.layerIdCopy].panelProps[
+        window._workspace._layerTypes[this.layerIdCopy]
+      ].panelProps.colors = colorsBack;
       let colors = this.$_getColorsFromOrigin(index, color);
       this.isGradient = false;
       this.isSingle = false;
@@ -1953,8 +2088,15 @@ export default {
         layerVector.paint[key] = value;
         this.map.setPaintProperty(layerId, key, layerVector.paint[key]);
         let id = extId || this.layerIdCopy;
-        window.originLayer[id][windowId].paint[key] = value;
+        if (id) {
+          window.originLayer[id][windowId].paint[key] = value;
+        }
         this.changeLayerProp = true;
+        if (layerId.indexOf("专题图") > -1) {
+          window.originLayer[this.layerIdCopy].panelProps[
+            this.themeType
+          ].panelProps[key] = value;
+        }
         this.changeLayerId = layerId;
       }
     },

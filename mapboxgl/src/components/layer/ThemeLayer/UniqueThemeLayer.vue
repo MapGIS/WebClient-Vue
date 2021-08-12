@@ -322,25 +322,6 @@ export default {
             minzoom: minzoom,
             maxzoom: maxzoom
           }
-          window.originLayer[this.layerIdCopy].panelProps = {
-            selectValue: this.fields[0],
-            gradientColor: "",
-            panelProps: {
-              "circle-opacity": this.opacity,
-              "circle-radius": this.radius,
-              "circle-translate": this.offset,
-              "circle-stroke-color": this.outerLineColor,
-              "circle-stroke-width": this.lineWidth,
-              "circle-stroke-opacity": this.outerLineOpacity,
-              "text-field": "",
-              "text-font": "",
-              "text-size": "",
-              "text-offset": "",
-              "text-letter-spacing": "",
-              "text-rotate": ""
-            },
-            checkArr: []
-          }
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
@@ -359,22 +340,6 @@ export default {
             },
             minzoom: minzoom,
             maxzoom: maxzoom
-          }
-          window.originLayer[this.layerIdCopy].panelProps = {
-            selectValue: this.fields[0],
-            gradientColor: "",
-            panelProps: {
-              "line-color": "",
-              "line-width": "",
-              "line-opacity": "",
-              "text-field": "",
-              "text-font": "",
-              "text-size": "",
-              "text-offset": "",
-              "text-letter-spacing": "",
-              "text-rotate": ""
-            },
-            checkArr: []
           }
         }
       }

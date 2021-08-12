@@ -130,10 +130,16 @@ export default {
       }
     },
 
-    $_gradientChange(colorsArr) {
+    $_gradientChange(colorsArr,heatObj) {
       const {heatMapLayerId} = this;
       let steps = [];
       let level = 1 / colorsArr.length;
+      if(typeof heatObj === "number"){
+        window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.selectHeatValue = heatObj;
+      }else {
+        window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.heatGradientArr = heatObj;
+        window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.selectHeatValue = 0;
+      }
       colorsArr.forEach((color, i) => {
         steps.push(i * level);
         steps.push(color);
