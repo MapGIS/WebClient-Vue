@@ -145,6 +145,7 @@ export default {
     $_checked(checkBoxArr, index, checkColor) {
       let colors = {}, newColors,
           next = false;
+      window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = checkBoxArr;
       if (this.originColors.colors.hasOwnProperty("stops")) {
         newColors = [];
         for (let i = 0; i < checkBoxArr.length; i++) {

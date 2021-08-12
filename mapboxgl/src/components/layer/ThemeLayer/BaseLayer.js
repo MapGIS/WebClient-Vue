@@ -1481,7 +1481,23 @@ export default {
         endColor,
         this.selectKey
       );
-      this.checkBoxArr = this.originColors.checkArr;
+      let checkBoxArr;
+      if (
+        window.originLayer[this.layerIdCopy] &&
+        window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps")
+      ) {
+        let panelProps =
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+            .panelProps;
+        if (panelProps.hasOwnProperty("checkBoxArr")) {
+          checkBoxArr = panelProps.checkBoxArr;
+        }
+      }
+      if (checkBoxArr) {
+        this.checkBoxArr = checkBoxArr;
+      } else {
+        this.checkBoxArr = this.originColors.checkArr;
+      }
       if (this.$_initThemeCallBack) {
         if (!window.originLayer[this.layerIdCopy].panelProps) {
           window.originLayer[this.layerIdCopy].panelProps = {};

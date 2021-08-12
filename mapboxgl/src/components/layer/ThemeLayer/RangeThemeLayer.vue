@@ -409,6 +409,7 @@ export default {
       }else {
         color = checkColor;
       }
+      window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = checkBoxArr;
       this.$_removeIcon();
       this.$_setRangeColor(color,this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
       this.showVector = true;
