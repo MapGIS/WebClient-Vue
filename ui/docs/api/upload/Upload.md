@@ -56,6 +56,7 @@ window.localStorage.setItem('mapgis_clouddisk_ip', '192.168.199.53')
 |mapgis_clouddisk_socket|9011|上传服务|必填项||
 |mapgis_clouddisk_group_path|f79ae7b1-8dca-4d37-bd87-14834b1cbf2e|云盘存储的根路径|必填项||
 |mapgis_clouddisk_token|eyJhbGciOiJIUzUxMiJ9......|用户token|必填项|**需要删除Bearer**|
+|mapgis_clouddisk_id|6|用户ID|必填项||
 
 ## 3、API（参数使用说明）
 
@@ -66,7 +67,7 @@ window.localStorage.setItem('mapgis_clouddisk_ip', '192.168.199.53')
 |title|对话框标题|可选项|字符串|‘导入文件’|
 |isMapstudio|是否被在线制图所使用，如果为true,则需要同时填写下面两项（currentDocument、handleNewDocument）|可选项|布尔型|false|
 |currentDocument|当前在线制图的document|isMapstudio为true时的必填项，否则为可选项|对象型||
-|handleNewDocument|更新document的回调，第一个参数为payload（payload={document: 新doc}）|isMapstudio为true时的必填项，否则为可选项|函数型||
+|handleNewDocument|组件内部更新document时的回调，第一个参数为payload（payload={document: 新doc}）|isMapstudio为true时的必填项，否则为可选项|函数型||
 |handleUploaded|上传完成时的回调|可选项|函数型||
 |@cancel|点击关闭按钮的回调|**必填项**|函数型||
 
