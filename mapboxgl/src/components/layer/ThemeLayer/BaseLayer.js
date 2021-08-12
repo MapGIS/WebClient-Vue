@@ -1841,31 +1841,10 @@ export default {
       return colors;
     },
     $_getData(features, value) {
-      let datas = [],
-        isSort = true;
+      let datas = [];
       for (let i = 0; i < features.length; i++) {
-        if (datas.indexOf(features[i].properties[value]) < 0) {
-          if (
-            features[i].properties[value] &&
-            typeof features[i].properties[value] !== "number"
-          ) {
-            isSort = false;
-          }
-          if (
-            (features[i].properties[value] ||
-              typeof features[i].properties[value] === "number") &&
-            features[i].properties[value] !== ""
-          ) {
-            datas.push(features[i].properties[value]);
-          }
-        }
+        datas.push(features[i].properties[value]);
       }
-      if (isSort) {
-        datas.sort(function(a, b) {
-          return a - b;
-        });
-      }
-
       this.dataBack = datas;
       if (this.themeType === "range") {
         datas = this.$_editData(datas);
