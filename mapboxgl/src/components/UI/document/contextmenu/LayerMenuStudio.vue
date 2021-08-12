@@ -121,7 +121,6 @@ export default {
           break;
         case "add-theme":
           this.$emit("onAddTheme", { type, layerId });
-          emitMapAddThemeLayer({ type, layerId });
           break;
         case "edit-theme":
           this.$emit("onEditTheme", { type, layerId });

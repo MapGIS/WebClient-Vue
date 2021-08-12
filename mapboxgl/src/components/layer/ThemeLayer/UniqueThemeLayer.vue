@@ -1,6 +1,7 @@
 <template>
   <div>
     <ThemePanel
+        ref="themePanel"
         v-if="!resetPanel"
         v-show="showPanelFlag"
         :title="title"
@@ -75,7 +76,7 @@ export default {
       default: "单值专题图"
     }
   },
-  data(){
+  data() {
     return {
       themeType: "unique",
       panelPropsDefault: {},
@@ -102,17 +103,17 @@ export default {
     $_outerLineColorChanged(color) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-color", color, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-color",color,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
     $_lineWidthChanged(lineWidth) {
-      switch (this.dataType){
+      switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-width",lineWidth,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
           break;
         case "line":
           this.$_setPaintProperty("line-width", lineWidth);
@@ -122,19 +123,19 @@ export default {
           break;
       }
     },
-    $_outerLineOpacityChanged(opacity){
+    $_outerLineOpacityChanged(opacity) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-opacity", opacity, this.lineId, this.lineLayer);
           break;
         case "circle":
-          this.$_setPaintProperty("circle-stroke-opacity",opacity,this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
+          this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
           break;
       }
     },
-    $_fontChanged(font){
+    $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont,this.textFont],this.textId,this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont, this.textFont], this.textId, this.textLayer);
     },
     /*
     * 多选框业务实现
@@ -145,7 +146,18 @@ export default {
     $_checked(checkBoxArr, index, checkColor) {
       let colors = {}, newColors,
           next = false;
-      if (this.originColors.colors.hasOwnProperty("stops")) {
+      this.$_setCheckBoxToLocal(checkBoxArr);
+      let localColors = this.$_getColorsFromLocal();
+      if (localColors) {
+        let check = checkBoxArr[index];
+        colors = localColors;
+        if (check) {
+          colors.splice(2 + (index + 1) * 2 - 1, 1, checkColor);
+        } else {
+          colors.splice(2 + (index + 1) * 2 - 1, 1, "#FFF");
+        }
+        next = true;
+      } else if (this.originColors.colors.hasOwnProperty("stops")) {
         newColors = [];
         for (let i = 0; i < checkBoxArr.length; i++) {
           if (checkBoxArr[i]) {
@@ -205,7 +217,7 @@ export default {
             break;
         }
         this.$_removeIcon();
-        this.$_setPaintByType(colors,true);
+        this.$_setPaintByType(colors, true);
         this.showVector = true;
         this.changeLayerProp = true;
         this.changeLayerId = this.layerIdCopy;
@@ -278,10 +290,11 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors,data,minzoom,maxzoom) {
+    $_initThemeCallBack(geojson, fillColors, data, minzoom, maxzoom) {
+      this.$refs.themePanel.setSelectValue(this.selectValue);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
             id: this.layerIdCopy + "_单值专题图",
             type: 'fill',
@@ -298,13 +311,15 @@ export default {
             minzoom: minzoom,
             maxzoom: maxzoom
           };
-          this.$_addLineLayer(minzoom,maxzoom);
+          this.$_addLineLayer(minzoom, maxzoom);
+        } else {
+          this.$_setColorsFromLocal();
         }
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
-            id:  this.layerIdCopy + "_单值专题图",
+            id: this.layerIdCopy + "_单值专题图",
             type: 'circle',
             source: this.source_vector_Id, //必须和上面的layerVectorId一致
             layout: {
@@ -322,12 +337,14 @@ export default {
             minzoom: minzoom,
             maxzoom: maxzoom
           }
+        } else {
+          this.$_setColorsFromLocal();
         }
       } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
         this.dataType = 'line';
-        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] ){
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
-            id:  this.layerIdCopy + "_单值专题图",
+            id: this.layerIdCopy + "_单值专题图",
             type: 'line',
             source: this.source_vector_Id, //必须和上面的layerVectorId一致
             layout: {
@@ -341,20 +358,22 @@ export default {
             minzoom: minzoom,
             maxzoom: maxzoom
           }
+        } else {
+          this.$_setColorsFromLocal();
         }
       }
-      if(this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]){
+      if (this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "单值专题图" + "_" + this.layerIdCopy;
-      this.$_addTextLayer(minzoom,maxzoom);
-      if(this.dataType === "fill"){
-        if(!window.originLayer[this.layerIdCopy].layerOrder){
-          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.lineId,this.textId];
+      this.$_addTextLayer(minzoom, maxzoom);
+      if (this.dataType === "fill") {
+        if (!window.originLayer[this.layerIdCopy].layerOrder) {
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName(), this.lineId, this.textId];
         }
-      }else {
-        if(!window.originLayer[this.layerIdCopy].layerOrder){
-          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName(),this.textId];
+      } else {
+        if (!window.originLayer[this.layerIdCopy].layerOrder) {
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName(), this.textId];
         }
       }
     }

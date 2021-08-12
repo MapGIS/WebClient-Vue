@@ -646,7 +646,7 @@
                     <div class="theme-panel-td theme-panel-td-border-right">
                       {{ index }}
                     </div>
-                    <div class="theme-panel-td theme-panel-td-border-right">
+                    <div class="theme-panel-td theme-panel-td-border-right"  v-if="dataType !== 'symbol'">
                       <mapgis-ui-checkbox
                           :value="{item:item,color:colors[index]}"
                           :color="colors[index]"
@@ -654,18 +654,18 @@
                           @change="$_checked">
                       </mapgis-ui-checkbox>
                     </div>
-                    <div class="theme-panel-td theme-panel-td-border-right">
+                    <div class="theme-panel-td theme-panel-td-border-right" v-if="dataType !== 'symbol'">
                       <div class="theme-panel-color-picker">
                         <colorPicker class="picker" v-model="colors[index]" v-on:change="$_changeColor(index)"/>
                       </div>
                     </div>
                     <div class="theme-panel-td theme-panel-td-key theme-panel-td-border-right"
-                         v-bind:title="selectValue">
+                         v-bind:title="selectValue" :style="{width: dataType !== 'symbol' ? '35%' : '45%'}">
                       {{
                             $_editStr(selectValue,8)
                       }}
                     </div>
-                    <div class="theme-panel-td theme-panel-td-value theme-panel-td-border-right" v-bind:title="item">
+                    <div class="theme-panel-td theme-panel-td-value theme-panel-td-border-right" v-bind:title="item" :style="{width: dataType !== 'symbol' ? '35%' : '45%'}">
                       {{
                             $_editStr(item,8)
                       }}
@@ -1068,6 +1068,9 @@ export default {
     this.$_initDataSource();
   },
   methods: {
+    setSelectValue(selectValue){
+      this.selectValue = selectValue;
+    },
     $_editStr(item,strLength){
       item = item || "";
       item = String(item);

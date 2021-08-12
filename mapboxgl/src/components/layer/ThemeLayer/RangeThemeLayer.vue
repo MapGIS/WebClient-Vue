@@ -250,6 +250,7 @@ export default {
         this.$nextTick(function () {
           this.addRange = false;
         });
+        this.$_setDataSourceLocal();
       }
     },
     $_addRange(index){
@@ -276,6 +277,17 @@ export default {
       this.$nextTick(function () {
         this.addRange = false;
       });
+      this.$_setDataSourceLocal();
+    },
+    $_setDataSourceLocal(){
+      if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy){
+        window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy = {};
+        window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.startData = {};
+        window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.endData = {};
+      }
+      window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue] = this.dataSourceCopy;
+      window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.startData[this.selectValue] = this.startData;
+      window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.endData[this.selectValue] = this.endData;
     },
     removeLayer() {
       this.$_removeLayer();
@@ -356,7 +368,7 @@ export default {
     },
     $_changeColor(index) {
       this.isGradient = false;
-      window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.colors = this.colors;
+      this.$_setColorsToLocal(this.colors);
       this.$_removeIcon();
       this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
     },
@@ -409,6 +421,7 @@ export default {
       }else {
         color = checkColor;
       }
+      this.$_setCheckBoxToLocal(checkBoxArr);
       this.$_removeIcon();
       this.$_setRangeColor(color,this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
       this.showVector = true;
@@ -453,11 +466,7 @@ export default {
     * **/
     $_selectChangeCallBack(colors) {
       this.dataInit = false;
-      let dataSourceCopy = [];
-      for (let i = 0; i < this.dataSource.length; i++) {
-        dataSourceCopy.push(this.dataSource[i]);
-      }
-      this.dataSourceCopy = dataSourceCopy;
+      this.$_getDataFromLocal(this.dataSource);
       this.$nextTick(function () {
         this.dataInit = true;
       });
@@ -489,17 +498,41 @@ export default {
         colorList: colorList
       }
     },
+    $_getDataFromLocal(dataSource){
+      let dataSourceCopyProps;
+      if (
+          window.originLayer[this.layerIdCopy] &&
+          window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
+          window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
+      ) {
+        let panelProps =
+            window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                .panelProps;
+        if (panelProps.hasOwnProperty("dataSourceCopy")) {
+          dataSourceCopyProps = panelProps.dataSourceCopy[this.selectValue];
+          this.startData = panelProps.startData[this.selectValue];
+          this.endData = panelProps.endData[this.selectValue];
+        }
+      }
+      if (dataSourceCopyProps) {
+        this.dataSourceCopy = dataSourceCopyProps;
+      } else {
+        let dataSourceCopy = [];
+        for (let i = 0; i < dataSource.length; i++) {
+          dataSourceCopy.push(dataSource[i]);
+        }
+        this.dataSourceCopy = dataSourceCopy;
+      }
+    },
     /*
     * 初始化专题图样式的业务逻辑
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
-      let dataSourceCopy = [];
-      for (let i = 0; i < dataSource.length; i++) {
-        dataSourceCopy.push(dataSource[i]);
-      }
-      this.dataSourceCopy = dataSourceCopy;
+      this.$_getDataFromLocal(dataSource);
       this.$nextTick(function () {
         this.dataInit = true;
       });
