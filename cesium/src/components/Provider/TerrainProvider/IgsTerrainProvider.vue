@@ -40,28 +40,24 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { $props, url, CesiumZondy, webGlobe } = this;
+      const { CesiumZondy, webGlobe } = this;
       var terrianlayer = new CesiumZondy.Layer.TerrainLayer({
         viewer: webGlobe.viewer,
       });
       return terrianlayer;
     },
     mount() {
-      const { webGlobe, vueIndex, vueKey, $props } = this;
+      const { webGlobe, $props } = this;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
       this.$emit("load", this);
 
       let terrianlayer = this.createCesiumObject();
-      let terrainLayers = terrianlayer.append(`${this.url}`, { ...$props });
-      if (vueKey && vueIndex) {
-        window.CesiumZondy.IgsTerrainManager.addSource(
-          vueKey,
-          vueIndex,
-          terrainLayers
-        );
-      }
+      let terrainLayers = terrianlayer.append(`${this.url}`, {
+        ...$props,
+        getDocLayers: this.handleTerrianLoaded.bind(this),
+      });
     },
     unmount() {
       const { webGlobe, vueKey, vueIndex } = this;
@@ -81,6 +77,17 @@ export default {
         }
       }
       window.CesiumZondy.IgsTerrainManager.deleteSource(vueKey, vueIndex);
+    },
+    handleTerrianLoaded(layers) {
+      const { vueIndex, vueKey } = this;
+      this.$emit("terrain-loaded", layers);
+      if (vueKey && vueIndex) {
+        window.CesiumZondy.IgsTerrainManager.addSource(
+          vueKey,
+          vueIndex,
+          layers
+        );
+      }
     },
   },
   render(h) {
