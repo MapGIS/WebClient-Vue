@@ -18,7 +18,7 @@ git clone https://gitee.com/osmapgis/WebClient-Vue.git
 
 <img alt="目录示例" src="../assets/images/catalog-show.png" width="40%">
 
-### 2. 修改package.json文件夹（路径：**/WebClient-Vue/ui/package.json**）,具体修改第5-6行如下所示：
+### 2. 修改 **/WebClient-Vue/ui/package.json** 文件,具体修改第5-6行（关注“module”改为“module1”），如下所示：
 
 ``` sh
 5   "main": "dist-libs/webclient-vue-ui.umd.min.js",
@@ -64,12 +64,16 @@ render: (h) => h(App),
 
 ## 注意事项
 
-### 1、由于link机制问题，其他项目（如云门户项目）在每次执行了npm install或npm uninstall后要重新执行下面命令，即重新link。
+### 1、由于link机制问题，其他项目（如云门户项目）在每次执行了npm install或npm uninstall后要重新执行下面命令，即重新link该组件。
 
 ``` sh
 npm link @mapgis/webclient-vue-ui
 ```
 
 ### 2、mockjs问题
+
+待添加...
+
+### 3、其他项目打包时的eslint检测报错
 
 待添加...

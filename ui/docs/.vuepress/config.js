@@ -65,7 +65,9 @@ module.exports = {
               ["/api/div/Div.md", "区块"],
               ["/api/collapsecard/CollapseCard.md", "收缩卡片"],
               ["/api/sprite/Sprite.md", "符号库"],
-              ["/api/upload/Upload.md", "上传"]
+              ["/api/upload/Upload.md", "上传"],
+              ["/api/clouddiskFileSelect/CDFileSelect.md", "从云盘选择"],
+              ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
             ]
           }
           /* {
