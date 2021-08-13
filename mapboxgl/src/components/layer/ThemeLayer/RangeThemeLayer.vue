@@ -370,7 +370,14 @@ export default {
       this.isGradient = false;
       this.$_setColorsToLocal(this.colors);
       this.$_removeIcon();
-      this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData);
+      let changeFlag = this.checkBoxArr[index];
+      if(changeFlag){
+        let startData = this.$_getStartEndData(index).startData;
+        if(index === 0){
+          startData = startData - (this.dataSourceCopy[1] - this.dataSourceCopy[0]);
+        }
+        this.$_setRangeColor(this.colors[index],startData,this.$_getStartEndData(index).endData);
+      }
     },
     $_inputStartChange() {
       this.direction = "start";
@@ -450,7 +457,10 @@ export default {
       let length = (paintColor.length - 1)/2;
       for (let i = 0;i <length;i++){
         if(paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData){
-          paintColor.splice(2 + i * 2,1,color);
+          if(i === 0){
+            paintColor.splice(2,1,color);
+          }
+          paintColor.splice(2 + (i + 1) * 2,1,color);
         }
       }
       window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = paintColor;
@@ -491,7 +501,6 @@ export default {
         colorList.push(gradient[i]);
         checkArr.push(true);
       }
-
       return {
         checkArr: checkArr,
         colors: colors,

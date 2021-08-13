@@ -2063,7 +2063,7 @@ export default {
     $_editData(Source) {
       let dataSource = [];
       for (let i = 0; i < Source.length; i++) {
-        if (Number(Source[i])) {
+        if (Source[i] !== "") {
           dataSource.push(Number(Source[i]));
         }
       }
@@ -2080,15 +2080,15 @@ export default {
         return newDataSource;
       } else {
         let rangeSect = range / this.rangeLevel;
+        let floatLength = String(rangeSect).split(".")[1].length;
         if (dataSource[0] < 0) {
           this.startData = dataSource[0] - 1;
         } else {
-          let range = dataSource[1] - dataSource[0];
-          this.startData = dataSource[0] - range;
+          this.startData = dataSource[0];
         }
         this.startDataCopy = this.startData;
         for (let i = 0; i < this.rangeLevel; i++) {
-          newDataSource.push(dataSource[0] + (i + 1) * rangeSect + 1);
+          newDataSource.push(Number((dataSource[0] + (i + 1) * rangeSect).toFixed(floatLength)));
         }
         this.endData = newDataSource[this.rangeLevel - 1] + rangeSect;
         this.endDataCopy = this.endData;
@@ -2147,12 +2147,13 @@ export default {
           valueArr = valueArr.sort(function(a, b) {
             return a - b;
           });
+          newColor.push("#ffffff");
           for (let i = 0; i < colors.stops.length; i++) {
             for (let j = index; j < valueArr.length; j++) {
               let value = valueArr[j];
               if (Number(value) <= colors.stops[i][0]) {
-                newColor.push(colors.stops[i][1]);
                 newColor.push(Number(value));
+                newColor.push(colors.stops[i][1]);
                 if (j === valueArr.length - 1) {
                   index = j + 1;
                 }
@@ -2162,7 +2163,6 @@ export default {
               }
             }
           }
-          newColor.push("#ffffff");
         }
       } else {
         newColor = colors;
