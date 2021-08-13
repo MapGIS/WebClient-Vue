@@ -276,7 +276,7 @@
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
-      <mapgis-ui-collapse v-model="activeKey" accordion v-if="dataType === 'symbol'">
+      <mapgis-ui-collapse v-model="activeKeyCopy" accordion v-if="dataType === 'symbol'">
         <mapgis-ui-collapse-panel key="2" header="符号">
           <mapgis-ui-row v-if="dataType !== 'circle'">
             <mapgis-ui-col :span="4">
@@ -1046,7 +1046,8 @@ export default {
       gradientColor: "#FF0000",
       labelSelectValue: undefined,
       selectHeatValue: 0,
-      listId: "theme-panel-list-" + parseInt(Math.random() * 100000)
+      listId: "theme-panel-list-" + parseInt(Math.random() * 100000),
+      activeKeyCopy: undefined
     }
   },
   watch: {
@@ -1132,6 +1133,7 @@ export default {
     this.$_formatPanelProps();
   },
   mounted() {
+    this.activeKeyCopy = this.activeKey;
     if(this.textFonts.length > 0 && !this.textFontsSelect){
       this.textFontsSelect = this.textFonts[0];
     }
