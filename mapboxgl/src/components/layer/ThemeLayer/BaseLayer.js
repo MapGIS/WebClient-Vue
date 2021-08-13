@@ -1846,6 +1846,9 @@ export default {
         datas.push(features[i].properties[value]);
       }
       datas = Array.from(new Set(datas));
+      datas = datas.sort(function (a,b) {
+        return a - b;
+      });
       this.dataBack = datas;
       if (this.themeType === "range") {
         datas = this.$_editData(datas);
@@ -2022,7 +2025,11 @@ export default {
       let colors;
       if (localColors) {
         colors = localColors;
-        colors.splice(2 + (index + 1) * 2 - 1, 1, color);
+        if(colors instanceof Array){
+          colors.splice(2 + (index + 1) * 2 - 1, 1, color);
+        }else {
+          colors.stops[index][1] = color;
+        }
       } else {
         colors = this.$_getColorsFromOrigin(index, color);
       }
