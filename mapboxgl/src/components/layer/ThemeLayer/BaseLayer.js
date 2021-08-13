@@ -180,10 +180,14 @@ export default {
             this.$_hideExtraLayer(layerId, themeType);
         },
         $_hideExtraLayer(layerId, themeType) {
-            let extraLayer =
-                window.originLayer[layerId][
-                layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
-                    ];
+            let extraLayer;
+            if (window.originLayer.hasOwnProperty(layerId) &&
+                window.originLayer[layerId].hasOwnProperty(layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer")) {
+                extraLayer =
+                    window.originLayer[layerId][
+                    layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
+                        ];
+            }
             if (extraLayer) {
                 if (extraLayer instanceof Array) {
                     for (let i = 0; i < extraLayer.length; i++) {
@@ -208,22 +212,25 @@ export default {
                         );
                     });
                 }
+                this.$_setLayOutProperty(
+                    "visibility",
+                    "none",
+                    layerId + "_" + this.$_getThemeName(themeType),
+                    window.originLayer[layerId][
+                    layerId + "_" + this.$_getThemeName(themeType)
+                        ],
+                    layerId
+                );
             }
-            this.$_setLayOutProperty(
-                "visibility",
-                "none",
-                layerId + "_" + this.$_getThemeName(themeType),
-                window.originLayer[layerId][
-                layerId + "_" + this.$_getThemeName(themeType)
-                    ],
-                layerId
-            );
         },
         $_showExtraLayer(layerId, themeType) {
-            let extraLayer =
-                window.originLayer[layerId][
-                layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
-                    ];
+            let extraLayer;
+            if (window.originLayer.hasOwnProperty(layerId) && window.originLayer[layerId].hasOwnProperty(layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer")) {
+                extraLayer =
+                    window.originLayer[layerId][
+                    layerId + "_" + this.$_getThemeName(themeType) + "_extraLayer"
+                        ];
+            }
             if (extraLayer) {
                 if (extraLayer instanceof Array) {
                     for (let i = 0; i < extraLayer.length; i++) {
@@ -248,16 +255,16 @@ export default {
                         );
                     });
                 }
+                this.$_setLayOutProperty(
+                    "visibility",
+                    "visible",
+                    layerId + "_" + this.$_getThemeName(themeType),
+                    window.originLayer[layerId][
+                    layerId + "_" + this.$_getThemeName(themeType)
+                        ],
+                    layerId
+                );
             }
-            this.$_setLayOutProperty(
-                "visibility",
-                "visible",
-                layerId + "_" + this.$_getThemeName(themeType),
-                window.originLayer[layerId][
-                layerId + "_" + this.$_getThemeName(themeType)
-                    ],
-                layerId
-            );
         },
         addThemeLayer(layerId, addLayer, minzoom, maxzoom) {
             minzoom = minzoom || 0;
@@ -1853,7 +1860,7 @@ export default {
         $_getData(features, value) {
             let datas = [];
             for (let i = 0; i < features.length; i++) {
-                if(features[i].properties[value] !== ""){
+                if (features[i].properties[value] !== "") {
                     datas.push(features[i].properties[value]);
                 }
             }
