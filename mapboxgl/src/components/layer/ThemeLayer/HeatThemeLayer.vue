@@ -82,14 +82,35 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
-      let weightArray = this.setWeightArr(geojson,this.defaultValue);
+    $_initThemeCallBack(geojson, fillColors, dataSource, minzoom, maxzoom) {
+      let weightArray = this.setWeightArr(geojson, this.defaultValue);
+      let colorGradient = this.getGradientColors(true);
+      let paintValue = {
+        paint: {
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0,
+            "rgba(255,255,255,0)",
+          ].concat(colorGradient),
+          "heatmap-radius": this.heatMapRadius,
+          "heatmap-opacity": this.opacity
+        },
+      }
+      if (weightArray===false){
+      } else {
+        paintValue.paint["heatmap-weight"] = [
+          "interpolate",
+          ["linear"],
+          ["get", this.defaultValue],
+        ].concat(weightArray);
+      }
       this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
         this.heatMapLayerId = this.layerIdCopy + "_热力专题图";
-        let colorGradient = this.getGradientColors(true);
-        if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
             id: this.heatMapLayerId,
             type: 'heatmap',
@@ -97,25 +118,10 @@ export default {
             layout: {
               'visibility': "visible"
             },
-            paint: {
-              "heatmap-weight": [
-                "interpolate",
-                ["linear"],
-                ["get", this.defaultValue],
-              ].concat(weightArray),
-              "heatmap-color": [
-                "interpolate",
-                ["linear"],
-                ["heatmap-density"],
-                0,
-                "rgba(255,255,255,0)",
-              ].concat(colorGradient),
-              "heatmap-radius": this.heatMapRadius,
-              "heatmap-opacity": this.opacity
-            },
+            paint: paintValue.paint,
             minzoom: minzoom,
             maxzoom: maxzoom
-          }
+          };
           if (this.source_vector_layer_Id) {
             window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
           }
@@ -125,18 +131,18 @@ export default {
           });
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
           this.title = "热力专题图" + "_" + this.layerIdCopy;
-          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy,this.layerIdCopy + "_" + this.$_getThemeName()];
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName()];
         }
       }
     },
 
-    $_gradientChange(colorsArr,heatObj) {
+    $_gradientChange(colorsArr, heatObj) {
       const {heatMapLayerId} = this;
       let steps = [];
       let level = 1 / colorsArr.length;
-      if(typeof heatObj === "number"){
+      if (typeof heatObj === "number") {
         window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.selectHeatValue = heatObj;
-      }else {
+      } else {
         window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.heatGradientArr = heatObj;
         window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.selectHeatValue = 0;
       }
@@ -164,13 +170,13 @@ export default {
 
     $_selectChange(value) {
       let geojsonOrigin = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"];
-      if(!geojsonOrigin.hasOwnProperty("features")){
+      if (!geojsonOrigin.hasOwnProperty("features")) {
         geojsonOrigin = {
           features: geojsonOrigin,
           type: "FeatureCollection"
         };
       }
-      let weightArr = this.setWeightArr(geojsonOrigin,value);
+      let weightArr = this.setWeightArr(geojsonOrigin, value);
       const {heatMapLayerId} = this;
       let weightRules = [
         "interpolate",
@@ -290,28 +296,31 @@ export default {
         return steps;
       }
     },
-    setWeightArr(geojsonOrigin,val) {
+    setWeightArr(geojsonOrigin, val) {
       let max = 0;
       let min = undefined;
       for (let i = 0; i < geojsonOrigin.features.length; i++) {
         let cur = geojsonOrigin.features[i].properties[val];
         //排除字符串""
-        if (cur !== ""){
-          cur  = Number(cur);
+        if (cur !== "") {
+          cur = Number(cur);
           cur > max ? max = cur : null;
-          if (min === undefined){
+          if (min === undefined) {
             min = max;
           }
           cur < min ? min = cur : null;
         }
       }
+      if (max === min) {
+        return false;
+      }
       let weightArr = [];
       let n = 5;
-      let weightOrigin = (max-min) / n;
+      let weightOrigin = (max - min) / n;
       let stops = 1 / n;
       for (let i = 0; i < n; i++) {
         let weightNum;
-        if (i=== n-1){
+        if (i === n - 1) {
           weightNum = max;
         } else {
           weightNum = min + weightOrigin * i;
