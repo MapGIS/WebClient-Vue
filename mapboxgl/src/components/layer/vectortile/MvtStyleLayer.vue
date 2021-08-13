@@ -390,10 +390,14 @@ export default {
     },
 
     resortTheme(news) {
-      let orders = news.map((l, i) => {
-        l.zindex = i;
-        return l;
-      });
+      let orders = news
+        .filter(l => {
+          return l.theme != undefined;
+        })
+        .map((l, i) => {
+          l.zindex = i;
+          return l;
+        });
       let newRules = [];
       this.themeRules.forEach(rules => {
         if (rules.length > 0) {
