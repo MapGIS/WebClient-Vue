@@ -233,16 +233,19 @@ export default {
         this.addRange = true;
         if(index === 0){
           let endData = this.dataSourceCopy.splice(index,1);
+          this.dataSource.splice(index,1);
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.startData,endData);
         }else if(index === this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index,1);
+          this.dataSource.splice(index,1);
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 1],this.endData);
         }else {
           let endData = this.dataSourceCopy.splice(index,1);
+          this.dataSource.splice(index,1);
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],endData);
