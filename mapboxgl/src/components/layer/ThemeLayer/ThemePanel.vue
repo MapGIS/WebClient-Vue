@@ -642,7 +642,7 @@
                     bordered
                     :data-source="dataSourceCopy"
                 >
-                  <mapgis-ui-list-item slot="renderItem" slot-scope="item, index">
+                  <mapgis-ui-list-item slot="renderItem" slot-scope="item, index" v-if="item">
                     <div class="theme-panel-td theme-panel-td-border-right">
                       {{ index }}
                     </div>

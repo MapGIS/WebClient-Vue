@@ -107,7 +107,7 @@ export default {
     },
     handlePathOk() {
       changePathUploaduri({ uri: this.temUrl });
-      console.warn("this.uploaduri111", this.uploaduri);
+      // console.warn("this.uploaduri111", this.uploaduri);
       this.$emit("changePathText", this.temUrl);
       this.showPathSelect = false;
       this.resetTree();

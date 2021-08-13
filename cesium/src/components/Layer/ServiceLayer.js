@@ -85,7 +85,8 @@ export default {
         }
       **/
       checkType: undefined,
-      layerId: undefined
+      layerId: undefined,
+      optionsBack: undefined
     };
   },
   watch: {
@@ -111,8 +112,13 @@ export default {
     },
     options: {
       handler: function() {
-        this.unmount();
-        this.mount();
+        let vm = this;
+        let isEqual = this.$_isEqual(vm.options, vm.optionsBack);
+        if (!isEqual) {
+          this.unmount();
+          this.mount();
+          this.optionsBack = this.options;
+        }
       },
       deep: true
     },
@@ -127,7 +133,24 @@ export default {
       }
     }
   },
+  mounted() {
+    this.optionsBack = this.options;
+  },
   methods: {
+    $_isEqual(obj1, obj2) {
+      if (typeof obj1 !== "object" || typeof obj2 !== "object") {
+        return obj1 === obj2;
+      }
+      if (obj2 === obj1) return true;
+      let keys1 = Object.keys(obj1);
+      let keys2 = Object.keys(obj2);
+      if (keys1.length !== keys2.length) return false;
+      for (let k of keys1) {
+        let res = this.$_isEqual(obj1[k], obj2[k]);
+        if (!res) return false;
+      }
+      return true;
+    },
     /*
      * 通用的mount函数，建议使用时在自己的mount函数里面调用此函数，并在mounted生命周期调用
      * 使用前请优先处理好自己组建里非通用参数，然后传入$_mount

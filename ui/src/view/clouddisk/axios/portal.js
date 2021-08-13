@@ -14,7 +14,7 @@ export function getPortalData(resourceType, page, pageSize) {
 
   api.setBaseUrl(url);
   // let token = sessionStorage.getItem("mapgis-cloud-portal-jwt");
-  console.warn('【门户】【UI组件】【是否可以获取到token】', token);
+  // console.warn('【门户】【UI组件】【是否可以获取到token】', token);
   api.setAuthorization(token);
   return api.get(
     "/portal/ptResource/page?resourceType=" + resourceType + "&page=" + page + "&pageSize=" + pageSize + "&datasourceType=1"
@@ -30,7 +30,7 @@ export function getPortalServices(serviceFormdata) {
 
   api.setBaseUrl(url);
   // let token = sessionStorage.getItem("mapgis-cloud-portal-jwt");
-  console.warn('【门户】【UI组件】【是否可以获取到token】', token);
+  // console.warn('【门户】【UI组件】【是否可以获取到token】', token);
   api.setAuthorization(token);
 
   api.setContentType("application/x-www-form-urlencoded");

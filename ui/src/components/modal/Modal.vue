@@ -76,7 +76,6 @@ export default {
         vm.$listeners,
         {
           'change': function(value) {
-            console.warn('进到modal打开的监控中', value)
             vm.$emit('change', value)
           }
         }

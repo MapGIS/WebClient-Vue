@@ -117,7 +117,7 @@ export default {
       // vm.path.uri = uri;
       // vm.path.uploaduri = uri;
       vm.uploaduri = uri;
-      console.warn("on change", uri);
+      // console.warn("on change", uri);
     });
   },
   methods: {

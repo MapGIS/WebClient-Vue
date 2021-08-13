@@ -46,7 +46,7 @@ export default {
     onLoadData(treeNode) {
       let vm = this;
       return new Promise(resolve => {
-        console.warn("获得节点", treeNode);
+        // console.warn("获得节点", treeNode);
         if (treeNode.dataRef.children) {
           resolve();
           return;
@@ -59,7 +59,7 @@ export default {
               if (errorCode < 0) {
                 vm.$notification.error({ message: errorCode, description: msg });
               } else {
-                console.warn("dirnavigation结果");
+                // console.warn("dirnavigation结果");
                 let items = data.filter(item => item.isfolder === true);
                 items = items.map(d => {
                   d.scopedSlots = {
@@ -74,13 +74,13 @@ export default {
             }
           })
           .catch(error => {
-            console.warn("【dirnavigation错误结果】", error);
+            // console.warn("【dirnavigation错误结果】", error);
             this.$notification.error({ message: "网络异常,请检查链接", description: error });
           });
       });
     },
     onSelect(node, event) {
-      console.warn(node, event, event.node.dataRef.url);
+      // console.warn(node, event, event.node.dataRef.url);
       this.$emit("changePath", event.node.dataRef.url || "");
     }
   }
