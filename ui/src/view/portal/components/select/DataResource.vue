@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     queryData (pagination) {
-      console.warn('当前分页数据', pagination)
+      // console.warn('当前分页数据', pagination)
       let vm = this
       this.loading = true
       getPortalData(1, pagination.current - 1, pagination.pageSize)
@@ -131,7 +131,7 @@ export default {
       })
     },
     onSelectChange(selectedRowKeys, selectedRows) {
-      console.warn('selectedRowKeys changed: ', selectedRowKeys, selectedRows)
+      // console.warn('selectedRowKeys changed: ', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
       this.selectedDataCache = this.selectedDataCache.concat(selectedRows)
       let selects = [...new Set(this.selectedDataCache)]
@@ -150,7 +150,7 @@ export default {
           }
         }
       }
-      console.warn('选择列表', tmpSelect)
+      // console.warn('选择列表', tmpSelect)
       this.selectLists = tmpSelect
     },
     reSelect () {

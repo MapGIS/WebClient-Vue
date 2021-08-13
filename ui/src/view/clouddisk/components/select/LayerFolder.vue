@@ -253,7 +253,7 @@ export default {
       }
     },
     handelClick (selectedKeys, e) {
-      console.warn('当前选择', e.node.dataRef.url)
+      // console.warn('当前选择', e.node.dataRef.url)
       if (!this.isMulti) {
         this.$emit("select", e.node.dataRef.url, e.node.dataRef)
       } else {
@@ -304,7 +304,7 @@ export default {
     loadCompany(item) {
       return new Promise(resolve => {
         if (item.dataRef.children) {
-          console.warn('进到有children的里面')
+          // console.warn('进到有children的里面')
           resolve();
           return;
         }
@@ -358,7 +358,7 @@ export default {
     },
     selectTiff(checkedKeys, e) {
       let selects = e.checkedNodes.map(item => item.data.props);
-      console.warn('复选框', selects, e, this.url, this.selectListsObj);
+      // console.warn('复选框', selects, e, this.url, this.selectListsObj);
       this.selectListsObj[this.url] = selects;
       this.$emit("handleSelectsInfo", this.selectListsObj);
     },
@@ -420,7 +420,7 @@ export default {
       // }
     },
     handelExpand (a, b) {
-      console.warn('检查展开', a, b);
+      // console.warn('检查展开', a, b);
     }
   }
 };

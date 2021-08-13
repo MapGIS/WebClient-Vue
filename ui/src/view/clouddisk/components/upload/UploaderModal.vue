@@ -182,13 +182,13 @@ export default {
       return url;
     },
     handleWebsocket(msgid) { // 在线制图时触发
-      console.warn('监控到消息', this.WebsocketContent)
+      // console.warn('监控到消息', this.WebsocketContent)
       let srcUrl = "";
       let content = this.WebsocketContent
       if (this.isMapstudio === false) {
         this.handleUploaded()
       } else {
-        console.warn('进到调图层来', this.WebsocketAction)
+        // console.warn('进到调图层来', this.WebsocketAction)
         // let promises = content.map(i => getFileByWebsocketCallback(i.subject));
         content.forEach((c, i) => {
           let url;

@@ -67,7 +67,7 @@ export default {
     openStyle () {
       // console.warn('看是否传过来模板（1个）：', this.selectsInfo)
       if (this.selectStyle.url) {
-      console.warn('看是否传过来style：', this.selectStyle)
+      // console.warn('看是否传过来style：', this.selectStyle)
         if (this.selectStyle.isfolder === true) {
           this.$notification.error({ message: '不可选择文件夹！', description: '请选择专题图模板文件' })
           // this.loadingModal = false
@@ -112,7 +112,7 @@ export default {
       }
     },
     addLayer () {
-      console.warn('准备添加图层', this.selectLists, this.currentDocument)
+      // console.warn('准备添加图层', this.selectLists, this.currentDocument)
       // let payload = {
       //   document: this.selectLists
       // }
@@ -122,7 +122,7 @@ export default {
       for (let i = 0; i < this.selectLists.length; i++) {
         let layer = this.selectLists[i]
         let { xattrs, type, title, url } = layer
-        console.warn('xattrs格式1', typeof xattrs, xattrs)
+        // console.warn('xattrs格式1', typeof xattrs, xattrs)
         // if (typeof xattrs === 'string') {
         //   xattrs = JSON.parse(xattrs)
         //   console.warn('xattrs格式2', typeof xattrs, xattrs)
@@ -162,7 +162,7 @@ export default {
         // }
         let useVectorTile = false
         useVectorTile = renderType ? renderType === 'vectorTile' : vclsinfo && vclsinfo.count > this.GjsonSize
-        console.warn('检验useVectorTile', useVectorTile)
+        // console.warn('检验useVectorTile', useVectorTile)
         if (vclsinfo && useVectorTile) { // 实时矢量瓦片
           if (hasVector && dataSource) {
             let temp = []
@@ -229,7 +229,7 @@ export default {
     openPreviewLayers (layers) {
       let doc
       doc = this.paraDocument(layers)
-      console.warn('返回新的document给在线制图', doc)
+      // console.warn('返回新的document给在线制图', doc)
       let payload = {
         document: doc
       }
@@ -251,7 +251,7 @@ export default {
             if (errorCode < 0) {
               this.$notification.error({ message: errorCode, description: msg })
             } else {
-              console.warn('【新工程已保存回云盘】')
+              // console.warn('【新工程已保存回云盘】')
               // let baseProjectUrl = getFileDownloadUrlWithAuth(srcUrl, false)
               // let projectUrl = Buffer.from(baseProjectUrl, 'utf-8').toString('base64') // 编码方式
               // projectUrl = encodeURIComponent(projectUrl)
@@ -390,7 +390,7 @@ export default {
                 if (item.isVectorTile) {
                   keepField = this.onlyOneField === true ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
                   item.path = item.path1 + keepField + item.path2 + `&Authorization=${this.cdToken}`
-                  console.warn('打印地址', this.onlyOneField, fields, keepField, item.path)
+                  // console.warn('打印地址', this.onlyOneField, fields, keepField, item.path)
                 } else { // geojson取全部字段
                   item.path = item.path + '&fields=' + keepField + `&Authorization=${this.cdToken}`
                 }
