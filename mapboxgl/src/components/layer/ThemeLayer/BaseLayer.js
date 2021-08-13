@@ -1792,6 +1792,7 @@ export default {
             let colors;
             if (window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
                 window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty(this.dataType + "-color") &&
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[this.dataType + "-color"].hasOwnProperty(this.selectValue)
             ) {
                 this.originColors = this.allOriginColors[key];
@@ -1852,7 +1853,9 @@ export default {
         $_getData(features, value) {
             let datas = [];
             for (let i = 0; i < features.length; i++) {
-                datas.push(features[i].properties[value]);
+                if(features[i].properties[value] !== ""){
+                    datas.push(features[i].properties[value]);
+                }
             }
             datas = Array.from(new Set(datas));
             datas = datas.sort(function (a, b) {
