@@ -59,12 +59,13 @@
 <script>
 import axios from 'axios'
 
-import { Extend } from '@mapgis/webclient-es6-service'
+// import { Extend } from '@mapgis/webclient-es6-service'
+import { RuleParse } from '../../RuleParas'
 import { IDocument, Layer, Doc } from '@mapgis/webclient-store'
 import { getPortalServices } from "../../../clouddisk/axios/portal";
 import { getPortalUrl } from "../../../clouddisk/config/mapgis";
 
-const { RuleParse } = Extend
+// const { RuleParse } = Extend
 const { GeoJsonLayer, RasterTileLayer, VectorTileLayer } = Layer
 const { defaultDocument } = Doc
 
@@ -179,19 +180,23 @@ export default {
         let portalIp = temUrl.split(':')[0]
         let portalPort = temUrl.split(':')[1]
 
+        // console.warn('打印RuleParse', RuleParse)
         let parse = new RuleParse()
         let serverType = parseInt(this.serviceForm.serverType) === 2 ? 5 : parseInt(this.serviceForm.serverType)
         let capability = parse.GetCapabilities(serverType, portalIp, portalPort, this.serviceForm.serverName)
-        this.checkCrs(capability)
         this.serviceUrl = parse.GetMap(parseInt(this.serviceForm.serverType), portalIp, portalPort, this.serviceForm.serverName, 'url')
+
+        this.checkCrs(capability)
         // console.warn('打印url', url)
         // this.paraDocument(url)
       }
     },
     checkCrs (url) {
+      this.$emit("handleLoading", true);
       axios.get(url)
         .then(res => {
           if (res.status === 200) {
+            this.$emit("handleLoading", false);
             let result = res.data
             if (typeof result === 'object') {
               let resolution = this.getTileResolution(result)
@@ -213,6 +218,7 @@ export default {
           }
         })
         .catch(error => {
+          this.$emit("handleLoading", false);
           this.$notification.error({ message: '网络异常,请检查链接', description: error })
         })
     },

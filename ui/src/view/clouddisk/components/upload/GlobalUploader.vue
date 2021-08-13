@@ -606,22 +606,22 @@ export default {
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
       this.BacgroundWebsocketInstance.onopen = function () {
-        console.warn('【WebSocket连接成功】', wsUrl)
+        console.log('【WebSocket连接成功】', wsUrl)
       };
       this.BacgroundWebsocketInstance.onerror = function (event) {
-        console.warn('【WebSocket连接错误】', event)
+        console.log('【WebSocket连接错误】', event)
       };
       this.BacgroundWebsocketInstance.onclose = function (event) {
-        console.warn('【WebSocket已关闭连接】', event)
+        console.log('【WebSocket已关闭连接】', event)
       };
     },
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
-        console.warn('【WebSocket接收消息中】', event)
+        console.log('【WebSocket接收消息中】', event)
         let flag = vm.isJSON(event.data);
         if (flag) {
-          console.log('websocket', event);
+          // console.log('websocket', event);
           let data = JSON.parse(event.data);
           let action = data.action;
           let msgid = data.msgid;
@@ -633,7 +633,7 @@ export default {
             changeWebSocketMsgid({ msgid: msgid });
           }
         } else {
-          console.warn("发送成功！", event.data);
+          console.log("发送成功！", event.data);
         }
       };
     },
