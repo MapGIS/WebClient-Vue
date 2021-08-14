@@ -1822,7 +1822,8 @@ export default {
             if (window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
                 window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty(this.dataType + "-color") &&
-                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[this.dataType + "-color"].hasOwnProperty(this.selectValue)
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[this.dataType + "-color"].hasOwnProperty(this.selectValue) &&
+                !clearColor
             ) {
                 this.originColors = this.allOriginColors[key];
                 colors = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[this.dataType + "-color"][this.selectValue];
@@ -1992,7 +1993,7 @@ export default {
                 startColor,
                 endColor,
                 this.selectKey,
-                false,
+                true,
                 true
             );
             this.$_removeIcon();
