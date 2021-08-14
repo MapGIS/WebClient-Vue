@@ -4,16 +4,16 @@
       <mapgis-ui-iconfont type="mapgis-yangshikuguanli" />编辑显示样式
     </contextmenu-item>
     <contextmenu-item divider />
-    <contextmenu-item @click="handleClick('add-theme')" v-if="!isTheme">
+    <contextmenu-item @click="handleClick('add-theme')" v-if="!isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-zhuantitu" />创建专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('edit-theme')" v-if="isTheme">
+    <contextmenu-item @click="handleClick('edit-theme')" v-if="isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-zhuantitu" />编辑专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme">
+    <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-chexiao" />撤销专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('make-symbol')">
+    <contextmenu-item @click="handleClick('make-symbol')" v-if="!isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-shengchengzhuji" />生成注记
     </contextmenu-item>
     <contextmenu-item divider />
@@ -76,7 +76,8 @@ export default {
   },
   props: {
     layerId: { type: String },
-    isTheme: { type: Boolean, default: false }
+    isTheme: { type: Boolean, default: false },
+    isSymbol: { type: Boolean, default: false }
   },
   watch: {
     layerId(next) {

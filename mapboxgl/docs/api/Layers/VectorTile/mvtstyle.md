@@ -131,3 +131,6 @@ Mapbox GL JS Style:
 1. 无专题图排序
    图层 A -> 图层 B
 2. 有专题图排序
+   1. 原始专题图排序
+      B b: C a: null
+      C b: A a:
