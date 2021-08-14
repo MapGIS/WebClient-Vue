@@ -222,6 +222,17 @@ export default {
                     layerId
                 );
             }
+            if(this.themeType === "symbol"){
+                this.$_setLayOutProperty(
+                    "visibility",
+                    "none",
+                    layerId + "_" + this.$_getThemeName(themeType),
+                    window.originLayer[layerId][
+                    layerId + "_" + this.$_getThemeName(themeType)
+                        ],
+                    layerId
+                );
+            }
         },
         $_showExtraLayer(layerId, themeType) {
             let extraLayer;
@@ -255,6 +266,17 @@ export default {
                         );
                     });
                 }
+                this.$_setLayOutProperty(
+                    "visibility",
+                    "visible",
+                    layerId + "_" + this.$_getThemeName(themeType),
+                    window.originLayer[layerId][
+                    layerId + "_" + this.$_getThemeName(themeType)
+                        ],
+                    layerId
+                );
+            }
+            if(this.themeType === "symbol"){
                 this.$_setLayOutProperty(
                     "visibility",
                     "visible",
@@ -1212,7 +1234,7 @@ export default {
             this.rangeFields = fields;
         },
         $_getFields(features) {
-            if (this.themeType === "range" || this.themeType === "heatmap") {
+            if (this.themeType === "range" || this.themeType === "heatmap" || this.themeType === "symbol") {
                 return this.rangeFields;
             } else {
                 let fields = [];
