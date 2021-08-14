@@ -293,6 +293,7 @@ export default {
       this.deleteExtraLayer(layerId,"range");
       this.deleteExtraLayer(layerId,"heatmap");
       this.resetMainLayer(layerId);
+      this.panels = [];
       this.showPanelFlag = false;
     },
     $_setPanelProps(panelProps){
