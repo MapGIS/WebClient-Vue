@@ -2123,7 +2123,10 @@ export default {
                 return newDataSource;
             } else {
                 let rangeSect = range / this.rangeLevel;
-                let floatLength = String(rangeSect).split(".")[1].length;
+                let floatLength;
+                if(String(rangeSect).indexOf(".") > -1){
+                    floatLength = String(rangeSect).split(".")[1].length;
+                }
                 if (dataSource[0] < 0) {
                     this.startData = dataSource[0] - 1;
                 } else {
@@ -2164,47 +2167,48 @@ export default {
                 if (
                     window.originThemeData[this.layerIdCopy][
                     this.themeType + "_" + this.selectKey
-                        ] &&
-                    !this.isGradient &&
-                    !this.isGradient &&
-                    !this.isSingle
+                        ]
                 ) {
                     newColor =
                         window.originThemeData[this.layerIdCopy][
                         this.themeType + "_" + this.selectKey
                             ];
                 } else {
-                    newColor = ["step", ["to-number", ["get", colors.property]]];
-                    let features =
-                            window.originLayer[this.layerIdCopy][
-                            this.layerIdCopy + "_features"
-                                ],
-                        index = 0,
-                        valueArr = [];
-                    for (let i = 0; i < features.length; i++) {
-                        let value = features[i].properties[this.selectKey];
-                        if (value && valueArr.indexOf(Number(value)) < 0) {
-                            valueArr.push(Number(value));
-                        }
-                    }
-                    valueArr = valueArr.sort(function (a, b) {
-                        return a - b;
-                    });
-                    newColor.push("#ffffff");
-                    for (let i = 0; i < colors.stops.length; i++) {
-                        for (let j = index; j < valueArr.length; j++) {
-                            let value = valueArr[j];
-                            if (Number(value) <= colors.stops[i][0]) {
-                                newColor.push(Number(value));
-                                newColor.push(colors.stops[i][1]);
-                                if (j === valueArr.length - 1) {
-                                    index = j + 1;
-                                }
-                            } else {
-                                index = j;
-                                break;
+                    if(colors.hasOwnProperty("stops")){
+                        newColor = ["step", ["to-number", ["get", colors.property]]];
+                        let features =
+                                window.originLayer[this.layerIdCopy][
+                                this.layerIdCopy + "_features"
+                                    ],
+                            index = 0,
+                            valueArr = [];
+                        for (let i = 0; i < features.length; i++) {
+                            let value = features[i].properties[this.selectKey];
+                            if (value && valueArr.indexOf(Number(value)) < 0) {
+                                valueArr.push(Number(value));
                             }
                         }
+                        valueArr = valueArr.sort(function (a, b) {
+                            return a - b;
+                        });
+                        newColor.push("#ffffff");
+                        for (let i = 0; i < colors.stops.length; i++) {
+                            for (let j = index; j < valueArr.length; j++) {
+                                let value = valueArr[j];
+                                if (Number(value) <= colors.stops[i][0]) {
+                                    newColor.push(Number(value));
+                                    newColor.push(colors.stops[i][1]);
+                                    if (j === valueArr.length - 1) {
+                                        index = j + 1;
+                                    }
+                                } else {
+                                    index = j;
+                                    break;
+                                }
+                            }
+                        }
+                    }else {
+                        newColor = colors;
                     }
                 }
             } else {
