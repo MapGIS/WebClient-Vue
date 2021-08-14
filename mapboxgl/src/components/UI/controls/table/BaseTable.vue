@@ -708,7 +708,10 @@ export default {
           (this.paginationCopy.pageSize + 1.5) * this.rowHeight + this.pageHeight;
       container.style.height = containerHeight + "px";
       tableBody.style.height = containerHeight + "px";
-      this.$_drawToolBar(containerHeight);
+      let vm = this;
+      setTimeout(function () {
+        vm.$_drawToolBar(containerHeight);
+      },20);
     },
     /*
      * 绘制工具栏
