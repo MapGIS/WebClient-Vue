@@ -272,7 +272,7 @@ export default {
           this.$_setRangeColor(newColors[1],startData,endData);
         }
       }else {
-        let addNum = (endData = startData) + endData;
+        let addNum = (endData - startData) + endData;
         this.colors.push(this.colors[index]);
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
