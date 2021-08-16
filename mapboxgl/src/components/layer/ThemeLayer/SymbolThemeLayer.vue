@@ -307,6 +307,7 @@ export default {
         this.rangeLevel--;
         this.addRange = true;
         this.dataSourceCopy.splice(index,1);
+        this.dataSource.splice(index,1);
         this.checkBoxArr.splice(index,1);
         this.radiusArr.splice(index,1);
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = this.radiusArr;
@@ -340,6 +341,7 @@ export default {
         if( startData < endData){
           let addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index + 1,0,addNum);
+          this.dataSource.splice(index + 1,0,addNum);
           this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
           this.checkBoxArr.splice(index + 1,0,true);
         }
@@ -348,6 +350,7 @@ export default {
         this.checkBoxArr.push(true);
         this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
         this.dataSourceCopy.push(this.endData);
+        this.dataSource.push(this.endData);
         this.endData = addNum;
       }
       if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr){

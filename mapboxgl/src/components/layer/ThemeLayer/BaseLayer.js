@@ -1531,7 +1531,8 @@ export default {
             }
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
             if(this.themeType === "symbol"){
-                if (window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
+                if (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
                     window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)){
                     this.dataSourceCopy = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
                 }else {
