@@ -206,7 +206,7 @@ export default {
   },
   data() {
     return {
-      title: "等级符号专题图",
+      title: "符号专题图",
       themeType: "symbol",
       dataSourceCopy: undefined,
       dataInit: false,
@@ -253,7 +253,7 @@ export default {
     },
     themeDefaultType: {
       type: String,
-      default: "等级符号专题图"
+      default: "符号专题图"
     }
   },
   created() {
@@ -792,7 +792,7 @@ export default {
             vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
             if(!window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]){
               window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
-                'id': vm.layerIdCopy + "_等级符号专题图",
+                'id': vm.layerIdCopy + "_符号专题图",
                 'source': vm.source_vector_Id,
                 'type': 'symbol',
                 'layout': {

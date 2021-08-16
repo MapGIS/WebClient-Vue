@@ -1286,7 +1286,7 @@ export default {
                         },
                         {
                             key: "symbol",
-                            value: "等级符号专题图"
+                            value: "符号专题图"
                         },
                         {
                             key: "heatmap",
@@ -1305,7 +1305,7 @@ export default {
                         },
                         {
                             key: "symbol",
-                            value: "等级符号专题图"
+                            value: "符号专题图"
                         },
                         {
                             key: "heatmap",
@@ -2384,7 +2384,7 @@ export default {
                     theme = "分段专题图";
                     break;
                 case "symbol":
-                    theme = "等级符号专题图";
+                    theme = "符号专题图";
                     break;
                 case "heatmap":
                     theme = "热力专题图";

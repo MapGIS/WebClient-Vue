@@ -171,7 +171,7 @@ export default {
                 vm.importArr.push(originLayerId + "unique");
               }else if(layerOrder[i] === originLayerId + "_分段专题图"){
                 vm.importArr.push(originLayerId + "range");
-              }else if(layerOrder[i] === originLayerId + "_等级符号专题图"){
+              }else if(layerOrder[i] === originLayerId + "_符号专题图"){
                 vm.importArr.push(originLayerId + "symbol");
               }else if(layerOrder[i] === originLayerId + "_热力专题图"){
                 vm.importArr.push(originLayerId + "heatmap");
@@ -370,7 +370,7 @@ export default {
           value: "分段专题图"
         }, {
           key: "symbol",
-          value: "等级符号专题图"
+          value: "符号专题图"
         }, {
           key: "heatmap",
           value: "热力专题图"
@@ -387,7 +387,7 @@ export default {
           this.themeDefaultTypeFlag = "分段专题图";
           break;
         case "symbol":
-          this.themeDefaultTypeFlag = "等级符号专题图";
+          this.themeDefaultTypeFlag = "符号专题图";
           break;
       }
       this.$_addThemeLayer(type, layerId,minzoom,maxzoom);

@@ -10,29 +10,30 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
       <!--专题图类型-->
-      <mapgis-ui-collapse accordion>
+      <mapgis-ui-collapse v-model="activeKeyCopy" accordion>
+        <mapgis-ui-sprite-select
+            v-show="false"
+            :url="iconUrl"
+            :defaultValue="defaultIconValue"
+            @change="$_clickIcon"
+            @iconLoaded="$_iconLoaded"
+        ></mapgis-ui-sprite-select>
         <mapgis-ui-collapse-panel key="1" header="专题图类型">
-          <mapgis-ui-row v-if="showField">
-            <p class="theme-panel-p">类型</p>
-          </mapgis-ui-row>
           <mapgis-ui-row>
-            <mapgis-ui-select
-                :default-value="themeDefaultTypeCopy"
-                v-model="themeDefaultTypeCopy"
-                @change="$_selectThemeType"
-                class="theme-panel-select"
-            >
-              <mapgis-ui-select-option v-for="(theme,index) in themeType" :key="index" :value="theme.key">{{
-                  theme.value
-                }}
-              </mapgis-ui-select-option>
-            </mapgis-ui-select>
+            <div @click="$_selectThemeType(type.key)" class="theme-panel-img-out" v-for="(type,index) in themeType" :key="index">
+              <div class="theme-panel-img-border" :class="{themePanelImgOutline: themeDefaultTypeCopy === type.value}">
+                <mapgis-ui-iconfont class="theme-panel-img" type="mapgis-danzhizhuantitu"></mapgis-ui-iconfont>
+                <div class="theme-panel-img-type">
+                  {{type.value}}
+                </div>
+              </div>
+            </div>
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
       <!--字段信息-->
       <mapgis-ui-collapse accordion>
-        <mapgis-ui-collapse-panel key="1" header="字段信息">
+        <mapgis-ui-collapse-panel key="2" header="字段信息">
           <mapgis-ui-row v-if="showField">
             <p class="theme-panel-p">字段</p>
           </mapgis-ui-row>
@@ -51,7 +52,7 @@
       </mapgis-ui-collapse>
       <!--热点-->
       <mapgis-ui-collapse accordion v-if="dataType === 'heatmap'">
-        <mapgis-ui-collapse-panel key="1" header="热点">
+        <mapgis-ui-collapse-panel key="3" header="热点">
           <mapgis-ui-row>
             <p class="theme-panel-p">热点颜色</p>
           </mapgis-ui-row>
@@ -97,7 +98,7 @@
       </mapgis-ui-collapse>
       <!--自定义-->
       <mapgis-ui-collapse accordion v-if="dataType === 'heatmap'">
-        <mapgis-ui-collapse-panel key="1" header="自定义">
+        <mapgis-ui-collapse-panel key="4" header="自定义">
           <mapgis-ui-row>
             <p class="theme-panel-p">自定义颜色</p>
           </mapgis-ui-row>
@@ -116,7 +117,7 @@
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
       <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap' && dataType !== 'symbol'">
-        <mapgis-ui-collapse-panel key="2" header="符号">
+        <mapgis-ui-collapse-panel key="5" header="符号">
           <mapgis-ui-row v-if="dataType !== 'circle'">
             <mapgis-ui-col :span="4">
               <p class="theme-panel-p">图标</p>
@@ -276,9 +277,9 @@
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
-      <mapgis-ui-collapse v-model="activeKeyCopy" accordion v-if="dataType === 'symbol'">
-        <mapgis-ui-collapse-panel key="2" header="符号">
-          <mapgis-ui-row v-if="dataType !== 'circle'">
+      <mapgis-ui-collapse accordion v-if="dataType === 'symbol'">
+        <mapgis-ui-collapse-panel key="9" header="符号">
+          <mapgis-ui-row>
             <mapgis-ui-col :span="4">
               <p class="theme-panel-p">图标</p>
             </mapgis-ui-col>
@@ -439,7 +440,7 @@
       </mapgis-ui-collapse>
       <!--边线样式-->
       <mapgis-ui-collapse accordion v-if="dataType !== 'symbol' && dataType !== 'heatmap'">
-        <mapgis-ui-collapse-panel key="5" header="线">
+        <mapgis-ui-collapse-panel key="6" header="线">
           <mapgis-ui-row v-if="dataType === 'line'">
             <p class="theme-panel-p">边线样式</p>
           </mapgis-ui-row>
@@ -551,7 +552,7 @@
       </mapgis-ui-collapse>
       <!--标签-->
       <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap'">
-        <mapgis-ui-collapse-panel key="3" header="标签">
+        <mapgis-ui-collapse-panel key="7" header="标签">
           <mapgis-ui-row>
             <p class="theme-panel-p">显示字段</p>
           </mapgis-ui-row>
@@ -738,7 +739,7 @@
       <slot name="operation"></slot>
       <!--专题图信息-->
       <mapgis-ui-collapse accordion @change="$_clickCollapse" v-if="dataType !== 'heatmap'">
-        <mapgis-ui-collapse-panel key="4" header="图例">
+        <mapgis-ui-collapse-panel key="8" header="分段值">
           <slot name="legend" :selectValue="selectValue">
             <!--            <mapgis-ui-row>-->
             <!--              <mapgis-ui-input v-model="search" placeholder="搜索框"/>-->
@@ -877,7 +878,8 @@ export default {
       }
     },
     iconUrl: {
-      type: String
+      type: String,
+      default: ""
     },
     defaultIconValue: {
       type: String
@@ -910,7 +912,7 @@ export default {
           value: "分段专题图"
         }, {
           key: "symbol",
-          value: "等级符号专题图"
+          value: "符号专题图"
         }, {
           key: "heatmap",
           value: "热力专题图"
@@ -1133,7 +1135,7 @@ export default {
     this.$_formatPanelProps();
   },
   mounted() {
-    this.activeKeyCopy = this.activeKey;
+    this.activeKeyCopy = ["1"];
     if(this.textFonts.length > 0 && !this.textFontsSelect){
       this.textFontsSelect = this.textFonts[0];
     }
@@ -1690,5 +1692,38 @@ export default {
 .theme-panel-input-radius{
   width: 305px;
   margin-left: 7px;
+}
+.theme-panel-img{
+  font-size: 82px;
+  position: absolute;
+  top: -7px;
+  left: -7px;
+}
+.theme-panel-img-border{
+  position: absolute;
+  width: 89px;
+  height: 89px;
+  cursor: pointer;
+}
+.theme-panel-img-border:hover{
+  outline: 3px solid rgb(0,129,226);
+}
+.themePanelImgOutline{
+  outline: 3px solid rgb(0,129,226);
+}
+.theme-panel-img-out{
+  position: relative;
+  width: 95px;
+  height: 115px;
+  display: inline-block;
+  margin-left: 7px;
+}
+.theme-panel-img-type{
+  position: absolute;
+  bottom: -14px;
+  left: -4px;
+  width: 95px;
+  height: 10px;
+  text-align: center;
 }
 </style>
