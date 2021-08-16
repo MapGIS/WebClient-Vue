@@ -57,6 +57,9 @@
     "divBackground": "#000000",
     "divForderColor": "#eeeeee",
     "contentBackground": "#000000",
+    "navBackground": "#111111",
+    "navBorderBackground": "#383838",
+    "navShadow": "#242424",
     "colorGroup": ["#3499e5", "#759aa0", "#e69d87", "#8dc1a9", "#ea7e53"]
   },
   {
@@ -117,6 +120,9 @@
     "divBackground": "#ffffff",
     "divForderColor": "#eeeeee",
     "contentBackground": "#ffffff",
+    "navBackground": "#FFFFFF",
+    "navBorderBackground": "#b3b3b3",
+    "navShadow": "#242424",
     "colorGroup": ["#0081e2", "#6be6c1", "#626c91", "#a0a7e6", "#c4ebad"]
   },
   {
