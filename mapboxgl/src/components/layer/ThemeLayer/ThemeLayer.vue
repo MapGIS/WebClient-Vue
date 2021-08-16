@@ -270,17 +270,21 @@ export default {
       this.showPanelFlag = false;
     },
     hideCurrentLayer(layerId) {
-      if(this[window._workspace._layerTypes[layerId] + "Layer"]){
-        this[window._workspace._layerTypes[layerId] + "Layer"].hideExtraLayer(layerId);
-      }else{
-        this.hideExtraLayer(layerId,window._workspace._layerTypes[layerId]);
+      if(window.hasOwnProperty("_workspace")){
+        if(this[window._workspace._layerTypes[layerId] + "Layer"]){
+          this[window._workspace._layerTypes[layerId] + "Layer"].hideExtraLayer(layerId);
+        }else{
+          this.hideExtraLayer(layerId,window._workspace._layerTypes[layerId]);
+        }
       }
     },
     showCurrentLayer(layerId) {
-      if(this[window._workspace._layerTypes[layerId] + "Layer"]){
-        this[window._workspace._layerTypes[layerId] + "Layer"].showExtraLayer(layerId);
-      }else {
-        this.showExtraLayer(layerId,window._workspace._layerTypes[layerId]);
+      if(window.hasOwnProperty("_workspace")){
+        if(this[window._workspace._layerTypes[layerId] + "Layer"]){
+          this[window._workspace._layerTypes[layerId] + "Layer"].showExtraLayer(layerId);
+        }else {
+          this.showExtraLayer(layerId,window._workspace._layerTypes[layerId]);
+        }
       }
     },
     resetLayer(layerId) {
@@ -289,6 +293,7 @@ export default {
       this.deleteExtraLayer(layerId,"range");
       this.deleteExtraLayer(layerId,"heatmap");
       this.resetMainLayer(layerId);
+      this.panels = [];
       this.showPanelFlag = false;
     },
     $_setPanelProps(panelProps){

@@ -115,16 +115,7 @@
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
       </mapgis-ui-collapse>
-      <!--字段过滤-->
-      <!--      <mapgis-ui-row>-->
-      <!--        <mapgis-ui-collapse>-->
-      <!--          <mapgis-ui-collapse-panel key="1" header="字段过滤">-->
-      <!--            <p>dasdadadasdasd</p>-->
-      <!--          </mapgis-ui-collapse-panel>-->
-      <!--        </mapgis-ui-collapse>-->
-      <!--      </mapgis-ui-row>-->
-      <!--符号-->
-      <mapgis-ui-collapse v-model="activeKey" accordion v-if="dataType !== 'heatmap'">
+      <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap' && dataType !== 'symbol'">
         <mapgis-ui-collapse-panel key="2" header="符号">
           <mapgis-ui-row v-if="dataType !== 'circle'">
             <mapgis-ui-col :span="4">
@@ -136,51 +127,172 @@
                 @change="$_clickIcon"
                 @iconLoaded="$_iconLoaded"
             ></mapgis-ui-sprite-select>
-            <!--            <mapgis-ui-col :span="20">-->
-            <!--              <div-->
-            <!--                  class="theme-panel-icon-button"-->
-            <!--                  @click="$_toggleIcon"-->
-            <!--              >-->
-            <!--                <div class="theme-panel-icon-button-inner"></div>-->
-            <!--              </div>-->
-            <!--              <div class="theme-panel-icons"-->
-            <!--                   v-show="showIcon"-->
-            <!--                   @mouseleave="$_closeIcon"-->
-            <!--              >-->
-            <!--                <mapgis-ui-tabs-->
-            <!--                    default-active-key="0"-->
-            <!--                >-->
-            <!--                  <mapgis-ui-tab-pane-->
-            <!--                      v-for="(iconTap,index) in icons"-->
-            <!--                      :key="String(index)"-->
-            <!--                      :tab="iconTap.type">-->
-            <!--                    <img-->
-            <!--                        class="theme-panel-icon"-->
-            <!--                        v-for="(icon,iconIndex) in iconTap.icons"-->
-            <!--                        :src="icon.url"-->
-            <!--                        :key="iconIndex"-->
-            <!--                        @click="$_clickIcon(icon)"-->
-            <!--                    >-->
-            <!--                  </mapgis-ui-tab-pane>-->
-            <!--                </mapgis-ui-tabs>-->
-            <!--              </div>-->
-            <!--            </mapgis-ui-col>-->
           </mapgis-ui-row>
           <mapgis-ui-row
               style="margin-top: 8px;"
               v-if="dataType !== 'line' && dataType !== 'symbol'"
           >
-<!--            <mapgis-ui-radio-group-->
-<!--                v-model="radioMode"-->
-<!--                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"-->
-<!--            >-->
-<!--              <mapgis-ui-radio-button @click="$_chooseColor('gradient')" value="gradient">-->
-<!--                渐变颜色-->
-<!--              </mapgis-ui-radio-button>-->
-<!--              <mapgis-ui-radio-button @click="$_chooseColor('single')" value="single">-->
-<!--                单体颜色-->
-<!--              </mapgis-ui-radio-button>-->
-<!--            </mapgis-ui-radio-group>-->
+            <p class="theme-panel-p" style="margin-bottom: 7px">渐变颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row
+              v-if="dataType !== 'line' && dataType !== 'symbol'"
+          >
+            <mapgis-ui-select
+                :default-value="'#FF0000'"
+                v-model="gradientColor"
+                @change="$_gradientChange"
+                v-show="radioMode === 'gradient'"
+            >
+              <mapgis-ui-select-option v-for="(gradient,index) in gradientArr" :key="index" :value="gradient.key">
+                <div class="theme-panel-gradient" :style="{background: gradient.value}"></div>
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+            <colorPicker
+                class="picker theme-panel-line-color"
+                v-model="singleColor"
+                @change="$_singleChanged"
+                v-show="radioMode === 'single'"
+            />
+          </mapgis-ui-row>
+          <mapgis-ui-row
+              v-if="dataType !== 'line'"
+          >
+            <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row
+              v-if="dataType !== 'line'"
+          >
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider class="theme-panel-slider" v-model="opacity"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol'">
+            <p class="theme-panel-p">图标大小</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="0"
+                  :max="radiusMax"
+                  :step="radiusStep"
+                  class="theme-panel-slider"
+                  v-model="radius"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="0"
+                  :max="radiusMax"
+                  :step="radiusStep"
+                  class="theme-panel-input-number"
+                  v-model="radius"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle'">
+            <p class="theme-panel-p">半径</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="0"
+                  :max="radiusMax"
+                  :step="radiusStep"
+                  class="theme-panel-slider"
+                  v-model="radius"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="0"
+                  :max="radiusMax"
+                  :step="radiusStep"
+                  class="theme-panel-input-number"
+                  v-model="radius"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
+            <p class="theme-panel-p">x轴偏移</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="xOffsetMin"
+                  :max="xOffsetMax"
+                  :step="xOffsetStep"
+                  class="theme-panel-slider"
+                  v-model="xOffset"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="xOffsetMin"
+                  :max="xOffsetMax"
+                  :step="xOffsetStep"
+                  class="theme-panel-input-number"
+                  v-model="xOffset"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
+            <p class="theme-panel-p">y轴偏移</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol' || dataType === 'circle'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="yOffsetMin"
+                  :max="yOffsetMax"
+                  :step="yOffsetStep"
+                  class="theme-panel-slider"
+                  v-model="yOffset"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="yOffsetMin"
+                  :max="yOffsetMax"
+                  :step="yOffsetStep"
+                  class="theme-panel-input-number"
+                  v-model="yOffset"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol'">
+            <p class="theme-panel-p">旋转角度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'symbol'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="0"
+                  :max="360"
+                  :step="rotationStep"
+                  class="theme-panel-slider"
+                  v-model="rotation"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="0"
+                  :max="360"
+                  :step="rotationStep"
+                  class="theme-panel-input-number"
+                  v-model="rotation"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+        </mapgis-ui-collapse-panel>
+      </mapgis-ui-collapse>
+      <mapgis-ui-collapse v-model="activeKeyCopy" accordion v-if="dataType === 'symbol'">
+        <mapgis-ui-collapse-panel key="2" header="符号">
+          <mapgis-ui-row v-if="dataType !== 'circle'">
+            <mapgis-ui-col :span="4">
+              <p class="theme-panel-p">图标</p>
+            </mapgis-ui-col>
+            <mapgis-ui-sprite-select
+                :url="iconUrl"
+                :defaultValue="defaultIconValue"
+                @change="$_clickIcon"
+                @iconLoaded="$_iconLoaded"
+            ></mapgis-ui-sprite-select>
+          </mapgis-ui-row>
+          <mapgis-ui-row
+              style="margin-top: 8px;"
+              v-if="dataType !== 'line' && dataType !== 'symbol'"
+          >
             <p class="theme-panel-p" style="margin-bottom: 7px">渐变颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row
@@ -632,7 +744,7 @@
             <!--              <mapgis-ui-input v-model="search" placeholder="搜索框"/>-->
             <!--            </mapgis-ui-row>-->
             <mapgis-ui-row>
-              <div id="theme-panel-list"
+              <div :id="listId"
                    class="theme-panel-list"
                    :style="{overflowY:scroll}"
                    @mouseover="$_mouseover"
@@ -642,7 +754,7 @@
                     bordered
                     :data-source="dataSourceCopy"
                 >
-                  <mapgis-ui-list-item slot="renderItem" slot-scope="item, index">
+                  <mapgis-ui-list-item slot="renderItem" slot-scope="item, index" v-if="item">
                     <div class="theme-panel-td theme-panel-td-border-right">
                       {{ index }}
                     </div>
@@ -933,7 +1045,9 @@ export default {
       labelFieldsCopy: [],
       gradientColor: "#FF0000",
       labelSelectValue: undefined,
-      selectHeatValue: 0
+      selectHeatValue: 0,
+      listId: "theme-panel-list-" + parseInt(Math.random() * 100000),
+      activeKeyCopy: undefined
     }
   },
   watch: {
@@ -1019,6 +1133,7 @@ export default {
     this.$_formatPanelProps();
   },
   mounted() {
+    this.activeKeyCopy = this.activeKey;
     if(this.textFonts.length > 0 && !this.textFontsSelect){
       this.textFontsSelect = this.textFonts[0];
     }
@@ -1145,7 +1260,7 @@ export default {
       if (!this.showRange) {
         this.$nextTick(function () {
           let vm = this;
-          let list = document.getElementById("theme-panel-list");
+          let list = document.getElementById(this.listId);
           if (list) {
             this.scrollBack = document.documentElement.scrollTop || document.body.scrollTop;
             list.addEventListener('scroll', function (event) {
