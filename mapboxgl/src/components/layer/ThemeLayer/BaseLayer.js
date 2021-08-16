@@ -2021,7 +2021,7 @@ export default {
                 startColor,
                 endColor,
                 this.selectKey,
-                true,
+                false,
                 true
             );
             this.$_removeIcon();
