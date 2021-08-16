@@ -22,7 +22,10 @@
           <mapgis-ui-row>
             <div @click="$_selectThemeType(type.key)" class="theme-panel-img-out" v-for="(type,index) in themeType" :key="index">
               <div class="theme-panel-img-border" :class="{themePanelImgOutline: themeDefaultTypeCopy === type.value}">
-                <mapgis-ui-iconfont class="theme-panel-img" type="mapgis-danzhizhuantitu"></mapgis-ui-iconfont>
+                <mapgis-ui-iconfont v-if="type.key === 'unique'" class="theme-panel-img" type="mapgis-danzhizhuantitu"></mapgis-ui-iconfont>
+                <mapgis-ui-iconfont v-if="type.key === 'range'" class="theme-panel-img" type="mapgis-zhuantitu"></mapgis-ui-iconfont>
+                <mapgis-ui-iconfont v-if="type.key === 'symbol'" class="theme-panel-img" type="mapgis-yinzifenxi"></mapgis-ui-iconfont>
+                <mapgis-ui-iconfont v-if="type.key === 'heatmap'" class="theme-panel-img" type="mapgis-kongxikuosan-01"></mapgis-ui-iconfont>
                 <div class="theme-panel-img-type">
                   {{type.value}}
                 </div>
