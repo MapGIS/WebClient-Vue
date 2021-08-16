@@ -341,16 +341,15 @@ export default {
       let layers = merges.concat(umsorts);
 
       this.themeRules.forEach(rules => {
-        rules.forEach((r, i) => {
-          if (i != 0) {
-            let index = vm.findIndex(layers, rules[0].id);
-            if (index >= 0) {
-              vm.addLayer(layers, index, r, "after");
-            } else {
-              vm.addLayer(layers, index, r, "tail");
-            }
+        for (let i = rules.length - 1; i > 0; i--) {
+          let r = rules[i];
+          let index = vm.findIndex(layers, rules[0].id);
+          if (index >= 0) {
+            vm.addLayer(layers, index, r, "after");
+          } else {
+            vm.addLayer(layers, index, r, "tail");
           }
-        });
+        }
       });
 
       return layers;
