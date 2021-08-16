@@ -204,12 +204,14 @@ export default {
                 this.$message.error('目前服务只支持经纬度坐标，无法添加非经纬度服务')
                 this.serviceUrl = ''
               } else {
-                this.paraDocument(this.serviceUrl)
+                let mapgisOffset = this.getOffset(result)
+                this.paraDocument(this.serviceUrl, mapgisOffset)
               }
             } else if (typeof result === 'string') {
               let checkString = result.substring(result.indexOf('<TileMatrixSet>'),result.indexOf('</TileMatrixSet>'))
               if (checkString.indexOf('4326') > 0 || checkString.indexOf('4490') > 0) {
-                this.paraDocument(this.serviceUrl)
+                let mapgisOffset = this.getOffset(result)
+                this.paraDocument(this.serviceUrl, mapgisOffset)
               } else {
                 this.$message.error('目前服务只支持经纬度坐标，无法添加非经纬度服务')
                 this.serviceUrl = ''
@@ -222,7 +224,7 @@ export default {
           this.$notification.error({ message: '网络异常,请检查链接', description: error })
         })
     },
-    paraDocument (url) {
+    paraDocument (url, offset) {
       let serverName = this.serviceForm.serverName
       let doc = IDocument.deepclone(this.currentDocument)
       let layer
@@ -234,6 +236,7 @@ export default {
       layer.url = url
       layer.key = serverName
       layer.id = serverName
+      layer.mapgisOffset = offset
       doc.addLayerInGroup(layer)
 
       console.warn('通过门户服务返回新的document给在线制图', doc)
@@ -251,6 +254,33 @@ export default {
         result = lods.length > 0 ? lods[0].resolution : -1
       }
       return result
+    },
+    getOffset (responseData) {
+      let offset = 0
+      if (typeof responseData === 'object') {
+        let { TileInfo2 } = responseData
+        if (TileInfo2 && TileInfo2.tileInfo && TileInfo2.tileInfo.cols && TileInfo2.tileInfo.lods) {
+          let cols = TileInfo2.tileInfo.cols
+          let lods = TileInfo2.tileInfo.lods
+          let scale = lods.length > 0 ? lods[0].scale : -1
+          // console.warn('【检查2项】', cols, scale)
+          if (scale === 295829355.450 && cols=== 256) offset = -1
+        }
+      } else if (typeof responseData === 'string') {
+        let tempList = responseData.split('<ows:Abstract>')
+        for (let i = 0; i < tempList.length; i++) {
+          if (tempList[i].indexOf('MapGIS') >= 0 && tempList[i].indexOf('96DPI') >= 0) {
+            let checkScaleInfo = tempList[i].substring(tempList[i].indexOf('<ScaleDenominator>') + '<ScaleDenominator>'.length, tempList[i].indexOf('</ScaleDenominator>'))
+            let checkTileWidth = tempList[i].substring(tempList[i].indexOf('<TileWidth>') + '<TileWidth>'.length, tempList[i].indexOf('</TileWidth>'))
+            checkScaleInfo = Number(checkScaleInfo)
+            checkTileWidth = Number(checkTileWidth)
+            if (checkScaleInfo === 295829355.45 && checkTileWidth=== 256) offset = -1
+            // console.warn('【检查2项】', checkScaleInfo, checkTileWidth)
+            break
+          }
+        }
+      }
+      return offset
     }
   }
 };
