@@ -1288,7 +1288,7 @@ export default {
       }
     },
     $_clickCollapse(key) {
-      if (key === "4") {
+      if (key === "8") {
         this.$_addScrollEvent();
       }
     },
