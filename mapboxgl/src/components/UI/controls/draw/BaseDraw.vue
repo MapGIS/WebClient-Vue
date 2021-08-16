@@ -24,9 +24,9 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 
-.mapgis-ui-space{
+.mapgis-default-control>.mapgis-ui-space{
   width: 40px!important;
   overflow: hidden;
   transition: width .5s ;
@@ -388,7 +388,7 @@ export default {
       this.$_emitEvent("removed");
     },
 
-    changeFold(){
+    changeFold(e){
       // document.querySelector(".mapgis-ui-space").style="backgroundColor:black;";
       let space = document.querySelector(".mapgis-ui-space");
       let width = getComputedStyle(space).width;
