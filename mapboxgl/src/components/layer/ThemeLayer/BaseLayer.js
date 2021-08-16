@@ -531,7 +531,7 @@ export default {
                     after: "defaultValue"
                 },
                 {
-                    before: "icon-size",
+                    before: "icon-size-all",
                     after: "radius"
                 },
                 {
@@ -1062,9 +1062,20 @@ export default {
                 }
                 this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
                 if (layerId.indexOf("专题图") > -1 && key !== "visibility") {
-                    window.originLayer[this.layerIdCopy].panelProps[
-                        this.themeType
-                        ].panelProps[key] = value;
+                    if(key === "icon-size"){
+                        if(!window.originLayer[this.layerIdCopy].panelProps[
+                            this.themeType
+                            ].panelProps.hasOwnProperty(key)){
+                            window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[key] = {};
+                        }
+                        window.originLayer[this.layerIdCopy].panelProps[
+                            this.themeType
+                            ].panelProps[key][this.selectValue] = value;
+                    }else {
+                        window.originLayer[this.layerIdCopy].panelProps[
+                            this.themeType
+                            ].panelProps[key] = value;
+                    }
                 }
                 this.changeLayerProp = true;
                 this.changeLayerId = layerId;
@@ -1519,6 +1530,19 @@ export default {
                 this.selectKey = this.selectValue;
             }
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
+            if(this.themeType === "symbol"){
+                if (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)){
+                    this.dataSourceCopy = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
+                }else {
+                    let dataSourceCopy = [];
+                    for (let i = 0; i < this.dataSource.length; i++) {
+                        dataSourceCopy.push(this.dataSource[i]);
+                    }
+                    this.dataSourceCopy = dataSourceCopy;
+                }
+            }
             let colors = this.$_getColors(
                 this.dataSource,
                 startColor,
@@ -1632,6 +1656,9 @@ export default {
                         );
                     }
                 }
+            }else {
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = {};
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue] = this.radiusArr;
             }
             if (!window._workspace._layerTypes[this.layerIdCopy]) {
                 window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
@@ -1892,7 +1919,7 @@ export default {
                 return a - b;
             });
             this.dataBack = datas;
-            if (this.themeType === "range") {
+            if (this.themeType === "range" || this.themeType === "symbol") {
                 datas = this.$_editData(datas);
             }
             return datas;
@@ -1953,8 +1980,10 @@ export default {
                     } else {
                         throw new Error("请设置$_selectChange方法的回到函数！");
                     }
-                    colors = this.$_editColor(colors);
-                    this.$_setPaintByType(colors, true);
+                    if(this.themeType !== "symbol"){
+                        colors = this.$_editColor(colors);
+                        this.$_setPaintByType(colors, true);
+                    }
                     this.showVector = true;
                 }
                 this.changeLayerProp = true;
@@ -1993,7 +2022,7 @@ export default {
                 startColor,
                 endColor,
                 this.selectKey,
-                true,
+                false,
                 true
             );
             this.$_removeIcon();

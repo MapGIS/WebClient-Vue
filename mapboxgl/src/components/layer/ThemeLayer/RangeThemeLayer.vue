@@ -48,7 +48,7 @@
         @fontChanged="$_fontChanged"
         @themeTypeChanged="$_themeTypeChanged"
     >
-      <div slot="legend" slot-scope="slotProps">
+      <div slot="legend">
         <mapgis-ui-row>
           <div class="theme-panel-list" v-for="(data,index) in dataSourceCopy" :key="index" :class="{panelListFirst: index === 0,panelListLast: index === dataSourceCopy.length - 1}">
             <div class="range-theme-list-item">
@@ -266,16 +266,18 @@ export default {
         if( startData < endData){
           let addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index + 1,0,addNum);
+          this.dataSource.splice(index + 1,0,addNum);
           let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
           this.$_setRangeColor(newColors[1],startData,endData);
         }
       }else {
-        let addNum = (endData = startData) + endData;
+        let addNum = (endData - startData) + endData;
         this.colors.push(this.colors[index]);
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
+        this.dataSource.push(addNum);
       }
       this.$nextTick(function () {
         this.addRange = false;
@@ -613,7 +615,7 @@ export default {
           }
         }
       }
-      if (this.source_vector_layer_Id && window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
+      if (this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
