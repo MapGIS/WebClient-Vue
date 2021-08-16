@@ -613,7 +613,7 @@ export default {
           }
         }
       }
-      if (this.source_vector_layer_Id && window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
+      if (this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
       this.title = "分段" + "_" + this.layerIdCopy;
