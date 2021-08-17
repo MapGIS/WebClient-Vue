@@ -73,5 +73,29 @@ let gradients = [{
 }, {
     key: "#0c0f0a,#ff206e,#fbff12,#41ead4,#ffffff",
     value: "-webkit-linear-gradient(left,#0c0f0a,#ff206e,#fbff12,#41ead4,#ffffff)"
+}, {
+    key: "#ffe5ec,#ffc2d1,#ffb3c6,#ff8fab,#fb6f92",
+    value: "-webkit-linear-gradient(left,#ffe5ec,#ffc2d1,#ffb3c6,#ff8fab,#fb6f92)"
+}, {
+    key: "#9eb3c2,#1c7293,#065a82,#1b3b6f,#21295c",
+    value: "-webkit-linear-gradient(left,#9eb3c2,#1c7293,#065a82,#1b3b6f,#21295c)"
+}, {
+    key: "#f6aa1c,#bc3908,#941b0c,#621708,#220901",
+    value: "-webkit-linear-gradient(left,#f6aa1c,#bc3908,#941b0c,#621708,#220901)"
+}, {
+    key: "#d8f3dc,#b7e4c7,#95d5b2,#74c69d,#52b788,#40916c,#40916c,#2d6a4f,#1b4332,#081c15",
+    value: "-webkit-linear-gradient(left,#d8f3dc,#b7e4c7,#95d5b2,#74c69d,#52b788,#40916c,#40916c,#2d6a4f,#1b4332,#081c15)"
+}, {
+    key: "#ffffff,#f5f3f4,#d3d3d3,#b1a7a6,#e5383b,#ba181b,#a4161a,#660708,#161a1d,#0b090a",
+    value: "-webkit-linear-gradient(left,#ffffff,#f5f3f4,#d3d3d3,#b1a7a6,#e5383b,#ba181b,#a4161a,#660708,#161a1d,#0b090a)"
+}, {
+    key: "#f8f9fa,#e9ecef,#dee2e6,#ced4da,#adb5bd,#6c757d,#495057,#343a40,#343a40,#212529",
+    value: "-webkit-linear-gradient(left,#f8f9fa,#e9ecef,#dee2e6,#ced4da,#adb5bd,#6c757d,#495057,#343a40,#343a40,#212529)"
+}, {
+    key: "#edf2fb,#e2eafc,#d7e3fc,#ccdbfd,#c1d3fe,#b6ccfe,#abc4ff",
+    value: "-webkit-linear-gradient(left,#edf2fb,#e2eafc,#d7e3fc,#ccdbfd,#c1d3fe,#b6ccfe,#abc4ff)"
+}, {
+    key: "#ffedd8,#f3d5b5,#e7bc91,#d4a276,#bc8a5f,#a47148,#8b5e34,#6f4518,#603808,#583101",
+    value: "-webkit-linear-gradient(left,#ffedd8,#f3d5b5,#e7bc91,#d4a276,#bc8a5f,#a47148,#8b5e34,#6f4518,#603808,#583101)"
 }];
 export default gradients;
