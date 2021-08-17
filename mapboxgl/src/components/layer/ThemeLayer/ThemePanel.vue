@@ -812,6 +812,8 @@
 </template>
 
 <script>
+import gradients from "./gradient";
+
 export default {
   name: "mapgis-igs-theme-panel",
   props: {
@@ -1009,16 +1011,7 @@ export default {
       startColor: "#FFF",
       endColor: "#000",
       currentColorIndex: 0,
-      gradientArr: [{
-        key: "#FF0000",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#FF0000)"
-      }, {
-        key: "#00FF00",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#00FF00)"
-      }, {
-        key: "#0000FF",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#0000FF)"
-      }],
+      gradientArr: gradients,
       marks: {
         0: '0%',
         100: {

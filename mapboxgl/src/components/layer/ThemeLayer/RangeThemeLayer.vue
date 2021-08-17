@@ -473,7 +473,7 @@ export default {
     * **/
     $_selectChangeCallBack(colors) {
       this.dataInit = false;
-      this.$_getDataFromLocal(this.dataSource);
+      this.$_getDataFromLocal(this.dataSource,true);
       this.$nextTick(function () {
         this.dataInit = true;
       });
@@ -486,9 +486,23 @@ export default {
     * @param endColor 渐变结束颜色，可自行指定
     * @param key 绘制规则针对的关键字
     * **/
-    $_getColorsCallBack(colors, dataSource, startColor, endColor, key) {
+    $_getColorsCallBack(colors, dataSource, startColor, endColor, key,features) {
       let checkArr = [], colorList = [];
-      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      let gradient;
+      if(endColor.indexOf(",") > -1){
+        gradient = endColor.split(",");
+        this.rangeLevel = gradient.length;
+        this.dataSource = this.$_getData(this.dataCopy.features, this.selectValue);
+        let dataSourceCopy = [];
+        for (let i = 0; i < this.dataSource.length; i++) {
+          dataSourceCopy.push(this.dataSource[i]);
+        }
+        this.dataSourceCopy = dataSourceCopy;
+
+        dataSource = this.dataSourceCopy;
+      }else {
+        gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      }
       colors = {
         "property": key,
         "stops": []
@@ -498,20 +512,22 @@ export default {
         colorList.push(gradient[i]);
         checkArr.push(true);
       }
+      this.checkArr = checkArr;
       return {
         checkArr: checkArr,
         colors: colors,
         colorList: colorList
       }
     },
-    $_getDataFromLocal(dataSource){
+    $_getDataFromLocal(dataSource,refreshData){
       let dataSourceCopyProps;
       if (
           window.originLayer[this.layerIdCopy] &&
           window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
           window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
-          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue) &&
+          !refreshData
       ) {
         let panelProps =
             window.originLayer[this.layerIdCopy].panelProps[this.themeType]

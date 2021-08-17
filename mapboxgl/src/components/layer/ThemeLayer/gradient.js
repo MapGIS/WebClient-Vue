@@ -1,0 +1,77 @@
+let gradients = [{
+    key: "#FF0000",
+    value: "-webkit-linear-gradient(left,#FFFFFF,#FF0000)"
+}, {
+    key: "#00FF00",
+    value: "-webkit-linear-gradient(left,#FFFFFF,#00FF00)"
+}, {
+    key: "#0000FF",
+    value: "-webkit-linear-gradient(left,#FFFFFF,#0000FF)"
+}, {
+    key: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
+    value: "-webkit-linear-gradient(left,#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD)"
+}, {
+    key: "#798234,#A3AD62,#D0D33E,#FDFBE4,#F0C6C3,#DF91A3,#D46780",
+    value: "-webkit-linear-gradient(left,#798234,#A3AD62,#D0D33E,#FDFBE4,#F0C6C3,#DF91A3,#D46780)"
+}, {
+    key: "#3D5941,#778868,#B5B991,#F6EDBD,#EDBB8A,#DE8A5A,#CA562C",
+    value: "-webkit-linear-gradient(left,#3D5941,#778868,#B5B991,#F6EDBD,#EDBB8A,#DE8A5A,#CA562C)"
+}, {
+    key: "#C51B7D,#E9A3C9,#FDE0EF,#F5F5F5,#E6F5D0,#A1D7CE,#4D9221",
+    value: "-webkit-linear-gradient(left,#C51B7D,#E9A3C9,#FDE0EF,#F5F5F5,#E6F5D0,#A1D7CE,#4D9221)"
+}, {
+    key: "#f72585,#b5179e,#7209b7,#560bad,#480ca8,#3a0ca3,#3f37c9,#4361ee,#4895ef,#4cc9f0",
+    value: "-webkit-linear-gradient(left,#f72585,#b5179e,#7209b7,#560bad,#480ca8,#3a0ca3,#3f37c9,#4361ee,#4895ef,#4cc9f0)"
+}, {
+    key: "#cdb4db,#ffc8dd,#ffafcc,#bde0fe,#a2d2ff",
+    value: "-webkit-linear-gradient(left,#cdb4db,#ffc8dd,#ffafcc,#bde0fe,#a2d2ff)"
+}, {
+    key: "#eae4e9,#fff1e6,#fde2e4,#fad2e1,#e2ece9,#bee1e6,#f0efeb,#dfe7fd,#cddafd",
+    value: "-webkit-linear-gradient(left,#eae4e9,#fff1e6,#fde2e4,#fad2e1,#e2ece9,#bee1e6,#f0efeb,#dfe7fd,#cddafd)"
+}, {
+    key: "#6f1d1b,#bb9457,#432818,#99582a,#ffe6a7",
+    value: "-webkit-linear-gradient(left,#6f1d1b,#bb9457,#432818,#99582a,#ffe6a7)"
+}, {
+    key: "#132a13,#31572c,#4f772d,#90a955,#ecf39e",
+    value: "-webkit-linear-gradient(left,#132a13,#31572c,#4f772d,#90a955,#ecf39e)"
+}, {
+    key: "#2b2d42,#4e2c70,#702b9e,#b429f9,#9c43f8,#855df7,#6d77f6,#5591f5,#3eabf4,#26c5f3",
+    value: "-webkit-linear-gradient(left,#2b2d42,#4e2c70,#702b9e,#b429f9,#9c43f8,#855df7,#6d77f6,#5591f5,#3eabf4,#26c5f3)"
+}, {
+    key: "#a4243b,#d8c99b,#d8973c,#bd632f,#9c43f8,#273e47",
+    value: "-webkit-linear-gradient(left,#a4243b,#d8c99b,#d8973c,#bd632f,#9c43f8,#273e47)"
+}, {
+    key: "#2d3142,#bfc0c0,#ffffff,#ef8354,#4f5d75",
+    value: "-webkit-linear-gradient(left,#2d3142,#bfc0c0,#ffffff,#ef8354,#4f5d75)"
+}, {
+    key: "#264653,#2a9d8f,#e9c46a,#f4a261,#e76f51",
+    value: "-webkit-linear-gradient(left,#264653,#2a9d8f,#e9c46a,#f4a261,#e76f51)"
+}, {
+    key: "#ff0000,#ff8700,#ffd300,#deff0a,#a1ff0a,#0aff99,#0aefff,#147df5,#580aff,#be0aff",
+    value: "-webkit-linear-gradient(left,#ff0000,#ff8700,#ffd300,#deff0a,#a1ff0a,#0aff99,#0aefff,#147df5,#580aff,#be0aff)"
+}, {
+    key: "#ea698b,#d55d92,#c05299,#ac46a1,#973aa8,#822faf,#6d23b6,#6411ad,#571089,#47126b",
+    value: "-webkit-linear-gradient(left,#ea698b,#d55d92,#c05299,#ac46a1,#973aa8,#822faf,#6d23b6,#6411ad,#571089,#47126b)"
+}, {
+    key: "#05668d,#028090,#00a896,#02c39a,#f0f3bd",
+    value: "-webkit-linear-gradient(left,#05668d,#028090,#00a896,#02c39a,#f0f3bd)"
+}, {
+    key: "#4f000b,#720026,#ce4257,#ff7f51,#ff9b54",
+    value: "-webkit-linear-gradient(left,#4f000b,#720026,#ce4257,#ff7f51,#ff9b54)"
+}, {
+    key: "#ee6055,#60d394,#aaf683,#ffd97d,#ff9b85",
+    value: "-webkit-linear-gradient(left,#ee6055,#60d394,#aaf683,#ffd97d,#ff9b85)"
+}, {
+    key: "#390099,#9e0059,#ff0054,#ff5400,#ffbd00",
+    value: "-webkit-linear-gradient(left,#390099,#9e0059,#ff0054,#ff5400,#ffbd00)"
+}, {
+    key: "#809bce,#95b8d1,#b8e0d2,#d6eadf,#eac4d5",
+    value: "-webkit-linear-gradient(left,#809bce,#95b8d1,#b8e0d2,#d6eadf,#eac4d5)"
+}, {
+    key: "#072ac8,#1e96fc,#a2d6f9,#fcf300,#ffc600",
+    value: "-webkit-linear-gradient(left,#072ac8,#1e96fc,#a2d6f9,#fcf300,#ffc600)"
+}, {
+    key: "#0c0f0a,#ff206e,#fbff12,#41ead4,#ffffff",
+    value: "-webkit-linear-gradient(left,#0c0f0a,#ff206e,#fbff12,#41ead4,#ffffff)"
+}];
+export default gradients;
