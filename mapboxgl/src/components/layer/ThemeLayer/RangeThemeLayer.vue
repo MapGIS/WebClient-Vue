@@ -606,7 +606,7 @@ export default {
             maxzoom: maxzoom
           }
         }
-      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "LineString" || geojson.features[0].geometry.type ===  "MultiLineString")) {
         this.dataType = 'line';
         if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
