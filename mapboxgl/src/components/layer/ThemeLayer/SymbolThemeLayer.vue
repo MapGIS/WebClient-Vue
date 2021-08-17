@@ -329,7 +329,12 @@ export default {
       this.$_removeIcon();
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
-      let endData = Number(this.dataSourceCopy[index + 1]);
+      let endData
+      if(this.dataSourceCopy.length === 2){
+        endData = this.endData;
+      }else {
+        endData = Number(this.dataSourceCopy[index + 1]);
+      }
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
           let addNum = (startData + endData)/2;
