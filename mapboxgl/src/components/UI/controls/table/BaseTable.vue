@@ -40,7 +40,7 @@
           </mapgis-ui-button>
         </mapgis-ui-button-group>
       </mapgis-ui-div>
-      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0">
+      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0 && visible">
         <div style="width: 100%;">
           暂无数据
         </div>
@@ -330,7 +330,9 @@ export default {
       dataSource = dataSource || this.dataSource;
       this.dataSourceOrigin = dataSource;
       this.sortBack = {};
-      this.rowSelection.selectedRowKeys = [];
+      if(this.rowSelection){
+        this.rowSelection.selectedRowKeys = [];
+      }
       if(!dataSource || !dataSource.features || dataSource.features.length === 0){
         this.hasFeatures = false;
         this.$emit("createTableFailed","属性表","没有数据!");
