@@ -252,7 +252,6 @@ export default {
     },
     $_addRange(index){
       this.$_removeIcon();
-      this.rangeLevel++;
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
       let endData = Number(this.dataSourceCopy[index + 1]);
@@ -265,6 +264,7 @@ export default {
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
           this.$_setRangeColor(newColors[1],startData,endData);
+          this.rangeLevel++;
         }
       }else {
         let addNum = (endData - startData) + endData;
@@ -272,6 +272,7 @@ export default {
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
         this.dataSource.push(addNum);
+        this.rangeLevel++;
       }
       this.$nextTick(function () {
         this.addRange = false;

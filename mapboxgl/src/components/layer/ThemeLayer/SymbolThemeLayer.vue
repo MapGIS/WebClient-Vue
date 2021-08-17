@@ -327,7 +327,6 @@ export default {
     },
     $_addRange(index){
       this.$_removeIcon();
-      this.rangeLevel++;
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
       let endData = Number(this.dataSourceCopy[index + 1]);
@@ -338,6 +337,7 @@ export default {
           this.dataSource.splice(index + 1,0,addNum);
           this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
           this.checkBoxArr.splice(index + 1,0,true);
+          this.rangeLevel++;
         }
       }else {
         let addNum = (this.endData - this.startData) + this.endData;
@@ -346,6 +346,7 @@ export default {
         this.dataSourceCopy.push(this.endData);
         this.dataSource.push(this.endData);
         this.endData = addNum;
+        this.rangeLevel++;
       }
       if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr){
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = {};
