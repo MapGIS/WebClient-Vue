@@ -1214,34 +1214,70 @@ export default {
                 regFloat = new RegExp("^[.\\d]*$"),
                 fieldsObj = {},
                 nullFields = {};
-            Object.keys(features[0].properties).forEach(function (key) {
-                fieldsObj[key] = true;
-                nullFields[key] = false;
-            });
-            for (let i = 0; i < features.length; i++) {
-                Object.keys(features[i].properties).forEach(function (key) {
-                    if (!fieldsObj[key]) {
-                        return;
+            if(this.themeType === "heatmap"){
+                Object.keys(features[0].properties).forEach(function (key) {
+                    fieldsObj[key] = true;
+                    nullFields[key] = false;
+                });
+                for (let i = 0; i < features.length; i++) {
+                    Object.keys(features[i].properties).forEach(function (key) {
+                        if (!fieldsObj[key]) {
+                            return;
+                        }
+                        if (features[i].properties[key]) {
+                            nullFields[key] = true;
+                        }
+                        let value = features[i].properties[key];
+                        if (
+                            value &&
+                            !reg.test(value) &&
+                            !regFloat.test(value) &&
+                            fieldsObj[key]
+                        ) {
+                            fieldsObj[key] = false;
+                        }
+                    });
+                }
+                Object.keys(fieldsObj).forEach(function (key) {
+                    if (fieldsObj[key] && nullFields[key]) {
+                        fields.push(key);
                     }
-                    if (features[i].properties[key]) {
-                        nullFields[key] = true;
-                    }
-                    let value = features[i].properties[key];
-                    if (
-                        value &&
-                        !reg.test(value) &&
-                        !regFloat.test(value) &&
-                        fieldsObj[key]
-                    ) {
-                        fieldsObj[key] = false;
+                });
+            }else {
+                let notOneValue = {};
+                Object.keys(features[0].properties).forEach(function (key) {
+                    fieldsObj[key] = true;
+                    notOneValue[key] = false;
+                    nullFields[key] = false;
+                });
+                for (let i = 0; i < features.length; i++) {
+                    Object.keys(features[i].properties).forEach(function (key) {
+                        if (!fieldsObj[key]) {
+                            return;
+                        }
+                        if (features[i].properties[key]) {
+                            nullFields[key] = true;
+                        }
+                        let value = features[i].properties[key];
+                        if (
+                            value &&
+                            !reg.test(value) &&
+                            !regFloat.test(value) &&
+                            fieldsObj[key]
+                        ) {
+                            fieldsObj[key] = false;
+                        }
+                        if(features[0].properties[key] !== value){
+                            notOneValue[key] = true;
+                        }
+                    });
+                }
+                Object.keys(fieldsObj).forEach(function (key) {
+                    if (fieldsObj[key] && nullFields[key] && notOneValue[key]) {
+                        fields.push(key);
                     }
                 });
             }
-            Object.keys(fieldsObj).forEach(function (key) {
-                if (fieldsObj[key] && nullFields[key]) {
-                    fields.push(key);
-                }
-            });
             this.rangeFields = fields;
         },
         $_getFields(features) {
