@@ -12,7 +12,7 @@
       <!--专题图类型-->
       <mapgis-ui-collapse v-model="activeKeyCopy" accordion>
         <mapgis-ui-sprite-select
-            v-show="false"
+            style="display: none"
             :url="iconUrl"
             :defaultValue="defaultIconValue"
             @change="$_clickIcon"
