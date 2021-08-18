@@ -7,6 +7,9 @@
     padding: 0px;
     height: $pro-header-height;
     display: $pro-header-display;
+    box-shadow: 0 0 1px 0 $layout-shadow;
+    -webkit-box-shadow: 0 0 1px 0 $layout-shadow;
+    border-bottom: 1px solid $layout-shadow;
   }
   @include e(ribbon, "-") {
     background: $ribbon-background;
@@ -36,10 +39,16 @@
   @include e(footer, "-") {
     height: $pro-footer-height;
     display: $pro-footer-display;
+    border-top: 1px solid $layout-shadow;
+    box-shadow: 0 0 1px 0 $layout-shadow;
+    -webkit-box-shadow: 0 0 1px 0 $layout-shadow;
   }
   @include e(leftsider, "-") {
-    background: $layout-background;
+    background: $layout-sider-background;
     height: $pro-leftsider-height;
     display: $pro-leftsider-display;
+    border-right: 1px solid $layout-shadow;
+    box-shadow: 1px 0 0 0 $layout-shadow;
+    -webkit-box-shadow: 1px 0 0 0 $layout-shadow;
   }
 }

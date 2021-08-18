@@ -22,6 +22,7 @@ $warning-color: var(--warning-color);
 $normal-color: #d9d9d9;
 $white: #fff;
 $black: #000;
+$shadow: var(--shadow);
 
 // Color used by default to control hover and active backgrounds
 $selected-color: var(--selected-color); // equal rgba($primary-color, 0.15)
@@ -162,13 +163,14 @@ $grid-gutter-width: 0;
 
 // Layout
 $layout-background: var(--layout-background);
+$layout-shadow: var(--shadow);
+$layout-sider-background: var(--sider-background);
 $layout-body-background: #f0f2f5;
 $layout-header-background: var(--header-background);
 $layout-footer-background: var(--footer-background);
 $layout-header-height: 64px;
 $layout-header-padding: 0 50px;
 $layout-footer-padding: 24px 50px;
-$layout-sider-background: $layout-header-background;
 $layout-trigger-height: 48px;
 $layout-trigger-background: #002140;
 $layout-trigger-color: #fff;
@@ -741,6 +743,7 @@ $json-editor-background: $card-background;
 $json-editor-background: $card-background;
 
 // content menu
+$content-color: var(--content-color);
 $content-background: var(--content-background);
 
 // Pro
