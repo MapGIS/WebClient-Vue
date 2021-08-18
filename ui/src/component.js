@@ -5,7 +5,8 @@ export { default as MapgisUiBorder } from "./components/border/Border.vue";
 // export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 
 // IconFont
-export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+// export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 
 // Layout
