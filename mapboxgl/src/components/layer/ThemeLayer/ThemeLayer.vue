@@ -145,6 +145,7 @@ export default {
       window.originLayer = themes;
       let layerOrder = window.originLayer.layerOrder;
       let originLayerIds = [],originLayerId = undefined;
+      let layerNameArr = themes.layerNameArr;
       for (let i =0;i< layerOrder.length;i++){
         if(layerOrder[i].indexOf("专题图") < 0){
           window._workspace._layerTypes[layerOrder[i]] = window.originLayer[layerOrder[i]].themeType;
@@ -165,8 +166,7 @@ export default {
             if(layerOrder[i].indexOf("专题图") < 0){
               originLayerId = layerOrder[i];
             }else {
-              let index = originLayerIds.indexOf(originLayerId);
-              let beforeLayer = index === originLayerIds.length - 1 ? undefined : originLayerIds[index + 1];
+              let beforeLayer = layerNameArr[layerNameArr.indexOf(originLayerId) + 1];
               if(layerOrder[i] === originLayerId + "_单值专题图"){
                 vm.importArr.push(originLayerId + "unique");
               }else if(layerOrder[i] === originLayerId + "_分段专题图"){
@@ -250,6 +250,14 @@ export default {
           });
         }
       });
+      let allLayers = this.map.getStyle().layers;
+      let layerNameArr = [];
+      for (let i = 0; i < allLayers.length; i++) {
+        if (allLayers[i].id.indexOf("专题图") < 0) {
+          layerNameArr.push(allLayers[i].id)
+        }
+      }
+      newAllLayer.layerNameArr = layerNameArr;
       return newAllLayer;
     },
     $_createLayerFailed(message) {
