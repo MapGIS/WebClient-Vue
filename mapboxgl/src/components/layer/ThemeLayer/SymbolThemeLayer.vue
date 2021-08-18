@@ -609,6 +609,7 @@ export default {
       this.dataInit = false;
       this.radiusIndex = undefined;
       this.radiusArr = [];
+      this.dataSourceCopy = this.dataSource;
       if (window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("endData") &&
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.endData.hasOwnProperty(this.selectValue)){
         this.endData = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.endData[this.selectValue];
