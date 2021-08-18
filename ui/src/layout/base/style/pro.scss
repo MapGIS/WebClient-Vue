@@ -18,8 +18,20 @@
     }
   }
   @include e(content, "-") {
-    height: $pro-content-height;
-    display: $pro-content-display;
+    display: flex;
+    &-center {
+      width: 100%;
+      height: $pro-content-height;
+      display: $pro-content-display;
+    }
+    &-left {
+      width: fit-content;
+      display: $pro-content-left-display;
+    }
+    &-right {
+      width: fit-content;
+      display: $pro-content-right-display;
+    }
   }
   @include e(footer, "-") {
     height: $pro-footer-height;

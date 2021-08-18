@@ -1,49 +1,41 @@
 <template>
-  <mapgis-ui-modal
-    title="打印设置"
-    :maskClosable="maskClosable"
-    v-model="visible"
-    :footer="null"
-    @cancel="handleClose"
-  >
-    <mapgis-ui-spin :spinning="loading">
-      <mapgis-ui-row>
-        <mapgis-ui-col span="6">
-          <span> 主标题 </span>
-        </mapgis-ui-col>
-        <mapgis-ui-col span="18">
-          <mapgis-ui-input v-model="info.baseinfo.title" />
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row>
-        <mapgis-ui-col span="6">
-          <span> 作者 </span>
-        </mapgis-ui-col>
-        <mapgis-ui-col span="18">
-          <mapgis-ui-input v-model="info.baseinfo.author" />
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row>
-        <mapgis-ui-col span="6">
-          <span> 时间 </span>
-        </mapgis-ui-col>
-        <mapgis-ui-col span="18">
-          <mapgis-ui-input v-model="info.baseinfo.date" />
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-divider />
-      <mapgis-ui-button
-        @click="print"
-        class="mapgis-brower-print-button"
-        type="primary"
-      >
-        <mapgis-ui-iconfont
-          class="mapgis-ui-modal-print-toolbar"
-          type="mapgis-dayinP"
-        />打印出图
-      </mapgis-ui-button>
-    </mapgis-ui-spin>
-  </mapgis-ui-modal>
+  <mapgis-ui-spin :spinning="loading">
+    <mapgis-ui-row class="mapgis-print-row">
+      <mapgis-ui-col span="6">
+        <span class="mapgis-print-title"> 主标题 </span>
+      </mapgis-ui-col>
+      <mapgis-ui-col span="18">
+        <mapgis-ui-input v-model="info.baseinfo.title" />
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row class="mapgis-print-row">
+      <mapgis-ui-col span="6">
+        <span class="mapgis-print-title"> 作者 </span>
+      </mapgis-ui-col>
+      <mapgis-ui-col span="18">
+        <mapgis-ui-input v-model="info.baseinfo.author" />
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row class="mapgis-print-row">
+      <mapgis-ui-col span="6">
+        <span class="mapgis-print-title"> 时间 </span>
+      </mapgis-ui-col>
+      <mapgis-ui-col span="18">
+        <mapgis-ui-input v-model="info.baseinfo.date" />
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-divider />
+    <mapgis-ui-button
+      @click="print"
+      class="mapgis-brower-print-button"
+      type="primary"
+    >
+      <mapgis-ui-iconfont
+        class="mapgis-ui-modal-print-toolbar"
+        type="mapgis-dayinP"
+      />打印出图
+    </mapgis-ui-button>
+  </mapgis-ui-spin>
 </template>
 
 <script>
@@ -53,19 +45,6 @@ export default {
   name: "mapgis-print",
   inject: ["mapbox", "map"],
   props: {
-    outStyle: {
-      type: Object,
-      default: () => {
-        return {
-          left: "10px",
-          top: "10px"
-        };
-      }
-    },
-    visible: {
-      type: Boolean,
-      default: true
-    },
     delay: {
       type: Boolean,
       default: false
@@ -75,14 +54,9 @@ export default {
       default: 1000
     }
   },
-  model: {
-    prop: "visible",
-    event: "change-visible"
-  },
   data() {
     return {
       loading: false,
-      maskClosable: false,
       info: {
         baseinfo: {
           title: "地图标题",
@@ -101,9 +75,6 @@ export default {
   watch: {},
   mounted() {},
   methods: {
-    handleClose() {
-      this.$emit("change-visible", false);
-    },
     handlePrintEnd() {
       this.loading = false;
     },
@@ -127,5 +98,11 @@ export default {
 <style>
 .mapgis-brower-print-button {
   width: 100%;
+}
+.mapgis-print-row {
+  padding: 4px;
+}
+.mapgis-print-title {
+  line-height: 32px;
 }
 </style>

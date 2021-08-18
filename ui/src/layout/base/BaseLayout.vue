@@ -10,12 +10,21 @@
       <mapgis-ui-layout>
         <mapgis-ui-layout-sider
           :width="leftSiderWidth"
+          :collapsible="false"
           class="mapgis-ui-pro-layout-leftsider"
         >
           <slot name="leftsider" />
         </mapgis-ui-layout-sider>
         <mapgis-ui-layout-content class="mapgis-ui-pro-layout-content">
-          <slot name="content" />
+          <div class="mapgis-ui-pro-layout-content-left">
+            <slot name="content-left" />
+          </div>
+          <div class="mapgis-ui-pro-layout-content-center">
+            <slot name="content-center" />
+          </div>
+          <div class="mapgis-ui-pro-layout-content-right">
+            <slot name="content-right" />
+          </div>
         </mapgis-ui-layout-content>
       </mapgis-ui-layout>
       <mapgis-ui-layout-footer class="mapgis-ui-pro-layout-footer">

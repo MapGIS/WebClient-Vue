@@ -122,6 +122,12 @@ export { default as MapgisUiLocaleProvider } from "./components/locale-provider/
 export { default as MapgisUiRibbonGroup } from "./components/ribbon/RibbonGroup.vue";
 export { default as MapgisUiRibbonCommand } from "./components/ribbon/RibbonCommand.vue";
 
+// Navs
+export { default as MapgisUiNavPanel } from "./layout/navs/NavPanel.vue";
+export { default as MapgisUiNavContent } from "./layout/navs/NavContent.vue";
+export { default as MapgisUiNavBar } from "./layout/navs/NavBar.vue";
+export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
+
 // Pro
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
