@@ -2524,6 +2524,9 @@ export default {
                 if (this.source_vector_layer_Id) {
                     this.textLayer["source-layer"] = this.source_vector_layer_Id;
                 }
+                if(this.dataType === "line"){
+                    this.textLayer.layout["symbol-placement"] = "line";
+                }
                 window.originLayer[this.layerIdCopy][this.textId] = this.textLayer;
                 this.map.addLayer(this.textLayer, this.upLayer);
                 emitMapAddLayer({layer: this.textLayer});
