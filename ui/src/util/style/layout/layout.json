@@ -12,9 +12,9 @@
     "footerDisplay": "block",
     "headerHeight": "64px",
     "ribbonHeight": "0px",
-    "contentHeight": "calc(100vh - 64px - 24px)",
+    "contentHeight": "calc(100vh - 64px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 24px)"
+    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)"
   },
   {
     "title": "Ribbon布局",
@@ -29,9 +29,9 @@
     "footerDisplay": "block",
     "headerHeight": "194px",
     "ribbonHeight": "130px",
-    "contentHeight": "calc(100vh - 194px - 24px)",
+    "contentHeight": "calc(100vh - 194px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 194px - 24px)"
+    "leftsiderHeight": "calc(100vh - 194px - 24px - 2px)"
   },
   {
     "title": "标准三段式布局",
@@ -46,9 +46,9 @@
     "footerDisplay": "block",
     "headerHeight": "64px",
     "ribbonHeight": "0px",
-    "contentHeight": "calc(100vh - 64px - 24px)",
+    "contentHeight": "calc(100vh - 64px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 24px)"
+    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)"
   },
   {
     "title": "抽屉布局",
@@ -63,9 +63,9 @@
     "footerDisplay": "block",
     "headerHeight": "64px",
     "ribbonHeight": "0px",
-    "contentHeight": "calc(100vh - 64px - 24px)",
+    "contentHeight": "calc(100vh - 64px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 24px)"
+    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)"
   },
   {
     "title": "无页头",
@@ -80,9 +80,9 @@
     "footerDisplay": "block",
     "headerHeight": "0px",
     "ribbonHeight": "0px",
-    "contentHeight": "calc(100vh - 0px - 24px)",
+    "contentHeight": "calc(100vh - 0px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 0px - 24px)"
+    "leftsiderHeight": "calc(100vh - 0px - 24px - 2px)"
   },
   {
     "title": "无页尾",
@@ -97,9 +97,9 @@
     "footerDisplay": "none",
     "headerHeight": "64px",
     "ribbonHeight": "0px",
-    "contentHeight": "calc(100vh - 64px - 0px)",
+    "contentHeight": "calc(100vh - 64px - 0px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 0px)"
+    "leftsiderHeight": "calc(100vh - 64px - 0px - 2px)"
   },
   {
     "title": "空白布局",
@@ -114,8 +114,8 @@
     "footerDisplay": "none",
     "headerHeight": "0px",
     "ribbonHeight": "0px",
-    "contentHeight": "calc(100vh - 0px - 0px)",
+    "contentHeight": "calc(100vh - 0px - 0px - 2px)",
     "footerHeight": "0px",
-    "leftsiderHeight": "calc(100vh - 0px - 0px)"
+    "leftsiderHeight": "calc(100vh - 0px - 0px - 2px)"
   }
 ]

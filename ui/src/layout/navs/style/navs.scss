@@ -8,7 +8,22 @@
     display: flex;
     height: 100%;
   }
+
   $content: "mapgis-ui-nav-content";
+
+  @include e(action-bar, "-") {
+    background: $nav-content-backgroud;
+    -webkit-box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
+    box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
+    border-right: 1px solid $nav-shadow-backgroud;
+  }
+
+  @include e(action-bar-reverse, "-") {
+    background: $nav-content-backgroud;
+    -webkit-box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
+    box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
+    border-left: 1px solid $nav-shadow-backgroud;
+  }
 
   @include e(content, "-") {
     background: $nav-content-backgroud;
@@ -18,14 +33,14 @@
 
     &-start {
       border-right: 1px solid $nav-border-backgroud;
-      -webkit-box-shadow: 0 0 4px 0 $nav-shadow-backgroud;
-      box-shadow: 0 0 4px 0 $nav-shadow-backgroud;
+      -webkit-box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
+      box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
     }
 
     &-end {
       border-left: 1px solid $nav-border-backgroud;
-      -webkit-box-shadow: 0 0 4px 0 $nav-shadow-backgroud;
-      box-shadow: 0 0 4px 0 $nav-shadow-backgroud;
+      -webkit-box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
+      box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
     }
   }
   @include e(bar, "-") {

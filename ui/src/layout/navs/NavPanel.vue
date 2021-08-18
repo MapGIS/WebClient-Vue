@@ -1,12 +1,12 @@
 <template>
   <div class="mapgis-ui-nav-panel">
-    <div class="action-bar">
+    <div class="mapgis-ui-nav-action-bar">
       <slot name="action-bar" />
     </div>
 
     <slot />
 
-    <div class="action-bar-reverse">
+    <div class="mapgis-ui-nav-action-bar-reverse">
       <slot name="action-bar-reverse" />
     </div>
   </div>

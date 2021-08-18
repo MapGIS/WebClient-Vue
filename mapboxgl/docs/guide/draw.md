@@ -671,3 +671,71 @@ export default {
 };
 </script>
 ```
+
+## 自带控件
+
+![自带控件](./default_control.png)
+
+::: tip
+通过属性enableControl可以控制是否使用自带控件，其提供了点、线、矩形、多边形以及圆的绘制功能
+   :::
+
+```vue
+<template>
+   <mapgis-web-map :accessToken="accessToken" >
+      <mapgis-igs-tdt-layer :token="token" :baseURL="baseURL" :crs="crs" :layerId="layerId" :sourceId="sourceId">
+      </mapgis-igs-tdt-layer>
+      <mapgis-draw
+              position="top-left"
+              @added="handleAdded"
+              @drawCreate="handleCreate"
+              @update-radius="handleRadiusUpdate"
+              :editable="false"
+              ref="drawref"
+      >
+      </mapgis-draw>
+   </mapgis-web-map>
+</template>
+
+<script>
+export default {
+   name: "CustomDraw",
+   props: {},
+   data() {
+      return {
+         accessToken:"pk.eyJ1IjoibHZ4aW5nZGV0dXppIiwiYSI6ImNrcmJkb3dwMDIycnkycXIyYW96ejQ5czcifQ.RftxemAeBo-0pa-FZqm5vw",
+         token: "3af3270f5f558ed33dcf9aacfb7a01b5",
+         baseURL: "http://t0.tianditu.gov.cn/img_w/wmts",
+         crs:"EPSG:3857",
+         layerId:"tdt",
+         sourceId:"tdt"
+      }
+   },
+   methods: {
+      enableDrawer() {
+         const component = this.$refs.drawref;
+         if (component) {
+            component.enableDrawer();
+         }
+      },
+      handleAdded(e, data) {
+         let { drawer, map } = e;
+         this.drawer = drawer;
+      },
+      handleCreate(e) {
+         const vm = this;
+         if (this.mode == "QueryByRect" || this.mode == "QueryByPolygon") {
+            this.drawer.delete(e.features[0].id);
+            // 执行查询操作
+         }
+      },
+      handleRadiusUpdate(e){
+         // this.drawer && this.drawer.changeMode("simple_select");
+         console.log('e',e);
+         console.log('center',e.center.geometry.coordinates);
+      }
+   },
+
+}
+</script>
+```

@@ -4,7 +4,7 @@
     <slot name="toolbar" />
     <!-- slot for toolbar-item -->
     <slot v-if="drawer" />
-    <div class="mapgis-default-control">
+    <div class="mapgis-default-control" v-show="enableControl">
       <mapgis-ui-space>
         <mapgis-ui-tooltip v-for="(item, i) in draws" :key="i" placement="bottom">
           <template slot="title">
@@ -118,6 +118,10 @@ export default {
   },
 
   props: {
+    editable: {
+      type: Boolean,
+      default: true
+    },
     enableControl: {
       type: Boolean,
       default: true
@@ -273,10 +277,11 @@ export default {
 
   mounted() {
     this.$_initDraw();
-    let position = this.position;
-    let pos = position.split('-');
-    document.querySelector(".mapgis-default-control").style = pos[0]+ ": 10px;" + pos[1] + ": 10px;";
-
+    if(this.enableControl){
+      let position = this.position;
+      let pos = position.split('-');
+      document.querySelector(".mapgis-default-control").style = pos[0]+ ": 10px;" + pos[1] + ": 10px;";
+    }
   },
 
   beforeDestroy() {
@@ -311,7 +316,13 @@ export default {
       // asControl 本身是拥有 $_bindSelfEvents 方法的，但是这里的draw组件并不是遵循的mapbox-gl.js的事件机制，
       // 因此我们需要覆盖该方法, 按照对应的业务方式实现
       const vm = this;
-      let listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
+      let listeners;
+      if (this.editable) {
+        listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
+      }  else {
+        listeners = ["drawUpdate","drawCreate"].concat(Object.keys(this.$listeners));
+      }
+
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       // Object.keys(this.$listeners).forEach(eventName => {
       listeners.forEach(eventName => {
@@ -327,6 +338,7 @@ export default {
     // 按照@mapgis/webclient-vue-mapboxgl的规范 发送事件 ，其实就是用{type：eventName}包装事件名
     $_emitDrawEvent(eventName, eventData) {
       // console.log("_emitDrawEvent", eventName, eventData);
+      const vm = this;
       let mode = this.drawer.getMode();
       if (eventName == "drawUpdate" && mode == "direct_select") {
         if (
@@ -340,7 +352,14 @@ export default {
           let radiusinkm = Math.round(Math.sqrt(area / Math.PI))/1000;
           this.$emit("update-radius", { area, radiusinkm, center });
         }
+      } else if (eventName == "drawCreate" && !this.editable) {
+        window.setTimeout(() => {
+          vm.drawer && vm.drawer.changeMode("simple_select");
+        }, 100)
       }
+      // if (eventName == "drawCreate" && mode == "direct_select" ) {
+      //   this.drawer && this.drawer.changeMode("simple_select");
+      // }
       return this.$_emitSelfEvent({ type: eventName }, eventData);
     },
 
