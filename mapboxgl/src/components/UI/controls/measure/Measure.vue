@@ -58,6 +58,10 @@ export default {
   },
 
   props: {
+    editable: {
+      type: Boolean,
+      default: true
+    },
     measureMode: {
       type: String,
       required: true,
@@ -174,6 +178,11 @@ export default {
         const result = vm._updateLengthOrArea();
         vm.$emit(measureEvents.measureresult, result);
         vm.$emit(measureEvents.measureResult, result);
+        if(!this.editable){
+          window.setTimeout(() => {
+            vm.measure && vm.measure.changeMode("simple_select");
+          }, 100)
+        }
       }
       if (eventName === "measureUpdate" || eventName === "measureupdate") {
         const result = vm._updateLengthOrArea();
