@@ -4,9 +4,9 @@
       shape="circle"
       v-if="collapse"
       :class="getPositionClassName()"
+      @click="show"
       ><mapgis-ui-iconfont
         :type="iconfont"
-        @click="show"
         class="mapgis-ui-collapse-card-iconfont"
       />
     </mapgis-ui-button>
@@ -75,6 +75,7 @@ export default {
   methods: {
     show() {
       this.collapse = false;
+      console.log("show", this.collapse);
     },
     hide() {
       this.collapse = true;
@@ -83,7 +84,7 @@ export default {
       let { position } = this;
       let className = "mapgis-ui-collapse-card-button ";
       switch (position) {
-        case "right":  
+        case "right":
         case "top-right":
         case "bottom-right":
           className += "mapgis-mvt-legend-card-right";

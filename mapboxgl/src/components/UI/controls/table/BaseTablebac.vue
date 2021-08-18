@@ -40,7 +40,7 @@
           </mapgis-ui-button>
         </mapgis-ui-button-group>
       </mapgis-ui-div>
-      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0 && visible">
+      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0">
         <div style="width: 100%;">
           暂无数据
         </div>
@@ -315,31 +315,14 @@ export default {
           }
       );
     },
-    $_nullProperties(features){
-      let nullProperties = true;
-      for (let i = 0; i < features.length; i++) {
-        if(nullProperties && JSON.stringify(features[i].properties) !== "{}"){
-          nullProperties = false;
-          break
-        }
-      }
-      return nullProperties;
-    },
     //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(dataSource) {
       dataSource = dataSource || this.dataSource;
       this.dataSourceOrigin = dataSource;
       this.sortBack = {};
-      if(this.rowSelection){
-        this.rowSelection.selectedRowKeys = [];
-      }
+      this.rowSelection.selectedRowKeys = [];
       if(!dataSource || !dataSource.features || dataSource.features.length === 0){
         this.hasFeatures = false;
-        this.$emit("createTableFailed","属性表","没有数据!");
-        this.$emit("createLayerFailed",{
-          message: "属性表",
-          description: "数据量为0!"
-        });
         return;
       }
       this.hasFeatures = true;
@@ -364,11 +347,10 @@ export default {
         // }
       } else if (dataSource instanceof Object) {
         if(dataSource.hasOwnProperty("selectedRowKeys")){
-          console.log("dataSource.selectedRowKeys",dataSource.selectedRowKeys)
           this.rowSelection.selectedRowKeys = dataSource.selectedRowKeys;
         }
         if(dataSource.hasOwnProperty("pagination")){
-          this.paginationCopy = {...dataSource.pagination};
+          this.paginationCopy = dataSource.pagination;
           let current = this.paginationCopy.current;
           delete this.paginationCopy.current;
           this.paginationCopy.defaultCurrent = current ? current : 1;
@@ -395,42 +377,22 @@ export default {
             });
           }
         } else {
-          let nullProperties = this.$_nullProperties(dataSource.features);
-          if(nullProperties){
-            this.$emit("createLayerFailed",{
-              message: "属性表",
-              description: "数据中不包含任何属性数据!"
-            });
-            this.hasFeatures = false;
-            return;
-          }
           //geoJSON格式
           let features = VFeature.fromGeoJSON(dataSource);
           this.paginationCopy.total = features.length;
           this.$_getColumnsCopyByFeatureSet(features,dataSource.sortInfo);
           this.$_applyColumnsToColumnsCopy();
           this.$_initPlainOptions();
-          this.deletTable = false;
-          let table = document.getElementById(this.tableId);
-          if(table){
-            draw(this,features);
-          }else {
-            let vm = this;
-            let interval = setInterval(function () {
-              let table = document.getElementById(vm.tableId);
-              if(table){
-                clearInterval(interval);
-                draw(vm,features,dataSource);
-              }
-            },30);
-          }
-          function draw(vm,features) {
-            vm.$_initCheckedList();
-            vm.featureSet = features;
-            vm.$_featureSetToDataSource(features);
-            vm.$_drawTable();
-            vm.$_addOperationColumns();
-          }
+          this.$nextTick(function () {
+            this.deletTable = false;
+            this.$nextTick(function () {
+              this.$_initCheckedList();
+              this.featureSet = features;
+              this.$_featureSetToDataSource(features);
+              this.$_drawTable();
+              this.$_addOperationColumns();
+            });
+          });
         }
       }
     },
@@ -710,10 +672,7 @@ export default {
           (this.paginationCopy.pageSize + 1.5) * this.rowHeight + this.pageHeight;
       container.style.height = containerHeight + "px";
       tableBody.style.height = containerHeight + "px";
-      let vm = this;
-      setTimeout(function () {
-        vm.$_drawToolBar(containerHeight);
-      },20);
+      this.$_drawToolBar(containerHeight);
     },
     /*
      * 绘制工具栏
@@ -1003,7 +962,6 @@ export default {
      * 分页或排序回调
      * **/
     $_change(pagination, filters, sorter, currentDataSource) {
-      console.log("sorter",sorter)
       if (!sorter.hasOwnProperty("order")) {
         sorter.order = "";
       }
@@ -1019,16 +977,20 @@ export default {
       }
       if (!this.pageInfo) {
         if (!sorter.hasOwnProperty("columnKey")) {
+          this.$_tableChanged();
           this.$emit("pageChanged", pagination, sorterObj, currentDataSource);
           this.$emit("pagechanged", pagination, sorterObj, currentDataSource);
         } else {
+          this.$_tableChanged();
           this.$emit("sorted", sorterObj, pagination, currentDataSource);
         }
       } else {
         if (pagination.current !== this.pageInfo.current) {
+          this.$_tableChanged();
           this.$emit("pageChanged", pagination, sorterObj, currentDataSource);
           this.$emit("pagechanged", pagination, sorterObj, currentDataSource);
         } else {
+          this.$_tableChanged();
           this.$emit("sorted", sorterObj, pagination, currentDataSource);
         }
       }
@@ -1148,7 +1110,6 @@ export default {
       if (this.editable && this.columnsCopy.length > 0) {
         this.$_addOperationColumns();
       }
-      this.$_drawTable();
       this.$_setRowSelect();
     },
     /**
@@ -1212,12 +1173,12 @@ export default {
     },
     $_tableChanged(){
       let tableData = this.$_getGeoJsonFromData();
-      tableData.selectedRowKeys = [].concat(this.rowSelection.selectedRowKeys);
+      tableData.selectedRowKeys = this.rowSelection.selectedRowKeys;
       if(!this.pageInfo){
-        tableData.pagination = {...this.paginationCopy};
+        tableData.pagination = this.paginationCopy;
         tableData.pagination.current = 1;
       }else {
-        tableData.pagination = {...this.pageInfo};
+        tableData.pagination = this.pageInfo;
       }
       tableData.sortInfo = this.sortBack;
       this.$emit("tableChanged",tableData);

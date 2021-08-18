@@ -175,6 +175,8 @@ export default {
 
             if (index === 0 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
               this.$_setPaint(index);
+            }else if (index === 0 && this.dataSourceCopy.length === 2 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
+              this.$_setPaint(index);
             } else if (index === this.dataSourceCopy.length && Number(this.dataSourceCopy[index]) > Number(this.dataSourceCopy[index - 1]) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setPaint(index);
             } else if (Number(this.dataSourceCopy[index - 1]) < Number(this.dataSourceCopy[index]) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
@@ -250,10 +252,14 @@ export default {
     },
     $_addRange(index){
       this.$_removeIcon();
-      this.rangeLevel++;
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
-      let endData = Number(this.dataSourceCopy[index + 1]);
+      let endData
+      if(this.dataSourceCopy.length === 2){
+        endData = this.endData;
+      }else {
+        endData = Number(this.dataSourceCopy[index + 1]);
+      }
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
           let addNum = (startData + endData)/2;
@@ -263,6 +269,7 @@ export default {
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
           this.$_setRangeColor(newColors[1],startData,endData);
+          this.rangeLevel++;
         }
       }else {
         let addNum = (endData - startData) + endData;
@@ -270,6 +277,7 @@ export default {
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
         this.dataSource.push(addNum);
+        this.rangeLevel++;
       }
       this.$nextTick(function () {
         this.addRange = false;
@@ -473,7 +481,7 @@ export default {
     * **/
     $_selectChangeCallBack(colors) {
       this.dataInit = false;
-      this.$_getDataFromLocal(this.dataSource);
+      this.$_getDataFromLocal(this.dataSource,true);
       this.$nextTick(function () {
         this.dataInit = true;
       });
@@ -486,9 +494,23 @@ export default {
     * @param endColor 渐变结束颜色，可自行指定
     * @param key 绘制规则针对的关键字
     * **/
-    $_getColorsCallBack(colors, dataSource, startColor, endColor, key) {
+    $_getColorsCallBack(colors, dataSource, startColor, endColor, key,features) {
       let checkArr = [], colorList = [];
-      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      let gradient;
+      if(endColor.indexOf(",") > -1){
+        gradient = endColor.split(",");
+        this.rangeLevel = gradient.length;
+        this.dataSource = this.$_getData(this.dataCopy.features, this.selectValue);
+        let dataSourceCopy = [];
+        for (let i = 0; i < this.dataSource.length; i++) {
+          dataSourceCopy.push(this.dataSource[i]);
+        }
+        this.dataSourceCopy = dataSourceCopy;
+
+        dataSource = this.dataSourceCopy;
+      }else {
+        gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      }
       colors = {
         "property": key,
         "stops": []
@@ -498,20 +520,22 @@ export default {
         colorList.push(gradient[i]);
         checkArr.push(true);
       }
+      this.checkArr = checkArr;
       return {
         checkArr: checkArr,
         colors: colors,
         colorList: colorList
       }
     },
-    $_getDataFromLocal(dataSource){
+    $_getDataFromLocal(dataSource,refreshData){
       let dataSourceCopyProps;
       if (
           window.originLayer[this.layerIdCopy] &&
           window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
           window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
-          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue) &&
+          !refreshData
       ) {
         let panelProps =
             window.originLayer[this.layerIdCopy].panelProps[this.themeType]
@@ -587,7 +611,7 @@ export default {
             maxzoom: maxzoom
           }
         }
-      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "LineString" || geojson.features[0].geometry.type ===  "MultiLineString")) {
         this.dataType = 'line';
         if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {

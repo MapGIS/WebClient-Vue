@@ -222,7 +222,7 @@ export default {
                     layerId
                 );
             }
-            if(this.themeType === "symbol"){
+            if (this.themeType === "symbol") {
                 this.$_setLayOutProperty(
                     "visibility",
                     "none",
@@ -276,7 +276,7 @@ export default {
                     layerId
                 );
             }
-            if(this.themeType === "symbol"){
+            if (this.themeType === "symbol") {
                 this.$_setLayOutProperty(
                     "visibility",
                     "visible",
@@ -1062,16 +1062,16 @@ export default {
                 }
                 this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
                 if (layerId.indexOf("专题图") > -1 && key !== "visibility") {
-                    if(key === "icon-size"){
-                        if(!window.originLayer[this.layerIdCopy].panelProps[
+                    if (key === "icon-size") {
+                        if (!window.originLayer[this.layerIdCopy].panelProps[
                             this.themeType
-                            ].panelProps.hasOwnProperty(key)){
+                            ].panelProps.hasOwnProperty(key)) {
                             window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[key] = {};
                         }
                         window.originLayer[this.layerIdCopy].panelProps[
                             this.themeType
                             ].panelProps[key][this.selectValue] = value;
-                    }else {
+                    } else {
                         window.originLayer[this.layerIdCopy].panelProps[
                             this.themeType
                             ].panelProps[key] = value;
@@ -1128,7 +1128,7 @@ export default {
             }
         },
         $_singleChangedOut(startColor, endColor) {
-            this.$_gradientChange(startColor, endColor);
+            this.$_gradientChange(startColor, endColor,false,true);
             window.originLayer[this.layerIdCopy].panelProps[
                 window._workspace._layerTypes[this.layerIdCopy]
                 ].panelProps.gradientColor = endColor;
@@ -1214,34 +1214,70 @@ export default {
                 regFloat = new RegExp("^[.\\d]*$"),
                 fieldsObj = {},
                 nullFields = {};
-            Object.keys(features[0].properties).forEach(function (key) {
-                fieldsObj[key] = true;
-                nullFields[key] = false;
-            });
-            for (let i = 0; i < features.length; i++) {
-                Object.keys(features[i].properties).forEach(function (key) {
-                    if (!fieldsObj[key]) {
-                        return;
+            if(this.themeType === "heatmap"){
+                Object.keys(features[0].properties).forEach(function (key) {
+                    fieldsObj[key] = true;
+                    nullFields[key] = false;
+                });
+                for (let i = 0; i < features.length; i++) {
+                    Object.keys(features[i].properties).forEach(function (key) {
+                        if (!fieldsObj[key]) {
+                            return;
+                        }
+                        if (features[i].properties[key]) {
+                            nullFields[key] = true;
+                        }
+                        let value = features[i].properties[key];
+                        if (
+                            value &&
+                            !reg.test(value) &&
+                            !regFloat.test(value) &&
+                            fieldsObj[key]
+                        ) {
+                            fieldsObj[key] = false;
+                        }
+                    });
+                }
+                Object.keys(fieldsObj).forEach(function (key) {
+                    if (fieldsObj[key] && nullFields[key]) {
+                        fields.push(key);
                     }
-                    if (features[i].properties[key]) {
-                        nullFields[key] = true;
-                    }
-                    let value = features[i].properties[key];
-                    if (
-                        value &&
-                        !reg.test(value) &&
-                        !regFloat.test(value) &&
-                        fieldsObj[key]
-                    ) {
-                        fieldsObj[key] = false;
+                });
+            }else {
+                let notOneValue = {};
+                Object.keys(features[0].properties).forEach(function (key) {
+                    fieldsObj[key] = true;
+                    notOneValue[key] = false;
+                    nullFields[key] = false;
+                });
+                for (let i = 0; i < features.length; i++) {
+                    Object.keys(features[i].properties).forEach(function (key) {
+                        if (!fieldsObj[key]) {
+                            return;
+                        }
+                        if (features[i].properties[key]) {
+                            nullFields[key] = true;
+                        }
+                        let value = features[i].properties[key];
+                        if (
+                            value &&
+                            !reg.test(value) &&
+                            !regFloat.test(value) &&
+                            fieldsObj[key]
+                        ) {
+                            fieldsObj[key] = false;
+                        }
+                        if(features[0].properties[key] !== value){
+                            notOneValue[key] = true;
+                        }
+                    });
+                }
+                Object.keys(fieldsObj).forEach(function (key) {
+                    if (fieldsObj[key] && nullFields[key] && notOneValue[key]) {
+                        fields.push(key);
                     }
                 });
             }
-            Object.keys(fieldsObj).forEach(function (key) {
-                if (fieldsObj[key] && nullFields[key]) {
-                    fields.push(key);
-                }
-            });
             this.rangeFields = fields;
         },
         $_getFields(features) {
@@ -1530,12 +1566,12 @@ export default {
                 this.selectKey = this.selectValue;
             }
             this.dataSource = this.$_getData(geojson.features, this.selectKey);
-            if(this.themeType === "symbol"){
+            if (this.themeType === "symbol") {
                 if (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
                     window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
-                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)) {
                     this.dataSourceCopy = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
-                }else {
+                } else {
                     let dataSourceCopy = [];
                     for (let i = 0; i < this.dataSource.length; i++) {
                         dataSourceCopy.push(this.dataSource[i]);
@@ -1547,7 +1583,10 @@ export default {
                 this.dataSource,
                 startColor,
                 endColor,
-                this.selectKey
+                this.selectKey,
+                false,
+                false,
+                geojson.features
             );
             this.$_setCheckBoxFromLocal();
             if (this.$_initThemeCallBack) {
@@ -1656,7 +1695,7 @@ export default {
                         );
                     }
                 }
-            }else {
+            } else {
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = {};
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue] = this.radiusArr;
             }
@@ -1844,7 +1883,7 @@ export default {
             let layers = this.$_getAllLayerStyle();
             this.$emit("themeLoaded", layers);
         },
-        $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
+        $_getColors(dataSource, startColor, endColor, key, noColor, clearColor,features) {
             let colors;
             if (window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
                 window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
@@ -1862,7 +1901,8 @@ export default {
                         dataSource,
                         startColor,
                         endColor,
-                        key
+                        key,
+                        features
                     );
                 } else {
                     throw new Error("请设置$_getColors方法的回到函数！");
@@ -1957,7 +1997,11 @@ export default {
         $_selectChange(value) {
             if (value !== "") {
                 this.selectValue = value;
-                this.rangeLevel = 10;
+                if(this.themeType === "range" && this.endColor.indexOf(",") > -1){
+                    this.rangeLevel = this.endColor.split(",").length;
+                }else {
+                    this.rangeLevel = 10;
+                }
                 let datas = this.$_getData(this.dataCopy.features, value);
                 this.dataSource = datas;
                 let colors = this.$_getColors(
@@ -1980,8 +2024,8 @@ export default {
                     } else {
                         throw new Error("请设置$_selectChange方法的回到函数！");
                     }
-                    if(this.themeType !== "symbol"){
-                        colors = this.$_editColor(colors);
+                    if (this.themeType !== "symbol") {
+                        colors = this.$_editColor(colors,true);
                         this.$_setPaintByType(colors, true);
                     }
                     this.showVector = true;
@@ -2013,7 +2057,7 @@ export default {
                 }
             }
         },
-        $_gradientChange(startColor, endColor, noEdit) {
+        $_gradientChange(startColor, endColor, noEdit,freshColor) {
             this.showVector = false;
             this.startColor = startColor;
             this.endColor = endColor;
@@ -2026,14 +2070,14 @@ export default {
                 true
             );
             this.$_removeIcon();
-            this.$_setPaintByType(colors, noEdit);
+            this.$_setPaintByType(colors, noEdit,freshColor);
             this.showVector = true;
             this.changeLayerProp = true;
             this.changeLayerId = this.layerIdCopy;
         },
-        $_setPaintByType(colors, noEdit) {
+        $_setPaintByType(colors, noEdit,freshColor) {
             if (!noEdit) {
-                colors = this.$_editColor(colors);
+                colors = this.$_editColor(colors,freshColor);
             }
             switch (this.dataType) {
                 case "fill":
@@ -2153,7 +2197,7 @@ export default {
             } else {
                 let rangeSect = range / this.rangeLevel;
                 let floatLength;
-                if(String(rangeSect).indexOf(".") > -1){
+                if (String(rangeSect).indexOf(".") > -1) {
                     floatLength = String(rangeSect).split(".")[1].length;
                 }
                 if (dataSource[0] < 0) {
@@ -2187,7 +2231,7 @@ export default {
                     break;
             }
         },
-        $_editColor(colors) {
+        $_editColor(colors,freshColor) {
             let newColor;
             if (this.themeType === "range") {
                 if (!window.originThemeData[this.layerIdCopy]) {
@@ -2196,14 +2240,14 @@ export default {
                 if (
                     window.originThemeData[this.layerIdCopy][
                     this.themeType + "_" + this.selectKey
-                        ]
+                        ] && !freshColor
                 ) {
                     newColor =
                         window.originThemeData[this.layerIdCopy][
                         this.themeType + "_" + this.selectKey
                             ];
                 } else {
-                    if(colors.hasOwnProperty("stops")){
+                    if (colors.hasOwnProperty("stops")) {
                         newColor = ["step", ["to-number", ["get", colors.property]]];
                         let features =
                                 window.originLayer[this.layerIdCopy][
@@ -2236,7 +2280,7 @@ export default {
                                 }
                             }
                         }
-                    }else {
+                    } else {
                         newColor = colors;
                     }
                 }

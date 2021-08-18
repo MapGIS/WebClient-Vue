@@ -178,11 +178,16 @@ export default {
       }
       let weightArr = this.setWeightArr(geojsonOrigin, value);
       const {heatMapLayerId} = this;
-      let weightRules = [
-        "interpolate",
-        ["linear"],
-        ['to-number', ["get", value]],
-      ].concat(weightArr);
+      let weightRules;
+      if(!weightArr){
+        weightRules = Number(geojsonOrigin.features[0].properties[value]);
+      }else {
+        weightRules = [
+          "interpolate",
+          ["linear"],
+          ['to-number', ["get", value]],
+        ].concat(weightArr);
+      }
       this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 

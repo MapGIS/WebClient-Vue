@@ -12,7 +12,7 @@
       <!--专题图类型-->
       <mapgis-ui-collapse v-model="activeKeyCopy" accordion>
         <mapgis-ui-sprite-select
-            v-show="false"
+            style="display: none"
             :url="iconUrl"
             :defaultValue="defaultIconValue"
             @change="$_clickIcon"
@@ -257,6 +257,121 @@
                   v-model="yOffset"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
+          <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'circle'">
+            <p class="theme-panel-p">外边线颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
+            <colorPicker
+                class="picker theme-panel-line-color"
+                v-model="outerLineColor"
+                @change="$_outerLineColorChanged"
+            />
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
+            <p class="theme-panel-p">外边线宽度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="0"
+                  :max="lineWidthMax"
+                  :step="lineWidthStep"
+                  class="theme-panel-slider"
+                  v-model="lineWidth"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="0"
+                  :max="lineWidthMax"
+                  :step="lineWidthStep"
+                  class="theme-panel-input-number"
+                  v-model="lineWidth"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
+            <p class="theme-panel-p" style="margin-top: 0.8em">外边线透明度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider class="theme-panel-slider" v-model="outerLineOpacity"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number class="theme-panel-input-number" v-model="outerLineOpacity"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <p class="theme-panel-p">线样式</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <mapgis-ui-select
+                :default-value="'theme-panel-line-zero'"
+                class="theme-panel-select"
+                @change="$_selectLineStyleChanged"
+            >
+              <mapgis-ui-select-option v-for="(line,index) in lineStyle" :key="index" :value="line.key">
+                <div v-if="line.key !== 'theme-panel-line-three'" :class="line.key"></div>
+                <div v-if="line.key === 'theme-panel-line-three'" :class="line.key">
+                  <div class="theme-panel-line-long"></div>
+                  <div class="theme-panel-line-short"></div>
+                  <div class="theme-panel-line-long"></div>
+                  <div class="theme-panel-line-short"></div>
+                  <div class="theme-panel-line-long"></div>
+                  <div class="theme-panel-line-short"></div>
+                  <div class="theme-panel-line-long"></div>
+                  <div class="theme-panel-line-short"></div>
+                  <div class="theme-panel-line-long"></div>
+                  <div class="theme-panel-line-short"></div>
+                  <div class="theme-panel-line-long"></div>
+                  <div class="theme-panel-line-short"></div>
+                </div>
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </mapgis-ui-row>
+          <mapgis-ui-row style="margin-top: 8px;">
+            <p class="theme-panel-p">渐变颜色</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <mapgis-ui-select
+                :default-value="'#FF0000'"
+                @change="$_gradientChange"
+            >
+              <mapgis-ui-select-option v-for="(gradient,index) in gradientArr" :key="index" :value="gradient.key">
+                <div class="theme-panel-gradient" :style="{background: gradient.value}"></div>
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <p class="theme-panel-p">宽度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider
+                  :min="0"
+                  :max="lineWidthMax"
+                  :step="lineWidthStep"
+                  class="theme-panel-slider"
+                  v-model="lineWidth"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number
+                  :min="0"
+                  :max="lineWidthMax"
+                  :step="lineWidthStep"
+                  class="theme-panel-input-number"
+                  v-model="lineWidth"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
+          </mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType === 'line'">
+            <mapgis-ui-col :span="18">
+              <mapgis-ui-slider class="theme-panel-slider" v-model="opacity"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="6">
+              <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
           <mapgis-ui-row v-if="dataType === 'symbol'">
             <p class="theme-panel-p">旋转角度</p>
           </mapgis-ui-row>
@@ -437,118 +552,6 @@
                   :step="rotationStep"
                   class="theme-panel-input-number"
                   v-model="rotation"/>
-            </mapgis-ui-col>
-          </mapgis-ui-row>
-        </mapgis-ui-collapse-panel>
-      </mapgis-ui-collapse>
-      <!--边线样式-->
-      <mapgis-ui-collapse accordion v-if="dataType !== 'symbol' && dataType !== 'heatmap'">
-        <mapgis-ui-collapse-panel key="6" header="线">
-          <mapgis-ui-row v-if="dataType === 'line'">
-            <p class="theme-panel-p">边线样式</p>
-          </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'line'">
-            <mapgis-ui-select
-                :default-value="'theme-panel-line-zero'"
-                class="theme-panel-select"
-                @change="$_selectLineStyleChanged"
-            >
-              <mapgis-ui-select-option v-for="(line,index) in lineStyle" :key="index" :value="line.key">
-                <div v-if="line.key !== 'theme-panel-line-three'" :class="line.key"></div>
-                <div v-if="line.key === 'theme-panel-line-three'" :class="line.key">
-                  <div class="theme-panel-line-long"></div>
-                  <div class="theme-panel-line-short"></div>
-                  <div class="theme-panel-line-long"></div>
-                  <div class="theme-panel-line-short"></div>
-                  <div class="theme-panel-line-long"></div>
-                  <div class="theme-panel-line-short"></div>
-                  <div class="theme-panel-line-long"></div>
-                  <div class="theme-panel-line-short"></div>
-                  <div class="theme-panel-line-long"></div>
-                  <div class="theme-panel-line-short"></div>
-                  <div class="theme-panel-line-long"></div>
-                  <div class="theme-panel-line-short"></div>
-                </div>
-              </mapgis-ui-select-option>
-            </mapgis-ui-select>
-          </mapgis-ui-row>
-          <mapgis-ui-row style="margin-top: 8px;">
-<!--            <mapgis-ui-radio-group-->
-<!--                v-model="radioMode"-->
-<!--                :style="{ marginBottom: '8px',marginLeft: '7px',float: 'left' }"-->
-<!--                v-if="dataType !== 'fill'"-->
-<!--            >-->
-<!--              <mapgis-ui-radio-button value="gradient">-->
-<!--                渐变颜色-->
-<!--              </mapgis-ui-radio-button>-->
-<!--              <mapgis-ui-radio-button value="single">-->
-<!--                单体颜色-->
-<!--              </mapgis-ui-radio-button>-->
-<!--            </mapgis-ui-radio-group>-->
-            <p class="theme-panel-p">颜色</p>
-          </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'line'">
-            <mapgis-ui-select
-                :default-value="'#FF0000'"
-                @change="$_gradientChange"
-                v-show="radioMode === 'gradient'"
-            >
-              <mapgis-ui-select-option v-for="(gradient,index) in gradientArr" :key="index" :value="gradient.key">
-                <div class="theme-panel-gradient" :style="{background: gradient.value}"></div>
-              </mapgis-ui-select-option>
-            </mapgis-ui-select>
-            <colorPicker
-                class="picker theme-panel-line-color"
-                v-model="singleColor"
-                @change="$_singleChanged"
-                v-show="radioMode === 'single'"
-            />
-          </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
-            <colorPicker
-                class="picker theme-panel-line-color"
-                v-model="outerLineColor"
-                @change="$_outerLineColorChanged"
-            />
-          </mapgis-ui-row>
-          <mapgis-ui-row>
-            <p class="theme-panel-p">宽度</p>
-          </mapgis-ui-row>
-          <mapgis-ui-row>
-            <mapgis-ui-col :span="18">
-              <mapgis-ui-slider
-                  :min="0"
-                  :max="lineWidthMax"
-                  :step="lineWidthStep"
-                  class="theme-panel-slider"
-                  v-model="lineWidth"/>
-            </mapgis-ui-col>
-            <mapgis-ui-col :span="6">
-              <mapgis-ui-input-number
-                  :min="0"
-                  :max="lineWidthMax"
-                  :step="lineWidthStep"
-                  class="theme-panel-input-number"
-                  v-model="lineWidth"/>
-            </mapgis-ui-col>
-          </mapgis-ui-row>
-          <mapgis-ui-row>
-            <p class="theme-panel-p" style="margin-top: 0.8em">透明度</p>
-          </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'line'">
-            <mapgis-ui-col :span="18">
-              <mapgis-ui-slider class="theme-panel-slider" v-model="opacity"/>
-            </mapgis-ui-col>
-            <mapgis-ui-col :span="6">
-              <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
-            </mapgis-ui-col>
-          </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
-            <mapgis-ui-col :span="18">
-              <mapgis-ui-slider class="theme-panel-slider" v-model="outerLineOpacity"/>
-            </mapgis-ui-col>
-            <mapgis-ui-col :span="6">
-              <mapgis-ui-input-number class="theme-panel-input-number" v-model="outerLineOpacity"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
         </mapgis-ui-collapse-panel>
@@ -809,6 +812,8 @@
 </template>
 
 <script>
+import gradients from "./gradient";
+
 export default {
   name: "mapgis-igs-theme-panel",
   props: {
@@ -1006,16 +1011,7 @@ export default {
       startColor: "#FFF",
       endColor: "#000",
       currentColorIndex: 0,
-      gradientArr: [{
-        key: "#FF0000",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#FF0000)"
-      }, {
-        key: "#00FF00",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#00FF00)"
-      }, {
-        key: "#0000FF",
-        value: "-webkit-linear-gradient(left,#FFFFFF,#0000FF)"
-      }],
+      gradientArr: gradients,
       marks: {
         0: '0%',
         100: {

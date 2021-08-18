@@ -172,8 +172,10 @@ export default {
                 index = i;
               }
             }
-
+            this.$_removeInputWrong();
             if (index === 0 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
+              this.$_setIconSize();
+            }else if (index === 0 && this.dataSourceCopy.length === 2 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setIconSize();
             } else if (index === this.dataSourceCopy.length && Number(this.dataSourceCopy[index]) > Number(this.dataSourceCopy[index - 1]) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setIconSize();
@@ -325,10 +327,14 @@ export default {
     },
     $_addRange(index){
       this.$_removeIcon();
-      this.rangeLevel++;
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
-      let endData = Number(this.dataSourceCopy[index + 1]);
+      let endData
+      if(this.dataSourceCopy.length === 2){
+        endData = this.endData;
+      }else {
+        endData = Number(this.dataSourceCopy[index + 1]);
+      }
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
           let addNum = (startData + endData)/2;
@@ -336,6 +342,7 @@ export default {
           this.dataSource.splice(index + 1,0,addNum);
           this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
           this.checkBoxArr.splice(index + 1,0,true);
+          this.rangeLevel++;
         }
       }else {
         let addNum = (this.endData - this.startData) + this.endData;
@@ -344,6 +351,7 @@ export default {
         this.dataSourceCopy.push(this.endData);
         this.dataSource.push(this.endData);
         this.endData = addNum;
+        this.rangeLevel++;
       }
       if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr){
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = {};
