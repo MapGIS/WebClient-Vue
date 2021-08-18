@@ -331,7 +331,7 @@
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-row>
-          <mapgis-ui-row style="margin-top: 8px;">
+          <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'line'">
             <p class="theme-panel-p">渐变颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row v-if="dataType === 'line'">
@@ -937,7 +937,7 @@ export default {
       defaultValue: "",
       opacity: 100,
       radius: 6,
-      radiusMax: 12,
+      radiusMax: 20,
       radiusStep: 0.1,
       xOffset: 0,
       xOffsetMax: 20,

@@ -1038,7 +1038,7 @@ export default {
                     "text-field",
                     "{" + value + "}",
                     this.textId,
-                    this.textLayer
+                    window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
                 );
             }
         },
@@ -1131,6 +1131,9 @@ export default {
             this.$_gradientChange(startColor, endColor,false,true);
             this.$_setColorsToLocal(this.colors);
             this.$_setCheckBoxToLocal(this.checkBoxArr);
+            this.$_setDataSourceToLocal(this.dataSourceCopy);
+            this.rangeLevel = this.endColor.split(",").length;
+            this.$_setRangeLevelToLocal();
             window.originLayer[this.layerIdCopy].panelProps[
                 window._workspace._layerTypes[this.layerIdCopy]
                 ].panelProps.gradientColor = endColor;
@@ -1159,7 +1162,7 @@ export default {
                 "text-size",
                 fontSize,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_xOffsetChanged(xOffset) {
@@ -1176,7 +1179,7 @@ export default {
                 "text-offset",
                 this.offsetText,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_xOffsetTextChanged(offset) {
@@ -1185,7 +1188,7 @@ export default {
                 "text-offset",
                 this.offsetText,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_textPaddingChanged(textPadding) {
@@ -1193,7 +1196,7 @@ export default {
                 "text-letter-spacing",
                 textPadding,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_textRotationChanged(textRotation) {
@@ -1201,7 +1204,7 @@ export default {
                 "text-rotate",
                 textRotation,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_outerLineOpacityChanged(opacity) {
@@ -1567,7 +1570,15 @@ export default {
                 this.defaultValue = this.selectValue;
                 this.selectKey = this.selectValue;
             }
-            this.dataSource = this.$_getData(geojson.features, this.selectKey);
+            if(
+                window.originLayer && window.originLayer.hasOwnProperty(this.layerIdCopy) &&
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy")
+                && window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
+            ){
+                this.dataSource = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
+            }else {
+                this.dataSource = this.$_getData(geojson.features, this.selectKey);
+            }
             if (this.themeType === "symbol") {
                 if (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
                     window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
@@ -1665,13 +1676,7 @@ export default {
                     };
                 }
             }
-            // this.$_setOriginLayer(colors);
-            // this.$_setLayOutProperty(
-            //   "visibility",
-            //   "none",
-            //   this.layerIdCopy,
-            //   window.originLayer[this.layerIdCopy][this.layerIdCopy]
-            // );
+            this.$_setRangeLevelFromLocal();
             this.$_hideLayerByOpacity();
             if (this.themeType !== "symbol") {
                 if (this.dataType === "fill") {
@@ -1704,12 +1709,15 @@ export default {
             if (!window._workspace._layerTypes[this.layerIdCopy]) {
                 window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
             }
-            // this.$_changeOriginLayer();
+            if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors){
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors[this.selectValue] = this.colors;
+            if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr){
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr[this.selectValue] = this.checkBoxArr;
             this.$_loadedLayer();
-            // this.$nextTick(function () {
-            //     this.$_changeOriginLayer();
-            //     this.$_loadedLayer();
-            // });
         },
         $_setCheckBoxToLocal(checkBoxArr) {
             if (
@@ -1723,6 +1731,41 @@ export default {
             window.originLayer[this.layerIdCopy].panelProps[
                 this.themeType
                 ].panelProps.checkBoxArr[this.selectValue] = checkBoxArr;
+        },
+        $_setDataSourceToLocal() {
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.dataSourceCopy
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.dataSourceCopy = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.dataSourceCopy[this.selectValue] = this.dataSourceCopy;
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.startData
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.startData = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.startData[this.selectValue] = this.startData;
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.endData
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.endData = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.endData[this.selectValue] = this.endData;
         },
         $_setColorsToLocal(colors) {
             // window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.colors = this.colors;
@@ -1932,7 +1975,8 @@ export default {
                         ].panelProps.hasOwnProperty("colors") &&
                     window.originLayer[this.layerIdCopy].panelProps[
                         this.themeType
-                        ].panelProps.colors.hasOwnProperty(this.selectValue)
+                        ].panelProps.colors.hasOwnProperty(this.selectValue) &&
+                    !clearColor
                 ) {
                     let panelProps =
                         window.originLayer[this.layerIdCopy].panelProps[this.themeType]
@@ -1996,11 +2040,42 @@ export default {
                 this.checkBoxArr = this.originColors.checkArr;
             }
         },
+        $_setRangeLevelFromLocal() {
+            if (
+                window.originLayer[this.layerIdCopy] &&
+                window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
+                window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(
+                    this.themeType
+                ) &&
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.hasOwnProperty("rangeLevel") &&
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.rangeLevel.hasOwnProperty(this.selectValue)
+            ) {
+                this.rangeLevel = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.rangeLevel[this.selectValue];
+            }
+        },
+        $_setRangeLevelToLocal() {
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.rangeLevel
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.rangeLevel = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.rangeLevel[this.selectValue] = this.rangeLevel;
+        },
         $_selectChange(value) {
             if (value !== "") {
                 this.selectValue = value;
                 if(this.themeType === "range" && this.endColor.indexOf(",") > -1){
                     this.rangeLevel = this.endColor.split(",").length;
+                    this.$_setRangeLevelToLocal();
                 }else {
                     this.rangeLevel = 10;
                 }
@@ -2032,6 +2107,14 @@ export default {
                     }
                     this.showVector = true;
                 }
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors[this.selectValue] = this.colors;
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr[this.selectValue] = this.checkBoxArr;
                 this.changeLayerProp = true;
                 this.changeLayerId = this.layerIdCopy;
             }

@@ -78,7 +78,8 @@
                 </mapgis-ui-input>
                 <mapgis-ui-input v-if="index > 0" class="range-theme-num"
                                  @click="$_inputClick(index - 1)"
-                                 @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
+                                 @change="$_inputStartChange"
+                                 v-model="dataSourceCopy[index - 1]">
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td" style="width: 3%">
@@ -91,13 +92,7 @@
                                  @change="$_inputEndChange"
                                  @click="$_inputClick(index)"
                                  v-model="dataSourceCopy[index]"
-                                 v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
-                </mapgis-ui-input>
-                <mapgis-ui-input class="range-theme-num"
-                                 @change="$_inputEndChange"
-                                 @click="$_inputClick('end')"
-                                 v-model="endData"
-                                 v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
+                                 v-if="index < dataSourceCopy.length && dataSourceCopy.length > 1">
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
@@ -148,6 +143,9 @@ export default {
           this.startNumWrong = true;
         } else {
           this.$_removeInputWrong();
+          if(this.dataInit){
+            this.$_setDataSourceToLocal();
+          }
         }
       }
     },
@@ -159,6 +157,9 @@ export default {
           this.endNumWrong = true;
         } else {
           this.$_removeInputWrong();
+          if(this.dataInit){
+            this.$_setDataSourceToLocal();
+          }
         }
       }
     },
@@ -223,65 +224,75 @@ export default {
     $_deleteRange(index){
       if(this.rangeLevel > 2){
         this.$_removeIcon();
-        this.rangeLevel--;
         this.addRange = true;
         if(index === 0){
           let endData = this.dataSourceCopy.splice(index,1);
-          this.dataSource.splice(index,1);
+          this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.startData,endData);
-        }else if(index === this.dataSourceCopy.length - 1){
+          this.rangeLevel--;
+        }else if(index < this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index,1);
-          this.dataSource.splice(index,1);
+          this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 1],this.endData);
-        }else {
-          let endData = this.dataSourceCopy.splice(index,1);
-          this.dataSource.splice(index,1);
+          this.rangeLevel--;
+        }else if(index === this.dataSourceCopy.length - 1){
+          this.dataSourceCopy.splice(index - 1,1);
+          this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],endData);
+          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 2],this.dataSourceCopy[index - 1]);
+          this.rangeLevel--;
         }
         this.$nextTick(function () {
           this.addRange = false;
         });
+        this.$_setRangeLevelToLocal();
         this.$_setDataSourceLocal();
       }
     },
     $_addRange(index){
       this.$_removeIcon();
       this.addRange = true;
-      let startData = Number(this.dataSourceCopy[index]);
-      let endData
-      if(this.dataSourceCopy.length === 2){
-        endData = this.endData;
+      let startData;
+      if(index === 0){
+        startData = this.startData;
       }else {
-        endData = Number(this.dataSourceCopy[index + 1]);
+        startData = Number(this.dataSourceCopy[index - 1]);
+      }
+      let endData,addNum;
+      if(this.dataSourceCopy.length === 2){
+        endData = Number(this.dataSourceCopy[0]);
+      }else if(index < this.dataSourceCopy.length) {
+        endData = Number(this.dataSourceCopy[index]);
       }
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
-          let addNum = (startData + endData)/2;
-          this.dataSourceCopy.splice(index + 1,0,addNum);
-          this.dataSource.splice(index + 1,0,addNum);
+          addNum = (startData + endData)/2;
+          this.dataSourceCopy.splice(index,0,addNum);
+          this.dataSource = this.dataSourceCopy;
           let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
-          this.$_setRangeColor(newColors[1],startData,endData);
+          this.$_setRangeColor(newColors[1],startData,addNum);
           this.rangeLevel++;
         }
       }else {
-        let addNum = (endData - startData) + endData;
+        addNum = (endData - startData) + endData;
         this.colors.push(this.colors[index]);
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
-        this.dataSource.push(addNum);
+        this.dataSource = this.dataSourceCopy;
+        this.endData = addNum;
         this.rangeLevel++;
       }
       this.$nextTick(function () {
         this.addRange = false;
       });
+      this.$_setRangeLevelToLocal();
       this.$_setDataSourceLocal();
     },
     $_setDataSourceLocal(){
@@ -312,7 +323,7 @@ export default {
     },
     $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font", [this.textFont,this.textFont], this.textId, this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont,this.textFont], this.textId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
     },
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType) {
@@ -404,6 +415,7 @@ export default {
       this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData,true);
       this.$_setRangeColor(this.colors[index + 1],this.$_getStartEndData(index + 1).startData,this.$_getStartEndData(index + 1).endData);
       this.dataSource[index] = Number(this.dataSourceCopy[index]);
+      this.$_setDataSourceToLocal();
     },
     $_checkboxChecked(e) {
       let value = e.target.value.item;
@@ -521,6 +533,7 @@ export default {
         checkArr.push(true);
       }
       this.checkArr = checkArr;
+      this.checkBoxArr = checkArr;
       return {
         checkArr: checkArr,
         colors: colors,
