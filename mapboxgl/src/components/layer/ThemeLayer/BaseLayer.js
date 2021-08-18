@@ -1129,6 +1129,8 @@ export default {
         },
         $_singleChangedOut(startColor, endColor) {
             this.$_gradientChange(startColor, endColor,false,true);
+            this.$_setColorsToLocal(this.colors);
+            this.$_setCheckBoxToLocal(this.checkBoxArr);
             window.originLayer[this.layerIdCopy].panelProps[
                 window._workspace._layerTypes[this.layerIdCopy]
                 ].panelProps.gradientColor = endColor;
