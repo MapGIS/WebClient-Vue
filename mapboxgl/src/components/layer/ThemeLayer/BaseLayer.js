@@ -1571,7 +1571,7 @@ export default {
                 this.selectKey = this.selectValue;
             }
             if(
-                window.originLayer && window.originLayer.hasOwnProperty(this.layerIdCopy) &&
+                window.originLayer && window.originLayer.hasOwnProperty(this.layerIdCopy) && window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy")
                 && window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
             ){
