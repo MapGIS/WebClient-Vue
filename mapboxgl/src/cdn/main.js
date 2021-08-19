@@ -18,3 +18,5 @@ export * from "./component";
 export default {
   install
 };
+
+window.Mapgis2d = MapComponents;

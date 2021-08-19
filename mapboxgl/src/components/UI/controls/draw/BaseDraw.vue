@@ -16,7 +16,7 @@
               @click="item.click"
               :class="item.className"
           >
-            <icon-font :type="item.icon" :class="item.className" theme="filled"/>
+            <mapgis-ui-iconfont :type="item.icon" :class="item.className" theme="filled"/>
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
       </mapgis-ui-space>
@@ -43,15 +43,11 @@
 </style>
 
 <script>
-// import { Icon } from 'ant-design-vue';
-import { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
+// import { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
 
-const IconFont = MapgisUiIconFont.createFromIconfontCN({
+/* const MapgisUiIconfont = MapgisUiIconFont.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_2743527_adfkxoozjnc.js',
-});
-// const IconFont = Icon.createFromIconfontCN({
-//   scriptUrl: '//at.alicdn.com/t/font_2743527_adfkxoozjnc.js',
-// });
+}); */
 import * as turf from "@turf/turf";
 import mapboxgl from "@mapgis/mapbox-gl"
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -107,7 +103,7 @@ export default {
   name: "mapgis-draw",
   mixins: [drawMixin, controlMixin],
   components:{
-    IconFont
+    /* MapgisUiIconfont */
   },
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5
   // inject: ["mapbox", "map"],
