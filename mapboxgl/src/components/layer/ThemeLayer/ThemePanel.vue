@@ -146,7 +146,7 @@
               v-if="dataType !== 'line' && dataType !== 'symbol'"
           >
             <mapgis-ui-select
-                :default-value="'#FF0000'"
+                :default-value="'#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD'"
                 v-model="gradientColor"
                 @change="$_gradientChange"
                 v-show="radioMode === 'gradient'"
@@ -1048,7 +1048,7 @@ export default {
       }],
       themeDefaultTypeCopy: undefined,
       labelFieldsCopy: [],
-      gradientColor: "#FF0000",
+      gradientColor: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
       labelSelectValue: undefined,
       selectHeatValue: 0,
       listId: "theme-panel-list-" + parseInt(Math.random() * 100000),

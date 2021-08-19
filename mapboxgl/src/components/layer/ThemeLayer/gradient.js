@@ -1,13 +1,4 @@
 let gradients = [{
-    key: "#FF0000",
-    value: "-webkit-linear-gradient(left,#FFFFFF,#FF0000)"
-}, {
-    key: "#00FF00",
-    value: "-webkit-linear-gradient(left,#FFFFFF,#00FF00)"
-}, {
-    key: "#0000FF",
-    value: "-webkit-linear-gradient(left,#FFFFFF,#0000FF)"
-}, {
     key: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
     value: "-webkit-linear-gradient(left,#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD)"
 }, {

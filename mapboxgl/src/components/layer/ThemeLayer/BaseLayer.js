@@ -115,7 +115,7 @@ export default {
             colors: [],
             originColors: [],
             startColor: "#FFFFFF",
-            endColor: "#FF0000",
+            endColor: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
             showLayer: true,
             showPanelFlag: true,
             resetPanel: false,
@@ -1552,7 +1552,7 @@ export default {
                 }
             });
             startColor = startColor || "#FFFFFF";
-            endColor = endColor || "#FF0000";
+            endColor = endColor || "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD";
             this.sourceVector.data = geojson;
             this.dataCopy = geojson;
             this.showVector = true;
@@ -2092,9 +2092,10 @@ export default {
                     this.dataSource,
                     this.startColor,
                     this.endColor,
-                    value
+                    value,
+                    false,
+                    true
                 );
-                this.$_setCheckBoxFromLocal();
                 this.selectKey = value;
                 window.originLayer[this.layerIdCopy].panelProps[
                     window._workspace._layerTypes[this.layerIdCopy]
