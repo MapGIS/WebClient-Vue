@@ -257,7 +257,7 @@ module.exports = {
       "link",
       {
         href:
-          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
+          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
         rel: "stylesheet",
         type: "text/css"
       }
@@ -266,7 +266,7 @@ module.exports = {
       "script",
       {
         src:
-          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
+          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
       }
     ]
   ],

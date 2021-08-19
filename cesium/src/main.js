@@ -35,3 +35,5 @@ export * from "./component";
 export default {
   install
 };
+
+window.Mapgis3d = MapComponents;
