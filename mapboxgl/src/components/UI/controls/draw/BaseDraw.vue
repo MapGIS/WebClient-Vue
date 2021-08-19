@@ -43,10 +43,15 @@
 </style>
 
 <script>
-import { Icon } from 'ant-design-vue';
-const IconFont = Icon.createFromIconfontCN({
+// import { Icon } from 'ant-design-vue';
+import { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
+
+const IconFont = MapgisUiIconFont.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_2743527_adfkxoozjnc.js',
 });
+// const IconFont = Icon.createFromIconfontCN({
+//   scriptUrl: '//at.alicdn.com/t/font_2743527_adfkxoozjnc.js',
+// });
 import * as turf from "@turf/turf";
 import mapboxgl from "@mapgis/mapbox-gl"
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
