@@ -459,6 +459,7 @@ export default {
     $_themeTypeChanged(key, value) {
       this.themeDefaultTypeFlag = value;
       this[this.showType + "Layer"].hideExtraLayer(this.ThemeLayerId);
+      window.originLayer[this.ThemeLayerId].themeType = key;
       this.showPanelFlag = true;
       let panelProps;
       if(window.originLayer[this.ThemeLayerId].panelProps.hasOwnProperty(key)){
@@ -483,7 +484,6 @@ export default {
             this.heatmapLayer.addThemeLayer(this.ThemeLayerId);
             break;
         }
-        window.originLayer[this.ThemeLayerId].themeType = key;
         this.showType = key;
         this[this.showType + "Layer"].showExtraLayer(this.ThemeLayerId);
       });
