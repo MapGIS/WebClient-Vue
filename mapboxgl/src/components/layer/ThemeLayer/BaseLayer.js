@@ -319,6 +319,7 @@ export default {
                 window.originLayer.layerOrder.indexOf(this.layerIdCopy) > -1
             ) {
                 this.dataType = window.originLayer[layerId].dataType;
+                this.themeType = window.originLayer[layerId].themeType;
                 this.$_getFromSource(layerId, minzoom, maxzoom);
             } else {
                 this.dataType = window.originLayer[layerId].dataType;
@@ -1141,14 +1142,14 @@ export default {
                 ].panelProps.gradientColor = endColor;
         },
         $_fontColorChanged(color) {
-            this.$_setPaintProperty("text-color", color, this.textId, this.textLayer);
+            this.$_setPaintProperty("text-color", color, this.textId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
         },
         $_haloColorChanged(color) {
             this.$_setPaintProperty(
                 "text-halo-color",
                 color,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_haloWidthChanged(color) {
@@ -1156,7 +1157,7 @@ export default {
                 "text-halo-width",
                 color,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_fontSizeChanged(fontSize) {
@@ -1711,17 +1712,23 @@ export default {
             if (!window._workspace._layerTypes[this.layerIdCopy]) {
                 window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
             }
-            if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors){
-                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors = {};
+            if(this.themeType !== "heatmap"){
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors[this.selectValue] = this.colors;
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr[this.selectValue] = this.checkBoxArr;
             }
-            window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors[this.selectValue] = this.colors;
-            if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr){
-                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = {};
-            }
-            window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr[this.selectValue] = this.checkBoxArr;
             this.$_loadedLayer();
         },
         $_setCheckBoxToLocal(checkBoxArr) {
+            let newCheckBoxArr = [];
+            for (let i = 0; i < checkBoxArr.length; i++) {
+                newCheckBoxArr.push(checkBoxArr[i]);
+            }
             if (
                 !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
                     .panelProps.checkBoxArr
@@ -1732,7 +1739,7 @@ export default {
             }
             window.originLayer[this.layerIdCopy].panelProps[
                 this.themeType
-                ].panelProps.checkBoxArr[this.selectValue] = checkBoxArr;
+                ].panelProps.checkBoxArr[this.selectValue] = newCheckBoxArr;
         },
         $_setDataSourceToLocal() {
             if (
@@ -1918,7 +1925,7 @@ export default {
 
             layers.push({
                 action: "add",
-                layer: this.textLayer
+                layer: window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             });
 
             let replaceLayer = this.$_getLayerStyle(this.layerIdCopy);

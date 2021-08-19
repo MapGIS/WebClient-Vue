@@ -453,27 +453,27 @@
               <mapgis-ui-input-number class="theme-panel-input-number" v-model="opacity"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'symbol'">
-            <p class="theme-panel-p">图标大小</p>
-          </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'symbol'">
-            <mapgis-ui-col :span="18">
-              <mapgis-ui-slider
-                  :min="0"
-                  :max="radiusMax"
-                  :step="radiusStep"
-                  class="theme-panel-slider"
-                  v-model="radius"/>
-            </mapgis-ui-col>
-            <mapgis-ui-col :span="6">
-              <mapgis-ui-input-number
-                  :min="0"
-                  :max="radiusMax"
-                  :step="radiusStep"
-                  class="theme-panel-input-number"
-                  v-model="radius"/>
-            </mapgis-ui-col>
-          </mapgis-ui-row>
+<!--          <mapgis-ui-row v-if="dataType === 'symbol'">-->
+<!--            <p class="theme-panel-p">图标大小</p>-->
+<!--          </mapgis-ui-row>-->
+<!--          <mapgis-ui-row v-if="dataType === 'symbol'">-->
+<!--            <mapgis-ui-col :span="18">-->
+<!--              <mapgis-ui-slider-->
+<!--                  :min="0"-->
+<!--                  :max="radiusMax"-->
+<!--                  :step="radiusStep"-->
+<!--                  class="theme-panel-slider"-->
+<!--                  v-model="radius"/>-->
+<!--            </mapgis-ui-col>-->
+<!--            <mapgis-ui-col :span="6">-->
+<!--              <mapgis-ui-input-number-->
+<!--                  :min="0"-->
+<!--                  :max="radiusMax"-->
+<!--                  :step="radiusStep"-->
+<!--                  class="theme-panel-input-number"-->
+<!--                  v-model="radius"/>-->
+<!--            </mapgis-ui-col>-->
+<!--          </mapgis-ui-row>-->
           <mapgis-ui-row v-if="dataType === 'circle'">
             <p class="theme-panel-p">半径</p>
           </mapgis-ui-row>
@@ -994,16 +994,7 @@ export default {
         key: "4",
         value: "#FF0000"
       }],
-      heatGradientArr: [{
-        key: "#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000",
-        value: "-webkit-linear-gradient(left,#0000FF,#00FFFF,#00FF00,#FFFF00,#FF0000)"
-      }, {
-        key: "#636CEA,#1B1DD5,#BE1C4D,#F79390,#FFFFCC",
-        value: "-webkit-linear-gradient(left,#636CEA,#1B1DD5,#BE1C4D,#F79390,#FFFFCC)"
-      }, {
-        key: "#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF",
-        value: "-webkit-linear-gradient(left,#B0B0B0,#0000FF,#00A6FF,#00FF00,#00FFFF,#FF0000,#FFA600,#FF00FF,#0000FF)"
-      }],
+      heatGradientArr: gradients,
       init: true,
       loadingTest: "加载中，请稍后...",
       FieldArray: [],

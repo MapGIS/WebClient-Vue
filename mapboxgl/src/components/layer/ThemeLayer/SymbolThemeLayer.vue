@@ -9,7 +9,7 @@
         :fields="fields"
         :labelFields="allFields"
         :colors="colors"
-        :dataType="dataType"
+        :dataType="themeType"
         :checkBoxArr="checkBoxArr"
         :showOutLineColor="false"
         :showRange="showRange"
@@ -85,13 +85,7 @@
                                  @change="$_inputEndChange"
                                  @click="$_inputClick(index)"
                                  v-model="dataSourceCopy[index]"
-                                 v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
-                </mapgis-ui-input>
-                <mapgis-ui-input class="range-theme-num"
-                                 @change="$_inputEndChange"
-                                 @click="$_inputClick('end')"
-                                 v-model="endData"
-                                 v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
+                                 v-if="index < dataSourceCopy.length && dataSourceCopy.length > 1">
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
@@ -222,7 +216,6 @@ export default {
       textRotation: 0,
       haloColor: "#FFFFFF",
       haloWidth: 0,
-      dataType: "symbol",
       panelPropsDefault: {
         "icon-size" : 1
       },
@@ -301,7 +294,7 @@ export default {
         this.rangeLevel--;
         this.addRange = true;
         this.dataSourceCopy.splice(index,1);
-        this.dataSource.splice(index,1);
+        this.dataSource = this.dataSourceCopy;
         this.checkBoxArr.splice(index,1);
         this.radiusArr.splice(index,1);
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = this.radiusArr;
@@ -339,17 +332,17 @@ export default {
         if( startData < endData){
           let addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index + 1,0,addNum);
-          this.dataSource.splice(index + 1,0,addNum);
+          this.dataSource = this.dataSourceCopy;
           this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
           this.checkBoxArr.splice(index + 1,0,true);
           this.rangeLevel++;
         }
       }else {
-        let addNum = (this.endData - this.startData) + this.endData;
+        let addNum = (this.dataSourceCopy[index] - this.dataSourceCopy[index - 1]) + this.dataSourceCopy[index];
         this.checkBoxArr.push(true);
         this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
-        this.dataSourceCopy.push(this.endData);
-        this.dataSource.push(this.endData);
+        this.dataSourceCopy.push(addNum);
+        this.dataSource = this.dataSourceCopy;
         this.endData = addNum;
         this.rangeLevel++;
       }
@@ -728,7 +721,7 @@ export default {
           this.radiusArr = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue];
         }else {
           for (let i = 0; i < this.dataSourceCopy.length; i++) {
-            this.radiusArr.push([i + 2]);
+            this.radiusArr.push([i + 1]);
           }
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue] = this.radiusArr;
         }
@@ -763,7 +756,7 @@ export default {
         let dataSourceCopy = [];
         for (let i = 0; i < dataSource.length; i++) {
           dataSourceCopy.push(dataSource[i]);
-          this.radiusArr.push([i + 2]);
+          this.radiusArr.push([i + 1]);
         }
         //这里规则仅支持小于，大于的话全会背第一个大鱼号的规则覆盖
         let iconSize = ["case"];

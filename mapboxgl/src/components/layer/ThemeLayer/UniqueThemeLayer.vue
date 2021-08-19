@@ -135,7 +135,7 @@ export default {
     },
     $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font", [this.textFont, this.textFont], this.textId, this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont, this.textFont], this.textId,  window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
     },
     /*
     * 多选框业务实现
@@ -228,6 +228,13 @@ export default {
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
+      this.dataSourceCopy = this.dataSource;
+      let checkArr = [];
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        checkArr.push(true);
+      }
+      this.checkArr = checkArr;
+      this.checkBoxArr = checkArr;
       switch (this.dataType) {
         case "fill":
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;

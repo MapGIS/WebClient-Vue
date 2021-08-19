@@ -333,10 +333,14 @@ export default {
           }
         }
         if(panelProps.hasOwnProperty("heatmap-opacity")){
-          panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+          if( panelProps["heatmap-opacity"] < 1){
+            panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("icon-opacity")){
-          panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+          if(panelProps["icon-opacity"] < 1){
+            panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("circle-translate")){
           panelProps["circle-translate-x"] = panelProps["circle-translate"][0];
