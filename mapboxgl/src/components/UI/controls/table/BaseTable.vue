@@ -1147,8 +1147,8 @@ export default {
       this.columnsCopy = columns;
       if (this.editable && this.columnsCopy.length > 0) {
         this.$_addOperationColumns();
+        this.$_drawTable();
       }
-      this.$_drawTable();
       this.$_setRowSelect();
     },
     /**
