@@ -333,10 +333,14 @@ export default {
           }
         }
         if(panelProps.hasOwnProperty("heatmap-opacity")){
-          panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+          if( panelProps["heatmap-opacity"] < 1){
+            panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("icon-opacity")){
-          panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+          if(panelProps["icon-opacity"] < 1){
+            panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("circle-translate")){
           panelProps["circle-translate-x"] = panelProps["circle-translate"][0];
@@ -455,6 +459,7 @@ export default {
     $_themeTypeChanged(key, value) {
       this.themeDefaultTypeFlag = value;
       this[this.showType + "Layer"].hideExtraLayer(this.ThemeLayerId);
+      window.originLayer[this.ThemeLayerId].themeType = key;
       this.showPanelFlag = true;
       let panelProps;
       if(window.originLayer[this.ThemeLayerId].panelProps.hasOwnProperty(key)){
@@ -479,7 +484,6 @@ export default {
             this.heatmapLayer.addThemeLayer(this.ThemeLayerId);
             break;
         }
-        window.originLayer[this.ThemeLayerId].themeType = key;
         this.showType = key;
         this[this.showType + "Layer"].showExtraLayer(this.ThemeLayerId);
       });

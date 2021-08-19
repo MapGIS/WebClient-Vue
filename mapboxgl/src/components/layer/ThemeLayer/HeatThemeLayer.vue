@@ -4,7 +4,6 @@
         v-if="!resetPanel"
         v-show="showPanelFlag"
         :title="title"
-        :checkBoxArr="checkBoxArr"
         :colors="colors"
         :data-source="dataSource"
         :dataType="dataType"
@@ -28,6 +27,7 @@
 <script>
 import ThemePanel from "./ThemePanel";
 import BaseLayer from "./BaseLayer";
+import gradients from "./gradient";
 
 export default {
   name: "mapgis-igs-heat-theme-layer",
@@ -47,7 +47,6 @@ export default {
     return {
       title: "热力专题图",
       dataSource: [],
-      checkBoxArr: [],
       fields: [],
       colors: [],
       originColors: [],
@@ -160,15 +159,22 @@ export default {
 
     $_heatRadiusChanged(heatRadius) {
       const {heatMapLayerId} = this;
-      this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
+      if(heatMapLayerId){
+        this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
+      }
     },
 
     $_opacityChanged(opacity) {
       const {heatMapLayerId} = this;
-      this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
+      if(heatMapLayerId){
+        this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
+      }
     },
 
     $_selectChange(value) {
+      window.originLayer[this.layerIdCopy].panelProps[
+          window._workspace._layerTypes[this.layerIdCopy]
+          ].panelProps.selectValue = value;
       let geojsonOrigin = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"];
       if (!geojsonOrigin.hasOwnProperty("features")) {
         geojsonOrigin = {
@@ -287,7 +293,7 @@ export default {
     },
     getGradientColors(tag) {
       if (tag) {
-        let originColor = ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"];
+        let originColor = gradients[0].key.split(",");
         let steps = [];
         for (let i = 0; i < originColor.length - 1; i++) {
           let colors = this.$_gradientColor(originColor[i], originColor[i + 1], 10);
