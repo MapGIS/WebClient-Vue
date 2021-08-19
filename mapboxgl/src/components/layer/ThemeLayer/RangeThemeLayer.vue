@@ -226,18 +226,18 @@ export default {
         this.$_removeIcon();
         this.addRange = true;
         if(index === 0){
-          let endData = this.dataSourceCopy.splice(index,1);
+          this.dataSourceCopy.splice(index,1);
           this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index],this.startData,endData);
+          this.$_setRangeColor(this.colors[index],this.startData,this.dataSourceCopy[index]);
           this.rangeLevel--;
         }else if(index < this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index,1);
           this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 1],this.endData);
+          this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],this.dataSourceCopy[index]);
           this.rangeLevel--;
         }else if(index === this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index - 1,1);
@@ -494,6 +494,7 @@ export default {
     $_selectChangeCallBack(colors) {
       this.dataInit = false;
       this.$_getDataFromLocal(this.dataSource,true);
+      this.$_setDataSourceToLocal();
       this.$nextTick(function () {
         this.dataInit = true;
       });

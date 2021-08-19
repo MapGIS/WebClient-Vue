@@ -1128,8 +1128,10 @@ export default {
             }
         },
         $_singleChangedOut(startColor, endColor) {
+            this.startColor = startColor;
+            this.endColor = endColor;
             this.$_gradientChange(startColor, endColor,false,true);
-            this.$_setColorsToLocal(this.colors);
+            this.$_setColorsToLocal(this.colors,startColor,endColor);
             this.$_setCheckBoxToLocal(this.checkBoxArr);
             this.$_setDataSourceToLocal(this.dataSourceCopy);
             this.rangeLevel = this.endColor.split(",").length;
@@ -1572,7 +1574,7 @@ export default {
             }
             if(
                 window.originLayer && window.originLayer.hasOwnProperty(this.layerIdCopy) && window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
-                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy")
+                window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty("this.themeType") && window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy")
                 && window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
             ){
                 this.dataSource = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
@@ -1767,8 +1769,7 @@ export default {
                 this.themeType
                 ].panelProps.endData[this.selectValue] = this.endData;
         },
-        $_setColorsToLocal(colors) {
-            // window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.colors = this.colors;
+        $_setColorsToLocal(colors,startColor,endColor) {
             if (
                 !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
                     .panelProps.colors
@@ -1780,6 +1781,12 @@ export default {
             window.originLayer[this.layerIdCopy].panelProps[
                 this.themeType
                 ].panelProps.colors[this.selectValue] = colors;
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.startColor = startColor
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.endColor = endColor;
         },
         $_setColorsFromLocal() {
             if (

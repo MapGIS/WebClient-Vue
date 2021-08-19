@@ -323,10 +323,14 @@ export default {
           panelProps["text-font"] = panelProps["text-font"][0];
         }
         if(panelProps.hasOwnProperty("circle-stroke-opacity")){
-          panelProps["circle-stroke-opacity"] = panelProps["circle-stroke-opacity"] * 100;
+          if(panelProps["circle-stroke-opacity"] < 1){
+            panelProps["circle-stroke-opacity"] = panelProps["circle-stroke-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("circle-opacity")){
-          panelProps["circle-opacity"] = panelProps["circle-opacity"] * 100;
+          if(panelProps["circle-opacity"] < 1){
+            panelProps["circle-opacity"] = panelProps["circle-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("heatmap-opacity")){
           panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
