@@ -20,7 +20,7 @@ const Template = (args, { argTypes }) => ({
       <template slot="header">
       <div class="logo" />
       <mapgis-ui-menu
-        theme="dark"
+        theme="light"
         mode="horizontal"
         :default-selected-keys="['2']"
         :style="{ lineHeight: '64px' }"

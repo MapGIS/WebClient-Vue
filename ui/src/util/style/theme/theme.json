@@ -69,7 +69,7 @@
     "title": "经典浅色",
     "label": "light",
     "style": "light",
-    "shadow": "#242424",
+    "shadow": "#E2E4E7",
     "textColor": "rgba(0, 0, 0, 0.65)",
     "textColorSecondary": "rgba(0, 0, 0, 0.45)",
     "background": "#fff",
