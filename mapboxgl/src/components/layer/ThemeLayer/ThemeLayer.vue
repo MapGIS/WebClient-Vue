@@ -6,7 +6,7 @@
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
-          :panelProps="panelPropsObj"
+          :panelProps="panelPropsObjunique"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -22,7 +22,7 @@
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
-          :panelProps="panelPropsObj"
+          :panelProps="panelPropsObjsymbol"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -39,7 +39,7 @@
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
           :themeTypeArr="themeType"
-          :panelProps="panelPropsObj"
+          :panelProps="panelPropsObjrange"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -54,7 +54,7 @@
           v-show="showType === 'heatmap'"
           :themeDefaultType="themeDefaultTypeFlag"
           :themeTypeArr="themeType"
-          :panelProps="panelPropsObj"
+          :panelProps="panelPropsObjheatmap"
           :resetAllLayer="resetAllLayerFlag"
           :iconUrl="iconUrlCopy"
           :closeAllPanel="closeAllPanelProps"
@@ -99,7 +99,11 @@ export default {
       closeAllPanelProps: true,
       iconUrlCopy: undefined,
       importArr: [],
-      panelPropsObj: undefined
+      panelPropsObj: undefined,
+      panelPropsObjrange: undefined,
+      panelPropsObjunique: undefined,
+      panelPropsObjsymbol: undefined,
+      panelPropsObjheatmap: undefined,
     }
   },
   props: {
@@ -309,7 +313,7 @@ export default {
       this.panels = [];
       this.showPanelFlag = false;
     },
-    $_setPanelProps(panelProps){
+    $_setPanelProps(panelProps,type){
       if(panelProps && panelProps instanceof Object && JSON.stringify(panelProps) !== "{}"){
         if(panelProps.hasOwnProperty("text-offset")){
           panelProps["text-offset-x"] = panelProps["text-offset"][0];
@@ -351,17 +355,34 @@ export default {
           panelProps["circle-translate-x"] = panelProps["circle-translate"][0];
           panelProps["circle-translate-y"] = panelProps["circle-translate"][1] * -1;
         }
+        if(panelProps.hasOwnProperty("fill-opacity")){
+          if(panelProps["fill-opacity"] < 1){
+            panelProps["fill-opacity"] = panelProps["fill-opacity"] * 100;
+          }
+        }
+        if(panelProps.hasOwnProperty("line-opacity") && type === "fill"){
+          if( panelProps["line-opacity"] < 1){
+            panelProps["fill-stroke-opacity"] = panelProps["line-opacity"] * 100;
+          }else {
+            panelProps["fill-stroke-opacity"] = panelProps["line-opacity"];
+          }
+          delete panelProps["line-opacity"];
+        }
         panelProps = JSON.parse(JSON.stringify(panelProps));
         delete panelProps.colors;
         delete panelProps.checkBoxArr;
-        this.panelPropsObj = panelProps;
+        this["panelPropsObj" + type] = panelProps;
       }
     },
     addThemeLayer(type, layerId,minzoom,maxzoom) {
       this.panelPropsObj = undefined;
       if(!type && this.importArr.indexOf(layerId + window._workspace._layerTypes[layerId]) >= 0){
-        let panelProps = window.originLayer[layerId].panelProps[window._workspace._layerTypes[layerId]].panelProps;
-        this.$_setPanelProps(panelProps);
+        let props = window.originLayer[layerId].panelProps,vm = this;
+        Object.keys(props).forEach(function (key) {
+          if(props.hasOwnProperty(key)){
+            vm.$_setPanelProps(props[key].panelProps,key);
+          }
+        });
       }
       let hasPanel = false;
       type = type || window._workspace._layerTypes[layerId];
@@ -467,12 +488,13 @@ export default {
       window.originLayer[this.ThemeLayerId].themeType = key;
       this.showPanelFlag = true;
       let panelProps;
+      let type = window.originLayer[this.ThemeLayerId].dataType;
       if(window.originLayer[this.ThemeLayerId].panelProps.hasOwnProperty(key)){
         panelProps = window.originLayer[this.ThemeLayerId].panelProps[key].panelProps;
       }
       this.panelPropsObj = undefined;
       if(this.importArr.indexOf(this.ThemeLayerId + key) >= 0 && panelProps && panelProps instanceof Object && JSON.stringify(panelProps) !== "{}"){
-        this.$_setPanelProps(panelProps);
+        this.$_setPanelProps(panelProps,type);
       }
       this.$nextTick(function () {
         switch (key) {

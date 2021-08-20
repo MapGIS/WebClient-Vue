@@ -685,6 +685,10 @@ export default {
           after: "lineWidth"
         },
         {
+          before: "line-color",
+          after: "outerLineColor"
+        },
+        {
           before: "line-opacity",
           after: "opacity"
         },
@@ -714,6 +718,10 @@ export default {
         },
         {
           before: "circle-stroke-opacity",
+          after: "outerLineOpacity"
+        },
+        {
+          before: "fill-stroke-opacity",
           after: "outerLineOpacity"
         },
         {
@@ -2370,7 +2378,14 @@ export default {
       this.showVector = false;
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("fill-outline-color", e);
+          this.$_setPaintProperty(
+            "fill-outline-color",
+            e,
+            this.layerIdCopy + "_" + this.$_getThemeName() + "_线",
+            window.originLayer[this.layerIdCopy][
+              this.layerIdCopy + "_" + this.$_getThemeName() + "_线"
+            ]
+          );
           break;
         case "circle":
           this.$_setPaintProperty("circle-outline-color", e);
@@ -2587,11 +2602,7 @@ export default {
         }
         this.changeLayerProp = true;
         if (layerId.indexOf("专题图") > -1) {
-          if (
-            key === "circle-color" ||
-            key === "fill-color" ||
-            key === "line-color"
-          ) {
+          if (key === "circle-color" || key === "fill-color") {
             if (
               !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
                 .panelProps[key]

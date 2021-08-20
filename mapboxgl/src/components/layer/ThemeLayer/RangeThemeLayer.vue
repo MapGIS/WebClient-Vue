@@ -311,7 +311,7 @@ export default {
     $_outerLineColorChanged(color) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-color", color, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-color", color,this.layerIdCopy + "_" + this.$_getThemeName() + "_线",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "circle":
           this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
@@ -325,7 +325,7 @@ export default {
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth,this.layerIdCopy + "_" + this.$_getThemeName() + "_线",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "line":
           this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
@@ -338,7 +338,7 @@ export default {
     $_outerLineOpacityChanged(opacity) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-opacity", opacity, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-opacity", opacity,this.layerIdCopy + "_" + this.$_getThemeName() + "_线",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "circle":
           this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
