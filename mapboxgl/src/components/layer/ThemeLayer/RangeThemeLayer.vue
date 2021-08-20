@@ -265,11 +265,7 @@ export default {
         startData = Number(this.dataSourceCopy[index - 1]);
       }
       let endData,addNum;
-      if(this.dataSourceCopy.length === 2){
-        endData = Number(this.dataSourceCopy[1]);
-      }else if(index < this.dataSourceCopy.length) {
-        endData = Number(this.dataSourceCopy[index]);
-      }
+      endData = Number(this.dataSourceCopy[index]);
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
           addNum = (startData + endData)/2;
@@ -278,7 +274,7 @@ export default {
           let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
-          this.$_setRangeColor(newColors[1],startData,addNum);
+          this.$_setRangeColor(newColors[1],addNum,this.dataSourceCopy[index + 1]);
           this.rangeLevel++;
         }
       }else {
