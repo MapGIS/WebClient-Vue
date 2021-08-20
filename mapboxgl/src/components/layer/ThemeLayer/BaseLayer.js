@@ -22,7 +22,8 @@ export const DefaultThemeLayers = [
   "_等级专题图_注记",
   "_热力专题图",
   "_热力专题图_线",
-  "_热力专题图_注记"
+  "_热力专题图_注记",
+  "_符号专题图"
 ];
 
 export default {
@@ -1256,7 +1257,7 @@ export default {
         }
         this.$_setPaintProperty(
           "line-dasharray",
-            value,
+          value,
           this.layerIdCopy + "_" + this.$_getThemeName() + "_线",
           window.originLayer[this.layerIdCopy][
             this.layerIdCopy + "_" + this.$_getThemeName() + "_线"
@@ -2133,7 +2134,7 @@ export default {
       }
       return colors;
     },
-    $_setDataSource(){
+    $_setDataSource() {
       let data = [];
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         data.push(this.dataSourceCopy[i]);
@@ -2143,7 +2144,11 @@ export default {
     $_getData(features, value) {
       let datas = [];
       for (let i = 0; i < features.length; i++) {
-        if (features[i].properties[value] !== "" && features[i].properties[value] !== undefined && features[i].properties[value] !== null) {
+        if (
+          features[i].properties[value] !== "" &&
+          features[i].properties[value] !== undefined &&
+          features[i].properties[value] !== null
+        ) {
           datas.push(features[i].properties[value]);
         }
       }
@@ -2509,7 +2514,12 @@ export default {
               valueArr = [];
             for (let i = 0; i < features.length; i++) {
               let value = features[i].properties[this.selectKey];
-              if (value !== "" && value !== undefined && value !== null && valueArr.indexOf(Number(value)) < 0) {
+              if (
+                value !== "" &&
+                value !== undefined &&
+                value !== null &&
+                valueArr.indexOf(Number(value)) < 0
+              ) {
                 valueArr.push(Number(value));
               }
             }
