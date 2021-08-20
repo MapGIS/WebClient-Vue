@@ -145,6 +145,7 @@ export default {
       window.originLayer = themes;
       let layerOrder = window.originLayer.layerOrder;
       let originLayerIds = [],originLayerId = undefined;
+      let layerNameArr = themes.layerNameArr;
       for (let i =0;i< layerOrder.length;i++){
         if(layerOrder[i].indexOf("专题图") < 0){
           window._workspace._layerTypes[layerOrder[i]] = window.originLayer[layerOrder[i]].themeType;
@@ -165,13 +166,12 @@ export default {
             if(layerOrder[i].indexOf("专题图") < 0){
               originLayerId = layerOrder[i];
             }else {
-              let index = originLayerIds.indexOf(originLayerId);
-              let beforeLayer = index === originLayerIds.length - 1 ? undefined : originLayerIds[index + 1];
+              let beforeLayer = layerNameArr[layerNameArr.indexOf(originLayerId) + 1];
               if(layerOrder[i] === originLayerId + "_单值专题图"){
                 vm.importArr.push(originLayerId + "unique");
               }else if(layerOrder[i] === originLayerId + "_分段专题图"){
                 vm.importArr.push(originLayerId + "range");
-              }else if(layerOrder[i] === originLayerId + "_等级符号专题图"){
+              }else if(layerOrder[i] === originLayerId + "_符号专题图"){
                 vm.importArr.push(originLayerId + "symbol");
               }else if(layerOrder[i] === originLayerId + "_热力专题图"){
                 vm.importArr.push(originLayerId + "heatmap");
@@ -250,6 +250,14 @@ export default {
           });
         }
       });
+      let allLayers = this.map.getStyle().layers;
+      let layerNameArr = [];
+      for (let i = 0; i < allLayers.length; i++) {
+        if (allLayers[i].id.indexOf("专题图") < 0) {
+          layerNameArr.push(allLayers[i].id)
+        }
+      }
+      newAllLayer.layerNameArr = layerNameArr;
       return newAllLayer;
     },
     $_createLayerFailed(message) {
@@ -315,16 +323,24 @@ export default {
           panelProps["text-font"] = panelProps["text-font"][0];
         }
         if(panelProps.hasOwnProperty("circle-stroke-opacity")){
-          panelProps["circle-stroke-opacity"] = panelProps["circle-stroke-opacity"] * 100;
+          if(panelProps["circle-stroke-opacity"] < 1){
+            panelProps["circle-stroke-opacity"] = panelProps["circle-stroke-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("circle-opacity")){
-          panelProps["circle-opacity"] = panelProps["circle-opacity"] * 100;
+          if(panelProps["circle-opacity"] < 1){
+            panelProps["circle-opacity"] = panelProps["circle-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("heatmap-opacity")){
-          panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+          if( panelProps["heatmap-opacity"] < 1){
+            panelProps["heatmap-opacity"] = panelProps["heatmap-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("icon-opacity")){
-          panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+          if(panelProps["icon-opacity"] < 1){
+            panelProps["icon-opacity"] = panelProps["icon-opacity"] * 100;
+          }
         }
         if(panelProps.hasOwnProperty("circle-translate")){
           panelProps["circle-translate-x"] = panelProps["circle-translate"][0];
@@ -370,7 +386,7 @@ export default {
           value: "分段专题图"
         }, {
           key: "symbol",
-          value: "等级符号专题图"
+          value: "符号专题图"
         }, {
           key: "heatmap",
           value: "热力专题图"
@@ -387,7 +403,7 @@ export default {
           this.themeDefaultTypeFlag = "分段专题图";
           break;
         case "symbol":
-          this.themeDefaultTypeFlag = "等级符号专题图";
+          this.themeDefaultTypeFlag = "符号专题图";
           break;
       }
       this.$_addThemeLayer(type, layerId,minzoom,maxzoom);
@@ -443,6 +459,7 @@ export default {
     $_themeTypeChanged(key, value) {
       this.themeDefaultTypeFlag = value;
       this[this.showType + "Layer"].hideExtraLayer(this.ThemeLayerId);
+      window.originLayer[this.ThemeLayerId].themeType = key;
       this.showPanelFlag = true;
       let panelProps;
       if(window.originLayer[this.ThemeLayerId].panelProps.hasOwnProperty(key)){
@@ -467,7 +484,6 @@ export default {
             this.heatmapLayer.addThemeLayer(this.ThemeLayerId);
             break;
         }
-        window.originLayer[this.ThemeLayerId].themeType = key;
         this.showType = key;
         this[this.showType + "Layer"].showExtraLayer(this.ThemeLayerId);
       });

@@ -226,5 +226,66 @@ module.exports = {
         // search: false
       }
     }
-  }
+  },
+  serviceWorker: true,
+  // base: '/vuepress-plugin-demo-block/',
+  head: [
+    [
+      "script",
+      {
+        src:
+          "https://cdn.jsdelivr.net/npm/react@16.6.3/umd/react.production.min.js"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "https://cdn.jsdelivr.net/npm/react-dom@16.6.3/umd/react-dom.production.min.js"
+      }
+    ],
+    ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
+    [
+      "script",
+      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
+    ],
+    [
+      "script",
+      { src: "https://cdn.jsdelivr.net/npm/numerify/lib/index.umd.min.js" }
+    ],
+    [
+      "link",
+      {
+        href:
+          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
+        rel: "stylesheet",
+        type: "text/css"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
+      }
+    ]
+  ],
+  plugins: [
+    [
+      "demo-block",
+      {
+        settings: {
+          jsLibs: [
+            // "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js",
+          ],
+          cssLibs: [
+            // "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css"
+          ],
+          jsfiddle: true, // 是否显示 jsfiddle 链接
+          codepen: true, // 是否显示 codepen 链接
+          horizontal: false // 是否展示为横向样式
+        }
+      }
+    ]
+  ]
 };

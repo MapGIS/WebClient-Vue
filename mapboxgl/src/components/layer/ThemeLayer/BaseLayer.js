@@ -115,7 +115,7 @@ export default {
             colors: [],
             originColors: [],
             startColor: "#FFFFFF",
-            endColor: "#FF0000",
+            endColor: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
             showLayer: true,
             showPanelFlag: true,
             resetPanel: false,
@@ -222,7 +222,7 @@ export default {
                     layerId
                 );
             }
-            if(this.themeType === "symbol"){
+            if (this.themeType === "symbol") {
                 this.$_setLayOutProperty(
                     "visibility",
                     "none",
@@ -276,7 +276,7 @@ export default {
                     layerId
                 );
             }
-            if(this.themeType === "symbol"){
+            if (this.themeType === "symbol") {
                 this.$_setLayOutProperty(
                     "visibility",
                     "visible",
@@ -319,6 +319,7 @@ export default {
                 window.originLayer.layerOrder.indexOf(this.layerIdCopy) > -1
             ) {
                 this.dataType = window.originLayer[layerId].dataType;
+                this.themeType = window.originLayer[layerId].themeType;
                 this.$_getFromSource(layerId, minzoom, maxzoom);
             } else {
                 this.dataType = window.originLayer[layerId].dataType;
@@ -1038,7 +1039,7 @@ export default {
                     "text-field",
                     "{" + value + "}",
                     this.textId,
-                    this.textLayer
+                    window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
                 );
             }
         },
@@ -1062,16 +1063,16 @@ export default {
                 }
                 this.map.setLayoutProperty(layerId, key, layerVector.layout[key]);
                 if (layerId.indexOf("专题图") > -1 && key !== "visibility") {
-                    if(key === "icon-size"){
-                        if(!window.originLayer[this.layerIdCopy].panelProps[
+                    if (key === "icon-size") {
+                        if (!window.originLayer[this.layerIdCopy].panelProps[
                             this.themeType
-                            ].panelProps.hasOwnProperty(key)){
+                            ].panelProps.hasOwnProperty(key)) {
                             window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps[key] = {};
                         }
                         window.originLayer[this.layerIdCopy].panelProps[
                             this.themeType
                             ].panelProps[key][this.selectValue] = value;
-                    }else {
+                    } else {
                         window.originLayer[this.layerIdCopy].panelProps[
                             this.themeType
                             ].panelProps[key] = value;
@@ -1128,20 +1129,27 @@ export default {
             }
         },
         $_singleChangedOut(startColor, endColor) {
-            this.$_gradientChange(startColor, endColor);
+            this.startColor = startColor;
+            this.endColor = endColor;
+            this.$_gradientChange(startColor, endColor,false,true);
+            this.$_setColorsToLocal(this.colors,startColor,endColor);
+            this.$_setCheckBoxToLocal(this.checkBoxArr);
+            this.$_setDataSourceToLocal(this.dataSourceCopy);
+            this.rangeLevel = this.endColor.split(",").length;
+            this.$_setRangeLevelToLocal();
             window.originLayer[this.layerIdCopy].panelProps[
                 window._workspace._layerTypes[this.layerIdCopy]
                 ].panelProps.gradientColor = endColor;
         },
         $_fontColorChanged(color) {
-            this.$_setPaintProperty("text-color", color, this.textId, this.textLayer);
+            this.$_setPaintProperty("text-color", color, this.textId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
         },
         $_haloColorChanged(color) {
             this.$_setPaintProperty(
                 "text-halo-color",
                 color,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_haloWidthChanged(color) {
@@ -1149,7 +1157,7 @@ export default {
                 "text-halo-width",
                 color,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_fontSizeChanged(fontSize) {
@@ -1157,7 +1165,7 @@ export default {
                 "text-size",
                 fontSize,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_xOffsetChanged(xOffset) {
@@ -1174,7 +1182,7 @@ export default {
                 "text-offset",
                 this.offsetText,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_xOffsetTextChanged(offset) {
@@ -1183,7 +1191,7 @@ export default {
                 "text-offset",
                 this.offsetText,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_textPaddingChanged(textPadding) {
@@ -1191,7 +1199,7 @@ export default {
                 "text-letter-spacing",
                 textPadding,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_textRotationChanged(textRotation) {
@@ -1199,7 +1207,7 @@ export default {
                 "text-rotate",
                 textRotation,
                 this.textId,
-                this.textLayer
+                window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             );
         },
         $_outerLineOpacityChanged(opacity) {
@@ -1214,34 +1222,70 @@ export default {
                 regFloat = new RegExp("^[.\\d]*$"),
                 fieldsObj = {},
                 nullFields = {};
-            Object.keys(features[0].properties).forEach(function (key) {
-                fieldsObj[key] = true;
-                nullFields[key] = false;
-            });
-            for (let i = 0; i < features.length; i++) {
-                Object.keys(features[i].properties).forEach(function (key) {
-                    if (!fieldsObj[key]) {
-                        return;
+            if(this.themeType === "heatmap"){
+                Object.keys(features[0].properties).forEach(function (key) {
+                    fieldsObj[key] = true;
+                    nullFields[key] = false;
+                });
+                for (let i = 0; i < features.length; i++) {
+                    Object.keys(features[i].properties).forEach(function (key) {
+                        if (!fieldsObj[key]) {
+                            return;
+                        }
+                        if (features[i].properties[key]) {
+                            nullFields[key] = true;
+                        }
+                        let value = features[i].properties[key];
+                        if (
+                            value &&
+                            !reg.test(value) &&
+                            !regFloat.test(value) &&
+                            fieldsObj[key]
+                        ) {
+                            fieldsObj[key] = false;
+                        }
+                    });
+                }
+                Object.keys(fieldsObj).forEach(function (key) {
+                    if (fieldsObj[key] && nullFields[key]) {
+                        fields.push(key);
                     }
-                    if (features[i].properties[key]) {
-                        nullFields[key] = true;
-                    }
-                    let value = features[i].properties[key];
-                    if (
-                        value &&
-                        !reg.test(value) &&
-                        !regFloat.test(value) &&
-                        fieldsObj[key]
-                    ) {
-                        fieldsObj[key] = false;
+                });
+            }else {
+                let notOneValue = {};
+                Object.keys(features[0].properties).forEach(function (key) {
+                    fieldsObj[key] = true;
+                    notOneValue[key] = false;
+                    nullFields[key] = false;
+                });
+                for (let i = 0; i < features.length; i++) {
+                    Object.keys(features[i].properties).forEach(function (key) {
+                        if (!fieldsObj[key]) {
+                            return;
+                        }
+                        if (features[i].properties[key]) {
+                            nullFields[key] = true;
+                        }
+                        let value = features[i].properties[key];
+                        if (
+                            value &&
+                            !reg.test(value) &&
+                            !regFloat.test(value) &&
+                            fieldsObj[key]
+                        ) {
+                            fieldsObj[key] = false;
+                        }
+                        if(features[0].properties[key] !== value){
+                            notOneValue[key] = true;
+                        }
+                    });
+                }
+                Object.keys(fieldsObj).forEach(function (key) {
+                    if (fieldsObj[key] && nullFields[key] && notOneValue[key]) {
+                        fields.push(key);
                     }
                 });
             }
-            Object.keys(fieldsObj).forEach(function (key) {
-                if (fieldsObj[key] && nullFields[key]) {
-                    fields.push(key);
-                }
-            });
             this.rangeFields = fields;
         },
         $_getFields(features) {
@@ -1286,7 +1330,7 @@ export default {
                         },
                         {
                             key: "symbol",
-                            value: "等级符号专题图"
+                            value: "符号专题图"
                         },
                         {
                             key: "heatmap",
@@ -1305,7 +1349,7 @@ export default {
                         },
                         {
                             key: "symbol",
-                            value: "等级符号专题图"
+                            value: "符号专题图"
                         },
                         {
                             key: "heatmap",
@@ -1509,7 +1553,7 @@ export default {
                 }
             });
             startColor = startColor || "#FFFFFF";
-            endColor = endColor || "#FF0000";
+            endColor = endColor || "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD";
             this.sourceVector.data = geojson;
             this.dataCopy = geojson;
             this.showVector = true;
@@ -1529,13 +1573,21 @@ export default {
                 this.defaultValue = this.selectValue;
                 this.selectKey = this.selectValue;
             }
-            this.dataSource = this.$_getData(geojson.features, this.selectKey);
-            if(this.themeType === "symbol"){
+            if(
+                window.originLayer && window.originLayer.hasOwnProperty(this.layerIdCopy) && window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
+                window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty("this.themeType") && window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy")
+                && window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
+            ){
+                this.dataSource = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
+            }else {
+                this.dataSource = this.$_getData(geojson.features, this.selectKey);
+            }
+            if (this.themeType === "symbol") {
                 if (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
                     window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
-                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)) {
                     this.dataSourceCopy = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy[this.selectValue];
-                }else {
+                } else {
                     let dataSourceCopy = [];
                     for (let i = 0; i < this.dataSource.length; i++) {
                         dataSourceCopy.push(this.dataSource[i]);
@@ -1547,7 +1599,10 @@ export default {
                 this.dataSource,
                 startColor,
                 endColor,
-                this.selectKey
+                this.selectKey,
+                false,
+                false,
+                geojson.features
             );
             this.$_setCheckBoxFromLocal();
             if (this.$_initThemeCallBack) {
@@ -1624,13 +1679,7 @@ export default {
                     };
                 }
             }
-            // this.$_setOriginLayer(colors);
-            // this.$_setLayOutProperty(
-            //   "visibility",
-            //   "none",
-            //   this.layerIdCopy,
-            //   window.originLayer[this.layerIdCopy][this.layerIdCopy]
-            // );
+            this.$_setRangeLevelFromLocal();
             this.$_hideLayerByOpacity();
             if (this.themeType !== "symbol") {
                 if (this.dataType === "fill") {
@@ -1656,21 +1705,30 @@ export default {
                         );
                     }
                 }
-            }else {
+            } else {
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = {};
                 window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue] = this.radiusArr;
             }
             if (!window._workspace._layerTypes[this.layerIdCopy]) {
                 window._workspace._layerTypes[this.layerIdCopy] = this.themeType;
             }
-            // this.$_changeOriginLayer();
+            if(this.themeType !== "heatmap"){
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors[this.selectValue] = this.colors;
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr[this.selectValue] = this.checkBoxArr;
+            }
             this.$_loadedLayer();
-            // this.$nextTick(function () {
-            //     this.$_changeOriginLayer();
-            //     this.$_loadedLayer();
-            // });
         },
         $_setCheckBoxToLocal(checkBoxArr) {
+            let newCheckBoxArr = [];
+            for (let i = 0; i < checkBoxArr.length; i++) {
+                newCheckBoxArr.push(checkBoxArr[i]);
+            }
             if (
                 !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
                     .panelProps.checkBoxArr
@@ -1681,10 +1739,44 @@ export default {
             }
             window.originLayer[this.layerIdCopy].panelProps[
                 this.themeType
-                ].panelProps.checkBoxArr[this.selectValue] = checkBoxArr;
+                ].panelProps.checkBoxArr[this.selectValue] = newCheckBoxArr;
         },
-        $_setColorsToLocal(colors) {
-            // window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.colors = this.colors;
+        $_setDataSourceToLocal() {
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.dataSourceCopy
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.dataSourceCopy = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.dataSourceCopy[this.selectValue] = this.dataSourceCopy;
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.startData
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.startData = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.startData[this.selectValue] = this.startData;
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.endData
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.endData = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.endData[this.selectValue] = this.endData;
+        },
+        $_setColorsToLocal(colors,startColor,endColor) {
             if (
                 !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
                     .panelProps.colors
@@ -1696,6 +1788,12 @@ export default {
             window.originLayer[this.layerIdCopy].panelProps[
                 this.themeType
                 ].panelProps.colors[this.selectValue] = colors;
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.startColor = startColor
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.endColor = endColor;
         },
         $_setColorsFromLocal() {
             if (
@@ -1827,7 +1925,7 @@ export default {
 
             layers.push({
                 action: "add",
-                layer: this.textLayer
+                layer: window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]
             });
 
             let replaceLayer = this.$_getLayerStyle(this.layerIdCopy);
@@ -1844,7 +1942,7 @@ export default {
             let layers = this.$_getAllLayerStyle();
             this.$emit("themeLoaded", layers);
         },
-        $_getColors(dataSource, startColor, endColor, key, noColor, clearColor) {
+        $_getColors(dataSource, startColor, endColor, key, noColor, clearColor,features) {
             let colors;
             if (window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
                 window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
@@ -1862,7 +1960,8 @@ export default {
                         dataSource,
                         startColor,
                         endColor,
-                        key
+                        key,
+                        features
                     );
                 } else {
                     throw new Error("请设置$_getColors方法的回到函数！");
@@ -1890,7 +1989,8 @@ export default {
                         ].panelProps.hasOwnProperty("colors") &&
                     window.originLayer[this.layerIdCopy].panelProps[
                         this.themeType
-                        ].panelProps.colors.hasOwnProperty(this.selectValue)
+                        ].panelProps.colors.hasOwnProperty(this.selectValue) &&
+                    !clearColor
                 ) {
                     let panelProps =
                         window.originLayer[this.layerIdCopy].panelProps[this.themeType]
@@ -1954,19 +2054,55 @@ export default {
                 this.checkBoxArr = this.originColors.checkArr;
             }
         },
+        $_setRangeLevelFromLocal() {
+            if (
+                window.originLayer[this.layerIdCopy] &&
+                window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
+                window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(
+                    this.themeType
+                ) &&
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.hasOwnProperty("rangeLevel") &&
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.rangeLevel.hasOwnProperty(this.selectValue)
+            ) {
+                this.rangeLevel = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.rangeLevel[this.selectValue];
+            }
+        },
+        $_setRangeLevelToLocal() {
+            if (
+                !window.originLayer[this.layerIdCopy].panelProps[this.themeType]
+                    .panelProps.rangeLevel
+            ) {
+                window.originLayer[this.layerIdCopy].panelProps[
+                    this.themeType
+                    ].panelProps.rangeLevel = {};
+            }
+            window.originLayer[this.layerIdCopy].panelProps[
+                this.themeType
+                ].panelProps.rangeLevel[this.selectValue] = this.rangeLevel;
+        },
         $_selectChange(value) {
             if (value !== "") {
                 this.selectValue = value;
-                this.rangeLevel = 10;
+                if(this.themeType === "range" && this.endColor.indexOf(",") > -1){
+                    this.rangeLevel = this.endColor.split(",").length;
+                    this.$_setRangeLevelToLocal();
+                }else {
+                    this.rangeLevel = 10;
+                }
                 let datas = this.$_getData(this.dataCopy.features, value);
                 this.dataSource = datas;
                 let colors = this.$_getColors(
                     this.dataSource,
                     this.startColor,
                     this.endColor,
-                    value
+                    value,
+                    false,
+                    true
                 );
-                this.$_setCheckBoxFromLocal();
                 this.selectKey = value;
                 window.originLayer[this.layerIdCopy].panelProps[
                     window._workspace._layerTypes[this.layerIdCopy]
@@ -1980,12 +2116,20 @@ export default {
                     } else {
                         throw new Error("请设置$_selectChange方法的回到函数！");
                     }
-                    if(this.themeType !== "symbol"){
-                        colors = this.$_editColor(colors);
+                    if (this.themeType !== "symbol") {
+                        colors = this.$_editColor(colors,true);
                         this.$_setPaintByType(colors, true);
                     }
                     this.showVector = true;
                 }
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.colors[this.selectValue] = this.colors;
+                if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr){
+                    window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr = {};
+                }
+                window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.checkBoxArr[this.selectValue] = this.checkBoxArr;
                 this.changeLayerProp = true;
                 this.changeLayerId = this.layerIdCopy;
             }
@@ -2013,7 +2157,7 @@ export default {
                 }
             }
         },
-        $_gradientChange(startColor, endColor, noEdit) {
+        $_gradientChange(startColor, endColor, noEdit,freshColor) {
             this.showVector = false;
             this.startColor = startColor;
             this.endColor = endColor;
@@ -2026,14 +2170,14 @@ export default {
                 true
             );
             this.$_removeIcon();
-            this.$_setPaintByType(colors, noEdit);
+            this.$_setPaintByType(colors, noEdit,freshColor);
             this.showVector = true;
             this.changeLayerProp = true;
             this.changeLayerId = this.layerIdCopy;
         },
-        $_setPaintByType(colors, noEdit) {
+        $_setPaintByType(colors, noEdit,freshColor) {
             if (!noEdit) {
-                colors = this.$_editColor(colors);
+                colors = this.$_editColor(colors,freshColor);
             }
             switch (this.dataType) {
                 case "fill":
@@ -2153,7 +2297,7 @@ export default {
             } else {
                 let rangeSect = range / this.rangeLevel;
                 let floatLength;
-                if(String(rangeSect).indexOf(".") > -1){
+                if (String(rangeSect).indexOf(".") > -1) {
                     floatLength = String(rangeSect).split(".")[1].length;
                 }
                 if (dataSource[0] < 0) {
@@ -2187,7 +2331,7 @@ export default {
                     break;
             }
         },
-        $_editColor(colors) {
+        $_editColor(colors,freshColor) {
             let newColor;
             if (this.themeType === "range") {
                 if (!window.originThemeData[this.layerIdCopy]) {
@@ -2196,14 +2340,14 @@ export default {
                 if (
                     window.originThemeData[this.layerIdCopy][
                     this.themeType + "_" + this.selectKey
-                        ]
+                        ] && !freshColor
                 ) {
                     newColor =
                         window.originThemeData[this.layerIdCopy][
                         this.themeType + "_" + this.selectKey
                             ];
                 } else {
-                    if(colors.hasOwnProperty("stops")){
+                    if (colors.hasOwnProperty("stops")) {
                         newColor = ["step", ["to-number", ["get", colors.property]]];
                         let features =
                                 window.originLayer[this.layerIdCopy][
@@ -2236,7 +2380,7 @@ export default {
                                 }
                             }
                         }
-                    }else {
+                    } else {
                         newColor = colors;
                     }
                 }
@@ -2384,7 +2528,7 @@ export default {
                     theme = "分段专题图";
                     break;
                 case "symbol":
-                    theme = "等级符号专题图";
+                    theme = "符号专题图";
                     break;
                 case "heatmap":
                     theme = "热力专题图";
@@ -2477,6 +2621,9 @@ export default {
                 };
                 if (this.source_vector_layer_Id) {
                     this.textLayer["source-layer"] = this.source_vector_layer_Id;
+                }
+                if(this.dataType === "line"){
+                    this.textLayer.layout["symbol-placement"] = "line";
                 }
                 window.originLayer[this.layerIdCopy][this.textId] = this.textLayer;
                 this.map.addLayer(this.textLayer, this.upLayer);

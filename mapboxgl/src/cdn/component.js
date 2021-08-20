@@ -1,5 +1,4 @@
 export { default as MapgisWebMap } from "../components/map/GlMap.vue";
-export { MapgisIconfont } from "../components/UI/iconfont";
 
 export { default as MapgisDocument } from "../components/UI/document/Document";
 
@@ -33,7 +32,7 @@ export { default as MapgisImageLayer } from "../components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "../components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "../components/layer/VectorLayer";
-export { default as MapgisMvtStyleLayer } from "../components/layer/vectortile/MvtStyleLayer";
+// export { default as MapgisMvtStyleLayer } from "../components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisRasterLayer } from "../components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "../components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "../components/layer/igserver/IgsDocLayer";

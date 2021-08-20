@@ -47,3 +47,5 @@ export default {
   setLayout,
   install
 };
+
+window.MapgisUi = UIComponents;

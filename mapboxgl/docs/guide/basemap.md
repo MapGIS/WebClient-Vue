@@ -10,10 +10,13 @@
 
 如果你使用`MapGIS-IGServer`提供的底图或者样式，你可以忽略该参数
 
-```vue
+::: demo
+
+```html
 <template>
   <mapgis-web-map
     :crs="crs"
+    class="mapgis-2d-map"
     :mapStyle="mapStyle"
     :center="center"
     :zoom="zoom"
@@ -26,44 +29,50 @@
   </mapgis-web-map>
 </template>
 
-<style lang="css">
-.main {
-  height: 600px;
-  width: 100%;
-}
-</style>
-
 <script>
-export default {
-  data() {
-    return {
-      mapStyle: {
-        version: 8,
-        sources: {},
-        layers: [
-          {
-            id: "背景",
-            type: "background",
-            paint: {
-              "background-color": "rgba(0, 0, 0, 0.5)"
+  export default {
+    components: {
+      "mapgis-web-map": window.Mapgis2d.MapgisWebMap,
+      "mapgis-rastertile-layer": window.Mapgis2d.MapgisRasterLayer
+    },
+    data: function() {
+      return {
+        mapStyle: {
+          version: 8,
+          sources: {},
+          layers: [
+            {
+              id: "背景",
+              type: "background",
+              paint: {
+                "background-color": "rgba(0, 0, 0, 0.5)"
+              }
             }
-          }
-        ]
-      },
-      zoom: 3,
-      center: [114.3, 30.5],
-      crs: "EPSG:4326"
-    };
-  },
-  created() {},
-  methods: {
-    handleMapLoad(payload) {
-      console.log(payload);
+          ]
+        },
+        zoom: 3,
+        center: [114.3, 30.5],
+        crs: "EPSG:4326"
+      };
+    },
+    created() {
+      console.log("window", window);
+    },
+    methods: {
+      handleMapLoad(payload) {
+        console.log(payload);
+      }
     }
-  }
-};
+  };
 </script>
+<style>
+  .mapgis-2d-map {
+    height: 300px;
+  }
+</style>
 ```
+
+:::
 
 ::: tip
 如果你需要显示的传入 mapbox-gl-js 的脚本, 请实现`mapboxGl`参数. 延迟加载后可以使用该脚本

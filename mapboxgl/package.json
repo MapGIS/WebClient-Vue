@@ -6,7 +6,7 @@
   "module": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
-    "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/cdn/main.js",
+    "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --inline-vue --name webclient-vue-mapboxgl src/cdn/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js --watch",
     "lint": "vue-cli-service lint",
     "docs:serve": "vuepress dev docs",
@@ -32,6 +32,7 @@
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/webclient-es6-service": "^10.5.4",
     "@mapgis/webclient-store": "^1.0.0",
+    "@mapgis/webclient-vue-ui": "^10.5.4-1",
     "@turf/turf": "^5.1.6",
     "ant-design-vue": "^1.7.5",
     "echarts": "^5.0.2",
@@ -66,7 +67,8 @@
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
     "vue": "^2.6.6",
-    "vue-template-compiler": "^2.6.6"
+    "vue-template-compiler": "^2.6.6",
+    "vuepress-plugin-demo-block": "^0.7.2"
   },
   "keywords": [
     "vue",

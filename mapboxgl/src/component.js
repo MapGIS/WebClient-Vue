@@ -1,7 +1,6 @@
 export { default as MapgisEventBusMapMixin } from "./lib/eventbus/EventBusMapMixin";
 
 export { default as MapgisWebMap } from "./components/map/GlMap.vue";
-export { MapgisIconfont } from "./components/UI/iconfont";
 
 export { default as MapgisDocument } from "./components/UI/document/Document";
 export { default as MapgisLayerMenuStudio } from "./components/UI/document/contextmenu/LayerMenuStudio.vue";
@@ -39,7 +38,6 @@ export { default as MapgisImageLayer } from "./components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "./components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "./components/layer/VectorLayer";
-
 
 export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";

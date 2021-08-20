@@ -135,7 +135,7 @@ export default {
     },
     $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font", [this.textFont, this.textFont], this.textId, this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont, this.textFont], this.textId,  window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
     },
     /*
     * 多选框业务实现
@@ -228,6 +228,13 @@ export default {
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
+      this.dataSourceCopy = this.dataSource;
+      let checkArr = [];
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        checkArr.push(true);
+      }
+      this.checkArr = checkArr;
+      this.checkBoxArr = checkArr;
       switch (this.dataType) {
         case "fill":
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
@@ -256,7 +263,27 @@ export default {
           break;
         }
       }
-      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      let gradient;
+      if(endColor.indexOf(",") > -1){
+        let colorArr = endColor.split(",");
+        let colorArrLength = colorArr.length - 1;
+        let dataLength = this.dataSource.length;
+        let colorLength = [];
+        let colorsRangeArr = [];
+        for (let i = 0; i < colorArrLength; i++) {
+          if (i === colorArrLength - 1) {
+            colorLength.push(dataLength - parseInt(dataLength / colorArrLength) * (colorArrLength - 1));
+          } else {
+            colorLength.push(parseInt(dataLength / colorArrLength));
+          }
+        }
+        for (let i =0;i<colorLength.length;i++){
+          colorsRangeArr = colorsRangeArr.concat(this.$_gradientColor(colorArr[i], colorArr[i + 1], colorLength[i]));
+        }
+        gradient = colorsRangeArr;
+      }else {
+        gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      }
       if (iSString) {
         colors = ['match', ['get', key]];
         for (let i = 0; i < dataSource.length; i++) {
@@ -340,7 +367,7 @@ export default {
         } else {
           this.$_setColorsFromLocal();
         }
-      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "LineString" || geojson.features[0].geometry.type ===  "MultiLineString")) {
         this.dataType = 'line';
         if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {

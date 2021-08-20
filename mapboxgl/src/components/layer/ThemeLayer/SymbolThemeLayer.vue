@@ -9,7 +9,7 @@
         :fields="fields"
         :labelFields="allFields"
         :colors="colors"
-        :dataType="dataType"
+        :dataType="themeType"
         :checkBoxArr="checkBoxArr"
         :showOutLineColor="false"
         :showRange="showRange"
@@ -63,43 +63,29 @@
                 </div>
               </div>
               <div class="theme-panel-td theme-panel-td-input-num">
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="index === 0 && startNumWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="index > 0 && (index - 1) === numWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                 <mapgis-ui-input v-if="dataSourceCopy.length === 1 || (dataSourceCopy.length > 1 && index === 0)"
                                  class="range-theme-num"
                                  @click="$_inputClick('start')"
                                  @change="$_inputStartChange" v-model="startData">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="startNumWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
                 </mapgis-ui-input>
                 <mapgis-ui-input v-if="index > 0" class="range-theme-num"
                                  @click="$_inputClick(index - 1)"
                                  @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="(index - 1) === numWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td" style="width: 3%">
                 ~
               </div>
               <div class="theme-panel-td theme-panel-td-input-num theme-panel-td-border-right">
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1 && index === numWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1) && endNumWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                 <mapgis-ui-input class="range-theme-num"
                                  @change="$_inputEndChange"
                                  @click="$_inputClick(index)"
                                  v-model="dataSourceCopy[index]"
-                                 v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input>
-                <mapgis-ui-input class="range-theme-num"
-                                 @change="$_inputEndChange"
-                                 @click="$_inputClick('end')"
-                                 v-model="endData"
-                                 v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="endNumWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
+                                 v-if="index < dataSourceCopy.length && dataSourceCopy.length > 1">
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
@@ -180,8 +166,10 @@ export default {
                 index = i;
               }
             }
-
+            this.$_removeInputWrong();
             if (index === 0 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
+              this.$_setIconSize();
+            }else if (index === 0 && this.dataSourceCopy.length === 2 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setIconSize();
             } else if (index === this.dataSourceCopy.length && Number(this.dataSourceCopy[index]) > Number(this.dataSourceCopy[index - 1]) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setIconSize();
@@ -206,7 +194,7 @@ export default {
   },
   data() {
     return {
-      title: "等级符号专题图",
+      title: "符号专题图",
       themeType: "symbol",
       dataSourceCopy: undefined,
       dataInit: false,
@@ -228,7 +216,6 @@ export default {
       textRotation: 0,
       haloColor: "#FFFFFF",
       haloWidth: 0,
-      dataType: "symbol",
       panelPropsDefault: {
         "icon-size" : 1
       },
@@ -253,7 +240,7 @@ export default {
     },
     themeDefaultType: {
       type: String,
-      default: "等级符号专题图"
+      default: "符号专题图"
     }
   },
   created() {
@@ -307,7 +294,7 @@ export default {
         this.rangeLevel--;
         this.addRange = true;
         this.dataSourceCopy.splice(index,1);
-        this.dataSource.splice(index,1);
+        this.dataSource = this.dataSourceCopy;
         this.checkBoxArr.splice(index,1);
         this.radiusArr.splice(index,1);
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = this.radiusArr;
@@ -333,25 +320,31 @@ export default {
     },
     $_addRange(index){
       this.$_removeIcon();
-      this.rangeLevel++;
       this.addRange = true;
       let startData = Number(this.dataSourceCopy[index]);
-      let endData = Number(this.dataSourceCopy[index + 1]);
+      let endData
+      if(this.dataSourceCopy.length === 2){
+        endData = this.endData;
+      }else {
+        endData = Number(this.dataSourceCopy[index + 1]);
+      }
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
           let addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index + 1,0,addNum);
-          this.dataSource.splice(index + 1,0,addNum);
+          this.dataSource = this.dataSourceCopy;
           this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
           this.checkBoxArr.splice(index + 1,0,true);
+          this.rangeLevel++;
         }
       }else {
-        let addNum = (this.endData - this.startData) + this.endData;
+        let addNum = (this.dataSourceCopy[index] - this.dataSourceCopy[index - 1]) + this.dataSourceCopy[index];
         this.checkBoxArr.push(true);
         this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
-        this.dataSourceCopy.push(this.endData);
-        this.dataSource.push(this.endData);
+        this.dataSourceCopy.push(addNum);
+        this.dataSource = this.dataSourceCopy;
         this.endData = addNum;
+        this.rangeLevel++;
       }
       if(!window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr){
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = {};
@@ -609,6 +602,7 @@ export default {
       this.dataInit = false;
       this.radiusIndex = undefined;
       this.radiusArr = [];
+      this.dataSourceCopy = this.dataSource;
       if (window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("endData") &&
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.endData.hasOwnProperty(this.selectValue)){
         this.endData = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.endData[this.selectValue];
@@ -727,7 +721,7 @@ export default {
           this.radiusArr = window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue];
         }else {
           for (let i = 0; i < this.dataSourceCopy.length; i++) {
-            this.radiusArr.push([i + 2]);
+            this.radiusArr.push([i + 1]);
           }
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr[this.selectValue] = this.radiusArr;
         }
@@ -762,7 +756,7 @@ export default {
         let dataSourceCopy = [];
         for (let i = 0; i < dataSource.length; i++) {
           dataSourceCopy.push(dataSource[i]);
-          this.radiusArr.push([i + 2]);
+          this.radiusArr.push([i + 1]);
         }
         //这里规则仅支持小于，大于的话全会背第一个大鱼号的规则覆盖
         let iconSize = ["case"];
@@ -792,7 +786,7 @@ export default {
             vm.defaultIconValue = keyArr[0] ? keyArr[0] : '';
             if(!window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]){
               window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()] = {
-                'id': vm.layerIdCopy + "_等级符号专题图",
+                'id': vm.layerIdCopy + "_符号专题图",
                 'source': vm.source_vector_Id,
                 'type': 'symbol',
                 'layout': {
@@ -943,5 +937,13 @@ export default {
 
 .theme-panel-td-checkbox, .theme-panel-td-index {
   padding-top: 10px;
+}
+.theme-panel-input-wrong{
+  position: absolute;
+  left: 54px;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+  z-index: 100;
 }
 </style>

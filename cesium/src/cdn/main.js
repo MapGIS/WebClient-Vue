@@ -19,3 +19,5 @@ export * from "./cdn_component";
 export default {
   install
 };
+
+window.Mapgis3d = MapComponents;

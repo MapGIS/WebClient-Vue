@@ -74,6 +74,11 @@ export default {
           title: "Ribbon布局"
         },
         {
+          key: "drawer",
+          url: require("./SettingDrawer/style/drawer.svg"),
+          title: "抽屉布局"
+        },
+        {
           key: "standard",
           url: require("./SettingDrawer/style/standard.svg"),
           title: "标准三段式布局"

@@ -5,7 +5,8 @@ export { default as MapgisUiBorder } from "./components/border/Border.vue";
 // export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 
 // IconFont
-export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+// export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 
 // Layout
@@ -121,6 +122,12 @@ export { default as MapgisUiLocaleProvider } from "./components/locale-provider/
 // Ribbon
 export { default as MapgisUiRibbonGroup } from "./components/ribbon/RibbonGroup.vue";
 export { default as MapgisUiRibbonCommand } from "./components/ribbon/RibbonCommand.vue";
+
+// Navs
+export { default as MapgisUiNavPanel } from "./layout/navs/NavPanel.vue";
+export { default as MapgisUiNavContent } from "./layout/navs/NavContent.vue";
+export { default as MapgisUiNavBar } from "./layout/navs/NavBar.vue";
+export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
 
 // Pro
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";

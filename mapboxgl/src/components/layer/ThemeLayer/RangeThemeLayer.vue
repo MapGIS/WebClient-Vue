@@ -69,43 +69,30 @@
                 </div>
               </div>
               <div class="theme-panel-td theme-panel-td-input-num">
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="index === 0 && startNumWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="index > 0 && (index - 1) === numWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                 <mapgis-ui-input v-if="dataSourceCopy.length === 1 || (dataSourceCopy.length > 1 && index === 0)"
                                  class="range-theme-num"
                                  @click="$_inputClick('start')"
                                  @change="$_inputStartChange" v-model="startData">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="startNumWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
                 </mapgis-ui-input>
                 <mapgis-ui-input v-if="index > 0" class="range-theme-num"
                                  @click="$_inputClick(index - 1)"
-                                 @change="$_inputStartChange" v-model="dataSourceCopy[index - 1]">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="(index - 1) === numWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
+                                 @change="$_inputStartChange"
+                                 v-model="dataSourceCopy[index - 1]">
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td" style="width: 3%">
                 ~
               </div>
               <div class="theme-panel-td theme-panel-td-input-num theme-panel-td-border-right">
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1 && index === numWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
+                <img alt="数据错误" class="theme-panel-input-wrong" v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1) && endNumWrong" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                 <mapgis-ui-input class="range-theme-num"
                                  @change="$_inputEndChange"
                                  @click="$_inputClick(index)"
                                  v-model="dataSourceCopy[index]"
-                                 v-if="index < dataSourceCopy.length - 1 && dataSourceCopy.length > 1">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="index === numWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
-                </mapgis-ui-input>
-                <mapgis-ui-input class="range-theme-num"
-                                 @change="$_inputEndChange"
-                                 @click="$_inputClick('end')"
-                                 v-model="endData"
-                                 v-if="dataSourceCopy.length === 1 || (index === dataSourceCopy.length - 1 && dataSourceCopy.length > 1)">
-                  <mapgis-ui-tooltip slot="suffix" title="Wrong number" v-if="endNumWrong">
-                    <mapgis-ui-iconfont type="mapgis-zaozitucanshuquesheng" style="color: rgba(255,0,0,.45)"/>
-                  </mapgis-ui-tooltip>
+                                 v-if="index < dataSourceCopy.length && dataSourceCopy.length > 1">
                 </mapgis-ui-input>
               </div>
               <div class="theme-panel-td theme-panel-td-add theme-panel-td-border-right" @click="$_addRange(index)">
@@ -156,6 +143,9 @@ export default {
           this.startNumWrong = true;
         } else {
           this.$_removeInputWrong();
+          if(this.dataInit){
+            this.$_setDataSourceToLocal();
+          }
         }
       }
     },
@@ -167,6 +157,9 @@ export default {
           this.endNumWrong = true;
         } else {
           this.$_removeInputWrong();
+          if(this.dataInit){
+            this.$_setDataSourceToLocal();
+          }
         }
       }
     },
@@ -182,6 +175,8 @@ export default {
             }
 
             if (index === 0 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.dataSourceCopy[index + 1])) {
+              this.$_setPaint(index);
+            }else if (index === 0 && this.dataSourceCopy.length === 2 && Number(this.dataSourceCopy[index]) > Number(this.startData) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setPaint(index);
             } else if (index === this.dataSourceCopy.length && Number(this.dataSourceCopy[index]) > Number(this.dataSourceCopy[index - 1]) && Number(this.dataSourceCopy[index]) < Number(this.endData)) {
               this.$_setPaint(index);
@@ -229,59 +224,75 @@ export default {
     $_deleteRange(index){
       if(this.rangeLevel > 2){
         this.$_removeIcon();
-        this.rangeLevel--;
         this.addRange = true;
         if(index === 0){
-          let endData = this.dataSourceCopy.splice(index,1);
-          this.dataSource.splice(index,1);
-          this.colors.splice(index,1);
-          this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index],this.startData,endData);
-        }else if(index === this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index,1);
-          this.dataSource.splice(index,1);
+          this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 1],this.endData);
-        }else {
-          let endData = this.dataSourceCopy.splice(index,1);
-          this.dataSource.splice(index,1);
+          this.$_setRangeColor(this.colors[index],this.startData,this.dataSourceCopy[index]);
+          this.rangeLevel--;
+        }else if(index < this.dataSourceCopy.length - 1){
+          this.dataSourceCopy.splice(index,1);
+          this.dataSource = this.dataSourceCopy;
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],endData);
+          this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],this.dataSourceCopy[index]);
+          this.rangeLevel--;
+        }else if(index === this.dataSourceCopy.length - 1){
+          this.dataSourceCopy.splice(index - 1,1);
+          this.dataSource = this.dataSourceCopy;
+          this.colors.splice(index,1);
+          this.checkBoxArr.splice(index,1);
+          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 2],this.dataSourceCopy[index - 1]);
+          this.rangeLevel--;
         }
         this.$nextTick(function () {
           this.addRange = false;
         });
+        this.$_setRangeLevelToLocal();
         this.$_setDataSourceLocal();
       }
     },
     $_addRange(index){
       this.$_removeIcon();
-      this.rangeLevel++;
       this.addRange = true;
-      let startData = Number(this.dataSourceCopy[index]);
-      let endData = Number(this.dataSourceCopy[index + 1]);
+      let startData;
+      if(index === 0){
+        startData = this.startData;
+      }else {
+        startData = Number(this.dataSourceCopy[index - 1]);
+      }
+      let endData,addNum;
+      if(this.dataSourceCopy.length === 2){
+        endData = Number(this.dataSourceCopy[0]);
+      }else if(index < this.dataSourceCopy.length) {
+        endData = Number(this.dataSourceCopy[index]);
+      }
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
-          let addNum = (startData + endData)/2;
-          this.dataSourceCopy.splice(index + 1,0,addNum);
-          this.dataSource.splice(index + 1,0,addNum);
+          addNum = (startData + endData)/2;
+          this.dataSourceCopy.splice(index,0,addNum);
+          this.dataSource = this.dataSourceCopy;
           let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
-          this.$_setRangeColor(newColors[1],startData,endData);
+          this.$_setRangeColor(newColors[1],startData,addNum);
+          this.rangeLevel++;
         }
       }else {
-        let addNum = (endData - startData) + endData;
+        addNum = (endData - startData) + endData;
         this.colors.push(this.colors[index]);
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
-        this.dataSource.push(addNum);
+        this.dataSource = this.dataSourceCopy;
+        this.endData = addNum;
+        this.rangeLevel++;
       }
       this.$nextTick(function () {
         this.addRange = false;
       });
+      this.$_setRangeLevelToLocal();
       this.$_setDataSourceLocal();
     },
     $_setDataSourceLocal(){
@@ -312,7 +323,7 @@ export default {
     },
     $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font", [this.textFont,this.textFont], this.textId, this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont,this.textFont], this.textId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
     },
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType) {
@@ -404,6 +415,7 @@ export default {
       this.$_setRangeColor(this.colors[index],this.$_getStartEndData(index).startData,this.$_getStartEndData(index).endData,true);
       this.$_setRangeColor(this.colors[index + 1],this.$_getStartEndData(index + 1).startData,this.$_getStartEndData(index + 1).endData);
       this.dataSource[index] = Number(this.dataSourceCopy[index]);
+      this.$_setDataSourceToLocal();
     },
     $_checkboxChecked(e) {
       let value = e.target.value.item;
@@ -481,7 +493,8 @@ export default {
     * **/
     $_selectChangeCallBack(colors) {
       this.dataInit = false;
-      this.$_getDataFromLocal(this.dataSource);
+      this.$_getDataFromLocal(this.dataSource,true);
+      this.$_setDataSourceToLocal();
       this.$nextTick(function () {
         this.dataInit = true;
       });
@@ -494,9 +507,23 @@ export default {
     * @param endColor 渐变结束颜色，可自行指定
     * @param key 绘制规则针对的关键字
     * **/
-    $_getColorsCallBack(colors, dataSource, startColor, endColor, key) {
+    $_getColorsCallBack(colors, dataSource, startColor, endColor, key,features) {
       let checkArr = [], colorList = [];
-      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      let gradient;
+      if(endColor.indexOf(",") > -1){
+        gradient = endColor.split(",");
+        this.rangeLevel = gradient.length;
+        this.dataSource = this.$_getData(this.dataCopy.features, this.selectValue);
+        let dataSourceCopy = [];
+        for (let i = 0; i < this.dataSource.length; i++) {
+          dataSourceCopy.push(this.dataSource[i]);
+        }
+        this.dataSourceCopy = dataSourceCopy;
+
+        dataSource = this.dataSourceCopy;
+      }else {
+        gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      }
       colors = {
         "property": key,
         "stops": []
@@ -506,20 +533,23 @@ export default {
         colorList.push(gradient[i]);
         checkArr.push(true);
       }
+      this.checkArr = checkArr;
+      this.checkBoxArr = checkArr;
       return {
         checkArr: checkArr,
         colors: colors,
         colorList: colorList
       }
     },
-    $_getDataFromLocal(dataSource){
+    $_getDataFromLocal(dataSource,refreshData){
       let dataSourceCopyProps;
       if (
           window.originLayer[this.layerIdCopy] &&
           window.originLayer[this.layerIdCopy].hasOwnProperty("panelProps") &&
           window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
           window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("dataSourceCopy") &&
-          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue)
+          window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.dataSourceCopy.hasOwnProperty(this.selectValue) &&
+          !refreshData
       ) {
         let panelProps =
             window.originLayer[this.layerIdCopy].panelProps[this.themeType]
@@ -595,7 +625,7 @@ export default {
             maxzoom: maxzoom
           }
         }
-      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "LineString" || geojson.features[0].geometry.type ===  "MultiLineString")) {
         this.dataType = 'line';
         if(!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]){
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
@@ -723,5 +753,13 @@ export default {
 
 .theme-panel-td-checkbox, .theme-panel-td-index {
   padding-top: 10px;
+}
+.theme-panel-input-wrong{
+  position: absolute;
+  left: 54px;
+  top: 12px;
+  width: 20px;
+  height: 20px;
+  z-index: 100;
 }
 </style>

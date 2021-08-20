@@ -2,6 +2,55 @@
 
 绘制视图的属性请看[API](/api/UI/Draw/draw.md).
 
+::: demo
+
+```html
+<template>
+  <mapgis-web-map :crs="crs" class="mapgis-2d-map">
+    <mapgis-rastertile-layer
+      layerId="tdt"
+      url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+    />
+    <mapgis-draw>
+      <div class="custom-draw">
+        自定义槽内容
+      </div>
+    </mapgis-draw>
+  </mapgis-web-map>
+</template>
+
+<script>
+  export default {
+    components: {
+      "mapgis-web-map": window.Mapgis2d.MapgisWebMap,
+      "mapgis-rastertile-layer": window.Mapgis2d.MapgisRasterLayer,
+      "mapgis-draw": window.Mapgis2d.MapgisDraw
+    },
+    data: function() {
+      return {
+        crs: "EPSG:4326"
+      };
+    },
+    methods: {}
+  };
+</script>
+<style>
+  .mapgis-2d-map {
+    height: 300px;
+  }
+  .custom-draw {
+    position: absolute;
+    z-index: 3000;
+    top: 20px;
+    left: 20px;
+    padding: 12px;
+    border: 1px solid #000;
+  }
+</style>
+```
+
+:::
+
 ## 绘制视图
 
 ![官方视图](./office_draw.png)
@@ -666,6 +715,80 @@ export default {
       this.coordinates = [];
       this.enableMeasure();
       this.measure && this.measure.deleteAll();
+    }
+  }
+};
+</script>
+```
+
+## 自带控件
+
+![自带控件](./default_control.png)
+
+::: tip
+通过属性 enableControl 可以控制是否使用自带控件，其提供了点、线、矩形、多边形以及圆的绘制功能
+:::
+
+```vue
+<template>
+  <mapgis-web-map :accessToken="accessToken">
+    <mapgis-igs-tdt-layer
+      :token="token"
+      :baseURL="baseURL"
+      :crs="crs"
+      :layerId="layerId"
+      :sourceId="sourceId"
+    >
+    </mapgis-igs-tdt-layer>
+    <mapgis-draw
+      position="top-left"
+      @added="handleAdded"
+      @drawCreate="handleCreate"
+      @update-radius="handleRadiusUpdate"
+      :editable="false"
+      ref="drawref"
+    >
+    </mapgis-draw>
+  </mapgis-web-map>
+</template>
+
+<script>
+export default {
+  name: "CustomDraw",
+  props: {},
+  data() {
+    return {
+      accessToken:
+        "pk.eyJ1IjoibHZ4aW5nZGV0dXppIiwiYSI6ImNrcmJkb3dwMDIycnkycXIyYW96ejQ5czcifQ.RftxemAeBo-0pa-FZqm5vw",
+      token: "3af3270f5f558ed33dcf9aacfb7a01b5",
+      baseURL: "http://t0.tianditu.gov.cn/img_w/wmts",
+      crs: "EPSG:3857",
+      layerId: "tdt",
+      sourceId: "tdt"
+    };
+  },
+  methods: {
+    enableDrawer() {
+      const component = this.$refs.drawref;
+      if (component) {
+        component.enableDrawer();
+      }
+    },
+    handleAdded(e, data) {
+      let { drawer, map } = e;
+      this.drawer = drawer;
+    },
+    handleCreate(e) {
+      const vm = this;
+      if (this.mode == "QueryByRect" || this.mode == "QueryByPolygon") {
+        this.drawer.delete(e.features[0].id);
+        // 执行查询操作
+      }
+    },
+    handleRadiusUpdate(e) {
+      // this.drawer && this.drawer.changeMode("simple_select");
+      console.log("e", e);
+      console.log("center", e.center.geometry.coordinates);
     }
   }
 };
