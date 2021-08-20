@@ -3,6 +3,7 @@
     <ThemePanel
         v-if="!resetPanel"
         v-show="showPanelFlag"
+        ref="themePanel"
         :title="title"
         :data-source="dataSource"
         :fields="fields"
@@ -576,6 +577,12 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
+      if(!window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType)
+        || (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
+          !window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("text-field"))
+      ){
+        this.$refs.themePanel.labelSelectValue = "";
+      }
       this.$_getDataFromLocal(dataSource);
       this.$nextTick(function () {
         this.dataInit = true;
@@ -614,8 +621,8 @@ export default {
             },
             paint: {
               'circle-color': fillColors, //颜色
-              'circle-opacity': this.opacity, //透明度
-              'circle-stroke-opacity': this.outerLineOpacity, //透明度
+              'circle-opacity': this.opacity > 1 ? this.opacity / 100 : this.opacity, //透明度
+              'circle-stroke-opacity': this.outerLineOpacity > 1 ? this.outerLineOpacity / 100 : this.outerLineOpacity, //透明度
               'circle-radius': this.radius, //透明度
               'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
               'circle-stroke-width': this.lineWidth,

@@ -271,7 +271,7 @@
                   v-model="yOffset"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'circle'">
+          <mapgis-ui-row style="margin-top: 8px;" v-if="dataType === 'circle' || dataType === 'fill'">
             <p class="theme-panel-p">外边线颜色</p>
           </mapgis-ui-row>
           <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
@@ -313,10 +313,10 @@
               <mapgis-ui-input-number class="theme-panel-input-number" v-model="outerLineOpacity"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'line'">
+          <mapgis-ui-row v-if="dataType === 'line' || dataType === 'fill'">
             <p class="theme-panel-p">线样式</p>
           </mapgis-ui-row>
-          <mapgis-ui-row v-if="dataType === 'line'">
+          <mapgis-ui-row v-if="dataType === 'line' || dataType === 'fill'">
             <mapgis-ui-select
                 :default-value="'theme-panel-line-zero'"
                 class="theme-panel-select"

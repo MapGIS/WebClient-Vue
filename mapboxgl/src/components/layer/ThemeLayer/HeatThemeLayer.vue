@@ -124,11 +124,12 @@ export default {
           if (this.source_vector_layer_Id) {
             window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
           }
-          this.extraLayer.push({
+          let extraLayer = [];
+          extraLayer.push({
             key: "heatmapLayer",
             value: this.heatMapLayerId
           });
-          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = this.extraLayer;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = extraLayer;
           this.title = "热力专题图" + "_" + this.layerIdCopy;
           window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName()];
         }

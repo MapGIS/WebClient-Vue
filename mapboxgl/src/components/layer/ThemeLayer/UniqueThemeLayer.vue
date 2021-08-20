@@ -359,7 +359,7 @@ export default {
               'circle-radius': this.radius, //透明度
               'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
               'circle-stroke-width': this.lineWidth,
-              'circle-translate': this.offset,
+              'circle-translate': [this.offset[0],this.offset[1]],
             },
             minzoom: minzoom,
             maxzoom: maxzoom
