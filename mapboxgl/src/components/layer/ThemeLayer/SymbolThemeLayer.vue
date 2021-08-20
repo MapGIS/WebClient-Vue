@@ -293,8 +293,8 @@ export default {
         this.$_removeIcon();
         this.rangeLevel--;
         this.addRange = true;
-        this.dataSourceCopy.splice(index,1);
-        this.dataSource = this.dataSourceCopy;
+        this.dataSourceCopy.splice(index - 1,1);
+        this.$_setDataSource();
         this.checkBoxArr.splice(index,1);
         this.radiusArr.splice(index,1);
         window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.radiusArr = this.radiusArr;
@@ -332,7 +332,7 @@ export default {
         if( startData < endData){
           let addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index + 1,0,addNum);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
           this.checkBoxArr.splice(index + 1,0,true);
           this.rangeLevel++;
@@ -342,7 +342,7 @@ export default {
         this.checkBoxArr.push(true);
         this.radiusArr.splice(index + 1,0,this.radiusArr[index]);
         this.dataSourceCopy.push(addNum);
-        this.dataSource = this.dataSourceCopy;
+        this.$_setDataSource();
         this.endData = addNum;
         this.rangeLevel++;
       }
