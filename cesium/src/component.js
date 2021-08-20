@@ -59,3 +59,8 @@ export { default as Fill } from "./components/Analysis/Fill";
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
 export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
+
+
+export { default as Mapgis3dRainEffect } from "./components/UI/SceneEffect/RainEffect";
+export { default as Mapgis3dSnowEffect } from "./components/UI/SceneEffect/SnowEffect";
+export { default as Mapgis3dFogEffect } from "./components/UI/SceneEffect/FogEffect";
