@@ -54,6 +54,7 @@
             </mapgis-ui-select>
           </mapgis-ui-form-model-item>
         </mapgis-ui-form-model>
+        <p style="color:#999999;">若表格显示异常（乱码或格式不对），请调整编码格式和分隔符</p>
         <mapgis-ui-table :columns="columns" :data-source="tableData" bordered :scroll="{ x: 1500, y: 300 }" :pagination="false">
         </mapgis-ui-table>
       </div>
