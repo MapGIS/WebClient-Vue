@@ -10,6 +10,7 @@
           read-only
           enter-button
           placeholder="请选择云盘路径"
+          @click="handleSaveModal"
           @search="handleSaveModal"
         />
       </mapgis-ui-col>
