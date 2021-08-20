@@ -325,7 +325,7 @@
                   a.some(function(e) {
                     return !!t[e] && -1 !== s[e].indexOf(t.type);
                   }) &&
-                    ((t.bbox = c(t).bbox()), this.update(t));
+                  ((t.bbox = c(t).bbox()), this.update(t));
               });
             });
         },
@@ -378,7 +378,9 @@
               try {
                 n = i.parse(e);
               } catch (e) {
-                var r = e.message.match(/line (\d+)/);
+                // var r = e.message.match(/line (\d+)/);
+                var reg = new RegExp("line (\\d+)");
+                var r = e.message.match(reg);
                 return [
                   { line: parseInt(r[1], 10) - 1, message: e.message, error: e }
                 ];
@@ -1160,14 +1162,22 @@
                     var a = i.length - 1;
                     switch (r) {
                       case 1:
+                        // this.$ = e
+                        //   .replace(/\\(\\|")/g, "$1")
+                        //   .replace(/\\n/g, "\n")
+                        //   .replace(/\\r/g, "\r")
+                        //   .replace(/\\t/g, "\t")
+                        //   .replace(/\\v/g, "\v")
+                        //   .replace(/\\f/g, "\f")
+                        //   .replace(/\\b/g, "\b");
                         this.$ = e
-                          .replace(/\\(\\|")/g, "$1")
-                          .replace(/\\n/g, "\n")
-                          .replace(/\\r/g, "\r")
-                          .replace(/\\t/g, "\t")
-                          .replace(/\\v/g, "\v")
-                          .replace(/\\f/g, "\f")
-                          .replace(/\\b/g, "\b");
+                          .replace(new RegExp('\\\\(\\\\|")', "g"), "$1")
+                          .replace(new RegExp("\\\\n", "g"), "\n")
+                          .replace(new RegExp("\\\\r", "g"), "\r")
+                          .replace(new RegExp("\\\\t", "g"), "\t")
+                          .replace(new RegExp("\\\\v", "g"), "\v")
+                          .replace(new RegExp("\\\\f", "g"), "\f")
+                          .replace(new RegExp("\\\\b", "g"), "\b");
                         break;
                       case 2:
                         this.$ = Number(e);
@@ -1519,7 +1529,8 @@
                       this.offset++,
                       (this.match += e),
                       (this.matched += e),
-                      e.match(/(?:\r\n?|\n).*/g)
+                      // e.match(/(?:\r\n?|\n).*/g)
+                      e.match(new RegExp("(?:\\r\\n?|\\n).*", "g"))
                         ? (this.yylineno++, this.yylloc.last_line++)
                         : this.yylloc.last_column++,
                       this.options.ranges && this.yylloc.range[1]++,
@@ -1529,14 +1540,17 @@
                   },
                   unput: function(e) {
                     var t = e.length,
-                      n = e.split(/(?:\r\n?|\n)/g);
+                      // n = e.split(/(?:\r\n?|\n)/g);
+                      n = e.split(new RegExp("(?:\\r\\n?|\\n)", "g"));
                     (this._input = e + this._input),
                       (this.yytext = this.yytext.substr(
                         0,
                         this.yytext.length - t
                       )),
                       (this.offset -= t);
-                    var o = this.match.split(/(?:\r\n?|\n)/g);
+                    var o = this.match.split(
+                      new RegExp("(?:\\r\\n?|\\n)", "g")
+                    );
                     (this.match = this.match.substr(0, this.match.length - 1)),
                       (this.matched = this.matched.substr(
                         0,
@@ -1587,7 +1601,7 @@
                     );
                     return (
                       (20 < e.length ? "..." : "") +
-                      e.substr(-20).replace(/\n/g, "")
+                      e.substr(-20).replace(new RegExp("\\n", "g"), "")
                     );
                   },
                   upcomingInput: function() {
@@ -1596,7 +1610,7 @@
                       e.length < 20 &&
                         (e += this._input.substr(0, 20 - e.length)),
                       (e.substr(0, 20) + (20 < e.length ? "..." : "")).replace(
-                        /\n/g,
+                        new RegExp("\\n", "g"),
                         ""
                       )
                     );
@@ -1632,7 +1646,8 @@
                         }),
                         this.options.ranges &&
                           (r.yylloc.range = this.yylloc.range.slice(0))),
-                      (o = e[0].match(/(?:\r\n?|\n).*/g)) &&
+                      // (o = e[0].match(/(?:\r\n?|\n).*/g)) &&
+                      (o = e[0].match(new RegExp("(?:\\r\\n?|\\n).*", "g"))) &&
                         (this.yylineno += o.length),
                       (this.yylloc = {
                         first_line: this.yylloc.last_line,
@@ -1640,7 +1655,8 @@
                         first_column: this.yylloc.last_column,
                         last_column: o
                           ? o[o.length - 1].length -
-                            o[o.length - 1].match(/\r?\n?/)[0].length
+                            o[o.length - 1].match(new RegExp("\\r?\\n?"))[0]
+                              .length
                           : this.yylloc.last_column + e[0].length
                       }),
                       (this.yytext += e[0]),
@@ -1844,8 +1860,10 @@
               p = "[object WeakMap]",
               N = "[object ArrayBuffer]",
               A = "[object DataView]",
-              f = /^\[object .+?Constructor\]$/,
-              h = /^(?:0|[1-9]\d*)$/,
+              // f = /^\[object .+?Constructor\]$/,
+              f = new RegExp("^\\[object .+?Constructor\\]$"),
+              // h = /^(?:0|[1-9]\d*)$/,
+              h = new RegExp("^(?:0|[1-9]\\d*)$"),
               t = {};
             (t["[object Float32Array]"] = t["[object Float64Array]"] = t[
               "[object Int8Array]"
@@ -1908,16 +1926,24 @@
               X = y["__core-js_shared__"],
               K = q.toString,
               W = Y.hasOwnProperty,
-              H = (B = /[^.]+$/.exec((X && X.keys && X.keys.IE_PROTO) || ""))
+              // H = (B = /[^.]+$/.exec((X && X.keys && X.keys.IE_PROTO) || ""))
+              //   ? "Symbol(src)_1." + B
+              //   : "",
+              H = (B = new RegExp("[^.]+$").exec(
+                (X && X.keys && X.keys.IE_PROTO) || ""
+              ))
                 ? "Symbol(src)_1." + B
                 : "",
               Z = Y.toString,
               Q = RegExp(
                 "^" +
                   K.call(W)
-                    .replace(/[\\^$.*+?()[\]{}|]/g, "\\$&")
+                    .replace(new RegExp("[\\\\^$.*+?()[\\]{}|]", "g"), "\\$&")
                     .replace(
-                      /hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,
+                      new RegExp(
+                        "hasOwnProperty|(function).*?(?=\\\\\\()| for .+?(?=\\\\\\])",
+                        "g"
+                      ),
                       "$1.*?"
                     ) +
                   "$"
@@ -3852,24 +3878,24 @@
             isShiftMousedown: function(e) {
               return (
                 !!e.originalEvent &&
-                !!e.originalEvent.shiftKey && 0 === e.originalEvent.button
+                !!e.originalEvent.shiftKey &&
+                0 === e.originalEvent.button
               );
             },
             isActiveFeature: function(e) {
               return (
                 !!e.featureTarget &&
                 !!e.featureTarget.properties &&
-                  e.featureTarget.properties.active === o.activeStates.ACTIVE &&
-                    e.featureTarget.properties.meta === o.meta.FEATURE
+                e.featureTarget.properties.active === o.activeStates.ACTIVE &&
+                e.featureTarget.properties.meta === o.meta.FEATURE
               );
             },
             isInactiveFeature: function(e) {
               return (
                 !!e.featureTarget &&
                 !!e.featureTarget.properties &&
-                  e.featureTarget.properties.active ===
-                    o.activeStates.INACTIVE &&
-                    e.featureTarget.properties.meta === o.meta.FEATURE
+                e.featureTarget.properties.active === o.activeStates.INACTIVE &&
+                e.featureTarget.properties.meta === o.meta.FEATURE
               );
             },
             noTarget: function(e) {
@@ -3879,7 +3905,7 @@
               return (
                 !!e.featureTarget &&
                 !!e.featureTarget.properties &&
-                  e.featureTarget.properties.meta === o.meta.FEATURE
+                e.featureTarget.properties.meta === o.meta.FEATURE
               );
             },
             isVertex: function(e) {
@@ -6145,18 +6171,14 @@
                 return s(e, "cold");
               }),
               i &&
-                o.ctx.map
-                  .getSource(u.sources.COLD)
-                  .setData({
-                    type: u.geojsonTypes.FEATURE_COLLECTION,
-                    features: o.sources.cold
-                  }),
-              o.ctx.map
-                .getSource(u.sources.HOT)
-                .setData({
+                o.ctx.map.getSource(u.sources.COLD).setData({
                   type: u.geojsonTypes.FEATURE_COLLECTION,
-                  features: o.sources.hot
+                  features: o.sources.cold
                 }),
+              o.ctx.map.getSource(u.sources.HOT).setData({
+                type: u.geojsonTypes.FEATURE_COLLECTION,
+                features: o.sources.hot
+              }),
               o._emitSelectionChange &&
                 (o.ctx.map.fire(u.events.SELECTION_CHANGE, {
                   features: o.getSelected().map(function(e) {

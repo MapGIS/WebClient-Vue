@@ -294,7 +294,10 @@ MTLLoader.MaterialCreator.prototype = {
       if (typeof url !== "string" || url === "") return "";
 
       // Absolute URL
-      if (/^https?:\/\//i.test(url)) return url;
+
+      // if (/^https?:\/\//i.test(url)) return url;
+      const regExp = new RegExp("^https?:\\/\\/", "i");
+      if (regExp.test(url)) return url;
 
       return baseUrl + url;
     }
@@ -395,7 +398,8 @@ MTLLoader.MaterialCreator.prototype = {
       offset: new THREE.Vector2(0, 0)
     };
 
-    var items = value.split(/\s+/);
+    // var items = value.split(/\s+/);
+    var items = value.split(new RegExp("\\s+"));
     var pos;
 
     pos = items.indexOf("-bm");

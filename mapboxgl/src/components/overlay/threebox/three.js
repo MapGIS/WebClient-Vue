@@ -1495,34 +1495,55 @@
   }
   function Xe(a, b) {
     return a
-      .replace(/NUM_DIR_LIGHTS/g, b.numDirLights)
-      .replace(/NUM_SPOT_LIGHTS/g, b.numSpotLights)
-      .replace(/NUM_RECT_AREA_LIGHTS/g, b.numRectAreaLights)
-      .replace(/NUM_POINT_LIGHTS/g, b.numPointLights)
-      .replace(/NUM_HEMI_LIGHTS/g, b.numHemiLights);
+      .replace(new RegExp("NUM_DIR_LIGHTS", "g"), b.numDirLights)
+      .replace(new RegExp("NUM_SPOT_LIGHTS", "g"), b.numSpotLights)
+      .replace(new RegExp("NUM_RECT_AREA_LIGHTS", "g"), b.numRectAreaLights)
+      .replace(new RegExp("NUM_POINT_LIGHTS", "g"), b.numPointLights)
+      .replace(new RegExp("NUM_HEMI_LIGHTS", "g"), b.numHemiLights);
+    // return a
+    //   .replace(/NUM_DIR_LIGHTS/g, b.numDirLights)
+    //   .replace(/NUM_SPOT_LIGHTS/g, b.numSpotLights)
+    //   .replace(/NUM_RECT_AREA_LIGHTS/g, b.numRectAreaLights)
+    //   .replace(/NUM_POINT_LIGHTS/g, b.numPointLights)
+    //   .replace(/NUM_HEMI_LIGHTS/g, b.numHemiLights);
   }
   function Ye(a, b) {
     return a
-      .replace(/NUM_CLIPPING_PLANES/g, b.numClippingPlanes)
+      .replace(new RegExp("NUM_CLIPPING_PLANES", "g"), b.numClippingPlanes)
       .replace(
-        /UNION_CLIPPING_PLANES/g,
+        new RegExp("UNION_CLIPPING_PLANES", "g"),
         b.numClippingPlanes - b.numClipIntersection
       );
+    // return a
+    //   .replace(/NUM_CLIPPING_PLANES/g, b.numClippingPlanes)
+    //   .replace(
+    //     /UNION_CLIPPING_PLANES/g,
+    //     b.numClippingPlanes - b.numClipIntersection
+    //   );
   }
   function Zd(a) {
-    return a.replace(/^[ \t]*#include +<([\w\d.]+)>/gm, function(a, c) {
-      a = S[c];
-      if (void 0 === a) throw Error("Can not resolve #include <" + c + ">");
-      return Zd(a);
-    });
+    // return a.replace(/^[ \t]*#include +<([\w\d.]+)>/gm, function(a, c) {
+    return a.replace(
+      new RegExp("^[ \\t]*#include +<([\\w\\d.]+)>", "gm"),
+      function(a, c) {
+        a = S[c];
+        if (void 0 === a) throw Error("Can not resolve #include <" + c + ">");
+        return Zd(a);
+      }
+    );
   }
   function Ze(a) {
+    //  /#pragma unroll_loop[\s]+?for \( int i = (\d+); i < (\d+); i \+\+ \) \{([\s\S]+?)(?=\})\}/g
     return a.replace(
-      /#pragma unroll_loop[\s]+?for \( int i = (\d+); i < (\d+); i \+\+ \) \{([\s\S]+?)(?=\})\}/g,
+      new RegExp(
+        "#pragma unroll_loop[\\s]+?for \\( int i = (\\d+); i < (\\d+); i \\+\\+ \\) \\{([\\s\\S]+?)(?=\\})\\}",
+        "g"
+      ),
       function(a, c, d, e) {
         a = "";
         for (c = parseInt(c); c < parseInt(d); c++)
-          a += e.replace(/\[ i \]/g, "[ " + c + " ]");
+          // a += e.replace(/\[ i \]/g, "[ " + c + " ]");
+          a += e.replace(new RegExp("\\[ i \\]", "g"), "[ " + c + " ]");
         return a;
       }
     );
@@ -20135,18 +20156,17 @@
         for (var g = a.length; b < g; b++) {
           var h = a[b],
             l = h.url;
+          const reg = new RegExp("^(\\/\\/)|([a-z]+:(\\/\\/)?)", "i");
           if (Array.isArray(l)) {
             e[h.uuid] = [];
             for (var k = 0, p = l.length; k < p; k++) {
               var n = l[k];
-              n = /^(\/\/)|([a-z]+:(\/\/)?)/i.test(n) ? n : d.texturePath + n;
+              // n = /^(\/\/)|([a-z]+:(\/\/)?)/i.test(n) ? n : d.texturePath + n;
+              n = reg.test(n) ? n : d.texturePath + n;
               e[h.uuid].push(c(n));
             }
           } else
-            (n = /^(\/\/)|([a-z]+:(\/\/)?)/i.test(h.url)
-              ? h.url
-              : d.texturePath + h.url),
-              (e[h.uuid] = c(n));
+            reg.test(h.url) ? h.url : d.texturePath + h.url, (e[h.uuid] = c(n));
         }
       }
       return e;
