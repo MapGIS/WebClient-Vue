@@ -1250,9 +1250,13 @@ export default {
     },
     $_lineStyleChanged(lineStyle) {
       if (this.dataType === "fill") {
+        let value = [];
+        for (let i = 0; i < lineStyle.value.length; i++) {
+          value.push(lineStyle.value[i]);
+        }
         this.$_setPaintProperty(
           "line-dasharray",
-          [lineStyle.value[0], lineStyle.value[1]],
+            value,
           this.layerIdCopy + "_" + this.$_getThemeName() + "_线",
           window.originLayer[this.layerIdCopy][
             this.layerIdCopy + "_" + this.$_getThemeName() + "_线"
@@ -2129,10 +2133,17 @@ export default {
       }
       return colors;
     },
+    $_setDataSource(){
+      let data = [];
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        data.push(this.dataSourceCopy[i]);
+      }
+      this.dataSource = data;
+    },
     $_getData(features, value) {
       let datas = [];
       for (let i = 0; i < features.length; i++) {
-        if (features[i].properties[value] !== "") {
+        if (features[i].properties[value] !== "" && features[i].properties[value] !== undefined && features[i].properties[value] !== null) {
           datas.push(features[i].properties[value]);
         }
       }
@@ -2498,7 +2509,7 @@ export default {
               valueArr = [];
             for (let i = 0; i < features.length; i++) {
               let value = features[i].properties[this.selectKey];
-              if (value && valueArr.indexOf(Number(value)) < 0) {
+              if (value !== "" && value !== undefined && value !== null && valueArr.indexOf(Number(value)) < 0) {
                 valueArr.push(Number(value));
               }
             }

@@ -670,10 +670,10 @@
                   v-model="fontSize"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType !== 'line'">
             <p class="theme-panel-p">x轴偏移</p>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType !== 'line'">
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="xOffsetTextMin"
@@ -691,10 +691,10 @@
                   v-model="xOffsetText"/>
             </mapgis-ui-col>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType !== 'line'">
             <p class="theme-panel-p">y轴偏移</p>
           </mapgis-ui-row>
-          <mapgis-ui-row>
+          <mapgis-ui-row v-if="dataType !== 'line'">
             <mapgis-ui-col :span="18">
               <mapgis-ui-slider
                   :min="yOffsetTextMin"

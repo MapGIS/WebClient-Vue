@@ -176,7 +176,9 @@ export default {
               }else if(layerOrder[i] === originLayerId + "_热力专题图"){
                 vm.importArr.push(originLayerId + "heatmap");
               }
-              vm.map.addLayer(window.originLayer[originLayerId][layerOrder[i]],beforeLayer);
+              if(!vm.map.getLayer(window.originLayer[originLayerId][layerOrder[i]])){
+                vm.map.addLayer(window.originLayer[originLayerId][layerOrder[i]],beforeLayer);
+              }
             }
           }
           for (let i =0;i< originLayerIds.length;i++){
@@ -235,14 +237,17 @@ export default {
       let allLayer = {...window.originLayer}, newAllLayer = {};
       Object.keys(allLayer).forEach(function (key) {
         if (allLayer[key] instanceof Array) {
-          newAllLayer[key] = allLayer[key];
+          newAllLayer[key] = [];
+          for (let i = 0;i < allLayer[key].length;i++){
+            newAllLayer[key].push(allLayer[key][i]);
+          }
         } else if (allLayer[key] instanceof Object) {
           newAllLayer[key] = {};
           Object.keys(allLayer[key]).forEach(function (layerKey) {
             if (allLayer[key].hasOwnProperty(layerKey) && layerKey.indexOf("_features") < 0) {
               newAllLayer[key][layerKey] = {};
               Object.keys(allLayer[key][layerKey]).forEach(function (paintKey) {
-                if(paintKey.indexOf("_") < 0){
+                if(paintKey.indexOf("_") < 0 && typeof allLayer[key][layerKey][paintKey] !== "function"){
                   newAllLayer[key][layerKey][paintKey] = allLayer[key][layerKey][paintKey];
                 }
               });

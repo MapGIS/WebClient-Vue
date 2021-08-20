@@ -228,24 +228,24 @@ export default {
         this.addRange = true;
         if(index === 0){
           this.dataSourceCopy.splice(index,1);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.startData,this.dataSourceCopy[index]);
           this.rangeLevel--;
         }else if(index < this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index,1);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],this.dataSourceCopy[index]);
           this.rangeLevel--;
         }else if(index === this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index - 1,1);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 2],this.dataSourceCopy[index - 1]);
+          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 2],this.dataSourceCopy[index - 1],false,true);
           this.rangeLevel--;
         }
         this.$nextTick(function () {
@@ -266,7 +266,7 @@ export default {
       }
       let endData,addNum;
       if(this.dataSourceCopy.length === 2){
-        endData = Number(this.dataSourceCopy[0]);
+        endData = Number(this.dataSourceCopy[1]);
       }else if(index < this.dataSourceCopy.length) {
         endData = Number(this.dataSourceCopy[index]);
       }
@@ -274,7 +274,7 @@ export default {
         if( startData < endData){
           addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index,0,addNum);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
@@ -286,7 +286,7 @@ export default {
         this.colors.push(this.colors[index]);
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
-        this.dataSource = this.dataSourceCopy;
+        this.$_setDataSource();
         this.endData = addNum;
         this.rangeLevel++;
       }
@@ -470,10 +470,16 @@ export default {
         endData: Number(endData)
       }
     },
-    $_setRangeColor(color,startData,endData,noPaint){
+    $_setRangeColor(color,startData,endData,noPaint,useEndData){
       let paintColor = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"];
       let length = (paintColor.length - 1)/2;
       for (let i = 0;i <length;i++){
+        let flag;
+        if(useEndData){
+          flag = paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] <= endData;
+        }else {
+          flag = paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData;
+        }
         if(paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData){
           if(i === 0){
             paintColor.splice(2,1,color);
