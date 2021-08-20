@@ -10,7 +10,7 @@
   @include e(group, "-") {
     width: fit-content;
     padding: 0px 12px;
-    border-right: 1px solid #e6e6e6;
+    border-right: 1px solid $shadow;
 
     &-tools {
       height: 64px;
@@ -26,8 +26,8 @@
       text-overflow: ellipsis;
       overflow: hidden;
       width: 99%;
-      color: rgba(0, 0, 0, 0.6);
-      border-top: 1px solid #e6e6e6;
+      color: $primary-5;
+      border-top: 1px solid shadow;
     }
   }
 

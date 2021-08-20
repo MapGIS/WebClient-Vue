@@ -14,6 +14,78 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       value: 0,
+      ribbons: [
+        {
+          "title": "地图文档",
+          "children": [
+            {
+              "title": "地图工程",
+              "type": "mapgis-ui-ribbon-group",
+              "children": [
+                {
+                  "title": "打开工程",
+                  "type": "mapgis-ui-ribbon-command",
+                  "icon": "mapgis-daoru",
+                  "enable": true,
+                  "action": "DOCUMENT_FROM_IMPORT"
+                },
+                {
+                  "title": "导出工程",
+                  "type": "mapgis-ui-ribbon-command",
+                  "icon": "mapgis-daochu",
+                  "enable": true,
+                  "action": "DOCUMENT_FROM_EXPORT"
+                }
+              ]
+            },
+            {
+              "title": "地图资源",
+              "type": "mapgis-ui-ribbon-group",
+              "children": [
+                {
+                  "title": "从文件添加",
+                  "type": "mapgis-ui-ribbon-command",
+                  "icon": "mapgis-tianjiawenjian",
+                  "enable": true,
+                  "action": "ADD_FROM_FILE"
+                },
+                {
+                  "title": "从云盘添加",
+                  "type": "mapgis-ui-ribbon-command",
+                  "icon": "mapgis-dianyunfenxi",
+                  "enable": true,
+                  "action": "ADD_FROM_CLOUDDISK"
+                },
+                {
+                  "title": "从门户添加",
+                  "type": "mapgis-ui-ribbon-command",
+                  "icon": "mapgis-tianjiafuwutuceng",
+                  "enable": true,
+                  "action": "ADD_FROM_PORTAL"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "打印设置",
+          "children": [
+            {
+              "title": "地图工程",
+              "type": "mapgis-ui-ribbon-group",
+              "children": [
+                {
+                  "title": "打印出图",
+                  "type": "mapgis-ui-ribbon-command",
+                  "icon": "mapgis-dayinP",
+                  "enable": true,
+                  "action": "DOCUMENT_FROM_IMPORT"
+                }
+              ]
+            }
+          ]
+        }
+      ]      
     };
   },
   template: `<mapgis-ui-layout-pro>
@@ -32,10 +104,31 @@ const Template = (args, { argTypes }) => ({
           nav 2
         </mapgis-ui-menu-item>
         <mapgis-ui-menu-item key="3">
-          nav 3
+        <mapgis-ui-iconfont type="mapgis-daoru" /> 
+        nav 3
         </mapgis-ui-menu-item>
       </mapgis-ui-menu>
       </template>
+      <template slot="ribbon" class="mapgis-pro-ribbon">
+        <mapgis-ui-tabs size="small">
+        <mapgis-ui-tab-pane
+          :key="i"
+          :tab="r.title"
+          v-for="(r, i) in ribbons"
+          class="mapgis-ui-ribbon-multi-group"
+        >
+          <mapgis-ui-ribbon-group
+            v-for="(g, j) in r.children"
+            :key="j"
+            :title="g.title"
+          >
+            <template v-for="(c, k) in g.children">
+              <component :is="c.type" v-bind="c" :key="k" />
+            </template>
+          </mapgis-ui-ribbon-group>
+        </mapgis-ui-tab-pane>
+      </mapgis-ui-tabs>
+    </template>
     </mapgis-ui-layout-pro>`,
 });
 

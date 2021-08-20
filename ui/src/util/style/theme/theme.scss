@@ -748,7 +748,7 @@ $content-background: var(--content-background);
 
 // Pro
 $ribbon-background: var(--ribbon-background);
-$ribbon-border-background: fade($ribbon-background, 60%);
+$ribbon-border-background: $shadow;
 
 // Navs
 $nav-content-backgroud: var(--nav-background);

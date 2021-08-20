@@ -48,7 +48,7 @@
     "popupBackground": "#383838",
     "popoverBackground": "#383838",
     "modalBackground": "#242424",
-    "ribbonBackground": "#222222",
+    "ribbonBackground": "#383838",
     "messageBackground": "#535353",
     "radioInnerDisabledBg": "rgba(255, 255, 255, 0.12)",
     "collapseCardHeaderBg": "#4a4a4a",

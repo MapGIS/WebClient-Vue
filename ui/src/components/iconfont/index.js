@@ -1,2 +1,6 @@
-import MapgisIconfont from "./IconFont.vue";
+import MapgisIconfont from "./Icon.vue";
+// import MapgisIconfont from "./IconFont.vue";
+
 export { MapgisIconfont };
+
+
