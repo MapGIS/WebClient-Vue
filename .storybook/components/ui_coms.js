@@ -1,7 +1,5 @@
 import "ant-design-vue/dist/antd.css";
 
-export { MapgisIconfont } from "../../mapboxgl/src/components/UI/iconfont";
-
 import { default as Slider } from "ant-design-vue/es/slider";
 
 import { default as InputNumber } from "ant-design-vue/es/input-number";

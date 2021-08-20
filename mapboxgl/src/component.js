@@ -34,6 +34,7 @@ export { default as MapgisInspect } from "./components/UI/controls/inspect/Inspe
 
 export { default as MapgisArrayLayer } from "./components/layer/ArrayLayer";
 // export { default as MapgisGeojsonLayer } from "./components/layer/GeojsonManagerLayer";
+export { default as MapgisGeojsonLayer } from "./components/layer/GeojsonLayer.vue";
 export { default as MapgisImageLayer } from "./components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "./components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
