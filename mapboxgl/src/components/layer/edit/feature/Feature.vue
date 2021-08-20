@@ -20,6 +20,8 @@
         :rule="r"
         :layerid="layerid"
         class="mapgis-mvt-editor-feature"
+        :minimum="r.minimum || 0"
+        :maximum="r.maximum || 1000"
         @edit-change="onEditChange"
       />
       <numberarray
