@@ -1,42 +1,6 @@
 <template>
   <div class="mapgis-inspect-content">
-    <slot :currentLayerInfo="currentLayerInfo" name="content">
-      <div class="mapgis-inspect-prop-tabs">
-        <mapgis-ui-tabs
-          v-model="activeKey"
-          :style="{ height: '240px' }"
-          size="small"
-          :active-key="activeKey"
-          :tab-position="tabPosition"
-          @tabClick="changePane"
-        >
-          <mapgis-ui-tab-pane
-            class="mapgis-inspect-prop-content"
-            v-for="(f, i) in currentLayerInfo"
-            :key="i"
-          >
-            <div slot="tab" class="mapgis-inspect-layer-name">
-              <mapgis-ui-tooltip :title="f.layer.id">
-                <span>
-                  {{ f.layer.id.substr(0, 12) }}
-                </span>
-              </mapgis-ui-tooltip>
-            </div>
-            <div
-              v-for="(value, key) in f.properties"
-              class="mapgis-inspect-prop-style"
-              :key="key"
-            >
-              <div class="mapgis-inspect-prop-key">
-                <span style="padding-right: 5px">{{ key }}</span>
-              </div>
-              <div>{{ value }} ({{ typeof value }})</div>
-            </div>
-            <br />
-          </mapgis-ui-tab-pane>
-        </mapgis-ui-tabs>
-      </div>
-    </slot>
+    <Popup :mode="clickMode" :currentLayerInfo="currentLayerInfo" />
   </div>
 </template>
 
@@ -46,10 +10,14 @@ import cloneDeep from "lodash.clonedeep";
 import mapboxgl from "@mapgis/mapbox-gl";
 const MapboxInspect = require("mapbox-gl-inspect");
 const { Convert } = VectorTile;
+import Popup from "../../../layer/geojson/Popup.vue";
 
 export default {
   name: "mapgis-inspect",
   inject: ["map", "mapbox"],
+  components: {
+    Popup
+  },
   mounted() {
     this.enableInspect();
   },
@@ -60,6 +28,12 @@ export default {
     },
     document: {
       type: Object
+    },
+    title: {
+      type: String
+    },
+    fields: {
+      type: Array
     }
   },
   watch: {
@@ -99,6 +73,7 @@ export default {
   },
   data() {
     return {
+      clickMode: "click",
       currentLayerInfo: [],
       tabPosition: "left",
       activeKey: "",
@@ -116,7 +91,7 @@ export default {
   methods: {
     enableInspect() {
       const vm = this;
-      const { map } = this;
+      const { map, title, fields } = this;
 
       if (!map || !map.getStyle()) {
         return;
@@ -136,7 +111,25 @@ export default {
         buildInspectStyle: (originalMapStyle, coloredLayers) =>
           vm.buildInspectStyle(originalMapStyle, coloredLayers, "", vm),
         renderPopup: features => {
-          vm.currentLayerInfo = features;
+          let fs = cloneDeep(features);
+          let newfeatrues = fs.map(f => {
+            let properties = f.properties;
+
+            if (fields) {
+              f.properties = {};
+              fields.forEach(field => {
+                f.properties[field] = properties[field];
+              });
+            }
+
+            if (title) {
+              f.title = properties[title];
+            }
+
+            return f;
+          });
+          console.log('newfeatrues', newfeatrues);
+          vm.currentLayerInfo = newfeatrues;
           return vm.$el;
         }
       });
@@ -206,64 +199,3 @@ export default {
   }
 };
 </script>
-<style>
-.mapgis-inspect-content {
-  position: absolute;
-  height: 240px;
-}
-
-.mapboxgl-popup-content {
-  height: 260px;
-  width: 360px;
-}
-
-.mapgis-inspect-prop-tabs {
-  max-width: 600px !important;
-  margin: 4px;
-}
-
-.mapboxgl-popup-content {
-  border-radius: 10px !important;
-}
-
-.mapgis-inspect-prop-content {
-  height: 240px;
-  width: 220px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  /* 针对火狐浏览器 */
-  scrollbar-color: transparent transparent;
-  scrollbar-width: thin;
-}
-
-.mapgis-inspect-layer-name {
-  width: 80px;
-}
-
-.mapboxgl-popup {
-  width: 360px;
-  /* min-width: 300px !important; */
-  /* max-width: 600px !important; */
-}
-
-.mapgis-inspect-prop-style {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 2px dotted #bccbd7;
-  padding: 5px;
-}
-
-.mapgis-inspect-prop-key {
-  font-weight: 700;
-  padding-right: 10px;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.mapgis-ui-tabs .mapgis-ui-tabs-left-bar .mapgis-ui-tabs-tab,
-.mapgis-ui-tabs .mapgis-ui-tabs-right-bar .mapgis-ui-tabs-tab {
-  padding: 9px !important;
-  margin: 0 0 10px 0 !important;
-  text-align: left !important;
-}
-</style>

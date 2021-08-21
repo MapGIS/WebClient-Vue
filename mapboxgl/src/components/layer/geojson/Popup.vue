@@ -1,49 +1,50 @@
 <template>
-  <div class="mapgis-geojsontool-content" ref="geojsontool">
+  <div class="mapgis-featuretool-content" ref="geojsontool">
     <div class="mapgis-inspect-prop-tabs">
       <mapgis-ui-tabs
-          v-if="mode === 'click'"
-          v-model="activeKey"
-          :style="{ height: '240px' }"
-          size="small"
-          :active-key="activeKey"
-          :tab-position="tabPosition">
+        v-if="mode === 'click'"
+        v-model="activeKey"
+        :style="{ height: '240px' }"
+        size="small"
+        :active-key="activeKey"
+        :tab-position="tabPosition"
+      >
         <mapgis-ui-tab-pane
-            class="mapgis-inspect-prop-content"
-            v-for="(f, i) in currentLayerInfo"
-            :key="i"
+          class="mapgis-inspect-prop-content"
+          v-for="(f, i) in currentLayerInfo"
+          :key="i"
         >
           <div slot="tab" class="mapgis-inspect-layer-name">
             <mapgis-ui-tooltip :title="f.layer.id">
-                        <span>
-                          {{ f.layer.id.substr(0, 12) }}
-                        </span>
+              <span>
+                {{ f.layer.id.substr(0, 12) }}
+              </span>
             </mapgis-ui-tooltip>
           </div>
-          <div>
-            {{f.title}}
+          <div class="mapgis-popup-content-title">
+            {{ f.title }}
           </div>
           <div
-              v-for="(value, key) in f.properties"
-              class="mapgis-inspect-prop-style"
-              :key="key"
+            v-for="(value, key) in f.properties"
+            class="mapgis-inspect-prop-style"
+            :key="key"
           >
             <div class="mapgis-inspect-prop-key">
               <span style="padding-right: 5px">{{ key }}</span>
             </div>
             <div>{{ value }} ({{ typeof value }})</div>
           </div>
-          <br/>
+          <br />
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
       <div v-else>
         <div>
-          {{f.title}}
+          {{ f.title }}
         </div>
         <div
-            v-for="(value, key) in f.properties"
-            class="mapgis-inspect-prop-style"
-            :key="key"
+          v-for="(value, key) in f.properties"
+          class="mapgis-inspect-prop-style"
+          :key="key"
         >
           <div class="mapgis-inspect-prop-key">
             <span style="padding-right: 5px">{{ key }}</span>
@@ -62,73 +63,55 @@ export default {
     outStyle: {
       type: Object,
       default: () => {
-       return { height: '120px', width: '240px'}
+        return { height: "120px", width: "240px" };
       }
     },
     mode: {
       type: String,
-      default: 'click'
+      default: "click"
     },
-      currentToolInfo: {
-        type: String,
-        default : "",
-      },
-      userProsChecked:  {
-        type: Array,
-        default : () => []
-      },
-      inspectActive: {
-        type: Boolean,
-        default: false
-      },
-      currentNum: {
-        type: String,
-        default: ''
-      },
-      currentLayerInfo: {
-        type: Array,
-        default : () => []
-      },
-      popupTitle:  {
-        type: String,
-        default: 'id'
-      },
-      hoveredStateId: {
-        type: Number,
-        default: -1
-      },
+    currentLayerInfo: {
+      type: Array,
+      default: () => []
+    }
   },
   data() {
     return {
       tabPosition: "top",
-      activeKey: "",
-    }
+      activeKey: ""
+    };
   }
-}
+};
 </script>
 
 <style>
-.mapgis-geojsontool-content {
-  position: absolute;
-  z-index: 1000;
+.mapboxgl-popup {
+  width: 300px;
 }
-.mapgis-inline {
-  display: inline-flex;
+
+.mapboxgl-popup-content {
+  width: 320px;
+  height: 260px;
+}
+
+.mapgis-inspect-content {
+  position: absolute;
+  width: 300px;
+  height: 240px; /* 此处不能屏蔽,不然初始化的时候会溢出 */
+}
+.mapgis-featuretool-content {
+  /* position: absolute; */
+  z-index: 1000;
+  /* width: 300px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
 }
 
 .mapgis-inspect-prop-tabs {
-  min-width: 320px !important;
-  max-width: 320px !important;
-}
-
-/deep/ .mapboxgl-popup-content {
-  height: unset !important;
-  width: unset !important;
+  width: 300px;
 }
 
 .mapgis-inspect-prop-content {
-  height: 240px;
-  width: 220px;
+  height: 220px;
+  width: 300px;
   overflow-x: hidden;
   overflow-y: scroll;
   /* 针对火狐浏览器 */
@@ -140,10 +123,8 @@ export default {
   width: 80px;
 }
 
-.mapboxgl-popup {
-  width: 360px;
-  /* min-width: 300px !important; */
-  /* max-width: 600px !important; */
+.mapgis-inline {
+  display: inline-flex;
 }
 
 .mapgis-inspect-prop-style {
