@@ -6,7 +6,6 @@
         v-model="activeKey"
         :style="{ height: '240px' }"
         size="small"
-        :active-key="activeKey"
         :tab-position="tabPosition"
       >
         <mapgis-ui-tab-pane
@@ -73,6 +72,11 @@ export default {
     currentLayerInfo: {
       type: Array,
       default: () => []
+    }
+  },
+  watch: {
+    activeKey(next) {
+      this.$emit('select-layer', next);
     }
   },
   data() {

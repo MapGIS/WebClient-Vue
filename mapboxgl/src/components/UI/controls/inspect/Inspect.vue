@@ -1,6 +1,10 @@
 <template>
   <div class="mapgis-inspect-content">
-    <Popup :mode="clickMode" :currentLayerInfo="currentLayerInfo" />
+    <Popup
+      :mode="clickMode"
+      :currentLayerInfo="currentLayerInfo"
+      @select-layer="changePane"
+    />
   </div>
 </template>
 
@@ -128,7 +132,7 @@ export default {
 
             return f;
           });
-          console.log('newfeatrues', newfeatrues);
+          
           vm.currentLayerInfo = newfeatrues;
           return vm.$el;
         }
@@ -174,6 +178,7 @@ export default {
         sources: sources,
         layers: [backgroundLayer].concat(coloredLayers)
       };
+      console.log('inspectStyle', inspectStyle);
       return inspectStyle;
     },
     recordStyle() {
