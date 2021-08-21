@@ -10,27 +10,41 @@ export const OBJLoader = function(manager) {
 
   this.regexp = {
     // v float float float
-    vertex_pattern: /^v\s+([\d|\.|\+|\-|e|E]+)\s+([\d|\.|\+|\-|e|E]+)\s+([\d|\.|\+|\-|e|E]+)/,
+    vertex_pattern: new RegExp(
+      "^v\\s+([\\d|\\.|\\+|\\-|e|E]+)\\s+([\\d|\\.|\\+|\\-|e|E]+)\\s+([\\d|\\.|\\+|\\-|e|E]+)"
+    ),
     // vn float float float
-    normal_pattern: /^vn\s+([\d|\.|\+|\-|e|E]+)\s+([\d|\.|\+|\-|e|E]+)\s+([\d|\.|\+|\-|e|E]+)/,
+    normal_pattern: new RegExp(
+      "^vn\\s+([\\d|\\.|\\+|\\-|e|E]+)\\s+([\\d|\\.|\\+|\\-|e|E]+)\\s+([\\d|\\.|\\+|\\-|e|E]+)"
+    ),
     // vt float float
-    uv_pattern: /^vt\s+([\d|\.|\+|\-|e|E]+)\s+([\d|\.|\+|\-|e|E]+)/,
+    uv_pattern: new RegExp(
+      "^vt\\s+([\\d|\\.|\\+|\\-|e|E]+)\\s+([\\d|\\.|\\+|\\-|e|E]+)"
+    ),
     // f vertex vertex vertex
-    face_vertex: /^f\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)(?:\s+(-?\d+))?/,
+    face_vertex: new RegExp(
+      "^f\\s+(-?\\d+)\\s+(-?\\d+)\\s+(-?\\d+)(?:\\s+(-?\\d+))?"
+    ),
     // f vertex/uv vertex/uv vertex/uv
-    face_vertex_uv: /^f\s+(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)(?:\s+(-?\d+)\/(-?\d+))?/,
+    face_vertex_uv: new RegExp(
+      "/^f\\s+(-?\\d+)\\/(-?\\d+)\\s+(-?\\d+)\\/(-?\\d+)\\s+(-?\\d+)\\/(-?\\d+)(?:\\s+(-?\\d+)\\/(-?\\d+))?"
+    ),
     // f vertex/uv/normal vertex/uv/normal vertex/uv/normal
-    face_vertex_uv_normal: /^f\s+(-?\d+)\/(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\/(-?\d+)\s+(-?\d+)\/(-?\d+)\/(-?\d+)(?:\s+(-?\d+)\/(-?\d+)\/(-?\d+))?/,
+    face_vertex_uv_normal: new RegExp(
+      "^f\\s+(-?\\d+)\\/(-?\\d+)\\/(-?\\d+)\\s+(-?\\d+)\\/(-?\\d+)\\/(-?\\d+)\\s+(-?\\d+)\\/(-?\\d+)\\/(-?\\d+)(?:\\s+(-?\\d+)\\/(-?\\d+)\\/(-?\\d+))?"
+    ),
     // f vertex//normal vertex//normal vertex//normal
-    face_vertex_normal: /^f\s+(-?\d+)\/\/(-?\d+)\s+(-?\d+)\/\/(-?\d+)\s+(-?\d+)\/\/(-?\d+)(?:\s+(-?\d+)\/\/(-?\d+))?/,
+    face_vertex_normal: new RegExp(
+      "^f\\s+(-?\\d+)\\/\\/(-?\\d+)\\s+(-?\\d+)\\/\\/(-?\\d+)\\s+(-?\\d+)\\/\\/(-?\\d+)(?:\\s+(-?\\d+)\\/\\/(-?\\d+))?"
+    ),
     // o object_name | g group_name
-    object_pattern: /^[og]\s*(.+)?/,
+    object_pattern: new RegExp("^[og]\\s*(.+)?"),
     // s boolean
-    smoothing_pattern: /^s\s+(\d+|on|off)/,
+    smoothing_pattern: new RegExp("^s\\s+(\\d+|on|off)"),
     // mtllib file_reference
-    material_library_pattern: /^mtllib /,
+    material_library_pattern: new RegExp("^mtllib "),
     // usemtl material_name
-    material_use_pattern: /^usemtl /
+    material_use_pattern: new RegExp("^usemtl ")
   };
 };
 
@@ -367,10 +381,12 @@ OBJLoader.prototype = {
 
     if (text.indexOf("\\\n") !== -1) {
       // join lines separated by a line continuation character (\)
-      text = text.replace(/\\\n/g, "");
+      // text = text.replace(/\\\n/g, "");
+      text = text.replace(new RegExp("\\\\\\n", "g"), "");
     }
 
-    var lines = text.split("\n");
+    // var lines = text.split("\n");
+    var lines = text.split(new RegExp("\\n"));
     var line = "",
       lineFirstChar = "",
       lineSecondChar = "";
