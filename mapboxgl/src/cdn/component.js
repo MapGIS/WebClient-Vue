@@ -32,7 +32,7 @@ export { default as MapgisImageLayer } from "../components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "../components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "../components/layer/VectorLayer";
-// export { default as MapgisMvtStyleLayer } from "../components/layer/vectortile/MvtStyleLayer";
+
 export { default as MapgisRasterLayer } from "../components/layer/RasterLayer";
 export { default as MapgisIgsTileLayer } from "../components/layer/igserver/IgsTileLayer";
 export { default as MapgisIgsDocLayer } from "../components/layer/igserver/IgsDocLayer";
@@ -48,6 +48,11 @@ export { default as MapgisEchartsLayer } from "../components/overlay/echarts/Ech
 
 export { default as MapgisMapvLayer } from "../components/overlay/MapvLayer";
 export { default as MapgisFeatureService } from "../components/map/mixins/FeatureService";
+
+// export { default as MapgisMvtStyleLayer } from "../components/layer/vectortile/MvtStyleLayer";
+// export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
+// export { default as MapgisMvtScale } from "../components/layer/edit/Scale";
+export { default as MapgisMvtLegend } from "../components/UI/controls/legend/LegendMvt";
 
 /* 
 import withEventsMixin from "../lib/withEvents";
