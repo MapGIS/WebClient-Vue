@@ -4,7 +4,7 @@ import MapgisUiLayoutPro from "../ui/src/layout/base/BaseLayout.vue";
 import "./style/pro.css";
 
 export default {
-  title: "Pro/布局-基础风格",
+  title: "Pro/布局-桌面风格",
   component: MapgisUiLayoutPro,
   argTypes: {
     mode: "admin",
@@ -113,6 +113,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   mounted() {
+    MapgisUI.setTheme('light');
     MapgisUI.setLayout(this.mode);
   },
   template: `<mapgis-ui-layout-pro>
@@ -181,7 +182,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-ui-layout-pro>`,
 });
 
-export const 基础使用 = Template.bind({});
-基础使用.args = {
-  mode: "admin",
+
+export const 桌面风格 = Template.bind({});
+桌面风格.args = {
+  mode: "ribbon",
 };

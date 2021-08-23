@@ -5,3 +5,14 @@
   margin: 16px 28px 16px 20px;
   float: left;
 }
+
+.mapgis-ui-nav-bar-item {
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  padding: 12px;
+}
+
+.mapgis-ui-nav-bar {
+  width: 48px;
+}
