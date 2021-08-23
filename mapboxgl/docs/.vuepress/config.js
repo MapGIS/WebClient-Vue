@@ -175,6 +175,7 @@ module.exports = {
               ],
 
               ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
+              ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
               ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
 
               ["/api/Layers/Cluster/cluster.md", "聚类"],
@@ -271,6 +272,22 @@ module.exports = {
           "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
       }
     ]
+    /* [
+      "link",
+      {
+        href:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-ui.css",
+        rel: "stylesheet",
+        type: "text/css"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-ui.umd.js"
+      }
+    ] */
   ],
   plugins: [
     [

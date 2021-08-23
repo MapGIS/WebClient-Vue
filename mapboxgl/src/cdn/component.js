@@ -51,7 +51,7 @@ export { default as MapgisFeatureService } from "../components/map/mixins/Featur
 
 // export { default as MapgisMvtStyleLayer } from "../components/layer/vectortile/MvtStyleLayer";
 // export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
-// export { default as MapgisMvtScale } from "../components/layer/edit/Scale";
+export { default as MapgisCustomScale } from "../components/UI/controls/scale/CustomScale";
 export { default as MapgisMvtLegend } from "../components/UI/controls/legend/LegendMvt";
 
 /* 

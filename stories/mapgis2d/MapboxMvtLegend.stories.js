@@ -1,4 +1,4 @@
-import MapgisMvtLegend from "../mapboxgl/src/components/UI/controls/legend/LegendMvt.vue";
+import MapgisMvtLegend from "../../mapboxgl/src/components/UI/controls/legend/LegendMvt.vue";
 
 export default {
   title: "二维/MVT-矢量瓦片图例",
