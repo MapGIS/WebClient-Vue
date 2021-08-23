@@ -52,6 +52,7 @@
       padding: 12px;
       flex-direction: column;
       cursor: pointer;
+      color: $text-color;
 
       &-start {
         justify-content: flex-start;
@@ -83,7 +84,7 @@
     }
 
     &-item:hover {
-      color: $primary-5;
+      color: $primary-5 !important;
     }
   }
 }

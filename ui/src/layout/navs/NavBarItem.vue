@@ -9,7 +9,7 @@
   >
     <mapgis-ui-iconfont :type="icon" />
     <span class="mapgis-ui-nav-bar-item-span">
-      {{ title }}
+      {{ title.substr(0, 2) }}
     </span>
   </div>
 </template>

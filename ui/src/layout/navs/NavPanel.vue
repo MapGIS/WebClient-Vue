@@ -40,6 +40,7 @@ export default {
       this.active = this.active == value ? "" : value;
       this.$emit("change-active", this.active);
       this.$slots.default.forEach(children => {
+        if (!children || !children.data) return;
         let attrs = children.data.attrs;
         if (attrs && attrs.value) {
           if (attrs.value == vm.active) {
@@ -53,6 +54,7 @@ export default {
     updateDisplay(value) {
       value = value || this.activeKey;
       this.$slots.default.forEach(children => {
+        if (!children || !children.data) return;
         let attrs = children.data.attrs;
         if (attrs && attrs.value) {
           if (attrs.value == value) {

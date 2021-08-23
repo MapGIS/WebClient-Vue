@@ -3,7 +3,7 @@ import antDirective from "ant-design-vue/es/_util/antDirective";
 
 import * as UIComponents from "./component";
 
-import { setLayout } from "./util/emit/layout";
+import { setLayout, setLayoutSettingVisible } from "./util/emit/layout";
 import { setTheme } from "./util/style/theme/set-theme";
 
 import { default as MapgisUiMessage } from "./components/message/Message.js";
@@ -19,6 +19,7 @@ const install = function(Vue, options) {
   require("./style.scss");
   setLayout(layout);
   setTheme(theme);
+  setLayoutSettingVisible(true);
   Vue.use(antDirective);
   for (let name in UIComponents) {
     const ui = UIComponents[name];
@@ -45,6 +46,7 @@ export { MapgisUiMessage, MapgisUiNotification, ModalInstance };
 export default {
   setTheme,
   setLayout,
+  setLayoutSettingVisible,
   install
 };
 
