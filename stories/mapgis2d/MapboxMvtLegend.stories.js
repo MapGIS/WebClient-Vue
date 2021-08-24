@@ -21,13 +21,13 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       mvtStyle:
-        "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/OSM全中国经纬度.json",
+        "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/街道-墨卡托.json",
     };
   },
   methods: {
     changeEnable() {},
   },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[105.22,33.03]" :zoom="3" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh">
       <mapgis-mvt-style-layer :mvtStyle="mvtStyle" /> 
       <mapgis-mvt-legend v-bind="$props" />
     </mapgis-web-map>`,

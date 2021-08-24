@@ -185,6 +185,7 @@ export default {
         sources: { ...oldStyle.sources, ...newStyle.sources },
         layers: newLayer
       };
+      this.$emit('change-style', style);
       return style;
     },
 
