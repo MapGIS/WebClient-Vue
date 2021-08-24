@@ -149,32 +149,22 @@ module.exports = {
             ]
           },
           {
-            title: "API",
+            title: "地图API",
             collapsable: false,
-            children: [
+            children:
+            [
               ["/api/", "地图对象"],
+            ]
+          },
+          {
+            title: "地图子组件API",
+            collapsable: false,
+            children:
+            [
               ["/api/controls.md", "控制组件"],
               ["/api/marker.md", "标注"],
               ["/api/popup.md", "气泡"],
-              ["/api/Layers/", "图层基础属性"],
-              ["/api/Layers/geojsonlayer.md", "GeojsonLayer"],
-              ["/api/Layers/vectorlayer.md", "VectorLayer"],
-              ["/api/Layers/rasterlayer.md", "RasterLayer"],
-              ["/api/Layers/imagelayer.md", "ImageLayer"],
-              ["/api/Layers/videolayer.md", "VideoLayer"],
-              ["/api/Layers/canvaslayer.md", "CanvasLayer"],
-              ["/api/Layers/igserver/igsDocLayer.md", "IgsDocLayer"],
-              ["/api/Layers/igserver/igsTileLayer.md", "IgsTileLayer"],
-              ["/api/Layers/igserver/igsVectorLayer.md", "IgsVectorLayer"],
-              ["/api/Layers/OGC/ogcWmtsLayer.md", "OGC-WMTS"],
-              ["/api/Layers/OGC/ogcWmsLayer.md", "OGC-WMS"],
-              ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGISMapLayer"],
-              [
-                "/api/Layers/ArcGISServer/ArcGISTileLayer.md",
-                "ArcGISTileLayer"
-              ],
 
-              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
               ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
               ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
 
@@ -196,6 +186,28 @@ module.exports = {
               ["/api/UI/Table/BaseTable.md", "表格"],
               ["/api/UI/Table/FeatureTable.md", "要素表格"],
               ["/api/map/mixin/FeatureService.md", "要素服务"]
+            ]
+          },
+          {
+            title: "图层API",
+            collapsable: false,
+            children:
+            [
+              ["/api/Layers/", "图层基础属性"],
+              ["/api/Layers/geojsonlayer.md", "GeoJSON图层"],
+              ["/api/Layers/vectorlayer.md", "矢量图层"],
+              ["/api/Layers/rasterlayer.md", "栅格图层/通用瓦片"],
+              ["/api/Layers/imagelayer.md", "图像图层"],
+              ["/api/Layers/videolayer.md", "视频图层"],
+              ["/api/Layers/canvaslayer.md", "画布图层"],
+              ["/api/Layers/igserver/igsDocLayer.md", "Igs地图文档"],
+              ["/api/Layers/igserver/igsTileLayer.md", "Igs瓦片服务"],
+              ["/api/Layers/igserver/igsVectorLayer.md", "Igs矢量图层"],
+              ["/api/Layers/OGC/ogcWmtsLayer.md", "OGC-WMTS"],
+              ["/api/Layers/OGC/ogcWmsLayer.md", "OGC-WMS"],
+              ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGIS地图"],
+              ["/api/Layers/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
+              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
             ]
           },
           {

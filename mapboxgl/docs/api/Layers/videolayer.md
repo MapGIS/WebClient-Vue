@@ -1,4 +1,6 @@
-# CanvasLayer
+# 视频图层
+
+> mapgis-video-layer
 
 ## 属性
 

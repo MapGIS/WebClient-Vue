@@ -1,4 +1,6 @@
-# CanvasLayer
+# 画布图层
+
+> mapgis-canvas-layer
 
 ::: tip
 Mapbox GL JS docs:  

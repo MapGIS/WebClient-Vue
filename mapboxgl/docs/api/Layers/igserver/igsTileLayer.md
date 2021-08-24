@@ -1,4 +1,6 @@
-# IgsTileLayer
+# Igs瓦片服务
+
+> mapgis-igs-tile-layer
 
 ## 属性
 

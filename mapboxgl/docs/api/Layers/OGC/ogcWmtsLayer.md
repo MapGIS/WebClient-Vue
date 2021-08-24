@@ -1,4 +1,6 @@
-# IgsWmtsLayer
+# OGC-WMTS
+
+> mapgis-ogc-wmts-layer
 
 ## 属性
 
@@ -91,7 +93,7 @@ All common layer [events](/zh/api/Layers/#events)
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
@@ -110,18 +112,18 @@ All common layer [events](/zh/api/Layers/#events)
       :zoomOffset="zoomOffset"
     >
     </mapgis-ogc-wmts-layer>
-  </mapbox-map>
+  </mapgis-web-map>
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsWmtsLayer } from "@mapgis/webclient-vue-mapboxgl";
+import { MapgisWebMap, MapgisOgcWmtsLayer } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap,
-    MapboxIgsWmtsLayer
+    MapgisWebMap,
+    MapgisOgcWmtsLayer
   },
   data() {
     return {
