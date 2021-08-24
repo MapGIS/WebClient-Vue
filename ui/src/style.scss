@@ -2,9 +2,11 @@
 /* MapGIS Design */
 
 /* MapGIS Design - Layout */
+@import "./components/div/style/div.scss";
 @import "./components/grid/style/grid.scss";
 @import "./components/layout/style/layout.scss";
 @import "./components/space/style/space.scss";
+@import "./components/scroll/style/scroll.scss";
 
 /* MapGIS Design - General */
 @import "./components/button/style/button.scss";
@@ -28,14 +30,17 @@
 @import "./components/radio/style/radio.scss";
 @import "./components/rate/style/rate.scss";
 @import "./components/select/style/select.scss";
+@import "./components/sprite/style/sprite.scss";
 @import "./components/slider/style/slider.scss";
 @import "./components/switch/style/switch.scss";
+@import "./components/time-picker/style/time-picker.scss";
 @import "./components/transfer/style/transfer.scss";
 @import "./components/tree-select/style/tree-select.scss";
 
 /* MapGIS Design - Data Display */
 @import "./components/avatar/style/avatar.scss";
 @import "./components/badge/style/badge.scss";
+@import "./components/collapse-card/style/collapse-card.scss";
 @import "./components/card/style/card.scss";
 @import "./components/calendar/style/calendar.scss";
 @import "./components/carousel/style/carousel.scss";
@@ -65,5 +70,14 @@
 @import "./components/divider/style/divider.scss";
 @import "./components/locale-provider/style/locale-provider.scss";
 
+/* MapGIS Design - Third Lib */
+@import "./components/jsoneditor/style/editor.scss";
+@import "./components/content/style/content.scss";
+
 /* MapGIS Design Pro - Setting */
+@import "./components/ribbon/style/ribbon.scss";
+@import "./layout/base/style/pro.scss";
 @import "./layout/base/SettingDrawer/style/index.scss";
+
+/* MapGIS Design Navs */
+@import "./layout/navs/style/navs.scss";

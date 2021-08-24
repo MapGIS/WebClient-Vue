@@ -22,6 +22,7 @@ $warning-color: var(--warning-color);
 $normal-color: #d9d9d9;
 $white: #fff;
 $black: #000;
+$shadow: var(--shadow);
 
 // Color used by default to control hover and active backgrounds
 $selected-color: var(--selected-color); // equal rgba($primary-color, 0.15)
@@ -38,8 +39,6 @@ $primary-7: var(--primary-7);
 $primary-8: var(--primary-8);
 $primary-9: var(--primary-9);
 $primary-10: var(--primary-10);
-
-
 
 $success-1: var(--success-1);
 $success-2: var(--success-2);
@@ -73,15 +72,15 @@ $danger-5: var(--danger-5);
 $danger-6: var(--danger-6); // equal $danger-color
 $danger-7: var(--danger-7);
 
-
 // Background color for `<body>`
 $body-background: #fff;
 // Base background color for most components
 $component-background: #fff;
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol';
-$code-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+  "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial,
+  sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$code-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+  monospace;
 $text-color: fade($black, 65%);
 $text-color-secondary: fade($black, 45%);
 $text-color-inverse: $white;
@@ -93,7 +92,7 @@ $text-color-dark: fade($white, 85%);
 $text-color-secondary-dark: fade($white, 65%);
 $text-selection-bg: $primary-color;
 $font-variant-base: tabular-nums;
-$font-feature-settings-base: 'tnum';
+$font-feature-settings-base: "tnum";
 $font-size-base: 14px;
 $font-size-lg: $font-size-base + 2px;
 $font-size-sm: 12px;
@@ -140,10 +139,12 @@ $body-background-without-opacity: var(--background-without-opacity);
 
 // Base background/text color for most components
 $component-background: var(--component-background);
-$component-background-without-opacity: var(--component-background-without-opacity);
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
-  'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol';
+$component-background-without-opacity: var(
+  --component-background-without-opacity
+);
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+  "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial,
+  sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $text-color: var(--text-color);
 $text-color-secondary: var(--text-color-secondary);
 $text-color-inverse: $white;
@@ -162,13 +163,14 @@ $grid-gutter-width: 0;
 
 // Layout
 $layout-background: var(--layout-background);
+$layout-shadow: var(--shadow);
+$layout-sider-background: var(--sider-background);
 $layout-body-background: #f0f2f5;
-$layout-header-background: #001529;
-$layout-footer-background: $layout-body-background;
+$layout-header-background: var(--header-background);
+$layout-footer-background: var(--footer-background);
 $layout-header-height: 64px;
 $layout-header-padding: 0 50px;
 $layout-footer-padding: 24px 50px;
-$layout-sider-background: $layout-header-background;
 $layout-trigger-height: 48px;
 $layout-trigger-background: #002140;
 $layout-trigger-color: #fff;
@@ -193,6 +195,11 @@ $control-padding-horizontal-sm: $padding-xs;
 $item-active-bg: $primary-1;
 $item-hover-bg: $primary-1;
 
+// DIV
+$div-color: var(--div-color);
+$div-background: var(--div-background);
+$div-border-color: var(--div-border-color);
+
 // LINK
 $link-color: $primary-6;
 $link-hover-color: $primary-5;
@@ -200,7 +207,9 @@ $link-active-color: $primary-7;
 
 // Border color
 $border-color-base: var(--border-color-base); // base border outline a component
-$border-color-split: var(--border-color-split); // split border inside a component
+$border-color-split: var(
+  --border-color-split
+); // split border inside a component
 $border-color-inverse: $white;
 $border-width-base: 1px; // width of the border for a component
 $border-style-base: solid; // style of a components border
@@ -238,7 +247,7 @@ $btn-primary-color: #fff;
 $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
-$btn-default-bg: transparent;
+$btn-default-bg: var(--button-default-background);
 $btn-default-border: var(--button-border-default-color);
 
 $btn-danger-color: $red-6;
@@ -310,19 +319,6 @@ $screen-sm-max: ($screen-md-min - 1px);
 $screen-md-max: ($screen-lg-min - 1px);
 $screen-lg-max: ($screen-xl-min - 1px);
 $screen-xl-max: ($screen-xxl-min - 1px);
-
-// Layout
-$layout-body-background: #f0f2f5;
-$layout-header-background: #001529;
-$layout-footer-background: $layout-body-background;
-$layout-sider-background: $layout-header-background;
-$layout-trigger-background: #002140;
-$layout-trigger-color: #fff;
-
-// Layout light theme
-$layout-sider-background-light: #fff;
-$layout-trigger-background-light: #fff;
-$layout-trigger-color-light: $text-color;
 
 //Dropdown
 $dropdown-vertical-padding: 5px;
@@ -480,21 +476,23 @@ $menu-dark-selected-item-icon-color: $white;
 $menu-dark-selected-item-text-color: $white;
 $menu-dark-item-hover-bg: transparent;
 
+$table-heading-color: $primary-5;
 $table-header-bg: $background-color-light;
-$table-header-color: $heading-color;
+$table-header-color: $table-heading-color;
 $table-header-sort-bg: $background-color-base;
 $table-body-sort-bg: rgba(0, 0, 0, 0.01);
-$table-row-hover-bg: $select-item-hover-bg;
+$table-row-hover-bg: $primary-4;
 $table-selected-row-color: inherit;
-$table-selected-row-bg: #fafafa;
+$table-selected-row-bg: $primary-4;
 $table-body-selected-sort-bg: $table-selected-row-bg;
-$table-selected-row-hover-bg: $table-selected-row-bg;
+$table-selected-row-hover-bg: $primary-5;
 $table-expanded-row-bg: #fbfbfb;
+$table-padding-vertical: 16px;
+$table-padding-horizontal: 16px;
+$table-border-radius-base: $border-radius-base;
 $table-footer-bg: $background-color-light;
-$table-footer-color: $heading-color;
+$table-footer-color: $table-heading-color;
 $table-header-bg-sm: transparent;
-$table-header-sort-active-bg: var(--table-header-sort-active-bg);
-$table-header-filter-active-bg: var(--table-header-filter-active-bg);
 
 // Tag
 $tag-default-bg: $background-color-light;
@@ -502,6 +500,8 @@ $tag-default-color: $text-color;
 $tag-font-size: $font-size-sm;
 
 // TimePicker
+$time-picker-panel-column-width: 56px;
+$time-picker-panel-width: $time-picker-panel-column-width * 3;
 $time-picker-selected-bg: $background-color-base;
 
 // Badge
@@ -634,7 +634,7 @@ $alert-success-border-color: $success-3;
 $alert-success-bg-color: $success-1;
 $alert-success-icon-color: $success-color;
 $alert-info-border-color: $info-3;
-$alert-info-bg-color:$info-1;
+$alert-info-bg-color: $info-1;
 $alert-info-icon-color: $info-color;
 $alert-warning-border-color: $warning-3;
 $alert-warning-bg-color: $warning-1;
@@ -651,6 +651,7 @@ $list-item-padding: $padding-sm 0;
 $list-item-meta-margin-bottom: $padding-md;
 $list-item-meta-avatar-margin-right: $padding-md;
 $list-item-meta-title-margin-bottom: $padding-sm;
+$list-item-hover-bg: $primary-4;
 
 // Timeline
 $timeline-width: 2px;
@@ -734,3 +735,23 @@ $drawer-body-padding: 24px;
 
 // Mapbox Popup
 $popup-background: var(--popup-background);
+
+// Json Editor
+$json-editor-background: var(--card-background);
+$json-editor-color: $primary-6;
+$json-editor-background: $card-background;
+$json-editor-background: $card-background;
+
+// content menu
+$content-color: var(--content-color);
+$content-background: var(--content-background);
+
+// Pro
+$ribbon-background: var(--ribbon-background);
+$ribbon-border-background: $shadow;
+
+// Navs
+$nav-content-backgroud: var(--nav-background);
+$nav-border-backgroud: var(--nav-border-background);
+$nav-shadow-backgroud: var(--nav-shadow);
+$nav-bar-width: 48px;

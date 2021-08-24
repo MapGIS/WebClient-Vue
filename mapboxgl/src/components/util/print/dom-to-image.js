@@ -606,7 +606,8 @@ function newUtil() {
     if (domtoimage.impl.options.cacheBust) {
       // Cache bypass so we dont have CORS issues with cached images
       // Source: https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest/Using_XMLHttpRequest#Bypassing_the_cache
-      url += (/\?/.test(url) ? "&" : "?") + new Date().getTime();
+      const regExp = new RegExp("\\?");
+      url += (regExp.test(url) ? "&" : "?") + new Date().getTime();
     }
 
     return new Promise(function(resolve) {
@@ -675,7 +676,8 @@ function newUtil() {
   }
 
   function escape(string) {
-    return string.replace(/([.*+?^${}()|\[\]\/\\])/g, "\\$1");
+    const regExp = new RegExp("([.*+?^${}()|\\[\\]\\/\\\\])", "g");
+    return string.replace(regExp, "\\$1");
   }
 
   function delay(ms) {
@@ -696,7 +698,10 @@ function newUtil() {
   }
 
   function escapeXhtml(string) {
-    return string.replace(/#/g, "%23").replace(/\n/g, "%0A");
+    // return string.replace(/#/g, "%23").replace(/\n/g, "%0A");
+    return string
+      .replace(new RegExp("#", "g"), "%23")
+      .replace(new RegExp("\\n", "g"), "%0A");
   }
 
   function width(node) {
@@ -718,7 +723,8 @@ function newUtil() {
 }
 
 function newInliner() {
-  var URL_REGEX = /url\(['"]?([^'"]+?)['"]?\)/g;
+  // var URL_REGEX = /url\(['"]?([^'"]+?)['"]?\)/g;
+  var URL_REGEX = new RegExp("url\\(['\"]?([^'\"]+?)['\"]?\\)", "g");
 
   return {
     inlineAll: inlineAll,

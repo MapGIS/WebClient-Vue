@@ -1,19 +1,28 @@
 <template>
   <div>
     <ThemePanel
-        v-show="showPanel"
+        ref="themePanel"
+        v-if="!resetPanel"
+        v-show="showPanelFlag"
+        :title="title"
         :data-source="dataSource"
         :fields="fields"
+        :labelFields="allFields"
         :colors="colors"
         :dataType="dataType"
         :checkBoxArr="checkBoxArr"
         :icons="icons"
         :panelProps="panelPropsDefault"
         :textFonts="textFonts"
+        :themeDefaultType="themeDefaultType"
+        :themeType="themeTypeArrCopy"
+        :iconUrl="iconUrl"
+        :isGradient="isGradient"
+        :isSingle="isSingle"
         @closePanel="$_closePanel"
         @change="$_selectChange"
         @checked="$_checked"
-        @gradientChange="$_gradientChange"
+        @gradientChange="$_singleChangedOut"
         @lineColorChanged="$_lineColorChanged"
         @opacityChanged="$_opacityChanged"
         @oneColorChanged="$_oneColorChanged"
@@ -34,9 +43,11 @@
         @textRotationChanged="$_textRotationChanged"
         @lineStyleChanged="$_lineStyleChanged"
         @clickIcon="$_clickIcon"
+        @iconLoaded="$_iconLoaded"
         @outerLineOpacityChanged="$_outerLineOpacityChanged"
         @outerLineColorChanged="$_outerLineColorChanged"
         @fontChanged="$_fontChanged"
+        @themeTypeChanged="$_themeTypeChanged"
     >
     </ThemePanel>
   </div>
@@ -59,18 +70,24 @@ export default {
       default() {
         return {}
       }
+    },
+    themeDefaultType: {
+      type: String,
+      default: "单值专题图"
     }
   },
-  data(){
+  data() {
     return {
       themeType: "unique",
-      panelPropsDefault: {}
+      panelPropsDefault: {},
+      title: "单值专题图"
     }
   },
   created() {
     this.$_formatProps();
   },
   mounted() {
+    window.map = this.map;
     this.$_mount();
   },
   destroyed() {
@@ -84,12 +101,19 @@ export default {
       this.$_toggleLayer();
     },
     $_outerLineColorChanged(color) {
-      this.$_setPaintProperty("line-color",color,this.lineId, this.lineLayer);
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty("line-color", color, this.lineId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
+          break;
+      }
     },
     $_lineWidthChanged(lineWidth) {
-      switch (this.dataType){
+      switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-width",lineWidth,this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth, this.lineId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "line":
           this.$_setPaintProperty("line-width", lineWidth);
@@ -99,12 +123,19 @@ export default {
           break;
       }
     },
-    $_outerLineOpacityChanged(opacity){
-      this.$_setPaintProperty("line-opacity",opacity,this.lineId, this.lineLayer);
+    $_outerLineOpacityChanged(opacity) {
+      switch (this.dataType) {
+        case "fill":
+          this.$_setPaintProperty("line-opacity", opacity, this.lineId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
+          break;
+        case "circle":
+          this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
+          break;
+      }
     },
-    $_fontChanged(font){
+    $_fontChanged(font) {
       this.textFont = font;
-      this.$_setLayOutProperty("text-font",[this.textFont],this.textId,this.textLayer);
+      this.$_setLayOutProperty("text-font", [this.textFont, this.textFont], this.textId,  window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_注记"]);
     },
     /*
     * 多选框业务实现
@@ -115,7 +146,18 @@ export default {
     $_checked(checkBoxArr, index, checkColor) {
       let colors = {}, newColors,
           next = false;
-      if (this.originColors.colors.hasOwnProperty("stops")) {
+      this.$_setCheckBoxToLocal(checkBoxArr);
+      let localColors = this.$_getColorsFromLocal();
+      if (localColors) {
+        let check = checkBoxArr[index];
+        colors = localColors;
+        if (check) {
+          colors.splice(2 + (index + 1) * 2 - 1, 1, checkColor);
+        } else {
+          colors.splice(2 + (index + 1) * 2 - 1, 1, "#FFF");
+        }
+        next = true;
+      } else if (this.originColors.colors.hasOwnProperty("stops")) {
         newColors = [];
         for (let i = 0; i < checkBoxArr.length; i++) {
           if (checkBoxArr[i]) {
@@ -165,35 +207,43 @@ export default {
       if (next) {
         switch (this.dataType) {
           case "fill":
-            this.layerVector.paint["fill-color"] = colors;
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
             break;
           case "circle":
-            this.layerVector.paint["circle-color"] = colors;
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
             break;
           case "line":
-            this.layerVector.paint["line-color"] = colors;
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
             break;
         }
-        this.$_changeOriginLayer();
+        this.$_removeIcon();
+        this.$_setPaintByType(colors, true);
         this.showVector = true;
         this.changeLayerProp = true;
         this.changeLayerId = this.layerIdCopy;
       }
     },
     /*
-    * 字段选择的回调函数，在该回调函数中应该重置绘制参数this.layerVector.paint
+    * 字段选择的回调函数，在该回调函数中应该重置绘制参数window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint
     * @param colors 针对该字段的颜色信息
     * **/
     $_selectChangeCallBack(colors) {
+      this.dataSourceCopy = this.dataSource;
+      let checkArr = [];
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        checkArr.push(true);
+      }
+      this.checkArr = checkArr;
+      this.checkBoxArr = checkArr;
       switch (this.dataType) {
         case "fill":
-          this.layerVector.paint["fill-color"] = colors;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["fill-color"] = colors;
           break;
         case "circle":
-          this.layerVector.paint["circle-color"] = colors;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["circle-color"] = colors;
           break;
         case "line":
-          this.layerVector.paint["line-color"] = colors;
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint["line-color"] = colors;
           break;
       }
     },
@@ -213,7 +263,27 @@ export default {
           break;
         }
       }
-      let gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      let gradient;
+      if(endColor.indexOf(",") > -1){
+        let colorArr = endColor.split(",");
+        let colorArrLength = colorArr.length - 1;
+        let dataLength = this.dataSource.length;
+        let colorLength = [];
+        let colorsRangeArr = [];
+        for (let i = 0; i < colorArrLength; i++) {
+          if (i === colorArrLength - 1) {
+            colorLength.push(dataLength - parseInt(dataLength / colorArrLength) * (colorArrLength - 1));
+          } else {
+            colorLength.push(parseInt(dataLength / colorArrLength));
+          }
+        }
+        for (let i =0;i<colorLength.length;i++){
+          colorsRangeArr = colorsRangeArr.concat(this.$_gradientColor(colorArr[i], colorArr[i + 1], colorLength[i]));
+        }
+        gradient = colorsRangeArr;
+      }else {
+        gradient = this.$_gradientColor(startColor, endColor, dataSource.length);
+      }
       if (iSString) {
         colors = ['match', ['get', key]];
         for (let i = 0; i < dataSource.length; i++) {
@@ -247,51 +317,92 @@ export default {
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson, fillColors) {
+    $_initThemeCallBack(geojson, fillColors, data, minzoom, maxzoom) {
+      this.$refs.themePanel.setSelectValue(this.selectValue);
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPolygon" || geojson.features[0].geometry.type === "Polygon")) {
         this.dataType = 'fill';
-        this.layerVector = {
-          id: "theme_layer_id",
-          type: 'fill',
-          source: this.source_vector_Id, //必须和上面的layerVectorId一致
-          paint: {
-            'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
-            'fill-color': fillColors, //颜色
-            'fill-opacity': this.opacity, //透明度
-            'fill-outline-color': '#fff' //边线颜色，没错,确实没有边线宽度这个选项
-          }
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.layerIdCopy + "_单值专题图",
+            type: 'fill',
+            source: this.source_vector_Id, //必须和上面的layerVectorId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
+              'fill-color': fillColors, //颜色
+              'fill-opacity': this.opacity, //透明度
+              'fill-outline-color': '#fff' //边线颜色，没错,确实没有边线宽度这个选项
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
+          };
+          this.$_addLineLayer(minzoom, maxzoom);
+        } else {
+          this.$_setColorsFromLocal();
         }
-        this.$_addLineLayer();
       } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'circle';
-        this.layerVector = {
-          id: "theme_layer_id",
-          type: 'circle',
-          source: this.source_vector_Id, //必须和上面的layerVectorId一致
-          paint: {
-            'circle-color': fillColors, //颜色
-            'circle-opacity': this.opacity, //透明度
-            'circle-stroke-opacity': this.outerLineOpacity, //透明度
-            'circle-radius': this.radius, //透明度
-            'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
-            'circle-stroke-width': this.lineWidth,
-            'circle-translate': this.offset,
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.layerIdCopy + "_单值专题图",
+            type: 'circle',
+            source: this.source_vector_Id, //必须和上面的layerVectorId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              'circle-color': fillColors, //颜色
+              'circle-opacity': this.opacity, //透明度
+              'circle-stroke-opacity': this.outerLineOpacity, //透明度
+              'circle-radius': this.radius, //透明度
+              'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
+              'circle-stroke-width': this.lineWidth,
+              'circle-translate': [this.offset[0],this.offset[1]],
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
           }
+        } else {
+          this.$_setColorsFromLocal();
         }
-      } else if (geojson.features.length > 0 && geojson.features[0].geometry.type === "LineString") {
+      } else if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "LineString" || geojson.features[0].geometry.type ===  "MultiLineString")) {
         this.dataType = 'line';
-        this.layerVector = {
-          id: "theme_layer_id",
-          type: 'line',
-          source: this.source_vector_Id, //必须和上面的layerVectorId一致
-          paint: {
-            'line-color': fillColors, //颜色
-            'line-opacity': this.opacity, //透明度
-            'line-width': this.lineWidth,
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.layerIdCopy + "_单值专题图",
+            type: 'line',
+            source: this.source_vector_Id, //必须和上面的layerVectorId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: {
+              'line-color': fillColors, //颜色
+              'line-opacity': this.opacity, //透明度
+              'line-width': this.lineWidth,
+            },
+            minzoom: minzoom,
+            maxzoom: maxzoom
           }
+        } else {
+          this.$_setColorsFromLocal();
         }
       }
-      this.$_addTextLayer();
+      if (this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
+        window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
+      }
+      this.title = "单值专题图" + "_" + this.layerIdCopy;
+      this.$_addTextLayer(minzoom, maxzoom);
+      if (this.dataType === "fill") {
+        if (!window.originLayer[this.layerIdCopy].layerOrder) {
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName(), this.lineId, this.textId];
+        }
+      } else {
+        if (!window.originLayer[this.layerIdCopy].layerOrder) {
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName(), this.textId];
+        }
+      }
     }
   }
 }

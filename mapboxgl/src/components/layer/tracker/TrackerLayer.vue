@@ -1,5 +1,38 @@
 <template>
   <div>
+    <mapgis-ui-collapse-card
+      v-show="visible"
+      :style="outStyle"
+      class="mapgis-tracker-layer-card"
+      iconfont="mapgis-moxingyaping"
+      position="bottom-left"
+      ref="collapsecard"
+    >
+      <div class="mapgis-mvt-legend-card-header" slot="title">
+        <span class="mapgis-tracker-card-title">
+          轨迹跟踪
+        </span>
+        <mapgis-ui-iconfont
+          class="mapgis-tracker-card-toolbar"
+          type="mapgis-moxingyaping"
+          @click="hide"
+        />
+      </div>
+      <div class="mapgis-ui-tracker-timeline">
+        <mapgis-ui-button-group size="small" class="mapgis-ui-tracker-buttons">
+          <mapgis-ui-button size="small">
+            <mapgis-ui-iconfont type="mapgis-shujudaoru"
+          /></mapgis-ui-button>
+          <mapgis-ui-button size="small">
+            <mapgis-ui-iconfont type="mapgis-tingzhijiaohuhuizhixian"
+          /></mapgis-ui-button>
+          <mapgis-ui-button size="small">
+            <mapgis-ui-iconfont type="mapgis-shujudaochu"
+          /></mapgis-ui-button>
+        </mapgis-ui-button-group>
+        <mapgis-ui-slider :style="{ width: '240px', 'line-height': '30px' }" />
+      </div>
+    </mapgis-ui-collapse-card>
     <slot name="popup" />
   </div>
 </template>
@@ -10,7 +43,22 @@ export default {
   name: "mapgis-tracker-layer",
   inject: ["mapbox", "map"],
   props: {
-    url: {
+    visible: {
+      type: Boolean,
+      default: true
+    },
+    outStyle: {
+      type: Object,
+      default: () => {
+        return {
+          width: "320px",
+          height: "80px",
+          left: "10px",
+          bottom: "10px"
+        };
+      }
+    },
+    geojson: {
       type: [String, Object],
       required: true
     },
@@ -31,24 +79,37 @@ export default {
       pathDistance: 1,
       popup: undefined,
       marker: undefined,
-      start: undefined
+      start: undefined,
+      collapse: false
     };
+  },
+  model: {
+    prop: "visible",
+    event: "change-visible"
   },
   mounted() {
     this.getData();
   },
   methods: {
+    handleClose() {
+      this.$emit("change-visible", false);
+    },
+    hide() {
+      if (this.$refs.collapsecard) {
+        this.$refs.collapsecard.hide();
+      }
+    },
     getData() {
-      let { url } = this;
+      let { geojson } = this;
       const vm = this;
-      if (typeof url === "string") {
-        fetch(url)
+      if (typeof geojson === "string") {
+        fetch(geojson)
           .then(response => response.json())
           .then(pinRouteGeojson => {
             vm.handleDynamicLine(pinRouteGeojson);
           });
       } else {
-        this.handleDynamicLine(url);
+        this.handleDynamicLine(geojson);
       }
     },
     handleDynamicLine(pinRouteGeojson) {
@@ -124,6 +185,7 @@ export default {
     },
     frame(time) {
       let {
+        map,
         path,
         pathDistance,
         popup,
@@ -147,10 +209,13 @@ export default {
         lng: alongPath[0],
         lat: alongPath[1]
       };
+      let elevation;
+      if (map.queryTerrainElevation) {
+        elevation = Math.floor(
+          map.queryTerrainElevation(lngLat, { exaggerated: false })
+        );
+      }
 
-      const elevation = Math.floor(
-        map.queryTerrainElevation(lngLat, { exaggerated: false })
-      );
       if (this.$slots.popup && this.$slots.popup.length > 0) {
         this.popup.setDOMContent(this.$slots.popup[0].elm);
       } else {
@@ -202,3 +267,23 @@ export default {
   }
 };
 </script>
+
+<style>
+.mapgis-tracker-layer-card {
+  position: absolute;
+  z-index: 1000;
+  overflow-y: scroll;
+  width: fit-content;
+}
+.mapgis-ui-tracker-timeline {
+  display: flex;
+}
+.mapgis-ui-tracker-buttons {
+  padding: 6px;
+}
+.mapgis-tracker-card-toolbar {
+  float: right;
+  margin-right: 6px !important;
+  font-size: 16px;
+}
+</style>

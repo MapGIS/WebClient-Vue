@@ -7,7 +7,7 @@
         'mapgis-ui-color-simple-item-active': isActive(i)
       }"
       :key="i"
-      :style="{ background: getColor(i) }"
+      :style="{ background: getColor(i), boxShadow: getShadow(i) }"
       @click="handleColorClick(i)"
     ></div>
   </div>
@@ -59,6 +59,13 @@ export default {
       let color = index < colors.length ? colors[index] : "#1890ff";
       return color;
     },
+    getShadow(index) {
+      let { colors } = this;
+      let color = index < colors.length ? colors[index] : "#1890ff";
+      color = "rgba(0, 0, 0, 0.05)";
+      let box = `2px 2px 2px 2px ${color}`;
+      return box;
+    },
     swapColor(index1, index2) {
       let arr = this.innerColors.map(c => c);
       arr[index1] = arr.splice(index2, 1, arr[index1])[0];
@@ -86,14 +93,16 @@ export default {
   flex-wrap: wrap;
 }
 .mapgis-ui-color-simple-item {
-  height: 40px;
-  width: 40px;
-  margin: 3px;
+  height: 36px;
+  width: 36px;
+  margin: 6px;
   border-radius: 4px;
 }
 .mapgis-ui-color-simple-item-active {
   height: 46px;
   width: 46px;
-  border: 3px solid #666666;
+  margin: 6px;
+  /* border: 3px solid transparent; */
+  box-shadow: 2px 2px 2px 2px transparent;
 }
 </style>

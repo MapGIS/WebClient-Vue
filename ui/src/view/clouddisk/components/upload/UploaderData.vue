@@ -1,17 +1,23 @@
 <template>
   <div>
-    <div class="path">
-      <p class="path-text" :title="importDestUrl">
+    <div class="mapgis-ui-uploader-path">
+      <p class="mapgis-ui-uploader-path-text" :title="importDestUrl">
         <img src="./images/save.png" style="padding-bottom:4px;" />
         导入到：{{ importDestUrl }}
       </p>
-      <mapgis-ui-button
+      <!-- <mapgis-ui-button
         type="link"
         style="line-height:40px;float:right;"
         @click="handleImportUrlModal"
       >
         {{ buttonText }}
-      </mapgis-ui-button>
+      </mapgis-ui-button> -->
+      <span
+        style="line-height:40px;float:right;margin-right:8px;cursor:pointer;"
+        @click="handleImportUrlModal"
+      >
+        {{ buttonText }}
+      </span>
     </div>
     <div class="type-radio">
       <mapgis-ui-radio-group
@@ -25,7 +31,7 @@
         <mapgis-ui-radio-button value="json">
           Geojson数据文件
         </mapgis-ui-radio-button>
-        <mapgis-ui-radio-button value="csv" :disabled="true">
+        <mapgis-ui-radio-button value="csv">
           CSV表格文件
         </mapgis-ui-radio-button>
       </mapgis-ui-radio-group>
@@ -55,8 +61,12 @@
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { openUploader, changePathUploaduri } from "../../../../util/emit/upload";
-import { uuid } from '../../util/uuid';
+import {
+  openUploader,
+  changePathUploaduri,
+  changeUploadWebsocketTaskId
+} from "../../../../util/emit/upload";
+import { uuid } from "../../util/uuid";
 
 export default {
   name: "importData",
@@ -78,8 +88,8 @@ export default {
       importDataType: "shp",
       typeDescriptions: {
         shp: ".zip格式，可包含单个或多个shp文件（建议使用rar压缩软件进行压缩）",
-        json: "Geojson格式文件(.json)",
-        csv: "CSV格式表格文件(.csv)"
+        json: "Geojson格式文件(.json、.geojson)",
+        csv: "CSV格式表格文件(.csv)，支持经纬度和Web墨卡托坐标系"
       },
       showPathSelect: false,
       showFolderTree: true,
@@ -96,8 +106,8 @@ export default {
       this.temUrl = url;
     },
     handlePathOk() {
-      changePathUploaduri({uri: this.temUrl});
-      console.warn("this.uploaduri111", this.uploaduri);
+      changePathUploaduri({ uri: this.temUrl });
+      // console.warn("this.uploaduri111", this.uploaduri);
       this.$emit("changePathText", this.temUrl);
       this.showPathSelect = false;
       this.resetTree();
@@ -122,18 +132,21 @@ export default {
       let gisFormat = type === "tiff" ? "raster" : "vector";
       // 本质上这个点击事件什么都不做，通过这个点击操作==>触发隐藏的全局上传空间的点击事件
       // 打开文件选择框
+      let taskid = uuid();
 
       openUploader({
-        // 下面哪怕是空的对象也要传入，主要是electron这个框架会截获vuex的状态导致不更新视图，千万别注释了
         param: {
           state: "toggle-click-event", // 传入的参数
           folderDir: this.curImportUrl,
           isCache: false,
           type: type,
           gisFormat: gisFormat,
-          isGisImport: true,
-          taskid: uuid()
+          isGisImport: this.importDataType !== "csv", // csv不可导入
+          taskid: taskid
         }
+      });
+      changeUploadWebsocketTaskId({
+        webSocketTaskId: taskid
       });
     }
   },
@@ -142,15 +155,14 @@ export default {
 </script>
 
 <style scoped>
-.path {
+.mapgis-ui-uploader-path {
   width: 100%;
   height: 40px;
-  background: #f2f2f2;
   margin: 0 auto;
 }
-.path-text {
+.mapgis-ui-uploader-path-text {
   display: inline-block;
-  max-width: calc(45vw - 130px);
+  max-width: calc(100% - 130px);
   line-height: 40px;
   color: #999999;
   overflow: hidden;
@@ -169,7 +181,6 @@ export default {
   margin-bottom: 10px;
   width: 450px;
   height: 180px;
-  background: #ffffff;
   border: 1px dashed #dcdfe6;
   border-radius: 4px;
 }

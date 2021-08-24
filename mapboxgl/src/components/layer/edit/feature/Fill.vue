@@ -9,6 +9,7 @@ import Feature from "./Feature.vue";
 const FillRules = [
   {
     title: "颜色",
+    icon: "mapgis-yansehecheng",
     type: "color",
     layerprop: "fill-color",
     layertype: "paint",
@@ -16,12 +17,14 @@ const FillRules = [
   },
   {
     title: "符号",
+    icon: "mapgis-yangshikuguanli",
     type: "sprite",
     layerprop: "fill-pattern",
     layertype: "paint"
   },
   {
     title: "抗锯齿",
+    icon: "mapgis-xianpinghuayidongdian",
     type: "boolean",
     layerprop: "fill-antialias",
     layertype: "paint",
@@ -29,6 +32,7 @@ const FillRules = [
   },
   {
     title: "透明度",
+    icon: "mapgis-duibidutiaojie",
     type: "number",
     layerprop: "fill-opacity",
     layertype: "paint",
@@ -38,6 +42,7 @@ const FillRules = [
   },
   {
     title: "边线颜色",
+    icon: "mapgis-yansehecheng",
     type: "color",
     layerprop: "fill-outline-color",
     layertype: "paint"

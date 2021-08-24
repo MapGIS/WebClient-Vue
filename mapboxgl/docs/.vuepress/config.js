@@ -158,7 +158,6 @@ module.exports = {
               ["/api/popup.md", "气泡"],
               ["/api/Layers/", "图层基础属性"],
               ["/api/Layers/geojsonlayer.md", "GeojsonLayer"],
-              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
               ["/api/Layers/vectorlayer.md", "VectorLayer"],
               ["/api/Layers/rasterlayer.md", "RasterLayer"],
               ["/api/Layers/imagelayer.md", "ImageLayer"],
@@ -174,6 +173,16 @@ module.exports = {
                 "/api/Layers/ArcGISServer/ArcGISTileLayer.md",
                 "ArcGISTileLayer"
               ],
+
+              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
+              ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
+              ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
+
+              ["/api/Layers/Cluster/cluster.md", "聚类"],
+              ["/api/Layers/Heater/heater.md", "热力"],
+              ["/api/Layers/Building/building.md", "建筑白膜"],
+              ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
+              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
 
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],
@@ -220,5 +229,82 @@ module.exports = {
         // search: false
       }
     }
-  }
+  },
+  serviceWorker: true,
+  // base: '/vuepress-plugin-demo-block/',
+  head: [
+    [
+      "script",
+      {
+        src:
+          "https://cdn.jsdelivr.net/npm/react@16.6.3/umd/react.production.min.js"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "https://cdn.jsdelivr.net/npm/react-dom@16.6.3/umd/react-dom.production.min.js"
+      }
+    ],
+    ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
+    [
+      "script",
+      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
+    ],
+    [
+      "script",
+      { src: "https://cdn.jsdelivr.net/npm/numerify/lib/index.umd.min.js" }
+    ],
+    [
+      "link",
+      {
+        href:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
+        rel: "stylesheet",
+        type: "text/css"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
+      }
+    ]
+    /* [
+      "link",
+      {
+        href:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-ui.css",
+        rel: "stylesheet",
+        type: "text/css"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-ui.umd.js"
+      }
+    ] */
+  ],
+  plugins: [
+    [
+      "demo-block",
+      {
+        settings: {
+          jsLibs: [
+            // "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js",
+          ],
+          cssLibs: [
+            // "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css"
+          ],
+          jsfiddle: true, // 是否显示 jsfiddle 链接
+          codepen: true, // 是否显示 codepen 链接
+          horizontal: false // 是否展示为横向样式
+        }
+      }
+    ]
+  ]
 };

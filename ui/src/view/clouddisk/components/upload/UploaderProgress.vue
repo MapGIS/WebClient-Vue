@@ -11,12 +11,24 @@
         更改位置
       </mapgis-ui-button> -->
     </div>
-    <mapgis-ui-progress
+    <!-- <mapgis-ui-progress
       class="upload-progress"
       type="circle"
       :percent="importProgress"
       :status="progressStatus"
-    />
+    /> -->
+    <mapgis-ui-row>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-progress class="upload-progress" type="circle" :percent="importProgress" :status="progressStatus" />
+      </mapgis-ui-col>
+      <mapgis-ui-col :span="12">
+        <mapgis-ui-timeline class="upload-info">
+          <mapgis-ui-timeline-item v-for="(item, index) in uploadInfos" :key="index" :color="item.state < 1 ? 'red' : 'green'">
+            {{item.info}}
+          </mapgis-ui-timeline-item>
+        </mapgis-ui-timeline>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
     <span style="color:#999999;">{{ tipText }}</span>
   </div>
 </template>
@@ -27,31 +39,53 @@ import UploadMixin from "../../../../mixin/UploaderMixin";
 export default {
   name: "importProgress",
   mixins: [UploadMixin],
-  props: {},
+  props: {
+  },
   data() {
     return {
       importStatus: "导入中...",
       importComplete: false,
       tipText: "后台导入中，当前窗口可关闭",
+      progressState: true,
       importProgress: 0,
-      importFileName: "上传文件名"
+      importFileName: "上传文件名",
+      uploadInfos: []
     };
   },
+  created () {
+    this.uploadInfos = []
+  },
   watch: {
-    websocket: {
-      handler: function(next) {
-        let wsAction = next.wsAction;
-        let contentType = next.contentType;
-        let wsContent = next.wsContent;
-        if (
-          wsAction === "refresh" &&
-          contentType === "dirNavigation" &&
-          wsContent[contentType] !== ""
-        ) {
-          this.importStatus = "导入成功";
-          this.importComplete = true;
-          this.tipText = "导入完成";
-          this.$emit("handleUploadComplete", true);
+    WebsocketContent: {
+      handler: function() {
+        let vm = this
+        if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'refresh') { // 比较msgid与本次导入的taskid是否一致，若不一致则不需要进行任何操作
+          let msgResponse = this.WebsocketContent[0]
+          let { errorCode, msg, subjectType } = msgResponse
+          if (subjectType === 'geotools:import') {
+            if (errorCode < 0) {
+              this.importStatus = '导入失败'
+              this.tipText = msg
+              this.progressState = false // 进度条样式改为叉号
+              this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
+            } else {
+              this.importStatus = '导入成功'
+              this.importComplete = true
+              this.tipText = '导入完成'
+              this.$emit('handleUploadComplete', true) // 放开“继续上传”按钮
+              // this.$emit('closeImport') // 关闭导入文件对话框
+            }
+          }
+        } else if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'info') {
+          let msgResponse = this.WebsocketContent[0]
+          let { errorCode, msg, subject, subjectType } = msgResponse
+          if (subjectType === 'geotools:import') {
+            let uploadInfo = {
+              info: subject,
+              state: errorCode
+            }
+            vm.uploadInfos.push(uploadInfo)
+          }
         }
       },
       deep: true
@@ -65,20 +99,29 @@ export default {
         this.importProgress = uploadProgress;
       }
     },
+    importComplete (next) {
+      if (next === true) {
+        this.importProgress = 100;
+      }
+    },
     fileName(next) {
       this.importFileName = next;
     }
   },
   computed: {
-    handleWsRefresh() {
-      return this.$store.state.websocket.msgid;
-    },
+    
+    // handleWsRefresh() {
+    //   return this.$store.state.websocket.msgid;
+    // },
     progressStatus() {
       if (this.uploadError === true) {
         this.importStatus = "导入失败";
-        this.tipText = "导入失败";
+        this.tipText = this.uploadErrorMsg;
         this.$emit("handleUploadComplete", true);
         return "exception";
+      } else if (this.progressState === false) {
+        this.progressState = true // 进度条样式改为叉号
+        return 'exception'
       } else {
         return null;
       }
@@ -108,5 +151,10 @@ export default {
 }
 .upload-progress {
   margin: 40px 0 66px 0;
+}
+.upload-info {
+  margin: 30px 30px 50px 0;
+  height: 166px;
+  overflow: auto;
 }
 </style>

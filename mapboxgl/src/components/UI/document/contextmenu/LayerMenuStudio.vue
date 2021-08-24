@@ -4,22 +4,25 @@
       <mapgis-ui-iconfont type="mapgis-yangshikuguanli" />编辑显示样式
     </contextmenu-item>
     <contextmenu-item divider />
-    <contextmenu-item @click="handleClick('add-theme')" v-if="!isTheme">
+    <contextmenu-item @click="handleClick('add-theme')" v-if="!isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-zhuantitu" />创建专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('edit-theme')" v-if="isTheme">
+    <contextmenu-item @click="handleClick('edit-theme')" v-if="isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-zhuantitu" />编辑专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme">
+    <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme && !isSymbol">
       <mapgis-ui-iconfont type="mapgis-chexiao" />撤销专题图
     </contextmenu-item>
+    <contextmenu-item @click="handleClick('make-symbol')" v-if="!isTheme && !isSymbol">
+      <mapgis-ui-iconfont type="mapgis-shengchengzhuji" />生成注记
+    </contextmenu-item>
     <contextmenu-item divider />
-    <contextmenu-item>
+    <contextmenu-item @click="handleClick('open-table')">
       <mapgis-ui-iconfont type="mapgis-zhujishuxingbianji" />查看属性表
     </contextmenu-item>
     <contextmenu-item divider />
     <contextmenu-item @click="handleClick('scale')">
-      <mapgis-ui-iconfont type="mapgis-yincangxianshimian" /> 显示比例尺
+      <mapgis-ui-iconfont type="mapgis-yincangxianshimian" /> 显示级别控制
     </contextmenu-item>
 
     <contextmenu-item divider />
@@ -38,8 +41,11 @@
         <mapgis-ui-input
           :style="{ width: '200px' }"
           :value="layerTitle"
-          @change="handleRename"
+          @change="handleNameChange"
         />
+        <mapgis-ui-button type="primary" @click="handleRename"
+          >确认
+        </mapgis-ui-button>
       </contextmenu-item>
     </contextmenu-submenu>
     <contextmenu-item divider />
@@ -52,13 +58,15 @@
 import {
   emitMapAddThemeLayer,
   emitMapEditThemeLayer,
-  emitMapRemoveThemeLayer
+  emitMapRemoveThemeLayer,
+  emitMapOpenTable
 } from "../../../../lib/eventbus/EmitMap";
 import {
   ContextmenuItem,
   ContextmenuGroup,
   ContextmenuSubmenu
 } from "v-contextmenu";
+
 export default {
   name: "mapgis-layercontent-studio",
   components: {
@@ -68,7 +76,8 @@ export default {
   },
   props: {
     layerId: { type: String },
-    isTheme: { type: Boolean, default: false }
+    isTheme: { type: Boolean, default: false },
+    isSymbol: { type: Boolean, default: false }
   },
   watch: {
     layerId(next) {
@@ -94,10 +103,13 @@ export default {
         this.$emit("onDelete", { layerId });
       }
     },
-    handleRename(event) {
+    handleNameChange(event) {
       let name = event.target.value;
-      let { layerId } = this;
-      this.$emit("onRename", { id: layerId, name });
+      this.layerTitle = name;
+    },
+    handleRename() {
+      let { layerId, layerTitle } = this;
+      this.$emit("onRename", { id: layerId, name: layerTitle });
     },
     handleClick(type) {
       const { layerId } = this;
@@ -110,7 +122,6 @@ export default {
           break;
         case "add-theme":
           this.$emit("onAddTheme", { type, layerId });
-          emitMapAddThemeLayer({ type, layerId });
           break;
         case "edit-theme":
           this.$emit("onEditTheme", { type, layerId });
@@ -119,6 +130,14 @@ export default {
         case "remove-theme":
           this.$emit("onRemoveTheme", { type, layerId });
           emitMapRemoveThemeLayer({ type, layerId });
+          break;
+        case "make-symbol":
+          this.$emit("onMakeSymbol", { type, layerId });
+          console.log("send-make-symbol");
+          break;
+        case "open-table":
+          this.$emit("onOpenTable", { type, layerId });
+          emitMapOpenTable({ type, layerId });
           break;
         case "up":
           this.$emit("onUp", { type, layerId });

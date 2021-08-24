@@ -1,26 +1,27 @@
 <template>
-  <mapgis-ui-card
-    size="small"
+  <mapgis-ui-collapse-card
     v-show="visible"
     :style="outStyle"
     class="mapgis-mvt-legend-card"
+    iconfont="mapgis-tuli"
+    ref="collapsecard"
   >
-    <span slot="extra">
-      <mapgis-ui-iconfont
-        class="mapgis-mvt-legend-card-toolbar"
-        type="mapgis-yingyan"
-      />
+    <div class="mapgis-mvt-legend-card-header" slot="title">
+      <span class="mapgis-mvt-legend-card-title">
+        图例
+      </span>
       <mapgis-ui-iconfont
         class="mapgis-mvt-legend-card-toolbar"
         type="mapgis-tuli"
+        @click="hide"
+      />
+      <mapgis-ui-iconfont
+        class="mapgis-mvt-legend-card-toolbar"
+        type="mapgis-shuaxinmulu"
         @click="refresh"
       />
-    </span>
-    <mapgis-ui-list
-      v-if="legends.length > 0"
-      :grid="{ gutter: 0, column: 1 }"
-      :data-source="legends"
-    >
+    </div>
+    <mapgis-ui-list :grid="{ gutter: 0, column: 1 }" :data-source="legends">
       <mapgis-ui-list-item
         slot="renderItem"
         class="mapgis-mvt-legend-row"
@@ -28,11 +29,11 @@
       >
         <img class="mapgis-mvt-legend-image" :src="item.imageData" />
         <span class="mapgis-mvt-legend-label">{{
-          item.label.substring(0, 12)
+          item.label.substring(0, 20)
         }}</span>
       </mapgis-ui-list-item>
     </mapgis-ui-list>
-  </mapgis-ui-card>
+  </mapgis-ui-collapse-card>
 </template>
 
 <script>
@@ -66,7 +67,8 @@ export default {
   },
   data() {
     return {
-      legends: []
+      legends: [],
+      collapse: false
     };
   },
   watch: {},
@@ -98,6 +100,16 @@ export default {
     },
     refresh() {
       this.getLegend();
+    },
+    hide() {
+      if (this.$refs.collapsecard) {
+        this.$refs.collapsecard.hide();
+      }
+    },
+    show() {
+      if (this.$refs.collapsecard) {
+        this.$refs.collapsecard.show();
+      }
     }
   }
 };
@@ -110,26 +122,42 @@ export default {
   overflow-y: scroll;
   width: fit-content;
 }
+.mapgis-mvt-legend-card-collapse {
+  float: right;
+}
+.mapgis-mvt-legend-card
+  .mapgis-ui-list-grid
+  .mapgis-ui-col
+  > .mapgis-ui-list-item {
+  margin-bottom: 6px !important;
+}
+
+.mapgis-mvt-legend-card-title {
+  font-size: 16px;
+  font-weight: bolder;
+  line-height: 20px;
+}
 
 .mapgis-mvt-legend-card-toolbar {
+  float: right;
   margin-right: 6px !important;
+  font-size: 16px;
 }
 
 .mapgis-mvt-legend-row {
   display: inline;
 }
 
+.mapgis-mvt-legend-row > .mapgis-ui-list-item {
+  width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .mapgis-mvt-legend-image {
   height: 16px;
   width: 16px;
   margin-right: 12px;
-}
-
-span.mapgis-mvt-legend-label {
-  width: 120px;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
 }
 </style>

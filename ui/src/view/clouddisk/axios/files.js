@@ -1,7 +1,7 @@
 import API from "./API";
 import md5 from "js-md5";
 
-import { getMapGISUrl, getMapgisToken, getMapgisPath } from "../config/mapgis";
+import { getMapGISUrl, getMapgisToken, getMapgisPath, getMapgisGroupPath } from "../config/mapgis";
 
 export function dirnavigation(folderDir) {
   const api = new API();
@@ -9,7 +9,7 @@ export function dirnavigation(folderDir) {
   const token = getMapgisToken();
   // const path = getMapgisPath()
   folderDir = folderDir === "" ? "-1" : folderDir;
-  folderDir = folderDir || getMapgisPath();
+  folderDir = folderDir || getMapgisGroupPath();
 
   api.setBaseUrl(url);
   api.setAuthorization(token);
@@ -410,6 +410,22 @@ export function exportVector(convertType, srcUrl, destPath, destFileName) {
       "&destFileName=" +
       destFileName
   );
+}
+
+/**
+ * CSV类型数据预览
+ * @param {*} srcUrl 文件路径
+ * @param {*} charset 文件编码
+ * @param {*} separator 分隔符
+ */
+export function getCSVTableData (srcUrl, charset, separator) {
+  const url = getMapGISUrl()
+  const api = new API()
+  const token = getMapgisToken()
+
+  api.setBaseUrl(url)
+  api.setAuthorization(token)
+  return api.get(url + '/clouddisk/rest/tools/table/preview?srcUrl=' + srcUrl + '&charset=' + charset + '&separator=' + separator + '&count=10')
 }
 
 // 获取外部业务数据表的元数据

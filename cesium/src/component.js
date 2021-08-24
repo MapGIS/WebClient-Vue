@@ -50,6 +50,8 @@ export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vu
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
 export { default as Mapgis3dModelFlatten } from "./components/Analysis/ModelFlatten";
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
+export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
+export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as DynamicCutting } from "./components/Analysis/DynamicCutting";
 export { default as Fill } from "./components/Analysis/Fill";
 
@@ -57,3 +59,8 @@ export { default as Fill } from "./components/Analysis/Fill";
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
 export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
+
+
+export { default as Mapgis3dRainEffect } from "./components/UI/SceneEffect/RainEffect";
+export { default as Mapgis3dSnowEffect } from "./components/UI/SceneEffect/SnowEffect";
+export { default as Mapgis3dFogEffect } from "./components/UI/SceneEffect/FogEffect";

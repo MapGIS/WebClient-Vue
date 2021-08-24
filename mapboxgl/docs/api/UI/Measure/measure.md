@@ -2,6 +2,13 @@
 
 ## 属性
 
+### `editable`
+
+- **类型:** `Boolean`
+- **默认值:** `true`
+- **非侦听属性**
+- **描述:** 控制双击结束测量时图形的编辑状态，为 false 时双击后创建图形为不可编辑状态
+
 ### `measureMode`
 
 - **类型:** `String`
@@ -30,10 +37,15 @@
 
 ### `@added`
 
-- **属性值:** `drawer` 当前绘制组件对象
+- **属性值:** `measure` 当前绘制组件对象
 - **描述:** 当绘制组件添加后，向父组件传递当前绘制组件对象
 
 ### `@measureResult`
+
+- **属性值:** `result` 测量结果，单位为 米|平方米；`coordinates` 被测量对象的坐标点集合
+- **描述:** 向父组件传递测量结果和被测量对象的坐标点集合
+
+### `@measureCreate`
 
 - **属性值:** `result` 测量结果，单位为 米|平方米；`coordinates` 被测量对象的坐标点集合
 - **描述:** 向父组件传递测量结果和被测量对象的坐标点集合
@@ -46,47 +58,55 @@
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
     :zoom="mapZoom"
     :center="outerCenter"
     :crs="mapCrs"
+    @load="handleMapLoad"
   >
-    <mapbox-measure
-      class="custom-draw-wrapper"
-      position="bottom-left"
+    <mapgis-measure
+      position="top-left"
+      :controls="controls"
       :measureMode="measureMode"
-      measureMethod="geography"
-      @added="handleAdded"
-      @measureResult="getMeasureResult"
+      ref="measure"
+      @measurecreate="handleMeasureCreate"
+      @measureresult="handleMeasureResult"
+      @added="handleMeasureAdded"
     >
-      <el-button-group slot="measureTool">
-        <el-tooltip
-          v-for="(item, i) in buttons"
+      <mapgis-ui-button-group class="mapgis-2d-measure-wrapper">
+        <mapgis-ui-tooltip
+          v-for="(item, i) in measures"
           :key="i"
-          class="item"
-          effect="dark"
-          :content="item.tip"
           placement="bottom"
         >
-          <el-button circle size="small" :type="item.type" @click="item.click">
-            <icon-font :type="item.icon" />
-          </el-button>
-        </el-tooltip>
-      </el-button-group>
-      <div slot="measureMarker">
-        <mapbox-marker
-          v-for="(item, i) in measureMarkers"
-          :key="'measuer-marker-' + i"
-          :coordinates="item.coordinates"
-        >
-          <div slot="marker" :style="item.style">{{ item.text }}</div>
-        </mapbox-marker>
-      </div>
-    </mapbox-measure>
-  </mapbox-map>
+          <template slot="title">
+            <span>{{ item.tip }}</span>
+          </template>
+          <mapgis-ui-button
+            circle
+            size="small"
+            :type="item.type"
+            @click="item.click"
+          >
+            <mapgis-ui-iconfont :type="item.icon" />
+          </mapgis-ui-button>
+        </mapgis-ui-tooltip>
+      </mapgis-ui-button-group>
+      <mapgis-marker
+        color="#ff0000"
+        :coordinates="coordinates"
+        v-if="coordinates.length > 0"
+      >
+        <div slot="marker" class="label">
+          <div>面积：{{ area }}</div>
+          <div>周长：{{ perimeter }}</div>
+        </div>
+      </mapgis-marker>
+    </mapgis-measure>
+  </mapgis-web-map>
 </template>
 
 <script>
@@ -105,44 +125,44 @@ export default {
       outerCenter: [130, 30], // 地图显示中心
       mapCrs: "EPSG:3857",
 
-      buttons: [
+      measureMode: "",
+      coordinates: [],
+      area: 0,
+      perimeter: 0,
+      measure: undefined,
+      measures: [
         {
-          icon: "icon-measurelength",
+          icon: "mapgis-erweixian",
           type: "default",
           tip: "长度测量",
           click: this.toggleMeasureLength
         },
         {
-          icon: "icon-measurearea",
-          type: "default",
+          icon: "mapgis-erweiqu",
+          type: "primary",
           tip: "面积测量",
           click: this.toggleMeasureArea
         },
         {
-          icon: "icon-trash",
-          type: "default",
-          tip: "删除",
-          click: this.toggleDelete
+          icon: "mapgis-shanchudangqianziceng",
+          type: "primary",
+          tip: "删除测量",
+          click: this.toggleMeasureDelete
         }
-      ],
-      measureMode: null,
-      measureMarkers: []
+      ]
     };
-  },
-  components: {
-    MapboxMap,
-    MapboxMeasure,
-    MapboxMarker,
-    IconFont
   },
   created() {
     // 在组件中使用mapbox-gl.js的脚本库功能
     this.mapbox = Mapbox;
   },
   methods: {
-    handleAdded(e) {
-      let { drawer } = e;
-      this.drawer = drawer;
+    handleMapLoad(payload) {
+      this.map = payload.map;
+    },
+    handleMeasureAdded(e) {
+      let { measure } = e;
+      this.measure = measure;
     },
     getMeasureResult(result) {
       console.log(result);
@@ -169,58 +189,62 @@ export default {
           break;
       }
     },
-    getCenterOfGravityPoint(lnglats) {
-      let area = 0.0; // 多边形面积
-      let Gx = 0.0;
-      let Gy = 0.0; // 重心的x、y
-      for (let i = 1; i <= lnglats.length; i++) {
-        const iLat = lnglats[i % lnglats.length][1];
-        const iLng = lnglats[i % lnglats.length][0];
-        const nextLat = lnglats[i - 1][1];
-        const nextLng = lnglats[i - 1][0];
-        const temp = (iLat * nextLng - iLng * nextLat) / 2.0;
-        area += temp;
-        Gy += (temp * (iLat + nextLat)) / 3.0;
-        Gx += (temp * (iLng + nextLng)) / 3.0;
+    enableMeasure() {
+      const component = this.$refs.measure;
+      if (component) {
+        component.enableMeasure();
       }
-      return [Gx / area, Gy / area];
+    },
+    handleMeasureCreate(e) {
+      // this.measure && this.measure.deleteAll();
+      console.log("绘制结果", e);
+      this.disableDrag();
+    },
+    handleMeasureResult(e) {
+      console.log("测量结果", e);
+      this.disableDrag();
+      const coords = e.center.geometry.coordinates;
+      this.coordinates = coords;
+      this.area = e.geographyArea || "无";
+      this.perimeter = e.geographyPerimeter;
+    },
+    disableDrag() {
+      const vm = this;
+      vm.map.on("draw.selectionchange", e => {
+        const { features, points } = e;
+        const hasLine = features && features.length > 0;
+        const hasPoints = points && points.length > 0;
+        if (hasLine && !hasPoints) {
+          // line clicked
+          if (vm.measure.getMode() !== "direct_select") {
+            vm.measure.changeMode("simple_select", { featureIds: [] });
+            // vm.measure.changeMode('direct_select', { featureId: features[0].id });
+          }
+        } else if (hasLine && hasPoints) {
+          // line vertex clicked
+        } else if (!hasLine && !hasPoints) {
+          // deselected
+        }
+      });
     },
     toggleMeasureLength() {
-      if (this.measureMode !== measureModes.measureLength) {
-        this.measureMarkers = [];
-      }
-      this.measureMode = measureModes.measureLength;
-      this.drawer && this.drawer.changeMode("draw_line_string");
+      this.enableMeasure();
+      this.coordinates = [];
+      this.measureMode = "measure-length";
+      this.measure && this.measure.changeMode("draw_line_string");
     },
     toggleMeasureArea() {
-      if (this.measureMode !== measureModes.measureArea) {
-        this.measureMarkers = [];
-      }
-      this.measureMode = measureModes.measureArea;
-      this.drawer && this.drawer.changeMode("draw_polygon");
+      this.enableMeasure();
+      this.coordinates = [];
+      this.measureMode = "measure-area";
+      this.measure && this.measure.changeMode("draw_polygon");
     },
-    toggleDelete() {
-      this.measureMarkers = [];
-      this.drawer && this.drawer.deleteAll();
+    toggleMeasureDelete() {
+      this.coordinates = [];
+      this.enableMeasure();
+      this.measure && this.measure.deleteAll();
     }
   }
 };
 </script>
-
-<style lang="css">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-}
-
-.main {
-  height: 100vh;
-  width: 100%;
-}
-
-.button {
-  border: #000 2px solid;
-  height: 30px;
-  text-align: center;
-}
-</style>
 ```

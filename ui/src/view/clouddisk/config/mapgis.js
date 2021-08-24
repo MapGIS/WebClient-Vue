@@ -19,6 +19,11 @@ export function getMapGISUrl() {
   return url;
 }
 
+export function getPortalUrl () {
+  const portalBaseurl = window.localStorage.getItem("mapgis-cloud-portal-baseurl") || "http://192.168.176.1:6160";
+  return portalBaseurl
+}
+
 export function getWebSocketUrl(payload = {}) {
   let { client } = payload;
   const id = window.localStorage.getItem("mapgis_clouddisk_id");
@@ -32,7 +37,7 @@ export function getWebSocketUrl(payload = {}) {
   // let pathname = window.location.pathname
   let port = window.location.port;
   client =
-    (client || "mapgis_ui_global_upload_websocket_id_") + Math.random() * 1000;
+    (client || "mapgis_ui_global_upload_websocket_id") + "_" + new Date().getTime();
   // let protocol = window.location.protocol
   if (ip !== null && socket !== null) {
     url =
@@ -84,6 +89,15 @@ export function getMapgisToken(token) {
   }
 }
 
+export function getPortalToken (token) {
+  const storeToken = window.localStorage.getItem('mapgis_portal_token')
+  if (token) {
+    return token
+  } else {
+    return storeToken
+  }
+}
+
 export function getMapUser() {
   const name = window.localStorage.getItem("mapgis_clouddisk_user_name") || "";
   const key = window.localStorage.getItem("mapgis_clouddisk_user_key") || "";
@@ -104,6 +118,11 @@ export function getMapgisPath(path) {
   } else {
     return storePath;
   }
+}
+
+export function getMapgisGroupPath () {
+  const groupPath = window.localStorage.getItem('mapgis_clouddisk_group_path')
+  return groupPath
 }
 
 export function getMapgisEncryptPath(path) {

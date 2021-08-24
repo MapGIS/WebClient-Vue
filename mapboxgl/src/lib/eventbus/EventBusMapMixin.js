@@ -1,4 +1,5 @@
 import EventBus from "./EventBusMap";
+import EmitEvent from "./EmitMap";
 
 export default {
   name: "mapgis-event-bus-map-mixin",
@@ -52,8 +53,38 @@ export default {
     EventBus.$on("map-remove-theme-layer", payload => {
       this.$_handleMapRemoveThemeLayer(payload);
     });
+    EventBus.$on("map-open-table", payload => {
+      this.$_handleMapOpenTable(payload);
+    });
+
+    // 专题图相关
+    EventBus.$on("document-import-theme-layer", payload => {
+      this.$_handleDocumentImportThemeLayer(payload);
+    });
+    EventBus.$on("document-export-theme-layer", payload => {
+      this.$_handleDocumentExportThemeLayer(payload);
+    });
+    EventBus.$on("document-add-theme-layer", payload => {
+      this.$_handleDocumentAddThemeLayer(payload);
+    });
+    EventBus.$on("document-edit-theme-layer", payload => {
+      this.$_handleDocumentEditThemeLayer(payload);
+    });
+    EventBus.$on("document-remove-theme-layer", payload => {
+      this.$_handleDocumentRemoveThemeLayer(payload);
+    });
+    EventBus.$on("document-show-theme-layer", payload => {
+      this.$_handleDocumentShowThemeLayer(payload);
+    });
+    EventBus.$on("document-hide-theme-layer", payload => {
+      this.$_handleDocumentHideThemeLayer(payload);
+    });
+    EventBus.$on("document-save-theme-layer", payload => {
+      this.$_handleDocumentSaveThemeLayer(payload);
+    });
   },
   methods: {
+    ...EmitEvent,
     initUploadData() {
       /* const upload = EventBus.$options.upload || defaultUpload;
 
@@ -103,6 +134,51 @@ export default {
      * @description 取消激活专题图
      * @param {payload} 专题图载荷
      */
-    $_handleMapRemoveThemeLayer(payload) {}
+    $_handleMapRemoveThemeLayer(payload) {},
+    /**
+     * @description 激活属性表
+     * @param {payload} 属性表载荷
+     */
+    $_handleMapOpenTable(payload) {},
+    /**
+     * @description 文档添加专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentImportThemeLayer(payload) {},
+    /**
+     * @description 文档添加专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentExportThemeLayer(payload) {},
+    /**
+     * @description 文档添加专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentAddThemeLayer(payload) {},
+    /**
+     * @description 文档编辑专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentEditThemeLayer(payload) {},
+    /**
+     * @description 文档删除专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentRemoveThemeLayer(payload) {},
+    /**
+     * @description 文档显示专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentShowThemeLayer(payload) {},
+    /**
+     * @description 文档隐藏专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentHideThemeLayer(payload) {},
+    /**
+     * @description 文档保存专题图
+     * @param {payload} 载荷
+     */
+    $_handleDocumentSaveThemeLayer(payload) {}
   }
 };

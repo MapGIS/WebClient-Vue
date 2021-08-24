@@ -29,7 +29,7 @@
 import { dirnavigation } from "../../axios/files";
 import { getShareList } from "../../axios/share.js";
 import { getFileIcon } from "../../util/fileType";
-import { getMapgisPath } from "../../config/mapgis";
+import { getMapgisPath, getMapgisGroupPath } from "../../config/mapgis";
 
 // const DefaultData = {
 //   title: '目录',
@@ -60,6 +60,10 @@ export default {
       default: true
     },
     isMulti: {
+      type: Boolean,
+      default: false
+    },
+    isStyle: {
       type: Boolean,
       default: false
     },
@@ -178,7 +182,7 @@ export default {
             vm.isLoading = false;
           });
       } else if (url === -100) {
-        let defaultURL = getMapgisPath();
+        let defaultURL = getMapgisGroupPath();
         dirnavigation(defaultURL)
           .then(res => {
             if (res.status === 200) {
@@ -201,6 +205,16 @@ export default {
                 let items = this.onlyFolder
                   ? data.filter(item => item.isfolder === true)
                   : data;
+                items = items.filter(item => {
+                  if (item.isfolder) {
+                    return true
+                  } else if (this.isStyle) {
+                    return item.type === '.style'
+                  } else {
+                    let hasImport = item.xattrs && item.xattrs.dataSource && item.xattrs.dataSource !== ''
+                    return hasImport
+                  }
+                })
                 items = items.map(d => {
                   d.commonUrl = defaultURL;
                   d.icon = getFileIcon(d.ext);
@@ -239,7 +253,7 @@ export default {
       }
     },
     handelClick (selectedKeys, e) {
-      console.warn('当前选择', e.node.dataRef.url)
+      // console.warn('当前选择', e.node.dataRef.url)
       if (!this.isMulti) {
         this.$emit("select", e.node.dataRef.url, e.node.dataRef)
       } else {
@@ -290,51 +304,61 @@ export default {
     loadCompany(item) {
       return new Promise(resolve => {
         if (item.dataRef.children) {
-          console.warn('进到有children的里面')
+          // console.warn('进到有children的里面')
           resolve();
           return;
         }
-      dirnavigation(item.dataRef.url)
-        .then(res => {
-          if (res.status === 200) {
-            let result = res.data;
-            let { data, errorCode, msg } = result;
-            if (errorCode < 0) {
-              this.$notification.error({ message: errorCode, description: msg });
-            } else {
-              let items = this.onlyFolder
-                ? data.filter(item => item.isfolder === true)
-                : data;
-              items = items.map(d => {
-                d.commonUrl = item.commonUrl;
-                d.icon = getFileIcon(d.ext);
-                if (d.isfolder) {
-                  d.loading = false;
-                  // d.children = [];
-                  d.disableCheckbox = true;
-                } else {
-                  d.isLeaf = true;
-                  d.expand = false;
-                  delete d.loading;
-                }
-                return d;
-              });
-              items = this.checkSelected(this.url, item.url, items);
-              item.dataRef.children = items;
-              // vm.data = [...vm.data];
-              // console.warn(items)
-              // callback(items, item);
+        dirnavigation(item.dataRef.url)
+          .then(res => {
+            if (res.status === 200) {
+              let result = res.data;
+              let { data, errorCode, msg } = result;
+              if (errorCode < 0) {
+                this.$notification.error({ message: errorCode, description: msg });
+              } else {
+                let items = this.onlyFolder
+                  ? data.filter(item => item.isfolder === true)
+                  : data;
+                items = items.filter(item => {
+                  if (item.isfolder) {
+                    return true
+                  } else if (this.isStyle) {
+                    return item.type === '.style'
+                  } else {
+                    let hasImport = item.xattrs && item.xattrs.dataSource && item.xattrs.dataSource !== ''
+                    return hasImport
+                  }
+                })
+                items = items.map(d => {
+                  d.commonUrl = item.commonUrl;
+                  d.icon = getFileIcon(d.ext);
+                  if (d.isfolder) {
+                    d.loading = false;
+                    // d.children = [];
+                    d.disableCheckbox = true;
+                  } else {
+                    d.isLeaf = true;
+                    d.expand = false;
+                    delete d.loading;
+                  }
+                  return d;
+                });
+                items = this.checkSelected(this.url, item.url, items);
+                item.dataRef.children = items;
+                // vm.data = [...vm.data];
+                // console.warn(items)
+                // callback(items, item);
+              }
             }
-          }
-        })
-        .catch(error => {
-          this.$notification.error({ message: "网络异常,请检查链接", description: error });
-        });
+          })
+          .catch(error => {
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });
+          });
       })
     },
     selectTiff(checkedKeys, e) {
       let selects = e.checkedNodes.map(item => item.data.props);
-      console.warn('复选框', selects, e, this.url, this.selectListsObj);
+      // console.warn('复选框', selects, e, this.url, this.selectListsObj);
       this.selectListsObj[this.url] = selects;
       this.$emit("handleSelectsInfo", this.selectListsObj);
     },
@@ -396,7 +420,7 @@ export default {
       // }
     },
     handelExpand (a, b) {
-      console.warn('检查展开', a, b);
+      // console.warn('检查展开', a, b);
     }
   }
 };

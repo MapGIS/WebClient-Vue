@@ -3,6 +3,7 @@
 
 @include b(card) {
   $card-prefix: &;
+  background-color: $card-body-background;
 
   @include e(body, '-') {
     background-color: $card-head-background;

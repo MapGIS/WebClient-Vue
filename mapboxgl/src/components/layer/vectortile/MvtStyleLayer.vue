@@ -113,17 +113,6 @@ export default {
       this.$_emitEvent("added", this);
     },
 
-    isThemeLayer(name) {
-      let isTheme = false;
-      if (!name) return isTheme;
-      DefaultThemeLayers.forEach(l => {
-        if (name.indexOf(l) >= 0) {
-          isTheme = true;
-        }
-      });
-      return isTheme;
-    },
-
     remove(oldStyle, removeForce) {
       removeForce = removeForce === undefined ? true : this.removeForce;
       let { map } = this;
@@ -196,6 +185,7 @@ export default {
         sources: { ...oldStyle.sources, ...newStyle.sources },
         layers: newLayer
       };
+      this.$emit('change-style', style);
       return style;
     },
 
@@ -224,28 +214,11 @@ export default {
     mergeLayers(olds, news) {
       const vm = this;
       news = news || [];
+      let themes = olds.filter(l => vm.isThemeLayer(l.id));
+      olds = olds.filter(l => !vm.isThemeLayer(l.id));
       if (!olds) return [].concat(news);
-      /* let merges = olds.map(layer => {
-        let find = news.find(l => l.id === layer.id);
-        return find ? find : layer;
-      }); */
-      let merges = olds.reduce((total, layer, index, arr) => {
-        let theme = undefined;
-        let beforetheme = undefined;
-        vm.themeRules.forEach(rules => {
-          let findtheme = rules.find(r => r.id == layer.id);
-          if (findtheme) {
-            theme = findtheme;
-            beforetheme = rules[0];
-            let findorigin = total.find(l => l.id == beforetheme.id);
-            if (!findorigin) {
-              let newbeforetheme = news.find(l => l.id == beforetheme.id);
-              if (beforetheme) newbeforetheme.paint = beforetheme.paint;
-              total = total.concat(newbeforetheme || beforetheme);
-            }
-          }
-        });
 
+      let merges = olds.reduce((total, layer, index, arr) => {
         let find = news.find(l => l.id == layer.id);
         let hasold = total.find(l => l.id == layer.id);
         if (find && !hasold) {
@@ -273,24 +246,74 @@ export default {
         return find ? false : true;
       });
       // 考虑 A-B-C 内部的顺序问题  如实际调整为B-A-C
-      /* const sort = clonedeep(unmerges);
+      // 主要是mapbox的机制只能办到addLayer({}, before), 所以只能按照before的顺序进行一个重新排序
+      let reunmerges = [];
+      const sort = clonedeep(unmerges);
       sort.forEach((layer, i) => {
         let { before, after } = layer;
+        let index = -1;
         if (before) {
-          for (let j = 0; j < unmerges.length; j++) {
-            if (unmerges[j].id == before) {
-              index = j;
-              break;
+          index = this.findIndex(reunmerges, before);
+          if (index >= 0) {
+            this.addLayer(reunmerges, index, layer, "before");
+          } else {
+            let beforeLayer = unmerges.find(l => l.id == before);
+            if (beforeLayer) {
+              index = this.findIndex(reunmerges, layer.id);
+              if (index >= 0) {
+                this.addLayer(reunmerges, index, beforeLayer, "before");
+              } else {
+                this.addLayer(reunmerges, index, beforeLayer, "tail");
+              }
+
+              index = this.findIndex(reunmerges, before);
+              if (index >= 0) {
+                this.addLayer(reunmerges, index, layer, "after");
+              } else {
+                this.addLayer(reunmerges, index, layer, "tail");
+              }
             }
           }
-          if (index >= 0) {
-              delete u.before;
-              unmerges.splice(index, 0, u);
-              return false;
-            }
+        } else if (after) {
+          index = this.findIndex(reunmerges, after);
+          this.addLayer(reunmerges, index, layer, "before");
         }
-      }); */
-      let umsorts = unmerges
+      });
+      // 专题图逻辑
+      // let hastheme = this.hasTheme(unmerges);
+      let hastheme = this.hasTheme();
+      if (this.hasTheme) {
+        let themeRules = this.resortTheme(news);
+        reunmerges = unmerges.reduce((total, layer) => {
+          let theme = undefined;
+          let beforetheme = undefined;
+          let findtheme = false;
+          themeRules.forEach(rules => {
+            let findtheme = rules.find(r => r.id == layer.id);
+            if (findtheme) {
+              theme = findtheme;
+              beforetheme = rules[0];
+              let findorigin = total.find(l => l.id == beforetheme.id);
+              if (!findorigin) {
+                findtheme = true;
+                let newbeforetheme = news.find(l => l.id == beforetheme.id);
+                if (beforetheme) newbeforetheme.paint = beforetheme.paint;
+                let themelayer = newbeforetheme || beforetheme;
+                if (themelayer) total = total.concat(themelayer);
+              }
+            }
+          });
+          if (!findtheme) {
+            if (!total.find(l => l.id == layer.id)) {
+              total = total.concat(layer);
+            }
+          }
+          return total;
+        }, []);
+      }
+
+      let lefts = hastheme ? reunmerges : unmerges;
+      let umsorts = lefts
         .filter((u, i) => {
           let index = -1;
           let { before, after } = u;
@@ -316,8 +339,103 @@ export default {
           delete u.after;
           return u;
         });
+      let layers = merges.concat(umsorts);
 
-      return merges.concat(umsorts);
+      this.themeRules.forEach(rules => {
+        for (let i = rules.length - 1; i > 0; i--) {
+          let r = rules[i];
+          let index = vm.findIndex(layers, rules[0].id);
+          if (index >= 0) {
+            vm.addLayer(layers, index, r, "after");
+          } else {
+            vm.addLayer(layers, index, r, "tail");
+          }
+        }
+      });
+
+      return layers;
+    },
+
+    isThemeLayer(name) {
+      let isTheme = false;
+      if (!name) return isTheme;
+      DefaultThemeLayers.forEach(l => {
+        if (name.indexOf(l) >= 0) {
+          isTheme = true;
+        }
+      });
+      return isTheme;
+    },
+
+    hasTheme(layers) {
+      let has = false;
+      this.themeRules.forEach(rules => {
+        rules.forEach(r => {
+          if (layers) {
+            layers.forEach(l => {
+              if (l.id == r.id) {
+                if (r.theme || r.theme !== "none") {
+                  has = true;
+                }
+              }
+            });
+          } else {
+            if (r.theme || r.theme !== "none") {
+              has = true;
+            }
+          }
+        });
+      });
+      return has;
+    },
+
+    resortTheme(news) {
+      let orders = news
+        .filter(l => {
+          return l.theme != undefined;
+        })
+        .map((l, i) => {
+          l.zindex = i;
+          return l;
+        });
+      let newRules = [];
+      this.themeRules.forEach(rules => {
+        if (rules.length > 0) {
+          let find = orders.find(l => l.id == rules[0].id);
+          if (find) {
+            newRules[find.zindex] = rules;
+          }
+        }
+      });
+      this.themeRules = newRules;
+      return newRules;
+    },
+
+    findIndex(arrs, id) {
+      let index = -1;
+      for (let j = 0; j < arrs.length; j++) {
+        if (arrs[j].id == id) {
+          index = j;
+          break;
+        }
+      }
+      return index;
+    },
+
+    addLayer(arrs, index, layer, mode = "before") {
+      if (mode === "before") {
+        if (!arrs.find(l => l.id == layer.id)) {
+          arrs.splice(index, 0, layer);
+        }
+      } else if (mode === "after") {
+        if (!arrs.find(l => l.id == layer.id)) {
+          arrs.splice(index + 1, 0, layer);
+        }
+      } else {
+        if (!arrs.find(l => l.id == layer.id)) {
+          arrs.push(layer);
+        }
+      }
     },
 
     $_handleMapAddLayer(payload) {},

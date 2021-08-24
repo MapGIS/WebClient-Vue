@@ -109,6 +109,36 @@ export const changeUploadError = payload => {
   EventBus.$emit("change-upload-error", uploadError);
 };
 
+/**
+ * @description 监控上传过程过程中的错误信息
+ * @param {String} uploadErrorMsg
+ */
+export const changeUploadErrorMsg = payload => {
+  EventBus.$options.upload.uploadErrorMsg = payload.uploadErrorMsg;
+  EventBus.$emit("change-upload-error-msg", payload.uploadErrorMsg);
+};
+
+/**
+ * @description 表示csv数据的首次上传是否完成
+ * @param {Boolean} csvUploadComplete 
+ */
+export const changeCsvUploadComplete = payload => {
+  EventBus.$options.upload.csvUploadComplete = payload.csvUploadComplete;
+  EventBus.$emit("change-upload-csv-complete", payload.csvUploadComplete);
+};
+
+/**
+ * @description 记录最新一次导入操作的taskId，此taskId与WebSocket消息的MsgId相同时，即表示该消息涉及当前最新一次导入
+ * @param {String} webSocketTaskId 
+ */
+export const changeUploadWebsocketTaskId = payload => {
+  EventBus.$options.upload.webSocketTaskId = payload.webSocketTaskId;
+  EventBus.$emit("change-upload-taskid", payload.webSocketTaskId);
+};
+// handleWebSocketTaskId (state, payload) {
+//   state.webSocketTaskId = payload.webSocketTaskId
+// },
+
 // -----------------------原始云盘 Complete 模块--------------------
 export const addCompleteUploaderCount = () => {
   let count = EventBus.$options.complete.uploadCount + 1;
@@ -141,10 +171,6 @@ export const changeWebSocketContent = payload => {
   EventBus.$options.websocket.WebsocketContent = payload.content;
   EventBus.$emit("change-websocket-content", payload.content);
 };
-export const changeWebSocketContentType = payload => {
-  EventBus.$options.websocket.WebsocketContentType = payload.contentType;
-  EventBus.$emit("change-websocket-content-type", payload.contentType);
-};
 export const changeWebSocketMsgid = payload => {
   EventBus.$options.websocket.WebsocketMessageId = payload.msgid;
   EventBus.$emit("change-websocket-msgid", payload.msgid);
@@ -152,7 +178,7 @@ export const changeWebSocketMsgid = payload => {
 
 // -------------------------原始云盘 Path 模块-----------------------
 export const changePathUploaduri= payload => {
-  console.warn("payload", payload);
+  // console.warn("payload", payload);
   EventBus.$options.path.uploaduri = payload.uri;
   EventBus.$emit("change-path-uploaduri", payload.uri);
 };

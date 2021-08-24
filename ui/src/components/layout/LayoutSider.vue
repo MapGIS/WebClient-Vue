@@ -10,8 +10,8 @@ export const LayoutSiderProps = {
   collapsible: false,
   defaultCollapsed: false,
   reverseArrow: false,
-  width: 200,
-  collapsedWidth: 80
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  collapsedWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 
 export default {

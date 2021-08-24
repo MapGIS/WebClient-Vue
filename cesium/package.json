@@ -27,7 +27,6 @@
     "@mapgis/cesium": "^1.59.3",
     "@mapgis/webclient-es6-service": "^10.5.4",
     "@mapgis/webclient-store": "^1.0.14",
-    "@mapgis/webclient-es6-service": "^10.5.4",
     "@turf/turf": "^5.1.6",
     "@vuepress/plugin-active-header-links": "^1.7.1",
     "@vuepress/plugin-nprogress": "^1.7.1",
@@ -35,12 +34,12 @@
     "compression-webpack-plugin": "^6.1.1",
     "echarts": "^5.0.2",
     "mapv": "^2.0.62",
+    "moment": "^2.29.1",
     "node-sass": "^4.14.0",
     "sass-loader": "^8.0.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vcolorpicker": "^1.1.0",
-    "vuepress": "^1.8.2",
-    "vuepress-plugin-demo-code": "^0.5.2"
+    "vuepress": "^1.8.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

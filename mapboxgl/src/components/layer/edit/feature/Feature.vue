@@ -8,8 +8,24 @@
         class="mapgis-mvt-editor-feature"
         @edit-change="onEditChange"
       />
+      <string
+        v-else-if="r.type === 'string'"
+        :rule="r"
+        :layerid="layerid"
+        class="mapgis-mvt-editor-feature"
+        @edit-change="onEditChange"
+      />
       <number
         v-else-if="r.type === 'number'"
+        :rule="r"
+        :layerid="layerid"
+        class="mapgis-mvt-editor-feature"
+        :minimum="r.minimum || 0"
+        :maximum="r.maximum || 1000"
+        @edit-change="onEditChange"
+      />
+      <numberarray
+        v-else-if="r.type === 'array-number'"
         :rule="r"
         :layerid="layerid"
         class="mapgis-mvt-editor-feature"
@@ -30,7 +46,9 @@
 import EditMixin from "../EditMixin";
 
 import color from "../property/PropertyColor.vue";
+import string from "../property/PropertyString.vue";
 import number from "../property/PropertyNumber.vue";
+import numberarray from "../property/PropertyArrayNumber.vue";
 import sprite from "../property/PropertySprite.vue";
 
 export default {
@@ -39,6 +57,8 @@ export default {
   components: {
     color,
     number,
+    numberarray,
+    string,
     sprite
   },
   props: {

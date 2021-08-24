@@ -1,31 +1,33 @@
 <template>
   <div>
     <ThemePanel
-        :checkBoxArr="checkBoxArr"
+        v-if="!resetPanel"
+        v-show="showPanelFlag"
+        :title="title"
         :colors="colors"
         :data-source="dataSource"
         :dataType="dataType"
         :fields="fields"
+        :labelFields="allFields"
+        :panelProps="panelPropsDefault"
+        :textFonts="textFonts"
+        :themeDefaultType="themeDefaultType"
+        :themeType="themeTypeArrCopy"
         @change="$_selectChange"
+        @closePanel="$_closePanel"
         @gradientChange="$_gradientChange"
         @heatRadiusChanged="$_heatRadiusChanged"
         @opacityChanged="$_opacityChanged"
+        @themeTypeChanged="$_themeTypeChanged"
     >
     </ThemePanel>
-    <mapgis-vector-layer
-        v-if="showVector"
-        :layer="layerVector"
-        :layer-id="layerVectorId"
-        :source="sourceVector"
-        :source-id="sourceVectorId"
-    >
-    </mapgis-vector-layer>
   </div>
 </template>
 
 <script>
-import ThemePanel from "./HeatPanel";
+import ThemePanel from "./ThemePanel";
 import BaseLayer from "./BaseLayer";
+import gradients from "./gradient";
 
 export default {
   name: "mapgis-igs-heat-theme-layer",
@@ -34,11 +36,17 @@ export default {
   components: {
     ThemePanel
   },
+  props: {
+    themeDefaultType: {
+      type: String,
+      default: "热力专题图"
+    },
+
+  },
   data() {
     return {
       title: "热力专题图",
       dataSource: [],
-      checkBoxArr: [],
       fields: [],
       colors: [],
       originColors: [],
@@ -49,15 +57,15 @@ export default {
       showVector: false,
       startColor: "#FFFFFF",
       endColor: "#FF0000",
-      sourceVectorId: 'unique_theme_source',
-      layerVectorId: 'unique_theme_layer',
-      sourceVector: {
-        type: 'geojson',
-        data: undefined
-      },
       layerVector: {},
-      showLayer: true
+      showLayer: true,
+      panelPropsDefault: {},
+      themeType: "heatmap",
+      heatMapLayerId: undefined,
     }
+  },
+  created() {
+    this.$_formatProps();
   },
   mounted() {
     this.$_mount();
@@ -66,106 +74,78 @@ export default {
     this.$_removeLayer();
   },
   methods: {
+    $_changeOriginLayer() {
+    },
     /*
     * 初始化专题图样式的业务逻辑
     * @param geojson geojson数据
     * @fillColors 处理好的颜色信息
     * **/
-    $_initThemeCallBack(geojson) {
-      if (this.useOriginLayer) {
-        this.map.removeLayer(this.layerId);
-        this.useOriginLayer = false;
+    $_initThemeCallBack(geojson, fillColors, dataSource, minzoom, maxzoom) {
+      let weightArray = this.setWeightArr(geojson, this.defaultValue);
+      let colorGradient = this.getGradientColors(true);
+      let paintValue = {
+        paint: {
+          "heatmap-color": [
+            "interpolate",
+            ["linear"],
+            ["heatmap-density"],
+            0,
+            "rgba(255,255,255,0)",
+          ].concat(colorGradient),
+          "heatmap-radius": this.heatMapRadius,
+          "heatmap-opacity": this.opacity
+        },
       }
+      if (weightArray===false){
+      } else {
+        paintValue.paint["heatmap-weight"] = [
+          "interpolate",
+          ["linear"],
+          ["get", this.defaultValue],
+        ].concat(weightArray);
+      }
+      this.$set(this.panelPropsDefault, "defaultValue", this.defaultValue)
       if (geojson.features.length > 0 && (geojson.features[0].geometry.type === "MultiPoint" || geojson.features[0].geometry.type === "Point")) {
         this.dataType = 'heatmap';
-        this.layerVector = {
-          type: 'heatmap',
-          source: this.sourceVectorId, //必须和上面的layerVectorId一致
-          paint: {
-            "heatmap-weight": [
-              "interpolate",
-              ["linear"],
-              ["get", "name"],
-              0,
-              0,
-              1000,
-              1
-            ],
-            "heatmap-intensity": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              0,
-              3,
-              9,
-              5
-            ],
-            "heatmap-color": [
-              "interpolate",
-              ["linear"],
-              ["heatmap-density"],
-              0,
-              "#FFFFFF",
-              0.16,
-              "#0000FF",
-              0.33,
-              "#00FFFF",
-              0.5,
-              "#00FF00",
-              0.66,
-              "#FFFF00",
-              0.83,
-              "#FF0000"
-            ],
-            // Adjust the heatmap radius by zoom level
-            "heatmap-radius": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              0,
-              2,
-              1,
-              4,
-              2,
-              8,
-              3,
-              16,
-              4,
-              32,
-              5,
-              64,
-              6,
-              128,
-              7,
-              256,
-              8,
-              512,
-              9,
-              1024,
-              10,
-              2048,
-              11,
-              4096
-            ],
-            // Transition from heatmap to circle layer by zoom level
-            "heatmap-opacity": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              5,
-              0.95,
-              6,
-              0
-            ]
+        this.heatMapLayerId = this.layerIdCopy + "_热力专题图";
+        if (!window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]) {
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()] = {
+            id: this.heatMapLayerId,
+            type: 'heatmap',
+            source: this.source_vector_Id, //必须和上面的layerId一致
+            layout: {
+              'visibility': "visible"
+            },
+            paint: paintValue.paint,
+            minzoom: minzoom,
+            maxzoom: maxzoom
+          };
+          if (this.source_vector_layer_Id) {
+            window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
           }
+          let extraLayer = [];
+          extraLayer.push({
+            key: "heatmapLayer",
+            value: this.heatMapLayerId
+          });
+          window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = extraLayer;
+          this.title = "热力专题图" + "_" + this.layerIdCopy;
+          window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName()];
         }
       }
     },
 
-    $_gradientChange(colorsArr) {
-      const {map, layerVectorId} = this;
+    $_gradientChange(colorsArr, heatObj) {
+      const {heatMapLayerId} = this;
       let steps = [];
       let level = 1 / colorsArr.length;
+      if (typeof heatObj === "number") {
+        window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.selectHeatValue = heatObj;
+      } else {
+        window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.heatGradientArr = heatObj;
+        window.originLayer[this.layerIdCopy].panelProps[window._workspace._layerTypes[this.layerIdCopy]].panelProps.selectHeatValue = 0;
+      }
       colorsArr.forEach((color, i) => {
         steps.push(i * level);
         steps.push(color);
@@ -175,32 +155,47 @@ export default {
         ["linear"],
         ["heatmap-density"],
       ].concat(steps);
-      map.setPaintProperty(layerVectorId, "heatmap-color", colorrules);
+      this.$_setPaintProperty("heatmap-color", colorrules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     $_heatRadiusChanged(heatRadius) {
-      const {map, layerVectorId} = this;
-      map.setPaintProperty(layerVectorId, "heatmap-radius", heatRadius);
+      const {heatMapLayerId} = this;
+      if(heatMapLayerId){
+        this.$_setPaintProperty("heatmap-radius", heatRadius, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
+      }
     },
 
     $_opacityChanged(opacity) {
-      const {map, layerVectorId} = this;
-      map.setPaintProperty(layerVectorId, "heatmap-opacity", opacity);
-      this.layerVector.paint["fill-opacity"] = opacity;
+      const {heatMapLayerId} = this;
+      if(heatMapLayerId){
+        this.$_setPaintProperty("heatmap-opacity", opacity, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
+      }
     },
 
     $_selectChange(value) {
-      const {map, layerVectorId} = this;
-      let weightRules = [
-        "interpolate",
-        ["linear"],
-        ["get", value],
-        0,
-        0,
-        1000,
-        1
-      ];
-      map.setPaintProperty(layerVectorId, "heatmap-weight", weightRules);
+      window.originLayer[this.layerIdCopy].panelProps[
+          window._workspace._layerTypes[this.layerIdCopy]
+          ].panelProps.selectValue = value;
+      let geojsonOrigin = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_features"];
+      if (!geojsonOrigin.hasOwnProperty("features")) {
+        geojsonOrigin = {
+          features: geojsonOrigin,
+          type: "FeatureCollection"
+        };
+      }
+      let weightArr = this.setWeightArr(geojsonOrigin, value);
+      const {heatMapLayerId} = this;
+      let weightRules;
+      if(!weightArr){
+        weightRules = Number(geojsonOrigin.features[0].properties[value]);
+      }else {
+        weightRules = [
+          "interpolate",
+          ["linear"],
+          ['to-number', ["get", value]],
+        ].concat(weightArr);
+      }
+      this.$_setPaintProperty("heatmap-weight", weightRules, heatMapLayerId, window.originLayer[this.layerIdCopy][heatMapLayerId]);
     },
 
     /*
@@ -296,6 +291,57 @@ export default {
         colors.push("#FFF");
       }
       return colors;
+    },
+    getGradientColors(tag) {
+      if (tag) {
+        let originColor = gradients[0].key.split(",");
+        let steps = [];
+        for (let i = 0; i < originColor.length - 1; i++) {
+          let colors = this.$_gradientColor(originColor[i], originColor[i + 1], 10);
+          let level = ((i + 2) * 0.2 - (i + 1) * 0.2) / colors.length;
+          colors.forEach((color, j) => {
+            let stop = (i + 1) * 0.2 + j * level;
+            steps.push(stop);
+            steps.push(color);
+          })
+        }
+        return steps;
+      }
+    },
+    setWeightArr(geojsonOrigin, val) {
+      let max = 0;
+      let min = undefined;
+      for (let i = 0; i < geojsonOrigin.features.length; i++) {
+        let cur = geojsonOrigin.features[i].properties[val];
+        //排除字符串""
+        if (cur !== "") {
+          cur = Number(cur);
+          cur > max ? max = cur : null;
+          if (min === undefined) {
+            min = max;
+          }
+          cur < min ? min = cur : null;
+        }
+      }
+      if (max === min) {
+        return false;
+      }
+      let weightArr = [];
+      let n = 5;
+      let weightOrigin = (max - min) / n;
+      let stops = 1 / n;
+      for (let i = 0; i < n; i++) {
+        let weightNum;
+        if (i === n - 1) {
+          weightNum = max;
+        } else {
+          weightNum = min + weightOrigin * i;
+        }
+        let stop = stops * i;
+        weightArr.push(weightNum);
+        weightArr.push(stop);
+      }
+      return weightArr;
     }
   }
 }

@@ -1,0 +1,12 @@
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
+
+@include b(div) {
+  $div-prefix: &;
+  
+  background: $div-background;
+
+  &:hover {
+
+  }
+}

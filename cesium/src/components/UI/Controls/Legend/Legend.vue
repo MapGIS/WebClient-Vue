@@ -24,59 +24,65 @@
 
 <script>
 export default {
-    name: "mapgis-3d-arcgis-legend",
-    inject: ["Cesium", "webGlobe", "CesiumZondy"],
-    data() {
-        return {
-            layers: [],
-            legends: [],
-            allLegends: [],
-        };
-    },
-    mounted() {
-        this.getLegendUrl();
-    },
-    methods: {
-        getLegendInfo(url) {
-            let legendUrl = url.replace(/(?<=MapServer).*/i, "/legend?f=pjson");
-            fetch(legendUrl)
-                .then((res) => {
-                    return res.json();
-                })
-                .then((res) => {
-                    this.layers = this.layers.concat(res.layers);
-                    res.layers.forEach((layer) => {
-                        this.allLegends = this.allLegends.concat(layer.legend);
-                    });
-                    this.legends = this.allLegends;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
-        getLegendUrl() {
-            const { CesiumZondy } = this;
-            let layers = [];
-            Object.keys(CesiumZondy.ArcgisManager).forEach((key) => {
-                if (key !== "vueKey") {
-                    layers = layers.concat(CesiumZondy.ArcgisManager[key]);
-                }
+  name: "mapgis-3d-arcgis-legend",
+  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  data() {
+    return {
+      layers: [],
+      legends: [],
+      allLegends: [],
+    };
+  },
+  mounted() {
+    this.getLegendUrl();
+  },
+  methods: {
+    getLegendInfo(url) {
+      const regExp = new RegExp("(?<=MapServer).*", 'i')
+      let legendUrl = url.replace(regExp, "/legend?f=pjson");
+      fetch(legendUrl)
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            this.layers = this.layers.concat(res.layers);
+            res.layers.forEach((layer) => {
+              this.allLegends = this.allLegends.concat(layer.legend);
             });
-            layers.forEach((layer) => {
-                let url = layer.source._imageryProvider.url;
-                if (/\/arcgis\/rest\/services/i.test(url)) {
-                    this.getLegendInfo(url);
-                }
-            });
-        },
-        handleChange(value) {
-            if (value === "全部") {
-                this.legends = this.allLegends;
-            } else {
-                this.legends = this.layers[value].legend;
-            }
-        },
+            this.legends = this.allLegends;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
     },
+    getLegendUrl() {
+      const {CesiumZondy} = this;
+      let layers = [];
+      Object.keys(CesiumZondy.ArcgisManager).forEach((key) => {
+        if (key !== "vueKey") {
+          layers = layers.concat(CesiumZondy.ArcgisManager[key]);
+        }
+      });
+      layers.forEach((layer) => {
+        let url = layer.source._imageryProvider.url;
+        const regExp = new RegExp("\\/arcgis\\/rest\\/services", 'i');
+
+        // if (/\/arcgis\/rest\/services/i.test(url)) {
+        //       this.getLegendInfo(url);
+        //   }
+        if (regExp.test(url)) {
+          this.getLegendInfo(url);
+        }
+      });
+    },
+    handleChange(value) {
+      if (value === "全部") {
+        this.legends = this.allLegends;
+      } else {
+        this.legends = this.layers[value].legend;
+      }
+    },
+  },
 };
 </script>
 

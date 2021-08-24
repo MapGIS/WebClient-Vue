@@ -3,6 +3,7 @@
     <span class="unvisible-uploader">{{ params }}</span>
     <!-- 上传 -->
     <uploader
+      v-if="initGloablUpload"
       ref="uploader"
       :change="tokenChange"
       :options="options"
@@ -16,25 +17,39 @@
     >
       <uploader-unsupport></uploader-unsupport>
 
-      <uploader-btn id="global-uploader-btn" :attrs="attrs1" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn"
+        :attrs="attrs1"
+        ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-tiff"
         :attrs="attrs2"
         ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-shp" :attrs="attrs3" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-shp"
+        :attrs="attrs3"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-json"
         :attrs="attrs4"
         ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-csv" :attrs="attrs5" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-csv"
+        :attrs="attrs5"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
@@ -141,13 +156,15 @@ import {
   changeUiState,
   changeUploadProgress,
   changeUploadError,
+  changeUploadErrorMsg,
   addCompleteUploaderCount,
   addCompleteUploaderResult,
   addGisCurrent,
   changeWebsocketAction,
   changeWebSocketContent,
   changeWebSocketContentType,
-  changeWebSocketMsgid
+  changeWebSocketMsgid,
+  changeCsvUploadComplete
 } from "../../../../util/emit/upload";
 
 import UploadMixin from "../../../../mixin/UploaderMixin";
@@ -172,6 +189,7 @@ export default {
   },
   data() {
     return {
+      initGloablUpload: false,
       percent: 0,
       showSpin: false,
       showSpinName: "",
@@ -239,7 +257,16 @@ export default {
   },
   created() {
     self = this;
-    this.initWebsocket();
+    let loopToken = window.setInterval(() => {
+      let token = window.localStorage.getItem("mapgis_clouddisk_token");
+      if (token !== null) {
+        this.initGloablUpload = true;
+        let target = getMapGISUploadUrl();
+        this.options.target = target;
+        this.initWebsocket();
+        window.clearInterval(loopToken);
+      }
+    }, 200);
   },
   mounted() {},
   watch: {
@@ -295,17 +322,17 @@ export default {
       }
 
       return this.param;
-    },
-    visible() {
-      if (this.$refs.uploadDiv) {
-        if (this.visible) {
-          document.getElementById("global-uploader").style.zIndex = 100;
-        } else {
-          document.getElementById("global-uploader").style.zIndex = -100;
-        }
-      }
-      return this.visible;
     }
+    // visible() {
+    //   if (this.$refs.uploadDiv) {
+    //     if (this.visible) {
+    //       document.getElementById("global-uploader").style.zIndex = 100;
+    //     } else {
+    //       document.getElementById("global-uploader").style.zIndex = -100;
+    //     }
+    //   }
+    //   return this.visible;
+    // }
   },
   methods: {
     updatePrecess() {
@@ -321,7 +348,12 @@ export default {
       return target;
     },
     onFileAdded(file) {
-      changeUiState({ state: "upload" });
+      let fileType = this.param.type;
+      if (fileType === 'csv') {
+        changeUiState({ state: "check" });
+      } else {
+        changeUiState({ state: "upload" });
+      }
       changeUploadError({ uploadError: false });
       changeUploadProgress({ progress: 0 });
       changeCurrentFilename({ filename: file.name });
@@ -364,6 +396,9 @@ export default {
       if (res.data.needMerge) {
         let type = self.param.type;
         let isCache = self.param.isCache;
+        let isGisImport = self.param.isGisImport
+        let taskid = self.param.taskid
+        // console.warn('本次上传对应taskid:', taskid)
         let gisFormat = type === "tiff" ? "raster" : "vector";
         let formdata = {
           // @date 2021/07/16
@@ -374,12 +409,15 @@ export default {
           filename: file.name,
           prelocation: file.relativePath,
           gisFormat: gisFormat,
-          isCache: isCache
+          isCache: isCache,
+          isGisImport: isGisImport || false,
+          taskid: taskid || ''
         };
         console.warn("mergeSimpleUpload 尝试发送", formdata);
         mergeSimpleUpload(formdata)
           .then(res => {
             console.warn("mergeSimpleUpload 成功发送", res);
+            changeCsvUploadComplete({ csvUploadComplete: true });
             // 文件合并成功
             // let data = res.data
             // Notice.success({
@@ -392,7 +430,7 @@ export default {
             //   this.importFile(this.$store.state.upload.param.folderDir, file.name)
             // }
           })
-          .catch(e => {
+          .catch(e => { 
             console.warn("mergeSimpleUpload 失败发送", e);
           });
 
@@ -400,6 +438,7 @@ export default {
       } else {
         console.log("上传成功");
         changeUploadProgress({ progress: 1 });
+        changeCsvUploadComplete({ csvUploadComplete: true });
       }
     },
     onFileError(rootFile, file, response, chunk) {
@@ -419,6 +458,7 @@ export default {
         content: "错误码:" + res.errorCode + "   失败原因： " + res.msg
       });
       changeUploadError({ uploadError: true });
+      changeUploadErrorMsg({ uploadErrorMsg: res.msg });
     },
     importFile(uri, name) {
       let self = this;
@@ -565,35 +605,54 @@ export default {
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
+      this.BacgroundWebsocketInstance.onopen = function () {
+        console.log('【WebSocket连接成功】', wsUrl)
+      };
+      this.BacgroundWebsocketInstance.onerror = function (event) {
+        console.log('【WebSocket连接错误】', event)
+      };
+      this.BacgroundWebsocketInstance.onclose = function (event) {
+        console.log('【WebSocket已关闭连接】', event)
+      };
     },
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
-        // let flag = vm.isJSON(event.data);
-        /* if (flag) { */
-          console.log('websocket', event);
+        console.log('【WebSocket接收消息中】', event)
+        let flag = vm.isJSON(event.data);
+        if (flag) {
+          // console.log('websocket', event);
           let data = JSON.parse(event.data);
           let action = data.action;
           let msgid = data.msgid;
           let contentStr = data.content;
-          let contentJson = {};
-          let contentType = "";
-          // if (vm.isJSON(contentStr)) {
-            contentJson = JSON.parse(contentStr);
-            contentType = Object.keys(contentJson)[0];
-          // }
-          if (contentType !== "" && contentJson !== {}) {
+          let contentJson = JSON.parse(contentStr);
+          if (contentJson !== {}) {
             changeWebsocketAction({ action: action });
-            changeWebSocketContent({ content: data });
-            changeWebSocketContentType({ contentType: contentType });
+            changeWebSocketContent({ content: contentJson });
             changeWebSocketMsgid({ msgid: msgid });
           }
-        /* } else {
-          console.warn("发送成功！", event.data);
-        } */
+        } else {
+          console.log("发送成功！", event.data);
+        }
       };
     },
-    removeWebsocket() {}
+    removeWebsocket() {},
+    isJSON (str) {
+      if (typeof str === 'string') {
+        try {
+          let obj = JSON.parse(str)
+          if (typeof obj === 'object' && obj) {
+            return true
+          } else {
+            return false
+          }
+        } catch (e) {
+          return false
+        }
+      }
+      return false
+    }
   },
   destroyed() {
     // Bus.$off("openUploader");

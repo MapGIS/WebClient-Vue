@@ -21,6 +21,9 @@ export default {
       uistatus: "init", // 暂定为init(选择文件前)、check(csv预览)、upload(上传过程)
       progress: 0,
       uploadError: false,
+      uploadErrorMsg: '',
+      csvUploadComplete: false,
+      webSocketTaskId: '',
       // 原始云盘的complete模块
       uploadCount: 0,
       uploads: [],
@@ -29,7 +32,6 @@ export default {
       giscount: [],
       // 原始云盘的websocket模块
       WebsocketAction: "",
-      WebsocketContentType: "",
       WebsocketContent: {},
       WebsocketMessageId: "", // 区分消息
       // 原始云盘的path模块
@@ -84,11 +86,20 @@ export default {
     EventBus.$on("change-upload-error", uploadError => {
       vm.uploadError = uploadError;
     });
+    EventBus.$on("change-upload-error-msg", uploadErrorMsg => {
+      vm.uploadErrorMsg = uploadErrorMsg;
+    });
     EventBus.$on("add-complete-uploader-count", count => {
       vm.count = count;
     });
     EventBus.$on("add-complete-uploader-result", uploads => {
       vm.uploads = uploads;
+    });
+    EventBus.$on("change-upload-csv-complete", complete => {
+      vm.csvUploadComplete = complete;
+    });
+    EventBus.$on("change-upload-taskid", taskid => {
+      vm.webSocketTaskId = taskid;
     });
     EventBus.$on("add-gis-current", giscurrents => {
       vm.giscurrents = giscurrents;
@@ -99,9 +110,6 @@ export default {
     EventBus.$on("change-websocket-content", content => {
       vm.WebsocketContent = content;
     });
-    EventBus.$on("change-websocket-content-type", contentType => {
-      vm.WebsocketContentType = contentType;
-    });
     EventBus.$on("change-websocket-msgid", msgid => {
       vm.WebsocketMessageId = msgid;
     });
@@ -109,7 +117,7 @@ export default {
       // vm.path.uri = uri;
       // vm.path.uploaduri = uri;
       vm.uploaduri = uri;
-      console.warn("on change", uri);
+      // console.warn("on change", uri);
     });
   },
   methods: {
