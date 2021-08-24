@@ -13,15 +13,12 @@ export default {
   mounted() {
     const vm = this;
     EventBus.$on("show-layout-setting", visible => {
-      console.log("show !!!!!!!!!!");
       vm.$_handleShowLayoutSetting();
     });
     EventBus.$on("hide-layout-setting", visible => {
-      console.log("hide !!!!!!!!!!");
       vm.$_handleHideLayoutSetting();
     });
     EventBus.$on("change-layout", themeStyle => {
-      console.log("change !!!!!!!!!!");
     });
   },
   methods: {

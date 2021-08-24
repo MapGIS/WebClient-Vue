@@ -1,39 +1,16 @@
 <template>
-  <mapgis-ui-collapse-card
-    v-show="visible"
-    :style="outStyle"
-    class="mapgis-mvt-legend-card"
-    iconfont="mapgis-tuli"
-    ref="collapsecard"
-  >
-    <div class="mapgis-mvt-legend-card-header" slot="title">
-      <span class="mapgis-mvt-legend-card-title">
-        图例
-      </span>
-      <mapgis-ui-iconfont
-        class="mapgis-mvt-legend-card-toolbar"
-        type="mapgis-tuli"
-        @click="hide"
-      />
-      <mapgis-ui-iconfont
-        class="mapgis-mvt-legend-card-toolbar"
-        type="mapgis-shuaxinmulu"
-        @click="refresh"
-      />
-    </div>
-    <mapgis-ui-list :grid="{ gutter: 0, column: 1 }" :data-source="legends">
-      <mapgis-ui-list-item
-        slot="renderItem"
-        class="mapgis-mvt-legend-row"
-        slot-scope="item"
-      >
-        <img class="mapgis-mvt-legend-image" :src="item.imageData" />
-        <span class="mapgis-mvt-legend-label">{{
-          item.label.substring(0, 20)
-        }}</span>
-      </mapgis-ui-list-item>
-    </mapgis-ui-list>
-  </mapgis-ui-collapse-card>
+  <mapgis-ui-list :grid="{ gutter: 0, column: 1 }" :data-source="legends">
+    <mapgis-ui-list-item
+      slot="renderItem"
+      class="mapgis-mvt-legend-row"
+      slot-scope="item"
+    >
+      <img class="mapgis-mvt-legend-image" :src="item.imageData" />
+      <span class="mapgis-mvt-legend-label">{{
+        item.label.substring(0, 20)
+      }}</span>
+    </mapgis-ui-list-item>
+  </mapgis-ui-list>
 </template>
 
 <script>
@@ -43,27 +20,10 @@ export default {
   name: "mapgis-mvt-legend",
   inject: ["mapbox", "map"],
   props: {
-    outStyle: {
-      type: Object,
-      default: () => {
-        return {
-          left: "10px",
-          top: "10px"
-        };
-      }
-    },
-    visible: {
-      type: Boolean,
-      default: true
-    },
     mode: {
       type: String,
       default: "flat" // flat group
     }
-  },
-  model: {
-    prop: "visible",
-    event: "change-visible"
   },
   data() {
     return {
@@ -76,9 +36,6 @@ export default {
     this.getLegend();
   },
   methods: {
-    handleClose() {
-      this.$emit("change-visible", false);
-    },
     getLegend() {
       const { map, mode } = this;
       if (!map) return;
