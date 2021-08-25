@@ -24,19 +24,40 @@
 
 <script>
 
-import BaseMixin from "../Controls/ServiceLayer";
+import BaseMixin from "../UI/Controls/ServiceLayer";
 
 export default {
   name: "mapgis-3d-snow-effect",
   mixins: [BaseMixin],
   props: {
-    density: {
-      type: Number,
-      default: 0.001
-    },
+    enable:{
+      type: Boolean,
+      default: true
+    }
+    // density: {
+    //   type: Number,
+    //   default: 0.001
+    // },
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
+    // density: {
+    //   handler(next){
+    //     // this.changeDensity(next);
+    //     this.density = next;
+    //     this.unmount();
+    //     this.initSnow();
+    //   }
+    // },
+    enable: {
+      handler(stag){
+        // this.changeDensity(next);
+        let {CesiumZondy,vueKey, vueIndex} = this;
+        let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+        let snow = find.source;
+        snow.enabled = stag;
+      }
+    },
   },
   data() {
     return {
@@ -46,14 +67,14 @@ export default {
   mounted() {
     let vm = this;
     vm.$_init(vm.initSnow());
+    let {CesiumZondy,vueKey, vueIndex,enable} = this;
+    let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+    let snow = find.source;
+    snow.enabled = enable;
+
   },
   destroyed() {
-    let {webGlobe, vueKey, vueIndex} = this;
-    let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
-    if (find && find.options && find.options.snow) {
-      webGlobe.scene.VisualAnalysisManager.remove(find.options.snow);
-    }
-    this.$emit("unload", this);
+    this.unmount();
   },
   methods: {
     initSnow() {
@@ -64,7 +85,7 @@ export default {
         webGlobe,
         // speed,
         // angle,
-        density
+        // density
       } = this;
       var advancedAnalysisManager = new CesiumZondy.Manager.AdvancedAnalysisManager({
         viewer: webGlobe.viewer
@@ -73,11 +94,21 @@ export default {
       let snow = advancedAnalysisManager.createSnow({
         // speed:speed,
         // angle:angle,
-        density:density
+        // density:density
       });
       CesiumZondy.AdvancedAnalysisManager.addSource(vueKey, vueIndex, snow);
       this.$emit("load", this);
     },
+    unmount(){
+      let {webGlobe, CesiumZondy,vueKey, vueIndex} = this;
+      let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        // CesiumZondy.AdvancedAnalysisManager.removeStage(find.source);
+        webGlobe.viewer.scene.postProcessStages.remove(find.source);
+      }
+      CesiumZondy.AdvancedAnalysisManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
+    }
   }
 }
 </script>
