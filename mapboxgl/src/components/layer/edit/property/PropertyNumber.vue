@@ -43,6 +43,9 @@ export default {
   },
   methods: {
     onChange(number) {
+      const { minimum, maximum } = this;
+      if (typeof number === "string") return;
+      if (number > maximum || number < minimum) return;
       const { map, rule, layerid } = this;
       this.$emit("change", number);
       if (layerid && rule) {

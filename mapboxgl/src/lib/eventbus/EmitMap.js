@@ -60,6 +60,14 @@ export const emitMapPrint = payload => {
   EventBus.$emit("map-print", payload);
 };
 
+export const emitDocumentImportThemeLayer = payload => {
+  EventBus.$emit("document-import-theme-layer", payload);
+};
+
+export const emitDocumentExportThemeLayer = payload => {
+  EventBus.$emit("document-export-theme-layer", payload);
+};
+
 export const emitDocumentAddThemeLayer = payload => {
   EventBus.$emit("document-add-theme-layer", payload);
 };
@@ -97,6 +105,8 @@ export default {
   emitMapRemoveThemeLayer,
   emitMapOpenTable,
   emitMapPrint,
+  emitDocumentImportThemeLayer,
+  emitDocumentExportThemeLayer,
   emitDocumentAddThemeLayer,
   emitDocumentEditThemeLayer,
   emitDocumentRemoveThemeLayer,

@@ -5,13 +5,15 @@
       v-if="collapse"
       :class="getPositionClassName()"
       @click="show"
-      ><mapgis-ui-iconfont
+    >
+      <slot name="icon-hiden" />
+      <mapgis-ui-iconfont
         :type="iconfont"
         class="mapgis-ui-collapse-card-iconfont"
       />
     </mapgis-ui-button>
     <transition name="bounce">
-      <mapgis-ui-card v-if="!collapse" :bordered="false" size="small">
+      <mapgis-ui-card v-show="!collapse" :bordered="false" size="small">
         <slot name="title"></slot>
         <slot></slot>
       </mapgis-ui-card>
@@ -36,7 +38,7 @@ export default {
     },
     iconfont: {
       type: [String, Node],
-      default: "mapgis-yingyan"
+      default: ""
     },
     visible: {
       type: Boolean,

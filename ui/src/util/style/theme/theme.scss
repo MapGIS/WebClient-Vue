@@ -247,7 +247,7 @@ $btn-primary-color: #fff;
 $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
-$btn-default-bg: var(--button-default-background);
+$btn-default-bg: transparent;
 $btn-default-border: var(--button-border-default-color);
 
 $btn-danger-color: $red-6;
@@ -615,7 +615,7 @@ $tree-node-selected-bg: $primary-2;
 
 // Collapse
 $collapse-header-bg: $background-color-light;
-$collapse-content-bg: $component-background;
+$collapse-content-bg: transparent;
 
 // Skeleton
 $skeleton-color: #f2f2f2;
@@ -651,7 +651,7 @@ $list-item-padding: $padding-sm 0;
 $list-item-meta-margin-bottom: $padding-md;
 $list-item-meta-avatar-margin-right: $padding-md;
 $list-item-meta-title-margin-bottom: $padding-sm;
-$list-item-hover-bg: $primary-4;
+$list-item-hover-bg: $primary-2;
 
 // Timeline
 $timeline-width: 2px;
@@ -748,7 +748,7 @@ $content-background: var(--content-background);
 
 // Pro
 $ribbon-background: var(--ribbon-background);
-$ribbon-border-background: fade($ribbon-background, 60%);
+$ribbon-border-background: $shadow;
 
 // Navs
 $nav-content-backgroud: var(--nav-background);

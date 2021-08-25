@@ -158,7 +158,6 @@ module.exports = {
               ["/api/popup.md", "气泡"],
               ["/api/Layers/", "图层基础属性"],
               ["/api/Layers/geojsonlayer.md", "GeojsonLayer"],
-              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
               ["/api/Layers/vectorlayer.md", "VectorLayer"],
               ["/api/Layers/rasterlayer.md", "RasterLayer"],
               ["/api/Layers/imagelayer.md", "ImageLayer"],
@@ -174,6 +173,10 @@ module.exports = {
                 "/api/Layers/ArcGISServer/ArcGISTileLayer.md",
                 "ArcGISTileLayer"
               ],
+
+              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
+              ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
+              ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
 
               ["/api/Layers/Cluster/cluster.md", "聚类"],
               ["/api/Layers/Heater/heater.md", "热力"],
@@ -257,7 +260,7 @@ module.exports = {
       "link",
       {
         href:
-          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
         rel: "stylesheet",
         type: "text/css"
       }
@@ -266,9 +269,25 @@ module.exports = {
       "script",
       {
         src:
-          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
       }
     ]
+    /* [
+      "link",
+      {
+        href:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-ui.css",
+        rel: "stylesheet",
+        type: "text/css"
+      }
+    ],
+    [
+      "script",
+      {
+        src:
+          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-ui.umd.js"
+      }
+    ] */
   ],
   plugins: [
     [

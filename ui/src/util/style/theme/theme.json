@@ -48,7 +48,7 @@
     "popupBackground": "#383838",
     "popoverBackground": "#383838",
     "modalBackground": "#242424",
-    "ribbonBackground": "#222222",
+    "ribbonBackground": "#383838",
     "messageBackground": "#535353",
     "radioInnerDisabledBg": "rgba(255, 255, 255, 0.12)",
     "collapseCardHeaderBg": "#4a4a4a",
@@ -69,7 +69,7 @@
     "title": "经典浅色",
     "label": "light",
     "style": "light",
-    "shadow": "#242424",
+    "shadow": "#E2E4E7",
     "textColor": "rgba(0, 0, 0, 0.65)",
     "textColorSecondary": "rgba(0, 0, 0, 0.45)",
     "background": "#fff",
@@ -128,7 +128,7 @@
     "contentBackground": "#ffffff",
     "navBackground": "#FFFFFF",
     "navBorderBackground": "#b3b3b3",
-    "navShadow": "#242424",
+    "navShadow": "#E2E4E7",
     "colorGroup": ["#0081e2", "#6be6c1", "#626c91", "#a0a7e6", "#c4ebad"]
   },
   {

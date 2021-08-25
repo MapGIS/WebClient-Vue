@@ -8,8 +8,9 @@
     @click="handleEvent"
   >
     <mapgis-ui-iconfont :type="icon" />
+    <slot name="icon" />
     <span class="mapgis-ui-nav-bar-item-span">
-      {{ title }}
+      {{ title.substr(0, 2) }}
     </span>
   </div>
 </template>
@@ -19,7 +20,7 @@ export default {
   name: "mapgis-ui-nav-bar-item",
   props: {
     title: { type: String, default: "标题" },
-    icon: { type: String, default: "mapgis-tucengjiancheng" },
+    icon: { type: String, default: "" },
     value: { type: String, default: "action-event" },
     position: { type: String, default: "start" }
   },

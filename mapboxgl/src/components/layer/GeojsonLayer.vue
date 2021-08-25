@@ -163,9 +163,6 @@ export default {
   methods: {
     $_deferredMount() {
       let {map, mapbox} = this;
-      // this.map = payload.map;
-      console.log("this.sourceId", this.sourceId);
-      console.log("this.source", this.source);
       this.map.on("dataloading", this.$_watchSourceLoading);
       if (this.source) {
         let source;
@@ -319,12 +316,10 @@ export default {
           // buildInspectStyle: (originalMapStyle, coloredLayers) =>
           //     vm.buildInspectStyle(originalMapStyle, coloredLayers, "", vm),
           renderPopup: features => {
-            console.log("features", features);
             let fs = clonedeep(features);
             let parentPopupLayers = this.$parent.popupLayers;
             let newfeatrues;
             // 针对属性进行过滤显示
-            console.log("this.$parent.popupLayers",this.$parent.popupLayers);
             let layerIds = Object.keys(parentPopupLayers);
             newfeatrues = fs.map((f)=>{
               if (parentPopupLayers.hasOwnProperty(f.layer.id)) {

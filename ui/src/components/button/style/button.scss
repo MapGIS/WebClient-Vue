@@ -4,7 +4,7 @@
 
 @include b(btn) {
   $prefix: &;
-  @include button-color($primary-5, $btn-default-bg, $btn-default-border);
+  @include button-color($text-color, $btn-default-bg, $btn-default-border);
   @include button-variant-other($btn-default-bg);
 
   @include e(primary, '-') {

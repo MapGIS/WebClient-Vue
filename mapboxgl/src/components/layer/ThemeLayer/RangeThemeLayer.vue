@@ -3,6 +3,7 @@
     <ThemePanel
         v-if="!resetPanel"
         v-show="showPanelFlag"
+        ref="themePanel"
         :title="title"
         :data-source="dataSource"
         :fields="fields"
@@ -227,24 +228,24 @@ export default {
         this.addRange = true;
         if(index === 0){
           this.dataSourceCopy.splice(index,1);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.startData,this.dataSourceCopy[index]);
           this.rangeLevel--;
         }else if(index < this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index,1);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
           this.$_setRangeColor(this.colors[index],this.dataSourceCopy[index - 1],this.dataSourceCopy[index]);
           this.rangeLevel--;
         }else if(index === this.dataSourceCopy.length - 1){
           this.dataSourceCopy.splice(index - 1,1);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           this.colors.splice(index,1);
           this.checkBoxArr.splice(index,1);
-          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 2],this.dataSourceCopy[index - 1]);
+          this.$_setRangeColor(this.colors[index - 1],this.dataSourceCopy[index - 2],this.dataSourceCopy[index - 1],false,true);
           this.rangeLevel--;
         }
         this.$nextTick(function () {
@@ -264,20 +265,16 @@ export default {
         startData = Number(this.dataSourceCopy[index - 1]);
       }
       let endData,addNum;
-      if(this.dataSourceCopy.length === 2){
-        endData = Number(this.dataSourceCopy[0]);
-      }else if(index < this.dataSourceCopy.length) {
-        endData = Number(this.dataSourceCopy[index]);
-      }
+      endData = Number(this.dataSourceCopy[index]);
       if(index < this.dataSourceCopy.length - 1){
         if( startData < endData){
           addNum = (startData + endData)/2;
           this.dataSourceCopy.splice(index,0,addNum);
-          this.dataSource = this.dataSourceCopy;
+          this.$_setDataSource();
           let newColors = this.$_gradientColor(this.colors[index],this.colors[index + 1],2);
           this.colors.splice(index + 1,0,newColors[1]);
           this.checkBoxArr.splice(index + 1,0,true);
-          this.$_setRangeColor(newColors[1],startData,addNum);
+          this.$_setRangeColor(newColors[1],addNum,this.dataSourceCopy[index + 1]);
           this.rangeLevel++;
         }
       }else {
@@ -285,7 +282,7 @@ export default {
         this.colors.push(this.colors[index]);
         this.checkBoxArr.push(true);
         this.dataSourceCopy.push(addNum);
-        this.dataSource = this.dataSourceCopy;
+        this.$_setDataSource();
         this.endData = addNum;
         this.rangeLevel++;
       }
@@ -314,7 +311,7 @@ export default {
     $_outerLineColorChanged(color) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-color", color, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-color", color,this.layerIdCopy + "_" + this.$_getThemeName() + "_线",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "circle":
           this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
@@ -328,7 +325,7 @@ export default {
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth,this.layerIdCopy + "_" + this.$_getThemeName() + "_线",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "line":
           this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
@@ -341,7 +338,7 @@ export default {
     $_outerLineOpacityChanged(opacity) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-opacity", opacity, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-opacity", opacity,this.layerIdCopy + "_" + this.$_getThemeName() + "_线",window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "circle":
           this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
@@ -469,10 +466,16 @@ export default {
         endData: Number(endData)
       }
     },
-    $_setRangeColor(color,startData,endData,noPaint){
+    $_setRangeColor(color,startData,endData,noPaint,useEndData){
       let paintColor = window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()].paint[this.dataType + "-color"];
       let length = (paintColor.length - 1)/2;
       for (let i = 0;i <length;i++){
+        let flag;
+        if(useEndData){
+          flag = paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] <= endData;
+        }else {
+          flag = paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData;
+        }
         if(paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData){
           if(i === 0){
             paintColor.splice(2,1,color);
@@ -576,6 +579,12 @@ export default {
     * @fillColors 处理好的颜色信息
     * **/
     $_initThemeCallBack(geojson, fillColors, dataSource,minzoom,maxzoom) {
+      if(!window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType)
+        || (window.originLayer[this.layerIdCopy].panelProps.hasOwnProperty(this.themeType) &&
+          !window.originLayer[this.layerIdCopy].panelProps[this.themeType].panelProps.hasOwnProperty("text-field"))
+      ){
+        this.$refs.themePanel.labelSelectValue = "";
+      }
       this.$_getDataFromLocal(dataSource);
       this.$nextTick(function () {
         this.dataInit = true;
@@ -614,8 +623,8 @@ export default {
             },
             paint: {
               'circle-color': fillColors, //颜色
-              'circle-opacity': this.opacity, //透明度
-              'circle-stroke-opacity': this.outerLineOpacity, //透明度
+              'circle-opacity': this.opacity > 1 ? this.opacity / 100 : this.opacity, //透明度
+              'circle-stroke-opacity': this.outerLineOpacity > 1 ? this.outerLineOpacity / 100 : this.outerLineOpacity, //透明度
               'circle-radius': this.radius, //透明度
               'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
               'circle-stroke-width': this.lineWidth,

@@ -18,3 +18,23 @@ export const setLayout = (layoutStyle = {}) => {
   EventBus.$options.layout = nextLayout;
   EventBus.$emit("change-layout", nextLayout);
 };
+
+export const showLayoutSetting = () => {
+  EventBus.$options.showSetting = true;
+  EventBus.$emit("show-layout-setting", true);
+};
+
+export const hideLayoutSetting = () => {
+  EventBus.$options.showSetting = false;
+  EventBus.$emit("hide-layout-setting", false);
+};
+
+export const setLayoutSettingVisible = visible => {
+  if (visible) {
+    EventBus.$options.showSetting = true;
+    EventBus.$emit("show-layout-setting", true);
+  } else {
+    EventBus.$options.showSetting = false;
+    EventBus.$emit("hide-layout-setting", false);
+  }
+};

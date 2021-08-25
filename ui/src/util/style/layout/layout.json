@@ -14,7 +14,8 @@
     "ribbonHeight": "0px",
     "contentHeight": "calc(100vh - 64px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)"
+    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)",
+    "studioTreeHeight": "calc(100vh - 64px - 24px -200px - 2px)"
   },
   {
     "title": "Ribbon布局",
@@ -31,7 +32,8 @@
     "ribbonHeight": "130px",
     "contentHeight": "calc(100vh - 194px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 194px - 24px - 2px)"
+    "leftsiderHeight": "calc(100vh - 194px - 24px - 2px)",
+    "studioTreeHeight": "calc(100vh - 400px)"
   },
   {
     "title": "标准三段式布局",
@@ -48,7 +50,8 @@
     "ribbonHeight": "0px",
     "contentHeight": "calc(100vh - 64px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)"
+    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)",
+    "studioTreeHeight": "calc(100vh - 64px - 24px -200px - 2px)"
   },
   {
     "title": "抽屉布局",
@@ -65,7 +68,8 @@
     "ribbonHeight": "0px",
     "contentHeight": "calc(100vh - 64px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)"
+    "leftsiderHeight": "calc(100vh - 64px - 24px - 2px)",
+    "studioTreeHeight": "calc(100vh - 64px - 24px -200px - 2px)"
   },
   {
     "title": "无页头",
@@ -82,7 +86,8 @@
     "ribbonHeight": "0px",
     "contentHeight": "calc(100vh - 0px - 24px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 0px - 24px - 2px)"
+    "leftsiderHeight": "calc(100vh - 0px - 24px - 2px)",
+    "studioTreeHeight": "calc(100vh - 0px - 24px -200px - 2px)"
   },
   {
     "title": "无页尾",
@@ -99,7 +104,8 @@
     "ribbonHeight": "0px",
     "contentHeight": "calc(100vh - 64px - 0px - 2px)",
     "footerHeight": "24px",
-    "leftsiderHeight": "calc(100vh - 64px - 0px - 2px)"
+    "leftsiderHeight": "calc(100vh - 64px - 0px - 2px)",
+    "studioTreeHeight": "calc(100vh - 64px - 0px -200px - 2px)"
   },
   {
     "title": "空白布局",
@@ -116,6 +122,7 @@
     "ribbonHeight": "0px",
     "contentHeight": "calc(100vh - 0px - 0px - 2px)",
     "footerHeight": "0px",
-    "leftsiderHeight": "calc(100vh - 0px - 0px - 2px)"
+    "leftsiderHeight": "calc(100vh - 0px - 0px - 2px)",
+    "studioTreeHeight": "calc(100vh - 0px - 0px -200px - 2px)"
   }
 ]

@@ -38,7 +38,7 @@ npm install --save @mapgis/webclient-vue-cesium
 yarn add @mapgis/webclient-vue-cesium
 ```
 
-在 main.js 中加入样式文件
+在 main.js 中全局引入组件
 
 ```js
 import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';

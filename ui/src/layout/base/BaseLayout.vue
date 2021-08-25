@@ -31,14 +31,17 @@
         <slot name="footer" />
       </mapgis-ui-layout-footer>
     </mapgis-ui-layout>
-    <base-setting />
+    <base-setting v-show="settings" />
   </mapgis-ui-layout>
 </template>
 
 <script>
 import BaseSetting from "./BaseSetting.vue";
+import BaseLayoutMixin from "../../mixin/LayoutMixin";
+
 export default {
   name: "mapgis-ui-layout-pro",
+  mixins: [BaseLayoutMixin],
   components: { BaseSetting },
   props: {
     leftSiderWidth: {
@@ -48,9 +51,17 @@ export default {
   },
   data() {
     return {
-      collapsed: false
+      collapsed: false,
+      settings: true
     };
   },
-  methods: {}
+  methods: {
+    $_handleShowLayoutSetting() {
+      this.settings = true;
+    },
+    $_handleHideLayoutSetting() {
+      this.settings = false;
+    }
+  }
 };
 </script>

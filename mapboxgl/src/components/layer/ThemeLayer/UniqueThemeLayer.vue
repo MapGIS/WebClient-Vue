@@ -103,7 +103,7 @@ export default {
     $_outerLineColorChanged(color) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-color", color, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-color", color, this.lineId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "circle":
           this.$_setPaintProperty("circle-stroke-color", color, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
@@ -113,7 +113,7 @@ export default {
     $_lineWidthChanged(lineWidth) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-width", lineWidth, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-width", lineWidth, this.lineId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "line":
           this.$_setPaintProperty("line-width", lineWidth);
@@ -126,7 +126,7 @@ export default {
     $_outerLineOpacityChanged(opacity) {
       switch (this.dataType) {
         case "fill":
-          this.$_setPaintProperty("line-opacity", opacity, this.lineId, this.lineLayer);
+          this.$_setPaintProperty("line-opacity", opacity, this.lineId, window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_线"]);
           break;
         case "circle":
           this.$_setPaintProperty("circle-stroke-opacity", opacity, this.layerIdCopy + "_" + this.$_getThemeName(), window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]);
@@ -359,7 +359,7 @@ export default {
               'circle-radius': this.radius, //透明度
               'circle-stroke-color': this.outerLineColor,//边线颜色，没错,确实没有边线宽度这个选项
               'circle-stroke-width': this.lineWidth,
-              'circle-translate': this.offset,
+              'circle-translate': [this.offset[0],this.offset[1]],
             },
             minzoom: minzoom,
             maxzoom: maxzoom
