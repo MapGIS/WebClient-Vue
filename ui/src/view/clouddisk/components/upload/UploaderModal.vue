@@ -53,7 +53,8 @@ import MapgisUiUploaderCsvCheck from "./UploaderCsvCheck.vue";
 import MapgisUiUploaderProgress from "./UploaderProgress.vue";
 import MapgisUiClouddiskTransform from "../select/LayerTransform";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { changeUiState, changeCsvUploadComplete } from "../../../../util/emit/upload";
+import { changeUiState, changeCsvUploadComplete, changePathUploaduri } from "../../../../util/emit/upload";
+import { getMapgisGroupPath } from "../../config/mapgis";
 import { getFileByWebsocketCallback, importVector } from "../../axios/files";
 
 export default {
@@ -81,6 +82,10 @@ export default {
     title: {
       type: String,
       default: '导入文件'
+    },
+    defaultPath: {
+      type: String,
+      default: 'data'
     },
     isMapstudio: {
       type: Boolean,
@@ -118,7 +123,17 @@ export default {
     },
     csvUploadComplete(next) {
       this.continueImportCsv = next
-    }
+    },
+    defaultPath: {
+      handler (next) {
+        if (next !== '') {
+          let url = getMapgisGroupPath() + '/' + next
+          changePathUploaduri({ uri: url })
+          this.changePathText(url)
+        }
+      },
+      immediate: true
+    },
   },
   computed: {
     footerHandle() {

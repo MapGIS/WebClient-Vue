@@ -611,16 +611,9 @@ export default {
       };
       this.BacgroundWebsocketInstance.onerror = function (event) {
         console.log(`【WebSocket连接错误】【${new Date().toLocaleString()}】`, event);
-        this.BacgroundWebsocketInstance.close();
-        setTimeout(() => {
-          vm.initWebsocket();
-        }, 1000)
       };
       this.BacgroundWebsocketInstance.onclose = function (event) {
         console.log(`【WebSocket已关闭连接】【${new Date().toLocaleString()}】`, event);
-        setTimeout(() => {
-          vm.initWebsocket();
-        }, 1000)
       };
     },
     updateWebsocket() {
