@@ -719,7 +719,7 @@ export default {
 .theme-panel-color-picker .picker {
   position: absolute;
   top: 16px;
-  right: 7px;
+  right: 3px;
 }
 
 .theme-panel-color-picker .picker .colorBtn {
@@ -727,7 +727,7 @@ export default {
 }
 
 .range-theme-num {
-  width: 64px;
+  width: 47px;
 }
 
 .range-theme-list-item {
@@ -736,9 +736,9 @@ export default {
 }
 
 .theme-panel-list{
-  border-top: 1px solid rgb(217, 217, 217);
-  border-left: 1px solid rgb(217, 217, 217);
-  border-right: 1px solid rgb(217, 217, 217);
+  border-top: 1px solid rgb(93, 93, 93);
+  border-left: 1px solid rgb(93, 93, 93);
+  border-right: 1px solid rgb(93, 93, 93);
 }
 
 .panelListFirst{
@@ -749,7 +749,7 @@ export default {
 .panelListLast{
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  border-bottom: 1px solid rgb(217, 217, 217);
+  border-bottom: 1px solid rgb(93, 93, 93);
 }
 
 /deep/ .mapgis-ui-list-bordered .mapgis-ui-list-item {

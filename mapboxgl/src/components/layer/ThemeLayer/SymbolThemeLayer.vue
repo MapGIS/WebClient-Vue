@@ -853,7 +853,7 @@ export default {
   display: inline-block;
   width: 100%;
   height: 100%;
-  padding-left: 5px;
+  padding-left: 1px;
   padding-top: 8px;
 }
 
@@ -886,9 +886,9 @@ export default {
 }
 
 .theme-panel-list{
-  border-top: 1px solid rgb(217, 217, 217);
-  border-left: 1px solid rgb(217, 217, 217);
-  border-right: 1px solid rgb(217, 217, 217);
+  border-top: 1px solid rgb(93, 93, 93);
+  border-left: 1px solid rgb(93, 93, 93);
+  border-right: 1px solid rgb(93, 93, 93);
 }
 
 .panelListFirst{
@@ -899,7 +899,7 @@ export default {
 .panelListLast{
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  border-bottom: 1px solid rgb(217, 217, 217);
+  border-bottom: 1px solid rgb(93, 93, 93);
 }
 
 .theme-panel-radius{
