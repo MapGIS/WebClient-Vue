@@ -63,7 +63,11 @@
     "navBackground": "#383838",
     "navBorderBackground": "#242424",
     "navShadow": "#242424",
-    "colorGroup": ["#3499e5", "#759aa0", "#e69d87", "#8dc1a9", "#ea7e53"]
+    "colorGroup": ["#3499e5", "#759aa0", "#e69d87", "#8dc1a9", "#ea7e53"],
+    "panelBackground": "rgb(44,44,44)",
+    "panelTextColor": "#FFFFFF",
+    "panelOptionColor": "#FFFFFF",
+    "panelBoxShadow": "rgba(0 0 0 / 31%)"
   },
   {
     "title": "经典浅色",
@@ -129,7 +133,11 @@
     "navBackground": "#FFFFFF",
     "navBorderBackground": "#b3b3b3",
     "navShadow": "#E2E4E7",
-    "colorGroup": ["#0081e2", "#6be6c1", "#626c91", "#a0a7e6", "#c4ebad"]
+    "colorGroup": ["#0081e2", "#6be6c1", "#626c91", "#a0a7e6", "#c4ebad"],
+    "panelBackground": "rgb(255,255,255)",
+    "panelTextColor": "#666666",
+    "panelOptionColor": "#999999",
+    "panelBoxShadow": "rgba(235 235 235 / 31%)"
   },
   {
     "title": "经典暖灰",
@@ -162,7 +170,8 @@
     "collapseCardHeaderBg": "#4a4a4a",
     "collapseCardBackground": "#414141",
     "searchArrowIconBg": "#383838",
-    "colorGroup": ["#e14d57", "#6be6c1", "#626c91", "#a0a7e6", "#c4ebad"]
+    "colorGroup": ["#e14d57", "#6be6c1", "#626c91", "#a0a7e6", "#c4ebad"],
+    "panelBackground": "rgb(44,44,44);"
   },
   {
     "title": "绿色渐变",
