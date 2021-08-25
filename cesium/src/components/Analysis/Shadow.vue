@@ -19,29 +19,6 @@
               @change="changeDate"
           />
         </a-form-model-item>
-        <!--        <a-form-model-item label="分析类型">-->
-        <!--          <a-row>-->
-        <!--            <a-radio-group v-model="formData.timeType">-->
-        <!--              <a-radio value="timeRange">-->
-        <!--                时间段-->
-        <!--              </a-radio>-->
-        <!--              <a-radio value="time">-->
-        <!--                时间点-->
-        <!--              </a-radio>-->
-        <!--            </a-radio-group>-->
-        <!--          </a-row>-->
-        <!--        </a-form-model-item>-->
-        <!--        <a-form-model-item v-if="formData.timeType === 'time'" label="时间">-->
-        <!--          <a-time-picker-->
-        <!--              :default-value="formDataTime"-->
-        <!--              size="small"-->
-        <!--              @change="-->
-        <!--            val => {-->
-        <!--              changeTime(val, 'time')-->
-        <!--            }-->
-        <!--          "-->
-        <!--          />-->
-        <!--        </a-form-model-item>-->
         <div>
           <a-form-model-item label="开始时间">
             <a-time-picker
@@ -93,11 +70,6 @@
               v-model="formData.shadowColor"
               @change="changeShadowColor"
           />
-          <!--        <MpColorPicker-->
-          <!--            :color.sync="formData.shadowColor"-->
-          <!--            :disableAlpha="true"-->
-
-          <!--        ></MpColorPicker>-->
         </a-form-model-item>
         <a-form-model-item label="非阴影颜色">
           <colorPicker
@@ -105,11 +77,6 @@
               v-model="formData.sunColor"
               @change="changeSunColor"
           />
-          <!--        <MpColorPicker-->
-          <!--            :color.sync="formData.sunColor"-->
-          <!--            :disableAlpha="true"-->
-          <!--            class="color-picker"-->
-          <!--        ></MpColorPicker>-->
         </a-form-model-item>
         <a-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
           <a-input
@@ -208,8 +175,6 @@ export default {
   watch: {
     formData: {
       handler: function (e) {
-        debugger
-        // console.log("e", e);
       }
     }
   },
@@ -327,8 +292,7 @@ export default {
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
         callback: positions => {
-          debugger
-          // self.remove()
+          self.remove()
           let xmin
           let ymin
           let xmax
@@ -371,8 +335,6 @@ export default {
             zPaneNum,
             shadowColor: shadowColor,
             sunColor: sunColor
-            // shadowColor:'rgba(0,255,0,255)',  //self.getCesiumColor(shadowColor),
-            // sunColor:'rgba(255,0,0,255)'// self.getCesiumColor(sunColor)
           })
           // 时间段范围阴影分析
           const result = shadowAnalysis.calcPointsArrayInShadowTime(
