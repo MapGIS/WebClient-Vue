@@ -16,7 +16,7 @@
     z-index: 2000;
     -webkit-box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
     box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
-    border-right: 1px solid $nav-shadow-backgroud;
+    border-right: 0px solid $nav-shadow-backgroud;
   }
 
   @include e(action-bar-reverse, "-") {
