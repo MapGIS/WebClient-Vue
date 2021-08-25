@@ -602,23 +602,31 @@ export default {
     },
 
     initWebsocket() {
+      let vm = this
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
       this.BacgroundWebsocketInstance.onopen = function () {
-        console.log('【WebSocket连接成功】', wsUrl)
+        console.log(`【WebSocket连接成功】【${new Date().toLocaleString()}】`, wsUrl);
       };
       this.BacgroundWebsocketInstance.onerror = function (event) {
-        console.log('【WebSocket连接错误】', event)
+        console.log(`【WebSocket连接错误】【${new Date().toLocaleString()}】`, event);
+        this.BacgroundWebsocketInstance.close();
+        setTimeout(() => {
+          vm.initWebsocket();
+        }, 1000)
       };
       this.BacgroundWebsocketInstance.onclose = function (event) {
-        console.log('【WebSocket已关闭连接】', event)
+        console.log(`【WebSocket已关闭连接】【${new Date().toLocaleString()}】`, event);
+        setTimeout(() => {
+          vm.initWebsocket();
+        }, 1000)
       };
     },
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
-        console.log('【WebSocket接收消息中】', event)
+        console.log(`【WebSocket接收消息中】【${new Date().toLocaleString()}】`, event)
         let flag = vm.isJSON(event.data);
         if (flag) {
           // console.log('websocket', event);
@@ -633,7 +641,7 @@ export default {
             changeWebSocketMsgid({ msgid: msgid });
           }
         } else {
-          console.log("发送成功！", event.data);
+          // console.log("发送成功！", event.data);
         }
       };
     },
