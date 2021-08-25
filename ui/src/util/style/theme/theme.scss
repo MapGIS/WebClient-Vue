@@ -615,7 +615,7 @@ $tree-node-selected-bg: $primary-2;
 
 // Collapse
 $collapse-header-bg: $background-color-light;
-$collapse-content-bg: $component-background;
+$collapse-content-bg: transparent;
 
 // Skeleton
 $skeleton-color: #f2f2f2;
@@ -651,7 +651,7 @@ $list-item-padding: $padding-sm 0;
 $list-item-meta-margin-bottom: $padding-md;
 $list-item-meta-avatar-margin-right: $padding-md;
 $list-item-meta-title-margin-bottom: $padding-sm;
-$list-item-hover-bg: $primary-4;
+$list-item-hover-bg: $primary-2;
 
 // Timeline
 $timeline-width: 2px;

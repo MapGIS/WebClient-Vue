@@ -1768,7 +1768,7 @@ export default {
 }
 
 /deep/ .mapgis-ui-collapse {
-  background-color: #FFF;
+  background-color: transparent;
   border-radius: 0;
   border: none;
 }

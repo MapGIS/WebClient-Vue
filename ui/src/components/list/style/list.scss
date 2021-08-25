@@ -56,8 +56,8 @@ $list-prefix-cls: $ant-prefix + "-list";
     padding: $list-item-padding;
 
     &:hover {
-      border-radius: 4px;
-      padding: 0px 20px;
+      /* border-radius: 4px; */
+      /* padding: 0px 20px; */
       background: $list-item-hover-bg;
     }
 
