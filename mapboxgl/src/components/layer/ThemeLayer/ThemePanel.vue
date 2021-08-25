@@ -6,7 +6,9 @@
       <mapgis-ui-row>
         <mapgis-ui-col :span="24" class="theme-panel-type theme-panel-type-title">
           <p class="theme-panel-title" :title="title">{{ title }}</p>
-          <p class="theme-panel-title-close" @click="$_close">X</p>
+          <p class="theme-panel-title-close" @click="$_close">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABS5JREFUeF7tW02IHEUUfq+a3YNEIx6FDSgevShCBCNxjZrV7Te9HpKLu4J68Adnb+IhEqPoQbxlReNBBbNezMHprp5k438wggHRgx5FIQGPsolLDrt0PalheuyZ7Znu6q7Z7aHTp2H71ffe+7Z+XlV/hbADj5TyIWaeAYB9QoiZ+Dci6r8BM18BgMuIeEUp1ftNRN+POzwch4NWqzWDiAcdxznMzA0AuKWgn2uIGERRdJ6ZLywsLGhyrD7WCFhbW7tta2urCQAHAWDWapT/g30HABempqZW5ubm/rHhwwoBYRg2lVLLiHiXjaCyMJj5DyHESdd1V7Jss96XIkBK+RQiNpl5f5ajcbxHxEvMvEJEnxXFL0SA7/sPCCGOAcDjRR1bbndOKfW253k/muIaEyClfBkA3gGAm0ydjdn+OgC8SkTvmfgxIkBK+REAPGviYBdsPyai5/L6zU2AlPIXALgnL/Au2/1KRPfmiSEXAVJKzgNWNRsiyswv00BKGQAAVS25nPFIItKF2NBnJAFBEDQR8WROZ5U0Y+blRqMxtF4YSoCUcgEAvqhkVuZBPUlErbRmqQT4vn+fEOIrALjV3FclW6wrpR71PO/nwehSCZBSnq1QkWOL0XNE9EQmAbq8BYBVW14rhrM4WDZv6wFhGP60W7X9uMnSewfXde9P+ukjQO/qmHmiZ/0sEhFxObmL7BGg9/Obm5uXdmpLmxXouN7rrfT09PT++DyhR4CU8nUAODEuxxXDPUFEb+iYkgT8AAAHbASKiEejKPrbcZxXmNkrg4mIfhRF7zqOczszf14GK9H2IhE92CMgCII7EPFPS+CzycNMKaUO+khB7DNEdDRuqw9XAUAfi5V+mPnORqPxV6cH+L7/ohDi/dKoAKCUOjB4MFGQhL7ku3Hqg5iLluJ8yfO8DzoEBEHQQsRSXTUOSndZ13V1Gd33GJKwLXkNFoZhq+yQioNiZr/RaCx0CJBS/gsAe2ww28VITSAnCWXamqSwQUQ3o81xNeC9SCJF2pgkPWg7i0EQLCHip2VQRrQ1ScjE1kq4zPy0JuAYIr5lBTEdJE9ieWysh8jMr2EYhqeY+Xnr6P2AoxKE5FKXWPLKLJ+50kHED/Uc0AaAbdvEXAhmRqkkpEHknCzNvKdbn9UE/AYAd9tAy4GRScIOJq/D/V0PgXVm3psjeFsmQ0nY4eQBEa/eIKD2Q6D2k2Dtl8HaF0K1L4VrvxnqboevllBypdUHZWr7Mm1NapVrRLS3cx4QhuFpZl40aT3Ctk1E7uB7wyJnGAkhAMzbiBMRV13XXYqPxBaFEKdtAAshaH5+XgfaewyTj9ttI6HdbrtKKWkjTqXUkud5qx0CtLDRcZzLNoD1ibDrumcs7er6SAjD8Iitk+EoivZp4WXyWPxbiwLHWSHEHqXUCxa6bFsIcUoptWHrRFjjENHD+p9048NI3FVr/2msuxrU9+No3BNq/Xm8WxTVWyDRJaG+EhlNQFcM/WUF9cBFS5XrSqnH0sTUo2RyWhRdWo9fNGLL7ZrDRNQjhZITIo7O4mqkeDqPVHaSRNKDZGSKpjMJ6E6K9RVLJzY1kySazhRJx3nl6gGx8SSIp7PE0YNjxIiA7nDQ6o9PKqgjXgeAZ4aJoofNlMYEdOsELaZ+s0J6Yn1p6niaGDpriShEQGJeqOe1uUFWa3txMklE4ursI7YElyndV0vkvq7c1dnBQLXwkpnnEPEwIh4qoUDbYOZvmPk8Iq5pYWPWmDZ9X2oOyOusytfn/wM8WMoN6jpefQAAAABJRU5ErkJggg==" alt="close">
+          </p>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <!--专题图类型-->
@@ -270,11 +272,13 @@
               <p class="theme-panel-p">边线颜色</p>
             </mapgis-ui-col>
             <mapgis-ui-col :span="15">
-              <colorPicker
-                  class="picker theme-panel-line-color"
-                  v-model="outerLineColor"
-                  @change="$_outerLineColorChanged"
-              />
+              <div class="theme-panel-color-outer">
+                <colorPicker
+                    class="picker theme-panel-line-color"
+                    v-model="outerLineColor"
+                    @change="$_outerLineColorChanged"
+                />
+              </div>
             </mapgis-ui-col>
           </mapgis-ui-row>
           <mapgis-ui-row v-if="dataType === 'circle' || dataType === 'fill'">
@@ -596,11 +600,13 @@
               <p class="theme-panel-p">字体颜色</p>
             </mapgis-ui-col>
             <mapgis-ui-col :span="15">
-              <colorPicker
-                  class="picker theme-panel-line-color"
-                  v-model="fontColor"
-                  @change="$_selectFontColor"
-              />
+              <div class="theme-panel-color-outer">
+                <colorPicker
+                    class="picker theme-panel-line-color"
+                    v-model="fontColor"
+                    @change="$_selectFontColor"
+                />
+              </div>
             </mapgis-ui-col>
           </mapgis-ui-row>
           <mapgis-ui-row>
@@ -608,11 +614,13 @@
               <p class="theme-panel-p">描边颜色</p>
             </mapgis-ui-col>
             <mapgis-ui-col :span="15">
-              <colorPicker
-                  class="picker theme-panel-line-color"
-                  v-model="haloColor"
-                  @change="$_selectHaloColor"
-              />
+              <div class="theme-panel-color-outer">
+                <colorPicker
+                    class="picker theme-panel-line-color"
+                    v-model="haloColor"
+                    @change="$_selectHaloColor"
+                />
+              </div>
             </mapgis-ui-col>
           </mapgis-ui-row>
           <mapgis-ui-row>
@@ -798,7 +806,7 @@
                         $_editStr(selectValue, 8)
                       }}
                     </div>
-                    <div class="theme-panel-td theme-panel-td-value theme-panel-td-border-right" v-bind:title="item"
+                    <div class="theme-panel-td theme-panel-td-value" v-bind:title="item"
                          :style="{width: dataType !== 'symbol' ? '35%' : '45%'}">
                       {{
                         $_editStr(item, 8)
@@ -1508,7 +1516,7 @@ export default {
 }
 
 .theme-panel-td-border-right {
-  border-right: 1px solid rgb(217, 217, 217);
+  border-right: 1px solid rgb(86, 86, 86);
 }
 
 .theme-panel .mapgis-ui-list-item {
@@ -1518,8 +1526,8 @@ export default {
 }
 
 .theme-panel .m-colorPicker {
-  margin-top: 6px;
-  margin-left: -2px;
+  margin-top: 5px;
+  margin-left: 10px;
 }
 
 .theme-panel .mapgis-ui-checkbox-checked {
@@ -1527,7 +1535,7 @@ export default {
 }
 
 .theme-panel-gradient {
-  width: 274px;
+  width: 106px;
   height: 15px;
   margin: 8px 0 0;
   border-radius: 3px;
@@ -1553,11 +1561,8 @@ export default {
 }
 
 /deep/ .theme-panel-line-color .colorBtn {
-  width: 160px !important;
-  height: 30px !important;
-  margin-left: 11px;
-  border-radius: 6px;
-  border: 1px solid rgb(218, 218, 218);
+  width: 130px !important;
+  height: 12px !important;
 }
 
 .theme-panel-type-title {
@@ -1585,9 +1590,22 @@ export default {
   color: #40a9ff;
   font-size: 12px;
   position: absolute;
-  right: 16px;
-  top: 4px;
+  right: 9px;
+  top: -2px;
   cursor: pointer;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.theme-panel-title-close > img{
+  width: 16px;
+  margin-top: 4px;
+}
+
+.theme-panel-title-close > img:hover{
+  transform: translateY(-50px);
+  filter: drop-shadow(#5eb7f2 0 50px);
 }
 
 .theme-panel-list {
@@ -1723,11 +1741,11 @@ export default {
 }
 
 .theme-panel-img-border:hover {
-  box-shadow: 1px 1px 1px 2px rgb(218, 218, 218);
+  box-shadow: 1px 1px 1px 2px rgb(94, 183, 242);
 }
 
 .themePanelImgOutline {
-  box-shadow: 1px 1px 1px 2px rgb(218, 218, 218);
+  box-shadow: 1px 1px 1px 2px rgb(94, 183, 242);
 }
 
 .theme-panel-img-out {
@@ -1783,5 +1801,18 @@ export default {
 
 /deep/ .mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box {
   padding: 16px 0 0 0;
+}
+
+.theme-panel-color-outer{
+  width: 153px;
+  height: 32px;
+  margin-left: 11px;
+  margin-top: 10px;
+  border: 1px solid var(--border-color-base);
+  border-radius: 4px;
+}
+
+/deep/ .mapgis-ui-select-selection__rendered{
+  margin-right: 31px!important;
 }
 </style>

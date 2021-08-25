@@ -812,7 +812,7 @@ export default {
               if(vm.source_vector_layer_Id){
                 window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
               }
-              vm.title = "等级符号" + "_" + vm.layerIdCopy;
+              vm.title = vm.layerIdCopy;
               vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()],vm.upLayer);
               window.originLayer[vm.layerIdCopy].layerOrder = [vm.layerIdCopy,vm.layerIdCopy + "_" + vm.$_getThemeName()];
               vm.$_setLayerOrder();
@@ -834,7 +834,7 @@ export default {
 
 <style scoped>
 .theme-panel-td-border-right {
-  border-right: 1px solid rgb(217, 217, 217);
+  border-right: 1px solid rgb(86, 86, 86);
 }
 
 .theme-panel-td {

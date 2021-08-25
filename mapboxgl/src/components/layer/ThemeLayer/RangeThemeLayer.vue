@@ -657,7 +657,7 @@ export default {
       if (this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
-      this.title = "分段" + "_" + this.layerIdCopy;
+      this.title = this.layerIdCopy;
       if(!window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey]){
         window.originThemeData[this.layerIdCopy][this.themeType + "_" + this.selectKey] = fillColors;
       }
@@ -681,7 +681,7 @@ export default {
 
 <style scoped>
 .theme-panel-td-border-right {
-  border-right: 1px solid rgb(217, 217, 217);
+  border-right: 1px solid rgb(86, 86, 86);
 }
 
 .theme-panel-td {
