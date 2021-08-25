@@ -149,18 +149,19 @@ module.exports = {
             ]
           },
           {
-            title: "地图API",
+            title: "组件",
             collapsable: false,
             children:
             [
+              {
+                title:'地图',
+                collapsable: false
+              },
               ["/api/", "地图对象"],
-            ]
-          },
-          {
-            title: "地图子组件API",
-            collapsable: false,
-            children:
-            [
+              {
+                title:'地图子组件',
+                collapsable: false
+              },
               ["/api/controls.md", "控制组件"],
               ["/api/marker.md", "标注"],
               ["/api/popup.md", "气泡"],
@@ -168,32 +169,19 @@ module.exports = {
               ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
               ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
 
-              ["/api/Layers/Cluster/cluster.md", "聚类"],
-              ["/api/Layers/Heater/heater.md", "热力"],
-              ["/api/Layers/Building/building.md", "建筑白膜"],
-              ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
-              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
-
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],
               ["/api/UI/Legend/legend.md", "图例"],
               ["/api/UI/Hawkeye/hawkeye.md", "鹰眼"],
               ["/api/UI/Compare/compare.md", "卷帘"],
 
-              ["/api/Overlay/Echarts.md", "Echarts"],
-              ["/api/Overlay/Mapv.md", "MapV"],
-
               ["/api/UI/Table/BaseTable.md", "表格"],
               ["/api/UI/Table/FeatureTable.md", "要素表格"],
-              ["/api/map/mixin/FeatureService.md", "要素服务"]
-            ]
-          },
-          {
-            title: "图层API",
-            collapsable: false,
-            children:
-            [
-              ["/api/Layers/", "图层基础属性"],
+              ["/api/map/mixin/FeatureService.md", "要素服务"],
+              {
+                title: "图层",
+                collapsable: false,
+              },
               ["/api/Layers/geojsonlayer.md", "GeoJSON图层"],
               ["/api/Layers/vectorlayer.md", "矢量图层"],
               ["/api/Layers/rasterlayer.md", "栅格图层/通用瓦片"],
@@ -208,18 +196,30 @@ module.exports = {
               ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGIS地图"],
               ["/api/Layers/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
               ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
+              {
+                title:'可视化',
+                collapsable: false
+              },
+              ["/api/Overlay/Echarts.md", "Echarts"],
+              ["/api/Overlay/Mapv.md", "MapV"],
+              ["/api/Layers/Cluster/cluster.md", "聚类"],
+              ["/api/Layers/Heater/heater.md", "热力"],
+              ["/api/Layers/Building/building.md", "建筑白膜"],
+              ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
+              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
             ]
           },
-          {
-            title: "源码分析",
-            collapsable: true,
-            children: [
-              ["/code/basemap.md", "基础地图"],
-              ["/code/controls.md", "控制视图"],
-              ["/code/markers&popups.md", "注记视图"],
-              ["/code/layers&sources.md", "图层与数据源"]
-            ]
-          },
+
+          // {
+          //   title: "源码分析",
+          //   collapsable: true,
+          //   children: [
+          //     ["/code/basemap.md", "基础地图"],
+          //     ["/code/controls.md", "控制视图"],
+          //     ["/code/markers&popups.md", "注记视图"],
+          //     ["/code/layers&sources.md", "图层与数据源"]
+          //   ]
+          // },
           {
             title: "插件组件",
             collapsable: false,

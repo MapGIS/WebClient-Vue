@@ -37,7 +37,7 @@ Vue.use(MapgisUi);
 Vue.use(Mapgis2d);
 ```
 
-### yarn link 项目链接方式`特殊情况下：需要使用组件最新的功能时`
+### yarn link 方式`特殊情况下：需要使用组件最新的功能时`
 
 mapgis webclient-vue-mapboxgl 的安装：
 
