@@ -45,8 +45,10 @@ export default {
         if (attrs && attrs.value) {
           if (attrs.value == vm.active) {
             children.elm.style.display = "block";
+            children.elm.style.visibility = "visible";
           } else {
             children.elm.style.display = "none";
+            children.elm.style.visibility = "hidden";
           }
         }
       });
@@ -59,8 +61,10 @@ export default {
         if (attrs && attrs.value) {
           if (attrs.value == value) {
             children.elm.style.display = "block";
+            children.elm.style.visibility = "visible";
           } else {
             children.elm.style.display = "none";
+            children.elm.style.visibility = "hidden";
           }
         }
       });

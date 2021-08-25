@@ -1,19 +1,19 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
+$layout-prefix-cls: $ant-prefix + "-layout";
+
 @include b (layout) {
   @include e(header, '-') {
-    background-color: $layout-header-background !important;
+    background-color: $layout-header-background;
   }
   @include e(content, '-') {
-    background-color: $layout-background !important;
+    background-color: $layout-background;
   }
   @include e(footer, '-') {
-    background-color: $layout-footer-background !important;
+    background-color: $layout-footer-background;
   }
 }
-
-$layout-prefix-cls: $ant-prefix + "-layout";
 
 .#{$layout-prefix-cls} {
   display: flex;
@@ -45,7 +45,7 @@ $layout-prefix-cls: $ant-prefix + "-layout";
     height: $layout-header-height;
     padding: $layout-header-padding;
     line-height: $layout-header-height;
-    background: $layout-header-background;
+    // background: $layout-header-background;
   }
 
   &-footer {

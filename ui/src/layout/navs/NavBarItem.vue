@@ -21,6 +21,7 @@ export default {
   props: {
     title: { type: String, default: "标题" },
     icon: { type: String, default: "" },
+    // shape: { type: String, default: "" }, // round  circle
     value: { type: String, default: "action-event" },
     position: { type: String, default: "start" }
   },
