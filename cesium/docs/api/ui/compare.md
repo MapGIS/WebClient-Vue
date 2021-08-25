@@ -1,4 +1,6 @@
-# Compare
+# 卷帘组件
+
+> mapgis-3d-compare
 
 ## 属性
 

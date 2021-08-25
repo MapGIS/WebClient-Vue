@@ -1,4 +1,6 @@
-# CesiumOgcWmtLayer
+# OGC WMS
+
+> mapgis-3d-ogc-wms-layer
 
 ## 属性
 

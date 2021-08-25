@@ -1,4 +1,6 @@
-# 表格组件 mapgis-3d-table
+# 表格组件
+
+> mapgis-3d-table
 
 ## 属性
 

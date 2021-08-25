@@ -1,4 +1,6 @@
-# DynamicCutting
+# 动态剖切
+
+> mapgis-3d-dynamic-cutting
 
 ## 属性
 

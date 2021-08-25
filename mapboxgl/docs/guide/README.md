@@ -84,6 +84,10 @@ yarn unlink @mapgis/webclient-vue-mapboxgl
 
 完成上述安装的步骤之后，我们来通过加载一个地图熟悉使用组件的基本流程。
 
+- 首先引入一个地图图层的容器 map 组件 mapgis-web-map
+
+- 在容器 map 内部再放入地图图层组件 mapgis-ogc-wmts-layer
+
 ```vue
 <template>
   <mapgis-web-map
@@ -152,10 +156,6 @@ export default {
 }
 </script>
 ```
-
-- 首先引入一个地图图层的容器 map 组件 mapgis-web-map
-
-- 在容器 map 内部再放入地图图层组件 mapgis-ogc-wmts-layer
 
 显示如下：
 
