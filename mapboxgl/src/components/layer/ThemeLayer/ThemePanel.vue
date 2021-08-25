@@ -23,7 +23,7 @@
         <mapgis-ui-row>
           <div @click="$_selectThemeType(type.key)" class="theme-panel-img-out" v-for="(type,index) in themeType"
                :key="index">
-            <div :style="{left: index === 1 ? 27 + 'px' : index === 2 ? 38 + 'px' : 13 + 'px'}"
+            <div :style="{left: index === 1 ? 40 + 'px' : index === 2 ? 55 + 'px' : 20 + 'px'}"
                  class="theme-panel-img-border" :class="{themePanelImgOutline: themeDefaultTypeCopy === type.value}">
               <img v-if="type.key === 'unique'" class="theme-panel-img"
                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJgAAAB4CAIAAACB5Kz0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NDU2MjUzRjAzRjAxMUVDODdENkQ3QTFDOTI5NDQwRiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NDU2MjU0MDAzRjAxMUVDODdENkQ3QTFDOTI5NDQwRiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk0NTYyNTNEMDNGMDExRUM4N0Q2RDdBMUM5Mjk0NDBGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjk0NTYyNTNFMDNGMDExRUM4N0Q2RDdBMUM5Mjk0NDBGIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+AviMXgAAIDdJREFUeNrcXUuT3NZ1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"
@@ -50,13 +50,13 @@
       </div>
       <div class="theme-panel-options">
         <!--字段信息-->
-        <mapgis-ui-collapse accordion>
+        <mapgis-ui-collapse v-model="activeKey" accordion>
           <mapgis-ui-collapse-panel key="2" header="字段信息">
             <mapgis-ui-row v-if="showField">
-              <mapgis-ui-col :span="10">
+              <mapgis-ui-col :span="9">
                 <p class="theme-panel-p">字段</p>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="14">
+              <mapgis-ui-col :span="15">
                 <mapgis-ui-select
                     v-if="fields.length > 0"
                     v-model="selectValue"
@@ -152,10 +152,10 @@
             <mapgis-ui-row
                 v-if="dataType !== 'line' && dataType !== 'symbol'"
             >
-              <mapgis-ui-col :span="10">
+              <mapgis-ui-col :span="9">
                 <p class="theme-panel-p" style="margin-top: 5px">渐变颜色</p>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="14">
+              <mapgis-ui-col :span="15">
                 <mapgis-ui-select
                     :default-value="'#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD'"
                     v-model="gradientColor"
@@ -290,7 +290,7 @@
                     :max="lineWidthMax"
                     :step="lineWidthStep"
                     class="theme-panel-slider"
-                    style="margin-left: 12px;"
+                    style="margin-left: 4px;"
                     v-model="lineWidth"/>
               </mapgis-ui-col>
               <mapgis-ui-col :span="4">
@@ -310,7 +310,7 @@
                 <mapgis-ui-slider
                     class="theme-panel-slider"
                     v-model="outerLineOpacity"
-                    style="margin-left: 12px;"
+                    style="margin-left: 4px;"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="4">
@@ -578,10 +578,10 @@
         <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap'">
           <mapgis-ui-collapse-panel key="7" header="标签">
             <mapgis-ui-row>
-              <mapgis-ui-col :span="10">
+              <mapgis-ui-col :span="9">
                 <p class="theme-panel-p">显示字段</p>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="14">
+              <mapgis-ui-col :span="15">
                 <mapgis-ui-select
                     v-if="labelFieldsCopy.length > 0"
                     class="theme-panel-select"
@@ -639,10 +639,10 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-row>
-              <mapgis-ui-col :span="10">
+              <mapgis-ui-col :span="9">
                 <p class="theme-panel-p">字体</p>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="14">
+              <mapgis-ui-col :span="15">
                 <mapgis-ui-select
                     v-if="fields.length > 0"
                     v-model="textFontsSelect"
@@ -774,7 +774,7 @@
                 <div :id="listId"
                      class="theme-panel-list"
                      :style="{overflowY:scroll}"
-                     style="width: 240px;margin-left: 31px;"
+                     style="width: 240px;margin-left: 12px;"
                      @mouseover="$_mouseover"
                      @mouseleave="$_mouseleave"
                 >
@@ -905,7 +905,7 @@ export default {
     activeKey: {
       type: Array,
       default() {
-        return [];
+        return ["2"];
       }
     },
     iconUrl: {
@@ -1447,7 +1447,7 @@ export default {
   z-index: 1000;
   width: 300px;
   height: calc(100vh - 64px);
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
   overflow-x: hidden;
   scrollbar-color: transparent transparent;
   scrollbar-width: thin;
@@ -1470,7 +1470,7 @@ export default {
   margin-top: 13px;
   margin-bottom: 0;
   text-align: left;
-  padding-left: 32px;
+  padding-left: 14px;
   font-family: "Microsoft YaHei";
 }
 
@@ -1526,8 +1526,8 @@ export default {
 }
 
 .theme-panel .m-colorPicker {
-  margin-top: 5px;
-  margin-left: 10px;
+  margin-top: 6px;
+  margin-left: 8px;
 }
 
 .theme-panel .mapgis-ui-checkbox-checked {
@@ -1551,7 +1551,7 @@ export default {
 
 .theme-panel-slider {
   width: 88px;
-  margin-left: 23px;
+  margin-left: 12px;
 }
 
 .theme-panel-input-number {
@@ -1561,8 +1561,8 @@ export default {
 }
 
 /deep/ .theme-panel-line-color .colorBtn {
-  width: 130px !important;
-  height: 12px !important;
+  width: 132px !important;
+  height: 17px !important;
 }
 
 .theme-panel-type-title {
@@ -1581,7 +1581,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 13px;
+  padding-left: 20px;
   margin-bottom: 0;
 }
 
@@ -1590,7 +1590,7 @@ export default {
   color: #40a9ff;
   font-size: 12px;
   position: absolute;
-  right: 9px;
+  right: -8px;
   top: -2px;
   cursor: pointer;
   width: 20px;
@@ -1620,7 +1620,13 @@ export default {
 }
 
 .theme-panel .mapgis-ui-collapse {
-  margin-top: 27px;
+  margin-top: 16px;
+  background: rgb(56,56,56);
+  width: 265px;
+  margin-left: 16px;
+  border-radius: 5px;
+  padding-top: 5px;
+  padding-bottom: 7px;
 }
 
 /deep/ .mapgis-ui-collapse-header {
@@ -1774,15 +1780,16 @@ export default {
 }
 
 /deep/ .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header .mapgis-ui-collapse-arrow {
-  left: 239px;
+  left: 238px;
 }
 
 /deep/ .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header {
   padding: 0 0 0 10px;
-  border-left: 3px solid rgb(204, 204, 204);
+  border-left: 1px solid rgb(204, 204, 204);
   border-radius: 0 !important;
   width: 240px;
-  margin-left: 19px;
+  height: 20px;
+  margin-left: 1px;
 }
 
 /deep/ .mapgis-ui-collapse {
@@ -1806,7 +1813,7 @@ export default {
 .theme-panel-color-outer{
   width: 153px;
   height: 32px;
-  margin-left: 11px;
+  margin-left: -2px;
   margin-top: 10px;
   border: 1px solid var(--border-color-base);
   border-radius: 4px;
@@ -1817,17 +1824,21 @@ export default {
 }
 
 .theme-panel-options{
-  width: 288px;
-  min-height: 581px;
+  width: 300px;
+  min-height: 582px;
   background: rgb(44,44,44);
-  margin-top: 3px;
+  margin-top: 8px;
   padding-top: 1px;
+  margin-left: -4px;
 }
 
 .theme-panel-head{
-  width: 288px;
+  width: 308px;
   height: 248px;
   margin-top: -18px;
   padding-top: 14px;
+  -webkit-box-shadow: 8px 10px 8px 0px rgba(0 0 0 / 31%);
+  box-shadow: 8px 10px 8px 0px rgba(0 0 0 / 31%);
+  margin-left: -14px;
 }
 </style>
