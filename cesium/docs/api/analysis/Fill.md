@@ -1,6 +1,6 @@
 # 填挖方分析
 
-> mapgis-3d-fill
+> mapgis-3d-cut-fill
 
 ## 属性
 
@@ -88,7 +88,7 @@
             :token="token"
     ></mapgis-3d-ogc-wmts-layer>
     <mapgis-3d-terrain-provider :url="terrainUrl" :v-if="showTerrain"></mapgis-3d-terrain-provider>
-    <mapgis-3d-fill></mapgis-3d-fill>
+    <mapgis-3d-cut-fill></mapgis-3d-cut-fill>
   </mapgis-web-scene>
 </template>
 
@@ -155,14 +155,14 @@ export default {
             :token="token"
     ></mapgis-3d-ogc-wmts-layer>
     <mapgis-3d-terrain-provider :url="terrainUrl" :v-if="showTerrain"></mapgis-3d-terrain-provider>
-    <mapgis-3d-fill
+    <mapgis-3d-cut-fill
       @loaded="loaded"
     >
       <div>
         <button @click="startAnalyse">开始分析</button>
         <button @click="stopAnalyse">结束分析</button>
       </div>
-    </mapgis-3d-fill>
+    </mapgis-3d-cut-fill>
   </mapgis-web-scene>
 </template>
 

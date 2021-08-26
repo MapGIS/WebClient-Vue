@@ -84,7 +84,7 @@ import * as H from "@turf/helpers";
 import * as T from "@turf/turf";
 import {getCesiumBaseObject} from "../Utils/util";
 export default {
-  name: "mapgis-3d-fill",
+  name: "mapgis-3d-cut-fill",
   mixins: [ServiceLayer],
   data(){
     return {
