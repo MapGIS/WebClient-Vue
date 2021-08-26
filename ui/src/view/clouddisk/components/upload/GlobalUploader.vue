@@ -185,7 +185,17 @@ export default {
     UploaderFile
   },
   props: {
-    action: String
+    action: String,
+    clouddiskParam: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    clearParam: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -263,9 +273,10 @@ export default {
         this.initGloablUpload = true;
         let target = getMapGISUploadUrl();
         this.options.target = target;
+        this.options.headers.Authorization = token;
         this.initWebsocket();
         window.clearInterval(loopToken);
-      }
+      };
     }, 200);
   },
   mounted() {},
@@ -277,7 +288,33 @@ export default {
     options: function() {
       let target = this.getSetting();
       this.options.target = target;
-    }
+    },
+    clearParam: {
+      immediate: true,
+      handler(next) {
+        if (next === true) {
+          localStorage.removeItem('mapgis_clouddisk_http')
+          localStorage.removeItem('mapgis_clouddisk_ip')
+          localStorage.removeItem('mapgis_clouddisk_socket')
+          localStorage.removeItem('mapgis_clouddisk_token')
+          localStorage.removeItem('mapgis_clouddisk_group_path')
+          localStorage.removeItem('mapgis_clouddisk_id')
+        }
+      }
+    },
+    clouddiskParam: {
+      immediate: true,
+      handler(next) {
+        if (next.mapgis_clouddisk_token && next.mapgis_clouddisk_token !== '') {
+          localStorage.setItem('mapgis_clouddisk_http', next.mapgis_clouddisk_http)
+          localStorage.setItem('mapgis_clouddisk_ip', next.mapgis_clouddisk_ip)
+          localStorage.setItem('mapgis_clouddisk_socket', next.mapgis_clouddisk_socket)
+          localStorage.setItem('mapgis_clouddisk_token', next.mapgis_clouddisk_token)
+          localStorage.setItem('mapgis_clouddisk_group_path', next.mapgis_clouddisk_group_path)
+          localStorage.setItem('mapgis_clouddisk_id', next.mapgis_clouddisk_id)
+        }
+      }
+    },
   },
   computed: {
     tokenChange() {
@@ -413,10 +450,10 @@ export default {
           isGisImport: isGisImport || false,
           taskid: taskid || ''
         };
-        console.warn("mergeSimpleUpload 尝试发送", formdata);
+        console.log("mergeSimpleUpload 尝试发送", formdata);
         mergeSimpleUpload(formdata)
           .then(res => {
-            console.warn("mergeSimpleUpload 成功发送", res);
+            console.log("mergeSimpleUpload 成功发送", res);
             changeCsvUploadComplete({ csvUploadComplete: true });
             // 文件合并成功
             // let data = res.data
@@ -431,7 +468,7 @@ export default {
             // }
           })
           .catch(e => { 
-            console.warn("mergeSimpleUpload 失败发送", e);
+            console.log("mergeSimpleUpload 失败发送", e);
           });
 
         // 不需要合并 */
