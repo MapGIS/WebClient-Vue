@@ -118,7 +118,7 @@ module.exports = {
               ["/api/analysis/Flood.md", "洪水淹没分析"],
               ["/api/analysis/DynamicCutting.md", "动态剖切"],
               ["/api/analysis/Excavate.md", "开挖分析"],
-              ["/api/analysis/Fill.md", "填挖方分析"],
+              // ["/api/analysis/Fill.md", "填挖方分析"],
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],
               ["/api/analysis/Skyline.md", "天际线分析"],
