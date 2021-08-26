@@ -248,6 +248,7 @@ $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
 $btn-default-bg: transparent;
+$btn-theme-bg: var(--background);
 $btn-default-border: var(--button-border-default-color);
 
 $btn-danger-color: $red-6;
@@ -273,6 +274,7 @@ $descriptions-bg: #fafafa;
 
 // Dropdown
 $dropdown-selected-color: $primary-6;
+$dropdown-background: var(--dropdown-background);
 
 // Empty
 $empty-background: var(--empty-background);
@@ -751,7 +753,9 @@ $ribbon-background: var(--ribbon-background);
 $ribbon-border-background: $shadow;
 
 // Navs
-$nav-content-backgroud: var(--nav-background);
+$nav-backgroud: var(--nav-background);
+$nav-content-backgroud: var(--nav-content-background);
+$nav-selected-backgroud: var(--nav-selected-background);
 $nav-border-backgroud: var(--nav-border-background);
 $nav-shadow-backgroud: var(--nav-shadow);
 $nav-bar-width: 48px;

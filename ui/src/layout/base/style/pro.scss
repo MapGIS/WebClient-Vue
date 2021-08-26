@@ -51,6 +51,21 @@
     box-shadow: 1px 0 0 0 $layout-shadow;
     -webkit-box-shadow: 1px 0 0 0 $layout-shadow;
   }
+
+  @include e(setting, "-") {
+    position: absolute;
+    z-index: 9999;
+    right: 0px;
+    top: 40vh;
+    width: 36px;
+    height: 36px;
+    background-color: $ribbon-background;
+    border-color: $ribbon-background;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
 }
 
 .mapgis-studio-tree {
