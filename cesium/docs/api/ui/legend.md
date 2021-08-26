@@ -1,6 +1,6 @@
 # 图例
 
-> mapgis-3d-arcgis-map-layer
+> mapgis-3d-arcgis-legend
 
 ## 示例
 
