@@ -19,30 +19,7 @@
               @change="changeDate"
           />
         </a-form-model-item>
-        <a-form-model-item label="分析类型">
-          <a-row>
-            <a-radio-group v-model="formData.timeType">
-              <a-radio value="timeRange">
-                时间段
-              </a-radio>
-              <a-radio value="time">
-                时间点
-              </a-radio>
-            </a-radio-group>
-          </a-row>
-        </a-form-model-item>
-        <a-form-model-item v-if="formData.timeType === 'time'" label="时间">
-          <a-time-picker
-              :default-value="formDataTime"
-              size="small"
-              @change="
-            val => {
-              changeTime(val, 'time')
-            }
-          "
-          />
-        </a-form-model-item>
-        <div v-else-if="formData.timeType === 'timeRange'">
+        <div>
           <a-form-model-item label="开始时间">
             <a-time-picker
                 :default-value="startTime"
@@ -65,6 +42,10 @@
             "
             />
           </a-form-model-item>
+<!--          <a-form-model-item label="时间滑动">-->
+<!--            <a-slider v-model="dateTimeVal" :step="20" :min="startTime" :max="endTime"-->
+<!--                              @change="setInput" :value="dateTimeVal"/>-->
+<!--          </a-form-model-item>-->
         </div>
         <a-form-model-item label="底部高程">
           <a-input
@@ -89,11 +70,6 @@
               v-model="formData.shadowColor"
               @change="changeShadowColor"
           />
-          <!--        <MpColorPicker-->
-          <!--            :color.sync="formData.shadowColor"-->
-          <!--            :disableAlpha="true"-->
-
-          <!--        ></MpColorPicker>-->
         </a-form-model-item>
         <a-form-model-item label="非阴影颜色">
           <colorPicker
@@ -101,11 +77,6 @@
               v-model="formData.sunColor"
               @change="changeSunColor"
           />
-          <!--        <MpColorPicker-->
-          <!--            :color.sync="formData.sunColor"-->
-          <!--            :disableAlpha="true"-->
-          <!--            class="color-picker"-->
-          <!--        ></MpColorPicker>-->
         </a-form-model-item>
         <a-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
           <a-input
@@ -123,6 +94,10 @@
             type="primary"
             @click="shadow"
         >阴影分析
+        </a-button
+        >
+        <a-button class="control-button" type="primary" @click="sun" size="small"
+        >日照分析
         </a-button
         >
         <a-button
@@ -169,13 +144,14 @@ export default {
         date: '2021-7-1', // 日期
         startTime: '10:00:00', // 开始时间
         endTime: '14:00:00', // 结束时间
+        dateTimeVal: '10:00:00',
         min: 0, // 最低高程(米)
         max: 20, // 拉伸高度(米)
-        shadowColor: 'rgb(0,255,0)', // 阴影颜色
-        sunColor: 'rgb(255,0,0)', // 非阴影颜色
+        shadowColor: 'rgba(0,255,0,255)', // 阴影颜色
+        sunColor: 'rgba(255,0,0,255)', // 非阴影颜色
         ratio: 0, // 阴影率(时间点范围阴影分析输出结果)
-        timeType: 'timeRange', // 分析类型(time：时间点；timeRange:时间段)
-        time: '10:00:00' // 时间点
+        // timeType: 'timeRange', // 分析类型(time：时间点；timeRange:时间段)
+        // time: '10:00:00' // 时间点
       },
       startDate: "",
       formDataTime: "",
@@ -195,6 +171,12 @@ export default {
     this.endTime = shadowMoment(this.formData.endTime, 'HH:mm:ss');
   },
   mounted() {
+  },
+  watch: {
+    formData: {
+      handler: function (e) {
+      }
+    }
   },
   methods: {
     /**
@@ -262,22 +244,48 @@ export default {
       }
       return cesiumColor
     },
+
+    /**
+     * 十六进制颜色值转为raga
+     * @param {string} color 十六进制颜色值
+     */
+    colorToRgba(val) {
+      //16进制的正则
+      let reg = new RegExp("^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$");
+      let color = val.toLowerCase();
+      if (val.includes('rgba')) {
+        return val;
+      }
+      let result = '';
+      if (reg.test(color)) {
+        let colorChange = [];
+        for (let i = 1; i < 7; i += 2) {
+          colorChange.push(parseInt("0x" + color.slice(i,i+2)));
+          result = "rgba("+colorChange.join(",")
+        }
+        result = result + ",255)";
+      }
+      return result;
+    },
+
     /**
      * 范围时间点阴影分析/范围时间段阴影分析
      */
     shadow() {
-      this.remove()
-      const {viewer} = this.webGlobe
+      this.remove();
+      const {viewer} = this.webGlobe;
       // 初始化交互式绘制控件
       let drawElement = new this.Cesium.DrawElement(viewer);
-      const {date, min, max, timeType, shadowColor, sunColor} = this.formData
-      const time = new Date(`${date} ${this.formData.time}`)
-      const startTime = new Date(`${date} ${this.formData.startTime}`)
-      const endTime = new Date(`${date} ${this.formData.endTime}`)
+      let {date, min, max, timeType, shadowColor, sunColor} = this.formData;
+      shadowColor = this.colorToRgba(shadowColor);
+      sunColor = this.colorToRgba(sunColor);
+      const time = new Date(`${date} ${this.formData.time}`);
+      const startTime = new Date(`${date} ${this.formData.startTime}`);
+      const endTime = new Date(`${date} ${this.formData.endTime}`);
 
-      viewer.scene.globe.depthTestAgainstTerrain = false // 关闭深度检测
+      viewer.scene.globe.depthTestAgainstTerrain = false; // 关闭深度检测
 
-      const self = this
+      const self = this;
       let shadowAnalysis;
       // 1.绘制分析区域(矩形)
       // 激活交互式绘制工具
@@ -325,28 +333,17 @@ export default {
             xPaneNum,
             yPaneNum,
             zPaneNum,
-            shadowColor: self.getCesiumColor(shadowColor),
-            sunColor: self.getCesiumColor(sunColor)
+            shadowColor: shadowColor,
+            sunColor: sunColor
           })
-          if (timeType === 'time') {
-            // 固定时间点范围阴影分析
-            const shadowRatio = shadowAnalysis.pointsArrayInShadow(
-                positions,
-                min,
-                max,
-                time
-            )
-            self.$set(self.formData, 'ratio', shadowRatio)
-          } else if (timeType === 'timeRange') {
-            // 时间段范围阴影分析
-            const result = shadowAnalysis.calcPointsArrayInShadowTime(
-                positions,
-                min,
-                max,
-                startTime,
-                endTime
-            )
-          }
+          // 时间段范围阴影分析
+          const result = shadowAnalysis.calcPointsArrayInShadowTime(
+              positions,
+              min,
+              max,
+              startTime,
+              endTime
+          )
           CesiumZondy.shadowAnalysisManager.addSource(
               self.vueKey,
               self.vueIndex,
@@ -355,6 +352,30 @@ export default {
         }
       })
 
+    },
+
+    /**
+     * 原生日照分析
+     */
+    sun() {
+      this.remove();
+      const {viewer} = this.webGlobe;
+      viewer.scene.globe.enableLighting = true; // 开启日照
+      viewer.shadows = true; // 开启阴影
+      const {date, startTime, endTime, time, timeType} = this.formData;
+      // 时间段日照分析
+      viewer.clock.shouldAnimate = true // 开启计时
+      viewer.clock.startTime = this.getJulianDate(
+          `${date} ${this.formData.startTime}`
+      )
+      viewer.clock.stopTime = this.getJulianDate(
+          `${date} ${this.formData.endTime}`
+      )
+      viewer.clock.currentTime = this.getJulianDate(
+          `${date} ${this.formData.startTime}`
+      )
+      viewer.clock.multiplier = 3600 // cesium中1秒表示现实中1个小时
+      viewer.clock.clockRange = this.Cesium.ClockRange.LOOP_STOP // 循环动画
     },
 
     /**
@@ -402,8 +423,8 @@ export default {
   /*flex-direction: column;*/
   max-height: calc(80vh);
   min-width: calc(20vw);
-  overflow: scroll;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding-bottom: 15px;
 }
 
 .shadow.right {
@@ -425,12 +446,20 @@ export default {
   line-height: 40px;
 }
 
+::v-deep .ant-form-item-label > label {
+  color: rgba(255, 255, 255, 1);
+}
+
 ::v-deep .ant-form-item-label > label::after {
   /*content: '';*/
 }
 
 ::v-deep .ant-input {
   padding: 4px 11px;
+}
+
+::v-deep .ant-time-picker {
+  width: 181px;
 }
 
 .color-picker {
