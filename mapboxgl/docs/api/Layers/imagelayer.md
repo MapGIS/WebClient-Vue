@@ -1,4 +1,6 @@
-# ImageLayer
+# 图像图层
+
+> mapgis-image-layer
 
 ## 属性
 

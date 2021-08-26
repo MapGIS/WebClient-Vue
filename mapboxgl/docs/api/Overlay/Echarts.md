@@ -1,4 +1,6 @@
-# MapgisEcharts
+# Echarts
+
+> mapgis-echarts
 
 ## 属性
 

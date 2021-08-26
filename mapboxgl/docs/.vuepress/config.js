@@ -128,6 +128,7 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
+              ["/guide/introduction.md", "产品介绍"],
               ["/guide/basemap.md", "基础地图"],
               ["/guide/composition.md", "结构"],
               ["/guide/controls.md", "控制视图"],
@@ -149,40 +150,25 @@ module.exports = {
             ]
           },
           {
-            title: "API",
+            title: "组件",
             collapsable: false,
-            children: [
+            children:
+            [
+              {
+                title:'地图',
+                collapsable: false
+              },
               ["/api/", "地图对象"],
+              {
+                title:'地图子组件',
+                collapsable: false
+              },
               ["/api/controls.md", "控制组件"],
               ["/api/marker.md", "标注"],
               ["/api/popup.md", "气泡"],
-              ["/api/Layers/", "图层基础属性"],
-              ["/api/Layers/geojsonlayer.md", "GeojsonLayer"],
-              ["/api/Layers/vectorlayer.md", "VectorLayer"],
-              ["/api/Layers/rasterlayer.md", "RasterLayer"],
-              ["/api/Layers/imagelayer.md", "ImageLayer"],
-              ["/api/Layers/videolayer.md", "VideoLayer"],
-              ["/api/Layers/canvaslayer.md", "CanvasLayer"],
-              ["/api/Layers/igserver/igsDocLayer.md", "IgsDocLayer"],
-              ["/api/Layers/igserver/igsTileLayer.md", "IgsTileLayer"],
-              ["/api/Layers/igserver/igsVectorLayer.md", "IgsVectorLayer"],
-              ["/api/Layers/OGC/ogcWmtsLayer.md", "OGC-WMTS"],
-              ["/api/Layers/OGC/ogcWmsLayer.md", "OGC-WMS"],
-              ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGISMapLayer"],
-              [
-                "/api/Layers/ArcGISServer/ArcGISTileLayer.md",
-                "ArcGISTileLayer"
-              ],
 
-              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式"],
               ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
               ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
-
-              ["/api/Layers/Cluster/cluster.md", "聚类"],
-              ["/api/Layers/Heater/heater.md", "热力"],
-              ["/api/Layers/Building/building.md", "建筑白膜"],
-              ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
-              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
 
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],
@@ -190,24 +176,51 @@ module.exports = {
               ["/api/UI/Hawkeye/hawkeye.md", "鹰眼"],
               ["/api/UI/Compare/compare.md", "卷帘"],
 
-              ["/api/Overlay/Echarts.md", "Echarts"],
-              ["/api/Overlay/Mapv.md", "MapV"],
-
               ["/api/UI/Table/BaseTable.md", "表格"],
               ["/api/UI/Table/FeatureTable.md", "要素表格"],
-              ["/api/map/mixin/FeatureService.md", "要素服务"]
+              ["/api/map/mixin/FeatureService.md", "要素服务"],
+              {
+                title: "图层",
+                collapsable: false,
+              },
+              ["/api/Layers/geojsonlayer.md", "GeoJSON图层"],
+              ["/api/Layers/vectorlayer.md", "矢量图层"],
+              ["/api/Layers/rasterlayer.md", "栅格图层/通用瓦片"],
+              ["/api/Layers/imagelayer.md", "图像图层"],
+              ["/api/Layers/videolayer.md", "视频图层"],
+              ["/api/Layers/canvaslayer.md", "画布图层"],
+              ["/api/Layers/igserver/igsDocLayer.md", "Igs地图文档"],
+              ["/api/Layers/igserver/igsTileLayer.md", "Igs瓦片服务"],
+              ["/api/Layers/igserver/igsVectorLayer.md", "Igs矢量图层"],
+              ["/api/Layers/OGC/ogcWmtsLayer.md", "OGC-WMTS"],
+              ["/api/Layers/OGC/ogcWmsLayer.md", "OGC-WMS"],
+              ["/api/Layers/ArcGISServer/ArcGISMapLayer.md", "ArcGIS地图"],
+              ["/api/Layers/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
+              ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
+              {
+                title:'可视化',
+                collapsable: false
+              },
+              ["/api/Overlay/Echarts.md", "Echarts"],
+              ["/api/Overlay/Mapv.md", "MapV"],
+              ["/api/Layers/Cluster/cluster.md", "聚类"],
+              ["/api/Layers/Heater/heater.md", "热力"],
+              ["/api/Layers/Building/building.md", "建筑白膜"],
+              ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
+              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
             ]
           },
-          {
-            title: "源码分析",
-            collapsable: true,
-            children: [
-              ["/code/basemap.md", "基础地图"],
-              ["/code/controls.md", "控制视图"],
-              ["/code/markers&popups.md", "注记视图"],
-              ["/code/layers&sources.md", "图层与数据源"]
-            ]
-          },
+
+          // {
+          //   title: "源码分析",
+          //   collapsable: true,
+          //   children: [
+          //     ["/code/basemap.md", "基础地图"],
+          //     ["/code/controls.md", "控制视图"],
+          //     ["/code/markers&popups.md", "注记视图"],
+          //     ["/code/layers&sources.md", "图层与数据源"]
+          //   ]
+          // },
           {
             title: "插件组件",
             collapsable: false,

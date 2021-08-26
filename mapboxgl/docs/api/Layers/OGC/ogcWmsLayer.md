@@ -1,4 +1,6 @@
-# IgsWmsLayer
+# OGC-WMS
+
+> mapgis-ogc-wms-layer
 
 ## 属性
 
@@ -95,12 +97,12 @@ All common layer [events](/zh/api/Layers/#events)
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsWmtsLayer } from "@mapgis/webclient-vue-mapboxgl";
+import { MapgisWebMap, MapgisOgcWmsLayer } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap,
-    MapboxIgsWmtsLayer
+    MapgisWebMap,
+    MapgisOgcWmsLayer
   },
   data() {
     return {
