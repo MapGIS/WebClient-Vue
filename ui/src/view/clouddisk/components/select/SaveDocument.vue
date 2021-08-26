@@ -18,6 +18,7 @@
         <mapgis-ui-button
           class="mapgis-ui-clouddisk-save-document-button"
           type="primary"
+          @click="handleSaveDocument"
           v-if="layout == 'vertical'"
         >
           保存
