@@ -5,42 +5,35 @@
       <span class="mapgis-property-color-left">{{ rule.title }} </span>
     </mapgis-ui-col>
     <mapgis-ui-col span="17">
-      <mapgis-ui-popover v-model="visible" trigger="click">
-        <a slot="content">
-          <color-picker
-            theme="light"
-            :color="value"
-            :sucker-hide="false"
-            :sucker-canvas="suckerCanvas"
-            :sucker-area="suckerArea"
-            @changeColor="onChange"
-            @openSucker="openSucker"
-          />
-        </a>
-        <mapgis-ui-input v-model="value">
+      <!-- <mapgis-ui-popover v-model="visible" trigger="click"> -->
+
+      <colorPicker
+        v-model="value"
+        class="theme-panel-line-color"
+        @change="onChange"
+      />
+
+      <!-- <mapgis-ui-input v-model="value">
           <mapgis-ui-button
             size="small"
             shape="round"
             slot="addonAfter"
             :style="{ background: value }"
           />
-        </mapgis-ui-input>
-      </mapgis-ui-popover>
+        </mapgis-ui-input> -->
+      <!-- </mapgis-ui-popover> -->
     </mapgis-ui-col>
   </mapgis-ui-row>
 </template>
 
 <script>
 import EditMixin from "../EditMixin";
-import colorPicker from "@caohenghu/vue-colorpicker";
 
 export default {
   name: "mapgis-mvt-editor-property-color",
   inject: ["map"],
   mixins: [EditMixin],
-  components: {
-    colorPicker
-  },
+  components: {},
   props: {
     rule: Object
   },
@@ -109,5 +102,13 @@ export default {
 .mapgis-property-color-left {
   height: 30px;
   line-height: 30px;
+}
+
+.theme-panel-line-color {
+  width: 160px !important;
+  height: 30px !important;
+  margin-left: 11px;
+  border-radius: 6px;
+  border: 1px solid rgb(218, 218, 218);
 }
 </style>

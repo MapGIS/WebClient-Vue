@@ -247,7 +247,8 @@ $btn-primary-color: #fff;
 $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
-$btn-default-bg: var(--button-default-background);
+$btn-default-bg: transparent;
+$btn-theme-bg: var(--background);
 $btn-default-border: var(--button-border-default-color);
 
 $btn-danger-color: $red-6;
@@ -273,6 +274,7 @@ $descriptions-bg: #fafafa;
 
 // Dropdown
 $dropdown-selected-color: $primary-6;
+$dropdown-background: var(--dropdown-background);
 
 // Empty
 $empty-background: var(--empty-background);
@@ -615,7 +617,7 @@ $tree-node-selected-bg: $primary-2;
 
 // Collapse
 $collapse-header-bg: $background-color-light;
-$collapse-content-bg: $component-background;
+$collapse-content-bg: transparent;
 
 // Skeleton
 $skeleton-color: #f2f2f2;
@@ -651,7 +653,7 @@ $list-item-padding: $padding-sm 0;
 $list-item-meta-margin-bottom: $padding-md;
 $list-item-meta-avatar-margin-right: $padding-md;
 $list-item-meta-title-margin-bottom: $padding-sm;
-$list-item-hover-bg: $primary-4;
+$list-item-hover-bg: $primary-2;
 
 // Timeline
 $timeline-width: 2px;
@@ -751,7 +753,15 @@ $ribbon-background: var(--ribbon-background);
 $ribbon-border-background: $shadow;
 
 // Navs
-$nav-content-backgroud: var(--nav-background);
+$nav-backgroud: var(--nav-background);
+$nav-content-backgroud: var(--nav-content-background);
+$nav-selected-backgroud: var(--nav-selected-background);
 $nav-border-backgroud: var(--nav-border-background);
 $nav-shadow-backgroud: var(--nav-shadow);
 $nav-bar-width: 48px;
+
+// ThemePanel
+$panel-backgroud: var(--panel-background);
+$panel-text-color: var(--panel-text-color);
+$panel-option-color: var(--panel-option-color);
+$panel-box-shadow: var(--panel-box-shadow);

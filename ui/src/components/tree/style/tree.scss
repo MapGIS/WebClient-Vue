@@ -1,5 +1,8 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-@include b(tree) {}
-
+@include b(tree) {
+  & li &-node-content-wrapper:hover {
+    background-color: var(--primary-2);
+  }
+}
