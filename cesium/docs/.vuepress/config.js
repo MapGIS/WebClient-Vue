@@ -53,38 +53,75 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
+              ["/guide/introduction.md", "产品介绍"],
               ["/guide/basemap.md", "基础地图"],
               ["/guide/wms&map&doc.md", "子图层控制"]
             ]
           },
           {
-            title: "API",
+            title: "组件",
             collapsable: false,
             children: [
+              {
+                title: "场景",
+                collapsable: false,
+              },
               ["/api/", "地图场景"],
-              ["/api/datasource/geojson.md", "GeoJSON"],
-              ["/api/layer/IGServer/IgsVectorLayer.md", "IGS-二维矢量"],
-              ["/api/layer/IGServer/IgsDocLayer.md", "IGS-Doc"],
-              ["/api/layer/IGServer/IgsTileLayer.md", "IGS-Tile"],
-              ["/api/layer/ArcGISServer/ArcGISMapLayer.md", "ArcGIS-Map"],
-              ["/api/layer/ArcGISServer/ArcGISTileLayer.md", "ArcGIS-Tile"],
-              ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
-              ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
-              ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
-              ["/api/m3d/m3d.md", "M3D"],
-              ["/api/analysis/Viewshed.md", "可视域分析"],
-              ["/api/analysis/Sightline.md", "通视分析"],
-              ["/api/analysis/Flood.md", "洪水淹没分析"],
+
+              {
+                title: "场景子组件",
+                collapsable: false,
+              },
               ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/marker.md", "标记点"],
               ["/api/ui/compare.md", "卷帘"],
               ["/api/ui/link.md", "多屏联动"],
               ["/api/ui/legend.md", "图例"],
               ["/api/ui/table.md", "表格"],
               ["/api/ui/draw.md", "绘制"],
-              ["/api/ui/measure.md", "量算"],
+              ["/api/ui/measure.md", "量测"],
+
+              {
+                title: "图层",
+                collapsable: false,
+              },
+              ["/api/layer/IGServer/IgsVectorLayer.md", "IGS二维矢量"],
+              ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
+              ["/api/layer/IGServer/IgsTileLayer.md", "IGS瓦片"],
+              ["/api/provider/igsterrain.md", "IGS地形"],
+
+              ["/api/layer/ArcGISServer/ArcGISMapLayer.md", "ArcGIS地图"],
+              ["/api/layer/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
+
+              ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
+              ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
+
+              ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
+
+              ["/api/m3d/m3d.md", "M3D"],
+
+              ["/api/datasource/geojson.md", "GeoJSON"],
+
+              {
+                title: "可视化",
+                collapsable: false,
+              },
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
-              ["/api/provider/igsterrain.md", "IGS地形"]
+
+              {
+                title: "空间分析",
+                collapsable: false,
+              },
+              ["/api/analysis/Viewshed.md", "可视域分析"],
+              ["/api/analysis/Sightline.md", "通视分析"],
+              ["/api/analysis/Flood.md", "洪水淹没分析"],
+              ["/api/analysis/DynamicCutting.md", "动态剖切"],
+              ["/api/analysis/Excavate.md", "开挖分析"],
+              // ["/api/analysis/Fill.md", "填挖方分析"],
+              ["/api/analysis/HeightLimited.md", "限高分析"],
+              ["/api/analysis/Shadow.md", "阴影分析"],
+              ["/api/analysis/Skyline.md", "天际线分析"],
             ]
           },
           {

@@ -13,6 +13,7 @@
 
 <script>
 import VueOptions from "../../../Base/Vue/VueOptions";
+import debounce from "lodash/debounce";
 
 export default {
   name: "mapgis-3d-statebar",
@@ -31,6 +32,10 @@ export default {
     showViewLevelInfo: {
       type: Boolean,
       default: false
+    },
+    frame: {
+      type: Number,
+      default: 10
     }
   },
 
@@ -49,7 +54,9 @@ export default {
     };
   },
 
-  created() {},
+  created() {
+    this.bindEvent();
+  },
   mounted() {
     this.mount();
   },
@@ -58,6 +65,16 @@ export default {
   },
 
   methods: {
+    bindEvent() {
+      this.$_frame = -1;
+      this.levelEvent = debounce(
+        () => {
+          this.updateViewLevel();
+        },
+        100,
+        { leading: true }
+      );
+    },
     mount() {
       this.showPosition();
     },
@@ -74,7 +91,7 @@ export default {
     },
     showPosition() {
       const vm = this;
-      let { Cesium, webGlobe, vueIndex, vueKey } = this;
+      let { Cesium, webGlobe, vueIndex, vueKey, frame } = this;
 
       const { viewer } = webGlobe;
 
@@ -87,14 +104,24 @@ export default {
           // vm.updateViewLevel();
           // vm.selectTile(movement.endPosition);
           // vm.selectedTile = vm.selectTile(movement.endPosition);
-          vm.updateShowInfo(movement.endPosition);
+          if (++vm.$_frame % frame == 0) {
+            vm.updateShowInfo(movement.endPosition);
+          }
+          if (vm.$_frame > 10000000) {
+            vm.$_frame = 0;
+          }
           lastScreenPos = movement.endPosition;
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         screenSpaceMouseEventHandler.setInputAction(() => {
           // vm.updateViewLevel();
           // vm.selectTile(lastScreenPos);
           // vm.selectedTile = vm.selectTile(lastScreenPos);
-          vm.updateShowInfo(lastScreenPos);
+          if (++vm.$_frame % frame == 0) {
+            vm.updateShowInfo(lastScreenPos);
+          }
+          if (vm.$_frame > 10000000) {
+            vm.$_frame = 0;
+          }
         }, Cesium.ScreenSpaceEventType.WHEEL);
         window.CesiumZondy.EventHandlerManager.addSource(
           vueKey,
@@ -106,10 +133,12 @@ export default {
       let lastScreenPos;
 
       viewer.scene.globe.tileLoadProgressEvent.addEventListener(() => {
-        vm.updateViewLevel();
+        // vm.updateViewLevel();
+        vm.levelEvent();
       });
       viewer.camera.changed.addEventListener(() => {
-        vm.updateViewLevel();
+        // vm.updateViewLevel();
+        vm.levelEvent();
       });
     },
     selectTile(e) {

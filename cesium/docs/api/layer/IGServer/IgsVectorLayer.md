@@ -1,4 +1,6 @@
-# IgsVectorLayer
+# IGS二维矢量
+
+> mapgis-3d-igs-vector-layer
 
 ## 属性
 
@@ -73,7 +75,8 @@
     <mapgis-3d-igs-vector-layer
       :gdbps="gdbps"
       :baseUrl="baseUrl"
-    ></mapgis-3d-igs-vector-layer>
+    >
+    </mapgis-3d-igs-vector-layer>
   </mapgis-web-scene>
 </template>
 

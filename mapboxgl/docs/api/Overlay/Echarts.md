@@ -1,4 +1,6 @@
-# MapgisEcharts
+# Echarts
+
+> mapgis-echarts-layer-layer
 
 ## 属性
 
@@ -41,7 +43,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
     :zoom="zoom"
     :map-style="mapStyle"
   >
-    <mapgis-echarts :options="option" />
+    <mapgis-echarts-layer :options="option" />
   </mapgis-web-map>
 </template>
 <script>

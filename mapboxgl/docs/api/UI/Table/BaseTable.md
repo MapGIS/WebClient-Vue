@@ -1,4 +1,6 @@
-# BaseTable
+# 表格
+
+> mapgis-base-table
 
 ## 属性
 
@@ -164,7 +166,7 @@
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map 
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
@@ -172,7 +174,7 @@
     :center="outerCenter"
     :crs="mapCrs"
   >
-    <mapbox-igs-tdt-layer
+    <mapgis-igs-tdt-layer
       :layer="layer"
       :layerId="layerId"
       :sourceId="sourceId"
@@ -180,19 +182,19 @@
       :token="token"
       :crs="mapCrs"
     >
-    </mapbox-igs-tdt-layer>
-  </mapbox-map>
+    </mapgis-igs-tdt-layer>
+  </mapgis-web-map >
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsTdtLayer } from "@mapgis/webclient-vue-mapboxgl";
+import { MapgisWebMap,MapgisIgsTdtLayer } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap,
-    MapboxIgsTdtLayer
+    MapgisWebMap,
+    MapgisIgsTdtLayer
   },
   data() {
     return {

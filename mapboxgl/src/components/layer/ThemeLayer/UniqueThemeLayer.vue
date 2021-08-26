@@ -392,7 +392,7 @@ export default {
       if (this.source_vector_layer_Id && !window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"]) {
         window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName()]["source-layer"] = this.source_vector_layer_Id;
       }
-      this.title = "单值专题图" + "_" + this.layerIdCopy;
+      this.title = this.layerIdCopy;
       this.$_addTextLayer(minzoom, maxzoom);
       if (this.dataType === "fill") {
         if (!window.originLayer[this.layerIdCopy].layerOrder) {

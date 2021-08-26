@@ -1,0 +1,19 @@
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
+
+.theme-panel-options,.theme-panel .mapgis-ui-collapse{
+  background: $panel-backgroud;
+}
+
+.theme-panel-p{
+  color: $panel-option-color;
+}
+
+.theme-panel-head{
+  -webkit-box-shadow: 8px 10px 8px 0px $panel-box-shadow;
+  box-shadow: 8px 10px 8px 0px $panel-box-shadow;
+}
+
+.mapgis-ui-collapse > .mapgis-ui-collapse-item:last-child, .mapgis-ui-collapse > .mapgis-ui-collapse-item:last-child > .mapgis-ui-collapse-header{
+  color: $panel-text-color;
+}

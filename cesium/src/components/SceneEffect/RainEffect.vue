@@ -28,7 +28,7 @@
 
 <script>
 
-import BaseMixin from "../Controls/ServiceLayer";
+import BaseMixin from "../UI/Controls/ServiceLayer";
 
 export default {
   name: "mapgis-3d-rain-effect",
@@ -42,6 +42,10 @@ export default {
       type: Number,
       default: 0
     },
+    enable:{
+      type: Boolean,
+      default: true
+    }
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
@@ -60,19 +64,32 @@ export default {
         this.unmount();
         this.initRain();
       }
-    }
+    },
+    enable: {
+      handler(stag){
+        // this.changeDensity(next);
+        let {CesiumZondy,vueKey, vueIndex} = this;
+        let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+        let rain = find.source;
+        rain.enabled = stag;
+      }
+    },
   },
   data() {
     return {
       waitManagerName: "M3DIgsManager",
-      minSpeed:0,
-      maxSpeed:200
+      // minSpeed:0,
+      // maxSpeed:200
     };
   },
   mounted() {
     //1.三维模型或地形先加载
     let vm = this;
     vm.$_init(vm.initRain());
+    let {CesiumZondy,vueKey, vueIndex,enable} = this;
+    let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+    let rain = find.source;
+    rain.enabled = enable;
   },
   destroyed() {
     this.unmount();
@@ -85,19 +102,18 @@ export default {
         vueIndex,
         webGlobe,
         speed,
-        angle
+        angle,
       } = this;
-      var advancedAnalysisManager = new CesiumZondy.Manager.AdvancedAnalysisManager({
-        viewer: webGlobe.viewer
-      });
-      //添加下雨特效
-      let rain = advancedAnalysisManager.createRain({
-        speed:speed,
-        angle:angle
-      });
-      // console.log('rain',rain);
-      CesiumZondy.AdvancedAnalysisManager.addSource(vueKey, vueIndex, rain);
-      this.$emit("load", this);
+        var advancedAnalysisManager = new CesiumZondy.Manager.AdvancedAnalysisManager({
+          viewer: webGlobe.viewer
+        });
+        //添加下雨特效
+        let rain = advancedAnalysisManager.createRain({
+          speed:speed,
+          angle:angle,
+        });
+        CesiumZondy.AdvancedAnalysisManager.addSource(vueKey, vueIndex, rain);
+        this.$emit("load", this);
     },
     // changeSpeed(newSpeed){
     //   this.speed = newSpeed;

@@ -1,4 +1,6 @@
-# Mapgis3dEchartsLayer
+# Echarts
+
+> mapgis-3d-echarts-layer
 
 ## 属性
 
