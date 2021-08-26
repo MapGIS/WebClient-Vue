@@ -70,7 +70,8 @@
     "panelBackground": "rgb(44,44,44)",
     "panelTextColor": "#FFFFFF",
     "panelOptionColor": "#FFFFFF",
-    "panelBoxShadow": "rgba(0 0 0 / 31%)"
+    "panelBoxShadow": "rgba(0 0 0 / 31%)",
+    "panelCollapseColor": "rgb(56,56,56)"
   },
   {
     "title": "经典浅色",
@@ -143,7 +144,8 @@
     "panelBackground": "rgb(255,255,255)",
     "panelTextColor": "#666666",
     "panelOptionColor": "#999999",
-    "panelBoxShadow": "rgba(235 235 235 / 31%)"
+    "panelBoxShadow": "rgba(235 235 235 / 31%)",
+    "panelCollapseColor": "#FFFFFF"
   },
   {
     "title": "经典暖灰",
