@@ -16,28 +16,28 @@
 
 ```vue
 <template>
-  <mapox-map
+  <mapgis-web-map
     container="map-test"
     :center.sync="center"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
   >
-    <mapbox-marker :coordinates.sync="markerCoordinates" color="green" />
-    <mapbox-geojson-layer
+    <mapgis-marker :coordinates.sync="markerCoordinates" color="green" />
+    <mapgis-geojson-layer
       type="fill"
       :sourceId="sourceId"
       :layerId="layerId"
       :source="geojson"
       @click="handleClick"
     />
-  </mapox-map>
+  </mapgis-web-map>
 </template>
 
 <script>
 import {
-  MapboxMap,
-  MapboxMarker,
-  MapboxGeojsonLayer
+  MapgisWebMap,
+  MapgisMarker,
+  MapgisGeojsonLayer
 } from '@mapgis/webclient-vue-mapboxgl'
 
 export default {

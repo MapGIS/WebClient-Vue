@@ -1,4 +1,4 @@
-# 地图场景
+# M3D模型
 
 > mapgis-3d-igs-m3d
 

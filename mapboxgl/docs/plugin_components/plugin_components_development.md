@@ -38,11 +38,11 @@ inject: ["mapbox", "map", "actions"],
 
 <script>
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap } from "@mapgis/webclient-vue-mapboxgl";
+import { MapgisWebMap } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap
+    MapgisWebMap
   },
   data() {
     return {
@@ -64,7 +64,7 @@ export default {
 
 <script>
 import Mapbox from "@mapgis/mapbox-gl";
-// import { MapboxMap } from "@mapgis/webclient-vue-mapboxgl";
+// import { MapgisWebMap } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   name: "MyPluginComponent"

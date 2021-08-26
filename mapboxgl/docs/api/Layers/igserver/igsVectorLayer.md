@@ -1,4 +1,6 @@
-# IgsVectorLayer
+# Igs矢量图层
+
+> mapgis-igs-vector-layer
 
 ## 属性
 
@@ -108,7 +110,7 @@ All common layer [events](/zh/api/Layers/#events)
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map 
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
@@ -125,20 +127,20 @@ All common layer [events](/zh/api/Layers/#events)
       :gdbps="igsVectorGdbps"
     >
     </mapbox-igs-vector-layer>
-  </mapbox-map>
+  </mapgis-web-map >
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
-  MapboxMap,
+  MapgisWebMap,
   MapboxIgsVectorLayer
 } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap,
+    MapgisWebMap,
     MapboxIgsVectorLayer
   },
   data() {

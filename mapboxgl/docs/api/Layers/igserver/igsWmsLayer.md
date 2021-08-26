@@ -121,7 +121,7 @@ All common layer [events](/zh/api/Layers/#events)
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map 
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
@@ -141,17 +141,17 @@ All common layer [events](/zh/api/Layers/#events)
       :crs="mapCrs"
     >
     </mapbox-igs-wms-layer>
-  </mapbox-map>
+  </mapgis-web-map >
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsWmsLayer } from "@mapgis/webclient-vue-mapboxgl";
+import { MapgisWebMap, MapboxIgsWmsLayer } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap,
+    MapgisWebMap,
     MapboxIgsWmsLayer
   },
   data() {
@@ -193,7 +193,7 @@ export default {
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map 
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
@@ -208,17 +208,17 @@ export default {
       :url="url"
     >
     </mapbox-igs-wms-layer>
-  </mapbox-map>
+  </mapgis-web-map >
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapboxMap, MapboxIgsWmsLayer } from "@mapgis/webclient-vue-mapboxgl";
+import { MapgisWebMap, MapboxIgsWmsLayer } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
-    MapboxMap,
+    MapgisWebMap,
     MapboxIgsWmsLayer
   },
   data() {

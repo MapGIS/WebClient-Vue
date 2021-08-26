@@ -1,7 +1,5 @@
 # 快速上手
 
-![核心框架](../images/framework/webclient-vue-mapboxgl.png)
-
 ## 安装
 
 ### ES6 方式
@@ -37,6 +35,42 @@ import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
 Vue.use(MapgisUi);
 Vue.use(Mapgis2d);
 ```
+
+### yarn link 方式`特殊情况下：需要使用组件最新的功能时`
+
+mapgis webclient-vue-mapboxgl 的安装：
+
+> 通过在 github 路径中:https://github.com/MapGIS/WebClient-Vue 下载最新的 WebClient-Vue 项目。
+
+1.项目安装完成后，分别有：cesium、mapboxgl、ui 工程，执行相对应文件中的 package.json 的 yarn/npm install 安装项目依赖。
+
+2.cd 进入 mapboxgl 工程目录下，执行
+
+```bash
+yarn link
+```
+
+3.再 cd 进入自己的项目工程，执行
+
+```bash
+yarn link @mapgis/webclient-vue-mapboxgl
+```
+
+4.同理，cesium、ui 工程也执行 2、3 步骤来链接到自己项目中
+
+5.在项目中 main.js 中全局引入组件和样式文件即可使用
+
+```js
+import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-mapboxgl/dist-libs/webclient-vue-mapboxgl.css";
+
+import MapgisUi from "@mapgis/webclient-vue-ui";
+import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
+
+Vue.use(MapgisUi);
+Vue.use(Mapgis2d);
+```
+
 
 ### yarn link 项目链接方式`特殊情况下：需要使用组件最新的功能时`
 
@@ -85,6 +119,10 @@ yarn unlink @mapgis/webclient-vue-mapboxgl
 
 完成上述安装的步骤之后，我们来通过加载一个地图熟悉使用组件的基本流程。
 
+- 首先引入一个地图图层的容器 map 组件 mapgis-web-map
+
+- 在容器 map 内部再放入地图图层组件 mapgis-ogc-wmts-layer
+
 ```vue
 <template>
   <mapgis-web-map :accessToken="accessToken">
@@ -120,6 +158,7 @@ export default {
 - 首先引入一个地图图层的容器 map 组件 mapgis-web-map
 
 - 在容器 map 内部再放入天地图图层组件 mapgis-igs-tdt-layer
+
 
 显示如下：
 

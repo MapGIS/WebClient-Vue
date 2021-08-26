@@ -1,4 +1,6 @@
-# GlMap
+# 地图对象
+
+> mapgis-web-map
 
 ## 属性
 
