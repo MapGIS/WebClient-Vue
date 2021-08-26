@@ -426,15 +426,21 @@
         <mapgis-ui-collapse accordion v-if="dataType === 'symbol'">
           <mapgis-ui-collapse-panel key="9" header="符号">
             <mapgis-ui-row>
-              <mapgis-ui-col :span="4">
-                <p class="theme-panel-p">图标</p>
+              <mapgis-ui-col :span="8">
+                <p style="margin-top: 0" class="theme-panel-p">图标</p>
               </mapgis-ui-col>
-              <mapgis-ui-sprite-select
-                  :url="iconUrl"
-                  :defaultValue="defaultIconValue"
-                  @change="$_clickIcon"
-                  @iconLoaded="$_iconLoaded"
-              ></mapgis-ui-sprite-select>
+              <mapgis-ui-col :span="16">
+                <mapgis-ui-svg-select
+                  :icons="icons"
+                  @clickIcon="$_clickIconSvg"
+                ></mapgis-ui-svg-select>
+              </mapgis-ui-col>
+<!--              <mapgis-ui-sprite-select-->
+<!--                  :url="iconUrl"-->
+<!--                  :defaultValue="defaultIconValue"-->
+<!--                  @change="$_clickIcon"-->
+<!--                  @iconLoaded="$_iconLoaded"-->
+<!--              ></mapgis-ui-sprite-select>-->
             </mapgis-ui-row>
             <mapgis-ui-row
                 style="margin-top: 8px;"
@@ -1149,6 +1155,11 @@ export default {
         }
       }
     },
+    icons: {
+      deep: true,
+      handler: function () {
+      }
+    },
   },
   created() {
     this.$_formatPanelProps();
@@ -1204,6 +1215,10 @@ export default {
     this.$_initDataSource();
   },
   methods: {
+    $_clickIconSvg(icon){
+      this.$emit("clickSvg",icon);
+      console.log("------------",icon)
+    },
     setSelectValue(selectValue) {
       this.selectValue = selectValue;
     },
