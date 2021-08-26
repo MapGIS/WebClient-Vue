@@ -5,7 +5,7 @@
 import {EchartsLayer} from "./cdn/EchartsLayer";
 
 export default {
-  name: "mapgis-echarts",
+  name: "mapgis-echarts-layer",
   props: {
     options: {
       type: Object,
