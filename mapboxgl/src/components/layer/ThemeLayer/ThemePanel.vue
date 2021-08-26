@@ -910,12 +910,6 @@ export default {
     textFonts: {
       type: Array
     },
-    activeKey: {
-      type: Array,
-      default() {
-        return ["2"];
-      }
-    },
     iconUrl: {
       type: String,
       default: ""
@@ -1070,7 +1064,8 @@ export default {
       labelSelectValue: undefined,
       selectHeatValue: 0,
       listId: "theme-panel-list-" + parseInt(Math.random() * 100000),
-      activeKeyCopy: undefined
+      activeKeyCopy: undefined,
+      activeKey: ["2"]
     }
   },
   watch: {
@@ -1642,7 +1637,7 @@ export default {
 }
 
 /deep/ .mapgis-ui-card-body {
-  padding: 24px 4px;
+  padding: 24px 4px 4px;
 }
 
 .theme-panel-icons {
@@ -1829,7 +1824,7 @@ export default {
 
 .theme-panel-options{
   width: 300px;
-  min-height: 582px;
+  min-height: 618px;
   margin-top: 8px;
   padding-top: 1px;
   margin-left: -4px;
@@ -1841,5 +1836,9 @@ export default {
   margin-top: -18px;
   padding-top: 14px;
   margin-left: -14px;
+}
+
+/deep/.mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box{
+  padding: 16px 16px 0 16px;;
 }
 </style>
