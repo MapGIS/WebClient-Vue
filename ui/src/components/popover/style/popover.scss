@@ -1,6 +1,17 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
+.mapgis-popup-content {
+  &-title {
+    color: $primary-5 !important;
+    font-weight: bolder;
+    margin-left: 6px;
+  }
+}
+
+.mapboxgl-popup-close-button {
+  color: $primary-5 !important;
+}
 .mapboxgl-popup-content {
   background-color: $popup-background !important;
 }
@@ -11,9 +22,9 @@
 
 $popover-prefix-cls: $ant-prefix + "-popover";
 
-.#{popover-prefix-cls} {
+.#{$popover-prefix-cls} {
   // .reset-component;
-
+  background: $popup-background;
   position: absolute;
   top: 0;
   left: 0;
@@ -27,7 +38,7 @@ $popover-prefix-cls: $ant-prefix + "-popover";
   &::after {
     position: absolute;
     background: fade($white, 1%);
-    content: '';
+    content: "";
   }
 
   &-hidden {
@@ -64,7 +75,7 @@ $popover-prefix-cls: $ant-prefix + "-popover";
     background-clip: padding-box;
     border-radius: $border-radius-base;
     box-shadow: $box-shadow-base;
-    box-shadow: '0 0 8px ${shadow-color} \9';
+    box-shadow: "0 0 8px ${shadow-color} \9";
   }
 
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {

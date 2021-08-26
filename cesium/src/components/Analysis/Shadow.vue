@@ -179,20 +179,22 @@ export default {
       },
       startDate: "",
       formDataTime: "",
-      startTime: "",
-      endTime: "",
+      startTime: '',
+      endTime: '',
       waitManagerName: "M3DIgsManager",
       layout: {
-      labelCol: { span: 7 },
-      wrapperCol: { span: 14 },
-    },
+        labelCol: {span: 7},
+        wrapperCol: {span: 14},
+      },
     }
   },
-  mounted() {
+  created() {
     this.startDate = shadowMoment(this.formData.date, 'YYYY-MM-DD');
     this.formDataTime = shadowMoment(this.formData.time, 'HH:mm:ss');
     this.startTime = shadowMoment(this.formData.startTime, 'HH:mm:ss');
     this.endTime = shadowMoment(this.formData.endTime, 'HH:mm:ss');
+  },
+  mounted() {
   },
   methods: {
     /**
@@ -320,12 +322,12 @@ export default {
           const yPaneNum = Math.ceil(recYLength / 4) // Y轴方向插值点个数
           const zPaneNum = Math.ceil((max - min) / 4) // Z轴方向插值点个数
           shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
-                xPaneNum,
-                yPaneNum,
-                zPaneNum,
-                shadowColor: self.getCesiumColor(shadowColor),
-                sunColor: self.getCesiumColor(sunColor)
-              })
+            xPaneNum,
+            yPaneNum,
+            zPaneNum,
+            shadowColor: self.getCesiumColor(shadowColor),
+            sunColor: self.getCesiumColor(sunColor)
+          })
           if (timeType === 'time') {
             // 固定时间点范围阴影分析
             const shadowRatio = shadowAnalysis.pointsArrayInShadow(
@@ -433,6 +435,7 @@ export default {
 
 .color-picker {
 }
+
 /deep/ .m-colorPicker .colorBtn[data-v-29accc04] {
   width: 180px;
 }
@@ -444,7 +447,7 @@ export default {
 }
 
 .control-button {
-  margin:0 6px;
+  margin: 0 6px;
 }
 
 

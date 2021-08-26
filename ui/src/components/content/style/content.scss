@@ -1,0 +1,18 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.v-contextmenu {
+  background-color: $content-background;
+  box-shadow: 2px 2px 8px 0px $shadow;
+  border: 1px solid fade($content-background, 50%);
+  color: fade($content-background, 50%);
+}
+
+.v-contextmenu-item--hover {
+  background: $primary-5 !important;
+  background-color: $primary-5 !important;
+}
+
+.v-contextmenu-item {
+  color: $content-color !important;
+}

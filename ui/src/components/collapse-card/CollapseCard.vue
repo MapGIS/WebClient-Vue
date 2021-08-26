@@ -1,17 +1,19 @@
 <template>
-  <div v-show="visible" :style="outStyle" class="mapgis-collapse-card">
+  <div v-show="visible" :style="outStyle" class="mapgis-ui-collapse-card">
     <mapgis-ui-button
       shape="circle"
       v-if="collapse"
       :class="getPositionClassName()"
-      ><mapgis-ui-iconfont
+      @click="show"
+    >
+      <slot name="icon-hiden" />
+      <mapgis-ui-iconfont
         :type="iconfont"
-        @click="show"
-        class="mapgis-collapse-card-iconfont"
+        class="mapgis-ui-collapse-card-iconfont"
       />
     </mapgis-ui-button>
     <transition name="bounce">
-      <mapgis-ui-card v-if="!collapse" :bordered="false" size="small">
+      <mapgis-ui-card v-show="!collapse" :bordered="false" size="small">
         <slot name="title"></slot>
         <slot></slot>
       </mapgis-ui-card>
@@ -36,7 +38,7 @@ export default {
     },
     iconfont: {
       type: [String, Node],
-      default: "mapgis-yingyan"
+      default: ""
     },
     visible: {
       type: Boolean,
@@ -75,15 +77,16 @@ export default {
   methods: {
     show() {
       this.collapse = false;
+      console.log("show", this.collapse);
     },
     hide() {
       this.collapse = true;
     },
     getPositionClassName() {
       let { position } = this;
-      let className = "mapgis-collapse-card-button ";
+      let className = "mapgis-ui-collapse-card-button ";
       switch (position) {
-        case "right":  
+        case "right":
         case "top-right":
         case "bottom-right":
           className += "mapgis-mvt-legend-card-right";
@@ -100,14 +103,7 @@ export default {
 };
 </script>
 <style>
-.mapgis-collapse-card {
-  position: absolute;
-  z-index: 1000;
-  overflow-y: scroll;
-  width: fit-content;
-}
-
-.mapgis-collapse-card-iconfont {
+.mapgis-ui-collapse-card-iconfont {
   font-size: 22px;
 }
 
@@ -119,7 +115,7 @@ export default {
   float: right;
 }
 
-.mapgis-collapse-card-button {
+.mapgis-ui-collapse-card-button {
 }
 
 .bounce-enter-active {

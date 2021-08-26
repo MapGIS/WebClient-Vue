@@ -1,0 +1,73 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../../util/style/layout/layout.scss";
+
+@include b(pro-layout) {
+  @include e(header, "-") {
+    padding: 0px;
+    height: $pro-header-height;
+    display: $pro-header-display;
+    box-shadow: 0 0 1px 0 $layout-shadow;
+    -webkit-box-shadow: 0 0 1px 0 $layout-shadow;
+    border-bottom: 1px solid $layout-shadow;
+  }
+  @include e(ribbon, "-") {
+    background: $ribbon-background;
+    border-bottom: 1px solid $ribbon-border-background;
+    height: $pro-ribbon-height;
+    display: $pro-ribbon-display;
+    .mapgis-ui-tabs-bar {
+      margin: 0 0 8px 0;
+    }
+  }
+  @include e(content, "-") {
+    display: flex;
+    &-center {
+      width: 100%;
+      height: $pro-content-height;
+      display: $pro-content-display;
+    }
+    &-left {
+      width: fit-content;
+      display: $pro-content-left-display;
+    }
+    &-right {
+      width: fit-content;
+      display: $pro-content-right-display;
+    }
+  }
+  @include e(footer, "-") {
+    height: $pro-footer-height;
+    display: $pro-footer-display;
+    border-top: 1px solid $layout-shadow;
+    box-shadow: 0 0 1px 0 $layout-shadow;
+    -webkit-box-shadow: 0 0 1px 0 $layout-shadow;
+  }
+  @include e(leftsider, "-") {
+    background: $layout-sider-background;
+    height: $pro-leftsider-height;
+    display: $pro-leftsider-display;
+    border-right: 1px solid $layout-shadow;
+    box-shadow: 1px 0 0 0 $layout-shadow;
+    -webkit-box-shadow: 1px 0 0 0 $layout-shadow;
+  }
+
+  @include e(setting, "-") {
+    position: absolute;
+    z-index: 9999;
+    right: 0px;
+    top: 40vh;
+    width: 36px;
+    height: 36px;
+    background-color: $ribbon-background;
+    border-color: $ribbon-background;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+}
+
+.mapgis-studio-tree {
+  height: $studio-tree-height !important;
+}

@@ -14,7 +14,7 @@ export const ACCEPT_CONFIG = {
     ".tiff"
   ],
   shp: [".zip"],
-  geojson: [".json"],
+  geojson: ['.json', '.geojson'],
   csv: [".csv"],
   getAll() {
     return [...this.image, ...this.video, ...this.document];

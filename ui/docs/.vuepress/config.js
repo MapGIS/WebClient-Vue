@@ -53,7 +53,9 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
-              ["/guide/base.md", "基础组件"]
+              ["/guide/base.md", "基础组件"],
+              ["/guide/dev.md", "本地link部署包方式"],
+              ["/guide/build.md", "解决打包内存溢出问题"],
             ]
           },
           {
@@ -62,7 +64,11 @@ module.exports = {
             children: [
               ["/api/iconfont/IconFont.md", "图标"],
               ["/api/div/Div.md", "区块"],
-              ["/api/collapsecard/CollapseCard.md", "收缩卡片"]
+              ["/api/collapsecard/CollapseCard.md", "收缩卡片"],
+              ["/api/sprite/Sprite.md", "符号库"],
+              ["/api/upload/Upload.md", "上传"],
+              ["/api/clouddiskFileSelect/CDFileSelect.md", "从云盘选择"],
+              ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
             ]
           }
           /* {

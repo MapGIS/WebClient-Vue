@@ -2,7 +2,7 @@
   <mapgis-ui-modal
     :visible="show"
     :maskClosable="false"
-    title="导入文件"
+    :title="title"
     :width="width"
     :dialog-style="{ top: '100px' }"
     @cancel="handleCloseImport"
@@ -53,7 +53,8 @@ import MapgisUiUploaderCsvCheck from "./UploaderCsvCheck.vue";
 import MapgisUiUploaderProgress from "./UploaderProgress.vue";
 import MapgisUiClouddiskTransform from "../select/LayerTransform";
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { changeUiState, changeCsvUploadComplete } from "../../../../util/emit/upload";
+import { changeUiState, changeCsvUploadComplete, changePathUploaduri } from "../../../../util/emit/upload";
+import { getMapgisGroupPath } from "../../config/mapgis";
 import { getFileByWebsocketCallback, importVector } from "../../axios/files";
 
 export default {
@@ -76,7 +77,19 @@ export default {
     },
     width: {
       type: Number,
-      default: 800
+      default: 600
+    },
+    title: {
+      type: String,
+      default: '导入文件'
+    },
+    defaultPath: {
+      type: String,
+      default: 'data'
+    },
+    isMapstudio: {
+      type: Boolean,
+      default: false
     },
     currentDocument: {
       type: Object,
@@ -85,6 +98,10 @@ export default {
       }
     },
     handleNewDocument: Function,
+    handleUploaded: {
+      type: Function,
+      default: () => {}
+    }
   },
   data() {
     return {
@@ -96,15 +113,27 @@ export default {
     };
   },
   watch: {
-    WebsocketMessageId: {
-      handler(next) {
-        this.handleWebsocket(next);
+    WebsocketContent: {
+      handler() {
+        if (this.WebsocketMessageId === this.webSocketTaskId && this.WebsocketAction === 'refresh') {
+          this.handleWebsocket(this.WebsocketMessageId);
+        }
       },
       deep: true
     },
     csvUploadComplete(next) {
       this.continueImportCsv = next
-    }
+    },
+    defaultPath: {
+      handler (next) {
+        if (next !== '') {
+          let url = getMapgisGroupPath() + '/' + next
+          changePathUploaduri({ uri: url })
+          this.changePathText(url)
+        }
+      },
+      immediate: true
+    },
   },
   computed: {
     footerHandle() {
@@ -161,21 +190,20 @@ export default {
     importFileInfo(url) {
       let gisindex = url.indexOf("/");
       if (gisindex >= 0) {
-        url = "常规文件夹" + url.slice(gisindex);
+        url = "组织文件夹" + url.slice(gisindex);
       } else {
-        url = "常规文件夹";
+        url = "组织文件夹";
       }
       return url;
     },
-    handleWebsocket(msgid) {
-      // UploaderData组件触发该行为，将上传的param参数封装
-      // const { taskid } = this.param;
-      // data = data || {};
-      // let { content, msgid } = data;
-      // let content = JSON.parse(content);
+    handleWebsocket(msgid) { // 在线制图时触发
+      // console.warn('监控到消息', this.WebsocketContent)
       let srcUrl = "";
       let content = this.WebsocketContent
-      if (msgid === this.webSocketTaskId) {
+      if (this.isMapstudio === false) {
+        this.handleUploaded()
+      } else {
+        // console.warn('进到调图层来', this.WebsocketAction)
         // let promises = content.map(i => getFileByWebsocketCallback(i.subject));
         content.forEach((c, i) => {
           let url;
@@ -188,9 +216,7 @@ export default {
           srcUrl += i !== content.length - 1 ? `${url},` : `${url}`;
         });
         getFileByWebsocketCallback(srcUrl).then(res => {
-          // console.log("res", res, res.data.data);
           this.selectLists = res.data.data;
-          // console.warn('这里可以得到', this.selectLists);
           setTimeout(() => {
             this.$refs.layerTransform.addLayer();
           },100);

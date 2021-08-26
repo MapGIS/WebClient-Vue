@@ -56,6 +56,42 @@ export const emitMapOpenTable = payload => {
   EventBus.$emit("map-open-table", payload);
 };
 
+export const emitMapPrint = payload => {
+  EventBus.$emit("map-print", payload);
+};
+
+export const emitDocumentImportThemeLayer = payload => {
+  EventBus.$emit("document-import-theme-layer", payload);
+};
+
+export const emitDocumentExportThemeLayer = payload => {
+  EventBus.$emit("document-export-theme-layer", payload);
+};
+
+export const emitDocumentAddThemeLayer = payload => {
+  EventBus.$emit("document-add-theme-layer", payload);
+};
+
+export const emitDocumentEditThemeLayer = payload => {
+  EventBus.$emit("document-edit-theme-layer", payload);
+};
+
+export const emitDocumentShowThemeLayer = payload => {
+  EventBus.$emit("document-show-theme-layer", payload);
+};
+
+export const emitDocumentHideThemeLayer = payload => {
+  EventBus.$emit("document-hide-theme-layer", payload);
+};
+
+export const emitDocumentRemoveThemeLayer = payload => {
+  EventBus.$emit("document-remove-theme-layer", payload);
+};
+
+export const emitDocumentSaveThemeLayer = payload => {
+  EventBus.$emit("document-save-theme-layer", payload);
+};
+
 export default {
   emitMapChangeStyle,
   emitMapAddLayer,
@@ -66,5 +102,15 @@ export default {
   emitMapSetLayerMinzoom,
   emitMapSetLayerMaxzoom,
   emitMapAddThemeLayer,
-  emitMapRemoveThemeLayer
+  emitMapRemoveThemeLayer,
+  emitMapOpenTable,
+  emitMapPrint,
+  emitDocumentImportThemeLayer,
+  emitDocumentExportThemeLayer,
+  emitDocumentAddThemeLayer,
+  emitDocumentEditThemeLayer,
+  emitDocumentRemoveThemeLayer,
+  emitDocumentShowThemeLayer,
+  emitDocumentHideThemeLayer,
+  emitDocumentSaveThemeLayer
 };

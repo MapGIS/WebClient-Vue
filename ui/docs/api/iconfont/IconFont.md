@@ -229,3 +229,51 @@ export default {
 ![组合显示1](../../assets/images/combine-1.png);
 
 ![组合显示2](../../assets/images/combine-2.png);
+
+## IconFont 网站定制
+
+> 使用 iconfont.cn
+
+::: tip
+对于使用 [iconfont.cn](https://www.iconfont.cn/) 的用户，通过设置 createFromIconfontCN 方法参数对象中的 scriptUrl 字段， 即可轻松地使用已有项目中的图标。
+:::
+
+### 全局引入
+``` js
+import MapgisUi, { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
+
+const IconFont = MapgisUiIconFont.createFromIconfontCN({
+  scriptUrl: "./icon/studio.js",
+});
+Vue.component("mapgis-ui-iconfont", IconFont);
+```
+
+### 单个引入
+
+``` vue
+<template>
+  <div class="icons-list">
+    <icon-font type="icon-tuichu" />
+    <icon-font type="icon-facebook" />
+    <icon-font type="icon-twitter" />
+  </div>
+</template>
+<script>
+import { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
+
+const IconFont = MapgisUiIconFont.createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
+});
+export default {
+  components: {
+    IconFont,
+  },
+};
+</script>
+<style scoped>
+.icons-list >>> .anticon {
+  margin-right: 6px;
+  font-size: 24px;
+}
+</style>
+```

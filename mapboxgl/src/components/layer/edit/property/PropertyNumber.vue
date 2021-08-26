@@ -1,13 +1,18 @@
 <template>
   <mapgis-ui-row class="mapgis-property-number">
-    <span class="mapgis-property-number-left">{{ rule.title }} </span>
-    <mapgis-ui-input-number
-      class="mapgis-property-number-right"
-      v-model="value"
-      :min="minimum"
-      :max="maximum"
-      @change="onChange"
-    />
+    <mapgis-ui-col span="7">
+      <mapgis-ui-iconfont :type="rule.icon" />
+      <span class="mapgis-property-number-left">{{ rule.title }} </span>
+    </mapgis-ui-col>
+    <mapgis-ui-col span="17">
+      <mapgis-ui-input-number
+        class="mapgis-property-number-right"
+        v-model="value"
+        :min="minimum"
+        :max="maximum"
+        @change="onChange"
+      />
+    </mapgis-ui-col>
   </mapgis-ui-row>
 </template>
 
@@ -38,15 +43,20 @@ export default {
   },
   methods: {
     onChange(number) {
+      const { minimum, maximum } = this;
+      if (typeof number === "string") return;
+      if (number > maximum || number < minimum) return;
       const { map, rule, layerid } = this;
       this.$emit("change", number);
       if (layerid && rule) {
         const { layertype, layerprop } = rule;
         if (rule.layertype === "paint") {
           map.setPaintProperty(layerid, layerprop, number);
-          let event = { layertype, layerprop, layervalue: number };
-          this.$_emitEvent(event);
+        } else if (rule.layertype === "layout") {
+          map.setLayoutProperty(layerid, layerprop, number);
         }
+        let event = { layertype, layerprop, layervalue: number };
+        this.$_emitEvent(event);
       }
     },
     getValue(id) {
@@ -73,13 +83,11 @@ export default {
 }
 
 .mapgis-property-number-left {
-  float: left;
   height: 30px;
   line-height: 30px;
 }
 
 .mapgis-property-number-right {
-  float: right;
-  width: 160px;
+  width: 180px !important;
 }
 </style>

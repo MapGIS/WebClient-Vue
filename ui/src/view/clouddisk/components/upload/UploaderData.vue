@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="path">
-      <p class="path-text" :title="importDestUrl">
+  <div class="mapgis-ui-upload-data">
+    <div class="mapgis-ui-uploader-path">
+      <p class="mapgis-ui-uploader-path-text" :title="importDestUrl">
         <img src="./images/save.png" style="padding-bottom:4px;" />
         导入到：{{ importDestUrl }}
       </p>
@@ -12,8 +12,11 @@
       >
         {{ buttonText }}
       </mapgis-ui-button> -->
-      <span style="line-height:40px;float:right;margin-right:8px;color:#269ff0;cursor:pointer;" @click="handleImportUrlModal">
-        {{buttonText}}
+      <span
+        style="line-height:40px;float:right;margin-right:8px;cursor:pointer;"
+        @click="handleImportUrlModal"
+      >
+        {{ buttonText }}
       </span>
     </div>
     <div class="type-radio">
@@ -33,9 +36,10 @@
         </mapgis-ui-radio-button>
       </mapgis-ui-radio-group>
     </div>
-    <div class="upload-main" @click="handleImportFile">
-      <img src="./images/upload.png" style="padding-top:40px;" />
-      <p style="padding-top:16px;color:#3D4757;font-size:16px;">选择文件</p>
+    <div class="mapgis-ui-upload-data-main" @click="handleImportFile">
+      <!-- <img src="./images/upload.png" style="padding-top:40px;" /> -->
+      <UploadIcon  class="mapgis-ui-upload-data-svg"/>
+      <p style="font-size:16px;">选择文件</p>
     </div>
     <p class="type-desc">{{ typeDescriptions[importDataType] }}</p>
     <mapgis-ui-modal
@@ -57,14 +61,22 @@
 
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
+import UploadIcon from '../../../svg/MajesticonsCloudUpload'
 import UploadMixin from "../../../../mixin/UploaderMixin";
-import { openUploader, changePathUploaduri, changeUploadWebsocketTaskId } from "../../../../util/emit/upload";
-import { uuid } from '../../util/uuid';
+import {
+  openUploader,
+  changePathUploaduri,
+  changeUploadWebsocketTaskId
+} from "../../../../util/emit/upload";
+import { uuid } from "../../util/uuid";
 
 export default {
   name: "importData",
   mixins: [UploadMixin],
-  components: { MapgisUiUploaderFoldertree },
+  components: { 
+    MapgisUiUploaderFoldertree,
+    UploadIcon
+  },
   props: {
     importDestUrl: {
       type: String,
@@ -81,8 +93,8 @@ export default {
       importDataType: "shp",
       typeDescriptions: {
         shp: ".zip格式，可包含单个或多个shp文件（建议使用rar压缩软件进行压缩）",
-        json: "Geojson格式文件(.json)",
-        csv: "CSV格式表格文件(.csv)"
+        json: "Geojson格式文件(.json、.geojson)",
+        csv: "CSV格式表格文件(.csv)，支持经纬度和Web墨卡托坐标系"
       },
       showPathSelect: false,
       showFolderTree: true,
@@ -99,8 +111,8 @@ export default {
       this.temUrl = url;
     },
     handlePathOk() {
-      changePathUploaduri({uri: this.temUrl});
-      console.warn("this.uploaduri111", this.uploaduri);
+      changePathUploaduri({ uri: this.temUrl });
+      // console.warn("this.uploaduri111", this.uploaduri);
       this.$emit("changePathText", this.temUrl);
       this.showPathSelect = false;
       this.resetTree();
@@ -128,20 +140,19 @@ export default {
       let taskid = uuid();
 
       openUploader({
-        // 下面哪怕是空的对象也要传入，主要是electron这个框架会截获vuex的状态导致不更新视图，千万别注释了
         param: {
           state: "toggle-click-event", // 传入的参数
           folderDir: this.curImportUrl,
           isCache: false,
           type: type,
           gisFormat: gisFormat,
-          isGisImport: this.importDataType !== 'csv', // csv不可导入
+          isGisImport: this.importDataType !== "csv", // csv不可导入
           taskid: taskid
         }
       });
       changeUploadWebsocketTaskId({
         webSocketTaskId: taskid
-      })
+      });
     }
   },
   destroyed() {}
@@ -149,17 +160,18 @@ export default {
 </script>
 
 <style scoped>
-.path {
+.mapgis-ui-uploader-path {
   width: 100%;
   height: 40px;
-  background: #f2f2f2;
   margin: 0 auto;
+  border: 1px solid #dcdfe6b8;
+  border-radius: 4px;
 }
-.path-text {
+.mapgis-ui-uploader-path-text {
   display: inline-block;
   max-width: calc(100% - 130px);
   line-height: 40px;
-  color: #999999;
+  /* color: #999999; */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -169,17 +181,16 @@ export default {
   margin-top: 20px;
   font-size: 14px;
 }
-.upload-main {
+/* .upload-main {
   margin: 0 auto;
   text-align: center;
   margin-top: 20px;
   margin-bottom: 10px;
   width: 450px;
   height: 180px;
-  background: #ffffff;
   border: 1px dashed #dcdfe6;
   border-radius: 4px;
-}
+} */
 .type-desc {
   width: 450px;
   text-align: center;

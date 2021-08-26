@@ -112,6 +112,9 @@ export default {
   z-index: 1000;
   height: calc(100vh - 200px);
   overflow-y: scroll;
+    /* 针对火狐浏览器 */
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
 }
 .mapgis-mvt-scale-card .action-type {
   width: 120px;

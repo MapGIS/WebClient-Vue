@@ -5,7 +5,8 @@ export { default as MapgisUiBorder } from "./components/border/Border.vue";
 // export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 
 // IconFont
-export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+// export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 
 // Layout
@@ -64,10 +65,12 @@ export { default as MapgisUiRadioGroup } from "./components/radio/Group.vue";
 export { default as MapgisUiRadioButton } from "./components/radio/Button.vue";
 export { default as MapgisUiRate } from "./components/rate/Rate.vue";
 export { default as MapgisUiSelect } from "./components/select/Select.vue";
+export { default as MapgisUiSpriteSelect } from "./components/sprite/Sprite.vue";
 export { default as MapgisUiSelectOption } from "./components/select/SelectOption.vue";
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
+export { default as MapgisUiTimePicker } from "./components/time-picker/TimePicker.vue";
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";
 export { default as MapgisUiTreeSelect } from "./components/tree-select/TreeSelect.vue";
 export { default as MapgisUiTreeSelectNode } from "./components/tree-select/TreeNode.vue";
@@ -116,6 +119,16 @@ export { default as MapgisUiConfigProvider } from "./components/config-provider/
 export { default as MapgisUiDivider } from "./components/divider/Divider.vue";
 export { default as MapgisUiLocaleProvider } from "./components/locale-provider/LocaleProvider.vue";
 
+// Ribbon
+export { default as MapgisUiRibbonGroup } from "./components/ribbon/RibbonGroup.vue";
+export { default as MapgisUiRibbonCommand } from "./components/ribbon/RibbonCommand.vue";
+
+// Navs
+export { default as MapgisUiNavPanel } from "./layout/navs/NavPanel.vue";
+export { default as MapgisUiNavContent } from "./layout/navs/NavContent.vue";
+export { default as MapgisUiNavBar } from "./layout/navs/NavBar.vue";
+export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
+
 // Pro
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
@@ -125,3 +138,7 @@ export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/compon
 export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
 export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
 export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";
+
+// Portal
+export { default as MapgisUiPortalDataresource } from "./view/portal/components/select/DataResource.vue";
+export { default as MapgisUiPortalServiceresource } from "./view/portal/components/select/ServiceResource.vue";

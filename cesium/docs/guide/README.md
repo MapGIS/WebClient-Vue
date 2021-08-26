@@ -1,6 +1,6 @@
 # 快速上手
 
-::: demo
+``` vue
 <template>
 
   <div id="app">
@@ -26,7 +26,7 @@ export default {
     }
 }
 </script>
-:::
+```
 
 ## 安装
 

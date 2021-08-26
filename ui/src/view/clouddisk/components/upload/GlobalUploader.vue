@@ -3,6 +3,7 @@
     <span class="unvisible-uploader">{{ params }}</span>
     <!-- 上传 -->
     <uploader
+      v-if="initGloablUpload"
       ref="uploader"
       :change="tokenChange"
       :options="options"
@@ -16,25 +17,39 @@
     >
       <uploader-unsupport></uploader-unsupport>
 
-      <uploader-btn id="global-uploader-btn" :attrs="attrs1" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn"
+        :attrs="attrs1"
+        ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-tiff"
         :attrs="attrs2"
         ref="uploadBtn"
+        :single="false"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-shp" :attrs="attrs3" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-shp"
+        :attrs="attrs3"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
         id="global-uploader-btn-json"
         :attrs="attrs4"
         ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
-      <uploader-btn id="global-uploader-btn-csv" :attrs="attrs5" ref="uploadBtn"
+      <uploader-btn
+        id="global-uploader-btn-csv"
+        :attrs="attrs5"
+        ref="uploadBtn"
+        :single="true"
         >选择文件</uploader-btn
       >
       <uploader-btn
@@ -174,6 +189,7 @@ export default {
   },
   data() {
     return {
+      initGloablUpload: false,
       percent: 0,
       showSpin: false,
       showSpinName: "",
@@ -241,7 +257,16 @@ export default {
   },
   created() {
     self = this;
-    this.initWebsocket();
+    let loopToken = window.setInterval(() => {
+      let token = window.localStorage.getItem("mapgis_clouddisk_token");
+      if (token !== null) {
+        this.initGloablUpload = true;
+        let target = getMapGISUploadUrl();
+        this.options.target = target;
+        this.initWebsocket();
+        window.clearInterval(loopToken);
+      }
+    }, 200);
   },
   mounted() {},
   watch: {
@@ -297,17 +322,17 @@ export default {
       }
 
       return this.param;
-    },
-    visible() {
-      if (this.$refs.uploadDiv) {
-        if (this.visible) {
-          document.getElementById("global-uploader").style.zIndex = 100;
-        } else {
-          document.getElementById("global-uploader").style.zIndex = -100;
-        }
-      }
-      return this.visible;
     }
+    // visible() {
+    //   if (this.$refs.uploadDiv) {
+    //     if (this.visible) {
+    //       document.getElementById("global-uploader").style.zIndex = 100;
+    //     } else {
+    //       document.getElementById("global-uploader").style.zIndex = -100;
+    //     }
+    //   }
+    //   return this.visible;
+    // }
   },
   methods: {
     updatePrecess() {
@@ -577,16 +602,27 @@ export default {
     },
 
     initWebsocket() {
+      let vm = this
       const wsUrl = getWebSocketUrl();
       this.BacgroundWebsocketInstance = new WebSocket(wsUrl);
       this.updateWebsocket();
+      this.BacgroundWebsocketInstance.onopen = function () {
+        console.log(`【WebSocket连接成功】【${new Date().toLocaleString()}】`, wsUrl);
+      };
+      this.BacgroundWebsocketInstance.onerror = function (event) {
+        console.log(`【WebSocket连接错误】【${new Date().toLocaleString()}】`, event);
+      };
+      this.BacgroundWebsocketInstance.onclose = function (event) {
+        console.log(`【WebSocket已关闭连接】【${new Date().toLocaleString()}】`, event);
+      };
     },
     updateWebsocket() {
       const vm = this;
       this.BacgroundWebsocketInstance.onmessage = function(event) {
+        console.log(`【WebSocket接收消息中】【${new Date().toLocaleString()}】`, event)
         let flag = vm.isJSON(event.data);
         if (flag) {
-          console.log('websocket', event);
+          // console.log('websocket', event);
           let data = JSON.parse(event.data);
           let action = data.action;
           let msgid = data.msgid;
@@ -598,7 +634,7 @@ export default {
             changeWebSocketMsgid({ msgid: msgid });
           }
         } else {
-          console.warn("发送成功！", event.data);
+          // console.log("发送成功！", event.data);
         }
       };
     },

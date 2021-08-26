@@ -335,6 +335,20 @@
 - **默认** false
 - **描述:** 添加一个 uers\_的前缀在绘制出来的要素上，通常是用来自定义显示或者做数值统计, e.g., ['==', 'user_custom_label', 'Example']
 
+### `enableControl`
+
+- **类型:** `Boolean`
+- **非侦听属性:**
+- **默认** true
+- **描述** 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性position改变其显示的位置
+
+### `editable`
+
+- **类型:** `Boolean`
+- **非侦听属性:**
+- **默认** true
+- **描述** 控制双击结束绘制后图形是否为可编辑状态
+
 ## 槽
 
 ### `default`
@@ -345,37 +359,37 @@
 
 ```vue
 <template>
-  <div>
-    <mapgis-web-map @load="handleMapLoad">
-      <mapgis-rastertile-layer :layerId="layerId" :url="url" />
-      <mapgis-draw
-        v-if="drawOrMeasure"
-        position="top-left"
-        :styles="styles"
-        v-bind:controls="controls"
-        v-on:added="handleDrawAdded"
-        v-on:drawcreate="handleDrawCreate"
-        ref="draw"
-      >
-        <div id="mapgis-2d-draw-wrapper">
-          <mapgis-ui-button-group>
-            <mapgis-ui-button v-on:click="togglePoint">画点</mapgis-ui-button>
-            <mapgis-ui-button v-on:click="togglePolyline"
-              >画线</mapgis-ui-button
-            >
-            <mapgis-ui-button v-on:click="togglePolygon">画区</mapgis-ui-button>
-            <mapgis-ui-button v-on:click="toggleCircle">画圆</mapgis-ui-button>
-            <mapgis-ui-button v-on:click="toggleRadius"
-              >画半径</mapgis-ui-button
-            >
-            <mapgis-ui-button type="primary" v-on:click="toggleDelete"
-              >删除</mapgis-ui-button
-            >
-          </mapgis-ui-button-group>
-        </div>
-      </mapgis-draw>
-    </mapgis-web-map>
-  </div>
+  <mapgis-web-map @load="handleMapLoad">
+    <mapgis-rastertile-layer :layerId="layerId" :url="url" />
+    <mapgis-draw
+      position="top-left"
+      :styles="styles"
+      :controls="controls"
+      v-on:added="handleDrawAdded"
+      v-on:drawcreate="handleDrawCreate"
+      ref="draw"
+    >
+      <mapgis-ui-button-group class="mapgis-2d-draw-wrapper">
+        <mapgis-ui-tooltip
+          v-for="(item, i) in draws"
+          :key="i"
+          placement="bottom"
+        >
+          <template slot="title">
+            <span>{{ item.tip }}</span>
+          </template>
+          <mapgis-ui-button
+            circle
+            size="small"
+            :type="item.type"
+            @click="item.click"
+          >
+            <mapgis-ui-iconfont :type="item.icon" />
+          </mapgis-ui-button>
+        </mapgis-ui-tooltip>
+      </mapgis-ui-button-group>
+    </mapgis-draw>
+  </mapgis-web-map>
 </template>
 
 <script>
@@ -409,6 +423,75 @@ export default {
             "line-width": 2
           }
         }
+      ],
+      drawer: undefined,
+      draws: [
+        {
+          icon: "mapgis-erweidian",
+          type: "default",
+          tip: "点选几何,按住shift可以框选",
+          click: this.toggleSimple
+        },
+        {
+          icon: "mapgis-erweidian",
+          type: "primary",
+          tip: "画点",
+          click: this.togglePoint
+        },
+        {
+          icon: "mapgis-erweixian",
+          type: "primary",
+          tip: "画线",
+          click: this.togglePolyline
+        },
+        {
+          icon: "mapgis-erweiqu",
+          type: "primary",
+          tip: "画矩形",
+          click: this.toggleRect
+        },
+        {
+          icon: "mapgis-erweiqu",
+          type: "primary",
+          tip: "画多边形",
+          click: this.togglePolygon
+        },
+        {
+          icon: "mapgis-yuan1",
+          type: "primary",
+          tip: "画圆",
+          click: this.toggleCircle
+        },
+        {
+          icon: "mapgis-yuanxinbanjingyuan1",
+          type: "primary",
+          tip: "画半径",
+          click: this.toggleRadius
+        },
+        {
+          icon: "mapgis-shanchudangqianziceng",
+          type: "primary",
+          tip: "删除选中图元",
+          click: this.toggleDelete
+        },
+        {
+          icon: "mapgis-shanchudangqianziceng",
+          type: "primary",
+          tip: "删除全部",
+          click: this.toggleDeleteAll
+        },
+        {
+          icon: "mapgis-juxing1",
+          type: "default",
+          tip: "矩形查询",
+          click: this.toggleQueryByRect
+        },
+        {
+          icon: "mapgis-pinghangsibianxing1",
+          type: "default",
+          tip: "多边形查询",
+          click: this.toggleQueryByPolygon
+        }
       ]
     };
   },
@@ -428,36 +511,44 @@ export default {
       const { drawer } = e;
       this.drawer = drawer;
     },
-    togglePoint(e) {
-      this.type = "point";
+    toggleSimple() {
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("simple_select");
+    },
+    togglePoint() {
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_point");
     },
     togglePolyline() {
-      this.type = "polyline";
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_line_string");
     },
     togglePolygon() {
-      this.type = "polygon";
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_polygon");
     },
+    toggleRect() {
+      this.enableDrawer();
+      this.drawer && this.drawer.changeMode("draw_rectangle");
+    },
     toggleCircle() {
-      this.type = "circle";
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_circle");
     },
     toggleRadius() {
-      this.type = "radius";
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_radius");
     },
     toggleDelete() {
-      this.featureArr = "";
-      this.queryParameters = "";
+      this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
     },
+    toggleDeleteAll() {
+      this.enableDrawer();
+      this.drawer && this.drawer.deleteAll();
+    },
+    toggleQueryByRect() {},
+    toggleQueryByPolygon() {},
     handleDrawCreate() {}
   }
 };
@@ -474,3 +565,7 @@ export default {
 ### `@removed`
 
 - **描述:** 当移除绘制组件后，通知父组件已移除绘制组件
+
+### `@update-radius`
+
+- **描述:** 当绘制组件添加后，可以实时获取绘制图形的面积（平方千米）、半径（千米）和中心坐标

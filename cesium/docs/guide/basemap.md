@@ -1,5 +1,55 @@
 # 基本地图
 
+::: demo
+
+```html
+<template>
+  <mapgis-web-scene
+    class="mapgis-2d-scene"
+  >
+    <mapgis-3d-ogc-wmts-layer
+        :baseUrl="baseUrl"
+        :wmtsLayer="wmtsLayer"
+        :tilingScheme="tilingScheme"
+        :tileMatrixSet="tileMatrixSet"
+        :format="format"
+        :layerStyle="layerStyle"
+    >
+    </mapgis-3d-ogc-wmts-layer>
+  </mapgis-web-scene>
+</template>
+
+<script>
+  export default {
+    components: {
+      "mapgis-web-scene": window.Mapgis3d.MapgisWebScene,
+      "mapgis-3d-ogc-wmts-layer": window.Mapgis3d.Mapgis3dOgcWmtsLayer
+    },
+    data: function() {
+      return {
+        baseUrl: 'http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752',
+        wmtsLayer: 'vec',
+        tileMatrixSet: 'c',
+        tilingScheme: 'EPSG:4326',
+        format: 'tiles',
+        layerStyle: {
+            zIndex: 1
+        }
+      };
+    },
+    methods: {
+    }
+  };
+</script>
+<style>
+  .mapgis-2d-scene {
+    height: 300px;
+  }
+</style>
+```
+
+:::
+
 ## 添加地图组件
 
 > 强烈建议使用前了解基本的 cesium 引导[Cesium - 向导](https://cesium.com/docs/) 以及 cesium 的开发方式[cesium - API](https://cesium.com/docs/cesiumjs-ref-doc/)

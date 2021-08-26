@@ -18,10 +18,10 @@ import {
   getNewTileUrl
 } from '../../axios/gis'
 import { FileType } from '../../util/fileType'
-import { getMapgisPath, getMapGISUrl } from '../../config/mapgis'
+import { getMapgisPath, getMapGISUrl, getMapgisGroupPath } from '../../config/mapgis'
 
 
-import { IDocument, Layer, Doc } from '@mapgis/webclient-store' // 这些项在线制图应该也已经添加了依赖，demo界面通过npm link连接
+import { IDocument, Layer, Doc } from '@mapgis/webclient-store'
 const { GeoJsonLayer, RasterTileLayer, VectorTileLayer } = Layer
 const { defaultDocument } = Doc
 
@@ -66,7 +66,8 @@ export default {
   methods: {
     openStyle () {
       // console.warn('看是否传过来模板（1个）：', this.selectsInfo)
-      if (this.selectStyle) {
+      if (this.selectStyle.url) {
+      // console.warn('看是否传过来style：', this.selectStyle)
         if (this.selectStyle.isfolder === true) {
           this.$notification.error({ message: '不可选择文件夹！', description: '请选择专题图模板文件' })
           // this.loadingModal = false
@@ -111,7 +112,7 @@ export default {
       }
     },
     addLayer () {
-      console.warn('准备添加图层', this.selectLists, this.currentDocument)
+      // console.warn('准备添加图层', this.selectLists, this.currentDocument)
       // let payload = {
       //   document: this.selectLists
       // }
@@ -121,6 +122,11 @@ export default {
       for (let i = 0; i < this.selectLists.length; i++) {
         let layer = this.selectLists[i]
         let { xattrs, type, title, url } = layer
+        // console.warn('xattrs格式1', typeof xattrs, xattrs)
+        // if (typeof xattrs === 'string') {
+        //   xattrs = JSON.parse(xattrs)
+        //   console.warn('xattrs格式2', typeof xattrs, xattrs)
+        // }
         if (!xattrs) {
           this.$notification.error({ message: "当前选择的某个图层缺少图层信息", description: '请检查所选图层是否导入！' })
           continue
@@ -133,7 +139,8 @@ export default {
           vclsinfo,
           tileDataPath,
           minLevel,
-          maxLevel
+          maxLevel,
+          renderType
         } = xattrs
         let path
         // let uuid = md5(url)
@@ -149,11 +156,14 @@ export default {
             continue
           }
         }
-        if (!storeServiceUrl) {
-          this.$notification.error({ message: '当前选择的某个图层缺少图层信息', description: '请检查图层！' })
-          continue
-        }
-        if (vclsinfo && vclsinfo.count > this.GjsonSize) { // 实时矢量瓦片
+        // if (!storeServiceUrl) {
+        //   this.$notification.error({ message: '当前选择的某个图层缺少图层信息', description: '请检查图层！' })
+        //   continue
+        // }
+        let useVectorTile = false
+        useVectorTile = renderType ? renderType === 'vectorTile' : vclsinfo && vclsinfo.count > this.GjsonSize
+        // console.warn('检验useVectorTile', useVectorTile)
+        if (vclsinfo && useVectorTile) { // 实时矢量瓦片
           if (hasVector && dataSource) {
             let temp = []
             temp = getCacheVectorTileUrl(storeServiceUrl, dataSourceType, dataSource, 4326, 0.5, 0.5, tileDataPath, minLevel, maxLevel)
@@ -174,7 +184,7 @@ export default {
         } else { // GeoJSON
           let metaPath = null
           if (hasVector && dataSource) { // 每个图层都有各自的边界、中心点
-            path = getNewVectorUrl(dataSource, true, 4326, this.GjsonSize)
+            path = getNewVectorUrl(dataSource, true, 4326, 30000)
           } else if (!hasVector && tileDataPath) { // 镶嵌数据集
             // path = getTileUrl(storeServiceUrl, tileDataPath)
             if (layer.type === FileType.TIF || layer.type === FileType.TIFF) {
@@ -209,7 +219,7 @@ export default {
         .catch(err => {
           console.warn('错误', err)
           if (err.message) {
-            this.$notification.error(err)
+            // this.$notification.error(err)
           } else {
             this.$notification.error({ message: '前端解析出现错误', description: err })
           }
@@ -219,12 +229,13 @@ export default {
     openPreviewLayers (layers) {
       let doc
       doc = this.paraDocument(layers)
-      // console.warn('看doc', doc)
+      // console.warn('返回新的document给在线制图', doc)
       let payload = {
         document: doc
       }
       this.handleNewDocument(payload) // 将新生成的doc传给在线制图
       this.$emit('closeImport') // 关闭导入文件对话框
+      this.$emit('closeDialog') // 关闭从门户选择数据的对话框
       // this.handleClose()
       let folderDir = getMapgisPath() + '/工作目录/工程文件Cache'
       let fileName = doc.layers[0].name + '_自动创建.style'
@@ -240,7 +251,7 @@ export default {
             if (errorCode < 0) {
               this.$notification.error({ message: errorCode, description: msg })
             } else {
-              console.warn('【新工程已保存回云盘】')
+              // console.warn('【新工程已保存回云盘】')
               // let baseProjectUrl = getFileDownloadUrlWithAuth(srcUrl, false)
               // let projectUrl = Buffer.from(baseProjectUrl, 'utf-8').toString('base64') // 编码方式
               // projectUrl = encodeURIComponent(projectUrl)
@@ -287,8 +298,10 @@ export default {
             layer.url = l.path
             layer.source = l.uuid
             layer.sourceLayer = l.sourceLayer
-            layer.minZoom = this.previewZoom.minZoom
-            layer.maxZoom = this.previewZoom.maxZoom
+            // layer.minZoom = this.previewZoom.minZoom
+            // layer.maxZoom = this.previewZoom.maxZoom
+            layer.minZoom = 0
+            layer.maxZoom = 24
             switch (l.subtype) {
               case 1:
                 layer.subtype = 'Circle'
@@ -371,12 +384,13 @@ export default {
                   return !this.checkFields(item)
                 })
                 fields.forEach(ele => {
-                  keepField += ele.name + ','
+                  keepField = keepField + ele.name + ','
                 })
                 keepField = keepField.slice(0, -1) // 全部属性字段，这两个二选一
                 if (item.isVectorTile) {
-                  keepField = this.onlyOneField ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
+                  keepField = this.onlyOneField === true ? fields[0].name : keepField // 只取所有属性字段的第一个，这两个二选一
                   item.path = item.path1 + keepField + item.path2 + `&Authorization=${this.cdToken}`
+                  // console.warn('打印地址', this.onlyOneField, fields, keepField, item.path)
                 } else { // geojson取全部字段
                   item.path = item.path + '&fields=' + keepField + `&Authorization=${this.cdToken}`
                 }
@@ -432,7 +446,7 @@ export default {
     },
     checkDuplication (uuid) {
       let flag = false
-      if (this.currentDocument.layers.length > 0) {
+      if (this.currentDocument.layers && this.currentDocument.layers.length > 0) {
         this.currentDocument.layers.forEach(item => {
           if (item.key === uuid) flag = true
         })

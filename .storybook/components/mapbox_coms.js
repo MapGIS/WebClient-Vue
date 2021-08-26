@@ -1,5 +1,3 @@
-export { MapgisIconfont } from "../../mapboxgl/src/components/UI/iconfont";
-
 export { default as MapgisWebMap } from "../../mapboxgl/src/components/map/GlMap.vue";
 
 export { default as MapgisDocument } from "../../mapboxgl/src/components/UI/document/Document";
@@ -28,7 +26,7 @@ export { default as MapgisMarker } from "../../mapboxgl/src/components/UI/Marker
 export { default as MapgisPopup } from "../../mapboxgl/src/components/UI/Popup.vue";
 
 export { default as MapgisArrayLayer } from "../../mapboxgl/src/components/layer/ArrayLayer";
-export { default as MapgisGeojsonLayer } from "../../mapboxgl/src/components/layer/GeojsonLayer";
+export { default as MapgisGeojsonLayer } from "../../mapboxgl/src/components/layer/GeojsonLayer.vue";
 export { default as MapgisImageLayer } from "../../mapboxgl/src/components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "../../mapboxgl/src/components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../../mapboxgl/src/components/layer/VideoLayer";

@@ -8,10 +8,10 @@
             <!-- <mapgis-ui-input v-model="formCheck.sref" placeholder="请选择源文件坐标" /> -->
             <mapgis-ui-select v-model="formCheck.sref" placeholder="请选择源文件坐标" style="width: 155px">
               <mapgis-ui-select-option value="EPSG:4326">
-                EPSG:4326
+                经纬度
               </mapgis-ui-select-option>
               <mapgis-ui-select-option value="EPSG:3857">
-                EPSG:3857
+                Web墨卡托
               </mapgis-ui-select-option>
             </mapgis-ui-select>
           </mapgis-ui-form-model-item>
@@ -43,9 +43,18 @@
             </mapgis-ui-select>
           </mapgis-ui-form-model-item>
           <mapgis-ui-form-model-item label="分隔符">
-            <mapgis-ui-input v-model="formCheck.separator" placeholder="请输入分隔符" style="width: 155px"/>
+            <!-- <mapgis-ui-input v-model="formCheck.separator" placeholder="请输入分隔符" style="width: 155px"/> -->
+            <mapgis-ui-select v-model="formCheck.separator" placeholder="请选择分隔符" style="width: 155px">
+              <mapgis-ui-select-option value="44">
+                逗号
+              </mapgis-ui-select-option>
+              <mapgis-ui-select-option value="9">
+                水平制表符
+              </mapgis-ui-select-option>
+            </mapgis-ui-select>
           </mapgis-ui-form-model-item>
         </mapgis-ui-form-model>
+        <p style="color:#999999;">若表格显示异常（乱码或格式不对），请调整编码格式和分隔符</p>
         <mapgis-ui-table :columns="columns" :data-source="tableData" bordered :scroll="{ x: 1500, y: 300 }" :pagination="false">
         </mapgis-ui-table>
       </div>
@@ -79,7 +88,7 @@ export default {
         xfield: '',
         yfield: '',
         charset: 'GBK',
-        separator: ','
+        separator: '44'
       },
       columns: [],
       tableData: [],

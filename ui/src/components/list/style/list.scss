@@ -1,9 +1,9 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 $list-prefix-cls: $ant-prefix + "-list";
 
-.#{list-prefix-cls} {
+.#{$list-prefix-cls} {
   // .reset-component;
 
   position: relative;
@@ -17,7 +17,7 @@ $list-prefix-cls: $ant-prefix + "-list";
     text-align: right;
 
     // https://github.com/ant-design/ant-design/issues/20037
-    .#{ant-prefix}-pagination-options {
+    .#{$ant-prefix}-pagination-options {
       text-align: left;
     }
   }
@@ -54,6 +54,12 @@ $list-prefix-cls: $ant-prefix + "-list";
     align-items: center;
     justify-content: space-between;
     padding: $list-item-padding;
+
+    &:hover {
+      /* border-radius: 4px; */
+      /* padding: 0px 20px; */
+      background: $list-item-hover-bg;
+    }
 
     &-content {
       color: $text-color;
@@ -156,7 +162,10 @@ $list-prefix-cls: $ant-prefix + "-list";
     min-height: 32px;
   }
 
-  &-something-after-last-item .#{ant-prefix}-spin-container > &-items > &-item:last-child {
+  &-something-after-last-item
+    .#{$ant-prefix}-spin-container
+    > &-items
+    > &-item:last-child {
     border-bottom: 1px solid $border-color-split;
   }
 
@@ -206,7 +215,7 @@ $list-prefix-cls: $ant-prefix + "-list";
     }
   }
 
-  &-grid .#{ant-prefix}-col > &-item {
+  &-grid .#{$ant-prefix}-col > &-item {
     display: block;
     max-width: 100%;
     margin-bottom: 16px;
@@ -221,9 +230,9 @@ $list-prefix-cls: $ant-prefix + "-list";
   }
 
   // Horizontal
-  &:not(.#{list-prefix-cls}-vertical) {
-    .#{list-prefix-cls}-item-no-flex {
-      .#{list-prefix-cls}-item-action {
+  &:not(.#{$list-prefix-cls}-vertical) {
+    .#{$list-prefix-cls}-item-no-flex {
+      .#{$list-prefix-cls}-item-action {
         float: right;
       }
     }

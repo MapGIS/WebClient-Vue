@@ -43,7 +43,7 @@ export function initManager() {
   window.CesiumZondy.EventHandlerManager =
     window.CesiumZondy.EventHandlerManager || new EventHandlerManager();
   window.CesiumZondy.IgsTerrainManager =
-    window.CesiumZondy.IgsTerrainManager || new EventHandlerManager();
+    window.CesiumZondy.IgsTerrainManager || new IgsTerrainManager();
   window.CesiumZondy.M3DIgsManager =
     window.CesiumZondy.M3DIgsManager || new EventHandlerManager();
   window.CesiumZondy.ArcgisManager =

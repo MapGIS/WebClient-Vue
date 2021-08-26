@@ -1,7 +1,6 @@
 <template>
   <div class="layout-model-folder">
     <mapgis-ui-tree
-      show-icon
       :default-expanded-keys="['0-0']"
       :load-data="onLoadData"
       :tree-data="treeData"
@@ -17,7 +16,7 @@
 </template>
 <script>
 import { dirnavigation } from "../../axios/files";
-import { getMapgisPath } from "../../config/mapgis";
+import { getMapgisPath, getMapgisGroupPath } from "../../config/mapgis";
 import UploadMixin from '../../../../mixin/UploaderMixin';
 
 export default {
@@ -33,12 +32,12 @@ export default {
   mounted() {
     this.treeData = [
       {
-        title: "常规文件夹",
+        title: "组织文件夹",
         key: "0-0",
         scopedSlots: {
           icon: "folderIcon"
         },
-        url: getMapgisPath()
+        url: getMapgisGroupPath()
       }
     ];
   },
@@ -46,7 +45,7 @@ export default {
     onLoadData(treeNode) {
       let vm = this;
       return new Promise(resolve => {
-        console.warn("获得节点", treeNode);
+        // console.warn("获得节点", treeNode);
         if (treeNode.dataRef.children) {
           resolve();
           return;
@@ -57,9 +56,9 @@ export default {
               let result = res.data;
               let { data, errorCode, msg } = result;
               if (errorCode < 0) {
-                vm.$Notice.error({ title: errorCode, desc: msg });
+                vm.$notification.error({ message: errorCode, description: msg });
               } else {
-                console.warn("dirnavigation结果");
+                // console.warn("dirnavigation结果");
                 let items = data.filter(item => item.isfolder === true);
                 items = items.map(d => {
                   d.scopedSlots = {
@@ -74,12 +73,13 @@ export default {
             }
           })
           .catch(error => {
-            this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+            // console.warn("【dirnavigation错误结果】", error);
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });
           });
       });
     },
     onSelect(node, event) {
-      console.warn(node, event, event.node.dataRef.url);
+      // console.warn(node, event, event.node.dataRef.url);
       this.$emit("changePath", event.node.dataRef.url || "");
     }
   }

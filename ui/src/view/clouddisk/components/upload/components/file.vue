@@ -329,7 +329,7 @@ export default {
     getImportStatus () {
       let fileName = this.file.name
       let fileUrl = this.$store.state.path.current.uri + '/' + fileName
-      console.warn('进到状态', fileUrl)
+      // console.warn('进到状态', fileUrl)
       this.timeid = setInterval(() => {
         this.getImportDaskStatus(fileUrl)
       }, 600000)
@@ -338,10 +338,10 @@ export default {
       }, 6000)
     },
     getImportDaskStatus (fileUrl) {
-      console.warn('进到状态延迟', fileUrl)
+      // console.warn('进到状态延迟', fileUrl)
       /* task(fileUrl)
         .then(res => {
-          console.warn('进到task', res.data)
+          // console.warn('进到task', res.data)
           // if (res.data.data.list.length <= 0) {
           //   this.isCompleteImport = false
           //   this.isImportError = true
@@ -375,7 +375,7 @@ export default {
         let temUrl = index < 0 ? '' : currentUrl.slice(index)
         this.fileUrl = '我的文件' + temUrl + '/' + this.file.name
       }
-      console.warn('观察', currentUrl, this.fileUrl)
+      // console.warn('观察', currentUrl, this.fileUrl)
       return this.fileUrl
     }
   },

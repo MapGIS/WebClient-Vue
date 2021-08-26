@@ -91,6 +91,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   &-submenu-active,
   &-submenu-title:hover {
     color: $menu-highlight-color;
+    z-index: 1000;
   }
 
   &-horizontal &-item,
@@ -102,6 +103,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
   &-horizontal > &-item-active,
   &-horizontal > &-submenu &-submenu-title:hover {
     background-color: transparent;
+    z-index: 1000;
   }
 
   &-item-selected {
@@ -110,6 +112,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     > a:hover {
       color: $menu-highlight-color;
     }
+    z-index: 1000;
   }
 
   &:not(&-horizontal) &-item-selected {
@@ -178,7 +181,7 @@ $menu-prefix-cls: $ant-prefix + "-menu";
     > .#{$menu-prefix-cls}-item,
     > .#{$menu-prefix-cls}-submenu {
       position: relative;
-      top: 1px;
+      top: -2px;
       display: inline-block;
       vertical-align: bottom;
       border-bottom: 2px solid transparent;

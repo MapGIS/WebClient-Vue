@@ -40,7 +40,9 @@ export default {
     },
     methods: {
         getLegendInfo(url) {
-            let legendUrl = url.replace(/(?<=MapServer).*/i, "/legend?f=pjson");
+            // let legendUrl = url.replace(/(?<=MapServer).*/i, "/legend?f=pjson");
+          const legend = new RegExp("(?<=MapServer).*", 'i');
+          let legendUrl = url.replace(legend, "/legend?f=pjson");
             fetch(legendUrl)
                 .then((res) => {
                     return res.json();
@@ -66,7 +68,8 @@ export default {
                     tiles = tiles.concat(sources[key].tiles);
                 });
             tiles.forEach((url) => {
-                if (/\/arcgis\/rest\/services/i.test(url)) {
+              const regExp = new RegExp("\\/arcgis\\/rest\\/services", 'i');
+              if (regExp.test(url)) {
                     this.getLegendInfo(url);
                 }
             });

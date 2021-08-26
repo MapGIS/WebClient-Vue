@@ -9,6 +9,8 @@ import Qs from "qs";
 // import {_httpAuthorization} from '../cos/qiniu';
 const clone = require("clone");
 
+// axios.defaults.withCredentials = true;
+
 class API {
   constructor(view) {
     this.view = view;

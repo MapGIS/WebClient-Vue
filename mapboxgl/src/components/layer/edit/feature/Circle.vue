@@ -9,6 +9,7 @@ import Feature from "./Feature.vue";
 const CircleRules = [
   {
     title: "半径",
+    icon: "mapgis-yuanxinbanjingyuan1",
     type: "number",
     layerprop: "circle-radius",
     layertype: "paint",
@@ -17,6 +18,7 @@ const CircleRules = [
   },
   {
     title: "颜色",
+    icon: "mapgis-yansehecheng",
     type: "color",
     layerprop: "circle-color",
     layertype: "paint",
@@ -24,6 +26,7 @@ const CircleRules = [
   },
   {
     title: "透明度",
+    icon: "mapgis-duibidutiaojie",
     type: "number",
     layerprop: "circle-opacity",
     layertype: "paint",
@@ -33,6 +36,7 @@ const CircleRules = [
   },
   {
     title: "边线半径",
+    icon: "mapgis-yuanxinbanjingyuan",
     type: "number",
     layerprop: "circle-stroke-width",
     layertype: "paint",
@@ -41,13 +45,15 @@ const CircleRules = [
   },
   {
     title: "边线颜色",
+    icon: "mapgis-yansehecheng",
     type: "color",
     layerprop: "circle-stroke-color",
     layertype: "paint",
     default: "#000000"
   },
   {
-    title: "边线透明度",
+    title: "边线透明",
+    icon: "mapgis-duibidutiaojie",
     type: "number",
     layerprop: "circle-stroke-opacity",
     layertype: "paint",
