@@ -128,6 +128,7 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
+              ["/guide/introduction.md", "产品介绍"],
               ["/guide/basemap.md", "基础地图"],
               ["/guide/composition.md", "结构"],
               ["/guide/controls.md", "控制视图"],

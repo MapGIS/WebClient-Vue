@@ -53,6 +53,7 @@ module.exports = {
             collapsable: false,
             children: [
               ["/guide/", "快速上手"],
+              ["/guide/introduction.md", "产品介绍"],
               ["/guide/basemap.md", "基础地图"],
               ["/guide/wms&map&doc.md", "子图层控制"]
             ]
@@ -60,13 +61,13 @@ module.exports = {
           {
             title: "组件",
             collapsable: false,
-            children:
-            [
+            children: [
               {
                 title: "场景",
                 collapsable: false,
               },
               ["/api/", "地图场景"],
+
               {
                 title: "场景子组件",
                 collapsable: false,
@@ -100,12 +101,14 @@ module.exports = {
               ["/api/m3d/m3d.md", "M3D"],
 
               ["/api/datasource/geojson.md", "GeoJSON"],
+
               {
                 title: "可视化",
                 collapsable: false,
               },
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
+
               {
                 title: "空间分析",
                 collapsable: false,
@@ -114,7 +117,7 @@ module.exports = {
               ["/api/analysis/Sightline.md", "通视分析"],
               ["/api/analysis/Flood.md", "洪水淹没分析"],
               ["/api/analysis/DynamicCutting.md", "动态剖切"],
-              ["/api/analysis/Excavete.md", "开挖分析"],
+              ["/api/analysis/Excavate.md", "开挖分析"],
               ["/api/analysis/Fill.md", "填挖方分析"],
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],

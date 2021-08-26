@@ -1,7 +1,5 @@
 # 快速上手
 
-![核心框架](../images/framework/webclient-vue-mapboxgl.png)
-
 ## 安装
 
 ### ES6 方式
