@@ -56,7 +56,7 @@
     "searchArrowIconBg": "#383838",
     "sliderRailBackgroundColor": "#6B6B6B",
     "divColor": "#ffffff",
-    "divBackground": "#383838",
+    "divBackground": "#2c2c2c",
     "divForderColor": "#eeeeee",
     "contentColor": "#ffffff",
     "contentBackground": "#383838",
@@ -70,7 +70,8 @@
     "panelBackground": "rgb(44,44,44)",
     "panelTextColor": "#FFFFFF",
     "panelOptionColor": "#FFFFFF",
-    "panelBoxShadow": "rgba(0 0 0 / 31%)"
+    "panelBoxShadow": "rgba(0 0 0 / 31%)",
+    "tableBackground": "#242424"
   },
   {
     "title": "经典浅色",
@@ -143,7 +144,8 @@
     "panelBackground": "rgb(255,255,255)",
     "panelTextColor": "#666666",
     "panelOptionColor": "#999999",
-    "panelBoxShadow": "rgba(235 235 235 / 31%)"
+    "panelBoxShadow": "rgba(235 235 235 / 31%)",
+    "tableBackground": "#F2F4F7"
   },
   {
     "title": "经典暖灰",

@@ -248,6 +248,7 @@ $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
 $btn-default-bg: transparent;
+// $btn-default-bg: var(--primary-6);
 $btn-theme-bg: var(--background);
 $btn-default-border: var(--button-border-default-color);
 
@@ -478,16 +479,17 @@ $menu-dark-selected-item-icon-color: $white;
 $menu-dark-selected-item-text-color: $white;
 $menu-dark-item-hover-bg: transparent;
 
-$table-heading-color: $primary-5;
+$table-background: var(--table-background);
+$table-heading-color: $primary-6;
 $table-header-bg: $background-color-light;
 $table-header-color: $table-heading-color;
 $table-header-sort-bg: $background-color-base;
 $table-body-sort-bg: rgba(0, 0, 0, 0.01);
-$table-row-hover-bg: $primary-4;
+$table-row-hover-bg: $primary-6;
 $table-selected-row-color: inherit;
-$table-selected-row-bg: $primary-4;
+$table-selected-row-bg: $primary-6;
 $table-body-selected-sort-bg: $table-selected-row-bg;
-$table-selected-row-hover-bg: $primary-5;
+$table-selected-row-hover-bg: $primary-6;
 $table-expanded-row-bg: #fbfbfb;
 $table-padding-vertical: 16px;
 $table-padding-horizontal: 16px;

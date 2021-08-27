@@ -3,7 +3,7 @@
     <div class="mapgis-table-collapse-wrapper">
       <mapgis-ui-div class="mapgis-table-collapse" v-show="!visible">
         <div @click="showTable">
-          <mapgis-ui-iconfont type="mapgis-shuxingjiancha" />属性表
+          <mapgis-ui-iconfont type="mapgis-table" />属性表
         </div>
       </mapgis-ui-div>
     </div>
@@ -19,23 +19,23 @@
         </div>
         <mapgis-ui-button-group class="toolbar-buttons">
           <mapgis-ui-button @click="$_exportData" size="small">
-            <mapgis-ui-iconfont type="mapgis-daochu" />
+            <mapgis-ui-iconfont type="mapgis-export" />
             导出
           </mapgis-ui-button>
           <mapgis-ui-button @click="$_fieldFilter" size="small">
-            <mapgis-ui-iconfont type="mapgis-shiliangtiaojianchaxun" />
+            <mapgis-ui-iconfont type="mapgis-filter" />
             字段过滤
           </mapgis-ui-button>
           <mapgis-ui-button @click="$_deleteMassFeature" size="small">
-            <mapgis-ui-iconfont type="mapgis-qingkong1" />
+            <mapgis-ui-iconfont type="mapgis-delete" />
             批量删除
           </mapgis-ui-button>
           <mapgis-ui-button @click="$_fullScreen" size="small" v-show="showFullScene">
-            <mapgis-ui-iconfont type="mapgis-quanpingxianshi" />
+            <mapgis-ui-iconfont type="mapgis-fullscreen" />
             全屏
           </mapgis-ui-button>
           <mapgis-ui-button @click="hideTable" size="small">
-            <mapgis-ui-iconfont type="mapgis-guanbiC" />
+            <mapgis-ui-iconfont type="mapgis-close-circle" />
             关闭
           </mapgis-ui-button>
         </mapgis-ui-button-group>
@@ -1373,8 +1373,10 @@ export default {
 .mapgis-table-collapse {
   margin: 0 auto;
   background: transparent;
-  width: 60px;
+  width: 72px;
   height: 24px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   border-top: 1px solid #666666;
   border-left: 1px solid #666666;
   border-right: 1px solid #666666;

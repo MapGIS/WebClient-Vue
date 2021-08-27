@@ -1,8 +1,6 @@
 <template>
-  <div v-show="visible">
+  <div v-show="visible" :style="outStyle" class="mapgis-ui-collapse-card">
     <mapgis-ui-button
-      :style="outStyle"
-      class="mapgis-ui-collapse-card-mini"
       type="primary"
       shape="circle"
       v-if="collapse"
@@ -17,8 +15,6 @@
     </mapgis-ui-button>
     <transition name="bounce">
       <mapgis-ui-card
-        class="mapgis-ui-collapse-card"
-        :style="outStyle"
         hoverable
         v-show="!collapse"
         :bordered="false"
