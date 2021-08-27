@@ -1290,10 +1290,17 @@ export default {
           ]
         );
       } else {
-        this.$_setPaintProperty("line-dasharray", [
-          lineStyle.value[0],
-          lineStyle.value[1]
-        ]);
+        if (lineStyle.key === "theme-panel-line-zero") {
+          this.$_setPaintProperty("line-dasharray", [
+            lineStyle.value[0],
+            lineStyle.value[0]
+          ]);
+        } else {
+          this.$_setPaintProperty("line-dasharray", [
+            lineStyle.value[0],
+            lineStyle.value[1]
+          ]);
+        }
       }
     },
     $_getNumberFields(features) {
