@@ -72,7 +72,8 @@
     "panelTextColor": "#FFFFFF",
     "panelOptionColor": "#FFFFFF",
     "panelBoxShadow": "rgba(0 0 0 / 31%)",
-    "tableBackground": "#242424"
+    "tableBackground": "#242424",
+    "panelCollapseColor": "rgb(56,56,56)"
   },
   {
     "title": "经典浅色",
@@ -147,7 +148,8 @@
     "panelTextColor": "#666666",
     "panelOptionColor": "#999999",
     "panelBoxShadow": "rgba(235 235 235 / 31%)",
-    "tableBackground": "#F2F4F7"
+    "tableBackground": "#F2F4F7",
+    "panelCollapseColor": "#FFFFFF"
   },
   {
     "title": "经典暖灰",
