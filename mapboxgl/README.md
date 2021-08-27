@@ -1,63 +1,68 @@
 # Webclient-Vue-MapboxGL
 
-## 组件式风格
+---
+
+## 简介
+
+webclient-vue-mapboxgl是基于MapboxGL实现的vue组件开发库，提供Web二维GIS应用的vue组件开发的服务。
+
+### 核心框架
+
+![核心框架](./docs/images/framework/webclient-vue-mapboxgl.png)
+
+### 模块说明
+
+![模块说明](./docs/guide/webclient-vue-mapbox.png)
+
+### 特点
+
++ 组件式风格
 
 通过 Vue 的组件方式调用 layers, markers, popups， 并且使用同步`synchronized props`来控制状态
 
-## Vue 控制
++ Vue 控制
 
 `面向对象编程`：地图元素拥有 Vue 的生命周期，将原生地图事件封装成 Vue 的事件
 
-## 同步的 Promise Actions
++ 同步的 Promise Actions
 
 原先异步的地图操作变成`同步操作`，并且采取`Promise`的方式进行开发避免大量的地图事件回调导致代码逻辑混乱，能够清晰的知道是什么行为导致地图的变化。
 
-> ~ 快速提示，刚接触一定要看完指南部分和自定义插件部分。 熟悉后可以直接查看 API。
+---
 
-```vue
-<template>
-  <mapgis-web-map
-    container="map-test"
-    :center.sync="center"
-    :accessToken="accessToken"
-    :mapStyle="mapStyle"
-  >
-    <mapgis-marker :coordinates.sync="markerCoordinates" color="green" />
-    <mapgis-geojson-layer
-      type="fill"
-      :sourceId="sourceId"
-      :layerId="layerId"
-      :source="geojson"
-      @click="handleClick"
-    />
-  </mapgis-web-map>
-</template>
+## 安装
 
-<script>
-import {
-  MapgisWebMap,
-  MapgisMarker,
-  MapgisGeojsonLayer
-} from '@mapgis/webclient-vue-mapboxgl'
-
-export default {
-  name: 'App',
-  data() {
-    return {
-      accessToken: 'some_token',
-      mapStyle: 'mapbox://map_style',
-      geojson: { /* … some geojson */}
-      layerId: 'firstLayer',
-      sourceId: 'firstSource',
-      markerCoordinates='[50, 50]'
-    }
-  }
-}
-</script>
+```bash
+npm install --save @mapgis/webclient-vue-mapboxgl
+# 或者
+yarn add @mapgis/webclient-vue-mapboxgl
 ```
 
-## 依赖
+在 main.js 中全局引入组件和样式文件
 
-[Vue.js 2.5+](https://github.com/vuejs/vue)  
-[MapGIS/Mapbox GL JS 0.54+](https://github.com/mapbox/mapbox-gl-js)  
-[MapGIS/WebClient-MapboxGL](https://github.com/mapbox/mapbox-gl-js)
+```js
+import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-mapboxgl/dist-libs/webclient-vue-mapboxgl.css";
+
+import MapgisUi from "@mapgis/webclient-vue-ui";
+import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
+
+Vue.use(MapgisUi);
+Vue.use(Mapgis2d);
+```
+
+---
+
+## 相关链接
+
++ [基本示例](http://develop.smaryun.com:8899/#/gallery/vue-mapboxgl)
++ [参考文档](http://120.78.82.242:8891/)
++ [项目源码](https://github.com/MapGIS/WebClient-Vue/tree/main/mapboxgl)
+
+---
+
+## 项目依赖
+
++ [Vue.js 2.5+](https://github.com/vuejs/vue)  
++ [MapGIS/Mapbox GL JS 0.54+](https://github.com/mapbox/mapbox-gl-js)  
++ [MapGIS/WebClient-MapboxGL](https://github.com/mapbox/mapbox-gl-js)
