@@ -66,7 +66,11 @@
 - `degreeCoordinate` 经纬度坐标集合
 - `webGlobe` 当前绘制组件所在的 webGlobe
 
-### 使用方法
+## 示例
+
+### 简单使用
+
+::: demo
 
 ```vue
 <template>
@@ -126,7 +130,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #app {
   height: 100vh;
   width: 100vw;
@@ -152,3 +156,5 @@ export default {
 }
 </style>
 ```
+
+:::
