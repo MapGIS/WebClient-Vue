@@ -21,6 +21,7 @@
         :activeKey="activeKey"
         :iconUrl="iconUrl"
         :defaultIconValue="defaultIconValue"
+        :defaultIcon="defaultIcon"
         @iconLoaded="$_iconLoaded"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"

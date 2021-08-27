@@ -49,6 +49,9 @@ export default {
     icons: {
       type: Array
     },
+    defaultIcon: {
+      type: String
+    },
     themeTypeArr: {
       type: Array
     },

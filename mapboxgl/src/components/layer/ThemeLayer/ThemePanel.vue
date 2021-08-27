@@ -8,7 +8,9 @@
           <mapgis-ui-col :span="24" class="theme-panel-type theme-panel-type-title">
             <p class="theme-panel-title" :title="title">{{ title }}</p>
             <p class="theme-panel-title-close" @click="$_close">
-              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABS5JREFUeF7tW02IHEUUfq+a3YNEIx6FDSgevShCBCNxjZrV7Te9HpKLu4J68Adnb+IhEqPoQbxlReNBBbNezMHprp5k438wggHRgx5FIQGPsolLDrt0PalheuyZ7Znu6q7Z7aHTp2H71ffe+7Z+XlV/hbADj5TyIWaeAYB9QoiZ+Dci6r8BM18BgMuIeEUp1ftNRN+POzwch4NWqzWDiAcdxznMzA0AuKWgn2uIGERRdJ6ZLywsLGhyrD7WCFhbW7tta2urCQAHAWDWapT/g30HABempqZW5ubm/rHhwwoBYRg2lVLLiHiXjaCyMJj5DyHESdd1V7Jss96XIkBK+RQiNpl5f5ajcbxHxEvMvEJEnxXFL0SA7/sPCCGOAcDjRR1bbndOKfW253k/muIaEyClfBkA3gGAm0ydjdn+OgC8SkTvmfgxIkBK+REAPGviYBdsPyai5/L6zU2AlPIXALgnL/Au2/1KRPfmiSEXAVJKzgNWNRsiyswv00BKGQAAVS25nPFIItKF2NBnJAFBEDQR8WROZ5U0Y+blRqMxtF4YSoCUcgEAvqhkVuZBPUlErbRmqQT4vn+fEOIrALjV3FclW6wrpR71PO/nwehSCZBSnq1QkWOL0XNE9EQmAbq8BYBVW14rhrM4WDZv6wFhGP60W7X9uMnSewfXde9P+ukjQO/qmHmiZ/0sEhFxObmL7BGg9/Obm5uXdmpLmxXouN7rrfT09PT++DyhR4CU8nUAODEuxxXDPUFEb+iYkgT8AAAHbASKiEejKPrbcZxXmNkrg4mIfhRF7zqOczszf14GK9H2IhE92CMgCII7EPFPS+CzycNMKaUO+khB7DNEdDRuqw9XAUAfi5V+mPnORqPxV6cH+L7/ohDi/dKoAKCUOjB4MFGQhL7ku3Hqg5iLluJ8yfO8DzoEBEHQQsRSXTUOSndZ13V1Gd33GJKwLXkNFoZhq+yQioNiZr/RaCx0CJBS/gsAe2ww28VITSAnCWXamqSwQUQ3o81xNeC9SCJF2pgkPWg7i0EQLCHip2VQRrQ1ScjE1kq4zPy0JuAYIr5lBTEdJE9ieWysh8jMr2EYhqeY+Xnr6P2AoxKE5FKXWPLKLJ+50kHED/Uc0AaAbdvEXAhmRqkkpEHknCzNvKdbn9UE/AYAd9tAy4GRScIOJq/D/V0PgXVm3psjeFsmQ0nY4eQBEa/eIKD2Q6D2k2Dtl8HaF0K1L4VrvxnqboevllBypdUHZWr7Mm1NapVrRLS3cx4QhuFpZl40aT3Ctk1E7uB7wyJnGAkhAMzbiBMRV13XXYqPxBaFEKdtAAshaH5+XgfaewyTj9ttI6HdbrtKKWkjTqXUkud5qx0CtLDRcZzLNoD1ibDrumcs7er6SAjD8Iitk+EoivZp4WXyWPxbiwLHWSHEHqXUCxa6bFsIcUoptWHrRFjjENHD+p9048NI3FVr/2msuxrU9+No3BNq/Xm8WxTVWyDRJaG+EhlNQFcM/WUF9cBFS5XrSqnH0sTUo2RyWhRdWo9fNGLL7ZrDRNQjhZITIo7O4mqkeDqPVHaSRNKDZGSKpjMJ6E6K9RVLJzY1kySazhRJx3nl6gGx8SSIp7PE0YNjxIiA7nDQ6o9PKqgjXgeAZ4aJoofNlMYEdOsELaZ+s0J6Yn1p6niaGDpriShEQGJeqOe1uUFWa3txMklE4ursI7YElyndV0vkvq7c1dnBQLXwkpnnEPEwIh4qoUDbYOZvmPk8Iq5pYWPWmDZ9X2oOyOusytfn/wM8WMoN6jpefQAAAABJRU5ErkJggg==" alt="close">
+              <img
+                  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABS5JREFUeF7tW02IHEUUfq+a3YNEIx6FDSgevShCBCNxjZrV7Te9HpKLu4J68Adnb+IhEqPoQbxlReNBBbNezMHprp5k438wggHRgx5FIQGPsolLDrt0PalheuyZ7Znu6q7Z7aHTp2H71ffe+7Z+XlV/hbADj5TyIWaeAYB9QoiZ+Dci6r8BM18BgMuIeEUp1ftNRN+POzwch4NWqzWDiAcdxznMzA0AuKWgn2uIGERRdJ6ZLywsLGhyrD7WCFhbW7tta2urCQAHAWDWapT/g30HABempqZW5ubm/rHhwwoBYRg2lVLLiHiXjaCyMJj5DyHESdd1V7Jss96XIkBK+RQiNpl5f5ajcbxHxEvMvEJEnxXFL0SA7/sPCCGOAcDjRR1bbndOKfW253k/muIaEyClfBkA3gGAm0ydjdn+OgC8SkTvmfgxIkBK+REAPGviYBdsPyai5/L6zU2AlPIXALgnL/Au2/1KRPfmiSEXAVJKzgNWNRsiyswv00BKGQAAVS25nPFIItKF2NBnJAFBEDQR8WROZ5U0Y+blRqMxtF4YSoCUcgEAvqhkVuZBPUlErbRmqQT4vn+fEOIrALjV3FclW6wrpR71PO/nwehSCZBSnq1QkWOL0XNE9EQmAbq8BYBVW14rhrM4WDZv6wFhGP60W7X9uMnSewfXde9P+ukjQO/qmHmiZ/0sEhFxObmL7BGg9/Obm5uXdmpLmxXouN7rrfT09PT++DyhR4CU8nUAODEuxxXDPUFEb+iYkgT8AAAHbASKiEejKPrbcZxXmNkrg4mIfhRF7zqOczszf14GK9H2IhE92CMgCII7EPFPS+CzycNMKaUO+khB7DNEdDRuqw9XAUAfi5V+mPnORqPxV6cH+L7/ohDi/dKoAKCUOjB4MFGQhL7ku3Hqg5iLluJ8yfO8DzoEBEHQQsRSXTUOSndZ13V1Gd33GJKwLXkNFoZhq+yQioNiZr/RaCx0CJBS/gsAe2ww28VITSAnCWXamqSwQUQ3o81xNeC9SCJF2pgkPWg7i0EQLCHip2VQRrQ1ScjE1kq4zPy0JuAYIr5lBTEdJE9ieWysh8jMr2EYhqeY+Xnr6P2AoxKE5FKXWPLKLJ+50kHED/Uc0AaAbdvEXAhmRqkkpEHknCzNvKdbn9UE/AYAd9tAy4GRScIOJq/D/V0PgXVm3psjeFsmQ0nY4eQBEa/eIKD2Q6D2k2Dtl8HaF0K1L4VrvxnqboevllBypdUHZWr7Mm1NapVrRLS3cx4QhuFpZl40aT3Ctk1E7uB7wyJnGAkhAMzbiBMRV13XXYqPxBaFEKdtAAshaH5+XgfaewyTj9ttI6HdbrtKKWkjTqXUkud5qx0CtLDRcZzLNoD1ibDrumcs7er6SAjD8Iitk+EoivZp4WXyWPxbiwLHWSHEHqXUCxa6bFsIcUoptWHrRFjjENHD+p9048NI3FVr/2msuxrU9+No3BNq/Xm8WxTVWyDRJaG+EhlNQFcM/WUF9cBFS5XrSqnH0sTUo2RyWhRdWo9fNGLL7ZrDRNQjhZITIo7O4mqkeDqPVHaSRNKDZGSKpjMJ6E6K9RVLJzY1kySazhRJx3nl6gGx8SSIp7PE0YNjxIiA7nDQ6o9PKqgjXgeAZ4aJoofNlMYEdOsELaZ+s0J6Yn1p6niaGDpriShEQGJeqOe1uUFWa3txMklE4ursI7YElyndV0vkvq7c1dnBQLXwkpnnEPEwIh4qoUDbYOZvmPk8Iq5pYWPWmDZ9X2oOyOusytfn/wM8WMoN6jpefQAAAABJRU5ErkJggg=="
+                  alt="close">
             </p>
           </mapgis-ui-col>
         </mapgis-ui-row>
@@ -141,19 +143,6 @@
         </mapgis-ui-collapse>
         <mapgis-ui-collapse accordion v-if="dataType !== 'heatmap' && dataType !== 'symbol'">
           <mapgis-ui-collapse-panel key="5" header="符号">
-            <mapgis-ui-row v-if="dataType !== 'circle'">
-              <mapgis-ui-col :span="6">
-                <p class="theme-panel-p">图标</p>
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="18">
-                <mapgis-ui-sprite-select
-                    :url="iconUrl"
-                    :defaultValue="defaultIconValue"
-                    @change="$_clickIcon"
-                    @iconLoaded="$_iconLoaded"
-                ></mapgis-ui-sprite-select>
-              </mapgis-ui-col>
-            </mapgis-ui-row>
             <mapgis-ui-row
                 v-if="dataType !== 'line' && dataType !== 'symbol'"
             >
@@ -431,16 +420,11 @@
               </mapgis-ui-col>
               <mapgis-ui-col :span="16">
                 <mapgis-ui-svg-select
-                  :icons="icons"
-                  @clickIcon="$_clickIconSvg"
+                    :icons="icons"
+                    :defaultIcon="defaultIcon"
+                    @clickIcon="$_clickIconSvg"
                 ></mapgis-ui-svg-select>
               </mapgis-ui-col>
-<!--              <mapgis-ui-sprite-select-->
-<!--                  :url="iconUrl"-->
-<!--                  :defaultValue="defaultIconValue"-->
-<!--                  @change="$_clickIcon"-->
-<!--                  @iconLoaded="$_iconLoaded"-->
-<!--              ></mapgis-ui-sprite-select>-->
             </mapgis-ui-row>
             <mapgis-ui-row
                 style="margin-top: 8px;"
@@ -913,6 +897,9 @@ export default {
     icons: {
       type: Array
     },
+    defaultIcon: {
+      type: String
+    },
     textFonts: {
       type: Array
     },
@@ -1215,9 +1202,8 @@ export default {
     this.$_initDataSource();
   },
   methods: {
-    $_clickIconSvg(icon){
-      this.$emit("clickSvg",icon);
-      console.log("------------",icon)
+    $_clickIconSvg(icon) {
+      this.$emit("clickSvg", icon);
     },
     setSelectValue(selectValue) {
       this.selectValue = selectValue;
@@ -1422,7 +1408,7 @@ export default {
       this.defaultValue = this.defaultValue === "" ? this.fields[0] : this.defaultValue;
       this.selectValue = this.selectValue === "" ? this.fields[0] : this.selectValue;
     },
-    $_panelClick() {
+    $_panelClick(e) {
       this.$emit("panelClick", this);
     },
     $_heatGradientChange(index) {
@@ -1616,12 +1602,12 @@ export default {
   overflow: hidden;
 }
 
-.theme-panel-title-close > img{
+.theme-panel-title-close > img {
   width: 16px;
   margin-top: 4px;
 }
 
-.theme-panel-title-close > img:hover{
+.theme-panel-title-close > img:hover {
   transform: translateY(-50px);
   filter: drop-shadow(#5eb7f2 0 50px);
 }
@@ -1702,29 +1688,30 @@ export default {
 }
 
 .theme-panel-line-zero {
-  width: 100%;
+  width: 105px;
   height: 10px;
-  margin-top: 10px;
+  margin-top: 13px;
   border-top: 5px solid black;
 }
 
 .theme-panel-line-one {
-  width: 100%;
+  width: 105px;
   height: 10px;
-  margin-top: 10px;
+  margin-top: 13px;
   border-top: 5px dotted black;
 }
 
 .theme-panel-line-two {
-  width: 100%;
+  width: 105px;
   height: 10px;
-  margin-top: 10px;
+  margin-top: 13px;
   border-top: 5px dashed black;
 }
 
 .theme-panel-line-three {
-  width: 100%;
+  width: 105px;
   height: 20px;
+  margin-top: 3px;
 }
 
 .theme-panel-line-long {
@@ -1824,7 +1811,7 @@ export default {
   border: none;
 }
 
-.theme-panel-color-outer{
+.theme-panel-color-outer {
   width: 157px;
   height: 32px;
   margin-left: -13px;
@@ -1833,11 +1820,11 @@ export default {
   border-radius: 4px;
 }
 
-/deep/ .mapgis-ui-select-selection__rendered{
-  margin-right: 31px!important;
+/deep/ .mapgis-ui-select-selection__rendered {
+  margin-right: 31px !important;
 }
 
-.theme-panel-options{
+.theme-panel-options {
   width: 300px;
   min-height: 618px;
   margin-top: 8px;
@@ -1845,7 +1832,7 @@ export default {
   margin-left: -4px;
 }
 
-.theme-panel-head{
+.theme-panel-head {
   width: 308px;
   height: 248px;
   margin-top: -18px;
@@ -1853,7 +1840,7 @@ export default {
   margin-left: -14px;
 }
 
-/deep/.mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box{
+/deep/ .mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box {
   padding: 16px 16px 0 16px;;
 }
 </style>

@@ -21,6 +21,7 @@
           v-show="showType === 'symbol'"
           :themeDefaultType="themeDefaultTypeFlag"
           :icons="icons"
+          :defaultIcon="defaultIcon"
           :themeTypeArr="themeType"
           :panelProps="panelPropsObjsymbol"
           :resetAllLayer="resetAllLayerFlag"
@@ -112,6 +113,9 @@ export default {
       default() {
         return []
       }
+    },
+    defaultIcon: {
+      type: String
     },
     iconUrl: {
       type: String
