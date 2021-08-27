@@ -150,6 +150,7 @@ export default {
           taskid: taskid
         }
       });
+      console.log('【本次上传对应taskid】', taskid)
       changeUploadWebsocketTaskId({
         webSocketTaskId: taskid
       });
