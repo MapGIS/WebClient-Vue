@@ -74,6 +74,6 @@ export default {
 
 <style>
 .mapgis-mvt-editor-feature {
-  margin: 2px 0px;
+  margin: 12px 0px;
 }
 </style>
