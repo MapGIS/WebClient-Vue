@@ -1,6 +1,9 @@
 <template>
-  <div v-show="visible" :style="outStyle" class="mapgis-ui-collapse-card">
+  <div v-show="visible">
     <mapgis-ui-button
+      :style="outStyle"
+      class="mapgis-ui-collapse-card-mini"
+      type="primary"
       shape="circle"
       v-if="collapse"
       :class="getPositionClassName()"
@@ -13,7 +16,14 @@
       />
     </mapgis-ui-button>
     <transition name="bounce">
-      <mapgis-ui-card v-show="!collapse" :bordered="false" size="small">
+      <mapgis-ui-card
+        class="mapgis-ui-collapse-card"
+        :style="outStyle"
+        hoverable
+        v-show="!collapse"
+        :bordered="false"
+        size="small"
+      >
         <slot name="title"></slot>
         <slot></slot>
       </mapgis-ui-card>
@@ -89,12 +99,12 @@ export default {
         case "right":
         case "top-right":
         case "bottom-right":
-          className += "mapgis-mvt-legend-card-right";
+          className += "mapgis-ui-collapse-card-right";
           break;
         case "left":
         case "top-left":
         case "bottom-left":
-          className += "mapgis-mvt-legend-card-left";
+          className += "mapgis-ui-collapse-card-left";
           break;
       }
       return className;
@@ -103,21 +113,6 @@ export default {
 };
 </script>
 <style>
-.mapgis-ui-collapse-card-iconfont {
-  font-size: 22px;
-}
-
-.mapgis-mvt-legend-card-left {
-  float: left;
-}
-
-.mapgis-mvt-legend-card-right {
-  float: right;
-}
-
-.mapgis-ui-collapse-card-button {
-}
-
 .bounce-enter-active {
   animation: bounce-in 0.5s;
 }

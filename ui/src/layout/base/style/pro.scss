@@ -56,15 +56,17 @@
     position: absolute;
     z-index: 9999;
     right: 0px;
-    top: 40vh;
-    width: 36px;
-    height: 36px;
+    top: 25vh;
+    width: 24px;
+    height: 24px;
     background-color: $ribbon-background;
     border-color: $ribbon-background;
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
+    box-shadow: 0px 0px 4px 1px $nav-shadow-backgroud;
+    /* color: $primary-6; */
   }
 }
 

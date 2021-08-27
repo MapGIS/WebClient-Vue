@@ -1,4 +1,6 @@
-# FeatureService
+# 要素服务
+
+> mapgis-feature-service
 
 ## Data
 
@@ -117,7 +119,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map 
     class="main"
     :accessToken="accessToken"
     :mapStyle="mapStyle"
@@ -125,14 +127,14 @@ All common [layers props](/zh/api/Layers/README.md#props)
     :center="outerCenter"
     :crs="mapCrs"
   >
-  </mapbox-map>
+  </mapgis-web-map >
 </template>
 
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
-  MapboxMap,
+  MapgisWebMap,
   featureService,
   ObjectIdsParameter,
   SQLParameter,
@@ -141,7 +143,7 @@ import {
 
 export default {
   components: {
-    MapboxMap
+    MapgisWebMap
   },
   data() {
     return {

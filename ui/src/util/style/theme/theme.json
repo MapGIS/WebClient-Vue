@@ -4,6 +4,7 @@
     "label": "dark",
     "style": "dark",
     "shadow": "#242424",
+    "deepShadow": "rgb(0, 0, 0, 0.45)",
     "textColor": "rgba(255, 255, 255, 0.65)",
     "textColorSecondary": "rgba(255, 255, 255, 0.45)",
     "background": "#1E1E1E",
@@ -56,7 +57,7 @@
     "searchArrowIconBg": "#383838",
     "sliderRailBackgroundColor": "#6B6B6B",
     "divColor": "#ffffff",
-    "divBackground": "#383838",
+    "divBackground": "#2c2c2c",
     "divForderColor": "#eeeeee",
     "contentColor": "#ffffff",
     "contentBackground": "#383838",
@@ -71,6 +72,7 @@
     "panelTextColor": "#FFFFFF",
     "panelOptionColor": "#FFFFFF",
     "panelBoxShadow": "rgba(0 0 0 / 31%)",
+    "tableBackground": "#242424",
     "panelCollapseColor": "rgb(56,56,56)"
   },
   {
@@ -78,6 +80,7 @@
     "label": "light",
     "style": "light",
     "shadow": "#E2E4E7",
+    "deepShadow": "rgb(0, 0, 0, 0.45)",
     "textColor": "rgba(0, 0, 0, 0.65)",
     "textColorSecondary": "rgba(0, 0, 0, 0.45)",
     "background": "#fff",
@@ -145,6 +148,7 @@
     "panelTextColor": "#666666",
     "panelOptionColor": "#999999",
     "panelBoxShadow": "rgba(235 235 235 / 31%)",
+    "tableBackground": "#F2F4F7",
     "panelCollapseColor": "#FFFFFF"
   },
   {

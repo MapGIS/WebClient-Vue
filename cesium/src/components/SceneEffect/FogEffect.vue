@@ -24,20 +24,40 @@
 
 <script>
 
-import BaseMixin from "../Controls/ServiceLayer";
+import BaseMixin from "../UI/Controls/ServiceLayer";
 
 export default {
   name: "mapgis-3d-fog-effect",
   mixins: [BaseMixin],
   props: {
-    alpha: {    //[0,1]
+    alpha: {    //[0.0,1.0]
       type: Number,
       default: 0.1
     },
+    enable:{
+      type: Boolean,
+      default: true
+    }
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
-
+    alpha: {
+      handler(next){
+        // this.changeSpeed(next);
+        this.alpha = next;
+        this.unmount();
+        this.initFog();
+      }
+    },
+    enable: {
+      handler(stag){
+        // this.changeDensity(next);
+        let {CesiumZondy,vueKey, vueIndex} = this;
+        let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+        let fog = find.source;
+        fog.enabled = stag;
+      }
+    },
   },
   data() {
     return {
@@ -47,14 +67,13 @@ export default {
   mounted() {
     let vm = this;
     vm.$_init(vm.initFog());
+    let {CesiumZondy,vueKey, vueIndex,enable} = this;
+    let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+    let fog = find.source;
+    fog.enabled = enable;
   },
   destroyed() {
-    let {webGlobe, vueKey, vueIndex} = this;
-    let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
-    if (find && find.options && find.options.fog) {
-      webGlobe.scene.VisualAnalysisManager.remove(find.options.fog);
-    }
-    this.$emit("unload", this);
+    this.unmount();
   },
   methods: {
     initFog() {
@@ -70,13 +89,21 @@ export default {
       });
       //添加雾特效
       let fog = advancedAnalysisManager.createFog({
-        // speed:speed,
-        // angle:angle,
         alpha:alpha
       });
       CesiumZondy.AdvancedAnalysisManager.addSource(vueKey, vueIndex, fog);
       this.$emit("load", this);
     },
+    unmount(){
+      let {webGlobe, CesiumZondy,vueKey, vueIndex} = this;
+      let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+      if (find && find.source) {
+        // CesiumZondy.AdvancedAnalysisManager.removeStage(find.source);
+        webGlobe.viewer.scene.postProcessStages.remove(find.source);
+      }
+      CesiumZondy.AdvancedAnalysisManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
+    }
   },
 
 }

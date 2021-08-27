@@ -92,3 +92,49 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 ::: tip 为什么要拷贝@mapgis/cesium
 由于原生的 Cesium 在支持 Webpack 编译的时候也是采取的 copy 插件来执行对应的文件夹拷贝操作。 因此为了统一处理，这里`统一不采取`手动修改 webpack.config 的方式，而是将 cesium 的所有文件放在 public 或者 asset 的某个目录下，自己`手动实现`静态资料的拷贝
 :::
+
+### yarn link 方式`特殊情况下：需要使用组件最新的功能时`
+
+mapgis webclient-vue-cesium 的安装：
+
+> 通过在 github 路径中：https://github.com/MapGIS/WebClient-Vue 下载最新的 WebClient-Vue 项目。
+
+1.项目安装完成后，分别有：cesium、mapboxgl、ui 工程，执行相对应文件中的 package.json 的 yarn/npm install 安装项目依赖。
+
+2.cd 进入 cesium 工程目录下，执行
+
+```bash
+yarn link
+```
+
+3.再 cd 进入自己的项目工程，执行
+
+```bash
+yarn link @mapgis/webclient-vue-cesium
+```
+
+4.同理，mapboxgl、ui 工程也执行 2、3 步骤来链接到自己项目中
+
+5.在项目中 main.js 中全局引入组件和样式文件即可使用
+
+```js
+import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
+
+import MapgisUi from "@mapgis/webclient-vue-ui";
+import Mapgis3d from "@mapgis/webclient-vue-cesium";
+
+Vue.use(MapgisUi);
+Vue.use(Mapgis3d);
+```
+
+6.不想使用 link @mapgis/webclient-vue-cesium 时可以执行
+
+```bash
+yarn unlink @mapgis/webclient-vue-cesium
+```
+
+解除链接。
+
+::: warning
+~ 纯浏览器端建议还是使用 Cesium 原生的方式，而不是 Vue 组件的方式，真心建议
+:::

@@ -6,7 +6,7 @@
       :class="{ 'mapgis-ui-pro-layout-setting': true, active: visible }"
       @click="showSetting"
     >
-      <mapgis-ui-iconfont type="mapgis-jieshutiaozheng" class="setting" />
+      <mapgis-ui-iconfont type="mapgis-setting" class="setting" />
     </mapgis-ui-button>
     <mapgis-ui-drawer
       class="mapgis-ui-pro-setting-drawer"
@@ -225,6 +225,6 @@ export default {
 }
 
 .setting {
-  font-size: 18px;
+  font-size: 12px;
 }
 </style>

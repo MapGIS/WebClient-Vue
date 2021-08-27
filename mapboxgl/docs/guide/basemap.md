@@ -112,7 +112,7 @@ import mapboxgl from "@mapgis/mapbox-gl";
 
 ## 地图加载
 
-当地图加载完毕,即 map.on(load,callback)事件响应, `mapbox-map`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 Mapbox GL JS `Map` 对象.
+当地图加载完毕,即 map.on(load,callback)事件响应, `mapgis-web-map`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 Mapbox GL JS `Map` 对象.
 
 ```js
 onMapLoaded(payload) {
@@ -152,7 +152,7 @@ Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 Map �
 
 ```vue
 <template>
-  <mapbox-map
+  <mapgis-web-map 
     :accessToken="accessToken"
     :mapStyle.sync="mapStyle"
     @load="onMapLoaded"

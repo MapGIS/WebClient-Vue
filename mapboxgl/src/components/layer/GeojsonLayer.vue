@@ -45,6 +45,9 @@ export default {
     }
   },
   props: {
+    data:{
+      type: [String,Object]
+    },
     enablePopup: {
       type: Boolean,
       defalut: false
@@ -147,9 +150,9 @@ export default {
   },
 
   created() {
-    if (this.source) {
+    if (this.data) {
       this.$watch(
-          "source.data",
+          ()=> this.data,
           function (next) {
             if (this.initial) return;
             this.mapSource.setData(next);
@@ -164,27 +167,27 @@ export default {
     $_deferredMount() {
       let {map, mapbox} = this;
       this.map.on("dataloading", this.$_watchSourceLoading);
-      if (this.source) {
-        let source;
-        if (this.enablePopup) {
-          source = {
-            type: "geojson",
-            generateId: true,
-            ...this.source
-          };
-        } else {
-          source = {
-            type: "geojson",
-            ...this.source
-          };
+      let source;
+      if (this.data) {
+        source = {
+          type: "geojson",
+          data: this.data
         }
-        try {
+      } else if (this.source) {
+        source = {
+          type: "geojson",
+          ...this.source
+        };
+        if (this.enablePopup) {
+          source.generateId = true;
+        }
+      }
+      try {
+        this.map.addSource(this.sourceId, source);
+      } catch (err) {
+        if (this.replaceSource) {
+          this.map.removeSource(this.sourceId);
           this.map.addSource(this.sourceId, source);
-        } catch (err) {
-          if (this.replaceSource) {
-            this.map.removeSource(this.sourceId);
-            this.map.addSource(this.sourceId, source);
-          }
         }
       }
       this.$_addLayer();
@@ -321,7 +324,7 @@ export default {
             let newfeatrues;
             // 针对属性进行过滤显示
             let layerIds = Object.keys(parentPopupLayers);
-            newfeatrues = fs.map((f)=>{
+            newfeatrues = fs.map((f) => {
               if (parentPopupLayers.hasOwnProperty(f.layer.id)) {
                 let properties = f.properties;
                 f.properties = {};
@@ -347,7 +350,6 @@ export default {
             // 针对高亮进行过滤显示
             // vm.highlightLayer(newfeatrues);
             vm.currentClickInfo = newfeatrues;
-            console.log("click", vm.$refs.click);
             return vm.$refs.click.$el;
           }
         });
@@ -382,21 +384,21 @@ export default {
       }
       this.$emit("select-layer", checkedLayer);
     },
-    $_bindHightLayerEvent () {
-      const vm  = this;
-      let { map } = this;
+    $_bindHightLayerEvent() {
+      const vm = this;
+      let {map} = this;
       map.on('click', this.layerId, function (e) {
         if (e.features.length > 0) {
           if (vm.hoveredStateId !== null) {
             map.setFeatureState(
-                { source: vm.sourceId, id: vm.hoveredStateId },
-                { hover: false }
+                {source: vm.sourceId, id: vm.hoveredStateId},
+                {hover: false}
             );
           }
           vm.hoveredStateId = e.features[0].id;
           map.setFeatureState(
-              { source: vm.sourceId,  id: vm.hoveredStateId },
-              { hover: true }
+              {source: vm.sourceId, id: vm.hoveredStateId},
+              {hover: true}
           );
         }
       });
@@ -434,15 +436,15 @@ export default {
             ]
           }
         }
-      }else if (this.layer.type === 'circle') {
+      } else if (this.layer.type === 'circle') {
         let circleRadius;
-        if (this.layer && this.layer.paint && this.layer.paint["circle-radius"] ) {
+        if (this.layer && this.layer.paint && this.layer.paint["circle-radius"]) {
           circleRadius = this.layer.paint["circle-radius"] + 4;
-        } else  {
+        } else {
           circleRadius = 6 + 4;
         }
 
-            highlight = {
+        highlight = {
           id: this.layerId + "_高亮边界线",
           type: 'circle',
           source: this.sourceId,
@@ -450,7 +452,7 @@ export default {
             "circle-color": "rgba(0, 0, 0, 0)",
             "circle-radius": circleRadius,
             "circle-stroke-color": '#00ffff',
-            'circle-stroke-width' : [
+            'circle-stroke-width': [
               'case',
               ['boolean', ['feature-state', 'hover'], false],
               2,
@@ -460,7 +462,7 @@ export default {
         }
       }
 
-      if(!map.getLayer(highlight.id)) map.addLayer(highlight);
+      if (!map.getLayer(highlight.id)) map.addLayer(highlight);
     }
   }
 };

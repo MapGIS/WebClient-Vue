@@ -202,6 +202,7 @@ export default {
       changeUploadWebsocketTaskId({
         webSocketTaskId: taskid // 维护最新的taskid
       })
+      console.log('【本次导入对应taskid】', taskid)
       return result
     }
   },

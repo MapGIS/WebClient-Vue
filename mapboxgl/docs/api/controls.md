@@ -1,8 +1,10 @@
-# Map control components
+# 地图控件
 
-## AttributionControl
+## 属性组件
 
-An AttributionControl control presents the map's attribution information.
+> mapgis-attribution
+
+属性组件可以显示地图属性信息
 
 ### 属性
 
@@ -22,9 +24,11 @@ An AttributionControl control presents the map's attribution information.
 - **描述:** String or strings to show in addition to any other attributions.
 - **查看:** `options.customAttribution` in [AttributionControl](https://docs.mapbox.com/mapbox-gl-js/api/#attributioncontrol)
 
-## FullscreenControl
+## 全屏组件
 
-Creates a button on the map to toggle fulscreen mode.
+> mapgis-fullscreen
+
+全屏组件会在地图上创建一个按钮来触发全屏模式。
 
 ### 属性
 
@@ -35,9 +39,11 @@ Creates a button on the map to toggle fulscreen mode.
 - **描述:** DOM element which should be made full screen. By default, the map container element will be made full screen.
 - **查看:** `options.container` in [FullscreenControl](https://docs.mapbox.com/mapbox-gl-js/api/#fullscreencontrol)
 
-## GeolocateControl
+## 地址组件
 
-Provides a button that uses the browser's geolocation API to locate the user on the map.
+> mapgis-geolocate
+
+地址组件提供一个使用浏览器定位API的按钮来为用户在地图上定位。
 
 ### 属性
 
@@ -81,7 +87,9 @@ Provides a button that uses the browser's geolocation API to locate the user on 
 - **Returns:** `boolean`
 - **查看:** [trigger](https://docs.mapbox.com/mapbox-gl-js/api/#geolocatecontrol#trigger) GeolocateControl method
 
-## NavigationControl
+## 导航组件
+
+> mapgis-navigation
 
 ### 属性
 
@@ -101,7 +109,9 @@ Provides a button that uses the browser's geolocation API to locate the user on 
 - **描述:** If true the zoom-in and zoom-out buttons are included.
 - **查看:** `options.showZoom` in [NavigationControl](https://docs.mapbox.com/mapbox-gl-js/api/#navigationcontrol)
 
-## ScaleControl
+## 比例尺组件
+
+> mapgis-scale
 
 ### 属性
 
