@@ -152,15 +152,14 @@ module.exports = {
           {
             title: "组件",
             collapsable: false,
-            children:
-            [
+            children: [
               {
-                title:'地图',
+                title: "地图",
                 collapsable: false
               },
               ["/api/", "地图对象"],
               {
-                title:'地图子组件',
+                title: "地图子组件",
                 collapsable: false
               },
               ["/api/controls.md", "控制组件"],
@@ -175,13 +174,14 @@ module.exports = {
               ["/api/UI/Legend/legend.md", "图例"],
               ["/api/UI/Hawkeye/hawkeye.md", "鹰眼"],
               ["/api/UI/Compare/compare.md", "卷帘"],
+              ["/api/UI/Zoom/zoom.md", "缩放"],
 
               ["/api/UI/Table/BaseTable.md", "表格"],
               // ["/api/UI/Table/FeatureTable.md", "要素表格"],
               // ["/api/map/mixin/FeatureService.md", "要素服务"],
               {
                 title: "图层",
-                collapsable: false,
+                collapsable: false
               },
               ["/api/Layers/geojsonlayer.md", "GeoJSON图层"],
               ["/api/Layers/vectorlayer.md", "矢量图层"],
@@ -198,7 +198,7 @@ module.exports = {
               ["/api/Layers/ArcGISServer/ArcGISTileLayer.md", "ArcGIS瓦片"],
               ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
               {
-                title:'可视化',
+                title: "可视化",
                 collapsable: false
               },
               ["/api/Overlay/Echarts.md", "Echarts"],
@@ -207,7 +207,7 @@ module.exports = {
               ["/api/Layers/Heater/heater.md", "热力"],
               ["/api/Layers/Building/building.md", "建筑白膜"],
               ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
-              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
+              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"]
             ]
           },
 
