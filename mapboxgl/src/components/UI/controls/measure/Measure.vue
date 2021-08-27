@@ -5,6 +5,41 @@
     <slot name="measureTool" />
     <!-- slot for measureMarker -->
     <slot name="measureMarker" />
+    <div class="mapgis-measure-control" v-show="enableControl">
+      <mapgis-ui-space>
+        <mapgis-ui-tooltip
+          v-for="(item, i) in measures"
+          :key="i"
+          placement="bottom"
+        >
+          <template slot="title">
+            <span>{{ item.tip }}</span>
+          </template>
+          <mapgis-ui-button
+            shape="circle"
+            :type="item.type"
+            @click="item.click"
+            :class="item.className"
+          >
+            <mapgis-ui-iconfont
+              :type="item.icon"
+              :class="item.className"
+              theme="filled"
+            />
+          </mapgis-ui-button>
+        </mapgis-ui-tooltip>
+      </mapgis-ui-space>
+      <mapgis-marker
+        color="#ff0000"
+        :coordinates="coordinates"
+        v-if="coordinates.length > 0"
+      >
+        <div slot="marker" class="mapgis-measure-control-label">
+          <div>面积：{{ area }}</div>
+          <div>周长：{{ perimeter }}</div>
+        </div>
+      </mapgis-marker>
+    </div>
   </div>
 </template>
 
@@ -62,6 +97,14 @@ export default {
       type: Boolean,
       default: true
     },
+    expandControl: {
+      type: Boolean,
+      default: false
+    },
+    enableControl: {
+      type: Boolean,
+      default: true
+    },
     measureMode: {
       type: String,
       required: true,
@@ -81,7 +124,38 @@ export default {
     return {
       initial: true,
       measure: undefined,
-      oldStyles: DefaultMeasureStyle
+      oldStyles: DefaultMeasureStyle,
+      area: 0,
+      perimeter: 0,
+      coordinates: [],
+      innermeasureMode: '',
+      measures: [
+        {
+          icon: "mapgis-huizhi1",
+          type: "primary",
+          tip: "展开",
+          click: this.changeFold,
+          className: "mapgis-measure-expand"
+        },
+        {
+          icon: "mapgis-ruler",
+          type: "primary",
+          tip: "长度",
+          click: this.toggleMeasureLength
+        },
+        {
+          icon: "mapgis-area",
+          type: "primary",
+          tip: "面积",
+          click: this.toggleMeasureArea
+        },
+        {
+          icon: "mapgis-shanchu_dianji",
+          type: "primary",
+          tip: "清空图元",
+          click: this.toggleMeasureDelete
+        }
+      ]
     };
   },
 
@@ -106,6 +180,16 @@ export default {
 
   mounted() {
     this.$_initMeasure();
+    if (this.enableControl) {
+      let position = this.position;
+      if (this.expandControl) {
+        this.changeFold();
+      } else {
+        let pos = position.split("-");
+        document.querySelector(".mapgis-draw-control").style =
+          pos[0] + ": 10px;" + pos[1] + ": 10px;";
+      }
+    }
   },
 
   beforeDestroy() {
@@ -153,6 +237,7 @@ export default {
       // asControl 本身是拥有 $_bindSelfEvents 方法的，但是这里的draw组件并不是遵循的mapbox-gl.js的事件机制，
       // 因此我们需要覆盖该方法, 按照对应的业务方式实现
       const vm = this;
+
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       Object.keys(this.$listeners)
         .concat([
@@ -178,10 +263,17 @@ export default {
         const result = vm._updateLengthOrArea();
         vm.$emit(measureEvents.measureresult, result);
         vm.$emit(measureEvents.measureResult, result);
-        if(!this.editable){
+        this.disableDrag();
+        if (result.center) {
+          const coords = result.center.geometry.coordinates;
+          vm.coordinates = coords;
+        }
+        vm.area = result.geographyArea || "无";
+        vm.perimeter = result.geographyPerimeter;
+        if (!this.editable) {
           window.setTimeout(() => {
             vm.measure && vm.measure.changeMode("simple_select");
-          }, 100)
+          }, 100);
         }
       }
       if (eventName === "measureUpdate" || eventName === "measureupdate") {
@@ -231,6 +323,7 @@ export default {
 
     _updateLengthOrArea() {
       if (!this.measure) return;
+      const {measureMode, innermeasureMode} = this;
       let data = this.measure.getAll();
       let geographyPerimeter,
         geographyArea,
@@ -244,7 +337,7 @@ export default {
         let mercatorCoordinate =
           mercatorData.features[mercatorData.features.length - 1].geometry
             .coordinates;
-        if (this.measureMode === measureModes.measureLength) {
+        if (measureMode === measureModes.measureLength || innermeasureMode === measureModes.measureLength) {
           center = turf.centroid(turf.lineString(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           projectionPerimeter = 0;
@@ -253,7 +346,7 @@ export default {
             let y = mercatorCoordinate[i][1] - mercatorCoordinate[i - 1][1];
             projectionPerimeter += Math.sqrt(x * x + y * y);
           }
-        } else if (this.measureMode === measureModes.measureArea) {
+        } else if (measureMode === measureModes.measureArea || innermeasureMode === measureModes.measureArea) {
           center = turf.centroid(turf.polygon(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           geographyArea = turf.area(data);
@@ -306,7 +399,89 @@ export default {
       this.$_removeMeasureControl();
 
       this.$_emitEvent("removed");
+    },
+
+    changeFold(e) {
+      // document.querySelector(".mapgis-ui-space").style="backgroundColor:black;";
+      let space = document.querySelector(
+        ".mapgis-measure-control > .mapgis-ui-space"
+      );
+      let width = getComputedStyle(space).width;
+      if (width == "40px") {
+        space.style =
+          "width: 160px!important;overflow: hidden;transition: width .5s;";
+      } else {
+        space.style =
+          "width: 40px!important;overflow: hidden;transition: width .5s;";
+      }
+    },
+    disableDrag() {
+      const vm = this;
+      vm.map.on("draw.selectionchange", e => {
+        const { features, points } = e;
+        const hasLine = features && features.length > 0;
+        const hasPoints = points && points.length > 0;
+        if (hasLine && !hasPoints) {
+          // line clicked
+          if (vm.measure.getMode() !== "direct_select") {
+            vm.measure.changeMode("simple_select", { featureIds: [] });
+            // vm.measure.changeMode('direct_select', { featureId: features[0].id });
+          }
+        } else if (hasLine && hasPoints) {
+          // line vertex clicked
+        } else if (!hasLine && !hasPoints) {
+          // deselected
+        }
+      });
+    },
+    handleMeasureResult(e) {
+      this.disableDrag();
+      const coords = e.center.geometry.coordinates;
+      this.coordinates = coords;
+      this.area = e.geographyArea || "无";
+      this.perimeter = e.geographyPerimeter;
+    },
+    toggleMeasureLength() {
+      this.enableMeasure();
+      this.coordinates = [];
+      this.innermeasureMode = "measure-length";
+      this.measure && this.measure.changeMode("draw_line_string");
+    },
+    toggleMeasureArea() {
+      this.enableMeasure();
+      this.coordinates = [];
+      this.innermeasureMode = "measure-area";
+      this.measure && this.measure.changeMode("draw_polygon");
+    },
+    toggleMeasureDelete() {
+      this.coordinates = [];
+      this.enableMeasure();
+      this.measure && this.measure.deleteAll();
     }
   }
 };
 </script>
+
+<style>
+.mapgis-measure-control > .mapgis-ui-space {
+  width: 40px !important;
+  overflow: hidden;
+  transition: width 0.5s;
+}
+
+.mapgis-measure-expand.mapgis-ui-btn {
+  width: 40px !important;
+  height: 40px !important;
+}
+.mapgis-measure-expand.anticon {
+  font-size: 19px !important;
+}
+
+.mapgis-measure-control {
+  width: fit-content;
+  position: absolute;
+  /*top: 10px;*/
+  /*left: 10px;*/
+  z-index: 3000;
+}
+</style>
