@@ -16,16 +16,29 @@ export default {
     zoomOffset: {
       type: Number,
       default: 0
+    },
+    forceOffset: {
+      type: Boolean,
+      default: false
     }
   },
   created() {},
   methods: {
     $_init() {
+      const { forceOffset, zoomOffset } = this;
       if (this.baseUrl) {
-        this._zoomOffset = this.zoomOffset;
+        this._zoomOffset = zoomOffset;
         this._url = this.baseUrl + "/tile/{z}/{y}/{x}";
         if (this.map.getCRS().epsgCode.includes("4326")) {
-          this._zoomOffset = -1;
+          if (zoomOffset == 0) {
+            // 这个地方会导致4326无法主动传入offset=0的情况，但是默认的arcgis
+            // 测试10.3 10.5 10.7后发现arcigs默认情况下就是offset=-1,
+            // 因此忽略主动传入0的场景. 这种情况只会发生在操作arcserver的时候
+            // 人为刻意的进行一张512*512的操作导致，这个操作本身是一种错误的操作
+            this._zoomOffset = forceOffset ? zoomOffset : -1;
+          } else {
+            this._zoomOffset = zoomOffset;
+          }
         }
       }
     },
