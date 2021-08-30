@@ -56,6 +56,6 @@ export { default as Mapgis3dHeightlimited } from "../components/Analysis/HeightL
 export { default as Mapgis3dShadow } from "../components/Analysis/Shadow";
 
 
-export { default as Mapgis3dRainEffect } from "./components/SceneEffect/RainEffect";
-export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";
-export { default as Mapgis3dFogEffect } from "./components/SceneEffect/FogEffect";
+export { default as Mapgis3dRainEffect } from "../components/SceneEffect/RainEffect";
+export { default as Mapgis3dSnowEffect } from "../components/SceneEffect/SnowEffect";
+export { default as Mapgis3dFogEffect } from "../components/SceneEffect/FogEffect";
