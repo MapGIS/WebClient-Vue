@@ -4,43 +4,33 @@
     <slot name="toolbar" />
     <!-- slot for toolbar-item -->
     <slot v-if="drawer" />
-    <div class="mapgis-default-control" v-show="enableControl">
+    <div class="mapgis-draw-control" v-show="enableControl">
       <mapgis-ui-space>
-        <mapgis-ui-tooltip v-for="(item, i) in draws" :key="i" placement="bottom">
+        <mapgis-ui-tooltip
+          v-for="(item, i) in draws"
+          :key="i"
+          placement="bottom"
+        >
           <template slot="title">
             <span>{{ item.tip }}</span>
           </template>
           <mapgis-ui-button
-              shape="circle"
-              :type="item.type"
-              @click="item.click"
-              :class="item.className"
+            shape="circle"
+            :type="item.type"
+            @click="item.click"
+            :class="item.className"
           >
-            <mapgis-ui-iconfont :type="item.icon" :class="item.className" theme="filled"/>
+            <mapgis-ui-iconfont
+              :type="item.icon"
+              :class="item.className"
+              theme="filled"
+            />
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
       </mapgis-ui-space>
     </div>
   </div>
 </template>
-
-<style scoped>
-
-.mapgis-default-control>.mapgis-ui-space{
-  width: 40px!important;
-  overflow: hidden;
-  transition: width .5s ;
-}
-
-.bigbutton.mapgis-ui-btn{
-  width: 40px!important;
-  height: 40px!important;
-}
-.bigbutton.anticon{
-  font-size: 19px!important;
-}
-
-</style>
 
 <script>
 // import { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
@@ -49,7 +39,7 @@
   scriptUrl: '//at.alicdn.com/t/font_2743527_adfkxoozjnc.js',
 }); */
 import * as turf from "@turf/turf";
-import mapboxgl from "@mapgis/mapbox-gl"
+import mapboxgl from "@mapgis/mapbox-gl";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
 // import { CircleMode, DragCircleMode } from "mapbox-gl-draw-circle";
@@ -102,7 +92,7 @@ const drawEvents = {
 export default {
   name: "mapgis-draw",
   mixins: [drawMixin, controlMixin],
-  components:{
+  components: {
     /* MapgisUiIconfont */
   },
   //@see https://cn.vuejs.org/v2/guide/components-edge-cases.html#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5
@@ -122,6 +112,10 @@ export default {
     editable: {
       type: Boolean,
       default: true
+    },
+    expandControl: {
+      type: Boolean,
+      default: false
     },
     enableControl: {
       type: Boolean,
@@ -190,50 +184,50 @@ export default {
       oldStyles: DefaultDrawStyle,
       draws: [
         {
-          icon: "icon-huizhi1",
+          icon: "mapgis-huizhi1",
           type: "primary",
-          tip:"展开",
+          tip: "展开",
           click: this.changeFold,
-          className:"bigbutton"
+          className: "mapgis-draw-expand"
         },
         {
-          icon: "icon-huizhidian2",
+          icon: "mapgis-huizhidian2",
           type: "primary",
           tip: "画点",
           click: this.togglePoint
         },
         {
-          icon: "icon-huizhixian1",
+          icon: "mapgis-huizhixian1",
           type: "primary",
           tip: "画线",
           click: this.togglePolyline
         },
         {
-          icon: "icon-huizhijuxing",
+          icon: "mapgis-huizhijuxing",
           type: "primary",
           tip: "画矩形",
           click: this.toggleRect
         },
         {
-          icon: "icon-draw-polygon",
+          icon: "mapgis-draw-polygon",
           type: "primary",
           tip: "画多边形",
           click: this.togglePolygon
         },
         {
-          icon: "icon-huizhiyuan1",
+          icon: "mapgis-huizhiyuan1",
           type: "primary",
           tip: "画圆",
           click: this.toggleCircle
         },
         {
-          icon: "icon-icon_huizhiyuanxing",
+          icon: "mapgis-icon_huizhiyuanxing",
           type: "primary",
           tip: "画半径",
           click: this.toggleRadius
         },
         {
-          icon: "icon-shanchu_dianji",
+          icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除选中图元",
           click: this.toggleDelete
@@ -278,10 +272,15 @@ export default {
 
   mounted() {
     this.$_initDraw();
-    if(this.enableControl){
+    if (this.enableControl) {
       let position = this.position;
-      let pos = position.split('-');
-      document.querySelector(".mapgis-default-control").style = pos[0]+ ": 10px;" + pos[1] + ": 10px;";
+      if (this.expandControl) {
+        this.changeFold();
+      } else {
+        let pos = position.split("-");
+        document.querySelector(".mapgis-draw-control").style =
+          pos[0] + ": 10px;" + pos[1] + ": 10px;";
+      }
     }
   },
 
@@ -320,8 +319,10 @@ export default {
       let listeners;
       if (this.editable) {
         listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
-      }  else {
-        listeners = ["drawUpdate","drawCreate"].concat(Object.keys(this.$listeners));
+      } else {
+        listeners = ["drawUpdate", "drawCreate"].concat(
+          Object.keys(this.$listeners)
+        );
       }
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
@@ -329,8 +330,8 @@ export default {
       listeners.forEach(eventName => {
         if (events.includes(eventName)) {
           this.$_bindDrawEvents(
-              drawEvents[eventName],
-              vm.$_emitDrawEvent.bind(vm, eventName)
+            drawEvents[eventName],
+            vm.$_emitDrawEvent.bind(vm, eventName)
           );
         }
       });
@@ -343,20 +344,20 @@ export default {
       let mode = this.drawer.getMode();
       if (eventName == "drawUpdate" && mode == "direct_select") {
         if (
-            eventData.action == "change_coordinates" &&
-            eventData.features &&
-            eventData.features.length >= 0
+          eventData.action == "change_coordinates" &&
+          eventData.features &&
+          eventData.features.length >= 0
         ) {
           let feature = eventData.features[0];
           let center = turf.center(feature);
-          let area = Math.round(turf.area(feature))/1000000;
-          let radiusinkm = Math.round(Math.sqrt(area / Math.PI))/1000;
+          let area = Math.round(turf.area(feature)) / 1000000;
+          let radiusinkm = Math.round(Math.sqrt(area / Math.PI)) / 1000;
           this.$emit("update-radius", { area, radiusinkm, center });
         }
       } else if (eventName == "drawCreate" && !this.editable) {
         window.setTimeout(() => {
           vm.drawer && vm.drawer.changeMode("simple_select");
-        }, 100)
+        }, 100);
       }
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
@@ -408,18 +409,19 @@ export default {
       this.$_emitEvent("removed");
     },
 
-    changeFold(e){
-      // document.querySelector(".mapgis-ui-space").style="backgroundColor:black;";
-      let space = document.querySelector(".mapgis-ui-space");
+    changeFold(e) {
+      let space = document.querySelector(".mapgis-draw-control > .mapgis-ui-space");
       let width = getComputedStyle(space).width;
-      if (width == "40px"){
-        space.style= "width: 320px!important;overflow: hidden;transition: width .5s;"
-      }else{
-        space.style="width: 40px!important;overflow: hidden;transition: width .5s;"
+      if (width == "40px") {
+        space.style =
+          "width: 320px!important;overflow: hidden;transition: width .5s;";
+      } else {
+        space.style =
+          "width: 40px!important;overflow: hidden;transition: width .5s;";
       }
     },
 
-    toggleStatic(){
+    toggleStatic() {
       // this.enableDrawer();
       this.drawer && this.drawer.changeMode("static");
     },
@@ -450,7 +452,6 @@ export default {
     toggleRadius() {
       this.enableDrawer();
       this.drawer && this.drawer.changeMode("draw_radius");
-
     },
     toggleDelete() {
       this.enableDrawer();
@@ -467,7 +468,21 @@ export default {
 </script>
 
 <style>
-.mapgis-default-control {
+.mapgis-draw-control > .mapgis-ui-space {
+  width: 40px !important;
+  overflow: hidden;
+  transition: width 0.5s;
+}
+
+.mapgis-draw-expand.mapgis-ui-btn {
+  width: 40px !important;
+  height: 40px !important;
+}
+.mapgis-draw-expand.anticon {
+  font-size: 19px !important;
+}
+
+.mapgis-draw-control {
   width: fit-content;
   position: absolute;
   /*top: 10px;*/

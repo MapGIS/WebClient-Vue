@@ -16,6 +16,16 @@ export default {
   model: {},
   props: formProps,
   computed: {},
-  methods: {}
+  methods: {
+    onFieldBlur() {
+      this.$children[0].onFieldBlur();
+    },
+    validate() {
+      this.$children[0].validate();
+    },
+    resetFields() {
+      this.$children[0].resetFields();
+    }
+  }
 };
 </script>

@@ -49,6 +49,9 @@ export default {
     icons: {
       type: Array
     },
+    defaultIcon: {
+      type: String
+    },
     themeTypeArr: {
       type: Array
     },
@@ -917,6 +920,21 @@ export default {
       this.showPanelFlag = true;
       this.$_toggleLayer();
     },
+    $_clickSvg(icon) {
+      let vm = this;
+      let img = new Image(128, 128);
+      let iconFullName = icon.split("/")[icon.split("/").length - 1];
+      let iconName = iconFullName.split(".")[0];
+      img.addEventListener("load", function() {
+        vm.map.addImage(iconName, img);
+        let hasIcon = vm.map.hasImage(iconName);
+        if (hasIcon) {
+          vm.$_setLayOutProperty("icon-image", iconName);
+          vm.$_setPaintProperty("icon-color", "#ffffff");
+        }
+      });
+      img.src = icon;
+    },
     $_mount() {
       if (!window._workspace) {
         window._workspace = {};
@@ -1272,10 +1290,17 @@ export default {
           ]
         );
       } else {
-        this.$_setPaintProperty("line-dasharray", [
-          lineStyle.value[0],
-          lineStyle.value[1]
-        ]);
+        if (lineStyle.key === "theme-panel-line-zero") {
+          this.$_setPaintProperty("line-dasharray", [
+            lineStyle.value[0],
+            lineStyle.value[0]
+          ]);
+        } else {
+          this.$_setPaintProperty("line-dasharray", [
+            lineStyle.value[0],
+            lineStyle.value[1]
+          ]);
+        }
       }
     },
     $_getNumberFields(features) {

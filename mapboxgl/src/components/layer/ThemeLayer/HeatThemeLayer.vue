@@ -130,7 +130,7 @@ export default {
             value: this.heatMapLayerId
           });
           window.originLayer[this.layerIdCopy][this.layerIdCopy + "_" + this.$_getThemeName() + "_extraLayer"] = extraLayer;
-          this.title = "热力专题图" + "_" + this.layerIdCopy;
+          this.title = this.layerIdCopy;
           window.originLayer[this.layerIdCopy].layerOrder = [this.layerIdCopy, this.layerIdCopy + "_" + this.$_getThemeName()];
         }
       }

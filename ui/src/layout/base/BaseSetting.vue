@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="mapgis-ui-pro-layout">
     <mapgis-ui-button
       v-show="!visible"
       size="small"
-      :class="{ 'mapgis-ui-setting-pro': true, active: visible }"
+      :class="{ 'mapgis-ui-pro-layout-setting': true, active: visible }"
       @click="showSetting"
     >
-      <mapgis-ui-iconfont type="mapgis-jieshutiaozheng" class="setting" />
+      <mapgis-ui-iconfont type="mapgis-setting" class="setting" />
     </mapgis-ui-button>
     <mapgis-ui-drawer
       class="mapgis-ui-pro-setting-drawer"
@@ -209,19 +209,6 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-ui-setting-pro {
-  position: absolute;
-  z-index: 9999;
-  right: 0px;
-  top: 40vh;
-  width: 36px;
-  height: 36px;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
-}
-
 .mapgis-ui-pro-layout-select-setting {
   width: 100%;
   flex-wrap: wrap;
@@ -238,6 +225,6 @@ export default {
 }
 
 .setting {
-  font-size: 18px;
+  font-size: 12px;
 }
 </style>

@@ -1,41 +1,53 @@
 <template>
   <div class="mapgis-layercontent-studio">
     <contextmenu-item @click="handleClick('edit')">
-      <mapgis-ui-iconfont type="mapgis-yangshikuguanli" />编辑显示样式
+      <mapgis-ui-iconfont type="mapgis-edit" />编辑显示样式
     </contextmenu-item>
     <contextmenu-item divider />
-    <contextmenu-item @click="handleClick('add-theme')" v-if="!isTheme && !isSymbol">
-      <mapgis-ui-iconfont type="mapgis-zhuantitu" />创建专题图
+    <contextmenu-item
+      @click="handleClick('add-theme')"
+      v-if="!isTheme && !isSymbol"
+    >
+      <mapgis-ui-iconfont type="mapgis-barchart" />创建专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('edit-theme')" v-if="isTheme && !isSymbol">
-      <mapgis-ui-iconfont type="mapgis-zhuantitu" />编辑专题图
+    <contextmenu-item
+      @click="handleClick('edit-theme')"
+      v-if="isTheme && !isSymbol"
+    >
+      <mapgis-ui-iconfont type="mapgis-barchart" />编辑专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('remove-theme')" v-if="isTheme && !isSymbol">
-      <mapgis-ui-iconfont type="mapgis-chexiao" />撤销专题图
+    <contextmenu-item
+      @click="handleClick('remove-theme')"
+      v-if="isTheme && !isSymbol"
+    >
+      <mapgis-ui-iconfont type="mapgis-redo" />撤销专题图
     </contextmenu-item>
-    <contextmenu-item @click="handleClick('make-symbol')" v-if="!isTheme && !isSymbol">
-      <mapgis-ui-iconfont type="mapgis-shengchengzhuji" />生成注记
+    <contextmenu-item
+      @click="handleClick('make-symbol')"
+      v-if="!isTheme && !isSymbol"
+    >
+      <mapgis-ui-iconfont type="mapgis-translate" />生成注记
     </contextmenu-item>
     <contextmenu-item divider />
     <contextmenu-item @click="handleClick('open-table')">
-      <mapgis-ui-iconfont type="mapgis-zhujishuxingbianji" />查看属性表
+      <mapgis-ui-iconfont type="mapgis-table" />查看属性表
     </contextmenu-item>
     <contextmenu-item divider />
     <contextmenu-item @click="handleClick('scale')">
-      <mapgis-ui-iconfont type="mapgis-yincangxianshimian" /> 显示级别控制
+      <mapgis-ui-iconfont type="mapgis-eye-close" /> 显示级别控制
     </contextmenu-item>
 
     <contextmenu-item divider />
     <contextmenu-item @click="handleClick('up')">
-      <mapgis-ui-iconfont type="mapgis-yidong1" />上移
+      <mapgis-ui-iconfont type="mapgis-arrowup" />上移
     </contextmenu-item>
     <contextmenu-item @click="handleClick('down')">
-      <mapgis-ui-iconfont type="mapgis-yidong1" />下移
+      <mapgis-ui-iconfont type="mapgis-arrowdown" />下移
     </contextmenu-item>
 
     <contextmenu-submenu>
       <span slot="title">
-        <mapgis-ui-iconfont type="mapgis-zaodanhangzhuji" />重命名
+        <mapgis-ui-iconfont type="mapgis-interation" />重命名
       </span>
       <contextmenu-item :autoHide="false">
         <mapgis-ui-input
@@ -50,7 +62,7 @@
     </contextmenu-submenu>
     <contextmenu-item divider />
     <contextmenu-item @click="emitDeleteClick">
-      <mapgis-ui-iconfont type="mapgis-shanchudangqianziceng" /> 移除
+      <mapgis-ui-iconfont type="mapgis-close" /> 移除
     </contextmenu-item>
   </div>
 </template>
@@ -159,6 +171,12 @@ export default {
   vertical-align: -0.25em;
   overflow: hidden;
   color: transparent;
+}
+
+.mapgis-layercontent-studio .anticon {
+  font-size: 16px;
+  line-height: 16px;
+  margin-right: 6px;
 }
 
 .v-contextmenu-item--hover {

@@ -1,0 +1,24 @@
+@import "../../../../../util/style/mixins/mixins.scss";
+@import "../../../../../util/style/theme/theme.scss";
+
+
+@include b(upload-data) {
+    &-main {
+        margin: 0 auto;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        width: 450px;
+        height: 180px;
+        border: 1px dashed #dcdfe6;
+        border-radius: 4px;
+    }
+
+    &-svg {
+        color: $primary-6;
+        font-size: 100px;
+        margin-top: 20px;
+        // width: 80px;
+        // height: 80px;
+    }
+}

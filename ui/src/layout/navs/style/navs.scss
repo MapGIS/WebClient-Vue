@@ -12,10 +12,11 @@
   $content: "mapgis-ui-nav-content";
 
   @include e(action-bar, "-") {
-    background: $nav-content-backgroud;
+    background: $nav-backgroud;
+    z-index: 2000;
     -webkit-box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
     box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
-    border-right: 1px solid $nav-shadow-backgroud;
+    border-right: 0px solid $nav-shadow-backgroud;
   }
 
   @include e(action-bar-reverse, "-") {
@@ -27,24 +28,35 @@
 
   @include e(content, "-") {
     background: $nav-content-backgroud;
+    z-index: 1000;
+    transition: width 0.5s;
+    visibility: hidden;
     // border-right: 1px solid $nav-border-backgroud;
     // -webkit-box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
     // box-shadow: 1px 0 0 0 $nav-shadow-backgroud;
 
     &-start {
       border-right: 1px solid $nav-border-backgroud;
-      -webkit-box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
-      box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
+      -webkit-box-shadow: 0px 0px 5px 3px $nav-shadow-backgroud;
+      box-shadow: 0px 0px 5px 3px $nav-shadow-backgroud;
     }
 
     &-end {
       border-left: 1px solid $nav-border-backgroud;
-      -webkit-box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
-      box-shadow: 0 0 1px 0 $nav-shadow-backgroud;
+      -webkit-box-shadow: 0px 0px 5px 3px $nav-shadow-backgroud;
+      box-shadow: 0px 0px 5px 3px $nav-shadow-backgroud;
     }
   }
+
   @include e(bar, "-") {
     width: $nav-bar-width;
+
+    &-reverse {
+      position: absolute;
+      bottom: 20px;
+      flex-direction: column-reverse;
+    }
+
     &-item {
       align-items: center;
       width: 48px;
@@ -53,6 +65,10 @@
       flex-direction: column;
       cursor: pointer;
       color: $text-color;
+
+      &-selected {
+        background: $nav-selected-backgroud;
+      }
 
       &-start {
         justify-content: flex-start;
@@ -63,8 +79,8 @@
       }
 
       .anticon {
-        margin: 0px 2px;
-        font-size: 16px;
+        margin: 0px 4px;
+        font-size: 18px;
         align-items: center;
       }
 
@@ -76,10 +92,10 @@
 
     &-item:not(:last-of-type):after {
       display: block;
-      margin-top: 6px;
+      margin-top: 3px;
       width: 24px;
       height: 1px;
-      background: $nav-border-backgroud;
+      background: $primary-6; // $nav-shadow-backgroud;
       content: "";
     }
 

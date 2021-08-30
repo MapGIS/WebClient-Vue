@@ -5,42 +5,37 @@
       <span class="mapgis-property-color-left">{{ rule.title }} </span>
     </mapgis-ui-col>
     <mapgis-ui-col span="17">
-      <mapgis-ui-popover v-model="visible" trigger="click">
-        <a slot="content">
-          <color-picker
-            theme="light"
-            :color="value"
-            :sucker-hide="false"
-            :sucker-canvas="suckerCanvas"
-            :sucker-area="suckerArea"
-            @changeColor="onChange"
-            @openSucker="openSucker"
-          />
-        </a>
-        <mapgis-ui-input v-model="value">
+      <!-- <mapgis-ui-popover v-model="visible" trigger="click"> -->
+
+      <div class="theme-panel-color-outer">
+        <colorPicker
+            v-model="value"
+            class="theme-panel-line-color"
+            @change="onChange"
+        />
+      </div>
+
+      <!-- <mapgis-ui-input v-model="value">
           <mapgis-ui-button
             size="small"
             shape="round"
             slot="addonAfter"
             :style="{ background: value }"
           />
-        </mapgis-ui-input>
-      </mapgis-ui-popover>
+        </mapgis-ui-input> -->
+      <!-- </mapgis-ui-popover> -->
     </mapgis-ui-col>
   </mapgis-ui-row>
 </template>
 
 <script>
 import EditMixin from "../EditMixin";
-import colorPicker from "@caohenghu/vue-colorpicker";
 
 export default {
   name: "mapgis-mvt-editor-property-color",
   inject: ["map"],
   mixins: [EditMixin],
-  components: {
-    colorPicker
-  },
+  components: {},
   props: {
     rule: Object
   },
@@ -101,7 +96,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-property-color {
   width: 100%;
 }
@@ -109,5 +104,21 @@ export default {
 .mapgis-property-color-left {
   height: 30px;
   line-height: 30px;
+  margin-left: -14px;
+}
+
+/deep/.theme-panel-line-color .colorBtn{
+  width: 167px !important;
+  height: 17px !important;
+  margin-left: 5px;
+  margin-top: 6px;
+}
+
+/deep/.theme-panel-color-outer {
+  width: 180px;
+  height: 32px;
+  border: 1px solid var(--border-color-base);
+  background-color: var(--component-background);
+  border-radius: 4px;
 }
 </style>

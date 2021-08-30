@@ -1,10 +1,7 @@
 <template>
   <div class="mapgis-ui-clouddisk-save-document">
-    <mapgis-ui-row style="margin-bottom:24px;">
-      <mapgis-ui-col :span="4">
-        <span style="float:right;line-height:32px;">导出路径：</span>
-      </mapgis-ui-col>
-      <mapgis-ui-col :span="20">
+    <mapgis-ui-form-model :layout="layout" :model="saveForm">
+      <mapgis-ui-form-model-item label="文件路径">
         <mapgis-ui-input-search
           v-model="saveForm.saveUrl"
           read-only
@@ -13,16 +10,22 @@
           @click="handleSaveModal"
           @search="handleSaveModal"
         />
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-    <mapgis-ui-row style="margin-bttom:24px;">
-      <mapgis-ui-col :span="4">
-        <span style="float:right;line-height:32px;">文件名称：</span>
-      </mapgis-ui-col>
-      <mapgis-ui-col :span="20">
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="文件名称">
         <mapgis-ui-input :addon-after="fileType" v-model="saveForm.fileName" />
-      </mapgis-ui-col>
-    </mapgis-ui-row>
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item>
+        <mapgis-ui-button
+          class="mapgis-ui-clouddisk-save-document-button"
+          type="primary"
+          @click="handleSaveDocument"
+          v-if="layout == 'vertical'"
+        >
+          保存
+        </mapgis-ui-button>
+      </mapgis-ui-form-model-item>
+    </mapgis-ui-form-model>
+
     <mapgis-ui-modal
       title="选择导出路径"
       class="modal-add-clouddisk"
@@ -63,7 +66,12 @@ export default {
         "/mapstudioweb/#/?share="
     };
   },
+  computed: {},
   props: {
+    layout: {
+      type: String,
+      default: "horizontal" // 'horizontal'|'vertical'|'inline'
+    },
     fileType: {
       type: String,
       default: ".style"
@@ -169,10 +177,10 @@ export default {
       fileAttr.preview = this.getEncodePreviewUrl(url);
 
       let {
-        crs = {epsg: "EPSG_4326"}, 
+        crs = { epsg: "EPSG_4326" },
         maxBounds = { west: -180, east: 180, south: -90, north: 90 }
       } = doc;
-            
+
       fileAttr.crs = crs;
       fileAttr.xmin = maxBounds.west || -180;
       fileAttr.xmax = maxBounds.east || 180;

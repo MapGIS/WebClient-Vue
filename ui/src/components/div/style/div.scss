@@ -1,12 +1,14 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(div) {
   $div-prefix: &;
-  
+
   background: $div-background;
 
-  &:hover {
+  -webkit-box-shadow: 0px 0px 2px 1px $shadow;
+  box-shadow: 0px 0px 2px 1px $shadow;
 
+  &:hover {
   }
 }

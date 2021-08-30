@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mapgis-ui-upload-data">
     <div class="mapgis-ui-uploader-path">
       <p class="mapgis-ui-uploader-path-text" :title="importDestUrl">
         <img src="./images/save.png" style="padding-bottom:4px;" />
@@ -36,9 +36,10 @@
         </mapgis-ui-radio-button>
       </mapgis-ui-radio-group>
     </div>
-    <div class="upload-main" @click="handleImportFile">
-      <img src="./images/upload.png" style="padding-top:40px;" />
-      <p style="padding-top:16px;color:#3D4757;font-size:16px;">选择文件</p>
+    <div class="mapgis-ui-upload-data-main" @click="handleImportFile">
+      <!-- <img src="./images/upload.png" style="padding-top:40px;" /> -->
+      <UploadIcon  class="mapgis-ui-upload-data-svg"/>
+      <p style="font-size:16px;">选择文件</p>
     </div>
     <p class="type-desc">{{ typeDescriptions[importDataType] }}</p>
     <mapgis-ui-modal
@@ -60,6 +61,7 @@
 
 <script>
 import MapgisUiUploaderFoldertree from ".//UploaderFolderTree.vue";
+import UploadIcon from '../../../svg/MajesticonsCloudUpload'
 import UploadMixin from "../../../../mixin/UploaderMixin";
 import {
   openUploader,
@@ -71,7 +73,10 @@ import { uuid } from "../../util/uuid";
 export default {
   name: "importData",
   mixins: [UploadMixin],
-  components: { MapgisUiUploaderFoldertree },
+  components: { 
+    MapgisUiUploaderFoldertree,
+    UploadIcon
+  },
   props: {
     importDestUrl: {
       type: String,
@@ -145,6 +150,7 @@ export default {
           taskid: taskid
         }
       });
+      console.log('【本次上传对应taskid】', taskid)
       changeUploadWebsocketTaskId({
         webSocketTaskId: taskid
       });
@@ -159,12 +165,14 @@ export default {
   width: 100%;
   height: 40px;
   margin: 0 auto;
+  border: 1px solid #dcdfe6b8;
+  border-radius: 4px;
 }
 .mapgis-ui-uploader-path-text {
   display: inline-block;
   max-width: calc(100% - 130px);
   line-height: 40px;
-  color: #999999;
+  /* color: #999999; */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -174,7 +182,7 @@ export default {
   margin-top: 20px;
   font-size: 14px;
 }
-.upload-main {
+/* .upload-main {
   margin: 0 auto;
   text-align: center;
   margin-top: 20px;
@@ -183,7 +191,7 @@ export default {
   height: 180px;
   border: 1px dashed #dcdfe6;
   border-radius: 4px;
-}
+} */
 .type-desc {
   width: 450px;
   text-align: center;

@@ -21,6 +21,7 @@
         :activeKey="activeKey"
         :iconUrl="iconUrl"
         :defaultIconValue="defaultIconValue"
+        :defaultIcon="defaultIcon"
         @iconLoaded="$_iconLoaded"
         @oneColorChanged="$_oneColorChanged"
         @checked="$_checked"
@@ -47,6 +48,7 @@
         @beginSearch="$_beginSearch"
         @singleChanged="$_singleChanged"
         @clickIcon="$_clickIcon"
+        @clickSvg="$_clickSvg"
         @fontChanged="$_fontChanged"
         @themeTypeChanged="$_themeTypeChanged"
     >
@@ -98,17 +100,18 @@
             <div class="range-theme-list-item" style="border-top: 1px solid rgb(217, 217, 217)" v-if="radiusIndex === index">
               <mapgis-ui-row>
                 <mapgis-ui-col :span="5">
-                  <p class="theme-panel-icon-title">图标半径</p>
+                  <p class="theme-panel-icon-title">半径</p>
                 </mapgis-ui-col>
-                <mapgis-ui-col :span="14">
+                <mapgis-ui-col :span="12">
                   <mapgis-ui-slider
+                      style="width: 97px"
                       :min="0"
                       :max="20"
                       v-model="radiusArr[index]"
                       class="theme-panel-slider theme-panel-icon-slider"
                   />
                 </mapgis-ui-col>
-                <mapgis-ui-col :span="3">
+                <mapgis-ui-col :span="5">
                   <mapgis-ui-input-number
                       v-model="radiusArr[index]"
                       class="theme-panel-input-number theme-panel-input-icon-number"/>
@@ -761,10 +764,10 @@ export default {
         //这里规则仅支持小于，大于的话全会背第一个大鱼号的规则覆盖
         let iconSize = ["case"];
         iconSize.push(["<", ["to-number",["get", this.selectValue]], this.startData]);
-        iconSize.push(1);
+        iconSize.push(0.1);
         for (let i = 0;i < dataSource.length;i++){
           iconSize.push(["<=", ["to-number",["get", this.selectValue]], dataSource[i]]);
-          iconSize.push(i + 2);
+          iconSize.push((i + 2) / 10);
         }
         iconSize.push(1);
         let offset = ["case"];
@@ -790,7 +793,7 @@ export default {
                 'source': vm.source_vector_Id,
                 'type': 'symbol',
                 'layout': {
-                  'icon-image': vm.defaultIconValue,
+                  'icon-image': "basic",
                   'icon-size': iconSize,
                   "text-field": '',
                   'text-size': vm.fontSize,
@@ -812,10 +815,18 @@ export default {
               if(vm.source_vector_layer_Id){
                 window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()]["source-layer"] = vm.source_vector_layer_Id;
               }
-              vm.title = "等级符号" + "_" + vm.layerIdCopy;
-              vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()],vm.upLayer);
-              window.originLayer[vm.layerIdCopy].layerOrder = [vm.layerIdCopy,vm.layerIdCopy + "_" + vm.$_getThemeName()];
-              vm.$_setLayerOrder();
+              vm.title = vm.layerIdCopy;
+              let img = new Image(128,128);
+              img.addEventListener('load',function () {
+                let hasIcon = vm.map.hasImage("basic");
+                if(!hasIcon){
+                  vm.map.addImage("basic",img);
+                }
+                vm.map.addLayer(window.originLayer[vm.layerIdCopy][vm.layerIdCopy + "_" + vm.$_getThemeName()],vm.upLayer);
+                window.originLayer[vm.layerIdCopy].layerOrder = [vm.layerIdCopy,vm.layerIdCopy + "_" + vm.$_getThemeName()];
+                vm.$_setLayerOrder();
+              });
+              img.src = "assets/svg/theme/basic/basic.svg";
             }
             clearInterval(interval);
           }
@@ -834,7 +845,7 @@ export default {
 
 <style scoped>
 .theme-panel-td-border-right {
-  border-right: 1px solid rgb(217, 217, 217);
+  border-right: 1px solid rgb(86, 86, 86);
 }
 
 .theme-panel-td {
@@ -853,7 +864,7 @@ export default {
   display: inline-block;
   width: 100%;
   height: 100%;
-  padding-left: 5px;
+  padding-left: 1px;
   padding-top: 8px;
 }
 
@@ -886,9 +897,9 @@ export default {
 }
 
 .theme-panel-list{
-  border-top: 1px solid rgb(217, 217, 217);
-  border-left: 1px solid rgb(217, 217, 217);
-  border-right: 1px solid rgb(217, 217, 217);
+  border-top: 1px solid rgb(93, 93, 93);
+  border-left: 1px solid rgb(93, 93, 93);
+  border-right: 1px solid rgb(93, 93, 93);
 }
 
 .panelListFirst{
@@ -899,7 +910,7 @@ export default {
 .panelListLast{
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  border-bottom: 1px solid rgb(217, 217, 217);
+  border-bottom: 1px solid rgb(93, 93, 93);
 }
 
 .theme-panel-radius{

@@ -1,6 +1,11 @@
 <template>
-  <div class="mapgis-ui-nav-bar">
-    <slot />
+  <div>
+    <div class="mapgis-ui-nav-bar">
+      <slot />
+    </div>
+    <div class="mapgis-ui-nav-bar-reverse">
+      <slot name="reverse" />
+    </div>
   </div>
 </template>
 
@@ -21,6 +26,35 @@ export default {
   methods: {
     handleValue(value) {
       this.$parent.$emit("change-bar", value);
+      this.changeSelect(value);
+    },
+    changeSelect(select) {
+      this.$slots.default.forEach(s => {
+        let value = s.componentOptions.propsData.value;
+        let elm = s.elm;
+        let className = "mapgis-ui-nav-bar-item-selected";
+        if (value == select) {
+          elm.className += ` ${className}`;
+        } else {
+          elm.className = elm.className.replace(
+            new RegExp(`(^|\\b)${className.split(" ").join("|")}(\\b|$)`, "gi"),
+            " "
+          );
+        }
+      });
+      this.$slots.reverse.forEach(s => {
+        let value = s.componentOptions.propsData.value;
+        let elm = s.elm;
+        let className = "mapgis-ui-nav-bar-item-selected";
+        if (value == select) {
+          elm.className += ` ${className}`;
+        } else {
+          elm.className = elm.className.replace(
+            new RegExp(`(^|\\b)${className.split(" ").join("|")}(\\b|$)`, "gi"),
+            " "
+          );
+        }
+      });
     }
   }
 };

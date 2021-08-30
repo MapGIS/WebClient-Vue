@@ -1,0 +1,8 @@
+@import "../../../../../util/style/mixins/mixins.scss";
+@import "../../../../../util/style/theme/theme.scss";
+
+@include b(clouddisk-save-document) {
+  &-button {
+    width: 100%;
+  }
+}

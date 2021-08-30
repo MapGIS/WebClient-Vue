@@ -1,7 +1,6 @@
 <template>
   <div class="layout-model-folder">
     <mapgis-ui-tree
-      show-icon
       :default-expanded-keys="['0-0']"
       :load-data="onLoadData"
       :tree-data="treeData"
