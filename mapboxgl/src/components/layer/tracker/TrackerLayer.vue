@@ -4,30 +4,32 @@
       v-show="visible"
       :style="outStyle"
       class="mapgis-tracker-layer-card"
-      iconfont="mapgis-moxingyaping"
       position="bottom-left"
       ref="collapsecard"
     >
-      <div class="mapgis-mvt-legend-card-header" slot="title">
+      <mapgis-ui-iconfont type="mapgis-map-pin" slot="icon-hiden" />
+      <span class="mapgis-mvt-legend-card-header" slot="title">
         <span class="mapgis-tracker-card-title">
           轨迹跟踪
         </span>
+      </span>
+      <span slot="extra">
         <mapgis-ui-iconfont
           class="mapgis-tracker-card-toolbar"
-          type="mapgis-moxingyaping"
+          type="mapgis-map-pin"
           @click="hide"
         />
-      </div>
+      </span>
       <div class="mapgis-ui-tracker-timeline">
         <mapgis-ui-button-group size="small" class="mapgis-ui-tracker-buttons">
           <mapgis-ui-button size="small">
-            <mapgis-ui-iconfont type="mapgis-shujudaoru"
+            <mapgis-ui-iconfont type="mapgis-chevrons-left"
           /></mapgis-ui-button>
           <mapgis-ui-button size="small">
-            <mapgis-ui-iconfont type="mapgis-tingzhijiaohuhuizhixian"
+            <mapgis-ui-iconfont type="mapgis-chevron-right"
           /></mapgis-ui-button>
           <mapgis-ui-button size="small">
-            <mapgis-ui-iconfont type="mapgis-shujudaochu"
+            <mapgis-ui-iconfont type="mapgis-chevrons-right"
           /></mapgis-ui-button>
         </mapgis-ui-button-group>
         <mapgis-ui-slider :style="{ width: '240px', 'line-height': '30px' }" />
@@ -51,8 +53,8 @@ export default {
       type: Object,
       default: () => {
         return {
-          width: "320px",
-          height: "80px",
+          width: "400px",
+          padding: "10px",
           left: "10px",
           bottom: "10px"
         };
@@ -272,7 +274,6 @@ export default {
 .mapgis-tracker-layer-card {
   position: absolute;
   z-index: 1000;
-  overflow-y: scroll;
   width: fit-content;
 }
 .mapgis-ui-tracker-timeline {
