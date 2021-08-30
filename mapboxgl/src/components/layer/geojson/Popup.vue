@@ -38,17 +38,17 @@
       </mapgis-ui-tabs>
       <div v-else>
         <div>
-          {{ f.title }}
+          {{ currentLayerInfo[0].title }}
         </div>
         <div
-          v-for="(value, key) in f.properties"
+          v-for="(value, key) in currentLayerInfo[0].properties"
           class="mapgis-inspect-prop-style"
           :key="key"
         >
           <div class="mapgis-inspect-prop-key">
             <span style="padding-right: 5px">{{ key }}</span>
           </div>
-          <div>{{ value }} ({{ typeof value }})</div>
+          <div>{{ value }}</div>
         </div>
       </div>
     </div>
