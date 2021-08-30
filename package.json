@@ -3,7 +3,7 @@
   "version": "10.5.4",
   "private": true,
   "scripts": {
-    "build-all": "npm run build-storybook && cd cesium && npm run docs:build && npm run build-cdn && cd ../mapboxgl && npm run docs:build && npm run build-cdn",
+    "build-all": "npm run build-storybook && cd ui && npm run build-cdn && cd ../cesium && npm run docs:build && npm run build-cdn && cd ../mapboxgl && npm run docs:build && npm run build-cdn",
     "build-cesium-all": "cd cesium && npm run docs:build && npm run build-cdn",
     "build-cesium-docs": "cd cesium && npm run docs:build",
     "build-cesium-umd": "cd cesium && npm run build",
