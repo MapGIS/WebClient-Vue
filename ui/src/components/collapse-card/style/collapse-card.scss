@@ -13,6 +13,36 @@
   scrollbar-color: transparent transparent;
   scrollbar-width: thin;
 
-  /* -webkit-box-shadow: 0px 0 3px 3px $shadow;
-  box-shadow: 0px 0 3px 3px $shadow; */
+  /* -webkit-box-shadow: 0px 0px 3px 1px $shadow;
+  box-shadow: 0px 0px 3px 1px $shadow; */
+
+  &-mini {
+    height: 36px !important; // 用来固定收缩时候的高度，不可删除
+    width: 36px !important; // 用来固定收缩时候的宽度，不可删除
+    & > .anticon {
+      font-size: 22px;
+    }
+  }
+
+  &-left {
+    float: left;
+  }
+
+  &-right {
+    float: right;
+  }
+
+  &-iconfont {
+    font-size: 22px;
+  }
+
+  &-extra {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    float: right;
+    .anticon {
+      font-size: 20px;
+    }
+  }
 }

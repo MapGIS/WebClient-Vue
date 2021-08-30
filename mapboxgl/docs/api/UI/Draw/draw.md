@@ -344,6 +344,13 @@
 - **默认** true
 - **描述** 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性 position 改变其显示的位置
 
+### `expandControl`
+
+- **类型:** `Boolean`
+- **非侦听属性:**
+- **默认** false
+- **描述** 是否默认展开基本功能的按钮控件，需要上面的 enableControl 为 true 才能实现
+
 ### `editable`
 
 - **类型:** `Boolean`

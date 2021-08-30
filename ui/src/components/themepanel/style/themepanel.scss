@@ -1,8 +1,12 @@
 @import '../../../util/style/mixins/mixins.scss';
 @import '../../../util/style/theme/theme.scss';
 
-.theme-panel-options,.theme-panel .mapgis-ui-collapse{
+.theme-panel-options{
   background: $panel-backgroud;
+}
+
+.theme-panel .mapgis-ui-collapse{
+  background: $panel-collapse-color;
 }
 
 .theme-panel-p{

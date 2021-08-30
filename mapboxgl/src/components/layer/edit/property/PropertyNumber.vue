@@ -85,6 +85,7 @@ export default {
 .mapgis-property-number-left {
   height: 30px;
   line-height: 30px;
+  margin-left: -14px;
 }
 
 .mapgis-property-number-right {

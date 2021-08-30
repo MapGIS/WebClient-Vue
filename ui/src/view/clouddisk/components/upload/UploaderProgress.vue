@@ -136,15 +136,16 @@ export default {
 .path {
   width: 100%;
   height: 40px;
-  background: #f2f5fa;
+  /* background: #f2f5fa; */
   margin: 0 auto;
+  border: 1px solid #dcdfe6b8;
 }
 .path-text {
   display: inline-block;
   max-width: calc(100% - 150px);
   line-height: 40px;
   margin-left: 10px;
-  color: #3d4757;
+  /* color: #3d4757; */
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

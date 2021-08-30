@@ -812,3 +812,16 @@ $table-selection-column-width: 60px;
     background-clip: padding-box;
   }
 } */
+
+.mapgis-table-collapse {
+  box-shadow: 0px 0px 4px 1px $nav-shadow-backgroud;;
+}
+
+.mapgis-table-collapse .anticon {
+  margin: 0px 6px;
+  /* color: $primary-6; */
+}
+
+.mapgis-baseTable-fieldFilter {
+  background: $div-background;
+}

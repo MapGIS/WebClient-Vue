@@ -1,0 +1,50 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.mapgis-zoom-wrapper {
+  flex-direction: column;
+  position: absolute;
+  top: 32px;
+  right: 30px;
+  width: 36px;
+  height: 73px;
+  padding: 0;
+  outline: none;
+  border-radius: 4px;
+  background-color: $content-background;
+  -webkit-box-shadow: 0px 2px 2px 1px $deep-shadow;
+  box-shadow: 0px 1px 2px 1px $deep-shadow;
+  z-index: 100;
+}
+
+.mapgis-zoom-wrapper .mapgis-zoom-item {
+  font-size: 25px;
+  line-height: 16px;
+  height: 36px;
+  width: 36px;
+  margin: 0 auto;
+  /* padding: 11px; */
+  outline: none;
+  font-weight: 500;
+  cursor: pointer;
+  color: $text-color;
+  text-align: center;
+}
+
+.mapgis-zoom-wrapper .mapgis-zoom-item:hover {
+  color: $primary-6;
+}
+
+.mapgis-zoom-wrapper .mapgis-zoom-item:not(:last-of-type):after {
+  display: block;
+  width: 16px;
+  height: 1px;
+  margin: 4px 10px;
+  background: $shadow;
+  content: "";
+}
+
+.mapgis-zoom-wrapper .anticon {
+  font-size: 24px;
+  margin: 6px;
+}

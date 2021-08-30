@@ -16,3 +16,7 @@
 .v-contextmenu-item {
   color: $content-color !important;
 }
+
+.v-contextmenu .v-contextmenu-divider {
+  border-bottom: 1px solid $primary-5;
+}

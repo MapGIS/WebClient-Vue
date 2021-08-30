@@ -66,6 +66,7 @@ export { default as MapgisUiRadioButton } from "./components/radio/Button.vue";
 export { default as MapgisUiRate } from "./components/rate/Rate.vue";
 export { default as MapgisUiSelect } from "./components/select/Select.vue";
 export { default as MapgisUiSpriteSelect } from "./components/sprite/Sprite.vue";
+export { default as MapgisUiSvgSelect } from "./components/svgselect/SvgSelect.vue";
 export { default as MapgisUiSelectOption } from "./components/select/SelectOption.vue";
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";

@@ -7,11 +7,13 @@
     <mapgis-ui-col span="17">
       <!-- <mapgis-ui-popover v-model="visible" trigger="click"> -->
 
-      <colorPicker
-        v-model="value"
-        class="theme-panel-line-color"
-        @change="onChange"
-      />
+      <div class="theme-panel-color-outer">
+        <colorPicker
+            v-model="value"
+            class="theme-panel-line-color"
+            @change="onChange"
+        />
+      </div>
 
       <!-- <mapgis-ui-input v-model="value">
           <mapgis-ui-button
@@ -94,7 +96,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-property-color {
   width: 100%;
 }
@@ -102,13 +104,21 @@ export default {
 .mapgis-property-color-left {
   height: 30px;
   line-height: 30px;
+  margin-left: -14px;
 }
 
-.theme-panel-line-color {
-  width: 160px !important;
-  height: 30px !important;
-  margin-left: 11px;
-  border-radius: 6px;
-  border: 1px solid rgb(218, 218, 218);
+/deep/.theme-panel-line-color .colorBtn{
+  width: 167px !important;
+  height: 17px !important;
+  margin-left: 5px;
+  margin-top: 6px;
+}
+
+/deep/.theme-panel-color-outer {
+  width: 180px;
+  height: 32px;
+  border: 1px solid var(--border-color-base);
+  background-color: var(--component-background);
+  border-radius: 4px;
 }
 </style>
