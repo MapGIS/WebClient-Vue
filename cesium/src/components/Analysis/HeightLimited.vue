@@ -14,7 +14,7 @@
       <a-card class="a-card">
         <a-row>
           <a-col :span="5">分析区域</a-col>
-          <a-col :span="14">
+          <a-col :span="19">
             <a-button @click="drawRectangle">绘制矩形</a-button>
             <a-button style="margin:0 15px" @click="drawPolygon">绘制面</a-button>
             <a-button @click="toggleDelete">清除</a-button>
@@ -91,7 +91,9 @@ export default {
     let vm = this;
     vm.$_init(vm.heightLimitedAnalysis);
   },
-
+  destroyed() {
+    this.unmount();
+  },
   watch: {
     heightLimit: {
       handler(next, old) {
@@ -106,6 +108,9 @@ export default {
       let vm = this;
       vm.heightLimit = data;
       vm.heightLimitedAnalysis();
+    },
+    removeDraw(){
+      this.drawer.unmount();
     },
     drawPolygon() {
       this.drawer && this.drawer.enableDrawPolygon();
@@ -129,13 +134,12 @@ export default {
     },
     heightLimitedAnalysis(lnglat) {
       const vm = this;
-      console.log("lnglat", lnglat);
       let {vueKey, vueIndex} = this
       let {heightLimit, CesiumZondy, webGlobe} = this;
       let viewer = webGlobe.viewer;
       let findSource = vm.$_getObject();
       if (findSource) {
-        console.log("findSource.source[0]._root", findSource.source[0]._root);
+        // console.log("findSource.source[0]._root", findSource.source[0]._root);
         if (!lnglat) {
           let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
           if (find) {
@@ -150,7 +154,6 @@ export default {
         } else if (lnglat.length === 2) {
           lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
         } else {
-          debugger
           let temp = [];
           lnglat.forEach((l, index) => {
             let lTemp = {};
@@ -159,7 +162,7 @@ export default {
             temp[index] = lTemp;
           })
           lnglat = temp;
-          console.log("lnglat", lnglat);
+          // console.log("lnglat", lnglat);
         }
       }
       //求相对坐标（笛卡尔）
@@ -169,9 +172,9 @@ export default {
       for (let i = 0; i < lnglat.length; i++) {
         pnts.push(new Cesium.Cartesian3(lnglat[i].longitude, lnglat[i].latitude, 0));
       }
-      console.log("pnts", pnts);
+      // console.log("pnts", pnts);
       let cesiumColor = Cesium.Color.fromCssColorString(vm.color);
-      console.log("heightLimit", heightLimit);
+      // console.log("heightLimit", heightLimit);
       var heightLimited = new Cesium.HeightLimited(viewer, {
         height: heightLimit,
         limitedColor: cesiumColor,
@@ -218,7 +221,6 @@ export default {
       return allPoint;
     },
     getAllPointByDegree(lnglat1, lnglat2) {
-      debugger
       let p1 = {}, p2 = {}, p3 = {}, p4 = {};
       p1.longitude = lnglat1[0];
       p1.latitude = lnglat1[1];
@@ -251,6 +253,10 @@ export default {
       }
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
       CesiumZondy.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
+    },
+    unmount(){
+      this.removeDraw();
+      this.remove();
     }
   }
 }
@@ -264,7 +270,9 @@ export default {
 }
 
 .heightlimited.right {
-  width: calc(50vw);
+  /*width: calc(50vw);*/
+  min-width: calc(20vw);
+  max-width: calc(50vw);
   position: absolute;
   top: 20px;
   right: 20px;
@@ -277,7 +285,11 @@ export default {
   left: 20px;
 }
 
-/deep/ .a-card-body {
+::v-deep .a-card-body {
   padding: 10px !important;
+}
+
+::v-deep .ant-col-5{
+  padding-top: 10px;
 }
 </style>
