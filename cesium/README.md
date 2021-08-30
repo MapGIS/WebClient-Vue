@@ -4,7 +4,7 @@
 
 ## 简介
 
-webclient-vue-cesium是基于Cesium的vue组件开发库，提供Web三维GIS应用的vue组件开发的服务。
+webclient-vue-cesium是基于Cesium的vue组件开发库，提供构建Web三维GIS应用的常用vue组件。
 
 ### 模块说明
 
@@ -44,7 +44,7 @@ Vue.use(Mapgis3d);
 
 ---
 
-## cecium库引入
+## cesium库引入
 
 > webclient-vue-cesium 依赖 `@mapgis/cesium`，安装`@mapgis/webclient-vue-cesium`的时候会自动安装依赖`@mapgis/cesium`，`@mapgis/cesium`的包结构展示如下：
 > 

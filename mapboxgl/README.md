@@ -4,7 +4,7 @@
 
 ## 简介
 
-webclient-vue-mapboxgl是基于MapboxGL实现的vue组件开发库，提供Web二维GIS应用的vue组件开发的服务。
+webclient-vue-mapboxgl是基于MapboxGL实现的vue组件开发库，提供构建Web二维GIS应用的常用vue组件。
 
 ### 核心框架
 
