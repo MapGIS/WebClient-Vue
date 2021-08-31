@@ -42,10 +42,6 @@
             "
             />
           </a-form-model-item>
-<!--          <a-form-model-item label="时间滑动">-->
-<!--            <a-slider v-model="dateTimeVal" :step="20" :min="startTime" :max="endTime"-->
-<!--                              @change="setInput" :value="dateTimeVal"/>-->
-<!--          </a-form-model-item>-->
         </div>
         <a-form-model-item label="底部高程">
           <a-input
@@ -158,6 +154,7 @@ export default {
       startTime: '',
       endTime: '',
       waitManagerName: "M3DIgsManager",
+      percent: 0,
       layout: {
         labelCol: {span: 7},
         wrapperCol: {span: 14},
@@ -175,7 +172,9 @@ export default {
   watch: {
     formData: {
       handler: function (e) {
-      }
+        this.reloadAnalysis();
+      },
+      deep: true
     }
   },
   methods: {
@@ -260,8 +259,8 @@ export default {
       if (reg.test(color)) {
         let colorChange = [];
         for (let i = 1; i < 7; i += 2) {
-          colorChange.push(parseInt("0x" + color.slice(i,i+2)));
-          result = "rgba("+colorChange.join(",")
+          colorChange.push(parseInt("0x" + color.slice(i, i + 2)));
+          result = "rgba(" + colorChange.join(",")
         }
         result = result + ",255)";
       }
@@ -293,6 +292,7 @@ export default {
         // 绘制完成回调函数
         callback: positions => {
           self.remove()
+          this.$emit("analysisBegin");
           let xmin
           let ymin
           let xmax
@@ -319,22 +319,22 @@ export default {
               new this.Cesium.Cartesian3(xmin, ymin, 0),
               new this.Cesium.Cartesian3(xmax, ymin, 0)
           )
-
           // 多边形y方向长度
           const recYLength = self.Cesium.Cartesian3.distance(
               new this.Cesium.Cartesian3(xmin, ymin, 0),
               new this.Cesium.Cartesian3(xmin, ymax, 0)
           )
-
           const xPaneNum = Math.ceil(recXLength / 4) // X轴方向插值点个数
           const yPaneNum = Math.ceil(recYLength / 4) // Y轴方向插值点个数
           const zPaneNum = Math.ceil((max - min) / 4) // Z轴方向插值点个数
+
           shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
             xPaneNum,
             yPaneNum,
             zPaneNum,
             shadowColor: shadowColor,
-            sunColor: sunColor
+            sunColor: sunColor,
+            percentCallback: this.setPercent(this.percent)
           })
           // 时间段范围阴影分析
           const result = shadowAnalysis.calcPointsArrayInShadowTime(
@@ -344,10 +344,15 @@ export default {
               startTime,
               endTime
           )
+          // 深拷贝positions数组对象
+          let positionCopy = [];
+          positionCopy = this.copy(positions);
+          // positionCopy = JSON.parse(JSON.stringify(positions));
           CesiumZondy.shadowAnalysisManager.addSource(
               self.vueKey,
               self.vueIndex,
-              {drawElement, shadowAnalysis}
+              {shadowAnalysis, drawElement},
+              {positionCopy: positionCopy}
           );
         }
       })
@@ -378,6 +383,83 @@ export default {
       viewer.clock.clockRange = this.Cesium.ClockRange.LOOP_STOP // 循环动画
     },
 
+    /**
+     * 参数更新后重新加载分析结果
+     */
+    reloadAnalysis() {
+      let vm = this;
+      const {viewer} = this.webGlobe;
+      let findSource = vm.$_getManager(manager);
+      let xPaneNum;
+      let yPaneNum;
+      let zPaneNum;
+      let positions = [];
+      const startTime = new Date(`${this.formData.date} ${this.formData.startTime}`);
+      const endTime = new Date(`${this.formData.date} ${this.formData.endTime}`);
+      const shadowColor = this.colorToRgba(this.formData.shadowColor);
+      const sunColor = this.colorToRgba(this.formData.sunColor);
+      if (findSource && findSource.source && findSource.options) {
+        let originAnaysis = findSource.source.shadowAnalysis;
+        let drawElement = findSource.source.drawElement;
+        xPaneNum = originAnaysis.xPaneNum;
+        yPaneNum = originAnaysis.yPaneNum;
+        zPaneNum = originAnaysis.zPaneNum;
+        positions = findSource.options.positionCopy;
+        this.remove();
+        this.$emit("analysisBegin");
+        let shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
+          xPaneNum,
+          yPaneNum,
+          zPaneNum,
+          shadowColor: shadowColor,
+          sunColor: sunColor,
+          percentCallback: this.setPercent(this.percent)
+        })
+        // 时间段范围阴影分析
+        const result = shadowAnalysis.calcPointsArrayInShadowTime(
+            positions,
+            this.formData.min,
+            this.formData.max,
+            startTime,
+            endTime
+        )
+        let positionCopy = [];
+        positionCopy = this.copy(positions);
+        //存放到管理器中
+        CesiumZondy.shadowAnalysisManager.addSource(
+            this.vueKey,
+            this.vueIndex,
+            {shadowAnalysis, drawElement},
+            {positionCopy: positionCopy}
+        );
+      }
+    },
+
+    /**
+     * 时间段阴影分析回调函数，获取分析进度值
+     */
+    setPercent(result){
+        this.percent = result;
+        const timer = setInterval(()=>{
+          if (this.percent === result){
+            console.log("result",result);
+            this.$emit("analysisEnd",result);
+          }
+          clearInterval(timer);
+        },200)
+    },
+
+    //数组对象深拷贝
+    copy(obj) {
+      var newobj = obj.constructor === Array ? [] : {};
+      if (typeof obj !== 'object') {
+        return;
+      }
+      for (let i in obj) {
+        newobj[i] = typeof obj[i] === 'object' ? this.copy(obj[i]) : obj[i];
+      }
+      return newobj;
+    },
     /**
      * 移除绘制插件和阴影分析结果
      */

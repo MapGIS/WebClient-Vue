@@ -14,7 +14,7 @@
       <a-card class="a-card">
         <a-row>
           <a-col :span="5">分析区域</a-col>
-          <a-col :span="14">
+          <a-col :span="19">
             <a-button @click="drawRectangle">绘制矩形</a-button>
             <a-button style="margin:0 15px" @click="drawPolygon">绘制面</a-button>
             <a-button @click="toggleDelete">清除</a-button>
@@ -285,7 +285,11 @@ export default {
   left: 20px;
 }
 
-/deep/ .a-card-body {
+::v-deep .a-card-body {
   padding: 10px !important;
+}
+
+::v-deep .ant-col-5{
+  padding-top: 10px;
 }
 </style>
