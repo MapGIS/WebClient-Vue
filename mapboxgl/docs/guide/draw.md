@@ -746,6 +746,7 @@ export default {
       @drawCreate="handleCreate"
       @update-radius="handleRadiusUpdate"
       :editable="false"
+      :enableControl="true"
       ref="drawref"
     >
     </mapgis-draw>
