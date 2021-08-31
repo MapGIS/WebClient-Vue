@@ -3,7 +3,9 @@ import MapgisMeasure from "../../mapboxgl/src/components/UI/controls/measure/Mea
 export default {
   title: "二维/交互-测量",
   component: MapgisMeasure,
-  argTypes: {},
+  argTypes: {
+    enableControl: true,
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -31,4 +33,6 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 测量 = Template.bind({});
-测量.args = {};
+测量.args = {
+  enableControl: true,
+};
