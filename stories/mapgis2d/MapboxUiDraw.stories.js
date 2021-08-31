@@ -1,7 +1,7 @@
 import MapgisDraw from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw.vue";
 
 export default {
-  title: "二维/交互-绘制",
+  title: "二维/交互/绘制",
   component: MapgisDraw,
   argTypes: {
     enableControl: false,

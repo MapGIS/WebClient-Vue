@@ -1,7 +1,7 @@
 import MapgisZoom from "../../mapboxgl/src/components/UI/controls/zoom/Zoom.vue";
 
 export default {
-  title: "二维/交互-缩放",
+  title: "二维/交互/缩放",
   component: MapgisZoom,
 };
 

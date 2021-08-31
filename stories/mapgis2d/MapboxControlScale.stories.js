@@ -1,7 +1,7 @@
 import MapgisCustomScale from "../../mapboxgl/src/components/UI/controls/scale/CustomScale.vue";
 
 export default {
-  title: "二维/交互-自定义比例尺",
+  title: "二维/交互/自定义比例尺",
   component: MapgisCustomScale,
   argTypes: {
     outStyle: {
