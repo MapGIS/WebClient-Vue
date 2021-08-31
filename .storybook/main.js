@@ -2,16 +2,19 @@ module.exports = {
   stories: [
     "../stories/**/*.stories.mdx",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
-    "../stories/**/**/*.stories.@(js|jsx|ts|tsx)",    
+    "../stories/**/**/*.stories.@(js|jsx|ts|tsx)",
     "../stories/pro/layout/*.stories.@(js|jsx|ts|tsx)",
   ],
   addons: [
     "@storybook/preset-scss",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    '@storybook/addon-knobs',
+    "@storybook/addon-knobs",
   ],
   webpackFinal: async (config, { configType }) => {
+    config.node = {
+      fs: "empty",
+    };
     config.module.rules.push({
       test: /\.less$/,
       use: [
