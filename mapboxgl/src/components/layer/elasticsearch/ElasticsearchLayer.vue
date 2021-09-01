@@ -85,7 +85,9 @@ export default {
     this.$_undeferredMount();
   },
   methods: {
-    $_deferredMount() {},
+    $_deferredMount() {
+      this.parseBucket();
+    },
     $_undeferredMount() {},
     $_bindEvent() {
       let { map } = this;
