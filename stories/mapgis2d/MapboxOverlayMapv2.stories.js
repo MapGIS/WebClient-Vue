@@ -6,7 +6,7 @@ import {utilCurve, geojson, utilCityCenter, DataSet} from "mapv";
 
 
 export default {
-    title: "二维/覆盖物/MapV-动画",
+    title: "二维/可视化/MapV-动画",
     component: MapgisMapv,
     argTypes: {}
 };

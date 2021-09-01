@@ -1,7 +1,7 @@
 import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 
 export default {
-    title: "三维/ArcGISServer/瓦片图层",
+    title: "三维/图层/ArcGISServer/瓦片图层",
 };
 
 const Template = (args, { argTypes }) => ({

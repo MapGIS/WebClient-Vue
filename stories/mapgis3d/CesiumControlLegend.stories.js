@@ -2,7 +2,7 @@ import ArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcG
 import ArcgisMapLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
 
 export default {
-    title: "三维/交互/arcgis图例"
+    title: "三维/场景子组件/arcgis图例"
 };
 
 const Template = (args, { argTypes }) => ({

@@ -4,7 +4,7 @@ import { BaseServer } from "@mapgis/webclient-es6-service";
 import * as echarts from 'echarts';
 
 export default {
-    title:"二维/覆盖物/Echarts",
+    title:"二维/可视化/Echarts",
     component:MapgisEchartsLayer,
     argTypes:{}
 };
@@ -112,8 +112,8 @@ const Template = (args, { argTypes }) => ({
     </mapgis-web-map>`
 });
 
-export const mapEcharts = Template.bind({});
+export const Echarts = Template.bind({});
 let busLines = {};
-mapEcharts.args = {
+Echarts.args = {
 
 };

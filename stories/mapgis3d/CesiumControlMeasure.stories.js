@@ -1,5 +1,5 @@
 export default {
-  title: "三维/交互/量测",
+  title: "三维/场景子组件/量测",
   argTypes: {
   },
 };

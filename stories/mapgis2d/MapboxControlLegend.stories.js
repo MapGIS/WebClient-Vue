@@ -1,15 +1,15 @@
-import MapgisArcserverLegend from "../../mapboxgl/src/components/UI/controls/legend/Legend.vue";
+import MapgisArcgisLegend from "../../mapboxgl/src/components/UI/controls/legend/Legend.vue";
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import ArcgisTileLayer from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer.js";
 
 export default {
-    title: "二维/交互/arcgis图例",
-    component: MapgisArcserverLegend
+    title: "二维/地图子组件/arcgis图例",
+    component: MapgisArcgisLegend
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisArcserverLegend, MapgisWebMap, ArcgisTileLayer },
+    components: { MapgisArcgisLegend, MapgisWebMap, ArcgisTileLayer },
     data() {
         return {
             mapOptions: {
@@ -82,5 +82,5 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Legend = Template.bind({});
-Legend.args = {}
+export const arcgis图例 = Template.bind({});
+arcgis图例.args = {}

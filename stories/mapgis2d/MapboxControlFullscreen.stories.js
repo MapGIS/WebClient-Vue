@@ -1,19 +1,18 @@
-import MapgisScale from "../../mapboxgl/src/components/UI/controls/ScaleControl";
+
+import MapgisFullscreen from "../../mapboxgl/src/components/UI/controls/FullscreenControl";
 
 export default {
-    title: "二维/地图子组件/比例尺组件",
-    component: MapgisScale,
+    title: "二维/地图子组件/全屏组件",
+    component: MapgisFullscreen,
     argTypes: {
-        position: "bottom-left",
-        zIndex: 900,
-        maxWidth: 300,
-        unit: "metric",
+        position:"top-right",
+        container:undefined
     },
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisScale },
+    components: { MapgisFullscreen },
     data() {
         return {
             mapOptions: {
@@ -30,15 +29,13 @@ const Template = (args, { argTypes }) => ({
     template: `
     <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-        <mapgis-scale v-bind="$props" />
+        <mapgis-fullscreen v-bind="$props" />
     </mapgis-web-map>
     `,
 });
 
-export const 比例尺组件 = Template.bind({});
-比例尺组件.args = {
-    position: "bottom-left",
-    zIndex: 900,
-    maxWidth: 300,
-    unit: "metric",
+export const 全屏组件 = Template.bind({});
+全屏组件.args = {
+    position:"top-right",
+    container:undefined
 };

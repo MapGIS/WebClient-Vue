@@ -1,5 +1,5 @@
 export default {
-  title: "三维/交互/表格",
+  title: "三维/场景子组件/表格",
   argTypes: {
   }
 };

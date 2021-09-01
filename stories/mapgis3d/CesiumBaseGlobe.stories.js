@@ -1,7 +1,7 @@
 import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 
 export default {
-  title: "三维/基础地图",
+  title: "三维/场景/地图场景",
   component: MapgisWebGlobe,
   argTypes: {
   },
