@@ -30,6 +30,8 @@
 
 ## 示例
 
+::: demo
+
 ```vue
 <template>
   <mapgis-web-scene>
@@ -59,3 +61,5 @@ export default {
 };
 </script>
 ```
+
+:::

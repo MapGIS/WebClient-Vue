@@ -119,7 +119,7 @@ export default {
     },
     enableControl: {
       type: Boolean,
-      default: true
+      default: false
     },
     // mapbox drawer options
     keybindings: {
