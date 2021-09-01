@@ -1,4 +1,4 @@
-# 限高分析
+# 控高分析
 
 > mapgis-3d-heightlimited
 
@@ -70,8 +70,6 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
   <div style="width: 1200px;height: 800px;">
     <mapgis-web-scene
       style="height:90vh"
-      lib-path="statics/libs/cdn/cesium/Cesium.js"
-      plugin-path="statics/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
     >
       <mapgis-3d-igs-m3d
         :autoReset="autoReset"
@@ -90,8 +88,8 @@ export default {
   name: "cesiumHeightLimited",
   data() {
     return {
-      // m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-      m3dUrl: "http://localhost:6163/igs/rest/g3d/BIM模型",
+      m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      // m3dUrl: "http://localhost:6163/igs/rest/g3d/BIM模型",
       autoReset: true,
       maximumScreenSpaceError: 6,
       debugShowBoundingVolume: true,
@@ -110,5 +108,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.ant-btn-primary{
+  margin-left: 10px;
+}
+</style>
 ```
