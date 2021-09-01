@@ -11,17 +11,18 @@ const Template = (args, { argTypes }) => ({
             m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
             autoReset: true,
             maximumScreenSpaceError: 8,
-            vueIndex:22
+            vueIndex:22,
+            maxSliderHeight:100
         }
     },
     template: `
       <mapgis-web-scene>
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>
-      <mapgis-3d-heightlimited :vue-index="vueIndex"></mapgis-3d-heightlimited>
+      <mapgis-3d-heightlimited :vue-index="vueIndex" :maxSliderHeight="maxSliderHeight"></mapgis-3d-heightlimited>
       </mapgis-web-scene>
     `
 });
 
-export const Shadow = Template.bind({});
-Shadow.args = {}
+export const HeightLimited = Template.bind({});
+HeightLimited.args = {}
