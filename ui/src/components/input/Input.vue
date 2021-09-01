@@ -7,7 +7,7 @@ import AntdMixin from "../../mixin/AntdMixin";
 import ThemeMixin from "../../mixin/ThemeMixin";
 
 export default {
-  name: "MapgisUiInput",
+  name: "mapgis-ui-input",
   wrapperUI: Input,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
