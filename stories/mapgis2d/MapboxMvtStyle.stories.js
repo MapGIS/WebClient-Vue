@@ -1,7 +1,7 @@
 import MapgisMvtStyleLayer from "../../mapboxgl/src/components/layer/vectortile/MvtStyleLayer";
 
 export default {
-  title: "二维/MVT-矢量瓦片样式",
+  title: "二维/MVT/矢量瓦片样式",
   component: MapgisMvtStyleLayer,
   argTypes: {
     mvtStyle: "",

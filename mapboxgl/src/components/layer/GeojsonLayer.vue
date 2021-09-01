@@ -268,7 +268,7 @@ export default {
                 //  赋值fields
                 let fields = vm.tipsOptions.fields;
                 if (!fields) {
-                  f.properties = properties;
+                  f.properties = {};
                 } else {
                   fields.forEach(field => {
                     f.properties[field] = properties[field];
@@ -406,6 +406,7 @@ export default {
     },
     $_addhoverLayer() {
       let highlight;
+      let {map} = this;
       if (this.layer.type === 'fill') {
         highlight = {
           id: this.layerId + "_高亮边界线",

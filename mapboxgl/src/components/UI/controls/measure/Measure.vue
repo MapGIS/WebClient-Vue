@@ -32,7 +32,7 @@
       <mapgis-marker
         color="#ff0000"
         :coordinates="coordinates"
-        v-if="coordinates.length > 0"
+        v-if="coordinates.length > 0 && enableControl"
       >
         <div slot="marker" class="mapgis-measure-control-label">
           <div>面积：{{ area }}</div>
@@ -42,8 +42,6 @@
     </div>
   </div>
 </template>
-
-<style></style>
 
 <script>
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
@@ -103,12 +101,12 @@ export default {
     },
     enableControl: {
       type: Boolean,
-      default: true
+      default: false
     },
     measureMode: {
       type: String,
-      required: true,
-      default: "measure-length"
+      /* required: true, */
+      default: ""
     },
     measureMethod: {
       type: String,
@@ -128,7 +126,7 @@ export default {
       area: 0,
       perimeter: 0,
       coordinates: [],
-      innermeasureMode: '',
+      innermeasureMode: "",
       measures: [
         {
           icon: "mapgis-huizhi1",
@@ -186,8 +184,9 @@ export default {
         this.changeFold();
       } else {
         let pos = position.split("-");
-        document.querySelector(".mapgis-draw-control").style =
-          pos[0] + ": 10px;" + pos[1] + ": 10px;";
+        document.querySelector(
+          ".mapgis-measure-control > .mapgis-ui-space"
+        ).style = pos[0] + ": 10px;" + pos[1] + ": 10px;";
       }
     }
   },
@@ -323,7 +322,7 @@ export default {
 
     _updateLengthOrArea() {
       if (!this.measure) return;
-      const {measureMode, innermeasureMode} = this;
+      const { measureMode, innermeasureMode } = this;
       let data = this.measure.getAll();
       let geographyPerimeter,
         geographyArea,
@@ -337,7 +336,11 @@ export default {
         let mercatorCoordinate =
           mercatorData.features[mercatorData.features.length - 1].geometry
             .coordinates;
-        if (measureMode === measureModes.measureLength || innermeasureMode === measureModes.measureLength) {
+        if (
+          measureMode === measureModes.measureLength ||
+          innermeasureMode === measureModes.measureLength
+        ) {
+          console.log('measure length');
           center = turf.centroid(turf.lineString(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           projectionPerimeter = 0;
@@ -346,7 +349,11 @@ export default {
             let y = mercatorCoordinate[i][1] - mercatorCoordinate[i - 1][1];
             projectionPerimeter += Math.sqrt(x * x + y * y);
           }
-        } else if (measureMode === measureModes.measureArea || innermeasureMode === measureModes.measureArea) {
+        } else if (
+          measureMode === measureModes.measureArea ||
+          innermeasureMode === measureModes.measureArea
+        ) {
+          console.log('measure area');  
           center = turf.centroid(turf.polygon(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           geographyArea = turf.area(data);

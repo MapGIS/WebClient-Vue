@@ -1,9 +1,11 @@
 import MapgisDraw from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw.vue";
 
 export default {
-  title: "二维/交互-绘制",
+  title: "二维/交互/绘制",
   component: MapgisDraw,
-  argTypes: {},
+  argTypes: {
+    enableControl: false,
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -31,4 +33,6 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 绘制 = Template.bind({});
-绘制.args = {};
+绘制.args = {
+  enableControl: true,
+};

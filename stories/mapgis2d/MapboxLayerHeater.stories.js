@@ -1,7 +1,7 @@
 import MapgisHeaterLayer from "../../mapboxgl/src/components/layer/heater/HeaterLayer.vue";
 
 export default {
-  title: "二维/图层-热力",
+  title: "二维/图层/热力",
   component: MapgisHeaterLayer,
   argTypes: {
     field: "驻留时间",
