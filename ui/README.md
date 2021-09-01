@@ -3,7 +3,7 @@
 敬请期待...
 
 
-## FormModel使用注意事项：
+## FormModel使用注意事项：（忽略）
 
 当涉及<u>^$refs</u>时，后面应添加<u>$children[0]</u>项。  
 ### 示例：

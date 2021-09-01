@@ -89,12 +89,11 @@
 
 ## 示例
 
+::: demo
+
 ```vue
 <template>
-  <mapgis-web-scene
-    libPath="cesium/Cesium.js"
-    pluginPath="cesium/webclient-cesium-plugin.min.js"
-  >
+  <mapgis-web-scene>
     <mapgis-3d-igs-tile-layer :id="id" :baseUrl="baseUrl" :srs="srs" />
   </mapgis-web-scene>
 </template>
@@ -111,3 +110,5 @@ export default {
 };
 </script>
 ```
+
+:::
