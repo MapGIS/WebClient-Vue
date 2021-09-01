@@ -174,6 +174,58 @@
 
 ## 示例
 
+### 加载天地图
+
+::: demo
+
+```vue
+<template>
+  <mapgis-web-scene>
+    <mapgis-3d-ogc-wmts-layer
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tileMatrixSet="tileMatrixSet"
+      :tilingScheme="tilingScheme"
+      :format="format"
+      :token="token"
+    />
+  </mapgis-web-scene>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      //天地图地址
+      baseUrl: "http://t0.tianditu.gov.cn/vec_c/wmts",
+      //Cesium的瓦片切图方式
+      tilingScheme: "EPSG:4326",
+      //地图的瓦片矩阵集合
+      tileMatrixSet: "c",
+      //图层名称
+      wmtsLayer: "vec",
+      //返回格式
+      format: "tiles",
+      //token信息
+      token: {
+        key: "tk",
+        value: "9c157e9585486c02edf817d2ecbc7752"
+      }
+    };
+  }
+};
+</script>
+
+<style lang="css">
+.main {
+  height: 600px;
+  width: 100%;
+}
+</style>
+```
+
+:::
+
 ### 加载 WMTS 地图 - IGS - 4326
 
 ```vue
@@ -344,54 +396,6 @@ export default {
         this.layerStyle.zIndex = 105;
       }
     }
-  }
-};
-</script>
-
-<style lang="css">
-.main {
-  height: 600px;
-  width: 100%;
-}
-</style>
-```
-
-### 加载天地图
-
-```vue
-<template>
-  <mapgis-web-scene>
-    <mapgis-3d-ogc-wmts-layer
-      :baseUrl="baseUrl"
-      :wmtsLayer="wmtsLayer"
-      :tileMatrixSet="tileMatrixSet"
-      :tilingScheme="tilingScheme"
-      :format="format"
-      :token="token"
-    />
-  </mapgis-web-scene>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      //天地图地址
-      baseUrl: "http://t0.tianditu.gov.cn/vec_c/wmts",
-      //Cesium的瓦片切图方式
-      tilingScheme: "EPSG:4326",
-      //地图的瓦片矩阵集合
-      tileMatrixSet: "c",
-      //图层名称
-      wmtsLayer: "vec",
-      //返回格式
-      format: "tiles",
-      //token信息
-      token: {
-        key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752"
-      }
-    };
   }
 };
 </script>

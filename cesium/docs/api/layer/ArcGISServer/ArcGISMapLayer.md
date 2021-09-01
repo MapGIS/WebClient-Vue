@@ -80,6 +80,8 @@
 
 ## 示例
 
+::: demo
+
 ```vue
 <template>
   <mapgis-web-scene class="main">
@@ -94,7 +96,7 @@ export default {
   name: "arcgisMapLayer",
   data() {
     return {
-      url:
+      baseUrl:
         "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
       layers: "show:0",
       layerStyle: {
@@ -131,15 +133,17 @@ export default {
 </style>
 ```
 
+:::
+
 ### 控制多张地图显示的 zIndex
 
 ```vue
 <template>
   <mapgis-web-scene class="main">
-    <mapgis-3d-arcgis-map-layer :url="url" :layerStyle="layerStyle" />
+    <mapgis-3d-arcgis-map-layer :baseUrl="url" :layerStyle="layerStyle" />
     <mapgis-3d-arcgis-tile-layer
       v-if="show"
-      :url="url2"
+      :baseUrl="url2"
       :layerStyle="layerStyle2"
     ></mapgis-3d-arcgis-tile-layer>
     <button @click="changeOpacity">改变透明度</button>
