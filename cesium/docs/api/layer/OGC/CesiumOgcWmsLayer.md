@@ -129,9 +129,11 @@ All common layer [events](/zh/api/Layers/#events)
 
 ### 加载 WMS 地图 - IGS - 4326
 
+::: demo
+
 ```vue
 <template>
-  <mapgis-web-scene>
+  <mapgis-web-scene  @load="handleLoad">
     <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :layers="layers" :srs="srs" />
   </mapgis-web-scene>
 </template>
@@ -141,12 +143,22 @@ export default {
   data() {
     return {
       //服务基地址
-      baseUrl: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer",
       //要显示的图层名称
-      layers: "武汉市,武汉市_行人道路",
+      layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院,商业用地,建筑物,铁路_1,铁路_2,铁路_3,主干道,主干道,高速公路_1,高速公路_1_9-10,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,地铁,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,地铁站POI,山顶,果园poi,汽车站点POI,大学poi,学校poi,中小学POI,幼儿园POI,医院POI,口腔医院POI,派出所POI,检察院POI,银行POI,邮局POI,体育馆POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,宾馆POI,百货店POI,便利店POI,书店POI,快餐POI,咖啡馆POI,电影院POI,高尔夫poi,村庄点,市镇点,区县点,首都点',
       //坐标参考系
       srs: "EPSG:4326"
     };
+  },
+  methods: {
+    handleLoad(e) {
+      const webGlobe = e.component.webGlobe;
+      var sceneManager = new CesiumZondy.Manager.SceneManager({
+        viewer: webGlobe.viewer
+      });
+      //视点跳转（经度，纬度，视角高度，跳转持续时间）
+      sceneManager.flyTo(116.348, 40.236, 300000);
+    }
   }
 };
 </script>
@@ -158,6 +170,8 @@ export default {
 }
 </style>
 ```
+
+:::
 
 ### 加载 WMS 地图 - ArcGis - 3857
 
@@ -207,9 +221,9 @@ export default {
   data() {
     return {
       //服务基地址
-      baseUrl: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer",
       //要显示的图层名称
-      layers: "武汉市,武汉市_行人道路",
+      layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院,商业用地,建筑物,铁路_1,铁路_2,铁路_3,主干道,主干道,高速公路_1,高速公路_1_9-10,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,地铁,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,地铁站POI,山顶,果园poi,汽车站点POI,大学poi,学校poi,中小学POI,幼儿园POI,医院POI,口腔医院POI,派出所POI,检察院POI,银行POI,邮局POI,体育馆POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,宾馆POI,百货店POI,便利店POI,书店POI,快餐POI,咖啡馆POI,电影院POI,高尔夫poi,村庄点,市镇点,区县点,首都点',
       //坐标参考系
       srs: "EPSG:4326"
     };
@@ -284,9 +298,9 @@ export default {
         zIndex: 105
       },
       //服务基地址
-      baseUrl2: "http://localhost:6163/igs/rest/ogc/doc/wuhan_t1/WMSServer",
+      baseUrl2: "http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer",
       //要显示的图层名称
-      layers: "武汉市,武汉市_行人道路",
+      layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院,商业用地,建筑物,铁路_1,铁路_2,铁路_3,主干道,主干道,高速公路_1,高速公路_1_9-10,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,地铁,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,地铁站POI,山顶,果园poi,汽车站点POI,大学poi,学校poi,中小学POI,幼儿园POI,医院POI,口腔医院POI,派出所POI,检察院POI,银行POI,邮局POI,体育馆POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,宾馆POI,百货店POI,便利店POI,书店POI,快餐POI,咖啡馆POI,电影院POI,高尔夫poi,村庄点,市镇点,区县点,首都点',
       //坐标参考系
       srs: "EPSG:4326",
       //样式信息

@@ -67,6 +67,8 @@
 
 ### 加载 4326 地图
 
+::: demo
+
 ```vue
 <template>
   <mapgis-web-scene>
@@ -79,12 +81,14 @@ export default {
   data() {
     return {
       //要加载的url
-      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328"
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
     };
   }
 };
 </script>
 ```
+
+:::
 
 ### 动态投影
 
@@ -100,7 +104,7 @@ export default {
   data() {
     return {
       //要加载的url
-      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
       //动态投影
       srs: "EPSG: 3857"
     };
@@ -123,7 +127,7 @@ export default {
   data() {
     return {
       //要加载的url
-      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
       //图层样式
       layerStyle: {
         opacity: 0.5,
@@ -150,7 +154,7 @@ export default {
   data() {
     return {
       //要加载的url
-      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
       //要显示的子图层
       layers: "show:1,2"
     };
@@ -196,7 +200,7 @@ export default {
         zIndex: 100
       },
       //要加载的url
-      baseUrlDoc: "http://localhost:6163/igs/rest/mrms/docs/武汉_专题图_4328",
+      baseUrlDoc: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
       //要显示的子图层
       layers: "show:1,2",
       //mapgis-web-scene的Id，组件唯一标识，多个图层时用来查找webGlobe

@@ -57,6 +57,8 @@
 
 ## 示例
 
+::: demo
+
 ```vue
 <template>
   <mapgis-web-scene class="main">
@@ -71,8 +73,7 @@ export default {
   name: "arcgisTileLayer",
   data() {
     return {
-      url:
-        "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      baseUrl:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
       layerStyle: {
         visible: true,
         opacity: 1,
@@ -105,3 +106,5 @@ export default {
 }
 </style>
 ```
+
+:::

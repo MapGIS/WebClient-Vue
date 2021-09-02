@@ -1,6 +1,6 @@
 // import "ant-design-vue/dist/antd.css";
 import antDirective from "ant-design-vue/es/_util/antDirective";
-
+import vcolorpicker from 'vcolorpicker'
 import * as UIComponents from "./component";
 
 import { setLayout, setLayoutSettingVisible } from "./util/emit/layout";
@@ -21,6 +21,7 @@ const install = function(Vue, options) {
   setTheme(theme);
   setLayoutSettingVisible(true);
   Vue.use(antDirective);
+  Vue.use(vcolorpicker);
   for (let name in UIComponents) {
     const ui = UIComponents[name];
     Vue.component(ui.options ? ui.options.name : ui.name, ui);

@@ -2,23 +2,34 @@
 
 ## 步骤1 clone代码
 
-代码地址：https://gitee.com/osmapgis/WebClient-Vue
+代码地址：https://gitee.com/osmapgis/WebClient-Vue、https://github.com/MapGIS/WebClient-Vue
 
  ``` sh
+
 git clone https://gitee.com/osmapgis/WebClient-Vue.git
+
+或
+
+git clone https://github.com/MapGIS/WebClient-Vue.git
 ```
 
 ## 步骤2 link前的准备
 
-### 1. 放入部署包
+### 1. 获取部署包
 
-我们会提供已经打好的部署包，解压后放到对应目录下（路径：**/WebClient-Vue/ui/**）
+部署包的获取有两种途径：
+#### ① 我们直接提供部署包，解压后放到对应目录下（路径：**/WebClient-Vue/ui/**），如下图：
 
-如图所示：
 
 <img alt="目录示例" src="../assets/images/catalog-show.png" width="40%">
 
-### 2. 修改 **/WebClient-Vue/ui/package.json** 文件,具体修改第5-6行（关注“module”改为“module1”），如下所示：
+#### ② 研发人员自行打包，下面为打包步骤：
+ ``` sh
+cd /WebClient-Vue/ui
+npm install
+npm run build
+```
+### 2. 打开 **/WebClient-Vue/ui/package.json** 文件，按下面内容修改第5-6行（重点关注第6行“module”改为了“module1”），如下所示：
 
 ``` sh
 5   "main": "dist-libs/webclient-vue-ui.umd.min.js",
