@@ -37,3 +37,9 @@ export { Popconfirm };
 
 export { default as Tree } from "ant-design-vue/es/tree/Tree";
 export { default as DirectoryTree } from "ant-design-vue/es/tree/DirectoryTree";
+
+export { default as  TimePicker} from "ant-design-vue/es/time-picker";
+export { default as  DatePicker} from "ant-design-vue/es/date-picker";
+export { default as  FormModelItem} from "ant-design-vue/es/form-model/FormItem";
+export { default as  FormModel} from "ant-design-vue/es/form-model/Form";
+

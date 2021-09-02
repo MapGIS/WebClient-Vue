@@ -11,17 +11,17 @@
       阴影分析
     </div>
     <div class="mp-widget-shadow-analysis">
-      <a-form-model :model="formData" v-bind="layout">
-        <a-form-model-item label="日期">
-          <a-date-picker
+      <mapgis-ui-form-model :model="formData" v-bind="layout">
+        <mapgis-ui-form-model-item label="日期">
+          <mapgis-ui-date-picker
               :default-value="startDate"
               size="small"
               @change="changeDate"
           />
-        </a-form-model-item>
+        </mapgis-ui-form-model-item>
         <div>
-          <a-form-model-item label="开始时间">
-            <a-time-picker
+          <mapgis-ui-form-model-item label="开始时间">
+            <mapgis-ui-time-picker
                 :default-value="startTime"
                 size="small"
                 @change="
@@ -30,9 +30,9 @@
               }
             "
             />
-          </a-form-model-item>
-          <a-form-model-item label="结束时间">
-            <a-time-picker
+          </mapgis-ui-form-model-item>
+          <mapgis-ui-form-model-item label="结束时间">
+            <mapgis-ui-time-picker
                 :default-value="endTime"
                 size="small"
                 @change="
@@ -41,68 +41,68 @@
               }
             "
             />
-          </a-form-model-item>
+          </mapgis-ui-form-model-item>
         </div>
-        <a-form-model-item label="底部高程">
-          <a-input
+        <mapgis-ui-form-model-item label="底部高程">
+          <mapgis-ui-input
               v-model.number="formData.min"
               addon-after="(米)"
               size="small"
               type="number"
           />
-        </a-form-model-item>
-        <a-form-model-item label="拉伸高度">
-          <a-input
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="拉伸高度">
+          <mapgis-ui-input
               v-model.number="formData.max"
               addon-after="(米)"
               min="0"
               size="small"
               type="number"
           />
-        </a-form-model-item>
-        <a-form-model-item label="阴影颜色">
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="阴影颜色">
           <colorPicker
               class="color-picker"
               v-model="formData.shadowColor"
               @change="changeShadowColor"
           />
-        </a-form-model-item>
-        <a-form-model-item label="非阴影颜色">
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="非阴影颜色">
           <colorPicker
               class="color-picker"
               v-model="formData.sunColor"
               @change="changeSunColor"
           />
-        </a-form-model-item>
-        <a-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
-          <a-input
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
+          <mapgis-ui-input
               v-model.number="formData.ratio"
               disabled
               size="small"
               type="number"
           />
-        </a-form-model-item>
-      </a-form-model>
+        </mapgis-ui-form-model-item>
+      </mapgis-ui-form-model>
       <div class="control-button-container">
-        <a-button
+        <mapgis-ui-button
             class="control-button"
             size="small"
             type="primary"
             @click="shadow"
         >阴影分析
-        </a-button
+        </mapgis-ui-button
         >
-        <a-button class="control-button" type="primary" @click="sun" size="small"
+        <mapgis-ui-button class="control-button" type="primary" @click="sun" size="small"
         >日照分析
-        </a-button
+        </mapgis-ui-button
         >
-        <a-button
+        <mapgis-ui-button
             class="control-button"
             size="small"
             type="primary"
             @click="remove"
         >结束分析
-        </a-button
+        </mapgis-ui-button
         >
       </div>
     </div>
@@ -519,28 +519,28 @@ export default {
   width: 250px;
 }
 
-::v-deep .ant-form-item {
+::v-deep .mapgis-ui-form-item {
   /*align-items: center;*/
   margin-bottom: 0;
 }
 
-::v-deep .ant-form-item-label {
+::v-deep .mapgis-ui-form-item-label {
   line-height: 40px;
 }
 
-::v-deep .ant-form-item-label > label {
+::v-deep .mapgis-ui-form-item-label > label {
   color: rgba(255, 255, 255, 1);
 }
 
-::v-deep .ant-form-item-label > label::after {
+::v-deep .mapgis-ui-form-item-label > label::after {
   /*content: '';*/
 }
 
-::v-deep .ant-input {
+::v-deep .mapgis-ui-input {
   padding: 4px 11px;
 }
 
-::v-deep .ant-time-picker {
+::v-deep .mapgis-ui-time-picker {
   width: 181px;
 }
 

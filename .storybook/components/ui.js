@@ -1,6 +1,7 @@
 import * as UIComponents from "./ui_coms";
 import MapgisUiIconFont from "../../ui/src/components/iconfont/Icon.vue";
 import MapgisUi from "../../ui/src/index";
+import vcolorpicker from "vcolorpicker";
 
 const install = function (Vue, options) {
   for (let name in UIComponents) {
@@ -13,6 +14,7 @@ const install = function (Vue, options) {
     });
     Vue.component("mapgis-ui-iconfont", IconFont);
     Vue.use(MapgisUi);
+    Vue.use(vcolorpicker);
   }
 };
 
