@@ -405,6 +405,9 @@ export default {
       this.showOptionsPannel = true;
       this.startHeightCopyTwo = 0;
       this.isPlayer = true;
+      this.$nextTick(function () {
+        this.downDisabled = false;
+      });
     },
     $_up(){
       switch (this.upTitle){
