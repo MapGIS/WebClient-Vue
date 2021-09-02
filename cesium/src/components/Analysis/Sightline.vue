@@ -379,7 +379,7 @@ export default {
 
 <style scoped>
 ::v-deep .mapgis-ui-card-body {
-    max-height: 300px;
+    max-height: 400px;
     overflow: auto;
 }
 ::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
