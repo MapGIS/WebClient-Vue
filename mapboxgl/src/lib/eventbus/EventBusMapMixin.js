@@ -82,6 +82,11 @@ export default {
     EventBus.$on("document-save-theme-layer", payload => {
       this.$_handleDocumentSaveThemeLayer(payload);
     });
+
+    // 打印相关
+    EventBus.$on("map-print-rect", payload => {
+      this.$_handleMapPrintRect(payload);
+    });
   },
   methods: {
     ...EmitEvent,
@@ -179,6 +184,8 @@ export default {
      * @description 文档保存专题图
      * @param {payload} 载荷
      */
-    $_handleDocumentSaveThemeLayer(payload) {}
+    $_handleDocumentSaveThemeLayer(payload) {},
+
+    $_handleMapPrintRect(payload) {}
   }
 };

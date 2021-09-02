@@ -220,11 +220,19 @@ export function printCanvas(map, callback, layoutinfo) {
   html2canvas(scale).then(function(scalecanvas) {
     scalecanvas.toBlob(function(scaleblob) {
       // saveAs(blob, "pretty image.png");
-      scaleParams.url = window.URL.createObjectURL(scaleblob);
       let scaleimg = new Image();
+
+      /* try {
+        scaleimg.srcObject  = scaleblob;
+      } catch (error) {
+        scaleimg.src = window.URL.createObjectURL(scaleblob);
+      } */
+      var urlCreator = window.URL || window.webkitURL;
+      scaleParams.url = urlCreator.createObjectURL(scaleblob);
       scaleimg.src = scaleParams.url;
+
       scaleimg.onload = function(e) {
-        window.URL.revokeObjectURL(scaleimg.src);
+        urlCreator.revokeObjectURL(scaleimg.src);
         scaleParams.image = scaleimg;
         scaleParams.width = scaleimg.width || scaleimg.style.width;
         scaleParams.height = scaleimg.height || scaleimg.style.height;
@@ -232,11 +240,11 @@ export function printCanvas(map, callback, layoutinfo) {
         html2canvas(legend).then(function(legendcanvas) {
           legendcanvas.toBlob(function(legendblob) {
             // saveAs(blob, "pretty image.png");
-            legendParams.url = window.URL.createObjectURL(legendblob);
+            legendParams.url = urlCreator.createObjectURL(legendblob);
             let legendimg = new Image();
             legendimg.src = legendParams.url;
             legendimg.onload = function(e) {
-              window.URL.revokeObjectURL(legendimg.src);
+              urlCreator.revokeObjectURL(legendimg.src);
               legendParams.image = legendimg;
               legendParams.width = legendimg.width || legendimg.style.width;
               legendParams.height = legendimg.height || legendimg.style.height;
