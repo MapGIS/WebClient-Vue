@@ -9,7 +9,7 @@ import Feature from "./Feature.vue";
 const CircleRules = [
   {
     title: "属性字段",
-    icon: "mapgis-xuanzezhuji",
+    icon: "mapgis-translate",
     type: "string",
     layerprop: "text-field",
     layertype: "layout",
@@ -17,7 +17,7 @@ const CircleRules = [
   },
   /* {
     title: "字体",
-    icon: "mapgis-yansehecheng",
+    icon: "mapgis-bg-colors",
     type: "string",
     layerprop: "text-font",
     layertype: "layout",
@@ -25,7 +25,7 @@ const CircleRules = [
   }, */
   {
     title: "字体大小",
-    icon: "mapgis-duibidutiaojie",
+    icon: "mapgis-font-size",
     type: "number",
     layerprop: "text-size",
     layertype: "layout",
@@ -35,7 +35,7 @@ const CircleRules = [
   },
   {
     title: "字体偏移",
-    icon: "mapgis-duibidutiaojie",
+    icon: "mapgis-font-colors",
     type: "array-number",
     layerprop: "text-offset",
     layertype: "layout",
@@ -45,7 +45,7 @@ const CircleRules = [
   },
   {
     title: "字体颜色",
-    icon: "mapgis-yansehecheng",
+    icon: "mapgis-bg-colors",
     type: "color",
     layerprop: "text-color",
     layertype: "paint",
@@ -53,7 +53,7 @@ const CircleRules = [
   },
   {
     title: "蒙片大小",
-    icon: "mapgis-sanweizhuji",
+    icon: "mapgis-font-size",
     type: "number",
     layerprop: "text-halo-width",
     layertype: "paint",
@@ -63,7 +63,7 @@ const CircleRules = [
   },
   {
     title: "蒙片颜色",
-    icon: "mapgis-yansehecheng",
+    icon: "mapgis-bg-colors",
     type: "color",
     layerprop: "text-halo-color",
     layertype: "paint",
@@ -71,7 +71,7 @@ const CircleRules = [
   },
   {
     title: "符号",
-    icon: "mapgis-yansehecheng",
+    icon: "mapgis-bg-colors",
     type: "sprite",
     layerprop: "icon-image",
     layertype: "layout",
@@ -79,7 +79,7 @@ const CircleRules = [
   },
   {
     title: "符号大小",
-    icon: "mapgis-duibidutiaojie",
+    icon: "mapgis-font-size",
     type: "number",
     layerprop: "icon-size",
     layertype: "layout",
@@ -89,7 +89,7 @@ const CircleRules = [
   },
   {
     title: "符号偏移",
-    icon: "mapgis-duibidutiaojie",
+    icon: "mapgis-font-colors",
     type: "array-number",
     layerprop: "icon-offset",
     layertype: "layout",

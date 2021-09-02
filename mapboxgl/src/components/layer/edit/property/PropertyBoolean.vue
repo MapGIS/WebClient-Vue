@@ -1,22 +1,21 @@
 <template>
-  <mapgis-ui-input
-    class="mapgis-property-string-right"
-    v-model="value"
-    @change="onChange"
-  />
+  <mapgis-ui-switch v-model="value" :size="size" @change="onChange" />
 </template>
 
 <script>
 import EditMixin from "../EditMixin";
 export default {
-  name: "mapgis-mvt-editor-property-string",
+  name: "mapgis-mvt-editor-property-boolean",
   mixins: [EditMixin],
   inject: ["map"],
   props: {
-    rule: Object
+    rule: Object,
+    minimum: { type: Number, default: 0 },
+    maximum: { type: Number, default: 1000 },
+    size: { type: String, default: "small" }
   },
   model: {
-    prop: "string",
+    prop: "boolean",
     event: "change"
   },
   watch: {
@@ -30,18 +29,18 @@ export default {
     };
   },
   methods: {
-    onChange(e) {
-      let string = e.target.value;
+    onChange(boolean) {
+      if (typeof boolean === "string") return;
       const { map, rule, layerid } = this;
-      this.$emit("change", string);
+      this.$emit("change", boolean);
       if (layerid && rule) {
         const { layertype, layerprop } = rule;
         if (rule.layertype === "paint") {
-          map.setPaintProperty(layerid, layerprop, string);
+          map.setPaintProperty(layerid, layerprop, boolean);
         } else if (rule.layertype === "layout") {
-          map.setLayoutProperty(layerid, layerprop, string);
+          map.setLayoutProperty(layerid, layerprop, boolean);
         }
-        let event = { layertype, layerprop, layervalue: string };
+        let event = { layertype, layerprop, layervalue: boolean };
         this.$_emitEvent(event);
       }
     },
@@ -62,9 +61,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.mapgis-property-string-right {
-  width: 100%;
-}
-</style>

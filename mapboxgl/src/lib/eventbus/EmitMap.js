@@ -92,6 +92,10 @@ export const emitDocumentSaveThemeLayer = payload => {
   EventBus.$emit("document-save-theme-layer", payload);
 };
 
+export const emitMapPrintRect = payload => {
+  EventBus.$emit("map-print-rect", payload);
+};
+
 export default {
   emitMapChangeStyle,
   emitMapAddLayer,
@@ -112,5 +116,6 @@ export default {
   emitDocumentRemoveThemeLayer,
   emitDocumentShowThemeLayer,
   emitDocumentHideThemeLayer,
-  emitDocumentSaveThemeLayer
+  emitDocumentSaveThemeLayer,
+  emitMapPrintRect
 };

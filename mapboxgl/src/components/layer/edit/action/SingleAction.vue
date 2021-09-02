@@ -78,6 +78,8 @@ export default {
 
 <style>
 .mapgis-mvt-action-single {
+  /* height: fit-content;
+  overflow-y: scroll; */
 }
 .mapgis-mvt-action-single-control {
   margin-top: 20px;

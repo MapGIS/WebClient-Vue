@@ -1,0 +1,10 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(iconfont) {
+}
+
+.mapgis-ui-form-item-label .anticon {
+  font-size: 16px;
+  color: $primary-6;
+}

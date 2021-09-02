@@ -8,7 +8,7 @@ import Feature from "./Feature.vue";
 
 const FillRules = [
   {
-    title: "颜色",
+    title: "填充颜色",
     icon: "mapgis-bg-colors",
     type: "color",
     layerprop: "fill-color",
@@ -16,7 +16,7 @@ const FillRules = [
     default: "#000000"
   },
   {
-    title: "符号",
+    title: "填充符号",
     icon: "mapgis-Symbols-1",
     type: "sprite",
     layerprop: "fill-pattern",
@@ -31,7 +31,7 @@ const FillRules = [
     default: true
   },
   {
-    title: "透明度",
+    title: "填充透明",
     icon: "mapgis-opacity",
     type: "number",
     layerprop: "fill-opacity",
