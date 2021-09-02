@@ -47,12 +47,46 @@ const LineRules = [
     type: "enum",
     layerprop: "line-cap",
     layertype: "layout",
+    enums: [
+      {
+        icon: "mapgis-join-1",
+        value: "butt",
+        title: "尖头"
+      },
+      {
+        icon: "mapgis-join-3",
+        value: "round",
+        title: "圆头"
+      },
+      {
+        icon: "mapgis-join-2",
+        value: "square",
+        title: "平头"
+      }
+    ],
     default: "butt"
   },
   {
     title: "边线拐角",
     icon: "mapgis-join-2",
     type: "enum",
+    enums: [
+      {
+        icon: "mapgis-join-1",
+        value: "miter",
+        title: "棱拐"
+      },
+      {
+        icon: "mapgis-join-3",
+        value: "round",
+        title: "圆拐"
+      },
+      {
+        icon: "mapgis-join-2",
+        value: "bevel",
+        title: "平拐"
+      }
+    ],
     layerprop: "line-join",
     layertype: "layout",
     default: "miter"
