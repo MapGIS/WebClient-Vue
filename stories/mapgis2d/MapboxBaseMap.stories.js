@@ -1,4 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
+import MapgisWebMapMd from "../../mapboxgl/docs/guide/draw.md";
 
 export default {
   title: "二维/基础地图",
@@ -26,14 +27,19 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap },
-  template: `<mapgis-web-map v-bind="$props" style="height:60vh">
+  parameters: {
+    docs: {
+      page: null,
+    },
+  },
+  template: `<mapgis-web-map v-bind="$props" style="height:100vh">
     <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
   </mapgis-web-map>
-  `
+  `,
 });
 
-export const EmptyMap = Template.bind({});
-EmptyMap.args = {
+export const 地图 = Template.bind({});
+地图.args = {
   mapStyle: {
     version: 8,
     sources: {},
@@ -50,4 +56,12 @@ EmptyMap.args = {
   zoom: 3,
   center: [114.3, 30.5],
   crs: "EPSG:4326",
+};
+
+地图.parameters = {
+  docs: {
+    description: {
+      component: MapgisWebMapMd,
+    },
+  },
 };

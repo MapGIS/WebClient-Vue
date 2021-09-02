@@ -65,7 +65,8 @@ export default {
         let newId = next.current.id;
         if (oldId != newId) {
           if (mode == "none") {
-            this.renderStyle();
+            this.restoreStyle();
+            // this.renderStyle();
           } else if (mode == "single") {
             this.renderStyle();
           }
