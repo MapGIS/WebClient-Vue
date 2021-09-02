@@ -3,7 +3,7 @@ import MapgisIgsDocLayer from "../../mapboxgl/src/components/layer/igserver/IgsD
 // import FeatureLayer from "./component/FeatureLayerIgserver";
 
 export default {
-  title: "二维/OGC/WFS",
+  title: "二维/图层/OGC/WFS",
   component: MapgisIgsDocLayer,
   argTypes: {
     layer: {},
@@ -22,8 +22,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Doc = Template.bind({});
-Doc.args = {
+export const WFS = Template.bind({});
+WFS.args = {
   layerId: "wuhan_WFS_4326",
   url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326"
 };

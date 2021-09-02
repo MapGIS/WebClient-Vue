@@ -1,7 +1,7 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 
 export default {
-  title: "二维/基础地图",
+  title: "二维/地图/地图对象",
   component: MapgisWebMap,
   argTypes: {
     mapStyle: {
@@ -32,8 +32,8 @@ const Template = (args, { argTypes }) => ({
   `
 });
 
-export const EmptyMap = Template.bind({});
-EmptyMap.args = {
+export const 地图对象 = Template.bind({});
+地图对象.args = {
   mapStyle: {
     version: 8,
     sources: {},

@@ -2,7 +2,7 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 
 export default {
-  title: "二维/要素表格",
+  title: "二维/地图子组件/要素表格",
   component: FeatureTable,
   argTypes: {
     MapUrl:"http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326",
@@ -31,8 +31,8 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const Doc = Template.bind({});
-Doc.args = {
+export const 要素表格 = Template.bind({});
+要素表格.args = {
   MapUrl:"http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326",
   layerId: "wuhan_WFS_4326",
   url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326"

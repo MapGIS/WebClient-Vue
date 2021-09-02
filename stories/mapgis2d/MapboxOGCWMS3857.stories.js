@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
 
 export default {
-  title: "二维/OGC/WMS-3857",
+  title: "二维/图层/OGC/WMS-3857",
   component: MapgisOgcWmsLayer,
   argTypes: {
     layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院',

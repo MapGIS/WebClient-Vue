@@ -5,7 +5,7 @@ import {BaseServer} from "@mapgis/webclient-es6-service";
 
 
 export default {
-    title: "二维/覆盖物/MapV",
+    title: "二维/可视化/MapV",
     component: MapgisMapv,
     argTypes: {}
 };

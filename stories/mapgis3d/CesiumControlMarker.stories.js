@@ -1,5 +1,5 @@
 export default {
-  title: "三维/交互/Marker",
+  title: "三维/场景子组件/Marker",
   argTypes: {
     position: {
       longitude: 110,
