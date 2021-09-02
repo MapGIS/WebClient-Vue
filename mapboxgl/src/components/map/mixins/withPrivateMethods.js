@@ -78,6 +78,7 @@ export default {
             if (this.accessToken) this.mapboxgl.accessToken = this.accessToken;
             const map = new mapboxgl.Map({
               ...this._props,
+              preserveDrawingBuffer: true,
               container: this.$refs.container,
               style: this.mapStyle
             });
