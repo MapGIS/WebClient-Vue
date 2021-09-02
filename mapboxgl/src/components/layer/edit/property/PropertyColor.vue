@@ -1,17 +1,17 @@
 <template>
   <mapgis-ui-row class="mapgis-property-color">
-    <mapgis-ui-col span="7">
+    <mapgis-ui-col :span="7">
       <mapgis-ui-iconfont :type="rule.icon" />
       <span class="mapgis-property-color-left">{{ rule.title }} </span>
     </mapgis-ui-col>
-    <mapgis-ui-col span="17">
+    <mapgis-ui-col :span="17">
       <!-- <mapgis-ui-popover v-model="visible" trigger="click"> -->
 
       <div class="theme-panel-color-outer">
         <colorPicker
-            v-model="value"
-            class="theme-panel-line-color"
-            @change="onChange"
+          v-model="value"
+          class="theme-panel-line-color"
+          @change="onChange"
         />
       </div>
 
@@ -58,8 +58,7 @@ export default {
     };
   },
   methods: {
-    onChange(event) {
-      const color = event.hex;
+    onChange(color) {
       const { map, rule, layerid } = this;
       this.$emit("change", color);
       this.value = color;
@@ -90,6 +89,15 @@ export default {
           value = layer[layertype][layerprop];
         }
       }
+      if (typeof value === "object") {
+        if (
+          value.stops &&
+          value.stops.length > 0 &&
+          value.stops[0].length > 1
+        ) {
+          value = value.stops[0][1];
+        }
+      }
       return value;
     }
   }
@@ -107,7 +115,7 @@ export default {
   margin-left: -14px;
 }
 
-/deep/.theme-panel-line-color .colorBtn{
+/deep/.theme-panel-line-color .colorBtn {
   width: 167px !important;
   height: 17px !important;
   margin-left: 5px;

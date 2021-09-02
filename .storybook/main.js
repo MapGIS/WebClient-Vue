@@ -1,6 +1,6 @@
 module.exports = {
   stories: [
-    "../stories/**/*.stories.mdx",
+    "../stories/**/*.stories.@(mdx|js)",
     "../stories/**/*.stories.@(js|jsx|ts|tsx)",
     "../stories/**/**/*.stories.@(js|jsx|ts|tsx)",
     "../stories/pro/layout/*.stories.@(js|jsx|ts|tsx)",
@@ -10,6 +10,24 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-knobs",
+    /* {
+      name: "@storybook/addon-docs",
+      options: {
+        configureJSX: true,
+        babelOptions: {},
+        sourceLoaderOptions: null,
+        transcludeMarkdown: true,
+      },
+    }, */
+    {
+      name: "@storybook/addon-storysource",
+      options: {
+        loaderOptions: {
+          injectStoryParameters: false,
+          prettierConfig: { printWidth: 80, singleQuote: false },
+        },
+      },
+    },
   ],
   webpackFinal: async (config, { configType }) => {
     config.node = {
