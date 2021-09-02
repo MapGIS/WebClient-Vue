@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-model-folder">
+  <div class="mapgis-ui-clouddisk-layout-model-folder" :style="{height:simple? 'calc(100vh - 200px)': '275px'}">
     <!-- <mapgis-ui-spin v-show="isLoading"> -->
       <mapgis-ui-tree
         v-show="!isLoading"
@@ -51,6 +51,10 @@ export default {
     };
   },
   props: {
+    simple: {
+      type: Boolean,  
+      default: false
+    },
     url: {
       type: Number,
       default: -100
@@ -160,7 +164,7 @@ export default {
                   }
                   commonData.push(ele.resInfo);
                 });
-                commonData = this.checkSelected(url, "", commonData);
+                // commonData = this.checkSelected(url, "", commonData);
                 let newDefaultData = {
                   title: "目录",
                   icon: "iconwenjianjia-shouqi-",
@@ -229,7 +233,7 @@ export default {
                   }
                   return d;
                 });
-                items = this.checkSelected(url, defaultURL, items);
+                // items = this.checkSelected(url, defaultURL, items);
                 let newDefaultData = {
                   title: "目录",
                   icon: "iconwenjianjia-shouqi-",
@@ -343,7 +347,7 @@ export default {
                   }
                   return d;
                 });
-                items = this.checkSelected(this.url, item.url, items);
+                // items = this.checkSelected(this.url, item.dataRef.url, items);
                 item.dataRef.children = items;
                 // vm.data = [...vm.data];
                 // console.warn(items)
@@ -426,71 +430,70 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.layout-model-folder {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  height: 275px;
-  margin-left: 10px;
-  position: relative;
-  // min-width: 200px;
-  .ivu-tree-title-selected,
-  .ivu-tree-title-selected:hover {
-    background-color: transparent;
-  }
-
-  .compay-view-tip-root {
-    height: 20px;
-    width: 80px;
-    font-family: 微软雅黑;
-    font-size: 12.5px;
-    font-weight: normal;
-    font-stretch: normal;
-
-    padding-top: 4px;
-    color: #333333;
-  }
-
-  .compay-view-tip {
-    height: 20px;
-    width: 150px;
-
-    font-family: 微软雅黑;
-    font-size: 12.5px;
-    font-weight: normal;
-    font-stretch: normal;
-    line-height: 16px;
-    padding-top: 5px;
-    color: #333333;
-
-    letter-spacing: 0px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    white-space: nowrap;
-    display: block;
-  }
-}
-
-.layout-model-folder::-webkit-scrollbar {
-  width: 3px;
-  height: 12px;
-  background-color: transparent;
-}
-
-.layout-model-folder::-webkit-scrollbar-track {
-  /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
-  /* border-radius: 3px; */
-  /* background-color: #e0f2fb; */
-  background-color: transparent;
-}
-
-.layout-model-folder::-webkit-scrollbar-thumb {
-  /* border-radius: 3px; */
-  /* -webkit-box-shadow: inset 0 0 6px #2d8cf0; */
-  background-color: #2d8cf0;
-}
-
 .layout-tree-company {
-  width: 35vw;
+  width: 20vw;
 }
+// .layout-model-folder {
+//   overflow-x: scroll;
+//   overflow-y: scroll;
+//   // max-height: calc(100vh - 200px);
+//   max-height: 275px;
+//   margin-left: 10px;
+//   position: relative;
+//   // min-width: 200px;
+//   .ivu-tree-title-selected,
+//   .ivu-tree-title-selected:hover {
+//     background-color: transparent;
+//   }
+//   // .compay-view-tip-root {
+//   //   height: 20px;
+//   //   width: 80px;
+//   //   font-family: 微软雅黑;
+//   //   font-size: 12.5px;
+//   //   font-weight: normal;
+//   //   font-stretch: normal;
+
+//   //   padding-top: 4px;
+//   //   color: #333333;
+//   // }
+
+//   // .compay-view-tip {
+//   //   height: 20px;
+//   //   width: 150px;
+
+//   //   font-family: 微软雅黑;
+//   //   font-size: 12.5px;
+//   //   font-weight: normal;
+//   //   font-stretch: normal;
+//   //   line-height: 16px;
+//   //   padding-top: 5px;
+//   //   color: #333333;
+
+//   //   letter-spacing: 0px;
+//   //   overflow: hidden;
+//   //   text-overflow: ellipsis;
+//   //   -o-text-overflow: ellipsis;
+//   //   white-space: nowrap;
+//   //   display: block;
+//   // }
+// }
+
+// .layout-model-folder::-webkit-scrollbar {
+//   width: 3px;
+//   height: 6px;
+//   background-color: transparent;
+// }
+
+// .layout-model-folder::-webkit-scrollbar-track {
+//   /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
+//   /* border-radius: 3px; */
+//   /* background-color: #e0f2fb; */
+//   background-color: transparent;
+// }
+
+// .layout-model-folder::-webkit-scrollbar-thumb {
+//   /* border-radius: 3px; */
+//   /* -webkit-box-shadow: inset 0 0 6px #2d8cf0; */
+//   background-color: #2d8cf0;
+// }
 </style>
