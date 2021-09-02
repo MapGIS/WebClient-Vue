@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisArcgisMapLayer from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISMapLayer";
 
 export default {
-    title: "二维/ArcGISServer/矢量地图图层",
+    title: "二维/图层/ArcGIS地图",
     component: MapgisArcgisMapLayer,
     argTypes: {
         layer: {},
@@ -21,8 +21,8 @@ const Template = (args, {argTypes}) => ({
     </mapgis-web-map>`,
 });
 
-export const  exportMap = Template.bind({});
-exportMap.args = {
+export const  ArcGIS地图 = Template.bind({});
+ArcGIS地图.args = {
     layers: "show:0,2,4,7,9,10,11,12",
     baseUrl: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
     layerId: "arcgismap_layerid",

@@ -3,7 +3,7 @@
 // import FeatureLayer from "./component/FeatureLayerIgserver";
 
 export default {
-  title: "二维/要素查询",
+  title: "二维/地图子组件/要素查询",
   component: MapgisIgsDocLayer,
   argTypes: {
     layer: {},
@@ -22,8 +22,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Doc = Template.bind({});
-Doc.args = {
+export const 要素查询 = Template.bind({});
+要素查询.args = {
   layerId: "wuhan_WFS_4326",
   url: "http://localhost:6163/igs/rest/mrms/docs/wuhan_WFS_4326"
 };

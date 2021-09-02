@@ -1,5 +1,5 @@
 export default {
-    title: "二维/交互/鹰眼"
+    title: "二维/地图子组件/鹰眼"
 };
 
 const Template = (args, { argTypes }) => ({
@@ -16,8 +16,8 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Hawkeye = Template.bind({});
-Hawkeye.args = {
+export const 鹰眼 = Template.bind({});
+鹰眼.args = {
     mapOptions: {
         crs: "EPSG:4326", //经纬度一定要设置crs参数
         maxBounds: [

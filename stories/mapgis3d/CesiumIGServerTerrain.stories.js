@@ -2,7 +2,7 @@ import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dIgsTerrain from "../../cesium/src/components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 
 export default {
-  title: "三维/地形/IGServer",
+  title: "三维/图层/IGServer地形",
   component: Mapgis3dIgsTerrain,
   argTypes: {
     url: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",

@@ -3,7 +3,7 @@ import MapgisRasterLayer from "../../mapboxgl/src/components/layer/RasterLayer.j
 import MapgisCanvasLayer from "../../mapboxgl/src/components/layer/CanvasLayer.js";
 
 export default {
-  title: "二维/图层/画布",
+  title: "二维/图层/画布图层",
   component: MapgisCanvasLayer,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
