@@ -26,9 +26,9 @@
 .control {
   position: absolute;
   z-index: 9999;
-  background: #ffffff;
+  background: #cc5a5a;
   top: 47.2vh;
-  left: 27.5vw;
+  left: 39.5vw;
   width: 5vw;
   height: 5vh;
   border-radius: 12px;

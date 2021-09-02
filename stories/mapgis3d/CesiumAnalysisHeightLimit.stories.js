@@ -23,5 +23,5 @@ const Template = (args, { argTypes }) => ({
     `
 });
 
-export const Shadow = Template.bind({});
-Shadow.args = {}
+export const HeightLimited = Template.bind({});
+HeightLimited.args = {}
