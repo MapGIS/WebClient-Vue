@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisIgsDocLayer from "../../mapboxgl/src/components/layer/igserver/IgsDocLayer";
 
 export default {
-  title: "二维/IGServer/地图文档",
+  title: "二维/图层/IGServer/IGS地图文档",
   component: MapgisIgsDocLayer,
   argTypes: {
     layerId: "igs_layer_layerid",

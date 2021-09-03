@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisWebMapMd from "../../mapboxgl/docs/guide/basemap.md";
 
 export default {
-  title: "二维/基础地图",
+  title: "二维/地图/地图对象",
   component: MapgisWebMap,
   argTypes: {
     mapStyle: {
@@ -37,6 +37,7 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>
   `,
 });
+
 
 export const 地图 = Template.bind({});
 地图.args = {

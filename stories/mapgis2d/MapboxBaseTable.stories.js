@@ -2,7 +2,7 @@ import {VFeature, SQLParameter} from "../../mapboxgl/src/components/util";
 import {polygonData} from "../component/geometry";
 
 export default {
-  title: "二维/基本表格",
+  title: "二维/地图子组件/表格",
   argTypes: {
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
@@ -143,8 +143,8 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const Doc = Template.bind({});
-Doc.args = {
+export const 表格 = Template.bind({});
+表格.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
   baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"

@@ -62,7 +62,7 @@ export default {
     },
     getValue(id) {
       const { map, layerid, rule } = this;
-      let value = undefined;
+      let value = "#1890FF";
       id = id || layerid;
       if (map && layerid && rule) {
         const { layertype, layerprop } = rule;

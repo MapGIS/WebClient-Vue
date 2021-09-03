@@ -2,7 +2,7 @@ import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import MapgisOgcWmsLayer from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
 
 export default {
-  title: "三维/OGC/WMS",
+  title: "三维/图层/OGC/WMS",
   component: MapgisOgcWmsLayer,
   argTypes: {
     baseUrl:"http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer",

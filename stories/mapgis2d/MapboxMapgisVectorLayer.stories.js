@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisIgsVectorLayer from "../../mapboxgl/src/components/layer/igserver/IgsVectorLayer";
 
 export default {
-  title: "二维/IGServer/矢量图层",
+  title: "二维/图层/IGServer/IGS矢量图层",
   component: MapgisIgsVectorLayer,
   argTypes: {
     layerId: "igs_layer_layerid",
@@ -48,8 +48,8 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const Vector = Template.bind({});
-Vector.args = {
+export const IGS矢量图层 = Template.bind({});
+IGS矢量图层.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
   baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/layers"

@@ -1,6 +1,6 @@
 # MapV
 
-> mapgis-3d-mapv
+> mapgis-3d-mapv-layer
 
 ## 属性
 

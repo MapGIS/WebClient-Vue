@@ -3,7 +3,7 @@ import MapgisRasterLayer from "../../mapboxgl/src/components/layer/RasterLayer.j
 import MapgisVideoLayer from "../../mapboxgl/src/components/layer/VideoLayer.js";
 
 export default {
-  title: "二维/图层/视频",
+  title: "二维/图层/视频图层",
   component: MapgisVideoLayer,
   // english Our exports that end in "Data" are not stories.
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
@@ -27,8 +27,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const Canvas = Template.bind({});
-Canvas.args = {
+export const 视频图层 = Template.bind({});
+视频图层.args = {
   delay: true,
   layer: {
     source: "video_source_id",
