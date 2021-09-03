@@ -1,5 +1,5 @@
 <template>
-  <div class="mapgis-ui-clouddisk-layer-select" :style="{border:simple? '': '1px solid #dcdee2'}">
+  <div class="mapgis-ui-clouddisk-layer-select" :style="{border:simple? '0px': '1px solid #dcdee2'}">
     <mapgis-ui-row>
       <mapgis-ui-col :span="simple ? 0 : 9" class="demo-split-pane">
         <mapgis-ui-clouddisk-company
