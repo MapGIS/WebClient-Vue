@@ -11,29 +11,29 @@
       控高分析
     </div>
     <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad">
-      <a-card class="a-card">
-        <a-row>
-          <a-col :span="5">分析区域</a-col>
-          <a-col :span="19">
-            <a-button @click="drawRectangle">绘制矩形</a-button>
-            <a-button style="margin:0 15px" @click="drawPolygon">绘制面</a-button>
-            <a-button @click="toggleDelete">清除</a-button>
-          </a-col>
-        </a-row>
-        <a-row style="padding-top: 10px">
-          <a-col :span="5">
+      <mapgis-ui-card class="a-card">
+        <mapgis-ui-row>
+          <mapgis-ui-col :span="5">分析区域</mapgis-ui-col>
+          <mapgis-ui-col :span="19">
+            <mapgis-ui-button @click="drawRectangle">绘制矩形</mapgis-ui-button>
+            <mapgis-ui-button style="margin:0 8px" @click="drawPolygon">绘制面</mapgis-ui-button>
+            <mapgis-ui-button @click="toggleDelete">清除</mapgis-ui-button>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+        <mapgis-ui-row style="padding-top: 10px">
+          <mapgis-ui-col :span="5">
             <span>限制高度</span>
-          </a-col>
-          <a-col :span="10" style="padding-right: 8px">
-            <a-slider v-model="heightLimit" :disabled="excavateAn" :max="maxSliderHeight" :min="mindepth" :step="5"
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="10" style="padding-right: 8px">
+            <mapgis-ui-slider v-model="heightLimit" :disabled="excavateAn" :max="maxSliderHeight" :min="mindepth" :step="5"
                       :value="parseFloat(heightLimit)" @change="setInput"/>
-          </a-col>
-          <a-col :span="5">
-            <a-input-number v-model="heightLimit" :max="maxSliderHeight" :min="mindepth"
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="5">
+            <mapgis-ui-input-number v-model="heightLimit" :max="maxSliderHeight" :min="mindepth"
                             :style="{marginLeft: '16px'}"/>
-          </a-col>
-        </a-row>
-      </a-card>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+      </mapgis-ui-card>
     </mapgis-3d-draw>
   </div>
 </template>
@@ -88,8 +88,8 @@ export default {
     }
   },
   mounted() {
-    let vm = this;
-    vm.$_init(vm.heightLimitedAnalysis);
+    // let vm = this;
+    // vm.$_init(vm.heightLimitedAnalysis);
   },
   destroyed() {
     this.unmount();
@@ -264,7 +264,7 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .ant-card-body {
+::v-deep .mapgis-ui-card-body {
   max-height: 300px;
   overflow: auto;
 }
@@ -285,11 +285,15 @@ export default {
   left: 20px;
 }
 
-::v-deep .a-card-body {
-  padding: 10px !important;
+::v-deep .mapgis-ui-card-body {
+  padding: 10px;
 }
 
-::v-deep .ant-col-5{
-  padding-top: 10px;
+::v-deep .mapgis-ui-col-5{
+  padding-top: 8px
+}
+::v-deep .mapgis-ui-col-19{
+  display: flex;
+  padding-right: 5px;
 }
 </style>
