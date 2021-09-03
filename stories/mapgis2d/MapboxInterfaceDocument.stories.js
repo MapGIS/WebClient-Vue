@@ -18,7 +18,6 @@ const Template = (args, { argTypes }) => ({
     <mapgis-arcgis-map-layer layerId="ArcGIS地图图层" baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer" />
     <mapgis-arcgis-tile-layer layerId="ArcGIS瓦片图层" baseUrl="http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer" />
     <mapgis-document />
-    <mapgis-arcgis-legend />
   </mapgis-web-map>`,
 });
 
