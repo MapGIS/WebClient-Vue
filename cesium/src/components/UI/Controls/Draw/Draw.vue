@@ -192,7 +192,6 @@ export default {
       let drawElement = this.getDrawElement(webGlobeDraw);
       drawElement.startDrawingPolyline({
         callback: function (positions) {
-          positions.splice(positions.length - 1,1);
           let degreeArr = [];
           for (let i = 0;i < positions.length;i++){
             let cartographic = Cesium.Cartographic.fromCartesian(positions[i]);
