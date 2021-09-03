@@ -1,4 +1,8 @@
-import { baiduMapLayer, DataSet } from "mapv";
+import {
+  baiduMapLayer,
+  DataSet,
+  utilDataRangeIntensity as Intensity
+} from "mapv";
 import mapboxgl from "@mapgis/mapbox-gl";
 
 var BaseLayer = baiduMapLayer ? baiduMapLayer.__proto__ : Function;
@@ -135,6 +139,12 @@ export class MapvBaseLayer extends BaseLayer {
     return this.canvasLayer.canvas.getContext(this.context);
   }
 
+  getZoom() {
+    if (!this.map) return 0;
+    let zoom = Math.floor(this.map.getZoom());
+    return zoom;
+  }
+
   init(options) {
     var self = this;
 
@@ -149,6 +159,40 @@ export class MapvBaseLayer extends BaseLayer {
     }
 
     this.initAnimator();
+  }
+
+  // 经纬度左边转换为墨卡托坐标
+  transferToMercator(dataSet) {
+    if (!dataSet) {
+      dataSet = this.dataSet;
+    }
+
+    var map = this.map;
+    if (this.options.coordType !== "bd09mc") {
+      var data = dataSet.get();
+      data = dataSet.transferCoordinate(
+        data,
+        function(coordinates) {
+          if (
+            coordinates[0] < -180 ||
+            coordinates[0] > 180 ||
+            coordinates[1] < -90 ||
+            coordinates[1] > 90
+          ) {
+            return coordinates;
+          } else {
+            var pixel = mapboxgl.MercatorCoordinate.fromLngLat(
+              { lng: coordinates[0], lat: coordinates[1] },
+              0
+            );
+            return [pixel.x, pixel.y];
+          }
+        },
+        "coordinates",
+        "coordinates_mercator"
+      );
+      dataSet._set(data);
+    }
   }
 
   _canvasUpdate(time) {
@@ -216,8 +260,54 @@ export class MapvBaseLayer extends BaseLayer {
         }
       };
     }
+    var data;
+    var zoom = this.getZoom();
+    if (
+      this.options.draw === "cluster" &&
+      (!this.options.maxClusterZoom || this.options.maxClusterZoom >= zoom)
+    ) {
+      var bounds = this.map.getBounds();
+      var ne = bounds.getNorthEast();
+      var sw = bounds.getSouthWest();
+      var clusterData = this.supercluster.getClusters(
+        [sw.lng, sw.lat, ne.lng, ne.lat],
+        zoom
+      );
+      this.pointCountMax = this.supercluster.trees[zoom].max;
+      this.pointCountMin = this.supercluster.trees[zoom].min;
+      var intensity = {};
+      var color = null;
+      var size = null;
+      if (this.pointCountMax === this.pointCountMin) {
+        color = this.options.fillStyle;
+        size = this.options.minSize || 8;
+      } else {
+        intensity = new Intensity({
+          min: this.pointCountMin,
+          max: this.pointCountMax,
+          minSize: this.options.minSize || 8,
+          maxSize: this.options.maxSize || 30,
+          gradient: this.options.gradient
+        });
+      }
+      for (var i = 0; i < clusterData.length; i++) {
+        var item = clusterData[i];
+        if (item.properties && item.properties.cluster_id) {
+          clusterData[i].size =
+            size || intensity.getSize(item.properties.point_count);
+          clusterData[i].fillStyle =
+            color || intensity.getColor(item.properties.point_count);
+        } else {
+          clusterData[i].size = self.options.size;
+        }
+      }
 
-    var data = self.dataSet.get(dataGetOptions);
+      this.clusterDataSet.set(clusterData);
+      this.transferToMercator(this.clusterDataSet);
+      data = self.clusterDataSet.get(dataGetOptions);
+    } else {
+      data = self.dataSet.get(dataGetOptions);
+    }
 
     this.processData(data);
 
