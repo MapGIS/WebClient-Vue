@@ -1,7 +1,7 @@
  import MapgisUiMentions from "../../../ui/src/components/mentions/Mentions.vue";
 
 export default {
-  title: "界面/提及",
+  title: "界面/数据输入/提及",
   component: MapgisUiMentions,
   argTypes: {
   },

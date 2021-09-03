@@ -1,7 +1,7 @@
 import MapgisUiDropdown from "../../../ui/src/components/dropdown/Dropdown.vue";
 
 export default {
-  title: "界面/下拉菜单",
+  title: "界面/导航/下拉菜单",
   component: MapgisUiDropdown,
   argTypes: {},
 };

@@ -1,7 +1,7 @@
 import MapgisUiProgress from "../../../ui/src/components/progress/Progress.vue";
 
 export default {
-  title: "界面/进度条",
+  title: "界面/反馈/进度条",
   component: MapgisUiProgress,
   argTypes: {
   },

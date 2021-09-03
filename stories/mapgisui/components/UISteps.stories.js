@@ -1,7 +1,7 @@
 import MapgisUiSteps from "../../../ui/src/components/steps/Steps.vue";
 
 export default {
-  title: "界面/步骤条",
+  title: "界面/导航/步骤条",
   component: MapgisUiSteps,
   argTypes: {},
 };

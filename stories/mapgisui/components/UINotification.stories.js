@@ -1,5 +1,5 @@
 export default {
-  title: "界面/通知提醒框",
+  title: "界面/反馈/通知提醒框",
   argTypes: {
   },
 };

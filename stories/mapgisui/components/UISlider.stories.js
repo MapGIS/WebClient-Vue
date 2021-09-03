@@ -1,7 +1,7 @@
 import MapgisUiSlider from "../../../ui/src/components/slider/Slider.vue";
 
 export default {
-  title: "界面/滑动",
+  title: "界面/数据输入/滑动",
   component: MapgisUiSlider,
   argTypes: {
     "default-value": 30,

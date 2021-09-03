@@ -1,7 +1,7 @@
 import MapgisUiBorder from "../../../ui/src/components/border/Border.vue";
 
 export default {
-  title: "界面/边框",
+  title: "界面/其他/边框",
   component: MapgisUiBorder,
   argTypes: {
     type: "border1",

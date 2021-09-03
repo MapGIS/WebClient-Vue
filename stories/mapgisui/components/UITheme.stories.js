@@ -9,7 +9,7 @@ import { setTheme } from "../../../ui/src/util/style/theme/set-theme";
 import themeFactory from "../../../ui/src/util/style/theme/theme.json";
 
 export default {
-  title: "界面/主题(待完成)",
+  title: "界面/主题/主题(待完成)",
   decorators: [withKnobs],
   parameters: {
     viewMode: "story",

@@ -1,7 +1,7 @@
 import MapgisUiList from "../../../ui/src/components/list/List.vue";
 
 export default {
-  title: "界面/列表",
+  title: "界面/数据显示/列表",
   component: MapgisUiList,
   argTypes: {
   },

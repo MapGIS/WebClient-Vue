@@ -4,7 +4,7 @@ import MapgisUiLayoutPro from "../../../ui/src/layout/base/BaseLayout.vue";
 import "../../style/pro.css";
 
 export default {
-  title: "界面/Pro/布局-抽屉风格",
+  title: "界面/布局/布局-抽屉风格",
   component: MapgisUiLayoutPro,
   argTypes: {
     mode: "drawer",

@@ -1,7 +1,7 @@
 import MapgisUiRadio from "../../../ui/src/components/radio/Radio.vue";
 
 export default {
-  title: "界面/单选框",
+  title: "界面/数据输入/单选框",
   component: MapgisUiRadio,
   argTypes: {
   },

@@ -1,7 +1,7 @@
 import MapgisUiResult from "../../../ui/src/components/result/Result.vue";
 
 export default {
-  title: "界面/结果",
+  title: "界面/反馈/结果",
   component: MapgisUiResult,
   argTypes: {
   },

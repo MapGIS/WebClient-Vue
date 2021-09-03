@@ -1,7 +1,7 @@
 import MapgisUiDivider from "../../../ui/src/components/divider/Divider.vue";
 
 export default {
-  title: "界面/分割线",
+  title: "界面/其他/分割线",
   component: MapgisUiDivider,
   argTypes: {
   },

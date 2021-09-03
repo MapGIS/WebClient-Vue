@@ -1,7 +1,7 @@
 import MapgisUiEmpty from "../../../ui/src/components/empty/Empty.vue";
 
 export default {
-  title: "界面/空状态",
+  title: "界面/数据显示/空状态",
   component: MapgisUiEmpty,
   argTypes: {
   },

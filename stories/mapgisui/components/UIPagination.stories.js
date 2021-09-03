@@ -1,7 +1,7 @@
 import MapgisUiPagination from "../../../ui/src/components/pagination/Pagination.vue";
 
 export default {
-  title: "界面/分页",
+  title: "界面/导航/分页",
   component: MapgisUiPagination,
   argTypes: {},
 };

@@ -1,7 +1,7 @@
 import MapgisUiTag from "../../../ui/src/components/tag/Tag.vue";
 
 export default {
-  title: "界面/标签",
+  title: "界面/数据显示/标签",
   component: MapgisUiTag,
   argTypes: {
   },

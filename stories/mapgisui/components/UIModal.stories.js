@@ -1,7 +1,7 @@
 import MapgisUiModal from "../../../ui/src/components/modal";
 
 export default {
-  title: "界面/对话框",
+  title: "界面/反馈/对话框",
   component: MapgisUiModal,
   argTypes: {
   },

@@ -1,7 +1,7 @@
 import MapgisUiBadge from "../../../ui/src/components/badge/Badge.vue";
 
 export default {
-  title: "界面/徽标数",
+  title: "界面/数据显示/徽标数",
   component: MapgisUiBadge,
   argTypes: {
   },

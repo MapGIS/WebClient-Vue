@@ -1,7 +1,7 @@
 import MapgisUiTransfer from "../../../ui/src/components/transfer/Transfer.vue";
 
 export default {
-  title: "界面/穿梭框",
+  title: "界面/数据输入/穿梭框",
   component: MapgisUiTransfer,
   argTypes: {
   },

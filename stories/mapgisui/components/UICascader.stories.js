@@ -1,7 +1,7 @@
 import MapgisUiCascader from "../../../ui/src/components/cascader/Cascader.vue";
 
 export default {
-  title: "界面/级联选择",
+  title: "界面/数据输入/级联选择",
   component: MapgisUiCascader,
   argTypes: {
   },

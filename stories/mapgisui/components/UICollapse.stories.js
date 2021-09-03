@@ -1,7 +1,7 @@
 import MapgisUiCollapse from "../../../ui/src/components/collapse/Collapse.vue";
 
 export default {
-  title: "界面/折叠面板",
+  title: "界面/数据显示/折叠面板",
   component: MapgisUiCollapse,
   argTypes: {
   },

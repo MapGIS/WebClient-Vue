@@ -1,7 +1,7 @@
 import MapgisUiTree from "../../../ui/src/components/tree/Tree.vue";
 
 export default {
-  title: "界面/树形控件",
+  title: "界面/数据显示/树形控件",
   component: MapgisUiTree,
   argTypes: {
   },

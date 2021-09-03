@@ -1,7 +1,7 @@
 import MapgisUiMenu from "../../../ui/src/components/menu/Menu.vue";
 
 export default {
-  title: "界面/导航菜单",
+  title: "界面/导航/导航菜单",
   component: MapgisUiMenu,
   argTypes: {
     mode: "vertical",

@@ -4,7 +4,7 @@ import MapgisUiCol from "../../../ui/src/components/grid/Col.vue";
 import '../../style/grid.css';
 
 export default {
-  title: "界面/网格",
+  title: "界面/布局/网格",
   component: MapgisUiRow,
   argTypes: {},
 };

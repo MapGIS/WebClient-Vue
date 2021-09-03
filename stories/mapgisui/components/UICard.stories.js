@@ -1,7 +1,7 @@
 import MapgisUiCard from "../../../ui/src/components/card/Card.vue";
 
 export default {
-  title: "界面/卡片",
+  title: "界面/数据显示/卡片",
   component: MapgisUiCard,
   argTypes: {
   },

@@ -1,7 +1,7 @@
 import MapgisUiStatistic from "../../../ui/src/components/statistic/Statistic.vue";
 
 export default {
-  title: "界面/统计数值",
+  title: "界面/数据显示/统计数值",
   component: MapgisUiStatistic,
   argTypes: {
   },

@@ -1,7 +1,7 @@
 import MapgisUiDrawer from "../../../ui/src/components/drawer/Drawer.vue";
 
 export default {
-  title: "界面/抽屉",
+  title: "界面/反馈/抽屉",
   component: MapgisUiDrawer,
   argTypes: {
   },

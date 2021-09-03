@@ -1,7 +1,7 @@
 import MapgisUiPopover from "../../../ui/src/components/popover/Popover.vue";
 
 export default {
-  title: "界面/气泡卡片",
+  title: "界面/数据显示/气泡卡片",
   component: MapgisUiPopover,
   argTypes: {
   },
