@@ -1,7 +1,7 @@
 import MapgisUiCheckbox from "../../../ui/src/components/checkbox/Checkbox.vue";
 
 export default {
-  title: "界面/多选框",
+  title: "界面/数据输入/多选框",
   component: MapgisUiCheckbox,
   argTypes: {
     groupDisabled: false

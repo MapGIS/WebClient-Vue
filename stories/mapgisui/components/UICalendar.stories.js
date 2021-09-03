@@ -1,7 +1,7 @@
 import MapgisUiCalendar from "../../../ui/src/components/calendar/Calendar.vue";
 
 export default {
-  title: "界面/日历",
+  title: "界面/数据显示/日历",
   component: MapgisUiCalendar,
   argTypes: {
   },

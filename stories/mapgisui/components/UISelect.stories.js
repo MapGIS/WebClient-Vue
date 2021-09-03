@@ -1,7 +1,7 @@
 import MapgisUiSelect from "../../../ui/src/components/select/Select.vue";
 
 export default {
-  title: "界面/选择器",
+  title: "界面/数据输入/选择器",
   component: MapgisUiSelect,
   argTypes: {
   },

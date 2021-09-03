@@ -2,7 +2,7 @@ import MapgisUiDatePicker from "../../../ui/src/components/date-picker/DatePicke
 import moment from 'moment';
 
 export default {
-  title: "界面/日期选择框",
+  title: "界面/数据输入/日期选择框",
   component: MapgisUiDatePicker,
   argTypes: {
   },

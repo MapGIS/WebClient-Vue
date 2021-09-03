@@ -1,5 +1,5 @@
 export default {
-  title: "界面/全局提示",
+  title: "界面/反馈/全局提示",
   argTypes: {},
 };
 

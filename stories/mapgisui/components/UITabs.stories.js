@@ -1,7 +1,7 @@
 import MapgisUiTabs from "../../../ui/src/components/tabs/Tabs.vue";
 
 export default {
-  title: "界面/标签页",
+  title: "界面/数据显示/标签页",
   component: MapgisUiTabs,
   argTypes: {
   },

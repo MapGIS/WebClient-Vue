@@ -1,7 +1,7 @@
 import MapgisUiAvatar from "../../../ui/src/components/avatar/Avatar.vue";
 
 export default {
-  title: "界面/头像",
+  title: "界面/数据显示/头像",
   component: MapgisUiAvatar,
   argTypes: {
   },

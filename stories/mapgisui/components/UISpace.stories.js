@@ -2,7 +2,7 @@ import MapgisUiSpace from "../../../ui/src/components/space/Space.vue";
 import '../../style/space.css';
 
 export default {
-  title: "界面/间隔",
+  title: "界面/布局/间隔",
   component: MapgisUiSpace,
   argTypes: {},
 };

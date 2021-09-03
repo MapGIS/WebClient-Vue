@@ -6,7 +6,7 @@ import 'moment/locale/zh-cn';
 moment.locale('en');
 
 export default {
-  title: "界面/全局化配置（待完成）",
+  title: "界面/其他/全局化配置（待完成）",
   component: MapgisUiConfigProvider,
   argTypes: {
   },

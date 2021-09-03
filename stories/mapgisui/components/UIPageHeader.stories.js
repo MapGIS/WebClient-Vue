@@ -1,7 +1,7 @@
 import MapgisUiPageHeader from "../../../ui/src/components/pageheader/PageHeader.vue";
 
 export default {
-  title: "界面/页头",
+  title: "界面/导航/页头",
   component: MapgisUiPageHeader,
   argTypes: {},
 };

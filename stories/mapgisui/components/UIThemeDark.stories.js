@@ -1,7 +1,7 @@
 import { setTheme } from "../../../ui/src/util/style/theme/set-theme";
 
 export default {
-  title: "界面/黑暗主题",
+  title: "界面/主题/黑暗主题（待完成）",
   parameters: {
     viewMode: "story",
     previewTabs: {

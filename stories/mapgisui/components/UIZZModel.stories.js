@@ -1,7 +1,7 @@
 import MapgisUiDatePicker from "../../../ui/src/components/date-picker/DatePicker.vue";
 
 export default {
-  title: "界面/空模板",
+  title: "界面/空模板使用（忽略）",
   component: MapgisUiDatePicker,
   argTypes: {
   },

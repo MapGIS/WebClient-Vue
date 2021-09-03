@@ -1,7 +1,7 @@
 import MapgisUiSwitch from "../../../ui/src/components/switch/Switch.vue";
 
 export default {
-  title: "界面/开关",
+  title: "界面/数据输入/开关",
   component: MapgisUiSwitch,
   argTypes: {
   },

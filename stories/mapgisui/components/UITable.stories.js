@@ -1,7 +1,7 @@
 import MapgisUiTable from "../../../ui/src/components/table/Table.vue";
 
 export default {
-  title: "界面/表格",
+  title: "界面/数据显示/表格",
   component: MapgisUiTable,
   argTypes: {
   },

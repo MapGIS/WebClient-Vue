@@ -1,7 +1,7 @@
 import MapgisUiTreeSelect from "../../../ui/src/components/tree-select/TreeSelect.vue";
 
 export default {
-  title: "界面/树形选择控件",
+  title: "界面/数据输入/树形选择控件",
   component: MapgisUiTreeSelect,
   argTypes: {
   },

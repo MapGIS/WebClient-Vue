@@ -1,7 +1,7 @@
 import MapgisUiInput from "../../../ui/src/components/input/Input.vue";
 
 export default {
-  title: "界面/输入框",
+  title: "界面/数据输入/输入框",
   component: MapgisUiInput,
   argTypes: {
   },

@@ -1,7 +1,7 @@
 import MapgisUiSkeleton from "../../../ui/src/components/skeleton/Skeleton.vue";
 
 export default {
-  title: "界面/骨架屏",
+  title: "界面/反馈/骨架屏",
   component: MapgisUiSkeleton,
   argTypes: {
   },

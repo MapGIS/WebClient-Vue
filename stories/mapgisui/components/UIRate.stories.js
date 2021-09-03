@@ -1,7 +1,7 @@
 import MapgisUiRate from "../../../ui/src/components/rate/Rate.vue";
 
 export default {
-  title: "界面/评分",
+  title: "界面/数据输入/评分",
   component: MapgisUiRate,
   argTypes: {
   },

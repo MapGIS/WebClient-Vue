@@ -1,7 +1,7 @@
 import MapgisUiSpin from "../../../ui/src/components/spin/Spin.vue";
 
 export default {
-  title: "界面/加载中",
+  title: "界面/反馈/加载中",
   component: MapgisUiSpin,
   argTypes: {
   },

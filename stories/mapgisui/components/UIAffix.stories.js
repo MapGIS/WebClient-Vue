@@ -1,5 +1,5 @@
 import MapgisUiAffix from "../../../ui/src/components/affix/Affix.vue";
-import MarkDown from "../../../ui/docs/guide/base.md";
+// import MarkDown from "../../../ui/docs/guide/base.md";
 
 export default {
   title: "界面/导航/固钉",
@@ -33,10 +33,10 @@ Slider.args = {
   offsetBottom: 10,
 };
 
-Slider.parameters = {
-  docs: {
-    description: {
-      component: MarkDown,
-    },
-  },
-};
+// Slider.parameters = {
+//   docs: {
+//     description: {
+//       component: MarkDown,
+//     },
+//   },
+// };

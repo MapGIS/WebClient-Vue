@@ -1,7 +1,7 @@
 import MapgisUiTimeline from "../../../ui/src/components/timeline/Timeline.vue";
 
 export default {
-  title: "界面/时间轴",
+  title: "界面/数据显示/时间轴",
   component: MapgisUiTimeline,
   argTypes: {
   },

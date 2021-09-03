@@ -4,7 +4,7 @@ import MapgisUiLayoutPro from "../../../ui/src/layout/base/BaseLayout.vue";
 import "../../style/pro.css";
 
 export default {
-  title: "Pro/布局-桌面风格",
+  title: "界面/布局/布局-桌面风格",
   component: MapgisUiLayoutPro,
   argTypes: {
     mode: "admin",
