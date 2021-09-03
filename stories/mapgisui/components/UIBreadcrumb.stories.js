@@ -1,7 +1,7 @@
 import MapgisUiBreadcrumb from "../../../ui/src/components/breadcrumb/Breadcrumb.vue";
 
 export default {
-  title: "界面/面包屑",
+  title: "界面/导航/面包屑",
   component: MapgisUiBreadcrumb,
   argTypes: {},
 };
