@@ -9,21 +9,19 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-knobs",
-    /* {
-      name: "@storybook/addon-docs",
-      options: {
-        configureJSX: true,
-        babelOptions: {},
-        sourceLoaderOptions: null,
-        transcludeMarkdown: true,
-      },
-    }, */
     {
-      name: "@storybook/addon-storysource",
+      name: '@storybook/addon-storysource',
       options: {
         loaderOptions: {
-          injectStoryParameters: false,
           prettierConfig: { printWidth: 80, singleQuote: false },
+        },
+      },
+    },
+    {
+      name: '@storybook/addon-docs',
+      options: {
+        sourceLoaderOptions: {
+          injectStoryParameters: false,
         },
       },
     },

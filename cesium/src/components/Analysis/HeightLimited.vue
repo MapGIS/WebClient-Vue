@@ -88,8 +88,8 @@ export default {
     }
   },
   mounted() {
-    let vm = this;
-    vm.$_init(vm.heightLimitedAnalysis);
+    // let vm = this;
+    // vm.$_init(vm.heightLimitedAnalysis);
   },
   destroyed() {
     this.unmount();

@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer.vue";
 
 export default {
-  title: "二维/图层/GeoJSON",
+  title: "二维/图层/GeoJSON图层",
   component: MapgisGeojsonLayer,
   argTypes: {
     layer: {},

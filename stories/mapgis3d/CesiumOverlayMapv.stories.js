@@ -3,7 +3,7 @@ import Mapgis3dArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISSer
 import {BaseServer} from "@mapgis/webclient-es6-service";
 
 export default {
-    title: "三维/覆盖物/MapV",
+    title: "三维/可视化/MapV",
 };
 
 const Template = (args, {argTypes}) => ({

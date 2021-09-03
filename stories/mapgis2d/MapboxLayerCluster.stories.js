@@ -1,7 +1,7 @@
 import MapgisClusterLayer from "../../mapboxgl/src/components/layer/cluster/ClusterLayer.vue";
 
 export default {
-  title: "二维/图层/聚类",
+  title: "二维/可视化/聚类",
   component: MapgisClusterLayer,
   argTypes: {
     geojson: "",

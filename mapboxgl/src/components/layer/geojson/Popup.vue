@@ -84,6 +84,13 @@ export default {
       tabPosition: "top",
       activeKey: ""
     };
+  },
+  mounted() {
+    this.$nextTick(()=>{
+      if (this.activeKey){
+        this.$emit('select-layer', this.activeKey);
+      }
+    })
   }
 };
 </script>

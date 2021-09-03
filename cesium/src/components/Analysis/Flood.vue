@@ -191,7 +191,7 @@ export default {
             this.upTitle = "上升";
             this.upDisabled = true;
             this.downDisabled = false;
-          }else if(this.currentHeightCopy === this.startHeightCopyTwo){
+          }else if(this.currentHeightCopy === parseInt(this.startHeightCopyTwo)){
             this.downTitle = "下降";
             this.upDisabled = false;
             this.downDisabled = true;
@@ -246,7 +246,7 @@ export default {
     },
     currentHeight: {
       handler: function () {
-        this.currentHeightCopy = Number(this.currentHeight);
+        this.currentHeightCopy = parseInt(Number(this.currentHeight));
       }
     },
     maxHeightCopy: {
@@ -288,7 +288,6 @@ export default {
       isPlayer: false,
       upTitle: "上升",
       downTitle: "下降",
-      playHeight: 0,
       upDisabled: false,
       downDisabled: false,
     }
@@ -358,7 +357,7 @@ export default {
         }
       }
       //极端洪水淹没平均高度
-      this.currentHeightCopy = height / cartographics.length;
+      this.currentHeightCopy = parseInt(height / cartographics.length);
       this.currentHeightCopyTwo = this.currentHeightCopy;
       //初始化新的洪水淹没分析
       let floodAnalyse = new Cesium.FloodAnalysis(webGlobe.viewer, positions, {
@@ -406,6 +405,9 @@ export default {
       this.showOptionsPannel = true;
       this.startHeightCopyTwo = 0;
       this.isPlayer = true;
+      this.$nextTick(function () {
+        this.downDisabled = false;
+      });
     },
     $_up(){
       switch (this.upTitle){
@@ -479,16 +481,15 @@ export default {
       //因为Cesium的事件计算和现实不一样，这里试出来大概是1.5倍
       timeOut = timeOut * timeDiff;
       this.isPlayer = true;
-      this.playHeight = Number(this.currentHeightCopy);
       let interval = setInterval(function () {
         i++;
-        vm.currentHeightCopy = Number((vm.currentHeightCopy + speed * forward).toFixed(4));
+        vm.currentHeightCopy = parseInt(Number((vm.currentHeightCopy + speed * forward).toFixed(4)));
         if(!vm.isPlayer){
           vm.isPlayer = true;
           clearInterval(interval);
         }
         if(i === time){
-          vm.currentHeightCopy = forward > 0 ? Number(end) : Number(start);
+          vm.currentHeightCopy = parseInt(forward > 0 ? Number(end) : Number(start));
           clearInterval(interval);
         }
       },timeOut)
@@ -496,19 +497,17 @@ export default {
     //停止洪水淹没分析
     $_stopAnalyse() {
       const {vueKey, vyeIndex} = this;
-      if (webGlobe.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
-        //删除淹没分析
-        webGlobe.scene.VisualAnalysisManager.removeAll();
-        //停止绘制
-        window.drawElement.stopDrawing();
-        //删除管理对象
-        window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vyeIndex);
-        //启用开始分析按钮
-        this.disabled = true;
-        //高度置零
-        this.currentHeight = 0;
-        this.currentHeightCopy = 0;
-      }
+      //删除淹没分析
+      webGlobe.scene.VisualAnalysisManager.removeAll();
+      //停止绘制
+      window.drawElement.stopDrawing();
+      //删除管理对象
+      window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vyeIndex);
+      //启用开始分析按钮
+      this.disabled = true;
+      //高度置零
+      this.currentHeight = 0;
+      this.currentHeightCopy = 0;
     }
   }
 }
