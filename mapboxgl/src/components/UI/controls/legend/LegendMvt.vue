@@ -1,5 +1,9 @@
 <template>
-  <mapgis-ui-list :grid="{ gutter: 0, column: 1 }" :data-source="legends">
+  <mapgis-ui-list
+    id="mapgis-legend-standard"
+    :grid="{ gutter: 0, column: 1 }"
+    :data-source="legends"
+  >
     <mapgis-ui-list-item
       slot="renderItem"
       class="mapgis-mvt-legend-row"
@@ -73,32 +77,9 @@ export default {
 </script>
 
 <style>
-.mapgis-mvt-legend-card {
-  position: absolute;
-  z-index: 1000;
-  overflow-y: scroll;
-  width: fit-content;
-}
-.mapgis-mvt-legend-card-collapse {
-  float: right;
-}
-.mapgis-mvt-legend-card
-  .mapgis-ui-list-grid
-  .mapgis-ui-col
-  > .mapgis-ui-list-item {
-  margin-bottom: 6px !important;
-}
-
-.mapgis-mvt-legend-card-title {
-  font-size: 16px;
-  font-weight: bolder;
-  line-height: 20px;
-}
-
-.mapgis-mvt-legend-card-toolbar {
-  float: right;
-  margin-right: 6px !important;
-  font-size: 16px;
+#mapgis-legend-standard {
+  height: 260px;
+  padding: 6px;
 }
 
 .mapgis-mvt-legend-row {
