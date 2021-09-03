@@ -1,9 +1,5 @@
-<<<<<<< HEAD:stories/MapboxBaseMap.stories.js
 import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
 import MapgisWebMapMd from "../mapboxgl/docs/guide/draw.md";
-=======
-import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
->>>>>>> 06aac292d87721da5911bb518a57923229f8d679:stories/mapgis2d/MapboxBaseMap.stories.js
 
 export default {
   title: "二维/地图/地图对象",
@@ -42,13 +38,8 @@ const Template = (args, { argTypes }) => ({
   `,
 });
 
-<<<<<<< HEAD:stories/MapboxBaseMap.stories.js
 export const 地图 = Template.bind({});
 地图.args = {
-=======
-export const 地图对象 = Template.bind({});
-地图对象.args = {
->>>>>>> 06aac292d87721da5911bb518a57923229f8d679:stories/mapgis2d/MapboxBaseMap.stories.js
   mapStyle: {
     version: 8,
     sources: {},
