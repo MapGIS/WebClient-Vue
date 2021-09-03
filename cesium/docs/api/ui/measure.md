@@ -72,11 +72,13 @@
 
 ### 简单使用
 
+::: demo
+
 ```vue
 <template>
   <div id="app">
     <mapgis-web-scene>
-      <mapgis-3d-Measure @load="handleLoad" @measured="measured">
+      <mapgis-3d-measure @load="handleLoad" @measured="measured">
         <div id="toolbar-wrapper">
           <div class="toolbar-item" v-on:click="measureLength">直线测量</div>
           <div class="toolbar-item" v-on:click="measureArea">面积测量</div>
@@ -84,14 +86,16 @@
           <div class="toolbar-item" v-on:click="measureSlope">坡度测量</div>
           <div class="toolbar-item" v-on:click="deleteMeasure">删除</div>
         </div>
-      </mapgis-3d-Measure>
+      </mapgis-3d-measure>
     </mapgis-web-scene>
   </div>
 </template>
 
 <script>
 export default {
-  name: "cesiumWmtsLayer",
+  components:{
+    
+  },
   data() {
     return {};
   },
@@ -129,7 +133,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #app {
   height: 100vh;
   width: 100vw;
@@ -155,6 +159,8 @@ export default {
 }
 </style>
 ```
+
+:::
 
 ### 多屏使用
 

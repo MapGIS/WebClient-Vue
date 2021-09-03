@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisImageLayer from "../../mapboxgl/src/components/layer/ImageLayer.js";
 
 export default {
-  title: "二维/图层/图像",
+  title: "二维/图层/图像图层",
   component: MapgisImageLayer,
   argTypes: {
     layer: {},

@@ -3,7 +3,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmtsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer.js";
 
 export default {
-  title: "二维/交互/卷内部帘",
+  title: "二维/地图子组件/卷内部帘",
   component: MapgisInnerCompare,
 };
 
@@ -56,8 +56,8 @@ const Vertical = (args, { argTypes }) => ({
             </div>`,
 });
 
-export const InnerMode = Vertical.bind({});
-InnerMode.args = {
+export const 卷内部帘 = Vertical.bind({});
+卷内部帘.args = {
   orientation: "vertical",
   beforeMapOptions: {
     mapStyle: {

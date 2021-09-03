@@ -1,19 +1,17 @@
-import MapgisScale from "../../mapboxgl/src/components/UI/controls/ScaleControl";
+import MapgisNavigation from "../../mapboxgl/src/components/UI/controls/NavigationControl";
 
 export default {
-    title: "二维/地图子组件/比例尺组件",
-    component: MapgisScale,
+    title: "二维/地图子组件/导航组件",
+    component: MapgisNavigation,
     argTypes: {
-        position: "bottom-left",
-        zIndex: 900,
-        maxWidth: 300,
-        unit: "metric",
+        showCompass:true,
+        showZoom:true
     },
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisScale },
+    components: { MapgisNavigation },
     data() {
         return {
             mapOptions: {
@@ -30,15 +28,13 @@ const Template = (args, { argTypes }) => ({
     template: `
     <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-        <mapgis-scale v-bind="$props" />
+        <mapgis-navigation v-bind="$props" />
     </mapgis-web-map>
     `,
 });
 
-export const 比例尺组件 = Template.bind({});
-比例尺组件.args = {
-    position: "bottom-left",
-    zIndex: 900,
-    maxWidth: 300,
-    unit: "metric",
+export const 导航组件 = Template.bind({});
+导航组件.args = {
+    showCompass:true,
+    showZoom:true
 };

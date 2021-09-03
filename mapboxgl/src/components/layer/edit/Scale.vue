@@ -85,7 +85,9 @@ export default {
       this.$_emitEvent(eventMin);
       this.$_emitEvent(eventMax);
       if (!map || !layerid) return;
-      map.setLayerZoomRange(layerid, zoom[0], zoom[1]);
+      if (map.getLayer(layerid)) {
+        map.setLayerZoomRange(layerid, zoom[0], zoom[1]);
+      }
     },
     handleClose() {
       this.$emit("change-visible", false);
@@ -96,6 +98,7 @@ export default {
       id = id || layerid;
       if (map && layerid) {
         const layer = this.$_getLayer(layerid);
+        if (!layer) return value;
         const { minzoom = 0, maxzoom = 24 } = layer;
         value = [minzoom, maxzoom];
       }

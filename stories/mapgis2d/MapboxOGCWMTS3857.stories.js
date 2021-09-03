@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmtsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer.js";
 
 export default {
-  title: "二维/OGC/WMTS-3857",
+  title: "二维/图层/OGC/WMTS-3857",
   component: MapgisOgcWmtsLayer,
   argTypes: {
     baseUrl:'http://t0.tianditu.gov.cn/vec_w/wmts',

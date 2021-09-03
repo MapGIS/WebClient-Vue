@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer.vue";
 
 export default {
-  title: "二维/图层/GeoJSON+popup",
+  title: "二维/可视化/GeoJSON+popup",
   component: MapgisGeojsonLayer,
   argTypes: {
     layer: {},
@@ -41,7 +41,7 @@ Fill.args = {
   data: "http://develop.smaryun.com/static/data/geojson/china.geojson",
   sourceId: "geojson_source_id",
   enablePopup: true,
-  enableTips: true,
+  enableTips: false,
   popupOptions: {
     title: "name",
     fields: ["adcode", "行政区代码","mpArea","mpPerimeter","GDP_2011"]

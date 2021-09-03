@@ -1,5 +1,5 @@
 export default {
-    title: "三维/图层/矢量图层"
+    title: "三维/图层/IGServer矢量图层"
 }
 
 const Template = (args, { argTypes }) => ({

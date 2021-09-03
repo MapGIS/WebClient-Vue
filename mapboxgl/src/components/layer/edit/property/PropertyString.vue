@@ -1,10 +1,10 @@
 <template>
   <mapgis-ui-row class="mapgis-property-number">
-    <mapgis-ui-col span="7">
+    <mapgis-ui-col :span="7">
       <mapgis-ui-iconfont :type="rule.icon" />
       <span class="mapgis-property-string-left">{{ rule.title }} </span>
     </mapgis-ui-col>
-    <mapgis-ui-col span="17">
+    <mapgis-ui-col :span="17">
       <mapgis-ui-input
         class="mapgis-property-string-right"
         v-model="value"

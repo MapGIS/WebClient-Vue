@@ -3,7 +3,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmtsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmtsLayer.js";
 
 export default {
-  title: "二维/交互/卷帘",
+  title: "二维/地图子组件/卷帘",
   component: MapgisCompare,
 };
 
