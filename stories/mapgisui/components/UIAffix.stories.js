@@ -2,7 +2,7 @@ import MapgisUiAffix from "../../../ui/src/components/affix/Affix.vue";
 // import MarkDown from "../../../ui/docs/guide/base.md";
 
 export default {
-  title: "界面/固钉",
+  title: "界面/导航/固钉",
   component: MapgisUiAffix,
   argTypes: {
     offsetTop: 10,
