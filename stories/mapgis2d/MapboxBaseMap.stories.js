@@ -1,5 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
-import MapgisWebMapMd from "../../mapboxgl/docs/guide/draw.md";
+import MapgisWebMapMd from "../../mapboxgl/docs/guide/basemap.md";
 
 export default {
   title: "二维/基础地图",
