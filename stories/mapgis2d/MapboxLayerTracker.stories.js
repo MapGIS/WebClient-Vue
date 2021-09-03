@@ -1,7 +1,7 @@
 import MapgisTrackerLayer from "../../mapboxgl/src/components/layer/tracker/TrackerLayer.vue";
 
 export default {
-  title: "二维/图层-轨迹",
+  title: "二维/可视化/轨迹跟踪",
   component: MapgisTrackerLayer,
   argTypes: {
     geojson: "http://develop.smaryun.com/static/data/geojson/tracker.geojson",
@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 轨迹 = Template.bind({});
-轨迹.args = {
+export const 轨迹跟踪 = Template.bind({});
+轨迹跟踪.args = {
   geojson: "http://develop.smaryun.com/static/data/geojson/tracker.geojson",
 };

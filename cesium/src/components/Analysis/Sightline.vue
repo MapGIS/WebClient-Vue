@@ -378,11 +378,11 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .ant-card-body {
-    max-height: 300px;
+::v-deep .mapgis-ui-card-body {
+    max-height: 400px;
     overflow: auto;
 }
-::v-deep .ant-input-affix-wrapper .ant-input:not(:first-child) {
+::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
     padding-left: 45px;
 }
 .edit-wrapper-vshed.right {

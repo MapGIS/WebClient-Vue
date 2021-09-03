@@ -1,7 +1,7 @@
 import MapgisElasticsearchLayer from "../../mapboxgl/src/components/layer/elasticsearch/ElasticsearchLayer.vue";
 
 export default {
-  title: "二维/图层-弹性搜索",
+  title: "二维/可视化/弹性搜索",
   component: MapgisElasticsearchLayer,
   argTypes: {},
 };

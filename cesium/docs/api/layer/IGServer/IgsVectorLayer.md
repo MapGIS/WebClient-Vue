@@ -66,11 +66,12 @@
 
 ## 示例
 
+::: demo
+
 ```vue
 <template>
   <mapgis-web-scene
-    libPath="cesium/Cesium.js"
-    pluginPath="cesium/webclient-cesium-plugin.min.js"
+    @load="handleLoad"
   >
     <mapgis-3d-igs-vector-layer
       :gdbps="gdbps"
@@ -85,12 +86,23 @@ export default {
   data() {
     return {
       gdbps: [
-        "gdbp://MapGisLocal/OpenLayerVecterMap/sfcls/武汉市",
-        "gdbp://MapGisLocal/OpenLayerVecterMap/sfcls/overLayByLayerAnalysisResultLayer2021-04-22-165404"
+        "GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市",
       ],
-      baseUrl: "http://localhost:6163/igs/rest/mrms/layers"
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/layers"
     };
+  },
+  methods: {
+    handleLoad(e) {
+      const webGlobe = e.component.webGlobe;
+      var sceneManager = new CesiumZondy.Manager.SceneManager({
+        viewer: webGlobe.viewer
+      });
+      //视点跳转（经度，纬度，视角高度，跳转持续时间）
+      sceneManager.flyTo(116.348, 40.236, 300000);
+    }
   }
 };
 </script>
 ```
+
+:::

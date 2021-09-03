@@ -1,7 +1,7 @@
 import MapgisBuildingLayer from "../../mapboxgl/src/components/layer/building/BuildingLayer.vue";
 
 export default {
-  title: "二维/图层-建筑白膜",
+  title: "二维/可视化/建筑白膜",
   component: MapgisBuildingLayer,
   argTypes: {
     geojson: "",
