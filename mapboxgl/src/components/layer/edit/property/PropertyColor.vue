@@ -62,7 +62,7 @@ export default {
     },
     getValue(id) {
       const { map, layerid, rule } = this;
-      let value = undefined;
+      let value = "#1890FF";
       id = id || layerid;
       if (map && layerid && rule) {
         const { layertype, layerprop } = rule;
@@ -86,33 +86,3 @@ export default {
   }
 };
 </script>
-<<<<<<< HEAD
-=======
-
-<style scoped>
-.mapgis-property-color {
-  width: 100%;
-}
-
-.mapgis-property-color-left {
-  height: 30px;
-  line-height: 30px;
-  margin-left: -14px;
-}
-
-/deep/.theme-panel-line-color .colorBtn {
-  width: 167px !important;
-  height: 17px !important;
-  margin-left: 5px;
-  margin-top: 6px;
-}
-
-/deep/.theme-panel-color-outer {
-  width: 180px;
-  height: 32px;
-  border: 1px solid var(--border-color-base);
-  background-color: var(--component-background);
-  border-radius: 4px;
-}
-</style>
->>>>>>> main
