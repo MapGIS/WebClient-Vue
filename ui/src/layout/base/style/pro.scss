@@ -10,6 +10,7 @@
     box-shadow: 0 0 1px 0 $layout-shadow;
     -webkit-box-shadow: 0 0 1px 0 $layout-shadow;
     border-bottom: 1px solid $layout-shadow;
+    line-height: $pro-header-height;
   }
   @include e(ribbon, "-") {
     background: $ribbon-background;
