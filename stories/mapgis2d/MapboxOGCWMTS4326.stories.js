@@ -38,16 +38,16 @@ const Template = (args, { argTypes }) => ({
   }
 });
 
-export const Igs_4326 = Template.bind({});
-Igs_4326.args = {
-  baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer',
-  wmtsLayer: 'beijing',
-  tileMatrixSet:"EPSG:4326_北京市_arcgis_GB",
-  layerId: 'ogcwmts_layerId',
-  sourceId: 'ogcwmts_sourceId',
-  //因为司马云是用的老版本的igs服务，因此offset必须传-1
-  zoomOffset: -1
-};
+// export const Igs_4326 = Template.bind({});
+// Igs_4326.args = {
+//   baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer',
+//   wmtsLayer: 'beijing',
+//   tileMatrixSet:"EPSG:4326_北京市_arcgis_GB",
+//   layerId: 'ogcwmts_layerId',
+//   sourceId: 'ogcwmts_sourceId',
+//   //因为司马云是用的老版本的igs服务，因此offset必须传-1
+//   zoomOffset: -1
+// };
 
 export const ArcGis_4326 = Template.bind({});
 ArcGis_4326.args = {

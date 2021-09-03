@@ -41,7 +41,7 @@ Fill.args = {
   data: "http://develop.smaryun.com/static/data/geojson/china.geojson",
   sourceId: "geojson_source_id",
   enablePopup: true,
-  enableTips: true,
+  enableTips: false,
   popupOptions: {
     title: "name",
     fields: ["adcode", "行政区代码","mpArea","mpPerimeter","GDP_2011"]
