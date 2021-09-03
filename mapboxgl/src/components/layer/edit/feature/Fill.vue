@@ -45,7 +45,8 @@ const FillRules = [
     icon: "mapgis-bg-colors",
     type: "color",
     layerprop: "fill-outline-color",
-    layertype: "paint"
+    layertype: "paint",
+    default: "#000000"
   }
 ];
 

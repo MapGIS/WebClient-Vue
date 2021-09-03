@@ -21,24 +21,31 @@ const Template = (args, { argTypes }) => ({
   components: { MapgisMvtEditor },
   data() {
     return {
-      layerid: "",
+      layer: "",
       enableEditor: false,
       mvtStyle:
         "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/街道-墨卡托.json",
     };
   },
   methods: {
+    handleMapLoad(e) {
+      this.map = e.map;
+    },
     handleChangeStyle(style) {
       const vm = this;
       window.setTimeout(() => {
         vm.enableEditor = true;
-        vm.layerid = "省级行政区";
+        vm.layer = "中国行政区";
+        console.log("map laod", this.map.getStyle());
       }, 1000);
     },
+    handleEditChange(event) {
+      console.log("样式切换", event, this.map.getStyle());
+    },
   },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="2" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="2" style="height:90vh" @load="handleMapLoad">
       <mapgis-mvt-style-layer :mvtStyle="mvtStyle" @change-style="handleChangeStyle" />
-      <mapgis-mvt-editor :outStyle="outStyle" :layerid="layerid" :visible="enableEditor"/>
+      <mapgis-mvt-editor :outStyle="outStyle" :layerid="layer" :visible="enableEditor" @edit-change="handleEditChange"/>
     </mapgis-web-map>`,
 });
 
@@ -49,8 +56,8 @@ export const 编辑 = Template.bind({});
     zIndex: 900,
     top: "10px",
     left: "10px",
-    height: "360px",
-    width: "320px",
+    height: "480px",
+    width: "340px",
   },
   visible: true,
 };

@@ -1,7 +1,7 @@
 import MapgisUiLayoutPro from "../../../ui/src/layout/base/BaseLayout.vue";
 
 export default {
-  title: "Pro/布局",
+  title: "界面/Pro/布局",
   component: MapgisUiRow,
   argTypes: {},
 };
