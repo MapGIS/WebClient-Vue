@@ -4,7 +4,10 @@ export default {
   title: "二维/地图子组件/绘制",
   component: MapgisDraw,
   argTypes: {
-    enableControl: false,
+    enableControl: {
+      name: 'enableControl',
+      description: '控制绘制组件自带按钮控件的开关',
+    }
   },
 };
 

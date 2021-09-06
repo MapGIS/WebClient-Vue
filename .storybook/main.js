@@ -8,7 +8,8 @@ module.exports = {
     "@storybook/preset-scss",
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-knobs",
+    // "@storybook/addon-knobs",
+    "@storybook/addon-a11y",
     {
       name: '@storybook/addon-storysource',
       options: {
