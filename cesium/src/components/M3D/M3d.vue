@@ -84,7 +84,7 @@ export default {
           if (scale) {
             tileset.setScale(new Cesium.Cartesian3(scale.x, scale.y, scale.z));
           }
-          if (opacity) {
+          if (opacity >= 0) {
             m3ds.forEach(
               m3d =>
                 (m3d.style = new Cesium.Cesium3DTileStyle({
