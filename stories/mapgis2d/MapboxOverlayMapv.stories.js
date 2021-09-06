@@ -1,17 +1,17 @@
-import MapgisMapv from "../../mapboxgl/src/components/overlay/MapvLayer.vue";
+import MapgisMapvLayer from "../../mapboxgl/src/components/overlay/MapvLayer.vue";
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisNavigationControl from "../../mapboxgl/src/components/UI/controls/NavigationControl";
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
 export default {
   title: "二维/可视化/MapV",
-  component: MapgisMapv,
+  component: MapgisMapvLayer,
   argTypes: {},
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebMap, MapgisMapv, BaseServer, MapgisNavigationControl },
+  components: { MapgisWebMap, MapgisMapvLayer, BaseServer, MapgisNavigationControl },
   data() {
     return {
       mapStyle: "mapbox://styles/mapbox/dark-v9",
@@ -48,7 +48,7 @@ const Template = (args, { argTypes }) => ({
   template: `
       <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:60vh">
       <mapgis-navigation-control position="top-right"/>
-      <mapgis-mapv v-bind="$props"></mapgis-mapv>
+      <mapgis-mapv-layer v-bind="$props"></mapgis-mapv-layer>
       </mapgis-web-map>
     `,
 });
