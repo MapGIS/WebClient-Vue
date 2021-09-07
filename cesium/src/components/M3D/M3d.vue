@@ -24,18 +24,32 @@ export default {
       return m3dLayer;
     },
     watchProp() {
-      let { show } = this;
+      let { show, opacity } = this;
       if (show) {
         this.$watch("show", function(next) {
           if (this.initial) return;
           this.changeShow(next);
         });
       }
+      if (opacity >= 0 && opacity <= 1) {
+        this.$watch("opacity", function(next) {
+          if (this.initial) return;
+          this.changeOpacity(next);
+        });
+      }
     },
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
-      const { webGlobe, vueIndex, vueKey, $props, offset, scale } = this;
+      const {
+        webGlobe,
+        vueIndex,
+        vueKey,
+        $props,
+        offset,
+        scale,
+        opacity
+      } = this;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
@@ -76,6 +90,14 @@ export default {
           if (scale) {
             tileset.setScale(new Cesium.Cartesian3(scale.x, scale.y, scale.z));
           }
+          if (opacity >= 0) {
+            m3ds.forEach(
+              m3d =>
+                (m3d.style = new Cesium.Cesium3DTileStyle({
+                  color: `color('#FFFFFF', ${opacity})`
+                }))
+            );
+          }
           vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
         }
       });
@@ -96,14 +118,24 @@ export default {
       CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     changeShow(show) {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      if (find) {
+        let m3ds = find.source;
+        m3ds && m3ds.forEach(m3d => (m3d.show = show));
+      }
+    },
+    changeOpacity(opacity) {
+      const { vueKey, vueIndex } = this;
+      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      console.log('find', find.source);
       if (find) {
         let m3ds = find.source;
         m3ds &&
           m3ds.forEach(m3d => {
-            m3d.show = show;
-            console.log(m3d.show);
+            m3d.style = new Cesium.Cesium3DTileStyle({
+              color: `color('#FFFFFF', ${opacity})`
+            });
           });
       }
     }

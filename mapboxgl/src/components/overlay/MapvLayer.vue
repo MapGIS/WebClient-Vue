@@ -67,6 +67,7 @@ export default {
       let vm = this;
       let data = [];
       geojson = geojson || this.geojson;
+      if (!geojson || geojson.length == 0) return;
       if (!(geojson.hasOwnProperty("features"))){
         geojson = this.$_convertData(geojson);
       };
