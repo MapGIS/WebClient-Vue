@@ -16,6 +16,14 @@ export default {
   inheritAttrs: false,
   model: {},
   props: formItemProps,
-  computed: {}
+  computed: {},
+  methods: {
+    onFieldBlur() {
+      this.$children[0].onFieldBlur();
+    },
+    onFieldChange() {
+      this.$children[0].onFieldChange();
+    }
+  }
 };
 </script>
