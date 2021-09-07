@@ -1,5 +1,5 @@
-import MapgisWebMap from "../mapboxgl/src/components/map/GlMap.vue";
-import MapgisWebMapMd from "../mapboxgl/docs/guide/draw.md";
+import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
+import MapgisWebMapMd from "../../mapboxgl/docs/guide/draw.md";
 
 export default {
   title: "二维/地图/地图对象",
