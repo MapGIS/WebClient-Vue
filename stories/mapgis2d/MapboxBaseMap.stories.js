@@ -1,4 +1,4 @@
-import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap";
+import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisWebMapMd from "../../mapboxgl/docs/guide/draw.md";
 
 export default {
