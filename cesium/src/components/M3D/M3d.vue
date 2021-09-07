@@ -24,11 +24,17 @@ export default {
       return m3dLayer;
     },
     watchProp() {
-      let { show } = this;
+      let { show, opacity } = this;
       if (show) {
         this.$watch("show", function(next) {
           if (this.initial) return;
           this.changeShow(next);
+        });
+      }
+      if (opacity >= 0 && opacity <= 1) {
+        this.$watch("opacity", function(next) {
+          if (this.initial) return;
+          this.changeOpacity(next);
         });
       }
     },
@@ -88,8 +94,7 @@ export default {
             m3ds.forEach(
               m3d =>
                 (m3d.style = new Cesium.Cesium3DTileStyle({
-                  color: `color('#FFFFFF', ${opacity})` //white, alpha = 0.2
-                  // color: `color(rgba(255, 255, 255, ${opacity}))`
+                  color: `color('#FFFFFF', ${opacity})`
                 }))
             );
           }
@@ -117,10 +122,20 @@ export default {
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
+        m3ds && m3ds.forEach(m3d => (m3d.show = show));
+      }
+    },
+    changeOpacity(opacity) {
+      const { vueKey, vueIndex } = this;
+      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      console.log('find', find.source);
+      if (find) {
+        let m3ds = find.source;
         m3ds &&
           m3ds.forEach(m3d => {
-            m3d.show = show;
-            console.log(m3d.show);
+            m3d.style = new Cesium.Cesium3DTileStyle({
+              color: `color('#FFFFFF', ${opacity})`
+            });
           });
       }
     }
