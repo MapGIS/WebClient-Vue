@@ -2,7 +2,7 @@ import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dIgsM3d from "../../cesium/src/components/M3D/M3d.vue";
 
 export default {
-  title: "三维/模型/M3D",
+  title: "三维/图层/M3D",
   component: Mapgis3dIgsM3d,
   argTypes: {
     url: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",

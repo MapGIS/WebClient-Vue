@@ -9,11 +9,51 @@ export default {
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
   excludeStories: /.*Data$/,
   argTypes: {
-    delay: true,
-    layer: {},
-    layerId: "canvas_layer_id",
-    source: {},
-    sourceId: "canvas_source_id",
+    delay: {
+      description:'',
+      type: { name: 'Boolean', required: false },
+      table:{
+        type: { summary: 'Boolean' },
+        defaultValue: { summary: 'false' },
+      },
+      control:'boolean'
+    },
+    layer: {
+      description:'[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)',
+      type: { name: 'Object | String', required: true },
+      table:{
+        type: { summary: 'Object | String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'object'
+    },
+    source: {
+      description:'[canvassource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#canvassource)',
+      type: { name: 'Object | String', required: false },
+      table:{
+        type: { summary: 'Object | String' },
+        // defaultValue: { summary: '' },
+      },
+      control:'object'
+    },
+    layerId: {
+      description: '待添加的图层的id，不能与现有的图层冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+    },
+    sourceId: {
+      description: '待添加的数据源的id，不能与现有的数据源冲突',
+      type: { name: 'String', required: true },
+      defaultValue:'',
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+    },
+
   },
 };
 
