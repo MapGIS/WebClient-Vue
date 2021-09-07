@@ -17,15 +17,15 @@ export default {
   props: formProps,
   computed: {},
   methods: {
-    onFieldBlur() {
-      this.$children[0].onFieldBlur();
-    },
-    validate() {
-      this.$children[0].validate();
+    validate(callback) {
+      this.$children[0].validate(callback);
     },
     resetFields() {
       this.$children[0].resetFields();
-    }
+    },
+    validateField(field) {
+      this.$children[0].validateField(field);
+    },
   }
 };
 </script>
