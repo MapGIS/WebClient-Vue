@@ -1,4 +1,4 @@
-# M3D模型
+# M3D 模型
 
 > mapgis-3d-igs-m3d
 
@@ -56,23 +56,26 @@
 ### `offset`
 
 - **类型**: `Object`
-- **非侦听属性** 非watch属性
-- **默认值** `{ longitude: 0,  latitude: 0, height: 0 }`
+- **非侦听属性** 非 watch 属性
+- **默认值** `{ longitude: 0, latitude: 0, height: 0 }`
 - **描述** 模型的偏移方向，主要用来抬高/降低模型
-``` json
+
+```json
 {
   "longitude": 0,
   "latitude": 0,
   "height": 0
 }
 ```
+
 ### `scale`
 
 - **类型**: `Object`
-- **非侦听属性** 非watch属性
-- **默认值** `{ x: 1.0,  y: 1.0, z: 1.0 }`
+- **非侦听属性** 非 watch 属性
+- **默认值** `{ x: 1.0, y: 1.0, z: 1.0 }`
 - **描述** 模型的缩放比例，用来缩放模型
-``` json
+
+```json
 {
   "x": 1.0,
   "y": 1.0,
@@ -83,8 +86,8 @@
 ### `opacity`
 
 - **类型**: `Number`
-- **非侦听属性** 非watch属性
-- **描述** 模型的透明度，内部通过Cesium3DTileStyle实现，`不推荐使用`
+- **侦听属性** watch 属性
+- **描述** 模型的透明度，内部通过 Cesium3DTileStyle 实现，`不推荐使用`
 
 ### `autoReset`
 
