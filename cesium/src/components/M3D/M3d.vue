@@ -35,7 +35,15 @@ export default {
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
-      const { webGlobe, vueIndex, vueKey, $props, offset, scale } = this;
+      const {
+        webGlobe,
+        vueIndex,
+        vueKey,
+        $props,
+        offset,
+        scale,
+        opacity
+      } = this;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
@@ -76,6 +84,15 @@ export default {
           if (scale) {
             tileset.setScale(new Cesium.Cartesian3(scale.x, scale.y, scale.z));
           }
+          if (opacity >= 0) {
+            m3ds.forEach(
+              m3d =>
+                (m3d.style = new Cesium.Cesium3DTileStyle({
+                  color: `color('#FFFFFF', ${opacity})` //white, alpha = 0.2
+                  // color: `color(rgba(255, 255, 255, ${opacity}))`
+                }))
+            );
+          }
           vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
         }
       });
@@ -96,7 +113,7 @@ export default {
       CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     changeShow(show) {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;

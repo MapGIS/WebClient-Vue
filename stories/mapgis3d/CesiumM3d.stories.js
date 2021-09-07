@@ -7,6 +7,7 @@ export default {
   argTypes: {
     url: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
     show: true,
+    opacity: 0.5,
   },
 };
 
@@ -24,4 +25,5 @@ export const M3D = Template.bind({});
 M3D.args = {
   url: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
   show: true,
+  opacity: 1.0,
 };

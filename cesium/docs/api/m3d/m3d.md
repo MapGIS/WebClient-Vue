@@ -79,6 +79,13 @@
   "z": 1.0
 }
 ```
+
+### `opacity`
+
+- **类型**: `Number`
+- **非侦听属性** 非watch属性
+- **描述** 模型的透明度，内部通过Cesium3DTileStyle实现，`不推荐使用`
+
 ### `autoReset`
 
 - **类型**: `Boolean`
