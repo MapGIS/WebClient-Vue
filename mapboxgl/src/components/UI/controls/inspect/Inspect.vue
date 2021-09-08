@@ -9,12 +9,15 @@
 </template>
 
 <script>
-import { IDocument, VectorTile } from "@mapgis/webclient-store";
-import cloneDeep from "lodash.clonedeep";
+// 此处的typescript 会和 require("mapbox-gl-inspect"); module.export 冲突
+// @see https://github.com/webpack/webpack/issues/4039
+// import { IDocument, VectorTile } from "@mapgis/webclient-store";
+// const { Convert } = VectorTile;
+
 import mapboxgl from "@mapgis/mapbox-gl";
+import cloneDeep from "lodash.clonedeep";
 const MapboxInspect = require("mapbox-gl-inspect");
-const { Convert } = VectorTile;
-import Popup from "../../../layer/geojson/Popup.vue";
+import Popup from "../../../layer/geojson/Popup";
 
 export default {
   name: "mapgis-inspect",
