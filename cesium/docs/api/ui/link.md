@@ -90,6 +90,18 @@
 <mapgis-3d-link :excludes="['one', 'two']" :enable="enable" />
 ```
 
+### `screenSpaceEventType`
+
+- **类型:** `Array`
+- **可选**
+- **非侦听属性**
+- **默认值:** ` [ ScreenSpaceEventType.WHEEL, ScreenSpaceEventType.MOUSE_MOVE, ScreenSpaceEventType.LEFT_UP, ScreenSpaceEventType.LEFT_DOWN, ScreenSpaceEventType.RIGHT_UP, ScreenSpaceEventType.RIGHT_DOWN ]`
+- **描述:** 触发同步更新的事件，默认是监控滚轮移动、鼠标左键抬起、鼠标右键抬起、鼠标滚动
+- 默认策略  
+- 1. 鼠标左键按下 - 鼠标移动 - 鼠标左键放开
+- 2. 鼠标右键按下 - 鼠标移动 - 鼠标右键放开
+- 3. 鼠标滚轮缩放
+
 ### `vueKey`
 
 - **类型:** `String`
