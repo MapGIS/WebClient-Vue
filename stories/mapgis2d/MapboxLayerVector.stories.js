@@ -15,8 +15,8 @@ export default {
             control:'object'
         },
         source: {
-            description:'栅格瓦片源<br/>' +
-                '详见[sources-raster使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)',
+            description:'矢量瓦片源<br/>' +
+                '详见[sources-vector使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-vector)',
             type: { name: 'Object | String', required: false },
             table:{
                 type: { summary: 'Object | String' },

@@ -5,11 +5,98 @@ export default {
   title: "二维/图层/OGC/WMS-3857",
   component: MapgisOgcWmsLayer,
   argTypes: {
-    layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院',
-    layerId: 'raster_layerId',
-    sourceId: 'raster_sourceId',
-    baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer',
-    crs:'EPSG:4326'
+    baseUrl: {
+      description:'WMS 请求基地址',
+      type:{ name: 'String', required: false },
+      defaultValue:null,
+      table:{
+        type:{
+          summary: 'String',
+          detail: '示例:"http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMSServer"'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    },
+    layers:{
+      description: '图层名称或 Id，多个值以逗号分隔，不传时不显示地图 <br/> ' +
+          '1. igs 使用地图名称 <br/> ' +
+          '2. arcgis 根据版本不同，可使用 id 或名称，具体依据 arcgis 的 wms 服务的 xml 文档',
+      type: {
+        name: 'String',
+        required: false
+      },
+      defaultValue:null,
+      table:{
+        type: {summary: 'String'},
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    } ,
+    version:{
+      description:'wmts 服务版本号',
+      type: { name: 'String', required: false },
+      defaultValue: '1.1.1',
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '1.1.1' },
+      },
+      control:'text'
+    } ,
+    format:{
+      description:'返回格式',
+      type: { name: 'String', required: false },
+      defaultValue: 'image/png',
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: 'image/png' },
+      },
+      control:{
+        type:'select',
+        options:['image/png','image/gif','image/jpg']
+      }
+    } ,
+    token:{
+      description:'瓦片请求的 token',
+      type: { name: 'String', required: false },
+      // defaultValue: '',
+      table:{
+        type: { summary: 'String' },
+        // defaultValue: { summary: '' },
+      },
+      control:'text'
+    } ,
+    height: {
+      description:'瓦片的高度',
+      defaultValue:512 ,
+      type: { name: 'Number', required: false },
+      table:{
+        type: { summary: 'Number' },
+        defaultValue: { summary: '512' },
+      },
+      control:'number'
+    },
+    width: {
+      description:'瓦片的宽度',
+      defaultValue:512 ,
+      type: { name: 'Number', required: false },
+      table:{
+        type: { summary: 'Number' },
+        defaultValue: { summary: '512' },
+      },
+      control:'number'
+    },
+    reversebbox:{
+      description:'这个参数专门针对特定版本的 arcserver，在一些特定的 arcserver 版本其 bbox 的传入方式是[miny, minx, maxy, maxx],而不是[minx, miny, maxx, maxy]',
+      type: { name: 'Boolean', required: false },
+      defaultValue: false,
+      table:{
+        type: { summary: 'Boolean' },
+        defaultValue: { summary: 'false' },
+      },
+      control:'boolean'
+    } ,
+
   },
 };
 
@@ -23,7 +110,7 @@ const Template = (args, { argTypes }) => ({
 
 export const IGS_3857 = Template.bind({});
 IGS_3857.args = {
-  layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院,商业用地,建筑物,铁路_1,铁路_2,铁路_3,主干道,主干道,高速公路_1,高速公路_1_9-10,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,三级道路_链接,三级道路,二级道路_链接,二级道路,一级道路_链接,一级道路,地铁,主干道_链接,主干道,主干道,高速公路_链接,高速公路_2,高速公路_2,地铁站POI,山顶,果园poi,汽车站点POI,大学poi,学校poi,中小学POI,幼儿园POI,医院POI,口腔医院POI,派出所POI,检察院POI,银行POI,邮局POI,体育馆POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,宾馆POI,百货店POI,便利店POI,书店POI,快餐POI,咖啡馆POI,电影院POI,高尔夫poi,村庄点,市镇点,区县点,首都点',
+  layers: '北京市,区县点,首都点',
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
   baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer',

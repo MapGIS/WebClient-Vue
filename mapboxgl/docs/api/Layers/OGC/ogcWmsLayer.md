@@ -30,9 +30,9 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `version`
 
 - **类型:** `String`
-- **默认值:** `1.0.0`
+- **默认值:** `1.1.1`
 - **非侦听属性**
-- **描述:** wmts 服务版本号。
+- **描述:** wms 服务版本号。
 
 ### `format`
 

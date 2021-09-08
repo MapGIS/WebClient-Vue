@@ -15,7 +15,7 @@ export default {
       control:'object'
     },
     source: {
-      description:'[source使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#imagesource)',
+      description:'[imagesource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#imagesource)',
       type: { name: 'Object | String', required: false },
       table:{
         type: { summary: 'Object | String' },
