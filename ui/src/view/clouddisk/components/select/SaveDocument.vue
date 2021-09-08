@@ -18,6 +18,7 @@
         <mapgis-ui-button
           class="mapgis-ui-clouddisk-save-document-button"
           type="primary"
+          :loading="saveloading"
           @click="handleSaveDocument"
           v-if="layout == 'vertical'"
         >
@@ -63,7 +64,8 @@ export default {
       // form: this.$form.createForm(this, { name: 'save' }),
       mapstudioUrlMark:
         window.localStorage.getItem("mapgis_clouddisk_mapstudioUrlMark") ||
-        "/mapstudioweb/#/?share="
+        "/mapstudioweb/#/?share=",
+      saveloading: false
     };
   },
   computed: {},
@@ -104,58 +106,68 @@ export default {
   watch: {},
   methods: {
     handleSaveDocument() {
-      if (this.saveForm.saveUrl === "" || this.saveForm.fileName === "") {
-        this.$notification.error({
-          message: "信息未填写完整",
-          description: "请将所有项填写完整"
-        });
-        this.$emit("handleLoading", true);
-        this.$nextTick(() => {
-          this.$emit("handleLoading", false);
-        });
-      } else {
-        let folderDir, fileName;
-        folderDir = this.saveForm.saveUrl;
-        fileName = this.saveForm.fileName + this.fileType;
-        let json = JSON.parse(this.currentDocumentStr);
-        let srcUrl = folderDir + "/" + fileName;
-        let fileAttribute = JSON.stringify(this.getFileAttr(json, srcUrl));
-        fileAttribute = encodeURIComponent(fileAttribute);
-        saveJsonFile(folderDir, fileName, fileAttribute, json) // 自动将最新document以style为类型存回云盘
-          .then(res => {
-            if (res.status === 200) {
-              let result = res.data;
-              let { errorCode, msg } = result;
-              if (errorCode < 0) {
-                this.$notification.error({
-                  message: errorCode,
-                  description: msg
-                });
-                this.$emit("handleLoading", true);
-                this.$nextTick(() => {
-                  this.$emit("handleLoading", false);
-                });
-              } else {
-                this.$notification.success({ message: "保存成功！" });
-                this.saveForm = {
-                  saveUrl: "",
-                  fileName: ""
-                };
-                this.$emit("closeDialog");
-              }
-            }
-          })
-          .catch(error => {
-            this.$notification.error({
-              message: "网络异常,请检查链接",
-              description: error
-            });
-            this.$emit("handleLoading", true);
-            this.$nextTick(() => {
-              this.$emit("handleLoading", false);
-            });
+      const vm = this;
+      this.$emit("emitDocumentSaveThemeLayer");
+      this.saveloading = true;
+      window.setTimeout(() => {
+        if (this.saveForm.saveUrl === "" || this.saveForm.fileName === "") {
+          this.$notification.error({
+            message: "信息未填写完整",
+            description: "请将所有项填写完整"
           });
-      }
+          vm.saveloading = false;
+          this.$emit("handleLoading", true);
+          this.$nextTick(() => {
+            this.$emit("handleLoading", false);
+          });
+        } else {
+          let folderDir, fileName;
+          folderDir = this.saveForm.saveUrl;
+          fileName = this.saveForm.fileName + this.fileType;
+          let json = JSON.parse(this.currentDocumentStr);
+          let srcUrl = folderDir + "/" + fileName;
+          let fileAttribute = JSON.stringify(this.getFileAttr(json, srcUrl));
+          fileAttribute = encodeURIComponent(fileAttribute);
+          saveJsonFile(folderDir, fileName, fileAttribute, json) // 自动将最新document以style为类型存回云盘
+            .then(res => {
+              if (res.status === 200) {
+                let result = res.data;
+                let { errorCode, msg } = result;
+                if (errorCode < 0) {
+                  this.$notification.error({
+                    message: errorCode,
+                    description: msg
+                  });
+                  vm.saveloading = false;
+                  this.$emit("handleLoading", true);
+                  this.$nextTick(() => {
+                    this.$emit("handleLoading", false);
+                  });
+                } else {
+                  vm.saveloading = false;
+                  this.$notification.success({ message: "保存成功！" });
+                  this.saveForm = {
+                    saveUrl: "",
+                    fileName: ""
+                  };
+                  this.$emit("closeDialog");
+                }
+              }
+            })
+            .catch(error => {
+              this.$notification.error({
+                message: "网络异常,请检查链接",
+                description: error
+              });
+              vm.saveloading = false;
+              this.$emit("handleLoading", true);
+              this.$nextTick(() => {
+                this.$emit("handleLoading", false);
+              });
+            });
+        }
+      }, 1000)
+      
     },
     handleSaveModal() {
       this.saveTree = true;
