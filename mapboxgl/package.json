@@ -24,17 +24,14 @@
     ]
   },
   "dependencies": {
-    "@caohenghu/vue-colorpicker": "^1.2.4",
     "@mapbox/mapbox-gl-draw": "1.2.0",
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
     "@mapgis/mapbox-gl": "^1.9.9",
     "@mapgis/mapbox-gl-compare": "^0.4.0",
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/webclient-es6-service": "^10.5.4",
-    "@mapgis/webclient-store": "^1.0.0",
     "@mapgis/webclient-vue-ui": "^10.5.4-1",
     "@turf/turf": "^5.1.6",
-    "ant-design-vue": "^1.7.5",
     "echarts": "^5.0.2",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.1.3",
@@ -67,8 +64,10 @@
     "husky": "^1.2.0",
     "lint-staged": "^8.1.0",
     "vue": "^2.6.6",
+    "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0",
     "vue-template-compiler": "^2.6.6",
-    "vuepress-plugin-demo-block": "^0.7.2"
+    "vuepress-plugin-demo-block": "^0.7.2",
+    "webpack-bundle-analyzer": "^4.4.2"
   },
   "keywords": [
     "vue",

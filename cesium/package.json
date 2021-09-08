@@ -30,7 +30,6 @@
     "@turf/turf": "^5.1.6",
     "@vuepress/plugin-active-header-links": "^1.7.1",
     "@vuepress/plugin-nprogress": "^1.7.1",
-    "ant-design-vue": "^1.7.5",
     "compression-webpack-plugin": "^6.1.1",
     "echarts": "^5.0.2",
     "mapv": "^2.0.62",
