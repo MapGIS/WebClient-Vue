@@ -62,6 +62,7 @@ export default {
           }
           this.remove(deleteStyle);
           this.$_initStyle(this.mode, next);
+          this.lastStyle = next;
         }
       },
       deep: true
@@ -73,7 +74,7 @@ export default {
   },
 
   beforeDestroy() {
-    this.remove();
+    this.remove(this.lastStyle);
   },
 
   methods: {
