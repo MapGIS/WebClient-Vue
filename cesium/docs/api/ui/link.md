@@ -72,6 +72,12 @@
 <mapgis-3d-link :includes="['one', 'two']" :enable="enable" />
 ```
 
+### `interval`
+- **类型:** `Number`
+- **非侦听属性**
+- **默认值:** `60`
+- **描述:** 视图刷新间隔，默认60帧刷新一次，与Cesium PostRender机制保持一致。
+
 ### `excludes`
 - **类型:** `Array`
 - **非侦听属性**

@@ -10,6 +10,69 @@
 - **非侦听属性**
 - **描述:** If `true`, the popup showes immediately after the component is mounted.
 
+- **特殊情况**
+
+1. 常规状态下 showed 和 popup 的状态是同步的
+2. 一旦人手动点击右上角的 x 关闭了 popup 此时的 showed 和 popup 的可视化状态是被破坏了
+   ![关闭](./UI/Popup/close.png)
+
+```vue
+<template>
+  <div class="hello">
+    <mapgis-web-map class="test-map">
+      <mapgis-draw :enable-control="true"> </mapgis-draw>
+      <mapgis-ui-button @click="handlePopup" class="test-popup" />
+      <mapgis-popup
+        :coordinates="coordinates"
+        anchor="top"
+        :showed="showed"
+        ref="popup"
+        @close="handleClose"
+      >
+        <mapgis-ui-card class="box-card">
+          <div>Hello, I'm popup!</div>
+        </mapgis-ui-card>
+      </mapgis-popup>
+    </mapgis-web-map>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "HelloWorld",
+  props: {
+    msg: String
+  },
+  data() {
+    return {
+      showed: true,
+      coordinates: [-111.549668, 39.014]
+    };
+  },
+  methods: {
+    handlePopup() {
+      this.showed = !this.showed;
+    },
+    handleClose() {
+      this.showed = false;
+    }
+  }
+};
+</script>
+
+<style>
+.test-map {
+  height: 100vh;
+}
+.test-popup {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
+</style>
+```
+
 ### `closeButton`
 
 - **类型**: `Boolean`
