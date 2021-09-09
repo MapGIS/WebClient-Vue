@@ -93,6 +93,9 @@ export default {
     },
     showCurrentLayer(layerId){
       this.$_showCurrentLayer(layerId);
+    },
+    setLayerZoomRange(layerId,minzoom,maxzoom){
+      this.$_setLayerZoomRange(layerId,minzoom,maxzoom);
     }
   }
 }
