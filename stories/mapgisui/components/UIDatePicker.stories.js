@@ -5,6 +5,14 @@ export default {
   title: "界面/数据输入/日期选择框",
   component: MapgisUiDatePicker,
   argTypes: {
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
   },
 };
 
