@@ -145,6 +145,51 @@ export class BaseManager {
     }
   }
 
+  changeSource(vueKey, vueIndex, source) {
+    vueKey = vueKey ? vueKey : this.vueKey;
+    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = `${vueIndex}`;
+    let index = -1;
+    let findSource = undefined;
+    if (!this[vueKey]) return findSource;
+
+    let find = this[vueKey].find((s, i) => {
+      let result = false;
+      if (s && s.key === vueIndex) {
+        index = i;
+        result = true;
+      }
+      return result;
+    });
+
+    if (!source) {
+      find.source = source;
+    }
+    return find;
+  }
+
+  changeOptions(vueKey, vueIndex, key, value) {
+    vueKey = vueKey ? vueKey : this.vueKey;
+    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = `${vueIndex}`;
+    let index = -1;
+    let findSource = undefined;
+    if (!this[vueKey]) return findSource;
+
+    let find = this[vueKey].find((s, i) => {
+      let result = false;
+      if (s && s.key === vueIndex) {
+        index = i;
+        result = true;
+      }
+      return result;
+    });
+    find.options = find.options || {};
+    find.options[key] = value;
+
+    return find;
+  }
+
   findSource(vueKey, vueIndex) {
     vueKey = vueKey ? vueKey : this.vueKey;
     vueIndex = vueIndex ? vueIndex : this.vueIndex;
