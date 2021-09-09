@@ -100,6 +100,7 @@ export default {
       const { Cesium, CesiumZondy, component } = payload;
       this.Cesium = Cesium;
       this.CesiumZondy = CesiumZondy;
+      let webGlobe = window.webGlobe; // 获取实例化的Cesium场景对象
     }
   }
 };
@@ -156,14 +157,9 @@ button {
 
 ### 通过 Props 来交互地图属性
 
-你可以通过 props 来控制地图的一些参数如 zoom(缩放级别), bearing(方位), pitch(倾斜)等.
+你可以通过 props 来控制地图的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
 
-如果你给 props 参数设置了 `.sync` 修饰 ([Vue docs](https://vuejs.org/v2/guide/components.html#sync-Modifier)),
-这些参数将会在对应的事件结束后同步更新(这里不见得是实时同步更新，这里强调的是事件结束同步更新).
-
-> 例如,如果你使用 `flyTo` 方法, props `zoom`, `center`, `bearing`, `pitch` 这些属性将会在飞行动画结束后执行.
-
-完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'Synced'
+完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'侦听属性'
 
 ## 地图加载
 
@@ -172,11 +168,14 @@ button {
 ```js
 onMapLoaded(payload) {
   // in component
-  this.map = payload.map; // 等价于 new mapboxGl.Map()
+  const {component, Cesium, CesiumZondy } = payload;
+  // component 当前场景组件
+  // Cesium 标准Cesium对象
+  // CesiumZondy 中地Cesium对象
 }
 ```
 
-所有的`mapbox-map`的内部组件都会在地图完全加载完毕后才加载渲染。
+所有的`mapgis-web-scene`的内部组件都会在地图完全加载完毕后才加载渲染。
 
 ::: warning Vuex 存储 Map 对象
 请注意，除了基本类型和普通对象外，向 Vuex 或组件的“data”添加其他类型的对象通常都不是一个好主意。尤其是类似以下几种情况:
@@ -207,11 +206,7 @@ Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 Map �
 
 ```vue
 <template>
-  <mapbox-map
-    :accessToken="accessToken"
-    :mapStyle.sync="mapStyle"
-    @load="onMapLoaded"
-  />
+  <mapgis-web-scene  @load="onMapLoaded" />
 </template>
 
 <script>
@@ -222,12 +217,12 @@ export default {
   },
   methods: {
     onMapLoaded(event) {
-      // 组件内部使用， 相信我，绝大部分场景都可以满足应用场景，
+      // 组件内部使用，绝大部分场景都可以满足应用场景，
       // 少数场景请使用上面的方案三配合Promise的方式来全局调用
-      this.map = event.map;
+      this.webGlobe = window.webGlobe;
       // 或者只是存起来，加入全局vuex的状态存储中，以方便其他组件使用map对象，
-      // 真心不建议,应为很容易在其他地方误触this.$store.map的setter事件
-      this.$store.map = event.map;
+      // 强烈禁止,应为很容易在其他地方误触this.$store.map的setter事件
+      this.$store.webGlobe = window.webGlobe;
     }
   }
 };
