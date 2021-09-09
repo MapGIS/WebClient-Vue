@@ -37,18 +37,20 @@
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
       <div v-else>
-        <div>
-          {{ currentLayerInfo[0].title }}
-        </div>
-        <div
-          v-for="(value, key) in currentLayerInfo[0].properties"
-          class="mapgis-inspect-prop-style"
-          :key="key"
-        >
-          <div class="mapgis-inspect-prop-key">
-            <span style="padding-right: 5px">{{ key }}</span>
+        <div v-if="currentLayerInfo && currentLayerInfo.length > 0">
+          <div>
+            {{ currentLayerInfo[0].title }}
           </div>
-          <div>{{ value }}</div>
+          <div
+            v-for="(value, key) in currentLayerInfo[0].properties"
+            class="mapgis-inspect-prop-style"
+            :key="key"
+          >
+            <div class="mapgis-inspect-prop-key">
+              <span style="padding-right: 5px">{{ key }}</span>
+            </div>
+            <div>{{ value }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -76,21 +78,24 @@ export default {
   },
   watch: {
     activeKey(next) {
-      this.$emit('select-layer', next);
+      this.$emit("select-layer", next);
+    },
+    currentLayerInfo() {
+      this.activeKey = 0;
     }
   },
   data() {
     return {
       tabPosition: "top",
-      activeKey: ""
+      activeKey: 0
     };
   },
   mounted() {
-    this.$nextTick(()=>{
-      if (this.activeKey){
-        this.$emit('select-layer', this.activeKey);
+    this.$nextTick(() => {
+      if (this.activeKey) {
+        this.$emit("select-layer", this.activeKey);
       }
-    })
+    });
   }
 };
 </script>

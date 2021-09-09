@@ -1,19 +1,9 @@
 <template>
   <div>
-<!--    <slot name="click">-->
-      <GeojsonPopup
-          ref="click"
-          :mode="clickMode"
-          :currentLayerInfo="currentClickInfo">
-      </GeojsonPopup>
-<!--    </slot>-->
-<!--    <slot name="hover">-->
-      <GeojsonPopup
-          ref="hover"
-          :mode="hoverMode"
-          :currentLayerInfo="currentHoverInfo">
-      </GeojsonPopup>
-<!--    </slot>-->
+    <Popup ref="click" :mode="clickMode" :currentLayerInfo="currentClickInfo">
+    </Popup>
+    <Popup ref="hover" :mode="hoverMode" :currentLayerInfo="currentHoverInfo">
+    </Popup>
   </div>
 </template>
 
@@ -21,14 +11,14 @@
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 import mapboxgl from "@mapgis/mapbox-gl";
-import clonedeep from 'lodash.clonedeep';
+import clonedeep from "lodash.clonedeep";
 const MapboxInspect = require("mapbox-gl-inspect");
-import GeojsonPopup from './geojson/Popup';
+import Popup from "./geojson/Popup";
 
 export default {
   name: "mapgis-geojson-layer",
   mixins: [mixin],
-  components: {GeojsonPopup},
+  components: { Popup },
   inject: ["map", "mapbox"],
   data() {
     return {
@@ -39,14 +29,14 @@ export default {
       currentClickInfo: [],
       currentHoverInfo: [],
       popupTitle: "id",
-      hoveredStateId : -1,
-      clickMode: 'click',
-      hoverMode: 'hover',
-    }
+      hoveredStateId: -1,
+      clickMode: "click",
+      hoverMode: "hover"
+    };
   },
   props: {
-    data:{
-      type: [String,Object]
+    data: {
+      type: [String, Object]
     },
     enablePopup: {
       type: Boolean,
@@ -72,7 +62,7 @@ export default {
     getSourceFeatures() {
       return filter => {
         if (this.map) {
-          return this.map.querySourceFeatures(this.sourceId, {filter});
+          return this.map.querySourceFeatures(this.sourceId, { filter });
         }
         return null;
       };
@@ -102,7 +92,7 @@ export default {
             });
           } else {
             return reject(
-                new Error(`Map source with id ${this.sourceId} not found.`)
+              new Error(`Map source with id ${this.sourceId} not found.`)
             );
           }
         });
@@ -122,7 +112,7 @@ export default {
             });
           } else {
             return reject(
-                new Error(`Map source with id ${this.sourceId} not found.`)
+              new Error(`Map source with id ${this.sourceId} not found.`)
             );
           }
         });
@@ -141,7 +131,7 @@ export default {
             });
           } else {
             return reject(
-                new Error(`Map source with id ${this.sourceId} not found.`)
+              new Error(`Map source with id ${this.sourceId} not found.`)
             );
           }
         });
@@ -152,12 +142,12 @@ export default {
   created() {
     if (this.data) {
       this.$watch(
-          ()=> this.data,
-          function (next) {
-            if (this.initial) return;
-            this.mapSource.setData(next);
-          },
-          {deep: true}
+        () => this.data,
+        function(next) {
+          if (this.initial) return;
+          this.mapSource.setData(next);
+        },
+        { deep: true }
       );
     }
     this.$_deferredMount();
@@ -165,17 +155,19 @@ export default {
 
   methods: {
     $_deferredMount() {
-      let {map, mapbox} = this;
+      let { map, mapbox } = this;
       this.map.on("dataloading", this.$_watchSourceLoading);
       let source;
       if (this.data) {
         source = {
           type: "geojson",
-          data: this.data
-        }
+          data: this.data,
+          generateId: true
+        };
       } else if (this.source) {
         source = {
           type: "geojson",
+          generateId: true,
           ...this.source
         };
         if (this.enablePopup) {
@@ -217,7 +209,7 @@ export default {
         if (this.replace) {
           this.map.removeLayer(this.layerId);
         } else {
-          this.$_emitEvent("layer-exists", {layerId: this.layerId});
+          this.$_emitEvent("layer-exists", { layerId: this.layerId });
           return existed;
         }
       }
@@ -227,19 +219,19 @@ export default {
         ...this.layer
       };
       this.map.addLayer(layer, this.before);
-      this.$_emitEvent("added", {layerId: this.layerId});
+      this.$_emitEvent("added", { layerId: this.layerId });
     },
 
     setFeatureState(featureId, state) {
       if (this.map) {
-        const params = {id: featureId, source: this.source};
+        const params = { id: featureId, source: this.source };
         return this.map.setFeatureState(params, state);
       }
     },
 
     getFeatureState(featureId) {
       if (this.map) {
-        const params = {id: featureId, source: this.source};
+        const params = { id: featureId, source: this.source };
         return this.map.getFeatureState(params);
       }
     },
@@ -256,52 +248,56 @@ export default {
     },
     $_addMousemoveEvents(popup) {
       let vm = this;
-      let {map} = this;
-      map.on('mousemove', vm.layerId, function (e) {
+      let { map } = this;
+      map.on("mousemove", vm.layerId, function(e) {
         if (e.features.length > 0) {
           let fs = clonedeep(e.features);
           if (vm.tipsOptions) {
             let newfeatrues;
-            newfeatrues = fs.map((f)=>{
-                let properties = f.properties;
+            newfeatrues = fs.map(f => {
+              let properties = f.properties;
+              f.properties = {};
+              //  赋值fields
+              let fields = vm.tipsOptions.fields;
+              if (!fields) {
                 f.properties = {};
-                //  赋值fields
-                let fields = vm.tipsOptions.fields;
-                if (!fields) {
-                  f.properties = {};
-                } else {
-                  fields.forEach(field => {
-                    f.properties[field] = properties[field];
-                  });
-                }
-                //  赋值title
-                let titlefield = vm.tipsOptions.title;
-                if (titlefield) {
-                  f.title = properties[titlefield];
-                } else {
-                  // f.title = "";
-                }
+              } else {
+                fields.forEach(field => {
+                  f.properties[field] = properties[field];
+                });
+              }
+              //  赋值title
+              let titlefield = vm.tipsOptions.title;
+              if (titlefield) {
+                f.title = properties[titlefield];
+              } else {
+                // f.title = "";
+              }
               return f;
             });
             vm.currentHoverInfo = [newfeatrues[0]];
           }
-          popup.setLngLat(e.lngLat)
-              .setDOMContent(vm.$refs.hover.$el)
-              .addTo(map);
+          popup
+            .setLngLat(e.lngLat)
+            .setDOMContent(vm.$refs.hover.$el)
+            .addTo(map);
         }
       });
-      map.on('mouseleave', vm.layerId, function () {
-        map.getCanvas().style.cursor = '';
+      map.on("mouseleave", vm.layerId, function() {
+        map.getCanvas().style.cursor = "";
         popup.remove();
       });
     },
     $_addPopupEvents() {
-      let {map} = this;
+      let { map } = this;
       let vm = this;
       if (!map || !map.getStyle()) {
         return;
       }
-      if (this.$parent.popupInspect == null && this.$parent.popupInspect === undefined) {
+      if (
+        this.$parent.popupInspect == null &&
+        this.$parent.popupInspect === undefined
+      ) {
         const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
             closeOnClick: true,
@@ -324,7 +320,7 @@ export default {
             let newfeatrues;
             // 针对属性进行过滤显示
             let layerIds = Object.keys(parentPopupLayers);
-            newfeatrues = fs.map((f) => {
+            newfeatrues = fs.map(f => {
               if (parentPopupLayers.hasOwnProperty(f.layer.id)) {
                 let properties = f.properties;
                 f.properties = {};
@@ -386,60 +382,63 @@ export default {
     },
     $_bindHightLayerEvent() {
       const vm = this;
-      let {map} = this;
-      map.on('click', this.layerId, function (e) {
+      let { map } = this;
+      map.on("click", this.layerId, function(e) {
         if (e.features.length > 0) {
           if (vm.hoveredStateId !== null) {
             map.setFeatureState(
-                {source: vm.sourceId, id: vm.hoveredStateId},
-                {hover: false}
+              { source: vm.sourceId, id: vm.hoveredStateId },
+              { hover: false }
             );
           }
           vm.hoveredStateId = e.features[0].id;
           map.setFeatureState(
-              {source: vm.sourceId, id: vm.hoveredStateId},
-              {hover: true}
+            { source: vm.sourceId, id: vm.hoveredStateId },
+            { hover: true }
           );
         }
       });
-
     },
     $_addhoverLayer() {
       let highlight;
-      let {map} = this;
-      if (this.layer.type === 'fill') {
+      let { map } = this;
+      if (this.layer.type === "fill") {
         highlight = {
           id: this.layerId + "_高亮边界线",
-          type: 'line',
+          type: "line",
           source: this.sourceId,
           paint: {
-            "line-color": '#00ffff',
-            'line-width': [
-              'case',
-              ['boolean', ['feature-state', 'hover'], false],
+            "line-color": "#00ffff",
+            "line-width": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
               2,
               0
             ]
           }
-        }
-      } else if (this.layer.type === 'line') {
+        };
+      } else if (this.layer.type === "line") {
         highlight = {
           id: this.layerId + "_高亮边界线",
-          type: 'line',
+          type: "line",
           source: this.sourceId,
           paint: {
-            "line-color": '#00ffff',
-            'line-width': [
-              'case',
-              ['boolean', ['feature-state', 'hover'], false],
+            "line-color": "#00ffff",
+            "line-width": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
               2,
               0
             ]
           }
-        }
-      } else if (this.layer.type === 'circle') {
+        };
+      } else if (this.layer.type === "circle") {
         let circleRadius;
-        if (this.layer && this.layer.paint && this.layer.paint["circle-radius"]) {
+        if (
+          this.layer &&
+          this.layer.paint &&
+          this.layer.paint["circle-radius"]
+        ) {
           circleRadius = this.layer.paint["circle-radius"] + 4;
         } else {
           circleRadius = 6 + 4;
@@ -447,20 +446,20 @@ export default {
 
         highlight = {
           id: this.layerId + "_高亮边界线",
-          type: 'circle',
+          type: "circle",
           source: this.sourceId,
           paint: {
             "circle-color": "rgba(0, 0, 0, 0)",
             "circle-radius": circleRadius,
-            "circle-stroke-color": '#00ffff',
-            'circle-stroke-width': [
-              'case',
-              ['boolean', ['feature-state', 'hover'], false],
+            "circle-stroke-color": "#00ffff",
+            "circle-stroke-width": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
               2,
               0
             ]
           }
-        }
+        };
       }
 
       if (!map.getLayer(highlight.id)) map.addLayer(highlight);
