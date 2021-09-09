@@ -3,7 +3,16 @@ import MapgisUiBreadcrumb from "../../../ui/src/components/breadcrumb/Breadcrumb
 export default {
   title: "界面/导航/面包屑",
   component: MapgisUiBreadcrumb,
-  argTypes: {},
+  argTypes: {
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
+  },
 };
 
 const Template = (args, { argTypes }) => ({

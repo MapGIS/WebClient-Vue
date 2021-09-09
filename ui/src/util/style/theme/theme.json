@@ -73,7 +73,11 @@
     "panelOptionColor": "#FFFFFF",
     "panelBoxShadow": "rgba(0 0 0 / 31%)",
     "tableBackground": "#242424",
-    "panelCollapseColor": "rgb(56,56,56)"
+    "panelCollapseColor": "rgb(56,56,56)",
+    "svgSelectOuterColor": "rgb(93, 93, 93)",
+    "svgSelectPanelColor": "rgb(74, 74, 74)",
+    "svgSelectPanelHeadColor": "rgb(44, 44, 44)",
+    "svgActiveTypeColor": "rgb(255, 255, 255)"
   },
   {
     "title": "经典浅色",
@@ -149,7 +153,11 @@
     "panelOptionColor": "#999999",
     "panelBoxShadow": "rgba(235 235 235 / 31%)",
     "tableBackground": "#F2F4F7",
-    "panelCollapseColor": "#FFFFFF"
+    "panelCollapseColor": "#FFFFFF",
+    "svgSelectOuterColor": "rgb(217, 217, 217)",
+    "svgSelectPanelColor": "rgb(255, 255, 255)",
+    "svgSelectPanelHeadColor": "rgb(233, 233, 233)",
+    "svgActiveTypeColor": "rgb(186, 181, 181)"
   },
   {
     "title": "经典暖灰",

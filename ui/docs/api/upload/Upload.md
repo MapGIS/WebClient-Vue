@@ -46,6 +46,7 @@
 |clouddiskParam|业务信息，如ip、端口、token等信息|当clearParam为true时，该参数必填|对象型|{}|
 
 clouddiskParam参数说明：由于该组件为业务组件，在引用前需要填写关键业务信息，这些信息需要通过后台接口获取，包括云盘业务信息如ip、端口、token等，示例和具体说明如下：
+
 ``` javascript
 this.clouddiskParam = {
   mapgis_clouddisk_http: 'http', // 后面的值通过调之前接口获取
@@ -56,7 +57,9 @@ this.clouddiskParam = {
   mapgis_clouddisk_id: 21
 }
 ```
+
 详细说明：
+
 |key|value(示例)|说明|是否必填|备注|
 |:---|:---|---|---|---|
 |mapgis_clouddisk_http|http|上传服务|必填项||

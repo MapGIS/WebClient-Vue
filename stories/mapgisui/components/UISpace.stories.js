@@ -4,7 +4,16 @@ import '../../style/space.css';
 export default {
   title: "界面/布局/间隔",
   component: MapgisUiSpace,
-  argTypes: {},
+  argTypes: {
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
+  },
 };
 
 const Template = (args, { argTypes }) => ({

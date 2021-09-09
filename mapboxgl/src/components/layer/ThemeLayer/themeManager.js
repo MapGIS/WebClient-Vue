@@ -319,7 +319,19 @@ class ZondyThemeManager {
     }
 
     getLayerOrderById(layerId) {
-        return window.ZondyThemeManager[this.vueId][layerId]["layerOrder"];
+        try {
+            return window.ZondyThemeManager[this.vueId][layerId]["layerOrder"];
+        }catch (e){
+            return undefined;
+        }
+    }
+
+    getThemeTypeById(layerId) {
+        try {
+            return window.ZondyThemeManager[this.vueId][layerId]["themeType"];
+        }catch (e){
+            return undefined;
+        }
     }
 
     getLayerNameArr() {

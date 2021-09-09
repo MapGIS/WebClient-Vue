@@ -12,24 +12,28 @@ import gradientHeatColor from "./gradientHeatColor";
 const {FeatureService} = MRFS;
 
 export const DefaultThemeMains = [
-  "_单值专题图",
-  "_分段专题图",
-  "_等级专题图",
-  "_热力专题图",
-  "_符号专题图"
+    "_统一专题图",
+    "_单值专题图",
+    "_分段专题图",
+    "_等级专题图",
+    "_热力专题图",
+    "_符号专题图"
 ];
 
 export const DefaultThemeSubs = [
-  "_单值专题图_线",
-  "_单值专题图_注记",
-  "_单值专题图_符号",
-  "_分段专题图_线",
-  "_分段专题图_注记",
-  "_分段专题图_符号",
-  "_等级专题图_线",
-  "_等级专题图_注记",
-  "_热力专题图_线",
-  "_热力专题图_注记"
+    "_统一专题图_线",
+    "_统一专题图_注记",
+    "_统一专题图_符号",
+    "_单值专题图_线",
+    "_单值专题图_注记",
+    "_单值专题图_符号",
+    "_分段专题图_线",
+    "_分段专题图_注记",
+    "_分段专题图_符号",
+    "_等级专题图_线",
+    "_等级专题图_注记",
+    "_热力专题图_线",
+    "_热力专题图_注记"
 ];
 
 export const DefaultThemeLayers = [
@@ -152,20 +156,45 @@ export default {
         }
         //初始化专题图管理对象
         themeManager.init(this.vueId);
+        this.$emit("loaded", this);
     },
     methods: {
         $_addThemeLayer(themeType, layerId) {
-            this.map.on("data", function(e) {
-                emitMapChangeStyle(vm.map.getStyle());
-            });
             this.$refs.themePanel.$_show();
             let vm = this;
             if (themeType) {
                 //初始化专题图存储对象
                 themeManager.initLayerProps(layerId);
                 //取得原图层绘制信息
-                let originLayer = this.$_getLayerStyle(layerId);
-                themeManager.setLayerProps(layerId, layerId, originLayer);
+                let originLayerStyle = this.$_getLayerStyle(layerId);
+                //如果原图层没有paint属性则补上基本的绘制属性，这里必须保证paint不为空，否则后续部分操作mapbox会报错
+                let originLayer = this.map.getLayer(layerId);
+                if (originLayer) {
+                    let type = originLayer.type;
+                    let paint = originLayer.paint;
+                    if (JSON.stringify(paint["_values"]) === "{}") {
+                        switch (type) {
+                            case "fill":
+                                this.map.setPaintProperty(layerId, "fill-color", "#EEEEEE");
+                                this.map.setPaintProperty(layerId, "fill-outline-color", "#FFFFFF");
+                                originLayerStyle.paint["fill-color"] = "#EEEEEE";
+                                originLayerStyle.paint["fill-outline-color"] = "#FFFFFF";
+                                break;
+                            case "line":
+                                this.map.setPaintProperty(layerId, "line-color", "#1890FF");
+                                originLayerStyle.paint["line-color"] = "#1890FF";
+                                break;
+                            case "circle":
+                                this.map.setPaintProperty(layerId, "circle-color", "#1890FF");
+                                this.map.setPaintProperty(layerId, "circle-stroke-color", "#000000");
+                                originLayerStyle.paint["circle-color"] = "#1890FF";
+                                originLayerStyle.paint["circle-stroke-color"] = "#000000";
+                                break;
+                        }
+                    }
+                }
+                //保存原始图层信息
+                themeManager.setLayerProps(layerId, layerId, originLayerStyle);
                 //设置专题图类型
                 themeManager.setLayerProps(layerId, "themeType", themeType);
             }
@@ -358,6 +387,7 @@ export default {
             let features;
             //从图层取得数据
             features = this.map.querySourceFeatures(this.source_Id);
+            this.$_getNullFields(features);
             //如果不存在数据，则不绘制图层
             if (features.length === 0) {
                 this.$emit("createLayerFailed", {
@@ -1525,8 +1555,6 @@ export default {
                     }
                     //保存选中字段
                     themeManager.setSelectField(vm.layerIdCopy, vm.themeType, vm.selectValue);
-                    //保存专题图类型
-                    themeManager.setLayerProps(vm.layerIdCopy, "themeType", themeType);
                     //设置面板参数
                     let textFields = themeManager.getLayerProps(vm.layerIdCopy, "fields");
                     vm.$refs.themePanel.$_setFields(fields);
@@ -1553,10 +1581,14 @@ export default {
                 } else {
                     fields = themeManager.getLayerProps(this.layerIdCopy, "numberFields");
                 }
-                dataSource = themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource");
+                if (this.themeType !== "heatmap") {
+                    dataSource = themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource");
+                    this.$refs.themePanel.$_setDataSoure(dataSource);
+                }
                 this.$refs.themePanel.$_setPanel(props, this.selectValue, fields);
-                this.$refs.themePanel.$_setDataSoure(dataSource);
             }
+            //保存专题图类型
+            themeManager.setLayerProps(vm.layerIdCopy, "themeType", themeType);
         },
         //字段变化
         $_fieldChanged(field) {
@@ -2471,12 +2503,14 @@ export default {
                                     let field = themeManager.getSelectField(originLayerId, "symbol");
                                     let iconUrl = themeManager.getExtraDataByField(originLayerId, "symbol", "iconUrl", field);
                                     let iconName = themeManager.getExtraDataByField(originLayerId, "symbol", "iconName", field);
+                                    let symbolOriginId = originLayerId;
+                                    let symbolId = layerOrder[i];
                                     vm.$refs.themePanel.$_setIcons(vm.icons);
                                     img.addEventListener("load", function () {
                                         vm.map.addImage(iconName, img);
                                         let hasIcon = vm.map.hasImage(iconName), iconSize;
                                         if (hasIcon) {
-                                            vm.map.addLayer(themeManager.getLayer(originLayerId, layerOrder[i]), beforeLayer);
+                                            vm.map.addLayer(themeManager.getLayer(symbolOriginId, symbolId), beforeLayer);
                                         }
                                     });
                                     img.src = iconUrl;
@@ -2504,14 +2538,54 @@ export default {
         },
         $_hideCurrentLayer(layerId) {
             let layerOrder = themeManager.getLayerOrderById(layerId);
+            let themeType = themeManager.getThemeTypeById(layerId);
             for (let i = 0; i < layerOrder.length; i++) {
-                this.$_setLayOutProperty(layerId, layerOrder[i], "visibility", "none");
+                if (layerOrder[i].indexOf(layerId + this.$_getThemeName(themeType)) > -1) {
+                    this.$_setLayOutProperty(layerId, layerOrder[i], "visibility", "none");
+                }
             }
         },
         $_showCurrentLayer(layerId) {
             let layerOrder = themeManager.getLayerOrderById(layerId);
+            let themeType = themeManager.getThemeTypeById(layerId);
             for (let i = 0; i < layerOrder.length; i++) {
-                this.$_setLayOutProperty(layerId, layerOrder[i], "visibility", "visible");
+                if (layerOrder[i].indexOf(layerId + this.$_getThemeName(themeType)) > -1) {
+                    this.$_setLayOutProperty(layerId, layerOrder[i], "visibility", "visible");
+                }
+            }
+            let vm = this;
+            setTimeout(function () {
+                //隐藏原图层
+                vm.$_setLayOutProperty(layerId, layerId, "visibility", "none");
+            }, 100);
+        },
+        $_getNullFields(features) {
+            let fields = [];
+            for (let i = 0; i < features.length; i++) {
+                Object.keys(features[i].properties).forEach(function (key) {
+                    if (
+                        (!features[i].properties[key] ||
+                            features[i].properties[key] === "" ||
+                            features[i].properties[key] === "undefined" ||
+                            features[i].properties[key] === "null") &&
+                        fields.indexOf(key) < 0
+                    ) {
+                        fields.push(key);
+                    }
+                });
+            }
+            this.$emit("hasNullProperty", fields);
+        },
+        $_setLayerZoomRange(layerId, minzoom, maxzoom) {
+            let layerOrder = themeManager.getLayerOrderById(layerId);
+            if (layerOrder) {
+                for (let i = 0; i < layerOrder.length; i++) {
+                    if (layerOrder[i] !== layerId) {
+                        if(this.map.getLayer(layerOrder[i])){
+                            this.map.setLayerZoomRange(layerOrder[i], minzoom, maxzoom);
+                        }
+                    }
+                }
             }
         }
     }

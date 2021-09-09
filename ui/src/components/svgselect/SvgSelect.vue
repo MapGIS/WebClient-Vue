@@ -138,7 +138,6 @@ export default {
 
 <style scoped>
 .svg-select-outer {
-  border: 1px solid rgb(93, 93, 93);
   border-radius: 5px;
   width: 24px;
   height: 24px;
@@ -190,15 +189,14 @@ export default {
   position: absolute;
   top: 29px;
   left: -233px;
-  background: rgb(74, 74, 74);
   z-index: 100;
+  box-shadow: 0px 3px 6px 0px rgb(0 0 0 / 35%);
 }
 
 .svg-select-panel-head {
   width: 98%;
   margin: 0 1%;
   height: 30px;
-  border-bottom: 2px solid rgb(44, 44, 44);
   position: relative;
 }
 
@@ -227,7 +225,6 @@ export default {
   height: 0;
   border-left: 11px solid transparent;
   border-right: 11px solid transparent;
-  border-bottom: 10px solid rgb(74, 74, 74);
   position: absolute;
   top: 21px;
 }
@@ -250,9 +247,5 @@ export default {
   border-bottom: 6px solid transparent;
   margin-left: -2px;
   margin-top: 4px;
-}
-
-.svgActiveType {
-  border-bottom: 3px solid white;
 }
 </style>

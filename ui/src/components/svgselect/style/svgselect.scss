@@ -1,7 +1,21 @@
 @import '../../../util/style/mixins/mixins.scss';
 @import '../../../util/style/theme/theme.scss';
 
-@include b (sprite) {
-  color: $primary-color;
+.svg-select-outer{
+  border: 1px solid $svg-select-outer-color;
+}
+.svg-select-panel{
+  background: $svg-select-panel-color;
+}
 
+.svg-select-triangle-up{
+  border-bottom: 10px solid $svg-select-panel-color;
+}
+
+.svg-select-panel-head{
+  border-bottom: 2px solid $svg-select-panel-head-color;
+}
+
+.svgActiveType {
+  border-bottom: 3px solid $svg-active-type-color;
 }
