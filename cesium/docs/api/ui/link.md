@@ -72,6 +72,12 @@
 <mapgis-3d-link :includes="['one', 'two']" :enable="enable" />
 ```
 
+### `interval`
+- **类型:** `Number`
+- **非侦听属性**
+- **默认值:** `60`
+- **描述:** 视图刷新间隔，默认60帧刷新一次，与Cesium PostRender机制保持一致。
+
 ### `excludes`
 - **类型:** `Array`
 - **非侦听属性**
@@ -89,6 +95,18 @@
 
 <mapgis-3d-link :excludes="['one', 'two']" :enable="enable" />
 ```
+
+### `screenSpaceEventType`
+
+- **类型:** `Array`
+- **可选**
+- **非侦听属性**
+- **默认值:** ` [ ScreenSpaceEventType.WHEEL, ScreenSpaceEventType.MOUSE_MOVE, ScreenSpaceEventType.LEFT_UP, ScreenSpaceEventType.LEFT_DOWN, ScreenSpaceEventType.RIGHT_UP, ScreenSpaceEventType.RIGHT_DOWN ]`
+- **描述:** 触发同步更新的事件，默认是监控滚轮移动、鼠标左键抬起、鼠标右键抬起、鼠标滚动
+- 默认策略  
+- 1. 鼠标左键按下 - 鼠标移动 - 鼠标左键放开
+- 2. 鼠标右键按下 - 鼠标移动 - 鼠标右键放开
+- 3. 鼠标滚轮缩放
 
 ### `vueKey`
 

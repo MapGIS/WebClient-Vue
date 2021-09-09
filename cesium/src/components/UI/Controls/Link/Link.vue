@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { ScreenSpaceEventType } from "../../../../lib/Event/ScreenSpaceEventType";
 import { deepCopy } from "../../../Utils/deepequal";
 
 export default {
@@ -12,6 +13,17 @@ export default {
     enable: { type: Boolean, default: false },
     includes: { type: Array, default: () => [] },
     excludes: { type: Array, default: () => [] },
+    screenSpaceEventType: {
+      type: Array,
+      default: () => [
+        ScreenSpaceEventType.WHEEL,
+        ScreenSpaceEventType.MOUSE_MOVE,
+        ScreenSpaceEventType.LEFT_UP,
+        ScreenSpaceEventType.LEFT_DOWN,
+        ScreenSpaceEventType.RIGHT_UP,
+        ScreenSpaceEventType.RIGHT_DOWN
+      ]
+    },
     vueKey: {
       type: String,
       default: "default"
@@ -34,6 +46,7 @@ export default {
   data() {
     return {
       time: 0,
+      active: false
     };
   },
   watch: {
@@ -126,7 +139,7 @@ export default {
       viewer.camera.setView(view3d);
     },
     addHandler() {
-      let { CesiumZondy, includes, excludes } = this;
+      let { CesiumZondy, includes, excludes, screenSpaceEventType } = this;
       CesiumZondy = CesiumZondy || window.CesiumZondy;
       let sources = CesiumZondy.GlobesManager.flatAllSource();
       let vm = this;
@@ -148,24 +161,26 @@ export default {
         s.options.ScreenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
           s.source.viewer.scene.canvas
         );
-        s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
-          vm.updateView(s.source.viewer.camera);
-          let _camerca = s.source.viewer.camera;
-          sources.forEach((other, j) => {
-            if (i != j) {
-              vm.checkValid(other.source.viewer, _camerca, other.parent);
+
+        screenSpaceEventType.forEach(item => {
+          s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
+            if (item.type == "LEFT_DOWN" || item.type == "RIGHT_DOWN") {
+              vm.active = true;
+            } else if (item.type == "LEFT_UP" || item.type == "RIGHT_UP") {
+              vm.active = false;
+            } else if (item.type == "MOUSE_MOVE") {
+              if (!vm.active) return;
             }
-          });
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        s.options.ScreenSpaceEventHandler.setInputAction(function(movement) {
-          vm.updateView(s.source.viewer.camera);
-          let _camerca = s.source.viewer.camera;
-          sources.forEach((other, j) => {
-            if (i != j) {
-              vm.checkValid(other.source.viewer, _camerca, other.parent);
-            }
-          });
-        }, Cesium.ScreenSpaceEventType.WHEEL);
+
+            vm.updateView(s.source.viewer.camera);
+            let _camerca = s.source.viewer.camera;
+            sources.forEach((other, j) => {
+              if (i != j) {
+                vm.checkValid(other.source.viewer, _camerca, other.parent);
+              }
+            });
+          }, Cesium.ScreenSpaceEventType[item.type]);
+        });
       }
     },
     deleteHandler() {
