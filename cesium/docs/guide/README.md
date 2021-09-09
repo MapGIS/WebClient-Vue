@@ -42,6 +42,7 @@ yarn add @mapgis/webclient-vue-cesium
 
 ```js
 import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
+import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
@@ -119,6 +120,7 @@ yarn link @mapgis/webclient-vue-cesium
 
 ```js
 import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
+import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
