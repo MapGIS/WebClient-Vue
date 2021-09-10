@@ -100,6 +100,7 @@ export { default as MapgisUiTableColumn } from "./components/table/Column.vue";
 export { default as MapgisUiTableColumnGroup } from "./components/table/ColumnGroup.vue";
 export { default as MapgisUiTabs } from "./components/tabs/Tabs.vue";
 export { default as MapgisUiTabPane } from "./components/tabs/TabPane.vue";
+export { default as MapgisUiGroupTab } from "./components/tabs/GroupTab.vue";
 export { default as MapgisUiTag } from "./components/tag/Tag.vue";
 export { default as MapgisUiCheckableTag } from "./components/tag/CheckableTag.vue";
 export { default as MapgisUiTimeline } from "./components/timeline/Timeline.vue";
@@ -120,7 +121,9 @@ export { default as MapgisUiConfigProvider } from "./components/config-provider/
 export { default as MapgisUiDivider } from "./components/divider/Divider.vue";
 export { default as MapgisUiLocaleProvider } from "./components/locale-provider/LocaleProvider.vue";
 
-// ColorPicker
+// Color
+export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
+export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";
 
 // Ribbon

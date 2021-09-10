@@ -41,6 +41,7 @@
     "spark-md5": "^3.0.1",
     "tinycolor2": "^1.4.2",
     "vcolorpicker": "^1.1.0",
+    "vue-color": "^2.8.1",
     "vuepress": "^1.8.2",
     "vuepress-plugin-demo-block": "^0.7.2",
     "vuepress-plugin-demo-code": "^0.6.0"

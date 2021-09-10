@@ -54,6 +54,7 @@ export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLi
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as DynamicCutting } from "./components/Analysis/DynamicCutting";
 export { default as Fill } from "./components/Analysis/Fill";
+export { default as Mapfis3dAspect } from "./components/Analysis/Aspect";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
