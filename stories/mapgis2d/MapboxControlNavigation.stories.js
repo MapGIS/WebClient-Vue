@@ -4,8 +4,26 @@ export default {
     title: "二维/地图子组件/导航组件",
     component: MapgisNavigation,
     argTypes: {
-        showCompass:true,
-        showZoom:true
+        showCompass:{
+            description:'控制是否显示罗盘按钮',
+            type: { name: 'Boolean', required: false },
+            defaultValue: true,
+            table:{
+                type: { summary: 'Boolean' },
+                defaultValue: { summary: 'true' },
+            },
+            control:'boolean'
+        } ,
+        showZoom:{
+            description:'控制是否显示缩放（放大和缩小）按钮',
+            type: { name: 'Boolean', required: false },
+            defaultValue: true,
+            table:{
+                type: { summary: 'Boolean' },
+                defaultValue: { summary: 'true' },
+            },
+            control:'boolean'
+        } ,
     },
 };
 

@@ -25,6 +25,18 @@ export default {
       },
       control:'color'
     },
+    field: {
+      description:'白膜高度选取的字段',
+      type:{ name: 'String', required: false },
+      defaultValue: 'point_count',
+      table:{
+        type:{
+          summary: 'String',
+        },
+        defaultValue: { summary: 'point_count' },
+      },
+      control:'text'
+    },
     opacity: {
       description:'白膜透明度',
       defaultValue:0.85 ,
