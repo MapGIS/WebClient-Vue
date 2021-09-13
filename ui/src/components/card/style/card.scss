@@ -1,19 +1,19 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(card) {
   $card-prefix: &;
   background-color: $card-body-background;
 
-  @include e(body, '-') {
+  @include e(body, "-") {
     background-color: $card-head-background;
   }
 
-  @include e(head, '-') {
+  @include e(head, "-") {
     background-color: $card-body-background;
-  }  
+  }
 
-  @include e(actions, '-') {
+  @include e(actions, "-") {
     background: $card-actions-background;
     > li {
       color: $text-color-secondary;
@@ -34,13 +34,13 @@
     }
   }
 
-  @include e(type-inner, '-') {
+  @include e(type-inner, "-") {
     #{$card-prefix}-head {
       background: $background-color-light;
     }
   }
 
-  @include e(meta, '-') {
+  @include e(meta, "-") {
     &-title {
       color: $card-head-color;
     }
@@ -48,5 +48,56 @@
     &-description {
       color: $text-color-secondary;
     }
+  }
+}
+
+@include b(command-card) {
+  $height-lg: 36px;
+  $height-md: 30px;
+  $height-sm: 24px;
+  $padding-lg: 12px;
+  $padding-md: 8px;
+  $padding-sm: 4px;
+  &.ant-card {
+    .ant-card-head {
+      font-size: 14px;
+      min-height: $height-md;
+      line-height: $height-md;
+      padding: 0 $padding-md;
+
+      .ant-card-head-title,
+      .ant-card-extra {
+        padding: 0;
+        color: $text-color;
+      }
+    }
+    .ant-card-body {
+      padding: $padding-md;
+    }
+    &.ant-card-small {
+      .ant-card-head {
+        margin-bottom: 4px;
+        min-height: $height-sm;
+        line-height: $height-sm;
+        padding: 0 $padding-sm;
+      }
+      .ant-card-body {
+        padding: $padding-sm;
+      }
+    }
+    &.ant-card-large {
+      .ant-card-head {
+        padding: 0 $padding-lg;
+        min-height: $height-lg;
+        line-height: $height-lg;
+      }
+      .ant-card-body {
+        padding: $padding-lg;
+      }
+    }
+  }
+
+  &-box-shadow {
+    box-shadow: $box-shadow-base;
   }
 }

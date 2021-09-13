@@ -6,6 +6,7 @@ export { default as MapgisUiBorder } from "./components/border/Border.vue";
 
 // IconFont
 // export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
+export { default as MapgisUiIcon } from "./components/iconfont/IconSvgImg.vue";
 export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 
@@ -13,6 +14,7 @@ export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSi
 export { default as MapgisUiDiv } from "./components/div/Div.vue";
 export { default as MapgisUiRow } from "./components/grid/Row.vue";
 export { default as MapgisUiCol } from "./components/grid/Col.vue";
+export { default as MapgisUiRowFlex } from "./components/grid/RowFlex.vue";
 
 export { default as MapgisUiLayout } from "./components/layout/Layout.vue";
 export { default as MapgisUiLayoutContent } from "./components/layout/LayoutContent.vue";
@@ -24,6 +26,7 @@ export { default as MapgisUiSpace } from "./components/space/Space.vue";
 // General
 export { default as MapgisUiButton } from "./components/button/Button.vue";
 export { default as MapgisUiButtonGroup } from "./components/button/Group.vue";
+export { default as MapgisUiButtonTooltip } from "./components/button/ButtonTooltip.vue";
 
 // Navigation
 export { default as MapgisUiAffix } from "./components/affix/Affix.vue";
@@ -41,6 +44,11 @@ export { default as MapgisUiPageHeader } from "./components/pageheader/PageHeade
 export { default as MapgisUiPagination } from "./components/pagination/Pagination.vue";
 export { default as MapgisUiSteps } from "./components/steps/Steps.vue";
 export { default as MapgisUiStep } from "./components/steps/Step.vue";
+export { default as MapgisUiToolbar } from "./components/toolbar/Toolbar.vue";
+export { default as MapgisUiToolbarCommand } from "./components/toolbar/ToolbarCommand.vue";
+export { default as MapgisUiToolbarCommandGroup } from "./components/toolbar/ToolbarCommandGroup.vue";
+export { default as MapgisUiToolbarSpace } from "./components/toolbar/ToolbarSpace.vue";
+export { default as MapgisUiToolbarTitle } from "./components/toolbar/ToolbarTitle.vue";
 
 // Data Entry
 export { default as MapgisUiCascader } from "./components/cascader/Cascader.vue";
@@ -81,6 +89,7 @@ export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
 export { default as MapgisUiBadge } from "./components/badge/Badge.vue";
 export { default as MapgisUiCalendar } from "./components/calendar/Calendar.vue";
 export { default as MapgisUiCollapseCard } from "./components/collapse-card/CollapseCard.vue";
+export { default as MapgisUiCommandCard } from "./components/card/CommandCard.vue";
 export { default as MapgisUiCard } from "./components/card/Card.vue";
 export { default as MapgisUiCardGrid } from "./components/card/Grid.vue";
 export { default as MapgisUiCardMeta } from "./components/card/Meta.vue";
@@ -98,6 +107,7 @@ export { default as MapgisUiStatisticCountdown } from "./components/statistic/Co
 export { default as MapgisUiTable } from "./components/table/Table.vue";
 export { default as MapgisUiTableColumn } from "./components/table/Column.vue";
 export { default as MapgisUiTableColumnGroup } from "./components/table/ColumnGroup.vue";
+export { default as MapgisUiEditableTable } from "./components/table/EditableTable.vue";
 export { default as MapgisUiTabs } from "./components/tabs/Tabs.vue";
 export { default as MapgisUiTabPane } from "./components/tabs/TabPane.vue";
 export { default as MapgisUiGroupTab } from "./components/tabs/GroupTab.vue";

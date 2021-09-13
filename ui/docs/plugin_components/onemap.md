@@ -1,5 +1,28 @@
 # 一张图组件移植
 
+
+## 已移植组件
+| 原始名称                 | 移植名称                        |
+| :----------------------- | :------------------------------ |
+| mp-icon                  | mapgis-ui-icon                  |
+| mp-buttom                | mapgis-ui-button-tooltip        |
+| mp-card                  | mapgis-ui-command-card          |
+| mp-toolbar               | mapgis-ui-toolbar               |
+| mp-toolbar-space         | mapgis-ui-toolbar-space         |
+| mp-toolbar-title         | mapgis-ui-toolbar-title         |
+| mp-toolbar-command       | mapgis-ui-toolbar-command       |
+| mp-toolbar-command-group | mapgis-ui-toolbar-command-group |
+| mp-editable-table        | mapgis-ui-editable-table        |
+| mp-row-flex              | mapgis-ui--row-flex             |
+|                          |                                 |
+|                          |                                 |
+|                          |                                 |
+|                          |                                 |
+|                          |                                 |
+
+
+
+
 ## 组件分析
 
 以地形组件为例

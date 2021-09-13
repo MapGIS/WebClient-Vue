@@ -21,5 +21,5 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  viewMode: "docs", // docs
+  viewMode: "canvas", // docs
 };
