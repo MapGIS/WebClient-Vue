@@ -5,7 +5,7 @@
 </template>
 
 <script>
-const Group = {
+export const Group = {
   name: 'mapgis-ui-color-checkbox-group',
   props: {
     defaultValues: {

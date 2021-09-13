@@ -10,7 +10,7 @@
 </template>
 
 <script>
-const Group = {
+export const Group = {
   name: 'mapgis-ui-img-checkbox-group',
   props: {
     multiple: {
