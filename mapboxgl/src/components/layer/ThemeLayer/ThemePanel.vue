@@ -337,6 +337,18 @@
                 <mapgis-ui-input-number class="theme-panel-input-number" v-model="circleStrokeOpacity"/>
               </mapgis-ui-col>
             </mapgis-ui-row>
+            <mapgis-ui-row v-if="dataType === 'line'">
+              <mapgis-ui-col :span="8">
+                <p style="margin-top: 0" class="theme-panel-p">填充图案</p>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="16">
+                <mapgis-ui-svg-select
+                    ref="wenli"
+                    :icons="icons"
+                    @change="$_clickWenliIcon"
+                ></mapgis-ui-svg-select>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
             <mapgis-ui-row v-if="dataType === 'line' && currentThemeType === 'uniform'">
               <mapgis-ui-col :span="9">
                 <p class="theme-panel-p">颜色</p>
@@ -441,6 +453,18 @@
                     :step="lineTranslateYStep"
                     class="theme-panel-input-number"
                     v-model="lineTranslateY"/>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+            <mapgis-ui-row v-if="dataType === 'fill'">
+              <mapgis-ui-col :span="8">
+                <p style="margin-top: 0" class="theme-panel-p">填充图案</p>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="16">
+                <mapgis-ui-svg-select
+                    ref="wenli"
+                    :icons="icons"
+                    @change="$_clickWenliIcon"
+                ></mapgis-ui-svg-select>
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-row v-if="dataType === 'fill' && currentThemeType === 'uniform'">
@@ -912,6 +936,52 @@
                     </mapgis-ui-col>
                   </mapgis-ui-row>
                 </div>
+<!--                <div class="range-theme-list-item" style="border-top: 1px solid rgb(93, 93, 93)"-->
+<!--                     v-if="radiusIndex === index">-->
+<!--                  <mapgis-ui-row style="margin-top: 0">-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <p class="theme-panel-icon-title">X偏移</p>-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="12">-->
+<!--                      <mapgis-ui-slider-->
+<!--                          style="width: 97px"-->
+<!--                          :min="0"-->
+<!--                          :max="20"-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          class="theme-panel-slider theme-panel-icon-slider"-->
+<!--                      />-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <mapgis-ui-input-number-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          style="margin-left: 2px"-->
+<!--                          class="theme-panel-input-number theme-panel-input-icon-number"/>-->
+<!--                    </mapgis-ui-col>-->
+<!--                  </mapgis-ui-row>-->
+<!--                </div>-->
+<!--                <div class="range-theme-list-item" style="border-top: 1px solid rgb(93, 93, 93)"-->
+<!--                     v-if="radiusIndex === index">-->
+<!--                  <mapgis-ui-row style="margin-top: 0">-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <p class="theme-panel-icon-title">Y偏移</p>-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="12">-->
+<!--                      <mapgis-ui-slider-->
+<!--                          style="width: 97px"-->
+<!--                          :min="0"-->
+<!--                          :max="20"-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          class="theme-panel-slider theme-panel-icon-slider"-->
+<!--                      />-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <mapgis-ui-input-number-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          style="margin-left: 2px"-->
+<!--                          class="theme-panel-input-number theme-panel-input-icon-number"/>-->
+<!--                    </mapgis-ui-col>-->
+<!--                  </mapgis-ui-row>-->
+<!--                </div>-->
               </div>
             </mapgis-ui-row>
             <mapgis-ui-row v-if="currentThemeType === 'range'">
@@ -959,12 +1029,12 @@
                          v-if="index < dataSource.length - 1 && dataSource.length > 1 && index === numWrong"
                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                     <img alt="数据错误" class="theme-panel-input-wrong"
-                         v-if="dataSource.length === 1 || (index === dataSource.length - 1 && dataSource.length > 1) && endNumWrong"
+                         v-if="index === dataSource.length - 1 && dataSource.length > 1 && endNumWrong"
                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                     <mapgis-ui-input class="range-theme-num"
                                      @click="$_inputClick(index)"
                                      v-model="dataSource[index]"
-                                     v-if="index < dataSource.length && dataSource.length > 1">
+                                     >
                     </mapgis-ui-input>
                   </div>
                   <div class="theme-panel-td theme-panel-td-range theme-panel-td-add theme-panel-td-border-right"
@@ -1241,6 +1311,9 @@ export default {
     },
     $_reset() {
       this.isUpDate = false;
+      if(this.$refs.wenli){
+        this.$refs.wenli.selectIcon = undefined;
+      }
       this.dataInit = false;
       this.radiusIndex = undefined;
       this.uniformColor = "#EE4C5A";
@@ -1609,6 +1682,9 @@ export default {
     $_resetIcon(iconUrl) {
       this.$refs.svg.selectIcon = iconUrl;
     },
+    $_setPattern(patternUrl) {
+      this.$refs.wenli.selectIcon = patternUrl;
+    },
     $_showRadius(index) {
       if (this.radiusIndex === index) {
         this.radiusIndex = undefined;
@@ -1704,6 +1780,9 @@ export default {
     },
     $_clickIcon(icon, url) {
       this.$emit("iconChanged", icon, url);
+    },
+    $_clickWenliIcon(icon, url){
+      this.$emit("wenliIconChanged", icon, url);
     },
     $_heatGradientChange(index) {
       this.heatmapGradient = index;
