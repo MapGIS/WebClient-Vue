@@ -1,4 +1,7 @@
 import MapgisUiCheckbox from "../../../ui/src/components/checkbox/Checkbox.vue";
+import DarkImg from '../assets/images/dark.svg'
+import LightImg from '../assets/images/light.svg'
+import NightImg from '../assets/images/night.svg'
 
 export default {
   title: "界面/数据输入/多选框",
@@ -162,3 +165,67 @@ const Template4 = (args, { argTypes }) => ({
 
 export const ControledCheckbox = Template4.bind({});
 ControledCheckbox.args = {};
+
+const Template5 = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  components: { MapgisUiCheckbox },
+  data() {
+    return {
+      DarkImg: DarkImg,
+      LightImg: LightImg,
+      NightImg: NightImg,
+    };
+  },
+  methods: {
+  },
+  template: `
+  <div>
+    <mapgis-ui-img-checkbox-group
+    >
+      <mapgis-ui-img-checkbox title="暗色菜单风格" :img="DarkImg" value="dark" />
+      <mapgis-ui-img-checkbox title="亮色菜单风格" :img="LightImg" value="light" />
+      <mapgis-ui-img-checkbox title="暗黑模式" :img="NightImg" value="night" />
+    </mapgis-ui-img-checkbox-group>
+  </div>
+  `,
+});
+
+export const 图片选择 = Template5.bind({});
+图片选择.args = {};
+
+const Template6 = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  components: { MapgisUiCheckbox },
+  data() {
+    return {
+      palettes: [
+        '#f5222d',
+        '#fa541c',
+        '#fadb14',
+        '#3eaf7c',
+        '#13c2c2',
+        '#1890ff',
+        '#722ed1',
+        '#eb2f96'
+      ]
+    };
+  },
+  methods: {
+  },
+  template: `
+  <div>
+    <mapgis-ui-color-checkbox-group
+    >
+      <mapgis-ui-color-checkbox
+        v-for="(color, index) in palettes"
+        :key="index"
+        :color="color"
+        :value="index"
+      />
+    </mapgis-ui-color-checkbox-group>
+  </div>
+  `,
+});
+
+export const 颜色选择 = Template6.bind({});
+颜色选择.args = {};
