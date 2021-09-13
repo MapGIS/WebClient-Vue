@@ -70,7 +70,7 @@ export default {
         );
       case "ColorPicker":
         return (
-          <mapgis-ui-color-picker-confirm
+          <mapgis-ui-sketch-color-picker-confirm
             onChange={onChange}
             value={value}
             size={size}
