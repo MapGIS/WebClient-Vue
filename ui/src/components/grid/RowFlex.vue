@@ -26,8 +26,11 @@
 import { CommonUtil } from "../../util/common";
 
 export default {
-  name: "mapgis-ui--row-flex",
+  name: "mapgis-ui-row-flex",
   props: {
+    /**
+     * 排列方向，"horizontal", "vertical", 默认'horizontal'
+     */
     type: {
       type: String,
       default: "horizontal",
@@ -35,6 +38,9 @@ export default {
         return CommonUtil.oneOf(value, ["horizontal", "vertical"]);
       }
     },
+    /**
+     * align 靠拢方向，"top", "middle", "bottom", 默认'middle'
+     */
     align: {
       type: String,
       default: "middle",
@@ -42,6 +48,9 @@ export default {
         return CommonUtil.oneOf(value, ["top", "middle", "bottom"]);
       }
     },
+    /**
+     * justify 对齐方向，"start", "end", "center", "space-between", "space-around", 默认'start'
+     */
     justify: {
       type: String,
       default: "start",
@@ -55,24 +64,42 @@ export default {
         ]);
       }
     },
+    /**
+     * 间隔， 默认0
+     */
     gutter: {
       type: [Array, Number],
       default: 0
     },
+    /**
+     * 文本 和 内容的比例分割， 默认[5, 19]
+     */
     span: {
       type: Array,
       default: () => [5, 19]
     },
+    /**
+     * 是否显示冒号， 默认`true`
+     */
     colon: {
       type: Boolean,
       default: true
     },
+    /**
+     * 标题
+     */
     label: {
       type: String
     },
+    /**
+     * 标题宽度，如果激活了该宽度，则 type = 'vertical'时无效
+     */
     labelWidth: {
       type: Number
     },
+    /**
+     * 标题对齐方向， "left", "center", "right", 默认'left'
+     */
     labelAlign: {
       type: String,
       default: "left",
@@ -80,6 +107,9 @@ export default {
         return CommonUtil.oneOf(value, ["left", "center", "right"]);
       }
     },
+    /**
+     * 内容对齐方向， "left", "center", "right", 默认'left'
+     */
     contentAlign: {
       type: String,
       default: "left",
