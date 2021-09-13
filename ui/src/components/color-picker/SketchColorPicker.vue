@@ -20,7 +20,6 @@
 import { Sketch } from "vue-color";
 
 export default {
-  // 组件名称，统一以"Mp"开头
   name: "mapgis-ui-sketch-color-picker",
   components: { "sketch-picker": Sketch },
   props: {

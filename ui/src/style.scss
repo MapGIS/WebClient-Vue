@@ -25,6 +25,7 @@
 @import "./components/checkbox/style/checkbox.scss";
 @import "./components/date-picker/style/date-picker.scss";
 @import "./components/input/style/input.scss";
+@import "./components/form/style/form.scss";
 @import "./components/form-model/style/form-model.scss";
 @import "./components/mentions/style/mentions.scss";
 @import "./components/radio/style/radio.scss";
@@ -69,6 +70,10 @@
 @import "./components/config-provider/style/config-provider.scss";
 @import "./components/divider/style/divider.scss";
 @import "./components/locale-provider/style/locale-provider.scss";
+@import "./components/mask/style/mask.scss";
+@import "./components/adjust-line/style/adjust-line.scss";
+@import "./components/placement/style/placement.scss";
+@import "./components/window/style/window.scss";
 
 /* MapGIS Design - IconFont */
 @import "./components/iconfont/style/iconfont.scss";

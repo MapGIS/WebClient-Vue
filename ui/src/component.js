@@ -46,6 +46,10 @@ export { default as MapgisUiStep } from "./components/steps/Step.vue";
 export { default as MapgisUiCascader } from "./components/cascader/Cascader.vue";
 export { default as MapgisUiCheckbox } from "./components/checkbox/Checkbox.vue";
 export { default as MapgisUiCheckboxGroup } from "./components/checkbox/Group.vue";
+export { default as MapgisUiImgCheckbox } from "./components/checkbox/ImgCheckbox.vue";
+export { Group as MapgisUiImgCheckboxGroup } from "./components/checkbox/ImgCheckbox.vue";
+export { default as MapgisUiColorCheckbox } from "./components/checkbox/ColorCheckbox.vue";
+export { Group as MapgisUiColorCheckboxGroup } from "./components/checkbox/ColorCheckbox.vue";
 export { default as MapgisUiDatePicker } from "./components/date-picker/DatePicker.vue";
 export { default as MapgisUiRangePicker } from "./components/date-picker/RangePicker.vue";
 export { default as MapgisUiMonthPicker } from "./components/date-picker/MonthPicker.vue";
@@ -56,6 +60,7 @@ export { default as MapgisUiInputSearch } from "./components/input/Search.vue";
 export { default as MapgisUiInputGroup } from "./components/input/Group.vue";
 export { default as MapgisUiInputPassword } from "./components/input/Password.vue";
 export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
+export { default as MapgisUiSettingForm } from "./components/form/SettingForm.vue";
 export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
 export { default as MapgisUiMentions } from "./components/mentions/Mentions.vue";
@@ -75,6 +80,7 @@ export { default as MapgisUiTimePicker } from "./components/time-picker/TimePick
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";
 export { default as MapgisUiTreeSelect } from "./components/tree-select/TreeSelect.vue";
 export { default as MapgisUiTreeSelectNode } from "./components/tree-select/TreeNode.vue";
+export { default as MapgisUiCustomTreeSelect } from "./components/tree-select/CustomTreeSelect.vue";
 
 // Data Display
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
@@ -87,6 +93,7 @@ export { default as MapgisUiCardMeta } from "./components/card/Meta.vue";
 export { default as MapgisUiCarousel } from "./components/carousel/Carousel.vue";
 export { default as MapgisUiCollapse } from "./components/collapse/Collapse.vue";
 export { default as MapgisUiCollapsePanel } from "./components/collapse/Panel.vue";
+export { default as MapgisUiCollapseButton } from "./components/collapse/CollapseButton.vue";
 export { default as MapgisUiEmpty } from "./components/empty/Empty.vue";
 export { default as MapgisUiList } from "./components/list/List.vue";
 export { default as MapgisUiListItem } from "./components/list/Item.vue";
@@ -115,15 +122,21 @@ export { default as MapgisUiProgress } from "./components/progress/Progress.vue"
 export { default as MapgisUiResult } from "./components/result/Result.vue";
 export { default as MapgisUiSkeleton } from "./components/skeleton/Skeleton.vue";
 export { default as MapgisUiSpin } from "./components/spin/Spin.vue";
+export { default as MapgisUiMapSpin } from "./components/spin/MapSpin.vue";
 
 // Other
 export { default as MapgisUiConfigProvider } from "./components/config-provider/ConfigProvider.vue";
 export { default as MapgisUiDivider } from "./components/divider/Divider.vue";
 export { default as MapgisUiLocaleProvider } from "./components/locale-provider/LocaleProvider.vue";
+export { default as MapgisUiMask } from "./components/mask/Mask.vue";
+export { default as MapgisUiAdjustLine } from "./components/adjust-line/AdjustLine.vue";
+export { default as MapgisUiPlacement } from "./components/placement/Placement.vue";
+export { default as MapgisUiWindow } from "./components/window/Window.vue";
 
 // Color
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
+export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";
 
 // Ribbon
