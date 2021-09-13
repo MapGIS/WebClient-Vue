@@ -2,7 +2,7 @@
 
 
 ## 已移植组件
-| 原始名称              | 新名称                                | 问题                                     | 所在文件夹   | storybook | 涉及a-icon |
+| 原始名称              | 新名称                                | 问题                                     | 所在文件夹   | 已补充storybook | 涉及a-icon |
 | :-------------------- | :------------------------------------ | :--------------------------------------- | :----------- | :-------- | :--------- |
 | MpImgCheckbox         | mapgis-ui-img-checkbox                |                                          | checkbox     | -         | √          |
 | MpImgCheckboxGroup    | mapgis-ui-img-checkbox-group          |                                          | checkbox     | -         |            |
@@ -13,7 +13,7 @@
 | MpCollapseButton      | mapgis-ui-collapse-button             | 未找到$base-bg-color未找到$border-color  | collapse     | -         | √          |
 | MpAdjustLine          | mapgis-ui-adjust-line                 | 未找到$base-bg-color未找到$border-color  | adjust-line  | -         |            |
 | MpGroupTab            | mapgis-ui-group-tab                   |                                          | tabs         | -         |            |
-| MpSettingForm         | mapgis-ui-setting-form                | **缺少mapgis-ui-form**；<br>全是.ant-××× | form         | -         |            |
+| MpSettingForm         | mapgis-ui-setting-form                | | form         | -         |            |
 | MpTreeSelect          | mapgis-ui-custom-tree-select          |                                          | tree-select  | -         | √          |
 | MpColorPicker         | mapgis-ui-sketch-color-picker         |                                          | color-picker | -         |            |
 | MpColorPickerConfirm  | mapgis-ui-sketch-color-picker-confirm | $size-lg、$size-md、$size-sm需要放到全局 | color-picker | -         |            |
