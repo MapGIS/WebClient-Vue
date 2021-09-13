@@ -9,7 +9,7 @@
         :allow-clear="true"
         :title="selectedValue"
       >
-        <a-icon slot="suffix" :class="arrowCls" type="down" />
+        <mapgis-ui-iconfont slot="suffix" :class="arrowCls" type="mapgis-down" />
       </mapgis-ui-input>
     </slot>
     <div slot="overlay" :class="`${prefixCls}-dropdown`">

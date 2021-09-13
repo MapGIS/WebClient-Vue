@@ -10,7 +10,7 @@ const install = function (Vue, options) {
 
     const IconFont = MapgisUiIconFont.createFromIconfontCN({
       // scriptUrl: "http://localhost:8888/fonts/iconfont.js",
-      scriptUrl: "//at.alicdn.com/t/font_2749943_998i6mq5ddb.js", 
+      scriptUrl: "//at.alicdn.com/t/font_2749943_pcaes71rnnc.js",
     });
     Vue.component("mapgis-ui-iconfont", IconFont);
     Vue.use(MapgisUi);

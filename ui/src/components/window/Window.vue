@@ -21,22 +21,22 @@
       </div>
       <slot name="toolbar"> </slot>
       <div :class="toolbarClass">
-        <a-icon
+        <mapgis-ui-iconfont
           v-if="shrinkAction"
           class="action"
-          :type="shrink ? 'up' : 'down'"
+          :type="shrink ? 'mapgis-up' : 'mapgis-down'"
           @click="shrink = !shrink"
         />
-        <a-icon
+        <mapgis-ui-iconfont
           v-if="fullScreenAction"
           class="action"
-          :type="fullScreen ? 'fullscreen-exit' : 'fullscreen'"
+          :type="fullScreen ? 'mapgis-fullscreen-exit' : 'mapgis-fullscreen-ant'"
           @click="onFullScreen"
         />
-        <a-icon
+        <mapgis-ui-iconfont
           v-if="closeAction"
           class="action"
-          type="close"
+          type="mapgis-close"
           @click="onClose"
         />
       </div>

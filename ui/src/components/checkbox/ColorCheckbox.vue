@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-ui-color-checkbox" :style="{ backgroundColor: color }" @click="toggle">
-    <a-icon v-if="sChecked" type="check" />
+    <mapgis-ui-iconfont v-if="sChecked" type="mapgis-check" />
   </div>
 </template>
 

@@ -5,7 +5,7 @@
       :style="{ 'z-index': zIndex }"
       @click="onClick"
     >
-      <a-icon :type="iconType" />
+      <mapgis-ui-iconfont :type="iconType" />
     </span>
   </div>
 </template>
@@ -48,16 +48,16 @@ export default {
       let icon
       switch (this.direction) {
         case 'left':
-          icon = `vertical-${this.syncedCollapsed ? 'right' : 'left'}`
+          icon = `vertical-${this.syncedCollapsed ? 'mapgis-right' : 'mapgis-left'}`
           break
         case 'right':
-          icon = `vertical-${this.syncedCollapsed ? 'left' : 'right'}`
+          icon = `vertical-${this.syncedCollapsed ? 'mapgis-left' : 'mapgis-right'}`
           break
         case 'top':
-          icon = `${this.syncedCollapsed ? 'up' : 'down'}`
+          icon = `${this.syncedCollapsed ? 'mapgis-up' : 'mapgis-down'}`
           break
         default:
-          icon = `${this.syncedCollapsed ? 'down' : 'up'}`
+          icon = `${this.syncedCollapsed ? 'mapgis-down' : 'mapgis-up'}`
           break
       }
       return icon

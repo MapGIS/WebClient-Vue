@@ -3,7 +3,7 @@
     <div class="mapgis-ui-img-checkbox" @click="toggle">
       <img :src="img" />
       <div v-if="sChecked" class="check-item">
-        <a-icon type="check" />
+        <mapgis-ui-iconfont type="mapgis-check" />
       </div>
     </div>
   </mapgis-ui-tooltip>
