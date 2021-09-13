@@ -337,6 +337,18 @@
                 <mapgis-ui-input-number class="theme-panel-input-number" v-model="circleStrokeOpacity"/>
               </mapgis-ui-col>
             </mapgis-ui-row>
+            <mapgis-ui-row v-if="dataType === 'line'">
+              <mapgis-ui-col :span="8">
+                <p style="margin-top: 0" class="theme-panel-p">填充图案</p>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="16">
+                <mapgis-ui-svg-select
+                    ref="wenli"
+                    :icons="icons"
+                    @change="$_clickWenliIcon"
+                ></mapgis-ui-svg-select>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
             <mapgis-ui-row v-if="dataType === 'line' && currentThemeType === 'uniform'">
               <mapgis-ui-col :span="9">
                 <p class="theme-panel-p">颜色</p>
@@ -441,6 +453,18 @@
                     :step="lineTranslateYStep"
                     class="theme-panel-input-number"
                     v-model="lineTranslateY"/>
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+            <mapgis-ui-row v-if="dataType === 'fill'">
+              <mapgis-ui-col :span="8">
+                <p style="margin-top: 0" class="theme-panel-p">填充图案</p>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="16">
+                <mapgis-ui-svg-select
+                    ref="wenli"
+                    :icons="icons"
+                    @change="$_clickWenliIcon"
+                ></mapgis-ui-svg-select>
               </mapgis-ui-col>
             </mapgis-ui-row>
             <mapgis-ui-row v-if="dataType === 'fill' && currentThemeType === 'uniform'">
@@ -912,6 +936,52 @@
                     </mapgis-ui-col>
                   </mapgis-ui-row>
                 </div>
+<!--                <div class="range-theme-list-item" style="border-top: 1px solid rgb(93, 93, 93)"-->
+<!--                     v-if="radiusIndex === index">-->
+<!--                  <mapgis-ui-row style="margin-top: 0">-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <p class="theme-panel-icon-title">X偏移</p>-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="12">-->
+<!--                      <mapgis-ui-slider-->
+<!--                          style="width: 97px"-->
+<!--                          :min="0"-->
+<!--                          :max="20"-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          class="theme-panel-slider theme-panel-icon-slider"-->
+<!--                      />-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <mapgis-ui-input-number-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          style="margin-left: 2px"-->
+<!--                          class="theme-panel-input-number theme-panel-input-icon-number"/>-->
+<!--                    </mapgis-ui-col>-->
+<!--                  </mapgis-ui-row>-->
+<!--                </div>-->
+<!--                <div class="range-theme-list-item" style="border-top: 1px solid rgb(93, 93, 93)"-->
+<!--                     v-if="radiusIndex === index">-->
+<!--                  <mapgis-ui-row style="margin-top: 0">-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <p class="theme-panel-icon-title">Y偏移</p>-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="12">-->
+<!--                      <mapgis-ui-slider-->
+<!--                          style="width: 97px"-->
+<!--                          :min="0"-->
+<!--                          :max="20"-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          class="theme-panel-slider theme-panel-icon-slider"-->
+<!--                      />-->
+<!--                    </mapgis-ui-col>-->
+<!--                    <mapgis-ui-col :span="5">-->
+<!--                      <mapgis-ui-input-number-->
+<!--                          v-model="radiusArr[index]"-->
+<!--                          style="margin-left: 2px"-->
+<!--                          class="theme-panel-input-number theme-panel-input-icon-number"/>-->
+<!--                    </mapgis-ui-col>-->
+<!--                  </mapgis-ui-row>-->
+<!--                </div>-->
               </div>
             </mapgis-ui-row>
             <mapgis-ui-row v-if="currentThemeType === 'range'">
@@ -1241,6 +1311,9 @@ export default {
     },
     $_reset() {
       this.isUpDate = false;
+      if(this.$refs.wenli){
+        this.$refs.wenli.selectIcon = undefined;
+      }
       this.dataInit = false;
       this.radiusIndex = undefined;
       this.uniformColor = "#EE4C5A";
@@ -1609,6 +1682,9 @@ export default {
     $_resetIcon(iconUrl) {
       this.$refs.svg.selectIcon = iconUrl;
     },
+    $_setPattern(patternUrl) {
+      this.$refs.wenli.selectIcon = patternUrl;
+    },
     $_showRadius(index) {
       if (this.radiusIndex === index) {
         this.radiusIndex = undefined;
@@ -1704,6 +1780,9 @@ export default {
     },
     $_clickIcon(icon, url) {
       this.$emit("iconChanged", icon, url);
+    },
+    $_clickWenliIcon(icon, url){
+      this.$emit("wenliIconChanged", icon, url);
     },
     $_heatGradientChange(index) {
       this.heatmapGradient = index;

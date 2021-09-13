@@ -69,6 +69,7 @@ class ZondyThemeManager {
             window.ZondyThemeManager[this.vueId][layerId].panelProps[themeType][
                 field
                 ] = {
+                "icon-image": "basic",
                 "icon-opacity": 100,
                 "icon-translate": [0, 0],
                 "icon-url": "assets/svg/theme/basic/basic.svg",
@@ -127,6 +128,7 @@ class ZondyThemeManager {
                         "gradient-color":
                             "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
                         "fill-color": "#FFFFFF",
+                        "fill-pattern": undefined,
                         "fill-opacity": 100,
                         "fill-translate": [0, 0],
                         "fill-outline-color": "#000000",
@@ -255,6 +257,12 @@ class ZondyThemeManager {
     getPanelProps(layerId, themeType, key) {
         return window.ZondyThemeManager[this.vueId][layerId].panelProps[themeType][
             this.field
+            ][key];
+    }
+
+    getPanelPropsByField(layerId, themeType, key, field) {
+        return window.ZondyThemeManager[this.vueId][layerId].panelProps[themeType][
+            field
             ][key];
     }
 

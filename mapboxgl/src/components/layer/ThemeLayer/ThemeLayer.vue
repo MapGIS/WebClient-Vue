@@ -9,6 +9,7 @@
         @addRange="$_addRange"
         @deleteRange="$_deleteRange"
         @iconChanged="$_iconChanged"
+        @wenliIconChanged="$_wenliIconChanged"
         @colorChanged="$_colorChanged"
         @checked="$_checked"
         @gradientChanged="$_gradientChanged"
