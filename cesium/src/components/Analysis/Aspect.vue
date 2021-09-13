@@ -1,0 +1,237 @@
+<template>
+  <div class="mapgis-widget-aspect-analysis">
+    <mapgis-ui-group-tab title="坡向图例设置">
+      <mapgis-ui-tooltip slot="handle" placement="bottomRight" :title="info">
+        <mapgis-ui-iconfont type="mapgis-setting"></mapgis-ui-iconfont>
+      </mapgis-ui-tooltip>
+    </mapgis-ui-group-tab>
+    <mapgis-ui-colors-setting
+      v-model="params"
+      :rangeField="'坡向范围'"
+    ></mapgis-ui-colors-setting>
+    <div class="mapgis-footer-actions">
+      <mapgis-ui-space>
+        <mapgis-ui-button type="primary" @click="add">分析</mapgis-ui-button>
+        <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+      </mapgis-ui-space>
+    </div>
+  </div>
+</template>
+
+<script>
+import { Util } from "@mapgis/webclient-vue-ui";
+import VueOptions from "../Base/Vue/VueOptions";
+const { ColorUtil } = Util;
+
+export default {
+  name: "mapgis-3d-analysis-aspect",
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  props: {
+    ...VueOptions
+  },
+  data() {
+    return {
+      params: [
+        { min: 0, max: 60, color: "rgba(244, 67, 54, 0.5)" },
+        { min: 60, max: 120, color: "rgba(233, 30, 99, 0.5)" },
+        { min: 120, max: 180, color: "rgba(156, 39, 176, 0.5)" },
+        { min: 180, max: 240, color: "rgba(255, 235, 59, 0.5)" },
+        { min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)" },
+        { min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" }
+      ],
+
+      brightnessEnabled: false, // 光照是否已开启
+
+      info:
+        "坡向分析需要带法线地形。\r\n坡向按照东北西南的顺序表示方向,即0°表示坡向指向正东方向。"
+    };
+  },
+
+  created() {},
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
+  },
+  methods: {
+    async createCesiumObject() {
+      const { baseUrl, options } = this;
+      // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
+      return new Promise(
+        resolve => {
+          resolve();
+        },
+        reject => {}
+      );
+    },
+    mount() {
+      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer } = webGlobe;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function(dataSource) {
+        vm.$emit("load", { component: this });
+        CesiumZondy.AspectAnalysisManager.addSource(
+          vueKey,
+          vueIndex,
+          dataSource,
+          {
+            drawElement: null,
+            aspectAnalysis: null
+          }
+        );
+      });
+    },
+    unmount() {
+      let { CesiumZondy, vueKey, vueIndex } = this;
+      let find = CesiumZondy.AspectAnalysisManager.findSource(vueKey, vueIndex);
+      if (find) {
+        this.remove();
+      }
+      CesiumZondy.AspectAnalysisManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
+    },
+    /**
+     * 开启光照
+     */
+    enableBrightness() {
+      if (this.brightnessEnabled) {
+        return;
+      }
+      // 开启光照，不然放大地图，分析结果显示异常
+      const { viewer } = this.webGlobe;
+      viewer.scene.globe.enableLighting = true;
+      // 调高亮度
+      const stages = viewer.scene.postProcessStages;
+      viewer.scene.brightness =
+        viewer.scene.brightness ||
+        stages.add(this.Cesium.PostProcessStageLibrary.createBrightnessStage());
+      viewer.scene.brightness.enabled = true;
+      viewer.scene.brightness.uniforms.brightness = 1.2;
+    },
+
+    active() {
+      const { viewer } = this.webGlobe;
+      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
+        this.brightnessEnabled = true;
+      }
+    },
+
+    add() {
+      let { CesiumZondy, vueKey, vueIndex } = this;
+      let find = CesiumZondy.AspectAnalysisManager.findSource(vueKey, vueIndex);
+      let { options } = find;
+      let { aspectAnalysis, drawElement } = options;
+      this.active();
+      const { viewer } = this.webGlobe;
+      // 初始化交互式绘制控件
+      drawElement = drawElement || new this.Cesium.DrawElement(viewer);
+
+      const { params } = this;
+
+      const colors = [];
+      const ramp = [];
+      params.forEach(({ max, color }) => {
+        ramp.push((max / 360).toFixed(2));
+        colors.push(color);
+      });
+      const rampColor = this.transformColor(colors);
+
+      const self = this;
+
+      // 激活交互式绘制工具
+      drawElement.startDrawingPolygon({
+        // 绘制完成回调函数
+        callback: positions => {
+          this.remove();
+          this.enableBrightness(); // 开启光照
+          aspectAnalysis =
+            aspectAnalysis ||
+            new this.Cesium.TerrainAnalyse(viewer, {
+              aspectRampColor: rampColor,
+              aspectRamp: ramp
+            });
+          aspectAnalysis.enableContour(false);
+          aspectAnalysis.updateMaterial("aspect");
+          aspectAnalysis.changeAnalyseArea(positions);
+        }
+      });
+    },
+
+    transformColor(arrayColor) {
+      let isNull = false;
+      const arr = arrayColor.map(color => {
+        if (color) {
+          return ColorUtil.rgbaToHex(color);
+        }
+        isNull = true;
+        return null;
+      });
+      if (isNull) {
+        return [];
+      }
+      return arr;
+    },
+
+    remove() {
+      let { CesiumZondy, vueKey, vueIndex } = this;
+      let find = CesiumZondy.AspectAnalysisManager.findSource(vueKey, vueIndex);
+      let { options } = find;
+      let { aspectAnalysis, drawElement } = options;
+
+      // 判断是否已有坡向分析结果
+      if (aspectAnalysis) {
+        // 移除坡向分析显示结果
+        aspectAnalysis.updateMaterial("none");
+        aspectAnalysis = null;
+      }
+
+      if (drawElement) {
+        // 取消交互式绘制矩形事件激活状态
+        drawElement.stopDrawing();
+        drawElement = null;
+      }
+
+      // 关闭光照
+      const { viewer } = this.webGlobe;
+      if (viewer.scene.brightness && !this.brightnessEnabled) {
+        viewer.scene.globe.enableLighting = false;
+        viewer.scene.brightness.enabled = false;
+      }
+    }
+  }
+};
+</script>
+<style lang="less" scoped>
+.mapgis-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  // border-top: 1px solid @border-color;
+  &.center {
+    justify-content: center;
+    .ant-btn {
+      margin: 0 4px;
+    }
+  }
+  /deep/.ant-btn {
+    margin-left: 8px;
+  }
+}
+.mapgis-note-info {
+  padding: 3px 0;
+  //color: @text-color-secondary;
+  word-break: break-all;
+  white-space: break-spaces;
+  font-size: 12px;
+  &.ant-input {
+    border: none;
+    background-color: transparent;
+    resize: none;
+    min-height: 24px;
+  }
+}
+</style>

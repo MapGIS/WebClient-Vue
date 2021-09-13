@@ -58,8 +58,8 @@
 </template>
 <script>
 export default {
-  name: "mapgis-geojson-popup",
-  inject: ["map", "mapbox"],
+  name: "mapgis-3d-geojson-popup",
+  inject: ["Cesium", "CesiumZondy"],
   props: {
     outStyle: {
       type: Object,

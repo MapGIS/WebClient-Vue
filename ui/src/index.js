@@ -1,7 +1,8 @@
 // import "ant-design-vue/dist/antd.css";
 import antDirective from "ant-design-vue/es/_util/antDirective";
-import vcolorpicker from 'vcolorpicker'
+import vcolorpicker from "vcolorpicker";
 import * as UIComponents from "./component";
+import * as Util from "./util/common";
 
 import { setLayout, setLayoutSettingVisible } from "./util/emit/layout";
 import { setTheme } from "./util/style/theme/set-theme";
@@ -42,9 +43,11 @@ if (typeof window !== "undefined" && window["Vue"]) {
 }
 
 export * from "./component";
+export { Util };
 
 export { MapgisUiMessage, MapgisUiNotification, ModalInstance };
 export default {
+  Util,
   setTheme,
   setLayout,
   setLayoutSettingVisible,
