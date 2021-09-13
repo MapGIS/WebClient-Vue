@@ -298,7 +298,7 @@ export default {
               if (!findorigin) {
                 findtheme = true;
                 let newbeforetheme = news.find(l => l.id == beforetheme.id);
-                if (beforetheme) newbeforetheme.paint = beforetheme.paint;
+                if (beforetheme) newbeforetheme.paint = beforetheme.paint || {};
                 let themelayer = newbeforetheme || beforetheme;
                 if (themelayer) total = total.concat(themelayer);
               }
