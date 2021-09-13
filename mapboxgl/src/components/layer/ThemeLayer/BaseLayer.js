@@ -179,11 +179,11 @@ export default {
             this.layerIdCopy = layerId;
             //专题图类型
             this.themeType = themeType;
-            //隐藏原图层
-            this.$_setLayOutProperty(this.layerIdCopy, this.layerIdCopy, "visibility", "none");
             //取得下一个图层的ID，没有就是undefined
             this.upLayer = this.$_getUpLayer();
             this.$refs.themePanel.$_setTitle(layerId);
+            //保存图层信息
+            this.$_setLayerInfo(this.layerIdCopy);
             let hasManager = themeManager.hasManager(this.layerIdCopy + this.$_getThemeName());
             if (hasManager) {
                 this.themeType = themeManager.getLayerProps(layerId, "themeType");
@@ -230,8 +230,6 @@ export default {
                     this.$refs.themePanel.$_setDataSoure(dataSource);
                 }
             } else {
-                //保存图层信息
-                this.$_setLayerInfo(this.layerIdCopy);
                 //取得数据
                 this.$_getDataByLayer(layerId, function (features) {
                     //设定数据几何类型
@@ -352,10 +350,10 @@ export default {
                     vm.$refs.themePanel.$_setLabelFields(["未设置"].concat(textFields));
                     vm.$refs.themePanel.$_setField(fields[0]);
                     vm.$refs.themePanel.$_setDataType(vm.dataType);
-                    //隐藏初始图层
-                    vm.$_setLayOutProperty(vm.layerIdCopy, vm.layerIdCopy, "visibility", "none");
                 });
             }
+            //将原图层opacity设置为0，而不是设置原图层的visibility，因为隐藏了某些时候queryRenderFeature会取不到数据
+            this.map.setPaintProperty(this.layerIdCopy, this.dataType + "-opacity", 0);
         },
         /**
          * 拥护已经加载了一张地图，通过mapbox的queryRenderFeature方法获取数据
@@ -377,39 +375,20 @@ export default {
             //从图层取得数据
             features = this.map.querySourceFeatures(this.source_Id);
             if (features.length === 0) {
-                this.map.setLayoutProperty(layerId, "visibility", "visible");
-                let vm = this;
-                setTimeout(function () {
-                    features = vm.map.queryRenderedFeatures({layers: [layerId]});
-                    vm.map.setLayoutProperty(layerId, "visibility", "none");
-                    if (vm.hasNullProperty.indexOf(layerId) < 0) {
-                        vm.$_getNullFields(features, layerId);
-                    }
-                    //如果不存在数据，则不绘制图层
-                    if (features.length === 0) {
-                        vm.$emit("createLayerFailed", {
-                            message: "专题图",
-                            description: "数据量为0!"
-                        });
-                    } else {
-                        //执行回调
-                        callback(features);
-                    }
-                }, 100);
+                features = this.map.queryRenderedFeatures({layers: [layerId]});
+            }
+            if (this.hasNullProperty.indexOf(layerId) < 0) {
+                this.$_getNullFields(features, layerId);
+            }
+            //如果不存在数据，则不绘制图层
+            if (features.length === 0) {
+                this.$emit("createLayerFailed", {
+                    message: "专题图",
+                    description: "数据量为0!"
+                });
             } else {
-                if (this.hasNullProperty.indexOf(layerId) < 0) {
-                    this.$_getNullFields(features, layerId);
-                }
-                //如果不存在数据，则不绘制图层
-                if (features.length === 0) {
-                    this.$emit("createLayerFailed", {
-                        message: "专题图",
-                        description: "数据量为0!"
-                    });
-                } else {
-                    //执行回调
-                    callback(features);
-                }
+                //执行回调
+                callback(features);
             }
         },
         /**
@@ -1195,6 +1174,9 @@ export default {
             };
             if (this.source_layer_Id) {
                 textLayer["source-layer"] = this.source_layer_Id;
+            }
+            if (this.dataType === "line") {
+                textLayer.layout["symbol-placement"] = "line";
             }
             if (!this.map.getLayer(this.layerIdCopy + this.$_getThemeName() + "_注记")) {
                 this.map.addLayer(textLayer, this.upLayer);
@@ -2394,7 +2376,8 @@ export default {
                         //设置面板分段颜色
                         vm.$refs.themePanel.$_setColors(vm.colors);
                         //设置面板分段复选框
-                        vm.$refs.themePanel.$_setCheckBoxArr(vm.checkBoxArr);                        vm.$refs.themePanel.$_setColors(vm.colors);
+                        vm.$refs.themePanel.$_setCheckBoxArr(vm.checkBoxArr);
+                        vm.$refs.themePanel.$_setColors(vm.colors);
                         //设置面板数据源
                         vm.$refs.themePanel.$_setDataSoure(dataSource);
                     });
@@ -2581,7 +2564,8 @@ export default {
                     //隐藏专题图原图层
                     for (let j = 0; j < originLayerIds.length; j++) {
                         vm.$_setOriginPaint(originLayerIds[j]);
-                        vm.map.setLayoutProperty(originLayerIds[j], "visibility", "none");
+                        let dataType = themeManager.getLayerProps(originLayerIds[j], "dataType");
+                        vm.map.setPaintProperty(originLayerIds[j], dataType + "-opacity", 0);
                     }
                     //屯换添加专题图，并确保顺序正常
                     for (let i = 0; i < layerOrder.length; i++) {
@@ -2646,7 +2630,12 @@ export default {
                 }
             }
             allLayerOrder.splice(allLayerOrder.indexOf(layerOrder[0]), layerOrder.length);
-            this.$_setLayOutProperty(layerId, layerId, "visibility", "visible");
+            let originLayer = themeManager.getLayerProps(layerId, layerId);
+            let opacity = 1;
+            if(originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(this.dataType + "-opacity")){
+                opacity = originLayer.paint[this.dataType + "-opacity"];
+            }
+            this.map.setPaintProperty(layerId, this.dataType + "-opacity", opacity);
             this.$refs.themePanel.$_close();
             themeManager.setManagerProps(layerId, undefined);
         },
@@ -2686,7 +2675,8 @@ export default {
             let vm = this;
             setTimeout(function () {
                 //隐藏原图层
-                vm.$_setLayOutProperty(layerId, layerId, "visibility", "none");
+                let dataType = themeManager.getLayerProps(layerId, "dataType");
+                vm.map.setPaintProperty(layerId, dataType + "-opacity", 0);
             }, 100);
         },
         $_getNullFields(features, layerId) {

@@ -18,3 +18,69 @@
 .sketch-color {
   color: #000000a6;
 }
+.mapgis-ui-sketch-color-picker-confirm {
+  $size-lg: 40px;
+  $size-md: 32px;
+  $size-sm: 24px; // ws记录，这几个需要放到全局
+
+  &-btn {
+    max-width: 100%;
+    min-width: $size-md;
+    height: $size-md;
+    line-height: $size-md;
+    padding: 0 4px;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  &-content {
+    color: #333;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-base;
+    > div {
+      box-shadow: none;
+      border-radius: 0;
+    }
+    &-btns {
+      background: $white;
+      padding: 12px 0;
+      text-align: center;
+      border-top: 1px solid $border-color-base;
+      border-bottom-left-radius: 2px;
+      border-bottom-right-radius: 2px;
+      button {
+        margin: 0 5px;
+      }
+    }
+  }
+  &-large {
+    min-width: $size-lg;
+    height: $size-lg;
+    line-height: $size-lg;
+  }
+  &-small {
+    min-width: $size-sm;
+    height: $size-sm;
+    line-height: $size-sm;
+  }
+  &-bordered {
+    border: 1px solid transparent;
+  }
+  &-border-radius {
+    border-radius: $border-radius-base;
+  }
+  &-disabled {
+    &:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: fade($white, 85%);
+    }
+  }
+}
