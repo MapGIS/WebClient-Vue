@@ -19,11 +19,9 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisUiTooltip },
   data() {
-    return {
-    };
+    return {};
   },
-  methods: {
-  },
+  methods: {},
   template: `
   <mapgis-ui-tooltip>
     <template slot="title">
@@ -36,3 +34,24 @@ const Template = (args, { argTypes }) => ({
 
 export const Tooltip = Template.bind({});
 Tooltip.args = {};
+
+const TemplateIcon = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  components: { MapgisUiTooltip },
+  data() {
+    return {};
+  },
+  methods: {},
+  template: `
+  <mapgis-ui-card>
+    <mapgis-ui-group-tab title="一级功能分类">
+      <mapgis-ui-tooltip slot="handle" title="测试">
+          <mapgis-ui-iconfont type="mapgis-setting" />
+      </mapgis-ui-tooltip>
+    </mapgis-ui-group-tab>
+  </mapgis-ui-card>
+  `,
+});
+
+export const Icon = TemplateIcon.bind({});
+Icon.args = {};
