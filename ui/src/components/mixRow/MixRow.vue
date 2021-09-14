@@ -166,7 +166,7 @@
 
 <script>
 export default {
-  name: "mapgis-ui-slider-row",
+  name: "mapgis-ui-mix-row",
   data() {
     return {
       valueCopy: undefined,
