@@ -5,23 +5,23 @@
 }
 
 @include b(colors-setting) {
-  ::v-deep .color-picker .color-container {
+  .mapgis-ui-sketch-color-picker .color-container {
     padding: 5px 2px;
     height: 25px;
     border: 0px solid #d9d9d9;
     border-radius: 0px;
   }
-  ::v-deep .ant-table {
+  .mapgis-ui-table {
     font-size: 12px;
     width: 260px;
   }
 
-  ::v-deep .ant-input-affix-wrapper .ant-input-prefix {
+  .mapgis-ui-input-affix-wrapper .mapgis-ui-input-prefix {
     font-size: 12px;
     left: 3px;
   }
 
-  ::v-deep .ant-input {
+  .mapgis-ui-input {
     font-size: 12px;
     border: none;
     border-radius: 0;
@@ -35,15 +35,15 @@
     }
   }
 
-  ::v-deep .ant-tooltip {
+  .mapgis-ui-tooltip {
     font-size: 12px;
   }
 
-  ::v-deep th {
+  th {
     padding: 6px 8px !important;
   }
 
-  ::v-deep td {
+  td {
     padding: 0 !important;
   }
 

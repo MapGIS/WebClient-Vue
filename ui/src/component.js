@@ -15,6 +15,7 @@ export { default as MapgisUiDiv } from "./components/div/Div.vue";
 export { default as MapgisUiRow } from "./components/grid/Row.vue";
 export { default as MapgisUiCol } from "./components/grid/Col.vue";
 export { default as MapgisUiRowFlex } from "./components/grid/RowFlex.vue";
+export { default as MapgisUiSettingFooter } from "./components/setting-footer/SettingFooter.vue";
 
 export { default as MapgisUiLayout } from "./components/layout/Layout.vue";
 export { default as MapgisUiLayoutContent } from "./components/layout/LayoutContent.vue";
