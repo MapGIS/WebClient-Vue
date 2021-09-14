@@ -18,7 +18,7 @@ export default {
   inheritAttrs: false,
   props: {
     ...selectTypes,
-    long: { type: Boolean, default: false }
+    autoWidth: { type: Boolean, default: false }
   },
   model: {
     prop: "value",
@@ -26,12 +26,10 @@ export default {
   },
   methods: {},
   computed: {
-    uiStyle() {
-      return this.long
-        ? {
-            width: "100%"
-          }
-        : {};
+    uiClass() {
+      return this.autoWidth
+        ? 'mapgis-ui-select-auto-width'
+        : '';
     },
     addListeners() {
       const vm = this;

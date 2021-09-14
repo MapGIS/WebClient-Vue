@@ -28,7 +28,7 @@ const Template = (args, { argTypes }) => ({
   template: `
   <div>
     <p>[{{value}}]</p>
-    <mapgis-ui-input style="width:160px;" v-model="value" placeholder="Basic input"></mapgis-ui-input>
+    <mapgis-ui-input autoWidth v-model="value" placeholder="Basic input"></mapgis-ui-input>
     <br />
     <br />
     <mapgis-ui-input-group compact>
@@ -75,7 +75,7 @@ const Template3 = (args, { argTypes }) => ({
   },
   template: `
   <div>
-    <mapgis-ui-input-search placeholder="input search loading deault" loading />
+    <mapgis-ui-input-search autoWidth placeholder="input search loading deault" loading />
     <br />
     <br />
     <mapgis-ui-input-search placeholder="input search loading with enterButton" loading enter-button />
@@ -147,7 +147,7 @@ const Template6 = (args, { argTypes }) => ({
   },
   template: `
   <div>
-    <mapgis-ui-input-number id="inputNumber" v-model="value" :min="1" :max="10" @change="onChange" />
+    <mapgis-ui-input-number id="inputNumber" autoWidth v-model="value" :min="1" :max="10" @change="onChange" />
     当前值：{{ value }}
   </div>
   `,
