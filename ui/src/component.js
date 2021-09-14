@@ -15,6 +15,7 @@ export { default as MapgisUiDiv } from "./components/div/Div.vue";
 export { default as MapgisUiRow } from "./components/grid/Row.vue";
 export { default as MapgisUiCol } from "./components/grid/Col.vue";
 export { default as MapgisUiRowFlex } from "./components/grid/RowFlex.vue";
+export { default as MapgisUiSettingFooter } from "./components/setting-footer/SettingFooter.vue";
 
 export { default as MapgisUiLayout } from "./components/layout/Layout.vue";
 export { default as MapgisUiLayoutContent } from "./components/layout/LayoutContent.vue";
@@ -143,6 +144,8 @@ export { default as MapgisUiMask } from "./components/mask/Mask.vue";
 export { default as MapgisUiAdjustLine } from "./components/adjust-line/AdjustLine.vue";
 export { default as MapgisUiPlacement } from "./components/placement/Placement.vue";
 export { default as MapgisUiWindow } from "./components/window/Window.vue";
+export { default as MapgisUiWindowCard } from "./components/window/WindowCard.vue";
+export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrapper.vue";
 
 // Color
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
