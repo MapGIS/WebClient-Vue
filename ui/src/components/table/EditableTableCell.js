@@ -42,7 +42,7 @@ export default {
         return (
           <mapgis-ui-select
             onChange={onChange}
-            options={column.props?.options}
+            options={column.props.options}
             value={value}
             size={size}
             placeholder={"请选择"}

@@ -20,7 +20,7 @@
 | MpWindow              | mapgis-ui-window                      | 未找到$base-bg-color未找到$border-color  | window       | -         | √          |
 | MpPlacement           | mapgis-ui-placement                   |                                          | placement    | -         |            |
 | MpIcon                | mapgis-ui-icon                        |                                          | iconfont     | √         |            |
-| MpButton              | mapgis-ui-button-tooltip              |                                          | button       | √         |            |
+| MpButton              | mapgis-ui-tooltip-button              |                                          | button       | √         |            |
 | MpCard                | mapgis-ui-command-card                |                                          | card         | √         |            |
 | MpEditableTable       | mapgis-ui-editable-table              |                                          | table        | √         | √          |
 | MpRowFlex             | mapgis-ui-row-flex                    |                                          | grid         | √         |            |

@@ -1,10 +1,10 @@
-import MapgisUiButtonTooltip from "../../../ui/src/components/button/ButtonTooltip.vue";
+import MapgisUiTooltipButton from "../../../ui/src/components/button/TooltipButton.vue";
 import MarkDown from "../../../ui/docs/api/button/Button.md";
 import Direction from "../../assets/direction.svg";
 
 export default {
   title: "界面/通用/提示按钮",
-  component: MapgisUiButtonTooltip,
+  component: MapgisUiTooltipButton,
   argTypes: {
     label: "一张图文字",
     zIndex: 2000,
@@ -13,7 +13,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisUiButtonTooltip },
+  components: { MapgisUiTooltipButton },
   data() {
     return {
       svg: Direction,
@@ -21,8 +21,8 @@ const Template = (args, { argTypes }) => ({
   },
   methods: {},
   template: `
-    <mapgis-ui-button-tooltip v-bind="$props" :icon="svg">
-    </mapgis-ui-button-tooltip>
+    <mapgis-ui-tooltip-button v-bind="$props" :icon="svg">
+    </mapgis-ui-tooltip-button>
   `,
 });
 

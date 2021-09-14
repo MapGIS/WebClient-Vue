@@ -4,7 +4,7 @@
     :overlay-style="{ zIndex }"
     placement="right"
   >
-    <div class="mapgis-ui-button-tooltip" @click="onClick">
+    <div class="mapgis-ui-tooltip-button" @click="onClick">
       <mapgis-ui-icon :icon="icon" />
     </div>
   </mapgis-ui-tooltip>
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  name: "mapgis-ui-button-tooltip",
+  name: "mapgis-ui-tooltip-button",
   props: {
     /**
      * tooltip显示文字
