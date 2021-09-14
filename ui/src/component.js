@@ -142,6 +142,8 @@ export { default as MapgisUiMask } from "./components/mask/Mask.vue";
 export { default as MapgisUiAdjustLine } from "./components/adjust-line/AdjustLine.vue";
 export { default as MapgisUiPlacement } from "./components/placement/Placement.vue";
 export { default as MapgisUiWindow } from "./components/window/Window.vue";
+export { default as MapgisUiWindowCard } from "./components/window/WindowCard.vue";
+export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrapper.vue";
 
 // Color
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
