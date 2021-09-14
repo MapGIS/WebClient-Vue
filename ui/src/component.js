@@ -83,6 +83,7 @@ export { default as MapgisUiSvgSelect } from "./components/svgselect/SvgSelect.v
 export { default as MapgisUiSelectOption } from "./components/select/SelectOption.vue";
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
+export { default as MapgisUiSliderRow } from "./components/sliderRow/SliderRow.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
 export { default as MapgisUiTimePicker } from "./components/time-picker/TimePicker.vue";
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";
@@ -142,6 +143,8 @@ export { default as MapgisUiMask } from "./components/mask/Mask.vue";
 export { default as MapgisUiAdjustLine } from "./components/adjust-line/AdjustLine.vue";
 export { default as MapgisUiPlacement } from "./components/placement/Placement.vue";
 export { default as MapgisUiWindow } from "./components/window/Window.vue";
+export { default as MapgisUiWindowCard } from "./components/window/WindowCard.vue";
+export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrapper.vue";
 
 // Color
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
