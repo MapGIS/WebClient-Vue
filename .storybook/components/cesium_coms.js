@@ -30,9 +30,10 @@ export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTi
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "../../cesium/src/components/UI/Marker/Marker";
 // export { default as { MapvLayer }} from "../../cesium/src/components/Overlay";
-export { default as Mapgis3dMapvLayer} from "../../cesium/src/components/Overlay/Mapv3dLayer.vue";
-export { default as Mapgis3dEchartsLayer} from "../../cesium/src/components/Overlay/Echarts.vue";
+export { default as Mapgis3dMapvLayer } from "../../cesium/src/components/Overlay/Mapv3dLayer.vue";
+export { default as Mapgis3dEchartsLayer } from "../../cesium/src/components/Overlay/Echarts.vue";
 
+export { default as Mapgis3dIgsTerrain } from "../../cesium/src/components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "../../cesium/src/components/Provider/TerrainProvider/TerrainProvider.vue";
 
 // 数据源
@@ -46,6 +47,7 @@ export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis
 export { default as Mapgis3dModelFlatten } from "../../cesium/src/components/Analysis/ModelFlatten";
 export { default as Mapgis3dExcavate } from "../../cesium/src/components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "../../cesium/src/components/Analysis/Flood";
+export { default as Mapgis3dAspect } from "../../cesium/src/components/Analysis/Aspect";
 export { default as Mapgis3dFill } from "../../cesium/src/components/Analysis/Fill";
 export { default as Mapgis3dDynamicCutting } from "../../cesium/src/components/Analysis/DynamicCutting";
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
