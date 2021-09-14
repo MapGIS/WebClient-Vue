@@ -42,4 +42,5 @@ export { default as  TimePicker} from "ant-design-vue/es/time-picker";
 export { default as  DatePicker} from "ant-design-vue/es/date-picker";
 export { default as  FormModelItem} from "ant-design-vue/es/form-model/FormItem";
 export { default as  FormModel} from "ant-design-vue/es/form-model/Form";
-
+export { default as  FormItem} from "ant-design-vue/es/form/FormItem";
+export { default as  Form} from "ant-design-vue/es/form/Form";
