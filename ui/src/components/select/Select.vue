@@ -16,18 +16,28 @@ export default {
   wrapperUI: Select,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: selectTypes,
+  props: {
+    ...selectTypes,
+    long: { type: Boolean, default: false }
+  },
   model: {
     prop: "value",
     event: "change"
   },
   methods: {},
   computed: {
+    uiStyle() {
+      return this.long
+        ? {
+            width: "100%"
+          }
+        : {};
+    },
     addListeners() {
       const vm = this;
       return {
         change: function(value) {
-          vm.$emit('change', value);
+          vm.$emit("change", value);
         }
       };
     }

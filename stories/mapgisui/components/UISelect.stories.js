@@ -88,7 +88,7 @@ const Template3 = (args, { argTypes }) => ({
   methods: {
   },
   template: `
-  <mapgis-ui-select default-value="武汉" style="width: 200px">
+  <mapgis-ui-select long default-value="武汉">
     <mapgis-ui-select-opt-group>
       <span slot="label">湖北省</span>
       <mapgis-ui-select-option value="黄冈">
