@@ -1,5 +1,5 @@
 <template>
-  <a-form
+  <mapgis-ui-form
     :class="[
       'mapgis-ui-setting-form',
       { compact },
@@ -19,7 +19,7 @@
     @submit="$emit('submit', $event)"
   >
     <slot />
-  </a-form>
+  </mapgis-ui-form>
 </template>
 
 <script>
