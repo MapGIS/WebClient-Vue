@@ -1,5 +1,5 @@
 <template>
-  <div class="mp-widget-contour-analysis">
+  <div class="mapgis-widget-contour-analysis">
     <mapgis-ui-group-tab title="等值线参数设置" />
     <mapgis-ui-form-model :model="formData" v-bind="layout">
       <mapgis-ui-form-model-item label="等值距">
@@ -32,10 +32,8 @@
 </template>
 
 <script>
-import { Util } from "@mapgis/webclient-vue-ui";
 import VueOptions from "../Base/Vue/VueOptions";
 import { colorToCesiumColor } from "../WebGlobe/util";
-const { ColorUtil } = Util;
 
 export default {
   name: "mapgis-3d-analysis-contour",
