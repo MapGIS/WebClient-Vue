@@ -192,9 +192,9 @@ export default {
       let { options } = find;
       let { slopeAnalysis, drawElement } = options;
 
-      // 判断是否已有坡向分析结果
+      // 判断是否已有坡度分析结果
       if (slopeAnalysis) {
-        // 移除坡向分析显示结果
+        // 移除坡度分析显示结果
         slopeAnalysis.updateMaterial("none");
         CesiumZondy.SlopeAnalysisManager.changeOptions(
           vueKey,
