@@ -48,6 +48,7 @@ export { default as Mapgis3dModelFlatten } from "../../cesium/src/components/Ana
 export { default as Mapgis3dExcavate } from "../../cesium/src/components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "../../cesium/src/components/Analysis/Flood";
 export { default as Mapgis3dAspect } from "../../cesium/src/components/Analysis/Aspect";
+export { default as Mapgis3dSlope } from "../../cesium/src/components/Analysis/Slope";
 export { default as Mapgis3dFill } from "../../cesium/src/components/Analysis/Fill";
 export { default as Mapgis3dDynamicCutting } from "../../cesium/src/components/Analysis/DynamicCutting";
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
