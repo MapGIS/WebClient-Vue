@@ -56,6 +56,7 @@ export { default as DynamicCutting } from "./components/Analysis/DynamicCutting"
 export { default as Fill } from "./components/Analysis/Fill";
 export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
 export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
+export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
