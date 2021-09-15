@@ -18,6 +18,7 @@
 | MpColorPicker         | mapgis-ui-sketch-color-picker         |                                          | color-picker | -         |            |
 | MpColorPickerConfirm  | mapgis-ui-sketch-color-picker-confirm | $size-lg、$size-md、$size-sm需要放到全局 | color-picker | -         |            |
 | MpWindow              | mapgis-ui-window                      | 未找到$base-bg-color未找到$border-color  | window       | -         | √          |
+| MpWindowWrapper              | mapgis-ui-window-wrapper   |  | window       | -         |          |
 | MpPlacement           | mapgis-ui-placement                   |                                          | placement    | -         |            |
 | MpIcon                | mapgis-ui-icon                        |                                          | iconfont     | √         |            |
 | MpButton              | mapgis-ui-tooltip-button              |                                          | button       | √         |            |
@@ -31,10 +32,22 @@
 | MpToolbarCommandGroup | mapgis-ui-toolbar-command-group       |                                          | toolbar      |           |            |
 
 
+## 样式变量问题汇总
+若遇到`ui\src\util\style\theme\theme.scss`里找不到的样式变量，可填写至下表。（本md文件路径：`ui\docs\plugin_components\onemap.md`）。
+
+| theme.scss中未找到 | 局部已有定义，需要放到theme.scss |
+| :---------------- | :----------------------------- |
+| $base-bg-color | $size-lg |
+| $border-color | $size-md |
+|  | $size-sm |
 
 
 
 
+## 注
+1、目前mapgis-ui暂未封装`<a-form>`组件，若组件移植过程中遇到`<a-form>`或`<a-form-item>`，请先继续保留`a-`，不要修改为`mapgis-ui-`；
+
+2、Select、Input组件已添加属性：`autoWidth`，设置为true时可实现宽度100%自适应。
 
 
 
@@ -106,7 +119,7 @@
 2. 针对该组件的样式
    1. 将该组件的样式部分从<style />里面单独的剥离到当前目录的`style/tabs.scss`目录下
    2. 2种方式移植，第一种是最暴力的方式，直接将整个样式移植到tabs.scss的最尾部 ![less2scss](./img/less2scss.png)
-   3. 对比上图发先，其中有2种颜色是没有找到的，优先去寻找`ui\src\util\style\theme\theme.scss` 看看有没有 ，我对比了一张图的theme.less 里面是400多的变量，mapgis-ui-是777个变量，绝大部分都囊括了一张图的样式
+   3. 对比上图发现，其中有2种颜色是没有找到的，优先去寻找`ui\src\util\style\theme\theme.scss` 看看有没有 ，我对比了一张图的theme.less 里面是400多的变量，mapgis-ui-是777个变量，绝大部分都囊括了一张图的样式
    4. 将上面的@primary-color; @heading-color; 替换成  $primary-color; $heading-color; 即可
    5. 具体的语法替换规则 请查看 [less => scss章节](/style/css/less2scss.md)
    6. 如果是新建的scss样式，不要忘记向`ui\src\style.scss`下增加该样式
