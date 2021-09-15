@@ -25,24 +25,23 @@
 <template>
   <div :class="['mapgis-widget-skyline-analysis',{ right: position === 'right', left: position === 'left' }]">
     <mapgis-ui-setting-form :wrapper-width="200">
-<!--      <mapgis-ui-mix-row :title="rowTitle" :value="centerPosition" :options="options" :type="type">-->
-<!--      </mapgis-ui-mix-row>-->
-      <mapgis-ui-form-model-item label="观察者信息">
-        <mapgis-ui-input
-            :value="centerPosition"
-            :disabled="true"
-            placeholder="经度，纬度，高程"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="线宽度">
-        <mapgis-ui-input-number v-model="formData.skylineWidth" :min="0"/>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="线颜色">
-        <mapgis-ui-sketch-color-picker
-            :color.sync="formData.skylineColor"
-            :disableAlpha="true"
-        ></mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-mix-row
+        title="观察者信息"
+        type="input"
+        :value="centerPosition"
+        :props="observerProps"
+      />
+      <mapgis-ui-mix-row
+          title="线宽度"
+          type="inputNumber"
+          v-model="formData.skylineWidth"
+          :props="lineWidthProps"
+      />
+      <mapgis-ui-mix-row
+          title="线颜色"
+          type="colorPicker"
+          v-model="formData.skylineColor"
+      />
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="add">天际线</mapgis-ui-button>
@@ -102,21 +101,12 @@ export default {
       skyline2dChart: null,
       positions2D: [],
       isLogarithmicDepthBufferEnable: false,
-      rowTitle:"观察者信息",
-      type: "input",
-      options:{
-        inputProps:{
-          disabled:true,
-          placeholder:"经度，纬度，高程",
-          titleCol:6,
-          inputCol:18,
-          titleStyle:{
-            fontSize:"12px",
-            color:"red",
-            marginTop:"4px",
-            width:"100px"
-          }
-        }
+      observerProps:{
+        disabled:true,
+        placeholder:"经度，纬度，高程",
+      },
+      lineWidthProps:{
+        min: 0
       }
     }
   },
