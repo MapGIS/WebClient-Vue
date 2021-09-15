@@ -126,6 +126,9 @@ export default {
 };
 ```
 
+![img_9.png](img_9.png)
+<br>
+
 control的可选值：
 <br>
 
