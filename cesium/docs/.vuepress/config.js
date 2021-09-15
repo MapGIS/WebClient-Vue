@@ -132,7 +132,8 @@ module.exports = {
               [
                 "/plugin_components/plugin_components_development.md",
                 "创建组件"
-              ]
+              ],
+              ["/plugin_components/create_storybook.md", "创建Storybook示例"],
             ]
           },
           {

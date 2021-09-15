@@ -70,8 +70,15 @@ export function initManager() {
     new HeightLimitedAnalysisManager();
   window.CesiumZondy.shadowAnalysisManager =
     window.CesiumZondy.shadowAnalysisManager || new shadowAnalysisManager();
+  window.CesiumZondy.IgsFeatureManager =
+    window.CesiumZondy.IgsFeatureManager || new IgsFeatureManager();
   window.CesiumZondy.AspectAnalysisManager =
     window.CesiumZondy.AspectAnalysisManager || new AspectAnalysisManager();
+  window.CesiumZondy.SlopeAnalysisManager =
+    window.CesiumZondy.SlopeAnalysisManager || new SlopeAnalysisManager();
+  window.CesiumZondy.SkyLineAnalysisManager = window.CesiumZondy.SkyLineAnalysisManager = new SkyLineAnalysisManager();
+  window.CesiumZondy.ContourAnalysisManager = window.CesiumZondy.ContourAnalysisManager = new ContourAnalysisManager();
+  window.CesiumZondy.CutFillAnalysisManager = window.CesiumZondy.CutFillAnalysisManager = new CutFillAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -259,4 +266,9 @@ export class DynamicCuttingManager extends BaseManager {}
 export class AnalysisManager extends BaseManager {}
 export class HeightLimitedAnalysisManager extends BaseManager {}
 export class shadowAnalysisManager extends BaseManager {}
+export class IgsFeatureManager extends BaseManager {}
 export class AspectAnalysisManager extends BaseManager {}
+export class SlopeAnalysisManager extends BaseManager {}
+export class SkyLineAnalysisManager extends BaseManager {}
+export class ContourAnalysisManager extends BaseManager {}
+export class CutFillAnalysisManager extends BaseManager {}
