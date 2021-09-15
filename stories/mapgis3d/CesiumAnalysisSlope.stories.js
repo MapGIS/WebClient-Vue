@@ -18,7 +18,7 @@ const Template = (args, { argTypes }) => ({
       format: "tiles",
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752",
+        value: "2ddaabf906d4b5418aed0078e1657029",
       },
     };
   },
