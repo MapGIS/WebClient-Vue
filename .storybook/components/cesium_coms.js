@@ -53,3 +53,4 @@ export { default as Mapgis3dFill } from "../../cesium/src/components/Analysis/Fi
 export { default as Mapgis3dDynamicCutting } from "../../cesium/src/components/Analysis/DynamicCutting";
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";
+export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
