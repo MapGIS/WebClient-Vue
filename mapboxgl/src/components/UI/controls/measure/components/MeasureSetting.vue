@@ -42,16 +42,28 @@
 </template>
 <script>
 import dep from "../store/dep";
-import { textTypeMap, lineTypeMap } from "../store/enums";
-import DefaultMeasureStyle from "../DefaultMeasureStyle";
+import { defaultStyle, lineTypeMap, paintTypeMap } from "../store/enums";
 
 export default {
   name: "measure-setting",
   data: vm => ({
     prefixCls: "measure-setting",
     measureStyle: dep.getStyles(),
-    textOptions: this.getOptions(textTypeMap),
-    lineOptions: this.getOptions(lineTypeMap)
+    lineOptions: Object.values(lineTypeMap).map(v => ({ label: v, value: v })),
+    textOptions: [
+      {
+        label: "宋体",
+        value: "宋体"
+      },
+      {
+        label: "楷体",
+        value: "楷体"
+      },
+      {
+        label: "微软雅黑",
+        value: "微软雅黑"
+      }
+    ]
   }),
   watch: {
     measureStyle(obj) {
@@ -71,7 +83,7 @@ export default {
       fillColor,
       fillOpacity
     }) {
-      return DefaultMeasureStyle.map(style => {
+      return defaultStyle.map(style => {
         let paint;
         switch (style.type) {
           case paintTypeMap.line:
@@ -103,12 +115,6 @@ export default {
           paint
         };
       });
-    },
-    /**
-     * 获取线和字体的下拉选项
-     */
-    getOptions(map) {
-      return Object.values(map).map(v => ({ label: v, value: v }));
     },
     /**
      * 样式变化通知更新地图和marker组件

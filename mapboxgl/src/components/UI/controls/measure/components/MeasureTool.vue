@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { measureModeMap, paintTypeMap, lineTypeMap } from "../store/enums";
+import { measureModeMap } from "../store/enums";
 import MeasureSetting from "./MeasureSetting.vue";
 import MeasureResult from "./MeasureResult.vue";
 

@@ -52,8 +52,14 @@ const MapboxDraw = MapboxDrawCom.default;
 
 import measureMixin from "./measureMixin";
 import controlMixin from "../withControlEvents";
-
-import DefaultMeasureStyle from "./DefaultMeasureStyle";
+import {
+  defaultStyle,
+  measureSelfEvents,
+  measureEvents,
+  measureMethodMap,
+  measureModeMap,
+  measureTypeToModeMap
+} from "./store/enums";
 
 const measureEvents = {
   // es6
@@ -114,7 +120,7 @@ export default {
     },
     styles: {
       type: Array,
-      default: () => DefaultMeasureStyle
+      default: () => defaultStyle
     }
   },
 
@@ -122,38 +128,16 @@ export default {
     return {
       initial: true,
       measure: undefined,
-      oldStyles: DefaultMeasureStyle,
-      area: 0,
-      perimeter: 0,
-      coordinates: [],
-      innermeasureMode: "",
-      measures: [
-        // {
-        //   icon: "mapgis-huizhi1",
-        //   type: "primary",
-        //   tip: "展开",
-        //   click: this.changeFold,
-        //   className: "mapgis-measure-expand"
-        // },
-        {
-          icon: "mapgis-ruler",
-          type: "primary",
-          tip: "长度",
-          click: this.toggleMeasureLength
-        },
-        {
-          icon: "mapgis-area",
-          type: "primary",
-          tip: "面积",
-          click: this.toggleMeasureArea
-        },
-        {
-          icon: "mapgis-shanchu_dianji",
-          type: "primary",
-          tip: "清空图元",
-          click: this.toggleMeasureDelete
-        }
-      ]
+      measureStyle: defaultStyle,
+      selfMeasureMode: "",
+      measureResult: {
+        geographyPerimeter: 0,
+        geographyArea: 0,
+        projectionPerimeter: 0,
+        projectionArea: 0,
+        coordinates: [],
+        center: null
+      }
     };
   },
 
@@ -182,8 +166,8 @@ export default {
       let position = this.position;
       let pos = position.split("-");
       document.querySelector(
-          // ".mapgis-measure-control > .mapgis-ui-space"
-          ".mapgis-measure-control"
+        // ".mapgis-measure-control > .mapgis-ui-space"
+        ".mapgis-measure-control"
       ).style = pos[0] + ": 10px;" + pos[1] + ": 10px;";
       // if (this.expandControl) {
       //   this.changeFold();
@@ -215,7 +199,8 @@ export default {
     $_initMeasure() {
       const draweroptions = {
         displayControlsDefault: true,
-        defaultMode: "simple_select",
+        defaultMode: measureModeMap.simple,
+        styles: defaultStyle,
         touchEnabled: false,
         boxSelect: false,
         controls: {
@@ -345,7 +330,7 @@ export default {
           measureMode === measureModes.measureLength ||
           innermeasureMode === measureModes.measureLength
         ) {
-          console.log('measure length');
+          console.log("measure length");
           center = turf.centroid(turf.lineString(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           projectionPerimeter = 0;
@@ -358,7 +343,7 @@ export default {
           measureMode === measureModes.measureArea ||
           innermeasureMode === measureModes.measureArea
         ) {
-          console.log('measure area');  
+          console.log("measure area");
           center = turf.centroid(turf.polygon(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           geographyArea = turf.area(data);
