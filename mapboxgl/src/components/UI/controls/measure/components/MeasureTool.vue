@@ -16,24 +16,25 @@
       <mapgis-ui-toolbar-space />
       <!-- 面积或长度单位选择 -->
       <mapgis-ui-select
-        size="small"
         v-model="unit"
         :options="unitOptions"
         :class="`${prefixCls}-unit`"
+        size="small"
+        placeholder="单位选择"
       />
       <mapgis-ui-toolbar-space />
       <!-- 清除或设置 -->
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
           title="清除"
-          icon="delete"
+          icon="mapgis-shanchu_dianji"
           @click="clearMeasure"
         />
         <mapgis-ui-toolbar-command
-          title="设置"
-          icon="setting"
-          :active="showSettingPanel"
           @click="showSettingPanel = !showSettingPanel"
+          :active="showSettingPanel"
+          title="设置"
+          icon="mapgis-setting"
         />
       </mapgis-ui-toolbar-command-group>
     </mapgis-ui-toolbar>
@@ -43,6 +44,7 @@
     <measure-setting
       v-if="showSettingPanel"
       @measure-style-change="measureStyleChange"
+      :mode="activeMode"
     />
   </div>
 </template>
@@ -66,16 +68,17 @@ export default {
     prefixCls: "measure-tool",
     showSettingPanel: false,
     activeMode: "",
+    // todo 替换ICON
     modes: [
       {
         mode: measureModeMap.line,
         title: "长度",
-        icon: "line-chart"
+        icon: "mapgis-huizhixian1"
       },
       {
         mode: measureModeMap.polygon,
         title: "面积",
-        icon: "area-chart"
+        icon: "mapgis-area"
       }
     ],
     unit: "",
@@ -127,14 +130,15 @@ export default {
       this.measure();
     },
     measure() {
-      this.$parent.changeMode(this.activeMode);
       this.$parent.enableMeasure();
+      this.$parent.changeMode(this.activeMode);
     },
     clearMeasure() {
-      this.$parent.clear();
+      this.$parent.remove();
     },
     measureStyleChange(style) {
-      this.$parent.combineStyle(style);
+      this.$parent.$_changeMapStyle(style);
+      this.changeMapStyle;
     }
   }
 };

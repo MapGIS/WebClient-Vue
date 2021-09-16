@@ -1,5 +1,5 @@
 <template>
-  <div :class="prefixCls">
+  <div class="measure-setting">
     <mapgis-ui-group-tab title="设置">
       <mapgis-ui-toolbar-command
         slot="handle"
@@ -10,8 +10,9 @@
     </mapgis-ui-group-tab>
     <mapgis-ui-row-flex type="vertical" label="字体名称">
       <mapgis-ui-select
-        :options="textOptions"
         v-model="measureStyle.textType"
+        :options="textOptions"
+        :auto-width="true"
       />
     </mapgis-ui-row-flex>
     <mapgis-ui-row-flex type="vertical" label="字体颜色">
@@ -24,15 +25,20 @@
       <mapgis-ui-select
         v-model="measureStyle.lineType"
         :options="lineOptions"
+        :auto-width="true"
       />
     </mapgis-ui-row-flex>
     <mapgis-ui-row-flex type="vertical" label="线颜色">
       <mapgis-ui-sketch-color-picker-confirm v-model="measureStyle.lineColor" />
     </mapgis-ui-row-flex>
     <mapgis-ui-row-flex type="vertical" label="线宽度">
-      <mapgis-ui-input-number :min="1" v-model="measureStyle.lineWidth" />
+      <mapgis-ui-input-number
+        :auto-width="true"
+        :min="1"
+        v-model="measureStyle.lineWidth"
+      />
     </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex type="vertical" label="填充颜色">
+    <mapgis-ui-row-flex v-show="isAreaMode" type="vertical" label="填充颜色">
       <mapgis-ui-sketch-color-picker-confirm
         v-model="measureStyle.fillColor"
         color-type="rgba"
@@ -42,12 +48,22 @@
 </template>
 <script>
 import dep from "../store/dep";
-import { defaultStyle, lineTypeMap, paintTypeMap } from "../store/enums";
+import {
+  defaultStyle,
+  measureModeMap,
+  lineTypeMap,
+  paintTypeMap
+} from "../store/enums";
 
 export default {
   name: "measure-setting",
+  props: {
+    mode: {
+      type: String,
+      default: measureModeMap.line
+    }
+  },
   data: vm => ({
-    prefixCls: "measure-setting",
     measureStyle: dep.getStyles(),
     lineOptions: Object.values(lineTypeMap).map(v => ({ label: v, value: v })),
     textOptions: [
@@ -65,8 +81,14 @@ export default {
       }
     ]
   }),
+  computed: {
+    isAreaMode({ mode }) {
+      return mode === measureModeMap.polygon;
+    }
+  },
   watch: {
     measureStyle(obj) {
+      debugger;
       this.notifyUpdate(obj);
     },
     deep: true
@@ -120,7 +142,7 @@ export default {
      * 样式变化通知更新地图和marker组件
      */
     notifyUpdate(obj) {
-      this.$emit("measure-style-change", this.integrateStyles());
+      this.$emit("measure-style-change", this.integrateStyles(obj));
       dep.setStyles(obj);
       dep.notify();
     },

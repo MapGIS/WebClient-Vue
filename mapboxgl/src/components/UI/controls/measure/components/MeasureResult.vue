@@ -1,9 +1,10 @@
 <template>
-  <div v-if="result" :class="prefixCls">
+  <div v-if="selfResult" class="measure-result">
     <mapgis-ui-row-flex
       v-for="item in selfResultOptions"
       :key="item.value"
-      :title="item.label"
+      :label="item.label"
+      :label-width="88"
     >
       {{ selfResult[item.value] }}
     </mapgis-ui-row-flex>
@@ -12,8 +13,8 @@
 <script>
 import { VPoint } from "../../../../util";
 import { last } from "../../../../util/util";
-import dep from "../store/dep";
 import { measureModeMap } from "../store/enums";
+import dep from "../store/dep";
 
 export default {
   name: "MeasureResult",
@@ -30,8 +31,8 @@ export default {
     }
   },
   data: vm => ({
-    prefixCls: "measure-result",
     selfResult: {
+      coordinates: [],
       planeLength: "",
       ellipsoidLength: "",
       planePerimeter: "",
@@ -73,13 +74,21 @@ export default {
   computed: {
     selfResultOptions({ selfResultMap, mode }) {
       return selfResultMap[mode];
+    },
+    unitOptions({ unit }) {
+      return this.transUnit(unit);
     }
   },
   watch: {
-    result(obj) {
-      this.handleResult(obj);
+    result: {
+      deep: true,
+      handler(nResult) {
+        this.handleResult(nResult);
+      }
     },
-    deep: true
+    unit() {
+      this.handleResult(this.result);
+    }
   },
   methods: {
     /**
@@ -94,22 +103,26 @@ export default {
       switch (unit) {
         case "m":
           perimeterR = 1;
+          perimeterUnit = "m";
           break;
         case "km":
           perimeterR = 1000;
+          perimeterUnit = "km";
           break;
         case "米":
           perimeterR = 1;
+          perimeterUnit = "米";
           break;
         case "千米":
           perimeterR = 1000;
+          perimeterUnit = "千米";
           break;
-        case "m2":
+        case "m²":
           areaR = 1;
           perimeterR = 1;
           perimeterUnit = "m";
           break;
-        case "km2":
+        case "km²":
           areaR = Math.pow(1000, 2);
           perimeterR = 1000;
           perimeterUnit = "km";
@@ -149,63 +162,59 @@ export default {
       dep.notify();
     },
     /**
-     * 处理测量结果
+     * 处理测量结果并通知其他订阅者更新(marker组件)
+     * @param {object|null} nResult 测量结果
      */
-    handleResult({
-      geographyPerimeter,
-      geographyArea,
-      projectionPerimeter,
-      projectionArea,
-      coordinates
-    }) {
-      const { areaR, perimeterR, perimeterUnit, areaUnit } = this.transUnit(
-        this.unit
-      );
-      const perimeter = `${this.precision(
-        projectionPerimeter / perimeterR
-      )} ${perimeterUnit}`;
-      const geoPerimeter = `${this.precision(
-        geographyPerimeter / perimeterR
-      )} ${perimeterUnit}`;
+    handleResult(nResult) {
+      let _result;
+      if (nResult) {
+        const {
+          geographyPerimeter,
+          geographyArea,
+          projectionPerimeter,
+          projectionArea,
+          coordinates
+        } = nResult;
+        const { areaR, perimeterR, perimeterUnit, areaUnit } = this.unitOptions;
+        const perimeter = `${this.precision(
+          projectionPerimeter / perimeterR
+        )} ${perimeterUnit}`;
+        const geoPerimeter = `${this.precision(
+          geographyPerimeter / perimeterR
+        )} ${perimeterUnit}`;
 
-      let _coordinates;
+        switch (this.mode) {
+          case measureModeMap.line:
+            _result = {
+              planeLength: perimeter,
+              ellipsoidLength: geoPerimeter,
+              coordinates: last(coordinates)
+            };
+            break;
+          case measureModeMap.polygon: {
+            const planeArea = `${this.precision(
+              projectionArea / areaR
+            )} ${areaUnit}`;
+            const ellipsoidArea = `${this.precision(
+              geographyArea / areaR
+            )} ${areaUnit}`;
 
-      switch (this.mode) {
-        case measureModeMap.line:
-          _coordinates = last(coordinates);
-
-          this.selfResult = {
-            planeLength: perimeter,
-            ellipsoidLength: geoPerimeter
-          };
-          break;
-        case measureModeMap.polygon: {
-          _coordinates = VPoint.getCenterOfGravityPoint(coordinates[0]);
-
-          const planeArea = `${this.precision(
-            projectionArea / areaR
-          )} ${areaUnit}`;
-          const ellipsoidArea = `${this.precision(
-            geographyArea / areaR
-          )} ${areaUnit}`;
-
-          this.selfResult = {
-            planeArea,
-            ellipsoidArea,
-            planePerimeter: perimeter,
-            ellipsoidPerimeter: geoPerimeter
-          };
-          break;
+            _result = {
+              planeArea,
+              ellipsoidArea,
+              planePerimeter: perimeter,
+              ellipsoidPerimeter: geoPerimeter,
+              coordinates: VPoint.getCenterOfGravityPoint(coordinates[0])
+            };
+            break;
+          }
+          default:
+            break;
         }
-        default:
-          break;
       }
 
-      this.notifyUpdate({
-        perimeter,
-        area: planeArea,
-        coordinates: _coordinates
-      });
+      this.selfResult = _result;
+      this.notifyUpdate(_result);
     }
   }
 };

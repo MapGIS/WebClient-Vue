@@ -1,15 +1,18 @@
 <template>
-  <div :class="prefixCls" v-if="marker">
-    <mapgis-marker :coordinates="marker.coordinates" anchor="bottom">
-      <div slot="marker" :class="`${prefixCls}-popup`">
-        <div :class="`${prefixCls}-popup-tip`"></div>
-        <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
-          <p>周长: {{ marker.perimeter }}</p>
-          <p v-if="marker.area">面积: {{ marker.area }}</p>
-        </div>
+  <mapgis-marker
+    v-if="coordinates.length"
+    :coordinates="coordinates"
+    :class="prefixCls"
+    anchor="bottom"
+  >
+    <div slot="marker" :class="`${prefixCls}-popup`">
+      <div :class="`${prefixCls}-popup-tip`"></div>
+      <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
+        <p>周长: {{ perimeter }}</p>
+        <p v-if="area">面积: {{ area }}</p>
       </div>
-    </mapgis-marker>
-  </div>
+    </div>
+  </mapgis-marker>
 </template>
 <script>
 import dep from "../store/dep";
@@ -18,16 +21,27 @@ export default {
   name: "measure-marker",
   data: vm => ({
     prefixCls: "measure-marker",
-    marker: null,
+    marker: {},
     markerStyle: {}
   }),
+  computed: {
+    area({ marker }) {
+      return marker.planeArea;
+    },
+    perimeter({ marker }) {
+      return marker.planeLength || marker.planePerimeter;
+    },
+    coordinates({ marker }) {
+      return marker.coordinates || [0, 0];
+    }
+  },
   methods: {
     /**
      * 订阅: 更新
      */
     update() {
       const { textSize, textType, textColor } = dep.getStyles();
-      this.marker = dep.getResult();
+      this.marker = dep.getResult() || {};
       this.markerStyle = {
         fontSize: `${textSize}px`,
         fontFamily: textType,
