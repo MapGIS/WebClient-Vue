@@ -1,8 +1,8 @@
 <template>
   <div>
-    <mapgis-ui-row v-if="type === 'slider'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'slider'">
       <mapgis-ui-col :span="sliderProps.titleCol">
-        <p style="margin-top: 0.8em">{{ title }}</p>
+        <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="sliderProps.sliderCol">
         <mapgis-ui-slider
@@ -17,8 +17,9 @@
             :tooltipPlacement="sliderProps.tooltipPlacement"
             :tooltipVisible="sliderProps.tooltipVisible"
             :getTooltipPopupContainer="sliderProps.getTooltipPopupContainer"
-            @change="methods.change"
-            @afterChange="methods.afterChange"
+            :style="mainStyle"
+            @change="$_change"
+            @afterChange="$_afterChange"
         />
       </mapgis-ui-col>
       <mapgis-ui-col :span="sliderProps.inputCol" v-if="!sliderProps.range">
@@ -27,12 +28,13 @@
             :max="sliderProps.sliderMax"
             :min="sliderProps.sliderMin"
             v-model="valueCopy"
+            :style="extraStyle"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row v-if="type === 'select'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'select'">
       <mapgis-ui-col :span="selectProps.titleCol">
-        <p style="margin-top: 0.8em">{{ title }}</p>
+        <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="selectProps.selectCol">
         <mapgis-ui-select
@@ -62,16 +64,17 @@
             :tokenSeparators="selectProps.tokenSeparators"
             :defaultOpen="selectProps.defaultOpen"
             :open="selectProps.open"
-            @blur="methods.blur"
-            @change="methods.change"
-            @deselect="methods.deselect"
-            @focus="methods.focus"
-            @inputKeydown="methods.inputKeydown"
-            @mouseenter="methods.mouseenter"
-            @mouseleave="methods.mouseleave"
-            @popupScroll="methods.popupScroll"
-            @search="methods.search"
-            @dropdownVisibleChange="methods.dropdownVisibleChange"
+            :style="mainStyle"
+            @blur="$_blur"
+            @change="$_change"
+            @deselect="$_deselect"
+            @focus="$_focus"
+            @inputKeydown="$_inputKeydown"
+            @mouseenter="$_mouseenter"
+            @mouseleave="$_mouseleave"
+            @popupScroll="$_popupScroll"
+            @search="$_search"
+            @dropdownVisibleChange="$_dropdownVisibleChange"
             style="width: 100%;">
           <mapgis-ui-select-option v-for="(data, index) in selectProps.dataSource" :key="index" :value="data">
             {{ data }}
@@ -79,30 +82,30 @@
         </mapgis-ui-select>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row v-if="type === 'colorPicker'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'colorPicker'">
       <mapgis-ui-col :span="colorPickerProps.titleCol">
-        <p>{{title}}</p>
+        <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="colorPickerProps.colorCol">
-        <div>
+        <div class="mix-row-color-outer">
           <colorPicker
               :id="colorId"
               v-model="valueCopy"
-              @change="methods.change"
+              @change="$_change"
           />
         </div>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row v-if="type === 'grediantPicker'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'grediantPicker'">
       <mapgis-ui-col :span="grediantPickerProps.titleCol">
-        <p style="margin-top: 5px">{{title}}</p>
+        <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="grediantPickerProps.selectCol">
         <mapgis-ui-select
             v-model="valueCopy"
             :getPopupContainer="grediantPickerProps.getPopupContainer"
-            @change="methods.change"
-            :style="grediantPickerProps.selectStyle"
+            @change="$_change"
+            :style="mainStyle"
         >
           <mapgis-ui-select-option v-for="(gradient,index) in grediantPickerProps.gradients" :key="index"
                                    :value="gradient.key">
@@ -111,40 +114,38 @@
         </mapgis-ui-select>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row v-if="type === 'input'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'input'">
       <mapgis-ui-col :span="inputProps.titleCol">
-        <p
-            :style="inputProps.titleStyle"
-        >{{title}}</p>
+        <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputProps.inputCol">
         <mapgis-ui-input
-          v-model="valueCopy"
-          :addonAfter="inputProps.addonAfter"
-          :addonBefore="inputProps.addonBefore"
-          :disabled="inputProps.disabled"
-          :id="inputProps.id"
-          :maxLength="inputProps.maxLength"
-          :prefix="inputProps.prefix"
-          :size="inputProps.size"
-          :suffix="inputProps.suffix"
-          :type="inputProps.type"
-          :allowClear="inputProps.allowClear"
-          @change="methods.change"
-          @pressEnter="methods.pressEnter"
-          :style="inputProps.inputStyle"
+            v-model="valueCopy"
+            :placeholder="inputProps.placeholder"
+            :addonAfter="inputProps.addonAfter"
+            :addonBefore="inputProps.addonBefore"
+            :disabled="inputProps.disabled"
+            :id="inputProps.id"
+            :maxLength="inputProps.maxLength"
+            :prefix="inputProps.prefix"
+            :size="inputProps.size"
+            :suffix="inputProps.suffix"
+            :type="inputProps.type"
+            :allowClear="inputProps.allowClear"
+            @change="$_change"
+            @pressEnter="$_pressEnter"
+            :style="mainStyle"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row v-if="type === 'inputNumber'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'inputNumber'">
       <mapgis-ui-col :span="inputNumberProps.titleCol">
-        <p
-            :style="inputNumberProps.titleStyle"
-        >{{title}}</p>
+        <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputNumberProps.inputCol">
         <mapgis-ui-input-number
             v-model="valueCopy"
+            :placeholder="inputNumberProps.placeholder"
             :autoFocus="inputNumberProps.autoFocus"
             :disabled="inputNumberProps.disabled"
             :formatter="inputNumberProps.formatter"
@@ -155,9 +156,9 @@
             :decimalSeparator="inputNumberProps.decimalSeparator"
             :size="inputNumberProps.size"
             :step="inputNumberProps.step"
-            @change="methods.change"
-            @pressEnter="methods.pressEnter"
-            :style="inputNumberProps.inputStyle"
+            @change="$_change"
+            @pressEnter="$_pressEnter"
+            :style="mainStyle"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -253,25 +254,18 @@ export default {
         selectCol: 16
       },
       colorPickerProps: {
-        //拾取器样式
-        style: {},
-        titleCol: 8,
-        colorCol: 16
+        titleCol: 6,
+        colorCol: 18
       },
       grediantPickerProps: {
         //菜单渲染父节点。默认渲染到 body 上，如果你遇到菜单滚动定位问题，试试修改为滚动的区域，并相对其定位。
         getPopupContainer: undefined,
         gradients: undefined,
-        selectStyle: {
-          width: "155px"
-        },
-        optionStyle: {
-          width: "155px"
-        },
         titleCol: 8,
         selectCol: 16
       },
       inputProps: {
+        placeholder: undefined,
         addonAfter: undefined,
         addonBefore: undefined,
         disabled: false,
@@ -282,10 +276,8 @@ export default {
         suffix: undefined,
         type: undefined,
         allowClear: undefined,
-        titleCol: 8,
-        inputCol: 16,
-        inputStyle: {},
-        titleStyle: {}
+        titleCol: 6,
+        inputCol: 18,
       },
       inputNumberProps: {
         autoFocus: undefined,
@@ -298,36 +290,8 @@ export default {
         decimalSeparator: undefined,
         size: undefined,
         step: undefined,
-        titleCol: 8,
-        inputCol: 16,
-        inputStyle: {},
-        titleStyle: {}
-      },
-      methods: {
-        blur: function () {
-        },
-        change: function () {
-        },
-        pressEnter: function () {
-        },
-        afterChange: function () {
-        },
-        deselect: function () {
-        },
-        focus: function () {
-        },
-        inputKeydown: function () {
-        },
-        mouseenter: function () {
-        },
-        mouseleave: function () {
-        },
-        popupScroll: function () {
-        },
-        search: function () {
-        },
-        dropdownVisibleChange: function () {
-        },
+        titleCol: 6,
+        inputCol: 18,
       },
       colorId: "colorId" + parseInt(Math.random() * 100000)
     }
@@ -344,15 +308,13 @@ export default {
      * 标题
      * */
     title: {
-      type: String,
-      required: true
+      type: String
     },
     /**
      * 字段名
      * */
     field: {
-      type: String,
-      required: true
+      type: String
     },
     /**
      * 字段值
@@ -363,7 +325,7 @@ export default {
     /**
      * 额外参数
      * */
-    options: {
+    props: {
       type: Object,
       default() {
         return {
@@ -371,6 +333,37 @@ export default {
         };
       }
     },
+    /**
+     * 标题样式
+     * */
+    titleStyle: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    /**
+     * 主体样式
+     * */
+    mainStyle: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    /**
+     * 额外样式
+     * */
+    extraStyle: {
+      type: Object,
+      default() {
+        return {};
+      }
+    }
+  },
+  model: {
+    prop: "value",
+    event: "change"
   },
   created() {
     if (this.type === "colorPicker") {
@@ -386,62 +379,118 @@ export default {
     value: {
       handler: function () {
         this.valueCopy = this.value;
-        let changeObject = {
-          type: this.type,
-          ket: this.fieldCopy,
-          value: this.valueCopy
-        }
-        this.$emit("changed", changeObject);
       },
       deep: true
     },
   },
   methods: {
     $_initProps() {
-      this.methods = Object.assign(this.methods, this.options.methods);
       switch (this.type) {
         case "slider":
-          this.sliderProps = Object.assign(this.sliderProps, this.options.sliderProps);
-          if(this.sliderProps.range && this.sliderProps.sliderCol === 16){
+          this.sliderProps = Object.assign(this.sliderProps, this.props);
+          if (this.sliderProps.range && this.sliderProps.sliderCol === 16) {
             this.sliderProps.sliderCol = 12;
           }
           break;
         case "select":
-          this.selectProps = Object.assign(this.selectProps, this.options.selectProps);
+          this.selectProps = Object.assign(this.selectProps, this.props);
           break;
         case "colorPicker":
           this.$_initColorStyle();
           break;
         case "grediantPicker":
-          this.grediantPickerProps = Object.assign(this.grediantPickerProps, this.options.grediantPickerProps);
-          if(!this.valueCopy && this.grediantPickerProps.gradients.length > 0){
+          this.grediantPickerProps = Object.assign(this.grediantPickerProps, this.props);
+          if (!this.valueCopy && this.grediantPickerProps.gradients.length > 0) {
             this.valueCopy = this.grediantPickerProps.gradients[0].key;
           }
           break;
         case "input":
-          this.inputProps = Object.assign(this.inputProps, this.options.inputProps);
+          this.inputProps = Object.assign(this.inputProps, this.props);
           break;
         case "inputNumber":
-          this.inputNumberProps = Object.assign(this.inputNumberProps, this.options.inputNumberProps);
+          this.inputNumberProps = Object.assign(this.inputNumberProps, this.props);
           break;
       }
     },
     $_initColorStyle() {
       let colorDocument = document.getElementById(this.colorId);
       let colorBtn = colorDocument.childNodes;
-      let vm = this;
-      Object.keys(this.options.colorPickerProps.style).forEach(function (key) {
-        colorBtn[0].style[key] = vm.options.colorPickerProps.style[key];
-      });
     },
+    $_change(e) {
+      this.$emit("change", e);
+    },
+    $_afterChange(e) {
+      this.$emit("afterChange", e);
+    },
+    $_pressEnter(e) {
+      this.$emit("pressEnter", e);
+    },
+    $_blur(e) {
+      this.$emit("blur", e);
+    },
+    $_deselect(e) {
+      this.$emit("deselect", e);
+    },
+    $_focus(e) {
+      this.$emit("focus", e);
+    },
+    $_inputKeydown(e) {
+      this.$emit("inputKeydown", e);
+    },
+    $_mouseenter(e) {
+      this.$emit("mouseenter", e);
+    },
+    $_mouseleave(e) {
+      this.$emit("mouseleave", e);
+    },
+    $_popupScroll(e) {
+      this.$emit("popupScroll", e);
+    },
+    $_search(e) {
+      this.$emit("search", e);
+    },
+    $_dropdownVisibleChange(e) {
+      this.$emit("dropdownVisibleChange", e);
+    }
   }
 }
 </script>
 
 <style scoped>
+.mix-row {
+  margin: 6px 0;
+}
+
 .mix-row-gradient {
   height: 15px;
   margin: 8px 0 0;
   border-radius: 3px;
+}
+
+.mix-row-title {
+  font-size: 12px;
+  position: absolute;
+  top: 8px;
+}
+
+.mix-row-color-outer {
+  width: 100%;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color-base);
+}
+
+/deep/ .m-colorPicker {
+  width: 100%;
+}
+
+/deep/ .colorBtn {
+  width: 96% !important;
+  margin: 5px 2%;
+  border-radius: 4px;
+}
+
+/deep/ .m-colorPicker .colorBtn {
+  height: 20px;
 }
 </style>

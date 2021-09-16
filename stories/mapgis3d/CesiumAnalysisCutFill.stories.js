@@ -1,8 +1,8 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
+import Markdown from "../../cesium/docs/api/analysis/CutFill.md";
 
 export default {
-  title: "三维/分析/坡向分析",
+  title: "三维/分析/填挖方分析",
 };
 
 const Template = (args, { argTypes }) => ({
@@ -36,7 +36,7 @@ const Template = (args, { argTypes }) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-analysis-aspect />
+        <mapgis-3d-analysis-cut-fill />
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -73,10 +73,10 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const 坡向 = Template.bind({});
-坡向.args = {};
+export const 填挖方 = Template.bind({});
+填挖方.args = {};
 
-坡向.parameters = {
+填挖方.parameters = {
   docs: {
     description: {
       component: Markdown,

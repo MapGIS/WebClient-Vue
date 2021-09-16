@@ -241,7 +241,9 @@ export default {
         index
       ).source;
       for (let i = 0; i < dynaCuts.length; i++) {
-        analysisManager.deleteDynamicCutting(dynaCuts[i]);
+        if (dynaCuts[i].hasOwnProperty("handler") && dynaCuts[i].handler) {
+          analysisManager.deleteDynamicCutting(dynaCuts[i]);
+        }
       }
       CesiumZondy.DynamicCuttingManager.deleteSource(vueKey, index);
       CesiumZondy.AnalysisManager.deleteSource(vueKey, index);

@@ -72,6 +72,8 @@ export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
 export { default as MapgisUiSettingForm } from "./components/form/SettingForm.vue";
 export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
+export { default as MapgisUiForm } from "./components/form/Form.vue";
+export { default as MapgisUiFormItem } from "./components/form/FormItem.vue";
 export { default as MapgisUiMentions } from "./components/mentions/Mentions.vue";
 export { default as MapgisUiMentionsOption } from "./components/mentions/Option.vue";
 export { default as MapgisUiRadio } from "./components/radio/Radio.vue";
