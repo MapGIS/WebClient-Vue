@@ -72,6 +72,10 @@ export function initManager() {
     window.CesiumZondy.shadowAnalysisManager || new shadowAnalysisManager();
   window.CesiumZondy.AspectAnalysisManager =
     window.CesiumZondy.AspectAnalysisManager || new AspectAnalysisManager();
+  DynamicSectionAnalysisManager;
+  window.CesiumZondy.DynamicSectionAnalysisManager =
+    window.CesiumZondy.DynamicSectionAnalysisManager ||
+    new DynamicSectionAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -260,3 +264,4 @@ export class AnalysisManager extends BaseManager {}
 export class HeightLimitedAnalysisManager extends BaseManager {}
 export class shadowAnalysisManager extends BaseManager {}
 export class AspectAnalysisManager extends BaseManager {}
+export class DynamicSectionAnalysisManager extends BaseManager {}
