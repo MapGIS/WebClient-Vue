@@ -4,11 +4,11 @@
     :style="controlStyle"
     class="measure-story-control"
   >
-    <mapgis-measure ref="mapgisMeasure" @measureresult="measureResult = $event">
+    <mapgis-3d-measure ref="measure3d" @load="measure = $event">
       <mapgis-ui-space
         v-if="!hasSettingPanel"
-        :style="toolbarStyle"
         slot="measureTool"
+        :style="toolbarStyle"
       >
         <mapgis-ui-tooltip
           v-for="(item, i) in toolbarBtns"
@@ -30,30 +30,16 @@
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
       </mapgis-ui-space>
-      <mapgis-marker
-        v-if="!!coordinates.length && enableControl"
-        slot="measureMarker"
-        :coordinates="coordinates"
-        color="#ff0000"
-      >
-        <div slot="marker" class="mapgis-measure-control-label">
-          <div v-if="measureResult.geographyArea">
-            面积：{{ measureResult.geographyArea }}
-          </div>
-          <div>周长：{{ measureResult.geographyPerimeter }}</div>
-        </div>
-      </mapgis-marker>
-    </mapgis-measure>
+    </mapgis-3d-measure>
   </div>
 </template>
 <script>
-import { measureModeMap } from "./store/enums";
-import MapgisMeasure from "./Measure.vue";
+import Mapgis3dMeaure from "./Measure.vue";
 
 export default {
   name: "measure-story",
   components: {
-    MapgisMeasure
+    "mapgis-3d-measure": Mapgis3dMeaure
   },
   props: {
     expandControl: {
@@ -74,8 +60,9 @@ export default {
     }
   },
   data: vm => ({
-    measureResult: null,
+    measure: null,
     toolbarVisible: false,
+    // todo ICON
     toolbarBtns: [
       {
         icon: "mapgis-huizhi1",
@@ -87,14 +74,26 @@ export default {
       {
         icon: "mapgis-ruler",
         type: "primary",
-        tip: "长度",
+        tip: "直线测量",
         click: vm.enableLengthMeasure
       },
       {
         icon: "mapgis-area",
         type: "primary",
-        tip: "面积",
+        tip: "面积测量",
         click: vm.enableAreaMeasure
+      },
+      {
+        icon: "mapgis-huizhijuxing",
+        type: "primary",
+        tip: "三角测量",
+        click: vm.enableTriangleMeasure
+      },
+      {
+        icon: "mapgis-huizhijuxing",
+        type: "primary",
+        tip: "坡度测量",
+        click: vm.enableSlopeMeasure
       },
       {
         icon: "mapgis-shanchu_dianji",
@@ -105,13 +104,8 @@ export default {
     ]
   }),
   computed: {
-    measureRef() {
-      return this.$refs.mapgisMeasure;
-    },
-    coordinates({ measureResult }) {
-      return measureResult && measureResult.center
-        ? measureResult.center.geometry.coordinates
-        : [];
+    measure3dRef() {
+      return this.$refs.measure3d;
     },
     controlStyle({ hasSettingPanel }) {
       return {
@@ -129,23 +123,25 @@ export default {
   },
   methods: {
     clearMeasure() {
-      this.measureResult = null;
-      this.measureRef.remove();
+      this.measure3dRef.deleteMeasure();
     },
-    startMeasure(mode) {
-      this.measureRef.enableMeasure();
-      this.measureRef.changeMode(mode);
+    startMeasure(measureName) {
+      this.measure3dRef.$_enableMeasure(measureName);
     },
     enableToolbar() {
       this.toolbarVisible = !this.toolbarVisible;
     },
     enableLengthMeasure() {
-      this.clearMeasure();
-      this.startMeasure(measureModeMap.line);
+      this.startMeasure("MeasureLengthTool");
     },
     enableAreaMeasure() {
-      this.clearMeasure();
-      this.startMeasure(measureModeMap.polygon);
+      this.startMeasure("MeasureAreaTool");
+    },
+    enableTriangleMeasure() {
+      this.startMeasure("TriangulationTool");
+    },
+    enableSlopeMeasure() {
+      this.startMeasure("MeasureSlopeTool");
     }
   },
   mounted() {
@@ -158,17 +154,17 @@ export default {
 </script>
 <style scoped>
 .measure-story-control > .mapgis-ui-space {
-  width: 40px !important;
+  width: 40px;
   overflow: hidden;
   transition: width 0.5s;
 }
 
 .mapgis-ui-btn.expand-btn {
-  width: 40px !important;
-  height: 40px !important;
+  width: 40px;
+  height: 40px;
 }
 .anticon.expand-btn {
-  font-size: 20px !important;
+  font-size: 20px;
 }
 
 .measure-story-control {

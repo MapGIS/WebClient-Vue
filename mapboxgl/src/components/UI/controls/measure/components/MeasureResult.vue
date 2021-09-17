@@ -4,7 +4,7 @@
       v-for="item in selfResultOptions"
       :key="item.value"
       :label="item.label"
-      :label-width="88"
+      :label-width="100"
     >
       {{ selfResult[item.value] }}
     </mapgis-ui-row-flex>
@@ -17,7 +17,7 @@ import { measureModeMap } from "../store/enums";
 import dep from "../store/dep";
 
 export default {
-  name: "MeasureResult",
+  name: "measure-result",
   props: {
     mode: {
       type: String,

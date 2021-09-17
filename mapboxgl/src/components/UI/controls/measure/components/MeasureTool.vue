@@ -16,6 +16,7 @@
       <mapgis-ui-toolbar-space />
       <!-- 面积或长度单位选择 -->
       <mapgis-ui-select
+        v-show="!!unit"
         v-model="unit"
         :options="unitOptions"
         :class="`${prefixCls}-unit`"
@@ -28,7 +29,7 @@
         <mapgis-ui-toolbar-command
           title="清除"
           icon="mapgis-shanchu_dianji"
-          @click="clearMeasure"
+          @click="beforeClearMeasure"
         />
         <mapgis-ui-toolbar-command
           @click="showSettingPanel = !showSettingPanel"
@@ -38,7 +39,7 @@
         />
       </mapgis-ui-toolbar-command-group>
     </mapgis-ui-toolbar>
-    <!-- 自定义内容区域 -->
+    <!-- 测量结果 -->
     <measure-result :mode="activeMode" :result="result" :unit="unit" />
     <!-- 设置面板 -->
     <measure-setting
@@ -123,10 +124,17 @@ export default {
     }
   }),
   methods: {
+    beforeClearMeasure() {
+      this.activeMode = "";
+      this.unit = "";
+      this.unitOptions = [];
+      this.clearMeasure();
+    },
     beforeMeasure(mode) {
       this.activeMode = mode;
       this.unitOptions = this.unitMap[mode];
       this.unit = this.unitOptions[0].value;
+      this.clearMeasure();
       this.measure();
     },
     measure() {
@@ -138,7 +146,6 @@ export default {
     },
     measureStyleChange(style) {
       this.$parent.$_changeMapStyle(style);
-      this.changeMapStyle;
     }
   }
 };

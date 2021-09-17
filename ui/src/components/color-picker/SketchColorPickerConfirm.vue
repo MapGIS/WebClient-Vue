@@ -14,17 +14,19 @@
       <sketch-picker v-else @input="colorChange" :value="color" />
       <div :class="`${prefixCls}-content-btns`">
         <mapgis-ui-button size="small" @click="cancel">取消</mapgis-ui-button>
-        <mapgis-ui-button type="primary" size="small" @click="confirm">确定</mapgis-ui-button>
+        <mapgis-ui-button type="primary" size="small" @click="confirm"
+          >确定</mapgis-ui-button
+        >
       </div>
     </div>
   </mapgis-ui-dropdown>
 </template>
 <script>
-import { ColorUtil, CommonUtil } from '../../util/common'
-import { Sketch, Chrome } from 'vue-color'
+import { ColorUtil, CommonUtil } from "../../util/common";
+import { Sketch, Chrome } from "vue-color";
 
 export default {
-  name: 'mapgis-ui-sketch-color-picker-confirm',
+  name: "mapgis-ui-sketch-color-picker-confirm",
   components: {
     SketchPicker: Sketch,
     ChromePicker: Chrome
@@ -32,22 +34,22 @@ export default {
   props: {
     type: {
       type: String,
-      default: 'chrome',
+      default: "chrome",
       validator(v) {
-        return CommonUtil.oneOf(v, ['sketch', 'chrome'])
+        return CommonUtil.oneOf(v, ["sketch", "chrome"]);
       }
     },
     colorType: {
       type: String,
-      default: 'rgb',
+      default: "rgb",
       validator(v) {
-        return CommonUtil.oneOf(v, ['hex', 'rgb', 'rgba'])
+        return CommonUtil.oneOf(v, ["hex", "rgb", "rgba"]);
       }
     },
     size: {
       type: String,
       validator(v) {
-        return CommonUtil.oneOf(v, ['large', 'small'])
+        return CommonUtil.oneOf(v, ["large", "small"]);
       }
     },
     disabled: {
@@ -64,27 +66,27 @@ export default {
     },
     defaultValue: {
       type: String,
-      default: 'rgb(24,144,255)',
+      default: "rgb(24,144,255)",
       validator: v =>
         ColorUtil.isHex(v) || ColorUtil.isRgb(v) || ColorUtil.isRgba(v)
     },
     value: {
       type: String,
       validator: v =>
-        ColorUtil.isHex(v) || ColorUtil.isRgb(v) || ColorUtil.isRgba(v)
+        !v || ColorUtil.isHex(v) || ColorUtil.isRgb(v) || ColorUtil.isRgba(v)
     }
   },
   data() {
-    const prefixCls = 'mapgis-ui-sketch-color-picker-confirm'
+    const prefixCls = "mapgis-ui-sketch-color-picker-confirm";
     return {
       prefixCls,
-      color: '',
+      color: "",
       visible: false
-    }
+    };
   },
   computed: {
     isChrome({ type }) {
-      return type === 'chrome'
+      return type === "chrome";
     },
     colorPickerBtnCls({ prefixCls, size, border, borderRadius, disabled }) {
       return [
@@ -95,18 +97,18 @@ export default {
           [`${prefixCls}-border-radius`]: !!borderRadius,
           [`${prefixCls}-disabled`]: !!disabled
         }
-      ]
+      ];
     },
     colorPickerBtnStyle({ defaultValue, value = defaultValue, border }) {
       return {
         background: value,
-        borderColor: border ? value : 'transparent'
-      }
+        borderColor: border ? value : "transparent"
+      };
     }
   },
   watch: {
     value(nV) {
-      this.color = nV
+      this.color = nV;
     }
   },
   methods: {
@@ -114,60 +116,60 @@ export default {
      * 展示颜色选择器
      */
     showPicker() {
-      this.visible = !this.disabled
+      this.visible = !this.disabled;
     },
     /**
      * 隐藏颜色选择器
      */
     hidePicker() {
-      this.visible = false
+      this.visible = false;
     },
     /**
      * 颜色选择变化
      */
     colorChange({ rgba: { r, g, b, a }, hex }) {
-      let _color = hex
+      let _color = hex;
       switch (this.colorType) {
-        case 'rgb':
-          _color = `rgb(${r}, ${g}, ${b})`
-          break
-        case 'rgba':
-          _color = `rgba(${r}, ${g}, ${b}, ${a})`
-          break
+        case "rgb":
+          _color = `rgb(${r}, ${g}, ${b})`;
+          break;
+        case "rgba":
+          _color = `rgba(${r}, ${g}, ${b}, ${a})`;
+          break;
         default:
-          break
+          break;
       }
-      this.color = _color
+      this.color = _color;
     },
     /**
      * 往上更新
      */
     dispatchColor() {
-      this.$emit('input', this.color)
-      this.$emit('change', this.color)
+      this.$emit("input", this.color);
+      this.$emit("change", this.color);
     },
     /**
      * 取消
      */
     cancel() {
-      this.color = this.value || this.defaultValue
-      this.hidePicker()
+      this.color = this.value || this.defaultValue;
+      this.hidePicker();
     },
     /**
      * 确认
      */
     confirm() {
-      this.dispatchColor()
-      this.visible = false
+      this.dispatchColor();
+      this.visible = false;
     }
   },
   created() {
     if (this.value) {
-      this.color = this.value
+      this.color = this.value;
     } else {
-      this.color = this.defaultValue
-      this.$emit('input', this.color)
+      this.color = this.defaultValue;
+      this.$emit("input", this.color);
     }
   }
-}
+};
 </script>

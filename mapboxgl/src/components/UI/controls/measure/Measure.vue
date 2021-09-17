@@ -94,14 +94,6 @@ export default {
       measureStyle: defaultStyle,
       selfMeasureMode: "",
       measureResult: null
-      /*   measureResult: {
-        geographyPerimeter: 0,
-        geographyArea: 0,
-        projectionPerimeter: 0,
-        projectionArea: 0,
-        coordinates: [],
-        center: null
-      } */
     };
   },
 
