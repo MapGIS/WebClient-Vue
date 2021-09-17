@@ -1,5 +1,7 @@
+import "../style/card.css";
+import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
 export default {
-    title: "三维/分析/阴影"
+    title: "三维/分析/阴影分析"
 };
 
 const Template = (args, { argTypes }) => ({
@@ -18,10 +20,19 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene>
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>
-      <mapgis-3d-shadow :vue-index="vueIndex"></mapgis-3d-shadow>
+<!--      <mapgis-ui-card class="storybook-ui-card">-->
+        <mapgis-3d-shadow :vue-index="vueIndex"></mapgis-3d-shadow>
+<!--      </mapgis-ui-card>-->
       </mapgis-web-scene>
     `
 });
 
 export const Shadow = Template.bind({});
 Shadow.args = {}
+Shadow.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
+};

@@ -1,5 +1,7 @@
+import "../style/card.css";
+import Markdown from "../../cesium/docs/api/analysis/Sightline.md";
 export default {
-    title: "三维/分析/通视"
+    title: "三维/分析/通视分析"
 };
 
 const Template = (args, { argTypes }) => ({
@@ -16,10 +18,19 @@ const Template = (args, { argTypes }) => ({
     <mapgis-web-scene>
         <mapgis-3d-raster-layer :url="url" />
         <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
+        <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-sightline></mapgis-3d-sightline>
+        </mapgis-ui-card>
     </mapgis-web-scene>
     `
 });
 
 export const Sightline = Template.bind({});
 Sightline.args = {}
+Sightline.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
+};

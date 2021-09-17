@@ -4,6 +4,7 @@
 .adjust-line-wrapper {
   .adjust-line {
     // border: 1px solid $border-color; // ws记录
+    border: 1px solid #f0f0f0; // ws记录
   }
   .adjust-line-h {
     width: 100%;
@@ -19,11 +20,13 @@
     width: 30px;
     height: 10px;
     // background-color: $base-bg-color; // ws记录
+    background-color: #fff; // ws记录
     .indicator {
       margin: 0 auto;
       width: 10px;
       height: 1px;
       // background-color: $border-color; // ws记录
+      background-color: #f0f0f0; // ws记录
     }
   }
   &:hover {

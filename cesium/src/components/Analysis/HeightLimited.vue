@@ -1,17 +1,17 @@
 <template>
-  <div :class="['heightlimited',{ right: position === 'right', left: position === 'left' }]">
-    <div
-        :style="{
-                background: 'rgb(38, 151, 204)',
-                padding: '5px',
-                color: 'white',
-            }"
-        class="card-title"
-    >
-      控高分析
-    </div>
+<!--  <div :class="['heightlimited',{ right: position === 'right', left: position === 'left' }]">-->
+<!--    <div-->
+<!--        :style="{-->
+<!--                background: 'rgb(38, 151, 204)',-->
+<!--                padding: '5px',-->
+<!--                color: 'white',-->
+<!--            }"-->
+<!--        class="card-title"-->
+<!--    >-->
+<!--      控高分析-->
+<!--    </div>-->
+  <div class="mapgis-widget-heightLimited-analysis">
     <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad">
-      <mapgis-ui-card class="a-card">
         <mapgis-ui-row>
           <mapgis-ui-col :span="5">分析区域</mapgis-ui-col>
           <mapgis-ui-col :span="19">
@@ -33,7 +33,6 @@
                             :style="{marginLeft: '16px'}"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
-      </mapgis-ui-card>
     </mapgis-3d-draw>
   </div>
 </template>
@@ -47,10 +46,10 @@ export default {
   name: "mapgis-3d-heightlimited",
   mixins: [ServiceLayer],
   props: {
-    position: {
-      type: String,
-      default: "right",
-    },
+    // position: {
+    //   type: String,
+    //   default: "right",
+    // },
     vueKey: {
       type: String,
       default: "default"
@@ -74,7 +73,7 @@ export default {
       default: 50
     }
   },
-  components: {draw},
+  // components: {draw},
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   data() {
     return {
@@ -269,23 +268,11 @@ export default {
   overflow: auto;
 }
 
-.heightlimited.right {
-  /*width: calc(50vw);*/
-  min-width: calc(20vw);
-  max-width: calc(50vw);
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.mapgis-ui-card-bordered{
+  border:unset;
 }
 
-.heightlimited.left {
-  width: calc(50vw);
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
-::v-deep .mapgis-ui-card-body {
+.mapgis-ui-card-body{
   padding: 10px;
 }
 

@@ -16,16 +16,6 @@ export default {
   model: {},
   props: formProps,
   computed: {},
-  methods: {
-    // validate(callback) {
-    //   this.$children[0].validate(callback);
-    // },
-    // resetFields() {
-    //   this.$children[0].resetFields();
-    // },
-    // validateField(field) {
-    //   this.$children[0].validateField(field);
-    // },
-  }
+  methods: {}
 };
 </script>

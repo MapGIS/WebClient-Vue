@@ -80,8 +80,10 @@ export function initManager() {
     new DynamicSectionAnalysisManager();
   window.CesiumZondy.SlopeAnalysisManager =
     window.CesiumZondy.SlopeAnalysisManager || new SlopeAnalysisManager();
-  window.CesiumZondy.SkyLineAnalysisManager = window.CesiumZondy.SkyLineAnalysisManager = new SkyLineAnalysisManager();
-  window.CesiumZondy.ContourAnalysisManager = window.CesiumZondy.ContourAnalysisManager = new ContourAnalysisManager();
+  window.CesiumZondy.SkyLineAnalysisManager = window.CesiumZondy.SkyLineAnalysisManager || new SkyLineAnalysisManager();
+  window.CesiumZondy.ContourAnalysisManager = window.CesiumZondy.ContourAnalysisManager || new ContourAnalysisManager();
+  window.CesiumZondy.ViewshedAnalysisManager = window.CesiumZondy.ViewshedAnalysisManager || new ViewshedAnalysisManager();
+  window.CesiumZondy.VisiblityAnalysisManager = window.CesiumZondy.VisiblityAnalysisManager || new VisiblityAnalysisManager();
   window.CesiumZondy.CutFillAnalysisManager = window.CesiumZondy.CutFillAnalysisManager = new CutFillAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
@@ -276,4 +278,6 @@ export class DynamicSectionAnalysisManager extends BaseManager {}
 export class SlopeAnalysisManager extends BaseManager {}
 export class SkyLineAnalysisManager extends BaseManager {}
 export class ContourAnalysisManager extends BaseManager {}
+export class ViewshedAnalysisManager extends BaseManager {}
+export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
