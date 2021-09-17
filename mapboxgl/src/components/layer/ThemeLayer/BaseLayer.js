@@ -229,6 +229,9 @@ export default {
                 if (dataSource) {
                     this.$refs.themePanel.$_setDataSoure(dataSource);
                 }
+                //抛出更新图例事件
+                let legends = this.$_getLegend(this.layerIdCopy);
+                this.$emit("updateLegend", legends);
             } else {
                 //取得数据
                 this.$_getDataByLayer(layerId, function (features) {
@@ -350,6 +353,9 @@ export default {
                     vm.$refs.themePanel.$_setLabelFields(["未设置"].concat(textFields));
                     vm.$refs.themePanel.$_setField(fields[0]);
                     vm.$refs.themePanel.$_setDataType(vm.dataType);
+                    //抛出更新图例事件
+                    let legends = vm.$_getLegend(vm.layerIdCopy);
+                    vm.$emit("updateLegend", legends);
                 });
             }
             //将原图层opacity设置为0，而不是设置原图层的visibility，因为隐藏了某些时候queryRenderFeature会取不到数据
@@ -373,10 +379,7 @@ export default {
             }
             let features;
             //从图层取得数据
-            features = this.map.querySourceFeatures(this.source_Id);
-            if (features.length === 0) {
-                features = this.map.queryRenderedFeatures({layers: [layerId]});
-            }
+            features = this.map.queryRenderedFeatures({layers: [layerId]});
             if (this.hasNullProperty.indexOf(layerId) < 0) {
                 this.$_getNullFields(features, layerId);
             }
@@ -853,7 +856,11 @@ export default {
                     let range = dataSourceCopy[length - 1] - dataSourceCopy[0];
                     if (range === 0) {
                         newDataSourceCopy.push(dataSourceCopy[0]);
-                        this.endData = dataSourceCopy[0] + 1;
+                        this.startData = dataSourceCopy[0];
+                        this.$refs.themePanel.startData = this.startData;
+                        this.$refs.themePanel.startDataCopy = this.startData;
+                        themeManager.setExtraData(this.layerIdCopy, this.themeType, "dataSource", newDataSourceCopy);
+                        themeManager.setPanelProps(this.layerIdCopy, this.themeType, "startData", this.startData);
                         return newDataSourceCopy;
                     } else {
                         let rangeSect = range / this.rangeLevel;
@@ -1600,6 +1607,9 @@ export default {
             }
             //保存专题图类型
             themeManager.setLayerProps(vm.layerIdCopy, "themeType", themeType);
+            //抛出更新图例事件
+            let legends = vm.$_getLegend(vm.layerIdCopy);
+            vm.$emit("updateLegend", legends);
         },
         //字段变化
         $_fieldChanged(field) {
@@ -1687,6 +1697,9 @@ export default {
                     props = themeManager.getPanelByField(vm.layerIdCopy, vm.themeType, field);
                     //循环重置专题图
                     vm.$_setPropertyByPanel(props);
+                    //抛出更新图例事件
+                    let legends = vm.$_getLegend(vm.layerIdCopy);
+                    vm.$emit("updateLegend", legends);
                 });
             } else {
                 //根据已存在的面板参数重置面板
@@ -1759,6 +1772,9 @@ export default {
                     //循环重置专题图
                     this.$_setPropertyByPanel(props);
                 }
+                //抛出更新图例事件
+                let legends = this.$_getLegend(this.layerIdCopy);
+                this.$emit("updateLegend", legends);
             }
         },
         $_setPropertyByPanel(props) {
@@ -1955,6 +1971,7 @@ export default {
                 this.$_setRangeColor(newColors[1], startData, endData);
             }
             this.$_setRangeData(dataSource);
+            this.$_returnLegend();
         },
         $_setRangeData(dataSource) {
             let newData = [];
@@ -1978,6 +1995,7 @@ export default {
                 this.$_setRangeColor(colors[index - 1], startData, endData);
             }
             this.$_setRangeData(dataSource);
+            this.$_returnLegend();
         },
         $_setRangeLevel(num) {
             let rangeLevel = themeManager.getExtraData(this.layerIdCopy, this.themeType, "rangeLevel");
@@ -2005,7 +2023,7 @@ export default {
             let paintColor = themeManager.getExtraData(this.layerIdCopy, this.themeType, this.dataType + "-color");
             let length = (paintColor.length - 1) / 2;
             for (let i = 0; i < length; i++) {
-                if (paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] < endData) {
+                if (paintColor[2 + i * 2 + 1] >= startData && paintColor[2 + i * 2 + 1] <= endData) {
                     if (i === 0) {
                         paintColor.splice(2, 1, color);
                     }
@@ -2279,9 +2297,15 @@ export default {
                     vm.map.addImage(icon, img);
                 }
                 vm.$_setLayOutProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), "icon-image", icon);
+                vm.$_returnLegend();
             });
             themeManager.setPanelProps(this.layerIdCopy, this.themeType, "icon-url", url);
             img.src = url;
+        },
+        $_returnLegend() {
+            //抛出更新图例事件
+            let legends = this.$_getLegend(this.layerIdCopy);
+            this.$emit("updateLegend", legends);
         },
         $_wenliIconChanged(icon, url) {
             let img = new Image(16, 16), vm = this;
@@ -2292,6 +2316,7 @@ export default {
                 }
                 vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-pattern", icon);
                 themeManager.setPanelProps(vm.layerIdCopy, vm.themeType, vm.dataType + "-pattern-url", url);
+                vm.$_returnLegend();
             });
             img.src = url;
         },
@@ -2315,6 +2340,7 @@ export default {
             let colors = themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors");
             colors[index] = color;
             themeManager.setPanelProps(this.layerIdCopy, this.themeType, "colors", colors);
+            this.$_returnLegend();
         },
         $_checked(checkBoxArr, index, color) {
             let paintColors = themeManager.getExtraData(this.layerIdCopy, this.themeType, this.dataType + "-color");
@@ -2364,6 +2390,7 @@ export default {
                     this.$refs.themePanel.$_setColors(this.colors);
                     //设置面板分段复选框
                     this.$refs.themePanel.$_setCheckBoxArr(this.checkBoxArr);
+                    this.$_returnLegend();
                     break;
                 case "range":
                     //先要取得数据
@@ -2380,6 +2407,7 @@ export default {
                         vm.$refs.themePanel.$_setColors(vm.colors);
                         //设置面板数据源
                         vm.$refs.themePanel.$_setDataSoure(dataSource);
+                        vm.$_returnLegend();
                     });
                     break;
             }
@@ -2388,8 +2416,7 @@ export default {
             let dataSource = themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource");
             let startData, endData;
             if (index === 0) {
-                startData = themeManager.getExtraData(this.layerIdCopy, this.themeType, "startData");
-                ;
+                startData = themeManager.getPanelProps(this.layerIdCopy, this.themeType, "startData");
                 endData = dataSource[index];
             } else if (index <= dataSource.length - 1) {
                 startData = dataSource[index - 1];
@@ -2414,6 +2441,7 @@ export default {
             themeManager.setExtraData(this.layerIdCopy, this.themeType, this.dataType + "-color", paintColors);
             themeManager.setPanelProps(this.layerIdCopy, this.themeType, "uniformColor", color);
             this.map.setPaintProperty(this.layerIdCopy + this.$_getThemeName(), this.dataType + "-color", paintColors);
+            this.$_returnLegend();
         },
         $_getWeightArr(dataSource) {
             //过滤非数字值
@@ -2433,8 +2461,18 @@ export default {
                 ["linear"],
                 ["get", this.selectValue]
             ];
-            heatmapWeight.push(Number(datas[0]), 0);
-            heatmapWeight.push(Number(datas[datas.length - 1]), 1);
+            if (datas.length === 1) {
+                if (Number(datas[0]) === 0) {
+                    heatmapWeight.push(0, 0);
+                    heatmapWeight.push(0.1, 1);
+                } else {
+                    heatmapWeight.push(0, 0);
+                    heatmapWeight.push(Number(datas[0]), 1);
+                }
+            } else {
+                heatmapWeight.push(Number(datas[0]), 0);
+                heatmapWeight.push(Number(datas[datas.length - 1]), 1);
+            }
             return heatmapWeight;
         },
         $_getHeatmapColors(gradientHeatColor) {
@@ -2516,6 +2554,7 @@ export default {
             }
             themeManager.setPanelProps(this.layerIdCopy, this.themeType, "heatmap-colors", colors);
             this.$_setPaintPropertyToExtra(this.layerIdCopy, this.layerIdCopy + this.$_getThemeName(), "heatmap-color", heatmapColor);
+            this.$_returnLegend();
         },
         $_getAllLayer() {
             let allLayer = themeManager.getAllLayer(), layerNameArr = [];
@@ -2632,10 +2671,11 @@ export default {
             allLayerOrder.splice(allLayerOrder.indexOf(layerOrder[0]), layerOrder.length);
             let originLayer = themeManager.getLayerProps(layerId, layerId);
             let opacity = 1;
-            if(originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(this.dataType + "-opacity")){
-                opacity = originLayer.paint[this.dataType + "-opacity"];
+            let dataType = themeManager.getLayerProps(layerId, "dataType");
+            if (originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(dataType + "-opacity")) {
+                opacity = originLayer.paint[dataType + "-opacity"];
             }
-            this.map.setPaintProperty(layerId, this.dataType + "-opacity", opacity);
+            this.map.setPaintProperty(layerId, dataType + "-opacity", opacity);
             this.$refs.themePanel.$_close();
             themeManager.setManagerProps(layerId, undefined);
         },
@@ -2744,6 +2784,50 @@ export default {
                     }
                 }
             }
+        },
+        $_getLegend(layerId) {
+            let colors, returnColors, legends = [];
+            switch (this.themeType) {
+                case "uniform":
+                    colors = themeManager.getExtraData(layerId, this.themeType, this.dataType + "-color");
+                    if (colors instanceof Array) {
+                        returnColors = colors.slice(2, colors.length - 1);
+                    } else {
+                        returnColors = colors.stops[0];
+                    }
+                    break;
+                case "unique":
+                    colors = themeManager.getExtraData(layerId, this.themeType, this.dataType + "-color");
+                    if (colors instanceof Array) {
+                        returnColors = colors.slice(2, colors.length - 1);
+                    } else {
+                        returnColors = colors.stops[0];
+                    }
+                    break;
+                case "range":
+                    colors = themeManager.getExtraData(layerId, this.themeType, this.dataType + "-color");
+                    returnColors = colors.slice(3, colors.length);
+                    break;
+                case "heatmap":
+                    colors = themeManager.getExtraData(layerId, this.themeType, "heatmap-color");
+                    returnColors = colors.slice(3, colors.length - 1);
+                    break;
+                case "symbol":
+                    colors = themeManager.getPanelProps(layerId, this.themeType, "icon-url");
+                    returnColors = colors;
+                    break;
+            }
+            if (returnColors) {
+                let length = returnColors.length / 2;
+                for (let i = 0; i < length; i++) {
+                    legends.push({
+                        layerName: returnColors[i * 2],
+                        layerType: this.dataType,
+                        color: returnColors[i * 2 + 1]
+                    });
+                }
+            }
+            return legends;
         }
     }
 };

@@ -87,6 +87,7 @@ export { default as MapgisUiSelectOption } from "./components/select/SelectOptio
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
 export { default as MapgisUiSliderRow } from "./components/mixRow/MixRow.vue";
+export { default as MapgisUiCustomPanel } from "./components/customPanel/CustomPanel.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
 export { default as MapgisUiTimePicker } from "./components/time-picker/TimePicker.vue";
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";

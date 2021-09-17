@@ -42,7 +42,7 @@
           </div>
         </mapgis-ui-row>
       </div>
-      <div class="theme-panel-options" :style="{height: dataType !== 'circle' ? '712px' : '618px'}">
+      <div class="theme-panel-options">
         <!--字段信息-->
         <mapgis-ui-collapse accordion>
           <mapgis-ui-collapse-panel key="2" header="字段信息">
@@ -868,18 +868,20 @@
                     </div>
                   </div>
                   <div class="theme-panel-td theme-panel-td-symbol theme-panel-td-input-num" style="padding-top: 4px">
-                    <img alt="数据错误" class="theme-panel-input-wrong" v-if="index === 0 && startNumWrong"
-                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                     <img alt="数据错误" class="theme-panel-input-wrong" v-if="index > 0 && (index - 1) === numWrong"
                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                     <mapgis-ui-input v-if="dataSource.length === 1 || (dataSource.length > 1 && index === 0)"
                                      class="range-theme-num"
                                      @click="$_inputClick('start')"
-                                     v-model="startData">
+                                     v-model="startData"
+                                     v-bind:title="startData"
+                    >
                     </mapgis-ui-input>
                     <mapgis-ui-input v-if="index > 0" class="range-theme-num"
                                      @click="$_inputClick(index - 1)"
-                                     v-model="dataSource[index - 1]">
+                                     v-model="dataSource[index - 1]"
+                                     v-bind:title="dataSource[index - 1]"
+                    >
                     </mapgis-ui-input>
                   </div>
                   <div class="theme-panel-td theme-panel-td-symbol" style="width: 3%">
@@ -897,7 +899,9 @@
                     <mapgis-ui-input class="range-theme-num"
                                      @click="$_inputClick(index)"
                                      v-model="dataSource[index]"
-                                     v-if="index < dataSource.length && dataSource.length >= 1">
+                                     v-if="index < dataSource.length && dataSource.length >= 1"
+                                     v-bind:title="dataSource[index]"
+                    >
                     </mapgis-ui-input>
                   </div>
                   <div class="theme-panel-td theme-panel-td-symbol theme-panel-td-add theme-panel-td-border-right"
@@ -1007,18 +1011,20 @@
                     </div>
                   </div>
                   <div class="theme-panel-td theme-panel-td-range theme-panel-td-input-num">
-                    <img alt="数据错误" class="theme-panel-input-wrong" v-if="index === 0 && startNumWrong"
-                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                     <img alt="数据错误" class="theme-panel-input-wrong" v-if="index > 0 && (index - 1) === numWrong"
                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAypJREFUeF7tmc9LlEEYx7/zuu+7JkFhRWU6Glg7mwRBEYFBRSJaHToUgRBEQUQEHTrUIUwPQRFE0CE8RBFEYHQoKQOLIuwQBV7SfTczc3YT+iVBkO686zux2GFb3teb8y7zvu8fsPN8PvN9ZucHQcg/EnJ+RAKiBITcQNQCIQ9AtAhGLRC1QMgNRC0QRACGGrC0UpqdhiStEpghQN/vvLiyZRJ/VNejPAEfaxbV5WOzjwBsKoaVwJBpirbGMXxTKUG5gHSdeV0ScsoH8gHj4oDWAmxq2QASXpAS8muSO6t0FyDnAZxmXFTpLuAngGofyEnGxRqtBaSoNUqARh/I94yLjVoLsKn1BsBWL0gC8irBczv0FlBn9YOgzQfyIeNiv+4C7oKgwxOS4BabEEe1FjDfPkBKeTWZcc5oLSBFrW4CdHpCSpxnGXFRawE2jZ8G5DVvAfIkyzg3tBaQpuZhCXLHcyco0ZHMiHtaC/hA4/tcyD5PSJe0s2zuqdYCbBprBoxBL0jDldvWZ53CPkHZp/w0OEqtDbPAsCdhBWFsPJdWRg+ovxX+XF+1ekbmJ70gY6ZYqf19wHgDKnOuNe0lYHaxiDeNQGidgAKcTa1fAJaUgE4xLpaphC+MpXwN+CfgE4C1JbBjjAu/U+KCeQlKwDsAm0uo3jIuPE+JC0YfVAJS1BwgIC3FYBJyIMmd1oWE9frtoBLQC+BgSUG9jItDoRCQpvEeCXn8f1jSw3juRCgE2NS6BOBsCexlxsW5UAhI08rdEu6zYlgCoyXBZ56HQkABMk2tC0XrwP0EF92q4QPbBwQB6jdmIP8CkYAyMhAlIIjJsOvNY5DGEUh37pGUGGkQ9zabcG6qrkd5AlK1sZ3EMF54gUrX3ZXM5l+qlKBcgE3jg4Bs9oYkrxnPbddcgPkdIMu9IeUPxp0VmguwvgCo8YHU/3ncptZjAHt8BDxhXOzVOgHz3QpXAE3ruBjRWkABbrgW1YZhdgGkfQ5W9ruu09WUxZRK+OgsENSVmOpZnm885fuAcoKPWiBqgYAeRsqpDaI1oJxmI4haogQEYb2cxowSUE6zEUQtfwEJOe5BvxJGeQAAAABJRU5ErkJggg=="/>
                     <mapgis-ui-input v-if="dataSource.length === 1 || (dataSource.length > 1 && index === 0)"
                                      class="range-theme-num"
                                      @click="$_inputClick('start')"
-                                     v-model="startData">
+                                     v-model="startData"
+                                     v-bind:title="startData"
+                    >
                     </mapgis-ui-input>
                     <mapgis-ui-input v-if="index > 0" class="range-theme-num"
                                      @click="$_inputClick(index - 1)"
-                                     v-model="dataSource[index - 1]">
+                                     v-model="dataSource[index - 1]"
+                                     v-bind:title="dataSource[index - 1]"
+                    >
                     </mapgis-ui-input>
                   </div>
                   <div class="theme-panel-td theme-panel-td-range" style="width: 3%;padding-top: 4px">
@@ -1034,6 +1040,7 @@
                     <mapgis-ui-input class="range-theme-num"
                                      @click="$_inputClick(index)"
                                      v-model="dataSource[index]"
+                                     v-bind:title="dataSource[index]"
                                      >
                     </mapgis-ui-input>
                   </div>
@@ -2292,7 +2299,7 @@ export default {
 
 .theme-panel-options {
   width: 300px;
-  min-height: 618px;
+  min-height: 593px;
   margin-top: 8px;
   padding-top: 1px;
   margin-left: -4px;

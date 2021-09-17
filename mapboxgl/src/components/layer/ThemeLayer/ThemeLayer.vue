@@ -97,6 +97,9 @@ export default {
     },
     setLayerZoomRange(layerId,minzoom,maxzoom){
       this.$_setLayerZoomRange(layerId,minzoom,maxzoom);
+    },
+    getLegend(layerId){
+      return this.$_getLegend(layerId);
     }
   }
 }
