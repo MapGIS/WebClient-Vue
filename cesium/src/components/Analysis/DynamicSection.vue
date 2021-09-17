@@ -15,22 +15,14 @@
           {{ node.title }}
         </mapgis-ui-radio>
       </mapgis-ui-radio-group>
-      <div v-else>
-        暂无数据！
-      </div>
+      <div v-else>暂无数据！</div>
     </mapgis-ui-row>
     <mapgis-ui-group-tab title="坐标轴"> </mapgis-ui-group-tab>
     <mapgis-ui-row class="axis">
       <mapgis-ui-radio-group v-model="axis">
-        <mapgis-ui-radio value="X">
-          X轴
-        </mapgis-ui-radio>
-        <mapgis-ui-radio value="Y">
-          Y轴
-        </mapgis-ui-radio>
-        <mapgis-ui-radio value="Z">
-          Z轴
-        </mapgis-ui-radio>
+        <mapgis-ui-radio value="X"> X轴 </mapgis-ui-radio>
+        <mapgis-ui-radio value="Y"> Y轴 </mapgis-ui-radio>
+        <mapgis-ui-radio value="Z"> Z轴 </mapgis-ui-radio>
       </mapgis-ui-radio-group>
     </mapgis-ui-row>
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
@@ -44,7 +36,7 @@
         </mapgis-ui-sketch-color-picker>
       </a-form-item>
       <a-form-item label="动画时间">
-        <mapgis-ui-input-number v-model="time" :min="0" style="width:100%;" />
+        <mapgis-ui-input-number v-model="time" :min="0" style="width: 100%" />
       </a-form-item>
       <a-form-item label="剖切距离">
         <mapgis-ui-slider
@@ -63,23 +55,20 @@
       <mapgis-ui-button type="primary" @click="animation">
         动态效果
       </mapgis-ui-button>
-      <mapgis-ui-button @click="stopClipping">
-        清除
-      </mapgis-ui-button>
+      <mapgis-ui-button @click="stopClipping"> 清除 </mapgis-ui-button>
     </mapgis-ui-setting-footer>
   </div>
 </template>
 
 <script>
-import { Util } from "@mapgis/webclient-vue-ui";
-const { ColorUtil } = Util;
-import VueOptions from "../Base/Vue/VueOptions";
+import { makeColor } from "../Utils/util";
+import BaseLayer from "./BaseLayer";
 
 export default {
   name: "mapgis-3d-dynamic-section",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  mixins: [BaseLayer],
   props: {
-    ...VueOptions,
     // 模型集合
     models: {
       type: Array,
@@ -134,6 +123,9 @@ export default {
       handler: function(layers) {
         if (layers && layers.length > 0) {
           this.model = layers[layers.length - 1];
+          this.m3dIsReady().then(() => {
+            this.startClipping();
+          });
         } else {
           this.model = null;
         }
@@ -145,13 +137,7 @@ export default {
       deep: true,
       immediate: true,
       handler: function() {
-        if (this.model) {
-          const source = this.landscapeLayerFuc();
-          if (source && source.length > 0) {
-            this.zoomToM3dLayerBySource(source[0]);
-            this.startClipping();
-          }
-        }
+        this.changeModel();
       }
     },
     axis: {
@@ -164,9 +150,10 @@ export default {
     }
   },
   mounted() {
-    this.mount();
+    this.onOpen();
   },
   destroyed() {
+    this.onClose();
     this.unmount();
   },
   methods: {
@@ -209,20 +196,62 @@ export default {
       CesiumZondy.DynamicSectionAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
-    /**
-     * 获取剖切图层
-     */
-    landscapeLayerFuc() {
-      const { vueIndex } = this.model;
-      const m3d = this.CesiumZondy.M3DIgsManager.findSource(
-        this.vueKey,
-        vueIndex
-      );
-      if (!m3d || !m3d.hasOwnProperty("source") || !m3d.source) {
-        return null;
-      }
 
-      return m3d.source;
+    /**
+     * 打开模块
+     */
+    onOpen() {
+      this.isActive = true;
+      this.mount();
+      this.changeModel();
+    },
+
+    /**
+     * 关闭模块
+     */
+    onClose() {
+      this.stopClipping();
+      this.isActive = false;
+    },
+
+    changeModel() {
+      this.m3dIsReady().then(m3d => {
+        const { source } = m3d;
+        this.zoomToM3dLayerBySource(source[0]);
+        this.startClipping();
+      });
+    },
+
+    /**
+     * 判断传入的m3d图层是否加载完毕
+     */
+    m3dIsReady() {
+      const { webGlobe, CesiumZondy, vueKey, vueIndex, model, isActive } = this;
+      return new Promise((resolve, reject) => {
+        if (isActive && model && model.vueIndex) {
+          this.$_getM3DByInterval(
+            function(m3ds) {
+              if (m3ds && m3ds.length > 0) {
+                if (
+                  !m3ds[0] ||
+                  !m3ds[0].hasOwnProperty("source") ||
+                  !m3ds[0].source
+                ) {
+                  reject(null);
+                } else {
+                  resolve(m3ds[0]);
+                }
+              } else {
+                reject(null);
+              }
+            },
+            vueKey,
+            model.vueIndex
+          );
+        } else {
+          reject(null);
+        }
+      });
     },
 
     /**
@@ -260,71 +289,70 @@ export default {
      * 动画设置
      */
     animation() {
-      if (this.max == undefined || this.min == undefined) {
-        return;
-      }
-      this.clearTimer();
-      this.distance = this.min;
-      const self = this;
-      this.timer = window.setInterval(() => {
-        if (self.readonly === false) {
-          self.readonly = true;
+      this.m3dIsReady().then(() => {
+        if (this.max == undefined || this.min == undefined) {
+          return;
         }
-        const step = ((self.max - self.min) * 2) / (self.time * 10);
-        self.distance += step;
-        if (self.distance >= self.max) {
-          self.distance = self.min;
-        }
-        self.setDistance(self.distance);
-      }, 100);
+        this.clearTimer();
+        this.distance = this.min;
+        const self = this;
+        this.timer = window.setInterval(() => {
+          if (self.readonly === false) {
+            self.readonly = true;
+          }
+          const step = ((self.max - self.min) * 2) / (self.time * 10);
+          self.distance += step;
+          if (self.distance >= self.max) {
+            self.distance = self.min;
+          }
+          self.setDistance(self.distance);
+        }, 100);
+      });
     },
     /**
      * 结束分析
      */
-    stopClipping() {},
+    stopClipping() {
+      this.clearTimer();
+      this.removeDynaCut();
+    },
 
     /**
      * 开始分析分析
      */
     startClipping() {
-      if (this.model === null || this.models.length === 0) {
-        return;
-      }
-      // 获取切割图层
-      const landscapeLayer = this.landscapeLayerFuc();
-      if (!(landscapeLayer && landscapeLayer.length > 0)) {
-        return;
-      }
-      this.clearTimer();
-      this.removeDynaCut();
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.DynamicSectionAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
-      let { options } = find;
-      let { dynamicSectionAnalysis } = options;
-      const { viewer } = this.webGlobe;
+      this.m3dIsReady().then(m3d => {
+        this.clearTimer();
+        this.removeDynaCut();
+        let { CesiumZondy, vueKey, vueIndex } = this;
+        let find = CesiumZondy.DynamicSectionAnalysisManager.findSource(
+          vueKey,
+          vueIndex
+        );
+        let { options } = find;
+        let { dynamicSectionAnalysis } = options;
+        const { viewer } = this.webGlobe;
 
-      dynamicSectionAnalysis =
-        dynamicSectionAnalysis ||
-        new this.Cesium.CuttingTool(viewer, landscapeLayer);
-      // 剖切方向
-      const direction = this.clippingDirection();
-      // 创建剖切对象实例
-      dynamicSectionAnalysis.createModelCuttingPlane(direction, {
-        distance: 0,
-        color: this.edgeColor(),
-        // 剖切辅助面的宽高缩放比(基于模型球的半径)
-        scaleHeight: 2.0,
-        scaleWidth: 2.0
+        dynamicSectionAnalysis =
+          dynamicSectionAnalysis ||
+          new this.Cesium.CuttingTool(viewer, m3d.source);
+        // 剖切方向
+        const direction = this.clippingDirection();
+        // 创建剖切对象实例
+        dynamicSectionAnalysis.createModelCuttingPlane(direction, {
+          distance: 0,
+          color: this.edgeColor(),
+          // 剖切辅助面的宽高缩放比(基于模型球的半径)
+          scaleHeight: 2.0,
+          scaleWidth: 2.0
+        });
+        CesiumZondy.DynamicSectionAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "dynamicSectionAnalysis",
+          dynamicSectionAnalysis
+        );
       });
-      CesiumZondy.DynamicSectionAnalysisManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "dynamicSectionAnalysis",
-        dynamicSectionAnalysis
-      );
     },
     /**
      * RGB/RGBA转Cesium内部颜色值
@@ -332,23 +360,7 @@ export default {
      */
     edgeColor() {
       const { color } = this;
-      let cesiumColor;
-      if (color.includes("rgb")) {
-        // 如果是rgb或者rgba
-        const a = color.split("(")[1].split(")")[0];
-        const arr = a.split(",");
-        const cesiumRed = Number((Number(arr[0]) / 255).toFixed(2));
-        const cesiumGreen = Number((Number(arr[1]) / 255).toFixed(2));
-        const cesiumBlue = Number((Number(arr[2]) / 255).toFixed(2));
-        const cesiumAlpha = Number(arr[3] ? arr[3] : 1);
-        cesiumColor = this.webGlobe.getColor(
-          cesiumRed,
-          cesiumGreen,
-          cesiumBlue,
-          cesiumAlpha
-        );
-      }
-      return cesiumColor;
+      return makeColor(color);
     },
     /**
      * 移除动态剖切对象
