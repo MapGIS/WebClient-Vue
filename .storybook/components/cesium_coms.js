@@ -51,7 +51,7 @@ export { default as Mapgis3dAspect } from "../../cesium/src/components/Analysis/
 export { default as Mapgis3dSlope } from "../../cesium/src/components/Analysis/Slope";
 export { default as Mapgis3dCutFill } from "../../cesium/src/components/Analysis/CutFill";
 // export { default as Mapgis3dFill } from "../../cesium/src/components/Analysis/Fill";
-export { default as Mapgis3dDynamicCutting } from "../../cesium/src/components/Analysis/DynamicCutting";
+// export { default as Mapgis3dDynamicCutting } from "../../cesium/src/components/Analysis/DynamicCutting";
 export { default as Mapgis3dDynamicSection } from "../../cesium/src/components/Analysis/DynamicSection";
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";

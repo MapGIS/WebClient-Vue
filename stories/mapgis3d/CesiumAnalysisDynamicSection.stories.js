@@ -2,7 +2,7 @@ import "../style/card.css";
 // import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
 
 export default {
-  title: "三维/分析/剖面分析",
+  title: "三维/分析/剖切分析",
 };
 
 const Template = (args, { argTypes }) => ({
