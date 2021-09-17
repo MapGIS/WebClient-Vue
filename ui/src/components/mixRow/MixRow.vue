@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mapgis-ui-row class="mix-row" v-if="type === 'slider'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiSlider'">
       <mapgis-ui-col :span="sliderProps.titleCol">
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
@@ -32,7 +32,7 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'select'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiSelect'">
       <mapgis-ui-col :span="selectProps.titleCol">
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
@@ -82,7 +82,7 @@
         </mapgis-ui-select>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'colorPicker'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiColorPicker'">
       <mapgis-ui-col :span="colorPickerProps.titleCol">
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
@@ -114,7 +114,7 @@
         </mapgis-ui-select>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'input'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiInput'">
       <mapgis-ui-col :span="inputProps.titleCol">
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
@@ -138,7 +138,7 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'inputNumber'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiInputNumber'">
       <mapgis-ui-col :span="inputNumberProps.titleCol">
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
