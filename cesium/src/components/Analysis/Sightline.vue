@@ -1,398 +1,330 @@
 <template>
-    <div
-        :class="[
-            'edit-wrapper-vshed',
-            { right: position === 'right', left: position === 'left' },
-        ]"
-    >
-        <div
-            class="card-title"
-            :style="{
-                background: 'rgb(38, 151, 204)',
-                padding: '5px',
-                color: 'white',
-            }"
-        >
-            通视分析
-        </div>
-        <mapgis-ui-card class="box-card-vshed attr-table">
-            <div class="starting">
-                起始点:
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.startLon" :disabled="!form.startLon">
-                        <span slot="prefix">经度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="startLonMax"
-                        :min="startLonMin"
-                        :disabled="!form.startLon"
-                        :value="parseFloat(form.startLon)"
-                        @change="setInput($event, 'startLon')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.startLat" :disabled="!form.startLat">
-                        <span slot="prefix">纬度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="startLatMax"
-                        :min="startLatMin"
-                        :disabled="!form.startLat"
-                        :value="parseFloat(form.startLat)"
-                        @change="setInput($event, 'startLat')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.startAlt" :disabled="!form.startAlt">
-                        <span slot="prefix">高度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="10"
-                        :max="startAltMax"
-                        :min="startAltMin"
-                        :disabled="!form.startAlt"
-                        :value="parseFloat(form.startAlt)"
-                        @change="setInput($event, 'startAlt')"
-                    />
-                </div>
-            </div>
-            <div class="ending">
-                结束点:
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.endLon" :disabled="!form.endLon">
-                        <span slot="prefix">经度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="endLonMax"
-                        :min="endLonMin"
-                        :disabled="!form.endLon"
-                        :value="parseFloat(form.endLon)"
-                        @change="setInput($event, 'endLon')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.endLat" :disabled="!form.endLat">
-                        <span slot="prefix">纬度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="endLatMax"
-                        :min="endLatMin"
-                        :disabled="!form.endLat"
-                        :value="parseFloat(form.endLat)"
-                        @change="setInput($event, 'endLat')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.endAlt" :disabled="!form.endAlt">
-                        <span slot="prefix">高度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="10"
-                        :max="endAltMax"
-                        :min="endAltMin"
-                        :disabled="!form.endAlt"
-                        :value="parseFloat(form.endAlt)"
-                        @change="setInput($event, 'endAlt')"
-                    />
-                </div>
-            </div>
-            <mapgis-ui-button class="content" type="primary" @click="initSightline"
-                >点击绘制</mapgis-ui-button
-            >
-            <mapgis-ui-button
-                class="content-clear"
-                type="primary"
-                @click="clearSightline"
-                >清除</mapgis-ui-button
-            >
-        </mapgis-ui-card>
-    </div>
+  <div class="mapgis-widget-visibility-analysis">
+    <mapgis-ui-form-model v-model="formData" v-bind="layout">
+      <mapgis-ui-form-model-item label="附加高度(米)">
+        <mapgis-ui-input
+            v-model.number="formData.exHeight"
+            type="number"
+            :min="0"
+            :step="0.1"
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="不可视区域颜色">
+        <mapgis-ui-sketch-color-picker
+            :disableAlpha="false"
+            :color="formData.unVisibleColor"
+            @input="
+              val =>
+                (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+        ></mapgis-ui-sketch-color-picker>
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="可视区域颜色">
+        <mapgis-ui-sketch-color-picker
+            :disableAlpha="false"
+            :color="formData.visibleColor"
+            @input="
+              val =>
+                (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+        ></mapgis-ui-sketch-color-picker>
+      </mapgis-ui-form-model-item>
+    </mapgis-ui-form-model>
+    <mapgis-ui-setting-footer>
+      <a-button type="primary" @click="onClickStart">分析</a-button>
+      <a-button @click="onClickStop">清除</a-button>
+    </mapgis-ui-setting-footer>
+  </div>
 </template>
 
 <script>
+import VueOptions from "../Base/Vue/VueOptions";
+
 export default {
-    name: "mapgis-3d-sightline",
-    inject: ["Cesium", "CesiumZondy", "webGlobe"],
-    props: {
-        index: {
-            type: Number,
-            default: 0,
-        },
-        position: {
-            type: String,
-            default: "right",
-        },
-    },
-    data() {
-        return {
-            //定义是否正在执行通视分析
-            visiblitying: false,
-            visiblityAn: false,
-            visiblity3daction: false,
+  name: "mapgis-3d-sightline",
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  props: {
+    ...VueOptions
+  },
+  data() {
+    return {
+      layout: {
+        labelCol: {span: 9},
+        wrapperCol: {span: 15},
+      },
+      formData: {
+        exHeight: 1.85,
+        visibleColor: '#008000',
+        unVisibleColor: '#ff0000'
+      },
+      // 是否为鼠标注册了监听事件
+      isAddEventListener: false,
 
-            startLonMin: 0,
-            startLatMin: 0,
-            startAltMin: 0,
-            endLonMin: 0,
-            endLatMin: 0,
-            endAltMin: 0,
-            startLonMax: 0,
-            startLatMax: 0,
-            startAltMax: 0,
-            endLonMax: 0,
-            endLatMax: 0,
-            endAltMax: 0,
-            form: {
-                startLon: 0,
-                startLat: 0,
-                startAlt: 0,
-                endLon: 0,
-                endLat: 0,
-                endAlt: 0,
-            },
-        };
-    },
-    watch: {
-        form: {
-            deep: true,
-            handler: function (val) {
-                let find = this.findSource();
-                let visiblity = window.visiblity[this.index][find.index];
-                if (visiblity !== null && typeof visiblity !== "undefined") {
-                    if (val.startLon && val.startLat && val.startAlt) {
-                        visiblity.viewPosition = Cesium.Cartesian3.fromDegrees(
-                            val.startLon,
-                            val.startLat,
-                            val.startAlt
-                        );
-                    }
-                    if (val.endLon && val.endLat && val.endAlt) {
-                        visiblity.targetPosition = Cesium.Cartesian3.fromDegrees(
-                            val.endLon,
-                            val.endLat,
-                            val.endAlt
-                        );
-                    }
-                }
-            },
-        },
-    },
-    methods: {
-        setInput(event, data) {
-            this.form[data] = event;
-        },
-        findSource() {
-            const vm = this;
-            let index = -1;
-            let find = window.visiblity[this.index].find((s, i) => {
-                let result = false;
-                let { layer } = vm;
-                if (s instanceof Cesium.VisiblityAnalysis) {
-                    index = i;
-                    result = true;
-                }
-                return result;
-            });
-            return { index: index, value: find };
-        },
-        initSightline() {
-            const { webGlobe } = this;
-            let viewer = webGlobe.viewer;
-            let that = this;
-            viewer.scene.globe.depthTestAgainstTerrain = true;
-            //注册鼠标左键点击事件
-            function left(movement) {
-                let find = that.findSource();
-                let visiblity = window.visiblity[that.index][find.index];
-                viewer.scene.globe.enableTransparent = false;
-                //判断是否初始化过通视分析类
-                if (that.visiblity3daction) {
-                    //获取鼠标点击位置
-                    var cartesian = viewer.getCartesian3Position(
-                        movement.position,
-                        cartesian
-                    );
-                    //第一个点
-                    if (cartesian != undefined && !that.visiblitying) {
-                        //设置通视分析观察点
-                        // visiblity.viewPosition = cartesian;
+      // 是否已选择观察点位置
+      hasViewPosition: false,
 
-                        let cartographic = Cesium.Cartographic.fromCartesian(
-                            cartesian
-                        );
-                        let lng = Cesium.Math.toDegrees(cartographic.longitude);
-                        let lat = Cesium.Math.toDegrees(cartographic.latitude);
-                        //模型高度
-                        let height = cartographic.height;
-                        that.form.startLon = lng;
-                        that.form.startLat = lat;
-                        that.form.startAlt = height;
+      // 观察点
+      viewPoint: undefined,
 
-                        viewer.scene.VisualAnalysisManager.add(visiblity);
-                        //设置为正在通视分析
-                        that.visiblitying = true;
+      // 目标点
+      targetPoint: undefined,
 
-                        that.startLonMin = that.form.startLon - 0.001;
-                        that.startLatMin = that.form.startLat - 0.001;
-                        that.startAltMin = that.form.startAlt - 100;
-                        that.startLonMax = that.form.startLon + 0.001;
-                        that.startLatMax = that.form.startLat + 0.001;
-                        that.startAltMax = that.form.startAlt + 100;
-                    } else {
-                        if (that.visiblitying) {
-                            //设置通视分析结果点
-                            // visiblity.targetPosition = cartesian;
-                            //设置为不在通视分析
-                            that.visiblitying = false;
-                            that.visiblity3daction = false;
-                        }
-                    }
-                }
+      // 观察点坐标
+      viewPosition: undefined,
+
+      //clone formData
+      formDataCloneVal: undefined,
+
+      //通视分析结果集
+      visibilityArr: []
+    };
+  },
+  watch: {
+    formDataCloneVal: {
+      deep: true,
+      handler: function (newVal, oldVal) {
+        const unVisibleColor = new this.Cesium.Color.fromCssColorString(
+            newVal.unVisibleColor
+        )
+        const visibleColor = new this.Cesium.Color.fromCssColorString(
+            newVal.visibleColor
+        )
+        if (this.visibilityArr.length > 0) {
+          this.visibilityArr.forEach(item => {
+            item._unvisibleColor = unVisibleColor;
+            item._visibleColor = visibleColor;
+            if (newVal.exHeight !== oldVal.exHeight) {
+              // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
+              item.exHeight = newVal.exHeight - oldVal.exHeight;
+
+              // 改变观察点坐标
+              this.viewPoint.position._value = item.viewPosition;
+              // 记录新的观察点坐标
+              this.viewPosition = item.viewPosition;
             }
-            //鼠标右键结束
-            function right(movement) {
-                let find = that.findSource();
-                let visiblity = window.visiblity[that.index][find.index];
-                //判断是否正在通视分析
-                if (that.visiblitying) {
-                    //设置通视分析结果点
-                    // visiblity.targetPosition = cartesian;
-                    //设置不在通视分析
-                    that.visiblitying = false;
-                    that.visiblity3daction = false;
-                }
-            }
-            //鼠标移动事件
-            function move(movement) {
-                let find = that.findSource();
-                let visiblity = window.visiblity[that.index][find.index];
-                //判断是否正在通视分析
-                if (that.visiblitying) {
-                    //获取鼠标位置
-                    var cartesian = viewer.getCartesian3Position(
-                        movement.endPosition,
-                        cartesian
-                    );
-                    if (cartesian) {
-                        //设置通视分析结果点
-                        // visiblity.targetPosition = cartesian;
-
-                        let cartographic = Cesium.Cartographic.fromCartesian(
-                            cartesian
-                        );
-                        let lng = Cesium.Math.toDegrees(cartographic.longitude);
-                        let lat = Cesium.Math.toDegrees(cartographic.latitude);
-                        //模型高度
-                        let height = cartographic.height;
-                        that.form.endLon = lng;
-                        that.form.endLat = lat;
-                        that.form.endAlt = height;
-
-                        that.endLonMin = that.form.endLon - 0.001;
-                        that.endLatMin = that.form.endLat - 0.001;
-                        that.endAltMin = that.form.endAlt - 100;
-                        that.endLonMax = that.form.endLon + 0.001;
-                        that.endLatMax = that.form.endLat + 0.001;
-                        that.endAltMax = that.form.endAlt + 100;
-                    }
-                }
-            }
-            if (that.visiblityAn === false) {
-                window.visiblity[that.index].push(
-                    new Cesium.VisiblityAnalysis(viewer.scene)
-                );
-                //获取三位场景视图对象
-                that.visiblityAn = true;
-                that.visiblitying = false;
-                that.visiblity3daction = true;
-                //注册事件
-                webGlobe.registerMouseEvent("LEFT_CLICK", left);
-                webGlobe.registerMouseEvent("RIGHT_CLICK", right);
-                webGlobe.registerMouseEvent("MOUSE_MOVE", move);
-            }
-        },
-        clearSightline() {
-            const { webGlobe } = this;
-            let that = this;
-            let find = that.findSource();
-            webGlobe.viewer.scene.globe.depthTestAgainstTerrain = true;
-            if (that.visiblityAn === true) {
-                //注销事件
-                webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-                webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
-                webGlobe.unRegisterMouseEvent("MOUSE_MOVE");
-                //移除通视分析结果
-                webGlobe.viewer.scene.VisualAnalysisManager.remove(
-                    window.visiblity[this.index][find.index]
-                );
-                that.visiblityAn = false;
-                that.visiblitying = false;
-                that.visiblity3daction = false;
-                //销毁通视分析类
-                delete window.visiblity[this.index][find.index];
-                that.form.endLon = 0;
-                that.form.endLat = 0;
-                that.form.endAlt = 0;
-                that.form.startLon = 0;
-                that.form.startLat = 0;
-                that.form.startAlt = 0;
-
-                that.startLonMin = 0;
-                that.startLatMin = 0;
-                that.startAltMin = 0;
-                that.endLonMin = 0;
-                that.endLatMin = 0;
-                that.endAltMin = 0;
-                that.startLonMax = 0;
-                that.startLatMax = 0;
-                that.startAltMax = 0;
-                that.endLonMax = 0;
-                that.endLatMax = 0;
-                that.endAltMax = 0;
-            }
-        },
+          })
+        }
+      }
+    }
+  },
+  methods: {
+    async createCesiumObject() {
+      const {baseUrl, options} = this;
+      // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
+      return new Promise(
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
+      );
     },
-    mounted() {
-        window.visiblity = window.visiblity || [[], []];
-    },
-    destroyed() {
-        const { webGlobe } = this;
-        let find = this.findSource();
-        webGlobe.viewer.scene.VisualAnalysisManager.remove(
-            window.visiblity[this.index][find.index]
+    mount() {
+      const {webGlobe, CesiumZondy, vueKey, vueIndex} = this;
+      const {viewer} = webGlobe;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
+        vm.$emit("load", {component: this});
+        CesiumZondy.VisiblityAnalysisManager.addSource(
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              visiblityAnalysis: null
+            }
         );
-        delete window.visiblity;
-        window.visiblity = [[], []];
+      });
     },
+    unmount() {
+      let {CesiumZondy, vueKey, vueIndex} = this;
+      this.onClickStop();
+      CesiumZondy.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
+    },
+    formDataClone() {
+      let vm = this;
+      vm.formDataCloneVal = JSON.parse(JSON.stringify(this.formData));
+      return vm.formDataCloneVal;
+    },
+    findSource() {
+      let {CesiumZondy, vueKey, vueIndex} = this;
+      let find = CesiumZondy.VisiblityAnalysisManager.findSource(vueKey, vueIndex);
+      return find;
+    },
+    // 点击“分析”按钮回调
+    onClickStart() {
+      this.onClickStop()
+      // this.isOpenDepthTest()
+      this.addEventListener()
+    },
+
+    // 创建通视分析工具
+    createVisibility() {
+  const unVisibleColor = new this.Cesium.Color.fromCssColorString(
+      this.formData.unVisibleColor
+  )
+  const visibleColor = new this.Cesium.Color.fromCssColorString(
+      this.formData.visibleColor
+  )
+
+  // 初始化高级分析功能管理类
+  const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
+      {
+        viewer: this.webGlobe.viewer
+      }
+  )
+
+  // 初始化通视分析类
+  const visibility = advancedAnalysisManager.createVisibilityAnalysis()
+  visibility._unvisibleColor = unVisibleColor
+  visibility._visibleColor = visibleColor
+
+  this.visibilityArr.push(visibility)
+
+  return visibility
+},
+
+    // 点击“结束分析”按钮回调
+    onClickStop() {
+      // 注销鼠标的各项监听事件
+      this.webGlobe.unRegisterMouseEvent('LEFT_CLICK')
+      this.webGlobe.unRegisterMouseEvent('RIGHT_CLICK')
+
+      this.webGlobe.viewer.entities.removeAll()
+
+      if (this.visibilityArr.length > 0) {
+        this.visibilityArr.forEach(item => {
+          // 移除通视分析结果
+          this.webGlobe.viewer.scene.VisualAnalysisManager.remove(item)
+          // 销毁通视分析类
+          item.destroy()
+        })
+      }
+
+      this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false
+      this.hasViewPosition = false
+      this.isAddEventListener = false
+      this.visibilityArr = []
+    },
+
+    // 为鼠标的各种行为注册监听事件
+    addEventListener() {
+      if (!this.isAddEventListener) {
+        this.webGlobe.registerMouseEvent('LEFT_CLICK', event => {
+          this.registerMouseLClickEvent(event)
+        })
+        this.webGlobe.registerMouseEvent('RIGHT_CLICK', event => {
+          this.registerMouseRClickEvent(event)
+        })
+
+        this.isAddEventListener = true
+      }
+    },
+
+    // 注册通视分析鼠标左键点击事件
+    registerMouseLClickEvent(event) {
+      let cartesian = this.webGlobe.viewer.getCartesian3Position(event.position)
+
+      if (!this.hasViewPosition && cartesian !== undefined) {
+        // 若还未选择观察点,则记录下观察点坐标
+
+        // 获取当前坐标系标准
+        const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid
+        // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
+        const cartographic = ellipsoid.cartesianToCartographic(cartesian)
+        // 抬高观察点
+        cartographic.height += this.formData.exHeight
+
+        cartesian = this.Cesium.Cartographic.toCartesian(cartographic)
+        this.viewPosition = cartesian
+
+        // 添加观察点到地图
+        this.addViewPoint(cartesian)
+        this.hasViewPosition = true
+      } else {
+        const visibility = this.createVisibility()
+
+        // 设置通视分析观察点坐标
+        visibility.viewPosition = this.viewPosition
+
+        // 设置通视分析结束点坐标
+        visibility.targetPosition = cartesian
+
+        // 添加目标点到地图
+        this.addTargetPoint(cartesian)
+      }
+    },
+
+    // 注册通视分析鼠标右键点击事件
+    registerMouseRClickEvent(event) {
+      // 注销鼠标的各项监听事件
+      this.webGlobe.unRegisterMouseEvent('LEFT_CLICK')
+      this.webGlobe.unRegisterMouseEvent('RIGHT_CLICK')
+      this.isAddEventListener = false
+    },
+
+    // 添加观察点到地图上
+    addViewPoint(cartesian) {
+      this.removeViewPoint()
+
+      this.viewPoint = this.webGlobe.viewer.entities.add({
+        position: cartesian,
+        point: {
+          color: this.Cesium.Color.BLUE,
+          pixelSize: 10
+        }
+      })
+    },
+
+    // 添加目标点到地图上
+    addTargetPoint(cartesian) {
+      this.removeTargetPoint()
+
+      this.targetPoint = this.webGlobe.viewer.entities.add({
+        position: cartesian,
+        point: {
+          color: this.Cesium.Color.RED,
+          pixelSize: 10
+        }
+      })
+    },
+
+    // 从地图上移除观察点
+    removeViewPoint() {
+      if (this.viewPoint) this.webGlobe.viewer.entities.remove(this.viewPoint)
+    },
+
+    // 从地图上移除目标点
+    removeTargetPoint() {
+      if (this.targetPoint) this.webGlobe.viewer.entities.remove(this.targetPoint)
+    }
+  },
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
+  },
 };
 </script>
 
 <style scoped>
 ::v-deep .mapgis-ui-card-body {
-    max-height: 400px;
-    overflow: auto;
+  /*max-height: 400px;*/
+  /*overflow: auto;*/
+  padding: 16px;
+}
+
+::v-deep .mapgis-ui-form-item-label {
+  line-height: 40px;
+}
+::v-deep .mapgis-ui-form label {
+  font-size: 12px;
+}
+::v-deep .mapgis-ui-form-item {
+  margin-bottom: 0;
 }
 ::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
-    padding-left: 45px;
-}
-.edit-wrapper-vshed.right {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-}
-.edit-wrapper-vshed.left {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+  padding-left: 45px;
 }
 </style>
