@@ -1,3 +1,6 @@
+import "../style/card.css";
+import Markdown from "../../cesium/docs/api/analysis/Skyline.md";
+
 export default {
     title: "三维/分析/天际线"
 };
@@ -16,10 +19,19 @@ const Template = (args, { argTypes }) => ({
     <mapgis-web-scene>
         <mapgis-3d-raster-layer :url="url" />
         <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
+        <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-skyline></mapgis-3d-skyline>
+        </mapgis-ui-card>
     </mapgis-web-scene>
     `
 });
 
 export const Skyline = Template.bind({});
 Skyline.args = {}
+Skyline.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
+};

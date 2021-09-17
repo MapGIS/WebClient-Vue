@@ -1,29 +1,6 @@
-<!--<template>-->
-<!--  <div :class="['skyl',{ right: position === 'right', left: position === 'left' }]">-->
-<!--    <div-->
-<!--        class="card-title"-->
-<!--        :style="{-->
-<!--                background: 'rgb(38, 151, 204)',-->
-<!--                padding: '5px',-->
-<!--                color: 'white',-->
-<!--            }"-->
-<!--    >-->
-<!--      天际线分析-->
-<!--    </div>-->
-<!--    <mapgis-ui-card>-->
-<!--    <mapgis-ui-button class="content" type="primary" @click="startSkyLine"-->
-<!--    >开始绘制</mapgis-ui-button-->
-<!--    >-->
-<!--    <mapgis-ui-button-->
-<!--        class="content-clear"-->
-<!--        type="primary"-->
-<!--        @click="clearSkyLine"-->
-<!--    >清除</mapgis-ui-button>-->
-<!--    </mapgis-ui-card>-->
-<!--  </div>-->
-<!--</template>-->
 <template>
-  <div :class="['mapgis-widget-skyline-analysis',{ right: position === 'right', left: position === 'left' }]">
+  <div>
+  <div class="mapgis-widget-skyline-analysis">
     <mapgis-ui-setting-form :wrapper-width="200">
       <mapgis-ui-mix-row
         title="观察者信息"
@@ -49,8 +26,9 @@
       <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
     <div class="skyline-analysis-mask" v-show="!!loading"/>
+  </div>
     <!-- 二维天际线 -->
-    <mapgis-ui-window-wrapper :visible="skyline2dVisible">
+<!--    <mapgis-ui-window-wrapper :visible="skyline2dVisible">-->
       <mapgis-ui-window
           @window-size="onSkyline2dWindowSize"
           :visible.sync="skyline2dVisible"
@@ -63,7 +41,7 @@
           <div id="skyline-2d-chart"/>
         </div>
       </mapgis-ui-window>
-    </mapgis-ui-window-wrapper>
+<!--    </mapgis-ui-window-wrapper>-->
   </div>
 </template>
 <script>
@@ -76,21 +54,11 @@ import { colorToCesiumColor, getCenterPosition } from "../WebGlobe/util";
 export default {
   name: "mapgis-3d-skyline",
   props: {
-    index: {
-      type: Number,
-      default: 0,
-    },
-    position: {
-      type: String,
-      default: "right",
-    },
     ...VueOptions
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   data() {
     return {
-      //定义天地线分析
-      // skyLineAn:false
       formData: {
         skylineWidth: 2,
         skylineColor: 'rgb(255,0,0)'
@@ -227,7 +195,6 @@ export default {
     },
     add() {
       this.remove();
-      debugger
       let {CesiumZondy, vueKey, vueIndex} = this;
       const {viewer} = this.webGlobe;
       let find = CesiumZondy.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
@@ -260,7 +227,6 @@ export default {
      * @param mode
      */
     onSkyline2dWindowSize(mode) {
-      debugger
       this.$nextTick(() => {
         if (this.skyline2dChart) {
           const width =
@@ -287,22 +253,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-//::v-deep .ant-card-body {
-//  max-height: 300px;
-//  overflow: auto;
-//}
-.mapgis-widget-skyline-analysis.right {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-.mapgis-widget-skyline-analysis.left {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
 ::v-deep {
   .mapgis-ui-row-flex {
     margin-bottom: 12px;
@@ -328,36 +278,27 @@ export default {
 }
 
 .mapgis-widget-skyline-analysis {
-  //display: flex;
-  //flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  position: relative;
   .skyline-analysis-mask {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
+    background-color: white;
     //background: fade($white, 40%);
     z-index: 2;
   }
 }
 
-//.mapgis-footer-actions {
-//  display: flex;
-//  align-items: center;
-//  justify-content: flex-end;
-//  margin-top: 12px;
-//  padding-top: 12px;
-//  //border-top: 1px solid $div-border-color;
-//  &.center {
-//    justify-content: center;
-//
-//    .ant-btn {
-//      margin: 0 4px;
-//    }
-//  }
+.storybook-ui-card {
+  //position: absolute;
+  //top: 10px;
+  //left: 10px;
+  //z-index: 1000;
+  background-color:#fff;
+}
 
-  ///deep/ .ant-btn {
-  //  margin-left: 8px;
-  //}
-//}
 </style>
