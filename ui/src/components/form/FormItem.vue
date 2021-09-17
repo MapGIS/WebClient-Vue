@@ -17,13 +17,6 @@ export default {
   model: {},
   props: formItemProps,
   computed: {},
-  methods: {
-    // onFieldBlur() {
-    //   this.$children[0].onFieldBlur();
-    // },
-    // onFieldChange() {
-    //   this.$children[0].onFieldChange();
-    // }
-  }
+  methods: {}
 };
 </script>
