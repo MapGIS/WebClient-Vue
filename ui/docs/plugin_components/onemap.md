@@ -33,22 +33,23 @@
 
 
 ## 样式变量问题汇总
+
 若遇到`ui\src\util\style\theme\theme.scss`里找不到的样式变量，可填写至下表。（本md文件路径：`ui\docs\plugin_components\onemap.md`）。
 
 | theme.scss中未找到 | 局部已有定义，需要放到theme.scss |
 | :---------------- | :----------------------------- |
 | $base-bg-color | $size-lg |
-| $border-color | $size-md |
-|  | $size-sm |
+| $border-color  | $size-md |
+|                | $size-sm |
 
 
 
 
 ## 注
-1、目前mapgis-ui暂未封装`<a-form>`组件，若组件移植过程中遇到`<a-form>`或`<a-form-item>`，请先继续保留`a-`，不要修改为`mapgis-ui-`；
 
-2、Select、Input组件已添加属性：`autoWidth`，设置为true时可实现宽度100%自适应。
+1、Select、Input组件已添加属性：`autoWidth`，设置为true时可实现宽度100%自适应。
 
+2、`<mapgis-ui-form>`和`<mapgis-ui-form-item>`组件已封装完成！！！
 
 
 
