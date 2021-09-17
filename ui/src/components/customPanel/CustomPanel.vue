@@ -31,6 +31,7 @@
             :value="item.value"
             :type="item.type"
             :ref="item.id"
+            :regExp="item.regExp"
         />
         <mapgis-ui-mix-row
             v-if="item.type === 'MapgisUiInputNumber'"

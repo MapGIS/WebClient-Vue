@@ -119,22 +119,31 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputProps.inputCol">
-        <mapgis-ui-input
-            v-model="valueCopy"
-            :placeholder="inputProps.placeholder"
-            :addonAfter="inputProps.addonAfter"
-            :addonBefore="inputProps.addonBefore"
-            :disabled="inputProps.disabled"
-            :id="inputProps.id"
-            :maxLength="inputProps.maxLength"
-            :prefix="inputProps.prefix"
-            :size="inputProps.size"
-            :suffix="inputProps.suffix"
-            :type="inputProps.type"
-            :allowClear="inputProps.allowClear"
-            @change="$_change"
-            @pressEnter="$_pressEnter"
-            :style="mainStyle"
+        <mapgis-ui-form-item
+            :validate-status="validateStatus"
+        >
+          <mapgis-ui-input
+              v-model="valueCopy"
+              :placeholder="inputProps.placeholder"
+              :addonAfter="inputProps.addonAfter"
+              :addonBefore="inputProps.addonBefore"
+              :disabled="inputProps.disabled"
+              :id="inputProps.id"
+              :maxLength="inputProps.maxLength"
+              :prefix="inputProps.prefix"
+              :size="inputProps.size"
+              :suffix="inputProps.suffix"
+              :type="inputProps.type"
+              :allowClear="inputProps.allowClear"
+              @change="$_change"
+              @pressEnter="$_pressEnter"
+              :style="mainStyle"
+          />
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item
+            validate-status="error"
+            help="Should be combination of numbers & alphabets"
+            v-if="validateStatus === 'error'"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -172,6 +181,7 @@ export default {
     return {
       valueCopy: undefined,
       fieldCopy: undefined,
+      validateStatus: "success",
       sliderProps: {
         //滑动最大值
         sliderMax: 200,
@@ -317,6 +327,12 @@ export default {
       type: String
     },
     /**
+     * 正则表达式
+     * */
+    regExp: {
+      type: String
+    },
+    /**
      * 字段值
      * */
     value: {
@@ -417,6 +433,16 @@ export default {
       let colorBtn = colorDocument.childNodes;
     },
     $_change(e) {
+      if(this.type === "MapgisUiInput"){
+        if(this.regExp){
+          let regExp = new RegExp(this.regExp);
+          if(!regExp.test(this.valueCopy)){
+            this.validateStatus = "error";
+          }else {
+            this.validateStatus = "success";
+          }
+        }
+      }
       this.$emit("change", e);
     },
     $_afterChange(e) {
