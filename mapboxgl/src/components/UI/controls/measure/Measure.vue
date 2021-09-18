@@ -35,8 +35,10 @@
         v-if="coordinates.length > 0 && enableControl"
       >
         <div slot="marker" class="mapgis-measure-control-label">
-          <div>面积：{{ area }}</div>
-          <div>周长：{{ perimeter }}</div>
+          <div class="mapgis-measure-control-label-span">面积：{{ area }}</div>
+          <div class="mapgis-measure-control-label-span">
+            周长：{{ perimeter }}
+          </div>
         </div>
       </mapgis-marker>
     </div>
@@ -340,7 +342,7 @@ export default {
           measureMode === measureModes.measureLength ||
           innermeasureMode === measureModes.measureLength
         ) {
-          console.log('measure length');
+          console.log("measure length");
           center = turf.centroid(turf.lineString(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           projectionPerimeter = 0;
@@ -353,7 +355,7 @@ export default {
           measureMode === measureModes.measureArea ||
           innermeasureMode === measureModes.measureArea
         ) {
-          console.log('measure area');  
+          console.log("measure area");
           center = turf.centroid(turf.polygon(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           geographyArea = turf.area(data);
@@ -490,5 +492,10 @@ export default {
   /*top: 10px;*/
   /*left: 10px;*/
   z-index: 3000;
+}
+
+.mapgis-measure-control-label-span {
+  background: #ffffff;
+  color: #fbb03b;
 }
 </style>
