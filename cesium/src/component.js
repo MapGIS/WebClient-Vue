@@ -37,7 +37,7 @@ export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
 export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.vue";
 // export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 
-export { default as Mapgis3dIGSTerrainProvider } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
+export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
 
 // 数据源
@@ -53,14 +53,16 @@ export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as DynamicCutting } from "./components/Analysis/DynamicCutting";
+export { default as DynamicSection } from "./components/Analysis/DynamicSection";
 export { default as Fill } from "./components/Analysis/Fill";
-export { default as Mapfis3dAspect } from "./components/Analysis/Aspect";
+export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
+export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
+export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
 export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
-
 
 export { default as Mapgis3dRainEffect } from "./components/SceneEffect/RainEffect";
 export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";

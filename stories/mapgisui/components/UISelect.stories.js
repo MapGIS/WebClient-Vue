@@ -26,7 +26,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
   <div>
-  <mapgis-ui-select default-value="lucy" style="width: 120px">
+  <mapgis-ui-select default-value="上海" :autoWidth="autoWidth">
       <mapgis-ui-select-option value="武汉">
         武汉
       </mapgis-ui-select-option>
@@ -40,12 +40,12 @@ const Template = (args, { argTypes }) => ({
         北京
       </mapgis-ui-select-option>
     </mapgis-ui-select>
-    <mapgis-ui-select default-value="武汉" style="width: 120px" disabled>
+    <mapgis-ui-select default-value="武汉" disabled>
       <mapgis-ui-select-option value="武汉">
         武汉
       </mapgis-ui-select-option>
     </mapgis-ui-select>
-    <mapgis-ui-select default-value="武汉" style="width: 120px" loading>
+    <mapgis-ui-select default-value="武汉" loading>
       <mapgis-ui-select-option value="武汉">
         武汉
       </mapgis-ui-select-option>
@@ -55,7 +55,9 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const Select = Template.bind({});
-Select.args = {};
+Select.args = {
+  autoWidth: true
+};
 
 const Template2 = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
@@ -88,7 +90,7 @@ const Template3 = (args, { argTypes }) => ({
   methods: {
   },
   template: `
-  <mapgis-ui-select long default-value="武汉">
+  <mapgis-ui-select default-value="武汉" :autoWidth="autoWidth">
     <mapgis-ui-select-opt-group>
       <span slot="label">湖北省</span>
       <mapgis-ui-select-option value="黄冈">
@@ -108,4 +110,6 @@ const Template3 = (args, { argTypes }) => ({
 });
 
 export const GroupSelect = Template3.bind({});
-GroupSelect.args = {};
+GroupSelect.args = {
+  autoWidth: true  
+};

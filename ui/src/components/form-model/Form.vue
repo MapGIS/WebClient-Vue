@@ -20,11 +20,14 @@ export default {
     validate(callback) {
       this.$children[0].validate(callback);
     },
+    validateField(field) {
+      this.$children[0].validateField(field);
+    },
     resetFields() {
       this.$children[0].resetFields();
     },
-    validateField(field) {
-      this.$children[0].validateField(field);
+    clearValidate(callback) {
+      this.$children[0].clearValidate(callback);
     },
   }
 };

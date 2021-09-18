@@ -1,23 +1,29 @@
-# 天际线分析
-
 > mapgis-3d-skyline
 
 ## 属性
-
-### `index`
-
-- **类型:** `Number`
-- **默认值:** `0`
-- **非侦听属性**
-- **描述:** 图层的索引值，表示第几个图层
-
-### `position`
+### `vueKey`
 
 - **类型:** `String`
-- **默认值:** `right`
+- **可选**
 - **非侦听属性**
-- **描述:** 分析面板的位置（right:右边 | left: 左边）
+- **默认值:** `default`
+- **描述:**
 
+```
+mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要指定该值，来唯一标识mapgis-web-scene组件，
+同时mapgis-web-scene插槽中的组件也需要传入相同的vueKey，让组件知道应该作用于哪一个mapgis-web-scene。
+```
+
+### `vueIndex`
+
+- **类型:** `Number`
+- **可选**
+- **非侦听属性**
+- **描述:**
+
+```
+当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
+```
 ## 示例
 
 ```vue
@@ -28,7 +34,9 @@
       plugin-path="statics/libs/cdn/zondyclient/webclient-cesium-plugin.min.js">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"></mapgis-3d-raster-layer>
     <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
+    <mapgis-ui-card class="storybook-ui-card">
     <mapgis-3d-skyline></mapgis-3d-skyline>
+    </mapgis-ui-card>
   </mapgis-web-scene>
 </template>
 
@@ -48,6 +56,11 @@ export default {
 </script>
 
 <style scoped>
-
+.storybook-ui-card {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
 </style>
 ```

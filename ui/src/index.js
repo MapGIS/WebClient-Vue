@@ -10,6 +10,7 @@ import { setTheme } from "./util/style/theme/set-theme";
 import { default as MapgisUiMessage } from "./components/message/Message.js";
 import { default as MapgisUiNotification } from "./components/notification/Notification.js";
 import { default as ModalInstance } from "./components/modal";
+import { default as MapgisUiForm } from "./components/form/Form.vue";
 
 const install = function(Vue, options) {
   options = options || {};
@@ -28,6 +29,7 @@ const install = function(Vue, options) {
     Vue.component(ui.options ? ui.options.name : ui.name, ui);
   }
 
+  Vue.prototype.$form = MapgisUiForm;
   Vue.prototype.$message = MapgisUiMessage;
   Vue.prototype.$notification = MapgisUiNotification;
   Vue.prototype.$info = ModalInstance.info;

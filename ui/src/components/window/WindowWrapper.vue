@@ -1,5 +1,5 @@
 <template>
-  <div class="mapgis-ui-map-panel-virtual" style="display: none">
+  <div class="mapgis-ui-map-panel-virtual">
     <mapgis-ui-window-card
       ref="mapPanelContainer"
       v-show="visible"

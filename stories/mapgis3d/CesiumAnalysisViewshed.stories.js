@@ -1,5 +1,7 @@
+import "../style/card.css";
+import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
 export default {
-    title: "三维/分析/可视域"
+    title: "三维/分析/可视域分析"
 }
 
 const Template = (args, { argTypes }) => ({
@@ -16,10 +18,19 @@ const Template = (args, { argTypes }) => ({
     <mapgis-web-scene>
         <mapgis-3d-raster-layer :url="url" />
         <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
+        <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-viewshed></mapgis-3d-viewshed>
+        </mapgis-ui-card>
     </mapgis-web-scene>
     `
 });
 
 export const Viewshed = Template.bind({});
 Viewshed.args = {};
+Viewshed.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
+};

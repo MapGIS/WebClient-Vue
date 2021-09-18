@@ -72,6 +72,8 @@ export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
 export { default as MapgisUiSettingForm } from "./components/form/SettingForm.vue";
 export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
+export { default as MapgisUiForm } from "./components/form/Form.vue";
+export { default as MapgisUiFormItem } from "./components/form/FormItem.vue";
 export { default as MapgisUiMentions } from "./components/mentions/Mentions.vue";
 export { default as MapgisUiMentionsOption } from "./components/mentions/Option.vue";
 export { default as MapgisUiRadio } from "./components/radio/Radio.vue";
@@ -84,7 +86,8 @@ export { default as MapgisUiSvgSelect } from "./components/svgselect/SvgSelect.v
 export { default as MapgisUiSelectOption } from "./components/select/SelectOption.vue";
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
-export { default as MapgisUiSliderRow } from "./components/sliderRow/SliderRow.vue";
+export { default as MapgisUiSliderRow } from "./components/mixRow/MixRow.vue";
+export { default as MapgisUiCustomPanel } from "./components/customPanel/CustomPanel.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
 export { default as MapgisUiTimePicker } from "./components/time-picker/TimePicker.vue";
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";

@@ -11,12 +11,20 @@ export default {
   wrapperUI: Input,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: inputProps,
+  props: {
+    ...inputProps,
+    autoWidth: { type: Boolean, default: false }
+  },
   model: {
     prop: 'value',
     event: 'change.value'
   },
   computed: {
+    uiClass() {
+      return this.autoWidth
+        ? 'mapgis-ui-input-auto-width'
+        : '';
+    },
     addListeners() {
       const vm = this;
       return {

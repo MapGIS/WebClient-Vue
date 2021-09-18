@@ -1,395 +1,697 @@
 <template>
-    <div
-        :class="[
-            'edit-wrapper-vshed',
-            { right: position === 'right', left: position === 'left' },
-        ]"
-    >
-        <div
-            class="card-title"
-            :style="{
-                background: 'rgb(38, 151, 204)',
-                padding: '5px',
-                color: 'white',
-            }"
-        >
-            可视域分析
-        </div>
-        <mapgis-ui-card class="box-card-vshed attr-table">
-            <div class="starting">
-                起始点:
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.startLon" :disabled="!form.startLon">
-                        <span slot="prefix">经度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="startLonMax"
-                        :min="startLonMin"
-                        :disabled="!form.startLon"
-                        :value="parseFloat(form.startLon)"
-                        @change="setInput($event, 'startLon')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.startLat" :disabled="!form.startLat">
-                        <span slot="prefix">纬度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="startLatMax"
-                        :min="startLatMin"
-                        :disabled="!form.startLat"
-                        :value="parseFloat(form.startLat)"
-                        @change="setInput($event, 'startLat')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.startAlt" :disabled="!form.startAlt">
-                        <span slot="prefix">高度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="10"
-                        :max="startAltMax"
-                        :min="startAltMin"
-                        :disabled="!form.startAlt"
-                        :value="parseFloat(form.startAlt)"
-                        @change="setInput($event, 'startAlt')"
-                    />
-                </div>
-            </div>
-            <div class="ending">
-                结束点:
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.endLon" :disabled="!form.endLon">
-                        <span slot="prefix">经度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="endLonMax"
-                        :min="endLonMin"
-                        :disabled="!form.endLon"
-                        :value="parseFloat(form.endLon)"
-                        @change="setInput($event, 'endLon')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.endLat" :disabled="!form.endLat">
-                        <span slot="prefix">纬度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="0.0001"
-                        :max="endLatMax"
-                        :min="endLatMin"
-                        :disabled="!form.endLat"
-                        :value="parseFloat(form.endLat)"
-                        @change="setInput($event, 'endLat')"
-                    />
-                </div>
-                <div class="inputs">
-                    <mapgis-ui-input v-model="form.endAlt" :disabled="!form.endAlt">
-                        <span slot="prefix">高度:</span>
-                    </mapgis-ui-input>
-                    <mapgis-ui-slider
-                        class="input"
-                        :step="10"
-                        :max="endAltMax"
-                        :min="endAltMin"
-                        :disabled="!form.endAlt"
-                        :value="parseFloat(form.endAlt)"
-                        @change="setInput($event, 'endAlt')"
-                    />
-                </div>
-            </div>
-            <mapgis-ui-button class="content" type="primary" @click="startViewshed"
-                >点击绘制</mapgis-ui-button
-            >
-            <mapgis-ui-button
-                class="content-clear"
-                type="primary"
-                @click="clearViewshed"
-                >清除</mapgis-ui-button
-            >
-        </mapgis-ui-card>
-    </div>
+  <div class="mapgis-widget-visual-analysis">
+<!--    <div>-->
+      <mapgis-ui-form-model v-model="formData" v-bind="layout">
+        <mapgis-ui-form-model-item label="水平视角">
+          <mapgis-ui-input
+              v-model.number="formData.horizontAngle"
+              :min="1"
+              type="number"
+          />
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="垂直视角">
+          <mapgis-ui-input
+              v-model.number="formData.verticalAngle"
+              :min="1"
+              type="number"
+          />
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="附加高度(米)">
+          <mapgis-ui-input
+              v-model.number="formData.exHeight"
+              type="number"
+              :min="0"
+              :step="0.1"
+          />
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="方向角">
+          <mapgis-ui-input v-model.number="angleSet.heading" :min="0" :max="360" type="number"/>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="俯仰角">
+          <mapgis-ui-input v-model.number="angleSet.pitch" :min="-90" :max="90" type="number"/>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="可视距离(米)">
+          <mapgis-ui-input v-model.number="angleSet.viewRadius" :min="0" type="number"/>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="观察点坐标">
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-input
+                  v-model.number="posData.viewPositionX"
+                  :step="0.0001"
+                  type="number"
+                  placeholder="经度"
+              />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-input
+                  v-model.number="posData.viewPositionY"
+                  :step="0.0001"
+                  type="number"
+                  placeholder="纬度"
+              />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-input
+                  v-model.number="posData.viewPositionZ"
+                  type="number"
+                  placeholder="高度"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="目标点坐标">
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-input
+                  v-model.number="posData.targetPositionX"
+                  :step="0.0001"
+                  type="number"
+                  placeholder="经度"
+              />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-input
+                  v-model.number="posData.targetPositionY"
+                  :step="0.0001"
+                  type="number"
+                  placeholder="纬度"
+              />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-input
+                  v-model.number="posData.targetPositionZ"
+                  type="number"
+                  placeholder="高度"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="不可视区域颜色">
+          <mapgis-ui-sketch-color-picker
+              :disableAlpha="false"
+              :color="formData.unVisibleColor"
+              @input="
+              val =>
+                (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+          ></mapgis-ui-sketch-color-picker>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="可视区域颜色">
+          <mapgis-ui-sketch-color-picker
+              :disableAlpha="false"
+              :color="formData.visibleColor"
+              @input="
+              val =>
+                (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+          ></mapgis-ui-sketch-color-picker>
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="可视遮罩颜色">
+          <mapgis-ui-sketch-color-picker
+              :disableAlpha="false"
+              :color="formData.maskColor"
+              @input="
+              val =>
+                (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+          ></mapgis-ui-sketch-color-picker>
+        </mapgis-ui-form-model-item>
+      </mapgis-ui-form-model>
+<!--    </div>-->
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="onClickStart">分析</mapgis-ui-button>
+      <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
+  </div>
 </template>
 
 <script>
+import VueOptions from "../Base/Vue/VueOptions";
+
 export default {
-    name: "mapgis-3d-viewshed",
-    props: {
-        index: {
-            type: Number,
-            default: 0,
-        },
-        position: {
-            type: String,
-            default: "right",
-        },
-    },
-    inject: ["Cesium", "CesiumZondy", "webGlobe"],
-    data() {
-        return {
-            //定义鼠标事件类
-            viewshedAn: false,
-            viewshed3daction: false,
-            viewshed3ding: false,
+  name: "mapgis-3d-viewshed",
+  props: {
+    ...VueOptions
+  },
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  data() {
+    return {
+      layout: {
+        labelCol: {span: 5},
+        wrapperCol: {span: 19},
+      },
+      formData: {
+        horizontAngle: 60,
+        verticalAngle: 60,
+        unVisibleColor: '#ff0000',
+        visibleColor: '#00ff00',
+        maskColor: 'rgba(37, 218, 169, 0.2)',
+        exHeight: 1.85
+      },
+      angleSet: {
+        //方向角
+        heading: 0,
+        // 俯仰角
+        pitch: 0,
+        // 可视距离
+        viewRadius: 0,
+      },
+      // 坐标数据
+      posData: {
+        viewPositionX: '',
+        viewPositionY: '',
+        viewPositionZ: '',
+        targetPositionX: '',
+        targetPositionY: '',
+        targetPositionZ: ''
+      },
 
-            startLonMin: 0,
-            startLatMin: 0,
-            startAltMin: 0,
-            endLonMin: 0,
-            endLatMin: 0,
-            endAltMin: 0,
-            startLonMax: 0,
-            startLatMax: 0,
-            startAltMax: 0,
-            endLonMax: 0,
-            endLatMax: 0,
-            endAltMax: 0,
-            form: {
-                startLon: 0,
-                startLat: 0,
-                startAlt: 0,
-                endLon: 0,
-                endLat: 0,
-                endAlt: 0,
-            },
-        };
-    },
-    watch: {
-        form: {
-            deep: true,
-            handler: function (val) {
-                let find = this.findSource();
-                let vshed3d = window.viewshed3d[this.index][find.index];
-                if (vshed3d !== null && typeof vshed3d !== "undefined") {
-                    if (val.startLon && val.startLat && val.startAlt) {
-                        vshed3d.viewPosition = Cesium.Cartesian3.fromDegrees(
-                            val.startLon,
-                            val.startLat,
-                            val.startAlt
-                        );
-                    }
-                    if (val.endLon && val.endLat && val.endAlt) {
-                        vshed3d.targetPosition = Cesium.Cartesian3.fromDegrees(
-                            val.endLon,
-                            val.endLat,
-                            val.endAlt
-                        );
-                    }
-                }
-            },
-        },
-    },
-    methods: {
-        setInput(event, data) {
-            this.form[data] = event;
-        },
-        findSource() {
-            const vm = this;
-            let index = -1;
-            let find = window.viewshed3d[this.index].find((s, i) => {
-                let result = false;
-                let { layer } = vm;
-                if (s instanceof Cesium.ViewshedAnalysis) {
-                    index = i;
-                    result = true;
-                }
-                return result;
-            });
-            return { index: index, value: find };
-        },
-        startViewshed() {
-            let that = this;
-            let viewer = that.webGlobe.viewer;
-            viewer.scene.globe.depthTestAgainstTerrain = true;
-            function left(movement) {
-                let find = that.findSource();
-                let vshed3d = window.viewshed3d[that.index][find.index];
-                that.webGlobe.viewer.scene.globe.enableTransparent = false;
-                if (that.viewshedAn) {
-                    // 可视域分析
-                    if (that.viewshed3daction) {
-                        //获取鼠标位置
-                        let cartesian = viewer.getCartesian3Position(
-                            movement.position,
-                            cartesian
-                        );
-                        if (cartesian !== undefined && !that.viewshed3ding) {
-                            cartesian.z += 3.6;
-                            let cartographic = Cesium.Cartographic.fromCartesian(
-                                cartesian
-                            );
-                            let lng = Cesium.Math.toDegrees(
-                                cartographic.longitude
-                            );
-                            let lat = Cesium.Math.toDegrees(
-                                cartographic.latitude
-                            );
-                            //模型高度
-                            let height = cartographic.height;
-                            that.form.startLon = lng;
-                            that.form.startLat = lat;
-                            that.form.startAlt = height;
-                            //设置观察点坐标
-                            vshed3d.viewPosition = cartesian;
-                            //添加可视域分析结果显示
-                            viewer.scene.VisualAnalysisManager.add(vshed3d);
-                            that.viewshed3ding = true;
+      // 是否为鼠标注册了监听事件
+      isAddEventListener: false,
 
-                            that.startLonMin = that.form.startLon - 0.001;
-                            that.startLatMin = that.form.startLat - 0.001;
-                            that.startAltMin = that.form.startAlt - 100;
-                            that.startLonMax = that.form.startLon + 0.001;
-                            that.startLatMax = that.form.startLat + 0.001;
-                            that.startAltMax = that.form.startAlt + 100;
-                        } else {
-                            // //设置可视域结果点
-                            vshed3d.targetPosition = cartesian;
-                            that.viewshed3daction = false;
-                            that.viewshed3ding = false;
-                        }
-                    }
-                }
-            }
-            //鼠标右键结束
-            function right(movement) {
-                let find = that.findSource();
-                let vshed3d = window.viewshed3d[that.index][find.index];
-                if (that.viewshed3ding) {
-                    if (that.viewshedAn) {
-                        that.viewshed3daction = false;
-                        that.viewshed3ding = false;
-                    }
-                }
-            }
+      // 是否已选择观察点位置
+      hasViewPosition: false,
 
-            function move(movement) {
-                let find = that.findSource();
-                let vshed3d = window.viewshed3d[that.index][find.index];
-                if (that.viewshed3ding) {
-                    let cartesian = viewer.getCartesian3Position(
-                        movement.endPosition,
-                        cartesian
-                    );
-                    if (cartesian) {
-                        vshed3d.targetPosition = cartesian;
-                        let cartographic = Cesium.Cartographic.fromCartesian(
-                            cartesian
-                        );
-                        let lng = Cesium.Math.toDegrees(cartographic.longitude);
-                        let lat = Cesium.Math.toDegrees(cartographic.latitude);
-                        //模型高度
-                        let height = cartographic.height;
-                        that.form.endLon = lng;
-                        that.form.endLat = lat;
-                        that.form.endAlt = height;
+      // 是否可以进行可视域分析
+      isAnalyze: false,
 
-                        that.endLonMin = that.form.endLon - 0.001;
-                        that.endLatMin = that.form.endLat - 0.001;
-                        that.endAltMin = that.form.endAlt - 100;
-                        that.endLonMax = that.form.endLon + 0.001;
-                        that.endLatMax = that.form.endLat + 0.001;
-                        that.endAltMax = that.form.endAlt + 100;
-                    }
-                }
-            }
-            if (that.viewshedAn === false) {
-                //获取三位场景视图对象
-                that.viewshedAn = true;
-                //可视域分析（新）
+      // 是否具有初始目标点
+      isHasTargetPos: false,
 
-                window.viewshed3d[that.index].push(
-                    new Cesium.ViewshedAnalysis(viewer.scene)
-                );
-                that.viewshed3daction = true;
-                that.viewshed3ding = false;
+      // 观察点
+      viewPoint: undefined,
 
-                //注册事件
-                that.webGlobe.registerMouseEvent("LEFT_CLICK", left);
-                that.webGlobe.registerMouseEvent("RIGHT_CLICK", right);
-                that.webGlobe.registerMouseEvent("MOUSE_MOVE", move);
-            }
-        },
-        clearViewshed() {
-            let that = this;
-            let viewer = that.webGlobe.viewer;
-            let find = that.findSource();
-            viewer.scene.globe.depthTestAgainstTerrain = true;
-            if (that.viewshedAn === true) {
-                that.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-                that.webGlobe.unRegisterMouseEvent("MOUSE_MOVE");
-                that.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
+      //clone formData
+      formDataCloneVal: undefined,
 
-                // window.webGlobe.viewer.entities.removeById("vshedPos");
-                viewer.scene.VisualAnalysisManager.remove(
-                    window.viewshed3d[this.index][find.index]
-                );
-                that.viewshedAn = false;
-                that.viewshed3daction = false;
-                that.viewshed3ding = false;
-                //定义可视域分析类
-                delete window.viewshed3d[this.index][find.index];
-                that.form.endLon = 0;
-                that.form.endLat = 0;
-                that.form.endAlt = 0;
-                that.form.startLon = 0;
-                that.form.startLat = 0;
-                that.form.startAlt = 0;
-
-                that.startLonMin = 0;
-                that.startLatMin = 0;
-                that.startAltMin = 0;
-                that.endLonMin = 0;
-                that.endLatMin = 0;
-                that.endAltMin = 0;
-                that.startLonMax = 0;
-                that.startLatMax = 0;
-                that.startAltMax = 0;
-                that.endLonMax = 0;
-                that.endLatMax = 0;
-                that.endAltMax = 0;
-            }
-        },
-    },
-    mounted() {
-        window.viewshed3d = window.viewshed3d || [[], []];
-    },
-    destroyed() {
-        const { webGlobe } = this;
+      // 深度检测是否已开启
+      depthTestAgainstTerrain: false,
+    };
+  },
+  watch: {
+    formDataCloneVal: {
+      deep: true,
+      handler: function (newVal, oldVal) {
+        let {Cesium} = this;
         let find = this.findSource();
-        webGlobe.viewer.scene.VisualAnalysisManager.remove(
-            window.viewshed3d[this.index][find.index]
+        const unVisibleColor = new Cesium.Color.fromCssColorString(
+            newVal.unVisibleColor
         );
-        delete window.viewshed3d;
-        window.viewshed3d = [[], []];
+        const visibleColor = new Cesium.Color.fromCssColorString(
+            newVal.visibleColor
+        );
+        const maskColor = new Cesium.Color.fromCssColorString(newVal.maskColor);
+
+        if (find.options.visualAnalysis) {
+          let visualAnalysis = find.options.visualAnalysis;
+          visualAnalysis.unVisibleColor = unVisibleColor;
+          visualAnalysis.visibleColor = visibleColor;
+          visualAnalysis._fanColor = maskColor;
+          visualAnalysis.horizontAngle =
+              newVal.horizontAngle;
+          visualAnalysis.verticalAngle =
+              newVal.verticalAngle;
+
+          if (newVal.exHeight !== oldVal.exHeight) {
+            let cartesian = visualAnalysis.viewPosition;
+            // 获取当前坐标系标准
+            const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid;
+            // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
+            const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+            cartographic.height += newVal.exHeight - oldVal.exHeight;
+
+            cartesian = Cesium.Cartographic.toCartesian(cartographic);
+            visualAnalysis.viewPosition = cartesian;
+            //赋值给manager
+            CesiumZondy.ViewshedAnalysisManager.changeOptions(vueKey, vueIndex, "visualAnalysis", visualAnalysis);
+            // 改变观察点坐标
+            this.viewPoint.position._value = cartesian;
+          }
+        }
+      }
     },
-};
+    angleSet: {
+      deep: true,
+      handler: function (newVal) {
+        let { vueKey, vueIndex} = this;
+        let find = this.findSource();
+        if (find.options.visualAnalysis) {
+          let visualAnalysis = find.options.visualAnalysis;
+          visualAnalysis.heading = newVal.heading;
+          visualAnalysis.pitch = newVal.pitch;
+          visualAnalysis.viewRadius = newVal.viewRadius;
+          CesiumZondy.ViewshedAnalysisManager.changeOptions(
+              vueKey,
+              vueIndex,
+              "visualAnalysis",
+              visualAnalysis
+          );
+          this.updateTargetPosition(
+              find.options.visualAnalysis.targetPosition
+          )
+        }
+      }
+    },
+  },
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
+  },
+  methods: {
+    async createCesiumObject() {
+      const {baseUrl, options} = this;
+      // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
+      return new Promise(
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
+      );
+    },
+    mount() {
+      const {webGlobe, CesiumZondy, vueKey, vueIndex} = this;
+      const {viewer} = webGlobe;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
+        vm.$emit("load", {component: this});
+        CesiumZondy.ViewshedAnalysisManager.addSource(
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              visualAnalysis: null
+            }
+        );
+      });
+    },
+    unmount() {
+      let {CesiumZondy,vueKey,vueIndex} = this;
+      this.onClickStop();
+      CesiumZondy.ViewshedAnalysisManager.deleteSource(vueKey, vueIndex);
+    },
+    formDataClone() {
+      let vm = this
+      vm.formDataCloneVal = JSON.parse(JSON.stringify(this.formData));
+      return vm.formDataCloneVal;
+    },
+
+    // 若分析完成后，当方向角、俯仰角、可视距离变化时，更新目标点坐标
+    updateTargetPosition(cartesian) {
+      this.convertPosition(cartesian, 'target');
+    },
+
+    // 将三维笛卡尔坐标转换为经纬度坐标
+    convertPosition(position, type) {
+      // 获取当前坐标系标准
+      const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid
+      // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
+      const cartographic = ellipsoid.cartesianToCartographic(position)
+      // 获取高度
+      const height = cartographic.height.toFixed(8);
+
+      // 获取该位置的经纬度坐标
+      const centerLon = parseFloat(
+          this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
+      )
+      const centerLat = parseFloat(
+          this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
+      )
+
+      if (type === 'view') {
+        this.posData.viewPositionX = centerLon
+        this.posData.viewPositionY = centerLat
+        this.posData.viewPositionZ = height
+      } else {
+        this.posData.targetPositionX = centerLon
+        this.posData.targetPositionY = centerLat
+        this.posData.targetPositionZ = height
+      }
+    },
+
+    // 点击开始分析按钮回调
+    onClickStart() {
+      this.startVisualAnalysis();
+
+      if (
+          this.posData.viewPositionX !== '' &&
+          this.posData.viewPositionY !== '' &&
+          this.posData.viewPositionZ !== '' &&
+          this.posData.targetPositionX !== '' &&
+          this.posData.targetPositionY !== '' &&
+          this.posData.targetPositionZ !== ''
+      ) {
+        this.isHasTargetPos = false
+        // 注销鼠标的各项监听事件
+        this.webGlobe.unRegisterMouseEvent('MOUSE_MOVE')
+        this.webGlobe.unRegisterMouseEvent('LEFT_CLICK')
+        this.webGlobe.unRegisterMouseEvent('RIGHT_CLICK')
+        this.isAddEventListener = false
+
+        this.onInputStart();
+      } else if (
+          this.posData.viewPositionX === '' &&
+          this.posData.viewPositionY === '' &&
+          this.posData.viewPositionZ === '' &&
+          this.posData.targetPositionX === '' &&
+          this.posData.targetPositionY === '' &&
+          this.posData.targetPositionZ === ''
+      ) {
+        this.isHasTargetPos = false;
+        this.addEventListener();
+      } else if (
+          this.posData.viewPositionX !== '' &&
+          this.posData.viewPositionY !== '' &&
+          this.posData.viewPositionZ !== '' &&
+          this.posData.targetPositionX === '' &&
+          this.posData.targetPositionY === '' &&
+          this.posData.targetPositionZ === ''
+      ) {
+        this.isHasTargetPos = false;
+        let viewCartesian = this.Cesium.Cartesian3.fromDegrees(
+            this.posData.viewPositionX,
+            this.posData.viewPositionY,
+            this.posData.viewPositionZ
+        )
+
+        const cartographic = this.updateExheight(viewCartesian);
+        viewCartesian = this.Cesium.Cartographic.toCartesian(cartographic);
+
+        // window.VisualAnalysisManage.visualAnalysis.viewPosition = viewCartesian;
+        let find = this.findSource();
+        debugger
+        find.options.visualAnalysis.viewPosition = viewCartesian;
+
+        this.convertPosition(viewCartesian, 'view');
+        // 添加观察点到地图
+        this.addViewPoint(viewCartesian);
+        this.hasViewPosition = true;
+        this.addEventListener();
+      } else if (
+          this.posData.viewPositionX === '' &&
+          this.posData.viewPositionY === '' &&
+          this.posData.viewPositionZ === '' &&
+          this.posData.targetPositionX !== '' &&
+          this.posData.targetPositionY !== '' &&
+          this.posData.targetPositionZ !== ''
+      ) {
+        this.isHasTargetPos = true
+        this.addEventListener()
+      } else {
+        this.isHasTargetPos = false
+        this.addEventListener()
+      }
+    },
+
+    // 开启可视域分析工具
+    startVisualAnalysis() {
+      let {webGlobe, Cesium, vueKey, vueIndex,} = this;
+      const viewer = webGlobe;
+      this.isAnalyze = true
+      this.tilesetArray = this.webGlobe._m3dServerLayer
+      // this.isOpenDepthTest()
+      if (!this.depthTestAgainstTerrain) {
+        viewer.scene.globe.depthTestAgainstTerrain = true
+      }
+      // 初始化分析工具
+      let find = this.findSource();
+      let {options} = find;
+      let visualAnalysis = options.visualAnalysis;
+      visualAnalysis = new Cesium.ViewshedAnalysis(viewer.scene);
+
+      // 锁定图层帧数,只显示一个可视域结果
+      for (let i = 0; i < this.tilesetArray.length; i++) {
+        this.tilesetArray[i][0].debugFreezeFrame = true
+      }
+
+      // 移除可视域分析结果
+      this.webGlobe.viewer.scene.VisualAnalysisManager._visualAnalysisList = []
+
+      // 移除所有观察点
+      this.webGlobe.viewer.entities.removeAll()
+
+      // 设置可视域分析工具的配置
+      const unVisibleColor = new this.Cesium.Color.fromCssColorString(
+          this.formData.unVisibleColor
+      )
+      const visibleColor = new this.Cesium.Color.fromCssColorString(
+          this.formData.visibleColor
+      )
+      const maskColor = new this.Cesium.Color.fromCssColorString(
+          this.formData.maskColor
+      )
+
+      visualAnalysis.horizontAngle = this.formData.horizontAngle;
+      visualAnalysis.verticalAngle = this.formData.verticalAngle;
+      visualAnalysis._unVisibleColor = unVisibleColor;
+      visualAnalysis._visibleColor = visibleColor;
+      visualAnalysis._fanColor = maskColor;
+
+      // 添加可视域分析结果显示
+      this.webGlobe.viewer.scene.VisualAnalysisManager.add(
+          visualAnalysis
+      )
+      //更新manager
+      CesiumZondy.ViewshedAnalysisManager.changeOptions(vueKey, vueIndex, "visualAnalysis", visualAnalysis);
+    },
+    // 通过输入坐标开始分析按钮
+    onInputStart() {
+      let viewCartesian = this.Cesium.Cartesian3.fromDegrees(
+          this.posData.viewPositionX,
+          this.posData.viewPositionY,
+          this.posData.viewPositionZ
+      )
+
+      const cartographic = this.updateExheight(viewCartesian);
+      viewCartesian = this.Cesium.Cartographic.toCartesian(cartographic);
+
+      const targetCartesian = this.Cesium.Cartesian3.fromDegrees(
+          this.posData.targetPositionX,
+          this.posData.targetPositionY,
+          this.posData.targetPositionZ
+      )
+
+      let find = this.findSource();
+      find.options.visualAnalysis.viewPosition = viewCartesian;
+      find.options.visualAnalysis.targetPosition = targetCartesian;
+
+      this.setVisualAttrs();
+
+      // 添加观察点到地图
+      this.addViewPoint(viewCartesian);
+    },
+
+    // 获取更新附加高度后的地理坐标
+    updateExheight(cartesian) {
+      // 获取当前坐标系标准
+      const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid;
+      // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
+      const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+      // 抬高观察点
+      cartographic.height += this.formData.exHeight;
+
+      return cartographic;
+    },
+
+    // 分析完成时显示方向角、俯仰角、可视距离三种属性
+    setVisualAttrs() {
+      let find = this.findSource();
+      const {
+        heading,
+        pitch,
+        viewRadius
+      } = find.options.visualAnalysis;
+
+      this.angleSet.heading = heading.toFixed(2);
+      this.angleSet.pitch = pitch.toFixed(2);
+      this.angleSet.viewRadius = parseInt(viewRadius);
+    },
+
+    // 添加观察点到地图上
+    addViewPoint(cartesian) {
+      if (this.viewPoint) this.webGlobe.viewer.entities.remove(this.viewPoint);
+
+      this.viewPoint = this.webGlobe.viewer.entities.add({
+        position: cartesian,
+        point: {
+          color: this.Cesium.Color.BLUE,
+          pixelSize: 10
+        }
+      })
+    },
+
+    // 点击结束分析按钮回调
+    onClickStop() {
+      // 注销鼠标的各项监听事件
+      this.webGlobe.unRegisterMouseEvent('MOUSE_MOVE')
+      this.webGlobe.unRegisterMouseEvent('LEFT_CLICK')
+      this.webGlobe.unRegisterMouseEvent('RIGHT_CLICK')
+
+      // 清空观察点与目标点坐标
+      this.posData.viewPositionX = ''
+      this.posData.viewPositionY = ''
+      this.posData.viewPositionZ = ''
+      this.posData.targetPositionX = ''
+      this.posData.targetPositionY = ''
+      this.posData.targetPositionZ = ''
+
+      // 清空方向角、俯仰角、可视距离
+      this.angleSet.heading = 0
+      this.angleSet.pitch = 0
+      this.angleSet.viewRadius = 0
+
+      // 移除所有观察点
+      this.webGlobe.viewer.entities.removeAll()
+
+      for (let i = 0; i < (this.tilesetArray || []).length; i++) {
+        this.tilesetArray[i][0].debugFreezeFrame = false
+      }
+
+      // 移除可视域分析工具
+      let find = this.findSource();
+      if (find && find.options) {
+        find.options.visualAnalysis = null;
+      }
+      // 移除可视域分析结果
+      this.webGlobe.viewer.scene.VisualAnalysisManager._visualAnalysisList = []
+
+      this.isAddEventListener = false
+      this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false
+      this.hasViewPosition = false
+      this.isAnalyze = false
+    },
+
+    // 为鼠标的各种行为注册监听事件
+    addEventListener() {
+      if (!this.isAddEventListener) {
+        this.webGlobe.registerMouseEvent('MOUSE_MOVE', event => {
+          this.registerMouseMoveEvent(event)
+        });
+        this.webGlobe.registerMouseEvent('LEFT_CLICK', event => {
+          this.registerMouseLClickEvent(event)
+        });
+        this.webGlobe.registerMouseEvent('RIGHT_CLICK', event => {
+          this.registerMouseRClickEvent(event)
+        });
+        this.isAddEventListener = true;
+      }
+    },
+    // 注册可视域分析鼠标移动事件
+    registerMouseMoveEvent(event) {
+      if (this.hasViewPosition) {
+        const cartesian = this.webGlobe.viewer.getCartesian3Position(
+            event.endPosition
+        )
+        if (cartesian) {
+          // 设置可视域结束点坐标
+          let find = this.findSource();
+          find.options.visualAnalysis.targetPosition = cartesian;
+        }
+      }
+    },
+
+    // 注册可视域分析鼠标左键点击事件
+    registerMouseLClickEvent(event) {
+      let cartesian = this.webGlobe.viewer.getCartesian3Position(event.position)
+      let find = this.findSource();
+
+      if (this.isAnalyze) {
+        if (!this.hasViewPosition && cartesian !== undefined) {
+          // 若还未选择观察点
+          const cartographic = this.updateExheight(cartesian)
+          cartesian = this.Cesium.Cartographic.toCartesian(cartographic)
+
+          // 设置可视域观察点坐标
+          find.options.visualAnalysis.viewPosition = cartesian
+          this.convertPosition(cartesian, 'view')
+
+          // 添加观察点到地图
+          this.addViewPoint(cartesian);
+          this.hasViewPosition = true;
+
+          // 如果拥有初始目标点，则相当于在选择观察点后，又自动点击了鼠标左键一次来选择目标点
+          if (this.isHasTargetPos) {
+            const targetCartesian = this.Cesium.Cartesian3.fromDegrees(
+                this.posData.targetPositionX,
+                this.posData.targetPositionY,
+                this.posData.targetPositionZ
+            )
+            find.options.visualAnalysis.targetPosition = targetCartesian
+
+            this.setVisualAttrs()
+            this.convertPosition(targetCartesian, 'target')
+
+            this.hasViewPosition = false
+            this.isAnalyze = false
+          }
+        } else {
+          // 已经选择了观察点，则这次是选择结束点
+
+          // 设置可视域结束点坐标
+          find.options.visualAnalysis.targetPosition = cartesian
+
+          this.setVisualAttrs()
+          this.convertPosition(cartesian, 'target')
+
+          this.hasViewPosition = false
+          this.isAnalyze = false
+        }
+      }
+    },
+
+    // 注册可视域分析鼠标右键点击事件
+    registerMouseRClickEvent(event) {
+      const cartesian = this.webGlobe.viewer.getCartesian3Position(event.position)
+      let find = this.findSource();
+
+      if (this.hasViewPosition) {
+        // 设置可视域结束点坐标
+        find.options.visualAnalysis.targetPosition = cartesian
+
+        this.setVisualAttrs()
+        this.convertPosition(cartesian, 'target')
+      }
+
+      this.hasViewPosition = false
+      this.isAnalyze = false
+    },
+    findSource() {
+      let {CesiumZondy, vueKey, vueIndex} = this;
+      let find = CesiumZondy.ViewshedAnalysisManager.findSource(vueKey, vueIndex);
+      return find;
+    }
+  }
+}
 </script>
 
 
 <style scoped>
-::v-deep .mapgis-ui-card-body {
-    max-height: 400px;
-    overflow: auto;
+.mapgis-widget-visual-analysis{
+  max-width: calc(42vw);
+  max-height: calc(50vh);
+  overflow-y: auto;
 }
-::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
-    padding-left: 45px;
+::v-deep .mapgis-ui-form-item {
+  margin-bottom: 0;
 }
-.edit-wrapper-vshed.right {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+::v-deep .mapgis-ui-form label {
+  font-size: 12px;
 }
-.edit-wrapper-vshed.left {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+
+::v-deep .mapgis-ui-form-item-label {
+  line-height: 40px;
+}
+
+::v-deep .mapgis-ui-input {
+  padding: 4px 11px;
+}
+
+::v-deep .mapgis-ui-card.mapgis-ui-card-bordered{
+  max-height: 100%;
+  overflow-y: auto;
 }
 </style>

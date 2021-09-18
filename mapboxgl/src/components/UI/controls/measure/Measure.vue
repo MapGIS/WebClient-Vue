@@ -97,10 +97,10 @@ export default {
       type: Boolean,
       default: true
     },
-    expandControl: {
-      type: Boolean,
-      default: false
-    },
+    // expandControl: {
+    //   type: Boolean,
+    //   default: false
+    // },
     enableControl: {
       type: Boolean,
       default: false
@@ -130,13 +130,13 @@ export default {
       coordinates: [],
       innermeasureMode: "",
       measures: [
-        {
-          icon: "mapgis-huizhi1",
-          type: "primary",
-          tip: "展开",
-          click: this.changeFold,
-          className: "mapgis-measure-expand"
-        },
+        // {
+        //   icon: "mapgis-huizhi1",
+        //   type: "primary",
+        //   tip: "展开",
+        //   click: this.changeFold,
+        //   className: "mapgis-measure-expand"
+        // },
         {
           icon: "mapgis-ruler",
           type: "primary",
@@ -182,14 +182,19 @@ export default {
     this.$_initMeasure();
     if (this.enableControl) {
       let position = this.position;
-      if (this.expandControl) {
-        this.changeFold();
-      } else {
-        let pos = position.split("-");
-        document.querySelector(
-          ".mapgis-measure-control > .mapgis-ui-space"
-        ).style = pos[0] + ": 10px;" + pos[1] + ": 10px;";
-      }
+      let pos = position.split("-");
+      document.querySelector(
+          // ".mapgis-measure-control > .mapgis-ui-space"
+          ".mapgis-measure-control"
+      ).style = pos[0] + ": 10px;" + pos[1] + ": 10px;";
+      // if (this.expandControl) {
+      //   this.changeFold();
+      // } else {
+      //   let pos = position.split("-");
+      //   document.querySelector(
+      //     ".mapgis-measure-control > .mapgis-ui-space"
+      //   ).style = pos[0] + ": 10px;" + pos[1] + ": 10px;";
+      // }
     }
   },
 
@@ -410,20 +415,20 @@ export default {
       this.$_emitEvent("removed");
     },
 
-    changeFold(e) {
-      // document.querySelector(".mapgis-ui-space").style="backgroundColor:black;";
-      let space = document.querySelector(
-        ".mapgis-measure-control > .mapgis-ui-space"
-      );
-      let width = getComputedStyle(space).width;
-      if (width == "40px") {
-        space.style =
-          "width: 160px!important;overflow: hidden;transition: width .5s;";
-      } else {
-        space.style =
-          "width: 40px!important;overflow: hidden;transition: width .5s;";
-      }
-    },
+    // changeFold(e) {
+    //   // document.querySelector(".mapgis-ui-space").style="backgroundColor:black;";
+    //   let space = document.querySelector(
+    //     ".mapgis-measure-control > .mapgis-ui-space"
+    //   );
+    //   let width = getComputedStyle(space).width;
+    //   if (width == "40px") {
+    //     space.style =
+    //       "width: 160px!important;overflow: hidden;transition: width .5s;";
+    //   } else {
+    //     space.style =
+    //       "width: 40px!important;overflow: hidden;transition: width .5s;";
+    //   }
+    // },
     disableDrag() {
       const vm = this;
       vm.map.on("draw.selectionchange", e => {
@@ -473,18 +478,18 @@ export default {
 
 <style>
 .mapgis-measure-control > .mapgis-ui-space {
-  width: 40px !important;
+  width: 120px !important;
   overflow: hidden;
-  transition: width 0.5s;
+  /*transition: width 0.5s;*/
 }
 
-.mapgis-measure-expand.mapgis-ui-btn {
-  width: 40px !important;
-  height: 40px !important;
-}
-.mapgis-measure-expand.anticon {
-  font-size: 19px !important;
-}
+/*.mapgis-measure-expand.mapgis-ui-btn {*/
+/*  width: 40px !important;*/
+/*  height: 40px !important;*/
+/*}*/
+/*.mapgis-measure-expand.anticon {*/
+/*  font-size: 19px !important;*/
+/*}*/
 
 .mapgis-measure-control {
   width: fit-content;

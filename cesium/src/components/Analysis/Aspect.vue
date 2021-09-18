@@ -1,20 +1,21 @@
 <template>
   <div class="mapgis-widget-aspect-analysis">
     <mapgis-ui-group-tab title="坡向图例设置">
-      <mapgis-ui-tooltip slot="handle" placement="bottomRight" :title="info">
-        <mapgis-ui-iconfont type="mapgis-setting"></mapgis-ui-iconfont>
+      <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+        <template slot="title">
+          <span>{{ info }}</span>
+        </template>
+        <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
       </mapgis-ui-tooltip>
     </mapgis-ui-group-tab>
     <mapgis-ui-colors-setting
       v-model="params"
       :rangeField="'坡向范围'"
     ></mapgis-ui-colors-setting>
-    <div class="mapgis-footer-actions">
-      <mapgis-ui-space>
-        <mapgis-ui-button type="primary" @click="add">分析</mapgis-ui-button>
-        <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-      </mapgis-ui-space>
-    </div>
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="add">分析</mapgis-ui-button>
+      <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
   </div>
 </template>
 
@@ -127,6 +128,12 @@ export default {
       const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
+      CesiumZondy.AspectAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "drawElement",
+        drawElement
+      );
 
       const { params } = this;
 
@@ -155,6 +162,12 @@ export default {
           aspectAnalysis.enableContour(false);
           aspectAnalysis.updateMaterial("aspect");
           aspectAnalysis.changeAnalyseArea(positions);
+          CesiumZondy.AspectAnalysisManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "aspectAnalysis",
+            aspectAnalysis
+          );
         }
       });
     },
@@ -184,13 +197,23 @@ export default {
       if (aspectAnalysis) {
         // 移除坡向分析显示结果
         aspectAnalysis.updateMaterial("none");
-        aspectAnalysis = null;
+        CesiumZondy.AspectAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "aspectAnalysis",
+          null
+        );
       }
 
       if (drawElement) {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
-        drawElement = null;
+        CesiumZondy.AspectAnalysisManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "drawElement",
+          null
+        );
       }
 
       // 关闭光照
@@ -203,35 +226,3 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
-.mapgis-footer-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 12px;
-  padding-top: 12px;
-  // border-top: 1px solid @border-color;
-  &.center {
-    justify-content: center;
-    .ant-btn {
-      margin: 0 4px;
-    }
-  }
-  /deep/.ant-btn {
-    margin-left: 8px;
-  }
-}
-.mapgis-note-info {
-  padding: 3px 0;
-  //color: @text-color-secondary;
-  word-break: break-all;
-  white-space: break-spaces;
-  font-size: 12px;
-  &.ant-input {
-    border: none;
-    background-color: transparent;
-    resize: none;
-    min-height: 24px;
-  }
-}
-</style>
