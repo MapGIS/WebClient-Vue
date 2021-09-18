@@ -20,9 +20,9 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene>
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>
-<!--      <mapgis-ui-card class="storybook-ui-card">-->
+      <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-shadow :vue-index="vueIndex"></mapgis-3d-shadow>
-<!--      </mapgis-ui-card>-->
+      </mapgis-ui-card>
       </mapgis-web-scene>
     `
 });

@@ -27,7 +27,7 @@ export default {
         maxSliderHeight:{
             description:'滑动条最大值',
             table:{
-                defaultValue: { summary: '50' },
+                defaultValue: { summary: 50 },
             },
             control:'text'
         },
@@ -44,10 +44,7 @@ const Template = (args, { argTypes }) => ({
             m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
             autoReset: true,
             maximumScreenSpaceError: 8,
-            vueIndex:22,
-            maxSliderHeight:120,
-            color:"#1C9C80",
-            opacity: 0.6,
+            vueIndex:22
         }
     },
     template: `
