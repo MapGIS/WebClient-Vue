@@ -161,7 +161,7 @@ export default {
 }
 
 .mapgis-legend-col-1 {
-  width: 180px;
+  width: 190px;
 }
 
 .mapgis-legend-col-2 {
