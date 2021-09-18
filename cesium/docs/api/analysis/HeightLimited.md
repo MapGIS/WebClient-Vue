@@ -1,23 +1,6 @@
-# 控高分析
-
 > mapgis-3d-heightlimited
 
 ## 属性
-
-### `index`
-
-- **类型:** `Number`
-- **默认值:** `0`
-- **非侦听属性**
-- **描述:** 图层的索引值，表示第几个图层
-
-### `position`
-
-- **类型:** `String`
-- **默认值:** `right`
-- **非侦听属性**
-- **描述:** 分析面板的位置（right:右边 | left: 左边）
-
 ### `vueKey`
 
 - **类型:** `String`
@@ -78,7 +61,9 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
         :vue-index="vueIndex"
         :debugShowBoundingVolume="debugShowBoundingVolume"
       />
+      <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-heightlimited :vue-index="vueIndex"></mapgis-3d-heightlimited>
+      </mapgis-ui-card>
     </mapgis-web-scene>
   </div>
 </template>
@@ -109,8 +94,11 @@ export default {
 </script>
 
 <style scoped>
-.ant-btn-primary{
-  margin-left: 10px;
+.storybook-ui-card{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
 }
 </style>
 ```

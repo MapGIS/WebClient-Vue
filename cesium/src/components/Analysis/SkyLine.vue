@@ -1,34 +1,42 @@
 <template>
   <div>
-  <div class="mapgis-widget-skyline-analysis">
-    <mapgis-ui-setting-form :wrapper-width="200">
-      <mapgis-ui-mix-row
-        title="观察者信息"
-        type="input"
-        :value="centerPosition"
-        :props="observerProps"
-      />
-      <mapgis-ui-mix-row
-          title="线宽度"
-          type="inputNumber"
-          v-model="formData.skylineWidth"
-          :props="lineWidthProps"
-      />
-      <mapgis-ui-mix-row
-          title="线颜色"
-          type="colorPicker"
-          v-model="formData.skylineColor"
-      />
-    </mapgis-ui-setting-form>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="add">天际线</mapgis-ui-button>
-      <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
-      <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-    </mapgis-ui-setting-footer>
-    <div class="skyline-analysis-mask" v-show="!!loading"/>
-  </div>
+<!--    <mapgis-ui-card class="storybook-ui-card">-->
+    <mapgis-ui-card :class="['ui-card',{ right: position === 'right', left: position === 'left' }]">
+      <div class="">
+        <mapgis-ui-setting-form :wrapper-width="200">
+          <mapgis-ui-mix-row
+              title="观察者信息："
+              type="MapgisUiInput"
+              :value="centerPosition"
+              :props="observerProps"
+          />
+          <mapgis-ui-mix-row
+              title="线宽度："
+              type="MapgisUiInputNumber"
+              v-model="formData.skylineWidth"
+              :props="lineWidthProps"
+          />
+          <mapgis-ui-mix-row
+              title="线颜色："
+              type="MapgisUiColorPicker"
+              v-model="formData.skylineColor"
+          />
+        </mapgis-ui-setting-form>
+        <mapgis-ui-setting-footer>
+          <mapgis-ui-button type="primary" @click="add">天际线</mapgis-ui-button>
+          <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
+          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+        </mapgis-ui-setting-footer>
+<!--        <div class="skyline-analysis-mask" v-show="!!loading"/>-->
+        <mapgis-ui-mask
+            :parentDivClass="'cesium-map-wrapper'"
+            :loading="maskShow"
+            :text="maskText"
+        ></mapgis-ui-mask>
+      </div>
+    </mapgis-ui-card>
     <!-- 二维天际线 -->
-<!--    <mapgis-ui-window-wrapper :visible="skyline2dVisible">-->
+    <mapgis-ui-window-wrapper :visible="skyline2dVisible">
       <mapgis-ui-window
           @window-size="onSkyline2dWindowSize"
           :visible.sync="skyline2dVisible"
@@ -41,7 +49,7 @@
           <div id="skyline-2d-chart"/>
         </div>
       </mapgis-ui-window>
-<!--    </mapgis-ui-window-wrapper>-->
+    </mapgis-ui-window-wrapper>
   </div>
 </template>
 <script>
@@ -49,11 +57,15 @@ import VueOptions from "../Base/Vue/VueOptions";
 import * as echarts from "echarts";
 import _cloneDeep from 'lodash/cloneDeep';
 import chartOptions from './skyline2dChartOptions';
-import { colorToCesiumColor, getCenterPosition } from "../WebGlobe/util";
+import {colorToCesiumColor, getCenterPosition} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-skyline",
   props: {
+    position:{
+      type: String,
+      default: "left",
+    },
     ...VueOptions
   },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
@@ -69,13 +81,15 @@ export default {
       skyline2dChart: null,
       positions2D: [],
       isLogarithmicDepthBufferEnable: false,
-      observerProps:{
-        disabled:true,
-        placeholder:"经度，纬度，高程",
+      observerProps: {
+        disabled: true,
+        placeholder: "经度，纬度，高程",
       },
-      lineWidthProps:{
+      lineWidthProps: {
         min: 0
-      }
+      },
+      maskShow: false,
+      maskText: '正在分析中, 请稍等...'
     }
   },
   mounted() {
@@ -191,10 +205,12 @@ export default {
      * @param positions3D 三维坐标点
      */
     analysisEndCallBack({positions2D = [], positions3D}) {
-      this.positions2D = positions2D.length ? _cloneDeep(positions2D) : []
+      this.positions2D = positions2D.length ? _cloneDeep(positions2D) : [];
+      this.maskShow = false;
     },
     add() {
       this.remove();
+      this.maskShow = true;
       let {CesiumZondy, vueKey, vueIndex} = this;
       const {viewer} = this.webGlobe;
       let find = CesiumZondy.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
@@ -213,7 +229,7 @@ export default {
       skylineAnalysisVal._analysisEndCallBack = this.analysisEndCallBack;
       skylineAnalysisVal.color = this.edgeColor();
       skylineAnalysisVal.lineWidth = this.formData.skylineWidth;
-      CesiumZondy.SkyLineAnalysisManager.changeOptions(vueKey, vueIndex, "skyLineAnalysis",skylineAnalysisVal);
+      CesiumZondy.SkyLineAnalysisManager.changeOptions(vueKey, vueIndex, "skyLineAnalysis", skylineAnalysisVal);
       this.setCenterPosition();
     },
     edgeColor() {
@@ -281,6 +297,7 @@ export default {
   display: flex;
   flex-direction: column;
   position: relative;
+
   .skyline-analysis-mask {
     position: absolute;
     left: 0;
@@ -293,12 +310,20 @@ export default {
   }
 }
 
-.storybook-ui-card {
-  //position: absolute;
-  //top: 10px;
-  //left: 10px;
-  //z-index: 1000;
-  background-color:#fff;
+.ui-card.right{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background-color: #fff;
+}
+
+.ui-card.left{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: #fff;
 }
 
 </style>

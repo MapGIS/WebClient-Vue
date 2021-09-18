@@ -76,8 +76,8 @@
             @search="$_search"
             @dropdownVisibleChange="$_dropdownVisibleChange"
             style="width: 100%;">
-          <mapgis-ui-select-option v-for="(data, index) in selectProps.dataSource" :key="index" :value="data">
-            {{ data }}
+          <mapgis-ui-select-option v-for="(data, index) in dataSource" :key="index" :value="data.value">
+            {{ data.key }}
           </mapgis-ui-select-option>
         </mapgis-ui-select>
       </mapgis-ui-col>
@@ -96,7 +96,7 @@
         </div>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'grediantPicker'">
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiGrediantSelect'">
       <mapgis-ui-col :span="grediantPickerProps.titleCol">
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
@@ -105,9 +105,10 @@
             v-model="valueCopy"
             :getPopupContainer="grediantPickerProps.getPopupContainer"
             @change="$_change"
+            class="mix-row-gradient-select"
             :style="mainStyle"
         >
-          <mapgis-ui-select-option v-for="(gradient,index) in grediantPickerProps.gradients" :key="index"
+          <mapgis-ui-select-option v-for="(gradient,index) in dataSource" :key="index"
                                    :value="gradient.key">
             <div class="mix-row-gradient" :style="{background: gradient.value,...grediantPickerProps.optionStyle}"/>
           </mapgis-ui-select-option>
@@ -119,22 +120,31 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputProps.inputCol">
-        <mapgis-ui-input
-            v-model="valueCopy"
-            :placeholder="inputProps.placeholder"
-            :addonAfter="inputProps.addonAfter"
-            :addonBefore="inputProps.addonBefore"
-            :disabled="inputProps.disabled"
-            :id="inputProps.id"
-            :maxLength="inputProps.maxLength"
-            :prefix="inputProps.prefix"
-            :size="inputProps.size"
-            :suffix="inputProps.suffix"
-            :type="inputProps.type"
-            :allowClear="inputProps.allowClear"
-            @change="$_change"
-            @pressEnter="$_pressEnter"
-            :style="mainStyle"
+        <mapgis-ui-form-item
+            :validate-status="validateStatus"
+        >
+          <mapgis-ui-input
+              v-model="valueCopy"
+              :placeholder="inputProps.placeholder"
+              :addonAfter="inputProps.addonAfter"
+              :addonBefore="inputProps.addonBefore"
+              :disabled="inputProps.disabled"
+              :id="inputProps.id"
+              :maxLength="inputProps.maxLength"
+              :prefix="inputProps.prefix"
+              :size="inputProps.size"
+              :suffix="inputProps.suffix"
+              :type="inputProps.type"
+              :allowClear="inputProps.allowClear"
+              @change="$_change"
+              @pressEnter="$_pressEnter"
+              :style="mainStyle"
+          />
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item
+            validate-status="error"
+            help="Should be combination of numbers & alphabets"
+            v-if="validateStatus === 'error'"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -159,6 +169,7 @@
             @change="$_change"
             @pressEnter="$_pressEnter"
             :style="mainStyle"
+            class="mix-row-input-number"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -172,6 +183,7 @@ export default {
     return {
       valueCopy: undefined,
       fieldCopy: undefined,
+      validateStatus: "success",
       sliderProps: {
         //滑动最大值
         sliderMax: 200,
@@ -190,7 +202,7 @@ export default {
         //提示框位置，有如下值top，left，right，bottom，topLeft，topRight，bottomLeft，bottomRight，leftTop，leftBottom，rightTop，rightBottom
         tooltipPlacement: "top",
         //是否显示提示框
-        tooltipVisible: true,
+        tooltipVisible: undefined,
         //Tooltip 渲染父节点，默认渲染到 body上
         getTooltipPopupContainer: undefined,
         titleCol: 8,
@@ -198,8 +210,6 @@ export default {
         inputCol: 4
       },
       selectProps: {
-        //数据源
-        dataSource: undefined,
         //默认获取焦点
         autoFocus: false,
         //是否默认高亮第一个选项。
@@ -317,10 +327,22 @@ export default {
       type: String
     },
     /**
+     * 正则表达式
+     * */
+    regExp: {
+      type: String
+    },
+    /**
      * 字段值
      * */
     value: {
       type: [Number, Array, String]
+    },
+    /**
+     * 数据源
+     * */
+    dataSource: {
+      type: [Array]
     },
     /**
      * 额外参数
@@ -386,28 +408,29 @@ export default {
   methods: {
     $_initProps() {
       switch (this.type) {
-        case "slider":
+        case "MapgisUiSlider":
           this.sliderProps = Object.assign(this.sliderProps, this.props);
           if (this.sliderProps.range && this.sliderProps.sliderCol === 16) {
             this.sliderProps.sliderCol = 12;
           }
           break;
-        case "select":
+        case "MapgisUiSelect":
           this.selectProps = Object.assign(this.selectProps, this.props);
           break;
-        case "colorPicker":
+        case "MapgisUiColorPicker":
           this.$_initColorStyle();
+          this.colorPickerProps = Object.assign(this.colorPickerProps, this.props);
           break;
-        case "grediantPicker":
+        case "MapgisUiGrediantSelect":
           this.grediantPickerProps = Object.assign(this.grediantPickerProps, this.props);
           if (!this.valueCopy && this.grediantPickerProps.gradients.length > 0) {
             this.valueCopy = this.grediantPickerProps.gradients[0].key;
           }
           break;
-        case "input":
+        case "MapgisUiInput":
           this.inputProps = Object.assign(this.inputProps, this.props);
           break;
-        case "inputNumber":
+        case "MapgisUiInputNumber":
           this.inputNumberProps = Object.assign(this.inputNumberProps, this.props);
           break;
       }
@@ -417,6 +440,16 @@ export default {
       let colorBtn = colorDocument.childNodes;
     },
     $_change(e) {
+      if (this.type === "MapgisUiInput") {
+        if (this.regExp) {
+          let regExp = new RegExp(this.regExp);
+          if (!regExp.test(this.valueCopy)) {
+            this.validateStatus = "error";
+          } else {
+            this.validateStatus = "success";
+          }
+        }
+      }
       this.$emit("change", e);
     },
     $_afterChange(e) {
@@ -467,6 +500,10 @@ export default {
   border-radius: 3px;
 }
 
+.mix-row-gradient-select {
+  width: 100%;
+}
+
 .mix-row-title {
   font-size: 12px;
   position: absolute;
@@ -478,6 +515,10 @@ export default {
   height: 32px;
   border-radius: 4px;
   border: 1px solid var(--border-color-base);
+}
+
+.mix-row-input-number{
+  width: 100%;
 }
 
 /deep/ .m-colorPicker {
@@ -492,5 +533,9 @@ export default {
 
 /deep/ .m-colorPicker .colorBtn {
   height: 20px;
+}
+
+/deep/ .mapgis-ui-select-selection-selected-value {
+  width: 100%;
 }
 </style>

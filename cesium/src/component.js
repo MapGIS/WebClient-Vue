@@ -53,6 +53,7 @@ export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as DynamicCutting } from "./components/Analysis/DynamicCutting";
+export { default as DynamicSection } from "./components/Analysis/DynamicSection";
 export { default as Fill } from "./components/Analysis/Fill";
 export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
 export { default as Mapgis3dSlope } from "./components/Analysis/Slope";

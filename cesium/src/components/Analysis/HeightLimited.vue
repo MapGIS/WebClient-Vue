@@ -1,19 +1,19 @@
 <template>
-  <div :class="['heightlimited',{ right: position === 'right', left: position === 'left' }]">
-    <div
-        :style="{
-                background: 'rgb(38, 151, 204)',
-                padding: '5px',
-                color: 'white',
-            }"
-        class="card-title"
-    >
-      控高分析
-    </div>
+<!--  <div :class="['heightlimited',{ right: position === 'right', left: position === 'left' }]">-->
+<!--    <div-->
+<!--        :style="{-->
+<!--                background: 'rgb(38, 151, 204)',-->
+<!--                padding: '5px',-->
+<!--                color: 'white',-->
+<!--            }"-->
+<!--        class="card-title"-->
+<!--    >-->
+<!--      控高分析-->
+<!--    </div>-->
+  <div class="mapgis-widget-heightLimited-analysis">
     <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad">
-      <mapgis-ui-card class="a-card">
         <mapgis-ui-row>
-          <mapgis-ui-col :span="5">分析区域</mapgis-ui-col>
+          <mapgis-ui-col :span="5">分析区域：</mapgis-ui-col>
           <mapgis-ui-col :span="19">
             <mapgis-ui-button @click="drawRectangle">绘制矩形</mapgis-ui-button>
             <mapgis-ui-button style="margin:0 8px" @click="drawPolygon">绘制面</mapgis-ui-button>
@@ -22,7 +22,7 @@
         </mapgis-ui-row>
         <mapgis-ui-row style="padding-top: 10px">
           <mapgis-ui-col :span="5">
-            <span>限制高度</span>
+            <span>限制高度：</span>
           </mapgis-ui-col>
           <mapgis-ui-col :span="10" style="padding-right: 8px">
             <mapgis-ui-slider v-model="heightLimit" :disabled="excavateAn" :max="maxSliderHeight" :min="mindepth" :step="5"
@@ -33,7 +33,6 @@
                             :style="{marginLeft: '16px'}"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
-      </mapgis-ui-card>
     </mapgis-3d-draw>
   </div>
 </template>
@@ -47,10 +46,10 @@ export default {
   name: "mapgis-3d-heightlimited",
   mixins: [ServiceLayer],
   props: {
-    position: {
-      type: String,
-      default: "right",
-    },
+    // position: {
+    //   type: String,
+    //   default: "right",
+    // },
     vueKey: {
       type: String,
       default: "default"
@@ -74,7 +73,7 @@ export default {
       default: 50
     }
   },
-  components: {draw},
+  // components: {draw},
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   data() {
     return {
@@ -88,14 +87,35 @@ export default {
     }
   },
   mounted() {
-    // let vm = this;
-    // vm.$_init(vm.heightLimitedAnalysis);
+    let vm = this;
+    vm.$_init(vm.heightLimitedAnalysis);
   },
   destroyed() {
     this.unmount();
   },
   watch: {
     heightLimit: {
+      handler(next, old) {
+        if (!deepEqual(next, old)) {
+          this.heightLimitedAnalysis();
+        }
+      }
+    },
+    color:{
+      handler(next, old) {
+        if (!deepEqual(next, old)) {
+          this.heightLimitedAnalysis();
+        }
+      }
+    },
+    opacity:{
+      handler(next, old) {
+        if (!deepEqual(next, old)) {
+          this.heightLimitedAnalysis();
+        }
+      }
+    },
+    maxSliderHeight:{
       handler(next, old) {
         if (!deepEqual(next, old)) {
           this.heightLimitedAnalysis();
@@ -125,6 +145,8 @@ export default {
     handleDrawLoad(drawer) {
       this.drawer = drawer;
     },
+
+    //绘制组件的回调函数
     handleCreate(cartesian3, lnglat) {
       let vm = this;
       this.drawer && this.drawer.removeEntities(true);
@@ -132,14 +154,19 @@ export default {
       vm.lnglat = lnglat;
       this.heightLimitedAnalysis(lnglat);
     },
+
+    //开始控高分析
     heightLimitedAnalysis(lnglat) {
       const vm = this;
       let {vueKey, vueIndex} = this
       let {heightLimit, CesiumZondy, webGlobe} = this;
       let viewer = webGlobe.viewer;
       let findSource = vm.$_getObject();
+
+      //先判断m3d模型是否加载完成
       if (findSource) {
-        // console.log("findSource.source[0]._root", findSource.source[0]._root);
+
+        //判断分析方式，不通过绘制矩形和绘制面的方式，则lnglat为空，走if,否则绘制方式就走else
         if (!lnglat) {
           let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
           if (find) {
@@ -162,19 +189,17 @@ export default {
             temp[index] = lTemp;
           })
           lnglat = temp;
-          // console.log("lnglat", lnglat);
         }
       }
-      //求相对坐标（笛卡尔）
-      // let localCertesian3 = vm.transformToLocal(cartesian3, findSource);
 
+      //控高分析边界点数组
       let pnts = [];
       for (let i = 0; i < lnglat.length; i++) {
         pnts.push(new Cesium.Cartesian3(lnglat[i].longitude, lnglat[i].latitude, 0));
       }
-      // console.log("pnts", pnts);
       let cesiumColor = Cesium.Color.fromCssColorString(vm.color);
-      // console.log("heightLimit", heightLimit);
+
+      //调用控告分析接口
       var heightLimited = new Cesium.HeightLimited(viewer, {
         height: heightLimit,
         limitedColor: cesiumColor,
@@ -184,6 +209,7 @@ export default {
         useOutLine: false
       });
       webGlobe.addSceneEffect(heightLimited);
+
       CesiumZondy.HeightLimitedAnalysisManager.addSource(
           vm.vueKey,
           vm.vueIndex,
@@ -191,6 +217,7 @@ export default {
           lnglat
       );
     },
+
     transformToLocal(cartesian3, findSource) {
       let localCertesian3 = [];
       let transform = findSource.source[0]._root.transform;
@@ -204,6 +231,8 @@ export default {
       }
       return localCertesian3;
     },
+
+    //根据外包盒子两个点求出四个点
     getAllPoint(southwest, northeast) {
       let p1 = this.degreefromCartesian(southwest);
       let p2 = this.degreefromCartesian(northeast);
@@ -220,6 +249,8 @@ export default {
       let allPoint = [p1, p4, p2, p3];
       return allPoint;
     },
+
+    //绘制方式返回的点坐标是经纬度坐标
     getAllPointByDegree(lnglat1, lnglat2) {
       let p1 = {}, p2 = {}, p3 = {}, p4 = {};
       p1.longitude = lnglat1[0];
@@ -237,6 +268,8 @@ export default {
       let allPoint = [p1, p4, p2, p3];
       return allPoint;
     },
+
+    //根据笛卡尔坐标求出点的经纬度坐标
     degreefromCartesian(p) {
       let point = {};
       let cartographic = Cesium.Cartographic.fromCartesian(p);
@@ -245,6 +278,7 @@ export default {
       point.height = cartographic.height; //模型高度
       return point;
     },
+
     remove() {
       const {vueKey, vueIndex} = this;
       let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
@@ -269,23 +303,11 @@ export default {
   overflow: auto;
 }
 
-.heightlimited.right {
-  /*width: calc(50vw);*/
-  min-width: calc(20vw);
-  max-width: calc(50vw);
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.mapgis-ui-card-bordered{
+  border:unset;
 }
 
-.heightlimited.left {
-  width: calc(50vw);
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
-::v-deep .mapgis-ui-card-body {
+.mapgis-ui-card-body{
   padding: 10px;
 }
 
@@ -295,5 +317,9 @@ export default {
 ::v-deep .mapgis-ui-col-19{
   display: flex;
   padding-right: 5px;
+}
+
+.mapgis-widget-heightLimited-analysis{
+  font-size: 12px;
 }
 </style>
