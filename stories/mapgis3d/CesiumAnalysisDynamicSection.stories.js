@@ -43,9 +43,9 @@ const Template = (args, { argTypes }) => ({
           :vueIndex="$props.models[1].vueIndex" 
           url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent"
       />
-      <a-card class="storybook-ui-card">
+      <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-dynamic-section v-bind="$props"/>
-      </a-card>
+      </mapgis-ui-card>
       </mapgis-web-scene>
     `,
   methods: {
