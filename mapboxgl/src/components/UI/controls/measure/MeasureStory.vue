@@ -29,20 +29,20 @@
             />
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
-      </mapgis-ui-space>
-      <mapgis-marker
-        v-if="!!coordinates.length && enableControl"
-        slot="measureMarker"
-        :coordinates="coordinates"
-        color="#ff0000"
-      >
-        <div slot="marker" class="mapgis-measure-control-label">
-          <div v-if="measureResult.geographyArea">
-            面积：{{ measureResult.geographyArea }}
+        <mapgis-marker
+          v-if="!!coordinates.length && enableControl"
+          slot="measureMarker"
+          :coordinates="coordinates"
+          color="#ff0000"
+        >
+          <div slot="marker" class="mapgis-measure-control-label">
+            <div v-if="measureResult.geographyArea">
+              面积：{{ measureResult.geographyArea }}
+            </div>
+            <div>周长：{{ measureResult.geographyPerimeter }}</div>
           </div>
-          <div>周长：{{ measureResult.geographyPerimeter }}</div>
-        </div>
-      </mapgis-marker>
+        </mapgis-marker>
+      </mapgis-ui-space>
     </mapgis-measure>
   </div>
 </template>
