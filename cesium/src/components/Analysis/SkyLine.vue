@@ -5,19 +5,19 @@
       <div class="">
         <mapgis-ui-setting-form :wrapper-width="200">
           <mapgis-ui-mix-row
-              title="观察者信息"
+              title="观察者信息："
               type="MapgisUiInput"
               :value="centerPosition"
               :props="observerProps"
           />
           <mapgis-ui-mix-row
-              title="线宽度"
+              title="线宽度："
               type="MapgisUiInputNumber"
               v-model="formData.skylineWidth"
               :props="lineWidthProps"
           />
           <mapgis-ui-mix-row
-              title="线颜色"
+              title="线颜色："
               type="MapgisUiColorPicker"
               v-model="formData.skylineColor"
           />

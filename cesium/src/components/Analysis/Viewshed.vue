@@ -671,8 +671,9 @@ export default {
 
 <style scoped>
 .mapgis-widget-visual-analysis{
-  max-width: calc(35vw);
-  /*overflow: auto;*/
+  max-width: calc(42vw);
+  max-height: calc(50vh);
+  overflow-y: auto;
 }
 ::v-deep .mapgis-ui-form-item {
   margin-bottom: 0;
