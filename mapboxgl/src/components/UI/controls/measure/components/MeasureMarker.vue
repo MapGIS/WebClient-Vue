@@ -8,8 +8,8 @@
     <div slot="marker" :class="`${prefixCls}-popup`">
       <div :class="`${prefixCls}-popup-tip`"></div>
       <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
-        <p>周长: {{ perimeter }}</p>
-        <p v-if="area">面积: {{ area }}</p>
+        <p>周长：{{ perimeter }}</p>
+        <p v-if="area">面积：{{ area }}</p>
       </div>
     </div>
   </mapgis-marker>
@@ -67,12 +67,8 @@ export default {
     align-self: center;
     width: 0;
     height: 0;
-    border: 10px solid transparent;
     border-bottom: none;
     z-index: 1;
-  }
-  &-popup-content {
-    padding: 5px 16px;
   }
 }
 </style>

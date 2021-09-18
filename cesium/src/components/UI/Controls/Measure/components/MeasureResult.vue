@@ -1,15 +1,8 @@
 <template>
   <div v-if="selfResult" class="measure-result">
-    <template v-for="{ label, value, unit } in selfResultOptions">
-      <mapgis-ui-row-flex
-        v-if="selfResult[value]"
-        :key="value"
-        :label="label"
-        :label-width="70"
-      >
-        <span>{{ selfResult[value] }} {{ unit }}</span>
-      </mapgis-ui-row-flex>
-    </template>
+    <div v-for="{ label, value, unit } in selfResultOptions" :key="value">
+      {{ label }}：{{ selfResult[value] }} {{ unit }}
+    </div>
   </div>
 </template>
 <script>
@@ -69,7 +62,7 @@ export default {
     result: {
       deep: true,
       handler(nResult) {
-        this.selfResult = { ...nResult };
+        this.selfResult = nResult;
       }
     }
   }

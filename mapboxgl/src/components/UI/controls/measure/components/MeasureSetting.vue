@@ -4,46 +4,60 @@
       <mapgis-ui-toolbar-command
         slot="handle"
         title="重置"
-        icon="redo"
+        icon="mapgis-redo"
         @click="onReset"
       />
     </mapgis-ui-group-tab>
-    <mapgis-ui-row-flex type="vertical" label="字体名称">
-      <mapgis-ui-select
-        v-model="measureStyle.textType"
-        :options="textOptions"
-        :auto-width="true"
-      />
-    </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex type="vertical" label="字体颜色">
-      <mapgis-ui-sketch-color-picker-confirm v-model="measureStyle.textColor" />
-    </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex type="vertical" label="字体大小">
-      <mapgis-ui-input-number :min="12" v-model="measureStyle.textSize" />
-    </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex type="vertical" label="线样式">
-      <mapgis-ui-select
-        v-model="measureStyle.lineType"
-        :options="lineOptions"
-        :auto-width="true"
-      />
-    </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex type="vertical" label="线颜色">
-      <mapgis-ui-sketch-color-picker-confirm v-model="measureStyle.lineColor" />
-    </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex type="vertical" label="线宽度">
-      <mapgis-ui-input-number
-        :auto-width="true"
-        :min="1"
-        v-model="measureStyle.lineWidth"
-      />
-    </mapgis-ui-row-flex>
-    <mapgis-ui-row-flex v-show="isAreaMode" type="vertical" label="填充颜色">
-      <mapgis-ui-sketch-color-picker-confirm
-        v-model="measureStyle.fillColor"
-        color-type="rgba"
-      />
-    </mapgis-ui-row-flex>
+    <mapgis-ui-setting-form layout="vertical">
+      <mapgis-ui-form-item label="字体名称">
+        <mapgis-ui-select
+          v-model="measureStyle.textType"
+          :options="textOptions"
+          :auto-width="true"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="字体颜色">
+        <mapgis-ui-sketch-color-picker
+          @input="onColorChange($event, 'textColor')"
+          :color="measureStyle.textColor"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="字体大小">
+        <mapgis-ui-input-number
+          v-model="measureStyle.textSize"
+          :min="12"
+          :auto-width="true"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="线样式">
+        <mapgis-ui-select
+          v-model="measureStyle.lineType"
+          :options="lineOptions"
+          :auto-width="true"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="线颜色">
+        <mapgis-ui-sketch-color-picker
+          @input="onColorChange($event, 'lineColor')"
+          :color="measureStyle.lineColor"
+          :disable-alpha="false"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="线宽度">
+        <mapgis-ui-input-number
+          v-model="measureStyle.lineWidth"
+          :min="1"
+          :auto-width="true"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item v-show="isAreaMode" label="填充颜色">
+        <mapgis-ui-sketch-color-picker
+          @input="onColorChange($event, 'fillColor')"
+          :color="measureStyle.fillColor"
+          :disable-alpha="false"
+        />
+      </mapgis-ui-form-item>
+    </mapgis-ui-setting-form>
   </div>
 </template>
 <script>
@@ -64,7 +78,9 @@ export default {
     }
   },
   data: vm => ({
-    measureStyle: dep.getStyles(),
+    measureStyle: {
+      ...dep.getStyles()
+    },
     lineOptions: Object.values(lineTypeMap).map(v => ({ label: v, value: v })),
     textOptions: [
       {
@@ -87,11 +103,12 @@ export default {
     }
   },
   watch: {
-    measureStyle(obj) {
-      debugger;
-      this.notifyUpdate(obj);
-    },
-    deep: true
+    measureStyle: {
+      handler(obj) {
+        this.notifyUpdate(obj);
+      },
+      deep: true
+    }
   },
   methods: {
     /**
@@ -105,9 +122,9 @@ export default {
       fillColor,
       fillOpacity
     }) {
-      return defaultStyle.map(style => {
+      return defaultStyle.map(({ type, ...others }) => {
         let paint;
-        switch (style.type) {
+        switch (type) {
           case paintTypeMap.line:
             paint = {
               "line-color": lineColor,
@@ -133,7 +150,8 @@ export default {
             break;
         }
         return {
-          ...style,
+          ...others,
+          type,
           paint
         };
       });
@@ -155,8 +173,8 @@ export default {
     /**
      * 颜色选择变化
      */
-    onColorChange(value, type) {
-      this.$set(this.measureStyle, type, value);
+    onColorChange({ hex }, type) {
+      this.$set(this.measureStyle, type, hex);
     }
   }
 };

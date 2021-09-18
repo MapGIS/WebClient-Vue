@@ -57,14 +57,26 @@
   color: $text-color;
 }
 
-.measure-marker-popup-content {
-  box-shadow: $box-shadow-base;
-  border-radius: $border-radius-base;
+.measure-marker-popup-tip {
+  border: 10px solid transparent;
+  border-top-color: $component-background;
 }
 
-.measure-setting > div {
-  margin-bottom: $font-size-sm;
+.measure-marker-popup-content {
+  padding: 4px $font-size-base;
+  box-shadow: $box-shadow-base;
+  border-radius: $border-radius-base;
+  background-color: $component-background;
+  > p {
+    margin-bottom: 0;
+  }
 }
-.measure-result > div {
+
+.measure-result {
   margin: $font-size-sm / 2 0;
+  > div {
+    line-height: 20px;
+    font-size: $font-size-base - 1px;
+    font-family: $font-family;
+  }
 }

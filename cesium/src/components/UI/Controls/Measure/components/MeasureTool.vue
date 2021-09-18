@@ -10,7 +10,7 @@
           :title="title"
           :icon="icon"
           :active="activeMode === mode"
-          @click="beforeMeasure(mode)"
+          @click="startMeasure(mode)"
         />
       </mapgis-ui-toolbar-command-group>
       <mapgis-ui-toolbar-space />
@@ -21,35 +21,35 @@
           icon="mapgis-shanchu_dianji"
           @click="clearMeasure"
         />
-        <!-- <mapgis-ui-toolbar-command
+        <mapgis-ui-toolbar-command
           @click="showSettingPanel = !showSettingPanel"
           :active="showSettingPanel"
           title="设置"
           icon="mapgis-setting"
-        /> -->
+        />
       </mapgis-ui-toolbar-command-group>
     </mapgis-ui-toolbar>
     <!-- 测量结果 -->
     <measure-3d-result :mode="activeMode" :result="measureResult" />
     <!-- 测量样式设置 -->
-    <!-- <measure-3d-setting
+    <measure-3d-setting
       v-if="showSettingPanel"
       @measure-style-change="measureStyleChange"
-    /> -->
+    />
   </div>
 </template>
 <script>
 import { last } from "../../../../Utils/util";
 import Measure3dResult, { measureModeMap } from "./MeasureResult.vue";
-// import Measure3dSetting from "./MeasureSetting.vue";
+import Measure3dSetting from "./MeasureSetting.vue";
 
 //  todo 暂不支持样式的实时更改
 export default {
   name: "measure-3d-tool",
   inject: ["webGlobe"],
   components: {
-    "measure-3d-result": Measure3dResult
-    // "measure-3d-setting": Measure3dSetting
+    "measure-3d-result": Measure3dResult,
+    "measure-3d-setting": Measure3dSetting
   },
   props: {
     result: {
@@ -58,7 +58,7 @@ export default {
   },
   data: vm => ({
     prefixCls: "measure-3d-tool",
-    // showSettingPanel: false,
+    showSettingPanel: false,
     measureResult: null,
     activeMode: "",
     // todo 替换ICON
@@ -116,30 +116,33 @@ export default {
       this.measureResult = _measureResult;
     },
     /**
+     * 开始测量
+     */
+    startMeasure(mode) {
+      this.activeMode = mode;
+      this.clearMeasure();
+      this.enableMeasure(mode);
+    },
+    /**
      *  关闭测量工具
      */
     clearMeasure() {
+      this.activeMode = "";
       this.measureResult = null;
       this.$parent.deleteMeasure();
     },
     /**
      * 开始测量
      */
-    startMeasure(mode) {
+    enableMeasure(mode) {
       this.$parent.$_enableMeasure(mode, this.setMeasureResult);
     },
     /**
-     * 测量前
-     */
-    beforeMeasure(mode) {
-      this.activeMode = mode;
-      this.clearMeasure();
-      this.startMeasure(mode);
-    }
-    /**
      * 测量样式变化
      */
-    // measureStyleChange(style) {}
+    measureStyleChange(style) {
+      this.$parent.initStyles(style);
+    }
   }
 };
 </script>

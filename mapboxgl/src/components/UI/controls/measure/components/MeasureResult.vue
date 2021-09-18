@@ -1,13 +1,8 @@
 <template>
   <div v-if="selfResult" class="measure-result">
-    <mapgis-ui-row-flex
-      v-for="item in selfResultOptions"
-      :key="item.value"
-      :label="item.label"
-      :label-width="100"
-    >
-      {{ selfResult[item.value] }}
-    </mapgis-ui-row-flex>
+    <div v-for="{ label, value } in selfResultOptions" :key="value">
+      {{ label }}：{{ selfResult[value] }}
+    </div>
   </div>
 </template>
 <script>

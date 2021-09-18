@@ -66,7 +66,7 @@ export default {
     },
     defaultValue: {
       type: String,
-      default: "rgb(24,144,255)",
+      default: "rgb(24, 144, 255)",
       validator: v =>
         ColorUtil.isHex(v) || ColorUtil.isRgb(v) || ColorUtil.isRgba(v)
     },
@@ -112,6 +112,16 @@ export default {
     }
   },
   methods: {
+    resolveDefaultValue() {
+      switch (this.colorType) {
+        case "hex":
+          return "rgb(24, 144, 255)";
+        case "rgba":
+          return "rgb(24, 144, 255, 1)";
+        default:
+          return "#1890ff";
+      }
+    },
     /**
      * 展示颜色选择器
      */
@@ -164,6 +174,7 @@ export default {
     }
   },
   created() {
+    this.resolveDefaultValue();
     if (this.value) {
       this.color = this.value;
     } else {

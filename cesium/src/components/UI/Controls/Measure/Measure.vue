@@ -22,9 +22,11 @@ export default {
   props: {
     styles: {
       type: Object,
-      deafult: () => ({
-        lineColor: "black"
-      })
+      deafult: function() {
+        return {
+          lineColor: "#1890ff"
+        };
+      }
     }
   },
   data() {
@@ -46,7 +48,7 @@ export default {
   mounted() {
     const vm = this;
     this.$_init(function() {
-      vm.initStyles();
+      vm.initStyles.call(vm);
       vm.initial = true;
       vm.$emit("load", vm);
     });
@@ -56,11 +58,14 @@ export default {
     this.$emit("unload");
   },
   methods: {
-    initStyles() {
-      this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
-        this.styles.lineColor,
-        this.measureStyles.lineColor
-      );
+    initStyles(nStyle = this.styles, oStyle = this.measureStyles) {
+      this.measureStyles = {
+        ...this.measureStyles,
+        lineColor: this.Cesium.Color.fromCssColorString(
+          nStyle.lineColor,
+          oStyle.lineColor
+        )
+      };
     },
     measureCallBack(result) {
       if (result instanceof Array) {
@@ -76,9 +81,9 @@ export default {
         this.waitManagerName,
         this.deleteMeasure
       );
-      const measure = new Cesium[MeasureName](webGlobe.viewer, {
+      const measure = new this.Cesium[MeasureName](webGlobe.viewer, {
         lineColor: this.measureStyles.lineColor,
-        callBack: function(result) {
+        callBack: result => {
           if (typeof callback === "function") {
             callback(result);
           } else {
@@ -86,11 +91,7 @@ export default {
           }
         }
       });
-      window.CesiumZondy.MeasureToolManager.addSource(
-        vueKey,
-        vueIndex,
-        measure
-      );
+      this.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, measure);
       measure.startTool();
     },
     deleteMeasure() {

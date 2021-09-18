@@ -5,7 +5,7 @@
       <!-- 面积或长度设置按钮 -->
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
-          v-for="{ title, mode, icon } in modes"
+          v-for="{ title, mode, icon } in modeOptions"
           :key="title"
           :title="title"
           :icon="icon"
@@ -13,17 +13,14 @@
           @click="beforeMeasure(mode)"
         />
       </mapgis-ui-toolbar-command-group>
-      <mapgis-ui-toolbar-space />
       <!-- 面积或长度单位选择 -->
       <mapgis-ui-select
-        v-show="!!unit"
         v-model="unit"
         :options="unitOptions"
         :class="`${prefixCls}-unit`"
         size="small"
         placeholder="单位选择"
       />
-      <mapgis-ui-toolbar-space />
       <!-- 清除或设置 -->
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
@@ -70,7 +67,7 @@ export default {
     showSettingPanel: false,
     activeMode: "",
     // todo 替换ICON
-    modes: [
+    modeOptions: [
       {
         mode: measureModeMap.line,
         title: "长度",
@@ -82,7 +79,7 @@ export default {
         icon: "mapgis-area"
       }
     ],
-    unit: "",
+    unit: undefined,
     unitOptions: [],
     unitMap: {
       [measureModeMap.line]: [
@@ -124,26 +121,41 @@ export default {
     }
   }),
   methods: {
+    /**
+     * 清除前
+     */
     beforeClearMeasure() {
       this.activeMode = "";
-      this.unit = "";
+      this.unit = undefined;
       this.unitOptions = [];
       this.clearMeasure();
     },
+    /**
+     * 测量前
+     */
     beforeMeasure(mode) {
       this.activeMode = mode;
       this.unitOptions = this.unitMap[mode];
       this.unit = this.unitOptions[0].value;
       this.clearMeasure();
-      this.measure();
+      this.enableMeasure();
     },
-    measure() {
+    /**
+     * 开启测量
+     */
+    enableMeasure() {
       this.$parent.enableMeasure();
       this.$parent.changeMode(this.activeMode);
     },
+    /**
+     * 清除测量
+     */
     clearMeasure() {
       this.$parent.remove();
     },
+    /**
+     * 样式设置变化
+     */
     measureStyleChange(style) {
       this.$parent.$_changeMapStyle(style);
     }
@@ -154,6 +166,7 @@ export default {
 .measure-tool {
   &-unit {
     width: 120px;
+    margin: 0 12px;
   }
 }
 </style>

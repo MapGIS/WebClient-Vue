@@ -311,8 +311,8 @@ export default {
      * 更改测量图层样式
      */
     $_changeMapStyle(styles = this.measureStyle) {
-      this.measureStyle = styles;
-      this.changeMapStyle(this.measureStyle);
+      this.changeMapStyle(styles);
+      this.measureStyle = [...styles];
     },
     /**
      * 融合样式
