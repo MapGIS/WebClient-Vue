@@ -107,7 +107,8 @@ export default {
       handler(obj) {
         this.notifyUpdate(obj);
       },
-      deep: true
+      deep: true,
+      immediate: true
     }
   },
   methods: {
