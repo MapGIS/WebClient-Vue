@@ -205,7 +205,7 @@ export default {
       this.$_initMeasure();
       this.$_compareStyle();
       this.$_unbindDrawEvents();
-      this.$_addMeasureControl(this.measure);
+      this.$_addMeasureControl(this.measure, this);
       this.$_emitEvent("added", { measure: this.measure });
       const eventNames = Object.keys(measureEvents);
       this.$_unbindMeasureEvents();
