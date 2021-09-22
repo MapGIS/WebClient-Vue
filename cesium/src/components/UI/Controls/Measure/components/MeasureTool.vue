@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <!-- 测量控制按钮 -->
-    <mapgis-ui-toolbar>
+    <mapgis-ui-toolbar :class="`${prefixCls}-toolbar`">
       <!-- 面积或长度设置按钮 -->
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
@@ -76,7 +76,7 @@ export default {
       {
         mode: measureModeMap.TriangulationTool,
         title: "三角",
-        icon: "mapgis-draw-polygon"
+        icon: "mapgis-sanjiaoceliang"
       }
     ]
   }),
@@ -129,7 +129,7 @@ export default {
     clearMeasure() {
       this.activeMode = "";
       this.measureResult = null;
-      this.$parent.deleteMeasure();
+      this.$parent.remove();
     },
     /**
      * 开始测量
@@ -147,9 +147,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.measure-tool {
-  &-unit {
-    width: 120px;
+.measure-3d-tool {
+  &-toolbar {
+    justify-content: space-between;
   }
 }
 </style>

@@ -123,7 +123,7 @@ export default {
   },
   methods: {
     clearMeasure() {
-      this.measure3dRef.deleteMeasure();
+      this.measure3dRef.remove();
     },
     startMeasure(measureName) {
       this.measure3dRef.$_enableMeasure(measureName);

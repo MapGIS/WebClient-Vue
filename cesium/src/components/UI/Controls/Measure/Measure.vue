@@ -54,7 +54,7 @@ export default {
     });
   },
   destroyed() {
-    this.deleteMeasure();
+    this.remove();
     this.$emit("unload");
   },
   methods: {
@@ -100,6 +100,9 @@ export default {
           manager.source.stopTool();
         }
       });
+    },
+    remove() {
+      this.deleteMeasure();
     }
   }
 };
