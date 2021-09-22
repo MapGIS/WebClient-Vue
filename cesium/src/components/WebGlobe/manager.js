@@ -89,7 +89,10 @@ export function initManager() {
   window.CesiumZondy.VisiblityAnalysisManager =
     window.CesiumZondy.VisiblityAnalysisManager ||
     new VisiblityAnalysisManager();
-  window.CesiumZondy.CutFillAnalysisManager = window.CesiumZondy.CutFillAnalysisManager = new CutFillAnalysisManager();
+  window.CesiumZondy.CutFillAnalysisManager =
+    window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
+  window.CesiumZondy.ProfileAnalysisManager =
+    window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -286,3 +289,4 @@ export class ContourAnalysisManager extends BaseManager {}
 export class ViewshedAnalysisManager extends BaseManager {}
 export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
+export class ProfileAnalysisManager extends BaseManager {}
