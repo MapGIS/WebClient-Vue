@@ -162,18 +162,16 @@ export default {
         source = {
           type: "geojson",
           data: this.data,
-          generateId: true
         };
       } else if (this.source) {
         source = {
           type: "geojson",
-          generateId: true,
           ...this.source
         };
+      }
         if (this.enablePopup) {
           source.generateId = true;
         }
-      }
       try {
         this.map.addSource(this.sourceId, source);
       } catch (err) {
@@ -300,7 +298,7 @@ export default {
       ) {
         const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
-            closeOnClick: true,
+            closeOnClick: false,
             closeButton: true
           }),
           // showInspectMap: true,

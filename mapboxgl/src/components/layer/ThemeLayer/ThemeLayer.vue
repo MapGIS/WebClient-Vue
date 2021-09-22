@@ -2,6 +2,9 @@
   <div>
     <ThemePanel
         ref="themePanel"
+        :hideItem="hideItemCopy"
+        :panelClass="panelClass"
+        :panelStyle="themeProps.panelStyle"
         @fieldChanged="$_fieldChanged"
         @themeTypeChanged="$_themeTypeChanged"
         @rangeInputChanged="$_rangeInputChanged"
@@ -58,7 +61,7 @@ import ThemePanel from "./ThemePanel";
 import BaseLayer from "./BaseLayer";
 
 export default {
-  name: "mapgis-igs-theme-layer",
+  name: "mapgis-theme-layer",
   inject: ["map"],
   mixins: [BaseLayer],
   components: {
@@ -70,6 +73,9 @@ export default {
   props: {},
   mounted() {
     this.$emit("loaded", this);
+    if(this.themeProps.icons){
+      this.$refs.themePanel.$_setIcons(this.themeProps.icons);
+    }
   },
   methods: {
     /**
