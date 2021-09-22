@@ -8,11 +8,11 @@ const install = function (Vue, options) {
     const com = UIComponents[name];
     Vue.component(com.options ? com.options.name : com.name, com);
 
-    const IconFont = MapgisUiIconFont.createFromIconfontCN({
-      // scriptUrl: "http://localhost:8888/fonts/iconfont.js",
-      scriptUrl: "//at.alicdn.com/t/font_2749943_pcaes71rnnc.js",
+    // const IconFont =
+    MapgisUiIconFont.createFromIconfontCN({
+      scriptUrl: "//at.alicdn.com/t/font_2749943_69c9cshqtiv.js",
     });
-    Vue.component("mapgis-ui-iconfont", IconFont);
+    // Vue.component("mapgis-ui-iconfont", IconFont);
     Vue.use(MapgisUi);
     Vue.use(vcolorpicker);
   }

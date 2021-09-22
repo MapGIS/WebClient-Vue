@@ -23,7 +23,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<mapgis-ui-dropdown>
     <a class="ant-dropdown-link" @click="e => e.preventDefault()">
-      鼠标移动到此处 <mapgis-ui-iconfont type="mapgis-check" />
+      鼠标移动到此处 <mapgis-ui-iconfont type="mapgis-down" />
     </a>
     <mapgis-ui-menu slot="overlay">
     <mapgis-ui-menu-item>
