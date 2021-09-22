@@ -177,6 +177,6 @@ export default {
   max-height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  z-index: 3000;
+  z-index: 1000;
 }
 </style>

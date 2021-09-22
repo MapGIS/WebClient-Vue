@@ -157,7 +157,7 @@ export default {
      * 样式设置变化
      */
     measureStyleChange(style) {
-      this.$parent.$_changeMapStyle(style);
+      this.$parent.combineStyle(style);
     }
   }
 };

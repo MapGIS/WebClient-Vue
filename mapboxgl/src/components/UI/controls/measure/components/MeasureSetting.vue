@@ -129,10 +129,14 @@ export default {
             paint = {
               "line-color": lineColor,
               "line-width": lineWidth,
-              "line-opacity": lineOpacity,
-              "line-dasharray":
-                lineType === lineTypeMap.dashed ? [0.2, 2] : undefined
+              "line-opacity": lineOpacity
             };
+            if (lineType === lineTypeMap.dashed) {
+              paint = {
+                ...paint,
+                "line-dasharray": [0.2, 2]
+              };
+            }
             break;
           case paintTypeMap.circle:
             paint = {

@@ -110,7 +110,7 @@ export default {
       this._updateLengthOrArea();
     },
     styles(nStyle) {
-      this.measureStyle = this.combineStyle(nStyle);
+      this.combineStyle(nStyle);
     }
   },
 
@@ -287,7 +287,7 @@ export default {
       const draweroptions = {
         displayControlsDefault: true,
         defaultMode: measureModeMap.simple,
-        styles: defaultStyle,
+        styles: this.measureStyle,
         touchEnabled: false,
         boxSelect: false,
         controls: {
@@ -310,9 +310,8 @@ export default {
     /**
      * 更改测量图层样式
      */
-    $_changeMapStyle(styles = this.measureStyle) {
-      this.changeMapStyle(styles);
-      this.measureStyle = [...styles];
+    $_changeMapStyle() {
+      this.changeMapStyle(this.measureStyle);
     },
     /**
      * 融合样式
@@ -320,7 +319,7 @@ export default {
      * @return {array} 整合后的样式集合
      */
     combineStyle(newStyles = []) {
-      return this.measureStyle
+      this.measureStyle = this.measureStyle
         .filter(l => !newStyles.find(f => f.id === l.id))
         .concat(newStyles);
     },
