@@ -205,7 +205,7 @@ export default {
       this.$_initMeasure();
       this.$_compareStyle();
       this.$_unbindDrawEvents();
-      this.$_addMeasureControl(this.measure);
+      this.$_addMeasureControl(this.measure, this);
       this.$_emitEvent("added", { measure: this.measure });
       const eventNames = Object.keys(measureEvents);
       this.$_unbindMeasureEvents();
@@ -491,7 +491,7 @@ export default {
 
 .mapgis-measure-control {
   width: fit-content;
-  position: absolute;
+  /* position: absolute; */
   /*top: 10px;*/
   /*left: 10px;*/
   z-index: 3000;

@@ -2,7 +2,7 @@
 @import "../../../util/style/theme/theme.scss";
 
 @include b(tooltip) {
-  & .anticon {
+  &.anticon {
     height: 27px;
     line-height: 27px;
   }

@@ -27,18 +27,18 @@
     </mapgis-ui-row>
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
     <mapgis-ui-setting-form :label-width="72">
-      <a-form-item label="剖面颜色">
+      <mapgis-ui-form-item label="剖面颜色">
         <mapgis-ui-sketch-color-picker
           :color.sync="color"
           :disableAlpha="false"
           class="color-picker"
         >
         </mapgis-ui-sketch-color-picker>
-      </a-form-item>
-      <a-form-item label="动画时间">
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="动画时间">
         <mapgis-ui-input-number v-model="time" :min="0" style="width: 100%" />
-      </a-form-item>
-      <a-form-item label="剖切距离">
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="剖切距离">
         <mapgis-ui-slider
           v-model="distance"
           :min="min"
@@ -46,7 +46,7 @@
           @change="setDistance"
           :disabled="readonly"
         />
-      </a-form-item>
+      </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="startClipping">
