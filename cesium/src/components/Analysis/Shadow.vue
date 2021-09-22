@@ -402,7 +402,6 @@ export default {
      * 时间段阴影分析回调函数，获取分析进度值
      */
     setPercent(result) {
-      debugger
       this.percent = result;
       this.maskText = `正在分析中, 请稍等...${Number((result * 100).toFixed(2))}%`;
       const timer = setInterval(() => {

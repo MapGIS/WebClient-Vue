@@ -490,7 +490,7 @@ export default {
 
 .mapgis-draw-control {
   width: fit-content;
-  position: absolute;
+  /* position: absolute; */
   /*top: 10px;*/
   /*left: 10px;*/
   z-index: 3000;

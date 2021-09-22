@@ -75,7 +75,7 @@
         &-selected {
           font-weight: normal;
           background-color: $select-item-selected-bg;
-          color: #fff;
+          color: $text-color;
         }
       }
     }
