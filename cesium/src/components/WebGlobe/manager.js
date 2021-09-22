@@ -26,8 +26,8 @@ export function initManager() {
     window.CesiumZondy.MarkerManager || new MarkerManager();
   window.CesiumZondy.OGCWMTSManager =
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
-  window.CesiumZondy.FloodAnalyseManager =
-    window.CesiumZondy.FloodAnalyseManager || new FloodAnalyseManager();
+  window.CesiumZondy.FloodAnalysisManager =
+    window.CesiumZondy.FloodAnalysisManager || new FloodAnalysisManager();
   window.CesiumZondy.OGCWMSManager =
     window.CesiumZondy.OGCWMSManager || new OGCWMSManager();
   window.CesiumZondy.DragEditManager =
@@ -80,11 +80,19 @@ export function initManager() {
     new DynamicSectionAnalysisManager();
   window.CesiumZondy.SlopeAnalysisManager =
     window.CesiumZondy.SlopeAnalysisManager || new SlopeAnalysisManager();
-  window.CesiumZondy.SkyLineAnalysisManager = window.CesiumZondy.SkyLineAnalysisManager || new SkyLineAnalysisManager();
-  window.CesiumZondy.ContourAnalysisManager = window.CesiumZondy.ContourAnalysisManager || new ContourAnalysisManager();
-  window.CesiumZondy.ViewshedAnalysisManager = window.CesiumZondy.ViewshedAnalysisManager || new ViewshedAnalysisManager();
-  window.CesiumZondy.VisiblityAnalysisManager = window.CesiumZondy.VisiblityAnalysisManager || new VisiblityAnalysisManager();
-  window.CesiumZondy.CutFillAnalysisManager = window.CesiumZondy.CutFillAnalysisManager = new CutFillAnalysisManager();
+  window.CesiumZondy.SkyLineAnalysisManager =
+    window.CesiumZondy.SkyLineAnalysisManager || new SkyLineAnalysisManager();
+  window.CesiumZondy.ContourAnalysisManager =
+    window.CesiumZondy.ContourAnalysisManager || new ContourAnalysisManager();
+  window.CesiumZondy.ViewshedAnalysisManager =
+    window.CesiumZondy.ViewshedAnalysisManager || new ViewshedAnalysisManager();
+  window.CesiumZondy.VisiblityAnalysisManager =
+    window.CesiumZondy.VisiblityAnalysisManager ||
+    new VisiblityAnalysisManager();
+  window.CesiumZondy.CutFillAnalysisManager =
+    window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
+  window.CesiumZondy.ProfileAnalysisManager =
+    window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -265,7 +273,7 @@ export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
-export class FloodAnalyseManager extends BaseManager {}
+export class FloodAnalysisManager extends BaseManager {}
 export class MarkerManager extends BaseManager {}
 export class AnalysisModelFlattenManager extends BaseManager {}
 export class DynamicCuttingManager extends BaseManager {}
@@ -281,3 +289,4 @@ export class ContourAnalysisManager extends BaseManager {}
 export class ViewshedAnalysisManager extends BaseManager {}
 export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
+export class ProfileAnalysisManager extends BaseManager {}

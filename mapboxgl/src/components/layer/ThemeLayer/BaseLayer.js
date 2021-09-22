@@ -107,9 +107,31 @@ export default {
          * */
         defaultIcon: {
             type: String
+        },
+        dataSource: {
+            type: Object
+        },
+        themeProps: {
+            type: Object
+        },
+        hideItem: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
+        panelStyle: {
+            type: Object
         }
     },
-    watch: {},
+    watch: {
+        dataSource: {
+            handler: function () {
+                this.$_sddThemeLayerBySource();
+            },
+            deep: true
+        }
+    },
     data() {
         return {
             //组件ID,如果有多个组件，可以进行区分
@@ -149,7 +171,11 @@ export default {
             //分段级数
             rangeLevel: 10,
             //是否含有空数据提示，每个图层只提示一次
-            hasNullProperty: []
+            hasNullProperty: [],
+            //初始化类型，function或props
+            initType: "function",
+            hideItemCopy: this.hideItem,
+            panelClass: undefined
         };
     },
     mounted() {
@@ -159,9 +185,31 @@ export default {
         //初始化专题图管理对象
         themeManager.init(this.vueId);
         this.$emit("loaded", this);
+        if(this.hideItem.length > 0){
+            this.hideItemCopy = this.hideItem;
+        }
+        this.$_sddThemeLayerBySource();
     },
     methods: {
-        $_addThemeLayer(themeType, layerId) {
+        $_sddThemeLayerBySource() {
+            if(this.dataSource){
+                this.source_Id = "geojson_" + parseInt(Math.random() * 10000);
+                this.map.addSource(this.source_Id, {
+                    type: "geojson",
+                    data: this.dataSource
+                });
+                this.initType = "props";
+                let layerId = this.themeProps.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
+                if(this.themeProps.panelClass && this.themeProps.panelClass instanceof Array){
+                    this.panelClass = {};
+                    for (let i = 0; i < this.themeProps.panelClass.length; i++) {
+                        this.panelClass[this.themeProps.panelClass[i]] = true;
+                    }
+                }
+                this.$_addThemeLayer(this.themeProps.themeType, layerId, this.themeProps.themeField)
+            }
+        },
+        $_addThemeLayer(themeType, layerId, themeField) {
             this.$refs.themePanel.$_show();
             let vm = this;
             if (themeType) {
@@ -232,6 +280,11 @@ export default {
                 //抛出更新图例事件
                 let legends = this.$_getLegend(this.layerIdCopy);
                 this.$emit("updateLegend", legends);
+                this.$refs.themePanel.$_show();
+                if (this.initType !== "props") {
+                    //将原图层opacity设置为0，而不是设置原图层的visibility，因为隐藏了某些时候queryRenderFeature会取不到数据
+                    this.map.setPaintProperty(this.layerIdCopy, this.dataType + "-opacity", 0);
+                }
             } else {
                 //取得数据
                 this.$_getDataByLayer(layerId, function (features) {
@@ -246,7 +299,11 @@ export default {
                     switch (themeType) {
                         case "uniform":
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "fields");
-                            vm.selectValue = fields[0];
+                            if (vm.initType === "props") {
+                                vm.selectValue = themeField;
+                            } else {
+                                vm.selectValue = fields[0];
+                            }
                             themeManager.initThemeProps(
                                 vm.layerIdCopy,
                                 vm.themeType,
@@ -265,7 +322,11 @@ export default {
                             break;
                         case "unique":
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "fields");
-                            vm.selectValue = fields[0];
+                            if (vm.initType === "props") {
+                                vm.selectValue = themeField;
+                            } else {
+                                vm.selectValue = fields[0];
+                            }
                             themeManager.initThemeProps(
                                 vm.layerIdCopy,
                                 vm.themeType,
@@ -284,7 +345,11 @@ export default {
                             break;
                         case "range":
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "numberFields");
-                            vm.selectValue = fields[0];
+                            if (vm.initType === "props") {
+                                vm.selectValue = themeField;
+                            } else {
+                                vm.selectValue = fields[0];
+                            }
                             themeManager.initThemeProps(
                                 vm.layerIdCopy,
                                 vm.themeType,
@@ -317,7 +382,11 @@ export default {
                             vm.$refs.themePanel.$_setIcons(vm.icons);
                             vm.$refs.themePanel.$_setDefaultIcon(vm.defaultIcon);
                             vm.$refs.themePanel.$_setDataSoure(dataSource);
-                            vm.selectValue = fields[0];
+                            if (vm.initType === "props") {
+                                vm.selectValue = themeField;
+                            } else {
+                                vm.selectValue = fields[0];
+                            }
                             themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             let radiusArr = [], radiusArrCopy = [];
                             for (let i = 0; i < dataSource.length; i++) {
@@ -336,7 +405,11 @@ export default {
                                 fields[0]
                             );
                             dataSource = vm.$_setDataSource(features, fields[0], "unique");
-                            vm.selectValue = fields[0];
+                            if (vm.initType === "props") {
+                                vm.selectValue = themeField;
+                            } else {
+                                vm.selectValue = fields[0];
+                            }
                             vm.$refs.themePanel.currentThemeType = vm.themeType;
                             vm.$_addHeatmapLayer(dataSource);
                             break;
@@ -351,15 +424,18 @@ export default {
                     //设置面板参数
                     vm.$refs.themePanel.$_setFields(fields);
                     vm.$refs.themePanel.$_setLabelFields(["未设置"].concat(textFields));
-                    vm.$refs.themePanel.$_setField(fields[0]);
+                    vm.$refs.themePanel.$_setField(vm.selectValue);
                     vm.$refs.themePanel.$_setDataType(vm.dataType);
                     //抛出更新图例事件
                     let legends = vm.$_getLegend(vm.layerIdCopy);
                     vm.$emit("updateLegend", legends);
+                    vm.$refs.themePanel.$_show();
+                    if (vm.initType !== "props") {
+                        //将原图层opacity设置为0，而不是设置原图层的visibility，因为隐藏了某些时候queryRenderFeature会取不到数据
+                        this.map.setPaintProperty(this.layerIdCopy, this.dataType + "-opacity", 0);
+                    }
                 });
             }
-            //将原图层opacity设置为0，而不是设置原图层的visibility，因为隐藏了某些时候queryRenderFeature会取不到数据
-            this.map.setPaintProperty(this.layerIdCopy, this.dataType + "-opacity", 0);
         },
         /**
          * 拥护已经加载了一张地图，通过mapbox的queryRenderFeature方法获取数据
@@ -370,7 +446,7 @@ export default {
             if (!layerId) {
                 throw new Error("layerId不能为空！");
             }
-            if (!this.map.getLayer(layerId)) {
+            if (!this.map.getLayer(layerId) && this.initType !== "props") {
                 throw new Error(
                     "未找到该图层，请确认layerId：" +
                     layerId +
@@ -378,8 +454,12 @@ export default {
                 );
             }
             let features;
-            //从图层取得数据
-            features = this.map.queryRenderedFeatures({layers: [layerId]});
+            if (this.initType === "props") {
+                features = this.dataSource.features;
+            } else {
+                //从图层取得数据
+                features = this.map.queryRenderedFeatures({layers: [layerId]});
+            }
             if (this.hasNullProperty.indexOf(layerId) < 0) {
                 this.$_getNullFields(features, layerId);
             }
@@ -399,9 +479,11 @@ export default {
          * @param layerId 图层Id
          * */
         $_setLayerInfo(layerId) {
-            let layer = this.map.getLayer(layerId);
-            this.source_Id = layer.source;
-            this.source_layer_Id = layer.sourceLayer;
+            if (this.initType !== "props") {
+                let layer = this.map.getLayer(layerId);
+                this.source_Id = layer.source;
+                this.source_layer_Id = layer.sourceLayer;
+            }
         },
         /**
          * 将要素数组转化为geojson数据
@@ -1636,18 +1718,21 @@ export default {
                             //重新取得数据
                             dataSource = vm.$_setDataSource(features, field, "unique");
                             //设置专题图颜色
-                            paintColor = vm.$_setUniformColors("#EE4C5A", dataSource, field);
+                            vm.currentGradient = "#EE4C5A";
+                            paintColor = vm.$_setUniformColors(vm.currentGradient, dataSource, field);
                             vm.$_setPaintPropertyToExtra(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
                             break;
                         case "unique":
                             //重新取得数据
                             dataSource = vm.$_setDataSource(features, field, "unique");
                             //设置专题图颜色
+                            vm.currentGradient = gradients[0].key;
                             paintColor = vm.$_setUniqueColors(vm.currentGradient, dataSource, field);
                             vm.$_setPaintPropertyToExtra(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
                             break;
                         case "range":
                             //设置分段等级
+                            vm.currentGradient = gradients[0].key;
                             let rangeLevel = vm.currentGradient.split(",").length;
                             themeManager.setExtraData(vm.layerIdCopy, vm.themeType, "rangeLevel", rangeLevel);
                             vm.rangeLevel = rangeLevel;
@@ -1676,7 +1761,8 @@ export default {
                             let heatmapWeight = vm.$_getWeightArr(dataSource);
                             vm.$_setPaintPropertyToExtra(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), "heatmap-weight", heatmapWeight);
                             //颜色仅需平均分配，但是初始颜色要是浅色系，颜色从浅到深
-                            let heatmapColor = vm.$_getHeatmapColors(gradientHeatColor[0].key);
+                            vm.currentGradient = gradientHeatColor[0].key;
+                            let heatmapColor = vm.$_getHeatmapColors(vm.currentGradient);
                             vm.$_setPaintPropertyToExtra(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), "heatmap-color", heatmapColor);
                             //半径比较重要，半径越大相对的渐变效果越宽，通视设置不同的缩放等级，会有模糊效果
                             let heatmapRadius = vm.$_getHeatmapRadius(40);
@@ -2189,7 +2275,7 @@ export default {
         $_yCircleTranslateChanged(translate) {
             this.$_setTranslate(translate, 1);
             let arr = themeManager.getPanelProps(this.layerIdCopy, this.themeType, "circle-translate");
-            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "circle-translate", [arr[0], -arr[1]]);
+            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "circle-translate", [Number(arr[0]), Number(arr[1]) * -1]);
         },
         $_iconTranslateYChanged(translate) {
             let vm = this;
@@ -2199,18 +2285,18 @@ export default {
                 return vm.$_editTranslate(translate, 1);
             });
             let arr = themeManager.getPanelProps(this.layerIdCopy, this.themeType, "icon-translate");
-            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "icon-translate", [arr[0], -arr[1]]);
+            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "icon-translate", [Number(arr[0]), Number(arr[1]) * -1]);
         },
         $_lineTranslateYChanged(translate) {
             this.$_setTranslate(translate, 1);
             let arr = themeManager.getPanelProps(this.layerIdCopy, this.themeType, "line-translate");
-            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "line-translate", [arr[0], -arr[1]]);
+            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "line-translate", [Number(arr[0]), Number(arr[1]) * -1]);
         },
         $_fillTranslateYChanged(translate) {
             this.$_setTranslate(translate, 1);
             this.$_setOutLineTranslate(translate, 1);
             let arr = themeManager.getPanelProps(this.layerIdCopy, this.themeType, "fill-translate");
-            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "fill-translate", [arr[0], -arr[1]]);
+            themeManager.setPanelProps(this.layerIdCopy, this.themeType, "fill-translate", [Number(arr[0]), Number(arr[1]) * -1]);
         },
         $_circleStrokeColorChanged(color) {
             this.$_setPaintProperty(this.layerIdCopy, this.layerIdCopy + this.$_getThemeName(), "circle-stroke-color", color);
@@ -2818,12 +2904,20 @@ export default {
                     break;
             }
             if (returnColors) {
-                let length = returnColors.length / 2;
-                for (let i = 0; i < length; i++) {
+                if(this.themeType !== "symbol"){
+                    let length = returnColors.length / 2;
+                    for (let i = 0; i < length; i++) {
+                        legends.push({
+                            layerName: returnColors[i * 2],
+                            layerType: this.dataType,
+                            color: returnColors[i * 2 + 1]
+                        });
+                    }
+                }else {
                     legends.push({
-                        layerName: returnColors[i * 2],
-                        layerType: this.dataType,
-                        color: returnColors[i * 2 + 1]
+                        layerName: this.layerIdCopy + "_符号",
+                        layerType: "symbol",
+                        color: returnColors
                     });
                 }
             }

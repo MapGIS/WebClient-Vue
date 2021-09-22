@@ -28,6 +28,7 @@ export { default as MapgisFeatureTable } from "../components/UI/controls/table/F
 
 export { default as MapgisArrayLayer } from "../components/layer/ArrayLayer";
 export { default as MapgisGeojsonLayer } from "../components/layer/GeojsonLayer";
+export { default as MapgisGeojsonPopup } from "../components/layer/geojson/Popup.vue";
 export { default as MapgisImageLayer } from "../components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "../components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../components/layer/VideoLayer";
