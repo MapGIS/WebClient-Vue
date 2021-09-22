@@ -26,29 +26,36 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="{height: '100vh'}"
           v-on:load="handleLoad"
       >
-      <mapgis-3d-ogc-wmts-layer
-          :baseUrl="url"
-          :wmtsLayer="layer"
-          :tileMatrixSet="tileMatrixSet"
-          :format="format"
-          :tilingScheme="tilingScheme"
-          :token="token"
-      ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-      <mapgis-3d-igs-m3d 
-          :vueIndex="$props.models[0].vueIndex" 
-          url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s"
-      />
-      <mapgis-3d-igs-m3d 
-          :vueIndex="$props.models[1].vueIndex" 
-          url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent"
-      />
-      <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-dynamic-section v-bind="$props"/>
-      </mapgis-ui-card>
+        <mapgis-3d-ogc-wmts-layer
+            :baseUrl="url"
+            :wmtsLayer="layer"
+            :tileMatrixSet="tileMatrixSet"
+            :format="format"
+            :tilingScheme="tilingScheme"
+            :token="token"
+        ></mapgis-3d-ogc-wmts-layer>
+        <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
+        <mapgis-3d-igs-m3d 
+            :vueIndex="$props.models[0].vueIndex" 
+            url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s"
+        />
+        <mapgis-3d-igs-m3d 
+            :vueIndex="$props.models[1].vueIndex" 
+            url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent"
+        />
+        <mapgis-ui-card class="storybook-ui-card">
+          <mapgis-3d-dynamic-section @mounted="dynamicMounted" @destroyed="dynamicDestroyed" v-bind="$props"/>
+        </mapgis-ui-card>
       </mapgis-web-scene>
     `,
   methods: {
+    dynamicMounted(component) {
+      component.onOpen();
+    },
+    dynamicDestroyed(component) {
+      component.onClose();
+      component.unmount();
+    },
     handleLoad(e) {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
@@ -85,6 +92,10 @@ DynamicSection.args = {
       title: "钻孔分层点",
     },
   ],
+  axis: "X",
+  color: "rgb(200,200,200,0.5)",
+  time: 10,
+  distance: 0,
 };
 
 DynamicSection.parameters = {

@@ -1,5 +1,5 @@
 <template>
-  <div class="mapgis-widget-aspect-analysis">
+  <div>
     <mapgis-ui-group-tab
       title="模型"
       :has-top-margin="false"
@@ -18,8 +18,8 @@
       <div v-else>暂无数据！</div>
     </mapgis-ui-row>
     <mapgis-ui-group-tab title="坐标轴"> </mapgis-ui-group-tab>
-    <mapgis-ui-row class="axis">
-      <mapgis-ui-radio-group v-model="axis">
+    <mapgis-ui-row class="axisCopy">
+      <mapgis-ui-radio-group v-model="axisCopy">
         <mapgis-ui-radio value="X"> X轴 </mapgis-ui-radio>
         <mapgis-ui-radio value="Y"> Y轴 </mapgis-ui-radio>
         <mapgis-ui-radio value="Z"> Z轴 </mapgis-ui-radio>
@@ -29,18 +29,22 @@
     <mapgis-ui-setting-form :label-width="72">
       <mapgis-ui-form-item label="剖面颜色">
         <mapgis-ui-sketch-color-picker
-          :color.sync="color"
+          :color.sync="colorCopy"
           :disableAlpha="false"
-          class="color-picker"
+          class="colorCopy-picker"
         >
         </mapgis-ui-sketch-color-picker>
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="动画时间">
-        <mapgis-ui-input-number v-model="time" :min="0" style="width: 100%" />
+        <mapgis-ui-input-number
+          v-model="timeCopy"
+          :min="0"
+          style="width: 100%"
+        />
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="剖切距离">
         <mapgis-ui-slider
-          v-model="distance"
+          v-model="distanceCopy"
           :min="min"
           :max="max"
           @change="setDistance"
@@ -73,6 +77,22 @@ export default {
     models: {
       type: Array,
       default: () => []
+    },
+    axis: {
+      type: String,
+      default: "X"
+    },
+    color: {
+      type: String,
+      default: "rgb(200,200,200,0.5)"
+    },
+    time: {
+      type: Number,
+      default: 10
+    },
+    distance: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -81,19 +101,16 @@ export default {
       model: null,
 
       // 默认坐标轴
-      axis: "X",
+      axisCopy: "X",
 
       // 默认裁剪边缘颜色
-      color: "rgb(200,200,200,0.5)",
+      colorCopy: "rgb(200,200,200,0.5)",
 
       // 默认动画时间
-      time: 10,
+      timeCopy: 10,
 
       // 默认剖切距离
-      distance: 0,
-
-      // 剖切图层
-      landscapeLayer: [],
+      distanceCopy: 0,
 
       // 最大剖切距离
       max: 10000,
@@ -123,9 +140,6 @@ export default {
       handler: function(layers) {
         if (layers && layers.length > 0) {
           this.model = layers[layers.length - 1];
-          this.m3dIsReady().then(() => {
-            this.startClipping();
-          });
         } else {
           this.model = null;
         }
@@ -137,10 +151,35 @@ export default {
       deep: true,
       immediate: true,
       handler: function() {
+        this.removeDynaCut();
         this.changeModel();
       }
     },
     axis: {
+      immediate: true,
+      handler: function() {
+        this.axisCopy = this.axis;
+      }
+    },
+    color: {
+      immediate: true,
+      handler: function() {
+        this.colorCopy = this.color;
+      }
+    },
+    time: {
+      immediate: true,
+      handler: function() {
+        this.timeCopy = this.time;
+      }
+    },
+    distance: {
+      immediate: true,
+      handler: function() {
+        this.distanceCopy = this.distance;
+      }
+    },
+    axisCopy: {
       deep: true,
       immediate: true,
       handler: function() {
@@ -150,11 +189,10 @@ export default {
     }
   },
   mounted() {
-    this.onOpen();
+    this.$emit("mounted", this);
   },
   destroyed() {
-    this.onClose();
-    this.unmount();
+    this.$emit("destroyed", this);
   },
   methods: {
     async createCesiumObject() {
@@ -218,7 +256,8 @@ export default {
       this.m3dIsReady().then(m3d => {
         const { source } = m3d;
         this.zoomToM3dLayerBySource(source[0]);
-        this.startClipping();
+        this.getMaxMin();
+        // this.startClipping();
       });
     },
 
@@ -258,7 +297,7 @@ export default {
      * 剖切方向，Cesium.Cartesian3中第一个参数是左右，第二个参数是前后，第三个参数是上下
      */
     clippingDirection() {
-      switch (this.axis) {
+      switch (this.axisCopy) {
         case "X":
           return new this.Cesium.Cartesian3(-1.0, 0.0, 0.0);
         case "Y":
@@ -294,18 +333,18 @@ export default {
           return;
         }
         this.clearTimer();
-        this.distance = this.min;
+        this.distanceCopy = this.min;
         const self = this;
         this.timer = window.setInterval(() => {
           if (self.readonly === false) {
             self.readonly = true;
           }
-          const step = ((self.max - self.min) * 2) / (self.time * 10);
-          self.distance += step;
-          if (self.distance >= self.max) {
-            self.distance = self.min;
+          const step = ((self.max - self.min) * 2) / (self.timeCopy * 10);
+          self.distanceCopy += step;
+          if (self.distanceCopy >= self.max) {
+            self.distanceCopy = self.min;
           }
-          self.setDistance(self.distance);
+          self.setDistance(self.distanceCopy);
         }, 100);
       });
     },
@@ -340,7 +379,7 @@ export default {
         const direction = this.clippingDirection();
         // 创建剖切对象实例
         dynamicSectionAnalysis.createModelCuttingPlane(direction, {
-          distance: 0,
+          distance: this.distanceCopy || 0,
           color: this.edgeColor(),
           // 剖切辅助面的宽高缩放比(基于模型球的半径)
           scaleHeight: 2.0,
@@ -356,11 +395,11 @@ export default {
     },
     /**
      * RGB/RGBA转Cesium内部颜色值
-     * @param {string} color rgb/rgba颜色值
+     * @param {string} colorCopy rgb/rgba颜色值
      */
     edgeColor() {
-      const { color } = this;
-      return makeColor(color);
+      const { colorCopy } = this;
+      return makeColor(colorCopy);
     },
     /**
      * 移除动态剖切对象
@@ -371,8 +410,8 @@ export default {
         vueKey,
         vueIndex
       );
-      let { options } = find;
-      let { dynamicSectionAnalysis } = options;
+      let { options } = find || {};
+      let { dynamicSectionAnalysis } = options || {};
       if (dynamicSectionAnalysis) {
         dynamicSectionAnalysis.removeAll();
         dynamicSectionAnalysis = null;
@@ -425,7 +464,7 @@ export default {
       let min = -max;
       if (!this.model) return;
       const { range } = this.model;
-      switch (this.axis) {
+      switch (this.axisCopy) {
         case "X":
           max = range.xmax;
           min = range.xmin;
@@ -443,15 +482,8 @@ export default {
       }
       this.max = max;
       this.min = min;
-      this.distance = (min + max) / 2;
+      this.distanceCopy = (min + max) / 2;
     }
   }
 };
 </script>
-<style scoped>
-.dynamic-section-container {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-</style>
