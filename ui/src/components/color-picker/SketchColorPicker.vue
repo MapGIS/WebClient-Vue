@@ -3,10 +3,10 @@
     <mapgis-ui-popover trigger="click">
       <template slot="content">
         <sketch-picker
-          class="sketch-color"
-          :disableAlpha="disableAlpha"
-          :value="pickColor"
-          @input="onColorChange"
+            class="sketch-color"
+            :disableAlpha="disableAlpha"
+            :value="pickColor"
+            @input="onColorChange"
         />
       </template>
       <div class="color-container">
@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import { Sketch } from "vue-color";
+import {Sketch} from "vue-color";
 
 export default {
   name: "mapgis-ui-sketch-color-picker",
-  components: { "sketch-picker": Sketch },
+  components: {"sketch-picker": Sketch},
   props: {
     color: {
       type: String,
@@ -34,7 +34,7 @@ export default {
       default: true
     },
     extraValue: {
-      type: Object
+      type: [Object, String, Number, Boolean]
     }
   },
   computed: {
