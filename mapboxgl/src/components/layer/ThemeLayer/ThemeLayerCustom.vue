@@ -3,6 +3,7 @@
     <mapgis-igs-theme-panel-custom
         ref="themePanel"
         :options="optionsCopy"
+        v-show="showPanel"
         @formChanged="$_formChanged"
     />
     <mapgis-inspect
@@ -22,24 +23,29 @@ export default {
   props: {
     popUpFields: {
       type: Array
+    },
+    showPanel: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
-      optionsCopy: undefined
+      optionsCopy: undefined,
+      themePropsCopy: undefined
     }
   },
   created() {
     this.panelType = "custom";
   },
   mounted() {
+    this.themePropsCopy = JSON.parse(JSON.stringify(this.themeProps));
   },
   methods: {
     $_formChanged(id, value, type, extra, extra2) {
       if (type === "MapgisUiThemeListCheckBox") {
         this.$_checked(extra, value, extra2);
       }else if (type === "MapgisUiThemeListColor") {
-        console.log("---id, value",id, value)
         this.$_colorChanged(value, id);
       }else {
         this["$_" + id + "Changed"](value);

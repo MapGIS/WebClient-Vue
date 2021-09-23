@@ -130,6 +130,29 @@ export default {
                 this.$_sddThemeLayerBySource();
             },
             deep: true
+        },
+        themeProps: {
+            handler: function () {
+                let vm = this;
+                let options = this.themeProps.options;
+                let rects = options.rects;
+                for (let i = 0; i < rects.length; i++) {
+                    let rows = rects[i].rows;
+                    for (let j = 0; j < rows.length; j++) {
+                        let oldData = vm.$_getValueById(rows[j].id, "value", vm.themePropsCopy.options);
+                        let newData = vm.$_getValueById(rows[j].id, "value", vm.themeProps.options);
+                        if (newData !== oldData) {
+                            if(rows[j].type === "MapgisUiGrediantSelect"){
+                                this.$_gradientChanged(newData)
+                            }else {
+                                this["$_" + rows[j].id + "Changed"](newData);
+                            }
+                        }
+                    }
+                }
+                this.themePropsCopy = JSON.parse(JSON.stringify(this.themeProps));
+            },
+            deep: true
         }
     },
     data() {
@@ -193,6 +216,28 @@ export default {
         this.$_sddThemeLayerBySource();
     },
     methods: {
+        $_getValueById(id, key, options) {
+            let value;
+            let rects = options.rects;
+            for (let i = 0; i < rects.length; i++) {
+                let rows = rects[i].rows;
+                for (let j = 0; j < rows.length; j++) {
+                    if (rows[j].type !== "multiCols") {
+                        if (rows[j].id === id) {
+                            value = rows[j][key];
+                        }
+                    } else {
+                        let children = rows[j].children;
+                        for (let k = 0; k < children.length; k++) {
+                            if (children[k].id === id) {
+                                value = children[k][key];
+                            }
+                        }
+                    }
+                }
+            }
+            return value;
+        },
         $_addHeightLightLayer() {
             if (this.dataType === "fill") {
                 let vm = this;
@@ -494,7 +539,7 @@ export default {
                     for (let j = 0; j < rows.length; j++) {
                         if (rows[j].type === "MapgisUiThemeList") {
                             //避免与vue绑定
-                            if(!rows[j].hasOwnProperty("props")){
+                            if (!rows[j].hasOwnProperty("props")) {
                                 rows[j].props = {};
                             }
                             rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
