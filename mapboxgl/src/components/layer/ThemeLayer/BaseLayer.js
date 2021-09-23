@@ -175,7 +175,9 @@ export default {
             //初始化类型，function或props
             initType: "function",
             hideItemCopy: this.hideItem,
-            panelClass: undefined
+            panelClass: undefined,
+            hoveredStateId: undefined,
+            panelType: "fix"
         };
     },
     mounted() {
@@ -185,28 +187,76 @@ export default {
         //初始化专题图管理对象
         themeManager.init(this.vueId);
         this.$emit("loaded", this);
-        if(this.hideItem.length > 0){
+        if (this.hideItem.length > 0) {
             this.hideItemCopy = this.hideItem;
         }
         this.$_sddThemeLayerBySource();
     },
     methods: {
+        $_addHeightLightLayer() {
+            if (this.dataType === "fill") {
+                let vm = this;
+                let hId = this.layerIdCopy + this.$_getThemeName() + "_height_light";
+                let heightLightLayer = {
+                    id: hId,
+                    type: "line",
+                    source: this.source_Id,
+                    paint: {
+                        "line-color": "#7B75C6",
+                        "line-width": ['case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            4,
+                            0]
+                    }
+                }
+                this.map.addLayer(heightLightLayer);
+                this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                    if (vm.hoveredStateId) {
+                        vm.map.setFeatureState(
+                            {source: vm.source_Id, id: vm.hoveredStateId},
+                            {hover: false}
+                        );
+                    }
+                    vm.hoveredStateId = e.features[0].id;
+                    vm.map.setFeatureState(
+                        {source: vm.source_Id, id: vm.hoveredStateId},
+                        {hover: true}
+                    );
+                });
+                this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                    if (vm.hoveredStateId !== null) {
+                        vm.map.setFeatureState(
+                            {source: vm.source_Id, id: vm.hoveredStateId},
+                            {hover: false}
+                        );
+                    }
+                    vm.hoveredStateId = null;
+                });
+            }
+        },
         $_sddThemeLayerBySource() {
-            if(this.dataSource){
+            if (this.dataSource) {
+                let dataSource = this.dataSource;
+                for (let i = 0; i < dataSource.features.length; i++) {
+                    if (!dataSource.features[i].hasOwnProperty("id")) {
+                        dataSource.features[i].id = i + 1;
+                    }
+                }
                 this.source_Id = "geojson_" + parseInt(Math.random() * 10000);
                 this.map.addSource(this.source_Id, {
                     type: "geojson",
-                    data: this.dataSource
+                    data: dataSource
                 });
                 this.initType = "props";
                 let layerId = this.themeProps.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
-                if(this.themeProps.panelClass && this.themeProps.panelClass instanceof Array){
+                if (this.themeProps.panelClass && this.themeProps.panelClass instanceof Array) {
                     this.panelClass = {};
                     for (let i = 0; i < this.themeProps.panelClass.length; i++) {
                         this.panelClass[this.themeProps.panelClass[i]] = true;
                     }
                 }
-                this.$_addThemeLayer(this.themeProps.themeType, layerId, this.themeProps.themeField)
+                this.$_addThemeLayer(this.themeProps.themeType, layerId, this.themeProps.themeField);
+                this.$_addHeightLightLayer();
             }
         },
         $_addThemeLayer(themeType, layerId, themeField) {
@@ -436,6 +486,32 @@ export default {
                     }
                 });
             }
+            if (this.panelType === "custom") {
+                this.optionsCopy = this.themeProps.options;
+                let rects = this.optionsCopy.rects;
+                for (let i = 0; i < rects.length; i++) {
+                    let rows = rects[i].rows;
+                    for (let j = 0; j < rows.length; j++) {
+                        if (rows[j].type === "MapgisUiThemeList") {
+                            //避免与vue绑定
+                            if(!rows[j].hasOwnProperty("props")){
+                                rows[j].props = {};
+                            }
+                            rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
+                            rows[j].props.colors = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors"));
+                            rows[j].props.checkBoxArr = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "checkBoxArr"));
+                            rows[j].props.field = this.selectValue;
+                        }
+                    }
+                }
+            }
+        },
+        $_getNewArray(dataSource) {
+            let newData = [];
+            for (let k = 0; k < dataSource.length; k++) {
+                newData.push(dataSource[k]);
+            }
+            return newData;
         },
         /**
          * 拥护已经加载了一张地图，通过mapbox的queryRenderFeature方法获取数据
@@ -2904,7 +2980,7 @@ export default {
                     break;
             }
             if (returnColors) {
-                if(this.themeType !== "symbol"){
+                if (this.themeType !== "symbol") {
                     let length = returnColors.length / 2;
                     for (let i = 0; i < length; i++) {
                         legends.push({
@@ -2913,7 +2989,7 @@ export default {
                             color: returnColors[i * 2 + 1]
                         });
                     }
-                }else {
+                } else {
                     legends.push({
                         layerName: this.layerIdCopy + "_符号",
                         layerType: "symbol",

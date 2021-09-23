@@ -190,7 +190,7 @@
               :type="item.type"
               :ref="item.id"
               :props="item.props"
-              @change="$_change"
+              @change="$_change(item.id,item.value,item.filter)"
           />
           <mapgis-ui-mix-row
               v-if="item.type === 'MapgisUiSlider'"
@@ -199,7 +199,7 @@
               :type="item.type"
               :ref="item.id"
               :props="item.props"
-              @change="$_change"
+              @change="$_change(item.id,item.value,item.filter)"
           />
           <mapgis-ui-mix-row
               v-if="item.type === 'MapgisUiSelect'"
@@ -209,7 +209,7 @@
               :ref="item.id"
               :props="item.props"
               :dataSource="item.dataSource"
-              @change="$_change"
+              @change="$_change(item.id,item.value,item.filter)"
           />
           <mapgis-ui-mix-row
               v-if="item.type === 'MapgisUiGrediantSelect'"
@@ -219,12 +219,19 @@
               :ref="item.id"
               :props="item.props"
               :dataSource="item.dataSource"
-              @change="$_change"
+              @change="$_change(item.id,item.value,item.filter)"
           />
           <mapgis-ui-mix-row
               v-if="item.type === 'MapgisUiColorPicker'"
               :title="item.title"
               v-model="item.value"
+              :type="item.type"
+              :ref="item.id"
+              :props="item.props"
+              @change="$_change(item.id,item.value,item.filter)"
+          />
+          <mapgis-ui-mix-row
+              v-if="item.type === 'MapgisUiThemeList'"
               :type="item.type"
               :ref="item.id"
               :props="item.props"
@@ -330,7 +337,7 @@ export default {
       }
       return forms;
     },
-    $_change(id, value, filter) {
+    $_change(id, value, filter, extra, extra2) {
       //正则判断
       if (filter && typeof filter === "string") {
         let reg = new RegExp(filter);
@@ -351,7 +358,14 @@ export default {
       if (filter && filter instanceof Function) {
         this.$_showError(filter(id, value, this), id);
       }
-      this.$emit("formChanged", this.$_getForm());
+      if(id === "MapgisUiThemeListCheckBox"){
+        console.log("---value, filter, id",value, filter, id)
+        this.$emit("formChanged", value, filter, id, extra, extra2);
+      }else if(id === "MapgisUiThemeListColor"){
+        this.$emit("formChanged", value, filter, id);
+      }else {
+        this.$emit("formChanged", id, value, this.$_getForm());
+      }
     },
     $_showError(flag, id) {
       if (flag) {

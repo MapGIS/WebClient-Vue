@@ -32,6 +32,9 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    },
+    extraValue: {
+      type: Object
     }
   },
   computed: {
@@ -47,7 +50,7 @@ export default {
   methods: {
     onColorChange(val) {
       this.getPickColor(val);
-      this.$emit("input", val);
+      this.$emit("input", val, this.extraValue);
     },
     // 颜色拾取器选中事件回调
     getPickColor(val) {

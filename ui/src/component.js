@@ -8,7 +8,6 @@ export { default as MapgisUiBorder } from "./components/border/Border.vue";
 // export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
 export { default as MapgisUiIcon } from "./components/iconfont/IconSvgImg.vue";
 export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
-export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 
 // Layout
 export { default as MapgisUiDiv } from "./components/div/Div.vue";
@@ -151,6 +150,7 @@ export { default as MapgisUiWindowCard } from "./components/window/WindowCard.vu
 export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrapper.vue";
 
 // Color
+export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";

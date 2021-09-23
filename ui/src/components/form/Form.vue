@@ -16,6 +16,8 @@ export default {
   model: {},
   props: formProps,
   computed: {},
+  createForm: Form.createForm,
+  createFormField: Form.createFormField,
   methods: {}
 };
 </script>
