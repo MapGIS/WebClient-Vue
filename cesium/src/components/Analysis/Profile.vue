@@ -93,49 +93,172 @@ export default {
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     ...VueOptions,
-    profileType: {
-      // 分析类型，0代表地形，1代表地形和模型兼容
-      type: Number,
-      default: 1
-    },
+    /**
+     * @type Number
+     * @default 1
+     * @description 分析类型，0代表地形，1代表地形和模型兼容
+     */
+    profileType: { type: Number, default: 1 },
+    /**
+     * @type String
+     * @default "right"
+     * @description 分析面板的位置
+     */
     position: {
       type: String,
-      default: "left"
+      default: "right"
     },
+    /**
+     * @type String
+     * @default "rgb(255,0,0)"
+     * @description 剖切线颜色
+     */
     polylineGroundColor: {
-      // 剖切线颜色
       type: String,
       default: "rgb(255,0,0)"
     },
+    /**
+     * @type Number
+     * @default 2
+     * @description 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
+     */
     samplePrecision: {
-      // 采样精度(采样间隔，平面距离，单位米，模型默认为0.2，地形为2)
       type: Number,
       default: 2
     },
+    /**
+     * @type Boolean
+     * @default false
+     * @description 是否显示剖面
+     */
     showPolygon: {
-      // 是否显示剖面
       type: Boolean,
       default: false
     },
+    /**
+     * @type String
+     * @default "rgb(0,255,0)"
+     * @description 交互点颜色(关闭剖面的时候生效)
+     */
     pointColor: {
-      // 交互点颜色(关闭剖面的时候生效)
       type: String,
       default: "rgb(0,255,0)"
     },
+    /**
+     * @type String
+     * @default "rgb(0,255,0)"
+     * @description 交互线颜色(开启剖面的时候生效)
+     */
     polyLineColor: {
-      // 交互线颜色(开启剖面的时候生效)
       type: String,
       default: "rgb(0,255,0)"
     },
+    /**
+     * @type String
+     * @default "rgb(0,0,255)"
+     * @description 剖面颜色
+     */
     polygonColor: {
-      // 剖面颜色
       type: String,
       default: "rgb(0,0,255)"
     },
+    /**
+     * @type Number
+     * @default 100
+     * @description 剖面高度
+     */
     polygonHeight: {
-      // 剖面高度
       type: Number,
       default: 100
+    },
+    /**
+     * @type Object
+     * @description 二维剖面显示样式
+     */
+    echartsOptions: {
+      type: Object,
+      default: () => {
+        const echartsOptions = {
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "line",
+              lineStyle: {
+                color: "#41aeff",
+                type: "solid"
+              }
+            },
+            confine: true, // 是否将 tooltip 框限制在图表的区域内。
+            backgroundColor: "rgba(255, 255, 255, 0.8)"
+          },
+          title: {
+            show: false
+          },
+          grid: {
+            top: 25,
+            left: 40,
+            right: 20,
+            bottom: 20,
+            contentLabel: false
+          },
+          calculable: true,
+          xAxis: [
+            {
+              show: false,
+              type: "value",
+              max: "dataMax"
+            }
+          ],
+          yAxis: [
+            {
+              type: "value",
+              splitLine: {
+                lineStyle: {
+                  color: "#d9d9d9",
+                  type: "dotted"
+                }
+              },
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              axisLabel: {
+                formatter: value => {
+                  const texts = [];
+                  if (value > 99999) {
+                    const text = Number(value).toExponential(1);
+                    texts.push(text);
+                  } else {
+                    texts.push(parseInt(value));
+                  }
+                  return texts;
+                }
+              }
+            }
+          ],
+          series: [
+            {
+              type: "line",
+              smooth: true, // 建议地形平滑显示二维剖面，模型取消平滑
+              itemStyle: {
+                color: "#40a9ff"
+              },
+              markPoint: {
+                symbol: "circle",
+                symbolSize: 15,
+                label: { position: "top" },
+                data: [
+                  { type: "max", name: "最高点" },
+                  { type: "min", name: "最低点" }
+                ]
+              }
+            }
+          ]
+        };
+        return echartsOptions;
+      }
     }
   },
   watch: {
@@ -183,7 +306,7 @@ export default {
       pointColorCopy: "rgb(0,255,0)", // 交互点颜色(关闭剖面的时候生效)
       polylineGroundColorCopy: "rgb(255,0,0)", // 剖切线颜色
       showPolygonCopy: false, // 是否显示剖面
-      samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型默认为0.2，地形为2)
+      samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
       profile2dVisible: false, // 是否显示二维剖面
       depthTestAgainstTerrain: false // 深度检测是否已开启
     };
@@ -226,108 +349,37 @@ export default {
       }
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.ProfileAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
-      if (find) {
+      const profileAnalysis = this._getProfileAnalysis();
+      if (profileAnalysis) {
         this.remove();
       }
       CesiumZondy.ProfileAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
-     * 获取二维剖面设置参数
+     * @description 获取剖面分析对象
+     * @return 剖面分析对象
      */
-    getEchartOptions(smooth) {
-      const echartsOptions = {
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "line",
-            lineStyle: {
-              color: "#41aeff",
-              type: "solid"
-            }
-          },
-          confine: true, // 是否将 tooltip 框限制在图表的区域内。
-          backgroundColor: "rgba(255, 255, 255, 0.8)"
-        },
-        title: {
-          show: false
-        },
-        grid: {
-          top: 25,
-          left: 40,
-          right: 20,
-          bottom: 20,
-          contentLabel: false
-        },
-        calculable: true,
-        xAxis: [
-          {
-            show: false,
-            type: "value",
-            max: "dataMax"
-          }
-        ],
-        yAxis: [
-          {
-            type: "value",
-            splitLine: {
-              lineStyle: {
-                color: "#d9d9d9",
-                type: "dotted"
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            axisLabel: {
-              formatter(value) {
-                const texts = [];
-                if (value > 99999) {
-                  const text = Number(value).toExponential(1);
-                  texts.push(text);
-                } else {
-                  texts.push(parseInt(value));
-                }
-                return texts;
-              }
-            }
-          }
-        ],
-        series: [
-          {
-            type: "line",
-            smooth,
-            itemStyle: {
-              color: "#40a9ff"
-            },
-            markPoint: {
-              symbol: "circle",
-              symbolSize: 15,
-              label: { position: "top" },
-              data: [
-                { type: "max", name: "最高点" },
-                { type: "min", name: "最低点" }
-              ]
-            }
-          }
-        ]
-      };
-      return echartsOptions;
+    _getProfileAnalysis() {
+      const { CesiumZondy, vueKey, vueIndex } = this;
+      const find = CesiumZondy.ProfileAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
+      const { options } = find;
+      const { profileAnalysis } = options;
+      return profileAnalysis;
     },
-    getColor(rgba) {
+    /**
+     * @description rgba值转cesium内部color对象
+     * @param rgba - {String} rgba值
+     * @return {Object} cesium内部color对象
+     */
+    _getColor(rgba) {
       return colorToCesiumColor(rgba, this.webGlobe);
     },
-
     /**
-     * 开始分析
+     * @description 开始分析
      */
     analysis() {
       const { viewer } = this.webGlobe;
@@ -342,16 +394,14 @@ export default {
         pointColorCopy,
         polylineGroundColorCopy,
         showPolygonCopy,
-        samplePrecisionCopy
+        samplePrecisionCopy,
+        echartsOptions
       } = this;
-      const pColor = this.getColor(polygonColorCopy);
-      const ptColor = this.getColor(pointColorCopy);
-      const lColor = this.getColor(polyLineColorCopy);
-      const pgColor = this.getColor(polylineGroundColorCopy);
+      const pColor = this._getColor(polygonColorCopy);
+      const ptColor = this._getColor(pointColorCopy);
+      const lColor = this._getColor(polyLineColorCopy);
+      const pgColor = this._getColor(polylineGroundColorCopy);
       const { profileType } = this;
-      // 地形平滑显示二维剖面，模型取消平滑
-      const smooth = this.profileType ? 1 : 0;
-      const echartsOptions = this.getEchartOptions(smooth);
       let profileAnalysis = null;
       if (!this.Cesium.defined(profileAnalysis)) {
         profileAnalysis = new this.Cesium.TerrainProfile(viewer, echarts, {
@@ -366,7 +416,7 @@ export default {
           profileType // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
         });
       }
-      profileAnalysis.profile(this.profileStart, this.profileSuccess);
+      profileAnalysis.profile(this._profileStart, this._profileSuccess);
       const { CesiumZondy, vueKey, vueIndex } = this;
       CesiumZondy.ProfileAnalysisManager.changeOptions(
         vueKey,
@@ -375,36 +425,28 @@ export default {
         profileAnalysis
       );
     },
-
     /**
-     * 开始分析，显示进度条
+     * @description 绘制结束后回调函数，表示cesium内部开始启用分析功能
      */
-    profileStart() {},
-
+    _profileStart() {
+      vm.$emit("start");
+    },
     /**
-     * 分析结束，移除进度条，并显示二维剖面
+     * @description 分析结束回调函数
      */
-    profileSuccess() {
-      const profileAnalysis = this.getProfileAnalysis();
-      // 剖切分析对象存在才显示二维剖面，以防在分析中，点击了清除
+    _profileSuccess() {
+      vm.$emit("success");
+      const profileAnalysis = this._getProfileAnalysis();
+      // 剖面分析对象存在才显示二维剖面，以防在分析中，点击了清除
       if (profileAnalysis) {
         this.profile2dVisible = true;
       }
     },
-
-    getProfileAnalysis() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      const find = CesiumZondy.ProfileAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
-      const { options } = find;
-      const { profileAnalysis } = options;
-      return profileAnalysis;
-    },
-
+    /**
+     * @description 移除剖面分析结果，关闭二维剖面显示，恢复深度检测设置
+     */
     remove() {
-      const profileAnalysis = this.getProfileAnalysis();
+      const profileAnalysis = this._getProfileAnalysis();
       // 关闭二维剖面显示
       this.profile2dVisible = false;
 
