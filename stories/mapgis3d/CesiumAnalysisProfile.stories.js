@@ -154,7 +154,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 剖面 = Template.bind({});
 剖面.args = {
-  position: "left",
+  position: "right",
   profileType: 0,
   polygonHeight: 100,
   polygonColor: "rgb(0,0,255)",
