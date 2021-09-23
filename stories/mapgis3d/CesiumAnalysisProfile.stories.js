@@ -1,5 +1,5 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
+import Markdown from "../../cesium/docs/api/analysis/Profile.md";
 
 export default {
   title: "三维/分析/剖面分析",
