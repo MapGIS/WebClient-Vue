@@ -71,24 +71,24 @@ export default {
       this.activeType = this.icons[0].type;
       this.selectIcon = this.defaultIcon;
     }else {
-      let basicFiles = require
-          .context("./basic", false, /.svg$/)
-          .keys();
-      let basic = [];
-      for (let i = 0; i < basicFiles.length; i++) {
-        basic.push(
-            "./basic/" +
-            basicFiles[i].substr(2, basicFiles[i].length - 1)
-        );
-      }
-      this.icons = [
-        {
-          type: "基本图形",
-          icons: basic,
-        }
-      ];
-      this.activeType = this.icons[0].type;
-      this.selectIcon = this.defaultIcon;
+      // let basicFiles = require
+      //     .context("./basic", false, /.svg$/)
+      //     .keys();
+      // let basic = [];
+      // for (let i = 0; i < basicFiles.length; i++) {
+      //   basic.push(
+      //       "./basic/" +
+      //       basicFiles[i].substr(2, basicFiles[i].length - 1)
+      //   );
+      // }
+      // this.icons = [
+      //   {
+      //     type: "基本图形",
+      //     icons: basic,
+      //   }
+      // ];
+      // this.activeType = this.icons[0].type;
+      // this.selectIcon = this.defaultIcon;
     }
     let vm = this;
     window.onclick = function (event) {
