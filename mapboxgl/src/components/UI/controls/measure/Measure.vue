@@ -372,8 +372,8 @@ export default {
         const hasPoints = points && points.length > 0;
         if (hasLine && !hasPoints) {
           // line clicked
-          if (vm.selfMeasureMode !== measureModeMap.direct) {
-            vm.changeMode(measureModeMap.simple, { featureIds: [] });
+          if (vm.measure.getMode() !== measureModeMap.direct) {
+            vm.measure.changeMode(measureModeMap.simple, { featureIds: [] });
             // vm.changeMode(measureModeMap.direct, {
             //   featureId: features[0].id
             // });

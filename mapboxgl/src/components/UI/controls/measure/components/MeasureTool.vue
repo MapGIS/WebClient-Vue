@@ -40,7 +40,7 @@
     <measure-result :mode="activeMode" :result="result" :unit="unit" />
     <!-- 设置面板 -->
     <measure-setting
-      v-if="showSettingPanel"
+      v-show="showSettingPanel"
       @measure-style-change="measureStyleChange"
       :mode="activeMode"
     />
