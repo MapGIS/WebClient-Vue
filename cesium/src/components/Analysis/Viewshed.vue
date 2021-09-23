@@ -1,39 +1,38 @@
 <template>
   <div class="mapgis-widget-visual-analysis">
-<!--    <div>-->
-      <mapgis-ui-form-model v-model="formData" v-bind="layout">
-        <mapgis-ui-form-model-item label="水平视角">
+      <mapgis-ui-setting-form  v-model="formData" :wrapper-width="350">
+        <mapgis-ui-form-item label="水平视角">
           <mapgis-ui-input
               v-model.number="formData.horizontAngle"
               :min="1"
               type="number"
           />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="垂直视角">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="垂直视角">
           <mapgis-ui-input
               v-model.number="formData.verticalAngle"
               :min="1"
               type="number"
           />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="附加高度(米)">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="附加高度(米)">
           <mapgis-ui-input
               v-model.number="formData.exHeight"
               type="number"
               :min="0"
               :step="0.1"
           />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="方向角">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="方向角">
           <mapgis-ui-input v-model.number="angleSet.heading" :min="0" :max="360" type="number"/>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="俯仰角">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="俯仰角">
           <mapgis-ui-input v-model.number="angleSet.pitch" :min="-90" :max="90" type="number"/>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="可视距离(米)">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="可视距离(米)">
           <mapgis-ui-input v-model.number="angleSet.viewRadius" :min="0" type="number"/>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="观察点坐标">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="观察点坐标">
           <mapgis-ui-row>
             <mapgis-ui-col :span="8">
               <mapgis-ui-input
@@ -59,8 +58,8 @@
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="目标点坐标">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="目标点坐标">
           <mapgis-ui-row>
             <mapgis-ui-col :span="8">
               <mapgis-ui-input
@@ -86,8 +85,8 @@
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="不可视区域颜色">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="不可视区域颜色">
           <mapgis-ui-sketch-color-picker
               :disableAlpha="false"
               :color="formData.unVisibleColor"
@@ -96,8 +95,8 @@
                 (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
             "
           ></mapgis-ui-sketch-color-picker>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="可视区域颜色">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="可视区域颜色">
           <mapgis-ui-sketch-color-picker
               :disableAlpha="false"
               :color="formData.visibleColor"
@@ -106,8 +105,8 @@
                 (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
             "
           ></mapgis-ui-sketch-color-picker>
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="可视遮罩颜色">
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="可视遮罩颜色">
           <mapgis-ui-sketch-color-picker
               :disableAlpha="false"
               :color="formData.maskColor"
@@ -116,8 +115,8 @@
                 (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
             "
           ></mapgis-ui-sketch-color-picker>
-        </mapgis-ui-form-model-item>
-      </mapgis-ui-form-model>
+        </mapgis-ui-form-item>
+      </mapgis-ui-setting-form>
 <!--    </div>-->
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="onClickStart">分析</mapgis-ui-button>
@@ -139,7 +138,7 @@ export default {
     return {
       layout: {
         labelCol: {span: 5},
-        wrapperCol: {span: 19},
+        wrapperCol: {span: 14},
       },
       formData: {
         horizontAngle: 60,
@@ -290,9 +289,7 @@ export default {
       });
     },
     unmount() {
-      let {CesiumZondy,vueKey,vueIndex} = this;
       this.onClickStop();
-      CesiumZondy.ViewshedAnalysisManager.deleteSource(vueKey, vueIndex);
     },
     formDataClone() {
       let vm = this
@@ -526,6 +523,7 @@ export default {
 
     // 点击结束分析按钮回调
     onClickStop() {
+      let { vueKey, vueIndex } = this;
       // 注销鼠标的各项监听事件
       this.webGlobe.unRegisterMouseEvent('MOUSE_MOVE')
       this.webGlobe.unRegisterMouseEvent('LEFT_CLICK')
@@ -556,6 +554,8 @@ export default {
       if (find && find.options) {
         find.options.visualAnalysis = null;
       }
+      CesiumZondy.ViewshedAnalysisManager.deleteSource(vueKey, vueIndex);
+
       // 移除可视域分析结果
       this.webGlobe.viewer.scene.VisualAnalysisManager._visualAnalysisList = []
 

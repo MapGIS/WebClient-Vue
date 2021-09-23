@@ -13,22 +13,14 @@
             <mapgis-ui-time-picker
                 :default-value="startTime"
                 size="small"
-                @change="
-              val => {
-                changeTime(val, 'startTime')
-              }
-            "
+                @change="changeTime(val, 'startTime')"
             />
           </mapgis-ui-form-model-item>
           <mapgis-ui-form-model-item label="结束时间">
             <mapgis-ui-time-picker
                 :default-value="endTime"
                 size="small"
-                @change="
-              val => {
-                changeTime(val, 'endTime')
-              }
-            "
+                @change="changeTime(val, 'endTime')"
             />
           </mapgis-ui-form-model-item>
         </div>
@@ -61,14 +53,6 @@
               :disableAlpha="true"
           />
         </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
-          <mapgis-ui-input
-              v-model.number="formData.ratio"
-              disabled
-              size="small"
-              type="number"
-          />
-        </mapgis-ui-form-model-item>
       </mapgis-ui-form-model>
       <mapgis-ui-setting-footer>
         <mapgis-ui-button
@@ -93,9 +77,9 @@
           :parentDivClass="'cesium-map-wrapper'"
           :loading="maskShow"
           :text="maskText"
+          :percent="percent"
       ></mapgis-ui-mask>
     </div>
-<!--  </div>-->
 </template>
 
 <script>
@@ -158,14 +142,6 @@ export default {
   beforeDestroy() {
     this.removeAll();
   },
-  watch: {
-    formData: {
-      handler: function (e) {
-        this.reloadAnalysis();
-      },
-      deep: true
-    }
-  },
   methods: {
     /**
      * 日期组件值变化
@@ -221,10 +197,9 @@ export default {
       this.remove();
       const {viewer} = this.webGlobe;
       // 初始化交互式绘制控件
+      debugger
       let drawElement = new this.Cesium.DrawElement(viewer);
-      let {date, min, max, timeType, shadowColor, sunColor} = this.formData;
-      shadowColor = this.colorToRgba(shadowColor);
-      sunColor = this.colorToRgba(sunColor);
+      let {date, min, max, shadowColor, sunColor} = this.formData;
       const time = new Date(`${date} ${this.formData.time}`);
       const startTime = new Date(`${date} ${this.formData.startTime}`);
       const endTime = new Date(`${date} ${this.formData.endTime}`);
@@ -280,7 +255,7 @@ export default {
             zPaneNum,
             shadowColor: shadowColor,
             sunColor: sunColor,
-            percentCallback: this.setPercent(this.percent)
+            percentCallback: this.setPercent
           })
           // 时间段范围阴影分析
           const result = shadowAnalysis.calcPointsArrayInShadowTime(
@@ -300,7 +275,6 @@ export default {
               {shadowAnalysis, drawElement},
               {positionCopy: positionCopy}
           );
-          console.log("CesiumZondy.shadowAnalysisManager",CesiumZondy.shadowAnalysisManager);
         }
       })
 
@@ -331,59 +305,6 @@ export default {
       viewer.clock.clockRange = this.Cesium.ClockRange.LOOP_STOP // 循环动画
     },
 
-    /**
-     * 参数更新后重新加载分析结果
-     */
-    reloadAnalysis() {
-      let {vueKey, vueIndex} = this;
-      const {viewer} = this.webGlobe;
-      // let findSource = vm.$_getManager(manager);
-      let findSource = CesiumZondy[manager].findSource(vueKey, vueIndex);
-      let xPaneNum;
-      let yPaneNum;
-      let zPaneNum;
-      let positions = [];
-      const startTime = new Date(`${this.formData.date} ${this.formData.startTime}`);
-      const endTime = new Date(`${this.formData.date} ${this.formData.endTime}`);
-      const shadowColor = this.colorToRgba(this.formData.shadowColor);
-      const sunColor = this.colorToRgba(this.formData.sunColor);
-      if (findSource && findSource.source && findSource.options) {
-        let originAnaysis = findSource.source.shadowAnalysis;
-        let drawElement = findSource.source.drawElement;
-        xPaneNum = originAnaysis.xPaneNum;
-        yPaneNum = originAnaysis.yPaneNum;
-        zPaneNum = originAnaysis.zPaneNum;
-        positions = findSource.options.positionCopy;
-        this.remove();
-        this.$emit("analysisBegin");
-        let shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
-          xPaneNum,
-          yPaneNum,
-          zPaneNum,
-          shadowColor: shadowColor,
-          sunColor: sunColor,
-          percentCallback: this.setPercent(this.percent)
-        })
-        // 时间段范围阴影分析
-        const result = shadowAnalysis.calcPointsArrayInShadowTime(
-            positions,
-            this.formData.min,
-            this.formData.max,
-            startTime,
-            endTime
-        )
-        let positionCopy = [];
-        positionCopy = this.copy(positions);
-        //存放到管理器中
-        CesiumZondy.shadowAnalysisManager.addSource(
-            this.vueKey,
-            this.vueIndex,
-            {shadowAnalysis, drawElement},
-            {positionCopy: positionCopy}
-        );
-      }
-    },
-
     // /**
     //  * 时间段阴影分析回调函数，获取分析进度值
     //  */
@@ -404,6 +325,7 @@ export default {
     setPercent(result) {
       this.percent = result;
       this.maskText = `正在分析中, 请稍等...${Number((result * 100).toFixed(2))}%`;
+      console.log("this.maskYetx",this.maskText);
       const timer = setInterval(() => {
         if (this.percent === result) {
           this.toggleMask(false);
