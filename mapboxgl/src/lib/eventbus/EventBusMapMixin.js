@@ -87,6 +87,9 @@ export default {
     EventBus.$on("map-print-rect", payload => {
       this.$_handleMapPrintRect(payload);
     });
+    EventBus.$on("map-print-full", payload => {
+      this.$_handleMapPrintFull(payload);
+    });
   },
   methods: {
     ...EmitEvent,
@@ -186,6 +189,8 @@ export default {
      */
     $_handleDocumentSaveThemeLayer(payload) {},
 
-    $_handleMapPrintRect(payload) {}
+    $_handleMapPrintRect(payload) {},
+
+    $_handleMapPrintFull(payload) {}
   }
 };

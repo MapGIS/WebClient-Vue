@@ -59,6 +59,12 @@ export const emitMapOpenTable = payload => {
 export const emitMapPrint = payload => {
   EventBus.$emit("map-print", payload);
 };
+export const emitMapPrintRect = payload => {
+  EventBus.$emit("map-print-rect", payload);
+};
+export const emitMapPrintFull = payload => {
+  EventBus.$emit("map-print-full", payload);
+};
 
 export const emitDocumentImportThemeLayer = payload => {
   EventBus.$emit("document-import-theme-layer", payload);
@@ -92,10 +98,6 @@ export const emitDocumentSaveThemeLayer = payload => {
   EventBus.$emit("document-save-theme-layer", payload);
 };
 
-export const emitMapPrintRect = payload => {
-  EventBus.$emit("map-print-rect", payload);
-};
-
 export default {
   emitMapChangeStyle,
   emitMapAddLayer,
@@ -117,5 +119,6 @@ export default {
   emitDocumentShowThemeLayer,
   emitDocumentHideThemeLayer,
   emitDocumentSaveThemeLayer,
-  emitMapPrintRect
+  emitMapPrintRect,
+  emitMapPrintFull
 };
