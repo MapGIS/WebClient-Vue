@@ -45,6 +45,7 @@ export { default as MapgisOgcWmsLayer } from "../components/layer/ogc/OgcWmsLaye
 export { default as MapgisOgcWmtsLayer } from "../components/layer/ogc/OgcWmtsLayer";
 export { default as MapgisArcgisMapLayer } from "../components/layer/ArcGISServer/ArcGISMapLayer";
 export { default as MapgisArcgisTileLayer } from "../components/layer/ArcGISServer/ArcGISTileLayer";
+export { default as MapgisThemeLayer } from "../components/layer/ThemeLayer/ThemeLayer";
 export { default as MapgisEchartsLayer } from "../components/overlay/echarts/EchartsLayer.vue";
 
 export { default as MapgisMapvLayer } from "../components/overlay/MapvLayer";

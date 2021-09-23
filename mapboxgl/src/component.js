@@ -72,7 +72,9 @@ export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
+export { default as MapgisThemePanelCustom } from "./components/layer/ThemeLayer/ThemePanelCustom";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
+export { default as MapgisThemeLayerCustom } from "./components/layer/ThemeLayer/ThemeLayerCustom";
 
 /* 
 import withEventsMixin from "./lib/withEvents";
