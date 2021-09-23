@@ -353,6 +353,7 @@ export default {
       if (profileAnalysis) {
         this.remove();
       }
+      const { CesiumZondy, vueKey, vueIndex } = this;
       CesiumZondy.ProfileAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
@@ -429,13 +430,13 @@ export default {
      * @description 绘制结束后回调函数，表示cesium内部开始启用分析功能
      */
     _profileStart() {
-      vm.$emit("start");
+      this.$emit("start");
     },
     /**
      * @description 分析结束回调函数
      */
     _profileSuccess() {
-      vm.$emit("success");
+      this.$emit("success");
       const profileAnalysis = this._getProfileAnalysis();
       // 剖面分析对象存在才显示二维剖面，以防在分析中，点击了清除
       if (profileAnalysis) {
@@ -449,6 +450,7 @@ export default {
       const profileAnalysis = this._getProfileAnalysis();
       // 关闭二维剖面显示
       this.profile2dVisible = false;
+      const { CesiumZondy, vueKey, vueIndex } = this;
 
       // 判断是否已有剖面分析结果
       if (profileAnalysis) {
