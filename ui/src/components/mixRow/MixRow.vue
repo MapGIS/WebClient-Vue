@@ -193,6 +193,7 @@
                 <div class="mix-row-color" :style="{background: listProps.colors[index]}">
                   <mapgis-ui-sketch-color-picker
                       :extraValue="index"
+                      :color="listProps.colors[index]"
                       @input="$_changeColor"
                   />
                 </div>
