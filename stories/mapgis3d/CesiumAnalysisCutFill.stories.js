@@ -3,6 +3,50 @@ import Markdown from "../../cesium/docs/api/analysis/CutFill.md";
 
 export default {
   title: "三维/分析/填挖方分析",
+  argTypes: {
+    xPaneNum: {
+      description: "X 坐标方向采样点的个数",
+      table: {
+        defaultValue: { summary: "16" },
+      },
+      control: "number",
+    },
+    yPaneNum: {
+      description: "Y 坐标方向采样点的个数",
+      table: {
+        defaultValue: { summary: "16" },
+      },
+      control: "number",
+    },
+    height: {
+      description: "平整高程",
+      table: {
+        defaultValue: { summary: "2000" },
+      },
+      control: "number",
+    },
+    lineColor: {
+      description: "分析区域边界颜色",
+      table: {
+        defaultValue: { summary: "rgba(0,255,0,1)" },
+      },
+      control: "color",
+    },
+    fillColor: {
+      description: "分析区域面颜色",
+      table: {
+        defaultValue: { summary: "rgba(0,0,255,0.3)" },
+      },
+      control: "color",
+    },
+    dataType: {
+      description: "数据类型,0.0：地形，1.0：模型，2.0：通用",
+      table: {
+        defaultValue: { summary: "2.0" },
+      },
+      control: "number",
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -23,22 +67,27 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-      <mapgis-web-scene style="{height: '100vh'}"
-          v-on:load="handleLoad"
-      >
-      <mapgis-3d-ogc-wmts-layer
-          :baseUrl="url"
-          :wmtsLayer="layer"
-          :tileMatrixSet="tileMatrixSet"
-          :format="format"
-          :tilingScheme="tilingScheme"
-          :token="token"
-      ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-      <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-analysis-cut-fill />
-      </mapgis-ui-card>
-      </mapgis-web-scene>
+  <mapgis-web-scene style="{height: '100vh'}" v-on:load="handleLoad">
+  <mapgis-3d-ogc-wmts-layer
+    :baseUrl="url"
+    :wmtsLayer="layer"
+    :tileMatrixSet="tileMatrixSet"
+    :format="format"
+    :tilingScheme="tilingScheme"
+    :token="token"
+  ></mapgis-3d-ogc-wmts-layer>
+  <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
+  <mapgis-ui-card class="storybook-ui-card">
+    <mapgis-3d-analysis-cut-fill
+      :xPaneNum="xPaneNum"
+      :yPaneNum="yPaneNum"
+      :height="height"
+      :lineColor="lineColor"
+      :fillColor="fillColor"
+      :dataType="dataType"
+      />
+  </mapgis-ui-card>
+</mapgis-web-scene>
     `,
   methods: {
     handleLoad(e) {
@@ -74,7 +123,14 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 填挖方 = Template.bind({});
-填挖方.args = {};
+填挖方.args = {
+  xPaneNum: 16,
+  yPaneNum: 16,
+  height: 2000,
+  lineColor: "rgba(0,255,0,1)",
+  fillColor: "rgba(0,0,255,0.3)",
+  dataType: 2.0,
+};
 
 填挖方.parameters = {
   docs: {
