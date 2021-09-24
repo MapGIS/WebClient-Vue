@@ -173,6 +173,42 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
+    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiThemeList'">
+      <mapgis-ui-list
+          :data-source="listProps.dataSource"
+      >
+        <mapgis-ui-list-item slot="renderItem" slot-scope="item,index">
+          <div class="mix-row-list">
+            <mapgis-ui-row>
+              <mapgis-ui-col :span="3">
+                <input type="checkbox"
+                       v-model="listProps.checkBoxArr[index]"
+                       @click="$_change(listProps.checkBoxArr[index],index,listProps.colors[index])"
+                >
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="3">
+                {{ index }}
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="2">
+                <div class="mix-row-color" :style="{background: listProps.colors[index]}">
+                  <mapgis-ui-sketch-color-picker
+                      :extraValue="index"
+                      :color="listProps.colors[index]"
+                      @input="$_changeColor"
+                  />
+                </div>
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="6">
+                {{ listProps.field }}
+              </mapgis-ui-col>
+              <mapgis-ui-col :span="10">
+                {{ item }}
+              </mapgis-ui-col>
+            </mapgis-ui-row>
+          </div>
+        </mapgis-ui-list-item>
+      </mapgis-ui-list>
+    </mapgis-ui-row>
   </div>
 </template>
 
@@ -186,7 +222,7 @@ export default {
       validateStatus: "success",
       sliderProps: {
         //滑动最大值
-        sliderMax: 200,
+        sliderMax: 100,
         //滑动最小值
         sliderMin: 0,
         //滑动步幅
@@ -302,6 +338,10 @@ export default {
         step: undefined,
         titleCol: 6,
         inputCol: 18,
+      },
+      listProps: {
+        dataSource: undefined,
+        colors: undefined
       },
       colorId: "colorId" + parseInt(Math.random() * 100000)
     }
@@ -433,13 +473,16 @@ export default {
         case "MapgisUiInputNumber":
           this.inputNumberProps = Object.assign(this.inputNumberProps, this.props);
           break;
+        case "MapgisUiThemeList":
+          this.listProps = Object.assign(this.listProps, this.props);
+          break;
       }
     },
     $_initColorStyle() {
       let colorDocument = document.getElementById(this.colorId);
       let colorBtn = colorDocument.childNodes;
     },
-    $_change(e) {
+    $_change(e, index, extra) {
       if (this.type === "MapgisUiInput") {
         if (this.regExp) {
           let regExp = new RegExp(this.regExp);
@@ -450,7 +493,15 @@ export default {
           }
         }
       }
-      this.$emit("change", e);
+      if (this.type === "MapgisUiThemeList") {
+        this.listProps.checkBoxArr[index] = !e;
+        this.$emit("change", "MapgisUiThemeListCheckBox", !e, index, this.listProps.checkBoxArr, extra);
+      } else {
+        this.$emit("change", e);
+      }
+    },
+    $_changeColor(e, extraValue) {
+      this.$emit("change", "MapgisUiThemeListColor", e.hex, extraValue);
     },
     $_afterChange(e) {
       this.$emit("afterChange", e);
@@ -517,8 +568,20 @@ export default {
   border: 1px solid var(--border-color-base);
 }
 
-.mix-row-input-number{
+.mix-row-input-number {
   width: 100%;
+}
+
+.mix-row-list {
+  width: 100%;
+  height: 100%;
+}
+
+.mix-row-color {
+  height: 16px;
+  width: 16px;
+  margin: auto;
+  margin-top: 3px;
 }
 
 /deep/ .m-colorPicker {

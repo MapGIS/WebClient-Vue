@@ -153,11 +153,11 @@ export default {
     },
     // 点击“分析”按钮回调
     onClickStart() {
-      this.onClickStop()
+      this.onClickStop();
+      this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = true;
       // this.isOpenDepthTest()
-      this.addEventListener()
+      this.addEventListener();
     },
-
     // 创建通视分析工具
     createVisibility() {
   const unVisibleColor = new this.Cesium.Color.fromCssColorString(
