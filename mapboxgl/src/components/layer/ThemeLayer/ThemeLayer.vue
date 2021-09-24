@@ -4,7 +4,7 @@
         ref="themePanel"
         :hideItem="hideItemCopy"
         :panelClass="panelClass"
-        :panelStyle="themeProps.panelStyle"
+        :panelStyle="themeProps && themeProps.panelStyle"
         @fieldChanged="$_fieldChanged"
         @themeTypeChanged="$_themeTypeChanged"
         @rangeInputChanged="$_rangeInputChanged"
@@ -73,7 +73,7 @@ export default {
   props: {},
   mounted() {
     this.$emit("loaded", this);
-    if(this.themeProps.icons){
+    if(this.themeProps && this.themeProps.icons){
       this.$refs.themePanel.$_setIcons(this.themeProps.icons);
     }
   },

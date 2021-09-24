@@ -527,7 +527,7 @@ export default {
                     vm.$refs.themePanel.$_show();
                     if (vm.initType !== "props") {
                         //将原图层opacity设置为0，而不是设置原图层的visibility，因为隐藏了某些时候queryRenderFeature会取不到数据
-                        this.map.setPaintProperty(this.layerIdCopy, this.dataType + "-opacity", 0);
+                        vm.map.setPaintProperty(vm.layerIdCopy, vm.dataType + "-opacity", 0);
                     }
                 });
             }
