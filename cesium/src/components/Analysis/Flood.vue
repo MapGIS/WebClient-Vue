@@ -179,27 +179,32 @@ export default {
           this.recalculate = true;
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     startHeight: {
       handler() {
         this.startHeightCopy = this.startHeight;
-      }
+      },
+      immediate: true
     },
     maxHeight: {
       handler() {
         this.maxHeightCopy = this.maxHeight;
-      }
+      },
+      immediate: true
     },
     floodColor: {
       handler() {
         this.floodColorCopy = this.floodColor;
-      }
+      },
+      immediate: true
     },
     floodSpeed: {
       handler() {
         this.floodSpeedCopy = this.floodSpeed;
-      }
+      },
+      immediate: true
     },
     maxHeightCopy: {
       handler: function(e) {
@@ -244,7 +249,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         CesiumZondy.FloodAnalysisManager.addSource(
           vueKey,
           vueIndex,

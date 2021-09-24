@@ -3,6 +3,18 @@ import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
 
 export default {
   title: "三维/分析/坡向分析",
+  argTypes: {
+    rampColors: {
+      description: "坡向分析角度颜色数组",
+      table: {
+        defaultValue: {
+          summary:
+            '[{ min: 0, max: 60, color: "rgba(244, 67, 54, 0.5)" },{ min: 60, max: 120, color: "rgba(233, 30, 99, 0.5)" },{ min: 120, max: 180, color: "rgba(156, 39, 176, 0.5)" },{ min: 180, max: 240, color: "rgba(255, 235, 59, 0.5)" },{ min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)" },{ min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" }]',
+        },
+      },
+      control: "array",
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -36,7 +48,8 @@ const Template = (args, { argTypes }) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-analysis-aspect />
+        <mapgis-3d-analysis-aspect 
+        :rampColors="rampColors"/>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -74,7 +87,16 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 坡向 = Template.bind({});
-坡向.args = {};
+坡向.args = {
+  rampColors: [
+    { min: 0, max: 60, color: "rgba(244, 67, 54, 0.5)" },
+    { min: 60, max: 120, color: "rgba(233, 30, 99, 0.5)" },
+    { min: 120, max: 180, color: "rgba(156, 39, 176, 0.5)" },
+    { min: 180, max: 240, color: "rgba(255, 235, 59, 0.5)" },
+    { min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)" },
+    { min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" },
+  ],
+};
 
 坡向.parameters = {
   docs: {

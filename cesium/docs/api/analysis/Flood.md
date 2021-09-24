@@ -92,7 +92,7 @@
 
 ## 方法
 
-### `analyse`
+### `analysis`
 
 - **Description:** 洪水淹没分析
 
@@ -229,10 +229,11 @@ export default {
         :amplitude="amplitude"
         :animationSpeed="animationSpeed"
         :frequency="frequency"
+        @load="load"
       >
         <!--      这里是自定义的界面-->
         <div>
-          <button @click="analyse">分析</button>
+          <button @click="analysis">分析</button>
           <button @click="remove">清除</button>
         </div>
       </mapgis-3d-analysis-flood>
@@ -263,7 +264,8 @@ export default {
       specularIntensity: 2,
       amplitude: 10,
       animationSpeed: 0.01,
-      frequency: 500
+      frequency: 500,
+      floodAnalysis: null
     };
   },
   methods: {
@@ -297,16 +299,16 @@ export default {
       });
     },
     //洪水分析组件加载完毕事件
-    load(floodAnalyse) {
-      this.floodAnalyse = floodAnalyse;
+    load(floodAnalysis) {
+      this.floodAnalysis = floodAnalysis;
     },
     //开始洪水淹没分析
-    analyse() {
-      this.floodAnalyse.analyse();
+    analysis() {
+      this.floodAnalysis.analysis();
     },
     //移除洪水淹没分析
     remove() {
-      this.floodAnalyse.remove();
+      this.floodAnalysis.remove();
     }
   }
 };
