@@ -24,7 +24,7 @@
 - **可选**
 - **默认值:** `150`
 - **侦听属性**
-- **描述:** 等高线间距
+- **描述:** 等高线间距，单位米
 
 ### `contourWidth`
 
@@ -189,7 +189,7 @@ export default {
       contourSpacing: 150,
       contourWidth: 2,
       contourColor: "rgb(255,0,0)",
-      contourAnalyse: null
+      contourAnalysis: null
     };
   },
   methods: {
@@ -223,16 +223,16 @@ export default {
       });
     },
     //等值线分析组件加载完毕事件
-    load(contourAnalyse) {
-      this.contourAnalyse = contourAnalyse;
+    load(contourAnalysis) {
+      this.contourAnalysis = contourAnalysis;
     },
     //开始等值线分析
     analysis() {
-      this.contourAnalyse.analysis();
+      this.contourAnalysis.analysis();
     },
     //移除等值线分析
     remove() {
-      this.contourAnalyse.remove();
+      this.contourAnalysis.remove();
     }
   }
 };

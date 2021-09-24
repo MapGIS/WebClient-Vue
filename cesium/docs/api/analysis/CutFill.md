@@ -239,7 +239,7 @@ export default {
       lineColor: "rgba(0,255,0,1)",
       fillColor: "rgba(0,0,255,0.3)",
       dataType: 2.0,
-      cutfillAnalyse: null
+      cutfillAnalysis: null
     };
   },
   methods: {
@@ -273,16 +273,16 @@ export default {
       });
     },
     //填挖方分析组件加载完毕事件
-    load(cutfillAnalyse) {
-      this.cutfillAnalyse = cutfillAnalyse;
+    load(cutfillAnalysis) {
+      this.cutfillAnalysis = cutfillAnalysis;
     },
     //开始填挖方分析
     analysis() {
-      this.cutfillAnalyse.analysis();
+      this.cutfillAnalysis.analysis();
     },
     //移除填挖方分析
     remove() {
-      this.cutfillAnalyse.remove();
+      this.cutfillAnalysis.remove();
     },
     //分析结束事件
     success(result) {

@@ -265,7 +265,7 @@ export default {
       amplitude: 10,
       animationSpeed: 0.01,
       frequency: 500,
-      floodAnalyse: null
+      floodAnalysis: null
     };
   },
   methods: {
@@ -299,16 +299,16 @@ export default {
       });
     },
     //洪水分析组件加载完毕事件
-    load(floodAnalyse) {
-      this.floodAnalyse = floodAnalyse;
+    load(floodAnalysis) {
+      this.floodAnalysis = floodAnalysis;
     },
     //开始洪水淹没分析
     analysis() {
-      this.floodAnalyse.analysis();
+      this.floodAnalysis.analysis();
     },
     //移除洪水淹没分析
     remove() {
-      this.floodAnalyse.remove();
+      this.floodAnalysis.remove();
     }
   }
 };
