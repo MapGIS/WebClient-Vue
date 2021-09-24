@@ -3,6 +3,29 @@ import Markdown from "../../cesium/docs/api/analysis/Contour.md";
 
 export default {
   title: "三维/分析/等值线分析",
+  argTypes: {
+    contourSpacing: {
+      description: "等高线间距,单位米",
+      table: {
+        defaultValue: { summary: "150" },
+      },
+      control: "number",
+    },
+    contourWidth: {
+      description: "等高线宽度",
+      table: {
+        defaultValue: { summary: "2" },
+      },
+      control: "number",
+    },
+    contourColor: {
+      description: "等高线颜色",
+      table: {
+        defaultValue: { summary: "rgb(255,0,0)" },
+      },
+      control: "color",
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
