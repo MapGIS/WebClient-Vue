@@ -195,7 +195,7 @@
 ### `@load`
 
 - **Description:** 在 Profile 加载完毕后发送该事件
-- **Payload** `{ Profile }`Profile 对象
+- **Payload** 剖面分析对象
 
 ### `@start`
 

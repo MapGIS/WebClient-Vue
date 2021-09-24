@@ -7,7 +7,7 @@
             <p class="flood-title">最大淹没高度(米):</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="16">
-            <mapgis-ui-input v-model="maxHeightCopy"/>
+            <mapgis-ui-input v-model="maxHeightCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -15,7 +15,7 @@
             <p class="flood-title">最小淹没高度(米):</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="16">
-            <mapgis-ui-input v-model="startHeightCopy"/>
+            <mapgis-ui-input v-model="startHeightCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -23,10 +23,13 @@
             <p class="flood-title">颜色:</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="12">
-            <mapgis-ui-input class="flood-input" v-model="floodColorCopy"/>
+            <mapgis-ui-input class="flood-input" v-model="floodColorCopy" />
           </mapgis-ui-col>
           <div v-if="showPicker" class="flood-color-picker">
-            <colorPicker v-model="floodColorCopy" v-on:change="headleChangeColor"/>
+            <colorPicker
+              v-model="floodColorCopy"
+              v-on:change="headleChangeColor"
+            />
           </div>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -34,7 +37,7 @@
             <p class="flood-title">洪水淹没速度:</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="12">
-            <mapgis-ui-input class="flood-input" v-model="floodSpeedCopy"/>
+            <mapgis-ui-input class="flood-input" v-model="floodSpeedCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -42,7 +45,10 @@
             <p class="flood-title">反射光强度:</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="12">
-            <mapgis-ui-input class="flood-input" v-model="specularIntensityCopy"/>
+            <mapgis-ui-input
+              class="flood-input"
+              v-model="specularIntensityCopy"
+            />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -50,7 +56,7 @@
             <p class="flood-title">水波高度:</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="12">
-            <mapgis-ui-input class="flood-input" v-model="amplitudeCopy"/>
+            <mapgis-ui-input class="flood-input" v-model="amplitudeCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -58,7 +64,7 @@
             <p class="flood-title">水纹速度:</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="12">
-            <mapgis-ui-input class="flood-input" v-model="animationSpeedCopy"/>
+            <mapgis-ui-input class="flood-input" v-model="animationSpeedCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -66,7 +72,7 @@
             <p class="flood-title">水纹频率:</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="12">
-            <mapgis-ui-input class="flood-input" v-model="frequencyCopy"/>
+            <mapgis-ui-input class="flood-input" v-model="frequencyCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <!--      <mapgis-ui-row>-->
@@ -84,17 +90,26 @@
         <!--        </mapgis-ui-col>-->
         <!--      </mapgis-ui-row>-->
         <mapgis-ui-row>
-          <mapgis-ui-button class="flood-button start" type="primary" @click="$_startAnalyse" :disabled="!disabled">开始分析
+          <mapgis-ui-button
+            class="flood-button start"
+            type="primary"
+            @click="$_startAnalyse"
+            :disabled="!disabled"
+            >开始分析
           </mapgis-ui-button>
         </mapgis-ui-row>
       </div>
-      <div class="flood-analyse-box" style="height: 127px;" v-show="showResultPannel">
+      <div
+        class="flood-analyse-box"
+        style="height: 127px;"
+        v-show="showResultPannel"
+      >
         <mapgis-ui-row>
           <mapgis-ui-col :span="8">
             <p class="flood-title">最大淹没高度(米):</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="16">
-            <mapgis-ui-input v-model="maxHeightCopy"/>
+            <mapgis-ui-input v-model="maxHeightCopy" />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
@@ -102,14 +117,36 @@
             <p class="flood-title">高度选择(米):</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="16">
-            <mapgis-ui-slider v-model="currentHeightCopy" :min="Number(startHeightCopyTwo)" :max="Number(maxHeightCopy)"
-                      :disabled="disabled"/>
+            <mapgis-ui-slider
+              v-model="currentHeightCopy"
+              :min="Number(startHeightCopyTwo)"
+              :max="Number(maxHeightCopy)"
+              :disabled="disabled"
+            />
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row>
-          <mapgis-ui-button class="flood-button back" style="right: 168px;" type="primary" @click="$_up" :disabled="upDisabled">{{upTitle}}</mapgis-ui-button>
-          <mapgis-ui-button class="flood-button back" style="right: 95px;" type="primary" @click="$_down" :disabled="downDisabled">{{downTitle}}</mapgis-ui-button>
-          <mapgis-ui-button class="flood-button back" @click="$_stopAnalyseToStart">停止分析</mapgis-ui-button>
+          <mapgis-ui-button
+            class="flood-button back"
+            style="right: 168px;"
+            type="primary"
+            @click="$_up"
+            :disabled="upDisabled"
+            >{{ upTitle }}</mapgis-ui-button
+          >
+          <mapgis-ui-button
+            class="flood-button back"
+            style="right: 95px;"
+            type="primary"
+            @click="$_down"
+            :disabled="downDisabled"
+            >{{ downTitle }}</mapgis-ui-button
+          >
+          <mapgis-ui-button
+            class="flood-button back"
+            @click="$_stopAnalyseToStart"
+            >停止分析</mapgis-ui-button
+          >
         </mapgis-ui-row>
       </div>
     </slot>
@@ -120,7 +157,7 @@
 import ServiceLayer from "./BaseLayer";
 
 export default {
-  name: "mapgis-3d-flood",
+  name: "mapgis-3d-analysis-flood",
   mixins: [ServiceLayer],
   props: {
     startHeight: {
@@ -170,10 +207,10 @@ export default {
   },
   watch: {
     currentHeightCopy: {
-      handler: function () {
+      handler: function() {
         //开始分析后的下一帧，开启高度监听
         if (this.isFlood) {
-          const {vueKey, vueIndex} = this;
+          const { vueKey, vueIndex } = this;
           let webGlobe = window.CesiumZondy.getWebGlobe(vueKey);
           let floodAnalyse = window.floodAnalyse;
           if (floodAnalyse) {
@@ -183,15 +220,18 @@ export default {
             floodAnalyse.animationSpeed = Number(this.animationSpeedCopy);
             floodAnalyse.amplitude = Number(this.amplitudeCopy);
             floodAnalyse.specularIntensity = Number(this.specularIntensityCopy);
-            floodAnalyse.isDownFlood = Number(this.floodHeightCopyTwo) > Number(this.currentHeightCopy);
+            floodAnalyse.isDownFlood =
+              Number(this.floodHeightCopyTwo) > Number(this.currentHeightCopy);
             //存储高度，方便下一次比较
             this.floodHeightCopyTwo = Number(this.currentHeightCopy);
           }
-          if(this.currentHeightCopy === this.maxHeightCopy){
+          if (this.currentHeightCopy === this.maxHeightCopy) {
             this.upTitle = "上升";
             this.upDisabled = true;
             this.downDisabled = false;
-          }else if(this.currentHeightCopy === parseInt(this.startHeightCopyTwo)){
+          } else if (
+            this.currentHeightCopy === parseInt(this.startHeightCopyTwo)
+          ) {
             this.downTitle = "下降";
             this.upDisabled = false;
             this.downDisabled = true;
@@ -200,58 +240,58 @@ export default {
       }
     },
     startHeight: {
-      handler: function () {
+      handler: function() {
         this.startHeightCopy = this.startHeight;
       }
     },
     minHeight: {
-      handler: function () {
+      handler: function() {
         this.minHeightCopy = this.minHeight;
       }
     },
     floodColor: {
-      handler: function () {
+      handler: function() {
         this.floodColorCopy = this.floodColor;
       }
     },
     maxHeight: {
-      handler: function () {
+      handler: function() {
         this.maxHeightCopy = this.maxHeight;
       }
     },
     floodSpeed: {
-      handler: function () {
+      handler: function() {
         this.floodSpeedCopy = this.floodSpeed;
       }
     },
     specularIntensity: {
-      handler: function () {
+      handler: function() {
         this.specularIntensityCopy = this.specularIntensity;
       }
     },
     amplitude: {
-      handler: function () {
+      handler: function() {
         this.amplitudeCopy = this.amplitude;
       }
     },
     animationSpeed: {
-      handler: function () {
+      handler: function() {
         this.animationSpeedCopy = this.animationSpeed;
       }
     },
     frequency: {
-      handler: function () {
+      handler: function() {
         this.frequencyCopy = this.frequency;
       }
     },
     currentHeight: {
-      handler: function () {
+      handler: function() {
         this.currentHeightCopy = parseInt(Number(this.currentHeight));
       }
     },
     maxHeightCopy: {
-      handler: function () {
-        if(Number(this.maxHeightCopy) <= Number(this.currentHeightCopy)){
+      handler: function() {
+        if (Number(this.maxHeightCopy) <= Number(this.currentHeightCopy)) {
           this.maxHeightCopy = Number(this.currentHeightCopy);
           this.upDisabled = true;
         }
@@ -260,7 +300,7 @@ export default {
   },
   data() {
     return {
-      selectDefault: 'startDrawingPolygon',
+      selectDefault: "startDrawingPolygon",
       drawToolName: "startDrawingPolygon",
       // tools: [{
       //   name: "startDrawingPolygon",
@@ -289,16 +329,16 @@ export default {
       upTitle: "上升",
       downTitle: "下降",
       upDisabled: false,
-      downDisabled: false,
-    }
+      downDisabled: false
+    };
   },
   mounted() {
     let vm = this;
-    window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+    window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
       vm.$_init();
       vm.showOptionsPannel = true;
       vm.$emit("load", vm, webGlobe);
-    }, this.vueKey)
+    }, this.vueKey);
   },
   methods: {
     //对外的开始分析方法
@@ -316,7 +356,7 @@ export default {
     //由于无法改变props，因此复制这些值
     $_init() {
       let vm = this;
-      Object.keys(this.$props).forEach(function (key) {
+      Object.keys(this.$props).forEach(function(key) {
         vm[key + "Copy"] = vm.$props[key];
       });
     },
@@ -328,7 +368,7 @@ export default {
       //确保开始洪水分析后，不会触发currentHeightCopy的更新操作，不然会出现分析失灵的情况
       this.isFlood = false;
       //如果没有注入Cesium，则取得window上面的
-      let {Cesium, vueKey, vueIndex} = this;
+      let { Cesium, vueKey, vueIndex } = this;
       let vm = this;
       if (!Cesium) {
         Cesium = window.Cesium;
@@ -339,7 +379,8 @@ export default {
         window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vueIndex);
       }
       //将笛卡尔坐标转为经纬度坐标
-      let cartographics = [], height = 0;
+      let cartographics = [],
+        height = 0;
       for (let i = 0; i < positions.length; i++) {
         cartographics.push(Cesium.Cartographic.fromCartesian(positions[i]));
         let cat = Cesium.Cartographic.fromCartesian(positions[i]);
@@ -377,7 +418,7 @@ export default {
         //水波的高度
         amplitude: Number(this.amplitudeCopy),
         // 指定光线强度
-        specularIntensity: Number(this.specularIntensityCopy),
+        specularIntensity: Number(this.specularIntensityCopy)
       });
       window.floodAnalyse = floodAnalyse;
       //设置深度检测
@@ -385,13 +426,13 @@ export default {
       //添加洪水淹没结果显示
       webGlobe.scene.VisualAnalysisManager.add(floodAnalyse);
       //一定是在下一帧，开启对currentHeightCopy的监听操作
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.showResultPannel = true;
         this.showOptionsPannel = false;
         //停止绘制
         window.drawElement.stopDrawing();
         this.isFlood = true;
-      })
+      });
     },
     //开始洪水淹没分析
     $_startAnalyse() {
@@ -405,14 +446,14 @@ export default {
       this.showOptionsPannel = true;
       this.startHeightCopyTwo = 0;
       this.isPlayer = true;
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.downDisabled = false;
       });
     },
-    $_up(){
-      switch (this.upTitle){
+    $_up() {
+      switch (this.upTitle) {
         case "上升":
-          this.$_playAnalyse(this.currentHeightCopy,this.maxHeightCopy,1);
+          this.$_playAnalyse(this.currentHeightCopy, this.maxHeightCopy, 1);
           this.downDisabled = true;
           this.upTitle = "暂停";
           break;
@@ -425,10 +466,14 @@ export default {
           break;
       }
     },
-    $_down(){
-      switch (this.downTitle){
+    $_down() {
+      switch (this.downTitle) {
         case "下降":
-          this.$_playAnalyse(this.startHeightCopyTwo,this.currentHeightCopy,-1);
+          this.$_playAnalyse(
+            this.startHeightCopyTwo,
+            this.currentHeightCopy,
+            -1
+          );
           this.upDisabled = true;
           this.downTitle = "暂停";
           break;
@@ -441,23 +486,23 @@ export default {
           break;
       }
     },
-    $_pause(){
+    $_pause() {
       this.isPlayer = false;
     },
     //对外的playAnalyse
-    playAnalyse(start,end,forward,rate,timeDiff){
-      this.$_playAnalyse(start,end,forward,rate,timeDiff);
+    playAnalyse(start, end, forward, rate, timeDiff) {
+      this.$_playAnalyse(start, end, forward, rate, timeDiff);
     },
     //对外的上升方法
-    up(){
-      this.$_playAnalyse(this.currentHeightCopy,this.maxHeightCopy,1);
+    up() {
+      this.$_playAnalyse(this.currentHeightCopy, this.maxHeightCopy, 1);
     },
     //对外的下降方法
-    down(){
-      this.$_playAnalyse(this.startHeightCopyTwo,this.currentHeightCopy,-1);
+    down() {
+      this.$_playAnalyse(this.startHeightCopyTwo, this.currentHeightCopy, -1);
     },
     //对外暂停听方法
-    pause(){
+    pause() {
       this.$_pause();
     },
     /**
@@ -468,7 +513,7 @@ export default {
      * @param rate 上升或下降频率
      * @param timeDiff Cesium和现实时间的倍率
      * */
-    $_playAnalyse(start,end,forward,rate,timeDiff){
+    $_playAnalyse(start, end, forward, rate, timeDiff) {
       rate = rate || 20;
       timeDiff = timeDiff || 1.5;
       let i = 0;
@@ -477,26 +522,32 @@ export default {
       let speed = this.floodSpeedCopy / rate;
       let time = Math.ceil(distance / speed);
       speed = distance / time;
-      let timeOut = parseInt(parseInt(((distance / this.floodSpeedCopy) / time) * 1000));
+      let timeOut = parseInt(
+        parseInt((distance / this.floodSpeedCopy / time) * 1000)
+      );
       //因为Cesium的事件计算和现实不一样，这里试出来大概是1.5倍
       timeOut = timeOut * timeDiff;
       this.isPlayer = true;
-      let interval = setInterval(function () {
+      let interval = setInterval(function() {
         i++;
-        vm.currentHeightCopy = parseInt(Number((vm.currentHeightCopy + speed * forward).toFixed(4)));
-        if(!vm.isPlayer){
+        vm.currentHeightCopy = parseInt(
+          Number((vm.currentHeightCopy + speed * forward).toFixed(4))
+        );
+        if (!vm.isPlayer) {
           vm.isPlayer = true;
           clearInterval(interval);
         }
-        if(i === time){
-          vm.currentHeightCopy = parseInt(forward > 0 ? Number(end) : Number(start));
+        if (i === time) {
+          vm.currentHeightCopy = parseInt(
+            forward > 0 ? Number(end) : Number(start)
+          );
           clearInterval(interval);
         }
-      },timeOut)
+      }, timeOut);
     },
     //停止洪水淹没分析
     $_stopAnalyse() {
-      const {vueKey, vyeIndex} = this;
+      const { vueKey, vyeIndex } = this;
       //删除淹没分析
       webGlobe.scene.VisualAnalysisManager.removeAll();
       //停止绘制
@@ -510,7 +561,7 @@ export default {
       this.currentHeightCopy = 0;
     }
   }
-}
+};
 </script>
 
 <style scoped>
