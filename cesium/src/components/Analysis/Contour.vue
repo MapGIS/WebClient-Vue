@@ -148,9 +148,16 @@ export default {
       CesiumZondy.ContourAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
+    /**
+     * @description rgba值转cesium内部color对象
+     * @return {Object} cesium内部color对象
+     */
     _edgeColor() {
       return colorToCesiumColor(this.contourColorCopy, this.webGlobe);
     },
+    /**
+     * @description 开始绘制并分析
+     */
     analysis() {
       let { CesiumZondy, vueKey, vueIndex, Cesium } = this;
       let find = CesiumZondy.ContourAnalysisManager.findSource(
@@ -193,6 +200,9 @@ export default {
         }
       });
     },
+    /**
+     * @description 移除等值线分析结果，取消交互式绘制事件激活状态
+     */
     remove() {
       let { CesiumZondy, vueKey, vueIndex } = this;
       let find = CesiumZondy.ContourAnalysisManager.findSource(
