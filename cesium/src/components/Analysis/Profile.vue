@@ -334,7 +334,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         CesiumZondy.ProfileAnalysisManager.addSource(
           vueKey,
           vueIndex,
