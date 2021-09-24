@@ -265,37 +265,44 @@ export default {
     polylineGroundColor: {
       handler() {
         this.polylineGroundColorCopy = this.polylineGroundColor;
-      }
+      },
+      immediate: true
     },
     samplePrecision: {
       handler() {
         this.samplePrecisionCopy = this.samplePrecision;
-      }
+      },
+      immediate: true
     },
     showPolygon: {
       handler() {
         this.showPolygonCopy = this.showPolygon;
-      }
+      },
+      immediate: true
     },
     pointColor: {
       handler() {
         this.pointColorCopy = this.pointColor;
-      }
+      },
+      immediate: true
     },
     polyLineColor: {
       handler() {
         this.polyLineColorCopy = this.polyLineColor;
-      }
+      },
+      immediate: true
     },
     polygonColor: {
       handler() {
         this.polygonColorCopy = this.polygonColor;
-      }
+      },
+      immediate: true
     },
     polygonHeight: {
       handler() {
         this.polygonHeightCopy = this.polygonHeight;
-      }
+      },
+      immediate: true
     }
   },
   data() {

@@ -198,32 +198,38 @@ export default {
           this.recalculate = true;
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
     },
     xPaneNum: {
       handler() {
         this.xPaneNumCopy = this.xPaneNum;
-      }
+      },
+      immediate: true
     },
     yPaneNum: {
       handler() {
         this.yPaneNumCopy = this.yPaneNum;
-      }
+      },
+      immediate: true
     },
     height: {
       handler() {
         this.heightCopy = this.height;
-      }
+      },
+      immediate: true
     },
     lineColor: {
       handler() {
         this.lineColorCopy = this.lineColor;
-      }
+      },
+      immediate: true
     },
     fillColor: {
       handler() {
         this.fillColorCopy = this.fillColor;
-      }
+      },
+      immediate: true
     }
   },
   methods: {
