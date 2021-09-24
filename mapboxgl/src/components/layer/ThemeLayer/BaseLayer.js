@@ -124,7 +124,7 @@ export default {
             type: Object
         },
         themeOptions: {
-            type: Object
+            type: Array
         }
     },
     watch: {
@@ -136,19 +136,40 @@ export default {
         },
         themeOptions: {
             handler: function () {
-                console.log("---themeOptions", this.themeOptions)
-                let vm = this;
-                Object.keys(this.themeOptions).forEach(function (key) {
-                    if (key === "checkBoxArr" && vm.themeOptions[key].length > 0) {
-
-                    } else if (key === "colors" && vm.themeOptions[key].length > 0) {
+                if (this.themeOptions instanceof Array) {
+                    //确认为一张图传来的参数
+                    if (this.themeOptions[0] && this.themeOptions[0] instanceof Object && this.themeOptions[0].hasOwnProperty("max")) {
+                        let options = this.$_formatThemeListOptions(this.themeOptions);
+                        console.log("---themeOptions", options)
+                        let vm = this;
                         vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
                             //切换渐变颜色
-                            let paintColor = vm.$_setRangeColors(vm.themeOptions.colors.join(","), vm.themeOptions.dataSource, "人口数", features);
-                            vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                            let paintColor = vm.$_setRangeColors(options.colors.join(","), options.dataSource, vm.selectValue, features);
+                            if(vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())){
+                                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                            }else {
+                                let interval = setInterval(function () {
+                                    if(vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())){
+                                        vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                                        clearInterval(interval);
+                                    }
+                                },10);
+                            }
                         });
                     }
-                });
+                }
+                // let vm = this;
+                // Object.keys(this.themeOptions).forEach(function (key) {
+                //     if (key === "checkBoxArr" && vm.themeOptions[key].length > 0) {
+                //
+                //     } else if (key === "colors" && vm.themeOptions[key].length > 0) {
+                //         vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
+                //             //切换渐变颜色
+                //             let paintColor = vm.$_setRangeColors(vm.themeOptions.colors.join(","), vm.themeOptions.dataSource, "人口数", features);
+                //             vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                //         });
+                //     }
+                // });
             },
             deep: true
         },
@@ -237,6 +258,19 @@ export default {
         this.$_sddThemeLayerBySource();
     },
     methods: {
+        $_formatThemeListOptions(options) {
+            let newOptions = {
+                startData: undefined,
+                dataSource: [],
+                colors: []
+            };
+            newOptions.startData = Number(options[0].min);
+            for (let i = 0; i < options.length; i++) {
+                newOptions.dataSource.push(Number(options[i].max));
+                newOptions.colors.push(options[i].color);
+            }
+            return newOptions;
+        },
         $_getValueById(id, key, options) {
             let value;
             let rects = options.rects;

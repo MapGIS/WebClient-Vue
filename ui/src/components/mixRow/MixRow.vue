@@ -173,10 +173,18 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiThemeList'">
+    <mapgis-ui-row class="mix-row" :style="{width: panelWidth + 'px', height: panelHeight + 'px'}" v-if="type === 'MapgisUiThemeList'">
       <mapgis-ui-list
           :data-source="listProps.dataSource"
       >
+        <mapgis-ui-spin
+            v-if="!listProps.dataSource || listProps.dataSource.length === 0"
+            style="position: absolute;top: 200px"
+            :style="{top: panelHeight / 2 + 'px'}"
+        />
+<!--        <template #renderEmpty>-->
+<!--          &lt;!&ndash;空状态&ndash;&gt;-->
+<!--        </template>-->
         <mapgis-ui-list-item slot="renderItem" slot-scope="item,index">
           <div class="mix-row-list">
             <mapgis-ui-row>
@@ -189,7 +197,10 @@
                 >
               </mapgis-ui-col>
               <mapgis-ui-col :span="3">
-                {{ index }}
+                <p class="mix-row-p"
+                   :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">{{
+                    index
+                  }}</p>
               </mapgis-ui-col>
               <mapgis-ui-col :span="2"
                              v-if="listProps.colors && listProps.colors.length > 0"
@@ -197,13 +208,16 @@
                 <mapgis-ui-sketch-color-picker
                     :extraValue="index"
                     :color="listProps.colors[index]"
+                    :size="listProps.size"
                     @input="$_changeColor"
                 >
                   <div class="mix-row-color" :style="{background: listProps.colors[index]}"/>
                 </mapgis-ui-sketch-color-picker>
               </mapgis-ui-col>
               <mapgis-ui-col :span="6">
-                {{ listProps.field }}
+                <p class="mix-row-p"
+                   :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
+                  {{ listProps.field }}</p>
               </mapgis-ui-col>
               <mapgis-ui-col :span="10">
                 <mapgis-ui-row>
@@ -212,18 +226,25 @@
                         v-model="listProps.startData"
                         v-bind:title="String(listProps.startData)"
                         v-if="index === 0"
+                        :size="listProps.size"
                     />
                     <mapgis-ui-input-number
                         v-model="listProps.dataSource[index - 1]"
                         v-bind:title="String(listProps.dataSource[index - 1])"
                         v-if="index > 0"
+                        :size="listProps.size"
                     />
                   </mapgis-ui-col>
-                  <mapgis-ui-col :span="2">~</mapgis-ui-col>
+                  <mapgis-ui-col :span="2">
+                    <p class="mix-row-p"
+                       :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
+                      ~</p>
+                  </mapgis-ui-col>
                   <mapgis-ui-col :span="11">
                     <mapgis-ui-input-number
                         v-model="listProps.dataSource[index]"
                         v-bind:title="String(listProps.dataSource[index])"
+                        :size="listProps.size"
                     />
                   </mapgis-ui-col>
                 </mapgis-ui-row>
@@ -367,12 +388,18 @@ export default {
         dataSource: undefined,
         colors: [],
         checkBoxArr: [],
-        gradient: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD"
+        gradient: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
+        size: undefined
       },
-      colorId: "colorId" + parseInt(Math.random() * 100000)
+      colorId: "colorId" + parseInt(Math.random() * 100000),
+      panelWidth: undefined,
+      panelHeight: undefined
     }
   },
   props: {
+    panelId: {
+      type: String
+    },
     /**
      * 组件类型
      * */
@@ -563,6 +590,11 @@ export default {
           this.listProps = Object.assign(this.listProps, this.props);
           this.listProps.colors = this.listProps.gradient.split(",");
           this.$_setThemeListDataSource();
+          this.$nextTick(function () {
+            let panel = document.getElementById(this.panelId);
+            this.panelWidth = panel.offsetWidth;
+            this.panelHeight = panel.offsetHeight;
+          });
           break;
       }
     },
@@ -678,6 +710,20 @@ export default {
   width: 16px;
   margin: auto;
   margin-top: 3px;
+}
+
+.mix-row-p {
+  text-align: center;
+  line-height: 32px;
+  margin-bottom: 0;
+}
+
+.mixRowPLarge {
+  line-height: 40px;
+}
+
+.mixRowPSmall {
+  line-height: 24px;
 }
 
 /deep/ .m-colorPicker {
