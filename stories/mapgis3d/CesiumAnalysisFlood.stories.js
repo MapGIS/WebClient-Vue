@@ -1,8 +1,73 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
+import Markdown from "../../cesium/docs/api/analysis/Flood.md";
 
 export default {
   title: "三维/分析/洪水淹没分析",
+  argTypes: {
+    startHeight: {
+      description: "洪水淹没水体起始高度",
+      table: {
+        defaultValue: { summary: "0" },
+      },
+      control: "number",
+    },
+    minHeight: {
+      description: "淹没动画高度起始点",
+      table: {
+        defaultValue: { summary: "0" },
+      },
+      control: "number",
+    },
+    maxHeight: {
+      description: "最大淹没高度，淹没动画高度终止点",
+      table: {
+        defaultValue: { summary: "2000" },
+      },
+      control: "number",
+    },
+    floodColor: {
+      description: "洪水颜色",
+      table: {
+        defaultValue: { summary: "rgba(149,232,249,0.5)" },
+      },
+      control: "color",
+    },
+    floodSpeed: {
+      description: "洪水淹没速度，单位 米/秒",
+      table: {
+        defaultValue: { summary: "500" },
+      },
+      control: "number",
+    },
+    specularIntensity: {
+      description: "反射光线强度",
+      table: {
+        defaultValue: { summary: "2" },
+      },
+      control: "number",
+    },
+    amplitude: {
+      description: "水波高度",
+      table: {
+        defaultValue: { summary: "10" },
+      },
+      control: "number",
+    },
+    animationSpeed: {
+      description: "水纹速度",
+      table: {
+        defaultValue: { summary: "0.01" },
+      },
+      control: "number",
+    },
+    frequency: {
+      description: "水纹频率",
+      table: {
+        defaultValue: { summary: "500" },
+      },
+      control: "number",
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -36,7 +101,16 @@ const Template = (args, { argTypes }) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-analysis-flood />
+        <mapgis-3d-analysis-flood 
+            :startHeight="startHeight"
+            :minHeight="minHeight"
+            :maxHeight="maxHeight"
+            :floodColor="floodColor"
+            :floodSpeed="floodSpeed"
+            :specularIntensity="specularIntensity"
+            :amplitude="amplitude"
+            :animationSpeed="animationSpeed"
+            :frequency="frequency"/>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -74,7 +148,17 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 洪水淹没 = Template.bind({});
-洪水淹没.args = {};
+洪水淹没.args = {
+  startHeight: 0,
+  minHeight: 0,
+  maxHeight: 2000,
+  floodColor: "rgba(149,232,249,0.5)",
+  floodSpeed: 500,
+  specularIntensity: 2,
+  amplitude: 10,
+  animationSpeed: 0.01,
+  frequency: 500,
+};
 
 洪水淹没.parameters = {
   docs: {
