@@ -179,3 +179,6 @@ export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/compo
 // Portal
 export { default as MapgisUiPortalDataresource } from "./view/portal/components/select/DataResource.vue";
 export { default as MapgisUiPortalServiceresource } from "./view/portal/components/select/ServiceResource.vue";
+
+// comprehensive-query
+export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-query/ComprehensiveQuery.vue";
