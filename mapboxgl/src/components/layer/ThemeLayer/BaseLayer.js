@@ -122,12 +122,54 @@ export default {
         },
         panelStyle: {
             type: Object
+        },
+        themeOptions: {
+            type: Array
         }
     },
     watch: {
         dataSource: {
             handler: function () {
                 this.$_sddThemeLayerBySource();
+            },
+            deep: true
+        },
+        themeOptions: {
+            handler: function () {
+                if (this.themeOptions instanceof Array) {
+                    //确认为一张图传来的参数
+                    if (this.themeOptions[0] && this.themeOptions[0] instanceof Object && this.themeOptions[0].hasOwnProperty("max")) {
+                        let options = this.$_formatThemeListOptions(this.themeOptions);
+                        console.log("---themeOptions", options)
+                        let vm = this;
+                        vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
+                            //切换渐变颜色
+                            let paintColor = vm.$_setRangeColors(options.colors.join(","), options.dataSource, vm.selectValue, features);
+                            if(vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())){
+                                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                            }else {
+                                let interval = setInterval(function () {
+                                    if(vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())){
+                                        vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                                        clearInterval(interval);
+                                    }
+                                },10);
+                            }
+                        });
+                    }
+                }
+                // let vm = this;
+                // Object.keys(this.themeOptions).forEach(function (key) {
+                //     if (key === "checkBoxArr" && vm.themeOptions[key].length > 0) {
+                //
+                //     } else if (key === "colors" && vm.themeOptions[key].length > 0) {
+                //         vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
+                //             //切换渐变颜色
+                //             let paintColor = vm.$_setRangeColors(vm.themeOptions.colors.join(","), vm.themeOptions.dataSource, "人口数", features);
+                //             vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                //         });
+                //     }
+                // });
             },
             deep: true
         },
@@ -142,9 +184,9 @@ export default {
                         let oldData = vm.$_getValueById(rows[j].id, "value", vm.themePropsCopy.options);
                         let newData = vm.$_getValueById(rows[j].id, "value", vm.themeProps.options);
                         if (newData !== oldData) {
-                            if(rows[j].type === "MapgisUiGrediantSelect"){
+                            if (rows[j].type === "MapgisUiGrediantSelect") {
                                 this.$_gradientChanged(newData)
-                            }else {
+                            } else {
                                 this["$_" + rows[j].id + "Changed"](newData);
                             }
                         }
@@ -216,6 +258,19 @@ export default {
         this.$_sddThemeLayerBySource();
     },
     methods: {
+        $_formatThemeListOptions(options) {
+            let newOptions = {
+                startData: undefined,
+                dataSource: [],
+                colors: []
+            };
+            newOptions.startData = Number(options[0].min);
+            for (let i = 0; i < options.length; i++) {
+                newOptions.dataSource.push(Number(options[i].max));
+                newOptions.colors.push(options[i].color);
+            }
+            return newOptions;
+        },
         $_getValueById(id, key, options) {
             let value;
             let rects = options.rects;
@@ -532,23 +587,23 @@ export default {
                 });
             }
             if (this.panelType === "custom") {
-                this.optionsCopy = this.themeProps.options;
-                let rects = this.optionsCopy.rects;
-                for (let i = 0; i < rects.length; i++) {
-                    let rows = rects[i].rows;
-                    for (let j = 0; j < rows.length; j++) {
-                        if (rows[j].type === "MapgisUiThemeList") {
-                            //避免与vue绑定
-                            if (!rows[j].hasOwnProperty("props")) {
-                                rows[j].props = {};
-                            }
-                            rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
-                            rows[j].props.colors = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors"));
-                            rows[j].props.checkBoxArr = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "checkBoxArr"));
-                            rows[j].props.field = this.selectValue;
-                        }
-                    }
-                }
+                // this.optionsCopy = this.themeProps.options;
+                // let rects = this.optionsCopy.rects;
+                // for (let i = 0; i < rects.length; i++) {
+                //     let rows = rects[i].rows;
+                //     for (let j = 0; j < rows.length; j++) {
+                //         if (rows[j].type === "MapgisUiThemeList") {
+                //             //避免与vue绑定
+                //             if (!rows[j].hasOwnProperty("props")) {
+                //                 rows[j].props = {};
+                //             }
+                //             rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
+                //             rows[j].props.colors = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors"));
+                //             rows[j].props.checkBoxArr = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "checkBoxArr"));
+                //             rows[j].props.field = this.selectValue;
+                //         }
+                //     }
+                // }
             }
         },
         $_getNewArray(dataSource) {

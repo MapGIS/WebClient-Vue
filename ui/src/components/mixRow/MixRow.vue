@@ -173,36 +173,81 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mix-row" v-if="type === 'MapgisUiThemeList'">
+    <mapgis-ui-row class="mix-row" :style="{width: panelWidth + 'px', height: panelHeight + 'px'}" v-if="type === 'MapgisUiThemeList'">
       <mapgis-ui-list
           :data-source="listProps.dataSource"
       >
+        <mapgis-ui-spin
+            v-if="!listProps.dataSource || listProps.dataSource.length === 0"
+            style="position: absolute;top: 200px"
+            :style="{top: panelHeight / 2 + 'px'}"
+        />
+<!--        <template #renderEmpty>-->
+<!--          &lt;!&ndash;空状态&ndash;&gt;-->
+<!--        </template>-->
         <mapgis-ui-list-item slot="renderItem" slot-scope="item,index">
           <div class="mix-row-list">
             <mapgis-ui-row>
-              <mapgis-ui-col :span="3">
+              <mapgis-ui-col :span="3"
+                             v-if="listProps.checkBoxArr && listProps.checkBoxArr.length > 0"
+              >
                 <input type="checkbox"
                        v-model="listProps.checkBoxArr[index]"
                        @click="$_change(listProps.checkBoxArr[index],index,listProps.colors[index])"
                 >
               </mapgis-ui-col>
               <mapgis-ui-col :span="3">
-                {{ index }}
+                <p class="mix-row-p"
+                   :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">{{
+                    index
+                  }}</p>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="2">
-                <div class="mix-row-color" :style="{background: listProps.colors[index]}">
-                  <mapgis-ui-sketch-color-picker
-                      :extraValue="index"
-                      :color="listProps.colors[index]"
-                      @input="$_changeColor"
-                  />
-                </div>
+              <mapgis-ui-col :span="2"
+                             v-if="listProps.colors && listProps.colors.length > 0"
+              >
+                <mapgis-ui-sketch-color-picker
+                    :extraValue="index"
+                    :color="listProps.colors[index]"
+                    :size="listProps.size"
+                    @input="$_changeColor"
+                >
+                  <div class="mix-row-color" :style="{background: listProps.colors[index]}"/>
+                </mapgis-ui-sketch-color-picker>
               </mapgis-ui-col>
               <mapgis-ui-col :span="6">
-                {{ listProps.field }}
+                <p class="mix-row-p"
+                   :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
+                  {{ listProps.field }}</p>
               </mapgis-ui-col>
               <mapgis-ui-col :span="10">
-                {{ item }}
+                <mapgis-ui-row>
+                  <mapgis-ui-col :span="11">
+                    <mapgis-ui-input-number
+                        v-model="listProps.startData"
+                        v-bind:title="String(listProps.startData)"
+                        v-if="index === 0"
+                        :size="listProps.size"
+                    />
+                    <mapgis-ui-input-number
+                        v-model="listProps.dataSource[index - 1]"
+                        v-bind:title="String(listProps.dataSource[index - 1])"
+                        v-if="index > 0"
+                        :size="listProps.size"
+                    />
+                  </mapgis-ui-col>
+                  <mapgis-ui-col :span="2">
+                    <p class="mix-row-p"
+                       :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
+                      ~</p>
+                  </mapgis-ui-col>
+                  <mapgis-ui-col :span="11">
+                    <mapgis-ui-input-number
+                        v-model="listProps.dataSource[index]"
+                        v-bind:title="String(listProps.dataSource[index])"
+                        :size="listProps.size"
+                    />
+                  </mapgis-ui-col>
+                </mapgis-ui-row>
               </mapgis-ui-col>
             </mapgis-ui-row>
           </div>
@@ -341,12 +386,20 @@ export default {
       },
       listProps: {
         dataSource: undefined,
-        colors: undefined
+        colors: [],
+        checkBoxArr: [],
+        gradient: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
+        size: undefined
       },
-      colorId: "colorId" + parseInt(Math.random() * 100000)
+      colorId: "colorId" + parseInt(Math.random() * 100000),
+      panelWidth: undefined,
+      panelHeight: undefined
     }
   },
   props: {
+    panelId: {
+      type: String
+    },
     /**
      * 组件类型
      * */
@@ -444,8 +497,68 @@ export default {
       },
       deep: true
     },
+    props: {
+      handler: function () {
+        this.$_initProps();
+      },
+      deep: true
+    },
   },
   methods: {
+    /**
+     * 从GeoJSON中取得数据
+     * @param GeoJSON GeoJSON数据
+     * @param key 字段名
+     * @returns 是否相等
+     * @param type 单值或分段
+     */
+    $_getDataByGeoJson(GeoJSON, key, type, rangeLevel) {
+      let dataSourceCopy = [], newDataSourceCopy = [], features = GeoJSON.features;
+      for (let i = 0; i < features.length; i++) {
+        if (
+            features[i].properties[key] !== "" &&
+            features[i].properties[key] !== null &&
+            features[i].properties[key] !== undefined
+        ) {
+          dataSourceCopy.push(features[i].properties[key]);
+        }
+      }
+      dataSourceCopy.sort(function (a, b) {
+        return a - b;
+      });
+      dataSourceCopy = Array.from(new Set(dataSourceCopy));
+      switch (type) {
+        case "unique":
+          newDataSourceCopy = dataSourceCopy;
+          break;
+        case "range":
+          let length = dataSourceCopy.length;
+          //某些情况下，取得的数字数据包含字符串要排除
+          let temp = [];
+          for (let j = 0; j < length; j++) {
+            if (!isNaN(Number(dataSourceCopy[j]))) {
+              temp.push(Number(dataSourceCopy[j]));
+            }
+          }
+          dataSourceCopy = temp;
+          length = dataSourceCopy.length;
+          let range = dataSourceCopy[length - 1] - dataSourceCopy[0];
+          if (range === 0) {
+            newDataSourceCopy.push(dataSourceCopy[0]);
+          } else {
+            let rangeSect = range / rangeLevel;
+            let floatLength;
+            if (String(rangeSect).indexOf(".") > -1) {
+              floatLength = String(rangeSect).split(".")[1].length;
+            }
+            for (let j = 0; j < rangeLevel; j++) {
+              newDataSourceCopy.push(Number(dataSourceCopy[0]) + (j + 1) * rangeSect);
+            }
+          }
+          break;
+      }
+      return newDataSourceCopy;
+    },
     $_initProps() {
       switch (this.type) {
         case "MapgisUiSlider":
@@ -475,7 +588,21 @@ export default {
           break;
         case "MapgisUiThemeList":
           this.listProps = Object.assign(this.listProps, this.props);
+          this.listProps.colors = this.listProps.gradient.split(",");
+          this.$_setThemeListDataSource();
+          this.$nextTick(function () {
+            let panel = document.getElementById(this.panelId);
+            this.panelWidth = panel.offsetWidth;
+            this.panelHeight = panel.offsetHeight;
+          });
           break;
+      }
+    },
+    $_setThemeListDataSource() {
+      if (this.listProps.dataSource && this.listProps.dataSource instanceof Object) {
+        let rangeLevel = this.listProps.gradient.split(",").length;
+        this.listProps.dataSource = this.$_getDataByGeoJson(this.listProps.dataSource, this.listProps.field, "range", rangeLevel);
+        this.listProps.startData = 0;
       }
     },
     $_initColorStyle() {
@@ -501,6 +628,7 @@ export default {
       }
     },
     $_changeColor(e, extraValue) {
+      this.$set(this.listProps.colors, extraValue, e.hex);
       this.$emit("change", "MapgisUiThemeListColor", e.hex, extraValue);
     },
     $_afterChange(e) {
@@ -582,6 +710,20 @@ export default {
   width: 16px;
   margin: auto;
   margin-top: 3px;
+}
+
+.mix-row-p {
+  text-align: center;
+  line-height: 32px;
+  margin-bottom: 0;
+}
+
+.mixRowPLarge {
+  line-height: 40px;
+}
+
+.mixRowPSmall {
+  line-height: 24px;
 }
 
 /deep/ .m-colorPicker {

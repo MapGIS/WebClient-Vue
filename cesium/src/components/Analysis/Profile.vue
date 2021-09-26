@@ -265,37 +265,44 @@ export default {
     polylineGroundColor: {
       handler() {
         this.polylineGroundColorCopy = this.polylineGroundColor;
-      }
+      },
+      immediate: true
     },
     samplePrecision: {
       handler() {
         this.samplePrecisionCopy = this.samplePrecision;
-      }
+      },
+      immediate: true
     },
     showPolygon: {
       handler() {
         this.showPolygonCopy = this.showPolygon;
-      }
+      },
+      immediate: true
     },
     pointColor: {
       handler() {
         this.pointColorCopy = this.pointColor;
-      }
+      },
+      immediate: true
     },
     polyLineColor: {
       handler() {
         this.polyLineColorCopy = this.polyLineColor;
-      }
+      },
+      immediate: true
     },
     polygonColor: {
       handler() {
         this.polygonColorCopy = this.polygonColor;
-      }
+      },
+      immediate: true
     },
     polygonHeight: {
       handler() {
         this.polygonHeightCopy = this.polygonHeight;
-      }
+      },
+      immediate: true
     }
   },
   data() {
@@ -334,7 +341,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         CesiumZondy.ProfileAnalysisManager.addSource(
           vueKey,
           vueIndex,

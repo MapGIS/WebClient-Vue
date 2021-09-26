@@ -1,33 +1,39 @@
 <template>
-  <div class="mapgis-widget-contour-analysis">
-    <mapgis-ui-group-tab title="等值线参数设置" />
-    <mapgis-ui-form-model :model="formData" v-bind="layout">
-      <mapgis-ui-form-model-item label="等值距">
-        <mapgis-ui-input
-          v-model.number="formData.contourSpacing"
-          type="number"
-          min="0"
-          addon-after="(米)"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="线宽">
-        <mapgis-ui-input
-          v-model.number="formData.contourWidth"
-          type="number"
-          min="0"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="线颜色">
-        <mapgis-ui-sketch-color-picker
-          :color.sync="formData.contourColor"
-          :disableAlpha="true"
-        ></mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="add">分析</mapgis-ui-button>
-      <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-    </mapgis-ui-setting-footer>
+  <div>
+    <slot>
+      <div class="mapgis-widget-contour-analysis">
+        <mapgis-ui-group-tab title="参数设置" />
+        <mapgis-ui-setting-form>
+          <mapgis-ui-form-item label="等值距">
+            <mapgis-ui-input
+              v-model.number="contourSpacingCopy"
+              type="number"
+              min="0"
+              addon-after="(米)"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="线宽">
+            <mapgis-ui-input
+              v-model.number="contourWidthCopy"
+              type="number"
+              min="0"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="线颜色">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="contourColorCopy"
+              :disableAlpha="true"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-setting-footer>
+          <mapgis-ui-button type="primary" @click="analysis"
+            >分析</mapgis-ui-button
+          >
+          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+        </mapgis-ui-setting-footer>
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -39,19 +45,60 @@ export default {
   name: "mapgis-3d-analysis-contour",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    ...VueOptions
+    ...VueOptions,
+    /**
+     * @type Number
+     * @default 150
+     * @description 等高线间距
+     */
+    contourSpacing: {
+      type: Number,
+      default: 150
+    },
+    /**
+     * @type Number
+     * @default 2
+     * @description 等高线宽度
+     */
+    contourWidth: {
+      type: Number,
+      default: 2
+    },
+    /**
+     * @type String
+     * @default "rgb(255,0,0)"
+     * @description 等高线颜色
+     */
+    contourColor: {
+      type: String,
+      default: "rgb(255,0,0)"
+    }
+  },
+  watch: {
+    contourSpacing: {
+      handler() {
+        this.contourSpacingCopy = this.contourSpacing;
+      },
+      immediate: true
+    },
+    contourWidth: {
+      handler() {
+        this.contourWidthCopy = this.contourWidth;
+      },
+      immediate: true
+    },
+    contourColor: {
+      handler() {
+        this.contourColorCopy = this.contourColor;
+      },
+      immediate: true
+    }
   },
   data() {
     return {
-      formData: {
-        contourSpacing: 150,
-        contourWidth: 2,
-        contourColor: "rgb(255,0,0)"
-      },
-      layout: {
-        labelCol: { span: 5 },
-        wrapperCol: { span: 16 }
-      }
+      contourSpacingCopy: 150,
+      contourWidthCopy: 2,
+      contourColorCopy: "rgb(255,0,0)"
     };
   },
 
@@ -77,7 +124,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         CesiumZondy.ContourAnalysisManager.addSource(
           vueKey,
           vueIndex,
@@ -101,10 +148,17 @@ export default {
       CesiumZondy.ContourAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
-    edgeColor() {
-      return colorToCesiumColor(this.formData.contourColor, this.webGlobe);
+    /**
+     * @description rgba值转cesium内部color对象
+     * @return {Object} cesium内部color对象
+     */
+    _edgeColor() {
+      return colorToCesiumColor(this.contourColorCopy, this.webGlobe);
     },
-    add() {
+    /**
+     * @description 开始绘制并分析
+     */
+    analysis() {
       let { CesiumZondy, vueKey, vueIndex, Cesium } = this;
       let find = CesiumZondy.ContourAnalysisManager.findSource(
         vueKey,
@@ -121,8 +175,8 @@ export default {
         "drawElement",
         drawElement
       );
-      const { contourWidth, contourSpacing } = this.formData;
-      const color = this.edgeColor();
+      const { contourWidthCopy, contourSpacingCopy } = this;
+      const color = this._edgeColor();
 
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
@@ -133,8 +187,8 @@ export default {
             contourAnalysis || new Cesium.TerrainAnalyse(viewer, {});
           contourAnalysis.enableContour(true);
           contourAnalysis.updateMaterial("none");
-          contourAnalysis.changeContourWidth(contourWidth);
-          contourAnalysis.changeContourSpacing(contourSpacing);
+          contourAnalysis.changeContourWidth(contourWidthCopy);
+          contourAnalysis.changeContourSpacing(contourSpacingCopy);
           contourAnalysis.changeContourColor(color);
           contourAnalysis.changeAnalyseArea(positions);
           CesiumZondy.ContourAnalysisManager.changeOptions(
@@ -146,6 +200,9 @@ export default {
         }
       });
     },
+    /**
+     * @description 移除等值线分析结果，取消交互式绘制事件激活状态
+     */
     remove() {
       let { CesiumZondy, vueKey, vueIndex } = this;
       let find = CesiumZondy.ContourAnalysisManager.findSource(
@@ -158,6 +215,7 @@ export default {
       // 判断是否已有等值线分析结果
       if (contourAnalysis) {
         // 移除等值线分析显示结果
+        contourAnalysis.enableContour(false);
         contourAnalysis.updateMaterial("none");
         CesiumZondy.ContourAnalysisManager.changeOptions(
           vueKey,

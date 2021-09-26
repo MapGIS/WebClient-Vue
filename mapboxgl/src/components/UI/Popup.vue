@@ -205,10 +205,6 @@ export default {
       }
       if (this.showed) {
         this.open = true;
-
-        if (this.marker) {
-          this.marker.togglePopup();
-        }
       }
     },
 

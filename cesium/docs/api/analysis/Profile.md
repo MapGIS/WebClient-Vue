@@ -195,7 +195,7 @@
 ### `@load`
 
 - **Description:** 在 Profile 加载完毕后发送该事件
-- **Payload** `{ Profile }`Profile 对象
+- **Payload** 剖面分析对象
 
 ### `@start`
 
@@ -325,7 +325,7 @@ export default {
     >
       <!--      这里是自定义的界面-->
       <div>
-        <button @click="analyse">分析</button>
+        <button @click="analysis">分析</button>
         <button @click="remove">清除</button>
       </div>
     </mapgis-3d-analysis-profile>
@@ -358,7 +358,7 @@ export default {
       showPolygon: false,
       samplePrecision: 2,
       //剖面分析组件对象
-      profileAnalyse: undefined
+      profileAnalysis: null
     };
   },
   methods: {
@@ -392,16 +392,16 @@ export default {
       });
     },
     //剖面分析组件加载完毕事件
-    load(profileAnalyse) {
-      this.profileAnalyse = profileAnalyse;
+    load(profileAnalysis) {
+      this.profileAnalysis = profileAnalysis;
     },
     //开始剖面分析
-    analyse() {
-      this.profileAnalyse.analyse();
+    analysis() {
+      this.profileAnalysis.analysis();
     },
     //移除剖面分析
     remove() {
-      this.profileAnalyse.remove();
+      this.profileAnalysis.remove();
     }
   }
 };
