@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
   template: `
       <mapgis-web-scene @load="showHeaterLayer = true">
         <mapgis-3d-igs-m3d
-          v-if="enableM3D"
+          v-if="enableModel"
           :autoReset="autoReset"
           :maximumScreenSpaceError="maximumScreenSpaceError"
           :url="m3dUrl" />
@@ -43,12 +43,14 @@ const Template = (args, { argTypes }) => ({
           :baseUrl="baseUrl"
           :layer-style="layerStyle"
           :tilingScheme="tilingScheme"/>
-        <mapgis-3d-heater-layer v-if="showHeaterLayer" />
+        <mapgis-3d-heater-layer
+         :enableModel="enableModel"
+          v-if="showHeaterLayer" />
       </mapgis-web-scene>
     `,
 });
 
 export const mapv = Template.bind({});
 mapv.args = {
-  enableM3D: false,
+  enableModel: false,
 };
