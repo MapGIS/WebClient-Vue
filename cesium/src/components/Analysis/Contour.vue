@@ -215,6 +215,7 @@ export default {
       // 判断是否已有等值线分析结果
       if (contourAnalysis) {
         // 移除等值线分析显示结果
+        contourAnalysis.enableContour(false);
         contourAnalysis.updateMaterial("none");
         CesiumZondy.ContourAnalysisManager.changeOptions(
           vueKey,
