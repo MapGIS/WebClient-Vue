@@ -19,14 +19,22 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-raster-layer :url="url" />
         <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
         <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-sightline></mapgis-3d-sightline>
+        <mapgis-3d-sightline 
+          :exHeight="exHeight"
+          :visibleColor="visibleColor"
+          :unVisibleColor="unVisibleColor"
+        ></mapgis-3d-sightline>
         </mapgis-ui-card>
     </mapgis-web-scene>
     `
 });
 
 export const Sightline = Template.bind({});
-Sightline.args = {}
+Sightline.args = {
+    exHeight:2.0,
+    visibleColor:'#2E8B57',
+    unVisibleColor:'#FFA500'
+}
 Sightline.parameters = {
     docs: {
         description: {
