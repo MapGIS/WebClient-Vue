@@ -9,7 +9,7 @@
             @input="onColorChange"
         />
       </template>
-      <div class="color-container">
+      <div class="color-container" :style="{border: showBorder ? 'border: 1px solid $border-color-base;' : 'none'}">
         <div :style="{ background: pickColor }" class="color-div"></div>
       </div>
     </mapgis-ui-popover>
@@ -38,6 +38,10 @@ export default {
     },
     size: {
       type: String
+    },
+    showBorder: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {

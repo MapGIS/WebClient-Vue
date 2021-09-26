@@ -173,13 +173,59 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
+    <mapgis-ui-infinite-list
+        :dataSource="listProps.dataSource"
+        :style="{width: panelWidth + 'px', height: panelHeight + 'px'}"
+        style="height: 100%"
+        v-if="type === 'MapgisUiThemeListUnique' && listProps.dataSource && listProps.dataSource.length > 0">
+      <template v-slot="{item, index}" style="height: 100%">
+        <mapgis-ui-row style="width: 100%">
+          <mapgis-ui-col :span="3"
+                         v-if="listProps.checkBoxArr && listProps.checkBoxArr.length > 0"
+          >
+            <input type="checkbox"
+                   v-model="listProps.checkBoxArr[index]"
+                   @click="$_change(listProps.checkBoxArr[index],index,listProps.colors[index])"
+            >
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="3">
+            <p class="mix-row-p"
+               :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">{{
+                index + 1
+              }}</p>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="2"
+                         v-if="listProps.colors && listProps.colors.length > 0"
+          >
+            <mapgis-ui-sketch-color-picker
+                :extraValue="index"
+                :color="listProps.colors[index]"
+                :size="listProps.size"
+                @input="$_changeColor"
+            >
+              <div class="mix-row-color" :style="{background: listProps.colors[index]}"/>
+            </mapgis-ui-sketch-color-picker>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="6">
+            <p class="mix-row-p"
+               :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
+              {{ listProps.field }}</p>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="10">
+            <p class="mix-row-p"
+               :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
+              {{ item }}</p>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+      </template>
+    </mapgis-ui-infinite-list>
     <mapgis-ui-row class="mix-row" :style="{width: panelWidth + 'px', height: panelHeight + 'px'}" v-if="type === 'MapgisUiThemeList'">
       <mapgis-ui-list
           :data-source="listProps.dataSource"
       >
         <mapgis-ui-spin
             v-if="!listProps.dataSource || listProps.dataSource.length === 0"
-            style="position: absolute;top: 200px"
+            style="position: absolute"
             :style="{top: panelHeight / 2 + 'px'}"
         />
 <!--        <template #renderEmpty>-->
@@ -199,7 +245,7 @@
               <mapgis-ui-col :span="3">
                 <p class="mix-row-p"
                    :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">{{
-                    index
+                    index + 1
                   }}</p>
               </mapgis-ui-col>
               <mapgis-ui-col :span="2"
@@ -209,6 +255,7 @@
                     :extraValue="index"
                     :color="listProps.colors[index]"
                     :size="listProps.size"
+                    :showBorder="customProps.showBorder"
                     @input="$_changeColor"
                 >
                   <div class="mix-row-color" :style="{background: listProps.colors[index]}"/>
@@ -258,6 +305,7 @@
 </template>
 
 <script>
+import {gradientColor} from "../../util/common/util"
 export default {
   name: "mapgis-ui-mix-row",
   data() {
@@ -448,6 +496,13 @@ export default {
         };
       }
     },
+    customProps: {
+      default() {
+        return {
+          showBorder: true
+        };
+      }
+    },
     /**
      * 标题样式
      * */
@@ -514,6 +569,9 @@ export default {
      */
     $_getDataByGeoJson(GeoJSON, key, type, rangeLevel) {
       let dataSourceCopy = [], newDataSourceCopy = [], features = GeoJSON.features;
+      if(!features){
+        return;
+      }
       for (let i = 0; i < features.length; i++) {
         if (
             features[i].properties[key] !== "" &&
@@ -589,7 +647,17 @@ export default {
         case "MapgisUiThemeList":
           this.listProps = Object.assign(this.listProps, this.props);
           this.listProps.colors = this.listProps.gradient.split(",");
-          this.$_setThemeListDataSource();
+          this.$_setThemeListDataSource("range");
+          this.$nextTick(function () {
+            let panel = document.getElementById(this.panelId);
+            this.panelWidth = panel.offsetWidth;
+            this.panelHeight = panel.offsetHeight;
+          });
+          break;
+        case "MapgisUiThemeListUnique":
+          this.listProps = Object.assign(this.listProps, this.props);
+          this.$_setThemeListDataSource("unique");
+          this.listProps.colors = this.$_getUniqueColors(this.listProps.gradient,this.listProps.dataSource);
           this.$nextTick(function () {
             let panel = document.getElementById(this.panelId);
             this.panelWidth = panel.offsetWidth;
@@ -598,11 +666,43 @@ export default {
           break;
       }
     },
-    $_setThemeListDataSource() {
-      if (this.listProps.dataSource && this.listProps.dataSource instanceof Object) {
-        let rangeLevel = this.listProps.gradient.split(",").length;
-        this.listProps.dataSource = this.$_getDataByGeoJson(this.listProps.dataSource, this.listProps.field, "range", rangeLevel);
+    $_getUniqueColors(color, dataSourceCopy) {
+      let colors = [];
+      if(dataSourceCopy && dataSourceCopy.length > 0){
+        //根据渐变颜色取得所有颜色
+        let colorArr = color.split(",");
+        let colorArrLength = colorArr.length - 1;
+        let dataLength = dataSourceCopy.length;
+        let colorLength = [];
+        for (let i = 0; i < colorArrLength; i++) {
+          if (i === colorArrLength - 1) {
+            colorLength.push(
+                dataLength -
+                parseInt(dataLength / colorArrLength) * (colorArrLength - 1)
+            );
+          } else {
+            colorLength.push(parseInt(dataLength / colorArrLength));
+          }
+        }
+        for (let i = 0; i < colorLength.length; i++) {
+          colors = colors.concat(
+              gradientColor(colorArr[i], colorArr[i + 1], colorLength[i])
+          );
+        }
+      }
+      return colors;
+    },
+    $_setThemeListDataSource(type) {
+      if (type === "range" && this.listProps.dataSource) {
+        if(!(this.listProps.dataSource instanceof Array)){
+          let rangeLevel = this.listProps.gradient.split(",").length;
+          this.listProps.dataSource = this.$_getDataByGeoJson(this.listProps.dataSource, this.listProps.field, type, rangeLevel);
+        }
         this.listProps.startData = 0;
+      }else {
+        if (!(this.listProps.dataSource instanceof Array)){
+          this.listProps.dataSource = this.$_getDataByGeoJson(this.listProps.dataSource, this.listProps.field, type);
+        }
       }
     },
     $_initColorStyle() {
