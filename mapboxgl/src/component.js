@@ -75,22 +75,3 @@ export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/Theme
 export { default as MapgisThemePanelCustom } from "./components/layer/ThemeLayer/ThemePanelCustom";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
 export { default as MapgisThemeLayerCustom } from "./components/layer/ThemeLayer/ThemeLayerCustom";
-
-/* 
-import withEventsMixin from "./lib/withEvents";
-import withSelfEventsMixin from "./components/UI/withSelfEvents";
-import controlMixin from "./components/UI/controls/controlMixin";
-import layerMixin from "./components/layer/layerMixin";
-
-export { default as const withEvents = withEventsMixin;
-export { default as const withSelfEvents = withSelfEventsMixin;
-export { default as const asControl = controlMixin;
-export { default as const asLayer = layerMixin;
-
-export { default as const $helpers = {
-  withEvents: withEventsMixin,
-  withSelfEvents: withSelfEventsMixin,
-  asControl: controlMixin,
-  asLayer: layerMixin
-}; 
-*/

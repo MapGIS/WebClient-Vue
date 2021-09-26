@@ -107,7 +107,7 @@ export default {
 
 .mapboxgl-popup-content {
   width: 320px;
-  height: 260px;
+  height: fit-content;
 }
 
 .mapgis-inspect-content {
