@@ -1,5 +1,5 @@
 <template>
-  <div class="mapgis-ui-sketch-color-picker">
+  <div class="mapgis-ui-sketch-color-picker" :class="{colorContainerLarge: size === 'large',colorContainerSmall: size === 'small'}">
     <mapgis-ui-popover trigger="click">
       <template slot="content">
         <sketch-picker
@@ -9,7 +9,7 @@
             @input="onColorChange"
         />
       </template>
-      <div class="color-container">
+      <div class="color-container" :style="{border: showBorder ? 'border: 1px solid $border-color-base;' : 'none'}">
         <div :style="{ background: pickColor }" class="color-div"></div>
       </div>
     </mapgis-ui-popover>
@@ -35,6 +35,13 @@ export default {
     },
     extraValue: {
       type: [Object, String, Number, Boolean]
+    },
+    size: {
+      type: String
+    },
+    showBorder: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {

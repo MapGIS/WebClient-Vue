@@ -1,21 +1,27 @@
 <template>
-  <div class="mapgis-widget-slope-analysis">
-    <mapgis-ui-group-tab title="坡度图例设置">
-      <mapgis-ui-tooltip slot="handle" placement="bottomRight">
-        <template slot="title">
-          <span>{{ info }}</span>
-        </template>
-        <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
-      </mapgis-ui-tooltip>
-    </mapgis-ui-group-tab>
-    <mapgis-ui-colors-setting
-      v-model="params"
-      :rangeField="'坡度范围'"
-    ></mapgis-ui-colors-setting>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="add">分析</mapgis-ui-button>
-      <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-    </mapgis-ui-setting-footer>
+  <div>
+    <slot>
+      <div class="mapgis-widget-slope-analysis">
+        <mapgis-ui-group-tab title="坡度图例设置">
+          <mapgis-ui-tooltip slot="handle" placement="bottomRight">
+            <template slot="title">
+              <span>{{ info }}</span>
+            </template>
+            <mapgis-ui-iconfont type="mapgis-info"></mapgis-ui-iconfont>
+          </mapgis-ui-tooltip>
+        </mapgis-ui-group-tab>
+        <mapgis-ui-colors-setting
+          v-model="rampColorsCopy"
+          :rangeField="'坡度范围'"
+        ></mapgis-ui-colors-setting>
+        <mapgis-ui-setting-footer>
+          <mapgis-ui-button type="primary" @click="analysis"
+            >分析</mapgis-ui-button
+          >
+          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+        </mapgis-ui-setting-footer>
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -28,11 +34,37 @@ export default {
   name: "mapgis-3d-analysis-slope",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    ...VueOptions
+    ...VueOptions,
+    /**
+     * @type Object
+     * @description 坡度分析角度颜色数组
+     */
+    rampColors: {
+      type: Array,
+      default: () => {
+        return [
+          { min: 0, max: 15, color: "rgba(244, 67, 54, 0.5)" },
+          { min: 15, max: 30, color: "rgba(233, 30, 99, 0.5)" },
+          { min: 30, max: 45, color: "rgba(156, 39, 176, 0.5)" },
+          { min: 45, max: 60, color: "rgba(255, 235, 59, 0.5)" },
+          { min: 60, max: 75, color: "rgba(96, 125, 139, 0.5)" },
+          { min: 75, max: 90, color: "rgba(76, 175, 80, 0.5)" }
+        ];
+      }
+    }
+  },
+  watch: {
+    rampColors: {
+      handler() {
+        this.rampColorsCopy = this.rampColors;
+      },
+      deep: true,
+      immediate: true
+    }
   },
   data() {
     return {
-      params: [
+      rampColorsCopy: [
         { min: 0, max: 15, color: "rgba(244, 67, 54, 0.5)" },
         { min: 15, max: 30, color: "rgba(233, 30, 99, 0.5)" },
         { min: 30, max: 45, color: "rgba(156, 39, 176, 0.5)" },
@@ -57,7 +89,6 @@ export default {
   methods: {
     async createCesiumObject() {
       const { baseUrl, options } = this;
-      // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
         resolve => {
           resolve();
@@ -71,7 +102,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         CesiumZondy.SlopeAnalysisManager.addSource(
           vueKey,
           vueIndex,
@@ -82,6 +113,9 @@ export default {
           }
         );
       });
+      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
+        this.brightnessEnabled = true;
+      }
     },
     unmount() {
       let { CesiumZondy, vueKey, vueIndex } = this;
@@ -93,9 +127,9 @@ export default {
       this.$emit("unload", this);
     },
     /**
-     * 开启光照
+     * @description 开启光照
      */
-    enableBrightness() {
+    _enableBrightness() {
       if (this.brightnessEnabled) {
         return;
       }
@@ -110,20 +144,14 @@ export default {
       viewer.scene.brightness.enabled = true;
       viewer.scene.brightness.uniforms.brightness = 1.2;
     },
-
-    active() {
-      const { viewer } = this.webGlobe;
-      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
-        this.brightnessEnabled = true;
-      }
-    },
-
-    add() {
+    /**
+     * @description 开始绘制并分析
+     */
+    analysis() {
       let { CesiumZondy, vueKey, vueIndex } = this;
       let find = CesiumZondy.SlopeAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { slopeAnalysis, drawElement } = options;
-      this.active();
       const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
@@ -134,24 +162,22 @@ export default {
         drawElement
       );
 
-      const { params } = this;
+      const { rampColorsCopy } = this;
 
       const colors = [];
       const ramp = [];
-      params.forEach(({ max, color }) => {
+      rampColorsCopy.forEach(({ max, color }) => {
         ramp.push((max / 360).toFixed(2));
         colors.push(color);
       });
-      const rampColor = this.transformColor(colors);
-
-      const self = this;
+      const rampColor = this._transformColor(colors);
 
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
         callback: positions => {
           this.remove();
-          this.enableBrightness(); // 开启光照
+          this._enableBrightness(); // 开启光照
           slopeAnalysis =
             slopeAnalysis ||
             new this.Cesium.TerrainAnalyse(viewer, {
@@ -170,8 +196,12 @@ export default {
         }
       });
     },
-
-    transformColor(arrayColor) {
+    /**
+     * @description rgba数组转hex数组
+     * @param arrayColor - {Array} rgba数组
+     * @return hex数组
+     */
+    _transformColor(arrayColor) {
       let isNull = false;
       const arr = arrayColor.map(color => {
         if (color) {
@@ -185,7 +215,9 @@ export default {
       }
       return arr;
     },
-
+    /**
+     * @description 移除坡度分析结果，取消交互式绘制事件激活状态
+     */
     remove() {
       let { CesiumZondy, vueKey, vueIndex } = this;
       let find = CesiumZondy.SlopeAnalysisManager.findSource(vueKey, vueIndex);

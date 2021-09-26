@@ -11,6 +11,8 @@ import gradientHeatColor from "./gradientHeatColor";
 
 const {FeatureService} = MRFS;
 
+import {gradientColor} from "../../util/util"
+
 export const DefaultThemeMains = [
     "_统一专题图",
     "_单值专题图",
@@ -122,12 +124,54 @@ export default {
         },
         panelStyle: {
             type: Object
+        },
+        themeOptions: {
+            type: Array
         }
     },
     watch: {
         dataSource: {
             handler: function () {
                 this.$_sddThemeLayerBySource();
+            },
+            deep: true
+        },
+        themeOptions: {
+            handler: function () {
+                if (this.themeOptions instanceof Array) {
+                    //确认为一张图传来的参数
+                    if (this.themeOptions[0] && this.themeOptions[0] instanceof Object && this.themeOptions[0].hasOwnProperty("max")) {
+                        let options = this.$_formatThemeListOptions(this.themeOptions);
+                        console.log("---themeOptions", options)
+                        let vm = this;
+                        vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
+                            //切换渐变颜色
+                            let paintColor = vm.$_setRangeColors(options.colors.join(","), options.dataSource, vm.selectValue, features);
+                            if(vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())){
+                                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                            }else {
+                                let interval = setInterval(function () {
+                                    if(vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())){
+                                        vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                                        clearInterval(interval);
+                                    }
+                                },10);
+                            }
+                        });
+                    }
+                }
+                // let vm = this;
+                // Object.keys(this.themeOptions).forEach(function (key) {
+                //     if (key === "checkBoxArr" && vm.themeOptions[key].length > 0) {
+                //
+                //     } else if (key === "colors" && vm.themeOptions[key].length > 0) {
+                //         vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
+                //             //切换渐变颜色
+                //             let paintColor = vm.$_setRangeColors(vm.themeOptions.colors.join(","), vm.themeOptions.dataSource, "人口数", features);
+                //             vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-color", paintColor);
+                //         });
+                //     }
+                // });
             },
             deep: true
         },
@@ -142,9 +186,9 @@ export default {
                         let oldData = vm.$_getValueById(rows[j].id, "value", vm.themePropsCopy.options);
                         let newData = vm.$_getValueById(rows[j].id, "value", vm.themeProps.options);
                         if (newData !== oldData) {
-                            if(rows[j].type === "MapgisUiGrediantSelect"){
+                            if (rows[j].type === "MapgisUiGrediantSelect") {
                                 this.$_gradientChanged(newData)
-                            }else {
+                            } else {
                                 this["$_" + rows[j].id + "Changed"](newData);
                             }
                         }
@@ -216,6 +260,19 @@ export default {
         this.$_sddThemeLayerBySource();
     },
     methods: {
+        $_formatThemeListOptions(options) {
+            let newOptions = {
+                startData: undefined,
+                dataSource: [],
+                colors: []
+            };
+            newOptions.startData = Number(options[0].min);
+            for (let i = 0; i < options.length; i++) {
+                newOptions.dataSource.push(Number(options[i].max));
+                newOptions.colors.push(options[i].color);
+            }
+            return newOptions;
+        },
         $_getValueById(id, key, options) {
             let value;
             let rects = options.rects;
@@ -309,6 +366,7 @@ export default {
             let vm = this;
             if (themeType) {
                 //初始化专题图存储对象
+                themeManager.vueId = this.vueId;
                 themeManager.initLayerProps(layerId);
                 //取得原图层绘制信息
                 let originLayerStyle = this.$_getLayerStyle(layerId);
@@ -532,23 +590,23 @@ export default {
                 });
             }
             if (this.panelType === "custom") {
-                this.optionsCopy = this.themeProps.options;
-                let rects = this.optionsCopy.rects;
-                for (let i = 0; i < rects.length; i++) {
-                    let rows = rects[i].rows;
-                    for (let j = 0; j < rows.length; j++) {
-                        if (rows[j].type === "MapgisUiThemeList") {
-                            //避免与vue绑定
-                            if (!rows[j].hasOwnProperty("props")) {
-                                rows[j].props = {};
-                            }
-                            rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
-                            rows[j].props.colors = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors"));
-                            rows[j].props.checkBoxArr = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "checkBoxArr"));
-                            rows[j].props.field = this.selectValue;
-                        }
-                    }
-                }
+                // this.optionsCopy = this.themeProps.options;
+                // let rects = this.optionsCopy.rects;
+                // for (let i = 0; i < rects.length; i++) {
+                //     let rows = rects[i].rows;
+                //     for (let j = 0; j < rows.length; j++) {
+                //         if (rows[j].type === "MapgisUiThemeList") {
+                //             //避免与vue绑定
+                //             if (!rows[j].hasOwnProperty("props")) {
+                //                 rows[j].props = {};
+                //             }
+                //             rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
+                //             rows[j].props.colors = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors"));
+                //             rows[j].props.checkBoxArr = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "checkBoxArr"));
+                //             rows[j].props.field = this.selectValue;
+                //         }
+                //     }
+                // }
             }
         },
         $_getNewArray(dataSource) {
@@ -906,89 +964,7 @@ export default {
         $_addLayer(featureCollection) {
         },
         $_gradientColor(startColor, endColor, step) {
-            let startRGB = this.$_colorRgb(startColor); //转换为rgb数组模式
-            let startR = startRGB[0];
-            let startG = startRGB[1];
-            let startB = startRGB[2];
-
-            let endRGB = this.$_colorRgb(endColor);
-            let endR = endRGB[0];
-            let endG = endRGB[1];
-            let endB = endRGB[2];
-
-            let sR = (endR - startR) / step; //总差值
-            let sG = (endG - startG) / step;
-            let sB = (endB - startB) / step;
-
-            let colorArr = [];
-            for (let i = 0; i < step; i++) {
-                //计算每一步的hex值
-                let hex = this.$_colorHex(
-                    "rgb(" +
-                    parseInt(sR * i + startR) +
-                    "," +
-                    parseInt(sG * i + startG) +
-                    "," +
-                    parseInt(sB * i + startB) +
-                    ")"
-                );
-                colorArr.push(hex);
-            }
-            return colorArr;
-        },
-        $_colorRgb(sColor) {
-            let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-            sColor = sColor.toLowerCase();
-            if (sColor && reg.test(sColor)) {
-                if (sColor.length === 4) {
-                    let sColorNew = "#";
-                    for (let i = 1; i < 4; i += 1) {
-                        sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
-                    }
-                    sColor = sColorNew;
-                }
-                //处理六位的颜色值
-                let sColorChange = [];
-                for (let i = 1; i < 7; i += 2) {
-                    sColorChange.push(parseInt("0x" + sColor.slice(i, i + 2)));
-                }
-                return sColorChange;
-            } else {
-                return sColor;
-            }
-        },
-        $_colorHex(rgb) {
-            let _this = rgb;
-            let reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-            if (/^(rgb|RGB)/.test(_this)) {
-                let aColor = _this.replace(/(?:\(|\)|rgb|RGB)*/g, "").split(",");
-                let strHex = "#";
-                for (let i = 0; i < aColor.length; i++) {
-                    let hex = Number(aColor[i]).toString(16);
-                    hex = hex < 10 ? 0 + "" + hex : hex; // 保证每个rgb的值为2位
-                    if (hex === "0") {
-                        hex += hex;
-                    }
-                    strHex += hex;
-                }
-                if (strHex.length !== 7) {
-                    strHex = _this;
-                }
-                return strHex;
-            } else if (reg.test(_this)) {
-                let aNum = _this.replace(/#/, "").split("");
-                if (aNum.length === 6) {
-                    return _this;
-                } else if (aNum.length === 3) {
-                    let numHex = "#";
-                    for (let i = 0; i < aNum.length; i += 1) {
-                        numHex += aNum[i] + aNum[i];
-                    }
-                    return numHex;
-                }
-            } else {
-                return _this;
-            }
+            return gradientColor(startColor, endColor, step);
         },
         /**
          * 将外部参数（mapbox参数）转化为面板参数，xx-xx-xx转化为驼峰命名的参数，并且不绑定在vue上面，通过panel的方法进行更新
@@ -1159,7 +1135,7 @@ export default {
                             "circle-stroke-opacity": 1,
                             "circle-radius": 6,
                             "circle-stroke-color": "#000000",
-                            "circle-stroke-width": 2,
+                            "circle-stroke-width": 1,
                             "circle-translate": [0, 0]
                         }
                     };
@@ -1175,7 +1151,7 @@ export default {
                         paint: {
                             "line-color": paintColors,
                             "line-opacity": 1,
-                            "line-width": 2
+                            "line-width": 1
                         }
                     };
                     break;
@@ -1230,7 +1206,7 @@ export default {
                             "circle-stroke-opacity": 1,
                             "circle-radius": 6,
                             "circle-stroke-color": "#000000",
-                            "circle-stroke-width": 2,
+                            "circle-stroke-width": 1,
                             "circle-translate": [0, 0]
                         }
                     };
@@ -1246,7 +1222,7 @@ export default {
                         paint: {
                             "line-color": paintColors,
                             "line-opacity": 1,
-                            "line-width": 2
+                            "line-width": 1
                         }
                     };
                     break;
@@ -1409,7 +1385,7 @@ export default {
                 paint: {
                     "line-color": "#000000",
                     "line-opacity": 1,
-                    "line-width": 2
+                    "line-width": 1
                 },
                 layout: {}
             };

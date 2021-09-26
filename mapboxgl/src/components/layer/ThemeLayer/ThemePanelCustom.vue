@@ -1,13 +1,13 @@
 <template>
   <div>
-    <mapgis-ui-custom-panel
-        ref="custom"
-        style="width: 50%"
-        :options="options"
-        @formChanged="$_formChanged"
-        class="theme-panel-custom"
-        v-if="options"
-    />
+<!--    <mapgis-ui-custom-panel-->
+<!--        ref="custom"-->
+<!--        style="width: 50%"-->
+<!--        :options="options"-->
+<!--        @formChanged="$_formChanged"-->
+<!--        class="theme-panel-custom"-->
+<!--        v-if="options"-->
+<!--    />-->
   </div>
 </template>
 
@@ -18,9 +18,9 @@ export default {
     return {}
   },
   props: {
-    options: {
-      type: Object
-    }
+    // options: {
+    //   type: Object
+    // }
   },
   methods: {
     $_show() {

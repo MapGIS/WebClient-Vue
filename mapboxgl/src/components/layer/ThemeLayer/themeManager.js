@@ -93,7 +93,7 @@ class ZondyThemeManager {
                             "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
                         "circle-radius": 6,
                         "circle-opacity": 100,
-                        "circle-stroke-width": 2,
+                        "circle-stroke-width": 1,
                         "circle-stroke-color": "#000000",
                         "circle-stroke-opacity": 100,
                         "circle-translate": [0, 0],
@@ -116,7 +116,7 @@ class ZondyThemeManager {
                         ] = {
                         "gradient-color":
                             "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
-                        "line-width": 3,
+                        "line-width": 1,
                         "line-opacity": 100,
                         "line-translate": [0, 0]
                     };
@@ -132,7 +132,7 @@ class ZondyThemeManager {
                         "fill-opacity": 100,
                         "fill-translate": [0, 0],
                         "fill-outline-color": "#000000",
-                        "fill-outline-width": 3,
+                        "fill-outline-width": 1,
                         "fill-outline-opacity": 100,
                         "text-field": "{未设置}",
                         "text-size": 12,

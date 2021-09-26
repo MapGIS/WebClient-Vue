@@ -1,6 +1,7 @@
 // import "ant-design-vue/dist/antd.css";
 import antDirective from "ant-design-vue/es/_util/antDirective";
 import vcolorpicker from "vcolorpicker";
+import infiniteScroll from "vue-infinite-scroll";
 import * as UIComponents from "./component";
 import * as Util from "./util/common";
 
@@ -26,6 +27,7 @@ const install = function(Vue, options) {
   setLayoutSettingVisible(true);
   Vue.use(antDirective);
   Vue.use(vcolorpicker);
+  Vue.use(infiniteScroll);
   for (let name in UIComponents) {
     const ui = UIComponents[name];
     Vue.component(ui.options ? ui.options.name : ui.name, ui);
