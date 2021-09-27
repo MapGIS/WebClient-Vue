@@ -4,20 +4,6 @@ import Markdown from "../../cesium/docs/api/analysis/Profile.md";
 export default {
   title: "三维/分析/剖面分析",
   argTypes: {
-    position: {
-      //描述信息，即页面上Description那一栏的值
-      description: "分析面板的位置",
-      table: {
-        //description描述信息下的提示框，可选，添加这一项就会在描述信息文字下生成一个提示信息按钮
-        //summary：提示按钮里的文字，detail：提示信息
-        // type:{ summary: 'tips',detail: "这里是提示" },
-        //默认值，即页面上Default那一栏的值，不在这里填写，则页面上不会有默认值
-        //如果加了detail,{ summary: 'null',detail: "这里是提示" },则页面会多出一个描述信息的提示框
-        defaultValue: { summary: "null" },
-      },
-      //Control这里一栏里面展示数据的方式，可以是input、textArean、boolean等，可选值如下
-      control: "text",
-    },
     profileType: {
       description: "分析类型，0代表地形，1代表地形和模型兼容",
       table: {
@@ -92,10 +78,11 @@ const Template = (args, { argTypes }) => ({
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029",
       },
+      profile2dVisible: false,
     };
   },
   template: `
-      <mapgis-web-scene style="{height: '100vh'}"
+    <mapgis-web-scene style="{height: '100vh'}"
           v-on:load="handleLoad"
       >
       <mapgis-3d-ogc-wmts-layer
@@ -107,17 +94,32 @@ const Template = (args, { argTypes }) => ({
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
+      <mapgis-ui-card customPosition="top-right">
       <mapgis-3d-analysis-profile 
           :profileType="profileType" 
-          :position="position" 
           :polygonHeight="polygonHeight" 
           :polygonColor="polygonColor" 
           :polyLineColor="polyLineColor" 
           :pointColor="pointColor"
           :polylineGroundColor="polylineGroundColor" 
           :showPolygon="showPolygon" 
-          :samplePrecision="samplePrecision"/>
-      </mapgis-web-scene>
+          :samplePrecision="samplePrecision"
+          @success="success"
+          @remove="remove"/>
+          </mapgis-ui-card>
+      <mapgis-ui-window
+        :visible.sync="profile2dVisible"
+        :min-width="400"
+        :max-height="250"
+        anchor="bottom-left"
+        title="剖面信息"
+      >
+        <div
+          id="profileChart"
+          style="width: 380px; height: 180px; float: right"
+        ></div>
+      </mapgis-ui-window>
+    </mapgis-web-scene>
     `,
   methods: {
     handleLoad(e) {
@@ -149,12 +151,17 @@ const Template = (args, { argTypes }) => ({
         roll: 0,
       });
     },
+    success() {
+      this.profile2dVisible = true;
+    },
+    remove() {
+      this.profile2dVisible = false;
+    },
   },
 });
 
 export const 剖面 = Template.bind({});
 剖面.args = {
-  position: "right",
   profileType: 0,
   polygonHeight: 100,
   polygonColor: "rgb(0,0,255)",

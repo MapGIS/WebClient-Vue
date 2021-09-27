@@ -1,85 +1,62 @@
 <template>
   <div>
     <slot>
-      <mapgis-ui-card
-        :class="[
-          'ui-card',
-          { right: position === 'right', left: position === 'left' }
-        ]"
-      >
-        <div class="mapgis-widget-profile-analysis">
-          <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-          <mapgis-ui-setting-form :label-width="72">
-            <mapgis-ui-form-item label="剖切线颜色">
-              <mapgis-ui-sketch-color-picker
-                :color.sync="polylineGroundColorCopy"
-                :disableAlpha="true"
-              ></mapgis-ui-sketch-color-picker>
-            </mapgis-ui-form-item>
+      <div class="mapgis-widget-profile-analysis">
+        <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
+        <mapgis-ui-setting-form :label-width="72">
+          <mapgis-ui-form-item label="剖切线颜色">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="polylineGroundColorCopy"
+              :disableAlpha="true"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
 
-            <mapgis-ui-form-item label="采样精度">
-              <mapgis-ui-input
-                v-model.number="samplePrecisionCopy"
-                type="number"
-                min="0"
-                addon-after="(米)"
-              />
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="交互点颜色" v-show="!showPolygonCopy">
-              <mapgis-ui-sketch-color-picker
-                :color.sync="pointColorCopy"
-                :disableAlpha="true"
-              ></mapgis-ui-sketch-color-picker>
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="显示剖面">
-              <mapgis-ui-switch size="small" v-model="showPolygonCopy" />
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="剖面高度" v-show="showPolygonCopy">
-              <mapgis-ui-input
-                v-model.number="polygonHeightCopy"
-                type="number"
-                min="0"
-                addon-after="(米)"
-              />
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="剖面颜色" v-show="showPolygonCopy">
-              <mapgis-ui-sketch-color-picker
-                :color.sync="polygonColorCopy"
-                :disableAlpha="true"
-              ></mapgis-ui-sketch-color-picker>
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="交互线颜色" v-show="showPolygonCopy">
-              <mapgis-ui-sketch-color-picker
-                :color.sync="polyLineColorCopy"
-                :disableAlpha="true"
-              ></mapgis-ui-sketch-color-picker>
-            </mapgis-ui-form-item>
-          </mapgis-ui-setting-form>
-          <mapgis-ui-setting-footer>
-            <mapgis-ui-button type="primary" @click="analysis"
-              >分析</mapgis-ui-button
-            >
-            <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
-          </mapgis-ui-setting-footer>
-        </div>
-      </mapgis-ui-card>
+          <mapgis-ui-form-item label="采样精度">
+            <mapgis-ui-input
+              v-model.number="samplePrecisionCopy"
+              type="number"
+              min="0"
+              addon-after="(米)"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="交互点颜色" v-show="!showPolygonCopy">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="pointColorCopy"
+              :disableAlpha="true"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="显示剖切面">
+            <mapgis-ui-switch size="small" v-model="showPolygonCopy" />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="剖切面高度" v-show="showPolygonCopy">
+            <mapgis-ui-input
+              v-model.number="polygonHeightCopy"
+              type="number"
+              min="0"
+              addon-after="(米)"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="剖切面颜色" v-show="showPolygonCopy">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="polygonColorCopy"
+              :disableAlpha="true"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="交互线颜色" v-show="showPolygonCopy">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="polyLineColorCopy"
+              :disableAlpha="true"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-setting-footer>
+          <mapgis-ui-button type="primary" @click="analysis"
+            >分析</mapgis-ui-button
+          >
+          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+        </mapgis-ui-setting-footer>
+      </div>
     </slot>
-
-    <!-- 二维剖面 -->
-    <mapgis-ui-window-wrapper :visible="profile2dVisible">
-      <mapgis-ui-window
-        :visible.sync="profile2dVisible"
-        :min-width="400"
-        :max-height="250"
-        anchor="bottom-left"
-        title="二维剖面"
-      >
-        <div
-          id="profileChart"
-          style="width: 380px; height: 180px; float: right"
-        ></div>
-      </mapgis-ui-window>
-    </mapgis-ui-window-wrapper>
   </div>
 </template>
 
@@ -99,15 +76,6 @@ export default {
      * @description 分析类型，0代表地形，1代表地形和模型兼容
      */
     profileType: { type: Number, default: 1 },
-    /**
-     * @type String
-     * @default "right"
-     * @description 分析面板的位置
-     */
-    position: {
-      type: String,
-      default: "right"
-    },
     /**
      * @type String
      * @default "rgb(255,0,0)"
@@ -196,7 +164,7 @@ export default {
           },
           grid: {
             top: 25,
-            left: 40,
+            left: 60,
             right: 20,
             bottom: 20,
             contentLabel: false
@@ -227,11 +195,11 @@ export default {
               axisLabel: {
                 formatter: value => {
                   const texts = [];
-                  if (value > 99999) {
-                    const text = Number(value).toExponential(1);
-                    texts.push(text);
+                  if (value > 999) {
+                    const text = (Number(value) / 1000).toFixed(2);
+                    texts.push(`${text}km`);
                   } else {
-                    texts.push(parseInt(value));
+                    texts.push(`${parseInt(value)}m`);
                   }
                   return texts;
                 }
@@ -253,7 +221,8 @@ export default {
                   { type: "max", name: "最高点" },
                   { type: "min", name: "最低点" }
                 ]
-              }
+              },
+              areaStyle: {}
             }
           ]
         };
@@ -314,7 +283,6 @@ export default {
       polylineGroundColorCopy: "rgb(255,0,0)", // 剖切线颜色
       showPolygonCopy: false, // 是否显示剖面
       samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
-      profile2dVisible: false, // 是否显示二维剖面
       depthTestAgainstTerrain: false // 深度检测是否已开启
     };
   },
@@ -391,7 +359,6 @@ export default {
      */
     analysis() {
       const { viewer } = this.webGlobe;
-      this.profile2dVisible = false;
       if (!this.depthTestAgainstTerrain) {
         viewer.scene.globe.depthTestAgainstTerrain = true;
       }
@@ -444,19 +411,13 @@ export default {
      */
     _profileSuccess() {
       this.$emit("success");
-      const profileAnalysis = this._getProfileAnalysis();
-      // 剖面分析对象存在才显示二维剖面，以防在分析中，点击了清除
-      if (profileAnalysis) {
-        this.profile2dVisible = true;
-      }
     },
     /**
      * @description 移除剖面分析结果，关闭二维剖面显示，恢复深度检测设置
      */
     remove() {
+      this.$emit("remove");
       const profileAnalysis = this._getProfileAnalysis();
-      // 关闭二维剖面显示
-      this.profile2dVisible = false;
       const { CesiumZondy, vueKey, vueIndex } = this;
 
       // 判断是否已有剖面分析结果
@@ -479,20 +440,3 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-.ui-card.right {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  background-color: #fff;
-}
-
-.ui-card.left {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background-color: #fff;
-}
-</style>
