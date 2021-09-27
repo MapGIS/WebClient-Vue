@@ -51,9 +51,9 @@
           />
         </mapgis-ui-form-item>
       </template>
-      <mapgis-ui-form-item label="填充颜色">
-        <!-- <color-picker-setting v-model="options.gradient" /> -->
-      </mapgis-ui-form-item>
+      <!-- <mapgis-ui-form-item label="填充颜色"> -->
+      <!-- <color-picker-setting v-model="options.gradient" /> -->
+      <!-- </mapgis-ui-form-item> -->
     </mapgis-ui-setting-form>
     <template v-if="activeType">
       <mapgis-3d-mapv-heater-layer
@@ -226,6 +226,7 @@ export default {
           this.bound = this.mockCesiumBound();
           this.geojson = this.mockCesiumGeoJson();
         } else {
+          debugger;
           this.bound = this.mockMapvBound();
           this.geojson = this.mockMapvGeoJson();
         }

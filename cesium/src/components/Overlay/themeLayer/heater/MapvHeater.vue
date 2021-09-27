@@ -140,7 +140,7 @@ export default {
     geojson: {
       deep: true,
       handler(d) {
-        if (!d || !d.features || !d.features.length) {
+        if (!d) {
           this.$_removeMapvLayer();
         } else {
           this.$_updateMapvLayer();
