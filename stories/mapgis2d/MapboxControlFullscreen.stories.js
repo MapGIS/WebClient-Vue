@@ -5,8 +5,16 @@ export default {
     title: "二维/地图子组件/全屏组件",
     component: MapgisFullscreen,
     argTypes: {
-        position:"top-right",
-        container:undefined
+        container:{
+            description:'指定进行全屏操作的DOM元素，默认为地图的容器，详见[全屏组件](https://docs.mapbox.com/mapbox-gl-js/api/#fullscreencontrol)',
+            type:{ name: 'HTMLElement', required: false },
+            defaultValue:undefined,
+            table:{
+                type: { summary: 'HTMLElement' ,detail: 'document.querySelector(\'body\')'},
+                defaultValue: { summary: 'undefined' },
+            },
+            control:'object'
+        },
     },
 };
 

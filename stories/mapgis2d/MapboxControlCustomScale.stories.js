@@ -4,14 +4,17 @@ export default {
   title: "二维/地图子组件/自定义比例尺",
   component: MapgisCustomScale,
   argTypes: {
-    outStyle: {
-      position: "absolute",
-      zIndex: 900,
-      right: "5px",
-      bottom: "10px",
-      maxHeight: "300px",
-      width: "220px",
-    },
+    outStyle:{
+      description:'图例默认显示的css样式',
+      type: { name: 'Object', required: false },
+      table:{
+        type: {
+          summary: 'Object',
+        },
+        defaultValue: { summary: '{ left: "10px", top: "10px" }' },
+      },
+      control:'object'
+    } ,
   },
 };
 

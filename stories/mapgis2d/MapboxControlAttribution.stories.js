@@ -4,9 +4,26 @@ export default {
     title: "二维/地图子组件/属性组件",
     component: MapgisAttribution,
     argTypes: {
-        customAttribution:"中地数码-司马云-二维属性组件",
-        position:"bottom-left",
-        compact:true
+        customAttribution: {
+            description:'当前属性组件要显示的字符串或者多个字符串组成的数组，详见[参数介绍](https://docs.mapbox.com/mapbox-gl-js/api/markers/#attributioncontrol-parameters)',
+            type: { name: 'Array | String', required: false },
+            defaultValue:undefined,
+            table:{
+                type: { summary: 'Object | Array' },
+                defaultValue: { summary: 'undefined' },
+            },
+            control:'object'
+        },
+        compact:{
+            description:'控制是否折叠属性组件。为true时，属性组件处于折叠状态，在鼠标悬停时会展示完整属性信息。详见[参数介绍](https://docs.mapbox.com/mapbox-gl-js/api/markers/#attributioncontrol-parameters)',
+            type: { name: 'Boolean', required: false },
+            defaultValue: true,
+            table:{
+                type: { summary: 'Boolean' },
+                defaultValue: { summary: 'true' },
+            },
+            control:'boolean'
+        } ,
     },
 };
 

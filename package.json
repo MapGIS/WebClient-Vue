@@ -53,6 +53,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/eslint-parser": "^7.12.1",
+    "@storybook/addon-a11y": "^6.3.7",
     "@storybook/addon-actions": "^6.2.9",
     "@storybook/addon-docs": "^6.3.7",
     "@storybook/addon-essentials": "^6.2.9",

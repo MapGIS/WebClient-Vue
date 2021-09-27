@@ -5,10 +5,173 @@ export default {
   title: "二维/图层/IGServer/IGS地图文档",
   component: MapgisIgsDocLayer,
   argTypes: {
-    layerId: "igs_layer_layerid",
-    sourceId: "igs_layer_sourceid",
-    baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
-    layers: 'show:0,1,2,3,4,5,6,7',
+    layerId:  {
+      description: '待添加的图层的id，不能与现有的图层冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'text'
+    },
+    baseUrl: {
+      description:'地图请求的基地址路径',
+      type:{ name: 'String', required: false },
+      defaultValue:null,
+      table:{
+        type:{
+          summary: 'String',
+          detail: '格式:"http://{ip}:{port}/igs/rest/mrms/docs"'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    },
+    layers:{
+      description: '指定需要被取图的图层序列号数组，以“，”分隔。默认为依据文档原始图层状态进行设置。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）<br/> ' +
+          '1. show：仅仅显示指定了图层序号的图层<br/> ' +
+          '2. hide ：显示除 hide 参数指定图层外所有的图层<br/> ' +
+          '3. include：除显示默认图层（地图文档内图层状态为可见的图层）外，另追加这些被指定的图层显示，追加的这些图层必须为地图中包含的图层<br/> ' +
+          '4. exclude: 从默认图层列表里删除这些被指定的图层后，进行显示',
+      type: {
+        name: 'String',
+        required: false
+      },
+      table:{
+        type: {
+          summary: 'String',
+          detail:'示例:"show:1,2"\n'+
+              '注意:若不传入开头的[show|hide|include|exclude],则默认是显示所有图层 \n' +
+              '  eg:"1,2,3"，显示的是所有图层,并非图层1、2、3'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    } ,
+    source: {
+      description:'栅格瓦片源<br/>' +
+          '详见[sources-raster使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)',
+      type: { name: 'Object | String', required: false },
+      table:{
+        type: { summary: 'Object | String' },
+        // defaultValue: { summary: '' },
+      },
+      control:'object'
+    },
+    tileSize: {
+      description:'输出瓦片大小',
+      defaultValue:512 ,
+      type: { name: 'Number', required: false },
+      table:{
+        type: { summary: 'Number' },
+        defaultValue: { summary: '512' },
+      },
+      control:'number'
+    },
+    filters:{
+      description:'用户指定的图层过滤条件，它由多个键值对组成，值为过滤条件。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）',
+      type: { name: 'String', required: false },
+      // defaultValue: null,
+      table:{
+        type:{
+          summary: 'String',
+          detail: '示例:"1:ID>4,3:ID>1"'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    },
+    igsMapStyle:{
+      description:'显示参数，指整个地图文档的显示参数。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）',
+      type: { name: 'Object', required: false },
+      defaultValue: null,
+      table:{
+        type: {
+          summary: 'Object',
+          detail:'示例:{SymbleShow:true,ShowElemRect:true}'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'object'
+    } ,
+    f:{
+      description:'图片的格式。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）',
+      type: { name: 'String', required: false },
+      defaultValue: 'png',
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: 'png' },
+      },
+      control:{
+        type:'select',
+        options:['jpg','png','gif']
+      }
+    } ,
+    proj:{
+      description:'针对整个地图文档进行投影参数设置。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）',
+      type: { name: 'String', required: false },
+      // defaultValue: null,
+      table:{
+        type:{
+          summary: 'String',
+          detail: '示例:"WGS1984_度"'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    } ,
+    guid:{
+      description:'用户标识地图文档的唯一id。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）',
+      type: { name: 'String', required: false },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: {
+          summary: 'newGuid()',
+          detail: '随机生成一个guid,返回值为一个字符串'
+        },
+      },
+      control:'text'
+    } ,
+    cache:{
+      description:'是否使用动态裁图功能',
+      type: { name: 'Boolean', required: false },
+      defaultValue: false,
+      table:{
+        type: { summary: 'Boolean' },
+        defaultValue: { summary: 'false' },
+      },
+      control:'boolean'
+    } ,
+    isAntialiasing:{
+      description:'控制是否高质量显示',
+      type: { name: 'Boolean', required: false },
+      defaultValue: false,
+      table:{
+        type: { summary: 'Boolean' },
+        defaultValue: { summary: 'false' },
+      },
+      control:'boolean'
+    } ,
+    update:{
+      description:'控制是否更新当前瓦片，仅当 cache 为 true 时有效',
+      type: { name: 'Boolean', required: false },
+      defaultValue: false,
+      table:{
+        type: { summary: 'Boolean' },
+        defaultValue: { summary: 'false' },
+      },
+      control:'boolean'
+    } ,
+    mode:{
+      description:'模式，如果是快显取图（hiRender,fast_display），文档为只读，只有 bbox,w,h 有效。',
+      type: { name: 'String', required: false },
+      // defaultValue: null,
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    } ,
   },
 };
 

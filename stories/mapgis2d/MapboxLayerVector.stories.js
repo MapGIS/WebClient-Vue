@@ -5,21 +5,42 @@ export default {
     title: "二维/图层/矢量图层",
     component: MapgisVectorLayer,
     argTypes: {
-        layerId: "china_bound_id",
-        sourceId: "vector_source_id",
-        layer:{
-            type: 'fill',
-            source: 'vector_source_id', //必须和上面的layerVectorId一致
-            paint: {
-                'fill-antialias': true, //抗锯齿，true表示针对边界缝隙进行填充
-                'fill-color': '#000000', //颜色
-                'fill-opacity': 1.0, //透明度
-                'fill-outline-color': '#FF0000' //边线颜色，没错,确实没有边线宽度这个选项
-            }
+        layer: {
+            description:'[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)',
+            type: { name: 'Object | String', required: true },
+            table:{
+                type: { summary: 'Object | String' },
+                defaultValue: { summary: '必传' },
+            },
+            control:'object'
         },
         source: {
-            type: 'geojson',
-            data: 'http://develop.smaryun.com/static/data/geojson/china.geojson'
+            description:'矢量瓦片源<br/>' +
+                '详见[sources-vector使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-vector)',
+            type: { name: 'Object | String', required: false },
+            table:{
+                type: { summary: 'Object | String' },
+                // defaultValue: { summary: '' },
+            },
+            control:'object'
+        },
+        layerId:  {
+            description: '待添加的图层的id，不能与现有的图层冲突',
+            type: { name: 'String', required: true },
+            table:{
+                type: { summary: 'String' },
+                defaultValue: { summary: '必传' },
+            },
+            control:'text'
+        },
+        sourceId: {
+            description: '待添加的数据源的id，不能与现有的数据源冲突',
+            type: { name: 'String', required: true },
+            table:{
+                type: { summary: 'String' },
+                defaultValue: { summary: '必传' },
+            },
+            control:'text'
         },
     },
 };

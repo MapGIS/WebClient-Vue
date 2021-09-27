@@ -5,10 +5,42 @@ export default {
   title: "二维/图层/图像图层",
   component: MapgisImageLayer,
   argTypes: {
-    layer: {},
-    layerId: "geojson_layer_id",
-    source: {},
-    sourceId: "geojson_source_id",
+    layer: {
+      description:'[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)',
+      type: { name: 'Object | String', required: true },
+      table:{
+        type: { summary: 'Object | String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'object'
+    },
+    source: {
+      description:'[imagesource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#imagesource)',
+      type: { name: 'Object | String', required: false },
+      table:{
+        type: { summary: 'Object | String' },
+        // defaultValue: { summary: '' },
+      },
+      control:'object'
+    },
+    layerId:  {
+      description: '待添加的图层的id，不能与现有的图层冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'text'
+    },
+    sourceId: {
+      description: '待添加的数据源的id，不能与现有的数据源冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'text'
+    },
   },
 };
 

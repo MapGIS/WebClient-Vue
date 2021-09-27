@@ -4,7 +4,8 @@ import ArcgisTileLayer from "../../mapboxgl/src/components/layer/ArcGISServer/Ar
 
 export default {
     title: "二维/地图子组件/arcgis图例",
-    component: MapgisArcgisLegend
+    component: MapgisArcgisLegend,
+    argTypes: {  },
 };
 
 const Template = (args, { argTypes }) => ({

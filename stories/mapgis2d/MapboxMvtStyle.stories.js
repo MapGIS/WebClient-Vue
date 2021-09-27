@@ -4,8 +4,32 @@ export default {
   title: "二维/图层/MVT/矢量瓦片样式",
   component: MapgisMvtStyleLayer,
   argTypes: {
-    mvtStyle: "",
-    mode: "add",
+    mvtStyle: {
+      description:'Mapbox 矢量瓦片样式<br/>' +
+          '详见[样式说明](https://docs.mapbox.com/mapbox-gl-js/style-spec)',
+      type: { name: 'Object | String', required: false },
+      defaultValue:undefined,
+      table:{
+        type: { summary: 'Object | String' },
+        defaultValue: { summary: 'undefined' },
+      },
+      control:'object'
+    },
+    mode:{
+      description:'样式显示模式',
+      type: { name: 'String', required: false },
+      defaultValue: 'merge',
+      table:{
+        type:{
+          summary: 'String',
+        },
+        defaultValue: { summary: 'merge' },
+      },
+      control:{
+        type:'select',
+        options:['merge','add','set']
+      }
+    } ,
     before: undefined,
   },
 };

@@ -5,13 +5,82 @@ export default {
   title: "二维/图层/OGC/WMTS-3857",
   component: MapgisOgcWmtsLayer,
   argTypes: {
-    baseUrl:'http://t0.tianditu.gov.cn/vec_w/wmts',
-    wmtsLayer: 'vec',
-    tileMatrixSet:"w",
-    format:"tiles",
-    layerId: 'ogcwmts_layerId',
-    sourceId: 'ogcwmts_sourceId',
-    token:"f5347cab4b28410a6e8ba5143e3d5a35"
+    baseUrl: {
+      description:'KVP 模式的基地址',
+      type:{ name: 'String', required: false },
+      defaultValue:null,
+      table:{
+        type:{
+          summary: 'String',
+          detail: '示例:"http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer"'
+        },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    },
+    wmtsLayer:{
+      description:'wmts 标准中的 layer 属性，即图层名称',
+      type: { name: 'String', required: false },
+      defaultValue: "",
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: "" },
+      },
+      control:'text'
+    } ,
+    tileMatrixSet:{
+      description:'wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合',
+      type: { name: 'String', required: false },
+      defaultValue: "",
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: "" },
+      },
+      control:'text'
+    } ,
+    version:{
+      description:'wmts 服务版本号',
+      type: { name: 'String', required: false },
+      defaultValue: '1.0.0',
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '1.0.0' },
+      },
+      control:'text'
+    } ,
+    wmtsStyle:{
+      description:'wmts 标准中的 style 属性，即地图样式',
+      type: { name: 'String', required: false },
+      defaultValue: "default",
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: "default" },
+      },
+      control:'text'
+    } ,
+    format:{
+      description:'wmts 标准中的 format 属性，即请求的图片的返回格式',
+      type: { name: 'String', required: false },
+      defaultValue: 'image/png',
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: 'image/png' },
+      },
+      control:{
+        type:'select',
+        options:['image/png','image/gif','image/jpg']
+      }
+    } ,
+    zoomOffset: {
+      description:'地图偏移级数，老版本的 Igserver 会使用到<br/>' ,
+      defaultValue:0 ,
+      type: { name: 'Number', required: false },
+      table:{
+        type: { summary: 'Number' },
+        defaultValue: { summary: '0' },
+      },
+      control:'number'
+    },
   },
 };
 

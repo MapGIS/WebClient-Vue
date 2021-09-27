@@ -10,9 +10,32 @@ export default {
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
   excludeStories: /.*Data$/,
   argTypes: {
-    anchor: "top",
-    show: true,
-    offset: [0, 0],
+    anchor: {
+      description:'设置coordinates定位的popup的部位，不设置时 popup会在确保显示在地图内的前提下优先定位在popup的底部',
+      type:{ name: 'String', required: false },
+      defaultValue:undefined,
+      table:{
+        type:{
+          summary: 'String',
+        },
+        defaultValue: { summary: 'undefined' },
+      },
+      control:{
+        type:'select',
+        options:['center','top','bottom','left','right','top-left','top-right','bottom-left','bottom-right']
+      }
+    },
+    offset:{
+      description:'相对于popup位置的偏移量，单位为像素，向左和向上为负,详见[popup参数介绍](https://docs.mapbox.com/mapbox-gl-js/api/markers/#popup-parameters)',
+      type: {name: 'Number | Array | Object', required: false},
+      defaultValue: () => [0, 0],
+      table:{
+        type:{summary:'Number | Array | Object'},
+        defaultValue:{summary:"[0, 0]"}
+      },
+      control: 'object'
+    },
+
   },
 };
 
