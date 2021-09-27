@@ -63,15 +63,25 @@
         searchPanelExpand ? '' : 'unvisible'
       ]"
       :style="{ 'max-height': `${maxHeight}px` }"
-    ></div>
+    >
+      <place-name
+        ref="placeName"
+        :widgetInfo="widgetInfo"
+        :geometry="geometry"
+      ></place-name>
+    </div>
   </div>
 </template>
 
 <script>
 import Feature from "./util/feature";
+import PlaceName from "./PlaceName/PlaceName.vue";
 
 export default {
   name: "mapgis-ui-comprehensive-query",
+  components: {
+    PlaceName
+  },
   props: {
     logo: {
       type: String,
@@ -80,6 +90,23 @@ export default {
     districtName: {
       type: String,
       default: ""
+    },
+    widgetInfo: {
+      type: Object,
+      default: () => ({
+        placeName: {
+          ip: "192.168.21.191",
+          port: "6163",
+          combine: "true",
+          queryWay: "gdbp",
+          docName: "",
+          showType: "normal",
+          clusterMaxCount: "1000",
+          allSearchName: "NAME",
+          allShows: "NAME:名称,ADDRESS:地址,TELEPHONE:联系方式,PAC:邮政编码",
+          queryTable: []
+        }
+      })
     }
   },
   data() {

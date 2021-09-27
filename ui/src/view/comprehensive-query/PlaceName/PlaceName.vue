@@ -5,14 +5,14 @@
         v-for="item in allItems"
         :key="`地名地址${item.placeName}`"
         @click="select(item)"
-        :class="{ active: selected.indexOf(item.placeName) > -1 }"
+        :class="{ 'place-name-active-text': selected.indexOf(item.placeName) > -1 }"
         >{{ item.placeName }}</span
       >
     </div>
     <div class="search-tab-container" v-if="showResult && !showResultSet">
       <div class="search-switch-container">
         <a-switch v-model="cluster" @change="onChange" size="small" />
-        <span :class="{ active: cluster }">聚合展示</span>
+        <span :class="{ 'place-name-active-text': cluster }">聚合展示</span>
         <a-icon
           class="action"
           style="flex: 1; text-align: right;"
@@ -79,14 +79,14 @@ export default {
   },
   computed: {
     allItems() {
-      return this.widgetInfo.config.placeName.queryTable;
+      return this.widgetInfo.placeName.queryTable;
     },
     showType() {
-      return this.widgetInfo.config.placeName.showType;
+      return this.widgetInfo.placeName.showType;
     },
     config() {
       return (
-        this.widgetInfo.config.placeName || this.widgetInfo.config.dataStore
+        this.widgetInfo.placeName || this.widgetInfo.dataStore
       );
     }
   },
@@ -216,7 +216,7 @@ export default {
         };
       }
       if (!isDelete) {
-        
+
         // this.addExhibition(new AttributeTableExhibition(exhibition));
         // this.openExhibitionPanel();
       } else {
