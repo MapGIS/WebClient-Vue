@@ -41,23 +41,28 @@
 | \$border-color      | \$size-md                         |
 |                     | \$size-sm                         |
 
-若遇到`ui\src\util\style\theme\theme.scss`里找不到的样式变量，可填写至下表。（本 md 文件路径：`ui\docs\plugin_components\onemap.md`）。
-
-| theme.scss 中未找到 | 局部已有定义，需要放到 theme.scss |
-| :------------------ | :-------------------------------- |
-| \$base-bg-color     | \$size-lg                         |
-| \$border-color      | \$size-md                         |
-|                     | \$size-sm                         |
-
 ## 注
 
-1、Select、Input 组件已添加属性：`autoWidth`，设置为 true 时可实现宽度 100%自适应。
+1、Select、Input 组件已添加属性：`autoWidth`，设置为 true 时可实现宽度 100% 自适应。
 
-2、`<mapgis-ui-form>`和`<mapgis-ui-form-item>`组件已封装完成！！！
+2、Card 组件已添加属性：`customPosition`，可控制卡片显示的绝对位置：
 
-1、目前 mapgis-ui 暂未封装`<a-form>`组件，若组件移植过程中遇到`<a-form>`或`<a-form-item>`，请先继续保留`a-`，不要修改为`mapgis-ui-`；
+```javascript
+customPosition: {
+  type: String,
+  default: '',
+  validator: v =>
+    [
+      'top-right',
+      'top-left',
+      'bottom-right',
+      'bottom-left'
+    ].includes(v)
+},
+```
 
-2、Select、Input 组件已添加属性：`autoWidth`，设置为 true 时可实现宽度 100%自适应。
+3、`<mapgis-ui-form>`和`<mapgis-ui-form-item>`组件已封装完成！！！
+
 
 ## 组件分析
 

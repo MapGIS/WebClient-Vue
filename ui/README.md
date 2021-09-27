@@ -3,16 +3,23 @@
 敬请期待...
 
 
-## FormModel使用注意事项：（忽略）
+## 组件增强说明
 
-当涉及<u>^$refs</u>时，后面应添加<u>$children[0]</u>项。  
-### 示例：
-> $refs.name.onFieldBlur()  
-> this.$refs.ruleForm.validate()   
-> this.$refs.ruleForm.resetFields()  
+1、Select、Input 组件添加属性：`autoWidth`，设置为 true 时可实现宽度 100% 自适应。
 
-### 应分别改为：
+2、Card 组件已添加属性：`customPosition`，可控制卡片显示的绝对位置：
 
-> $refs.name.$children[0].onFieldBlur()  
-> this.$refs.ruleForm.$children[0].validate()   
-> this.$refs.ruleForm.$children[0].resetFields()  
+```javascript
+customPosition: {
+  type: String,
+  default: '',
+  validator: v =>
+    [
+      'top-right',
+      'top-left',
+      'bottom-right',
+      'bottom-left'
+    ].includes(v)
+},
+```
+3、基于List组件增加无限加载列表组件：`mapgis-ui-infinite-list`，详情可查看StoryBook。
