@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <slot v-if="initial"></slot>
+  <div class="mapgis-3d-measure">
+    <slot v-if="initial"> </slot>
+    <slot name="measureTool">
+      <measure-3d-tool />
+    </slot>
   </div>
 </template>
 
@@ -8,10 +11,14 @@
 
 <script>
 import ServiceLayer from "../ServiceLayer";
+import Measure3dTool from "./components/MeasureTool.vue";
 
 export default {
   name: "mapgis-3d-measure",
   mixins: [ServiceLayer],
+  components: {
+    "measure-3d-tool": Measure3dTool
+  },
   props: {
     styles: {
       type: Object,
@@ -82,7 +89,13 @@ export default {
       let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
       let measure = new Cesium[MeasureName](webGlobe.viewer, {
         lineColor: this.measureStyles.lineColor,
-        callBack: this.measureCallBack
+        callBack: result => {
+          if (typeof callback === "function") {
+            callback(result);
+          } else {
+            this.measureCallBack(result);
+          }
+        }
       });
       window.CesiumZondy.MeasureToolManager.addSource(
         vueKey,
@@ -97,6 +110,9 @@ export default {
           manager.source.stopTool();
         }
       });
+    },
+    remove() {
+      this.deleteMeasure();
     }
   }
 };

@@ -1,0 +1,182 @@
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
+
+.mp-widget-comprehensive-query {
+  .search-box {
+    .ant-divider {
+      margin: 0;
+    }
+    input {
+      border: 0;
+      box-shadow: 0 0 0 0;
+    }
+    button {
+      border: 0;
+      padding: 0;
+      &.search-button {
+        width: 57px;
+        border-radius: 0 2px 2px 0;
+      }
+      &.close-button {
+        line-height: 16px;
+        padding: 0 8px;
+      }
+    }
+  }
+  .locate-panel-contaner,
+  .search-panel-contaner {
+    .ant-tabs.ant-tabs-card {
+      .ant-tabs-card-bar {
+        margin-bottom: 0;
+        .ant-tabs-nav-container-scrolling {
+          padding-right: 20px;
+          padding-left: 20px;
+          .ant-tabs-tab-prev.ant-tabs-tab-arrow-show,
+          .ant-tabs-tab-next.ant-tabs-tab-arrow-show {
+            width: 20px;
+          }
+        }
+        .ant-tabs-nav-container {
+          height: 32px;
+          .ant-tabs-tab {
+            height: 32px;
+            line-height: 32px;
+            padding: 0 6px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mp-widget-comprehensive-query {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  color: $text-color;
+  border-radius: 2px;
+  max-height: calc(100% - 20px);
+  .query-section {
+    border-radius: 2px;
+    box-shadow: 0px 1px 2px 1px $shadow-color;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: $base-bg-color;
+    width: fit-content;
+    height: 32px;
+    .comprehensive-query-logo {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      cursor: pointer;
+      .district-title {
+        white-space: nowrap;
+        margin-left: 3px;
+        color: $text-color;
+      }
+    }
+    .start-search-button {
+      font-size: 16px;
+      width: 32px;
+    }
+    .search-input {
+      flex: 1;
+    }
+    .search-button {
+      font-size: 14px;
+      width: 46px;
+    }
+    .close-button {
+      font-size: 14px;
+    }
+  }
+  .ant-divider-vertical {
+    top: 0;
+  }
+  .panel-container {
+    background: $base-bg-color;
+    padding: 10px;
+    margin-top: 3px;
+    &.unvisible {
+      display: none;
+    }
+  }
+  .search-panel-contaner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.place-name-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  .float-pop-container {
+    span {
+      padding: 3px 6px;
+      white-space: nowrap;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .place-name-active-text {
+      color: $primary-color;
+    }
+  }
+  .search-tab-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    .search-switch-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .place-name-active-text {
+        color: $primary-color;
+      }
+      .ant-switch {
+        margin: 0 10px 0 0;
+      }
+      .action {
+        cursor: pointer;
+        padding-left: 8px;
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+    ::v-deep .ant-tabs {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      .ant-tabs-nav-container {
+        height: 32px;
+        .ant-tabs-tab {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+      .ant-tabs-bar {
+        margin-bottom: 10px;
+      }
+      .ant-tabs-content {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        .ant-tabs-tabpane-active {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+}

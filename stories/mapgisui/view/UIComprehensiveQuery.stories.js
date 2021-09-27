@@ -1,0 +1,907 @@
+export default {
+  title: '界面/业务组件/综合查询',
+}
+
+const Template = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  data() {
+    return {}
+  },
+  template: `
+      <mapgis-ui-comprehensive-query v-bind="$props"/>
+    `,
+  methods: {},
+})
+
+export const 综合查询 = Template.bind({})
+综合查询.args = {
+  logo:'static/media/stories/assets/direction.svg',
+  districtName:'湖北省',
+  widgetInfo:{
+    "placeName": {
+      "ip": "192.168.21.191",
+      "port": "6163",
+      "combine": "true",
+      "queryWay": "gdbp",
+      "docName": "",
+      "showType": "normal",
+      "clusterMaxCount": "1000",
+      "allSearchName": "NAME",
+      "allShows": "NAME:名称,ADDRESS:地址,TELEPHONE:联系方式,PAC:邮政编码",
+      "queryTable": [
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015LYJD",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015LYJD",
+          "placeName": "旅游景点",
+          "color": "#FF8C69",
+          "LayerName": "D430000DM2015LYJD",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": true
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015GGSS",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015GGSS",
+          "placeName": "公共设施",
+          "color": "#FFE5B4",
+          "LayerName": "D430000DM2015GGSS",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015CYMS",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015CYMS",
+          "placeName": "餐饮美食",
+          "color": "#DA70D6",
+          "LayerName": "D430000DM2015CYMS",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://sys:sa@ORCL/HN/ds/地名地址/sfcls/D430000DM2015YDXX",
+          "gdbpText": "gdbp://@ORCL/HN/ds/地名地址/sfcls/D430000DM2015YDXX",
+          "placeName": "运动休闲",
+          "color": "#CC5500",
+          "LayerName": "D430000DM2015YDXX",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015GW",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015GW",
+          "placeName": "购物",
+          "color": "#50C878",
+          "LayerName": "D430000DM2015GW",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015BGJD",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015BGJD",
+          "placeName": "宾馆酒店",
+          "color": "#556B2F",
+          "LayerName": "D430000DM2015BGJD",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "URL",
+            "EMAIL",
+            "BRAND",
+            "ABBRE",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "ABBREVIATI",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "NOTE_",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "CODE",
+            "YSDM",
+            "CYM",
+            "SJXZQM",
+            "BZ",
+            "PCODE",
+            "DZMMSJ",
+            "XSCC",
+            "DMLBDM_D",
+            "DMLBDM_Z",
+            "JC2",
+            "aa",
+            "OBJECTID",
+            "ERRCODE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015JRHY",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015JRHY",
+          "placeName": "金融行业",
+          "color": "#8A2BE2",
+          "LayerName": "D430000DM2015JRHY",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015GSQY",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015GSQY",
+          "placeName": "公司企业",
+          "color": "#FF1493",
+          "LayerName": "D430000DM2015GSQY",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015DCXQ",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015DCXQ",
+          "placeName": "地产小区",
+          "color": "#E32636",
+          "LayerName": "D430000DM2015DCXQ",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015JTSS",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015JTSS",
+          "placeName": "交通设施",
+          "color": "#DA70D6",
+          "LayerName": "D430000DM2015JTSS",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        },
+        {
+          "gdbp": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015JTDM",
+          "gdbpText": "gdbp://MYY:zondy123@MapGISLocalPlus/comprehensive-query/sfcls/D430000DM2015JTDM",
+          "placeName": "交通地名",
+          "color": "#FFCC00",
+          "LayerName": "D430000DM2015JTDM",
+          "LayerIndex": "",
+          "searchField": "NAME",
+          "attrs": [
+            "ID",
+            "ELEMID",
+            "ADDNAME",
+            "CONTINENT",
+            "COUNTRY",
+            "PROVINCE",
+            "CITY",
+            "DISTRICT",
+            "TOWN",
+            "VILLAGE",
+            "STREET",
+            "RESIDENT",
+            "DOORPN",
+            "BUILDING",
+            "ADDCODE",
+            "LON",
+            "LAT",
+            "CLASID",
+            "NAME",
+            "OTHERNAME",
+            "OLDNAME",
+            "ENAME",
+            "ADDRESS",
+            "TELEPHONE",
+            "ZIPCODE",
+            "FAX",
+            "PAC",
+            "TYPE",
+            "OTHERTYPE",
+            "EMAIL",
+            "IMPORTANCE",
+            "COLDATE",
+            "UPDATE_",
+            "ENDDATE",
+            "REMARK",
+            "CITYCODENE",
+            "DATASOURCE",
+            "STACODE",
+            "TYPENAME1",
+            "TYPENAME2",
+            "SOURCE",
+            "SOURCE1",
+            "NID",
+            "PRODATE",
+            "FROM_STATEID",
+            "TO_STATEID",
+            "mpLayer"
+          ],
+          "showAttrsAndTitle": [
+            {
+              "attr": "NAME",
+              "showName": "名称"
+            },
+            {
+              "attr": "ADDRESS",
+              "showName": "地址"
+            },
+            {
+              "attr": "TELEPHONE",
+              "showName": "联系方式"
+            },
+            {
+              "attr": "PAC",
+              "showName": "邮政编码"
+            }
+          ],
+          "allUse": false
+        }
+      ]
+    }
+  }
+  
+}
+
+综合查询.parameters = {
+  docs: {
+    description: {
+      // component: Markdown,
+    },
+  },
+}
