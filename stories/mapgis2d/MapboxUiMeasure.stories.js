@@ -1,4 +1,4 @@
-import MapgisMeasure from "../../mapboxgl/src/components/UI/controls/measure/Measure.vue";
+import MapgisMeasure from "../../mapboxgl/src/components/UI/controls/measure/MeasureStory.vue";
 
 export default {
   title: "二维/地图子组件/测量",
