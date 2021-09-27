@@ -3,6 +3,29 @@ import Markdown from "../../cesium/docs/api/analysis/Contour.md";
 
 export default {
   title: "三维/分析/等值线分析",
+  argTypes: {
+    contourSpacing: {
+      description: "等高线间距,单位米",
+      table: {
+        defaultValue: { summary: "150" },
+      },
+      control: "number",
+    },
+    contourWidth: {
+      description: "等高线宽度",
+      table: {
+        defaultValue: { summary: "2" },
+      },
+      control: "number",
+    },
+    contourColor: {
+      description: "等高线颜色",
+      table: {
+        defaultValue: { summary: "rgb(255,0,0)" },
+      },
+      control: "color",
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -23,22 +46,24 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-      <mapgis-web-scene style="{height: '100vh'}"
-          v-on:load="handleLoad"
-      >
-      <mapgis-3d-ogc-wmts-layer
-          :baseUrl="url"
-          :wmtsLayer="layer"
-          :tileMatrixSet="tileMatrixSet"
-          :format="format"
-          :tilingScheme="tilingScheme"
-          :token="token"
-      ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-      <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-analysis-contour />
-      </mapgis-ui-card>
-      </mapgis-web-scene>
+  <mapgis-web-scene style="{height: '100vh'}" v-on:load="handleLoad">
+    <mapgis-3d-ogc-wmts-layer
+      :baseUrl="url"
+      :wmtsLayer="layer"
+      :tileMatrixSet="tileMatrixSet"
+      :format="format"
+      :tilingScheme="tilingScheme"
+      :token="token"
+    ></mapgis-3d-ogc-wmts-layer>
+    <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
+    <mapgis-ui-card class="storybook-ui-card">
+      <mapgis-3d-analysis-contour
+        :contourSpacing="contourSpacing"
+        :contourWidth="contourWidth"
+        :contourColor="contourColor"
+      />
+    </mapgis-ui-card>
+  </mapgis-web-scene>
     `,
   methods: {
     handleLoad(e) {
@@ -74,7 +99,11 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 等值线 = Template.bind({});
-等值线.args = {};
+等值线.args = {
+  contourSpacing: 150,
+  contourWidth: 2,
+  contourColor: "rgb(255,0,0)",
+};
 
 等值线.parameters = {
   docs: {

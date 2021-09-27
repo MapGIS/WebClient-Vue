@@ -1,13 +1,3 @@
-<template>
-  <div>
-    <Popup ref="click" :mode="clickMode" :currentLayerInfo="currentClickInfo">
-    </Popup>
-    <Popup ref="hover" :mode="hoverMode" :currentLayerInfo="currentHoverInfo">
-    </Popup>
-  </div>
-</template>
-
-<script>
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 import mapboxgl from "@mapgis/mapbox-gl";
@@ -56,7 +46,15 @@ export default {
     // }
     tipsOptions: {
       type: Object
-    }
+    },
+    /**
+     *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
+     */
+    customPopup: Function,
+    /**
+     *  自定义Tips界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
+     */
+    customTips: Function
   },
   computed: {
     getSourceFeatures() {
@@ -153,6 +151,59 @@ export default {
     this.$_deferredMount();
   },
 
+  render(h) {
+    let {
+      customPopup,
+      customTips,
+      clickMode,
+      hoverMode,
+      currentClickInfo,
+      currentHoverInfo
+    } = this;
+
+    if (customPopup || customTips) {
+      return (
+        <div class="mapgis-geojson-custom-wrapper">
+          <div ref="click">
+            {customPopup && customPopup(currentClickInfo)}
+            {!customPopup && (
+              <Popup
+                ref="click"
+                mode={clickMode}
+                currentLayerInfo={currentClickInfo}
+              ></Popup>
+            )}
+          </div>
+          <div ref="hover">
+            {customTips && customTips(currentHoverInfo)}
+            {!customTips && (
+              <Popup
+                ref="hover"
+                mode={hoverMode}
+                currentLayerInfo={currentHoverInfo}
+              ></Popup>
+            )}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div class="mapgis-geojson-default-wrapper">
+          <Popup
+            ref="click"
+            mode={clickMode}
+            currentLayerInfo={currentClickInfo}
+          ></Popup>
+          <Popup
+            ref="hover"
+            mode={hoverMode}
+            currentLayerInfo={currentHoverInfo}
+          ></Popup>
+        </div>
+      );
+    }
+  },
+
   methods: {
     $_deferredMount() {
       let { map, mapbox } = this;
@@ -161,7 +212,7 @@ export default {
       if (this.data) {
         source = {
           type: "geojson",
-          data: this.data,
+          data: this.data
         };
       } else if (this.source) {
         source = {
@@ -169,9 +220,9 @@ export default {
           ...this.source
         };
       }
-        if (this.enablePopup) {
-          source.generateId = true;
-        }
+      if (this.enablePopup) {
+        source.generateId = true;
+      }
       try {
         this.map.addSource(this.sourceId, source);
       } catch (err) {
@@ -277,7 +328,7 @@ export default {
           }
           popup
             .setLngLat(e.lngLat)
-            .setDOMContent(vm.$refs.hover.$el)
+            .setDOMContent(vm.$refs.hover.$el || vm.$refs.hover)
             .addTo(map);
         }
       });
@@ -344,7 +395,7 @@ export default {
             // 针对高亮进行过滤显示
             // vm.highlightLayer(newfeatrues);
             vm.currentClickInfo = newfeatrues;
-            return vm.$refs.click.$el;
+            return vm.$refs.click.$el || vm.$refs.click;
           }
         });
         map.addControl(inspect);
@@ -464,4 +515,3 @@ export default {
     }
   }
 };
-</script>

@@ -1,81 +1,95 @@
 <template>
-  <div class="mapgis-widget-cut-fill-analysis">
-    <mapgis-ui-group-tab title="参数设置">
-      <mapgis-ui-toolbar slot="handle" :bordered="false">
-        <mapgis-ui-toolbar-command
-          icon="mapgis-redo"
-          title="重新计算"
-          @click="startFill"
-          :disabled="!recalculate"
-        ></mapgis-ui-toolbar-command>
-      </mapgis-ui-toolbar>
-    </mapgis-ui-group-tab>
-    <mapgis-ui-form-model :model="formData" v-bind="formDataLayout">
-      <mapgis-ui-form-model-item label="x方向采样点数">
-        <mapgis-ui-input v-model.number="formData.x" type="number" min="0" />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="y方向采样点数">
-        <mapgis-ui-input v-model.number="formData.y" type="number" min="0" />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="填挖规整高度">
-        <mapgis-ui-input
-          v-model.number="formData.z"
-          type="number"
-          min="0"
-          addon-after="(米)"
-        />
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
-    <mapgis-ui-group-tab title="样式设置"></mapgis-ui-group-tab>
-    <mapgis-ui-form-model :model="style" v-bind="layout">
-      <mapgis-ui-form-model-item label="边线">
-        <mapgis-ui-sketch-color-picker
-          :color.sync="style.lineColor"
-          :disableAlpha="false"
-        ></mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="填充">
-        <mapgis-ui-sketch-color-picker
-          :color.sync="style.fillColor"
-          :disableAlpha="false"
-        ></mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
-    <mapgis-ui-group-tab title="填挖结果"></mapgis-ui-group-tab>
-    <mapgis-ui-form-model :model="result" v-bind="layout">
-      <mapgis-ui-form-model-item label="高程范围">
-        <mapgis-ui-input
-          v-model.number="result.height"
-          disabled
-          addon-after="(米)"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="表面积">
-        <mapgis-ui-input
-          v-model.number="result.surfaceArea"
-          disabled
-          addon-after="(平方米)"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="挖体积">
-        <mapgis-ui-input
-          v-model.number="result.cutVolume"
-          disabled
-          addon-after="(立方米)"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="填体积">
-        <mapgis-ui-input
-          v-model.number="result.fillVolume"
-          disabled
-          addon-after="(立方米)"
-        />
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="analysis">分析</mapgis-ui-button>
-      <mapgis-ui-button @click="stopCutFillM">清除</mapgis-ui-button>
-    </mapgis-ui-setting-footer>
+  <div>
+    <slot>
+      <div class="mapgis-widget-cut-fill-analysis">
+        <mapgis-ui-group-tab title="参数设置">
+          <mapgis-ui-toolbar slot="handle" :bordered="false">
+            <mapgis-ui-toolbar-command
+              icon="mapgis-redo"
+              title="重新计算"
+              @click="refresh"
+              :disabled="!recalculate"
+            ></mapgis-ui-toolbar-command>
+          </mapgis-ui-toolbar>
+        </mapgis-ui-group-tab>
+        <mapgis-ui-setting-form>
+          <mapgis-ui-form-item label="x方向采样点数">
+            <mapgis-ui-input
+              v-model.number="xPaneNumCopy"
+              type="number"
+              min="0"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="y方向采样点数">
+            <mapgis-ui-input
+              v-model.number="yPaneNumCopy"
+              type="number"
+              min="0"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="填挖规整高度">
+            <mapgis-ui-input
+              v-model.number="heightCopy"
+              type="number"
+              min="0"
+              addon-after="(米)"
+            />
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-group-tab title="样式设置"></mapgis-ui-group-tab>
+        <mapgis-ui-setting-form>
+          <mapgis-ui-form-item label="边线">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="lineColorCopy"
+              :disableAlpha="false"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="填充">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="fillColorCopy"
+              :disableAlpha="false"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-group-tab title="填挖结果"></mapgis-ui-group-tab>
+        <mapgis-ui-setting-form>
+          <mapgis-ui-form-item label="高程范围">
+            <mapgis-ui-input
+              v-model.number="result.height"
+              disabled
+              addon-after="(米)"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="表面积">
+            <mapgis-ui-input
+              v-model.number="result.surfaceArea"
+              disabled
+              addon-after="(平方米)"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="挖体积">
+            <mapgis-ui-input
+              v-model.number="result.cutVolume"
+              disabled
+              addon-after="(立方米)"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="填体积">
+            <mapgis-ui-input
+              v-model.number="result.fillVolume"
+              disabled
+              addon-after="(立方米)"
+            />
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-setting-footer>
+          <mapgis-ui-button type="primary" @click="analysis"
+            >分析</mapgis-ui-button
+          >
+          <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
+        </mapgis-ui-setting-footer>
+      </div>
+    </slot>
   </div>
 </template>
 
@@ -87,19 +101,69 @@ export default {
   name: "mapgis-3d-analysis-cut-fill",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    ...VueOptions
+    ...VueOptions,
+    /**
+     * @type Number
+     * @default 16
+     * @description X坐标方向采样点的个数
+     */
+    xPaneNum: {
+      type: Number,
+      default: 16
+    },
+    /**
+     * @type Number
+     * @default 16
+     * @description Y坐标方向采样点的个数
+     */
+    yPaneNum: {
+      type: Number,
+      default: 16
+    },
+    /**
+     * @type Number
+     * @default 2000
+     * @description 平整高程
+     */
+    height: {
+      type: Number,
+      default: 2000
+    },
+    /**
+     * @type String
+     * @default "rgba(0,255,0,1)"
+     * @description 分析区域边界颜色
+     */
+    lineColor: {
+      type: String,
+      default: "rgba(0,255,0,1)"
+    },
+    /**
+     * @type String
+     * @default "rgba(0,0,255,0.3)"
+     * @description 分析区域面颜色
+     */
+    fillColor: {
+      type: String,
+      default: "rgba(0,0,255,0.3)"
+    },
+    /**
+     * @type Number
+     * @default 2.0
+     * @description 数据类型,0.0：地形，1.0：模型，2.0：通用
+     */
+    dataType: {
+      type: Number,
+      default: 2.0
+    }
   },
   data() {
     return {
-      formData: {
-        x: 16,
-        y: 16,
-        z: 2000
-      },
-      style: {
-        lineColor: "rgba(0,255,0,1)",
-        fillColor: "rgba(0,0,255,0.3)"
-      },
+      xPaneNumCopy: 16,
+      yPaneNumCopy: 16,
+      heightCopy: 2000,
+      lineColorCopy: "rgba(0,255,0,1)",
+      fillColorCopy: "rgba(0,0,255,0.3)",
       result: {
         height: "",
         surfaceArea: "",
@@ -111,18 +175,15 @@ export default {
       entityController: null,
       terrainLine: null,
       terrainPolygon: null,
-      depthTestAgainstTerrain: false, // 深度检测是否已开启
-      formDataLayout: {
-        labelCol: { span: 8 },
-        wrapperCol: { span: 13 }
-      },
-      layout: {
-        labelCol: { span: 5 },
-        wrapperCol: { span: 16 }
-      }
+      depthTestAgainstTerrain: false // 深度检测是否已开启
     };
   },
-
+  computed: {
+    params() {
+      const { xPaneNumCopy, yPaneNumCopy, heightCopy } = this;
+      return { xPaneNumCopy, yPaneNumCopy, heightCopy };
+    }
+  },
   created() {},
   mounted() {
     this.mount();
@@ -131,13 +192,44 @@ export default {
     this.unmount();
   },
   watch: {
-    formData: {
+    params: {
       handler: function(e) {
         if (this.positions) {
           this.recalculate = true;
         }
       },
-      deep: true
+      deep: true,
+      immediate: true
+    },
+    xPaneNum: {
+      handler() {
+        this.xPaneNumCopy = this.xPaneNum;
+      },
+      immediate: true
+    },
+    yPaneNum: {
+      handler() {
+        this.yPaneNumCopy = this.yPaneNum;
+      },
+      immediate: true
+    },
+    height: {
+      handler() {
+        this.heightCopy = this.height;
+      },
+      immediate: true
+    },
+    lineColor: {
+      handler() {
+        this.lineColorCopy = this.lineColor;
+      },
+      immediate: true
+    },
+    fillColor: {
+      handler() {
+        this.fillColorCopy = this.fillColor;
+      },
+      immediate: true
     }
   },
   methods: {
@@ -155,7 +247,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         CesiumZondy.CutFillAnalysisManager.addSource(
           vueKey,
           vueIndex,
@@ -166,6 +258,9 @@ export default {
           }
         );
       });
+      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
+        this.brightnessEnabled = true;
+      }
     },
     unmount() {
       let { CesiumZondy, vueKey, vueIndex } = this;
@@ -179,24 +274,34 @@ export default {
       CesiumZondy.CutFillAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
-    getColor(rgba) {
+    /**
+     * @description rgba值转cesium内部color对象
+     * @param rgba - {String} rgba值
+     * @return {Object} cesium内部color对象
+     */
+    _getColor(rgba) {
       return colorToCesiumColor(rgba, this.webGlobe);
     },
-    active() {
-      const { viewer } = this.webGlobe;
-      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
-        this.brightnessEnabled = true;
-      }
-    },
-    analysis() {
-      let { CesiumZondy, vueKey, vueIndex, Cesium } = this;
-      let find = CesiumZondy.CutFillAnalysisManager.findSource(
+    /**
+     * @description 获取SourceOptions,以方便获取填挖方分析对象和绘制对象
+     * @return SourceOptions对象
+     */
+    _getSourceOptions() {
+      const { CesiumZondy, vueKey, vueIndex } = this;
+      const find = CesiumZondy.CutFillAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
-      let { options } = find;
+      const { options } = find;
+      return options;
+    },
+    /**
+     * @description 开始绘制并分析
+     */
+    analysis() {
+      let { CesiumZondy, vueKey, vueIndex, Cesium } = this;
+      const options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
-      this.active();
       const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
@@ -206,20 +311,21 @@ export default {
         "drawElement",
         drawElement
       );
-      const lineColor = this.getColor(this.style.lineColor);
-      const fillColor = this.getColor(this.style.fillColor);
+      const lineColor = this._getColor(this.lineColorCopy);
+      const fillColor = this._getColor(this.fillColorCopy);
 
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
         callback: positions => {
+          this.$emit("start");
           this.remove();
           this.positions = positions;
 
           const linePointArr = [];
           const polygonPointArr = [];
           positions.forEach(element => {
-            const { lon, lat, height } = this.cartesianToDegrees(element);
+            const { lon, lat, height } = this._cartesianToDegrees(element);
             linePointArr.push(lon);
             linePointArr.push(lat);
             polygonPointArr.push(lon);
@@ -267,11 +373,16 @@ export default {
           // 绘制图形通用方法：对接Cesium原生特性
           this.terrainPolygon = this.entityController.appendGraphics(polygon);
 
-          this.startFill();
+          this._doAnalysis();
         }
       });
     },
-    cartesianToDegrees(cartesian) {
+    /**
+     * @description 世界坐标转经纬度坐标
+     * @param cartesian - {Object} 世界坐标
+     * @return {Object} 经纬度坐标
+     */
+    _cartesianToDegrees(cartesian) {
       const { ellipsoid } = this.webGlobe.scene.globe;
       // 将笛卡尔坐标转换为地理坐标
       const cartographic = ellipsoid.cartesianToCartographic(cartesian);
@@ -285,17 +396,18 @@ export default {
       };
       return coor;
     },
-
-    // 开始分析
-    startFill() {
+    /**
+     * @description 进行填挖方分析
+     */
+    _doAnalysis() {
       const { positions } = this;
       if (!positions) {
         this.$message.warning("请绘制分析区域");
         return;
       }
-      this.reset();
+      this._reset();
       const { viewer } = this.webGlobe;
-      const { x, y, z } = this.formData;
+      const { xPaneNumCopy, yPaneNumCopy, heightCopy } = this;
 
       if (!this.depthTestAgainstTerrain) {
         viewer.scene.globe.depthTestAgainstTerrain = true;
@@ -308,15 +420,15 @@ export default {
         }
       );
       // 创建填挖方实例
-      const cutFill = cutFillAnalysis.createCutFill(2.0, {
+      const cutFill = cutFillAnalysis.createCutFill(this.dataType, {
         // 设置x方向采样点个数
-        xPaneNum: x <= 0 ? 16 : x,
+        xPaneNum: xPaneNumCopy,
         // 设置y方向采样点个数参数
-        yPaneNum: y <= 0 ? 16 : y,
+        yPaneNum: yPaneNumCopy,
         // 设置填挖规整高度
-        height: z,
+        height: heightCopy,
         // 返回结果的回调函数
-        callback: this.analysisSuccess
+        callback: this._analysisSuccess
       });
       // 开始执行填挖方分析
       cutFillAnalysis.startCutFill(cutFill, positions);
@@ -330,23 +442,28 @@ export default {
         cutFillAnalysis
       );
     },
-
-    analysisSuccess(result) {
+    /**
+     * @description 分析成功回调
+     */
+    _analysisSuccess(result) {
       this.result = {
         height: `${result.minHeight.toFixed(2)}~${result.maxHeight.toFixed(2)}`,
         surfaceArea: result.surfaceArea,
         cutVolume: result.cutVolume,
         fillVolume: result.fillVolume
       };
+      this.$emit("success", result);
     },
-
-    // 移除填挖方计算
-    stopCutFillM() {
-      this.reset();
-      this.remove();
+    /**
+     * @description 重新计算
+     */
+    refresh() {
+      this._doAnalysis();
     },
-
-    reset() {
+    /**
+     * @description 重置结果显示
+     */
+    _reset() {
       this.result = {
         height: "",
         surfaceArea: "",
@@ -354,13 +471,12 @@ export default {
         fillVolume: ""
       };
     },
+    /**
+     * @description 移除填挖方分析结果，取消交互式绘制事件激活状态，恢复深度检测设置，重置结果显示
+     */
     remove() {
       let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.CutFillAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
-      let { options } = find;
+      let options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
 
       // 判断是否已有等值线分析结果
@@ -386,6 +502,7 @@ export default {
 
       this.positions = null;
       this.recalculate = false;
+      this._reset();
 
       if (!this.depthTestAgainstTerrain) {
         this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false;

@@ -1,15 +1,15 @@
 <template>
   <div class="mapgis-widget-visibility-analysis">
-    <mapgis-ui-form-model v-model="formData" v-bind="layout">
-      <mapgis-ui-form-model-item label="附加高度(米)">
+    <mapgis-ui-setting-form v-model="formData" :wrapper-width="200">
+      <mapgis-ui-form-item label="附加高度(米)">
         <mapgis-ui-input
             v-model.number="formData.exHeight"
             type="number"
             :min="0"
             :step="0.1"
         />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="不可视区域颜色">
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="不可视区域颜色">
         <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
             :color="formData.unVisibleColor"
@@ -18,8 +18,8 @@
                 (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
             "
         ></mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="可视区域颜色">
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="可视区域颜色">
         <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
             :color="formData.visibleColor"
@@ -28,8 +28,8 @@
                 (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
             "
         ></mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
+      </mapgis-ui-form-item>
+    </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
       <a-button type="primary" @click="onClickStart">分析</a-button>
       <a-button @click="onClickStop">清除</a-button>
@@ -44,14 +44,38 @@ export default {
   name: "mapgis-3d-sightline",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    ...VueOptions
+    ...VueOptions,
+    /**
+     * @type Number
+     * @default 1.85
+     * @description 观察点的附加高度
+     */
+    exHeight: {
+      type: Number,
+      default: 1.85
+    },
+    /**
+     * @type String
+     * @default '#008000'
+     * @description 可视区域颜色
+     */
+    visibleColor: {
+      type: String,
+      default: '#008000'
+    },
+    /**
+     * @type String
+     * @default '#ff0000'
+     * @description 不可视区域颜色
+     */
+    unVisibleColor: {
+      type: String,
+      default: '#ff0000'
+    }
+
   },
   data() {
     return {
-      layout: {
-        labelCol: {span: 9},
-        wrapperCol: {span: 15},
-      },
       formData: {
         exHeight: 1.85,
         visibleColor: '#008000',
@@ -72,15 +96,33 @@ export default {
       // 观察点坐标
       viewPosition: undefined,
 
-      //clone formData
-      formDataCloneVal: undefined,
-
       //通视分析结果集
-      visibilityArr: []
+      visibilityArr: [],
+
+      // 深度检测是否已开启
+      depthTestAgainstTerrain: false,
     };
   },
   watch: {
-    formDataCloneVal: {
+    exHeight: {
+      handler: function (newVal, oldVal) {
+        this.formData.exHeight = newVal;
+      },
+      immediate: true
+    },
+    visibleColor: {
+      handler: function (newVal, oldVal) {
+        this.formData.visibleColor = newVal;
+      },
+      immediate: true
+    },
+    unVisibleColor: {
+      handler: function (newVal, oldVal) {
+        this.formData.unVisibleColor = newVal;
+      },
+      immediate: true
+    },
+    formData: {
       deep: true,
       handler: function (newVal, oldVal) {
         const unVisibleColor = new this.Cesium.Color.fromCssColorString(
@@ -141,11 +183,7 @@ export default {
       this.onClickStop();
       CesiumZondy.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
     },
-    formDataClone() {
-      let vm = this;
-      vm.formDataCloneVal = JSON.parse(JSON.stringify(this.formData));
-      return vm.formDataCloneVal;
-    },
+
     findSource() {
       let {CesiumZondy, vueKey, vueIndex} = this;
       let find = CesiumZondy.VisiblityAnalysisManager.findSource(vueKey, vueIndex);
@@ -153,36 +191,39 @@ export default {
     },
     // 点击“分析”按钮回调
     onClickStart() {
-      this.onClickStop()
-      // this.isOpenDepthTest()
-      this.addEventListener()
+      this.onClickStop();
+      //深度检测开启
+      if (!this.depthTestAgainstTerrain) {
+        this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = true
+      }
+      this.addEventListener();
     },
-
     // 创建通视分析工具
     createVisibility() {
-  const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-      this.formData.unVisibleColor
-  )
-  const visibleColor = new this.Cesium.Color.fromCssColorString(
-      this.formData.visibleColor
-  )
 
-  // 初始化高级分析功能管理类
-  const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
-      {
-        viewer: this.webGlobe.viewer
-      }
-  )
+      const unVisibleColor = new this.Cesium.Color.fromCssColorString(
+          this.formData.unVisibleColor
+      )
+      const visibleColor = new this.Cesium.Color.fromCssColorString(
+          this.formData.visibleColor
+      )
 
-  // 初始化通视分析类
-  const visibility = advancedAnalysisManager.createVisibilityAnalysis()
-  visibility._unvisibleColor = unVisibleColor
-  visibility._visibleColor = visibleColor
+      // 初始化高级分析功能管理类
+      const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
+          {
+            viewer: this.webGlobe.viewer
+          }
+      )
 
-  this.visibilityArr.push(visibility)
+      // 初始化通视分析类
+      const visibility = advancedAnalysisManager.createVisibilityAnalysis()
+      visibility._unvisibleColor = unVisibleColor
+      visibility._visibleColor = visibleColor
 
-  return visibility
-},
+      this.visibilityArr.push(visibility)
+
+      return visibility;
+    },
 
     // 点击“结束分析”按钮回调
     onClickStop() {
@@ -201,7 +242,10 @@ export default {
         })
       }
 
-      this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false
+      //恢复深度检测的原始设置
+      if (!this.depthTestAgainstTerrain) {
+        this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false
+      }
       this.hasViewPosition = false
       this.isAddEventListener = false
       this.visibilityArr = []
@@ -249,6 +293,14 @@ export default {
 
         // 设置通视分析结束点坐标
         visibility.targetPosition = cartesian
+
+        //修改manager的options
+        CesiumZondy.VisiblityAnalysisManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "visualAnalysis",
+            visibility
+        );
 
         // 添加目标点到地图
         this.addTargetPoint(cartesian)
@@ -318,12 +370,15 @@ export default {
 ::v-deep .mapgis-ui-form-item-label {
   line-height: 40px;
 }
+
 ::v-deep .mapgis-ui-form label {
   font-size: 12px;
 }
+
 ::v-deep .mapgis-ui-form-item {
   margin-bottom: 0;
 }
+
 ::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
   padding-left: 45px;
 }
