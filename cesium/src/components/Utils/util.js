@@ -33,6 +33,64 @@ export const getDocumentByClassName = (htmlCollection, className) => {
 export function isFunction(value) {
   return typeof value === "function";
 }
+
+/**
+ * 是否有效数据
+ * @param {*} v
+ * @returns
+ */
+export function isDef(v) {
+  return v !== undefined && v !== null;
+}
+
+/**
+ * 校验数据的原始数据类型
+ * @param {*} v
+ * @returns {string}
+ */
+export function typeOf(v) {
+  const _toString = Object.prototype.toString;
+  let res;
+  switch (_toString.call(v)) {
+    case "[object Object]":
+      res = "object";
+      break;
+    case "[object Array]":
+      res = "array";
+      break;
+    case "[object Function]":
+      res = "function";
+      break;
+    case "[object String]":
+      res = "string";
+      break;
+    case "[object Number]":
+      res = "number";
+      break;
+    case "[object Symbol]":
+      res = "symbol";
+      break;
+    case "[object Undefined]":
+      res = "undefined";
+      break;
+    case "[object Null]":
+      res = "null";
+      break;
+    default:
+      break;
+  }
+  return res;
+}
+
+/**
+ * 是否空对象
+ * @param {*} v
+ * @returns {boolean}
+ */
+export function isEmptyObj(v) {
+  return !isDef(v) || (typeOf(v, "object") && !Object.keys(v).length);
+}
+
 /**
  * 验证是否是经纬度。
  * @param {Number} longitude
@@ -418,14 +476,4 @@ export function getCesiumBaseObject(vm, name) {
     }
   }
   return baseObject;
-}
-
-/**
- * 获取数组最后一个元素
- * @param {array} array
- * @returns  元素
- */
-export function last(array) {
-  const length = array == null ? 0 : array.length;
-  return length ? array[length - 1] : undefined;
 }

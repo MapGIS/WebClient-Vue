@@ -22,9 +22,9 @@ export default {
   props: {
     styles: {
       type: Object,
-      deafult: function() {
+      default() {
         return {
-          lineColor: "#1890ff"
+          lineColor: "black"
         };
       }
     }
@@ -46,26 +46,23 @@ export default {
     }
   },
   mounted() {
-    const vm = this;
+    let vm = this;
     this.$_init(function() {
-      vm.initStyles.call(vm);
+      vm.initStyles();
       vm.initial = true;
       vm.$emit("load", vm);
     });
   },
   destroyed() {
-    this.remove();
+    this.deleteMeasure();
     this.$emit("unload");
   },
   methods: {
-    initStyles(nStyle = this.styles, oStyle = this.measureStyles) {
-      this.measureStyles = {
-        ...this.measureStyles,
-        lineColor: this.Cesium.Color.fromCssColorString(
-          nStyle.lineColor,
-          oStyle.lineColor
-        )
-      };
+    initStyles() {
+      this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
+        this.styles.lineColor,
+        this.measureStyles.lineColor
+      );
     },
     measureCallBack(result) {
       if (result instanceof Array) {
@@ -75,13 +72,22 @@ export default {
       }
       this.$emit("measured", result);
     },
-    $_enableMeasure(MeasureName, callback) {
+    enableMeasureLength() {
+      this.$_enableMeasure("MeasureLengthTool");
+    },
+    enableMeasureArea() {
+      this.$_enableMeasure("MeasureAreaTool");
+    },
+    enableMeasureTriangle() {
+      this.$_enableMeasure("TriangulationTool");
+    },
+    enableMeasureSlope() {
+      this.$_enableMeasure("MeasureSlopeTool");
+    },
+    $_enableMeasure(MeasureName) {
       const { vueKey, vueIndex } = this;
-      const webGlobe = this.$_getObject(
-        this.waitManagerName,
-        this.deleteMeasure
-      );
-      const measure = new this.Cesium[MeasureName](webGlobe.viewer, {
+      let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
+      let measure = new Cesium[MeasureName](webGlobe.viewer, {
         lineColor: this.measureStyles.lineColor,
         callBack: result => {
           if (typeof callback === "function") {
@@ -91,7 +97,11 @@ export default {
           }
         }
       });
-      this.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, measure);
+      window.CesiumZondy.MeasureToolManager.addSource(
+        vueKey,
+        vueIndex,
+        measure
+      );
       measure.startTool();
     },
     deleteMeasure() {
