@@ -28,6 +28,26 @@ export default {
   wrapperUI: Card,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: cardProps
+  props: {
+    ...cardProps,
+    customPosition: {
+      type: String,
+      default: '',
+      validator: v =>
+        [
+          'top-right',
+          'top-left',
+          'bottom-right',
+          'bottom-left'
+        ].includes(v)
+    },
+  },
+  computed: {
+    uiClass() {
+      return this.customPosition
+        ? 'mapgis-ui-card' + '-' + this.customPosition
+        : '';
+    },
+  }
 };
 </script>
