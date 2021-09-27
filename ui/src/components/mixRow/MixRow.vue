@@ -624,8 +624,9 @@ export default {
       if (!GeoJSON) {
         return;
       }
-      key = "面积";
       let features = GeoJSON.features
+      //因为一张图无法取得字段名，因此暂时这样写
+      key = Object.keys(features[0].properties)[1];
       for (let i = 0; i < features.length; i++) {
         if (
             features[i].properties[key] !== "" &&
