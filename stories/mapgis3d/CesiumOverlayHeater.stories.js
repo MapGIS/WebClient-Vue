@@ -50,7 +50,7 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const mapv = Template.bind({});
-mapv.args = {
+export const 热力图 = Template.bind({});
+热力图.args = {
   enableModel: false,
 };
