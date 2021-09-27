@@ -226,7 +226,6 @@ export default {
           this.bound = this.mockCesiumBound();
           this.geojson = this.mockCesiumGeoJson();
         } else {
-          debugger;
           this.bound = this.mockMapvBound();
           this.geojson = this.mockMapvGeoJson();
         }
