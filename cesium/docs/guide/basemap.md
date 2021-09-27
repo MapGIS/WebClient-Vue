@@ -5,7 +5,7 @@
 ```html
 <template>
   <mapgis-web-scene
-    class="mapgis-2d-scene"
+    class="mapgis-3d-scene"
   >
     <mapgis-3d-ogc-wmts-layer
         :baseUrl="baseUrl"
@@ -42,7 +42,7 @@
   };
 </script>
 <style>
-  .mapgis-2d-scene {
+  .mapgis-3d-scene {
     height: 300px;
   }
 </style>
@@ -50,7 +50,7 @@
 
 :::
 
-## 添加地图组件
+## 添加地图场景组件
 
 > 强烈建议使用前了解基本的 cesium 引导[Cesium - 向导](https://cesium.com/docs/) 以及 cesium 的开发方式[cesium - API](https://cesium.com/docs/cesiumjs-ref-doc/)
 
@@ -110,7 +110,6 @@ export default {
 ### Vue 组件
 
 ```md
-::: demo
 <template>
 <button class="animated shake infinite" @click="onClick">Click me!</button>
 </template>
@@ -128,13 +127,11 @@ button {
     color: blue;
 }
 </style>
-
-:::
 ```
 
 ### 结果
 
-::: demo
+```vue
 <template>
 <button class="animated shake infinite" @click="onClick">Click me!</button>
 </template>
@@ -152,18 +149,17 @@ button {
     color: blue;
 }
 </style>
+```
 
-:::
+### 通过 Props 来交互场景属性
 
-### 通过 Props 来交互地图属性
+你可以通过 props 来控制地图场景的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
 
-你可以通过 props 来控制地图的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
+完整的 props 列表请查看[API docs](/api/#props), 注意文字描述中的字段'侦听属性'
 
-完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'侦听属性'
+## 场景加载
 
-## 地图加载
-
-当地图加载完毕,即 map.on(load,callback)事件响应, `mapbox-map`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 Mapbox GL JS `Map` 对象.
+当地图场景加载完毕,即 map.on(load,callback)事件响应, `mapgis-web-scene`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 CesiumJS `Cesium` 对象、MapGIS `CesiumZondy`对象以及发送当前事件的`mapgis-web-scene`组件。
 
 ```js
 onMapLoaded(payload) {
@@ -231,4 +227,4 @@ export default {
 
 ### 事件
 
-全部的地图行为请看 [API](/zh/api/#events) 页面.
+全部的地图行为请看 [API](/api/#events) 页面.
