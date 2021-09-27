@@ -156,6 +156,7 @@ export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetti
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";
+export { default as MapgisUiColorPickerSetting } from "./components/colorPickerSetting/ColorPickerSetting";
 
 // Ribbon
 export { default as MapgisUiRibbonGroup } from "./components/ribbon/RibbonGroup.vue";

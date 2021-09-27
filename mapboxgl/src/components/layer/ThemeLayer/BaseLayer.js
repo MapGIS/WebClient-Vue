@@ -357,6 +357,7 @@ export default {
                         this.panelClass[this.themeProps.panelClass[i]] = true;
                     }
                 }
+                this.selectValue = this.themeProps.themeField;
                 this.$_addThemeLayer(this.themeProps.themeType, layerId, this.themeProps.themeField);
                 this.$_addHeightLightLayer();
             }
@@ -557,6 +558,7 @@ export default {
                                 vm.dataType,
                                 fields[0]
                             );
+                            themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             dataSource = vm.$_setDataSource(features, fields[0], "unique");
                             if (vm.initType === "props") {
                                 vm.selectValue = themeField;

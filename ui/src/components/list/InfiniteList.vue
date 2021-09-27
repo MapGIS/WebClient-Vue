@@ -25,6 +25,9 @@ export default {
     distance: {
       type: Number,
       default: 10
+    },
+    size: {
+      type: String
     }
   },
   data() {

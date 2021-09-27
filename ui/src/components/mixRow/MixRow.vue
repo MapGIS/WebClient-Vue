@@ -173,6 +173,9 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
+    <mapgis-ui-color-picker-setting
+        v-if="type === 'MapgisUiColorPickerSetting'"
+    />
     <mapgis-ui-infinite-list
         :dataSource="listProps.dataSource"
         :style="{width: panelWidth + 'px', height: panelHeight + 'px'}"
@@ -202,9 +205,8 @@
                 :color="listProps.colors[index]"
                 :size="listProps.size"
                 @input="$_changeColor"
-            >
-              <div class="mix-row-color" :style="{background: listProps.colors[index]}"/>
-            </mapgis-ui-sketch-color-picker>
+                :colorStyle="listProps.style"
+            />
           </mapgis-ui-col>
           <mapgis-ui-col :span="6">
             <p class="mix-row-p"
@@ -219,7 +221,32 @@
         </mapgis-ui-row>
       </template>
     </mapgis-ui-infinite-list>
-    <mapgis-ui-row class="mix-row" :style="{width: panelWidth + 'px', height: panelHeight + 'px'}" v-if="type === 'MapgisUiThemeList'">
+    <mapgis-ui-row class="mix-row" :style="{width: panelWidth + 'px', height: panelHeight + 'px'}"
+                   v-if="type === 'MapgisUiThemeList'">
+      <div class="mix-row-theme-list-title">
+        <mapgis-ui-row type="flex">
+          <!--          <mapgis-ui-col :span="3"-->
+          <!--                         v-if="listProps.checkBoxArr && listProps.checkBoxArr.length > 0"-->
+          <!--          >-->
+          <!--            <p class="mix-row-list-p">复选框</p>-->
+          <!--          </mapgis-ui-col>-->
+          <!--          <mapgis-ui-col :span="2">-->
+          <!--            <p class="mix-row-list-p" style="padding-left: 2px;">序号</p>-->
+          <!--          </mapgis-ui-col>-->
+          <mapgis-ui-col :span="3">
+            <p class="mix-row-list-p" style="padding-left: 12px;">颜色</p>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="4">
+            <p class="mix-row-list-p" style="padding-left: 29px;">字段名</p>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="12">
+            <p class="mix-row-list-p" style="padding-left: 19px;">分段值</p>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="5">
+            <p class="mix-row-list-p" style="padding-left: 33px;">操作</p>
+          </mapgis-ui-col>
+        </mapgis-ui-row>
+      </div>
       <mapgis-ui-list
           :data-source="listProps.dataSource"
       >
@@ -228,27 +255,27 @@
             style="position: absolute"
             :style="{top: panelHeight / 2 + 'px'}"
         />
-<!--        <template #renderEmpty>-->
-<!--          &lt;!&ndash;空状态&ndash;&gt;-->
-<!--        </template>-->
+        <!--        <template #renderEmpty>-->
+        <!--          &lt;!&ndash;空状态&ndash;&gt;-->
+        <!--        </template>-->
         <mapgis-ui-list-item slot="renderItem" slot-scope="item,index">
           <div class="mix-row-list">
-            <mapgis-ui-row>
-              <mapgis-ui-col :span="3"
-                             v-if="listProps.checkBoxArr && listProps.checkBoxArr.length > 0"
-              >
-                <input type="checkbox"
-                       v-model="listProps.checkBoxArr[index]"
-                       @click="$_change(listProps.checkBoxArr[index],index,listProps.colors[index])"
-                >
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="3">
-                <p class="mix-row-p"
-                   :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">{{
-                    index + 1
-                  }}</p>
-              </mapgis-ui-col>
-              <mapgis-ui-col :span="2"
+            <mapgis-ui-row :class="{mixRowSmall: listProps.size === 'small'}">
+              <!--              <mapgis-ui-col :span="3"-->
+              <!--                             v-if="listProps.checkBoxArr && listProps.checkBoxArr.length > 0"-->
+              <!--              >-->
+              <!--                <input type="checkbox"-->
+              <!--                       v-model="listProps.checkBoxArr[index]"-->
+              <!--                       @click="$_change(listProps.checkBoxArr[index],index,listProps.colors[index])"-->
+              <!--                >-->
+              <!--              </mapgis-ui-col>-->
+              <!--              <mapgis-ui-col :span="2">-->
+              <!--                <p class="mix-row-p"-->
+              <!--                   :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">{{-->
+              <!--                    index + 1-->
+              <!--                  }}</p>-->
+              <!--              </mapgis-ui-col>-->
+              <mapgis-ui-col :span="4"
                              v-if="listProps.colors && listProps.colors.length > 0"
               >
                 <mapgis-ui-sketch-color-picker
@@ -256,43 +283,62 @@
                     :color="listProps.colors[index]"
                     :size="listProps.size"
                     :showBorder="customProps.showBorder"
+                    :colorStyle="listProps.style"
                     @input="$_changeColor"
                 >
                   <div class="mix-row-color" :style="{background: listProps.colors[index]}"/>
                 </mapgis-ui-sketch-color-picker>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="6">
+              <mapgis-ui-col :span="4">
                 <p class="mix-row-p"
+                   :title="listProps.field"
                    :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
                   {{ listProps.field }}</p>
               </mapgis-ui-col>
-              <mapgis-ui-col :span="10">
+              <mapgis-ui-col :span="16">
                 <mapgis-ui-row>
-                  <mapgis-ui-col :span="11">
+                  <mapgis-ui-col :span="8">
                     <mapgis-ui-input-number
                         v-model="listProps.startData"
                         v-bind:title="String(listProps.startData)"
                         v-if="index === 0"
                         :size="listProps.size"
+                        class="mix-row-input"
                     />
                     <mapgis-ui-input-number
                         v-model="listProps.dataSource[index - 1]"
                         v-bind:title="String(listProps.dataSource[index - 1])"
                         v-if="index > 0"
                         :size="listProps.size"
+                        class="mix-row-input"
                     />
                   </mapgis-ui-col>
                   <mapgis-ui-col :span="2">
                     <p class="mix-row-p"
+                       style="padding-left: 6px"
                        :class="{mixRowPLarge: listProps.size === 'large',mixRowPSmall: listProps.size === 'small'}">
                       ~</p>
                   </mapgis-ui-col>
-                  <mapgis-ui-col :span="11">
+                  <mapgis-ui-col :span="8">
                     <mapgis-ui-input-number
                         v-model="listProps.dataSource[index]"
                         v-bind:title="String(listProps.dataSource[index])"
+                        @change="$_inputChange(index)"
                         :size="listProps.size"
+                        class="mix-row-input"
                     />
+                  </mapgis-ui-col>
+                  <mapgis-ui-col :span="2">
+                    <img class="mix-row-add"
+                         :class="{mixRowImgSmall: listProps.size === 'small',mixRowLarge: listProps.size === 'large'}"
+                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABEZJREFUWEe1V01sVUUU/s68vtomxY2BWMVEEwNRU9/rzLxdVVi4EAjGRdlIVARd4EZAILIBE6PBqDX4kxjE/7iAhbHiT2IMGOvGzkxfjaXWhXHhT6CykSZN2r45Zl7ufbnvcu/70Xo3792ZM9/57jlnvjlD6PJxzq313t8khFgP4GZmvgbAvBDiEjNPSinnu4GkTowjp6NCiFFm3tRqDTN/BuDzYrE4XiqVfmuH35JAcMzMxwCMAljbDiw1fxnA+0T0npRyOm9tLoHJyclNQoiTAG7t0nGW+T6l1CtZE5kEjDF7iej19AIi+sp7P0tEF4hoFsCs956ZeWOhUNgYfoko/N6f4eyYUuqZqzDTA9baRwC8kxwnoovM/KxS6rVOomGM2UNEJwD0p+x3KaXebcJOvhhjRonodGrRB729vQeHhoYupp2HGgljWZVvjBkkoi8B3Jlcx8w7tNZn4rFGCpxzJWauppxkhi3YGGMOENHh8J+Zj2utX8qKjrX2KIBQyI2HiMpxYTYIWGtfBrAvYTeulMrKZd3EOXcu3pJEdF5KuTkvPc6555j56cT8mFJqf3ivE5ienl6/srISvv666IvC/r1Xa/1TC9COCQQMa60BoCK8yz09PeWgE3UC1tqDAF6InTHzg1rrj1oVXDcRiHw8DuDNBOZ+pdRYTOB7AJVo8lOl1PZWzrtNQYxljPmFiG6phz5KGznnbmfmmaz8rGYEItInmXlPjNvX1zcYCGxn5k8S4X9Ca/3G/xGBSF3PxdhCiK2BwKPMfCoe9N5vrlQq56O87SSi3Xlkkrughc0ppdSHYb5arW6o1WpzCdtdZK09BOB4PEhE64KwVKvVG2u1WpDbNe2i0Wb+SqFQuK1cLv8+MTGxpr+//++E/aFAoGkHLC4uXjsyMnIlOglDbXR7Cqb5zBPRHeGj8gg0aX84VMrl8s8BJaidEGLbf0mB9/5srJKZKZiamtrivQ9NRP1J1sBq74K8IgxNx6XELngqT9eThLoVomgbvsjMB5L1VhciY8xZItoaCcQZKeWOdoX3bwgYY+aIaEPADq2b1npbTKCpASGiLVLKL1YzBdbaJilm5rreZB5GAL5VSt29ygTyD6NIdJqOYyJqmYpuUuCcO83MobGNn+bjOCqQrhoSa+1OALFk743VLh21jhuSKApPAhhLghDR81LKI1npCGoZxoPKZc1nNCKh+B7TWr/V2AmdMA41ERFpWZgxlnPuvqgDuiuFf1gp1eg76rsui3lWZxzZfRwaKO/9N8Vi8Y+FhYU/w/jAwMDg8vLyDUKIewCUADyQwv0rHGpSyvG0v9yLSU6H3E4erppn5jlm3l2pVL7LWtzuahYK82EAD8X9YhcMFgG8WigUTuTVSG4K0k6ipjXcGULz0u5y+iMRfQ3gbaXUD+0Id3Q7ToLMzMxcv7S0JL336xJHdf16DuDC8PDwr+2cJuf/AZGKXgkO+31+AAAAAElFTkSuQmCC"
+                         @click="$_addRange(index)"
+                         title="新增分段">
+                    <img class="mix-row-add"
+                         :class="{mixRowImgSmall: listProps.size === 'small',mixRowLarge: listProps.size === 'large'}"
+                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA7lJREFUWEfFV02MFEUU/l737GGJSIzIBXCBgwknd7qK2T2sXOCKikYhKMarJGtI9OJP5CeAF0kIG+BqFAgL/nLGi+5hd6zXs55MPAiiXgBDlkXmsNP9SE26NzU93Ts725tQSV+q3qvv66qv6n1FWGabmppaOzg4uBvAPgAviMh6InrWpovIf0R0D8AfACabzeaNsbGx+eVMTb2CmHk7EY2LyH4Az/SKT8bvE9EVEZlQSv2+VM6SBJj5BIBxAE8vEzgb9gCAJfFpUX4hAWb+GcBLKwTOpv2ilNqZN1cuAWa+C2B9NkFE5omo7ny/JhrYISK19COitTlg95RSz2X7uwgw800AW3ImuNhqtT4bGRmx44VtZmZma6VSOQ7g7ZygW0qprW5/B4EwDK+KyBuZRLsa40qpyX62g5ntaZkA0PHXRHQtCII307kWCSSC+yQDclQpdawf4GwsMx8BcDTTfzIVZpuAPWoApl21i8hNrfW2MuBprjHmTyJyl96ejlF7RNsEwjA8LyLvuWBRFNVqtVpbZGVbvV7f4ft+vWPviS4EQXCIjDHriOgvAOvSABE5rbX+sCywm2+M+YKIPnD65kRkiMIwPCgiXzkDDxcWFraPjo7+s5oEpqenNw0MDNhb8alFARK9Q8z8DYDXHbDCS6MsoZzL7VtLIARQdZZ/Qmv9flmwvHxjzFlbV5yxhtXAbSLa7BB4S2t9udFobInj2B6hd0uSuaSUal9KxpgDRHTJwfrbrsD/ANY4nUNa69vMfA7AoZLgaXr7PjHGPJ8IPu1/1EXA9/1Nw8PD/xZcICvl0yYwOzu7MYoiV9yPurbA87y91Wr1B4vEzNcB7FkpapL3ped5x6rV6q1Go/FqHMffZ7egQ4RE9HkQBB+XBM1ND8PwlIh81CFCZr6S2Ky0/yellLVeq96Y+QaAXc7Ek1YDewF85yzLfBRFL/Yqu/2ys2Xa9/3fMl7hNUrMpr2KXb93USl1sF+QpeKZ+euMR7jfbDaHCosRgP39eoAiAok3sFu92CgtRonau8oxgLtKqQ2rsQrMfCdjTDrLcULCOuAnY0jSv8xzwtaYxHG8r19vYD2A53mTGSNioTqKXZ4pLXLEp1ut1pleZdqW3UqlcjhT+9N/7HLGRba8yBk/BNAQkdnEwk0lM49Zi0VEw0llXaz5joa6HLEdK3yYFDjkFWky64Q7TkOPs/vknmaOMNPH6QHXN/ZYijkiulz6ceqCWPPqed7LIvIKgG0Fz3Nrv3+M4/i61npuOfv1GEgrvUth6rD9AAAAAElFTkSuQmCC"
+                         @click="$_deleteRange(index)"
+                         title="删除分段">
                   </mapgis-ui-col>
                 </mapgis-ui-row>
               </mapgis-ui-col>
@@ -306,6 +352,7 @@
 
 <script>
 import {gradientColor} from "../../util/common/util"
+
 export default {
   name: "mapgis-ui-mix-row",
   data() {
@@ -437,7 +484,12 @@ export default {
         colors: [],
         checkBoxArr: [],
         gradient: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
-        size: undefined
+        size: undefined,
+        style: {
+          width: "62px",
+          marginLeft: "11px"
+        },
+        rangeLevel: 0
       },
       colorId: "colorId" + parseInt(Math.random() * 100000),
       panelWidth: undefined,
@@ -557,7 +609,7 @@ export default {
         this.$_initProps();
       },
       deep: true
-    },
+    }
   },
   methods: {
     /**
@@ -568,10 +620,12 @@ export default {
      * @param type 单值或分段
      */
     $_getDataByGeoJson(GeoJSON, key, type, rangeLevel) {
-      let dataSourceCopy = [], newDataSourceCopy = [], features = GeoJSON.features;
-      if(!features){
+      let dataSourceCopy = [], newDataSourceCopy = [];
+      if (!GeoJSON) {
         return;
       }
+      key = "面积";
+      let features = GeoJSON.features
       for (let i = 0; i < features.length; i++) {
         if (
             features[i].properties[key] !== "" &&
@@ -647,28 +701,29 @@ export default {
         case "MapgisUiThemeList":
           this.listProps = Object.assign(this.listProps, this.props);
           this.listProps.colors = this.listProps.gradient.split(",");
+          this.listProps.rangeLevel = this.listProps.colors.length;
           this.$_setThemeListDataSource("range");
           this.$nextTick(function () {
             let panel = document.getElementById(this.panelId);
             this.panelWidth = panel.offsetWidth;
-            this.panelHeight = panel.offsetHeight;
+            // this.panelHeight = panel.offsetHeight;
           });
           break;
         case "MapgisUiThemeListUnique":
           this.listProps = Object.assign(this.listProps, this.props);
           this.$_setThemeListDataSource("unique");
-          this.listProps.colors = this.$_getUniqueColors(this.listProps.gradient,this.listProps.dataSource);
+          this.listProps.colors = this.$_getUniqueColors(this.listProps.gradient, this.listProps.dataSource);
           this.$nextTick(function () {
             let panel = document.getElementById(this.panelId);
             this.panelWidth = panel.offsetWidth;
-            this.panelHeight = panel.offsetHeight;
+            // this.panelHeight = panel.offsetHeight;
           });
           break;
       }
     },
     $_getUniqueColors(color, dataSourceCopy) {
       let colors = [];
-      if(dataSourceCopy && dataSourceCopy.length > 0){
+      if (dataSourceCopy && dataSourceCopy.length > 0) {
         //根据渐变颜色取得所有颜色
         let colorArr = color.split(",");
         let colorArrLength = colorArr.length - 1;
@@ -694,13 +749,13 @@ export default {
     },
     $_setThemeListDataSource(type) {
       if (type === "range" && this.listProps.dataSource) {
-        if(!(this.listProps.dataSource instanceof Array)){
+        if (!(this.listProps.dataSource instanceof Array)) {
           let rangeLevel = this.listProps.gradient.split(",").length;
           this.listProps.dataSource = this.$_getDataByGeoJson(this.listProps.dataSource, this.listProps.field, type, rangeLevel);
         }
         this.listProps.startData = 0;
-      }else {
-        if (!(this.listProps.dataSource instanceof Array)){
+      } else {
+        if (!(this.listProps.dataSource instanceof Array)) {
           this.listProps.dataSource = this.$_getDataByGeoJson(this.listProps.dataSource, this.listProps.field, type);
         }
       }
@@ -725,6 +780,51 @@ export default {
         this.$emit("change", "MapgisUiThemeListCheckBox", !e, index, this.listProps.checkBoxArr, extra);
       } else {
         this.$emit("change", e);
+      }
+    },
+    $_inputChange(index){
+      if(index === 0){
+        if(this.listProps.dataSource[index] <= this.listProps.startData || this.listProps.dataSource[index] >= this.listProps.dataSource[index + 1]){
+          console.log("----------错误")
+        }
+      }else if (index < this.listProps.dataSource.length -1) {
+        if(this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1] || this.listProps.dataSource[index] >= this.listProps.dataSource[index + 1]){
+          console.log("----------错误")
+        }
+      }else {
+        if(this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1]){
+          console.log("----------错误")
+        }
+      }
+    },
+    $_addRange(index) {
+      let startData;
+      if (index === 0) {
+        startData = this.listProps.startData;
+      } else {
+        startData = Number(this.listProps.dataSource[index]);
+      }
+      let endData = Number(this.listProps.dataSource[index]);
+      if (index < this.listProps.dataSource.length - 1) {
+        if (startData < endData) {
+          let addNum = (startData + endData) / 2;
+          this.listProps.dataSource.splice(index, 0, addNum);
+          this.listProps.rangeLevel++;
+          let newColors = gradientColor(this.listProps.colors[index], this.listProps.colors[index + 1], 2);
+          this.listProps.colors.splice(index + 1, 0, newColors[1]);
+        }
+      } else {
+        let addNum = (this.listProps.dataSource[index] - this.listProps.dataSource[index - 1]) + this.listProps.dataSource[index];
+        this.listProps.dataSource.push(addNum);
+        this.listProps.rangeLevel++;
+        this.listProps.colors.splice(index + 1, 0, this.listProps.colors[index]);
+      }
+    },
+    $_deleteRange(index) {
+      if (this.listProps.rangeLevel > 2) {
+        this.listProps.dataSource.splice(index, 1);
+        this.listProps.rangeLevel--;
+        this.listProps.colors.splice(index, 1);
       }
     },
     $_changeColor(e, extraValue) {
@@ -773,6 +873,10 @@ export default {
   margin: 6px 0;
 }
 
+.mixRowSmall {
+  padding: 6px 0;
+}
+
 .mix-row-gradient {
   height: 15px;
   margin: 8px 0 0;
@@ -810,10 +914,18 @@ export default {
   width: 16px;
   margin: auto;
   margin-top: 3px;
+  cursor: pointer;
 }
 
 .mix-row-p {
-  text-align: center;
+  text-align: left;
+  line-height: 32px;
+  margin-bottom: 0;
+  padding-left: 12px;
+}
+
+.mix-row-list-p {
+  text-align: left;
   line-height: 32px;
   margin-bottom: 0;
 }
@@ -824,6 +936,32 @@ export default {
 
 .mixRowPSmall {
   line-height: 24px;
+}
+
+.mix-row-add {
+  margin-top: 6px;
+  margin-left: 9px;
+  cursor: pointer;
+}
+
+.mixRowLarge {
+  margin-top: 4px;
+}
+
+.mixRowImgSmall {
+  width: 18px;
+  margin-top: -4px;
+  margin-left: 12px;
+}
+
+.mix-row-input {
+  width: 100%;
+}
+
+.mix-row-theme-list-title {
+  width: 100%;
+  height: 30px;
+  border-bottom: 1px solid var(--border-color-split);
 }
 
 /deep/ .m-colorPicker {
@@ -842,5 +980,9 @@ export default {
 
 /deep/ .mapgis-ui-select-selection-selected-value {
   width: 100%;
+}
+
+/deep/ .mapgis-ui-list-item {
+  padding: 0;
 }
 </style>
