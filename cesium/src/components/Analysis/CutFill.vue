@@ -90,6 +90,12 @@
         </mapgis-ui-setting-footer>
       </div>
     </slot>
+    <mapgis-ui-mask
+      v-if="useMask"
+      :parentDivClass="'cesium-viewer'"
+      :loading="maskShow"
+      :text="maskText"
+    ></mapgis-ui-mask>
   </div>
 </template>
 
@@ -155,6 +161,15 @@ export default {
     dataType: {
       type: Number,
       default: 2.0
+    },
+    /**
+     * @type Boolean
+     * @default true
+     * @description 是否使用内置的遮罩层
+     */
+    useMask: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -175,7 +190,9 @@ export default {
       entityController: null,
       terrainLine: null,
       terrainPolygon: null,
-      depthTestAgainstTerrain: false // 深度检测是否已开启
+      depthTestAgainstTerrain: false, // 深度检测是否已开启
+      maskShow: false,
+      maskText: "正在分析中, 请稍等..."
     };
   },
   computed: {
@@ -321,6 +338,7 @@ export default {
           this.$emit("start");
           this.remove();
           this.positions = positions;
+          this.maskShow = true;
 
           const linePointArr = [];
           const polygonPointArr = [];
@@ -452,6 +470,7 @@ export default {
         cutVolume: result.cutVolume,
         fillVolume: result.fillVolume
       };
+      this.maskShow = false;
       this.$emit("success", result);
     },
     /**
@@ -502,6 +521,7 @@ export default {
 
       this.positions = null;
       this.recalculate = false;
+      this.maskShow = false;
       this._reset();
 
       if (!this.depthTestAgainstTerrain) {
@@ -514,6 +534,7 @@ export default {
         this.terrainPolygon = null;
         this.entityController = null;
       }
+      this.$emit("remove");
     }
   }
 };

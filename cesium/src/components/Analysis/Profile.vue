@@ -57,6 +57,12 @@
         </mapgis-ui-setting-footer>
       </div>
     </slot>
+    <mapgis-ui-mask
+      v-if="useMask"
+      :parentDivClass="'cesium-viewer'"
+      :loading="maskShow"
+      :text="maskText"
+    ></mapgis-ui-mask>
   </div>
 </template>
 
@@ -228,6 +234,15 @@ export default {
         };
         return echartsOptions;
       }
+    },
+    /**
+     * @type Boolean
+     * @default true
+     * @description 是否使用内置的遮罩层
+     */
+    useMask: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -283,7 +298,9 @@ export default {
       polylineGroundColorCopy: "rgb(255,0,0)", // 剖切线颜色
       showPolygonCopy: false, // 是否显示剖面
       samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
-      depthTestAgainstTerrain: false // 深度检测是否已开启
+      depthTestAgainstTerrain: false, // 深度检测是否已开启
+      maskShow: false,
+      maskText: "正在分析中, 请稍等..."
     };
   },
 
@@ -404,19 +421,20 @@ export default {
      * @description 绘制结束后回调函数，表示cesium内部开始启用分析功能
      */
     _profileStart() {
+      this.maskShow = true;
       this.$emit("start");
     },
     /**
      * @description 分析结束回调函数
      */
     _profileSuccess() {
+      this.maskShow = false;
       this.$emit("success");
     },
     /**
      * @description 移除剖面分析结果，关闭二维剖面显示，恢复深度检测设置
      */
     remove() {
-      this.$emit("remove");
       const profileAnalysis = this._getProfileAnalysis();
       const { CesiumZondy, vueKey, vueIndex } = this;
 
@@ -436,6 +454,8 @@ export default {
       if (!this.depthTestAgainstTerrain) {
         this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false;
       }
+      this.maskShow = false;
+      this.$emit("remove");
     }
   }
 };
