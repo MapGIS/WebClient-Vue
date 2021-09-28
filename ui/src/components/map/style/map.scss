@@ -56,3 +56,11 @@
 .mapgis-mvt-legend-label {
   color: $text-color;
 }
+
+// geojson-layer
+.mapgis-geojson-default-wrapper {
+  display: none;
+}
+.mapgis-geojson-custom-wrapper {
+  display: none;
+}

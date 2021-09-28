@@ -23,10 +23,12 @@ export { default as MapgisFeatureService } from "../../mapboxgl/src/components/m
 // export { default as MapgisFixDraw } from "../../mapboxgl/src/components/UI/controls/drawfix/FixDraw";
 
 export { default as MapgisMarker } from "../../mapboxgl/src/components/UI/Marker.vue";
+export { default as MapgisMarkerPlotting } from "../../mapboxgl/src/components/UI/marker/MarkerPlotting.vue";
+export { default as MapgisMarkerLayer } from "../../mapboxgl/src/components/UI/marker/MarkerLayer.vue";
 export { default as MapgisPopup } from "../../mapboxgl/src/components/UI/Popup.vue";
 
 export { default as MapgisArrayLayer } from "../../mapboxgl/src/components/layer/ArrayLayer";
-export { default as MapgisGeojsonLayer } from "../../mapboxgl/src/components/layer/GeojsonLayer.vue";
+export { default as MapgisGeojsonLayer } from "../../mapboxgl/src/components/layer/GeojsonLayer";
 export { default as MapgisImageLayer } from "../../mapboxgl/src/components/layer/ImageLayer";
 export { default as MapgisCanvasLayer } from "../../mapboxgl/src/components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "../../mapboxgl/src/components/layer/VideoLayer";
