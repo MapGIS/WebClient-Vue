@@ -132,7 +132,7 @@ export default {
     watch: {
         dataSource: {
             handler: function () {
-                this.$_sddThemeLayerBySource();
+                this.$_addThemeLayerBySource();
             },
             deep: true
         },
@@ -257,7 +257,7 @@ export default {
         if (this.hideItem.length > 0) {
             this.hideItemCopy = this.hideItem;
         }
-        this.$_sddThemeLayerBySource();
+        this.$_addThemeLayerBySource();
     },
     methods: {
         $_formatThemeListOptions(options) {
@@ -336,7 +336,7 @@ export default {
                 });
             }
         },
-        $_sddThemeLayerBySource() {
+        $_addThemeLayerBySource() {
             if (this.dataSource) {
                 let dataSource = this.dataSource;
                 for (let i = 0; i < dataSource.features.length; i++) {
@@ -358,6 +358,9 @@ export default {
                     }
                 }
                 this.selectValue = this.themeProps.themeField;
+                if(this.themeProps.themeType === "symbol"){
+                    this.defaultIcon = "useDefault"
+                }
                 this.$_addThemeLayer(this.themeProps.themeType, layerId, this.themeProps.themeField);
                 this.$_addHeightLightLayer();
             }
@@ -531,6 +534,7 @@ export default {
                                 vm.dataType,
                                 fields[0]
                             );
+                            themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             dataSource = vm.$_setDataSource(features, fields[0], "range");
                             vm.$refs.themePanel.currentThemeType = vm.themeType;
                             vm.$refs.themePanel.$_setIcons(vm.icons);
@@ -541,7 +545,6 @@ export default {
                             } else {
                                 vm.selectValue = fields[0];
                             }
-                            themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             let radiusArr = [], radiusArrCopy = [];
                             for (let i = 0; i < dataSource.length; i++) {
                                 radiusArr.push(i + 1);
@@ -1276,10 +1279,14 @@ export default {
         },
         //添加等级符号专题图图层
         $_addSymbolLayer(dataSource) {
-            let vm = this;
+            let vm = this,iconName;
             let img = new Image(128, 128);
-            let iconFullName = vm.defaultIcon.split("/")[vm.defaultIcon.split("/").length - 1];
-            let iconName = iconFullName.split(".")[0];
+            if(vm.defaultIcon === "useDefault"){
+                iconName = "useDefault";
+            }else {
+                let iconFullName = vm.defaultIcon.split("/")[vm.defaultIcon.split("/").length - 1];
+                iconName = iconFullName.split(".")[0];
+            }
             themeManager.setPanelProps(this.layerIdCopy, this.themeType, "icon-image", iconName);
             img.addEventListener("load", function () {
                 let hasIcon = vm.map.hasImage(iconName), iconSize;
@@ -1326,7 +1333,11 @@ export default {
                     }
                 }
             });
-            img.src = vm.defaultIcon;
+            if(vm.defaultIcon === "useDefault"){
+                img.src = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjI5OTcyNzU0MDMwIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyMzQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNTEwLjY5MTE5MSA2NC41Njc1NTFjLTI0Ni41NDgyMzIgMC00NDcuMTI1NDU3IDIwMC41NzgyNDgtNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDAgMjQ2LjU0MzExNiAyMDAuNTc4MjQ4IDQ0Ny4xMjU0NTcgNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDI0Ni41NDMxMTYgMCA0NDcuMTI1NDU3LTIwMC41ODIzNDEgNDQ3LjEyNTQ1Ny00NDcuMTI1NDU3Qzk1Ny44MTY2NDggMjY1LjE0NDc3NiA3NTcuMjM0MzA3IDY0LjU2NzU1MSA1MTAuNjkxMTkxIDY0LjU2NzU1MXpNNTEwLjY5MTE5MSA4NjMuNDg5MzA2Yy0xOTMuOTgyMDE2IDAtMzUxLjc5NjI5OC0xNTcuODE0MjgyLTM1MS43OTYyOTgtMzUxLjc5NjI5OHMxNTcuODE0MjgyLTM1MS43OTYyOTggMzUxLjc5NjI5OC0zNTEuNzk2Mjk4Uzg2Mi40ODc0ODkgMzE3LjcxMDk5MiA4NjIuNDg3NDg5IDUxMS42OTMwMDggNzA0LjY3MzIwOCA4NjMuNDg5MzA2IDUxMC42OTExOTEgODYzLjQ4OTMwNnoiIHAtaWQ9IjIyMzUiIGZpbGw9IiMxMjk2ZGIiPjwvcGF0aD48cGF0aCBkPSJNNTEwLjY5MTE5MSA1MTEuNjkzMDA4bS0yMTQuNDkxMTE5IDBhMjA5LjYwNiAyMDkuNjA2IDAgMSAwIDQyOC45ODIyMzggMCAyMDkuNjA2IDIwOS42MDYgMCAxIDAtNDI4Ljk4MjIzOCAwWiIgcC1pZD0iMjIzNiIgZmlsbD0iIzEyOTZkYiI+PC9wYXRoPjwvc3ZnPg==";
+            }else {
+                img.src = vm.defaultIcon;
+            }
             themeManager.setPanelProps(this.layerIdCopy, this.themeType, "icon-url", vm.defaultIcon);
         },
         //添加额外图层

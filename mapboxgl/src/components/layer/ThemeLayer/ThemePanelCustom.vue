@@ -1,13 +1,13 @@
 <template>
   <div>
-<!--    <mapgis-ui-custom-panel-->
-<!--        ref="custom"-->
-<!--        style="width: 50%"-->
-<!--        :options="options"-->
-<!--        @formChanged="$_formChanged"-->
-<!--        class="theme-panel-custom"-->
-<!--        v-if="options"-->
-<!--    />-->
+    <!--    <mapgis-ui-custom-panel-->
+    <!--        ref="custom"-->
+    <!--        style="width: 50%"-->
+    <!--        :options="options"-->
+    <!--        @formChanged="$_formChanged"-->
+    <!--        class="theme-panel-custom"-->
+    <!--        v-if="options"-->
+    <!--    />-->
   </div>
 </template>
 
@@ -44,6 +44,8 @@ export default {
     $_setIcons() {
     },
     $_setDefaultIcon() {
+    },
+    $_setRadiusArr() {
     },
     $_formChanged(id, value, type, extra, extra2) {
       this.$emit("formChanged", id, value, type, extra, extra2);
