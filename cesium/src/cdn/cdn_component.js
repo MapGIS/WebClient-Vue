@@ -35,27 +35,28 @@ export { default as Mapgis3dPopup } from "../components/UI/Popup/Popup.vue";
 /* export { default as Mapgis3dMapvLayer} from "../components/Overlay/Mapv3dLayer.vue";
 export { default as Mapgis3dEchartsLayer} from "../components/Overlay/Echarts.vue"; */
 
-export { default as Mapgis3dIGSTerrainProvider } from "../components/Provider/TerrainProvider/IgsTerrainProvider.vue";
+export { default as Mapgis3dIgsTerrain } from "../components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "../components/Provider/TerrainProvider/TerrainProvider.vue";
 
 // 数据源
-export { default as Mapgis3dGeoJsonDataSource } from "../components/DataSource/Geojson/GeoJsonDataSource.vue";
-export { default as Mapgis3dCzmlDataSource } from "../components/DataSource/Czml/CzmlDataSource";
+export { default as Mapgis3dGeojsonDatasource } from "../components/DataSource/Geojson/GeoJsonDataSource.vue";
+export { default as Mapgis3dCzmlDatasource } from "../components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
 export { default as Mapgis3dViewshed } from "../components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "../components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "../components/Analysis/SkyLine";
+export { default as Mapgis3dModelFlatten } from "../components/Analysis/ModelFlatten";
 export { default as Mapgis3dExcavate } from "../components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "../components/Analysis/Flood";
 export { default as Mapgis3dFloodNoSlot } from "../components/Analysis/FloodNoSlot";
 export { default as colorPicker } from "vcolorpicker";
 export { default as Mapgis3dDynamicCutting } from "../components/Analysis/DynamicCutting";
-export { default as Mapgis3dFill } from "../components/Analysis/Fill";
+export { default as Mapgis3dCutFill } from "../components/Analysis/Fill";
 export { default as Mapgis3dHeightlimited } from "../components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "../components/Analysis/Shadow";
 
-
+//场景效果组件
 export { default as Mapgis3dRainEffect } from "../components/SceneEffect/RainEffect";
 export { default as Mapgis3dSnowEffect } from "../components/SceneEffect/SnowEffect";
 export { default as Mapgis3dFogEffect } from "../components/SceneEffect/FogEffect";

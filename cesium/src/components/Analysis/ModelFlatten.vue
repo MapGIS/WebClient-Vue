@@ -36,7 +36,7 @@ import BaseMixin from "./BaseLayer";
 
 const Managger = "AnalysisModelFlattenManager";
 export default {
-  name: "mapgis-3d-modelflatten",
+  name: "mapgis-3d-model-flatten",
   mixins: [BaseMixin],
   props: {
     position: {

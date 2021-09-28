@@ -34,7 +34,7 @@
 - **可选**
 - **默认值:** `left`
 - **侦听属性**
-- **描述:** 动态剖切的切割面朝向，方向分为left、right、forward、back、top、bottom
+- **描述:** 动态剖切的切割面朝向，方向分为 left、right、forward、back、top、bottom
 
 ### `color`
 
@@ -42,7 +42,7 @@
 - **可选**
 - **默认值:** `#00FFFF`
 - **侦听属性**
-- **描述:** 动态剖切的剖切面颜色，与css的color属性一致，使用16进制颜色
+- **描述:** 动态剖切的剖切面颜色，与 css 的 color 属性一致，使用 16 进制颜色
 
 ### `opacity`
 
@@ -50,7 +50,7 @@
 - **可选**
 - **默认值:** `0.7`
 - **侦听属性**
-- **描述:** 填挖方墙体透明度，与css的opacity属性一致
+- **描述:** 剖切对象透明度，与 css 的 opacity 属性一致
 
 ### `defaultCutIndex`
 
@@ -78,7 +78,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **类型:** `Number或Array`
 - **必传:**
 - **侦听属性**
-- **描述:** 通过vueIndex将剖切面绑定在模型上，当只剖切一个模型时，传一个vueIndex即可，当要通视对多个模型进行剖切时，传入一个[vueIndex]数组即可
+- **描述:** 通过 vueIndex 将剖切面绑定在模型上，当只剖切一个模型时，传一个 vueIndex 即可，当要通视对多个模型进行剖切时，传入一个[vueIndex]数组即可
 
 ## 事件
 
@@ -97,21 +97,21 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ## 动态剖切使用方法
 
 ```vue
-
 <template>
   <mapgis-web-scene
-      libPath="cesium/Cesium.js"
-      pluginPath="cesium/webclient-cesium-plugin.min.js">
+    libPath="cesium/Cesium.js"
+    pluginPath="cesium/webclient-cesium-plugin.min.js"
+  >
     <mapgis-3d-igs-m3d :vueIndex="vueIndex2" :url="url"></mapgis-3d-igs-m3d>
     <mapgis-3d-igs-m3d :vueIndex="vueIndex" :url="url2"></mapgis-3d-igs-m3d>
     <mapgis-3d-dynamic-cutting
-        :vueIndex="vueIndex"
-        :startDistance="distance"
-        :currentDistance="currentDistance"
-        :defaultCutIndex="defaultCutIndex"
-        :color="color"
-        :opacity="opacity"
-        :direction="direction"
+      :vueIndex="vueIndex"
+      :startDistance="distance"
+      :currentDistance="currentDistance"
+      :defaultCutIndex="defaultCutIndex"
+      :color="color"
+      :opacity="opacity"
+      :direction="direction"
     ></mapgis-3d-dynamic-cutting>
   </mapgis-web-scene>
 </template>
@@ -120,8 +120,9 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 export default {
   data() {
     return {
-      url: 'http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s',
-      url2: 'http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent',
+      url: "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s",
+      url2:
+        "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent",
       vueIndex: 1,
       vueIndex2: 2,
       distance: -1000,
@@ -140,21 +141,21 @@ export default {
 ## 动态剖切 - 同时剖切多个模型
 
 ```vue
-
 <template>
   <mapgis-web-scene
-      libPath="cesium/Cesium.js"
-      pluginPath="cesium/webclient-cesium-plugin.min.js">
+    libPath="cesium/Cesium.js"
+    pluginPath="cesium/webclient-cesium-plugin.min.js"
+  >
     <mapgis-3d-igs-m3d :vueIndex="vueIndex2" :url="url"></mapgis-3d-igs-m3d>
     <mapgis-3d-igs-m3d :vueIndex="vueIndex" :url="url2"></mapgis-3d-igs-m3d>
     <mapgis-3d-dynamic-cutting
-        :vueIndex="vueIndexArr"
-        :startDistance="distance"
-        :currentDistance="currentDistance"
-        :defaultCutIndex="defaultCutIndex"
-        :color="color"
-        :opacity="opacity"
-        :direction="direction"
+      :vueIndex="vueIndexArr"
+      :startDistance="distance"
+      :currentDistance="currentDistance"
+      :defaultCutIndex="defaultCutIndex"
+      :color="color"
+      :opacity="opacity"
+      :direction="direction"
     ></mapgis-3d-dynamic-cutting>
   </mapgis-web-scene>
 </template>
@@ -163,8 +164,9 @@ export default {
 export default {
   data() {
     return {
-      url: 'http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s',
-      url2: 'http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent',
+      url: "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s",
+      url2:
+        "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent",
       vueIndex: 1,
       vueIndex2: 2,
       //同时剖切多个模型时，传入一串要切割的模型的vueIndex即可
@@ -185,22 +187,22 @@ export default {
 ## 自定义界面-插槽方式
 
 ```vue
-
 <template>
   <mapgis-web-scene
-      libPath="cesium/Cesium.js"
-      pluginPath="cesium/webclient-cesium-plugin.min.js">
+    libPath="cesium/Cesium.js"
+    pluginPath="cesium/webclient-cesium-plugin.min.js"
+  >
     <mapgis-3d-igs-m3d :vueIndex="vueIndex2" :url="url"></mapgis-3d-igs-m3d>
     <mapgis-3d-igs-m3d :vueIndex="vueIndex" :url="url2"></mapgis-3d-igs-m3d>
     <mapgis-3d-dynamic-cutting
-        :vueIndex="vueIndexArr"
-        :startDistance="distance"
-        :currentDistance="currentDistance"
-        :defaultCutIndex="defaultCutIndex"
-        :color="color"
-        :opacity="opacity"
-        :direction="direction"
-        @loaded="loaded"
+      :vueIndex="vueIndexArr"
+      :startDistance="distance"
+      :currentDistance="currentDistance"
+      :defaultCutIndex="defaultCutIndex"
+      :color="color"
+      :opacity="opacity"
+      :direction="direction"
+      @loaded="loaded"
     >
       <div>
         <!--自定义您的界面-->
@@ -215,8 +217,9 @@ export default {
 export default {
   data() {
     return {
-      url: 'http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s',
-      url2: 'http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent',
+      url: "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s",
+      url2:
+        "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent",
       vueIndex: 1,
       vueIndex2: 2,
       //同时剖切多个模型时，传入一串要切割的模型的vueIndex即可
@@ -231,11 +234,11 @@ export default {
     };
   },
   methods: {
-    loaded(DynamicCutting){
+    loaded(DynamicCutting) {
       //在这里拿到DynamicCutting组件对象
       this.DynamicCutting = DynamicCutting;
     },
-    change(){
+    change() {
       //通过改变currentDistance的值，来改变剖切距离
       this.DynamicCutting.currentDistance = 1500;
     }

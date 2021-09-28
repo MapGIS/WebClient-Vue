@@ -36,8 +36,8 @@ export { default as Mapgis3dEchartsLayer} from "../../cesium/src/components/Over
 export { default as Mapgis3dTerrainProvider } from "../../cesium/src/components/Provider/TerrainProvider/TerrainProvider.vue";
 
 // 数据源
-export { default as Mapgis3dGeoJsonDataSource } from "../../cesium/src/components/DataSource/Geojson/GeoJsonDataSource.vue";
-export { default as Mapgis3dCzmlDataSource } from "../../cesium/src/components/DataSource/Czml/CzmlDataSource";
+export { default as Mapgis3dGeojsonDatasource } from "../../cesium/src/components/DataSource/Geojson/GeoJsonDataSource.vue";
+export { default as Mapgis3dCzmlDatasource } from "../../cesium/src/components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";
@@ -46,7 +46,7 @@ export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis
 export { default as Mapgis3dModelFlatten } from "../../cesium/src/components/Analysis/ModelFlatten";
 export { default as Mapgis3dExcavate } from "../../cesium/src/components/Analysis/Excavate";
 export { default as Mapgis3dFlood } from "../../cesium/src/components/Analysis/Flood";
-export { default as Mapgis3dFill } from "../../cesium/src/components/Analysis/Fill";
+export { default as Mapgis3dCutFill } from "../../cesium/src/components/Analysis/Fill";
 export { default as Mapgis3dDynamicCutting } from "../../cesium/src/components/Analysis/DynamicCutting";
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";

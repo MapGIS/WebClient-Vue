@@ -1,4 +1,4 @@
-# 地图场景 
+# 地图场景
 
 > mapgis-web-scene
 
@@ -32,14 +32,14 @@
 - **Type**: `String`
 - **非侦听属性** 非 watch 属性
 - **Default:** `default`
-- - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+- - **Description:** 该 key 的主要作用是用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ### `vueIndex`
 
 - **Type**: `[String, Number]`
 - **非侦听属性** 非 watch 属性
 - **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
-- - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+- - **Description:** 该 key 的主要作用是用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ### `container`
 
