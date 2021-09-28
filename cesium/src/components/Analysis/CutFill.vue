@@ -427,9 +427,7 @@ export default {
       const { viewer } = this.webGlobe;
       const { xPaneNumCopy, yPaneNumCopy, heightCopy } = this;
 
-      if (!this.depthTestAgainstTerrain) {
-        viewer.scene.globe.depthTestAgainstTerrain = true;
-      }
+      viewer.scene.globe.depthTestAgainstTerrain = true;
 
       // 初始化高级分析功能管理类
       const cutFillAnalysis = new this.CesiumZondy.Manager.AdvancedAnalysisManager(

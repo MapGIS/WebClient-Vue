@@ -376,9 +376,7 @@ export default {
      */
     analysis() {
       const { viewer } = this.webGlobe;
-      if (!this.depthTestAgainstTerrain) {
-        viewer.scene.globe.depthTestAgainstTerrain = true;
-      }
+      viewer.scene.globe.depthTestAgainstTerrain = true;
       const {
         polygonColorCopy,
         polygonHeightCopy,
