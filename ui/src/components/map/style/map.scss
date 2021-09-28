@@ -57,6 +57,13 @@
   color: $text-color;
 }
 
+// geojson-layer
+.mapgis-geojson-default-wrapper {
+  display: none;
+}
+.mapgis-geojson-custom-wrapper {
+  display: none;
+}
 .measure-marker-popup-tip {
   border: 10px solid transparent;
   border-top-color: $component-background;
