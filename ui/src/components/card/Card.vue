@@ -35,6 +35,7 @@ export default {
       default: '',
       validator: v =>
         [
+          '',
           'top-right',
           'top-left',
           'bottom-right',

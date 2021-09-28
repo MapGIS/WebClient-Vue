@@ -131,9 +131,6 @@ export default {
      * @description 开启光照
      */
     _enableBrightness() {
-      if (this.brightnessEnabled) {
-        return;
-      }
       // 开启光照，不然放大地图，分析结果显示异常
       const { viewer } = this.webGlobe;
       viewer.scene.globe.enableLighting = true;
