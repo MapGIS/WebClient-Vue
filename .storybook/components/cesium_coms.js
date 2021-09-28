@@ -43,8 +43,8 @@ export { default as Mapgis3dTerrainProvider } from "../../cesium/src/components/
 export { default as Mapgis3dIgsFeatureLayer } from "../../cesium/src/components/Layer/IGServer/IgsFeatureLayer.vue";
 
 // 数据源
-export { default as Mapgis3dGeoJsonDataSource } from "../../cesium/src/components/DataSource/Geojson/GeoJsonDataSource.vue";
-export { default as Mapgis3dCzmlDataSource } from "../../cesium/src/components/DataSource/Czml/CzmlDataSource";
+export { default as Mapgis3dGeojsonDatasource } from "../../cesium/src/components/DataSource/Geojson/GeoJsonDataSource.vue";
+export { default as Mapgis3dCzmlDatasource } from "../../cesium/src/components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";

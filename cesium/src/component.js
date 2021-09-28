@@ -50,8 +50,8 @@ export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProv
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
 
 // 数据源
-export { default as Mapgis3dGeoJsonDataSource } from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
-export { default as Mapgis3dCzmlDataSource } from "./components/DataSource/Czml/CzmlDataSource";
+export { default as Mapgis3dGeojsonDatasource } from "./components/DataSource/Geojson/GeoJsonDataSource.vue";
+export { default as Mapgis3dCzmlDatasource } from "./components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
 export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue";
@@ -61,21 +61,22 @@ export { default as Mapgis3dModelFlatten } from "./components/Analysis/ModelFlat
 export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
-export { default as DynamicCutting } from "./components/Analysis/DynamicCutting";
+export { default as Mapgis3dDynamicCutting } from "./components/Analysis/DynamicCutting";
 export { default as DynamicSection } from "./components/Analysis/DynamicSection";
-export { default as Fill } from "./components/Analysis/Fill";
+export { default as Mapgis3dFill } from "./components/Analysis/Fill";
 export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
 export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
 export { default as Mapgis3dParticleEffects } from "./components/Analysis/ParticleEffects";
+export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
 export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";
-export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 
+//场景效果组件
 export { default as Mapgis3dRainEffect } from "./components/SceneEffect/RainEffect";
 export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";
 export { default as Mapgis3dFogEffect } from "./components/SceneEffect/FogEffect";
