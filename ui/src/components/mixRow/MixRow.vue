@@ -88,10 +88,9 @@
       </mapgis-ui-col>
       <mapgis-ui-col :span="colorPickerProps.colorCol">
         <div class="mix-row-color-outer">
-          <colorPicker
-              :id="colorId"
-              v-model="valueCopy"
-              @change="$_change"
+          <mapgis-ui-sketch-color-picker
+              :color="valueCopy"
+              @input="$_changeColorSketch"
           />
         </div>
       </mapgis-ui-col>
@@ -629,7 +628,6 @@ export default {
           this.selectProps = Object.assign(this.selectProps, this.props);
           break;
         case "MapgisUiColorPicker":
-          this.$_initColorStyle();
           this.colorPickerProps = Object.assign(this.colorPickerProps, this.props);
           break;
         case "MapgisUiGrediantSelect":
@@ -705,10 +703,6 @@ export default {
         }
       }
     },
-    $_initColorStyle() {
-      let colorDocument = document.getElementById(this.colorId);
-      let colorBtn = colorDocument.childNodes;
-    },
     $_change(e, index, extra) {
       if (this.type === "MapgisUiInput") {
         if (this.regExp) {
@@ -726,6 +720,10 @@ export default {
       } else {
         this.$emit("change", e);
       }
+    },
+    $_changeColorSketch(e){
+      let  rgba = `rgba(${e.rgba.r}, ${e.rgba.g}, ${e.rgba.b}, ${e.rgba.a})`;
+      this.$emit("change", rgba);
     },
     $_changeColor(e, extraValue) {
       this.$set(this.listProps.colors, extraValue, e.hex);
