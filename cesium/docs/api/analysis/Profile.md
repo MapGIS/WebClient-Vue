@@ -1,5 +1,7 @@
 > mapgis-3d-analysis-profile
 
+<font style="color:red;fontsize=5px;">注意：必须在外部定义一个 div，并设置其 id 为 profileChart，用于显示剖面信息(echarts 图表)</font>
+
 ## 属性
 
 ### `vueKey`
@@ -17,14 +19,6 @@
 - **非侦听属性**
 - **默认值:** `(Math.random() * 100000000).toFixed(0)`随机计算值
 - **描述:** 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
-
-### `position`
-
-- **类型:** `String`
-- **可选**
-- **非侦听属性**
-- **默认值:** `right`
-- **描述:** 分析面板的位置
 
 ### `profileType`
 
@@ -90,6 +84,14 @@
 - **默认值:** `100`
 - **描述:** 剖面高度
 
+### `useMask`
+
+- **类型:** `Boolean`
+- **可选**
+- **默认值:** `true`
+- **非侦听属性**
+- **描述:** 是否使用内置的遮罩层
+
 ### `echartsOptions`
 
 - **类型:** `Object`
@@ -117,7 +119,7 @@
   },
   grid: {
     top: 25,
-    left: 40,
+    left: 60,
     right: 20,
     bottom: 20,
     contentLabel: false
@@ -148,11 +150,11 @@
       axisLabel: {
         formatter: value => {
           const texts = [];
-          if (value > 99999) {
-            const text = Number(value).toExponential(1);
-            texts.push(text);
+          if (value > 999) {
+            const text = (Number(value) / 1000).toFixed(2);
+            texts.push(`${text}km`);
           } else {
-            texts.push(parseInt(value));
+            texts.push(`${parseInt(value)}m`);
           }
           return texts;
         }
@@ -174,7 +176,8 @@
           { type: "max", name: "最高点" },
           { type: "min", name: "最低点" }
         ]
-      }
+      },
+      areaStyle: {}
     }
   ]
 }
@@ -205,6 +208,10 @@
 
 - **Description:** 在剖面分析结束后发送该事件
 
+### `@remove`
+
+- **Description:** 在移除分析对象和分析结果后，发送该事件
+
 ## 示例
 
 ### 非插槽方式
@@ -221,17 +228,32 @@
       :token="token"
     ></mapgis-3d-ogc-wmts-layer>
     <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
-    <mapgis-3d-analysis-profile
-      :profileType="profileType"
-      :position="position"
-      :polygonHeight="polygonHeight"
-      :polygonColor="polygonColor"
-      :polyLineColor="polyLineColor"
-      :pointColor="pointColor"
-      :polylineGroundColor="polylineGroundColor"
-      :showPolygon="showPolygon"
-      :samplePrecision="samplePrecision"
-    />
+    <mapgis-ui-card customPosition="top-right">
+      <mapgis-3d-analysis-profile
+        :profileType="profileType"
+        :polygonHeight="polygonHeight"
+        :polygonColor="polygonColor"
+        :polyLineColor="polyLineColor"
+        :pointColor="pointColor"
+        :polylineGroundColor="polylineGroundColor"
+        :showPolygon="showPolygon"
+        :samplePrecision="samplePrecision"
+        @success="success"
+        @remove="remove"
+      />
+    </mapgis-ui-card>
+    <mapgis-ui-window
+      :visible.sync="profile2dVisible"
+      :min-width="400"
+      :max-height="250"
+      anchor="bottom-left"
+      title="剖面信息"
+    >
+      <div
+        id="profileChart"
+        style="width: 380px; height: 180px; float: right"
+      ></div>
+    </mapgis-ui-window>
   </mapgis-web-scene>
 </template>
 
@@ -251,7 +273,6 @@ export default {
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029"
       },
-      position: "left",
       profileType: 0,
       polygonHeight: 100,
       polygonColor: "rgb(0,0,255)",
@@ -259,7 +280,8 @@ export default {
       pointColor: "rgb(0,255,0)",
       polylineGroundColor: "rgb(255,0,0)",
       showPolygon: false,
-      samplePrecision: 2
+      samplePrecision: 2,
+      profile2dVisible: false
     };
   },
   methods: {
@@ -291,6 +313,12 @@ export default {
         pitch: -16,
         roll: 0
       });
+    },
+    success() {
+      this.profile2dVisible = true;
+    },
+    remove() {
+      this.profile2dVisible = false;
     }
   }
 };
@@ -321,6 +349,7 @@ export default {
       :polylineGroundColor="polylineGroundColor"
       :showPolygon="showPolygon"
       :samplePrecision="samplePrecision"
+      @success="success"
       @load="load"
     >
       <!--      这里是自定义的界面-->
@@ -329,6 +358,19 @@ export default {
         <button @click="remove">清除</button>
       </div>
     </mapgis-3d-analysis-profile>
+    </mapgis-ui-card>
+    <mapgis-ui-window
+      :visible.sync="profile2dVisible"
+      :min-width="400"
+      :max-height="250"
+      anchor="bottom-left"
+      title="剖面信息"
+    >
+      <div
+        id="profileChart"
+        style="width: 380px; height: 180px; float: right"
+      ></div>
+    </mapgis-ui-window>
   </mapgis-web-scene>
 </template>
 
@@ -357,8 +399,8 @@ export default {
       polylineGroundColor: "rgb(255,0,0)",
       showPolygon: false,
       samplePrecision: 2,
-      //剖面分析组件对象
-      profileAnalysis: null
+      profileAnalysis: null,//剖面分析组件对象
+      profile2dVisible:false //显示剖面信息
     };
   },
   methods: {
@@ -402,6 +444,10 @@ export default {
     //移除剖面分析
     remove() {
       this.profileAnalysis.remove();
+      this.profile2dVisible = false;
+    },
+    success() {
+      this.profile2dVisible = true;
     }
   }
 };

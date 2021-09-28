@@ -1,6 +1,5 @@
 <template>
   <div>
-<!--    <mapgis-ui-card class="storybook-ui-card">-->
     <mapgis-ui-card :class="['ui-card',{ right: position === 'right', left: position === 'left' }]">
       <div class="">
         <mapgis-ui-setting-form :wrapper-width="200">
@@ -27,7 +26,6 @@
           <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
-<!--        <div class="skyline-analysis-mask" v-show="!!loading"/>-->
         <mapgis-ui-mask
             :parentDivClass="'cesium-map-wrapper'"
             :loading="maskShow"
@@ -36,20 +34,22 @@
       </div>
     </mapgis-ui-card>
     <!-- 二维天际线 -->
-    <mapgis-ui-window-wrapper :visible="skyline2dVisible">
-      <mapgis-ui-window
-          @window-size="onSkyline2dWindowSize"
-          :visible.sync="skyline2dVisible"
-          :min-width="300"
-          :max-height="300"
-          anchor="bottom-left"
-          title="二维天际线"
-      >
-        <div ref="skyline2dChart">
-          <div id="skyline-2d-chart"/>
-        </div>
-      </mapgis-ui-window>
-    </mapgis-ui-window-wrapper>
+    <slot>
+      <mapgis-ui-window-wrapper :visible="skyline2dVisible">
+        <mapgis-ui-window
+            @window-size="onSkyline2dWindowSize"
+            :visible.sync="skyline2dVisible"
+            :min-width="300"
+            :max-height="300"
+            anchor="bottom-left"
+            title="二维天际线"
+        >
+          <div ref="skyline2dChart">
+            <div id="skyline-2d-chart"/>
+          </div>
+        </mapgis-ui-window>
+      </mapgis-ui-window-wrapper>
+    </slot>
   </div>
 </template>
 <script>
@@ -62,9 +62,17 @@ import {colorToCesiumColor, getCenterPosition} from "../WebGlobe/util";
 export default {
   name: "mapgis-3d-skyline",
   props: {
-    position:{
+    position: {
       type: String,
       default: "left",
+    },
+    skylineWidth: {
+      type: Number,
+      default: 2
+    },
+    skylineColor: {
+      type:String,
+      default:'rgb(255,0,0)'
     },
     ...VueOptions
   },
@@ -310,7 +318,7 @@ export default {
   }
 }
 
-.ui-card.right{
+.ui-card.right {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -318,7 +326,7 @@ export default {
   background-color: #fff;
 }
 
-.ui-card.left{
+.ui-card.left {
   position: absolute;
   top: 10px;
   left: 10px;

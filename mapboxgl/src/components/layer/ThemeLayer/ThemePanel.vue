@@ -553,7 +553,7 @@
             </mapgis-ui-row>
             <mapgis-ui-row v-if="dataType === 'fill'">
               <mapgis-ui-col :span="9">
-                <p class="theme-panel-p" style="margin-top: 5px">边线颜色</p>
+                <p class="theme-panel-p" style="margin-top: 14px">边线颜色</p>
               </mapgis-ui-col>
               <mapgis-ui-col :span="15">
                 <div class="theme-panel-color-outer">
@@ -1157,7 +1157,7 @@ export default {
       gradientColor: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
       uniformColor: "#EE4C5A",
       gradientArr: gradients,
-      circleStrokeWidth: 2,
+      circleStrokeWidth: 1,
       circleStrokeWidthMax: 10,
       circleStrokeWidthStep: 0.1,
       circleStrokeOpacity: 100,
@@ -1170,7 +1170,7 @@ export default {
       lineTranslateYMin: -20,
       lineTranslateYMax: 20,
       lineTranslateYStep: 0.1,
-      lineWidth: 3,
+      lineWidth: 1,
       lineWidthMax: 20,
       lineWidthStep: 0.1,
       fillOpacity: 100,
@@ -1184,7 +1184,7 @@ export default {
       fillTranslateYStep: 0.1,
       fillOutlineColor: "#000000",
       fillOutlineOpacity: 100,
-      fillOutlineWidth: 3,
+      fillOutlineWidth: 1,
       fillOutlineWidthMax: 20,
       fillOutlineWidthStep: 0.1,
       textField: undefined,
@@ -2308,7 +2308,7 @@ export default {
 
 .theme-panel-options {
   width: 300px;
-  min-height: 593px;
+  min-height: 710px;
   margin-top: 8px;
   padding-top: 1px;
   margin-left: -4px;

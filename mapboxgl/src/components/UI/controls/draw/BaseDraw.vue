@@ -1,23 +1,23 @@
 <template>
   <div>
     <!-- slot for toolbar -->
-    <slot name="toolbar"/>
+    <slot name="toolbar" />
     <!-- slot for toolbar-item -->
-    <slot v-if="drawer"/>
+    <slot v-if="drawer" />
     <div class="mapgis-draw-control" v-show="enableControl">
       <mapgis-ui-space>
         <mapgis-ui-tooltip
-            v-for="(item, i) in draws"
-            :key="i"
-            placement="bottom"
+          v-for="(item, i) in draws"
+          :key="i"
+          placement="bottom"
         >
           <template slot="title">
             <span>{{ item.tip }}</span>
           </template>
           <mapgis-ui-button
             shape="circle"
-              :type="item.type"
-              @click="item.click"
+            :type="item.type"
+            @click="item.click"
             :class="item.className"
           >
             <mapgis-ui-iconfont
@@ -265,7 +265,7 @@ export default {
       this.drawer.setDraggable(next);
     },
     styles: {
-      handler: function (news) {
+      handler: function(news) {
         this.oldStyles = this.combineStyle(news);
       }
     }
@@ -277,7 +277,7 @@ export default {
       let position = this.position;
       let pos = position.split("-");
       document.querySelector(".mapgis-draw-control").style =
-          pos[0] + ": 10px;" + pos[1] + ": 10px;";
+        pos[0] + ": 10px;" + pos[1] + ": 10px;";
       // if (this.expandControl) {
       //   this.changeFold();
       // } else {
@@ -298,7 +298,7 @@ export default {
       this.$_compareStyle();
       this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
-      this.$_emitEvent("added", {drawer: this.drawer});
+      this.$_emitEvent("added", { drawer: this.drawer });
       const eventNames = Object.keys(drawEvents);
       this.$_unbindDrawEvents();
       this.$_bindSelfEvents(eventNames);
@@ -325,7 +325,7 @@ export default {
         listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
       } else {
         listeners = ["drawUpdate", "drawCreate"].concat(
-            Object.keys(this.$listeners)
+          Object.keys(this.$listeners)
         );
       }
 
@@ -334,8 +334,8 @@ export default {
       listeners.forEach(eventName => {
         if (events.includes(eventName)) {
           this.$_bindDrawEvents(
-              drawEvents[eventName],
-              vm.$_emitDrawEvent.bind(vm, eventName)
+            drawEvents[eventName],
+            vm.$_emitDrawEvent.bind(vm, eventName)
           );
         }
       });
@@ -348,15 +348,15 @@ export default {
       let mode = this.drawer.getMode();
       if (eventName == "drawUpdate" && mode == "direct_select") {
         if (
-            eventData.action == "change_coordinates" &&
-            eventData.features &&
-            eventData.features.length >= 0
+          eventData.action == "change_coordinates" &&
+          eventData.features &&
+          eventData.features.length >= 0
         ) {
           let feature = eventData.features[0];
           let center = turf.center(feature);
           let area = Math.round(turf.area(feature)) / 1000000;
           let radiusinkm = Math.round(Math.sqrt(area / Math.PI)) / 1000;
-          this.$emit("update-radius", {area, radiusinkm, center});
+          this.$emit("update-radius", { area, radiusinkm, center });
         }
       } else if (eventName == "drawCreate" && !this.editable) {
         window.setTimeout(() => {
@@ -366,7 +366,7 @@ export default {
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
       // }
-      return this.$_emitSelfEvent({type: eventName}, eventData);
+      return this.$_emitSelfEvent({ type: eventName }, eventData);
     },
 
     $_compareStyle() {
@@ -386,7 +386,7 @@ export default {
     },
 
     changeMapStyle(layers) {
-      let {map} = this;
+      let { map } = this;
       layers.forEach(layer => {
         if (map.getLayer(layer)) {
           if (layer.filter) {
@@ -465,10 +465,8 @@ export default {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
     },
-    toggleQueryByRect() {
-    },
-    toggleQueryByPolygon() {
-    }
+    toggleQueryByRect() {},
+    toggleQueryByPolygon() {}
   }
 };
 </script>

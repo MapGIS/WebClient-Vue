@@ -46,6 +46,13 @@ export default {
       },
       control: "number",
     },
+    useMask: {
+      description: "是否使用内置的遮罩层",
+      table: {
+        defaultValue: { summary: "true" },
+      },
+      control: "boolean",
+    },
   },
 };
 
@@ -77,7 +84,7 @@ const Template = (args, { argTypes }) => ({
     :token="token"
   ></mapgis-3d-ogc-wmts-layer>
   <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
-  <mapgis-ui-card class="storybook-ui-card">
+  <mapgis-ui-card class="storybook-ui-card" style="zIndex:20002">
     <mapgis-3d-analysis-cut-fill
       :xPaneNum="xPaneNum"
       :yPaneNum="yPaneNum"
@@ -85,6 +92,7 @@ const Template = (args, { argTypes }) => ({
       :lineColor="lineColor"
       :fillColor="fillColor"
       :dataType="dataType"
+      :useMask="useMask"
       />
   </mapgis-ui-card>
 </mapgis-web-scene>
@@ -130,6 +138,7 @@ export const 填挖方 = Template.bind({});
   lineColor: "rgba(0,255,0,1)",
   fillColor: "rgba(0,0,255,0.3)",
   dataType: 2.0,
+  useMask: true,
 };
 
 填挖方.parameters = {

@@ -2,11 +2,13 @@
   <div :id="id" class="custom-panel">
     <div v-for="(rects,index) in optionsCopy" :key="index">
       <mapgis-ui-mix-row
-          v-if="rects.type === 'MapgisUiThemeList'"
           :type="rects.type"
           :ref="rects.id"
+          :value="rects.value"
+          :dataSource="rects.dataSource"
           :panelId="id"
           :props="rects.props"
+          :customProps="rects.customProps"
           @change="$_change"
       />
       <!--      <div v-if="rects.type === 'Div'">-->

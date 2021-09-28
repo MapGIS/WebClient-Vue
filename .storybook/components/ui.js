@@ -23,5 +23,5 @@ if (typeof window !== "undefined" && window["Vue"]) {
 }
 
 export default {
-  install
+  install,
 };

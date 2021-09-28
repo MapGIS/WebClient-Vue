@@ -66,6 +66,14 @@
 - **非侦听属性**
 - **描述:** 数据类型,0.0：地形，1.0：模型，2.0：通用
 
+### `useMask`
+
+- **类型:** `Boolean`
+- **可选**
+- **默认值:** `true`
+- **非侦听属性**
+- **描述:** 是否使用内置的遮罩层
+
 ## 方法
 
 ### `analysis`
@@ -95,6 +103,10 @@
 
 - **Description:** 在分析结束后发送该事件
 - **Payload** 分析结果{minHeight,maxHeight,surfaceArea,cutVolume,fillVolume}
+
+### `@remove`
+
+- **Description:** 在移除分析对象和分析结果后，发送该事件
 
 ## 示例
 

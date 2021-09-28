@@ -10,7 +10,7 @@
         <slot :item="item" :index="index"></slot>
       </mapgis-ui-list-item>
       <div v-if="loading && !busy" class="mapgis-ui-infinite-list-loading">
-        <mapgis-ui-spin />
+        <mapgis-ui-spin/>
       </div>
     </mapgis-ui-list>
   </div>
@@ -21,19 +21,24 @@
 export default {
   name: 'mapgis-ui-infinite-list',
   props: {
-    dataSource: Array
+    dataSource: Array,
+    distance: {
+      type: Number,
+      default: 10
+    },
+    size: {
+      type: String
+    }
   },
   data() {
     return {
       data: [],
       loading: false,
       busy: false,
+      index: 0,
     }
   },
   beforeMount() {
-    this.fetchData(res => {
-      this.data = res;
-    });
   },
   methods: {
     fetchData(callback) {
@@ -44,14 +49,15 @@ export default {
     handleInfiniteOnLoad() {
       const data = this.data;
       this.loading = true;
-      if (data.length > 24) {
-        this.$message.warning('已超过24条');
-        this.busy = true;
-        this.loading = false;
-        return;
-      }
+      // if (data.length >= this.dataSource.length) {
+      //   this.$message.warning('已经到底了~');
+      //   this.busy = true;
+      //   this.loading = false;
+      //   return;
+      // }
       this.fetchData(res => {
-        this.data = data.concat(res);
+        this.data = this.data.concat(res.slice(this.index, this.index + this.distance));
+        this.index += this.distance;
         this.loading = false;
       });
     },
