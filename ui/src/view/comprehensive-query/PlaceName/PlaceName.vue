@@ -5,50 +5,66 @@
         v-for="item in allItems"
         :key="`地名地址${item.placeName}`"
         @click="select(item)"
-        :class="{ 'place-name-active-text': selected.indexOf(item.placeName) > -1 }"
+        :class="{
+          'place-name-active-text': selected.indexOf(item.placeName) > -1
+        }"
         >{{ item.placeName }}</span
       >
     </div>
     <div class="search-tab-container" v-if="showResult && !showResultSet">
       <div class="search-switch-container">
-        <a-switch v-model="cluster" @change="onChange" size="small" />
+        <mapgis-ui-switch v-model="cluster" @change="onChange" size="small" />
         <span :class="{ 'place-name-active-text': cluster }">聚合展示</span>
-        <a-icon
+
+        <mapgis-ui-iconfont
           class="action"
           style="flex: 1; text-align: right;"
-          :type="shrink ? 'up' : 'down'"
+          :type="shrink ? 'mapgis-up' : 'mapgis-down'"
           @click="shrink = !shrink"
         />
       </div>
-      <a-tabs
+      <mapgis-ui-tabs
         v-model="tab"
         type="card"
         v-show="!shrink"
         style="margin-top: 8px;"
       >
-        <a-tab-pane v-for="item in selected" :key="item" :tab="item">
-          <!-- <place-name-panel
+        <mapgis-ui-tab-pane v-for="item in selected" :key="item" :tab="item">
+          <place-name-panel
+            :defaultMarkerIcon="defaultMarkerIcon"
+            :selectedMarkerIcon="selectedMarkerIcon"
             :widgetInfo="widgetInfo"
             :cluster="cluster"
             :name="item"
             :keyword="keyword"
             :activeTab="tab"
-            :baseUrl="baseUrl"
             :geometry="geometryData"
             @show-coords="showCoords"
-            @click-item="setCenter"
-            @update-geojson="updateGeojson"
-          ></place-name-panel> -->
-        </a-tab-pane>
-      </a-tabs>
+            @click-item="clickItem"
+            @update-geojson="currentResult"
+          ></place-name-panel>
+        </mapgis-ui-tab-pane>
+      </mapgis-ui-tabs>
     </div>
   </div>
 </template>
 
 <script>
+import PlaceNamePanel from "./PlaceNamePanel";
 export default {
   name: "place-name",
+  components: {
+    PlaceNamePanel
+  },
   props: {
+    defaultMarkerIcon: {
+      type: String,
+      default: ""
+    },
+    selectedMarkerIcon: {
+      type: String,
+      default: ""
+    },
     widgetInfo: {
       type: Object,
       default: () => ({})
@@ -73,7 +89,6 @@ export default {
       cluster: false,
       // 结果集展示标志
       showResultSet: false,
-      geojson: {},
       shrink: false
     };
   },
@@ -85,9 +100,7 @@ export default {
       return this.widgetInfo.placeName.showType;
     },
     config() {
-      return (
-        this.widgetInfo.placeName || this.widgetInfo.dataStore
-      );
+      return this.widgetInfo.placeName || this.widgetInfo.dataStore;
     }
   },
   watch: {
@@ -100,15 +113,7 @@ export default {
     showType: {
       immediate: true,
       handler() {
-        if (this.showType === "result") {
-          this.showResultSet = true;
-        } else if (this.showType === "normal") {
-          this.showResultSet = false;
-          this.cluster = false;
-        } else if (this.showType === "cluster") {
-          this.showResultSet = false;
-          this.cluster = true;
-        }
+        this.showTypeChange();
       }
     }
   },
@@ -118,6 +123,17 @@ export default {
     }
   },
   methods: {
+    showTypeChange() {
+      if (this.showType === "result") {
+        this.showResultSet = true;
+      } else if (this.showType === "normal") {
+        this.showResultSet = false;
+        this.cluster = false;
+      } else if (this.showType === "cluster") {
+        this.showResultSet = false;
+        this.cluster = true;
+      }
+    },
     onChange(val) {
       const copy = JSON.parse(JSON.stringify(this.selected));
       this.selected = [];
@@ -168,6 +184,38 @@ export default {
         });
       }
     },
+    reset() {
+      this.showResult = false;
+      this.tab = "";
+      this.showTypeChange();
+      this.markers = [];
+      this.fieldConfigs = [];
+      this.currentResult({})
+    },
+    removeResult() {
+      // 点击关闭面板的时候，删除属性表里面所有的tab
+      if (this.showResultSet === true) {
+        this.selectedCopy.forEach(item => {
+          this.openReseultSet(item, true);
+        });
+      }
+    },
+    /**
+     * 当前展示的结果回调函数
+     */
+    currentResult(geojson) {
+      this.$emit("current-result", geojson);
+    },
+    showCoords(markers, fieldConfigs, activeMarkers, activeFieldConfigs) {
+      this.markers = [...markers, ...activeMarkers];
+      this.fieldConfigs = [...fieldConfigs, ...activeFieldConfigs];
+    },
+    /**
+     * 当前点击的条目的回调函数
+     */
+    clickItem(positionCoord) {
+      this.$emit("click-item", positionCoord);
+    },
     openReseultSet(item, isDelete) {
       const { queryWay, ip, port, docName, allSearchName } = this.config;
       const {
@@ -191,8 +239,8 @@ export default {
           option: {
             id: LayerIndex,
             name: LayerName,
-            ip: ip || baseConfigInstance.config.ip,
-            port: Number(port || baseConfigInstance.config.port),
+            ip: ip,
+            port: Number(port),
             serverType: LayerType.IGSMapImage,
             layerIndex: LayerIndex,
             serverName: docName,
@@ -206,8 +254,8 @@ export default {
           id: `${placeName}`,
           name: `${placeName} 查询结果`,
           option: {
-            ip: ip || baseConfigInstance.config.ip,
-            port: Number(port || baseConfigInstance.config.port),
+            ip: ip,
+            port: Number(port),
             serverType: LayerType.IGSVector,
             gdbp: gdbp,
             where,
@@ -216,7 +264,6 @@ export default {
         };
       }
       if (!isDelete) {
-
         // this.addExhibition(new AttributeTableExhibition(exhibition));
         // this.openExhibitionPanel();
       } else {

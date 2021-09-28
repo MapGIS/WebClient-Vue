@@ -3,7 +3,7 @@
 
 .mp-widget-comprehensive-query {
   .search-box {
-    .ant-divider {
+    .mapgis-ui-divider {
       margin: 0;
     }
     input {
@@ -25,20 +25,20 @@
   }
   .locate-panel-contaner,
   .search-panel-contaner {
-    .ant-tabs.ant-tabs-card {
-      .ant-tabs-card-bar {
+    .mapgis-ui-tabs.mapgis-ui-tabs-card {
+      .mapgis-ui-tabs-card-bar {
         margin-bottom: 0;
-        .ant-tabs-nav-container-scrolling {
+        .mapgis-ui-tabs-nav-container-scrolling {
           padding-right: 20px;
           padding-left: 20px;
-          .ant-tabs-tab-prev.ant-tabs-tab-arrow-show,
-          .ant-tabs-tab-next.ant-tabs-tab-arrow-show {
+          .mapgis-ui-tabs-tab-prev.mapgis-ui-tabs-tab-arrow-show,
+          .mapgis-ui-tabs-tab-next.mapgis-ui-tabs-tab-arrow-show {
             width: 20px;
           }
         }
-        .ant-tabs-nav-container {
+        .mapgis-ui-tabs-nav-container {
           height: 32px;
-          .ant-tabs-tab {
+          .mapgis-ui-tabs-tab {
             height: 32px;
             line-height: 32px;
             padding: 0 6px;
@@ -92,7 +92,7 @@
       font-size: 14px;
     }
   }
-  .ant-divider-vertical {
+  .mapgis-ui-divider-vertical {
     top: 0;
   }
   .panel-container {
@@ -110,6 +110,7 @@
   }
 }
 
+// 综合查询查询面板样式
 .place-name-container {
   flex: 1;
   overflow: hidden;
@@ -139,7 +140,7 @@
       .place-name-active-text {
         color: $primary-color;
       }
-      .ant-switch {
+      .mapgis-ui-switch {
         margin: 0 10px 0 0;
       }
       .action {
@@ -150,33 +151,111 @@
         }
       }
     }
-    ::v-deep .ant-tabs {
+    .mapgis-ui-tabs {
       display: flex;
       flex-direction: column;
       flex: 1;
       overflow: hidden;
-      .ant-tabs-nav-container {
+      .mapgis-ui-tabs-nav-container {
         height: 32px;
-        .ant-tabs-tab {
+        .mapgis-ui-tabs-tab {
           height: 32px;
           line-height: 32px;
         }
       }
-      .ant-tabs-bar {
+      .mapgis-ui-tabs-bar {
         margin-bottom: 10px;
       }
-      .ant-tabs-content {
+      .mapgis-ui-tabs-content {
         flex: 1;
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        .ant-tabs-tabpane-active {
+        .mapgis-ui-tabs-tabpane-active {
           flex: 1;
           display: flex;
           flex-direction: column;
           overflow: hidden;
         }
       }
+    }
+  }
+}
+
+// 综合查询面板展示模块样式
+.comprehensive-place-name-panel-container {
+  &,
+  .mapgis-ui-spin-nested-loading,
+  .mapgis-ui-spin-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    .cluster-title {
+      margin: 8px 0;
+      span:first-child {
+        padding-left: 5px;
+        border-left: 4px solid $primary-color;
+        font-weight: bold;
+        color: $title-color;
+        margin-right: 5px;
+      }
+    }
+    .cluster-content {
+      display: flex;
+      align-items: center;
+      span:nth-child(2) {
+        flex: 1;
+        text-align: right;
+      }
+      .mapgis-ui-tag {
+        margin-left: 10px;
+      }
+    }
+    .comprehensive-place-name-panel {
+      flex: 1;
+      overflow: auto;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        border-bottom: 1px solid $border-color;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        &:last-child {
+          border-bottom-width: 0;
+        }
+        .content-place-name-panel {
+          flex: 1;
+          p {
+            margin-bottom: 3px !important;
+            label {
+              color: $title-color;
+              margin-right: 8px;
+              font-weight: bold;
+            }
+            span {
+              color: $text-color;
+            }
+          }
+        }
+        .img-place-name-panel {
+          margin-right: 18px;
+        }
+      }
+    }
+    .pagination-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 5px;
+    }
+    .mapgis-ui-empty-normal {
+      margin: 15px 0 5px 0;
     }
   }
 }

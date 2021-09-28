@@ -1,6 +1,6 @@
 <template>
   <div>
-    <solt>
+    <slot>
     <mapgis-ui-group-tab
       title="模型"
       :has-top-margin="false"
@@ -62,7 +62,7 @@
       </mapgis-ui-button>
       <mapgis-ui-button @click="stopClipping"> 清除 </mapgis-ui-button>
     </mapgis-ui-setting-footer>
-    </solt>
+    </slot>
   </div>
 </template>
 
