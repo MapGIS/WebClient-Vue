@@ -27,6 +27,10 @@ export default {
     showPanel: {
       type: Boolean,
       default: true
+    },
+    defaultIcon: {
+      type: String,
+      default: "useDefault"
     }
   },
   data() {

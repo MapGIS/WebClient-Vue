@@ -358,9 +358,6 @@ export default {
                     }
                 }
                 this.selectValue = this.themeProps.themeField;
-                if(this.themeProps.themeType === "symbol"){
-                    this.defaultIcon = "useDefault"
-                }
                 this.$_addThemeLayer(this.themeProps.themeType, layerId, this.themeProps.themeField);
                 this.$_addHeightLightLayer();
             }
@@ -528,23 +525,23 @@ export default {
                             break;
                         case "symbol":
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "numberFields");
-                            themeManager.initThemeProps(
-                                vm.layerIdCopy,
-                                vm.themeType,
-                                vm.dataType,
-                                fields[0]
-                            );
-                            themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
-                            dataSource = vm.$_setDataSource(features, fields[0], "range");
-                            vm.$refs.themePanel.currentThemeType = vm.themeType;
-                            vm.$refs.themePanel.$_setIcons(vm.icons);
-                            vm.$refs.themePanel.$_setDefaultIcon(vm.defaultIcon);
-                            vm.$refs.themePanel.$_setDataSoure(dataSource);
                             if (vm.initType === "props") {
                                 vm.selectValue = themeField;
                             } else {
                                 vm.selectValue = fields[0];
                             }
+                            themeManager.initThemeProps(
+                                vm.layerIdCopy,
+                                vm.themeType,
+                                vm.dataType,
+                                vm.selectValue
+                            );
+                            themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
+                            dataSource = vm.$_setDataSource(features, vm.selectValue, "range");
+                            vm.$refs.themePanel.currentThemeType = vm.themeType;
+                            vm.$refs.themePanel.$_setIcons(vm.icons);
+                            vm.$refs.themePanel.$_setDefaultIcon(vm.defaultIcon);
+                            vm.$refs.themePanel.$_setDataSoure(dataSource);
                             let radiusArr = [], radiusArrCopy = [];
                             for (let i = 0; i < dataSource.length; i++) {
                                 radiusArr.push(i + 1);
