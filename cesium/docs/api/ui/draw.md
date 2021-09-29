@@ -1,5 +1,3 @@
-# 绘制组件 
-
 > mapgis-3d-draw
 
 ## 属性
@@ -10,6 +8,28 @@
 - **侦听属性**
 - **默认值:** `false`
 - **描述:** 是否允许无线绘制。true：允许无线绘制，false：不允许
+
+### `enableControl`
+
+- **类型:** `Boolean`
+- **侦听属性**
+- **默认值:** `true`
+- **描述:** 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性 position 改变其显示的位置
+
+### `position`
+
+- **类型:** `String`
+- **侦听属性**
+- **默认值:** `top-right`
+- **描述:** 传入的属性 position 改变其按钮控件的位置
+
+
+### `clampToGround`
+
+- **类型:** `Boolean`
+- **侦听属性**
+- **默认值:** `true`
+- **描述:** 绘制在三维图层上，是否贴地贴模型，true则贴地贴模型。
 
 ### `vueKey`
 
@@ -76,18 +96,18 @@
 <template>
   <div id="app">
     <mapgis-web-scene>
-      <mapgis-3d-draw
-        ref="drawref"
-        v-on:load="handleDrawLoad"
-        v-on:drawcreate="handleCreate"
-      >
-        <div id="toolbar-wrapper">
-          <div class="toolbar-item" v-on:click="togglePoint">画点</div>
-          <div class="toolbar-item" v-on:click="togglePolyline">画线</div>
-          <div class="toolbar-item" v-on:click="toggleRect">矩形</div>
-          <div class="toolbar-item" v-on:click="togglePolygon">多边形</div>
-          <div class="toolbar-item" v-on:click="toggleDelete">删除</div>
-        </div>
+      <mapgis-3d-raster-layer 
+              url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+      <mapgis-3d-igs-m3d 
+              :autoReset="autoReset" 
+              :maximumScreenSpaceError="maximumScreenSpaceError" 
+              :url="m3dUrl">
+      </mapgis-3d-igs-m3d>
+      <mapgis-3d-draw 
+              :enableControl="enableControl"
+              :drawStyle="drawStyle"
+              :clampToGround="clampToGround" 
+              :position="position">
       </mapgis-3d-draw>
     </mapgis-web-scene>
   </div>
@@ -100,32 +120,19 @@ export default {
     return {};
   },
   methods: {
-    handleDrawLoad(drawer) {
-      this.drawer = drawer;
+    m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/DaYanTa",
+    autoReset:true,
+    maximumScreenSpaceError:6,
+    enableControl: true,
+    position:"top-right",
+    drawStyle:{
+      color:'#FF8C00',
+      opacity:0.6,
+      // outlineColor:'#FFA500',
+      // width:4,
+      // outlineWidth:2
     },
-    handleCreate(cartesian3, lnglat) {
-      console.log("create", cartesian3, lnglat);
-    },
-    togglePoint(e) {
-      //绘制点
-      this.drawer && this.drawer.enableDrawPoint();
-    },
-    togglePolyline() {
-      //绘制线
-      this.drawer && this.drawer.enableDrawLine();
-    },
-    togglePolygon() {
-      //绘制多边形
-      this.drawer && this.drawer.enableDrawPolygon();
-    },
-    toggleRect() {
-      //绘制矩形
-      this.drawer && this.drawer.enableDrawRectangle();
-    },
-    toggleDelete() {
-      //删除绘制
-      this.drawer && this.drawer.removeEntities();
-    }
+    clampToGround:true
   }
 };
 </script>
