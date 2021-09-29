@@ -2920,7 +2920,7 @@ export default {
                 }
             }, 100);
         },
-        $_resetAllLayer(layerId) {
+        $_resetAllLayer(layerId, removeOriginLayer) {
             let layerOrder = themeManager.getLayerProps(layerId, "layerOrder"), vm = this;
             let allLayerOrder = themeManager.getLayerOrder();
             for (let i = 0; i < layerOrder.length; i++) {
@@ -2929,13 +2929,17 @@ export default {
                 }
             }
             allLayerOrder.splice(allLayerOrder.indexOf(layerOrder[0]), layerOrder.length);
-            let originLayer = themeManager.getLayerProps(layerId, layerId);
-            let opacity = 1;
-            let dataType = themeManager.getLayerProps(layerId, "dataType");
-            if (originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(dataType + "-opacity")) {
-                opacity = originLayer.paint[dataType + "-opacity"];
+            if(removeOriginLayer){
+                this.map.removeLayer(layerId);
+            }else {
+                let originLayer = themeManager.getLayerProps(layerId, layerId);
+                let opacity = 1;
+                let dataType = themeManager.getLayerProps(layerId, "dataType");
+                if (originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(dataType + "-opacity")) {
+                    opacity = originLayer.paint[dataType + "-opacity"];
+                }
+                this.map.setPaintProperty(layerId, dataType + "-opacity", opacity);
             }
-            this.map.setPaintProperty(layerId, dataType + "-opacity", opacity);
             this.$refs.themePanel.$_close();
             themeManager.setManagerProps(layerId, undefined);
         },

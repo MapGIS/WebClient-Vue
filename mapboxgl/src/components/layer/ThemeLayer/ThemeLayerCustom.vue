@@ -58,8 +58,8 @@ export default {
       this["$_" + id + "Changed"](value);
     }
   },
-  resetLayer(layerId) {
-    this.$_resetAllLayer(layerId);
+  resetLayer(layerId, removeOriginLayer) {
+    this.$_resetAllLayer(layerId, removeOriginLayer);
   },
   hideCurrentLayer(layerId) {
     this.$_hideCurrentLayer(layerId);
