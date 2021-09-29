@@ -57,6 +57,12 @@
         :selectedMarkerIcon="selectedMarkerIcon"
         :widgetInfo="widgetInfo"
         :geometry="geometry"
+        @current-result="currentResult"
+        @select-markers="selectMarkers"
+        @click-item="clickItem"
+        @change-cluster="changeCluster"
+        @open-attribute-table="openAttributeTable"
+        @remove-attribute-table="removeAttributeTable"
       ></place-name>
     </div>
   </div>
@@ -174,6 +180,42 @@ export default {
         .getBoundingClientRect().top;
       const bottom = document.documentElement.clientHeight - top;
       this.maxHeight = bottom - 10 - 3;
+    },
+    /**
+     * 当前展示的结果回调函数
+     */
+    currentResult(geojson) {
+      this.$emit("current-result", geojson);
+    },
+    /**
+     * 当前点击的条目的回调函数
+     */
+    clickItem(feature) {
+      this.$emit("click-item", feature);
+    },
+    /**
+     * 当前选中的坐标
+     */
+    selectMarkers(selectMarkers) {
+      this.$emit("select-markers", selectMarkers);
+    },
+    /**
+     * 聚合按钮改变时的回调
+     */
+    changeCluster(val) {
+      this.$emit("change-cluster", val);
+    },
+    /**
+     * 打开属性表回调函数
+     */
+    openAttributeTable(exhibition) {
+      this.$emit("open-attribute-table", exhibition);
+    },
+    /**
+     * 关闭属性表回调函数
+     */
+    removeAttributeTable(exhibitionId) {
+      this.$emit("remove-attribute-table", exhibitionId);
     }
   }
 };

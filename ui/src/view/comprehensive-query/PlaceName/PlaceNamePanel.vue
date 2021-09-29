@@ -107,8 +107,8 @@ export default {
       activeMarkersInfos: [],
       activeFieldConfigs: [],
       spinning: false,
-      geojson: {type: "FeatureCollection", features:[]},
-      selectMarkers:[]
+      geojson: { type: "FeatureCollection", features: [] },
+      selectMarkers: []
     };
   },
   computed: {
@@ -129,14 +129,12 @@ export default {
     activeTab: {
       immediate: true,
       handler() {
-        // this.activeMarkersInfos = [];
-        // this.activeFieldConfigs = [];
-        // this.updataMarkers();
+        this.selectMarkers = [];
+        this.updataMarkers();
       }
     }
   },
-  beforeCreate() {
-  },
+  beforeCreate() {},
   mounted() {
     const { showAttrsAndTitle } = this.selectedItem;
     const fields = [];
@@ -161,13 +159,8 @@ export default {
     },
     updataMarkers() {
       if (this.activeTab === this.name) {
-        this.$emit(
-          "show-coords",
-          this.markersInfos,
-          this.fieldConfigs,
-          this.activeMarkersInfos,
-          this.activeFieldConfigs
-        );
+        this.$emit("select-markers", this.selectMarkers);
+        this.$emit("update-geojson", this.geojson);
       }
     },
     async queryFeature() {
@@ -177,8 +170,6 @@ export default {
               this.config.allSearchName} LIKE '%${this.keyword}%'`
           : `${this.selectedItem.searchField ||
               this.config.allSearchName} LIKE '%'`;
-      // const where = `${this.selectedItem.searchField ||
-      // this.config.allSearchName} LIKE '%${this.keyword}%'`
       if (!this.isDataStoreQuery) {
         await this.igsQuery(where);
       } else {
@@ -233,86 +224,51 @@ export default {
             for (let f = 0; f < this.fields.length; f += 1) {
               properties[this.fields[f]] = feature.properties[this.fields[f]];
             }
-            // const coords = {
-            //   coordinates: Feature.getGeoJSONFeatureCenter(feature),
-            //   properties,
-            //   markerId: `place-name-${j}`,
-            //   img: this.defaultMarkerIcon
-            // };
-            // markerCoords.push(coords);
-            properties.markerId= `place-name-${j}`
-            feature.properties=properties
+            properties.markerId = `place-name-${j}`;
+            feature.properties = properties;
           }
         }
         this.geojson = { type: "FeatureCollection", features };
-        // if (this.cluster) {
-        //   this.geojson = { type: "FeatureCollection", features };
-        //   this.markersInfos = [];
-        //   this.activeMarkersInfos = [];
-        //   this.activeFieldConfigs = [];
-        // } else {
-        //   this.markersInfos = markerCoords;
-        //   this.activeMarkersInfos = [];
-        //   this.activeFieldConfigs = [];
-        //   this.geojson = {type: "FeatureCollection", features:[]};
-        // }
         this.maxCount = geoJSONData.dataCount
           ? geoJSONData.dataCount
           : features.length;
-        // this.updataMarkers();
-        this.$emit("update-geojson", this.geojson);
+        this.updataMarkers();
       } catch (error) {
         console.log(error);
       } finally {
         this.spinning = false;
       }
     },
-    async mouseOver(index) {
-      this.selectMarkers=[this.geojson.features[index].properties.markerId]
-      // this.activeMarkersInfos = [
-      //   {
-      //     ...this.markersInfos[index],
-      //     markerId: `active-${this.markersInfos[index].markerId}`,
-      //     img: this.selectedMarkerIcon
-      //   }
-      // ];
-      // this.activeFieldConfigs = [
-      //   {
-      //     ...this.fieldConfigs[index]
-      //   }
-      // ];
-      // this.$set(this.markersInfos[index], "img", this.selectedMarkerIcon);
-      // this.updataMarkers();
+    mouseOver(index) {
+      this.selectMarkers = [this.geojson.features[index].properties.markerId];
+      this.updataMarkers();
     },
-    async mouseLeave(index) {
-      this.selectMarkers=[]
-      // this.activeMarkersInfos = [
-      //   {
-      //     ...this.markersInfos[index],
-      //     markerId: `active-${this.markersInfos[index].markerId}`,
-      //     img: this.defaultMarkerIcon
-      //   }
-      // ];
-      // this.activeFieldConfigs = [
-      //   {
-      //     ...this.fieldConfigs[index]
-      //   }
-      // ];
-      // this.$set(this.markersInfos[index], "img", this.defaultMarkerIcon);
-      // this.updataMarkers();
+    mouseLeave(index) {
+      this.selectMarkers = [];
+      this.updataMarkers();
     },
+            /**
+     * 点击列表的回调事件
+     */
     pageChange(page) {
       this.currentPageIndex = page;
+      this.selectMarkers = [];
       this.queryFeature();
     },
+        /**
+     * 点击列表的回调事件
+     */
     setActivePoint(index) {
       this.$emit("click-item", this.geojson.features[index]);
     },
-    activeImage(markerId){
-      if(this.selectMarkers.length>0&&this.selectMarkers[0]===markerId){
-        return this.selectedMarkerIcon
+    /**
+     * 列表高亮图标
+     */
+    activeImage(markerId) {
+      if (this.selectMarkers.length > 0 && this.selectMarkers[0] === markerId) {
+        return this.selectedMarkerIcon;
       }
-      return this.defaultMarkerIcon
+      return this.defaultMarkerIcon;
     }
   }
 };

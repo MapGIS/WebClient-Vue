@@ -38,8 +38,8 @@
             :name="item"
             :keyword="keyword"
             :activeTab="tab"
-            :geometry="geometryData"
-            @show-coords="showCoords"
+            :geometry="geometry"
+            @select-markers="selectMarkers"
             @click-item="clickItem"
             @update-geojson="currentResult"
           ></place-name-panel>
@@ -51,6 +51,9 @@
 
 <script>
 import PlaceNamePanel from "./PlaceNamePanel";
+const layer = require("../util/layer");
+
+const { LayerType } = layer;
 export default {
   name: "place-name",
   components: {
@@ -76,7 +79,6 @@ export default {
   },
   data() {
     return {
-      geometryData: null,
       selected: [],
       selectedCopy: [],
       showResult: false,
@@ -104,16 +106,17 @@ export default {
     }
   },
   watch: {
-    geometry: {
-      immediate: true,
-      handler(val) {
-        this.geometryData = val;
-      }
-    },
+    // geometry: {
+    //   immediate: true,
+    //   handler(val) {
+    //     this.geometryData = val;
+    //   }
+    // },
     showType: {
       immediate: true,
       handler() {
         this.showTypeChange();
+        this.$emit("change-cluster", this.cluster);
       }
     }
   },
@@ -138,6 +141,7 @@ export default {
       const copy = JSON.parse(JSON.stringify(this.selected));
       this.selected = [];
       this.selected = copy;
+      this.$emit("change-cluster", val);
     },
     select(item) {
       const index = this.selected.indexOf(item.placeName);
@@ -153,10 +157,6 @@ export default {
     },
     search(keyword) {
       this.keyword = keyword;
-      // TODO 该处后面要继续添加二三维的回调
-      // if (!this.geometry) {
-      //   this.geometryData = this.getBounds();
-      // }
       if (this.showResultSet) {
         const arr = [];
         // 删除属性表中不包含在此次选择项的tab
@@ -184,13 +184,16 @@ export default {
         });
       }
     },
+    selectedItem(name) {
+      return this.allItems.find(item => name === item.placeName);
+    },
     reset() {
       this.showResult = false;
       this.tab = "";
       this.showTypeChange();
       this.markers = [];
       this.fieldConfigs = [];
-      this.currentResult({})
+      this.currentResult({ type: "FeatureCollection", features: [] });
     },
     removeResult() {
       // 点击关闭面板的时候，删除属性表里面所有的tab
@@ -206,15 +209,17 @@ export default {
     currentResult(geojson) {
       this.$emit("current-result", geojson);
     },
-    showCoords(markers, fieldConfigs, activeMarkers, activeFieldConfigs) {
-      this.markers = [...markers, ...activeMarkers];
-      this.fieldConfigs = [...fieldConfigs, ...activeFieldConfigs];
+    /**
+     * 当前选中的坐标
+     */
+    selectMarkers(selectMarkers) {
+      this.$emit("select-markers", selectMarkers);
     },
     /**
      * 当前点击的条目的回调函数
      */
-    clickItem(positionCoord) {
-      this.$emit("click-item", positionCoord);
+    clickItem(feature) {
+      this.$emit("click-item", feature);
     },
     openReseultSet(item, isDelete) {
       const { queryWay, ip, port, docName, allSearchName } = this.config;
@@ -244,7 +249,7 @@ export default {
             serverType: LayerType.IGSMapImage,
             layerIndex: LayerIndex,
             serverName: docName,
-            geometry: this.geometryData,
+            geometry: this.geometry,
             serverUrl: `http://${ip}:${port}/igs/rest/mrms/docs/${docName}`,
             where
           }
@@ -259,14 +264,16 @@ export default {
             serverType: LayerType.IGSVector,
             gdbp: gdbp,
             where,
-            geometry: this.geometryData
+            geometry: this.geometry
           }
         };
       }
       if (!isDelete) {
+        this.$emit("open-attribute-table", exhibition);
         // this.addExhibition(new AttributeTableExhibition(exhibition));
         // this.openExhibitionPanel();
       } else {
+        this.$emit("remove-attribute-table", exhibition.id);
         // this.removeExhibition(exhibition.id);
       }
     }
