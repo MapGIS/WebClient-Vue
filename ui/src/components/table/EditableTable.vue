@@ -6,6 +6,7 @@
     :loading="loading"
     :class="prefixCls"
   >
+    <slot name="top" />
     <mapgis-ui-table
       bordered
       :row-selection="tableRowSelection"

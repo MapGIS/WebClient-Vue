@@ -7,6 +7,7 @@ import ThemeMixin from "../../mixin/ThemeMixin";
 export const emptyProps = {
   ...EmptyProps(),
   image: PropTypes.any.def(require("./assets/image/empty.png"))
+  // image: Empty.PRESENTED_IMAGE_SIMPLE
 };
 
 export default {
