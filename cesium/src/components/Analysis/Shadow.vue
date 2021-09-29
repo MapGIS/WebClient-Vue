@@ -375,7 +375,6 @@ export default {
     setPercent(result) {
       this.percent = result;
       this.maskText = `正在分析中, 请稍等...${Number((result * 100).toFixed(2))}%`;
-      console.log("this.maskYetx", this.maskText);
       const timer = setInterval(() => {
         if (this.percent === result) {
           this.toggleMask(false);
@@ -466,7 +465,7 @@ export default {
 }
 
 ::v-deep .mapgis-ui-time-picker {
-  width: 171px;
+  width: 179px;
 }
 
 ::v-deep .mapgis-ui-col-5 {

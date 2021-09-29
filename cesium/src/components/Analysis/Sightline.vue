@@ -167,7 +167,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
-        vm.$emit("load", {component: this});
+        vm.$emit("load", vm);
         CesiumZondy.VisiblityAnalysisManager.addSource(
             vueKey,
             vueIndex,
@@ -267,6 +267,7 @@ export default {
 
     // 注册通视分析鼠标左键点击事件
     registerMouseLClickEvent(event) {
+      let {vueKey, vueIndex} = this;
       let cartesian = this.webGlobe.viewer.getCartesian3Position(event.position)
 
       if (!this.hasViewPosition && cartesian !== undefined) {

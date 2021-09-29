@@ -1,5 +1,5 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
+import Markdown from "../../cesium/docs/api/analysis/Viewshed.md";
 
 export default {
     title: "三维/分析/可视域分析",
@@ -7,39 +7,44 @@ export default {
         horizontAngle: {
             description:'观察点的水平视角',
             table:{
-                //description描述信息下的提示框，可选，添加这一项就会在描述信息文字下生成一个提示信息按钮
-                //summary：提示按钮里的文字，detail：提示信息
-                // type:{ summary: 'tips',detail: "这里是提示" },
-                //默认值，即页面上Default那一栏的值，不在这里填写，则页面上不会有默认值
-                //如果加了detail,{ summary: 'null',detail: "这里是提示" },则页面会多出一个描述信息的提示框
                 defaultValue: { summary: '60' },
             },
-            //Control这里一栏里面展示数据的方式，可以是input、textArean、boolean等，可选值如下
-            control:'text'
+            control:'number'
+        },
+        verticalAngle: {
+            description:'观察点的垂直视角',
+            table:{
+                defaultValue: { summary: '60' },
+            },
+            control:'number'
+        },
+        exHeight: {
+            description:'观察点的附加高度，单位为米',
+            table:{
+                defaultValue: { summary: '1.85' },
+            },
+            control:'number'
         },
         maskColor: {
             description:'可视遮罩颜色',
             table:{
                 defaultValue: { summary: 'rgba(37, 218, 169, 0.2)' },
             },
-            //Control这里一栏里面展示数据的方式，可以是input、textArean、boolean等，可选值如下
-            control:'text'
+            control:'color'
         },
         visibleColor: {
             description:'可视区域颜色',
             table:{
                 defaultValue: { summary: '#00ff00' },
             },
-            //Control这里一栏里面展示数据的方式，可以是input、textArean、boolean等，可选值如下
-            control:'text'
+            control:'color'
         },
         unVisibleColor: {
             description:'非可视区域颜色',
             table:{
                 defaultValue: { summary: '#ff0000' },
             },
-            //Control这里一栏里面展示数据的方式，可以是input、textArean、boolean等，可选值如下
-            control:'text'
+            control:'color'
         },
     }
 }
@@ -59,7 +64,13 @@ const Template = (args, {argTypes}) => ({
       <mapgis-3d-raster-layer :url="url"/>
       <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-viewshed :horizontAngle="horizontAngle" :maskColor="maskColor" :visibleColor="visibleColor"></mapgis-3d-viewshed>
+        <mapgis-3d-viewshed 
+            :horizontAngle="horizontAngle"
+            :verticalAngle="verticalAngle"
+            :exHeight="exHeight"
+            :maskColor="maskColor" 
+            :visibleColor="visibleColor"
+            :unVisibleColor="unVisibleColor"></mapgis-3d-viewshed>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `
@@ -68,9 +79,11 @@ const Template = (args, {argTypes}) => ({
 export const Viewshed = Template.bind({});
 Viewshed.args = {
     horizontAngle: 70,
+    verticalAngle:60,
     maskColor: 'rgba(37, 218, 169, 0.2)',
     visibleColor:'#00ff00',
-    unVisibleColor:'#ff0000'
+    unVisibleColor:'#ff0000',
+    exHeight:1.85
 };
 Viewshed.parameters = {
     docs: {

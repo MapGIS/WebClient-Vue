@@ -1,6 +1,7 @@
 > mapgis-3d-viewshed
 
 ## 属性
+
 ### `vueKey`
 
 - **类型:** `String`
@@ -42,6 +43,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **描述:** 观察点的垂直视角
 
 ### `exHeight`
+
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
@@ -72,38 +74,53 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **默认值:** `rgba(37, 218, 169, 0.2)`
 - **描述:** 可视遮罩颜色，可以传16进制或者rgba任意形式颜色
 
+## 事件
+
+### `@load`
+
+- **Description:** 在 Viewshed组件 加载完毕后发送该事件
+- **Payload** 可视域分析对象
 
 ## 示例
 
 ```vue
+
 <template>
-    <mapgis-web-scene
-        libPath="cesium/Cesium.js"
-        pluginPath="cesium/webclient-cesium-plugin.min.js"
-    >
-        <mapgis-3d-raster-layer :url="url" />
-        <mapgis-3d-igs-m3d
-            :autoReset="autoReset"
-            :maximumScreenSpaceError="maximumScreenSpaceError"
-            :url="m3dUrl"
-        />
-      <mapgis-ui-card class="storybook-ui-card">
-      <mapgis-3d-viewshed></mapgis-3d-viewshed>
-      </mapgis-ui-card>
-    </mapgis-web-scene>
+  <mapgis-web-scene
+      libPath="cesium/Cesium.js"
+      pluginPath="cesium/webclient-cesium-plugin.min.js"
+  >
+    <mapgis-3d-raster-layer :url="url"/>
+    <mapgis-3d-igs-m3d
+        :autoReset="autoReset"
+        :maximumScreenSpaceError="maximumScreenSpaceError"
+        :url="m3dUrl"
+    />
+    <mapgis-ui-card class="storybook-ui-card">
+      <mapgis-3d-viewshed
+          :horizontAngle="horizontAngle"
+          :maskColor="maskColor"
+          :visibleColor="visibleColor">
+      </mapgis-3d-viewshed>
+    </mapgis-ui-card>
+  </mapgis-web-scene>
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-            url:
-                "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-            autoReset: true,
-            maximumScreenSpaceError: 8,
-        };
-    },
+  data() {
+    return {
+      url:
+          "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
+      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      autoReset: true,
+      maximumScreenSpaceError: 8,
+      horizontAngle: 70,
+      maskColor: 'rgba(37, 218, 169, 0.2)',
+      visibleColor: '#00ff00',
+      unVisibleColor: '#ff0000'
+    };
+  },
 };
 </script>
 <style scoped>
