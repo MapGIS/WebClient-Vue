@@ -373,7 +373,7 @@ export default {
             }
         },
         $_addThemeLayerBySource() {
-            if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && JSON.stringify(this.dataSource) !== "{}") {
+            if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
                 let dataSource = this.dataSource;
                 for (let i = 0; i < dataSource.features.length; i++) {
                     if (!dataSource.features[i].hasOwnProperty("id")) {
