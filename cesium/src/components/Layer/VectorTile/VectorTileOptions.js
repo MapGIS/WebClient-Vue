@@ -67,5 +67,5 @@ export default {
   /**
    * @description 是否可见
    */
-  show: { type: Boolean, default: true }
+  show: { type: Boolean, default: true },
 };
