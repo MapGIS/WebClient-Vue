@@ -1,32 +1,78 @@
 <script>
 import VectorTileOptions from "./VectorTileOptions";
+import ServiceLayer from "../ServiceLayer";
+import clonedeep from 'lodash.clonedeep'
+
 export default {
   name: "mapgis-3d-vectortile-layer",
+  mixins: [ServiceLayer],
   props: { ...VectorTileOptions },
+  data() {
+    return {
+      managerName: "VectorTileManager"
+    };
+  },
   inject: ["Cesium", "webGlobe", "CesiumZondy"],
   created() {},
   mounted() {
-    this.mount();
+    this.$_mount();
     this.watchProp();
   },
   destroyed() {
-    this.unmount();
+    this.$_unmount();
+  },
+  watch: {
+    layerStyle: {
+      handler: function(next, old) {
+        let { vueKey, vueIndex } = this;
+        let layer = window.CesiumZondy[this.managerName].findSource(
+          vueKey,
+          vueIndex
+        );
+        if (this.layerStyleCopy.visible !== this.layerStyle.visible) {
+          layer.source.show = this.layerStyle.visible;
+        }
+        if (this.layerStyleCopy.opacity !== this.layerStyle.opacity) {
+          layer.source.alpha = this.layerStyle.opacity;
+        }
+        if (this.layerStyleCopy.zIndex !== this.layerStyle.zIndex) {
+          this.$_moveLayer();
+        }
+        this.layerStyleCopy = clonedeep(next);
+      },
+      deep: true
+    }
   },
   methods: {
-    createCesiumObject() {
+    /* layerLoaded(e) {
+      console.log("layerLoaded", e);
+    }, */
+    async createCesiumObject() {
       const { $props, webGlobe, CesiumZondy } = this;
       const { tilingScheme } = $props;
       const viewer = webGlobe.viewer;
       let tileScheme;
-      
-      if (typeof tilingScheme === 'string') {
+
+      if (typeof tilingScheme === "string") {
         tileScheme = this.checkTiling(tilingScheme);
       } else {
         tileScheme = tilingScheme;
       }
 
-      const opt = {...$props, tilingScheme: tileScheme}
-      return new CesiumZondy.Overlayer.VectorTileLayer(viewer, opt);
+      return new Promise(
+        resolve => {
+          let vectortile;
+          const opt = {
+            ...$props,
+            tilingScheme: tileScheme,
+            callback: () => {
+              resolve(vectortile);
+            }
+          };
+          vectortile = new CesiumZondy.Overlayer.VectorTileLayer(viewer, opt);
+        },
+        reject => {}
+      );
     },
     checkTiling(tileMatrixSetName) {
       let tilingScheme;
@@ -52,16 +98,13 @@ export default {
         vueIndex,
         show,
         mvtStyle,
-        vectortilejson,
+        vectortilejson
       } = this;
       const viewer = webGlobe.viewer;
-      let find = CesiumZondy.VectorTileManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = CesiumZondy.VectorTileManager.findSource(vueKey, vueIndex);
 
       if (show) {
-        this.$watch("show", function (next) {
+        this.$watch("show", function(next) {
           if (this.initial) return;
           if (find) {
             !viewer.isDestroyed() && find.source.setVisible(next);
@@ -75,7 +118,7 @@ export default {
               !viewer.isDestroyed() && this.$vectortile.updateStyle(nextStyle);
             }
           },
-          deep: true,
+          deep: true
         });
       }
       if (vectortilejson) {
@@ -85,46 +128,87 @@ export default {
               !viewer.isDestroyed() && this.$vectortile.updateStyle(nextStyle);
             }
           },
-          deep: true,
+          deep: true
         });
       }
     },
     updateStyle(style) {
       this.$vectortile.updateStyle(style);
     },
-    mount() {
+    provider() {
+      return this.$vectortile ? this.$vectortile.provider : undefined;
+    },
+    $_mount() {
       const { webGlobe, vueIndex, vueKey, CesiumZondy } = this;
+      const { layerStyle } = this;
+      const { visible, opacity, zIndex } = layerStyle;
+      //取得webGlobe对象，防止当页面有多个webGlobe只会取得
+      let webGlobeObj = this.$_getWebGlobe();
+      const { imageryLayers } = webGlobeObj.viewer;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
       this.$emit("load", this);
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(vectortile => {
+        vm.$vectortile = vectortile;
+        let imageryLayer = vectortile.provider;
 
-      let vectortile = this.createCesiumObject();
-      this.$vectortile = vectortile;
+        if (vueKey && vueIndex) {
+          CesiumZondy.VectorTileManager.addSource(
+            vueKey,
+            vueIndex,
+            imageryLayer,
+            { vectortile }
+          );
+        }
 
-      if (vueKey && vueIndex) {
-        CesiumZondy.VectorTileManager.addSource(
-          vueKey,
-          vueIndex,
-          vectortile
-        );
-      }
+        //初始化imageryLayers.addImageryProvider需要的index
+        let providerZIndex;
+        if (zIndex < 0) {
+          throw new Error("zIndex不能为负数");
+        } else if (!zIndex) {
+          //如果没有设置layerStyle.zIndex，则layer的zIndex统一设置为0，并且按照初始化的顺序向上叠放
+          providerZIndex = 0;
+        } else {
+          //确定zIndex不能重复
+          this.$_checkZIndex(imageryLayers);
+          //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
+          providerZIndex = zIndex;
+        }
+
+        //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
+        //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
+        //只会根据imageryLayers排序，不会影响其他图层
+        this.$_initLayerIndex();
+
+        //设置图层是否可见
+        if (typeof visible === "boolean") {
+          imageryLayer.show = visible;
+        }
+
+        //设置涂层的透明度
+        if (typeof opacity === "number") {
+          imageryLayer.alpha = opacity;
+        }
+
+        //得到layerStyle的副本，供watch使用
+        this.layerStyleCopy = clonedeep(layerStyle);
+      });
     },
-    unmount() {
+    $_unmount() {
       const { webGlobe, vueKey, vueIndex, CesiumZondy } = this;
       const viewer = webGlobe.viewer;
-      let find = CesiumZondy.VectorTileManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = CesiumZondy.VectorTileManager.findSource(vueKey, vueIndex);
       if (find) {
-        !viewer.isDestroyed() && find.source.destroy();
+        !viewer.isDestroyed() && find.options.vectortile.destroy();
       }
       CesiumZondy.VectorTileManager.deleteSource(vueKey, vueIndex);
-    },
+    }
   },
   render(createElement) {
     return createElement("span");
-  },
+  }
 };
 </script>
