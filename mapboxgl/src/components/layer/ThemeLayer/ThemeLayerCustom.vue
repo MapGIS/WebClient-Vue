@@ -4,6 +4,7 @@
         ref="themePanel"
         :options="optionsCopy"
         @formChanged="$_formChanged"
+        @highlightChanged="$_highlightChanged"
     />
     <mapgis-inspect
         :showMapPopupOnHover=true
@@ -45,25 +46,28 @@ export default {
     this.themePropsCopy = JSON.parse(JSON.stringify(this.themeProps));
   },
   methods: {
-    $_formChanged(id, value, type, extra, extra2) {
-      if (type === "MapgisUiThemeListCheckBox") {
-        this.$_checked(extra, value, extra2);
-      }else if (type === "MapgisUiThemeListColor") {
-        this.$_colorChanged(value, id);
-      }else {
-        this["$_" + id + "Changed"](value);
-      }
-    },
-    resetLayer(layerId){
-      this.$_resetAllLayer(layerId);
-    },
-    hideCurrentLayer(layerId){
-      this.$_hideCurrentLayer(layerId);
-    },
-    showCurrentLayer(layerId){
-      this.$_showCurrentLayer(layerId);
-    },
-  }
+    $_highlightChanged(id) {
+      this.$emit("highlightChanged", id);
+  },
+  $_formChanged(id, value, type, extra, extra2) {
+    if (type === "MapgisUiThemeListCheckBox") {
+      this.$_checked(extra, value, extra2);
+    } else if (type === "MapgisUiThemeListColor") {
+      this.$_colorChanged(value, id);
+    } else {
+      this["$_" + id + "Changed"](value);
+    }
+  },
+  resetLayer(layerId) {
+    this.$_resetAllLayer(layerId);
+  },
+  hideCurrentLayer(layerId) {
+    this.$_hideCurrentLayer(layerId);
+  },
+  showCurrentLayer(layerId) {
+    this.$_showCurrentLayer(layerId);
+  },
+}
 }
 </script>
 

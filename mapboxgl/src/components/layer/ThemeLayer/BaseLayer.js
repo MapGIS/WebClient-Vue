@@ -145,7 +145,7 @@ export default {
                     if (this.themeOptions[0] && this.themeOptions[0] instanceof Object) {
                         let options;
                         if (this.themeOptions[0].hasOwnProperty("color")) {
-                            options = this.$_formatThemeListOptions(this.themeOptions);
+                            options = this.$_formatThemeListOptions(this.themeOptions[0]);
                             let vm = this;
                             vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
                                 //切换渐变颜色
@@ -359,6 +359,7 @@ export default {
                         {source: vm.source_Id, id: vm.hoveredStateId},
                         {hover: true}
                     );
+                    vm.$emit("highlightChanged", e.features[0].id);
                 });
                 this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
                     if (vm.hoveredStateId !== null) {
