@@ -40,7 +40,7 @@
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer.js";
-import {Mapgis3dDraw} from "../UI/Controls/Draw/Draw";
+import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../../../../mapboxgl/src/components/util/util";
 
 export default {

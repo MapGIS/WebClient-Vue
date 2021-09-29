@@ -55,26 +55,32 @@
 - **Default:** `true`
 - - **Description:** Cesium 键盘事件是否激活
 
-### `viewerMode`
+[comment]: <> (### `viewerMode`)
 
-- **Type**: `String`
-- **非侦听属性** 非 watch 属性
-- **Default:** `3D`
-- - **Description:** 初始视图模式默认为三维球视图 '2D'表示二维视图 'COLUMBUS_VIEW' 表示三维平面视图
+[comment]: <> (- **Type**: `String`)
 
-### `showInfo`
+[comment]: <> (- **非侦听属性** 非 watch 属性)
 
-- **Type**: `Boolean`
-- **非侦听属性** 非 watch 属性
-- **Default:** `false`
-- - **Description:** 是否显示默认的属性信息框
+[comment]: <> (- **Default:** `3D`)
+
+[comment]: <> (- - **Description:** 初始视图模式默认为三维球视图 '2D'表示二维视图 'COLUMBUS_VIEW' 表示三维平面视图)
+
+[comment]: <> (### `showInfo`)
+
+[comment]: <> (- **Type**: `Boolean`)
+
+[comment]: <> (- **非侦听属性** 非 watch 属性)
+
+[comment]: <> (- **Default:** `false`)
+
+[comment]: <> (- - **Description:** 是否显示默认的属性信息框)
 
 ### `animation`
 
 - **Type**: `Boolean`
 - **非侦听属性** 非 watch 属性
 - **Default:** `false`
-- - **Description:** 默认动画控制不显示
+- - **Description:** 默认动画控件不显示
 
 ### `timeline`
 
