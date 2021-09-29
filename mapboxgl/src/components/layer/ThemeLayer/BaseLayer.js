@@ -133,7 +133,6 @@ export default {
     watch: {
         dataSource: {
             handler: function () {
-                console.log("----themeOptions", this.themeOptions)
                 this.$_addThemeLayerBySource();
             },
             deep: true
@@ -145,7 +144,7 @@ export default {
                     if (this.themeOptions[0] && this.themeOptions[0] instanceof Object) {
                         let options;
                         if (this.themeOptions[0].hasOwnProperty("color")) {
-                            options = this.$_formatThemeListOptions(this.themeOptions[0]);
+                            options = this.$_formatThemeListOptions(this.themeOptions);
                             let vm = this;
                             vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
                                 //切换渐变颜色
@@ -330,6 +329,25 @@ export default {
             }
             return value;
         },
+        $_setHeightLightLayerByIndex(index){
+            if (this.dataType === "fill") {
+                this.hoveredStateId = this.dataSource.features[index].id;
+                this.map.setFeatureState(
+                    {source: this.source_Id, id: this.hoveredStateId},
+                    {hover: true}
+                );
+            }
+        },
+        $_deleteHeightLightLayerByIndex(index){
+            if (this.dataType === "fill") {
+                this.hoveredStateId = this.dataSource.features[index].id;
+                this.map.setFeatureState(
+                    {source: this.source_Id, id: this.hoveredStateId},
+                    {hover: false}
+                );
+                this.hoveredStateId = null;
+            }
+        },
         $_addHeightLightLayer() {
             if (this.dataType === "fill") {
                 let vm = this;
@@ -359,7 +377,12 @@ export default {
                         {source: vm.source_Id, id: vm.hoveredStateId},
                         {hover: true}
                     );
-                    vm.$emit("highlightChanged", e.features[0].id);
+                    for (let i = 0; i < vm.dataSource.features.length; i++) {
+                        if (vm.dataSource.features[i].id === e.features[0].id) {
+                            vm.$emit("highlightChanged", i);
+                            break;
+                        }
+                    }
                 });
                 this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
                     if (vm.hoveredStateId !== null) {
@@ -1226,7 +1249,7 @@ export default {
         $_addRangeLayer() {
             let paintColors;
             if (this.themeOptions && this.themeOptions instanceof Array) {
-                let options = this.$_formatThemeListOptions(this.themeOptions[0]);
+                let options = this.$_formatThemeListOptions(this.themeOptions);
                 let features = this.dataSource.features;
                 paintColors = this.$_setRangeColors(options.colors.join(","), options.dataSource, this.selectValue, features);
             } else {
@@ -1301,7 +1324,7 @@ export default {
                 );
             }
         },
-        $_getIconSizeByRadius(dataSource,radius){
+        $_getIconSizeByRadius(dataSource, radius) {
             let iconSize;
             if (dataSource.length > 0) {
                 //这里规则仅支持小于，大于的话全会背第一个大鱼号的规则覆盖
@@ -1351,11 +1374,11 @@ export default {
                 if (!hasIcon) {
                     vm.map.addImage(iconName, img);
                 }
-                if (vm.themeOptions && vm.themeOptions instanceof Array){
-                    let themeOptions = vm.$_formatThemeListOptionsSymbol(vm.themeOptions[0]);
+                if (vm.themeOptions && vm.themeOptions instanceof Array) {
+                    let themeOptions = vm.$_formatThemeListOptionsSymbol(vm.themeOptions);
                     vm.startData = themeOptions.startData;
                     iconSize = vm.$_getIconSizeByRadius(themeOptions.dataSource, themeOptions.radius);
-                }else {
+                } else {
                     iconSize = vm.$_getIconSize(dataSource);
                 }
                 //存储iconSize
@@ -2939,8 +2962,8 @@ export default {
             this.$refs.themePanel.$_close();
             themeManager.setManagerProps(layerId, undefined);
         },
-        $_deleteThemeLayerByGeoJSON(layerId){
-            if(this.map.getLayer(layerId + this.$_getThemeName(this.themeProps.themeType))){
+        $_deleteThemeLayerByGeoJSON(layerId) {
+            if (this.map.getLayer(layerId + this.$_getThemeName(this.themeProps.themeType))) {
                 let layerOrder = themeManager.getLayerProps(layerId, "layerOrder"), vm = this;
                 let allLayerOrder = themeManager.getLayerOrder();
                 for (let i = 0; i < layerOrder.length; i++) {
@@ -2949,7 +2972,7 @@ export default {
                     }
                 }
                 allLayerOrder.splice(allLayerOrder.indexOf(layerOrder[0]), layerOrder.length);
-                if(this.$refs.themePanel){
+                if (this.$refs.themePanel) {
                     this.$refs.themePanel.$_close();
                 }
                 themeManager.setManagerProps(layerId, undefined);
