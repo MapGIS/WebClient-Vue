@@ -143,7 +143,7 @@ export default {
                     //确认为一张图传来的参数
                     if (this.themeOptions[0] && this.themeOptions[0] instanceof Object) {
                         let options;
-                        if (this.themeOptions[0].hasOwnProperty("color")) {
+                        if (this.themeOptions[0].hasOwnProperty("sectionColor")) {
                             options = this.$_formatThemeListOptions(this.themeOptions);
                             let vm = this;
                             vm.$_getDataByLayer(vm.layerIdCopy, function (features) {
@@ -290,7 +290,7 @@ export default {
             newOptions.startData = Number(options[0].min);
             for (let i = 0; i < options.length; i++) {
                 newOptions.dataSource.push(Number(options[i].max));
-                newOptions.colors.push(options[i].color);
+                newOptions.colors.push(options[i].sectionColor);
             }
             return newOptions;
         },
