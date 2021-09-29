@@ -53,7 +53,7 @@
 - **Type**: `Boolean`
 - **非侦听属性** 非 watch 属性
 - **Default:** `true`
-- - **Description:** Cesium 键盘事件是否激活
+- - **Description:** Cesium 键盘事件是否激活，激活后可以使用 W\A\S\D 控制相机的方向和远近
 
 [comment]: <> (### `viewerMode`)
 
