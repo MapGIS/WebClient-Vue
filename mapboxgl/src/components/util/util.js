@@ -2,7 +2,7 @@
  * 随机生成一个guid
  * @returns {string}
  */
-export const newGuid = function () {
+export const newGuid = function() {
   let guid = "";
   for (let i = 1; i <= 32; i++) {
     let n = Math.floor(Math.random() * 16.0).toString(16);
@@ -22,16 +22,13 @@ export function uuid() {
   if (window.performance && typeof window.performance.now === "function") {
     d += performance.now();
   }
-  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-    /[xy]/g,
-    (c) => {
-      // tslint:disable-next-line: no-bitwise
-      const r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      // tslint:disable-next-line: no-bitwise
-      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-    }
-  );
+  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    // tslint:disable-next-line: no-bitwise
+    const r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    // tslint:disable-next-line: no-bitwise
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
   return UuidStr;
 }
 
@@ -43,7 +40,7 @@ export function randomid() {
   if (window.performance && typeof window.performance.now === "function") {
     d += performance.now();
   }
-  const UuidStr = "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+  const UuidStr = "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, c => {
     // tslint:disable-next-line: no-bitwise
     const r = (d + Math.random() * 16) % 16 | 0;
     d = Math.floor(d / 16);

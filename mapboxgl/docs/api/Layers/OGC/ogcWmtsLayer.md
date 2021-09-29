@@ -83,6 +83,43 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值** 0
 - **描述:** 地图偏移级数，老版本的 Igserver 会使用到
 
+### `layer`
+
+- **类型:** `Object`
+- **默认值:** `null`
+- **侦听属性**
+- **描述:**
+  栅格瓦片图层可通过 layer 参数中的 paint、filter、layout 来修改图层样式属性，
+  更多 raster 的属性参考官网
+
+  > paint：
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#raster）
+
+  > layout：
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#layout-property
+
+  > filter：
+  > https://docs.mapbox.com/help/glossary/filter/
+  >
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#filter
+
+- **示例:**
+  ```
+  layer:{
+           paint:{
+             raster-opacity:0.5
+           }
+         }
+  layer:{
+           filter:["all", ["==", "mpginf_id", "1"]]
+        }
+  layer:{
+           layout:{
+             visibility:'visible'
+           }
+        }
+  ```
+
 ## 事件
 
 All common layer [events](/zh/api/Layers/#events)
@@ -118,7 +155,10 @@ All common layer [events](/zh/api/Layers/#events)
 <script>
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
-import { MapgisWebMap, MapgisOgcWmtsLayer } from "@mapgis/webclient-vue-mapboxgl";
+import {
+  MapgisWebMap,
+  MapgisOgcWmtsLayer
+} from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {

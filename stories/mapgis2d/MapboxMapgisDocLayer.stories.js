@@ -1,4 +1,3 @@
-import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisIgsDocLayer from "../../mapboxgl/src/components/layer/igserver/IgsDocLayer";
 
 export default {
@@ -7,14 +6,14 @@ export default {
   argTypes: {
     layerId: "igs_layer_layerid",
     sourceId: "igs_layer_sourceid",
-    baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
-    layers: 'show:0,1,2,3,4,5,6,7',
+    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+    layers: "show:0,1,2,3,4,5,6,7",
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebMap, MapgisIgsDocLayer },
+  components: { MapgisIgsDocLayer },
   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:60vh">
   <mapgis-igs-doc-layer :cache="cache" :layers="layers" :filters="filters" v-bind="$props" />
   <button style="position: absolute;z-index: 1;left:0;top:0;" @click="edit('filters','0:ID>4')">修改filter</button>
@@ -41,8 +40,11 @@ const Template = (args, { argTypes }) => ({
 export const 地图文档 = Template.bind({});
 地图文档.args = {
   layerId: "igs_layer_layerid",
-  baseUrl:'http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市',
-  layers: 'show:0,1,2,3,4,5,6,7',
+  baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+  layers: "show:0,1,2,3,4,5,6,7",
+  layer: {
+    paint: { "raster-opacity": 0.75 },
+  },
 };
 
 // const TemplateTile = (args, { argTypes }) => ({
@@ -64,4 +66,3 @@ export const 地图文档 = Template.bind({});
 //   layers: 'show:0,1,2,3,4,5,6,7',
 //   dynamicTile: true,
 // };
-

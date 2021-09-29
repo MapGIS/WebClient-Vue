@@ -363,9 +363,7 @@ export default {
       // 指定光线强度
       floodAnalysis.specularIntensity = Number(specularIntensity);
 
-      if (!this.depthTestAgainstTerrain) {
-        viewer.scene.globe.depthTestAgainstTerrain = true;
-      }
+      viewer.scene.globe.depthTestAgainstTerrain = true;
       // 添加洪水淹没结果显示
       this.webGlobe.scene.VisualAnalysisManager.add(floodAnalysis);
       this.mHeight = maxHeightCopy;

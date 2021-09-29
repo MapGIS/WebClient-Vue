@@ -28,6 +28,10 @@ export { default as MapgisHawkeye } from "./components/UI/controls/hawkeye/Hawke
 export { default as MapgisArcgisLegend } from "./components/UI/controls/legend/Legend";
 
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
+export { default as MapgisMarkerPro } from "./components/UI/marker/MarkerPro.vue";
+export { default as MapgisMarkerSetPro } from "./components/UI/marker/MarkerSetPro.vue";
+export { default as MapgisMarkerPlotting } from "./components/UI/marker/MarkerPlotting.vue";
+export { default as MapgisMarkerLayer } from "./components/UI/marker/MarkerLayer.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
 export { default as MapgisGeojsonPopup } from "./components/layer/geojson/Popup.vue";
 

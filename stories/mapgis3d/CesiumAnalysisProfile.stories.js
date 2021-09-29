@@ -60,6 +60,13 @@ export default {
       },
       control: "number",
     },
+    useMask: {
+      description: "是否使用内置的遮罩层",
+      table: {
+        defaultValue: { summary: "true" },
+      },
+      control: "boolean",
+    },
   },
 };
 
@@ -94,7 +101,7 @@ const Template = (args, { argTypes }) => ({
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-      <mapgis-ui-card customPosition="top-right">
+      <mapgis-ui-card customPosition="top-right" style="zIndex:20002">
       <mapgis-3d-analysis-profile 
           :profileType="profileType" 
           :polygonHeight="polygonHeight" 
@@ -104,6 +111,7 @@ const Template = (args, { argTypes }) => ({
           :polylineGroundColor="polylineGroundColor" 
           :showPolygon="showPolygon" 
           :samplePrecision="samplePrecision"
+          :useMask="useMask"
           @success="success"
           @remove="remove"/>
           </mapgis-ui-card>
@@ -170,6 +178,7 @@ export const 剖面 = Template.bind({});
   polylineGroundColor: "rgb(255,0,0)",
   showPolygon: false,
   samplePrecision: 2,
+  useMask: true,
 };
 
 剖面.parameters = {
