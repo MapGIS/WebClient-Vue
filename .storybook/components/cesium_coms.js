@@ -19,6 +19,10 @@ export { default as Mapgis3dOgcWmtsLayer } from "../../cesium/src/components/Lay
 export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
 export { default as Mapgis3dArcgisTileLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
+
+// 要素图层
+export { default as Mapgis3dGeojsonLayer } from "../../cesium/src/components/Layer/GeoJSON/GeoJsonLayer";
+
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "../../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
@@ -29,6 +33,7 @@ export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTi
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "../../cesium/src/components/UI/Marker/Marker";
+export { default as Mapgis3dMarkerPlotting } from "../../cesium/src/components/Layer/GeoJSON/3dMarkerPlotting.vue";
 // export { default as { MapvLayer }} from "../../cesium/src/components/Overlay";
 export { default as Mapgis3dMapvLayer } from "../../cesium/src/components/Overlay/Mapv3dLayer.vue";
 export { default as Mapgis3dEchartsLayer } from "../../cesium/src/components/Overlay/Echarts.vue";

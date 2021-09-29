@@ -173,7 +173,7 @@ export default {
           providerZIndex = 0;
         } else {
           //确定zIndex不能重复
-          this.$_checkZIndex(imageryLayers);
+          vm.$_checkZIndex(imageryLayers);
           //如果有layerStyle.zIndex，则layer的zIndex为layerStyle.zIndex
           providerZIndex = zIndex;
         }
@@ -181,7 +181,7 @@ export default {
         //如果有zIndex，则保证zIndex大于0的layer始终在zIndex为0的layer上面，并按照zIndex从大到小排序
         //如果没有zIndex，则按初始化顺序向上叠放，如果在此layer的下方含有zIndex大于0的layer，则layer向下一层，直到下方没有包含zIndex大于0的layer
         //只会根据imageryLayers排序，不会影响其他图层
-        this.$_initLayerIndex();
+        vm.$_initLayerIndex();
 
         //设置图层是否可见
         if (typeof visible === "boolean") {
@@ -194,7 +194,7 @@ export default {
         }
 
         //得到layerStyle的副本，供watch使用
-        this.layerStyleCopy = clonedeep(layerStyle);
+        vm.layerStyleCopy = clonedeep(layerStyle);
       });
     },
     $_unmount() {
