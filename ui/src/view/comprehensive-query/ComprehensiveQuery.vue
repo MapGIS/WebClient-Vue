@@ -3,9 +3,7 @@
     <div class="search-box query-section">
       <div class="comprehensive-query-logo" @click="onLocate">
         <mapgis-ui-icon :icon="logo" />
-        <span class="district-title" v-if="districtName">{{
-          districtName
-        }}</span>
+        <span class="district-title">{{ districtName }}</span>
       </div>
       <mapgis-ui-divider type="vertical" />
       <mapgis-ui-button
@@ -41,18 +39,7 @@
         locationPanelExpand ? '' : 'unvisible'
       ]"
     >
-      <mapgis-ui-tabs v-model="locationType" size="small" type="card">
-        <mapgis-ui-tab-pane
-          key="district"
-          tab="行政区划定位"
-        ></mapgis-ui-tab-pane>
-        <mapgis-ui-tab-pane
-          key="coordinate"
-          tab="坐标定位"
-          force-render
-        ></mapgis-ui-tab-pane>
-        <mapgis-ui-tab-pane key="map-sheet" tab="图幅定位"></mapgis-ui-tab-pane>
-      </mapgis-ui-tabs>
+      <slot />
     </div>
     <div id="measure-max-height" />
     <div
@@ -66,15 +53,23 @@
     >
       <place-name
         ref="placeName"
+        :defaultMarkerIcon="defaultMarkerIcon"
+        :selectedMarkerIcon="selectedMarkerIcon"
         :widgetInfo="widgetInfo"
         :geometry="geometry"
+        @current-result="currentResult"
+        @select-markers="selectMarkers"
+        @click-item="clickItem"
+        @change-cluster="changeCluster"
+        @open-attribute-table="openAttributeTable"
+        @remove-attribute-table="removeAttributeTable"
       ></place-name>
     </div>
   </div>
 </template>
 
 <script>
-import Feature from "./util/feature";
+const Feature = require("./util/feature");
 import PlaceName from "./PlaceName/PlaceName.vue";
 
 export default {
@@ -87,26 +82,25 @@ export default {
       type: String,
       default: ""
     },
+    defaultMarkerIcon: {
+      type: String,
+      default: ""
+    },
+    selectedMarkerIcon: {
+      type: String,
+      default: ""
+    },
     districtName: {
       type: String,
       default: ""
     },
+    geoJSONExtent: {
+      type: Object,
+      default: () => ({})
+    },
     widgetInfo: {
       type: Object,
-      default: () => ({
-        placeName: {
-          ip: "192.168.21.191",
-          port: "6163",
-          combine: "true",
-          queryWay: "gdbp",
-          docName: "",
-          showType: "normal",
-          clusterMaxCount: "1000",
-          allSearchName: "NAME",
-          allShows: "NAME:名称,ADDRESS:地址,TELEPHONE:联系方式,PAC:邮政编码",
-          queryTable: []
-        }
-      })
+      default: () => ({})
     }
   },
   data() {
@@ -117,17 +111,30 @@ export default {
 
       maxHeight: 0,
 
-      // 可选district：行政区划定位；coordinate：坐标定位；map-sheet：图幅号定位
-      locationType: "",
-
       locationPanelExpand: false,
 
-      searchInputExapnd: false,
-
-      geoJson: null
+      searchInputExapnd: false
     };
   },
-  computed: {},
+  computed: {
+    geometry() {
+      if (this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}") {
+        let geojson;
+        if (this.geoJSONExtent.features) {
+          geojson = this.geoJSONExtent;
+        } else {
+          geojson = {
+            type: "FeatureCollection",
+            features: [this.geoJSONExtent]
+          };
+        }
+        const result = Feature.FeatureConvert.featureGeoJSONToTangram(geojson);
+        if (Array.isArray(result)) return result[0];
+        return result;
+      }
+      return null;
+    }
+  },
   mounted() {
     this.setMaxHeight();
     window.addEventListener("resize", this.setMaxHeight, false);
@@ -148,6 +155,9 @@ export default {
 
       this.locationPanelExpand = false;
       this.searchPanelExpand = false;
+      this.$refs.placeName.removeResult();
+      this.$refs.placeName.reset();
+      this.$emit("onClose");
     },
     onSearchFocus() {
       this.searchPanelExpand = true;
@@ -156,6 +166,10 @@ export default {
     onSearch() {
       this.searchPanelExpand = true;
       this.locationPanelExpand = false;
+      this.$emit("onSearch");
+      this.$nextTick(() => {
+        this.$refs.placeName.search(this.keyword);
+      });
     },
     onStartSearch() {
       this.searchInputExapnd = true;
@@ -166,6 +180,42 @@ export default {
         .getBoundingClientRect().top;
       const bottom = document.documentElement.clientHeight - top;
       this.maxHeight = bottom - 10 - 3;
+    },
+    /**
+     * 当前展示的结果回调函数
+     */
+    currentResult(geojson) {
+      this.$emit("current-result", geojson);
+    },
+    /**
+     * 当前点击的条目的回调函数
+     */
+    clickItem(feature) {
+      this.$emit("click-item", feature);
+    },
+    /**
+     * 当前选中的坐标
+     */
+    selectMarkers(selectMarkers) {
+      this.$emit("select-markers", selectMarkers);
+    },
+    /**
+     * 聚合按钮改变时的回调
+     */
+    changeCluster(val) {
+      this.$emit("change-cluster", val);
+    },
+    /**
+     * 打开属性表回调函数
+     */
+    openAttributeTable(exhibition) {
+      this.$emit("open-attribute-table", exhibition);
+    },
+    /**
+     * 关闭属性表回调函数
+     */
+    removeAttributeTable(exhibitionId) {
+      this.$emit("remove-attribute-table", exhibitionId);
     }
   }
 };
