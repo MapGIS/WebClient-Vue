@@ -203,3 +203,53 @@ const Template2 = (args, { argTypes }) => ({
 
 export const settingForm = Template2.bind({});
 settingForm.args = {};
+
+const Template3 = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  components: {},
+  template: `
+  <div>
+    <mapgis-ui-form-custom-validate :validate-status="validateStatus" :help="help">
+      <mapgis-ui-input v-model="value" placeholder="请输入"/>
+    </mapgis-ui-form-custom-validate>
+    <mapgis-ui-form-custom-validate :validate-status="validateStatus" :help="help">
+      <mapgis-ui-select default-value="武汉">
+        <mapgis-ui-select-opt-group>
+          <span slot="label">湖北省</span>
+          <mapgis-ui-select-option value="黄冈">
+            黄冈
+          </mapgis-ui-select-option>
+          <mapgis-ui-select-option value="武汉">
+            武汉
+          </mapgis-ui-select-option>
+        </mapgis-ui-select-opt-group>
+        <mapgis-ui-select-opt-group label="浙江省">
+          <mapgis-ui-select-option value="杭州">
+            杭州
+          </mapgis-ui-select-option>
+        </mapgis-ui-select-opt-group>
+      </mapgis-ui-select>
+    </mapgis-ui-form-custom-validate>
+    <mapgis-ui-button @click="handleClick">切换</mapgis-ui-button>
+  </div>
+  `,
+  data() {
+    return {
+      validateStatus: 'error',
+      help: '错误',
+      value: '点击按钮切换状态'
+    };
+  },
+  computed: {
+  },
+  methods: {
+    handleClick () {
+      this.validateStatus = this.validateStatus === 'warning' ? 'success' : 'warning' ,
+      this.help = this.validateStatus === 'warning' ? '警告' : '成功'
+      this.value = '状态已切换'
+    }
+  },
+});
+
+export const 自定义校验 = Template3.bind({});
+自定义校验.args = {};
