@@ -87,40 +87,40 @@
   $padding-lg: 12px;
   $padding-md: 8px;
   $padding-sm: 4px;
-  &.ant-card {
-    .ant-card-head {
+  &.mapgis-ui-card {
+    .mapgis-ui-card-head {
       font-size: 14px;
       min-height: $height-md;
       line-height: $height-md;
       padding: 0 $padding-md;
 
-      .ant-card-head-title,
-      .ant-card-extra {
+      .mapgis-ui-card-head-title,
+      .mapgis-ui-card-extra {
         padding: 0;
         color: $text-color;
       }
     }
-    .ant-card-body {
+    .mapgis-ui-card-body {
       padding: $padding-md;
     }
-    &.ant-card-small {
-      .ant-card-head {
+    &.mapgis-ui-card-small {
+      .mapgis-ui-card-head {
         margin-bottom: 4px;
         min-height: $height-sm;
         line-height: $height-sm;
         padding: 0 $padding-sm;
       }
-      .ant-card-body {
+      .mapgis-ui-card-body {
         padding: $padding-sm;
       }
     }
-    &.ant-card-large {
-      .ant-card-head {
+    &.mapgis-ui-card-large {
+      .mapgis-ui-card-head {
         padding: 0 $padding-lg;
         min-height: $height-lg;
         line-height: $height-lg;
       }
-      .ant-card-body {
+      .mapgis-ui-card-body {
         padding: $padding-lg;
       }
     }
