@@ -40,6 +40,7 @@ export { default as Mapgis3dEchartsLayer } from "../../cesium/src/components/Ove
 
 export { default as Mapgis3dIgsTerrain } from "../../cesium/src/components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "../../cesium/src/components/Provider/TerrainProvider/TerrainProvider.vue";
+export { default as Mapgis3dIgsFeatureLayer } from "../../cesium/src/components/Layer/IGServer/IgsFeatureLayer.vue";
 
 // 数据源
 export { default as Mapgis3dGeoJsonDataSource } from "../../cesium/src/components/DataSource/Geojson/GeoJsonDataSource.vue";

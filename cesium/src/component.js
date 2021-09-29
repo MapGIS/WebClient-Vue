@@ -20,6 +20,7 @@ export { default as Mapgis3dOgcWmsLayer } from "./components/Layer/OGC/OGCWMSLay
 export { default as Mapgis3dOgcReveserWmsLayer } from "./components/Layer/OGC/OGCReveserWMSLayer.vue";
 
 export { default as Mapgis3dIgsVectorLayer } from "./components/Layer/IGServer/IgsVectorLayer.vue";
+export { default as Mapgis3dIgsFeatureLayer } from "./components/Layer/IGServer/IgsFeatureLayer.vue";
 
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
