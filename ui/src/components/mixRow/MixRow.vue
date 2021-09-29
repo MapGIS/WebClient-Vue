@@ -328,7 +328,7 @@
             </mapgis-ui-row>
             <mapgis-ui-row v-show="listProps.radiusArray[index]" :class="{mixRowSmall: listProps.size === 'small'}">
               <mapgis-ui-col :span="3">
-                <p style="padding-left: 12px">
+                <p :style="{paddingBottom: listProps.size === 'small' ? 'none' : '1em'}" style="padding-left: 12px">
                   半径
                 </p>
               </mapgis-ui-col>
@@ -713,7 +713,7 @@ export default {
             for (let i = 0; i < this.listProps.rangeLevel; i++) {
               this.listProps.radiusArray.push(false);
             }
-            if(!(this.listProps.radius instanceof Array)){
+            if (!(this.listProps.radius instanceof Array)) {
               let radius = this.listProps.radius;
               this.listProps.radius = [];
               for (let i = 0; i < this.listProps.rangeLevel; i++) {
@@ -821,7 +821,7 @@ export default {
       if (index === 0) {
         startData = this.listProps.startData;
       } else {
-        startData = Number(this.listProps.dataSource[index]);
+        startData = Number(this.listProps.dataSource[index - 1]);
       }
       let endData = Number(this.listProps.dataSource[index]);
       if (index < this.listProps.dataSource.length - 1) {
@@ -833,7 +833,12 @@ export default {
           this.listProps.colors.splice(index + 1, 0, newColors[1]);
         }
       } else {
-        let addNum = (this.listProps.dataSource[index] - this.listProps.dataSource[index - 1]) + this.listProps.dataSource[index];
+        let addNum;
+        if(this.listProps.dataSource[index - 1]){
+          addNum = (this.listProps.dataSource[index] - this.listProps.dataSource[index - 1]) + this.listProps.dataSource[index];
+        }else {
+          addNum = 2;
+        }
         this.listProps.dataSource.push(addNum);
         this.listProps.rangeLevel++;
         this.listProps.colors.splice(index + 1, 0, this.listProps.colors[index]);

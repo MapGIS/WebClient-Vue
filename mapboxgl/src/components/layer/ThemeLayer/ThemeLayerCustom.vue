@@ -1,9 +1,8 @@
 <template>
-  <div>
+  <div v-show="showPanel">
     <mapgis-igs-theme-panel-custom
         ref="themePanel"
         :options="optionsCopy"
-        v-show="showPanel"
         @formChanged="$_formChanged"
     />
     <mapgis-inspect
@@ -54,7 +53,16 @@ export default {
       }else {
         this["$_" + id + "Changed"](value);
       }
-    }
+    },
+    resetLayer(layerId){
+      this.$_resetAllLayer(layerId);
+    },
+    hideCurrentLayer(layerId){
+      this.$_hideCurrentLayer(layerId);
+    },
+    showCurrentLayer(layerId){
+      this.$_showCurrentLayer(layerId);
+    },
   }
 }
 </script>

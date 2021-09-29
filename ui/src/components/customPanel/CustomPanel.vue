@@ -340,18 +340,66 @@ export default {
       } else {
         let rects = this.options;
         for (let i = 0; i < rects.length; i++) {
-          if (rects[i].type === "MapgisUiThemeList") {
-            let listProps = this.$refs[rects[i].id][0].listProps
-            forms[rects[i].id] = this.$_formatThemeList({
-              "checkBoxArr": listProps.checkBoxArr,
-              "colors": listProps.colors,
-              "dataSource": listProps.dataSource,
-              "startData": listProps.startData
-            });
+          let listProps = this.$refs[rects[i].id][0].listProps
+          switch (rects[i].type) {
+            case "MapgisUiThemeList":
+              forms[rects[i].id] = this.$_formatThemeList({
+                "checkBoxArr": listProps.checkBoxArr,
+                "colors": listProps.colors,
+                "dataSource": listProps.dataSource,
+                "startData": listProps.startData
+              });
+              break;
+            case "MapgisUiThemeListSymbol":
+              forms[rects[i].id] = this.$_formatThemeListSymbol({
+                "checkBoxArr": listProps.checkBoxArr,
+                "radius": listProps.radius,
+                "dataSource": listProps.dataSource,
+                "startData": listProps.startData
+              });
+              break;
           }
         }
       }
       return forms;
+    },
+    $_formatThemeListSymbol(data){
+      let dataSource = data.dataSource;
+      let checkBoxArr = data.checkBoxArr;
+      let radius = data.radius;
+      let newData = [];
+      if (dataSource && dataSource.length > 0) {
+        if (checkBoxArr && checkBoxArr.length > 0) {
+          newData.push( {
+            "min": data.startData,
+            "max": dataSource[0],
+            "radius": radius[0],
+            "checkBox": checkBoxArr[0]
+          });
+          for (let i = 0; i < dataSource.length; i++) {
+            newData.push( {
+              "min": dataSource[i - 1],
+              "max": dataSource[i],
+              "radius": radius[i],
+              "checkBox": checkBoxArr[i]
+            });
+          }
+        } else {
+          newData.push( {
+            "min": data.startData,
+            "max": dataSource[0],
+            "radius": radius[0]
+          });
+          for (let i = 1; i < dataSource.length; i++) {
+            newData.push( {
+              "min": dataSource[i - 1],
+              "max": dataSource[i],
+              "radius": radius[i]
+            });
+          }
+        }
+      }
+      return newData;
     },
     $_formatThemeList(data) {
       let dataSource = data.dataSource;
