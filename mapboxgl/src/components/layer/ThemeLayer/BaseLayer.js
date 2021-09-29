@@ -333,7 +333,7 @@ export default {
         $_addHeightLightLayer() {
             if (this.dataType === "fill") {
                 let vm = this;
-                let hId = this.layerIdCopy + this.$_getThemeName() + "_height_light";
+                let hId = this.layerIdCopy + this.$_getThemeName() + "_高亮";
                 let heightLightLayer = {
                     id: hId,
                     type: "line",
@@ -2920,7 +2920,7 @@ export default {
                 }
             }, 100);
         },
-        $_resetAllLayer(layerId, removeOriginLayer) {
+        $_resetAllLayer(layerId) {
             let layerOrder = themeManager.getLayerProps(layerId, "layerOrder"), vm = this;
             let allLayerOrder = themeManager.getLayerOrder();
             for (let i = 0; i < layerOrder.length; i++) {
@@ -2929,19 +2929,31 @@ export default {
                 }
             }
             allLayerOrder.splice(allLayerOrder.indexOf(layerOrder[0]), layerOrder.length);
-            if(removeOriginLayer){
-                this.map.removeLayer(layerId);
-            }else {
-                let originLayer = themeManager.getLayerProps(layerId, layerId);
-                let opacity = 1;
-                let dataType = themeManager.getLayerProps(layerId, "dataType");
-                if (originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(dataType + "-opacity")) {
-                    opacity = originLayer.paint[dataType + "-opacity"];
-                }
-                this.map.setPaintProperty(layerId, dataType + "-opacity", opacity);
+            let originLayer = themeManager.getLayerProps(layerId, layerId);
+            let opacity = 1;
+            let dataType = themeManager.getLayerProps(layerId, "dataType");
+            if (originLayer.hasOwnProperty("paint") && originLayer.paint.hasOwnProperty(dataType + "-opacity")) {
+                opacity = originLayer.paint[dataType + "-opacity"];
             }
+            this.map.setPaintProperty(layerId, dataType + "-opacity", opacity);
             this.$refs.themePanel.$_close();
             themeManager.setManagerProps(layerId, undefined);
+        },
+        $_deleteThemeLayerByGeoJSON(layerId){
+            if(this.map.getLayer(layerId + this.$_getThemeName(this.themeProps.themeType))){
+                let layerOrder = themeManager.getLayerProps(layerId, "layerOrder"), vm = this;
+                let allLayerOrder = themeManager.getLayerOrder();
+                for (let i = 0; i < layerOrder.length; i++) {
+                    if (layerOrder[i] !== layerId) {
+                        vm.map.removeLayer(layerOrder[i]);
+                    }
+                }
+                allLayerOrder.splice(allLayerOrder.indexOf(layerOrder[0]), layerOrder.length);
+                if(this.$refs.themePanel){
+                    this.$refs.themePanel.$_close();
+                }
+                themeManager.setManagerProps(layerId, undefined);
+            }
         },
         $_hideCurrentLayer(layerId) {
             let layerOrder = themeManager.getLayerOrderById(layerId);

@@ -58,8 +58,8 @@ export default {
       this["$_" + id + "Changed"](value);
     }
   },
-  resetLayer(layerId, removeOriginLayer) {
-    this.$_resetAllLayer(layerId, removeOriginLayer);
+  resetLayer(layerId) {
+    this.$_deleteThemeLayerByGeoJSON(layerId);
   },
   hideCurrentLayer(layerId) {
     this.$_hideCurrentLayer(layerId);
