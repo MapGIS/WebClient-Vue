@@ -1,6 +1,5 @@
 import Mapgis3dPopup from "../../cesium/src/components/UI/Popup/Popup.vue"
 import Markdown from "../../cesium/docs/api/ui/draw.md";
-import {Viewshed} from "./CesiumAnalysisViewshed.stories";
 
 export default {
   title: "三维/场景子组件/绘制组件",
@@ -33,6 +32,13 @@ export default {
         defaultValue: { summary: 'top-right' },
       },
       control:'text'
+    },
+    infinite:{
+      description:'连续绘制开关',
+      table:{
+        defaultValue: { summary: 'false' },
+      },
+      control:'boolean'
     }
   },
 };
@@ -43,7 +49,12 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-scene>
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-igs-m3d>
-    <mapgis-3d-draw :enableControl="enableControl" :drawStyle="drawStyle" :clampToGround="clampToGround" :position="position"></mapgis-3d-draw>
+    <mapgis-3d-draw :enableControl="enableControl" 
+                    :drawStyle="drawStyle"
+                    :clampToGround="clampToGround"
+                    :position="position"
+                    :infinite="infinite"
+    ></mapgis-3d-draw>
   </mapgis-web-scene>`
 });
 
@@ -61,7 +72,8 @@ draw.args = {
     // width:4,
     // outlineWidth:2
   },
-  clampToGround:true
+  clampToGround:true,
+  infinite:true
 };
 draw.parameters = {
   docs: {

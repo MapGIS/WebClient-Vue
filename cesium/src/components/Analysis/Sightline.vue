@@ -31,8 +31,8 @@
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
-      <a-button type="primary" @click="onClickStart">分析</a-button>
-      <a-button @click="onClickStop">清除</a-button>
+      <mapgis-ui-button type="primary" @click="onClickStart">分析</mapgis-ui-button>
+      <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
   </div>
 </template>

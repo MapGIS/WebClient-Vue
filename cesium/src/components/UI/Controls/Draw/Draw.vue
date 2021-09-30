@@ -5,32 +5,32 @@
     <!-- slot for toolbar-item -->
     <slot v-if="initial"/>
     <mapgis-ui-card :customPosition="position" class="mapgis-3d-draw-control">
-    <div v-show="enableControl">
-      <mapgis-ui-space>
-        <mapgis-ui-tooltip
-            v-for="(item, i) in draws"
-            :key="i"
-            placement="bottom"
-        >
-          <template slot="title">
-            <span>{{ item.tip }}</span>
-          </template>
-          <mapgis-ui-button
-              shape="circle"
-              :type="item.type"
-              @click="item.click"
-              :class="item.className"
+      <div v-show="enableControl">
+        <mapgis-ui-space>
+          <mapgis-ui-tooltip
+              v-for="(item, i) in draws"
+              :key="i"
+              placement="bottom"
           >
-            <mapgis-ui-iconfont
-                :type="item.icon"
+            <template slot="title">
+              <span>{{ item.tip }}</span>
+            </template>
+            <mapgis-ui-button
+                shape="circle"
+                :type="item.type"
+                @click="item.click"
                 :class="item.className"
-                theme="filled"
-            />
-          </mapgis-ui-button>
-        </mapgis-ui-tooltip>
+            >
+              <mapgis-ui-iconfont
+                  :type="item.icon"
+                  :class="item.className"
+                  theme="filled"
+              />
+            </mapgis-ui-button>
+          </mapgis-ui-tooltip>
 
-      </mapgis-ui-space>
-    </div>
+        </mapgis-ui-space>
+      </div>
     </mapgis-ui-card>
   </div>
 </template>
@@ -70,13 +70,14 @@ export default {
       default: () => {
         return {
           color: '#FF0000',
-          opacity: 1
+          opacity: 1,
+          outlineWidth: 1,
+          //边线颜色
+          outlineColor: '#FFA500',
+          //线宽
+          width: 2,
         }
       }
-    },
-    drawedClear:{
-      type:Boolean,
-      default: true
     },
     vueKey: {
       type: String,
@@ -151,8 +152,8 @@ export default {
   },
   watch: {
     //贴地
-    clampToGround:{
-      handler: function (newVal,oldVal) {
+    clampToGround: {
+      handler: function (newVal, oldVal) {
         this.unmount();
         this.mount();
       }
@@ -199,8 +200,21 @@ export default {
     },
 
     removeEntities(unmount) {
+      let {vueKey, vueIndex} = this;
       //移除所有实体
-      this.getWebGlobe();
+      let webGlobeDraw = this.getWebGlobe();
+      // 取得webGlobe后，清空当前绘制
+      if (webGlobeDraw) {
+        let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+        if (drawEntities) {
+          drawEntities = drawEntities.source;
+          for (let i = 0; i < drawEntities.length; i++) {
+            webGlobeDraw.viewer.scene.primitives.remove(drawEntities[i]);
+            webGlobeDraw.viewer.entities.remove(drawEntities[i]);
+          }
+          drawEntities.source = [];
+        }
+      }
       if (!unmount) {
         if (this.drawOption.length > 0) {
           this[this.drawOption]();
@@ -226,8 +240,7 @@ export default {
           webGlobeDraw = GlobesManager[this.vueKey][0].source;
         }
       }
-      //取得webGlobe后，清空当前绘制
-      if (webGlobeDraw) {
+      if (!this.infinite) {
         let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
         if (drawEntities) {
           drawEntities = drawEntities.source;
@@ -237,19 +250,17 @@ export default {
           }
           drawEntities.source = [];
         }
-        if (window.drawElement) {
-          window.drawElement.stopDrawing();
-        }
       }
       return webGlobeDraw;
     },
     getDrawElement(webGlobe) {
       if (window.drawElement) {
-        if (this.drawedClear){
+        if (!this.infinite) {
           window.drawElement.stopDrawing();
         }
+      } else {
+        window.drawElement = new Cesium.DrawElement(webGlobe.viewer);
       }
-      window.drawElement = new Cesium.DrawElement(webGlobe.viewer);
       return window.drawElement;
     },
     enableDrawPoint() {
@@ -276,7 +287,7 @@ export default {
       const color = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
-        color:color,
+        color: color,
         callback: function (position) {
           let cartographic = Cesium.Cartographic.fromCartesian(position);
           let lng = Cesium.Math.toDegrees(cartographic.longitude);
@@ -300,7 +311,7 @@ export default {
     enableDrawLine() {
       this.drawOption = "enableDrawLine";
       let webGlobeDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex,drawStyle} = this;
+      let {Cesium, vueKey, vueIndex, drawStyle} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
@@ -313,7 +324,7 @@ export default {
       }
       const color = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
       drawElement.startDrawingPolyline({
-        color:color,
+        color: color,
         callback: function (positions) {
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
@@ -332,6 +343,7 @@ export default {
           let drawEntity = webGlobeDraw.viewer.scene.primitives.add(polyline);
           let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
+
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
@@ -358,7 +370,7 @@ export default {
       }
       const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
       drawElement.startDrawingPolygon({
-        color:colorStyle,
+        color: colorStyle,
         callback: function (positions) {
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
@@ -377,9 +389,11 @@ export default {
           let drawEntity = webGlobeDraw.viewer.scene.primitives.add(polygon);
           let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
+
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
+
           vm.$emit('drawCreate', positions, degreeArr, webGlobeDraw);
           vm.$emit('drawcreate', positions, degreeArr, webGlobeDraw);
         }
@@ -404,7 +418,7 @@ export default {
       const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
 
       drawElement.startDrawingExtent({
-        color:colorStyle,
+        color: colorStyle,
         callback: function (positions) {
           let rectangle = new Cesium.DrawElement.ExtentPrimitive({
             extent: positions,
@@ -426,6 +440,7 @@ export default {
             let height = positions.height;
             degreeArr.push([lng, lat, height]);
           }
+
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
@@ -439,7 +454,7 @@ export default {
     enableDrawCircle() {
       this.drawOption = "enableDrawCircle";
       let webGlobeDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex,drawStyle} = this;
+      let {Cesium, vueKey, vueIndex, drawStyle} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
@@ -452,12 +467,15 @@ export default {
       }
       const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
       drawElement.startDrawingCircle({
-        color:colorStyle,
+        color: colorStyle,
         callback: function (center, radius) {
           // alert(center.toString() + ' ' + radius.toString());
+          var centerCartographic = Cesium.Cartographic.fromCartesian(center);
+          let height = centerCartographic.height;
           let redCircle = new Cesium.DrawElement.CirclePrimitive({
             center: center,
             radius: radius,
+            height: height,
             asynchronous: false,
             material: Cesium.Material.fromType('Color', {
               color: colorStyle
@@ -466,11 +484,13 @@ export default {
 
           let drawEntity = webGlobeDraw.viewer.scene.primitives.add(redCircle);
 
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
-          drawEntities.push(drawEntity);
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
+
+          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          drawEntities.push(drawEntity);
+
           vm.$emit('drawCreate', center, radius, webGlobeDraw);
           vm.$emit('drawcreate', center, radius, webGlobeDraw);
         }
@@ -483,13 +503,15 @@ export default {
 .mapgis-3d-draw-control {
   z-index: 1000;
   position: absolute;
-  background:rgba(255,255,255,0);
+  background: rgba(255, 255, 255, 0);
 }
-::v-deep .mapgis-ui-card-body{
+
+::v-deep .mapgis-ui-card-body {
   padding: 0;
-  background:rgba(255,255,255,0);
+  background: rgba(255, 255, 255, 0);
 }
-::v-deep .mapgis-ui-card-bordered{
-  border:unset;
+
+::v-deep .mapgis-ui-card-bordered {
+  border: unset;
 }
 </style>
