@@ -2,9 +2,9 @@ module.exports = {
   productionSourceMap: false,
   outputDir: "dist-libs",
   pluginOptions: {
-    webpackBundleAnalyzer: {
+    /* webpackBundleAnalyzer: {
       openAnalyzer: false
-    }
+    } */
   },
   configureWebpack: {
     externals: {
