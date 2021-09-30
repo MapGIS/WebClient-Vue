@@ -119,9 +119,8 @@
 </template>
 
 <script>
-import { VFeature } from "../../../util";
 import { MRFS } from "@mapgis/webclient-es6-service";
-const { FeatureService } = MRFS;
+const { FeatureService,VFeature } = MRFS;
 export default {
   name: "mapgis-base-table",
   props: {
@@ -333,7 +332,7 @@ export default {
       if(this.rowSelection){
         this.rowSelection.selectedRowKeys = [];
       }
-      if(!dataSource || !dataSource.features || dataSource.features.length === 0){
+      if(!dataSource ){
         this.hasFeatures = false;
         this.$emit("createTableFailed","属性表","没有数据!");
         this.$emit("createLayerFailed",{
@@ -344,6 +343,15 @@ export default {
       }
       this.hasFeatures = true;
       if (dataSource instanceof Array) {
+        if (dataSource.length === 0){
+          this.hasFeatures = false;
+          this.$emit("createTableFailed","属性表","没有数据!");
+          this.$emit("createLayerFailed",{
+            message: "属性表",
+            description: "数据量为0!"
+          });
+          return;
+        }
         if (this.$_isFeatureSet(dataSource)) {
           //Feature集合
           this.$_getColumnsCopyByFeatureSet(dataSource);
@@ -377,6 +385,15 @@ export default {
         }
         //zondy格式
         if (this.$_isZondyResult(dataSource)) {
+          if(!dataSource.SFEleArray || dataSource.SFEleArray.length === 0){
+            this.hasFeatures = false;
+            this.$emit("createTableFailed","属性表","没有数据!");
+            this.$emit("createLayerFailed",{
+              message: "属性表",
+              description: "数据量为0!"
+            });
+            return;
+          }
           //this.columnsCopy.length为0表示第一次加载数据，需要初始化表头
           if (this.columnsCopy.length === 0) {
             this.$_getColumnsCopyByZondySource(dataSource);
