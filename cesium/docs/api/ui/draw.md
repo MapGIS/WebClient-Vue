@@ -7,19 +7,19 @@
 - **类型:** `Boolean`
 - **侦听属性**
 - **默认值:** `false`
-- **描述:** 是否允许无线绘制。true：允许无线绘制，false：不允许
+- **描述:** 是否允许无限绘制。true：允许无限绘制，false：不允许
 
 ### `enableControl`
 
 - **类型:** `Boolean`
-- **侦听属性**
+- **非侦听属性**
 - **默认值:** `true`
 - **描述:** 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性 position 改变其显示的位置
 
 ### `position`
 
 - **类型:** `String`
-- **侦听属性**
+- **非侦听属性**
 - **默认值:** `top-right`
 - **描述:** 传入的属性 position 改变其按钮控件的位置
 
@@ -30,6 +30,25 @@
 - **侦听属性**
 - **默认值:** `true`
 - **描述:** 绘制在三维图层上，是否贴地贴模型，true则贴地贴模型。
+
+### `drawStyle`
+
+- **类型:** `Object`
+- **非侦听属性**
+- **默认值:** 
+```
+  {
+    color: '#FF0000',
+    opacity: 1,
+    //点的边线宽度
+    outlineWidth: 1,
+    //点的边线颜色
+    outlineColor: '#FFA500',
+    //线宽
+    width: 2,
+  }
+  ```
+- **描述:** 绘制点、线、矩形、多边形、圆图形样式。目前不支持矩形、多边形、圆的边线样式设置。
 
 ### `vueKey`
 
@@ -107,7 +126,8 @@
               :enableControl="enableControl"
               :drawStyle="drawStyle"
               :clampToGround="clampToGround" 
-              :position="position">
+              :position="position"
+              :infinite="infinite">
       </mapgis-3d-draw>
     </mapgis-web-scene>
   </div>
@@ -132,7 +152,8 @@ export default {
       // width:4,
       // outlineWidth:2
     },
-    clampToGround:true
+    clampToGround:true,
+    infinite:true
   }
 };
 </script>
