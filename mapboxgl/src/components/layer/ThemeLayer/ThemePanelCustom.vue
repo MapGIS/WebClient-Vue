@@ -25,6 +25,8 @@ export default {
   methods: {
     $_show() {
     },
+    $_close() {
+    },
     $_setTitle() {
     },
     $_setDataSoure() {
