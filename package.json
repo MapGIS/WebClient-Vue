@@ -26,6 +26,7 @@
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/webclient-es6-service": "^1.0.3",
     "@mapgis/webclient-store": "^1.0.14",
+    "@mapgis/webclient-vue-ui": "^10.5.5",
     "@storybook/addon-knobs": "^6.3.0",
     "@storybook/preset-scss": "^1.0.3",
     "@turf/turf": "^6.3.0",

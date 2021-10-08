@@ -94,7 +94,7 @@ export const 标绘图层 = Template.bind({});
     ],
   },
   idField: "fid",
-  selects: ["1111", "2222"],
+  selects: [],
   fitBound: { xmin: 100, ymin: 20, xmax: 110, ymax: 30 },
   layerStyle: {
     marker: new MarkerStyle({
@@ -113,8 +113,8 @@ export const 标绘图层 = Template.bind({});
       color: "#ff0000",
       opacity: 0.8,
       width: 5,
-      cap: 'round',
-      join: 'round',
+      cap: "round",
+      join: "round",
       shadow: new Shadow({ blur: 0 }),
     }),
     polygon: new FillStyle({
