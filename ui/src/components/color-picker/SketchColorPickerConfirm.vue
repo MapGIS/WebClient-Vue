@@ -1,5 +1,5 @@
 <template>
-  <mapgis-ui-dropdown :visible="visible" :trigger="['click']">
+  <mapgis-ui-dropdown :visible="visible" :trigger="['click']" :class="colorPickerDropdown">
     <slot>
       <span
         @click.prevent="showPicker"
@@ -74,6 +74,10 @@ export default {
       type: String,
       validator: v =>
         !v || ColorUtil.isHex(v) || ColorUtil.isRgb(v) || ColorUtil.isRgba(v)
+    },
+    autoWidth: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -104,7 +108,12 @@ export default {
         background: value,
         borderColor: border ? value : "transparent"
       };
-    }
+    },
+    colorPickerDropdown() {
+      return this.autoWidth
+        ? 'mapgis-ui-sketch-color-picker-auto-width'
+        : '';
+    },
   },
   watch: {
     value(nV) {

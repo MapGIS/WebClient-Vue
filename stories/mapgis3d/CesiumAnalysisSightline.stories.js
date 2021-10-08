@@ -1,7 +1,30 @@
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Sightline.md";
 export default {
-    title: "三维/分析/通视分析"
+    title: "三维/分析/通视分析",
+    argTypes: {
+        visibleColor: {
+            description: '可视区域颜色',
+            table: {
+                defaultValue: {summary: '#008000'},
+            },
+            control: 'color'
+        },
+        unVisibleColor: {
+            description: '不可视区域颜色',
+            table: {
+                defaultValue: {summary: '#ff0000'},
+            },
+            control: 'color'
+        },
+        exHeight: {
+            description: '观察点的附加高度',
+            table: {
+                defaultValue: {summary: '1.85'},
+            },
+            control: 'number'
+        }
+    }
 };
 
 const Template = (args, { argTypes }) => ({

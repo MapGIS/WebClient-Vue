@@ -31,8 +31,8 @@
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
-      <a-button type="primary" @click="onClickStart">分析</a-button>
-      <a-button @click="onClickStop">清除</a-button>
+      <mapgis-ui-button type="primary" @click="onClickStart">分析</mapgis-ui-button>
+      <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
   </div>
 </template>
@@ -167,7 +167,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
-        vm.$emit("load", {component: this});
+        vm.$emit("load", vm);
         CesiumZondy.VisiblityAnalysisManager.addSource(
             vueKey,
             vueIndex,
@@ -267,6 +267,7 @@ export default {
 
     // 注册通视分析鼠标左键点击事件
     registerMouseLClickEvent(event) {
+      let {vueKey, vueIndex} = this;
       let cartesian = this.webGlobe.viewer.getCartesian3Position(event.position)
 
       if (!this.hasViewPosition && cartesian !== undefined) {

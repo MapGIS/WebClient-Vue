@@ -2,7 +2,7 @@
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
 
 // 目前echart 5.0 和 vue-echarts 6.0 冲突过大，等官方解决后再接入，目前是自己封装echarts5.0
-// export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
+export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 
 // IconFont
 // export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
@@ -73,6 +73,7 @@ export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
 export { default as MapgisUiForm } from "./components/form/Form.vue";
 export { default as MapgisUiFormItem } from "./components/form/FormItem.vue";
+export { default as MapgisUiFormCustomValidate } from "./components/form/CustomValidate.vue";
 export { default as MapgisUiMentions } from "./components/mentions/Mentions.vue";
 export { default as MapgisUiMentionsOption } from "./components/mentions/Option.vue";
 export { default as MapgisUiRadio } from "./components/radio/Radio.vue";
@@ -177,6 +178,7 @@ export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/compon
 export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
 export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
 export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";
+export { default as MapgisUiClouddiskModelFields } from "./view/clouddisk/components/model/Fields.vue";
 
 // Portal
 export { default as MapgisUiPortalDataresource } from "./view/portal/components/select/DataResource.vue";

@@ -46,6 +46,7 @@ export default {
             value={value}
             size={size}
             placeholder={"请选择"}
+            autoWidth={true}
             {...{ ...column.props }}
           />
         );
@@ -56,6 +57,7 @@ export default {
             value={value}
             size={size}
             placeholder={"请输入"}
+            autoWidth={true}
             {...{ ...column.props }}
           />
         );
@@ -65,6 +67,8 @@ export default {
             onChange={onChange}
             value={value}
             size={size}
+            autoWidth={true}
+            style={"border:0px"}
             {...{ ...column.props }}
           />
         );
@@ -74,6 +78,7 @@ export default {
             onChange={onChange}
             value={value}
             size={size}
+            autoWidth={true}
             border-radius={false}
             {...{ ...column.props }}
           />
