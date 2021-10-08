@@ -245,6 +245,7 @@
         :polylineGroundColor="polylineGroundColor"
         :showPolygon="showPolygon"
         :samplePrecision="samplePrecision"
+        :echartsDivId="'profileChart'"
         @success="success"
         @remove="remove"
       />
@@ -356,6 +357,7 @@ export default {
       :polylineGroundColor="polylineGroundColor"
       :showPolygon="showPolygon"
       :samplePrecision="samplePrecision"
+      :echartsDivId="'profileChart'"
       @success="success"
       @load="load"
     >
