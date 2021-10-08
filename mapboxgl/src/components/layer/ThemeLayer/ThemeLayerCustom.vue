@@ -10,6 +10,7 @@
         :showMapPopupOnHover=true
         :showInspectMapPopupOnHover=true
         :fields="popUpFields"
+        v-if="isPopUpAble"
     />
   </div>
 </template>
@@ -36,15 +37,13 @@ export default {
   data() {
     return {
       optionsCopy: undefined,
-      themePropsCopy: undefined
     }
   },
   created() {
     this.panelType = "custom";
   },
   mounted() {
-    this.themePropsCopy = JSON.parse(JSON.stringify(this.themeProps));
-  },
+    },
   methods: {
     $_highlightChanged(id) {
       this.$emit("highlightChanged", id);

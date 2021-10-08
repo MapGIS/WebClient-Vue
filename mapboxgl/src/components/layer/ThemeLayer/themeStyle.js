@@ -14,83 +14,32 @@ let uniqueTheme = {
     visible: true,
     //高亮样式
     highlightStyle: {
-        //高亮时是否显示填充颜色
-        isShowFill: true,
-        //高亮时的填充颜色
-        color: "",
-        //高亮填充颜色的透明度
-        opacity: "",
-        //高亮时是否显示外边线，仅点、多边形有用
-        isShowBorder: true,
-        //外边线颜色
-        borderColor: "",
-        //外边线宽度
-        borderWidth: "",
-        //外边线样式，仅多边形有用
-        borderStyle: "",
-        //高亮边线的透明度
-        borderOpacity: "",
+        //填充区域样式
+        fillStyle: fillStyle,
+        //外边线样式
+        lineStyle: lineStyle
     },
     //专题图样式
     style: {
-        //填充颜色颜色
-        color: "",
-        //线宽，仅对线有用
-        width: "",
-        //是否有外边线，仅点、多边形有用
-        border: true,
-        //外边线颜色
-        borderColor: "",
-        //外边线宽度
-        borderWidth: "",
-        //外边线样式，仅多边形有用
-        borderStyle: "",
-        //线样式，仅线有用
-        lineStyle: "",
-        //半径，仅点、符号有用
-        radius: "",
-        //是否启用阴影
-        shadow: false,
-        //阴影模糊度
-        shadowBlur: "",
-        //阴影颜色
-        shadowColor: "",
-        //阴影X轴偏移
-        shadowOffsetX: "",
-        //阴影Y周偏印
-        shadowOffsetY: "",
-        //整体X轴偏移
-        offsetX: "",
-        //整体Y轴偏移
-        offsetY: "",
-        //是否启用文字标签
-        idShowFont: false,
-        //字体
-        fontFamily: "",
-        //字体颜色
-        fontColor: "",
-        //字体大小
-        fontSize: "",
-        //文字间距
-        fontSpacing: "",
-        //文字X轴偏移
-        fontXOffset: "",
-        //文字Y轴偏移
-        fontYOffset: "",
-        //是否启用图标或填充图案
-        isShowSymbol: false,
-        //符号Url或者名称
-        symbol: "",
-        //图标颜色
-        symbolColor: "",
-        //旋转角度
-        symbolRotate: "",
-        //符号大小
-        symbolSize: "",
-        //符号X轴偏移
-        symbolXOffset: "",
-        //符号Y轴偏移
-        symbolYOffset: "",
+        //数据类型为点则对应点样式
+        //点样式
+        ...pointStyle,
+        //标签样式
+        ...textStyle,
+        //数据类型为线则对应线样式
+        //线样式
+        ...lineStyle,
+        //标签样式
+        ...textStyle,
+        //填充符号样式
+        ...symbolStyle,
+        //数据类型为几何则对应的样式
+        //几何样式
+        ...fillStyle,
+        //标签样式
+        ...textStyle,
+        //填充符号样式
+        ...symbolStyle
     },
     //field字段所对应的值得专题图样式，不写则默认用style的
     //假设field叫武汉区名称
@@ -125,83 +74,32 @@ let rangeTheme = {
     visible: true,
     //高亮样式
     highlightStyle: {
-        //高亮时是否显示填充颜色
-        isShowFill: true,
-        //高亮时的填充颜色
-        color: "",
-        //高亮填充颜色的透明度
-        opacity: "",
-        //高亮时是否显示外边线，仅点、多边形有用
-        isShowBorder: true,
-        //外边线颜色
-        borderColor: "",
-        //外边线宽度
-        borderWidth: "",
-        //外边线样式，仅多边形有用
-        borderStyle: "",
-        //高亮边线的透明度
-        borderOpacity: "",
+        //填充区域样式
+        fillStyle: fillStyle,
+        //外边线样式
+        lineStyle: lineStyle
     },
     //专题图样式
     style: {
-        //填充颜色颜色
-        color: "",
-        //线宽，仅对线有用
-        width: "",
-        //是否有外边线，仅点、多边形有用
-        isShowBorder: true,
-        //外边线颜色
-        borderColor: "",
-        //外边线宽度
-        borderWidth: "",
-        //外边线样式，仅多边形有用
-        borderStyle: "",
-        //线样式，仅线有用
-        lineStyle: "",
-        //半径，仅点、符号有用
-        radius: "",
-        //是否启用阴影
-        shadow: false,
-        //阴影模糊度
-        shadowBlur: "",
-        //阴影颜色
-        shadowColor: "",
-        //阴影X轴偏移
-        shadowOffsetX: "",
-        //阴影Y周偏印
-        shadowOffsetY: "",
-        //整体X轴偏移
-        offsetX: "",
-        //整体Y轴偏移
-        offsetY: "",
-        //是否启用文字标签
-        idShowFont: false,
-        //字体
-        fontFamily: "",
-        //字体颜色
-        fontColor: "",
-        //字体大小
-        fontSize: "",
-        //文字间距
-        fontSpacing: "",
-        //文字X轴偏移
-        fontXOffset: "",
-        //文字Y轴偏移
-        fontYOffset: "",
-        //是否启用图标或填充图案
-        isShowSymbol: false,
-        //符号Url或者名称
-        symbol: "",
-        //图标颜色
-        symbolColor: "",
-        //旋转角度
-        symbolRotate: "",
-        //符号大小
-        symbolSize: "",
-        //符号X轴偏移
-        symbolXOffset: "",
-        //符号Y轴偏移
-        symbolYOffset: "",
+        //数据类型为点则对应点样式
+        //点样式
+        ...pointStyle,
+        //标签样式
+        ...textStyle,
+        //数据类型为线则对应线样式
+        //线样式
+        ...lineStyle,
+        //标签样式
+        ...textStyle,
+        //填充符号样式
+        ...symbolStyle,
+        //数据类型为几何则对应的样式
+        //几何样式
+        ...fillStyle,
+        //标签样式
+        ...textStyle,
+        //填充符号样式
+        ...symbolStyle
     },
     //field字段所对应的值得专题图样式，不写则默认用style的
     //假设field叫面积
@@ -244,83 +142,32 @@ let uniformTheme = {
     visible: true,
     //高亮样式
     highlightStyle: {
-        //高亮时是否显示填充颜色
-        isShowFill: true,
-        //高亮时的填充颜色
-        color: "",
-        //高亮填充颜色的透明度
-        opacity: "",
-        //高亮时是否显示外边线，仅点、多边形有用
-        isShowBorder: true,
-        //外边线颜色
-        borderColor: "",
-        //外边线宽度
-        borderWidth: "",
-        //外边线样式，仅多边形有用
-        borderStyle: "",
-        //高亮边线的透明度
-        borderOpacity: "",
+        //填充区域样式
+        fillStyle: fillStyle,
+        //外边线样式
+        lineStyle: lineStyle
     },
     //专题图样式
     style: {
-        //填充颜色颜色
-        color: "",
-        //线宽，仅对线有用
-        width: "",
-        //是否有外边线，仅点、多边形有用
-        border: true,
-        //外边线颜色
-        borderColor: "",
-        //外边线宽度
-        borderWidth: "",
-        //外边线样式，仅多边形有用
-        borderStyle: "",
-        //线样式，仅线有用
-        lineStyle: "",
-        //半径，仅点、符号有用
-        radius: "",
-        //是否启用阴影
-        shadow: false,
-        //阴影模糊度
-        shadowBlur: "",
-        //阴影颜色
-        shadowColor: "",
-        //阴影X轴偏移
-        shadowOffsetX: "",
-        //阴影Y周偏印
-        shadowOffsetY: "",
-        //整体X轴偏移
-        offsetX: "",
-        //整体Y轴偏移
-        offsetY: "",
-        //是否启用文字标签
-        idShowFont: false,
-        //字体
-        fontFamily: "",
-        //字体颜色
-        fontColor: "",
-        //字体大小
-        fontSize: "",
-        //文字间距
-        fontSpacing: "",
-        //文字X轴偏移
-        fontXOffset: "",
-        //文字Y轴偏移
-        fontYOffset: "",
-        //是否启用图标或填充图案
-        isShowSymbol: false,
-        //符号Url或者名称
-        symbol: "",
-        //图标颜色
-        symbolColor: "",
-        //旋转角度
-        symbolRotate: "",
-        //符号大小
-        symbolSize: "",
-        //符号X轴偏移
-        symbolXOffset: "",
-        //符号Y轴偏移
-        symbolYOffset: "",
+        //数据类型为点则对应点样式
+        //点样式
+        ...pointStyle,
+        //标签样式
+        ...textStyle,
+        //数据类型为线则对应线样式
+        //线样式
+        ...lineStyle,
+        //标签样式
+        ...textStyle,
+        //填充符号样式
+        ...symbolStyle,
+        //数据类型为几何则对应的样式
+        //几何样式
+        ...fillStyle,
+        //标签样式
+        ...textStyle,
+        //填充符号样式
+        ...symbolStyle
     }
 }
 
@@ -338,6 +185,13 @@ let symbolTheme = {
     opacity: 100,
     //专题图是否显示或隐藏
     visible: true,
+    //高亮样式
+    highlightStyle: {
+        //填充区域样式
+        fillStyle: fillStyle,
+        //外边线样式
+        lineStyle: lineStyle
+    },
     //专题图样式
     style: {
         //是否启用文字标签
@@ -433,3 +287,108 @@ let heatmapTheme = {
         }
     }]
 }
+
+//点样式
+
+let pointStyle = {
+    //半径，仅点、符号有用
+    radius: 5,
+    //外边线颜色
+    outlineColor: "#FF0000",
+    //外边线宽度
+    outlineWidth: 1,
+    //锚点，方向Top，。。8个方向
+    anchor: "center"
+}
+
+//线样式
+let lineStyle = {
+    //线宽度
+    width: "",
+    //线样式，仅线有用
+    dashArray: "",
+    //线头样式
+    cap: "",
+    //拐角样式
+    join: "",
+    //是否启用阴影
+    hasShadow: false,
+    //阴影模糊度
+    shadowBlur: "",
+    //阴影颜色
+    shadowColor: "",
+    //阴影X轴偏移
+    shadowOffsetX: "",
+    //阴影Y周偏印
+    shadowOffsetY: "",
+}
+
+//几何样式
+let fillStyle = {
+    //是否有外边线，仅点、多边形有用
+    hasOutline: true,
+    //外边线颜色
+    outlineColor: "",
+    //外边线宽度
+    outlineWidth: "",
+    //线样式，仅线有用
+    outlineDashArray: "",
+    //是否启用阴影
+    hasShadow: false,
+    //阴影模糊度
+    shadowBlur: "",
+    //阴影颜色
+    shadowColor: "",
+    //阴影X轴偏移
+    shadowOffsetX: "",
+    //阴影Y周偏印
+    shadowOffsetY: "",
+    symbol: symbolStyle,
+    outlineSymbol:symbolStyle,
+}
+
+//符号样式
+let symbolStyle = {
+    //符号Url或者名称(本地自带图片)
+    symbol: "",
+    //旋转角度
+    rotate: "",
+    //符号大小
+    size: "",
+    //符号X轴偏移
+    xOffset: "",
+    //符号Y轴偏移
+    yOffset: "",
+    //锚点，方向Top，。。8个方向
+    anchor: ""
+}
+
+//注记或者标签样式
+let textStyle = {
+    //字体
+    fontFamily: "",
+    //字体颜色
+    fontColor: "",
+    //字体大小
+    fontSize: "",
+    //文字间距
+    spacing: "",
+    //文字旋转角度
+    rotate: "",
+    //文字X轴偏移
+    xOffset: "",
+    //文字Y轴偏移
+    yOffset: "",
+    //行高
+    lineHeight: "",
+    //行宽
+    maxWidth: "",
+    //对齐方式
+    align: "",
+    //描边
+    halo: "",
+    //是否沿着边线显示
+    placement: ""
+}
+
+export default uniqueTheme;
