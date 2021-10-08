@@ -112,6 +112,7 @@ const Template = (args, { argTypes }) => ({
           :showPolygon="showPolygon" 
           :samplePrecision="samplePrecision"
           :useMask="useMask"
+          :echartsDivId="'profileChart'"
           @success="success"
           @remove="remove"/>
           </mapgis-ui-card>
