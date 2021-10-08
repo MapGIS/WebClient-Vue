@@ -8,10 +8,8 @@
 </template>
 
 <script>
-import { Manager } from "@mapgis/webclient-es6-service";
-
 export default {
-  name: "mapgis-3d-Marker",
+  name: "mapgis-3d-marker",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     text: {
@@ -84,12 +82,12 @@ export default {
   data() {
     return {
       marker: undefined
-    }
+    };
   },
-  provide () {
+  provide() {
     const self = this;
     return {
-      get marker () {
+      get marker() {
         // 提供marker给子组件popup或者插槽槽
         return self.marker;
       }
@@ -132,9 +130,10 @@ export default {
       }, vueKey);
     },
     $_init(webGlobe) {
+      const { CesiumZondy } = this;
       let Cesium = this.Cesium || window.Cesium;
       let webGlobeMarker = this.webGlobe || webGlobe;
-      let labelLayer = new Manager.LabelLayer({
+      let labelLayer = new CesiumZondy.Manager.LabelLayer({
         viewer: webGlobeMarker.viewer
       });
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
@@ -153,6 +152,8 @@ export default {
         heightReference = Cesium.HeightReference.NONE;
       }
       this.$_append(labelLayer, heightReference);
+      this.marker = this;
+      console.log("marker", this);
     },
     $_append(labelLayer, heightReference) {
       let icon = labelLayer.appendLabelIcon(
@@ -186,9 +187,22 @@ export default {
       const { vueKey, vueIndex } = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
       CesiumZondy.MarkerManager.addSource(vueKey, vueIndex, icon);
+    },
+    togglePopup() {
+      const { longitude, latitude, height } = this;
+      let children = this.$children;
+      if (!children || children.length <= 0) return;
+      let popup = children[0];
+      let vnode = popup.$vnode;
+      if (!vnode) return;
+      let { tag } = vnode;
+      if (!tag || tag.indexOf("mapgis-3d-popup") < 0) return;
+      if (!popup.$props.position) {
+        popup.$props.position = { longitude, latitude, height };
+        popup.togglePopup();
+      }
+      popup.togglePopup();
     }
   }
 };
 </script>
-
-<style scoped></style>
