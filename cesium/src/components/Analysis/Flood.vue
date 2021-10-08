@@ -57,7 +57,11 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import { colorToCesiumColor } from "../WebGlobe/util";
+import {
+  colorToCesiumColor,
+  isDepthTestAgainstTerrainEnable,
+  setDepthTestAgainstTerrainEnable
+} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-analysis-flood",
@@ -154,7 +158,7 @@ export default {
       floodSpeedCopy: 500,
       positions: null,
       recalculate: false,
-      depthTestAgainstTerrain: false, // 深度检测是否已开启
+      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       mHeight: 2000, // 淹没最高高度变化前的值
       timer: null
     };
@@ -260,9 +264,6 @@ export default {
           }
         );
       });
-      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
-        this.brightnessEnabled = true;
-      }
     },
     unmount() {
       let { CesiumZondy, vueKey, vueIndex } = this;
@@ -363,7 +364,13 @@ export default {
       // 指定光线强度
       floodAnalysis.specularIntensity = Number(specularIntensity);
 
-      viewer.scene.globe.depthTestAgainstTerrain = true;
+      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
+        this.webGlobe
+      );
+      if (!this.isDepthTestAgainstTerrainEnable) {
+        // 如果深度检测没有开启，则开启
+        setDepthTestAgainstTerrainEnable(true, this.webGlobe);
+      }
       // 添加洪水淹没结果显示
       this.webGlobe.scene.VisualAnalysisManager.add(floodAnalysis);
       this.mHeight = maxHeightCopy;
@@ -395,6 +402,21 @@ export default {
       this._doAnalysis();
     },
     /**
+     * @description 恢复深度检测设置
+     */
+    _restoreDepthTestAgainstTerrain() {
+      if (
+        this.isDepthTestAgainstTerrainEnable !== undefined &&
+        this.isDepthTestAgainstTerrainEnable !==
+          isDepthTestAgainstTerrainEnable(this.webGlobe)
+      ) {
+        setDepthTestAgainstTerrainEnable(
+          this.isDepthTestAgainstTerrainEnable,
+          this.webGlobe
+        );
+      }
+    },
+    /**
      * @description 移除洪水淹没分析结果
      */
     _removeFlood() {
@@ -413,6 +435,7 @@ export default {
           null
         );
       }
+      this._restoreDepthTestAgainstTerrain();
     },
     /**
      * @description 移除洪水淹没分析结果，取消交互式绘制事件激活状态，恢复深度检测设置
@@ -436,10 +459,6 @@ export default {
 
       this.positions = null;
       this.recalculate = false;
-
-      if (!this.depthTestAgainstTerrain) {
-        this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false;
-      }
     }
   }
 };
