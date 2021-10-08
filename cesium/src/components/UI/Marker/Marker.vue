@@ -85,7 +85,7 @@ export default {
     return {
       marker: undefined,
       isMoveIn: false,
-      isMoveOut: false
+      isMoveOut: true
     }
   },
   provide () {
@@ -189,14 +189,14 @@ export default {
             if(!vm.isMoveIn){
               vm.isMoveIn = true;
               vm.isMoveOut = false;
-              vm.$emit("moveIn",label, vm.longitude, vm.latitude, vm.height);
+              vm.$emit("mouseOver",label, vm.longitude, vm.latitude, vm.height);
             }
           }
           if(!Cesium.defined(pickedObject)) {
             if(!vm.isMoveOut){
               vm.isMoveIn = false;
               vm.isMoveOut = true;
-              vm.$emit("moveOut",label, vm.longitude, vm.latitude, vm.height);
+              vm.$emit("mouseOut",label, vm.longitude, vm.latitude, vm.height);
             }
           }
         }
