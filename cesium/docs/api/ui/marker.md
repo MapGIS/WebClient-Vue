@@ -1,6 +1,6 @@
 # 标记点
 
-> mapgis-3d-marker
+> mapgis-3d-Marker
 
 ## 属性
 
@@ -122,7 +122,7 @@
 - **Payload** `{ popup }`
 - `popup` Popup 对象
 
-### `@mouseOver`
+### `@mouseEnter`
 
 - **描述** Popup的鼠标移入事件
 - **Payload** `{ options, longitude, latitude, height }`
@@ -131,7 +131,7 @@
 - `latitude` Popup的纬度坐标
 - `height` Popup的高度坐标
 
-### `@mouseOut`
+### `@mouseLeave`
 
 - **描述** Popup的鼠标移出事件
 - **Payload** `{ options, longitude, latitude, height }`

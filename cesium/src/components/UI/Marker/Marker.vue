@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "mapgis-3d-marker",
+  name: "mapgis-3d-Marker",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     text: {
@@ -189,14 +189,14 @@ export default {
             if(!vm.isMoveIn){
               vm.isMoveIn = true;
               vm.isMoveOut = false;
-              vm.$emit("mouseOver",label, vm.longitude, vm.latitude, vm.height);
+              vm.$emit("mouseEnter",label, vm.longitude, vm.latitude, vm.height);
             }
           }
           if(!Cesium.defined(pickedObject)) {
             if(!vm.isMoveOut){
               vm.isMoveIn = false;
               vm.isMoveOut = true;
-              vm.$emit("mouseOut",label, vm.longitude, vm.latitude, vm.height);
+              vm.$emit("mouseLeave",label, vm.longitude, vm.latitude, vm.height);
             }
           }
         }
