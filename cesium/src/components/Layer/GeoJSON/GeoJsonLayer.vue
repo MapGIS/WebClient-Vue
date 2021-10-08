@@ -115,8 +115,7 @@ export default {
       promise.then(function(dataSource) {
         // viewer.zoomTo(dataSource);
         viewer.dataSources.add(dataSource);
-        let entities = dataSource.entities.values;
-        vm.changeColor(entities);
+        vm.changeColor(dataSource);
         vm.$emit("load", { component: this });
         let handler;
         if (enablePopup) {
@@ -225,7 +224,8 @@ export default {
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
     },
-    changeColor(entities) {
+    changeColor(dataSource) {
+      let entities = dataSource.entities.values;
       const vm = this;
       const { Cesium, layerStyle } = this;
       const { point, line, polygon } = layerStyle;
@@ -268,20 +268,30 @@ export default {
       } = this;
       const { point, line, polygon } = layerStyle;
       const hpolygon = highlightStyle.polygon;
+      const hline = highlightStyle.line;
+      const hpoint = highlightStyle.point;
       let outlineEntity;
       if (!entities || entities.length <= 0 || !enablePopup) return;
       let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
       if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
-        if (entity.id != vm.activeId) {
-          if (entity.polygon) {
-            const style = polygon.toCesiumStyle(Cesium);
-            const { material } = style;
-            entity.polygon.material = material;
-          }
-        } else {
-          if (entity.polygon) {
+        if (entity.id == vm.activeId) {
+          if (entity.ellipse) {
+            const style = hpoint.toCesiumStyle(Cesium);
+            const { material, radius, outline } = style;
+            entity.ellipse = new Cesium.EllipseGraphics({
+              semiMajorAxis: radius,
+              semiMinorAxis: radius,
+              outline: outline,
+              material: material
+            });
+          } else if (entity.polyline) {
+            const style = hline.toCesiumStyle(Cesium);
+            const { material, width } = style;
+            entity.polyline.material = material;
+            entity.polyline.width = width;
+          } else if (entity.polygon) {
             outlineEntity = find.options.outlineEntity;
             const style = hpolygon.toCesiumStyle(Cesium);
             const { material, outlineColor } = style;
@@ -308,6 +318,27 @@ export default {
               "outlineEntity",
               outlineEntity
             );
+          }
+        } else {
+          if (entity.ellipse) {
+            const style = point.toCesiumStyle(Cesium);
+            const { material, radius, outline } = style;
+            entity.ellipse = new Cesium.EllipseGraphics({
+              semiMajorAxis: radius,
+              semiMinorAxis: radius,
+              outline: outline,
+              material: material
+            });
+          } else if (entity.polyline) {
+            const style = line.toCesiumStyle(Cesium);
+            const { material, width } = style;
+            entity.polyline.material = material;
+            entity.polyline.width = width;
+          } else if (entity.polygon) {
+            const style = polygon.toCesiumStyle(Cesium);
+            const { material, outlineColor } = style;
+            entity.polygon.material = material;
+            entity.polygon.outlineColor = outlineColor;
           }
         }
       }

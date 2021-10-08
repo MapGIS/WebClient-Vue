@@ -46,7 +46,8 @@ const Template = (args, { argTypes }) => ({
 
 export const GeoJSON = Template.bind({});
 GeoJSON.args = {
-  baseUrl: "http://develop.smaryun.com/static/data/geojson/china.geojson",
+  baseUrl1: "http://develop.smaryun.com/static/data/geojson/china.geojson",
+  baseUrl: "http://localhost:8888/static/data/geojson/省会城市.json",
   enablePopup: true,
   layerStyle: {
     point: new PointStyle({
@@ -67,10 +68,16 @@ GeoJSON.args = {
     }),
   },
   highlightStyle: {
-    point: new PointStyle(),
+    point: new PointStyle({
+      radius: 45000,
+      color: "#ff0000",
+      outlineColor: "#ffffff",
+      outlineWidth: 2.5,
+    }),
     line: new LineStyle({
-      width: 2,
+      width: 6,
       color: "#000000",
+      shadow: new Shadow({ blur: 6, color: "#ff0000" }),
       outlineColor: "#ff0000",
       outlineWidth: 8,
     }),
