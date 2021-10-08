@@ -1,6 +1,6 @@
 <template>
   <div v-show="showPanel">
-    <mapgis-igs-theme-panel-custom
+    <mapgis-theme-panel-custom
         ref="themePanel"
         :options="optionsCopy"
         @formChanged="$_formChanged"
@@ -19,7 +19,7 @@
 import BaseLayer from "./BaseLayer";
 
 export default {
-  name: "mapgis-igs-theme-layer-custom",
+  name: "mapgis-theme-layer-custom",
   mixins: [BaseLayer],
   props: {
     popUpFields: {

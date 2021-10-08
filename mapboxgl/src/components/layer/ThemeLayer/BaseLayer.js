@@ -138,6 +138,9 @@ export default {
         layerStyle: {
             type: Object
         },
+        highlightStyle: {
+            type: Object
+        },
         styleGroups: {
             type: Array
         },
@@ -288,22 +291,80 @@ export default {
             }
         },
         $_addHeightLightLayer() {
-            if (this.dataType === "fill") {
-                let vm = this;
-                let hId = this.layerIdCopy + this.$_getThemeName() + "_高亮";
-                let heightLightLayer = {
-                    id: hId,
-                    type: "line",
-                    source: this.source_Id,
-                    paint: {
-                        "line-color": "#7B75C6",
-                        "line-width": ['case',
-                            ['boolean', ['feature-state', 'hover'], false],
-                            4,
-                            0]
+            let vm = this;
+            if(this.themeType === "range"){
+                if (this.dataType === "fill") {
+                    let hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_线";
+                    let hIdFill = this.layerIdCopy + this.$_getThemeName() + "_高亮_多边形";
+                    let heightLightLayer = {
+                        id: hId,
+                        type: "line",
+                        source: this.source_Id,
+                        paint: {
+                            "line-color": "#7B75C6",
+                            "line-width": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                4,
+                                0]
+                        }
+                    }
+                    let heightLightLayerFill = {
+                        id: hIdFill,
+                        type: "fill",
+                        source: this.source_Id,
+                        paint: {
+                            "fill-color": "#7B75C6",
+                            "fill-opacity": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.5,
+                                0]
+                        }
+                    }
+                    if (this.highlightStyle) {
+                        const {lineStyle, fillStyle} = this.highlightStyle;
+                        if (lineStyle) {
+                            if (lineStyle.color) {
+                                heightLightLayer.paint["line-color"] = lineStyle.color;
+                            }
+                            if (lineStyle.width) {
+                                heightLightLayer.paint["line-width"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    lineStyle.width,
+                                    0];
+                            }
+                            if (lineStyle.opacity) {
+                                heightLightLayer.paint["line-opacity"] = lineStyle.opacity;
+                            }
+                        }
+                        if(fillStyle){
+                            if (fillStyle.color) {
+                                heightLightLayerFill.paint["fill-color"] = fillStyle.color;
+                            }
+                            if (fillStyle.opacity) {
+                                heightLightLayerFill.paint["fill-opacity"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    fillStyle.opacity,
+                                    0];
+                            }
+                        }
+                    }
+                    this.map.addLayer(heightLightLayer);
+                    this.map.addLayer(heightLightLayerFill);
+                } else if(this.dataType === "circle") {
+                    let hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_点";
+                    let heightLightLayer = {
+                        id: hId,
+                        type: "circle",
+                        source: this.source_Id,
+                        paint: {
+                            "circle-radius": 6,
+                            "circle-opacity": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.5,
+                                0]
+                        }
                     }
                 }
-                this.map.addLayer(heightLightLayer);
                 this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
                     if (vm.hoveredStateId) {
                         vm.map.setFeatureState(
@@ -312,7 +373,6 @@ export default {
                         );
                     }
                     vm.hoveredStateId = e.features[0].id;
-                    console.log("e.features[0].id",e.features[0].id)
                     vm.map.setFeatureState(
                         {source: vm.source_Id, id: vm.hoveredStateId},
                         {hover: true}
@@ -333,9 +393,6 @@ export default {
                     }
                     vm.hoveredStateId = null;
                 });
-            }else {
-                // this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                // });
             }
         },
         $_addThemeLayerBySource() {
@@ -361,7 +418,9 @@ export default {
                 // }
                 this.selectValue = this.themeField;
                 this.$_addThemeLayer(this.type, layerId, this.field);
-                this.$_addHeightLightLayer();
+                if (this.isHoverAble) {
+                    this.$_addHeightLightLayer();
+                }
             }
         },
         $_addThemeLayer(themeType, layerId, themeField) {

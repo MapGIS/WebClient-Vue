@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: "mapgis-igs-theme-panel-custom",
+  name: "mapgis-theme-panel-custom",
   data() {
     return {}
   },
