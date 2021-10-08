@@ -1,4 +1,4 @@
-import Mapgis3dMarkerPlotting from "../../cesium/src/components/Layer/Marker/3dMarkerPlotting.vue";
+import Mapgis3dMarkerPlotting from "../../cesium/src/components/Layer/Marker/DynamicMarkerLayer.vue";
 
 export default {
   title: "三维/图层/标注图层",

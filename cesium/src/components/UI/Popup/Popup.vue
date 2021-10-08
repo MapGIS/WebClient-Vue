@@ -23,7 +23,7 @@ export default {
       show: true
     };
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe", "marker"],
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
     position: {
       deep: true,
