@@ -194,7 +194,7 @@ export default {
   },
   props: {
     title: String,
-    id: String | Number,
+    id: String,
     params: Array,
     modelGroup: {
       type: String,
