@@ -1,9 +1,14 @@
 <template>
-
+  <div style="display: none">
+    <!-- slot for custom marker -->
+    <slot name="marker" />
+    <!-- slot for popup -->
+    <slot v-if="marker" />
+  </div>
 </template>
 
 <script>
-import {Manager} from "@mapgis/webclient-es6-service"
+import { Manager } from "@mapgis/webclient-es6-service";
 
 export default {
   name: "mapgis-3d-Marker",
@@ -76,11 +81,25 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      marker: undefined
+    }
+  },
+  provide () {
+    const self = this;
+    return {
+      get marker () {
+        // 提供marker给子组件popup或者插槽槽
+        return self.marker;
+      }
+    };
+  },
   mounted() {
     let vm = this;
-    Object.keys(this.$props).forEach(function (key) {
-      if(key !== "vueKey" && key !== "vueIndex"){
-        vm.$watch(key,function () {
+    Object.keys(this.$props).forEach(function(key) {
+      if (key !== "vueKey" && key !== "vueIndex") {
+        vm.$watch(key, function() {
           vm.$_unmount();
           vm.$_mount();
         });
@@ -92,22 +111,25 @@ export default {
     this.$_unmount();
   },
   methods: {
-    $_mount(){
+    $_mount() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
         vm.$_init(webGlobe);
-      },this.vueKey)
+      }, this.vueKey);
     },
-    $_unmount(){
-      const {vueKey, vueIndex } = this;
+    $_unmount() {
+      const { vueKey, vueIndex } = this;
       const vm = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
-        let MarkerManager = CesiumZondy.MarkerManager.findSource(vueKey, vueIndex);
+      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
+        let MarkerManager = CesiumZondy.MarkerManager.findSource(
+          vueKey,
+          vueIndex
+        );
         let webGlobeMarker = vm.webGlobe || webGlobe;
         webGlobeMarker.viewer.entities.remove(MarkerManager.source);
         CesiumZondy.MarkerManager.deleteSource(vueKey, vueIndex);
-      },vueKey);
+      }, vueKey);
     },
     $_init(webGlobe) {
       let Cesium = this.Cesium || window.Cesium;
@@ -117,54 +139,56 @@ export default {
       });
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
       switch (this.heightReference) {
-        case "clamped" :
+        case "clamped":
           heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
           break;
-        case "absolute" :
+        case "absolute":
           heightReference = Cesium.HeightReference.NONE;
           break;
-        case "above" :
+        case "above":
           heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
           break;
       }
-      if(this.height > 0){
+      if (this.height > 0) {
         heightReference = Cesium.HeightReference.NONE;
       }
-      this.$_append(labelLayer,heightReference);
+      this.$_append(labelLayer, heightReference);
     },
-    $_append(labelLayer,heightReference) {
+    $_append(labelLayer, heightReference) {
       let icon = labelLayer.appendLabelIcon(
-          //文本内容
-          this.text,
-          //经度、纬度、高度
-          this.longitude, this.latitude, this.height,
-          //文字大小、字体
-          this.fontSize + " " + this.fontFamily,
-          //文字颜色
-          Cesium.Color.fromCssColorString(this.color),
-          // "data/picture/icon.png",
-          this.iconUrl,
-          this.iconWidth, this.iconHeight,
-          //最远显示距离：相机到注记的距离大于该值 注记不显示
-          this.farDist,
-          //最近显示距离：相机到注记的距离小于该值 注记不显示
-          this.nearDist,
-          //图片位置：'center','top','bottom'
-          this.iconPos,
-          "",
-          //相对位置
-          heightReference
+        //文本内容
+        this.text,
+        //经度、纬度、高度
+        this.longitude,
+        this.latitude,
+        this.height,
+        //文字大小、字体
+        this.fontSize + " " + this.fontFamily,
+        //文字颜色
+        Cesium.Color.fromCssColorString(this.color),
+        // "data/picture/icon.png",
+        this.iconUrl,
+        this.iconWidth,
+        this.iconHeight,
+        //最远显示距离：相机到注记的距离大于该值 注记不显示
+        this.farDist,
+        //最近显示距离：相机到注记的距离小于该值 注记不显示
+        this.nearDist,
+        //图片位置：'center','top','bottom'
+        this.iconPos,
+        "",
+        //相对位置
+        heightReference
       );
       this.$_addIcon(icon);
     },
     $_addIcon(icon) {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      CesiumZondy.MarkerManager.addSource(vueKey,vueIndex,icon);
+      CesiumZondy.MarkerManager.addSource(vueKey, vueIndex, icon);
     }
   }
-}
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
