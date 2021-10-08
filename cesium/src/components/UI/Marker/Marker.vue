@@ -81,8 +81,10 @@ export default {
   },
   data() {
     return {
-      marker: undefined
-    };
+      marker: undefined,
+      isMoveIn: false,
+      isMoveOut: false
+    }
   },
   provide() {
     const self = this;
@@ -131,6 +133,7 @@ export default {
     },
     $_init(webGlobe) {
       const { CesiumZondy } = this;
+      let vm = this;
       let Cesium = this.Cesium || window.Cesium;
       let webGlobeMarker = this.webGlobe || webGlobe;
       let labelLayer = new CesiumZondy.Manager.LabelLayer({
@@ -153,7 +156,51 @@ export default {
       }
       this.$_append(labelLayer, heightReference);
       this.marker = this;
-      console.log("marker", this);
+      let handler = new Cesium.ScreenSpaceEventHandler(webGlobeMarker.viewer.scene.canvas);
+      let scene = webGlobeMarker.viewer.scene;
+      let label = {
+        //文本内容
+        text: this.text,
+        //经度、纬度、高度
+        longitude: this.longitude,
+        latitude: this.latitude,
+        height: this.height,
+        //文字大小、字体
+        font: this.fontSize + " " + this.fontFamily,
+        //文字颜色
+        fontColor: Cesium.Color.fromCssColorString(this.color),
+        // "data/picture/icon.png",
+        iconUrl: this.iconUrl,
+        iconWidth: this.iconWidth,
+        iconHeight: this.iconHeight,
+        //最远显示距离：相机到注记的距离大于该值 注记不显示
+        farDist: this.farDist,
+        //最近显示距离：相机到注记的距离小于该值 注记不显示
+        nearDist: this.nearDist,
+        //图片位置：'center','top','bottom'
+        iconPos: this.iconPos,
+        //相对位置
+        heightReference: heightReference
+      }
+      handler.setInputAction(function(movement) {
+        if (scene.mode !== Cesium.SceneMode.MORPHING) {
+          let pickedObject = scene.pick(movement.endPosition);
+          if(Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id") && pickedObject.id.label) {
+            if(!vm.isMoveIn){
+              vm.isMoveIn = true;
+              vm.isMoveOut = false;
+              vm.$emit("moveIn",label, vm.longitude, vm.latitude, vm.height);
+            }
+          }
+          if(!Cesium.defined(pickedObject)) {
+            if(!vm.isMoveOut){
+              vm.isMoveIn = false;
+              vm.isMoveOut = true;
+              vm.$emit("moveOut",label, vm.longitude, vm.latitude, vm.height);
+            }
+          }
+        }
+      }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
     },
     $_append(labelLayer, heightReference) {
       let icon = labelLayer.appendLabelIcon(
