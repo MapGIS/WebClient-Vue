@@ -12,7 +12,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisVectorTileLayer },
-  template: `<mapgis-web-scene  >
+  template: `<mapgis-web-scene style="height:95vh" >
     <mapgis-3d-vectortile-layer v-bind="$props" />
   </mapgis-web-scene>`,
 });

@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "mapgis-3d-Marker",
+  name: "mapgis-3d-marker",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     text: {
