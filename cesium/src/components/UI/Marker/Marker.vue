@@ -83,7 +83,8 @@ export default {
     return {
       marker: undefined,
       isMoveIn: false,
-      isMoveOut: true
+      isMoveOut: true,
+      labelId: undefined
     }
   },
   provide() {
@@ -185,7 +186,7 @@ export default {
       handler.setInputAction(function(movement) {
         if (scene.mode !== Cesium.SceneMode.MORPHING) {
           let pickedObject = scene.pick(movement.endPosition);
-          if(Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id") && pickedObject.id.label) {
+          if(Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id") && pickedObject.id.label && pickedObject.id.id === vm.labelId) {
             if(!vm.isMoveIn){
               vm.isMoveIn = true;
               vm.isMoveOut = false;
@@ -229,6 +230,7 @@ export default {
         heightReference
       );
       this.$_addIcon(icon);
+      this.labelId = icon._id;
     },
     $_addIcon(icon) {
       const { vueKey, vueIndex } = this;
