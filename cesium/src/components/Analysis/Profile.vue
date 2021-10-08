@@ -247,6 +247,15 @@ export default {
     useMask: {
       type: Boolean,
       default: true
+    },
+    /**
+     * @type String
+     * @required true
+     * @description 剖面信息显示容器的id
+     */
+    echartsDivId: {
+      type: String,
+      required: true
     }
   },
   watch: {
@@ -304,7 +313,8 @@ export default {
       samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       maskShow: false,
-      maskText: "正在分析中, 请稍等..."
+      maskText: "正在分析中, 请稍等...",
+      profileeChart: undefined
     };
   },
 
@@ -340,6 +350,9 @@ export default {
           }
         );
       });
+      this.profileeChart = echarts.init(
+        document.getElementById(this.echartsDivId)
+      );
     },
     unmount() {
       const profileAnalysis = this._getProfileAnalysis();
@@ -410,7 +423,8 @@ export default {
           showPolygon: showPolygonCopy,
           polylineGroundColor: pgColor,
           samplePrecision: samplePrecisionCopy,
-          profileType // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
+          profileType, // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
+          echart: this.profileeChart
         });
       }
       profileAnalysis.profile(this._profileStart, this._profileSuccess);

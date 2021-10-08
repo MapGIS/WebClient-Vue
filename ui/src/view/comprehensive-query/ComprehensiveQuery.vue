@@ -62,6 +62,7 @@
         @click-item="clickItem"
         @change-cluster="changeCluster"
         @open-attribute-table="openAttributeTable"
+        @color-cluster="colorCluster"
         @remove-attribute-table="removeAttributeTable"
       ></place-name>
     </div>
@@ -158,6 +159,9 @@ export default {
       this.$refs.placeName.removeResult();
       this.$refs.placeName.reset();
       this.$emit("onClose");
+    },
+    colorCluster(color){
+      this.$emit("color-cluster", color);
     },
     onSearchFocus() {
       this.searchPanelExpand = true;

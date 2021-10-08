@@ -17,6 +17,9 @@ export function formatStyleToLayer(style, themeType, dataType, layerId) {
         case "unique":
             layers = getLayerFromStyle(style, dataType, layerId);
             break;
+        case "range":
+            layers = getLayerFromStyle(style, dataType, layerId);
+            break;
         case "symbol":
             layers = getLayerFromSymbolStyle(style, layerId);
             break;

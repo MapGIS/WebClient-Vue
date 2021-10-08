@@ -42,6 +42,7 @@
             @select-markers="selectMarkers"
             @click-item="clickItem"
             @update-geojson="currentResult"
+            @color-cluster="colorCluster"
           ></place-name-panel>
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
@@ -137,6 +138,9 @@ export default {
         this.cluster = true;
       }
     },
+    colorCluster(color){
+      this.$emit("color-cluster", color);
+    },
     onChange(val) {
       const copy = JSON.parse(JSON.stringify(this.selected));
       this.selected = [];
@@ -194,6 +198,7 @@ export default {
       this.markers = [];
       this.fieldConfigs = [];
       this.currentResult({ type: "FeatureCollection", features: [] });
+      this.$emit("change-cluster", this.cluster);
     },
     removeResult() {
       // 点击关闭面板的时候，删除属性表里面所有的tab
