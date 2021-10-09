@@ -1,4 +1,5 @@
 import Mapgis3dDynamicMarkerLayer from "../../cesium/src/components/Layer/Marker/DynamicMarkerLayer.vue";
+import Markdown from "../../cesium/docs/api/layer/marker/DynamicMarker.md";
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
@@ -69,8 +70,8 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const Marker = Template.bind({});
-Marker.args = {
+export const 标绘图层 = Template.bind({});
+标绘图层.args = {
   data: {
     type: "FeatureCollection",
     features: [
@@ -147,5 +148,13 @@ Marker.args = {
     marker: new MarkerStyle({
       symbol: DefaultActiveImagePlotting,
     }),
+  },
+};
+
+标绘图层.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
   },
 };
