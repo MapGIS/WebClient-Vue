@@ -8,7 +8,7 @@
   >
     <mapgis-ui-col
       :span="labelSpan"
-      :title="label"
+      :title="title || label"
       :style="labelStyle"
       :class="`${prefixCls}-col-left`"
     >
@@ -84,6 +84,12 @@ export default {
     colon: {
       type: Boolean,
       default: true
+    },
+    /**
+     * 标题说明
+     */
+    title: {
+      type: String
     },
     /**
      * 标题
