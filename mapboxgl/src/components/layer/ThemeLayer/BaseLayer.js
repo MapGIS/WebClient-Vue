@@ -14,6 +14,8 @@ import {gradientColor} from "../../util/util";
 import All from "@mapgis/webclient-es6-service";
 import {formatInterpolate, formatStyleToLayer} from "./themeUtil";
 
+import * as turf from "@turf/turf"
+
 export const DefaultThemeMains = [
     "_统一专题图",
     "_单值专题图",
@@ -286,16 +288,27 @@ export default {
         },
         $_highLightFeature(highlightFeature) {
             this.highlightFeature = highlightFeature || this.highlightFeature;
-            if(this.highlightFeature && this.highlightFeature instanceof Object){
-                if (this.highlightFeature.hasOwnProperty("id")) {
-                    this.hoveredStateId = this.highlightFeature.id;
+            if (this.highlightFeature && this.highlightFeature instanceof Object) {
+                if (this.highlightFeature.hasOwnProperty("properties") && this.highlightFeature.properties.fid) {
+                    this.hoveredStateId = this.highlightFeature.properties.fid;
                     this.map.setFeatureState(
                         {source: this.source_Id, id: this.hoveredStateId},
                         {hover: true}
                     );
                 }
-                if (this.highlightFeature.hasOwnProperty("properties") && this.highlightFeature.properties.centroid) {
-                    this.$_addPopup(this.highlightFeature.properties.centroid, this.highlightFeature);
+                if (this.highlightFeature.hasOwnProperty("geometry") && this.highlightFeature.geometry.coordinates) {
+                    let coordinates, points = [];
+                    if (this.highlightFeature.geometry.type === "MultiPolygon") {
+                        coordinates = this.highlightFeature.geometry.coordinates[0][0];
+                    } else {
+                        coordinates = this.highlightFeature.geometry.coordinates[0];
+                    }
+                    for (let i = 0; i < coordinates.length; i++) {
+                        points.push(turf.point([coordinates[i][0], coordinates[i][1]]));
+                    }
+                    let featuresCollection = turf.featureCollection(points);
+                    let center = turf.center(featuresCollection);
+                    this.$_addPopup(center.geometry.coordinates, this.highlightFeature);
                 }
             }
         },
@@ -454,7 +467,7 @@ export default {
             }
         },
         $_addPopup(coordinates, feature) {
-            if(this.isPopUpAble){
+            if (this.isPopUpAble) {
                 if (!window.popup) {
                     window.popup = new this.mapbox.Popup({
                         closeOnClick: false,
