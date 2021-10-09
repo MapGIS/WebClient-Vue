@@ -4,6 +4,7 @@
     :latitude="popupPosition.latitude"
     :height="popupPosition.height"
     :iconUrl="img"
+    :farDist="200000000"
     @mouseEnter="mouseOver"
     @mouseLeave="mouseOut"
   >
