@@ -47,3 +47,5 @@ export { default as MapgisArcgisMapLayer} from "../../mapboxgl/src/components/la
 export { default as MapgisArcgisTileLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
 export { default as MapgisEchartsLayer} from "../../mapboxgl/src/components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/MapvLayer";
+
+export { default as Mapgis2DComprehensiveQuery } from "../../mapboxgl/src/components/service/comprehensive-query/ComprehensiveQuery";

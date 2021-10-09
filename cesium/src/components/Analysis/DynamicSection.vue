@@ -193,7 +193,7 @@ export default {
   mounted() {
     this.$emit("mounted", this);
   },
-  destroyed() {
+  beforeDestroy() {
     this.$emit("destroyed", this);
   },
   methods: {
@@ -414,6 +414,7 @@ export default {
       );
       let { options } = find || {};
       let { dynamicSectionAnalysis } = options || {};
+      debugger
       if (dynamicSectionAnalysis) {
         dynamicSectionAnalysis.removeAll();
         dynamicSectionAnalysis = null;

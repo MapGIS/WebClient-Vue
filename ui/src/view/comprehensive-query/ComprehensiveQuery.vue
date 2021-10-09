@@ -70,7 +70,7 @@
 </template>
 
 <script>
-const Feature = require("./util/feature");
+const Feature = require("./util/feature.min.js");
 import PlaceName from "./PlaceName/PlaceName.vue";
 
 export default {

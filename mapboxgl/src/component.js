@@ -79,3 +79,5 @@ export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/Theme
 export { default as MapgisThemePanelCustom } from "./components/layer/ThemeLayer/ThemePanelCustom";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
 export { default as MapgisThemeLayerCustom } from "./components/layer/ThemeLayer/ThemeLayerCustom";
+
+export { default as Mapgis2DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";

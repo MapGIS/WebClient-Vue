@@ -1,5 +1,5 @@
 export default {
-  title: "界面/业务组件/综合查询",
+  title: "二维/服务/综合查询",
   argTypes: {
     logo: {
       description: "左侧logo",
@@ -25,46 +25,30 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
-    return {};
+    return {
+      mapOptions: {
+        crs: "EPSG:4326", //经纬度一定要设置crs参数
+        maxBounds: [
+          [-180, -90],
+          [180, 90],
+        ],
+        zoom: 7.5,
+        center: [116.39, 40.2],
+      },
+    };
   },
   template: `
-      <mapgis-ui-comprehensive-query 
-        v-bind="$props"       
-        @onClose="onClose"
-        @onSearch="onSearch"
-        @current-result="currentResult"
-        @select-markers="selectMarkers"
-        @click-item="clickItem"
-        @change-cluster="changeCluster"
-        @open-attribute-table="openAttributeTable"
-        @remove-attribute-table="removeAttributeTable"
-      />
-    `,
+        <mapgis-web-map v-bind="{...mapOptions}" style="height:calc(100vh - 20px)">
+          <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+          <mapgis-2d-comprehensive-query 
+            style="position: absolute;top: 10px;left: 10px;z-index: 100"
+            v-bind="$props"       
+            @open-attribute-table="openAttributeTable"
+            @remove-attribute-table="removeAttributeTable"
+          />
+        </mapgis-web-map>
+      `,
   methods: {
-    /**
-     * 当前展示的结果回调函数（将查询结果展示至地图上）
-     */
-    currentResult(geojson) {
-      console.log(geojson);
-    },
-    /**
-     * 当前点击的条目的回调函数（实现点击后跳转中心点）
-     */
-    clickItem(feature) {
-      console.log(feature);
-    },
-    /**
-     * 当前选中的坐标
-     */
-    selectMarkers(selectMarkers) {
-      console.log(selectMarkers);
-    },
-    /**
-     * 聚合按钮改变时的回调
-     */
-    changeCluster(val) {
-      console.log(val);
-    },
     /**
      * 打开属性表回调函数
      */
