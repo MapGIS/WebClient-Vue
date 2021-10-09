@@ -91,7 +91,16 @@ export function getLayerFromStyle(style, dataType, layerId) {
         case "line":
             Object.keys(style).forEach(function (key) {
                 if (linePaintList.hasOwnProperty(key)) {
-                    themeLayer.paint[linePaintList[key]] = style[key];
+                    if (key === "color") {
+                        if (typeof linePaintList[key] === "string") {
+                            let colors = style[key].split(",");
+                            if (colors.length === 1) {
+                                themeLayer.paint[linePaintList[key]] = style[key];
+                            }
+                        }
+                    } else {
+                        themeLayer.paint[linePaintList[key]] = style[key];
+                    }
                 }
                 if (lineLayoutList.hasOwnProperty(key)) {
                     themeLayer.layout[lineLayoutList[key]] = style[key];
