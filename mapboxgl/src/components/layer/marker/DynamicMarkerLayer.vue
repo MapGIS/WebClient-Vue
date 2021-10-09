@@ -28,10 +28,16 @@ export default {
   components: { MapgisMarkerSetPro },
   inject: ["map"],
   props: {
+    /**
+     * Geojson数据源
+     */
     data: {
       type: [Object, String],
       required: true
     },
+    /**
+     * 当前图层的显示样式，只能是 MarkerStyle
+     */
     layerStyle: {
       type: Object,
       default: () => {
@@ -43,10 +49,16 @@ export default {
         };
       }
     },
+    /**
+     * 是否激活高亮
+     */
     highlight: {
       type: Boolean,
       default: true
     },
+    /**
+     * 当前图层的高亮样式
+     */
     highlightStyle: {
       type: Object,
       default: () => {
@@ -60,10 +72,16 @@ export default {
         };
       }
     },
+    /**
+     * 要素唯一id字段，用来过滤、查询、高亮
+     */
     idField: {
       type: String,
       default: "fid"
     },
+    /**
+     * 当前选中的要素id的数组
+     */
     selects: {
       type: Array,
       default: () => []
@@ -72,6 +90,9 @@ export default {
       type: Boolean,
       default: false
     },
+    /**
+     * 缩放当前视图到指定的的范围
+     */
     fitBound: {
       type: Object,
       default: () => {

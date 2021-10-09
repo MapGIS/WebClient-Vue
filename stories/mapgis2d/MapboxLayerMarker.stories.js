@@ -1,4 +1,5 @@
-import MapgisMarkerLayer from "../../mapboxgl/src/components/UI/marker/MarkerLayer.vue";
+import MapgisDynamicMarkerLayer from "../../mapboxgl/src/components/layer/marker/DynamicMarkerLayer.vue";
+import Markdown from "../../mapboxgl/docs/api/Layers/Marker/DynamicMarker.md";
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
@@ -9,7 +10,7 @@ const DefaultInactiveImagePlotting =
 
 export default {
   title: "二维/图层/标注图层",
-  component: MapgisMarkerLayer,
+  component: MapgisDynamicMarkerLayer,
   argTypes: {
     selects: [],
     idField: "markerId",
@@ -32,18 +33,18 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisMarkerLayer },
+  components: { MapgisDynamicMarkerLayer },
   data() {
     return {};
   },
   methods: {},
   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.2]" :zoom="3" style="height:95vh">
     <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-marker-layer v-bind="$props">
+    <mapgis-dynamic-marker-layer v-bind="$props">
       <mapigs-ui-card slot="popup" slot-scope="{ marker }">
         {{marker.fid}}
       </mapigs-ui-card>
-    </mapgis-marker-layer>
+    </mapgis-dynamic-marker-layer>
   </mapgis-web-map>`,
 });
 
@@ -125,5 +126,13 @@ export const 标绘图层 = Template.bind({});
     marker: new MarkerStyle({
       symbol: DefaultActiveImagePlotting,
     }),
+  },
+};
+
+标绘图层.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
   },
 };
