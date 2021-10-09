@@ -14,6 +14,8 @@ import {gradientColor} from "../../util/util";
 import All from "@mapgis/webclient-es6-service";
 import {formatInterpolate, formatStyleToLayer} from "./themeUtil";
 
+import * as turf from "@turf/turf"
+
 export const DefaultThemeMains = [
     "_统一专题图",
     "_单值专题图",
@@ -114,9 +116,6 @@ export default {
         dataSource: {
             type: Object
         },
-        themeProps: {
-            type: Object
-        },
         hideItem: {
             type: Array,
             default() {
@@ -136,7 +135,19 @@ export default {
             type: String
         },
         layerStyle: {
+            type: Object,
+            default() {
+                return {}
+            }
+        },
+        highlightStyle: {
             type: Object
+        },
+        highlightFeature: {
+            type: Object
+        },
+        highlightCoordinates: {
+            type: Array
         },
         styleGroups: {
             type: Array
@@ -154,6 +165,12 @@ export default {
         dataSource: {
             handler: function () {
                 this.$_addThemeLayerBySource();
+            },
+            deep: true
+        },
+        highlightFeature: {
+            handler: function () {
+                this.$_highLightFeature();
             },
             deep: true
         }
@@ -203,7 +220,8 @@ export default {
             hideItemCopy: this.hideItem,
             panelClass: undefined,
             hoveredStateId: undefined,
-            panelType: "fix"
+            panelType: "fix",
+            markers: []
         };
     },
     mounted() {
@@ -268,13 +286,30 @@ export default {
             }
             return value;
         },
-        $_highLightFeature(index) {
-            if (this.dataType === "fill") {
-                this.hoveredStateId = this.dataSource.features[index].id;
-                this.map.setFeatureState(
-                    {source: this.source_Id, id: this.hoveredStateId},
-                    {hover: true}
-                );
+        $_highLightFeature(highlightFeature) {
+            this.highlightFeature = highlightFeature || this.highlightFeature;
+            if (this.highlightFeature && this.highlightFeature instanceof Object) {
+                if (this.highlightFeature.hasOwnProperty("properties") && this.highlightFeature.properties.fid) {
+                    this.hoveredStateId = this.highlightFeature.properties.fid;
+                    this.map.setFeatureState(
+                        {source: this.source_Id, id: this.hoveredStateId},
+                        {hover: true}
+                    );
+                }
+                if (this.highlightFeature.hasOwnProperty("geometry") && this.highlightFeature.geometry.coordinates) {
+                    let coordinates, points = [];
+                    if (this.highlightFeature.geometry.type === "MultiPolygon") {
+                        coordinates = this.highlightFeature.geometry.coordinates[0][0];
+                    } else {
+                        coordinates = this.highlightFeature.geometry.coordinates[0];
+                    }
+                    for (let i = 0; i < coordinates.length; i++) {
+                        points.push(turf.point([coordinates[i][0], coordinates[i][1]]));
+                    }
+                    let featuresCollection = turf.featureCollection(points);
+                    let center = turf.center(featuresCollection);
+                    this.$_addPopup(center.geometry.coordinates, this.highlightFeature);
+                }
             }
         },
         $_deleteHeightLightLayerByIndex(index) {
@@ -288,22 +323,122 @@ export default {
             }
         },
         $_addHeightLightLayer() {
-            if (this.dataType === "fill") {
-                let vm = this;
-                let hId = this.layerIdCopy + this.$_getThemeName() + "_高亮";
-                let heightLightLayer = {
-                    id: hId,
-                    type: "line",
-                    source: this.source_Id,
-                    paint: {
-                        "line-color": "#7B75C6",
-                        "line-width": ['case',
-                            ['boolean', ['feature-state', 'hover'], false],
-                            4,
-                            0]
+            let vm = this, hId, heightLightLayer;
+            if (this.themeType === "range") {
+                if (this.dataType === "fill") {
+                    hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_线";
+                    let hIdFill = this.layerIdCopy + this.$_getThemeName() + "_高亮_多边形";
+                    heightLightLayer = {
+                        id: hId,
+                        type: "line",
+                        source: this.source_Id,
+                        paint: {
+                            "line-color": "#7B75C6",
+                            "line-width": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                4,
+                                0]
+                        }
                     }
+                    let heightLightLayerFill = {
+                        id: hIdFill,
+                        type: "fill",
+                        source: this.source_Id,
+                        paint: {
+                            "fill-color": "#7B75C6",
+                            "fill-opacity": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.5,
+                                0]
+                        }
+                    }
+                    if (this.highlightStyle) {
+                        const {lineStyle, fillStyle} = this.highlightStyle;
+                        if (lineStyle) {
+                            if (lineStyle.color) {
+                                heightLightLayer.paint["line-color"] = lineStyle.color;
+                            }
+                            if (lineStyle.width) {
+                                heightLightLayer.paint["line-width"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    lineStyle.width,
+                                    0];
+                            }
+                            if (lineStyle.opacity) {
+                                heightLightLayer.paint["line-opacity"] = lineStyle.opacity;
+                            }
+                        }
+                        if (fillStyle) {
+                            if (fillStyle.color) {
+                                heightLightLayerFill.paint["fill-color"] = fillStyle.color;
+                            }
+                            if (fillStyle.opacity) {
+                                heightLightLayerFill.paint["fill-opacity"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    fillStyle.opacity,
+                                    0];
+                            }
+                        }
+                    }
+                    this.map.addLayer(heightLightLayer);
+                    this.map.addLayer(heightLightLayerFill);
+                } else if (this.dataType === "circle") {
+                    hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_点";
+                    let cRadius;
+                    if (this.layerStyle) {
+                        const {radius} = this.layerStyle;
+                        cRadius = radius || 6;
+                    }
+                    heightLightLayer = {
+                        id: hId,
+                        type: "circle",
+                        source: this.source_Id,
+                        paint: {
+                            "circle-color": "#0000FF",
+                            "circle-stroke-color": "#7B75C6",
+                            "circle-stroke-width": 2,
+                            "circle-stroke-opacity": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.5,
+                                0],
+                            "circle-radius": cRadius,
+                            "circle-opacity": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.5,
+                                0]
+                        }
+                    }
+                    if (this.highlightStyle) {
+                        const {pointStyle} = this.highlightStyle;
+                        if (pointStyle) {
+                            if (pointStyle.color) {
+                                heightLightLayer.paint["circle-color"] = pointStyle.color;
+                            }
+                            if (pointStyle.radius) {
+                                heightLightLayer.paint["circle-radius"] = pointStyle.radius;
+                            }
+                            if (pointStyle.outlineColor) {
+                                heightLightLayer.paint["circle-stroke-color"] = pointStyle.outlineColor;
+                            }
+                            if (pointStyle.outlineWidth) {
+                                heightLightLayer.paint["circle-stroke-width"] = pointStyle.outlineWidth;
+                            }
+                            if (pointStyle.outlineOpacity) {
+                                heightLightLayer.paint["circle-stroke-opacity"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    pointStyle.outlineOpacity,
+                                    0];
+                            }
+                            if (pointStyle.opacity) {
+                                heightLightLayer.paint["circle-opacity"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    pointStyle.opacity,
+                                    0];
+                            }
+                        }
+                    }
+                    this.map.addLayer(heightLightLayer);
                 }
-                this.map.addLayer(heightLightLayer);
                 this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
                     if (vm.hoveredStateId) {
                         vm.map.setFeatureState(
@@ -312,17 +447,12 @@ export default {
                         );
                     }
                     vm.hoveredStateId = e.features[0].id;
-                    console.log("e.features[0].id",e.features[0].id)
                     vm.map.setFeatureState(
                         {source: vm.source_Id, id: vm.hoveredStateId},
                         {hover: true}
                     );
-                    for (let i = 0; i < vm.dataSource.features.length; i++) {
-                        if (vm.dataSource.features[i].id === e.features[0].id) {
-                            vm.$emit("highlightChanged", i);
-                            break;
-                        }
-                    }
+                    vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                    vm.$emit("highlightChanged", vm.hoveredStateId);
                 });
                 this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
                     if (vm.hoveredStateId !== null) {
@@ -330,12 +460,29 @@ export default {
                             {source: vm.source_Id, id: vm.hoveredStateId},
                             {hover: false}
                         );
+                        vm.$_removePopup();
                     }
                     vm.hoveredStateId = null;
                 });
-            }else {
-                // this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                // });
+            }
+        },
+        $_addPopup(coordinates, feature) {
+            if (this.isPopUpAble) {
+                if (!window.popup) {
+                    window.popup = new this.mapbox.Popup({
+                        closeOnClick: false,
+                        closeButton: false,
+                        className: 'popup-content'
+                    }).addTo(this.map);
+                }
+                window.popup.setHTML("<h1 style='text-align: center;padding-top: 20px'>" + this.selectValue + " : " + feature.properties[this.selectValue] + "</h1>");
+                window.popup.setLngLat(coordinates);
+            }
+        },
+        $_removePopup() {
+            if (window.popup) {
+                window.popup.remove();
+                window.popup = undefined;
             }
         },
         $_addThemeLayerBySource() {
@@ -353,15 +500,21 @@ export default {
                 });
                 this.initType = "props";
                 let layerId = this.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
-                // if (this.themeProps.panelClass && this.themeProps.panelClass instanceof Array) {
-                //     this.panelClass = {};
-                //     for (let i = 0; i < this.themeProps.panelClass.length; i++) {
-                //         this.panelClass[this.themeProps.panelClass[i]] = true;
-                //     }
-                // }
-                this.selectValue = this.themeField;
+                this.selectValue = this.field;
                 this.$_addThemeLayer(this.type, layerId, this.field);
-                this.$_addHeightLightLayer();
+                // let vm = this;
+                // vm.$_addPopup(vm.highlightCoordinates,{
+                //     properties: {
+                //         adcode: 1111
+                //     }
+                // });
+                // vm.map.setFeatureState(
+                //     {source: vm.source_Id, id: 1},
+                //     {hover: true}
+                // );
+                if (this.isHoverAble) {
+                    this.$_addHeightLightLayer();
+                }
             }
         },
         $_addThemeLayer(themeType, layerId, themeField) {
@@ -594,23 +747,6 @@ export default {
                 });
             }
             if (this.panelType === "custom") {
-                // this.optionsCopy = this.themeProps.options;
-                // let rects = this.optionsCopy.rects;
-                // for (let i = 0; i < rects.length; i++) {
-                //     let rows = rects[i].rows;
-                //     for (let j = 0; j < rows.length; j++) {
-                //         if (rows[j].type === "MapgisUiThemeList") {
-                //             //避免与vue绑定
-                //             if (!rows[j].hasOwnProperty("props")) {
-                //                 rows[j].props = {};
-                //             }
-                //             rows[j].props.dataSource = this.$_getNewArray(themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource"));
-                //             rows[j].props.colors = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "colors"));
-                //             rows[j].props.checkBoxArr = this.$_getNewArray(themeManager.getPanelProps(this.layerIdCopy, this.themeType, "checkBoxArr"));
-                //             rows[j].props.field = this.selectValue;
-                //         }
-                //     }
-                // }
             }
         },
         $_getNewArray(dataSource) {
@@ -3180,7 +3316,7 @@ export default {
             themeManager.setManagerProps(layerId, undefined);
         },
         $_deleteThemeLayerByGeoJSON(layerId) {
-            if (this.map.getLayer(layerId + this.$_getThemeName(this.themeProps.themeType))) {
+            if (this.map.getLayer(layerId + this.$_getThemeName(this.type))) {
                 let layerOrder = themeManager.getLayerProps(layerId, "layerOrder"), vm = this;
                 let allLayerOrder = themeManager.getLayerOrder();
                 for (let i = 0; i < layerOrder.length; i++) {

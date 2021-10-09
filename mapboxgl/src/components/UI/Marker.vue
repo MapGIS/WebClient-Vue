@@ -35,7 +35,7 @@ export default {
     const self = this;
     return {
       get marker () {
-        // 提供markerg给子组件popup或者插槽槽
+        // 提供marker给子组件popup或者插槽槽
         return self.marker;
       }
     };

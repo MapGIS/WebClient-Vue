@@ -15,6 +15,14 @@ export default {
     prop: "visible",
     event: "change"
   },
+  data() {
+    return {
+      longitude: 0, // 仅用于父级marker动态改变popup的data使用
+      latitude: 0, // 仅用于父级marker动态改变popup的data使用
+      height: 0, // 仅用于父级marker动态改变popup的data使用,
+      show: true
+    };
+  },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   watch: {
     position: {
@@ -24,6 +32,12 @@ export default {
       }
     },
     visible: {
+      deep: true,
+      handler() {
+        this.update();
+      }
+    },
+    show: {
       deep: true,
       handler() {
         this.update();
@@ -42,6 +56,10 @@ export default {
     this.unmount();
   },
   methods: {
+    togglePopup() {
+      let value = !this.show;
+      this.show = value;
+    },
     getWebGlobe() {
       let { webGlobe, vueKey, CesiumZondy } = this;
       CesiumZondy = CesiumZondy || window.CesiumZondy;
@@ -59,7 +77,8 @@ export default {
 
       if (this.$slots.default) {
         if (this.$slots.default[0].elm) {
-          container = this.$slots.default[0].elm || this.$slots.default[0].elm.innerHTML;
+          container =
+            this.$slots.default[0].elm || this.$slots.default[0].elm.innerHTML;
         } else if (this.$slots.default[0].context.$children[0].$el) {
           container = this.$slots.default[0].context.$children[0].$el.innerHTML;
         }
@@ -136,7 +155,7 @@ export default {
         CesiumZondy.PopupManager.deleteSource(vueKey, vueIndex);
       }
 
-      if (this.visible) {
+      if (this.visible && this.show) {
         popup = this.createCesiumObject();
         this.$emit("load", { popup: popup });
         if (vueKey && (vueIndex || vueIndex === 0)) {

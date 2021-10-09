@@ -1,4 +1,5 @@
-import MapgisMarkerLayer from "../../mapboxgl/src/components/UI/marker/MarkerLayer.vue";
+import Mapgis3dDynamicMarkerLayer from "../../cesium/src/components/Layer/Marker/DynamicMarkerLayer.vue";
+import Markdown from "../../cesium/docs/api/layer/marker/DynamicMarker.md";
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle, Shadow } = Style;
 
@@ -8,8 +9,8 @@ const DefaultInactiveImagePlotting =
   "data:image/png;base64,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";
 
 export default {
-  title: "二维/图层/标注图层",
-  component: MapgisMarkerLayer,
+  title: "三维/图层/标注图层",
+  component: Mapgis3dDynamicMarkerLayer,
   argTypes: {
     selects: [],
     idField: "markerId",
@@ -32,19 +33,41 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisMarkerLayer },
+  template: `
+    <mapgis-web-scene :libPath="libPath" :pluginPath="pluginPath" style="height: 95vh">
+      <mapgis-3d-ogc-wmts-layer
+          :baseUrl="urlT"
+          :wmtsLayer="layer"
+          :tileMatrixSet="tileMatrixSetID"
+          :format="format"
+          :tilingScheme="srs"
+          :token="token"
+      />
+      <mapgis-3d-dynamic-marker-layer v-bind="$props">
+        <mapigs-ui-card slot="popup" slot-scope="{ marker }">
+          {{marker.fid}}
+        </mapigs-ui-card>
+      </mapgis-3d-dynamic-marker-layer>
+    </mapgis-web-scene>
+  `,
   data() {
-    return {};
+    return {
+      libPath: "http://localhost:8888/static/libs/cdn/cesium/Cesium.js",
+      pluginPath:
+        "http://localhost:8888/static/libs/cdn/cesium/webclient-cesium-plugin.min.js",
+      //天地图地址，请在url地址后面加token
+      urlT: "http://t0.tianditu.gov.cn/img_c/wmts",
+      //参考系
+      tileMatrixSetID: "c",
+      srs: "EPSG:4326",
+      layer: "img",
+      format: "tiles",
+      token: {
+        key: "tk",
+        value: "f5347cab4b28410a6e8ba5143e3d5a35",
+      },
+    };
   },
-  methods: {},
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.2]" :zoom="3" style="height:95vh">
-    <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-marker-layer v-bind="$props">
-      <mapigs-ui-card slot="popup" slot-scope="{ marker }">
-        {{marker.fid}}
-      </mapigs-ui-card>
-    </mapgis-marker-layer>
-  </mapgis-web-map>`,
 });
 
 export const 标绘图层 = Template.bind({});
@@ -94,7 +117,7 @@ export const 标绘图层 = Template.bind({});
     ],
   },
   idField: "fid",
-  selects: ["1111", "2222"],
+  selects: [],
   fitBound: { xmin: 100, ymin: 20, xmax: 110, ymax: 30 },
   layerStyle: {
     marker: new MarkerStyle({
@@ -105,7 +128,7 @@ export const 标绘图层 = Template.bind({});
     point: new PointStyle({
       color: "#ff0000",
       opacity: 0.8,
-      radius: 10,
+      radius: 50000,
       outlineWidth: 5,
       outlineColor: "#000000",
     }),
@@ -113,8 +136,8 @@ export const 标绘图层 = Template.bind({});
       color: "#ff0000",
       opacity: 0.8,
       width: 5,
-      cap: 'round',
-      join: 'round',
+      cap: "round",
+      join: "round",
       shadow: new Shadow({ blur: 0 }),
     }),
     polygon: new FillStyle({
@@ -125,5 +148,13 @@ export const 标绘图层 = Template.bind({});
     marker: new MarkerStyle({
       symbol: DefaultActiveImagePlotting,
     }),
+  },
+};
+
+标绘图层.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
   },
 };

@@ -1,5 +1,13 @@
 <template>
-  <div class="mapgis-marker-3d">
+  <mapgis-3d-marker
+    :longitude="popupPosition.longitude"
+    :latitude="popupPosition.latitude"
+    :height="popupPosition.height"
+    :iconUrl="img"
+    :farDist="200000000"
+    @mouseEnter="mouseOver"
+    @mouseLeave="mouseOut"
+  >
     <mapgis-3d-popup
       :vue-key="vueKey"
       :position="{
@@ -41,7 +49,7 @@
         </slot>
       </div>
     </mapgis-3d-popup>
-  </div>
+  </mapgis-3d-marker>
 </template>
 
 <script>
@@ -49,8 +57,8 @@
  * cesium标注，弹出框使用@mapgis/webclient-vue-cesium里的popup
  */
 export default {
-  name: 'Mp3dMarkerPro',
-  inject: ['Cesium', 'CesiumZondy', 'webGlobe'],
+  name: "mapgis-3d-marker-pro",
+  inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
     vueKey: String,
     marker: {
@@ -70,54 +78,54 @@ export default {
   },
   data() {
     return {
-      showPopup: true,
+      showPopup: false,
       entityNames: []
-    }
+    };
   },
   computed: {
     img() {
-      return this.marker.img
+      return this.marker.img;
     },
     popupPosition() {
       if (!this.marker) {
-        return {}
+        return {};
       }
-      const { coordinates } = this.marker
-      const height = coordinates.length > 2 ? Number(coordinates[2]) : 0
+      const { coordinates } = this.marker;
+      const height = coordinates.length > 2 ? Number(coordinates[2]) : 0;
       const position = {
         longitude: Number(coordinates[0]),
         latitude: Number(coordinates[1]),
         height: height
-      }
-      return position
+      };
+      return position;
     },
     // 根据filedConfigs做一个过滤，去除不可见的
     propertyKeys() {
-      const keys = Object.keys(this.marker.properties)
+      const keys = Object.keys(this.marker.properties);
       return keys.filter(key => {
-        const config = this.fieldConfigs.find(config => config.name === key)
+        const config = this.fieldConfigs.find(config => config.name === key);
 
         if (
           config &&
-          Object.hasOwnProperty.call(config, 'visible') &&
+          Object.hasOwnProperty.call(config, "visible") &&
           !config.visible
         ) {
-          return false
+          return false;
         }
 
-        return true
-      })
+        return true;
+      });
     },
     propertyName() {
       return function(key) {
-        const config = this.fieldConfigs.find(config => config.name === key)
+        const config = this.fieldConfigs.find(config => config.name === key);
 
-        if (config && Object.hasOwnProperty.call(config, 'title')) {
-          return config.title
+        if (config && Object.hasOwnProperty.call(config, "title")) {
+          return config.title;
         }
 
-        return key
-      }
+        return key;
+      };
     }
   },
   watch: {
@@ -125,7 +133,7 @@ export default {
     img: {
       deep: true,
       handler() {
-        this.updateMarker()
+        this.updateMarker();
       }
     },
     currentMarkerId: {
@@ -140,42 +148,38 @@ export default {
     }
   },
   mounted() {
-    const webGlobe = this.CesiumZondy.getWebGlobe(this.vueKey) || this.webGlobe
-    this.updateMarker()
+    const webGlobe = this.CesiumZondy.getWebGlobe(this.vueKey) || this.webGlobe;
+    this.updateMarker();
   },
-  beforeDestroy() {
-  },
+  beforeDestroy() {},
   methods: {
     changePopup(val) {
-      this.showPopup = val
+      this.showPopup = val;
       if (!val) {
-        this.$emit('change', '')
+        this.$emit("change", "");
       }
     },
     bindEvent() {
-      this.$emit('popupload', this.marker.fid)
+      this.$emit("popupload", this.marker.fid);
     },
     updateMarker() {
-      const marker = { ...this.marker }
-      marker.mouseOver = event => {
-        this.mouseOver(event, marker)
-      }
-      marker.mouseOut = event => {
-        this.mouseOut(event, marker)
-      }
-      marker.name = marker.fid
-      marker.center = marker.coordinates
+      /* let marker = { ...this.marker };
+      marker.name = marker.fid;
+      marker.center = marker.coordinates; */
     },
-    mouseOver(event, marker) {
-      this.showPopup = true
-      this.$emit('marker-id', marker.fid)
-      this.$emit('mouseenter', event, marker.fid)
+    mouseOver(event, label, lng, lat, height) {
+      this.showPopup = true;
+      const { marker } = this;
+      this.$emit("marker-id", marker.fid);
+      this.$emit("mouseenter", event, marker.fid);
     },
-    mouseOut(event, marker) {
-      this.$emit('mouseleave', event, marker.fid)
+    mouseOut(event, label, lng, lat, height) {
+      const { marker } = this;
+      this.showPopup = false;
+      this.$emit("mouseleave", event, marker.fid);
     }
   }
-}
+};
 </script>
 
 <style lang="less">

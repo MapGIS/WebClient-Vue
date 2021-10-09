@@ -24,7 +24,7 @@
 import Mp3dMarkerPro from './3dMarkerPro.vue'
 
 export default {
-  name: 'Mp3dMarkerSetPro',
+  name: 'mapgis-3d-marker-set-pro',
   components: { Mp3dMarkerPro },
   props: {
     vueKey: {

@@ -35,4 +35,37 @@ const Template = (args, { argTypes }) => ({
 export const 绘制 = Template.bind({});
 绘制.args = {
   enableControl: true,
+  styles: [
+    {
+      id: "gl-draw-polygon-stroke-active",
+      type: "line",
+      filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
+      layout: {
+        "line-cap": "round",
+        "line-join": "round"
+      },
+      paint: {
+        "line-color": "#FF0000",
+        "line-dasharray": [0.2, 2],
+        "line-width": 2
+      }
+    },
+    {
+      'id': 'gl-draw-line-active',
+      'type': 'line',
+      'filter': ['all',
+        ['==', '$type', 'LineString'],
+        ['==', 'active', 'true']
+      ],
+      'layout': {
+        'line-cap': 'round',
+        'line-join': 'round'
+      },
+      'paint': {
+        'line-color': '#FF0000',
+        'line-dasharray': [0.2, 2],
+        'line-width': 2
+      }
+    }
+  ]
 };

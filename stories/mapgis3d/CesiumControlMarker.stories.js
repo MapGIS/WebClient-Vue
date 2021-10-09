@@ -29,6 +29,8 @@ const Template = (args, { argTypes }) => ({
         :text="text"
         :iconUrl="iconUrl"
         :heightReference="heightReference"
+        @mouseEnter="mouseEnter"
+        @mouseLeave="mouseLeave"
     ></mapgis-3d-Marker>
     </mapgis-web-scene>
   `,
@@ -49,9 +51,17 @@ const Template = (args, { argTypes }) => ({
       longitude: 114.4018,
       latitude: 30.4673,
       height: 0,
-      iconUrl: "data/picture/icon.png",
+      iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
       text: "这是测试",
       heightReference: "clamped",
+    }
+  },
+  methods: {
+    mouseEnter(options, longitude, latitude, height){
+      console.log("mouseEnter",options, longitude, latitude, height);
+    },
+    mouseLeave(options, longitude, latitude, height){
+      console.log("mouseLeave",options, longitude, latitude, height);
     }
   }
 });

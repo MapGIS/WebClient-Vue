@@ -17,6 +17,9 @@ export function formatStyleToLayer(style, themeType, dataType, layerId) {
         case "unique":
             layers = getLayerFromStyle(style, dataType, layerId);
             break;
+        case "range":
+            layers = getLayerFromStyle(style, dataType, layerId);
+            break;
         case "symbol":
             layers = getLayerFromSymbolStyle(style, layerId);
             break;
@@ -57,7 +60,7 @@ export function getLayerFromStyle(style, dataType, layerId) {
     };
     themeLayer.id = layerId || "test";
     switch (dataType) {
-        case "point":
+        case "circle":
             Object.keys(style).forEach(function (key) {
                 if (pointPaintList.hasOwnProperty(key)) {
                     if (key === "color") {
@@ -147,7 +150,6 @@ export function getLayerFromStyle(style, dataType, layerId) {
                     symbolLayer.layout[symbolLayoutList[key]] = style[key];
                 }
                 if (textPaintList.hasOwnProperty(key)) {
-                    console.log("textPaintList", textPaintList)
                     if (key === "xOffset") {
                         symbolLayer.paint[textPaintList[key]] = [style[key], symbolLayer.paint[textPaintList[key]][1]];
                     } else if (key === "yOffset") {
@@ -165,7 +167,6 @@ export function getLayerFromStyle(style, dataType, layerId) {
     }
     layers.themeLayer = themeLayer;
     layers.symbolLayer = symbolLayer;
-    console.log("-------layers", layers)
     return layers;
 }
 
