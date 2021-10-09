@@ -89,10 +89,11 @@
   $padding-sm: 4px;
   &.mapgis-ui-card {
     .mapgis-ui-card-head {
-      font-size: 14px;
+      font-size: $font-size-base;
       min-height: $height-md;
       line-height: $height-md;
       padding: 0 $padding-md;
+      margin-bottom: $padding-md;
 
       .mapgis-ui-card-head-title,
       .mapgis-ui-card-extra {
@@ -101,17 +102,13 @@
       }
     }
     .mapgis-ui-card-body {
-      padding: $padding-md;
+      padding: 0;
     }
     &.mapgis-ui-card-small {
       .mapgis-ui-card-head {
-        margin-bottom: 4px;
         min-height: $height-sm;
         line-height: $height-sm;
         padding: 0 $padding-sm;
-      }
-      .mapgis-ui-card-body {
-        padding: $padding-sm;
       }
     }
     &.mapgis-ui-card-large {
@@ -119,9 +116,6 @@
         padding: 0 $padding-lg;
         min-height: $height-lg;
         line-height: $height-lg;
-      }
-      .mapgis-ui-card-body {
-        padding: $padding-lg;
       }
     }
   }
