@@ -11,15 +11,13 @@
         <slot name="popup" v-bind="slotProps"></slot>
       </template>
     </mapgis-3d-marker-set-pro>
-    <mapgis-3d-geojson-layer >
-    </mapgis-3d-geojson-layer>
   </div>
 </template>
 
 <script>
 import { Style } from "@mapgis/webclient-es6-service";
+import VueOptions from "../../Base/Vue/VueOptions";
 import Mapgis3dMarkerSetPro from "./3dMarkerSetPro.vue";
-import Mapgis3dGeojsonLayer from "../GeoJSON/GeoJsonLayer.vue";
 import * as turfjs from "@turf/turf";
 
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
@@ -30,10 +28,10 @@ const DefaultInactiveImagePlotting =
 
 export default {
   name: "mapgis-3d-dynamic-marker-layer",
-  components: { Mapgis3dMarkerSetPro, Mapgis3dGeojsonLayer },
+  components: { Mapgis3dMarkerSetPro },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    vueKey: String,
+    ...VueOptions,
     data: {
       type: [Object, String],
       required: true
@@ -88,7 +86,6 @@ export default {
   data() {
     return {
       markers: [],
-      entityNames: [],
       currentLayer: null
     };
   },
@@ -118,18 +115,32 @@ export default {
     }
   },
   mounted() {
-    const _webGlobe =
-      this.CesiumZondy.getWebGlobe(this.vueKey) || this.webGlobe;
-    this.sceneControllerWebGlobe = _webGlobe;
-    this.analysisManager = new this.CesiumZondy.Manager.AnalysisManager({
-      viewer: _webGlobe.viewer
-    });
     this.parseData();
+    this.mount();
   },
   destroyed() {
     this.analysisManager = null;
   },
   methods: {
+    mount() {
+      const vm = this;
+      const { CesiumZondy, vueKey, vueIndex, data } = this;
+      const webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || this.webGlobe;
+      const { viewer } = webGlobe;
+      let analysisManager = new CesiumZondy.Manager.AnalysisManager({
+        viewer: viewer
+      });
+
+      let promise = new Cesium.GeoJsonDataSource.load(data);
+      promise.then(function(dataSource) {
+        viewer.dataSources.add(dataSource);
+        vm.changeColor(dataSource);
+        CesiumZondy.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
+          analysisManager: analysisManager
+        });
+      });
+    },
+    unmount() {},
     parseData(data) {
       data = data || this.data;
       const vm = this;
@@ -139,7 +150,6 @@ export default {
             return response.json();
           })
           .then(function(resdata) {
-            console.log("parseData", resdata);
             vm.parseMarker(resdata);
           });
       } else {
@@ -171,30 +181,42 @@ export default {
     getMarker(fid) {
       return this.markers.find(marker => marker.fid === fid);
     },
+    isSelectedMarker(id) {
+      return this.selects.findIndex(idField => idField === id) !== -1;
+    },
     changeFilterWithMap() {
+      const { webGlobe } = this;
       if (!this.filterWithMap) {
         return;
       }
-      const cExtent = this.sceneController.getCurrentExtent();
+      const rectangle = webGlobe.viewer.camera.computeViewRectangle();
       const bounds = {
-        xmin: cExtent.xmin,
-        ymin: cExtent.ymin,
-        xmax: cExtent.xmax,
-        ymax: cExtent.ymax
+        xmin: (rectangle.west / Math.PI) * 180,
+        ymin: (rectangle.south / Math.PI) * 180,
+        xmax: (rectangle.east / Math.PI) * 180,
+        ymax: (rectangle.north / Math.PI) * 180
       };
       this.$emit("map-bound-change", bounds);
     },
     zoomToCartesian3(x, y) {
-      const destination = this.sceneController.getCartesian3FromDegrees(
+      const { Cesium, webGlobe } = this;
+      const destination = Cesium.Cartesian3.fromDegrees(x, y, z)(
         x,
         y,
-        this.sceneController.getPositionCartographicHeight()
+        webGlobe.viewer.camera.positionCartographic.height
       );
-      this.sceneController.cameraFlyTo({ destination });
+      webGlobe.viewer.camera.flyTo({ destination });
     },
     zoomTo(bound) {
-      const destination = this.sceneController.getRectangleFromDegrees(bound);
-      this.sceneController.cameraFlyTo({ destination });
+      const { Cesium, webGlobe } = this;
+      const { xmin, ymin, xmax, ymax } = bound;
+      const destination = new Cesium.Rectangle.fromDegrees(
+        xmin,
+        ymin,
+        xmax,
+        ymax
+      );
+      webGlobe.viewer.camera.flyTo({ destination });
     },
     zoomOrPanTo({ xmin, ymin, xmax, ymax }) {
       const {
@@ -220,98 +242,50 @@ export default {
 
       if (marker) {
         this.highlightFeature(marker);
+        this.highlightMarker(marker);
       }
     },
     mouseLeaveEvent(e, id) {
-      this.clearHighlight();
-      this.stopDisplay();
+      const marker = this.getMarker(id);
+      if (marker) {
+        this.clearHighlightFeature(marker);
+        this.clearHighlightMarker(marker);
+        this.stopDisplay();
+      }
     },
     popupLoad(markerId) {
       this.$emit("popupload", markerId);
     },
-    highlightFeature(marker) {
-      const { highlightStyle } = this;
-      const { fid, feature } = marker;
-      if (!feature) return;
-      marker.img = highlightStyle.marker.symbol;
-      const layerId = `highlight-layer-${fid}`;
-      const sourceId = `highlight-${fid}`;
-      if (!this.map.getSource(sourceId)) {
-        this.map.addSource(sourceId, {
-          type: "geojson",
-          data: {
-            features: [feature],
-            type: "FeatureCollection"
-          }
-        });
-      }
-      let options = {};
-      if (!highlightStyle) return;
-
-      const { point, line, polygon } = highlightStyle;
-      if (!feature || !feature.geometry) return;
-      switch (feature.geometry.type) {
-        case "Point":
-          options = {
-            type: "circle",
-            ...point.toMapboxStyle()
-          };
-          break;
-        case "LineString":
-          options = {
-            type: "line",
-            ...line.toMapboxStyle()
-          };
-          break;
-        case "Polygon":
-          options = {
-            type: "fill",
-            ...polygon.toMapboxStyle()
-          };
-          break;
-        default:
-          break;
-      }
-      /* if (featureGeoJSON.features[0].geometry.type === "3DPolygon") {
-        const { source } = this.sceneController.findSource(
-          featureGeoJSON.features[0].properties.specialLayerId
-        );
-        if (source && source.length > 0) {
-          this.stopDisplay();
-          this.currentLayer = [source[0]];
-          const idList = [featureGeoJSON.features[0].properties.FID];
-          const options = {
-            // 高亮颜色
-            color: new this.Cesium.Color.fromCssColorString(
-              this.highlightStyle.feature.reg.color
-            ),
-            // 高亮模式：REPLACE为替换
-            colorBlendMode: this.Cesium.Cesium3DTileColorBlendMode.REPLACE
-          };
-          // 开始闪烁查找到的模型
-          this.analysisManager.startCustomDisplay(
-            this.currentLayer,
-            idList,
-            options
-          );
+    changeColor(dataSource) {
+      if (!dataSource) return;
+      const { Cesium, highlightStyle } = this;
+      let entities = dataSource.entities.values;
+      const vm = this;
+      const { point } = highlightStyle;
+      for (let i = 0; i < entities.length; i++) {
+        let entity = entities[i];
+        if (entity.billboard) {
+          entity.billboard.show = false;
+          const style = point.toCesiumStyle(Cesium);
+          const { material, radius, outline } = style;
+          entity.ellipse = new Cesium.EllipseGraphics({
+            semiMajorAxis: radius,
+            semiMinorAxis: radius,
+            outline: outline,
+            material: material
+          });
+          entity.ellipse.show = false;
+        } else if (entity.polyline) {
+          entity.polyline.show = false;
+        } else if (entity.polygon) {
+          entity.polygon.show = false;
         }
-      } */
-    },
-    stopDisplay() {
-      if (this.currentLayer) {
-        this.analysisManager.stopCustomDisplay(this.currentLayer);
-        this.currentLayer = null;
-      }
-    },
-    clearHighlight() {
-      for (let i = this.entityNames.length - 1; i >= 0; i -= 1) {
-        // this.sceneOverlays.removeEntityByName(this.entityNames[i]);
-        this.entityNames.pop();
       }
     },
     getViewExtend() {
+      let { vueKey, webGlobe } = this;
       const params = {};
-      const webGlobe = this.sceneControllerWebGlobe;
+      webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || webGlobe;
       const extend = webGlobe.viewer.camera.computeViewRectangle();
       if (typeof extend === "undefined") {
         // 2D下会可能拾取不到坐标，extend返回undefined,所以做以下转换
@@ -377,15 +351,114 @@ export default {
       // 返回屏幕所在经纬度范围
       return params;
     },
-    onClearHighlightFeature() {
-      this.clearHighlight();
-      this.stopDisplay();
+    highlightFeature(marker) {
+      const vm = this;
+      const { vueKey, vueIndex } = this;
+      const { webGlobe, Cesium, CesiumZondy } = this;
+      const { layerStyle, highlightStyle, idField } = this;
+      const { point, line, polygon } = layerStyle;
+      const hpolygon = highlightStyle.polygon;
+      const hline = highlightStyle.line;
+      const hpoint = highlightStyle.point;
+
+      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      if (!find) return;
+      for (let i = 0; i < find.source.entities.values.length; i++) {
+        let entity = find.source.entities.values[i];
+        if (entity.properties[idField] == marker.feature.properties.fid) {
+          if (entity.ellipse) {
+            const style = hpoint.toCesiumStyle(Cesium);
+            const { material, radius, outline } = style;
+            entity.ellipse.show = true;
+            entity.ellipse = new Cesium.EllipseGraphics({
+              semiMajorAxis: radius,
+              semiMinorAxis: radius,
+              outline: outline,
+              material: material
+            });
+          } else if (entity.polyline) {
+            const style = hline.toCesiumStyle(Cesium);
+            const { material, width } = style;
+            entity.polyline.show = true;
+            entity.polyline.material = material;
+            entity.polyline.width = width;
+          } else if (entity.polygon) {
+            const style = hpolygon.toCesiumStyle(Cesium);
+            const { material, outlineColor } = style;
+            entity.polygon.show = true;
+            entity.polygon.material = material;
+            entity.polygon.outlineColor = outlineColor;
+          }
+        } else {
+          if (entity.ellipse) {
+            entity.ellipse.show = false;
+          } else if (entity.polyline) {
+            entity.polyline.show = false;
+          } else if (entity.polygon) {
+            entity.polygon.show = false;
+          }
+        }
+      }
+      /* if (featureGeoJSON.features[0].geometry.type === "3DPolygon") {
+        const { source } = this.sceneController.findSource(
+          featureGeoJSON.features[0].properties.specialLayerId
+        );
+        if (source && source.length > 0) {
+          this.stopDisplay();
+          this.currentLayer = [source[0]];
+          const idList = [featureGeoJSON.features[0].properties.FID];
+          const options = {
+            // 高亮颜色
+            color: new this.Cesium.Color.fromCssColorString(
+              this.highlightStyle.feature.reg.color
+            ),
+            // 高亮模式：REPLACE为替换
+            colorBlendMode: this.Cesium.Cesium3DTileColorBlendMode.REPLACE
+          };
+          // 开始闪烁查找到的模型
+          this.analysisManager.startCustomDisplay(
+            this.currentLayer,
+            idList,
+            options
+          );
+        }
+      } */
     },
-    onHighlightFeature({ feature }) {
-      const bound = feature.properties.specialLayerBound;
-      // || Feature.getGeoJSONFeatureBound(feature);
+    stopDisplay() {
+      if (this.currentLayer) {
+        this.analysisManager.stopCustomDisplay(this.currentLayer);
+        this.currentLayer = null;
+      }
+    },
+    clearHighlightFeature(marker) {
+      const { CesiumZondy, vueKey, vueIndex, layerStyle } = this;
+      let dataSource = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      this.changeColor(dataSource.source);
+    },
+    highlightMarker(marker) {
+      marker.img = this.highlightStyle.marker.symbol;
+    },
+    clearHighlightMarker(marker) {
+      if (!this.isSelectedMarker(marker.fid)) {
+        marker.img = this.layerStyle.marker.symbol;
+      }
+    },
+    onClearHighlightFeature(fid) {
+      const marker = this.getMarker(fid);
+      this.clearHighlightMarker(marker);
+      // this.stopDisplay();
+    },
+    onHighlightFeature(fid) {
+      const marker = this.getMarker(fid);
+      let bbox = turfjs.bbox(marker.feature);
+      let bound = {
+        xmin: bbox[0],
+        ymin: bbox[1],
+        xmax: bbox[2],
+        ymax: bbox[3]
+      };
       this.zoomOrPanTo(bound);
-      this.highlightFeature({ feature });
+      this.highlightMarker(marker);
     }
   }
 };

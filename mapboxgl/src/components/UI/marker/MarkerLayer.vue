@@ -245,7 +245,8 @@ export default {
       let { highlight } = this;
       if (!highlight) return;
       const marker = this.getMarker(id);
-      if (marker && !this.isSelectedMarker(id)) {
+      if (marker) {
+        this.highlightMarker(marker);
         this.highlightFeature(marker);
       }
     },
@@ -253,7 +254,8 @@ export default {
       let { highlight } = this;
       if (!highlight) return;
       const marker = this.getMarker(id);
-      if (marker && !this.isSelectedMarker(id)) {
+      if (marker) {
+        this.clearHighlightMarker(marker);
         this.clearHighlightFeature(marker);
       }
     },
@@ -261,7 +263,6 @@ export default {
       const { highlightStyle } = this;
       const { fid, feature } = marker;
       if (!feature) return;
-      marker.img = highlightStyle.marker.symbol;
       const layerId = `highlight-layer-${fid}`;
       const sourceId = `highlight-${fid}`;
       if (!this.map.getSource(sourceId)) {
@@ -280,7 +281,6 @@ export default {
       if (!feature || !feature.geometry) return;
       switch (feature.geometry.type) {
         case "Point":
-          // 点要素的高亮符号怎么处理?
           options = {
             type: "circle",
             ...point.toMapboxStyle()
@@ -312,7 +312,6 @@ export default {
     clearHighlightFeature(marker) {
       const { layerStyle } = this;
       const { fid, feature } = marker;
-      marker.img = layerStyle.marker.symbol;
       const layerId = `highlight-layer-${fid}`;
       const sourceId = `highlight-${fid}`;
       if (this.map.getLayer(layerId)) {
@@ -322,9 +321,17 @@ export default {
         this.map.removeSource(sourceId);
       }
     },
+    highlightMarker(marker) {
+      marker.img = this.highlightStyle.marker.symbol;
+    },
+    clearHighlightMarker(marker) {
+      if (!this.isSelectedMarker(marker.fid)) {
+        marker.img = this.layerStyle.marker.symbol;
+      }
+    },
     onClearHighlightFeature(fid) {
       const marker = this.getMarker(fid);
-      this.clearHighlightFeature(marker);
+      this.clearHighlightMarker(marker);
     },
     onHighlightFeature(fid) {
       const marker = this.getMarker(fid);
@@ -336,7 +343,7 @@ export default {
         ymax: bbox[3]
       };
       this.zoomOrPanTo(bound);
-      this.highlightFeature(marker);
+      this.highlightMarker(marker);
     }
   }
 };
