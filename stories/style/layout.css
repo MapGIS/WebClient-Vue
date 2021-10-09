@@ -23,3 +23,7 @@
 #components-layout-demo-basic > .mapgis-ui-layout:last-child {
   margin: 0;
 }
+.storybook-span{
+  color: red;
+  font-weight: bold;
+}
