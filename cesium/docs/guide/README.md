@@ -33,9 +33,15 @@ export default {
 ### ES6 方式
 
 ```bash
+安装webclient-vue-cesium:
 npm install --save @mapgis/webclient-vue-cesium
 # 或者
 yarn add @mapgis/webclient-vue-cesium
+
+安装webclient-vue-ui:
+npm install --save @mapgis/webclient-vue-ui
+# 或者
+yarn add @mapgis/webclient-vue-ui
 ```
 
 在 main.js 中全局引入组件

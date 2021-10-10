@@ -380,7 +380,6 @@ export default {
                             }
                         }
                     }
-                    this.map.addLayer(heightLightLayer);
                     this.map.addLayer(heightLightLayerFill);
                 } else if (this.dataType === "circle") {
                     hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_点";
@@ -437,8 +436,45 @@ export default {
                             }
                         }
                     }
-                    this.map.addLayer(heightLightLayer);
+                } else if (this.dataType === "line") {
+                    hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_线";
+                    let lWidth;
+                    if (this.layerStyle) {
+                        const {width} = this.layerStyle;
+                        lWidth = width || 1;
+                    }
+                    heightLightLayer = {
+                        id: hId,
+                        type: "line",
+                        source: this.source_Id,
+                        paint: {
+                            "line-color": "#0000FF",
+                            "line-width": lWidth,
+                            "line-opacity": ['case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.5,
+                                0]
+                        }
+                    }
+                    if (this.highlightStyle) {
+                        const {lineStyle} = this.highlightStyle;
+                        if (lineStyle) {
+                            if (lineStyle.color) {
+                                heightLightLayer.paint["line-color"] = lineStyle.color;
+                            }
+                            if (lineStyle.width) {
+                                heightLightLayer.paint["line-width"] = lineStyle.width;
+                            }
+                            if (lineStyle.opacity) {
+                                heightLightLayer.paint["line-opacity"] = ['case',
+                                    ['boolean', ['feature-state', 'hover'], false],
+                                    lineStyle.opacity,
+                                    0];
+                            }
+                        }
+                    }
                 }
+                this.map.addLayer(heightLightLayer);
                 this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
                     if (vm.hoveredStateId) {
                         vm.map.setFeatureState(
@@ -501,17 +537,8 @@ export default {
                 this.initType = "props";
                 let layerId = this.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
                 this.selectValue = this.field;
+                themeManager.field = this.selectValue;
                 this.$_addThemeLayer(this.type, layerId, this.field);
-                // let vm = this;
-                // vm.$_addPopup(vm.highlightCoordinates,{
-                //     properties: {
-                //         adcode: 1111
-                //     }
-                // });
-                // vm.map.setFeatureState(
-                //     {source: vm.source_Id, id: 1},
-                //     {hover: true}
-                // );
                 if (this.isHoverAble) {
                     this.$_addHeightLightLayer();
                 }
@@ -706,6 +733,11 @@ export default {
                             vm.$_addSymbolLayer(dataSource);
                             break;
                         case "heatmap":
+                            if (vm.initType === "props") {
+                                vm.selectValue = themeField;
+                            } else {
+                                vm.selectValue = fields[0];
+                            }
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "numberFields");
                             themeManager.initThemeProps(
                                 vm.layerIdCopy,
@@ -715,11 +747,6 @@ export default {
                             );
                             themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             dataSource = vm.$_setDataSource(features, fields[0], "unique");
-                            if (vm.initType === "props") {
-                                vm.selectValue = themeField;
-                            } else {
-                                vm.selectValue = fields[0];
-                            }
                             vm.$refs.themePanel.currentThemeType = vm.themeType;
                             vm.$_addHeatmapLayer(dataSource);
                             break;
@@ -1154,7 +1181,7 @@ export default {
                     }
                 }
             }
-            let opacitys;
+            let opacitys, radiuses, outlineWidths, outlineColors, outlineOpacities;
             //如果有styleGroups，则应用
             if (this.styleGroups && this.styleGroups.length > 0) {
                 //处理透明度
@@ -1166,6 +1193,46 @@ export default {
                 for (let k = 3; k < colors.length; k += 2) {
                     opacitys[k] = colors[k];
                     opacitys[k + 1] = opacity;
+                }
+                //处理半径
+                let radius = 6;
+                if (this.layerStyle.hasOwnProperty("radius")) {
+                    radius = this.layerStyle.radius;
+                }
+                radiuses = ["step", ["to-number", ["get", key]], radius];
+                for (let k = 3; k < colors.length; k += 2) {
+                    radiuses[k] = colors[k];
+                    radiuses[k + 1] = radius;
+                }
+                //处理外边线宽度
+                let outlineWidth = 1;
+                if (this.layerStyle.hasOwnProperty("outlineWidth")) {
+                    outlineWidth = this.layerStyle.outlineWidth;
+                }
+                outlineWidths = ["step", ["to-number", ["get", key]], outlineWidth];
+                for (let k = 3; k < colors.length; k += 2) {
+                    outlineWidths[k] = colors[k];
+                    outlineWidths[k + 1] = outlineWidth;
+                }
+                //处理外边线颜色
+                let outlineColor = "#000000";
+                if (this.layerStyle.hasOwnProperty("outlineColor")) {
+                    outlineColor = this.layerStyle.outlineColor;
+                }
+                outlineColors = ["step", ["to-number", ["get", key]], outlineColor];
+                for (let k = 3; k < colors.length; k += 2) {
+                    outlineColors[k] = colors[k];
+                    outlineColors[k + 1] = outlineColor;
+                }
+                //处理外边线透明度
+                let outlineOpacity = 1;
+                if (this.layerStyle.hasOwnProperty("outlineColor")) {
+                    outlineOpacity = this.layerStyle.outlineOpacity;
+                }
+                outlineOpacities = ["step", ["to-number", ["get", key]], outlineOpacity];
+                for (let k = 3; k < colors.length; k += 2) {
+                    outlineOpacities[k] = colors[k];
+                    outlineOpacities[k + 1] = outlineOpacity;
                 }
                 for (let i = 0; i < this.styleGroups.length; i++) {
                     if (this.styleGroups[i].hasOwnProperty("style") && this.styleGroups[i].hasOwnProperty("start") && this.styleGroups[i].hasOwnProperty("end")) {
@@ -1183,6 +1250,42 @@ export default {
                                 if (this.styleGroups[i].start <= opacitys[j] && opacitys[j] <= this.styleGroups[i].end) {
                                     opacitys[j + 1] = this.styleGroups[i].style.opacity;
                                 } else if (opacitys[j] > this.styleGroups[i].end) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.styleGroups[i].style.hasOwnProperty("radius")) {
+                            for (let j = 3; j < radiuses.length; j += 2) {
+                                if (this.styleGroups[i].start <= radiuses[j] && radiuses[j] <= this.styleGroups[i].end) {
+                                    radiuses[j + 1] = this.styleGroups[i].style.radius;
+                                } else if (radiuses[j] > this.styleGroups[i].end) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.styleGroups[i].style.hasOwnProperty("outlineWidth")) {
+                            for (let j = 3; j < outlineWidths.length; j += 2) {
+                                if (this.styleGroups[i].start <= outlineWidths[j] && outlineWidths[j] <= this.styleGroups[i].end) {
+                                    outlineWidths[j + 1] = this.styleGroups[i].style.outlineWidth;
+                                } else if (outlineWidths[j] > this.styleGroups[i].end) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.styleGroups[i].style.hasOwnProperty("outlineColor")) {
+                            for (let j = 3; j < outlineColors.length; j += 2) {
+                                if (this.styleGroups[i].start <= outlineColors[j] && outlineColors[j] <= this.styleGroups[i].end) {
+                                    outlineColors[j + 1] = this.styleGroups[i].style.outlineColor;
+                                } else if (outlineColors[j] > this.styleGroups[i].end) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.styleGroups[i].style.hasOwnProperty("outlineOpacity")) {
+                            for (let j = 3; j < outlineOpacities.length; j += 2) {
+                                if (this.styleGroups[i].start <= outlineOpacities[j] && outlineOpacities[j] <= this.styleGroups[i].end) {
+                                    outlineOpacities[j + 1] = this.styleGroups[i].style.outlineOpacity;
+                                } else if (outlineOpacities[j] > this.styleGroups[i].end) {
                                     break;
                                 }
                             }
@@ -1216,6 +1319,40 @@ export default {
                 this.dataType + "-opacity",
                 opacitys
             );
+            if(this.dataType === "circle"){
+                if(radiuses){
+                    themeManager.setExtraData(
+                        this.layerIdCopy,
+                        this.themeType,
+                        "circle-radius",
+                        radiuses
+                    );
+                }
+                if(outlineWidths){
+                    themeManager.setExtraData(
+                        this.layerIdCopy,
+                        this.themeType,
+                        "circle-stroke-width",
+                        outlineWidths
+                    );
+                }
+                if(outlineColors){
+                    themeManager.setExtraData(
+                        this.layerIdCopy,
+                        this.themeType,
+                        "circle-stroke-color",
+                        outlineColors
+                    );
+                }
+                if(outlineOpacities){
+                    themeManager.setExtraData(
+                        this.layerIdCopy,
+                        this.themeType,
+                        "circle-stroke-opacity",
+                        outlineOpacities
+                    );
+                }
+            }
             //将数值绑定到vue上
             this.$_setDataToVue("colors", color.split(","));
             this.$_setDataToVue("checkBoxArr", checkBoxArr);
@@ -1397,6 +1534,11 @@ export default {
                 this.themeType,
                 this.dataType + "-opacity"
             );
+            let outlineOpacity = themeManager.getExtraData(
+                this.layerIdCopy,
+                this.themeType,
+                "circle-stroke-opacity"
+            );
             let layers;
             if (this.layerStyle) {
                 layers = formatStyleToLayer(this.layerStyle, this.themeType, this.dataType, layer.id);
@@ -1440,6 +1582,9 @@ export default {
             }
             if (outlineColor && this.dataType === "circle") {
                 layer.paint["circle-stroke-color"] = outlineColor;
+            }
+            if (outlineOpacity) {
+                layer.paint["circle-stroke-opacity"] = outlineOpacity;
             }
             if (opacity) {
                 layer.paint[this.dataType + "-opacity"] = opacity;
@@ -3136,12 +3281,25 @@ export default {
             ];
         },
         $_addHeatmapLayer(dataSource) {
+            themeManager.field = this.selectValue;
             //权重不会影响效果，仅会影响点的数量
             let heatmapWeight = this.$_getWeightArr(dataSource);
             //颜色仅需平均分配，但是初始颜色要是浅色系，颜色从浅到深
-            let heatmapColor = this.$_getHeatmapColors(gradientHeatColor[0].key);
+            let gradientColor;
+            if (this.layerStyle && this.layerStyle.color) {
+                gradientColor = this.layerStyle.color;
+            } else {
+                gradientColor = gradientHeatColor[0].key;
+            }
+            let heatmapColor = this.$_getHeatmapColors(gradientColor);
             //半径比较重要，半径越大相对的渐变效果越宽，通视设置不同的缩放等级，会有模糊效果
-            let heatmapRadius = this.$_getHeatmapRadius(40);
+            let gradientRadius;
+            if (this.layerStyle && this.layerStyle.color) {
+                gradientRadius = this.layerStyle.radius;
+            } else {
+                gradientRadius = 40;
+            }
+            let heatmapRadius = this.$_getHeatmapRadius(gradientRadius);
             let paintValue = {
                 paint: {
                     "heatmap-color": heatmapColor,
