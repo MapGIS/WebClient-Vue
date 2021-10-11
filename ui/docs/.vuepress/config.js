@@ -55,7 +55,8 @@ module.exports = {
               ["/guide/", "快速上手"],
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],
-              ["/guide/build.md", "解决打包内存溢出问题"]
+              ["/guide/build.md", "解决打包内存溢出问题"],
+              ["/guide/borderBox.md", "解决全局设置为盒模型问题"]
             ]
           },
           {

@@ -1,9 +1,13 @@
+import mapboxgl from "@mapgis/mapbox-gl";
+import { Style } from "@mapgis/webclient-es6-service";
+
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
-import mapboxgl from "@mapgis/mapbox-gl";
 import clonedeep from "lodash.clonedeep";
 const MapboxInspect = require("mapbox-gl-inspect");
 import Popup from "./geojson/Popup";
+
+const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
 export default {
   name: "mapgis-geojson-layer",
@@ -33,19 +37,38 @@ export default {
       defalut: false
     },
     popupOptions: {
-      type: Object
+      type: Object,
+      default: () => {
+        return { title: "name" };
+      }
     },
     enableTips: {
       type: Boolean,
       defalut: false
     },
-    //tipsOptions : {
-    //    title : "",
-    //     fields: []
-    //
-    // }
     tipsOptions: {
-      type: Object
+      type: Object,
+      default: () => {
+        return { title: "name" };
+      }
+    },
+    /**
+     * 当前图层的显示样式
+     */
+    layerStyle: {
+      type: Object,
+      default: () => {
+        return {};
+      }
+    },
+    /**
+     * 当前图层的高亮样式
+     */
+    highlightStyle: {
+      type: Object,
+      default: () => {
+        return {};
+      }
     },
     /**
      *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
@@ -60,7 +83,9 @@ export default {
     getSourceFeatures() {
       return filter => {
         if (this.map) {
-          return this.map.querySourceFeatures(this.sourceId, { filter });
+          return this.map.querySourceFeatures(this.sourceId || this.layerId, {
+            filter
+          });
         }
         return null;
       };
@@ -90,7 +115,9 @@ export default {
             });
           } else {
             return reject(
-              new Error(`Map source with id ${this.sourceId} not found.`)
+              new Error(
+                `Map source with id ${this.sourceId || this.layerId} not found.`
+              )
             );
           }
         });
@@ -110,7 +137,9 @@ export default {
             });
           } else {
             return reject(
-              new Error(`Map source with id ${this.sourceId} not found.`)
+              new Error(
+                `Map source with id ${this.sourceId || this.layerId} not found.`
+              )
             );
           }
         });
@@ -129,7 +158,9 @@ export default {
             });
           } else {
             return reject(
-              new Error(`Map source with id ${this.sourceId} not found.`)
+              new Error(
+                `Map source with id ${this.sourceId || this.layerId} not found.`
+              )
             );
           }
         });
@@ -224,11 +255,11 @@ export default {
         source.generateId = true;
       }
       try {
-        this.map.addSource(this.sourceId, source);
+        this.map.addSource(this.sourceId || this.layerId, source);
       } catch (err) {
         if (this.replaceSource) {
-          this.map.removeSource(this.sourceId);
-          this.map.addSource(this.sourceId, source);
+          this.map.removeSource(this.sourceId || this.layerId);
+          this.map.addSource(this.sourceId || this.layerId, source);
         }
       }
       this.$_addLayer();
@@ -253,21 +284,44 @@ export default {
     },
 
     $_addLayer() {
-      let existed = this.map.getLayer(this.layerId);
+      const { layerId, sourceId, layer, map, replace, layerStyle } = this;
+      const { point, line, polygon } = layerStyle;
+      let existed = map.getLayer(layerId);
       if (existed) {
-        if (this.replace) {
-          this.map.removeLayer(this.layerId);
+        if (replace) {
+          map.removeLayer(layerId);
         } else {
-          this.$_emitEvent("layer-exists", { layerId: this.layerId });
+          this.$_emitEvent("layer-exists", { layerId: layerId });
           return existed;
         }
       }
-      const layer = {
+      let style;
+      if (Object.keys(layer).length == 0) {
+        if (point) {
+          style = {
+            type: "circle",
+            ...point.toMapboxStyle()
+          };
+        } else if (line) {
+          style = {
+            type: "line",
+            ...line.toMapboxStyle()
+          };
+        } else if (polygon) {
+          style = {
+            type: "fill",
+            ...polygon.toMapboxStyle()
+          };
+        }
+      } else {
+        style = layer;
+      }
+      let addlayer = {
         id: this.layerId,
-        source: this.sourceId,
-        ...this.layer
+        source: this.sourceId || this.layerId,
+        ...style
       };
-      this.map.addLayer(layer, this.before);
+      this.map.addLayer(addlayer, this.before);
       this.$_emitEvent("added", { layerId: this.layerId });
     },
 
@@ -436,13 +490,13 @@ export default {
         if (e.features.length > 0) {
           if (vm.hoveredStateId !== null) {
             map.setFeatureState(
-              { source: vm.sourceId, id: vm.hoveredStateId },
+              { source: vm.sourceId || vm.layerId, id: vm.hoveredStateId },
               { hover: false }
             );
           }
           vm.hoveredStateId = e.features[0].id;
           map.setFeatureState(
-            { source: vm.sourceId, id: vm.hoveredStateId },
+            { source: vm.sourceId || vm.layerId, id: vm.hoveredStateId },
             { hover: true }
           );
         }
@@ -450,68 +504,58 @@ export default {
     },
     $_addhoverLayer() {
       let highlight;
-      let { map } = this;
-      if (this.layer.type === "fill") {
-        highlight = {
-          id: this.layerId + "_高亮边界线",
-          type: "line",
-          source: this.sourceId,
-          paint: {
-            "line-color": "#00ffff",
-            "line-width": [
-              "case",
-              ["boolean", ["feature-state", "hover"], false],
-              2,
-              0
-            ]
-          }
-        };
-      } else if (this.layer.type === "line") {
-        highlight = {
-          id: this.layerId + "_高亮边界线",
-          type: "line",
-          source: this.sourceId,
-          paint: {
-            "line-color": "#00ffff",
-            "line-width": [
-              "case",
-              ["boolean", ["feature-state", "hover"], false],
-              2,
-              0
-            ]
-          }
-        };
-      } else if (this.layer.type === "circle") {
-        let circleRadius;
-        if (
-          this.layer &&
-          this.layer.paint &&
-          this.layer.paint["circle-radius"]
-        ) {
-          circleRadius = this.layer.paint["circle-radius"] + 4;
-        } else {
-          circleRadius = 6 + 4;
+      let { map, layer, layerId, sourceId, highlightStyle } = this;
+      sourceId = sourceId || layerId;
+      const { point, line, polygon } = highlightStyle;
+      if (Object.keys(layer).length == 0) {
+        if (point) {
+          highlight = {
+            id: layerId + "_高亮边界线",
+            type: "circle",
+            source: sourceId,
+            ...point.toMapboxStyle({ highlight: true })
+          };
+        } else if (line) {
+          highlight = {
+            id: layerId + "_高亮边界线",
+            type: "line",
+            source: sourceId,
+            ...line.toMapboxStyle({ highlight: true })
+          };
+        } else if (polygon) {
+          highlight = {
+            id: layerId + "_高亮边界线",
+            type: "fill",
+            source: sourceId,
+            ...polygon.toMapboxStyle({ highlight: true })
+          };
         }
-
-        highlight = {
-          id: this.layerId + "_高亮边界线",
-          type: "circle",
-          source: this.sourceId,
-          paint: {
-            "circle-color": "rgba(0, 0, 0, 0)",
-            "circle-radius": circleRadius,
-            "circle-stroke-color": "#00ffff",
-            "circle-stroke-width": [
-              "case",
-              ["boolean", ["feature-state", "hover"], false],
-              2,
-              0
-            ]
-          }
-        };
+        if (!map.getLayer(highlight.id)) map.addLayer(highlight);
+      } else {
+        if (this.layer.type === "fill") {
+          highlight = {
+            id: layerId + "_高亮边界线",
+            type: "line",
+            source: sourceId,
+            ...line.toMapboxStyle({ highlight: true })
+          };
+        } else if (this.layer.type === "line") {
+          highlight = {
+            id: layerId + "_高亮边界线",
+            type: "line",
+            source: sourceId,
+            ...line.toMapboxStyle({ highlight: true })
+          };
+        } else if (this.layer.type === "circle") {
+          highlight = {
+            id: layerId + "_高亮边界线",
+            type: "circle",
+            source: sourceId,
+            ...point.toMapboxStyle({ highlight: true })
+          };
+        }
+        if (!map.getLayer(highlight.id)) map.addLayer(highlight);
       }
-
-      if (!map.getLayer(highlight.id)) map.addLayer(highlight);
     }
   }
 };

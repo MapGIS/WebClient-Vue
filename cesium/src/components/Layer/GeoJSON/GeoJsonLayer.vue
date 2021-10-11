@@ -157,6 +157,7 @@ export default {
 
           // 多选模式
           let entities = scene.drillPick(movement.position);
+          if (entities.length <= 0) return;
           // 单选模式
           /* let feature = scene.pick(movement.position);
           if (feature instanceof Cesium.Cesium3DTileFeature) {

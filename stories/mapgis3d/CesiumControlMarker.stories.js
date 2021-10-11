@@ -13,7 +13,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
-    <mapgis-web-scene>
+    <mapgis-web-scene style="height: 95vh">
     <mapgis-3d-ogc-wmts-layer
         :baseUrl="urlT"
         :wmtsLayer="layer"

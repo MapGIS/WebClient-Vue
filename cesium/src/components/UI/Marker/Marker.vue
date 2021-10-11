@@ -12,6 +12,10 @@ export default {
   name: "mapgis-3d-marker",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
+    fid: {
+      type: String,
+      default: ""
+    },
     text: {
       type: String,
       default: ""
@@ -77,6 +81,9 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    },
+    changeEvent: {
+      type: Function
     }
   },
   data() {
@@ -183,6 +190,7 @@ export default {
       let scene = webGlobeMarker.viewer.scene;
       if (!window.handler) {
         window.handler = new Cesium.ScreenSpaceEventHandler(webGlobeMarker.viewer.scene.canvas);
+        window.lastActiveId;
         window.handler.setInputAction(function (movement) {
           if (scene.mode !== Cesium.SceneMode.MORPHING) {
             let pickedObject = scene.pick(movement.endPosition);
@@ -191,12 +199,14 @@ export default {
                 vm.isMoveIn = true;
                 vm.isMoveOut = false;
                 vm.$emit("mouseEnter", vm.$_hasId(pickedObject.id.id).label);
+                window.lastActiveId = vm.$_hasId(pickedObject.id.id).label;
               }
             }
             if (!Cesium.defined(pickedObject)) {
               if (!vm.isMoveOut) {
                 vm.isMoveIn = false;
                 vm.isMoveOut = true;
+                 vm.$emit("mouseLeave", window.lastActiveId);
               }
             }
           }
@@ -243,6 +253,8 @@ export default {
           //相对位置
           heightReference
       );
+      label.fid = this.fid;
+      label.changeEvent = this.changeEvent;
       icon.markLabel = label;
       this.$_addIcon(icon);
     },

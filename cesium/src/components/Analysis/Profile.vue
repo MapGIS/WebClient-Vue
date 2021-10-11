@@ -172,6 +172,16 @@ export default {
           title: {
             show: false
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {
+                type: "png",
+                show: true,
+                title: "保存为图片"
+              },
+              restore: { show: true, title: "刷新" }
+            }
+          },
           grid: {
             top: 25,
             left: 60,
