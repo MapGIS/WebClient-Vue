@@ -7,42 +7,42 @@ export default {
   title: "三维/分析/粒子特效",
   argTypes: {
     emissionRate: {
-      description: "发射速率",
+      description: "发射速率(个/秒)",
       table: {
         defaultValue: { summary: 20.0 },
       },
       control: "number",
     },
     imageSize: {
-      description: "尺寸",
+      description: "尺寸(像素)",
       table: {
         defaultValue: { summary: 5.0 },
       },
       control: "number",
     },
     minimumParticleLife: {
-      description: "粒子最小存在时间",
+      description: "粒子最小存在时间(秒)",
       table: {
         defaultValue: { summary: 2.0 },
       },
       control: "number",
     },
     maximumParticleLife: {
-      description: "粒子最大存在时间",
+      description: "粒子最大存在时间(秒)",
       table: {
         defaultValue: { summary: 3.0 },
       },
       control: "number",
     },
     minimumSpeed: {
-      description: "最小速度",
+      description: "最小速度(个/秒)",
       table: {
         defaultValue: { summary: 9.0 },
       },
       control: "number",
     },
     maximumSpeed: {
-      description: "最大速度",
+      description: "最大速度(个/秒)",
       table: {
         defaultValue: { summary: 9.5 },
       },
@@ -162,8 +162,8 @@ const Template = (args, { argTypes }) => ({
   },
 });
 
-export const ParticleEffects = Template.bind({});
-ParticleEffects.args = {
+export const 粒子特效 = Template.bind({});
+粒子特效.args = {
   emissionRate: 2.0, // 发射速率
   imageSize: 5.0, // 尺寸
   minimumParticleLife: 2.0, // 粒子最小存在时间
@@ -174,7 +174,7 @@ ParticleEffects.args = {
   endScale: 4.0, // 结束比例
   emitterType: "圆形放射",
 };
-ParticleEffects.parameters = {
+粒子特效.parameters = {
   docs: {
     description: {
       component: Markdown,
