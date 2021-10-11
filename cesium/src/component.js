@@ -38,7 +38,9 @@ export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
-export { default as Mapgis3dMarkerPlotting } from "./components/Layer/GeoJSON/3dMarkerPlotting.vue";
+export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/3dMarkerPro.vue";
+export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/3dMarkerSetPro.vue";
+export { default as Mapgis3dDynamicMarkerLayer } from "./components/Layer/Marker/DynamicMarkerLayer.vue";
 export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.vue";
 // export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 export { default as Mapgis3dCesiumHeaterLayer } from "./components/Overlay/themeLayer/heater/CesiumHeater.vue";
@@ -67,6 +69,7 @@ export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
+export { default as Mapgis3dParticleEffects } from "./components/Analysis/ParticleEffects";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";

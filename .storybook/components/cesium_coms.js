@@ -33,7 +33,7 @@ export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTi
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "../../cesium/src/components/UI/Marker/Marker";
-export { default as Mapgis3dMarkerPlotting } from "../../cesium/src/components/Layer/GeoJSON/3dMarkerPlotting.vue";
+export { default as Mapgis3dDynamicMarkerLayer } from "../../cesium/src/components/Layer/Marker/DynamicMarkerLayer.vue";
 // export { default as { MapvLayer }} from "../../cesium/src/components/Overlay";
 export { default as Mapgis3dMapvLayer } from "../../cesium/src/components/Overlay/Mapv3dLayer.vue";
 export { default as Mapgis3dEchartsLayer } from "../../cesium/src/components/Overlay/Echarts.vue";
@@ -63,3 +63,4 @@ export { default as Mapgis3dDynamicSection } from "../../cesium/src/components/A
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";
 export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
+export { default as Mapgis3dParticleEffects } from "../../cesium/src/components/Analysis/ParticleEffects";

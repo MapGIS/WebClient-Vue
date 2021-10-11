@@ -5,9 +5,15 @@
 ### ES6 方式
 
 ```bash
+安装webclient-vue-mapboxgl:
 npm install --save @mapgis/webclient-vue-mapboxgl
 # 或者
 yarn add @mapgis/webclient-vue-mapboxgl
+
+安装webclient-vue-ui:
+npm install --save @mapgis/webclient-vue-ui
+# 或者
+yarn add @mapgis/webclient-vue-ui
 ```
 
 > - webclient-vue-mapboxgl 依赖于 mapgis 版本的 mapbox-gl。

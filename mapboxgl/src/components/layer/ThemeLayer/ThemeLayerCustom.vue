@@ -1,16 +1,23 @@
 <template>
   <div v-show="showPanel">
-    <mapgis-igs-theme-panel-custom
+    <mapgis-theme-panel-custom
         ref="themePanel"
         :options="optionsCopy"
         @formChanged="$_formChanged"
         @highlightChanged="$_highlightChanged"
     />
-    <mapgis-inspect
-        :showMapPopupOnHover=true
-        :showInspectMapPopupOnHover=true
-        :fields="popUpFields"
-    />
+<!--    <mapgis-inspect-->
+<!--        :showMapPopupOnHover=true-->
+<!--        :showInspectMapPopupOnHover=true-->
+<!--        :fields="popUpFields"-->
+<!--        v-if="isPopUpAble"-->
+<!--    />-->
+<!--    <mapgis-marker-->
+<!--        v-if="markers.length > 0"-->
+<!--        :coordinates="markers"-->
+<!--    >-->
+<!--      <div slot="marker" style="background: #ffffff;padding: 6px;border: 3px solid #ccc;border-radius: 3px;">sadasdsadasd</div>-->
+<!--    </mapgis-marker>-->
   </div>
 </template>
 
@@ -18,7 +25,7 @@
 import BaseLayer from "./BaseLayer";
 
 export default {
-  name: "mapgis-igs-theme-layer-custom",
+  name: "mapgis-theme-layer-custom",
   mixins: [BaseLayer],
   props: {
     popUpFields: {
@@ -36,14 +43,12 @@ export default {
   data() {
     return {
       optionsCopy: undefined,
-      themePropsCopy: undefined
     }
   },
   created() {
     this.panelType = "custom";
   },
   mounted() {
-    this.themePropsCopy = JSON.parse(JSON.stringify(this.themeProps));
   },
   methods: {
     $_highlightChanged(id) {
@@ -77,6 +82,11 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+.popup-content {
+  width: 260px;
+}
+.mapboxgl-popup-content{
+  width: 260px;
+}
 </style>

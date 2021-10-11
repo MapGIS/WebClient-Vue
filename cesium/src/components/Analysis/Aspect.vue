@@ -26,9 +26,17 @@
 </template>
 
 <script>
-import { Util } from "@mapgis/webclient-vue-ui";
+import { rgbaToHex } from "../Utils/common/color-util";
+/* import { Util } from "@mapgis/webclient-vue-ui";
+const { ColorUtil } = Util; */
 import VueOptions from "../Base/Vue/VueOptions";
-const { ColorUtil } = Util;
+import {
+  isEnableLighting,
+  setEnableLighting,
+  getBrightness,
+  getBrightnessStatusAndUniformsBrightness,
+  setBrightnessStatusAndUniformsBrightness
+} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-analysis-aspect",
@@ -73,7 +81,11 @@ export default {
         { min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" }
       ],
 
-      brightnessEnabled: false, // 光照是否已开启
+      isEnableLighting: undefined, // 光照是否已开启
+
+      noBrightness: undefined, // 是否有brightness对象
+
+      brightnessStatusAndUniformsBrightness: undefined, // 光照参数
 
       info:
         "坡向分析需要带法线地形。\r\n坡向按照东北西南的顺序表示方向,即0°表示坡向指向正东方向。"
@@ -114,9 +126,6 @@ export default {
           }
         );
       });
-      if (viewer.scene.globe.enableLighting && viewer.scene.brightness) {
-        this.brightnessEnabled = true;
-      }
     },
     unmount() {
       let { CesiumZondy, vueKey, vueIndex } = this;
@@ -132,15 +141,35 @@ export default {
      */
     _enableBrightness() {
       // 开启光照，不然放大地图，分析结果显示异常
-      const { viewer } = this.webGlobe;
-      viewer.scene.globe.enableLighting = true;
+
+      this.isEnableLighting = isEnableLighting(this.webGlobe);
+      if (!this.isEnableLighting) {
+        // 未开启光照，开启
+        setEnableLighting(true, this.webGlobe);
+      }
       // 调高亮度
+      const { viewer } = this.webGlobe;
       const stages = viewer.scene.postProcessStages;
-      viewer.scene.brightness =
-        viewer.scene.brightness ||
-        stages.add(this.Cesium.PostProcessStageLibrary.createBrightnessStage());
-      viewer.scene.brightness.enabled = true;
-      viewer.scene.brightness.uniforms.brightness = 1.2;
+      const brightness = getBrightness(this.webGlobe);
+      if (!brightness) {
+        // 初始没有brightness对象
+        this.noBrightness = true;
+        viewer.scene.brightness = stages.add(
+          this.Cesium.PostProcessStageLibrary.createBrightnessStage()
+        );
+      }
+      // 设置前记录原有光照参数
+      this.brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
+        this.webGlobe
+      );
+      const statusAndUniformsBrightness = {
+        enabled: true,
+        brightness: 1.2
+      };
+      setBrightnessStatusAndUniformsBrightness(
+        statusAndUniformsBrightness,
+        this.webGlobe
+      );
     },
     /**
      * @description 开始绘制并分析
@@ -203,7 +232,7 @@ export default {
       let isNull = false;
       const arr = arrayColor.map(color => {
         if (color) {
-          return ColorUtil.rgbaToHex(color);
+          return rgbaToHex(color);
         }
         isNull = true;
         return null;
@@ -245,11 +274,43 @@ export default {
         );
       }
 
-      // 关闭光照
-      const { viewer } = this.webGlobe;
-      if (viewer.scene.brightness && !this.brightnessEnabled) {
-        viewer.scene.globe.enableLighting = false;
-        viewer.scene.brightness.enabled = false;
+      // 恢复光照设置
+      this._restoreEnableLighting();
+    },
+    /***
+     * 恢复光照设置
+     */
+    _restoreEnableLighting() {
+      // 恢复光照开启状态设置
+      if (
+        this.isEnableLighting !== undefined &&
+        this.isEnableLighting !== isEnableLighting(this.webGlobe)
+      ) {
+        setEnableLighting(this.isEnableLighting, this.webGlobe);
+      }
+      const stages = this.webGlobe.viewer.scene.postProcessStages;
+      if (this.noBrightness) {
+        // 如果开始没有brightness对象，恢复
+        stages.remove(this.webGlobe.viewer.scene.brightness);
+        this.webGlobe.viewer.scene.brightness = undefined;
+      } else {
+        // 恢复brightness参数设置
+        if (this.brightnessStatusAndUniformsBrightness !== undefined) {
+          const brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
+            this.webGlobe
+          );
+          if (
+            this.brightnessStatusAndUniformsBrightness.enabled !==
+              brightnessStatusAndUniformsBrightness.enabled ||
+            this.brightnessStatusAndUniformsBrightness.brightness !==
+              brightnessStatusAndUniformsBrightness.brightness
+          ) {
+            setBrightnessStatusAndUniformsBrightness(
+              this.brightnessStatusAndUniformsBrightness,
+              this.webGlobe
+            );
+          }
+        }
       }
     }
   }

@@ -26,7 +26,7 @@
   "dependencies": {
     "@mapgis/cesium": "^1.59.3",
     "@mapgis/webclient-es6-service": "^10.5.4",
-    "@mapgis/webclient-store": "^1.0.14",
+    "@mapgis/webclient-store": "^10.5.5",
     "@turf/turf": "^5.1.6",
     "@vuepress/plugin-active-header-links": "^1.7.1",
     "@vuepress/plugin-nprogress": "^1.7.1",

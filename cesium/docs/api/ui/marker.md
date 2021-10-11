@@ -1,6 +1,6 @@
 # 标记点
 
-> mapgis-3d-marker
+> mapgis-3d-Marker
 
 ## 属性
 
@@ -121,3 +121,21 @@
 - **描述** 在 Popup 加载完毕后发送该事件
 - **Payload** `{ popup }`
 - `popup` Popup 对象
+
+### `@mouseEnter`
+
+- **描述** Popup的鼠标移入事件
+- **Payload** `{ options, longitude, latitude, height }`
+- `options` Popup的初始化参数
+- `longitude` Popup的经度坐标
+- `latitude` Popup的纬度坐标
+- `height` Popup的高度坐标
+
+### `@mouseLeave`
+
+- **描述** Popup的鼠标移出事件
+- **Payload** `{ options, longitude, latitude, height }`
+- `options` Popup的初始化参数
+- `longitude` Popup的经度坐标
+- `latitude` Popup的纬度坐标
+- `height` Popup的高度坐标

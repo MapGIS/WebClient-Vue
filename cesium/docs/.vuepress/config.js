@@ -101,6 +101,7 @@ module.exports = {
               ["/api/m3d/m3d.md", "M3D"],
 
               ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/marker/DynamicMarker.md", "动态注记"],
 
               {
                 title: "可视化",

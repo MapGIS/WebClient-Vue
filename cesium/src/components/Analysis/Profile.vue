@@ -59,7 +59,7 @@
     </slot>
     <mapgis-ui-mask
       v-if="useMask"
-      :parentDivClass="'cesium-viewer'"
+      :parentDivClass="'cesium-map-wrapper'"
       :loading="maskShow"
       :text="maskText"
     ></mapgis-ui-mask>
@@ -68,7 +68,11 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import { colorToCesiumColor } from "../WebGlobe/util";
+import {
+  colorToCesiumColor,
+  isDepthTestAgainstTerrainEnable,
+  setDepthTestAgainstTerrainEnable
+} from "../WebGlobe/util";
 import * as echarts from "echarts";
 
 export default {
@@ -168,6 +172,16 @@ export default {
           title: {
             show: false
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {
+                type: "png",
+                show: true,
+                title: "保存为图片"
+              },
+              restore: { show: true, title: "刷新" }
+            }
+          },
           grid: {
             top: 25,
             left: 60,
@@ -243,6 +257,15 @@ export default {
     useMask: {
       type: Boolean,
       default: true
+    },
+    /**
+     * @type String
+     * @required true
+     * @description 剖面信息显示容器的id
+     */
+    echartsDivId: {
+      type: String,
+      required: true
     }
   },
   watch: {
@@ -298,9 +321,10 @@ export default {
       polylineGroundColorCopy: "rgb(255,0,0)", // 剖切线颜色
       showPolygonCopy: false, // 是否显示剖面
       samplePrecisionCopy: 2, // 采样精度(采样间隔，平面距离，单位米，模型推荐为0.2，地形推荐为2)
-      depthTestAgainstTerrain: false, // 深度检测是否已开启
+      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       maskShow: false,
-      maskText: "正在分析中, 请稍等..."
+      maskText: "正在分析中, 请稍等...",
+      profileeChart: undefined
     };
   },
 
@@ -336,9 +360,9 @@ export default {
           }
         );
       });
-      if (viewer.scene.globe.depthTestAgainstTerrain) {
-        this.depthTestAgainstTerrain = true;
-      }
+      this.profileeChart = echarts.init(
+        document.getElementById(this.echartsDivId)
+      );
     },
     unmount() {
       const profileAnalysis = this._getProfileAnalysis();
@@ -376,7 +400,13 @@ export default {
      */
     analysis() {
       const { viewer } = this.webGlobe;
-      viewer.scene.globe.depthTestAgainstTerrain = true;
+      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
+        this.webGlobe
+      );
+      if (!this.isDepthTestAgainstTerrainEnable) {
+        // 如果深度检测没有开启，则开启
+        setDepthTestAgainstTerrainEnable(true, this.webGlobe);
+      }
       const {
         polygonColorCopy,
         polygonHeightCopy,
@@ -403,7 +433,8 @@ export default {
           showPolygon: showPolygonCopy,
           polylineGroundColor: pgColor,
           samplePrecision: samplePrecisionCopy,
-          profileType // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
+          profileType, // 0表示只采地形，分析中界面不会卡顿；1表示支持模型和地形，分析中界面会卡顿
+          echart: this.profileeChart
         });
       }
       profileAnalysis.profile(this._profileStart, this._profileSuccess);
@@ -430,6 +461,21 @@ export default {
       this.$emit("success");
     },
     /**
+     * @description 恢复深度检测设置
+     */
+    _restoreDepthTestAgainstTerrain() {
+      if (
+        this.isDepthTestAgainstTerrainEnable !== undefined &&
+        this.isDepthTestAgainstTerrainEnable !==
+          isDepthTestAgainstTerrainEnable(this.webGlobe)
+      ) {
+        setDepthTestAgainstTerrainEnable(
+          this.isDepthTestAgainstTerrainEnable,
+          this.webGlobe
+        );
+      }
+    },
+    /**
      * @description 移除剖面分析结果，关闭二维剖面显示，恢复深度检测设置
      */
     remove() {
@@ -448,10 +494,7 @@ export default {
         );
       }
 
-      // 恢复深度检测设置
-      if (!this.depthTestAgainstTerrain) {
-        this.webGlobe.viewer.scene.globe.depthTestAgainstTerrain = false;
-      }
+      this._restoreDepthTestAgainstTerrain();
       this.maskShow = false;
       this.$emit("remove");
     }
