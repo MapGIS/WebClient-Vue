@@ -1,27 +1,19 @@
 import wuhan_house from "../assets/geojson/wuhan_house"
 export default {
-  title: "二维/图层/专题图/分段专题图自定义样式/定义整体样式/点",
+  title: "二维/图层/专题图/分段专题图/点数据",
   argTypes: {
-    type: {
-      description: "专题图类型，uniform(统一)，unique(单值)，range(分段)，heatmap(热力)，symbol(符号)",
-      table:{
-        defaultValue: { summary: 'range' },
-      },
-    },
-    field: {
-      description: "专题图字段，请填写仅含有数字的字段",
-      table:{
-        defaultValue: { summary: 'null' },
-      },
-    },
     dataSource: {
-      description: "geojson格式的数据源",
+      description: "geojson格式的数据源，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
       table:{
         defaultValue: { summary: 'null' },
       },
     },
-    layerStyle: {
-      description: "渐变样式，有如下参数：<br>" +
+    themeOption: {
+      description:  "创建专题图所需要的参数，有如下值：<br>" +
+          "1、<span class='storybook-span'>type</span>(必填)：专题图类型，类型有以下值，uniform(统一)，unique(单值)，range(分段)，heatmap(热力)，symbol(符号)<br>" +
+          "2、<span class='storybook-span'>field</span>(必填)：属性字段，即以某个字段的值来创建专题图<br>" +
+          "3、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式<br>" +
+          "有如下值：<br>" +
           "1、<span class='storybook-span'>color</span>：渐变颜色，例如：#9999FF,#99FFFF,#FF9999,#FFFF99<br>" +
           "2、<span class='storybook-span'>opacity</span>：透明度，默认为1，0~1之间的小数，0表示完全透明，1表示不透明<br>" +
           "3、<span class='storybook-span'>radius</span>：点半径，默认为6<br>" +
@@ -41,26 +33,30 @@ const Template = (args, {argTypes}) => ({
   template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
     <mapgis-theme-layer-custom v-bind="$props"/>
     </mapgis-web-map>`,
-  data(){
-    return{
-    }
-  },
-  mounted(){
-    console.log("props",this.$props)
-  }
 });
 
-export const  定义整体样式 = Template.bind({});
-定义整体样式.args = {
-  type: "range",
-  field: "display_x",
+export const  自定义样式 = Template.bind({});
+自定义样式.args = {
   dataSource: wuhan_house,
-  layerStyle: {
-    color: "#3D5941,#778868,#B5B991,#F6EDBD,#EDBB8A,#DE8A5A,#CA562C",
-    opacity: 1,
-    radius: 10,
-    outlineColor: "#13aad0",
-    outlineOpacity: 1,
-    outlineWidth: 4
+  themeOption: {
+    type: "range",
+    field: "display_x",
+    layerStyle: {
+      color: "#3D5941,#778868,#B5B991,#F6EDBD,#EDBB8A,#DE8A5A,#CA562C",
+      opacity: 1,
+      radius: 10,
+      outlineColor: "#13aad0",
+      outlineOpacity: 1,
+      outlineWidth: 4
+    }
+  }
+}
+
+export const  默认样式 = Template.bind({});
+默认样式.args = {
+  dataSource: wuhan_house,
+  themeOption: {
+    type: "range",
+    field: "display_x",
   }
 }
