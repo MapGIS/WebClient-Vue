@@ -296,6 +296,10 @@ export default {
     //color:fade($text-color, 40%);
     background: transparent;
   }
+
+  .mapgis-ui-sketch-color-picker .color-container{
+    border:unset;
+  }
 }
 
 #skyline-2d-chart {
