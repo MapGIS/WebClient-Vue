@@ -29,7 +29,7 @@
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer.js";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
-import {deepEqual} from "../../../../mapboxgl/src/components/util/util";
+import {deepEqual} from "../Utils/deepequal";
 
 export default {
   name: "mapgis-3d-heightlimited",

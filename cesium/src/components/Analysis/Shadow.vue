@@ -92,7 +92,9 @@
 
 <script>
 import BaseMixin from "./BaseLayer";
-import { hexToRgba } from "../../../../ui/src/util/common/color-util";
+import {hexToRgba} from '../Utils/common/color-util';
+/* import { Util } from "@mapgis/webclient-vue-ui";
+const { ColorUtil } = Util; */
 import VueOptions from "../Base/Vue/VueOptions";
 
 const shadowMoment = require('moment');

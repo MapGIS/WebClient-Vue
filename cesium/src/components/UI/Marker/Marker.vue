@@ -81,6 +81,9 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    },
+    changeEvent: {
+      type: Function
     }
   },
   data() {
@@ -251,6 +254,7 @@ export default {
           heightReference
       );
       label.fid = this.fid;
+      label.changeEvent = this.changeEvent;
       icon.markLabel = label;
       this.$_addIcon(icon);
     },
