@@ -1,6 +1,6 @@
 > mapgis-3d-analysis-profile
 
-<font style="color:red;fontsize=5px;">注意：必须在外部定义一个 div，并通过 echartsDivId 参数将 div 的 id 传入组件，用于显示剖面信息(echarts 图表)</font>
+<span style="color:red;fontsize=5px;">注意：必须在外部定义一个 div，并通过 echartsDivId 参数将 div 的 id 传入组件，用于显示剖面信息(echarts 图表)</span>
 
 ## 属性
 

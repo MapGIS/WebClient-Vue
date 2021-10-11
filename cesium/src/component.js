@@ -69,6 +69,7 @@ export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
+export { default as Mapgis3dParticleEffects } from "./components/Analysis/ParticleEffects";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
@@ -78,3 +79,5 @@ export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 export { default as Mapgis3dRainEffect } from "./components/SceneEffect/RainEffect";
 export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";
 export { default as Mapgis3dFogEffect } from "./components/SceneEffect/FogEffect";
+
+export { default as Mapgis3DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";

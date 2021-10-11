@@ -13,7 +13,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
-    <mapgis-web-scene>
+    <mapgis-web-scene style="height: 95vh">
     <mapgis-3d-ogc-wmts-layer
         :baseUrl="urlT"
         :wmtsLayer="layer"
@@ -22,7 +22,7 @@ const Template = (args, { argTypes }) => ({
         :tilingScheme="srs"
         :token="token"
     />
-    <mapgis-3d-Marker
+    <mapgis-3d-marker
         :longitude="longitude"
         :latitude="latitude"
         :height="height"
@@ -31,7 +31,17 @@ const Template = (args, { argTypes }) => ({
         :heightReference="heightReference"
         @mouseEnter="mouseEnter"
         @mouseLeave="mouseLeave"
-    ></mapgis-3d-Marker>
+    ></mapgis-3d-marker>
+    <mapgis-3d-marker
+        :longitude="longitude2"
+        :latitude="latitude2"
+        :height="height"
+        :text="text"
+        :iconUrl="iconUrl"
+        :heightReference="heightReference"
+        @mouseEnter="mouseEnter"
+        @mouseLeave="mouseLeave"
+    ></mapgis-3d-marker>
     </mapgis-web-scene>
   `,
   data(){
@@ -50,6 +60,8 @@ const Template = (args, { argTypes }) => ({
       },
       longitude: 114.4018,
       latitude: 30.4673,
+      longitude2: 115,
+      latitude2: 31,
       height: 0,
       iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
       text: "这是测试",

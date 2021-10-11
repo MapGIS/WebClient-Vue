@@ -34,10 +34,8 @@
     <div
       :class="[
         'locate-panel-contaner',
-        'query-section',
-        'panel-container',
-        locationPanelExpand ? '' : 'unvisible'
       ]"
+      :style="{display:locationPanelExpand ? 'block' : 'none'}"
     >
       <slot />
     </div>

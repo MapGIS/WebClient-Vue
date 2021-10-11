@@ -1,23 +1,6 @@
-# 开挖分析
-
 > mapgis-3d-excavate
 
 ## 属性
-
-### `index`
-
-- **类型:** `Number`
-- **默认值:** `0`
-- **非侦听属性**
-- **描述:** 图层的索引值，表示第几个图层
-
-### `position`
-
-- **类型:** `String`
-- **默认值:** `right`
-- **非侦听属性**
-- **描述:** 分析面板的位置（right:右边 | left: 左边）
-
 ### `vueKey`
 
 - **类型:** `String`
@@ -33,13 +16,13 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ### `vueIndex`
 
 - **类型:** `Number`
-- **可选**
+- **必传**
 - **非侦听属性**
 - **描述:**
 ```
+通过vueIndex将开挖面绑定在模型上，当只开挖一个模型时，传一个vueIndex即可，当要对多个模型进行开挖时，传入一个[vueIndex]数组即可
 当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
 ```
-
 
 ### `excaveteStyle`
 - **类型:** `Object`
@@ -48,8 +31,8 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **描述:** 图层样式，有如下值：
 
 ```
-    material String 控制裁剪面的材质颜色，默认值“rgb(0,0,255)”
-    edgeColor String 控制裁剪时边界线颜色，默认值“rgb(0,0,255)”
+    material String 控制裁剪面的材质颜色，默认值"#00FFFF"
+    edgeColor String 控制裁剪时边界线颜色，默认值"#FF8C00"
     edgeWidth Number 控制边界线宽度，默认值 3
 ```
 

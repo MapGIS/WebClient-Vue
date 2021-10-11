@@ -1,17 +1,6 @@
 <template>
-<!--  <div :class="['heightlimited',{ right: position === 'right', left: position === 'left' }]">-->
-<!--    <div-->
-<!--        :style="{-->
-<!--                background: 'rgb(38, 151, 204)',-->
-<!--                padding: '5px',-->
-<!--                color: 'white',-->
-<!--            }"-->
-<!--        class="card-title"-->
-<!--    >-->
-<!--      控高分析-->
-<!--    </div>-->
   <div class="mapgis-widget-heightLimited-analysis">
-    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad">
+    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad" :enableControl="enableControl">
         <mapgis-ui-row>
           <mapgis-ui-col :span="5">分析区域：</mapgis-ui-col>
           <mapgis-ui-col :span="19">
@@ -39,17 +28,13 @@
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer.js";
-import draw from "../UI/Controls/Draw/Draw";
-import {deepEqual} from "../../../../mapboxgl/src/components/util/util";
+import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
+import {deepEqual} from "../Utils/deepequal";
 
 export default {
   name: "mapgis-3d-heightlimited",
   mixins: [ServiceLayer],
   props: {
-    // position: {
-    //   type: String,
-    //   default: "right",
-    // },
     vueKey: {
       type: String,
       default: "default"
@@ -73,7 +58,7 @@ export default {
       default: 50
     }
   },
-  // components: {draw},
+  components: {Mapgis3dDraw},
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   data() {
     return {
@@ -83,11 +68,19 @@ export default {
       mindepth: 0,
       boundingSphere: "",
       waitManagerName: "M3DIgsManager",
-      cartesianForHeight: []
+      cartesianForHeight: [],
+      enableControl:false
     }
   },
   mounted() {
     let vm = this;
+    Object.keys(this.$props).forEach(function (key) {
+      if (key!=="vueKey" && key!=="vueIndex"){
+        vm.$watch(key,function () {
+          this.heightLimitedAnalysis();
+        })
+      }
+    })
     vm.$_init(vm.heightLimitedAnalysis);
   },
   destroyed() {

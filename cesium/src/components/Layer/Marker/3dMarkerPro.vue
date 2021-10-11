@@ -4,6 +4,8 @@
     :latitude="popupPosition.latitude"
     :height="popupPosition.height"
     :iconUrl="img"
+    :fid="marker.fid"
+    :changeEvent="changeEvent"
     :farDist="200000000"
     @mouseEnter="mouseOver"
     @mouseLeave="mouseOut"
@@ -142,7 +144,7 @@ export default {
       handler() {
         // 当前显示弹出框的标注与组件内的id不一致时，隐藏弹出框
         if (this.currentMarkerId !== this.marker.fid) {
-          // this.showPopup = false
+          this.showPopup = false;
         }
       }
     }
@@ -167,16 +169,27 @@ export default {
       marker.name = marker.fid;
       marker.center = marker.coordinates; */
     },
-    mouseOver(event, label, lng, lat, height) {
-      this.showPopup = true;
-      const { marker } = this;
-      this.$emit("marker-id", marker.fid);
-      this.$emit("mouseenter", event, marker.fid);
+    changeEvent(enable) {
+      this.showPopup = enable;
     },
-    mouseOut(event, label, lng, lat, height) {
-      const { marker } = this;
-      this.showPopup = false;
-      this.$emit("mouseleave", event, marker.fid);
+    mouseOver(event) {
+      const { changeEvent, fid } = event;
+      if (changeEvent) {
+        changeEvent(true);
+      } else {
+        this.showPopup = true;
+      }
+      this.$emit("marker-id", fid);
+      this.$emit("mouseenter", event, fid);
+    },
+    mouseOut(event) {
+      const { changeEvent, fid } = event;
+      if (changeEvent) {
+        changeEvent(false);
+      } else {
+        this.showPopup = false;
+      }
+      this.$emit("mouseleave", event, fid);
     }
   }
 };

@@ -14,6 +14,7 @@ export default {
   argTypes: {
     baseUrl: "",
     enablePopup: true,
+    enableTips: true
   },
   layerStyle: {
     point: new PointStyle(),
@@ -49,6 +50,7 @@ GeoJSON.args = {
   baseUrl1: "http://develop.smaryun.com/static/data/geojson/china.geojson",
   baseUrl: "http://localhost:8888/static/data/geojson/省会城市.json",
   enablePopup: true,
+  enableTips: true,
   layerStyle: {
     point: new PointStyle({
       radius: 25000,

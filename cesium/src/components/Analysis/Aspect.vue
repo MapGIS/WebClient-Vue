@@ -26,7 +26,9 @@
 </template>
 
 <script>
-import { Util } from "@mapgis/webclient-vue-ui";
+import { rgbaToHex } from "../Utils/common/color-util";
+/* import { Util } from "@mapgis/webclient-vue-ui";
+const { ColorUtil } = Util; */
 import VueOptions from "../Base/Vue/VueOptions";
 import {
   isEnableLighting,
@@ -35,7 +37,6 @@ import {
   getBrightnessStatusAndUniformsBrightness,
   setBrightnessStatusAndUniformsBrightness
 } from "../WebGlobe/util";
-const { ColorUtil } = Util;
 
 export default {
   name: "mapgis-3d-analysis-aspect",
@@ -231,7 +232,7 @@ export default {
       let isNull = false;
       const arr = arrayColor.map(color => {
         if (color) {
-          return ColorUtil.rgbaToHex(color);
+          return rgbaToHex(color);
         }
         isNull = true;
         return null;
