@@ -45,7 +45,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="最小存在时间">
+          <mapgis-ui-form-item label="最小存在时间(秒)">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
@@ -68,7 +68,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="最大存在时间">
+          <mapgis-ui-form-item label="最大存在时间(秒)">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
@@ -91,7 +91,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="最小速度">
+          <mapgis-ui-form-item label="最小速度(个/秒)">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
@@ -112,7 +112,7 @@
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="最大速度">
+          <mapgis-ui-form-item label="最大速度(个/秒)">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider

@@ -23,7 +23,7 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 发射速率
+- **描述:** 发射速率(个/秒)
 - **默认值:** 20.0
 
 ### `imageSize`
@@ -31,7 +31,7 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 尺寸
+- **描述:** 尺寸(像素)
 - **默认值:** 5.0
 
 ### `minimumParticleLife`
@@ -39,7 +39,7 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 粒子最小存在时间
+- **描述:** 粒子最小存在时间(秒)
 - **默认值:** 2.0
 
 ### `maximumParticleLife`
@@ -47,7 +47,7 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 粒子最大存在时间
+- **描述:** 粒子最大存在时间(秒)
 - **默认值:** 3.0
 
 ### `minimumSpeed`
@@ -55,7 +55,7 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 最小速度
+- **描述:** 最小速度(个/秒)
 - **默认值:** 9.0
 
 ### `maximumSpeed`
@@ -63,7 +63,7 @@
 - **类型:** `Number`
 - **可选**
 - **侦听属性**
-- **描述:** 最大速度
+- **描述:** 最大速度(个/秒)
 - **默认值:** 9.5
 
 ### `startScale`
@@ -342,7 +342,7 @@ export default {
                 </mapgis-ui-col>
               </mapgis-ui-row>
             </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="最小存在时间">
+            <mapgis-ui-form-item label="最小存在时间(秒)">
               <mapgis-ui-row>
                 <mapgis-ui-col :span="15">
                   <mapgis-ui-slider
@@ -365,7 +365,7 @@ export default {
                 </mapgis-ui-col>
               </mapgis-ui-row>
             </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="最大存在时间">
+            <mapgis-ui-form-item label="最大存在时间(秒)">
               <mapgis-ui-row>
                 <mapgis-ui-col :span="15">
                   <mapgis-ui-slider
@@ -388,7 +388,7 @@ export default {
                 </mapgis-ui-col>
               </mapgis-ui-row>
             </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="最小速度">
+            <mapgis-ui-form-item label="最小速度(个/秒)">
               <mapgis-ui-row>
                 <mapgis-ui-col :span="15">
                   <mapgis-ui-slider
@@ -409,7 +409,7 @@ export default {
                 </mapgis-ui-col>
               </mapgis-ui-row>
             </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="最大速度">
+            <mapgis-ui-form-item label="最大速度(个/秒)">
               <mapgis-ui-row>
                 <mapgis-ui-col :span="15">
                   <mapgis-ui-slider
