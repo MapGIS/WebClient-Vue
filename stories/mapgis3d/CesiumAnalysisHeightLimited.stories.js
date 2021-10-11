@@ -22,14 +22,14 @@ export default {
             table:{
                 defaultValue: { summary: 0.5 },
             },
-            control:'text'
+            control:'number'
         },
         maxSliderHeight:{
             description:'滑动条最大值',
             table:{
                 defaultValue: { summary: 50 },
             },
-            control:'text'
+            control:'number'
         },
 
     }
@@ -48,7 +48,7 @@ const Template = (args, { argTypes }) => ({
         }
     },
     template: `
-      <mapgis-web-scene>
+      <mapgis-web-scene style="width: calc(90vw)">
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>
       <mapgis-ui-card class="storybook-ui-card">
