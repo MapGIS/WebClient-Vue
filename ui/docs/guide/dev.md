@@ -81,10 +81,10 @@ render: (h) => h(App),
 npm link @mapgis/webclient-vue-ui
 ```
 
-### 2、mockjs问题
+<!-- ### 2、mockjs问题
 
 待添加...
 
 ### 3、其他项目打包时的eslint检测报错
 
-待添加...
+待添加... -->
