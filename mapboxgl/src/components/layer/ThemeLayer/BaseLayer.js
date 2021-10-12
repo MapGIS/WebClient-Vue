@@ -159,9 +159,25 @@ export default {
             type: Boolean,
             default: false
         },
-        isPopUpAble: {
+        enableTips: {
             type: Boolean,
             default: false
+        },
+        tipsOptions: {
+            type: Object,
+            default: {
+                enableHighlight: true
+            }
+        },
+        enablePopup: {
+            type: Boolean,
+            default: false
+        },
+        popupOptions: {
+            type: Object,
+            default: {
+                enableHighlight: true
+            }
         },
     },
     watch: {
@@ -223,6 +239,9 @@ export default {
             hideItemCopy: this.hideItem,
             panelClass: undefined,
             hoveredStateId: undefined,
+            tipsSourceId: undefined,
+            popupStateId: undefined,
+            popupSourceId: undefined,
             panelType: "fix",
             markers: []
         };
@@ -311,7 +330,7 @@ export default {
                     }
                     let featuresCollection = turf.featureCollection(points);
                     let center = turf.center(featuresCollection);
-                    this.$_addPopup(center.geometry.coordinates, this.highlightFeature);
+                    this.$_addTips(center.geometry.coordinates, this.highlightFeature);
                 }
             }
         },
@@ -325,16 +344,27 @@ export default {
                 this.hoveredStateId = null;
             }
         },
-        $_addHeightLightLayer() {
-            let vm = this, hId, heightLightLayer;
+        $_addHeightLightLayer(name, options, source_Id) {
+            let hId, heightLightLayer;
+            if (this.dataSource && this.dataSource instanceof Object) {
+                this.map.addSource(
+                    source_Id,
+                    {
+                        "type": "geojson",
+                        "data": this.dataSource
+                    }
+                );
+            } else {
+                return;
+            }
             if (this.themeType === "range") {
                 if (this.dataType === "fill") {
-                    hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_线";
-                    let hIdFill = this.layerIdCopy + this.$_getThemeName() + "_高亮_多边形";
+                    hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_线";
+                    let hIdFill = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_多边形";
                     heightLightLayer = {
                         id: hId,
                         type: "line",
-                        source: this.source_Id,
+                        source: source_Id,
                         paint: {
                             "line-color": "#7B75C6",
                             "line-width": ['case',
@@ -346,7 +376,7 @@ export default {
                     let heightLightLayerFill = {
                         id: hIdFill,
                         type: "fill",
-                        source: this.source_Id,
+                        source: source_Id,
                         paint: {
                             "fill-color": "#7B75C6",
                             "fill-opacity": ['case',
@@ -355,8 +385,8 @@ export default {
                                 0]
                         }
                     }
-                    if (this.themeOption.highlightStyle) {
-                        const {lineStyle, fillStyle} = this.themeOption.highlightStyle;
+                    if (options.highlightStyle) {
+                        const {lineStyle, fillStyle} = options.highlightStyle;
                         if (lineStyle) {
                             if (lineStyle.color) {
                                 heightLightLayer.paint["line-color"] = lineStyle.color;
@@ -385,7 +415,7 @@ export default {
                     }
                     this.map.addLayer(heightLightLayerFill);
                 } else if (this.dataType === "circle") {
-                    hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_点";
+                    hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_点";
                     let cRadius;
                     if (this.themeOption.layerStyle) {
                         const {radius} = this.themeOption.layerStyle;
@@ -394,7 +424,7 @@ export default {
                     heightLightLayer = {
                         id: hId,
                         type: "circle",
-                        source: this.source_Id,
+                        source: source_Id,
                         paint: {
                             "circle-color": "#0000FF",
                             "circle-stroke-color": "#7B75C6",
@@ -410,8 +440,8 @@ export default {
                                 0]
                         }
                     }
-                    if (this.themeOption.highlightStyle) {
-                        const {pointStyle} = this.themeOption.highlightStyle;
+                    if (options.highlightStyle) {
+                        const {pointStyle} = options.highlightStyle;
                         if (pointStyle) {
                             if (pointStyle.color) {
                                 heightLightLayer.paint["circle-color"] = pointStyle.color;
@@ -440,7 +470,7 @@ export default {
                         }
                     }
                 } else if (this.dataType === "line") {
-                    hId = this.layerIdCopy + this.$_getThemeName() + "_高亮_线";
+                    hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_线";
                     let lWidth;
                     if (this.themeOption.layerStyle) {
                         const {width} = this.themeOption.layerStyle;
@@ -449,7 +479,7 @@ export default {
                     heightLightLayer = {
                         id: hId,
                         type: "line",
-                        source: this.source_Id,
+                        source: source_Id,
                         paint: {
                             "line-color": "#0000FF",
                             "line-width": lWidth,
@@ -459,8 +489,8 @@ export default {
                                 0]
                         }
                     }
-                    if (this.themeOption.highlightStyle) {
-                        const {lineStyle} = this.themeOption.highlightStyle;
+                    if (options.highlightStyle) {
+                        const {lineStyle} = options.highlightStyle;
                         if (lineStyle) {
                             if (lineStyle.color) {
                                 heightLightLayer.paint["line-color"] = lineStyle.color;
@@ -478,45 +508,26 @@ export default {
                     }
                 }
                 this.map.addLayer(heightLightLayer);
-                this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                    if (vm.hoveredStateId) {
-                        vm.map.setFeatureState(
-                            {source: vm.source_Id, id: vm.hoveredStateId},
-                            {hover: false}
-                        );
-                    }
-                    vm.hoveredStateId = e.features[0].id;
-                    vm.map.setFeatureState(
-                        {source: vm.source_Id, id: vm.hoveredStateId},
-                        {hover: true}
-                    );
-                    vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                    vm.$emit("highlightChanged", vm.hoveredStateId);
-                });
-                this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                    if (vm.hoveredStateId !== null) {
-                        vm.map.setFeatureState(
-                            {source: vm.source_Id, id: vm.hoveredStateId},
-                            {hover: false}
-                        );
-                        vm.$_removePopup();
-                    }
-                    vm.hoveredStateId = null;
-                });
             }
         },
         $_addPopup(coordinates, feature) {
-            if (this.isPopUpAble) {
-                if (!window.popup) {
-                    window.popup = new this.mapbox.Popup({
-                        closeOnClick: false,
-                        closeButton: false,
-                        className: 'popup-content'
-                    }).addTo(this.map);
-                }
-                window.popup.setHTML("<h1 style='text-align: center;padding-top: 20px'>" + this.selectValue + " : " + feature.properties[this.selectValue] + "</h1>");
-                window.popup.setLngLat(coordinates);
+            if (window.popup) {
+                this.$_removePopup();
             }
+            if (!window.popup) {
+                let popupOptions = {
+                    offset: 12,
+                    closeOnClick: false,
+                    closeButton: false,
+                    maxWidth: "300px",
+                    className: 'popup-content'
+                }
+                popupOptions = Object.assign(popupOptions, this.popupOptions);
+                window.popup = new this.mapbox.Popup(popupOptions).addTo(this.map);
+            }
+            let element = this.$_getPopupHtml(this.popupOptions.fields, this.popupOptions.alias, this.popupOptions.style, feature, this.selectValue);
+            window.popup.setHTML(element);
+            window.popup.setLngLat(coordinates);
         },
         $_removePopup() {
             if (window.popup) {
@@ -524,9 +535,77 @@ export default {
                 window.popup = undefined;
             }
         },
+        $_addTips(coordinates, feature) {
+            if (this.enableTips) {
+                if (!window.tips) {
+                    let tipsOption = {
+                        offset: 12,
+                        closeOnClick: false,
+                        closeButton: false,
+                        maxWidth: "300px",
+                        className: 'popup-content'
+                    }
+                    tipsOption = Object.assign(tipsOption, this.tipsOptions);
+                    window.tips = new this.mapbox.Popup(tipsOption).addTo(this.map);
+                }
+                let element = this.$_getPopupHtml(this.tipsOptions.fields, this.tipsOptions.alias, this.tipsOptions.style, feature, this.selectValue);
+                window.tips.setHTML(element);
+                window.tips.setLngLat(coordinates);
+            }
+        },
+        $_getPopupHtml(fields, alias, style, feature, defaultField) {
+            let element = "<div>", field, newStyle;
+
+            function getField(alias, field) {
+                if (alias && alias instanceof Object && alias.hasOwnProperty(field)) {
+                    field = alias[field];
+                }
+                return field;
+            }
+
+            function getStyle(style) {
+                let styleStr = "", defaultStyle = {
+                    "text-align": "left",
+                    "white-space": "nowrap",
+                    "text-overflow": "ellipsis",
+                    "overflow": "hidden",
+                    "word-break": " break-all",
+                    "padding": "6px 0",
+                    "font-size": "20px",
+                    "font-weight": "bolder"
+                };
+                style = Object.assign(defaultStyle, style);
+                if (style && style instanceof Object) {
+                    Object.keys(style).forEach(function (key) {
+                        styleStr += key + ":" + style[key] + ";";
+                    });
+                }
+                return styleStr;
+            }
+
+            newStyle = getStyle(style);
+
+            if (fields && fields instanceof Array && fields.length > 0) {
+                for (let i = 0; i < fields.length; i++) {
+                    field = getField(alias, fields[i]);
+                    element += "<div style='" + newStyle + "'>" + field + " : " + feature.properties[fields[i]] + "</div>";
+                }
+            } else {
+                field = getField(alias, defaultField);
+                element += "<div style='" + newStyle + "'>" + field + " : " + feature.properties[defaultField] + "</div>";
+            }
+            element += "</div>";
+            return element;
+        },
+        $_removeTips() {
+            if (window.tips) {
+                window.tips.remove();
+                window.tips = undefined;
+            }
+        },
         $_addThemeLayerBySource() {
             if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
-                let dataSource = this.dataSource;
+                let dataSource = this.dataSource, vm = this;
                 for (let i = 0; i < dataSource.features.length; i++) {
                     if (!dataSource.features[i].hasOwnProperty("id")) {
                         dataSource.features[i].id = i + 1;
@@ -539,12 +618,74 @@ export default {
                 });
                 this.initType = "props";
                 let layerId = this.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
-                this.selectValue = this.themeOption.field;
+                this.selectValue = this.field;
                 themeManager.field = this.selectValue;
                 themeManager.vueId = this.vueId;
-                this.$_addThemeLayer(this.themeOption.type, layerId, this.selectValue);
-                if (this.isHoverAble) {
-                    this.$_addHeightLightLayer();
+                this.$_addThemeLayer(this.type, layerId, this.selectValue);
+                //是否开启tips
+                if (this.enableTips) {
+                    //是否开启高亮
+                    if (this.tipsOptions.enableHighlight || !this.tipsOptions.hasOwnProperty("enableHighlight")) {
+                        this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
+                        this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId);
+                        this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                            if (vm.hoveredStateId) {
+                                vm.map.setFeatureState(
+                                    {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                    {hover: false}
+                                );
+                            }
+                            vm.hoveredStateId = e.features[0].id;
+                            vm.map.setFeatureState(
+                                {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                {hover: true}
+                            );
+                            vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                            vm.$emit("highlightChanged", vm.hoveredStateId);
+                        });
+                        this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                            if (vm.hoveredStateId !== null) {
+                                vm.map.setFeatureState(
+                                    {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                    {hover: false}
+                                );
+                                vm.$_removeTips();
+                            }
+                            vm.hoveredStateId = null;
+                        });
+                    } else {
+                        this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                            vm.hoveredStateId = e.features[0].id;
+                            vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                        });
+                        this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                            if (vm.hoveredStateId !== null) {
+                                vm.$_removeTips();
+                            }
+                            vm.hoveredStateId = null;
+                        });
+                    }
+                }
+                //是否开启Popup
+                if (this.enablePopup) {
+                    if (this.popupOptions.enableHighlight || !this.popupOptions.hasOwnProperty("enableHighlight")) {
+                        this.popupSourceId = this.layerIdCopy + "_popup_" + parseInt(String(Math.random() * 10000));
+                        this.$_addHeightLightLayer("_popup", this.popupOptions, this.popupSourceId);
+                    }
+                    this.map.on('click', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.popupStateId) {
+                            vm.map.setFeatureState(
+                                {source: vm.popupSourceId, id: vm.popupStateId},
+                                {hover: false}
+                            );
+                        }
+                        vm.popupStateId = e.features[0].id;
+                        vm.map.setFeatureState(
+                            {source: vm.popupSourceId, id: vm.popupStateId},
+                            {hover: true}
+                        );
+                        vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                    });
                 }
             }
         },
@@ -1323,8 +1464,8 @@ export default {
                 this.dataType + "-opacity",
                 opacitys
             );
-            if(this.dataType === "circle"){
-                if(radiuses){
+            if (this.dataType === "circle") {
+                if (radiuses) {
                     themeManager.setExtraData(
                         this.layerIdCopy,
                         this.themeType,
@@ -1332,7 +1473,7 @@ export default {
                         radiuses
                     );
                 }
-                if(outlineWidths){
+                if (outlineWidths) {
                     themeManager.setExtraData(
                         this.layerIdCopy,
                         this.themeType,
@@ -1340,7 +1481,7 @@ export default {
                         outlineWidths
                     );
                 }
-                if(outlineColors){
+                if (outlineColors) {
                     themeManager.setExtraData(
                         this.layerIdCopy,
                         this.themeType,
@@ -1348,7 +1489,7 @@ export default {
                         outlineColors
                     );
                 }
-                if(outlineOpacities){
+                if (outlineOpacities) {
                     themeManager.setExtraData(
                         this.layerIdCopy,
                         this.themeType,
@@ -3479,7 +3620,7 @@ export default {
             themeManager.setManagerProps(layerId, undefined);
         },
         $_deleteThemeLayerByGeoJSON(layerId) {
-            if (this.map.getLayer(layerId + this.$_getThemeName(this.themeOption.type))) {
+            if (this.map.getLayer(layerId + this.$_getThemeName(this.type))) {
                 let layerOrder = themeManager.getLayerProps(layerId, "layerOrder"), vm = this;
                 let allLayerOrder = themeManager.getLayerOrder();
                 for (let i = 0; i < layerOrder.length; i++) {

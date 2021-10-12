@@ -1,6 +1,6 @@
-import wuhan_house from "../assets/geojson/wuhan_house"
+import wuhan from "../assets/geojson/wuhan"
 export default {
-  title: "二维/图层/专题图/专题图开启高亮和PopUp/点数据",
+  title: "二维/图层/专题图/专题图开启高亮和PopUp/自定义Tips",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
@@ -25,14 +25,15 @@ export default {
           "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式(略)<br>" +
           "2、<span class='storybook-span'>highlightStyle</span>(选填)：高亮样式<br>" +
           "有如下值：<br>" +
-          "2.1、<span class='storybook-span'>pointStyle</span>(选填)：高亮的区域(圆)样式<br>" +
+          "2.1、<span class='storybook-span'>lineStyle</span>：高亮图层的外边线样式：<br>" +
           "有如下值：<br>" +
-          "2.1.1、<span class='storybook-span'>radius</span>(选填)：高亮的区域(圆)的半径<br>" +
-          "2.1.2、<span class='storybook-span'>color</span>(选填)：高亮的区域(圆)的颜色，十六进制或rgb颜色<br>" +
-          "2.1.3、<span class='storybook-span'>opacity</span>(选填)：高亮的区域(圆)的透明度，0~1之间的值，0表示透明，1表示不透明<br>" +
-          "2.1.4、<span class='storybook-span'>outlineColor</span>(选填)：高亮的区域(圆)的外边线颜色，十六进制或rgb颜色<br>" +
-          "2.1.5、<span class='storybook-span'>outlineWidth</span>(选填)：高亮的区域(圆)的外边线宽度<br>" +
-          "2.1.6、<span class='storybook-span'>outlineOpacity</span>(选填)：高亮的区域(圆)的外边线透明度，0~1之间的值，0表示透明，1表示不透明<br>" +
+          "2.1.1、<span class='storybook-span'>color</span>：高亮图层的外边线颜色，十六进制或rgb颜色<br>" +
+          "2.1.2、<span class='storybook-span'>width</span>：高亮图层的外边线宽度<br>" +
+          "2.1.3、<span class='storybook-span'>opacity</span>：高亮图层的外边透明度，0~1之间的值，0表示透明，1表示不透明<br>" +
+          "2.2、<span class='storybook-span'>fillStyle</span>：高亮图层的填充区域样式<br>" +
+          "有如下值：<br>" +
+          "2.2.1、<span class='storybook-span'>color</span>：高亮图层的填充区域颜色，十六进制或rgb颜色<br>" +
+          "2.2.2、<span class='storybook-span'>opacity</span>：高亮图层的填充区域透明度，0~1之间的值，0表示透明，1表示不透明<br>" +
           "3、<span class='storybook-span'>layerStyle</span>(选填)：分段样式(略)<br>",
       table:{
         defaultValue: { summary: 'null' },
@@ -63,24 +64,67 @@ const Template = (args, {argTypes}) => ({
 
 export const  开启高亮和PopUp = Template.bind({});
 开启高亮和PopUp.args = {
-  dataSource: wuhan_house,
+  dataSource: wuhan,
   type: "range",
-  field: "display_x",
-  themeOption: {
-    layerStyle: {
-      radius: 10
+  field: "adcode",
+  enableTips: true,
+  tipsOptions: {
+    anchor: "top-left",
+    offset: 20,
+    maxWidth: "400px",
+    fields: [
+        "name",
+        "adcode",
+        "center",
+    ],
+    alias: {
+      "name": "行政区名",
+      "adcode": "邮政编码",
+      "center": "中心点",
     },
+    style: {
+    },
+    enableHighlight: true,
     highlightStyle: {
-      pointStyle: {
-        radius: 10,
+      lineStyle: {
         color: "#FF0000",
-        opacity: 0.5,
-        outlineColor: "#FFFF00",
-        outlineWidth: 4,
-        outlineOpacity: 1
+        width: 4,
+        opacity: 1
+      },
+      fillStyle: {
+        color: "#0000FF",
+        opacity: 0.5
       }
     }
   },
-  isHoverAble: true,
-  enableTips: true
+  enablePopup: true,
+  popupOptions: {
+    anchor: "bottom",
+    offset: 20,
+    maxWidth: "400px",
+    fields: [
+      "name",
+      "adcode",
+      "center",
+    ],
+    alias: {
+      "name": "行政区名",
+      "adcode": "邮政编码",
+      "center": "中心点",
+    },
+    style: {
+    },
+    enableHighlight: true,
+    highlightStyle: {
+      lineStyle: {
+        color: "#FF0000",
+        width: 4,
+        opacity: 1
+      },
+      fillStyle: {
+        color: "#0000FF",
+        opacity: 0.5
+      }
+    }
+  },
 }
