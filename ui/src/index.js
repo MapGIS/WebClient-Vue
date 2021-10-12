@@ -9,6 +9,7 @@ import { setTheme } from "./util/style/theme/set-theme";
 import { default as MapgisUiMessage } from "./components/message/Message.js";
 import { default as MapgisUiNotification } from "./components/notification/Notification.js";
 import { default as ModalInstance } from "./components/modal";
+import { default as IconFont } from "./components/iconfont/Icon.vue";
 
 const install = function(Vue, options) {
   options = options || {};
@@ -25,6 +26,9 @@ const install = function(Vue, options) {
     const ui = UIComponents[name];
     Vue.component(ui.options ? ui.options.name : ui.name, ui);
   }
+
+  const MapgisUiIconFont = IconFont.createFromIconfontCN({});
+  Vue.component("mapgis-ui-iconfont", MapgisUiIconFont);
 
   Vue.prototype.$message = MapgisUiMessage;
   Vue.prototype.$notification = MapgisUiNotification;
