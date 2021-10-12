@@ -172,7 +172,6 @@ export default {
   beforeDestroy () {
     if (this.map) {
       this.popup.remove();
-      this.$_emitEvent("removed");
     }
   },
 
@@ -218,7 +217,7 @@ export default {
 
     remove () {
       this.popup.remove();
-      this.$_emitEvent("remove", { popup: this.popup });
+      this.$_emitEvent("removed", { popup: this.popup });
     }
   }
 };

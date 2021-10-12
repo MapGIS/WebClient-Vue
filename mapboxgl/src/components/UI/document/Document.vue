@@ -1,7 +1,7 @@
 <template>
   <div class="mapgis-document-wrapper" :style="wrapperStyle">
     <div class="document-header-title">
-      <mapgis-iconfont type="mapgis-tucengjiancheng" />
+      <mapgis-ui-iconfont type="mapgis-tucengjiancheng" />
       <span>地图文档树</span>
     </div>
     <mapgis-ui-input-search
@@ -19,7 +19,7 @@
       @expand="onExpand"
     >
       <template slot="custom" slot-scope="{ icon }">
-        <mapgis-iconfont :type="icon" />
+        <mapgis-ui-iconfont :type="icon" />
       </template>
       <template slot="title" slot-scope="{ title }">
         <span v-contextmenu:LayerMenu :title="title">
