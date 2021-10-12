@@ -86,7 +86,41 @@ export default {
 .popup-content {
   width: auto;
 }
-.mapboxgl-popup-content{
+
+.mapboxgl-popup-content {
   width: auto;
+  padding: 0;
+}
+
+.mapgis-theme-popup-container{
+  padding: 10px 10px 15px;
+}
+
+.mapgis-theme-popup-row {
+  text-align: left;
+  white-space: nowrap;
+  padding: 6px 0;
+  font-size: 24px;
+  font-weight: bolder;
+  height: 40px;
+}
+.mapgis-theme-popup-item{
+  display: inline-block;
+  line-height: 24px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.mapgis-theme-popup-colon {
+  margin: 0 3px;
+}
+
+.mapgis-theme-popup-field {
+  min-width: 27%;
+}
+
+.mapgis-theme-popup-value {
+  width: 70%;
 }
 </style>

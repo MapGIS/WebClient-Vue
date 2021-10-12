@@ -518,14 +518,14 @@ export default {
                 let popupOptions = {
                     offset: 12,
                     closeOnClick: false,
-                    closeButton: false,
-                    maxWidth: "300px",
+                    closeButton: true,
+                    maxWidth: '300px',
                     className: 'popup-content'
                 }
                 popupOptions = Object.assign(popupOptions, this.popupOptions);
                 window.popup = new this.mapbox.Popup(popupOptions).addTo(this.map);
             }
-            let element = this.$_getPopupHtml(this.popupOptions.fields, this.popupOptions.alias, this.popupOptions.style, feature, this.selectValue);
+            let element = this.$_getPopupHtml(this.popupOptions.fields, this.popupOptions.alias, this.popupOptions.style, this.popupOptions.class, this.popupOptions.title, feature, this.selectValue);
             window.popup.setHTML(element);
             window.popup.setLngLat(coordinates);
         },
@@ -548,13 +548,14 @@ export default {
                     tipsOption = Object.assign(tipsOption, this.tipsOptions);
                     window.tips = new this.mapbox.Popup(tipsOption).addTo(this.map);
                 }
-                let element = this.$_getPopupHtml(this.tipsOptions.fields, this.tipsOptions.alias, this.tipsOptions.style, feature, this.selectValue);
+                let element = this.$_getPopupHtml(this.tipsOptions.fields, this.tipsOptions.alias, this.tipsOptions.style, this.tipsOptions.class, this.tipsOptions.title, feature, this.selectValue);
                 window.tips.setHTML(element);
                 window.tips.setLngLat(coordinates);
             }
         },
-        $_getPopupHtml(fields, alias, style, feature, defaultField) {
-            let element = "<div>", field, newStyle;
+        $_getPopupHtml(fields, alias, style, pClass, title, feature, defaultField) {
+            let field, containerStyle, titleStyle, rowStyle, fieldStyle, valueStyle;
+            let containerClass, rowClass, titleClass, fieldClass, valueClass;
 
             function getField(alias, field) {
                 if (alias && alias instanceof Object && alias.hasOwnProperty(field)) {
@@ -564,17 +565,7 @@ export default {
             }
 
             function getStyle(style) {
-                let styleStr = "", defaultStyle = {
-                    "text-align": "left",
-                    "white-space": "nowrap",
-                    "text-overflow": "ellipsis",
-                    "overflow": "hidden",
-                    "word-break": " break-all",
-                    "padding": "6px 0",
-                    "font-size": "20px",
-                    "font-weight": "bolder"
-                };
-                style = Object.assign(defaultStyle, style);
+                let styleStr = "";
                 if (style && style instanceof Object) {
                     Object.keys(style).forEach(function (key) {
                         styleStr += key + ":" + style[key] + ";";
@@ -583,16 +574,60 @@ export default {
                 return styleStr;
             }
 
-            newStyle = getStyle(style);
+            if (style && style.hasOwnProperty("containerStyle")) {
+                containerStyle = getStyle(style.containerStyle);
+            }
+
+            if (pClass && pClass.hasOwnProperty("containerClass")) {
+                containerClass = pClass.containerClass;
+            }
+
+            let element = "<div class='mapgis-theme-popup-container " + containerClass + "' style='" + containerStyle + "'>"
+
+            if (style && style.hasOwnProperty("rowStyle")) {
+                rowStyle = getStyle(style.rowStyle);
+            }
+
+            if (pClass && pClass.hasOwnProperty("rowClass")) {
+                rowClass = pClass.rowClass;
+            }
+
+            if (style && style.hasOwnProperty("titleStyle")) {
+                titleStyle = getStyle(style.titleStyle);
+            }
+
+            if (pClass && pClass.hasOwnProperty("titleClass")) {
+                titleClass = pClass.titleClass;
+            }
+
+            if (style && style.hasOwnProperty("fieldStyle")) {
+                fieldStyle = getStyle(style.fieldStyle);
+            }
+
+            if (pClass && pClass.hasOwnProperty("fieldClass")) {
+                fieldClass = pClass.fieldClass;
+            }
+
+            if (style && style.hasOwnProperty("valueStyle")) {
+                valueStyle = getStyle(style.valueStyle);
+            }
+
+            if (pClass && pClass.hasOwnProperty("valueClass")) {
+                valueClass = pClass.valueClass;
+            }
+
+            if (title) {
+                element += "<div class='mapgis-theme-popup-row " + titleClass + "' style='" + titleStyle + "'>" + title + "</div>";
+            }
 
             if (fields && fields instanceof Array && fields.length > 0) {
                 for (let i = 0; i < fields.length; i++) {
                     field = getField(alias, fields[i]);
-                    element += "<div style='" + newStyle + "'>" + field + " : " + feature.properties[fields[i]] + "</div>";
+                    element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value "+valueClass+"' style='" + valueStyle + "'>" + feature.properties[fields[i]] + "</span></div>";
                 }
             } else {
                 field = getField(alias, defaultField);
-                element += "<div style='" + newStyle + "'>" + field + " : " + feature.properties[defaultField] + "</div>";
+                element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value "+valueClass+"' style='" + valueStyle + "'>" + feature.properties[defaultField] + "</span></div>";
             }
             element += "</div>";
             return element;
