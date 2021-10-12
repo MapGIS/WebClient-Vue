@@ -49,7 +49,7 @@ const Template = (args, { argTypes }) => ({
       longitude: 114.4018,
       latitude: 30.4673,
       height: 0,
-      iconUrl: "data/picture/icon.png",
+      iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
       text: "这是测试",
       heightReference: "clamped",
     }

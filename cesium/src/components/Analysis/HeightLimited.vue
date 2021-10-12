@@ -40,7 +40,7 @@
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer.js";
-import draw from "../UI/Controls/Draw/Draw";
+import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../../../../mapboxgl/src/components/util/util";
 
 export default {
@@ -74,7 +74,7 @@ export default {
       default: 50
     }
   },
-  components: {draw},
+  components: { Mapgis3dDraw },
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   data() {
     return {

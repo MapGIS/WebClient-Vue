@@ -22,7 +22,7 @@
 - **描述:**
   > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
-### `url`
+### `baseUrl`
 
 - **类型**: `Object`
 - **必传**

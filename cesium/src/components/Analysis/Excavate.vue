@@ -29,10 +29,6 @@ import ServiceLayer from "../UI/Controls/ServiceLayer.js";
 export default {
   name: "mapgis-3d-excavate",
   props: {
-    index: {
-      type: Number,
-      default: 0,
-    },
     position: {
       type: String,
       default: "right",

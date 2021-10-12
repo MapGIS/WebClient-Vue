@@ -1,4 +1,4 @@
-# 量测组件 
+# 量测组件
 
 > mapgis-3d-measure
 
@@ -56,15 +56,15 @@
 
 - **描述:** 激活直线测量功能
 
-### `MeasureAreaTool`
+### `enableMeasureArea`
 
 - **描述:** 激活面积测量功能
 
-### `TriangulationTool`
+### `enableMeasureTriangle`
 
 - **描述:** 激活三角测量功能
 
-### `MeasureSlopeTool`
+### `enableMeasureSlope`
 
 - **描述:** 激活坡度测量功能
 
@@ -93,9 +93,7 @@
 
 <script>
 export default {
-  components:{
-    
-  },
+  components: {},
   data() {
     return {};
   },
