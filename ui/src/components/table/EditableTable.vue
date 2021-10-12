@@ -15,7 +15,7 @@
       :loading="loading"
       :pagination="false"
       :row-key="rowKey"
-      :class="`${prefixCls}-table`"
+      :class="tableCls"
     >
       <template
         v-for="column in tableColumns"
@@ -104,6 +104,14 @@ export default {
     };
   },
   computed: {
+    tableCls({ prefixCls, size }) {
+      return [
+        `${prefixCls}-table`,
+        {
+          [`${prefixCls}-table-${size}`]: !!size
+        }
+      ];
+    },
     // 新增按钮
     addTool() {
       return {

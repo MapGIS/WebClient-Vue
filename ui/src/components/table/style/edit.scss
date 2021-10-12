@@ -34,4 +34,13 @@
       }
     }
   }
+  &-table-small {
+    .mapgis-ui-table-placeholder {
+      padding: 8px;
+      > div {
+        font-size: $font-size-sm;
+        line-height: 1;
+      }
+    }
+  }
 }
