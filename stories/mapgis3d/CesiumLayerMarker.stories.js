@@ -14,11 +14,9 @@ export default {
   argTypes: {
     selects: [],
     idField: "markerId",
-    layerStyle: {
-      marker: new MarkerStyle({
-        symbol: DefaultInactiveImagePlotting,
-      }),
-    },
+    layerStyle: new MarkerStyle({
+      symbol: DefaultInactiveImagePlotting,
+    }),
     highlightStyle: {
       point: new PointStyle(),
       line: new LineStyle(),
@@ -119,11 +117,10 @@ export const 标绘图层 = Template.bind({});
   idField: "fid",
   selects: [],
   fitBound: { xmin: 100, ymin: 20, xmax: 110, ymax: 30 },
-  layerStyle: {
-    marker: new MarkerStyle({
-      symbol: DefaultInactiveImagePlotting,
-    }),
-  },
+  layerStyle: new MarkerStyle({
+    symbol: DefaultInactiveImagePlotting,
+  }),
+
   highlightStyle: {
     point: new PointStyle({
       color: "#ff0000",

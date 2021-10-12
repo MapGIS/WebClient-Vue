@@ -72,15 +72,13 @@ const geojson = {
 export const Circle = Template.bind({});
 Circle.args = {
   layerId: "geojson_layer_id",
-  layerStyle: {
-    point: new PointStyle({
-      radius: 12,
-      color: "#ffffff",
-      opacity: 0.8,
-      outlineWidth: 5,
-      outlineColor: "#52B883",
-    }),
-  },
+  layerStyle: new PointStyle({
+    radius: 12,
+    color: "#ffffff",
+    opacity: 0.8,
+    outlineWidth: 5,
+    outlineColor: "#52B883",
+  }),
   highlightStyle: {
     point: new PointStyle({
       radius: 15,
@@ -99,15 +97,14 @@ Circle.args = {
 export const Line = Template.bind({});
 Line.args = {
   layerId: "geojson_layer_id",
-  layerStyle: {
-    line: new LineStyle({
-      width: 6,
-      color: "#ffffff",
-      opacity: 0.8,
-      outlineWidth: 5,
-      outlineColor: "#52B883",
-    }),
-  },
+  layerStyle: new LineStyle({
+    width: 6,
+    color: "#ffffff",
+    opacity: 0.8,
+    outlineWidth: 5,
+    outlineColor: "#52B883",
+  }),
+
   highlightStyle: {
     line: new LineStyle({
       width: 8,
@@ -126,13 +123,12 @@ Line.args = {
 export const Fill = Template.bind({});
 Fill.args = {
   layerId: "geojson_layer_id",
-  layerStyle: {
-    polygon: new FillStyle({
-      color: "#ffffff",
-      opacity: 0.8,
-      outlineColor: "#52B883",
-    }),
-  },
+  layerStyle: new FillStyle({
+    color: "#ffffff",
+    opacity: 0.8,
+    outlineColor: "#52B883",
+  }),
+
   highlightStyle: {
     polygon: new FillStyle({
       width: 8,

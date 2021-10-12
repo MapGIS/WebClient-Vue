@@ -14,12 +14,9 @@ export default {
   argTypes: {
     baseUrl: "",
     enablePopup: true,
-    enableTips: true
+    enableTips: true,
   },
   layerStyle: {
-    point: new PointStyle(),
-    line: new LineStyle(),
-    polygon: new FillStyle(),
   },
   highlightStyle: {
     point: new PointStyle(),
@@ -45,30 +42,73 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const GeoJSON = Template.bind({});
-GeoJSON.args = {
-  baseUrl1: "http://develop.smaryun.com/static/data/geojson/china.geojson",
-  baseUrl: "http://localhost:8888/static/data/geojson/省会城市.json",
+export const 点 = Template.bind({});
+点.args = {
+  baseUrl: "http://develop.smaryun.com/static/data/geojson/省会城市.geojson",
   enablePopup: true,
   enableTips: true,
-  layerStyle: {
+  layerStyle: new PointStyle({
+    radius: 25000,
+    color: "#ffff00",
+    outlineColor: "#ff0000",
+    outlineWidth: 2.5,
+  }),
+  highlightStyle: {
     point: new PointStyle({
-      radius: 25000,
-      color: "#ffff00",
-      outlineColor: "#ff0000",
+      radius: 45000,
+      color: "#ff0000",
+      outlineColor: "#ffffff",
       outlineWidth: 2.5,
     }),
     line: new LineStyle({
       width: 6,
-      color: "#0000ff",
-    }),
-    polygon: new FillStyle({
-      color: "#eeeeee",
+      color: "#000000",
+      shadow: new Shadow({ blur: 6, color: "#ff0000" }),
       outlineColor: "#ff0000",
-      outlineWidth: 2.5,
-      opacity: 0.25,
+      outlineWidth: 8,
     }),
+    polygon: new FillStyle({ color: "#ff0000", opacity: 0.7 }),
   },
+};
+
+export const 线 = Template.bind({});
+线.args = {
+  baseUrl: "http://develop.smaryun.com/static/data/geojson/长江黄河.geojson",
+  enablePopup: true,
+  enableTips: true,
+  layerStyle: new LineStyle({
+    width: 6,
+    color: "#0000ff",
+  }),
+  highlightStyle: {
+    point: new PointStyle({
+      radius: 45000,
+      color: "#ff0000",
+      outlineColor: "#ffffff",
+      outlineWidth: 2.5,
+    }),
+    line: new LineStyle({
+      width: 6,
+      color: "#000000",
+      shadow: new Shadow({ blur: 6, color: "#ff0000" }),
+      outlineColor: "#ff0000",
+      outlineWidth: 8,
+    }),
+    polygon: new FillStyle({ color: "#ff0000", opacity: 0.7 }),
+  },
+};
+
+export const 区 = Template.bind({});
+区.args = {
+  baseUrl: "http://develop.smaryun.com/static/data/geojson/省级行政区.geojson",
+  enablePopup: true,
+  enableTips: true,
+  layerStyle: new FillStyle({
+    color: "#1890ff",
+    outlineColor: "#ff0000",
+    outlineWidth: 2.5,
+    opacity: 0.25,
+  }),
   highlightStyle: {
     point: new PointStyle({
       radius: 45000,
