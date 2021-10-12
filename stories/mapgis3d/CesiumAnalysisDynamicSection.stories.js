@@ -53,8 +53,8 @@ const Template = (args, { argTypes }) => ({
       component.onOpen();
     },
     dynamicDestroyed(component) {
-      component.onClose();
-      component.unmount();
+      // component.onClose();
+      // component.unmount();
     },
     handleLoad(e) {
       const { component, Cesium } = e;
