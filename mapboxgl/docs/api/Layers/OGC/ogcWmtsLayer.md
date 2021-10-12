@@ -83,13 +83,48 @@ All common [layers props](/zh/api/Layers/README.md#props)
 - **默认值** 0
 - **描述:** 地图偏移级数，老版本的 Igserver 会使用到
 
+### `layer`
+
+- **类型:** `Object`
+- **默认值:** `null`
+- **侦听属性**
+- **描述:**
+  栅格瓦片图层可通过 layer 参数中的 paint、filter、layout 来修改图层样式属性，
+  更多 raster 的属性参考官网
+
+  > paint：
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#raster）
+
+  > layout：
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#layout-property
+
+  > filter：
+  > https://docs.mapbox.com/help/glossary/filter/
+  >
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#filter
+
+- **示例:**
+  ```
+  layer:{
+           paint:{
+             raster-opacity:0.5
+           }
+         }
+  layer:{
+           filter:["all", ["==", "mpginf_id", "1"]]
+        }
+  layer:{
+           layout:{
+             visibility:'visible'
+           }
+        }
+  ```
+
 ## 事件
 
 All common layer [events](/zh/api/Layers/#events)
 
 ## 示例
-
-### KVP 格式
 
 ```vue
 <template>
@@ -102,29 +137,19 @@ All common layer [events](/zh/api/Layers/#events)
     :crs="mapCrs"
   >
     <mapgis-ogc-wmts-layer
-      :layer="layer"
-      :layerId="layerId"
-      :sourceId="sourceId"
-      :ip="igsWmtsIp"
-      :port="igsWmtsPort"
-      :tileMatrixSet="igsWmtsTilematrixSet"
-      :wmtsLayer="igsWmtsLayer"
-      :zoomOffset="zoomOffset"
+      :layer-id="layerWmtsId"
+      :source-id="sourceWmtsId"
+      :base-url="baseUrl"
+      :tile-matrix-set="tileMatrixSet"
+      :wmts-layer="wmtsLayer"
+      :zoom-offset="zoomoffset"
     >
     </mapgis-ogc-wmts-layer>
   </mapgis-web-map>
 </template>
 
 <script>
-import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import Mapbox from "@mapgis/mapbox-gl";
-import { MapgisWebMap, MapgisOgcWmtsLayer } from "@mapgis/webclient-vue-mapboxgl";
-
 export default {
-  components: {
-    MapgisWebMap,
-    MapgisOgcWmtsLayer
-  },
   data() {
     return {
       mapStyle: {
@@ -138,13 +163,14 @@ export default {
       mapZoom: 8, // 地图初始化级数
       outerCenter: [116.39, 40.2], // 地图显示中心
       mapCrs: "EPSG:4326",
-      layer: "beijing",
+      wmtsLayer: "beijing",
       layerWmtsId: "ogcwmts_layerId",
       sourceWmtsId: "ogcwmts_sourceId",
       tileMatrixSet: "EPSG:4326_北京市_arcgis_GB",
-      baseUrl: "http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer",
+      baseUrl:
+        "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
       //因为司马云是用的老版本的igs服务，因此offset必须传-1
-      offset: -1
+      zoomoffset: -1
     };
   },
 
