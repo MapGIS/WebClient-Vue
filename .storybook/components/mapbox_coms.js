@@ -48,3 +48,8 @@ export { default as MapgisArcgisMapLayer} from "../../mapboxgl/src/components/la
 export { default as MapgisArcgisTileLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
 export { default as MapgisEchartsLayer} from "../../mapboxgl/src/components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/MapvLayer";
+
+export { default as Mapgis2DComprehensiveQuery } from "../../mapboxgl/src/components/service/comprehensive-query/ComprehensiveQuery";
+export { default as MapgisThemePanelCustom } from "../../mapboxgl/src/components/layer/ThemeLayer/ThemePanelCustom";
+export { default as MapgisThemeLayerCustom } from "../../mapboxgl/src/components/layer/ThemeLayer/ThemeLayerCustom";
+export { default as MapgisInspect } from "../../mapboxgl/src/components/UI/controls/inspect/Inspect";

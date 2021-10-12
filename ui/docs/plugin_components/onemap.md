@@ -69,7 +69,6 @@ customPosition: {
 
 3、`<mapgis-ui-form>`和`<mapgis-ui-form-item>`组件已封装完成！！！
 
-
 ## 组件分析
 
 以地形组件为例

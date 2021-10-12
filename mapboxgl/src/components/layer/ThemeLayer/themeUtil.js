@@ -30,15 +30,23 @@ export function formatStyleToLayer(style, themeType, dataType, layerId) {
 export function getLayerFromSymbolStyle(style, layerId) {
     let layers = {}
     let themeLayer = {
-        paint: {},
+        paint: {
+            "icon-translate": [0, 0]
+        },
         layout: {}
     };
     themeLayer.id = layerId || "test";
     Object.keys(style).forEach(function (key) {
-        if(symbolPaintList.hasOwnProperty(key)){
-            themeLayer.paint[symbolPaintList[key]] = style[key];
+        if (symbolPaintList.hasOwnProperty(key)) {
+            if (key === "xOffset") {
+                themeLayer.paint["icon-translate"][0] = style[key];
+            }else if (key === "yOffset") {
+                themeLayer.paint["icon-translate"][1] = style[key] * -1;
+            }else {
+                themeLayer.paint[symbolPaintList[key]] = style[key];
+            }
         }
-        if(symbolLayoutList.hasOwnProperty(key)){
+        if (symbolLayoutList.hasOwnProperty(key)) {
             themeLayer.layout[symbolLayoutList[key]] = style[key];
         }
     });
