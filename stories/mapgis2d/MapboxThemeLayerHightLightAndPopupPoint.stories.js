@@ -1,6 +1,6 @@
 import wuhan_house from "../assets/geojson/wuhan_house"
 export default {
-  title: "二维/图层/专题图/专题图开启高亮和PopUp/点数据",
+  title: "二维/图层/专题图/开启Tips和Popup/点数据",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",

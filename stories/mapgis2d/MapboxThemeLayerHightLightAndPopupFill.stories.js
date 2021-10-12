@@ -1,6 +1,6 @@
 import wuhan from "../assets/geojson/wuhan"
 export default {
-  title: "二维/图层/专题图/专题图开启高亮和PopUp/多边形数据",
+  title: "二维/图层/专题图/开启Tips和Popup/多边形数据",
   argTypes: {
     dataSource: {
       description: "geojson格式的数据源，详见如下网址：<a href='https://geojson.org/' target='_blank'>https://geojson.org/  </a>",
@@ -20,37 +20,18 @@ export default {
         defaultValue: { summary: 'null' },
       },
     },
-    themeOption: {
-      description:  "专题图样式，包含专题图图层样式、分段样式以及高亮样式，样式如下：<br>" +
-          "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式(略)<br>" +
-          "2、<span class='storybook-span'>highlightStyle</span>(选填)：高亮样式<br>" +
-          "有如下值：<br>" +
-          "2.1、<span class='storybook-span'>lineStyle</span>：高亮图层的外边线样式：<br>" +
-          "有如下值：<br>" +
-          "2.1.1、<span class='storybook-span'>color</span>：高亮图层的外边线颜色，十六进制或rgb颜色<br>" +
-          "2.1.2、<span class='storybook-span'>width</span>：高亮图层的外边线宽度<br>" +
-          "2.1.3、<span class='storybook-span'>opacity</span>：高亮图层的外边透明度，0~1之间的值，0表示透明，1表示不透明<br>" +
-          "2.2、<span class='storybook-span'>fillStyle</span>：高亮图层的填充区域样式<br>" +
-          "有如下值：<br>" +
-          "2.2.1、<span class='storybook-span'>color</span>：高亮图层的填充区域颜色，十六进制或rgb颜色<br>" +
-          "2.2.2、<span class='storybook-span'>opacity</span>：高亮图层的填充区域透明度，0~1之间的值，0表示透明，1表示不透明<br>" +
-          "3、<span class='storybook-span'>layerStyle</span>(选填)：分段样式(略)<br>",
-      table:{
-        defaultValue: { summary: 'null' },
-      }
-    },
-    isHoverAble: {
-      description: "是否开启高亮，默认不开启",
-      table:{
-        defaultValue: { summary: 'false' },
-      },
-    },
     enableTips: {
-      description: "是否开启PopUp，默认不开启",
-      table:{
-        defaultValue: { summary: 'false' },
+      description: "是否开启Tips，默认不开启，Tips是指当鼠标移动到某一个要素内时，会弹出一个窗口，显示要素信息",
+      table: {
+        defaultValue: {summary: 'false'},
       },
-    }
+    },
+    enablePopup: {
+      description: "是否开启Popup，默认不开启，Popup是指当鼠标点击在图层上时，会弹出一个窗口，显示要素信息，但不会随着鼠标移动而移动",
+      table: {
+        defaultValue: {summary: 'false'},
+      },
+    },
   },
 };
 
@@ -62,24 +43,11 @@ const Template = (args, {argTypes}) => ({
     </mapgis-web-map>`,
 });
 
-export const  开启高亮和PopUp = Template.bind({});
-开启高亮和PopUp.args = {
+export const  开启Tips和Popup = Template.bind({});
+开启Tips和Popup.args = {
   dataSource: wuhan,
   type: "range",
   field: "adcode",
-  themeOption: {
-    highlightStyle: {
-      lineStyle: {
-        color: "#FF0000",
-        width: 4,
-        opacity: 1
-      },
-      fillStyle: {
-        color: "#0000FF",
-        opacity: 0.5
-      }
-    }
-  },
-  isHoverAble: true,
   enableTips: true,
+  enablePopup: true,
 }
