@@ -414,7 +414,6 @@ export default {
       );
       let { options } = find || {};
       let { dynamicSectionAnalysis } = options || {};
-      debugger
       if (dynamicSectionAnalysis) {
         dynamicSectionAnalysis.removeAll();
         dynamicSectionAnalysis = null;
