@@ -8,6 +8,13 @@
 
 ### 属性
 
+### `position`
+
+- **类型:** `String`
+- **Default:** `top-right`
+- **非侦听属性**
+- **描述:** 地图属性信息所在位置
+
 ### `compact`
 
 - **类型:** `Boolean`
@@ -19,7 +26,7 @@
 ### `customAttribution`
 
 - **类型:** `string, Array<string>?`
-- **Default:** `true`
+- **Default:** `undefined`
 - **非侦听属性**
 - **描述:** String or strings to show in addition to any other attributions.
 - **查看:** `options.customAttribution` in [AttributionControl](https://docs.mapbox.com/mapbox-gl-js/api/#attributioncontrol)
@@ -43,7 +50,7 @@
 
 > mapgis-geolocate
 
-地址组件提供一个使用浏览器定位API的按钮来为用户在地图上定位。
+地址组件提供一个使用浏览器定位 API 的按钮来为用户在地图上定位。
 
 ### 属性
 
