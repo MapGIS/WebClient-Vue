@@ -56,7 +56,8 @@ module.exports = {
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],
               ["/guide/build.md", "解决打包内存溢出问题"],
-              ["/guide/borderBox.md", "解决全局设置为盒模型问题"]
+              ["/guide/borderBox.md", "解决全局设置为盒模型问题"],
+              ["/guide/fontSize.md", "解决字体大小被全局设置的问题"]
             ]
           },
           {
