@@ -188,38 +188,20 @@ export default {
       };
       this.$_append(labelLayer, heightReference, label);
       this.marker = this;
-      let scene = webGlobeMarker.viewer.scene;
+      
       if (!window.DynamicMarkerHandler) {
         window.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
           webGlobeMarker.viewer.scene.canvas
         );
-        window.DynamicMarkerLastActiceId;
-        window.DynamicMarkerHandler.setInputAction(function(movement) {
-          if (scene.mode !== Cesium.SceneMode.MORPHING) {
-            let pickedObject = scene.pick(movement.endPosition);
-            if (
-              Cesium.defined(pickedObject) &&
-              pickedObject.hasOwnProperty("id") &&
-              pickedObject.id.label &&
-              vm.$_hasId(pickedObject.id.id).flag
-            ) {
-              if (!vm.isMoveIn) {
-                vm.isMoveIn = true;
-                vm.isMoveOut = false;
-                vm.$emit("mouseEnter", vm.$_hasId(pickedObject.id.id).label);
-                window.DynamicMarkerLastActiceId = vm.$_hasId(pickedObject.id.id).label;
-              }
-            }
-            if (!Cesium.defined(pickedObject)) {
-              if (!vm.isMoveOut) {
-                vm.isMoveIn = false;
-                vm.isMoveOut = true;
-                vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
-              }
-            }
-          }
-        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
       }
+      window.DynamicMarkerHandler.removeInputAction(
+        vm.$_markerMouseAction,
+        Cesium.ScreenSpaceEventType.MOUSE_MOVE
+      );
+      window.DynamicMarkerHandler.setInputAction(
+        vm.$_markerMouseAction,
+        Cesium.ScreenSpaceEventType.MOUSE_MOVE
+      );
     },
     $_hasId(id) {
       let marker = {};
@@ -233,6 +215,40 @@ export default {
         }
       }
       return marker;
+    },
+    $_markerMouseAction(movement) {
+      const { Cesium, CesiumZondy } = this;
+      const vm = this;
+      let webGlobeMarker = this.webGlobe;
+      let scene = webGlobeMarker.viewer.scene;
+      window.DynamicMarkerLastActiceId = window.DynamicMarkerLastActiceId || undefined;
+      if (scene.mode !== Cesium.SceneMode.MORPHING) {
+        let pickedObject = scene.pick(movement.endPosition);
+        if (
+          Cesium.defined(pickedObject) &&
+          pickedObject.hasOwnProperty("id") &&
+          pickedObject.id.label &&
+          vm.$_hasId(pickedObject.id.id).flag
+        ) {
+          if (!vm.isMoveIn) {
+            vm.isMoveIn = true;
+            vm.isMoveOut = false;
+            let label = vm.$_hasId(pickedObject.id.id).label
+            if (window.DynamicMarkerLastActiceId != label) {
+              vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
+            }
+            vm.$emit("mouseEnter", label);
+            window.DynamicMarkerLastActiceId = label;
+          }
+        }
+        if (!Cesium.defined(pickedObject)) {
+          if (!vm.isMoveOut) {
+            vm.isMoveIn = false;
+            vm.isMoveOut = true;
+            vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
+          }
+        }
+      }
     },
     $_append(labelLayer, heightReference, label) {
       let icon = labelLayer.appendLabelIcon(

@@ -91,7 +91,9 @@ export default {
   watch: {
     data: {
       handler(next) {
-        this.parseData(next);
+        // this.parseData(next);
+        this.unmount();
+        this.mount();
       },
       deep: true
     },
@@ -114,14 +116,16 @@ export default {
     }
   },
   mounted() {
-    this.parseData();
     this.mount();
   },
   destroyed() {
+    this.unmount();
     this.analysisManager = null;
   },
   methods: {
     mount() {
+      this.parseData();
+
       const vm = this;
       const { CesiumZondy, vueKey, vueIndex, data } = this;
       const webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || this.webGlobe;
@@ -139,7 +143,21 @@ export default {
         });
       });
     },
-    unmount() {},
+    unmount() {
+      const { webGlobe, vueKey, vueIndex } = this;
+      const vm = this;
+      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
+      const { viewer } = webGlobe;
+      const { dataSources } = viewer;
+      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      if (find) {
+        if (dataSources) {
+          dataSources.remove(find.source, true);
+        }
+      }
+      CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
+      this.$emit("unload", this);
+    },
     parseData(data) {
       data = data || this.data;
       const vm = this;
@@ -239,8 +257,11 @@ export default {
       // 高亮要素
       const marker = this.getMarker(id);
       const { highlightStyle } = this;
-      const { enableHoverMarker = true, enableHoverFeature = true } = highlightStyle;
-      
+      const {
+        enableHoverMarker = true,
+        enableHoverFeature = true
+      } = highlightStyle;
+
       if (marker) {
         enableHoverFeature && this.highlightFeature(marker);
         enableHoverMarker && this.highlightMarker(marker);
