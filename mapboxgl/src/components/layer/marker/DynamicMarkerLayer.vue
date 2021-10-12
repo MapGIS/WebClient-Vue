@@ -60,6 +60,8 @@ export default {
       type: Object,
       default: () => {
         return {
+          enableHoverMarker: true,
+          enableHoverFeature: true,
           marker: new MarkerStyle({
             symbol: DefaultActiveImagePlotting
           }),
@@ -262,10 +264,13 @@ export default {
     mouseEnterEvent(e, id) {
       let { highlight } = this;
       if (!highlight) return;
+      const { highlightStyle } = this;
+      const { enableHoverMarker = true, enableHoverFeature = true } = highlightStyle;
+
       const marker = this.getMarker(id);
       if (marker) {
-        this.highlightMarker(marker);
-        this.highlightFeature(marker);
+        enableHoverMarker && this.highlightMarker(marker);
+        enableHoverFeature && this.highlightFeature(marker);
       }
     },
     mouseLeaveEvent(e, id) {

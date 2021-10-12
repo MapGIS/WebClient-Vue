@@ -38,8 +38,8 @@ export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
-export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/3dMarkerPro.vue";
-export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/3dMarkerSetPro.vue";
+export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/Marker3dPro.vue";
+export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/Marker3dSetPro.vue";
 export { default as Mapgis3dDynamicMarkerLayer } from "./components/Layer/Marker/DynamicMarkerLayer.vue";
 export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.vue";
 // export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";

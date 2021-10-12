@@ -1,9 +1,9 @@
 <template>
   <div style="display: none">
     <!-- slot for custom marker -->
-    <slot name="marker"/>
+    <slot name="marker" />
     <!-- slot for popup -->
-    <slot v-if="marker"/>
+    <slot v-if="marker" />
   </div>
 </template>
 
@@ -91,7 +91,7 @@ export default {
       marker: undefined,
       isMoveIn: false,
       isMoveOut: true
-    }
+    };
   },
   provide() {
     const self = this;
@@ -104,9 +104,10 @@ export default {
   },
   mounted() {
     let vm = this;
-    Object.keys(this.$props).forEach(function (key) {
-      if (key !== "vueKey" && key !== "vueIndex") {
-        vm.$watch(key, function () {
+    const defaults = ["vueKey", "vueIndex"];
+    Object.keys(this.$props).forEach(function(key) {
+      if (defaults.indexOf(key) < 0) {
+        vm.$watch(key, function() {
           vm.$_unmount();
           vm.$_mount();
         });
@@ -120,18 +121,18 @@ export default {
   methods: {
     $_mount() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
         vm.$_init(webGlobe);
       }, this.vueKey);
     },
     $_unmount() {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       const vm = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
         let MarkerManager = CesiumZondy.MarkerManager.findSource(
-            vueKey,
-            vueIndex
+          vueKey,
+          vueIndex
         );
         let webGlobeMarker = vm.webGlobe || webGlobe;
         webGlobeMarker.viewer.entities.remove(MarkerManager.source);
@@ -139,7 +140,7 @@ export default {
       }, vueKey);
     },
     $_init(webGlobe) {
-      const {CesiumZondy} = this;
+      const { CesiumZondy } = this;
       let vm = this;
       let Cesium = this.Cesium || window.Cesium;
       let webGlobeMarker = this.webGlobe || webGlobe;
@@ -184,35 +185,41 @@ export default {
         iconPos: this.iconPos,
         //相对位置
         heightReference: heightReference
-      }
+      };
       this.$_append(labelLayer, heightReference, label);
       this.marker = this;
       let scene = webGlobeMarker.viewer.scene;
-      if (!window.handler) {
-        window.handler = new Cesium.ScreenSpaceEventHandler(webGlobeMarker.viewer.scene.canvas);
-        window.lastActiveId;
-        window.handler.setInputAction(function (movement) {
+      if (!window.DynamicMarkerHandler) {
+        window.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
+          webGlobeMarker.viewer.scene.canvas
+        );
+        window.DynamicMarkerLastActiceId;
+        window.DynamicMarkerHandler.setInputAction(function(movement) {
           if (scene.mode !== Cesium.SceneMode.MORPHING) {
             let pickedObject = scene.pick(movement.endPosition);
-            if (Cesium.defined(pickedObject) && pickedObject.hasOwnProperty("id") && pickedObject.id.label && vm.$_hasId(pickedObject.id.id).flag) {
+            if (
+              Cesium.defined(pickedObject) &&
+              pickedObject.hasOwnProperty("id") &&
+              pickedObject.id.label &&
+              vm.$_hasId(pickedObject.id.id).flag
+            ) {
               if (!vm.isMoveIn) {
                 vm.isMoveIn = true;
                 vm.isMoveOut = false;
                 vm.$emit("mouseEnter", vm.$_hasId(pickedObject.id.id).label);
-                window.lastActiveId = vm.$_hasId(pickedObject.id.id).label;
+                window.DynamicMarkerLastActiceId = vm.$_hasId(pickedObject.id.id).label;
               }
             }
             if (!Cesium.defined(pickedObject)) {
               if (!vm.isMoveOut) {
                 vm.isMoveIn = false;
                 vm.isMoveOut = true;
-                 vm.$emit("mouseLeave", window.lastActiveId);
+                vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
               }
             }
           }
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
       }
-
     },
     $_hasId(id) {
       let marker = {};
@@ -229,29 +236,29 @@ export default {
     },
     $_append(labelLayer, heightReference, label) {
       let icon = labelLayer.appendLabelIcon(
-          //文本内容
-          this.text,
-          //经度、纬度、高度
-          this.longitude,
-          this.latitude,
-          this.height,
-          //文字大小、字体
-          this.fontSize + " " + this.fontFamily,
-          //文字颜色
-          Cesium.Color.fromCssColorString(this.color),
-          // "data/picture/icon.png",
-          this.iconUrl,
-          this.iconWidth,
-          this.iconHeight,
-          //最远显示距离：相机到注记的距离大于该值 注记不显示
-          this.farDist,
-          //最近显示距离：相机到注记的距离小于该值 注记不显示
-          this.nearDist,
-          //图片位置：'center','top','bottom'
-          this.iconPos,
-          "",
-          //相对位置
-          heightReference
+        //文本内容
+        this.text,
+        //经度、纬度、高度
+        this.longitude,
+        this.latitude,
+        this.height,
+        //文字大小、字体
+        this.fontSize + " " + this.fontFamily,
+        //文字颜色
+        Cesium.Color.fromCssColorString(this.color),
+        // "data/picture/icon.png",
+        this.iconUrl,
+        this.iconWidth,
+        this.iconHeight,
+        //最远显示距离：相机到注记的距离大于该值 注记不显示
+        this.farDist,
+        //最近显示距离：相机到注记的距离小于该值 注记不显示
+        this.nearDist,
+        //图片位置：'center','top','bottom'
+        this.iconPos,
+        "",
+        //相对位置
+        heightReference
       );
       label.fid = this.fid;
       label.changeEvent = this.changeEvent;
@@ -259,21 +266,21 @@ export default {
       this.$_addIcon(icon);
     },
     $_addIcon(icon) {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
       CesiumZondy.MarkerManager.addSource(vueKey, vueIndex, icon);
     },
     togglePopup() {
-      const {longitude, latitude, height} = this;
+      const { longitude, latitude, height } = this;
       let children = this.$children;
       if (!children || children.length <= 0) return;
       let popup = children[0];
       let vnode = popup.$vnode;
       if (!vnode) return;
-      let {tag} = vnode;
+      let { tag } = vnode;
       if (!tag || tag.indexOf("mapgis-3d-popup") < 0) return;
       if (!popup.$props.position) {
-        popup.$props.position = {longitude, latitude, height};
+        popup.$props.position = { longitude, latitude, height };
         popup.togglePopup();
       }
       popup.togglePopup();

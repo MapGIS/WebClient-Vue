@@ -122,6 +122,8 @@ export const 标绘图层 = Template.bind({});
   }),
 
   highlightStyle: {
+    enableHoverMarker: false,
+    enableHoverFeature: true,
     point: new PointStyle({
       color: "#ff0000",
       opacity: 0.8,

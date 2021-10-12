@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Mp3dMarkerPro from './3dMarkerPro.vue'
+import Mp3dMarkerPro from './Marker3dPro.vue'
 
 export default {
   name: 'mapgis-3d-marker-set-pro',

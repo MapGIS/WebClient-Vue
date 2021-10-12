@@ -17,7 +17,7 @@
 <script>
 import { Style } from "@mapgis/webclient-es6-service";
 import VueOptions from "../../Base/Vue/VueOptions";
-import Mapgis3dMarkerSetPro from "./3dMarkerSetPro.vue";
+import Mapgis3dMarkerSetPro from "./Marker3dSetPro.vue";
 import * as turfjs from "@turf/turf";
 
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
@@ -52,6 +52,8 @@ export default {
       type: Object,
       default: () => {
         return {
+          enableHoverMarker: true,
+          enableHoverFeature: true,
           marker: new MarkerStyle({
             symbol: DefaultActiveImagePlotting
           }),
@@ -236,10 +238,12 @@ export default {
     mouseEnterEvent(e, id) {
       // 高亮要素
       const marker = this.getMarker(id);
-
+      const { highlightStyle } = this;
+      const { enableHoverMarker = true, enableHoverFeature = true } = highlightStyle;
+      
       if (marker) {
-        this.highlightFeature(marker);
-        this.highlightMarker(marker);
+        enableHoverFeature && this.highlightFeature(marker);
+        enableHoverMarker && this.highlightMarker(marker);
       }
     },
     mouseLeaveEvent(e, id) {
