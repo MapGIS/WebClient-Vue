@@ -1,17 +1,17 @@
 import {VFeature, SQLParameter} from "../../mapboxgl/src/components/util";
+import MapgisBaseTable from "../../mapboxgl/src/components/UI/controls/table/BaseTable";
 import {polygonData} from "../component/geometry";
 
 export default {
   title: "二维/地图子组件/表格",
+  component:MapgisBaseTable,
   argTypes: {
-    layerId: "igs_layer_layerid",
-    sourceId: "igs_layer_sourceid",
-    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
+  components:MapgisBaseTable,
   template: `
     <mapgis-web-map crs="EPSG:4326" :center="[116.3909, 39.9148]" :zoom="8">
       <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
