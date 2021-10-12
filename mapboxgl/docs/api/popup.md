@@ -120,6 +120,14 @@ export default {
 
 - **描述:** Slot for Popup content. Can be plain text, HTML or Vue component. If `onlyText` set to `true` content in this slot treated as plaint text.
 
+## 方法
+
+### `.remove()`
+
+- **描述:** Removes popup from the map.
+- **返回值** `Popup` MapboxGL popup.
+- **查看** [Popup.remove](https://docs.mapbox.com/mapbox-gl-js/api/markers/#popup#remove)
+
 ## 事件
 
 ### `@added`
@@ -134,10 +142,10 @@ export default {
 
 ### `@open`
 
-- **描述:** Fires when marker added on the map.
+- **描述:** Fires when popup is opened on the map.
 - **Payload** `{ popup: Popup }` Object with MapboxGL `Popup` object
 
 ### `@close`
 
-- **描述:** Fires when marker added on the map.
+- **描述:** Fires when popup is closed on the map.
 - **Payload** `{ popup: Popup }` Object with MapboxGL `Popup` object
