@@ -166,64 +166,139 @@
 
 ```vue
 <template>
-  <mapgis-web-map 
-    class="main"
-    :accessToken="accessToken"
-    :mapStyle="mapStyle"
-    :zoom="mapZoom"
-    :center="outerCenter"
-    :crs="mapCrs"
-  >
-    <mapgis-igs-tdt-layer
-      :layer="layer"
-      :layerId="layerId"
-      :sourceId="sourceId"
-      :baseURL="baseURL"
-      :token="token"
-      :crs="mapCrs"
+  <mapgis-web-map crs="EPSG:4326" :center="[116.3909, 39.9148]" :zoom="8">
+    <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+    <mapgis-igs-doc-layer :layerId="layerId" :sourceId="sourceId" :baseUrl="baseUrl"/>
+    <mapgis-base-table
+            :dataSource="dataSource"
+            :pagination="pagination"
+            :columns="columns"
+            @pageChanged="pageChanged"
+            @sorted="sorted"
+            @selected="selected"
+            @selectAll="selectAll"
+            @delete="deleteRow"
+            @edited="edited"
+            @fullScreen="fullScreen"
+            @originScreen="originScreen"
     >
-    </mapgis-igs-tdt-layer>
-  </mapgis-web-map >
+    </mapgis-base-table>
+    <mapgis-feature-service @loaded="serviceLoaded" :url="serviceUrl"/>
+  </mapgis-web-map>
 </template>
 
 <script>
-import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import Mapbox from "@mapgis/mapbox-gl";
-import { MapgisWebMap,MapgisIgsTdtLayer } from "@mapgis/webclient-vue-mapboxgl";
-
+import {MRFS} from '@mapgis/webclient-es6-service'
+const {VFeature,SQLParameter}=MRFS
 export default {
-  components: {
-    MapgisWebMap,
-    MapgisIgsTdtLayer
-  },
-  data() {
+  name: "basetable2d",
+  data(){
     return {
-      accessToken:
-        "pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA", // 使用mapbox样式需要的秘钥
-      mapStyle: "mapbox://styles/mapbox/light-v9", // 地图样式
-      mapZoom: 3, // 地图初始化级数
-      outerCenter: [130, 30], // 地图显示中心
-      mapCrs: "EPSG:4326",
-
-      layerId: "igsLayer_layerId",
-      sourceId: "igsLayer_sourceId",
-      layer: {}, // 图层配置信息
-      baseURL: "http://t2.tianditu.gov.cn/vec_c/wmts", // 请求基地址
-      token: "2ddaabf906d4b5418aed0078e1657029" // 请求天地图的key值
-    };
+      layerId: "igs_layer_layerid",
+      sourceId: "igs_layer_sourceid",
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+      service: '',
+      columns: [],
+      dataSource: [],
+      pagination:{
+        total:0,
+        pageSize:10
+      },
+      serviceUrl: "http://develop.smaryun.com:6163/igs/rest/mrfs/docs/Hubei3857"
+    }
   },
-
-  created() {
-    // 在组件中使用mapbox-gl.js的脚本库功能
-    this.mapbox = Mapbox;
+  mounted() {
+  },
+  methods:{
+    //获取数据
+    getData(type){
+      //获取数据
+      this.query(0,10,undefined,undefined,true,"Feature");
+    },
+    query(pageIndex,pagination,orderBy,isAsc,initial,type){
+      let vm = this;
+      let sql = new SQLParameter({
+        layers: "1",
+        where: '',
+        pageIndex: pageIndex,
+        pagination: pagination,
+        orderBy: orderBy,
+        isAsc: isAsc,
+        IncludeGeometry: false
+      })
+      //zondy格式
+      vm.service.$_queryBySQL(sql,function (result) {
+        if(type === "zondy"){
+          vm.dataSource = result;
+        }else if(type === "Feature"){
+          vm.dataSource = VFeature.fromQueryResult(result);
+        }
+        if(initial){
+          vm.columns = [{
+            title: "mpArea",
+            key: "mpArea",
+            checked: true
+          },{
+            title: "mpPerimeter",
+            key: "mpPerimeter",
+            width: 120,
+            checked: true
+          },{
+            title: "mpLayer",
+            key: "mpLayer",
+            width: 120,
+            checked: true
+          }];
+          vm.pagination.total = result.TotalCount;
+        }
+      },function () {})
+    },
+    //要素服务加载完毕事件
+    serviceLoaded(service){
+      this.service = service;
+      this.getData('zondy');
+    },
+    //table加载完毕事件
+    handleCreated(table){
+      this.table = table;
+    },
+    //编辑完成事件
+    edited(row){
+      console.log("编辑完成",row);
+    },
+    deleteRow(OID,row){
+      console.log(OID,row)
+    },
+    pageChanged(pagination,sorter){
+      //默认降序
+      let isAsc = false;
+      if(sorter.order === "ascend"){
+        isAsc = true;
+      }else if(sorter.order === "") {
+        sorter.columnKey = "";
+      }
+      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
+    },
+    sorted(sorter,pagination){
+      //默认降序
+      let isAsc = false;
+      if(sorter.order === "ascend"){
+        isAsc = true;
+      }else if(sorter.order === "") {
+        sorter.columnKey = "";
+      }
+      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
+    },
+    selected(row,selectRows){
+      console.log("选择一行",row);
+      console.log("已选择数据",selectRows);
+    },
+    selectAll(selectRows){
+      console.log("已选择数据",selectRows);
+    },
+    fullScreen(){},
+    originScreen(){}
   }
-};
-</script>
-
-<style lang="css">
-.main {
-  height: 600px;
-  width: 100%;
 }
-</style>
+</script>
 ```

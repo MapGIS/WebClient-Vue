@@ -124,22 +124,30 @@ const { FeatureService,VFeature } = MRFS;
 export default {
   name: "mapgis-base-table",
   props: {
-    //json数据源url
+    /*
+    * json数据源url
+    * */
     baseUrl: {
       type: String
     },
-    //数据源
+    /*
+    * 数据源
+    * */
     dataSource: {
       type: [Array, Object]
     },
-    //用户自定义的表头信息数组
+    /*
+    * 用户自定义的表头信息数组
+    * */
     columns: {
       type: Array,
       default() {
         return [];
       }
     },
-    //分页信息
+    /*
+    * 分页信息
+    * */
     pagination: {
       type: Object,
       default() {
@@ -149,12 +157,16 @@ export default {
         };
       }
     },
-    //是否启用编辑
+    /*
+    * 是否启用表格编辑
+    * */
     editable: {
       type: Boolean,
       default: true
     },
-    //是否启用选
+    /*
+    * 是否启用选择
+    * */
     selectable: {
       type: Boolean,
       default: true
