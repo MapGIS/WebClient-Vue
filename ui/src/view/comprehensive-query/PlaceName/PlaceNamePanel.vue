@@ -160,15 +160,15 @@ export default {
     updataMarkers() {
       if (this.activeTab === this.name) {
         // this.$emit("select-markers", []);
-        this.$emit("update-geojson", {
-          type: "FeatureCollection",
-          features: []
-        });
-        this.$nextTick(() => {
+        // this.$emit("update-geojson", {
+        //   type: "FeatureCollection",
+        //   features: []
+        // });
+        // this.$nextTick(() => {
           this.$emit("select-markers", this.selectMarkers);
           this.$emit("update-geojson", this.geojson);
           this.$emit("color-cluster", this.selectedItem.color);
-        });
+        // });
       }
     },
     async queryFeature() {

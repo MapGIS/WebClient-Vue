@@ -6,18 +6,18 @@
         @formChanged="$_formChanged"
         @highlightChanged="$_highlightChanged"
     />
-<!--    <mapgis-inspect-->
-<!--        :showMapPopupOnHover=true-->
-<!--        :showInspectMapPopupOnHover=true-->
-<!--        :fields="popUpFields"-->
-<!--        v-if="isPopUpAble"-->
-<!--    />-->
-<!--    <mapgis-marker-->
-<!--        v-if="markers.length > 0"-->
-<!--        :coordinates="markers"-->
-<!--    >-->
-<!--      <div slot="marker" style="background: #ffffff;padding: 6px;border: 3px solid #ccc;border-radius: 3px;">sadasdsadasd</div>-->
-<!--    </mapgis-marker>-->
+    <!--    <mapgis-inspect-->
+    <!--        :showMapPopupOnHover=true-->
+    <!--        :showInspectMapPopupOnHover=true-->
+    <!--        :fields="popUpFields"-->
+    <!--        v-if="isPopUpAble"-->
+    <!--    />-->
+    <!--    <mapgis-marker-->
+    <!--        v-if="markers.length > 0"-->
+    <!--        :coordinates="markers"-->
+    <!--    >-->
+    <!--      <div slot="marker" style="background: #ffffff;padding: 6px;border: 3px solid #ccc;border-radius: 3px;">sadasdsadasd</div>-->
+    <!--    </mapgis-marker>-->
   </div>
 </template>
 
@@ -84,9 +84,9 @@ export default {
 
 <style>
 .popup-content {
-  width: 260px;
+  width: auto;
 }
 .mapboxgl-popup-content{
-  width: 260px;
+  width: auto;
 }
 </style>
