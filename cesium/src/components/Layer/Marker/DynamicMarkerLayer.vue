@@ -39,12 +39,9 @@ export default {
     layerStyle: {
       type: Object,
       default: () => {
-        return {
-          type: "dynamic-marker",
-          marker: new MarkerStyle({
-            symbol: DefaultInactiveImagePlotting
-          })
-        };
+        return new MarkerStyle({
+          symbol: DefaultInactiveImagePlotting
+        });
       }
     },
     highlight: {
@@ -169,7 +166,7 @@ export default {
         let marker = {
           fid: id,
           coordinates,
-          img: layerStyle.marker.symbol,
+          img: layerStyle.symbol,
           properties: f.properties,
           feature: f
         };
@@ -440,7 +437,7 @@ export default {
     },
     clearHighlightMarker(marker) {
       if (!this.isSelectedMarker(marker.fid)) {
-        marker.img = this.layerStyle.marker.symbol;
+        marker.img = this.layerStyle.symbol;
       }
     },
     onClearHighlightFeature(fid) {

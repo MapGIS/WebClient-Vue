@@ -50,11 +50,11 @@ export default {
     },
     iconHeight: {
       type: Number,
-      default: 50
+      default: 32
     },
     iconWidth: {
       type: Number,
-      default: 50
+      default: 32
     },
     farDist: {
       type: Number,

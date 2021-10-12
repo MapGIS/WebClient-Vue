@@ -59,11 +59,7 @@ export default {
     layerStyle: {
       type: Object,
       default: () => {
-        return {
-          point: new PointStyle(),
-          line: new LineStyle(),
-          polygon: new FillStyle()
-        };
+        return {};
       }
     },
     highlightStyle: {
@@ -229,13 +225,13 @@ export default {
       let entities = dataSource.entities.values;
       const vm = this;
       const { Cesium, layerStyle } = this;
-      const { point, line, polygon } = layerStyle;
+      const { type } = layerStyle;
 
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
-        if (entity.billboard) {
+        if (type == 'point' || entity.billboard) {
           entity.billboard.show = false;
-          const style = point.toCesiumStyle(Cesium);
+          const style = layerStyle.toCesiumStyle(Cesium);
           const { material, radius, outline } = style;
           entity.ellipse = new Cesium.EllipseGraphics({
             semiMajorAxis: radius,
@@ -243,13 +239,13 @@ export default {
             outline: outline,
             material: material
           });
-        } else if (entity.polyline) {
-          const style = line.toCesiumStyle(Cesium);
+        } else if (type == 'line' || entity.polyline) {
+          const style = layerStyle.toCesiumStyle(Cesium);
           const { material, width } = style;
           entity.polyline.material = material;
           entity.polyline.width = width;
-        } else if (entity.polygon) {
-          const style = polygon.toCesiumStyle(Cesium);
+        } else if (type == 'fill' || entity.polygon) {
+          const style = layerStyle.toCesiumStyle(Cesium);
           const { material, outlineColor } = style;
           entity.polygon.material = material;
           entity.polygon.outlineColor = outlineColor;
@@ -267,7 +263,7 @@ export default {
         layerStyle,
         highlightStyle
       } = this;
-      const { point, line, polygon } = layerStyle;
+      const { type } = layerStyle;
       const hpolygon = highlightStyle.polygon;
       const hline = highlightStyle.line;
       const hpoint = highlightStyle.point;
@@ -321,8 +317,8 @@ export default {
             );
           }
         } else {
-          if (entity.ellipse) {
-            const style = point.toCesiumStyle(Cesium);
+          if (type == 'point' || entity.ellipse) {
+            const style = layerStyle.toCesiumStyle(Cesium);
             const { material, radius, outline } = style;
             entity.ellipse = new Cesium.EllipseGraphics({
               semiMajorAxis: radius,
@@ -330,13 +326,13 @@ export default {
               outline: outline,
               material: material
             });
-          } else if (entity.polyline) {
-            const style = line.toCesiumStyle(Cesium);
+          } else if (type == 'line' || entity.polyline) {
+            const style = layerStyle.toCesiumStyle(Cesium);
             const { material, width } = style;
             entity.polyline.material = material;
             entity.polyline.width = width;
-          } else if (entity.polygon) {
-            const style = polygon.toCesiumStyle(Cesium);
+          } else if (type == 'fill' || entity.polygon) {
+            const style = layerStyle.toCesiumStyle(Cesium);
             const { material, outlineColor } = style;
             entity.polygon.material = material;
             entity.polygon.outlineColor = outlineColor;
