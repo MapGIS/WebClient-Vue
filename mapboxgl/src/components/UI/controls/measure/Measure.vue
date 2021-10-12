@@ -262,7 +262,7 @@ export default {
         const result = vm._updateLengthOrArea();
         vm.$emit(measureEvents.measureresult, result);
         vm.$emit(measureEvents.measureResult, result);
-        this.disableDrag();
+        // this.disableDrag();
         if (result.center) {
           const coords = result.center.geometry.coordinates;
           vm.coordinates = coords;
@@ -469,7 +469,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-measure-control > .mapgis-ui-space {
   width: 40px !important;
   overflow: hidden;
