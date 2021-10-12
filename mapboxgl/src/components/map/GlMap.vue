@@ -13,7 +13,7 @@ import mapEvents from "./events";
 import options from "./options";
 import withWatchers from "./mixins/withWatchers";
 import withPrivateMethods from "./mixins/withPrivateMethods";
-// import withAsyncActions from "./mixins/withAsyncActions";
+import withAsyncActions from "./mixins/withAsyncActions";
 
 import { addListener, removeListener } from "resize-detector";
 import debounce from "lodash/debounce";
@@ -23,7 +23,8 @@ export default {
 
   mixins: [
     withWatchers,
-    /* withAsyncActions, */ withPrivateMethods,
+    withAsyncActions,
+    withPrivateMethods,
     withEvents
   ],
 
@@ -120,11 +121,18 @@ export default {
       }
       const eventNames = Object.keys(mapEvents);
       this.$_bindMapEvents(eventNames);
-      // this.$_registerAsyncActions(map);
+      /*
+      * @date 2021-9-21
+      * @author 廖欣迪
+      * @description 为了使用异步的地图方法
+      * */
+      this.$_registerAsyncActions(map);
       this.$_bindPropsUpdateEvents();
       this.initialized = true;
       this.$emit("load", { map, component: this, actions, mapbox });
       this.bindSize();
+    }).catch(function onRejected(error){
+      document.write('错误：' + error);
     });
   },
 
