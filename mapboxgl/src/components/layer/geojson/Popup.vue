@@ -102,32 +102,32 @@ export default {
 
 <style>
 .mapboxgl-popup {
-  width: 300px;
+  width: 240px;
 }
 
 .mapboxgl-popup-content {
-  width: 320px;
+  width: 260px;
   height: fit-content;
 }
 
 .mapgis-inspect-content {
   position: absolute;
-  width: 300px;
+  width: 240px;
   height: 240px; /* 此处不能屏蔽,不然初始化的时候会溢出 */
 }
 .mapgis-featuretool-content {
   /* position: absolute; */
   z-index: 1000;
-  /* width: 300px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
+  /* width: 240px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
 }
 
 .mapgis-inspect-prop-tabs {
-  width: 300px;
+  width: 240px;
 }
 
 .mapgis-inspect-prop-content {
   height: 220px;
-  width: 300px;
+  width: 240px;
   overflow-x: hidden;
   overflow-y: scroll;
   /* 针对火狐浏览器 */

@@ -285,7 +285,7 @@ export default {
 
     $_addLayer() {
       const { layerId, sourceId, layer, map, replace, layerStyle } = this;
-      const { point, line, polygon } = layerStyle;
+      const { type } = layerStyle;
       let existed = map.getLayer(layerId);
       if (existed) {
         if (replace) {
@@ -297,20 +297,20 @@ export default {
       }
       let style;
       if (Object.keys(layer).length == 0) {
-        if (point) {
+        if (type == "point") {
           style = {
             type: "circle",
-            ...point.toMapboxStyle()
+            ...layerStyle.toMapboxStyle()
           };
-        } else if (line) {
+        } else if (type == "line") {
           style = {
             type: "line",
-            ...line.toMapboxStyle()
+            ...layerStyle.toMapboxStyle()
           };
-        } else if (polygon) {
+        } else if (type == "fill") {
           style = {
             type: "fill",
-            ...polygon.toMapboxStyle()
+            ...layerStyle.toMapboxStyle()
           };
         }
       } else {
@@ -506,23 +506,23 @@ export default {
       let highlight;
       let { map, layer, layerId, sourceId, highlightStyle } = this;
       sourceId = sourceId || layerId;
-      const { point, line, polygon } = highlightStyle;
+      const { type, point, line, polygon } = highlightStyle;
       if (Object.keys(layer).length == 0) {
-        if (point) {
+        if (type == "point" || point) {
           highlight = {
             id: layerId + "_高亮边界线",
             type: "circle",
             source: sourceId,
             ...point.toMapboxStyle({ highlight: true })
           };
-        } else if (line) {
+        } else if (type == "line" || line) {
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
             source: sourceId,
             ...line.toMapboxStyle({ highlight: true })
           };
-        } else if (polygon) {
+        } else if (type == "polygon" || polygon) {
           highlight = {
             id: layerId + "_高亮边界线",
             type: "fill",
