@@ -34,10 +34,8 @@
     <div
       :class="[
         'locate-panel-contaner',
-        'query-section',
-        'panel-container',
-        locationPanelExpand ? '' : 'unvisible'
       ]"
+      :style="{display:locationPanelExpand ? 'block' : 'none'}"
     >
       <slot />
     </div>
@@ -70,7 +68,7 @@
 </template>
 
 <script>
-const Feature = require("./util/feature");
+const Feature = require("./util/feature.min.js");
 import PlaceName from "./PlaceName/PlaceName.vue";
 
 export default {

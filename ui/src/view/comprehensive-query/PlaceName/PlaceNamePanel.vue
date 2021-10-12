@@ -55,7 +55,7 @@
 </template>
 
 <script>
-const Feature = require("../util/feature");
+const Feature = require("../util/feature.min.js");
 import { Empty } from "ant-design-vue";
 export default {
   props: {
