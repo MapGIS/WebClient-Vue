@@ -2,10 +2,10 @@
   <div class="wrapper-content-layer">
     <!--     <contextmenu-group> -->
     <!-- <contextmenu-item>
-      <mapgis-iconfont type="mapgis-xuanzezitu" />全选
+      <mapgis-ui-iconfont type="mapgis-xuanzezitu" />全选
     </contextmenu-item> -->
     <contextmenu-item @click="emitReveseClick">
-      <mapgis-iconfont type="mapgis-xuanzezhuji" /> 仅显示当前图层
+      <mapgis-ui-iconfont type="mapgis-xuanzezhuji" /> 仅显示当前图层
     </contextmenu-item>
     <!-- </contextmenu-group> -->
 
@@ -13,25 +13,25 @@
 
     <contextmenu-submenu>
       <span slot="title">
-        <mapgis-iconfont type="mapgis-yansehecheng" />样式编辑
+        <mapgis-ui-iconfont type="mapgis-yansehecheng" />样式编辑
       </span>
       <contextmenu-item :autoHide="false">
-        <mapgis-iconfont type="mapgis-bilichi" />级别控制
+        <mapgis-ui-iconfont type="mapgis-bilichi" />级别控制
         <a-slider range v-model="zoom" :min="minzoom" :max="maxzoom" />
       </contextmenu-item>
       <contextmenu-item divider />
       <contextmenu-item :autoHide="false">
-        <mapgis-iconfont type="mapgis-changjingtouming" />透明度控制
+        <mapgis-ui-iconfont type="mapgis-changjingtouming" />透明度控制
         <a-slider :min="0" :max="1" v-model="opacity" :step="0.1" />
       </contextmenu-item>
     </contextmenu-submenu>
     <contextmenu-item divider />
     <!-- <contextmenu-item>
-      <mapgis-iconfont type="mapgis-dilishujuyuan" />元数据信息
+      <mapgis-ui-iconfont type="mapgis-dilishujuyuan" />元数据信息
     </contextmenu-item> -->
 
     <contextmenu-item>
-      <mapgis-iconfont type="mapgis-chexiao" />关闭
+      <mapgis-ui-iconfont type="mapgis-chexiao" />关闭
     </contextmenu-item>
   </div>
 </template>
