@@ -23,7 +23,7 @@ yarn add @mapgis/webclient-vue-ui
 
 <!-- ### 1. 放入部署包 -->
 
-将我们提供的最新部署包，解压后替换到对应目录的dist包（路径：**门户项目/node_modules/@mapgis/webclient-vue-ui/dist-libs**）
+将我们提供的最新部署包，解压后替换到对应目录的dist包（路径：**其他项目/node_modules/@mapgis/webclient-vue-ui/dist-libs**）
 
 如图所示：
 
@@ -32,6 +32,6 @@ yarn add @mapgis/webclient-vue-ui
 
 ## 步骤3 验证
 
-### 1. 运行项目，测试上传组件是否正常
+### 1. 运行项目，测试组件是否正常
 
 ### 2. 打包项目并测试
