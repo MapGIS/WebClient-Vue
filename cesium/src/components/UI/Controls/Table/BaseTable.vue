@@ -1088,11 +1088,26 @@ export default {
         "features": []
       };
       for(let i = 0;i < this.dataSourceCopy.length;i++){
-        geoJson.features.push({
-          type: 'Feature',
-          geometry: this.dataSourceOrigin.features[i].geometry,
-          properties: this.dataSourceCopy[i]
-        });
+        if(this.dataSourceOrigin.hasOwnProperty("features")){
+          geoJson.features.push({
+            type: 'Feature',
+            geometry: this.dataSourceOrigin.features[i].geometry,
+            properties: this.dataSourceCopy[i]
+          });
+        }else if(this.$_isZondyResult(this.dataSourceOrigin)){
+          let features = VFeature.fromQueryResult(this.dataSourceOrigin);
+          geoJson.features.push({
+            type: 'Feature',
+            geometry: features[i].geometry,
+            properties: this.dataSourceCopy[i]
+          });
+        }else if(this.dataSourceOrigin instanceof Array){
+          geoJson.features.push({
+            type: 'Feature',
+            geometry: this.dataSourceOrigin[i].geometry,
+            properties: this.dataSourceCopy[i]
+          });
+        }
       }
       return geoJson;
     },
@@ -1229,6 +1244,7 @@ export default {
     },
     $_tableChanged(){
       let tableData = this.$_getGeoJsonFromData();
+      console.log("this.rowSelection.selectedRowKeys",this.rowSelection.selectedRowKeys)
       tableData.selectedRowKeys = [].concat(this.rowSelection.selectedRowKeys);
       if(!this.pageInfo){
         tableData.pagination = {...this.paginationCopy};
