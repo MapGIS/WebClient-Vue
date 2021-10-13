@@ -1,3 +1,5 @@
+import Markdown from "../../cesium/docs/api/service/comprehensiveQuery/comprehensiveQuery.md"
+
 export default {
   title: "三维/服务/综合查询",
   argTypes: {
@@ -35,10 +37,17 @@ const Template = (args, { argTypes }) => ({
         zoom: 7.5,
         center: [116.39, 40.2],
       },
+      libPath: "http://192.168.200.35:8000/Desktop/cesium/Cesium.js",
+      pluginPath:
+        "http://192.168.200.35:8000/Desktop/cesium/webclient-cesium-plugin.min.js",
     };
   },
   template: `
-  <mapgis-web-scene>
+        <mapgis-web-scene
+          :libPath="libPath"
+          :pluginPath="pluginPath"
+          style="height:calc(100vh - 40px)"
+        >
           <mapgis-3d-comprehensive-query 
             style="position: absolute;top: 10px;left: 10px;z-index: 100"
             v-bind="$props"       
@@ -990,7 +999,7 @@ export const 综合查询 = Template.bind({});
 综合查询.parameters = {
   docs: {
     description: {
-      // component: Markdown,
+      component: Markdown,
     },
   },
 };

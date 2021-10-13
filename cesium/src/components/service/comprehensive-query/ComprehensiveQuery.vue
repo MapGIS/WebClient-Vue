@@ -120,7 +120,7 @@ export default {
      */
     clickItem(feature) {
       const center = Feature.getGeoJSONFeatureCenter(feature);
-this.webGlobe.flyTo(center[0], center[1])
+      this.webGlobe.flyTo(center[0], center[1])
     },
 
     /**
