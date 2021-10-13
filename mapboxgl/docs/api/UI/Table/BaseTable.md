@@ -37,7 +37,7 @@
     }
   ```
 - **参考:** <br>
-  `[Feature]` in [Feature](/zh/api/Util/geomtry/Feature.md) <br>
+  `[Feature]` in [Feature](/api/Util/geomtry/Feature.md) <br>
   `Zondy` in [Zondy](http://develop.smaryun.com:8899/#/demo/mapboxgl/mapgis-igserver/feature/feature-search) <br>
 
 ### `columns`

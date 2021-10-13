@@ -4,7 +4,7 @@
 
 ## Data
 
-All common [layers props](/zh/api/Layers/README.md#props)
+All common [layers props](/api/Layers/README.md#props)
 
 ### `MapUrl`
 
