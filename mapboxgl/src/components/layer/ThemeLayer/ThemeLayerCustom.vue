@@ -106,7 +106,7 @@ export default {
 }
 .mapgis-theme-popup-item{
   display: inline-block;
-  line-height: 24px;
+  line-height: 33px;
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: break-all;
