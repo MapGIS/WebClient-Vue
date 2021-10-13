@@ -55,7 +55,7 @@ export default {
     },
     enableControl: {
       type: Boolean,
-      default: true
+      default: false
     },
     position: {
       type: String,
