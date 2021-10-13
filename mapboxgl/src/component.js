@@ -1,4 +1,4 @@
-// export { default as MapgisEventBusMapMixin } from "./lib/eventbus/EventBusMapMixin";
+export { default as MapgisEventBusMapMixin } from "./lib/eventbus/EventBusMapMixin";
 
 export { default as MapgisWebMap } from "./components/map/GlMap.vue";
 
@@ -30,8 +30,8 @@ export { default as MapgisArcgisLegend } from "./components/UI/controls/legend/L
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
 
-export { default as MapgisBaseTable } from "./components/UI/controls/table/MapBoxBaseTable";
-// export { default as MapgisFeatureTable } from "./components/UI/controls/table/FeatureTable";
+export { default as MapgisBaseTable } from "./components/UI/controls/table/BaseTable";
+export { default as MapgisFeatureTable } from "./components/UI/controls/table/FeatureTable";
 export { default as MapgisInspect } from "./components/UI/controls/inspect/Inspect";
 
 export { default as MapgisArrayLayer } from "./components/layer/ArrayLayer";
@@ -41,7 +41,7 @@ export { default as MapgisCanvasLayer } from "./components/layer/CanvasLayer";
 export { default as MapgisVideoLayer } from "./components/layer/VideoLayer";
 export { default as MapgisVectorLayer } from "./components/layer/VectorLayer";
 
-// export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
+export { default as MapgisMvtStyleLayer } from "./components/layer/vectortile/MvtStyleLayer";
 export { default as MapgisMvtEditor } from "./components/layer/edit/Edit";
 export { default as MapgisMvtScale } from "./components/layer/edit/Scale";
 export { default as MapgisMvtLegend } from "./components/UI/controls/legend/LegendMvt";
@@ -69,10 +69,10 @@ export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 // es5的依赖过多先不放开
 // export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
 
-/* export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
+export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
 export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
 export { default as MapgisSymbolThemeLayer } from "./components/layer/ThemeLayer/SymbolThemeLayer";
 export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
-export { default as MapgisHeatThemeLayer } from "./components/layer/ThemeLayer/HeatThemeLayer"; */
+export { default as MapgisHeatThemeLayer } from "./components/layer/ThemeLayer/HeatThemeLayer";
