@@ -4,7 +4,7 @@
 
 ## 属性
 
-All common [layers props](/zh/api/Layers/README.md#props)
+All common [layers props](/api/Layers/README.md#props)
 
 ### `source`
 
@@ -40,7 +40,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ## 事件
 
-All common layer [events](/zh/api/Layers/#events)
+All common layer [events](/api/Layers/#events)
 
 ## 示例
 

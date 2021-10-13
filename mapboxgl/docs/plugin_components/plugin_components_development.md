@@ -12,7 +12,7 @@ Webclient-Vue-Mapboxgl内部使用独立的VUE注入机制[provide/inject](https
 ::: tip
 1. `mapbox` (Mapbox GL官方脚本), 
 1. `map` ([Map实例](https://docs.mapbox.com/mapbox-gl-js/api/#map)) 
-1. `actions` ([promisified](/zh/api/#actions) 封装的同步的地图方法).
+1. `actions` ([promisified](/api/#actions) 封装的同步的地图方法).
 :::
 
 只要是注入了上面的属性,你就可以添加地图要素或者执行对应的地图方法。 注入方法如下：
@@ -129,7 +129,7 @@ const { withEvents, withSelfEvents, asControl, asLayer } = $helpers;
 ### `asLayer`
 
 [Source](https://github.com/soal/vue-mapbox/blob/master/src/components/layer/layerMixin.js).  
-提供地图图层的主代码结构 [layers API](/zh/api/layers)
+提供地图图层的主代码结构 [layers API](/api/layers)
 
 ## 从原生插件创建组件
 
