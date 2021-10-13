@@ -165,8 +165,10 @@ export default {
         },
         tipsOptions: {
             type: Object,
-            default: {
-                enableHighlight: true
+            default() {
+                return {
+                    enableHighlight: true
+                }
             }
         },
         enablePopup: {
@@ -175,14 +177,17 @@ export default {
         },
         popupOptions: {
             type: Object,
-            default: {
-                enableHighlight: true
+            default() {
+                return {
+                    enableHighlight: true
+                }
             }
         },
     },
     watch: {
         dataSource: {
             handler: function () {
+                console.log("watch dataSource-----")
                 this.$_addThemeLayerBySource();
             },
             deep: true
@@ -247,6 +252,7 @@ export default {
         };
     },
     mounted() {
+        console.log("mounted-----")
         window.mapgis2d = this.map;
         if (!window.layerManager) {
             window.layerManager = {};
@@ -310,11 +316,18 @@ export default {
         },
         $_highLightFeature(highlightFeature) {
             this.highlightFeature = highlightFeature || this.highlightFeature;
+            console.log("---highlightFeature",this.highlightFeature)
             if (this.highlightFeature && this.highlightFeature instanceof Object) {
                 if (this.highlightFeature.hasOwnProperty("properties") && this.highlightFeature.properties.fid) {
+                    if (this.hoveredStateId) {
+                        this.map.setFeatureState(
+                            {source: this.tipsSourceId, id: this.hoveredStateId},
+                            {hover: false}
+                        );
+                    }
                     this.hoveredStateId = this.highlightFeature.properties.fid;
                     this.map.setFeatureState(
-                        {source: this.source_Id, id: this.hoveredStateId},
+                        {source: this.tipsSourceId, id: this.hoveredStateId},
                         {hover: true}
                     );
                 }
@@ -347,6 +360,7 @@ export default {
         $_addHeightLightLayer(name, options, source_Id) {
             let hId, heightLightLayer;
             if (this.dataSource && this.dataSource instanceof Object) {
+                console.log("source_Id",source_Id)
                 this.map.addSource(
                     source_Id,
                     {
@@ -413,7 +427,9 @@ export default {
                             }
                         }
                     }
-                    this.map.addLayer(heightLightLayerFill);
+                    if(!this.map.getLayer(hIdFill)){
+                        this.map.addLayer(heightLightLayerFill);
+                    }
                 } else if (this.dataType === "circle") {
                     hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_点";
                     let cRadius;
@@ -507,7 +523,9 @@ export default {
                         }
                     }
                 }
-                this.map.addLayer(heightLightLayer);
+                if(!this.map.getLayer(hId)){
+                    this.map.addLayer(heightLightLayer);
+                }
             }
         },
         $_addPopup(coordinates, feature) {
@@ -623,11 +641,11 @@ export default {
             if (fields && fields instanceof Array && fields.length > 0) {
                 for (let i = 0; i < fields.length; i++) {
                     field = getField(alias, fields[i]);
-                    element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value "+valueClass+"' style='" + valueStyle + "'>" + feature.properties[fields[i]] + "</span></div>";
+                    element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[fields[i]] + "</span></div>";
                 }
             } else {
                 field = getField(alias, defaultField);
-                element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value "+valueClass+"' style='" + valueStyle + "'>" + feature.properties[defaultField] + "</span></div>";
+                element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[defaultField] + "</span></div>";
             }
             element += "</div>";
             return element;
@@ -639,6 +657,8 @@ export default {
             }
         },
         $_addThemeLayerBySource() {
+            console.log("this.dataSource----",this.dataSource)
+            console.log("this.type----",this.type)
             if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
                 let dataSource = this.dataSource, vm = this;
                 for (let i = 0; i < dataSource.features.length; i++) {
@@ -658,12 +678,13 @@ export default {
                 themeManager.vueId = this.vueId;
                 this.$_addThemeLayer(this.type, layerId, this.selectValue);
                 //是否开启tips
-                if (this.enableTips) {
+                if (this.enableTips && this.type !== "symbol" && this.type !== "heatmap") {
                     //是否开启高亮
                     if (this.tipsOptions.enableHighlight || !this.tipsOptions.hasOwnProperty("enableHighlight")) {
                         this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
                         this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId);
                         this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                            console.log("this.tipsSourceId",vm.tipsSourceId)
                             if (vm.hoveredStateId) {
                                 vm.map.setFeatureState(
                                     {source: vm.tipsSourceId, id: vm.hoveredStateId},
@@ -702,7 +723,7 @@ export default {
                     }
                 }
                 //是否开启Popup
-                if (this.enablePopup) {
+                if (this.enablePopup && this.type !== "symbol" && this.type !== "heatmap") {
                     if (this.popupOptions.enableHighlight || !this.popupOptions.hasOwnProperty("enableHighlight")) {
                         this.popupSourceId = this.layerIdCopy + "_popup_" + parseInt(String(Math.random() * 10000));
                         this.$_addHeightLightLayer("_popup", this.popupOptions, this.popupSourceId);
@@ -1366,7 +1387,8 @@ export default {
             if (this.themeOption.styleGroups && this.themeOption.styleGroups.length > 0) {
                 //处理透明度
                 let opacity = 1;
-                if (this.themeOption.layerStyle.hasOwnProperty("opacity")) {
+                const {layerStyle} = this.themeOption;
+                if (layerStyle && layerStyle.hasOwnProperty("opacity")) {
                     opacity = this.themeOption.layerStyle.opacity;
                 }
                 opacitys = ["step", ["to-number", ["get", key]], opacity];
@@ -1376,7 +1398,7 @@ export default {
                 }
                 //处理半径
                 let radius = 6;
-                if (this.themeOption.layerStyle.hasOwnProperty("radius")) {
+                if (layerStyle && layerStyle.hasOwnProperty("radius")) {
                     radius = this.themeOption.layerStyle.radius;
                 }
                 radiuses = ["step", ["to-number", ["get", key]], radius];
@@ -1386,7 +1408,7 @@ export default {
                 }
                 //处理外边线宽度
                 let outlineWidth = 1;
-                if (this.themeOption.layerStyle.hasOwnProperty("outlineWidth")) {
+                if (layerStyle && layerStyle.hasOwnProperty("outlineWidth")) {
                     outlineWidth = this.themeOption.layerStyle.outlineWidth;
                 }
                 outlineWidths = ["step", ["to-number", ["get", key]], outlineWidth];
@@ -1396,7 +1418,7 @@ export default {
                 }
                 //处理外边线颜色
                 let outlineColor = "#000000";
-                if (this.themeOption.layerStyle.hasOwnProperty("outlineColor")) {
+                if (layerStyle && layerStyle.hasOwnProperty("outlineColor")) {
                     outlineColor = this.themeOption.layerStyle.outlineColor;
                 }
                 outlineColors = ["step", ["to-number", ["get", key]], outlineColor];
@@ -1406,7 +1428,7 @@ export default {
                 }
                 //处理外边线透明度
                 let outlineOpacity = 1;
-                if (this.themeOption.layerStyle.hasOwnProperty("outlineColor")) {
+                if (layerStyle && layerStyle.hasOwnProperty("outlineColor")) {
                     outlineOpacity = this.themeOption.layerStyle.outlineOpacity;
                 }
                 outlineOpacities = ["step", ["to-number", ["get", key]], outlineOpacity];
@@ -3668,6 +3690,27 @@ export default {
                     this.$refs.themePanel.$_close();
                 }
                 themeManager.setManagerProps(layerId, undefined);
+                this.$_removePopup();
+                this.$_removeTips();
+                this.$_removeHighlightLayer("_tips");
+                this.$_removeHighlightLayer("_popup");
+                if (this.map.getSource(this.tipsSourceId)) {
+                    this.map.removeSource(this.tipsSourceId);
+                }
+                if (this.map.getSource(this.popupSourceId)) {
+                    this.map.removeSource(this.popupSourceId);
+                }
+            }
+        },
+        $_removeHighlightLayer(name) {
+            if (this.map.getLayer(this.layerIdCopy + this.$_getThemeName() + name + "_高亮_点")) {
+                this.map.removeLayer(this.layerIdCopy + this.$_getThemeName() + name + "_高亮_点");
+            }
+            if (this.map.getLayer(this.layerIdCopy + this.$_getThemeName() + name + "_高亮_线")) {
+                this.map.removeLayer(this.layerIdCopy + this.$_getThemeName() + name + "_高亮_线");
+            }
+            if (this.map.getLayer(this.layerIdCopy + this.$_getThemeName() + name + "_高亮_多边形")) {
+                this.map.removeLayer(this.layerIdCopy + this.$_getThemeName() + name + "_高亮_多边形");
             }
         },
         $_hideCurrentLayer(layerId) {
