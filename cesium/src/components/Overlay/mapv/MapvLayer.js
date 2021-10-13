@@ -52,349 +52,397 @@ var idIndex = 0;
     var mapvLayer = new CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
  */
 export class MapvLayer {
-    constructor(map, dataSet, mapVOptions, container) {
-        this.map = map;
-        this.scene = map.scene;
+  constructor(map, dataSet, mapVOptions, container) {
+    this.map = map;
+    this.scene = map.scene;
 
-        this.mapvBaseLayer = new MapvBaseLayer(map, dataSet, mapVOptions, this);
-        this.mapVOptions = mapVOptions;
+    this.mapvBaseLayer = new MapvBaseLayer(map, dataSet, mapVOptions, this);
+    this.mapVOptions = mapVOptions;
 
-        this.initDevicePixelRatio();
+    this.initDevicePixelRatio();
 
-        this.canvas = this._creteWidgetCanvas(); //this._createCanvas();
+    this.canvas = this._creteWidgetCanvas(); //this._createCanvas();
 
-        this.render = this.render.bind(this);
-        this.handler = undefined;
-        this.postRenderTime = 0;
+    this.render = this.render.bind(this);
+    this.handler = undefined;
+    this.postRenderTime = 0;
 
-        let cesiumOpt = mapVOptions.cesium;
-        if (cesiumOpt) {
-            this.postRender = cesiumOpt.postRender || false;
-            this.postRenderFrame = cesiumOpt.postRenderFrame || 30;
-        }
-
-        if (container != undefined) {
-            this.container = container;
-            container.appendChild(this.canvas);
-        } else {
-            var parents = document.getElementsByClassName('cesium-widget');
-            var parent = parents.length > 0 ? parents[0] : map.container;
-            this.container = parent;
-            this.addInnerContainer();
-        }
-
-        this.bindEvent();
-
-        this._reset();
+    let cesiumOpt = mapVOptions.cesium;
+    if (cesiumOpt) {
+      this.postRender = cesiumOpt.postRender || false;
+      this.postRenderFrame = cesiumOpt.postRenderFrame || 30;
     }
 
-    initDevicePixelRatio() {
-        this.devicePixelRatio = window.devicePixelRatio || 1;
+    if (container != undefined) {
+      this.container = container;
+      container.appendChild(this.canvas);
+    } else {
+      var parents = document.getElementsByClassName("cesium-widget");
+      var parent = parents.length > 0 ? parents[0] : map.container;
+      this.container = parent;
+      this.addInnerContainer();
     }
 
-    addInnerContainer() {
-        //var container = document.createElement('div');
-        this.container.appendChild(this.canvas);
-        //container.appendChild(this.canvas);
-        //return container;
+    this.bindEvent();
+
+    this._reset();
+  }
+
+  initDevicePixelRatio() {
+    this.devicePixelRatio = window.devicePixelRatio || 1;
+  }
+
+  addInnerContainer() {
+    //var container = document.createElement('div');
+    this.container.appendChild(this.canvas);
+    //container.appendChild(this.canvas);
+    //return container;
+  }
+
+  bindEvent() {
+    let self = this;
+    let map = this.map;
+    //下面几个是cesium专属事件,clickEvent和mousemoveEvent是mapv内部自带的方法不放出来
+    this.innerMoveStart = this.moveStartEvent.bind(this);
+    this.innerMoveEnd = this.moveEndEvent.bind(this);
+
+    this.innnerZoomStart = this.zoomStartEvent.bind(this);
+    this.innnerZoomEnd = this.zoomEndEvent.bind(this);
+
+    this.postEventHandle = this.postEvent.bind(this);
+    this.postStartEvent = this.postStartEvent.bind(this);
+    this.postEndEvent = this.postEndEvent.bind(this);
+
+    //handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    if (this.postRender) {
+      // this.scene.postRender.addEventListener(this.postEventHandle);
+      this.scene.camera.moveStart.addEventListener(this.postStartEvent, this);
+      this.scene.camera.moveEnd.addEventListener(this.postEndEvent, this);
+    } else {
+      var handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
+
+      handler.setInputAction(
+        this.innerMoveEnd,
+        Cesium.ScreenSpaceEventType.WHEEL
+      );
+      handler.setInputAction(
+        this.innerMoveStart,
+        Cesium.ScreenSpaceEventType.LEFT_DOWN
+      );
+      handler.setInputAction(
+        this.innerMoveEnd,
+        Cesium.ScreenSpaceEventType.LEFT_UP
+      );
+      handler.setInputAction(
+        this.innerMoveStart,
+        Cesium.ScreenSpaceEventType.RIGHT_DOWN
+      );
+      handler.setInputAction(
+        this.innerMoveEnd,
+        Cesium.ScreenSpaceEventType.RIGHT_UP
+      );
+
+      map.scene.camera.moveEnd.addEventListener(this.innerMoveEnd(), this);
+
+      this.handler = handler;
+    }
+  }
+
+  unbindEvent() {
+    let map = this.map;
+    if (this.postRender) {
+      this.scene.camera.moveStart.removeEventListener(
+        this.postStartEvent,
+        this
+      );
+      this.scene.camera.moveEnd.removeEventListener(this.postEndEvent, this);
+    } else {
+      let handler = this.handler;
+      if (handler) {
+        handler.removeInputAction(
+          this.innerMoveEnd,
+          Cesium.ScreenSpaceEventType.WHEEL
+        );
+        handler.removeInputAction(
+          this.innerMoveStart,
+          Cesium.ScreenSpaceEventType.LEFT_DOWN
+        );
+        handler.removeInputAction(
+          this.innerMoveEnd,
+          Cesium.ScreenSpaceEventType.LEFT_UP
+        );
+        handler.removeInputAction(
+          this.innerMoveStart,
+          Cesium.ScreenSpaceEventType.RIGHT_DOWN
+        );
+        handler.removeInputAction(
+          this.innerMoveEnd,
+          Cesium.ScreenSpaceEventType.RIGHT_UP
+        );
+        handler.destroy();
+      }
+      map.scene.camera.moveEnd.removeEventListener(this.innerMoveEnd(), this);
+    }
+  }
+
+  postStartEvent() {
+    if (this.mapvBaseLayer) {
+      this.mapvBaseLayer.animatorMovestartEvent();
+      this.scene.postRender.addEventListener(this._reset, this);
+    }
+    this._visiable();
+  }
+
+  postEndEvent() {
+    if (this.mapvBaseLayer) {
+      this.mapvBaseLayer.animatorMoveendEvent();
+      this.scene.postRender.removeEventListener(this._reset, this);
+    }
+    this._reset();
+    this._visiable();
+  }
+
+  moveStartEvent() {
+    if (this.mapvBaseLayer) {
+      this.mapvBaseLayer.animatorMovestartEvent();
+    }
+    this._unvisiable();
+  }
+
+  moveEndEvent() {
+    if (this.mapvBaseLayer) {
+      this.mapvBaseLayer.animatorMoveendEvent();
+    }
+    this._reset();
+    this._visiable();
+  }
+
+  zoomStartEvent() {
+    this._unvisiable();
+  }
+  zoomEndEvent() {
+    this._unvisiable();
+  }
+
+  postEvent() {
+    this.postRenderTime++;
+    if (this.postRenderTime % this.postRenderFrame === 0) this.moveEndEvent();
+  }
+
+  //-----------------------------------Start Data Operation---------------------------------
+
+  /**
+   * 增加数据
+   * @function module:客户端可视化.MapVLayer.prototype.addData
+   *
+   * @param data - {Array} 数据.
+   * @param options - {Object} 只做额外增加的字段作用
+   * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
+   */
+  addData(data, options) {
+    if (this.mapvBaseLayer == undefined) return;
+    this.mapvBaseLayer.addData(data, options);
+  }
+
+  /**
+   * 更新数据
+   * @function module:客户端可视化.MapVLayer.prototype.updateData
+   *
+   * @param data - {Array} 数据.
+   * @param options - {Object} 只做额外增加的字段作用
+   * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
+   */
+  updateData(data, options) {
+    if (this.mapvBaseLayer == undefined) return;
+    this.mapvBaseLayer.updateData(data, options);
+  }
+
+  /**
+   * 获取数据
+   * @function module:客户端可视化.MapVLayer.prototype.getData
+   *
+   * @param data - {Array} 数据.
+   * @param options - {Object} 只做额外增加的字段作用
+   * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
+   */
+  getData() {
+    if (this.mapvBaseLayer) {
+      this.dataSet = this.mapvBaseLayer.getData();
+    }
+    return this.dataSet;
+  }
+
+  removeData(filter) {
+    if (this.mapvBaseLayer == undefined) return;
+    this.mapvBaseLayer && this.mapvBaseLayer.removeData(filter);
+  }
+
+  /**
+   * 删除数据
+   * @function module:客户端可视化.MapVLayer.prototype.removeAllData
+   */
+  removeAllData() {
+    if (this.mapvBaseLayer == undefined) return;
+    this.mapvBaseLayer.clearData();
+  }
+  //-----------------------------------End Data Operation---------------------------------
+  _visiable() {
+    this.canvas.style.display = "block";
+    return this;
+  }
+
+  _unvisiable() {
+    this.canvas.style.display = "none";
+    return this;
+  }
+
+  _createCanvas() {
+    var canvas = document.createElement("canvas");
+    canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
+    canvas.style.position = "absolute";
+    canvas.style.top = "0px";
+    canvas.style.left = "0px";
+
+    canvas.style.pointerEvents = "none";
+    canvas.style.zIndex = this.mapVOptions.zIndex || 100;
+
+    canvas.width =
+      parseInt(this.map.canvas.width) ||
+      parseInt(this.map.container.offsetWidth);
+    canvas.height =
+      parseInt(this.map.canvas.height) ||
+      parseInt(this.map.container.offsetHeight);
+    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
+
+    var devicePixelRatio = this.devicePixelRatio;
+    if (this.mapVOptions.context == "2d") {
+      canvas
+        .getContext(this.mapVOptions.context)
+        .scale(devicePixelRatio, devicePixelRatio);
+    }
+    return canvas;
+  }
+
+  _creteWidgetCanvas() {
+    var canvas = document.createElement("canvas");
+
+    canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
+    canvas.style.position = "absolute";
+    canvas.style.top = "0px";
+    canvas.style.left = "0px";
+
+    canvas.style.pointerEvents = "none";
+    canvas.style.zIndex = this.mapVOptions.zIndex || 100;
+
+    canvas.width =
+      parseInt(this.map.canvas.width) ||
+      parseInt(this.map.container.offsetWidth);
+    canvas.height =
+      parseInt(this.map.canvas.height) ||
+      parseInt(this.map.container.offsetHeight);
+    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
+    var devicePixelRatio = this.devicePixelRatio;
+    if (this.mapVOptions.context == "2d") {
+      canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
     }
 
-    bindEvent() {
-        let self = this;
-        let map = this.map;
-        //下面几个是cesium专属事件,clickEvent和mousemoveEvent是mapv内部自带的方法不放出来
-        this.innerMoveStart = this.moveStartEvent.bind(this);
-        this.innerMoveEnd = this.moveEndEvent.bind(this);
+    return canvas;
+  }
 
-        this.innnerZoomStart = this.zoomStartEvent.bind(this);
-        this.innnerZoomEnd = this.zoomEndEvent.bind(this);
+  _reset() {
+    this.resizeCanvas();
+    this.fixPosition();
+    this.onResize();
+    this.render();
+  }
 
-        this.postEventHandle = this.postEvent.bind(this);
-        this.postStartEvent = this.postStartEvent.bind(this);
-        this.postEndEvent = this.postEndEvent.bind(this);
+  /**
+   * 强制重回图层
+   * @function module:客户端可视化.MapVLayer.prototype.draw
+   */
+  draw() {
+    this._reset();
+  }
 
-        //handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        if (this.postRender) {
-            // this.scene.postRender.addEventListener(this.postEventHandle);
-            this.scene.camera.moveStart.addEventListener(this.postStartEvent, this);
-            this.scene.camera.moveEnd.addEventListener(this.postEndEvent, this);
-        } else {
-            var handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
+  /**
+   * 显示图层
+   * @function module:客户端可视化.MapVLayer.prototype.show
+   */
+  show() {
+    this._visiable();
+  }
+  /**
+   * 隐藏图层
+   * @function module:客户端可视化.MapVLayer.prototype.hide
+   */
+  hide() {
+    this._unvisiable();
+  }
 
-            handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.WHEEL);
-            handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-            handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.LEFT_UP);
-            handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
-            handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.RIGHT_UP);
+  /**
+   * 销毁图层-实际调用remove，为了接口保持一致
+   * @function module:客户端可视化.MapVLayer.prototype.destroy
+   */
+  destroy() {
+    this.remove();
+  }
 
-            map.scene.camera.moveEnd.addEventListener(this.innerMoveEnd(), this);
+  /**
+   * 销毁图层
+   * @function module:客户端可视化.MapVLayer.prototype.remove
+   */
+  remove() {
+    if (this.mapvBaseLayer == undefined) return;
+    this.unbindEvent();
+    this.removeAllData();
+    this.mapvBaseLayer.clear(this.mapvBaseLayer.getContext());
+    this.mapvBaseLayer = undefined;
+    var parent = this.canvas.parentElement;
+    parent.removeChild(this.canvas);
+  }
 
-            this.handler = handler;
-        }
+  /**
+   * 更新图层
+   * @function module:客户端可视化.MapVLayer.prototype.update
+   */
+  update(opt) {
+    if (opt == undefined) {
+      return;
     }
+    this.updateData(opt.data, opt.options);
+  }
 
-    unbindEvent() {
-        let map = this.map;
-        if (this.postRender) {
-            this.scene.camera.moveStart.removeEventListener(this.postStartEvent, this);
-            this.scene.camera.moveEnd.removeEventListener(this.postEndEvent, this);
-        } else {
-            let handler = this.handler;    
-            if (handler) {
-                handler.removeInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.WHEEL);
-                handler.removeInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-                handler.removeInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.LEFT_UP);
-                handler.removeInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
-                handler.removeInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.RIGHT_UP);
-                handler.destroy();
-            }
-            map.scene.camera.moveEnd.removeEventListener(this.innerMoveEnd(), this);
-        }
+  resizeCanvas() {
+    //this.mapContainer.style.perspective = this.map.transform.cameraToCenterDistance + 'px';
+    if (this.canvas == undefined || this.canvas == null) return;
+    var canvas = this.canvas;
+    canvas.style.position = "absolute";
+    canvas.style.top = "0px";
+    canvas.style.left = "0px";
+    canvas.width =
+      parseInt(this.map.canvas.width) ||
+      parseInt(this.map.container.offsetWidth);
+    canvas.height =
+      parseInt(this.map.canvas.height) ||
+      parseInt(this.map.container.offsetHeight);
+    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
+    var devicePixelRatio = this.devicePixelRatio;
+    if (this.mapVOptions.context == "2d") {
+      canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
     }
+  }
 
-    postStartEvent() {
-        if (this.mapvBaseLayer) {
-            this.mapvBaseLayer.animatorMovestartEvent();
-            this.scene.postRender.addEventListener(this._reset, this);
-        }
-        this._visiable();
-    }
+  fixPosition() {}
 
-    postEndEvent() {
-        if (this.mapvBaseLayer) {
-            this.mapvBaseLayer.animatorMoveendEvent();
-            this.scene.postRender.removeEventListener(this._reset, this);
-        }
-        this._reset();
-        this._visiable();
-    }
+  onResize() {}
 
-    moveStartEvent() {
-        if (this.mapvBaseLayer) {
-            this.mapvBaseLayer.animatorMovestartEvent();
-        }
-        this._unvisiable();
-    }
-
-    moveEndEvent() {
-        if (this.mapvBaseLayer) {
-            this.mapvBaseLayer.animatorMoveendEvent();
-        }
-        this._reset();
-        this._visiable();
-    }
-
-    zoomStartEvent() {
-        this._unvisiable();
-    }
-    zoomEndEvent() {
-        this._unvisiable();
-    }
-
-    postEvent() {
-        this.postRenderTime++;
-        if (this.postRenderTime % this.postRenderFrame === 0) this.moveEndEvent();
-    }
-
-    //-----------------------------------Start Data Operation---------------------------------
-
-    /**
-     * 增加数据
-     * @function module:客户端可视化.MapVLayer.prototype.addData
-     *
-     * @param data - {Array} 数据.
-     * @param options - {Object} 只做额外增加的字段作用
-     * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
-     */
-    addData(data, options) {
-        if (this.mapvBaseLayer == undefined) return;
-        this.mapvBaseLayer.addData(data, options);
-    }
-
-    /**
-     * 更新数据
-     * @function module:客户端可视化.MapVLayer.prototype.updateData
-     *
-     * @param data - {Array} 数据.
-     * @param options - {Object} 只做额外增加的字段作用
-     * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
-     */
-    updateData(data, options) {
-        if (this.mapvBaseLayer == undefined) return;
-        this.mapvBaseLayer.updateData(data, options);
-    }
-
-    /**
-     * 获取数据
-     * @function module:客户端可视化.MapVLayer.prototype.getData
-     *
-     * @param data - {Array} 数据.
-     * @param options - {Object} 只做额外增加的字段作用
-     * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
-     */
-    getData() {
-        if (this.mapvBaseLayer) {
-            this.dataSet = this.mapvBaseLayer.getData();
-        }
-        return this.dataSet;
-    }
-
-    removeData(filter) {
-        if (this.mapvBaseLayer == undefined) return;
-        this.mapvBaseLayer && this.mapvBaseLayer.removeData(filter);
-    }
-
-    /**
-     * 删除数据
-     * @function module:客户端可视化.MapVLayer.prototype.removeAllData
-     */
-    removeAllData() {
-        if (this.mapvBaseLayer == undefined) return;
-        this.mapvBaseLayer.clearData();
-    }
-    //-----------------------------------End Data Operation---------------------------------
-    _visiable() {
-        this.canvas.style.display = 'block';
-        return this;
-    }
-
-    _unvisiable() {
-        this.canvas.style.display = 'none';
-        return this;
-    }
-
-    _createCanvas() {
-        var canvas = document.createElement('canvas');
-        canvas.id = this.mapVOptions.layerid || 'mapv' + idIndex++;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
-
-        canvas.style.pointerEvents = 'none';
-        canvas.style.zIndex = this.mapVOptions.zIndex || 100;
-
-        canvas.width = parseInt(this.map.canvas.width);
-        canvas.height = parseInt(this.map.canvas.height);
-        canvas.style.width = this.map.canvas.style.width;
-        canvas.style.height = this.map.canvas.style.height;
-        var devicePixelRatio = this.devicePixelRatio;
-        if (this.mapVOptions.context == '2d') {
-            canvas.getContext(this.mapVOptions.context).scale(devicePixelRatio, devicePixelRatio);
-        }
-        return canvas;
-    }
-
-    _creteWidgetCanvas() {
-        var canvas = document.createElement('canvas');
-
-        canvas.id = this.mapVOptions.layerid || 'mapv' + idIndex++;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
-
-        canvas.style.pointerEvents = 'none';
-        canvas.style.zIndex = this.mapVOptions.zIndex || 100;
-
-        canvas.width = parseInt(this.map.canvas.width);
-        canvas.height = parseInt(this.map.canvas.height);
-        canvas.style.width = this.map.canvas.style.width;
-        canvas.style.height = this.map.canvas.style.height;
-        var devicePixelRatio = this.devicePixelRatio;
-        if (this.mapVOptions.context == '2d') {
-            canvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
-        }
-
-        return canvas;
-    }
-
-    _reset() {
-        this.resizeCanvas();
-        this.fixPosition();
-        this.onResize();
-        this.render();
-    }
-
-    /**
-     * 强制重回图层
-     * @function module:客户端可视化.MapVLayer.prototype.draw
-     */
-    draw() {
-        this._reset();
-    }
-
-    /**
-     * 显示图层
-     * @function module:客户端可视化.MapVLayer.prototype.show
-     */
-    show() {
-        this._visiable();
-    }
-    /**
-     * 隐藏图层
-     * @function module:客户端可视化.MapVLayer.prototype.hide
-     */
-    hide() {
-        this._unvisiable();
-    }
-
-    /**
-     * 销毁图层-实际调用remove，为了接口保持一致
-     * @function module:客户端可视化.MapVLayer.prototype.destroy
-     */
-    destroy() {
-        this.remove();
-    }
-
-    /**
-     * 销毁图层
-     * @function module:客户端可视化.MapVLayer.prototype.remove
-     */
-    remove() {
-        if (this.mapvBaseLayer == undefined) return;
-        this.unbindEvent();
-        this.removeAllData();
-        this.mapvBaseLayer.clear(this.mapvBaseLayer.getContext());
-        this.mapvBaseLayer = undefined;
-        var parent = this.canvas.parentElement;
-        parent.removeChild(this.canvas);
-    }
-
-    /**
-     * 更新图层
-     * @function module:客户端可视化.MapVLayer.prototype.update
-     */
-    update(opt) {
-        if (opt == undefined) {
-            return;
-        }
-        this.updateData(opt.data, opt.options);
-    }
-
-    resizeCanvas() {
-        //this.mapContainer.style.perspective = this.map.transform.cameraToCenterDistance + 'px';
-        if (this.canvas == undefined || this.canvas == null) return;
-        var canvas = this.canvas;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
-        canvas.width = parseInt(this.map.canvas.width);
-        canvas.height = parseInt(this.map.canvas.height);
-        //canvas.style.width = this.map.canvas.style.width;
-        //canvas.style.height = this.map.canvas.style.height;
-        var devicePixelRatio = this.devicePixelRatio;
-        if (this.mapVOptions.context == '2d') {
-            canvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
-        }
-    }
-
-    fixPosition() {}
-
-    onResize() {}
-
-    render() {
-        if (this.mapvBaseLayer == undefined) return;
-        this.mapvBaseLayer._canvasUpdate();
-    }
+  render() {
+    if (this.mapvBaseLayer == undefined) return;
+    this.mapvBaseLayer._canvasUpdate();
+  }
 }
 
 export default MapvLayer;
