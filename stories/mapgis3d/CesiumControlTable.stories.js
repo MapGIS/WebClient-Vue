@@ -15,6 +15,7 @@ const Template = (args, { argTypes }) => ({
         :pagination="pagination"
         @pageChanged="pageChanged"
         @selectAll="selectAll"
+        @exportData="exportData"
         @fullScreen="fullScreen"
         @originScreen="originScreen"
         @edited="edited"
@@ -45,7 +46,7 @@ const Template = (args, { argTypes }) => ({
       let inter = setInterval(function () {
         if(Zondy.Catalog){
           clearInterval(inter);
-          vm.query("0",10);
+          vm.query("0",20);
         }
       },20);
     },
@@ -80,7 +81,7 @@ const Template = (args, { argTypes }) => ({
     pageChanged(pagination, sorter){
       //分页事件
       console.log("pageChanged",pagination)
-      this.query(pagination.current - 1,pagination.pageSize,sorter.orderField,sorter.isAsc);
+      // this.query(pagination.current - 1,pagination.pageSize,sorter.orderField,sorter.isAsc);
     },
     selectAll(selectData){
       //全选事件
@@ -92,6 +93,10 @@ const Template = (args, { argTypes }) => ({
       console.log("allDate",allDate);
     },
     fullScreen(pagination, sorter){
+    },
+    exportData(allDate){
+      //导出数据
+      console.log("exportData",allDate);
     },
     originScreen(pagination, sorter){
       //还原屏幕事件
