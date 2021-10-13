@@ -1,3 +1,5 @@
+import Markdown from "../../mapboxgl/docs/api/service/comprehensiveQuery/comprehensiveQuery.md"
+
 export default {
   title: "二维/服务/综合查询",
   argTypes: {
@@ -38,7 +40,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-        <mapgis-web-map v-bind="{...mapOptions}" style="height:calc(100vh - 20px)">
+        <mapgis-web-map v-bind="{...mapOptions}" style="height:calc(100vh - 40px)">
           <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
           <mapgis-2d-comprehensive-query 
             style="position: absolute;top: 10px;left: 10px;z-index: 100"
@@ -991,7 +993,7 @@ export const 综合查询 = Template.bind({});
 综合查询.parameters = {
   docs: {
     description: {
-      // component: Markdown,
+      component: Markdown,
     },
   },
 };

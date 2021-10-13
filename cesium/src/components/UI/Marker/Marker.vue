@@ -234,7 +234,7 @@ export default {
             vm.isMoveIn = true;
             vm.isMoveOut = false;
             let label = vm.$_hasId(pickedObject.id.id).label
-            if (window.DynamicMarkerLastActiceId != label) {
+            if (window.DynamicMarkerLastActiceId && window.DynamicMarkerLastActiceId != label) {
               vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
             }
             vm.$emit("mouseEnter", label);

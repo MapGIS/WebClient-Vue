@@ -58,15 +58,14 @@ export default {
   },
   computed: {
     layerStyle() {
-      return {
-        type: "dynamic-marker",
-        marker: new MarkerStyle({
+      return new MarkerStyle({
           symbol: this.defaultMarkerIcon
-        })
-      };
+        });
     },
     highlightStyle() {
       return {
+        enableHoverMarker: false,
+        enableHoverFeature: false,
         marker: new MarkerStyle({
           symbol: this.selectedMarkerIcon
         }),
