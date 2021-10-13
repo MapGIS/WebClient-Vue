@@ -5,7 +5,6 @@
 <script>
 import clonedeep from "lodash.clonedeep";
 import withEvents from "../../../lib/withEvents";
-import { deepEqual } from "../../util/util";
 import { compareStyle } from "./MvtCompare";
 import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
