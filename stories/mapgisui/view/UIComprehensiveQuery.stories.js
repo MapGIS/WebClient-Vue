@@ -1,3 +1,4 @@
+import MarkDown from "../../../ui/docs/api/comprehensiveQuery/comprehensiveQuery.md";
 export default {
   title: "界面/业务组件/综合查询",
   argTypes: {
@@ -1009,7 +1010,7 @@ export const 综合查询 = Template.bind({});
 综合查询.parameters = {
   docs: {
     description: {
-      // component: Markdown,
+      component: MarkDown,
     },
   },
 };

@@ -217,7 +217,7 @@ export default {
     },
     zoomToCartesian3(x, y) {
       const { Cesium, webGlobe } = this;
-      const destination = Cesium.Cartesian3.fromDegrees(x, y, z)(
+      const destination = Cesium.Cartesian3.fromDegrees(
         x,
         y,
         webGlobe.viewer.camera.positionCartographic.height
