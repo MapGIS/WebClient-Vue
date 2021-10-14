@@ -51,7 +51,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
    <template>
         <contextmenu-item :autoHide="false">
             <mapgis-ui-iconfont type="mapgis-bilichi" />级别控制
-            <a-slider range v-model="zoom" :min="minzoom" :max="maxzoom" />
+            <mapgis-ui-slider range v-model="zoom" :min="minzoom" :max="maxzoom" />
         </contextmenu-item>
    </template>
    <script>
