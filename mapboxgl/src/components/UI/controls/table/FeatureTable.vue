@@ -192,12 +192,11 @@ import BaseDraw from "../draw/BaseDraw"
 import * as T from '@turf/turf'
 import * as H from '@turf/helpers'
 
-import BaseTable from "./BaseTable";
 export default {
   name: "mapgis-feature-table",
   mixins: [featureService],
   inject: ["map"],
-  components: {BaseTable,BaseDraw},
+  components: {BaseDraw},
   props: {
     url: {
       type: String,
