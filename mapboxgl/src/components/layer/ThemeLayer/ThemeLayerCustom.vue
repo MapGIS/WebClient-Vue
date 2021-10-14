@@ -89,7 +89,6 @@ export default {
   white-space: nowrap;
   padding: 6px 0;
   font-size: 14px;
-  font-weight: bolder;
   height: 14px;
 }
 

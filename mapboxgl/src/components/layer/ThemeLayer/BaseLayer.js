@@ -185,7 +185,7 @@ export default {
         },
         enableLoading: {
             type: Boolean,
-            default: false
+            default: true
         },
         loadingOptions: {
             type: Object,
