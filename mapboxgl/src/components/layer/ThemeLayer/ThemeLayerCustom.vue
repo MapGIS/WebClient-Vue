@@ -6,18 +6,6 @@
         @formChanged="$_formChanged"
         @highlightChanged="$_highlightChanged"
     />
-    <!--    <mapgis-inspect-->
-    <!--        :showMapPopupOnHover=true-->
-    <!--        :showInspectMapPopupOnHover=true-->
-    <!--        :fields="popUpFields"-->
-    <!--        v-if="isPopUpAble"-->
-    <!--    />-->
-    <!--    <mapgis-marker-->
-    <!--        v-if="markers.length > 0"-->
-    <!--        :coordinates="markers"-->
-    <!--    >-->
-    <!--      <div slot="marker" style="background: #ffffff;padding: 6px;border: 3px solid #ccc;border-radius: 3px;">sadasdsadasd</div>-->
-    <!--    </mapgis-marker>-->
   </div>
 </template>
 
@@ -92,7 +80,7 @@ export default {
   padding: 0;
 }
 
-.mapgis-theme-popup-container{
+.mapgis-theme-popup-container {
   padding: 10px 10px 15px;
 }
 
@@ -100,13 +88,14 @@ export default {
   text-align: left;
   white-space: nowrap;
   padding: 6px 0;
-  font-size: 24px;
+  font-size: 14px;
   font-weight: bolder;
-  height: 40px;
+  height: 14px;
 }
-.mapgis-theme-popup-item{
+
+.mapgis-theme-popup-item {
   display: inline-block;
-  line-height: 33px;
+  line-height: 14px;
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: break-all;
@@ -122,5 +111,22 @@ export default {
 
 .mapgis-theme-popup-value {
   width: 70%;
+}
+
+.mapgis-mask{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0.3;
+  z-index: 1;
+}
+
+.mapgis-ui-spin-loading{
+  z-index: 10;
+  top: 50%;
+  left: 50%;
 }
 </style>

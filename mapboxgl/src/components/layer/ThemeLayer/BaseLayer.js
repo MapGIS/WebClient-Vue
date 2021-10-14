@@ -183,11 +183,20 @@ export default {
                 }
             }
         },
+        enableLoading: {
+            type: Boolean,
+            default: false
+        },
+        loadingOptions: {
+            type: Object,
+            default() {
+                return {}
+            }
+        },
     },
     watch: {
         dataSource: {
             handler: function () {
-                console.log("watch dataSource-----")
                 this.$_addThemeLayerBySource();
             },
             deep: true
@@ -248,11 +257,12 @@ export default {
             popupStateId: undefined,
             popupSourceId: undefined,
             panelType: "fix",
-            markers: []
+            markers: [],
+            spinId: undefined,
+            maskId: undefined
         };
     },
     mounted() {
-        console.log("mounted-----")
         window.mapgis2d = this.map;
         if (!window.layerManager) {
             window.layerManager = {};
@@ -263,9 +273,64 @@ export default {
         if (this.hideItem.length > 0) {
             this.hideItemCopy = this.hideItem;
         }
+        if (this.enableLoading) {
+            this.$_addSpin(this.layerId || "geojson_layer_" + parseInt(Math.random() * 10000));
+        }
         this.$_addThemeLayerBySource();
     },
     methods: {
+        $_addSpin(layerId) {
+            let _container = document.getElementById(this.map._container.id), vm = this;
+            let spinSpan = document.createElement("span");
+            const {maskClass, maskStyle, spinClass, spinStyle, delayTime} = this.loadingOptions;
+            spinSpan.className = "mapgis-ui-spin-dot mapgis-ui-spin-dot-spin";
+            for (let i = 0; i < 4; i++) {
+                let spinSpanI = document.createElement("i");
+                spinSpanI.className = "mapgis-ui-spin-dot-item";
+                spinSpan.append(spinSpanI);
+            }
+            let spin = document.createElement("div");
+            let spinClassName = "mapgis-ui-spin mapgis-ui-spin-spinning mapgis-ui-spin-loading";
+            if (spinClass) {
+                spinClassName += " " + spinClass;
+            }
+            spin.className = spinClassName;
+            spin.append(spinSpan);
+            spin.style.position = "absolute";
+            if(spinStyle){
+                Object.keys(spinStyle).forEach(function (key) {
+                    spin.style[key] = spinStyle[key];
+                });
+            }
+            this.spinId = layerId + "_spin_" + parseInt(String(Math.random() + 10000));
+            spin.id = this.spinId;
+            let mask = document.createElement("div");
+            let maskClassName = "mapgis-mask";
+            if (maskClass) {
+                maskClassName += " " + maskClass;
+            }
+            mask.className = maskClassName;
+            if(maskStyle){
+                Object.keys(maskStyle).forEach(function (key) {
+                    mask.style[key] = maskStyle[key];
+                });
+            }
+            this.maskId = layerId + "_mask_" + parseInt(String(Math.random() + 10000));
+            mask.id = this.maskId;
+            _container.append(spin);
+            _container.append(mask);
+            let interval = setInterval(function () {
+                if (vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName())) {
+                    let time = delayTime || 100;
+                    setTimeout(function () {
+                        let _container = document.getElementById(vm.map._container.id);
+                        _container.removeChild(document.getElementById(vm.spinId));
+                        _container.removeChild(document.getElementById(vm.maskId));
+                    }, time);
+                    clearInterval(interval);
+                }
+            }, 30);
+        },
         $_formatThemeListOptions(options) {
             let newOptions = {
                 startData: undefined,
@@ -315,8 +380,10 @@ export default {
             return value;
         },
         $_highLightFeature(highlightFeature) {
+            if (this.themeType === "heatmap" || this.themeType === "symbol") {
+                return;
+            }
             this.highlightFeature = highlightFeature || this.highlightFeature;
-            console.log("---highlightFeature",this.highlightFeature)
             if (this.highlightFeature && this.highlightFeature instanceof Object) {
                 if (this.highlightFeature.hasOwnProperty("properties") && this.highlightFeature.properties.fid) {
                     if (this.hoveredStateId) {
@@ -360,7 +427,6 @@ export default {
         $_addHeightLightLayer(name, options, source_Id) {
             let hId, heightLightLayer;
             if (this.dataSource && this.dataSource instanceof Object) {
-                console.log("source_Id",source_Id)
                 this.map.addSource(
                     source_Id,
                     {
@@ -427,7 +493,7 @@ export default {
                             }
                         }
                     }
-                    if(!this.map.getLayer(hIdFill)){
+                    if (!this.map.getLayer(hIdFill)) {
                         this.map.addLayer(heightLightLayerFill);
                     }
                 } else if (this.dataType === "circle") {
@@ -523,7 +589,7 @@ export default {
                         }
                     }
                 }
-                if(!this.map.getLayer(hId)){
+                if (!this.map.getLayer(hId)) {
                     this.map.addLayer(heightLightLayer);
                 }
             }
@@ -657,8 +723,6 @@ export default {
             }
         },
         $_addThemeLayerBySource() {
-            console.log("this.dataSource----",this.dataSource)
-            console.log("this.type----",this.type)
             if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
                 let dataSource = this.dataSource, vm = this;
                 for (let i = 0; i < dataSource.features.length; i++) {
@@ -684,7 +748,6 @@ export default {
                         this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
                         this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId);
                         this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                            console.log("this.tipsSourceId",vm.tipsSourceId)
                             if (vm.hoveredStateId) {
                                 vm.map.setFeatureState(
                                     {source: vm.tipsSourceId, id: vm.hoveredStateId},
