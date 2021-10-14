@@ -242,11 +242,13 @@
       <mapgis-ui-list
           :data-source="listProps.dataSource"
       >
-        <mapgis-ui-spin
+        <mapgis-ui-empty
+            :image="defaultImage"
+            :description="false"
             v-if="!listProps.dataSource || listProps.dataSource.length === 0"
-            style="position: absolute"
-            :style="{top: panelHeight / 2 + 'px'}"
-        />
+        >
+          <span>暂无数据</span>
+        </mapgis-ui-empty>
         <mapgis-ui-list-item slot="renderItem" slot-scope="item,index">
           <div class="mix-row-list">
             <mapgis-ui-row :class="{mixRowSmall: listProps.size === 'small'}">
@@ -355,6 +357,7 @@
 
 <script>
 import {gradientColor} from "../../util/common/util"
+import Empty from "ant-design-vue/es/empty/index";
 
 export default {
   name: "mapgis-ui-mix-row",
@@ -498,7 +501,8 @@ export default {
       },
       colorId: "colorId" + parseInt(Math.random() * 100000),
       panelWidth: undefined,
-      panelHeight: undefined
+      panelHeight: undefined,
+      defaultImage: Empty.PRESENTED_IMAGE_SIMPLE
     }
   },
   props: {
@@ -598,6 +602,7 @@ export default {
     }
   },
   mounted() {
+    console.log("Empty.PRESENTED_IMAGE_DEFAULT",Empty.PRESENTED_IMAGE_DEFAULT)
     this.valueCopy = this.value;
     this.fieldCopy = this.field;
     this.$_initProps();
