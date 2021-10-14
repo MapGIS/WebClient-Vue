@@ -192,7 +192,7 @@ import BaseDraw from "../draw/BaseDraw"
 import * as T from '@turf/turf'
 import * as H from '@turf/helpers'
 
-import BaseTable from "./BaseTable";
+import BaseTable from "./MapBoxBaseTable";
 export default {
   name: "mapgis-feature-table",
   mixins: [featureService],

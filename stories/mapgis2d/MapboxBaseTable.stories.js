@@ -1,6 +1,5 @@
 import {VFeature, SQLParameter} from "../../mapboxgl/src/components/util";
-import MapgisBaseTable from "../../mapboxgl/src/components/UI/controls/table/BaseTable";
-import {polygonData} from "../component/geometry";
+import MapgisBaseTable from "../../mapboxgl/src/components/UI/controls/table/MapBoxBaseTable";
 
 export default {
   title: "二维/地图子组件/表格",
@@ -23,6 +22,7 @@ const Template = (args, { argTypes }) => ({
           @pageChanged="pageChanged"
           @sorted="sorted"
           @selected="selected"
+          @exportData="exportData"
           @selectAll="selectAll"
           @delete="deleteRow"
           @edited="edited"
@@ -51,9 +51,9 @@ const Template = (args, { argTypes }) => ({
     //获取数据
     getData(type){
       //获取数据
-      // this.query(0,10,undefined,undefined,true,"zondy");
+      this.query(0,20,undefined,undefined,true,"zondy");
       // this.query(0,10,undefined,undefined,true,"Feature");
-      this.query(0,10,undefined,undefined,true,"Feature");
+      // this.query(0,10,undefined,undefined,true,"Feature");
     },
     query(pageIndex,pagination,orderBy,isAsc,initial,type){
       let vm = this;
@@ -111,14 +111,14 @@ const Template = (args, { argTypes }) => ({
     },
     pageChanged(pagination,sorter){
       //默认降序
-      let isAsc = false;
-      if(sorter.order === "ascend"){
-        isAsc = true;
-      }else if(sorter.order === "") {
-        sorter.columnKey = "";
-      }
+      // let isAsc = false;
+      // if(sorter.order === "ascend"){
+      //   isAsc = true;
+      // }else if(sorter.order === "") {
+      //   sorter.columnKey = "";
+      // }
       // this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"zondy");
-      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
+      // this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
     },
     sorted(sorter,pagination){
       //默认降序
@@ -134,6 +134,10 @@ const Template = (args, { argTypes }) => ({
     selected(row,selectRows){
       console.log("选择一行",row);
       console.log("已选择数据",selectRows);
+    },
+    exportData(allDate){
+      //导出数据
+      console.log("exportData",allDate);
     },
     selectAll(selectRows){
       console.log("已选择数据",selectRows);

@@ -1,11 +1,15 @@
+import Mapgis3dTable from "../../cesium/src/components/UI/Controls/Table/BaseTable";
+
 export default {
   title: "三维/场景子组件/表格",
+  component:Mapgis3dTable,
   argTypes: {
   }
 };
 
 const Template = (args, { argTypes }) => ({
   test:argTypes,
+  components:Mapgis3dTable,
   props: Object.keys(argTypes),
   template: `
     <mapgis-web-scene style="height: 800px">
