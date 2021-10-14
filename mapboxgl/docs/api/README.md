@@ -13,8 +13,15 @@
 ### `mapStyle`
 
 - **类型**: `String`, `Object`
-- **必传**
-- **侦听属性**
+- **Default:** `{
+  version: 8,
+  sources: {},
+  layers: [{
+    id: "背景",
+    type: "background",
+    paint: {"background-color": "rgba(0, 0, 0, 1)"}
+  }]
+}`
 - **描述:** The map's Mapbox style. This must be an a JSON object conforming to the schema described in the Mapbox Style Specification , or a URL to such JSON.
 - **查看:** `options.style` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
 
