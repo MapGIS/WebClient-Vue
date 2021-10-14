@@ -29,6 +29,9 @@
     );
   }
   @include e(link, "-") {
+    color: $link-color;
+    background-color: transparent;
+    border-color: transparent;
     &:hover,
     &:focus,
     &:active {

@@ -32,7 +32,7 @@ export const avatarTypes = {
 };
 
 export default {
-  name: "MapgisUiAvatar",
+  name: "mapgis-ui-avatar",
   wrapperUI: Avatar,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,

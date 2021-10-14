@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: 'MpAdjustLine',
+  name: 'mapgis-ui-adjust-line',
   props: {
     direction: {
       validator(value) {
