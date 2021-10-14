@@ -181,23 +181,18 @@
 </template>
 
 <script>
-/* import Vue from "vue"
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
-
-Vue.use(Antd); */
-
 import featureService from "../../../map/mixins/FeatureService"
 import BaseDraw from "../draw/BaseDraw"
+import BaseTable from "./MapBoxBaseTable.vue";
+
 import * as T from '@turf/turf'
 import * as H from '@turf/helpers'
 
-import BaseTable from "./BaseTable";
 export default {
   name: "mapgis-feature-table",
   mixins: [featureService],
   inject: ["map"],
-  components: {BaseTable,BaseDraw},
+  components: {BaseTable, BaseDraw},
   props: {
     url: {
       type: String,
