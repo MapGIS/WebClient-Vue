@@ -4,13 +4,6 @@
 
 ## 属性
 
-### `index`
-
-- **类型:** `Number`
-- **默认值:** `0`
-- **非侦听属性**
-- **描述:** 图层的索引值，表示第几个图层
-
 ### `position`
 
 - **类型:** `String`
@@ -34,7 +27,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ### `vueIndex`
 
 - **类型:** `Number`
-- **可选**
+- **必传**
 - **非侦听属性**
 - **描述:**
 
@@ -68,9 +61,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ```vue
 <template>
   <div style="width: 1200px;height: 800px;">
-    <mapgis-web-scene
-      style="height:90vh"
-    >
+    <mapgis-web-scene style="height:90vh">
       <mapgis-3d-igs-m3d
         :autoReset="autoReset"
         :maximumScreenSpaceError="maximumScreenSpaceError"
@@ -88,7 +79,7 @@ export default {
   name: "cesiumHeightLimited",
   data() {
     return {
-      m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
       // m3dUrl: "http://localhost:6163/igs/rest/g3d/BIM模型",
       autoReset: true,
       maximumScreenSpaceError: 6,
@@ -109,7 +100,7 @@ export default {
 </script>
 
 <style scoped>
-.ant-btn-primary{
+.ant-btn-primary {
   margin-left: 10px;
 }
 </style>

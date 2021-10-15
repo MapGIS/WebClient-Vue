@@ -1,4 +1,4 @@
-# 地图场景 
+# 地图场景
 
 > mapgis-web-scene
 
@@ -32,14 +32,14 @@
 - **Type**: `String`
 - **非侦听属性** 非 watch 属性
 - **Default:** `default`
-- - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+- - **Description:** 该 key 的主要作用是用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ### `vueIndex`
 
 - **Type**: `[String, Number]`
 - **非侦听属性** 非 watch 属性
 - **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
-- - **Description:** 该 key 的主要作用市用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
+- - **Description:** 该 key 的主要作用是用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
 ### `container`
 
@@ -53,28 +53,34 @@
 - **Type**: `Boolean`
 - **非侦听属性** 非 watch 属性
 - **Default:** `true`
-- - **Description:** Cesium 键盘事件是否激活
+- - **Description:** Cesium 键盘事件是否激活，激活后可以使用 W\A\S\D 控制相机的方向和远近
 
-### `viewerMode`
+[comment]: <> (### `viewerMode`)
 
-- **Type**: `String`
-- **非侦听属性** 非 watch 属性
-- **Default:** `3D`
-- - **Description:** 初始视图模式默认为三维球视图 '2D'表示二维视图 'COLUMBUS_VIEW' 表示三维平面视图
+[comment]: <> (- **Type**: `String`)
 
-### `showInfo`
+[comment]: <> (- **非侦听属性** 非 watch 属性)
 
-- **Type**: `Boolean`
-- **非侦听属性** 非 watch 属性
-- **Default:** `false`
-- - **Description:** 是否显示默认的属性信息框
+[comment]: <> (- **Default:** `3D`)
+
+[comment]: <> (- - **Description:** 初始视图模式默认为三维球视图 '2D'表示二维视图 'COLUMBUS_VIEW' 表示三维平面视图)
+
+[comment]: <> (### `showInfo`)
+
+[comment]: <> (- **Type**: `Boolean`)
+
+[comment]: <> (- **非侦听属性** 非 watch 属性)
+
+[comment]: <> (- **Default:** `false`)
+
+[comment]: <> (- - **Description:** 是否显示默认的属性信息框)
 
 ### `animation`
 
 - **Type**: `Boolean`
 - **非侦听属性** 非 watch 属性
 - **Default:** `false`
-- - **Description:** 默认动画控制不显示
+- - **Description:** 默认动画控件不显示
 
 ### `timeline`
 

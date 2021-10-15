@@ -320,8 +320,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Pans the map by the specified offest
-- **Returns:** `{Promise<{ eventData, center }>}`
-  Promise that resolves object with event data and new center of the map when animation ends
+- **Returns:** `{Promise<{ center }>}`
+  Promise that resolves object with new center of the map when animation ends
 - **查看:** [panBy](https://docs.mapbox.com/mapbox-gl-js/api/#map#panby) Map method
 
 ### `.panTo(coordinates, options?, eventData?)`
@@ -331,8 +331,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Pans the map to the specified location, with an animated transition
-- **Returns:** `{Promise<{ eventData, center }>}`
-  Promise that resolves object with event data and new center of the map when animation ends
+- **Returns:** `{Promise<{ center }>}`
+  Promise that resolves object with new center of the map when animation ends
 - **查看:** [panTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#panto) Map method
 
 ### `.zoomTo(zoom, options?, eventData?)`
@@ -342,8 +342,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Zooms the map to the specified zoom level, with an animated transition
-- **Returns:** `{Promise<{ eventData, zoom }>}`
-  Promise that resolves object with event data and new zoom level of the map when animation ends
+- **Returns:** `{Promise<{ zoom }>}`
+  Promise that resolves object with new zoom level of the map when animation ends
 - **查看:** [zoomTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomto) Map method
 
 ### `.zoomIn(options?, eventData?)`
@@ -352,8 +352,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Increases the map's zoom level by 1
-- **Returns:** `{Promise<{ eventData, zoom }>}`
-  Promise that resolves object with event data and new zoom level of the map when animation ends
+- **Returns:** `{Promise<{ zoom }>}`
+  Promise that resolves object with new zoom level of the map when animation ends
 - **查看:** [zoomIn](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomin) Map method
 
 ### `.zoomOut(options?, eventData?)`
@@ -362,8 +362,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Decreases the map's zoom level by 1
-- **Returns:** `{Promise<{ eventData, zoom }>}`
-  Promise that resolves object with event data and new zoom level of the map when animation ends
+- **Returns:** `{Promise<{ zoom }>}`
+  Promise that resolves object with new zoom level of the map when animation ends
 - **查看:** [zoomOut](https://docs.mapbox.com/mapbox-gl-js/api/#map#zoomOut) Map method
 
 ### `.rotateTo(bearing, options?, eventData?)`
@@ -373,8 +373,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Rotates the map to the specified bearing, with an animated transition. The bearing is the compass direction that is \"up\"; for example, a bearing of 90° orients the map so that east is up.
-- **Returns:** `{Promise<{ eventData, bearing }>}`
-  Promise that resolves object with event data and new bearing of the map when animation ends
+- **Returns:** `{Promise<{ bearing }>}`
+  Promise that resolves object with new bearing of the map when animation ends
 - **查看:** [rotateTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#rotateto) Map method
 
 ### `.resetNorth(options?, eventData?)`
@@ -382,8 +382,8 @@ Asynchronous actions exposed via `GlMap.actions`
 - **参数:**
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
 - **描述:** Rotates the map so that north is up (0° bearing), with an animated transition
-- **Returns:** `{Promise<{ eventData, bearing }>}`
-  Promise that resolves object with event data and new bearing of the map when animation ends
+- **Returns:** `{Promise<{ bearing }>}`
+  Promise that resolves object with new bearing of the map when animation ends
 - **查看:** [resetNorth](https://docs.mapbox.com/mapbox-gl-js/api/#map#resetnorth) Map method
 
 ### `.snapToNorth(options?, eventData?)`
@@ -392,8 +392,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `options` `{AnimationOptions object}` animation options. See [AnimationOptions](https://docs.mapbox.com/mapbox-gl-js/api/#animationoptions)
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Snaps the map so that north is up (0° bearing), if the current bearing is close enough to it (i.e. within the `bearingSnap` prop threshold).
-- **Returns:** `{Promise<{ eventData, bearing }>}`
-  Promise that resolves object with event data and new bearing of the map when animation ends
+- **Returns:** `{Promise<{ bearing }>}`
+  Promise that resolves object with new bearing of the map when animation ends
 - **查看:** [snapToNorth](https://docs.mapbox.com/mapbox-gl-js/api/#map#snaptonorth) Map method
 
 ### `.fitBounds(bounds, options?, eventData?)`
@@ -408,8 +408,8 @@ Asynchronous actions exposed via `GlMap.actions`
     - `options.maxZoom?` `{number}` The maximum zoom level to allow when the map view transitions to the specified bounds
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Pans and zooms the map to contain its visible area within the specified geographical bounds. This function will also reset the map's bearing to 0 if bearing is nonzero
-- **Returns:** `{Promise<{ eventData, bounds }>}`
-  Promise that resolves object with event data and new bounds of the map when animation ends
+- **Returns:** `{Promise<{ bounds }>}`
+  Promise that resolves object with new bounds of the map when animation ends
 - **查看:** [fitBounds](https://docs.mapbox.com/mapbox-gl-js/api/#map#fitbounds) Map method
 
 ### `.jumpTo(options, eventData?)`
@@ -423,8 +423,8 @@ Asynchronous actions exposed via `GlMap.actions`
     - `options.around?` `{number[] | LngLat}` If `zoom` is specified, `around` determines the point around which the zoom is centered.
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Changes any combination of center, zoom, bearing, and pitch, without an animated transition. The map will retain its current values for any details not specified in options
-- **Returns:** `{Promise<{ eventData, pitch, zoom, center, bearing }>}`
-  Promise that resolves object with event data and new pitch, zoom, center and bearing of the map
+- **Returns:** `{Promise<{ pitch, zoom, center, bearing }>}`
+  Promise that resolves object with new pitch, zoom, center and bearing of the map
 - **查看:** [jumpTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#jumpto) Map method
 
 ### `.easeTo(options, eventData?)`
@@ -446,8 +446,8 @@ Asynchronous actions exposed via `GlMap.actions`
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 
 - **描述:** Changes any combination of center, zoom, bearing, and pitch, with an animated transition between old and new values. The map will retain its current values for any details not specified in `options`
-- **Returns:** `{Promise<{ eventData, pitch, zoom, center, bearing }>}`
-  Promise that resolves object with event data and new pitch, zoom, center and bearing of the map when animations ends
+- **Returns:** `{Promise<{ pitch, zoom, center, bearing }>}`
+  Promise that resolves object with new pitch, zoom, center and bearing of the map
 - **查看:** [easeTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#easeto) Map method
 
 ### `.flyTo(options, eventData?)`
@@ -461,8 +461,8 @@ Asynchronous actions exposed via `GlMap.actions`
     - `options.maxDuration?` `{number}` The animation's maximum duration, measured in milliseconds. If duration exceeds maximum duration, it resets to 0
   - `eventData` `{Object}` Custom data passed to corresponfing event.
 - **描述:** Changes any combination of center, zoom, bearing, and pitch, animating the transition along a curve that evokes flight. The animation seamlessly incorporates zooming and panning to help the user maintain her bearings even after traversing a great distance
-- **Returns:** `{Promise<{ eventData, pitch, zoom, center, bearing }>}`
-  Promise that resolves object with event data and new pitch, zoom, center and bearing of the map when animations ends
+- **Returns:** `{Promise<{ pitch, zoom, center, bearing }>}`
+  Promise that resolves object with new pitch, zoom, center and bearing of the map
 - **查看:** [flyTo](https://docs.mapbox.com/mapbox-gl-js/api/#map#flyto) Map method
 
 ## 事件

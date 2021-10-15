@@ -36,7 +36,7 @@
       >
         <div slot="marker" class="mapgis-measure-control-label">
           <div>面积：{{ area }}</div>
-          <div>周长：{{ perimeter }}</div>
+          <div>长度：{{ perimeter }}</div>
         </div>
       </mapgis-marker>
     </div>
@@ -262,7 +262,7 @@ export default {
         const result = vm._updateLengthOrArea();
         vm.$emit(measureEvents.measureresult, result);
         vm.$emit(measureEvents.measureResult, result);
-        this.disableDrag();
+        // this.disableDrag();
         if (result.center) {
           const coords = result.center.geometry.coordinates;
           vm.coordinates = coords;
@@ -277,6 +277,12 @@ export default {
       }
       if (eventName === "measureUpdate" || eventName === "measureupdate") {
         const result = vm._updateLengthOrArea();
+        if (result.center) {
+          const coords = result.center.geometry.coordinates;
+          vm.coordinates = coords;
+          vm.area = result.geographyArea || "无";
+          vm.perimeter = result.geographyPerimeter;
+        }
         vm.$emit(measureEvents.measureresult, result);
         vm.$emit(measureEvents.measureResult, result);
       }
@@ -340,7 +346,6 @@ export default {
           measureMode === measureModes.measureLength ||
           innermeasureMode === measureModes.measureLength
         ) {
-          console.log('measure length');
           center = turf.centroid(turf.lineString(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           projectionPerimeter = 0;
@@ -353,7 +358,6 @@ export default {
           measureMode === measureModes.measureArea ||
           innermeasureMode === measureModes.measureArea
         ) {
-          console.log('measure area');  
           center = turf.centroid(turf.polygon(coordinates));
           geographyPerimeter = turf.length(data) * 1000;
           geographyArea = turf.area(data);
@@ -469,7 +473,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .mapgis-measure-control > .mapgis-ui-space {
   width: 40px !important;
   overflow: hidden;

@@ -64,13 +64,13 @@ module.exports = {
             children: [
               {
                 title: "场景",
-                collapsable: false,
+                collapsable: false
               },
               ["/api/", "地图场景"],
 
               {
                 title: "场景子组件",
-                collapsable: false,
+                collapsable: false
               },
               ["/api/ui/popup.md", "气泡"],
               ["/api/ui/marker.md", "标记点"],
@@ -80,10 +80,13 @@ module.exports = {
               ["/api/ui/table.md", "表格"],
               ["/api/ui/draw.md", "绘制"],
               ["/api/ui/measure.md", "量测"],
+              // ["/api/sceneeffect/fogeffect.md", "雾组件"],
+              // ["/api/sceneeffect/raineffect.md", "雨组件"],
+              // ["/api/sceneeffect/snoweffect.md", "雪组件"],
 
               {
                 title: "图层",
-                collapsable: false,
+                collapsable: false
               },
               ["/api/layer/IGServer/IgsVectorLayer.md", "IGS二维矢量"],
               ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
@@ -104,14 +107,14 @@ module.exports = {
 
               {
                 title: "可视化",
-                collapsable: false,
+                collapsable: false
               },
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
 
               {
                 title: "空间分析",
-                collapsable: false,
+                collapsable: false
               },
               ["/api/analysis/Viewshed.md", "可视域分析"],
               ["/api/analysis/Sightline.md", "通视分析"],
@@ -121,7 +124,7 @@ module.exports = {
               // ["/api/analysis/Fill.md", "填挖方分析"],
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],
-              ["/api/analysis/Skyline.md", "天际线分析"],
+              ["/api/analysis/Skyline.md", "天际线分析"]
             ]
           },
           {

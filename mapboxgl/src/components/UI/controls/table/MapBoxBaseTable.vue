@@ -3,7 +3,7 @@
     <div class="mapgis-table-collapse-wrapper">
       <mapgis-ui-div class="mapgis-table-collapse" v-show="!visible">
         <div @click="showTable">
-          <mapgis-ui-iconfont type="mapgis-shuxingjiancha" />属性表
+          <mapgis-ui-iconfont type="mapgis-table" />属性表
         </div>
       </mapgis-ui-div>
     </div>
@@ -19,28 +19,28 @@
         </div>
         <mapgis-ui-button-group class="toolbar-buttons">
           <mapgis-ui-button @click="$_exportData" size="small">
-            <mapgis-ui-iconfont type="mapgis-daochu" />
+            <mapgis-ui-iconfont type="mapgis-export" />
             导出
           </mapgis-ui-button>
           <mapgis-ui-button @click="$_fieldFilter" size="small">
-            <mapgis-ui-iconfont type="mapgis-shiliangtiaojianchaxun" />
+            <mapgis-ui-iconfont type="mapgis-filter" />
             字段过滤
           </mapgis-ui-button>
           <mapgis-ui-button @click="$_deleteMassFeature" size="small">
-            <mapgis-ui-iconfont type="mapgis-qingkong1" />
+            <mapgis-ui-iconfont type="mapgis-delete" />
             批量删除
           </mapgis-ui-button>
           <mapgis-ui-button @click="$_fullScreen" size="small" v-show="showFullScene">
-            <mapgis-ui-iconfont type="mapgis-quanpingxianshi" />
+            <mapgis-ui-iconfont type="mapgis-fullscreen" />
             全屏
           </mapgis-ui-button>
           <mapgis-ui-button @click="hideTable" size="small">
-            <mapgis-ui-iconfont type="mapgis-guanbiC" />
+            <mapgis-ui-iconfont type="mapgis-close-circle" />
             关闭
           </mapgis-ui-button>
         </mapgis-ui-button-group>
       </mapgis-ui-div>
-      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0">
+      <div class="mapgis-baseTable-nonData" v-show="columnsCopy.length === 0 && visible">
         <div style="width: 100%;">
           暂无数据
         </div>
@@ -119,28 +119,35 @@
 </template>
 
 <script>
-import { VFeature } from "../../../util";
 import { MRFS } from "@mapgis/webclient-es6-service";
-const { FeatureService } = MRFS;
+const { FeatureService,VFeature } = MRFS;
 export default {
   name: "mapgis-base-table",
   props: {
-    //json数据源url
+    /*
+    * json数据源url
+    * */
     baseUrl: {
       type: String
     },
-    //数据源
+    /*
+    * 数据源
+    * */
     dataSource: {
       type: [Array, Object]
     },
-    //用户自定义的表头信息数组
+    /*
+    * 用户自定义的表头信息数组
+    * */
     columns: {
       type: Array,
       default() {
         return [];
       }
     },
-    //分页信息
+    /*
+    * 分页信息
+    * */
     pagination: {
       type: Object,
       default() {
@@ -150,12 +157,16 @@ export default {
         };
       }
     },
-    //是否启用编辑
+    /*
+    * 是否启用表格编辑
+    * */
     editable: {
       type: Boolean,
       default: true
     },
-    //是否启用选
+    /*
+    * 是否启用选择
+    * */
     selectable: {
       type: Boolean,
       default: true
@@ -315,18 +326,44 @@ export default {
           }
       );
     },
+    $_nullProperties(features){
+      let nullProperties = true;
+      for (let i = 0; i < features.length; i++) {
+        if(nullProperties && JSON.stringify(features[i].properties) !== "{}"){
+          nullProperties = false;
+          break
+        }
+      }
+      return nullProperties;
+    },
     //将传入的数据转化为mapgis-ui-table识别的数据
     $_initSource(dataSource) {
       dataSource = dataSource || this.dataSource;
       this.dataSourceOrigin = dataSource;
       this.sortBack = {};
-      this.rowSelection.selectedRowKeys = [];
-      if(!dataSource || !dataSource.features || dataSource.features.length === 0){
+      if(this.rowSelection){
+        this.rowSelection.selectedRowKeys = [];
+      }
+      if(!dataSource ){
         this.hasFeatures = false;
+        this.$emit("createTableFailed","属性表","没有数据!");
+        this.$emit("createLayerFailed",{
+          message: "属性表",
+          description: "数据量为0!"
+        });
         return;
       }
       this.hasFeatures = true;
       if (dataSource instanceof Array) {
+        if (dataSource.length === 0){
+          this.hasFeatures = false;
+          this.$emit("createTableFailed","属性表","没有数据!");
+          this.$emit("createLayerFailed",{
+            message: "属性表",
+            description: "数据量为0!"
+          });
+          return;
+        }
         if (this.$_isFeatureSet(dataSource)) {
           //Feature集合
           this.$_getColumnsCopyByFeatureSet(dataSource);
@@ -347,10 +384,11 @@ export default {
         // }
       } else if (dataSource instanceof Object) {
         if(dataSource.hasOwnProperty("selectedRowKeys")){
+          console.log("dataSource.selectedRowKeys",dataSource.selectedRowKeys)
           this.rowSelection.selectedRowKeys = dataSource.selectedRowKeys;
         }
         if(dataSource.hasOwnProperty("pagination")){
-          this.paginationCopy = dataSource.pagination;
+          this.paginationCopy = {...dataSource.pagination};
           let current = this.paginationCopy.current;
           delete this.paginationCopy.current;
           this.paginationCopy.defaultCurrent = current ? current : 1;
@@ -359,6 +397,15 @@ export default {
         }
         //zondy格式
         if (this.$_isZondyResult(dataSource)) {
+          if(!dataSource.SFEleArray || dataSource.SFEleArray.length === 0){
+            this.hasFeatures = false;
+            this.$emit("createTableFailed","属性表","没有数据!");
+            this.$emit("createLayerFailed",{
+              message: "属性表",
+              description: "数据量为0!"
+            });
+            return;
+          }
           //this.columnsCopy.length为0表示第一次加载数据，需要初始化表头
           if (this.columnsCopy.length === 0) {
             this.$_getColumnsCopyByZondySource(dataSource);
@@ -377,22 +424,42 @@ export default {
             });
           }
         } else {
+          let nullProperties = this.$_nullProperties(dataSource.features);
+          if(nullProperties){
+            this.$emit("createLayerFailed",{
+              message: "属性表",
+              description: "数据中不包含任何属性数据!"
+            });
+            this.hasFeatures = false;
+            return;
+          }
           //geoJSON格式
           let features = VFeature.fromGeoJSON(dataSource);
           this.paginationCopy.total = features.length;
           this.$_getColumnsCopyByFeatureSet(features,dataSource.sortInfo);
           this.$_applyColumnsToColumnsCopy();
           this.$_initPlainOptions();
-          this.$nextTick(function () {
-            this.deletTable = false;
-            this.$nextTick(function () {
-              this.$_initCheckedList();
-              this.featureSet = features;
-              this.$_featureSetToDataSource(features);
-              this.$_drawTable();
-              this.$_addOperationColumns();
-            });
-          });
+          this.deletTable = false;
+          let table = document.getElementById(this.tableId);
+          if(table){
+            draw(this,features);
+          }else {
+            let vm = this;
+            let interval = setInterval(function () {
+              let table = document.getElementById(vm.tableId);
+              if(table){
+                clearInterval(interval);
+                draw(vm,features,dataSource);
+              }
+            },30);
+          }
+          function draw(vm,features) {
+            vm.$_initCheckedList();
+            vm.featureSet = features;
+            vm.$_featureSetToDataSource(features);
+            vm.$_drawTable();
+            vm.$_addOperationColumns();
+          }
         }
       }
     },
@@ -672,7 +739,10 @@ export default {
           (this.paginationCopy.pageSize + 1.5) * this.rowHeight + this.pageHeight;
       container.style.height = containerHeight + "px";
       tableBody.style.height = containerHeight + "px";
-      this.$_drawToolBar(containerHeight);
+      let vm = this;
+      setTimeout(function () {
+        vm.$_drawToolBar(containerHeight);
+      },20);
     },
     /*
      * 绘制工具栏
@@ -962,6 +1032,7 @@ export default {
      * 分页或排序回调
      * **/
     $_change(pagination, filters, sorter, currentDataSource) {
+      console.log("sorter",sorter)
       if (!sorter.hasOwnProperty("order")) {
         sorter.order = "";
       }
@@ -977,20 +1048,16 @@ export default {
       }
       if (!this.pageInfo) {
         if (!sorter.hasOwnProperty("columnKey")) {
-          this.$_tableChanged();
           this.$emit("pageChanged", pagination, sorterObj, currentDataSource);
           this.$emit("pagechanged", pagination, sorterObj, currentDataSource);
         } else {
-          this.$_tableChanged();
           this.$emit("sorted", sorterObj, pagination, currentDataSource);
         }
       } else {
         if (pagination.current !== this.pageInfo.current) {
-          this.$_tableChanged();
           this.$emit("pageChanged", pagination, sorterObj, currentDataSource);
           this.$emit("pagechanged", pagination, sorterObj, currentDataSource);
         } else {
-          this.$_tableChanged();
           this.$emit("sorted", sorterObj, pagination, currentDataSource);
         }
       }
@@ -1033,11 +1100,26 @@ export default {
         "features": []
       };
       for(let i = 0;i < this.dataSourceCopy.length;i++){
-        geoJson.features.push({
-          type: 'Feature',
-          geometry: this.dataSourceOrigin.features[i].geometry,
-          properties: this.dataSourceCopy[i]
-        });
+        if(this.dataSourceOrigin.hasOwnProperty("features")){
+          geoJson.features.push({
+            type: 'Feature',
+            geometry: this.dataSourceOrigin.features[i].geometry,
+            properties: this.dataSourceCopy[i]
+          });
+        }else if(this.$_isZondyResult(this.dataSourceOrigin)){
+          let features = VFeature.fromQueryResult(this.dataSourceOrigin);
+          geoJson.features.push({
+            type: 'Feature',
+            geometry: features[i].geometry,
+            properties: this.dataSourceCopy[i]
+          });
+        }else if(this.dataSourceOrigin instanceof Array){
+          geoJson.features.push({
+            type: 'Feature',
+            geometry: this.dataSourceOrigin[i].geometry,
+            properties: this.dataSourceCopy[i]
+          });
+        }
       }
       return geoJson;
     },
@@ -1109,6 +1191,7 @@ export default {
       this.columnsCopy = columns;
       if (this.editable && this.columnsCopy.length > 0) {
         this.$_addOperationColumns();
+        this.$_drawTable();
       }
       this.$_setRowSelect();
     },
@@ -1173,12 +1256,12 @@ export default {
     },
     $_tableChanged(){
       let tableData = this.$_getGeoJsonFromData();
-      tableData.selectedRowKeys = this.rowSelection.selectedRowKeys;
+      tableData.selectedRowKeys = [].concat(this.rowSelection.selectedRowKeys);
       if(!this.pageInfo){
-        tableData.pagination = this.paginationCopy;
+        tableData.pagination = {...this.paginationCopy};
         tableData.pagination.current = 1;
       }else {
-        tableData.pagination = this.pageInfo;
+        tableData.pagination = {...this.pageInfo};
       }
       tableData.sortInfo = this.sortBack;
       this.$emit("tableChanged",tableData);
@@ -1334,8 +1417,10 @@ export default {
 .mapgis-table-collapse {
   margin: 0 auto;
   background: transparent;
-  width: 60px;
+  width: 72px;
   height: 24px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   border-top: 1px solid #666666;
   border-left: 1px solid #666666;
   border-right: 1px solid #666666;

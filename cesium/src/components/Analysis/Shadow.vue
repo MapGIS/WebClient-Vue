@@ -44,7 +44,7 @@
           </mapgis-ui-form-model-item>
         </div>
         <mapgis-ui-form-model-item label="底部高程">
-          <MapgisUiInput
+          <Mapgis-ui-input
               v-model.number="formData.min"
               addon-after="(米)"
               size="small"
@@ -52,7 +52,7 @@
           />
         </mapgis-ui-form-model-item>
         <mapgis-ui-form-model-item label="拉伸高度">
-          <MapgisUiInput
+          <Mapgis-ui-input
               v-model.number="formData.max"
               addon-after="(米)"
               min="0"
@@ -75,7 +75,7 @@
           />
         </mapgis-ui-form-model-item>
         <mapgis-ui-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
-          <MapgisUiInput
+          <Mapgis-ui-input
               v-model.number="formData.ratio"
               disabled
               size="small"

@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import {Manager} from "@mapgis/webclient-es6-service"
 
 export default {
   name: "mapgis-3d-Marker",
@@ -112,7 +111,7 @@ export default {
     $_init(webGlobe) {
       let Cesium = this.Cesium || window.Cesium;
       let webGlobeMarker = this.webGlobe || webGlobe;
-      let labelLayer = new Manager.LabelLayer({
+      let labelLayer = new CesiumZondy.Manager.LabelLayer({
         viewer: webGlobeMarker.viewer
       });
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;

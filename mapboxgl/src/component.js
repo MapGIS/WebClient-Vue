@@ -30,7 +30,7 @@ export { default as MapgisArcgisLegend } from "./components/UI/controls/legend/L
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
 
-export { default as MapgisBaseTable } from "./components/UI/controls/table/BaseTable";
+export { default as MapgisBaseTable } from "./components/UI/controls/table/MapBoxBaseTable";
 export { default as MapgisFeatureTable } from "./components/UI/controls/table/FeatureTable";
 export { default as MapgisInspect } from "./components/UI/controls/inspect/Inspect";
 
@@ -76,22 +76,3 @@ export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
 export { default as MapgisHeatThemeLayer } from "./components/layer/ThemeLayer/HeatThemeLayer";
-
-/* 
-import withEventsMixin from "./lib/withEvents";
-import withSelfEventsMixin from "./components/UI/withSelfEvents";
-import controlMixin from "./components/UI/controls/controlMixin";
-import layerMixin from "./components/layer/layerMixin";
-
-export { default as const withEvents = withEventsMixin;
-export { default as const withSelfEvents = withSelfEventsMixin;
-export { default as const asControl = controlMixin;
-export { default as const asLayer = layerMixin;
-
-export { default as const $helpers = {
-  withEvents: withEventsMixin,
-  withSelfEvents: withSelfEventsMixin,
-  asControl: controlMixin,
-  asLayer: layerMixin
-}; 
-*/

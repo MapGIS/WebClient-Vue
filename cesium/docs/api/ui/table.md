@@ -17,17 +17,16 @@
   > let featureSet = Feature.fromQueryResult(result); <br/>
   > 将 GEOJSON 格式的 JSON 转为[Feature] <br/>
   > let featureSet = Feature.fromGeoJSON(GEOJSON); <br/>
-  > 格式： <br/>
-  > [{ <br/>
-  > geometry:"", <br/>
-  > geometryType:"", <br/>
-  > attributes:"", <br/>
-  > style:"", <br/>
-  > FID:"" <br/>
-  > }, <br/>
-  > Feature2, <br/>
-  > Feature3 <br/>
-  > ] <br/>
+  > 格式： <br/> > [{ <br/>
+  > > geometry:"", <br/>
+  > > geometryType:"", <br/>
+  > > attributes:"", <br/>
+  > > style:"", <br/>
+  > > FID:"" <br/>
+  > > }, <br/>
+  > > Feature2, <br/>
+  > > Feature3 <br/>
+  > > ] <br/>
   > 二：Zondy: 使用 Zondy 的 API 做查询返回的格式 <br/>
   > { <br/>
   > AttStruct:{...}, <br/>
@@ -124,7 +123,7 @@
 
 ### `@selectAll` 或 `@selectall`
 
-- **描述:** 多选框中，算中一页中的所有数据事件
+- **描述:** 多选框中，其中一页中的所有数据事件
 - **返回值** `{ selectData,selected }` <br>
   `selectData` 已选的所有数据 <br>
   `selected` 是否全选 <br>
