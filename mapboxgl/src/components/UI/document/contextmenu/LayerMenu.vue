@@ -17,12 +17,12 @@
       </span>
       <contextmenu-item :autoHide="false">
         <mapgis-ui-iconfont type="mapgis-bilichi" />级别控制
-        <a-slider range v-model="zoom" :min="minzoom" :max="maxzoom" />
+        <mapgis-ui-slider range v-model="zoom" :min="minzoom" :max="maxzoom" />
       </contextmenu-item>
       <contextmenu-item divider />
       <contextmenu-item :autoHide="false">
         <mapgis-ui-iconfont type="mapgis-changjingtouming" />透明度控制
-        <a-slider :min="0" :max="1" v-model="opacity" :step="0.1" />
+        <mapgis-ui-slider :min="0" :max="1" v-model="opacity" :step="0.1" />
       </contextmenu-item>
     </contextmenu-submenu>
     <contextmenu-item divider />

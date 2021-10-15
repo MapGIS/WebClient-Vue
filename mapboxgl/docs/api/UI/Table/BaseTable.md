@@ -178,6 +178,7 @@
             @selected="selected"
             @selectAll="selectAll"
             @delete="deleteRow"
+            @exportData="exportData"
             @edited="edited"
             @fullScreen="fullScreen"
             @originScreen="originScreen"
@@ -213,7 +214,9 @@ export default {
     //获取数据
     getData(type){
       //获取数据
-      this.query(0,10,undefined,undefined,true,"Feature");
+      this.query(0,20,undefined,undefined,true,"zondy");
+      // this.query(0,10,undefined,undefined,true,"Feature");
+      // this.query(0,10,undefined,undefined,true,"Feature");
     },
     query(pageIndex,pagination,orderBy,isAsc,initial,type){
       let vm = this;
@@ -233,6 +236,7 @@ export default {
         }else if(type === "Feature"){
           vm.dataSource = VFeature.fromQueryResult(result);
         }
+        console.log("vm.dataSource",vm.dataSource);
         if(initial){
           vm.columns = [{
             title: "mpArea",
@@ -256,6 +260,7 @@ export default {
     //要素服务加载完毕事件
     serviceLoaded(service){
       this.service = service;
+      console.log('service',service)
       this.getData('zondy');
     },
     //table加载完毕事件
@@ -270,14 +275,15 @@ export default {
       console.log(OID,row)
     },
     pageChanged(pagination,sorter){
-      //默认降序
-      let isAsc = false;
-      if(sorter.order === "ascend"){
-        isAsc = true;
-      }else if(sorter.order === "") {
-        sorter.columnKey = "";
-      }
-      this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
+      //   //默认降序
+      //   let isAsc = false;
+      //   if(sorter.order === "ascend"){
+      //     isAsc = true;
+      //   }else if(sorter.order === "") {
+      //     sorter.columnKey = "";
+      //   }
+      //   // this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"zondy");
+      //   this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
     },
     sorted(sorter,pagination){
       //默认降序
@@ -287,7 +293,12 @@ export default {
       }else if(sorter.order === "") {
         sorter.columnKey = "";
       }
+      // this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"zondy");
       this.query(pagination.current - 1,pagination.pageSize,sorter.columnKey,isAsc,false,"Feature");
+    },
+    exportData(allData){
+      //导出数据
+      console.log("exportData",allData);
     },
     selected(row,selectRows){
       console.log("选择一行",row);
@@ -300,5 +311,6 @@ export default {
     originScreen(){}
   }
 }
+</script>
 </script>
 ```

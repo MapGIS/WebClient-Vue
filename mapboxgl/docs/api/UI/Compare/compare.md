@@ -11,6 +11,10 @@
 - **默认值:** `vertical`
 - **描述:** 卷帘显示方向。vertical(垂直方向) | horizontal(水平方向)
 
+:::warning
+`mapgis-compare`组件在使用时，其子组件中的`mapgis-web-map`组件不传入`mapStyle`属性
+:::
+
 ## 示例
 
 ```vue
