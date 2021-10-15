@@ -107,6 +107,11 @@ export default {
       isDepthTestAgainstTerrainEnable: undefined // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
     };
   },
+  computed:{
+    formDataNew(){
+      return JSON.parse(JSON.stringify(this.formData));
+    }
+  },
   watch: {
     exHeight: {
       handler: function(newVal, oldVal) {
@@ -126,7 +131,7 @@ export default {
       },
       immediate: true
     },
-    formData: {
+    formDataNew: {
       deep: true,
       handler: function(newVal, oldVal) {
         const unVisibleColor = new this.Cesium.Color.fromCssColorString(
