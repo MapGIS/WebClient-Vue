@@ -26,7 +26,7 @@ const Template = (args, { argTypes }) => ({
       }, 5000);
     },
   },
-  template: `<mapgis-web-scene @load="handleMapload">
+  template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-igs-m3d v-bind="$props" :opacity="opacity" />
     <mapgis-3d-statebar />
@@ -36,5 +36,11 @@ const Template = (args, { argTypes }) => ({
 export const M3D = Template.bind({});
 M3D.args = {
   url: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+  show: true,
+};
+
+export const 图层控制 = Template.bind({});
+图层控制.args = {
+  url: "http://192.168.21.191:6163/igs/rest/g3d/汉阳BIM",
   show: true,
 };
