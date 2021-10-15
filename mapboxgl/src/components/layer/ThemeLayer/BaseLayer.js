@@ -9,10 +9,10 @@ import ZondyThemeManager from "./themeManager";
 import gradients from "./gradient";
 import gradientHeatColor from "./gradientHeatColor";
 
-const {FeatureService} = MRFS;
+const {FeatureService, VFeature} = MRFS;
 import {gradientColor} from "../../util/util";
 import All from "@mapgis/webclient-es6-service";
-import {formatInterpolate, formatStyleToLayer} from "./themeUtil";
+import {formatInterpolate, formatStyleToLayer, getLayerFromTextStyle} from "./themeUtil";
 
 import * as turf from "@turf/turf"
 
@@ -114,7 +114,7 @@ export default {
             type: String
         },
         dataSource: {
-            type: Object
+            type: [Object, String]
         },
         hideItem: {
             type: Array,
@@ -259,7 +259,9 @@ export default {
             panelType: "fix",
             markers: [],
             spinId: undefined,
-            maskId: undefined
+            maskId: undefined,
+            dataSourceIgs: undefined,
+            igsTextSourceId: undefined
         };
     },
     mounted() {
@@ -297,7 +299,7 @@ export default {
             spin.className = spinClassName;
             spin.append(spinSpan);
             spin.style.position = "absolute";
-            if(spinStyle){
+            if (spinStyle) {
                 Object.keys(spinStyle).forEach(function (key) {
                     spin.style[key] = spinStyle[key];
                 });
@@ -310,7 +312,7 @@ export default {
                 maskClassName += " " + maskClass;
             }
             mask.className = maskClassName;
-            if(maskStyle){
+            if (maskStyle) {
                 Object.keys(maskStyle).forEach(function (key) {
                     mask.style[key] = maskStyle[key];
                 });
@@ -399,20 +401,23 @@ export default {
                     );
                 }
                 if (this.highlightFeature.hasOwnProperty("geometry") && this.highlightFeature.geometry.coordinates) {
-                    let coordinates, points = [];
-                    if (this.highlightFeature.geometry.type === "MultiPolygon") {
-                        coordinates = this.highlightFeature.geometry.coordinates[0][0];
-                    } else {
-                        coordinates = this.highlightFeature.geometry.coordinates[0];
-                    }
-                    for (let i = 0; i < coordinates.length; i++) {
-                        points.push(turf.point([coordinates[i][0], coordinates[i][1]]));
-                    }
-                    let featuresCollection = turf.featureCollection(points);
-                    let center = turf.center(featuresCollection);
-                    this.$_addTips(center.geometry.coordinates, this.highlightFeature);
+                    this.$_addTips(this.$_getCenter(this.highlightFeature), this.highlightFeature);
                 }
             }
+        },
+        $_getCenter(feature) {
+            let coordinates, points = [];
+            if (feature.geometry.type === "MultiPolygon") {
+                coordinates = feature.geometry.coordinates[0][0];
+            } else {
+                coordinates = feature.geometry.coordinates[0];
+            }
+            for (let i = 0; i < coordinates.length; i++) {
+                points.push(turf.point([coordinates[i][0], coordinates[i][1]]));
+            }
+            let featuresCollection = turf.featureCollection(points);
+            let center = turf.center(featuresCollection);
+            return center.geometry.coordinates;
         },
         $_deleteHeightLightLayerByIndex(index) {
             if (this.dataType === "fill") {
@@ -722,90 +727,179 @@ export default {
                 window.tips = undefined;
             }
         },
-        $_addThemeLayerBySource() {
-            if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
-                let dataSource = this.dataSource, vm = this;
-                for (let i = 0; i < dataSource.features.length; i++) {
-                    if (!dataSource.features[i].hasOwnProperty("id")) {
-                        dataSource.features[i].id = i + 1;
+        $_resultToGeojson(result) {
+            let geojson = {
+                "type": "FeatureCollection",
+                "features": []
+            };
+            let FldName = result.AttStruct.FldName;
+            for (let i = 0; i < result.SFEleArray.length; i++) {
+                let fGeom = result.SFEleArray[i].fGeom, feature, coordinates;
+                let AttValue = result.SFEleArray[i].AttValue;
+                if (fGeom.LinGeom.length > 0) {
+
+                } else if (fGeom.PntGeom.length > 0) {
+
+                } else if (fGeom.RegGeom.length > 0) {
+                    let RegGeom = fGeom.RegGeom;
+                    let properties = {};
+                    for (let g = 0; g < FldName.length; g++) {
+                        properties[FldName[g]] = AttValue[g];
+                    }
+                    if (RegGeom.length > 1) {
+                        feature = {
+                            "type": "Feature",
+                            "properties": properties,
+                            "geometry": {
+                                "type": "MultiPolygon",
+                                "coordinates": []
+                            }
+                        };
+                        for (let k = 0; k < RegGeom.length; k++) {
+                            coordinates = [];
+                            let Dots = RegGeom[k].Rings[0].Arcs[0].Dots;
+                            for (let m = 0; m < Dots.length; m++) {
+                                coordinates.push([Dots[m].x, Dots[m].y]);
+                            }
+                            feature.geometry.coordinates.push([coordinates]);
+                        }
+                    } else {
+                        coordinates = [];
+                        let Dots = RegGeom[0].Rings[0].Arcs[0].Dots;
+                        for (let m = 0; m < Dots.length; m++) {
+                            coordinates.push([Dots[m].x, Dots[m].y]);
+                        }
+                        feature = {
+                            "type": "Feature",
+                            "properties": properties,
+                            "geometry": {
+                                "type": "Polygon",
+                                "coordinates": [coordinates]
+                            }
+                        };
                     }
                 }
-                this.source_Id = "geojson_" + parseInt(Math.random() * 10000);
-                this.map.addSource(this.source_Id, {
-                    type: "geojson",
-                    data: dataSource
-                });
-                this.initType = "props";
-                let layerId = this.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
-                this.selectValue = this.field;
-                themeManager.field = this.selectValue;
-                themeManager.vueId = this.vueId;
-                this.$_addThemeLayer(this.type, layerId, this.selectValue);
-                //是否开启tips
-                if (this.enableTips && this.type !== "symbol" && this.type !== "heatmap") {
-                    //是否开启高亮
-                    if (this.tipsOptions.enableHighlight || !this.tipsOptions.hasOwnProperty("enableHighlight")) {
-                        this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
-                        this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId);
-                        this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                            if (vm.hoveredStateId) {
-                                vm.map.setFeatureState(
-                                    {source: vm.tipsSourceId, id: vm.hoveredStateId},
-                                    {hover: false}
-                                );
-                            }
-                            vm.hoveredStateId = e.features[0].id;
+                geojson.features.push(feature);
+            }
+            return geojson;
+        },
+        $_addThemeLayerBySource() {
+            let vm = this;
+            if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
+                vm.$_addTheme(this.dataSource);
+            } else if (this.dataSource && typeof this.dataSource === "string" && this.dataSource.indexOf("igs/rest/mrfs/layer/query") >= 0) {
+                FeatureService.get(this.dataSource,
+                    function (result) {
+                        result = JSON.parse(result);
+                        let LabelDots = result.LabelDots;
+                        result = vm.$_resultToGeojson(result);
+                        let textGeojson = {
+                            type: "FeatureCollection",
+                            features: []
+                        }
+                        for (let k = 0; k < LabelDots.length; k++) {
+                            textGeojson.features.push({
+                                "type": "Feature",
+                                "properties": result.features[k].properties,
+                                "geometry": {
+                                    "type": "Point",
+                                    "coordinates": [LabelDots[k].X, LabelDots[k].Y]
+                                }
+                            });
+                        }
+                        vm.igsTextSourceId = "igs_text_" + parseInt(String(Math.random() * 10000));
+                        vm.map.addSource(vm.igsTextSourceId, {
+                            type: "geojson",
+                            data: textGeojson
+                        });
+                        vm.dataSourceIgs = result;
+                        vm.$_addTheme(result);
+                    });
+            }
+
+        },
+        $_addTheme(dataSource) {
+            let vm = this;
+            for (let i = 0; i < dataSource.features.length; i++) {
+                if (!dataSource.features[i].hasOwnProperty("id")) {
+                    dataSource.features[i].id = i + 1;
+                }
+            }
+            this.source_Id = "geojson_" + parseInt(Math.random() * 10000);
+            this.map.addSource(this.source_Id, {
+                type: "geojson",
+                data: dataSource
+            });
+            this.initType = "props";
+            let layerId = this.layerId || "geojson_layer_" + parseInt(Math.random() * 10000);
+            this.selectValue = this.field;
+            themeManager.field = this.selectValue;
+            themeManager.vueId = this.vueId;
+            this.$_addThemeLayer(this.type, layerId, this.selectValue);
+            //是否开启tips
+            if (this.enableTips && this.type !== "symbol" && this.type !== "heatmap") {
+                //是否开启高亮
+                if (this.tipsOptions.enableHighlight || !this.tipsOptions.hasOwnProperty("enableHighlight")) {
+                    this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
+                    this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId);
+                    this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.hoveredStateId) {
                             vm.map.setFeatureState(
                                 {source: vm.tipsSourceId, id: vm.hoveredStateId},
-                                {hover: true}
-                            );
-                            vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                            vm.$emit("highlightChanged", vm.hoveredStateId);
-                        });
-                        this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                            if (vm.hoveredStateId !== null) {
-                                vm.map.setFeatureState(
-                                    {source: vm.tipsSourceId, id: vm.hoveredStateId},
-                                    {hover: false}
-                                );
-                                vm.$_removeTips();
-                            }
-                            vm.hoveredStateId = null;
-                        });
-                    } else {
-                        this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                            vm.hoveredStateId = e.features[0].id;
-                            vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                        });
-                        this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                            if (vm.hoveredStateId !== null) {
-                                vm.$_removeTips();
-                            }
-                            vm.hoveredStateId = null;
-                        });
-                    }
-                }
-                //是否开启Popup
-                if (this.enablePopup && this.type !== "symbol" && this.type !== "heatmap") {
-                    if (this.popupOptions.enableHighlight || !this.popupOptions.hasOwnProperty("enableHighlight")) {
-                        this.popupSourceId = this.layerIdCopy + "_popup_" + parseInt(String(Math.random() * 10000));
-                        this.$_addHeightLightLayer("_popup", this.popupOptions, this.popupSourceId);
-                    }
-                    this.map.on('click', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                        if (vm.popupStateId) {
-                            vm.map.setFeatureState(
-                                {source: vm.popupSourceId, id: vm.popupStateId},
                                 {hover: false}
                             );
                         }
-                        vm.popupStateId = e.features[0].id;
+                        vm.hoveredStateId = e.features[0].id;
                         vm.map.setFeatureState(
-                            {source: vm.popupSourceId, id: vm.popupStateId},
+                            {source: vm.tipsSourceId, id: vm.hoveredStateId},
                             {hover: true}
                         );
-                        vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                        vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                        vm.$emit("highlightChanged", vm.hoveredStateId);
+                    });
+                    this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.hoveredStateId !== null) {
+                            vm.map.setFeatureState(
+                                {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                {hover: false}
+                            );
+                            vm.$_removeTips();
+                        }
+                        vm.hoveredStateId = null;
+                    });
+                } else {
+                    this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        vm.hoveredStateId = e.features[0].id;
+                        vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                    });
+                    this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.hoveredStateId !== null) {
+                            vm.$_removeTips();
+                        }
+                        vm.hoveredStateId = null;
                     });
                 }
+            }
+            //是否开启Popup
+            if (this.enablePopup && this.type !== "symbol" && this.type !== "heatmap") {
+                if (this.popupOptions.enableHighlight || !this.popupOptions.hasOwnProperty("enableHighlight")) {
+                    this.popupSourceId = this.layerIdCopy + "_popup_" + parseInt(String(Math.random() * 10000));
+                    this.$_addHeightLightLayer("_popup", this.popupOptions, this.popupSourceId);
+                }
+                this.map.on('click', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                    if (vm.popupStateId) {
+                        vm.map.setFeatureState(
+                            {source: vm.popupSourceId, id: vm.popupStateId},
+                            {hover: false}
+                        );
+                    }
+                    vm.popupStateId = e.features[0].id;
+                    vm.map.setFeatureState(
+                        {source: vm.popupSourceId, id: vm.popupStateId},
+                        {hover: true}
+                    );
+                    vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                });
             }
         },
         $_addThemeLayer(themeType, layerId, themeField) {
@@ -1065,7 +1159,11 @@ export default {
             }
             let features;
             if (this.initType === "props") {
-                features = this.dataSource.features;
+                if (typeof this.dataSource === "string") {
+                    features = this.dataSourceIgs.features;
+                } else {
+                    features = this.dataSource.features;
+                }
             } else {
                 //从图层取得数据
                 features = this.map.queryRenderedFeatures({layers: [layerId]});
@@ -2196,22 +2294,106 @@ export default {
                     "text-halo-width": 0
                 }
             };
+            let textStyle = this.themeOption.textStyle || {};
+            const {enableTurf, enableIgs, baseUrl} = textStyle;
+            let vm = this;
             if (this.source_layer_Id) {
                 textLayer["source-layer"] = this.source_layer_Id;
             }
             if (this.dataType === "line") {
                 textLayer.layout["symbol-placement"] = "line";
             }
-            if (!this.map.getLayer(this.layerIdCopy + this.$_getThemeName() + "_注记")) {
-                this.map.addLayer(textLayer, this.upLayer);
-                themeManager.setLayerProps(
-                    this.layerIdCopy,
-                    this.layerIdCopy + this.$_getThemeName() + "_注记",
-                    textLayer
-                );
-                emitMapAddLayer({
-                    layer: textLayer
-                });
+            if (textStyle) {
+                let newTextLayer = getLayerFromTextStyle(textStyle);
+                textLayer = Object.assign(textLayer, newTextLayer);
+            }
+            if (enableIgs && baseUrl && this.dataType === "fill") {
+                const {features} = this.dataSource;
+                let featureLength = features.length;
+                let textGeojson = {
+                    "type": "FeatureCollection",
+                    "features": []
+                }
+                let geometryStr = "";
+                for (let i = 0; i < features.length; i++) {
+                    if (features[i].geometry.type === "MultiPolygon") {
+                        geometryStr = features[i].geometry.coordinates[0][0].toString();
+                    } else {
+                        geometryStr = features[i].geometry.coordinates[0].toString();
+                    }
+                    let url = baseUrl + "/igs/rest/mrfs/getLabel?geometryType=polygon&f=json&geometry=" + geometryStr;
+                    FeatureService.get(url, function (result, properties) {
+                        result = JSON.parse(result);
+                        let feature = {
+                            "type": "Feature",
+                            "properties": properties,
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [result.X, result.Y]
+                            }
+                        }
+                        textGeojson.features.push(feature);
+                    }, function () {
+                    }, features[i].properties);
+                }
+                let textInterval = setInterval(function () {
+                    if (featureLength === textGeojson.features.length) {
+                        let textSource = vm.layerIdCopy + "_textGeojson_" + parseInt(String(Math.random() * 10000));
+                        vm.map.addSource(textSource, {
+                            "type": "geojson",
+                            "data": textGeojson
+                        });
+                        textLayer.source = textSource;
+                        if (!vm.map.getLayer(vm.layerIdCopy + vm.$_getThemeName() + "_注记")) {
+                            vm.map.addLayer(textLayer, vm.upLayer);
+                            themeManager.setLayerProps(
+                                vm.layerIdCopy,
+                                vm.layerIdCopy + vm.$_getThemeName() + "_注记",
+                                textLayer
+                            );
+                        }
+                        clearInterval(textInterval);
+                    }
+                }, 30);
+            } else {
+                if (enableTurf && this.dataType === "fill") {
+                    const {features} = this.dataSource;
+                    let textGeojson = {
+                        "type": "FeatureCollection",
+                        "features": []
+                    }
+                    for (let i = 0; i < features.length; i++) {
+                        let feature = {
+                            "type": "Feature",
+                            "properties": features[i].properties,
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": this.$_getCenter(features[i])
+                            }
+                        }
+                        textGeojson.features.push(feature);
+                    }
+                    let textSource = vm.layerIdCopy + "_textGeojson_" + parseInt(String(Math.random() * 10000));
+                    this.map.addSource(textSource, {
+                        "type": "geojson",
+                        "data": textGeojson
+                    });
+                    textLayer.source = textSource;
+                }
+                if (typeof this.dataSource === "string" && this.dataType === "fill") {
+                    textLayer.source = this.igsTextSourceId;
+                }
+                if (!this.map.getLayer(this.layerIdCopy + this.$_getThemeName() + "_注记")) {
+                    this.map.addLayer(textLayer, this.upLayer);
+                    themeManager.setLayerProps(
+                        this.layerIdCopy,
+                        this.layerIdCopy + this.$_getThemeName() + "_注记",
+                        textLayer
+                    );
+                    emitMapAddLayer({
+                        layer: textLayer
+                    });
+                }
             }
         },
         //添加线图层
