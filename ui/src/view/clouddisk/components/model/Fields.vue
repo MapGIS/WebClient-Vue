@@ -1,18 +1,18 @@
 <template>
   <div class="mapgis-ui-workflow-wrapper">
-    <mapgis-ui-card
+    <!-- <mapgis-ui-card
       class="model-params-dialog"
-    >
+    > -->
       <!-- <p slot="title">
         <IconFont id="iconworkflow"></IconFont>
         {{title}}  
       </p>
       <Tag slot="extra" color="primary">{{id}}</Tag> -->
-      <div class="switch-detail">
+      <div class="switch-detail" v-if="detailButton">
         <span>显示高级参数</span>
         <mapgis-ui-switch size="small" v-model="isDetail" @on-change="switchParams" />
       </div>
-      <div class="mapgis-ui-workflow-wrapper-modelTask">
+      <div class="mapgis-ui-workflow-wrapper-modelTask" :style="{height:autoHeight}">
         <div
           v-for="(p, i) in list"
           :key="i"
@@ -101,7 +101,7 @@
           </mapgis-ui-row>
         </div>
       </div>
-    </mapgis-ui-card>
+    <!-- </mapgis-ui-card> -->
     <div style="background:#fff;text-align:center;">
       <mapgis-ui-button type="primary" style="margin:8px 10px;" @click="() => {this.$emit('handleConfirm')}">执行分析</mapgis-ui-button>
       <mapgis-ui-button style="margin:8px 10px;" @click="() => {this.$emit('handleClearParams')}">清空数据</mapgis-ui-button>
@@ -120,7 +120,7 @@
         :isMulti="isMulti"
         :onlyFolder="onlyFolder"
         :handleFolderChange="handleFolderChange"
-      >此处暂未写入云盘业务逻辑</slot>
+      >此处暂无业务逻辑</slot>
       <!-- <treefolder
         v-if="resetOutput"
         ref="treefolder"
@@ -148,7 +148,7 @@
         :handleFolderChange="handleFolderChange"
         :emitSelect="emitSelect"
         :emitSelectInfo="emitSelectInfo"
-      >此处暂未写入云盘业务逻辑</slot>
+      >此处暂无业务逻辑</slot>
       <!-- <treefolder
         v-if="resetInput"
         ref="treefolder"
@@ -203,6 +203,14 @@ export default {
     modelType: {
       type: String,
       default: ''
+    },
+    detailButton: {
+      type: Boolean,
+      default: true
+    },
+    autoHeight: {
+      type: String,
+      default: 'calc(100vh - 240px)'
     },
     // oldFileGdbp: {
     //   type: String,

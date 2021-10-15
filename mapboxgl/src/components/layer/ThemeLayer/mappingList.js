@@ -65,8 +65,6 @@ let textPaintList = {
     "haloBlur": "text-halo-blur",
     "haloColor": "text-halo-color",
     "haloWidth": "text-halo-width",
-    "xOffset": "text-translate",
-    "yOffset": "text-translate",
 }
 
 export {textPaintList};
@@ -81,6 +79,8 @@ let textLayoutList = {
     "maxWidth": "text-max-width",
     "align": "text-justify",
     "placement": "symbol-placement",
+    "xOffset": "text-offset",
+    "yOffset": "text-offset",
 }
 
 export {textLayoutList};
