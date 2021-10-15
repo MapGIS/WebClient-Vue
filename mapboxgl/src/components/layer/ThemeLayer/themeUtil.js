@@ -40,9 +40,9 @@ export function getLayerFromSymbolStyle(style, layerId) {
         if (symbolPaintList.hasOwnProperty(key)) {
             if (key === "xOffset") {
                 themeLayer.paint["icon-translate"][0] = style[key];
-            }else if (key === "yOffset") {
+            } else if (key === "yOffset") {
                 themeLayer.paint["icon-translate"][1] = style[key] * -1;
-            }else {
+            } else {
                 themeLayer.paint[symbolPaintList[key]] = style[key];
             }
         }
@@ -52,6 +52,34 @@ export function getLayerFromSymbolStyle(style, layerId) {
     });
     layers.themeLayer = themeLayer;
     return layers;
+}
+
+export function getLayerFromTextStyle(style) {
+    let textLayer = {
+        paint: {},
+        layout: {
+            "text-offset": [0, 0]
+        }
+    };
+    Object.keys(style).forEach(function (key) {
+        if (textPaintList.hasOwnProperty(key)) {
+            textLayer.paint[textPaintList[key]] = style[key];
+        }
+        if (textLayoutList.hasOwnProperty(key)) {
+            if (key === "field") {
+                textLayer.layout[textLayoutList[key]] = "{" + style[key] + "}";
+            } else if (key === "fontFamily") {
+                textLayer.layout[textLayoutList[key]] = [style[key], style[key]];
+            } else if (key === "xOffset") {
+                textLayer.layout["text-offset"][0] = style[key];
+            } else if (key === "yOffset") {
+                textLayer.layout["text-offset"][1] = style[key] * -1;
+            } else {
+                textLayer.layout[textLayoutList[key]] = style[key];
+            }
+        }
+    });
+    return textLayer;
 }
 
 export function getLayerFromStyle(style, dataType, layerId) {
