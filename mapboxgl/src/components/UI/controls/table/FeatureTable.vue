@@ -192,7 +192,7 @@ export default {
   name: "mapgis-feature-table",
   mixins: [featureService],
   inject: ["map"],
-  components: {BaseTable, BaseDraw},
+  components: {BaseDraw},
   props: {
     url: {
       type: String,

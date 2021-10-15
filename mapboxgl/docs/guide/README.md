@@ -5,9 +5,15 @@
 ### ES6 方式
 
 ```bash
+安装webclient-vue-mapboxgl:
 npm install --save @mapgis/webclient-vue-mapboxgl
 # 或者
 yarn add @mapgis/webclient-vue-mapboxgl
+
+安装webclient-vue-ui:
+npm install --save @mapgis/webclient-vue-ui
+# 或者
+yarn add @mapgis/webclient-vue-ui
 ```
 
 > - webclient-vue-mapboxgl 依赖于 mapgis 版本的 mapbox-gl。
@@ -24,6 +30,26 @@ import Mapgis2d from "@mapgis/webclient-vue-mapboxgl";
 
 Vue.use(MapgisUi);
 Vue.use(Mapgis2d);
+```
+
+在实际项目中，当操作完以上步骤后，若出现下列报错:
+![less未激活](../images/bug/activeLess.png)
+是由于 less 依赖未激活导致的，需要在项目的 vue.config.js 文件中配置激活 less
+
+```js
+module.exports = {
+  lintOnSave: false,
+  css: {
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          modifyVars: {},
+          javascriptEnabled: true
+        }
+      }
+    }
+  }
+};
 ```
 
 ### yarn link 方式`特殊情况下：需要使用组件最新的功能时`
