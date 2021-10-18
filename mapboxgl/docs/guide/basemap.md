@@ -108,7 +108,7 @@ import mapboxgl from "@mapgis/mapbox-gl";
 
 > 例如,如果你使用 `flyTo` 方法, props `zoom`, `center`, `bearing`, `pitch` 这些属性将会在飞行动画结束后执行.
 
-完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'Synced'
+完整的 props 列表请查看[API docs](/api/#props), 注意文字描述中的字段'Synced'
 
 ## 地图加载
 
@@ -152,7 +152,7 @@ Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 Map �
 
 ```vue
 <template>
-  <mapgis-web-map 
+  <mapgis-web-map
     :accessToken="accessToken"
     :mapStyle.sync="mapStyle"
     @load="onMapLoaded"
@@ -216,7 +216,7 @@ export deafult {
 </script>
 ```
 
-全部的地图行为请看[API](/zh/api/#actions) 页面.
+全部的地图行为请看[API](/api/#events) 页面.
 
 ### 特殊方法 `actions.stop()`
 
@@ -224,4 +224,4 @@ export deafult {
 
 ### 事件
 
-全部的地图行为请看 [API](/zh/api/#events) 页面.
+全部的地图行为请看 [API](/api/#events) 页面.

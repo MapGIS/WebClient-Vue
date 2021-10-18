@@ -12,6 +12,7 @@ export { default as MapgisSearchControl } from "../components/UI/controls/search
 export { default as MapgisCompareControl } from "../components/UI/controls/compare/CompareControl";
 export { default as MapgisCompareInnerControl } from "../components/UI/controls/compare/CompareInnerControl";
 export { default as MapgisFpsControl } from "../components/UI/controls/fps/FpsControl";
+export { default as MapgisZoom } from "../components/UI/controls/zoom/Zoom.vue";
 export { default as MapgisDraw } from "../components/UI/controls/draw/BaseDraw";
 export { default as MapgisMeasure } from "../components/UI/controls/measure/Measure";
 // export { default as BaseDrawItem from "../components/UI/controls/draw/BaseDrawItem";
