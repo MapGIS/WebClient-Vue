@@ -2,6 +2,10 @@
 
 > mapgis-measure
 
+:::tip
+绘制组件`mapgis-draw`在地图对象加载完成之后才会生效，详见[Mapbox GL官方文档](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md)
+:::
+
 ## 属性
 
 ### `enableControl`
