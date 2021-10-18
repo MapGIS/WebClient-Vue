@@ -1,8 +1,8 @@
-export function flyTo(globeView, webGlobe) {
-  webGlobe.viewer.camera.flyTo(globeView);
+export function flyTo(globeView, viewer) {
+  viewer.camera.flyTo(globeView);
 }
 
-export function flyToEx(globeView, webGlobe) {
+export function flyToEx(globeView, viewer) {
   let { destination, orientation } = globeView;
   let { x, y, z } = destination;
   let { heading, pitch } = orientation;
@@ -15,7 +15,7 @@ export function flyToEx(globeView, webGlobe) {
     center = new Cesium.Cartesian3.fromDegrees(x, y, z);
   }
 
-  webGlobe.viewer.camera.flyToEx({
+  viewer.camera.flyToEx({
     target: center,
     offset: new Cesium.HeadingPitchRange(heading, pitch, range)
   });

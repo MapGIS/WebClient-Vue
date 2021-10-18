@@ -41,8 +41,8 @@ export default {
       get CesiumZondy() {
         return self.CesiumZondy;
       },
-      get webGlobe() {
-        return self.webGlobe;
+      get viewer() {
+        return self.viewer;
       },
     };
   },
@@ -57,9 +57,9 @@ export default {
       handler: function() {
         //解决分屏时，cesium无限拉长的问题，要给一个固定高度
         let vm = this;
-        window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+        window.CesiumZondy.getWebGlobeByInterval(function (viewer) {
           vm.$nextTick(function () {
-            webGlobe.viewer.container.style.height = this.height + "px";
+            viewer.container.style.height = this.height + "px";
           })
         },this.vueKey)
       }
@@ -70,31 +70,20 @@ export default {
       await this.$_loadScript();
     },
     flyTo(globeView) {
-      flyTo(globeView, this.webGlobe);
+      flyTo(globeView, this.viewer);
     },
     flyToEx(globeView) {
-      flyToEx(globeView, this.webGlobe);
+      flyToEx(globeView, this.viewer);
     },
   },
 
   created() {
     initManager();
-    this.webGlobe = null;
+    this.viewer = null;
     this.propsIsUpdating = {};
 
-    window.webGlobe = window.webGlobe || null;
-    /*     const eventNames = Object.keys(mapEvents);
-    this.$_bindMapEvents(eventNames);
-    this.$_registerAsyncActions(map);
-    this.$_bindPropsUpdateEvents(); */
+    window.viewer = window.viewer || null;
     this.initialized = false;
-    // const cesiumLib = import("@mapgis/cesium");
-    // Cesium.buildModuleUrl.setBaseUrl('./cesium/');
-
-    /* console.log("cesium created", this.cesium);
-    this.cesiumPromise = this.cesium
-      ? Promise.resolve(this.cesium)
-      : this.loadScript(); */
   },
 
   mounted() {
@@ -105,38 +94,33 @@ export default {
       this.Cesium = Cesium;
       this.CesiumZondy = window.CesiumZondy;
       let container = this.$refs.container
-      const webGlobe = new Cesium.WebSceneControl(container, {
+      let viewer = new Cesium.Viewer(container, {
         ...this._props,
       });
+      this.viewer = viewer;
 
       //解决分屏时，cesium无限拉长的问题，要给一个固定高度
       if(this.height){
         this.$nextTick(function () {
-          webGlobe.viewer.container.style.height = this.height + "px";
+          viewer.container.style.height = this.height + "px";
         })
       }
 
-      this.webGlobe = webGlobe;
-      webGlobe.vueKey = vueKey;
+      viewer.vueKey = vueKey;
       if (cameraView) {
-        webGlobe.viewer.scene.camera.setView(cameraView);
+        viewer.scene.camera.setView(cameraView);
       }
-      window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, webGlobe, {
+      window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, viewer, {
         ScreenSpaceEventHandler: undefined,
       });
 
-      window.webGlobe = window.webGlobe || webGlobe;
-      webGlobe.viewer.cesiumWidget.readyPromise && 
-      webGlobe.viewer.cesiumWidget.readyPromise.then(function(globe) {
+      window.viewer = window.viewer || viewer;
+      viewer.cesiumWidget.readyPromise && 
+      viewer.cesiumWidget.readyPromise.then(function(globe) {
         vm.$emit("webGlobeLoaded",globe);
       });
-      // window.webGlobe = webGlobe;
-      /*     const eventNames = Object.keys(mapEvents);
-      this.$_bindMapEvents(eventNames);
-      this.$_registerAsyncActions(map);
-      this.$_bindPropsUpdateEvents(); */
       this.initialized = true;
-      // 这里禁止吧cesium示例化后的webGlobe传上去，此处会发生vue劫持操作，导致内存溢出
+      // 这里禁止吧cesium示例化后的viewer传上去，此处会发生vue劫持操作，导致内存溢出
       this.$emit("load", {
         component: this,
         Cesium: Cesium,
@@ -153,14 +137,13 @@ export default {
 
   beforeDestroy() {
     this.$nextTick(() => {
-      if (this.webGlobe) {
+      if (this.viewer) {
         const {vueKey, vueIndex} = this;
         window.CesiumZondy.GlobesManager.deleteSource(vueKey, vueIndex)
-        this.webGlobe.viewer.scene.primitives.removeAll();
-        this.webGlobe.viewer.scene.primitives.destroy();
-        this.webGlobe.viewer.entities.removeAll();
-        this.webGlobe.viewer.destroy();
-        // this.webGlobe = null;
+        this.viewer.scene.primitives.removeAll();
+        this.viewer.scene.primitives.destroy();
+        this.viewer.entities.removeAll();
+        this.viewer.destroy();
         // this.viewer = null;
         this.initialized = false;
       }
