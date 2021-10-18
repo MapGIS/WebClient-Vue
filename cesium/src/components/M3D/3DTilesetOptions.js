@@ -14,6 +14,10 @@ export default {
     type: [String, Number],
     default: () => (Math.random() * 100000000).toFixed(0)
   },
+  layers: {
+    type: [String],
+    default: undefined
+  },
   /**
    * @type Cesium.Resource.headers
    * @example headers: { "szvsud-license-key": '3AE2IROq5nGn5K/+zQlUxSoHoNdjCoS1l5567rK5SKjHfRbQIvhtbInd7S9X6bFl' },
@@ -21,7 +25,7 @@ export default {
   headers: {},
   url: { type: String, required: true },
   show: { type: Boolean, default: true },
-  opacity : { type: Number },
+  opacity: { type: Number },
   autoReset: { type: Boolean, default: true },
 
   /**
