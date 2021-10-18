@@ -245,11 +245,14 @@ export default {
         let m3ds = find.source;
         if (!m3ds) return;
         m3ds.forEach(m3d => {
-          if (layers && layers.indexOf(m3d.layerIndex) >= 0) {
+          if (layers) {
             m3d.show = true;
-            console.log("show", m3d.layerIndex);
+            if (layers.indexOf(m3d.layerIndex) >= 0) {
+            } else {
+              m3d.show = false;
+            }
           } else {
-            m3d.show = false;
+            m3d.show = true;
           }
         });
       }
