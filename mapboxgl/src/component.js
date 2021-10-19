@@ -35,7 +35,6 @@ export { default as MapgisPopup } from "./components/UI/Popup.vue";
 export { default as MapgisGeojsonPopup } from "./components/layer/geojson/Popup.vue";
 
 export { default as MapgisBaseTable } from "./components/UI/controls/table/MapBoxBaseTable";
-export { default as MapgisFeatureTable } from "./components/UI/controls/table/FeatureTable";
 export { default as MapgisInspect } from "./components/UI/controls/inspect/Inspect";
 
 export { default as MapgisArrayLayer } from "./components/layer/ArrayLayer";

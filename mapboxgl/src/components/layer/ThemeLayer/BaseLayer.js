@@ -14,6 +14,15 @@ import {gradientColor} from "../../util/util";
 import All from "@mapgis/webclient-es6-service";
 import {formatInterpolate, formatStyleToLayer, getLayerFromTextStyle} from "./themeUtil";
 
+import {
+    fillOutlinePaintList,
+    fillPaintList,
+    pointPaintList,
+    linePaintList,
+    symbolPaintList,
+    symbolLayoutList
+} from "./mappingList"
+
 import * as turf from "@turf/turf"
 
 export const DefaultThemeMains = [
@@ -106,12 +115,6 @@ export default {
          * */
         icons: {
             type: Array
-        },
-        /**
-         * 默认图标
-         * */
-        defaultIcon: {
-            type: String
         },
         dataSource: {
             type: [Object, String]
@@ -206,7 +209,75 @@ export default {
                 this.$_highLightFeature();
             },
             deep: true
-        }
+        },
+        type: {
+            handler: function () {
+                this.$_removeHighlightLayerAll();
+                this.$_themeTypeChanged(this.type);
+                this.$_addTipsAndPopup(this.type);
+            },
+            deep: true
+        },
+        field: {
+            handler: function () {
+                this.$_fieldChanged(this.field);
+            },
+            deep: true
+        },
+        enableTips: {
+            handler: function () {
+            },
+            deep: true
+        },
+        enablePopup: {
+            handler: function () {
+            },
+            deep: true
+        },
+        "themeOption.layerStyle": {
+            handler: function () {
+                let vm = this;
+                Object.keys(this.themeOption.layerStyle).forEach(function (key) {
+                    let layerStyleCopy = vm.themeOptionCopy.layerStyle;
+                    let layerStyle = vm.themeOption.layerStyle;
+                    if ((layerStyleCopy.hasOwnProperty(key) && layerStyle.hasOwnProperty(key) && layerStyleCopy[key] !== layerStyle[key]) ||
+                        (!layerStyleCopy.hasOwnProperty(key) && layerStyle.hasOwnProperty(key))
+                    ) {
+                        vm.$_updateStyle(layerStyle, key);
+                    }
+                });
+                this.$_getThemeOptionCopy();
+            },
+            deep: true
+        },
+        "themeOption.styleGroups": {
+            handler: function () {
+                let vm = this, styleGroups = this.themeOption.styleGroups, groups = {};
+                for (let i = 0; i < styleGroups.length; i++) {
+                    const {style} = styleGroups[i];
+                    if (style) {
+                        Object.keys(style).forEach(function (key) {
+                            if (!groups[key]) {
+                                groups[key] = [];
+                            }
+                            let s = {
+                                start: styleGroups[i].start,
+                                end: styleGroups[i].end
+                            }
+                            s[key] = style[key];
+                            groups[key].push(s);
+                        });
+                    }
+                }
+                switch (this.themeType) {
+                    case "range":
+                        this.$_updateRangeStyleGroups(groups);
+                        break;
+                }
+                this.$_getThemeOptionCopy();
+            },
+            deep: true
+        },
     },
     data() {
         return {
@@ -260,8 +331,10 @@ export default {
             markers: [],
             spinId: undefined,
             maskId: undefined,
-            dataSourceIgs: undefined,
-            igsTextSourceId: undefined
+            dataSourceUrl: undefined,
+            igsTextSourceId: undefined,
+            themeOptionCopy: undefined,
+            defaultIcon: "useDefault"
         };
     },
     mounted() {
@@ -281,6 +354,131 @@ export default {
         this.$_addThemeLayerBySource();
     },
     methods: {
+        $_updateRangeStyleGroups(groups) {
+            let vm = this;
+
+            function setPaint(groups, key, vm) {
+                let paintArr = groups[key];
+                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + key);
+                for (let i = 0; i < paintArr.length; i++) {
+                    for (let j = 3; j < paints.length; j += 2) {
+                        if (paintArr[i].start <= paints[j] && paints[j] <= paintArr[i].end) {
+                            paints[j + 1] = paintArr[i][key];
+                        } else if (paints[j] > paintArr[i].end) {
+                            break;
+                        }
+                    }
+                }
+                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + key, paints);
+            }
+
+            switch (this.dataType) {
+                case "fill":
+                    if (groups.color) {
+                        setPaint(groups, "color", vm);
+                    }
+                    if (groups.opacity) {
+                        setPaint(groups, "opacity", vm);
+                    }
+                    break;
+            }
+        },
+        $_updateStyle(layerStyle, key) {
+            let vm = this;
+            if (vm.themeType !== "heatmap" && vm.themeType !== "symbol") {
+                switch (vm.dataType) {
+                    case "fill":
+                        if (fillOutlinePaintList.hasOwnProperty(key)) {
+                            vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName() + "_线", fillOutlinePaintList[key], layerStyle[key]);
+                        }
+                        vm.$_updatePaint(fillPaintList, layerStyle, key);
+                        break;
+                    case "circle":
+                        vm.$_updatePaint(pointPaintList, layerStyle, key);
+                        break;
+                    case "line":
+                        vm.$_updatePaint(linePaintList, layerStyle, key);
+                        break;
+                }
+            } else if (vm.themeType === "heatmap") {
+                if (key === "color") {
+                    let colors = vm.$_getHeatmapColors(layerStyle[key]);
+                    vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), "heatmap-color", colors);
+                } else {
+                    vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), "heatmap-radius", layerStyle[key]);
+                }
+            } else if (vm.themeType === "symbol") {
+                let value = layerStyle[key];
+                if (symbolPaintList.hasOwnProperty(key)) {
+                    if (key === "xOffset" || key === "yOffset") {
+                        let translate = themeManager.getPanelProps(vm.layerIdCopy, vm.themeType, "icon-translate");
+                        if (key === "xOffset") {
+                            translate[0] = Number(layerStyle[key]);
+                        } else {
+                            translate[1] = Number(layerStyle[key]) * -1;
+                        }
+                        value = translate;
+                    }
+                    vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), symbolPaintList[key], value);
+                }
+                if (symbolLayoutList.hasOwnProperty(key)) {
+                    if (key === "symbol") {
+                        let iconName = "useDefault";
+                        vm.defaultIcon = layerStyle[key];
+                        if (vm.defaultIcon !== "useDefault") {
+                            let iconFullName = vm.defaultIcon.split("/")[vm.defaultIcon.split("/").length - 1];
+                            iconName = iconFullName.split(".")[0];
+                        }
+                        if (!vm.map.hasImage(iconName)) {
+                            let img = new Image(128, 128);
+                            img.addEventListener("load", function () {
+                                vm.map.addImage(iconName, img);
+                                vm.$_setLayOutProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), symbolLayoutList[key], iconName);
+                            });
+                            if (vm.defaultIcon === "useDefault") {
+                                img.src = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjI5OTcyNzU0MDMwIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIyMzQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48L3N0eWxlPjwvZGVmcz48cGF0aCBkPSJNNTEwLjY5MTE5MSA2NC41Njc1NTFjLTI0Ni41NDgyMzIgMC00NDcuMTI1NDU3IDIwMC41NzgyNDgtNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDAgMjQ2LjU0MzExNiAyMDAuNTc4MjQ4IDQ0Ny4xMjU0NTcgNDQ3LjEyNTQ1NyA0NDcuMTI1NDU3IDI0Ni41NDMxMTYgMCA0NDcuMTI1NDU3LTIwMC41ODIzNDEgNDQ3LjEyNTQ1Ny00NDcuMTI1NDU3Qzk1Ny44MTY2NDggMjY1LjE0NDc3NiA3NTcuMjM0MzA3IDY0LjU2NzU1MSA1MTAuNjkxMTkxIDY0LjU2NzU1MXpNNTEwLjY5MTE5MSA4NjMuNDg5MzA2Yy0xOTMuOTgyMDE2IDAtMzUxLjc5NjI5OC0xNTcuODE0MjgyLTM1MS43OTYyOTgtMzUxLjc5NjI5OHMxNTcuODE0MjgyLTM1MS43OTYyOTggMzUxLjc5NjI5OC0zNTEuNzk2Mjk4Uzg2Mi40ODc0ODkgMzE3LjcxMDk5MiA4NjIuNDg3NDg5IDUxMS42OTMwMDggNzA0LjY3MzIwOCA4NjMuNDg5MzA2IDUxMC42OTExOTEgODYzLjQ4OTMwNnoiIHAtaWQ9IjIyMzUiIGZpbGw9IiMxMjk2ZGIiPjwvcGF0aD48cGF0aCBkPSJNNTEwLjY5MTE5MSA1MTEuNjkzMDA4bS0yMTQuNDkxMTE5IDBhMjA5LjYwNiAyMDkuNjA2IDAgMSAwIDQyOC45ODIyMzggMCAyMDkuNjA2IDIwOS42MDYgMCAxIDAtNDI4Ljk4MjIzOCAwWiIgcC1pZD0iMjIzNiIgZmlsbD0iIzEyOTZkYiI+PC9wYXRoPjwvc3ZnPg==";
+                            } else {
+                                img.src = vm.defaultIcon;
+                            }
+                        } else {
+                            vm.$_setLayOutProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), symbolLayoutList[key], iconName);
+                        }
+                    } else {
+                        if (key === "symbolSize") {
+                            value = value / 10;
+                        }
+                        vm.$_setLayOutProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), symbolLayoutList[key], value);
+                    }
+                }
+            }
+        },
+        $_updatePaint(PaintList, layerStyle, key) {
+            if (PaintList.hasOwnProperty(key)) {
+                if (key === "color") {
+                    let geojson = this.dataSourceUrl || this.dataSource;
+                    if (geojson && geojson instanceof Object) {
+                        let dataSource = themeManager.getExtraData(this.layerIdCopy, this.themeType, "dataSource");
+                        let colors = this.$_getRangeColors(layerStyle[key], dataSource, this.selectValue, geojson.features).colors;
+                        this.$_setPaintProperty(this.layerIdCopy, this.layerIdCopy + this.$_getThemeName(), PaintList[key], colors);
+                    }
+                } else {
+                    this.$_setPaintProperty(this.layerIdCopy, this.layerIdCopy + this.$_getThemeName(), PaintList[key], layerStyle[key]);
+                }
+            }
+        },
+        $_getThemeOptionCopy() {
+            if (this.themeOption) {
+                let vm = this;
+                this.themeOptionCopy = {};
+                const {layerStyle} = this.themeOption;
+                if (layerStyle instanceof Object) {
+                    this.themeOptionCopy.layerStyle = {};
+                    Object.keys(layerStyle).forEach(function (key) {
+                        vm.themeOptionCopy.layerStyle[key] = layerStyle[key];
+                    });
+                }
+            }
+        },
         $_addSpin(layerId) {
             let _container = document.getElementById(this.map._container.id), vm = this;
             let spinSpan = document.createElement("span");
@@ -429,7 +627,7 @@ export default {
                 this.hoveredStateId = null;
             }
         },
-        $_addHeightLightLayer(name, options, source_Id) {
+        $_addHeightLightLayer(name, options, source_Id, themeType) {
             let hId, heightLightLayer;
             if (this.dataSource && this.dataSource instanceof Object) {
                 this.map.addSource(
@@ -439,13 +637,21 @@ export default {
                         "data": this.dataSource
                     }
                 );
+            } else if (this.dataSourceUrl && this.dataSourceUrl instanceof Object) {
+                this.map.addSource(
+                    source_Id,
+                    {
+                        "type": "geojson",
+                        "data": this.dataSourceUrl
+                    }
+                );
             } else {
                 return;
             }
-            if (this.themeType === "range") {
+            if (this.themeType !== "symbol" && this.themeType !== "heatmap") {
                 if (this.dataType === "fill") {
-                    hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_线";
-                    let hIdFill = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_多边形";
+                    hId = this.layerIdCopy + this.$_getThemeName(themeType) + name + "_高亮_线";
+                    let hIdFill = this.layerIdCopy + this.$_getThemeName(themeType) + name + "_高亮_多边形";
                     heightLightLayer = {
                         id: hId,
                         type: "line",
@@ -502,7 +708,7 @@ export default {
                         this.map.addLayer(heightLightLayerFill);
                     }
                 } else if (this.dataType === "circle") {
-                    hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_点";
+                    hId = this.layerIdCopy + this.$_getThemeName(themeType) + name + "_高亮_点";
                     let cRadius;
                     if (this.themeOption.layerStyle) {
                         const {radius} = this.themeOption.layerStyle;
@@ -557,7 +763,7 @@ export default {
                         }
                     }
                 } else if (this.dataType === "line") {
-                    hId = this.layerIdCopy + this.$_getThemeName() + name + "_高亮_线";
+                    hId = this.layerIdCopy + this.$_getThemeName(themeType) + name + "_高亮_线";
                     let lWidth;
                     if (this.themeOption.layerStyle) {
                         const {width} = this.themeOption.layerStyle;
@@ -706,13 +912,13 @@ export default {
             }
 
             if (title) {
-                element += "<div class='mapgis-theme-popup-row " + titleClass + "' style='" + titleStyle + "'>" + title + "</div>";
+                element += "<div class='mapgis-theme-popup-row mapgis-theme-popup-title " + titleClass + "' style='" + titleStyle + "'>" + title + "</div>";
             }
 
             if (fields && fields instanceof Array && fields.length > 0) {
                 for (let i = 0; i < fields.length; i++) {
                     field = getField(alias, fields[i]);
-                    element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[fields[i]] + "</span></div>";
+                    element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "' title='" + field + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "' title='" + feature.properties[fields[i]] + "'>" + feature.properties[fields[i]] + "</span></div>";
                 }
             } else {
                 field = getField(alias, defaultField);
@@ -721,6 +927,85 @@ export default {
             element += "</div>";
             return element;
         },
+        // $_getPopupHtml(fields, alias, style, pClass, title, feature, defaultField) {
+        //     let field, containerStyle, titleStyle, rowStyle, fieldStyle, valueStyle;
+        //     let containerClass, rowClass, titleClass, fieldClass, valueClass;
+        //
+        //     function getField(alias, field) {
+        //         if (alias && alias instanceof Object && alias.hasOwnProperty(field)) {
+        //             field = alias[field];
+        //         }
+        //         return field;
+        //     }
+        //
+        //     function getStyle(style) {
+        //         let styleStr = "";
+        //         if (style && style instanceof Object) {
+        //             Object.keys(style).forEach(function (key) {
+        //                 styleStr += key + ":" + style[key] + ";";
+        //             });
+        //         }
+        //         return styleStr;
+        //     }
+        //
+        //     if (style && style.hasOwnProperty("containerStyle")) {
+        //         containerStyle = getStyle(style.containerStyle);
+        //     }
+        //
+        //     if (pClass && pClass.hasOwnProperty("containerClass")) {
+        //         containerClass = pClass.containerClass;
+        //     }
+        //
+        //     let element = "<div class='mapgis-theme-popup-container " + containerClass + "' style='" + containerStyle + "'>"
+        //
+        //     if (style && style.hasOwnProperty("rowStyle")) {
+        //         rowStyle = getStyle(style.rowStyle);
+        //     }
+        //
+        //     if (pClass && pClass.hasOwnProperty("rowClass")) {
+        //         rowClass = pClass.rowClass;
+        //     }
+        //
+        //     if (style && style.hasOwnProperty("titleStyle")) {
+        //         titleStyle = getStyle(style.titleStyle);
+        //     }
+        //
+        //     if (pClass && pClass.hasOwnProperty("titleClass")) {
+        //         titleClass = pClass.titleClass;
+        //     }
+        //
+        //     if (style && style.hasOwnProperty("fieldStyle")) {
+        //         fieldStyle = getStyle(style.fieldStyle);
+        //     }
+        //
+        //     if (pClass && pClass.hasOwnProperty("fieldClass")) {
+        //         fieldClass = pClass.fieldClass;
+        //     }
+        //
+        //     if (style && style.hasOwnProperty("valueStyle")) {
+        //         valueStyle = getStyle(style.valueStyle);
+        //     }
+        //
+        //     if (pClass && pClass.hasOwnProperty("valueClass")) {
+        //         valueClass = pClass.valueClass;
+        //     }
+        //
+        //     if (title) {
+        //         element += "<div class='mapgis-theme-popup-row " + titleClass + "' style='" + titleStyle + "'>" + title + "</div>";
+        //     }
+        //
+        //     if (fields && fields instanceof Array && fields.length > 0) {
+        //         for (let i = 0; i < fields.length; i++) {
+        //             field = getField(alias, fields[i]);
+        //             element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[fields[i]] + "</span></div>";
+        //         }
+        //     } else {
+        //         field = getField(alias, defaultField);
+        //         element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[defaultField] + "</span></div>";
+        //     }
+        //     element += "</div>";
+        //     return element;
+        // },
         $_removeTips() {
             if (window.tips) {
                 window.tips.remove();
@@ -785,38 +1070,125 @@ export default {
         },
         $_addThemeLayerBySource() {
             let vm = this;
+            this.$_getThemeOptionCopy();
             if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
                 vm.$_addTheme(this.dataSource);
-            } else if (this.dataSource && typeof this.dataSource === "string" && this.dataSource.indexOf("igs/rest/mrfs/layer/query") >= 0) {
-                FeatureService.get(this.dataSource,
-                    function (result) {
-                        result = JSON.parse(result);
-                        let LabelDots = result.LabelDots;
-                        result = vm.$_resultToGeojson(result);
-                        let textGeojson = {
-                            type: "FeatureCollection",
-                            features: []
-                        }
-                        for (let k = 0; k < LabelDots.length; k++) {
-                            textGeojson.features.push({
-                                "type": "Feature",
-                                "properties": result.features[k].properties,
-                                "geometry": {
-                                    "type": "Point",
-                                    "coordinates": [LabelDots[k].X, LabelDots[k].Y]
-                                }
+            } else if (this.dataSource && typeof this.dataSource === "string") {
+                if (this.dataSource.indexOf("igs/rest/mrfs/layer/query") >= 0) {
+                    FeatureService.get(this.dataSource,
+                        function (result) {
+                            result = JSON.parse(result);
+                            let LabelDots = result.LabelDots;
+                            result = vm.$_resultToGeojson(result);
+                            let textGeojson = {
+                                type: "FeatureCollection",
+                                features: []
+                            }
+                            for (let k = 0; k < LabelDots.length; k++) {
+                                textGeojson.features.push({
+                                    "type": "Feature",
+                                    "properties": result.features[k].properties,
+                                    "geometry": {
+                                        "type": "Point",
+                                        "coordinates": [LabelDots[k].X, LabelDots[k].Y]
+                                    }
+                                });
+                            }
+                            vm.igsTextSourceId = "igs_text_" + parseInt(String(Math.random() * 10000));
+                            vm.map.addSource(vm.igsTextSourceId, {
+                                type: "geojson",
+                                data: textGeojson
                             });
-                        }
-                        vm.igsTextSourceId = "igs_text_" + parseInt(String(Math.random() * 10000));
-                        vm.map.addSource(vm.igsTextSourceId, {
-                            type: "geojson",
-                            data: textGeojson
+                            vm.dataSourceUrl = result;
+                            vm.$_addTheme(result);
                         });
-                        vm.dataSourceIgs = result;
+                } else {
+                    FeatureService.get(this.dataSource, function (result) {
+                        result = JSON.parse(result);
+                        vm.dataSourceUrl = result;
                         vm.$_addTheme(result);
                     });
+                }
             }
 
+        },
+        $_addTipsAndPopup(themeType) {
+            let vm = this;
+            //是否开启tips
+            if (this.enableTips && this.type !== "symbol" && this.type !== "heatmap") {
+                //是否开启高亮
+                if (this.tipsOptions.enableHighlight || !this.tipsOptions.hasOwnProperty("enableHighlight")) {
+                    this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
+                    this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId, themeType);
+                    this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.enableTips) {
+                            if (vm.hoveredStateId) {
+                                vm.map.setFeatureState(
+                                    {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                    {hover: false}
+                                );
+                            }
+                            vm.hoveredStateId = e.features[0].id;
+                            vm.map.setFeatureState(
+                                {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                {hover: true}
+                            );
+                            vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                            vm.$emit("highlightChanged", vm.hoveredStateId);
+                        }
+                    });
+                    this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.enableTips) {
+                            if (vm.hoveredStateId !== null) {
+                                vm.map.setFeatureState(
+                                    {source: vm.tipsSourceId, id: vm.hoveredStateId},
+                                    {hover: false}
+                                );
+                                vm.$_removeTips();
+                            }
+                            vm.hoveredStateId = null;
+                        }
+                    });
+                } else {
+                    this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.enableTips) {
+                            vm.hoveredStateId = e.features[0].id;
+                            vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                        }
+                    });
+                    this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                        if (vm.enableTips) {
+                            if (vm.hoveredStateId !== null) {
+                                vm.$_removeTips();
+                            }
+                            vm.hoveredStateId = null;
+                        }
+                    });
+                }
+            }
+            //是否开启Popup
+            if (this.enablePopup && this.type !== "symbol" && this.type !== "heatmap") {
+                if (this.popupOptions.enableHighlight || !this.popupOptions.hasOwnProperty("enableHighlight")) {
+                    this.popupSourceId = this.layerIdCopy + "_popup_" + parseInt(String(Math.random() * 10000));
+                    this.$_addHeightLightLayer("_popup", this.popupOptions, this.popupSourceId, themeType);
+                }
+                this.map.on('click', this.layerIdCopy + this.$_getThemeName(), (e) => {
+                    if (vm.enablePopup) {
+                        if (vm.popupStateId) {
+                            vm.map.setFeatureState(
+                                {source: vm.popupSourceId, id: vm.popupStateId},
+                                {hover: false}
+                            );
+                        }
+                        vm.popupStateId = e.features[0].id;
+                        vm.map.setFeatureState(
+                            {source: vm.popupSourceId, id: vm.popupStateId},
+                            {hover: true}
+                        );
+                        vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
+                    }
+                });
+            }
         },
         $_addTheme(dataSource) {
             let vm = this;
@@ -836,71 +1208,7 @@ export default {
             themeManager.field = this.selectValue;
             themeManager.vueId = this.vueId;
             this.$_addThemeLayer(this.type, layerId, this.selectValue);
-            //是否开启tips
-            if (this.enableTips && this.type !== "symbol" && this.type !== "heatmap") {
-                //是否开启高亮
-                if (this.tipsOptions.enableHighlight || !this.tipsOptions.hasOwnProperty("enableHighlight")) {
-                    this.tipsSourceId = this.layerIdCopy + "_tips_" + parseInt(String(Math.random() * 10000));
-                    this.$_addHeightLightLayer("_tips", this.tipsOptions, this.tipsSourceId);
-                    this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                        if (vm.hoveredStateId) {
-                            vm.map.setFeatureState(
-                                {source: vm.tipsSourceId, id: vm.hoveredStateId},
-                                {hover: false}
-                            );
-                        }
-                        vm.hoveredStateId = e.features[0].id;
-                        vm.map.setFeatureState(
-                            {source: vm.tipsSourceId, id: vm.hoveredStateId},
-                            {hover: true}
-                        );
-                        vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                        vm.$emit("highlightChanged", vm.hoveredStateId);
-                    });
-                    this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                        if (vm.hoveredStateId !== null) {
-                            vm.map.setFeatureState(
-                                {source: vm.tipsSourceId, id: vm.hoveredStateId},
-                                {hover: false}
-                            );
-                            vm.$_removeTips();
-                        }
-                        vm.hoveredStateId = null;
-                    });
-                } else {
-                    this.map.on('mousemove', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                        vm.hoveredStateId = e.features[0].id;
-                        vm.$_addTips([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                    });
-                    this.map.on('mouseleave', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                        if (vm.hoveredStateId !== null) {
-                            vm.$_removeTips();
-                        }
-                        vm.hoveredStateId = null;
-                    });
-                }
-            }
-            //是否开启Popup
-            if (this.enablePopup && this.type !== "symbol" && this.type !== "heatmap") {
-                if (this.popupOptions.enableHighlight || !this.popupOptions.hasOwnProperty("enableHighlight")) {
-                    this.popupSourceId = this.layerIdCopy + "_popup_" + parseInt(String(Math.random() * 10000));
-                    this.$_addHeightLightLayer("_popup", this.popupOptions, this.popupSourceId);
-                }
-                this.map.on('click', this.layerIdCopy + this.$_getThemeName(), (e) => {
-                    if (vm.popupStateId) {
-                        vm.map.setFeatureState(
-                            {source: vm.popupSourceId, id: vm.popupStateId},
-                            {hover: false}
-                        );
-                    }
-                    vm.popupStateId = e.features[0].id;
-                    vm.map.setFeatureState(
-                        {source: vm.popupSourceId, id: vm.popupStateId},
-                        {hover: true}
-                    );
-                    vm.$_addPopup([e.lngLat.lng, e.lngLat.lat], e.features[0]);
-                });
-            }
+            this.$_addTipsAndPopup();
         },
         $_addThemeLayer(themeType, layerId, themeField) {
             this.$refs.themePanel.$_show();
@@ -1091,17 +1399,13 @@ export default {
                             vm.$_addSymbolLayer(dataSource);
                             break;
                         case "heatmap":
-                            if (vm.initType === "props") {
-                                vm.selectValue = themeField;
-                            } else {
-                                vm.selectValue = fields[0];
-                            }
+                            vm.selectValue = themeField || fields[0];
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "numberFields");
                             themeManager.initThemeProps(
                                 vm.layerIdCopy,
                                 vm.themeType,
                                 vm.dataType,
-                                fields[0]
+                                vm.selectValue
                             );
                             themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             dataSource = vm.$_setDataSource(features, fields[0], "unique");
@@ -1160,7 +1464,7 @@ export default {
             let features;
             if (this.initType === "props") {
                 if (typeof this.dataSource === "string") {
-                    features = this.dataSourceIgs.features;
+                    features = this.dataSourceUrl.features;
                 } else {
                     features = this.dataSource.features;
                 }
@@ -1506,7 +1810,7 @@ export default {
             this.$_setDataToVue("checkBoxArr", checkBoxArr);
             return newColors;
         },
-        $_setRangeColors(color, dataSourceCopy, key, features) {
+        $_getRangeColors(color, dataSourceCopy, key, features) {
             if (this.themeOption.layerStyle && this.themeOption.layerStyle.hasOwnProperty("color")) {
                 color = this.themeOption.layerStyle.color;
             }
@@ -1543,6 +1847,15 @@ export default {
                     }
                 }
             }
+            return {
+                colors: colors,
+                checkBoxArr: checkBoxArr
+            }
+        },
+        $_setRangeColors(color, dataSourceCopy, key, features) {
+            let colorAndCheckBox = this.$_getRangeColors(color, dataSourceCopy, key, features);
+            let colors = colorAndCheckBox.colors;
+            let checkBoxArr = colorAndCheckBox.checkBoxArr;
             let opacitys, radiuses, outlineWidths, outlineColors, outlineOpacities;
             //如果有styleGroups，则应用
             if (this.themeOption.styleGroups && this.themeOption.styleGroups.length > 0) {
@@ -1952,6 +2265,9 @@ export default {
             if (opacity) {
                 layer.paint[this.dataType + "-opacity"] = opacity;
             }
+            if (layer.paint.hasOwnProperty("icon-translate")) {
+                themeManager.setPanelProps(this.layerIdCopy, this.themeType, "icon-translate", layer.paint["icon-translate"]);
+            }
             return layer;
         },
         //添加专题图图层
@@ -2194,6 +2510,10 @@ export default {
         $_addSymbolLayer(dataSource) {
             let vm = this, iconName;
             let img = new Image(128, 128);
+            const {layerStyle} = this.themeOption;
+            if (layerStyle.symbol) {
+                vm.defaultIcon = layerStyle.symbol;
+            }
             if (vm.defaultIcon === "useDefault") {
                 iconName = "useDefault";
             } else {
@@ -2234,6 +2554,10 @@ export default {
                         }
                     };
                     layer = vm.$_editLayerByStyle(layer);
+                    layer.layout["icon-image"] = iconName;
+                    if (typeof layer.layout["icon-size"] === 'number') {
+                        layer.layout["icon-size"] = layer.layout["icon-size"] / 10;
+                    }
                     let newIconSize;
                     if (vm.themeOption.styleGroups && vm.themeOption.styleGroups.length > 0) {
                         newIconSize = vm.$_getIconSize(dataSource);
@@ -2766,12 +3090,12 @@ export default {
                             break;
                         case "heatmap":
                             fields = themeManager.getLayerProps(vm.layerIdCopy, "numberFields");
-                            vm.selectValue = fields[0];
+                            vm.selectValue = this.field || fields[0];
                             themeManager.initThemeProps(
                                 vm.layerIdCopy,
                                 vm.themeType,
                                 vm.dataType,
-                                fields[0]
+                                vm.selectValue
                             );
                             themeManager.initExtraData(vm.layerIdCopy, vm.themeType, vm.selectValue);
                             dataSource = vm.$_setDataSource(features, fields[0], "unique");
@@ -3935,16 +4259,19 @@ export default {
                     this.$refs.themePanel.$_close();
                 }
                 themeManager.setManagerProps(layerId, undefined);
-                this.$_removePopup();
-                this.$_removeTips();
-                this.$_removeHighlightLayer("_tips");
-                this.$_removeHighlightLayer("_popup");
-                if (this.map.getSource(this.tipsSourceId)) {
-                    this.map.removeSource(this.tipsSourceId);
-                }
-                if (this.map.getSource(this.popupSourceId)) {
-                    this.map.removeSource(this.popupSourceId);
-                }
+                this.$_removeHighlightLayerAll();
+            }
+        },
+        $_removeHighlightLayerAll() {
+            this.$_removePopup();
+            this.$_removeTips();
+            this.$_removeHighlightLayer("_tips");
+            this.$_removeHighlightLayer("_popup");
+            if (this.map.getSource(this.tipsSourceId)) {
+                this.map.removeSource(this.tipsSourceId);
+            }
+            if (this.map.getSource(this.popupSourceId)) {
+                this.map.removeSource(this.popupSourceId);
             }
         },
         $_removeHighlightLayer(name) {
