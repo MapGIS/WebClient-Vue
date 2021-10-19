@@ -4,7 +4,8 @@ import { Style } from "@mapgis/webclient-es6-service";
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 import clonedeep from "lodash.clonedeep";
-const MapboxInspect = require("mapbox-gl-inspect");
+const Inspect = require("@mapgis/mapbox-gl-inspect");
+const MapboxInspect = Inspect.default;
 import Popup from "./geojson/Popup";
 
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
@@ -401,6 +402,7 @@ export default {
         this.$parent.popupInspect == null &&
         this.$parent.popupInspect === undefined
       ) {
+        console.log("MapboxInspect", MapboxInspect);
         const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
             closeOnClick: false,
@@ -517,7 +519,7 @@ export default {
             ...point.toMapboxStyle({ highlight: true })
           };
         } else if (type == "line" || line) {
-          if (!line) return;  
+          if (!line) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -525,7 +527,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (type == "polygon" || polygon) {
-          if (!polygon) return;  
+          if (!polygon) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "fill",
@@ -536,7 +538,7 @@ export default {
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
       } else {
         if (this.layer.type === "fill") {
-          if (!line) return;  
+          if (!line) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -544,7 +546,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "line") {
-          if (!line) return;  
+          if (!line) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -552,7 +554,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "circle") {
-          if (!point) return;  
+          if (!point) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "circle",
