@@ -23,6 +23,10 @@ export default {
     // }
   },
   methods: {
+    $_setPanel() {
+    },
+    $_reset() {
+    },
     $_show() {
     },
     $_close() {
