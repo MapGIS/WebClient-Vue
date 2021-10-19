@@ -5,8 +5,7 @@ export default {
   component: MapgisMeasure,
   argTypes: {
     enableControl: true,
-    expandControl: true,
-    hasSettingPanel: false,
+    isAdvanceControl: false,
     position: "top-left",
   },
 };
@@ -17,7 +16,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       measureResult: null,
-      toolbarVisible: this.expandControl,
+      toolbarVisible: true,
       toolbarBtns: [
         {
           icon: "mapgis-chevrons-right",
@@ -65,7 +64,7 @@ const Template = (args, { argTypes }) => ({
         ? measureResult.center.geometry.coordinates
         : [];
     },
-    controlStyle({ position, hasSettingPanel }) {
+    controlStyle({ position, isAdvanceControl }) {
       const [first, secend] = position.split("-");
       return {
         width: "fit-content",
@@ -78,7 +77,7 @@ const Template = (args, { argTypes }) => ({
         left: "10px",
         [first]: "10px",
         [secend]: "10px",
-        background: hasSettingPanel ? "#fff" : "transparent",
+        background: isAdvanceControl ? "#fff" : "transparent",
       };
     },
     toolbarStyle({ toolbarVisible }) {
@@ -139,7 +138,7 @@ const Template = (args, { argTypes }) => ({
         @measureresult="measureResult = $event"
       >
         <mapgis-ui-space
-          v-if="!hasSettingPanel"
+          v-if="!isAdvanceControl"
           :style="toolbarStyle"
           slot="measureTool"
         >
@@ -183,7 +182,6 @@ const Template = (args, { argTypes }) => ({
 export const 量测 = Template.bind({});
 量测.args = {
   enableControl: true,
-  expandControl: true,
-  hasSettingPanel: false,
+  isAdvanceControl: false,
   position: "top-left",
 };
