@@ -32,10 +32,8 @@
       </template>
     </div>
     <div
-      :class="[
-        'locate-panel-contaner',
-      ]"
-      :style="{display:locationPanelExpand ? 'block' : 'none'}"
+      :class="['locate-panel-contaner']"
+      :style="{ display: locationPanelExpand ? 'block' : 'none' }"
     >
       <slot />
     </div>
@@ -68,7 +66,7 @@
 </template>
 
 <script>
-const Feature = require("./util/feature.min.js");
+import * as Feature from "./util/feature";
 import PlaceName from "./PlaceName/PlaceName.vue";
 
 export default {
@@ -158,7 +156,7 @@ export default {
       this.$refs.placeName.reset();
       this.$emit("onClose");
     },
-    colorCluster(color){
+    colorCluster(color) {
       this.$emit("color-cluster", color);
     },
     onSearchFocus() {
