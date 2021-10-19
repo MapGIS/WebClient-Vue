@@ -8,9 +8,9 @@
         {{title}}  
       </p>
       <Tag slot="extra" color="primary">{{id}}</Tag> -->
-      <div class="switch-detail" v-if="detailButton">
+      <div class="switch-detail" v-show="detailButton">
         <span>显示高级参数</span>
-        <mapgis-ui-switch size="small" v-model="isDetail" @on-change="switchParams" />
+        <mapgis-ui-switch size="small" v-model="isDetail" @change="switchParams" />
       </div>
       <div class="mapgis-ui-workflow-wrapper-modelTask" :style="{height:autoHeight}">
         <div
@@ -69,6 +69,7 @@
               size="default"
               :value="p.value"
               :title="handleDescp(p)"
+              :disabled="isOneMap && p.direction === 'OUT'"
               @change="(v)=> handleString(v, i)"
               @focus="handleShowModal(p, i)"
             />
@@ -94,7 +95,7 @@
             <mapgis-ui-switch
               v-else-if="p.dataType === 'BOOLEAN' && (isDetail || p.need)"
               size="default"
-              :value="p.value"
+              :checked="p.value"
               @change="(v)=> handleBoolean(v, i)"
             />
           <!-- </Col> -->
@@ -102,9 +103,9 @@
         </div>
       </div>
     <!-- </mapgis-ui-card> -->
-    <div style="background:#fff;text-align:center;">
-      <mapgis-ui-button type="primary" style="margin:8px 10px;" @click="() => {this.$emit('handleConfirm')}">执行分析</mapgis-ui-button>
-      <mapgis-ui-button style="margin:8px 10px;" @click="() => {this.$emit('handleClearParams')}">清空数据</mapgis-ui-button>
+    <div style="background:#fff;" :style="buttonPosition">
+      <mapgis-ui-button type="primary" style="margin:8px 18px 8px 0px;" :loading="showLoading" @click="() => {this.$emit('handleConfirm')}">执行分析</mapgis-ui-button>
+      <mapgis-ui-button style="margin:8px 4px;" @click="() => {this.$emit('handleClearParams')}">清空数据</mapgis-ui-button>
     </div>
     <mapgis-ui-modal
       :closable="false"
@@ -194,7 +195,6 @@ export default {
   },
   props: {
     title: String,
-    id: String,
     params: Array,
     modelGroup: {
       type: String,
@@ -203,6 +203,14 @@ export default {
     modelType: {
       type: String,
       default: ''
+    },
+    isOneMap: {
+      type: Boolean,
+      default: false
+    },
+    showLoading: {
+      type: Boolean,
+      default: false
     },
     detailButton: {
       type: Boolean,
@@ -289,11 +297,11 @@ export default {
     //     }
     //   })
     // },
-    modelType (next) {
-      if (next === 'igs') {
-        this.isDetail = true
-      }
-    }
+    // modelType (next) {
+    //   if (next === 'igs') {
+    //     this.isDetail = true
+    //   }
+    // }
     // oldFileGdbp (next) {
     //   let selectFormat = {
     //     xattrs: {
@@ -303,7 +311,15 @@ export default {
     //   this.selectsInfo = selectFormat
     // }
   },
-  computed: {},
+  mounted () {},
+  computed: {
+    buttonPosition () {
+      if (this.isOneMap) {
+        return 'text-align:right'
+      }
+      return 'text-align:center'
+    }
+  },
   methods: {
     handleTree (param, index) { // 'IN.URL'或'OUT.URL'或'IN.URL.MULTI'
       this.index = index
@@ -333,16 +349,20 @@ export default {
         } else return param.valueShow
       }
     },
-    isTreeFolder (file) {
-      if (EnumTree.indexOf(file.name) >= 0) {
+    isTreeFolder (param) {
+      if (EnumTree.indexOf(param.name) >= 0 && !this.isOneMap) {
         return true
       }
       return false
     },
     clearParams () {
       this.list.forEach(l => {
-        l.value = ''
-        l.valueShow = ''
+        if (l.dataType === 'BOOLEAN') {
+          l.value = false
+        } else {
+          l.value = ''
+          l.valueShow = ''
+        }
       })
     },
     updateParams () {
