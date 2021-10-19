@@ -5,6 +5,7 @@
 <script>
 import clonedeep from "lodash.clonedeep";
 import withEvents from "../../../lib/withEvents";
+import { deepEqual } from "../../util/util";
 import { compareStyle } from "./MvtCompare";
 import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
@@ -297,7 +298,7 @@ export default {
               if (!findorigin) {
                 findtheme = true;
                 let newbeforetheme = news.find(l => l.id == beforetheme.id);
-                if (beforetheme) newbeforetheme.paint = beforetheme.paint;
+                if (beforetheme) newbeforetheme.paint = beforetheme.paint || {};
                 let themelayer = newbeforetheme || beforetheme;
                 if (themelayer) total = total.concat(themelayer);
               }
