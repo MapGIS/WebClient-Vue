@@ -22,7 +22,8 @@ import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 import mapboxgl from "@mapgis/mapbox-gl";
 import clonedeep from 'lodash.clonedeep';
-const MapboxInspect = require("mapbox-gl-inspect");
+const Inspect = require("@mapgis/mapbox-gl-inspect");
+const MapboxInspect = Inspect.default;
 import GeojsonPopup from './geojson/Popup';
 
 export default {
