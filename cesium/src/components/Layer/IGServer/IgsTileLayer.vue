@@ -17,7 +17,7 @@ export default {
   data() {
     return {
       managerName: "IgsTilecLayerManager",
-      providerName: "MapGISMapProvider",
+      providerName: "MapGISTileServerImageProvider",
       checkType: {
         tileWidth: "number",
         tileHeight: "number",
