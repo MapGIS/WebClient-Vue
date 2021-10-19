@@ -31,7 +31,7 @@
             <div class="mapgis-inspect-prop-key">
               <span style="padding-right: 5px">{{ key }}</span>
             </div>
-            <div>{{ value }} ({{ typeof value }})</div>
+            <div>{{ value }} ({{ parseType(typeof value) }})</div>
           </div>
           <br />
         </mapgis-ui-tab-pane>
@@ -96,20 +96,22 @@ export default {
         this.$emit("select-layer", this.activeKey);
       }
     });
+  },
+  methods: {
+    parseType(type) {
+      let string = "未知";
+      if (type == "string") {
+        string = "字符";
+      } else if (type == "number") {
+        string = "数值";
+      }
+      return string;
+    }
   }
 };
 </script>
 
 <style>
-.mapboxgl-popup {
-  width: 240px;
-}
-
-.mapboxgl-popup-content {
-  width: 260px;
-  height: fit-content;
-}
-
 .mapgis-inspect-content {
   position: absolute;
   width: 240px;

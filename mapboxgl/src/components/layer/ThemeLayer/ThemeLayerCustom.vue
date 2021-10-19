@@ -75,11 +75,6 @@ export default {
   width: auto;
 }
 
-.mapboxgl-popup-content {
-  width: auto;
-  padding: 0;
-}
-
 .mapgis-theme-popup-container {
   padding: 10px 10px 15px;
 }
