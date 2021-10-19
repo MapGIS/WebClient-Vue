@@ -171,11 +171,13 @@ export default {
       if (this.data) {
         source = {
           type: "geojson",
+          generateId: true,
           data: this.data
         }
       } else if (this.source) {
         source = {
           type: "geojson",
+          generateId: true,
           ...this.source
         };
         if (this.enablePopup) {
@@ -302,7 +304,7 @@ export default {
         return;
       }
       if (this.$parent.popupInspect == null && this.$parent.popupInspect === undefined) {
-        const inspect = new MapboxInspect({
+        /* const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
             closeOnClick: true,
             closeButton: true
@@ -354,7 +356,7 @@ export default {
           }
         });
         map.addControl(inspect);
-        this.$parent.popupInspect = inspect;
+        this.$parent.popupInspect = inspect; */
       } else {
         //排除重复layerID
         let inspect = this.$parent.popupInspect;
