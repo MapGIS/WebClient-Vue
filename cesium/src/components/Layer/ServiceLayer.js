@@ -1,5 +1,5 @@
 export default {
-  inject: ["webGlobe"],
+  inject: ["webGlobe","Viewer"],
   props: {
     baseUrl: {
       type: String,
@@ -48,7 +48,7 @@ export default {
           tileDiscardPolicy: undefined,
           tileHeight: 256,
           tileWidth: 256,
-          enablePickFeatures: undefined,
+          enablePickFeatures: false,
           minimumLevel: 0,
           maximumLevel: 20,
           credit: undefined
@@ -206,28 +206,16 @@ export default {
         }
       }
 
-      //设置Headers
-      let checkHeaders = this.$_checkValue(this.options, "headers", ""),
-        urlSource;
-      if (checkHeaders === "null") {
-        urlSource = new Cesium.Resource({
-          url: options.baseUrl,
-          headers: options.headers
-        });
-      } else {
-        urlSource = options.baseUrl;
-      }
-
-      options.url = urlSource;
+      options.url = options.baseUrl;
 
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
-      let webGlobeObj = this.$_getWebGlobe();
+      // let webGlobeObj = this.$_getWebGlobe();
 
       //根据对应的providerName设置provider
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
-      const { imageryLayers } = webGlobeObj.viewer;
+      const { imageryLayers } = this.Viewer;
 
       let provider;
       if (CesiumZondyLayer) {
@@ -315,10 +303,10 @@ export default {
       this.$emit("load", imageryLayer, this);
     },
     $_unmount() {
-      let webGlobeObj = this.$_getWebGlobe();
+      // let webGlobeObj = this.$_getWebGlobe();
       let { vueKey, vueIndex } = this;
-      const { viewer } = webGlobeObj;
-      const { imageryLayers } = viewer;
+      // const { viewer } = webGlobeObj;
+      const { imageryLayers } = this.Viewer;
       let find = window.CesiumZondy[this.managerName].findSource(
         vueKey,
         vueIndex
@@ -466,9 +454,9 @@ export default {
         throw new Error("zIndex不能为负数");
       }
       //取得webGlobe对象
-      let webGlobeObj = this.$_getWebGlobe();
-      const { viewer } = webGlobeObj;
-      const { imageryLayers } = viewer;
+      // let webGlobeObj = this.$_getWebGlobe();
+      // const { viewer } = webGlobeObj;
+      const { imageryLayers } = this.Viewer;
       const { _layers } = imageryLayers;
       let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
       let index = this.$_getCurrentLayer(imageryLayers).index;
@@ -566,9 +554,7 @@ export default {
      * 会在$_mount使用
      * **/
     $_initLayerIndex() {
-      let webGlobeObj = this.$_getWebGlobe();
-      const { viewer } = webGlobeObj;
-      const { imageryLayers } = viewer;
+      const { imageryLayers } = this.Viewer;
       let _layers = imageryLayers._layers;
       let length = _layers.length;
       let currentLayer = _layers[length - 1];
