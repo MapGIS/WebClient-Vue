@@ -1,7 +1,10 @@
 let pointPaintList = {
+    "color": "circle-color",
+    "opacity": "circle-opacity",
     "radius": "circle-radius",
     "outlineColor": "circle-stroke-color",
     "outlineWidth": "circle-stroke-width",
+    "outlineOpacity": "circle-stroke-opacity",
 }
 export {pointPaintList};
 
@@ -24,6 +27,13 @@ let fillPaintList = {
     "opacity": "fill-opacity"
 }
 export {fillPaintList};
+
+let fillOutlinePaintList = {
+    "outlineWidth": "line-width",
+    "outlineColor": "line-color",
+    "outlineOpacity": "line-opacity",
+}
+export {fillOutlinePaintList};
 
 let fillLayoutList = {
 }

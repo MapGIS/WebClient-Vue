@@ -33,7 +33,7 @@ export default {
 - `coordinates {Array}` GeoJSON 格式的 coordinates 部分, 用于标注位置
 - `offset {Object, Array}` 相对显示位置的偏移
 
-完整的参数请看 [API](/zh/api/marker.md#props)
+完整的参数请看 [API](/api/marker.md#props)
 
 ### 插槽
 
@@ -185,7 +185,7 @@ export default {
 
 - `anchor {string}` 指定了 popup 出现的位置是在设置的那个方位。
 
-完整的参数列表请看 [API](/zh/api/popup.md#props)
+完整的参数列表请看 [API](/api/popup.md#props)
 
 ## MarkersPopups
 

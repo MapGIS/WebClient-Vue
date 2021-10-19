@@ -69,7 +69,7 @@ export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
-export { default as Mapgis3dParticleEffects } from "./components/Analysis/ParticleEffects";
+export { default as Mapgis3dParticleEffects } from "./components/Overlay/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 
 //融合组件

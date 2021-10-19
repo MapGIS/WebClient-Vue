@@ -4,7 +4,7 @@ import smokeImg from "../assets/smoke.png";
 import Markdown from "../../cesium/docs/api/analysis/ParticleEffects.md";
 
 export default {
-  title: "三维/分析/粒子特效",
+  title: "三维/可视化/粒子特效",
   argTypes: {
     emissionRate: {
       description: "发射速率(个/秒)",

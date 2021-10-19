@@ -16,11 +16,10 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `wmtsLayer`
 
 - **类型:** `String`
-- **默认值:** ``
-- **watch**
-- **非侦听属性**
+- **默认值:** ""
+- **侦听属性**
 - **描述:** wmts 标准中的 layer 属性，即图层名称
-  > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
+  这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。<br/>
   > ... <br/> > \<Layer\> <br/> > \<ows:Title\>beijing\</ows:Title\> <br/> > \<ows:Identifier\>beijing</ows:Identifier\>//这个值 beijing 就是 wmtsLayer 属性所需要的值 <br/>
   > ... <br/> > \</Layer\> <br/>
@@ -30,31 +29,31 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `tileMatrixSet`
 
 - **类型:** `String`
-- **默认值:** ``
-- **watch**
-- **非侦听属性**
+- **默认值:** ""
+- **侦听属性**
 - **描述:** wmts 标准中的 TileMatrixSet 属性，即地图矩阵集合
+
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。<br/>
-  > ... <br/> > \<TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
+  > ... <br/> > <TileMatrixSet\> <br/> > \<ows:Title\>采用 arcgis 计算方式的瓦片块阵集\</ows:Title\> <br/> > \<ows:Abstract\>该块阵集使用 arcgis 标准计算的比例尺\</ows:Abstract\> <br/> > \<ows:Identifier\>EPSG:4326*北京市\_arcgis_GB\</ows:Identifier\>//这个值 EPSG:4326*北京市*arcgis_GB 就是 TileMatrixSet 属性所需要的值 <br/> > \<ows:SupportedCRS\>urn:ogc:def:crs:EPSG::4326\</ows:SupportedCRS\> <br/> > \<WellKnownScaleSet\>urn:ogc:def:wkss:OGC:1.0:GoogleCRS84Quad\</WellKnownScaleSet\> <br/>
   > ... <br/> > \<TileMatrixSet\> <br/>
   > ... <br/>
   > 全文搜索\<TileMatrixSet\>关键字，在\<TileMatrixSet\>下找到\<ows:Identifier\>属性，里面的值"EPSG:4326*北京市\_arcgis_GB"就是 tileMatrixSet 属性所需要的
+
+- **注意:** 在 XML 文档中，一般有三种地图矩阵集，分别是 OGC 官方标准计算，arcgis 标准计算，以及 MapGIS 标准计算方式的矩阵集合，在事业部采用的瓦片裁剪的 MapGIS 桌面端版本是 10.2 之后的，三种矩阵集都可以任选其一使用。但 10.2 之前版本的 mapgis 版本裁剪的瓦片需要注意，若 wmts 图层需要和哪些图层（arcgis 还是天地图）叠加使用，就要用不同的矩阵集才不会出现重叠问题。
 
 ### `version`
 
 - **类型:** `String`
 - **默认值:** `1.0.0`
-- **watch**
-- **非侦听属性**
+- **侦听属性**
 - **描述:** wmts 服务版本号。
 
 ### `wmtsStyle`
 
 - **类型:** `String`
 - **默认值:** `default`
-- **watch**
-- **非侦听属性**
+- **侦听属性**
 - **描述:** wmts 标准中的 style 属性，即地图样式
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。 <br/>
@@ -66,8 +65,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 - **类型:** `String`
 - **默认值:** `image/png`
-- **watch**
-- **非侦听属性**
+- **侦听属性**
 - **描述:** wmts 标准中的 format 属性，即请求的图片的返回格式
   > 这里以司马云上发布的 WMTS 服务为例，ArcGis 同理，访问http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer?service=WMTS&request=GetCapabilities，获取地图元信息
   > 这里得到的是一个 XML 文档。 <br/>
@@ -78,10 +76,9 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `zoomOffset`
 
 - **类型:** `Number`
-- **watch**
 - **非侦听属性**
 - **默认值** 0
-- **描述:** 地图偏移级数，老版本的 Igserver 会使用到
+- **描述:** 地图偏移级数，老版本的 Igserver 会使用到，或者在制图时设置了偏移。
 
 ### `layer`
 
@@ -126,8 +123,6 @@ All common layer [events](/zh/api/Layers/#events)
 
 ## 示例
 
-### KVP 格式
-
 ```vue
 <template>
   <mapgis-web-map
@@ -139,32 +134,19 @@ All common layer [events](/zh/api/Layers/#events)
     :crs="mapCrs"
   >
     <mapgis-ogc-wmts-layer
-      :layer="layer"
-      :layerId="layerId"
-      :sourceId="sourceId"
-      :ip="igsWmtsIp"
-      :port="igsWmtsPort"
-      :tileMatrixSet="igsWmtsTilematrixSet"
-      :wmtsLayer="igsWmtsLayer"
-      :zoomOffset="zoomOffset"
+      :layer-id="layerWmtsId"
+      :source-id="sourceWmtsId"
+      :base-url="baseUrl"
+      :tile-matrix-set="tileMatrixSet"
+      :wmts-layer="wmtsLayer"
+      :zoom-offset="zoomoffset"
     >
     </mapgis-ogc-wmts-layer>
   </mapgis-web-map>
 </template>
 
 <script>
-import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import Mapbox from "@mapgis/mapbox-gl";
-import {
-  MapgisWebMap,
-  MapgisOgcWmtsLayer
-} from "@mapgis/webclient-vue-mapboxgl";
-
 export default {
-  components: {
-    MapgisWebMap,
-    MapgisOgcWmtsLayer
-  },
   data() {
     return {
       mapStyle: {
@@ -178,13 +160,14 @@ export default {
       mapZoom: 8, // 地图初始化级数
       outerCenter: [116.39, 40.2], // 地图显示中心
       mapCrs: "EPSG:4326",
-      layer: "beijing",
+      wmtsLayer: "beijing",
       layerWmtsId: "ogcwmts_layerId",
       sourceWmtsId: "ogcwmts_sourceId",
       tileMatrixSet: "EPSG:4326_北京市_arcgis_GB",
-      baseUrl: "http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer",
+      baseUrl:
+        "http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
       //因为司马云是用的老版本的igs服务，因此offset必须传-1
-      offset: -1
+      zoomoffset: -1
     };
   },
 

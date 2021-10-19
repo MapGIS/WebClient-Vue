@@ -509,6 +509,7 @@ export default {
       const { type, point, line, polygon } = highlightStyle;
       if (Object.keys(layer).length == 0) {
         if (type == "point" || point) {
+          if (!point) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "circle",
@@ -516,6 +517,7 @@ export default {
             ...point.toMapboxStyle({ highlight: true })
           };
         } else if (type == "line" || line) {
+          if (!line) return;  
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -523,6 +525,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (type == "polygon" || polygon) {
+          if (!polygon) return;  
           highlight = {
             id: layerId + "_高亮边界线",
             type: "fill",
@@ -533,6 +536,7 @@ export default {
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
       } else {
         if (this.layer.type === "fill") {
+          if (!line) return;  
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -540,6 +544,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "line") {
+          if (!line) return;  
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -547,6 +552,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "circle") {
+          if (!point) return;  
           highlight = {
             id: layerId + "_高亮边界线",
             type: "circle",
