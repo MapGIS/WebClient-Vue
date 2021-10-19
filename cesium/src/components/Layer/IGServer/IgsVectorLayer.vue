@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             managerName: "IgsserverManager",
-            providerName: "MapGIS2DDocMapProvider",
+            providerName: "MapGISMapServerImageryProvider",
             checkType: {
                 tileWidth: "number",
                 tileHeight: "number",
