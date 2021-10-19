@@ -55,7 +55,7 @@
 </template>
 
 <script>
-const Feature = require("../util/feature.min.js");
+import * as Feature from "../util/feature";
 import { Empty } from "ant-design-vue";
 export default {
   props: {
@@ -165,9 +165,9 @@ export default {
         //   features: []
         // });
         // this.$nextTick(() => {
-          this.$emit("select-markers", this.selectMarkers);
-          this.$emit("update-geojson", this.geojson);
-          this.$emit("color-cluster", this.selectedItem.color);
+        this.$emit("select-markers", this.selectMarkers);
+        this.$emit("update-geojson", this.geojson);
+        this.$emit("color-cluster", this.selectedItem.color);
         // });
       }
     },

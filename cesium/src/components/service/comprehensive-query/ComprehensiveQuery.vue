@@ -30,7 +30,7 @@
 </template>
 
 <script>
-const Feature = require("./util/feature.min.js");
+import * as Feature from "./util/feature";
 import PlaceNameCesium from "./PlaceNameCesium";
 
 export default {
@@ -120,7 +120,7 @@ export default {
      */
     clickItem(feature) {
       const center = Feature.getGeoJSONFeatureCenter(feature);
-      this.webGlobe.flyTo(center[0], center[1])
+      this.webGlobe.flyTo(center[0], center[1]);
     },
 
     /**
