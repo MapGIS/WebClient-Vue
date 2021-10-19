@@ -39,9 +39,6 @@ export default {
   },
   mounted() {
     this.mount();
-    console.log("this.zIndex",this.layerStyle.zIndex)
-    console.log("this.vueIndex",this.vueIndex)
-    console.log("this.Viewer",this.Viewer)
   },
   methods: {
     mount(){
