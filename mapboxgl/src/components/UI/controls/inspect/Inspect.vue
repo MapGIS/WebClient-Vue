@@ -16,7 +16,8 @@
 
 import mapboxgl from "@mapgis/mapbox-gl";
 import cloneDeep from "lodash.clonedeep";
-const MapboxInspect = require("mapbox-gl-inspect");
+const Inspect = require("@mapgis/mapbox-gl-inspect");
+const MapboxInspect = Inspect.default;
 import Popup from "../../../layer/geojson/Popup";
 
 export default {
