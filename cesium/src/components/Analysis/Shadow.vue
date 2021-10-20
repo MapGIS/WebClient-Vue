@@ -102,7 +102,7 @@ const manager = "shadowAnalysisManager";
 export default {
   name: "mapgis-3d-shadow",
   mixins: [BaseMixin],
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -222,8 +222,7 @@ export default {
       );
     },
     mount() {
-      const { webGlobe} = this;
-      const { viewer } = webGlobe;
+      const { viewer} = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
@@ -262,7 +261,7 @@ export default {
      */
     shadow() {
       this.remove();
-      const {viewer} = this.webGlobe;
+      let { viewer } = this;
       // 初始化交互式绘制控件
       let drawElement = new this.Cesium.DrawElement(viewer);
       let {date, minHeight, stretchHeight, shadowColor, sunColor} = this.formData;
@@ -276,7 +275,8 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: results => {
+          let positions = results.positions;
           // self.remove();
           self.toggleMask(true);
           this.$emit("analysisBegin");
@@ -324,7 +324,7 @@ export default {
             percentCallback: this.setPercent
           })
           // 时间段范围阴影分析
-          const result = shadowAnalysis.calcPointsArrayInShadowTime(
+          shadowAnalysis.calcPointsArrayInShadowTime(
               positions,
               minHeight,
               stretchHeight,
@@ -341,6 +341,7 @@ export default {
               {shadowAnalysis, drawElement},
               {positionCopy: positionCopy}
           );
+          // drawElement.stopDrawing();
         }
       })
 
@@ -352,7 +353,7 @@ export default {
     sun() {
       this.removeSun();
       // this.remove();
-      const {viewer} = this.webGlobe;
+      let { viewer } = this;
       viewer.scene.globe.enableLighting = true; // 开启日照
       viewer.shadows = true; // 开启阴影
       const {date, startTime, endTime, time, timeType} = this.formData;
@@ -421,7 +422,7 @@ export default {
      * 移除日照分析结果
      */
     removeSun() {
-      const {viewer} = this.webGlobe
+      const { viewer } = this;
       viewer.scene.globe.enableLighting = false
       viewer.shadows = false
       viewer.clock.multiplier = 1

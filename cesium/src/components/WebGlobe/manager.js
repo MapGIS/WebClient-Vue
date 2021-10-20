@@ -100,9 +100,9 @@ export function initManager() {
       vueKey = "default";
     }
     let GlobesManager = window.CesiumZondy.GlobesManager,
-      webGlobeObj;
-    webGlobeObj = GlobesManager[vueKey][0].source;
-    return webGlobeObj;
+      viewer;
+    viewer = GlobesManager[vueKey][0].source;
+    return viewer;
   };
 
   /**
@@ -115,15 +115,15 @@ export function initManager() {
       vueKey = "default";
     }
     let GlobesManager = window.CesiumZondy.GlobesManager,
-      webGlobeObj;
+      viewer;
     let interval = setInterval(function() {
       if (
         GlobesManager.hasOwnProperty(vueKey) &&
         GlobesManager[vueKey].length > 0
       ) {
         clearInterval(interval);
-        webGlobeObj = GlobesManager[vueKey][0].source;
-        callback(webGlobeObj);
+        viewer = GlobesManager[vueKey][0].source;
+        callback(viewer);
       }
     }, 50);
   };

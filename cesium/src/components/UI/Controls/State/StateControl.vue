@@ -18,7 +18,7 @@ import debounce from "lodash/debounce";
 export default {
   name: "mapgis-3d-statebar",
   mixins: [],
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   props: {
     ...VueOptions,
     showHpr: {
@@ -79,7 +79,7 @@ export default {
       this.showPosition();
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      const { viewer, vueKey, vueIndex } = this;
       let find = window.CesiumZondy.EventHandlerManager.findSource(
         vueKey,
         vueIndex
@@ -91,9 +91,7 @@ export default {
     },
     showPosition() {
       const vm = this;
-      let { Cesium, webGlobe, vueIndex, vueKey, frame } = this;
-
-      const { viewer } = webGlobe;
+      let { Cesium, viewer, vueIndex, vueKey, frame } = this;
 
       if (vueKey && vueIndex) {
         let screenSpaceMouseEventHandler = new Cesium.ScreenSpaceEventHandler(
@@ -142,9 +140,8 @@ export default {
       });
     },
     selectTile(e) {
-      let { Cesium, webGlobe } = this;
+      let { Cesium, viewer } = this;
       let selectedTileTmp;
-      const { viewer } = webGlobe;
       const ellipsoid = viewer.scene.globe.ellipsoid;
 
       let cartesian = viewer.scene.camera.pickEllipsoid(e, ellipsoid);
@@ -176,8 +173,7 @@ export default {
       return selectedTileTmp;
     },
     updateViewLevel() {
-      let { Cesium, webGlobe } = this;
-      const { viewer } = webGlobe;
+      let { Cesium, viewer } = this;
       const tilesToRender =
         viewer.scene.globe._surface.tileProvider._tilesToRenderByTextureCount;
       for (let i = 0; i < tilesToRender.length; i += 1) {
@@ -204,7 +200,7 @@ export default {
         viewLevel,
         height,
         Cesium,
-        webGlobe,
+        viewer,
         showHpr,
         showSelectTileInfo,
         showViewLevelInfo
@@ -212,7 +208,6 @@ export default {
 
       let vm = this;
 
-      const { viewer } = webGlobe;
       let cartesian = viewer.getCartesian3Position(screenPos, cartesian);
       const ellipsoid = viewer.scene.globe.ellipsoid;
       const { camera } = viewer;

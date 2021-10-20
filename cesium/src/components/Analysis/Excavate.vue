@@ -69,7 +69,7 @@ export default {
       }
     }
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   mixins: [ServiceLayer],
   data() {
     return {
@@ -132,6 +132,7 @@ export default {
   methods: {
     getM3d() {
       let vm = this
+      let { Cesium } = this;
       let find = vm.$_getObject();
       vm._boundingVolume = find.source[0]._root._boundingVolume;
       // 模型包围盒的世界坐标系的中心、东北角、西南角
@@ -183,17 +184,16 @@ export default {
     startExcavate() {
       let vm = this;
       vm.initial = false;
-      let {CesiumZondy, webGlobe} = this;
+      let {CesiumZondy, viewer} = this;
       let find = vm.$_getObject();
-      //将获取的开挖示例放到ExcavateAnalysisManager中进行管理
-      let analysisManager = new CesiumZondy.Manager.AnalysisManager({
-        viewer: webGlobe.viewer
-      });
+
+      //初始化开挖实例
       let material = Cesium.Color.fromCssColorString(vm.materialCopy);
       material = Cesium.Color.fromAlpha(material, 0.7);
       let edgeColor = Cesium.Color.fromCssColorString(vm.edgeColorCopy);
       edgeColor = Cesium.Color.fromAlpha(edgeColor, 0.7);
-      let dynaCut = analysisManager.createExcavateAnalysis({
+
+      let dynaCut = this.createExcavateAnalysis({
         //图层信息
         tileset: find.source[0],
         //开挖面的形状
@@ -212,6 +212,7 @@ export default {
         latitude: vm.centerDegree.latitude,
         height: vm.centerDegree.height + vm.depth / 2
       });
+
       CesiumZondy.ExcavateAnalysisManager.addSource(
           vm.vueKey,
           vm.vueIndex,
@@ -230,10 +231,86 @@ export default {
         }
       }, false);
     },
+
+    /**
+     * 开挖
+     * @function module:客户端可视化分析.AnalysisManager.prototype.createExcavateAnalysis
+     * @param {Object} options 开挖参数
+     * @param {Object} options.tileset 图层信息
+     * @param {Object} options.planes 开挖面的形状
+     * @param {Object} [options.material] 裁剪面材质
+     * @param {Color} [options.edgeColor] 边界线颜色
+     * @param {Number} [options.edgeWidth] 边界线宽度
+     * @param {Boolean} [options.unionClippingRegions] 裁减法线方向，默认值为 false
+     * @param {Number} options.longitude 开挖面定位点经度
+     * @param {Number} options.latitude 开挖面定位点纬度
+     * @param {Number} [options.height] 开挖面定位点高度
+     */
+    createExcavateAnalysis(options) {
+      if (!Cesium.defined(options.tileset) || !Cesium.defined(options.planes)) {
+        return undefined;
+      }
+      const { tileset } = options;
+      const { planes } = options;
+      const material = Cesium.defaultValue(options.material, Cesium.Color.WHITE.withAlpha(0.02));
+      const edgeColor = Cesium.defaultValue(options.edgeColor, Cesium.Color.RED);
+      const edgeWidth = Cesium.defaultValue(options.edgeWidth, 0);
+      const unionClippingRegions = Cesium.defaultValue(options.unionClippingRegions, false);
+      const { longitude } = options;
+      const { latitude } = options;
+      const height = Cesium.defaultValue(options.height, 0.0);
+      const { transform } = tileset._root;
+      const rotation = new Cesium.Matrix3();
+      Cesium.Matrix4.getMatrix3(transform, rotation);
+      const scale = new Cesium.Cartesian3();
+      Cesium.Matrix4.getScale(transform, scale);
+      const center = new Cesium.Cartesian3();
+      Cesium.Matrix4.getTranslation(transform, center);
+      let modelMatrix = transform.clone();
+      if (Cesium.defined(longitude) && Cesium.defined(latitude)) {
+        modelMatrix = this.getTransForm(transform, longitude, latitude, height);
+      }
+      tileset.clippingPlanes = new Cesium.ClippingPlaneCollection({
+        modelMatrix,
+        planes,
+        edgeColor,
+        edgeWidth,
+        unionClippingRegions
+      });
+      const planeEntityArray = [];
+      const { radius } = tileset.boundingSphere;
+      for (let i = 0; i < planes.length; i += 1) {
+        const planeEntity = this.viewer.entities.add({
+          position: center,
+          plane: {
+            dimensions: new Cesium.Cartesian2(radius * 2.5, radius * 2.5),
+            material
+          }
+        });
+        planeEntityArray.push(planeEntity);
+      }
+      return {
+        tileset,
+        planes: planeEntityArray
+      };
+    },
+
+    getTransForm(transform, lo, la, height) {
+      // let { Cesium } = this;
+      let position = Cesium.Cartographic.toCartesian(Cesium.Cartographic.fromDegrees(lo, la, height));
+      let matrix = new Cesium.Matrix4();
+      matrix = Cesium.Matrix4.inverse(transform, matrix);
+      position = Cesium.Matrix4.multiplyByPoint(matrix, position, position);
+      const center = new Cesium.Cartesian3(0.0, 0.0, 0.0);
+      Cesium.Cartesian3.subtract(position, center, position);
+      Cesium.Matrix4.fromTranslation(position, matrix);
+      return matrix;
+    },
+
     drawPoint(p) {
-      let {CesiumZondy, webGlobe} = this;
+      let {CesiumZondy, viewer} = this;
       let entityController = new CesiumZondy.Manager.EntityController({
-        viewer: webGlobe.viewer
+        viewer: viewer
       });
       //填充颜色
       var fillColor = new Cesium.Color(255 / 255, 255 / 255, 0 / 255, 1);
@@ -266,7 +343,7 @@ export default {
       let find = CesiumZondy.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         let source = find.source;
-        this.webGlobe.deleteDynamicCutting(source);
+        // this.webGlobe.deleteDynamicCutting(source);
       }
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
       CesiumZondy.ExcavateAnalysisManager.deleteSource(vueKey, vueIndex);

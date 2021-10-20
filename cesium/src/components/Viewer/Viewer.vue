@@ -13,9 +13,11 @@ export default {
       default: ""
     }
   },
-  data: {
-    isLoad: false,
-    viewer: undefined
+  data() {
+    return {
+      isLoad: false,
+      viewer: undefined
+    }
   },
   methods: {
     init() {

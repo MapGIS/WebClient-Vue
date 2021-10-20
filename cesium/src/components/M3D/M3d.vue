@@ -4,7 +4,7 @@ import { M3dType, M3dType_0_0 } from "./M3dType";
 
 export default {
   name: "mapgis-3d-igs-m3d",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     ...Tileset3dOptions
   },
@@ -30,9 +30,9 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { CesiumZondy, webGlobe } = this;
+      const { CesiumZondy, viewer } = this;
       let m3dLayer = new CesiumZondy.Layer.M3DLayer({
-        viewer: webGlobe.viewer
+        viewer: viewer
       });
       return m3dLayer;
     },
@@ -55,7 +55,7 @@ export default {
     mount() {
       const vm = this;
       const {
-        webGlobe,
+        viewer,
         vueIndex,
         vueKey,
         $props,
@@ -63,7 +63,6 @@ export default {
         scale,
         opacity
       } = this;
-      const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
       // this.$emit("load", { component: this });
@@ -150,8 +149,7 @@ export default {
       });
     },
     unmount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
