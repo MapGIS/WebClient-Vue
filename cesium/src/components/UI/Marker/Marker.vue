@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "mapgis-3d-marker",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     fid: {
       type: String,
@@ -121,31 +121,31 @@ export default {
   methods: {
     $_mount() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        vm.$_init(webGlobe);
+      window.CesiumZondy.getWebGlobeByInterval(function(viewer) {
+        vm.$_init(viewer);
       }, this.vueKey);
     },
     $_unmount() {
       const { vueKey, vueIndex } = this;
       const vm = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
+      window.CesiumZondy.getWebGlobeByInterval(function(viewer) {
         let MarkerManager = CesiumZondy.MarkerManager.findSource(
           vueKey,
           vueIndex
         );
-        let webGlobeMarker = vm.webGlobe || webGlobe;
-        webGlobeMarker.viewer.entities.remove(MarkerManager.source);
+        viewer = vm.viewer || viewer;
+        viewer.entities.remove(MarkerManager.source);
         CesiumZondy.MarkerManager.deleteSource(vueKey, vueIndex);
       }, vueKey);
     },
-    $_init(webGlobe) {
+    $_init(viewer) {
       const { CesiumZondy } = this;
       let vm = this;
       let Cesium = this.Cesium || window.Cesium;
-      let webGlobeMarker = this.webGlobe || webGlobe;
+      let viewerMarker = this.viewer || viewer;
       let labelLayer = new CesiumZondy.Manager.LabelLayer({
-        viewer: webGlobeMarker.viewer
+        viewer: viewerMarker
       });
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
       switch (this.heightReference) {
@@ -191,7 +191,7 @@ export default {
       
       if (!window.DynamicMarkerHandler) {
         window.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
-          webGlobeMarker.viewer.scene.canvas
+          viewerMarker.scene.canvas
         );
       }
       window.DynamicMarkerHandler.removeInputAction(
@@ -217,10 +217,9 @@ export default {
       return marker;
     },
     $_markerMouseAction(movement) {
-      const { Cesium, CesiumZondy } = this;
+      const { Cesium, CesiumZondy, viewer } = this;
       const vm = this;
-      let webGlobeMarker = this.webGlobe;
-      let scene = webGlobeMarker.viewer.scene;
+      let scene = viewer.scene;
       window.DynamicMarkerLastActiceId = window.DynamicMarkerLastActiceId || undefined;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);

@@ -41,6 +41,12 @@
 - **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
 - - **Description:** 该 key 的主要作用是用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的引用，从而避免 vue 对 cesium 的内存劫持
 
+### `height`
+
+- **Type**: `Number`
+- **侦听属性** watch 属性
+- - **Description:** 解决分屏时，cesium无限拉长的问题，要给一个固定高度
+
 ### `container`
 
 - **Type**: `[String, HTMLElement]`
@@ -48,12 +54,12 @@
 - **Default:** `cesium-${("" + Math.random()).split(".")[1]}`
 - - **Description:** Cesium-WebGlobe 绑定的 Dom 元素对象
 
-### `keyEventEnable`
+<!-- ### `keyEventEnable`
 
 - **Type**: `Boolean`
 - **非侦听属性** 非 watch 属性
 - **Default:** `true`
-- - **Description:** Cesium 键盘事件是否激活，激活后可以使用 W\A\S\D 控制相机的方向和远近
+- - **Description:** Cesium 键盘事件是否激活，激活后可以使用 W\A\S\D 控制相机的方向和远近 -->
 
 [comment]: <> (### `viewerMode`)
 
@@ -75,6 +81,9 @@
 
 [comment]: <> (- - **Description:** 是否显示默认的属性信息框)
 
+::: tip
+下面基础属性可以参考  Cesium.Viewer.ConstructorOptions
+:::
 ### `animation`
 
 - **Type**: `Boolean`

@@ -9,7 +9,7 @@
 import "@mapgis/cesium/dist/Widgets/widgets.css";
 import withPrivateMethods from "./mixins/withPrivateMethods";
 import withEvents from "../../lib/withEvents";
-import mapEvents from "./events";
+// import mapEvents from "./events";
 import { flyTo, flyToEx } from "./util";
 import { initManager } from "./manager";
 import options from "./options";
@@ -139,11 +139,11 @@ export default {
     this.$nextTick(() => {
       if (this.viewer) {
         const {vueKey, vueIndex} = this;
-        window.CesiumZondy.GlobesManager.deleteSource(vueKey, vueIndex)
         this.viewer.scene.primitives.removeAll();
         this.viewer.scene.primitives.destroy();
         this.viewer.entities.removeAll();
         this.viewer.destroy();
+        window.CesiumZondy.GlobesManager.deleteSource(vueKey, vueIndex)
         // this.viewer = null;
         this.initialized = false;
       }
