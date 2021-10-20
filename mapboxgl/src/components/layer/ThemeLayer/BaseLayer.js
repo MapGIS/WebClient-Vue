@@ -254,7 +254,7 @@ export default {
         },
         "themeOption.styleGroups": {
             handler: function () {
-                let groups = {};
+                let groups = {}, vm = this;
                 const {styleGroups} = this.themeOption
                 for (let i = 0; i < styleGroups.length; i++) {
                     const {style} = styleGroups[i];
@@ -263,9 +263,16 @@ export default {
                             if (!groups[key]) {
                                 groups[key] = [];
                             }
-                            let s = {
-                                start: styleGroups[i].start,
-                                end: styleGroups[i].end
+                            let s;
+                            if(vm.themeType === "range"){
+                                s = {
+                                    start: styleGroups[i].start,
+                                    end: styleGroups[i].end
+                                }
+                            }else if(vm.themeType === "unique"){
+                                s = {
+                                    value: styleGroups[i].value
+                                }
                             }
                             s[key] = style[key];
                             groups[key].push(s);
@@ -275,6 +282,9 @@ export default {
                 switch (this.themeType) {
                     case "range":
                         this.$_updateRangeStyleGroups(groups);
+                        break;
+                    case "unique":
+                        this.$_updateUniqueStyleGroups(groups);
                         break;
                 }
                 this.$_getThemeOptionCopy();
@@ -364,6 +374,76 @@ export default {
                 opacitys[k + 1] = defaultValue;
             }
             return opacitys;
+        },
+        $_updateUniqueStyleGroups(groups){
+            let vm = this, watchObject;
+            function setPaint(groups, key, vm, keyAlias) {
+                let paintArr = groups[key];
+                let paintsKey = keyAlias || key;
+                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
+                if(!paints){
+                    let defaultValue;
+                    switch (vm.dataType) {
+                        case "circle":
+                            defaultValue = pointDefaultValue[key];
+                            break;
+                        case "line":
+                            defaultValue = polylineDefaultValue[key];
+                            break;
+                        case "fill":
+                            defaultValue = polygonDefaultValue[key];
+                            break;
+                    }
+                    let pColors = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-color");
+                    paints = vm.$_getInterpolate(paintsKey, defaultValue, pColors);
+                }
+                for (let i = 0; i < paintArr.length; i++) {
+                    if(paints.indexOf(paintArr[i].value) >= 0){
+                        paints[paints.indexOf(paintArr[i].value) + 1] = paintArr[i][key];
+                    }
+                }
+                let newKey = keyAlias || key;
+                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + newKey, paints);
+            }
+            switch (this.dataType) {
+                case "fill":
+                    watchObject = {
+                        color: "",
+                        opacity: ""
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+                case "circle":
+                    watchObject = {
+                        color: "",
+                        opacity: "",
+                        radius: "",
+                        outlineWidth: "stroke-width",
+                        outlineColor: "stroke-color",
+                        outlineOpacity: "stroke-opacity"
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+                case "line":
+                    watchObject = {
+                        color: "",
+                        opacity: ""
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+            }
         },
         $_updateRangeStyleGroups(groups) {
             let vm = this, watchObject;
@@ -1602,36 +1682,55 @@ export default {
                 }
                 newColors.push("#FFFFFF");
                 if (this.themeOption.styleGroups) {
-                    let radius, outlineWidth, outlineColor, opacity;
+                    let radius, outlineWidth, outlineColor, outlineOpacity, opacity;
                     for (let i = 0; i < this.themeOption.styleGroups.length; i++) {
-                        newColors[newColors.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.color;
+                        if(newColors.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                            newColors[newColors.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.color;
+                        }
                         if (this.themeOption.styleGroups[i].style.radius) {
                             if (!radius) {
                                 let r = this.themeOption.layerStyle.radius || 6;
                                 radius = formatInterpolate(iSString, dataSourceCopy, key, r);
                             }
-                            radius[radius.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.radius;
+                            if(radius.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                                radius[radius.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.radius;
+                            }
                         }
                         if (this.themeOption.styleGroups[i].style.outlineWidth) {
                             if (!outlineWidth) {
                                 let w = this.themeOption.layerStyle.outlineWidth || 1;
                                 outlineWidth = formatInterpolate(iSString, dataSourceCopy, key, w);
                             }
-                            outlineWidth[outlineWidth.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineWidth;
+                            if(outlineWidth.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                                outlineWidth[outlineWidth.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineWidth;
+                            }
                         }
                         if (this.themeOption.styleGroups[i].style.outlineColor) {
                             if (!outlineColor) {
                                 let c = this.themeOption.layerStyle.outlineColor || "#000000";
                                 outlineColor = formatInterpolate(iSString, dataSourceCopy, key, c);
                             }
-                            outlineColor[outlineColor.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineColor;
+                            if(outlineColor.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                                outlineColor[outlineColor.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineColor;
+                            }
+                        }
+                        if (this.themeOption.styleGroups[i].style.outlineOpacity) {
+                            if (!outlineOpacity) {
+                                let o = this.themeOption.layerStyle.outlineOpacity || 1;
+                                outlineOpacity = formatInterpolate(iSString, dataSourceCopy, key, o);
+                            }
+                            if(outlineOpacity.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                                outlineOpacity[outlineOpacity.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineOpacity;
+                            }
                         }
                         if (this.themeOption.styleGroups[i].style.hasOwnProperty("opacity")) {
                             if (!opacity) {
                                 let o = this.themeOption.layerStyle.opacity || 1;
                                 opacity = formatInterpolate(iSString, dataSourceCopy, key, o);
                             }
-                            opacity[opacity.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.opacity;
+                            if(opacity.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                                opacity[opacity.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.opacity;
+                            }
                         }
                     }
                     if (radius) {
@@ -1656,6 +1755,14 @@ export default {
                             this.themeType,
                             "circle-stroke-color",
                             outlineColor
+                        );
+                    }
+                    if (outlineOpacity && this.dataType === "circle") {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            "circle-stroke-opacity",
+                            outlineOpacity
                         );
                     }
                     if (opacity) {
@@ -2192,6 +2299,11 @@ export default {
                 this.themeType,
                 this.dataType + "-stroke-color"
             );
+            let outlineOpacity = themeManager.getExtraData(
+                this.layerIdCopy,
+                this.themeType,
+                this.dataType + "-stroke-opacity"
+            );
             let opacity = themeManager.getExtraData(
                 this.layerIdCopy,
                 this.themeType,
@@ -2286,6 +2398,9 @@ export default {
                 }
                 if (outlineColor && this.dataType === "circle") {
                     layer.paint["circle-stroke-color"] = outlineColor;
+                }
+                if (outlineOpacity && this.dataType === "circle") {
+                    layer.paint["circle-stroke-opacity"] = outlineOpacity;
                 }
                 if (opacity) {
                     layer.paint[this.dataType + "-opacity"] = opacity;
