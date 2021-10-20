@@ -59,7 +59,7 @@ export default {
     }
   },
   components: {Mapgis3dDraw},
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   data() {
     return {
       //定义
@@ -152,8 +152,7 @@ export default {
     heightLimitedAnalysis(lnglat) {
       const vm = this;
       let {vueKey, vueIndex} = this
-      let {heightLimit, CesiumZondy, webGlobe} = this;
-      let viewer = webGlobe.viewer;
+      let {heightLimit, CesiumZondy, viewer} = this;
       let findSource = vm.$_getObject();
 
       //先判断m3d模型是否加载完成
@@ -193,7 +192,8 @@ export default {
       let cesiumColor = Cesium.Color.fromCssColorString(vm.color);
 
       //调用控告分析接口
-      var heightLimited = new Cesium.HeightLimited(viewer, {
+      let temp;
+      let heightLimited = new Cesium.HeightLimited(viewer, {
         height: heightLimit,
         limitedColor: cesiumColor,
         blendTransparency: vm.opacity,
@@ -201,8 +201,8 @@ export default {
         polygonColor: Cesium.Color.WHITE.withAlpha(0),
         useOutLine: false
       });
-      webGlobe.addSceneEffect(heightLimited);
-
+      // webGlobe.addSceneEffect(heightLimited);
+      temp = heightLimited.add();
       CesiumZondy.HeightLimitedAnalysisManager.addSource(
           vm.vueKey,
           vm.vueIndex,

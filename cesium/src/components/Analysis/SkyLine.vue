@@ -22,12 +22,8 @@
           />
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="add"
-            >天际线</mapgis-ui-button
-          >
-          <mapgis-ui-button @click="showAnalysis2d"
-            >二维天际线</mapgis-ui-button
-          >
+          <mapgis-ui-button type="primary" @click="addSkyLine">天际线</mapgis-ui-button>
+          <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
         <mapgis-ui-mask
@@ -74,7 +70,7 @@ export default {
     },
     ...VueOptions
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   data() {
     return {
       formData: {
@@ -133,8 +129,7 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const {viewer, CesiumZondy, vueKey, vueIndex} = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
@@ -149,17 +144,9 @@ export default {
         );
       });
       //缓存区设置
-      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        this.webGlobe
-      );
-      if (
-        navigator.userAgent.indexOf("Linux") > 0 &&
-        navigator.userAgent.indexOf("Firefox") > 0
-      ) {
-        setLogarithmicDepthBufferEnable(false, this.webGlobe);
-      } else {
-        // 其他浏览器还是设置为true，不然会导致分析结果不正确，cesium1.8版本已不需要再额外设置
-        setLogarithmicDepthBufferEnable(true, this.webGlobe);
+      this.isLogarithmicDepthBufferEnable = this.viewer.scene.logarithmicDepthBuffer;
+      if (this.isLogarithmicDepthBufferEnable === true) {
+        this.viewer.scene.logarithmicDepthBuffer= false;
       }
     },
     unmount() {
@@ -175,13 +162,11 @@ export default {
 
       //缓存区设置
       if (
-        this.isLogarithmicDepthBufferEnable !==
-        isLogarithmicDepthBufferEnable(this.webGlobe)
+          this.isLogarithmicDepthBufferEnable !==
+          this.viewer.scene.logarithmicDepthBuffer
       ) {
-        setLogarithmicDepthBufferEnable(
-          this.isLogarithmicDepthBufferEnable,
-          this.webGlobe
-        );
+        this.viewer.scene.logarithmicDepthBuffer =
+            this.isLogarithmicDepthBufferEnable
       }
       this.$emit("unload", this);
     },
@@ -210,7 +195,7 @@ export default {
      * 获取二维天际线图表的xy轴信息
      */
     getChartOptions() {
-      const { canvas } = this.webGlobe.viewer;
+      const {canvas} = this.viewer;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       return this.positions2D.reduce(
@@ -253,31 +238,26 @@ export default {
       this.positions2D = positions2D.length ? _cloneDeep(positions2D) : [];
       this.maskShow = false;
     },
-    add() {
+    addSkyLine() {
       this.remove();
       this.maskShow = true;
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = this.webGlobe;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
-      let { options } = find;
+      let {CesiumZondy, vueKey, vueIndex, viewer} = this;
+      let scene = viewer.scene;
+      let find = CesiumZondy.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
+      let {options} = find;
+      scene.skyAtmosphere.showGroundAtmosphere = false;
 
-      // 初始化高级分析功能管理类
-      const advancedAnalysisManager = new this.CesiumZondy.Manager.AdvancedAnalysisManager(
-        {
-          viewer: this.webGlobe.viewer
-        }
-      );
+      scene.skyBox.show = false;
+      scene.skyAtmosphere.show = false;
+
       // 创建天际线实例
       let skylineAnalysisVal = options.skylineAnalysis;
-
-      skylineAnalysisVal =
-        skylineAnalysisVal || advancedAnalysisManager.createSkyLine();
+      skylineAnalysisVal = skylineAnalysisVal || new Cesium.SkyLineAnalysis({ scene: viewer.scene });
       skylineAnalysisVal._analysisEndCallBack = this.analysisEndCallBack;
       skylineAnalysisVal.color = this.edgeColor();
       skylineAnalysisVal.lineWidth = this.formData.skylineWidth;
+      // 添加到地图上
+      viewer.scene.visualAnalysisManager.add(skylineAnalysisVal);
 
       this.$emit("success");
       CesiumZondy.SkyLineAnalysisManager.changeOptions(
@@ -289,13 +269,15 @@ export default {
       this.setCenterPosition();
     },
     edgeColor() {
-      return colorToCesiumColor(this.formData.skylineColor, this.webGlobe);
+      return colorToCesiumColor(
+          this.formData.skylineColor
+      )
     },
     /**
      * 设置观察者位置
      */
     setCenterPosition() {
-      const position = getCenterPosition(this.webGlobe);
+      const position = getCenterPosition(this.viewer);
       if (position) {
         const { lng, lat, height } = position;
         const lngStr = `${lng.toFixed(4)}°`;

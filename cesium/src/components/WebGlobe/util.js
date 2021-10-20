@@ -55,7 +55,7 @@ export function dirname(path) {
  * @param color rgb/rgba字符串
  * @returns {*}
  */
-export function colorToCesiumColor(color, webGlobe) {
+export function colorToCesiumColor(color) {
   let cesiumColor;
   if (color.includes("rgb")) {
     // 如果是rgb或者rgba
@@ -65,7 +65,7 @@ export function colorToCesiumColor(color, webGlobe) {
     const cesiumGreen = Number((Number(arr[1]) / 255).toFixed(2));
     const cesiumBlue = Number((Number(arr[2]) / 255).toFixed(2));
     const cesiumAlpha = Number(arr[3] ? arr[3] : 1);
-    cesiumColor = webGlobe.getColor(
+    cesiumColor = new Cesium.Color(
       cesiumRed,
       cesiumGreen,
       cesiumBlue,
@@ -79,14 +79,14 @@ export function colorToCesiumColor(color, webGlobe) {
  * 获取当前摄像机的位置
  * @returns {null|{lng: number, lat: number, height: *}}
  */
-export function getCenterPosition(webGlobe) {
-  const lnglat = getCartographic(webGlobe);
+export function getCenterPosition(viewer) {
+  const lnglat = getCartographic(viewer);
   if (lnglat) {
     const { longitude, latitude } = lnglat;
     const pi = Math.PI;
     const lng = (longitude * 180) / pi;
     const lat = (latitude * 180) / pi;
-    const height = getCameraHeight(webGlobe);
+    const height = getCameraHeight(viewer);
     return {
       lng,
       lat,
@@ -100,9 +100,9 @@ export function getCenterPosition(webGlobe) {
  * 获取地理坐标
  * @returns 地理坐标
  */
-export function getCartographic(webGlobe) {
-  console.log("Cesium", Cesium);
-  const pickEllipsoid = getPickEllipsoid(webGlobe);
+export function getCartographic(viewer) {
+  // console.log("Cesium", Cesium);
+  const pickEllipsoid = getPickEllipsoid(viewer);
   return pickEllipsoid
     ? Cesium.Ellipsoid.WGS84.cartesianToCartographic(pickEllipsoid)
     : null;
@@ -112,9 +112,9 @@ export function getCartographic(webGlobe) {
  * 获取椭球坐标
  * @returns height
  */
-export function getPickEllipsoid(webGlobe) {
-  const { w, h } = getWebGlobeCanvasSize(webGlobe);
-  return webGlobe.viewer.camera.pickEllipsoid(
+export function getPickEllipsoid(viewer) {
+  const { w, h } = getWebGlobeCanvasSize(viewer);
+  return viewer.camera.pickEllipsoid(
     new Cesium.Cartesian2(w / 2, h / 2)
   );
 }
@@ -123,8 +123,8 @@ export function getPickEllipsoid(webGlobe) {
  * 获取三维场景画布高宽
  * @returns {w:number; h: number}
  */
-export function getWebGlobeCanvasSize(webGlobe) {
-  const { canvas } = webGlobe.viewer;
+export function getWebGlobeCanvasSize(viewer) {
+  const { canvas } = viewer;
   return {
     w: canvas.clientWidth,
     h: canvas.clientHeight
@@ -135,8 +135,7 @@ export function getWebGlobeCanvasSize(webGlobe) {
  * 获取camera高度
  * @returns height
  */
-export function getCameraHeight(webGlobe) {
-  const { viewer } = webGlobe;
+export function getCameraHeight(viewer) {
   return viewer
     ? viewer.scene.globe.ellipsoid.cartesianToCartographic(
         viewer.camera.position
@@ -148,32 +147,32 @@ export function getCameraHeight(webGlobe) {
  * 判断当前是否开启了对数深度缓存区
  * @returns true:开启,false:关闭
  */
-export function isLogarithmicDepthBufferEnable(webGlobe) {
-  return webGlobe.viewer.scene.logarithmicDepthBuffer;
+export function isLogarithmicDepthBufferEnable(viewer) {
+  return viewer.scene.logarithmicDepthBuffer;
 }
 
 /**
  * 设置是否开启对数深度缓存区
  * @param {*} isEnable true:开启，false:关闭
  */
-export function setLogarithmicDepthBufferEnable(isEnable, webGlobe) {
-  webGlobe.viewer.scene.logarithmicDepthBuffer = isEnable;
+export function setLogarithmicDepthBufferEnable(isEnable, viewer) {
+  viewer.scene.logarithmicDepthBuffer = isEnable;
 }
 
 /**
  * 判断当前是否开启了深度检测
  * @returns true:开启,false:关闭
  */
-export function isDepthTestAgainstTerrainEnable(webGlobe) {
-  return webGlobe.viewer.scene.globe.depthTestAgainstTerrain;
+export function isDepthTestAgainstTerrainEnable(viewer) {
+  return viewer.scene.globe.depthTestAgainstTerrain;
 }
 
 /**
  * 设置是否开启深度检测
  * @param {*} isEnable true:开启，false:关闭
  */
-export function setDepthTestAgainstTerrainEnable(isEnable, webGlobe) {
-  webGlobe.viewer.scene.globe.depthTestAgainstTerrain = isEnable;
+export function setDepthTestAgainstTerrainEnable(isEnable, viewer) {
+  viewer.scene.globe.depthTestAgainstTerrain = isEnable;
 }
 
 /**

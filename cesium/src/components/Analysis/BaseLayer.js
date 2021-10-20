@@ -1,7 +1,7 @@
 import {getCesiumBaseObject} from "../Utils/util";
 
 export default {
-  inject: ["webGlobe", "Cesium","CesiumZondy"],
+  inject: ["viewer", "Cesium","CesiumZondy"],
   props: {
     vueKey: {
       type: String,
@@ -40,73 +40,22 @@ export default {
       }
       return Cesium;
     },
-    $_draw(drawFunction, webGlobe, analyseFunction, analysisName) {
-      window.drawElement = new window.Cesium.DrawElement(webGlobe.viewer);
+    $_draw(drawFunction, viewer, analyseFunction, analysisName) {
+      window.drawElement = new window.Cesium.DrawElement(viewer);
       let vm = this;
       console.log("drawElement", drawElement);
       window.drawElement[drawFunction]({
-        callback: function(positions) {
-          console.log("positions", positions);
-          vm[analyseFunction](webGlobe, positions, analysisName);
+        callback: function(result) {
+          // console.log("positions", positions);
+          let positions = result.positions;
+          vm[analyseFunction](viewer, positions, analysisName);
         }
       });
     },
-    $_terrainAnalyse(webGlobe, positions, analysisName) {
-      if (positions.length > 0) {
-        let pointArr = new Array();
-        let Npositions = [];
-        let terrainAnalyse = new window.Cesium.TerrainAnalyse(
-          webGlobe.viewer,
-          {}
-        );
-        //必须要一个原点,可以写死
-        let transform = terrainAnalyse.getTransform(115.5, 30.5, 0.0);
-        let inverseTransform = Cesium.Matrix4.inverse(
-          transform,
-          new Cesium.Matrix4()
-        );
-        let globe = webGlobe.viewer.scene.globe;
-        globe.modifiedSlopeMatrix = inverseTransform;
-        //坐标转换、处理
-        for (let i = 0; i < positions.length; i++) {
-          let point = positions[i];
-          let ellipsoid = globe.ellipsoid;
-          let cartesian3 = new Cesium.Cartesian3(point.x, point.y, point.z);
-          let cartographic = ellipsoid.cartesianToCartographic(cartesian3);
-          let lat = Cesium.Math.toDegrees(cartographic.latitude);
-          let lon = Cesium.Math.toDegrees(cartographic.longitude);
-          let height = cartographic.height;
-          pointArr.push(lon, lat, height);
-          let geoPosition = Cesium.Matrix4.multiplyByPoint(
-            inverseTransform,
-            new Cesium.Cartesian3.fromDegrees(lon, lat, height),
-            new Cesium.Cartesian3()
-          );
-          Npositions.push(geoPosition);
-        }
-        Npositions.push(Npositions[0]);
-        globe.selectArea = Npositions;
-
-        //构造区对象
-        let polygon = {
-          name: "立体区",
-          polygon: {
-            //坐标点
-            hierarchy: Cesium.Cartesian3.fromDegreesArrayHeights(pointArr),
-            ...this.terrainGraphics
-          }
-        };
-        //绘制图形通用方法：对接Cesium原生特性
-        webGlobe.appendGraphics(polygon);
-
-        //更新地形
-        terrainAnalyse.updateMaterial(analysisName);
-      }
-    },
     $_initAnalysis(drawFunction, analyseFunction, analysisName) {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        vm.$_draw(drawFunction, webGlobe, analyseFunction, analysisName);
+      window.CesiumZondy.getWebGlobeByInterval(function(viewer) {
+        vm.$_draw(drawFunction, viewer, analyseFunction, analysisName);
       }, this.vueKey);
     },
     /*
@@ -122,11 +71,11 @@ export default {
       }
       //如果是GlobesManager，则直接通过vueKey来寻找
       if (MName === "GlobesManager") {
-        const { webGlobe } = this;
+        const { viewer } = this;
         if (this.vueKey === "default") {
           // 使用注入的webGlobe
           // codemirror使用的时候不能支持多屏，也无法获取.CesiumZondy.GlobesManager对象
-          source = webGlobe;
+          source = viewer;
         } else {
           let GlobesManager = window.CesiumZondy.GlobesManager;
           if (GlobesManager[this.vueKey]) {

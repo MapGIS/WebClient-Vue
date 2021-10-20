@@ -1,5 +1,5 @@
 export default {
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     vueKey: {
       type: String,
@@ -46,11 +46,11 @@ export default {
       }
       //如果是GlobesManager，则直接通过vueKey来寻找
       if (MName === "GlobesManager") {
-        const { webGlobe } = this;
+        const { viewer } = this;
         if (this.vueKey === "default") {
           // 使用注入的webGlobe
           // codemirror使用的时候不能支持多屏，也无法获取.CesiumZondy.GlobesManager对象
-          source = webGlobe;
+          source = viewer;
         } else {
           let GlobesManager = window.CesiumZondy.GlobesManager;
           if (GlobesManager[this.vueKey]) {
