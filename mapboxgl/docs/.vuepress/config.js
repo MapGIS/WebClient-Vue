@@ -175,6 +175,7 @@ module.exports = {
               ["/api/UI/Hawkeye/hawkeye.md", "鹰眼"],
               ["/api/UI/Compare/compare.md", "卷帘"],
               ["/api/UI/Zoom/zoom.md", "缩放"],
+              ["/api/UI/State/StateBar.md", "状态栏"],
 
               ["/api/UI/Table/BaseTable.md", "表格"],
               // ["/api/UI/Table/FeatureTable.md", "要素表格"],

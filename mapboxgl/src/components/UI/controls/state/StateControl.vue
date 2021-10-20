@@ -20,22 +20,37 @@ export default {
   name: "mapgis-state",
   mixins: [controlMixin],
   props: {
+    /**
+     * 是否激活默认界面
+     */
     default: {
       type: Boolean,
       default: true
     },
+    /**
+     * 是否返回比例尺,单位：米
+     */
     scale: {
       type: Boolean,
       default: true
     },
+    /**
+     * 是否返回级别
+     */
     level: {
       type: Boolean,
       default: true
     },
+    /**
+     * 是否返回经度
+     */
     lng: {
       type: Boolean,
       default: true
     },
+    /**
+     * 是否返回纬度
+     */
     lat: {
       type: Boolean,
       default: true
