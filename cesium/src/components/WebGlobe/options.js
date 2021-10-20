@@ -20,35 +20,10 @@ export default {
       return `cesium-${("" + Math.random()).split(".")[1]}`;
     }
   },
-  keyEventEnable: {
-    type: Boolean,
-    default: true
-  },
-  /**
-   * @description 初始视图模式默认为三维球视图 '2D'表示二维视图 'COLUMBUS_VIEW' 表示三维平面视图
-   */
-  viewerMode: {
-    type: String,
-    default: "3D"
-  },
-  /**
-   * @description 是否显示默认的属性信息框
-   */
-  showInfo: {
-    type: Boolean,
-    default: false
-  },
   /**
    * @description 默认动画控制不显示
    */
   animation: {
-    type: Boolean,
-    default: false
-  },
-  /**
-   * @description 默认时间轴控制不显示
-   */
-  timeline: {
     type: Boolean,
     default: false
   },
@@ -73,6 +48,31 @@ export default {
     type: Boolean,
     default: false
   },
+  /**
+   * @description 默认地理编码控件不显示
+   */
+  geocoder: {
+    type: Boolean,
+    default: false
+  },
+
+  /**
+   * @link Cesium.SceneMode
+   * @description 初始视图模式默认为三维球视图
+   * COLUMBUS_VIEW: 1 SCENE2D: 2 SCENE3D: 3
+   */
+  sceneMode: {
+    type: Number
+  },
+
+  /**
+   * @description 默认时间轴控制不显示
+   */
+  timeline: {
+    type: Boolean,
+    default: false
+  },
+
   contextOptions: {
     type: Object,
     default: function() {

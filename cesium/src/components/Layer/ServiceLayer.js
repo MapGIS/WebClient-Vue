@@ -1,5 +1,5 @@
 export default {
-  inject: ["webGlobe","Viewer"],
+  inject: ["viewer"],
   props: {
     baseUrl: {
       type: String,
@@ -208,14 +208,14 @@ export default {
 
       options.url = options.baseUrl;
 
-      //取得webGlobe对象，防止当页面有多个webGlobe只会取得
-      // let webGlobeObj = this.$_getWebGlobe();
+      //取得viewer对象，防止当页面有多个viewer只会取得
+      // let viewerObj = this.$_getWebGlobe();
 
       //根据对应的providerName设置provider
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
-      const { imageryLayers } = this.Viewer;
+      const { imageryLayers } = this.viewer;
 
       let provider;
       if (CesiumZondyLayer) {
@@ -303,10 +303,8 @@ export default {
       this.$emit("load", imageryLayer, this);
     },
     $_unmount() {
-      // let webGlobeObj = this.$_getWebGlobe();
       let { vueKey, vueIndex } = this;
-      // const { viewer } = webGlobeObj;
-      const { imageryLayers } = this.Viewer;
+      const { imageryLayers } = this.viewer;
       let find = window.CesiumZondy[this.managerName].findSource(
         vueKey,
         vueIndex
@@ -427,21 +425,21 @@ export default {
       return layerIndex;
     },
     $_getWebGlobe() {
-      let webGlobeObj;
-      const { vueKey, webGlobe } = this;
-      //如果this.vueKey，则从GlobesManager中取得webGlobeObj
+      let viewerObj;
+      const { vueKey, viewer } = this;
+      //如果this.vueKey，则从GlobesManager中取得viewerObj
       if (vueKey) {
         if (vueKey === "default") {
-          webGlobeObj = webGlobe;
+          viewerObj = viewer;
         } else {
           let GlobesManager = window.CesiumZondy.GlobesManager;
-          webGlobeObj = GlobesManager[this.vueKey][0].source;
+          viewerObj = GlobesManager[this.vueKey][0].source;
         }
       } else {
-        //否则取this.webGlobe
-        webGlobeObj = webGlobe;
+        //否则取this.viewer
+        viewerObj = viewer;
       }
-      return webGlobeObj;
+      return viewerObj;
     },
     /*
      * 当zIndex改变时，调用此方法，在watch中使用
@@ -454,9 +452,7 @@ export default {
         throw new Error("zIndex不能为负数");
       }
       //取得webGlobe对象
-      // let webGlobeObj = this.$_getWebGlobe();
-      // const { viewer } = webGlobeObj;
-      const { imageryLayers } = this.Viewer;
+      const { imageryLayers } = this.viewer;
       const { _layers } = imageryLayers;
       let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
       let index = this.$_getCurrentLayer(imageryLayers).index;
@@ -554,7 +550,7 @@ export default {
      * 会在$_mount使用
      * **/
     $_initLayerIndex() {
-      const { imageryLayers } = this.Viewer;
+      const { imageryLayers } = this.viewer;
       let _layers = imageryLayers._layers;
       let length = _layers.length;
       let currentLayer = _layers[length - 1];
