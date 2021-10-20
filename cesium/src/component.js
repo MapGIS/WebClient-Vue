@@ -30,7 +30,6 @@ export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJ
 
 // 矢量瓦片
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";
-export { default as Mapgis3dGraphicLayer } from "./components/GraphicLayer/GraphicLayer";
 
 // 模型
 export { default as Mapgis3dFileM3d } from "./components/M3D/M3dFile.vue";
