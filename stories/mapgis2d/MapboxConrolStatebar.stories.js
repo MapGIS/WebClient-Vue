@@ -1,4 +1,3 @@
-import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisStateControl from "../../mapboxgl/src/components/UI/controls/state/StateControl.vue";
 import "../style/state.css";
 
@@ -12,18 +11,35 @@ export default {
       table: {
         type: {
           summary: "自定义界面",
-          detail: "",
+          detail: `<mapgis-state :default="false">
+  <template v-slot:default="{state}">
+    <mapgis-ui-input-group size="default" class="mapgis-test-2d-statebar">
+      <mapgis-ui-input addon-before="级别" :value="state.level"/>
+      <mapgis-ui-input addon-before="比例尺" :value="state.scale"/>
+      <mapgis-ui-input addon-before="经度" :value="state.lng" />
+      <mapgis-ui-input addon-before="纬度" :value="state.lat"/>
+    </mapgis-ui-input-group>
+  </template>
+</mapgis-state>`,
         },
         defaultValue: { summary: true },
       },
-      control: "object",
     },
+    scale: true,
+    level: true,
+    lng: true,
+    lat: true,
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebMap, MapgisStateControl },
+  components: { MapgisStateControl },
+  data() {
+    return {
+      compact: true
+    }
+  },
   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.3, 40.5]" :zoom="5" style="height:95vh">
     <mapgis-rastertile-layer
       layerId="raster_tdt",
@@ -32,11 +48,11 @@ const Template = (args, { argTypes }) => ({
     </mapgis-rastertile-layer>
     <mapgis-state v-bind="$props">
       <template v-slot:default="{state}">
-        <mapgis-ui-input-group size="default" class="mapgis-test-2d-statebar">
-          <mapgis-ui-input addon-before="级别" :value="state.level"/>
-          <mapgis-ui-input addon-before="比例尺" :value="state.scale"/>
-          <mapgis-ui-input addon-before="经度" :value="state.lng" />
-          <mapgis-ui-input addon-before="纬度" :value="state.lat"/>
+        <mapgis-ui-input-group size="small" :compact="compact" class="mapgis-test-2d-statebar">
+          <mapgis-ui-input addon-before="级别" :value="state.level" class="mapgis-test-2d-statebar-item"/>
+          <mapgis-ui-input addon-before="比例尺" :value="state.scale" class="mapgis-test-2d-statebar-item"/>
+          <mapgis-ui-input addon-before="经度" :value="state.lng" class="mapgis-test-2d-statebar-item"/>
+          <mapgis-ui-input addon-before="纬度" :value="state.lat"class="mapgis-test-2d-statebar-item"/>
         </mapgis-ui-input-group>
       </template>
     </mapgis-state>
@@ -44,4 +60,10 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 状态栏 = Template.bind({});
-状态栏.args = {};
+状态栏.args = {
+  default: false,
+  scale: true,
+  level: true,
+  lng: true,
+  lat: true,
+};
