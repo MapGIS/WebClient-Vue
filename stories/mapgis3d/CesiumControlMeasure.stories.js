@@ -79,7 +79,7 @@ const Template = (args, { argTypes }) => ({
           click: this.enableAreaMeasure,
         },
         {
-          icon: "mapgis-huizhijuxing",
+          icon: "mapgis-sanjiaoceliang",
           type: "primary",
           tip: "三角测量",
           click: this.enableTriangleMeasure,
@@ -123,7 +123,7 @@ const Template = (args, { argTypes }) => ({
       return {
         overflow: "hidden",
         transition: "width 0.3s",
-        width: `${toolbarVisible ? 160 : 32}px`,
+        width: `${toolbarVisible ? 240 : 32}px`,
       };
     },
     btnStyle({ toolbarVisible }) {
@@ -145,6 +145,7 @@ const Template = (args, { argTypes }) => ({
       this.measure3dRef.remove();
     },
     startMeasure(measureName) {
+      this.clearMeasure();
       this.measure3dRef.$_enableMeasure(measureName);
     },
     enableToolbar() {
