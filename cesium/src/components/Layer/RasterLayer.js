@@ -2,7 +2,7 @@ import IgsOptions from "./RasterOptions";
 
 export default {
   props: { ...IgsOptions },
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   created() {
     this.imageryLayer = this.createCesiumObject();
     this.mount();
@@ -32,16 +32,14 @@ export default {
       }
     },
     mount() {
-      const { webGlobe, imageryLayer, layerIndex } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, imageryLayer, layerIndex } = this;
       viewer.imageryLayers.add(imageryLayer, layerIndex);
       return (
         !viewer.isDestroyed() && viewer.imageryLayers.contains(imageryLayer)
       );
     },
     unmount() {
-      const { webGlobe, imageryLayer } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, imageryLayer } = this;
       return !viewer.isDestroyed() && viewer.imageryLayers.remove(imageryLayer);
     }
   },
