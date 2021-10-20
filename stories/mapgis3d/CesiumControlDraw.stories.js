@@ -68,9 +68,9 @@ draw.args = {
   drawStyle:{
     color:'#FF8C00',
     opacity:0.6,
-    // outlineColor:'#FFA500',
-    // width:4,
-    // outlineWidth:2
+    outlineColor:'#FFA500',
+    width:4,
+    outlineWidth:2
   },
   clampToGround:true,
   infinite:true
