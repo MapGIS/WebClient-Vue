@@ -22,7 +22,7 @@ import {
     linePaintList,
     symbolPaintList,
     symbolLayoutList,
-    polylineDefaultValue
+    polylineDefaultValue, pointDefaultValue, polygonDefaultValue
 } from "./mappingList"
 
 import * as turf from "@turf/turf"
@@ -373,7 +373,18 @@ export default {
                 let paintsKey = keyAlias || key;
                 let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
                 if(!paints){
-                    let defaultValue = polylineDefaultValue[key];
+                    let defaultValue;
+                    switch (vm.dataType) {
+                        case "circle":
+                            defaultValue = pointDefaultValue[key];
+                            break;
+                        case "line":
+                            defaultValue = polylineDefaultValue[key];
+                            break;
+                        case "fill":
+                            defaultValue = polygonDefaultValue[key];
+                            break;
+                    }
                     let pColors = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-color");
                     paints = vm.$_getInterpolate(paintsKey, defaultValue, pColors);
                 }

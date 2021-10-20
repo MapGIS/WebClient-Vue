@@ -95,9 +95,26 @@ let textLayoutList = {
 
 export {textLayoutList};
 
+let pointDefaultValue = {
+    color: "#FF0000",
+    radius: 6,
+    opacity: 1,
+    outlineWidth: 1,
+    outlineColor: "#FFFFFF",
+    outlineOpacity: 1
+}
+
+export {pointDefaultValue};
+
 let polylineDefaultValue = {
     opacity: 1,
     width: 1
 }
 
 export {polylineDefaultValue};
+
+let polygonDefaultValue = {
+    opacity: 1
+}
+
+export {polygonDefaultValue};
