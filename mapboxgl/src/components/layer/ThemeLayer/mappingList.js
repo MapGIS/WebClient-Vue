@@ -94,3 +94,10 @@ let textLayoutList = {
 }
 
 export {textLayoutList};
+
+let polylineDefaultValue = {
+    opacity: 1,
+    width: 1
+}
+
+export {polylineDefaultValue};

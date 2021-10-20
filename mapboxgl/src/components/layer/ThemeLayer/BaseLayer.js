@@ -21,7 +21,8 @@ import {
     pointPaintList,
     linePaintList,
     symbolPaintList,
-    symbolLayoutList
+    symbolLayoutList,
+    polylineDefaultValue
 } from "./mappingList"
 
 import * as turf from "@turf/turf"
@@ -253,7 +254,8 @@ export default {
         },
         "themeOption.styleGroups": {
             handler: function () {
-                let vm = this, styleGroups = this.themeOption.styleGroups, groups = {};
+                let groups = {};
+                const {styleGroups} = this.themeOption
                 for (let i = 0; i < styleGroups.length; i++) {
                     const {style} = styleGroups[i];
                     if (style) {
@@ -355,12 +357,26 @@ export default {
         this.$_addThemeLayerBySource();
     },
     methods: {
+        $_getInterpolate(key, defaultValue, colors) {
+            let opacitys = ["step", ["to-number", ["get", key]], defaultValue];
+            for (let k = 3; k < colors.length; k += 2) {
+                opacitys[k] = colors[k];
+                opacitys[k + 1] = defaultValue;
+            }
+            return opacitys;
+        },
         $_updateRangeStyleGroups(groups) {
-            let vm = this;
+            let vm = this, watchObject;
 
-            function setPaint(groups, key, vm) {
+            function setPaint(groups, key, vm, keyAlias) {
                 let paintArr = groups[key];
-                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + key);
+                let paintsKey = keyAlias || key;
+                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
+                if(!paints){
+                    let defaultValue = polylineDefaultValue[key];
+                    let pColors = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-color");
+                    paints = vm.$_getInterpolate(paintsKey, defaultValue, pColors);
+                }
                 for (let i = 0; i < paintArr.length; i++) {
                     for (let j = 3; j < paints.length; j += 2) {
                         if (paintArr[i].start <= paints[j] && paints[j] <= paintArr[i].end) {
@@ -370,17 +386,47 @@ export default {
                         }
                     }
                 }
-                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + key, paints);
+                let newKey = keyAlias || key;
+                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + newKey, paints);
             }
 
             switch (this.dataType) {
                 case "fill":
-                    if (groups.color) {
-                        setPaint(groups, "color", vm);
+                    watchObject = {
+                        color: "",
+                        opacity: ""
                     }
-                    if (groups.opacity) {
-                        setPaint(groups, "opacity", vm);
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+                case "circle":
+                    watchObject = {
+                        color: "",
+                        opacity: "",
+                        radius: "",
+                        outlineWidth: "stroke-width",
+                        outlineColor: "stroke-color",
+                        outlineOpacity: "stroke-opacity"
                     }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+                case "line":
+                    watchObject = {
+                        color: "",
+                        opacity: ""
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
                     break;
             }
         },
