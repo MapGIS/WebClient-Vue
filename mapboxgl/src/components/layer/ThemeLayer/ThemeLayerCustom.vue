@@ -67,64 +67,6 @@ export default {
 </script>
 
 <style>
-.popup-content {
-  width: auto;
-}
-
-.mapgis-theme-popup-container {
-  padding: 10px 12px 20px 12px;
-}
-
-.mapgis-theme-popup-row:nth-child(2n + 2) {
-  background-color: rgb(231, 232, 233);
-}
-
-.mapgis-theme-popup-row:nth-child(2n + 3) {
-  background-color: rgb(244, 244, 244);
-}
-
-.mapgis-theme-popup-row:nth-child(2n + 2):hover, .mapgis-theme-popup-row:nth-child(2n + 3):hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
-}
-
-.mapgis-theme-popup-row {
-  text-align: left;
-  white-space: nowrap;
-  padding: 6px 12px;
-  height: 25px;
-  line-height: 11px;
-  min-width: 240px;
-  border-left: 2px solid rgba(115, 176, 251, 0);
-}
-
-.mapgis-theme-popup-title {
-  color: rgb(178, 178, 178);
-  font-weight: bold;
-  border-bottom: 1px solid rgb(232, 232, 232);
-  padding: 6px 0;
-  line-height: 8px;
-  height: 28px;
-  margin-bottom: 3px;
-}
-
-.mapgis-theme-popup-item {
-  display: inline-block;
-  line-height: 14px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  word-break: break-all;
-}
-
-.mapgis-theme-popup-field {
-  width: 30%;
-}
-
-.mapgis-theme-popup-value {
-  width: 70%;
-  text-align: right;
-}
-
 .mapgis-mask {
   position: absolute;
   top: 0;
