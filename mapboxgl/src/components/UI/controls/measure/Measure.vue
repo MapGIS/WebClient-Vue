@@ -448,6 +448,7 @@ export default {
       this.$_initMeasure();
       this.$_changeMapStyle();
       this.$_unbindDrawEvents();
+      this.$_unbindEditEvents();
       this.$_addMeasureControl(this.measure);
       this.$_emitEvent("added", { measure: this.measure });
       this.$_unbindMeasureEvents();

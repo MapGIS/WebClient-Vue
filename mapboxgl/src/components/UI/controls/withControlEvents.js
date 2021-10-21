@@ -7,6 +7,7 @@ export default {
     this.$_initMapboxDom();
     this.drawEvents = this.$_initMapboxEvent().draw;
     this.measureEvents = this.$_initMapboxEvent().measure;
+    this.editEvents = this.$_initMapboxEvent().edit;
   },
 
   methods: {
@@ -15,6 +16,7 @@ export default {
       window.mapboxDom.draw = window.mapboxDom.draw || {};
       window.mapboxDom.measure = window.mapboxDom.measure || {};
       window.mapboxDom.measureCom = window.mapboxDom.measureCom || {};
+      window.mapboxDom.edit = window.mapboxDom.edit || {};
       return window.mapboxDom;
     },
 
@@ -22,6 +24,7 @@ export default {
       window.mapboxEvent = window.mapboxEvent || {};
       window.mapboxEvent.draw = window.mapboxEvent.draw || [];
       window.mapboxEvent.measure = window.mapboxEvent.measure || [];
+      window.mapboxEvent.edit = window.mapboxEvent.edit || [];
       return window.mapboxEvent;
     },
 
@@ -43,6 +46,7 @@ export default {
       if (!control) return;
       this.$_removeDrawControl();
       this.$_removeMeasureControl();
+      this.$_removeEditControl();
       window.mapboxDom.draw = control;
       this.map && this.map.addControl(control);
     },
@@ -83,6 +87,7 @@ export default {
       if (!control) return;
       this.$_removeDrawControl();
       this.$_removeMeasureControl();
+      this.$_removeEditControl();
       window.mapboxDom.measure = control;
       window.mapboxDom.measureCom = com;
       this.map && this.map.addControl(control);
@@ -124,6 +129,47 @@ export default {
       if (window.mapboxDom.measureCom) {
         window.mapboxDom.measureCom.coordinates = [];
       }
+    },
+
+    $_addEditControl(control) {
+      if (!control) return;
+      this.$_removeDrawControl();
+      this.$_removeMeasureControl();
+      this.$_removeEditControl();
+      window.mapboxDom.edit = control;
+      this.map && this.map.addControl(control);
+    },
+
+    $_removeEditControl() {
+      this.$_removeSource(DrawSources.HOT);
+      this.$_removeSource(DrawSources.COLD);
+      if (
+        window.mapboxDom.edit &&
+        window.mapboxDom.edit.onAdd &&
+        window.mapboxDom.edit.onRemove
+      ) {
+        if (!this.map) return;
+        this.map.removeControl(window.mapboxDom.edit);
+        window.mapboxDom.edit = undefined;
+      }
+    },
+
+    $_bindEditEvents(eventName, eventCallback) {
+      if (!this.map) return;
+      this.editEvents.push({
+        name: eventName,
+        callback: eventCallback
+      });
+      this.map.on(eventName, eventCallback);
+    },
+
+    $_unbindEditEvents() {
+      if (!this.map) return;
+      if (this.editEvents.length <= 0) return;
+      this.editEvents.forEach(e => {
+        this.map && this.map.off(e.name, e.callback);
+      });
+      this.editEvents.length = 0;
     }
   }
 };
