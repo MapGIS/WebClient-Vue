@@ -1,6 +1,6 @@
 # IGS二维矢量
 
-> mapgis-3d-igs-vector-layer
+> mapgis-3d-igs-dynamic-layer
 
 ## 属性
 

@@ -13,7 +13,7 @@ export { default as Mapgis3dArcgisLegend } from "../../cesium/src/components/UI/
 export { default as Mapgis3dImageryLayer } from "../../cesium/src/components/Provider/ImageProvider/ImageryLayer.vue";
 export { default as Mapgis3dIgsDocLayer } from "../../cesium/src/components/Layer/IGServer/IgsDocLayer.vue";
 export { default as Mapgis3dIgsTileLayer } from "../../cesium/src/components/Layer/IGServer/IgsTileLayer.vue";
-export { default as Mapgis3dIgsVectorLayer } from "../../cesium/src/components/Layer/IGServer/IgsVectorLayer.vue";
+export { default as Mapgis3dIgsDynamicLayer } from "../../cesium/src/components/Layer/IGServer/IgsDynamicLayer.vue";
 export { default as Mapgis3dRasterLayer } from "../../cesium/src/components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";

@@ -208,14 +208,12 @@ export default {
 
       options.url = options.baseUrl;
 
-      //取得viewer对象，防止当页面有多个viewer只会取得
-      // let viewerObj = this.$_getWebGlobe();
-
+      //取得webGlobe对象，防止当页面有多个webGlobe只会取得
       //根据对应的providerName设置provider
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
-      const { imageryLayers } = this.viewer;
+      const { imageryLayers } = this.$_getWebGlobe();;
 
       let provider;
       if (CesiumZondyLayer) {
@@ -304,7 +302,7 @@ export default {
     },
     $_unmount() {
       let { vueKey, vueIndex } = this;
-      const { imageryLayers } = this.viewer;
+      const { imageryLayers } = this.$_getWebGlobe();
       let find = window.CesiumZondy[this.managerName].findSource(
         vueKey,
         vueIndex
@@ -425,21 +423,21 @@ export default {
       return layerIndex;
     },
     $_getWebGlobe() {
-      let viewerObj;
+      let webGlobeObj;
       const { vueKey, viewer } = this;
-      //如果this.vueKey，则从GlobesManager中取得viewerObj
+      //如果this.vueKey，则从GlobesManager中取得webGlobeObj
       if (vueKey) {
         if (vueKey === "default") {
-          viewerObj = viewer;
+          webGlobeObj = viewer;
         } else {
           let GlobesManager = window.CesiumZondy.GlobesManager;
-          viewerObj = GlobesManager[this.vueKey][0].source;
+          webGlobeObj = GlobesManager[this.vueKey][0].source;
         }
       } else {
-        //否则取this.viewer
-        viewerObj = viewer;
+        //否则取this.webGlobe
+        webGlobeObj = viewer;
       }
-      return viewerObj;
+      return webGlobeObj;
     },
     /*
      * 当zIndex改变时，调用此方法，在watch中使用
@@ -452,7 +450,7 @@ export default {
         throw new Error("zIndex不能为负数");
       }
       //取得webGlobe对象
-      const { imageryLayers } = this.viewer;
+      const { imageryLayers } = this.$_getWebGlobe();
       const { _layers } = imageryLayers;
       let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
       let index = this.$_getCurrentLayer(imageryLayers).index;
@@ -550,7 +548,7 @@ export default {
      * 会在$_mount使用
      * **/
     $_initLayerIndex() {
-      const { imageryLayers } = this.viewer;
+      const { imageryLayers } = this.$_getWebGlobe();
       let _layers = imageryLayers._layers;
       let length = _layers.length;
       let currentLayer = _layers[length - 1];

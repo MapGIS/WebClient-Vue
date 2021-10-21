@@ -13,10 +13,10 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-scene>
-        <mapgis-3d-igs-vector-layer
+        <mapgis-3d-igs-dynamic-layer
             :gdbps="gdbps"
             :baseUrl="baseUrl"
-        ></mapgis-3d-igs-vector-layer>
+        ></mapgis-3d-igs-dynamic-layer>
     </mapgis-web-scene>
     `
 });
