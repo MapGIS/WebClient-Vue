@@ -82,7 +82,7 @@ export {textPaintList};
 let textLayoutList = {
     "field": "text-field",
     "fontFamily": "text-font",
-    "fontSize": "icon-size",
+    "fontSize": "text-size",
     "spacing": "text-letter-spacing",
     "rotate": "text-rotate",
     "lineHeight": "text-line-height",

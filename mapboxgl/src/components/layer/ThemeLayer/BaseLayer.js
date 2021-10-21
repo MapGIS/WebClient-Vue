@@ -198,6 +198,33 @@ export default {
                 return {}
             }
         },
+        enableLegend: {
+            type: Boolean,
+            default: false
+        },
+        legendOption: {
+            type: Object,
+            default() {
+                return {
+                    title: "",
+                    fields: [],
+                    style: {
+                        containerStyle: {},
+                        titleStyle: {},
+                        rowStyle: {},
+                        legendStyle: {},
+                        labelStyle: {},
+                    },
+                    class: {
+                        containerClass: {},
+                        titleClass: {},
+                        rowClass: {},
+                        legendClass: {},
+                        labelClass: {},
+                    }
+                }
+            }
+        }
     },
     watch: {
         dataSource: {

@@ -6,11 +6,27 @@
         @formChanged="$_formChanged"
         @highlightChanged="$_highlightChanged"
     />
+    <slot name="legend" :colors="legendColors">
+      <div class="mapgis-theme-legend" :class="legendOption.class.containerClass" v-if="enableLegend"
+           :style="legendOption.style.containerStyle">
+        <div class="mapgis-theme-legend-title" :class="legendOption.class.titleClass" :style="legendOption.style.titleStyle">
+          {{ legendOption.title }}
+        </div>
+        <div class="mapgis-theme-legend-row" :class="legendOption.class.rowClass" :style="legendOption.style.rowStyle" :key="index"
+             v-for="(color, index) in legendColors">
+          <div class="mapgis-theme-legend-color" :class="legendOption.class.legendClass" :style="{background: color, ...legendOption.style.legendStyle}"></div>
+          <div class="mapgis-theme-legend-content" :class="legendOption.class.labelClass" :style="legendOption.style.labelStyle">
+            {{ legendOption.fields[index] }}
+          </div>
+        </div>
+      </div>
+    </slot>
   </div>
 </template>
 
 <script>
 import BaseLayer from "./BaseLayer";
+import gradients from "./gradient";
 
 export default {
   name: "mapgis-theme-layer-custom",
@@ -27,12 +43,18 @@ export default {
   data() {
     return {
       optionsCopy: undefined,
+      legendColors: undefined,
     }
   },
   created() {
     this.panelType = "custom";
   },
   mounted() {
+    const {layerStyle} = this.themeOption;
+    let colors = layerStyle.color || gradients[0].key;
+    this.legendColors = colors.split(",");
+    this.containerClass = this.legendOption.class.containerClass;
+    this.titleClass = this.legendOption.class.titleClass;
   },
   methods: {
     $_highlightChanged(id) {
@@ -82,5 +104,43 @@ export default {
   z-index: 10;
   top: 50%;
   left: 50%;
+}
+
+.mapgis-theme-legend {
+  width: 300px;
+  height: 306px;
+  border: 2px solid grey;
+  border-radius: 4px;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1;
+}
+
+.mapgis-theme-legend-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.mapgis-theme-legend-row {
+  margin-top: 12px;
+  height: 40px;
+}
+
+.mapgis-theme-legend-color {
+  width: 39%;
+  height: 40px;
+  float: left;
+  margin-left: 27px;
+}
+
+.mapgis-theme-legend-content {
+  width: 50%;
+  height: 40px;
+  float: left;
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 10px;
 }
 </style>

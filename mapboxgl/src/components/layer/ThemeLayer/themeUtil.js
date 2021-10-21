@@ -66,16 +66,20 @@ export function getLayerFromTextStyle(style) {
             textLayer.paint[textPaintList[key]] = style[key];
         }
         if (textLayoutList.hasOwnProperty(key)) {
-            if (key === "field") {
-                textLayer.layout[textLayoutList[key]] = "{" + style[key] + "}";
-            } else if (key === "fontFamily") {
-                textLayer.layout[textLayoutList[key]] = [style[key], style[key]];
-            } else if (key === "xOffset") {
-                textLayer.layout["text-offset"][0] = style[key];
-            } else if (key === "yOffset") {
-                textLayer.layout["text-offset"][1] = style[key] * -1;
-            } else {
-                textLayer.layout[textLayoutList[key]] = style[key];
+            if(key !== "fieldAfter" && key !== "fieldAfter"){
+                if (key === "field") {
+                    let fieldBefore = style["fieldBefore"] || "";
+                    let fieldAfter = style["fieldAfter"] || "";
+                    textLayer.layout[textLayoutList[key]] = fieldBefore + "{" + style[key] + "}" + fieldAfter;
+                } else if (key === "fontFamily") {
+                    textLayer.layout[textLayoutList[key]] = [style[key], style[key]];
+                } else if (key === "xOffset") {
+                    textLayer.layout["text-offset"][0] = style[key];
+                } else if (key === "yOffset") {
+                    textLayer.layout["text-offset"][1] = style[key] * -1;
+                } else {
+                    textLayer.layout[textLayoutList[key]] = style[key];
+                }
             }
         }
     });
