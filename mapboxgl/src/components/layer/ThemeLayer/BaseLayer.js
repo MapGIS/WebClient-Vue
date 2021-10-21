@@ -264,12 +264,12 @@ export default {
                                 groups[key] = [];
                             }
                             let s;
-                            if(vm.themeType === "range"){
+                            if (vm.themeType === "range") {
                                 s = {
                                     start: styleGroups[i].start,
                                     end: styleGroups[i].end
                                 }
-                            }else if(vm.themeType === "unique"){
+                            } else if (vm.themeType === "unique") {
                                 s = {
                                     value: styleGroups[i].value
                                 }
@@ -375,13 +375,24 @@ export default {
             }
             return opacitys;
         },
-        $_updateUniqueStyleGroups(groups){
+        $_getInterpolateUnique(key, defaultValue, colors) {
+            let interpolate = {
+                property: key,
+                stops: []
+            };
+            for (let k = 0; k < colors.stops.length; k++) {
+                interpolate.stops.push([colors.stops[k][0], defaultValue]);
+            }
+            return interpolate;
+        },
+        $_updateUniqueStyleGroups(groups) {
             let vm = this, watchObject;
-            function setPaint(groups, key, vm, keyAlias) {
+
+            function setPaint(groups, key, vm, keyAlias, field) {
                 let paintArr = groups[key];
                 let paintsKey = keyAlias || key;
                 let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
-                if(!paints){
+                if (!paints) {
                     let defaultValue;
                     switch (vm.dataType) {
                         case "circle":
@@ -395,16 +406,29 @@ export default {
                             break;
                     }
                     let pColors = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-color");
-                    paints = vm.$_getInterpolate(paintsKey, defaultValue, pColors);
+                    paints = vm.$_getInterpolateUnique(field, defaultValue, pColors);
                 }
-                for (let i = 0; i < paintArr.length; i++) {
-                    if(paints.indexOf(paintArr[i].value) >= 0){
-                        paints[paints.indexOf(paintArr[i].value) + 1] = paintArr[i][key];
+                if (paints.hasOwnProperty("stops")) {
+                    let stops = paints.stops;
+                    for (let i = 0; i < paintArr.length; i++) {
+                        for (let j = 0; j < stops.length; j++) {
+                            if (stops[j][0] === paintArr[i].value) {
+                                stops[j][1] = paintArr[i][key];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < paintArr.length; i++) {
+                        if (paints.indexOf(paintArr[i].value) >= 0) {
+                            paints[paints.indexOf(paintArr[i].value) + 1] = paintArr[i][key];
+                        }
                     }
                 }
                 let newKey = keyAlias || key;
                 vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + newKey, paints);
             }
+
             switch (this.dataType) {
                 case "fill":
                     watchObject = {
@@ -413,7 +437,7 @@ export default {
                     }
                     Object.keys(groups).forEach(function (key) {
                         if (watchObject.hasOwnProperty(key)) {
-                            setPaint(groups, key, vm, watchObject[key]);
+                            setPaint(groups, key, vm, watchObject[key], vm.selectValue);
                         }
                     });
                     break;
@@ -428,7 +452,7 @@ export default {
                     }
                     Object.keys(groups).forEach(function (key) {
                         if (watchObject.hasOwnProperty(key)) {
-                            setPaint(groups, key, vm, watchObject[key]);
+                            setPaint(groups, key, vm, watchObject[key], vm.selectValue);
                         }
                     });
                     break;
@@ -439,7 +463,7 @@ export default {
                     }
                     Object.keys(groups).forEach(function (key) {
                         if (watchObject.hasOwnProperty(key)) {
-                            setPaint(groups, key, vm, watchObject[key]);
+                            setPaint(groups, key, vm, watchObject[key], vm.selectValue);
                         }
                     });
                     break;
@@ -452,7 +476,7 @@ export default {
                 let paintArr = groups[key];
                 let paintsKey = keyAlias || key;
                 let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
-                if(!paints){
+                if (!paints) {
                     let defaultValue;
                     switch (vm.dataType) {
                         case "circle":
@@ -1684,7 +1708,7 @@ export default {
                 if (this.themeOption.styleGroups) {
                     let radius, outlineWidth, outlineColor, outlineOpacity, opacity;
                     for (let i = 0; i < this.themeOption.styleGroups.length; i++) {
-                        if(newColors.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                        if (newColors.indexOf(this.themeOption.styleGroups[i].value) >= 0) {
                             newColors[newColors.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.color;
                         }
                         if (this.themeOption.styleGroups[i].style.radius) {
@@ -1692,7 +1716,7 @@ export default {
                                 let r = this.themeOption.layerStyle.radius || 6;
                                 radius = formatInterpolate(iSString, dataSourceCopy, key, r);
                             }
-                            if(radius.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                            if (radius.indexOf(this.themeOption.styleGroups[i].value) >= 0) {
                                 radius[radius.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.radius;
                             }
                         }
@@ -1701,7 +1725,7 @@ export default {
                                 let w = this.themeOption.layerStyle.outlineWidth || 1;
                                 outlineWidth = formatInterpolate(iSString, dataSourceCopy, key, w);
                             }
-                            if(outlineWidth.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                            if (outlineWidth.indexOf(this.themeOption.styleGroups[i].value) >= 0) {
                                 outlineWidth[outlineWidth.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineWidth;
                             }
                         }
@@ -1710,7 +1734,7 @@ export default {
                                 let c = this.themeOption.layerStyle.outlineColor || "#000000";
                                 outlineColor = formatInterpolate(iSString, dataSourceCopy, key, c);
                             }
-                            if(outlineColor.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                            if (outlineColor.indexOf(this.themeOption.styleGroups[i].value) >= 0) {
                                 outlineColor[outlineColor.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineColor;
                             }
                         }
@@ -1719,7 +1743,7 @@ export default {
                                 let o = this.themeOption.layerStyle.outlineOpacity || 1;
                                 outlineOpacity = formatInterpolate(iSString, dataSourceCopy, key, o);
                             }
-                            if(outlineOpacity.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                            if (outlineOpacity.indexOf(this.themeOption.styleGroups[i].value) >= 0) {
                                 outlineOpacity[outlineOpacity.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineOpacity;
                             }
                         }
@@ -1728,7 +1752,7 @@ export default {
                                 let o = this.themeOption.layerStyle.opacity || 1;
                                 opacity = formatInterpolate(iSString, dataSourceCopy, key, o);
                             }
-                            if(opacity.indexOf(this.themeOption.styleGroups[i].value) >= 0){
+                            if (opacity.indexOf(this.themeOption.styleGroups[i].value) >= 0) {
                                 opacity[opacity.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.opacity;
                             }
                         }
@@ -1775,6 +1799,7 @@ export default {
                     }
                 }
             } else {
+                let opacity, radius, outlineWidth, outlineColor, outlineOpacity;
                 newColors = {
                     property: key,
                     stops: []
@@ -1790,6 +1815,111 @@ export default {
                                 newColors.stops[j][1] = this.themeOption.styleGroups[i].style.color;
                             }
                         }
+                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("opacity")) {
+                            if (!opacity) {
+                                let o = this.themeOption.layerStyle.opacity || 1;
+                                opacity = formatInterpolate(iSString, dataSourceCopy, key, o);
+                            }
+                            let stops = opacity.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOption.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOption.styleGroups[i].style.opacity;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("radius")) {
+                            if (!radius) {
+                                let r = this.themeOption.layerStyle.radius || 6;
+                                radius = formatInterpolate(iSString, dataSourceCopy, key, r);
+                            }
+                            let stops = radius.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOption.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOption.styleGroups[i].style.radius;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("outlineWidth")) {
+                            if (!outlineWidth) {
+                                let l = this.themeOption.layerStyle.outlineWidth || 1;
+                                outlineWidth = formatInterpolate(iSString, dataSourceCopy, key, l);
+                            }
+                            let stops = outlineWidth.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOption.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOption.styleGroups[i].style.outlineWidth;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("outlineColor")) {
+                            if (!outlineColor) {
+                                let l = this.themeOption.layerStyle.outlineColor || "#000000";
+                                outlineColor = formatInterpolate(iSString, dataSourceCopy, key, l);
+                            }
+                            let stops = outlineColor.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOption.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOption.styleGroups[i].style.outlineColor;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("outlineOpacity")) {
+                            if (!outlineOpacity) {
+                                let l = this.themeOption.layerStyle.outlineOpacity || 1;
+                                outlineOpacity = formatInterpolate(iSString, dataSourceCopy, key, l);
+                            }
+                            let stops = outlineOpacity.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOption.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOption.styleGroups[i].style.outlineOpacity;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (opacity) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-opacity",
+                            opacity
+                        );
+                    }
+                    if (radius) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-radius",
+                            radius
+                        );
+                    }
+                    if (outlineWidth) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-stroke-width",
+                            outlineWidth
+                        );
+                    }
+                    if (outlineColor) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-stroke-color",
+                            outlineColor
+                        );
+                    }
+                    if (outlineOpacity) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-stroke-opacity",
+                            outlineOpacity
+                        );
                     }
                 }
             }

@@ -100,7 +100,7 @@ let pointDefaultValue = {
     radius: 6,
     opacity: 1,
     outlineWidth: 1,
-    outlineColor: "#FFFFFF",
+    outlineColor: "#000000",
     outlineOpacity: 1
 }
 

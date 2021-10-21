@@ -226,6 +226,16 @@ export function formatInterpolate(isString, dataSource, key, value) {
             }
         }
         interpolate.push(value);
+    }else {
+        interpolate = {
+            property: key,
+            stops: []
+        };
+        for (let i = 0; i < dataSource.length; i++) {
+            if (dataSource[i] !== "") {
+                interpolate.stops.push([dataSource[i], value]);
+            }
+        }
     }
     return interpolate;
 }
