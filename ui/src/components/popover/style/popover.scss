@@ -1,25 +1,6 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
-.mapgis-popup-content {
-  &-title {
-    color: $primary-5;
-    font-weight: bolder;
-    margin-left: 6px;
-  }
-}
-
-.mapboxgl-popup-close-button {
-  color: $primary-5;
-}
-.mapboxgl-popup-content {
-  background-color: $popup-background;
-}
-
-.mapboxgl-popup-header {
-  background-color: $popup-background;
-}
-
 $popover-prefix-cls: $ant-prefix + "-popover";
 
 .#{$popover-prefix-cls} {

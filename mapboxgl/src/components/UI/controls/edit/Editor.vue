@@ -127,6 +127,7 @@ export default {
     feature: {
       handler: function(next) {
         this.parseFeature(next);
+        this.toggleFeature();
       },
       deep: true
     },
@@ -318,6 +319,7 @@ export default {
       if (!properties) return;
       editor.setFeatureProperty(guid, key, value);
       let f = editor.get(guid);
+      this.properties = f.properties;
       this.$emit("change.feature", f);
     }
   }
