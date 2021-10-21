@@ -23,7 +23,7 @@ export default {
         defaultValue: { summary: 'null' },
       },
     },
-    themeOption: {
+    themeOptions: {
       description: "专题图样式，包含专题图图层样式、分段样式以及标签样式，其中标签样式如下：<br>" +
           "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式<br>" +
           "2、<span class='storybook-span'>styleGroups</span>(选填)：分段样式(略)<br>" +
@@ -83,7 +83,7 @@ export const  标签 = Template.bind({});
   dataSource: "http://localhost:6163/igs/rest/mrfs/layer/query?f=json&gdbp=gdbp://MapGISLocalPlus/wuhan_new/sfcls/武汉市&structs={IncludeAttribute:true,IncludeGeometry:true,IncludeWebGraphic:false}&pageCount=200&page=0&cursorType=forward&rtnLabel=true",
   type: "uniform",
   field: "Name",
-  themeOption: {
+  themeOptions: {
     textStyle: {
       field: "Name",
       fontColor: "#FFFFFF",

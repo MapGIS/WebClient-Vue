@@ -20,7 +20,7 @@ export default {
         defaultValue: { summary: 'null' },
       },
     },
-    themeOption: {
+    themeOptions: {
       description:  "专题图样式，包含专题图图层样式、分段样式以及高亮样式，样式如下：<br>" +
           "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式<br>" +
           "有如下值：<br>" +
@@ -52,7 +52,7 @@ export const  自定义样式 = Template.bind({});
   dataSource: wuhan_subway,
   type: "range",
   field: "mpLength",
-  themeOption: {
+  themeOptions: {
     layerStyle: {
       color: "#ff0000,#ff8700,#ffd300,#deff0a,#a1ff0a,#0aff99,#0aefff,#147df5,#580aff,#be0aff",
       width: 5,

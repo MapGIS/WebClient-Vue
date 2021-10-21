@@ -108,6 +108,9 @@ function getDefaultPopup(fields, alias, style, pClass, title, feature, defaultFi
     }
     element += getPopupRows(fields, alias, popupStyle, feature, defaultField, rowClass, fieldClass, valueClass, before);
     element += "</div></div>";
+    if(defaultField && (!fields || fields && fields instanceof Array && fields.length === 0)){
+        element = element.replace("mapgis-popup-row-container ","mapgis-popup-row-container mapgis-popup-row-container-defaultField ");
+    }
     return element;
 }
 

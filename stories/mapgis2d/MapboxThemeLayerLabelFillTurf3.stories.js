@@ -20,7 +20,7 @@ export default {
         defaultValue: { summary: 'null' },
       },
     },
-    themeOption: {
+    themeOptions: {
       description: "专题图样式，包含专题图图层样式、分段样式以及标签样式，其中标签样式如下：<br>" +
           "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式<br>" +
           "2、<span class='storybook-span'>styleGroups</span>(选填)：分段样式(略)<br>" +
@@ -80,7 +80,7 @@ export const  标签 = Template.bind({});
   dataSource: wuhan,
   type: "uniform",
   field: "name",
-  themeOption: {
+  themeOptions: {
     textStyle: {
       enableIgs: true,
       baseUrl: "http://localhost:6163",

@@ -209,6 +209,10 @@ export default {
   overflow: auto;
 }
 
+.mapgis-popup-row-container-defaultField{
+  height: 32.5px;
+}
+
 .mapgis-popup-row:nth-child(2n) {
   background-color: rgb(231, 232, 233);
 }

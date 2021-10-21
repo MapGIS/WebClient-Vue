@@ -20,7 +20,7 @@ export default {
         defaultValue: { summary: 'null' },
       },
     },
-    themeOption: {
+    themeOptions: {
       description:  "专题图所有样式，包含专题图样式、高亮样式以及分段样式，热力图目前只应用专题图样式，有如下值：<br>" +
           "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式<br>" +
           "有如下值：<br>" +
@@ -46,7 +46,7 @@ export const  自定义样式 = Template.bind({});
   dataSource: wuhan_house,
   type: "heatmap",
   field: "display_x",
-  themeOption: {
+  themeOptions: {
     layerStyle:{
       color: "#9766BF,#C9ADAD,#B5ADDD,#93A9DD,#74A9E1",
       radius: 20

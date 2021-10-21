@@ -42,7 +42,7 @@ export const 武汉2020年GDP = Template.bind({});
     title: "2020武汉行政区GDP(亿元)",
     fields: ["极低","低","中等","高","极高"],
   },
-  themeOption: {
+  themeOptions: {
     layerStyle: {
       color: "#caf0f8,#90e0ef,#00b4d8,#0077b6,#03045e"
     },

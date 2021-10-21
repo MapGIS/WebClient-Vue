@@ -7,16 +7,16 @@
         @highlightChanged="$_highlightChanged"
     />
     <slot name="legend" :colors="legendColors">
-      <div class="mapgis-theme-legend" :class="legendOptionCopy.class.containerClass" v-if="enableLegend"
-           :style="legendOptionCopy.style.containerStyle">
-        <div class="mapgis-theme-legend-title" :class="legendOptionCopy.class.titleClass" :style="legendOptionCopy.style.titleStyle">
-          {{ legendOptionCopy.title }}
+      <div class="mapgis-theme-legend" :class="legendOptionsCopy.class.containerClass" v-if="enableLegend"
+           :style="legendOptionsCopy.style.containerStyle">
+        <div class="mapgis-theme-legend-title" :class="legendOptionsCopy.class.titleClass" :style="legendOptionsCopy.style.titleStyle">
+          {{ legendOptionsCopy.title }}
         </div>
-        <div class="mapgis-theme-legend-row" :class="legendOptionCopy.class.rowClass" :style="legendOptionCopy.style.rowStyle" :key="index"
+        <div class="mapgis-theme-legend-row" :class="legendOptionsCopy.class.rowClass" :style="legendOptionsCopy.style.rowStyle" :key="index"
              v-for="(color, index) in legendColors">
-          <div class="mapgis-theme-legend-color" :class="legendOptionCopy.class.legendClass" :style="{background: color, ...legendOptionCopy.style.legendStyle}"></div>
-          <div class="mapgis-theme-legend-content" :class="legendOptionCopy.class.labelClass" :style="legendOptionCopy.style.labelStyle">
-            {{ legendOptionCopy.fields[index] }}
+          <div class="mapgis-theme-legend-color" :class="legendOptionsCopy.class.legendClass" :style="{background: color, ...legendOptionsCopy.style.legendStyle}"></div>
+          <div class="mapgis-theme-legend-content" :class="legendOptionsCopy.class.labelClass" :style="legendOptionsCopy.style.labelStyle">
+            {{ legendOptionsCopy.fields[index] }}
           </div>
         </div>
       </div>
@@ -50,10 +50,10 @@ export default {
     this.panelType = "custom";
   },
   mounted() {
-    const {layerStyle} = this.themeOption;
+    const {layerStyle} = this.themeOptions;
     let colors = layerStyle.color || gradients[0].key;
     this.legendColors = colors.split(",");
-    this.legendOptionCopy = Object.assign(this.legendOptionCopy, this.legendOption);
+    this.legendOptionsCopy = Object.assign(this.legendOptionsCopy, this.legendOptions);
   },
   methods: {
     $_highlightChanged(id) {
