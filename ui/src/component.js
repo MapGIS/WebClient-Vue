@@ -75,6 +75,7 @@ export { default as MapgisUiTimePicker } from "./components/time-picker/TimePick
 export { default as MapgisUiTransfer } from "./components/transfer/Transfer.vue";
 export { default as MapgisUiTreeSelect } from "./components/tree-select/TreeSelect.vue";
 export { default as MapgisUiTreeSelectNode } from "./components/tree-select/TreeNode.vue";
+export { default as MapgisUiJsonEditor } from "./components/jsoneditor/JsonEditor.vue";
 
 // Data Display
 export { default as MapgisUiAvatar } from "./components/avatar/Avatar.vue";
