@@ -181,7 +181,7 @@ export function getPopupHtml(type, feature, options, currentField){
             element = getDefaultPopup(options.fields, options.alias, options.style, options.class, options.title, feature, currentField, popupStyle, "mapgis-popup-row", "mapgis-popup-item mapgis-popup-field", "mapgis-popup-item mapgis-popup-value");
             break;
         default:
-            element = getDefaultPopup(options.fields, options.alias, options.style, options.class, options.title, feature, currentField, popupStyle);
+            element = getDefaultPopup(options.fields, options.alias, options.style, options.class, options.title, feature, currentField, popupStyle, "mapgis-popup-row", "mapgis-popup-item mapgis-popup-field", "mapgis-popup-item mapgis-popup-value");
             break;
     }
     return element;
