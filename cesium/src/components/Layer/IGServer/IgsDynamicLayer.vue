@@ -5,7 +5,7 @@
 import ServiceLayer from "../ServiceLayer";
 
 export default {
-    name: "mapgis-3d-igs-vector-layer",
+    name: "mapgis-3d-igs-dynamic-layer",
     mixins: [ServiceLayer],
     props: {
         gdbps: {
