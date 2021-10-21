@@ -205,24 +205,7 @@ export default {
         legendOption: {
             type: Object,
             default() {
-                return {
-                    title: "",
-                    fields: [],
-                    style: {
-                        containerStyle: {},
-                        titleStyle: {},
-                        rowStyle: {},
-                        legendStyle: {},
-                        labelStyle: {},
-                    },
-                    class: {
-                        containerClass: {},
-                        titleClass: {},
-                        rowClass: {},
-                        legendClass: {},
-                        labelClass: {},
-                    }
-                }
+                return {}
             }
         }
     },
@@ -374,7 +357,25 @@ export default {
             dataSourceUrl: undefined,
             igsTextSourceId: undefined,
             themeOptionCopy: undefined,
-            defaultIcon: "useDefault"
+            defaultIcon: "useDefault",
+            legendOptionCopy: {
+                title: "",
+                fields: [],
+                style: {
+                    containerStyle: {},
+                    titleStyle: {},
+                    rowStyle: {},
+                    legendStyle: {},
+                    labelStyle: {},
+                },
+                class: {
+                    containerClass: {},
+                    titleClass: {},
+                    rowClass: {},
+                    legendClass: {},
+                    labelClass: {},
+                }
+            }
         };
     },
     mounted() {
