@@ -51,7 +51,7 @@ export default {
   },
   mounted() {
     const {layerStyle} = this.themeOptions;
-    let colors = layerStyle.color || gradients[0].key;
+    let colors = layerStyle && layerStyle.color ? layerStyle.color : gradients[0].key;
     this.legendColors = colors.split(",");
     this.legendOptionsCopy = Object.assign(this.legendOptionsCopy, this.legendOptions);
   },

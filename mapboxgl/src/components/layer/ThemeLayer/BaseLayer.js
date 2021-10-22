@@ -2684,7 +2684,7 @@ export default {
             let vm = this, iconName;
             let img = new Image(128, 128);
             const {layerStyle} = this.themeOptions;
-            if (layerStyle.symbol) {
+            if (layerStyle && layerStyle.symbol) {
                 vm.defaultIcon = layerStyle.symbol;
             }
             if (vm.defaultIcon === "useDefault") {

@@ -252,7 +252,7 @@ export default {
 
 .mapgis-popup-item {
   display: inline-block;
-  line-height: 14px;
+  line-height: 20px;
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: break-all;
