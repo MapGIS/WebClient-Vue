@@ -64,6 +64,19 @@ export default {
           }) },
         defaultValue: { summary: 'null' },
       }
+    },
+    legendOptions: {
+      description: "图例参数，设置如下",
+      table:{
+        type:{ summary: '图例参数样式',detail: formatObjectToHtml({
+            title: "图例标题,String对象",
+            fields: "图例里面要显示的字段，Array对象，请与专题图的渐变颜色数量保持一致",
+            style: {
+              containerStyle: "图例容器样式"
+            },
+          }) },
+        defaultValue: { summary: 'null' },
+      }
     }
   },
 };

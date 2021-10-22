@@ -1,7 +1,11 @@
 export function formatObjectToHtml(obj) {
     let objStr = "{\n";
     Object.keys(obj).forEach(function (key) {
-        objStr += formatObject(key, obj[key]);
+        if(obj[key] instanceof Object){
+            objStr += formatObject(key, obj[key], "   ", "    ");
+        }else {
+            objStr += formatObject(key, obj[key]);
+        }
     });
     objStr += '}';
     return objStr;
