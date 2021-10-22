@@ -72,7 +72,7 @@ import BaseLayer from "./BaseLayer";
 
 export default {
   name: "mapgis-3d-dynamic-section",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   mixins: [BaseLayer],
   props: {
     // 模型集合
@@ -208,8 +208,7 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
@@ -267,7 +266,7 @@ export default {
      * 判断传入的m3d图层是否加载完毕
      */
     m3dIsReady() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex, model, isActive } = this;
+      const { CesiumZondy, vueKey, vueIndex, model, isActive } = this;
       return new Promise((resolve, reject) => {
         if (isActive && model && model.vueIndex) {
           this.$_getM3DByInterval(
@@ -372,7 +371,7 @@ export default {
         );
         let { options } = find;
         let { dynamicSectionAnalysis } = options;
-        const { viewer } = this.webGlobe;
+        const { viewer } = this;
 
         dynamicSectionAnalysis =
           dynamicSectionAnalysis ||
@@ -442,9 +441,9 @@ export default {
      * @returns M3DLayer对象
      */
     getM3D() {
-      const { CesiumZondy, webGlobe } = this;
+      const { CesiumZondy, viewer } = this;
       const m3d = new CesiumZondy.Layer.M3DLayer({
-        viewer: webGlobe.viewer
+        viewer: viewer
       });
       return m3d;
     },

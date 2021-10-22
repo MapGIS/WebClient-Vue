@@ -7,7 +7,7 @@ const { VFeature } = MRFS;
 
 export default {
   name: "mapgis-3d-mapv-heater-layer",
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   props: {
     geojson: {
       // 数据源
@@ -85,7 +85,7 @@ export default {
       if (!this.geojson) return;
       this.dataSource = this.$_handleGeojson(this.geojson, this.field);
       this.mapvLayer = new MapvLayer(
-        this.webGlobe.viewer,
+        this.viewer,
         this.dataSource,
         this.selfOptions
       );

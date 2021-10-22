@@ -3,7 +3,7 @@ import { isDef } from "../../../Utils/util";
 
 export default {
   name: "mapgis-3d-cesium-heater-layer",
-  inject: ["webGlobe", "CesiumZondy"],
+  inject: ["viewer", "CesiumZondy"],
   props: {
     geojson: {
       // 数据源
@@ -71,7 +71,7 @@ export default {
     $_createCesiumHeater() {
       if (!this.analysisManager) {
         this.analysisManager = new this.CesiumZondy.Manager.AnalysisManager({
-          viewer: this.webGlobe.viewer
+          viewer: this.viewer
         });
       }
       const dataSource = this.$_getCesiumDataArr(this.geojson, this.field);
