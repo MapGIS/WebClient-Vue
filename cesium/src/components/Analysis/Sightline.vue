@@ -3,17 +3,17 @@
     <mapgis-ui-setting-form v-model="formData" :wrapper-width="200">
       <mapgis-ui-form-item label="附加高度(米)">
         <mapgis-ui-input
-          v-model.number="formData.exHeight"
-          type="number"
-          :min="0"
-          :step="0.1"
+            v-model.number="formData.exHeight"
+            type="number"
+            :min="0"
+            :step="0.1"
         />
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="不可视区域颜色">
         <mapgis-ui-sketch-color-picker
-          :disableAlpha="false"
-          :color="formData.unVisibleColor"
-          @input="
+            :disableAlpha="false"
+            :color="formData.unVisibleColor"
+            @input="
             val =>
               (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           "
@@ -21,9 +21,9 @@
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="可视区域颜色">
         <mapgis-ui-sketch-color-picker
-          :disableAlpha="false"
-          :color="formData.visibleColor"
-          @input="
+            :disableAlpha="false"
+            :color="formData.visibleColor"
+            @input="
             val =>
               (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           "
@@ -32,7 +32,12 @@
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="onClickStart"
-        >分析</mapgis-ui-button
+      >通视分析
+      </mapgis-ui-button
+      >
+      <mapgis-ui-button type="primary" @click="lookAroundAnalysis"
+      >环视通视分析
+      </mapgis-ui-button
       >
       <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
@@ -109,51 +114,56 @@ export default {
       handlerAction: undefined
     };
   },
-  computed:{
-    formDataNew(){
+  computed: {
+    formDataNew() {
       return JSON.parse(JSON.stringify(this.formData));
     }
   },
   watch: {
     exHeight: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.exHeight = newVal;
       },
       immediate: true
     },
     visibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.visibleColor = newVal;
       },
       immediate: true
     },
     unVisibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.unVisibleColor = newVal;
       },
       immediate: true
     },
     formDataNew: {
       deep: true,
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-          newVal.unVisibleColor
+            newVal.unVisibleColor
         );
         const visibleColor = new this.Cesium.Color.fromCssColorString(
-          newVal.visibleColor
+            newVal.visibleColor
         );
+        let find = this.findSource();
         if (this.visibilityArr.length > 0) {
           this.visibilityArr.forEach(item => {
-            item._unvisibleColor = unVisibleColor;
-            item._visibleColor = visibleColor;
-            if (newVal.exHeight !== oldVal.exHeight) {
-              // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
-              item.exHeight = newVal.exHeight - oldVal.exHeight;
-
-              // 改变观察点坐标
-              this.viewPoint.position._value = item.viewPosition;
-              // 记录新的观察点坐标
-              this.viewPosition = item.viewPosition;
+            if (find.options.visiblityAnalysis) {
+              let visiblityAnalysis = find.options.visiblityAnalysis;
+              visiblityAnalysis.unvisibleColor = unVisibleColor;
+              visiblityAnalysis.visibleColor = visibleColor;
+              item.unvisibleColor = unVisibleColor;
+              item.visibleColor = visibleColor;
+              if (newVal.exHeight !== oldVal.exHeight) {
+                // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
+                visiblityAnalysis.exHeight = newVal.exHeight - oldVal.exHeight;
+                // 改变观察点坐标
+                this.viewPoint.position._value = item.viewPosition;
+                // 记录新的观察点坐标
+                this.viewPosition = item.viewPosition;
+              }
             }
           });
         }
@@ -162,53 +172,54 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const { baseUrl, options } = this;
+      const {baseUrl, options} = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
       );
     },
     mount() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const {CesiumZondy, vueKey, vueIndex} = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         CesiumZondy.VisiblityAnalysisManager.addSource(
-          vueKey,
-          vueIndex,
-          dataSource,
-          {
-            visiblityAnalysis: null
-          }
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              visiblityAnalysis: null
+            }
         );
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let {CesiumZondy, vueKey, vueIndex} = this;
       this.onClickStop();
       CesiumZondy.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
     },
 
     findSource() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let {CesiumZondy, vueKey, vueIndex} = this;
       let find = CesiumZondy.VisiblityAnalysisManager.findSource(
-        vueKey,
-        vueIndex
+          vueKey,
+          vueIndex
       );
       return find;
     },
     // 点击“分析”按钮回调
     onClickStart() {
-      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-
+      //开启三维视图事件处理（例如鼠标点击）
+      this.startEventHandler();
       this.onClickStop();
       //深度检测开启
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
+          this.viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
@@ -216,28 +227,46 @@ export default {
       }
       this.addEventListener();
     },
+    lookAroundAnalysis() {
+      this.startEventHandler();
+      this.addEventListener();
+      let visibility;
+      let find = this.findSource();
+      if (find.options && find.options.visiblityAnalysis) {
+        visibility = find.options.visiblityAnalysis;
+      } else {
+        visibility = this.createVisibility();
+      }
+
+      let drawElement = new Cesium.DrawElement(this.viewer);
+      drawElement.startDrawingCircle({
+        color: new Cesium.Color(0.2, 0.4, 0.3, 1.0),
+        callback: function (result) {
+          drawElement.stopDrawing();
+          find.options.visiblityAnalysis.lookAroundAnalysis(result.center, result.radius);
+        }
+      });
+    },
+    startEventHandler() {
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+    },
     // 创建通视分析工具
     createVisibility() {
       let {viewer} = this;
       const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-        this.formData.unVisibleColor
+          this.formData.unVisibleColor
       );
       const visibleColor = new this.Cesium.Color.fromCssColorString(
-        this.formData.visibleColor
+          this.formData.visibleColor
       );
 
       // 初始化通视分析类
-      const visibility = new Cesium.VisiblityAnalysis({ scene: viewer.scene});
-
+      const visibility = new Cesium.VisiblityAnalysis({scene: viewer.scene});
+      visibility.unvisibleColor = unVisibleColor;
+      visibility.visibleColor = visibleColor;
       // 添加通视分析结果显示
       viewer.scene.visualAnalysisManager.add(visibility);
-      console.log("visibility",visibility);
-      // const visibility = advancedAnalysisManager.createVisibilityAnalysis();
-      visibility._unvisibleColor = unVisibleColor;
-      visibility._visibleColor = visibleColor;
-
       this.visibilityArr.push(visibility);
-
       return visibility;
     },
     /**
@@ -245,13 +274,13 @@ export default {
      */
     _restoreDepthTestAgainstTerrain() {
       if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
+          this.isDepthTestAgainstTerrainEnable !== undefined &&
+          this.isDepthTestAgainstTerrainEnable !==
           isDepthTestAgainstTerrainEnable(this.viewer)
       ) {
         setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.viewer
+            this.isDepthTestAgainstTerrainEnable,
+            this.viewer
         );
       }
     },
@@ -307,9 +336,9 @@ export default {
 
     // 注册通视分析鼠标左键点击事件
     registerMouseLClickEvent(event) {
-      let { vueKey, vueIndex } = this;
+      let {vueKey, vueIndex} = this;
       let cartesian = this.viewer.getCartesian3Position(
-        event.position
+          event.position
       );
 
       if (!this.hasViewPosition && cartesian !== undefined) {
@@ -339,10 +368,10 @@ export default {
 
         //修改manager的options
         CesiumZondy.VisiblityAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "visualAnalysis",
-          visibility
+            vueKey,
+            vueIndex,
+            "visiblityAnalysis",
+            visibility
         );
 
         // 添加目标点到地图
