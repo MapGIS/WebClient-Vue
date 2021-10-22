@@ -432,21 +432,10 @@ export default {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
-
       // 创建填挖方实例
       const cutFill = new Cesium.CutFillAnalysis(this.viewer, {
         callBack: this._analysisSuccess
       });
-      // const cutFill = cutFillAnalysis.createCutFill(this.dataType, {
-      //   // 设置x方向采样点个数
-      //   xPaneNum: xPaneNumCopy,
-      //   // 设置y方向采样点个数参数
-      //   yPaneNum: yPaneNumCopy,
-      //   // 设置填挖规整高度
-      //   height: heightCopy,
-      //   // 返回结果的回调函数
-      //   callback: this._analysisSuccess
-      // });
 
       // 设置x方向采样点个数
       cutFill.xPaneNum = xPaneNumCopy;

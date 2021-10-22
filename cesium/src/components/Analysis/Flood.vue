@@ -288,7 +288,6 @@ export default {
       const { CesiumZondy, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       let { drawElement } = options;
-      // const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(this.viewer);
       CesiumZondy.FloodAnalysisManager.changeOptions(
@@ -301,9 +300,9 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: result => {
           this.remove();
-          this.positions = positions;
+          this.positions = result.positions;
           this._doAnalysis();
         }
       });
@@ -331,28 +330,9 @@ export default {
         animationSpeed,
         frequency
       } = this;
-      // // 初始化高级分析功能管理类
-      // const advancedAnalysisManager = new this.CesiumZondy.Manager.AdvancedAnalysisManager(
-      //   {
-      //     viewer: viewer
-      //   }
-      // );
+
       // 初始化洪水淹没分析类
       floodAnalysis = floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
-
-      // floodAnalysis =
-      //   floodAnalysis ||
-      //   advancedAnalysisManager.createFlood(positions, {
-      //     // 设置洪水淹没区域动画最低高度
-      //     minHeight: Number(minHeight), // 设置洪水淹没区域动画最低高度
-      //     // 设置洪水淹没区域最高高度
-      //     maxHeight: Number(maxHeightCopy),
-      //     // 设置洪水上涨速度
-      //     floodSpeed: Number(floodSpeedCopy)
-      //   });
-
-      console.log("floodAnalysis",floodAnalysis);
-
       //设置洪水淹没区域最低开始高度
       floodAnalysis.minHeight = Number(minHeight);
       //设置洪水淹没区域最高高度
@@ -435,7 +415,7 @@ export default {
       // 判断是否已有洪水淹没分析结果
       if (floodAnalysis) {
         // 移除洪水淹没分析显示结果
-        this.viewer.scene.VisualAnalysisManager.remove(floodAnalysis);
+        this.viewer.scene.visualAnalysisManager.remove(floodAnalysis);
         CesiumZondy.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,

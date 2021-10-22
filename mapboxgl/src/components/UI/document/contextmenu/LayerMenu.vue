@@ -38,14 +38,12 @@
 <script>
 import {
   ContextmenuItem,
-  ContextmenuGroup,
   ContextmenuSubmenu
 } from "v-contextmenu";
 export default {
   name: "LayerMenu",
   components: {
     ContextmenuItem,
-    ContextmenuGroup,
     ContextmenuSubmenu
   },
   inject: ["mapbox", "map", "document"],
