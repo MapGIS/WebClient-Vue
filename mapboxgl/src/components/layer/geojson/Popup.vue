@@ -4,7 +4,6 @@
       <mapgis-ui-tabs
         v-if="mode === 'click'"
         v-model="activeKey"
-        :style="{ height: '240px' }"
         size="small"
         :tab-position="tabPosition"
       >
@@ -29,7 +28,7 @@
             :key="key"
           >
             <div class="mapgis-inspect-prop-key">
-              <span style="padding-right: 5px">{{ key }}</span>
+              <span>{{ key }}</span>
             </div>
             <div>{{ value }} ({{ parseType(typeof value) }})</div>
           </div>
@@ -47,7 +46,7 @@
             :key="key"
           >
             <div class="mapgis-inspect-prop-key">
-              <span style="padding-right: 5px">{{ key }}</span>
+              <span>{{ key }}</span>
             </div>
             <div>{{ value }}</div>
           </div>
@@ -113,8 +112,9 @@ export default {
 
 <style>
 .mapgis-featuretool-content {
-  /* position: absolute; */
+  position: absolute;
   z-index: 1000;
+  height: 0px;
   /* width: 240px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
 }
 
@@ -134,10 +134,6 @@ export default {
 
 .mapgis-inspect-layer-name {
   width: 80px;
-}
-
-.mapgis-inline {
-  display: inline-flex;
 }
 
 .mapgis-inspect-prop-style {

@@ -64,16 +64,12 @@
     font-weight: bolder;
     margin-left: 6px;
   }
+  padding: 0px;
+  background-color: $popup-background;
 }
 
 .mapboxgl-popup-close-button {
   color: $primary-5;
-}
-.mapboxgl-popup-content {
-  padding: 0px;
-  background-color: $popup-background;
-  height: auto;
-  width: fit-content;
 }
 
 .mapboxgl-popup-header {
