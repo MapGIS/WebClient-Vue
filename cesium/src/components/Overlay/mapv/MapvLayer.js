@@ -14,13 +14,13 @@ var idIndex = 0;
  * @param {Boolean} [mapVOptions.cesium.postRender=false] 是否实时渲染
  * @param {Boolean} [mapVOptionscesium.cesium.postRenderFrame=30] 每间隔多少帧渲染一次
  * @param container - {Element} 外部传入的div;外接的方式使用mapv
- * @example 
+ * @example
  *  // 构建对应的dataset
-    var dataSet = new mapv.DataSet(data);
+ var dataSet = new mapv.DataSet(data);
 
-    // 设置对应的参数
-    // https://github.com/huiyan-fe/mapv/blob/master/API.md
-    var options = {
+ // 设置对应的参数
+ // https://github.com/huiyan-fe/mapv/blob/master/API.md
+ var options = {
     context: '2d',    //cesium必须设置画布为2d
     postRender: false,
     postRenderFrame: 5,
@@ -48,8 +48,8 @@ var idIndex = 0;
     max: 100,
     draw: 'honeycomb'   // 绘制蜂窝图
     }
-    // 声明cesium的mapv图层并将其显示到三维球上
-    var mapvLayer = new CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
+ // 声明cesium的mapv图层并将其显示到三维球上
+ var mapvLayer = new CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
  */
 export class MapvLayer {
     constructor(map, dataSet, mapVOptions, container) {
@@ -77,7 +77,7 @@ export class MapvLayer {
             this.container = container;
             container.appendChild(this.canvas);
         } else {
-            var parents = document.getElementsByClassName('cesium-widget');
+            var parents = document.getElementsByClassName("cesium-widget");
             var parent = parents.length > 0 ? parents[0] : map.container;
             this.container = parent;
             this.addInnerContainer();
@@ -121,11 +121,26 @@ export class MapvLayer {
         } else {
             var handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas);
 
-            handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.WHEEL);
-            handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-            handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.LEFT_UP);
-            handler.setInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
-            handler.setInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.RIGHT_UP);
+            handler.setInputAction(
+                this.innerMoveEnd,
+                Cesium.ScreenSpaceEventType.WHEEL
+            );
+            handler.setInputAction(
+                this.innerMoveStart,
+                Cesium.ScreenSpaceEventType.LEFT_DOWN
+            );
+            handler.setInputAction(
+                this.innerMoveEnd,
+                Cesium.ScreenSpaceEventType.LEFT_UP
+            );
+            handler.setInputAction(
+                this.innerMoveStart,
+                Cesium.ScreenSpaceEventType.RIGHT_DOWN
+            );
+            handler.setInputAction(
+                this.innerMoveEnd,
+                Cesium.ScreenSpaceEventType.RIGHT_UP
+            );
 
             map.scene.camera.moveEnd.addEventListener(this.innerMoveEnd(), this);
 
@@ -136,16 +151,34 @@ export class MapvLayer {
     unbindEvent() {
         let map = this.map;
         if (this.postRender) {
-            this.scene.camera.moveStart.removeEventListener(this.postStartEvent, this);
+            this.scene.camera.moveStart.removeEventListener(
+                this.postStartEvent,
+                this
+            );
             this.scene.camera.moveEnd.removeEventListener(this.postEndEvent, this);
         } else {
-            let handler = this.handler;    
+            let handler = this.handler;
             if (handler) {
-                handler.removeInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.WHEEL);
-                handler.removeInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.LEFT_DOWN);
-                handler.removeInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.LEFT_UP);
-                handler.removeInputAction(this.innerMoveStart, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
-                handler.removeInputAction(this.innerMoveEnd, Cesium.ScreenSpaceEventType.RIGHT_UP);
+                handler.removeInputAction(
+                    this.innerMoveEnd,
+                    Cesium.ScreenSpaceEventType.WHEEL
+                );
+                handler.removeInputAction(
+                    this.innerMoveStart,
+                    Cesium.ScreenSpaceEventType.LEFT_DOWN
+                );
+                handler.removeInputAction(
+                    this.innerMoveEnd,
+                    Cesium.ScreenSpaceEventType.LEFT_UP
+                );
+                handler.removeInputAction(
+                    this.innerMoveStart,
+                    Cesium.ScreenSpaceEventType.RIGHT_DOWN
+                );
+                handler.removeInputAction(
+                    this.innerMoveEnd,
+                    Cesium.ScreenSpaceEventType.RIGHT_UP
+                );
                 handler.destroy();
             }
             map.scene.camera.moveEnd.removeEventListener(this.innerMoveEnd(), this);
@@ -254,54 +287,65 @@ export class MapvLayer {
     }
     //-----------------------------------End Data Operation---------------------------------
     _visiable() {
-        this.canvas.style.display = 'block';
+        this.canvas.style.display = "block";
         return this;
     }
 
     _unvisiable() {
-        this.canvas.style.display = 'none';
+        this.canvas.style.display = "none";
         return this;
     }
 
     _createCanvas() {
-        var canvas = document.createElement('canvas');
-        canvas.id = this.mapVOptions.layerid || 'mapv' + idIndex++;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
+        var canvas = document.createElement("canvas");
+        canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
+        canvas.style.position = "absolute";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
 
-        canvas.style.pointerEvents = 'none';
+        canvas.style.pointerEvents = "none";
         canvas.style.zIndex = this.mapVOptions.zIndex || 100;
 
-        canvas.width = parseInt(this.map.canvas.width);
-        canvas.height = parseInt(this.map.canvas.height);
-        canvas.style.width = this.map.canvas.style.width;
-        canvas.style.height = this.map.canvas.style.height;
+        canvas.width =
+            parseInt(this.map.canvas.width) ||
+            parseInt(this.map.container.offsetWidth);
+        canvas.height =
+            parseInt(this.map.canvas.height) ||
+            parseInt(this.map.container.offsetHeight);
+        canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+        canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
+
         var devicePixelRatio = this.devicePixelRatio;
-        if (this.mapVOptions.context == '2d') {
-            canvas.getContext(this.mapVOptions.context).scale(devicePixelRatio, devicePixelRatio);
+        if (this.mapVOptions.context == "2d") {
+            canvas
+                .getContext(this.mapVOptions.context)
+                .scale(devicePixelRatio, devicePixelRatio);
         }
         return canvas;
     }
 
     _creteWidgetCanvas() {
-        var canvas = document.createElement('canvas');
+        var canvas = document.createElement("canvas");
 
-        canvas.id = this.mapVOptions.layerid || 'mapv' + idIndex++;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
+        canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
+        canvas.style.position = "absolute";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
 
-        canvas.style.pointerEvents = 'none';
+        canvas.style.pointerEvents = "none";
         canvas.style.zIndex = this.mapVOptions.zIndex || 100;
 
-        canvas.width = parseInt(this.map.canvas.width);
-        canvas.height = parseInt(this.map.canvas.height);
-        canvas.style.width = this.map.canvas.style.width;
-        canvas.style.height = this.map.canvas.style.height;
+        canvas.width =
+            parseInt(this.map.canvas.width) ||
+            parseInt(this.map.container.offsetWidth);
+        canvas.height =
+            parseInt(this.map.canvas.height) ||
+            parseInt(this.map.container.offsetHeight);
+        canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+        canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
         var devicePixelRatio = this.devicePixelRatio;
-        if (this.mapVOptions.context == '2d') {
-            canvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
+        if (this.mapVOptions.context == "2d") {
+            canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
         }
 
         return canvas;
@@ -374,16 +418,20 @@ export class MapvLayer {
         //this.mapContainer.style.perspective = this.map.transform.cameraToCenterDistance + 'px';
         if (this.canvas == undefined || this.canvas == null) return;
         var canvas = this.canvas;
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0px';
-        canvas.style.left = '0px';
-        canvas.width = parseInt(this.map.canvas.width);
-        canvas.height = parseInt(this.map.canvas.height);
-        //canvas.style.width = this.map.canvas.style.width;
-        //canvas.style.height = this.map.canvas.style.height;
+        canvas.style.position = "absolute";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
+        canvas.width =
+            parseInt(this.map.canvas.width) ||
+            parseInt(this.map.container.offsetWidth);
+        canvas.height =
+            parseInt(this.map.canvas.height) ||
+            parseInt(this.map.container.offsetHeight);
+        canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+        canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
         var devicePixelRatio = this.devicePixelRatio;
-        if (this.mapVOptions.context == '2d') {
-            canvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
+        if (this.mapVOptions.context == "2d") {
+            canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
         }
     }
 
