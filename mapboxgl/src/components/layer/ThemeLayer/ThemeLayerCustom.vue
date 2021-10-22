@@ -120,6 +120,7 @@ export default {
   font-size: 20px;
   font-weight: bold;
   margin-top: 8px;
+  text-align: center;
 }
 
 .mapgis-theme-legend-row {
@@ -141,5 +142,6 @@ export default {
   font-size: 20px;
   font-weight: bold;
   padding-top: 10px;
+  text-align: center;
 }
 </style>

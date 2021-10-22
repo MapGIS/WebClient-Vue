@@ -5,6 +5,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420102,
+        "gdp": 1247.04,
         "name": "江岸区",
         "center": [
           114.30304,
@@ -296,6 +297,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420103,
+        "gdp": 1319.06,
         "name": "江汉区",
         "center": [
           114.283109,
@@ -575,6 +577,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420104,
+        "gdp": 801.16,
         "name": "硚口区",
         "center": [
           114.264568,
@@ -930,6 +933,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420105,
+        "gdp": 699.01,
         "name": "汉阳区",
         "center": [
           114.265807,
@@ -1497,6 +1501,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420106,
+        "gdp": 1492.93,
         "name": "武昌区",
         "center": [
           114.307344,
@@ -2116,6 +2121,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420107,
+        "gdp": 761.47,
         "name": "青山区",
         "center": [
           114.39707,
@@ -2887,6 +2893,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420111,
+        "gdp": 1036.16,
         "name": "洪山区",
         "center": [
           114.400718,
@@ -5358,6 +5365,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420112,
+        "gdp": 1370.17,
         "name": "东西湖区",
         "center": [
           114.142483,
@@ -6301,6 +6309,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420113,
+        "gdp": 1650.31,
         "name": "汉南区",
         "center": [
           114.08124,
@@ -7456,6 +7465,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420114,
+        "gdp": 371.34,
         "name": "蔡甸区",
         "center": [
           114.029341,
@@ -9383,6 +9393,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420115,
+        "gdp": 842.04,
         "name": "江夏区",
         "center": [
           114.313961,
@@ -11414,6 +11425,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420116,
+        "gdp": 1013.28,
         "name": "黄陂区",
         "center": [
           114.374025,
@@ -13349,6 +13361,7 @@ let wuhan = {
       "type": "Feature",
       "properties": {
         "adcode": 420117,
+        "gdp": 888.57,
         "name": "新洲区",
         "center": [
           114.802108,

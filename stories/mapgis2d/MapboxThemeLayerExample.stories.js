@@ -8,7 +8,7 @@ export default {
 const Template = (args, {argTypes}) => ({
   props: Object.keys(argTypes),
   methods:{},
-  template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :mapStyle="mapStyle" :zoom="8" style="height:96vh">
+  template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :mapStyle="mapStyle" :zoom="9" style="height:96vh">
     <mapgis-theme-layer-custom v-bind="$props"/>
     </mapgis-web-map>`,
   data(){
@@ -21,12 +21,12 @@ const Template = (args, {argTypes}) => ({
             id: "背景",
             type: "background",
             paint: {
-              "background-color": "rgba(0, 0, 0, 1)"
+              "background-color": "rgba(255, 255, 255, 1)"
             }
           }
         ],
-        // glyphs: "http://localhost:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
-        glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+        glyphs: "http://localhost:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+        // glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
       },
     }
   }
@@ -38,7 +38,7 @@ export const 武汉2020年GDP = Template.bind({});
   type: "range",
   field: "gdp",
   enableLegend: true,
-  legendOption: {
+  legendOptions: {
     title: "2020武汉行政区GDP(亿元)",
     fields: ["极低","低","中等","高","极高"],
   },
