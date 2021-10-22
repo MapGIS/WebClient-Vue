@@ -16,7 +16,6 @@ import Measure3dTool from "./components/MeasureTool.vue";
 export default {
   name: "mapgis-3d-measure",
   mixins: [ServiceLayer],
-  inject:["viewer"],
   components: {
     "measure-3d-tool": Measure3dTool
   },
@@ -35,6 +34,7 @@ export default {
       measure: undefined,
       initial: false,
       measureStyles: {},
+      waitManagerName: "GlobesManager"
     };
   },
   watch: {
@@ -85,7 +85,8 @@ export default {
       this.$_enableMeasure("MeasureSlopeTool");
     },
     $_enableMeasure(MeasureName) {
-      const { vueKey, vueIndex, viewer, Cesium } = this;
+      const { vueKey, vueIndex } = this;
+      let viewer = this.$_getObject(this.waitManagerName, this.deleteMeasure);
       let measure = new Cesium[MeasureName](viewer, {
         lineColor: this.measureStyles.lineColor,
         callBack: result => {
