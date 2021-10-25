@@ -11,7 +11,6 @@
         <measure-tool :result="measureResult" v-if="isAdvanceControl"/>
         <mapgis-ui-space
             v-if="!isAdvanceControl"
-            :style="toolbarStyle"
         >
           <mapgis-ui-tooltip
               v-for="(item, i) in toolbarBtns"
@@ -40,7 +39,7 @@
               <div v-if="measureResult.geographyArea">
                 面积：{{ measureResult.geographyArea }}
               </div>
-              <div>周长：{{ measureResult.geographyPerimeter }}</div>
+              <div>长度：{{ measureResult.geographyPerimeter }}</div>
             </div>
           </mapgis-marker>
         </mapgis-ui-space>
@@ -130,17 +129,10 @@ export default {
       initial: true,
       measure: undefined,
       measureStyle: defaultStyle,
-      selfMeasureMode: measureModeMap.simple,
+      selfMeasureMode: undefined,
       measureResult: null,
-      toolbarVisible: true,
       toolbarBtns: [
-        {
-          icon: "mapgis-chevrons-right",
-          type: "primary",
-          tip: "展开/收起",
-          control: true,
-          click: this.enableToolbar,
-        },
+
         {
           icon: "mapgis-ruler",
           type: "primary",
@@ -185,24 +177,10 @@ export default {
         background: isAdvanceControl ? "#fff" : "transparent",
       };
     },
-    toolbarStyle({ toolbarVisible }) {
-      return {
-        overflow: "hidden",
-        transition: "width 0.3s",
-        width: `${toolbarVisible ? 160 : 32}px`,
-      };
-    },
-    btnStyle({ toolbarVisible }) {
-      return ({ control }) => ({
+    btnStyle() {
+      return () => ({
         width: "32px !important",
         height: "32px !important",
-        ...(control
-            ? {
-              fontSize: "20px",
-              transition: "transform 0.2s",
-              transform: `rotate(${toolbarVisible ? "180deg" : "0"})`,
-            }
-            : {}),
       });
     },
   },
@@ -456,7 +434,9 @@ export default {
     changeMode(mode = measureModeMap.simple, options) {
       try {
         if (this.measure) {
-          this.selfMeasureMode = mode;
+          if(mode === measureModeMap.line || mode === measureModeMap.polygon){
+            this.selfMeasureMode = mode;
+          }
           this.measure.changeMode(mode, options);
         }
       } catch (e) {}
@@ -465,7 +445,6 @@ export default {
      * 启用测量工具
      */
     enableMeasure() {
-      debugger
       this.$_initMeasure();
       this.$_changeMapStyle();
       this.$_unbindDrawEvents();
@@ -519,9 +498,9 @@ export default {
       this.enableMeasure();
       this.changeMode(mode);
     },
-    enableToolbar() {
-      this.toolbarVisible = !this.toolbarVisible;
-    },
+    // enableToolbar() {
+    //   this.toolbarVisible = !this.toolbarVisible;
+    // },
     enableLengthMeasure() {
       this.remove();
       this.startMeasure("draw_line_string");
