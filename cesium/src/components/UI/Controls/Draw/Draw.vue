@@ -254,13 +254,10 @@ export default {
       return viewerDraw;
     },
     getDrawElement(viewer) {
-      if (window.drawElement) {
-        if (!this.infinite) {
-          window.drawElement.stopDrawing();
-        }
-      } else {
-        window.drawElement = new Cesium.DrawElement(viewer);
+      if (window.drawElement && !this.infinite) {
+        window.drawElement.stopDrawing();
       }
+      window.drawElement = new Cesium.DrawElement(viewer);
       return window.drawElement;
     },
     enableDrawPoint() {
@@ -287,7 +284,6 @@ export default {
         color: color,
         callback: function (result) {
           let position = result.position;
-          console.log('point',position)
           let cartographic = Cesium.Cartographic.fromCartesian(position);
           let lng = Cesium.Math.toDegrees(cartographic.longitude);
           let lat = Cesium.Math.toDegrees(cartographic.latitude);
@@ -333,7 +329,6 @@ export default {
         color: color,
         callback: function (result) {
           let positions = result.positions;
-          console.log('line',positions)
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
             let cartographic = Cesium.Cartographic.fromCartesian(positions[i]);
@@ -381,7 +376,6 @@ export default {
         color: colorStyle,
         callback: function (result) {
           let positions = result.positions;
-          console.log('polygon',positions)
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
             let cartographic = Cesium.Cartographic.fromCartesian(positions[i]);
@@ -431,21 +425,18 @@ export default {
         color: colorStyle,
         callback: function (result) {
           let extent = result.extent;
-          console.log('rectangle',result)
-          console.log('viewer',viewer)
           let rectangle = new Cesium.DrawElement.ExtentPrimitive({
             extent: extent,
             material: Cesium.Material.fromType('Color', {
               color: colorStyle
             }),
           });
-          let drawEntity = viewer.scene.primitives.add(rectangle);
+          let drawEntity = viewerDraw.scene.primitives.add(rectangle);
 
           let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
           let radianPoints = [extent.west, extent.north, extent.east, extent.south];
-          let ellipsoid = viewer.scene.globe.ellipsoid;
-          console.log('----------ellipsoid',ellipsoid)
+          let ellipsoid = viewerDraw.scene.globe.ellipsoid;
           let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(radianPoints, ellipsoid);
           let degreeArr = [];
           for (let i = 0; i < Cartesian3Points.length; i++) {
@@ -500,7 +491,7 @@ export default {
             })
           });
 
-          let drawEntity = viewer.scene.primitives.add(redCircle);
+          let drawEntity = viewerDraw.scene.primitives.add(redCircle);
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
