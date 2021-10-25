@@ -8,7 +8,7 @@
           :style="controlStyle"
           class="measure-story-control"
       >
-        <measure-tool :result="measureResult" v-show="isAdvanceControl"/>
+        <measure-tool :result="measureResult" v-if="isAdvanceControl"/>
         <mapgis-ui-space
             v-if="!isAdvanceControl"
             :style="toolbarStyle"
