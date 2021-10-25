@@ -1,15 +1,5 @@
 export function initManager() {
   window.CesiumZondy = window.CesiumZondy || {};
-  window.CesiumZondy.TerrainManager = window.CesiumZondy.TerrainManager || {
-    default: []
-  };
-  window.CesiumZondy.LabelManager = window.CesiumZondy.LabelManager || {
-    default: []
-  };
-
-  window.CesiumZondy.M3DFileManager = window.CesiumZondy.M3DFileManager || {
-    default: []
-  };
 
   window.CesiumZondy.GlobesManager =
     window.CesiumZondy.GlobesManager || new BaseManager();
@@ -127,6 +117,15 @@ export function initManager() {
       }
     }, 50);
   };
+}
+
+export function initVueCesium() {
+  window.vueCesium = window.vueCesium || {};
+  window.vueCesium.G3DManager = window.vueCesium.G3DManager || new G3DManager();
+  window.vueCesium.ViewerManager =
+    window.vueCesium.ViewerManager || new ViewerManager();
+  window.vueCesium.HighlightManager =
+    window.vueCesium.HighlightManager || new HighlightManager();
 }
 
 export class BaseManager {
@@ -268,6 +267,9 @@ export class MeasureToolManager extends BaseManager {}
 export class EventHandlerManager extends BaseManager {}
 export class IgsTerrainManager extends BaseManager {}
 export class M3DIgsManager extends BaseManager {}
+export class G3DManager extends BaseManager {}
+export class ViewerManager extends BaseManager {}
+export class HighlightManager extends BaseManager {}
 export class ArcgisManager extends BaseManager {}
 export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
