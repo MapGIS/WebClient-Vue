@@ -76,6 +76,107 @@
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
           </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4" >
+              <span>雨速度</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="speed" :min="1.0" :max="20.0" @change="speedChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number v-model="speed" :min="1.0" :max="20.0" style="marginLeft: 16px"  @change="speedChange"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>雨透明度</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="rainOpacity" :min="0" :max="1" :step="0.1"  @change="rainOpacityChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="rainOpacity"
+                  :min="0"
+                  :max="1"
+                  :step="0.1"
+                  style="marginLeft: 16px"
+                  @change="rainOpacityChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>雨角度</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="angle" :min="0" :max="90" :step="10" @change="angleChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="contrast"
+                  :min="0"
+                  :max="90"
+                  :step="10"
+                  style="marginLeft: 16px"
+                  @change="angleChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>雪粒大小</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="size" :min="5" :max="20" :step="5"  @change="szChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="size"
+                  :min="5"
+                  :max="20"
+                  :step="5"
+                  style="marginLeft: 16px"
+                  @change="szChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>雪密度</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="density" :min="5" :max="20" :step="5"   @change="dstChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="density"
+                  :min="5"
+                  :max="20"
+                  :step="5"
+                  style="marginLeft: 16px"
+                  @change="dstChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>雾透明度</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="fogOpacity" :min="0" :max="1" :step="0.1"  @change="fogOpacityChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="fogOpacity"
+                  :min="0"
+                  :max="1"
+                  :step="0.1"
+                  style="marginLeft: 16px"
+                  @change="fogOpacityChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane key="3" tab="其它特效">
           <mapgis-ui-row>
@@ -122,36 +223,36 @@ export default {
   name: "mapgis-3d-setting",
   mixins: [ServiceLayer],
   inject: ["viewer"],
-  props: {
-    speed: {
-      type: Number,
-      default: 1.0,//雨丝速度，【1.0,20.0】
-    },
-    rainOpacity: {
-      type: Number,
-      default: 1.0,//alpha，雨透明度，值域【0,1】
-    },
-    angle: {
-      type: Number,
-      default: 0.0,//雨倾斜角度，值域【0,90】
-    },
-    density: {
-      type: Number,
-      default: 5,//size,雪的数量、密度
-    },
-    size: {
-      type: Number,
-      default: 5,//scale，雪粒子的大小
-    },
-    color: {
-      type: String,
-      default: '#FFFFFF',//雾的颜色，Cesium.Color(red, green, blue, alpha)
-    },
-    fogOpacity: {
-      type: Number,
-      default: 0.5,//雾的透明度,alpha
-    },
-  },
+  // props: {
+  //   speed: {
+  //     type: Number,
+  //     default: 1.0,//雨丝速度，【1.0,20.0】
+  //   },
+  //   rainOpacity: {
+  //     type: Number,
+  //     default: 1.0,//alpha，雨透明度，值域【0,1】
+  //   },
+  //   angle: {
+  //     type: Number,
+  //     default: 0.0,//雨倾斜角度，值域【0,90】
+  //   },
+  //   density: {
+  //     type: Number,
+  //     default: 5,//size,雪的数量、密度
+  //   },
+  //   size: {
+  //     type: Number,
+  //     default: 5,//scale，雪粒子的大小
+  //   },
+  //   color: {
+  //     type: String,
+  //     default: '#FFFFFF',//雾的颜色，Cesium.Color(red, green, blue, alpha)
+  //   },
+  //   fogOpacity: {
+  //     type: Number,
+  //     default: 0.5,//雾的透明度,alpha
+  //   },
+  // },
   data() {
     return {
       weather: undefined,
@@ -166,63 +267,70 @@ export default {
       SkyBox2: false,
       enableCloud:false,
       rain : false,
+      speed:1.0,
+      rainOpacity:1.0,
+      angle:0,
       snow : false,
+      density:5,
+      size:5,
       fog : false,
+      color:'#FFFFFF',
+      fogOpacity:0.5,
       blckWhite:false,
-      ntVision:false
+      ntVision:false,
     };
   },
-  watch: {
-    speed: {
-      handler: function (next) {
-        this.speed = next;
-        // this.$_removeWeather();
-        // this.enableRain()
-      },
-    },
-    rainOpacity: {
-      handler: function (next) {
-        this.rainOpacity = next;
-        // this.$_removeWeather();
-        // this.enableRain()
-      },
-    },
-    angle: {
-      handler: function (next) {
-        this.angle = next;
-        // this.$_removeWeather();
-        // this.enableRain()
-      },
-    },
-    density: {
-      handler: function (next) {
-        this.density = next;
-        // this.$_removeWeather();
-        // this.enableSnow()
-      },
-    },
-    size: {
-      handler: function (next) {
-        this.size = next;
-        // this.$_removeWeather();
-        // this.enableSnow()
-      },
-    },
-    color: {
-      handler: function (next) {
-        this.color = next;
-        // this.$_removeWeather();
-        // this.enableFog()
-      },
-    },
-    fogOpacity: {
-      handler: function (next) {
-        this.fogOpacity = next;
-        // this.$_removeWeather();
-        // this.enableFog()
-      },
-    },
-  },
+  // watch: {
+  //   speed: {
+  //     handler: function (next) {
+  //       this.speed = next;
+  //       // this.$_removeWeather();
+  //       // this.enableRain()
+  //     },
+  //   },
+  //   rainOpacity: {
+  //     handler: function (next) {
+  //       this.rainOpacity = next;
+  //       // this.$_removeWeather();
+  //       // this.enableRain()
+  //     },
+  //   },
+  //   angle: {
+  //     handler: function (next) {
+  //       this.angle = next;
+  //       // this.$_removeWeather();
+  //       // this.enableRain()
+  //     },
+  //   },
+  //   density: {
+  //     handler: function (next) {
+  //       this.density = next;
+  //       // this.$_removeWeather();
+  //       // this.enableSnow()
+  //     },
+  //   },
+  //   size: {
+  //     handler: function (next) {
+  //       this.size = next;
+  //       // this.$_removeWeather();
+  //       // this.enableSnow()
+  //     },
+  //   },
+  //   color: {
+  //     handler: function (next) {
+  //       this.color = next;
+  //       // this.$_removeWeather();
+  //       // this.enableFog()
+  //     },
+  //   },
+  //   fogOpacity: {
+  //     handler: function (next) {
+  //       this.fogOpacity = next;
+  //       // this.$_removeWeather();
+  //       // this.enableFog()
+  //     },
+  //   },
+  // },
   mounted() {
     const { viewer }=this;
     let bright = viewer.scene.postProcessStages.add(
@@ -235,7 +343,7 @@ export default {
   },
   destroyed() {
     // this.removeWeather();
-    // this.$emit("unload");
+    this.$emit("unload");
   },
   methods: {
     enableRain() {
@@ -262,6 +370,7 @@ export default {
       this.$_enableWeather("addFog", fogOptions);
     },
     //积雪？？
+
 
     $_enableWeather(WeatherName, options) {
       const {vueKey, vueIndex, viewer, Cesium} = this;
@@ -293,6 +402,27 @@ export default {
         vm.removeWeather();
       }
     },
+    speedChange(e){
+      this.speed = e;
+      let vm = this;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
+    rainOpacityChange(e){
+      this.rainOpacity = e;
+      let vm = this;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
+    angleChange(e){
+      this.angle = e;
+      let vm = this;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
     snowChange(e){
       this.snow = e.target.checked;
       let vm = this;
@@ -300,6 +430,20 @@ export default {
         vm.enableSnow();
       }else{
         vm.removeWeather();
+      }
+    },
+    szChange(e){
+      this.size = e;
+      let vm = this;
+      if (this.snow) {
+        vm.enableSnow();
+      }
+    },
+    dstChange(e){
+      this.density = e;
+      let vm = this;
+      if (this.snow) {
+        vm.enableSnow();
       }
     },
     fogChange(e){
@@ -311,6 +455,15 @@ export default {
         vm.removeWeather();
       }
     },
+    fogOpacityChange(e){
+      this.fogOpacity = e;
+      let vm = this;
+      if (this.fog) {
+        vm.enableFog();
+      }
+    },
+
+
     //全球云
     enableClouds() {
       const {vueKey, vueIndex, viewer, Cesium} = this;
@@ -325,7 +478,6 @@ export default {
           vueIndex,
           clouds
       );
-
     },
     removeClouds() {
       this.$_deleteManger("MeasureToolManager", function (manager) {
