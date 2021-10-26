@@ -1,4 +1,5 @@
 import Vue from "vue";
+import axios from "axios";
 
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import MapgisMapboxComponents from "./components/mapbox";
@@ -13,11 +14,12 @@ Vue.use(MapgisUIComponents, {});
 Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
 
-// "http://develop.smaryun.com:8899/static/libs/cdn/cesium/Cesium.js";
-window.VueCesiumLibPath = "http://localhost:8888/static/libs/cdn/cesium-new/Cesium.js";
-
-// "http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
-window.VueCesiumPluginPath = "http://localhost:8888/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
+axios.get("./config.json").then((res) => {
+  let { data } = res;
+  Object.keys(data).forEach((key) => {
+    window[key] = data[key];
+  });
+});
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
