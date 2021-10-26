@@ -296,6 +296,7 @@ export default {
     enableDrawer() {
       this.$_compareStyle();
       this.$_initDraw();
+      this.$_unbindEditEvents();
       this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
       this.$_emitEvent("added", { drawer: this.drawer });

@@ -1,150 +1,353 @@
+<template>
+  <span class="mapgis-3d-g3d-layer">
+    <slot name="control">
+      <mapgis-ui-div class="mapgis-3d-g3d-document">
+        <mapgis-ui-input-search
+          style="margin-bottom: 8px"
+          placeholder="搜索"
+          @change="onChange"
+        />
+        <mapgis-ui-tree
+          class="mapgis-3d-g3d-document-tree"
+          checkable
+          showIcon
+          v-model="layerIds"
+          :expanded-keys="expandedKeys"
+          :auto-expand-parent="autoExpandParent"
+          :tree-data="layerTree"
+          @expand="onExpand"
+        >
+          <template slot="custom" slot-scope="{ icon }">
+            <!-- <mapgis-ui-iconfont :type="icon" /> -->
+          </template>
+          <template
+            slot="title"
+            slot-scope="{ title, icon, version, layerIndex, key }"
+          >
+            <span class="mapgis-3d-g3d-layer-span">
+              <span v-if="title && title.indexOf(searchValue) > -1">
+                {{ title.substr(0, title.indexOf(searchValue)) }}
+                <span style="color: #f50">{{ searchValue }}</span>
+                {{
+                  title.substr(title.indexOf(searchValue) + searchValue.length)
+                }}
+              </span>
+              <span v-else>{{ title }}</span>
+              <mapgis-ui-tag>{{ version }}</mapgis-ui-tag>
+              <mapgis-ui-iconfont
+                v-if="title != '地图场景'"
+                class="iconfont"
+                :type="key == expandItemKey ? 'mapgis-up' : 'mapgis-down'"
+                @click="() => handleExpandItemKey(key)"
+              />
+              <mapgis-ui-iconfont :type="icon" class="iconfont" />
+              <m3d-menus
+                v-if="key == expandItemKey"
+                :version="version"
+                :layerIndex="layerIndex"
+              >
+              </m3d-menus>
+            </span>
+          </template>
+        </mapgis-ui-tree>
+      </mapgis-ui-div>
+    </slot>
+  </span>
+</template>
+
 <script>
-import Tileset3dOptions from "./3DTilesetOptions";
+import G3DOptions from "./G3DOptions";
+// import { M3dType, M3dType_2_0 } from "./M3dType";
+
+import M3dMenus from "./components/M3dMenus.vue";
 
 export default {
-  name: "mapgis-3d-igs-m3d",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  name: "mapgis-3d-g3d-layer",
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
-    ...Tileset3dOptions
+    ...G3DOptions
+  },
+  components: {
+    M3dMenus
+  },
+  data() {
+    return {
+      layerIds: this.parseLayers(),
+      layerTree: [
+        {
+          title: "地图场景",
+          key: '"地图场景"',
+          version: "",
+          icon: "mapgis-layer1",
+          menu: "mapgis-down",
+          children: [],
+          scopedSlots: { icon: "custom", title: "title" }
+        }
+      ],
+      expandedKeys: [],
+      searchValue: "",
+      autoExpandParent: true,
+      expandItemKey: undefined
+    };
+  },
+  provide() {
+    const self = this;
+    return {
+      get m3ds() {
+        return self.m3ds;
+      }
+    };
   },
   created() {},
   mounted() {
     this.mount();
-    this.watchProp();
   },
   destroyed() {
     this.unmount();
   },
+  watch: {
+    layers(next) {
+      this.layerIds = this.parseLayers(next);
+      this.changeLayerVisible(this.layerIds);
+    },
+    layerIds(next) {
+      this.changeLayerVisible(this.layerIds);
+    }
+  },
   methods: {
     createCesiumObject() {
-      const { CesiumZondy, webGlobe } = this;
-      let m3dLayer = new CesiumZondy.Layer.M3DLayer({
-        viewer: webGlobe.viewer
-      });
-      return m3dLayer;
-    },
-    watchProp() {
-      let { show, opacity } = this;
-      if (show) {
-        this.$watch("show", function(next) {
-          if (this.initial) return;
-          this.changeShow(next);
-        });
-      }
-      if (opacity >= 0 && opacity <= 1) {
-        this.$watch("opacity", function(next) {
-          if (this.initial) return;
-          this.changeOpacity(next);
-        });
-      }
+      return new Promise(
+        resolve => {
+          resolve();
+        },
+        reject => {}
+      );
     },
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
-      const {
-        webGlobe,
-        vueIndex,
-        vueKey,
-        $props,
-        offset,
-        scale,
-        opacity
-      } = this;
-      const viewer = webGlobe.viewer;
+      const { vueIndex, vueKey, vueCesium } = this;
+      const { viewer, url, $props } = this;
+
+      let g3dLayer = this.createCesiumObject();
+      let layers = this.parseLayers();
+      g3dLayer.then(e => {
+        let g3d = viewer.scene.layers.appendG3DLayer(url, {
+          $props,
+          loaded: function(layer) {
+            // 该回调有多少图层循环进多少次
+          },
+          getDocLayerIndexes(index) {
+            // 该回调只触发一次
+            let g3dLayer = viewer.scene.layers.getG3DLayerByID(index[0]);
+            var layerIndexs = g3dLayer.getM3DLayerIndexes();
+
+            let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+
+            if (find && find.options && find.options.m3ds) {
+              let props = layerIndexs.map(i => {
+                let gIndex = layerIndexs[i];
+                let layer = g3dLayer.getLayer(gIndex);
+                return layer.readyPromise;
+              });
+
+              Promise.all(props).then(m3ds => {
+                vm.$emit("loaded", { g3d: vm });
+                vm.m3ds = m3ds;
+                find.options.m3ds = m3ds;
+                m3ds.forEach((m3d, i) => {
+                  // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
+                  let gIndex = layerIndexs[i];
+                  let layer = g3dLayer.getLayer(gIndex);
+                  let name = g3dLayer.getLayerName(gIndex);
+                  let version = vm.parseVersion(layer);
+                  if (vm.layerTree[0].version.indexOf(version) < 0) {
+                    vm.layerTree[0].version += ` ${version}`;
+                  }
+                  vm.layerTree[0].children.push({
+                    title: name,
+                    key: `${layerIndexs[i]}`,
+                    layerIndex: layerIndexs[i],
+                    version: version,
+                    icon: "mapgis-layer",
+                    menu: "mapgis-down",
+                    scopedSlots: {
+                      icon: "custom",
+                      title: "title"
+                    }
+                  });
+                  if (layers.indexOf(`${i}`) >= 0) {
+                    layer.show = true;
+                  } else {
+                    layer.show = false;
+                  }
+                });
+              });
+            }
+          }
+        });
+        vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, { m3ds: [] });
+      });
 
       if (viewer.isDestroyed()) return;
-      // this.$emit("load", { component: this });
-
-      let m3dLayer = this.createCesiumObject();
-      let m3ds = m3dLayer.append(`${this.url}`, {
-        ...$props,
-        loaded: tileset => {
-          if (vueKey && vueIndex) {
-            CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
-            !vm.show && m3ds && m3ds.forEach(m3d => (m3d.show = vm.show));
-          }
-          if (offset) {
-            let boundingSphere = tileset.boundingSphere;
-            let cartographic = Cesium.Cartographic.fromCartesian(
-              boundingSphere.center
-            );
-            let surface = Cesium.Cartesian3.fromRadians(
-              cartographic.longitude,
-              cartographic.latitude,
-              0.0
-            );
-            let { longitude = 0, latitude = 0, height = 0 } = offset;
-            let offsetParam = Cesium.Cartesian3.fromRadians(
-              cartographic.longitude + longitude,
-              cartographic.latitude + latitude,
-              height
-            );
-
-            let translation = Cesium.Cartesian3.subtract(
-              offsetParam,
-              surface,
-              new Cesium.Cartesian3()
-            );
-            tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
-          }
-          if (scale) {
-            tileset.setScale(new Cesium.Cartesian3(scale.x, scale.y, scale.z));
-          }
-          if (opacity >= 0) {
-            m3ds.forEach(
-              m3d =>
-                (m3d.style = new Cesium.Cesium3DTileStyle({
-                  color: `color('#FFFFFF', ${opacity})`
-                }))
-            );
-          }
-          vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
-        }
-      });
     },
     unmount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const viewer = webGlobe.viewer;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
-      if (find) {
-        let m3ds = find.source;
-        !viewer.isDestroyed() &&
-          m3ds &&
-          m3ds.forEach(l => {
-            l.destroy();
-          });
+      const { vueCesium, vueKey, vueIndex } = this;
+      const { viewer } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let { m3ds } = find.options;
+        if (!viewer.isDestroyed() && m3ds) {
+          m3ds.forEach(l => l.destroy());
+        }
       }
       this.$emit("unload", { component: this });
-      CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
+      vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
-    changeShow(show) {
-      const { vueKey, vueIndex } = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
-      if (find) {
-        let m3ds = find.source;
-        m3ds && m3ds.forEach(m3d => (m3d.show = show));
+    // 搜索需要
+    onExpand(expandedKeys) {
+      this.expandedKeys = expandedKeys;
+      this.autoExpandParent = false;
+    },
+    getParentKey(key, tree) {
+      let parentKey;
+      for (let i = 0; i < tree.length; i++) {
+        const node = tree[i];
+        if (node.children) {
+          if (node.children.some(item => item.key === key)) {
+            parentKey = node.key;
+          } else if (this.getParentKey(key, node.children)) {
+            parentKey = this.getParentKey(key, node.children);
+          }
+        }
+      }
+      return parentKey;
+    },
+    onChange(e) {
+      let { layerTree } = this;
+      const dataList = [];
+      const generateList = data => {
+        for (let i = 0; i < data.length; i++) {
+          const node = data[i];
+          const { key } = node;
+          dataList.push({ key, title: key });
+          if (node.children) {
+            generateList(node.children);
+          }
+        }
+      };
+      generateList(layerTree);
+
+      const value = e.target.value;
+      const expandedKeys = dataList
+        .map(item => {
+          if (item.title.indexOf(value) > -1) {
+            return this.getParentKey(item.key, layerTree);
+          }
+          return null;
+        })
+        .filter((item, i, self) => item && self.indexOf(item) === i);
+      Object.assign(this, {
+        expandedKeys,
+        searchValue: value,
+        autoExpandParent: true
+      });
+    },
+    // 图层解析
+    parseVersion(m3d) {
+      const { asset } = m3d;
+      const { version } = asset;
+      return version;
+    },
+    parseName(m3d) {
+      let { _gdbpUrl } = m3d;
+      let name;
+      let reg = new RegExp(/\\.*\.mcj/g);
+      let result = _gdbpUrl.match(reg);
+      if (result && result.length > 0) {
+        let temp = result[0];
+        let res = temp.split("\\");
+        let proj = res[res.length - 1];
+        let names = proj.split(".mcj");
+        name = names && names.length > 0 ? names[0] : "未命名";
+      }
+      return name;
+    },
+    parseLayers(layerString) {
+      layerString = layerString || this.layers;
+      if (!layerString) return undefined;
+      let pattern = new RegExp(/show:/i);
+      if (!pattern.test(layerString)) {
+        console.warn("layers格式错误，格式为show:0,1,2");
+      }
+      let layerStr = layerString.replace(/show:/i, "");
+      let layerStrs = layerStr.split(",");
+      let layers = layerStrs.map(l => l);
+      return layers;
+    },
+    changeLayerVisible(layers) {
+      layers = layers || this.layerIds;
+      const { vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let m3ds = find.options.m3ds;
+        if (!m3ds) return;
+        m3ds.forEach((m3d, i) => {
+          if (layers) {
+            if (layers.indexOf(`${i}`) >= 0) {
+              m3d.show = true;
+            } else {
+              m3d.show = false;
+            }
+          } else {
+            m3d.show = true;
+          }
+        });
       }
     },
-    changeOpacity(opacity) {
-      const { vueKey, vueIndex } = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
-      console.log('find', find.source);
-      if (find) {
-        let m3ds = find.source;
-        m3ds &&
-          m3ds.forEach(m3d => {
-            m3d.style = new Cesium.Cesium3DTileStyle({
-              color: `color('#FFFFFF', ${opacity})`
-            });
-          });
+    handleExpandItemKey(key) {
+      if (key == this.expandItemKey) {
+        this.expandItemKey = undefined;
+      } else {
+        this.expandItemKey = key;
       }
     }
-  },
-  render(h) {
-    return h("span", {
-      class: "mapgis-3d-igs-m3d",
-      ref: "m3d"
-    });
   }
 };
 </script>
+<style scoped>
+.mapgis-3d-g3d-layer {
+  position: absolute;
+  z-index: 100;
+  left: 10px;
+  top: 10px;
+}
+.mapgis-3d-g3d-document {
+  max-height: 360px;
+  padding: 2px;
+}
+.mapgis-3d-g3d-document-tree {
+  max-height: 310px;
+  min-width: 200px;
+  /* max-width: 300px; */
+  overflow-y: scroll;
+}
+.mapgis-3d-g3d-layer-span {
+  width: 180px;
+  display: inline-block;
+  justify-content: space-between;
+}
+.mapgis-3d-g3d-layer-span > .iconfont {
+  line-height: 28px;
+  font-size: 16px;
+  float: right;
+}
+
+.mapgis-3d-g3d-layer
+  ::v-deep
+  .mapgis-ui-tree
+  li
+  .mapgis-ui-tree-node-content-wrapper {
+  height: fit-content;
+}
+</style>

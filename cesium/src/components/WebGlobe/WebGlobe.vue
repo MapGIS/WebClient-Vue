@@ -11,7 +11,7 @@ import withPrivateMethods from "./mixins/withPrivateMethods";
 import withEvents from "../../lib/withEvents";
 // import mapEvents from "./events";
 import { flyTo, flyToEx } from "./util";
-import { initManager } from "./manager";
+import { initManager, initVueCesium } from "./manager";
 import options from "./options";
 
 export default {
@@ -40,6 +40,9 @@ export default {
       },
       get CesiumZondy() {
         return self.CesiumZondy;
+      },
+      get vueCesium() {
+        return self.vueCesium;
       },
       get viewer() {
         return self.viewer;
@@ -79,6 +82,7 @@ export default {
 
   created() {
     initManager();
+    initVueCesium();
     this.viewer = null;
     this.propsIsUpdating = {};
 
@@ -93,6 +97,7 @@ export default {
     this.$_loadScript().then((Cesium) => {
       this.Cesium = Cesium;
       this.CesiumZondy = window.CesiumZondy;
+      this.vueCesium = window.vueCesium;
       let container = this.$refs.container
       let viewer = new Cesium.Viewer(container, {
         ...this._props,
@@ -111,6 +116,10 @@ export default {
         viewer.scene.camera.setView(cameraView);
       }
       window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, viewer, {
+        ScreenSpaceEventHandler: undefined,
+      });
+      window.vueCesium.ViewerManager.addSource(vueKey, vueIndex, viewer, {
+        // 专门提供给M3D、G3D做查询用处
         ScreenSpaceEventHandler: undefined,
       });
 
