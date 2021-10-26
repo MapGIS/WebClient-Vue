@@ -22,20 +22,79 @@
               </mapgis-ui-checkbox>
           </mapgis-ui-col>
           </mapgis-ui-row>
+
           <mapgis-ui-row>
-            <mapgis-ui-col :span="4" >
-              <span>亮度</span>
+            <mapgis-ui-col :span="5" >
+              <mapgis-ui-checkbox :checked="compass" @change="enableCmps">罗盘控件
+              </mapgis-ui-checkbox>
             </mapgis-ui-col>
-            <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="brightness" :min="0" :max="10" @change="brtChange"/>
+            <mapgis-ui-col :span="5" >
+              <mapgis-ui-checkbox :checked="zoom" @change="enableZm">缩放控件
+              </mapgis-ui-checkbox>
             </mapgis-ui-col>
-            <mapgis-ui-col :span="4">
-              <mapgis-ui-input-number v-model="brightness" :min="0" :max="10" style="marginLeft: 16px"  @change="brtChange"/>
+            <mapgis-ui-col :span="5" >
+              <mapgis-ui-checkbox :checked="sceneskybox" @change="sceneSkyboxChange">星空
+              </mapgis-ui-checkbox>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="5" >
+              <mapgis-ui-checkbox :checked="enableSunlight" @change="sunChange">undefined
+              </mapgis-ui-checkbox>
             </mapgis-ui-col>
           </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4" >
+              <span>亮度stage</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="brightness" :min="0" :max="2" :step="0.2" @change="brtChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number v-model="brightness" :min="0" :max="2" :step="0.2" style="marginLeft: 16px"  @change="brtChange"/>
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
           <mapgis-ui-row>
             <mapgis-ui-col :span="4">
-              <span>对比度</span>
+              <span>亮度layer</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="layerbrightness" :min="0" :max="3" :step="0.2" @change="layerBrtChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="layerbrightness"
+                  :min="0"
+                  :max="3"
+                  :step="0.2"
+                  style="marginLeft: 16px"
+                  @change="layerBrtChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>对比度layer</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="layercontrast" :min="0" :max="3" :step="0.2"  @change="layerCtrstChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="layercontrast"
+                  :min="0"
+                  :max="3"
+                  :step="0.2"
+                  style="marginLeft: 16px"
+                  @change="layerCtrstChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>对比度bloom</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
               <mapgis-ui-slider v-model="contrast" :min="-255" :max="255" :step="10" :disabled="disabled"  @change="ctrstChange"/>
@@ -52,6 +111,45 @@
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>色调layer</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="layerhue" :min="-1" :max="1" :step="0.1"  @change="layerHueChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="layerhue"
+                  :min="-1"
+                  :max="1"
+                  :step="0.1"
+                  style="marginLeft: 16px"
+                  @change="layerHueChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
+          <mapgis-ui-row>
+            <mapgis-ui-col :span="4">
+              <span>饱和度layer</span>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8">
+              <mapgis-ui-slider v-model="layersaturation" :min="0" :max="3" :step="0.2"  @change="layerSaturationChange"/>
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="4">
+              <mapgis-ui-input-number
+                  v-model="layersaturation"
+                  :min="0"
+                  :max="3"
+                  :step="0.2"
+                  style="marginLeft: 16px"
+                  @change="layerSaturationChange"
+              />
+            </mapgis-ui-col>
+          </mapgis-ui-row>
+
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane key="2" tab="天气特效" force-render>
           <mapgis-ui-row>
@@ -262,7 +360,11 @@ export default {
       enableBloom: false,
       undgrd:false,
       brightness:1,
+      layerbrightness:1,
       contrast:128,
+      layercontrast:1,
+      layerhue:0,
+      layersaturation:1,
       disabled:!this.enableBloom,
       SkyBox2: false,
       enableCloud:false,
@@ -278,6 +380,10 @@ export default {
       fogOpacity:0.5,
       blckWhite:false,
       ntVision:false,
+      compass:false,
+      zoom:false,
+      sceneskybox:true,
+
     };
   },
   // watch: {
@@ -346,6 +452,27 @@ export default {
     this.$emit("unload");
   },
   methods: {
+    enableCmps(e){
+      const {viewer} = this;
+      this.compass = e.target.checked;
+      viewer.createNavigationTool({ enableCompass: true, enableZoomControls: true, enableDistanceLegend: true });
+      // let pos;
+      // if(this.compass){
+      // }else{
+      //   viewer.createNavigationTool({ enableCompass: false, enableZoomControls: false, enableDistanceLegend: false });
+      // }
+    },
+    enableZm(e){
+      const {viewer} = this;
+      this.zoom = e.target.checked;
+      let pos;
+      if(this.zoom){
+        viewer.createNavigationTool({ enableCompass: true, enableZoomControls: this.zoom, enableDistanceLegend: true });
+      }else{
+        viewer.createNavigationTool({ enableCompass: true, enableZoomControls: this.zoom, enableDistanceLegend: true });
+      }
+      // viewer.createNavigationTool({ enableCompass: this.compass, enableZoomControls: this.zoom });
+    },
     enableRain() {
       let rainOptions = {
         speed: this.speed,
@@ -504,7 +631,8 @@ export default {
         cloudsDuration: 10000,
         cloudsImgSource: Cesium.buildModuleUrl('Assets/Images/clouds.png')
       });
-      skyBox.addskyBox(); //添加天空盒
+      skyBox.addskyBox('skyBox3'); //添加天空盒样式1
+      // skyBox.addskyBox('skyBox2'); //添加天空盒样式2
       viewer.scene.camera.flyTo({
         destination: new Cesium.Cartesian3(-2179825.7788852383, 4380581.427298224, 4091538.107446992),
         orientation: {
@@ -612,6 +740,11 @@ export default {
       bloom.enabled = true;
 
     },
+    sceneSkyboxChange(e){
+      const {viewer} = this;
+      this.sceneskybox = e.target.checked;
+      viewer.scene.skyBox.show = this.sceneskybox ; //背景，星空
+    },
     brtChange(e){
       const {viewer} = this;
       this.brightness = e;
@@ -619,13 +752,32 @@ export default {
       // console.log("viewer.scene.postProcessStages",viewer.scene.postProcessStages._activeStages[0])
       // console.log("brt.e",e)
     },
+    layerBrtChange(e){
+      const {viewer} = this;
+      this.layerbrightness = e;
+      viewer.scene.imageryLayers._layers[0].brightness = this.layerbrightness;
+    },
+    layerCtrstChange(e){
+      const {viewer} = this;
+      this.layercontrast = e;
+      viewer.scene.imageryLayers._layers[0].contrast = this.layercontrast;
+    },
     ctrstChange(e){
       const {viewer} = this;
       this.contrast = e;
       console.log('wwww',e);
       viewer.scene.postProcessStages.bloom.uniforms.contrast = this.contrast;
       console.log("viewer.scene.postProcessStages.bloom.uniforms.contrast",viewer.scene.postProcessStages.bloom.uniforms.contrast)
-
+    },
+    layerHueChange(e){
+      const {viewer} = this;
+      this.layerhue = e;
+      viewer.scene.imageryLayers._layers[0].hue = this.layerhue;
+    },
+    layerSaturationChange(e){
+      const {viewer} = this;
+      this.layersaturation = e;
+      viewer.scene.imageryLayers._layers[0].saturation = this.layersaturation;
     },
     skyAtChange(e) {
       const {viewer} = this;
