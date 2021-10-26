@@ -82,7 +82,7 @@ export {textPaintList};
 let textLayoutList = {
     "field": "text-field",
     "fontFamily": "text-font",
-    "fontSize": "icon-size",
+    "fontSize": "text-size",
     "spacing": "text-letter-spacing",
     "rotate": "text-rotate",
     "lineHeight": "text-line-height",
@@ -94,3 +94,27 @@ let textLayoutList = {
 }
 
 export {textLayoutList};
+
+let pointDefaultValue = {
+    color: "#FF0000",
+    radius: 6,
+    opacity: 1,
+    outlineWidth: 1,
+    outlineColor: "#000000",
+    outlineOpacity: 1
+}
+
+export {pointDefaultValue};
+
+let polylineDefaultValue = {
+    opacity: 1,
+    width: 1
+}
+
+export {polylineDefaultValue};
+
+let polygonDefaultValue = {
+    opacity: 1
+}
+
+export {polygonDefaultValue};

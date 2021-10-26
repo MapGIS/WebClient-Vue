@@ -13,6 +13,7 @@ const {FeatureService, VFeature} = MRFS;
 import {gradientColor} from "../../util/util";
 import All from "@mapgis/webclient-es6-service";
 import {formatInterpolate, formatStyleToLayer, getLayerFromTextStyle} from "./themeUtil";
+import {getPopupHtml} from "../../UI/popupUtil"
 
 import {
     fillOutlinePaintList,
@@ -20,7 +21,8 @@ import {
     pointPaintList,
     linePaintList,
     symbolPaintList,
-    symbolLayoutList
+    symbolLayoutList,
+    polylineDefaultValue, pointDefaultValue, polygonDefaultValue
 } from "./mappingList"
 
 import * as turf from "@turf/turf"
@@ -128,7 +130,7 @@ export default {
         panelStyle: {
             type: Object
         },
-        themeOption: {
+        themeOptions: {
             type: Object,
             default() {
                 return {}
@@ -196,6 +198,16 @@ export default {
                 return {}
             }
         },
+        enableLegend: {
+            type: Boolean,
+            default: false
+        },
+        legendOptions: {
+            type: Object,
+            default() {
+                return {}
+            }
+        }
     },
     watch: {
         dataSource: {
@@ -234,25 +246,26 @@ export default {
             },
             deep: true
         },
-        "themeOption.layerStyle": {
+        "themeOptions.layerStyle": {
             handler: function () {
                 let vm = this;
-                Object.keys(this.themeOption.layerStyle).forEach(function (key) {
-                    let layerStyleCopy = vm.themeOptionCopy.layerStyle;
-                    let layerStyle = vm.themeOption.layerStyle;
+                Object.keys(this.themeOptions.layerStyle).forEach(function (key) {
+                    let layerStyleCopy = vm.themeOptionsCopy.layerStyle;
+                    let layerStyle = vm.themeOptions.layerStyle;
                     if ((layerStyleCopy.hasOwnProperty(key) && layerStyle.hasOwnProperty(key) && layerStyleCopy[key] !== layerStyle[key]) ||
                         (!layerStyleCopy.hasOwnProperty(key) && layerStyle.hasOwnProperty(key))
                     ) {
                         vm.$_updateStyle(layerStyle, key);
                     }
                 });
-                this.$_getThemeOptionCopy();
+                this.$_getthemeOptionsCopy();
             },
             deep: true
         },
-        "themeOption.styleGroups": {
+        "themeOptions.styleGroups": {
             handler: function () {
-                let vm = this, styleGroups = this.themeOption.styleGroups, groups = {};
+                let groups = {}, vm = this;
+                const {styleGroups} = this.themeOptions
                 for (let i = 0; i < styleGroups.length; i++) {
                     const {style} = styleGroups[i];
                     if (style) {
@@ -260,9 +273,16 @@ export default {
                             if (!groups[key]) {
                                 groups[key] = [];
                             }
-                            let s = {
-                                start: styleGroups[i].start,
-                                end: styleGroups[i].end
+                            let s;
+                            if (vm.themeType === "range") {
+                                s = {
+                                    start: styleGroups[i].start,
+                                    end: styleGroups[i].end
+                                }
+                            } else if (vm.themeType === "unique") {
+                                s = {
+                                    value: styleGroups[i].value
+                                }
                             }
                             s[key] = style[key];
                             groups[key].push(s);
@@ -273,8 +293,11 @@ export default {
                     case "range":
                         this.$_updateRangeStyleGroups(groups);
                         break;
+                    case "unique":
+                        this.$_updateUniqueStyleGroups(groups);
+                        break;
                 }
-                this.$_getThemeOptionCopy();
+                this.$_getthemeOptionsCopy();
             },
             deep: true
         },
@@ -333,8 +356,26 @@ export default {
             maskId: undefined,
             dataSourceUrl: undefined,
             igsTextSourceId: undefined,
-            themeOptionCopy: undefined,
-            defaultIcon: "useDefault"
+            themeOptionsCopy: undefined,
+            defaultIcon: "useDefault",
+            legendOptionsCopy: {
+                title: "",
+                fields: [],
+                style: {
+                    containerStyle: {},
+                    titleStyle: {},
+                    rowStyle: {},
+                    legendStyle: {},
+                    labelStyle: {},
+                },
+                class: {
+                    containerClass: {},
+                    titleClass: {},
+                    rowClass: {},
+                    legendClass: {},
+                    labelClass: {},
+                }
+            }
         };
     },
     mounted() {
@@ -354,12 +395,131 @@ export default {
         this.$_addThemeLayerBySource();
     },
     methods: {
-        $_updateRangeStyleGroups(groups) {
-            let vm = this;
+        $_getInterpolate(key, defaultValue, colors) {
+            let opacitys = ["step", ["to-number", ["get", key]], defaultValue];
+            for (let k = 3; k < colors.length; k += 2) {
+                opacitys[k] = colors[k];
+                opacitys[k + 1] = defaultValue;
+            }
+            return opacitys;
+        },
+        $_getInterpolateUnique(key, defaultValue, colors) {
+            let interpolate = {
+                property: key,
+                stops: []
+            };
+            for (let k = 0; k < colors.stops.length; k++) {
+                interpolate.stops.push([colors.stops[k][0], defaultValue]);
+            }
+            return interpolate;
+        },
+        $_updateUniqueStyleGroups(groups) {
+            let vm = this, watchObject;
 
-            function setPaint(groups, key, vm) {
+            function setPaint(groups, key, vm, keyAlias, field) {
                 let paintArr = groups[key];
-                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + key);
+                let paintsKey = keyAlias || key;
+                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
+                if (!paints) {
+                    let defaultValue;
+                    switch (vm.dataType) {
+                        case "circle":
+                            defaultValue = pointDefaultValue[key];
+                            break;
+                        case "line":
+                            defaultValue = polylineDefaultValue[key];
+                            break;
+                        case "fill":
+                            defaultValue = polygonDefaultValue[key];
+                            break;
+                    }
+                    let pColors = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-color");
+                    paints = vm.$_getInterpolateUnique(field, defaultValue, pColors);
+                }
+                if (paints.hasOwnProperty("stops")) {
+                    let stops = paints.stops;
+                    for (let i = 0; i < paintArr.length; i++) {
+                        for (let j = 0; j < stops.length; j++) {
+                            if (stops[j][0] === paintArr[i].value) {
+                                stops[j][1] = paintArr[i][key];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < paintArr.length; i++) {
+                        if (paints.indexOf(paintArr[i].value) >= 0) {
+                            paints[paints.indexOf(paintArr[i].value) + 1] = paintArr[i][key];
+                        }
+                    }
+                }
+                let newKey = keyAlias || key;
+                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + newKey, paints);
+            }
+
+            switch (this.dataType) {
+                case "fill":
+                    watchObject = {
+                        color: "",
+                        opacity: ""
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key], vm.selectValue);
+                        }
+                    });
+                    break;
+                case "circle":
+                    watchObject = {
+                        color: "",
+                        opacity: "",
+                        radius: "",
+                        outlineWidth: "stroke-width",
+                        outlineColor: "stroke-color",
+                        outlineOpacity: "stroke-opacity"
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key], vm.selectValue);
+                        }
+                    });
+                    break;
+                case "line":
+                    watchObject = {
+                        color: "",
+                        opacity: ""
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key], vm.selectValue);
+                        }
+                    });
+                    break;
+            }
+        },
+        $_updateRangeStyleGroups(groups) {
+            let vm = this, watchObject;
+
+            function setPaint(groups, key, vm, keyAlias) {
+                let paintArr = groups[key];
+                let paintsKey = keyAlias || key;
+                let paints = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-" + paintsKey);
+                if (!paints) {
+                    let defaultValue;
+                    switch (vm.dataType) {
+                        case "circle":
+                            defaultValue = pointDefaultValue[key];
+                            break;
+                        case "line":
+                            defaultValue = polylineDefaultValue[key];
+                            break;
+                        case "fill":
+                            defaultValue = polygonDefaultValue[key];
+                            break;
+                    }
+                    let pColors = themeManager.getExtraData(vm.layerIdCopy, vm.themeType, vm.dataType + "-color");
+                    paints = vm.$_getInterpolate(paintsKey, defaultValue, pColors);
+                }
                 for (let i = 0; i < paintArr.length; i++) {
                     for (let j = 3; j < paints.length; j += 2) {
                         if (paintArr[i].start <= paints[j] && paints[j] <= paintArr[i].end) {
@@ -369,17 +529,47 @@ export default {
                         }
                     }
                 }
-                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + key, paints);
+                let newKey = keyAlias || key;
+                vm.$_setPaintProperty(vm.layerIdCopy, vm.layerIdCopy + vm.$_getThemeName(), vm.dataType + "-" + newKey, paints);
             }
 
             switch (this.dataType) {
                 case "fill":
-                    if (groups.color) {
-                        setPaint(groups, "color", vm);
+                    watchObject = {
+                        color: "",
+                        opacity: ""
                     }
-                    if (groups.opacity) {
-                        setPaint(groups, "opacity", vm);
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+                case "circle":
+                    watchObject = {
+                        color: "",
+                        opacity: "",
+                        radius: "",
+                        outlineWidth: "stroke-width",
+                        outlineColor: "stroke-color",
+                        outlineOpacity: "stroke-opacity"
                     }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
+                    break;
+                case "line":
+                    watchObject = {
+                        color: "",
+                        opacity: ""
+                    }
+                    Object.keys(groups).forEach(function (key) {
+                        if (watchObject.hasOwnProperty(key)) {
+                            setPaint(groups, key, vm, watchObject[key]);
+                        }
+                    });
                     break;
             }
         },
@@ -466,15 +656,15 @@ export default {
                 }
             }
         },
-        $_getThemeOptionCopy() {
-            if (this.themeOption) {
+        $_getthemeOptionsCopy() {
+            if (this.themeOptions) {
                 let vm = this;
-                this.themeOptionCopy = {};
-                const {layerStyle} = this.themeOption;
+                this.themeOptionsCopy = {};
+                const {layerStyle} = this.themeOptions;
                 if (layerStyle instanceof Object) {
-                    this.themeOptionCopy.layerStyle = {};
+                    this.themeOptionsCopy.layerStyle = {};
                     Object.keys(layerStyle).forEach(function (key) {
-                        vm.themeOptionCopy.layerStyle[key] = layerStyle[key];
+                        vm.themeOptionsCopy.layerStyle[key] = layerStyle[key];
                     });
                 }
             }
@@ -710,8 +900,8 @@ export default {
                 } else if (this.dataType === "circle") {
                     hId = this.layerIdCopy + this.$_getThemeName(themeType) + name + "_高亮_点";
                     let cRadius;
-                    if (this.themeOption.layerStyle) {
-                        const {radius} = this.themeOption.layerStyle;
+                    if (this.themeOptions.layerStyle) {
+                        const {radius} = this.themeOptions.layerStyle;
                         cRadius = radius || 6;
                     }
                     heightLightLayer = {
@@ -765,8 +955,8 @@ export default {
                 } else if (this.dataType === "line") {
                     hId = this.layerIdCopy + this.$_getThemeName(themeType) + name + "_高亮_线";
                     let lWidth;
-                    if (this.themeOption.layerStyle) {
-                        const {width} = this.themeOption.layerStyle;
+                    if (this.themeOptions.layerStyle) {
+                        const {width} = this.themeOptions.layerStyle;
                         lWidth = width || 1;
                     }
                     heightLightLayer = {
@@ -820,8 +1010,8 @@ export default {
                 popupOptions = Object.assign(popupOptions, this.popupOptions);
                 window.popup = new this.mapbox.Popup(popupOptions).addTo(this.map);
             }
-            let element = this.$_getPopupHtml(this.popupOptions.fields, this.popupOptions.alias, this.popupOptions.style, this.popupOptions.class, this.popupOptions.title, feature, this.selectValue);
-            window.popup.setHTML(element);
+            const {type} = this.popupOptions;
+            window.popup.setHTML(getPopupHtml(type, feature, this.popupOptions, this.selectValue));
             window.popup.setLngLat(coordinates);
         },
         $_removePopup() {
@@ -843,169 +1033,11 @@ export default {
                     tipsOption = Object.assign(tipsOption, this.tipsOptions);
                     window.tips = new this.mapbox.Popup(tipsOption).addTo(this.map);
                 }
-                let element = this.$_getPopupHtml(this.tipsOptions.fields, this.tipsOptions.alias, this.tipsOptions.style, this.tipsOptions.class, this.tipsOptions.title, feature, this.selectValue);
-                window.tips.setHTML(element);
+                const {type} = this.tipsOptions;
+                window.tips.setHTML(getPopupHtml(type, feature, this.tipsOptions, this.selectValue));
                 window.tips.setLngLat(coordinates);
             }
         },
-        $_getPopupHtml(fields, alias, style, pClass, title, feature, defaultField) {
-            let field, containerStyle, titleStyle, rowStyle, fieldStyle, valueStyle;
-            let containerClass, rowClass, titleClass, fieldClass, valueClass;
-
-            function getField(alias, field) {
-                if (alias && alias instanceof Object && alias.hasOwnProperty(field)) {
-                    field = alias[field];
-                }
-                return field;
-            }
-
-            function getStyle(style) {
-                let styleStr = "";
-                if (style && style instanceof Object) {
-                    Object.keys(style).forEach(function (key) {
-                        styleStr += key + ":" + style[key] + ";";
-                    });
-                }
-                return styleStr;
-            }
-
-            if (style && style.hasOwnProperty("containerStyle")) {
-                containerStyle = getStyle(style.containerStyle);
-            }
-
-            if (pClass && pClass.hasOwnProperty("containerClass")) {
-                containerClass = pClass.containerClass;
-            }
-
-            let element = "<div class='mapgis-theme-popup-container " + containerClass + "' style='" + containerStyle + "'>"
-
-            if (style && style.hasOwnProperty("rowStyle")) {
-                rowStyle = getStyle(style.rowStyle);
-            }
-
-            if (pClass && pClass.hasOwnProperty("rowClass")) {
-                rowClass = pClass.rowClass;
-            }
-
-            if (style && style.hasOwnProperty("titleStyle")) {
-                titleStyle = getStyle(style.titleStyle);
-            }
-
-            if (pClass && pClass.hasOwnProperty("titleClass")) {
-                titleClass = pClass.titleClass;
-            }
-
-            if (style && style.hasOwnProperty("fieldStyle")) {
-                fieldStyle = getStyle(style.fieldStyle);
-            }
-
-            if (pClass && pClass.hasOwnProperty("fieldClass")) {
-                fieldClass = pClass.fieldClass;
-            }
-
-            if (style && style.hasOwnProperty("valueStyle")) {
-                valueStyle = getStyle(style.valueStyle);
-            }
-
-            if (pClass && pClass.hasOwnProperty("valueClass")) {
-                valueClass = pClass.valueClass;
-            }
-
-            if (title) {
-                element += "<div class='mapgis-theme-popup-row mapgis-theme-popup-title " + titleClass + "' style='" + titleStyle + "'>" + title + "</div>";
-            }
-
-            if (fields && fields instanceof Array && fields.length > 0) {
-                for (let i = 0; i < fields.length; i++) {
-                    field = getField(alias, fields[i]);
-                    element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "' title='" + field + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "' title='" + feature.properties[fields[i]] + "'>" + feature.properties[fields[i]] + "</span></div>";
-                }
-            } else {
-                field = getField(alias, defaultField);
-                element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[defaultField] + "</span></div>";
-            }
-            element += "</div>";
-            return element;
-        },
-        // $_getPopupHtml(fields, alias, style, pClass, title, feature, defaultField) {
-        //     let field, containerStyle, titleStyle, rowStyle, fieldStyle, valueStyle;
-        //     let containerClass, rowClass, titleClass, fieldClass, valueClass;
-        //
-        //     function getField(alias, field) {
-        //         if (alias && alias instanceof Object && alias.hasOwnProperty(field)) {
-        //             field = alias[field];
-        //         }
-        //         return field;
-        //     }
-        //
-        //     function getStyle(style) {
-        //         let styleStr = "";
-        //         if (style && style instanceof Object) {
-        //             Object.keys(style).forEach(function (key) {
-        //                 styleStr += key + ":" + style[key] + ";";
-        //             });
-        //         }
-        //         return styleStr;
-        //     }
-        //
-        //     if (style && style.hasOwnProperty("containerStyle")) {
-        //         containerStyle = getStyle(style.containerStyle);
-        //     }
-        //
-        //     if (pClass && pClass.hasOwnProperty("containerClass")) {
-        //         containerClass = pClass.containerClass;
-        //     }
-        //
-        //     let element = "<div class='mapgis-theme-popup-container " + containerClass + "' style='" + containerStyle + "'>"
-        //
-        //     if (style && style.hasOwnProperty("rowStyle")) {
-        //         rowStyle = getStyle(style.rowStyle);
-        //     }
-        //
-        //     if (pClass && pClass.hasOwnProperty("rowClass")) {
-        //         rowClass = pClass.rowClass;
-        //     }
-        //
-        //     if (style && style.hasOwnProperty("titleStyle")) {
-        //         titleStyle = getStyle(style.titleStyle);
-        //     }
-        //
-        //     if (pClass && pClass.hasOwnProperty("titleClass")) {
-        //         titleClass = pClass.titleClass;
-        //     }
-        //
-        //     if (style && style.hasOwnProperty("fieldStyle")) {
-        //         fieldStyle = getStyle(style.fieldStyle);
-        //     }
-        //
-        //     if (pClass && pClass.hasOwnProperty("fieldClass")) {
-        //         fieldClass = pClass.fieldClass;
-        //     }
-        //
-        //     if (style && style.hasOwnProperty("valueStyle")) {
-        //         valueStyle = getStyle(style.valueStyle);
-        //     }
-        //
-        //     if (pClass && pClass.hasOwnProperty("valueClass")) {
-        //         valueClass = pClass.valueClass;
-        //     }
-        //
-        //     if (title) {
-        //         element += "<div class='mapgis-theme-popup-row " + titleClass + "' style='" + titleStyle + "'>" + title + "</div>";
-        //     }
-        //
-        //     if (fields && fields instanceof Array && fields.length > 0) {
-        //         for (let i = 0; i < fields.length; i++) {
-        //             field = getField(alias, fields[i]);
-        //             element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[fields[i]] + "</span></div>";
-        //         }
-        //     } else {
-        //         field = getField(alias, defaultField);
-        //         element += "<div class='mapgis-theme-popup-row " + rowClass + "' style='" + rowStyle + "'><span class='mapgis-theme-popup-item mapgis-theme-popup-field " + fieldClass + "' style='" + fieldStyle + "'>" + field + "</span><span class='mapgis-theme-popup-item mapgis-theme-popup-colon'> : </span><span class='mapgis-theme-popup-item mapgis-theme-popup-value " + valueClass + "' style='" + valueStyle + "'>" + feature.properties[defaultField] + "</span></div>";
-        //     }
-        //     element += "</div>";
-        //     return element;
-        // },
         $_removeTips() {
             if (window.tips) {
                 window.tips.remove();
@@ -1070,7 +1102,7 @@ export default {
         },
         $_addThemeLayerBySource() {
             let vm = this;
-            this.$_getThemeOptionCopy();
+            this.$_getthemeOptionsCopy();
             if (this.dataSource && !(this.dataSource instanceof Array) && this.dataSource instanceof Object && Object.keys(this.dataSource).length > 0) {
                 vm.$_addTheme(this.dataSource);
             } else if (this.dataSource && typeof this.dataSource === "string") {
@@ -1656,8 +1688,8 @@ export default {
          * @newColors newColors 返回的绘制数据
          * */
         $_setUniqueColors(color, dataSourceCopy, key) {
-            if (this.themeOption.layerStyle && this.themeOption.layerStyle.hasOwnProperty("color")) {
-                color = this.themeOption.layerStyle.color;
+            if (this.themeOptions.layerStyle && this.themeOptions.layerStyle.hasOwnProperty("color")) {
+                color = this.themeOptions.layerStyle.color;
             }
             //判断是为数字还是字符串
             let iSString = false;
@@ -1701,37 +1733,56 @@ export default {
                     }
                 }
                 newColors.push("#FFFFFF");
-                if (this.themeOption.styleGroups) {
-                    let radius, outlineWidth, outlineColor, opacity;
-                    for (let i = 0; i < this.themeOption.styleGroups.length; i++) {
-                        newColors[newColors.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.color;
-                        if (this.themeOption.styleGroups[i].style.radius) {
+                if (this.themeOptions.styleGroups) {
+                    let radius, outlineWidth, outlineColor, outlineOpacity, opacity;
+                    for (let i = 0; i < this.themeOptions.styleGroups.length; i++) {
+                        if (newColors.indexOf(this.themeOptions.styleGroups[i].value) >= 0) {
+                            newColors[newColors.indexOf(this.themeOptions.styleGroups[i].value) + 1] = this.themeOptions.styleGroups[i].style.color;
+                        }
+                        if (this.themeOptions.styleGroups[i].style.radius) {
                             if (!radius) {
-                                let r = this.themeOption.layerStyle.radius || 6;
+                                let r = this.themeOptions.layerStyle.radius || 6;
                                 radius = formatInterpolate(iSString, dataSourceCopy, key, r);
                             }
-                            radius[radius.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.radius;
+                            if (radius.indexOf(this.themeOptions.styleGroups[i].value) >= 0) {
+                                radius[radius.indexOf(this.themeOptions.styleGroups[i].value) + 1] = this.themeOptions.styleGroups[i].style.radius;
+                            }
                         }
-                        if (this.themeOption.styleGroups[i].style.outlineWidth) {
+                        if (this.themeOptions.styleGroups[i].style.outlineWidth) {
                             if (!outlineWidth) {
-                                let w = this.themeOption.layerStyle.outlineWidth || 1;
+                                let w = this.themeOptions.layerStyle.outlineWidth || 1;
                                 outlineWidth = formatInterpolate(iSString, dataSourceCopy, key, w);
                             }
-                            outlineWidth[outlineWidth.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineWidth;
+                            if (outlineWidth.indexOf(this.themeOptions.styleGroups[i].value) >= 0) {
+                                outlineWidth[outlineWidth.indexOf(this.themeOptions.styleGroups[i].value) + 1] = this.themeOptions.styleGroups[i].style.outlineWidth;
+                            }
                         }
-                        if (this.themeOption.styleGroups[i].style.outlineColor) {
+                        if (this.themeOptions.styleGroups[i].style.outlineColor) {
                             if (!outlineColor) {
-                                let c = this.themeOption.layerStyle.outlineColor || "#000000";
+                                let c = this.themeOptions.layerStyle.outlineColor || "#000000";
                                 outlineColor = formatInterpolate(iSString, dataSourceCopy, key, c);
                             }
-                            outlineColor[outlineColor.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.outlineColor;
+                            if (outlineColor.indexOf(this.themeOptions.styleGroups[i].value) >= 0) {
+                                outlineColor[outlineColor.indexOf(this.themeOptions.styleGroups[i].value) + 1] = this.themeOptions.styleGroups[i].style.outlineColor;
+                            }
                         }
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("opacity")) {
+                        if (this.themeOptions.styleGroups[i].style.outlineOpacity) {
+                            if (!outlineOpacity) {
+                                let o = this.themeOptions.layerStyle.outlineOpacity || 1;
+                                outlineOpacity = formatInterpolate(iSString, dataSourceCopy, key, o);
+                            }
+                            if (outlineOpacity.indexOf(this.themeOptions.styleGroups[i].value) >= 0) {
+                                outlineOpacity[outlineOpacity.indexOf(this.themeOptions.styleGroups[i].value) + 1] = this.themeOptions.styleGroups[i].style.outlineOpacity;
+                            }
+                        }
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("opacity")) {
                             if (!opacity) {
-                                let o = this.themeOption.layerStyle.opacity || 1;
+                                let o = this.themeOptions.layerStyle.opacity || 1;
                                 opacity = formatInterpolate(iSString, dataSourceCopy, key, o);
                             }
-                            opacity[opacity.indexOf(this.themeOption.styleGroups[i].value) + 1] = this.themeOption.styleGroups[i].style.opacity;
+                            if (opacity.indexOf(this.themeOptions.styleGroups[i].value) >= 0) {
+                                opacity[opacity.indexOf(this.themeOptions.styleGroups[i].value) + 1] = this.themeOptions.styleGroups[i].style.opacity;
+                            }
                         }
                     }
                     if (radius) {
@@ -1758,6 +1809,14 @@ export default {
                             outlineColor
                         );
                     }
+                    if (outlineOpacity && this.dataType === "circle") {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            "circle-stroke-opacity",
+                            outlineOpacity
+                        );
+                    }
                     if (opacity) {
                         themeManager.setExtraData(
                             this.layerIdCopy,
@@ -1768,6 +1827,7 @@ export default {
                     }
                 }
             } else {
+                let opacity, radius, outlineWidth, outlineColor, outlineOpacity;
                 newColors = {
                     property: key,
                     stops: []
@@ -1776,13 +1836,118 @@ export default {
                     newColors.stops.push([dataSourceCopy[i], colors[i]]);
                     checkBoxArr.push(true);
                 }
-                if (this.themeOption.styleGroups) {
-                    for (let i = 0; i < this.themeOption.styleGroups.length; i++) {
+                if (this.themeOptions.styleGroups) {
+                    for (let i = 0; i < this.themeOptions.styleGroups.length; i++) {
                         for (let j = 0; j < newColors.stops.length; j++) {
-                            if (newColors.stops[j][0] === this.themeOption.styleGroups[i].value) {
-                                newColors.stops[j][1] = this.themeOption.styleGroups[i].style.color;
+                            if (newColors.stops[j][0] === this.themeOptions.styleGroups[i].value) {
+                                newColors.stops[j][1] = this.themeOptions.styleGroups[i].style.color;
                             }
                         }
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("opacity")) {
+                            if (!opacity) {
+                                let o = this.themeOptions.layerStyle.opacity || 1;
+                                opacity = formatInterpolate(iSString, dataSourceCopy, key, o);
+                            }
+                            let stops = opacity.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOptions.styleGroups[i].style.opacity;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("radius")) {
+                            if (!radius) {
+                                let r = this.themeOptions.layerStyle.radius || 6;
+                                radius = formatInterpolate(iSString, dataSourceCopy, key, r);
+                            }
+                            let stops = radius.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOptions.styleGroups[i].style.radius;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("outlineWidth")) {
+                            if (!outlineWidth) {
+                                let l = this.themeOptions.layerStyle.outlineWidth || 1;
+                                outlineWidth = formatInterpolate(iSString, dataSourceCopy, key, l);
+                            }
+                            let stops = outlineWidth.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOptions.styleGroups[i].style.outlineWidth;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("outlineColor")) {
+                            if (!outlineColor) {
+                                let l = this.themeOptions.layerStyle.outlineColor || "#000000";
+                                outlineColor = formatInterpolate(iSString, dataSourceCopy, key, l);
+                            }
+                            let stops = outlineColor.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOptions.styleGroups[i].style.outlineColor;
+                                    break;
+                                }
+                            }
+                        }
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("outlineOpacity")) {
+                            if (!outlineOpacity) {
+                                let l = this.themeOptions.layerStyle.outlineOpacity || 1;
+                                outlineOpacity = formatInterpolate(iSString, dataSourceCopy, key, l);
+                            }
+                            let stops = outlineOpacity.stops;
+                            for (let k = 0; k < stops.length; k++) {
+                                if (stops[k][0] === this.themeOptions.styleGroups[i].value) {
+                                    stops[k][1] = this.themeOptions.styleGroups[i].style.outlineOpacity;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (opacity) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-opacity",
+                            opacity
+                        );
+                    }
+                    if (radius) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-radius",
+                            radius
+                        );
+                    }
+                    if (outlineWidth) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-stroke-width",
+                            outlineWidth
+                        );
+                    }
+                    if (outlineColor) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-stroke-color",
+                            outlineColor
+                        );
+                    }
+                    if (outlineOpacity) {
+                        themeManager.setExtraData(
+                            this.layerIdCopy,
+                            this.themeType,
+                            this.dataType + "-stroke-opacity",
+                            outlineOpacity
+                        );
                     }
                 }
             }
@@ -1811,8 +1976,8 @@ export default {
             return newColors;
         },
         $_getRangeColors(color, dataSourceCopy, key, features) {
-            if (this.themeOption.layerStyle && this.themeOption.layerStyle.hasOwnProperty("color")) {
-                color = this.themeOption.layerStyle.color;
+            if (this.themeOptions.layerStyle && this.themeOptions.layerStyle.hasOwnProperty("color")) {
+                color = this.themeOptions.layerStyle.color;
             }
             let colors = ["step", ["to-number", ["get", key]]], checkBoxArr = [], colorArr = color.split(",");
             colors.push("#ffffff");
@@ -1858,12 +2023,12 @@ export default {
             let checkBoxArr = colorAndCheckBox.checkBoxArr;
             let opacitys, radiuses, outlineWidths, outlineColors, outlineOpacities;
             //如果有styleGroups，则应用
-            if (this.themeOption.styleGroups && this.themeOption.styleGroups.length > 0) {
+            if (this.themeOptions.styleGroups && this.themeOptions.styleGroups.length > 0) {
                 //处理透明度
                 let opacity = 1;
-                const {layerStyle} = this.themeOption;
+                const {layerStyle} = this.themeOptions;
                 if (layerStyle && layerStyle.hasOwnProperty("opacity")) {
-                    opacity = this.themeOption.layerStyle.opacity;
+                    opacity = this.themeOptions.layerStyle.opacity;
                 }
                 opacitys = ["step", ["to-number", ["get", key]], opacity];
                 for (let k = 3; k < colors.length; k += 2) {
@@ -1873,7 +2038,7 @@ export default {
                 //处理半径
                 let radius = 6;
                 if (layerStyle && layerStyle.hasOwnProperty("radius")) {
-                    radius = this.themeOption.layerStyle.radius;
+                    radius = this.themeOptions.layerStyle.radius;
                 }
                 radiuses = ["step", ["to-number", ["get", key]], radius];
                 for (let k = 3; k < colors.length; k += 2) {
@@ -1883,7 +2048,7 @@ export default {
                 //处理外边线宽度
                 let outlineWidth = 1;
                 if (layerStyle && layerStyle.hasOwnProperty("outlineWidth")) {
-                    outlineWidth = this.themeOption.layerStyle.outlineWidth;
+                    outlineWidth = this.themeOptions.layerStyle.outlineWidth;
                 }
                 outlineWidths = ["step", ["to-number", ["get", key]], outlineWidth];
                 for (let k = 3; k < colors.length; k += 2) {
@@ -1893,7 +2058,7 @@ export default {
                 //处理外边线颜色
                 let outlineColor = "#000000";
                 if (layerStyle && layerStyle.hasOwnProperty("outlineColor")) {
-                    outlineColor = this.themeOption.layerStyle.outlineColor;
+                    outlineColor = this.themeOptions.layerStyle.outlineColor;
                 }
                 outlineColors = ["step", ["to-number", ["get", key]], outlineColor];
                 for (let k = 3; k < colors.length; k += 2) {
@@ -1903,65 +2068,65 @@ export default {
                 //处理外边线透明度
                 let outlineOpacity = 1;
                 if (layerStyle && layerStyle.hasOwnProperty("outlineColor")) {
-                    outlineOpacity = this.themeOption.layerStyle.outlineOpacity;
+                    outlineOpacity = this.themeOptions.layerStyle.outlineOpacity;
                 }
                 outlineOpacities = ["step", ["to-number", ["get", key]], outlineOpacity];
                 for (let k = 3; k < colors.length; k += 2) {
                     outlineOpacities[k] = colors[k];
                     outlineOpacities[k + 1] = outlineOpacity;
                 }
-                for (let i = 0; i < this.themeOption.styleGroups.length; i++) {
-                    if (this.themeOption.styleGroups[i].hasOwnProperty("style") && this.themeOption.styleGroups[i].hasOwnProperty("start") && this.themeOption.styleGroups[i].hasOwnProperty("end")) {
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("color")) {
+                for (let i = 0; i < this.themeOptions.styleGroups.length; i++) {
+                    if (this.themeOptions.styleGroups[i].hasOwnProperty("style") && this.themeOptions.styleGroups[i].hasOwnProperty("start") && this.themeOptions.styleGroups[i].hasOwnProperty("end")) {
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("color")) {
                             for (let j = 3; j < colors.length; j += 2) {
-                                if (this.themeOption.styleGroups[i].start <= colors[j] && colors[j] <= this.themeOption.styleGroups[i].end) {
-                                    colors[j + 1] = this.themeOption.styleGroups[i].style.color;
-                                } else if (colors[j] > this.themeOption.styleGroups[i].end) {
+                                if (this.themeOptions.styleGroups[i].start <= colors[j] && colors[j] <= this.themeOptions.styleGroups[i].end) {
+                                    colors[j + 1] = this.themeOptions.styleGroups[i].style.color;
+                                } else if (colors[j] > this.themeOptions.styleGroups[i].end) {
                                     break;
                                 }
                             }
                         }
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("opacity")) {
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("opacity")) {
                             for (let j = 3; j < opacitys.length; j += 2) {
-                                if (this.themeOption.styleGroups[i].start <= opacitys[j] && opacitys[j] <= this.themeOption.styleGroups[i].end) {
-                                    opacitys[j + 1] = this.themeOption.styleGroups[i].style.opacity;
-                                } else if (opacitys[j] > this.themeOption.styleGroups[i].end) {
+                                if (this.themeOptions.styleGroups[i].start <= opacitys[j] && opacitys[j] <= this.themeOptions.styleGroups[i].end) {
+                                    opacitys[j + 1] = this.themeOptions.styleGroups[i].style.opacity;
+                                } else if (opacitys[j] > this.themeOptions.styleGroups[i].end) {
                                     break;
                                 }
                             }
                         }
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("radius")) {
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("radius")) {
                             for (let j = 3; j < radiuses.length; j += 2) {
-                                if (this.themeOption.styleGroups[i].start <= radiuses[j] && radiuses[j] <= this.themeOption.styleGroups[i].end) {
-                                    radiuses[j + 1] = this.themeOption.styleGroups[i].style.radius;
-                                } else if (radiuses[j] > this.themeOption.styleGroups[i].end) {
+                                if (this.themeOptions.styleGroups[i].start <= radiuses[j] && radiuses[j] <= this.themeOptions.styleGroups[i].end) {
+                                    radiuses[j + 1] = this.themeOptions.styleGroups[i].style.radius;
+                                } else if (radiuses[j] > this.themeOptions.styleGroups[i].end) {
                                     break;
                                 }
                             }
                         }
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("outlineWidth")) {
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("outlineWidth")) {
                             for (let j = 3; j < outlineWidths.length; j += 2) {
-                                if (this.themeOption.styleGroups[i].start <= outlineWidths[j] && outlineWidths[j] <= this.themeOption.styleGroups[i].end) {
-                                    outlineWidths[j + 1] = this.themeOption.styleGroups[i].style.outlineWidth;
-                                } else if (outlineWidths[j] > this.themeOption.styleGroups[i].end) {
+                                if (this.themeOptions.styleGroups[i].start <= outlineWidths[j] && outlineWidths[j] <= this.themeOptions.styleGroups[i].end) {
+                                    outlineWidths[j + 1] = this.themeOptions.styleGroups[i].style.outlineWidth;
+                                } else if (outlineWidths[j] > this.themeOptions.styleGroups[i].end) {
                                     break;
                                 }
                             }
                         }
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("outlineColor")) {
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("outlineColor")) {
                             for (let j = 3; j < outlineColors.length; j += 2) {
-                                if (this.themeOption.styleGroups[i].start <= outlineColors[j] && outlineColors[j] <= this.themeOption.styleGroups[i].end) {
-                                    outlineColors[j + 1] = this.themeOption.styleGroups[i].style.outlineColor;
-                                } else if (outlineColors[j] > this.themeOption.styleGroups[i].end) {
+                                if (this.themeOptions.styleGroups[i].start <= outlineColors[j] && outlineColors[j] <= this.themeOptions.styleGroups[i].end) {
+                                    outlineColors[j + 1] = this.themeOptions.styleGroups[i].style.outlineColor;
+                                } else if (outlineColors[j] > this.themeOptions.styleGroups[i].end) {
                                     break;
                                 }
                             }
                         }
-                        if (this.themeOption.styleGroups[i].style.hasOwnProperty("outlineOpacity")) {
+                        if (this.themeOptions.styleGroups[i].style.hasOwnProperty("outlineOpacity")) {
                             for (let j = 3; j < outlineOpacities.length; j += 2) {
-                                if (this.themeOption.styleGroups[i].start <= outlineOpacities[j] && outlineOpacities[j] <= this.themeOption.styleGroups[i].end) {
-                                    outlineOpacities[j + 1] = this.themeOption.styleGroups[i].style.outlineOpacity;
-                                } else if (outlineOpacities[j] > this.themeOption.styleGroups[i].end) {
+                                if (this.themeOptions.styleGroups[i].start <= outlineOpacities[j] && outlineOpacities[j] <= this.themeOptions.styleGroups[i].end) {
+                                    outlineOpacities[j + 1] = this.themeOptions.styleGroups[i].style.outlineOpacity;
+                                } else if (outlineOpacities[j] > this.themeOptions.styleGroups[i].end) {
                                     break;
                                 }
                             }
@@ -2216,32 +2381,32 @@ export default {
                 "circle-stroke-opacity"
             );
             let layers;
-            if (this.themeOption.layerStyle) {
-                layers = formatStyleToLayer(this.themeOption.layerStyle, this.themeType, this.dataType, layer.id);
+            if (this.themeOptions.layerStyle) {
+                layers = formatStyleToLayer(this.themeOptions.layerStyle, this.themeType, this.dataType, layer.id);
                 //当要素类型为fill时，要单独设置边线宽度、边线颜色、边线透明度
                 if (this.dataType === "fill") {
-                    if (this.themeOption.layerStyle.hasOwnProperty("outlineWidth")) {
+                    if (this.themeOptions.layerStyle.hasOwnProperty("outlineWidth")) {
                         themeManager.setExtraData(
                             this.layerIdCopy,
                             this.themeType,
                             "line-width",
-                            this.themeOption.layerStyle.outlineWidth
+                            this.themeOptions.layerStyle.outlineWidth
                         );
                     }
-                    if (this.themeOption.layerStyle.hasOwnProperty("outlineColor")) {
+                    if (this.themeOptions.layerStyle.hasOwnProperty("outlineColor")) {
                         themeManager.setExtraData(
                             this.layerIdCopy,
                             this.themeType,
                             "line-color",
-                            this.themeOption.layerStyle.outlineColor
+                            this.themeOptions.layerStyle.outlineColor
                         );
                     }
-                    if (this.themeOption.layerStyle.hasOwnProperty("outlineOpacity")) {
+                    if (this.themeOptions.layerStyle.hasOwnProperty("outlineOpacity")) {
                         themeManager.setExtraData(
                             this.layerIdCopy,
                             this.themeType,
                             "line-opacity",
-                            this.themeOption.layerStyle.outlineOpacity
+                            this.themeOptions.layerStyle.outlineOpacity
                         );
                     }
                 }
@@ -2291,6 +2456,11 @@ export default {
                 this.layerIdCopy,
                 this.themeType,
                 this.dataType + "-stroke-color"
+            );
+            let outlineOpacity = themeManager.getExtraData(
+                this.layerIdCopy,
+                this.themeType,
+                this.dataType + "-stroke-opacity"
             );
             let opacity = themeManager.getExtraData(
                 this.layerIdCopy,
@@ -2352,23 +2522,23 @@ export default {
                 layer["source-layer"] = this.source_layer_Id;
             }
             let layers;
-            if (this.themeOption.layerStyle) {
-                layers = formatStyleToLayer(this.themeOption.layerStyle, "unique", this.dataType, layer.id);
+            if (this.themeOptions.layerStyle) {
+                layers = formatStyleToLayer(this.themeOptions.layerStyle, "unique", this.dataType, layer.id);
                 if (this.dataType === "fill") {
-                    if (this.themeOption.layerStyle.hasOwnProperty("outlineWidth")) {
+                    if (this.themeOptions.layerStyle.hasOwnProperty("outlineWidth")) {
                         themeManager.setExtraData(
                             this.layerIdCopy,
                             this.themeType,
                             "line-width",
-                            this.themeOption.layerStyle.outlineWidth
+                            this.themeOptions.layerStyle.outlineWidth
                         );
                     }
-                    if (this.themeOption.layerStyle.hasOwnProperty("outlineColor")) {
+                    if (this.themeOptions.layerStyle.hasOwnProperty("outlineColor")) {
                         themeManager.setExtraData(
                             this.layerIdCopy,
                             this.themeType,
                             "line-color",
-                            this.themeOption.layerStyle.outlineColor
+                            this.themeOptions.layerStyle.outlineColor
                         );
                     }
                 }
@@ -2386,6 +2556,9 @@ export default {
                 }
                 if (outlineColor && this.dataType === "circle") {
                     layer.paint["circle-stroke-color"] = outlineColor;
+                }
+                if (outlineOpacity && this.dataType === "circle") {
+                    layer.paint["circle-stroke-opacity"] = outlineOpacity;
                 }
                 if (opacity) {
                     layer.paint[this.dataType + "-opacity"] = opacity;
@@ -2510,8 +2683,8 @@ export default {
         $_addSymbolLayer(dataSource) {
             let vm = this, iconName;
             let img = new Image(128, 128);
-            const {layerStyle} = this.themeOption;
-            if (layerStyle.symbol) {
+            const {layerStyle} = this.themeOptions;
+            if (layerStyle && layerStyle.symbol) {
                 vm.defaultIcon = layerStyle.symbol;
             }
             if (vm.defaultIcon === "useDefault") {
@@ -2559,9 +2732,9 @@ export default {
                         layer.layout["icon-size"] = layer.layout["icon-size"] / 10;
                     }
                     let newIconSize;
-                    if (vm.themeOption.styleGroups && vm.themeOption.styleGroups.length > 0) {
+                    if (vm.themeOptions.styleGroups && vm.themeOptions.styleGroups.length > 0) {
                         newIconSize = vm.$_getIconSize(dataSource);
-                        let size = 0.1 || vm.themeOption.layerStyle.symbolSize;
+                        let size = 0.1 || vm.themeOptions.layerStyle.symbolSize;
                         for (let i = 2; i < newIconSize.length; i += 2) {
                             newIconSize[i] = size;
                         }
@@ -2618,7 +2791,7 @@ export default {
                     "text-halo-width": 0
                 }
             };
-            let textStyle = this.themeOption.textStyle || {};
+            let textStyle = this.themeOptions.textStyle || {};
             const {enableTurf, enableIgs, baseUrl} = textStyle;
             let vm = this;
             if (this.source_layer_Id) {
@@ -4058,16 +4231,16 @@ export default {
             let heatmapWeight = this.$_getWeightArr(dataSource);
             //颜色仅需平均分配，但是初始颜色要是浅色系，颜色从浅到深
             let gradientColor;
-            if (this.themeOption.layerStyle && this.themeOption.layerStyle.color) {
-                gradientColor = this.themeOption.layerStyle.color;
+            if (this.themeOptions.layerStyle && this.themeOptions.layerStyle.color) {
+                gradientColor = this.themeOptions.layerStyle.color;
             } else {
                 gradientColor = gradientHeatColor[0].key;
             }
             let heatmapColor = this.$_getHeatmapColors(gradientColor);
             //半径比较重要，半径越大相对的渐变效果越宽，通视设置不同的缩放等级，会有模糊效果
             let gradientRadius;
-            if (this.themeOption.layerStyle && this.themeOption.layerStyle.color) {
-                gradientRadius = this.themeOption.layerStyle.radius;
+            if (this.themeOptions.layerStyle && this.themeOptions.layerStyle.color) {
+                gradientRadius = this.themeOptions.layerStyle.radius;
             } else {
                 gradientRadius = 40;
             }

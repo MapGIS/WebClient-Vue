@@ -21,7 +21,7 @@ export default {
                 defaultValue: { summary: 'null' },
             },
         },
-        themeOption: {
+        themeOptions: {
             description:  "专题图样式，包含专题图图层样式、分段样式以及高亮样式，样式如下：<br>" +
                 "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式<br>" +
                 "有如下值：<br>" +
@@ -64,7 +64,7 @@ export const 定义单个分段样式 = Template.bind({});
     dataSource: wuhan_house,
     type: "range",
     field: "display_x",
-    themeOption: {
+    themeOptions: {
         layerStyle: {
             color: "#3D5941,#778868,#B5B991,#F6EDBD,#EDBB8A,#DE8A5A,#CA562C",
             radius: 10

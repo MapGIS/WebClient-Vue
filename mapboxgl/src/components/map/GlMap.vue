@@ -190,4 +190,192 @@ export default {
   width: 100% !important;
   height: 100vh !important;
 }
+
+/*popup样式*/
+.popup-content {
+  width: auto;
+}
+
+.mapboxgl-popup-content {
+  width: 330px !important;
+}
+
+.mapgis-popup-container {
+  padding: 10px 12px 20px 12px;
+}
+
+.mapgis-popup-row-container{
+  height: 130px;
+  overflow: auto;
+}
+
+.mapgis-popup-row-container-defaultField{
+  height: 32.5px;
+}
+
+.mapgis-popup-row:nth-child(2n) {
+  background-color: rgb(231, 232, 233);
+}
+
+.mapgis-popup-row:nth-child(2n + 1) {
+  background-color: rgb(244, 244, 244);
+}
+
+.mapgis-popup-row:hover {
+  background-color: rgb(220, 235, 254);
+  border-left: 2px solid rgb(115, 176, 251);
+}
+
+.mapgis-popup-row {
+  text-align: left;
+  white-space: nowrap;
+  padding: 6px 12px;
+  height: 32px;
+  line-height: 11px;
+  min-width: 240px;
+  border-left: 2px solid rgba(115, 176, 251, 0);
+}
+
+.mapgis-popup-title {
+  color: rgb(178, 178, 178);
+  font-weight: bold;
+  border-bottom: 2px solid rgb(232, 232, 232);
+  padding: 6px 0;
+  line-height: 11px;
+  margin-bottom: 3px;
+  text-align: left;
+  white-space: nowrap;
+  height: 32px;
+  min-width: 240px;
+  border-left: 2px solid rgba(115, 176, 251, 0);
+}
+
+.mapgis-popup-item {
+  display: inline-block;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.mapgis-popup-field {
+  width: 30%;
+}
+
+.mapgis-popup-value {
+  width: 70%;
+  text-align: right;
+}
+
+/*第二种popup样式*/
+.mapgis-popup-left-row {
+  height: 56px;
+}
+
+.mapgis-popup-row-left-container{
+  height: 224px;
+}
+
+.mapgis-popup-left-item {
+  line-height: 22px;
+}
+
+.mapgis-popup-left-field {
+  color: rgb(152, 152, 152);
+  font-size: 12px;
+}
+
+.mapgis-popup-left-value {
+  font-size: 15px;
+}
+
+.mapgis-popup-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+/*第三种popup样式*/
+.mapgis-popup-underline-row {
+  text-align: left;
+  white-space: nowrap;
+  padding: 6px 12px;
+  height: 32px;
+  line-height: 11px;
+  min-width: 240px;
+  border-left: 2px solid rgba(115, 176, 251, 0);
+  border-bottom: 1px solid rgb(246, 246, 246);
+}
+
+.mapgis-popup-underline-row:hover {
+  background-color: rgb(220, 235, 254);
+  border-left: 2px solid rgb(115, 176, 251);
+}
+
+.mapgis-popup-underline-item, .mapgis-popup-point-item{
+  line-height: 22px;
+}
+
+.mapgis-popup-table-item{
+  line-height: 30px;
+}
+
+.mapgis-popup-underline-field {
+  font-weight: bold;
+  color: rgb(152, 152, 152);
+}
+
+/*第四种popup样式*/
+.mapgis-popup-point-row {
+  text-align: left;
+  white-space: nowrap;
+  padding: 6px 12px;
+  height: 32px;
+  line-height: 11px;
+  min-width: 240px;
+  border-left: 2px solid rgba(115, 176, 251, 0);
+}
+
+.mapgis-popup-point-row:hover {
+  background-color: rgb(220, 235, 254);
+  border-left: 2px solid rgb(115, 176, 251);
+}
+
+.mapgis-popup-point-field {
+  margin-left: 7px;
+}
+
+.mapgis-popup-point {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border: 1px solid black;
+  border-radius: 50%;
+  background: black;
+  margin-bottom: 10px;
+}
+
+.mapgis-popup-point-value{
+  padding-right: 10px;
+}
+
+/*第五种popup样式*/
+.mapgis-popup-table-row {
+  text-align: left;
+  white-space: nowrap;
+  padding: 0;
+  height: 32px;
+  line-height: 11px;
+  min-width: 240px;
+  border-bottom: 2px solid rgb(235, 235, 235);
+}
+
+.mapgis-popup-table-field {
+  background: rgb(240, 241, 241);
+  padding-left: 14px;
+}
+.mapgis-popup-table-value{
+  padding-right: 10px;
+}
+
 </style>
