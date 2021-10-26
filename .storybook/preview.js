@@ -1,4 +1,5 @@
 import Vue from "vue";
+import axios from "axios";
 
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import MapgisMapboxComponents from "./components/mapbox";
@@ -12,6 +13,13 @@ import MapgisUIComponents from "../ui/src/index";
 Vue.use(MapgisUIComponents, {});
 Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
+
+axios.get("./config.json").then((res) => {
+  let { data } = res;
+  Object.keys(data).forEach((key) => {
+    window[key] = data[key];
+  });
+});
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
