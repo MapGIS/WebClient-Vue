@@ -5,7 +5,7 @@ export default {
   title: "二维/图层/OGC/WMTS-4326",
   component: MapgisOgcWmtsLayer,
   argTypes: {
-    baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer',
+    baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/WMTSServer`,
     wmtsLayer: 'beijing',
     tileMatrixSet:"EPSG:4326_北京市_arcgis_GB",
     layerId: 'ogcwmts_layerId',

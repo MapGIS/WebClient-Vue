@@ -71,7 +71,8 @@ const Template = (args, {argTypes}) => ({
           }
         ],
         // glyphs: "http://localhost:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
-        glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+         // glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+        glyphs: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`
       },
     }
   }

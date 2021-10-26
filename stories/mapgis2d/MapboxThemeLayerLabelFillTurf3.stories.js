@@ -69,7 +69,8 @@ const Template = (args, {argTypes}) => ({
           }
         ],
         // glyphs: "http://localhost:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
-        glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+         // glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+        glyphs: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`
       },
     }
   }
@@ -83,7 +84,7 @@ export const  标签 = Template.bind({});
   themeOptions: {
     textStyle: {
       enableIgs: true,
-      baseUrl: "http://localhost:6163",
+      baseUrl: `http://${window.webclient.ip}:${window.webclient.port}`,
       field: "name",
       fontColor: "#FFFFFF",
       fontFamily: "宋体",
