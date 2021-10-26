@@ -35,7 +35,7 @@ const Template = (args, { argTypes }) => ({
 
 export const OGCWMTS = Template.bind({});
 OGCWMTS.args = {
-  baseUrl:"http://develop.smaryun.com:6163/igs/rest/ogc/beijing/WMTSServer",
+  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/beijing/WMTSServer`,
   wmtsLayer: "beijing",
   tileMatrixSet : "EPSG:4326_北京市_028mm_GB",
   tilingScheme : "EPSG:4326",

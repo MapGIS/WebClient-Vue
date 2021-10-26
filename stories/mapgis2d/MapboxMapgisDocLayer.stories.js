@@ -40,7 +40,7 @@ const Template = (args, { argTypes }) => ({
 export const 地图文档 = Template.bind({});
 地图文档.args = {
   layerId: "igs_layer_layerid",
-  baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/docs/北京市`,
   layers: "show:0,1,2,3,4,5,6,7",
   layer: {
     paint: { "raster-opacity": 0.75 },

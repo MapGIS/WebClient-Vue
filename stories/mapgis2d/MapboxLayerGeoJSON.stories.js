@@ -89,7 +89,7 @@ Circle.args = {
     }),
   },
   data:
-    "http://develop.smaryun.com/static/data/geojson/china.geojson" /* geojson, */,
+      `http://${window.webclient.ip}/static/data/geojson/china.geojson` /* geojson, */,
   enablePopup: true,
   enableTips: true,
 };
@@ -115,8 +115,8 @@ Line.args = {
     }),
   },
   data:
-    "http://develop.smaryun.com/static/data/geojson/china.geojson" /* geojson, */,
-  enablePopup: true,
+    `http://${window.webclient.ip}/static/data/geojson/china.geojson` /* geojson, */,
+    enablePopup: true,
   enableTips: true,
 };
 
@@ -138,7 +138,7 @@ Fill.args = {
     }),
   },
   data:
-    "http://develop.smaryun.com/static/data/geojson/china.geojson" /* geojson, */,
+      `http://${window.webclient.ip}/static/data/geojson/china.geojson` /* geojson, */,
   enablePopup: true,
   enableTips: true,
 };

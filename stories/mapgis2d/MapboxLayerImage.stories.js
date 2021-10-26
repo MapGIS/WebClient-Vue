@@ -30,7 +30,7 @@ Image.args = {
   layerId: "image_layer_id",
   source: {
     type: "image",
-    url: "http://develop.smaryun.com:8899/static/data/picture/imagelayer.png",
+    url: `http://${window.webclient.ip}/static/data/picture/imagelayer.png`,
     coordinates: [
       [108.7381, 45.6339],
       [126.0011, 45.6339],

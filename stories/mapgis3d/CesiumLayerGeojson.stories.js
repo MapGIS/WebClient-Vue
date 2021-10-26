@@ -29,13 +29,10 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      libPath: "http://localhost:8888/static/libs/cdn/cesium/Cesium.js",
-      pluginPath:
-        "http://localhost:8888/static/libs/cdn/cesium/webclient-cesium-plugin.min.js",
     };
   },
   components: {},
-  template: `<mapgis-web-scene :libPath="libPath" :pluginPath="pluginPath" style="height: 95vh">
+  template: `<mapgis-web-scene style="height: 95vh">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=cia_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-geojson-layer v-bind="$props"/>
@@ -44,7 +41,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 点 = Template.bind({});
 点.args = {
-  baseUrl: "http://develop.smaryun.com/static/data/geojson/省会城市.geojson",
+  baseUrl: `http://${window.webclient.ip}/static/data/geojson/省会城市.geojson`,
   enablePopup: true,
   enableTips: true,
   layerStyle: new PointStyle({
@@ -73,7 +70,7 @@ export const 点 = Template.bind({});
 
 export const 线 = Template.bind({});
 线.args = {
-  baseUrl: "http://develop.smaryun.com/static/data/geojson/长江黄河.geojson",
+  baseUrl: `http://${window.webclient.ip}/static/data/geojson/长江黄河.geojson`,
   enablePopup: true,
   enableTips: true,
   layerStyle: new LineStyle({
@@ -100,7 +97,7 @@ export const 线 = Template.bind({});
 
 export const 区 = Template.bind({});
 区.args = {
-  baseUrl: "http://develop.smaryun.com/static/data/geojson/省级行政区.geojson",
+  baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
   enablePopup: true,
   enableTips: true,
   layerStyle: new FillStyle({

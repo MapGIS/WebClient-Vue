@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
 
 export const DocLayer = Template.bind({});
 DocLayer.args = {
-  baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/北京市`,
   layers: "exclude:1",
   layerStyle: {
     visible: true,

@@ -145,7 +145,7 @@ export default {
 
             return f;
           });
-          
+
           vm.currentLayerInfo = newfeatrues;
           return vm.$el;
         }

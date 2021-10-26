@@ -91,6 +91,7 @@ const Template = (args, { argTypes }) => ({
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029",
       },
+      autoReset:true,
       particleMode: "",
       imgUrl: "",
       particleEffects: null,

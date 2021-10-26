@@ -38,8 +38,8 @@ export const 视频图层 = Template.bind({});
   source: {
     type: "video",
     urls: [
-      "http://develop.smaryun.com:8899/static/data/video/drone.mp4",
-      "http://develop.smaryun.com:8899/static/data/video/drone.webm",
+      `http://${window.webclient.ip}/static/data/video/drone.mp4`,
+      `http://${window.webclient.ip}/static/data/video/drone.webm`,
     ],
     coordinates: [
       [-122.51596391201019, 37.56238816766053],

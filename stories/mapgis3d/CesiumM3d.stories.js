@@ -44,13 +44,15 @@ M3D.args = {
 
 export const 图层控制 = Template.bind({});
 图层控制.args = {
-  url: "http://192.168.21.191:6163/igs/rest/g3d/汉阳BIM",
+  // url: "http://192.168.21.191:6163/igs/rest/g3d/汉阳BIM",
+  url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/汉阳BIM`,
   show: true,
   layers: "layers=show:0,1",
 };
 
 export const 点云 = Template.bind({});
 点云.args = {
-  url: "http://192.168.21.191:6163/igs/rest/g3d/m3d_点云",
+  // url: "http://192.168.21.191:6163/igs/rest/g3d/m3d_点云",
+  url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/m3d_点云`,
   show: true,
 };
