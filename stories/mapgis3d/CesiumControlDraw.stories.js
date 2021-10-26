@@ -60,7 +60,7 @@ const Template = (args, { argTypes }) => ({
 
 export const draw = Template.bind({});
 draw.args = {
-  m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/DaYanTa",
+  m3durl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/DaYanTa`,
   autoReset:true,
   maximumScreenSpaceError:6,
   enableControl: true,

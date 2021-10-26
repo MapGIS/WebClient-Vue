@@ -76,7 +76,8 @@ const Template = (args, { argTypes }) => ({
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
-      terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
+      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
+      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",

@@ -5,7 +5,7 @@ export default {
   title: "三维/模型/M3D",
   component: Mapgis3dIgsM3d,
   argTypes: {
-    url: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+    url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
     show: true,
     opacity: 1.0,
     layers: undefined,
@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 
 export const M3D = Template.bind({});
 M3D.args = {
-  url: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
   show: true,
   opacity: 0.5,
 };

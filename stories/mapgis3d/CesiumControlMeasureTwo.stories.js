@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      m3durl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3durl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       vueKey: "scene"
     }
   },

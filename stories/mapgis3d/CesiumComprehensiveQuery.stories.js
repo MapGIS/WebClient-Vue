@@ -37,15 +37,13 @@ const Template = (args, { argTypes }) => ({
         zoom: 7.5,
         center: [116.39, 40.2],
       },
-      libPath: "http://192.168.200.35:8000/Desktop/cesium/Cesium.js",
-      pluginPath:
-        "http://192.168.200.35:8000/Desktop/cesium/webclient-cesium-plugin.min.js",
+      // libPath: "http://192.168.200.35:8000/Desktop/cesium/Cesium.js",
+      // pluginPath:
+      //   "http://192.168.200.35:8000/Desktop/cesium/webclient-cesium-plugin.min.js",
     };
   },
   template: `
         <mapgis-web-scene
-          :libPath="libPath"
-          :pluginPath="pluginPath"
           style="height:calc(100vh - 40px)"
         >
           <mapgis-3d-comprehensive-query 
@@ -98,8 +96,10 @@ export const 综合查询 = Template.bind({});
   },
   widgetInfo: {
     placeName: {
-      ip: "192.168.21.191",
-      port: "6163",
+      // ip: "192.168.21.191",
+      ip: `${window.webclient.ip}`,
+      // port: 6163,
+      port: `${window.webclient.port}`,
       combine: "true",
       queryWay: "gdbp",
       docName: "",
