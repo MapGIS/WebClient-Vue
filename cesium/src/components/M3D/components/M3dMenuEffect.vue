@@ -113,9 +113,5 @@ export default {
 </script>
 
 <style>
-.mapgis-3d-m3d-menu-effect > .mapgis-3d-setting {
-  display: block;
-  position: relative;
-  height: 400px;
-}
+
 </style>
