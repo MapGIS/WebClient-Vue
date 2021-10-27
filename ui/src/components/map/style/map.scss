@@ -109,18 +109,64 @@
 
 // cesium style
 .mapgis-3d-m3d-menus {
-  display: flex;
+  padding: 4px;
+  margin-top: 4px;
   width: 100%;
   border-radius: 2px;
   // box-shadow: -0.5px -0.5px 2px 2px $shadow-color;
   box-shadow: -0.5px -0.5px 2px 2px $primary-3;
   &-header {
+    display: flex;
     font-size: 18px;
     &-menu {
       color: $text-color;
     }
     &-menu-active {
       color: $primary-6;
+    }
+  }
+  &-content {
+    display: block;
+  }
+}
+
+.mapgis-3d-popup-props {
+  &-title {
+    font-size: 14px;
+    width: 345px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #999999;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  &-item {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    line-height: 36px;
+    width: 345px;
+    height: 36px;
+
+    &:nth-child(odd) {
+      background: #e7e8e9;
+    }
+
+    &:nth-child(even) {
+      margin-top: 1px;
+      background: #f3f4f4;
+    }
+
+    &-key {
+      margin-left: 18px;
+      color: #999999;
+      float: left;
+    }
+
+    &-value {
+      margin-right: 12px;
+      color: #333333;
+      float: right;
     }
   }
 }
