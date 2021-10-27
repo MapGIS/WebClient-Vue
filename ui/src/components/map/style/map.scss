@@ -107,6 +107,12 @@
   }
 }
 
+.mapgis-3d-g3d-layer {
+  .mapgis-ui-card-small > .mapgis-ui-card-body {
+    padding: 3px;
+  }
+}
+
 // cesium style
 .mapgis-3d-m3d-menus {
   padding: 4px;
@@ -114,19 +120,25 @@
   width: 100%;
   border-radius: 2px;
   // box-shadow: -0.5px -0.5px 2px 2px $shadow-color;
-  box-shadow: -0.5px -0.5px 2px 2px $primary-3;
+  // box-shadow: -0.5px -0.5px 2px 2px $primary-3;
   &-header {
     display: flex;
-    font-size: 18px;
+    font-size: 28px;
     &-menu {
       color: $text-color;
     }
     &-menu-active {
       color: $primary-6;
     }
+    &-menu-small {
+      font-size: 18px;
+    }
   }
   &-content {
     display: block;
+  }
+  .mapgis-ui-divider-horizontal.mapgis-ui-divider-with-text-center {
+    margin: 4px 0px;
   }
 }
 
