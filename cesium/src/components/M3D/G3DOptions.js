@@ -15,6 +15,25 @@ export default {
     default: () => (Math.random() * 100000000).toFixed(0)
   },
 
+  outStyle: {
+    type: Object,
+    default: () => {
+      return {
+        position: "absolute",
+        zIndex: 1000,
+        height: "300px",
+        width: "240px",
+        top: "10px",
+        left: "10px"
+      };
+    }
+  },
+
+  mode: {
+    type: String,
+    default: "inline" // tab inline
+  },
+
   /**
    * @description g3d网络请求地址
    */

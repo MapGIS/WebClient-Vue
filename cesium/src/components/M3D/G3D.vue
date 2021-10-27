@@ -1,70 +1,114 @@
 <template>
-  <span class="mapgis-3d-g3d-layer">
+  <div class="mapgis-3d-g3d-layer">
     <slot name="control">
-      <mapgis-ui-div class="mapgis-3d-g3d-document">
-        <mapgis-ui-input-search
-          style="margin-bottom: 8px"
-          placeholder="搜索"
-          @change="onChange"
+      <mapgis-ui-collapse-card
+        ref="card"
+        position="top-left"
+        :defaultCollapse="false"
+        :outStyle="outStyle"
+        :title="title"
+      >
+        <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
+        <div class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</div>
+        <mapgis-ui-iconfont
+          type="mapgis-hide"
+          slot="extra"
+          @click="handleCardHdie"
         />
-        <mapgis-ui-tree
-          class="mapgis-3d-g3d-document-tree"
-          checkable
-          showIcon
-          v-model="layerIds"
-          :expanded-keys="expandedKeys"
-          :auto-expand-parent="autoExpandParent"
-          :tree-data="layerTree"
-          @expand="onExpand"
-        >
-          <template slot="custom" slot-scope="{ icon }">
-            <!-- <mapgis-ui-iconfont :type="icon" /> -->
-          </template>
-          <template
-            slot="title"
-            slot-scope="{
-              title,
-              icon,
-              version,
-              gdbp,
-              ip,
-              port,
-              layerIndex,
-              key
-            }"
+        <div class="mapgis-3d-g3d-document">
+          <mapgis-ui-input-search
+            style="margin-bottom: 8px"
+            placeholder="搜索"
+            @change="onChange"
+          />
+          <mapgis-ui-tree
+            class="mapgis-3d-g3d-document-tree"
+            checkable
+            showIcon
+            v-model="layerIds"
+            :expanded-keys="expandedKeys"
+            :auto-expand-parent="autoExpandParent"
+            :tree-data="layerTree"
+            @expand="onExpand"
           >
-            <span class="mapgis-3d-g3d-layer-span">
-              <span v-if="title && title.indexOf(searchValue) > -1">
-                {{ title.substr(0, title.indexOf(searchValue)) }}
-                <span style="color: #f50">{{ searchValue }}</span>
-                {{
-                  title.substr(title.indexOf(searchValue) + searchValue.length)
-                }}
-              </span>
-              <span v-else>{{ title }}</span>
-              <mapgis-ui-tag v-if="version">{{ version }}</mapgis-ui-tag>
-              <mapgis-ui-iconfont
-                v-if="title != '地图场景'"
-                class="iconfont"
-                :type="key == expandItemKey ? 'mapgis-up' : 'mapgis-down'"
-                @click="() => handleExpandItemKey(key)"
-              />
-              <mapgis-ui-iconfont :type="icon" class="iconfont" />
-              <m3d-menus
-                v-if="key == expandItemKey"
-                :version="version"
-                :layerIndex="layerIndex"
-                :gdbp="gdbp"
-                :ip="ip"
-                :port="port"
+            <template slot="custom" slot-scope="{ icon }">
+              <!-- <mapgis-ui-iconfont :type="icon" /> -->
+            </template>
+            <template
+              slot="title"
+              slot-scope="{
+                title,
+                icon,
+                version,
+                gdbp,
+                ip,
+                port,
+                layerIndex,
+                key
+              }"
+            >
+              <span
+                :class="{
+                  'mapgis-3d-g3d-layer-span': true,
+                  'mapgis-3d-g3d-layer-span-tab': mode == 'tab',
+                  'mapgis-3d-g3d-layer-span-inline': mode == 'inline'
+                }"
               >
-              </m3d-menus>
-            </span>
-          </template>
-        </mapgis-ui-tree>
-      </mapgis-ui-div>
+                <span v-if="title && title.indexOf(searchValue) > -1">
+                  {{ title.substr(0, title.indexOf(searchValue)) }}
+                  <span style="color: #f50">{{ searchValue }}</span>
+                  {{
+                    title.substr(
+                      title.indexOf(searchValue) + searchValue.length
+                    )
+                  }}
+                </span>
+                <span v-else>{{ title }}</span>
+                <mapgis-ui-tag v-if="version && key == '地图场景默认键值'">{{
+                  version
+                }}</mapgis-ui-tag>
+                <mapgis-ui-iconfont
+                  v-if="mode == 'inline'"
+                  class="iconfont"
+                  :type="key == expandItemKey ? 'mapgis-up' : 'mapgis-down'"
+                  @click="() => handleExpandItemKey(key)"
+                />
+                <mapgis-ui-iconfont
+                  :type="icon"
+                  class="iconfont"
+                  @click="
+                    () =>
+                      handleActiveItemKey({
+                        title,
+                        icon,
+                        version,
+                        gdbp,
+                        ip,
+                        port,
+                        layerIndex,
+                        key
+                      })
+                  "
+                />
+              </span>
+            </template>
+          </mapgis-ui-tree>
+        </div>
+
+        <m3d-menus
+          slot="panel"
+          size="big"
+          :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
+          :version="version"
+          :layerIndex="layerIndex"
+          :gdbp="gdbp"
+          :ip="ip"
+          :port="port"
+        >
+        </m3d-menus>
+      </mapgis-ui-collapse-card>
     </slot>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -84,11 +128,12 @@ export default {
   },
   data() {
     return {
+      title: "G3D场景图层",
       layerIds: this.parseLayers(),
       layerTree: [
         {
           title: "地图场景",
-          key: '"地图场景"',
+          key: "地图场景默认键值",
           version: "",
           icon: "mapgis-layer1",
           menu: "mapgis-down",
@@ -100,6 +145,11 @@ export default {
       searchValue: "",
       autoExpandParent: true,
       expandItemKey: undefined,
+      activeItemKey: undefined,
+      gdbp: undefined,
+      layerKey: undefined,
+      layerIndex: undefined,
+      version: undefined,
       ip: "localhost",
       port: "6163"
     };
@@ -158,6 +208,7 @@ export default {
             // 该回调只触发一次
             let g3dLayer = viewer.scene.layers.getLayer(indexes[0]);
             vm.layerTree[0].version = g3dLayer.version;
+            vm.version = g3dLayer.version;
             vm.layerTree[0].title = g3dLayer.name;
             var layerIndexs = g3dLayer.getM3DLayerIndexes();
 
@@ -347,6 +398,20 @@ export default {
       } else {
         this.expandItemKey = key;
       }
+    },
+    handleActiveItemKey(layer) {
+      const { title, icon, version, gdbp, ip, port, layerIndex, key } = layer;
+      this.title = title;
+      this.gdbp = gdbp;
+      this.version = version;
+      this.ip = ip;
+      this.port = port;
+      this.layerIndex = layerIndex;
+      this.layerKey = key;
+      this.$refs.card && this.$refs.card.togglePanel();
+    },
+    handleCardHdie() {
+      this.$refs.card && this.$refs.card.hide();
     }
   }
 };
@@ -358,20 +423,31 @@ export default {
   left: 10px;
   top: 10px;
 }
+
+.mapgis-3d-g3d-layer-title {
+  line-height: 32px;
+  height: 32px;
+  font-weight: bold;
+}
+
 .mapgis-3d-g3d-document {
-  max-height: 360px;
-  padding: 2px;
+  height: fit-content;
 }
 .mapgis-3d-g3d-document-tree {
-  max-height: 310px;
+  max-height: 360px;
   min-width: 200px;
   /* max-width: 300px; */
   overflow-y: scroll;
 }
 .mapgis-3d-g3d-layer-span {
-  width: 280px;
   display: inline-block;
   justify-content: space-between;
+}
+.mapgis-3d-g3d-layer-span-tab {
+  width: 160px;
+}
+.mapgis-3d-g3d-layer-span-inline {
+  width: 240px;
 }
 .mapgis-3d-g3d-layer-span > .iconfont {
   line-height: 28px;

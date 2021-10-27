@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mapgis-ui-input :value="gdbp" size="small">
+    <mapgis-ui-input :value="gdbp" size="default">
       <mapgis-ui-tooltip slot="addonAfter" placement="bottom">
         <span slot="title"
           >0.0版本/1.0版本需要地图文档绑定模型，服务要重新发一下</span
