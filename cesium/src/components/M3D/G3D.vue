@@ -22,7 +22,16 @@
           </template>
           <template
             slot="title"
-            slot-scope="{ title, icon, version, layerIndex, key }"
+            slot-scope="{
+              title,
+              icon,
+              version,
+              gdbp,
+              ip,
+              port,
+              layerIndex,
+              key
+            }"
           >
             <span class="mapgis-3d-g3d-layer-span">
               <span v-if="title && title.indexOf(searchValue) > -1">
@@ -33,7 +42,7 @@
                 }}
               </span>
               <span v-else>{{ title }}</span>
-              <mapgis-ui-tag>{{ version }}</mapgis-ui-tag>
+              <mapgis-ui-tag v-if="version">{{ version }}</mapgis-ui-tag>
               <mapgis-ui-iconfont
                 v-if="title != '地图场景'"
                 class="iconfont"
@@ -45,6 +54,9 @@
                 v-if="key == expandItemKey"
                 :version="version"
                 :layerIndex="layerIndex"
+                :gdbp="gdbp"
+                :ip="ip"
+                :port="port"
               >
               </m3d-menus>
             </span>
@@ -87,7 +99,9 @@ export default {
       expandedKeys: [],
       searchValue: "",
       autoExpandParent: true,
-      expandItemKey: undefined
+      expandItemKey: undefined,
+      ip: "localhost",
+      port: "6163"
     };
   },
   provide() {
@@ -129,6 +143,9 @@ export default {
       const { vueIndex, vueKey, vueCesium } = this;
       const { viewer, url, $props } = this;
 
+      let server = this.parseServer();
+      let { ip, port } = server;
+
       let g3dLayer = this.createCesiumObject();
       let layers = this.parseLayers();
       g3dLayer.then(e => {
@@ -137,9 +154,11 @@ export default {
           loaded: function(layer) {
             // 该回调有多少图层循环进多少次
           },
-          getDocLayerIndexes(index) {
+          getDocLayerIndexes(indexes) {
             // 该回调只触发一次
-            let g3dLayer = viewer.scene.layers.getG3DLayerByID(index[0]);
+            let g3dLayer = viewer.scene.layers.getLayer(indexes[0]);
+            vm.layerTree[0].version = g3dLayer.version;
+            vm.layerTree[0].title = g3dLayer.name;
             var layerIndexs = g3dLayer.getM3DLayerIndexes();
 
             let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
@@ -158,17 +177,19 @@ export default {
                 m3ds.forEach((m3d, i) => {
                   // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
                   let gIndex = layerIndexs[i];
+                  let info = g3dLayer.getLayerInfo(gIndex);
                   let layer = g3dLayer.getLayer(gIndex);
-                  let name = g3dLayer.getLayerName(gIndex);
-                  let version = vm.parseVersion(layer);
-                  if (vm.layerTree[0].version.indexOf(version) < 0) {
-                    vm.layerTree[0].version += ` ${version}`;
-                  }
+                  let { layerName, gdbpUrl, layerType } = info;
+                  // let version = vm.parseVersion(layer);
                   vm.layerTree[0].children.push({
-                    title: name,
+                    title: layerName,
                     key: `${layerIndexs[i]}`,
+                    version: g3dLayer.version,
                     layerIndex: layerIndexs[i],
-                    version: version,
+                    layerType,
+                    ip,
+                    port,
+                    gdbp: gdbpUrl,
                     icon: "mapgis-layer",
                     menu: "mapgis-down",
                     scopedSlots: {
@@ -254,6 +275,21 @@ export default {
       });
     },
     // 图层解析
+    parseServer(url) {
+      url = url || this.url;
+      let ip = new RegExp(/^[http:]*[https:]*\/\/.*\//);
+      let ips = url.match(ip);
+      let temp = ips[0].split("http://");
+      let domains = temp[1].split(":");
+      ip = domains[0];
+      let port = domains[1].split("/")[0];
+      this.ip = ip;
+      this.port = port;
+      return {
+        ip,
+        port
+      };
+    },
     parseVersion(m3d) {
       const { asset } = m3d;
       const { version } = asset;

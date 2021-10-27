@@ -140,8 +140,8 @@ export default {
       handler: function () {
         //开始分析后的下一帧，开启高度监听
         if (this.isFlood) {
-          const {vueKey, vueIndex} = this;
-          let webGlobe = window.CesiumZondy.getWebGlobe(vueKey);
+          const {vueKey, vueIndex, vueCesium} = this;
+          let viewer = window.vueCesium.getViewer(vueKey);
           let floodAnalyseManager = window.CesiumZondy.FloodAnalyseManager.findSource(vueKey, vueIndex);
           if (floodAnalyseManager && floodAnalyseManager.hasOwnProperty("source") && floodAnalyseManager.source) {
             let floodAnalyse = floodAnalyseManager.source;
@@ -152,7 +152,7 @@ export default {
             floodAnalyse.amplitude = Number(this.amplitudeCopy);
             floodAnalyse.specularIntensity = Number(this.specularIntensityCopy);
             floodAnalyse.isDownFlood = Number(this.floodHeightCopyTwo) > Number(this.currentHeightCopy);
-            webGlobe.scene.requestRender();
+            viewer.scene.requestRender();
             //存储高度，方便下一次比较
             this.floodHeightCopyTwo = this.currentHeightCopy;
           }
@@ -239,10 +239,10 @@ export default {
   },
   mounted() {
     let vm = this;
-    window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+    window.vueCesium.getViewerByInterval(function (viewer) {
       vm.$_init();
       vm.initial = true;
-      vm.$emit("load", vm, webGlobe);
+      vm.$emit("load", vm, viewer);
     }, this.vueKey)
   },
   methods: {
@@ -269,7 +269,7 @@ export default {
     //   this.drawToolName = value;
     // },
     //开始洪水淹没分析
-    $_floodAnalyse(webGlobe, positions) {
+    $_floodAnalyse(viewer, positions) {
       //确保开始洪水分析后，不会触发currentHeightCopy的更新操作，不然会出现分析失灵的情况
       this.isFlood = false;
       //如果没有注入Cesium，则取得window上面的
@@ -278,8 +278,8 @@ export default {
         Cesium = window.Cesium;
       }
       //开始分析前，删除上一次分析
-      if (webGlobe.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
-        webGlobe.scene.VisualAnalysisManager.removeAll();
+      if (viewer.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
+        viewer.scene.VisualAnalysisManager.removeAll();
         window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vueIndex);
       }
       //将笛卡尔坐标转为经纬度坐标
@@ -292,7 +292,7 @@ export default {
       this.currentHeightCopy = height / cartographics.length;
       this.currentHeightCopyTwo = this.currentHeightCopy;
       //初始化新的洪水淹没分析
-      let floodAnalyse = new Cesium.FloodAnalysis(webGlobe.viewer, positions, {
+      let floodAnalyse = new Cesium.FloodAnalysis(viewer, positions, {
         //设置洪水淹没水体起始高度
         startHeight: Number(this.startHeightCopy),
         //设置洪水淹没区域动画最低高度
@@ -313,9 +313,9 @@ export default {
       });
       window.CesiumZondy.FloodAnalyseManager.addSource(vueKey, vueIndex, floodAnalyse);
       //设置深度检测
-      webGlobe.viewer.scene.globe.depthTestAgainstTerrain = true;
+      viewer.scene.globe.depthTestAgainstTerrain = true;
       //添加洪水淹没结果显示
-      webGlobe.scene.VisualAnalysisManager.add(floodAnalyse);
+      viewer.scene.VisualAnalysisManager.add(floodAnalyse);
       //一定是在下一帧，开启对currentHeightCopy的监听操作
       this.$nextTick(function () {
         this.isFlood = true;

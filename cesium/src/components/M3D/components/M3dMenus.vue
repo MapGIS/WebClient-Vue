@@ -15,29 +15,55 @@
         />
       </mapgis-ui-tooltip>
     </div>
-    <div>
+    <div class="mapgis-3d-m3d-menus-content">
       <m3d-menu-highlight
         v-if="currentMenu == 'highlight'"
         :version="version"
         :layerIndex="layerIndex"
       >
       </m3d-menu-highlight>
+      <m3d-menu-oid
+        v-if="currentMenu == 'oid'"
+        :version="version"
+        :layerIndex="layerIndex"
+      >
+      </m3d-menu-oid>
+      <m3d-menu-props
+        v-if="currentMenu == 'properties'"
+        :version="version"
+        :layerIndex="layerIndex"
+        :gdbp="gdbp"
+        :ip="ip"
+        :port="port"
+      >
+      </m3d-menu-props>
     </div>
   </div>
 </template>
 
 <script>
 import M3dMenuHighlight from "./M3dMenuHighlight.vue";
+import M3dMenuOid from "./M3dMenuOid.vue";
+import M3dMenuProps from "./M3dMenuProps.vue";
 
 export default {
   name: "mapgis-3d-m3d-menus",
-  components: { M3dMenuHighlight },
+  components: { M3dMenuHighlight, M3dMenuOid, M3dMenuProps },
   props: {
     version: {
       type: String
     },
     layerIndex: {
       type: Number
+    },
+    gdbp: {
+      type: String
+    },
+    ip: {
+      type: String
+    },
+    port: {
+      type: String
     }
   },
   data() {
@@ -51,7 +77,7 @@ export default {
           icon: "mapgis-target-lock"
         },
         {
-          type: "iod",
+          type: "oid",
           title: "OID查询",
           icon: "mapgis-bullseye"
         },
