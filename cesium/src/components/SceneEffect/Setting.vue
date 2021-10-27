@@ -41,6 +41,9 @@ export default {
   },
   mixins: [ServiceLayer],
   props: {
+    /*
+    * 组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项。
+    * */
     layout: {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
@@ -102,7 +105,6 @@ export default {
 .mapgis-3d-setting {
   display: block;
   position: relative;
-  height: 100%;
 }
 
 .mapgis-3d-setting-control {
