@@ -22,7 +22,6 @@
 <!--              </mapgis-ui-checkbox>-->
 <!--            </mapgis-ui-col>-->
 <!--          </mapgis-ui-row>-->
-
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
     </slot>
@@ -99,17 +98,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .mapgis-3d-setting {
-  height: fit-content;
+  display: block;
+  position: relative;
+  height: 100%;
 }
 
 .mapgis-3d-setting-control {
   height: fit-content;
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  /*在地图容器中的层，要设置z-index的值让其显示在地图上层*/
 }
 
 </style>

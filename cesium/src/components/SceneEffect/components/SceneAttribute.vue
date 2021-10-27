@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mapgis-3d-scene-attr">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left">
 
       <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
@@ -290,6 +290,9 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-3d-scene-attr {
+  padding: 0px 8px;
+}
 .mapgis-ui-form-item{
   margin: 0;
 }

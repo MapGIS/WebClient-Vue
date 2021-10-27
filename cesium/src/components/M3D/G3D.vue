@@ -444,7 +444,7 @@ export default {
   justify-content: space-between;
 }
 .mapgis-3d-g3d-layer-span-tab {
-  width: 160px;
+  width: 170px;
 }
 .mapgis-3d-g3d-layer-span-inline {
   width: 240px;

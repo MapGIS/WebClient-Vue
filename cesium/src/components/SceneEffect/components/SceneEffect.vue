@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mapgis-3d-scene-effect">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left">
 
       <mapgis-ui-form-model-item label="天气特效" >
@@ -496,6 +496,9 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-3d-scene-effect {
+  padding: 0px 8px;
+}
 .mapgis-ui-form-item{
   margin: 0px;
 }
