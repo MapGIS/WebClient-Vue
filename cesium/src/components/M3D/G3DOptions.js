@@ -20,11 +20,12 @@ export default {
     default: () => {
       return {
         position: "absolute",
-        zIndex: 1000,
-        height: "300px",
-        width: "240px",
-        top: "10px",
-        left: "10px"
+          zIndex: 1000,
+          height: "450px",
+          width: "270px",
+          top: "10px",
+          left: "10px",
+          padding: "2px",
       };
     }
   },
