@@ -369,7 +369,7 @@ export default {
   overflow-y: scroll;
 }
 .mapgis-3d-g3d-layer-span {
-  width: 180px;
+  width: 280px;
   display: inline-block;
   justify-content: space-between;
 }

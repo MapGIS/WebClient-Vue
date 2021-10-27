@@ -37,6 +37,12 @@
         :port="port"
       >
       </m3d-menu-props>
+      <m3d-menu-effect
+        v-if="currentMenu == 'effect'"
+        :version="version"
+        :layerIndex="layerIndex"
+      >
+      </m3d-menu-effect>
     </div>
   </div>
 </template>
@@ -45,10 +51,11 @@
 import M3dMenuHighlight from "./M3dMenuHighlight.vue";
 import M3dMenuOid from "./M3dMenuOid.vue";
 import M3dMenuProps from "./M3dMenuProps.vue";
+import M3dMenuEffect from "./M3dMenuEffect.vue";
 
 export default {
   name: "mapgis-3d-m3d-menus",
-  components: { M3dMenuHighlight, M3dMenuOid, M3dMenuProps },
+  components: { M3dMenuHighlight, M3dMenuOid, M3dMenuProps, M3dMenuEffect },
   props: {
     version: {
       type: String

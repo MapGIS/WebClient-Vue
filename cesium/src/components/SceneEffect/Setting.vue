@@ -1,76 +1,106 @@
 <template>
-  <div class="mapgis-3d-setting">
+  <mapgis-ui-div class="mapgis-3d-setting">
     <slot v-if="initial"></slot>
     <slot name="settingTool">
-      <mapgis-ui-tabs class="settingControl" default-active-key="1">
+      <mapgis-ui-tabs class="mapgis-3d-setting-control" default-active-key="1">
         <mapgis-ui-tab-pane key="1" tab="基本设置">
-
           <mapgis-ui-row>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="enableSkyAtmosphere" @change="skyAtChange">大气渲染
+              <mapgis-ui-checkbox
+                :checked="enableSkyAtmosphere"
+                @change="skyAtChange"
+                >大气渲染
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="enableBloom" @change="bloomChange">全局泛光
+              <mapgis-ui-checkbox :checked="enableBloom" @change="bloomChange"
+                >全局泛光
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="undgrd" @change="undgrdChange">地下模式
+              <mapgis-ui-checkbox :checked="undgrd" @change="undgrdChange"
+                >地下模式
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="enableSunlight" @change="sunChange">太阳光
+              <mapgis-ui-checkbox :checked="enableSunlight" @change="sunChange"
+                >太阳光
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
           </mapgis-ui-row>
 
           <mapgis-ui-row>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="compass" @change="enableCmps">罗盘控件
+              <mapgis-ui-checkbox :checked="compass" @change="enableCmps"
+                >罗盘控件
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="zoom" @change="enableZm">缩放控件
+              <mapgis-ui-checkbox :checked="zoom" @change="enableZm"
+                >缩放控件
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="sceneskybox" @change="sceneSkyboxChange">开启星空
+              <mapgis-ui-checkbox
+                :checked="sceneskybox"
+                @change="sceneSkyboxChange"
+                >开启星空
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="floodlight" @change="floodLightChange">模型泛光
+              <mapgis-ui-checkbox
+                :checked="floodlight"
+                @change="floodLightChange"
+                >模型泛光
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
           </mapgis-ui-row>
 
-          <mapgis-ui-row>
-            <mapgis-ui-col :span="4">
-              <span>亮度stage</span>
-            </mapgis-ui-col>
-            <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="brightness" :max="2" :min="0" :step="0.2" @change="brtChange"/>
-            </mapgis-ui-col>
-            <mapgis-ui-col :span="4">
-              <mapgis-ui-input-number v-model="brightness" :max="2" :min="0" :step="0.2" style="marginLeft: 16px"
-                                      @change="brtChange"/>
-            </mapgis-ui-col>
-          </mapgis-ui-row>
+          <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout">
+            <mapgis-ui-form-model-item label="亮度" required >
+              <mapgis-ui-space align="center">
+                <mapgis-ui-slider
+                  v-model="brightness"
+                  :max="2"
+                  :min="0"
+                  :step="0.2"
+                  :style="{ minWidth: '100px' }"
+                  size="small"
+                  @change="brtChange"
+                />
+                <mapgis-ui-input-number
+                  v-model="brightness"
+                  :max="2"
+                  :min="0"
+                  :step="0.2"
+                  size="small"
+                  @change="brtChange"
+                />
+              </mapgis-ui-space>
+            </mapgis-ui-form-model-item>
+          </mapgis-ui-form-model>
 
           <mapgis-ui-row>
             <mapgis-ui-col :span="4">
               <span>亮度layer</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="layerbrightness" :max="3" :min="0" :step="0.2" @change="layerBrtChange"/>
+              <mapgis-ui-slider
+                v-model="layerbrightness"
+                :max="3"
+                :min="0"
+                :step="0.2"
+                @change="layerBrtChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="layerbrightness"
-                  :max="3"
-                  :min="0"
-                  :step="0.2"
-                  style="marginLeft: 16px"
-                  @change="layerBrtChange"
+                v-model="layerbrightness"
+                :max="3"
+                :min="0"
+                :step="0.2"
+                style="marginLeft: 16px"
+                @change="layerBrtChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -80,16 +110,22 @@
               <span>对比度layer</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="layercontrast" :max="3" :min="0" :step="0.2" @change="layerCtrstChange"/>
+              <mapgis-ui-slider
+                v-model="layercontrast"
+                :max="3"
+                :min="0"
+                :step="0.2"
+                @change="layerCtrstChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="layercontrast"
-                  :max="3"
-                  :min="0"
-                  :step="0.2"
-                  style="marginLeft: 16px"
-                  @change="layerCtrstChange"
+                v-model="layercontrast"
+                :max="3"
+                :min="0"
+                :step="0.2"
+                style="marginLeft: 16px"
+                @change="layerCtrstChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -99,18 +135,24 @@
               <span>对比度bloom</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="contrast" :disabled="disabled" :max="255" :min="-255" :step="10"
-                                @change="ctrstChange"/>
+              <mapgis-ui-slider
+                v-model="contrast"
+                :disabled="disabled"
+                :max="255"
+                :min="-255"
+                :step="10"
+                @change="ctrstChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="contrast"
-                  :disabled="disabled"
-                  :max="255"
-                  :min="-255"
-                  :step="10"
-                  style="marginLeft: 16px"
-                  @change="ctrstChange"
+                v-model="contrast"
+                :disabled="disabled"
+                :max="255"
+                :min="-255"
+                :step="10"
+                style="marginLeft: 16px"
+                @change="ctrstChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -120,16 +162,22 @@
               <span>色调layer</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="layerhue" :max="1" :min="-1" :step="0.1" @change="layerHueChange"/>
+              <mapgis-ui-slider
+                v-model="layerhue"
+                :max="1"
+                :min="-1"
+                :step="0.1"
+                @change="layerHueChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="layerhue"
-                  :max="1"
-                  :min="-1"
-                  :step="0.1"
-                  style="marginLeft: 16px"
-                  @change="layerHueChange"
+                v-model="layerhue"
+                :max="1"
+                :min="-1"
+                :step="0.1"
+                style="marginLeft: 16px"
+                @change="layerHueChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -139,47 +187,55 @@
               <span>饱和度layer</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="layersaturation" :max="3" :min="0" :step="0.2"
-                                @change="layerSaturationChange"/>
+              <mapgis-ui-slider
+                v-model="layersaturation"
+                :max="3"
+                :min="0"
+                :step="0.2"
+                @change="layerSaturationChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="layersaturation"
-                  :max="3"
-                  :min="0"
-                  :step="0.2"
-                  style="marginLeft: 16px"
-                  @change="layerSaturationChange"
+                v-model="layersaturation"
+                :max="3"
+                :min="0"
+                :step="0.2"
+                style="marginLeft: 16px"
+                @change="layerSaturationChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
-
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane key="2" force-render tab="特效">
-
           <!--          天气特效-->
           <mapgis-ui-row>
             <mapgis-ui-col :span="20">天气特效</mapgis-ui-col>
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-col :span="4">
-              <mapgis-ui-checkbox :checked="SkyBox2" @change="skyBoxChange">天空盒
+              <mapgis-ui-checkbox :checked="SkyBox2" @change="skyBoxChange"
+                >天空盒
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
-              <mapgis-ui-checkbox :checked="enableCloud" @change="cloudChange">云图
+              <mapgis-ui-checkbox :checked="enableCloud" @change="cloudChange"
+                >云图
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
-              <mapgis-ui-checkbox :checked="rain" @change="rnChange">雨
+              <mapgis-ui-checkbox :checked="rain" @change="rnChange"
+                >雨
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
-              <mapgis-ui-checkbox :checked="snow" @change="snowChange">雪
+              <mapgis-ui-checkbox :checked="snow" @change="snowChange"
+                >雪
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
-              <mapgis-ui-checkbox :checked="fog" @change="fogChange">雾
+              <mapgis-ui-checkbox :checked="fog" @change="fogChange"
+                >雾
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -189,11 +245,21 @@
               <span>雨速度</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="speed" :max="20.0" :min="1.0" @change="speedChange"/>
+              <mapgis-ui-slider
+                v-model="speed"
+                :max="20.0"
+                :min="1.0"
+                @change="speedChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
-              <mapgis-ui-input-number v-model="speed" :max="20.0" :min="1.0" style="marginLeft: 16px"
-                                      @change="speedChange"/>
+              <mapgis-ui-input-number
+                v-model="speed"
+                :max="20.0"
+                :min="1.0"
+                style="marginLeft: 16px"
+                @change="speedChange"
+              />
             </mapgis-ui-col>
           </mapgis-ui-row>
 
@@ -202,16 +268,22 @@
               <span>雨透明度</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="rainOpacity" :max="1" :min="0" :step="0.1" @change="rainOpacityChange"/>
+              <mapgis-ui-slider
+                v-model="rainOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="rainOpacityChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="rainOpacity"
-                  :max="1"
-                  :min="0"
-                  :step="0.1"
-                  style="marginLeft: 16px"
-                  @change="rainOpacityChange"
+                v-model="rainOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                style="marginLeft: 16px"
+                @change="rainOpacityChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -221,16 +293,22 @@
               <span>雨角度</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="angle" :max="90" :min="0" :step="10" @change="angleChange"/>
+              <mapgis-ui-slider
+                v-model="angle"
+                :max="90"
+                :min="0"
+                :step="10"
+                @change="angleChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="contrast"
-                  :max="90"
-                  :min="0"
-                  :step="10"
-                  style="marginLeft: 16px"
-                  @change="angleChange"
+                v-model="contrast"
+                :max="90"
+                :min="0"
+                :step="10"
+                style="marginLeft: 16px"
+                @change="angleChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -240,16 +318,22 @@
               <span>雪粒大小</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="size" :max="20" :min="5" :step="5" @change="szChange"/>
+              <mapgis-ui-slider
+                v-model="size"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="szChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="size"
-                  :max="20"
-                  :min="5"
-                  :step="5"
-                  style="marginLeft: 16px"
-                  @change="szChange"
+                v-model="size"
+                :max="20"
+                :min="5"
+                :step="5"
+                style="marginLeft: 16px"
+                @change="szChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -259,16 +343,22 @@
               <span>雪密度</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="density" :max="20" :min="5" :step="5" @change="dstChange"/>
+              <mapgis-ui-slider
+                v-model="density"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="dstChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="density"
-                  :max="20"
-                  :min="5"
-                  :step="5"
-                  style="marginLeft: 16px"
-                  @change="dstChange"
+                v-model="density"
+                :max="20"
+                :min="5"
+                :step="5"
+                style="marginLeft: 16px"
+                @change="dstChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -278,16 +368,22 @@
               <span>雾透明度</span>
             </mapgis-ui-col>
             <mapgis-ui-col :span="8">
-              <mapgis-ui-slider v-model="fogOpacity" :max="1" :min="0" :step="0.1" @change="fogOpacityChange"/>
+              <mapgis-ui-slider
+                v-model="fogOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="fogOpacityChange"
+              />
             </mapgis-ui-col>
             <mapgis-ui-col :span="4">
               <mapgis-ui-input-number
-                  v-model="fogOpacity"
-                  :max="1"
-                  :min="0"
-                  :step="0.1"
-                  style="marginLeft: 16px"
-                  @change="fogOpacityChange"
+                v-model="fogOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                style="marginLeft: 16px"
+                @change="fogOpacityChange"
               />
             </mapgis-ui-col>
           </mapgis-ui-row>
@@ -298,44 +394,23 @@
           </mapgis-ui-row>
           <mapgis-ui-row>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="blckWhite" @change="blackAndWhiteChange">黑白照片
+              <mapgis-ui-checkbox
+                :checked="blckWhite"
+                @change="blackAndWhiteChange"
+                >黑白照片
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
             <mapgis-ui-col :span="5">
-              <mapgis-ui-checkbox :checked="ntVision" @change="nightVision">夜视效果
+              <mapgis-ui-checkbox :checked="ntVision" @change="nightVision"
+                >夜视效果
               </mapgis-ui-checkbox>
             </mapgis-ui-col>
           </mapgis-ui-row>
-
-
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
     </slot>
-  </div>
+  </mapgis-ui-div>
 </template>
-
-<style scoped>
-.settingControl {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  /*在地图容器中的层，要设置z-index的值让其显示在地图上层*/
-  color: #ffffff;
-  background-color: #4c4e5a;
-  /*!*圆角的大小 *!*/
-  border-radius: 10px;
-  padding: 0 10px 10px;
-}
-
-.mapgis-ui-row {
-  line-height: 36px;
-  /*margin-left: 10px*/
-}
-
-.mapgis-ui-col {
-  text-align: center;
-}
-</style>
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer";
@@ -345,6 +420,10 @@ export default {
   mixins: [ServiceLayer],
   inject: ["viewer"],
   props: {
+    layout: {
+      type: String,
+      default: "horizontal" // 'horizontal' 'vertical' 'inline'
+    }
     // speed: {
     //   type: Number,
     //   default: 1.0,//雨丝速度，【1.0,20.0】
@@ -399,15 +478,15 @@ export default {
       density: 5,
       size: 5,
       fog: false,
-      color: '#FFFFFF',
+      color: "#FFFFFF",
       fogOpacity: 0.5,
       blckWhite: false,
       ntVision: false,
       compass: false,
       zoom: false,
       sceneskybox: true,
-      floodlight:false,
-      transform:undefined,
+      floodlight: false,
+      transform: undefined
     };
   },
   // watch: {
@@ -462,9 +541,9 @@ export default {
   //   },
   // },
   mounted() {
-    const {viewer} = this;
+    const { viewer } = this;
     let bright = viewer.scene.postProcessStages.add(
-        Cesium.PostProcessStageLibrary.createBrightnessStage()
+      Cesium.PostProcessStageLibrary.createBrightnessStage()
     );
     bright.uniforms.brightness = this.brightness;
 
@@ -474,6 +553,17 @@ export default {
   destroyed() {
     // this.removeWeather();
     this.$emit("unload");
+  },
+  computed: {
+    formItemLayout() {
+      const { layout } = this;
+      return layout === "horizontal"
+        ? {
+            labelCol: { span: 4 },
+            wrapperCol: { span: 16 }
+          }
+        : {};
+    }
   },
   methods: {
     // enableCmps(e){
@@ -516,20 +606,19 @@ export default {
     },
     //积雪？？
 
-
     $_enableWeather(WeatherName, options) {
-      const {vueKey, vueIndex, viewer, Cesium} = this;
+      const { vueKey, vueIndex, viewer, Cesium } = this;
       this.$_removeWeather();
       let weather = new Cesium.WeatherEffect(viewer);
       weather[WeatherName](options);
       window.CesiumZondy.MeasureToolManager.addSource(
-          vueKey,
-          vueIndex,
-          weather
+        vueKey,
+        vueIndex,
+        weather
       );
     },
     $_removeWeather() {
-      this.$_deleteManger("MeasureToolManager", function (manager) {
+      this.$_deleteManger("MeasureToolManager", function(manager) {
         if (manager.source) {
           manager.source.removeAll();
         }
@@ -608,25 +697,20 @@ export default {
       }
     },
 
-
     //全球云
     enableClouds() {
-      const {vueKey, vueIndex, viewer, Cesium} = this;
+      const { vueKey, vueIndex, viewer, Cesium } = this;
 
       //云图效果验证
       var clouds = new Cesium.GlobeEffect(viewer, {
         cloudsDuration: 10000,
-        cloudsImgSource: Cesium.buildModuleUrl('Assets/Images/clouds.png')
+        cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
       });
       clouds.addGlobeClouds(); //添加云层
-      window.CesiumZondy.MeasureToolManager.addSource(
-          vueKey,
-          vueIndex,
-          clouds
-      );
+      window.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, clouds);
     },
     removeClouds() {
-      this.$_deleteManger("MeasureToolManager", function (manager) {
+      this.$_deleteManger("MeasureToolManager", function(manager) {
         if (manager.source) {
           manager.source.removeGlobeClouds();
         }
@@ -644,10 +728,10 @@ export default {
 
     //云层天空盒
     enableSkyBox() {
-      const {vueKey, vueIndex, viewer, Cesium} = this;
+      const { vueKey, vueIndex, viewer, Cesium } = this;
 
-      let skyBox = new Cesium.GlobeEffect(viewer, {cloudsDuration: 100000});
-      skyBox.addDefaultSkyBox('skyBox3'); //添加天空盒默认样式1
+      let skyBox = new Cesium.GlobeEffect(viewer, { cloudsDuration: 100000 });
+      skyBox.addDefaultSkyBox("skyBox3"); //添加天空盒默认样式1
       // skyBox.addDefaultSkyBox('skyBox2'); //添加天空盒默认样式2
 
       // //自定义天空盒的样式
@@ -678,12 +762,12 @@ export default {
       window.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, skyBox);
     },
     removeSkyBox() {
-      const {vueKey, vueIndex, viewer, Cesium} = this;
-      this.$_deleteManger('MeasureToolManager', function (manager) {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      this.$_deleteManger("MeasureToolManager", function(manager) {
         if (manager.source) {
           manager.source.removeSkyBox();
         }
-      })
+      });
       // viewer.scene.camera.flyTo({
       //   destination: new Cesium.Cartesian3(-4957554.172258782, 19883663.751066618, 10885451.402250132),
       //   orientation: {
@@ -706,19 +790,23 @@ export default {
 
     //模型泛光
     enableFloodLight() {
-      const {vueKey, vueIndex, viewer, Cesium} = this;
-      console.log('transform', this.transform);
-      let floodLight = new Cesium.BloomEffect(viewer, [], this.transform);//position传空数组表示对全部模型泛光处理
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      console.log("transform", this.transform);
+      let floodLight = new Cesium.BloomEffect(viewer, [], this.transform); //position传空数组表示对全部模型泛光处理
       floodLight.add();
-      console.log('floodLight', floodLight);
-      window.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, floodLight);
+      console.log("floodLight", floodLight);
+      window.CesiumZondy.MeasureToolManager.addSource(
+        vueKey,
+        vueIndex,
+        floodLight
+      );
     },
     removeFloodLight() {
-      this.$_deleteManger('MeasureToolManager', function (manager) {
+      this.$_deleteManger("MeasureToolManager", function(manager) {
         if (manager.source) {
           manager.source.remove();
         }
-      })
+      });
     },
     floodLightChange(e) {
       this.floodlight = e.target.checked;
@@ -731,7 +819,7 @@ export default {
     },
 
     sceneSetting() {
-      const {vueKey, vueItndex, viewer, Cesium} = this;
+      const { vueKey, vueItndex, viewer, Cesium } = this;
       // console.log('viewer.scene.globe', viewer.scene.globe);
       // console.log('viewer.scene', viewer.scene);
       // console.log('viewer.scene.postProcessStages', viewer.scene.postProcessStages);
@@ -742,13 +830,13 @@ export default {
 
       //monochrome黑白照片
       var blackAndWhite = viewer.scene.postProcessStages.add(
-          Cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
+        Cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
       );
-      blackAndWhite.uniforms.gradations = 5.0;//(灰度级数)
+      blackAndWhite.uniforms.gradations = 5.0; //(灰度级数)
 
       //夜视效果
       var nightVision = viewer.scene.postProcessStages.add(
-          Cesium.PostProcessStageLibrary.createNightVisionStage()
+        Cesium.PostProcessStageLibrary.createNightVisionStage()
       );
 
       //是否开启大气渲染
@@ -759,8 +847,14 @@ export default {
       atmosphere.saturationShift = 0; //-1 黑白照片的模式
 
       //地下模式
-      console.log("viewer.scene.cameraUnderground", viewer.scene.cameraUnderground);
-      console.log("viewer.scene.globe.translucency", viewer.scene.globe.translucency);
+      console.log(
+        "viewer.scene.cameraUnderground",
+        viewer.scene.cameraUnderground
+      );
+      console.log(
+        "viewer.scene.globe.translucency",
+        viewer.scene.globe.translucency
+      );
       viewer.scene.globe.translucency.enabled = true;
       viewer.scene.globe.translucency.backFaceAlpha = 1;
       viewer.scene.globe.translucency.frontFaceAlpha = 0;
@@ -768,7 +862,7 @@ export default {
 
       //场景亮度
       var bright = viewer.scene.postProcessStages.add(
-          Cesium.PostProcessStageLibrary.createBrightnessStage()
+        Cesium.PostProcessStageLibrary.createBrightnessStage()
       );
       bright.brightness = 1; //0为全黑
 
@@ -783,74 +877,76 @@ export default {
       //全局泛光
       let bloom = viewer.scene.postProcessStages.bloom;
       bloom.enabled = true;
-
     },
     sceneSkyboxChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.sceneskybox = e.target.checked;
       viewer.scene.skyBox.show = this.sceneskybox; //背景，星空
     },
     brtChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.brightness = e;
       viewer.scene.postProcessStages._activeStages[0]._actualUniforms.brightness = this.brightness;
       // console.log("viewer.scene.postProcessStages",viewer.scene.postProcessStages._activeStages[0])
       // console.log("brt.e",e)
     },
     layerBrtChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.layerbrightness = e;
       viewer.scene.imageryLayers._layers[0].brightness = this.layerbrightness;
     },
     layerCtrstChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.layercontrast = e;
       viewer.scene.imageryLayers._layers[0].contrast = this.layercontrast;
     },
     ctrstChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.contrast = e;
-      console.log('wwww', e);
+      console.log("wwww", e);
       viewer.scene.postProcessStages.bloom.uniforms.contrast = this.contrast;
-      console.log("viewer.scene.postProcessStages.bloom.uniforms.contrast", viewer.scene.postProcessStages.bloom.uniforms.contrast)
+      console.log(
+        "viewer.scene.postProcessStages.bloom.uniforms.contrast",
+        viewer.scene.postProcessStages.bloom.uniforms.contrast
+      );
     },
     layerHueChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.layerhue = e;
       viewer.scene.imageryLayers._layers[0].hue = this.layerhue;
     },
     layerSaturationChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.layersaturation = e;
       viewer.scene.imageryLayers._layers[0].saturation = this.layersaturation;
     },
     skyAtChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       // console.log(`checked = ${e.target.checked}`);
       this.enableSkyAtmosphere = e.target.checked;
       viewer.scene.skyAtmosphere.show = this.enableSkyAtmosphere;
     },
     bloomChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       // console.log(`checked = ${e.target.checked}`);
       this.enableBloom = e.target.checked;
       viewer.scene.postProcessStages.bloom.enabled = this.enableBloom;
       this.disabled = !this.enableBloom;
     },
     sunChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.enableSunlight = e.target.checked;
       viewer.scene.globe.enableLighting = this.enableSunlight;
     },
     undgrdChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.undgrd = e.target.checked;
       viewer.scene.globe.translucency.enabled = this.undgrd;
       viewer.scene.globe.translucency.backFaceAlpha = 1;
       viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
     },
     removeOtherStages() {
-      const {viewer} = this;
+      const { viewer } = this;
       let length = viewer.scene.postProcessStages._activeStages.length;
       if (length > 1) {
         let i = 1;
@@ -861,38 +957,68 @@ export default {
       }
     },
     blackAndWhiteChange(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.blckWhite = e.target.checked;
       let vm = this;
       if (vm.blckWhite) {
         vm.removeOtherStages();
 
         let blackAndWhite = viewer.scene.postProcessStages.add(
-            Cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
+          Cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
         );
-        blackAndWhite.uniforms.gradations = 5.0;//(灰度级数)
+        blackAndWhite.uniforms.gradations = 5.0; //(灰度级数)
 
-        console.log('viewer.scene.postProcessStages', viewer.scene.postProcessStages)
-
+        console.log(
+          "viewer.scene.postProcessStages",
+          viewer.scene.postProcessStages
+        );
       } else {
         vm.removeOtherStages();
       }
     },
     nightVision(e) {
-      const {viewer} = this;
+      const { viewer } = this;
       this.ntVision = e.target.checked;
       let vm = this;
       if (vm.ntVision) {
         vm.removeOtherStages();
         viewer.scene.postProcessStages.add(
-            Cesium.PostProcessStageLibrary.createNightVisionStage()
+          Cesium.PostProcessStageLibrary.createNightVisionStage()
         );
-        console.log('viewer.scene.postProcessStages', viewer.scene.postProcessStages)
+        console.log(
+          "viewer.scene.postProcessStages",
+          viewer.scene.postProcessStages
+        );
       } else {
         vm.removeOtherStages();
       }
-
     }
   }
 };
 </script>
+
+<style scoped>
+.mapgis-3d-setting {
+  height: fit-content;
+}
+
+.mapgis-3d-setting-control {
+  height: fit-content;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  /*在地图容器中的层，要设置z-index的值让其显示在地图上层*/
+  /*!*圆角的大小 *!*/
+  border-radius: 10px;
+  padding: 0 10px 10px;
+}
+
+.mapgis-ui-row {
+  line-height: 36px;
+  /*margin-left: 10px*/
+}
+
+.mapgis-ui-col {
+  text-align: center;
+}
+</style>
