@@ -1,20 +1,36 @@
 <template>
-  <span>
-    <mapgis-3d-popup v-model="show" :position="position">
-      <mapgis-ui-statistic
-        title="OID"
-        :value="oid"
-        style="margin-right: 50px"
-      />
+  <div>
+    <mapgis-ui-input :value="gdbp" size="small">
+      <mapgis-ui-tooltip slot="addonAfter" placement="bottom">
+        <span slot="title"
+          >0.0版本/1.0版本需要地图文档绑定模型，服务要重新发一下</span
+        >
+        <mapgis-ui-iconfont type="mapgis-info-circle" />
+      </mapgis-ui-tooltip>
+    </mapgis-ui-input>
+    <mapgis-3d-popup v-model="show" :position="position" :forceRender="true">
+      <span>
+        <div class="mapgis-3d-popup-props-title">OID: {{ oid }}</div>
+        <div
+          class="mapgis-3d-popup-props-item"
+          v-for="key in Object.keys(properties)"
+          :key="key"
+        >
+          <span class="mapgis-3d-popup-props-item-key">{{ key }}</span>
+          <span class="mapgis-3d-popup-props-item-value">{{
+            properties[key]
+          }}</span>
+        </div>
+      </span>
     </mapgis-3d-popup>
-  </span>
+  </div>
 </template>
 
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
-  name: "mapgis-3d-m3d-menu-oid",
+  name: "mapgis-3d-m3d-menu-props",
   inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
   props: {
     ...VueOptions,
@@ -23,6 +39,15 @@ export default {
     },
     layerIndex: {
       type: Number
+    },
+    gdbp: {
+      type: String
+    },
+    ip: {
+      type: String
+    },
+    port: {
+      type: String
     }
   },
   data() {
@@ -34,6 +59,7 @@ export default {
         height: 0
       },
       oid: undefined,
+      properties: {},
       show: false
     };
   },
@@ -105,7 +131,7 @@ export default {
     $_highlightAction(movement) {
       const vm = this;
       const { vueKey, vueIndex, vueCesium, Cesium } = this;
-      const { layerIndex, viewer, m3ds, version } = this;
+      const { layerIndex, viewer, m3ds, version, gdbp } = this;
       let tileset;
       if (m3ds) {
         tileset = m3ds[layerIndex];
@@ -159,13 +185,6 @@ export default {
             analysisManager.stopCustomDisplay(currentLayer);
             analysisManager.startCustomDisplay(currentLayer, idList, options);
 
-            /* const { position } = movement;
-            const { x, y } = position;
-            let pick1 = new Cesium.Cartesian2(x, y);
-            let cartesian = viewer.scene.globe.pick(
-              viewer.camera.getPickRay(pick1),
-              viewer.scene
-            ); */
             let ellipsoid = viewer.scene.globe.ellipsoid;
             let center = current.feature.tileset.boundingSphere.center;
             let cartographic = ellipsoid.cartesianToCartographic(center);
@@ -173,11 +192,26 @@ export default {
             let lng = Cesium.Math.toDegrees(cartographic.longitude);
             let height = cartographic.height;
 
-            vm.show = true;
             vm.position.longitude = lng;
             vm.position.latitude = lat;
             vm.position.height = height;
             vm.oid = vlueNumber;
+            vm.$_query(vlueNumber, gdbp);
+            /* let test = new Promise((resolve, rej) => {
+              window.setTimeout(() => {
+                let test = {
+                  name: "石家庄",
+                  mpArea: 1220.7382131131,
+                  mpLength: 120.7382131131,
+                  省份: "河北省"
+                };
+                resolve(test);
+              }, 1 * 1000);
+            });
+            test.then(res => {
+              vm.properties = res;
+              vm.show = true;
+            }); */
           } else if (
             Cesium.defined(pickedFeature) &&
             current.feature == pickedFeature
@@ -191,6 +225,36 @@ export default {
         tileset.pickedOid = oid;
         tileset.pickedColor = new Cesium.Color(1.0, 1.0, 0.0, 0.6);
       }
+    },
+    $_query(oid, gdbp) {
+      if (!oid) return;
+      const vm = this;
+      const { CesiumZondy, ip, port } = this;
+      var queryParam = new CesiumZondy.Query.G3DDocQuery();
+      queryParam.gdbp = encodeURI(gdbp);
+      queryParam.structs =
+        '{"IncludeAttribute":true,"IncludeGeometry":true,"IncludeWebGraphic":false}';
+      queryParam.objectIds = oid;
+      queryParam.serverIp = ip;
+      queryParam.serverPort = port;
+      queryParam.queryG3DFeature(
+        result => {
+          if (result != null) {
+            let keys = result.AttStruct.FldName;
+            let values = result.SFEleArray[0].AttValue;
+            let properties = {};
+            keys.forEach((k, i) => {
+              properties[k] = values[i];
+            });
+            vm.properties = properties;
+            vm.show = true;
+          }
+        },
+        e => {
+          alert("error");
+        },
+        "post"
+      );
     }
   }
 };

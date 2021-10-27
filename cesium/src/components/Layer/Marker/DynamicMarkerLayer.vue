@@ -29,7 +29,7 @@ const DefaultInactiveImagePlotting =
 export default {
   name: "mapgis-3d-dynamic-marker-layer",
   components: { Mapgis3dMarkerSetPro },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     data: {
@@ -127,9 +127,8 @@ export default {
       this.parseData();
 
       const vm = this;
-      const { CesiumZondy, vueKey, vueIndex, data } = this;
-      const webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || this.webGlobe;
-      const { viewer } = webGlobe;
+      const { vueCesium, vueKey, vueIndex, data } = this;
+      const viewer = vueCesium.getViewer(vueKey) || this.viewer;
       let analysisManager = new CesiumZondy.Manager.AnalysisManager({
         viewer: viewer
       });
@@ -144,10 +143,9 @@ export default {
       });
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      const { viewer, vueKey, vueIndex } = this;
       const vm = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      const { viewer } = webGlobe;
       const { dataSources } = viewer;
       let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
@@ -202,11 +200,11 @@ export default {
       return this.selects.findIndex(idField => idField === id) !== -1;
     },
     changeFilterWithMap() {
-      const { webGlobe } = this;
+      const { viewer } = this;
       if (!this.filterWithMap) {
         return;
       }
-      const rectangle = webGlobe.viewer.camera.computeViewRectangle();
+      const rectangle = viewer.camera.computeViewRectangle();
       const bounds = {
         xmin: (rectangle.west / Math.PI) * 180,
         ymin: (rectangle.south / Math.PI) * 180,
@@ -216,16 +214,16 @@ export default {
       this.$emit("map-bound-change", bounds);
     },
     zoomToCartesian3(x, y) {
-      const { Cesium, webGlobe } = this;
+      const { Cesium, viewer } = this;
       const destination = Cesium.Cartesian3.fromDegrees(
         x,
         y,
-        webGlobe.viewer.camera.positionCartographic.height
+        viewer.camera.positionCartographic.height
       );
-      webGlobe.viewer.camera.flyTo({ destination });
+      viewer.camera.flyTo({ destination });
     },
     zoomTo(bound) {
-      const { Cesium, webGlobe } = this;
+      const { Cesium, viewer } = this;
       const { xmin, ymin, xmax, ymax } = bound;
       const destination = new Cesium.Rectangle.fromDegrees(
         xmin,
@@ -233,7 +231,7 @@ export default {
         xmax,
         ymax
       );
-      webGlobe.viewer.camera.flyTo({ destination });
+      viewer.camera.flyTo({ destination });
     },
     zoomOrPanTo({ xmin, ymin, xmax, ymax }) {
       const {
@@ -305,13 +303,13 @@ export default {
       }
     },
     getViewExtend() {
-      let { vueKey, webGlobe } = this;
+      let { vueKey, vueCesium, viewer } = this;
       const params = {};
-      webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || webGlobe;
-      const extend = webGlobe.viewer.camera.computeViewRectangle();
+      viewer = vueCesium.getViewer(vueKey) || viewer;
+      const extend = viewer.camera.computeViewRectangle();
       if (typeof extend === "undefined") {
         // 2D下会可能拾取不到坐标，extend返回undefined,所以做以下转换
-        const canvas = webGlobe.viewer.scene.canvas;
+        const canvas = viewer.scene.canvas;
         // canvas左上角坐标转2d坐标
         const upperLeft = new this.Cesium.Cartesian2(0, 0);
         // canvas右下角坐标转2d坐标
@@ -320,18 +318,12 @@ export default {
           canvas.clientHeight
         );
 
-        const ellipsoid = webGlobe.viewer.scene.globe.ellipsoid;
+        const ellipsoid = viewer.scene.globe.ellipsoid;
         // 2D转3D世界坐标
-        const upperLeft3 = webGlobe.viewer.camera.pickEllipsoid(
-          upperLeft,
-          ellipsoid
-        );
+        const upperLeft3 = viewer.camera.pickEllipsoid(upperLeft, ellipsoid);
 
         // 2D转3D世界坐标
-        const lowerRight3 = webGlobe.viewer.camera.pickEllipsoid(
-          lowerRight,
-          ellipsoid
-        );
+        const lowerRight3 = viewer.camera.pickEllipsoid(lowerRight, ellipsoid);
 
         // 3D世界坐标转弧度
         const upperLeftCartographic = ellipsoid.cartesianToCartographic(
@@ -376,7 +368,7 @@ export default {
     highlightFeature(marker) {
       const vm = this;
       const { vueKey, vueIndex } = this;
-      const { webGlobe, Cesium, CesiumZondy } = this;
+      const { Cesium, CesiumZondy } = this;
       const { layerStyle, highlightStyle, idField } = this;
       const { point, line, polygon } = layerStyle;
       const hpolygon = highlightStyle.polygon;

@@ -3,10 +3,13 @@
 </template>
 
 <script>
+import VueOptions from "../../Base/Vue/VueOptions";
+
 export default {
   name: "mapgis-3d-m3d-menu-highlight",
   inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
   props: {
+    ...VueOptions,
     version: {
       type: String
     },
@@ -77,7 +80,12 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
+      const { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+      }
       this.$emit("unload", { component: this });
+      vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
     $_highlightAction(movement) {
       const { vueKey, vueIndex, vueCesium, Cesium } = this;

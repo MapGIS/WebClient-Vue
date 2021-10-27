@@ -8,10 +8,6 @@ export function initManager() {
     window.CesiumZondy.Tileset3DManager || new BaseManager();
   window.CesiumZondy.EntityManager =
     window.CesiumZondy.EntityManager || new EntityManager();
-  window.CesiumZondy.GeojsonManager =
-    window.CesiumZondy.GeojsonManager || new GeojsonManager();
-  window.CesiumZondy.PopupManager =
-    window.CesiumZondy.PopupManager || new PopupManager();
   window.CesiumZondy.MarkerManager =
     window.CesiumZondy.MarkerManager || new MarkerManager();
   window.CesiumZondy.OGCWMTSManager =
@@ -83,40 +79,6 @@ export function initManager() {
     window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
   window.CesiumZondy.ProfileAnalysisManager =
     window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
-
-  //在window.CesiumZondy下添加取得WebGlobe对象的方法
-  window.CesiumZondy.getWebGlobe = function(vueKey) {
-    if (!vueKey) {
-      vueKey = "default";
-    }
-    let GlobesManager = window.CesiumZondy.GlobesManager,
-      viewer;
-    viewer = GlobesManager[vueKey][0].source;
-    return viewer;
-  };
-
-  /**
-   * 通过轮询的方式取得webGlobeObj
-   * @param callback 回调函数
-   * @param vueKey vueKey，唯一标识webscene组件
-   * */
-  window.CesiumZondy.getWebGlobeByInterval = function(callback, vueKey) {
-    if (!vueKey) {
-      vueKey = "default";
-    }
-    let GlobesManager = window.CesiumZondy.GlobesManager,
-      viewer;
-    let interval = setInterval(function() {
-      if (
-        GlobesManager.hasOwnProperty(vueKey) &&
-        GlobesManager[vueKey].length > 0
-      ) {
-        clearInterval(interval);
-        viewer = GlobesManager[vueKey][0].source;
-        callback(viewer);
-      }
-    }, 50);
-  };
 }
 
 export function initVueCesium() {
@@ -126,6 +88,44 @@ export function initVueCesium() {
     window.vueCesium.ViewerManager || new ViewerManager();
   window.vueCesium.HighlightManager =
     window.vueCesium.HighlightManager || new HighlightManager();
+  window.vueCesium.GeojsonManager =
+    window.vueCesium.GeojsonManager || new GeojsonManager();
+  window.vueCesium.PopupManager =
+    window.vueCesium.PopupManager || new PopupManager();
+
+  //在window.CesiumZondy下添加取得WebGlobe对象的方法
+  window.vueCesium.getViewer = function(vueKey) {
+    if (!vueKey) {
+      vueKey = "default";
+    }
+    let ViewerManager = window.vueCesium.ViewerManager,
+      viewer;
+    viewer = ViewerManager[vueKey][0].source;
+    return viewer;
+  };
+
+  /**
+   * 通过轮询的方式取得webGlobeObj
+   * @param callback 回调函数
+   * @param vueKey vueKey，唯一标识webscene组件
+   * */
+  window.vueCesium.getViewerByInterval = function(callback, vueKey) {
+    if (!vueKey) {
+      vueKey = "default";
+    }
+    let ViewerManager = window.vueCesium.ViewerManager,
+      viewer;
+    let interval = setInterval(function() {
+      if (
+        ViewerManager.hasOwnProperty(vueKey) &&
+        ViewerManager[vueKey].length > 0
+      ) {
+        clearInterval(interval);
+        viewer = ViewerManager[vueKey][0].source;
+        callback(viewer);
+      }
+    }, 50);
+  };
 }
 
 export class BaseManager {
