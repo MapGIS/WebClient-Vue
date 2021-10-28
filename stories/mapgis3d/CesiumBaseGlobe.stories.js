@@ -17,10 +17,10 @@ const Template = (args, { argTypes }) => ({
         zIndex: 700,
         width: "200px",
         padding: "10px",
-        right: "10px",
+        left: "10px",
         top: "10px",
       },
-      position: "top-right",
+      position: "top-left",
     };
   },
   template: `<mapgis-web-globe v-bind="$props" style="height:95vh">
@@ -29,7 +29,7 @@ const Template = (args, { argTypes }) => ({
       <span slot="extra">
         <mapgis-ui-iconfont type="mapgis-map-pin" @click="hide" />
       </span>
-      <mapigs-ui-button type="primary">销毁场景</mapigs-ui-button>
+      <mapgis-ui-button type="primary">销毁场景</mapgis-ui-button>
     </mapgis-ui-collapse-card>
     
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />

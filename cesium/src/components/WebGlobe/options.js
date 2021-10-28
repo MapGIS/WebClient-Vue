@@ -21,6 +21,27 @@ export default {
     }
   },
   /**
+   * @description 默认主页按钮不显示
+   */
+  homeButton: {
+    type: Boolean,
+    default: false
+  },
+  /**
+   * @description 默认导航按钮不显示
+   */
+  navigationHelpButton: {
+    type: Boolean,
+    default: false
+  },
+  /**
+   * @description 默认模型切换按钮不显示
+   */
+  sceneModePicker: {
+    type: Boolean,
+    default: false
+  },
+  /**
    * @description 默认动画控制不显示
    */
   animation: {

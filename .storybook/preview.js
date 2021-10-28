@@ -14,12 +14,12 @@ Vue.use(MapgisUIComponents, {});
 Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
 
-axios.get("./config.json").then((res) => {
+/* axios.get("./config.json").then((res) => {
   let { data } = res;
   Object.keys(data).forEach((key) => {
     window[key] = data[key];
   });
-});
+}); */
 
 window.webclient = {
   ip: "192.168.81.103",
@@ -27,9 +27,9 @@ window.webclient = {
 };
 
 window.VueCesiumLibPath =
-  "http://localhost:8888/static/libs/cdn/cesium/Cesium.js";
+  "http://192.168.82.89:8086/static/libs/cdn/cesium-new/Cesium.js";
 window.VueCesiumPluginPath =
-  "http://localhost:8888/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
+  "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
