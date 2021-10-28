@@ -26,8 +26,11 @@ export default {
         return {}
       }
     },
-    labelOptions: {
-      type: Object
+    flyToOptions: {
+      type: Object,
+      default() {
+        return {}
+      }
     },
     vueKey: {type: String, default: "default"},
     vueIndex: {
@@ -74,9 +77,19 @@ export default {
         let addPoint = true, pointId, points;
         let source = window.CesiumZondy.DataFlowManager.findSource(vueKey, vueIndex);
         if (vm.firstAdd) {
-          vm.viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 1400),
+          let flyToOptions = {
             duration: 6
+          }, defaultHeight = 1400;
+          const {height} = vm.flyToOptions;
+          if (height === 0 || height) {
+            defaultHeight = Number(height);
+          }
+          console.log("defaultHeight",defaultHeight)
+          console.log("vm.flyToOptions",vm.flyToOptions)
+          flyToOptions = Object.assign(flyToOptions, vm.flyToOptions);
+          vm.viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], defaultHeight),
+            ...flyToOptions
           });
           vm.firstAdd = false;
         }
