@@ -3,26 +3,47 @@
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left">
 
       <mapgis-ui-form-model-item label="天气特效" >
-          <mapgis-ui-checkbox :checked="enableSunlight" @change="sunChange">太阳
+          <mapgis-ui-checkbox :checked="sunlight" @change="enableSunlight">太阳
           </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="sceneskybox" @change="sceneSkyboxChange" >星空
+          <mapgis-ui-checkbox :checked="sceneSkybox" @change="enableSceneSkybox" >星空
           </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="enableCloud" @change="cloudChange" >云图
+          <mapgis-ui-checkbox :checked="clouds" @change="$_enableClouds" >云图
           </mapgis-ui-checkbox>
       </mapgis-ui-form-model-item>
 
       <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-          <mapgis-ui-checkbox :checked="rain" @change="rnChange" >雨
+          <mapgis-ui-checkbox :checked="rain" @change="$_enableRain" >雨
           </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="snow" @change="snowChange" >雪
+          <mapgis-ui-checkbox :checked="snow" @change="$_enableSnow" >雪
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox :checked="fog" @change="fogChange" >雾
           </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="SkyBox2" @change="skyBoxChange">天空盒
+          <mapgis-ui-checkbox :checked="skybox" @change="$_enableSkyBox">天空盒
           </mapgis-ui-checkbox>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雨速度" >
+      <mapgis-ui-form-model-item label="周期/秒" v-show="clouds">
+        <mapgis-ui-space>
+          <mapgis-ui-slider
+              v-model="cloudsduration"
+              :max="10"
+              :min="1"
+              @change="cloudsDurationChange"
+              :style="{ minWidth: '100px' }"
+              size="small"
+          />
+          <mapgis-ui-input-number
+              v-model="cloudsduration"
+              :max="10"
+              :min="1"
+              @change="cloudsDurationChange"
+              style="{ marginLeft: '16px'}"
+              size="small"
+          />
+        </mapgis-ui-space>
+      </mapgis-ui-form-model-item>
+      
+      <mapgis-ui-form-model-item label="雨速度" v-show="rain">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="speed"
@@ -37,13 +58,13 @@
               :max="20.0"
               :min="1.0"
               @change="speedChange"
-              style="marginLeft: 16px"
+              style="{ marginLeft: '16px'}"
               size="small"
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雨透明度" >
+      <mapgis-ui-form-model-item label="雨透明度" v-show="rain">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="rainOpacity"
@@ -60,13 +81,13 @@
               :min="0"
               :step="0.1"
               @change="rainOpacityChange"
-              style="marginLeft: 16px"
+              style="{ marginLeft: '16px'}"
               size="small"
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雨角度" >
+      <mapgis-ui-form-model-item label="雨角度" v-show="rain">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="angle"
@@ -83,13 +104,13 @@
               :min="0"
               :step="10"
               @change="angleChange"
-              style="marginLeft: 16px"
+              style="{ marginLeft: '16px'}"
               size="small"
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雪粒大小" >
+      <mapgis-ui-form-model-item label="雪粒大小" v-show="snow">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="size"
@@ -106,13 +127,13 @@
               :min="5"
               :step="5"
               @change="szChange"
-              style="marginLeft: 16px"
+              style="{ marginLeft: '16px'}"
               size="small"
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雪密度" >
+      <mapgis-ui-form-model-item label="雪密度" v-show="snow">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="density"
@@ -129,13 +150,13 @@
               :min="5"
               :step="5"
               @change="dstChange"
-              style="marginLeft: 16px"
+              style="{ marginLeft: '16px'}"
               size="small"
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雾透明度" >
+      <mapgis-ui-form-model-item label="雾透明度" v-show="fog">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="fogOpacity"
@@ -152,7 +173,7 @@
               :min="0"
               :step="0.1"
               @change="fogOpacityChange"
-              style="marginLeft: 16px"
+              style="{ marginLeft: '16px'}"
               size="small"
           />
         </mapgis-ui-space>
@@ -184,9 +205,10 @@ export default {
   },
   data (){
     return {
-      enableSunlight: false,
-      sceneskybox: true,
-      enableCloud: false,
+      sunlight: false,
+      sceneSkybox: true,
+      clouds: false,
+      cloudsduration: 5,
       weather: undefined,
       rain: false,
       speed: 1.0,
@@ -198,7 +220,7 @@ export default {
       fog: false,
       fogOpacity: 0.5,
       color: "#FFFFFF",
-      SkyBox2: false,
+      skybox: false,
 
       blckWhite: false,
       ntVision: false,
@@ -209,7 +231,7 @@ export default {
       return layout === "horizontal"
           ? {
             labelCol: { span: 6 },
-            wrapperCol: { span: 16 }
+            wrapperCol: { span: 18 }
           }
           : {};
     }
@@ -217,8 +239,8 @@ export default {
   mounted() {
     const { vueKey, vueIndex } = this;
     window.CesiumZondy.SettingToolManager.addSource(vueKey,vueIndex,{},{
-      globeClouds: null,
-      skyBox:null,
+      GlobeCloud: null,
+      SkyBox:null,
       Rain:null,
       Fog:null,
       Snow:null
@@ -226,50 +248,61 @@ export default {
   },
   methods: {
     //太阳
-    sunChange(e) {
+    enableSunlight(e) {
       const { viewer } = this;
-      this.enableSunlight = e.target.checked;
-      viewer.scene.globe.enableLighting = this.enableSunlight;
+      this.sunlight = e.target.checked;
+      viewer.scene.globe.enableLighting = this.sunlight;
     },
 
     //星空
-    sceneSkyboxChange(e) {
+    enableSceneSkybox(e) {
       const { viewer } = this;
-      this.sceneskybox = e.target.checked;
-      viewer.scene.skyBox.show = this.sceneskybox; //背景，星空
+      this.sceneSkybox = e.target.checked;
+      viewer.scene.skyBox.show = this.sceneSkybox; //背景，星空
     },
 
     //云图
-    cloudChange(e) {
-      this.enableCloud = e.target.checked;
+    $_enableClouds(e) {
+      this.clouds = e.target.checked;
       let vm = this;
-      if (vm.enableCloud) {
+      if (vm.clouds) {
         vm.enableClouds();
       } else {
         vm.removeClouds();
       }
     },
+    cloudsDurationChange(e){
+      this.cloudsduration = e;
+      let vm = this;
+      if (this.clouds) {
+        vm.removeClouds();
+        vm.enableClouds();
+      }
+    },
     enableClouds() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
-      //云图效果验证
-      var clouds = new Cesium.GlobeEffect(viewer, {
-        cloudsDuration: 10000,
+      /*
+      * cloudsDuration的单位是毫秒
+      * */
+      let durationInms = this.cloudsduration * 1000;
+      let clouds = new Cesium.GlobeEffect(viewer, {
+        cloudsDuration: durationInms,
         cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
       });
       clouds.addGlobeClouds(); //添加云层
-      window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'globeClouds',clouds);
+      window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud',clouds);
     },
     removeClouds() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
       let manager = window.CesiumZondy['SettingToolManager'].findSource(vueKey, vueIndex );
-      if (manager.options && manager.options.globeClouds) {
-        manager.options.globeClouds.removeGlobeClouds();
-        window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'globeClouds',null);
+      if (manager.options && manager.options.GlobeCloud) {
+        manager.options.GlobeCloud.removeGlobeClouds();
+        window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud',null);
       }
     },
 
     //雨
-    rnChange(e) {
+    $_enableRain(e) {
       this.rain = e.target.checked;
       let vm = this;
       if (vm.rain) {
@@ -300,7 +333,7 @@ export default {
       }
     },
     //雪
-    snowChange(e) {
+    $_enableSnow(e) {
       this.snow = e.target.checked;
       let vm = this;
       if (vm.snow) {
@@ -419,10 +452,10 @@ export default {
     },
 
     //天空盒
-    skyBoxChange(e) {
-      this.SkyBox2 = e.target.checked;
+    $_enableSkyBox(e) {
+      this.skybox = e.target.checked;
       let vm = this;
-      if (vm.SkyBox2) {
+      if (vm.skybox) {
         vm.enableSkyBox();
       } else {
         vm.removeSkyBox();
@@ -459,14 +492,14 @@ export default {
       //   duration:1,
       // })
 
-      window.CesiumZondy.SettingToolManager.changeOptions(vueKey, vueIndex, 'skyBox', skyBox);
+      window.CesiumZondy.SettingToolManager.changeOptions(vueKey, vueIndex, 'SkyBox', skyBox);
     },
     removeSkyBox() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
       let manager = window.CesiumZondy['SettingToolManager'].findSource(vueKey, vueIndex );
-      if (manager.options && manager.options.skyBox) {
-        manager.options.skyBox.removeSkyBox();
-        window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'skyBox',null);
+      if (manager.options && manager.options.SkyBox) {
+        manager.options.SkyBox.removeSkyBox();
+        window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'SkyBox',null);
       }
       // viewer.scene.camera.flyTo({
       //   destination: new Cesium.Cartesian3(-4957554.172258782, 19883663.751066618, 10885451.402250132),
