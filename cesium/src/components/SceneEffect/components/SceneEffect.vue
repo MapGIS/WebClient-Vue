@@ -173,7 +173,6 @@
 
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
-
 export default {
   name: "SceneEffect",
   mixins: [ServiceLayer],
@@ -215,6 +214,16 @@ export default {
           : {};
     }
   },
+  mounted() {
+    const { vueKey, vueIndex } = this;
+    window.CesiumZondy.SettingToolManager.addSource(vueKey,vueIndex,{},{
+      globeClouds: null,
+      skyBox:null,
+      Rain:null,
+      Fog:null,
+      Snow:null
+    });
+  },
   methods: {
     //太阳
     sunChange(e) {
@@ -242,21 +251,21 @@ export default {
     },
     enableClouds() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
-
       //云图效果验证
       var clouds = new Cesium.GlobeEffect(viewer, {
         cloudsDuration: 10000,
         cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
       });
       clouds.addGlobeClouds(); //添加云层
-      window.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, clouds);
+      window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'globeClouds',clouds);
     },
     removeClouds() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
-        if (manager.source) {
-          manager.source.removeGlobeClouds();
-        }
-      });
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      let manager = window.CesiumZondy['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager.options && manager.options.globeClouds) {
+        manager.options.globeClouds.removeGlobeClouds();
+        window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'globeClouds',null);
+      }
     },
 
     //雨
@@ -266,7 +275,7 @@ export default {
       if (vm.rain) {
         vm.enableRain();
       } else {
-        vm.removeWeather();
+        vm.removeWeather('Rain');
       }
     },
     speedChange(e) {
@@ -297,7 +306,7 @@ export default {
       if (vm.snow) {
         vm.enableSnow();
       } else {
-        vm.removeWeather();
+        vm.removeWeather('Snow');
       }
     },
     szChange(e) {
@@ -321,7 +330,7 @@ export default {
       if (vm.fog) {
         vm.enableFog();
       } else {
-        vm.removeWeather();
+        vm.removeWeather('Fog');
       }
     },
     fogOpacityChange(e) {
@@ -338,44 +347,75 @@ export default {
         angle: this.angle,
         alpha: this.rainOpacity
       };
-      this.$_enableWeather("addRain", rainOptions);
+      this.$_enableWeather("Rain", rainOptions);
     },
     enableSnow() {
       let snowOptions = {
         size: this.density,
         scale: this.size
       };
-      this.$_enableWeather("addSnow", snowOptions);
+      this.$_enableWeather("Snow", snowOptions);
     },
     enableFog() {
+      const { Cesium }=this;
       let color = Cesium.Color.fromCssColorString(this.color);
       let fogOptions = {
         fogcolor: color,
         alpha: this.fogOpacity
       };
-      this.$_enableWeather("addFog", fogOptions);
+      this.$_enableWeather("Fog", fogOptions);
     },
     //积雪？？
     $_enableWeather(WeatherName, options) {
       const { vueKey, vueIndex, viewer, Cesium } = this;
-      this.$_removeWeather();
+
+      this.removeWeather(WeatherName);
+
+      // let manager = window.CesiumZondy['SettingToolManager'].findSource(vueKey, vueIndex );
+      // if(manager && manager.options && manager.options[WeatherName] && manager.options[WeatherName] !== null){
+      //   this.removeWeather(WeatherName);
+      // }
       let weather = new Cesium.WeatherEffect(viewer);
-      weather[WeatherName](options);
-      window.CesiumZondy.MeasureToolManager.addSource(
-          vueKey,
-          vueIndex,
-          weather
-      );
+      switch(WeatherName) {
+        case 'Rain':
+          weather.addRain(options);
+          window.CesiumZondy['SettingToolManager'].changeOptions(vueKey,vueIndex,'Rain',weather);
+          break;
+        case 'Snow':
+          weather.addSnow(options);
+          window.CesiumZondy['SettingToolManager'].changeOptions(vueKey,vueIndex,'Snow',weather);
+          break;
+        case 'Fog':
+          weather.addFog(options);
+          window.CesiumZondy['SettingToolManager'].changeOptions(vueKey,vueIndex,'Fog',weather);
+          break;
+        default:
+          weather.log('传参错误');
+          break;
+      }
     },
-    removeWeather() {
-      this.$_removeWeather();
-    },
-    $_removeWeather() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
-        if (manager.source) {
-          manager.source.removeAll();
-        }
-      });
+
+    removeWeather(WeatherName) {
+      const { vueKey, vueIndex } = this;
+      let manager = window.CesiumZondy['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager && manager.options) {
+        Object.keys(manager.options).forEach(function(name) {
+          if (name === WeatherName && manager.options[WeatherName]) {
+            switch(WeatherName) {
+              case 'Rain':
+                manager.options.Rain.removeRain();
+                break;
+              case 'Snow':
+                manager.options.Snow.removeSnow();
+                break;
+              case 'Fog':
+                manager.options.Fog.removeFog();
+                break;
+            };
+            window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, WeatherName,null);
+          }
+        });
+      }
     },
 
     //天空盒
@@ -390,7 +430,6 @@ export default {
     },
     enableSkyBox() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
-
       let skyBox = new Cesium.GlobeEffect(viewer, { cloudsDuration: 100000 });
       skyBox.addDefaultSkyBox("skyBox3"); //添加天空盒默认样式1
       // skyBox.addDefaultSkyBox('skyBox2'); //添加天空盒默认样式2
@@ -420,15 +459,15 @@ export default {
       //   duration:1,
       // })
 
-      window.CesiumZondy.MeasureToolManager.addSource(vueKey, vueIndex, skyBox);
+      window.CesiumZondy.SettingToolManager.changeOptions(vueKey, vueIndex, 'skyBox', skyBox);
     },
     removeSkyBox() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
-      this.$_deleteManger("MeasureToolManager", function(manager) {
-        if (manager.source) {
-          manager.source.removeSkyBox();
-        }
-      });
+      let manager = window.CesiumZondy['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager.options && manager.options.skyBox) {
+        manager.options.skyBox.removeSkyBox();
+        window.CesiumZondy['SettingToolManager'].changeOptions(vueKey, vueIndex, 'skyBox',null);
+      }
       // viewer.scene.camera.flyTo({
       //   destination: new Cesium.Cartesian3(-4957554.172258782, 19883663.751066618, 10885451.402250132),
       //   orientation: {
@@ -491,7 +530,6 @@ export default {
       }
     },
   },
-
 }
 </script>
 
