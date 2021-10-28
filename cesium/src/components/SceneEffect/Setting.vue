@@ -62,6 +62,9 @@ export default {
     this.$emit("load", this);
   },
   destroyed() {
+    this.$_deleteManger("SettingToolManager",function (manager){
+      console.log('destroyed');
+    });
     this.$emit("unload");
   },
   methods: {
