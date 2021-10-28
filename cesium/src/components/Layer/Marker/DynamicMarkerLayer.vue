@@ -29,7 +29,7 @@ const DefaultInactiveImagePlotting =
 export default {
   name: "mapgis-3d-dynamic-marker-layer",
   components: { Mapgis3dMarkerSetPro },
-  inject: ["Cesium", "vueCesium", "viewer"],
+  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     data: {
@@ -127,7 +127,7 @@ export default {
       this.parseData();
 
       const vm = this;
-      const { vueCesium, vueKey, vueIndex, data } = this;
+      const { CesiumZondy, vueCesium, vueKey, vueIndex, data } = this;
       const viewer = vueCesium.getViewer(vueKey) || this.viewer;
       let analysisManager = new CesiumZondy.Manager.AnalysisManager({
         viewer: viewer
@@ -137,23 +137,23 @@ export default {
       promise.then(function(dataSource) {
         viewer.dataSources.add(dataSource);
         vm.changeColor(dataSource);
-        CesiumZondy.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
+        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
           analysisManager: analysisManager
         });
       });
     },
     unmount() {
-      const { viewer, vueKey, vueIndex } = this;
+      const { viewer, vueKey, vueIndex, vueCesium } = this;
       const vm = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
       const { dataSources } = viewer;
-      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
         if (dataSources) {
           dataSources.remove(find.source, true);
         }
       }
-      CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
+      vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     parseData(data) {
@@ -367,7 +367,7 @@ export default {
     },
     highlightFeature(marker) {
       const vm = this;
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
       const { Cesium, CesiumZondy } = this;
       const { layerStyle, highlightStyle, idField } = this;
       const { point, line, polygon } = layerStyle;
@@ -375,7 +375,7 @@ export default {
       const hline = highlightStyle.line;
       const hpoint = highlightStyle.point;
 
-      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
@@ -445,8 +445,8 @@ export default {
       }
     },
     clearHighlightFeature(marker) {
-      const { CesiumZondy, vueKey, vueIndex, layerStyle } = this;
-      let dataSource = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      const { CesiumZondy, vueKey, vueIndex, vueCesium, layerStyle } = this;
+      let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       this.changeColor(dataSource.source);
     },
     highlightMarker(marker) {

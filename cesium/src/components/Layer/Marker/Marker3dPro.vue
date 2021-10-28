@@ -60,7 +60,7 @@
  */
 export default {
   name: "mapgis-3d-marker-pro",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
   props: {
     vueKey: String,
     marker: {
@@ -150,7 +150,7 @@ export default {
     }
   },
   mounted() {
-    const webGlobe = this.CesiumZondy.getWebGlobe(this.vueKey) || this.webGlobe;
+    const viewer = this.vueCesium.getViewer(this.vueKey) || this.viewer;
     this.updateMarker();
   },
   beforeDestroy() {},
