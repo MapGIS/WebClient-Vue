@@ -81,6 +81,8 @@ export function initManager() {
     window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
   window.CesiumZondy.DataFlowManager =
     window.CesiumZondy.DataFlowManager || new DataFlowManager();
+  window.CesiumZondy.SettingToolManager =
+    window.CesiumZondy.SettingToolManager || new SettingToolManager();
 }
 
 export function initVueCesium() {
@@ -304,3 +306,4 @@ export class DataFlowManager extends BaseManager {}
 export class ExplosionManager extends BaseManager {}
 export class BloomEffectManager extends BaseManager {}
 export class DynamicLightLineManager extends BaseManager {}
+export class SettingToolManager extends BaseManager {}
