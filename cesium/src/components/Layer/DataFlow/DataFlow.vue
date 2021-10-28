@@ -84,8 +84,6 @@ export default {
           if (height === 0 || height) {
             defaultHeight = Number(height);
           }
-          console.log("defaultHeight",defaultHeight)
-          console.log("vm.flyToOptions",vm.flyToOptions)
           flyToOptions = Object.assign(flyToOptions, vm.flyToOptions);
           vm.viewer.camera.flyTo({
             destination: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], defaultHeight),
