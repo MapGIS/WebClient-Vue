@@ -142,14 +142,28 @@
   }
 
   .mapgis-ui-form-item {
-    margin-bottom: 6px;
+    margin-bottom: 0px;
   }
 
   .m-colorPicker .box {
-    z-index: 2000;
-    width: 160px;
+    /* position: absolute;
+    z-index: 2000; */
+    left: -30px;
+    width: 190px;
     padding: 0px;
   }
+
+  .m-colorPicker .colorBtn {
+    width: 150px;
+  }
+  /* .m-colorPicker .tColor li {
+    height: 10px !important;
+    width: 10px !important;
+  }
+  .m-colorPicker .bColor li {
+    height: 10px !important;
+    width: 10px !important;
+  } */
 }
 
 .mapgis-3d-popup-props {
