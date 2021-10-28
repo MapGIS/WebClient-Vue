@@ -123,7 +123,7 @@
   // box-shadow: -0.5px -0.5px 2px 2px $primary-3;
   &-header {
     display: flex;
-    font-size: 28px;
+    font-size: 20px;
     &-menu {
       color: $text-color;
     }
@@ -180,5 +180,11 @@
       color: #333333;
       float: right;
     }
+  }
+}
+
+.mapgis-3d-m3d-menu-explosion {
+  .anticon {
+    font-size: 32px;
   }
 }

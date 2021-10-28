@@ -92,6 +92,8 @@ export function initVueCesium() {
     window.vueCesium.GeojsonManager || new GeojsonManager();
   window.vueCesium.PopupManager =
     window.vueCesium.PopupManager || new PopupManager();
+  window.vueCesium.ExplosionManager =
+    window.vueCesium.ExplosionManager || new ExplosionManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
@@ -292,3 +294,4 @@ export class ViewshedAnalysisManager extends BaseManager {}
 export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
 export class ProfileAnalysisManager extends BaseManager {}
+export class ExplosionManager extends BaseManager {}
