@@ -40,12 +40,12 @@
         :port="port"
       >
       </m3d-menu-props>
-      <m3d-menu-effect
-        v-if="currentMenu == 'effect'"
+      <m3d-menu-explosion
+        v-if="currentMenu == 'explosion'"
         :version="version"
         :layerIndex="layerIndex"
       >
-      </m3d-menu-effect>
+      </m3d-menu-explosion>
       <m3d-menu-setting v-if="currentMenu == 'setting'" :version="version">
       </m3d-menu-setting>
     </div>
@@ -56,7 +56,7 @@
 import M3dMenuHighlight from "./M3dMenuHighlight.vue";
 import M3dMenuOid from "./M3dMenuOid.vue";
 import M3dMenuProps from "./M3dMenuProps.vue";
-import M3dMenuEffect from "./M3dMenuEffect.vue";
+import M3dMenuExplosion from "./M3dMenuExplosion.vue";
 import M3dMenuSetting from "./M3dMenuSetting.vue";
 
 export default {
@@ -65,7 +65,7 @@ export default {
     M3dMenuHighlight,
     M3dMenuOid,
     M3dMenuProps,
-    M3dMenuEffect,
+    M3dMenuExplosion,
     M3dMenuSetting
   },
   props: {
@@ -126,9 +126,34 @@ export default {
               icon: "mapgis-table"
             },
             {
-              type: "effect",
-              title: "特效",
-              icon: "mapgis-Symbols-1"
+              type: "explosion",
+              title: "爆炸",
+              icon: "mapgis-api"
+            },
+            {
+              type: "highlight",
+              title: "泛光",
+              icon: "mapgis-highlight"
+            },
+            {
+              type: "dynamic",
+              title: "扫描",
+              icon: "mapgis-wifi"
+            },
+            {
+              type: "star",
+              title: "探照灯",
+              icon: "mapgis-star"
+            },
+            {
+              type: "radar",
+              title: "雷达",
+              icon: "mapgis-radarchart"
+            },
+            {
+              type: "circle",
+              title: "动态圆",
+              icon: "mapgis-time-circle"
             }
           ]
         : [
