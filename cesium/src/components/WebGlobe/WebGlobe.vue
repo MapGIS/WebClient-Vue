@@ -134,6 +134,7 @@ export default {
         component: this,
         Cesium: Cesium,
         CesiumZondy: window.CesiumZondy,
+        vueCesium: window.vueCesium
       });
       if (this.container) {
         let dom = document.getElementById(this.container);
@@ -151,7 +152,7 @@ export default {
         this.viewer.scene.primitives.removeAll();
         this.viewer.scene.primitives.destroy();
         this.viewer.entities.removeAll();
-        this.viewer.destroy();
+        // this.viewer.destroy();
         window.CesiumZondy.GlobesManager.deleteSource(vueKey, vueIndex)
         // this.viewer = null;
         this.initialized = false;
