@@ -79,6 +79,8 @@ export function initManager() {
     window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
   window.CesiumZondy.ProfileAnalysisManager =
     window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
+  window.CesiumZondy.DataFlowManager =
+    window.CesiumZondy.DataFlowManager || new DataFlowManager();
 }
 
 export function initVueCesium() {
@@ -294,4 +296,5 @@ export class ViewshedAnalysisManager extends BaseManager {}
 export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
 export class ProfileAnalysisManager extends BaseManager {}
+export class DataFlowManager extends BaseManager {}
 export class ExplosionManager extends BaseManager {}
