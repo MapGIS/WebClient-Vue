@@ -140,6 +140,16 @@
   .mapgis-ui-divider-horizontal.mapgis-ui-divider-with-text-center {
     margin: 4px 0px;
   }
+
+  .mapgis-ui-form-item {
+    margin-bottom: 6px;
+  }
+
+  .m-colorPicker .box {
+    z-index: 2000;
+    width: 160px;
+    padding: 0px;
+  }
 }
 
 .mapgis-3d-popup-props {

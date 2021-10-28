@@ -94,8 +94,8 @@ export default {
       labelCol: { span: 8 },
       wrapperCol: { span: 16 },
       currentMenu: undefined,
-      angle: 90,
-      distance: 100,
+      angle: 200,
+      distance: 5,
       speed: 1
     };
   },

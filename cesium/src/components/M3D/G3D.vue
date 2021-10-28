@@ -50,8 +50,7 @@
               <span
                 :class="{
                   'mapgis-3d-g3d-layer-span': true,
-                  'mapgis-3d-g3d-layer-span-tab': mode == 'tab',
-                  'mapgis-3d-g3d-layer-span-inline': mode == 'inline'
+                  'mapgis-3d-g3d-layer-span-inline': true
                 }"
               >
                 <span v-if="title && title.indexOf(searchValue) > -1">
@@ -67,12 +66,6 @@
                 <mapgis-ui-tag v-if="version && key == '地图场景默认键值'">{{
                   version
                 }}</mapgis-ui-tag>
-                <mapgis-ui-iconfont
-                  v-if="mode == 'inline'"
-                  class="iconfont"
-                  :type="key == expandItemKey ? 'mapgis-up' : 'mapgis-down'"
-                  @click="() => handleExpandItemKey(key)"
-                />
                 <mapgis-ui-iconfont
                   :type="icon"
                   class="iconfont"
@@ -443,11 +436,8 @@ export default {
   display: inline-block;
   justify-content: space-between;
 }
-.mapgis-3d-g3d-layer-span-tab {
-  width: 170px;
-}
 .mapgis-3d-g3d-layer-span-inline {
-  width: 240px;
+  width: 170px;
 }
 .mapgis-3d-g3d-layer-span > .iconfont {
   line-height: 28px;
