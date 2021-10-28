@@ -30,11 +30,6 @@ export default {
     }
   },
 
-  mode: {
-    type: String,
-    default: "inline" // tab inline
-  },
-
   /**
    * @description g3d网络请求地址
    */

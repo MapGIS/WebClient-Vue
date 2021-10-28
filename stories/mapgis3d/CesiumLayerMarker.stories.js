@@ -42,9 +42,9 @@ const Template = (args, { argTypes }) => ({
           :token="token"
       />
       <mapgis-3d-dynamic-marker-layer v-bind="$props">
-        <mapigs-ui-card slot="popup" slot-scope="{ marker }">
+        <mapgis-ui-card slot="popup" slot-scope="{ marker }">
           {{marker.fid}}
-        </mapigs-ui-card>
+        </mapgis-ui-card>
       </mapgis-3d-dynamic-marker-layer>
     </mapgis-web-scene>
   `,
