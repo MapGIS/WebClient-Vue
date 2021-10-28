@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "mapgis-3d-marker",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
   props: {
     fid: {
       type: String,
@@ -121,15 +121,16 @@ export default {
   methods: {
     $_mount() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function(viewer) {
+      const { vueCesium } = this;
+      vueCesium.getViewerByInterval(function(viewer) {
         vm.$_init(viewer);
       }, this.vueKey);
     },
     $_unmount() {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
       const vm = this;
       let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      window.CesiumZondy.getWebGlobeByInterval(function(viewer) {
+      vueCesium.getViewerByInterval(function(viewer) {
         let MarkerManager = CesiumZondy.MarkerManager.findSource(
           vueKey,
           vueIndex
@@ -188,7 +189,7 @@ export default {
       };
       this.$_append(labelLayer, heightReference, label);
       this.marker = this;
-      
+
       if (!window.DynamicMarkerHandler) {
         window.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
           viewerMarker.scene.canvas
@@ -220,7 +221,8 @@ export default {
       const { Cesium, CesiumZondy, viewer } = this;
       const vm = this;
       let scene = viewer.scene;
-      window.DynamicMarkerLastActiceId = window.DynamicMarkerLastActiceId || undefined;
+      window.DynamicMarkerLastActiceId =
+        window.DynamicMarkerLastActiceId || undefined;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);
         if (
@@ -232,8 +234,11 @@ export default {
           if (!vm.isMoveIn) {
             vm.isMoveIn = true;
             vm.isMoveOut = false;
-            let label = vm.$_hasId(pickedObject.id.id).label
-            if (window.DynamicMarkerLastActiceId && window.DynamicMarkerLastActiceId != label) {
+            let label = vm.$_hasId(pickedObject.id.id).label;
+            if (
+              window.DynamicMarkerLastActiceId &&
+              window.DynamicMarkerLastActiceId != label
+            ) {
               vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
             }
             vm.$emit("mouseEnter", label);

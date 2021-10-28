@@ -21,6 +21,16 @@ axios.get("./config.json").then((res) => {
   });
 });
 
+window.webclient = {
+  ip: "192.168.81.103",
+  port: "8089",
+};
+
+window.VueCesiumLibPath =
+  "http://localhost:8888/static/libs/cdn/cesium/Cesium.js";
+window.VueCesiumPluginPath =
+  "http://localhost:8888/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {
