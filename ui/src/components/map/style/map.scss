@@ -122,6 +122,30 @@
   .mapgis-ui-divider-horizontal.mapgis-ui-divider-with-text-center {
     margin: 4px 0px;
   }
+
+  .mapgis-ui-form-item {
+    margin-bottom: 0px;
+  }
+
+  .m-colorPicker .box {
+    /* position: absolute;
+    z-index: 2000; */
+    left: -30px;
+    width: 190px;
+    padding: 0px;
+  }
+
+  .m-colorPicker .colorBtn {
+    width: 150px;
+  }
+  /* .m-colorPicker .tColor li {
+    height: 10px !important;
+    width: 10px !important;
+  }
+  .m-colorPicker .bColor li {
+    height: 10px !important;
+    width: 10px !important;
+  } */
 }
 
 .mapgis-3d-popup-props {

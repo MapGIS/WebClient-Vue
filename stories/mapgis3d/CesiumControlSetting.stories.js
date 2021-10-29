@@ -24,7 +24,7 @@ const Template = (args, { argTypes }) => ({
     components: { "mapgis-3d-setting": Mapgis3dSetting },
     template: `
       <mapgis-web-scene
-          class="main"
+          :timeline="true"
       >
       <mapgis-3d-igs-m3d
           :auto-reset="autoReset"

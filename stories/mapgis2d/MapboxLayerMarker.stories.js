@@ -42,9 +42,9 @@ const Template = (args, { argTypes }) => ({
   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.2]" :zoom="3" style="height:95vh">
     <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-dynamic-marker-layer v-bind="$props">
-      <mapigs-ui-card slot="popup" slot-scope="{ marker }">
+      <mapgis-ui-card slot="popup" slot-scope="{ marker }">
         {{marker.fid}}
-      </mapigs-ui-card>
+      </mapgis-ui-card>
     </mapgis-dynamic-marker-layer>
   </mapgis-web-map>`,
 });

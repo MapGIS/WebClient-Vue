@@ -79,6 +79,10 @@ export function initManager() {
     window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
   window.CesiumZondy.ProfileAnalysisManager =
     window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
+  window.CesiumZondy.DataFlowManager =
+    window.CesiumZondy.DataFlowManager || new DataFlowManager();
+  window.CesiumZondy.SettingToolManager =
+    window.CesiumZondy.SettingToolManager || new SettingToolManager();
 }
 
 export function initVueCesium() {
@@ -94,6 +98,10 @@ export function initVueCesium() {
     window.vueCesium.PopupManager || new PopupManager();
   window.vueCesium.ExplosionManager =
     window.vueCesium.ExplosionManager || new ExplosionManager();
+  window.vueCesium.BloomEffectManager =
+    window.vueCesium.BloomEffectManager || new BloomEffectManager();
+  window.vueCesium.DynamicLightLineManager =
+    window.vueCesium.DynamicLightLineManager || new DynamicLightLineManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
@@ -294,4 +302,8 @@ export class ViewshedAnalysisManager extends BaseManager {}
 export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
 export class ProfileAnalysisManager extends BaseManager {}
+export class DataFlowManager extends BaseManager {}
 export class ExplosionManager extends BaseManager {}
+export class BloomEffectManager extends BaseManager {}
+export class DynamicLightLineManager extends BaseManager {}
+export class SettingToolManager extends BaseManager {}

@@ -19,6 +19,8 @@
       </div>
     </mapgis-ui-divider>
     <div class="mapgis-3d-m3d-menus-content">
+      <m3d-menu-setting v-if="currentMenu == 'setting'" :version="version">
+      </m3d-menu-setting>
       <m3d-menu-highlight
         v-if="currentMenu == 'highlight'"
         :version="version"
@@ -46,27 +48,42 @@
         :layerIndex="layerIndex"
       >
       </m3d-menu-explosion>
-      <m3d-menu-setting v-if="currentMenu == 'setting'" :version="version">
-      </m3d-menu-setting>
+      <m3d-menu-bloom
+        v-if="currentMenu == 'bloom'"
+        :version="version"
+        :layerIndex="layerIndex"
+      >
+      </m3d-menu-bloom>
+      <m3d-menu-dynamic-line
+        v-if="currentMenu == 'dynamic'"
+        :version="version"
+        :layerIndex="layerIndex"
+      >
+      </m3d-menu-dynamic-line>
     </div>
   </div>
 </template>
 
 <script>
+import M3dMenuSetting from "./M3dMenuSetting.vue";
+
 import M3dMenuHighlight from "./M3dMenuHighlight.vue";
 import M3dMenuOid from "./M3dMenuOid.vue";
 import M3dMenuProps from "./M3dMenuProps.vue";
 import M3dMenuExplosion from "./M3dMenuExplosion.vue";
-import M3dMenuSetting from "./M3dMenuSetting.vue";
+import M3dMenuBloom from "./M3dMenuBloom.vue";
+import M3dMenuDynamicLine from "./M3dMenuDynamicLine.vue";
 
 export default {
   name: "mapgis-3d-m3d-menus",
   components: {
+    M3dMenuSetting,
     M3dMenuHighlight,
     M3dMenuOid,
     M3dMenuProps,
     M3dMenuExplosion,
-    M3dMenuSetting
+    M3dMenuBloom,
+    M3dMenuDynamicLine
   },
   props: {
     mode: {
@@ -131,7 +148,7 @@ export default {
               icon: "mapgis-api"
             },
             {
-              type: "highlight",
+              type: "bloom",
               title: "泛光",
               icon: "mapgis-highlight"
             },

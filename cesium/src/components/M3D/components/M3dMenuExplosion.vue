@@ -4,31 +4,34 @@
     <div class="mapgis-3d-m3d-menu-explosion-direction">
       <mapgis-ui-row>
         <mapgis-ui-col :span="8" :offset="8"
-          ><mapgis-ui-button shape="circle">
+          ><mapgis-ui-button shape="circle" @click="() => changeHeadding(90)">
             <mapgis-ui-iconfont type="mapgis-up-circle" />
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="8"
-          ><mapgis-ui-button shape="circle">
+          ><mapgis-ui-button shape="circle" @click="() => changeHeadding(180)">
             <mapgis-ui-iconfont type="mapgis-left-circle" />
           </mapgis-ui-button>
         </mapgis-ui-col>
         <mapgis-ui-col :span="8" :offset="8"
-          ><mapgis-ui-button shape="circle">
+          ><mapgis-ui-button shape="circle" @click="() => changeHeadding(0)">
             <mapgis-ui-iconfont type="mapgis-right-circle" />
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="8" :offset="8"
-          ><mapgis-ui-button shape="circle">
+          ><mapgis-ui-button shape="circle" @click="() => changeHeadding(-90)">
             <mapgis-ui-iconfont type="mapgis-down-circle" />
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
     </div>
+    <!-- <mapgis-ui-button @click="handleDrawDirection">
+      激活绘制方向
+    </mapgis-ui-button> -->
     <mapgis-ui-divider> 数值设置 </mapgis-ui-divider>
     <mapgis-ui-form-model
       :layout="layout"
@@ -36,11 +39,20 @@
       :wrapperCol="wrapperCol"
       labelAlign="left"
     >
-      <mapgis-ui-form-model-item label="角度设置" required>
+      <mapgis-ui-form-model-item label="朝向角度" required>
         <mapgis-ui-input-number
           :style="{ width: '100%' }"
           size="small"
-          :min="0"
+          :min="-360"
+          :max="360"
+          v-model="headding"
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="旋转角度" required>
+        <mapgis-ui-input-number
+          :style="{ width: '100%' }"
+          size="small"
+          :min="-360"
           :max="360"
           v-model="angle"
         />
@@ -80,7 +92,6 @@ export default {
   name: "mapgis-3d-m3d-menu-explosion",
   inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
   props: {
-    ...VueOptions,
     version: {
       type: String
     },
@@ -94,9 +105,11 @@ export default {
       labelCol: { span: 8 },
       wrapperCol: { span: 16 },
       currentMenu: undefined,
-      angle: 90,
-      distance: 100,
-      speed: 1
+      headding: 0,
+      angle: 0,
+      distance: 5,
+      speed: 1,
+      moveDirection: undefined
     };
   },
   created() {},
@@ -141,7 +154,7 @@ export default {
     explosionAction() {
       const { vueKey, vueIndex, vueCesium, Cesium } = this;
       const { layerIndex, viewer, m3ds, version } = this;
-      const { distance, speed } = this;
+      const { distance, speed, moveDirection } = this;
       let tileset;
       if (m3ds) {
         tileset = m3ds[layerIndex];
@@ -167,12 +180,37 @@ export default {
           vectorLeft.y * Math.cos(angle) + vectorUp.y * Math.sin(angle);
         vector.z =
           vectorLeft.z * Math.cos(angle) + vectorUp.z * Math.sin(angle);
+        // vector = vector;
         modelExplosion.multiLayerAxisExplosionWithAnimate([layer], {
           direction: vector,
           expDistance: distance,
           speed: speed
         });
       }
+    },
+    handleDrawDirection() {
+      const vm = this;
+      const { viewer } = this;
+      let drawElement = new Cesium.DrawElement(viewer);
+      drawElement.startDrawingPolyline({
+        color: new Cesium.Color(0.3, 0.7, 0.8, 1.0),
+        callback: function(result) {
+          console.warn("pos", result);
+          // vm.moveDirection = result.positions;
+          var polyline = new Cesium.DrawElement.PolylinePrimitive({
+            positions: result.positions,
+            width: 1,
+            geodesic: true
+          });
+          scene.primitives.add(polyline);
+          polyline.setEditable();
+          primitivesList.push(polyline);
+        }
+      });
+    },
+    changeHeadding(rotate) {
+      this.angle = this.headding + rotate;
+      this.explosionAction();
     }
   }
 };

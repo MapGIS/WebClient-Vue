@@ -34,6 +34,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景 = Template.bind({});
 场景.args = {
-  url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
+  url: "http://192.168.88.204:6163/igs/rest/g3d/临海3号楼",
   layers: "show:1,2",
 };
