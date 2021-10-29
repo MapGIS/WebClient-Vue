@@ -325,6 +325,10 @@ export default {
 </script>
 
 <style>
+.mapboxgl-popup-content {
+  height: 0px;
+}
+
 .mapgis-edit-control > .mapgis-ui-div > .mapgis-ui-tabs > .mapgis-ui-tabs-bar {
   margin: 0 0 4px 0;
 }
