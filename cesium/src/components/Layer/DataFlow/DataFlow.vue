@@ -7,7 +7,7 @@ import {Style} from "@mapgis/webclient-es6-service";
 
 const {PointStyle, ModelStyle, MarkerStyle} = Style;
 export default {
-  name: "mapgis-3d-data-flow",
+  name: "mapgis-3d-data-flow-layer",
   inject: ["viewer"],
   props: {
     baseUrl: {
