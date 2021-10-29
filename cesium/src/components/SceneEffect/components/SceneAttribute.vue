@@ -12,13 +12,13 @@
       </mapgis-ui-form-model-item>
 
       <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-        <mapgis-ui-checkbox :checked="compass" @change="enableCmps">罗盘控件
+        <mapgis-ui-checkbox v-model="compass" @change="enableNavigation">罗盘控件
         </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox :checked="zoom" @change="enableZm">缩放控件
+        <mapgis-ui-checkbox v-model="zoom" @change="enableNavigation">缩放控件
         </mapgis-ui-checkbox>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="泛光亮度" v-show="bloom">
+      <mapgis-ui-form-model-item v-show="bloom" label="泛光亮度">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="bloomBrt"
@@ -41,7 +41,7 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="泛光对比度" v-show="bloom">
+      <mapgis-ui-form-model-item v-show="bloom" label="泛光对比度">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="bloomCtrst"
@@ -64,27 +64,27 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-<!--      <mapgis-ui-form-model-item label="stage亮度">-->
-<!--        <mapgis-ui-space>-->
-<!--          <mapgis-ui-slider-->
-<!--              v-model="brightness"-->
-<!--              :max="2"-->
-<!--              :min="0"-->
-<!--              :step="0.2"-->
-<!--              :style="{ minWidth: '100px' }"-->
-<!--              size="small"-->
-<!--              @change="brtChange"-->
-<!--          />-->
-<!--          <mapgis-ui-input-number-->
-<!--              v-model="brightness"-->
-<!--              :max="2"-->
-<!--              :min="0"-->
-<!--              :step="0.2"-->
-<!--              size="small"-->
-<!--              @change="brtChange"-->
-<!--          />-->
-<!--        </mapgis-ui-space>-->
-<!--      </mapgis-ui-form-model-item>-->
+      <!--      <mapgis-ui-form-model-item label="stage亮度">-->
+      <!--        <mapgis-ui-space>-->
+      <!--          <mapgis-ui-slider-->
+      <!--              v-model="brightness"-->
+      <!--              :max="2"-->
+      <!--              :min="0"-->
+      <!--              :step="0.2"-->
+      <!--              :style="{ minWidth: '100px' }"-->
+      <!--              size="small"-->
+      <!--              @change="brtChange"-->
+      <!--          />-->
+      <!--          <mapgis-ui-input-number-->
+      <!--              v-model="brightness"-->
+      <!--              :max="2"-->
+      <!--              :min="0"-->
+      <!--              :step="0.2"-->
+      <!--              size="small"-->
+      <!--              @change="brtChange"-->
+      <!--          />-->
+      <!--        </mapgis-ui-space>-->
+      <!--      </mapgis-ui-form-model-item>-->
 
       <mapgis-ui-form-model-item label="亮度">
         <mapgis-ui-space>
@@ -187,6 +187,7 @@
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "@mapgis/cesium/dist/MapGIS/Tools/Navigation/Styles/navigation-all.css"
+
 export default {
   name: "SceneAttribute",
   mixins: [ServiceLayer],
@@ -200,7 +201,7 @@ export default {
     return {
       skyAtmosphere: true,
       bloom: false,
-      bloomBrt:- 0.3,
+      bloomBrt: -0.3,
       bloomCtrst: 128,
       undgrd: false,
       compass: false,
@@ -237,7 +238,6 @@ export default {
     * */
     enableSkyAtmosphere(e) {
       const {viewer} = this;
-      // console.log(`checked = ${e.target.checked}`);
       this.skyAtmosphere = e.target.checked;
       viewer.scene.skyAtmosphere.show = this.skyAtmosphere;
     },
@@ -261,33 +261,22 @@ export default {
       viewer.scene.globe.translucency.backFaceAlpha = 1;
       viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
     },
+
     /*
-    * 罗盘控件
+    * 导航控件（罗盘控件和缩放控件的状态控制）
     * */
-    enableCmps(e) {
+    enableNavigation(e) {
       const {viewer} = this;
-      this.compass = e.target.checked;
-      /*
-      * 待确认：罗盘和缩放控件的移除
-      * */
-      var options = {};
+      // this.compass = e.target.checked;
+      if (viewer.cesiumNavigation) {
+        viewer.cesiumNavigation.destroy();
+      }
+      let options = {};
       options.enableCompass = this.compass;
       options.enableZoomControls = this.zoom;
-      let compass = viewer.createNavigationTool(options);
-      console.log('----------------------------------compass', compass)
+      viewer.createNavigationTool(options);
     },
-    /*
-    * 缩放控件
-    * */
-    enableZm(e) {
-      const {viewer} = this;
-      this.zoom = e.target.checked;
-      var options = {};
-      options.enableCompass = this.compass;
-      options.enableZoomControls = this.zoom;
-      let zoom = viewer.createNavigationTool(options);
-      console.log('----------------------------------zoom', zoom)
-    },
+
     /*
     * 泛光亮度
     * */
