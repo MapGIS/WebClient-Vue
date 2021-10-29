@@ -2,23 +2,37 @@ import path from "../assets/geojson/path"
 export default {
   title: "三维/图层/轨迹/模型",
   argTypes: {
-    dataSource: {
-      description: "轨迹数据"
-    },
     startTime: {
       description: "起始时间"
     },
     endTime: {
       description: "结束时间"
     },
-    layerStyle: {
+    trackPointStyle: {
       description: "模型样式，样式如下：<br>" +
           "1、<span class='storybook-span'>url</span>(必填)：模型的url地址<br>" +
-          "2、<span class='storybook-span'>scale</span>(选填)：图标的放大倍数。默认为1<br>" +
+          "2、<span class='storybook-span'>scale</span>(选填)：图标的放大倍数，默认为1<br>" +
           "",
       table:{
         defaultValue: { summary: 'null' },
       },
+    },
+    trackStyle: {
+      description: "轨迹样式，样式如下：<br>" +
+          "1、<span class='storybook-span'>show</span>(选填)：是否显示轨迹<br>" +
+          "2、<span class='storybook-span'>width</span>(选填)：轨迹宽度，默认为8<br>" +
+          "3、<span class='storybook-span'>color</span>(选填)：轨迹填充颜色，默认为#FF00FF<br>" +
+          "4、<span class='storybook-span'>opacity</span>(选填)：轨迹填充透明度，默认为1<br>" +
+          "5、<span class='storybook-span'>outlineColor</span>(选填)：轨迹外边线颜色，默认为#00FFFF<br>" +
+          "6、<span class='storybook-span'>outlineWidth</span>(选填)：轨迹外边线宽度，默认为5<br>" +
+          "7、<span class='storybook-span'>outlineOpacity</span>(选填)：轨迹外边线透明度，默认为1<br>" +
+          "",
+      table:{
+        defaultValue: { summary: 'null' },
+      },
+    },
+    dataSource: {
+      description: "轨迹数据"
     },
   },
 };
@@ -38,8 +52,12 @@ export const 模型 = Template.bind({});
   dataSource: path,
   startTime: "2012-08-04T10:00:00Z",
   endTime: "2012-08-04T15:00:00Z",
-  layerStyle: {
+  trackPointStyle: {
     type: "model",
     url: "./glb/CesiumMilkTruck.glb"
+  },
+  trackStyle:{
+    color: "rgba(0,0,0,0.4)",
+    outlineColor: "rgba(255,0,255,0.4)"
   }
 };
