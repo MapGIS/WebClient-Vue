@@ -32,7 +32,7 @@
 <script>
 import {Style} from "@mapgis/webclient-es6-service";
 
-const {PointStyle, ModelStyle, MarkerStyle} = Style;
+const {PointStyle, ModelStyle, MarkerStyle, TrackStyle} = Style;
 export default {
   name: "mapgis-3d-track-layer",
   inject: ["viewer"],
@@ -56,7 +56,10 @@ export default {
       type: Number,
       default: 10
     },
-    layerStyle: {
+    trackPointStyle: {
+      type: Object
+    },
+    trackStyle: {
       type: Object
     },
     dataSource: {
@@ -135,11 +138,13 @@ export default {
       if (isCZML(this.dataSource)) {
         czml = this.dataSource;
       } else {
-        let mStyle = new ModelStyle(this.layerStyle);
+        let mStyle = new ModelStyle(this.trackPointStyle);
         mStyle = mStyle.toCesiumStyle(Cesium)
         if(mStyle.uri){
           mStyle.gltf = mStyle.uri;
         }
+        let tStyle = new TrackStyle(this.trackStyle);
+        tStyle = tStyle.toCesiumStyle(Cesium)
         czml = [
           {
             id: "document",
@@ -157,23 +162,7 @@ export default {
             description:
                 "<p>Hang gliding flight log data from Daniel H. Friedman.<br>Icon created by Larisa Skosyrska from the Noun Project</p>",
             availability: this.startTime + "/" + this.endTime,
-            path: {
-              material: {
-                polylineOutline: {
-                  color: {
-                    rgba: [255, 0, 255, 255],
-                  },
-                  outlineColor: {
-                    rgba: [0, 255, 255, 255],
-                  },
-                  outlineWidth: 5,
-                },
-              },
-              width: 8,
-              leadTime: 0,
-              trailTime: 1000,
-              resolution: 5,
-            },
+            path: tStyle,
             model: mStyle,
             position: {
               interpolationAlgorithm: "LINEAR",
