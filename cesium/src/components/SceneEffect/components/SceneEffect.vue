@@ -2,24 +2,28 @@
   <div class="mapgis-3d-scene-effect">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left">
 
-      <mapgis-ui-form-model-item label="天气特效" >
-          <mapgis-ui-checkbox :checked="sunlight" @change="enableSunlight">太阳
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="sceneSkybox" @change="enableSceneSkybox" >星空
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="clouds" @change="$_enableClouds" >云图
-          </mapgis-ui-checkbox>
+<!--      <mapgis-ui-form-model-item label="天气特效" >-->
+<!--          <mapgis-ui-checkbox :checked="sunlight" @change="enableSunlight">太阳-->
+<!--          </mapgis-ui-checkbox>-->
+<!--          <mapgis-ui-checkbox :checked="sceneSkybox" @change="enableSceneSkybox" >星空-->
+<!--          </mapgis-ui-checkbox>-->
+<!--          <mapgis-ui-checkbox :checked="clouds" @change="$_enableClouds" >云图-->
+<!--          </mapgis-ui-checkbox>-->
+<!--      </mapgis-ui-form-model-item>-->
+
+      <mapgis-ui-form-model-item label="太阳" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="sunlight" @change="enableSunlight">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-          <mapgis-ui-checkbox :checked="rain" @change="$_enableRain" >雨
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="snow" @change="$_enableSnow" >雪
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="fog" @change="fogChange" >雾
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="skybox" @change="$_enableSkyBox">天空盒
-          </mapgis-ui-checkbox>
+      <mapgis-ui-form-model-item label="星空" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="sceneSkybox" @change="enableSceneSkybox">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="云图" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="clouds" @change="$_enableClouds">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
       <mapgis-ui-form-model-item label="周期/秒" v-show="clouds">
@@ -42,7 +46,12 @@
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
-      
+
+      <mapgis-ui-form-model-item label="雨" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="rain" @change="$_enableRain">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
       <mapgis-ui-form-model-item label="雨速度" v-show="rain">
         <mapgis-ui-space>
           <mapgis-ui-slider
@@ -110,6 +119,11 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
+      <mapgis-ui-form-model-item label="雪" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="snow" @change="$_enableSnow">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
       <mapgis-ui-form-model-item label="雪粒大小" v-show="snow">
         <mapgis-ui-space>
           <mapgis-ui-slider
@@ -156,6 +170,11 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
+      <mapgis-ui-form-model-item label="雾" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="fog" @change="$_enableFog">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
       <mapgis-ui-form-model-item label="雾透明度" v-show="fog">
         <mapgis-ui-space>
           <mapgis-ui-slider
@@ -179,14 +198,40 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="其它特效">
-        <mapgis-ui-space>
-          <mapgis-ui-checkbox :checked="blckWhite" @change="blackAndWhiteChange">黑白照片
-          </mapgis-ui-checkbox>
-          <mapgis-ui-checkbox :checked="ntVision" @change="nightVision" >夜视效果
-          </mapgis-ui-checkbox>
-        </mapgis-ui-space>
+      <mapgis-ui-form-model-item label="天空盒" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="skybox" @change="$_enableSkyBox">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
+
+<!--      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">-->
+<!--          <mapgis-ui-checkbox :checked="rain" @change="$_enableRain" >雨-->
+<!--          </mapgis-ui-checkbox>-->
+<!--          <mapgis-ui-checkbox :checked="snow" @change="$_enableSnow" >雪-->
+<!--          </mapgis-ui-checkbox>-->
+<!--          <mapgis-ui-checkbox :checked="fog" @change="$_enableFog" >雾-->
+<!--          </mapgis-ui-checkbox>-->
+<!--          <mapgis-ui-checkbox :checked="skybox" @change="$_enableSkyBox">天空盒-->
+<!--          </mapgis-ui-checkbox>-->
+<!--      </mapgis-ui-form-model-item>-->
+
+      <mapgis-ui-form-model-item label="黑白照片" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="blckWhite" @change="blackAndWhiteChange">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="夜视效果" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="ntVision" @change="nightVision">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+<!--      <mapgis-ui-form-model-item label="其它特效">-->
+<!--        <mapgis-ui-space>-->
+<!--          <mapgis-ui-checkbox :checked="blckWhite" @change="blackAndWhiteChange">黑白照片-->
+<!--          </mapgis-ui-checkbox>-->
+<!--          <mapgis-ui-checkbox :checked="ntVision" @change="nightVision" >夜视效果-->
+<!--          </mapgis-ui-checkbox>-->
+<!--        </mapgis-ui-space>-->
+<!--      </mapgis-ui-form-model-item>-->
 
     </mapgis-ui-form-model>
   </div>
@@ -250,20 +295,17 @@ export default {
     //太阳
     enableSunlight(e) {
       const { viewer } = this;
-      this.sunlight = e.target.checked;
       viewer.scene.globe.enableLighting = this.sunlight;
     },
 
     //星空
     enableSceneSkybox(e) {
       const { viewer } = this;
-      this.sceneSkybox = e.target.checked;
       viewer.scene.skyBox.show = this.sceneSkybox; //背景，星空
     },
 
     //云图
     $_enableClouds(e) {
-      this.clouds = e.target.checked;
       let vm = this;
       if (vm.clouds) {
         vm.enableClouds();
@@ -272,7 +314,6 @@ export default {
       }
     },
     cloudsDurationChange(e){
-      this.cloudsduration = e;
       let vm = this;
       if (this.clouds) {
         vm.removeClouds();
@@ -303,7 +344,6 @@ export default {
 
     //雨
     $_enableRain(e) {
-      this.rain = e.target.checked;
       let vm = this;
       if (vm.rain) {
         vm.enableRain();
@@ -312,21 +352,18 @@ export default {
       }
     },
     speedChange(e) {
-      this.speed = e;
       let vm = this;
       if (this.rain) {
         vm.enableRain();
       }
     },
     rainOpacityChange(e) {
-      this.rainOpacity = e;
       let vm = this;
       if (this.rain) {
         vm.enableRain();
       }
     },
     angleChange(e) {
-      this.angle = e;
       let vm = this;
       if (this.rain) {
         vm.enableRain();
@@ -334,7 +371,6 @@ export default {
     },
     //雪
     $_enableSnow(e) {
-      this.snow = e.target.checked;
       let vm = this;
       if (vm.snow) {
         vm.enableSnow();
@@ -343,22 +379,19 @@ export default {
       }
     },
     szChange(e) {
-      this.size = e;
       let vm = this;
       if (this.snow) {
         vm.enableSnow();
       }
     },
     dstChange(e) {
-      this.density = e;
       let vm = this;
       if (this.snow) {
         vm.enableSnow();
       }
     },
     //雾
-    fogChange(e) {
-      this.fog = e.target.checked;
+    $_enableFog(e) {
       let vm = this;
       if (vm.fog) {
         vm.enableFog();
@@ -367,7 +400,6 @@ export default {
       }
     },
     fogOpacityChange(e) {
-      this.fogOpacity = e;
       let vm = this;
       if (this.fog) {
         vm.enableFog();
@@ -453,7 +485,6 @@ export default {
 
     //天空盒
     $_enableSkyBox(e) {
-      this.skybox = e.target.checked;
       let vm = this;
       if (vm.skybox) {
         vm.enableSkyBox();
@@ -515,7 +546,6 @@ export default {
     //黑白照片
     blackAndWhiteChange(e) {
       const { viewer } = this;
-      this.blckWhite = e.target.checked;
       let vm = this;
       if (vm.blckWhite) {
         vm.removeOtherStages();
@@ -525,10 +555,6 @@ export default {
         );
         blackAndWhite.uniforms.gradations = 5.0; //(灰度级数)
 
-        console.log(
-            "viewer.scene.postProcessStages",
-            viewer.scene.postProcessStages
-        );
       } else {
         vm.removeOtherStages();
       }
@@ -536,16 +562,11 @@ export default {
     //夜视效果
     nightVision(e) {
       const { viewer } = this;
-      this.ntVision = e.target.checked;
       let vm = this;
       if (vm.ntVision) {
         vm.removeOtherStages();
         viewer.scene.postProcessStages.add(
             Cesium.PostProcessStageLibrary.createNightVisionStage()
-        );
-        console.log(
-            "viewer.scene.postProcessStages",
-            viewer.scene.postProcessStages
         );
       } else {
         vm.removeOtherStages();

@@ -1,24 +1,18 @@
 <template>
   <div class="mapgis-3d-scene-attr">
-    <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left">
+    <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
-      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-        <mapgis-ui-checkbox :checked="skyAtmosphere" @change="enableSkyAtmosphere">大气渲染
-        </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox :checked="bloom" @change="enableBloom">全局泛光
-        </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox :checked="undgrd" @change="enableUndgrd">地下模式
-        </mapgis-ui-checkbox>
+      <mapgis-ui-form-model-item label="大气渲染" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-        <mapgis-ui-checkbox v-model="compass" @change="enableNavigation">罗盘控件
-        </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox v-model="zoom" @change="enableNavigation">缩放控件
-        </mapgis-ui-checkbox>
+      <mapgis-ui-form-model-item label="全局泛光" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="bloom" @change="enableBloom">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item v-show="bloom" label="泛光亮度">
+      <mapgis-ui-form-model-item label="泛光亮度" v-show="bloom">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="bloomBrt"
@@ -41,7 +35,7 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item v-show="bloom" label="泛光对比度">
+      <mapgis-ui-form-model-item label="泛光对比度" v-show="bloom">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="bloomCtrst"
@@ -62,6 +56,21 @@
               @change="bloomCtrstChange"
           />
         </mapgis-ui-space>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="地下模式" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="undgrd" @change="enableUndgrd">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="罗盘控件" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="compass" @change="enableNavigation">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="缩放控件" :wrapperCol="{span: 4,offset: 14}">
+        <mapgis-ui-switch size="small" v-model="zoom" @change="enableNavigation">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
       <!--      <mapgis-ui-form-model-item label="stage亮度">-->
@@ -220,10 +229,10 @@ export default {
       return layout === "horizontal"
           ? {
             labelCol: {span: 6},
-            wrapperCol: {span: 18}
+            wrapperCol: {span: 16}
           }
           : {};
-    }
+    },
   },
   mounted() {
     const {viewer} = this;
@@ -236,26 +245,22 @@ export default {
     /*
     * 大气渲染
     * */
-    enableSkyAtmosphere(e) {
+    enableSkyAtmosphere() {
       const {viewer} = this;
-      this.skyAtmosphere = e.target.checked;
       viewer.scene.skyAtmosphere.show = this.skyAtmosphere;
     },
     /*
     * 全局泛光
     * */
-    enableBloom(e) {
+    enableBloom() {
       const {viewer} = this;
-      // console.log(`checked = ${e.target.checked}`);
-      this.bloom = e.target.checked;
       viewer.scene.postProcessStages.bloom.enabled = this.bloom;
     },
     /*
     * 地下模式
     * */
-    enableUndgrd(e) {
+    enableUndgrd() {
       const {viewer} = this;
-      this.undgrd = e.target.checked;
       viewer.scene.screenSpaceCameraController.enableCollisionDetection = !this.undgrd;
       viewer.scene.globe.translucency.enabled = this.undgrd;
       viewer.scene.globe.translucency.backFaceAlpha = 1;
@@ -267,7 +272,6 @@ export default {
     * */
     enableNavigation(e) {
       const {viewer} = this;
-      // this.compass = e.target.checked;
       if (viewer.cesiumNavigation) {
         viewer.cesiumNavigation.destroy();
       }
@@ -280,28 +284,16 @@ export default {
     /*
     * 泛光亮度
     * */
-    bloomBrtChange(e) {
+    bloomBrtChange() {
       const {viewer} = this;
-      this.bloomBrt = e;
-      console.log("wwww", e);
       viewer.scene.postProcessStages.bloom.uniforms.brightness = this.bloomBrt;
-      console.log(
-          "viewer.scene.postProcessStages.bloom.uniforms.brightness",
-          viewer.scene.postProcessStages.bloom.uniforms.brightness
-      );
     },
     /*
     * 泛光对比度
     * */
-    bloomCtrstChange(e) {
+    bloomCtrstChange() {
       const {viewer} = this;
-      this.bloomCtrst = e;
-      console.log("wwww", e);
       viewer.scene.postProcessStages.bloom.uniforms.contrast = this.bloomCtrst;
-      console.log(
-          "viewer.scene.postProcessStages.bloom.uniforms.contrast",
-          viewer.scene.postProcessStages.bloom.uniforms.contrast
-      );
     },
     /*
     * stage亮度
@@ -353,9 +345,11 @@ export default {
 <style scoped>
 .mapgis-3d-scene-attr {
   padding: 0px 8px;
+
 }
 
 .mapgis-ui-form-item {
   margin: 0;
 }
+
 </style>
