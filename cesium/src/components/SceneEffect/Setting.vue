@@ -106,12 +106,12 @@ export default {
 
 <style>
 .mapgis-3d-setting {
-  display: block;
   position: relative;
 }
 
 .mapgis-3d-setting-control {
   height: fit-content;
+  width: 320px;
 }
 
 </style>
