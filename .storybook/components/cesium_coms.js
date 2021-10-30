@@ -9,6 +9,7 @@ export { default as Mapgis3dMeasure } from "../../cesium/src/components/UI/Contr
 export { default as Mapgis3dCompare } from "../../cesium/src/components/UI/Controls/Compare/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "../../cesium/src/components/UI/Controls/Legend/Legend.vue";
 export { default as Mapgis3DDataFlow } from "../../cesium/src/components/Layer/DataFlow/DataFlow";
+export { default as Mapgis3DTrack } from "../../cesium/src/components/Layer/Track/Track";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "../../cesium/src/components/Provider/ImageProvider/ImageryLayer.vue";
