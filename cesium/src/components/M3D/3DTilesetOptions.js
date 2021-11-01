@@ -14,6 +14,24 @@ export default {
     type: [String, Number],
     default: () => (Math.random() * 100000000).toFixed(0)
   },
+
+  enableTips: {},
+  enablePopup: {},
+  tipsOptions: {
+    type: Object,
+    default: () => {
+      return { title: "name" };
+    }
+  },
+  popupOptions: {
+    type: Object,
+    default: () => {
+      return { title: "name" };
+    }
+  },
+
+  highlightStyle: {},
+
   layers: {
     type: [String],
     default: undefined
