@@ -171,6 +171,8 @@ export default {
         let m3ds = find.source;
         m3ds && m3ds.forEach(m3d => (m3d.show = show));
       }
+      this.layerList = this.parseLayers();
+      this.changeLayerVisible(this.layerList);
     },
     changeOpacity(opacity) {
       const { vueKey, vueIndex } = this;
