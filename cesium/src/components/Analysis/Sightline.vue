@@ -243,7 +243,7 @@ export default {
         color: new Cesium.Color(0.2, 0.4, 0.3, 1.0),
         callback: function (result) {
           drawElement.stopDrawing();
-          find.options.visiblityAnalysis.lookAroundAnalysis(result.center, result.radius);
+          visibility.lookAroundAnalysis(result.center, result.radius);
         }
       });
     },
@@ -355,7 +355,7 @@ export default {
         this.viewPosition = cartesian;
 
         // 添加观察点到地图
-        this.addViewPoint(cartesian);
+        // this.addViewPoint(cartesian);
         this.hasViewPosition = true;
       } else {
         const visibility = this.createVisibility();
@@ -375,7 +375,7 @@ export default {
         );
 
         // 添加目标点到地图
-        this.addTargetPoint(cartesian);
+        // this.addTargetPoint(cartesian);
       }
     },
 

@@ -103,11 +103,20 @@ export default {
         markers.forEach(this.onHighlightFeature);
       }
     },
-    fitBound(nV) {
-      if (nV) {
-        this.zoomTo(nV);
-      }
+    fitBound:{
+      handler(nV){
+        if (nV) {
+              this.zoomTo(nV);
+            }
+      },
+      immediate:true,
+      deep:true
     },
+    // fitBound(nV) {
+    //   if (nV) {
+    //     this.zoomTo(nV);
+    //   }
+    // },
     selectionBound(nV) {
       this.zoomOrPanTo(nV);
     },
