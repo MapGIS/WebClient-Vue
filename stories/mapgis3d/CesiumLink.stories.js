@@ -53,5 +53,5 @@ const Template = (args, { argTypes }) => ({
   </div>`,
 });
 
-export const 多屏联动 = Template.bind({});
-多屏联动.args = {};
+export const 三维联动 = Template.bind({});
+三维联动.args = {};
