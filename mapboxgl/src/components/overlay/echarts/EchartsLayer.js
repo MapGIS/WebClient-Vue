@@ -76,6 +76,7 @@ import { MapCoordSys } from "./MapCoordSys";
 export class EchartsLayer {
   constructor(map, options) {
     this.map = map;
+    window["echartsMapboxMap"] = map;
     this.options = options;
     this.layerId = options.layerId || "echartlayerdefaultid";
     this.layerClass = options.classId || "echartlayerdefaultclass";
@@ -176,7 +177,7 @@ export class EchartsLayer {
       render: function(mapModel, ecModel, api) {
         var rendering = true;
 
-        var mapboxglMap = echarts.mapboxglMap;
+        var mapboxglMap = echarts.mapboxglMap || window["echartsMapboxMap"];
 
         var viewportRoot = api.getZr().painter.getViewportRoot();
         var coordSys = mapModel.coordinateSystem;
