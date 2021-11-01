@@ -140,6 +140,15 @@ export default {
     stretchHeight:{
       type:Number,
       default:20
+    },
+    /**
+     * @type Number
+     * @default 8
+     * @description 时区，UTC标准时间 + 时区 = 本地时间
+     */
+    timeZone:{
+      type:Number,
+      default:8
     }
   },
   data() {
@@ -180,6 +189,11 @@ export default {
   destroyed() {
     this.removeAll();
   },
+  computed: {
+    formDataNew() {
+      return JSON.parse(JSON.stringify(this.formData));
+    }
+  },
   watch: {
     shadowColor: {
       handler: function (newVal, oldVal) {
@@ -210,6 +224,15 @@ export default {
         this.formData.stretchHeight = this.stretchHeight;
       },
       immediate:true
+    },
+    formDataNew:{
+      deep: true,
+      handler: function (newVal, oldVal) {
+        let find = this.findSource();
+        if (find && find.options.shadowAnalysis){
+          // console.log("shadowAnalysis",find.options.shadowAnalysis)
+        }
+      }
     }
   },
   methods: {
@@ -252,8 +275,9 @@ export default {
      * 时间字符串转JulianDate时间
      */
     getJulianDate(timeStr) {
+      let {timeZone} = this;
       const utc = this.Cesium.JulianDate.fromDate(new Date(timeStr)) // UTC
-      return this.Cesium.JulianDate.addHours(utc, 0, new this.Cesium.JulianDate()) // 北京时间
+      return this.Cesium.JulianDate.addHours(utc, timeZone, new this.Cesium.JulianDate()) // 北京时间
     },
 
     /**
@@ -338,8 +362,11 @@ export default {
           CesiumZondy.shadowAnalysisManager.addSource(
               self.vueKey,
               self.vueIndex,
-              {shadowAnalysis, drawElement},
-              {positionCopy: positionCopy}
+              null,
+              {
+                shadowAnalysis:shadowAnalysis,
+                drawElement:drawElement
+              }
           );
           // drawElement.stopDrawing();
         }
@@ -359,6 +386,10 @@ export default {
       const {date, startTime, endTime, time, timeType} = this.formData;
       // 时间段日照分析
       viewer.clock.shouldAnimate = true // 开启计时
+
+      // var utc = Cesium.JulianDate.fromDate(new Date('2019/10/04 15:00:00')); //UTC
+      // viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(utc, 8, new Cesium.JulianDate()); //北京时间=UTC+8=GMT+8
+
       viewer.clock.startTime = this.getJulianDate(
           `${date} ${this.formData.startTime}`
       )
@@ -396,6 +427,14 @@ export default {
         newobj[i] = typeof obj[i] === 'object' ? this.copy(obj[i]) : obj[i];
       }
       return newobj;
+    },
+    findSource() {
+      let {CesiumZondy, vueKey, vueIndex} = this;
+      let find = CesiumZondy.shadowAnalysisManager.findSource(
+          vueKey,
+          vueIndex
+      );
+      return find;
     },
     /**
      * 移除绘制插件和阴影分析结果
