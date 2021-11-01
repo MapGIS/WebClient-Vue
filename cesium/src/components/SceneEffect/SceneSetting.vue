@@ -2,26 +2,28 @@
   <mapgis-ui-div class="mapgis-3d-setting">
     <slot v-if="initial"></slot>
     <slot name="settingTool">
+      <img src="./components/关闭.png" class="closeButton">
       <mapgis-ui-tabs
           class="mapgis-3d-setting-control"
           default-active-key="1"
-          size="small"
           :animated="false"
+          :tabBarStyle="tabBarStyle"
+          :style="panelStyle"
       >
         <mapgis-ui-tab-pane key="1" tab="基本属性">
           <scene-attribute :layout="layout"></scene-attribute>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane key="2" force-render tab="场景特效">
           <scene-effect :layout="layout"></scene-effect>
-<!--          <mapgis-ui-row>-->
-<!--            <mapgis-ui-col :span="5">-->
-<!--              <mapgis-ui-checkbox-->
-<!--                  :checked="modelBloom"-->
-<!--                  @change="modelBloomChange"-->
-<!--              >模型泛光-->
-<!--              </mapgis-ui-checkbox>-->
-<!--            </mapgis-ui-col>-->
-<!--          </mapgis-ui-row>-->
+          <!--          <mapgis-ui-row>-->
+          <!--            <mapgis-ui-col :span="5">-->
+          <!--              <mapgis-ui-checkbox-->
+          <!--                  :checked="modelBloom"-->
+          <!--                  @change="modelBloomChange"-->
+          <!--              >模型泛光-->
+          <!--              </mapgis-ui-checkbox>-->
+          <!--            </mapgis-ui-col>-->
+          <!--          </mapgis-ui-row>-->
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
     </slot>
@@ -34,7 +36,7 @@ import SceneAttribute from "./components/SceneAttribute";
 import SceneEffect from "./components/SceneEffect";
 
 export default {
-  name: "mapgis-3d-setting",
+  name: "mapgis-3d-scene-setting",
   components: {
     SceneAttribute,
     SceneEffect
@@ -47,13 +49,20 @@ export default {
     layout: {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
+    },
+    panelStyle: {
+      type: Object,
     }
   },
   data() {
     return {
       initial: false,
       modelBloom: false,
-      transform: undefined
+      transform: undefined,
+      tabBarStyle: {
+        margin:'0px'
+      },
+
     };
   },
 
@@ -105,13 +114,26 @@ export default {
 </script>
 
 <style>
+
 .mapgis-3d-setting {
-  position: relative;
-}
-
-.mapgis-3d-setting-control {
+  /*width: 320px;*/
   height: fit-content;
-  width: 320px;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  padding: 0 10px;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2);
+  border-radius: 4px;
 }
 
+.closeButton{
+  width: 33px;
+  height: 33px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  margin-top: -16.5px;
+  margin-right: -16.5px;
+}
 </style>
