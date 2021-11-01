@@ -102,6 +102,8 @@ export function initVueCesium() {
     window.vueCesium.BloomEffectManager || new BloomEffectManager();
   window.vueCesium.DynamicLightLineManager =
     window.vueCesium.DynamicLightLineManager || new DynamicLightLineManager();
+  window.vueCesium.SearchLightManager =
+    window.vueCesium.SearchLightManager || new SearchLightManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
@@ -307,3 +309,4 @@ export class ExplosionManager extends BaseManager {}
 export class BloomEffectManager extends BaseManager {}
 export class DynamicLightLineManager extends BaseManager {}
 export class SettingToolManager extends BaseManager {}
+export class SearchLightManager extends BaseManager {}

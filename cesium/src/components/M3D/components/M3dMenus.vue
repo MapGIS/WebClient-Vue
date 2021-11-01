@@ -60,6 +60,12 @@
         :layerIndex="layerIndex"
       >
       </m3d-menu-dynamic-line>
+      <m3d-menu-searchlight
+        v-if="currentMenu == 'searchlight'"
+        :version="version"
+        :layerIndex="layerIndex"
+      >
+      </m3d-menu-searchlight>
     </div>
   </div>
 </template>
@@ -73,6 +79,7 @@ import M3dMenuProps from "./M3dMenuProps.vue";
 import M3dMenuExplosion from "./M3dMenuExplosion.vue";
 import M3dMenuBloom from "./M3dMenuBloom.vue";
 import M3dMenuDynamicLine from "./M3dMenuDynamicLine.vue";
+import M3dMenuSearchlight from "./M3dMenuSearchlight.vue";
 
 export default {
   name: "mapgis-3d-m3d-menus",
@@ -83,7 +90,8 @@ export default {
     M3dMenuProps,
     M3dMenuExplosion,
     M3dMenuBloom,
-    M3dMenuDynamicLine
+    M3dMenuDynamicLine,
+    M3dMenuSearchlight
   },
   props: {
     mode: {
@@ -158,7 +166,7 @@ export default {
               icon: "mapgis-wifi"
             },
             {
-              type: "star",
+              type: "searchlight",
               title: "探照灯",
               icon: "mapgis-star"
             },
