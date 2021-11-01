@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-3d-scene-effect">
-    <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left">
+    <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
 
 <!--      <mapgis-ui-form-model-item label="天气特效" >-->
 <!--          <mapgis-ui-checkbox :checked="sunlight" @change="enableSunlight">太阳-->
@@ -11,195 +11,190 @@
 <!--          </mapgis-ui-checkbox>-->
 <!--      </mapgis-ui-form-model-item>-->
 
-      <mapgis-ui-form-model-item label="太阳" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="sunlight" @change="enableSunlight">
+      <mapgis-ui-form-model-item label="太阳" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sunlight" @change="enableSunlight">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="星空" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="sceneSkybox" @change="enableSceneSkybox">
+      <mapgis-ui-form-model-item label="星空" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sceneSkybox" @change="enableSceneSkybox">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="云图" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="clouds" @change="$_enableClouds">
+      <mapgis-ui-form-model-item label="云图" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="clouds" @change="$_enableClouds">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="周期/秒" v-show="clouds">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="cloudsduration"
-              :max="10"
-              :min="1"
-              @change="cloudsDurationChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="cloudsduration"
-              :max="10"
-              :min="1"
-              @change="cloudsDurationChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <div class="parameter" v-show="clouds">
 
-      <mapgis-ui-form-model-item label="雨" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="rain" @change="$_enableRain">
+        <mapgis-ui-form-model-item label="周期/秒">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="cloudsduration"
+                :max="10"
+                :min="1"
+                @change="cloudsDurationChange"
+            />
+            <mapgis-ui-input-number
+                v-model="cloudsduration"
+                :max="10"
+                :min="1"
+                @change="cloudsDurationChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雨" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="rain" @change="$_enableRain">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雨速度" v-show="rain">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="speed"
-              :max="20.0"
-              :min="1.0"
-              @change="speedChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="speed"
-              :max="20.0"
-              :min="1.0"
-              @change="speedChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <div class="parameter" v-show="rain">
 
-      <mapgis-ui-form-model-item label="雨透明度" v-show="rain">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="rainOpacity"
-              :max="1"
-              :min="0"
-              :step="0.1"
-              @change="rainOpacityChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="rainOpacity"
-              :max="1"
-              :min="0"
-              :step="0.1"
-              @change="rainOpacityChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="雨速度" v-show="rain">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="speed"
+                :max="20.0"
+                :min="1.0"
+                @change="speedChange"
+            />
+            <mapgis-ui-input-number
+                v-model="speed"
+                :max="20.0"
+                :min="1.0"
+                @change="speedChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雨角度" v-show="rain">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="angle"
-              :max="90"
-              :min="0"
-              :step="10"
-              @change="angleChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="angle"
-              :max="90"
-              :min="0"
-              :step="10"
-              @change="angleChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="雨透明度" v-show="rain">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="rainOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="rainOpacityChange"
+            />
+            <mapgis-ui-input-number
+                v-model="rainOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="rainOpacityChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雪" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="snow" @change="$_enableSnow">
+        <mapgis-ui-form-model-item label="雨角度" v-show="rain">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="angle"
+                :max="90"
+                :min="0"
+                :step="10"
+                @change="angleChange"
+            />
+            <mapgis-ui-input-number
+                v-model="angle"
+                :max="90"
+                :min="0"
+                :step="10"
+                @change="angleChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雪" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="snow" @change="$_enableSnow">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雪粒大小" v-show="snow">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="size"
-              :max="20"
-              :min="5"
-              :step="5"
-              @change="szChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="size"
-              :max="20"
-              :min="5"
-              :step="5"
-              @change="szChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <div class="parameter" v-show="snow">
 
-      <mapgis-ui-form-model-item label="雪密度" v-show="snow">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="density"
-              :max="20"
-              :min="5"
-              :step="5"
-              @change="dstChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="density"
-              :max="20"
-              :min="5"
-              :step="5"
-              @change="dstChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="雪粒大小" >
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="size"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="szChange"
+            />
+            <mapgis-ui-input-number
+                v-model="size"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="szChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雾" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="fog" @change="$_enableFog">
+        <mapgis-ui-form-model-item label="雪密度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="density"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="dstChange"
+            />
+            <mapgis-ui-input-number
+                v-model="density"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="dstChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雾" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="fog" @change="$_enableFog">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="雾透明度" v-show="fog">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="fogOpacity"
-              :max="1"
-              :min="0"
-              :step="0.1"
-              @change="fogOpacityChange"
-              :style="{ minWidth: '100px' }"
-              size="small"
-          />
-          <mapgis-ui-input-number
-              v-model="fogOpacity"
-              :max="1"
-              :min="0"
-              :step="0.1"
-              @change="fogOpacityChange"
-              style="{ marginLeft: '16px'}"
-              size="small"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <div class="parameter" v-show="fog">
 
-      <mapgis-ui-form-model-item label="天空盒" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="skybox" @change="$_enableSkyBox">
+        <mapgis-ui-form-model-item label="雾透明度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="fogOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="fogOpacityChange"
+            />
+            <mapgis-ui-input-number
+                v-model="fogOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="fogOpacityChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="天空盒" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="skybox" @change="$_enableSkyBox">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
@@ -214,13 +209,13 @@
 <!--          </mapgis-ui-checkbox>-->
 <!--      </mapgis-ui-form-model-item>-->
 
-      <mapgis-ui-form-model-item label="黑白照片" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="blckWhite" @change="blackAndWhiteChange">
+      <mapgis-ui-form-model-item label="黑白照片" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="blckWhite" @change="blackAndWhiteChange">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="夜视效果" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="ntVision" @change="nightVision">
+      <mapgis-ui-form-model-item label="夜视效果" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="ntVision" @change="nightVision">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
@@ -588,10 +583,58 @@ export default {
 </script>
 
 <style scoped>
+
 .mapgis-3d-scene-effect {
-  padding: 0px 8px;
+  padding: 10px 0px;
 }
+
 .mapgis-ui-form-item{
-  margin: 0px;
+  margin: 0;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+  padding: 0 10px;
+}
+
+::v-deep .mapgis-ui-form-item-control{
+  text-align: right;
+}
+
+::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
+  content: url("titlew.png");
+  margin-right: 6px;
+}
+
+/*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
+/*  padding-left: 11px!important;*/
+/*}*/
+
+.mapgis-ui-input-number{
+  /*margin-left: 10px;*/
+  width: 60px;
+}
+
+.mapgis-ui-slider{
+  width: 120px;
+}
+
+::v-deep .mapgis-ui-slider-rail{
+  background-color: #F0F0F0;
+}
+
+::v-deep .parameter .mapgis-ui-slider-rail{
+  background-color: #FFFFFF;
+}
+::v-deep .mapgis-ui-slider-track{
+  background-color: #91D5FF;
+}
+::v-deep .mapgis-ui-slider-handle{
+  border: 2px solid #91D5FF;
+}
+
+.parameter{
+  background: #F1F1F1;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 </style>

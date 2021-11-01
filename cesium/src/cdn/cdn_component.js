@@ -56,7 +56,8 @@ export { default as Mapgis3dCutFill } from "../components/Analysis/Fill";
 export { default as Mapgis3dHeightlimited } from "../components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "../components/Analysis/Shadow";
 
-//场景效果组件
-export { default as Mapgis3dRainEffect } from "../components/SceneEffect/RainEffect";
-export { default as Mapgis3dSnowEffect } from "../components/SceneEffect/SnowEffect";
-export { default as Mapgis3dFogEffect } from "../components/SceneEffect/FogEffect";
+//场景设置组件
+// export { default as Mapgis3dRainEffect } from "../components/SceneEffect/RainEffect";
+// export { default as Mapgis3dSnowEffect } from "../components/SceneEffect/SnowEffect";
+// export { default as Mapgis3dFogEffect } from "../components/SceneEffect/FogEffect";
+export { default as Mapgis3dSceneSetting } from "../components/SceneEffect/SceneSetting";

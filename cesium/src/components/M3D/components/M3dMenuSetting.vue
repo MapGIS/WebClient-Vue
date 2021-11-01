@@ -6,7 +6,7 @@
 
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
-import EffectSetting from "../../SceneEffect/Setting.vue";
+import EffectSetting from "../../SceneEffect/SceneSetting";
 
 export default {
   name: "mapgis-3d-m3d-menu-setting",
