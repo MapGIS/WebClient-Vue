@@ -87,3 +87,4 @@ export { default as Mapgis3dSetting } from "./components/SceneEffect/Setting";
 export { default as Mapgis3DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";
 export { default as Mapgis3DDataFlow } from "./components/Layer/DataFlow/DataFlow";
 export { default as Mapgis3DTack } from "./components/Layer/Track/Track";
+export { default as Mapgis3DPlottingLayer } from "./components/Layer/Plotting/PlottingLayer";
