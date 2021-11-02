@@ -111,13 +111,15 @@
 ### `onEmitterChange`
 
 - **Description:** 切换发射类型，赋值可选 '盒状放射', '圆形放射', '锥形放射', '球形放射'
-- **parameter** value: 发射类型
+- **Param:** `{value}`
+- `value` 发射类型
 
 ### `onChangeEffect`
 
 - **Description:** 动态修改参数，及时响应函数
-- **parameter** val: 修改后的值
-- **parameter** key: 修改对应的参数名
+- **Param:** `{val，key}`
+  `val` 修改后的值
+  `key` 修改对应的参数名
 
 ## 事件
 
