@@ -1,33 +1,39 @@
 <template>
-  <mapgis-ui-div class="mapgis-3d-setting">
-    <slot v-if="initial"></slot>
-    <slot name="settingTool">
-      <img src="./components/关闭.png" class="closeButton">
-      <mapgis-ui-tabs
-          class="mapgis-3d-setting-control"
-          default-active-key="1"
-          :animated="false"
-          :tabBarStyle="tabBarStyle"
-          :style="panelStyle"
-      >
-        <mapgis-ui-tab-pane key="1" tab="基本属性">
-          <scene-attribute :layout="layout"></scene-attribute>
-        </mapgis-ui-tab-pane>
-        <mapgis-ui-tab-pane key="2" force-render tab="场景特效">
-          <scene-effect :layout="layout"></scene-effect>
-          <!--          <mapgis-ui-row>-->
-          <!--            <mapgis-ui-col :span="5">-->
-          <!--              <mapgis-ui-checkbox-->
-          <!--                  :checked="modelBloom"-->
-          <!--                  @change="modelBloomChange"-->
-          <!--              >模型泛光-->
-          <!--              </mapgis-ui-checkbox>-->
-          <!--            </mapgis-ui-col>-->
-          <!--          </mapgis-ui-row>-->
-        </mapgis-ui-tab-pane>
-      </mapgis-ui-tabs>
-    </slot>
-  </mapgis-ui-div>
+  <div>
+    <mapgis-ui-div class="mapgis-3d-setting">
+      <slot v-if="initial"></slot>
+      <slot name="settingTool">
+        <div class="mapgis-3d-setting-control" v-show="show"  :style="panelStyle">
+<!--          <div @mouseenter="hover=true" @mouseleave="hover=false">-->
+<!--            <img src="./components/关闭.png" class="closeButton" @click="closePanel" v-show="!hover">-->
+<!--            <img src="./components/关闭hover.png" class="closeButton" @click="closePanel" v-show="hover">-->
+<!--          </div>-->
+          <div class="control-header">
+            <label class="title">设置</label>
+            <div @mouseenter="hover=true" @mouseleave="hover=false">
+              <img src="./components/关闭2.png" @click="closePanel" v-show="!hover" class="closeButton2">
+              <img src="./components/关闭2hover.png" @click="closePanel" v-show="hover" class="closeButton2">
+            </div>
+          </div>
+          <mapgis-ui-tabs
+              default-active-key="1"
+              :animated="false"
+              :tabBarStyle="tabBarStyle"
+          >
+            <mapgis-ui-tab-pane key="1" tab="基本属性">
+              <scene-attribute :layout="layout"></scene-attribute>
+            </mapgis-ui-tab-pane>
+            <mapgis-ui-tab-pane key="2" force-render tab="场景特效">
+              <scene-effect :layout="layout"></scene-effect>
+            </mapgis-ui-tab-pane>
+          </mapgis-ui-tabs>
+        </div>
+      </slot>
+    </mapgis-ui-div>
+    <mapgis-ui-button class="openButton" @click="openPanel" type="primary" shape="circle">
+      <mapgis-ui-iconfont type="mapgis-setting" />
+    </mapgis-ui-button>
+  </div>
 </template>
 
 <script>
@@ -62,7 +68,8 @@ export default {
       tabBarStyle: {
         margin:'0px'
       },
-
+      show:true,
+      hover:false
     };
   },
 
@@ -77,47 +84,25 @@ export default {
     this.$emit("unload");
   },
   methods: {
-    //模型泛光
-    modelBloomChange(e) {
-      this.modelBloom = e.target.checked;
-      let vm = this;
-      if (vm.modelBloom) {
-        vm.enableModelBloom();
-      } else {
-        vm.removeModelBloom();
-      }
+
+    openPanel(){
+      this.show = !this.show;
     },
-    enableModelBloom() {
-      const { vueKey, vueIndex, viewer, Cesium } = this;
-      let modelBloom = new Cesium.BloomEffect(viewer, [], this.transform); //position传空数组表示对全部模型泛光处理
-      modelBloom.add();
-      console.log("modelBloom", modelBloom);
-      window.CesiumZondy.MeasureToolManager.addSource(
-        vueKey,
-        vueIndex,
-        modelBloom
-      );
-    },
-    removeModelBloom() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
-        if (manager.source) {
-          manager.source.remove();
-        }
-      });
-    },
-    setTransform(transform){
-      this.transform = transform;
-    },
+    closePanel(){
+      this.show = false;
+    }
 
   }
 };
 </script>
 
-<style>
+<style scoped>
 
-.mapgis-3d-setting {
+.mapgis-3d-setting-control {
   /*width: 320px;*/
   height: fit-content;
+  max-height: 536px;
+  overflow: scroll;
   position: absolute;
   top: 30px;
   left: 30px;
@@ -125,6 +110,29 @@ export default {
   background: #FFFFFF;
   box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2);
   border-radius: 4px;
+}
+.control-header{
+  height: 40px;
+  border-bottom: 1px solid #F0F0F0;
+  line-height: 40px;
+}
+.title{
+  padding-left: 10px;
+  font-size: 16px;
+  color: #333333;
+}
+.closeButton2{
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.openButton{
+  position: absolute;
+  top: 30px;
+  right: 30px;
 }
 
 .closeButton{
