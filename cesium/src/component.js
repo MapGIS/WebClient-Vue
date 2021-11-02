@@ -83,6 +83,7 @@ export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent
 // export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";
 // export { default as Mapgis3dFogEffect } from "./components/SceneEffect/FogEffect";
 export { default as Mapgis3dSceneSetting } from "./components/SceneEffect/SceneSetting";
+export { default as Mapgis3dSceneRoaming } from "./components/SceneEffect/SceneRoaming";
 
 export { default as Mapgis3DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";
 export { default as Mapgis3DDataFlow } from "./components/Layer/DataFlow/DataFlow";
