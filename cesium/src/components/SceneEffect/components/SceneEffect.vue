@@ -26,7 +26,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="clouds">
+      <div class="parameter" :style="{ maxHeight: cloudsParams }">
 
         <mapgis-ui-form-model-item label="周期/秒">
           <mapgis-ui-space>
@@ -53,7 +53,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="rain">
+      <div class="parameter" :style="{ maxHeight: rainParams }">
 
         <mapgis-ui-form-model-item label="雨速度" v-show="rain">
           <mapgis-ui-space>
@@ -120,7 +120,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="snow">
+      <div class="parameter" :style="{ maxHeight: snowParams }">
 
         <mapgis-ui-form-model-item label="雪粒大小" >
           <mapgis-ui-space>
@@ -169,7 +169,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="fog">
+      <div class="parameter" :style="{ maxHeight: fogParams }">
 
         <mapgis-ui-form-model-item label="雾透明度">
           <mapgis-ui-space>
@@ -303,8 +303,10 @@ export default {
     $_enableClouds(e) {
       let vm = this;
       if (vm.clouds) {
+        this.cloudsParams = "40px"
         vm.enableClouds();
       } else {
+        this.cloudsParams = "0px"
         vm.removeClouds();
       }
     },
@@ -341,8 +343,10 @@ export default {
     $_enableRain(e) {
       let vm = this;
       if (vm.rain) {
+        this.rainParams = "120px";
         vm.enableRain();
       } else {
+        this.rainParams = "0px";
         vm.removeWeather('Rain');
       }
     },
@@ -368,8 +372,10 @@ export default {
     $_enableSnow(e) {
       let vm = this;
       if (vm.snow) {
+        this.snowParams = "80px";
         vm.enableSnow();
       } else {
+        this.snowParams = "0px";
         vm.removeWeather('Snow');
       }
     },
@@ -389,8 +395,10 @@ export default {
     $_enableFog(e) {
       let vm = this;
       if (vm.fog) {
+        this.snowParams = "40px";
         vm.enableFog();
       } else {
+        this.snowParams = "0px";
         vm.removeWeather('Fog');
       }
     },
@@ -590,14 +598,14 @@ export default {
 
 .mapgis-ui-form-item{
   margin: 0;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
   padding: 0 10px;
 }
 
 ::v-deep .mapgis-ui-form-item-control{
   text-align: right;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
 }
 
 ::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
@@ -635,6 +643,13 @@ export default {
 .parameter{
   background: #F1F1F1;
   border-radius: 4px;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
+  overflow: hidden;
+  max-height: 0px;
+  overflow: hidden;
+  transition:max-height 1s;
+  -moz-transition:max-height 1s; /* Firefox 4 */
+  -webkit-transition:max-height 1s; /* Safari and Chrome */
+  -o-transition:max-height 1s; /* Opera */
 }
 </style>

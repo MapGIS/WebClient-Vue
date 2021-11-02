@@ -12,9 +12,9 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="bloom">
+      <div class="parameter" :style="{maxHeight: bloomParams}">
 
-        <mapgis-ui-form-model-item label="泛光亮度">
+        <mapgis-ui-form-model-item label="亮度">
           <mapgis-ui-space>
             <mapgis-ui-slider
                 v-model="bloomBrt"
@@ -34,7 +34,7 @@
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
 
-        <mapgis-ui-form-model-item label="泛光对比度">
+        <mapgis-ui-form-model-item label="对比度">
           <mapgis-ui-space>
             <mapgis-ui-slider
                 v-model="bloomCtrst"
@@ -206,6 +206,7 @@ export default {
       layercontrast: 1,
       layerhue: 0,
       layersaturation: 1,
+
     }
   },
   computed: {
@@ -238,17 +239,24 @@ export default {
     * */
     enableBloom() {
       const {viewer} = this;
-      viewer.scene.postProcessStages.bloom.enabled = this.bloom;
+      let vm = this;
+      if(vm.bloom){ this.bloomParams = "80px" }else{ this.bloomParams = "0px" }
+      setTimeout(function () {
+        viewer.scene.postProcessStages.bloom.enabled = vm.bloom;
+      },400)
     },
     /*
     * 地下模式
     * */
     enableUndgrd() {
       const {viewer} = this;
-      viewer.scene.screenSpaceCameraController.enableCollisionDetection = !this.undgrd;
-      viewer.scene.globe.translucency.enabled = this.undgrd;
-      viewer.scene.globe.translucency.backFaceAlpha = 1;
-      viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+      let vm = this;
+      setTimeout(function () {
+        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm.undgrd;
+        viewer.scene.globe.translucency.enabled = vm.undgrd;
+        viewer.scene.globe.translucency.backFaceAlpha = 1;
+        viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+      },300)
     },
 
     /*
@@ -334,14 +342,14 @@ export default {
 
 .mapgis-ui-form-item {
   margin: 0;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
   padding: 0 10px;
 }
 
 ::v-deep .mapgis-ui-form-item-control{
   text-align: right;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
 }
 
 ::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
@@ -386,9 +394,15 @@ export default {
 .parameter{
   background: #F1F1F1;
   border-radius: 4px;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
+  overflow: hidden;
+  max-height: 0px;
+  overflow: hidden;
+  transition:max-height .5s;
+  -moz-transition:max-height .5s; /* Firefox 4 */
+  -webkit-transition:max-height .5s; /* Safari and Chrome */
+  -o-transition:max-height .5s; /* Opera */
 }
-
 
 
 </style>
