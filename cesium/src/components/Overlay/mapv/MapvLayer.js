@@ -1,4 +1,5 @@
 import { MapvBaseLayer } from "./MapvBaseLayer";
+import debounce from "lodash/debounce";
 
 var idIndex = 0;
 
@@ -103,8 +104,21 @@ export class MapvLayer {
     let self = this;
     let map = this.map;
     //下面几个是cesium专属事件,clickEvent和mousemoveEvent是mapv内部自带的方法不放出来
-    this.innerMoveStart = this.moveStartEvent.bind(this);
-    this.innerMoveEnd = this.moveEndEvent.bind(this);
+    this.innerMoveStart = debounce(
+      () => {
+        this.moveStartEvent.bind(this);
+      },
+      100,
+      { leading: true }
+    );
+
+    this.innerMoveEnd = debounce(
+      () => {
+        this.moveEndEvent.bind(this);
+      },
+      100,
+      { leading: true }
+    );
 
     this.innnerZoomStart = this.zoomStartEvent.bind(this);
     this.innnerZoomEnd = this.zoomEndEvent.bind(this);
