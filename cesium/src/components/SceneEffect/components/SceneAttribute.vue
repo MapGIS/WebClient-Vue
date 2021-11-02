@@ -2,74 +2,72 @@
   <div class="mapgis-3d-scene-attr">
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
-      <mapgis-ui-form-model-item label="大气渲染" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
+      <mapgis-ui-form-model-item label="大气渲染" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="全局泛光" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="bloom" @change="enableBloom">
+      <mapgis-ui-form-model-item label="全局泛光" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="bloom" @change="enableBloom">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="泛光亮度" v-show="bloom">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="bloomBrt"
-              :max="0.2"
-              :min="-0.6"
-              :step="0.05"
-              :style="{ minWidth: '100px' }"
-              size="small"
-              @change="bloomBrtChange"
-          />
-          <mapgis-ui-input-number
-              v-model="bloomBrt"
-              :max="0.2"
-              :min="-0.6"
-              :step="0.05"
-              size="small"
-              style="{ marginLeft: '16px'}"
-              @change="bloomBrtChange"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <div class="parameter" v-show="bloom">
 
-      <mapgis-ui-form-model-item label="泛光对比度" v-show="bloom">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="bloomCtrst"
-              :max="255"
-              :min="-255"
-              :step="10"
-              :style="{ minWidth: '100px' }"
-              size="small"
-              @change="bloomCtrstChange"
-          />
-          <mapgis-ui-input-number
-              v-model="bloomCtrst"
-              :max="255"
-              :min="-255"
-              :step="10"
-              size="small"
-              style="{ marginLeft: '16px'}"
-              @change="bloomCtrstChange"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="泛光亮度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="bloomBrt"
+                :max="0.2"
+                :min="-0.6"
+                :step="0.05"
+                @change="bloomBrtChange"
+            />
+            <mapgis-ui-input-number
+                v-model="bloomBrt"
+                :max="0.2"
+                :min="-0.6"
+                :step="0.05"
+                size="small"
+                @change="bloomBrtChange"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="地下模式" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="undgrd" @change="enableUndgrd">
+        <mapgis-ui-form-model-item label="泛光对比度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="bloomCtrst"
+                :max="255"
+                :min="-255"
+                :step="10"
+                @change="bloomCtrstChange"
+            />
+            <mapgis-ui-input-number
+                v-model="bloomCtrst"
+                :max="255"
+                :min="-255"
+                :step="10"
+                size="small"
+                @change="bloomCtrstChange"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="地下模式" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="undgrd" @change="enableUndgrd">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="罗盘控件" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="compass" @change="enableNavigation">
+      <mapgis-ui-form-model-item label="罗盘控件" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="compass" @change="enableNavigation">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="缩放控件" :wrapperCol="{span: 4,offset: 14}">
-        <mapgis-ui-switch size="small" v-model="zoom" @change="enableNavigation">
+      <mapgis-ui-form-model-item label="缩放控件" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="zoom" @change="enableNavigation">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
@@ -80,8 +78,6 @@
       <!--              :max="2"-->
       <!--              :min="0"-->
       <!--              :step="0.2"-->
-      <!--              :style="{ minWidth: '100px' }"-->
-      <!--              size="small"-->
       <!--              @change="brtChange"-->
       <!--          />-->
       <!--          <mapgis-ui-input-number-->
@@ -102,8 +98,6 @@
               :max="3"
               :min="0"
               :step="0.2"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerBrtChange"
           />
           <mapgis-ui-input-number
@@ -112,7 +106,6 @@
               :min="0"
               :step="0.2"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerBrtChange"
           />
         </mapgis-ui-space>
@@ -125,8 +118,6 @@
               :max="3"
               :min="0"
               :step="0.2"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerCtrstChange"
           />
           <mapgis-ui-input-number
@@ -135,7 +126,6 @@
               :min="0"
               :step="0.2"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerCtrstChange"
           />
         </mapgis-ui-space>
@@ -148,8 +138,6 @@
               :max="1"
               :min="-1"
               :step="0.1"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerHueChange"
           />
           <mapgis-ui-input-number
@@ -158,7 +146,6 @@
               :min="-1"
               :step="0.1"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerHueChange"
           />
         </mapgis-ui-space>
@@ -171,8 +158,6 @@
               :max="3"
               :min="0"
               :step="0.2"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerSaturationChange"
           />
           <mapgis-ui-input-number
@@ -181,7 +166,6 @@
               :min="0"
               :step="0.2"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerSaturationChange"
           />
         </mapgis-ui-space>
@@ -229,7 +213,7 @@ export default {
       return layout === "horizontal"
           ? {
             labelCol: {span: 6},
-            wrapperCol: {span: 16}
+            wrapperCol: {span: 18}
           }
           : {};
     },
@@ -343,13 +327,68 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-3d-scene-attr {
-  padding: 0px 8px;
 
+.mapgis-3d-scene-attr {
+  padding: 10px 0px;
 }
 
 .mapgis-ui-form-item {
   margin: 0;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+  padding: 0 10px;
 }
+
+::v-deep .mapgis-ui-form-item-control{
+  text-align: right;
+}
+
+::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
+  content: url("titlew.png");
+  margin-right: 6px;
+}
+
+.mapgis-ui-input-number{
+  /*margin-left: 10px;*/
+  width: 60px;
+}
+
+.mapgis-ui-slider{
+  width: 120px;
+  min-width: 100px;
+}
+
+::v-deep .mapgis-ui-slider-rail{
+  background-color: #F0F0F0;
+}
+
+::v-deep .parameter .mapgis-ui-slider-rail{
+  background-color: #FFFFFF;
+}
+::v-deep .mapgis-ui-slider-track{
+  background-color: #91D5FF;
+}
+::v-deep .mapgis-ui-slider-handle{
+  border: 2px solid #91D5FF;
+}
+
+/*!*设置tab头宽度为80px*!
+
+.mapgis-ui-tabs-nav .mapgis-ui-tabs-tab{
+  padding: 12px;
+}
+
+.mapgis-ui-tabs-ink-bar[style]{
+  width: 80px!important;
+}*/
+
+.parameter{
+  background: #F1F1F1;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+
 
 </style>

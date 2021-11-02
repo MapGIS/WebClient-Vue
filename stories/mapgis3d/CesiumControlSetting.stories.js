@@ -1,4 +1,4 @@
-import Mapgis3dSetting from "../../cesium/src/components/SceneEffect/Setting.vue";
+import Mapgis3dSetting from "../../cesium/src/components/SceneEffect/SceneSetting";
 
 export default {
     title: "三维/场景子组件/场景设置",

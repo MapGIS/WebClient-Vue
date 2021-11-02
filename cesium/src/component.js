@@ -8,7 +8,7 @@ export { default as Mapgis3dMeasure } from "./components/UI/Controls/Measure/Mea
 export { default as Mapgis3dCompare } from "./components/UI/Controls/Compare/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "./components/UI/Controls/Legend/Legend.vue";
 export { default as Mapgis3dTable } from "./components/UI/Controls/Table/BaseTable.vue";
-export { default as Mapgis3dLocate} from "./components/UI/Controls/geoLocate/Locate.vue";
+export { default as Mapgis3dLocate } from "./components/UI/Controls/geoLocate/Locate.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -78,11 +78,12 @@ export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
 export { default as Mapgis3dComponentLegend } from "./components/UI/mixComponent/Legend";
 
-//场景效果组件
-export { default as Mapgis3dRainEffect } from "./components/SceneEffect/RainEffect";
-export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";
-export { default as Mapgis3dFogEffect } from "./components/SceneEffect/FogEffect";
-export { default as Mapgis3dSetting } from "./components/SceneEffect/Setting";
+//场景设置组件
+// export { default as Mapgis3dRainEffect } from "./components/SceneEffect/RainEffect";
+// export { default as Mapgis3dSnowEffect } from "./components/SceneEffect/SnowEffect";
+// export { default as Mapgis3dFogEffect } from "./components/SceneEffect/FogEffect";
+export { default as Mapgis3dSceneSetting } from "./components/SceneEffect/SceneSetting";
+export { default as Mapgis3dSceneRoaming } from "./components/SceneEffect/SceneRoaming";
 
 export { default as Mapgis3DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";
 export { default as Mapgis3DDataFlow } from "./components/Layer/DataFlow/DataFlow";
