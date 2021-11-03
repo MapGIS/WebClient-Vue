@@ -187,7 +187,6 @@ export default {
     editOptions: {
       handler: function () {
         this.editOptionsCopy = this.editOptions;
-        console.log("this.editOptionsCopy", this.editOptionsCopy)
       },
     }
   },
