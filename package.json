@@ -15,8 +15,8 @@
     "build-mapboxgl-cdn": "cd mapboxgl && npm run build-cdn",
     "build-ui-umd": "cd ui && npm run build",
     "build-ui-cdn": "cd ui && npm run build-cdn",
-    "build-storybook": "build-storybook -s ./stories/data -o storybook",
-    "storybook": "start-storybook -s ./stories/data -p 8895"
+    "build-storybook": "build-storybook -s ./stories/public -o storybook",
+    "storybook": "start-storybook -s ./stories/public -p 8895"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.2.0",
