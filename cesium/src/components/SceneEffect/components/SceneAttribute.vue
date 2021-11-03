@@ -188,7 +188,7 @@ export default {
     layout: {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
-    }
+    },
   },
   data() {
     return {
@@ -196,6 +196,7 @@ export default {
       bloom: false,
       bloomBrt: -0.3,
       bloomCtrst: 128,
+      bloomParams:undefined,
       undgrd: false,
       compass: false,
       zoom: false,
@@ -206,15 +207,14 @@ export default {
       layercontrast: 1,
       layerhue: 0,
       layersaturation: 1,
-
     }
   },
   computed: {
     formItemLayout({layout}) {
       return layout === "horizontal"
           ? {
-            labelCol: {span: 6},
-            wrapperCol: {span: 18}
+            labelCol: {span: 7},
+            wrapperCol: {span: 17}
           }
           : {};
     },
@@ -239,10 +239,18 @@ export default {
     * */
     enableBloom() {
       const {viewer} = this;
+      this.$emit('updateSpin',true);
       let vm = this;
-      if(vm.bloom){ this.bloomParams = "80px" }else{ this.bloomParams = "0px" }
+
+      if(vm.bloom){
+        this.bloomParams = "80px"
+      }else{
+        this.bloomParams = "0px"
+      }
+
       setTimeout(function () {
         viewer.scene.postProcessStages.bloom.enabled = vm.bloom;
+        vm.$emit('updateSpin',false);
       },400)
     },
     /*
@@ -250,12 +258,14 @@ export default {
     * */
     enableUndgrd() {
       const {viewer} = this;
+      this.$emit('updateSpin',true);
       let vm = this;
       setTimeout(function () {
         viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm.undgrd;
         viewer.scene.globe.translucency.enabled = vm.undgrd;
         viewer.scene.globe.translucency.backFaceAlpha = 1;
         viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+        vm.$emit('updateSpin',false);
       },300)
     },
 
@@ -337,7 +347,6 @@ export default {
 <style scoped>
 
 .mapgis-3d-scene-attr {
-  padding: 10px 0px;
 }
 
 .mapgis-ui-form-item {
@@ -358,13 +367,12 @@ export default {
 }
 
 .mapgis-ui-input-number{
-  /*margin-left: 10px;*/
+  margin-right: 12px;
   width: 60px;
 }
 
 .mapgis-ui-slider{
-  width: 120px;
-  min-width: 100px;
+  width: 110px;
 }
 
 ::v-deep .mapgis-ui-slider-rail{
@@ -397,12 +405,13 @@ export default {
   /*margin-bottom: 10px;*/
   overflow: hidden;
   max-height: 0px;
-  overflow: hidden;
   transition:max-height .5s;
   -moz-transition:max-height .5s; /* Firefox 4 */
   -webkit-transition:max-height .5s; /* Safari and Chrome */
   -o-transition:max-height .5s; /* Opera */
 }
 
-
+/*::v-deep .mapgis-ui-col-6{*/
+/*  padding-right: 16px;*/
+/*}*/
 </style>
