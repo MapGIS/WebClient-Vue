@@ -105,12 +105,12 @@ let editOptions = {
             type: "inputNumber",
             title: "半径",
             key: "radius",
-            value: 6
+            value: 12
         }, {
             type: "color",
             title: "颜色",
             key: "color",
-            value: "#000000"
+            value: "#d51b1b"
         }, {
             type: "slider",
             title: "透明度",
@@ -123,7 +123,7 @@ let editOptions = {
             type: "inputNumber",
             title: "边线宽度",
             key: "outlineWidth",
-            value: 1
+            value: 3
         }, {
             type: "color",
             title: "边线颜色",
