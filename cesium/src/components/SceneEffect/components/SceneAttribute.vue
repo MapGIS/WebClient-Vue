@@ -1,90 +1,95 @@
 <template>
   <div class="mapgis-3d-scene-attr">
-    <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left">
+    <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
-      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-        <mapgis-ui-checkbox :checked="skyAtmosphere" @change="enableSkyAtmosphere">大气渲染
-        </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox :checked="bloom" @change="enableBloom">全局泛光
-        </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox :checked="undgrd" @change="enableUndgrd">地下模式
-        </mapgis-ui-checkbox>
+      <mapgis-ui-form-model-item label="大气渲染" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">
-        <mapgis-ui-checkbox :checked="compass" @change="enableCmps">罗盘控件
-        </mapgis-ui-checkbox>
-        <mapgis-ui-checkbox :checked="zoom" @change="enableZm">缩放控件
-        </mapgis-ui-checkbox>
+      <mapgis-ui-form-model-item label="全局泛光" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="bloom" @change="enableBloom">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="泛光亮度" v-show="bloom">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="bloomBrt"
-              :max="0.2"
-              :min="-0.6"
-              :step="0.05"
-              :style="{ minWidth: '100px' }"
-              size="small"
-              @change="bloomBrtChange"
-          />
-          <mapgis-ui-input-number
-              v-model="bloomBrt"
-              :max="0.2"
-              :min="-0.6"
-              :step="0.05"
-              size="small"
-              style="{ marginLeft: '16px'}"
-              @change="bloomBrtChange"
-          />
-        </mapgis-ui-space>
+      <div class="parameter" :style="{maxHeight: bloomParams}">
+
+        <mapgis-ui-form-model-item label="亮度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="bloomBrt"
+                :max="0.2"
+                :min="-0.6"
+                :step="0.05"
+                @change="bloomBrtChange"
+            />
+            <mapgis-ui-input-number
+                v-model="bloomBrt"
+                :max="0.2"
+                :min="-0.6"
+                :step="0.05"
+                size="small"
+                @change="bloomBrtChange"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+        <mapgis-ui-form-model-item label="对比度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="bloomCtrst"
+                :max="255"
+                :min="-255"
+                :step="10"
+                @change="bloomCtrstChange"
+            />
+            <mapgis-ui-input-number
+                v-model="bloomCtrst"
+                :max="255"
+                :min="-255"
+                :step="10"
+                size="small"
+                @change="bloomCtrstChange"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="地下模式" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="undgrd" @change="enableUndgrd">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="泛光对比度" v-show="bloom">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="bloomCtrst"
-              :max="255"
-              :min="-255"
-              :step="10"
-              :style="{ minWidth: '100px' }"
-              size="small"
-              @change="bloomCtrstChange"
-          />
-          <mapgis-ui-input-number
-              v-model="bloomCtrst"
-              :max="255"
-              :min="-255"
-              :step="10"
-              size="small"
-              style="{ marginLeft: '16px'}"
-              @change="bloomCtrstChange"
-          />
-        </mapgis-ui-space>
+      <mapgis-ui-form-model-item label="罗盘控件" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="compass" @change="enableNavigation">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-<!--      <mapgis-ui-form-model-item label="stage亮度">-->
-<!--        <mapgis-ui-space>-->
-<!--          <mapgis-ui-slider-->
-<!--              v-model="brightness"-->
-<!--              :max="2"-->
-<!--              :min="0"-->
-<!--              :step="0.2"-->
-<!--              :style="{ minWidth: '100px' }"-->
-<!--              size="small"-->
-<!--              @change="brtChange"-->
-<!--          />-->
-<!--          <mapgis-ui-input-number-->
-<!--              v-model="brightness"-->
-<!--              :max="2"-->
-<!--              :min="0"-->
-<!--              :step="0.2"-->
-<!--              size="small"-->
-<!--              @change="brtChange"-->
-<!--          />-->
-<!--        </mapgis-ui-space>-->
-<!--      </mapgis-ui-form-model-item>-->
+      <mapgis-ui-form-model-item label="缩放控件" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="zoom" @change="enableNavigation">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <!--      <mapgis-ui-form-model-item label="stage亮度">-->
+      <!--        <mapgis-ui-space>-->
+      <!--          <mapgis-ui-slider-->
+      <!--              v-model="brightness"-->
+      <!--              :max="2"-->
+      <!--              :min="0"-->
+      <!--              :step="0.2"-->
+      <!--              @change="brtChange"-->
+      <!--          />-->
+      <!--          <mapgis-ui-input-number-->
+      <!--              v-model="brightness"-->
+      <!--              :max="2"-->
+      <!--              :min="0"-->
+      <!--              :step="0.2"-->
+      <!--              size="small"-->
+      <!--              @change="brtChange"-->
+      <!--          />-->
+      <!--        </mapgis-ui-space>-->
+      <!--      </mapgis-ui-form-model-item>-->
 
       <mapgis-ui-form-model-item label="亮度">
         <mapgis-ui-space>
@@ -93,8 +98,6 @@
               :max="3"
               :min="0"
               :step="0.2"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerBrtChange"
           />
           <mapgis-ui-input-number
@@ -103,7 +106,6 @@
               :min="0"
               :step="0.2"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerBrtChange"
           />
         </mapgis-ui-space>
@@ -116,8 +118,6 @@
               :max="3"
               :min="0"
               :step="0.2"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerCtrstChange"
           />
           <mapgis-ui-input-number
@@ -126,7 +126,6 @@
               :min="0"
               :step="0.2"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerCtrstChange"
           />
         </mapgis-ui-space>
@@ -139,8 +138,6 @@
               :max="1"
               :min="-1"
               :step="0.1"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerHueChange"
           />
           <mapgis-ui-input-number
@@ -149,7 +146,6 @@
               :min="-1"
               :step="0.1"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerHueChange"
           />
         </mapgis-ui-space>
@@ -162,8 +158,6 @@
               :max="3"
               :min="0"
               :step="0.2"
-              :style="{ minWidth: '100px' }"
-              size="small"
               @change="layerSaturationChange"
           />
           <mapgis-ui-input-number
@@ -172,7 +166,6 @@
               :min="0"
               :step="0.2"
               size="small"
-              style="{ marginLeft: '16px'}"
               @change="layerSaturationChange"
           />
         </mapgis-ui-space>
@@ -187,6 +180,7 @@
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "@mapgis/cesium/dist/MapGIS/Tools/Navigation/Styles/navigation-all.css"
+
 export default {
   name: "SceneAttribute",
   mixins: [ServiceLayer],
@@ -194,14 +188,15 @@ export default {
     layout: {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
-    }
+    },
   },
   data() {
     return {
       skyAtmosphere: true,
       bloom: false,
-      bloomBrt:- 0.3,
+      bloomBrt: -0.3,
       bloomCtrst: 128,
+      bloomParams:undefined,
       undgrd: false,
       compass: false,
       zoom: false,
@@ -218,11 +213,11 @@ export default {
     formItemLayout({layout}) {
       return layout === "horizontal"
           ? {
-            labelCol: {span: 6},
-            wrapperCol: {span: 18}
+            labelCol: {span: 7},
+            wrapperCol: {span: 17}
           }
           : {};
-    }
+    },
   },
   mounted() {
     const {viewer} = this;
@@ -235,84 +230,72 @@ export default {
     /*
     * 大气渲染
     * */
-    enableSkyAtmosphere(e) {
+    enableSkyAtmosphere() {
       const {viewer} = this;
-      // console.log(`checked = ${e.target.checked}`);
-      this.skyAtmosphere = e.target.checked;
       viewer.scene.skyAtmosphere.show = this.skyAtmosphere;
     },
     /*
     * 全局泛光
     * */
-    enableBloom(e) {
+    enableBloom() {
       const {viewer} = this;
-      // console.log(`checked = ${e.target.checked}`);
-      this.bloom = e.target.checked;
-      viewer.scene.postProcessStages.bloom.enabled = this.bloom;
+      this.$emit('updateSpin',true);
+      let vm = this;
+
+      if(vm.bloom){
+        this.bloomParams = "80px"
+      }else{
+        this.bloomParams = "0px"
+      }
+
+      setTimeout(function () {
+        viewer.scene.postProcessStages.bloom.enabled = vm.bloom;
+        vm.$emit('updateSpin',false);
+      },400)
     },
     /*
     * 地下模式
     * */
-    enableUndgrd(e) {
+    enableUndgrd() {
       const {viewer} = this;
-      this.undgrd = e.target.checked;
-      viewer.scene.screenSpaceCameraController.enableCollisionDetection = !this.undgrd;
-      viewer.scene.globe.translucency.enabled = this.undgrd;
-      viewer.scene.globe.translucency.backFaceAlpha = 1;
-      viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+      this.$emit('updateSpin',true);
+      let vm = this;
+      setTimeout(function () {
+        viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm.undgrd;
+        viewer.scene.globe.translucency.enabled = vm.undgrd;
+        viewer.scene.globe.translucency.backFaceAlpha = 1;
+        viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+        vm.$emit('updateSpin',false);
+      },300)
     },
+
     /*
-    * 罗盘控件
+    * 导航控件（罗盘控件和缩放控件的状态控制）
     * */
-    enableCmps(e) {
+    enableNavigation(e) {
       const {viewer} = this;
-      this.compass = e.target.checked;
-      /*
-      * 待确认：罗盘和缩放控件的移除
-      * */
-      var options = {};
+      if (viewer.cesiumNavigation) {
+        viewer.cesiumNavigation.destroy();
+      }
+      let options = {};
       options.enableCompass = this.compass;
       options.enableZoomControls = this.zoom;
-      let compass = viewer.createNavigationTool(options);
-      console.log('----------------------------------compass', compass)
+      viewer.createNavigationTool(options);
     },
-    /*
-    * 缩放控件
-    * */
-    enableZm(e) {
-      const {viewer} = this;
-      this.zoom = e.target.checked;
-      var options = {};
-      options.enableCompass = this.compass;
-      options.enableZoomControls = this.zoom;
-      let zoom = viewer.createNavigationTool(options);
-      console.log('----------------------------------zoom', zoom)
-    },
+
     /*
     * 泛光亮度
     * */
-    bloomBrtChange(e) {
+    bloomBrtChange() {
       const {viewer} = this;
-      this.bloomBrt = e;
-      console.log("wwww", e);
       viewer.scene.postProcessStages.bloom.uniforms.brightness = this.bloomBrt;
-      console.log(
-          "viewer.scene.postProcessStages.bloom.uniforms.brightness",
-          viewer.scene.postProcessStages.bloom.uniforms.brightness
-      );
     },
     /*
     * 泛光对比度
     * */
-    bloomCtrstChange(e) {
+    bloomCtrstChange() {
       const {viewer} = this;
-      this.bloomCtrst = e;
-      console.log("wwww", e);
       viewer.scene.postProcessStages.bloom.uniforms.contrast = this.bloomCtrst;
-      console.log(
-          "viewer.scene.postProcessStages.bloom.uniforms.contrast",
-          viewer.scene.postProcessStages.bloom.uniforms.contrast
-      );
     },
     /*
     * stage亮度
@@ -362,11 +345,73 @@ export default {
 </script>
 
 <style scoped>
+
 .mapgis-3d-scene-attr {
-  padding: 0px 8px;
 }
 
 .mapgis-ui-form-item {
   margin: 0;
+  padding: 0 10px;
 }
+
+::v-deep .mapgis-ui-form-item-control{
+  text-align: right;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+}
+
+::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
+  content: url("titlew.png");
+  margin-right: 6px;
+}
+
+.mapgis-ui-input-number{
+  margin-right: 12px;
+  width: 60px;
+}
+
+.mapgis-ui-slider{
+  width: 110px;
+}
+
+::v-deep .mapgis-ui-slider-rail{
+  background-color: #F0F0F0;
+}
+
+::v-deep .parameter .mapgis-ui-slider-rail{
+  background-color: #FFFFFF;
+}
+::v-deep .mapgis-ui-slider-track{
+  background-color: #91D5FF;
+}
+::v-deep .mapgis-ui-slider-handle{
+  border: 2px solid #91D5FF;
+}
+
+/*!*设置tab头宽度为80px*!
+
+.mapgis-ui-tabs-nav .mapgis-ui-tabs-tab{
+  padding: 12px;
+}
+
+.mapgis-ui-tabs-ink-bar[style]{
+  width: 80px!important;
+}*/
+
+.parameter{
+  background: #F1F1F1;
+  border-radius: 4px;
+  /*margin-bottom: 10px;*/
+  overflow: hidden;
+  max-height: 0px;
+  transition:max-height .5s;
+  -moz-transition:max-height .5s; /* Firefox 4 */
+  -webkit-transition:max-height .5s; /* Safari and Chrome */
+  -o-transition:max-height .5s; /* Opera */
+}
+
+/*::v-deep .mapgis-ui-col-6{*/
+/*  padding-right: 16px;*/
+/*}*/
 </style>

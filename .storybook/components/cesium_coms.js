@@ -9,6 +9,7 @@ export { default as Mapgis3dMeasure } from "../../cesium/src/components/UI/Contr
 export { default as Mapgis3dCompare } from "../../cesium/src/components/UI/Controls/Compare/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "../../cesium/src/components/UI/Controls/Legend/Legend.vue";
 export { default as Mapgis3DDataFlow } from "../../cesium/src/components/Layer/DataFlow/DataFlow";
+export { default as Mapgis3DTrack } from "../../cesium/src/components/Layer/Track/Track";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "../../cesium/src/components/Provider/ImageProvider/ImageryLayer.vue";
@@ -65,6 +66,9 @@ export { default as Mapgis3dDynamicSection } from "../../cesium/src/components/A
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";
 export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
+
 export { default as Mapgis3dParticleEffects } from "../../cesium/src/components/Overlay/ParticleEffects";
+
+export { default as Mapgis3dSceneRoaming } from "../../cesium/src/components/SceneEffect/SceneRoaming";
 
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";
