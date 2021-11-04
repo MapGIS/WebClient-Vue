@@ -26,7 +26,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="clouds">
+      <div class="parameter" :style="{ maxHeight: cloudsParams }">
 
         <mapgis-ui-form-model-item label="周期/秒">
           <mapgis-ui-space>
@@ -53,9 +53,9 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="rain">
+      <div class="parameter" :style="{ maxHeight: rainParams }">
 
-        <mapgis-ui-form-model-item label="雨速度" v-show="rain">
+        <mapgis-ui-form-model-item label="雨速度">
           <mapgis-ui-space>
             <mapgis-ui-slider
                 v-model="speed"
@@ -73,7 +73,7 @@
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
 
-        <mapgis-ui-form-model-item label="雨透明度" v-show="rain">
+        <mapgis-ui-form-model-item label="雨透明度">
           <mapgis-ui-space>
             <mapgis-ui-slider
                 v-model="rainOpacity"
@@ -93,7 +93,7 @@
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
 
-        <mapgis-ui-form-model-item label="雨角度" v-show="rain">
+        <mapgis-ui-form-model-item label="雨角度">
           <mapgis-ui-space>
             <mapgis-ui-slider
                 v-model="angle"
@@ -120,7 +120,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="snow">
+      <div class="parameter" :style="{ maxHeight: snowParams }">
 
         <mapgis-ui-form-model-item label="雪粒大小" >
           <mapgis-ui-space>
@@ -169,7 +169,7 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <div class="parameter" v-show="fog">
+      <div class="parameter" :style="{ maxHeight: fogParams }">
 
         <mapgis-ui-form-model-item label="雾透明度">
           <mapgis-ui-space>
@@ -249,29 +249,34 @@ export default {
       sceneSkybox: true,
       clouds: false,
       cloudsduration: 5,
+      cloudsParams:undefined,
       weather: undefined,
       rain: false,
       speed: 1.0,
       rainOpacity: 1.0,
       angle: 0,
+      rainParams:undefined,
       snow: false,
       size: 5,
       density: 5,
+      snowParams:undefined,
       fog: false,
       fogOpacity: 0.5,
       color: "#FFFFFF",
+      fogParams:undefined,
       skybox: false,
 
       blckWhite: false,
       ntVision: false,
+
     }
   },
   computed: {
     formItemLayout({ layout }) {
       return layout === "horizontal"
           ? {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 18 }
+            labelCol: { span: 7 },
+            wrapperCol: { span: 17 }
           }
           : {};
     }
@@ -290,7 +295,13 @@ export default {
     //太阳
     enableSunlight(e) {
       const { viewer } = this;
-      viewer.scene.globe.enableLighting = this.sunlight;
+      this.$emit('updateSpin',true);
+      let vm = this;
+      setTimeout(function () {
+        viewer.scene.globe.enableLighting = vm.sunlight;
+        vm.$emit('updateSpin',false);
+      },400)
+
     },
 
     //星空
@@ -301,12 +312,20 @@ export default {
 
     //云图
     $_enableClouds(e) {
+      this.$emit('updateSpin',true);
       let vm = this;
-      if (vm.clouds) {
-        vm.enableClouds();
-      } else {
-        vm.removeClouds();
-      }
+
+      if(vm.clouds){ this.cloudsParams = "40px" }else{ this.cloudsParams = "0px" }
+
+      setTimeout(function () {
+        if (vm.clouds) {
+          vm.enableClouds();
+        } else {
+          vm.removeClouds();
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
     },
     cloudsDurationChange(e){
       let vm = this;
@@ -339,12 +358,24 @@ export default {
 
     //雨
     $_enableRain(e) {
+      this.$emit('updateSpin',true);
       let vm = this;
-      if (vm.rain) {
-        vm.enableRain();
-      } else {
-        vm.removeWeather('Rain');
+
+      if(vm.rain){
+        this.rainParams = "120px"
+      }else{
+        this.rainParams = "0px";
       }
+
+      setTimeout(function () {
+        if (vm.rain) {
+          vm.enableRain();
+        } else {
+          vm.removeWeather('Rain');
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
     },
     speedChange(e) {
       let vm = this;
@@ -366,12 +397,24 @@ export default {
     },
     //雪
     $_enableSnow(e) {
+      this.$emit('updateSpin',true);
       let vm = this;
-      if (vm.snow) {
-        vm.enableSnow();
-      } else {
-        vm.removeWeather('Snow');
+
+      if(vm.snow){
+        this.snowParams = "80px";
+      }else{
+        this.snowParams = "0px"
       }
+
+      setTimeout(function () {
+        if (vm.snow) {
+          vm.enableSnow();
+        } else {
+          vm.removeWeather('Snow');
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
     },
     szChange(e) {
       let vm = this;
@@ -387,12 +430,22 @@ export default {
     },
     //雾
     $_enableFog(e) {
+      this.$emit('updateSpin',true);
       let vm = this;
-      if (vm.fog) {
-        vm.enableFog();
-      } else {
-        vm.removeWeather('Fog');
+      if(vm.fog){
+        this.fogParams = "40px"
+      }else{
+        this.fogParams = "0px"
       }
+      setTimeout(function () {
+        if (vm.fog) {
+          vm.enableFog();
+        } else {
+          vm.removeWeather('Fog');
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
     },
     fogOpacityChange(e) {
       let vm = this;
@@ -585,19 +638,18 @@ export default {
 <style scoped>
 
 .mapgis-3d-scene-effect {
-  padding: 10px 0px;
 }
 
 .mapgis-ui-form-item{
   margin: 0;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
   padding: 0 10px;
 }
 
 ::v-deep .mapgis-ui-form-item-control{
   text-align: right;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
 }
 
 ::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
@@ -610,12 +662,12 @@ export default {
 /*}*/
 
 .mapgis-ui-input-number{
-  /*margin-left: 10px;*/
+  margin-right: 12px;
   width: 60px;
 }
 
 .mapgis-ui-slider{
-  width: 120px;
+  width: 110px;
 }
 
 ::v-deep .mapgis-ui-slider-rail{
@@ -635,6 +687,13 @@ export default {
 .parameter{
   background: #F1F1F1;
   border-radius: 4px;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
+  overflow: hidden;
+  max-height: 0px;
+  transition:max-height .5s;
+  -moz-transition:max-height .5s; /* Firefox 4 */
+  -webkit-transition:max-height .5s; /* Safari and Chrome */
+  -o-transition:max-height .5s; /* Opera */
 }
+
 </style>
