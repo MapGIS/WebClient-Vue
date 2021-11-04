@@ -306,9 +306,9 @@ export default {
   margin-left: -8px;
   margin-top: 4px;
   overflow: hidden;
-  transition: max-height 1s;
-  -moz-transition: max-height 1s; /* Firefox 4 */
-  -webkit-transition: max-height 1s; /* Safari and Chrome */
-  -o-transition: max-height 1s; /* Opera */
+  transition: max-height 0.5s;
+  -moz-transition: max-height 0.5s; /* Firefox 4 */
+  -webkit-transition: max-height 0.5s; /* Safari and Chrome */
+  -o-transition: max-height 0.5s; /* Opera */
 }
 </style>

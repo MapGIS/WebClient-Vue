@@ -52,7 +52,7 @@ export default {
       setTimeout(function () {
         vm.switchIcon = false;
         vm.showTool = false;
-      }, 3000);
+      }, 1500);
     },
     $_layOut() {
       this.layOffTool = false;
@@ -61,7 +61,7 @@ export default {
       let vm = this;
       setTimeout(function () {
         vm.switchIcon = true;
-      }, 3000);
+      }, 1500);
     },
     $_chooseTool(tool) {
       this.activeTool = tool;
@@ -148,8 +148,8 @@ export default {
 }
 
 .plottingLayOff {
-  animation: layOff 3s;
-  -webkit-animation: layOff 3s;
+  animation: layOff 1.5s;
+  -webkit-animation: layOff 1.5s;
   animation-fill-mode: forwards;
   -moz-animation-fill-mode: forwards;
 }
@@ -173,8 +173,8 @@ export default {
 }
 
 .plottingLayOut {
-  animation: layOut 3s;
-  -webkit-animation: layOut 3s;
+  animation: layOut 1.5s;
+  -webkit-animation: layOut 1.5s;
   animation-fill-mode: forwards;
   -moz-animation-fill-mode: forwards;
 }
