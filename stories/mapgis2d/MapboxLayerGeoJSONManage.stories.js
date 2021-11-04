@@ -1,5 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
-import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer.vue";
+import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer";
 
 export default {
   title: "二维/图层/GeoJSON内置popup",
