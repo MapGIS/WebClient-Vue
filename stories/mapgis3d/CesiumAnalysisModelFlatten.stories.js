@@ -26,11 +26,11 @@ const Template = (args, { argTypes }) => ({
             :url="m3dUrl" 
         />
         
-        <mapgis-3d-modelflatten 
+        <mapgis-3d-model-flatten 
             :vueKey="vueKey" 
             :vueIndex="vueIndex"
         >
-        </mapgis-3d-modelflatten>
+        </mapgis-3d-model-flatten>
     </mapgis-web-scene>
     `,
 });
