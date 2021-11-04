@@ -1,6 +1,7 @@
 // import echarts from "echarts";
 import * as echarts from "echarts";
 import { MapCoordSys } from "./MapCoordSys";
+import debounce from "lodash/debounce";
 
 /**npm install echarts@5.0.2
  * mapboxgl的echars 4.0的实现
@@ -203,6 +204,15 @@ export class EchartsLayer {
           });
         };
 
+        var zoomHandler = function () {
+          if (rendering) {
+            return;
+          }
+          api.dispatchAction({
+            type: "MapboxGLRoma"
+          });
+        }
+
         function zoomEndHandler() {
           if (rendering) {
             return;
@@ -217,10 +227,14 @@ export class EchartsLayer {
         // Moveend may be triggered by centerAndZoom method when creating coordSys next time
         // mapboxglMap.removeEventListener('moveend', this._oldMoveHandler)
         mapboxglMap.off("zoomend", this._oldZoomEndHandler);
+        mapboxglMap.off("move", this._oldMoveHandler);
+        mapboxglMap.off("zoom", this._oldZoomHandler);
         mapboxglMap.on("move", moveHandler);
+        mapboxglMap.on("zoom", debounce(()=>{ zoomHandler }, 100,{ leading: true }));
         // mapboxglMap.addEventListener('moveend', moveHandler)
         mapboxglMap.on("zoomend", zoomEndHandler);
 
+        this._oldZoomHandler = zoomHandler;
         this._oldMoveHandler = moveHandler;
         this._oldZoomEndHandler = zoomEndHandler;
 

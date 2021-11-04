@@ -14,13 +14,13 @@ var idIndex = 0;
  * @param {Boolean} [mapVOptions.cesium.postRender=false] 是否实时渲染
  * @param {Boolean} [mapVOptionscesium.cesium.postRenderFrame=30] 每间隔多少帧渲染一次
  * @param container - {Element} 外部传入的div;外接的方式使用mapv
- * @example 
+ * @example
  *  // 构建对应的dataset
-    var dataSet = new mapv.DataSet(data);
+ var dataSet = new mapv.DataSet(data);
 
-    // 设置对应的参数
-    // https://github.com/huiyan-fe/mapv/blob/master/API.md
-    var options = {
+ // 设置对应的参数
+ // https://github.com/huiyan-fe/mapv/blob/master/API.md
+ var options = {
     context: '2d',    //cesium必须设置画布为2d
     postRender: false,
     postRenderFrame: 5,
@@ -48,8 +48,8 @@ var idIndex = 0;
     max: 100,
     draw: 'honeycomb'   // 绘制蜂窝图
     }
-    // 声明cesium的mapv图层并将其显示到三维球上
-    var mapvLayer = new CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
+ // 声明cesium的mapv图层并将其显示到三维球上
+ var mapvLayer = new CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
  */
 export class MapvLayer {
   constructor(map, dataSet, mapVOptions, container) {
@@ -308,10 +308,10 @@ export class MapvLayer {
 
     canvas.width =
       parseInt(this.map.canvas.width) ||
-      parseInt(this.map.container.offsetWidth);
+      parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
     canvas.height =
       parseInt(this.map.canvas.height) ||
-      parseInt(this.map.container.offsetHeight);
+      parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
     canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
     canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
 
@@ -337,10 +337,10 @@ export class MapvLayer {
 
     canvas.width =
       parseInt(this.map.canvas.width) ||
-      parseInt(this.map.container.offsetWidth);
+      parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
     canvas.height =
       parseInt(this.map.canvas.height) ||
-      parseInt(this.map.container.offsetHeight);
+      parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
     canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
     canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
     var devicePixelRatio = this.devicePixelRatio;
@@ -423,10 +423,10 @@ export class MapvLayer {
     canvas.style.left = "0px";
     canvas.width =
       parseInt(this.map.canvas.width) ||
-      parseInt(this.map.container.offsetWidth);
+      parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
     canvas.height =
       parseInt(this.map.canvas.height) ||
-      parseInt(this.map.container.offsetHeight);
+      parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
     canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
     canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
     var devicePixelRatio = this.devicePixelRatio;

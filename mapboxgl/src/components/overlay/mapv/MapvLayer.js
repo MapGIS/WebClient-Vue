@@ -1,5 +1,6 @@
 import mapboxgl from "@mapgis/mapbox-gl";
 import { MapvBaseLayer } from "./MapvBaseLayer";
+import debounce from "lodash/debounce";
 
 /**
  * @origin author kyle / http://nikai.us/
@@ -9,6 +10,7 @@ import { MapvBaseLayer } from "./MapvBaseLayer";
  * @param map - {Object} 传入的mapboxgl的地图对象
  * @param dataset - {MapvDataSet} 传入的mapv的属性。 <br>
  * @param mapvoption - {MapvOption} 可选参数。<br>
+ * @param {Boolean} [MapvOption.postRender=false] 是否实时渲染
  * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
  * @example 
  * var options = {
@@ -38,6 +40,7 @@ export class MapvLayer {
   constructor(map, dataSet, mapVOptions) {
     this.map = map;
     this.layerID = mapVOptions.layerID;
+    this.postRender = mapVOptions.postRender || false;
     delete mapVOptions["layerID"];
     this.mapvBaseLayer = new MapvBaseLayer(map, dataSet, mapVOptions, this);
     this.mapVOptions = mapVOptions;
@@ -69,6 +72,12 @@ export class MapvLayer {
     this.innerMoveEnd = this.moveEndEvent.bind(this);
 
     this.innnerZoomStart = this.zoomStartEvent.bind(this);
+    this.innerZoom = this.zoomEvent.bind(this);
+    // this.innerZoom = debounce(
+    //     ()=>{
+    //       this.zoomEvent.bind(this)
+    //     },100,
+    //     { leading: true });
     this.innnerZoomEnd = this.zoomEndEvent.bind(this);
 
     this.innnerRotateStart = this.rotateStartEvent.bind(this);
@@ -78,6 +87,9 @@ export class MapvLayer {
 
     this.innerRemove = this.removeEvent.bind(this);
 
+    if (this.postRender){
+      map.on("zoom", this.innerZoom);
+    }
     map.on("resize", this.innerResize);
 
     map.on("zoomstart", this.innnerZoomStart);
@@ -98,6 +110,9 @@ export class MapvLayer {
 
     map.off("zoomstart", this.innnerZoomStart);
     map.off("zoomend", this.innnerZoomEnd);
+    if (this.postRender){
+      map.off("zoom", this.innerZoom);
+    }
 
     map.off("rotatestart", this.innnerRotateStart);
     map.off("rotateend", this.innnerRotateEnd);
@@ -121,6 +136,9 @@ export class MapvLayer {
   zoomStartEvent() {
     this._reset();
     // this._unvisiable();
+  }
+  zoomEvent() {
+    this._reset();
   }
   zoomEndEvent() {
     this._unvisiable();
@@ -338,7 +356,9 @@ export class MapvLayer {
   remove() {
     this.removeAllData();
     this.unbindEvent();
-    this.mapContainer.removeChild(this.canvas);
+    var parent = this.canvas.parentElement;
+    parent.removeChild(this.canvas);
+    // this.mapContainer.removeChild(this.canvas);
     this.disposeFlag = true;
   }
 
@@ -347,9 +367,10 @@ export class MapvLayer {
    * @function mapboxgl.zondy.MapvLayer.prototype.destroy
    */
   destroy() {
-    this.removeAllData();
-    this.unbindEvent();
-    this.mapContainer.removeChild(this.canvas);
-    this.disposeFlag = true;
+    this.remove();
+    // this.removeAllData();
+    // this.unbindEvent();
+    // this.mapContainer.removeChild(this.canvas);
+    // this.disposeFlag = true;
   }
 }
