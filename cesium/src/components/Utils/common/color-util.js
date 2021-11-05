@@ -19,7 +19,7 @@ export function isRgba(color) {
 export function getColorObject(color, opacity) {
   let tempColor = color;
   if (color.indexOf("rgb") === -1) {
-    tempColor = this.hexToRgba(color, opacity);
+    tempColor = hexToRgba(color, opacity);
   }
   const strs = tempColor.split(",");
   const r = Number(strs[0].split("(")[1]);
@@ -100,7 +100,7 @@ export function rgbaToHex(color, disableAlpha) {
   }
   if (!color.includes("a") || disableAlpha) {
     // 如果是rgb或者rgba
-    return this.rgbToHex(color);
+    return rgbToHex(color);
   }
   const colorStr = color.split("(")[1].split(")")[0];
   const arr = colorStr.split(",");
@@ -135,7 +135,7 @@ export function rgbaToHex(color, disableAlpha) {
       break;
     }
   }
-  const rgbHex = this.rgbToHex(color);
+  const rgbHex = rgbToHex(color);
   return `${rgbHex}${alphaHex}`;
 }
 

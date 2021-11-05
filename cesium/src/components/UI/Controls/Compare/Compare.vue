@@ -5,7 +5,6 @@
 <script>
 export default {
   name: "mapgis-3d-compare",
-  // inject: ["Cesium", "webGlobe"],
   props: {
     beforeLayers: {
       type: Array,
@@ -62,9 +61,9 @@ export default {
         }else {
           slider = slider[0];
         }
-        let container = webGlobe.elementID.parentNode;
+        let container = document.getElementById(viewer.container.id).parentNode;
         container.appendChild(slider);
-        let layers = webGlobe.layers._layers;
+        let layers = viewer.imageryLayers._layers;
 
         if (vm.beforeLayers.length && vm.afterLayers.length) {
           for (let i = 1; i < layers.length; i++) {
@@ -86,7 +85,7 @@ export default {
               Cesium.ImagerySplitDirection.RIGHT;
         }
 
-        webGlobe.scene.imagerySplitPosition =
+        viewer.scene.imagerySplitPosition =
             slider.offsetLeft / slider.parentElement.offsetWidth;
 
         let handler = new Cesium.ScreenSpaceEventHandler(slider);
@@ -101,7 +100,7 @@ export default {
               (slider.offsetLeft + relativeOffset) /
               slider.parentElement.offsetWidth;
           slider.style.left = 100.0 * splitPosition + "%";
-          webGlobe.scene.imagerySplitPosition = splitPosition;
+          viewer.scene.imagerySplitPosition = splitPosition;
         }
 
         //鼠标左键按下事件
@@ -134,16 +133,16 @@ export default {
     },
   },
   destroyed() {
-    let webGlobe = window.CesiumZondy.getWebGlobe(this.vueKey);
-    if(webGlobe){
-      let layers = webGlobe.layers._layers;
+    let viewer = window.vueCesium.getViewer(this.vueKey);
+    if(viewer){
+      let layers = viewer.imageryLayers._layers;
       layers.forEach((layer) => {
         layer.show = true;
         layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
       });
       let slider = document.getElementsByClassName("slider");
       if(slider.length > 0){
-        let container = webGlobe.elementID.parentNode;
+        let container =  document.getElementById(viewer.container.id).parentNode;
         container.removeChild(slider[0]);
       }
     }

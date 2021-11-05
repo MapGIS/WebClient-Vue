@@ -43,7 +43,7 @@ import { colorToCesiumColor } from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-analysis-contour",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -119,8 +119,7 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
@@ -153,20 +152,19 @@ export default {
      * @return {Object} cesium内部color对象
      */
     _edgeColor() {
-      return colorToCesiumColor(this.contourColorCopy, this.webGlobe);
+      return colorToCesiumColor(this.contourColorCopy, this.viewer);
     },
     /**
      * @description 开始绘制并分析
      */
     analysis() {
-      let { CesiumZondy, vueKey, vueIndex, Cesium } = this;
+      let { CesiumZondy, vueKey, vueIndex, Cesium, viewer } = this;
       let find = CesiumZondy.ContourAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
       let { options } = find;
       let { contourAnalysis, drawElement } = options;
-      const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
       CesiumZondy.ContourAnalysisManager.changeOptions(
