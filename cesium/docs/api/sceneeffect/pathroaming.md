@@ -1,4 +1,4 @@
-> mapgis-3d-scene-roaming
+> mapgis-3d-path-roaming
 
 ## 属性
 
@@ -17,6 +17,14 @@
 - **非侦听属性**
 - **默认值:** `(Math.random() * 100000000).toFixed(0)`随机计算值
 - **描述:** 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
+
+### `positions`
+
+- **类型:** `Array`
+- **可选**
+- **非侦听属性**
+- **默认值:** `[{ x: 114.40150642571967, y: 30.46598749322795, z: 7.771843648287394 },{ x: 114.40168198567844, y: 30.46658777743634, z: 7.77844677044535 },{ x: 114.40227628732939, y: 30.467054308914204, z: 7.629952007623256 },{ x: 114.40232362516146, y: 30.467591260922404, z: 7.87974370284682 }]`
+- **描述:** 漫游路径坐标集合
 
 ### `speed`
 
@@ -108,52 +116,67 @@
 
 ## 方法
 
-### `onAddPathStart`
+### `onClickStartOrPauseOrResume`
 
-- **Description:** 新增路线
+- **Description:** 开始/暂停/继续漫游事件。
 
-### `onAddPathComplete`
+### `onClickStop`
 
-- **Description:** 新路线增加完成。
+- **Description:** 停止漫游。
 
-### `onAddPathCancel`
+### `onCheckBoxChange`
 
-- **Description:** 取消新路线增加。
+- **Description:** checkbox 勾选事件。（循环，显示路径，显示提示信息）。
+- **Param:** `{val,key}`
+- `val` checkbox 改变后的值
+- `key` checkbox 对应的字段，循环(isLoop)，显示路径(showPath)，显示提示信息(showInfo)
 
-### `onGotoPath`
+### `onSpeedChange`
 
-- **Description:** 进入指定路径设置界面。
-- **Param:** `{path}`
-- `path` 路径对象
+- **Description:** 更改速度。
+- **Param:** `{val}`
+- `val` 变更后的速度值
 
-### `onDeletePath`
+### `onEffectsChange`
 
-- **Description:** 删除指定路径。
-- **Param:** `{path}`
-- `path` 路径对象
+- **Description:** 更改方位角/俯仰角。
+- **Param:** `{val,key}`
+- `val` 改变后的值
+- `key` 修改对应的字段，方位角(heading)，俯仰角(pitch)
 
-### `onGotoHome`
+### `changeRange`
 
-- **Description:** 返回主页。
+- **Description:** 更改距离。
+- **Param:** `{val}`
+- `val` 改变后的值
 
-### `onGetPathRoaming`
+### `onTypeChange`
 
-- **Description:** 获取单个路径漫游组件对象。
-- **Payload** 单个路径漫游组件对象
+- **Description:** 切换插值方法
+- **Param:** `{val}`
+- `val` 改变后的值
+
+### `onModelChange`
+
+- **Description:** 切换模型
+- **Param:** `{val}`
+- `val` 改变后的值
 
 ## 事件
 
 ### `@load`
 
-- **Description:** 在 场景漫游组件 加载完毕后发送该事件
-- **Payload** 场景漫游组件对象
+- **Description:** 在 pathroaming 组件 加载完毕后发送该事件
+- **Payload** pathroaming 组件对象
 
 ### `@unload`
 
-- **Description:** 在 场景漫游组件 销毁发送该事件
-- **Payload** 场景漫游组件对象
+- **Description:** 在 pathroaming 组件 销毁发送该事件
+- **Payload** pathroaming 组件对象
 
 ## 示例
+
+### 非插槽方式
 
 ```vue
 <template>
@@ -172,7 +195,8 @@
       :url="m3dUrl"
     />
     <mapgis-ui-card class="storybook-ui-card">
-      <mapgis-3d-scene-roaming
+      <mapgis-3d-path-roaming
+        :positions="positions"
         :speed="speed"
         :exHeight="exHeight"
         :heading="heading"
@@ -205,6 +229,12 @@ export default {
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029"
       },
+      positions: [
+        { x: 114.40150642571967, y: 30.46598749322795, z: 7.771843648287394 },
+        { x: 114.40168198567844, y: 30.46658777743634, z: 7.77844677044535 },
+        { x: 114.40227628732939, y: 30.467054308914204, z: 7.629952007623256 },
+        { x: 114.40232362516146, y: 30.467591260922404, z: 7.87974370284682 }
+      ],
       speed: 10,
       exHeight: 1,
       heading: 90,
@@ -231,6 +261,115 @@ export default {
     };
   },
   methods: {}
+};
+</script>
+```
+
+### 插槽方式
+
+```vue
+<template>
+  <mapgis-web-scene style="{height: '100vh'}">
+    <mapgis-3d-ogc-wmts-layer
+      :baseUrl="url"
+      :wmtsLayer="layer"
+      :tileMatrixSet="tileMatrixSet"
+      :format="format"
+      :tilingScheme="tilingScheme"
+      :token="token"
+    ></mapgis-3d-ogc-wmts-layer>
+    <mapgis-3d-igs-m3d
+      :autoReset="autoReset"
+      :maximumScreenSpaceError="maximumScreenSpaceError"
+      :url="m3dUrl"
+    />
+    <mapgis-ui-card class="storybook-ui-card">
+      <mapgis-3d-path-roaming
+        :positions="positions"
+        :speed="speed"
+        :exHeight="exHeight"
+        :heading="heading"
+        :pitch="pitch"
+        :animationType="animationType"
+        :interpolationAlgorithm="interpolationAlgorithm"
+        :isLoop="isLoop"
+        :showPath="showPath"
+        :showInfo="showInfo"
+        :models="models"
+        @load="load"
+      >
+        <!--      这里是自定义的界面-->
+        <div>
+          <button @click="start">开始</button>
+          <button @click="stop">停止</button>
+        </div>
+      </mapgis-3d-path-roaming>
+    </mapgis-ui-card>
+  </mapgis-web-scene>
+</template>
+
+<script>
+export default {
+  name: "snowczm",
+  data() {
+    return {
+      url: "http://t0.tianditu.gov.cn/img_c/wmts",
+      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      autoReset: true,
+      maximumScreenSpaceError: 8,
+      tileMatrixSet: "c",
+      tilingScheme: "EPSG:4326",
+      layer: "img",
+      format: "tiles",
+      token: {
+        key: "tk",
+        value: "2ddaabf906d4b5418aed0078e1657029"
+      },
+      positions: [
+        { x: 114.40150642571967, y: 30.46598749322795, z: 7.771843648287394 },
+        { x: 114.40168198567844, y: 30.46658777743634, z: 7.77844677044535 },
+        { x: 114.40227628732939, y: 30.467054308914204, z: 7.629952007623256 },
+        { x: 114.40232362516146, y: 30.467591260922404, z: 7.87974370284682 }
+      ],
+      speed: 10,
+      exHeight: 1,
+      heading: 90,
+      pitch: 0,
+      animationType: 1,
+      interpolationAlgorithm: "LagrangePolynomialApproximation",
+      isLoop: true,
+      showPath: true,
+      showInfo: true,
+      models: [
+        {
+          label: "人",
+          value: "./CesiumModels/Cesium_Man.glb"
+        },
+        {
+          label: "卡车",
+          value: "./CesiumModels/CesiumMilkTruck.glb"
+        },
+        {
+          label: "飞机",
+          value: "./CesiumModels/Cesium_Air.gltf"
+        }
+      ]
+    };
+  },
+  methods: {
+    //坡向分析组件加载完毕事件
+    load(pathroaming) {
+      this.pathroaming = pathroaming;
+    },
+    //开始坡向分析
+    start() {
+      this.pathroaming.onClickStartOrPauseOrResume();
+    },
+    //移除坡向分析
+    stop() {
+      this.pathroaming.onClickStop();
+    }
+  }
 };
 </script>
 ```
