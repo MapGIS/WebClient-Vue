@@ -12,7 +12,7 @@ export default {
       managerName: "VectorTileManager"
     };
   },
-  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  inject: ["Cesium", "viewer", "CesiumZondy", "vueCesium"],
   created() {},
   mounted() {
     this.$_mount();
@@ -44,13 +44,9 @@ export default {
     }
   },
   methods: {
-    /* layerLoaded(e) {
-      console.log("layerLoaded", e);
-    }, */
     async createCesiumObject() {
-      const { $props, webGlobe, CesiumZondy } = this;
+      const { $props, viewer, CesiumZondy } = this;
       const { tilingScheme } = $props;
-      const viewer = webGlobe.viewer;
       let tileScheme;
 
       if (typeof tilingScheme === "string") {
@@ -93,14 +89,13 @@ export default {
     watchProp() {
       const {
         CesiumZondy,
-        webGlobe,
+        viewer,
         vueKey,
         vueIndex,
         show,
         mvtStyle,
         vectortilejson
       } = this;
-      const viewer = webGlobe.viewer;
       let find = CesiumZondy.VectorTileManager.findSource(vueKey, vueIndex);
 
       if (show) {
@@ -139,13 +134,12 @@ export default {
       return this.$vectortile ? this.$vectortile.provider : undefined;
     },
     $_mount() {
-      const { webGlobe, vueIndex, vueKey, CesiumZondy } = this;
+      const { vueIndex, vueKey, CesiumZondy } = this;
       const { layerStyle } = this;
       const { visible, opacity, zIndex } = layerStyle;
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
-      let webGlobeObj = this.$_getWebGlobe();
-      const { imageryLayers } = webGlobeObj.viewer;
-      const viewer = webGlobe.viewer;
+      let viewer = this.$_getWebGlobe();
+      const { imageryLayers } = viewer;
 
       if (viewer.isDestroyed()) return;
       this.$emit("load", this);
@@ -198,8 +192,7 @@ export default {
       });
     },
     $_unmount() {
-      const { webGlobe, vueKey, vueIndex, CesiumZondy } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, vueKey, vueIndex, CesiumZondy } = this;
       let find = CesiumZondy.VectorTileManager.findSource(vueKey, vueIndex);
       if (find) {
         !viewer.isDestroyed() && find.options.vectortile.destroy();

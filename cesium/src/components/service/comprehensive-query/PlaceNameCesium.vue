@@ -29,7 +29,7 @@ import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 export default {
   name: "place-name-cesium",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     selectedMarkerIcon: {
       type: String,
