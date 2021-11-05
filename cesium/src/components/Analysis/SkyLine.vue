@@ -4,32 +4,36 @@
       <div>
         <mapgis-ui-setting-form :wrapper-width="200">
           <mapgis-ui-mix-row
-              title="观察者信息："
-              type="MapgisUiInput"
-              :value="centerPosition"
-              :props="observerProps"
+            title="观察者信息："
+            type="MapgisUiInput"
+            :value="centerPosition"
+            :props="observerProps"
           />
           <mapgis-ui-mix-row
-              title="线宽度："
-              type="MapgisUiInputNumber"
-              v-model="formData.skylineWidth"
-              :props="lineWidthProps"
+            title="线宽度："
+            type="MapgisUiInputNumber"
+            v-model="formData.skylineWidth"
+            :props="lineWidthProps"
           />
           <mapgis-ui-mix-row
-              title="线颜色："
-              type="MapgisUiColorPicker"
-              v-model="formData.skylineColor"
+            title="线颜色："
+            type="MapgisUiColorPicker"
+            v-model="formData.skylineColor"
           />
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="addSkyLine">天际线</mapgis-ui-button>
-          <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
+          <mapgis-ui-button type="primary" @click="addSkyLine"
+            >天际线</mapgis-ui-button
+          >
+          <mapgis-ui-button @click="showAnalysis2d"
+            >二维天际线</mapgis-ui-button
+          >
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
         <mapgis-ui-mask
-            :parentDivClass="'cesium-map-wrapper'"
-            :loading="maskShow"
-            :text="maskText"
+          :parentDivClass="'cesium-map-wrapper'"
+          :loading="maskShow"
+          :text="maskText"
         ></mapgis-ui-mask>
       </div>
     </slot>
@@ -38,9 +42,14 @@
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
 import * as echarts from "echarts";
-import _cloneDeep from 'lodash/cloneDeep';
-import chartOptions from './skyline2dChartOptions';
-import {colorToCesiumColor, getCenterPosition} from "../WebGlobe/util";
+import _cloneDeep from "lodash/cloneDeep";
+import chartOptions from "./skyline2dChartOptions";
+import {
+  colorToCesiumColor,
+  getCenterPosition,
+  isLogarithmicDepthBufferEnable,
+  setLogarithmicDepthBufferEnable
+} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-skyline",
@@ -60,8 +69,8 @@ export default {
      * @description 天际线颜色
      */
     skylineColor: {
-      type:String,
-      default:'rgb(255,0,0)'
+      type: String,
+      default: "rgb(255,0,0)"
     },
     ...VueOptions
   },
@@ -70,34 +79,34 @@ export default {
     return {
       formData: {
         skylineWidth: 2,
-        skylineColor: 'rgb(255,0,0)'
+        skylineColor: "rgb(255,0,0)"
       },
       loading: null,
-      centerPosition: '',
+      centerPosition: "",
       positions2D: [],
-      skyline2dChart:null,
+      skyline2dChart: null,
       observerProps: {
         disabled: true,
-        placeholder: "经度，纬度，高程",
+        placeholder: "经度，纬度，高程"
       },
       lineWidthProps: {
         min: 0
       },
       maskShow: false,
-      maskText: '正在分析中, 请稍等...',
+      maskText: "正在分析中, 请稍等...",
       //是否开启缓存区
       isLogarithmicDepthBufferEnable: false
-    }
+    };
   },
-  watch:{
-    skylineWidth:{
-      handler: function (newVal, oldVal) {
+  watch: {
+    skylineWidth: {
+      handler: function(newVal, oldVal) {
         this.formData.skylineWidth = newVal;
       },
       immediate: true
     },
-    skylineColor:{
-      handler: function (newVal, oldVal) {
+    skylineColor: {
+      handler: function(newVal, oldVal) {
         this.formData.skylineColor = newVal;
       },
       immediate: true
@@ -105,8 +114,8 @@ export default {
   },
   mounted() {
     this.skyline2dChart = echarts.init(
-        document.getElementById('skyline-2d-chart')
-    )
+      document.getElementById("skyline-2d-chart")
+    );
     this.mount();
   },
   destroyed() {
@@ -114,40 +123,50 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const {baseUrl, options} = this;
+      const { baseUrl, options } = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-          resolve => {
-            resolve();
-          },
-          reject => {
-          }
+        resolve => {
+          resolve();
+        },
+        reject => {}
       );
     },
     mount() {
-      const {viewer, CesiumZondy, vueKey, vueIndex} = this;
+      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function (dataSource) {
+      promise.then(function(dataSource) {
         vm.$emit("load", vm);
         CesiumZondy.SkyLineAnalysisManager.addSource(
-            vueKey,
-            vueIndex,
-            dataSource,
-            {
-              skyLineAnalysis: null
-            }
+          vueKey,
+          vueIndex,
+          dataSource,
+          {
+            skyLineAnalysis: null
+          }
         );
       });
       //缓存区设置
-      this.isLogarithmicDepthBufferEnable = this.viewer.scene.logarithmicDepthBuffer;
-      if (this.isLogarithmicDepthBufferEnable === true) {
-        this.viewer.scene.logarithmicDepthBuffer= false;
+      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
+        this.webGlobe
+      );
+      if (
+        navigator.userAgent.indexOf("Linux") > 0 &&
+        navigator.userAgent.indexOf("Firefox") > 0
+      ) {
+        setLogarithmicDepthBufferEnable(false, this.webGlobe);
+      } else {
+        // 其他浏览器还是设置为true，不然会导致分析结果不正确，cesium1.8版本已不需要再额外设置
+        setLogarithmicDepthBufferEnable(true, this.webGlobe);
       }
     },
     unmount() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
+      let { CesiumZondy, vueKey, vueIndex } = this;
+      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
       if (find) {
         this.remove();
       }
@@ -155,27 +174,32 @@ export default {
 
       //缓存区设置
       if (
-          this.isLogarithmicDepthBufferEnable !==
-          this.viewer.scene.logarithmicDepthBuffer
+        this.isLogarithmicDepthBufferEnable !==
+        isLogarithmicDepthBufferEnable(this.webGlobe)
       ) {
-        this.viewer.scene.logarithmicDepthBuffer =
-            this.isLogarithmicDepthBufferEnable
+        setLogarithmicDepthBufferEnable(
+          this.isLogarithmicDepthBufferEnable,
+          this.webGlobe
+        );
       }
       this.$emit("unload", this);
     },
     remove() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
+      let { CesiumZondy, vueKey, vueIndex } = this;
+      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
       if (find && find.options) {
-        let {options} = find;
-        let {skyLineAnalysis} = options;
+        let { options } = find;
+        let { skyLineAnalysis } = options;
 
         // 判断是否已有天际线分析结果
         if (skyLineAnalysis) {
           // 移除天际线分析显示结果
           skyLineAnalysis.destroy();
           skyLineAnalysis = null;
-          this.centerPosition = '';
+          this.centerPosition = "";
           this.positions2D = [];
         }
       }
@@ -185,23 +209,23 @@ export default {
      * 获取二维天际线图表的xy轴信息
      */
     getChartOptions() {
-      const {canvas} = this.viewer;
+      const { canvas } = this.viewer;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       return this.positions2D.reduce(
-          ({x, y}, v) => {
-            x.push((1 - v.x / w).toFixed(8))
-            y.push((1 - v.y / h).toFixed(8))
-            return {
-              x,
-              y
-            }
-          },
-          {
-            x: [],
-            y: []
-          }
-      )
+        ({ x, y }, v) => {
+          x.push((1 - v.x / w).toFixed(8));
+          y.push((1 - v.y / h).toFixed(8));
+          return {
+            x,
+            y
+          };
+        },
+        {
+          x: [],
+          y: []
+        }
+      );
     },
     /**
      * 展示二维天际线
@@ -209,7 +233,7 @@ export default {
      */
     showAnalysis2d() {
       if (!this.positions2D.length) {
-        this.$message.warning('请先进行天际线分析')
+        this.$message.warning("请先进行天际线分析");
       } else {
         this.skyline2dChart.clear();
         this.skyline2dChart.showLoading();
@@ -224,17 +248,20 @@ export default {
      * @param positions2D 二维坐标点
      * @param positions3D 三维坐标点
      */
-    analysisEndCallBack({positions2D = [], positions3D}) {
+    analysisEndCallBack({ positions2D = [], positions3D }) {
       this.positions2D = positions2D.length ? _cloneDeep(positions2D) : [];
       this.maskShow = false;
     },
     addSkyLine() {
       this.remove();
       this.maskShow = true;
-      let {CesiumZondy, vueKey, vueIndex, viewer} = this;
+      let { CesiumZondy, vueKey, vueIndex, viewer } = this;
       let scene = viewer.scene;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
-      let {options} = find;
+      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
+        vueKey,
+        vueIndex
+      );
+      let { options } = find;
       scene.skyAtmosphere.showGroundAtmosphere = false;
 
       scene.skyBox.show = false;
@@ -242,21 +269,26 @@ export default {
 
       // 创建天际线实例
       let skylineAnalysisVal = options.skylineAnalysis;
-      skylineAnalysisVal = skylineAnalysisVal || new Cesium.SkyLineAnalysis({ scene: viewer.scene });
+      skylineAnalysisVal =
+        skylineAnalysisVal ||
+        new Cesium.SkyLineAnalysis({ scene: viewer.scene });
       skylineAnalysisVal._analysisEndCallBack = this.analysisEndCallBack;
       skylineAnalysisVal.color = this.edgeColor();
       skylineAnalysisVal.lineWidth = this.formData.skylineWidth;
       // 添加到地图上
       viewer.scene.visualAnalysisManager.add(skylineAnalysisVal);
 
-      this.$emit("success",)
-      CesiumZondy.SkyLineAnalysisManager.changeOptions(vueKey, vueIndex, "skyLineAnalysis", skylineAnalysisVal);
+      this.$emit("success");
+      CesiumZondy.SkyLineAnalysisManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "skyLineAnalysis",
+        skylineAnalysisVal
+      );
       this.setCenterPosition();
     },
     edgeColor() {
-      return colorToCesiumColor(
-          this.formData.skylineColor
-      )
+      return colorToCesiumColor(this.formData.skylineColor);
     },
     /**
      * 设置观察者位置
@@ -264,15 +296,15 @@ export default {
     setCenterPosition() {
       const position = getCenterPosition(this.viewer);
       if (position) {
-        const {lng, lat, height} = position
-        const lngStr = `${lng.toFixed(4)}°`
-        const latStr = `${lat.toFixed(4)}°`
-        const heightStr = `${height.toFixed(2)}m`
-        this.centerPosition = `${lngStr}，${latStr}，${heightStr}`
+        const { lng, lat, height } = position;
+        const lngStr = `${lng.toFixed(4)}°`;
+        const latStr = `${lat.toFixed(4)}°`;
+        const heightStr = `${height.toFixed(2)}m`;
+        this.centerPosition = `${lngStr}，${latStr}，${heightStr}`;
       }
     }
-  },
-}
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -294,8 +326,8 @@ export default {
     background: transparent;
   }
 
-  .mapgis-ui-sketch-color-picker .color-container{
-    border:unset;
+  .mapgis-ui-sketch-color-picker .color-container {
+    border: unset;
   }
 }
 
@@ -336,5 +368,4 @@ export default {
   z-index: 1000;
   background-color: #fff;
 }
-
 </style>

@@ -58,13 +58,29 @@
             </mapgis-ui-table>
           </div>
         </div>
-        <path-roaming
-          v-else
-          ref="refPathRoaming"
-          :path="roamingPath"
-          :models="models"
-          @goto-home="onGotoHome"
-        ></path-roaming>
+        <div v-else>
+          <div class="header" @click="onGotoHome">
+            <div>
+              <mapgis-ui-iconfont class="return" type="mapgis-left" />
+            </div>
+            <div class="name">{{ roamingPath.name }}</div>
+          </div>
+          <path-roaming
+            ref="refPathRoaming"
+            :positions="roamingPath.path"
+            :models="models"
+            :speed="roamingPath.para.speed"
+            :exHeight="roamingPath.para.exHeight"
+            :heading="roamingPath.para.heading"
+            :pitch="roamingPath.para.pitch"
+            :range="roamingPath.para.range"
+            :animationType="roamingPath.para.animationType"
+            :interpolationAlgorithm="roamingPath.para.interpolationAlgorithm"
+            :isLoop="roamingPath.para.isLoop"
+            :showPath="roamingPath.para.showPath"
+            :showInfo="roamingPath.para.showInfo"
+          ></path-roaming>
+        </div>
       </div>
     </slot>
   </div>
@@ -290,13 +306,7 @@ export default {
       const path = {
         name: `路线${pathId}`,
         id: pathId,
-        path: this.addedPositions
-          .map(item => {
-            return [item.x, item.y, item.z];
-          })
-          .reduce(function(a, b) {
-            return a.concat(b);
-          }),
+        path: this.addedPositions,
         para: {
           speed,
           exHeight,
@@ -322,6 +332,7 @@ export default {
       this.roaming = true;
     },
     onGotoHome() {
+      this.$refs.refPathRoaming.onClickStop();
       this.roaming = false;
     },
     onDeletePath(path) {
@@ -367,6 +378,19 @@ export default {
   .path-container .path-list {
     width: 280px;
     margin: 0 auto;
+  }
+
+  .header {
+    cursor: pointer;
+    display: flex;
+    align-content: center;
+    .return {
+      // color: @primary-color;
+      margin: 0 10px 0 0;
+    }
+    .name {
+      flex: 1;
+    }
   }
 }
 ::v-deep .mapgis-ui-table {
