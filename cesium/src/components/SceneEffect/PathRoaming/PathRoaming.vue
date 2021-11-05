@@ -54,7 +54,7 @@
                   type="number"
                   :min="1"
                   addon-after="公里/小时"
-                  @change="e => onSpeedChange(e.target.value)"
+                  :disabled="isStart ? true : false"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -519,11 +519,11 @@ export default {
         window.SceneWanderManager.animation[key] = val;
       }
     },
-    onSpeedChange(val) {
-      window.SceneWanderManager.animation.speed = parseFloat(
-        val * 0.28
-      ).toFixed(2);
-    },
+    // onSpeedChange(val) {
+    //   window.SceneWanderManager.animation.speed = parseFloat(
+    //     val * 0.28
+    //   ).toFixed(2);
+    // },
     onEffectsChange(val, key) {
       window.SceneWanderManager.animation[key] = this.Cesium.Math.toRadians(
         parseInt(val)

@@ -114,9 +114,7 @@ export function getCartographic(viewer) {
  */
 export function getPickEllipsoid(viewer) {
   const { w, h } = getWebGlobeCanvasSize(viewer);
-  return viewer.camera.pickEllipsoid(
-    new Cesium.Cartesian2(w / 2, h / 2)
-  );
+  return viewer.camera.pickEllipsoid(new Cesium.Cartesian2(w / 2, h / 2));
 }
 
 /**
@@ -188,7 +186,7 @@ export function isEnableLighting(webGlobe) {
  * @param {*} isEnable true:开启，false:关闭
  */
 export function setEnableLighting(isEnable, webGlobe) {
-  webGlobe.viewer.scene.globe.depthTestAgainstTerrain = isEnable;
+  webGlobe.viewer.scene.globe.enableLighting = isEnable;
 }
 
 /**
