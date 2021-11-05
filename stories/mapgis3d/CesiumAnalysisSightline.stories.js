@@ -38,7 +38,7 @@ const Template = (args, { argTypes }) => ({
         }
     },
     template: `
-    <mapgis-web-scene>
+    <mapgis-web-scene style="height: 95vh">
         <mapgis-3d-raster-layer :url="url" />
         <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
         <mapgis-ui-card class="storybook-ui-card">

@@ -40,7 +40,7 @@ import {
 
 export default {
   name: "mapgis-3d-analysis-slope",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -109,8 +109,7 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
@@ -141,15 +140,15 @@ export default {
     _enableBrightness() {
       // 开启光照，不然放大地图，分析结果显示异常
 
-      this.isEnableLighting = isEnableLighting(this.webGlobe);
+      this.isEnableLighting = isEnableLighting(this.viewer);
       if (!this.isEnableLighting) {
         // 未开启光照，开启
-        setEnableLighting(true, this.webGlobe);
+        setEnableLighting(true, this.viewer);
       }
       // 调高亮度
-      const { viewer } = this.webGlobe;
+      const { viewer } = this;
       const stages = viewer.scene.postProcessStages;
-      const brightness = getBrightness(this.webGlobe);
+      const brightness = getBrightness(this.viewer);
       if (!brightness) {
         // 初始没有brightness对象
         this.noBrightness = true;
@@ -159,7 +158,7 @@ export default {
       }
       // 设置前记录原有光照参数
       this.brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
-        this.webGlobe
+        this.viewer
       );
       const statusAndUniformsBrightness = {
         enabled: true,
@@ -167,7 +166,7 @@ export default {
       };
       setBrightnessStatusAndUniformsBrightness(
         statusAndUniformsBrightness,
-        this.webGlobe
+        this.viewer
       );
     },
     /**
@@ -178,7 +177,7 @@ export default {
       let find = CesiumZondy.SlopeAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { slopeAnalysis, drawElement } = options;
-      const { viewer } = this.webGlobe;
+      const { viewer } = this;
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
       CesiumZondy.SlopeAnalysisManager.changeOptions(
@@ -283,20 +282,20 @@ export default {
       // 恢复光照开启状态设置
       if (
         this.isEnableLighting !== undefined &&
-        this.isEnableLighting !== isEnableLighting(this.webGlobe)
+        this.isEnableLighting !== isEnableLighting(this.viewer)
       ) {
-        setEnableLighting(this.isEnableLighting, this.webGlobe);
+        setEnableLighting(this.isEnableLighting, this.viewer);
       }
-      const stages = this.webGlobe.viewer.scene.postProcessStages;
+      const stages = this.viewer.scene.postProcessStages;
       if (this.noBrightness) {
         // 如果开始没有brightness对象，恢复
-        stages.remove(this.webGlobe.viewer.scene.brightness);
-        this.webGlobe.viewer.scene.brightness = undefined;
+        stages.remove(this.viewer.scene.brightness);
+        this.viewer.scene.brightness = undefined;
       } else {
         // 恢复brightness参数设置
         if (this.brightnessStatusAndUniformsBrightness !== undefined) {
           const brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
-            this.webGlobe
+            this.viewer
           );
           if (
             this.brightnessStatusAndUniformsBrightness.enabled !==
@@ -306,7 +305,7 @@ export default {
           ) {
             setBrightnessStatusAndUniformsBrightness(
               this.brightnessStatusAndUniformsBrightness,
-              this.webGlobe
+              this.viewer
             );
           }
         }
