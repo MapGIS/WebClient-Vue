@@ -1,4 +1,3 @@
-<script src="../../Base/Vue/VueOptions.js"></script>
 <template>
   <span></span>
 </template>
@@ -37,7 +36,6 @@ export default {
       providerName: "ArcGisMapServerImageryProvider",
     }
   },
-  inject: ["Cesium", "webGlobe", "CesiumZondy"],
   mixins: [ServiceLayer],
   created() {
   },

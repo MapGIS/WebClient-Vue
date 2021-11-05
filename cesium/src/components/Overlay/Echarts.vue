@@ -23,11 +23,10 @@ export default {
       }
     }
   },
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   methods: {
     createCesiumObject() {
-      const {webGlobe} = this;
-      const viewer = webGlobe.viewer;
+      const viewer = this.viewer;
       return new EchartsLayer(viewer, this.options);
     },
     watchProp() {
@@ -44,14 +43,12 @@ export default {
       })
     },
     mount() {
-      const {webGlobe} = this;
-      const viewer = webGlobe.viewer;
+      const {viewer} = this;
       this.echartsLayer = this.createCesiumObject();
       this.echartsLayer.addTo(viewer);
     },
     unmount() {
-      const {webGlobe, echartsLayer} = this;
-      const viewer = webGlobe.viewer;
+      const {viewer, echartsLayer} = this;
       return !viewer.isDestroyed() && echartsLayer.remove();
     }
   },

@@ -22,18 +22,14 @@
           />
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="addSkyLine"
-            >天际线</mapgis-ui-button
-          >
-          <mapgis-ui-button @click="showAnalysis2d"
-            >二维天际线</mapgis-ui-button
-          >
+          <mapgis-ui-button type="primary" @click="addSkyLine">天际线</mapgis-ui-button>
+          <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
         <mapgis-ui-mask
-          :parentDivClass="'cesium-map-wrapper'"
-          :loading="maskShow"
-          :text="maskText"
+            :parentDivClass="'cesium-map-wrapper'"
+            :loading="maskShow"
+            :text="maskText"
         ></mapgis-ui-mask>
       </div>
     </slot>
@@ -149,16 +145,16 @@ export default {
       });
       //缓存区设置
       this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        this.webGlobe
+          viewer
       );
       if (
         navigator.userAgent.indexOf("Linux") > 0 &&
         navigator.userAgent.indexOf("Firefox") > 0
       ) {
-        setLogarithmicDepthBufferEnable(false, this.webGlobe);
+        setLogarithmicDepthBufferEnable(false, viewer);
       } else {
         // 其他浏览器还是设置为true，不然会导致分析结果不正确，cesium1.8版本已不需要再额外设置
-        setLogarithmicDepthBufferEnable(true, this.webGlobe);
+        setLogarithmicDepthBufferEnable(true, viewer);
       }
     },
     unmount() {
@@ -175,11 +171,11 @@ export default {
       //缓存区设置
       if (
         this.isLogarithmicDepthBufferEnable !==
-        isLogarithmicDepthBufferEnable(this.webGlobe)
+        isLogarithmicDepthBufferEnable(this.viewer)
       ) {
         setLogarithmicDepthBufferEnable(
           this.isLogarithmicDepthBufferEnable,
-          this.webGlobe
+          this.viewer
         );
       }
       this.$emit("unload", this);
@@ -263,9 +259,9 @@ export default {
       );
       let { options } = find;
       scene.skyAtmosphere.showGroundAtmosphere = false;
-
+      //
       scene.skyBox.show = false;
-      scene.skyAtmosphere.show = false;
+      // scene.skyAtmosphere.show = false;
 
       // 创建天际线实例
       let skylineAnalysisVal = options.skylineAnalysis;
