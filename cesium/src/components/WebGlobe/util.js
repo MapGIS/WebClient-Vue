@@ -177,32 +177,32 @@ export function setDepthTestAgainstTerrainEnable(isEnable, viewer) {
  * 判断当前是否开启了光照
  * @returns true:开启,false:关闭
  */
-export function isEnableLighting(webGlobe) {
-  return webGlobe.viewer.scene.globe.enableLighting;
+export function isEnableLighting(viewer) {
+  return viewer.scene.globe.enableLighting;
 }
 
 /**
  * 设置光照
  * @param {*} isEnable true:开启，false:关闭
  */
-export function setEnableLighting(isEnable, webGlobe) {
-  webGlobe.viewer.scene.globe.enableLighting = isEnable;
+export function setEnableLighting(isEnable, viewer) {
+  viewer.scene.globe.enableLighting = isEnable;
 }
 
 /**
  * 获取光照对象
  * @returns brightness对象
  */
-export function getBrightness(webGlobe) {
-  return webGlobe.viewer.scene.brightness;
+export function getBrightness(viewer) {
+  return viewer.scene.brightness;
 }
 
 /**
  * 获取光照对象的开启状态和Uniforms的brightness参数
  * @returns this.webGlobe.viewer.scene.brightness的enabled和uniforms.brightness值
  */
-export function getBrightnessStatusAndUniformsBrightness(webGlobe) {
-  const { enabled, uniforms } = webGlobe.viewer.scene.brightness;
+export function getBrightnessStatusAndUniformsBrightness(viewer) {
+  const { enabled, uniforms } = viewer.scene.brightness;
   const { brightness } = uniforms;
   return { enabled, brightness };
 }
@@ -213,9 +213,9 @@ export function getBrightnessStatusAndUniformsBrightness(webGlobe) {
  */
 export function setBrightnessStatusAndUniformsBrightness(
   { enabled, brightness },
-  webGlobe
+  viewer
 ) {
-  const sceneBrightness = webGlobe.viewer.scene.brightness;
+  const sceneBrightness = viewer.scene.brightness;
   sceneBrightness.enabled = enabled;
   sceneBrightness.uniforms.brightness = brightness;
 }

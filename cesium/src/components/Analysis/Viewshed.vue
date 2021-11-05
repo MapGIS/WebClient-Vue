@@ -454,9 +454,6 @@ export default {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-        // this.webGlobe.unRegisterMouseEvent("MOUSE_MOVE");
-        // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-        // this.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
         this.isAddEventListener = false;
 
         this.onInputStart();
@@ -531,13 +528,6 @@ export default {
       let {options} = find;
       let visualAnalysis = options.visualAnalysis;
       visualAnalysis = new Cesium.ViewshedAnalysis();
-      console.log("visualAnalysis",visualAnalysis);
-
-
-      // 锁定图层帧数,只显示一个可视域结果
-      // for (let i = 0; i < this.tilesetArray.length; i++) {
-      //   this.tilesetArray[i][0].debugFreezeFrame = true;
-      // }
 
       // 移除可视域分析结果
       viewer.scene.visualAnalysisManager._visualAnalysisList = [];
@@ -654,12 +644,11 @@ export default {
     onClickStop() {
       let {vueKey, vueIndex} = this;
       // 注销鼠标的各项监听事件
-      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-      // this.webGlobe.unRegisterMouseEvent("MOUSE_MOVE");
-      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-      // this.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
+      if (this.handlerAction){
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+      }
 
       // 清空观察点与目标点坐标
       this.posData.viewPositionX = "";
@@ -684,6 +673,7 @@ export default {
       // 移除可视域分析工具
       let find = this.findSource();
       if (find && find.options) {
+        this.viewer.scene.visualAnalysisManager.remove(find.options.visualAnalysis);
         find.options.visualAnalysis = null;
       }
 
@@ -714,15 +704,6 @@ export default {
         this.handlerAction.setInputAction(event => {
           this.registerMouseRClickEvent(event);
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-        // this.webGlobe.registerMouseEvent("MOUSE_MOVE", event => {
-        //   this.registerMouseMoveEvent(event);
-        // });
-        // this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
-        //   this.registerMouseLClickEvent(event);
-        // });
-        // this.webGlobe.registerMouseEvent("RIGHT_CLICK", event => {
-        //   this.registerMouseRClickEvent(event);
-        // });
         this.isAddEventListener = true;
       }
     },
