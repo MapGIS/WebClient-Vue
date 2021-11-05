@@ -15,7 +15,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { "mapgis-3d-measure": Mapgis3dMeasure },
   template: `
-    <mapgis-web-scene
+    <mapgis-web-scene style="height:95vh"
       v-bind:animation="false"
       v-bind:timeline="false">
       <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>

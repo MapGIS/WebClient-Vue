@@ -46,7 +46,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { Mapgis3dPopup },
-  template: `<mapgis-web-scene>
+  template: `<mapgis-web-scene style="height:95vh">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-igs-m3d>
     <mapgis-3d-draw :enableControl="enableControl" 

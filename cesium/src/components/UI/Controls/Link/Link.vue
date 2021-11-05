@@ -8,7 +8,7 @@ import { deepCopy } from "../../../Utils/deepequal";
 
 export default {
   name: "mapgis-3d-link",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     enable: { type: Boolean, default: false },
     includes: { type: Array, default: () => [] },
@@ -74,10 +74,10 @@ export default {
   methods: {
     getInstanceOptions() {
       let instanceOptions;
-      let { vueKey, CesiumZondy } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let { vueKey, vueCesium } = this;
+      vueCesium = vueCesium || window.vueCesium;
       if (vueKey !== "default") {
-        instanceOptions = CesiumZondy.GlobesManager[vueKey][0].options;
+        instanceOptions = vueCesium.ViewerManager[vueKey][0].options;
       }
       return instanceOptions;
     },
@@ -156,9 +156,9 @@ export default {
       viewer.camera.setView(view3d);
     },
     addHandler() {
-      let { CesiumZondy, includes, excludes, screenSpaceEventType } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
-      let sources = CesiumZondy.GlobesManager.flatAllSource();
+      let { vueCesium, includes, excludes, screenSpaceEventType } = this;
+      vueCesium = vueCesium || window.vueCesium;
+      let sources = vueCesium.ViewerManager.flatAllSource();
       let vm = this;
 
       this.stamp = new Date().getTime();
@@ -178,11 +178,11 @@ export default {
         }
 
         s.options.ScreenSpaceEventHandler = new Cesium.ScreenSpaceEventHandler(
-          s.source.viewer.scene.canvas
+          s.source.scene.canvas
         );
 
-        s.source.viewer.camera.changed.addEventListener(() => {
-          vm.updateView(s.source.viewer.camera);
+        s.source.camera.changed.addEventListener(() => {
+          vm.updateView(s.source.camera);
         });
 
         screenSpaceEventType.forEach(item => {
@@ -195,11 +195,11 @@ export default {
               if (!vm.active) return;
             }
 
-            vm.updateView(s.source.viewer.camera);
-            let _camerca = s.source.viewer.camera;
+            vm.updateView(s.source.camera);
+            let _camerca = s.source.camera;
             sources.forEach((other, j) => {
               if (i != j) {
-                vm.checkValid(other.source.viewer, _camerca, other.parent);
+                vm.checkValid(other.source, _camerca, other.parent);
               }
             });
           }, Cesium.ScreenSpaceEventType[item.type]);
@@ -207,10 +207,10 @@ export default {
       }
     },
     deleteHandler() {
-      let { CesiumZondy, screenSpaceEventType } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let { vueCesium, screenSpaceEventType } = this;
+      vueCesium = vueCesium || window.vueCesium;
       /* 这段代码要结合WebGlobe里面的如下代码才能明白
-      window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, webGlobe, {
+      window.vueCesium.ViewerManager.addSource(vueKey, vueIndex, webGlobe, {
         ScreenSpaceEventHandler: undefined,
       }); */
       const instance = this.getInstanceOptions();
@@ -224,7 +224,7 @@ export default {
         }
       }
 
-      let sources = CesiumZondy.GlobesManager.flatAllSource();
+      let sources = vueCesium.ViewerManager.flatAllSource();
       sources.forEach((s, i) => {
         if (s.options.ScreenSpaceEventHandler) {
           screenSpaceEventType.forEach(item => {
@@ -232,8 +232,8 @@ export default {
               Cesium.ScreenSpaceEventType[item.type]
             );
           });
-          s.source.viewer.camera.changed.removeEventListener(() => {
-            vm.updateView(s.source.viewer.camera);
+          s.source.camera.changed.removeEventListener(() => {
+            vm.updateView(s.source.camera);
           });
           // s.options.ScreenSpaceEventHandler.destroy();
         }
