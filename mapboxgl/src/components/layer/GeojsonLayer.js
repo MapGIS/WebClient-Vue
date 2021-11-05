@@ -402,7 +402,6 @@ export default {
         this.$parent.popupInspect == null &&
         this.$parent.popupInspect === undefined
       ) {
-        console.log("MapboxInspect", MapboxInspect);
         const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
             closeOnClick: false,

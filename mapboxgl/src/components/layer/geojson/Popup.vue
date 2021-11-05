@@ -112,14 +112,10 @@ export default {
 </script>
 
 <style>
-.mapgis-inspect-content {
-  position: absolute;
-  width: 240px;
-  height: 240px; /* 此处不能屏蔽,不然初始化的时候会溢出 */
-}
 .mapgis-featuretool-content {
   /* position: absolute; */
   z-index: 1000;
+  height: 0px;  /** 这里会触发draw绘制的时候溢出Bug */
   /* width: 240px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
 }
 

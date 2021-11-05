@@ -217,3 +217,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.mapgis-inspect-content {
+  position: absolute;
+  width: 240px;
+  height: 0px; /* 此处不能屏蔽,不然初始化的时候会溢出 */
+}
+</style>
