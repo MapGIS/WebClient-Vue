@@ -131,12 +131,6 @@
 - `val` checkbox 改变后的值
 - `key` checkbox 对应的字段，循环(isLoop)，显示路径(showPath)，显示提示信息(showInfo)
 
-### `onSpeedChange`
-
-- **Description:** 更改速度。
-- **Param:** `{val}`
-- `val` 变更后的速度值
-
 ### `onEffectsChange`
 
 - **Description:** 更改方位角/俯仰角。

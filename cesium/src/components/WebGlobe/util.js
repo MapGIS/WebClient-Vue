@@ -114,9 +114,7 @@ export function getCartographic(viewer) {
  */
 export function getPickEllipsoid(viewer) {
   const { w, h } = getWebGlobeCanvasSize(viewer);
-  return viewer.camera.pickEllipsoid(
-    new Cesium.Cartesian2(w / 2, h / 2)
-  );
+  return viewer.camera.pickEllipsoid(new Cesium.Cartesian2(w / 2, h / 2));
 }
 
 /**
