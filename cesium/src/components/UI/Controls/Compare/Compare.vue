@@ -51,7 +51,7 @@ export default {
   methods: {
     initCompare() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
+      window.vueCesium.getViewerByInterval(function (viewer) {
         let slider = document.getElementsByClassName("slider");
         if(slider.length === 0){
           slider = document.createElement("div");
