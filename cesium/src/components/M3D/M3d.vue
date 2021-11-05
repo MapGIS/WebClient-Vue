@@ -17,15 +17,25 @@ export default {
   mounted() {
     this.layerList = this.parseLayers(this.layers);
     this.mount();
-    this.watchProp();
   },
   destroyed() {
     this.unmount();
   },
   watch: {
     layers(next) {
+      if (this.initial) return;
       this.layerList = this.parseLayers(next);
       this.changeLayerVisible(this.layerList);
+    },
+    show(next) {
+      if (this.initial) return;
+      this.changeShow(next);
+    },
+    opacity(next) {
+      if (this.initial) return;
+      if (next >= 0 && next <= 1) {
+        this.changeOpacity(next);
+      }
     }
   },
   methods: {
@@ -36,33 +46,10 @@ export default {
       });
       return m3dLayer;
     },
-    watchProp() {
-      let { show, opacity } = this;
-      if (show) {
-        this.$watch("show", function(next) {
-          if (this.initial) return;
-          this.changeShow(next);
-        });
-      }
-      if (opacity >= 0 && opacity <= 1) {
-        this.$watch("opacity", function(next) {
-          if (this.initial) return;
-          this.changeOpacity(next);
-        });
-      }
-    },
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
-      const {
-        viewer,
-        vueIndex,
-        vueKey,
-        $props,
-        offset,
-        scale,
-        opacity
-      } = this;
+      const { viewer, vueIndex, vueKey, $props, offset, scale, opacity } = this;
 
       if (viewer.isDestroyed()) return;
       // this.$emit("load", { component: this });
