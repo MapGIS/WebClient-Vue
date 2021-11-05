@@ -35,7 +35,7 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-scene>
+      <mapgis-web-scene style="height:95vh">
       <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
       <mapgis-3d-mapv-layer :options="options" :geojson="geojson"></mapgis-3d-mapv-layer>
       </mapgis-web-scene>
