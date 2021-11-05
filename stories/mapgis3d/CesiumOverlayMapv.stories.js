@@ -28,11 +28,32 @@ const Template = (args, { argTypes }) => ({
         };
       });
     },
-  },
-  template: `
-      <mapgis-web-scene :style="{height: '95vh'}">
-        <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
-        <mapgis-3d-mapv-layer :options="options" :geojson="geojson"></mapgis-3d-mapv-layer>
+    methods: {
+        initData() {
+            this.geojson = {};
+            let randomCount = 500;
+            let data = [];
+            while (randomCount--) {
+                data.push({
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [75 + Math.random() * 50, 20.3 + Math.random() * 20]
+                    },
+                    properties:{
+                        count: 30 * Math.random()
+                    },
+                });
+            }
+            ;
+            this.geojson = {
+                "features": data
+            }
+        }
+    },
+    template: `
+      <mapgis-web-scene style="height:95vh">
+      <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
+      <mapgis-3d-mapv-layer :options="options" :geojson="geojson"></mapgis-3d-mapv-layer>
       </mapgis-web-scene>
     `,
 });
