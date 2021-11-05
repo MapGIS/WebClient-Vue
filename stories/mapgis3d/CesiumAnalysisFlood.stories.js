@@ -89,7 +89,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-      <mapgis-web-scene style="{height: '100vh'}"
+      <mapgis-web-scene style="height: 95vh"
           v-on:load="handleLoad"
       >
       <mapgis-3d-ogc-wmts-layer
@@ -120,8 +120,8 @@ const Template = (args, { argTypes }) => ({
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2Q0ZGMxYy1iZGZkLTQ4OWItODlhMy1iOWNkMDE0M2U3YWEiLCJpZCI6NTEzNSwiaWF0IjoxNjA2MjE0OTkyfQ.2aktNrUASlLsPwSFtkgKBTQLJTAnOTyjgKDRQmnafiE";
-      const { webGlobe } = component;
-      webGlobe.viewer.camera.setView({
+      const { viewer } = component;
+      viewer.camera.setView({
         direction: {
           x: 0.4680575394156845,
           y: -0.8267033643312148,
@@ -135,7 +135,7 @@ const Template = (args, { argTypes }) => ({
       });
       //构造视图功能管理对象（视图）
       var sceneManager = new CesiumZondy.Manager.SceneManager({
-        viewer: webGlobe.viewer,
+        viewer: viewer,
       });
       //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
       sceneManager.flyToEx(121, 24, {

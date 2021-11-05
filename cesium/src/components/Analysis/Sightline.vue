@@ -288,11 +288,10 @@ export default {
     // 点击“结束分析”按钮回调
     onClickStop() {
       // 注销鼠标的各项监听事件
-      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-      // this.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
-
+      if (this.handlerAction){
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+      }
       this.viewer.entities.removeAll();
 
       if (this.visibilityArr.length > 0) {
