@@ -71,4 +71,6 @@ export { default as Mapgis3dParticleEffects } from "../../cesium/src/components/
 
 export { default as Mapgis3dSceneRoaming } from "../../cesium/src/components/SceneEffect/SceneRoaming";
 
+export { default as Mapgis3dPathRoaming } from "../../cesium/src/components/SceneEffect/PathRoaming/PathRoaming";
+
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";

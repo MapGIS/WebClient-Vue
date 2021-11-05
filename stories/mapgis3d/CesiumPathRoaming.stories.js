@@ -1,9 +1,19 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/sceneeffect/sceneroaming.md";
+import Markdown from "../../cesium/docs/api/sceneeffect/pathroaming.md";
 
 export default {
-  title: "三维/场景漫游/路径管理",
+  title: "三维/场景漫游/单路径",
   argTypes: {
+    positions: {
+      description: "漫游路径坐标集合",
+      table: {
+        defaultValue: {
+          summary:
+            "[{ x: 114.40150642571967, y: 30.46598749322795, z: 7.771843648287394 },{ x: 114.40168198567844, y: 30.46658777743634, z: 7.77844677044535 },{ x: 114.40227628732939, y: 30.467054308914204, z: 7.629952007623256 },{ x: 114.40232362516146, y: 30.467591260922404, z: 7.87974370284682 }]",
+        },
+      },
+      control: "array",
+    },
     speed: {
       description:
         "漫游速度 默认1m/s(1米/秒) 特别提醒（漫游场景范围很大的时候，这个一定要设置大，比如飞机可能就是真实的几千米每秒 如果不按真实设置，会导致内部时间点插值过密，造成卡顿）。",
@@ -156,7 +166,8 @@ const Template = (args, { argTypes }) => ({
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-scene-roaming 
+        <mapgis-3d-path-roaming
+        :positions="positions" 
         :speed="speed"
         :exHeight="exHeight"
         :heading="heading"
@@ -173,8 +184,14 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 路径管理 = Template.bind({});
-路径管理.args = {
+export const 单路径 = Template.bind({});
+单路径.args = {
+  positions: [
+    { x: 114.40150642571967, y: 30.46598749322795, z: 7.771843648287394 },
+    { x: 114.40168198567844, y: 30.46658777743634, z: 7.77844677044535 },
+    { x: 114.40227628732939, y: 30.467054308914204, z: 7.629952007623256 },
+    { x: 114.40232362516146, y: 30.467591260922404, z: 7.87974370284682 },
+  ],
   speed: 10,
   exHeight: 1,
   heading: 90,
@@ -201,7 +218,7 @@ export const 路径管理 = Template.bind({});
   ],
 };
 
-路径管理.parameters = {
+单路径.parameters = {
   docs: {
     description: {
       component: Markdown,
