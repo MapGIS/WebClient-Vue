@@ -189,7 +189,7 @@ export function isEnableLighting(webGlobe) {
  * @param {*} isEnable true:开启，false:关闭
  */
 export function setEnableLighting(isEnable, webGlobe) {
-  webGlobe.viewer.scene.globe.depthTestAgainstTerrain = isEnable;
+  webGlobe.viewer.scene.globe.enableLighting = isEnable;
 }
 
 /**

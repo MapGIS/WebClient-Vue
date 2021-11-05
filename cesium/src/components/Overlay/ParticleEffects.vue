@@ -20,6 +20,7 @@
                   v-model="emissionRateCopy"
                   :min="0"
                   :max="100"
+                  @change="val => onChangeEffect(val, 'emissionRate')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -41,6 +42,7 @@
                   v-model="imageSizeCopy"
                   :min="2"
                   :max="60"
+                  @change="val => onChangeEffect(val, 'imageSize')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -64,6 +66,7 @@
                   :min="0.1"
                   :max="30.0"
                   :step="0.1"
+                  @change="val => onChangeEffect(val, 'minimumParticleLife')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -87,6 +90,7 @@
                   :min="0.1"
                   :max="30.0"
                   :step="0.1"
+                  @change="val => onChangeEffect(val, 'maximumParticleLife')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -108,6 +112,7 @@
                   v-model="minimumSpeedCopy"
                   :min="0"
                   :max="30"
+                  @change="val => onChangeEffect(val, 'minimumSpeed')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -129,6 +134,7 @@
                   v-model="maximumSpeedCopy"
                   :min="0"
                   :max="30"
+                  @change="val => onChangeEffect(val, 'maximumSpeed')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -152,6 +158,7 @@
                   :min="0.0"
                   :max="10.0"
                   :step="0.5"
+                  @change="val => onChangeEffect(val, 'startScale')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -175,6 +182,7 @@
                   :min="0.0"
                   :max="10.0"
                   :step="0.5"
+                  @change="val => onChangeEffect(val, 'endScale')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>

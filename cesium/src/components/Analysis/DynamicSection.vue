@@ -1,67 +1,67 @@
 <template>
   <div>
     <slot>
-    <mapgis-ui-group-tab
-      title="模型"
-      :has-top-margin="false"
-    ></mapgis-ui-group-tab>
-    <mapgis-ui-row class="model">
-      <mapgis-ui-radio-group v-if="models.length > 0" v-model="model">
-        <mapgis-ui-radio
-          v-for="(node, index) in models"
-          :style="radioStyle"
-          :key="`model-${index}`"
-          :value="node"
-        >
-          {{ node.title }}
-        </mapgis-ui-radio>
-      </mapgis-ui-radio-group>
-      <div v-else>暂无数据！</div>
-    </mapgis-ui-row>
-    <mapgis-ui-group-tab title="坐标轴"> </mapgis-ui-group-tab>
-    <mapgis-ui-row class="axisCopy">
-      <mapgis-ui-radio-group v-model="axisCopy">
-        <mapgis-ui-radio value="X"> X轴 </mapgis-ui-radio>
-        <mapgis-ui-radio value="Y"> Y轴 </mapgis-ui-radio>
-        <mapgis-ui-radio value="Z"> Z轴 </mapgis-ui-radio>
-      </mapgis-ui-radio-group>
-    </mapgis-ui-row>
-    <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-    <mapgis-ui-setting-form :label-width="72">
-      <mapgis-ui-form-item label="剖面颜色">
-        <mapgis-ui-sketch-color-picker
-          :color.sync="colorCopy"
-          :disableAlpha="false"
-          class="colorCopy-picker"
-        >
-        </mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="动画时间">
-        <mapgis-ui-input-number
-          v-model="timeCopy"
-          :min="0"
-          style="width: 100%"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="剖切距离">
-        <mapgis-ui-slider
-          v-model="distanceCopy"
-          :min="min"
-          :max="max"
-          @change="setDistance"
-          :disabled="readonly"
-        />
-      </mapgis-ui-form-item>
-    </mapgis-ui-setting-form>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="startClipping">
-        分析
-      </mapgis-ui-button>
-      <mapgis-ui-button type="primary" @click="animation">
-        动态效果
-      </mapgis-ui-button>
-      <mapgis-ui-button @click="stopClipping"> 清除 </mapgis-ui-button>
-    </mapgis-ui-setting-footer>
+      <mapgis-ui-group-tab
+        title="模型"
+        :has-top-margin="false"
+      ></mapgis-ui-group-tab>
+      <mapgis-ui-row class="model">
+        <mapgis-ui-radio-group v-if="models.length > 0" v-model="model">
+          <mapgis-ui-radio
+            v-for="(node, index) in models"
+            :style="radioStyle"
+            :key="`model-${index}`"
+            :value="node"
+          >
+            {{ node.title }}
+          </mapgis-ui-radio>
+        </mapgis-ui-radio-group>
+        <div v-else>暂无数据！</div>
+      </mapgis-ui-row>
+      <mapgis-ui-group-tab title="坐标轴"> </mapgis-ui-group-tab>
+      <mapgis-ui-row class="axisCopy">
+        <mapgis-ui-radio-group v-model="axisCopy">
+          <mapgis-ui-radio value="X"> X轴 </mapgis-ui-radio>
+          <mapgis-ui-radio value="Y"> Y轴 </mapgis-ui-radio>
+          <mapgis-ui-radio value="Z"> Z轴 </mapgis-ui-radio>
+        </mapgis-ui-radio-group>
+      </mapgis-ui-row>
+      <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
+      <mapgis-ui-setting-form :label-width="72">
+        <mapgis-ui-form-item label="剖面颜色">
+          <mapgis-ui-sketch-color-picker
+            :color.sync="colorCopy"
+            :disableAlpha="false"
+            class="colorCopy-picker"
+          >
+          </mapgis-ui-sketch-color-picker>
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="动画时间">
+          <mapgis-ui-input-number
+            v-model="timeCopy"
+            :min="0"
+            style="width: 100%"
+          />
+        </mapgis-ui-form-item>
+        <mapgis-ui-form-item label="剖切距离">
+          <mapgis-ui-slider
+            v-model="distanceCopy"
+            :min="min"
+            :max="max"
+            @change="setDistance"
+            :disabled="readonly"
+          />
+        </mapgis-ui-form-item>
+      </mapgis-ui-setting-form>
+      <mapgis-ui-setting-footer>
+        <mapgis-ui-button type="primary" @click="startClipping">
+          分析
+        </mapgis-ui-button>
+        <mapgis-ui-button type="primary" @click="animation">
+          动态效果
+        </mapgis-ui-button>
+        <mapgis-ui-button @click="stopClipping"> 清除 </mapgis-ui-button>
+      </mapgis-ui-setting-footer>
     </slot>
   </div>
 </template>
@@ -466,25 +466,28 @@ export default {
       let min = -max;
       if (!this.model) return;
       const { range } = this.model;
-      switch (this.axisCopy) {
+      const { xmin, ymin, xmax, ymax, zmin, zmax } = range;
+      let length = max - min;
+      switch (this.axis) {
         case "X":
-          max = range.xmax;
-          min = range.xmin;
+          max = xmax;
+          min = xmin;
           break;
         case "Y":
-          max = range.ymax;
-          min = range.ymin;
+          max = ymax;
+          min = ymin;
           break;
         case "Z":
-          max = range.zmax;
-          min = range.zmin;
+          max = zmax;
+          min = zmin;
           break;
         default:
           break;
       }
-      this.max = max;
-      this.min = min;
-      this.distanceCopy = (min + max) / 2;
+      length = (max - min) * 1.5;
+      this.distanceCopy = length / 2;
+      this.max = length;
+      this.min = -length;
     }
   }
 };
