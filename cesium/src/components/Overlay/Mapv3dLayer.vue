@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const viewer = this.viewer;
+      const { viewer } = this;
       this.dataset = this.initData();
       if (!this.dataset) {
         return;
