@@ -2,12 +2,6 @@
   <div>
     <slot>
       <div class="mapgis-path-roaming">
-        <div class="header" @click="onGotoHome">
-          <div>
-            <mapgis-ui-iconfont class="return" type="mapgis-left" />
-          </div>
-          <div class="name">{{ pathCopy.name }}</div>
-        </div>
         <div class="roaming-actions">
           <mapgis-ui-button
             class="roaming-action"
@@ -28,20 +22,20 @@
         </div>
         <div class="roaming-options">
           <mapgis-ui-checkbox
-            :checked="pathCopy.para.isLoop"
-            @change="e => onCheckBoxChange(e, 'isLoop')"
+            :checked="isLoopCopy"
+            @change="e => onCheckBoxChange(e.target.checked, 'isLoop')"
           >
             循环
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox
-            :checked="pathCopy.para.showPath"
-            @change="e => onCheckBoxChange(e, 'showPath')"
+            :checked="showPathCopy"
+            @change="e => onCheckBoxChange(e.target.checked, 'showPath')"
           >
             显示路径
           </mapgis-ui-checkbox>
           <mapgis-ui-checkbox
-            :checked="pathCopy.para.showInfo"
-            @change="e => onCheckBoxChange(e, 'showInfo')"
+            :checked="showInfoCopy"
+            @change="e => onCheckBoxChange(e.target.checked, 'showInfo')"
           >
             显示提示信息
           </mapgis-ui-checkbox>
@@ -56,11 +50,11 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-input
-                  v-model.number="pathCopy.para.speed"
+                  v-model.number="speedCopy"
                   type="number"
-                  min="1"
+                  :min="1"
                   addon-after="公里/小时"
-                  @change="onSpeedChange"
+                  @change="e => onSpeedChange(e.target.value)"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -68,90 +62,83 @@
           <mapgis-ui-form-item label="附加高程">
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
-                <mapgis-ui-input-number
-                  v-model="pathCopy.para.exHeight"
+                <mapgis-ui-input
+                  v-model.number="exHeightCopy"
+                  type="number"
                   :min="0"
+                  addon-after="米"
                   :disabled="isStart ? true : false"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item
-            label="方位角"
-            v-show="pathCopy.para.animationType !== 1"
-          >
+          <mapgis-ui-form-item label="方位角" v-show="animationTypeCopy !== 1">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
                   class="slider-body"
-                  v-model="pathCopy.para.heading"
+                  v-model="headingCopy"
                   :min="-180"
                   :max="180"
-                  :disabled="pathCopy.para.animationType === 1 ? true : false"
+                  :disabled="animationTypeCopy === 1 ? true : false"
                   @change="val => onEffectsChange(val, 'heading')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
                   class="slider-number"
-                  v-model="pathCopy.para.heading"
+                  v-model="headingCopy"
                   :min="-180"
                   :max="180"
-                  :disabled="pathCopy.para.animationType === 1 ? true : false"
+                  :disabled="animationTypeCopy === 1 ? true : false"
                   @change="val => onEffectsChange(val, 'heading')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item
-            label="俯仰角"
-            v-show="pathCopy.para.animationType === 2"
-          >
+          <mapgis-ui-form-item label="俯仰角" v-show="animationTypeCopy === 2">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
                   class="slider-body"
-                  v-model="pathCopy.para.pitch"
+                  v-model="pitchCopy"
                   :min="-180"
                   :max="180"
-                  :disabled="pathCopy.para.animationType !== 2 ? true : false"
+                  :disabled="animationTypeCopy !== 2 ? true : false"
                   @change="val => onEffectsChange(val, 'pitch')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
                   class="slider-number"
-                  v-model="pathCopy.para.pitch"
+                  v-model="pitchCopy"
                   :min="-180"
                   :max="180"
-                  :disabled="pathCopy.para.animationType !== 2 ? true : false"
+                  :disabled="animationTypeCopy !== 2 ? true : false"
                   @change="val => onEffectsChange(val, 'pitch')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item
-            label="距离"
-            v-show="pathCopy.para.animationType !== 1"
-          >
+          <mapgis-ui-form-item label="距离" v-show="animationTypeCopy !== 1">
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
                   class="slider-body"
-                  v-model="pathCopy.para.range"
+                  v-model="rangeCopy"
                   :min="0"
                   :max="200"
-                  :disabled="pathCopy.para.animationType === 1 ? true : false"
+                  :disabled="animationTypeCopy === 1 ? true : false"
                   @change="val => changeRange(val)"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
                   class="slider-number"
-                  v-model="pathCopy.para.range"
+                  v-model="rangeCopy"
                   :min="0"
                   :max="200"
-                  :disabled="pathCopy.para.animationType === 1 ? true : false"
+                  :disabled="animationTypeCopy === 1 ? true : false"
                   @change="val => changeRange(val)"
                 />
               </mapgis-ui-col>
@@ -161,7 +148,7 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-select
-                  v-model="pathCopy.para.animationType"
+                  v-model="animationTypeCopy"
                   @change="onTypeChange"
                 >
                   <mapgis-ui-select-option
@@ -178,7 +165,7 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="24">
                 <mapgis-ui-select
-                  v-model="pathCopy.para.interpolationAlgorithm"
+                  v-model="interpolationAlgorithmCopy"
                   :disabled="isStart ? true : false"
                 >
                   <mapgis-ui-select-option
@@ -215,14 +202,56 @@
   </div>
 </template>
 <script>
+import VueOptions from "../../Base/Vue/VueOptions";
 export default {
   name: "mapgis-3d-path-roaming",
   inject: ["Cesium", "CesiumZondy", "viewer"],
   props: {
-    path: {
-      type: Object,
+    ...VueOptions,
+    positions: {
+      type: Array,
       required: true,
-      default: () => {}
+      default: () => []
+    },
+    speed: {
+      type: Number,
+      default: 10
+    },
+    exHeight: {
+      type: Number,
+      default: 1
+    },
+    heading: {
+      type: Number,
+      default: 90
+    },
+    pitch: {
+      type: Number,
+      default: 0
+    },
+    range: {
+      type: Number,
+      default: 0
+    },
+    animationType: {
+      type: Number,
+      default: 1
+    },
+    interpolationAlgorithm: {
+      type: String,
+      default: "LagrangePolynomialApproximation"
+    },
+    isLoop: {
+      type: Boolean,
+      default: true
+    },
+    showPath: {
+      type: Boolean,
+      default: true
+    },
+    showInfo: {
+      type: Boolean,
+      default: true
     },
     models: {
       type: Array,
@@ -251,28 +280,79 @@ export default {
       deep: true,
       immediate: true
     },
-    path: {
+    speed: {
       handler() {
-        this.pathCopy = this.path;
+        this.speedCopy = this.speed;
       },
-      deep: true,
+      immediate: true
+    },
+    exHeight: {
+      handler() {
+        this.exHeightCopy = this.exHeight;
+      },
+      immediate: true
+    },
+    heading: {
+      handler() {
+        this.headingCopy = this.heading;
+      },
+      immediate: true
+    },
+    pitch: {
+      handler() {
+        this.pitchCopy = this.pitch;
+      },
+      immediate: true
+    },
+    range: {
+      handler() {
+        this.rangeCopy = this.range;
+      },
+      immediate: true
+    },
+    animationType: {
+      handler() {
+        this.animationTypeCopy = this.animationType;
+      },
+      immediate: true
+    },
+    interpolationAlgorithm: {
+      handler() {
+        this.interpolationAlgorithmCopy = this.interpolationAlgorithm;
+      },
+      immediate: true
+    },
+    isLoop: {
+      handler() {
+        this.isLoopCopy = this.isLoop;
+      },
+      immediate: true
+    },
+    showPath: {
+      handler() {
+        this.showPathCopy = this.showPath;
+      },
+      immediate: true
+    },
+    showInfo: {
+      handler() {
+        this.showInfoCopy = this.showInfo;
+      },
       immediate: true
     }
   },
   data() {
     return {
-      pathCopy: {
-        speed: 10,
-        exHeight: 1,
-        heading: 90,
-        pitch: 0,
-        range: 0,
-        animationType: 1,
-        interpolationAlgorithm: "LagrangePolynomialApproximation",
-        isLoop: true,
-        showPath: true,
-        showInfo: true
-      },
+      speedCopy: 10,
+      exHeightCopy: 1,
+      headingCopy: 90,
+      pitchCopy: 0,
+      rangeCopy: 0,
+      animationTypeCopy: 1,
+      interpolationAlgorithmCopy: "LagrangePolynomialApproximation",
+      isLoopCopy: true,
+      showPathCopy: true,
+      showInfoCopy: true,
       isStart: false,
       isPause: false,
       perspectiveOptions: [
@@ -320,30 +400,57 @@ export default {
       // ]
     };
   },
-  created() {
-    window.SceneWanderManager = {
-      animation: null
-    };
-
-    //  初始化漫游动画
-    window.SceneWanderManager.animation = new this.Cesium.AnimationTool(
-      this.viewer,
-      {
-        modelUrl: this.modelUrl
-      }
-    );
+  created() {},
+  mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.unmount();
   },
   methods: {
-    onGotoHome() {
+    async createCesiumObject() {
+      return new Promise(
+        resolve => {
+          resolve();
+        },
+        reject => {}
+      );
+    },
+    mount() {
+      window.SceneWanderManager = {
+        animation: null
+      };
+
+      //  初始化漫游动画
+      window.SceneWanderManager.animation = new this.Cesium.AnimationTool(
+        this.viewer,
+        {
+          modelUrl: this.modelUrl
+        }
+      );
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function(dataSource) {
+        vm.$emit("load", vm);
+      });
+    },
+    unmount() {
       this.onClickStop();
-      this.$emit("goto-home");
+      this.$emit("unload", this);
     },
     onClickStartOrPauseOrResume() {
       if (!this.isStart) {
         // 设置播放动画的各项属性
-        if (this.pathCopy.path.length > 0) {
+        if (this.positions.length > 0) {
+          const path = this.positions
+            .map(item => {
+              return [item.x, item.y, item.z];
+            })
+            .reduce(function(a, b) {
+              return a.concat(b);
+            });
           window.SceneWanderManager.animation.positions = this.Cesium.Cartesian3.fromDegreesArrayHeights(
-            this.pathCopy.path
+            path
           );
           this._setAnimationAttr();
 
@@ -367,17 +474,17 @@ export default {
     _setAnimationAttr() {
       // 默认速度的单位为m/s，这里将公里每小时转换为m/s
       window.SceneWanderManager.animation.speed = (
-        this.pathCopy.para.speed * 0.28
+        this.speedCopy * 0.28
       ).toFixed(2);
-      window.SceneWanderManager.animation.exHeight = this.pathCopy.para.exHeight;
-      window.SceneWanderManager.animation.heading = this.pathCopy.para.heading;
-      window.SceneWanderManager.animation.pitch = this.pathCopy.para.pitch;
-      window.SceneWanderManager.animation.animationType = this.pathCopy.para.animationType;
-      window.SceneWanderManager.animation.isLoop = this.pathCopy.para.isLoop;
-      window.SceneWanderManager.animation.isShowPath = this.pathCopy.para.showPath;
-      window.SceneWanderManager.animation.showInfo = this.pathCopy.para.showInfo;
+      window.SceneWanderManager.animation.exHeight = this.exHeightCopy;
+      window.SceneWanderManager.animation.heading = this.headingCopy;
+      window.SceneWanderManager.animation.pitch = this.pitchCopy;
+      window.SceneWanderManager.animation.animationType = this.animationTypeCopy;
+      window.SceneWanderManager.animation.isLoop = this.isLoopCopy;
+      window.SceneWanderManager.animation.isShowPath = this.showPathCopy;
+      window.SceneWanderManager.animation.showInfo = this.showInfoCopy;
 
-      switch (this.pathCopy.para.interpolationAlgorithm) {
+      switch (this.interpolationAlgorithmCopy) {
         case "LagrangePolynomialApproximation":
           window.SceneWanderManager.animation.interpolationAlgorithm = this.Cesium.LagrangePolynomialApproximation; // 拉格朗日插值
           break;
@@ -393,36 +500,29 @@ export default {
 
       // 若是上帝视角，设置动画的视角高度为200
       if (window.SceneWanderManager.animation.animationType === 3) {
-        this.pathCopy.para.range = 200;
+        this.rangeCopy = 200;
       } else {
-        this.pathCopy.para.range = 0;
+        this.rangeCopy = 0;
       }
-      window.SceneWanderManager.animation.range = this.pathCopy.para.range;
+      window.SceneWanderManager.animation.range = this.rangeCopy;
     },
-    onCheckBoxChange(e, key) {
-      this.pathCopy.para[key] = e.target.checked;
-
+    onCheckBoxChange(val, key) {
+      this[`${key}Copy`] = val;
       if (key === "showPath") {
         if (
           window.SceneWanderManager.animation &&
           window.SceneWanderManager.animation.animationModel
         ) {
-          window.SceneWanderManager.animation.animationModel.pathCopy.show._value =
-            e.target.checked;
+          window.SceneWanderManager.animation.animationModel.pathCopy.show._value = val;
         }
       } else {
-        window.SceneWanderManager.animation[key] = e.target.checked;
+        window.SceneWanderManager.animation[key] = val;
       }
     },
-    onSpeedChange(e) {
+    onSpeedChange(val) {
       window.SceneWanderManager.animation.speed = parseFloat(
-        e.target.value * 0.28
+        val * 0.28
       ).toFixed(2);
-      // TODO 临时解决办法，cesium1.8已解决这个问题
-      // speed默认值是10
-      window.SceneWanderManager.animation.speedupFactor = e.target.value
-        ? e.target.value / 10
-        : 1;
     },
     onEffectsChange(val, key) {
       window.SceneWanderManager.animation[key] = this.Cesium.Math.toRadians(
@@ -436,11 +536,11 @@ export default {
       window.SceneWanderManager.animation.animationType = value;
       // 若是上帝视角，设置动画的视角高度为200
       if (window.SceneWanderManager.animation.animationType === 3) {
-        this.pathCopy.para.range = 200;
+        this.rangeCopy = 200;
       } else {
-        this.pathCopy.para.range = 0;
+        this.rangeCopy = 0;
       }
-      window.SceneWanderManager.animation.range = this.pathCopy.para.range;
+      window.SceneWanderManager.animation.range = this.rangeCopy;
     },
     onModelChange(value) {
       window.SceneWanderManager.animation._modelUrl = value;
@@ -451,18 +551,6 @@ export default {
 
 <style lang="scss" scoped>
 .mapgis-path-roaming {
-  .header {
-    cursor: pointer;
-    display: flex;
-    align-content: center;
-    .return {
-      // color: @primary-color;
-      margin: 0 10px 0 0;
-    }
-    .name {
-      flex: 1;
-    }
-  }
   .roaming-actions {
     padding: 12px 0;
     display: flex;
@@ -485,7 +573,7 @@ export default {
     .slider-number {
       width: 100%;
     }
-    .ant-input-number {
+    .mapgis-ui-input-number {
       width: 100%;
     }
   }
