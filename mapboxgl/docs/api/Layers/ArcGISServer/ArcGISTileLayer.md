@@ -47,6 +47,8 @@ All common [layers props](/api/Layers/README.md#props)
                 // [-180, -270] |------|------|    [180, -270]
 ```
 
+:::
+
 ### `layer`
 
 - **类型:** `Object`
