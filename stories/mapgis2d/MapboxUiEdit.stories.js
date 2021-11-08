@@ -1,8 +1,8 @@
-import MapgisEdit from "../../mapboxgl/src/components/UI/controls/edit/Edit.vue";
+import MapgisEditor from "../../mapboxgl/src/components/UI/controls/edit/Editor.vue";
 
 export default {
   title: "二维/地图子组件/编辑",
-  component: MapgisEdit,
+  component: MapgisEditor,
   argTypes: {
     feature: {},
     enableControl: false,
@@ -11,7 +11,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisEdit },
+  components: { MapgisEditor },
   data() {
     return {
       mapOptions: {
