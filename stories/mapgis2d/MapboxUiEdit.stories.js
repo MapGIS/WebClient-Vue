@@ -1,4 +1,4 @@
-import MapgisEdit from "../../mapboxgl/src/components/UI/controls/edit/Edit.vue";
+import MapgisEdit from "../../mapboxgl/src/components/UI/controls/edit/Editor.vue";
 
 export default {
   title: "二维/地图子组件/编辑",
