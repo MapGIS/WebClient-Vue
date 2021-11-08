@@ -56,14 +56,8 @@ export function initManager() {
     new HeightLimitedAnalysisManager();
   window.CesiumZondy.shadowAnalysisManager =
     window.CesiumZondy.shadowAnalysisManager || new shadowAnalysisManager();
-  window.CesiumZondy.IgsFeatureManager =
-    window.CesiumZondy.IgsFeatureManager || new IgsFeatureManager();
   window.CesiumZondy.AspectAnalysisManager =
     window.CesiumZondy.AspectAnalysisManager || new AspectAnalysisManager();
-  DynamicSectionAnalysisManager;
-  window.CesiumZondy.DynamicSectionAnalysisManager =
-    window.CesiumZondy.DynamicSectionAnalysisManager ||
-    new DynamicSectionAnalysisManager();
   window.CesiumZondy.SlopeAnalysisManager =
     window.CesiumZondy.SlopeAnalysisManager || new SlopeAnalysisManager();
   window.CesiumZondy.SkyLineAnalysisManager =
@@ -104,6 +98,11 @@ export function initVueCesium() {
     window.vueCesium.DynamicLightLineManager || new DynamicLightLineManager();
   window.vueCesium.SearchLightManager =
     window.vueCesium.SearchLightManager || new SearchLightManager();
+  window.vueCesium.IgsFeatureManager =
+    window.vueCesium.IgsFeatureManager || new IgsFeatureManager();
+  window.vueCesium.DynamicSectionAnalysisManager =
+    window.vueCesium.DynamicSectionAnalysisManager ||
+    new DynamicSectionAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
