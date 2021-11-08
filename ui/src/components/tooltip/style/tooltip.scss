@@ -1,5 +1,9 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-@include b (tooltip) {
+@include b(tooltip) {
+  &.anticon {
+    height: 27px;
+    line-height: 27px;
+  }
 }

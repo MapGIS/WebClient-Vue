@@ -58,6 +58,9 @@ export default {
     },
     uiStyle: function() {
       return null;
+    },
+    uiClass: function() {
+      return null;
     }
   },
   data() {
@@ -68,6 +71,7 @@ export default {
     return h(
       Component,
       {
+        class: this.uiClass,
         props: this.uiProps,
         style: this.uiStyle,
         attrs: this.$attrs,

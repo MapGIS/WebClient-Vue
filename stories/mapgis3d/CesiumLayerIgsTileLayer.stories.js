@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 export const Tile = Template.bind({});
 Tile.args = {
   id: "IGServer-Tle-Layer",
-  baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/北京市`,
   layerStyle: {
     visible: true,
     opacity: 1,

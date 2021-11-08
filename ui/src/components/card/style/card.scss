@@ -1,19 +1,19 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
 @include b(card) {
   $card-prefix: &;
   background-color: $card-body-background;
 
-  @include e(body, '-') {
+  @include e(body, "-") {
     background-color: $card-head-background;
   }
 
-  @include e(head, '-') {
+  @include e(head, "-") {
     background-color: $card-body-background;
-  }  
+  }
 
-  @include e(actions, '-') {
+  @include e(actions, "-") {
     background: $card-actions-background;
     > li {
       color: $text-color-secondary;
@@ -34,13 +34,13 @@
     }
   }
 
-  @include e(type-inner, '-') {
+  @include e(type-inner, "-") {
     #{$card-prefix}-head {
       background: $background-color-light;
     }
   }
 
-  @include e(meta, '-') {
+  @include e(meta, "-") {
     &-title {
       color: $card-head-color;
     }
@@ -48,5 +48,79 @@
     &-description {
       color: $text-color-secondary;
     }
+  }
+
+  @include e(top-right, "-") {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: #fff;
+  }
+  @include e(top-left, "-") {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    background-color: #fff;
+  }
+  @include e(bottom-right, "-") {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+    background-color: #fff;
+  }
+  @include e(bottom-left, "-") {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000;
+    background-color: #fff;
+  }
+}
+
+@include b(command-card) {
+  $height-lg: 36px;
+  $height-md: 30px;
+  $height-sm: 24px;
+  $padding-lg: 12px;
+  $padding-md: 8px;
+  $padding-sm: 4px;
+  &.mapgis-ui-card {
+    .mapgis-ui-card-head {
+      font-size: $font-size-base;
+      min-height: $height-md;
+      line-height: $height-md;
+      padding: 0 $padding-md;
+      margin-bottom: $padding-md;
+
+      .mapgis-ui-card-head-title,
+      .mapgis-ui-card-extra {
+        padding: 0;
+        color: $text-color;
+      }
+    }
+    .mapgis-ui-card-body {
+      padding: 0;
+    }
+    &.mapgis-ui-card-small {
+      .mapgis-ui-card-head {
+        min-height: $height-sm;
+        line-height: $height-sm;
+        padding: 0 $padding-sm;
+      }
+    }
+    &.mapgis-ui-card-large {
+      .mapgis-ui-card-head {
+        padding: 0 $padding-lg;
+        min-height: $height-lg;
+        line-height: $height-lg;
+      }
+    }
+  }
+
+  &-box-shadow {
+    box-shadow: $box-shadow-base;
   }
 }

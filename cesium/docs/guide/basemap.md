@@ -151,11 +151,13 @@ button {
 </style>
 ```
 
-### 通过 Props 来交互场景属性
+:::
 
-你可以通过 props 来控制地图场景的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
+### 通过 Props 来交互地图属性
 
-完整的 props 列表请查看[API docs](/api/#props), 注意文字描述中的字段'侦听属性'
+你可以通过 props 来控制地图的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
+
+完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'侦听属性'
 
 ## 场景加载
 

@@ -4,6 +4,14 @@ export default {
   title: "界面/数据显示/卡片",
   component: MapgisUiCard,
   argTypes: {
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
   },
 };
 
@@ -25,7 +33,7 @@ const Template = (args, { argTypes }) => ({
       <p>card content</p>
     </mapgis-ui-card>
     <br />
-    <mapgis-ui-card size="small" title="Small size card" style="width: 300px">
+    <mapgis-ui-card size="small" title="Small size card" style="width: 300px" customPosition="bottom-right">
       <a slot="extra" >more</a>
       <p>card content</p>
       <p>card content</p>

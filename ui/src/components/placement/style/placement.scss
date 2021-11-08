@@ -1,0 +1,52 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.mapgis-ui-placement {
+  position: absolute;
+  &.top-left {
+    top: 0;
+    left: 0;
+  }
+  &.top-right {
+    top: 0;
+    right: 0;
+  }
+  &.bottom-left {
+    bottom: 0;
+    left: 0;
+  }
+  &.bottom-right {
+    bottom: 0;
+    right: 0;
+  }
+  &.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  &.top-center {
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+  &.bottom-center {
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+  }
+  &.center-left {
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &.center-right {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  &.center-center {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

@@ -1,17 +1,10 @@
 <template>
-  <mapgis-ui-row class="mapgis-property-sprite">
-    <mapgis-ui-col :span="7">
-      <mapgis-ui-iconfont :type="rule.icon" />
-      <span class="mapgis-property-sprite-left">{{ rule.title }} </span>
-    </mapgis-ui-col>
-    <mapgis-ui-col :span="17">
-      <mapgis-ui-sprite-select
-        v-model="value"
-        :url="sprite"
-        @change="onChange"
-      />
-    </mapgis-ui-col>
-  </mapgis-ui-row>
+  <mapgis-ui-sprite-select
+    v-model="value"
+    :url="sprite"
+    @change="onChange"
+    :size="size"
+  />
 </template>
 
 <script>
@@ -23,7 +16,8 @@ export default {
   props: {
     rule: Object,
     minimum: { type: Number, default: 0 },
-    maximum: { type: Number, default: 1000 }
+    maximum: { type: Number, default: 1000 },
+    size: { type: String, default: "small" }
   },
   model: {
     prop: "number",
@@ -82,13 +76,4 @@ export default {
 };
 </script>
 
-<style>
-.mapgis-property-sprite {
-  width: 100%;
-}
-
-.mapgis-property-sprite-left {
-  height: 30px;
-  line-height: 30px;
-}
-</style>
+<style></style>

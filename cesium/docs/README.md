@@ -19,6 +19,7 @@ footer: MIT Licensed
 
 ```javascript
 // main.js
+import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
 Vue.use(Mapgis3d);
 ```

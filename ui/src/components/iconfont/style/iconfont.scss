@@ -1,0 +1,29 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(iconfont) {
+}
+
+.mapgis-ui-form-item-label .anticon {
+  font-size: 16px;
+  color: $primary-6;
+}
+
+@include b(icon-wrapper) {
+  display: inline;
+  vertical-align: middle;
+  .icon {
+    line-height: 0;
+    text-align: center;
+    text-transform: none;
+    > svg {
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+    }
+  }
+  > img {
+    vertical-align: middle;
+    width: 1em;
+  }
+}

@@ -16,13 +16,21 @@ export default {
   wrapperUI: TextArea,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: textAreaProps,
+  props: {
+    ...textAreaProps,
+    autoWidth: { type: Boolean, default: false }  
+  },
   methods: {},
   model: {
     prop: 'value',
     event: 'change.value'
   },
   computed: {
+    uiClass() {
+      return this.autoWidth
+        ? 'mapgis-ui-input-auto-width'
+        : '';
+    },
     addListeners() {
       const vm = this;
       return {

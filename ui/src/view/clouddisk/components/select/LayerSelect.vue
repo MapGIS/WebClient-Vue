@@ -1,7 +1,7 @@
 <template>
-  <div class="mapgis-ui-clouddisk-layer-select">
+  <div class="mapgis-ui-clouddisk-layer-select" :style="{border:simple? '0px': '1px solid #dcdee2'}">
     <mapgis-ui-row>
-      <mapgis-ui-col :span="9" class="demo-split-pane">
+      <mapgis-ui-col :span="simple ? 0 : 9" class="demo-split-pane">
         <mapgis-ui-clouddisk-company
           :isMulti="isLayers"
           :tiffListsObj="tiffListsObj"
@@ -9,10 +9,11 @@
         />
       </mapgis-ui-col>
 
-      <mapgis-ui-col :span="15" class="demo-split-pane">
+      <mapgis-ui-col :span="simple ? 24 : 15" class="demo-split-pane">
         <mapgis-ui-clouddisk-folder
           ref="folder"
           :url="url"
+          :simple="simple"
           :isMulti="isLayers"
           :isStyle="isStyle"
           :curTiffUrl="curTiffUrl"
@@ -23,7 +24,7 @@
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row>
+    <mapgis-ui-row v-show="!simple">
       <mapgis-ui-input
         read-only
         class="treefolder-url"
@@ -62,6 +63,10 @@ export default {
     };
   },
   props: {
+    simple: {
+      type: Boolean,  
+      default: false
+    },
     onlyFolder: {
       type: Boolean,
       default: false
@@ -219,7 +224,7 @@ export default {
 <style>
 .mapgis-ui-clouddisk-layer-select {
   min-height: 300px;
-  border: 1px solid #dcdee2;
+  /* border: 1px solid #dcdee2; */
   padding: 0px;
 }
 .demo-split-pane:first-child {

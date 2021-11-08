@@ -239,14 +239,44 @@ export default {
 :::
 
 ### 全局引入
+
+``` js
+import MapgisUi, { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
+
+MapgisUiIconFont.createFromIconfontCN({
+  scriptUrl: "./icon/studio.js", // 支持js文件或iconfont.cn在线地址
+});
+```
+
+若希望修改名称，可仿照以下示例：
+
 ``` js
 import MapgisUi, { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
 
 const IconFont = MapgisUiIconFont.createFromIconfontCN({
   scriptUrl: "./icon/studio.js",
 });
-Vue.component("mapgis-ui-iconfont", IconFont);
+Vue.component("mapgis-ui-iconfont-NewName", IconFont);
 ```
+
+### storybook引入（针对开发人员）
+
+> 若使用的是现有的"WebClient-Vue-Icon"图标库中的图标，则无需手动注入，忽略本节内容即可。
+
+::: tip
+需要手动注入的情形：假如开发人员最近添加了若干个图标到"WebClient-Vue-Icon"图标库，为方便立即在storybook上看到效果，可通过以下方式在ui.js文件（路径：`.storybook\components\ui.js`）中注入：
+:::
+
+``` js
+import MapgisUiIconFont from "../../ui/src/components/iconfont/Icon.vue";
+
+MapgisUiIconFont.createFromIconfontCN({
+  scriptUrl: "//at.alicdn.com/t/font_2749943_69c9cshqtiv.js", // 从iconfont.cn网站复制最新的在线地址
+});
+```
+
+> 注 ："WebClient-Vue-Icon"图标库更新后请联系相关人员及时更新UI代码。
+
 
 ### 单个引入
 

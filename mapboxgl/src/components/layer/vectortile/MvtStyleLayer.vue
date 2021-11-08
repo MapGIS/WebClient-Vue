@@ -5,7 +5,6 @@
 <script>
 import clonedeep from "lodash.clonedeep";
 import withEvents from "../../../lib/withEvents";
-import { deepEqual } from "../../util/util";
 import { compareStyle } from "./MvtCompare";
 import { DefaultThemeLayers } from "../ThemeLayer/BaseLayer";
 
@@ -82,6 +81,9 @@ export default {
       this.$_initStyle(this.mode, this.mvtStyle);
       this.initStyle = this.mvtStyle;
       this.initial = false;
+      if (typeof this.mvtStyle === 'object') {
+        this.lastStyle = this.mvtStyle;
+      }
     },
 
     async $_initStyle(mode, style) {

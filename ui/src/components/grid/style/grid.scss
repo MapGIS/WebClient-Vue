@@ -2,6 +2,17 @@
 @import "../../../util/style/theme/theme.scss";
 @import "./mixin.scss";
 
+@include b(row-flex) {
+  &-vertical {
+    .row-flex-col-left {
+      margin-bottom: 4px;
+    }
+  }
+  &-col-left {
+    white-space: normal;
+  }
+}
+
 // Grid system
 .#{$ant-prefix}-row {
   @include make-row();

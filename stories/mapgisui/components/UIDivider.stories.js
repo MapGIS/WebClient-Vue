@@ -4,6 +4,14 @@ export default {
   title: "界面/其他/分割线",
   component: MapgisUiDivider,
   argTypes: {
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
   },
 };
 

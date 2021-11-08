@@ -41,6 +41,10 @@
     @include clear-icon();
   }
 
+  @include e(auto-width, '-') {
+    width: 100%;
+  }
+
   // &:-internal-autofill-selected {
   //   background-color: inset 0 0 0 1000px rgab(255, 255, 255, 0)!important;
   // }

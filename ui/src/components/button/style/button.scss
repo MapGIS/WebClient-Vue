@@ -1,13 +1,13 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-@import 'mixin.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "mixin.scss";
 
 @include b(btn) {
   $prefix: &;
   @include button-color($text-color, $btn-default-bg, $btn-default-border);
   @include button-variant-other($btn-theme-bg);
 
-  @include e(primary, '-') {
+  @include e(primary, "-") {
     @include button-variant-primary(
       $btn-primary-color,
       $primary-6,
@@ -17,32 +17,79 @@
       $primary-7
     );
   }
-  @include e(danger, '-') {
+  @include e(danger, "-") {
     border-color: $btn-danger-border;
-    @include button-variant-primary($danger-5, transparent, $danger-5, $danger-7, transparent, $danger-7);
+    @include button-variant-primary(
+      $danger-5,
+      transparent,
+      $danger-5,
+      $danger-7,
+      transparent,
+      $danger-7
+    );
   }
-  @include e(link, '-') {
+  @include e(link, "-") {
+    color: $link-color;
+    background-color: transparent;
+    border-color: transparent;
     &:hover,
     &:focus,
     &:active {
       border-color: transparent;
     }
   }
-  @include e(background-ghost, '-') {
+  @include e(background-ghost, "-") {
     color: $btn-default-color;
     border-color: $btn-default-border;
     &#{$prefix}-primary {
-      @include button-variant-ghost($primary-5, transparent, $primary-5, $primary-7, transparent, $primary-7);
+      @include button-variant-ghost(
+        $primary-5,
+        transparent,
+        $primary-5,
+        $primary-7,
+        transparent,
+        $primary-7
+      );
     }
     &#{$prefix}-danger {
-      @include button-variant-ghost($danger-5, transparent, $danger-5, $danger-7, transparent, $danger-7);
+      @include button-variant-ghost(
+        $danger-5,
+        transparent,
+        $danger-5,
+        $danger-7,
+        transparent,
+        $danger-7
+      );
     }
     &#{$prefix}-link {
       color: $btn-default-color;
-      @include button-variant-ghost($primary-5, transparent, transparent, $primary-7, transparent, transparent);
+      @include button-variant-ghost(
+        $primary-5,
+        transparent,
+        transparent,
+        $primary-7,
+        transparent,
+        transparent
+      );
     }
   }
-  @include e(group, '-') {
+  @include e(group, "-") {
     color: $btn-default-color;
+  }
+}
+
+@include b(tooltip-button) {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  background: $base-bg-color;
+  border-radius: 2px;
+  line-height: 32px;
+  font-size: 16px;
+  box-shadow: 0px 1px 2px 0px $shadow-color;
+  color: $text-color;
+  text-align: center;
+  &:hover {
+    color: $primary-color;
   }
 }

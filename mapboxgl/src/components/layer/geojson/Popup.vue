@@ -46,7 +46,7 @@
             :key="key"
           >
             <div class="mapgis-inspect-prop-key">
-              <span>{{ key }}</span>
+              <span style="padding-right: 5px">{{ key }}</span>
             </div>
             <div>{{ value }}</div>
           </div>
@@ -111,10 +111,14 @@ export default {
 </script>
 
 <style>
+.mapgis-inspect-content {
+  position: absolute;
+  width: 240px;
+  height: 240px; /* 此处不能屏蔽,不然初始化的时候会溢出 */
+}
 .mapgis-featuretool-content {
   position: absolute;
   z-index: 1000;
-  height: 0px;
   /* width: 240px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
 }
 

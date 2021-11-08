@@ -27,15 +27,15 @@ const Template = (args, { argTypes }) => ({
           metadata: {},
           sources: {},
           layers: [],
-          sprite: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/sprite",
+          sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
           glyphs:
-            "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf",
+              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         },
       },
     };
   },
   template: `
-    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
+    <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-cluster-layer  v-bind="$props" />
     </mapgis-web-map>
@@ -45,5 +45,5 @@ const Template = (args, { argTypes }) => ({
 export const 聚类 = Template.bind({});
 聚类.args = {
   geojson:
-    "http://develop.smaryun.com/static/data/geojson/chinamobile_1000.geojson",
+      `http://${window.webclient.ip}/static/data/geojson/chinamobile_1000.geojson`,
 };

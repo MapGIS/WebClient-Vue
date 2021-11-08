@@ -8,7 +8,7 @@ const Template = (args, { argTypes }) => ({
     return {
       url:
         "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
       vueKey: "default",
@@ -26,11 +26,11 @@ const Template = (args, { argTypes }) => ({
             :url="m3dUrl" 
         />
         
-        <mapgis-3d-modelflatten 
+        <mapgis-3d-model-flatten 
             :vueKey="vueKey" 
             :vueIndex="vueIndex"
         >
-        </mapgis-3d-modelflatten>
+        </mapgis-3d-model-flatten>
     </mapgis-web-scene>
     `,
 });

@@ -1,9 +1,10 @@
 <template>
-  <div class="mapgis-ui-sprite-symbol-wrapper">
+  <mapgis-ui-space class="mapgis-ui-sprite-symbol-wrapper1">
     <mapgis-ui-select
       show-search
-      style="minWidth: 160px"
+      class="mapgis-ui-sprite-select"
       :default-value="defaultValue"
+      :size="size"
       @change="updateSpriteItem"
       @blur="updateSpriteItem"
       @select="handleSpriteSelect"
@@ -21,7 +22,9 @@
         </div>
       </mapgis-ui-select-option>
     </mapgis-ui-select>
-    <mapgis-ui-button shape="circle" @click="showModal">符</mapgis-ui-button>
+    <mapgis-ui-button :size="size" shape="circle" @click="showModal"
+      >符</mapgis-ui-button
+    >
     <mapgis-ui-modal
       forceRender
       title="符号库"
@@ -33,7 +36,7 @@
     >
       <canvas ref="mapgis-ui-sprite-canvas" />
     </mapgis-ui-modal>
-  </div>
+  </mapgis-ui-space>
 </template>
 <script>
 import ThemeMixin from "../../mixin/ThemeMixin";
@@ -48,7 +51,8 @@ export default {
     },
     defaultValue: {
       type: String
-    }
+    },
+    size: { type: String, default: "small" }
   },
   data() {
     return {
@@ -121,8 +125,8 @@ export default {
         vm.width = width + 40;
         vm.height = height + 40;
         ctx.drawImage(image, 0, 0);
-        localStorage.setItem("base64",base64);
-        vm.$emit("iconLoaded",json);
+        localStorage.setItem("base64", base64);
+        vm.$emit("iconLoaded", json);
       };
       image.src = base64;
     },
@@ -159,16 +163,3 @@ export default {
   }
 };
 </script>
-<style>
-.mapgis-ui-sprite-symbol-wrapper {
-  display: flex;
-}
-.mapgis-ui-sprite-symbol-canvas {
-  height: 20px;
-  width: 20px;
-  margin: 5px 0px;
-}
-.mapgis-ui-sprite-symbol-text {
-  line-height: 30px;
-}
-</style>

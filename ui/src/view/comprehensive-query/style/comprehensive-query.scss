@@ -1,0 +1,261 @@
+@import '../../../util/style/mixins/mixins.scss';
+@import '../../../util/style/theme/theme.scss';
+
+.mp-widget-comprehensive-query {
+  .search-box {
+    .mapgis-ui-divider {
+      margin: 0;
+    }
+    input {
+      border: 0;
+      box-shadow: 0 0 0 0;
+    }
+    button {
+      border: 0;
+      padding: 0;
+      &.search-button {
+        width: 57px;
+        border-radius: 0 2px 2px 0;
+      }
+      &.close-button {
+        line-height: 16px;
+        padding: 0 8px;
+      }
+    }
+  }
+  .locate-panel-contaner,
+  .search-panel-contaner {
+    .mapgis-ui-tabs.mapgis-ui-tabs-card {
+      .mapgis-ui-tabs-card-bar {
+        margin-bottom: 0;
+        .mapgis-ui-tabs-nav-container-scrolling {
+          padding-right: 20px;
+          padding-left: 20px;
+          .mapgis-ui-tabs-tab-prev.mapgis-ui-tabs-tab-arrow-show,
+          .mapgis-ui-tabs-tab-next.mapgis-ui-tabs-tab-arrow-show {
+            width: 20px;
+          }
+        }
+        .mapgis-ui-tabs-nav-container {
+          height: 32px;
+          .mapgis-ui-tabs-tab {
+            height: 32px;
+            line-height: 32px;
+            padding: 0 6px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mp-widget-comprehensive-query {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  color: $text-color;
+  border-radius: 2px;
+  max-height: calc(100% - 20px);
+  .query-section {
+    border-radius: 2px;
+    box-shadow: 0px 1px 2px 1px $shadow-color;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: $base-bg-color;
+    width: fit-content;
+    height: 32px;
+    .comprehensive-query-logo {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      cursor: pointer;
+      .district-title {
+        white-space: nowrap;
+        margin-left: 3px;
+        color: $text-color;
+      }
+    }
+    .start-search-button {
+      font-size: 16px;
+      width: 32px;
+    }
+    .search-input {
+      flex: 1;
+    }
+    .search-button {
+      font-size: 14px;
+      width: 46px;
+    }
+    .close-button {
+      font-size: 14px;
+    }
+  }
+  .mapgis-ui-divider-vertical {
+    top: 0;
+  }
+  .panel-container {
+    background: $base-bg-color;
+    padding: 10px;
+    margin-top: 3px;
+    &.unvisible {
+      display: none;
+    }
+  }
+  .search-panel-contaner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// 综合查询查询面板样式
+.place-name-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  .float-pop-container {
+    span {
+      padding: 3px 6px;
+      white-space: nowrap;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .place-name-active-text {
+      color: $primary-color;
+    }
+  }
+  .search-tab-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    .search-switch-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .place-name-active-text {
+        color: $primary-color;
+      }
+      .mapgis-ui-switch {
+        margin: 0 10px 0 0;
+      }
+      .action {
+        cursor: pointer;
+        padding-left: 8px;
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+    .mapgis-ui-tabs {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      .mapgis-ui-tabs-nav-container {
+        height: 32px;
+        .mapgis-ui-tabs-tab {
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+      .mapgis-ui-tabs-bar {
+        margin-bottom: 10px;
+      }
+      .mapgis-ui-tabs-content {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        .mapgis-ui-tabs-tabpane-active {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+}
+
+// 综合查询面板展示模块样式
+.comprehensive-place-name-panel-container {
+  &,
+  .mapgis-ui-spin-nested-loading,
+  .mapgis-ui-spin-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    .cluster-title {
+      margin: 8px 0;
+      span:first-child {
+        padding-left: 5px;
+        border-left: 4px solid $primary-color;
+        font-weight: bold;
+        color: $title-color;
+        margin-right: 5px;
+      }
+    }
+    .cluster-content {
+      display: flex;
+      align-items: center;
+      span:nth-child(2) {
+        flex: 1;
+        text-align: right;
+      }
+      .mapgis-ui-tag {
+        margin-left: 10px;
+      }
+    }
+    .comprehensive-place-name-panel {
+      flex: 1;
+      overflow: auto;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        border-bottom: 1px solid $border-color;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        &:last-child {
+          border-bottom-width: 0;
+        }
+        .content-place-name-panel {
+          flex: 1;
+          p {
+            margin-bottom: 3px !important;
+            label {
+              color: $title-color;
+              margin-right: 8px;
+              font-weight: bold;
+            }
+            span {
+              color: $text-color;
+            }
+          }
+        }
+        .img-place-name-panel {
+          margin-right: 18px;
+        }
+      }
+    }
+    .pagination-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 5px;
+    }
+    .mapgis-ui-empty-normal {
+      margin: 15px 0 5px 0;
+    }
+  }
+}

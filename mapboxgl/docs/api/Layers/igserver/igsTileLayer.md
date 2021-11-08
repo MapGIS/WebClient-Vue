@@ -1,4 +1,4 @@
-# Igs瓦片服务
+# Igs 瓦片服务
 
 > mapgis-igs-tile-layer
 
@@ -37,6 +37,43 @@ All common [layers props](/api/Layers/README.md#props)
 - **默认值:** `0`
 - **非侦听属性**
 - **描述:** 级数偏差数。igs 经纬度瓦片 zoomOffset 取值为 1，igs 墨卡托瓦片 zoomOffset 取值为 0。以支持非标准裁剪的瓦片（这里的非标准不是指任意裁剪瓦片，而是当前瓦片的 0 级不是 mapbox 定义的瓦片的 0 级，中间相差 zoomOffset 级）
+
+### `layer`
+
+- **类型:** `Object`
+- **默认值:** `null`
+- **侦听属性**
+- **描述:**
+  栅格瓦片图层可通过 layer 参数中的 paint、filter、layout 来修改图层样式属性，
+  更多 raster 的属性参考官网
+
+  > paint：
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#raster）
+
+  > layout：
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#layout-property
+
+  > filter：
+  > https://docs.mapbox.com/help/glossary/filter/
+  >
+  > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#filter
+
+- **示例:**
+  ```
+  layer:{
+           paint:{
+             raster-opacity:0.5
+           }
+         }
+  layer:{
+           filter:["all", ["==", "mpginf_id", "1"]]
+        }
+  layer:{
+           layout:{
+             visibility:'visible'
+           }
+        }
+  ```
 
 ## 事件
 

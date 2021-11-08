@@ -35,7 +35,7 @@ export default {
     },
     enablePopup: {
       type: Boolean,
-      defalut: false
+      default: false
     },
     popupOptions: {
       type: Object,
@@ -45,7 +45,7 @@ export default {
     },
     enableTips: {
       type: Boolean,
-      defalut: false
+      default: false
     },
     tipsOptions: {
       type: Object,

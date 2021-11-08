@@ -75,7 +75,7 @@
         &-selected {
           font-weight: normal;
           background-color: $select-item-selected-bg;
-          color: #fff;
+          color: $text-color;
         }
       }
     }
@@ -96,5 +96,9 @@
 
   @include e(arrow, '-') {
     color: $text-color-secondary;
+  }
+
+  @include e(auto-width, '-') {
+    width: 100%;
   }
 }

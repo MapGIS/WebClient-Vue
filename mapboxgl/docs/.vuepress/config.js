@@ -185,6 +185,7 @@ module.exports = {
                 collapsable: false
               },
               ["/api/Layers/geojsonlayer.md", "GeoJSON图层"],
+              ["/api/Layers/Marker/DynamicMarker.md", "动态注记图层"],
               ["/api/Layers/vectorlayer.md", "矢量图层"],
               ["/api/Layers/rasterlayer.md", "栅格图层/通用瓦片"],
               ["/api/Layers/imagelayer.md", "图像图层"],

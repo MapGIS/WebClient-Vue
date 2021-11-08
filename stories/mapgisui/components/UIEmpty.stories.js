@@ -4,6 +4,14 @@ export default {
   title: "界面/数据显示/空状态",
   component: MapgisUiEmpty,
   argTypes: {
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
   },
 };
 
@@ -44,7 +52,7 @@ const Template2 = (args, { argTypes }) => ({
   methods: {
   },
   template: `
-  <mapgis-ui-empty :description="false"/>
+  <mapgis-ui-empty :description="false" :image-style="{ height: '60px' }"/>
   `,
 });
 

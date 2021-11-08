@@ -1,7 +1,41 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
 
-@include b (sprite) {
+@include b(sprite) {
+  $prefix: &;
   color: $primary-color;
+  &-symbol-wrapper {
+    display: flex;
+  }
 
+  &-symbol-canvas {
+    height: 20px;
+    width: 20px;
+    margin: 5px 0px;
+  }
+  &-symbol-text {
+    line-height: 30px;
+  }
+}
+
+.mapgis-ui-form-vertical {
+  .mapgis-ui-sprite-select {
+    width: 230px;
+  }
+  .mapgis-property-color {
+    .colorBtn {
+      width: 240px;
+      height: 12px;
+    }
+  }
+}
+.mapgis-ui-form-horizontal {
+  .mapgis-ui-sprite-select {
+    width: 150px;
+  }
+
+  .mapgis-property-color .colorBtn {
+    width: 157px;
+    height: 12px;
+  }
 }

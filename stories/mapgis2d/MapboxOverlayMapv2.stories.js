@@ -176,7 +176,7 @@ const Template = (args, {argTypes}) => ({
             let onError = function (e) {
                 console.log(e);
             }
-            var service = new BaseServer.IgsServiceBase('http://develop.smaryun.com:8899/static/data/mapv/china.geojson', {
+            var service = new BaseServer.IgsServiceBase(`http://${window.webclient.ip}/static/data/mapv/china.geojson`, {
                 eventListeners: {
                     scope: this,
                     processCompleted: onSuccess,

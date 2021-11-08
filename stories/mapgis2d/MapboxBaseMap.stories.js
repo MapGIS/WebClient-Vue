@@ -1,5 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
-import MapgisWebMapMd from "../../mapboxgl/docs/guide/draw.md";
+import MapgisWebMapMd from "../../mapboxgl/docs/guide/basemap.md";
 
 export default {
     title: "二维/地图/地图对象",
@@ -91,24 +91,25 @@ const Template = (args, {argTypes}) => ({
     `,
 });
 
+
 export const 地图 = Template.bind({});
 地图.args = {
-    mapStyle: {
-        version: 8,
-        sources: {},
-        layers: [
-            {
-                id: "背景",
-                type: "background",
-                paint: {
-                    "background-color": "rgba(0, 0, 0, 0.5)",
-                },
-            },
-        ],
-    },
-    zoom: 3,
-    center: [114.3, 30.5],
-    crs: "EPSG:4326",
+  mapStyle: {
+    version: 8,
+    sources: {},
+    layers: [
+      {
+        id: "背景",
+        type: "background",
+        paint: {
+          "background-color": "rgba(0, 0, 0, 0.5)",
+        },
+      },
+    ],
+  },
+  zoom: 3,
+  center: [114.3, 30.5],
+  crs: "EPSG:4326",
 };
 
 地图.parameters = {

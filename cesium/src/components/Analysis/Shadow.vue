@@ -1,116 +1,101 @@
 <template>
-  <div :class="['shadow',{ right: position === 'right', left: position === 'left' }]">
-    <div
-        class="card-title"
-        :style="{
-                background: 'rgb(38, 151, 204)',
-                padding: '5px',
-                color: 'white',
-            }"
-    >
-      阴影分析
-    </div>
-    <div class="mp-widget-shadow-analysis">
-      <mapgis-ui-form-model :model="formData" v-bind="layout">
-        <mapgis-ui-form-model-item label="日期">
-          <mapgis-ui-date-picker
-              :default-value="startDate"
-              size="small"
-              @change="changeDate"
-          />
-        </mapgis-ui-form-model-item>
-        <div>
-          <mapgis-ui-form-model-item label="开始时间">
-            <mapgis-ui-time-picker
-                :default-value="startTime"
-                size="small"
-                @change="
-              val => {
-                changeTime(val, 'startTime')
-              }
-            "
-            />
-          </mapgis-ui-form-model-item>
-          <mapgis-ui-form-model-item label="结束时间">
-            <mapgis-ui-time-picker
-                :default-value="endTime"
-                size="small"
-                @change="
-              val => {
-                changeTime(val, 'endTime')
-              }
-            "
-            />
-          </mapgis-ui-form-model-item>
-        </div>
-        <mapgis-ui-form-model-item label="底部高程">
-          <Mapgis-ui-input
-              v-model.number="formData.min"
-              addon-after="(米)"
-              size="small"
-              type="number"
-          />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="拉伸高度">
-          <Mapgis-ui-input
-              v-model.number="formData.max"
-              addon-after="(米)"
-              min="0"
-              size="small"
-              type="number"
-          />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="阴影颜色">
-          <colorPicker
-              class="color-picker"
-              v-model="formData.shadowColor"
-              @change="changeShadowColor"
-          />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item label="非阴影颜色">
-          <colorPicker
-              class="color-picker"
-              v-model="formData.sunColor"
-              @change="changeSunColor"
-          />
-        </mapgis-ui-form-model-item>
-        <mapgis-ui-form-model-item v-show="formData.timeType === 'time'" label="阴影率">
-          <Mapgis-ui-input
-              v-model.number="formData.ratio"
-              disabled
-              size="small"
-              type="number"
-          />
-        </mapgis-ui-form-model-item>
-      </mapgis-ui-form-model>
-      <div class="control-button-container">
-        <mapgis-ui-button
-            class="control-button"
+  <div class="mp-widget-shadow-analysis">
+    <mapgis-ui-setting-form :model="formData">
+      <mapgis-ui-form-model-item label="日期">
+        <mapgis-ui-date-picker
+            :default-value="startDate"
             size="small"
-            type="primary"
-            @click="shadow"
-        >阴影分析
-        </mapgis-ui-button
-        >
-        <mapgis-ui-button class="control-button" type="primary" @click="sun" size="small"
-        >日照分析
-        </mapgis-ui-button
-        >
-        <mapgis-ui-button
-            class="control-button"
-            size="small"
-            type="primary"
-            @click="remove"
-        >结束分析
-        </mapgis-ui-button
-        >
+            @change="changeDate"
+        />
+      </mapgis-ui-form-model-item>
+      <div>
+        <mapgis-ui-form-model-item label="开始时间">
+          <mapgis-ui-time-picker
+              :default-value="startTime"
+              size="small"
+              @change="changeTime(val, 'startTime')"
+          />
+        </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="结束时间">
+          <mapgis-ui-time-picker
+              :default-value="endTime"
+              size="small"
+              @change="changeTime(val, 'endTime')"
+          />
+        </mapgis-ui-form-model-item>
       </div>
-    </div>
+      <mapgis-ui-form-model-item label="底部高程">
+        <mapgis-ui-input
+            v-model.number="formData.minHeight"
+            addon-after="(米)"
+            size="small"
+            type="number"
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="拉伸高度">
+        <mapgis-ui-input
+            v-model.number="formData.stretchHeight"
+            addon-after="(米)"
+            min="0"
+            size="small"
+            type="number"
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="阴影颜色">
+        <mapgis-ui-sketch-color-picker
+            :color.sync="formData.shadowColor"
+            :disableAlpha="true"
+            @input="
+              val =>
+                (formData.shadowColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="非阴影颜色">
+        <mapgis-ui-sketch-color-picker
+            :color.sync="formData.sunColor"
+            :disableAlpha="true"
+            @input="
+              val =>
+                (formData.sunColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+        />
+      </mapgis-ui-form-model-item>
+    </mapgis-ui-setting-form>
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button
+          :disabled="maskShow"
+          type="primary"
+          @click="shadow"
+      >阴影分析
+      </mapgis-ui-button
+      >
+      <mapgis-ui-button type="primary" @click="sun" :disabled="maskShow"
+      >日照效果
+      </mapgis-ui-button
+      >
+      <mapgis-ui-button
+          type="primary"
+          @click="removeAll"
+      > 清除
+      </mapgis-ui-button
+      >
+    </mapgis-ui-setting-footer>
+    <mapgis-ui-mask
+        :parentDivClass="'cesium-map-wrapper'"
+        :loading="maskShow"
+        :text="maskText"
+        :percent="percent"
+    ></mapgis-ui-mask>
   </div>
 </template>
 
 <script>
 import BaseMixin from "./BaseLayer";
+import {hexToRgba} from '../Utils/common/color-util';
+/* import { Util } from "@mapgis/webclient-vue-ui";
+const { ColorUtil } = Util; */
+import VueOptions from "../Base/Vue/VueOptions";
 
 const shadowMoment = require('moment');
 const manager = "shadowAnalysisManager";
@@ -119,20 +104,43 @@ export default {
   mixins: [BaseMixin],
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    position: {
+    ...VueOptions,
+    /**
+     * @type String
+     * @default 'rgba(0,255,0,255)'
+     * @description 阴影部分颜色
+     */
+    shadowColor: {
       type: String,
-      default: "right",
+      default: 'rgba(0,255,0,255)'
     },
-    vueKey: {
+    /**
+     * @type String
+     * @default 'rgba(255,0,0,255)'
+     * @description 非阴影部分颜色
+     */
+    sunColor: {
       type: String,
-      default: "default"
+      default: 'rgba(255,0,0,255)'
     },
-    vueIndex: {
-      type: Number,
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
+    /**
+     * @type Number
+     * @default 0
+     * @description 底部高程(米)
+     */
+    minHeight:{
+      type:Number,
+      default:0
     },
+    /**
+     * @type Number
+     * @default 20
+     * @description 拉伸高度(米)
+     */
+    stretchHeight:{
+      type:Number,
+      default:20
+    }
   },
   data() {
     return {
@@ -141,13 +149,10 @@ export default {
         startTime: '10:00:00', // 开始时间
         endTime: '14:00:00', // 结束时间
         dateTimeVal: '10:00:00',
-        min: 0, // 最低高程(米)
-        max: 20, // 拉伸高度(米)
+        minHeight: 0, // 最低高程(米)
+        stretchHeight: 20, // 拉伸高度(米)
         shadowColor: 'rgba(0,255,0,255)', // 阴影颜色
         sunColor: 'rgba(255,0,0,255)', // 非阴影颜色
-        ratio: 0, // 阴影率(时间点范围阴影分析输出结果)
-        // timeType: 'timeRange', // 分析类型(time：时间点；timeRange:时间段)
-        // time: '10:00:00' // 时间点
       },
       startDate: "",
       formDataTime: "",
@@ -156,9 +161,11 @@ export default {
       waitManagerName: "M3DIgsManager",
       percent: 0,
       layout: {
-        labelCol: {span: 7},
-        wrapperCol: {span: 14},
+        labelCol: {span: 5},
+        wrapperCol: {span: 16},
       },
+      maskShow: false,
+      maskText: '正在分析中, 请稍等...0%'
     }
   },
   created() {
@@ -168,16 +175,64 @@ export default {
     this.endTime = shadowMoment(this.formData.endTime, 'HH:mm:ss');
   },
   mounted() {
+    this.mount();
+  },
+  destroyed() {
+    this.removeAll();
   },
   watch: {
-    formData: {
-      handler: function (e) {
-        this.reloadAnalysis();
+    shadowColor: {
+      handler: function (newVal, oldVal) {
+        if (newVal.indexOf("#") > -1) {
+          this.shadowColor = hexToRgba(newVal, 1);
+        }
+        this.formData.shadowColor = this.shadowColor;
       },
-      deep: true
+      immediate: true
+    },
+    sunColor: {
+      handler: function (newVal, oldVal) {
+        if (newVal.indexOf("#") > -1) {
+          this.sunColor = hexToRgba(newVal, 1);
+        }
+        this.formData.sunColor = this.sunColor;
+      },
+      immediate: true
+    },
+    minHeight:{
+      handler:function () {
+        this.formData.minHeight = this.minHeight;
+      },
+      immediate:true
+    },
+    stretchHeight:{
+      handler:function () {
+        this.formData.stretchHeight = this.stretchHeight;
+      },
+      immediate:true
     }
   },
   methods: {
+    async createCesiumObject() {
+      return new Promise(
+          resolve => {
+            resolve();
+          },
+          reject => {}
+      );
+    },
+    mount() {
+      const { webGlobe} = this;
+      const { viewer } = webGlobe;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function(dataSource) {
+        vm.$emit("load", vm);
+      });
+      if (viewer.scene.globe.depthTestAgainstTerrain) {
+        this.depthTestAgainstTerrain = true;
+      }
+    },
     /**
      * 日期组件值变化
      */
@@ -194,23 +249,6 @@ export default {
       this.$set(this.formData, tag, time)
     },
 
-    // 微件关闭时
-    onClose() {
-      this.remove()
-    },
-
-    // 微件失活时
-    onDeActive() {
-      this.remove()
-    },
-
-    /**
-     * rgb转cesium的颜色
-     */
-    getCesiumColor(colorStr) {
-      return this.colorToCesiumColor(colorStr);
-    },
-
     /**
      * 时间字符串转JulianDate时间
      */
@@ -218,71 +256,19 @@ export default {
       const utc = this.Cesium.JulianDate.fromDate(new Date(timeStr)) // UTC
       return this.Cesium.JulianDate.addHours(utc, 0, new this.Cesium.JulianDate()) // 北京时间
     },
-    /**
-     * RGB/RGBA转Cesium内部颜色值
-     * @param {string} color rgb/rgba颜色值
-     */
-    colorToCesiumColor(color) {
-      let cesiumColor
-      if (color.includes('rgb')) {
-        // 如果是rgb或者rgba
-        const a = color.split('(')[1].split(')')[0]
-        const arr = a.split(',')
-        const cesiumRed = Number((Number(arr[0]) / 255).toFixed(2))
-        const cesiumGreen = Number((Number(arr[1]) / 255).toFixed(2))
-        const cesiumBlue = Number((Number(arr[2]) / 255).toFixed(2))
-        const cesiumAlpha = Number(arr[3] ? arr[3] : 1)
-        cesiumColor = this.webGlobe.getColor(
-            cesiumRed,
-            cesiumGreen,
-            cesiumBlue,
-            cesiumAlpha
-        )
-      } else if (color.indexOf('#') >= 0) {
-        cesiumColor = Cesium.Color.fromCssColorString(color);
-      }
-      return cesiumColor
-    },
 
     /**
-     * 十六进制颜色值转为raga
-     * @param {string} color 十六进制颜色值
-     */
-    colorToRgba(val) {
-      //16进制的正则
-      let reg = new RegExp("^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$");
-      let color = val.toLowerCase();
-      if (val.includes('rgba')) {
-        return val;
-      }
-      let result = '';
-      if (reg.test(color)) {
-        let colorChange = [];
-        for (let i = 1; i < 7; i += 2) {
-          colorChange.push(parseInt("0x" + color.slice(i, i + 2)));
-          result = "rgba(" + colorChange.join(",")
-        }
-        result = result + ",255)";
-      }
-      return result;
-    },
-
-    /**
-     * 范围时间点阴影分析/范围时间段阴影分析
+     * 范围时间段阴影分析
      */
     shadow() {
       this.remove();
       const {viewer} = this.webGlobe;
       // 初始化交互式绘制控件
       let drawElement = new this.Cesium.DrawElement(viewer);
-      let {date, min, max, timeType, shadowColor, sunColor} = this.formData;
-      shadowColor = this.colorToRgba(shadowColor);
-      sunColor = this.colorToRgba(sunColor);
+      let {date, minHeight, stretchHeight, shadowColor, sunColor} = this.formData;
       const time = new Date(`${date} ${this.formData.time}`);
       const startTime = new Date(`${date} ${this.formData.startTime}`);
       const endTime = new Date(`${date} ${this.formData.endTime}`);
-
-      viewer.scene.globe.depthTestAgainstTerrain = false; // 关闭深度检测
 
       const self = this;
       let shadowAnalysis;
@@ -291,7 +277,8 @@ export default {
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
         callback: positions => {
-          self.remove()
+          // self.remove();
+          self.toggleMask(true);
           this.$emit("analysisBegin");
           let xmin
           let ymin
@@ -326,7 +313,7 @@ export default {
           )
           const xPaneNum = Math.ceil(recXLength / 4) // X轴方向插值点个数
           const yPaneNum = Math.ceil(recYLength / 4) // Y轴方向插值点个数
-          const zPaneNum = Math.ceil((max - min) / 4) // Z轴方向插值点个数
+          const zPaneNum = Math.ceil((stretchHeight - minHeight) / 4) // Z轴方向插值点个数
 
           shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
             xPaneNum,
@@ -334,13 +321,13 @@ export default {
             zPaneNum,
             shadowColor: shadowColor,
             sunColor: sunColor,
-            percentCallback: this.setPercent(this.percent)
+            percentCallback: this.setPercent
           })
           // 时间段范围阴影分析
           const result = shadowAnalysis.calcPointsArrayInShadowTime(
               positions,
-              min,
-              max,
+              minHeight,
+              stretchHeight,
               startTime,
               endTime
           )
@@ -363,7 +350,8 @@ export default {
      * 原生日照分析
      */
     sun() {
-      this.remove();
+      this.removeSun();
+      // this.remove();
       const {viewer} = this.webGlobe;
       viewer.scene.globe.enableLighting = true; // 开启日照
       viewer.shadows = true; // 开启阴影
@@ -384,71 +372,19 @@ export default {
     },
 
     /**
-     * 参数更新后重新加载分析结果
-     */
-    reloadAnalysis() {
-      let vm = this;
-      const {viewer} = this.webGlobe;
-      let findSource = vm.$_getManager(manager);
-      let xPaneNum;
-      let yPaneNum;
-      let zPaneNum;
-      let positions = [];
-      const startTime = new Date(`${this.formData.date} ${this.formData.startTime}`);
-      const endTime = new Date(`${this.formData.date} ${this.formData.endTime}`);
-      const shadowColor = this.colorToRgba(this.formData.shadowColor);
-      const sunColor = this.colorToRgba(this.formData.sunColor);
-      if (findSource && findSource.source && findSource.options) {
-        let originAnaysis = findSource.source.shadowAnalysis;
-        let drawElement = findSource.source.drawElement;
-        xPaneNum = originAnaysis.xPaneNum;
-        yPaneNum = originAnaysis.yPaneNum;
-        zPaneNum = originAnaysis.zPaneNum;
-        positions = findSource.options.positionCopy;
-        this.remove();
-        this.$emit("analysisBegin");
-        let shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
-          xPaneNum,
-          yPaneNum,
-          zPaneNum,
-          shadowColor: shadowColor,
-          sunColor: sunColor,
-          percentCallback: this.setPercent(this.percent)
-        })
-        // 时间段范围阴影分析
-        const result = shadowAnalysis.calcPointsArrayInShadowTime(
-            positions,
-            this.formData.min,
-            this.formData.max,
-            startTime,
-            endTime
-        )
-        let positionCopy = [];
-        positionCopy = this.copy(positions);
-        //存放到管理器中
-        CesiumZondy.shadowAnalysisManager.addSource(
-            this.vueKey,
-            this.vueIndex,
-            {shadowAnalysis, drawElement},
-            {positionCopy: positionCopy}
-        );
-      }
-    },
-
-    /**
      * 时间段阴影分析回调函数，获取分析进度值
      */
-    setPercent(result){
-        this.percent = result;
-        const timer = setInterval(()=>{
-          if (this.percent === result){
-            console.log("result",result);
-            this.$emit("analysisEnd",result);
-          }
-          clearInterval(timer);
-        },200)
+    setPercent(result) {
+      this.percent = result;
+      this.maskText = `正在分析中, 请稍等...${Number((result * 100).toFixed(2))}%`;
+      const timer = setInterval(() => {
+        if (this.percent === result) {
+          this.toggleMask(false);
+          this.$emit("success");
+        }
+        clearInterval(timer);
+      }, 200)
     },
-
     //数组对象深拷贝
     copy(obj) {
       var newobj = obj.constructor === Array ? [] : {};
@@ -464,9 +400,9 @@ export default {
      * 移除绘制插件和阴影分析结果
      */
     remove() {
-      let vm = this;
       let {vueKey, vueIndex} = this;
-      let findSource = vm.$_getManager(manager);
+      // let findSource = vm.$_getManager(manager);
+      let findSource = CesiumZondy[manager].findSource(vueKey, vueIndex);
       // 判断是否已有阴影分析结果
       if (findSource && findSource.source) {
         // 移除阴影分析显示结果
@@ -480,15 +416,29 @@ export default {
       }
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
       CesiumZondy[manager].deleteSource(vueKey, vueIndex);
-      this.$set(this.formData, 'ratio', 0)
-
-      // 关闭原生日照分析
+    },
+    /**
+     * 移除日照分析结果
+     */
+    removeSun() {
       const {viewer} = this.webGlobe
       viewer.scene.globe.enableLighting = false
       viewer.shadows = false
       viewer.clock.multiplier = 1
       viewer.clock.shouldAnimate = false // 关闭计时
     },
+    removeAll() {
+      this.remove();
+      this.removeSun();
+      this.$emit("unload", this);
+    },
+    /**
+     * 阴影分析遮罩层
+     */
+    toggleMask(status) {
+      this.maskShow = status;
+    },
+
     changeShadowColor(color) {
       this.formData.shadowColor = color;
     },
@@ -500,40 +450,16 @@ export default {
 </script>
 
 <style scoped>
-.mp-widget-shadow-analysis {
-  /*display: flex;*/
-  /*flex-direction: column;*/
-  max-height: calc(80vh);
-  min-width: calc(20vw);
-  background-color: rgba(0, 0, 0, 0.3);
-  padding-bottom: 15px;
-}
-
-.shadow.right {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
-
-::v-deep .fixed-table {
-  width: 250px;
-}
-
 ::v-deep .mapgis-ui-form-item {
-  /*align-items: center;*/
   margin-bottom: 0;
+}
+
+::v-deep .mapgis-ui-form label {
+  font-size: 12px;
 }
 
 ::v-deep .mapgis-ui-form-item-label {
   line-height: 40px;
-}
-
-::v-deep .mapgis-ui-form-item-label > label {
-  color: rgba(255, 255, 255, 1);
-}
-
-::v-deep .mapgis-ui-form-item-label > label::after {
-  /*content: '';*/
 }
 
 ::v-deep .mapgis-ui-input {
@@ -541,25 +467,10 @@ export default {
 }
 
 ::v-deep .mapgis-ui-time-picker {
-  width: 181px;
+  width: 179px;
 }
 
-.color-picker {
+::v-deep .mapgis-ui-col-5 {
+  width: 23.833333%;
 }
-
-/deep/ .m-colorPicker .colorBtn[data-v-29accc04] {
-  width: 180px;
-}
-
-.control-button-container {
-  display: inline-flex;
-  justify-content: space-between;
-  margin: 5px 0;
-}
-
-.control-button {
-  margin: 0 6px;
-}
-
-
 </style>

@@ -4,7 +4,18 @@ export default {
   title: "界面/导航/导航菜单",
   component: MapgisUiMenu,
   argTypes: {
-    mode: "vertical",
+    mode: {
+      options: ['vertical', 'vertical-right', 'horizontal', 'inline'],
+      control: { type: 'radio' }
+    },
+    prefixCls: { table: { disable: true } },
+    getPopupContainer: { table: { disable: true } },
+    csp: { table: { disable: true } },
+    locale: { table: { disable: true } },
+    background: { table: { disable: true } },
+    textColor: { table: { disable: true } },
+    colorGroup: { table: { disable: true } },
+    themeStyleChanged: { table: { disable: true } },
   },
 };
 
@@ -16,7 +27,7 @@ const Template = (args, { argTypes }) => ({
       current: ["mail"],
     };
   },
-  template: `<mapgis-ui-menu v-model="current" :mode="mode">
+  template: `<mapgis-ui-menu v-model="current" :mode="mode" style="width:500px;">
       <mapgis-ui-menu-item key="mail"> <mapgis-ui-icon type="mail" />导航菜单一</mapgis-ui-menu-item>
       <mapgis-ui-menu-item key="app" disabled> <mapgis-ui-icon type="appstore" />导航菜单二-禁用</mapgis-ui-menu-item>
       <mapgis-ui-sub-menu>
@@ -39,7 +50,7 @@ const Template = (args, { argTypes }) => ({
         </mapgis-ui-menu-item-group>
       </mapgis-ui-sub-menu>
       <mapgis-ui-menu-item key="alipay">
-        <a href="https//develop.smaryun.com" target="_blank" rel="noopener noreferrer"
+        <a href="https://develop.smaryun.com" target="_blank" rel="noopener noreferrer"
           >导航菜单四 - 链接</a
         >
       </mapgis-ui-menu-item>
@@ -82,7 +93,7 @@ const TemplateInline = (args, { argTypes }) => ({
         </mapgis-ui-menu-item-group>
       </mapgis-ui-sub-menu>
       <mapgis-ui-menu-item key="alipay">
-        <a href="https//develop.smaryun.com" target="_blank" rel="noopener noreferrer"
+        <a href="https://develop.smaryun.com" target="_blank" rel="noopener noreferrer"
           >导航菜单四 - 链接</a
         >
       </mapgis-ui-menu-item>

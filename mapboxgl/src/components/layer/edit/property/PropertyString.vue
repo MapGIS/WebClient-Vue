@@ -1,17 +1,9 @@
 <template>
-  <mapgis-ui-row class="mapgis-property-number">
-    <mapgis-ui-col :span="7">
-      <mapgis-ui-iconfont :type="rule.icon" />
-      <span class="mapgis-property-string-left">{{ rule.title }} </span>
-    </mapgis-ui-col>
-    <mapgis-ui-col :span="17">
-      <mapgis-ui-input
-        class="mapgis-property-string-right"
-        v-model="value"
-        @change="onChange"
-      />
-    </mapgis-ui-col>
-  </mapgis-ui-row>
+  <mapgis-ui-input
+    class="mapgis-property-string-right"
+    v-model="value"
+    @change="onChange"
+  />
 </template>
 
 <script>
@@ -47,7 +39,7 @@ export default {
         if (rule.layertype === "paint") {
           map.setPaintProperty(layerid, layerprop, string);
         } else if (rule.layertype === "layout") {
-          map.setLayoutProperty(layerid, layerprop, string);  
+          map.setLayoutProperty(layerid, layerprop, string);
         }
         let event = { layertype, layerprop, layervalue: string };
         this.$_emitEvent(event);
@@ -72,15 +64,6 @@ export default {
 </script>
 
 <style>
-.mapgis-property-number {
-  width: 100%;
-}
-
-.mapgis-property-string-left {
-  height: 30px;
-  line-height: 30px;
-}
-
 .mapgis-property-string-right {
   width: 100%;
 }

@@ -1,0 +1,97 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(toolbar) {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  &.bordered {
+    border-top: 1px solid $item-active-bg;
+    border-bottom: 1px solid $item-active-bg;
+  }
+  &.sm {
+    height: 28px;
+  }
+}
+
+@include b(toolbar-command) {
+  font-size: 14px;
+  color: $text-color;
+  width: 27px;
+  margin: 0 6px;
+  padding-top: 2px;
+  text-align: center;
+  cursor: pointer;
+  &.anticon {
+    height: 27px;
+    line-height: 27px;
+  }
+  &-large {
+    width: 34px;
+  }
+  &-large .anticon {
+    height: 34px;
+    line-height: 34px;
+  }
+  &-small {
+    width: 20px;
+  }
+  &-small .anticon {
+    height: 20px;
+    line-height: 20px;
+  }
+  &:hover {
+    color: $primary-color;
+  }
+  &.hover-bordered {
+    &:hover {
+      border: 1px solid $border-color;
+    }
+  }
+  &.active {
+    color: $primary-color;
+  }
+  &.disabled {
+    cursor: not-allowed;
+    color: $disabled-color;
+    pointer-events: none;
+  }
+}
+
+@include b(toolbar-command-group) {
+  display: flex;
+  align-items: center;
+  &.remove-first-command-left-margin {
+    & > .#{$ant-prefix}-toolbar-command {
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+  &.remove-last-command-right-margin {
+    & > .#{$ant-prefix}-toolbar-command {
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+@include b(toolbar-space) {
+  flex-grow: 1;
+}
+
+@include b(toolbar-title) {
+  flex: 1 1 0%;
+  min-width: 1px;
+  max-width: 100%;
+  font-weight: 400;
+  color: $title-color;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  &.has-padding {
+    padding: 0 12px;
+  }
+}

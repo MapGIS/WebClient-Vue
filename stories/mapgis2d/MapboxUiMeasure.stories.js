@@ -1,10 +1,12 @@
 import MapgisMeasure from "../../mapboxgl/src/components/UI/controls/measure/Measure.vue";
 
 export default {
-  title: "二维/地图子组件/测量",
+  title: "二维/地图子组件/量测",
   component: MapgisMeasure,
   argTypes: {
     enableControl: true,
+    isAdvanceControl: false,
+    position: "top-left",
   },
 };
 
@@ -25,14 +27,19 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
-        <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-        <mapgis-measure  v-bind="$props" />
-    </mapgis-web-map>
-    `,
+  <mapgis-web-map v-bind="{ ...mapOptions }" style="height:90vh">
+    <mapgis-rastertile-layer
+      layerId="tdt"
+      url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+    />
+      <mapgis-measure v-bind="$props">
+      </mapgis-measure>
+</mapgis-web-map>`,
 });
 
-export const 测量 = Template.bind({});
-测量.args = {
+export const 量测 = Template.bind({});
+量测.args = {
   enableControl: true,
+  isAdvanceControl: false,
+  position: "top-left",
 };

@@ -16,6 +16,7 @@ export default {
       window.mapboxDom.draw = window.mapboxDom.draw || {};
       window.mapboxDom.measure = window.mapboxDom.measure || {};
       window.mapboxDom.edit = window.mapboxDom.edit || {};
+      window.mapboxDom.measureCom = window.mapboxDom.measureCom || {};
       return window.mapboxDom;
     },
 
@@ -82,12 +83,13 @@ export default {
       this.drawEvents.length = 0;
     },
 
-    $_addMeasureControl(control) {
+    $_addMeasureControl(control, com) {
       if (!control) return;
       this.$_removeDrawControl();
       this.$_removeMeasureControl();
       this.$_removeEditControl();
       window.mapboxDom.measure = control;
+      window.mapboxDom.measureCom = com;
       this.map && this.map.addControl(control);
     },
 
@@ -104,6 +106,7 @@ export default {
 
         this.map.removeControl(window.mapboxDom.measure);
         window.mapboxDom.measure = undefined;
+        window.mapboxDom.measureCom = undefined;
       }
     },
 
@@ -164,6 +167,9 @@ export default {
         this.map && this.map.off(e.name, e.callback);
       });
       this.editEvents.length = 0;
+      if (window.mapboxDom.measureCom) {
+        window.mapboxDom.measureCom.coordinates = [];
+      }
     }
   }
 };

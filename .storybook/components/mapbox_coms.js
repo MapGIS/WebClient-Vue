@@ -24,6 +24,9 @@ export { default as MapgisEditor } from "../../mapboxgl/src/components/UI/contro
 // export { default as MapgisFixDraw } from "../../mapboxgl/src/components/UI/controls/drawfix/FixDraw";
 
 export { default as MapgisMarker } from "../../mapboxgl/src/components/UI/Marker.vue";
+export { default as MapgisMarkerPro } from "../../mapboxgl/src/components/layer/marker/MarkerPro.vue";
+export { default as MapgisMarkerSetPro } from "../../mapboxgl/src/components/layer/marker/MarkerSetPro.vue";
+export { default as MapgisDynamicMarkerLayer } from "../../mapboxgl/src/components/layer/marker/DynamicMarkerLayer.vue";
 export { default as MapgisPopup } from "../../mapboxgl/src/components/UI/Popup.vue";
 
 export { default as MapgisArrayLayer } from "../../mapboxgl/src/components/layer/ArrayLayer";
@@ -46,3 +49,8 @@ export { default as MapgisArcgisMapLayer} from "../../mapboxgl/src/components/la
 export { default as MapgisArcgisTileLayer} from "../../mapboxgl/src/components/layer/ArcGISServer/ArcGISTileLayer";
 export { default as MapgisEchartsLayer} from "../../mapboxgl/src/components/overlay/EchartsLayer";
 export { default as MapgisMapvLayer } from "../../mapboxgl/src/components/overlay/MapvLayer";
+
+export { default as Mapgis2DComprehensiveQuery } from "../../mapboxgl/src/components/service/comprehensive-query/ComprehensiveQuery";
+export { default as MapgisThemePanelCustom } from "../../mapboxgl/src/components/layer/ThemeLayer/ThemePanelCustom";
+export { default as MapgisThemeLayerCustom } from "../../mapboxgl/src/components/layer/ThemeLayer/ThemeLayerCustom";
+export { default as MapgisInspect } from "../../mapboxgl/src/components/UI/controls/inspect/Inspect";

@@ -8,23 +8,23 @@ import Feature from "./Feature.vue";
 
 const LineRules = [
   {
-    title: "颜色",
-    icon: "mapgis-yansehecheng",
+    title: "边线颜色",
+    icon: "mapgis-bg-colors",
     type: "color",
     layerprop: "line-color",
     layertype: "paint",
     default: "#000000"
   },
   {
-    title: "符号",
-    icon: "mapgis-yangshikuguanli",
+    title: "边线符号",
+    icon: "mapgis-Symbols-1",
     type: "sprite",
     layerprop: "line-pattern",
     layertype: "paint"
   },
   {
-    title: "透明度",
-    icon: "mapgis-duibidutiaojie",
+    title: "边线透明",
+    icon: "mapgis-opacity",
     type: "number",
     layerprop: "line-opacity",
     layertype: "paint",
@@ -33,8 +33,8 @@ const LineRules = [
     maximum: 1
   },
   {
-    title: "线宽",
-    icon: "mapgis-daolumian",
+    title: "边线线宽",
+    icon: "mapgis-join-2",
     type: "number",
     layerprop: "line-width",
     layertype: "paint",
@@ -42,17 +42,51 @@ const LineRules = [
     minimum: 0
   },
   {
-    title: "线头",
-    icon: "mapgis-daolulvdai",
+    title: "边线线头",
+    icon: "mapgis-line",
     type: "enum",
     layerprop: "line-cap",
     layertype: "layout",
+    enums: [
+      {
+        icon: "mapgis-join-1",
+        value: "butt",
+        title: "尖头"
+      },
+      {
+        icon: "mapgis-join-3",
+        value: "round",
+        title: "圆头"
+      },
+      {
+        icon: "mapgis-join-2",
+        value: "square",
+        title: "平头"
+      }
+    ],
     default: "butt"
   },
   {
-    title: "拐角",
-    icon: "mapgis-daoluyalifenxi",
+    title: "边线拐角",
+    icon: "mapgis-join-2",
     type: "enum",
+    enums: [
+      {
+        icon: "mapgis-join-1",
+        value: "miter",
+        title: "棱拐"
+      },
+      {
+        icon: "mapgis-join-3",
+        value: "round",
+        title: "圆拐"
+      },
+      {
+        icon: "mapgis-join-2",
+        value: "bevel",
+        title: "平拐"
+      }
+    ],
     layerprop: "line-join",
     layertype: "layout",
     default: "miter"

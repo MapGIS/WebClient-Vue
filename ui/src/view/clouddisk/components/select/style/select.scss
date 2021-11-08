@@ -6,3 +6,26 @@
     width: 100%;
   }
 }
+
+@include b(clouddisk-layout-model-folder) {
+  overflow-x: scroll;
+  overflow-y: scroll;
+  margin-left: 10px;
+  position: relative;
+  // min-width: 200px;
+  .ivu-tree-title-selected,
+  .ivu-tree-title-selected:hover {
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar {
+    // width: 6px;
+    // height: 6px;
+    background-color: transparent;
+  }
+  &.layout-model-folder::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: $primary-6;
+  }
+}
