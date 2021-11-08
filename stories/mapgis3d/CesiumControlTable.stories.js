@@ -32,7 +32,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      url: 'http://develop.smaryun.com:6163/igs/rest/g3d/ModelM3D',
+      url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ModelM3D`,
       dataSource: undefined,
       pagination:{
         total:0,
@@ -68,7 +68,8 @@ const Template = (args, { argTypes }) => ({
       queryParam.page = page;
       queryParam.pageCount = pageCount;
       //服务器的ip
-      queryParam.ip = "develop.smaryun.com"
+      // queryParam.ip = "develop.smaryun.com"
+      queryParam.ip = "localhost"
       queryParam.port = "6163";
       //排序设置
       queryParam.orderField = orderField ? orderField : "";

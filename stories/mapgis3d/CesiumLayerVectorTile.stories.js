@@ -12,7 +12,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisVectorTileLayer },
-  template: `<mapgis-web-scene  >
+  template: `<mapgis-web-scene style="height:95vh" >
     <mapgis-3d-vectortile-layer v-bind="$props" />
   </mapgis-web-scene>`,
 });
@@ -20,13 +20,13 @@ const Template = (args, { argTypes }) => ({
 export const 墨卡托 = Template.bind({});
 墨卡托.args = {
   styleUrl:
-    "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/蓝色-墨卡托.json",
+      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/蓝色-墨卡托.json`,
   tilingScheme: "EPSG:3857"
 };
 
 export const 经纬度 = Template.bind({});
 经纬度.args = {
   styleUrl:
-    "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/OSM全中国经纬度.json",
+      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/OSM全中国经纬度.json`,
   tilingScheme: "EPSG:4326"
 };

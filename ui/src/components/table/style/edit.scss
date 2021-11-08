@@ -1,0 +1,46 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(editable-table) {
+  &-table {
+    /* ::v-deep  */
+    .mapgis-ui-table {
+      th {
+        padding: 4px 8px !important;
+      }
+      td {
+        padding: 0 !important;
+      }
+
+      .mapgis-ui-empty,
+      .mapgis-ui-empty-image {
+        margin: 0;
+      }
+
+      .anticon {
+        cursor: pointer;
+        &:hover {
+          color: $primary-color;
+        }
+      }
+      .mapgis-ui-input,
+      .mapgis-ui-select-selection {
+        border: none;
+      }
+
+      .mapgis-ui-input:focus,
+      .mapgis-ui-select-focused .mapgis-ui-select-selection {
+        box-shadow: none;
+      }
+    }
+  }
+  &-table-small {
+    .mapgis-ui-table-placeholder {
+      padding: 8px;
+      > div {
+        font-size: $font-size-sm;
+        line-height: 1;
+      }
+    }
+  }
+}

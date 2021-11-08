@@ -21,3 +21,51 @@
     background-color: $collapse-header-bg;
   }
 }
+
+.mapgis-ui-collapse-indicator-wrapper {
+  position: relative;
+  .indicator {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    // background-color: $base-bg-color; // ws记录
+    // border: 1px solid $border-color; // ws记录
+    background-color: #fff; // ws记录
+    border: 1px solid #f0f0f0; // ws记录
+    cursor: pointer;
+    &.left {
+      height: 64px;
+      top: calc(50% - 32px);
+      border-radius: 4px 0 0 4px;
+      border-right-color: transparent;
+    }
+    &.right {
+      height: 64px;
+      top: calc(50% - 32px);
+      border-radius: 0 4px 4px 0;
+      border-left-color: transparent;
+    }
+    &.top {
+      width: 64px;
+      left: calc(50% - 32px);
+      bottom: 0;
+      border-radius: 4px 4px 0 0;
+      border-bottom-color: transparent;
+    }
+    &.bottom {
+      width: 64px;
+      left: calc(50% - 32px);
+      border-radius: 0 0 4px 4px;
+      border-top-color: transparent;
+    }
+  }
+
+  &:hover {
+    .indicator {
+      color: white;
+      background: $primary-color;
+    }
+  }
+}

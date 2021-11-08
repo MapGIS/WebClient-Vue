@@ -83,5 +83,5 @@ const Template = (args, { argTypes }) => ({
 export const IGS瓦片服务 = Template.bind({});
 IGS瓦片服务.args = {
   layerId: "igs_layer_layerid",
-  baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/北京市`,
 };

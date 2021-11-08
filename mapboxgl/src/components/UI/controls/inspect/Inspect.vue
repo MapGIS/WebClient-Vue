@@ -42,6 +42,14 @@ export default {
     },
     fields: {
       type: Array
+    },
+    showMapPopupOnHover: {
+      type: Boolean,
+      default: false
+    },
+    showInspectMapPopupOnHover: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -113,8 +121,8 @@ export default {
         }),
         // showInspectMap: true,
         showMapPopup: true,
-        showMapPopupOnHover: false,
-        showInspectMapPopupOnHover: false,
+        showMapPopupOnHover: this.showMapPopupOnHover,
+        showInspectMapPopupOnHover: this.showMapPopupOnHover,
         showInspectButton: false,
         blockHoverPopupOnClick: false,
         buildInspectStyle: (originalMapStyle, coloredLayers) =>

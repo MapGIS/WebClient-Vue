@@ -81,6 +81,13 @@ export default {
       },
       control:'number'
     },
+    baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/WMTSServer`,
+    wmtsLayer: 'beijing',
+    tileMatrixSet:"EPSG:4326_北京市_arcgis_GB",
+    layerId: 'ogcwmts_layerId',
+    sourceId: 'ogcwmts_sourceId',
+    //因为司马云是用的老版本的igs服务，因此offset必须传-1
+    zoomOffset: -1
   },
 };
 

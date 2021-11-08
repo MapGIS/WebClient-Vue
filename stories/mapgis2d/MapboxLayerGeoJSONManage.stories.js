@@ -1,5 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
-import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer.vue";
+import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer";
 
 export default {
   title: "二维/图层/GeoJSON内置popup",
@@ -100,7 +100,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisGeojsonLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[114.3, 30.5]" :zoom="6" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[114.3, 30.5]" :zoom="6" style="height:95vh">
     <mapgis-geojson-layer v-bind="$props" />
   </mapgis-web-map>`,
 });
@@ -124,16 +124,16 @@ Fill.args = {
     },
   },
   layerId: "geojsonLayer",
-  data: "http://develop.smaryun.com/static/data/geojson/china.geojson",
+  data: `http://${window.webclient.ip}/static/data/geojson/china.geojson`,
   sourceId: "geojson_source_id",
   enablePopup: true,
-  enableTips: false,
+  enableTips: true,
   popupOptions: {
     title: "name",
-    fields: ["adcode", "行政区代码","mpArea","mpPerimeter","GDP_2011"]
+    fields: ["adcode", "行政区代码", "mpArea", "mpPerimeter", "GDP_2011"],
   },
   tipsOptions: {
     title: "name",
-    fields: ["行政区代码", "adcode","mpArea"]
-  }
+    fields: ["行政区代码", "adcode", "mpArea"],
+  },
 };

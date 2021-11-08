@@ -3,10 +3,17 @@
 > mapgis-measure
 
 :::tip
-绘制组件`mapgis-draw`在地图对象加载完成之后才会生效，详见[Mapbox GL官方文档](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md)
+绘制组件`mapgis-draw`在地图对象加载完成之后才会生效，详见[Mapbox GL 官方文档](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md)
 :::
 
 ## 属性
+
+### `enableControl`
+
+- **类型:** `Boolean`
+- **非侦听属性:**
+- **默认** false
+- **描述** 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性 position 改变其显示的位置
 
 ### `editable`
 

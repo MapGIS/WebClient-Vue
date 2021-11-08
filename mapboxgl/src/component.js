@@ -29,7 +29,11 @@ export { default as MapgisHawkeye } from "./components/UI/controls/hawkeye/Hawke
 export { default as MapgisArcgisLegend } from "./components/UI/controls/legend/Legend";
 
 export { default as MapgisMarker } from "./components/UI/Marker.vue";
+export { default as MapgisMarkerPro } from "./components/layer/marker/MarkerPro.vue";
+export { default as MapgisMarkerSetPro } from "./components/layer/marker/MarkerSetPro.vue";
+export { default as MapgisMarkerLayer } from "./components/layer/marker/DynamicMarkerLayer.vue";
 export { default as MapgisPopup } from "./components/UI/Popup.vue";
+export { default as MapgisGeojsonPopup } from "./components/layer/geojson/Popup.vue";
 
 export { default as MapgisBaseTable } from "./components/UI/controls/table/MapBoxBaseTable";
 export { default as MapgisInspect } from "./components/UI/controls/inspect/Inspect";
@@ -70,9 +74,9 @@ export { default as MapgisMapvLayer } from "./components/overlay/MapvLayer";
 // export { default as MapgisThreeboxLayer } from "./components/overlay/ThreeboxLayer";
 
 export { default as MapgisFeatureService } from "./components/map/mixins/FeatureService";
-export { default as MapgisUniqueThemeLayer } from "./components/layer/ThemeLayer/UniqueThemeLayer";
-export { default as MapgisSymbolThemeLayer } from "./components/layer/ThemeLayer/SymbolThemeLayer";
-export { default as MapgisRangeThemeLayer } from "./components/layer/ThemeLayer/RangeThemeLayer";
 export { default as MapgisThemePanel } from "./components/layer/ThemeLayer/ThemePanel";
+export { default as MapgisThemePanelCustom } from "./components/layer/ThemeLayer/ThemePanelCustom";
 export { default as MapgisThemeLayer } from "./components/layer/ThemeLayer/ThemeLayer";
-export { default as MapgisHeatThemeLayer } from "./components/layer/ThemeLayer/HeatThemeLayer";
+export { default as MapgisThemeLayerCustom } from "./components/layer/ThemeLayer/ThemeLayerCustom";
+
+export { default as Mapgis2DComprehensiveQuery } from "./components/service/comprehensive-query/ComprehensiveQuery";

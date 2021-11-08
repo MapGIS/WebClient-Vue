@@ -23,9 +23,9 @@ const Template = (args, { argTypes }) => ({
           metadata: {},
           sources: {},
           layers: [],
-          sprite: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/sprite",
+          sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
           glyphs:
-            "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf",
+              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         },
         zoom: 13,
         center: [114.8820937708428, 30.44895306216159],

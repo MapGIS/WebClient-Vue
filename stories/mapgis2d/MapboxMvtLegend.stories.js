@@ -21,7 +21,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       mvtStyle:
-        "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/街道-墨卡托.json",
+          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
     };
   },
   methods: {

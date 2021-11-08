@@ -1,19 +1,13 @@
 <template>
-  <mapgis-ui-row class="mapgis-property-number">
-    <mapgis-ui-col :span="7">
-      <mapgis-ui-iconfont :type="rule.icon" />
-      <span class="mapgis-property-number-left">{{ rule.title }} </span>
-    </mapgis-ui-col>
-    <mapgis-ui-col :span="17">
-      <mapgis-ui-input-number
-        class="mapgis-property-number-right"
-        v-model="value"
-        :min="minimum"
-        :max="maximum"
-        @change="onChange"
-      />
-    </mapgis-ui-col>
-  </mapgis-ui-row>
+  <mapgis-ui-input-number
+    class="mapgis-property-number-right"
+    :style="{ width: '100%' }"
+    v-model="value"
+    :min="minimum"
+    :max="maximum"
+    :size="size"
+    @change="onChange"
+  />
 </template>
 
 <script>
@@ -25,7 +19,8 @@ export default {
   props: {
     rule: Object,
     minimum: { type: Number, default: 0 },
-    maximum: { type: Number, default: 1000 }
+    maximum: { type: Number, default: 1000 },
+    size: { type: String, default: "small" }
   },
   model: {
     prop: "number",
@@ -78,17 +73,7 @@ export default {
 </script>
 
 <style>
-.mapgis-property-number {
-  width: 100%;
-}
-
-.mapgis-property-number-left {
-  height: 30px;
-  line-height: 30px;
-  margin-left: -14px;
-}
-
 .mapgis-property-number-right {
-  width: 180px !important;
+  width: 100%;
 }
 </style>

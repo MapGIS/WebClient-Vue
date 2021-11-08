@@ -16,18 +16,26 @@ export default {
   wrapperUI: Select,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: selectTypes,
+  props: {
+    ...selectTypes,
+    autoWidth: { type: Boolean, default: false }
+  },
   model: {
     prop: "value",
     event: "change"
   },
   methods: {},
   computed: {
+    uiClass() {
+      return this.autoWidth
+        ? 'mapgis-ui-select-auto-width'
+        : '';
+    },
     addListeners() {
       const vm = this;
       return {
         change: function(value) {
-          vm.$emit('change', value);
+          vm.$emit("change", value);
         }
       };
     }

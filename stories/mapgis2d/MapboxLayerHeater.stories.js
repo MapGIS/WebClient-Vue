@@ -38,5 +38,5 @@ export const 热力 = Template.bind({});
 热力.args = {
   field: "驻留时间",
   geojson:
-    "http://develop.smaryun.com/static/data/geojson/chinamobile_1000.geojson",
+      `http://${window.webclient.ip}/static/data/geojson/chinamobile_1000.geojson`,
 };

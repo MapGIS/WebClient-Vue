@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <slot v-if="initial"></slot>
+  <div class="mapgis-3d-measure">
+    <slot v-if="initial"> </slot>
+    <slot name="measureTool">
+      <measure-3d-tool />
+    </slot>
   </div>
 </template>
 
@@ -8,21 +11,25 @@
 
 <script>
 import ServiceLayer from "../ServiceLayer";
+import Measure3dTool from "./components/MeasureTool.vue";
 
 export default {
   name: "mapgis-3d-measure",
   mixins: [ServiceLayer],
+  components: {
+    "measure-3d-tool": Measure3dTool
+  },
   props: {
-    styles:{
+    styles: {
       type: Object,
-      default(){
+      default() {
         return {
           lineColor: "black"
-        }
+        };
       }
     }
   },
-  data () {
+  data() {
     return {
       measure: undefined,
       initial: false,
@@ -30,7 +37,7 @@ export default {
       waitManagerName: "GlobesManager"
     };
   },
-  watch:{
+  watch: {
     styles: {
       handler: function() {
         this.initStyles();
@@ -38,63 +45,74 @@ export default {
       deep: true
     }
   },
-  mounted () {
+  mounted() {
     let vm = this;
-    this.$_init(function () {
+    this.$_init(function() {
       vm.initStyles();
       vm.initial = true;
-      vm.$emit("load",vm);
-    })
+      vm.$emit("load", vm);
+    });
   },
   destroyed() {
     this.deleteMeasure();
-    vm.$emit("unload");
+    this.$emit("unload");
   },
   methods: {
-    initStyles(){
-      this.measureStyles.lineColor = Cesium.Color.fromCssColorString(this.styles.lineColor,this.measureStyles.lineColor);
+    initStyles() {
+      this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
+        this.styles.lineColor,
+        this.measureStyles.lineColor
+      );
     },
-    measureCallBack(result){
-      if(result instanceof Array){
+    measureCallBack(result) {
+      if (result instanceof Array) {
         for (let i = 0; i < result.length; i++) {
           result[i] = result[i] / 1000;
         }
       }
-      this.$emit("measured",result);
+      this.$emit("measured", result);
     },
-    enableMeasureLength(){
+    enableMeasureLength() {
       this.$_enableMeasure("MeasureLengthTool");
-
     },
-    enableMeasureArea(){
+    enableMeasureArea() {
       this.$_enableMeasure("MeasureAreaTool");
     },
-    enableMeasureTriangle(){
+    enableMeasureTriangle() {
       this.$_enableMeasure("TriangulationTool");
     },
-    enableMeasureSlope(){
+    enableMeasureSlope() {
       this.$_enableMeasure("MeasureSlopeTool");
     },
-    $_enableMeasure(MeasureName){
-      const { vueKey,vueIndex } = this;
-      let webGlobe = this.$_getObject(this.waitManagerName,this.deleteMeasure);
-      let measure = new Cesium[MeasureName](webGlobe.viewer,{
+    $_enableMeasure(MeasureName) {
+      const { vueKey, vueIndex } = this;
+      let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
+      let measure = new Cesium[MeasureName](webGlobe.viewer, {
         lineColor: this.measureStyles.lineColor,
-        callBack: this.measureCallBack
+        callBack: result => {
+          if (typeof callback === "function") {
+            callback(result);
+          } else {
+            this.measureCallBack(result);
+          }
+        }
       });
       window.CesiumZondy.MeasureToolManager.addSource(
-          vueKey,
-          vueIndex,
-          measure
+        vueKey,
+        vueIndex,
+        measure
       );
       measure.startTool();
     },
-    deleteMeasure(){
-      this.$_deleteManger("MeasureToolManager",function (manager) {
-        if(manager.source){
+    deleteMeasure() {
+      this.$_deleteManger("MeasureToolManager", function(manager) {
+        if (manager.source) {
           manager.source.stopTool();
         }
       });
+    },
+    remove() {
+      this.deleteMeasure();
     }
   }
 };

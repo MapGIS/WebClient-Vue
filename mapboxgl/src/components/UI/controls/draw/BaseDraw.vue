@@ -52,6 +52,7 @@ import {
   SimpleSelectMode
 } from "mapbox-gl-draw-circle";
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
+
 const modes = MapboxDrawCom.default.modes;
 const MapboxDraw = MapboxDrawCom.default;
 modes.draw_rectangle = DrawRectangle;
@@ -113,10 +114,10 @@ export default {
       type: Boolean,
       default: true
     },
-    expandControl: {
-      type: Boolean,
-      default: false
-    },
+    // expandControl: {
+    //   type: Boolean,
+    //   default: false
+    // },
     enableControl: {
       type: Boolean,
       default: false
@@ -183,13 +184,13 @@ export default {
       drawer: undefined,
       oldStyles: DefaultDrawStyle,
       draws: [
-        {
-          icon: "mapgis-huizhi1",
-          type: "primary",
-          tip: "展开",
-          click: this.changeFold,
-          className: "mapgis-draw-expand"
-        },
+        // {
+        //   icon: "mapgis-huizhi1",
+        //   type: "primary",
+        //   tip: "展开",
+        //   click: this.changeFold,
+        //   className: "mapgis-draw-expand"
+        // },
         {
           icon: "mapgis-huizhidian2",
           type: "primary",
@@ -274,13 +275,16 @@ export default {
     this.$_initDraw();
     if (this.enableControl) {
       let position = this.position;
-      if (this.expandControl) {
-        this.changeFold();
-      } else {
-        let pos = position.split("-");
-        document.querySelector(".mapgis-draw-control").style =
-          pos[0] + ": 10px;" + pos[1] + ": 10px;";
-      }
+      let pos = position.split("-");
+      document.querySelector(".mapgis-draw-control").style =
+        pos[0] + ": 10px;" + pos[1] + ": 10px;";
+      // if (this.expandControl) {
+      //   this.changeFold();
+      // } else {
+      //   let pos = position.split("-");
+      //   document.querySelector(".mapgis-draw-control").style =
+      //     pos[0] + ": 10px;" + pos[1] + ": 10px;";
+      // }
     }
   },
 
@@ -410,17 +414,17 @@ export default {
       this.$_emitEvent("removed");
     },
 
-    changeFold(e) {
-      let space = document.querySelector(".mapgis-draw-control > .mapgis-ui-space");
-      let width = getComputedStyle(space).width;
-      if (width == "40px") {
-        space.style =
-          "width: 320px!important;overflow: hidden;transition: width .5s;";
-      } else {
-        space.style =
-          "width: 40px!important;overflow: hidden;transition: width .5s;";
-      }
-    },
+    // changeFold(e) {
+    //   let space = document.querySelector(".mapgis-draw-control > .mapgis-ui-space");
+    //   let width = getComputedStyle(space).width;
+    //   if (width == "40px") {
+    //     space.style =
+    //       "width: 320px!important;overflow: hidden;transition: width .5s;";
+    //   } else {
+    //     space.style =
+    //       "width: 40px!important;overflow: hidden;transition: width .5s;";
+    //   }
+    // },
 
     toggleStatic() {
       // this.enableDrawer();
@@ -470,18 +474,18 @@ export default {
 
 <style>
 .mapgis-draw-control > .mapgis-ui-space {
-  width: 40px !important;
+  width: 280px !important;
   overflow: hidden;
-  transition: width 0.5s;
+  /*transition: width 0.5s;*/
 }
 
-.mapgis-draw-expand.mapgis-ui-btn {
-  width: 40px !important;
-  height: 40px !important;
-}
-.mapgis-draw-expand.anticon {
-  font-size: 19px !important;
-}
+/*.mapgis-draw-expand.mapgis-ui-btn {*/
+/*  width: 40px !important;*/
+/*  height: 40px !important;*/
+/*}*/
+/*.mapgis-draw-expand.anticon {*/
+/*  font-size: 19px !important;*/
+/*}*/
 
 .mapgis-draw-control {
   width: fit-content;

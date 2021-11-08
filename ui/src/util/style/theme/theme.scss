@@ -201,6 +201,11 @@ $div-color: var(--div-color);
 $div-background: var(--div-background);
 $div-border-color: var(--div-border-color);
 
+// The background colors for active and hover states for things like
+// list items or table cells.
+$item-active-bg: $primary-1;
+$item-hover-bg: $primary-1;
+
 // LINK
 $link-color: $primary-6;
 $link-hover-color: $primary-5;
@@ -481,16 +486,16 @@ $menu-dark-selected-item-text-color: $white;
 $menu-dark-item-hover-bg: transparent;
 
 $table-background: var(--table-background);
-$table-heading-color: $primary-6;
+$table-heading-color: $primary-5;
 $table-header-bg: $background-color-light;
 $table-header-color: $table-heading-color;
 $table-header-sort-bg: $background-color-base;
 $table-body-sort-bg: rgba(0, 0, 0, 0.01);
-$table-row-hover-bg: $primary-6;
+$table-row-hover-bg: $primary-2;
 $table-selected-row-color: inherit;
-$table-selected-row-bg: $primary-6;
+$table-selected-row-bg: $primary-2;
 $table-body-selected-sort-bg: $table-selected-row-bg;
-$table-selected-row-hover-bg: $primary-6;
+$table-selected-row-hover-bg: $primary-2;
 $table-expanded-row-bg: #fbfbfb;
 $table-padding-vertical: 16px;
 $table-padding-horizontal: 16px;
@@ -769,3 +774,36 @@ $panel-text-color: var(--panel-text-color);
 $panel-option-color: var(--panel-option-color);
 $panel-box-shadow: var(--panel-box-shadow);
 $panel-collapse-color: var(--panel-collapse-color);
+
+//svgSelect
+$svg-select-outer-color: var(--svg-select-outer-color);
+$svg-select-panel-color: var(--svg-select-panel-color);
+$svg-select-panel-head-color: var(--svg-select-panel-head-color);
+$svg-active-type-color: var(--svg-active-type-color);
+
+// OneMap
+$primary-color: $primary-color;
+$success-color: $success-color;
+$warning-color: $warning-color;
+$error-color: $warning-color;
+
+$title-color: $heading-color;
+$text-color: $text-color;
+$text-color-second: $text-color-secondary;
+
+$layout-bg-color: $layout-body-background;
+$base-bg-color: $body-background;
+$hover-bg-color: rgba(0, 0, 0, 0.025);
+$border-color: $border-color-split;
+$shadow-color: $shadow-color;
+
+$text-color-inverse: $text-color-inverse;
+$hover-bg-color-light: $hover-bg-color;
+$hover-bg-color-dark: $primary-7;
+$hover-bg-color-night: rgba(255, 255, 255, 0.025);
+$header-bg-color-dark: $layout-header-background;
+
+$shadow-down: $shadow-1-down;
+$shadow-up: $shadow-1-up;
+$shadow-left: $shadow-1-left;
+$shadow-right: $shadow-1-right;

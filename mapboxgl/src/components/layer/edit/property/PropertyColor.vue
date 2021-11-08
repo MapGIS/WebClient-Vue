@@ -1,31 +1,13 @@
 <template>
-  <mapgis-ui-row class="mapgis-property-color">
-    <mapgis-ui-col :span="7">
-      <mapgis-ui-iconfont :type="rule.icon" />
-      <span class="mapgis-property-color-left">{{ rule.title }} </span>
-    </mapgis-ui-col>
-    <mapgis-ui-col :span="17">
-      <!-- <mapgis-ui-popover v-model="visible" trigger="click"> -->
-
-      <div class="theme-panel-color-outer">
-        <colorPicker
-          v-model="value"
-          class="theme-panel-line-color"
-          @change="onChange"
-        />
-      </div>
-
-      <!-- <mapgis-ui-input v-model="value">
-          <mapgis-ui-button
-            size="small"
-            shape="round"
-            slot="addonAfter"
-            :style="{ background: value }"
-          />
-        </mapgis-ui-input> -->
-      <!-- </mapgis-ui-popover> -->
-    </mapgis-ui-col>
-  </mapgis-ui-row>
+  <!-- <div class="theme-panel-color-outer"> -->
+  <mapgis-ui-button :size="size" :style="{ width: '100%' }">
+    <colorPicker
+      v-model="value"
+      class="mapgis-property-color"
+      @change="onChange"
+    />
+  </mapgis-ui-button>
+  <!-- </div> -->
 </template>
 
 <script>
@@ -37,7 +19,8 @@ export default {
   mixins: [EditMixin],
   components: {},
   props: {
-    rule: Object
+    rule: Object,
+    size: { type: String, default: "small" }
   },
   model: {
     prop: "color",

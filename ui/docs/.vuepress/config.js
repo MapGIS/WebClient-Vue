@@ -56,6 +56,8 @@ module.exports = {
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],
               ["/guide/build.md", "解决打包内存溢出问题"],
+              ["/guide/borderBox.md", "解决全局设置为盒模型问题"],
+              ["/guide/fontSize.md", "解决字体大小被全局设置的问题"]
             ]
           },
           {
@@ -68,20 +70,19 @@ module.exports = {
               ["/api/sprite/Sprite.md", "符号库"],
               ["/api/upload/Upload.md", "上传"],
               ["/api/clouddiskFileSelect/CDFileSelect.md", "从云盘选择"],
-              ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
+              ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"]
             ]
-          }
-          /* {
+          },
+          {
+            title: "样式&主题",
+            collapsable: false,
+            children: [["/style/css/less2scss.md", "Less & Sass"]]
+          },
+          {
             title: "组件开发",
             collapsable: false,
-            children: [
-              ["/plugin_components/", "使用组件"],
-              [
-                "/plugin_components/plugin_components_development.md",
-                "封装组件"
-              ]
-            ]
-          }, */
+            children: [["/plugin_components/onemap.md", "移植组件"]]
+          }
         ]
       }
     }
@@ -91,23 +92,13 @@ module.exports = {
       "script",
       { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
     ],
-    ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
-    [
-      "script",
-      {
-        src:
-          "http://localhost:8081/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
-      }
-    ]
+    ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }]
   ],
   plugins: [
     [
       "demo-code",
       {
-        jsLibs: [
-          "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js",
-          "http://localhost:8081/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
-        ]
+        jsLibs: ["https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"]
       }
     ]
   ]

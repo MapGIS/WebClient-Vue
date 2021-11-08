@@ -1,6 +1,6 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
-// @import "../../input/style/mixin.scss";
+@import "./edit.scss";
 
 @include b(table) {
   $table-prefix: &;

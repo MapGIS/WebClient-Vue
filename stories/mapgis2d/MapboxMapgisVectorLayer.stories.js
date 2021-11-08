@@ -198,6 +198,6 @@ const Template = (args, { argTypes }) => ({
 export const IGS矢量图层 = Template.bind({});
 IGS矢量图层.args = {
   layerId: "igs_layer_layerid",
-  // sourceId: "igs_layer_sourceid",
-  baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/layers"
+  sourceId: "igs_layer_sourceid",
+  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`
 };

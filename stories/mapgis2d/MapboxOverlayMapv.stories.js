@@ -56,6 +56,7 @@ const Template = (args, { argTypes }) => ({
 export const mapv = Template.bind({});
 mapv.args = {
   options: {
+    postRender:true,
     context: "2d",
     fillStyle: "rgba(55, 50, 250, 0.8)",
     size: 40,

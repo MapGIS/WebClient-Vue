@@ -93,6 +93,11 @@ export default {
       },
       control:'boolean'
     } ,
+    layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院',
+    layerId: 'raster_layerId',
+    sourceId: 'raster_sourceId',
+    baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
+    crs:'EPSG:4326'
   },
 };
 
@@ -109,8 +114,8 @@ IGS_4326.args = {
   layers: '北京市,绿地_1,绿地_2,绿地_3,中小学POI,幼儿园POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,书店POI,区县点,首都点',
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
-  baseUrl:'http://develop.smaryun.com:6163/igs/rest/ogc/doc/北京市/WMSServer',
-  // crs:'EPSG:4326'
+  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
+  crs:'EPSG:4326'
 };
 
 export const ArcGis_4326 = Template.bind({});

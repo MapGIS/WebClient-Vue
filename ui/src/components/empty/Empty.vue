@@ -6,11 +6,13 @@ import ThemeMixin from "../../mixin/ThemeMixin";
 
 export const emptyProps = {
   ...EmptyProps(),
+  imageStyle: PropTypes.any.def({ height: '30px' }),
   image: PropTypes.any.def(require("./assets/image/empty.png"))
+  // image: Empty.PRESENTED_IMAGE_SIMPLE
 };
 
 export default {
-  name: "MapgisUiEmpty",
+  name: "mapgis-ui-empty",
   wrapperUI: Empty,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,

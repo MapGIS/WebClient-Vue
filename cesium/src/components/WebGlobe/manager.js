@@ -26,8 +26,8 @@ export function initManager() {
     window.CesiumZondy.MarkerManager || new MarkerManager();
   window.CesiumZondy.OGCWMTSManager =
     window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
-  window.CesiumZondy.FloodAnalyseManager =
-    window.CesiumZondy.FloodAnalyseManager || new FloodAnalyseManager();
+  window.CesiumZondy.FloodAnalysisManager =
+    window.CesiumZondy.FloodAnalysisManager || new FloodAnalysisManager();
   window.CesiumZondy.OGCWMSManager =
     window.CesiumZondy.OGCWMSManager || new OGCWMSManager();
   window.CesiumZondy.DragEditManager =
@@ -70,6 +70,29 @@ export function initManager() {
     new HeightLimitedAnalysisManager();
   window.CesiumZondy.shadowAnalysisManager =
     window.CesiumZondy.shadowAnalysisManager || new shadowAnalysisManager();
+  window.CesiumZondy.IgsFeatureManager =
+    window.CesiumZondy.IgsFeatureManager || new IgsFeatureManager();
+  window.CesiumZondy.AspectAnalysisManager =
+    window.CesiumZondy.AspectAnalysisManager || new AspectAnalysisManager();
+  DynamicSectionAnalysisManager;
+  window.CesiumZondy.DynamicSectionAnalysisManager =
+    window.CesiumZondy.DynamicSectionAnalysisManager ||
+    new DynamicSectionAnalysisManager();
+  window.CesiumZondy.SlopeAnalysisManager =
+    window.CesiumZondy.SlopeAnalysisManager || new SlopeAnalysisManager();
+  window.CesiumZondy.SkyLineAnalysisManager =
+    window.CesiumZondy.SkyLineAnalysisManager || new SkyLineAnalysisManager();
+  window.CesiumZondy.ContourAnalysisManager =
+    window.CesiumZondy.ContourAnalysisManager || new ContourAnalysisManager();
+  window.CesiumZondy.ViewshedAnalysisManager =
+    window.CesiumZondy.ViewshedAnalysisManager || new ViewshedAnalysisManager();
+  window.CesiumZondy.VisiblityAnalysisManager =
+    window.CesiumZondy.VisiblityAnalysisManager ||
+    new VisiblityAnalysisManager();
+  window.CesiumZondy.CutFillAnalysisManager =
+    window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
+  window.CesiumZondy.ProfileAnalysisManager =
+    window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
 
   //在window.CesiumZondy下添加取得WebGlobe对象的方法
   window.CesiumZondy.getWebGlobe = function(vueKey) {
@@ -145,6 +168,51 @@ export class BaseManager {
     }
   }
 
+  changeSource(vueKey, vueIndex, source) {
+    vueKey = vueKey ? vueKey : this.vueKey;
+    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = `${vueIndex}`;
+    let index = -1;
+    let findSource = undefined;
+    if (!this[vueKey]) return findSource;
+
+    let find = this[vueKey].find((s, i) => {
+      let result = false;
+      if (s && s.key === vueIndex) {
+        index = i;
+        result = true;
+      }
+      return result;
+    });
+
+    if (!source) {
+      find.source = source;
+    }
+    return find;
+  }
+
+  changeOptions(vueKey, vueIndex, key, value) {
+    vueKey = vueKey ? vueKey : this.vueKey;
+    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = `${vueIndex}`;
+    let index = -1;
+    let findSource = undefined;
+    if (!this[vueKey]) return findSource;
+
+    let find = this[vueKey].find((s, i) => {
+      let result = false;
+      if (s && s.key === vueIndex) {
+        index = i;
+        result = true;
+      }
+      return result;
+    });
+    find.options = find.options || {};
+    find.options[key] = value;
+
+    return find;
+  }
+
   findSource(vueKey, vueIndex) {
     vueKey = vueKey ? vueKey : this.vueKey;
     vueIndex = vueIndex ? vueIndex : this.vueIndex;
@@ -205,10 +273,20 @@ export class IgsDocLayerManager extends BaseManager {}
 export class IgsTilecLayerManager extends BaseManager {}
 export class IgsserverManager extends BaseManager {}
 export class ExcavateAnalysisManager extends BaseManager {}
-export class FloodAnalyseManager extends BaseManager {}
+export class FloodAnalysisManager extends BaseManager {}
 export class MarkerManager extends BaseManager {}
 export class AnalysisModelFlattenManager extends BaseManager {}
 export class DynamicCuttingManager extends BaseManager {}
 export class AnalysisManager extends BaseManager {}
 export class HeightLimitedAnalysisManager extends BaseManager {}
 export class shadowAnalysisManager extends BaseManager {}
+export class IgsFeatureManager extends BaseManager {}
+export class AspectAnalysisManager extends BaseManager {}
+export class DynamicSectionAnalysisManager extends BaseManager {}
+export class SlopeAnalysisManager extends BaseManager {}
+export class SkyLineAnalysisManager extends BaseManager {}
+export class ContourAnalysisManager extends BaseManager {}
+export class ViewshedAnalysisManager extends BaseManager {}
+export class VisiblityAnalysisManager extends BaseManager {}
+export class CutFillAnalysisManager extends BaseManager {}
+export class ProfileAnalysisManager extends BaseManager {}

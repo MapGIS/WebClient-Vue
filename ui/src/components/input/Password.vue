@@ -19,13 +19,21 @@ export default {
   wrapperUI: Password,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
-  props: inputPasswordProps,
+  props: {
+    ...inputPasswordProps,
+    autoWidth: { type: Boolean, default: false }
+  },
   methods: {},
   model: {
     prop: 'value',
     event: 'change.value'
   },
   computed: {
+    uiClass() {
+      return this.autoWidth
+        ? 'mapgis-ui-input-auto-width'
+        : '';
+    },
     addListeners() {
       const vm = this;
       return {

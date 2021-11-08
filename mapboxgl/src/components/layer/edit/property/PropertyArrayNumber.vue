@@ -1,26 +1,22 @@
 <template>
-  <mapgis-ui-row class="mapgis-property-array-number">
-    <mapgis-ui-col :span="7">
-      <mapgis-ui-iconfont :type="rule.icon" />
-      <span class="mapgis-property-array-number-left">{{ rule.title }} </span>
-    </mapgis-ui-col>
-    <mapgis-ui-col :span="17">
-      <mapgis-ui-input-number
-        class="mapgis-property-array-number-right"
-        v-model="valuex"
-        :min="minimum"
-        :max="maximum"
-        @change="onChangeX"
-      />
-      <mapgis-ui-input-number
-        class="mapgis-property-array-number-right"
-        v-model="valuey"
-        :min="minimum"
-        :max="maximum"
-        @change="onChangeY"
-      />
-    </mapgis-ui-col>
-  </mapgis-ui-row>
+  <mapgis-ui-space>
+    <mapgis-ui-input-number
+      class="mapgis-property-array-number-right"
+      v-model="valuex"
+      :min="minimum"
+      :max="maximum"
+      :size="size"
+      @change="onChangeX"
+    />
+    <mapgis-ui-input-number
+      class="mapgis-property-array-number-right"
+      v-model="valuey"
+      :min="minimum"
+      :max="maximum"
+      :size="size"
+      @change="onChangeY"
+    />
+  </mapgis-ui-space>
 </template>
 
 <script>
@@ -32,7 +28,8 @@ export default {
   props: {
     rule: Object,
     minimum: { type: Number, default: -100 },
-    maximum: { type: Number, default: 100 }
+    maximum: { type: Number, default: 100 },
+    size: { type: String, default: "small" }
   },
   watch: {
     layerid(next) {
@@ -43,7 +40,7 @@ export default {
   data() {
     return {
       valuex: this.getValueX(),
-      valuey: this.getValueY(),
+      valuey: this.getValueY()
     };
   },
   methods: {
@@ -108,15 +105,6 @@ export default {
 </script>
 
 <style>
-.mapgis-property-array-number {
-  width: 100%;
-}
-
-.mapgis-property-array-number-left {
-  height: 30px;
-  line-height: 30px;
-}
-
 .mapgis-property-array-number-right {
   width: 90px !important;
 }

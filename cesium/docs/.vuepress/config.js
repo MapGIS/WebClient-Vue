@@ -104,6 +104,7 @@ module.exports = {
               ["/api/m3d/m3d.md", "M3D"],
 
               ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/marker/DynamicMarker.md", "动态注记"],
 
               {
                 title: "可视化",
@@ -135,7 +136,8 @@ module.exports = {
               [
                 "/plugin_components/plugin_components_development.md",
                 "创建组件"
-              ]
+              ],
+              ["/plugin_components/create_storybook.md", "创建Storybook示例"],
             ]
           },
           {

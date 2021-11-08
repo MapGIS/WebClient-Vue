@@ -16,3 +16,35 @@
     }
   }
 }
+
+.mapgis-ui-img-checkbox {
+  margin-right: 16px;
+  position: relative;
+  border-radius: 4px;
+  cursor: pointer;
+  .check-item {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    padding-top: 15px;
+    padding-left: 24px;
+    height: 100%;
+    color: $primary-color;
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+.mapgis-ui-color-checkbox {
+  float: left;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-right: 8px;
+  text-align: center;
+  // color: $base-bg-color; // ws记录
+  color: #fff; // ws记录
+  font-weight: bold;
+}

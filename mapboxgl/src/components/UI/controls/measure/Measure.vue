@@ -2,83 +2,83 @@
   <div>
     <slot v-if="measure"></slot>
     <!-- slot for measureTool -->
-    <slot name="measureTool" />
-    <!-- slot for measureMarker -->
-    <slot name="measureMarker" />
-    <div class="mapgis-measure-control" v-show="enableControl">
-      <mapgis-ui-space>
-        <mapgis-ui-tooltip
-          v-for="(item, i) in measures"
-          :key="i"
-          placement="bottom"
-        >
-          <template slot="title">
-            <span>{{ item.tip }}</span>
-          </template>
-          <mapgis-ui-button
-            shape="circle"
-            :type="item.type"
-            @click="item.click"
-            :class="item.className"
-          >
-            <mapgis-ui-iconfont
-              :type="item.icon"
-              :class="item.className"
-              theme="filled"
-            />
-          </mapgis-ui-button>
-        </mapgis-ui-tooltip>
-      </mapgis-ui-space>
-      <mapgis-marker
-        color="#ff0000"
-        :coordinates="coordinates"
-        v-if="coordinates.length > 0 && enableControl"
+    <slot name="measureTool">
+      <div
+          v-show="enableControl"
+          :style="controlStyle"
+          class="measure-story-control"
       >
-        <div slot="marker" class="mapgis-measure-control-label">
-          <div>面积：{{ area }}</div>
-          <div>长度：{{ perimeter }}</div>
-        </div>
-      </mapgis-marker>
-    </div>
+        <measure-tool :result="measureResult" v-if="isAdvanceControl"/>
+        <mapgis-ui-space
+            v-if="!isAdvanceControl"
+        >
+          <mapgis-ui-tooltip
+              v-for="(item, i) in toolbarBtns"
+              :key="i"
+              placement="bottom"
+          >
+            <span slot="title">{{ item.tip }}</span>
+            <mapgis-ui-button
+                shape="circle"
+                @click="item.click(item)"
+                :type="item.type"
+                :style="btnStyle(item)"
+            >
+              <mapgis-ui-iconfont
+                  :type="item.icon"
+                  theme="filled"
+              />
+            </mapgis-ui-button>
+          </mapgis-ui-tooltip>
+          <mapgis-marker
+              v-if="!!coordinates.length && enableControl"
+              :coordinates="coordinates"
+              color="#ff0000"
+          >
+            <div slot="marker" class="mapgis-measure-control-label">
+              <div v-if="measureResult.geographyArea">
+                面积：{{ measureResult.geographyArea }}
+              </div>
+              <div>长度：{{ measureResult.geographyPerimeter }}</div>
+            </div>
+          </mapgis-marker>
+        </mapgis-ui-space>
+      </div>
+
+    </slot>
+    <!-- slot for measureMarker -->
+    <slot name="measureMarker">
+      <measure-marker />
+    </slot>
   </div>
 </template>
 
 <script>
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import * as turf from "@turf/turf";
-
 import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
-const MapboxDraw = MapboxDrawCom.default;
-
+import { last, oneOf } from "../../../util/util";
+import MeasureTool from "./components/MeasureTool.vue";
+import MeasureMarker from "./components/MeasureMarker.vue";
 import measureMixin from "./measureMixin";
 import controlMixin from "../withControlEvents";
-
-import DefaultMeasureStyle from "./DefaultMeasureStyle";
-
-const measureEvents = {
-  // es6
-  measureCreate: "draw.create",
-  measureUpdate: "draw.update",
-  measureResult: "measureResult",
-  // brower
-  measurecreate: "draw.create",
-  measureupdate: "draw.update",
-  measureresult: "measureresult"
-};
-
-const measureModes = {
-  measureLength: "measure-length",
-  measureArea: "measure-area"
-};
-const measureMethods = {
-  geography: "geography",
-  projection: "projection",
-  both: "both"
-};
+import {
+  defaultStyle,
+  measureSelfEvents,
+  measureEvents,
+  measureMethodMap,
+  measureModeMap,
+  measureTypeToModeMap
+} from "./store/enums";
+const MapboxDraw = MapboxDrawCom.default;
 
 export default {
   name: "mapgis-measure",
   mixins: [measureMixin, controlMixin],
+  components: {
+    MeasureTool,
+    MeasureMarker
+  },
 
   provide() {
     const self = this;
@@ -95,26 +95,32 @@ export default {
       type: Boolean,
       default: true
     },
-    expandControl: {
+    enableControl: {
       type: Boolean,
       default: false
     },
-    enableControl: {
+    isAdvanceControl: {
       type: Boolean,
       default: false
     },
     measureMode: {
       type: String,
-      /* required: true, */
-      default: ""
+      validator(value) {
+        return !value || oneOf(value, Object.keys(measureTypeToModeMap));
+      }
     },
+    // geography按照地理坐标系计算长度和面积，
+    // projection按照投影坐标系计算长度和面积，both返回两种坐标系的计算结果
     measureMethod: {
       type: String,
-      default: "both" //geography按照地理坐标系计算长度和面积，projection按照投影坐标系计算长度和面积，both返回两种坐标系的计算结果
+      default: measureMethodMap.both,
+      validator(value) {
+        return oneOf(value, Object.keys(measureMethodMap));
+      }
     },
     styles: {
       type: Array,
-      default: () => DefaultMeasureStyle
+      default: () => defaultStyle
     }
   },
 
@@ -122,96 +128,249 @@ export default {
     return {
       initial: true,
       measure: undefined,
-      oldStyles: DefaultMeasureStyle,
-      area: 0,
-      perimeter: 0,
-      coordinates: [],
-      innermeasureMode: "",
-      measures: [
-        {
-          icon: "mapgis-huizhi1",
-          type: "primary",
-          tip: "展开",
-          click: this.changeFold,
-          className: "mapgis-measure-expand"
-        },
+      measureStyle: defaultStyle,
+      selfMeasureMode: undefined,
+      measureResult: null,
+      toolbarBtns: [
+
         {
           icon: "mapgis-ruler",
           type: "primary",
           tip: "长度",
-          click: this.toggleMeasureLength
+          click: this.enableLengthMeasure,
         },
         {
           icon: "mapgis-area",
           type: "primary",
           tip: "面积",
-          click: this.toggleMeasureArea
+          click: this.enableAreaMeasure,
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "清空图元",
-          click: this.toggleMeasureDelete
-        }
-      ]
+          click: this.remove,
+        },
+      ],
     };
   },
 
+  computed: {
+    coordinates({ measureResult }) {
+      return measureResult && measureResult.center
+          ? measureResult.center.geometry.coordinates
+          : [];
+    },
+    controlStyle({ position, isAdvanceControl }) {
+      const [first, secend] = position.split("-");
+      return {
+        width: "fit-content",
+        position: "absolute",
+        maxHeight: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
+        zIndex: 1000,
+        top: "10px",
+        left: "10px",
+        [first]: "10px",
+        [secend]: "10px",
+        background: isAdvanceControl ? "#fff" : "transparent",
+      };
+    },
+    btnStyle() {
+      return () => ({
+        width: "32px !important",
+        height: "32px !important",
+      });
+    },
+  },
+
   watch: {
-    measureMode() {
-      const { measure, initial } = this;
-      if (initial) return;
-      if (measure) {
+    measureMode(mode) {
+      if (this.initial) return;
+      if (this.measure) {
+        this.selfMeasureMode = measureTypeToModeMap[mode];
         // measure.deleteAll();
         // measure.trash();
       }
     },
     measureMethod() {
-      this._updateLengthOrArea();
+      this.$_updateLengthOrArea();
     },
-    styles: {
-      handler: function(news) {
-        this.oldStyles = this.combineStyle(news);
-      }
+    styles(nStyle) {
+      this.combineStyle(nStyle);
     }
   },
 
   mounted() {
     this.$_initMeasure();
-    if (this.enableControl) {
-      let position = this.position;
-      if (this.expandControl) {
-        this.changeFold();
-      } else {
-        let pos = position.split("-");
-        document.querySelector(
-          ".mapgis-measure-control > .mapgis-ui-space"
-        ).style = pos[0] + ": 10px;" + pos[1] + ": 10px;";
-      }
-    }
   },
 
   beforeDestroy() {
     this.remove();
   },
-
   methods: {
-    enableMeasure() {
-      this.$_initMeasure();
-      this.$_compareStyle();
-      this.$_unbindDrawEvents();
-      this.$_unbindEditEvents();
-      this.$_addMeasureControl(this.measure);
-      this.$_emitEvent("added", { measure: this.measure });
-      const eventNames = Object.keys(measureEvents);
-      this.$_unbindMeasureEvents();
-      this.$_bindSelfEvents(eventNames);
+    /**
+     * 设置双击结束后图形编辑状态
+     */
+    $_setEditable() {
+      if (!this.editable) {
+        const timer = setTimeout(() => {
+          this.changeMode();
+          clearTimeout(timer);
+        }, 100);
+      }
     },
+    /**
+     * 派发测量结果事件
+     */
+    $_emitMeasureResult(result = this.measureResult) {
+      this.$emit(measureEvents.measureresult, result);
+      this.$emit(measureEvents.measureResult, result);
+    },
+    /**
+     * 获取周长
+     */
+    $_getPerimeter(coordinate, perimeter = 0) {
+      let _perimeter = perimeter;
+      for (let i = 1, prevCoord = coordinate[0]; i < coordinate.length; i++) {
+        const coord = coordinate[i];
+        const [x1, y1] = prevCoord;
+        const [x, y] = coord;
+        _perimeter += Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+        prevCoord = [...coord];
+      }
+      return _perimeter;
+    },
+    /**
+     * 获取面积
+     */
+    $_getArea(coordinate, area = 0) {
+      let _area = area;
+      for (let i = 1, prevCoord = coordinate[0]; i < coordinate.length; i++) {
+        const coord = coordinate[i];
+        const [x1, y1] = prevCoord;
+        const [x, y] = coord;
+        _area += (x1 * y - x * y1) / 2;
+        prevCoord = [...coord];
+      }
+      return Math.abs(_area);
+    },
+    /**
+     * 更新测量面积和长度
+     */
+    $_updateLengthOrArea() {
+      if (!this.measure) return;
+      const data = this.measure.getAll();
+      let geographyPerimeter = 0;
+      let geographyArea = 0;
+      let projectionPerimeter = 0;
+      let projectionArea = 0;
+      let center = null;
 
+      if (data.features.length) {
+        geographyPerimeter = turf.length(data) * 1000;
+        const { coordinates } = last(data.features).geometry;
+        const { coordinates: mercatorCoordinate } = last(
+          turf.toMercator(data).features
+        ).geometry;
+        switch (this.selfMeasureMode) {
+          case measureModeMap.line:
+            center = turf.centroid(turf.lineString(coordinates));
+            projectionPerimeter = this.$_getPerimeter(mercatorCoordinate);
+            break;
+          case measureModeMap.polygon: {
+            const lastCoord = last(mercatorCoordinate);
+            projectionPerimeter = this.$_getPerimeter(lastCoord);
+            projectionArea = this.$_getArea(lastCoord);
+            center = turf.centroid(turf.polygon(coordinates));
+            geographyArea = turf.area(data);
+            break;
+          }
+          default:
+            break;
+        }
+        // turf计算结果单位，长度默认是千米，面积默认是平方米；
+        // 本组件对外输出结果长度统一为米，面积统一为平方米
+        let result;
+        switch (this.measureMethod) {
+          case measureMethodMap.geography:
+            result = {
+              geographyPerimeter,
+              geographyArea,
+              coordinates,
+              center
+            };
+            break;
+          case measureMethodMap.projection:
+            result = {
+              projectionPerimeter,
+              projectionArea,
+              coordinates,
+              center
+            };
+            break;
+          default:
+            result = {
+              geographyPerimeter,
+              geographyArea,
+              projectionPerimeter,
+              projectionArea,
+              coordinates,
+              center
+            };
+            break;
+        }
+
+        this.measureResult = { ...result };
+      }
+    },
+    /**
+     * 按照@mapgis/webclient-vue-mapboxgl的规范发送事件 ，其实就是用{type：eventName}包装事件名
+     */
+    $_emitMeasureEvent(eventName, eventData) {
+      switch (eventName) {
+        case measureSelfEvents.measureCreate:
+        case measureSelfEvents.measurecreate:
+          // this.disableDrag();
+          this.$_setEditable();
+          break;
+        case measureSelfEvents.measureUpdate:
+        case measureSelfEvents.measureupdate:
+          break;
+        default:
+          break;
+      }
+      this.$_updateLengthOrArea();
+      this.$_emitMeasureResult();
+      return this.$_emitSelfEvent({ type: eventName }, eventData);
+    },
+    /**
+     * 重写$listeners, 添加自定义事件
+     * asControl本身是拥有 $_bindSelfEvents 方法的，但是这里的draw组件并不是遵循的mapbox-gl.js的事件机制，因此我们需要覆盖该方法, 按照对应的业务方式实现
+     * 使用vue的this.$listeners方式来订阅用户指定的事件
+     * @param {array} events 事件集合
+     */
+    $_bindSelfEvents(events) {
+      if (!events.length) return;
+      Object.keys(this.$listeners)
+        .concat(Object.keys(measureSelfEvents))
+        .forEach(eventName => {
+          if (events.includes(eventName)) {
+            this.$_bindMeasureEvents(
+              measureEvents[eventName],
+              this.$_emitMeasureEvent.bind(this, eventName)
+            );
+          }
+        });
+    },
+    /**
+     * 初始化绘制工具并注册自定义事件
+     */
     $_initMeasure() {
       const draweroptions = {
         displayControlsDefault: true,
-        defaultMode: "simple_select",
+        defaultMode: measureModeMap.simple,
         touchEnabled: false,
         boxSelect: false,
         controls: {
@@ -222,211 +381,91 @@ export default {
           combine_features: false,
           uncombine_features: false
         },
-        styles: this.oldStyles
+        styles: this.measureStyle
       };
       this.measure = new MapboxDraw(draweroptions);
-
-      const eventNames = Object.keys(measureEvents);
-      this.$_bindSelfEvents(eventNames);
-
+      this.$_bindSelfEvents(Object.keys(measureEvents));
       this.initial = false;
     },
-
-    $_bindSelfEvents(events) {
-      if (events.length === 0) return;
-      // asControl 本身是拥有 $_bindSelfEvents 方法的，但是这里的draw组件并不是遵循的mapbox-gl.js的事件机制，
-      // 因此我们需要覆盖该方法, 按照对应的业务方式实现
-      const vm = this;
-
-      // 使用vue的this.$listeners方式来订阅用户指定的事件
-      Object.keys(this.$listeners)
-        .concat([
-          "measureCreate",
-          "measurecreate",
-          "measureUpdate",
-          "measureupdate"
-        ])
-        .forEach(eventName => {
-          if (events.includes(eventName)) {
-            this.$_bindMeasureEvents(
-              measureEvents[eventName],
-              vm.$_emitMeasureEvent.bind(vm, eventName)
-            );
-          }
-        });
+    /**
+     * 更改测量图层样式
+     */
+    $_changeMapStyle() {
+      this.changeMapStyle(this.measureStyle);
+    },
+    /**
+     * 融合样式
+     * @param {array} 样式数据
+     * @return {array} 整合后的样式集合
+     */
+    combineStyle(newStyles = []) {
+        this.measureStyle = this.measureStyle
+            .filter(l => !newStyles.find(f => f.id === l.id))
+            .concat(newStyles);
     },
 
-    // 按照@mapgis/webclient-vue-mapboxgl的规范 发送事件 ，其实就是用{type：eventName}包装事件名
-    $_emitMeasureEvent(eventName, eventData) {
-      const vm = this;
-      if (eventName === "measureCreate" || eventName === "measurecreate") {
-        const result = vm._updateLengthOrArea();
-        vm.$emit(measureEvents.measureresult, result);
-        vm.$emit(measureEvents.measureResult, result);
-        // this.disableDrag();
-        if (result.center) {
-          const coords = result.center.geometry.coordinates;
-          vm.coordinates = coords;
-        }
-        vm.area = result.geographyArea || "无";
-        vm.perimeter = result.geographyPerimeter;
-        if (!this.editable) {
-          window.setTimeout(() => {
-            vm.measure && vm.measure.changeMode("simple_select");
-          }, 100);
-        }
-      }
-      if (eventName === "measureUpdate" || eventName === "measureupdate") {
-        const result = vm._updateLengthOrArea();
-        if (result.center) {
-          const coords = result.center.geometry.coordinates;
-          vm.coordinates = coords;
-          vm.area = result.geographyArea || "无";
-          vm.perimeter = result.geographyPerimeter;
-        }
-        vm.$emit(measureEvents.measureresult, result);
-        vm.$emit(measureEvents.measureResult, result);
-      }
-      return vm.$_emitSelfEvent({ type: eventName }, eventData);
-    },
-
-    $_compareStyle() {
-      let combines = this.combineStyle();
-      this.changeMapStyle(combines);
-      this.oldStyles = combines;
-    },
-
-    combineStyle(news) {
-      let olds = this.oldStyles || DefaultMeasureStyle;
-      news = news || this.styles;
-      let combines = olds.filter(l => {
-        return !news.find(f => f.id === l.id);
-      });
-      combines = combines.concat(news);
-      return combines;
-    },
-
-    changeMapStyle(layers) {
-      let { map } = this;
-      layers.forEach(layer => {
+    /**
+     * 改变测量工具样式
+     */
+    changeMapStyle(styles) {
+      const { map } = this;
+      styles.forEach(layer => {
         if (map.getLayer(layer)) {
-          if (layer.filter) {
-            map.setFilter(layer.id, layer.filter);
+          const { id, filter, paint, layout } = layer;
+          if (filter) {
+            map.setFilter(id, filter);
           }
-          if (layer.paint) {
-            Object.keys(layer.paint).forEach(key => {
-              map.setPaintProperty(layer.id, key, layer.paint[key]);
+          if (paint) {
+            Object.entries(paint).forEach(([key, value]) => {
+              map.setPaintProperty(id, key, value);
             });
           }
-          if (layer.layout) {
-            Object.keys(layer.layout).forEach(key => {
-              map.setLayoutProperty(layer.id, key, layer.layout[key]);
+          if (layout) {
+            Object.entries(layout).forEach(([key, value]) => {
+              map.setLayoutProperty(id, key, value);
             });
           }
         }
       });
     },
-
-    _updateLengthOrArea() {
-      if (!this.measure) return;
-      const { measureMode, innermeasureMode } = this;
-      let data = this.measure.getAll();
-      let geographyPerimeter,
-        geographyArea,
-        projectionPerimeter,
-        projectionArea,
-        center;
-      if (data.features.length > 0) {
-        let coordinates =
-          data.features[data.features.length - 1].geometry.coordinates;
-        let mercatorData = turf.toMercator(data);
-        let mercatorCoordinate =
-          mercatorData.features[mercatorData.features.length - 1].geometry
-            .coordinates;
-        if (
-          measureMode === measureModes.measureLength ||
-          innermeasureMode === measureModes.measureLength
-        ) {
-          center = turf.centroid(turf.lineString(coordinates));
-          geographyPerimeter = turf.length(data) * 1000;
-          projectionPerimeter = 0;
-          for (let i = 1; i < mercatorCoordinate.length; i++) {
-            let x = mercatorCoordinate[i][0] - mercatorCoordinate[i - 1][0];
-            let y = mercatorCoordinate[i][1] - mercatorCoordinate[i - 1][1];
-            projectionPerimeter += Math.sqrt(x * x + y * y);
+    /**
+     * 改变绘制类型
+     */
+    changeMode(mode = measureModeMap.simple, options) {
+      try {
+        if (this.measure) {
+          if(mode === measureModeMap.line || mode === measureModeMap.polygon){
+            this.selfMeasureMode = mode;
           }
-        } else if (
-          measureMode === measureModes.measureArea ||
-          innermeasureMode === measureModes.measureArea
-        ) {
-          center = turf.centroid(turf.polygon(coordinates));
-          geographyPerimeter = turf.length(data) * 1000;
-          geographyArea = turf.area(data);
-          mercatorCoordinate =
-            mercatorCoordinate[mercatorCoordinate.length - 1];
-          projectionPerimeter = 0;
-          for (let i = 1; i < mercatorCoordinate.length; i++) {
-            let x = mercatorCoordinate[i][0] - mercatorCoordinate[i - 1][0];
-            let y = mercatorCoordinate[i][1] - mercatorCoordinate[i - 1][1];
-            projectionPerimeter += Math.sqrt(x * x + y * y);
-          }
-          projectionArea = 0;
-          for (let j = 1; j < mercatorCoordinate.length; j++) {
-            let s1 = mercatorCoordinate[j - 1][0] * mercatorCoordinate[j][1];
-            let s2 = mercatorCoordinate[j][0] * mercatorCoordinate[j - 1][1];
-            projectionArea += (s1 - s2) / 2;
-          }
-          projectionArea = Math.abs(projectionArea);
+          this.measure.changeMode(mode, options);
         }
-        // turf计算结果单位，长度默认是千米，面积默认是平方米；本组件对外输出结果长度统一为米，面积统一为平方米
-        if (this.measureMethod === measureMethods.geography) {
-          return {
-            geographyPerimeter: geographyPerimeter,
-            geographyArea: geographyArea,
-            coordinates: coordinates,
-            center: center
-          };
-        } else if (this.measureMethod === measureMethods.projection) {
-          return {
-            projectionPerimeter: projectionPerimeter,
-            projectionArea: projectionArea,
-            coordinates: coordinates,
-            center: center
-          };
-        } else if (this.measureMethod === measureMethods.both) {
-          return {
-            geographyPerimeter: geographyPerimeter,
-            geographyArea: geographyArea,
-            projectionPerimeter: projectionPerimeter,
-            projectionArea: projectionArea,
-            coordinates: coordinates,
-            center: center
-          };
-        }
-      }
+      } catch (e) {}
     },
-
+    /**
+     * 启用测量工具
+     */
+    enableMeasure() {
+      this.$_initMeasure();
+      this.$_changeMapStyle();
+      this.$_unbindDrawEvents();
+      this.$_addMeasureControl(this.measure);
+      this.$_emitEvent("added", { measure: this.measure });
+      this.$_unbindMeasureEvents();
+      this.$_bindSelfEvents(Object.keys(measureEvents));
+    },
+    /**
+     * 移除测量组件和事件解绑
+     */
     remove() {
+      this.measureResult = null;
+      this.changeMode();
       this.$_unbindMeasureEvents();
       this.$_removeMeasureControl();
-
       this.$_emitEvent("removed");
     },
-
-    changeFold(e) {
-      // document.querySelector(".mapgis-ui-space").style="backgroundColor:black;";
-      let space = document.querySelector(
-        ".mapgis-measure-control > .mapgis-ui-space"
-      );
-      let width = getComputedStyle(space).width;
-      if (width == "40px") {
-        space.style =
-          "width: 160px!important;overflow: hidden;transition: width .5s;";
-      } else {
-        space.style =
-          "width: 40px!important;overflow: hidden;transition: width .5s;";
-      }
-    },
+    /**
+     * 禁止拖拽
+     */
     disableDrag() {
       const vm = this;
       vm.map.on("draw.selectionchange", e => {
@@ -435,9 +474,11 @@ export default {
         const hasPoints = points && points.length > 0;
         if (hasLine && !hasPoints) {
           // line clicked
-          if (vm.measure.getMode() !== "direct_select") {
-            vm.measure.changeMode("simple_select", { featureIds: [] });
-            // vm.measure.changeMode('direct_select', { featureId: features[0].id });
+          if (vm.measure.getMode() !== measureModeMap.direct) {
+            vm.measure.changeMode(measureModeMap.simple, { featureIds: [] });
+            // vm.changeMode(measureModeMap.direct, {
+            //   featureId: features[0].id
+            // });
           }
         } else if (hasLine && hasPoints) {
           // line vertex clicked
@@ -446,54 +487,29 @@ export default {
         }
       });
     },
+    /**
+     * 处理测量结果
+     */
     handleMeasureResult(e) {
       this.disableDrag();
-      const coords = e.center.geometry.coordinates;
-      this.coordinates = coords;
-      this.area = e.geographyArea || "无";
-      this.perimeter = e.geographyPerimeter;
+      this.measureResult = e;
     },
-    toggleMeasureLength() {
+    startMeasure(mode) {
       this.enableMeasure();
-      this.coordinates = [];
-      this.innermeasureMode = "measure-length";
-      this.measure && this.measure.changeMode("draw_line_string");
+      this.changeMode(mode);
     },
-    toggleMeasureArea() {
-      this.enableMeasure();
-      this.coordinates = [];
-      this.innermeasureMode = "measure-area";
-      this.measure && this.measure.changeMode("draw_polygon");
+    // enableToolbar() {
+    //   this.toolbarVisible = !this.toolbarVisible;
+    // },
+    enableLengthMeasure() {
+      this.remove();
+      this.startMeasure("draw_line_string");
     },
-    toggleMeasureDelete() {
-      this.coordinates = [];
-      this.enableMeasure();
-      this.measure && this.measure.deleteAll();
-    }
+    enableAreaMeasure() {
+      this.remove();
+      this.startMeasure("draw_polygon");
+    },
+
   }
 };
 </script>
-
-<style scoped>
-.mapgis-measure-control > .mapgis-ui-space {
-  width: 40px !important;
-  overflow: hidden;
-  transition: width 0.5s;
-}
-
-.mapgis-measure-expand.mapgis-ui-btn {
-  width: 40px !important;
-  height: 40px !important;
-}
-.mapgis-measure-expand.anticon {
-  font-size: 19px !important;
-}
-
-.mapgis-measure-control {
-  width: fit-content;
-  position: absolute;
-  /*top: 10px;*/
-  /*left: 10px;*/
-  z-index: 3000;
-}
-</style>

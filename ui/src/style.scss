@@ -7,7 +7,7 @@
 @import "./components/layout/style/layout.scss";
 @import "./components/space/style/space.scss";
 @import "./components/scroll/style/scroll.scss";
-
+@import "./components/setting-footer/style/setting-footer.scss";
 /* MapGIS Design - General */
 @import "./components/button/style/button.scss";
 @import "./components/border/style/border.scss";
@@ -19,12 +19,14 @@
 @import "./components/menu/style/menu.scss";
 @import "./components/pageheader/style/pageheader.scss";
 @import "./components/pagination/style/pagination.scss";
+@import "./components/toolbar/style/toolbar.scss";
 
 /* MapGIS Design - Data Entry */
 @import "./components/cascader/style/cascader.scss";
 @import "./components/checkbox/style/checkbox.scss";
 @import "./components/date-picker/style/date-picker.scss";
 @import "./components/input/style/input.scss";
+@import "./components/form/style/form.scss";
 @import "./components/form-model/style/form-model.scss";
 @import "./components/mentions/style/mentions.scss";
 @import "./components/radio/style/radio.scss";
@@ -69,6 +71,17 @@
 @import "./components/config-provider/style/config-provider.scss";
 @import "./components/divider/style/divider.scss";
 @import "./components/locale-provider/style/locale-provider.scss";
+@import "./components/mask/style/mask.scss";
+@import "./components/adjust-line/style/adjust-line.scss";
+@import "./components/placement/style/placement.scss";
+@import "./components/window/style/window.scss";
+
+/* MapGIS Design - IconFont */
+@import "./components/iconfont/style/iconfont.scss";
+
+/* MapGIS Design - Color */
+@import "./components/color/style/color.scss";
+@import "./components/color-picker/style/color-picker.scss";
 
 /* MapGIS Design - Third Lib */
 @import "./components/jsoneditor/style/editor.scss";
@@ -85,6 +98,7 @@
 /* MapGIS Design CloudDisk */
 @import "./view/clouddisk/components/upload/style/upload.scss";
 @import "./view/clouddisk/components/select/style/select.scss";
+@import "./view/clouddisk/components/model/style/model.scss";
 
 /* MapGIS Design Mapbox Base*/
 @import "./components/map/style/map.scss";
@@ -92,3 +106,6 @@
 /* MapGIS Design THemePanel */
 @import "./components/themepanel/style/themepanel.scss";
 @import "./components/svgselect/style/svgselect.scss";
+
+/* MapGIS Design Comprehensive Query */
+@import "./view/comprehensive-query/style/comprehensive-query.scss"

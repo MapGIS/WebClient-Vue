@@ -1,0 +1,37 @@
+@import "../../../../../util/style/mixins/mixins.scss";
+@import "../../../../../util/style/theme/theme.scss";
+
+@include b(workflow-wrapper) {
+    text-align: left;
+    // .mapgis-ui-card-body {
+    //   padding: 0px 16px 10px 16px;
+    // }
+    .switch-detail {
+      text-align: right;
+      margin: 5px 0px;
+    }
+
+    &-parmsName {
+        text-align: left;
+        width: 100%;
+        padding: 5px 0 8px 0;
+        font-weight: bold;
+    }
+    &-parmsButton {
+      // width: 40px;
+      margin-left: 5px; 
+      float: left;
+    }
+    &-parmsInputUrl {
+      width: calc(100% - 40px);
+      float: left;
+    }
+    &-parmsCommon {
+      width: calc(100% - 4px);
+      float: left;
+    }
+    &-modelTask {
+      // height: calc(100vh - 300px);
+      overflow-y: auto;
+    }
+}

@@ -1,15 +1,6 @@
-# 阴影分析
-
 > mapgis-3d-shadow
 
 ## 属性
-
-### `position`
-
-- **类型:** `String`
-- **默认值:** `right`
-- **非侦听属性**
-- **描述:** 分析面板的位置（right:右边 | left: 左边）
 
 ### `vueKey`
 
@@ -35,6 +26,58 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 当mapgis-web-scene插槽中使用了多个相同组件时，例如多个mapgis-3d-igs-doc-layer组件，用来区分组件的标识符。
 ```
 
+### `shadowColor`
+
+- **类型:** `String`
+- **可选**
+- **侦听属性**
+- **默认值:** `rgba(0,255,0,255)`
+- **描述:** 阴影部分颜色
+
+### `sunColor`
+
+- **类型:** `String`
+- **可选**
+- **侦听属性**
+- **默认值:** `rgba(255,0,0,255)`
+- **描述:** 非阴影部分颜色
+
+### `minHeight`
+- **类型:** `Number`
+- **可选**
+- **侦听属性**
+- **默认值:** `0`
+- **描述:** 底部高程，单位为米
+
+### `stretchHeight`
+- **类型:** `Number`
+- **可选**
+- **侦听属性**
+- **默认值:** `0`
+- **描述:** 拉伸高度，单位为米
+
+## 方法
+
+### `removeAll` 
+
+- **Description:** 移除阴影分析对象，移除阴影分析结果和日照分析结果。
+
+## 事件
+
+### `@load`
+
+- **Description:** 在 Shadow组件 加载完毕后发送该事件
+- **Payload** 阴影分析对象
+
+### `@analysisBegin`
+
+- **Description:** 在阴影分析绘制完后,开始分析前发送该事件
+
+### `@success`
+
+- **Description:** 在阴影分析结束后发送该事件
+
+
 ## 示例
 
 ```vue
@@ -51,7 +94,13 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
         :url="m3dUrl"
         :vue-index="vueIndex"
       />
-      <mapgis-3d-shadow :vue-index="vueIndex"></mapgis-3d-shadow>
+      <mapgis-ui-card class="storybook-ui-card">
+      <mapgis-3d-shadow 
+          :vue-index="vueIndex" 
+          :shadowColor="shadowColor" 
+          :sunColor="sunColor"
+          @load="load"></mapgis-3d-shadow>
+      </mapgis-ui-card>
     </mapgis-web-scene>
   </div>
 </template>
@@ -65,12 +114,26 @@ export default {
       // m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/DaYanTa",
       autoReset: true,
       maximumScreenSpaceError: 6,
-      vueIndex: 22
+      vueIndex: 22,
+      shadowColor:'#2E8B57',
+      sunColor:'#FFA500',
+      shadowAnalysis:undefined
     };
   },
-  methods: {}
+  methods: {
+    load(shadowAnalysis){
+      this.shadowAnalysis = shadowAnalysis;
+    }
+  }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.storybook-ui-card {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+}
+</style>
 ```

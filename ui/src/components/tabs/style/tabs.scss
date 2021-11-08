@@ -93,3 +93,58 @@
     color: $primary-color;
   }
 }
+
+.mapgis-ui-group-tab {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-weight: 700;
+
+  &.is-mini {
+    font-size: 12px;
+    &.has-top-margin {
+      margin-top: 4px;
+    }
+    &.has-bottom-margin {
+      margin-bottom: 4px;
+    }
+  }
+  &.is-small {
+    font-size: 14px;
+    &.has-top-margin {
+      margin-top: 6px;
+    }
+    &.has-bottom-margin {
+      margin-bottom: 6px;
+    }
+  }
+  &.is-default {
+    font-size: 14px;
+    &.has-top-margin {
+      margin-top: 7px;
+    }
+    &.has-bottom-margin {
+      margin-bottom: 7px;
+    }
+  }
+  &.is-large {
+    font-size: 16px;
+    &.has-top-margin {
+      margin-top: 8px;
+    }
+    &.has-bottom-margin {
+      margin-bottom: 8px;
+    }
+  }
+  hr {
+    width: 3px;
+    height: 1em;
+    margin-right: 8px;
+    border: 0;
+    background-color: $primary-color;
+  }
+  .title {
+    flex: 1;
+    color: $heading-color;
+  }
+}
