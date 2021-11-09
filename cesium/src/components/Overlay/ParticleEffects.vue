@@ -215,7 +215,7 @@ import {
 
 export default {
   name: "mapgis-3d-particle-effects",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -349,7 +349,8 @@ export default {
       emitterTypeCopy: "圆形放射", // 发射类型下拉值
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
       particleArr: [], // 粒子特效集
-      isLogarithmicDepthBufferEnable: undefined // 记录对数深度缓冲区状态
+      isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
+      handlerAction:undefined
     };
   },
 
@@ -386,39 +387,47 @@ export default {
           item.remove();
         });
       }
-      this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
       this.particleArr = [];
       if (
         this.isLogarithmicDepthBufferEnable !==
-        isLogarithmicDepthBufferEnable(this.webGlobe)
+        isLogarithmicDepthBufferEnable(this.viewer)
       ) {
         setLogarithmicDepthBufferEnable(
           this.isLogarithmicDepthBufferEnable,
-          this.webGlobe
+          this.viewer
         );
       }
     },
     onCreateParticle() {
       this._addEventListener();
       this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        this.webGlobe
+        this.viewer
       );
       if (this.isLogarithmicDepthBufferEnable === true) {
-        setLogarithmicDepthBufferEnable(false, this.webGlobe);
+        setLogarithmicDepthBufferEnable(false, this.viewer);
       }
     },
     _addEventListener() {
-      this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction.setInputAction(event => {
         this._registerMouseLClickEvent(event);
-      });
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+      // this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
+      //   this._registerMouseLClickEvent(event);
+      // });
     },
     _registerMouseLClickEvent(event) {
       // 获取点击点的笛卡尔坐标
-      const cartesian = this.webGlobe.viewer.getCartesian3Position(
+      const cartesian = this.viewer.getCartesian3Position(
         event.position
       );
       // 获取当前坐标系标准
-      const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid;
+      const ellipsoid = this.viewer.scene.globe.ellipsoid;
       // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
       const cartographic = ellipsoid.cartesianToCartographic(cartesian);
 
@@ -431,9 +440,9 @@ export default {
       );
 
       // 初始化高级分析功能管理类
-      const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
+      const advancedAnalysisManager = new window.vueCesium.Manager.AdvancedAnalysisManager(
         {
-          viewer: this.webGlobe.viewer
+          viewer: this.viewer
         }
       );
 
@@ -467,7 +476,7 @@ export default {
       this.particleArr.push(particle);
 
       // 开启计时
-      this.webGlobe.viewer.clock.shouldAnimate = true;
+      this.viewer.clock.shouldAnimate = true;
       // 粒子特效初始参数
       const viewModel = {
         emissionRate: this.emissionRateCopy,
@@ -486,7 +495,10 @@ export default {
       this.Cesium.knockout.track(viewModel);
 
       // 注销鼠标的各项监听事件
-      this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
     },
     onEmitterChange(value) {
       let emitter;

@@ -43,7 +43,7 @@ import { colorToCesiumColor } from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-analysis-contour",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -119,12 +119,12 @@ export default {
       );
     },
     mount() {
-      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.ContourAnalysisManager.addSource(
+        vueCesium.ContourAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -136,15 +136,15 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.ContourAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.ContourAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         this.remove();
       }
-      CesiumZondy.ContourAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.ContourAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -158,8 +158,8 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let { CesiumZondy, vueKey, vueIndex, Cesium, viewer } = this;
-      let find = CesiumZondy.ContourAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
+      let find = vueCesium.ContourAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -167,7 +167,7 @@ export default {
       let { contourAnalysis, drawElement } = options;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
-      CesiumZondy.ContourAnalysisManager.changeOptions(
+      vueCesium.ContourAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -179,7 +179,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: result => {
           this.remove();
           contourAnalysis =
             contourAnalysis || new Cesium.TerrainAnalyse(viewer, {});
@@ -188,8 +188,8 @@ export default {
           contourAnalysis.changeContourWidth(contourWidthCopy);
           contourAnalysis.changeContourSpacing(contourSpacingCopy);
           contourAnalysis.changeContourColor(color);
-          contourAnalysis.changeAnalyseArea(positions);
-          CesiumZondy.ContourAnalysisManager.changeOptions(
+          contourAnalysis.changeAnalyseArea(result.positions);
+          vueCesium.ContourAnalysisManager.changeOptions(
             vueKey,
             vueIndex,
             "contourAnalysis",
@@ -202,8 +202,8 @@ export default {
      * @description 移除等值线分析结果，取消交互式绘制事件激活状态
      */
     remove() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.ContourAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.ContourAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -215,7 +215,7 @@ export default {
         // 移除等值线分析显示结果
         contourAnalysis.enableContour(false);
         contourAnalysis.updateMaterial("none");
-        CesiumZondy.ContourAnalysisManager.changeOptions(
+        vueCesium.ContourAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "contourAnalysis",
@@ -226,7 +226,7 @@ export default {
       if (drawElement) {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.ContourAnalysisManager.changeOptions(
+        vueCesium.ContourAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",

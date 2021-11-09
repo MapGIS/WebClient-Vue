@@ -44,7 +44,7 @@ export default {
       default: "right"
     }
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {};
   },
@@ -63,8 +63,7 @@ export default {
       return this.$_getManager(Managger);
     },
     startModelFlatten() {
-      const { vueKey, vueIndex, webGlobe } = this;
-      const { viewer } = webGlobe;
+      const { vueKey, vueIndex, viewer} = this;
       let m3d;
       let find = this.findSource();
       if (!find) {
@@ -78,7 +77,7 @@ export default {
           m3d = m3ds.source[0];
         }
         const { u_arrayLength, u_height, u_isFlatten, u_positionArray } = m3d;
-        window.CesiumZondy[Managger].addSource(vueKey, vueIndex, tool, {
+        window.vueCesium[Managger].addSource(vueKey, vueIndex, tool, {
           m3d: m3d,
           origin: {
             u_arrayLength,
@@ -90,7 +89,7 @@ export default {
       }
     },
     clearModelFlatten() {
-      const { webGlobe } = this;
+      const { viewer } = this;
       let find = this.findSource();
       if (find.source) {
         let tool = find.source;
@@ -101,11 +100,11 @@ export default {
         m3d.u_height = origin.u_height;
         m3d.u_arrayLength = origin.u_arrayLength;
         m3d.u_positionArray = origin.u_positionArray;
-        webGlobe.viewer.scene.requestRender();
+        viewer.scene.requestRender();
       }
     },
     getDrawResult(positions) {
-      const { Cesium, CesiumZondy, webGlobe } = this;
+      const { Cesium, vueCesium, viewer } = this;
 
       let find = this.findSource();
       if (!find) return;
@@ -127,9 +126,9 @@ export default {
       }
       array.push(array[0]);
       //初始化高级分析功能管理类
-      var advancedAnalysisManager = new CesiumZondy.Manager.AdvancedAnalysisManager(
+      var advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
         {
-          viewer: webGlobe.viewer
+          viewer: viewer
         }
       );
       advancedAnalysisManager.createModelFlatten(m3d, {
@@ -143,7 +142,7 @@ export default {
         array: array
       });
       //场景渲染（渲染最新的压平效果）
-      webGlobe.viewer.scene.requestRender();
+     viewer.scene.requestRender();
     }
   }
 };

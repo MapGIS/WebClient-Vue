@@ -97,7 +97,7 @@ export default {
           }
         }
       });
-      window.CesiumZondy.MeasureToolManager.addSource(
+      window.vueCesium.MeasureToolManager.addSource(
         vueKey,
         vueIndex,
         measure

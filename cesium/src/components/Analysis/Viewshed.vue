@@ -208,7 +208,7 @@ export default {
       default: 1.85
     }
   },
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       formData: {
@@ -326,7 +326,7 @@ export default {
             cartesian = Cesium.Cartographic.toCartesian(cartographic);
             visualAnalysis.viewPosition = cartesian;
             //赋值给manager
-            CesiumZondy.ViewshedAnalysisManager.changeOptions(
+            vueCesium.ViewshedAnalysisManager.changeOptions(
                 vueKey,
                 vueIndex,
                 "visualAnalysis",
@@ -348,7 +348,7 @@ export default {
           visualAnalysis.heading = newVal.heading;
           visualAnalysis.pitch = newVal.pitch;
           visualAnalysis.viewRadius = newVal.viewRadius;
-          CesiumZondy.ViewshedAnalysisManager.changeOptions(
+          vueCesium.ViewshedAnalysisManager.changeOptions(
               vueKey,
               vueIndex,
               "visualAnalysis",
@@ -378,12 +378,12 @@ export default {
       );
     },
     mount() {
-      const { CesiumZondy, vueKey, vueIndex} = this;
+      const { vueCesium, vueKey, vueIndex} = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.ViewshedAnalysisManager.addSource(
+        vueCesium.ViewshedAnalysisManager.addSource(
             vueKey,
             vueIndex,
             dataSource,
@@ -396,7 +396,7 @@ export default {
     unmount() {
       let {vueKey, vueIndex} = this;
       this.onClickStop();
-      CesiumZondy.ViewshedAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.ViewshedAnalysisManager.deleteSource(vueKey, vueIndex);
     },
     formDataClone() {
       let vm = this;
@@ -555,7 +555,7 @@ export default {
       // 添加可视域分析结果显示
       viewer.scene.visualAnalysisManager.add(visualAnalysis);
       //更新manager
-      CesiumZondy.ViewshedAnalysisManager.changeOptions(
+      vueCesium.ViewshedAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "visualAnalysis",
@@ -791,8 +791,8 @@ export default {
       this.isAnalyze = false;
     },
     findSource() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
-      let find = CesiumZondy.ViewshedAnalysisManager.findSource(
+      let {vueCesium, vueKey, vueIndex} = this;
+      let find = vueCesium.ViewshedAnalysisManager.findSource(
           vueKey,
           vueIndex
       );

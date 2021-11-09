@@ -31,7 +31,7 @@ import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-m3d-menu-props",
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer", "m3ds"],
   props: {
     ...VueOptions,
     version: {
@@ -93,7 +93,7 @@ export default {
               originalColor: new Cesium.Color()
             },
             currentLayer: undefined,
-            analysisManager: new CesiumZondy.Manager.AnalysisManager({
+            analysisManager: new window.CesiumZondy.Manager.AnalysisManager({
               viewer: viewer
             })
           },
@@ -229,8 +229,8 @@ export default {
     $_query(oid, gdbp) {
       if (!oid) return;
       const vm = this;
-      const { CesiumZondy, ip, port } = this;
-      var queryParam = new CesiumZondy.Query.G3DDocQuery();
+      const { vueCesium, ip, port } = this;
+      var queryParam = new window.CesiumZondy.Query.G3DDocQuery();
       queryParam.gdbp = encodeURI(gdbp);
       queryParam.structs =
         '{"IncludeAttribute":true,"IncludeGeometry":true,"IncludeWebGraphic":false}';

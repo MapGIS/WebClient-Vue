@@ -40,7 +40,7 @@ export default {
         if (this.drawMode && this.drawMode !== DrawModeEnum.UnPicked) {
           if (this.drawMode === DrawModeEnum.Picked || this.drawMode === DrawModeEnum.Added) {
             let style = this.$_getStyleFromOptions(this.toolOptions.options);
-            let handlerManager = window.CesiumZondy.DrawToolManager.findSource(this.vueKey, this.vueIndex);
+            let handlerManager = window.vueCesium.DrawToolManager.findSource(this.vueKey, this.vueIndex);
             let options = handlerManager.options;
             for (let i = 0; i < options.length; i++) {
               if (this.entityId === options[i].id) {

@@ -102,7 +102,7 @@ const manager = "shadowAnalysisManager";
 export default {
   name: "mapgis-3d-shadow",
   mixins: [BaseMixin],
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -359,7 +359,7 @@ export default {
           let positionCopy = [];
           positionCopy = this.copy(positions);
           // positionCopy = JSON.parse(JSON.stringify(positions));
-          CesiumZondy.shadowAnalysisManager.addSource(
+          vueCesium.shadowAnalysisManager.addSource(
               self.vueKey,
               self.vueIndex,
               null,
@@ -429,8 +429,8 @@ export default {
       return newobj;
     },
     findSource() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
-      let find = CesiumZondy.shadowAnalysisManager.findSource(
+      let {vueCesium, vueKey, vueIndex} = this;
+      let find = vueCesium.shadowAnalysisManager.findSource(
           vueKey,
           vueIndex
       );
@@ -442,7 +442,7 @@ export default {
     remove() {
       let {vueKey, vueIndex} = this;
       // let findSource = vm.$_getManager(manager);
-      let findSource = CesiumZondy[manager].findSource(vueKey, vueIndex);
+      let findSource = vueCesium[manager].findSource(vueKey, vueIndex);
       // 判断是否已有阴影分析结果
       if (findSource && findSource.source) {
         // 移除阴影分析显示结果
@@ -455,7 +455,7 @@ export default {
         findSource.source.drawElement = null
       }
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
-      CesiumZondy[manager].deleteSource(vueKey, vueIndex);
+      vueCesium[manager].deleteSource(vueKey, vueIndex);
     },
     /**
      * 移除日照分析结果

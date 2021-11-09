@@ -24,7 +24,7 @@ import PopupContent from "../../UI/Geojson/Popup";
 
 export default {
   name: "mapgis-3d-geojson-datasource",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     layerId: {
@@ -93,8 +93,7 @@ export default {
       return new Cesium.GeoJsonDataSource.load(baseUrl, options);
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex, enablePopup } = this;
-      const { viewer } = webGlobe;
+      const { viewer, vueCesium, vueKey, vueIndex, enablePopup } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
@@ -105,28 +104,26 @@ export default {
         if (enablePopup) {
           handler = vm.bindEvent();
         }
-        CesiumZondy.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
+        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
           handler: handler
         });
       });
     },
     unmount() {
-      let { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      let { viewer, vueCesium, vueKey, vueIndex } = this;
       const { dataSources } = viewer;
-      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
         if (dataSources) {
           dataSources.remove(find.source, true);
         }
       }
-      CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
+      vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     bindEvent() {
       const vm = this;
-      const { Cesium, webGlobe, popupOptions } = this;
-      const { viewer } = webGlobe;
+      const { Cesium, viewer, popupOptions } = this;
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -211,11 +208,11 @@ export default {
     highlight(entities) {
       const vm = this;
       const { vueKey, vueIndex } = this;
-      const { webGlobe, CesiumZondy, enablePopup, options } = this;
+      const { viewer, vueCesium, enablePopup, options } = this;
       const { fillColor, alpha } = options;
       let outlineEntity;
       if (!entities || entities.length <= 0 || !enablePopup) return;
-      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
@@ -235,7 +232,7 @@ export default {
               "#ff0000"
             );
             if (outlineEntity) {
-              webGlobe.viewer.entities.remove(outlineEntity);
+              viewer.entities.remove(outlineEntity);
             }
             outlineEntity = new Cesium.Entity({
               polyline: {
@@ -248,8 +245,8 @@ export default {
                 clampToGround: true
               }
             });
-            webGlobe.viewer.entities.add(outlineEntity);
-            CesiumZondy.GeojsonManager.changeOptions(
+            viewer.entities.add(outlineEntity);
+            vueCesium.GeojsonManager.changeOptions(
               vueKey,
               vueIndex,
               "outlineEntity",

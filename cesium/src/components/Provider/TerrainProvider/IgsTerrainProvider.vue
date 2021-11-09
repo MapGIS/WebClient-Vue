@@ -3,7 +3,7 @@ import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-igs-terrain",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     autoReset: {
       type: Boolean,
@@ -60,7 +60,7 @@ export default {
     },
     unmount() {
       const { viewer, vueKey, vueIndex } = this;
-      let find = window.CesiumZondy.IgsTerrainManager.findSource(
+      let find = window.vueCesium.IgsTerrainManager.findSource(
         vueKey,
         vueIndex
       );
@@ -73,14 +73,14 @@ export default {
           viewer.scene.layers.removeAllTerrainLayers();
         }
       }
-      window.CesiumZondy.IgsTerrainManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.IgsTerrainManager.deleteSource(vueKey, vueIndex);
     },
     _handleTerrianLoaded(layers) {
       debugger
       const { vueIndex, vueKey } = this;
       this.$emit("terrain-loaded", layers);
       if (vueKey && vueIndex) {
-        window.CesiumZondy.IgsTerrainManager.addSource(
+        window.vueCesium.IgsTerrainManager.addSource(
           vueKey,
           vueIndex,
           layers

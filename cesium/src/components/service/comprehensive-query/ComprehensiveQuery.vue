@@ -36,7 +36,7 @@ import PlaceNameCesium from "./PlaceNameCesium";
 export default {
   name: "mapgis-3d-comprehensive-query",
   components: { PlaceNameCesium },
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     logo: {
       type: String,

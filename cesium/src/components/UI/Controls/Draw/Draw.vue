@@ -47,7 +47,7 @@ const drawEvents = {
 export default {
   name: "mapgis-3d-draw",
   mixins: [],
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     infinite: {
       type: Boolean,
@@ -170,7 +170,7 @@ export default {
           clearInterval(interval);
           vm.initial = true;
           vm.$emit("load", vm);
-          window.CesiumZondy.DrawToolManager.addSource(
+          window.vueCesium.DrawToolManager.addSource(
               vueKey,
               vueIndex,
               []
@@ -180,15 +180,15 @@ export default {
     },
 
     unmount() {
-      let {vueKey, vueIndex, CesiumZondy} = this;
-      if (!CesiumZondy) {
-        CesiumZondy = window.CesiumZondy;
+      let {vueKey, vueIndex, vueCesium} = this;
+      if (!vueCesium) {
+        vueCesium = window.vueCesium;
       }
-      let find = CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
       //清空实体，删除Draw组件
       if (find) {
         this.removeEntities(true);
-        CesiumZondy.DrawToolManager.deleteSource(vueKey, vueIndex);
+        vueCesium.DrawToolManager.deleteSource(vueKey, vueIndex);
       }
       //清空drawElement
       if (window.drawElement) {
@@ -205,7 +205,7 @@ export default {
       let viewer = this.getWebGlobe();
       // 取得viewer后，清空当前绘制
       if (viewer) {
-        let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
         if (drawEntities) {
           drawEntities = drawEntities.source;
           for (let i = 0; i < drawEntities.length; i++) {
@@ -223,9 +223,9 @@ export default {
     },
     getWebGlobe() {
       let viewerDraw;
-      let {viewer, CesiumZondy, Cesium, vueKey, vueIndex} = this;
-      if (!CesiumZondy) {
-        CesiumZondy = window.CesiumZondy;
+      let {viewer, vueCesium, Cesium, vueKey, vueIndex} = this;
+      if (!vueCesium) {
+        vueCesium = window.vueCesium;
       }
       if (!Cesium) {
         Cesium = window.Cesium;
@@ -235,13 +235,13 @@ export default {
         viewerDraw = viewer;
       } else {
         //当viewer不存在，则表示要通过vueKey获取
-        let GlobesManager = CesiumZondy.GlobesManager;
+        let GlobesManager = vueCesium.GlobesManager;
         if (GlobesManager.hasOwnProperty(this.vueKey) && GlobesManager[this.vueKey].length > 0 && GlobesManager[this.vueKey][0].hasOwnProperty("source")) {
           viewerDraw = GlobesManager[this.vueKey][0].source;
         }
       }
       if (!this.infinite) {
-        let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
         if (drawEntities) {
           drawEntities = drawEntities.source;
           for (let i = 0; i < drawEntities.length; i++) {
@@ -264,9 +264,9 @@ export default {
       this.drawOption = "enableDrawPoint";
       let viewerDraw = this.getWebGlobe();
       const vm = this;
-      let {CesiumZondy, Cesium, vueKey, vueIndex, drawStyle} = this;
-      if (!CesiumZondy) {
-        CesiumZondy = window.CesiumZondy;
+      let {vueCesium, Cesium, vueKey, vueIndex, drawStyle} = this;
+      if (!vueCesium) {
+        vueCesium = window.vueCesium;
       }
       if (!Cesium) {
         Cesium = window.Cesium;
@@ -300,7 +300,7 @@ export default {
               outlineWidth : drawStyle.outlineWidth
             }
           });
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
           if (!vm.infinite) {
             drawElement.stopDrawing();
@@ -344,7 +344,7 @@ export default {
             geodesic: true
           });
           let drawEntity = viewerDraw.scene.primitives.add(polyline);
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
 
           if (!vm.infinite) {
@@ -391,7 +391,7 @@ export default {
             }),
           });
           let drawEntity = viewerDraw.scene.primitives.add(polygon);
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
 
           if (!vm.infinite) {
@@ -433,7 +433,7 @@ export default {
           });
           let drawEntity = viewerDraw.scene.primitives.add(rectangle);
 
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
           let radianPoints = [extent.west, extent.north, extent.east, extent.south];
           let ellipsoid = viewerDraw.scene.globe.ellipsoid;
@@ -497,7 +497,7 @@ export default {
             drawElement.stopDrawing();
           }
 
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
 
           vm.$emit('drawCreate', center, radius, viewerDraw);

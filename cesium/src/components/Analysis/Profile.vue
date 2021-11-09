@@ -77,7 +77,7 @@ import * as echarts from "echarts";
 
 export default {
   name: "mapgis-3d-analysis-profile",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -345,12 +345,12 @@ export default {
       );
     },
     mount() {
-      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.ProfileAnalysisManager.addSource(
+        vueCesium.ProfileAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -368,8 +368,8 @@ export default {
       if (profileAnalysis) {
         this.remove();
       }
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      CesiumZondy.ProfileAnalysisManager.deleteSource(vueKey, vueIndex);
+      const { vueCesium, vueKey, vueIndex } = this;
+      vueCesium.ProfileAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -377,8 +377,8 @@ export default {
      * @return 剖面分析对象
      */
     _getProfileAnalysis() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      const find = CesiumZondy.ProfileAnalysisManager.findSource(
+      const { vueCesium, vueKey, vueIndex } = this;
+      const find = vueCesium.ProfileAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -436,8 +436,8 @@ export default {
         });
       }
       profileAnalysis.profile(this._profileStart, this._profileSuccess);
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      CesiumZondy.ProfileAnalysisManager.changeOptions(
+      const { vueCesium, vueKey, vueIndex } = this;
+      vueCesium.ProfileAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "profileAnalysis",
@@ -478,13 +478,13 @@ export default {
      */
     remove() {
       const profileAnalysis = this._getProfileAnalysis();
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
 
       // 判断是否已有剖面分析结果
       if (profileAnalysis) {
         // 移除剖面分析显示结果
         profileAnalysis.destroy();
-        CesiumZondy.ProfileAnalysisManager.changeOptions(
+        vueCesium.ProfileAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "profileAnalysis",

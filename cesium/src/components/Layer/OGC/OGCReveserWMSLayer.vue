@@ -7,7 +7,7 @@ import ServiceLayer from "../ServiceLayer";
 
 export default {
   name: "mapgis-3d-ogc-reveserwms-layer",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [ServiceLayer],
   props: {
     layers: { type: String, required: true },
@@ -72,14 +72,14 @@ export default {
   },
   methods: {
     mount() {
-      let { srs, CesiumZondy } = this;
+      let { srs, vueCesium } = this;
       let opt = {};
       //处理独有参数
       //如果srs或crs存在，则生成tilingScheme对象，动态投影会用到
       if (srs) {
         opt.tilingScheme = this.$_setTilingScheme(srs);
       }
-      this.$_mount(opt, CesiumZondy.Provider.WebReverseMapServiceImageryProvider);
+      this.$_mount(opt, vueCesium.Provider.WebReverseMapServiceImageryProvider);
     },
     unmount() {
       this.$_unmount();

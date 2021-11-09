@@ -1,82 +1,5 @@
 export function initManager() {
-  window.CesiumZondy = window.CesiumZondy || {};
-
-  window.CesiumZondy.GlobesManager =
-    window.CesiumZondy.GlobesManager || new BaseManager();
-
-  window.CesiumZondy.Tileset3DManager =
-    window.CesiumZondy.Tileset3DManager || new BaseManager();
-  window.CesiumZondy.EntityManager =
-    window.CesiumZondy.EntityManager || new EntityManager();
-  window.CesiumZondy.MarkerManager =
-    window.CesiumZondy.MarkerManager || new MarkerManager();
-  window.CesiumZondy.OGCWMTSManager =
-    window.CesiumZondy.OGCWMTSManager || new OGCWMTSManager();
-  window.CesiumZondy.FloodAnalysisManager =
-    window.CesiumZondy.FloodAnalysisManager || new FloodAnalysisManager();
-  window.CesiumZondy.OGCWMSManager =
-    window.CesiumZondy.OGCWMSManager || new OGCWMSManager();
-  window.CesiumZondy.DragEditManager =
-    window.CesiumZondy.DragEditManager || new DragEditManager();
-  window.CesiumZondy.VectorTileManager =
-    window.CesiumZondy.VectorTileManager || new VectorTileManager();
-  window.CesiumZondy.AdvancedAnalysisManager =
-    window.CesiumZondy.AdvancedAnalysisManager || new AdvancedAnalysisManager();
-  window.CesiumZondy.DrawToolManager =
-    window.CesiumZondy.DrawToolManager || new DrawToolManager();
-  window.CesiumZondy.MeasureToolManager =
-    window.CesiumZondy.MeasureToolManager || new MeasureToolManager();
-  window.CesiumZondy.EventHandlerManager =
-    window.CesiumZondy.EventHandlerManager || new EventHandlerManager();
-  window.CesiumZondy.IgsTerrainManager =
-    window.CesiumZondy.IgsTerrainManager || new IgsTerrainManager();
-  window.CesiumZondy.M3DIgsManager =
-    window.CesiumZondy.M3DIgsManager || new EventHandlerManager();
-  window.CesiumZondy.ArcgisManager =
-    window.CesiumZondy.ArcgisManager || new EventHandlerManager();
-  window.CesiumZondy.IgsDocLayerManager =
-    window.CesiumZondy.IgsDocLayerManager || new IgsDocLayerManager();
-  window.CesiumZondy.IgsTilecLayerManager =
-    window.CesiumZondy.IgsTilecLayerManager || new IgsTilecLayerManager();
-  window.CesiumZondy.IgsserverManager =
-    window.CesiumZondy.IgsserverManager || new EventHandlerManager();
-  window.CesiumZondy.ExcavateAnalysisManager =
-    window.CesiumZondy.ExcavateAnalysisManager || new ExcavateAnalysisManager();
-  window.CesiumZondy.AnalysisModelFlattenManager =
-    window.CesiumZondy.AnalysisModelFlattenManager ||
-    new AnalysisModelFlattenManager();
-  window.CesiumZondy.DynamicCuttingManager =
-    window.CesiumZondy.DynamicCuttingManager || new DynamicCuttingManager();
-  window.CesiumZondy.AnalysisManager =
-    window.CesiumZondy.AnalysisManager || new AnalysisManager();
-  window.CesiumZondy.AnalysisManager =
-    window.CesiumZondy.AnalysisManager || new AnalysisManager();
-  window.CesiumZondy.HeightLimitedAnalysisManager =
-    window.CesiumZondy.HeightLimitedAnalysisManager ||
-    new HeightLimitedAnalysisManager();
-  window.CesiumZondy.shadowAnalysisManager =
-    window.CesiumZondy.shadowAnalysisManager || new shadowAnalysisManager();
-  window.CesiumZondy.AspectAnalysisManager =
-    window.CesiumZondy.AspectAnalysisManager || new AspectAnalysisManager();
-  window.CesiumZondy.SlopeAnalysisManager =
-    window.CesiumZondy.SlopeAnalysisManager || new SlopeAnalysisManager();
-  window.CesiumZondy.SkyLineAnalysisManager =
-    window.CesiumZondy.SkyLineAnalysisManager || new SkyLineAnalysisManager();
-  window.CesiumZondy.ContourAnalysisManager =
-    window.CesiumZondy.ContourAnalysisManager || new ContourAnalysisManager();
-  window.CesiumZondy.ViewshedAnalysisManager =
-    window.CesiumZondy.ViewshedAnalysisManager || new ViewshedAnalysisManager();
-  window.CesiumZondy.VisiblityAnalysisManager =
-    window.CesiumZondy.VisiblityAnalysisManager ||
-    new VisiblityAnalysisManager();
-  window.CesiumZondy.CutFillAnalysisManager =
-    window.CesiumZondy.CutFillAnalysisManager || new CutFillAnalysisManager();
-  window.CesiumZondy.ProfileAnalysisManager =
-    window.CesiumZondy.ProfileAnalysisManager || new ProfileAnalysisManager();
-  window.CesiumZondy.DataFlowManager =
-    window.CesiumZondy.DataFlowManager || new DataFlowManager();
-  window.CesiumZondy.SettingToolManager =
-    window.CesiumZondy.SettingToolManager || new SettingToolManager();
+  window.vueCesium = window.vueCesium || {};
 }
 
 export function initVueCesium() {
@@ -103,8 +26,84 @@ export function initVueCesium() {
   window.vueCesium.DynamicSectionAnalysisManager =
     window.vueCesium.DynamicSectionAnalysisManager ||
     new DynamicSectionAnalysisManager();
+  window.vueCesium.HeightLimitedAnalysisManager =
+    window.vueCesium.HeightLimitedAnalysisManager ||
+    new HeightLimitedAnalysisManager();
 
-  //在window.CesiumZondy下添加取得WebGlobe对象的方法
+  window.vueCesium.GlobesManager =
+    window.vueCesium.GlobesManager || new BaseManager();
+
+  window.vueCesium.Tileset3DManager =
+    window.vueCesium.Tileset3DManager || new BaseManager();
+  window.vueCesium.EntityManager =
+    window.vueCesium.EntityManager || new EntityManager();
+  window.vueCesium.MarkerManager =
+    window.vueCesium.MarkerManager || new MarkerManager();
+  window.vueCesium.OGCWMTSManager =
+    window.vueCesium.OGCWMTSManager || new OGCWMTSManager();
+  window.vueCesium.FloodAnalysisManager =
+    window.vueCesium.FloodAnalysisManager || new FloodAnalysisManager();
+  window.vueCesium.OGCWMSManager =
+    window.vueCesium.OGCWMSManager || new OGCWMSManager();
+  window.vueCesium.DragEditManager =
+    window.vueCesium.DragEditManager || new DragEditManager();
+  window.vueCesium.VectorTileManager =
+    window.vueCesium.VectorTileManager || new VectorTileManager();
+  window.vueCesium.AdvancedAnalysisManager =
+    window.vueCesium.AdvancedAnalysisManager || new AdvancedAnalysisManager();
+  window.vueCesium.DrawToolManager =
+    window.vueCesium.DrawToolManager || new DrawToolManager();
+  window.vueCesium.MeasureToolManager =
+    window.vueCesium.MeasureToolManager || new MeasureToolManager();
+  window.vueCesium.EventHandlerManager =
+    window.vueCesium.EventHandlerManager || new EventHandlerManager();
+  window.vueCesium.IgsTerrainManager =
+    window.vueCesium.IgsTerrainManager || new IgsTerrainManager();
+  window.vueCesium.M3DIgsManager =
+    window.vueCesium.M3DIgsManager || new EventHandlerManager();
+  window.vueCesium.ArcgisManager =
+    window.vueCesium.ArcgisManager || new EventHandlerManager();
+  window.vueCesium.IgsDocLayerManager =
+    window.vueCesium.IgsDocLayerManager || new IgsDocLayerManager();
+  window.vueCesium.IgsTilecLayerManager =
+    window.vueCesium.IgsTilecLayerManager || new IgsTilecLayerManager();
+  window.vueCesium.IgsserverManager =
+    window.vueCesium.IgsserverManager || new EventHandlerManager();
+  window.vueCesium.ExcavateAnalysisManager =
+    window.vueCesium.ExcavateAnalysisManager || new ExcavateAnalysisManager();
+  window.vueCesium.AnalysisModelFlattenManager =
+    window.vueCesium.AnalysisModelFlattenManager ||
+    new AnalysisModelFlattenManager();
+  window.vueCesium.DynamicCuttingManager =
+    window.vueCesium.DynamicCuttingManager || new DynamicCuttingManager();
+  window.vueCesium.AnalysisManager =
+    window.vueCesium.AnalysisManager || new AnalysisManager();
+  window.vueCesium.AnalysisManager =
+    window.vueCesium.AnalysisManager || new AnalysisManager();
+  window.vueCesium.shadowAnalysisManager =
+    window.vueCesium.shadowAnalysisManager || new shadowAnalysisManager();
+  window.vueCesium.AspectAnalysisManager =
+    window.vueCesium.AspectAnalysisManager || new AspectAnalysisManager();
+  window.vueCesium.SlopeAnalysisManager =
+    window.vueCesium.SlopeAnalysisManager || new SlopeAnalysisManager();
+  window.vueCesium.SkyLineAnalysisManager =
+    window.vueCesium.SkyLineAnalysisManager || new SkyLineAnalysisManager();
+  window.vueCesium.ContourAnalysisManager =
+    window.vueCesium.ContourAnalysisManager || new ContourAnalysisManager();
+  window.vueCesium.ViewshedAnalysisManager =
+    window.vueCesium.ViewshedAnalysisManager || new ViewshedAnalysisManager();
+  window.vueCesium.VisiblityAnalysisManager =
+    window.vueCesium.VisiblityAnalysisManager || new VisiblityAnalysisManager();
+  window.vueCesium.CutFillAnalysisManager =
+    window.vueCesium.CutFillAnalysisManager || new CutFillAnalysisManager();
+  window.vueCesium.ProfileAnalysisManager =
+    window.vueCesium.ProfileAnalysisManager || new ProfileAnalysisManager();
+  window.vueCesium.DataFlowManager =
+    window.vueCesium.DataFlowManager || new DataFlowManager();
+  window.vueCesium.SettingToolManager =
+    window.vueCesium.SettingToolManager || new SettingToolManager();
+
+  //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
     if (!vueKey) {
       vueKey = "default";

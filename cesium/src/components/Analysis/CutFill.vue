@@ -109,7 +109,7 @@ import {
 
 export default {
   name: "mapgis-3d-analysis-cut-fill",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -263,12 +263,12 @@ export default {
       );
     },
     mount() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.CutFillAnalysisManager.addSource(
+        vueCesium.CutFillAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -280,15 +280,15 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.CutFillAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.CutFillAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         this.remove();
       }
-      CesiumZondy.CutFillAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.CutFillAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -304,8 +304,8 @@ export default {
      * @return SourceOptions对象
      */
     _getSourceOptions() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      const find = CesiumZondy.CutFillAnalysisManager.findSource(
+      const { vueCesium, vueKey, vueIndex } = this;
+      const find = vueCesium.CutFillAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -316,12 +316,12 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let { CesiumZondy, vueKey, vueIndex, Cesium, viewer } = this;
+      let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
       const options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
-      CesiumZondy.CutFillAnalysisManager.changeOptions(
+      vueCesium.CutFillAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -351,7 +351,7 @@ export default {
           });
 
           // 构造几何绘制控制对象
-          this.entityController = new CesiumZondy.Manager.EntityController({
+          this.entityController = new window.CesiumZondy.Manager.EntityController({
             viewer
           });
 
@@ -449,9 +449,9 @@ export default {
       // 开始执行填挖方分析
       this.startCutFill(cutFill, positions);
 
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let { vueCesium, vueKey, vueIndex } = this;
 
-      CesiumZondy.CutFillAnalysisManager.changeOptions(
+      vueCesium.CutFillAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "cutFillAnalysis",
@@ -551,13 +551,13 @@ export default {
      * @description 移除填挖方分析结果，取消交互式绘制事件激活状态，恢复深度检测设置，重置结果显示
      */
     remove() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       let options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
 
       // 判断是否已有等值线分析结果
       if (cutFillAnalysis) {
-        CesiumZondy.CutFillAnalysisManager.changeOptions(
+        vueCesium.CutFillAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "cutFillAnalysis",
@@ -568,7 +568,7 @@ export default {
       if (drawElement) {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.CutFillAnalysisManager.changeOptions(
+        vueCesium.CutFillAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",

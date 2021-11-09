@@ -6,7 +6,7 @@ import ServiceLayer from "../ServiceLayer";
 
 export default {
   name: "mapgis-3d-rastertile-layer",
-  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  inject: ["Cesium", "viewer", "vueCesium"],
   mixins: [ServiceLayer],
   props: {
     crs: {

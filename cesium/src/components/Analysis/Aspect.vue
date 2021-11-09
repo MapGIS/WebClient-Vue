@@ -40,7 +40,7 @@ import {
 
 export default {
   name: "mapgis-3d-analysis-aspect",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -110,12 +110,12 @@ export default {
       );
     },
     mount() {
-      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.AspectAnalysisManager.addSource(
+        vueCesium.AspectAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -127,12 +127,12 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.AspectAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.AspectAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
       }
-      CesiumZondy.AspectAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.AspectAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -174,14 +174,14 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.AspectAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.AspectAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { aspectAnalysis, drawElement } = options;
       const { viewer } = this;
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
-      CesiumZondy.AspectAnalysisManager.changeOptions(
+      vueCesium.AspectAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -213,7 +213,7 @@ export default {
           aspectAnalysis.enableContour(false);
           aspectAnalysis.updateMaterial("aspect");
           aspectAnalysis.changeAnalyseArea(result.positions);
-          CesiumZondy.AspectAnalysisManager.changeOptions(
+          vueCesium.AspectAnalysisManager.changeOptions(
             vueKey,
             vueIndex,
             "aspectAnalysis",
@@ -245,8 +245,8 @@ export default {
      * @description 移除坡向分析结果，取消交互式绘制事件激活状态
      */
     remove() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.AspectAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.AspectAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { aspectAnalysis, drawElement } = options;
 
@@ -254,7 +254,7 @@ export default {
       if (aspectAnalysis) {
         // 移除坡向分析显示结果
         aspectAnalysis.updateMaterial("none");
-        CesiumZondy.AspectAnalysisManager.changeOptions(
+        vueCesium.AspectAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "aspectAnalysis",
@@ -265,7 +265,7 @@ export default {
       if (drawElement) {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.AspectAnalysisManager.changeOptions(
+        vueCesium.AspectAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",

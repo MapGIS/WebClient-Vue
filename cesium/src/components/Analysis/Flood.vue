@@ -65,7 +65,7 @@ import {
 
 export default {
   name: "mapgis-3d-analysis-flood",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -212,7 +212,7 @@ export default {
     },
     maxHeightCopy: {
       handler: function(e) {
-        const { viewer, CesiumZondy, vueKey, vueIndex } = this;
+        const { viewer, vueCesium, vueKey, vueIndex } = this;
         const options = this._getSourceOptions();
         const { floodAnalysis } = options;
         if (!floodAnalysis) {
@@ -248,12 +248,12 @@ export default {
       );
     },
     mount() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.FloodAnalysisManager.addSource(
+        vueCesium.FloodAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -265,12 +265,12 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.FloodAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.FloodAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
       }
-      CesiumZondy.FloodAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.FloodAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -285,12 +285,12 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       let { drawElement } = options;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(this.viewer);
-      CesiumZondy.FloodAnalysisManager.changeOptions(
+      vueCesium.FloodAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -316,7 +316,7 @@ export default {
         this.$message.warning("请绘制分析区域");
         return;
       }
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       let { floodAnalysis } = options;
       const {
@@ -362,7 +362,7 @@ export default {
       // 添加洪水淹没结果显示
       this.viewer.scene.visualAnalysisManager.add(floodAnalysis);
       this.mHeight = maxHeightCopy;
-      CesiumZondy.FloodAnalysisManager.changeOptions(
+      vueCesium.FloodAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "floodAnalysis",
@@ -374,8 +374,8 @@ export default {
      * @return SourceOptions对象
      */
     _getSourceOptions() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      const find = CesiumZondy.FloodAnalysisManager.findSource(
+      const { vueCesium, vueKey, vueIndex } = this;
+      const find = vueCesium.FloodAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -408,7 +408,7 @@ export default {
      * @description 移除洪水淹没分析结果
      */
     _removeFlood() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       const { floodAnalysis } = options;
 
@@ -416,7 +416,7 @@ export default {
       if (floodAnalysis) {
         // 移除洪水淹没分析显示结果
         this.viewer.scene.visualAnalysisManager.remove(floodAnalysis);
-        CesiumZondy.FloodAnalysisManager.changeOptions(
+        vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "floodAnalysis",
@@ -430,14 +430,14 @@ export default {
      */
     remove() {
       this._removeFlood();
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       const { drawElement } = options;
 
       if (drawElement) {
         // 取消交互式绘制事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.FloodAnalysisManager.changeOptions(
+        vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",

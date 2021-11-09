@@ -27,23 +27,19 @@
 </template>
 
 <script>
-import ServiceLayer from "../UI/Controls/ServiceLayer.js";
+// import ServiceLayer from "../UI/Controls/ServiceLayer.js";
+import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../Utils/deepequal";
 
 export default {
   name: "mapgis-3d-heightlimited",
-  mixins: [ServiceLayer],
+  mixins: [BaseLayer],
   props: {
-    vueKey: {
-      type: String,
-      default: "default"
-    },
-    vueIndex: {
-      type: Number,
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
+    // 模型集合
+    models: {
+      type: Array,
+      default: () => []
     },
     color: {
       type: String,
@@ -59,7 +55,7 @@ export default {
     }
   },
   components: {Mapgis3dDraw},
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       //定义
@@ -87,36 +83,87 @@ export default {
     this.unmount();
   },
   watch: {
-    heightLimit: {
-      handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
+    models: {
+      handler: function(layers) {
+        if (layers && layers.length > 0) {
+          this.model = layers[layers.length - 1];
+        } else {
+          this.model = null;
         }
+      },
+      deep: true,
+      immediate: true
+    },
+    model: {
+      deep: true,
+      immediate: true,
+      handler: function() {
+        this.removeDynaCut();
+        this.changeModel();
       }
     },
-    color:{
-      handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
-        }
-      }
-    },
-    opacity:{
-      handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
-        }
-      }
-    },
-    maxSliderHeight:{
-      handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
-        }
-      }
-    }
+  //   heightLimit: {
+  //     handler(next, old) {
+  //       if (!deepEqual(next, old)) {
+  //         this.heightLimitedAnalysis();
+  //       }
+  //     }
+  //   },
+  //   color:{
+  //     handler(next, old) {
+  //       if (!deepEqual(next, old)) {
+  //         this.heightLimitedAnalysis();
+  //       }
+  //     }
+  //   },
+  //   opacity:{
+  //     handler(next, old) {
+  //       if (!deepEqual(next, old)) {
+  //         this.heightLimitedAnalysis();
+  //       }
+  //     }
+  //   },
+  //   maxSliderHeight:{
+  //     handler(next, old) {
+  //       if (!deepEqual(next, old)) {
+  //         this.heightLimitedAnalysis();
+  //       }
+  //     }
+  //   }
   },
   methods: {
+    /**
+     * 判断传入的m3d图层是否加载完毕
+     */
+    m3dIsReady() {
+      const { vueCesium, vueKey, vueIndex, model } = this;
+      return new Promise((resolve, reject) => {
+        if ( model && model.vueIndex) {
+          this.$_getM3DByInterval(
+              function(m3ds) {
+                if (m3ds && m3ds.length > 0) {
+                  if (
+                      !m3ds[0] ||
+                      !m3ds[0].hasOwnProperty("source") ||
+                      !m3ds[0].source
+                  ) {
+                    reject(null);
+                  } else {
+                    resolve(m3ds[0]);
+                  }
+                } else {
+                  reject(null);
+                }
+              },
+              vueKey,
+              model.vueIndex
+          );
+        } else {
+          reject(null);
+        }
+      });
+    },
+
     setInput(data) {
       let vm = this;
       vm.heightLimit = data;
@@ -152,7 +199,7 @@ export default {
     heightLimitedAnalysis(lnglat) {
       const vm = this;
       let {vueKey, vueIndex} = this
-      let {heightLimit, CesiumZondy, viewer} = this;
+      let {heightLimit, vueCesium, viewer} = this;
       let findSource = vm.$_getObject();
 
       //先判断m3d模型是否加载完成
@@ -160,7 +207,7 @@ export default {
 
         //判断分析方式，不通过绘制矩形和绘制面的方式，则lnglat为空，走if,否则绘制方式就走else
         if (!lnglat) {
-          let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+          let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
           if (find) {
             lnglat = find.options;
             this.remove();
@@ -203,7 +250,7 @@ export default {
       });
       // webGlobe.addSceneEffect(heightLimited);
       temp = heightLimited.add();
-      CesiumZondy.HeightLimitedAnalysisManager.addSource(
+      vueCesium.HeightLimitedAnalysisManager.addSource(
           vm.vueKey,
           vm.vueIndex,
           heightLimited,
@@ -274,12 +321,12 @@ export default {
 
     remove() {
       const {vueKey, vueIndex} = this;
-      let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
       if (find && find.source) {
         find.source.remove();
       }
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
-      CesiumZondy.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
     },
     unmount(){
       this.removeDraw();

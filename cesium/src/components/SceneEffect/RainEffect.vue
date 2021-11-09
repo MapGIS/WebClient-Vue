@@ -47,7 +47,7 @@ export default {
       default: true
     }
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   watch: {
     speed: {
       handler(next){
@@ -68,8 +68,8 @@ export default {
     enable: {
       handler(stag){
         // this.changeDensity(next);
-        let {CesiumZondy,vueKey, vueIndex} = this;
-        let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+        let {vueCesium,vueKey, vueIndex} = this;
+        let find = vueCesium.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
         let rain = find.source;
         rain.enabled = stag;
       }
@@ -86,8 +86,8 @@ export default {
     //1.三维模型或地形先加载
     let vm = this;
     vm.$_init(vm.initRain());
-    let {CesiumZondy,vueKey, vueIndex,enable} = this;
-    let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+    let {vueCesium,vueKey, vueIndex,enable} = this;
+    let find = vueCesium.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
     let rain = find.source;
     rain.enabled = enable;
   },
@@ -97,22 +97,22 @@ export default {
   methods: {
     initRain() {
       const {
-        CesiumZondy,
+        vueCesium,
         vueKey,
         vueIndex,
-        webGlobe,
+        viewer,
         speed,
         angle,
       } = this;
-        var advancedAnalysisManager = new CesiumZondy.Manager.AdvancedAnalysisManager({
-          viewer: webGlobe.viewer
+        var advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager({
+          viewer: viewer
         });
         //添加下雨特效
         let rain = advancedAnalysisManager.createRain({
           speed:speed,
           angle:angle,
         });
-        CesiumZondy.AdvancedAnalysisManager.addSource(vueKey, vueIndex, rain);
+        vueCesium.AdvancedAnalysisManager.addSource(vueKey, vueIndex, rain);
         this.$emit("load", this);
     },
     // changeSpeed(newSpeed){
@@ -121,13 +121,13 @@ export default {
     //   this.initRain();
     // },
     unmount(){
-      let {webGlobe, CesiumZondy,vueKey, vueIndex} = this;
-      let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+      let {viewer, vueCesium,vueKey, vueIndex} = this;
+      let find = vueCesium.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
       if (find && find.source) {
-        // CesiumZondy.AdvancedAnalysisManager.removeStage(find.source);
-        webGlobe.viewer.scene.postProcessStages.remove(find.source);
+        // vueCesium.AdvancedAnalysisManager.removeStage(find.source);
+        viewer.scene.postProcessStages.remove(find.source);
       }
-      CesiumZondy.AdvancedAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.AdvancedAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     }
   },

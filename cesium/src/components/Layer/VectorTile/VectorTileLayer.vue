@@ -12,7 +12,7 @@ export default {
       managerName: "VectorTileManager"
     };
   },
-  inject: ["Cesium", "viewer", "CesiumZondy", "vueCesium"],
+  inject: ["Cesium", "viewer", "vueCesium"],
   created() {},
   mounted() {
     this.$_mount();
@@ -25,7 +25,7 @@ export default {
     layerStyle: {
       handler: function(next, old) {
         let { vueKey, vueIndex } = this;
-        let layer = window.CesiumZondy[this.managerName].findSource(
+        let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const { $props, viewer, CesiumZondy } = this;
+      const { $props, viewer, vueCesium } = this;
       const { tilingScheme } = $props;
       let tileScheme;
 
@@ -65,7 +65,7 @@ export default {
               resolve(vectortile);
             }
           };
-          vectortile = new CesiumZondy.Overlayer.VectorTileLayer(viewer, opt);
+          vectortile = new window.CesiumZondy.Overlayer.VectorTileLayer(viewer, opt);
         },
         reject => {}
       );
@@ -88,7 +88,7 @@ export default {
     },
     watchProp() {
       const {
-        CesiumZondy,
+        vueCesium,
         viewer,
         vueKey,
         vueIndex,
@@ -96,7 +96,7 @@ export default {
         mvtStyle,
         vectortilejson
       } = this;
-      let find = CesiumZondy.VectorTileManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.VectorTileManager.findSource(vueKey, vueIndex);
 
       if (show) {
         this.$watch("show", function(next) {
@@ -134,7 +134,7 @@ export default {
       return this.$vectortile ? this.$vectortile.provider : undefined;
     },
     $_mount() {
-      const { vueIndex, vueKey, CesiumZondy } = this;
+      const { vueIndex, vueKey, vueCesium } = this;
       const { layerStyle } = this;
       const { visible, opacity, zIndex } = layerStyle;
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
@@ -150,7 +150,7 @@ export default {
         let imageryLayer = vectortile.provider;
 
         if (vueKey && vueIndex) {
-          CesiumZondy.VectorTileManager.addSource(
+          vueCesium.VectorTileManager.addSource(
             vueKey,
             vueIndex,
             imageryLayer,
@@ -192,12 +192,12 @@ export default {
       });
     },
     $_unmount() {
-      const { viewer, vueKey, vueIndex, CesiumZondy } = this;
-      let find = CesiumZondy.VectorTileManager.findSource(vueKey, vueIndex);
+      const { viewer, vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.VectorTileManager.findSource(vueKey, vueIndex);
       if (find) {
         !viewer.isDestroyed() && find.options.vectortile.destroy();
       }
-      CesiumZondy.VectorTileManager.deleteSource(vueKey, vueIndex);
+      vueCesium.VectorTileManager.deleteSource(vueKey, vueIndex);
     }
   },
   render(createElement) {

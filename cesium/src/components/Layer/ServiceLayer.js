@@ -93,7 +93,7 @@ export default {
     layerStyle: {
       handler: function() {
         let { vueKey, vueIndex } = this;
-        let layer = window.CesiumZondy[this.managerName].findSource(
+        let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
@@ -125,7 +125,7 @@ export default {
     id: {
       handler: function() {
         const { vueIndex, vueKey } = this;
-        let layer = window.CesiumZondy[this.managerName].findSource(
+        let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
@@ -167,9 +167,9 @@ export default {
      * }
      *
      * @param addOpt 需要额外添加的参数
-     * @param CesiumZondyLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
+     * @param vueCesiumLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
      * **/
-    $_mount(addOpt, CesiumZondyLayer) {
+    $_mount(addOpt, vueCesiumLayer) {
       //类型检测
       this.$_check();
       let opt = {},
@@ -213,11 +213,11 @@ export default {
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
-      const { imageryLayers } = this.$_getWebGlobe();;
+      const { imageryLayers } = this.$_getWebGlobe();
 
       let provider;
-      if (CesiumZondyLayer) {
-        provider = new CesiumZondyLayer(options);
+      if (vueCesiumLayer) {
+        provider = new vueCesiumLayer(options);
       } else {
         provider = new Cesium[this.providerName](options);
       }
@@ -290,7 +290,7 @@ export default {
       }
 
       //将图层加入对应的manager
-      window.CesiumZondy[this.managerName].addSource(
+      window.vueCesium[this.managerName].addSource(
         vueKey,
         vueIndex,
         imageryLayer,
@@ -303,12 +303,12 @@ export default {
     $_unmount() {
       let { vueKey, vueIndex } = this;
       const { imageryLayers } = this.$_getWebGlobe();
-      let find = window.CesiumZondy[this.managerName].findSource(
+      let find = window.vueCesium[this.managerName].findSource(
         vueKey,
         vueIndex
       );
       imageryLayers.remove(find.source, true);
-      window.CesiumZondy[this.managerName].deleteSource(vueKey, vueIndex);
+      window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     $_checkZIndex(imageryLayers) {
@@ -367,13 +367,13 @@ export default {
       let Layers = [],
         vm = this;
 
-      //遍历window.CesiumZondy下所有的Manager
-      Object.keys(window.CesiumZondy).forEach(function(key) {
+      //遍历window.vueCesium下所有的Manager
+      Object.keys(window.vueCesium).forEach(function(key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
-          if (window.CesiumZondy[key].hasOwnProperty("vueKey")) {
-            if (window.CesiumZondy[key].hasOwnProperty(vm.vueKey)) {
-              let layerManagers = window.CesiumZondy[key][vm.vueKey];
+          if (window.vueCesium[key].hasOwnProperty("vueKey")) {
+            if (window.vueCesium[key].hasOwnProperty(vm.vueKey)) {
+              let layerManagers = window.vueCesium[key][vm.vueKey];
               for (let i = 0; i < layerManagers.length; i++) {
                 //确保拥有options并且options里面含有zIndex
                 if (
@@ -430,7 +430,7 @@ export default {
         if (vueKey === "default") {
           webGlobeObj = viewer;
         } else {
-          let GlobesManager = window.CesiumZondy.GlobesManager;
+          let GlobesManager = window.vueCesium.GlobesManager;
           webGlobeObj = GlobesManager[this.vueKey][0].source;
         }
       } else {

@@ -142,7 +142,7 @@ export default {
         if (this.isFlood) {
           const {vueKey, vueIndex, vueCesium} = this;
           let viewer = window.vueCesium.getViewer(vueKey);
-          let floodAnalyseManager = window.CesiumZondy.FloodAnalyseManager.findSource(vueKey, vueIndex);
+          let floodAnalyseManager = window.vueCesium.FloodAnalyseManager.findSource(vueKey, vueIndex);
           if (floodAnalyseManager && floodAnalyseManager.hasOwnProperty("source") && floodAnalyseManager.source) {
             let floodAnalyse = floodAnalyseManager.source;
             floodAnalyse.maxHeight = Number(this.currentHeightCopy);
@@ -280,7 +280,7 @@ export default {
       //开始分析前，删除上一次分析
       if (viewer.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
         viewer.scene.VisualAnalysisManager.removeAll();
-        window.CesiumZondy.FloodAnalyseManager.deleteSource(vueKey, vueIndex);
+        window.vueCesium.FloodAnalyseManager.deleteSource(vueKey, vueIndex);
       }
       //将笛卡尔坐标转为经纬度坐标
       let cartographics = [], height = 0;
@@ -311,7 +311,7 @@ export default {
         // 指定光线强度
         specularIntensity: Number(this.specularIntensityCopy),
       });
-      window.CesiumZondy.FloodAnalyseManager.addSource(vueKey, vueIndex, floodAnalyse);
+      window.vueCesium.FloodAnalyseManager.addSource(vueKey, vueIndex, floodAnalyse);
       //设置深度检测
       viewer.scene.globe.depthTestAgainstTerrain = true;
       //添加洪水淹没结果显示
@@ -329,9 +329,9 @@ export default {
     },
     //停止洪水淹没分析
     $_stopAnalyse() {
-      if (webGlobe.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
+      if (this.viewer.scene.VisualAnalysisManager._visualAnalysisList.length > 0) {
         //删除淹没分析
-        webGlobe.scene.VisualAnalysisManager.removeAll();
+        this.viewer.scene.VisualAnalysisManager.removeAll();
         //停止绘制
         window.drawElement.stopDrawing();
         //启用开始分析按钮

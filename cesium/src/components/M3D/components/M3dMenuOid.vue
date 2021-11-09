@@ -15,7 +15,7 @@ import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-m3d-menu-oid",
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer", "m3ds"],
   props: {
     ...VueOptions,
     version: {
@@ -67,7 +67,7 @@ export default {
               originalColor: new Cesium.Color()
             },
             currentLayer: undefined,
-            analysisManager: new CesiumZondy.Manager.AnalysisManager({
+            analysisManager: new window.CesiumZondy.Manager.AnalysisManager({
               viewer: viewer
             })
           },

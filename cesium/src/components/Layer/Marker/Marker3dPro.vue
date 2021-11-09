@@ -60,7 +60,7 @@
  */
 export default {
   name: "mapgis-3d-marker-pro",
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     vueKey: String,
     marker: {

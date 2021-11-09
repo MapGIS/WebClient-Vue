@@ -2,7 +2,7 @@ import TilesetOptions from "./3DTilesetOptions";
 
 export default {
   props: { ...TilesetOptions },
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   created() {},
   mounted() {
     this.mount();
@@ -26,19 +26,14 @@ export default {
       }
     },
     mount() {
-      const { webGlobe, autoReset, vueIndex, vueKey } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, autoReset, vueIndex, vueKey } = this;
       if (viewer.isDestroyed()) return;
       this.$emit("load", this);
 
       let tileset = this.createCesiumObject();
 
       if (vueKey && vueIndex) {
-        window.CesiumZondy.Tileset3DManager.addSource(
-          vueKey,
-          vueIndex,
-          tileset
-        );
+        window.vueCesium.Tileset3DManager.addSource(vueKey, vueIndex, tileset);
       }
       viewer.scene.primitives.add(tileset);
 
@@ -61,17 +56,13 @@ export default {
         });
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
-      const viewer = webGlobe.viewer;
-      let find = window.CesiumZondy.Tileset3DManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      const { viewer, vueKey, vueIndex } = this;
+      let find = window.vueCesium.Tileset3DManager.findSource(vueKey, vueIndex);
       if (find) {
         !viewer.isDestroyed() && viewer.scene.primitives.remove(find.source);
         find.source.destroy && find.source.destroy();
       }
-      window.CesiumZondy.Tileset3DManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.Tileset3DManager.deleteSource(vueKey, vueIndex);
     }
   },
   render(createElement) {

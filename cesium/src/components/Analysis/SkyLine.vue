@@ -70,7 +70,7 @@ export default {
     },
     ...VueOptions
   },
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       formData: {
@@ -129,12 +129,12 @@ export default {
       );
     },
     mount() {
-      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.SkyLineAnalysisManager.addSource(
+        vueCesium.SkyLineAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -158,15 +158,15 @@ export default {
       }
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.SkyLineAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         this.remove();
       }
-      CesiumZondy.SkyLineAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.SkyLineAnalysisManager.deleteSource(vueKey, vueIndex);
 
       //缓存区设置
       if (
@@ -181,8 +181,8 @@ export default {
       this.$emit("unload", this);
     },
     remove() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.SkyLineAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -251,9 +251,9 @@ export default {
     addSkyLine() {
       this.remove();
       this.maskShow = true;
-      let { CesiumZondy, vueKey, vueIndex, viewer } = this;
+      let { vueCesium, vueKey, vueIndex, viewer } = this;
       let scene = viewer.scene;
-      let find = CesiumZondy.SkyLineAnalysisManager.findSource(
+      let find = vueCesium.SkyLineAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -275,7 +275,7 @@ export default {
       viewer.scene.visualAnalysisManager.add(skylineAnalysisVal);
 
       this.$emit("success");
-      CesiumZondy.SkyLineAnalysisManager.changeOptions(
+      vueCesium.SkyLineAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "skyLineAnalysis",

@@ -48,12 +48,12 @@ export default {
   },
   destroyed() {
     let {vueKey, vueIndex} = this;
-    let source = window.CesiumZondy.DataFlowManager.findSource(vueKey, vueIndex);
+    let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
     let points = source.source;
     for (let i = 0; i < points.length; i++) {
       this.viewer.entities.remove(points[i]);
     }
-    CesiumZondy.DataFlowManager.deleteSource(vueKey, vueIndex);
+    vueCesium.DataFlowManager.deleteSource(vueKey, vueIndex);
   },
   methods: {
     setModelDirection(longitude, latitude, direction) {
@@ -75,7 +75,7 @@ export default {
       ws.onmessage = function (evt) {
         let data = JSON.parse(evt.data);
         let addPoint = true, pointId, points;
-        let source = window.CesiumZondy.DataFlowManager.findSource(vueKey, vueIndex);
+        let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
         if (vm.firstAdd) {
           let flyToOptions = {
             duration: 6
@@ -106,7 +106,7 @@ export default {
         if (addPoint) {
           if (!points) {
             points = [];
-            window.CesiumZondy.DataFlowManager.addSource(vueKey, vueIndex, points);
+            window.vueCesium.DataFlowManager.addSource(vueKey, vueIndex, points);
           }
           let point;
           switch (vm.layerStyle.type) {

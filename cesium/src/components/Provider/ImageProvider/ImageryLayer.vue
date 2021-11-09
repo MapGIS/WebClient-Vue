@@ -3,7 +3,7 @@ import ImageryOptions from "./ImageryOptions";
 export default {
   name: 'cesium-layer-imagery',
   mixins: [],
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   props: {
     ...ImageryOptions
   },
@@ -16,14 +16,12 @@ export default {
       return new Cesium.ImageryLayer(provider || {}, $props)
     },
     async mount () {
-      const { webGlobe, imageryLayer } = this
-      const viewer = webGlobe.viewer;
+      const { viewer, imageryLayer } = this
       viewer.imageryLayers.add(imageryLayer)
       return !this.viewer.isDestroyed() && viewer.imageryLayers.contains(imageryLayer)
     },
     async unmount () {
-      const { webGlobe, imageryLayer } = this
-      const viewer = webGlobe.viewer;
+      const { viewer, imageryLayer } = this
       return !viewer.isDestroyed() && viewer.imageryLayers.remove(imageryLayer)
     },
     /* async refresh () {

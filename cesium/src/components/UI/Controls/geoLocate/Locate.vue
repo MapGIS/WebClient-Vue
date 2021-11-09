@@ -193,7 +193,7 @@ export default {
      */
     flyToRectangle(rect, heading = 0.0, pitch = -90, range = 0.0, duration = 3) {
       let {viewer} = this;
-      console.log("rectangle", rect);
+      const vm = this;
       //先清空entity
       viewer. entities.removeAll();
       const westernmostLon = Math.round(Number((rect[0][0]))*100)/100;
@@ -217,6 +217,7 @@ export default {
       this.locateMarker = true;
       this.fitBound = {xmin: westernmostLon, ymin: southernmostLat, xmax: easternmostLon, ymax: northernmostLat};
       this.highlightStyle.polygon = new FillStyle(this.mapSheetBoundaryStyle);
+      vm.$emit("located",rectRound);
     },
     lonlatToPoint(inputValue) {
       let lon = inputValue.split(',')[0];

@@ -38,9 +38,6 @@ export default {
       get Cesium() {
         return self.Cesium;
       },
-      get CesiumZondy() {
-        return self.CesiumZondy;
-      },
       get vueCesium() {
         return self.vueCesium;
       },
@@ -60,7 +57,7 @@ export default {
       handler: function() {
         //解决分屏时，cesium无限拉长的问题，要给一个固定高度
         let vm = this;
-        window.CesiumZondy.getWebGlobeByInterval(function (viewer) {
+        window.vueCesium.getViewerByInterval(function (viewer) {
           vm.$nextTick(function () {
             viewer.container.style.height = this.height + "px";
           })
@@ -85,7 +82,6 @@ export default {
     initVueCesium();
     this.viewer = null;
     this.propsIsUpdating = {};
-
     window.viewer = window.viewer || null;
     this.initialized = false;
   },
@@ -115,7 +111,7 @@ export default {
       if (cameraView) {
         viewer.scene.camera.setView(cameraView);
       }
-      window.CesiumZondy.GlobesManager.addSource(vueKey, vueIndex, viewer, {
+      window.vueCesium.GlobesManager.addSource(vueKey, vueIndex, viewer, {
         ScreenSpaceEventHandler: undefined,
       });
       window.vueCesium.ViewerManager.addSource(vueKey, vueIndex, viewer, {
@@ -153,7 +149,7 @@ export default {
         this.viewer.scene.primitives.destroy();
         this.viewer.entities.removeAll();
         // this.viewer.destroy();
-        window.CesiumZondy.GlobesManager.deleteSource(vueKey, vueIndex)
+        window.vueCesium.GlobesManager.deleteSource(vueKey, vueIndex)
         // this.viewer = null;
         this.initialized = false;
       }

@@ -5,7 +5,7 @@
 <script>
 export default {
   name: "cesium-ogcwmts-provider",
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   props: {
     layer: Object,
     index: { type: Number, default: 0 },
@@ -40,10 +40,9 @@ export default {
       });
     },
     mount() {
-      const { webGlobe, options, layer } = this;
-      const { viewer } = webGlobe;
+      const { viewer, options, layer } = this;
       const { imageryLayers } = viewer;
-      window.Zondy = window.Zondy || window.CesiumZondy;
+      window.Zondy = window.Zondy || window.vueCesium;
       let provider = this.createCesiumObject();
       let imageLayer = imageryLayers.addImageryProvider(provider);
 
@@ -57,8 +56,7 @@ export default {
       this.$emit("load", this.layer, this);
     },
     unmount() {
-      let { webGlobe } = this;
-      const { viewer } = webGlobe;
+      let { viewer } = this;
       const { imageryLayers } = viewer;
       let find = this.findProvider();
       imageryLayers.remove(find.imageLayer, true);

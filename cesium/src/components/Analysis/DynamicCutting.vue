@@ -75,7 +75,7 @@ export default {
       handler: function f() {}
     }
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       //当前的迫切面的距离
@@ -115,9 +115,9 @@ export default {
     $_mount() {
       const { vueKey, vueIndex } = this;
       let Cesium = getCesiumBaseObject(this, "Cesium");
-      let CesiumZondy = getCesiumBaseObject(this, "CesiumZondy");
+      let vueCesium = getCesiumBaseObject(this, "vueCesium");
       let vm = this;
-      CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
+      vueCesium.getViewerByInterval(function(viewer) {
         vm.$_getM3DByInterval(function(m3d) {
           //模型加载完毕，抛出lioaded事件
           vm.$emit("loaded", vm);
@@ -160,10 +160,10 @@ export default {
               break;
           }
           //初始化分析功能管理类
-          let analysisManager = new CesiumZondy.Manager.AnalysisManager({
-            viewer: webGlobe.viewer
+          let analysisManager = new window.CesiumZondy.Manager.AnalysisManager({
+            viewer: viewer
           });
-          CesiumZondy.AnalysisManager.addSource(
+          vueCesium.AnalysisManager.addSource(
             vueKey,
             vueIndex instanceof Array ? vueIndex[0] : vueIndex,
             analysisManager
@@ -223,7 +223,7 @@ export default {
               false
             );
           }
-          CesiumZondy.DynamicCuttingManager.addSource(
+          vueCesium.DynamicCuttingManager.addSource(
             vueKey,
             vueIndex instanceof Array ? vueIndex[0] : vueIndex,
             dynaCuts
@@ -234,9 +234,9 @@ export default {
     $_unmount() {
       const { vueKey, vueIndex } = this;
       let index = vueIndex instanceof Array ? vueIndex[0] : vueIndex;
-      let dynaCuts = CesiumZondy.DynamicCuttingManager.findSource(vueKey, index)
+      let dynaCuts = vueCesium.DynamicCuttingManager.findSource(vueKey, index)
         .source;
-      let analysisManager = CesiumZondy.AnalysisManager.findSource(
+      let analysisManager = vueCesium.AnalysisManager.findSource(
         vueKey,
         index
       ).source;
@@ -245,8 +245,8 @@ export default {
           analysisManager.deleteDynamicCutting(dynaCuts[i]);
         }
       }
-      CesiumZondy.DynamicCuttingManager.deleteSource(vueKey, index);
-      CesiumZondy.AnalysisManager.deleteSource(vueKey, index);
+      vueCesium.DynamicCuttingManager.deleteSource(vueKey, index);
+      vueCesium.AnalysisManager.deleteSource(vueKey, index);
     }
   }
 };

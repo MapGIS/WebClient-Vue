@@ -53,7 +53,7 @@ import {
 
 export default {
   name: "mapgis-3d-sightline",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -183,12 +183,12 @@ export default {
       );
     },
     mount() {
-      const {CesiumZondy, vueKey, vueIndex} = this;
+      const {vueCesium, vueKey, vueIndex} = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.VisiblityAnalysisManager.addSource(
+        vueCesium.VisiblityAnalysisManager.addSource(
             vueKey,
             vueIndex,
             dataSource,
@@ -199,14 +199,14 @@ export default {
       });
     },
     unmount() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       this.onClickStop();
-      CesiumZondy.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
     },
 
     findSource() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
-      let find = CesiumZondy.VisiblityAnalysisManager.findSource(
+      let {vueCesium, vueKey, vueIndex} = this;
+      let find = vueCesium.VisiblityAnalysisManager.findSource(
           vueKey,
           vueIndex
       );
@@ -322,13 +322,6 @@ export default {
           this.registerMouseRClickEvent(event);
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
-        // this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
-        //   this.registerMouseLClickEvent(event);
-        // });
-        // this.webGlobe.registerMouseEvent("RIGHT_CLICK", event => {
-        //   this.registerMouseRClickEvent(event);
-        // });
-
         this.isAddEventListener = true;
       }
     },
@@ -366,7 +359,7 @@ export default {
         visibility.targetPosition = cartesian;
 
         //修改manager的options
-        CesiumZondy.VisiblityAnalysisManager.changeOptions(
+        vueCesium.VisiblityAnalysisManager.changeOptions(
             vueKey,
             vueIndex,
             "visiblityAnalysis",
@@ -383,8 +376,6 @@ export default {
       // 注销鼠标的各项监听事件
       this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
-      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-      // this.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
       this.isAddEventListener = false;
     },
 

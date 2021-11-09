@@ -4,7 +4,7 @@ import { M3dType, M3dType_0_0 } from "./M3dType";
 
 export default {
   name: "mapgis-3d-igs-m3d",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...Tileset3dOptions
   },
@@ -40,8 +40,8 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { CesiumZondy, viewer } = this;
-      let m3dLayer = new CesiumZondy.Layer.M3DLayer({
+      const { vueCesium, viewer } = this;
+      let m3dLayer = new window.CesiumZondy.Layer.M3DLayer({
         viewer: viewer
       });
       return m3dLayer;
@@ -59,7 +59,7 @@ export default {
         ...$props,
         loaded: tileset => {
           if (vueKey && vueIndex) {
-            CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+            vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
             m3ds.forEach(m3d => console.log("m3d", m3d));
 
             if (!vm.show && m3ds) {
@@ -136,8 +136,8 @@ export default {
       });
     },
     unmount() {
-      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         !viewer.isDestroyed() &&
@@ -147,11 +147,11 @@ export default {
           });
       }
       this.$emit("unload", { component: this });
-      CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
+      vueCesium.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     changeShow(show) {
       const { vueKey, vueIndex } = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         m3ds && m3ds.forEach(m3d => (m3d.show = show));
@@ -161,7 +161,7 @@ export default {
     },
     changeOpacity(opacity) {
       const { vueKey, vueIndex } = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
@@ -227,7 +227,7 @@ export default {
     changeLayerVisible(layers) {
       layers = layers || this.layerList;
       const { vueKey, vueIndex } = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;

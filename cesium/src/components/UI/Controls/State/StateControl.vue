@@ -80,14 +80,14 @@ export default {
     },
     unmount() {
       const { viewer, vueKey, vueIndex } = this;
-      let find = window.CesiumZondy.EventHandlerManager.findSource(
+      let find = window.vueCesium.EventHandlerManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         find.source.destroy && find.source.destroy();
       }
-      window.CesiumZondy.EventHandlerManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.EventHandlerManager.deleteSource(vueKey, vueIndex);
     },
     showPosition() {
       const vm = this;
@@ -121,7 +121,7 @@ export default {
             vm.$_frame = 0;
           }
         }, Cesium.ScreenSpaceEventType.WHEEL);
-        window.CesiumZondy.EventHandlerManager.addSource(
+        window.vueCesium.EventHandlerManager.addSource(
           vueKey,
           vueIndex,
           screenSpaceMouseEventHandler

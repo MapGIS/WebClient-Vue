@@ -73,7 +73,7 @@ export default {
       }
     }
   },
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [ServiceLayer],
   data() {
     return {
@@ -188,7 +188,7 @@ export default {
     startExcavate() {
       let vm = this;
       vm.initial = false;
-      let {CesiumZondy, viewer} = this;
+      let {vueCesium, viewer} = this;
       let find = vm.$_getObject();
 
       //初始化开挖实例
@@ -217,7 +217,7 @@ export default {
         height: vm.centerDegree.height + vm.depth / 2
       });
 
-      CesiumZondy.ExcavateAnalysisManager.addSource(
+      vueCesium.ExcavateAnalysisManager.addSource(
           vm.vueKey,
           vm.vueIndex,
           dynaCut,
@@ -312,8 +312,8 @@ export default {
     },
 
     drawPoint(p) {
-      let {CesiumZondy, viewer} = this;
-      let entityController = new CesiumZondy.Manager.EntityController({
+      let {vueCesium, viewer} = this;
+      let entityController = new window.CesiumZondy.Manager.EntityController({
         viewer: viewer
       });
       //填充颜色
@@ -343,14 +343,14 @@ export default {
       excavateDepth = data;
     },
     unmount() {
-      let {CesiumZondy, vueKey, vueIndex} = this;
-      let find = CesiumZondy.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
+      let {vueCesium, vueKey, vueIndex} = this;
+      let find = vueCesium.ExcavateAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         let source = find.source;
         // this.webGlobe.deleteDynamicCutting(source);
       }
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
-      CesiumZondy.ExcavateAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.ExcavateAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
   }

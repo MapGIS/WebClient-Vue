@@ -205,7 +205,7 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 export default {
   name: "mapgis-3d-path-roaming",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     positions: {

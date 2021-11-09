@@ -97,7 +97,7 @@ export default {
       default: (Math.random() * 10000).toFixed(0)
     }
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseMixin],
   data() {
     return {

@@ -168,17 +168,17 @@ export default {
     },
     $_deleteEntity(callback){
       const {vueKey,vueIndex} = this;
-      let CesiumZondy = getCesiumBaseObject(this,"CesiumZondy");
-      let entityManager = CesiumZondy.EntityManager.findSource(vueKey,vueIndex),entity;
+      let vueCesium = getCesiumBaseObject(this,"vueCesium");
+      let entityManager = vueCesium.EntityManager.findSource(vueKey,vueIndex),entity;
       let vm = this;
       if(entityManager && entityManager.hasOwnProperty("source") && entityManager.source){
-        entity = CesiumZondy.EntityManager.findSource(vueKey,vueIndex).source;
-        CesiumZondy.getWebGlobeByInterval(function (webGlobe) {
-          webGlobe.viewer.entities.remove(entity);
-          CesiumZondy.EntityManager.deleteSource(vueKey,vueIndex);
+        entity = vueCesium.EntityManager.findSource(vueKey,vueIndex).source;
+        vueCesium.getViewerByInterval(function (viewer) {
+          viewer.entities.remove(entity);
+          vueCesium.EntityManager.deleteSource(vueKey,vueIndex);
         });
       }
-      callback && callback(vm,webGlobe);
+      callback && callback(vm,viewer);
     },
     $_analyse(advancedAnalysisManager,positions,wallHeight){
       let vm = this,height,volumeTitle;
@@ -231,12 +231,11 @@ export default {
       center.wallHeight = wallHeight;
       return center;
     },
-    $_addEntity(webGlobe,center,positions,wallHeight){
+    $_addEntity(viewer,center,positions,wallHeight){
       const {vueKey,vueIndex} = this;
       let Cesium= getCesiumBaseObject(this,"Cesium");
       //添加填挖方分析显示实体
       let transform = this.$_transformEdit(center);
-      let viewer = webGlobe.viewer;
       let array = [];
       for (let i = 0; i < positions.length; i++) {
         let point = positions[i];
@@ -271,9 +270,9 @@ export default {
           outline: true
         }
       });
-      CesiumZondy.EntityManager.addSource(vueKey,vueIndex,entity);
+      vueCesium.EntityManager.addSource(vueKey,vueIndex,entity);
     },
-    $_volumeAnalyse(webGlobe, positions) {
+    $_volumeAnalyse(viewer, positions) {
       let center = this.$_getCenter(positions);
       let wallHeight = center.wallHeight;
       let height = center.wallHeight;
@@ -282,10 +281,10 @@ export default {
       }
       //移除视图中所有的实体对象
       this.$_deleteEntity();
-      this.$_addEntity(webGlobe,center,positions,height);
+      this.$_addEntity(viewer,center,positions,height);
       //初始化高级分析功能管理类
-      let advancedAnalysisManager = new CesiumZondy.Manager.AdvancedAnalysisManager({
-        viewer: webGlobe.viewer
+      let advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager({
+        viewer: viewer
       });
       this.$_analyse(advancedAnalysisManager,positions,height);
     },

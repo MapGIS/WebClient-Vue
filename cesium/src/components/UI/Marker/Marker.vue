@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "mapgis-3d-marker",
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer"],
   props: {
     fid: {
       type: String,
@@ -129,23 +129,23 @@ export default {
     $_unmount() {
       const { vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
+      let vueCesium = this.vueCesium || window.vueCesium;
       vueCesium.getViewerByInterval(function(viewer) {
-        let MarkerManager = CesiumZondy.MarkerManager.findSource(
+        let MarkerManager = vueCesium.MarkerManager.findSource(
           vueKey,
           vueIndex
         );
         viewer = vm.viewer || viewer;
         viewer.entities.remove(MarkerManager.source);
-        CesiumZondy.MarkerManager.deleteSource(vueKey, vueIndex);
+        vueCesium.MarkerManager.deleteSource(vueKey, vueIndex);
       }, vueKey);
     },
     $_init(viewer) {
-      const { CesiumZondy } = this;
+      const { vueCesium } = this;
       let vm = this;
       let Cesium = this.Cesium || window.Cesium;
       let viewerMarker = this.viewer || viewer;
-      let labelLayer = new CesiumZondy.Manager.LabelLayer({
+      let labelLayer = new window.CesiumZondy.Manager.LabelLayer({
         viewer: viewerMarker
       });
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
@@ -207,7 +207,7 @@ export default {
     $_hasId(id) {
       let marker = {};
       marker.flag = false;
-      let markerManagers = CesiumZondy.MarkerManager[this.vueKey];
+      let markerManagers = vueCesium.MarkerManager[this.vueKey];
       for (let i = 0; i < markerManagers.length; i++) {
         if (markerManagers[i].source._id === id) {
           marker.flag = true;
@@ -218,7 +218,7 @@ export default {
       return marker;
     },
     $_markerMouseAction(movement) {
-      const { Cesium, CesiumZondy, viewer } = this;
+      const { Cesium, vueCesium, viewer } = this;
       const vm = this;
       let scene = viewer.scene;
       window.DynamicMarkerLastActiceId =
@@ -287,8 +287,8 @@ export default {
     },
     $_addIcon(icon) {
       const { vueKey, vueIndex } = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      CesiumZondy.MarkerManager.addSource(vueKey, vueIndex, icon);
+      let vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium.MarkerManager.addSource(vueKey, vueIndex, icon);
     },
     togglePopup() {
       const { longitude, latitude, height } = this;

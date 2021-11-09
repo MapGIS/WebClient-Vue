@@ -23,7 +23,7 @@ export default {
       show: true
     };
   },
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer"],
   watch: {
     position: {
       deep: true,
@@ -68,8 +68,8 @@ export default {
     },
     createCesiumObject() {
       const vm = this;
-      let { Cesium, CesiumZondy, position, options, container } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let { Cesium, vueCesium, position, options, container } = this;
+      vueCesium = vueCesium || window.vueCesium;
 
       if (this.$slots.default) {
         if (this.$slots.default[0].elm) {
@@ -99,7 +99,7 @@ export default {
 
       let viewer = this.getViewer();
 
-      return new CesiumZondy.Overlayer.PopupLayer(
+      return new window.CesiumZondy.Overlayer.PopupLayer(
         viewer,
         position,
         options,

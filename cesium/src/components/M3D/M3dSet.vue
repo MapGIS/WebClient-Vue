@@ -3,7 +3,7 @@ import Tileset3dOptions from "./3DTilesetOptions";
 
 export default {
   name: "mapgis-3d-m3dset",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...Tileset3dOptions
   },
@@ -17,9 +17,9 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { CesiumZondy, webGlobe } = this;
-      let m3dLayer = new CesiumZondy.Layer.M3DLayer({
-        viewer: webGlobe.viewer
+      const { vueCesium, viewer } = this;
+      let m3dLayer = new window.CesiumZondy.Layer.M3DLayer({
+        viewer: viewer
       });
       return m3dLayer;
     },
@@ -35,8 +35,7 @@ export default {
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
-      const { webGlobe, vueIndex, vueKey, $props, offset, scale } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, vueIndex, vueKey, $props, offset, scale } = this;
 
       if (viewer.isDestroyed()) return;
       // this.$emit("load", { component: this });
@@ -46,7 +45,7 @@ export default {
         ...$props,
         loaded: tileset => {
           if (vueKey && vueIndex) {
-            CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+            vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
             !vm.show && m3ds && m3ds.forEach(m3d => (m3d.show = vm.show));
           }
           if (offset) {
@@ -81,9 +80,8 @@ export default {
       });
     },
     unmount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const viewer = webGlobe.viewer;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         !viewer.isDestroyed() &&
@@ -93,11 +91,11 @@ export default {
           });
       }
       this.$emit("unload", { component: this });
-      CesiumZondy.M3DIgsManager.deleteSource(vueKey, vueIndex);
+      vueCesium.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     changeShow(show) {
       const {vueKey, vueIndex} = this;
-      let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         m3ds &&

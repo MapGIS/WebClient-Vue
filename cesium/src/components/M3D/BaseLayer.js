@@ -2,7 +2,7 @@ import VueOptions from "../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-m3d-base-layer",
-  inject: ["Cesium", "vueCesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions
   },

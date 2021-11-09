@@ -1,5 +1,5 @@
 export default {
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     vueKey: {
       type: String,
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     /*
-     * 初始化函数，如果组件需要的对象（webGlobe，M3D模型对象等）初始化完毕，才初始化组件
+     * 初始化函数，如果组件需要的对象（viewer，M3D模型对象等）初始化完毕，才初始化组件
      * @param callback 回调函数
      * **/
     $_init(callback) {
@@ -34,7 +34,7 @@ export default {
       }, 50);
     },
     /*
-     * 根据veuKey取得webGlobe对象
+     * 根据veuKey取得viewer对象
      * @param deleteFunc Function 删除前一次绘制的函数
      * @param NewManagerName String 如果指定了NewManagerName，则使用NewManagerName
      * **/
@@ -46,23 +46,20 @@ export default {
       }
       //如果是GlobesManager，则直接通过vueKey来寻找
       if (MName === "GlobesManager") {
-        const { webGlobe } = this;
+        const { viewer } = this;
         if (this.vueKey === "default") {
-          // 使用注入的webGlobe
-          // codemirror使用的时候不能支持多屏，也无法获取.CesiumZondy.GlobesManager对象
-          source = webGlobe;
+          // 使用注入的viewer
+          // codemirror使用的时候不能支持多屏，也无法获取.vueCesium.GlobesManager对象
+          source = viewer;
         } else {
-          let GlobesManager = window.CesiumZondy.GlobesManager;
+          let GlobesManager = window.vueCesium.GlobesManager;
           if (GlobesManager[this.vueKey]) {
             source = GlobesManager[this.vueKey][0].source;
           }
         }
       } else {
         //如果是其他的Manager，则通过vueKey和vueIndex来寻找
-        source = window.CesiumZondy[MName].findSource(
-          this.vueKey,
-          this.vueIndex
-        );
+        source = window.vueCesium[MName].findSource(this.vueKey, this.vueIndex);
       }
       if (deleteFunc) {
         deleteFunc(source);
@@ -76,13 +73,10 @@ export default {
      * **/
     $_deleteManger(managerName, callback) {
       const { vueKey, vueIndex } = this;
-      let manager = window.CesiumZondy[managerName].findSource(
-        vueKey,
-        vueIndex
-      );
+      let manager = window.vueCesium[managerName].findSource(vueKey, vueIndex);
       if (manager) {
         callback(manager);
-        window.CesiumZondy[managerName].deleteSource(vueKey, vueIndex);
+        window.vueCesium[managerName].deleteSource(vueKey, vueIndex);
       }
     }
   }

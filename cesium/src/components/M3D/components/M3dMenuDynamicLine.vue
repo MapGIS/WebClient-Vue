@@ -126,7 +126,7 @@ import BaseLayer from "../BaseLayer";
 
 export default {
   name: "mapgis-3d-m3d-menu-dynamic-line",
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   mixins: [BaseLayer],
   props: {
     version: {

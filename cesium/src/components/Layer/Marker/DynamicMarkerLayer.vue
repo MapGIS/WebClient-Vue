@@ -29,7 +29,7 @@ const DefaultInactiveImagePlotting =
 export default {
   name: "mapgis-3d-dynamic-marker-layer",
   components: { Mapgis3dMarkerSetPro },
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     data: {
@@ -136,9 +136,9 @@ export default {
       this.parseData();
 
       const vm = this;
-      const { CesiumZondy, vueCesium, vueKey, vueIndex, data } = this;
+      const { vueCesium, vueCesium, vueKey, vueIndex, data } = this;
       const viewer = vueCesium.getViewer(vueKey) || this.viewer;
-      let analysisManager = new CesiumZondy.Manager.AnalysisManager({
+      let analysisManager = new window.CesiumZondy.Manager.AnalysisManager({
         viewer: viewer
       });
 
@@ -154,7 +154,7 @@ export default {
     unmount() {
       const { viewer, vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
+      let vueCesium = this.vueCesium || window.vueCesium;
       const { dataSources } = viewer;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
@@ -377,7 +377,7 @@ export default {
     highlightFeature(marker) {
       const vm = this;
       const { vueKey, vueIndex, vueCesium } = this;
-      const { Cesium, CesiumZondy } = this;
+      const { Cesium, vueCesium } = this;
       const { layerStyle, highlightStyle, idField } = this;
       const { point, line, polygon } = layerStyle;
       const hpolygon = highlightStyle.polygon;
@@ -454,7 +454,7 @@ export default {
       }
     },
     clearHighlightFeature(marker) {
-      const { CesiumZondy, vueKey, vueIndex, vueCesium, layerStyle } = this;
+      const { vueCesium, vueKey, vueIndex, vueCesium, layerStyle } = this;
       let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       this.changeColor(dataSource.source);
     },

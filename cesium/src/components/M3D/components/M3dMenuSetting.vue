@@ -10,7 +10,7 @@ import EffectSetting from "../../SceneEffect/SceneSetting";
 
 export default {
   name: "mapgis-3d-m3d-menu-setting",
-  inject: ["Cesium", "CesiumZondy", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "vueCesium", "viewer", "m3ds"],
   components: { EffectSetting },
   props: {
     ...VueOptions,
@@ -56,7 +56,7 @@ export default {
               originalColor: new Cesium.Color()
             },
             currentLayer: undefined,
-            analysisManager: new CesiumZondy.Manager.AnalysisManager({
+            analysisManager: new window.CesiumZondy.Manager.AnalysisManager({
               viewer: viewer
             })
           },

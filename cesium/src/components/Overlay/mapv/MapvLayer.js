@@ -6,7 +6,7 @@ var idIndex = 0;
  * @author 基础平台/创新中心 潘卓然 ParnDeedlit
  * @class  module:客户端可视化.MapVLayer
  * @classdesc  Mapv图表图层
- * @description CesiumZondy.Overlayer.MapVLayer 基于新建立的Html Element嵌入mapv
+ * @description vueCesium.Overlayer.MapVLayer 基于新建立的Html Element嵌入mapv
  * @param map - {Object} 传入的cesium的地图对象Viewer
  * @param dataset - {MapvDataSet} 传入的mapv的属性
  * @param mapVOptions - {MapvOption} 可选参数。https://github.com/huiyan-fe/mapv/blob/master/API.md
@@ -49,7 +49,7 @@ var idIndex = 0;
     draw: 'honeycomb'   // 绘制蜂窝图
     }
  // 声明cesium的mapv图层并将其显示到三维球上
- var mapvLayer = new CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
+ var mapvLayer = new window.CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
  */
 export class MapvLayer {
   constructor(map, dataSet, mapVOptions, container) {

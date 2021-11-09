@@ -33,8 +33,7 @@ export default {
       return tileset;
     },
     mount() {
-      const { webGlobe, autoReset } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, autoReset } = this;
       if (viewer.isDestroyed()) return;
 
       let tileset = this.createCesiumObject();
@@ -70,15 +69,14 @@ export default {
           );
           primitives.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
 
-          if (autoReset) webGlobe.zoomToM3dLayer(primitives);
+          if (autoReset) new Cesium.Layers.zoomToM3dLayer(primitives);
         })
         .otherwise(function (error) {
           console.error("3dtileset", error);
         });
     },
     unmount() {
-      const { webGlobe, tileset } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, tileset } = this;
       return !viewer.isDestroyed() && viewer.scene.primitives.remove(tileset);
     },
   },
