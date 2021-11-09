@@ -17,13 +17,8 @@ export default {
   inject: ["map", "mapbox"],
   data() {
     return {
-      currentToolInfo: "",
-      userProsChecked: [],
-      inspectActive: false,
-      currentNum: "",
       currentClickInfo: [],
       currentHoverInfo: [],
-      popupTitle: "id",
       hoveredStateId: -1,
       clickMode: "click",
       hoverMode: "hover"
@@ -200,7 +195,6 @@ export default {
             {customPopup && customPopup(currentClickInfo)}
             {!customPopup && (
               <Popup
-                ref="click"
                 mode={clickMode}
                 currentLayerInfo={currentClickInfo}
               ></Popup>
@@ -210,7 +204,6 @@ export default {
             {customTips && customTips(currentHoverInfo)}
             {!customTips && (
               <Popup
-                ref="hover"
                 mode={hoverMode}
                 currentLayerInfo={currentHoverInfo}
               ></Popup>

@@ -1,8 +1,26 @@
+<template>
+  <span>
+    <Popup :position="position" v-model="visible" forceRender>
+      <PopupContent
+        ref="click"
+        :mode="clickMode"
+        :currentLayerInfo="currentClickInfo"
+      >
+      </PopupContent>
+      <PopupContent
+        ref="hover"
+        :mode="hoverMode"
+        :currentLayerInfo="currentHoverInfo"
+      >
+      </PopupContent
+    ></Popup>
+  </span>
+</template>
+
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
 import Popup from "../../UI/Popup/Popup.vue";
 import PopupContent from "../../UI/Geojson/Popup";
-import { getPopupHtml } from "../../UI/Popup/popupUtil";
 
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
@@ -25,20 +43,14 @@ export default {
       default: false
     },
     popupOptions: {
-      type: Object,
-      default: () => {
-        return { type: "default", title: "name" };
-      }
+      type: Object
     },
     enableTips: {
       type: Boolean,
       default: false
     },
     tipsOptions: {
-      type: Object,
-      default: () => {
-        return { type: "default", title: "name" };
-      }
+      type: Object
     },
     layerStyle: {
       type: Object,
@@ -55,15 +67,7 @@ export default {
           polygon: new FillStyle()
         };
       }
-    },
-    /**
-     *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
-     */
-    customPopup: Function,
-    /**
-     *  自定义Tips界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
-     */
-    customTips: Function
+    }
   },
   data() {
     return {
@@ -89,80 +93,6 @@ export default {
   },
   destroyed() {
     this.unmount();
-  },
-  render(h) {
-    let {
-      visible,
-      position,
-      customPopup,
-      customTips,
-      clickMode,
-      hoverMode,
-      currentClickInfo,
-      currentHoverInfo,
-      popupOptions,
-      tipsOptions
-    } = this;
-
-    const { type } = popupOptions;
-    const feature =
-      currentClickInfo && currentClickInfo.length > 0
-        ? currentClickInfo[0]
-        : { properties: {} };
-
-    let container = getPopupHtml(type, feature, {
-      title: feature.title,
-      fields: Object.keys(feature.properties),
-      style: {
-        containerStyle: { width: "360px" }
-      }
-    });
-
-    console.log(container);
-
-    if (customPopup || customTips) {
-      return (
-        <Popup position={position} visible={visible} forceRender={true}>
-          <div ref="click">
-            {customPopup && customPopup(currentClickInfo)}
-            {!customPopup && (
-              <PopupContent
-                mode={clickMode}
-                currentLayerInfo={currentClickInfo}
-              ></PopupContent>
-            )}
-          </div>
-          <div ref="hover">
-            {customTips && customTips(currentHoverInfo)}
-            {!customTips && (
-              <PopupContent
-                mode={hoverMode}
-                currentLayerInfo={currentHoverInfo}
-              ></PopupContent>
-            )}
-          </div>
-        </Popup>
-      );
-    } else {
-      return (
-        <Popup
-          position={position}
-          visible={visible}
-          forceRender={true}
-          container={container}
-        ></Popup>
-      );
-      /* <PopupContent
-            ref="click"
-            mode={clickMode}
-            currentLayerInfo={currentClickInfo}
-          ></PopupContent>
-          <PopupContent
-            ref="hover"
-            mode={hoverMode}
-            currentLayerInfo={currentHoverInfo}
-          ></PopupContent> */
-    }
   },
   methods: {
     async createCesiumObject() {
@@ -206,6 +136,8 @@ export default {
       let tempPos = new Cesium.Cartesian3();
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function(movement) {
+        let foundPosition = false;
+
         const scene = viewer.scene;
         if (scene.mode !== Cesium.SceneMode.MORPHING) {
           let cartesian = viewer.scene.pickPosition(movement.position);
@@ -214,10 +146,18 @@ export default {
 
           // 多选模式
           let entities = scene.drillPick(movement.position);
-          if (entities.length <= 0) {
-            vm.visible = false;
-            return;
-          }
+          if (entities.length <= 0) return;
+          // 单选模式
+          /* let feature = scene.pick(movement.position);
+          if (feature instanceof Cesium.Cesium3DTileFeature) {
+            feature.color = Cesium.Color.RED;
+          } else if (feature instanceof Cesium.Primitive) {
+            let nc = new Cesium.Color.fromCssColorString("#ff0000").withAlpha(
+              1.0
+            );
+            feature.id.polygon.material = nc;
+            feature.id.polygon.outline = Cesium.Color.fromCssColorString("#000000");
+          } */
 
           let longitudeString2, latitudeString2, heightString2;
 
@@ -285,12 +225,12 @@ export default {
         if (type == "point" || entity.billboard) {
           entity.billboard.show = false;
           const style = layerStyle.toCesiumStyle(Cesium);
-          const { color, pixelSize, outlineColor } = style;
+          const { material, radius, outline } = style;
           entity.ellipse = new Cesium.EllipseGraphics({
-            semiMajorAxis: pixelSize,
-            semiMinorAxis: pixelSize,
-            outline: outlineColor,
-            material: color
+            semiMajorAxis: radius,
+            semiMinorAxis: radius,
+            outline: outline,
+            material: material
           });
         } else if (type == "line" || entity.polyline) {
           const style = layerStyle.toCesiumStyle(Cesium);
@@ -322,12 +262,12 @@ export default {
         if (entity.id == vm.activeId) {
           if (entity.ellipse) {
             const style = hpoint.toCesiumStyle(Cesium);
-            const { color, pixelSize, outlineColor } = style;
+            const { material, radius, outline } = style;
             entity.ellipse = new Cesium.EllipseGraphics({
-              semiMajorAxis: pixelSize,
-              semiMinorAxis: pixelSize,
-              outline: outlineColor,
-              material: color
+              semiMajorAxis: radius,
+              semiMinorAxis: radius,
+              outline: outline,
+              material: material
             });
           } else if (entity.polyline) {
             const style = hline.toCesiumStyle(Cesium);
@@ -365,12 +305,12 @@ export default {
         } else {
           if (type == "point" || entity.ellipse) {
             const style = layerStyle.toCesiumStyle(Cesium);
-            const { color, pixelSize, outlineColor } = style;
+            const { material, radius, outline } = style;
             entity.ellipse = new Cesium.EllipseGraphics({
-              semiMajorAxis: pixelSize,
-              semiMinorAxis: pixelSize,
-              outline: outlineColor,
-              material: color
+              semiMajorAxis: radius,
+              semiMinorAxis: radius,
+              outline: outline,
+              material: material
             });
           } else if (type == "line" || entity.polyline) {
             const style = layerStyle.toCesiumStyle(Cesium);

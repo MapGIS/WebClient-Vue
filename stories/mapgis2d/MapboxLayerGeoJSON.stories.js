@@ -4,6 +4,8 @@ import MapgisGeojsonLayer from "../../mapboxgl/src/components/layer/GeojsonLayer
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
+import '../style/popup.css';
+
 export default {
   title: "二维/图层/GeoJSON图层",
   component: MapgisGeojsonLayer,

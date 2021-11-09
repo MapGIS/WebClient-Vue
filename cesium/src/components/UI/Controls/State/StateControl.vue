@@ -3,7 +3,7 @@
     <span>
       经度:{{ longitude }}°，纬度:{{ latitude }}°， 海拔高度:{{
         height
-      }}米，相机视角高度:{{ cameraHeight }}米
+      }}米，相机高度:{{ cameraHeight }}米
     </span>
     <span v-if="showHpr"></span>
     <span v-if="showSelectTileInfo"></span>
