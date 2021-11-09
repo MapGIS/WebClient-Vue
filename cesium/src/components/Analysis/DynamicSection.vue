@@ -72,7 +72,7 @@ import BaseLayer from "./BaseLayer";
 
 export default {
   name: "mapgis-3d-dynamic-section",
-  inject: ["Cesium", "CesiumZondy", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
     // 模型集合
@@ -208,12 +208,12 @@ export default {
       );
     },
     mount() {
-      const { viewer, CesiumZondy, vueKey, vueIndex } = this;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", { component: this });
-        CesiumZondy.DynamicSectionAnalysisManager.addSource(
+        vueCesium.DynamicSectionAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -224,15 +224,15 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.DynamicSectionAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.DynamicSectionAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         this.removeDynaCut();
       }
-      CesiumZondy.DynamicSectionAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.DynamicSectionAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
 
@@ -266,7 +266,7 @@ export default {
      * 判断传入的m3d图层是否加载完毕
      */
     m3dIsReady() {
-      const { CesiumZondy, vueKey, vueIndex, model, isActive } = this;
+      const { vueCesium, vueKey, vueIndex, model, isActive } = this;
       return new Promise((resolve, reject) => {
         if (isActive && model && model.vueIndex) {
           this.$_getM3DByInterval(
@@ -313,8 +313,8 @@ export default {
      * 设置剖切距离
      */
     setDistance(value) {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.DynamicSectionAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.DynamicSectionAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -364,8 +364,8 @@ export default {
       this.m3dIsReady().then(m3d => {
         this.clearTimer();
         this.removeDynaCut();
-        let { CesiumZondy, vueKey, vueIndex } = this;
-        let find = CesiumZondy.DynamicSectionAnalysisManager.findSource(
+        let { vueCesium, vueKey, vueIndex } = this;
+        let find = vueCesium.DynamicSectionAnalysisManager.findSource(
           vueKey,
           vueIndex
         );
@@ -386,7 +386,7 @@ export default {
           scaleHeight: 2.0,
           scaleWidth: 2.0
         });
-        CesiumZondy.DynamicSectionAnalysisManager.changeOptions(
+        vueCesium.DynamicSectionAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "dynamicSectionAnalysis",
@@ -406,8 +406,8 @@ export default {
      * 移除动态剖切对象
      */
     removeDynaCut() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.DynamicSectionAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.DynamicSectionAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -416,7 +416,7 @@ export default {
       if (dynamicSectionAnalysis) {
         dynamicSectionAnalysis.removeAll();
         dynamicSectionAnalysis = null;
-        CesiumZondy.DynamicSectionAnalysisManager.changeOptions(
+        vueCesium.DynamicSectionAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "dynamicSectionAnalysis",
@@ -441,8 +441,8 @@ export default {
      * @returns M3DLayer对象
      */
     getM3D() {
-      const { CesiumZondy, viewer } = this;
-      const m3d = new CesiumZondy.Layer.M3DLayer({
+      const { vueCesium, viewer } = this;
+      const m3d = new vueCesium.Layer.M3DLayer({
         viewer: viewer
       });
       return m3d;

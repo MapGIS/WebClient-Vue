@@ -6,7 +6,7 @@ import clonedeep from "lodash.clonedeep";
 
 export default {
   name: "mapgis-3d-igs-feature-layer",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     baseUrl: {
       type: String,
@@ -90,33 +90,33 @@ export default {
   },
   methods: {
     mount() {
-      let {webGlobe, CesiumZondy} = this;
+      let {viewer, vueCesium} = this;
       let vm = this;
-      let featureLayers;
+      let layerIndex;
       let options = {};
       options = vm.initOptions(options);
-      featureLayers = webGlobe.appendMapGISVectorDocMap(vm.baseUrl, options);
-      CesiumZondy.IgsFeatureManager.addSource(
+      layerIndex = viewer.scene.layers.appendImageryLayer(vm.baseUrl, options);
+      vueCesium.IgsFeatureManager.addSource(
           vm.vueKey,
           vm.vueIndex,
-          featureLayers
+          layerIndex
       );
       //抛出load事件
-      this.$emit("load", {featureLayers:featureLayers});
+      this.$emit("load", {layerIndex: layerIndex});
     },
     unmount() {
       //图层移除
-      let {webGlobe} = this;
+      let {viewer, vueCesium} = this;
       const {vueKey, vueIndex} = this;
-      let find = CesiumZondy.IgsFeatureManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.IgsFeatureManager.findSource(vueKey, vueIndex);
       if (find && find.source) {
         let findSource = find.source;
-        webGlobe.removeMapGISVectorLayer(findSource);
+        viewer.scene.layers.removeImageryLayerByID(findSource);
       }
-      CesiumZondy.IgsFeatureManager.deleteSource(vueKey, vueIndex);
+      vueCesium.IgsFeatureManager.deleteSource(vueKey, vueIndex);
     },
     initOptions(options) {
-      const vm = this;
+      const { Cesium } = this;
       let {layers, autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
       if (layers) {
         if (layers.indexOf("gdbp") <= -1 && layers.indexOf("layers") <= -1) {
@@ -137,17 +137,17 @@ export default {
           let tempArr = [];
           featureStyleCopy.map((currentVal, index, array) => {
             tempArr.push({
-              'type':currentVal.type,'styleOptions':currentVal.parameters
+              'type': currentVal.type, 'styleOptions': currentVal.parameters
             })
           })
           tempArr.forEach((fs) => {
             let styleOptions = fs.styleOptions;
             if (styleOptions && styleOptions.color) {
-              let colorTrans = vm.colorToCesiumColor(styleOptions.color);
+              let colorTrans = Cesium.Color.fromCssColorString(styleOptions.color);
               styleOptions.color = colorTrans;
             }
             if (styleOptions && styleOptions.outlineColor) {
-              let outlineColorTemp = vm.colorToCesiumColor(styleOptions.outlineColor);
+              let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
               styleOptions.outlineColor = outlineColorTemp;
             }
             fs.styleOptions = styleOptions;
@@ -158,10 +158,10 @@ export default {
           featureStyleCopy = this.$_changeKey(featureStyleCopy);
           let styleOptions = featureStyleCopy.styleOptions;
           if (styleOptions && styleOptions.color) {
-            styleOptions.color = vm.colorToCesiumColor(styleOptions.color);
+            styleOptions.color = Cesium.Color.fromCssColorString(styleOptions.color);
           }
           if (styleOptions && styleOptions.outlineColor) {
-            let outlineColorTemp = vm.colorToCesiumColor(styleOptions.outlineColor);
+            let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
             styleOptions.outlineColor = outlineColorTemp;
           }
           options.style = featureStyleCopy;
@@ -182,32 +182,7 @@ export default {
       options.pageCount = 0
       return options;
     },
-    /**
-     * rgba或者十六进制转换成cesium.color
-     * @param color
-     * @returns {*}
-     */
-    colorToCesiumColor(color) {
-      let cesiumColor;
-      if (color.includes('rgb')) {
-        // 如果是rgb或者rgba
-        const a = color.split('(')[1].split(')')[0];
-        const arr = a.split(',');
-        const cesiumRed = Number((Number(arr[0]) / 255).toFixed(2));
-        const cesiumGreen = Number((Number(arr[1]) / 255).toFixed(2));
-        const cesiumBlue = Number((Number(arr[2]) / 255).toFixed(2));
-        const cesiumAlpha = Number(arr[3] ? arr[3] : 1);
-        cesiumColor = this.webGlobe.getColor(
-            cesiumRed,
-            cesiumGreen,
-            cesiumBlue,
-            cesiumAlpha
-        )
-      } else if (color.indexOf('#') >= 0) {
-        cesiumColor = Cesium.Color.fromCssColorString(color);
-      }
-      return cesiumColor;
-    },
+
     //该方法用于修改对象的key值
     $_changeKey(oldFeatureStyle) {
       let keyMap = {type: "type", parameters: "styleOptions"};
