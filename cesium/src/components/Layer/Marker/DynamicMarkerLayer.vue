@@ -152,8 +152,9 @@ export default {
       });
     },
     unmount() {
-      const { viewer, vueKey, vueIndex, vueCesium } = this;
+      let { viewer, vueKey, vueIndex, vueCesium } = this;
       const vm = this;
+      vueCesium = this.vueCesium || window.vueCesium;
       const { dataSources } = viewer;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
@@ -375,8 +376,8 @@ export default {
     },
     highlightFeature(marker) {
       const vm = this;
-      const { vueKey, vueIndex } = this;
-      const { Cesium, vueCesium } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      const { Cesium } = this;
       const { layerStyle, highlightStyle, idField } = this;
       const { point, line, polygon } = layerStyle;
       const hpolygon = highlightStyle.polygon;
@@ -453,7 +454,7 @@ export default {
       }
     },
     clearHighlightFeature(marker) {
-      const { vueKey, vueIndex, vueCesium, layerStyle } = this;
+      const { vueCesium, vueKey, vueIndex, layerStyle } = this;
       let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       this.changeColor(dataSource.source);
     },

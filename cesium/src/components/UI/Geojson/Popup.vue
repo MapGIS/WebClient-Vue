@@ -2,16 +2,16 @@
   <div class="mapgis-popup-container" ref="geojsontool">
     <div class="mapgis-3d-inspect-prop-tabs">
       <mapgis-ui-tabs
-          v-if="mode === 'click'"
-          v-model="activeKey"
-          :style="{ height: '240px' }"
-          size="small"
-          :tab-position="tabPosition"
+        v-if="mode === 'click'"
+        v-model="activeKey"
+        :style="{ height: '240px' }"
+        size="small"
+        :tab-position="tabPosition"
       >
         <mapgis-ui-tab-pane
-            class="mapgis-3d-inspect-prop-content"
-            v-for="(f, i) in currentLayerInfo"
-            :key="i"
+          class="mapgis-3d-inspect-prop-content"
+          v-for="(f, i) in currentLayerInfo"
+          :key="i"
         >
           <div slot="tab" class="mapgis-3d-inspect-layer-name">
             <mapgis-ui-tooltip :title="f.layer.id">
@@ -24,9 +24,9 @@
             {{ f.title }}
           </div>
           <div
-              v-for="(value, key) in f.properties"
-              class="mapgis-popup-row"
-              :key="key"
+            v-for="(value, key) in f.properties"
+            class="mapgis-popup-row"
+            :key="key"
           >
             <div class="mapgis-3d-inspect-prop-key">
               <span style="padding-right: 5px">{{ key }}</span>
@@ -42,9 +42,9 @@
             {{ currentLayerInfo[0].title }}
           </div>
           <div
-              v-for="(value, key) in currentLayerInfo[0].properties"
-              class="mapgis-popup-row"
-              :key="key"
+            v-for="(value, key) in currentLayerInfo[0].properties"
+            class="mapgis-popup-row"
+            :key="key"
           >
             <div class="mapgis-3d-inspect-prop-key">
               <span style="padding-right: 5px">{{ key }}</span>
@@ -59,7 +59,7 @@
 <script>
 export default {
   name: "mapgis-3d-geojson-popup",
-  inject: ["Cesium"],
+  inject: ["Cesium", "vueCesium"],
   props: {
     outStyle: {
       type: Object,
