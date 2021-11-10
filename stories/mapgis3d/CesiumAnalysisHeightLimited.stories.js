@@ -41,18 +41,27 @@ const Template = (args, { argTypes }) => ({
         return {
             url:
                 "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+            // m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8,
-            vueIndex:22
+            m3dUrl1:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+            m3dUrl2:`http://192.168.21.191:6163/igs/rest/g3d/school`
         }
     },
     template: `
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
-      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>
+      <mapgis-3d-igs-m3d
+          :vueIndex="$props.models[0].vueIndex"
+          :url="m3dUrl1"
+      />
+      <mapgis-3d-igs-m3d
+          :vueIndex="$props.models[1].vueIndex"
+          :url="m3dUrl2"
+      />
+<!--      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>-->
       <mapgis-ui-card class="storybook-ui-card">
-      <mapgis-3d-heightlimited :vue-index="vueIndex" :maxSliderHeight="maxSliderHeight" :color="color" :opacity="opacity"></mapgis-3d-heightlimited>
+      <mapgis-3d-heightlimited v-bind="$props"></mapgis-3d-heightlimited>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `
@@ -60,6 +69,18 @@ const Template = (args, { argTypes }) => ({
 
 export const HeightLimited = Template.bind({});
 HeightLimited.args = {
+    models: [
+        {
+
+            vueIndex: 1,
+            title: "中地大楼模型",
+        },
+        {
+            vueIndex: 2,
+            title: "学校模型",
+        },
+    ],
+
     maxSliderHeight:120,
     color:"#1C9C80",
     opacity: 0.6,
