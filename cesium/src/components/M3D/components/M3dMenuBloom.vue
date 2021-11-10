@@ -86,7 +86,7 @@ import BaseLayer from "../BaseLayer";
 
 export default {
   name: "mapgis-3d-m3d-menu-bloom",
-  inject: ["Cesium", "vueCesium", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   mixins: [BaseLayer],
   props: {
     version: {

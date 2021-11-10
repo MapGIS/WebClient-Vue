@@ -23,7 +23,7 @@ export default {
       show: true
     };
   },
-  inject: ["Cesium", "vueCesium", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   watch: {
     position: {
       deep: true,

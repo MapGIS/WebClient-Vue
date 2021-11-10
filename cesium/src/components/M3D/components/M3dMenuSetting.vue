@@ -10,7 +10,7 @@ import EffectSetting from "../../SceneEffect/SceneSetting";
 
 export default {
   name: "mapgis-3d-m3d-menu-setting",
-  inject: ["Cesium", "vueCesium", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   components: { EffectSetting },
   props: {
     ...VueOptions,

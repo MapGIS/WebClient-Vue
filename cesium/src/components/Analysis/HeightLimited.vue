@@ -98,7 +98,8 @@ export default {
       deep: true,
       immediate: true,
       handler: function() {
-        this.removeDynaCut();
+        this.removeDraw();
+        this.remove();
         this.changeModel();
       }
     },

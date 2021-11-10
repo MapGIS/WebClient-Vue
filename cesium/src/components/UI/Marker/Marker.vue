@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "mapgis-3d-marker",
-  inject: ["Cesium", "vueCesium", "vueCesium", "viewer"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     fid: {
       type: String,
@@ -129,7 +129,6 @@ export default {
     $_unmount() {
       const { vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let vueCesium = this.vueCesium || window.vueCesium;
       vueCesium.getViewerByInterval(function(viewer) {
         let MarkerManager = vueCesium.MarkerManager.findSource(
           vueKey,
@@ -205,6 +204,7 @@ export default {
       );
     },
     $_hasId(id) {
+      let { vueCesium } = this;
       let marker = {};
       marker.flag = false;
       let markerManagers = vueCesium.MarkerManager[this.vueKey];

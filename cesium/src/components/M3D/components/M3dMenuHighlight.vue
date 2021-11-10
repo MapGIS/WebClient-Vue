@@ -24,7 +24,7 @@ import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-m3d-menu-highlight",
-  inject: ["Cesium", "vueCesium", "vueCesium", "viewer", "m3ds"],
+  inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   props: {
     ...VueOptions,
     version: {
