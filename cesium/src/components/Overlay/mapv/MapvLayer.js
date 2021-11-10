@@ -431,7 +431,7 @@ export class MapvLayer {
     canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
     var devicePixelRatio = this.devicePixelRatio;
     if (this.mapVOptions.context == "2d") {
-      canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+      // canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
     }
   }
 

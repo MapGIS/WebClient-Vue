@@ -116,7 +116,7 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-scene style="height:60vh"  :cameraView = "cameraView">
+      <mapgis-web-scene style="height:95vh"  :cameraView = "cameraView">
       <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle"/>
       <mapgis-3d-echarts-layer :options.sync="option"></mapgis-3d-echarts-layer>
       </mapgis-web-scene>`
