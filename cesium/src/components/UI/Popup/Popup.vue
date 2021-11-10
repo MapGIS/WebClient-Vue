@@ -5,6 +5,7 @@
 </template>
 <script>
 import PopupOptions from "./PopupOptions";
+import PopupLayer from "./PopupLayer";
 
 export default {
   name: "mapgis-3d-popup",
@@ -99,12 +100,7 @@ export default {
 
       let viewer = this.getViewer();
 
-      return new window.CesiumZondy.Overlayer.PopupLayer(
-        viewer,
-        position,
-        options,
-        container
-      );
+      return new PopupLayer(viewer, position, options, container);
     },
     mount() {
       let { viewer, vueKey, vueIndex, vueCesium } = this;
