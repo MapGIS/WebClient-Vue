@@ -1,16 +1,17 @@
 <script>
 import Tileset3dOptions from "./3DTilesetOptions";
-import { M3dType, M3dType_0_0 } from "./M3dType";
+import { M3dType, M3dType_0_0, M3dType_2_0 } from "./M3dType";
 
 export default {
-  name: "mapgis-3d-igs-m3d",
+  name: "mapgis-3d-m3d-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...Tileset3dOptions
   },
   data() {
     return {
-      layerList: undefined
+      layerList: undefined,
+      version: undefined
     };
   },
   created() {},
@@ -40,12 +41,43 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { vueCesium, viewer } = this;
-      let m3dLayer = new window.CesiumZondy.Layer.M3DLayer({
-        viewer: viewer
-      });
+      const { vueCesium, viewer, url, $props } = this;
+      let version = this.parseCesiumVersion(url);
+      if (version == "1.0") {
+        return new Promise(
+          resolve => {
+            let m3dLayer = new window.CesiumZondy.Layer.M3DLayer({
+              viewer: viewer
+            });
+            resolve({ layer: m3dLayer });
+          },
+          reject => {}
+        );
+      } else if (version == "2.0") {
+        return new Promise(
+          resolve => {
+            let layerIndex = viewer.scene.layers.appendM3DLayer(url, $props);
+            resolve({ layerIndex: layerIndex });
+          },
+          reject => {}
+        );
+      }
+
       return m3dLayer;
     },
+    parseCesiumVersion(url) {
+      let g3d = new RegExp("/igs/rest/g3d/");
+      let find = url.search(g3d);
+      if (find >= 0) {
+        // 0.0 1.0版本的m3d图层，等于2.0版本的g3d图层
+        this.version = "1.0";
+      } else {
+        // 2.0 版本
+        this.version = "2.0";
+      }
+      return this.version;
+    },
+    parseM3dVersion() {},
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
@@ -54,84 +86,63 @@ export default {
       if (viewer.isDestroyed()) return;
       // this.$emit("load", { component: this });
 
-      let m3dLayer = this.createCesiumObject();
-      let m3ds = m3dLayer.append(`${this.url}`, {
-        ...$props,
-        loaded: tileset => {
-          if (vueKey && vueIndex) {
-            vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
-            m3ds.forEach(m3d => console.log("m3d", m3d));
-
-            if (!vm.show && m3ds) {
-              m3ds.forEach(m3d => {
-                m3d.show = vm.show;
-              });
-            }
-          }
-          if (offset) {
-            let boundingSphere = tileset.boundingSphere;
-            let cartographic = Cesium.Cartographic.fromCartesian(
-              boundingSphere.center
-            );
-            let surface = Cesium.Cartesian3.fromRadians(
-              cartographic.longitude,
-              cartographic.latitude,
-              0.0
-            );
-            let { longitude = 0, latitude = 0, height = 0 } = offset;
-            let offsetParam = Cesium.Cartesian3.fromRadians(
-              cartographic.longitude + longitude,
-              cartographic.latitude + latitude,
-              height
-            );
-
-            let translation = Cesium.Cartesian3.subtract(
-              offsetParam,
-              surface,
-              new Cesium.Cartesian3()
-            );
-            tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
-          }
-          if (scale) {
-            tileset.setScale(new Cesium.Cartesian3(scale.x, scale.y, scale.z));
-          }
-
-          if (opacity >= 0) {
-            let dataCallback = () => {
-              if (loop) {
-                window.clearInterval(loop);
-                loop = undefined;
-                m3ds.forEach(m3d => {
-                  let type = vm.checkType(m3d);
-                  m3d.type = type;
-                  switch (type) {
-                    case M3dType.Model:
-                    case M3dType.Instance:
-                      m3d.style = new Cesium.Cesium3DTileStyle({
-                        color: `color('#FFFFFF', ${opacity})`
-                      });
-                      break;
-                    case M3dType.CloudPoint:
-                      // 0.0 1.0版本无法激活Cesium自带得下列样式代码，只能在2.0以后的版本实现透明度的改变
-                      /* m3d.style = new Cesium.Cesium3DTileStyle({
-                        color: {
-                          conditions: [["true", "color('#FFFF00', 0.25)"]]
-                        }
-                      }); */
-                      break;
-                    case M3dType.UnKnow:
-                      break;
-                  }
-                });
+      let promise = this.createCesiumObject();
+      promise.then(payload => {
+        const { layer, layerIndex } = payload;
+        if (layer) {
+          // 0.0 1.0版本的处理方式
+          let m3ds = layer.append(`${this.url}`, {
+            ...$props,
+            loaded: tileset => {
+              if (vueKey && vueIndex) {
+                vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+                if (!vm.show && m3ds) {
+                  m3ds.forEach(m3d => {
+                    m3d.show = vm.show;
+                  });
+                }
               }
-            };
-            let loop = window.setInterval(() => {
-              m3ds.forEach(m3d => {
-                vm.checkType(m3d, dataCallback);
-              });
-            }, 100);
-          }
-          vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
+              if (offset) {
+                let boundingSphere = tileset.boundingSphere;
+                let cartographic = Cesium.Cartographic.fromCartesian(
+                  boundingSphere.center
+                );
+                let surface = Cesium.Cartesian3.fromRadians(
+                  cartographic.longitude,
+                  cartographic.latitude,
+                  0.0
+                );
+                let { longitude = 0, latitude = 0, height = 0 } = offset;
+                let offsetParam = Cesium.Cartesian3.fromRadians(
+                  cartographic.longitude + longitude,
+                  cartographic.latitude + latitude,
+                  height
+                );
+
+                let translation = Cesium.Cartesian3.subtract(
+                  offsetParam,
+                  surface,
+                  new Cesium.Cartesian3()
+                );
+                tileset.modelMatrix = Cesium.Matrix4.fromTranslation(
+                  translation
+                );
+              }
+              if (scale) {
+                tileset.setScale(
+                  new Cesium.Cartesian3(scale.x, scale.y, scale.z)
+                );
+              }
+              // if (opacity >= 0) { vm.loopM3d(m3ds, "1.0"); }
+              vm.loopM3d(m3ds, "1.0");
+              vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
+            }
+          });
+        } else if (layerIndex >= 0) {
+          // 2.0版本的处理方式
+          let m3dLayer = viewer.scene.layers.getM3DLayer(layerIndex);
+          let m3ds = [m3dLayer];
+          vm.loopM3d(m3ds, "2.0");
         }
       });
     },
@@ -175,42 +186,112 @@ export default {
       }
     },
     checkType(tileset, callback) {
+      const vm = this;
       let m3dType = M3dType.UnKnow;
       const { root } = tileset;
       if (!root) return m3dType;
-
       const version = root.tileset._version;
-
-      console.log("version", version);
-      if (version == 0.0 || version == 1.0) {
+      let { children } = root;
+      if (version == "0.0" || version == "1.0") {
         // m3d 0.x  1.x版本逻辑判断 type =0是模型 =1是示例化数据 =2是点云
-        let { children } = root;
-        console.log("root", root);
         if (!children || children.length <= 0) return m3dType;
-        let child = children[0];
-        console.log("child", child.content);
-        if (child.content) {
-          let type = child.content._dataType;
-          console.log("type", type);
-          if (callback) {
-            callback();
-          }
-          switch (type) {
-            case M3dType_0_0.Model:
-              m3dType = M3dType.Model;
-              break;
-            case M3dType_0_0.Instance:
-              m3dType = M3dType.Instance;
-              break;
-            case M3dType_0_0.CloudPoint:
-              m3dType = M3dType.CloudPoint;
-              break;
-          }
-        }
-      } else if (version == 2.0) {
+        children.forEach(child => {
+          let tempType = vm.checkTypeNode(child, version, callback);
+          m3dType = tempType || m3dType;
+        });
+      } else if (version == "2.0") {
+        if (!children || children.length <= 0) return m3dType;
+        children.forEach(child => {
+          let tempType = vm.checkTypeNode(child, version, callback);
+          m3dType = tempType ? tempType : m3dType;
+        });
       }
 
       return m3dType;
+    },
+    checkTypeNode(tileset, version, callback) {
+      let m3dType;
+      const vm = this;
+      if (!tileset) return m3dType;
+      if (tileset._content) {
+        let type = tileset._content._dataType;
+        if (type >= 0) {
+          if (version == "1.0") {
+            switch (type) {
+              case M3dType_0_0.Model:
+                m3dType = M3dType.Model;
+                break;
+              case M3dType_0_0.Instance:
+                m3dType = M3dType.Instance;
+                break;
+              case M3dType_0_0.CloudPoint:
+                m3dType = M3dType.CloudPoint;
+                break;
+            }
+          } else if (version == "2.0") {
+            switch (type) {
+              case M3dType_2_0.Model:
+                m3dType = M3dType.Model;
+                break;
+              case M3dType_2_0.Instance:
+                m3dType = M3dType.Instance;
+                break;
+              case M3dType_2_0.CloudPoint:
+                m3dType = M3dType.CloudPoint;
+                break;
+            }
+          }
+          if (callback) {
+            callback(m3dType);
+          }
+          return m3dType;
+        }
+      }
+
+      tileset.children.forEach(child => {
+        let tempType = vm.checkTypeNode(child, version, callback);
+        m3dType = tempType ? tempType : m3dType;
+      });
+
+      return m3dType;
+    },
+    loopM3d(m3ds, version) {
+      const vm = this;
+      const { vueKey, vueIndex, vueCesium, opacity } = this;
+      let dataCallback = cbtype => {
+        if (loop) {
+          window.clearInterval(loop);
+          loop = undefined;
+          m3ds.forEach(m3d => {
+            let type = vm.checkType(m3d);
+            m3d.type = type || cbtype;
+            switch (type) {
+              case M3dType.Model:
+              case M3dType.Instance:
+                m3d.style = new Cesium.Cesium3DTileStyle({
+                  color: `color('#FFFFFF', ${opacity})`
+                });
+                break;
+              case M3dType.CloudPoint:
+                // 0.0 1.0版本无法激活Cesium自带得下列样式代码，只能在2.0以后的版本实现透明度的改变
+                /* m3d.style = new Cesium.Cesium3DTileStyle({
+                        color: {
+                          conditions: [["true", "color('#FFFF00', 0.25)"]]
+                        }
+                      }); */
+                break;
+              case M3dType.UnKnow:
+                break;
+            }
+          });
+          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+        }
+      };
+      let loop = window.setInterval(() => {
+        m3ds.forEach(m3d => {
+          vm.checkType(m3d, dataCallback);
+        });
+      }, 100);
     },
     parseLayers(layerString) {
       layerString = layerString || this.layers;

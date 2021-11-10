@@ -35,7 +35,7 @@ export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTil
 // 模型
 export { default as Mapgis3dFileM3d } from "./components/M3D/M3dFile.vue";
 export { default as Mapgis3dG3dLayer } from "./components/M3D/G3D.vue";
-export { default as Mapgis3dIgsM3d } from "./components/M3D/M3d.vue";
+export { default as Mapgis3dM3dLayer } from "./components/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
