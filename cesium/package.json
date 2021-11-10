@@ -35,10 +35,12 @@
     "mapv": "^2.0.62",
     "moment": "^2.29.1",
     "node-sass": "^4.14.0",
+    "ol": "5.3.3",
     "sass-loader": "^8.0.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vcolorpicker": "^1.1.0",
-    "vuepress": "^1.8.2"
+    "vuepress": "^1.8.2",
+    "webfont-matcher": "1.1.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

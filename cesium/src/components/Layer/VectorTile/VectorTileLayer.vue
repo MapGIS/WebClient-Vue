@@ -2,6 +2,7 @@
 import VectorTileOptions from "./VectorTileOptions";
 import ServiceLayer from "../ServiceLayer";
 import clonedeep from 'lodash.clonedeep'
+import VectorTileRender from './VectorTileRender';
 
 export default {
   name: "mapgis-3d-vectortile-layer",
@@ -24,8 +25,8 @@ export default {
   watch: {
     layerStyle: {
       handler: function(next, old) {
-        let { vueKey, vueIndex } = this;
-        let layer = window.vueCesium[this.managerName].findSource(
+        let { vueKey, vueIndex, vueCesium } = this;
+        let layer = vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
@@ -65,7 +66,7 @@ export default {
               resolve(vectortile);
             }
           };
-          vectortile = new window.CesiumZondy.Overlayer.VectorTileLayer(viewer, opt);
+          vectortile = new VectorTileRender(viewer, opt);
         },
         reject => {}
       );
