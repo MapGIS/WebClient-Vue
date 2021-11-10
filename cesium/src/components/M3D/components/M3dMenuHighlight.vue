@@ -1,22 +1,7 @@
 <template>
   <span>
-     <mapgis-ui-statistic title="提示" value="请点击场景模型！" />
+    <mapgis-ui-statistic title="提示" value="请点击场景模型！" />
   </span>
-  </template>
-<script>
-export default {
-  data() {
-    return {
-      deadline: Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30,
-    };
-  },
-  methods: {
-    onFinish() {
-      console.log('finished!');
-    },
-  },
-};
-</script> </span>
 </template>
 
 <script>
