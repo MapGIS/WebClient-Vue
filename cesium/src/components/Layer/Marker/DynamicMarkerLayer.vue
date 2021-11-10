@@ -136,7 +136,7 @@ export default {
       this.parseData();
 
       const vm = this;
-      const { vueCesium, vueCesium, vueKey, vueIndex, data } = this;
+      const { vueCesium, vueKey, vueIndex, data } = this;
       const viewer = vueCesium.getViewer(vueKey) || this.viewer;
       let analysisManager = new window.CesiumZondy.Manager.AnalysisManager({
         viewer: viewer
@@ -152,9 +152,9 @@ export default {
       });
     },
     unmount() {
-      const { viewer, vueKey, vueIndex, vueCesium } = this;
+      let { viewer, vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium = this.vueCesium || window.vueCesium;
       const { dataSources } = viewer;
       let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
@@ -377,7 +377,7 @@ export default {
     highlightFeature(marker) {
       const vm = this;
       const { vueKey, vueIndex, vueCesium } = this;
-      const { Cesium, vueCesium } = this;
+      const { Cesium } = this;
       const { layerStyle, highlightStyle, idField } = this;
       const { point, line, polygon } = layerStyle;
       const hpolygon = highlightStyle.polygon;
@@ -454,7 +454,7 @@ export default {
       }
     },
     clearHighlightFeature(marker) {
-      const { vueCesium, vueKey, vueIndex, vueCesium, layerStyle } = this;
+      const { vueCesium, vueKey, vueIndex, layerStyle } = this;
       let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       this.changeColor(dataSource.source);
     },

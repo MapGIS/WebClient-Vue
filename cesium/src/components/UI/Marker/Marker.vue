@@ -127,9 +127,9 @@ export default {
       }, this.vueKey);
     },
     $_unmount() {
-      const { vueKey, vueIndex, vueCesium } = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium = this.vueCesium || window.vueCesium;
       vueCesium.getViewerByInterval(function(viewer) {
         let MarkerManager = vueCesium.MarkerManager.findSource(
           vueKey,

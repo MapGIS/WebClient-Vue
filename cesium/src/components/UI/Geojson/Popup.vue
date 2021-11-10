@@ -59,11 +59,7 @@
 <script>
 export default {
   name: "mapgis-3d-geojson-popup",
-<<<<<<< HEAD
-  inject: ["Cesium"],
-=======
   inject: ["Cesium", "vueCesium"],
->>>>>>> 23f1c868 (【SDK】【Cesium】【统改webGlobe/CesiumZondy/new CesiumZondy--->viewer/vueCesium/new window.CesiumZondy】)
   props: {
     outStyle: {
       type: Object,
