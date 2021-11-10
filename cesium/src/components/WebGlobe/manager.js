@@ -78,8 +78,6 @@ export function initVueCesium() {
     window.vueCesium.DynamicCuttingManager || new DynamicCuttingManager();
   window.vueCesium.AnalysisManager =
     window.vueCesium.AnalysisManager || new AnalysisManager();
-  window.vueCesium.AnalysisManager =
-    window.vueCesium.AnalysisManager || new AnalysisManager();
   window.vueCesium.shadowAnalysisManager =
     window.vueCesium.shadowAnalysisManager || new shadowAnalysisManager();
   window.vueCesium.AspectAnalysisManager =
@@ -308,3 +306,4 @@ export class BloomEffectManager extends BaseManager {}
 export class DynamicLightLineManager extends BaseManager {}
 export class SettingToolManager extends BaseManager {}
 export class SearchLightManager extends BaseManager {}
+export class Tileset3DManager extends BaseManager {}
