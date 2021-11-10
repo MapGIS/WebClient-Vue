@@ -118,8 +118,6 @@ export default {
       }
     });
 
-    console.log(container);
-
     if (customPopup || customTips) {
       return (
         <Popup position={position} visible={visible} forceRender={true}>

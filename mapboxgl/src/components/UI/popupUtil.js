@@ -187,7 +187,11 @@ function getDefaultPopup(
     valueClass,
     before
   );
-  element += "</div></div>";
+  if (title) {
+    element += "</div></div>";
+  } else {
+    element += "</div>";
+  }
   if (
     defaultField &&
     (!fields || (fields && fields instanceof Array && fields.length === 0))
@@ -256,7 +260,11 @@ function getPopupLeftHtml(
     let value = feature.properties[defaultField] || "无";
     element += getRow(popupStyle, field, value);
   }
-  element += "</div></div>";
+  if (title) {
+    element += "</div></div>";
+  } else {
+    element += "</div>";
+  }
   return element;
 }
 
