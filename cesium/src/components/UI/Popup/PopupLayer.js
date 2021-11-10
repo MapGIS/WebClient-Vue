@@ -6,7 +6,7 @@ let popupsIdIndex = 0;
  * @author 基础平台/创新中心 潘卓然
  * @class module:客户端可视化.PopupLayer
  * @classdesc 弹出窗图层
- * @description CesiumZondy.zondy.PopupLayer cesium的popup的实现
+ * @description PopupLayer cesium的popup的实现
  * @param {Viewer} map 传入的cesium的地图对象viewer
  * @param {Entity} [position.entity]  实体,内部获取坐标点cartesian, 输入此参数可忽略下面的，cartesian，longitude,latitude
  * @param {Cartesian3} [position.cartesian] 笛卡尔积坐标点cartesian, 输入此参数可忽略下面的longitude,latitude
@@ -39,7 +39,7 @@ let popupsIdIndex = 0;
           0
         );
         popups = [cartesian1, cartesian2, cartesian3].map((c) => {
-          const popup = new CesiumZondy.Overlayer.PopupLayer(
+          const popup = new PopupLayer(
             webGlobe.viewer,
             {
               cartesian: c,

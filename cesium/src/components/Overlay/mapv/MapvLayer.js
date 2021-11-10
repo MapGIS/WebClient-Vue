@@ -49,7 +49,7 @@ var idIndex = 0;
     draw: 'honeycomb'   // 绘制蜂窝图
     }
  // 声明cesium的mapv图层并将其显示到三维球上
- var mapvLayer = new window.CesiumZondy.Overlayer.MapvLayer(map, dataSet, options);
+ var mapvLayer = new MapvLayer(map, dataSet, options);
  */
 export class MapvLayer {
   constructor(map, dataSet, mapVOptions, container) {
