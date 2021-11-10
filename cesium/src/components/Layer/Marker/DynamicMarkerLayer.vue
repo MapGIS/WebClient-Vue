@@ -296,12 +296,12 @@ export default {
         if (entity.billboard) {
           entity.billboard.show = false;
           const style = point.toCesiumStyle(Cesium);
-          const { material, radius, outline } = style;
+          const { color, pixelSize, outlineColor } = style;
           entity.ellipse = new Cesium.EllipseGraphics({
-            semiMajorAxis: radius,
-            semiMinorAxis: radius,
-            outline: outline,
-            material: material
+            semiMajorAxis: pixelSize,
+            semiMinorAxis: pixelSize,
+            outline: outlineColor,
+            material: color
           });
           entity.ellipse.show = false;
         } else if (entity.polyline) {
@@ -391,13 +391,13 @@ export default {
         if (entity.properties[idField] == marker.feature.properties.fid) {
           if (entity.ellipse) {
             const style = hpoint.toCesiumStyle(Cesium);
-            const { material, radius, outline } = style;
+            const { color, pixelSize, outlineColor } = style;
             entity.ellipse.show = true;
             entity.ellipse = new Cesium.EllipseGraphics({
-              semiMajorAxis: radius,
-              semiMinorAxis: radius,
-              outline: outline,
-              material: material
+              semiMajorAxis: pixelSize,
+              semiMinorAxis: pixelSize,
+              outline: outlineColor,
+              material: color
             });
           } else if (entity.polyline) {
             const style = hline.toCesiumStyle(Cesium);
