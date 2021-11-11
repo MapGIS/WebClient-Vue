@@ -5,7 +5,7 @@ export default {
     component: Mapgis3dSetting,
     argTypes: {
         layout: {
-            description: "场景设置组件的布局方式",
+            description: "场景设置组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项",
             table: {
                 defaultValue: {
                     summary:'horizontal'
@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
           :url="m3dUrl"
       >
       </mapgis-3d-igs-m3d>
-      <mapgis-3d-setting v-bind="$props" class="sceneSetting" style="position: absolute;top: 10px;left: 10px"></mapgis-3d-setting ref="setting">
+      <mapgis-3d-setting v-bind="$props" class="sceneSetting"></mapgis-3d-setting>
       </mapgis-web-scene>
     `,
     data() {
@@ -47,5 +47,11 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景设置 = Template.bind({});
 场景设置.args = {
-    layout:'horizontal'
+    layout:'horizontal',
+    panelStyle:{
+        position:"absolute",
+        top:"10px",
+        left:"10px",
+        width:"320px"
+    }
 };
