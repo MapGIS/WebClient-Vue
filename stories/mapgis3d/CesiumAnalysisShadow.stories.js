@@ -1,5 +1,7 @@
+import Mapgis3dShadow from "../../cesium/src/components/Analysis/Shadow"
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
+
 export default {
     title: "三维/分析/阴影分析",
     argTypes: {
@@ -32,7 +34,8 @@ export default {
             },
             control: 'number'
         }
-    }
+    },
+    component:Mapgis3dShadow
 };
 
 const Template = (args, { argTypes }) => ({
@@ -47,16 +50,21 @@ const Template = (args, { argTypes }) => ({
             vueIndex:22
         }
     },
+    components:{
+        "mapgis-3d-shadow": Mapgis3dShadow
+    },
     template: `
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
-      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-igs-m3d>
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-shadow
             :shadowColor="shadowColor"
             :sunColor="sunColor"
             :minHeight="minHeight"
-            :stretchHeight="stretchHeight">
+            :stretchHeight="stretchHeight"
+            :enableShadowRatio="enableShadowRatio"
+        >
         </mapgis-3d-shadow>
       </mapgis-ui-card>
       </mapgis-web-scene>
@@ -68,7 +76,8 @@ Shadow.args = {
     shadowColor:'rgba(0,255,0,255)',
     sunColor:'rgba(255,0,0,255)',
     minHeight:0,
-    stretchHeight:19
+    stretchHeight:19,
+    enableShadowRatio: true
 }
 Shadow.parameters = {
     docs: {
