@@ -1,6 +1,6 @@
 <template>
   <div class="mp-widget-shadow-analysis">
-    <mapgis-ui-setting-form :model="formData">
+    <mapgis-ui-setting-form :model="formData" :wrapperWidth="128" :labelWidth="70">
       <mapgis-ui-form-model-item label="日期">
         <mapgis-ui-date-picker
             :default-value="startDate"
@@ -43,6 +43,7 @@
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="阴影颜色">
         <mapgis-ui-sketch-color-picker
+            size="small"
             :color.sync="formData.shadowColor"
             :disableAlpha="true"
             @input="
@@ -53,6 +54,7 @@
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="非阴影颜色">
         <mapgis-ui-sketch-color-picker
+            size="small"
             :color.sync="formData.sunColor"
             :disableAlpha="true"
             @input="
@@ -62,24 +64,28 @@
         />
       </mapgis-ui-form-model-item>
     </mapgis-ui-setting-form>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button
-          :disabled="maskShow"
-          type="primary"
-          @click="shadow"
-      >阴影分析
-      </mapgis-ui-button
-      >
-      <mapgis-ui-button :disabled="maskShow" type="primary" @click="sun"
-      >日照效果
-      </mapgis-ui-button
-      >
-      <mapgis-ui-button
-          type="primary"
-          @click="removeAll"
-      > 清除
-      </mapgis-ui-button
-      >
+    <mapgis-ui-setting-footer class="settingButton">
+      <mapgis-ui-space>
+        <mapgis-ui-button
+            :disabled="maskShow"
+            type="primary"
+            @click="shadow"
+            size="small"
+        >阴影分析
+        </mapgis-ui-button
+        >
+        <mapgis-ui-button :disabled="maskShow" type="primary" @click="sun" size="small"
+        >日照效果
+        </mapgis-ui-button
+        >
+        <mapgis-ui-button
+            type="primary"
+            @click="removeAll"
+            size="small"
+        > 清除
+        </mapgis-ui-button
+        >
+      </mapgis-ui-space>
     </mapgis-ui-setting-footer>
     <mapgis-ui-mask
         :loading="maskShow"
@@ -605,6 +611,12 @@ export default {
 </script>
 
 <style scoped>
+
+.mp-widget-shadow-analysis{
+  padding:10px 20px;
+  border-radius: 4px;
+}
+
 ::v-deep .mapgis-ui-form-item {
   margin-bottom: 0;
 }
@@ -619,10 +631,6 @@ export default {
 
 ::v-deep .mapgis-ui-input {
   padding: 4px 11px;
-}
-
-::v-deep .mapgis-ui-time-picker {
-  width: 179px;
 }
 
 ::v-deep .mapgis-ui-col-5 {
