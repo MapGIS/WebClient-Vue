@@ -100,11 +100,19 @@
 
 ### `models`
 
-- **类型:** `String`
+- **类型:** `Array`
 - **可选**
 - **非侦听属性**
-- **默认值:** `./CesiumModels/Cesium_Man.glb`
-- **描述:** 模型
+- **默认值:** []
+- **描述:** 模型数组， 示例：[{label: "人",value: "./CesiumModels/Cesium_Man.glb",},{label: "卡车",value: "./CesiumModels/CesiumMilkTruck.glb",},{label: "飞机",value: "./CesiumModels/Cesium_Air.gltf",}]
+
+### `paths`
+
+- **类型:** `Array`
+- **可选**
+- **非侦听属性**
+- **默认值:** []
+- **描述:** 路径数据数组
 
 ## 方法
 
@@ -150,8 +158,13 @@
 
 ### `@unload`
 
-- **Description:** 在 场景漫游组件 销毁发送该事件
+- **Description:** 在 场景漫游组件 销毁时发送该事件
 - **Payload** 场景漫游组件对象
+
+### `@save-paths`
+
+- **Description:** 点击保存按钮发送该事件
+- **Payload** paths 路径数据对象
 
 ## 示例
 
