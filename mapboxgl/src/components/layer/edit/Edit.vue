@@ -1,11 +1,12 @@
 <template>
-  <mapgis-ui-card
+  <!-- <mapgis-ui-card
     v-show="visible"
     :style="outStyle"
     title="设置显示样式"
     class="mapgis-mvt-editor-card"
   >
-    <a slot="extra" @click="handleClose">x</a>
+    <a slot="extra" @click="handleClose">x</a> -->
+  <div class="mapgis-mvt-editor">
     <mapgis-ui-radio-group v-model="action" button-style="solid">
       <mapgis-ui-radio-button class="action-type" value="single">
         单级别配置
@@ -20,7 +21,8 @@
       @edit-change="onEditChange"
     />
     <multi-action v-else :layerid="layerid" />
-  </mapgis-ui-card>
+  </div>
+  <!-- </mapgis-ui-card> -->
 </template>
 
 <script>
@@ -35,25 +37,25 @@ export default {
   inject: ["map", "mapbox"],
   mixins: [EditMixin],
   props: {
-    outStyle: {
-      type: Object,
-      default: () => {
-        return {
-          left: "10px",
-          top: "10px"
-        };
-      }
-    },
+    // outStyle: {
+    //   type: Object,
+    //   default: () => {
+    //     return {
+    //       left: "10px",
+    //       top: "10px"
+    //     };
+    //   }
+    // },
     layerid: {
       type: String
-    },
-    visible: {
-      type: Boolean,
-      default: false
     }
+    // visible: {
+    //   type: Boolean,
+    //   default: false
+    // }
   },
   model: {
-    prop: "visible",
+    // prop: "visible",
     event: "change"
   },
   data() {
@@ -75,17 +77,11 @@ export default {
 </script>
 
 <style lang="css">
-.mapgis-mvt-editor-card {
-  width: 200px;
-  position: absolute;
-  z-index: 1000;
-  height: calc(100vh - 200px);
-  overflow-y: scroll;
-  /* 针对火狐浏览器 */
-  scrollbar-color: transparent transparent;
-  scrollbar-width: thin;
+.mapgis-mvt-editor {
+  max-height: calc(50vh);
+  overflow-y: auto;
 }
-.mapgis-mvt-editor-card .action-type {
+.mapgis-mvt-editor .action-type {
   width: 120px;
   text-align: center;
 }
