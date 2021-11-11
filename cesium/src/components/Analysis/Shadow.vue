@@ -1,6 +1,6 @@
 <template>
   <div class="mp-widget-shadow-analysis">
-    <mapgis-ui-setting-form :model="formData" :wrapperWidth="128" :labelWidth="70">
+    <mapgis-ui-setting-form :model="formData" :wrapperWidth="128" :labelWidth="80">
       <mapgis-ui-form-model-item label="日期">
         <mapgis-ui-date-picker
             :default-value="startDate"
@@ -657,6 +657,11 @@ export default {
   width: 50%;
   text-align: right;
   font-size: 14px;
+}
+
+::v-deep .mapgis-ui-form-item-label:before{
+  content: url("titlew.png");
+  margin-right: 6px;
 }
 
 </style>
