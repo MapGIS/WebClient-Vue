@@ -441,8 +441,8 @@ export default {
      * @returns M3DLayer对象
      */
     getM3D() {
-      const { vueCesium, viewer } = this;
-      const m3d = new vueCesium.Layer.M3DLayer({
+      const { viewer } = this;
+      const m3d = new window.CesiumZondy.Layer.M3DLayer({
         viewer: viewer
       });
       return m3d;

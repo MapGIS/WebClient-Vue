@@ -2,7 +2,7 @@ import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dM3dLayer from "../../cesium/src/components/M3D/M3d.vue";
 
 export default {
-  title: "三维/图层/M3D/1.0 基础",
+  title: "三维/图层/M3D/2.0 基础",
   component: Mapgis3dM3dLayer,
   argTypes: {
     url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
@@ -28,8 +28,7 @@ const Template = (args, { argTypes }) => ({
       }, 5000);
     },
   },
-  template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">
-    <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+  template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
     <mapgis-3d-m3d-layer v-bind="$props" :opacity="opacity" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
@@ -37,7 +36,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 基础 = Template.bind({});
 基础.args = {
-  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+  // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+  url: "http://192.168.88.204:8089/M3D/2.0/M3DAttributeTest_BIN/zondy.mcj",
   show: true,
   opacity: 0.5,
 };

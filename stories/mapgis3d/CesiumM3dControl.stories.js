@@ -2,7 +2,7 @@ import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dM3dLayer from "../../cesium/src/components/M3D/M3d.vue";
 
 export default {
-  title: "三维/图层/M3D/1.0 基础",
+  title: "三维/图层/M3D/1.0 图层控制",
   component: Mapgis3dM3dLayer,
   argTypes: {
     url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
@@ -35,9 +35,10 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 基础 = Template.bind({});
-基础.args = {
-  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
+export const 图层控制 = Template.bind({});
+图层控制.args = {
+  url: "http://192.168.21.191:6163/igs/rest/g3d/汉阳BIM",
+  // url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/汉阳BIM`,
   show: true,
-  opacity: 0.5,
+  layers: "layers=show:0,1",
 };

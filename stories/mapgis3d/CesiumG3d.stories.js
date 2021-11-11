@@ -1,7 +1,7 @@
 import Mapgis3dG3dLayer from "../../cesium/src/components/M3D/G3D.vue";
 
 export default {
-  title: "三维/模型/场景图层G3D",
+  title: "三维/图层/G3D",
   component: Mapgis3dG3dLayer,
   argTypes: {
     url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",

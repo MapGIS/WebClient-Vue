@@ -1,57 +1,29 @@
 <template>
-  <div class="mapgis-popup-container" ref="geojsontool">
-    <div class="mapgis-3d-inspect-prop-tabs">
-      <mapgis-ui-tabs
-        v-if="mode === 'click'"
-        v-model="activeKey"
-        :style="{ height: '240px' }"
-        size="small"
-        :tab-position="tabPosition"
+  <div class="mapgis-popup-container"  v-if="mode === 'click'">
+    <div class="mapgis-popup-title" v-if="currentLayerInfo[0].title">
+      {{ currentLayerInfo[0].title}}
+    </div>
+    <div class="mapgis-popup-row-container" v-for="(value, key) in currentLayerInfo[0].properties" :key="key">
+      <div class="mapgis-popup-row">
+        <span class="mapgis-popup-item mapgis-popup-field">{{key}}</span>
+        <span class="mapgis-popup-item mapgis-popup-value">{{value}}</span>
+      </div>
+    </div>
+  </div>
+  <div v-else>
+    <div v-if="currentLayerInfo && currentLayerInfo.length > 0">
+      <div v-if="currentLayerInfo[0].title">
+        {{ currentLayerInfo[0].title }}
+      </div>
+      <div
+          v-for="(value, key) in currentLayerInfo[0].properties"
+          class="mapgis-popup-row"
+          :key="key"
       >
-        <mapgis-ui-tab-pane
-          class="mapgis-3d-inspect-prop-content"
-          v-for="(f, i) in currentLayerInfo"
-          :key="i"
-        >
-          <div slot="tab" class="mapgis-3d-inspect-layer-name">
-            <mapgis-ui-tooltip :title="f.layer.id">
-              <span>
-                {{ f.layer.id.substr(0, 12) }}
-              </span>
-            </mapgis-ui-tooltip>
-          </div>
-          <div class="mapgis-3d-popup-content-title">
-            {{ f.title }}
-          </div>
-          <div
-            v-for="(value, key) in f.properties"
-            class="mapgis-popup-row"
-            :key="key"
-          >
-            <div class="mapgis-3d-inspect-prop-key">
-              <span style="padding-right: 5px">{{ key }}</span>
-            </div>
-            <div>{{ value }} ({{ typeof value }})</div>
-          </div>
-          <br />
-        </mapgis-ui-tab-pane>
-      </mapgis-ui-tabs>
-      <div v-else>
-        <div v-if="currentLayerInfo && currentLayerInfo.length > 0">
-          <div>
-            {{ currentLayerInfo[0].title }}
-          </div>
-          <div
-            v-for="(value, key) in currentLayerInfo[0].properties"
-            class="mapgis-popup-row"
-            :key="key"
-          >
-            <div class="mapgis-3d-inspect-prop-key">
-              <span style="padding-right: 5px">{{ key }}</span>
-            </div>
-            <div>{{ value }}</div>
-          </div>
+        <div class="mapgis-3d-inspect-prop-key">
+          <span style="padding-right: 5px">{{ key }}</span>
         </div>
+        <div>{{ value }}</div>
       </div>
     </div>
   </div>
@@ -64,7 +36,7 @@ export default {
     outStyle: {
       type: Object,
       default: () => {
-        return { height: "120px", width: "240px" };
+        return {height: "120px", width: "240px"};
       }
     },
     mode: {
