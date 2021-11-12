@@ -31,6 +31,7 @@
     "axios": "^0.21.1",
     "clone": "^2.1.2",
     "css-vars-ponyfill": "^2.4.5",
+    "d3": "5.16.0",
     "echarts": "^5.1.2",
     "js-md5": "^0.7.3",
     "jsoneditor": "^9.5.6",

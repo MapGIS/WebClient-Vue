@@ -1,6 +1,6 @@
 <template>
   <div class="mp-widget-shadow-analysis">
-    <mapgis-ui-setting-form :model="formData">
+    <mapgis-ui-setting-form :model="formData" :wrapperWidth="128" :labelWidth="80">
       <mapgis-ui-form-model-item label="日期">
         <mapgis-ui-date-picker
             :default-value="startDate"
@@ -43,6 +43,7 @@
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="阴影颜色">
         <mapgis-ui-sketch-color-picker
+            size="small"
             :color.sync="formData.shadowColor"
             :disableAlpha="true"
             @input="
@@ -53,6 +54,7 @@
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="非阴影颜色">
         <mapgis-ui-sketch-color-picker
+            size="small"
             :color.sync="formData.sunColor"
             :disableAlpha="true"
             @input="
@@ -62,24 +64,28 @@
         />
       </mapgis-ui-form-model-item>
     </mapgis-ui-setting-form>
-    <mapgis-ui-setting-footer>
-      <mapgis-ui-button
-          :disabled="maskShow"
-          type="primary"
-          @click="shadow"
-      >阴影分析
-      </mapgis-ui-button
-      >
-      <mapgis-ui-button :disabled="maskShow" type="primary" @click="sun"
-      >日照效果
-      </mapgis-ui-button
-      >
-      <mapgis-ui-button
-          type="primary"
-          @click="removeAll"
-      > 清除
-      </mapgis-ui-button
-      >
+    <mapgis-ui-setting-footer class="settingButton">
+      <mapgis-ui-space>
+        <mapgis-ui-button
+            :disabled="maskShow"
+            type="primary"
+            @click="shadow"
+            size="small"
+        >阴影分析
+        </mapgis-ui-button
+        >
+        <mapgis-ui-button :disabled="maskShow" type="primary" @click="sun" size="small"
+        >日照效果
+        </mapgis-ui-button
+        >
+        <mapgis-ui-button
+            type="primary"
+            @click="removeAll"
+            size="small"
+        > 清除
+        </mapgis-ui-button
+        >
+      </mapgis-ui-space>
     </mapgis-ui-setting-footer>
     <mapgis-ui-mask
         :loading="maskShow"
@@ -88,7 +94,7 @@
         :text="maskText"
     ></mapgis-ui-mask>
     <span>
-      <Popup v-model="visible" :position="position" forceRender :container="container">
+      <Popup v-model="visible" :position="position" forceRender>
         <PopupContent :currentLayerInfo="currentClickInfo"></PopupContent>
       </Popup>
     </span>
@@ -106,6 +112,7 @@ import { getPopupHtml } from "../UI/Popup/popupUtil";
 
 const shadowMoment = require('moment');
 const manager = "shadowAnalysisManager";
+let handler;
 export default {
   name: "mapgis-3d-shadow",
   mixins: [BaseMixin],
@@ -162,19 +169,9 @@ export default {
      * @default false
      * @description 是否开启显示阴影率的popup弹框
      */
-    enablePopup: {
+    enableShadowRatio: {
       type: Boolean,
       default: false
-    },
-    /**
-     * @type Object
-     * @description 显示阴影率弹框的样式
-     */
-    popupOptions: {
-      type: Object,
-      default: () => {
-        return { type: "default", title: "name" };
-      }
     },
   },
   data() {
@@ -208,6 +205,7 @@ export default {
       },
       visible: false,
       currentClickInfo: undefined,
+      handler:undefined
     }
   },
   components: {
@@ -269,6 +267,11 @@ export default {
         if (find && find.options.shadowAnalysis) {
           // console.log("shadowAnalysis",find.options.shadowAnalysis)
         }
+      }
+    },
+    maskShow:{
+      handler: function () {
+        this.getShadowRatio();
       }
     }
   },
@@ -387,7 +390,8 @@ export default {
             shadowColor: shadowColor,
             sunColor: sunColor,
             percentCallback: this.setPercent,
-            intervalTime: 10
+            intervalTime: 10,
+            // pointSize:10
           })
           // 时间段范围阴影分析
           shadowAnalysis.calcPointsArrayInShadowTime(
@@ -398,66 +402,7 @@ export default {
               endTime
           )
 
-          if(!this.maskShow){
-            console.log("11111")
-          }
-          //左击查看阴影时间和光照时间
-          console.log('startClick');
-          let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-          let vm = this;
-          handler.setInputAction(function (movement) {
-            //获取鼠标点击位置
-            let pickedFeature = viewer.scene.pick(movement.position);
-            // console.log('pickedFeature',pickedFeature);
-
-            let info = pickedFeature.primitive.id;
-
-            if(info){
-              //获取点的属性信息
-              let infoArr = info.split(",");
-              let id = infoArr[0].split(":")[1];
-              // console.log('info', info);
-              // console.log('id', id);
-              let timeInSun = infoArr[1].split("：")[1];
-              // console.log('timeInSun', timeInSun);
-              let timeInShadow = infoArr[2].split("：")[1];
-              let sun = parseFloat(timeInSun);
-              let shad = parseFloat(timeInShadow);
-              let shadowRatio = Math.round(shad / (shad + sun) * 100);
-
-              //设置popup的内容
-              vm.currentClickInfo = [{
-                layer: {
-                  id: id
-                },
-                properties: {
-                  光照时间: timeInSun,
-                  阴影时间: timeInShadow,
-                  阴影率: shadowRatio + '%'
-                },
-                title:"title"
-              }];
-
-              //获取点的经纬度坐标
-              let cartesian = viewer.scene.globe.pick(viewer.camera.getPickRay(movement.position), viewer.scene);
-              let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-              let lng = Cesium.Math.toDegrees(cartographic.longitude);
-              let lat = Cesium.Math.toDegrees(cartographic.latitude);
-
-              //设置弹出popup的位置
-              vm.position.height = cartographic.height;
-              vm.position.latitude = lat;
-              vm.position.longitude = lng;
-
-              //显示popup
-              vm.visible = true;
-
-              viewer.scene.requestRender();
-
-            }else{
-              console.log("未选中");
-            }
-          }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+          self.getShadowRatio();
 
           // 深拷贝positions数组对象
           let positionCopy = [];
@@ -521,7 +466,75 @@ export default {
         clearInterval(timer);
       }, 200)
     },
-    //数组对象深拷贝
+
+    /**
+     * 获取时间段阴影分析结果点的阴影率
+     */
+    getShadowRatio(){
+      const{ viewer ,Cesium} = this;
+      if(this.enableShadowRatio && !this.maskShow ){
+        //左击查看阴影时间和光照时间
+        console.log('startComputeShadowRatio');
+        handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        let vm = this;
+        handler.setInputAction(function (movement) {
+          //获取鼠标点击位置
+          let pickedFeature = viewer.scene.pick(movement.endPosition,10,10);
+          console.log('pickedFeature',pickedFeature);
+
+          if(pickedFeature.primitive && pickedFeature.primitive.id){
+
+            //获取点的属性信息
+            let info = pickedFeature.primitive.id;
+            let infoArr = info.split(",");
+            let id = infoArr[0].split(":")[1];
+            // console.log('info', info);
+            // console.log('id', id);
+            let timeInSun = infoArr[1].split("：")[1];
+            // console.log('timeInSun', timeInSun);
+            let timeInShadow = infoArr[2].split("：")[1];
+            let sun = parseFloat(timeInSun);
+            let shad = parseFloat(timeInShadow);
+            let shadowRatio = Math.round(shad / (shad + sun) * 100);
+
+            //设置popup的内容
+            vm.currentClickInfo = [{
+              // title:"阴影率信息",
+              properties: {
+                光照时间: sun + "分钟",
+                阴影时间: shad + "分钟",
+                阴影率: shadowRatio + '%'
+              },
+            }];
+
+            //获取点的经纬度坐标
+            let cartesian = viewer.scene.globe.pick(viewer.camera.getPickRay(movement.endPosition), viewer.scene);
+            let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+            let lng = Cesium.Math.toDegrees(cartographic.longitude);
+            let lat = Cesium.Math.toDegrees(cartographic.latitude);
+
+            //设置弹出popup的位置
+            vm.position.height = cartographic.height;
+            vm.position.latitude = lat;
+            vm.position.longitude = lng;
+
+            //显示popup
+            vm.visible = true;
+
+            viewer.scene.requestRender();
+
+          }else{
+            vm.visible = false;
+            console.log("未选中");
+          }
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      }
+
+    },
+
+    /**
+     * 数组对象深拷贝
+     */
     copy(obj) {
       var newobj = obj.constructor === Array ? [] : {};
       if (typeof obj !== 'object') {
@@ -544,8 +557,11 @@ export default {
      * 移除绘制插件和阴影分析结果
      */
     remove() {
-      let {vueKey, vueIndex, vueCesium} = this;
+      let {vueKey, vueIndex, vueCesium,Cesium} = this;
       // let findSource = vm.$_getManager(manager);
+      if(handler){
+        handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      }
       let findSource = this.findSource();
       console.log("findSource", findSource)
       // 判断是否已有阴影分析结果
@@ -595,6 +611,12 @@ export default {
 </script>
 
 <style scoped>
+
+.mp-widget-shadow-analysis{
+  padding:10px 20px;
+  border-radius: 4px;
+}
+
 ::v-deep .mapgis-ui-form-item {
   margin-bottom: 0;
 }
@@ -611,11 +633,35 @@ export default {
   padding: 4px 11px;
 }
 
-::v-deep .mapgis-ui-time-picker {
-  width: 179px;
-}
-
 ::v-deep .mapgis-ui-col-5 {
   width: 23.833333%;
 }
+
+::v-deep .mapgis-popup-row-container{
+  padding-top: 10px;
+  height: fit-content;
+  overflow: auto;
+}
+
+::v-deep .mapgis-popup-row {
+  min-width: 200px;
+}
+
+::v-deep .mapgis-popup-field {
+  width: 50%;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+::v-deep .mapgis-popup-value {
+  width: 50%;
+  text-align: right;
+  font-size: 14px;
+}
+
+::v-deep .mapgis-ui-form-item-label:before{
+  content: url("titlew.png");
+  margin-right: 6px;
+}
+
 </style>

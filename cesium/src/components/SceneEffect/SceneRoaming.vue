@@ -28,11 +28,19 @@
             </mapgis-ui-button>
           </div>
           <div v-if="!interactiveAdding" class="path-container">
-            <mapgis-ui-group-tab :title="pathTotal"> </mapgis-ui-group-tab>
+            <mapgis-ui-group-tab :title="pathTotal">
+              <mapgis-ui-toolbar slot="handle" :bordered="false">
+                <mapgis-ui-toolbar-command
+                  icon="mapgis-save"
+                  title="保存"
+                  @click="_savePaths"
+                ></mapgis-ui-toolbar-command>
+              </mapgis-ui-toolbar>
+            </mapgis-ui-group-tab>
             <div class="path-list">
               <path-item
                 :key="index"
-                v-for="(item, index) in paths"
+                v-for="(item, index) in pathsCopy"
                 :path="item"
                 @goto-path="onGotoPath(item)"
                 @delete-path="onDeletePath(item)"
@@ -140,11 +148,16 @@ export default {
       type: Array,
       required: true,
       default: () => []
+    },
+    paths: {
+      type: Array,
+      required: true,
+      default: () => []
     }
   },
   computed: {
     pathTotal() {
-      return `${this.paths.length}条路线`;
+      return `${this.pathsCopy.length}条路线`;
     },
     positions() {
       return this.addedPositions.map((position, index) => {
@@ -152,7 +165,15 @@ export default {
       });
     }
   },
-  watch: {},
+  watch: {
+    paths: {
+      handler() {
+        this.pathsCopy = this.paths;
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   data() {
     return {
       draw: undefined,
@@ -191,7 +212,7 @@ export default {
           width: 60
         }
       ],
-      paths: [],
+      pathsCopy: [],
       linePoints: [],
       polyline: undefined
     };
@@ -279,8 +300,8 @@ export default {
     },
     onAddPathComplete() {
       let pathId;
-      if (this.paths.length > 0) {
-        const pathIds = this.paths
+      if (this.pathsCopy.length > 0) {
+        const pathIds = this.pathsCopy
           .map((item, index) => {
             return item.id || index + 1;
           })
@@ -320,7 +341,7 @@ export default {
           showInfo
         }
       };
-      this.paths.push(path);
+      this.pathsCopy.push(path);
 
       this._stopAdded();
     },
@@ -336,9 +357,9 @@ export default {
       this.roaming = false;
     },
     onDeletePath(path) {
-      const index = this.paths.indexOf(path);
+      const index = this.pathsCopy.indexOf(path);
       if (index > -1) {
-        this.paths.splice(index, 1);
+        this.pathsCopy.splice(index, 1);
       }
     },
     _stopAdded() {
@@ -358,6 +379,9 @@ export default {
     },
     onGetPathRoaming() {
       return this.$refs.refPathRoaming;
+    },
+    _savePaths() {
+      this.$emit("save-paths", this.pathsCopy);
     }
   }
 };

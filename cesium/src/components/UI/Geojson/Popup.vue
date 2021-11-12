@@ -1,12 +1,18 @@
 <template>
-  <div class="mapgis-popup-container"  v-if="mode === 'click'">
-    <div class="mapgis-popup-title" v-if="currentLayerInfo[0].title">
-      {{ currentLayerInfo[0].title}}
-    </div>
-    <div class="mapgis-popup-row-container" v-for="(value, key) in currentLayerInfo[0].properties" :key="key">
-      <div class="mapgis-popup-row">
-        <span class="mapgis-popup-item mapgis-popup-field">{{key}}</span>
-        <span class="mapgis-popup-item mapgis-popup-value">{{value}}</span>
+  <div class="mapgis-popup-container" v-if="mode === 'click'">
+    <div v-if="currentLayerInfo && currentLayerInfo.length > 0">
+      <div class="mapgis-popup-title" v-if="currentLayerInfo[0].title">
+        {{ currentLayerInfo[0].title}}
+      </div>
+      <div class="mapgis-popup-row-container">
+        <div
+            class="mapgis-popup-row"
+            v-for="(value, key) in currentLayerInfo[0].properties"
+            :key="key"
+        >
+          <span class="mapgis-popup-item mapgis-popup-field">{{key}}</span>
+          <span class="mapgis-popup-item mapgis-popup-value">{{value}}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -47,27 +53,6 @@ export default {
       type: Array,
       default: () => []
     }
-  },
-  watch: {
-    activeKey(next) {
-      this.$emit("select-layer", next);
-    },
-    currentLayerInfo() {
-      this.activeKey = 0;
-    }
-  },
-  data() {
-    return {
-      tabPosition: "top",
-      activeKey: 0
-    };
-  },
-  mounted() {
-    this.$nextTick(() => {
-      if (this.activeKey) {
-        this.$emit("select-layer", this.activeKey);
-      }
-    });
   }
-};
+}
 </script>

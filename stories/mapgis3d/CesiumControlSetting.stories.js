@@ -1,11 +1,11 @@
-import Mapgis3dSetting from "../../cesium/src/components/SceneEffect/SceneSetting";
+import Mapgis3dSeneSetting from "../../cesium/src/components/SceneEffect/SceneSetting";
 
 export default {
     title: "三维/场景子组件/场景设置",
-    component: Mapgis3dSetting,
+    component: Mapgis3dSeneSetting,
     argTypes: {
         layout: {
-            description: "场景设置组件的布局方式",
+            description: "场景设置组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项",
             table: {
                 defaultValue: {
                     summary:'horizontal'
@@ -21,7 +21,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { "mapgis-3d-setting": Mapgis3dSetting },
+    components: { "mapgis-3d-scene-setting": Mapgis3dSeneSetting },
     template: `
       <mapgis-web-scene
           style="height:95vh"
@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
           :url="m3dUrl"
       >
       </mapgis-3d-igs-m3d>
-      <mapgis-3d-setting v-bind="$props" class="sceneSetting" style="position: absolute;top: 10px;left: 10px"></mapgis-3d-setting ref="setting">
+      <mapgis-3d-scene-setting v-bind="$props" class="sceneSetting"></mapgis-3d-scene-setting>
       </mapgis-web-scene>
     `,
     data() {
@@ -47,5 +47,11 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景设置 = Template.bind({});
 场景设置.args = {
-    layout:'horizontal'
+    layout:'horizontal',
+    panelStyle:{
+        position:"absolute",
+        top:"10px",
+        left:"10px",
+        width:"320px"
+    }
 };

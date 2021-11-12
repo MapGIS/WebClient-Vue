@@ -1,13 +1,16 @@
 <template>
   <div>
-    <mapgis-ui-div class="mapgis-3d-setting">
+    <mapgis-ui-div class="mapgis-3d-scene-setting">
       <slot v-if="initial"></slot>
       <slot name="settingTool">
-        <div v-show="show" :style="panelStyle" class="mapgis-3d-setting-control">
-          <!--          <div @mouseenter="hover=true" @mouseleave="hover=false">-->
-          <!--            <img src="./components/关闭.png" class="closeButton" @click="closePanel" v-show="!hover">-->
-          <!--            <img src="./components/关闭hover.png" class="closeButton" @click="closePanel" v-show="hover">-->
-          <!--          </div>-->
+        <div v-show="show" :style="panelStyle" class="setting-control">
+<!--          第一种关闭按钮-->
+<!--          <div @mouseenter="hover=true" @mouseleave="hover=false">-->
+<!--            <img src="./components/关闭.png" class="closeButton" @click="closePanel" v-show="!hover">-->
+<!--            <img src="./components/关闭hover.png" class="closeButton" @click="closePanel" v-show="hover">-->
+<!--          </div>-->
+
+<!--          第二种关闭按钮-->
           <div class="control-header" >
             <label class="title">设置</label>
             <div @mouseenter="hover=true" @mouseleave="hover=false">
@@ -50,13 +53,16 @@ export default {
   },
   mixins: [ServiceLayer],
   props: {
-    /*
+    /**
     * 组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项。
-    * */
+    */
     layout: {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
     },
+    /**
+     * 面板样式
+     */
     panelStyle: {
       type: Object,
     }
@@ -107,7 +113,7 @@ export default {
 
 <style scoped>
 
-.mapgis-3d-setting-control {
+.setting-control {
   /*width: 320px;*/
   height: fit-content;
   position: absolute;

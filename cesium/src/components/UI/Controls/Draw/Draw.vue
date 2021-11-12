@@ -215,6 +215,10 @@ export default {
           drawEntities.source = [];
         }
       }
+      //清空drawElement
+      if (window.drawElement) {
+        window.drawElement.stopDrawing();
+      }
       if (!unmount) {
         if (this.drawOption.length > 0) {
           this[this.drawOption]();
