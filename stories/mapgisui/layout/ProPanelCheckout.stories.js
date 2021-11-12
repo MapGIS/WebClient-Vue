@@ -20,10 +20,10 @@ const Template = (args, { argTypes }) => ({
     };
   },
   mounted() {
-    setTheme("technology");
+    /* setTheme("technology"); */
   },
   template: `<div>
-  <mapgis-ui-border type="border1" :style="{width: '280px', height:'300px'}">
+  <!-- <mapgis-ui-border type="border1" :style="{width: '280px', height:'300px'}"> -->
     <mapgis-ui-switch-panel layout="horizontal">
         <mapgis-ui-form-model-item label="周期/秒">
           <mapgis-ui-space>
@@ -63,7 +63,7 @@ const Template = (args, { argTypes }) => ({
             </mapgis-ui-row>
         </mapgis-ui-form-model-item>        
       </mapgis-ui-switch-panel>
-    </mapgis-ui-border>
+    <!-- </mapgis-ui-border> -->
   </div>`,
 });
 

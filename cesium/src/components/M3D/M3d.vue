@@ -315,7 +315,9 @@ export default {
         m3ds.forEach(m3d => {
           if (layers) {
             m3d.show = true;
-            if (layers.indexOf(m3d.layerIndex) >= 0) {
+            // @description cesium 1.84 (M3D 2.0)将layerIndex内部隐藏起来了 
+            // @date 20211112 潘卓然， 等到三维放开这个属性后还原
+            if (layers.indexOf(m3d.layerIndex || m3d._layerIndex) >= 0) {
             } else {
               m3d.show = false;
             }
