@@ -173,6 +173,7 @@ export { default as MapgisUiNavBarItem } from "./layout/navs/NavBarItem.vue";
 // Pro
 export { default as MapgisUiProSetting } from "./layout/base/BaseSetting.vue";
 export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
+export { default as MapgisUiSwitchPanel } from "./layout/panel/SwitchPanel.vue";
 
 // CloudDisk
 export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";

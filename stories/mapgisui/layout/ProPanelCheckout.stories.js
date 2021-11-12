@@ -16,7 +16,6 @@ const Template = (args, { argTypes }) => ({
     return {
       value: 0,
       cloudsduration: 0,
-      cloudsduration: 0,
     };
   },
   mounted() {

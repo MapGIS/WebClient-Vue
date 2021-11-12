@@ -89,6 +89,8 @@ export default {
       } else {
         this.maxHeight = "0px";
       }
+
+      this.$emit("changeChecked", e);
     }
   }
 };
