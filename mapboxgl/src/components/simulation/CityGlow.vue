@@ -1,36 +1,46 @@
-import rasterLayer from "../RasterLayer";
-import layerEvents from "../../../lib/layerEvents";
-import { newGuid } from "../../util";
-import igsOptions from "./igsOptions";
+<template>
+  <div></div>
+</template>
+
+<script>
+import layerMixin from "../layer/layerMixin";
+import layerEvents from "../../lib/layerEvents";
+import clonedeep from "lodash.clonedeep";
+
+import { MRFS } from "@mapgis/webclient-es6-service";
+const { QueryDocFeature, QueryLayerFeature } = MRFS;
 
 export default {
-  name: "mapgis-igs-vector-layer",
-  mixins: [rasterLayer],
+  name: "mapgis-igs-feature-layer",
+  mixins: [layerMixin],
   props: {
-    ...igsOptions,
-    gdbps: {
-      type: [String, Array],
-      require: true
-    },
-    filters: {
+    baseUrl: {
       type: String,
       default: null
     },
-    igsMapStyle: {
+    mapIndex: {
+      type: Number,
+      default: 0
+    },
+    layers: {
+      type: [String, Array],
+      default: null
+    },
+    tileFeaturesCount: {
+      type: Number,
+      default: 400
+    },
+    filter: {
+      type: String,
+      default: null
+    },
+    layerStyle: {
       type: Object,
       default: null
-    },
-    f: {
-      type: String,
-      default: "png"
     },
     guid: {
       type: String,
       default: new Date().getTime().toString()
-    },
-    keepCache: {
-      type: Boolean,
-      default: true
     }
   },
   methods: {
@@ -62,6 +72,7 @@ export default {
     },
     $_initAllRequestParams() {
       let params = [];
+      params.push("guid=" + this.guid);
       let gdbps;
       if (typeof this.gdbps === "string") {
         gdbps = this.gdbps;
@@ -69,13 +80,6 @@ export default {
         gdbps = this.gdbps.toString();
       }
       params.push("gdbps=" + gdbps);
-      params.push("f=" + this.f);
-      params.push("guid=" + this.guid);
-
-      let width, height;
-      width = height = this.tileSize;
-      params.push("width=" + width);
-      params.push("height=" + height);
 
       if (this.filters) {
         params.push("filters=" + this.filters);
@@ -83,13 +87,11 @@ export default {
       if (this.igsMapStyle) {
         params.push("style=" + JSON.stringify(this.igsMapStyle));
       }
-      if (!this.keepCache) {
-        params.push("temp=" + Math.random());
-      }
+
       return params;
     },
     $_deferredMount() {
-      this.$_init();
+      /* this.$_init();
       let source = {
         type: "raster",
         tiles: [this._url],
@@ -110,7 +112,8 @@ export default {
       this.$_addLayer();
       this.$_bindLayerEvents(layerEvents);
       this.map.off("dataloading", this.$_watchSourceLoading);
-      this.initial = false;
+      this.initial = false; */
     }
   }
 };
+</script>

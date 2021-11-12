@@ -1,0 +1,61 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+/* import TitleImage from "./style/titlew.png"; */
+
+.mapgis-ui-border__content {
+  .mapgis-ui-switch-panel {
+    width: 100%;
+    height: fit-content;
+  }
+}
+
+@include b(switch-panel) {
+  .mapgis-ui-form-item {
+    margin: 0;
+    padding: 0 10px;
+  }
+
+  .mapgis-ui-form-item-control {
+    text-align: right;
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+  }
+
+  .mapgis-ui-form-item-label {
+    padding: 0px;
+    line-height: 40px;
+  }
+
+  @include e(header, "-") {
+    padding: 0 6px;
+    font-size: 14px;
+  }
+
+  .mapgis-ui-switch-panel-label:before {
+    content: url("./layout/panel/style/titlew.png");
+    margin-right: 6px;
+  }
+
+  @include e(label, "-") {
+    padding: 0 6px;
+    line-height: 40px;
+  }
+
+  @include e(switch, "-") {
+    float: right;
+    margin: 9px 0px;
+  }
+
+  @include e(parameter, "-") {
+    background: $panel-inner-color;
+    margin: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 0.5s;
+    -moz-transition: max-height 0.5s; /* Firefox 4 */
+    -webkit-transition: max-height 0.5s; /* Safari and Chrome */
+    -o-transition: max-height 0.5s; /* Opera */
+  }
+}
