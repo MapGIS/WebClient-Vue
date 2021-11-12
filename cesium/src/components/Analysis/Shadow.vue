@@ -473,36 +473,33 @@ export default {
     getShadowRatio(){
       const{ viewer ,Cesium} = this;
       if(this.enableShadowRatio && !this.maskShow ){
+        let vm = this;
+
         //左击查看阴影时间和光照时间
         console.log('startComputeShadowRatio');
         handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-        let vm = this;
         handler.setInputAction(function (movement) {
-          //获取鼠标点击位置
+
+          //获取鼠标点击位置的实体
           let pickedFeature = viewer.scene.pick(movement.endPosition,10,10);
-          console.log('pickedFeature',pickedFeature);
 
           if(pickedFeature.primitive && pickedFeature.primitive.id){
 
+            // console.log('pickedFeature',pickedFeature);
+
             //获取点的属性信息
             let info = pickedFeature.primitive.id;
-            let infoArr = info.split(",");
-            let id = infoArr[0].split(":")[1];
-            // console.log('info', info);
-            // console.log('id', id);
-            let timeInSun = infoArr[1].split("：")[1];
+            let timeInSun = info.timeInSun;
             // console.log('timeInSun', timeInSun);
-            let timeInShadow = infoArr[2].split("：")[1];
-            let sun = parseFloat(timeInSun);
-            let shad = parseFloat(timeInShadow);
-            let shadowRatio = Math.round(shad / (shad + sun) * 100);
+            let timeInShadow = info.timeInShadow;
+            let shadowRatio = Math.round(timeInShadow / (timeInShadow + timeInSun) * 100);
 
             //设置popup的内容
             vm.currentClickInfo = [{
               // title:"阴影率信息",
               properties: {
-                光照时间: sun + "分钟",
-                阴影时间: shad + "分钟",
+                光照时间: timeInSun + "分钟",
+                阴影时间: timeInShadow + "分钟",
                 阴影率: shadowRatio + '%'
               },
             }];

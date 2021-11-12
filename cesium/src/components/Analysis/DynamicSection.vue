@@ -126,9 +126,6 @@ export default {
       // slider滑块是否禁用
       readonly: false,
 
-      // 组件是否已激活
-      isActive: false,
-
       // radio样式
       radioStyle: {
         display: "block",
@@ -190,11 +187,12 @@ export default {
       }
     }
   },
+  created() {},
   mounted() {
-    this.$emit("mounted", this);
+    this.mount();
   },
-  beforeDestroy() {
-    this.$emit("destroyed", this);
+  destroyed() {
+    this.unmount();
   },
   methods: {
     async createCesiumObject() {
@@ -212,7 +210,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
-        vm.$emit("load", { component: this });
+        vm.$emit("load", vm);
         vueCesium.DynamicSectionAnalysisManager.addSource(
           vueKey,
           vueIndex,
@@ -222,6 +220,7 @@ export default {
           }
         );
       });
+      this.changeModel();
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -234,29 +233,20 @@ export default {
       }
       vueCesium.DynamicSectionAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
-    },
-
-    /**
-     * 打开模块
-     */
-    onOpen() {
-      this.isActive = true;
-      this.mount();
-      this.changeModel();
-    },
-
-    /**
-     * 关闭模块
-     */
-    onClose() {
       this.stopClipping();
-      this.isActive = false;
     },
 
     changeModel() {
       this.m3dIsReady().then(m3d => {
+        let id = this.model.vueIndex;
+        let layerIndex = 0;
+        if (id.includes(":")) {
+          const strs = id.split(":");
+          id = strs[0];
+          layerIndex = strs[1];
+        }
         const { source } = m3d;
-        this.zoomToM3dLayerBySource(source[0]);
+        this.zoomToM3dLayerBySource(source[layerIndex]);
         this.getMaxMin();
         // this.startClipping();
       });
@@ -268,25 +258,32 @@ export default {
     m3dIsReady() {
       const { vueCesium, vueKey, vueIndex, model, isActive } = this;
       return new Promise((resolve, reject) => {
-        if (isActive && model && model.vueIndex) {
+        if (model && model.vueIndex) {
+          let id = model.vueIndex;
+          let layerIndex = 0;
+          if (id.includes(":")) {
+            const strs = id.split(":");
+            id = strs[0];
+            layerIndex = strs[1];
+          }
           this.$_getM3DByInterval(
             function(m3ds) {
               if (m3ds && m3ds.length > 0) {
                 if (
-                  !m3ds[0] ||
-                  !m3ds[0].hasOwnProperty("source") ||
-                  !m3ds[0].source
+                  !m3ds[layerIndex] ||
+                  !m3ds[layerIndex].hasOwnProperty("source") ||
+                  !m3ds[layerIndex].source
                 ) {
                   reject(null);
                 } else {
-                  resolve(m3ds[0]);
+                  resolve(m3ds[layerIndex]);
                 }
               } else {
                 reject(null);
               }
             },
             vueKey,
-            model.vueIndex
+            id
           );
         } else {
           reject(null);

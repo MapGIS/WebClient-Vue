@@ -38,6 +38,7 @@ const Template = (args, { argTypes }) => ({
 export const 图层控制 = Template.bind({});
 图层控制.args = {
   url: "http://192.168.21.191:6163/igs/rest/g3d/汉阳BIM",
+  // url: 'http://192.168.21.191:6163/igs/rest/g3d/大楼',
   // url:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/汉阳BIM`,
   show: true,
   layers: "layers=show:0,1",
