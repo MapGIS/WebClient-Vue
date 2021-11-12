@@ -27,7 +27,7 @@ export default {
         zIndex: "number",
         parameters: "object",
         getFeatureInfoParameters: "object",
-        enablePickFeatures: "object",
+        enablePickFeatures: "boolean",
         getFeatureInfoFormats: "array",
         rectangle: "object",
         tilingScheme: "object",
