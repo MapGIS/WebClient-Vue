@@ -350,7 +350,7 @@ export default {
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
       particleArr: [], // 粒子特效集
       isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
-      handlerAction:undefined
+      handlerAction: undefined
     };
   },
 
@@ -388,7 +388,9 @@ export default {
         });
       }
       if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
       }
       // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
       this.particleArr = [];
@@ -412,7 +414,9 @@ export default {
       }
     },
     _addEventListener() {
-      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(
+        this.viewer.scene.canvas
+      );
       this.handlerAction.setInputAction(event => {
         this._registerMouseLClickEvent(event);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -423,9 +427,7 @@ export default {
     },
     _registerMouseLClickEvent(event) {
       // 获取点击点的笛卡尔坐标
-      const cartesian = this.viewer.getCartesian3Position(
-        event.position
-      );
+      const cartesian = this.viewer.getCartesian3Position(event.position);
       // 获取当前坐标系标准
       const ellipsoid = this.viewer.scene.globe.ellipsoid;
       // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
@@ -440,7 +442,7 @@ export default {
       );
 
       // 初始化高级分析功能管理类
-      const advancedAnalysisManager = new window.vueCesium.Manager.AdvancedAnalysisManager(
+      const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
         {
           viewer: this.viewer
         }
@@ -496,7 +498,9 @@ export default {
 
       // 注销鼠标的各项监听事件
       if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
       }
       // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
     },
