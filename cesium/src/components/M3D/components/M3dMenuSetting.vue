@@ -1,17 +1,17 @@
 <template>
   <div class="mapgis-3d-m3d-menu-setting">
-    <effect-setting layout="vertical"> </effect-setting>
+    <mapgis-3d-scene-setting layout="vertical"> </mapgis-3d-scene-setting>
   </div>
 </template>
 
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
-import EffectSetting from "../../SceneEffect/SceneSetting";
+import Mapgis3dSeneSetting from "../../SceneEffect/SceneSetting";
 
 export default {
   name: "mapgis-3d-m3d-menu-setting",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
-  components: { EffectSetting },
+  components: { SceneSetting },
   props: {
     ...VueOptions,
     version: {
@@ -113,7 +113,7 @@ export default {
 </script>
 
 <style>
-.mapgis-3d-m3d-menu-setting > .mapgis-3d-setting {
+.mapgis-3d-m3d-menu-setting > .mapgis-3d-scene-setting {
   display: block;
   position: relative;
   height: 100%;

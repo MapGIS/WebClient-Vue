@@ -1,9 +1,9 @@
 <template>
   <div>
-    <mapgis-ui-div class="mapgis-3d-setting">
+    <mapgis-ui-div class="mapgis-3d-scene-setting">
       <slot v-if="initial"></slot>
       <slot name="settingTool">
-        <div v-show="show" :style="panelStyle" class="mapgis-3d-setting-control">
+        <div v-show="show" :style="panelStyle" class="setting-control">
 <!--          第一种关闭按钮-->
 <!--          <div @mouseenter="hover=true" @mouseleave="hover=false">-->
 <!--            <img src="./components/关闭.png" class="closeButton" @click="closePanel" v-show="!hover">-->
@@ -113,7 +113,7 @@ export default {
 
 <style scoped>
 
-.mapgis-3d-setting-control {
+.setting-control {
   /*width: 320px;*/
   height: fit-content;
   position: absolute;
