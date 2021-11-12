@@ -156,7 +156,7 @@
     </svg>
     <svg :style="iconStyle" v-if="type === 'removeStyle'" :class="{mapgisIconHover : hoverIcon === 'removeStyle'}"
          class="mapgis-mapstory-icon"
-        viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false">
+         viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false">
       <g viewBox="0 0 24 24">
         <path
             d="M12.75 12.75l-2.1-2.1-7.84-7.84-1.42 1.41 8.41 8.41L6.64 20h3l2.26-5.27 7.88 7.88 1.41-1.42zM12.22 7l-.72 1.67 2.1 2.1L15.21 7H21V4H6.83l3 3z"></path>
@@ -167,7 +167,7 @@
 
 <script>
 export default {
-  name: "project-icon",
+  name: "svg-icon",
   props: {
     type: {
       type: String

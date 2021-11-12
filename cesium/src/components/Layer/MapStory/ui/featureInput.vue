@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-feature-input-container">
-    <mapgis-ui-input :style="inputStyle" class="mapgis-feature-input" v-model="value" :placeholder="placeholder"/>
+    <mapgis-ui-input :id="id" :style="inputStyle" class="mapgis-feature-input" v-model="valueCopy" :placeholder="placeholder"/>
     <div class="mapgis-feature-input-title">{{ title }}</div>
   </div>
 </template>
@@ -17,6 +17,9 @@ export default {
       type: String,
       default: "title"
     },
+    id: {
+      type: String
+    },
     placeholder: {
       type: String
     },
@@ -29,6 +32,28 @@ export default {
         return {}
       }
     }
+  },
+  data() {
+    return {
+      valueCopy: undefined
+    }
+  },
+  watch: {
+    value: {
+      handler: function () {
+        this.valueCopy = this.value;
+      },
+      deep: true
+    },
+    valueCopy: {
+      handler: function () {
+        this.$emit("change", this.valueCopy);
+      },
+      deep: true
+    }
+  },
+  created() {
+    this.valueCopy = this.value;
   }
 }
 </script>

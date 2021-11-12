@@ -37,13 +37,13 @@
             <div class="mapgis-mapstory-project-panel-title">{{ project.title }}</div>
           </mapgis-ui-col>
           <mapgis-ui-col span="12" class="mapgis-mapstory-tool-bar">
-            <project-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>
-            <project-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>
-            <project-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>
-            <project-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>
-            <project-icon v-show="showToolIndex !== index && project.show" type="eye"/>
-            <project-icon @click="$_showProject(index, true)" v-show="showToolIndex === index && !project.show" type="eye"/>
-            <project-icon @click="$_showProject(index, false)" v-show="showToolIndex === index && project.show" type="noEye"/>
+            <svg-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>
+            <svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>
+            <svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>
+            <svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>
+            <svg-icon v-show="showToolIndex !== index && project.show" type="eye"/>
+            <svg-icon @click="$_showProject(index, true)" v-show="showToolIndex === index && !project.show" type="eye"/>
+            <svg-icon @click="$_showProject(index, false)" v-show="showToolIndex === index && project.show" type="noEye"/>
           </mapgis-ui-col>
         </div>
       </mapgis-ui-row>
@@ -52,11 +52,11 @@
 </template>
 
 <script>
-import projectIcon from "./projectIcon"
+import svgIcon from "../img/svgIcon"
 export default {
   name: "projectRow",
   components: {
-    "project-icon": projectIcon,
+    "svg-icon": svgIcon,
   },
   data() {
     return {

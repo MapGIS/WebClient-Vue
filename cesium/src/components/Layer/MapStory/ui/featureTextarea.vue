@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mapgis-feature-textarea-head">
+    <div v-if="hasToolBar" class="mapgis-feature-textarea-head">
       <feature-icon :containerStyle="containerStyle" type="fontSize"/>
       <feature-icon :containerStyle="containerStyle" type="fontWeight"/>
       <feature-icon :containerStyle="containerStyle" type="italic"/>
@@ -9,12 +9,13 @@
       <feature-icon :containerStyle="containerStyle" type="removeStyle"/>
       <feature-icon :containerStyle="containerStyle" type="more"/>
     </div>
-    <mapgis-ui-textarea class="mapgis-feature-textarea" v-model="value"/>
+    <mapgis-ui-textarea :style="textareaStyle" :class="{mapgisInputNoTool: !hasToolBar}" :placeholder="placeholder"
+                        class="mapgis-feature-textarea" v-model="valueCopy"/>
   </div>
 </template>
 
 <script>
-import featureIcon from "./projectIcon";
+import featureIcon from "../img/svgIcon";
 
 export default {
   name: "featureTextarea",
@@ -27,6 +28,7 @@ export default {
   },
   data() {
     return {
+      valueCopy: undefined,
       containerStyle: {
         height: "40px",
         lineHeight: "60px",
@@ -38,7 +40,35 @@ export default {
   props: {
     value: {
       type: String
+    },
+    placeholder: {
+      type: String
+    },
+    hasToolBar: {
+      type: Boolean,
+      default: true
+    },
+    textareaStyle: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
+  },
+  watch: {
+    value: {
+      handler: function () {
+        this.valueCopy = this.value;
+      }
+    },
+    valueCopy: {
+      handler: function () {
+        this.$emit("change", this.valueCopy);
+      }
+    }
+  },
+  created() {
+    this.valueCopy = this.value;
   }
 }
 </script>
@@ -66,5 +96,9 @@ export default {
   border-top-right-radius: 4px;
   margin: 0 auto;
   padding-left: 10px;
+}
+
+.mapgisInputNoTool {
+  border-radius: 4px;
 }
 </style>

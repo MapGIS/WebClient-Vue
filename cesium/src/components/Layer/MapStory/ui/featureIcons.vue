@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import marker from "./base64Image"
+import marker from "../img/base64Image"
 
 export default {
   name: "featureIcons",

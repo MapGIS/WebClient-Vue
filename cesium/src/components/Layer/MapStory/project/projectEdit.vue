@@ -4,12 +4,12 @@
       <mapgis-ui-row class="mapgis-project-edit-top-tool">
         <mapgis-ui-col span="18" class="mapgis-project-edit-top-left">
           <div @click="$_back" class="mapgis-project-edit-back-container">
-            <project-icon type="back" :iconStyle="iconStyle" class="mapgis-project-back"/>
+            <svg-icon type="back" :iconStyle="iconStyle" class="mapgis-project-back"/>
           </div>
         </mapgis-ui-col>
         <mapgis-ui-col span="6">
-          <project-icon type="delete"/>
-          <project-icon type="more"/>
+          <svg-icon @click="$_deleteProject" type="delete"/>
+          <svg-icon type="more"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row v-show="!editTitle" class="mapgis-project-edit-title">
@@ -17,14 +17,16 @@
           <h3 class="mapgis-project-edit-title-value">{{ projectCopy.title }}</h3>
         </mapgis-ui-col>
         <mapgis-ui-col span="6">
-          <project-icon id="mpEdit" @click="$_editTitle" class="mapgis-project-edit-edit-icon" type="edit"/>
+          <svg-icon id="mpEdit" @click="$_editTitle" class="mapgis-project-edit-edit-icon" type="edit"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row v-show="editTitle">
-        <mapgis-ui-input id="mpTitle" class="mapgis-project-edit-edit-title" v-model="projectCopy.title"/>
+        <feature-input @change="$_titleChange" title="标题" :inputStyle="inputStyle" id="mpTitle"
+                       v-model="projectCopy.title"/>
       </mapgis-ui-row>
       <mapgis-ui-row v-show="editTitle">
-        <mapgis-ui-textarea id="mpDescription" class="mapgis-project-edit-edit-title mapgis-project-edit-edit-description" v-model="projectCopy.description" placeholder="描述信息"/>
+        <feature-textarea @change="$_titleChange" :textareaStyle="textareaStyle" :hasToolBar="false" id="mpDescription"
+                          v-model="projectCopy.description" placeholder="描述信息"/>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col span="24" class="mapgis-project-edit-new-feature">
@@ -33,42 +35,50 @@
               <mapgis-ui-menu-item key="1" @click="$_addPoint">
                 添加点
               </mapgis-ui-menu-item>
-              <mapgis-ui-menu-item key="2">
+              <mapgis-ui-menu-item key="2" @click="$_addLine">
                 添加线
               </mapgis-ui-menu-item>
-              <mapgis-ui-menu-item key="3">
+              <mapgis-ui-menu-item key="3" @click="$_addPolygon">
                 添加多边形
               </mapgis-ui-menu-item>
             </mapgis-ui-menu>
             <mapgis-ui-button type="primary" class="mapgis-project-edit-feature-button"> 新建要素</mapgis-ui-button>
           </mapgis-ui-dropdown>
-          <mapgis-ui-button class="mapgis-project-edit-feature-preview">
+          <mapgis-ui-button @click="$_projectPreview" class="mapgis-project-edit-feature-preview">
             预览
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-edit-split"></mapgis-ui-row>
       <mapgis-ui-row>
-        <feature-row @editFeature="$_editFeature" :features="projectCopy.features"/>
+        <feature-row @deleteFeature="$_deleteFeature" @editFeature="$_editFeature" :features="projectCopy.features"/>
       </mapgis-ui-row>
     </div>
     <div v-show="editFeature">
-      <feature-edit :feature="currentFeature"/>
+      <feature-edit @featurePreview="$_featurePreview" @back="$_featureBack" :feature="currentFeature"/>
     </div>
   </div>
 </template>
 
 <script>
-import projectIcon from "./projectIcon"
-import featureRow from "./featureRow"
-import featureEdit from "./featureEdit"
+import svgIcon from "../img/svgIcon"
+import featureRow from "../feature/featureRow"
+import featureEdit from "../feature/featureEdit"
+import featureInput from "../ui/featureInput"
+import featureTextarea from "../ui/featureTextarea"
 
 export default {
   name: "projectEdit",
   components: {
-    "project-icon": projectIcon,
+    "svg-icon": svgIcon,
     "feature-row": featureRow,
     "feature-edit": featureEdit,
+    "feature-input": featureInput,
+    "feature-textarea": featureTextarea,
+  },
+  model: {
+    prop: "project",
+    event: "change"
   },
   data() {
     return {
@@ -78,6 +88,16 @@ export default {
       projectCopy: undefined,
       iconStyle: {
         opacity: 1
+      },
+      textareaStyle: {
+        marginBottom: "20px",
+        marginLeft: "-14px",
+        width: "358px"
+      },
+      inputStyle: {
+        marginBottom: "20px",
+        marginLeft: "-14px",
+        width: "358px"
       }
     }
   },
@@ -93,30 +113,57 @@ export default {
       }
     }
   },
-  created(){
+  watch: {
+    project: {
+      handler: function () {
+        this.projectCopy = this.project;
+      },
+      deep: true
+    },
+    projectCopy: {
+      handler: function () {
+        this.$emit("change", this.projectCopy);
+      },
+      deep: true
+    }
+  },
+  created() {
     this.projectCopy = this.project;
   },
   methods: {
-    $_editFeature(index){
+    $_projectPreview() {
+      this.$emit("projectPreview");
+    },
+    $_deleteProject() {
+      this.$emit("deleteProject");
+      this.$_back();
+    },
+    $_titleChange() {
+      this.$emit("titleChanged", {
+        title: this.projectCopy.title,
+        description: this.projectCopy.description,
+      });
+    },
+    $_editFeature(index) {
       this.editFeature = true;
       this.currentFeature = this.projectCopy.features[index];
     },
     $_editTitle() {
       this.editTitle = true;
     },
-    $_addPoint() {
-      this.projectCopy.features.push({
+    $_getFeature(type) {
+      return {
         "title": "无标题",
         "content": "",
         "containerType": "small",
         "images": "",
-        "baseUrl": {
-          "type":  "point",
-          "geometry": {},
-          "properties": {}
-        },
         "layerStyle": {
           "show": true
+        },
+        "baseUrl": {
+          "type": type,
+          "geometry": {},
+          "properties": {}
         },
         "camera": {
           "type": "cartesian",
@@ -127,10 +174,43 @@ export default {
           "pitch": 0,
           "roll": 0
         }
+      }
+    },
+    $_addPoint() {
+      let feature = this.$_getFeature("point");
+      // this.projectCopy.features.push(feature);
+      this.$emit("addFeature", {
+        type: "point",
+        feature: feature
+      });
+    },
+    $_addLine() {
+      let feature = this.$_getFeature("line");
+      this.projectCopy.features.push(feature);
+      this.$emit("addFeature", {
+        type: "line",
+        feature: feature
+      });
+    },
+    $_addPolygon() {
+      let feature = this.$_getFeature("polygon");
+      this.projectCopy.features.push(feature);
+      this.$emit("addFeature", {
+        type: "polygon",
+        feature: feature
       });
     },
     $_back() {
       this.$emit("backed");
+    },
+    $_featureBack() {
+      this.editFeature = false;
+    },
+    $_featurePreview(feature) {
+      this.$emit("featurePreview", feature);
+    },
+    $_deleteFeature(index) {
+      this.projectCopy.features.splice(index, 1);
     }
   }
 }

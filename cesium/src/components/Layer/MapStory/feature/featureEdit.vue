@@ -1,24 +1,20 @@
 <template>
   <div>
-    <mapgis-ui-row v-if="feature" class="mapgis-project-feature-edit-panel-head">
+    <mapgis-ui-row v-if="featureCopy" class="mapgis-project-feature-edit-panel-head">
       <mapgis-ui-col span="17" class="mapgis-project-feature-edit-panel-head-left">
-        <project-icon :icon-style="iconStyle" type="back"/>
+        <svg-icon @click="$_back" :icon-style="iconStyle" type="back"/>
       </mapgis-ui-col>
       <mapgis-ui-col span="7">
-        <mapgis-ui-button class="mapgis-project-feature-preview">预览</mapgis-ui-button>
+        <mapgis-ui-button @click="$_preview" class="mapgis-project-feature-preview">预览</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div v-if="feature" class="mapgis-project-feature-edit-panel">
+    <div v-if="featureCopy" class="mapgis-project-feature-edit-panel">
+      <upload-picture v-model="featureCopy.images"/>
       <mapgis-ui-row>
-        <div class="mapgis-project-feature-edit-panel-image">
-          <project-icon :icon-style="iconStyle" type="image"/>
-        </div>
-      </mapgis-ui-row>
-      <mapgis-ui-row>
-        <feature-input :value="feature.title" title="标题" placeholder="请输入标题"/>
+        <feature-input v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-textarea :value="feature.content"/>
+        <feature-textarea v-model="featureCopy.content"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
         <feature-select title="展示框大小"/>
@@ -35,25 +31,28 @@
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" :value="feature.camera.heading" title="方向角" placeholder="请输入方向角"/>
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
+                         placeholder="请输入方向角"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" :value="feature.camera.pitch" title="俯仰角" placeholder="请输入俯仰角"/>
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角" placeholder="请输入俯仰角"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input :value="feature.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
+        <feature-input v-model="featureCopy.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" :value="feature.camera.latitude" title="经度" placeholder="请输入经度"/>
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.longLatPosition[0]" title="经度"
+                         placeholder="请输入经度"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" :value="feature.camera.longitude" title="纬度" placeholder="请输入纬度"/>
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.longLatPosition[1]" title="纬度"
+                         placeholder="请输入纬度"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input :value="feature.camera.height" title="高度" placeholder="请输入高度"/>
+        <feature-input v-model="featureCopy.camera.longLatPosition[2]" title="高度" placeholder="请输入高度"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-button type="primary" class="mapgis-project-feature-edit-reset-camera">还原视角</mapgis-ui-button>
@@ -63,23 +62,26 @@
 </template>
 
 <script>
-import projectIcon from "./projectIcon"
-import featureInput from "./featureInput"
-import featureTextarea from "./featureTextarea"
-import featureSelect from "./featureSelect"
-import featureIcons from "./featureIcons"
+import svgIcon from "../img/svgIcon"
+import featureInput from "../ui/featureInput"
+import featureTextarea from "../ui/featureTextarea"
+import featureSelect from "../ui/featureSelect"
+import featureIcons from "../ui/featureIcons"
+import uploadPicture from "../ui/uploadPicture"
 
 export default {
   name: "featureEdit",
   components: {
-    "project-icon": projectIcon,
+    "svg-icon": svgIcon,
     "feature-input": featureInput,
     "feature-textarea": featureTextarea,
     "feature-select": featureSelect,
     "feature-icons": featureIcons,
+    "upload-picture": uploadPicture,
   },
   data() {
     return {
+      featureCopy: undefined,
       inputStyle: {
         width: "162px",
       },
@@ -91,6 +93,25 @@ export default {
   props: {
     feature: {
       type: Object
+    }
+  },
+  watch: {
+    feature: {
+      handler: function () {
+        this.featureCopy = this.feature;
+      },
+      deep: true
+    },
+  },
+  created() {
+    this.featureCopy = this.feature;
+  },
+  methods: {
+    $_preview() {
+      this.$emit("featurePreview", this.featureCopy);
+    },
+    $_back() {
+      this.$emit("back");
     }
   }
 }
@@ -131,15 +152,6 @@ export default {
 
 .mapgis-project-feature-preview:hover {
   color: black !important;
-}
-
-.mapgis-project-feature-edit-panel-image {
-  width: 344px;
-  height: 160px;
-  background: rgb(57, 68, 87);
-  border-radius: 4px;
-  margin: 30px auto;
-  padding-top: 50px;
 }
 
 .mapgis-project-feature-edit-panel-camera {

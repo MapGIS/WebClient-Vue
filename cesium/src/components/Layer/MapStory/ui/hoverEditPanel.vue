@@ -5,11 +5,11 @@
         <h2 class="mapgis-project-hover-panel-title-value">保存至项目</h2>
       </mapgis-ui-col>
       <mapgis-ui-col span="6">
-        <project-icon style="margin-left: 32px" type="close"/>
+        <svg-icon @click="$_close" style="margin-left: 32px" type="close"/>
       </mapgis-ui-col>
     </mapgis-ui-row>
     <mapgis-ui-row>
-      <mapgis-ui-input class="mapgis-project-hover-panel-input" placeholder="请输入标题"/>
+      <feature-input :inputStyle="inputStyle" @change="$_titleChange" placeholder="请输入标题"/>
     </mapgis-ui-row>
     <mapgis-ui-row>
       <mapgis-ui-select class="mapgis-project-hover-panel-select" :default-value="projects[0].title">
@@ -25,7 +25,7 @@
         </mapgis-ui-button>
       </mapgis-ui-col>
       <mapgis-ui-col span="12">
-        <mapgis-ui-button type="primary" class="mapgis-project-hover-save">
+        <mapgis-ui-button @click="$_close" type="primary" class="mapgis-project-hover-save">
           保存
         </mapgis-ui-button>
       </mapgis-ui-col>
@@ -34,12 +34,14 @@
 </template>
 
 <script>
-import projectIcon from "./projectIcon"
+import svgIcon from "../img/svgIcon"
+import featureInput from "./featureInput"
 
 export default {
   name: "hoverEditPanel",
   components: {
-    "project-icon": projectIcon,
+    "svg-icon": svgIcon,
+    "feature-input": featureInput,
   },
   props: {
     projects: {
@@ -62,6 +64,21 @@ export default {
           show: true,
         }]
       }
+    }
+  },
+  data() {
+    return {
+      inputStyle: {
+        width: "320px"
+      }
+    }
+  },
+  methods: {
+    $_titleChange(value) {
+      this.$emit("titleChanged", value);
+    },
+    $_close() {
+      this.$emit("closeHoverPanel");
     }
   }
 }
@@ -91,19 +108,6 @@ export default {
 .mapgis-project-hover-panel-title-value {
   color: white;
   font-weight: bold;
-}
-
-.mapgis-project-hover-panel-input {
-  width: 89% !important;
-  height: 54px !important;
-}
-
-.mapgis-project-hover-panel-input {
-  font-size: 18px !important;
-}
-
-.mapgis-project-hover-panel-input::-webkit-input-placeholder {
-  font-size: 18px;
 }
 
 .mapgis-project-hover-panel-select {

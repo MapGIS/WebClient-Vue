@@ -2,28 +2,30 @@
   <div>
     <mapgis-ui-row :class="{mapgisMapStoryFeatureActive: index === activeToolIndex}"
                    :key="index"
-                   v-for="(feature,index) in features" class="mapgis-mapstory-feature-row">
+                   v-for="(feature,index) in featuresCopy" class="mapgis-mapstory-feature-row">
       <div @click="$_clickRow(index)" class="mapgis-mapstory-feature-container" @mouseenter="$_rowEnter(index)"
            @mouseleave="$_rowLeave">
-        <mapgis-ui-col span="12">
-          <div class="mapgis-mapstory-feature-panel-title">
+        <mapgis-ui-col span="18">
+          <div :title="feature.title" class="mapgis-mapstory-feature-panel-title">
             <feature-icon class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
                           :iconStyle="iconStylePoint" :type="feature.baseUrl.type"/>
             <p class="mapgis-mapstory-feature-panel-title-value">{{ feature.title }}</p>
           </div>
         </mapgis-ui-col>
-        <mapgis-ui-col span="12" class="mapgis-mapstory-tool-bar">
+        <mapgis-ui-col span="6" class="mapgis-mapstory-tool-bar">
           <feature-icon @click="$_editFeature(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"
                         v-show="showToolIndex === index"
                         type="edit"/>
-          <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle" v-show="showToolIndex === index"
+          <feature-icon @click="$_delete(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"
+                        v-show="showToolIndex === index"
                         type="delete"/>
           <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
                         v-show="showToolIndex !== index && feature.layerStyle.show" type="eye"/>
           <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle" @click="$_showFeature(index, true)"
                         v-show="showToolIndex === index && !feature.layerStyle.show"
                         type="eye"/>
-          <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle" @click="$_showFeature(index, false)"
+          <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
+                        @click="$_showFeature(index, false)"
                         v-show="showToolIndex === index && feature.layerStyle.show"
                         type="noEye"/>
         </mapgis-ui-col>
@@ -33,7 +35,7 @@
 </template>
 
 <script>
-import featureIcon from "./projectIcon"
+import featureIcon from "../img/svgIcon"
 
 export default {
   name: "featureRow",
@@ -42,6 +44,7 @@ export default {
   },
   data() {
     return {
+      featuresCopy: [],
       activeToolIndex: undefined,
       hoverIcon: undefined,
       showToolIndex: undefined,
@@ -71,7 +74,16 @@ export default {
       }
     },
   },
-  mounted() {
+  watch: {
+    features: {
+      handler: function () {
+        this.featuresCopy = this.features;
+      },
+      deep: true
+    }
+  },
+  created() {
+    this.featuresCopy = this.features;
   },
   methods: {
     $_editFeature(index) {
@@ -87,7 +99,11 @@ export default {
       this.showToolIndex = index;
     },
     $_showFeature(index, flag) {
+      this.$set(this.featuresCopy[index].layerStyle, "show", flag);
       this.$emit("showFeature", index, flag);
+    },
+    $_delete(index) {
+      this.$emit("deleteFeature", index);
     }
   }
 }
@@ -121,6 +137,8 @@ export default {
   position: relative;
   color: white;
   height: 36px;
+  width: 100%;
+  overflow: hidden;
   line-height: 36px;
   font-size: 14px;
   text-align: left;
