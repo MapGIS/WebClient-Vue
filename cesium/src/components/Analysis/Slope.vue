@@ -191,7 +191,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: result => {
           this.remove();
           this._enableBrightness(); // 开启光照
           slopeAnalysis =
@@ -202,7 +202,7 @@ export default {
             });
           slopeAnalysis.enableContour(false);
           slopeAnalysis.updateMaterial("slope");
-          slopeAnalysis.changeAnalyseArea(positions);
+          slopeAnalysis.changeAnalyseArea(result.positions);
           vueCesium.SlopeAnalysisManager.changeOptions(
             vueKey,
             vueIndex,
