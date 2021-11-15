@@ -1,14 +1,42 @@
 <template>
   <div>
-    <slot></slot>
+    <mapgis-ui-card
+      size="small"
+      hoverable
+      :style="{ width: `${width}px` }"
+      class="mapgis-city-glow"
+    >
+      <mapgis-ui-popconfirm @confirm="confirmSetting" @cancel="cancelSetting">
+        <template slot="title">
+          <div>颜色设置</div>
+          <div>把之前的颜色色板放这里</div>
+        </template>
+        <mapgis-ui-iconfont
+          type="mapgis-setting"
+          class="mapgis-city-glow-setting"
+        />
+      </mapgis-ui-popconfirm>
+      <mapgis-ui-slider :style="{ width: width }"> </mapgis-ui-slider>
+      <span class="mapgis-city-glow-starttime">起始时间:{{ startTime }}</span>
+      <div class="mapgis-city-glow-toolbar">
+        <mapgis-ui-iconfont type="mapgis-chevrons-left" />
+        <mapgis-ui-iconfont type="mapgis-chevron-left" />
+        <!-- <mapgis-ui-button type="primary" shape="circle"> -->
+        <mapgis-ui-iconfont
+          type="mapgis-play-circle-fill"
+          class="mapgis-city-glow-toolbar-main"
+        />
+        <!-- </mapgis-ui-button> -->
+        <mapgis-ui-iconfont type="mapgis-chevron-right" />
+        <mapgis-ui-iconfont type="mapgis-chevrons-right" />
+      </div>
+      <span class="mapgis-city-glow-endtime">结束时间:{{ endTime }}</span>
+    </mapgis-ui-card>
   </div>
 </template>
 
 <script>
-import layerMixin from "../layer/layerMixin";
-import layerEvents from "../../lib/layerEvents";
-import clonedeep from "lodash.clonedeep";
-
+import moment from "moment";
 import { MRFS } from "@mapgis/webclient-es6-service";
 const { QueryDocFeature, QueryLayerFeature } = MRFS;
 
@@ -20,6 +48,26 @@ export default {
   inject: ["mapbox", "map"],
   /* mixins: [layerMixin], */
   props: {
+    width: {
+      type: Number,
+      default: 500
+    },
+    stepTime: {
+      type: Number,
+      default: 60
+    },
+    fps: {
+      type: Number,
+      default: 60
+    },
+    startTime: {
+      type: [Number, String],
+      default: moment().format("L")
+    },
+    endTime: {
+      type: [Number, String],
+      default: moment().format("L")
+    },
     // --------------------IGServer小数据-----------------
     baseUrl: {
       type: String,
@@ -77,15 +125,6 @@ export default {
     feature: {
       geometry: {},
       properties: { 属性名: "属性值" }
-    },
-
-    time: {
-      type: Number,
-      default: 60
-    },
-    fps: {
-      type: Number,
-      default: 60
     }
   },
   data() {
@@ -102,6 +141,9 @@ export default {
   model: {
     prop: "feature",
     event: "change-feature"
+  },
+  created() {
+    moment.locale();
   },
   mounted() {
     this.$_deferredMount();
@@ -198,24 +240,24 @@ export default {
       }
     },
     startGlow() {
-      const { id, map, field, heightScale, time, fps } = this;
+      const { id, map, field, heightScale, stepTime, fps } = this;
       const vm = this;
-      // const allTime = time * 60;
+      // const allTime = stepTime * 60;
       let startTime = 973935416;
       let endTime = 1636639287;
       let midTime = (startTime + endTime) / 2;
 
       let timeCount = endTime - startTime;
-      let timeStep = timeCount / time;
+      let timeStep = timeCount / stepTime;
 
       let draw = function(now) {
         // console.log(now);
-        let percent = vm.currenttime / time;
+        let percent = vm.currenttime / stepTime;
         vm.timestamp++;
         if (vm.timestamp % fps == 0) {
           midTime = startTime + timeStep * vm.currenttime;
           vm.currenttime++;
-          if (vm.currenttime >= time) {
+          if (vm.currenttime >= stepTime) {
             vm.currenttime = 0;
             vm.timestamp = 0;
           }
@@ -251,7 +293,7 @@ export default {
         map.setPaintProperty(id, "fill-extrusion-color", colors);
         map.setFilter(id, ["<=", ["get", "startTime"], midTime]);
 
-        // Animate the map bearing and light color over time, and make the light more
+        // Animate the map bearing and light color over stepTime, and make the light more
         // intense when the audio is louder.
         /* map.setBearing(now / 500);
         const hue = (now / 100) % 360;
@@ -265,7 +307,55 @@ export default {
       };
 
       requestAnimationFrame(draw);
-    }
+    },
+    confirmSetting() {},
+    cancelSetting() {}
   }
 };
 </script>
+
+<style scoped>
+.mapgis-city-glow {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  margin: 0px auto;
+}
+.mapgis-city-glow-toolbar {
+  display: flex;
+  width: 110px;
+  margin: 0px auto;
+}
+
+.mapgis-city-glow-toolbar-main {
+  color: #1890ff;
+}
+
+.mapgis-city-glow-toolbar > .anticon {
+  font-size: 22px;
+}
+
+.mapgis-ui-card-small > .mapgis-ui-card-body {
+  padding: 6px 12px;
+}
+
+.mapgis-city-glow-starttime {
+  position: absolute;
+  left: 10px;
+}
+
+.mapgis-city-glow-endtime {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+}
+.mapgis-city-glow-setting {
+  position: absolute;
+  font-size: 18px;
+  top: 4px;
+  right: 4px;
+}
+.mapgis-ui-popover {
+  background: transparent;
+}
+</style>

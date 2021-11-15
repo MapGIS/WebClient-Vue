@@ -9,6 +9,7 @@ export default {
     heightScale: 2,
     time: 60,
     fps: 60,
+    width: "600px",
   },
 };
 
@@ -56,4 +57,5 @@ export const 城市生长 = Template.bind({});
   heightScale: 2,
   time: 60,
   fps: 60,
+  width: "600px",
 };
