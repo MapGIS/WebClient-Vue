@@ -219,3 +219,57 @@ export function setBrightnessStatusAndUniformsBrightness(
   sceneBrightness.enabled = enabled;
   sceneBrightness.uniforms.brightness = brightness;
 }
+
+/**
+ * 设置探照灯效果
+ * @param {Object} light 探照灯参数对象
+ */
+export function setLight(light, viewer) {
+  viewer.scene.light = light;
+}
+
+/**
+ * 获取light对象
+ * @returns light对象
+ */
+export function getLight(viewer) {
+  return viewer.scene.light;
+}
+
+/**
+ * 设置DynamicAtmosphereLighting值
+ * @param {Boolean} dynamicAtmosphereLighting
+ */
+export function setDynamicAtmosphereLighting(
+  dynamicAtmosphereLighting,
+  viewer
+) {
+  viewer.scene.globe.dynamicAtmosphereLighting = dynamicAtmosphereLighting;
+}
+
+/**
+ * 获取DynamicAtmosphereLighting值
+ * @returns DynamicAtmosphereLighting值
+ */
+export function getDynamicAtmosphereLighting(viewer) {
+  return viewer.scene.globe.dynamicAtmosphereLighting;
+}
+
+/**
+ * 设置DynamicAtmosphereLightingFromSun值
+ * @param {Boolean} DynamicAtmosphereLightingFromSun
+ */
+export function setDynamicAtmosphereLightingFromSun(
+  dynamicAtmosphereLightingFromSun,
+  viewer
+) {
+  viewer.scene.globe.dynamicAtmosphereLightingFromSun = dynamicAtmosphereLightingFromSun;
+}
+
+/**
+ * 获取DynamicAtmosphereLightingFromSun值
+ * @returns DynamicAtmosphereLightingFromSun值
+ */
+export function getDynamicAtmosphereLightingFromSun(viewer) {
+  return viewer.scene.globe.dynamicAtmosphereLightingFromSun;
+}

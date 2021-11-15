@@ -33,9 +33,12 @@ import VueOptions from "../Base/Vue/VueOptions";
 import {
   isEnableLighting,
   setEnableLighting,
-  getBrightness,
-  getBrightnessStatusAndUniformsBrightness,
-  setBrightnessStatusAndUniformsBrightness
+  getLight,
+  setLight,
+  getDynamicAtmosphereLighting,
+  setDynamicAtmosphereLighting,
+  getDynamicAtmosphereLightingFromSun,
+  setDynamicAtmosphereLightingFromSun
 } from "../WebGlobe/util";
 
 export default {
@@ -64,7 +67,7 @@ export default {
      * @type Boolean
      * @description 坡向分析是否开启箭头显示结果
      */
-    enableArrow:{
+    enableArrow: {
       type: Boolean,
       default: false
     },
@@ -72,10 +75,10 @@ export default {
      * @type Number
      * @description 坡向分析箭头显示结果时箭头的密度
      */
-    arrowDensity:{
+    arrowDensity: {
       type: Number,
       default: 3.0
-    },
+    }
   },
   watch: {
     rampColors: {
@@ -99,9 +102,11 @@ export default {
 
       isEnableLighting: undefined, // 光照是否已开启
 
-      noBrightness: undefined, // 是否有brightness对象
+      light: undefined, // 是否有light对象
 
-      brightnessStatusAndUniformsBrightness: undefined, // 光照参数
+      dynamicAtmosphereLighting: undefined,
+
+      dynamicAtmosphereLightingFromSun: undefined,
 
       info:
         "坡向分析需要带法线地形。\r\n坡向按照东北西南的顺序表示方向,即0°表示坡向指向正东方向。"
@@ -164,41 +169,28 @@ export default {
       }
       // 调高亮度
       const { viewer } = this;
-      const stages = viewer.scene.postProcessStages;
-      const brightness = getBrightness(this.viewer);
-      if (!brightness) {
-        // 初始没有brightness对象
-        this.noBrightness = true;
-        viewer.scene.brightness = stages.add(
-          this.Cesium.PostProcessStageLibrary.createBrightnessStage()
-        );
-      }
-      // 设置前记录原有光照参数
-      this.brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
-        this.viewer
+      this.light = getLight(viewer);
+      this.dynamicAtmosphereLighting = getDynamicAtmosphereLighting(viewer);
+      this.dynamicAtmosphereLightingFromSun = getDynamicAtmosphereLightingFromSun(
+        viewer
       );
-      const statusAndUniformsBrightness = {
-        enabled: true,
-        brightness: 1.2
-      };
-      setBrightnessStatusAndUniformsBrightness(
-        statusAndUniformsBrightness,
-        this.viewer
-      );
+      const searchLight = new this.Cesium.DirectionalLight({
+        direction: viewer.scene.camera.directionWC, // Updated every frame
+        intensity: 2.0
+      });
+      setLight(searchLight, viewer);
+      setDynamicAtmosphereLighting(false, viewer);
+      setDynamicAtmosphereLightingFromSun(false, viewer);
     },
     /**
      * @description 开始绘制并分析
      */
     analysis() {
-      let { vueCesium, vueKey, vueIndex,Cesium } = this;
+      let { vueCesium, vueKey, vueIndex, Cesium } = this;
       let find = vueCesium.AspectAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { aspectAnalysis, drawElement } = options;
       const { viewer } = this;
-
-      //开启光照
-      this._enableBrightness();
-
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
       vueCesium.AspectAnalysisManager.changeOptions(
@@ -217,7 +209,10 @@ export default {
         colors.push(color);
       });
       const rampColor = this._transformColor(colors);
-      let cartesian2 = new Cesium.Cartesian2(this.arrowDensity,this.arrowDensity);
+      let cartesian2 = new Cesium.Cartesian2(
+        this.arrowDensity,
+        this.arrowDensity
+      );
 
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
@@ -228,16 +223,20 @@ export default {
           aspectAnalysis =
             aspectAnalysis ||
             new this.Cesium.TerrainAnalyse(viewer, {
-              aspectRampColor: rampColor,
+              aspectRampColor: rampColor
             });
           aspectAnalysis.enableContour(false);
           aspectAnalysis.updateMaterial("aspect");
           aspectAnalysis.changeAnalyseArea(result.positions);
 
-          if(vm.enableArrow){
+          if (vm.enableArrow) {
             //箭头坡向效果
-            viewer.scene.globe.material = Cesium.Material.fromType('AspectArrow');
-            viewer.scene.globe.material.uniforms.AspectArrowMap = Cesium.buildModuleUrl('Assets/Textures/arrow3.png');
+            viewer.scene.globe.material = Cesium.Material.fromType(
+              "AspectArrow"
+            );
+            viewer.scene.globe.material.uniforms.AspectArrowMap = Cesium.buildModuleUrl(
+              "Assets/Textures/arrow3.png"
+            );
             //改变坡向箭头的密度
             aspectAnalysis.changeArrowAspectRepeat(cartesian2);
             viewer.scene.globe.material.uniforms.repeat = cartesian2;
@@ -311,37 +310,21 @@ export default {
      * 恢复光照设置
      */
     _restoreEnableLighting() {
+      const { viewer } = this;
       // 恢复光照开启状态设置
-      if (
-        this.isEnableLighting !== undefined &&
-        this.isEnableLighting !== isEnableLighting(this.viewer)
-      ) {
-        setEnableLighting(this.isEnableLighting, this.viewer);
+      if (this.isEnableLighting !== undefined) {
+        setEnableLighting(this.isEnableLighting, viewer);
       }
-      const stages = this.viewer.scene.postProcessStages;
-      if (this.noBrightness) {
-        // 如果开始没有brightness对象，恢复
-        stages.remove(this.viewer.scene.brightness);
-        this.viewer.scene.brightness = undefined;
-      } else {
-        // 恢复brightness参数设置
-        if (this.brightnessStatusAndUniformsBrightness !== undefined) {
-          const brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
-            this.viewer
-          );
-          if (
-            this.brightnessStatusAndUniformsBrightness.enabled !==
-              brightnessStatusAndUniformsBrightness.enabled ||
-            this.brightnessStatusAndUniformsBrightness.brightness !==
-              brightnessStatusAndUniformsBrightness.brightness
-          ) {
-            setBrightnessStatusAndUniformsBrightness(
-              this.brightnessStatusAndUniformsBrightness,
-              this.viewer
-            );
-          }
-        }
+
+      // 恢复brightness参数设置
+      if (this.light !== undefined) {
+        setLight(this.light);
       }
+      setDynamicAtmosphereLighting(this.dynamicAtmosphereLighting, viewer);
+      setDynamicAtmosphereLightingFromSun(
+        this.dynamicAtmosphereLightingFromSun,
+        viewer
+      );
     }
   }
 };
