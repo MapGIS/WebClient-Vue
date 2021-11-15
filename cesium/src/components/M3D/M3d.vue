@@ -133,7 +133,6 @@ export default {
                   new Cesium.Cartesian3(scale.x, scale.y, scale.z)
                 );
               }
-              // if (opacity >= 0) { vm.loopM3d(m3ds, "1.0"); }
               vm.loopM3d(m3ds, "1.0");
               vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
             }
@@ -172,12 +171,15 @@ export default {
     },
     changeOpacity(opacity) {
       const { vueKey, vueIndex } = this;
+      const vm = this;
       let find = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
         m3ds.forEach(m3d => {
-          if (m3d.type == M3dType.Model || m3d.type == M3dType.Instance) {
+          let type = vm.checkType(m3d);
+          type = type == M3dType.UnKnow ? m3d.type : type;
+          if (type == M3dType.Model || type == M3dType.Instance) {
             m3d.style = new Cesium.Cesium3DTileStyle({
               color: `color('#FFFFFF', ${opacity})`
             });
@@ -216,7 +218,7 @@ export default {
       if (tileset._content) {
         let type = tileset._content._dataType;
         if (type >= 0) {
-          if (version == "1.0") {
+          if (version == "0.0" || version == "1.0") {
             switch (type) {
               case M3dType_0_0.Model:
                 m3dType = M3dType.Model;
@@ -315,7 +317,7 @@ export default {
         m3ds.forEach(m3d => {
           if (layers) {
             m3d.show = true;
-            // @description cesium 1.84 (M3D 2.0)将layerIndex内部隐藏起来了 
+            // @description cesium 1.84 (M3D 2.0)将layerIndex内部隐藏起来了
             // @date 20211112 潘卓然， 等到三维放开这个属性后还原
             if (layers.indexOf(m3d.layerIndex || m3d._layerIndex) >= 0) {
             } else {
