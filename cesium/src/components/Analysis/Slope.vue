@@ -278,7 +278,7 @@ export default {
 
       // 恢复brightness参数设置
       if (this.light !== undefined) {
-        setLight(this.light);
+        setLight(this.light, viewer);
       }
       setDynamicAtmosphereLighting(this.dynamicAtmosphereLighting, viewer);
       setDynamicAtmosphereLightingFromSun(
