@@ -100,7 +100,7 @@ export default {
     },
     $_showFeature(index, flag) {
       this.$set(this.featuresCopy[index].layerStyle, "show", flag);
-      this.$emit("showFeature", index, flag);
+      this.$emit("showFeature", this.featuresCopy[index].id, flag);
     },
     $_delete(index) {
       this.$emit("deleteFeature", index);

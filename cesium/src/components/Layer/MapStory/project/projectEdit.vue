@@ -41,6 +41,9 @@
               <mapgis-ui-menu-item key="3" @click="$_addPolygon">
                 添加多边形
               </mapgis-ui-menu-item>
+              <mapgis-ui-menu-item key="4" @click="$_addRectangle">
+                添加矩形
+              </mapgis-ui-menu-item>
             </mapgis-ui-menu>
             <mapgis-ui-button type="primary" class="mapgis-project-edit-feature-button"> 新建要素</mapgis-ui-button>
           </mapgis-ui-dropdown>
@@ -51,11 +54,12 @@
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-edit-split"></mapgis-ui-row>
       <mapgis-ui-row>
-        <feature-row @deleteFeature="$_deleteFeature" @editFeature="$_editFeature" :features="projectCopy.features"/>
+        <feature-row @showFeature="$_showFeature" @deleteFeature="$_deleteFeature" @editFeature="$_editFeature"
+                     :features="projectCopy.features"/>
       </mapgis-ui-row>
     </div>
     <div v-show="editFeature">
-      <feature-edit @featurePreview="$_featurePreview" @back="$_featureBack" :feature="currentFeature"/>
+      <feature-edit @changeColor="$_changeColor" @changeIcon="$_changeIcon" @featurePreview="$_featurePreview" @back="$_featureBack" :feature="currentFeature"/>
     </div>
   </div>
 </template>
@@ -120,6 +124,12 @@ export default {
       },
       deep: true
     },
+    "project.features": {
+      handler: function () {
+        this.projectCopy = this.project;
+      },
+      deep: true
+    },
     projectCopy: {
       handler: function () {
         this.$emit("change", this.projectCopy);
@@ -131,6 +141,15 @@ export default {
     this.projectCopy = this.project;
   },
   methods: {
+    $_changeColor(color) {
+      this.$emit("changeColor",color, this.currentFeature.id, this.currentFeature.drawType);
+    },
+    $_changeIcon(icon) {
+      this.$emit("changeIcon", icon, this.currentFeature.id);
+    },
+    $_showFeature(id, flag) {
+      this.$emit("showFeature", id, flag);
+    },
     $_projectPreview() {
       this.$emit("projectPreview");
     },
@@ -154,6 +173,7 @@ export default {
     $_getFeature(type) {
       return {
         "title": "无标题",
+        "id": type + parseInt(String(Math.random() * 100000000)),
         "content": "",
         "containerType": "small",
         "images": "",
@@ -172,31 +192,36 @@ export default {
           "height": 0,
           "heading": 0,
           "pitch": 0,
-          "roll": 0
+          "roll": 0,
+          "longLatPosition": [0, 0, 0]
         }
       }
     },
     $_addPoint() {
       let feature = this.$_getFeature("point");
-      // this.projectCopy.features.push(feature);
       this.$emit("addFeature", {
         type: "point",
         feature: feature
       });
     },
     $_addLine() {
-      let feature = this.$_getFeature("line");
-      this.projectCopy.features.push(feature);
+      let feature = this.$_getFeature("polyline");
       this.$emit("addFeature", {
-        type: "line",
+        type: "polyline",
         feature: feature
       });
     },
     $_addPolygon() {
       let feature = this.$_getFeature("polygon");
-      this.projectCopy.features.push(feature);
       this.$emit("addFeature", {
         type: "polygon",
+        feature: feature
+      });
+    },
+    $_addRectangle() {
+      let feature = this.$_getFeature("polygon");
+      this.$emit("addFeature", {
+        type: "rectangle",
         feature: feature
       });
     },

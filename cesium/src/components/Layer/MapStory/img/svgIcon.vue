@@ -89,7 +89,7 @@
               d="M12 2a8 8 0 0 1 8 8.2c0 3.3-2.7 7.3-8 11.8-5.3-4.5-8-8.5-8-11.8A8 8 0 0 1 12 2zm6 8.2A6 6 0 0 0 12 4a6 6 0 0 0-6 6.2c0 2.3 2 5.4 6 9.1 4-3.7 6-6.8 6-9.1zM12 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"></path>
       </g>
     </svg>
-    <svg :style="iconStyle" v-if="type === 'line'" :class="{mapgisIconHover : hoverIcon === 'line'}"
+    <svg :style="iconStyle" v-if="type === 'polyline'" :class="{mapgisIconHover : hoverIcon === 'polyline'}"
          class="mapgis-mapstory-icon"
          viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false">
       <g viewBox="0 0 24 24">

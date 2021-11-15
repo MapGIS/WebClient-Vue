@@ -2,7 +2,8 @@
   <div class="mapgis-feature-icons-container">
     <div class="mapgis-feature-icons-title">{{ title }}</div>
     <div class="mapgis-feature-icons">
-      <img class="mapgis-feature-icon" v-for="(marker,index) in markers" :key="index" :src="marker.value" :title="marker.key" alt=""/>
+      <img @click="$_click(marker.key)" class="mapgis-feature-icon" v-for="(marker,index) in markers" :key="index"
+           :src="marker.value" :title="marker.key" alt=""/>
     </div>
   </div>
 </template>
@@ -21,6 +22,11 @@ export default {
     title: {
       type: String,
       default: "title"
+    }
+  },
+  methods: {
+    $_click(marker) {
+      this.$emit("changeIcon", marker);
     }
   }
 }
@@ -54,7 +60,7 @@ export default {
   padding-left: 10px;
 }
 
-.mapgis-feature-icon{
+.mapgis-feature-icon {
   width: 44px;
   height: 44px;
   margin: 10px;

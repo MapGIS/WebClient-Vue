@@ -1,7 +1,8 @@
 <template>
   <div v-if="currentFeature" class="mapgis-story-panel-large" :style="{height: panelHeight + 'px'}">
     <img v-if="showFullImg" class="mapgis-story-panel-large-full-img" :src="currentImg" alt="">
-    <svg-icon @click="$_closeFull"  class="mapgis-story-panel-large-full-close" :icon-style="iconStyle" :container-style="containerStyle" type="close"/>
+    <svg-icon @click="$_closeFull" class="mapgis-story-panel-large-full-close" :icon-style="iconStyle"
+              :container-style="containerStyle" type="close"/>
     <img class="mapgis-story-panel-large-carousel-img" v-if="!showCarousel" :src="currentFeature.images" alt="">
     <mapgis-ui-carousel :afterChange="$_afterChange" v-if="showCarousel" class="mapgis-story-panel-large-carousel"
                         autoplay arrows>
@@ -111,8 +112,9 @@ export default {
     },
     $_flyTo() {
       const {x, y, z} = this.currentFeature.baseUrl.geometry;
+      const {height, longLatPosition} = this.currentFeature.camera;
       let entity = this.viewer.entities.add({
-        position: new Cesium.Cartesian3(x, y, z),
+        position: new Cesium.Cartesian3.fromDegrees(longLatPosition[0], longLatPosition[1], 0),
         point: {
           pixelSize: 10,
           color: Cesium.Color.fromCssColorString("#000").withAlpha(0),
@@ -273,7 +275,7 @@ export default {
   padding-right: 20px;
 }
 
-.mapgis-story-panel-large-full-img{
+.mapgis-story-panel-large-full-img {
   position: fixed;
   z-index: 10000000;
   top: 0;
@@ -282,7 +284,7 @@ export default {
   height: 1080px;
 }
 
-.mapgis-story-panel-large-full-close{
+.mapgis-story-panel-large-full-close {
   position: fixed;
   z-index: 10000001;
   top: 0;

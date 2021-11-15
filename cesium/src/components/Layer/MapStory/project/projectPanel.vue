@@ -21,6 +21,9 @@
       </div>
       <div v-if="addProject">
         <project-edit
+            @changeIcon="$_changeIcon"
+            @changeColor="$_changeColor"
+            @showFeature="$_showFeature"
             @projectPreview="$_projectPreview"
             @featurePreview="$_featurePreview"
             @addFeature="$_addFeature" @deleteProject="$_deleteProject" @titleChanged="$_titleChanged"
@@ -139,23 +142,22 @@ export default {
         MRFS.FeatureService.get(this.projects[index].url, function (result) {
           if (typeof result === "string") {
             result = JSON.parse(result);
-            console.log("result", result)
             const {features} = result;
             if (features && features instanceof Array) {
               for (let i = 0; i < features.length; i++) {
-                console.log("features[i].baseUrl",features[i].baseUrl)
                 const {geometry} = features[i].baseUrl;
                 const {x, y, z} = geometry;
                 if (x && y && z) {
                   let img = document.createElement("img");
                   let imgUrl = features[i].layerStyle.billboard.image;
-                  if(typeof imgUrl === 'number'){
+                  if (typeof imgUrl === 'number') {
                     imgUrl = base64Image[imgUrl].value;
                   }
                   img.src = imgUrl;
                   img.onload = function () {
                     vm.viewer.entities.add({
-                      position:  new Cesium.Cartesian3(x, y, z),
+                      id: features[i].id,
+                      position: new Cesium.Cartesian3(x, y, z),
                       billboard: {
                         image: img
                       }
@@ -184,6 +186,15 @@ export default {
     $_closeHoverPanel() {
       this.showEditPanel = false;
       this.$emit("closeHoverPanel");
+    },
+    $_changeIcon(icon, id) {
+      this.$emit("changeIcon", icon, id);
+    },
+    $_changeColor(color, id, type) {
+      this.$emit("changeColor", color, id, type);
+    },
+    $_showFeature(id, flag) {
+      this.$emit("showFeature", id, flag);
     },
     $_projectPreview() {
       this.showLargePanel = true;

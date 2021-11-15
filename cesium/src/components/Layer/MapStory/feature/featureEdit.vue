@@ -19,8 +19,11 @@
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
         <feature-select title="展示框大小"/>
       </mapgis-ui-row>
-      <mapgis-ui-row>
-        <feature-icons title="图标"/>
+      <mapgis-ui-row v-if="featureCopy.drawType === 'point'">
+        <feature-icons title="featureCopy.drawType"/>
+      </mapgis-ui-row>
+      <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
+        <feature-color @changeColor="$_changeColor" title="填充颜色"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-panel-camera">
         <mapgis-ui-col :span="16">
@@ -31,15 +34,18 @@
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.orientation.heading" title="方向角"
                          placeholder="请输入方向角"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角" placeholder="请输入俯仰角"/>
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.orientation.pitch" title="俯仰角" placeholder="请输入俯仰角"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input v-model="featureCopy.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
+        <feature-input v-model="featureCopy.camera.orientation.roll" title="滚动角" placeholder="请输入滚动角"/>
+      </mapgis-ui-row>
+      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
+        <feature-input v-model="featureCopy.camera.height" title="相机高度" placeholder="请输入滚动角"/>
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-col span="12">
@@ -67,6 +73,7 @@ import featureInput from "../ui/featureInput"
 import featureTextarea from "../ui/featureTextarea"
 import featureSelect from "../ui/featureSelect"
 import featureIcons from "../ui/featureIcons"
+import featureColor from "../ui/featureColor"
 import uploadPicture from "../ui/uploadPicture"
 
 export default {
@@ -78,6 +85,7 @@ export default {
     "feature-select": featureSelect,
     "feature-icons": featureIcons,
     "upload-picture": uploadPicture,
+    "feature-color": featureColor,
   },
   data() {
     return {
@@ -107,6 +115,12 @@ export default {
     this.featureCopy = this.feature;
   },
   methods: {
+    $_changeColor(color) {
+      this.$emit("changeColor",color);
+    },
+    $_changeIcon(icon) {
+      this.$emit("changeIcon", icon);
+    },
     $_preview() {
       this.$emit("featurePreview", this.featureCopy);
     },
@@ -123,7 +137,6 @@ export default {
   height: 836px;
   overflow: hidden;
   overflow-y: scroll;
-  padding-bottom: 20px;
 }
 
 .mapgis-project-feature-edit-panel-head {
