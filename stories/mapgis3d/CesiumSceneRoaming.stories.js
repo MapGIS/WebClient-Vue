@@ -154,7 +154,7 @@ const Template = (args, { argTypes }) => ({
           :tilingScheme="tilingScheme"
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" />
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-scene-roaming 
         :speed="speed"

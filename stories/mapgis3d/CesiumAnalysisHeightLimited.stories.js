@@ -51,11 +51,11 @@ const Template = (args, { argTypes }) => ({
     template: `
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
-      <mapgis-3d-igs-m3d
+      <mapgis-3d-m3d-layer
           :vueIndex="$props.models[0].vueIndex"
           :url="m3dUrl1"
       />
-      <mapgis-3d-igs-m3d
+      <mapgis-3d-m3d-layer
           :vueIndex="$props.models[1].vueIndex"
           :url="m3dUrl2"
       />
@@ -71,7 +71,6 @@ export const HeightLimited = Template.bind({});
 HeightLimited.args = {
     models: [
         {
-
             vueIndex: 1,
             title: "中地大楼模型",
         },
@@ -80,10 +79,7 @@ HeightLimited.args = {
             title: "学校模型",
         },
     ],
-
-    maxSliderHeight:120,
     color:"#1C9C80",
-    opacity: 0.6,
 }
 HeightLimited.parameters = {
     docs: {

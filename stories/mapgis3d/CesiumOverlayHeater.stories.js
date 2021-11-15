@@ -17,7 +17,7 @@ const Template = (args, {argTypes}) => ({
     components: {
         MapgisWebScene,
         "mapgis-3d-arcgis-tile-layer": Mapgis3dArcgisTileLayer,
-        "mapgis-3d-igs-m3d": Mapgis3dIgsM3d,
+        "mapgis-3d-m3d-layer": Mapgis3dIgsM3d,
         "mapgis-3d-cesium-heater-layer": Mapgis3dCesiumHeaterLayer,
         "mapgis-3d-mapv-heater-layer": Mapgis3dMapvHeaterLayer,
     },
@@ -210,7 +210,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene style="height: 95vh">
-      <mapgis-3d-igs-m3d
+      <mapgis-3d-m3d-layer
           v-if="enableModel"
           :autoReset="autoReset"
           :maximumScreenSpaceError="maximumScreenSpaceError"

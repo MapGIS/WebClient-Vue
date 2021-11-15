@@ -18,7 +18,7 @@ const Template = (args, { argTypes }) => ({
     <mapgis-web-scene style="height:95vh"
       v-bind:animation="false"
       v-bind:timeline="false">
-      <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
+      <mapgis-3d-m3d-layer :url="m3durl"> </mapgis-3d-m3d-layer>
       <div
         v-show="enableControl"
         :style="controlStyle"

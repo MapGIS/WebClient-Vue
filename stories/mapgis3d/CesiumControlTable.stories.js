@@ -13,7 +13,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
     <mapgis-web-scene style="height: 800px">
-    <mapgis-3d-igs-m3d :url="url"> </mapgis-3d-igs-m3d>
+    <mapgis-3d-m3d-layer :url="url"> </mapgis-3d-m3d-layer>
     <mapgis-3d-table
         :dataSource="dataSource"
         :pagination="pagination"

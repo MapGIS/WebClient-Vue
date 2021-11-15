@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-scene style="height: 95vh">
-        <mapgis-3d-igs-m3d :url="m3dUrl2"  :vue-index="vueIndex" :auto-reset="autoReset" :maximum-screen-space-error="maximumScreenSpaceError"></mapgis-3d-igs-m3d>
+        <mapgis-3d-m3d-layer :url="m3dUrl2"  :vue-index="vueIndex" :auto-reset="autoReset" :maximum-screen-space-error="maximumScreenSpaceError"></mapgis-3d-m3d-layer>
         <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-excavate :vue-index="vueIndex" :excaveteStyle="excaveteStyle"></mapgis-3d-excavate>
         </mapgis-ui-card>
