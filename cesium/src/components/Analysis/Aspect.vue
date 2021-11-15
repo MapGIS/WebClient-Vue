@@ -59,7 +59,23 @@ export default {
           { min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)" }
         ];
       }
-    }
+    },
+    /**
+     * @type Boolean
+     * @description 坡向分析是否开启箭头显示结果
+     */
+    enableArrow:{
+      type: Boolean,
+      default: false
+    },
+    /**
+     * @type Number
+     * @description 坡向分析箭头显示结果时箭头的密度
+     */
+    arrowDensity:{
+      type: Number,
+      default: 3.0
+    },
   },
   watch: {
     rampColors: {
@@ -174,11 +190,15 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let { vueCesium, vueKey, vueIndex } = this;
+      let { vueCesium, vueKey, vueIndex,Cesium } = this;
       let find = vueCesium.AspectAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { aspectAnalysis, drawElement } = options;
       const { viewer } = this;
+
+      //开启光照
+      this._enableBrightness();
+
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
       vueCesium.AspectAnalysisManager.changeOptions(
@@ -189,14 +209,15 @@ export default {
       );
 
       const { rampColorsCopy } = this;
+      const vm = this;
 
       const colors = [];
-      const ramp = [];
-      rampColorsCopy.forEach(({ max, color }) => {
-        ramp.push((max / 360).toFixed(2));
+      // const ramp = [];
+      rampColorsCopy.forEach(({ color }) => {
         colors.push(color);
       });
       const rampColor = this._transformColor(colors);
+      let cartesian2 = new Cesium.Cartesian2(this.arrowDensity,this.arrowDensity);
 
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
@@ -208,11 +229,21 @@ export default {
             aspectAnalysis ||
             new this.Cesium.TerrainAnalyse(viewer, {
               aspectRampColor: rampColor,
-              aspectRamp: ramp
             });
           aspectAnalysis.enableContour(false);
           aspectAnalysis.updateMaterial("aspect");
           aspectAnalysis.changeAnalyseArea(result.positions);
+
+          if(vm.enableArrow){
+            //箭头坡向效果
+            viewer.scene.globe.material = Cesium.Material.fromType('AspectArrow');
+            viewer.scene.globe.material.uniforms.AspectArrowMap = Cesium.buildModuleUrl('Assets/Textures/arrow3.png');
+            //改变坡向箭头的密度
+            aspectAnalysis.changeArrowAspectRepeat(cartesian2);
+            viewer.scene.globe.material.uniforms.repeat = cartesian2;
+            viewer.scene.globe.repeat = cartesian2;
+          }
+
           vueCesium.AspectAnalysisManager.changeOptions(
             vueKey,
             vueIndex,

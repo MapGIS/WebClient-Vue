@@ -76,7 +76,6 @@ export default {
       window.vueCesium.IgsTerrainManager.deleteSource(vueKey, vueIndex);
     },
     _handleTerrianLoaded(layers) {
-      debugger
       const { vueIndex, vueKey } = this;
       this.$emit("terrain-loaded", layers);
       if (vueKey && vueIndex) {

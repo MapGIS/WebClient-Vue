@@ -33,6 +33,7 @@ const Template = (args, {argTypes}) => ({
                 key: "tk",
                 value: "2ddaabf906d4b5418aed0078e1657029",
             },
+
         };
     },
     template: `
@@ -50,7 +51,9 @@ const Template = (args, {argTypes}) => ({
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-analysis-aspect
-            :rampColors="rampColors"/>
+            :rampColors="rampColors"
+            :enableArrow="enableArrow"
+        />
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -96,6 +99,7 @@ export const 坡向 = Template.bind({});
         {min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)"},
         {min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)"},
     ],
+    enableArrow:true,
 };
 
 坡向.parameters = {
