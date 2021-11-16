@@ -52,7 +52,6 @@ const Template = (args, {argTypes}) => ({
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-analysis-aspect
             :rampColors="rampColors"
-            :enableArrow="enableArrow"
         />
       </mapgis-ui-card>
       </mapgis-web-scene>
@@ -99,7 +98,6 @@ export const 坡向 = Template.bind({});
         {min: 240, max: 300, color: "rgba(96, 125, 139, 0.5)"},
         {min: 300, max: 360, color: "rgba(76, 175, 80, 0.5)"},
     ],
-    enableArrow:true,
 };
 
 坡向.parameters = {

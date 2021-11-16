@@ -609,11 +609,6 @@ export default {
 
 <style scoped>
 
-.mp-widget-shadow-analysis{
-  padding:10px 20px;
-  border-radius: 4px;
-}
-
 ::v-deep .mapgis-ui-form-item {
   margin-bottom: 0;
 }

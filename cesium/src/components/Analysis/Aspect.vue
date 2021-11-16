@@ -2,6 +2,19 @@
   <div>
     <slot>
       <div class="mapgis-widget-aspect-analysis">
+        <mapgis-ui-group-tab title="显示模式"/>
+        <mapgis-ui-radio-group v-model="value">
+          <mapgis-ui-radio
+              :value="1"
+          >
+            坡向箭头
+          </mapgis-ui-radio>
+          <mapgis-ui-radio
+              :value="2"
+          >
+            填充颜色
+          </mapgis-ui-radio>
+        </mapgis-ui-radio-group>
         <mapgis-ui-group-tab title="坡向图例设置">
           <mapgis-ui-tooltip slot="handle" placement="bottomRight">
             <template slot="title">
@@ -13,7 +26,10 @@
         <mapgis-ui-colors-setting
           v-model="rampColorsCopy"
           :rangeField="'坡向范围'"
-        ></mapgis-ui-colors-setting>
+        >
+        </mapgis-ui-colors-setting>
+
+
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
             >分析</mapgis-ui-button
@@ -64,14 +80,6 @@ export default {
       }
     },
     /**
-     * @type Boolean
-     * @description 坡向分析是否开启箭头显示结果
-     */
-    enableArrow: {
-      type: Boolean,
-      default: false
-    },
-    /**
      * @type Number
      * @description 坡向分析箭头显示结果时箭头的密度
      */
@@ -109,7 +117,9 @@ export default {
       dynamicAtmosphereLightingFromSun: undefined,
 
       info:
-        "坡向分析需要带法线地形。\r\n坡向按照东北西南的顺序表示方向,即0°表示坡向指向正东方向。"
+        "坡向分析需要带法线地形。\r\n坡向按照东北西南的顺序表示方向,即0°表示坡向指向正东方向。",
+
+      value:1
     };
   },
 
@@ -199,13 +209,15 @@ export default {
         "drawElement",
         drawElement
       );
+      this._enableBrightness(); // 开启光照
 
       const { rampColorsCopy } = this;
       const vm = this;
 
       const colors = [];
-      // const ramp = [];
-      rampColorsCopy.forEach(({ color }) => {
+      const ramp = [];
+      rampColorsCopy.forEach(({ max,color }) => {
+        ramp.push((max / 360).toFixed(2));
         colors.push(color);
       });
       const rampColor = this._transformColor(colors);
@@ -218,29 +230,25 @@ export default {
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
         callback: result => {
-          this.remove();
-          this._enableBrightness(); // 开启光照
+          vm.remove();
+          vm._enableBrightness(); // 开启光照
           aspectAnalysis =
             aspectAnalysis ||
-            new this.Cesium.TerrainAnalyse(viewer, {
-              aspectRampColor: rampColor
+            new vm.Cesium.TerrainAnalyse(viewer, {
+              aspectRampColor: rampColor,
+              aspectRamp: ramp
             });
-          aspectAnalysis.enableContour(false);
-          aspectAnalysis.updateMaterial("aspect");
-          aspectAnalysis.changeAnalyseArea(result.positions);
 
-          if (vm.enableArrow) {
-            //箭头坡向效果
-            viewer.scene.globe.material = Cesium.Material.fromType(
-              "AspectArrow"
-            );
-            viewer.scene.globe.material.uniforms.AspectArrowMap = Cesium.buildModuleUrl(
-              "Assets/Textures/arrow3.png"
-            );
+          if(vm.value === 1){
             //改变坡向箭头的密度
             aspectAnalysis.changeArrowAspectRepeat(cartesian2);
-            viewer.scene.globe.material.uniforms.repeat = cartesian2;
-            viewer.scene.globe.repeat = cartesian2;
+            aspectAnalysis.updateMaterial('aspectArrow');
+            aspectAnalysis.changeAnalyseArea(result.positions);
+            console.log("arrow analysis done");
+          }else{
+            aspectAnalysis.updateMaterial('aspect');
+            aspectAnalysis.changeAnalyseArea(result.positions);
+            console.log("color analysis done");
           }
 
           vueCesium.AspectAnalysisManager.changeOptions(
