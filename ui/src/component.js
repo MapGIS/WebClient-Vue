@@ -188,3 +188,6 @@ export { default as MapgisUiPortalServiceresource } from "./view/portal/componen
 
 // comprehensive-query
 export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-query/ComprehensiveQuery.vue";
+
+// chart
+export { default as MapgisUiChartFlow } from "./components/charts/Flow.vue";
