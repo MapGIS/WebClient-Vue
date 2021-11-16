@@ -15,8 +15,8 @@ export default {
     default: () => (Math.random() * 100000000).toFixed(0)
   },
 
-  enableTips: {},
-  enablePopup: {},
+  enableTips: { type: Boolean, default: false },
+  enablePopup: { type: Boolean, default: false },
   tipsOptions: {
     type: Object,
     default: () => {

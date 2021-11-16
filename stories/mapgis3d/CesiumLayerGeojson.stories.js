@@ -1,4 +1,4 @@
-import GeoJsonLayer from "../../cesium/src/components/Layer/GeoJSON/GeoJsonLayer.vue";
+import GeoJsonLayer from "../../cesium/src/components/Layer/GeoJSON/GeoJsonLayer";
 
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle, Shadow } = Style;

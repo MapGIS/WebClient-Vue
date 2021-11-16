@@ -193,6 +193,9 @@ export default {
         if (dataSources) {
           dataSources.remove(find.source, true);
         }
+        if (find.handler) {
+          find.handler.destroy();
+        }
       }
       vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
