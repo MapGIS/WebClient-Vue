@@ -43,7 +43,7 @@ export default {
   headers: {},
   url: { type: String, required: true },
   show: { type: Boolean, default: true },
-  opacity: { type: Number },
+  opacity: { type: Number, default: 1 },
   autoReset: { type: Boolean, default: true },
 
   /**
