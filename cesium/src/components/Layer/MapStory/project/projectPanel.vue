@@ -12,15 +12,19 @@
             </mapgis-ui-button>
           </mapgis-ui-col>
         </mapgis-ui-row>
-        <project-row title="我的最爱" @editProject="$_editProject" @deleted="$_deleted" @showProjected="$_showProject"
-                     @marked="$_marker"
-                     :projects="projects" type="favourite"/>
-        <project-row title="所有工程" @editProject="$_editProject" @deleted="$_deleted" @showProjected="$_showProject"
-                     @marked="$_marker"
-                     :projects="projects"/>
+        <mapgis-ui-project-row title="我的最爱" @editProject="$_editProject" @deleted="$_deleted"
+                               @showProjected="$_showProject"
+                               @marked="$_marker"
+                               :projects="projects" type="favourite"/>
+        <mapgis-ui-project-row title="所有工程" @editProject="$_editProject" @deleted="$_deleted"
+                               @showProjected="$_showProject"
+                               @marked="$_marker"
+                               :projects="projects"/>
       </div>
       <div v-if="addProject">
-        <project-edit
+        <mapgis-ui-project-edit
+            @getCamera="$_getCamera"
+            @deleteFeature="$_deleteFeature"
             @changeIcon="$_changeIcon"
             @changeColor="$_changeColor"
             @showFeature="$_showFeature"
@@ -30,34 +34,30 @@
             ref="panelEdit" v-model="project"
             @backed="$_back"/>
       </div>
-      <hover-edit-panel
+      <mapgis-ui-hover-edit-panel
           @closeHoverPanel="$_closeHoverPanel"
           @titleChanged="$_titleChange" v-if="showEditPanel"/>
     </div>
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
-    <story-panel-large v-show="showLargePanel" @closePanel="$_closePanel" :feature="storyFeature"/>
+    <mapgis-ui-story-panel-large
+        v-show="showLargePanel"
+        @closePanel="$_closePanel"
+        @flyTo="$_flyTo"
+        :feature="storyFeature"/>
   </div>
 </template>
 
 <script>
-import projectRow from "./projectRow";
-import mapCollection from "../feature/mapCollection";
-import projectEdit from "./projectEdit";
-import hoverEditPanel from "../ui/hoverEditPanel";
-import storyPanelLarge from "../ui/storyPanelLarge";
+import mapCollection from "../mapCollection";
 import mapStoryService from "../mapStoryService";
 import {MRFS} from "@mapgis/webclient-es6-service"
-import base64Image from "../img/base64Image";
+import Base64IconsKeyValue from "../../../../../../ui/src/components/iconfont/Base64IconsKeyValue"
 
 export default {
   name: "projectPanel",
   mixins: [mapStoryService],
   components: {
-    "project-row": projectRow,
     "map-collection": mapCollection,
-    "project-edit": projectEdit,
-    "hover-edit-panel": hoverEditPanel,
-    "story-panel-large": storyPanelLarge,
   },
   inject: ["Cesium", "viewer"],
   watch: {
@@ -140,6 +140,7 @@ export default {
       this.addProject = true;
     },
     $_editProject(index) {
+      this.$emit("editProject", index);
       let vm = this;
       if (this.projects[index].url) {
         this.currentProjectIndex = index;
@@ -152,14 +153,14 @@ export default {
                 const {map} = features[i];
                 const {geometry} = features[i].baseUrl;
                 const {x, y, z} = geometry;
-                if(map){
+                if (map) {
                   vm.optArr.push(map);
                 }
                 if (x && y && z) {
                   let img = document.createElement("img");
                   let imgUrl = features[i].layerStyle.billboard.image;
                   if (typeof imgUrl === 'number') {
-                    imgUrl = base64Image[imgUrl].value;
+                    imgUrl = Base64IconsKeyValue[imgUrl].value;
                   }
                   img.src = imgUrl;
                   img.onload = function () {
@@ -194,6 +195,12 @@ export default {
     $_closeHoverPanel() {
       this.showEditPanel = false;
       this.$emit("closeHoverPanel");
+    },
+    $_getCamera(currentFeature) {
+      this.$emit("getCamera", currentFeature);
+    },
+    $_deleteFeature(index, id) {
+      this.$emit("deleteFeature", index, id, this.project);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
@@ -247,7 +254,7 @@ export default {
   padding-left: 10px;
 }
 
-.mapgis-project-edit-top-tool {
+.mapgis-mapgis-ui-project-edit-top-tool {
   width: 400px;
   height: 64px;
 }

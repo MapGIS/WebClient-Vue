@@ -1,12 +1,15 @@
 <template>
   <div>
     <project-panel ref="projectPanel"
+                   @deleteFeature="$_deleteFeature"
+                   @getCamera="$_getCamera"
                    @changeColor="$_changeColor"
                    @changeIcon="$_changeIcon"
                    @showFeature="$_showFeature"
                    @addFeature="$_addFeature"
                    @titleChanged="$_titleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
+                   @editProject="$_editProject"
                    :dataSource="dataSourceCopy"/>
     <mapgis-3d-draw :infinite="true" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
   </div>
@@ -87,6 +90,7 @@ export default {
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
     },
+    $_editProject(index) {},
     $_closeHoverPanel() {
       let vm = this;
       switch (this.currentFeatureType) {
@@ -127,6 +131,36 @@ export default {
     $_changeColor(color, id, type) {
       let entity = this.viewer.entities.getById(id);
       entity[type].material = Cesium.Color.fromCssColorString(color.hex);
+    },
+    $_getLayer(index, project, callBack) {
+      const {map} = project.features[index];
+      if (map) {
+        const {vueKey, vueIndex} = map;
+        if (vueKey && vueIndex) {
+          let layerManager = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex);
+          callBack(layerManager.source);
+        }
+      }
+    },
+    $_deleteFeature(index, id, project) {
+      let vm = this;
+      if (id) {
+        this.viewer.entities.removeById(id);
+      }
+      this.$_getLayer(index, project, function (layer) {
+        vm.viewer.imageryLayers.remove(layer);
+      });
+    },
+    $_getCamera(currentFeature) {
+      let camera = this.viewer.camera;
+      currentFeature.camera.positionCartographic = {
+        height: camera.positionCartographic.height,
+        latitude: camera.positionCartographic.latitude,
+        longitude: camera.positionCartographic.longitude
+      };
+      currentFeature.camera.heading = camera.heading;
+      currentFeature.camera.pitch = camera.pitch;
+      currentFeature.camera.roll = camera.roll;
     },
     $_changeIcon(icon, id) {
       let entity = this.viewer.entities.getById(id);

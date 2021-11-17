@@ -1,5 +1,5 @@
 import * as turf from "@turf/turf"
-import base64Image from "./img/base64Image";
+import Base64IconsKeyValue from "../../../../../ui/src/components/iconfont/Base64IconsKeyValue"
 
 export default {
     inject: ["viewer", "Cesium"],
@@ -15,15 +15,31 @@ export default {
             }
         }
     },
+    data() {
+        return {
+        }
+    },
     methods: {
+        $_flyTo(camera) {
+            const {positionCartographic, heading, pitch, roll} = camera;
+            const {longitude, latitude, height} = positionCartographic;
+            this.viewer.camera.flyTo({
+                destination: new Cesium.Cartesian3.fromRadians(longitude, latitude, height),
+                orientation: {
+                    heading: heading,
+                    pitch: pitch,
+                    roll: roll
+                }
+            });
+        },
         $_getBillBoardIcon(index, callBack) {
             let img = document.createElement("img");
             if (typeof index === "number") {
-                img.src = base64Image[index].value;
+                img.src = Base64IconsKeyValue[index].value;
             } else if (typeof index === "string") {
-                for (let i = 0; i < base64Image.length; i++) {
-                    if (base64Image[i].key === index) {
-                        img.src = base64Image[i].value;
+                for (let i = 0; i < Base64IconsKeyValue.length; i++) {
+                    if (Base64IconsKeyValue[i].key === index) {
+                        img.src = Base64IconsKeyValue[i].value;
                         break;
                     }
                 }
