@@ -1,18 +1,12 @@
 <script>
 import Tileset3dOptions from "./3DTilesetOptions";
 import { M3dType, M3dType_0_0, M3dType_2_0 } from "./M3dType";
-
-import Popup from "../UI/Popup/Popup.vue";
-import PopupContent from "../UI/Geojson/Popup";
-import { getPopupHtml } from "../UI/Popup/popupUtil";
+import PopupMixin from "../Mixin/PopupMixin";
 
 export default {
   name: "mapgis-3d-m3d-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
-  components: {
-    Popup,
-    PopupContent
-  },
+  mixins: [PopupMixin],
   props: {
     ...Tileset3dOptions
   },
@@ -20,18 +14,7 @@ export default {
     return {
       layerIndex: undefined,
       layerList: undefined,
-      activeId: undefined,
-      version: undefined,
-      visible: false,
-      position: {
-        longitude: 110,
-        latitude: 30,
-        height: 0
-      },
-      currentClickInfo: [],
-      currentHoverInfo: [],
-      clickMode: "click",
-      hoverMode: "hover"
+      version: undefined
     };
   },
   created() {},
@@ -59,6 +42,9 @@ export default {
       }
     }
   },
+  /* render(h) {
+    return this.$_render(h);
+  }, */
   methods: {
     createCesiumObject() {
       const { vueCesium, viewer, url, $props } = this;
@@ -180,122 +166,64 @@ export default {
           m3ds.forEach(l => {
             l.destroy();
           });
-        if (find.handler) {
-          find.handler.destroy();
+        if (find.clickhandler) {
+          find.clickhandler.destroy();
+        }
+        if (find.hoverhandler) {
+          find.hoverhandler.destroy();
         }
       }
       this.$emit("unload", { component: this });
       vueCesium.M3DIgsManager.deleteSource(vueKey, vueIndex);
     },
     initPopupEvent() {
-      const { vueKey, vueIndex, enablePopup } = this;
-      let handler;
+      const { vueKey, vueIndex, enablePopup, enableTips } = this;
+
+      let clickhandler, hoverhandler;
       if (enablePopup) {
-        handler = this.bindPopupEvent();
+        clickhandler = this.$_bindClickEvent(this.pickFeature);
+      }
+      if (enableTips) {
+        hoverhandler = this.$_bindHoverEvent(this.pickFeature);
       }
       vueCesium.M3DIgsManager.changeOptions(
         vueKey,
         vueIndex,
-        "handler",
-        handler
+        "clickhandler",
+        clickhandler
+      );
+      vueCesium.M3DIgsManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "hoverhandler",
+        hoverhandler
       );
     },
-    bindPopupEvent() {
+    pickFeature(payload) {
       const vm = this;
-      const { Cesium, viewer, version, popupOptions, layerIndex } = this;
-      let tempRay = new Cesium.Ray();
-      let tempPos = new Cesium.Cartesian3();
-      let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function(movement) {
-        const scene = viewer.scene;
-        if (scene.mode !== Cesium.SceneMode.MORPHING) {
-          // let cartesian = viewer.scene.pickPosition(movement.position);
-          // let cartesian = viewer.scene.pickPositionWorldCoordinates(movement.position);
-          let cartesian = viewer.getCartesian3Position(movement.position);
-          let ray = scene.camera.getPickRay(movement.position, tempRay);
-          let cartesian2 = scene.globe.pick(ray, scene, tempPos);
-
-          // 多选模式
-          let entities = scene.drillPick(movement.position);
-          if (entities.length <= 0) {
-            vm.visible = false;
-            return;
-          }
-
-          let longitudeString2, latitudeString2, heightString2;
-
-          if (Cesium.defined(cartesian2)) {
-            let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
-            longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
-            latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
-            heightString2 = cartographic2.height;
-          }
-
-          if (cartesian || cartesian2) {
-            vm.visible = true;
-            vm.position = {
-              longitude: longitudeString2,
-              latitude: latitudeString2,
-              height: heightString2
-            };
-            if (version == "0.0" || version == "1.0") {
-              vm.currentClickInfo = entities.map(e => {
-                let info = {
-                  layer: { id: e.id ? e.id.id : "未知数据" },
-                  properties: {}
-                };
-                vm.activeId = e.id ? e.id.id : undefined;
-                if (e.id && e.id.properties) {
-                  Object.keys(e.id.properties)
-                    .filter(p => {
-                      let inner =
-                        p.indexOf("Subscription") <= 0 &&
-                        !["_propertyNames", "_definitionChanged"].find(
-                          n => n == p
-                        );
-                      return inner;
-                    })
-                    .forEach(p => {
-                      let name = p.substr(1);
-                      info.properties[name] = e.id.properties[p]._value;
-                    });
-                  info.layer.id =
-                    vm.layerId ||
-                    info.properties["name"] ||
-                    info.properties["title"];
-                  let titlefield = popupOptions
-                    ? popupOptions.title
-                    : undefined;
-                  if (titlefield) {
-                    info.title = info.properties[titlefield];
-                  }
-                }
-                return info;
-              });
-            } else if (version == "2.0") {
-              var oid = viewer.scene.pickOid(movement.position);
-              var feature = viewer.scene.pick(movement.position);
-              var tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-              let titlefield = popupOptions ? popupOptions.title : undefined;
-              if (tileset.useRawSaveAtt && Cesium.defined(feature)) {
-                let result = feature.content.getAttributeByOID(oid);
-                vm.currentClickInfo = [
-                  { properties: result, title: result[titlefield] }
-                ];
-              } else {
-                tileset.queryAttributes(oid).then(function(result) {
-                  vm.currentClickInfo = [
-                    { properties: result, title: result[titlefield] }
-                  ];
-                });
-              }
-            }
-          } else {
-            vm.visible = false;
-          }
+      const { movement } = payload;
+      const { popupOptions } = this;
+      const { viewer } = this;
+      const { version, layerIndex } = this;
+      if (version == "0.0" || version == "1.0") {
+      } else if (version == "2.0") {
+        let oid = viewer.scene.pickOid(movement.position);
+        let feature = viewer.scene.pick(movement.position);
+        let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+        let titlefield = popupOptions ? popupOptions.title : undefined;
+        if (tileset.useRawSaveAtt && Cesium.defined(feature)) {
+          let result = feature.content.getAttributeByOID(oid);
+          vm.currentClickInfo = [
+            { properties: result, title: result[titlefield] }
+          ];
+        } else {
+          tileset.queryAttributes(oid).then(function(result) {
+            vm.currentClickInfo = [
+              { properties: result, title: result[titlefield] }
+            ];
+          });
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      return handler;
+      }
     },
     changeShow(show) {
       const { vueKey, vueIndex } = this;
@@ -466,78 +394,6 @@ export default {
           }
         });
       }
-    }
-  },
-  render(h) {
-    let {
-      visible,
-      position,
-      customPopup,
-      customTips,
-      clickMode,
-      hoverMode,
-      currentClickInfo,
-      currentHoverInfo,
-      popupOptions,
-      tipsOptions
-    } = this;
-
-    const { type } = popupOptions;
-    const feature =
-      currentClickInfo && currentClickInfo.length > 0
-        ? currentClickInfo[0]
-        : { properties: {} };
-
-    let container = getPopupHtml(type, feature, {
-      title: feature.title,
-      fields: Object.keys(feature.properties),
-      style: {
-        containerStyle: { width: "360px" }
-      }
-    });
-
-    if (customPopup || customTips) {
-      return (
-        <Popup position={position} visible={visible} forceRender={true}>
-          <div ref="click">
-            {customPopup && customPopup(currentClickInfo)}
-            {!customPopup && (
-              <PopupContent
-                mode={clickMode}
-                currentLayerInfo={currentClickInfo}
-              ></PopupContent>
-            )}
-          </div>
-          <div ref="hover">
-            {customTips && customTips(currentHoverInfo)}
-            {!customTips && (
-              <PopupContent
-                mode={hoverMode}
-                currentLayerInfo={currentHoverInfo}
-              ></PopupContent>
-            )}
-          </div>
-        </Popup>
-      );
-    } else {
-      return (
-        <Popup
-          position={position}
-          visible={visible}
-          forceRender={true}
-          container={container}
-        ></Popup>
-      );
-      /* <PopupContent
-            ref="click"
-            mode={clickMode}
-            currentLayerInfo={currentClickInfo}
-          ></PopupContent>
-          <PopupContent
-            ref="hover"
-            mode={hoverMode}
-            currentLayerInfo={currentHoverInfo}
-          ></PopupContent> */
     }
   }
 };

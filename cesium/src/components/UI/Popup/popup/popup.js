@@ -48,6 +48,11 @@ export function updataPopupPosition(viewer, cartesian, popupId, popupContentId, 
         res = false;
     }
 
+    // 近距离下全部显示，不考虑椭球的避让
+    if (scene.globe.ellipsoid.cartesianToCartographic(i).height < 1000) {
+        res = true;
+    }
+
     let popup = window.document.getElementById(popupId);
     if (!popup) return;
 

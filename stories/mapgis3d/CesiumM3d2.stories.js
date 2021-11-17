@@ -1,5 +1,5 @@
 import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
-import Mapgis3dM3dLayer from "../../cesium/src/components/M3D/M3d.vue";
+import Mapgis3dM3dLayer from "../../cesium/src/components/Layer/M3D/M3d.vue";
 
 export default {
   title: "三维/图层/M3D/2.0 基础",

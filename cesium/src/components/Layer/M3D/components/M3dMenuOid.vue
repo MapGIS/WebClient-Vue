@@ -1,14 +1,20 @@
 <template>
   <span>
-    <mapgis-ui-statistic title="提示" value="请点击场景模型！" />
+    <mapgis-3d-popup v-model="show" :position="position">
+      <mapgis-ui-statistic
+        title="OID"
+        :value="oid"
+        style="margin-right: 50px"
+      />
+    </mapgis-3d-popup>
   </span>
 </template>
 
 <script>
-import VueOptions from "../../Base/Vue/VueOptions";
+import VueOptions from "../../../Base/Vue/VueOptions";
 
 export default {
-  name: "mapgis-3d-m3d-menu-highlight",
+  name: "mapgis-3d-m3d-menu-oid",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   props: {
     ...VueOptions,
@@ -21,7 +27,14 @@ export default {
   },
   data() {
     return {
-      currentMenu: undefined
+      currentMenu: undefined,
+      position: {
+        longitude: 0,
+        latitude: 0,
+        height: 0
+      },
+      oid: undefined,
+      show: false
     };
   },
   created() {},
@@ -90,6 +103,7 @@ export default {
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
     $_highlightAction(movement) {
+      const vm = this;
       const { vueKey, vueIndex, vueCesium, Cesium } = this;
       const { layerIndex, viewer, m3ds, version } = this;
       let tileset;
@@ -119,10 +133,10 @@ export default {
             current.feature !== pickedFeature
           ) {
             currentLayer = [current.feature.tileset];
-            var title = current.feature.getProperty("name");
-            var values = title.split("_");
-            var vlueNumber = parseInt(values[2]);
-            var idList = [vlueNumber];
+            let title = current.feature.getProperty("name");
+            let values = title.split("_");
+            let vlueNumber = parseInt(values[2]);
+            let idList = [vlueNumber];
             analysisManager.stopCustomDisplay(currentLayer);
             current.feature = undefined;
           }
@@ -134,20 +148,46 @@ export default {
           ) {
             current.feature = pickedFeature;
             currentLayer = [current.feature.tileset];
-            var title = current.feature.getProperty("name");
-            var values = title.split("_");
-            var vlueNumber = parseInt(values[2]);
-            var idList = [vlueNumber];
-            var options = {
+            let title = current.feature.getProperty("name");
+            let values = title.split("_");
+            let vlueNumber = parseInt(values[2]);
+            let idList = [vlueNumber];
+            let options = {
               color: new Cesium.Color(255 / 255, 255 / 255, 0 / 255, 1),
               colorBlendMode: Cesium.Cesium3DTileColorBlendMode.REPLACE
             };
             analysisManager.stopCustomDisplay(currentLayer);
             analysisManager.startCustomDisplay(currentLayer, idList, options);
+
+            /* const { position } = movement;
+            const { x, y } = position;
+            let pick1 = new Cesium.Cartesian2(x, y);
+            let cartesian = viewer.scene.globe.pick(
+              viewer.camera.getPickRay(pick1),
+              viewer.scene
+            ); */
+            let ellipsoid = viewer.scene.globe.ellipsoid;
+            let center = current.feature.tileset.boundingSphere.center;
+            let cartographic = ellipsoid.cartesianToCartographic(center);
+            let lat = Cesium.Math.toDegrees(cartographic.latitude);
+            let lng = Cesium.Math.toDegrees(cartographic.longitude);
+            let height = cartographic.height;
+
+            vm.show = true;
+            vm.position.longitude = lng;
+            vm.position.latitude = lat;
+            vm.position.height = height;
+            vm.oid = vlueNumber;
+          } else if (
+            Cesium.defined(pickedFeature) &&
+            current.feature == pickedFeature
+          ) {
+          } else {
+            vm.show = false;
           }
         }
       } else if (version == "2.0") {
-        var oid = viewer.scene.pickOid(movement.position);
+        let oid = viewer.scene.pickOid(movement.position);
         tileset.pickedOid = oid;
         tileset.pickedColor = new Cesium.Color(1.0, 1.0, 0.0, 0.6);
       }

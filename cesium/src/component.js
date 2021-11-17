@@ -33,10 +33,10 @@ export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJ
 export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTile/VectorTileLayer.vue";
 
 // 模型
-export { default as Mapgis3dFileM3d } from "./components/M3D/M3dFile.vue";
-export { default as Mapgis3dG3dLayer } from "./components/M3D/G3D.vue";
-export { default as Mapgis3dM3dLayer } from "./components/M3D/M3d.vue";
-export { default as Mapgis3dTileset } from "./components/M3D/3dTileset.vue";
+export { default as Mapgis3dFileM3d } from "./components/Layer/M3D/M3dFile.vue";
+export { default as Mapgis3dG3dLayer } from "./components/Layer/M3D/G3D.vue";
+export { default as Mapgis3dM3dLayer } from "./components/Layer/M3D/M3d.vue";
+export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";

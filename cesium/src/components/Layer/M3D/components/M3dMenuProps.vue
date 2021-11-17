@@ -1,21 +1,37 @@
 <template>
   <div>
+    <mapgis-ui-input :value="gdbp" size="default">
+      <mapgis-ui-tooltip slot="addonAfter" placement="bottom">
+        <span slot="title"
+          >0.0版本/1.0版本需要地图文档绑定模型，服务要重新发一下</span
+        >
+        <mapgis-ui-iconfont type="mapgis-info-circle" />
+      </mapgis-ui-tooltip>
+    </mapgis-ui-input>
     <mapgis-3d-popup v-model="show" :position="position" :forceRender="true">
-      <mapgis-3d-story-popup :feature="feature"> </mapgis-3d-story-popup>
+      <span>
+        <div class="mapgis-3d-popup-props-title">OID: {{ oid }}</div>
+        <div
+          class="mapgis-3d-popup-props-item"
+          v-for="key in Object.keys(properties)"
+          :key="key"
+        >
+          <span class="mapgis-3d-popup-props-item-key">{{ key }}</span>
+          <span class="mapgis-3d-popup-props-item-value">{{
+            properties[key]
+          }}</span>
+        </div>
+      </span>
     </mapgis-3d-popup>
   </div>
 </template>
 
 <script>
-import VueOptions from "../../Base/Vue/VueOptions";
-import Mapgis3dStoryPopup from "../../Layer/MapStory/ui/storyPanelLarge.vue";
+import VueOptions from "../../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-m3d-menu-props",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
-  components: {
-    Mapgis3dStoryPopup
-  },
   props: {
     ...VueOptions,
     version: {
@@ -36,7 +52,6 @@ export default {
   },
   data() {
     return {
-      feature: { geometry: {}, properties: {} },
       currentMenu: undefined,
       position: {
         longitude: 0,
@@ -182,6 +197,21 @@ export default {
             vm.position.height = height;
             vm.oid = vlueNumber;
             vm.$_query(vlueNumber, gdbp);
+            /* let test = new Promise((resolve, rej) => {
+              window.setTimeout(() => {
+                let test = {
+                  name: "石家庄",
+                  mpArea: 1220.7382131131,
+                  mpLength: 120.7382131131,
+                  省份: "河北省"
+                };
+                resolve(test);
+              }, 1 * 1000);
+            });
+            test.then(res => {
+              vm.properties = res;
+              vm.show = true;
+            }); */
           } else if (
             Cesium.defined(pickedFeature) &&
             current.feature == pickedFeature
@@ -217,10 +247,6 @@ export default {
               properties[k] = values[i];
             });
             vm.properties = properties;
-            vm.feature = {
-              geometry: vm.feature.geometry,
-              properties: properties
-            };
             vm.show = true;
           }
         },

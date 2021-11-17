@@ -1,6 +1,6 @@
 import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
-import Mapgis3dIgsM3d from "../../cesium/src/components/M3D/M3d.vue";
+import Mapgis3dIgsM3d from "../../cesium/src/components/Layer/M3D/M3d.vue";
 import Mapgis3dCesiumHeaterLayer from "../../cesium/src/components/Overlay/themeLayer/heater/CesiumHeater.vue";
 import Mapgis3dMapvHeaterLayer from "../../cesium/src/components/Overlay/themeLayer/heater/MapvHeater.vue";
 
