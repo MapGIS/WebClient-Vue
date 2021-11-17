@@ -89,7 +89,7 @@ export default {
             vm.$emit("change", true);
           },
           onHide: () => {
-            vm.$emit("change", false);
+            vm.$emit("change", false, vm.vueIndex);
             if (vm.destroyOnClose) {
               // 这里其实是无效的，本质上是通过update来实现的
               // vm.unmount();
