@@ -52,7 +52,7 @@ export default {
   destroyed() {
     this.clearModelFlatten();
     let find = this.findSource();
-    if (find.source) {
+    if (find && find.source) {
       let tool = find.source;
       tool.destroy();
     }
@@ -90,7 +90,7 @@ export default {
     clearModelFlatten() {
       const { viewer } = this;
       let find = this.findSource();
-      if (find.source) {
+      if (find && find.source) {
         let tool = find.source;
         let m3d = find.options.m3d;
         let origin = find.options.origin;

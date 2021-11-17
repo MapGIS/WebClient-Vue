@@ -18,13 +18,21 @@
 - **默认值:** `(Math.random() * 100000000).toFixed(0)`随机计算值
 - **描述:** 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
+### `switchOptions`
+
+- **类型:** `Array`
+- **可选**
+- **默认值:** `["isogram", "isosurface"]`
+- **非侦听属性**
+- **描述:** 等值线和等值面的面板展示开关，可传值为"isogram"，"isosurface"
+
 ### `contourSpacing`
 
 - **类型:** `Number`
 - **可选**
 - **默认值:** `150`
 - **侦听属性**
-- **描述:** 等高线间距，单位米
+- **描述:** 等值线间距，单位米
 
 ### `contourWidth`
 
@@ -32,7 +40,7 @@
 - **可选**
 - **默认值:** `2`
 - **侦听属性**
-- **描述:** 等高线宽度
+- **描述:** 等值线宽度
 
 ### `contourColor`
 
@@ -40,24 +48,48 @@
 - **可选**
 - **默认值:** `rgb(255,0,0)`
 - **侦听属性**
-- **描述:** 等高线颜色
+- **描述:** 等值线颜色
+
+### `bandThickness`
+
+- **类型:** `Number`
+- **可选**
+- **默认值:** `200`
+- **侦听属性**
+- **描述:** 等值面宽度
+
+### `bandPosition`
+
+- **类型:** `Array`
+- **可选**
+- **默认值:** `[]`
+- **侦听属性**
+- **描述:** 等值面高度数组
+
+### `colorsArray`
+
+- **类型:** `Array`
+- **可选**
+- **默认值:** `[]`
+- **侦听属性**
+- **描述:** 等值面颜色数组，与高度数组的等值面一一对应
 
 ## 方法
 
 ### `analysis`
 
-- **Description:** 等值线分析
+- **Description:** 等值线、等值面分析
 
 ### `remove`
 
-- **Description:** 移除等值线分析对象，移除等值线分析结果。
+- **Description:** 移除等值线、等值面分析对象，移除等值线、等值面分析结果。
 
 ## 事件
 
 ### `@load`
 
 - **Description:** 在 Contour 加载完毕后发送该事件
-- **Payload** 等值线分析对象
+- **Payload** 等值线或等值面分析对象
 
 ## 示例
 
@@ -80,6 +112,7 @@
         :contourSpacing="contourSpacing"
         :contourWidth="contourWidth"
         :contourColor="contourColor"
+        :switchOptions="switchOptions"
       />
     </mapgis-ui-card>
   </mapgis-web-scene>
@@ -102,7 +135,8 @@ export default {
       },
       contourSpacing: 150,
       contourWidth: 2,
-      contourColor: "rgb(255,0,0)"
+      contourColor: "rgb(255,0,0)",
+      switchOptions: ["isogram"]
     };
   },
   methods: {

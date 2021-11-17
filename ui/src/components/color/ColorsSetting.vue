@@ -23,6 +23,16 @@
           :prefix="`${record.min}~`"
           @change="changeMax(record, index)"
           type="number"
+          v-if="!singleNumber"
+        />
+        <mapgis-ui-input
+            v-else
+            v-model="record.max"
+            size="small"
+            :min="record.min"
+            :max="getMax(index)"
+            @change="changeMax(record, index)"
+            type="number"
         />
       </template>
       <template slot="operation" slot-scope="text, record, index">
@@ -32,7 +42,7 @@
             @click="remove(index)"
           ></mapgis-ui-iconfont>
         </mapgis-ui-tooltip>
-        <mapgis-ui-tooltip placement="top" title="向下插入一行">
+        <mapgis-ui-tooltip placement="top" title="向上插入一行">
           <mapgis-ui-iconfont
             type="mapgis-plus"
             @click="add(index)"
@@ -51,7 +61,8 @@ export default {
   props: {
     // [{ min: 0, max: 60, color: 'rgba(244, 67, 54, 0.5)' }...]
     value: { type: Array },
-    rangeField: { type: String, default: "角度范围" }
+    rangeField: { type: String, default: "角度范围" },
+    singleNumber:{ type: Boolean, defalut: false}
   },
   data() {
     return {
@@ -67,6 +78,7 @@ export default {
         {
           title: this.rangeField,
           dataIndex: "max",
+          align: "center",
           scopedSlots: { customRender: "max" }
         },
         {

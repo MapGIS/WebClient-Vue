@@ -9,29 +9,14 @@ export default {
             table:{
                 //description描述信息下的提示框，可选，添加这一项就会在描述信息文字下生成一个提示信息按钮
                 //summary：提示按钮里的文字，detail：提示信息
-                type:{ summary: 'tips',detail: "CSS的十六进制" },
+                type:{ summary: 'tips',detail: "CSS的十六进制/rgb/rgba" },
                 //默认值，即页面上Default那一栏的值，不在这里填写，则页面上不会有默认值
                 //如果加了detail,{ summary: 'null',detail: "这里是提示" },则页面会多出一个描述信息的提示框
                 defaultValue: { summary: '#ff0000' },
             },
             //Control这里一栏里面展示数据的方式，可以是input、textArean、boolean等，可选值如下
             control:'text'
-        },
-        opacity:{
-            description:'分析结果透明度',
-            table:{
-                defaultValue: { summary: 0.5 },
-            },
-            control:'number'
-        },
-        maxSliderHeight:{
-            description:'滑动条最大值',
-            table:{
-                defaultValue: { summary: 50 },
-            },
-            control:'number'
-        },
-
+        }
     }
 };
 
@@ -59,7 +44,6 @@ const Template = (args, { argTypes }) => ({
           :vueIndex="$props.models[1].vueIndex"
           :url="m3dUrl2"
       />
-<!--      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl" :vue-index="vueIndex"></mapgis-3d-igs-m3d>-->
       <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-heightlimited v-bind="$props"></mapgis-3d-heightlimited>
       </mapgis-ui-card>
@@ -79,7 +63,7 @@ HeightLimited.args = {
             title: "学校模型",
         },
     ],
-    color:"#1C9C80",
+    color:"rgba(123,104,238,0.5)",
 }
 HeightLimited.parameters = {
     docs: {

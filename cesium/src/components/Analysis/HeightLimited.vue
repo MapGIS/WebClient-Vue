@@ -3,50 +3,72 @@
     <mapgis-ui-group-tab
         title="模型"
         :has-top-margin="false"
-    ></mapgis-ui-group-tab>
-    <mapgis-ui-row class="model">
-      <mapgis-ui-radio-group v-if="models.length > 0" v-model="model">
-        <mapgis-ui-radio
-            v-for="(node, index) in models"
-            :style="radioStyle"
-            :key="`model-${index}`"
-            :value="node"
-        >
+        v-if="models.length > 1"></mapgis-ui-group-tab>
+    <mapgis-ui-row class="model" v-if="models.length > 1">
+      <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">
+        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
           {{ node.title }}
-        </mapgis-ui-radio>
-      </mapgis-ui-radio-group>
-      <div v-else>暂无数据！</div>
+        </mapgis-ui-select-option>
+      </mapgis-ui-select>
     </mapgis-ui-row>
-    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
+    <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
+    <mapgis-ui-setting-form :label-width="72">
+      <mapgis-ui-form-item label="限高颜色">
+        <mapgis-ui-sketch-color-picker
+            :color.sync="colorCopy"
+            :disableAlpha="false"
+            class="colorCopy-picker"
+        >
+        </mapgis-ui-sketch-color-picker>
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="限制高度">
+        <mapgis-ui-slider  :disabled="readonly"
+                           :max="maxSliderHeight" :min="minSlider"
+                           :step="5"
+                           v-model="heightLimit"
+                           @change="setInput"/>
+      </mapgis-ui-form-item>
+    </mapgis-ui-setting-form>
+    <mapgis-3d-draw :vue-key="vueKey" v-on:draw-create="handleCreate" v-on:load="handleDrawLoad"
                     :enableControl="enableControl">
-      <mapgis-ui-row>
-        <mapgis-ui-col :span="5">分析区域：</mapgis-ui-col>
-        <mapgis-ui-col :span="19">
-          <mapgis-ui-button @click="drawRectangle">绘制矩形</mapgis-ui-button>
-          <mapgis-ui-button style="margin:0 8px" @click="drawPolygon">绘制面</mapgis-ui-button>
-          <mapgis-ui-button @click="toggleDelete">清除</mapgis-ui-button>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row style="padding-top: 10px">
-        <mapgis-ui-col :span="5">
-          <span>限制高度：</span>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="10" style="padding-right: 8px">
-          <mapgis-ui-slider v-model="heightLimit" :disabled="excavateAn" :max="maxSliderHeight" :min="mindepth"
-                            :step="5"
-                            :value="parseFloat(heightLimit)" @change="setInput"/>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="5">
-          <mapgis-ui-input-number v-model="heightLimit" :max="maxSliderHeight" :min="mindepth"
-                                  :style="{marginLeft: '16px'}"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
+      <div class="parent_div">
+        <mapgis-ui-group-tab title="绘制区域"></mapgis-ui-group-tab>
+        <div style="text-align: right" class="child_div">
+          <mapgis-ui-tooltip
+              v-for="(item, i) in draws"
+              :key="i"
+              placement="bottom"
+          >
+            <template slot="title">
+              <span>{{ item.tip }}</span>
+            </template>
+            <mapgis-ui-button
+                shape="circle"
+                :type="item.type"
+                @click="item.click"
+                :class="item.className"
+                style="margin: 0 12px"
+            >
+              <mapgis-ui-iconfont
+                  :type="item.icon"
+                  :class="item.className"
+                  theme="filled"
+              />
+            </mapgis-ui-button>
+          </mapgis-ui-tooltip>
+        </div>
+      </div>
     </mapgis-3d-draw>
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="startHeightAnalysis">
+        分析
+      </mapgis-ui-button>
+      <mapgis-ui-button @click="toggleDelete">清除</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
   </div>
 </template>
 
 <script>
-// import ServiceLayer from "../UI/Controls/ServiceLayer.js";
 import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../Utils/deepequal";
@@ -63,14 +85,6 @@ export default {
     color: {
       type: String,
       default: "#ff0000"
-    },
-    opacity: {
-      type: Number,
-      default: 0.5
-    },
-    maxSliderHeight: {
-      type: Number,
-      default: 50
     }
   },
   components: {Mapgis3dDraw},
@@ -79,34 +93,45 @@ export default {
     return {
       //定义
       heightLimit: 10,
-      excavateAn: false,
-      mindepth: 0,
+      // slider滑块是否禁用
+      readonly: false,
+      minSlider:0,
       boundingSphere: "",
       waitManagerName: "M3DIgsManager",
       cartesianForHeight: [],
       enableControl: false,
       // 选中模型
       model: null,
+      size: "default",
       // radio样式
       radioStyle: {
         display: "block",
         height: "30px",
         lineHeight: "30px"
-      }
+      },
+      colorCopy: "#ff0000",
+      opacityCopy: 0.5,
+      maxSliderHeight: 50,
+      draws: [
+        {
+          icon: "mapgis-huizhijuxing",
+          type: "primary",
+          tip: "绘制矩形",
+          click: this.drawRectangle
+        },
+        {
+          icon: "mapgis-draw-polygon",
+          type: "primary",
+          tip: "绘制多边形",
+          click: this.drawPolygon
+        },
+      ],
+      // m3d模型对象
+      m3d:undefined
     }
   },
   mounted() {
-    let vm = this;
-    Object.keys(this.$props).forEach(function (key) {
-      if (key !== "vueKey" && key !== "vueIndex") {
-        vm.$watch(key, function () {
-          this.heightLimitedAnalysis();
-        })
-      }
-    })
-    // vm.$_init(vm.heightLimitedAnalysis);
-    // vm.m3dIsReady.then(vm.heightLimitedAnalysis);
-    vm.heightLimitedAnalysis();
+    this.mount();
   },
   destroyed() {
     this.unmount();
@@ -132,36 +157,50 @@ export default {
         this.changeModel();
       }
     },
-    //   heightLimit: {
-    //     handler(next, old) {
-    //       if (!deepEqual(next, old)) {
-    //         this.heightLimitedAnalysis();
-    //       }
-    //     }
-    //   },
-    //   color:{
-    //     handler(next, old) {
-    //       if (!deepEqual(next, old)) {
-    //         this.heightLimitedAnalysis();
-    //       }
-    //     }
-    //   },
-    //   opacity:{
-    //     handler(next, old) {
-    //       if (!deepEqual(next, old)) {
-    //         this.heightLimitedAnalysis();
-    //       }
-    //     }
-    //   },
-    //   maxSliderHeight:{
-    //     handler(next, old) {
-    //       if (!deepEqual(next, old)) {
-    //         this.heightLimitedAnalysis();
-    //       }
-    //     }
-    //   }
+    color: {
+      immediate: true,
+      handler(next, old) {
+        if (!deepEqual(next, old)) {
+          this.colorCopy = next;
+        }
+      }
+    },
+    colorCopy: {
+      immediate: true,
+      handler(next, old) {
+        this.remove();
+        this.heightLimitedAnalysis();
+      }
+    },
   },
   methods: {
+    async createCesiumObject() {
+      return new Promise(
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
+      );
+    },
+    mount() {
+      const {viewer, vueCesium, vueKey, vueIndex} = this;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
+        vm.$emit("load", vm);
+        vueCesium.HeightLimitedAnalysisManager.addSource(
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              heightLimitedAnalysis: null,
+              lnglat: null
+            }
+        );
+      });
+    },
+
     /**
      * 判断传入的m3d图层是否加载完毕
      */
@@ -186,7 +225,7 @@ export default {
                 }
               },
               vueKey,
-              model.vueIndex
+              model.vueIndex || vueIndex
           );
         } else {
           reject(null);
@@ -195,12 +234,12 @@ export default {
     },
 
     changeModel() {
+      let vm = this;
       this.m3dIsReady().then(m3d => {
-        const { source } = m3d;
-        this.zoomToM3dLayerBySource(source[0]);
-
-        // this.getMaxMin();
-        // this.startClipping();
+        const {source} = m3d;
+        vm.m3d = m3d;
+        vm.zoomToM3dLayerBySource(source[0]);
+        vm.getM3dHeight(source[0]);
       });
     },
 
@@ -218,18 +257,46 @@ export default {
      * @returns M3DLayer对象
      */
     getM3D() {
-      const { viewer } = this;
+      const {viewer} = this;
       const m3d = new window.CesiumZondy.Layer.M3DLayer({
         viewer: viewer
       });
       return m3d;
     },
 
+    /**
+     * 获取模型的高度
+     */
+    getM3dHeight(source) {
+      let vm = this;
+      let _boundingVolume = source._root._boundingVolume;
+      //求外包盒的高度
+      let height = Math.abs(_boundingVolume.maximumHeight - _boundingVolume.minimumHeight);
+      this.maxSliderHeight = height;
+    },
+
+    /**
+     * 开始分析
+     */
+    startHeightAnalysis() {
+      this.heightLimitedAnalysis();
+    },
 
     setInput(data) {
       let vm = this;
       vm.heightLimit = data;
-      vm.heightLimitedAnalysis();
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.HeightLimitedAnalysisManager.findSource(
+          vueKey,
+          vueIndex
+      );
+      let { options } = find;
+      let { heightLimitedAnalysis } = options;
+      if (heightLimitedAnalysis) {
+        // 设置限高高度
+        heightLimitedAnalysis.height = data;
+      }
+      // vm.heightLimitedAnalysis();
     },
     removeDraw() {
       this.drawer.unmount();
@@ -250,28 +317,29 @@ export default {
 
     //绘制组件的回调函数
     handleCreate(cartesian3, lnglat) {
-      let vm = this;
-      this.drawer && this.drawer.removeEntities(true);
-      vm.cartesian3 = cartesian3;
-      vm.lnglat = lnglat;
-      this.heightLimitedAnalysis(lnglat);
+      // let vm = this;
+      // this.drawer && this.drawer.removeEntities(true);
+      // vm.cartesian3 = cartesian3;
+      // vm.lnglat = lnglat;
+      // this.heightLimitedAnalysis(lnglat);
+      // window.drawElement.stopDrawing();
     },
 
     //开始控高分析
     heightLimitedAnalysis(lnglat) {
       const vm = this;
+      // 先remove
+      // this.remove();
       let {vueKey, vueIndex} = this
       let {heightLimit, vueCesium, viewer} = this;
-      // let findSource = vm.$_getObject();
       //先判断m3d模型是否加载完成
-      // if (findSource) {
-      this.m3dIsReady().then(m3d => {
+      vm.m3dIsReady().then(m3d => {
         //判断分析方式，不通过绘制矩形和绘制面的方式，则lnglat为空，走if,否则绘制方式就走else
         if (!lnglat) {
           let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
-          if (find) {
-            lnglat = find.options;
-            this.remove();
+          if (find && find.options && find.options.lnglat) {
+            lnglat = find.options.lnglat;
+            // this.remove();
           } else {
             vm._boundingVolume = m3d.source[0]._root._boundingVolume;
             const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
@@ -290,30 +358,34 @@ export default {
           })
           lnglat = temp;
         }
+        vueCesium.HeightLimitedAnalysisManager.changeOptions(
+            vm.vueKey,
+            vm.vueIndex,
+            "lnglat",
+            lnglat
+        );
         //控高分析边界点数组
         let pnts = [];
         for (let i = 0; i < lnglat.length; i++) {
           pnts.push(new Cesium.Cartesian3(lnglat[i].longitude, lnglat[i].latitude, 0));
         }
-        let cesiumColor = Cesium.Color.fromCssColorString(vm.color);
+        let cesiumColor = Cesium.Color.fromCssColorString(vm.colorCopy);
 
-        //调用控告分析接口
-        let temp;
+        //调用控高分析接口
         let heightLimited = new Cesium.HeightLimited(viewer, {
           height: heightLimit,
           limitedColor: cesiumColor,
-          blendTransparency: vm.opacity,
+          blendTransparency: vm.opacityCopy,
           posArray: pnts,
           polygonColor: Cesium.Color.WHITE.withAlpha(0),
           useOutLine: false
         });
-        // webGlobe.addSceneEffect(heightLimited);
-        temp = heightLimited.add();
-        vueCesium.HeightLimitedAnalysisManager.addSource(
+        heightLimited.add();
+        vueCesium.HeightLimitedAnalysisManager.changeOptions(
             vm.vueKey,
             vm.vueIndex,
-            heightLimited,
-            lnglat
+            "heightLimitedAnalysis",
+            heightLimited
         );
       })
     },
@@ -380,18 +452,32 @@ export default {
       return point;
     },
 
+    handleChange(e){
+      let a1 = this.models.filter((m)=>{
+        return m.title === e;
+      })
+      this.model = a1[0];
+      this.toggleDelete();
+    },
+
     remove() {
-      const {vueKey, vueIndex} = this;
+      const {vueKey, vueIndex, vueCesium} = this;
       let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
-      if (find && find.source) {
-        find.source.remove();
+      if (find && find.options) {
+        if (find.options.heightLimitedAnalysis) {
+          let analysis = find.options.heightLimitedAnalysis;
+          analysis.remove();
+          find.options.heightLimitedAnalysis = null;
+          find.options.lnglat = null;
+        }
       }
-      // 这段代码可以认为是对应的vue的获取destroyed生命周期
-      vueCesium.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
     },
     unmount() {
+      let { vueCesium, vueKey, vueIndex} = this;
       this.removeDraw();
       this.remove();
+      // 这段代码可以认为是对应的vue的获取destroyed生命周期
+      vueCesium.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
     }
   }
 }
@@ -402,6 +488,10 @@ export default {
 ::v-deep .mapgis-ui-card-body {
   max-height: 300px;
   overflow: auto;
+}
+
+::v-deep .mapgis-ui-select {
+  width: calc(35vh);
 }
 
 .mapgis-ui-card-bordered {
@@ -423,5 +513,15 @@ export default {
 
 .mapgis-widget-heightLimited-analysis {
   font-size: 12px;
+}
+.parent_div{
+  width: 100%;
+  display: inline-block;
+  position: relative;
+}
+.child_div{
+  position: absolute;
+  top:0;
+  right: 0px;
 }
 </style>
