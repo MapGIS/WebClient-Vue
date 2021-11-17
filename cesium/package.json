@@ -40,7 +40,8 @@
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vcolorpicker": "^1.1.0",
     "vuepress": "^1.8.2",
-    "webfont-matcher": "1.1.0"
+    "webfont-matcher": "1.1.0",
+    "wangeditor-antd": "^1.0.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
