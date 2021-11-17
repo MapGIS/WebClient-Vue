@@ -1,6 +1,7 @@
 <template>
   <div>
     <mapgis-3d-popup
+        v-if="enablePopup"
         v-for="(popup,index) in popups"
         :key="index"
         :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
@@ -57,7 +58,11 @@ export default {
     vueIndex: {
       type: [String, Number],
       default: () => (Math.random() * 100000000).toFixed(0)
-    }
+    },
+    enablePopup: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
