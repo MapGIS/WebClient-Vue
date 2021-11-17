@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import VueOptions from "../../Base/Vue/VueOptions";
-import Mapgis3dSeneSetting from "../../SceneEffect/SceneSetting";
+import VueOptions from "../../../Base/Vue/VueOptions";
+import Mapgis3dSeneSetting from "../../../SceneEffect/SceneSetting";
 
 export default {
   name: "mapgis-3d-m3d-menu-setting",

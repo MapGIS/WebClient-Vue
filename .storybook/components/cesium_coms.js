@@ -30,10 +30,10 @@ export { default as Mapgis3dGeojsonLayer } from "../../cesium/src/components/Lay
 export { default as Mapgis3dVectortileLayer } from "../../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
 // 模型
-export { default as Mapgis3dFileM3d } from "../../cesium/src/components/M3D/M3dFile.vue";
-export { default as Mapgis3dIgsM3d } from "../../cesium/src/components/M3D/M3d.vue";
-export { default as Mapgis3dG3dLayer } from "../../cesium/src/components/M3D/G3D.vue";
-export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTileset.vue";
+export { default as Mapgis3dFileM3d } from "../../cesium/src/components/Layer/M3D/M3dFile.vue";
+export { default as Mapgis3dIgsM3d } from "../../cesium/src/components/Layer/M3D/M3d.vue";
+export { default as Mapgis3dG3dLayer } from "../../cesium/src/components/Layer/M3D/G3D.vue";
+export { default as Mapgis3dTileset } from "../../cesium/src/components/Layer/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "../../cesium/src/components/UI/Marker/Marker";

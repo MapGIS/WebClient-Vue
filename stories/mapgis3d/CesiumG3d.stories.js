@@ -1,4 +1,4 @@
-import Mapgis3dG3dLayer from "../../cesium/src/components/M3D/G3D.vue";
+import Mapgis3dG3dLayer from "../../cesium/src/components/Layer/M3D/G3D.vue";
 
 export default {
   title: "三维/图层/G3D",

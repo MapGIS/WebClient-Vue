@@ -1,4 +1,4 @@
-import VueOptions from "../Base/Vue/VueOptions";
+import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-m3d-base-layer",
