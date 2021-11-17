@@ -59,7 +59,7 @@
       </mapgis-ui-row>
     </div>
     <div v-show="editFeature">
-      <feature-edit @changeColor="$_changeColor" @changeIcon="$_changeIcon" @featurePreview="$_featurePreview" @back="$_featureBack" :feature="currentFeature"/>
+      <feature-edit @addMap="$_addMap" @changeColor="$_changeColor" @changeIcon="$_changeIcon" @featurePreview="$_featurePreview" @back="$_featureBack" :feature="currentFeature"/>
     </div>
   </div>
 </template>
@@ -141,6 +141,9 @@ export default {
     this.projectCopy = this.project;
   },
   methods: {
+    $_addMap(type, map) {
+      this.$emit("addMap", type, map);
+    },
     $_changeColor(color) {
       this.$emit("changeColor",color, this.currentFeature.id, this.currentFeature.drawType);
     },

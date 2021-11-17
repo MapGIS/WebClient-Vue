@@ -2,7 +2,7 @@
   <div>
     <mapgis-ui-row v-if="featureCopy" class="mapgis-project-feature-edit-panel-head">
       <mapgis-ui-col span="17" class="mapgis-project-feature-edit-panel-head-left">
-        <svg-icon @click="$_back" :icon-style="iconStyle" type="back"/>
+        <mapgis-ui-svg-icon @click="$_back" :icon-style="iconStyle" type="back"/>
       </mapgis-ui-col>
       <mapgis-ui-col span="7">
         <mapgis-ui-button @click="$_preview" class="mapgis-project-feature-preview">预览</mapgis-ui-button>
@@ -14,7 +14,7 @@
         <feature-input v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-textarea v-model="featureCopy.content"/>
+        <div class="mapgis-project-feature-edit-deitor" ref="editor"></div>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
         <feature-select title="展示框大小"/>
@@ -25,6 +25,9 @@
       <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
         <feature-color @changeColor="$_changeColor" title="填充颜色"/>
       </mapgis-ui-row>
+      <mapgis-ui-row>
+        <feature-map @addMap="$_addMap" title="附加地图" placeholder="请输入地图Url"/>
+      </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-panel-camera">
         <mapgis-ui-col :span="16">
           <h4 class="mapgis-project-feature-edit-panel-camera-title">设置相机视角</h4>
@@ -34,61 +37,66 @@
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.orientation.heading" title="方向角"
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
                          placeholder="请输入方向角"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.orientation.pitch" title="俯仰角" placeholder="请输入俯仰角"/>
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角"
+                         placeholder="请输入俯仰角"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input v-model="featureCopy.camera.orientation.roll" title="滚动角" placeholder="请输入滚动角"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input v-model="featureCopy.camera.height" title="相机高度" placeholder="请输入滚动角"/>
+        <feature-input v-model="featureCopy.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.longLatPosition[0]" title="经度"
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.longitude" title="经度"
                          placeholder="请输入经度"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.longLatPosition[1]" title="纬度"
+          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.latitude" title="纬度"
                          placeholder="请输入纬度"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input v-model="featureCopy.camera.longLatPosition[2]" title="高度" placeholder="请输入高度"/>
+        <feature-input v-model="featureCopy.camera.positionCartographic.height" title="高度" placeholder="请输入高度"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <mapgis-ui-button type="primary" class="mapgis-project-feature-edit-reset-camera">还原视角</mapgis-ui-button>
+        <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-project-feature-edit-reset-camera">获取当前视角</mapgis-ui-button>
       </mapgis-ui-row>
     </div>
+    <map-collection :options="options"/>
   </div>
 </template>
 
 <script>
+import mapCollection from "./mapCollection"
 import svgIcon from "../img/svgIcon"
 import featureInput from "../ui/featureInput"
-import featureTextarea from "../ui/featureTextarea"
 import featureSelect from "../ui/featureSelect"
 import featureIcons from "../ui/featureIcons"
 import featureColor from "../ui/featureColor"
+import featureMap from "../ui/featureMap"
 import uploadPicture from "../ui/uploadPicture"
+
+import E from 'wangeditor-antd'
 
 export default {
   name: "featureEdit",
   components: {
     "svg-icon": svgIcon,
+    "map-collection": mapCollection,
     "feature-input": featureInput,
-    "feature-textarea": featureTextarea,
     "feature-select": featureSelect,
     "feature-icons": featureIcons,
     "upload-picture": uploadPicture,
     "feature-color": featureColor,
+    "feature-map": featureMap,
   },
+  inject: ["Cesium", "viewer"],
   data() {
     return {
+      options: {},
       featureCopy: undefined,
       inputStyle: {
         width: "162px",
@@ -107,6 +115,7 @@ export default {
     feature: {
       handler: function () {
         this.featureCopy = this.feature;
+        this.$_addEditor();
       },
       deep: true
     },
@@ -115,8 +124,53 @@ export default {
     this.featureCopy = this.feature;
   },
   methods: {
+    $_getCamera() {
+      let camera = this.viewer.camera;
+      this.featureCopy.camera.positionCartographic = {
+        height: camera.positionCartographic.height,
+        latitude: camera.positionCartographic.latitude,
+        longitude: camera.positionCartographic.longitude
+      };
+      this.featureCopy.camera.heading = camera.heading;
+      this.featureCopy.camera.pitch = camera.pitch;
+      this.featureCopy.camera.roll = camera.roll;
+    },
+    $_addEditor() {
+      let vm = this;
+      if(this.$refs.editor){
+        let editor = new E(this.$refs.editor);
+        editor.customConfig.onchange = (html) => {
+        };
+        editor.customConfig.menus = [
+          'fontSize',  // 字号
+          'fontName',  // 字体
+          'italic',  // 斜体
+          'underline',  // 下划线
+          'foreColor',  // 文字颜色
+          'link',  // 插入链接
+          'justify',  // 对齐方式s
+          'image',  // 插入图片
+        ]
+        editor.customConfig.uploadImgServer ='你的上传地址';
+        editor.customConfig.uploadFileName = 'file';
+        editor.customConfig.zIndex = 100;
+        editor.customConfig.uploadImgParams = {
+          from: 'editor'
+        };
+        editor.customConfig.linkImgCallback = function (url) {
+          vm.featureCopy.content = editor.txt.html();
+        }
+        editor.create();
+        editor.txt.html(this.featureCopy.content);
+      }
+    },
+    $_addMap(type, map) {
+      this.mapType = type;
+      this.options = map;
+      this.featureCopy.map = map;
+    },
     $_changeColor(color) {
-      this.$emit("changeColor",color);
+      this.$emit("changeColor", color);
     },
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon);
@@ -189,5 +243,10 @@ export default {
 
 .mapgis-project-feature-edit-reset-camera {
   width: 344px;
+}
+
+.mapgis-project-feature-edit-deitor{
+  width: 340px;
+  margin: 0 28px;
 }
 </style>

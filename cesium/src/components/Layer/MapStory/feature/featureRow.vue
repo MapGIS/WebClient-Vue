@@ -39,6 +39,7 @@ import featureIcon from "../img/svgIcon"
 
 export default {
   name: "featureRow",
+  inject: ["viewer", "Cesium"],
   components: {
     "feature-icon": featureIcon,
   },
@@ -99,10 +100,31 @@ export default {
       this.showToolIndex = index;
     },
     $_showFeature(index, flag) {
+      this.$_getLayer(index, function (layer) {
+        layer.show = flag
+      });
       this.$set(this.featuresCopy[index].layerStyle, "show", flag);
       this.$emit("showFeature", this.featuresCopy[index].id, flag);
     },
+    $_getLayer(index, callBack) {
+      const {map} = this.featuresCopy[index];
+      if (map) {
+        const {vueKey, vueIndex} = map;
+        if (vueKey && vueIndex) {
+          let layerManager = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex);
+          callBack(layerManager.source);
+        }
+      }
+    },
     $_delete(index) {
+      let vm = this;
+      const {id} = this.featuresCopy[index];
+      if (id) {
+        this.viewer.entities.removeById(this.featuresCopy[index].id);
+      }
+      this.$_getLayer(index, function (layer) {
+        vm.viewer.imageryLayers.remove(layer);
+      });
       this.$emit("deleteFeature", index);
     }
   }

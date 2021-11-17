@@ -34,12 +34,14 @@
           @closeHoverPanel="$_closeHoverPanel"
           @titleChanged="$_titleChange" v-if="showEditPanel"/>
     </div>
+    <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <story-panel-large v-show="showLargePanel" @closePanel="$_closePanel" :feature="storyFeature"/>
   </div>
 </template>
 
 <script>
 import projectRow from "./projectRow";
+import mapCollection from "../feature/mapCollection";
 import projectEdit from "./projectEdit";
 import hoverEditPanel from "../ui/hoverEditPanel";
 import storyPanelLarge from "../ui/storyPanelLarge";
@@ -52,6 +54,7 @@ export default {
   mixins: [mapStoryService],
   components: {
     "project-row": projectRow,
+    "map-collection": mapCollection,
     "project-edit": projectEdit,
     "hover-edit-panel": hoverEditPanel,
     "story-panel-large": storyPanelLarge,
@@ -75,6 +78,7 @@ export default {
   },
   data() {
     return {
+      optArr: [],
       panelHeight: 900,
       showLargePanel: false,
       showEditPanel: false,
@@ -145,8 +149,12 @@ export default {
             const {features} = result;
             if (features && features instanceof Array) {
               for (let i = 0; i < features.length; i++) {
+                const {map} = features[i];
                 const {geometry} = features[i].baseUrl;
                 const {x, y, z} = geometry;
+                if(map){
+                  vm.optArr.push(map);
+                }
                 if (x && y && z) {
                   let img = document.createElement("img");
                   let imgUrl = features[i].layerStyle.billboard.image;

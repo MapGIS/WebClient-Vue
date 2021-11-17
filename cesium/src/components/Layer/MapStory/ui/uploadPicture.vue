@@ -1,11 +1,11 @@
 <template>
   <mapgis-ui-row>
     <div @click="$_clickLarge" class="mapgis-upload-picture-image">
-      <svg-icon style="margin-top: 50px" v-show="!currentImgUrl" :icon-style="iconStyle" type="image"/>
-      <svg-icon @click="$_reload" style="right: 36px;" class="mapgis-upload-picture-icon-container"
+      <mapgis-ui-svg-icon style="margin-top: 50px" v-show="!currentImgUrl" :icon-style="iconStyle" type="image"/>
+      <mapgis-ui-svg-icon @click="$_reload" style="right: 36px;" class="mapgis-upload-picture-icon-container"
                 v-show="currentImgUrl"
                 :icon-style="iconStyle" type="edit"/>
-      <svg-icon @click="$_delete" class="mapgis-upload-picture-icon-container" v-show="currentImgUrl"
+      <mapgis-ui-svg-icon @click="$_delete" class="mapgis-upload-picture-icon-container" v-show="currentImgUrl"
                 :icon-style="iconStyle"
                 type="delete"/>
       <input style="display: none" type="file" :id="inputId"
@@ -16,22 +16,17 @@
       <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
            :style="{marginRight: index && index % 3 === 0 ? 0 : '13px'}" :key="index" v-for="(imgUrl,index) in imgUrls"
            class="mapgis-upload-picture-img" :src="imgUrl" alt="">
-      <svg-icon @click="$_clickSmall" class="mapgis-upload-picture-upload" :icon-style="iconStyle" type="image"/>
+      <mapgis-ui-svg-icon @click="$_clickSmall" class="mapgis-upload-picture-upload" :icon-style="iconStyle" type="image"/>
     </div>
   </mapgis-ui-row>
 </template>
 
 <script>
-import svgIcon from "../img/svgIcon"
-
 export default {
   name: "uploadPicture",
   model: {
     prop: "images",
     event: "change"
-  },
-  components: {
-    "svg-icon": svgIcon,
   },
   props: {
     images: {
