@@ -4,16 +4,14 @@
 
 ```html
 <template>
-  <mapgis-web-scene
-    class="mapgis-3d-scene"
-  >
+  <mapgis-web-scene class="mapgis-3d-scene">
     <mapgis-3d-ogc-wmts-layer
-        :baseUrl="baseUrl"
-        :wmtsLayer="wmtsLayer"
-        :tilingScheme="tilingScheme"
-        :tileMatrixSet="tileMatrixSet"
-        :format="format"
-        :layerStyle="layerStyle"
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tilingScheme="tilingScheme"
+      :tileMatrixSet="tileMatrixSet"
+      :format="format"
+      :layerStyle="layerStyle"
     >
     </mapgis-3d-ogc-wmts-layer>
   </mapgis-web-scene>
@@ -27,18 +25,18 @@
     },
     data: function() {
       return {
-        baseUrl: 'http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752',
-        wmtsLayer: 'vec',
-        tileMatrixSet: 'c',
-        tilingScheme: 'EPSG:4326',
-        format: 'tiles',
+        baseUrl:
+          "http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752",
+        wmtsLayer: "vec",
+        tileMatrixSet: "c",
+        tilingScheme: "EPSG:4326",
+        format: "tiles",
         layerStyle: {
-            zIndex: 1
+          zIndex: 1
         }
       };
     },
-    methods: {
-    }
+    methods: {}
   };
 </script>
 <style>
@@ -133,29 +131,31 @@ button {
 
 ```vue
 <template>
-<button class="animated shake infinite" @click="onClick">Click me!</button>
+  <button class="animated shake infinite" @click="onClick">Click me!</button>
 </template>
 
 <script>
 export default {
-    methods: {
-        onClick: () => { window.alert(1) },
-    },
-}
+  methods: {
+    onClick: () => {
+      window.alert(1);
+    }
+  }
+};
 </script>
 
 <style>
 button {
-    color: blue;
+  color: blue;
 }
 </style>
 ```
 
 :::
 
-### 通过 Props 来交互地图属性
+### 通过 Props 来交互场景属性
 
-你可以通过 props 来控制地图的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
+你可以通过 props 来控制地图场景的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
 
 完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'侦听属性'
 
@@ -204,7 +204,7 @@ Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 Map �
 
 ```vue
 <template>
-  <mapgis-web-scene  @load="onMapLoaded" />
+  <mapgis-web-scene @load="onMapLoaded" />
 </template>
 
 <script>
