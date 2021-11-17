@@ -1,13 +1,13 @@
 <template>
-  <div class="mapgis-feature-input-container">
-    <mapgis-ui-input :id="id" :style="inputStyle" class="mapgis-feature-input" v-model="valueCopy" :placeholder="placeholder"/>
-    <div class="mapgis-feature-input-title">{{ title }}</div>
+  <div class="mapgis-ui-input-outline-container">
+    <mapgis-ui-input :id="id" :style="inputStyle" class="mapgis-ui-input-outline" v-model="valueCopy" :placeholder="placeholder"/>
+    <div class="mapgis-ui-input-outline-title">{{ title }}</div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "featureInput",
+  name: "mapgis-ui-input-outline",
   model: {
     prop: "value",
     event: "change"
@@ -59,13 +59,13 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-feature-input-container {
+.mapgis-ui-input-outline-container {
   position: relative;
   width: auto;
   height: auto;
 }
 
-.mapgis-feature-input {
+.mapgis-ui-input-outline {
   width: 344px;
   height: 54px;
   background: rgba(0, 0, 0, 0);
@@ -75,7 +75,7 @@ export default {
   padding-left: 14px;
 }
 
-.mapgis-feature-input-title {
+.mapgis-ui-input-outline-title {
   position: absolute;
   top: -10px;
   left: 40px;

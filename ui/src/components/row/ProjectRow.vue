@@ -29,21 +29,21 @@
         </div>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div :style="{height: collapse ? '0' : rowLength * 64 + 'px'}" class="mapgis-mapstory-project-row-container">
-      <mapgis-ui-row :key="index" v-for="(project,index) in projects" class="mapgis-mapstory-project-row">
+    <div :style="{height: collapse ? '0' : rowLength * 64 + 'px'}" class="mapgis-ui-project-row-container">
+      <mapgis-ui-row :key="index" v-for="(project,index) in projects" class="mapgis-ui-project-row">
         <div style="width: 400px;height: 64px" v-if="project.type === type" @mouseenter="$_rowEnter(index)"
              @mouseleave="$_rowLeave">
           <mapgis-ui-col span="12">
             <div class="mapgis-mapstory-project-panel-title">{{ project.title }}</div>
           </mapgis-ui-col>
           <mapgis-ui-col span="12" class="mapgis-mapstory-tool-bar">
-            <svg-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>
-            <svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>
-            <svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>
-            <svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>
-            <svg-icon v-show="showToolIndex !== index && project.show" type="eye"/>
-            <svg-icon @click="$_showProject(index, true)" v-show="showToolIndex === index && !project.show" type="eye"/>
-            <svg-icon @click="$_showProject(index, false)" v-show="showToolIndex === index && project.show" type="noEye"/>
+            <mapgis-ui-svg-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>
+            <mapgis-ui-svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>
+            <mapgis-ui-svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>
+            <mapgis-ui-svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>
+            <mapgis-ui-svg-icon v-show="showToolIndex !== index && project.show" type="eye"/>
+            <mapgis-ui-svg-icon @click="$_showProject(index, true)" v-show="showToolIndex === index && !project.show" type="eye"/>
+            <mapgis-ui-svg-icon @click="$_showProject(index, false)" v-show="showToolIndex === index && project.show" type="noEye"/>
           </mapgis-ui-col>
         </div>
       </mapgis-ui-row>
@@ -52,12 +52,8 @@
 </template>
 
 <script>
-import svgIcon from "../img/svgIcon"
 export default {
-  name: "projectRow",
-  components: {
-    "svg-icon": svgIcon,
-  },
+  name: "mapgis-ui-project-row",
   data() {
     return {
       hoverIcon: undefined,
@@ -128,7 +124,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-mapstory-project-row-container {
+.mapgis-ui-project-row-container {
   width: 100%;
   transition: height .3s;
   overflow: hidden;
@@ -137,7 +133,7 @@ export default {
   -o-transition: height .3s; /* Opera */
 }
 
-.mapgis-mapstory-project-row:hover {
+.mapgis-ui-project-row:hover {
   background: rgb(40, 41, 44);
   cursor: pointer;
 }

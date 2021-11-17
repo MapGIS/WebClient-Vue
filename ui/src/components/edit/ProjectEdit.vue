@@ -1,35 +1,36 @@
 <template>
   <div>
     <div v-show="!editFeature">
-      <mapgis-ui-row class="mapgis-project-edit-top-tool">
-        <mapgis-ui-col span="18" class="mapgis-project-edit-top-left">
-          <div @click="$_back" class="mapgis-project-edit-back-container">
-            <svg-icon type="back" :iconStyle="iconStyle" class="mapgis-project-back"/>
+      <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
+        <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
+          <div @click="$_back" class="mapgis-ui-project-edit-back-container">
+            <mapgis-ui-svg-icon type="back" :iconStyle="iconStyle" class="mapgis-project-back"/>
           </div>
         </mapgis-ui-col>
         <mapgis-ui-col span="6">
-          <svg-icon @click="$_deleteProject" type="delete"/>
-          <svg-icon type="more"/>
+          <mapgis-ui-svg-icon @click="$_deleteProject" type="delete"/>
+          <mapgis-ui-svg-icon type="more"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row v-show="!editTitle" class="mapgis-project-edit-title">
+      <mapgis-ui-row v-show="!editTitle" class="mapgis-ui-project-edit-title">
         <mapgis-ui-col span="18">
-          <h3 class="mapgis-project-edit-title-value">{{ projectCopy.title }}</h3>
+          <h3 class="mapgis-ui-project-edit-title-value">{{ projectCopy.title }}</h3>
         </mapgis-ui-col>
         <mapgis-ui-col span="6">
-          <svg-icon id="mpEdit" @click="$_editTitle" class="mapgis-project-edit-edit-icon" type="edit"/>
+          <mapgis-ui-svg-icon id="mpEdit" @click="$_editTitle" class="mapgis-ui-project-edit-edit-icon" type="edit"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row v-show="editTitle">
-        <feature-input @change="$_titleChange" title="标题" :inputStyle="inputStyle" id="mpTitle"
-                       v-model="projectCopy.title"/>
+        <mapgis-ui-input-outline @change="$_titleChange" title="标题" :inputStyle="inputStyle" id="mpTitle"
+                                 v-model="projectCopy.title"/>
       </mapgis-ui-row>
       <mapgis-ui-row v-show="editTitle">
-        <feature-textarea @change="$_titleChange" :textareaStyle="textareaStyle" :hasToolBar="false" id="mpDescription"
-                          v-model="projectCopy.description" placeholder="描述信息"/>
+        <mapgis-ui-textarea-outline @change="$_titleChange" :textareaStyle="textareaStyle" :hasToolBar="false"
+                                    id="mpDescription"
+                                    v-model="projectCopy.description" placeholder="描述信息"/>
       </mapgis-ui-row>
       <mapgis-ui-row>
-        <mapgis-ui-col span="24" class="mapgis-project-edit-new-feature">
+        <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
           <mapgis-ui-dropdown>
             <mapgis-ui-menu slot="overlay">
               <mapgis-ui-menu-item key="1" @click="$_addPoint">
@@ -45,41 +46,35 @@
                 添加矩形
               </mapgis-ui-menu-item>
             </mapgis-ui-menu>
-            <mapgis-ui-button type="primary" class="mapgis-project-edit-feature-button"> 新建要素</mapgis-ui-button>
+            <mapgis-ui-button type="primary" class="mapgis-ui-project-edit-feature-button"> 新建要素</mapgis-ui-button>
           </mapgis-ui-dropdown>
-          <mapgis-ui-button @click="$_projectPreview" class="mapgis-project-edit-feature-preview">
+          <mapgis-ui-button @click="$_projectPreview" class="mapgis-ui-project-edit-feature-preview">
             预览
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-edit-split"></mapgis-ui-row>
+      <mapgis-ui-row class="mapgis-ui-project-edit-split"></mapgis-ui-row>
       <mapgis-ui-row>
-        <feature-row @showFeature="$_showFeature" @deleteFeature="$_deleteFeature" @editFeature="$_editFeature"
+        <mapgis-ui-feature-row @showFeature="$_showFeature" @deleteFeature="$_deleteFeature" @editFeature="$_editFeature"
                      :features="projectCopy.features"/>
       </mapgis-ui-row>
     </div>
     <div v-show="editFeature">
-      <feature-edit @addMap="$_addMap" @changeColor="$_changeColor" @changeIcon="$_changeIcon" @featurePreview="$_featurePreview" @back="$_featureBack" :feature="currentFeature"/>
+      <mapgis-ui-feature-edit
+          @getCamera="$_getCamera"
+          @addMap="$_addMap"
+          @changeColor="$_changeColor"
+          @changeIcon="$_changeIcon"
+          @featurePreview="$_featurePreview"
+          @back="$_featureBack"
+          :feature="currentFeature"/>
     </div>
   </div>
 </template>
 
 <script>
-import svgIcon from "../img/svgIcon"
-import featureRow from "../feature/featureRow"
-import featureEdit from "../feature/featureEdit"
-import featureInput from "../ui/featureInput"
-import featureTextarea from "../ui/featureTextarea"
-
 export default {
-  name: "projectEdit",
-  components: {
-    "svg-icon": svgIcon,
-    "feature-row": featureRow,
-    "feature-edit": featureEdit,
-    "feature-input": featureInput,
-    "feature-textarea": featureTextarea,
-  },
+  name: "mapgis-ui-project-edit",
   model: {
     prop: "project",
     event: "change"
@@ -141,11 +136,14 @@ export default {
     this.projectCopy = this.project;
   },
   methods: {
+    $_getCamera() {
+      this.$emit("getCamera", this.currentFeature);
+    },
     $_addMap(type, map) {
       this.$emit("addMap", type, map);
     },
     $_changeColor(color) {
-      this.$emit("changeColor",color, this.currentFeature.id, this.currentFeature.drawType);
+      this.$emit("changeColor", color, this.currentFeature.id, this.currentFeature.drawType);
     },
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon, this.currentFeature.id);
@@ -237,7 +235,8 @@ export default {
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);
     },
-    $_deleteFeature(index) {
+    $_deleteFeature(index, id) {
+      this.$emit("deleteFeature", index, id);
       this.projectCopy.features.splice(index, 1);
     }
   }
@@ -245,12 +244,12 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-project-edit-top-left {
+.mapgis-ui-project-edit-top-left {
   text-align: left;
   padding-left: 10px;
 }
 
-.mapgis-project-edit-back-container {
+.mapgis-ui-project-edit-back-container {
   width: 40px;
   height: 40px;
   border-radius: 100%;
@@ -265,37 +264,37 @@ export default {
   left: 5px;
 }
 
-.mapgis-project-edit-title {
+.mapgis-ui-project-edit-title {
   width: 368px;
   height: 52px;
   margin: 12px 12px 0 20px;
 }
 
-.mapgis-project-edit-title-value {
+.mapgis-ui-project-edit-title-value {
   color: white;
   font-weight: bold;
   text-align: left;
   font-size: 20px;
 }
 
-.mapgis-project-edit-edit-icon {
+.mapgis-ui-project-edit-edit-icon {
   margin-top: -12px;
   margin-left: 51px;
 }
 
-.mapgis-project-edit-new-feature {
+.mapgis-ui-project-edit-new-feature {
   text-align: left;
   padding-left: 14px;
   height: 36px;
 }
 
-.mapgis-project-edit-feature-button {
+.mapgis-ui-project-edit-feature-button {
   width: 141px;
   height: 36px;
   margin-right: 10px;
 }
 
-.mapgis-project-edit-feature-preview {
+.mapgis-ui-project-edit-feature-preview {
   width: 100px;
   height: 36px;
   color: rgb(102, 102, 102);
@@ -303,12 +302,12 @@ export default {
   border: 1px solid rgb(102, 102, 102);
 }
 
-.mapgis-project-edit-split {
+.mapgis-ui-project-edit-split {
   margin-top: 20px;
   border-bottom: 1px solid #5f6368;
 }
 
-.mapgis-project-edit-edit-title {
+.mapgis-ui-project-edit-edit-title {
   font-size: 18px;
   height: 58px;
   width: 352px;
@@ -316,7 +315,7 @@ export default {
   margin-bottom: 20px;
 }
 
-.mapgis-project-edit-edit-description {
+.mapgis-ui-project-edit-edit-description {
   height: 152px;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div class="mapgis-feature-select-container">
-    <div class="mapgis-feature-select-title">{{ title }}</div>
-    <mapgis-ui-select class="mapgis-feature-select" default-value="小">
-      <mapgis-ui-select-option class="mapgis-feature-select-option" value="小">
+  <div class="mapgis-ui-select-outline-container">
+    <div class="mapgis-ui-select-outline-title">{{ title }}</div>
+    <mapgis-ui-select class="mapgis-ui-select-outline" default-value="小">
+      <mapgis-ui-select-option class="mapgis-ui-select-outline-option" value="小">
         小
       </mapgis-ui-select-option>
-      <mapgis-ui-select-option class="mapgis-feature-select-option" value="大">
+      <mapgis-ui-select-option class="mapgis-ui-select-outline-option" value="大">
         大
       </mapgis-ui-select-option>
     </mapgis-ui-select>
@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name: "featureSelect",
+  name: "mapgis-ui-select-outline",
   props: {
     title: {
       type: String,
@@ -25,13 +25,13 @@ export default {
 </script>
 
 <style>
-.mapgis-feature-select-container {
+.mapgis-ui-select-outline-container {
   width: auto;
   height: auto;
   position: relative;
 }
 
-.mapgis-feature-select-title {
+.mapgis-ui-select-outline-title {
   position: absolute;
   top: -10px;
   left: 40px;
@@ -41,11 +41,11 @@ export default {
   background: rgb(32, 33, 36);
 }
 
-.mapgis-feature-select {
+.mapgis-ui-select-outline {
   width: 342px;
 }
 
-.mapgis-feature-select > div {
+.mapgis-ui-select-outline > div {
   background: rgb(32, 33, 36);
   border: 1px solid rgb(95, 99, 104);
   height: 54px;
@@ -55,15 +55,15 @@ export default {
   font-size: 18px;
 }
 
-.mapgis-feature-select .mapgis-ui-select-arrow svg {
+.mapgis-ui-select-outline .mapgis-ui-select-arrow svg {
   color: #e8eaed;
 }
 
-.mapgis-feature-select-option, .mapgis-ui-select-dropdown-menu {
+.mapgis-ui-select-outline-option, .mapgis-ui-select-dropdown-menu {
   background: rgb(48, 50, 53);
 }
 
-.mapgis-feature-select-option {
+.mapgis-ui-select-outline-option {
   color: #e8eaed !important;
   font-size: 18px !important;
   height: 44px;
@@ -71,7 +71,7 @@ export default {
   padding-left: 14px !important;
 }
 
-.mapgis-feature-select-option:hover {
+.mapgis-ui-select-outline-option:hover {
   color: black !important;
 }
 </style>

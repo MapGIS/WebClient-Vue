@@ -1,6 +1,6 @@
 <template>
-  <div class="mapgis-feature-color-container">
-    <div class="mapgis-feature-color-title">{{ title }}</div>
+  <div class="mapgis-ui-color-outline-container">
+    <div class="mapgis-ui-color-outline-title">{{ title }}</div>
     <mapgis-ui-sketch-color-picker
         :color.sync="colorCopy"
         @input="$_changeColor"
@@ -13,7 +13,7 @@
 <script>
 
 export default {
-  name: "featureIcons",
+  name: "mapgis-ui-color-outline",
   data() {
     return {
       style: {
@@ -51,7 +51,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-feature-color-container {
+.mapgis-ui-color-outline-container {
   width: 342px;
   height: 62px;
   position: relative;
@@ -61,11 +61,11 @@ export default {
   padding: 14px;
 }
 
-.mapgis-feature-color-container:hover{
+.mapgis-ui-color-outline-container:hover{
   border-color: #269ff0;
 }
 
-.mapgis-feature-color-title {
+.mapgis-ui-color-outline-title {
   position: absolute;
   top: -10px;
   left: 17px;

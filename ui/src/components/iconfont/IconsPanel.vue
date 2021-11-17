@@ -1,7 +1,7 @@
 <template>
-  <div class="mapgis-feature-icons-container">
-    <div class="mapgis-feature-icons-title">{{ title }}</div>
-    <div class="mapgis-feature-icons">
+  <div class="mapgis-ui-icons-panel-container">
+    <div class="mapgis-ui-icons-panel-title">{{ title }}</div>
+    <div class="mapgis-ui-icons-panel">
       <img @click="$_click(marker.key)" class="mapgis-feature-icon" v-for="(marker,index) in markers" :key="index"
            :src="marker.value" :title="marker.key" alt=""/>
     </div>
@@ -9,13 +9,13 @@
 </template>
 
 <script>
-import marker from "../img/base64Image"
+import Base64IconsKeyValue from "./Base64IconsKeyValue"
 
 export default {
-  name: "featureIcons",
+  name: "mapgis-ui-icons-panel",
   data() {
     return {
-      markers: marker
+      markers: Base64IconsKeyValue
     }
   },
   props: {
@@ -33,13 +33,13 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-feature-icons-container {
+.mapgis-ui-icons-panel-container {
   width: auto;
   height: auto;
   position: relative;
 }
 
-.mapgis-feature-icons-title {
+.mapgis-ui-icons-panel-title {
   position: absolute;
   top: -10px;
   left: 40px;
@@ -49,7 +49,7 @@ export default {
   background: rgb(32, 33, 36);
 }
 
-.mapgis-feature-icons {
+.mapgis-ui-icons-panel {
   margin: 30px auto;
   width: 344px;
   height: 210px;

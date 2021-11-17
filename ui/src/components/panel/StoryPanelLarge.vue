@@ -1,11 +1,11 @@
 <template>
-  <div v-if="currentFeature" class="mapgis-story-panel-large" :style="{height: panelHeight + 'px'}">
-    <img v-if="showFullImg" class="mapgis-story-panel-large-full-img" :src="currentImg" alt="">
-    <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-story-panel-large-full-close"
-              :icon-style="iconStyle"
-              :container-style="containerStyle" type="close"/>
-    <img class="mapgis-story-panel-large-carousel-img" v-if="!showCarousel" :src="currentFeature.images" alt="">
-    <mapgis-ui-carousel :afterChange="$_afterChange" v-if="showCarousel" class="mapgis-story-panel-large-carousel"
+  <div v-if="currentFeature" class="mapgis-ui-story-panel-large" :style="{height: panelHeight + 'px'}">
+    <img v-if="showFullImg" class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
+    <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
+                        :icon-style="iconStyle"
+                        :container-style="containerStyle" type="close"/>
+    <img class="mapgis-ui-story-panel-large-carousel-img" v-if="!showCarousel" :src="currentFeature.images" alt="">
+    <mapgis-ui-carousel :afterChange="$_afterChange" v-if="showCarousel" class="mapgis-ui-story-panel-large-carousel"
                         autoplay arrows>
       <div
           slot="prevArrow"
@@ -18,42 +18,38 @@
         <mapgis-ui-iconfont type="mapgis-right-circle"/>
       </div>
       <div :key="index" v-for="(image,index) in currentFeature.images">
-        <img class="mapgis-story-panel-large-carousel-img" :src="image" alt="">
+        <img class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
       </div>
     </mapgis-ui-carousel>
-    <div @click="$_fullScreen" class="mapgis-story-panel-large-full-screen">
+    <div @click="$_fullScreen" class="mapgis-ui-story-panel-large-full-screen">
       <img :src="icon.fullScreen" alt="">
     </div>
-    <div @click="$_flyTo" class="mapgis-story-panel-large-fly">
+    <div @click="$_flyTo" class="mapgis-ui-story-panel-large-fly">
       <img :src="icon.flyTo" alt="">
     </div>
     <mapgis-ui-svg-icon @click="$_close" :icon-style="iconStyle" :container-style="containerStyle" type="close"/>
-    <div class="mapgis-story-panel-large-title">
+    <div class="mapgis-ui-story-panel-large-title">
       <h1>{{ currentFeature.title }}</h1>
     </div>
-    <div class="mapgis-story-panel-large-content" :id="storyContentId">
+    <div class="mapgis-ui-story-panel-large-content" :id="storyContentId">
     </div>
-    <div class="mapgis-story-panel-large-bottom">
-      <mapgis-ui-base64-icon v-show="!isPlay" @click="$_play" class="mapgis-story-panel-large-play" type="play"/>
-      <mapgis-ui-base64-icon v-show="isPlay" @click="$_play" class="mapgis-story-panel-large-play" type="pause"/>
-      <mapgis-ui-iconfont v-show="!isPlay" @click="$_prevFeature" style="width: 20px;cursor: pointer" type="mapgis-left-circle"/>
+    <div class="mapgis-ui-story-panel-large-bottom">
+      <mapgis-ui-base64-icon v-show="!isPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="play"/>
+      <mapgis-ui-base64-icon v-show="isPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="pause"/>
+      <mapgis-ui-iconfont v-show="!isPlay" @click="$_prevFeature" style="width: 20px;cursor: pointer"
+                          type="mapgis-left-circle"/>
       {{ currentFeatureIndex }} / {{ this.featureCopy.length }}
-      <mapgis-ui-iconfont v-show="!isPlay" @click="$_nextFeature" style="width: 20px;cursor: pointer" type="mapgis-right-circle"/>
+      <mapgis-ui-iconfont v-show="!isPlay" @click="$_nextFeature" style="width: 20px;cursor: pointer"
+                          type="mapgis-right-circle"/>
     </div>
   </div>
 </template>
 
 <script>
-import icon from "../img/base64Icon"
-import svgIcon from "../img/svgIcon"
-import mapStoryService from "../mapStoryService"
+import Base64IconsKeyValue from "../iconfont/Base64IconsKeyValue"
 
 export default {
-  name: "storyPanelLarge",
-  components: {
-    "svg-icon": svgIcon,
-  },
-  mixins: [mapStoryService],
+  name: "mapgis-ui-story-panel-large",
   props: {
     feature: {
       type: Array,
@@ -75,7 +71,7 @@ export default {
       currentImgIndex: 0,
       currentImg: 0,
       featureCopy: [],
-      icon: icon,
+      icon: Base64IconsKeyValue,
       containerStyle: {
         position: "absolute",
         top: "14px",
@@ -113,7 +109,11 @@ export default {
       if (!this.isPlay) {
         let vm = this;
         this.isPlay = true;
-        vm.currentFeatureIndex = 1;
+        if (vm.currentFeatureIndex < vm.featureCopy.length && vm.currentFeatureIndex > 1) {
+          vm.currentFeatureIndex++;
+        } else {
+          vm.currentFeatureIndex = 1;
+        }
         vm.currentFeature = vm.featureCopy[vm.currentFeatureIndex - 1];
         vm.$_init();
         vm.$_flyTo();
@@ -124,7 +124,8 @@ export default {
             vm.$_init();
             vm.$_flyTo();
           } else {
-            clearInterval(this.interval);
+            vm.isPlay = false;
+            clearInterval(vm.interval);
           }
         }, 5000);
       } else {
@@ -149,16 +150,7 @@ export default {
       this.showFullImg = true;
     },
     $_flyTo() {
-      const {positionCartographic, heading, pitch, roll} = this.currentFeature.camera;
-      const {longitude, latitude, height} = positionCartographic;
-      this.viewer.camera.flyTo({
-        destination: new Cesium.Cartesian3.fromRadians(longitude, latitude, height),
-        orientation: {
-          heading: heading,
-          pitch: pitch,
-          roll: roll
-        }
-      });
+      this.$emit("flyTo", this.currentFeature.camera);
     },
     $_prevFeature() {
       if (this.currentFeatureIndex > 1) {
@@ -199,7 +191,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-story-panel-large {
+.mapgis-ui-story-panel-large {
   position: absolute;
   z-index: 1;
   right: 0;
@@ -209,26 +201,26 @@ export default {
   background: white;
 }
 
-.mapgis-story-panel-large-carousel {
+.mapgis-ui-story-panel-large-carousel {
   width: 100%;
   height: 278px;
 }
 
-.mapgis-story-panel-large-carousel-img {
+.mapgis-ui-story-panel-large-carousel-img {
   width: 100%;
   height: 278px;
 }
 
-.mapgis-story-panel-large-title {
+.mapgis-ui-story-panel-large-title {
   text-align: left;
   padding: 10px 14px;
 }
 
-.mapgis-story-panel-large-title > h1 {
+.mapgis-ui-story-panel-large-title > h1 {
   margin-bottom: 0;
 }
 
-.mapgis-story-panel-large-content {
+.mapgis-ui-story-panel-large-content {
   width: 100%;
   word-break: break-word;
   text-align: left;
@@ -240,11 +232,11 @@ export default {
   overflow-y: scroll;
 }
 
-.mapgis-story-panel-large-content > img {
+.mapgis-ui-story-panel-large-content > img {
   margin: 10px 0;
 }
 
-.mapgis-story-panel-large-full-screen {
+.mapgis-ui-story-panel-large-full-screen {
   position: absolute;
   top: 228px;
   left: 10px;
@@ -254,17 +246,17 @@ export default {
   padding: 8px;
 }
 
-.mapgis-story-panel-large-full-screen:hover {
+.mapgis-ui-story-panel-large-full-screen:hover {
   background: rgb(202, 195, 193);
 }
 
-.mapgis-story-panel-large-full-screen > img {
+.mapgis-ui-story-panel-large-full-screen > img {
   width: 24px;
   height: 24px;
   cursor: pointer;
 }
 
-.mapgis-story-panel-large-fly {
+.mapgis-ui-story-panel-large-fly {
   position: absolute;
   top: 248px;
   right: 30px;
@@ -279,7 +271,7 @@ export default {
   -o-transition: transform 0.5s; /* Opera */
 }
 
-.mapgis-story-panel-large-fly:hover {
+.mapgis-ui-story-panel-large-fly:hover {
   transform: scale(1.15);
   -webkit-box-shadow: #666 0 0 10px;
   -moz-box-shadow: #666 0 0 10px;
@@ -287,12 +279,12 @@ export default {
   cursor: pointer;
 }
 
-.mapgis-story-panel-large-fly > img {
+.mapgis-ui-story-panel-large-fly > img {
   width: 28px;
   height: 28px;
 }
 
-.mapgis-story-panel-large-bottom {
+.mapgis-ui-story-panel-large-bottom {
   position: absolute;
   left: 0;
   bottom: 0;
@@ -305,7 +297,7 @@ export default {
   padding-right: 20px;
 }
 
-.mapgis-story-panel-large-full-img {
+.mapgis-ui-story-panel-large-full-img {
   position: fixed;
   z-index: 10000000;
   top: 0;
@@ -314,14 +306,14 @@ export default {
   height: 1080px;
 }
 
-.mapgis-story-panel-large-full-close {
+.mapgis-ui-story-panel-large-full-close {
   position: fixed;
   z-index: 10000001;
   top: 0;
   right: 0;
 }
 
-.mapgis-story-panel-large-play {
+.mapgis-ui-story-panel-large-play {
   float: left;
   margin-top: 20px;
   margin-left: 12px;

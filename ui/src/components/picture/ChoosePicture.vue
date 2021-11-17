@@ -1,29 +1,29 @@
 <template>
   <mapgis-ui-row>
-    <div @click="$_clickLarge" class="mapgis-upload-picture-image">
+    <div @click="$_clickLarge" class="mapgis-ui-choose-picture-image">
       <mapgis-ui-svg-icon style="margin-top: 50px" v-show="!currentImgUrl" :icon-style="iconStyle" type="image"/>
-      <mapgis-ui-svg-icon @click="$_reload" style="right: 36px;" class="mapgis-upload-picture-icon-container"
+      <mapgis-ui-svg-icon @click="$_reload" style="right: 36px;" class="mapgis-ui-choose-picture-icon-container"
                 v-show="currentImgUrl"
                 :icon-style="iconStyle" type="edit"/>
-      <mapgis-ui-svg-icon @click="$_delete" class="mapgis-upload-picture-icon-container" v-show="currentImgUrl"
+      <mapgis-ui-svg-icon @click="$_delete" class="mapgis-ui-choose-picture-icon-container" v-show="currentImgUrl"
                 :icon-style="iconStyle"
                 type="delete"/>
       <input style="display: none" type="file" :id="inputId"
              accept="image/png, image/jpeg, image/gif, image/jpg, image/svg">
       <img style="height: 100%" :src="currentImgUrl" alt="">
     </div>
-    <div v-show="currentImgUrl" class="mapgis-upload-picture-carousel">
+    <div v-show="currentImgUrl" class="mapgis-ui-choose-picture-carousel">
       <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
            :style="{marginRight: index && index % 3 === 0 ? 0 : '13px'}" :key="index" v-for="(imgUrl,index) in imgUrls"
-           class="mapgis-upload-picture-img" :src="imgUrl" alt="">
-      <mapgis-ui-svg-icon @click="$_clickSmall" class="mapgis-upload-picture-upload" :icon-style="iconStyle" type="image"/>
+           class="mapgis-ui-choose-picture-img" :src="imgUrl" alt="">
+      <mapgis-ui-svg-icon @click="$_clickSmall" class="mapgis-ui-choose-picture-upload" :icon-style="iconStyle" type="image"/>
     </div>
   </mapgis-ui-row>
 </template>
 
 <script>
 export default {
-  name: "uploadPicture",
+  name: "mapgis-ui-choose-picture",
   model: {
     prop: "images",
     event: "change"
@@ -146,7 +146,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-upload-picture-image {
+.mapgis-ui-choose-picture-image {
   position: relative;
   width: 344px;
   height: 160px;
@@ -156,7 +156,7 @@ export default {
   overflow: hidden;
 }
 
-.mapgis-upload-picture-carousel {
+.mapgis-ui-choose-picture-carousel {
   width: 344px;
   height: auto;
   overflow: hidden;
@@ -165,7 +165,7 @@ export default {
   margin-top: 0;
 }
 
-.mapgis-upload-picture-img {
+.mapgis-ui-choose-picture-img {
   width: 76px;
   height: 58px;
   cursor: pointer;
@@ -180,7 +180,7 @@ export default {
   border: 2px solid rgb(138, 180, 248);
 }
 
-.mapgis-upload-picture-upload {
+.mapgis-ui-choose-picture-upload {
   width: 76px;
   height: 58px;
   background: rgb(47, 68, 87);
@@ -190,7 +190,7 @@ export default {
   float: left;
 }
 
-.mapgis-upload-picture-icon-container {
+.mapgis-ui-choose-picture-icon-container {
   position: absolute;
   top: 0;
   right: 0;
@@ -200,7 +200,7 @@ export default {
   line-height: 50px;
 }
 
-.mapgis-upload-picture-icon-container:hover {
+.mapgis-ui-choose-picture-icon-container:hover {
   background: rgb(43, 43, 45);
 }
 </style>

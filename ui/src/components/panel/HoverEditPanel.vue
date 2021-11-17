@@ -1,18 +1,18 @@
 <template>
-  <div class="mapgis-project-hover-panel">
-    <mapgis-ui-row class="mapgis-project-hover-panel-title">
+  <div class="mapgis-ui-hover-edit-panel">
+    <mapgis-ui-row class="mapgis-ui-hover-edit-panel-title">
       <mapgis-ui-col span="18">
-        <h2 class="mapgis-project-hover-panel-title-value">保存至项目</h2>
+        <h2 class="mapgis-ui-hover-edit-panel-title-value">保存至项目</h2>
       </mapgis-ui-col>
       <mapgis-ui-col span="6">
-        <svg-icon @click="$_close" style="margin-left: 32px" type="close"/>
+        <mapgis-ui-svg-icon @click="$_close" style="margin-left: 32px" type="close"/>
       </mapgis-ui-col>
     </mapgis-ui-row>
     <mapgis-ui-row>
-      <feature-input :inputStyle="inputStyle" @change="$_titleChange" placeholder="请输入标题"/>
+      <mapgis-ui-input-outline :inputStyle="inputStyle" @change="$_titleChange" placeholder="请输入标题"/>
     </mapgis-ui-row>
     <mapgis-ui-row>
-      <mapgis-ui-select class="mapgis-project-hover-panel-select" :default-value="projects[0].title">
+      <mapgis-ui-select class="mapgis-ui-hover-edit-panel-select" :default-value="projects[0].title">
         <mapgis-ui-select-option v-for="(project,index) in projects" :key="index" :value="project.title">
           {{ project.title }}
         </mapgis-ui-select-option>
@@ -34,15 +34,8 @@
 </template>
 
 <script>
-import svgIcon from "../img/svgIcon"
-import featureInput from "./featureInput"
-
 export default {
-  name: "hoverEditPanel",
-  components: {
-    "svg-icon": svgIcon,
-    "feature-input": featureInput,
-  },
+  name: "mapgis-ui-hover-edit-panel",
   props: {
     projects: {
       type: Array,
@@ -85,7 +78,7 @@ export default {
 </script>
 
 <style>
-.mapgis-project-hover-panel {
+.mapgis-ui-hover-edit-panel {
   position: absolute;
   width: 360px;
   height: 255px;
@@ -99,27 +92,27 @@ export default {
   box-shadow: #666 0 0 10px;
 }
 
-.mapgis-project-hover-panel-title-value {
+.mapgis-ui-hover-edit-panel-title-value {
   margin-top: 12px;
   padding: 0 12px 0 20px;
   text-align: left;
 }
 
-.mapgis-project-hover-panel-title-value {
+.mapgis-ui-hover-edit-panel-title-value {
   color: white;
   font-weight: bold;
 }
 
-.mapgis-project-hover-panel-select {
+.mapgis-ui-hover-edit-panel-select {
   width: 89%;
   margin-top: 14px !important;
 }
 
-.mapgis-project-hover-panel-select > div {
+.mapgis-ui-hover-edit-panel-select > div {
   height: 54px;
 }
 
-.mapgis-project-hover-panel-select > div > div {
+.mapgis-ui-hover-edit-panel-select > div > div {
   height: 54px;
   line-height: 54px;
   font-size: 18px;

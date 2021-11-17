@@ -1,102 +1,80 @@
 <template>
   <div>
-    <mapgis-ui-row v-if="featureCopy" class="mapgis-project-feature-edit-panel-head">
-      <mapgis-ui-col span="17" class="mapgis-project-feature-edit-panel-head-left">
+    <mapgis-ui-row v-if="featureCopy" class="mapgis-ui-feature-edit-panel-head">
+      <mapgis-ui-col span="17" class="mapgis-ui-feature-edit-panel-head-left">
         <mapgis-ui-svg-icon @click="$_back" :icon-style="iconStyle" type="back"/>
       </mapgis-ui-col>
       <mapgis-ui-col span="7">
         <mapgis-ui-button @click="$_preview" class="mapgis-project-feature-preview">预览</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div v-if="featureCopy" class="mapgis-project-feature-edit-panel">
-      <upload-picture v-model="featureCopy.images"/>
+    <div v-if="featureCopy" class="mapgis-ui-feature-edit-panel">
+      <mapgis-ui-choose-picture v-model="featureCopy.images"/>
       <mapgis-ui-row>
-        <feature-input v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
+        <mapgis-ui-input-outline v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <div class="mapgis-project-feature-edit-deitor" ref="editor"></div>
+      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+        <div class="mapgis-ui-feature-edit-deitor" ref="editor"></div>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-select title="展示框大小"/>
+      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+        <mapgis-ui-select-outline title="展示框大小"/>
       </mapgis-ui-row>
       <mapgis-ui-row v-if="featureCopy.drawType === 'point'">
-        <feature-icons title="featureCopy.drawType"/>
+        <mapgis-ui-icons-panel @changeIcon="$_changeIcon" title="选择图标"/>
       </mapgis-ui-row>
       <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-        <feature-color @changeColor="$_changeColor" title="填充颜色"/>
+        <mapgis-ui-color-outline @changeColor="$_changeColor" title="填充颜色"/>
       </mapgis-ui-row>
       <mapgis-ui-row>
-        <feature-map @addMap="$_addMap" title="附加地图" placeholder="请输入地图Url"/>
+        <mapgis-ui-map-outline @addMap="$_addMap" title="附加地图" placeholder="请输入地图Url"/>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-panel-camera">
+      <mapgis-ui-row class="mapgis-ui-feature-edit-panel-camera">
         <mapgis-ui-col :span="16">
-          <h4 class="mapgis-project-feature-edit-panel-camera-title">设置相机视角</h4>
+          <h4 class="mapgis-ui-feature-edit-panel-camera-title">设置相机视角</h4>
         </mapgis-ui-col>
         <mapgis-ui-col :span="8">
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
+      <mapgis-ui-row style="padding: 0 10px;" class="mapgis-ui-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
+          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
                          placeholder="请输入方向角"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角"
+          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角"
                          placeholder="请输入俯仰角"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input v-model="featureCopy.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
+      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+        <mapgis-ui-input-outline v-model="featureCopy.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
       </mapgis-ui-row>
-      <mapgis-ui-row style="padding: 0 10px;" class="mapgis-project-feature-edit-set-camera">
+      <mapgis-ui-row style="padding: 0 10px;" class="mapgis-ui-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.longitude" title="经度"
+          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.longitude" title="经度"
                          placeholder="请输入经度"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <feature-input :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.latitude" title="纬度"
+          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.latitude" title="纬度"
                          placeholder="请输入纬度"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <feature-input v-model="featureCopy.camera.positionCartographic.height" title="高度" placeholder="请输入高度"/>
+      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+        <mapgis-ui-input-outline v-model="featureCopy.camera.positionCartographic.height" title="高度" placeholder="请输入高度"/>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-project-feature-edit-set-camera">
-        <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-project-feature-edit-reset-camera">获取当前视角</mapgis-ui-button>
+      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+        <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-ui-feature-edit-reset-camera">获取当前视角</mapgis-ui-button>
       </mapgis-ui-row>
     </div>
-    <map-collection :options="options"/>
   </div>
 </template>
 
 <script>
-import mapCollection from "./mapCollection"
-import svgIcon from "../img/svgIcon"
-import featureInput from "../ui/featureInput"
-import featureSelect from "../ui/featureSelect"
-import featureIcons from "../ui/featureIcons"
-import featureColor from "../ui/featureColor"
-import featureMap from "../ui/featureMap"
-import uploadPicture from "../ui/uploadPicture"
-
 import E from 'wangeditor-antd'
 
 export default {
-  name: "featureEdit",
-  components: {
-    "svg-icon": svgIcon,
-    "map-collection": mapCollection,
-    "feature-input": featureInput,
-    "feature-select": featureSelect,
-    "feature-icons": featureIcons,
-    "upload-picture": uploadPicture,
-    "feature-color": featureColor,
-    "feature-map": featureMap,
-  },
-  inject: ["Cesium", "viewer"],
+  name: "mapgis-ui-feature-edit",
   data() {
     return {
-      options: {},
       featureCopy: undefined,
       inputStyle: {
         width: "162px",
@@ -115,7 +93,9 @@ export default {
     feature: {
       handler: function () {
         this.featureCopy = this.feature;
-        this.$_addEditor();
+        this.$nextTick(function () {
+          this.$_addEditor();
+        });
       },
       deep: true
     },
@@ -125,15 +105,7 @@ export default {
   },
   methods: {
     $_getCamera() {
-      let camera = this.viewer.camera;
-      this.featureCopy.camera.positionCartographic = {
-        height: camera.positionCartographic.height,
-        latitude: camera.positionCartographic.latitude,
-        longitude: camera.positionCartographic.longitude
-      };
-      this.featureCopy.camera.heading = camera.heading;
-      this.featureCopy.camera.pitch = camera.pitch;
-      this.featureCopy.camera.roll = camera.roll;
+      this.$emit("getCamera");
     },
     $_addEditor() {
       let vm = this;
@@ -166,7 +138,6 @@ export default {
     },
     $_addMap(type, map) {
       this.mapType = type;
-      this.options = map;
       this.featureCopy.map = map;
     },
     $_changeColor(color) {
@@ -186,14 +157,14 @@ export default {
 </script>
 
 <style>
-.mapgis-project-feature-edit-panel {
+.mapgis-ui-feature-edit-panel {
   width: 100%;
   height: 836px;
   overflow: hidden;
   overflow-y: scroll;
 }
 
-.mapgis-project-feature-edit-panel-head {
+.mapgis-ui-feature-edit-panel-head {
   position: absolute;
   top: 0;
   left: 0;
@@ -202,7 +173,7 @@ export default {
   border-bottom: 1px solid rgb(95, 99, 104);
 }
 
-.mapgis-project-feature-edit-panel-head-left {
+.mapgis-ui-feature-edit-panel-head-left {
   text-align: left;
   padding-left: 10px;
 }
@@ -221,7 +192,7 @@ export default {
   color: black !important;
 }
 
-.mapgis-project-feature-edit-panel-camera {
+.mapgis-ui-feature-edit-panel-camera {
   width: 400px;
   height: 40px;
   background: rgb(41, 42, 45);
@@ -229,7 +200,7 @@ export default {
   border-bottom: 1px solid rgb(56, 57, 61);
 }
 
-.mapgis-project-feature-edit-panel-camera-title {
+.mapgis-ui-feature-edit-panel-camera-title {
   color: white;
   text-align: left;
   padding-left: 28px;
@@ -237,15 +208,15 @@ export default {
   line-height: 40px;
 }
 
-.mapgis-project-feature-edit-set-camera {
+.mapgis-ui-feature-edit-set-camera {
   margin-top: 30px;
 }
 
-.mapgis-project-feature-edit-reset-camera {
+.mapgis-ui-feature-edit-reset-camera {
   width: 344px;
 }
 
-.mapgis-project-feature-edit-deitor{
+.mapgis-ui-feature-edit-deitor{
   width: 340px;
   margin: 0 28px;
 }

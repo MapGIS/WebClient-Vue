@@ -1,27 +1,22 @@
 <template>
   <div>
-    <div v-if="hasToolBar" class="mapgis-feature-textarea-head">
-      <feature-icon :containerStyle="containerStyle" type="fontSize"/>
-      <feature-icon :containerStyle="containerStyle" type="fontWeight"/>
-      <feature-icon :containerStyle="containerStyle" type="italic"/>
-      <feature-icon :containerStyle="containerStyle" type="link"/>
-      <feature-icon :containerStyle="containerStyle" type="textAlign"/>
-      <feature-icon :containerStyle="containerStyle" type="removeStyle"/>
-      <feature-icon :containerStyle="containerStyle" type="more"/>
+    <div v-if="hasToolBar" class="mapgis-ui-textarea-outline-head">
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="fontSize"/>
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="fontWeight"/>
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="italic"/>
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="link"/>
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="textAlign"/>
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="removeStyle"/>
+      <mapgis-ui-svg-icon :containerStyle="containerStyle" type="more"/>
     </div>
     <mapgis-ui-textarea :style="textareaStyle" :class="{mapgisInputNoTool: !hasToolBar}" :placeholder="placeholder"
-                        class="mapgis-feature-textarea" v-model="valueCopy"/>
+                        class="mapgis-ui-textarea-outline" v-model="valueCopy"/>
   </div>
 </template>
 
 <script>
-import featureIcon from "../img/svgIcon";
-
 export default {
-  name: "featureTextarea",
-  components: {
-    "feature-icon": featureIcon,
-  },
+  name: "mapgis-ui-textarea-outline",
   model: {
     prop: "value",
     event: "change"
@@ -74,7 +69,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-feature-textarea {
+.mapgis-ui-textarea-outline {
   width: 340px;
   height: 92px;
   margin: 0 auto;
@@ -85,7 +80,7 @@ export default {
   color: #e8eaed;
 }
 
-.mapgis-feature-textarea-head {
+.mapgis-ui-textarea-outline-head {
   width: 340px;
   height: 48px;
   text-align: left;

@@ -2,29 +2,29 @@
   <div>
     <mapgis-ui-row :class="{mapgisMapStoryFeatureActive: index === activeToolIndex}"
                    :key="index"
-                   v-for="(feature,index) in featuresCopy" class="mapgis-mapstory-feature-row">
+                   v-for="(feature,index) in featuresCopy" class="mapgis-ui-feature-row">
       <div @click="$_clickRow(index)" class="mapgis-mapstory-feature-container" @mouseenter="$_rowEnter(index)"
            @mouseleave="$_rowLeave">
         <mapgis-ui-col span="18">
           <div :title="feature.title" class="mapgis-mapstory-feature-panel-title">
-            <feature-icon class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
+            <mapgis-ui-svg-icon class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
                           :iconStyle="iconStylePoint" :type="feature.baseUrl.type"/>
             <p class="mapgis-mapstory-feature-panel-title-value">{{ feature.title }}</p>
           </div>
         </mapgis-ui-col>
         <mapgis-ui-col span="6" class="mapgis-mapstory-tool-bar">
-          <feature-icon @click="$_editFeature(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"
+          <mapgis-ui-svg-icon @click="$_editFeature(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"
                         v-show="showToolIndex === index"
                         type="edit"/>
-          <feature-icon @click="$_delete(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"
+          <mapgis-ui-svg-icon @click="$_delete(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"
                         v-show="showToolIndex === index"
                         type="delete"/>
-          <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
+          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
                         v-show="showToolIndex !== index && feature.layerStyle.show" type="eye"/>
-          <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle" @click="$_showFeature(index, true)"
+          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" @click="$_showFeature(index, true)"
                         v-show="showToolIndex === index && !feature.layerStyle.show"
                         type="eye"/>
-          <feature-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
+          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
                         @click="$_showFeature(index, false)"
                         v-show="showToolIndex === index && feature.layerStyle.show"
                         type="noEye"/>
@@ -35,14 +35,8 @@
 </template>
 
 <script>
-import featureIcon from "../img/svgIcon"
-
 export default {
-  name: "featureRow",
-  inject: ["viewer", "Cesium"],
-  components: {
-    "feature-icon": featureIcon,
-  },
+  name: "mapgis-ui-feature-row",
   data() {
     return {
       featuresCopy: [],
@@ -106,26 +100,9 @@ export default {
       this.$set(this.featuresCopy[index].layerStyle, "show", flag);
       this.$emit("showFeature", this.featuresCopy[index].id, flag);
     },
-    $_getLayer(index, callBack) {
-      const {map} = this.featuresCopy[index];
-      if (map) {
-        const {vueKey, vueIndex} = map;
-        if (vueKey && vueIndex) {
-          let layerManager = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex);
-          callBack(layerManager.source);
-        }
-      }
-    },
     $_delete(index) {
-      let vm = this;
       const {id} = this.featuresCopy[index];
-      if (id) {
-        this.viewer.entities.removeById(this.featuresCopy[index].id);
-      }
-      this.$_getLayer(index, function (layer) {
-        vm.viewer.imageryLayers.remove(layer);
-      });
-      this.$emit("deleteFeature", index);
+      this.$emit("deleteFeature", index, id);
     }
   }
 }
@@ -136,11 +113,11 @@ export default {
   background: rgb(57, 68, 87) !important;
 }
 
-.mapgis-mapstory-feature-row {
+.mapgis-ui-feature-row {
   margin-top: 10px;
 }
 
-.mapgis-mapstory-feature-row:hover {
+.mapgis-ui-feature-row:hover {
   background: rgb(40, 41, 44);
   cursor: pointer;
 }

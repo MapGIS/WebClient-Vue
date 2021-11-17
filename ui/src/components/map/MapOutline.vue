@@ -1,11 +1,11 @@
 <template>
-  <div class="mapgis-feature-map-container">
-    <div class="mapgis-feature-map-title">{{ title }}</div>
+  <div class="mapgis-ui-map-outline-container">
+    <div class="mapgis-ui-map-outline-title">{{ title }}</div>
     <mapgis-ui-row style="margin-bottom: 10px">
       <mapgis-ui-col span="18">
       </mapgis-ui-col>
       <mapgis-ui-col span="6">
-        <mapgis-ui-button class="mapgis-feature-map-add" @click="$_addMap">附加地图</mapgis-ui-button>
+        <mapgis-ui-button class="mapgis-ui-map-outline-add" @click="$_addMap">附加地图</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
     <mapgis-ui-mix-row
@@ -62,7 +62,7 @@
 <script>
 
 export default {
-  name: "featureMap",
+  name: "mapgis-ui-map-outline",
   data() {
     return {
       baseUrl: "",
@@ -168,7 +168,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-feature-map-container {
+.mapgis-ui-map-outline-container {
   width: 342px;
   height: auto;
   position: relative;
@@ -179,11 +179,11 @@ export default {
   margin-top: 0;
 }
 
-.mapgis-feature-map-container:hover {
+.mapgis-ui-map-outline-container:hover {
   border-color: #269ff0;
 }
 
-.mapgis-feature-map-title {
+.mapgis-ui-map-outline-title {
   position: absolute;
   top: -10px;
   left: 17px;
@@ -193,7 +193,7 @@ export default {
   background: rgb(32, 33, 36);
 }
 
-.mapgis-feature-map-add{
+.mapgis-ui-map-outline-add{
   color: #e8eaed;
   border-color: rgb(95, 99, 104);
   margin-left: -10px;
