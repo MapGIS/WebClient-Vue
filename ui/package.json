@@ -47,7 +47,8 @@
     "vue-infinite-scroll": "^2.0.2",
     "vuepress": "^1.8.2",
     "vuepress-plugin-demo-block": "^0.7.2",
-    "vuepress-plugin-demo-code": "^0.6.0"
+    "vuepress-plugin-demo-code": "^0.6.0",
+    "wangeditor-antd": "^1.0.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

@@ -8,6 +8,9 @@ export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
 // export { default as MapgisUiIconFont } from "./components/iconfont/IconFont.vue";
 export { default as MapgisUiIcon } from "./components/iconfont/IconSvgImg.vue";
 export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
+export { default as MapgisUiSvgIcon } from "./components/iconfont/SvgIcon";
+export { default as MapgisUiBase64Icon } from "./components/iconfont/Base64Icon";
+export { default as MapgisUiIconsPanel } from "./components/iconfont/IconsPanel";
 
 // Layout
 export { default as MapgisUiDiv } from "./components/div/Div.vue";
@@ -63,6 +66,8 @@ export { default as MapgisUiRangePicker } from "./components/date-picker/RangePi
 export { default as MapgisUiMonthPicker } from "./components/date-picker/MonthPicker.vue";
 export { default as MapgisUiWeekPicker } from "./components/date-picker/WeekPicker.vue";
 export { default as MapgisUiInput } from "./components/input/Input.vue";
+export { default as MapgisUiTextareaOutline } from "./components/input/TextareaOutline.vue";
+export { default as MapgisUiInputOutline } from "./components/input/InputOutline";
 export { default as MapgisUiTextarea } from "./components/input/Textarea.vue";
 export { default as MapgisUiInputSearch } from "./components/input/Search.vue";
 export { default as MapgisUiInputGroup } from "./components/input/Group.vue";
@@ -81,6 +86,7 @@ export { default as MapgisUiRadioGroup } from "./components/radio/Group.vue";
 export { default as MapgisUiRadioButton } from "./components/radio/Button.vue";
 export { default as MapgisUiRate } from "./components/rate/Rate.vue";
 export { default as MapgisUiSelect } from "./components/select/Select.vue";
+export { default as MapgisUiSelectOutline } from "./components/select/SelectOutline.vue";
 export { default as MapgisUiSpriteSelect } from "./components/sprite/Sprite.vue";
 export { default as MapgisUiSvgSelect } from "./components/svgselect/SvgSelect.vue";
 export { default as MapgisUiSelectOption } from "./components/select/SelectOption.vue";
@@ -155,6 +161,7 @@ export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrap
 // Color
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
+export { default as MapgisUiColorOutline } from "./components/color/ColorOutline";
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";
@@ -191,3 +198,21 @@ export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-quer
 
 // chart
 export { default as MapgisUiChartFlow } from "./components/charts/Flow.vue";
+
+//map
+export { default as MapgisUiMapOutline } from "./components/map/MapOutline";
+
+//panel
+export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditPanel";
+export { default as MapgisUiStoryPanelLarge } from "./components/panel/StoryPanelLarge";
+
+//picture
+export { default as MapgisUiChoosePicture } from "./components/picture/ChoosePicture";
+
+//row
+export { default as MapgisUiProjectRow } from "./components/row/ProjectRow";
+export { default as MapgisUiFeatureRow } from "./components/row/FeatureRow";
+
+//edit
+export { default as MapgisUiFeatureEdit } from "./components/edit/FeatureEdit";
+export { default as MapgisUiProjectEdit } from "./components/edit/ProjectEdit";
