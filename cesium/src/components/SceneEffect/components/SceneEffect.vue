@@ -11,7 +11,10 @@
 <!--          </mapgis-ui-checkbox>-->
 <!--      </mapgis-ui-form-model-item>-->
 
-      <mapgis-ui-form-model-item label="太阳" >
+<!--      <mapgis-ui-switch-panel layout="horizontal" label="太阳ceshi" :checked="sunlight" @changeChecked="enableSunlight">-->
+<!--      </mapgis-ui-switch-panel>-->
+
+      <mapgis-ui-form-model-item label="太阳光照" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sunlight" @change="enableSunlight">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
@@ -295,10 +298,13 @@ export default {
     //太阳
     enableSunlight(e) {
       const { viewer } = this;
+      this.sunlight = e;
       this.$emit('updateSpin',true);
       let vm = this;
       setTimeout(function () {
         viewer.scene.globe.enableLighting = vm.sunlight;
+        // var sunLight = new Cesium.SunLight({color:Cesium.Color.RED});
+        // viewer.scene.light = sunLight
         vm.$emit('updateSpin',false);
       },400)
 

@@ -1,9 +1,6 @@
 <template>
-  <div>
-    <mapgis-ui-div class="mapgis-3d-scene-setting">
-      <slot v-if="initial"></slot>
-      <slot name="settingTool">
-        <div v-show="show" :style="panelStyle" class="setting-control">
+  <div class="mapgis-3d-scene-setting">
+    <div v-show="show" :style="panelStyle" class="setting-control">
 <!--          第一种关闭按钮-->
 <!--          <div @mouseenter="hover=true" @mouseleave="hover=false">-->
 <!--            <img src="./components/关闭.png" class="closeButton" @click="closePanel" v-show="!hover">-->
@@ -30,12 +27,10 @@
               <scene-effect ref="effect" :layout="layout" @updateSpin="changeSpinning"></scene-effect>
             </mapgis-ui-tab-pane>
           </mapgis-ui-tabs>
-        </div>
-      </slot>
-    </mapgis-ui-div>
-    <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="openPanel">
+    </div>
+    <!-- <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="openPanel">
       <mapgis-ui-iconfont type="mapgis-setting"/>
-    </mapgis-ui-button>
+    </mapgis-ui-button> -->
     <mapgis-ui-spin :spinning="spinning" size="large" style="top: 50%;left: 50%"/>
   </div>
 </template>
@@ -69,7 +64,7 @@ export default {
   },
   data() {
     return {
-      initial: false,
+    //   initial: false,
       modelBloom: false,
       transform: undefined,
       tabBarStyle: {
@@ -84,7 +79,7 @@ export default {
   },
 
   mounted() {
-    this.initial = true;
+    // this.initial = true;
     this.$emit("load", this);
   },
   destroyed() {
@@ -114,15 +109,15 @@ export default {
 <style scoped>
 
 .setting-control {
-  /*width: 320px;*/
+  /* width: 320px; */
   height: fit-content;
-  position: absolute;
+  /* position: absolute;
   top: 30px;
-  left: 30px;
-  /*padding: 0 10px;*/
+  left: 30px; */
+  /* padding: 0 10px; */
   background: #FFFFFF;
-  box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2);
-  border-radius: 4px;
+  /* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2);
+  border-radius: 4px; */
 }
 
 .control-header {

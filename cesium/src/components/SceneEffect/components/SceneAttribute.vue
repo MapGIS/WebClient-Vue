@@ -2,10 +2,85 @@
   <div class="mapgis-3d-scene-attr">
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
+      <mapgis-ui-form-model-item label="地球" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="earth" @change="enableEarth">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="太阳" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="sun" @change="enableSun">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="月亮" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="moon" @change="enableMoon">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="深度检测" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="depthTest" @change="enableDepthTest">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="雾化效果" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="surficialFog" @change="enableSurficialFog">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{ maxHeight: surfFogParams }">
+
+        <mapgis-ui-form-model-item label="密度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="surfFogDst"
+                :max="0.005"
+                :min="0"
+                :step="0.0002"
+                @change="enableSurficialFog"
+            />
+            <mapgis-ui-input-number
+                v-model="surfFogDst"
+                :max="0.005"
+                :min="0"
+                :step="0.0002"
+                @change="enableSurficialFog"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+        <!-- <mapgis-ui-form-model-item label="最小亮度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="surfFogMinBrt"
+                :max="10"
+                :min="0"
+                @change="enableSurficialFog"
+            />
+            <mapgis-ui-input-number
+                v-model="surfFogMinBrt"
+                :max="10"
+                :min="0"
+                @change="enableSurficialFog"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item> -->
+
+      </div>
+
+      <!-- <mapgis-ui-form-model-item label="时间轴" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="timeline" @change="enableTimeline">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item> -->
+
       <mapgis-ui-form-model-item label="大气渲染" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
+
+      <!-- <mapgis-ui-switch-panel label="大气渲染" :layout="layout" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere">
+      </mapgis-ui-switch-panel> -->
 
       <mapgis-ui-form-model-item label="全局泛光" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="bloom" @change="enableBloom">
@@ -178,6 +253,7 @@
 
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
+import { log } from '../../Utils/log';
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "./navigation-all.css"
 
@@ -192,6 +268,16 @@ export default {
   },
   data() {
     return {
+      earth:true,
+      sun:true,
+      moon:true,
+      depthTest:true,
+      surficialFog:true,
+      surfFogParams:"80px",
+      surfFogDst:0.0002,
+      // surfFogMinBrt:1,
+    
+      // timeline:false,
       skyAtmosphere: true,
       bloom: false,
       bloomBrt: -0.3,
@@ -228,17 +314,101 @@ export default {
   },
   methods: {
     /*
+    * 地球
+    * */
+    enableEarth(){
+      const {viewer} = this;
+      if(this.earth){
+        viewer.scene.skyAtmosphere.show = this.skyAtmosphere
+      }else{
+        viewer.scene.skyAtmosphere.show = true;
+      }
+      viewer.scene.globe.show = this.earth;
+    },
+    /*
+    * 太阳
+    * */
+    enableSun(){
+      const {viewer} = this;
+      viewer.scene.sun.show = this.sun;
+      if(this.sun){
+        let sunPosition = viewer.scene.sun._boundingVolume.center;
+        viewer.camera.flyTo({
+          destination:new Cesium.Cartesian3(-sunPosition.x/1000,-sunPosition.y/1000,-sunPosition.z/2000),
+          orientation:{heading:0,pitch:Cesium.Math.toRadians(-90),roll:0},
+          duration:0.5
+        })
+      }else{
+        viewer.camera.flyHome(0.5);
+      }
+    },
+    /*
+    * 月亮
+    * */
+    enableMoon(){
+      const {viewer} = this;
+      viewer.scene.moon.show = this.moon;
+      
+      if(this.moon){
+        console.log("iiiiimmmmiiiii",viewer.scene.moon);
+        let moonPosition = viewer.scene.moon._ellipsoidPrimitive._boundingSphere.center;
+        viewer.camera.flyTo({
+          destination:new Cesium.Cartesian3(moonPosition.x/1.2,moonPosition.y/1.2,moonPosition.z/1.2),
+          orientation:{heading:0,pitch:Cesium.Math.toRadians(90),roll:0},
+          duration:0.5
+        })
+      }else{
+        viewer.camera.flyHome(0.5);
+      }
+    },
+    /*
+    * 深度检测
+    * */
+    enableDepthTest(){
+      const {viewer} = this;
+      viewer.scene.globe.depthTestAgainstTerrain = this.depthTest;
+    },
+    /*
+    * 雾化效果
+    * */
+    enableSurficialFog(){
+      const {viewer} = this;
+      let vm = this;
+
+      if(vm.surficialFog){
+        this.surfFogParams = "40px"
+      }else{
+        this.surfFogParams = "0px"
+      }
+      viewer.scene.fog.density = this.surfFogDst;
+      // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
+      viewer.scene.fog.enabled = this.surficialFog;
+    },
+
+    // enableTimeline(){
+    //   const {viewer} = this;
+    //   if(this.timeline){
+    //     viewer.timeline = new Cesium.Timeline(viewer.container,viewer.clock);
+    //   }else{
+    //     viewer.timeline.destroy();
+    //   }
+    // },
+
+
+    /*
     * 大气渲染
     * */
-    enableSkyAtmosphere() {
+    enableSkyAtmosphere(e) {
       const {viewer} = this;
+      this.skyAtmosphere = e;
       viewer.scene.skyAtmosphere.show = this.skyAtmosphere;
     },
     /*
     * 全局泛光
     * */
-    enableBloom() {
+    enableBloom(e) {
       const {viewer} = this;
+      this.bloom = e;
       this.$emit('updateSpin',true);
       let vm = this;
 
@@ -265,6 +435,13 @@ export default {
         viewer.scene.globe.translucency.enabled = vm.undgrd;
         viewer.scene.globe.translucency.backFaceAlpha = 1;
         viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+
+        //groundAlpha
+        //viewer.scene.globe.globeAlpha = parseFloat(this.value);
+
+        //最小缩放距离
+        //viewer.scene.screenSpaceCameraController.minimumZoomDistance = Number($("#camera-minimum-zoom-distance").val());
+
         vm.$emit('updateSpin',false);
       },300)
     },
