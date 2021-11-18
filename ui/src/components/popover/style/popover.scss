@@ -236,6 +236,21 @@
   background: transparent;
 }
 
+.cesium-popup-separate-button {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  padding: 4px 4px 0 0;
+  text-align: center;
+  width: 18px;
+  height: 14px;
+  font: 16px/14px Tahoma, Verdana, sans-serif;
+  color: $primary-6;
+  text-decoration: none;
+  font-weight: bold;
+  background: transparent;
+}
+
 .cesium-popup-content-wrapper {
   text-align: left;
   padding: 0px;

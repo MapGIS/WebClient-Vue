@@ -94,7 +94,10 @@ export default {
               // 这里其实是无效的，本质上是通过update来实现的
               // vm.unmount();
             }
-          }
+          },
+          onSeparate: (payload) => {
+            vm.$emit("separate", payload);
+          },
         }
       };
 
