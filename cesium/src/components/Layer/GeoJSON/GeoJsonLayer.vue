@@ -65,7 +65,7 @@ export default {
           clickhandler = vm.$_bindClickEvent(vm.highlight);
         }
         if (enableTips) {
-          hoverhandler = vm.$_bindHoverEvent();
+          hoverhandler = vm.$_bindHoverEvent(vm.changePopup);
         }
         vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
           clickhandler: clickhandler,
@@ -204,6 +204,10 @@ export default {
           }
         }
       }
+    },
+    changePopup(payload) {
+      const { currentClickInfo } = payload;
+      this.currentClickInfo = currentClickInfo;
     }
   }
 };

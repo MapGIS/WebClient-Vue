@@ -92,7 +92,7 @@ export const 区 = Template.bind({});
 区.args = {
   baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
   enablePopup: true,
-  enableTips: false,
+  enableTips: true,
   layerStyle: new FillStyle({
     color: "#1890ff",
     outlineColor: "#ff0000",
