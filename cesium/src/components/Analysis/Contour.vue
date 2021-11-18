@@ -9,6 +9,7 @@
           :wrapperCol="{ span: 16 }"
           layout="horizontal"
           label="等值线"
+          :height="'154px'"
           v-if="switchOptions.indexOf('isogram') >= 0"
           @changeChecked="startIsogram"
         >
@@ -40,6 +41,7 @@
         <mapgis-ui-switch-panel
           :labelCol="{ span: 8 }"
           :wrapperCol="{ span: 16 }"
+          :height="'312px'"
           layout="horizontal"
           label="等值面"
           v-if="switchOptions.indexOf('isosurface') >= 0"
