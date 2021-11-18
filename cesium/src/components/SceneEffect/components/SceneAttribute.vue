@@ -22,6 +22,11 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
+      <mapgis-ui-form-model-item label="阴影效果" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="shadow" @change="enableShadow">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
       <mapgis-ui-form-model-item label="雾化效果" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="surficialFog" @change="enableSurficialFog">
         </mapgis-ui-switch>
@@ -33,14 +38,14 @@
           <mapgis-ui-space>
             <mapgis-ui-slider
                 v-model="surfFogDst"
-                :max="0.005"
+                :max="0.002"
                 :min="0"
                 :step="0.0002"
                 @change="enableSurficialFog"
             />
             <mapgis-ui-input-number
                 v-model="surfFogDst"
-                :max="0.005"
+                :max="0.002"
                 :min="0"
                 :step="0.0002"
                 @change="enableSurficialFog"
@@ -69,10 +74,15 @@
 
       </div>
 
-      <!-- <mapgis-ui-form-model-item label="时间轴" >
+      <mapgis-ui-form-model-item label="显示帧率" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="FPS" @change="enableFPS">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>      
+
+      <mapgis-ui-form-model-item label="时间轴" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="timeline" @change="enableTimeline">
         </mapgis-ui-switch>
-      </mapgis-ui-form-model-item> -->
+      </mapgis-ui-form-model-item>
 
       <mapgis-ui-form-model-item label="大气渲染" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
@@ -135,6 +145,28 @@
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="undgrd" @change="enableUndgrd">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{maxHeight: undgrdParams}">
+        <mapgis-ui-form-model-item label="地表透明度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="groundAlpha"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="enableUndgrd"
+            />
+            <mapgis-ui-input-number
+                v-model="groundAlpha"
+                  :max="1"
+                :min="0"
+                :step="0.1"
+                size="small"
+                @change="enableUndgrd"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>        
+      </div>
 
       <mapgis-ui-form-model-item label="罗盘控件" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="compass" @change="enableNavigation">
@@ -253,7 +285,6 @@
 
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
-import { log } from '../../Utils/log';
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "./navigation-all.css"
 
@@ -272,18 +303,24 @@ export default {
       sun:true,
       moon:true,
       depthTest:true,
+      shadow:false,
       surficialFog:true,
       surfFogParams:"80px",
       surfFogDst:0.0002,
       // surfFogMinBrt:1,
     
-      // timeline:false,
+      FPS:false,
+      timeline:false,
       skyAtmosphere: true,
       bloom: false,
+      bloomParams:undefined,
       bloomBrt: -0.3,
       bloomCtrst: 128,
-      bloomParams:undefined,
+      
       undgrd: false,
+      undgrdParams:undefined,
+      groundAlpha:0.5,
+
       compass: false,
       zoom: false,
 
@@ -306,11 +343,16 @@ export default {
     },
   },
   mounted() {
-    const {viewer} = this;
+    const {viewer, vueKey, vueIndex} = this;
     let bright = viewer.scene.postProcessStages.add(
         Cesium.PostProcessStageLibrary.createBrightnessStage()
     );
     bright.uniforms.brightness = this.brightness;
+
+    window.vueCesium.SettingToolManager.addSource(vueKey,vueIndex,null,{
+      timeline: null,
+    });
+
   },
   methods: {
     /*
@@ -369,6 +411,16 @@ export default {
       viewer.scene.globe.depthTestAgainstTerrain = this.depthTest;
     },
     /*
+    * 阴影效果
+    * */
+    enableShadow(){
+      const {viewer,Cesium} = this;
+      viewer.shadows = this.shadow;
+      // viewer.terrainShadows = this.shadow ? Cesium.ShadowMode.ENABLED : Cesium.ShadowMode.DISABLED;
+      // viewer.scene.globe.shadows = this.shadow ? Cesium.ShadowMode.ENABLED : Cesium.ShadowMode.DISABLED;
+    },
+    
+    /*
     * 雾化效果
     * */
     enableSurficialFog(){
@@ -384,17 +436,57 @@ export default {
       // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
       viewer.scene.fog.enabled = this.surficialFog;
     },
+    /*
+    * 显示帧率
+    * */
+    enableFPS(){
+      const {viewer} = this;
+      viewer.scene.debugShowFramesPerSecond = this.FPS;
+    },
+    /*
+    * 开启时间轴 
+    * */
+    enableTimeline(){
+      const {viewer,Cesium,vueKey, vueIndex} = this;
+      let vm = this;
+      if(vm.timeline){
+        
+        let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
+        console.log("list",list);
 
-    // enableTimeline(){
-    //   const {viewer} = this;
-    //   if(this.timeline){
-    //     viewer.timeline = new Cesium.Timeline(viewer.container,viewer.clock);
-    //   }else{
-    //     viewer.timeline.destroy();
-    //   }
-    // },
+        if(list.length > 0){
+          list[0].parentNode.removeChild(list[0]);
+          // let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
+          // console.log("listdelete",list);
+          // document.removeChild(document.getElementsByClassName('cesium-viewer-timelineContainer')[0]);
+        }
 
+        var viewerContainer = viewer.container;
+        var timelineContainer = document.createElement('div');
+        timelineContainer.className = 'cesium-viewer-timelineContainer';
 
+        viewerContainer.appendChild(timelineContainer);
+        let timeline = new Cesium.Timeline(timelineContainer, viewer.clock);
+        timeline.addEventListener('settime', vm.onTimelineScrubfunction, false);
+        timeline.zoomTo(viewer.clock.startTime, viewer.clock.stopTime);
+        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'timeline', timeline);
+
+      }else{
+        const { vueKey, vueIndex} = this;
+        let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
+        if (manager.options && manager.options.timeline) {
+          manager.options.timeline.destroy();
+          window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'timeline', null);
+        }
+      }
+    },
+
+    onTimelineScrubfunction(e) {
+        var clock = e.clock;
+        console.log("e",e);
+        clock.currentTime = e.timeJulian;
+        clock.shouldAnimate = false;
+    },
     /*
     * 大气渲染
     * */
@@ -413,9 +505,9 @@ export default {
       let vm = this;
 
       if(vm.bloom){
-        this.bloomParams = "80px"
+        vm.bloomParams = "80px"
       }else{
-        this.bloomParams = "0px"
+        vm.bloomParams = "0px"
       }
 
       setTimeout(function () {
@@ -430,17 +522,25 @@ export default {
       const {viewer} = this;
       this.$emit('updateSpin',true);
       let vm = this;
+      
+
+     if(vm.undgrd){
+        vm.undgrdParams = "40px"
+      }else{
+        vm.undgrdParams = "0px"
+      }
+
       setTimeout(function () {
         viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm.undgrd;
         viewer.scene.globe.translucency.enabled = vm.undgrd;
-        viewer.scene.globe.translucency.backFaceAlpha = 1;
-        viewer.scene.globe.translucency.frontFaceAlpha = 0.5;
+        //设置地表透明度
+        viewer.scene.globe.translucency.backFaceAlpha = vm.groundAlpha;
+        viewer.scene.globe.translucency.frontFaceAlpha = vm.groundAlpha;
 
-        //groundAlpha
-        //viewer.scene.globe.globeAlpha = parseFloat(this.value);
+
 
         //最小缩放距离
-        //viewer.scene.screenSpaceCameraController.minimumZoomDistance = Number($("#camera-minimum-zoom-distance").val());
+        //viewer.scene.screenSpaceCameraController.minimumZoomDistance = ;
 
         vm.$emit('updateSpin',false);
       },300)
@@ -523,8 +623,8 @@ export default {
 
 <style scoped>
 
-.mapgis-3d-scene-attr {
-}
+/* .mapgis-3d-scene-attr {
+} */
 
 .mapgis-ui-form-item {
   margin: 0;

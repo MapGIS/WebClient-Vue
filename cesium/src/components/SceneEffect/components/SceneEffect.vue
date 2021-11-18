@@ -19,6 +19,23 @@
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
+      <div class="parameter" :style="{ maxHeight: sunlightParams }">
+
+        <mapgis-ui-form-model-item label="光照颜色">
+          <mapgis-ui-sketch-color-picker
+              size="small"
+              :color.sync="lightColor"
+              :disableAlpha="false"
+              :style="{padding:'8px 0'}"
+              @input="
+                val =>
+                  (lightColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+              "
+          />
+        </mapgis-ui-form-model-item>
+
+      </div>
+
       <mapgis-ui-form-model-item label="星空" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sceneSkybox" @change="enableSceneSkybox">
         </mapgis-ui-switch>
@@ -249,6 +266,10 @@ export default {
   data (){
     return {
       sunlight: false,
+      sunlightParams:undefined,
+      lightColor: 'rgba(255,255,255,255)', // 光照颜色
+
+
       sceneSkybox: true,
       clouds: false,
       cloudsduration: 5,
@@ -294,6 +315,14 @@ export default {
       Snow:null
     });
   },
+  watch:{
+    lightColor:{
+      handler:function(newColor){
+        this.lightColorChange(newColor);
+      },
+      deep:true
+    }
+  },
   methods: {
     //太阳
     enableSunlight(e) {
@@ -301,6 +330,9 @@ export default {
       this.sunlight = e;
       this.$emit('updateSpin',true);
       let vm = this;
+
+      if(vm.sunlight){ this.sunlightParams = "40px" }else{ this.sunlightParams = "0px" }
+
       setTimeout(function () {
         viewer.scene.globe.enableLighting = vm.sunlight;
         // var sunLight = new Cesium.SunLight({color:Cesium.Color.RED});
@@ -309,7 +341,13 @@ export default {
       },400)
 
     },
-
+    //光照颜色
+    lightColorChange(e){
+      const {Cesium} = this;
+      let color = Cesium.Color.fromCssColorString(e);
+      let sunLight = new Cesium.SunLight({color:color});
+      viewer.scene.light = sunLight;
+    },
     //星空
     enableSceneSkybox(e) {
       const { viewer } = this;
@@ -351,14 +389,14 @@ export default {
         cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
       });
       clouds.addGlobeClouds(); //添加云层
-      window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud',clouds);
+      window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud', clouds);
     },
     removeClouds() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
       let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
       if (manager.options && manager.options.GlobeCloud) {
         manager.options.GlobeCloud.removeGlobeClouds();
-        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud',null);
+        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud', null);
       }
     },
 
@@ -643,8 +681,8 @@ export default {
 
 <style scoped>
 
-.mapgis-3d-scene-effect {
-}
+/* .mapgis-3d-scene-effect {
+} */
 
 .mapgis-ui-form-item{
   margin: 0;

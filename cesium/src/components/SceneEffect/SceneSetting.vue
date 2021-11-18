@@ -20,11 +20,20 @@
               :tabBarStyle="tabBarStyle"
               default-active-key="1"
           >
-            <mapgis-ui-tab-pane key="1" tab="基本属性" class="control-content">
-              <scene-attribute ref="attr" :layout="layout" @updateSpin="changeSpinning"></scene-attribute>
+            <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content">
+              <basic-setting ref="attr" :layout="layout" @updateSpin="changeSpinning"></basic-setting>
             </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="2" force-render tab="场景特效" class="control-content">
-              <scene-effect ref="effect" :layout="layout" @updateSpin="changeSpinning"></scene-effect>
+            <mapgis-ui-tab-pane key="2" force-render tab="相机设置" class="control-content">
+              <camera-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></camera-setting>
+            </mapgis-ui-tab-pane>
+            <mapgis-ui-tab-pane key="3" force-render tab="光照设置" class="control-content">
+              <light-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></light-setting>
+            </mapgis-ui-tab-pane>
+            <mapgis-ui-tab-pane key="4" force-render tab="天气设置" class="control-content">
+              <weather-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></weather-setting>
+            </mapgis-ui-tab-pane>
+            <mapgis-ui-tab-pane key="5" force-render tab="特效设置" class="control-content">
+              <effect-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></effect-setting>
             </mapgis-ui-tab-pane>
           </mapgis-ui-tabs>
     </div>
@@ -37,14 +46,20 @@
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer";
-import SceneAttribute from "./components/SceneAttribute";
-import SceneEffect from "./components/SceneEffect";
+import BasicSetting from "./components/SceneAttribute";
+import CameraSetting from "./components/CameraSetting";
+import LightSetting from "./components/LightSetting";
+import WeatherSetting from "./components/WeatherSetting";
+import EffectSetting from "./components/SceneEffect";
 
 export default {
   name: "mapgis-3d-scene-setting",
   components: {
-    SceneAttribute,
-    SceneEffect
+    BasicSetting,
+    CameraSetting,
+    LightSetting,
+    WeatherSetting,
+    EffectSetting
   },
   mixins: [ServiceLayer],
   props: {
@@ -110,6 +125,7 @@ export default {
 
 .setting-control {
   /* width: 320px; */
+  max-width: 320px;
   height: fit-content;
   /* position: absolute;
   top: 30px;
