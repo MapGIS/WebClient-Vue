@@ -21,7 +21,7 @@
 
 <script>
 import {Style} from "@mapgis/webclient-es6-service";
-import { getPopupHtml } from "../../UI/Popup/popupUtil";
+import {getPopupHtml} from "../../UI/Popup/popupUtil";
 
 const {PointStyle, ModelStyle, MarkerStyle} = Style;
 export default {
@@ -63,6 +63,12 @@ export default {
       type: Boolean,
       default: false
     },
+    popupOptions: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
   },
   data() {
     return {
@@ -120,14 +126,14 @@ export default {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
         if (Cesium.defined(pickedFeature)) {
           let hasPopup = false, index;
-          for (let i = 0;i<vm.popups.length;i++){
-            if(vm.popups[i].properties[vm.UUID] === pickedFeature.id.properties[vm.UUID].getValue()){
+          for (let i = 0; i < vm.popups.length; i++) {
+            if (vm.popups[i].properties[vm.UUID] === pickedFeature.id.properties[vm.UUID].getValue()) {
               hasPopup = true;
               index = i;
               break;
             }
           }
-          if(!hasPopup){
+          if (!hasPopup) {
             let popup = vm.$_cartesian3ToLongLat(pickedFeature.id.position.getValue());
             popup.height = 50;
             popup.keys = pickedFeature.id.keys;
@@ -138,15 +144,18 @@ export default {
               let key = pickedFeature.id.keys[i];
               popup.properties[key] = pickedFeature.id.properties[key].getValue();
             }
-            popup.container = getPopupHtml("default", {properties: popup.properties}, {
-              title: "测试标题",
+            let {type} = vm.popupOptions;
+            type = type || "default";
+            let defaultOptions = {
               fields: popup.keys,
               style: {
-                containerStyle: { width: "360px" }
+                containerStyle: {width: "360px"}
               }
-            });
+            };
+            defaultOptions = Object.assign(defaultOptions, vm.popupOptions)
+            popup.container = getPopupHtml(type, {properties: popup.properties}, defaultOptions);
             vm.popups.push(popup);
-          }else {
+          } else {
             vm.popups[index].show = true;
           }
         }
