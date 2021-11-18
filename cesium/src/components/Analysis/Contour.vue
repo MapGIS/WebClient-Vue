@@ -4,18 +4,14 @@
       <div class="mapgis-widget-contour-analysis">
         <mapgis-ui-group-tab title="参数设置"/>
         <mapgis-ui-setting-form>
-          <mapgis-ui-form-model-item label="等值线" v-if="switchOptions.indexOf('isogram')>=0">
-            <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="isogram" @change="startIsogram">
-            </mapgis-ui-switch>
-          </mapgis-ui-form-model-item>
-
-          <div class="parameter" :style="{maxHeight: maxIsogram,padding:padVal}">
-            <mapgis-ui-form-item label="等值距">
+          <mapgis-ui-switch-panel layout="horizontal" label="等值线" v-if="switchOptions.indexOf('isogram')>=0" @changeChecked="startIsogram">
+            <mapgis-ui-form-item label="等值距" style="width: fit-content">
               <mapgis-ui-input
                   v-model.number="formData1.contourSpacingCopy"
                   type="number"
                   min="0"
                   addon-after="(米)"
+                  style="width: fit-content"
               />
             </mapgis-ui-form-item>
             <mapgis-ui-form-item label="线宽">
@@ -31,15 +27,9 @@
                   :disableAlpha="false"
               ></mapgis-ui-sketch-color-picker>
             </mapgis-ui-form-item>
-          </div>
+          </mapgis-ui-switch-panel>
 
-          <mapgis-ui-form-model-item label="等值面" v-if="switchOptions.indexOf('isosurface')>=0">
-            <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="isosurface"
-                              @change="startIsosurface">
-            </mapgis-ui-switch>
-          </mapgis-ui-form-model-item>
-
-          <div class="parameter" :style="{maxHeight: maxIsosurface,padding:padVal1}" v-if="isosurface">
+          <mapgis-ui-switch-panel layout="horizontal" label="等值面" v-if="switchOptions.indexOf('isosurface')>=0" @changeChecked="startIsosurface">
             <mapgis-ui-form-item label="等值面透明度">
               <mapgis-ui-input
                   v-model.number="formData2.bandTransparencyCopy"
@@ -65,7 +55,7 @@
                 :rangeField="'高度'"
                 :singleNumber="true"
             ></mapgis-ui-colors-setting>
-          </div>
+          </mapgis-ui-switch-panel>
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
@@ -363,25 +353,16 @@ export default {
       return colorToCesiumColor(this.formData1.contourColorCopy, this.viewer);
     },
 
-    startIsogram() {
+    startIsogram(isogram) {
       let vm = this;
-      if (vm.isogram) {
-        this.maxIsogram = "134px"
-        this.padVal = "6px"
-      } else {
-        this.maxIsogram = "0px"
-        this.padVal = "0px"
-      }
+      vm.isogram = isogram;
     },
 
-    startIsosurface() {
+    startIsosurface(isosurface) {
       let vm = this
-      if (vm.isosurface) {
-        this.maxIsosurface = "800px"
-        this.padVal1 = "6px"
+      vm.isosurface = isosurface;
+      if (isosurface) {
       } else {
-        this.maxIsosurface = "0px"
-        this.padVal1 = "0px"
         let options = this._findOptions();
         if (options) {
           let {contourAnalysis} = options;
@@ -538,7 +519,6 @@ export default {
 ::v-deep .mapgis-ui-input {
   padding: 4px 11px;
 }
-
 
 .parameter {
   background: #F1F1F1;
