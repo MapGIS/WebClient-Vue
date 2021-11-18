@@ -26,7 +26,7 @@ import {getPopupHtml} from "../../UI/Popup/popupUtil";
 const {PointStyle, ModelStyle, MarkerStyle} = Style;
 export default {
   name: "mapgis-3d-data-flow-layer",
-  inject: ["viewer"],
+  inject: ["viewer", "Cesium"],
   props: {
     baseUrl: {
       type: String
@@ -34,10 +34,6 @@ export default {
     UUID: {
       type: String,
       default: "imei"
-    },
-    type: {
-      type: String,
-      default: "point"
     },
     options: {
       type: Object
@@ -70,10 +66,45 @@ export default {
       }
     }
   },
+  watch: {
+    layerStyle: {
+      handler: function () {
+        let source = window.vueCesium.DataFlowManager.findSource(this.vueKey, this.vueIndex);
+        let points = source.source;
+        switch (this.layerStyle.type) {
+          case "point":
+            for (let i = 0; i < points.length; i++) {
+              let pointStyle = new Style.PointStyle(this.layerStyle);
+              points[i]["point"] = Object.assign(points[i][this.layerStyle.type], pointStyle.toCesiumStyle(Cesium));
+            }
+            break;
+          case "marker":
+            for (let i = 0; i < points.length; i++) {
+              let markerStyle = new Style.MarkerStyle();
+              markerStyle = markerStyle.toCesiumStyle(this.layerStyle, {}, Cesium);
+              points[i]["billboard"] = Object.assign(points[i]["billboard"], markerStyle.billboard);
+              markerStyle.label.text = points[i]["label"].text;
+              points[i]["label"] = Object.assign(points[i]["label"], markerStyle.label);
+            }
+            break;
+          case "model":
+            for (let i = 0; i < points.length; i++) {
+              let modelStyle = new Style.ModelStyle(this.layerStyle);
+              points[i]["model"] = Object.assign(points[i][this.layerStyle.type], modelStyle.toCesiumStyle(Cesium));
+            }
+            break;
+        }
+      },
+      deep: true
+    }
+  },
   data() {
     return {
+      //保存所有的取得的要素信息（已去重）
+      features: [],
       firstAdd: true,
       popups: [],
+      websocket: undefined
     }
   },
   mounted() {
@@ -83,8 +114,14 @@ export default {
     let {vueKey, vueIndex} = this;
     let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
     let points = source.source;
+    this.websocket.close();
     for (let i = 0; i < points.length; i++) {
       this.viewer.entities.remove(points[i]);
+    }
+    for (let i = 0; i < this.popups.length; i++) {
+      let pop = window.vueCesium.PopupManager.findSource(this.vueKey, this.popups[i].vueIndex);
+      pop.source.remove()
+      window.vueCesium.PopupManager.deleteSource(this.vueKey, this.popups[i].vueIndex);
     }
     vueCesium.DataFlowManager.deleteSource(vueKey, vueIndex);
   },
@@ -120,7 +157,7 @@ export default {
       let vm = this;
       const {vueKey, vueIndex} = this;
       //开启长链接
-      let ws = new WebSocket(this.baseUrl);
+      this.websocket = new WebSocket(this.baseUrl);
       //设置点击事件
       this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
@@ -161,7 +198,7 @@ export default {
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       //接受消息
-      ws.onmessage = function (evt) {
+      this.websocket.onmessage = function (evt) {
         let data = JSON.parse(evt.data);
         let addPoint = true, pointId, points;
         let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
@@ -199,10 +236,17 @@ export default {
           }
           let point;
           let keys = Object.keys(data.properties);
+          vm.features.push({
+            type: "point",
+            geometry: data.geometry,
+            properties: data.properties,
+          });
+          vm.$emit("updated", vm.features);
           switch (vm.layerStyle.type) {
             case "point":
               let pStyle = new PointStyle(vm.layerStyle);
               point = vm.viewer.entities.add({
+                id: data.properties[vm.UUID],
                 position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
                 point: pStyle.toCesiumStyle(Cesium),
                 properties: data.properties,
@@ -212,6 +256,7 @@ export default {
             case "model":
               let mStyle = new ModelStyle(vm.layerStyle);
               point = vm.viewer.entities.add({
+                id: data.properties[vm.UUID],
                 position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
                 model: mStyle.toCesiumStyle(Cesium),
                 properties: data.properties,
@@ -222,6 +267,7 @@ export default {
               let markerStyle = new MarkerStyle();
               markerStyle = markerStyle.toCesiumStyle(vm.layerStyle, data, Cesium);
               point = vm.viewer.entities.add({
+                id: data.properties[vm.UUID],
                 position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
                 billboard: markerStyle.billboard,
                 label: markerStyle.label,
