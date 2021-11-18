@@ -44,6 +44,10 @@ export default {
         return {}
       }
     },
+    enableFlyTo: {
+      type: Boolean,
+      default: false
+    },
     flyToOptions: {
       type: Object,
       default() {
@@ -71,28 +75,80 @@ export default {
       handler: function () {
         let source = window.vueCesium.DataFlowManager.findSource(this.vueKey, this.vueIndex);
         let points = source.source;
-        switch (this.layerStyle.type) {
-          case "point":
-            for (let i = 0; i < points.length; i++) {
-              let pointStyle = new Style.PointStyle(this.layerStyle);
-              points[i]["point"] = Object.assign(points[i][this.layerStyle.type], pointStyle.toCesiumStyle(Cesium));
+        let point, vm = this, newPoints = [];
+        if (this.currentType !== this.layerStyle.type) {
+          this.websocket.close();
+          for (let i = 0; i < points.length; i++) {
+            this.viewer.entities.remove(points[i]);
+            switch (this.layerStyle.type) {
+              case "point":
+                let pStyle = new PointStyle(this.layerStyle);
+                point = this.viewer.entities.add({
+                  id: this.features[i].properties[this.UUID],
+                  position: Cesium.Cartesian3.fromDegrees(this.features[i].geometry.coordinates[0], this.features[i].geometry.coordinates[1], 20),
+                  point: pStyle.toCesiumStyle(Cesium),
+                  properties: this.features[i].properties,
+                  keys: Object.keys(this.features[i].properties)
+                });
+                break;
+              case "model":
+                let mStyle = new ModelStyle(this.layerStyle);
+                point = this.viewer.entities.add({
+                  id: this.features[i].properties[this.UUID],
+                  position: Cesium.Cartesian3.fromDegrees(this.features[i].geometry.coordinates[0], this.features[i].geometry.coordinates[1], 20),
+                  model: mStyle.toCesiumStyle(Cesium),
+                  properties: this.features[i].properties,
+                  keys: Object.keys(this.features[i].properties)
+                });
+                break;
+              case "marker":
+                let markerStyle = new MarkerStyle();
+                markerStyle = markerStyle.toCesiumStyle(this.layerStyle, this.features[i], Cesium);
+                point = this.viewer.entities.add({
+                  id: this.features[i].properties[this.UUID],
+                  position: Cesium.Cartesian3.fromDegrees(this.features[i].geometry.coordinates[0], this.features[i].geometry.coordinates[1], 20),
+                  billboard: markerStyle.billboard,
+                  label: markerStyle.label,
+                  properties: this.features[i].properties,
+                  keys: keys
+                });
+                break;
             }
-            break;
-          case "marker":
-            for (let i = 0; i < points.length; i++) {
-              let markerStyle = new Style.MarkerStyle();
-              markerStyle = markerStyle.toCesiumStyle(this.layerStyle, {}, Cesium);
-              points[i]["billboard"] = Object.assign(points[i]["billboard"], markerStyle.billboard);
-              markerStyle.label.text = points[i]["label"].text;
-              points[i]["label"] = Object.assign(points[i]["label"], markerStyle.label);
-            }
-            break;
-          case "model":
-            for (let i = 0; i < points.length; i++) {
-              let modelStyle = new Style.ModelStyle(this.layerStyle);
-              points[i]["model"] = Object.assign(points[i][this.layerStyle.type], modelStyle.toCesiumStyle(Cesium));
-            }
-            break;
+            newPoints.push(point);
+          }
+          window.vueCesium.DataFlowManager.deleteSource(this.vueKey, this.vueIndex);
+          window.vueCesium.DataFlowManager.addSource(this.vueKey, this.vueIndex, newPoints);
+          this.currentType = this.layerStyle.type;
+          //开启长链接
+          this.websocket = new WebSocket(this.baseUrl);
+          //接受消息
+          this.websocket.onmessage = function (evt) {
+            vm.$_webSocketCallBack(evt, vm);
+          };
+        } else {
+          switch (this.layerStyle.type) {
+            case "point":
+              for (let i = 0; i < points.length; i++) {
+                let pointStyle = new Style.PointStyle(this.layerStyle);
+                points[i]["point"] = Object.assign(points[i][this.layerStyle.type], pointStyle.toCesiumStyle(Cesium));
+              }
+              break;
+            case "marker":
+              for (let i = 0; i < points.length; i++) {
+                let markerStyle = new Style.MarkerStyle();
+                markerStyle = markerStyle.toCesiumStyle(this.layerStyle, {}, Cesium);
+                points[i]["billboard"] = Object.assign(points[i]["billboard"], markerStyle.billboard);
+                markerStyle.label.text = points[i]["label"].text;
+                points[i]["label"] = Object.assign(points[i]["label"], markerStyle.label);
+              }
+              break;
+            case "model":
+              for (let i = 0; i < points.length; i++) {
+                let modelStyle = new Style.ModelStyle(this.layerStyle);
+                points[i]["model"] = Object.assign(points[i][this.layerStyle.type], modelStyle.toCesiumStyle(Cesium));
+              }
+              break;
+          }
         }
       },
       deep: true
@@ -104,7 +160,8 @@ export default {
       features: [],
       firstAdd: true,
       popups: [],
-      websocket: undefined
+      websocket: undefined,
+      currentType: undefined
     }
   },
   mounted() {
@@ -153,9 +210,104 @@ export default {
       position.alt = graphicPosition.height;
       return position;
     },
+    $_webSocketCallBack(evt, vm) {
+      const {vueKey, vueIndex} = vm;
+      let data = JSON.parse(evt.data);
+      let addPoint = true, pointId, points;
+      let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
+      if (vm.firstAdd && vm.enableFlyTo) {
+        let flyToOptions = {
+          duration: 6
+        }, defaultHeight = 1400;
+        const {height} = vm.flyToOptions;
+        if (height === 0 || height) {
+          defaultHeight = Number(height);
+        }
+        flyToOptions = Object.assign(flyToOptions, vm.flyToOptions);
+        vm.viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], defaultHeight),
+          ...flyToOptions
+        });
+        vm.firstAdd = false;
+      }
+      //如果已有points，如果imei相同则更新点，否则添加点
+      if (source) {
+        points = source.source;
+        for (let i = 0; i < points.length; i++) {
+          if (points[i].properties[vm.UUID].getValue() === data.properties[vm.UUID]) {
+            addPoint = false;
+            pointId = i;
+            break;
+          }
+        }
+      }
+      //添加点
+      if (addPoint) {
+        if (!points) {
+          points = [];
+          window.vueCesium.DataFlowManager.addSource(vueKey, vueIndex, points);
+        }
+        let point;
+        let keys = Object.keys(data.properties);
+        vm.features.push({
+          type: "point",
+          geometry: data.geometry,
+          properties: data.properties,
+        });
+        vm.$emit("updated", vm.features);
+        switch (vm.layerStyle.type) {
+          case "point":
+            let pStyle = new PointStyle(vm.layerStyle);
+            point = vm.viewer.entities.add({
+              id: data.properties[vm.UUID],
+              position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
+              point: pStyle.toCesiumStyle(Cesium),
+              properties: data.properties,
+              keys: keys
+            });
+            break;
+          case "model":
+            let mStyle = new ModelStyle(vm.layerStyle);
+            point = vm.viewer.entities.add({
+              id: data.properties[vm.UUID],
+              position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
+              model: mStyle.toCesiumStyle(Cesium),
+              properties: data.properties,
+              keys: keys
+            });
+            break;
+          case "marker":
+            let markerStyle = new MarkerStyle();
+            markerStyle = markerStyle.toCesiumStyle(vm.layerStyle, data, Cesium);
+            point = vm.viewer.entities.add({
+              id: data.properties[vm.UUID],
+              position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
+              billboard: markerStyle.billboard,
+              label: markerStyle.label,
+              properties: data.properties,
+              keys: keys
+            });
+            break;
+        }
+        points.push(point);
+      } else {
+        //更新点
+        points[pointId].properties = data.properties;
+        points[pointId].position = Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20);
+        //更新popup
+        for (let i = 0; i < vm.popups.length; i++) {
+          if (vm.popups[i].properties[vm.UUID] === data.properties[vm.UUID]) {
+            vm.popups[i].lng = data.geometry.coordinates[0];
+            vm.popups[i].lat = data.geometry.coordinates[1];
+            vm.popups[i].alt = 50;
+            break;
+          }
+        }
+      }
+    },
     $_addEntityLayer() {
       let vm = this;
-      const {vueKey, vueIndex} = this;
+      this.currentType = this.layerStyle.type;
       //开启长链接
       this.websocket = new WebSocket(this.baseUrl);
       //设置点击事件
@@ -199,98 +351,7 @@ export default {
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       //接受消息
       this.websocket.onmessage = function (evt) {
-        let data = JSON.parse(evt.data);
-        let addPoint = true, pointId, points;
-        let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
-        if (vm.firstAdd) {
-          let flyToOptions = {
-            duration: 6
-          }, defaultHeight = 1400;
-          const {height} = vm.flyToOptions;
-          if (height === 0 || height) {
-            defaultHeight = Number(height);
-          }
-          flyToOptions = Object.assign(flyToOptions, vm.flyToOptions);
-          vm.viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], defaultHeight),
-            ...flyToOptions
-          });
-          vm.firstAdd = false;
-        }
-        //如果已有points，如果imei相同则更新点，否则添加点
-        if (source) {
-          points = source.source;
-          for (let i = 0; i < points.length; i++) {
-            if (points[i].properties[vm.UUID].getValue() === data.properties[vm.UUID]) {
-              addPoint = false;
-              pointId = i;
-              break;
-            }
-          }
-        }
-        //添加点
-        if (addPoint) {
-          if (!points) {
-            points = [];
-            window.vueCesium.DataFlowManager.addSource(vueKey, vueIndex, points);
-          }
-          let point;
-          let keys = Object.keys(data.properties);
-          vm.features.push({
-            type: "point",
-            geometry: data.geometry,
-            properties: data.properties,
-          });
-          vm.$emit("updated", vm.features);
-          switch (vm.layerStyle.type) {
-            case "point":
-              let pStyle = new PointStyle(vm.layerStyle);
-              point = vm.viewer.entities.add({
-                id: data.properties[vm.UUID],
-                position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
-                point: pStyle.toCesiumStyle(Cesium),
-                properties: data.properties,
-                keys: keys
-              });
-              break;
-            case "model":
-              let mStyle = new ModelStyle(vm.layerStyle);
-              point = vm.viewer.entities.add({
-                id: data.properties[vm.UUID],
-                position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
-                model: mStyle.toCesiumStyle(Cesium),
-                properties: data.properties,
-                keys: keys
-              });
-              break;
-            case "marker":
-              let markerStyle = new MarkerStyle();
-              markerStyle = markerStyle.toCesiumStyle(vm.layerStyle, data, Cesium);
-              point = vm.viewer.entities.add({
-                id: data.properties[vm.UUID],
-                position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
-                billboard: markerStyle.billboard,
-                label: markerStyle.label,
-                properties: data.properties,
-                keys: keys
-              });
-              break;
-          }
-          points.push(point);
-        } else {
-          //更新点
-          points[pointId].properties = data.properties;
-          points[pointId].position = Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20);
-          //更新popup
-          for (let i = 0; i < vm.popups.length; i++) {
-            if (vm.popups[i].properties[vm.UUID] === data.properties[vm.UUID]) {
-              vm.popups[i].lng = data.geometry.coordinates[0];
-              vm.popups[i].lat = data.geometry.coordinates[1];
-              vm.popups[i].alt = 50;
-              break;
-            }
-          }
-        }
+        vm.$_webSocketCallBack(evt, vm);
       };
     }
   }
