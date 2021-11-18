@@ -144,7 +144,7 @@ export class BaseManager {
 
   addSource(vueKey, vueIndex, source, options) {
     vueKey = vueKey ? vueKey : this.vueKey;
-    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = vueIndex || vueIndex == 0 ? vueIndex : this.vueIndex;
     vueIndex = `${vueIndex}`;
     if (!this[vueKey]) {
       this[vueKey] = [];
@@ -177,7 +177,7 @@ export class BaseManager {
 
   changeSource(vueKey, vueIndex, source) {
     vueKey = vueKey ? vueKey : this.vueKey;
-    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = vueIndex || vueIndex == 0 ? vueIndex : this.vueIndex;
     vueIndex = `${vueIndex}`;
     let index = -1;
     let findSource = undefined;
@@ -200,7 +200,7 @@ export class BaseManager {
 
   changeOptions(vueKey, vueIndex, key, value) {
     vueKey = vueKey ? vueKey : this.vueKey;
-    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = vueIndex || vueIndex == 0 ? vueIndex : this.vueIndex;
     vueIndex = `${vueIndex}`;
     let index = -1;
     let findSource = undefined;
@@ -222,7 +222,7 @@ export class BaseManager {
 
   findSource(vueKey, vueIndex) {
     vueKey = vueKey ? vueKey : this.vueKey;
-    vueIndex = vueIndex ? vueIndex : this.vueIndex;
+    vueIndex = vueIndex || vueIndex == 0 ? vueIndex : this.vueIndex;
     vueIndex = `${vueIndex}`;
     let index = -1;
     let findSource = undefined;
