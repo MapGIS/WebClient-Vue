@@ -95,14 +95,23 @@ export default {
       let layerIndex;
       let options = {};
       options = vm.initOptions(options);
-      layerIndex = viewer.scene.layers.appendImageryLayer(vm.baseUrl, options);
+      if (vm.baseUrl.indexOf("/g3d") > -1) {
+        layerIndex = viewer.scene.layers.appendG3DLayer(vm.baseUrl, {
+          ...options,
+          getDocLayerIndexes: vm._handleCallback
+        });
+      } else {
+        layerIndex = viewer.scene.layers.appendVectorLayer(vm.baseUrl, {
+          ...options,
+          getDocLayerIndexes: vm._handleCallback
+        });
+      }
+
       vueCesium.IgsFeatureManager.addSource(
           vm.vueKey,
           vm.vueIndex,
           layerIndex
       );
-      //抛出load事件
-      this.$emit("load", {layerIndex: layerIndex});
     },
     unmount() {
       //图层移除
@@ -116,7 +125,7 @@ export default {
       vueCesium.IgsFeatureManager.deleteSource(vueKey, vueIndex);
     },
     initOptions(options) {
-      const { Cesium } = this;
+      const {Cesium} = this;
       let {layers, autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
       if (layers) {
         if (layers.indexOf("gdbp") <= -1 && layers.indexOf("layers") <= -1) {
@@ -192,6 +201,13 @@ export default {
         return newData;
       }, {});
       return newFeatureStyle;
+    },
+
+    _handleCallback(indexs) {
+      console.log(indexs);
+      let layerIndex = indexs;
+      //抛出load事件
+      this.$emit("load", {layerIndex: layerIndex});
     }
   }
 }

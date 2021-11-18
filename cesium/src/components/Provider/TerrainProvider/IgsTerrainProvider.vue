@@ -9,10 +9,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    // show: {
-    //   type: Boolean,
-    //   default: true,
-    // },
+    show: {
+      type: Boolean,
+      default: true,
+    },
     url: {
       type: String,
     },
@@ -51,11 +51,6 @@ export default {
         ...$props,
         getDocLayerIndexes:vm._handleTerrianLoaded
       });
-      console.log("terrianlayer",terrianlayer);
-      viewer.scene.globe.enableLighting = true;
-      // 设置太阳时间
-      // var utc = Cesium.JulianDate.fromDate(new Date('2021/05/04 12:00:00')); //UTC
-      // viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(utc, 8, new Cesium.JulianDate());
       this.$emit("load", this);
     },
     unmount() {
