@@ -567,34 +567,4 @@ export default {
 };
 </script>
 <style scoped>
-::v-deep .mapgis-ui-form-item {
-  margin-bottom: 0;
-}
-
-::v-deep .mapgis-ui-form label {
-  font-size: 12px;
-}
-
-::v-deep .mapgis-ui-form-item-label {
-  line-height: 40px;
-}
-
-::v-deep .mapgis-ui-input {
-  padding: 4px 11px;
-}
-
-.parameter {
-  background: #f1f1f1;
-  border-radius: 4px;
-  /*margin-bottom: 10px;*/
-  overflow: hidden;
-  max-height: 0px;
-  transition: max-height 0.5s;
-  -moz-transition: max-height 0.5s; /* Firefox 4 */
-  -webkit-transition: max-height 0.5s; /* Safari and Chrome */
-  -o-transition: max-height 0.5s; /* Opera */
-}
-::v-deep .mapgis-ui-colors-setting .mapgis-ui-table {
-  margin: 0 auto;
-}
 </style>
