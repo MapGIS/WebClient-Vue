@@ -3,15 +3,15 @@
     <slot>
       <div class="mapgis-widget-contour-analysis">
         <mapgis-ui-group-tab title="参数设置"/>
-        <mapgis-ui-setting-form>
-          <mapgis-ui-switch-panel layout="horizontal" label="等值线" v-if="switchOptions.indexOf('isogram')>=0" @changeChecked="startIsogram">
-            <mapgis-ui-form-item label="等值距" style="width: fit-content">
+<!--        <mapgis-ui-setting-form>-->
+          <mapgis-ui-switch-panel layout="horizontal" label="等值线" v-if="switchOptions.indexOf('isogram')>=0"
+                                  @changeChecked="startIsogram">
+            <mapgis-ui-form-item label="等值距">
               <mapgis-ui-input
                   v-model.number="formData1.contourSpacingCopy"
                   type="number"
                   min="0"
                   addon-after="(米)"
-                  style="width: fit-content"
               />
             </mapgis-ui-form-item>
             <mapgis-ui-form-item label="线宽">
@@ -29,7 +29,8 @@
             </mapgis-ui-form-item>
           </mapgis-ui-switch-panel>
 
-          <mapgis-ui-switch-panel layout="horizontal" label="等值面" v-if="switchOptions.indexOf('isosurface')>=0" @changeChecked="startIsosurface">
+          <mapgis-ui-switch-panel layout="horizontal" label="等值面" v-if="switchOptions.indexOf('isosurface')>=0"
+                                  @changeChecked="startIsosurface">
             <mapgis-ui-form-item label="等值面透明度">
               <mapgis-ui-input
                   v-model.number="formData2.bandTransparencyCopy"
@@ -54,9 +55,10 @@
                 v-model="formData2.bandColorArray"
                 :rangeField="'高度'"
                 :singleNumber="true"
+                :style="{width:'285px'}"
             ></mapgis-ui-colors-setting>
           </mapgis-ui-switch-panel>
-        </mapgis-ui-setting-form>
+<!--        </mapgis-ui-setting-form>-->
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
           >分析
@@ -530,5 +532,8 @@ export default {
   -moz-transition: max-height .5s; /* Firefox 4 */
   -webkit-transition: max-height .5s; /* Safari and Chrome */
   -o-transition: max-height .5s; /* Opera */
+}
+::v-deep .mapgis-ui-colors-setting .mapgis-ui-table{
+  margin: 0 auto;
 }
 </style>
