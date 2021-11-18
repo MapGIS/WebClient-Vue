@@ -1,4 +1,3 @@
-import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import Mapgis3dM3dLayer from "../../cesium/src/components/Layer/M3D/M3d.vue";
 
 export default {
@@ -9,12 +8,13 @@ export default {
     show: true,
     opacity: 1.0,
     enablePopup: true,
+    highlightStyle: {color: 'rgba(255, 0, 0, 0.6)'}
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebScene, Mapgis3dM3dLayer },
+  components: { Mapgis3dM3dLayer },
   data() {
     return {};
   },
@@ -35,6 +35,7 @@ export const 基础 = Template.bind({});
   url: "http://192.168.88.204:8089/M3D/2.0/M3DAttributeTest_BIN/zondy.mcj",
   show: true,
   opacity: 1.0,
+  highlightStyle: {color: 'rgba(255, 255, 0, 0.6)'},
   enablePopup: true,
   popupOptions: {
     title: "id",

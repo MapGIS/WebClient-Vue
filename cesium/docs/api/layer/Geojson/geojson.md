@@ -333,16 +333,6 @@ export default {
   ``` javascript
   import { Style } from "@mapgis/webclient-es6-service";
   const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
-  ```
-
-### `layerStyle`
-- **类型:** `Object`
-- **非侦听属性**
-- **描述:** 当前图层的显示样式
-- **默认值**
-  ``` javascript
-  import { Style } from "@mapgis/webclient-es6-service";
-  const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
   let highlightStyle = {
     point: new PointStyle(),
     line: new LineStyle(),

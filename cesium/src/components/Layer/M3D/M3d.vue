@@ -202,7 +202,8 @@ export default {
     pickFeature(payload) {
       const vm = this;
       const { movement } = payload;
-      const { popupOptions } = this;
+      const { popupOptions, highlightStyle } = this;
+      const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer } = this;
       const { version, layerIndex } = this;
       if (version == "0.0" || version == "1.0") {
@@ -210,6 +211,8 @@ export default {
         let oid = viewer.scene.pickOid(movement.position);
         let feature = viewer.scene.pick(movement.position);
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+        tileset.pickedOid = oid;
+        tileset.pickedColor = Cesium.Color.fromCssColorString(color);
         let titlefield = popupOptions ? popupOptions.title : undefined;
         if (tileset.useRawSaveAtt && Cesium.defined(feature)) {
           let result = feature.content.getAttributeByOID(oid);

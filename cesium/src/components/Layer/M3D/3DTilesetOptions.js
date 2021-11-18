@@ -1,3 +1,6 @@
+import { Style } from "@mapgis/webclient-es6-service";
+const { ModelStyle } = Style;
+
 export default {
   /**
    * @type String
@@ -15,7 +18,12 @@ export default {
     default: () => (Math.random() * 100000000).toFixed(0)
   },
 
-  highlightStyle: {},
+  highlightStyle: {
+    type: Object,
+    default: () => {
+      return new ModelStyle({ color: "rgba(255, 255, 0, 0.6)" });
+    }
+  },
 
   layers: {
     type: [String],

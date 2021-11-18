@@ -76,6 +76,17 @@
       |--- m3d-layer-2  非勾选状态
   ```
 
+### `highlightStyle`
+- **类型:** `Object`
+- **非侦听属性**
+- **描述:** 当前图层的点击高亮显示样式
+- **默认值**
+  ``` javascript
+  import { Style } from "@mapgis/webclient-es6-service";
+  const { ModelStyle } = Style;
+  let highlightStyle = new ModelStyle()
+  ```
+
 ### `offset`
 
 - **类型**: `Object`
