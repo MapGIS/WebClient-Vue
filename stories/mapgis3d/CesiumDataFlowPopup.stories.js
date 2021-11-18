@@ -15,7 +15,7 @@ export default {
     },
     popupOptions: {
       description: "Popup对象的配置参数，如下所示：<br>" +
-          "1、<span class='storybook-span'>title</span>(选填)：弹框样式类型，默认'default'，有如下值可选：'default','left','underline','point','table','default'<br>" +
+          "1、<span class='storybook-span'>type</span>(选填)：弹框样式类型，默认'default'，有如下值可选：'default','left','underline','point','table','default'<br>" +
           "2、<span class='storybook-span'>anchor</span>(选填)：锚点，即鼠标相对于Tips的位置，默认值为'bottom'，有如可选下值：'center' , 'top' , 'bottom' , 'left' , 'right' , 'top-left' , 'top-right' , 'bottom-left' ,'bottom-right'<br>" +
           "3、<span class='storybook-span'>offset</span>(选填)：相对偏移，即Tips相对鼠标偏移量，有数字(例如10)和数组(例如[10,10])两种方式，<br>" +
           "<span class='storybook-span'>当偏移量为一个数字X(例如10)时</span>，表示Tips在锚点(anchor)所定义的方向上相对鼠标进行偏移X(例如10)像素;<br>" +
