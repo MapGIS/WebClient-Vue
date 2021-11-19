@@ -40,6 +40,7 @@ export default {
   },
   data() {
     return {
+      pinMap: true,
       activeId: undefined,
       visible: false,
       position: {
@@ -65,6 +66,7 @@ export default {
   },
   render(h) {
     let {
+      pinMap,
       visible,
       position,
       hovervisible,
@@ -79,20 +81,40 @@ export default {
       tipsOptions
     } = this;
 
-    const { type } = popupOptions;
+    const { type, enableSeparate } = popupOptions;
     const feature =
       currentClickInfo && currentClickInfo.length > 0
         ? currentClickInfo[0]
         : { properties: {} };
 
     let container = getPopupHtml(type, feature, {
+      enableSeparate: enableSeparate,
+      separateMap: this.$_separateMap,
       title: feature.title,
       fields: Object.keys(feature.properties),
       style: {
         containerStyle: { width: "360px" }
       }
     });
-
+    if (!pinMap) {
+      const images = "http://192.168.82.89:8086/static/assets/gallery/m3d.png";
+      /* [
+        "http://192.168.82.89:8086/static/assets/gallery/m3d.png",
+        "http://192.168.82.89:8086/static/assets/gallery/biggps.png"
+      ]; */
+      const description = "这是一段说明文字";
+      const fs = currentClickInfo.forEach(f => {
+        f.images = images;
+        f.content = description;
+      });
+      return (
+        <mapgis-ui-story-panel-large
+          onClosePanel={this.$_onPinMap.bind(this)}
+          onFlyTo={this.$_onFlyTo.bind(this)}
+          feature={currentClickInfo}
+        />
+      );
+    }
     if (customPopup || customTips) {
       return (
         <Popup position={position} visible={visible} forceRender={true}>
@@ -124,6 +146,7 @@ export default {
             visible={visible}
             forceRender={true}
             container={container}
+            onSeparate={this.$_separateMap.bind(this)}
           ></Popup>
           <Popup
             position={hoverposition}
@@ -338,6 +361,16 @@ export default {
         Cesium.ScreenSpaceEventType.MOUSE_MOVE
       );
       return handler;
-    }
+    },
+    $_separateMap() {
+      this.pinMap = false;
+    },
+    $_pinMap() {
+      this.pinMap = true;
+    },
+    $_onPinMap() {
+      this.pinMap = true;
+    },
+    $_onFlyTo() {}
   }
 };

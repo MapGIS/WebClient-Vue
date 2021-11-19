@@ -4,13 +4,15 @@
         title="模型"
         :has-top-margin="false"
         v-if="models.length > 1"></mapgis-ui-group-tab>
-    <mapgis-ui-row class="model" v-if="models.length > 1">
+    <mapgis-ui-form-item v-if="models.length > 1">
+<!--    <mapgis-ui-row class="model" v-if="models.length > 1">-->
       <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">
         <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
           {{ node.title }}
         </mapgis-ui-select-option>
       </mapgis-ui-select>
-    </mapgis-ui-row>
+    </mapgis-ui-form-item>
+<!--    </mapgis-ui-row>-->
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
     <mapgis-ui-setting-form :label-width="72">
       <mapgis-ui-form-item label="限高颜色">
@@ -485,35 +487,10 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .mapgis-ui-card-body {
-  max-height: 300px;
-  overflow: auto;
-}
-
 ::v-deep .mapgis-ui-select {
-  width: calc(35vh);
+  width: 100%;
 }
 
-.mapgis-ui-card-bordered {
-  border: unset;
-}
-
-.mapgis-ui-card-body {
-  padding: 10px;
-}
-
-::v-deep .mapgis-ui-col-5 {
-  padding-top: 8px
-}
-
-::v-deep .mapgis-ui-col-19 {
-  display: flex;
-  padding-right: 5px;
-}
-
-.mapgis-widget-heightLimited-analysis {
-  font-size: 12px;
-}
 .parent_div{
   width: 100%;
   display: inline-block;

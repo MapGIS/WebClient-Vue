@@ -82,7 +82,8 @@ function getPopupContainer(popupStyle) {
   );
 }
 
-function getPopupTitle(popupStyle, title, rowContainerClass) {
+function getPopupTitle(popupStyle, title, rowContainerClass, options) {
+  const { enableSeparate = true, separateMap } = options;
   rowContainerClass = "mapgis-popup-row-container " + rowContainerClass;
   return (
     "<div class='mapgis-popup-title " +
@@ -95,6 +96,32 @@ function getPopupTitle(popupStyle, title, rowContainerClass) {
     rowContainerClass +
     "'>"
   );
+
+  /* if (enableSeparate) {
+    let dom = document.createElement("i");
+    dom.addEventListener('click', () => separateMap());
+    dom.innerHTML =
+      `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
+      `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`;
+    let icon = dom.innerHTML;
+    console.log("icon", icon);
+    let icon1 =
+      `<i class="anticon mapgis-ui-tooltip-open" onclick='console.log(separateMap)'>` +
+      `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
+      `<use xlink:href="#mapgis-Matchsizeup"></use></svg></i>`;
+    return (
+      "<div class='mapgis-popup-title " +
+      popupStyle.titleClass +
+      "' style='" +
+      popupStyle.titleStyle +
+      `'>${icon}` +
+      title +
+      "</div><div class='" +
+      rowContainerClass +
+      "'>"
+    );
+  } else {
+  } */
 }
 
 function getPopupRows(
@@ -159,11 +186,7 @@ function getPopupRows(
 }
 
 function getDefaultPopup(
-  fields,
-  alias,
-  style,
-  pClass,
-  title,
+  options,
   feature,
   defaultField,
   popupStyle,
@@ -172,9 +195,11 @@ function getDefaultPopup(
   valueClass,
   before
 ) {
+  const { fields, alias, style, title } = options;
+  const pClass = options.class;
   let element = getPopupContainer(popupStyle);
   if (title) {
-    element += getPopupTitle(popupStyle, title);
+    element += getPopupTitle(popupStyle, title, "", options);
   }
   element += getPopupRows(
     fields,
@@ -205,16 +230,9 @@ function getDefaultPopup(
   return element;
 }
 
-function getPopupLeftHtml(
-  fields,
-  alias,
-  style,
-  pClass,
-  title,
-  feature,
-  defaultField,
-  popupStyle
-) {
+function getPopupLeftHtml(options, feature, defaultField, popupStyle) {
+  const { fields, alias, style, title } = options;
+  const pClass = options.class;
   let element = getPopupContainer(popupStyle),
     field;
   if (title) {
@@ -275,6 +293,7 @@ function getPopupLeftHtml(
  * @param {Object} feature 一个要素，必填，根据要素生成popup中的内容
  * @param {Object} options 生成popup参数，选填，如下所示
  * {
+ *     enableSeparate: true, // 是否以popup的形式跟随地图联动
  *     fields: [],//要显示的字段数组，["字段1","字段2","字段3"...]
  *     alias: [],//要显示的字段别名，["别名1","别名2","别名3"...]
  *     style: {//popup里的元素的样式
@@ -301,23 +320,16 @@ export function getPopupHtml(type, feature, options, currentField) {
   switch (type) {
     case "left":
       element = getPopupLeftHtml(
-        options.fields,
-        options.alias,
-        options.style,
-        options.class,
-        options.title,
+        options,
         feature,
         currentField,
-        popupStyle
+        popupStyle,
+        options
       );
       break;
     case "underline":
       element = getDefaultPopup(
-        options.fields,
-        options.alias,
-        options.style,
-        options.class,
-        options.title,
+        options,
         feature,
         currentField,
         popupStyle,
@@ -328,11 +340,7 @@ export function getPopupHtml(type, feature, options, currentField) {
       break;
     case "point":
       element = getDefaultPopup(
-        options.fields,
-        options.alias,
-        options.style,
-        options.class,
-        options.title,
+        options,
         feature,
         currentField,
         popupStyle,
@@ -344,11 +352,7 @@ export function getPopupHtml(type, feature, options, currentField) {
       break;
     case "table":
       element = getDefaultPopup(
-        options.fields,
-        options.alias,
-        options.style,
-        options.class,
-        options.title,
+        options,
         feature,
         currentField,
         popupStyle,
@@ -359,11 +363,7 @@ export function getPopupHtml(type, feature, options, currentField) {
       break;
     case "default":
       element = getDefaultPopup(
-        options.fields,
-        options.alias,
-        options.style,
-        options.class,
-        options.title,
+        options,
         feature,
         currentField,
         popupStyle,
@@ -374,11 +374,7 @@ export function getPopupHtml(type, feature, options, currentField) {
       break;
     default:
       element = getDefaultPopup(
-        options.fields,
-        options.alias,
-        options.style,
-        options.class,
-        options.title,
+        options,
         feature,
         currentField,
         popupStyle,

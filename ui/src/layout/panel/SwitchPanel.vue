@@ -45,6 +45,10 @@ export default {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
     },
+    height: {
+      type: String,
+      default: "fit-content"
+    },
     labelCol: {
       type: Object,
       default: () => {
@@ -83,9 +87,10 @@ export default {
   methods: {
     changeChecked(e) {
       let vm = this;
+      const { height = "fit-content" } = this;
 
       if (vm.innerChecked) {
-        this.maxHeight = "fit-content";
+        this.maxHeight = height;
       } else {
         this.maxHeight = "0px";
       }

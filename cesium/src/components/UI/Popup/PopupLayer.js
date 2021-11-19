@@ -20,6 +20,7 @@ let popupsIdIndex = 0;
  * @param {Object} [options.callback]
  * @param {Function} [options.callback.onShow] 显示popup事件的回调
  * @param {Function} [options.callback.onHide] 隐藏popup事件的回调
+ * @param {Function} [options.callback.onSeparate] 分离popup事件的回调
  * @param {Element|String} container 外部传入的div的字符串描述方式，一般是文字或者echarts的div;
  *
  * @example 这里唯一要注意的是我们中地数码的ceisum的右键事件不是放大缩小而是旋转视角
@@ -76,9 +77,10 @@ export default class PopupLayer {
         this.isShow = true;
 
         if (options.callback) {
-            const { onShow, onHide } = options.callback;
+            const { onShow, onHide, onSeparate } = options.callback;
             this.onShow = onShow;
             this.onHide = onHide;
+            this.onSeparate = onSeparate;
         }
 
         let ScreenSpaceEventHandler = this.Cesium.ScreenSpaceEventHandler || window['Cesium'].ScreenSpaceEventHandler;
@@ -162,6 +164,13 @@ export default class PopupLayer {
             infoDiv.appendChild(popupContentDiv);
         }
 
+        let separate = window.document.createElement('div');        
+        separate.className = 'cesium-popup-separate-button';
+        separate.addEventListener('click', () => self.separate());
+        let icon = `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
+        `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`
+        separate.innerHTML = icon;
+
         let close = window.document.createElement('div');
         close.className = 'cesium-popup-close-button';
         close.addEventListener('click', () => self.hide());
@@ -171,6 +180,7 @@ export default class PopupLayer {
         if (this.showClose) {
             let parent = window.document.getElementById(this.popupContentId);
             parent && parent.appendChild(close);
+            parent && parent.appendChild(separate);
         }
         this.infoDiv = infoDiv;
     }
@@ -261,6 +271,17 @@ export default class PopupLayer {
             node.style.display = 'none';
         }
     }
+
+    /**
+     * 分离Popup
+     * @function module:客户端可视化.PopupLayer.prototype.
+     */
+     separate() {
+        this.hide();
+        if (this.onSeparate) {
+            this.onSeparate();
+        }
+    }    
 
     /**
      * 删除图层
