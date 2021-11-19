@@ -302,6 +302,12 @@ export default {
         }
         points.push(point);
       } else {
+        for (let i = 0; i < vm.features.length; i++) {
+          if (vm.features[i].properties[vm.UUID] === data.properties[vm.UUID]) {
+            vm.features[i].geometry.coordinates = data.geometry.coordinates;
+            break;
+          }
+        }
         //更新点
         points[pointId].properties = data.properties;
         points[pointId].position = Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20);
