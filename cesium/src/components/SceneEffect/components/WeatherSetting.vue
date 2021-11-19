@@ -1,30 +1,28 @@
 <template>
-  <div class="mapgis-3d-scene-effect">
+  <div class="weather-setting">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
+      
+      <mapgis-ui-form-model-item label="太阳" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="sun" @change="enableSun">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
 
-<!--      <mapgis-ui-form-model-item label="天气特效" >-->
-<!--          <mapgis-ui-checkbox :checked="sunlight" @change="enableSunlight">太阳-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="sceneSkybox" @change="enableSceneSkybox" >星空-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="clouds" @change="$_enableClouds" >云图-->
-<!--          </mapgis-ui-checkbox>-->
-<!--      </mapgis-ui-form-model-item>-->
-
-<!--      <mapgis-ui-switch-panel layout="horizontal" label="太阳ceshi" :checked="sunlight" @changeChecked="enableSunlight">-->
-<!--      </mapgis-ui-switch-panel>-->
-
-      <mapgis-ui-form-model-item label="太阳光照" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sunlight" @change="enableSunlight">
+      <mapgis-ui-form-model-item label="月亮" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="moon" @change="enableMoon">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
       <mapgis-ui-form-model-item label="星空" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sceneSkybox" @change="enableSceneSkybox">
         </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>     
+
+      <mapgis-ui-form-model-item label="天空盒" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="skybox" @change="$_enableSkyBox">
+        </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="云图" >
+      <mapgis-ui-form-model-item label="云层" >
         <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="clouds" @change="$_enableClouds">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
@@ -196,40 +194,52 @@
 
       </div>
 
-      <mapgis-ui-form-model-item label="天空盒" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="skybox" @change="$_enableSkyBox">
+      <mapgis-ui-form-model-item label="雾化效果" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="surficialFog" @change="enableSurficialFog">
         </mapgis-ui-switch>
       </mapgis-ui-form-model-item>
 
-<!--      <mapgis-ui-form-model-item :wrapperCol="{span: 24}">-->
-<!--          <mapgis-ui-checkbox :checked="rain" @change="$_enableRain" >雨-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="snow" @change="$_enableSnow" >雪-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="fog" @change="$_enableFog" >雾-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="skybox" @change="$_enableSkyBox">天空盒-->
-<!--          </mapgis-ui-checkbox>-->
-<!--      </mapgis-ui-form-model-item>-->
+      <div class="parameter" :style="{ maxHeight: surfFogParams }">
 
-      <mapgis-ui-form-model-item label="黑白照片" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="blckWhite" @change="blackAndWhiteChange">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
+        <mapgis-ui-form-model-item label="密度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="surfFogDst"
+                :max="0.002"
+                :min="0"
+                :step="0.0002"
+                @change="enableSurficialFog"
+            />
+            <mapgis-ui-input-number
+                v-model="surfFogDst"
+                :max="0.002"
+                :min="0"
+                :step="0.0002"
+                @change="enableSurficialFog"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
 
-      <mapgis-ui-form-model-item label="夜视效果" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="ntVision" @change="nightVision">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
+        <!-- <mapgis-ui-form-model-item label="最小亮度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="surfFogMinBrt"
+                :max="10"
+                :min="0"
+                @change="enableSurficialFog"
+            />
+            <mapgis-ui-input-number
+                v-model="surfFogMinBrt"
+                :max="10"
+                :min="0"
+                @change="enableSurficialFog"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item> -->
 
-<!--      <mapgis-ui-form-model-item label="其它特效">-->
-<!--        <mapgis-ui-space>-->
-<!--          <mapgis-ui-checkbox :checked="blckWhite" @change="blackAndWhiteChange">黑白照片-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="ntVision" @change="nightVision" >夜视效果-->
-<!--          </mapgis-ui-checkbox>-->
-<!--        </mapgis-ui-space>-->
-<!--      </mapgis-ui-form-model-item>-->
+      </div>
 
     </mapgis-ui-form-model>
   </div>
@@ -238,7 +248,7 @@
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
 export default {
-  name: "SceneEffect",
+  name: "WeatherSetting",
   mixins: [ServiceLayer],
   props:{
     layout: {
@@ -248,29 +258,37 @@ export default {
   },
   data (){
     return {
-      sunlight: false,
+      sun:true,
+      moon:true,
+      //星空
       sceneSkybox: true,
+      //天空盒
+      skybox: false,
+      //云层
       clouds: false,
-      cloudsduration: 5,
       cloudsParams:undefined,
+      cloudsduration: 5,
+
       weather: undefined,
       rain: false,
+      rainParams:undefined,
       speed: 1.0,
       rainOpacity: 1.0,
       angle: 0,
-      rainParams:undefined,
       snow: false,
+      snowParams:undefined,
       size: 5,
       density: 5,
-      snowParams:undefined,
       fog: false,
+      fogParams:undefined,
       fogOpacity: 0.5,
       color: "#FFFFFF",
-      fogParams:undefined,
-      skybox: false,
-
-      blckWhite: false,
-      ntVision: false,
+      
+      //雾化效果
+      surficialFog:true,
+      surfFogParams:"80px",
+      surfFogDst:0.0002,
+      // surfFogMinBrt:1,
 
     }
   },
@@ -295,27 +313,82 @@ export default {
     });
   },
   methods: {
-    //太阳
-    enableSunlight(e) {
-      const { viewer } = this;
-      this.sunlight = e;
-      this.$emit('updateSpin',true);
-      let vm = this;
-      setTimeout(function () {
-        viewer.scene.globe.enableLighting = vm.sunlight;
-        // var sunLight = new Cesium.SunLight({color:Cesium.Color.RED});
-        // viewer.scene.light = sunLight
-        vm.$emit('updateSpin',false);
-      },400)
-
+    /*
+    * 太阳
+    * */
+    enableSun(){
+      const {viewer} = this;
+      viewer.scene.sun.show = this.sun;
+      if(this.sun){
+        let sunPosition = viewer.scene.sun._boundingVolume.center;
+        viewer.camera.flyTo({
+          destination:new Cesium.Cartesian3(-sunPosition.x/1000,-sunPosition.y/1000,-sunPosition.z/2000),
+          orientation:{heading:0,pitch:Cesium.Math.toRadians(-90),roll:0},
+          duration:0.5
+        })
+      }else{
+        viewer.camera.flyHome(0.5);
+      }
     },
-
+    /*
+    * 月亮
+    * */
+    enableMoon(){
+      const {viewer} = this;
+      viewer.scene.moon.show = this.moon;
+      
+      if(this.moon){
+        let moonPosition = viewer.scene.moon._ellipsoidPrimitive._boundingSphere.center;
+        viewer.camera.flyTo({
+          destination:new Cesium.Cartesian3(moonPosition.x/1.2,moonPosition.y/1.2,moonPosition.z/1.2),
+          orientation:{heading:0,pitch:Cesium.Math.toRadians(90),roll:0},
+          duration:0.5
+        })
+      }else{
+        viewer.camera.flyHome(0.5);
+      }
+    },
+    
     //星空
     enableSceneSkybox(e) {
       const { viewer } = this;
       viewer.scene.skyBox.show = this.sceneSkybox; //背景，星空
     },
+    
+    //天空盒
+    $_enableSkyBox(e) {
+      let vm = this;
+      if (vm.skybox) {
+        vm.enableSkyBox();
+      } else {
+        vm.removeSkyBox();
+      }
+    },
+    enableSkyBox() {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      let skyBox = new Cesium.GlobeEffect(viewer, { cloudsDuration: 100000 });
+      skyBox.addDefaultSkyBox("skyBox3"); //添加天空盒默认样式1
+      // skyBox.addDefaultSkyBox('skyBox2'); //添加天空盒默认样式2
 
+      window.vueCesium.SettingToolManager.changeOptions(vueKey, vueIndex, 'SkyBox', skyBox);
+    },
+    removeSkyBox() {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager.options && manager.options.SkyBox) {
+        manager.options.SkyBox.removeSkyBox();
+        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'SkyBox',null);
+      }
+      // viewer.scene.camera.flyTo({
+      //   destination: new Cesium.Cartesian3(-4957554.172258782, 19883663.751066618, 10885451.402250132),
+      //   orientation: {
+      //     heading: 6.283185307179586,
+      //     pitch: -1.5707963267948966,
+      //     roll: 0
+      //   },
+      //   duration: 1.0
+      // })
+    },
     //云图
     $_enableClouds(e) {
       this.$emit('updateSpin',true);
@@ -351,14 +424,14 @@ export default {
         cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
       });
       clouds.addGlobeClouds(); //添加云层
-      window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud',clouds);
+      window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud', clouds);
     },
     removeClouds() {
       const { vueKey, vueIndex, viewer, Cesium } = this;
       let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
       if (manager.options && manager.options.GlobeCloud) {
         manager.options.GlobeCloud.removeGlobeClouds();
-        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud',null);
+        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud', null);
       }
     },
 
@@ -484,7 +557,6 @@ export default {
       };
       this.$_enableWeather("Fog", fogOptions);
     },
-    //积雪？？
     $_enableWeather(WeatherName, options) {
       const { vueKey, vueIndex, viewer, Cesium } = this;
 
@@ -513,7 +585,6 @@ export default {
           break;
       }
     },
-
     removeWeather(WeatherName) {
       const { vueKey, vueIndex } = this;
       let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
@@ -536,115 +607,32 @@ export default {
         });
       }
     },
-
-    //天空盒
-    $_enableSkyBox(e) {
+     
+    /*
+    * 雾化效果
+    * */
+    enableSurficialFog(){
+      const {viewer} = this;
       let vm = this;
-      if (vm.skybox) {
-        vm.enableSkyBox();
-      } else {
-        vm.removeSkyBox();
+
+      if(vm.surficialFog){
+        this.surfFogParams = "40px"
+      }else{
+        this.surfFogParams = "0px"
       }
-    },
-    enableSkyBox() {
-      const { vueKey, vueIndex, viewer, Cesium } = this;
-      let skyBox = new Cesium.GlobeEffect(viewer, { cloudsDuration: 100000 });
-      skyBox.addDefaultSkyBox("skyBox3"); //添加天空盒默认样式1
-      // skyBox.addDefaultSkyBox('skyBox2'); //添加天空盒默认样式2
-
-      // //自定义天空盒的样式
-      // skyBox.removeSkyBox();
-      // let newskybox = new Cesium.SkyBox({
-      //   sources: {
-      //     positiveX: Cesium.buildModuleUrl('Assets/Textures/SkyBox2/front.jpg'),
-      //     negativeX: Cesium.buildModuleUrl('Assets/Textures/SkyBox2/back.jpg'),
-      //     positiveY: Cesium.buildModuleUrl('Assets/Textures/SkyBox2/right.jpg'),
-      //     negativeY: Cesium.buildModuleUrl('Assets/Textures/SkyBox2/left.jpg'),
-      //     positiveZ: Cesium.buildModuleUrl('Assets/Textures/SkyBox2/top.jpg'),
-      //     negativeZ: Cesium.buildModuleUrl('Assets/Textures/SkyBox2/down.jpg')
-      //   },
-      //   nearGround: true
-      // });
-      // skyBox.changeSkyBox(newskybox)
-
-      // viewer.scene.camera.flyTo({
-      //   destination: new Cesium.Cartesian3(-2179825.7788852383, 4380581.427298224, 4091538.107446992),
-      //   orientation: {
-      //     heading: 0.005352643897039933,
-      //     pitch: -0.03880119222393663,
-      //     roll: 6.2831853071795845
-      //   },
-      //   duration:1,
-      // })
-
-      window.vueCesium.SettingToolManager.changeOptions(vueKey, vueIndex, 'SkyBox', skyBox);
-    },
-    removeSkyBox() {
-      const { vueKey, vueIndex, viewer, Cesium } = this;
-      let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
-      if (manager.options && manager.options.SkyBox) {
-        manager.options.SkyBox.removeSkyBox();
-        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'SkyBox',null);
-      }
-      // viewer.scene.camera.flyTo({
-      //   destination: new Cesium.Cartesian3(-4957554.172258782, 19883663.751066618, 10885451.402250132),
-      //   orientation: {
-      //     heading: 6.283185307179586,
-      //     pitch: -1.5707963267948966,
-      //     roll: 0
-      //   },
-      //   duration: 1.0
-      // })
+      viewer.scene.fog.density = this.surfFogDst;
+      // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
+      viewer.scene.fog.enabled = this.surficialFog;
     },
 
-    //黑白照片
-    blackAndWhiteChange(e) {
-      const { viewer } = this;
-      let vm = this;
-      if (vm.blckWhite) {
-        vm.removeOtherStages();
-
-        let blackAndWhite = viewer.scene.postProcessStages.add(
-            Cesium.PostProcessStageLibrary.createBlackAndWhiteStage()
-        );
-        blackAndWhite.uniforms.gradations = 5.0; //(灰度级数)
-
-      } else {
-        vm.removeOtherStages();
-      }
-    },
-    //夜视效果
-    nightVision(e) {
-      const { viewer } = this;
-      let vm = this;
-      if (vm.ntVision) {
-        vm.removeOtherStages();
-        viewer.scene.postProcessStages.add(
-            Cesium.PostProcessStageLibrary.createNightVisionStage()
-        );
-      } else {
-        vm.removeOtherStages();
-      }
-    },
-    removeOtherStages() {
-      const { viewer } = this;
-      let length = viewer.scene.postProcessStages._activeStages.length;
-      if (length > 1) {
-        let i = 1;
-        for (i; i < length; i++) {
-          let stage = viewer.scene.postProcessStages.get(i);
-          viewer.scene.postProcessStages.remove(stage);
-        }
-      }
-    },
   },
 }
 </script>
 
 <style scoped>
 
-.mapgis-3d-scene-effect {
-}
+/* .weather-setting {
+} */
 
 .mapgis-ui-form-item{
   margin: 0;

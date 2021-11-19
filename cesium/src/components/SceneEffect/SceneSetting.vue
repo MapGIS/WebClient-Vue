@@ -1,32 +1,36 @@
 <template>
   <div class="mapgis-3d-scene-setting">
     <div v-show="show" :style="panelStyle" class="setting-control">
-<!--          第一种关闭按钮-->
-<!--          <div @mouseenter="hover=true" @mouseleave="hover=false">-->
-<!--            <img src="./components/关闭.png" class="closeButton" @click="closePanel" v-show="!hover">-->
-<!--            <img src="./components/关闭hover.png" class="closeButton" @click="closePanel" v-show="hover">-->
-<!--          </div>-->
-
-<!--          第二种关闭按钮-->
-          <div class="control-header" >
+          
+      <div class="control-header" >
             <label class="title">设置</label>
             <div @mouseenter="hover=true" @mouseleave="hover=false">
               <img v-show="!hover" class="closeButton2" src="./components/关闭2.png" @click="closePanel">
               <img v-show="hover" class="closeButton2" src="./components/关闭2hover.png" @click="closePanel">
             </div>
-          </div>
-          <mapgis-ui-tabs
+      </div>
+      
+      <mapgis-ui-tabs
               :animated="false"
               :tabBarStyle="tabBarStyle"
               default-active-key="1"
           >
-            <mapgis-ui-tab-pane key="1" tab="基本属性" class="control-content">
-              <scene-attribute ref="attr" :layout="layout" @updateSpin="changeSpinning"></scene-attribute>
+            <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content">
+              <basic-setting ref="attr" :layout="layout" @updateSpin="changeSpinning"></basic-setting>
             </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="2" force-render tab="场景特效" class="control-content">
-              <scene-effect ref="effect" :layout="layout" @updateSpin="changeSpinning"></scene-effect>
+            <mapgis-ui-tab-pane key="2" force-render tab="相机设置" class="control-content">
+              <camera-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></camera-setting>
             </mapgis-ui-tab-pane>
-          </mapgis-ui-tabs>
+            <mapgis-ui-tab-pane key="3" force-render tab="光照设置" class="control-content">
+              <light-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></light-setting>
+            </mapgis-ui-tab-pane>
+            <mapgis-ui-tab-pane key="4" force-render tab="天气设置" class="control-content">
+              <weather-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></weather-setting>
+            </mapgis-ui-tab-pane>
+            <mapgis-ui-tab-pane key="5" force-render tab="特效设置" class="control-content">
+              <effect-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></effect-setting>
+            </mapgis-ui-tab-pane>
+      </mapgis-ui-tabs>
     </div>
     <!-- <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="openPanel">
       <mapgis-ui-iconfont type="mapgis-setting"/>
@@ -37,14 +41,20 @@
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer";
-import SceneAttribute from "./components/SceneAttribute";
-import SceneEffect from "./components/SceneEffect";
+import BasicSetting from "./components/BasicSetting";
+import CameraSetting from "./components/CameraSetting";
+import LightSetting from "./components/LightSetting";
+import WeatherSetting from "./components/WeatherSetting";
+import EffectSetting from "./components/EffectSetting";
 
 export default {
   name: "mapgis-3d-scene-setting",
   components: {
-    SceneAttribute,
-    SceneEffect
+    BasicSetting,
+    CameraSetting,
+    LightSetting,
+    WeatherSetting,
+    EffectSetting
   },
   mixins: [ServiceLayer],
   props: {
@@ -79,17 +89,22 @@ export default {
   },
 
   mounted() {
-    // this.initial = true;
-    this.$emit("load", this);
+    this.mount();
   },
   destroyed() {
-    this.$_deleteManger("SettingToolManager", function (manager) {
-      console.log('destroyed');
-    });
-    this.$emit("unload");
+    this.unmount();
   },
   methods: {
-
+    mount(){
+      // this.initial = true;
+      this.$emit("load", this);
+    },
+    unmount(){
+      this.$_deleteManger("SettingToolManager", function (manager) {
+        console.log('destroyed');
+      });
+      this.$emit("unload");
+    },
     openPanel() {
       this.show = !this.show;
     },
@@ -110,6 +125,7 @@ export default {
 
 .setting-control {
   /* width: 320px; */
+  max-width: 320px;
   height: fit-content;
   /* position: absolute;
   top: 30px;
