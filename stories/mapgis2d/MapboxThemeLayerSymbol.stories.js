@@ -46,7 +46,7 @@ const Template = (args, {argTypes}) => ({
       <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" 
                       :zoom="8" 
                       :mapStyle="mapStyle" 
-                      style="height:60vh"
+                      style="height:96vh"
       >
       <mapgis-theme-layer-custom v-bind="$props"/>
       </mapgis-web-map>`,
@@ -65,7 +65,7 @@ const Template = (args, {argTypes}) => ({
                     }
                 ],
                 // glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
-                glyphs: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+                glyphs: `http://${window.webclient.ip}:${window.webclient.port}/${window.glyphs}/{fontstack}/{range}.pbf`,
     },
         }
     }
