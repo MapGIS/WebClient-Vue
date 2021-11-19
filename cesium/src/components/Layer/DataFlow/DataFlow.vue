@@ -1,21 +1,22 @@
 <template>
   <div>
-    <mapgis-3d-popup
-        v-if="enablePopup"
-        v-for="(popup,index) in popups"
-        :key="index"
-        :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
-        :forceRender="true"
-        v-model="popup.show"
-        @change="$_toggle"
-        :vueIndex="popup.vueIndex"
-    >
-      <div>
-        <slot name="content" :popup="popup">
-          <div v-html="popup.container"></div>
-        </slot>
-      </div>
-    </mapgis-3d-popup>
+    <template v-for="(popup,index) in popups">
+      <mapgis-3d-popup
+          v-if="enablePopup"
+          :key="index"
+          :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+          :forceRender="true"
+          v-model="popup.show"
+          @change="$_toggle"
+          :vueIndex="popup.vueIndex"
+      >
+        <div>
+          <slot name="content" :popup="popup">
+            <div v-html="popup.container"></div>
+          </slot>
+        </div>
+      </mapgis-3d-popup>
+    </template>
   </div>
 </template>
 
@@ -130,6 +131,7 @@ export default {
             case "point":
               for (let i = 0; i < points.length; i++) {
                 let pointStyle = new Style.PointStyle(this.layerStyle);
+                points[i]["point"] = points[i]["point"] || {};
                 points[i]["point"] = Object.assign(points[i][this.layerStyle.type], pointStyle.toCesiumStyle(Cesium));
               }
               break;
@@ -137,7 +139,9 @@ export default {
               for (let i = 0; i < points.length; i++) {
                 let markerStyle = new Style.MarkerStyle();
                 markerStyle = markerStyle.toCesiumStyle(this.layerStyle, {}, Cesium);
+                points[i]["billboard"] = points[i]["billboard"] || {};
                 points[i]["billboard"] = Object.assign(points[i]["billboard"], markerStyle.billboard);
+                points[i]["label"] = points[i]["label"] || {text: ""};
                 markerStyle.label.text = points[i]["label"].text;
                 points[i]["label"] = Object.assign(points[i]["label"], markerStyle.label);
               }
@@ -145,6 +149,7 @@ export default {
             case "model":
               for (let i = 0; i < points.length; i++) {
                 let modelStyle = new Style.ModelStyle(this.layerStyle);
+                points[i]["model"] = points[i]["model"] || {};
                 points[i]["model"] = Object.assign(points[i][this.layerStyle.type], modelStyle.toCesiumStyle(Cesium));
               }
               break;
