@@ -7,6 +7,12 @@
     <img :style="{width: width,height: height}" v-if="type === 'pause'" title="暂停"
          :src="Base64Icons.pause"
          alt="">
+    <img :style="{width: width,height: height}" v-if="type === 'fullScreen'" title="全屏"
+         :src="Base64Icons.fullScreen"
+         alt="">
+    <img :style="{width: width,height: height}" v-if="type === 'flyTo'" title="飞到"
+         :src="Base64Icons.flyTo"
+         alt="">
   </div>
 </template>
 

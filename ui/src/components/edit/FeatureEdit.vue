@@ -38,11 +38,11 @@
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-ui-feature-edit-set-camera">
         <mapgis-ui-col span="12">
           <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
-                         placeholder="请输入方向角"/>
+                                   placeholder="请输入方向角"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
           <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角"
-                         placeholder="请输入俯仰角"/>
+                                   placeholder="请输入俯仰角"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
@@ -50,19 +50,23 @@
       </mapgis-ui-row>
       <mapgis-ui-row style="padding: 0 10px;" class="mapgis-ui-feature-edit-set-camera">
         <mapgis-ui-col span="12">
-          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.longitude" title="经度"
-                         placeholder="请输入经度"/>
+          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.longitude"
+                                   title="经度"
+                                   placeholder="请输入经度"/>
         </mapgis-ui-col>
         <mapgis-ui-col span="12">
-          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.latitude" title="纬度"
-                         placeholder="请输入纬度"/>
+          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.latitude"
+                                   title="纬度"
+                                   placeholder="请输入纬度"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-input-outline v-model="featureCopy.camera.positionCartographic.height" title="高度" placeholder="请输入高度"/>
+        <mapgis-ui-input-outline v-model="featureCopy.camera.positionCartographic.height" title="高度"
+                                 placeholder="请输入高度"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-ui-feature-edit-reset-camera">获取当前视角</mapgis-ui-button>
+        <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-ui-feature-edit-reset-camera">获取当前视角
+        </mapgis-ui-button>
       </mapgis-ui-row>
     </div>
   </div>
@@ -93,6 +97,7 @@ export default {
     feature: {
       handler: function () {
         this.featureCopy = this.feature;
+        console.log("-----featureCopy", this.featureCopy)
         this.$nextTick(function () {
           this.$_addEditor();
         });
@@ -109,9 +114,11 @@ export default {
     },
     $_addEditor() {
       let vm = this;
-      if(this.$refs.editor){
+      if (this.$refs.editor) {
         let editor = new E(this.$refs.editor);
         editor.customConfig.onchange = (html) => {
+          vm.featureCopy.content = editor.txt.html();
+          vm.$emit("textChanged", editor.txt.html())
         };
         editor.customConfig.menus = [
           'fontSize',  // 字号
@@ -123,7 +130,7 @@ export default {
           'justify',  // 对齐方式s
           'image',  // 插入图片
         ]
-        editor.customConfig.uploadImgServer ='你的上传地址';
+        editor.customConfig.uploadImgServer = '你的上传地址';
         editor.customConfig.uploadFileName = 'file';
         editor.customConfig.zIndex = 100;
         editor.customConfig.uploadImgParams = {
@@ -138,7 +145,14 @@ export default {
     },
     $_addMap(type, map) {
       this.mapType = type;
-      this.featureCopy.map = map;
+      if (this.featureCopy.map) {
+        const {vueKey, vueIndex} = this.featureCopy.map;
+        if (vueKey && vueIndex) {
+          map.vueKey = vueKey;
+          map.vueIndex = vueIndex;
+        }
+      }
+      this.$emit("addMap", "WMS", map, this.featureCopy.id);
     },
     $_changeColor(color) {
       this.$emit("changeColor", color);
@@ -216,7 +230,7 @@ export default {
   width: 344px;
 }
 
-.mapgis-ui-feature-edit-deitor{
+.mapgis-ui-feature-edit-deitor {
   width: 340px;
   margin: 0 28px;
 }

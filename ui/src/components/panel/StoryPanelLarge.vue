@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentFeature" class="mapgis-ui-story-panel-large" :style="{height: panelHeight + 'px'}">
+  <div v-if="currentFeature" class="mapgis-ui-story-panel-large" :style="{height: height}">
     <img v-if="showFullImg" class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
     <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
                         :icon-style="iconStyle"
@@ -22,10 +22,10 @@
       </div>
     </mapgis-ui-carousel>
     <div @click="$_fullScreen" class="mapgis-ui-story-panel-large-full-screen">
-      <img :src="icon.fullScreen" alt="">
+      <mapgis-ui-base64-icon width="24px" height="24px" type="fullScreen"/>
     </div>
     <div @click="$_flyTo" class="mapgis-ui-story-panel-large-fly">
-      <img :src="icon.flyTo" alt="">
+      <mapgis-ui-base64-icon width="28px" height="28px" type="flyTo"/>
     </div>
     <mapgis-ui-svg-icon @click="$_close" :icon-style="iconStyle" :container-style="containerStyle" type="close"/>
     <div class="mapgis-ui-story-panel-large-title">
@@ -34,12 +34,12 @@
     <div class="mapgis-ui-story-panel-large-content" :id="storyContentId">
     </div>
     <div class="mapgis-ui-story-panel-large-bottom">
-      <mapgis-ui-base64-icon v-show="!isPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="play"/>
+      <mapgis-ui-base64-icon v-show="!isPlay && showPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="play"/>
       <mapgis-ui-base64-icon v-show="isPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="pause"/>
-      <mapgis-ui-iconfont v-show="!isPlay" @click="$_prevFeature" style="width: 20px;cursor: pointer"
+      <mapgis-ui-iconfont v-show="!isPlay && showArrow" @click="$_prevFeature" style="width: 20px;cursor: pointer"
                           type="mapgis-left-circle"/>
       {{ currentFeatureIndex }} / {{ this.featureCopy.length }}
-      <mapgis-ui-iconfont v-show="!isPlay" @click="$_nextFeature" style="width: 20px;cursor: pointer"
+      <mapgis-ui-iconfont v-show="!isPlay && showArrow" @click="$_nextFeature" style="width: 20px;cursor: pointer"
                           type="mapgis-right-circle"/>
     </div>
   </div>
@@ -56,6 +56,18 @@ export default {
       default() {
         return [];
       }
+    },
+    height: {
+      type: String,
+      default: "900px"
+    },
+    showPlay: {
+      type: Boolean,
+      default: true
+    },
+    showArrow: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -64,7 +76,6 @@ export default {
       isPlay: false,
       storyContentId: "storyContentId" + parseInt(String(Math.random() * 1000000000)),
       showFullImg: false,
-      panelHeight: 900,
       showCarousel: false,
       currentFeature: undefined,
       currentFeatureIndex: 1,
@@ -94,14 +105,14 @@ export default {
         this.$nextTick(function () {
           this.$_setContent();
         });
-      }
+      },
+      deep: true
     }
   },
   created() {
     this.$_init();
   },
   mounted() {
-    this.panelHeight = this.$_getContainerHeight();
     this.$_setContent();
   },
   methods: {
@@ -193,7 +204,7 @@ export default {
 <style scoped>
 .mapgis-ui-story-panel-large {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   right: 0;
   top: 0;
   width: 435px;
@@ -248,12 +259,6 @@ export default {
 
 .mapgis-ui-story-panel-large-full-screen:hover {
   background: rgb(202, 195, 193);
-}
-
-.mapgis-ui-story-panel-large-full-screen > img {
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
 }
 
 .mapgis-ui-story-panel-large-fly {
