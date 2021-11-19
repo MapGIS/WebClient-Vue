@@ -54,7 +54,7 @@ const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
     methods: {},
     template: `
-      <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
+      <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:96vh">
       <mapgis-theme-layer-custom v-bind="$props"/>
       </mapgis-web-map>`,
 });
