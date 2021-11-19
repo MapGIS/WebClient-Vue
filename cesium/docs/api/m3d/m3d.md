@@ -186,7 +186,7 @@
 
 ## 事件
 
-### `@load`
+### `@loaded`
 
 - **描述** 在 M3D 加载完毕后发送该事件
 - **Payload** `{ component }`

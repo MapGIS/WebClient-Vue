@@ -10,11 +10,13 @@
       >
         <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
         <div class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</div>
-        <mapgis-ui-iconfont
-          type="mapgis-hide"
-          slot="extra"
-          @click="handleCardHdie"
-        />
+        <mapgis-ui-space slot="extra" class="mapgis-3d-g3d-layer-icons">
+          <mapgis-ui-tooltip> </mapgis-ui-tooltip>
+          <mapgis-ui-iconfont type="mapgis-highlight" />
+          <mapgis-ui-iconfont type="mapgis-fire1" />
+          <mapgis-ui-iconfont type="mapgis-setting" />
+          <mapgis-ui-iconfont type="mapgis-hide" @click="handleCardHdie" />
+        </mapgis-ui-space>
         <div class="mapgis-3d-g3d-document">
           <mapgis-ui-input-search
             style="margin-bottom: 8px"
@@ -63,15 +65,22 @@
                   }}
                 </span>
                 <span v-else>{{ title }}</span>
-                <mapgis-ui-tag v-if="version && key == '地图场景默认键值'">{{
-                  version
-                }}</mapgis-ui-tag>
+                <span
+                  v-if="version && key == '地图场景默认键值'"
+                  class="mapgis-3d-g3d-layer-version"
+                  >版本:{{ version }}</span
+                >
                 <mapgis-ui-iconfont
                   :type="icon"
                   class="iconfont"
+                  @click="() => handleActiveItemKey({ version, layerIndex })"
+                />
+                <mapgis-ui-iconfont
+                  type="mapgis-crosshair"
+                  class="iconfont"
                   @click="
                     () =>
-                      handleActiveItemKey({
+                      handleHighlighItemKey({
                         title,
                         icon,
                         version,
@@ -123,6 +132,24 @@ export default {
     return {
       title: "G3D场景图层",
       layerIds: this.parseLayers(),
+      menus: [
+        {
+          title: "高亮",
+          icon: "mapgis-highlight"
+        },
+        {
+          title: "模型爆炸",
+          icon: "mapgis-fire1"
+        },
+        {
+          title: "批量设置",
+          icon: "mapgis-setting"
+        },
+        {
+          title: "隐藏面板",
+          icon: "mapgis-hide"
+        }
+      ],
       layerTree: [
         {
           title: "地图场景",
@@ -191,6 +218,7 @@ export default {
 
       let g3dLayer = this.createCesiumObject();
       let layers = this.parseLayers();
+      if (!layers) this.layerIds = [];
       g3dLayer.then(e => {
         let g3d = viewer.scene.layers.appendG3DLayer(url, {
           $props,
@@ -218,18 +246,20 @@ export default {
                 vm.$emit("loaded", { g3d: vm });
                 vm.m3ds = m3ds;
                 find.options.m3ds = m3ds;
+                let all = [];
                 m3ds.forEach((m3d, i) => {
                   // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
                   let gIndex = layerIndexs[i];
                   let info = g3dLayer.getLayerInfo(gIndex);
                   let layer = g3dLayer.getLayer(gIndex);
                   let { layerName, gdbpUrl, layerType } = info;
+                  all.push(`${gIndex}`);
                   // let version = vm.parseVersion(layer);
                   vm.layerTree[0].children.push({
                     title: layerName,
-                    key: `${layerIndexs[i]}`,
+                    key: `${gIndex}`,
                     version: g3dLayer.version,
-                    layerIndex: layerIndexs[i],
+                    layerIndex: gIndex,
                     layerType,
                     ip,
                     port,
@@ -241,12 +271,17 @@ export default {
                       title: "title"
                     }
                   });
-                  if (layers.indexOf(`${i}`) >= 0) {
-                    layer.show = true;
+                  if (layers) {
+                    if (layers.indexOf(`${i}`) >= 0) {
+                      layer.show = true;
+                    } else {
+                      layer.show = false;
+                    }
                   } else {
-                    layer.show = false;
+                    layer.show = true;
                   }
                 });
+                vm.layerIds = all;
               });
             }
           }
@@ -403,53 +438,15 @@ export default {
       this.layerKey = key;
       this.$refs.card && this.$refs.card.togglePanel();
     },
+    handleHighlighItemKey(layer) {
+      const { title, icon, version, gdbp, ip, port, layerIndex, key } = layer;
+    },
     handleCardHdie() {
       this.$refs.card && this.$refs.card.hide();
+    },
+    handleHover() {
+      console.log("hover");
     }
   }
 };
 </script>
-<style scoped>
-.mapgis-3d-g3d-layer {
-  position: absolute;
-  z-index: 100;
-  left: 10px;
-  top: 10px;
-}
-
-.mapgis-3d-g3d-layer-title {
-  line-height: 32px;
-  height: 32px;
-  font-weight: bold;
-}
-
-.mapgis-3d-g3d-document {
-  height: fit-content;
-}
-.mapgis-3d-g3d-document-tree {
-  max-height: 360px;
-  min-width: 200px;
-  /* max-width: 300px; */
-  overflow-y: scroll;
-}
-.mapgis-3d-g3d-layer-span {
-  display: inline-block;
-  justify-content: space-between;
-}
-.mapgis-3d-g3d-layer-span-inline {
-  width: 170px;
-}
-.mapgis-3d-g3d-layer-span > .iconfont {
-  line-height: 28px;
-  font-size: 16px;
-  float: right;
-}
-
-.mapgis-3d-g3d-layer
-  ::v-deep
-  .mapgis-ui-tree
-  li
-  .mapgis-ui-tree-node-content-wrapper {
-  height: fit-content;
-}
-</style>

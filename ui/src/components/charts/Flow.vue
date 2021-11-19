@@ -1,16 +1,19 @@
 <template>
   <div>
-    <mapgis-ui-radio-group size="small" v-model="type">
-      <mapgis-ui-radio-button value="name"
-        ><mapgis-ui-iconfont type="mapgis-info" />名称分析
-      </mapgis-ui-radio-button>
-      <mapgis-ui-radio-button value="count"
-        ><mapgis-ui-iconfont type="mapgis-crosshair" />频率分析
-      </mapgis-ui-radio-button>
-      <mapgis-ui-radio-button value="group"
-        ><mapgis-ui-iconfont type="mapgis-cluster" />聚类分析
-      </mapgis-ui-radio-button>
-    </mapgis-ui-radio-group>
+    <mapgis-ui-space direction="vertical">
+      <mapgis-ui-radio-group size="small" v-model="type">
+        <mapgis-ui-radio-button value="name" class="mapgis-ui-chart-flow-type"
+          ><mapgis-ui-iconfont type="mapgis-info" />名称分析
+        </mapgis-ui-radio-button>
+        <mapgis-ui-radio-button value="count" class="mapgis-ui-chart-flow-type"
+          ><mapgis-ui-iconfont type="mapgis-crosshair" />频率分析
+        </mapgis-ui-radio-button>
+        <mapgis-ui-radio-button value="group" class="mapgis-ui-chart-flow-type"
+          ><mapgis-ui-iconfont type="mapgis-cluster" />聚类分析
+        </mapgis-ui-radio-button>
+      </mapgis-ui-radio-group>
+      <mapgis-ui-d3-colorpick size="small" @change="handlerColorChange" />
+    </mapgis-ui-space>
     <div id="mapgisflowcharts" :style="outStyle"></div>
   </div>
 </template>
@@ -86,11 +89,19 @@ export default {
       this.$emit("hover", payload);
     },
     orderType(type) {},
+    clearChart() {
+      d3.select("#mapgisflowcharts")
+        .selectAll("svg")
+        .remove();
+    },
     initChart(data, width, height, changeLayerBySelect) {
       let { margin, domain } = this;
       domain = domain || [-25000, 25000];
       width = width - 135 || 400;
       height = height - 135 || 400;
+      let color = this.color
+        ? this.color.scheme || d3.schemeSet3
+        : d3.schemeSet3;
 
       var x = d3.scaleBand().range([0, width]),
         z = d3
@@ -100,7 +111,7 @@ export default {
         c = d3
           .scaleQuantize()
           .domain(domain)
-          .range(d3.schemeSet3 /* schemeRdYlGn[10] */);
+          .range(color /* schemeRdYlGn[10] */);
 
       var svg = d3
         .select("#mapgisflowcharts")
@@ -192,7 +203,7 @@ export default {
         .attr("y", x.bandwidth() / 2)
         .attr("dy", ".32em")
         .attr("text-anchor", "end")
-        // .attr("text-color", "#ffffff")
+        // .style("fill", "#ffff00")
         .text(function(d, i) {
           return nodes[i].name;
         });
@@ -215,10 +226,10 @@ export default {
         .attr("y", x.bandwidth() / 2)
         .attr("dy", ".32em")
         .attr("text-anchor", "start")
+        // .style("fill", "#ff0000")
         .text(function(d, i) {
           return nodes[i].name;
         });
-      // .style("fill", "#ffffff");
 
       this.orderType = order.bind(this);
 
@@ -367,6 +378,13 @@ export default {
           }
         })
       );
+    },
+    handlerColorChange(color) {
+      this.color = color;
+      let { width, height, data } = this;
+      data = data || DefaultData;
+      this.clearChart();
+      this.initChart(data, width, height, this.hoverCallback);
     }
   }
 };

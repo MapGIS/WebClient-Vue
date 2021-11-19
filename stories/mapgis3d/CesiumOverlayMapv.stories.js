@@ -14,10 +14,22 @@ const Template = (args, { argTypes }) => ({
     this.initData();
   },
   methods: {
-    initData() {
+    async initData() {
       const vm = this;
       this.geojson = {};
-      axios.get("./geojson/china-city.geojson").then((res) => {
+
+      let res = await axios.get("./geojson/china-city.geojson");
+
+      const { data } = res;
+
+      let fs = data.features.map((f) => {
+        f.properties.count = Math.random() * 30;
+        return f;
+      });
+      vm.geojson = {
+        features: fs,
+      };
+      /* .then((res) => {
         const { data } = res;
         let fs = data.features.map((f) => {
           f.properties.count = Math.random() * 30;
@@ -26,7 +38,7 @@ const Template = (args, { argTypes }) => ({
         vm.geojson = {
           features: fs,
         };
-      });
+      }); */
     },
   },
   template: `

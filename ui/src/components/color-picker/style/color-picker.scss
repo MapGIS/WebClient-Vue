@@ -21,13 +21,13 @@
   width: 100%;
 }
 
-.colorContainerLarge{
+.colorContainerLarge {
   .color-container {
     height: 40px;
   }
 }
 
-.colorContainerSmall{
+.colorContainerSmall {
   .color-container {
     height: 24px;
   }
@@ -94,11 +94,21 @@
   }
   &-disabled {
     &:after {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 0;
       background: fade($white, 85%);
     }
+  }
+}
+
+.mapgis-ui-d3-color-item {
+  height: 16px;
+  margin: 2px 0px;
+  width: 170px;
+  object-fit: fill;
+  .mapgis-ui-select-selection-selected-value {
+    display: flex !important;
   }
 }
