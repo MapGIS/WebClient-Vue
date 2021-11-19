@@ -68,15 +68,7 @@ export default {
     drawStyle: {
       type: Object,
       default: () => {
-        return {
-          color: '#FF0000',
-          opacity: 1,
-          outlineWidth: 1,
-          //边线颜色
-          outlineColor: '#FFA500',
-          //线宽
-          width: 2,
-        }
+        return {}
       }
     },
     vueKey: {
@@ -93,6 +85,15 @@ export default {
 
   data() {
     return {
+      drawStyleCopy: {
+        color: '#FF0000',
+        opacity: 1,
+        outlineWidth: 1,
+        //边线颜色
+        outlineColor: '#FFA500',
+        //线宽
+        width: 2,
+      },
       initial: false,
       drawOption: "",
       draws: [
@@ -145,6 +146,7 @@ export default {
   created() {
   },
   mounted() {
+    this.drawStyleCopy = Object.assign(this.drawStyleCopy, this.drawStyle);
     this.mount();
   },
   destroyed() {
@@ -157,6 +159,12 @@ export default {
         this.unmount();
         this.mount();
       }
+    },
+    drawStyle: {
+      handler: function () {
+        this.drawStyleCopy = Object.assign(this.drawStyleCopy, this.drawStyle);
+      },
+      deep: true
     }
   },
   methods: {
@@ -268,7 +276,7 @@ export default {
       this.drawOption = "enableDrawPoint";
       let viewerDraw = this.getWebGlobe();
       const vm = this;
-      let {vueCesium, Cesium, vueKey, vueIndex, drawStyle} = this;
+      let {vueCesium, Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!vueCesium) {
         vueCesium = window.vueCesium;
       }
@@ -281,8 +289,8 @@ export default {
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const outlineColor = new Cesium.Color.fromCssColorString(drawStyle.outlineColor).withAlpha(drawStyle.opacity);
-      const color = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const outlineColor = new Cesium.Color.fromCssColorString(drawStyleCopy.outlineColor).withAlpha(drawStyleCopy.opacity);
+      const color = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
         color: color,
@@ -301,7 +309,7 @@ export default {
               pixelSize : 10,
               color : color,
               outlineColor : outlineColor,
-              outlineWidth : drawStyle.outlineWidth
+              outlineWidth : drawStyleCopy.outlineWidth
             }
           });
           let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
@@ -317,7 +325,7 @@ export default {
     enableDrawLine() {
       this.drawOption = "enableDrawLine";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyle} = this;
+      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
@@ -328,7 +336,7 @@ export default {
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const color = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const color = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingPolyline({
         color: color,
         callback: function (result) {
@@ -344,7 +352,7 @@ export default {
           let polyline = new Cesium.DrawElement.PolylinePrimitive({
             id: "polyline",
             positions: positions,
-            width: drawStyle.width,
+            width: drawStyleCopy.width,
             geodesic: true
           });
           let drawEntity = viewerDraw.scene.primitives.add(polyline);
@@ -368,14 +376,14 @@ export default {
         Cesium = window.Cesium;
       }
       let vm = this;
-      let {drawStyle} = this;
+      let {drawStyleCopy} = this;
       let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
         drawElement.setGroundPrimitiveType('BOTH');
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingPolygon({
         color: colorStyle,
         callback: function (result) {
@@ -412,7 +420,7 @@ export default {
     enableDrawRectangle() {
       this.drawOption = "enableDrawRectangle";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyle} = this;
+      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
@@ -423,7 +431,7 @@ export default {
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
 
       drawElement.startDrawingExtent({
         color: colorStyle,
@@ -464,7 +472,7 @@ export default {
     enableDrawCircle() {
       this.drawOption = "enableDrawCircle";
       let viewerDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyle} = this;
+      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
@@ -475,7 +483,7 @@ export default {
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingCircle({
         color: colorStyle,
         callback: function (result) {
