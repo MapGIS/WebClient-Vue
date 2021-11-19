@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import projectPanel from "./project/projectPanel"
+import projectPanel from "./projectPanel"
 import mapStoryService from "./mapStoryService"
 
 export default {
@@ -54,7 +54,7 @@ export default {
       this.currentPoints = degreeArr;
       switch (this.currentFeatureType) {
         case "rectangle":
-          let e =this.viewer.entities.add({
+          let e = this.viewer.entities.add({
             id: window.feature.id,
             rectangle: {
               coordinates: radians,
@@ -90,7 +90,8 @@ export default {
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
     },
-    $_editProject(index) {},
+    $_editProject(index) {
+    },
     $_closeHoverPanel() {
       let vm = this;
       switch (this.currentFeatureType) {
@@ -168,9 +169,14 @@ export default {
         entity.billboard.image = img;
       });
     },
-    $_showFeature(id, flag) {
-      let entity = this.viewer.entities.getById(id);
-      entity.show = flag;
+    $_showFeature(id, flag, index, project) {
+      if (id) {
+        let entity = this.viewer.entities.getById(id);
+        entity.show = flag;
+      }
+      this.$_getLayer(index, project, function (layer) {
+        layer.show = flag;
+      });
     },
     $_addFeature(feature) {
       let vm = this;

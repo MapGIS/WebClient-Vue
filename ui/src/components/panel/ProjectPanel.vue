@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div :style="{height: panelHeight + 'px'}" @click="$_click" class="mapgis-mapstory-project-panel">
+    <div :style="{height: height}" @click="$_click" class="mapgis-ui-project-panel">
       <div v-show="!addProject">
         <mapgis-ui-row>
           <mapgis-ui-col span="14">
-            <div class="mapgis-mapstory-project-panel-title">工程文件</div>
+            <div class="mapgis-ui-project-panel-title">工程文件</div>
           </mapgis-ui-col>
           <mapgis-ui-col span="10">
-            <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-mapstory-project-panel-add">
+            <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-ui-project-panel-add">
               新建工程
             </mapgis-ui-button>
           </mapgis-ui-col>
@@ -30,7 +30,9 @@
             @showFeature="$_showFeature"
             @projectPreview="$_projectPreview"
             @featurePreview="$_featurePreview"
-            @addFeature="$_addFeature" @deleteProject="$_deleteProject" @titleChanged="$_titleChanged"
+            @addFeature="$_addFeature"
+            @deleteProject="$_deleteProject"
+            @titleChanged="$_titleChanged"
             ref="panelEdit" v-model="project"
             @backed="$_back"/>
       </div>
@@ -38,28 +40,12 @@
           @closeHoverPanel="$_closeHoverPanel"
           @titleChanged="$_titleChange" v-if="showEditPanel"/>
     </div>
-    <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
-    <mapgis-ui-story-panel-large
-        v-show="showLargePanel"
-        @closePanel="$_closePanel"
-        @flyTo="$_flyTo"
-        :feature="storyFeature"/>
   </div>
 </template>
 
 <script>
-import mapCollection from "../mapCollection";
-import mapStoryService from "../mapStoryService";
-import {MRFS} from "@mapgis/webclient-es6-service"
-import Base64IconsKeyValue from "../../../../../../ui/src/components/iconfont/Base64IconsKeyValue"
-
 export default {
-  name: "projectPanel",
-  mixins: [mapStoryService],
-  components: {
-    "map-collection": mapCollection,
-  },
-  inject: ["Cesium", "viewer"],
+  name: "mapgis-ui-project-panel",
   watch: {
     dataSource: {
       handler: function () {
@@ -74,12 +60,15 @@ export default {
       default() {
         return [];
       }
+    },
+    height: {
+      type: String,
+      default: "900px"
     }
   },
   data() {
     return {
       optArr: [],
-      panelHeight: 900,
       showLargePanel: false,
       showEditPanel: false,
       addProject: false,
@@ -91,9 +80,6 @@ export default {
   },
   created() {
     this.projects = this.dataSource;
-  },
-  mounted() {
-    this.panelHeight = this.$_getContainerHeight();
   },
   methods: {
     $_closePanel() {
@@ -140,48 +126,7 @@ export default {
       this.addProject = true;
     },
     $_editProject(index) {
-      this.$emit("editProject", index);
-      let vm = this;
-      if (this.projects[index].url) {
-        this.currentProjectIndex = index;
-        MRFS.FeatureService.get(this.projects[index].url, function (result) {
-          if (typeof result === "string") {
-            result = JSON.parse(result);
-            const {features} = result;
-            if (features && features instanceof Array) {
-              for (let i = 0; i < features.length; i++) {
-                const {map} = features[i];
-                const {geometry} = features[i].baseUrl;
-                const {x, y, z} = geometry;
-                if (map) {
-                  vm.optArr.push(map);
-                }
-                if (x && y && z) {
-                  let img = document.createElement("img");
-                  let imgUrl = features[i].layerStyle.billboard.image;
-                  if (typeof imgUrl === 'number') {
-                    imgUrl = Base64IconsKeyValue[imgUrl].value;
-                  }
-                  img.src = imgUrl;
-                  img.onload = function () {
-                    vm.viewer.entities.add({
-                      id: features[i].id,
-                      position: new Cesium.Cartesian3(x, y, z),
-                      billboard: {
-                        image: img
-                      }
-                    });
-                  }
-                }
-              }
-            }
-          }
-          vm.project = result;
-          vm.addProject = true;
-        }, function (error) {
-          console.error(error);
-        });
-      }
+      this.$emit("editProject", index, this.projects[index]);
     },
     $_back() {
       this.addProject = false;
@@ -227,7 +172,7 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-mapstory-project-panel {
+.mapgis-ui-project-panel {
   position: absolute;
   top: 0;
   left: 0;
@@ -238,24 +183,19 @@ export default {
   padding-bottom: 20px;
 }
 
-.mapgis-mapstory-project-panel-add {
+.mapgis-ui-project-panel-add {
   margin-top: 13px;
   margin-right: -16px;
   width: 126px;
   height: 36px;
 }
 
-.mapgis-mapstory-project-panel-title {
+.mapgis-ui-project-panel-title {
   color: white;
   height: 64px;
   line-height: 64px;
   font-size: 18px;
   text-align: left;
   padding-left: 10px;
-}
-
-.mapgis-mapgis-ui-project-edit-top-tool {
-  width: 400px;
-  height: 64px;
 }
 </style>

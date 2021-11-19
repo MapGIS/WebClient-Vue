@@ -73,6 +73,7 @@ export default {
     features: {
       handler: function () {
         this.featuresCopy = this.features;
+        console.log("this.featuresCopy",this.featuresCopy)
       },
       deep: true
     }
@@ -94,11 +95,8 @@ export default {
       this.showToolIndex = index;
     },
     $_showFeature(index, flag) {
-      this.$_getLayer(index, function (layer) {
-        layer.show = flag
-      });
       this.$set(this.featuresCopy[index].layerStyle, "show", flag);
-      this.$emit("showFeature", this.featuresCopy[index].id, flag);
+      this.$emit("showFeature", this.featuresCopy[index].id, flag, index);
     },
     $_delete(index) {
       const {id} = this.featuresCopy[index];

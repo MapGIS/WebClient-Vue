@@ -13,6 +13,7 @@
       <img style="height: 100%" :src="currentImgUrl" alt="">
     </div>
     <div v-show="currentImgUrl" class="mapgis-ui-choose-picture-carousel">
+      <p style="color: white">{{currenImgIndex}}</p>
       <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
            :style="{marginRight: index && index % 3 === 0 ? 0 : '13px'}" :key="index" v-for="(imgUrl,index) in imgUrls"
            class="mapgis-ui-choose-picture-img" :src="imgUrl" alt="">
@@ -37,7 +38,7 @@ export default {
     return {
       imagesCopyCopy: undefined,
       loadImg: true,
-      currenImgIndex: undefined,
+      currenImgIndex: 0,
       currentImgUrl: undefined,
       imgUrls: [],
       iconStyle: {
@@ -68,13 +69,11 @@ export default {
       this.imagesCopy = this.images;
       if (this.imagesCopy) {
         if (typeof this.imagesCopy === "string") {
-          this.currenImgIndex = 0;
           this.currentImgUrl = this.imagesCopy;
           this.imgUrls.push(this.currentImgUrl);
         } else if (this.imagesCopy instanceof Array) {
           if (this.imagesCopy.length > 0) {
-            this.currenImgIndex = 0;
-            this.currentImgUrl = this.imagesCopy[0];
+            this.currentImgUrl = this.imagesCopy[this.currenImgIndex];
             this.imgUrls = this.imagesCopy;
           }
         }
@@ -87,11 +86,11 @@ export default {
       this.loadImg = false;
       this.imgUrls.splice(this.currenImgIndex, 1);
       if (this.imgUrls.length > 0) {
-        if (this.imgUrls.length >= this.currenImgIndex) {
+        if(this.currenImgIndex === 0){
+          this.currentImgUrl = this.imgUrls[this.currenImgIndex];
+        }else if (this.imgUrls.length >= this.currenImgIndex) {
           this.currentImgUrl = this.imgUrls[this.currenImgIndex - 1];
           this.currenImgIndex = this.currenImgIndex - 1;
-        } else {
-          this.currentImgUrl = this.imgUrls[this.currenImgIndex - 2];
         }
       } else {
         this.currenImgIndex = undefined;
@@ -106,6 +105,8 @@ export default {
       let vm = this;
       this.$_chooseImg(function (url) {
         vm.currentImgUrl = url;
+        console.log("vm.currenImgIndex",vm.currenImgIndex)
+
         vm.$set(vm.imgUrls, vm.currenImgIndex, url);
       });
     },

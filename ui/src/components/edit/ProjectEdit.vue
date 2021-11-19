@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="$_clickPanel" class="mapgis-ui-project-edit-panel" :style="{height: height}">
     <div v-show="!editFeature">
       <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
         <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
@@ -55,12 +55,16 @@
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-ui-project-edit-split"></mapgis-ui-row>
       <mapgis-ui-row>
-        <mapgis-ui-feature-row @showFeature="$_showFeature" @deleteFeature="$_deleteFeature" @editFeature="$_editFeature"
-                     :features="projectCopy.features"/>
+        <mapgis-ui-feature-row
+            @showFeature="$_showFeature"
+            @deleteFeature="$_deleteFeature"
+            @editFeature="$_editFeature"
+            :features="projectCopy.features"/>
       </mapgis-ui-row>
     </div>
     <div v-show="editFeature">
       <mapgis-ui-feature-edit
+          @textChanged="$_textChanged"
           @getCamera="$_getCamera"
           @addMap="$_addMap"
           @changeColor="$_changeColor"
@@ -110,6 +114,10 @@ export default {
           "features": []
         };
       }
+    },
+    height: {
+      type: String,
+      default: "900px"
     }
   },
   watch: {
@@ -136,11 +144,26 @@ export default {
     this.projectCopy = this.project;
   },
   methods: {
+    $_clickPanel(e) {
+      if (e.target.id !== "mpTitle" && e.target.id !== "mpDescription" && e.target.id !== "mpEdit") {
+        this.editTitle = false;
+      }
+    },
+    $_textChanged(text) {
+      let features = this.projectCopy.features, index;
+      for (let i = 0; i < features.length; i++) {
+        if (features[i].id === this.currentFeature.id) {
+          index = i;
+          break;
+        }
+      }
+      this.$emit("textChanged", text, index);
+    },
     $_getCamera() {
       this.$emit("getCamera", this.currentFeature);
     },
-    $_addMap(type, map) {
-      this.$emit("addMap", type, map);
+    $_addMap(type, map, id) {
+      this.$emit("addMap", type, map, id);
     },
     $_changeColor(color) {
       this.$emit("changeColor", color, this.currentFeature.id, this.currentFeature.drawType);
@@ -148,8 +171,8 @@ export default {
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon, this.currentFeature.id);
     },
-    $_showFeature(id, flag) {
-      this.$emit("showFeature", id, flag);
+    $_showFeature(id, flag, index) {
+      this.$emit("showFeature", id, flag, index, this.projectCopy);
     },
     $_projectPreview() {
       this.$emit("projectPreview");
@@ -162,6 +185,7 @@ export default {
       this.$emit("titleChanged", {
         title: this.projectCopy.title,
         description: this.projectCopy.description,
+        uuid: this.projectCopy.uuid,
       });
     },
     $_editFeature(index) {
@@ -236,7 +260,7 @@ export default {
       this.$emit("featurePreview", feature);
     },
     $_deleteFeature(index, id) {
-      this.$emit("deleteFeature", index, id);
+      this.$emit("deleteFeature", index, id, this.projectCopy);
       this.projectCopy.features.splice(index, 1);
     }
   }
@@ -244,6 +268,15 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-project-edit-panel {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 400px;
+  background: rgb(32, 33, 36);
+}
+
 .mapgis-ui-project-edit-top-left {
   text-align: left;
   padding-left: 10px;

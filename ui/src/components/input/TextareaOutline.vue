@@ -9,7 +9,7 @@
       <mapgis-ui-svg-icon :containerStyle="containerStyle" type="removeStyle"/>
       <mapgis-ui-svg-icon :containerStyle="containerStyle" type="more"/>
     </div>
-    <mapgis-ui-textarea :style="textareaStyle" :class="{mapgisInputNoTool: !hasToolBar}" :placeholder="placeholder"
+    <mapgis-ui-textarea :id="id" :style="textareaStyle" :class="{mapgisInputNoTool: !hasToolBar}" :placeholder="placeholder"
                         class="mapgis-ui-textarea-outline" v-model="valueCopy"/>
   </div>
 </template>
@@ -34,6 +34,9 @@ export default {
   },
   props: {
     value: {
+      type: String
+    },
+    id: {
       type: String
     },
     placeholder: {
