@@ -1,11 +1,11 @@
-@import '../../../util/style/mixins/mixins.scss';
-@import '../../../util/style/theme/theme.scss';
-@import '../../../components/input/style/mixin.scss';
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+@import "../../../components/input/style/mixin.scss";
 
 @include b(select) {
   $prefix: &;
-  
-  @include e(selection, '-') {
+
+  @include e(selection, "-") {
     $prefix-selection: &;
     #{$prefix}-focused &,
     &:focus,
@@ -34,13 +34,13 @@
     }
   }
 
-  @include e(open, '-') {
+  @include e(open, "-") {
     #{$prefix}-selection {
       @include focus-color($primary-5, $primary-shadow-color);
     }
   }
 
-  @include e(disabled, '-') {
+  @include e(disabled, "-") {
     #{$prefix}-selection {
       &,
       &:hover,
@@ -62,9 +62,10 @@
     }
   }
 
-  @include e(dropdown, '-') {
+  @include e(dropdown, "-") {
     $prefix-dropdown: &;
     &-menu {
+      background: transparent;
       &-item-group-title {
         color: $text-color-secondary;
       }
@@ -94,11 +95,11 @@
     }
   }
 
-  @include e(arrow, '-') {
+  @include e(arrow, "-") {
     color: $text-color-secondary;
   }
 
-  @include e(auto-width, '-') {
+  @include e(auto-width, "-") {
     width: 100%;
   }
 }

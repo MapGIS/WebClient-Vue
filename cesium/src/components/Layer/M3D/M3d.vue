@@ -214,7 +214,7 @@ export default {
         tileset.pickedOid = oid;
         tileset.pickedColor = Cesium.Color.fromCssColorString(color);
         let titlefield = popupOptions ? popupOptions.title : undefined;
-        if (tileset.useRawSaveAtt && Cesium.defined(feature)) {
+        if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
           let result = feature.content.getAttributeByOID(oid);
           vm.currentClickInfo = [
             { properties: result, title: result[titlefield] }
