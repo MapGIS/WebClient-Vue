@@ -36,6 +36,10 @@ export default {
       type: String,
       default: "imei"
     },
+    updateInterval: {
+      type: Number,
+      default: 300
+    },
     options: {
       type: Object
     },
@@ -79,6 +83,7 @@ export default {
         let point, vm = this, newPoints = [];
         if (this.currentType !== this.layerStyle.type) {
           this.websocket.close();
+          clearInterval(this.interval);
           for (let i = 0; i < points.length; i++) {
             this.viewer.entities.remove(points[i]);
             switch (this.layerStyle.type) {
@@ -111,7 +116,7 @@ export default {
                   billboard: markerStyle.billboard,
                   label: markerStyle.label,
                   properties: this.features[i].properties,
-                  keys: keys
+                  keys: Object.keys(this.features[i].properties)
                 });
                 break;
             }
@@ -126,6 +131,7 @@ export default {
           this.websocket.onmessage = function (evt) {
             vm.$_webSocketCallBack(evt, vm);
           };
+          this.$_setUpdatedEvent();
         } else {
           switch (this.layerStyle.type) {
             case "point":
@@ -166,7 +172,8 @@ export default {
       firstAdd: true,
       popups: [],
       websocket: undefined,
-      currentType: undefined
+      currentType: undefined,
+      interval: undefined
     }
   },
   mounted() {
@@ -259,7 +266,6 @@ export default {
           geometry: data.geometry,
           properties: data.properties,
         });
-        vm.$emit("updated", vm.features);
         switch (vm.layerStyle.type) {
           case "point":
             let pStyle = new PointStyle(vm.layerStyle);
@@ -310,6 +316,13 @@ export default {
         }
       }
     },
+    $_setUpdatedEvent() {
+      let vm = this;
+      //定时发送updated事件
+      this.interval = setInterval(function () {
+        vm.$emit("updated", vm.features);
+      }, this.updateInterval);
+    },
     $_addEntityLayer() {
       let vm = this;
       this.currentType = this.layerStyle.type;
@@ -358,6 +371,7 @@ export default {
       this.websocket.onmessage = function (evt) {
         vm.$_webSocketCallBack(evt, vm);
       };
+      this.$_setUpdatedEvent();
     }
   }
 }
