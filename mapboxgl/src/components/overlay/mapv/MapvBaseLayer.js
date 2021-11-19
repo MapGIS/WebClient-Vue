@@ -155,7 +155,9 @@ export class MapvBaseLayer extends BaseLayer {
     this.context = self.options.context || "2d";
 
     if (self.options.zIndex) {
-      this.canvasLayer && this.canvasLayer.setZIndex(self.options.zIndex);
+      if (this.canvasLayer && this.canvasLayer.setZIndex !== undefined){
+        this.canvasLayer && this.canvasLayer.setZIndex(self.options.zIndex);
+      }
     }
 
     this.initAnimator();

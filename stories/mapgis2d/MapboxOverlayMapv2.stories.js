@@ -192,7 +192,7 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:60vh">
+      <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:95vh">
       <mapgis-navigation-control position="top-right"/>
       <mapgis-mapv v-bind="{...mapvGeojson}"></mapgis-mapv>
       <mapgis-mapv v-bind="{...mapvText}"></mapgis-mapv>
