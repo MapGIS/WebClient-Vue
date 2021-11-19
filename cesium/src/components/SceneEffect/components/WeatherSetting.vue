@@ -1,0 +1,693 @@
+<template>
+  <div class="weather-setting">
+    <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
+      
+      <mapgis-ui-form-model-item label="太阳" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="sun" @change="enableSun">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="月亮" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="moon" @change="enableMoon">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="星空" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sceneSkybox" @change="enableSceneSkybox">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>     
+
+      <mapgis-ui-form-model-item label="天空盒" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="skybox" @change="$_enableSkyBox">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-form-model-item label="云层" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="clouds" @change="$_enableClouds">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{ maxHeight: cloudsParams }">
+
+        <mapgis-ui-form-model-item label="周期/秒">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="cloudsduration"
+                :max="10"
+                :min="1"
+                @change="cloudsDurationChange"
+            />
+            <mapgis-ui-input-number
+                v-model="cloudsduration"
+                :max="10"
+                :min="1"
+                @change="cloudsDurationChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雨" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="rain" @change="$_enableRain">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{ maxHeight: rainParams }">
+
+        <mapgis-ui-form-model-item label="雨速度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="speed"
+                :max="20.0"
+                :min="1.0"
+                @change="speedChange"
+            />
+            <mapgis-ui-input-number
+                v-model="speed"
+                :max="20.0"
+                :min="1.0"
+                @change="speedChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+        <mapgis-ui-form-model-item label="雨透明度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="rainOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="rainOpacityChange"
+            />
+            <mapgis-ui-input-number
+                v-model="rainOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="rainOpacityChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+        <mapgis-ui-form-model-item label="雨角度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="angle"
+                :max="90"
+                :min="0"
+                :step="10"
+                @change="angleChange"
+            />
+            <mapgis-ui-input-number
+                v-model="angle"
+                :max="90"
+                :min="0"
+                :step="10"
+                @change="angleChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雪" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="snow" @change="$_enableSnow">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{ maxHeight: snowParams }">
+
+        <mapgis-ui-form-model-item label="雪粒大小" >
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="size"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="szChange"
+            />
+            <mapgis-ui-input-number
+                v-model="size"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="szChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+        <mapgis-ui-form-model-item label="雪密度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="density"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="dstChange"
+            />
+            <mapgis-ui-input-number
+                v-model="density"
+                :max="20"
+                :min="5"
+                :step="5"
+                @change="dstChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雾" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="fog" @change="$_enableFog">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{ maxHeight: fogParams }">
+
+        <mapgis-ui-form-model-item label="雾透明度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="fogOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="fogOpacityChange"
+            />
+            <mapgis-ui-input-number
+                v-model="fogOpacity"
+                :max="1"
+                :min="0"
+                :step="0.1"
+                @change="fogOpacityChange"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+      </div>
+
+      <mapgis-ui-form-model-item label="雾化效果" >
+        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="surficialFog" @change="enableSurficialFog">
+        </mapgis-ui-switch>
+      </mapgis-ui-form-model-item>
+
+      <div class="parameter" :style="{ maxHeight: surfFogParams }">
+
+        <mapgis-ui-form-model-item label="密度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="surfFogDst"
+                :max="0.002"
+                :min="0"
+                :step="0.0002"
+                @change="enableSurficialFog"
+            />
+            <mapgis-ui-input-number
+                v-model="surfFogDst"
+                :max="0.002"
+                :min="0"
+                :step="0.0002"
+                @change="enableSurficialFog"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item>
+
+        <!-- <mapgis-ui-form-model-item label="最小亮度">
+          <mapgis-ui-space>
+            <mapgis-ui-slider
+                v-model="surfFogMinBrt"
+                :max="10"
+                :min="0"
+                @change="enableSurficialFog"
+            />
+            <mapgis-ui-input-number
+                v-model="surfFogMinBrt"
+                :max="10"
+                :min="0"
+                @change="enableSurficialFog"
+                size="small"
+            />
+          </mapgis-ui-space>
+        </mapgis-ui-form-model-item> -->
+
+      </div>
+
+    </mapgis-ui-form-model>
+  </div>
+</template>
+
+<script>
+import ServiceLayer from "../../UI/Controls/ServiceLayer";
+export default {
+  name: "WeatherSetting",
+  mixins: [ServiceLayer],
+  props:{
+    layout: {
+      type: String,
+      default: "horizontal" // 'horizontal' 'vertical' 'inline'
+    }
+  },
+  data (){
+    return {
+      sun:true,
+      moon:true,
+      //星空
+      sceneSkybox: true,
+      //天空盒
+      skybox: false,
+      //云层
+      clouds: false,
+      cloudsParams:undefined,
+      cloudsduration: 5,
+
+      weather: undefined,
+      rain: false,
+      rainParams:undefined,
+      speed: 1.0,
+      rainOpacity: 1.0,
+      angle: 0,
+      snow: false,
+      snowParams:undefined,
+      size: 5,
+      density: 5,
+      fog: false,
+      fogParams:undefined,
+      fogOpacity: 0.5,
+      color: "#FFFFFF",
+      
+      //雾化效果
+      surficialFog:true,
+      surfFogParams:"80px",
+      surfFogDst:0.0002,
+      // surfFogMinBrt:1,
+
+    }
+  },
+  computed: {
+    formItemLayout({ layout }) {
+      return layout === "horizontal"
+          ? {
+            labelCol: { span: 7 },
+            wrapperCol: { span: 17 }
+          }
+          : {};
+    }
+  },
+  mounted() {
+    const { vueKey, vueIndex } = this;
+    window.vueCesium.SettingToolManager.addSource(vueKey,vueIndex,{},{
+      GlobeCloud: null,
+      SkyBox:null,
+      Rain:null,
+      Fog:null,
+      Snow:null
+    });
+  },
+  methods: {
+    /*
+    * 太阳
+    * */
+    enableSun(){
+      const {viewer} = this;
+      viewer.scene.sun.show = this.sun;
+      if(this.sun){
+        let sunPosition = viewer.scene.sun._boundingVolume.center;
+        viewer.camera.flyTo({
+          destination:new Cesium.Cartesian3(-sunPosition.x/1000,-sunPosition.y/1000,-sunPosition.z/2000),
+          orientation:{heading:0,pitch:Cesium.Math.toRadians(-90),roll:0},
+          duration:0.5
+        })
+      }else{
+        viewer.camera.flyHome(0.5);
+      }
+    },
+    /*
+    * 月亮
+    * */
+    enableMoon(){
+      const {viewer} = this;
+      viewer.scene.moon.show = this.moon;
+      
+      if(this.moon){
+        let moonPosition = viewer.scene.moon._ellipsoidPrimitive._boundingSphere.center;
+        viewer.camera.flyTo({
+          destination:new Cesium.Cartesian3(moonPosition.x/1.2,moonPosition.y/1.2,moonPosition.z/1.2),
+          orientation:{heading:0,pitch:Cesium.Math.toRadians(90),roll:0},
+          duration:0.5
+        })
+      }else{
+        viewer.camera.flyHome(0.5);
+      }
+    },
+    
+    //星空
+    enableSceneSkybox(e) {
+      const { viewer } = this;
+      viewer.scene.skyBox.show = this.sceneSkybox; //背景，星空
+    },
+    
+    //天空盒
+    $_enableSkyBox(e) {
+      let vm = this;
+      if (vm.skybox) {
+        vm.enableSkyBox();
+      } else {
+        vm.removeSkyBox();
+      }
+    },
+    enableSkyBox() {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      let skyBox = new Cesium.GlobeEffect(viewer, { cloudsDuration: 100000 });
+      skyBox.addDefaultSkyBox("skyBox3"); //添加天空盒默认样式1
+      // skyBox.addDefaultSkyBox('skyBox2'); //添加天空盒默认样式2
+
+      window.vueCesium.SettingToolManager.changeOptions(vueKey, vueIndex, 'SkyBox', skyBox);
+    },
+    removeSkyBox() {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager.options && manager.options.SkyBox) {
+        manager.options.SkyBox.removeSkyBox();
+        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'SkyBox',null);
+      }
+      // viewer.scene.camera.flyTo({
+      //   destination: new Cesium.Cartesian3(-4957554.172258782, 19883663.751066618, 10885451.402250132),
+      //   orientation: {
+      //     heading: 6.283185307179586,
+      //     pitch: -1.5707963267948966,
+      //     roll: 0
+      //   },
+      //   duration: 1.0
+      // })
+    },
+    //云图
+    $_enableClouds(e) {
+      this.$emit('updateSpin',true);
+      let vm = this;
+
+      if(vm.clouds){ this.cloudsParams = "40px" }else{ this.cloudsParams = "0px" }
+
+      setTimeout(function () {
+        if (vm.clouds) {
+          vm.enableClouds();
+        } else {
+          vm.removeClouds();
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
+    },
+    cloudsDurationChange(e){
+      let vm = this;
+      if (this.clouds) {
+        vm.removeClouds();
+        vm.enableClouds();
+      }
+    },
+    enableClouds() {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      /*
+      * cloudsDuration的单位是毫秒
+      * */
+      let durationInms = this.cloudsduration * 1000;
+      let clouds = new Cesium.GlobeEffect(viewer, {
+        cloudsDuration: durationInms,
+        cloudsImgSource: Cesium.buildModuleUrl("Assets/Images/clouds.png")
+      });
+      clouds.addGlobeClouds(); //添加云层
+      window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud', clouds);
+    },
+    removeClouds() {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+      let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager.options && manager.options.GlobeCloud) {
+        manager.options.GlobeCloud.removeGlobeClouds();
+        window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'GlobeCloud', null);
+      }
+    },
+
+    //雨
+    $_enableRain(e) {
+      this.$emit('updateSpin',true);
+      let vm = this;
+
+      if(vm.rain){
+        this.rainParams = "120px"
+      }else{
+        this.rainParams = "0px";
+      }
+
+      setTimeout(function () {
+        if (vm.rain) {
+          vm.enableRain();
+        } else {
+          vm.removeWeather('Rain');
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
+    },
+    speedChange(e) {
+      let vm = this;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
+    rainOpacityChange(e) {
+      let vm = this;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
+    angleChange(e) {
+      let vm = this;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
+    //雪
+    $_enableSnow(e) {
+      this.$emit('updateSpin',true);
+      let vm = this;
+
+      if(vm.snow){
+        this.snowParams = "80px";
+      }else{
+        this.snowParams = "0px"
+      }
+
+      setTimeout(function () {
+        if (vm.snow) {
+          vm.enableSnow();
+        } else {
+          vm.removeWeather('Snow');
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
+    },
+    szChange(e) {
+      let vm = this;
+      if (this.snow) {
+        vm.enableSnow();
+      }
+    },
+    dstChange(e) {
+      let vm = this;
+      if (this.snow) {
+        vm.enableSnow();
+      }
+    },
+    //雾
+    $_enableFog(e) {
+      this.$emit('updateSpin',true);
+      let vm = this;
+      if(vm.fog){
+        this.fogParams = "40px"
+      }else{
+        this.fogParams = "0px"
+      }
+      setTimeout(function () {
+        if (vm.fog) {
+          vm.enableFog();
+        } else {
+          vm.removeWeather('Fog');
+        }
+        vm.$emit('updateSpin',false);
+      },400)
+
+    },
+    fogOpacityChange(e) {
+      let vm = this;
+      if (this.fog) {
+        vm.enableFog();
+      }
+    },
+
+    enableRain() {
+      let rainOptions = {
+        speed: this.speed,
+        angle: this.angle,
+        alpha: this.rainOpacity
+      };
+      this.$_enableWeather("Rain", rainOptions);
+    },
+    enableSnow() {
+      let snowOptions = {
+        size: this.density,
+        scale: this.size
+      };
+      this.$_enableWeather("Snow", snowOptions);
+    },
+    enableFog() {
+      const { Cesium }=this;
+      let color = Cesium.Color.fromCssColorString(this.color);
+      let fogOptions = {
+        fogcolor: color,
+        alpha: this.fogOpacity
+      };
+      this.$_enableWeather("Fog", fogOptions);
+    },
+    $_enableWeather(WeatherName, options) {
+      const { vueKey, vueIndex, viewer, Cesium } = this;
+
+      this.removeWeather(WeatherName);
+
+      // let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
+      // if(manager && manager.options && manager.options[WeatherName] && manager.options[WeatherName] !== null){
+      //   this.removeWeather(WeatherName);
+      // }
+      let weather = new Cesium.WeatherEffect(viewer);
+      switch(WeatherName) {
+        case 'Rain':
+          weather.addRain(options);
+          window.vueCesium['SettingToolManager'].changeOptions(vueKey,vueIndex,'Rain',weather);
+          break;
+        case 'Snow':
+          weather.addSnow(options);
+          window.vueCesium['SettingToolManager'].changeOptions(vueKey,vueIndex,'Snow',weather);
+          break;
+        case 'Fog':
+          weather.addFog(options);
+          window.vueCesium['SettingToolManager'].changeOptions(vueKey,vueIndex,'Fog',weather);
+          break;
+        default:
+          weather.log('传参错误');
+          break;
+      }
+    },
+    removeWeather(WeatherName) {
+      const { vueKey, vueIndex } = this;
+      let manager = window.vueCesium['SettingToolManager'].findSource(vueKey, vueIndex );
+      if (manager && manager.options) {
+        Object.keys(manager.options).forEach(function(name) {
+          if (name === WeatherName && manager.options[WeatherName]) {
+            switch(WeatherName) {
+              case 'Rain':
+                manager.options.Rain.removeRain();
+                break;
+              case 'Snow':
+                manager.options.Snow.removeSnow();
+                break;
+              case 'Fog':
+                manager.options.Fog.removeFog();
+                break;
+            };
+            window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, WeatherName,null);
+          }
+        });
+      }
+    },
+     
+    /*
+    * 雾化效果
+    * */
+    enableSurficialFog(){
+      const {viewer} = this;
+      let vm = this;
+
+      if(vm.surficialFog){
+        this.surfFogParams = "40px"
+      }else{
+        this.surfFogParams = "0px"
+      }
+      viewer.scene.fog.density = this.surfFogDst;
+      // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
+      viewer.scene.fog.enabled = this.surficialFog;
+    },
+
+  },
+}
+</script>
+
+<style scoped>
+
+/* .weather-setting {
+} */
+
+.mapgis-ui-form-item{
+  margin: 0;
+  padding: 0 10px;
+}
+
+::v-deep .mapgis-ui-form-item-control{
+  text-align: right;
+  height: 40px;
+  line-height: 40px;
+  overflow: hidden;
+}
+
+::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
+  content: url("titlew.png");
+  margin-right: 6px;
+}
+
+/*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
+/*  padding-left: 11px!important;*/
+/*}*/
+
+.mapgis-ui-input-number{
+  margin-right: 12px;
+  width: 60px;
+}
+
+.mapgis-ui-slider{
+  width: 110px;
+}
+
+::v-deep .mapgis-ui-slider-rail{
+  background-color: #F0F0F0;
+}
+
+::v-deep .parameter .mapgis-ui-slider-rail{
+  background-color: #FFFFFF;
+}
+::v-deep .mapgis-ui-slider-track{
+  background-color: #91D5FF;
+}
+::v-deep .mapgis-ui-slider-handle{
+  border: 2px solid #91D5FF;
+}
+
+.parameter{
+  background: #F1F1F1;
+  border-radius: 4px;
+  /*margin-bottom: 10px;*/
+  overflow: hidden;
+  max-height: 0px;
+  transition:max-height .5s;
+  -moz-transition:max-height .5s; /* Firefox 4 */
+  -webkit-transition:max-height .5s; /* Safari and Chrome */
+  -o-transition:max-height .5s; /* Opera */
+}
+
+</style>
