@@ -89,7 +89,7 @@ export default {
         opacity: 1,
         outlineWidth: 1,
         //边线颜色
-        outlineColor: '#FFA500',
+        outlineColor: '#000000',
         //线宽
         width: 2,
       },

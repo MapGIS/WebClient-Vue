@@ -1,12 +1,14 @@
-import Mapgis3dPopup from "../../cesium/src/components/UI/Popup/Popup.vue"
-import Markdown from "../../cesium/docs/api/ui/draw.md";
-
 export default {
   title: "三维/场景子组件/绘制组件",
-  component: Mapgis3dPopup,
   argTypes: {
     drawStyle:{
-      description:'绘制样式设置',
+      description: "绘制样式：<br>" +
+          "1、<span class='storybook-span'>color</span>(选填)：填充颜色，默认值#FF0000<br>" +
+          "2、<span class='storybook-span'>opacity</span>(选填)：透明度，默认值1<br>" +
+          "3、<span class='storybook-span'>outlineWidth</span>(选填)：外边线宽度，默认值1<br>" +
+          "4、<span class='storybook-span'>outlineColor</span>(选填)：外边线颜色，默认值#000000<br>" +
+          "5、<span class='storybook-span'>width</span>(选填)：绘制线时，线的宽度，默认值2<br>" +
+          "",
       table:{
         defaultValue: { summary: '' },
       },
@@ -45,7 +47,6 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { Mapgis3dPopup },
   template: `<mapgis-web-scene>
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-draw :enableControl="enableControl" 
@@ -59,8 +60,6 @@ const Template = (args, { argTypes }) => ({
 
 export const draw = Template.bind({});
 draw.args = {
-  autoReset:true,
-  maximumScreenSpaceError:6,
   enableControl: true,
   position:"top-right",
   drawStyle:{
@@ -72,12 +71,5 @@ draw.args = {
   },
   clampToGround:true,
   infinite:true
-};
-draw.parameters = {
-  docs: {
-    description: {
-      component: Markdown,
-    },
-  },
 };
 
