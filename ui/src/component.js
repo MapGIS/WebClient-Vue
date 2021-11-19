@@ -162,6 +162,7 @@ export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrap
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
 export { default as MapgisUiColorOutline } from "./components/color/ColorOutline";
+export { default as MapgisUiD3ColorPicker } from "./components/color-picker/D3ColorPicker.vue";
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";

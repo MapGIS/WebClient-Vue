@@ -82,6 +82,7 @@
 @import "./components/iconfont/style/iconfont.scss";
 
 /* MapGIS Design - Color */
+@import "./components/charts/style/charts.scss";
 @import "./components/color/style/color.scss";
 @import "./components/color-picker/style/color-picker.scss";
 
@@ -105,6 +106,7 @@
 
 /* MapGIS Design Mapbox Base*/
 @import "./components/map/style/map.scss";
+@import "./components/map/style/g3d.scss";
 
 /* MapGIS Design THemePanel */
 @import "./components/themepanel/style/themepanel.scss";

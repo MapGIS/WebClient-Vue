@@ -1,0 +1,73 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.mapgis-3d-g3d-layer {
+  position: absolute;
+  z-index: 100;
+  left: 10px;
+  top: 10px;
+}
+
+.mapgis-3d-g3d-layer-title {
+  line-height: 32px;
+  height: 32px;
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.mapgis-3d-g3d-layer-icons {
+  .anticon {
+    font-size: 16px;
+    float: right;
+  }
+  .anticon:hover {
+    color: $primary-6;
+  }
+}
+
+.mapgis-3d-g3d-document {
+  height: fit-content;
+}
+.mapgis-3d-g3d-document-tree {
+  max-height: 360px;
+  min-width: 200px;
+  /* max-width: 300px; */
+  overflow-y: scroll;
+}
+.mapgis-3d-g3d-layer-span {
+  display: inline-block;
+  justify-content: space-between;
+}
+.mapgis-3d-g3d-layer-span:hover {
+  .iconfont {
+    color: $primary-6;
+  }
+  span {
+    color: $primary-6;
+  }
+}
+.mapgis-3d-g3d-layer-span-inline {
+  width: 170px;
+}
+.mapgis-3d-g3d-layer-span {
+  .iconfont {
+    line-height: 28px;
+    font-size: 16px;
+    float: right;
+    color: transparent;
+  }
+}
+
+.mapgis-3d-g3d-layer
+  ::v-deep
+  .mapgis-ui-tree
+  li
+  .mapgis-ui-tree-node-content-wrapper {
+  height: fit-content;
+}
+
+.mapgis-3d-g3d-layer-version {
+  font-size: 12px;
+  font-weight: bolder;
+  color: $primary-6;
+}

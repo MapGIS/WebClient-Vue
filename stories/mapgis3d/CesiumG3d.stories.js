@@ -5,7 +5,7 @@ export default {
   component: Mapgis3dG3dLayer,
   argTypes: {
     url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
-    layers: undefined,
+    layers: "show",
   },
 };
 
@@ -35,5 +35,5 @@ const Template = (args, { argTypes }) => ({
 export const 场景 = Template.bind({});
 场景.args = {
   url: "http://192.168.88.204:6163/igs/rest/g3d/临海3号楼",
-  layers: "show:1,2",
+  // layers: "show:1,2",
 };
