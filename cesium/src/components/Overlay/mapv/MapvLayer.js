@@ -426,17 +426,17 @@ export class MapvLayer {
     if (window.Cesium.VERSION > 1.59) {
       canvas.width =
         parseInt(this.map.canvas.width) ||
-        parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
-      canvas.height =
-        parseInt(this.map.canvas.height) ||
-        parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
-    } else {
-      canvas.width =
-        parseInt(this.map.canvas.width) ||
         parseInt(this.map.container.offsetWidth);
       canvas.height =
         parseInt(this.map.canvas.height) ||
         parseInt(this.map.container.offsetHeight);
+    } else {
+      canvas.width =
+        parseInt(this.map.canvas.width) ||
+        parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
+      canvas.height =
+        parseInt(this.map.canvas.height) ||
+        parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
       var devicePixelRatio = this.devicePixelRatio;
       if (this.mapVOptions.context == "2d") {
         canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
