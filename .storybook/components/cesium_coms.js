@@ -75,3 +75,5 @@ export { default as Mapgis3dSceneRoaming } from "../../cesium/src/components/Sce
 export { default as Mapgis3dPathRoaming } from "../../cesium/src/components/SceneEffect/PathRoaming/PathRoaming";
 
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";
+export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
+export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";
