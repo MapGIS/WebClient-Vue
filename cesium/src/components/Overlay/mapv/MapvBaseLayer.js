@@ -4,7 +4,9 @@ import {
   utilDataRangeIntensity as Intensity
 } from "mapv";
 
-var BaseLayer = baiduMapLayer ? baiduMapLayer.__proto__ : Function;
+import Supercluster from './SuperCluster'
+
+let BaseLayer = baiduMapLayer ? baiduMapLayer.__proto__ : Function;
 
 /**
  * @private
@@ -28,8 +30,8 @@ export class MapvBaseLayer extends BaseLayer {
     this.scene = map.scene;
     this.dataSet = dataSet;
 
-    var self = this;
-    var data = null;
+    let self = this;
+    let data = null;
     options = options || {};
 
     self.init(options);
@@ -64,7 +66,7 @@ export class MapvBaseLayer extends BaseLayer {
    * @example
    * //mapv.map.BaseLayer.clickEvent
    * clickEvent(pixel, e) {
-   *    var dataItem = this.isPointInPath(this.getContext(), pixel);
+   *    let dataItem = this.isPointInPath(this.getContext(), pixel);
    *    if (dataItem) {
    *       this.options.methods.click(dataItem, e);
    *    } else {
@@ -73,7 +75,7 @@ export class MapvBaseLayer extends BaseLayer {
    *  }
    */
   clickEvent(e) {
-    var pixel = e.point;
+    let pixel = e.point;
     super.clickEvent(pixel, e);
   }
 
@@ -84,7 +86,7 @@ export class MapvBaseLayer extends BaseLayer {
    * @example
    * //mapv.map.BaseLayer.mousemoveEvent
    * mousemoveEvent(pixel, e) {
-   *   var dataItem = this.isPointInPath(this.getContext(), pixel);
+   *   let dataItem = this.isPointInPath(this.getContext(), pixel);
    *   if (dataItem) {
    *       this.options.methods.mousemove(dataItem, e);
    *   } else {
@@ -93,14 +95,14 @@ export class MapvBaseLayer extends BaseLayer {
    * }
    */
   mousemoveEvent(e) {
-    var pixel = e.point;
+    let pixel = e.point;
     super.mousemoveEvent(pixel, e);
   }
 
   addAnimatorEvent() {}
 
   animatorMovestartEvent() {
-    var animationOptions = this.options.animation;
+    let animationOptions = this.options.animation;
     if (this.isEnabledTime() && this.animator) {
       this.steps.step = animationOptions.stepsRange.start;
       //this.animator.stop();
@@ -114,7 +116,7 @@ export class MapvBaseLayer extends BaseLayer {
   }
 
   bindEvent() {
-    var map = this.map;
+    let map = this.map;
     if (this.options.methods) {
       if (this.options.methods.click) {
         //map.on('click', this.clickEvent);
@@ -126,7 +128,7 @@ export class MapvBaseLayer extends BaseLayer {
   }
 
   unbindEvent() {
-    var map = this.map;
+    let map = this.map;
 
     if (this.options.methods) {
       if (this.options.methods.click) {
@@ -153,7 +155,7 @@ export class MapvBaseLayer extends BaseLayer {
   }
 
   init(options) {
-    var self = this;
+    let self = this;
 
     self.options = options;
 
@@ -173,19 +175,19 @@ export class MapvBaseLayer extends BaseLayer {
     if (!dataSet) {
       dataSet = this.dataSet;
     }
-    var lnglat2Mkt = poi => {
-      var mercator = {};
-      var earthRad = 6378137.0;
+    let lnglat2Mkt = poi => {
+      let mercator = {};
+      let earthRad = 6378137.0;
       mercator.x = ((poi.lng * Math.PI) / 180) * earthRad;
-      var a = (poi.lat * Math.PI) / 180;
+      let a = (poi.lat * Math.PI) / 180;
       mercator.y =
         (earthRad / 2) * Math.log((1.0 + Math.sin(a)) / (1.0 - Math.sin(a)));
       return mercator;
     };
 
-    var map = this.map;
+    let map = this.map;
     if (this.options.coordType !== "bd09mc") {
-      var data = dataSet.get();
+      let data = dataSet.get();
       data = dataSet.transferCoordinate(
         data,
         function(coordinates) {
@@ -197,7 +199,7 @@ export class MapvBaseLayer extends BaseLayer {
           ) {
             return coordinates;
           } else {
-            var pixel = lnglat2Mkt({
+            let pixel = lnglat2Mkt({
               lng: coordinates[0],
               lat: coordinates[1]
             });
@@ -211,17 +213,126 @@ export class MapvBaseLayer extends BaseLayer {
     }
   }
 
+  dataOptions() {
+    const self = this;
+    return {
+      transferCoordinate: function(coordinate) {
+        let pointSphere = Cesium.Cartesian3.fromDegrees(
+          coordinate[0],
+          coordinate[1]
+        );
+        let position = self.map.camera.position;
+        let cameraHeight = self.map.scene.globe.ellipsoid.cartesianToCartographic(
+          position
+        ).height;
+        cameraHeight += self.map.scene.globe.ellipsoid.maximumRadius * 1.2;
+        let distance = Cesium.Cartesian3.distance(position, pointSphere);
+        if (distance > cameraHeight) {
+          return undefined;
+          // return [-50, -50];a
+        }
+
+        let car3 = Cesium.Cartesian3.fromDegrees(coordinate[0], coordinate[1]);
+        let point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+          self.map.scene,
+          car3
+        );
+        if (!point) return [0, 0];
+
+        if (self.options.draw === "cluster") {
+          return [
+            point.x * self.devicePixelRatio,
+            point.y * self.devicePixelRatio
+          ];
+        }
+        return [point.x, point.y];
+      }
+    };
+  }
+
+  changeCluster() {
+    const self = this;
+    let zoom = this.getZoom();
+    let dataGetOptions = this.dataOptions();
+    let rect = this.map.scene.camera.computeViewRectangle();
+    const south = Cesium.Math.toDegrees(rect.south);
+    const north = Cesium.Math.toDegrees(rect.north);
+    const east = Cesium.Math.toDegrees(rect.east);
+    const west = Cesium.Math.toDegrees(rect.west);
+
+    let clusterData = this.supercluster.getClusters(
+      [west, south, east, north],
+      zoom
+    );
+    this.pointCountMax = this.supercluster.trees[zoom].max;
+    this.pointCountMin = this.supercluster.trees[zoom].min;
+    let intensity = {};
+    let color = null;
+    let size = null;
+    if (this.pointCountMax === this.pointCountMin) {
+      color = this.options.fillStyle;
+      size = this.options.minSize || 8;
+    } else {
+      intensity = new Intensity({
+        min: this.pointCountMin,
+        max: this.pointCountMax,
+        minSize: this.options.minSize || 8,
+        maxSize: this.options.maxSize || 30,
+        gradient: this.options.gradient
+      });
+    }
+    for (let i = 0; i < clusterData.length; i++) {
+      let item = clusterData[i];
+      if (item.properties && item.properties.cluster_id) {
+        clusterData[i].size =
+          size || intensity.getSize(item.properties.point_count);
+        clusterData[i].fillStyle =
+          color || intensity.getColor(item.properties.point_count);
+      } else {
+        clusterData[i].size = self.options.size;
+      }
+    }
+    this.clusterDataSet.set(clusterData);
+    this.transferToMercator(self.clusterDataSet);
+    let data = self.clusterDataSet.get(dataGetOptions);
+    return data;
+  }
+
+  refreshCluster(options) {
+    options = options || this.options;
+    this.supercluster = new Supercluster({
+        maxZoom: options.maxZoom || 19,
+        radius: options.clusterRadius || 100,
+        minPoints: options.minPoints || 2,
+        extent: options.extent || 512
+    });
+
+    this.supercluster.load(this.dataSet.get());
+    // 拿到每个级别下的最大值最小值
+    this.supercluster.trees.forEach(item => {
+        let max = 0;
+        let min = Infinity;
+        item.points.forEach(point => {
+            max = Math.max(point.numPoints || 0, max);
+            min = Math.min(point.numPoints || Infinity, min);
+        });
+        item.max = max;
+        item.min = min;
+    });
+    this.clusterDataSet = new DataSet();
+}
+
   _canvasUpdate(time) {
-    var map = this.map;
-    var scene = this.scene;
+    let map = this.map;
+    let scene = this.scene;
     if (!this.canvasLayer || this.stopAniamation) {
       return;
     }
-    var self = this;
+    let self = this;
 
-    var animationOptions = self.options.animation;
+    let animationOptions = self.options.animation;
 
-    var context = self.getContext();
+    let context = self.getContext();
 
     if (self.isEnabledTime()) {
       if (time === undefined) {
@@ -240,7 +351,7 @@ export class MapvBaseLayer extends BaseLayer {
     }
 
     if (this.context === "2d") {
-      for (var key in self.options) {
+      for (let key in self.options) {
         context[key] = self.options[key];
       }
     } else {
@@ -254,43 +365,11 @@ export class MapvBaseLayer extends BaseLayer {
       return;
     }
 
-    var dataGetOptions = {
-      transferCoordinate: function(coordinate) {
-        var pointSphere = Cesium.Cartesian3.fromDegrees(
-          coordinate[0],
-          coordinate[1]
-        );
-        var position = self.map.camera.position;
-        var cameraHeight = self.map.scene.globe.ellipsoid.cartesianToCartographic(
-          position
-        ).height;
-        cameraHeight += self.map.scene.globe.ellipsoid.maximumRadius * 1.2;
-        var distance = Cesium.Cartesian3.distance(position, pointSphere);
-        if (distance > cameraHeight) {
-          return undefined;
-          // return [-50, -50];a
-        }
-
-        let car3 = Cesium.Cartesian3.fromDegrees(
-          coordinate[0],
-          coordinate[1]
-        );
-        let point = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
-          self.map.scene,
-          car3
-        );
-        if (!point) return [0, 0];
-
-        if (self.options.draw === "cluster") {
-            return [point.x * self.devicePixelRatio, point.y * self.devicePixelRatio];            
-        }
-        return [point.x, point.y];
-      }
-    };
+    let dataGetOptions = this.dataOptions();
 
     if (time !== undefined) {
       dataGetOptions.filter = function(item) {
-        var trails = animationOptions.trails || 10;
+        let trails = animationOptions.trails || 10;
         if (time && item.time > time - trails && item.time < time) {
           return true;
         } else {
@@ -299,53 +378,13 @@ export class MapvBaseLayer extends BaseLayer {
       };
     }
 
-    var data;
-    var zoom = this.getZoom();
+    let data;
+    let zoom = this.getZoom();
     if (
       this.options.draw === "cluster" &&
       (!this.options.maxClusterZoom || this.options.maxClusterZoom >= zoom)
     ) {
-      let rect = this.map.scene.camera.computeViewRectangle();
-      const south = Cesium.Math.toDegrees(rect.south);
-      const north = Cesium.Math.toDegrees(rect.north);
-      const east  = Cesium.Math.toDegrees(rect.east);
-      const west = Cesium.Math.toDegrees(rect.west);
-
-      var clusterData = this.supercluster.getClusters(
-        [west, south, east, north],
-        zoom
-      );
-      this.pointCountMax = this.supercluster.trees[zoom].max;
-      this.pointCountMin = this.supercluster.trees[zoom].min;
-      var intensity = {};
-      var color = null;
-      var size = null;
-      if (this.pointCountMax === this.pointCountMin) {
-        color = this.options.fillStyle;
-        size = this.options.minSize || 8;
-      } else {
-        intensity = new Intensity({
-          min: this.pointCountMin,
-          max: this.pointCountMax,
-          minSize: this.options.minSize || 8,
-          maxSize: this.options.maxSize || 30,
-          gradient: this.options.gradient
-        });
-      }
-      for (var i = 0; i < clusterData.length; i++) {
-        var item = clusterData[i];
-        if (item.properties && item.properties.cluster_id) {
-          clusterData[i].size =
-            size || intensity.getSize(item.properties.point_count);
-          clusterData[i].fillStyle =
-            color || intensity.getColor(item.properties.point_count);
-        } else {
-          clusterData[i].size = self.options.size;
-        }
-      }
-      this.clusterDataSet.set(clusterData);
-      this.transferToMercator(self.clusterDataSet);
-      data = self.clusterDataSet.get(dataGetOptions);
+      data = this.changeCluster();
     } else {
       data = self.dataSet.get(dataGetOptions);
     }
@@ -359,7 +398,7 @@ export class MapvBaseLayer extends BaseLayer {
       self.options._size = self.options.size;
     }
 
-    var pixel = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
+    let pixel = Cesium.SceneTransforms.wgs84ToWindowCoordinates(
       scene,
       Cesium.Cartesian3.fromDegrees(0, 0)
     );
@@ -370,12 +409,23 @@ export class MapvBaseLayer extends BaseLayer {
   }
 
   updateData(data, options) {
-    var _data = data;
+    let _data = data;
     if (_data && _data.get) {
       _data = _data.get();
     }
     if (_data != undefined) {
-      this.dataSet.set(_data);
+      let zoom = this.getZoom();  
+      if (
+        this.options.draw === "cluster" &&
+        (!this.options.maxClusterZoom || this.options.maxClusterZoom >= zoom)
+      ) {
+        this.dataSet = data;
+        this.refreshCluster(this.options);
+        _data = this.changeCluster();
+        this.dataSet.set(_data);
+      } else {
+        this.dataSet.set(_data);
+      }
     }
 
     super.update({
@@ -384,7 +434,7 @@ export class MapvBaseLayer extends BaseLayer {
   }
 
   addData(data, options) {
-    var _data = data;
+    let _data = data;
     if (data && data.get) {
       _data = data.get();
     }
@@ -402,7 +452,7 @@ export class MapvBaseLayer extends BaseLayer {
     if (!this.dataSet) {
       return;
     }
-    var newData = this.dataSet.get({
+    let newData = this.dataSet.get({
       filter: function(data) {
         return filter != null && typeof filter === "function"
           ? !filter(data)
