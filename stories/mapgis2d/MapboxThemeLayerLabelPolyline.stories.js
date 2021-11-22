@@ -52,7 +52,7 @@ export default {
 const Template = (args, {argTypes}) => ({
   props: Object.keys(argTypes),
   methods:{},
-  template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :mapStyle="mapStyle" :zoom="8" style="height:60vh">
+  template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :mapStyle="mapStyle" :zoom="8" style="height:96vh">
     <mapgis-theme-layer-custom v-bind="$props"/>
     </mapgis-web-map>`,
   data(){
@@ -71,7 +71,7 @@ const Template = (args, {argTypes}) => ({
         ],
         // glyphs: "http://localhost:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
          // glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
-        glyphs: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`
+        glyphs: `http://${window.webclient.ip}:${window.webclient.port}/${window.glyphs}/{fontstack}/{range}.pbf`
       },
     }
   }

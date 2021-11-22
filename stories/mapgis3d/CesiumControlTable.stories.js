@@ -1,18 +1,14 @@
-import Mapgis3dTable from "../../cesium/src/components/UI/Controls/Table/BaseTable";
-
 export default {
   title: "三维/场景子组件/表格",
-  component:Mapgis3dTable,
   argTypes: {
   }
 };
 
 const Template = (args, { argTypes }) => ({
   test:argTypes,
-  components:Mapgis3dTable,
   props: Object.keys(argTypes),
   template: `
-    <mapgis-web-scene style="height: 800px">
+    <mapgis-web-scene style="height: 95vh">
     <mapgis-3d-igs-m3d :url="url"> </mapgis-3d-igs-m3d>
     <mapgis-3d-table
         :dataSource="dataSource"
@@ -59,7 +55,7 @@ const Template = (args, { argTypes }) => ({
       //初始化参数对象
       let queryParam = new Zondy.Catalog.G3DMapDoc();
       //查询图层的URL路径
-      queryParam.gdbp = "gdbp://MapGisLocal/示例数据/ds/三维示例/sfcls/景观_模型";
+      queryParam.gdbp = "gdbp://MapGisLocalPlus/示例数据/ds/三维示例/sfcls/景观_建筑模型";
       //设置查询结果结构
       queryParam.structs = {'IncludeAttribute':true,'IncludeGeometry':false,'IncludeWebGraphic':false};
       //属性查询
@@ -69,8 +65,8 @@ const Template = (args, { argTypes }) => ({
       queryParam.pageCount = pageCount;
       //服务器的ip
       // queryParam.ip = "develop.smaryun.com"
-      queryParam.ip = "localhost"
-      queryParam.port = "6163";
+      queryParam.ip = window.webclient.ip;
+      queryParam.port = window.webclient.port;
       //排序设置
       queryParam.orderField = orderField ? orderField : "";
       queryParam.isAsc = isAsc ? isAsc : false;
