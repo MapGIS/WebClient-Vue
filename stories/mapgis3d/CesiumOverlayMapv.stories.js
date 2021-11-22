@@ -46,7 +46,7 @@ mapv.args = {
     opacity: 1,
     zIndex: 2,
   },
-  tilingScheme: "EPSG:4326",
+  tilingScheme: "EPSG:3857",
   options: {
     context: "2d",
     fillStyle: "rgba(55, 50, 250, 0.8)",
