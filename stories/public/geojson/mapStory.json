@@ -1,0 +1,135 @@
+{
+    "title": "国家地理",
+    "description": "",
+    "uuid": "1",
+    "map": {
+        "type": "WMTS",
+        "baseUrl": "http://t4.tianditu.gov.cn/cta_w/wmts?tk=9c157e9585486c02edf817d2ecbc7752",
+        "layer": "cta",
+        "tilingScheme": "EPSG:3857",
+        "tileMatrixSet": "w",
+        "format": "tiles",
+        "vueKey": "default",
+        "vueIndex": 1000213213121
+    },
+    "features": [{
+        "title": "新疆 （中国陆地面积最大的自治区）",
+        "id": "xinjiang",
+        "drawType": "point",
+        "type": "marker",
+        "content": "新疆地处亚欧大陆腹地，陆地边境线5600多公里，周边与俄罗斯、哈萨克斯坦、吉尔吉斯斯坦、塔吉克斯坦、巴基斯坦、蒙古、印度、阿富汗伊斯兰共和国八国接壤，在历史上是古丝绸之路的重要通道，现在是第二座“亚欧大陆桥”的必经之地，战略位置十分重要。新疆现有56个民族成份 [4]  ，主要居住有汉、维吾尔、哈萨克、回、蒙古、柯尔克孜、锡伯、塔吉克、乌孜别克、满、达斡尔、塔塔尔、俄罗斯等民族，是中国五个少数民族自治区之一。全国第六次人口普查结果中，24省市区受高等教育人口比例新疆位列第五。新疆将全面落实南疆地区14年免费教育政策，推进其他地区14年免费教育，逐步实现全区15年免费教育，即学前3年、小学6年、初中3年、高中3年",
+        "containerType": "large",
+        "images": ["http://localhost:8080/assets/png/xinijiang/xinjiang1.jpg","http://localhost:8080/assets/png/xinijiang/xinjiang2.jpg",
+        "http://localhost:8080/assets/png/xinijiang/xinjiang3.jpg","http://localhost:8080/assets/png/xinijiang/xinjang4.jpg"],
+        "baseUrl": {
+            "type":  "point",
+            "geometry": {
+                "x": 386698.8503276396,
+                "y": 4766092.166505608,
+                "z": 4206684.868673657
+            },
+            "properties": {}
+        },
+        "layerStyle": {
+            "show": true,
+            "billboard": {
+                "image": 0
+            }
+        },
+        "camera": {
+            "heading": 0.6517542547389921,
+            "pitch": -0.8556576016505568,
+            "roll": 6.283093970317177,
+            "positionCartographic": {
+                "height": 1921276.0829455983,
+                "latitude": 0.5159365612016351,
+                "longitude": 1.2542810612376214
+            }
+        },
+        "g3dUrl": "在线scene的编辑结果，不支持编辑"
+    },
+        {
+            "title": "云南（彩云之南）",
+            "id": "yunnan",
+            "drawType": "point",
+            "type": "marker",
+            "content": "云南省，简称云或滇，中国23个省之一，位于西南地区，省会昆明。介于北纬21°8′～29°15′，东经97°31′～106°11′之间，东部与贵州、广西为邻，北部与四川相连，西北部紧依西藏，西部与缅甸接壤，南部和老挝、越南毗邻，云南省总面积39.41万平方千米，占全国国土总面积的4.1%，居全国第8位。云南是全国边境线最长的省份之一，有8个州（市）的25个边境县分别与缅甸、老挝和越南交界。",
+            "containerType": "large",
+            "images": [
+                "http://localhost:8080/assets/png/yunnan/yunnan1.jpg",
+                "http://localhost:8080/assets/png/yunnan/yunnan2.jpg",
+                "http://localhost:8080/assets/png/yunnan/yunnan3.jpeg",
+                "http://localhost:8080/assets/png/yunnan/yunnan4.jpg"
+            ],
+            "baseUrl": {
+                "type": "point",
+                "geometry": {
+                    "x": 378982.15225862426,
+                    "y": 5371302.759974537,
+                    "z": 3407033.829236505
+                },
+                "properties": {}
+            },
+            "layerStyle": {
+                "show": true,
+                "billboard": {
+                    "image": 0
+                }
+            },
+            "camera": {
+                "heading": 6.283185307179586,
+                "pitch": -1.5691472163490854,
+                "roll": 0,
+                "positionCartographic": {
+                    "height": 1383568.489302337,
+                    "latitude": 0.5534225905286387,
+                    "longitude": 1.4863732408614219
+                }
+            },
+            "g3dUrl": "在线scene的编辑结果，不支持编辑"
+        },{
+            "title": "北京（首都）",
+            "id": "beijing",
+            "drawType": "point",
+            "type": "marker",
+            "content": "<div style=\"text-align: left;\">&nbsp; &nbsp;北京（Beijing），简称“<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E4%BA%AC/15808773\" style=\"background-color: rgb(255, 255, 255);\">京</a>”，古称<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E7%87%95%E4%BA%AC/85350\" style=\"background-color: rgb(255, 255, 255);\">燕京</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%8C%97%E5%B9%B3/1193468\" style=\"background-color: rgb(255, 255, 255);\">北平</a>，是<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD/106554\" style=\"background-color: rgb(255, 255, 255);\">中华人民共和国</a>的<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E9%A6%96%E9%83%BD/26194\" style=\"background-color: rgb(255, 255, 255);\">首都</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E7%9B%B4%E8%BE%96%E5%B8%82/725471\" style=\"background-color: rgb(255, 255, 255);\">直辖市</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%9B%BD%E5%AE%B6%E4%B8%AD%E5%BF%83%E5%9F%8E%E5%B8%82/842500\" style=\"background-color: rgb(255, 255, 255);\">国家中心城市</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E8%B6%85%E5%A4%A7%E5%9F%8E%E5%B8%82/413865\" style=\"background-color: rgb(255, 255, 255);\">超大城市</a>，<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%9B%BD%E5%8A%A1%E9%99%A2/343590\" style=\"background-color: rgb(255, 255, 255);\">国务院</a>批复确定的中国<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E6%94%BF%E6%B2%BB%E4%B8%AD%E5%BF%83/3218495\" style=\"background-color: rgb(255, 255, 255);\">政治中心</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E6%96%87%E5%8C%96%E4%B8%AD%E5%BF%83/10438262\" style=\"background-color: rgb(255, 255, 255);\">文化中心</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%9B%BD%E9%99%85%E4%BA%A4%E5%BE%80%E4%B8%AD%E5%BF%83/8858752\" style=\"background-color: rgb(255, 255, 255);\">国际交往中心</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E7%A7%91%E6%8A%80%E5%88%9B%E6%96%B0%E4%B8%AD%E5%BF%83/50914358\" style=\"background-color: rgb(255, 255, 255);\">科技创新中心</a><sup>&nbsp;[1]</sup><a name=\"ref_[1]_13223029\" style=\"background-color: rgb(255, 255, 255);\">&nbsp;</a>&nbsp;，截至2020年，全市下辖16个区，总面积16410.54平方千米<sup>&nbsp;[116]</sup><a name=\"ref_[116]_13223029\" style=\"background-color: rgb(255, 255, 255);\">&nbsp;</a>&nbsp;。根据第七次人口普查数据，截至2020年11月1日零时，北京市常住人口为21893095人。<sup>&nbsp;[116]</sup><a name=\"ref_[116]_13223029\" style=\"background-color: rgb(255, 255, 255);\">&nbsp;</a>&nbsp;北京地处<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E4%B8%AD%E5%9B%BD/1122445\" style=\"background-color: rgb(255, 255, 255);\">中国</a>北部、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%8D%8E%E5%8C%97%E5%B9%B3%E5%8E%9F\" style=\"background-color: rgb(255, 255, 255);\">华北平原</a>北部，东与<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%A4%A9%E6%B4%A5/132308\" style=\"background-color: rgb(255, 255, 255);\">天津</a>毗连，其余均与<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E6%B2%B3%E5%8C%97/65777\" style=\"background-color: rgb(255, 255, 255);\">河北</a>相邻，中心位于东经116°20′、北纬39°56′，是世界著名<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%8F%A4%E9%83%BD/62861\" style=\"background-color: rgb(255, 255, 255);\">古都</a>和现代化国际城市，也是<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E4%B8%AD%E5%9B%BD%E5%85%B1%E4%BA%A7%E5%85%9A%E4%B8%AD%E5%A4%AE%E5%A7%94%E5%91%98%E4%BC%9A/1141242\" style=\"background-color: rgb(255, 255, 255);\">中国共产党中央委员会</a>、<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E4%B8%AD%E5%A4%AE%E4%BA%BA%E6%B0%91%E6%94%BF%E5%BA%9C/5693897\" style=\"background-color: rgb(255, 255, 255);\">中华人民共和国中央人民政府</a>和<a target=\"_blank\" href=\"https://baike.baidu.com/item/%E5%85%A8%E5%9B%BD%E4%BA%BA%E6%B0%91%E4%BB%A3%E8%A1%A8%E5%A4%A7%E4%BC%9A%E5%B8%B8%E5%8A%A1%E5%A7%94%E5%91%98%E4%BC%9A/689890\" style=\"background-color: rgb(255, 255, 255);\">全国人民代表大会常务委员会</a>的办公所在地<sup>&nbsp;[2]</sup><a name=\"ref_[2]_13223029\" style=\"background-color: rgb(255, 255, 255);\">&nbsp;</a>&nbsp;</div>",
+            "containerType": "large",
+            "images": ["http://localhost:8080/assets/png/beijing/beijing.jpg","http://localhost:8080/assets/png/beijing/beijing2.jpg",
+                "http://localhost:8080/assets/png/beijing/beijing3.jpg"],
+            "baseUrl": {
+                "type":  "point",
+                "geometry": {
+                  "x": -2172797.010839777,
+                  "y": 4380441.528604052,
+                  "z": 4081549.1161620435
+                },
+                "properties": {}
+            },
+            "layerStyle": {
+                "show": true,
+                "billboard": {
+                    "image": 0
+                }
+            },
+            "map": {
+                "type": "WMTS",
+                "baseUrl": "http://develop.smaryun.com:6163/igs/rest/ogc/WMTSServer",
+                "layer": "beijing",
+                "tilingScheme": "EPSG:4326",
+                "tileMatrixSet": "EPSG:4326_北京市_028mm_GB",
+                "vueKey": "default",
+                "vueIndex": 10001
+            },
+            "camera": {
+                "heading": 6.260027694250433,
+                "pitch": -0.3500221015637415,
+                "roll": 0.000003928177749301653,
+                "positionCartographic": {
+                    "height": 1646.3543852190894,
+                    "latitude": 0.698214208274689,
+                    "longitude": 2.0312736284158044
+                }
+            },
+            "g3dUrl": "在线scene的编辑结果，不支持编辑"
+        }]
+}
