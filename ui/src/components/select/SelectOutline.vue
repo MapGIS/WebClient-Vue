@@ -29,6 +29,7 @@ export default {
   width: auto;
   height: auto;
   position: relative;
+  text-align: center;
 }
 
 .mapgis-ui-select-outline-title {

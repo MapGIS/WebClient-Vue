@@ -73,7 +73,6 @@ export default {
     features: {
       handler: function () {
         this.featuresCopy = this.features;
-        console.log("this.featuresCopy",this.featuresCopy)
       },
       deep: true
     }

@@ -25,7 +25,7 @@
         :formStyle="formStyle"
     />
     <mapgis-ui-mix-row
-        v-if="currentSelect === 'WMS地图' || currentSelect === 'IGS地图文档' || currentSelect === 'WMTS地图'"
+        v-if="currentSelect === 'WMS' || currentSelect === 'DOC'"
         title="图层名称"
         type="MapgisUiInput"
         v-model="layers"
@@ -33,7 +33,15 @@
         :formStyle="formStyle"
     />
     <mapgis-ui-mix-row
-        v-if="currentSelect === 'IGS矢量图层'"
+        v-if="currentSelect === 'WMTS'"
+        title="图层名称"
+        type="MapgisUiInput"
+        v-model="layer"
+        :titleStyle="titleStyle"
+        :formStyle="formStyle"
+    />
+    <mapgis-ui-mix-row
+        v-if="currentSelect === 'DYNAMIC'"
         title="gdbp地址"
         type="MapgisUiInput"
         v-model="gdbps"
@@ -41,7 +49,7 @@
         :formStyle="formStyle"
     />
     <mapgis-ui-mix-row
-        v-if="currentSelect === 'IGS瓦片' || currentSelect === 'WMTS地图'"
+        v-if="currentSelect === 'TILE' || currentSelect === 'WMTS'"
         title="坐标系"
         type="MapgisUiInput"
         v-model="tilingScheme"
@@ -49,10 +57,18 @@
         :formStyle="formStyle"
     />
     <mapgis-ui-mix-row
-        v-if="currentSelect === 'IGS瓦片' || currentSelect === 'WMTS地图'"
+        v-if="currentSelect === 'TILE' || currentSelect === 'WMTS'"
         title="比例尺"
         type="MapgisUiInput"
         v-model="tileMatrixSet"
+        :titleStyle="titleStyle"
+        :formStyle="formStyle"
+    />
+    <mapgis-ui-mix-row
+        v-if="currentSelect === 'WMTS'"
+        title="返回格式"
+        type="MapgisUiInput"
+        v-model="format"
         :titleStyle="titleStyle"
         :formStyle="formStyle"
     />
@@ -67,10 +83,12 @@ export default {
     return {
       baseUrl: "",
       layers: "",
+      layer: "",
       tilingScheme: "",
       tileMatrixSet: "",
+      format: "image/png",
       gdbps: "",
-      currentSelect: "IGS瓦片",
+      currentSelect: "TILE",
       titleStyle: {
         color: "#e8eaed",
         paddingLeft: "12px"
@@ -84,22 +102,22 @@ export default {
       },
       selectData: [{
         key: "IGS瓦片",
-        value: "IGS瓦片",
-      },{
+        value: "TILE",
+      }, {
         key: "IGS地图文档",
-        value: "IGS地图文档",
-      },{
+        value: "DOC",
+      }, {
         key: "IGS矢量图层",
-        value: "IGS矢量图层",
-      },{
+        value: "DYNAMIC",
+      }, {
         key: "GeoJSON",
         value: "GeoJSON",
-      },{
+      }, {
         key: "WMTS地图",
-        value: "WMTS地图",
-      },{
+        value: "WMTS",
+      }, {
         key: "WMS地图",
-        value: "WMS地图",
+        value: "WMS",
       }]
     }
   },
@@ -108,15 +126,47 @@ export default {
       type: String,
       default: "title"
     },
+    map: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
   },
-  watch: {},
-  created() {
+  watch: {
+    map: {
+      handler: function () {
+        this.$_initMap();
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.$_initMap();
   },
   methods: {
+    $_initMap() {
+      const {
+        type = "TILE",
+        baseUrl = "",
+        layer = "",
+        layers = "",
+        tilingScheme = "",
+        tileMatrixSet = "",
+        format = "image/png"
+      } = this.map;
+      this.currentSelect = type;
+      this.baseUrl = baseUrl;
+      this.layer = layer;
+      this.layers = layers;
+      this.tilingScheme = tilingScheme;
+      this.tileMatrixSet = tileMatrixSet;
+      this.format = format;
+    },
     $_addMap() {
       let map;
       switch (this.currentSelect) {
-        case "WMS地图":
+        case "WMS":
           map = {
             type: "WMS",
             baseUrl: this.baseUrl,
@@ -124,17 +174,18 @@ export default {
           };
           this.$emit("addMap", "WMS", map);
           break;
-        case "WMTS地图":
+        case "WMTS":
           map = {
             type: "WMTS",
             baseUrl: this.baseUrl,
-            layer: this.layers,
+            layer: this.layer,
             tilingScheme: this.tilingScheme,
             tileMatrixSet: this.tileMatrixSet,
+            format: this.format,
           };
           this.$emit("addMap", "WMTS", map);
           break;
-        case "IGS瓦片":
+        case "TILE":
           map = {
             type: "TILE",
             baseUrl: this.baseUrl,
@@ -142,7 +193,7 @@ export default {
           };
           this.$emit("addMap", "TILE", map);
           break;
-        case "IGS矢量图层":
+        case "DYNAMIC":
           map = {
             type: "DYNAMIC",
             baseUrl: this.baseUrl,
@@ -150,9 +201,9 @@ export default {
           };
           this.$emit("addMap", "DYNAMIC", map);
           break;
-        case "IGS地图文档":
+        case "DOC":
           map = {
-            type: "DYNAMIC",
+            type: "DOC",
             baseUrl: this.baseUrl,
             layers: this.layers
           };
@@ -193,7 +244,7 @@ export default {
   background: rgb(32, 33, 36);
 }
 
-.mapgis-ui-map-outline-add{
+.mapgis-ui-map-outline-add {
   color: #e8eaed;
   border-color: rgb(95, 99, 104);
   margin-left: -10px;

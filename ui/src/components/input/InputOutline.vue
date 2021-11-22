@@ -63,6 +63,7 @@ export default {
   position: relative;
   width: auto;
   height: auto;
+  text-align: center;
 }
 
 .mapgis-ui-input-outline {

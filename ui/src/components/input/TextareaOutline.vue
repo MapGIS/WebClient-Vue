@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mapgis-ui-textarea-outline-container">
     <div v-if="hasToolBar" class="mapgis-ui-textarea-outline-head">
       <mapgis-ui-svg-icon :containerStyle="containerStyle" type="fontSize"/>
       <mapgis-ui-svg-icon :containerStyle="containerStyle" type="fontWeight"/>
@@ -9,7 +9,8 @@
       <mapgis-ui-svg-icon :containerStyle="containerStyle" type="removeStyle"/>
       <mapgis-ui-svg-icon :containerStyle="containerStyle" type="more"/>
     </div>
-    <mapgis-ui-textarea :id="id" :style="textareaStyle" :class="{mapgisInputNoTool: !hasToolBar}" :placeholder="placeholder"
+    <mapgis-ui-textarea :id="id" :style="textareaStyle" :class="{mapgisInputNoTool: !hasToolBar}"
+                        :placeholder="placeholder"
                         class="mapgis-ui-textarea-outline" v-model="valueCopy"/>
   </div>
 </template>
@@ -72,6 +73,10 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-textarea-outline-container {
+  text-align: center;
+}
+
 .mapgis-ui-textarea-outline {
   width: 340px;
   height: 92px;
