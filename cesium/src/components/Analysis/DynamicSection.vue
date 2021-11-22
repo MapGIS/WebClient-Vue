@@ -5,19 +5,20 @@
         title="模型"
         :has-top-margin="false"
       ></mapgis-ui-group-tab>
-      <mapgis-ui-row class="model">
-        <mapgis-ui-radio-group v-if="models.length > 0" v-model="model">
-          <mapgis-ui-radio
-            v-for="(node, index) in models"
-            :style="radioStyle"
-            :key="`model-${index}`"
-            :value="node"
-          >
-            {{ node.title }}
-          </mapgis-ui-radio>
-        </mapgis-ui-radio-group>
-        <div v-else>暂无数据！</div>
-      </mapgis-ui-row>
+      <mapgis-ui-checkbox-group
+        v-if="checkboxOptions.length > 0"
+        @change="onCheckboxGroupChange"
+      >
+        <mapgis-ui-row
+          v-for="(option, index) in checkboxOptions"
+          :key="`model-${index}`"
+        >
+          <mapgis-ui-checkbox :value="option.value">
+            {{ option.label }}
+          </mapgis-ui-checkbox>
+        </mapgis-ui-row>
+      </mapgis-ui-checkbox-group>
+      <div v-else>暂无数据！</div>
       <mapgis-ui-group-tab title="坐标轴"> </mapgis-ui-group-tab>
       <mapgis-ui-row class="axisCopy">
         <mapgis-ui-radio-group v-model="axisCopy">
@@ -99,9 +100,6 @@ export default {
   },
   data() {
     return {
-      // 选中模型
-      model: null,
-
       // 默认坐标轴
       axisCopy: "X",
 
@@ -131,27 +129,44 @@ export default {
         display: "block",
         height: "30px",
         lineHeight: "30px"
-      }
+      },
+      checkboxOptions: [],
+      checked: [],
+      vueIndexs: [],
+      layerIndexs: []
     };
   },
   watch: {
     models: {
       handler: function(layers) {
-        if (layers && layers.length > 0) {
-          this.model = layers[layers.length - 1];
-        } else {
-          this.model = null;
-        }
+        this.checkboxOptions = [];
+        this.vueIndexs = [];
+        this.layerIndexs = [];
+        layers.forEach(layer => {
+          const { title, vueIndex } = layer;
+          let id = vueIndex;
+          let layerIndex = 0;
+          if (id.includes(":")) {
+            const strs = id.split(":");
+            id = strs[0];
+            layerIndex = strs[1];
+          }
+          // 确保vueIndexs和layerIndexs同步保存
+          this.vueIndexs.push(id);
+          this.layerIndexs.push(layerIndex);
+          const obj = { label: title, value: id };
+          this.checkboxOptions.push(obj);
+        });
       },
       deep: true,
       immediate: true
     },
-    model: {
+    checked: {
       deep: true,
       immediate: true,
       handler: function() {
         this.removeDynaCut();
-        this.changeModel();
+        this.changeChecked();
       }
     },
     axis: {
@@ -182,7 +197,7 @@ export default {
       deep: true,
       immediate: true,
       handler: function() {
-        this.getMaxMin();
+        this.changeChecked();
         this.startClipping();
       }
     }
@@ -220,7 +235,7 @@ export default {
           }
         );
       });
-      this.changeModel();
+      this.changeChecked();
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -236,19 +251,47 @@ export default {
       this.stopClipping();
     },
 
-    changeModel() {
-      this.m3dIsReady().then(m3d => {
-        let id = this.model.vueIndex;
-        let layerIndex = 0;
-        if (id.includes(":")) {
-          const strs = id.split(":");
-          id = strs[0];
-          layerIndex = strs[1];
+    onCheckboxGroupChange(val) {
+      this.checked = [...val];
+      this.changeChecked();
+    },
+
+    changeChecked() {
+      this.m3dIsReady().then(m3dSetArray => {
+        if (m3dSetArray && m3dSetArray.length > 0) {
+          const { xmin, ymin, xmax, ymax, height } = this._getM3DSetArrayRange(
+            m3dSetArray
+          );
+          if (m3dSetArray.length == 1) {
+            this.zoomToM3dLayerBySource(m3dSetArray[0]);
+          } else if (m3dSetArray.length > 1) {
+            // 如果多个m3d的最大包围盒长宽大于第一个m3d的长宽的五倍，则提示用户剖切效果可能不好
+            const m1Range = this._getM3DSetArrayRange([m3dSetArray[0]]);
+            const m1Box = this._getM3DSetArrayBox(m1Range);
+            const maxBox = this._getM3DSetArrayBox({
+              xmin,
+              ymin,
+              xmax,
+              ymax,
+              height
+            });
+            if (
+              maxBox.xLength > m1Box.xLength * 5 &&
+              maxBox.yLength > m1Box.yLength * 5
+            ) {
+              this.$message.warning("模型之间的距离太大，剖切效果可能不好");
+            }
+            this.viewer.camera.flyTo({
+              destination: this.Cesium.Rectangle.fromDegrees(
+                xmin,
+                ymin,
+                xmax,
+                ymax
+              )
+            });
+          }
+          this.getMaxMinBySource({ xmin, ymin, xmax, ymax, height });
         }
-        const { source } = m3d;
-        this.zoomToM3dLayerBySource(source[layerIndex]);
-        this.getMaxMin();
-        // this.startClipping();
       });
     },
 
@@ -256,34 +299,33 @@ export default {
      * 判断传入的m3d图层是否加载完毕
      */
     m3dIsReady() {
-      const { vueCesium, vueKey, vueIndex, model, isActive } = this;
+      const {
+        vueCesium,
+        vueKey,
+        vueIndex,
+        checked,
+        vueIndexs,
+        layerIndexs
+      } = this;
       return new Promise((resolve, reject) => {
-        if (model && model.vueIndex) {
-          let id = model.vueIndex;
-          let layerIndex = 0;
-          if (id.includes(":")) {
-            const strs = id.split(":");
-            id = strs[0];
-            layerIndex = strs[1];
-          }
+        if (checked.length > 0) {
           this.$_getM3DByInterval(
             function(m3ds) {
               if (m3ds && m3ds.length > 0) {
-                if (
-                  !m3ds[layerIndex] ||
-                  !m3ds[layerIndex].hasOwnProperty("source") ||
-                  !m3ds[layerIndex].source
-                ) {
-                  reject(null);
-                } else {
-                  resolve(m3ds[layerIndex]);
+                const sources = [];
+                for (let i = 0; i < m3ds.length; i++) {
+                  const { key, source } = m3ds[i];
+                  const index = vueIndexs.indexOf(key);
+                  const layerIndex = layerIndexs[index];
+                  sources.push(source[layerIndex]);
                 }
+                resolve(sources);
               } else {
                 reject(null);
               }
             },
             vueKey,
-            id
+            checked
           );
         } else {
           reject(null);
@@ -358,7 +400,7 @@ export default {
      * 开始分析分析
      */
     startClipping() {
-      this.m3dIsReady().then(m3d => {
+      this.m3dIsReady().then(m3dSetArray => {
         this.clearTimer();
         this.removeDynaCut();
         let { vueCesium, vueKey, vueIndex } = this;
@@ -372,7 +414,7 @@ export default {
 
         dynamicSectionAnalysis =
           dynamicSectionAnalysis ||
-          new this.Cesium.CuttingTool(viewer, m3d.source);
+          new this.Cesium.CuttingTool(viewer, m3dSetArray);
         // 剖切方向
         const direction = this.clippingDirection();
         // 创建剖切对象实例
@@ -434,56 +476,106 @@ export default {
     },
 
     /**
-     * 获取M3DLayer对象
-     * @returns M3DLayer对象
-     */
-    getM3D() {
-      const { viewer } = this;
-      const m3d = new window.CesiumZondy.Layer.M3DLayer({
-        viewer: viewer
-      });
-      return m3d;
-    },
-
-    /**
      * 跳转到模型范围，视角不变。基于source
      * @param source
      */
     zoomToM3dLayerBySource(source) {
-      const m3d = this.getM3D();
-      m3d.zoomToM3dLayer(source);
+      const { boundingSphere } = source;
+      this.viewer.camera.viewBoundingSphere(
+        boundingSphere,
+        new Cesium.HeadingPitchRange(0.0, -0.5, boundingSphere.radius)
+      );
+      this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     },
 
     /**
-     * 获取剖切距离最大最小值
+     * 获取剖切面离包围盒中心点的最大最小值
      */
-    getMaxMin() {
+    _getMaxMinByRange(range) {
+      let m3dBox = this._getM3DSetArrayBox(range);
+      const { xLength, yLength, height } = m3dBox;
       let max = 10000;
       let min = -max;
-      if (!this.model) return;
-      const { range } = this.model;
-      const { xmin, ymin, xmax, ymax, zmin, zmax } = range;
       let length = max - min;
       switch (this.axis) {
         case "X":
-          max = xmax;
-          min = xmin;
+          length = xLength;
           break;
         case "Y":
-          max = ymax;
-          min = ymin;
+          length = yLength;
           break;
         case "Z":
-          max = zmax;
-          min = zmin;
+          length = height;
           break;
         default:
           break;
       }
-      length = (max - min) * 1.5;
       this.distanceCopy = length / 2;
       this.max = length;
       this.min = -length;
+    },
+
+    /**
+     * 获取多个M3D的最大包围盒范围
+     */
+    _getM3DSetArrayRange(m3dSetArray) {
+      let xmin;
+      let ymin;
+      let xmax;
+      let ymax;
+      let height;
+      for (let i = 0; i < m3dSetArray.length; i++) {
+        const m3d = m3dSetArray[i];
+        const northeastCornerCartesian =
+          m3d._root.boundingVolume.northeastCornerCartesian;
+        const southwestCornerCartesian =
+          m3d._root.boundingVolume.southwestCornerCartesian;
+        //这里：东南角和西北角在外包盒子的同一平面上
+        const p1 = this.$_degreeFromCartesian(southwestCornerCartesian); // 西南角
+        const p2 = this.$_degreeFromCartesian(northeastCornerCartesian); // 东北角
+        if (xmin == undefined || p1.longitude < xmin) {
+          xmin = p1.longitude;
+        }
+        if (ymin == undefined || p1.latitude < ymin) {
+          ymin = p1.latitude;
+        }
+        if (xmax == undefined || p2.longitude > xmax) {
+          xmax = p2.longitude;
+        }
+        if (ymax == undefined || p2.latitude > ymax) {
+          ymax = p2.latitude;
+        }
+        mHeight =
+          m3d._root.boundingVolume.maximumHeight -
+          m3d._root.boundingVolume.minimumHeight;
+        if (height == undefined || mHeight > height) {
+          height = mHeight;
+        }
+      }
+      return { xmin, ymin, xmax, ymax, height };
+    },
+
+    /**
+     * 获取多个M3D的最大包围盒(长宽高)
+     */
+    _getM3DSetArrayBox(range) {
+      const { xmin, ymin, xmax, ymax, height } = range;
+      // 西南角
+      const nP1 = Cesium.Cartesian3.fromDegrees(xmin, ymin, 0);
+      // 东北角
+      const nP2 = Cesium.Cartesian3.fromDegrees(xmax, ymax, 0);
+      // 西北角
+      const nP3 = Cesium.Cartesian3.fromDegrees(xmin, ymax, 0);
+      // 东南角
+      const nP4 = Cesium.Cartesian3.fromDegrees(xmax, ymin, 0);
+      //求出平面的长和宽
+      let xLength = Cesium.Cartesian3.distance(nP4, nP1);
+      let yLength = Cesium.Cartesian3.distance(nP3, nP1);
+      return {
+        xLength,
+        yLength,
+        height
+      };
     }
   }
 };
