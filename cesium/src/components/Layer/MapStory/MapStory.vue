@@ -6,24 +6,30 @@
                    @changeColor="$_changeColor"
                    @changeIcon="$_changeIcon"
                    @showFeature="$_showFeature"
+                   @showProject="$_showProject"
+                   @addMapToProject="$_addMapToProject"
                    @addFeature="$_addFeature"
                    @titleChanged="$_titleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
                    @editProject="$_editProject"
                    :dataSource="dataSourceCopy"/>
     <mapgis-3d-draw :infinite="true" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
+    <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
+    <map-collection :key="opt.vueIndex" v-for="(opt) in projectMaps" :options="opt"/>
   </div>
 </template>
 
 <script>
 import projectPanel from "./projectPanel"
+import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService"
 
 export default {
   name: "mapgis-3d-map-story-layer",
   mixins: [mapStoryService],
   components: {
-    "project-panel": projectPanel
+    "project-panel": projectPanel,
+    "map-collection": mapCollection,
   },
   data() {
     return {
@@ -91,6 +97,10 @@ export default {
       this.drawer = drawer;
     },
     $_editProject(index) {
+      if (this.dataSource instanceof Array) {
+        this.$refs.projectPanel.showProjectPanel = false;
+        this.$refs.projectPanel.currentProject = this.projectSet[this.dataSource[index].uuid];
+      }
     },
     $_closeHoverPanel() {
       let vm = this;
@@ -121,8 +131,8 @@ export default {
           window.feature.drawType = "rectangle";
           break;
       }
-      this.$refs.projectPanel.$_addFeatureSet(window.feature);
-      this.$refs.projectPanel.showEditPanel = false;
+      this.$refs.projectPanel.$refs.projectP.$_addFeatureSet(window.feature);
+      this.$refs.projectPanel.$refs.projectP.showEditPanel = false;
     },
     $_titleChanged(title) {
       if (window.feature) {
@@ -169,6 +179,28 @@ export default {
         entity.billboard.image = img;
       });
     },
+    $_showProject(project) {
+      const {show, uuid} = project;
+      let newProject = this.projectSet[uuid];
+      const {features} = newProject;
+      for (let i = 0; i < features.length; i++) {
+        let entity = this.viewer.entities.getById(features[i].id);
+        const {layerStyle} = features[i]
+        if (show) {
+          if (layerStyle.hasOwnProperty("show") && layerStyle.show !== false) {
+            entity.show = show;
+            this.$_getLayer(i, newProject, function (layer) {
+              layer.show = show;
+            });
+          }
+        } else {
+          entity.show = show;
+          this.$_getLayer(i, newProject, function (layer) {
+            layer.show = show;
+          });
+        }
+      }
+    },
     $_showFeature(id, flag, index, project) {
       if (id) {
         let entity = this.viewer.entities.getById(id);
@@ -178,19 +210,36 @@ export default {
         layer.show = flag;
       });
     },
+    $_addMapToProject(type, map) {
+      map.vueKey = this.vueKey;
+      map.vueIndex = new Date().getTime();
+      let index, addMap = true;
+      for (let i = 0; i < this.projectMaps.length; i++) {
+        if (this.projectMaps[i].vueKey === map.vueKey && this.projectMaps[i].vueIndex === map.vueIndex) {
+          index = i;
+          addMap = false;
+          break;
+        }
+      }
+      if (addMap) {
+        this.projectMaps.push(map);
+      } else {
+        this.$emit(this.projectMaps, index, map);
+      }
+    },
     $_addFeature(feature) {
       let vm = this;
       this.currentFeatureType = feature.type;
       switch (feature.type) {
         case "point":
           this.$_addPoint(function (position, cartesian3Position) {
-            if (!vm.$refs.projectPanel.showEditPanel) {
+            if (!vm.$refs.projectPanel.$refs.projectP.showEditPanel) {
               feature.feature.baseUrl.geometry = cartesian3Position;
               feature.feature.camera.longLatPosition = [position.lng, position.lat, position.alt];
               feature.feature.camera.cartesian3Position = cartesian3Position;
               window.feature = feature.feature;
               vm.$_setCamera();
-              vm.$refs.projectPanel.showEditPanel = true;
+              vm.$refs.projectPanel.$refs.projectP.showEditPanel = true;
             }
           });
           break;

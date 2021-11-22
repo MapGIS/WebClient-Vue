@@ -34,6 +34,7 @@
         :wmtsLayer="optionsCopy.layer"
         :tileMatrixSet="optionsCopy.tileMatrixSet"
         :tilingScheme="optionsCopy.tilingScheme"
+        :format="optionsCopy.format"
         :vueKey="optionsCopy.vueKey"
         :vueIndex="optionsCopy.vueIndex"
     />

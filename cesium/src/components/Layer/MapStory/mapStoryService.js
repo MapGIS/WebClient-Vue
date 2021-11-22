@@ -1,5 +1,6 @@
 import * as turf from "@turf/turf"
 import Base64IconsKeyValue from "../../../../../ui/src/components/iconfont/Base64IconsKeyValue"
+import {MRFS} from "@mapgis/webclient-es6-service";
 
 export default {
     inject: ["viewer", "Cesium"],
@@ -17,6 +18,9 @@ export default {
     },
     data() {
         return {
+            projectSet: {},
+            optArr: [],
+            projectMaps: []
         }
     },
     methods: {
@@ -94,9 +98,55 @@ export default {
         },
         $_initManager() {
             let mapStoryManager = window.vueCesium.MapStoryManager.findSource(this.vueKey, this.vueIndex);
+            let vm = this;
             if (!mapStoryManager) {
                 let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
                 window.vueCesium.MapStoryManager.addSource(this.vueKey, this.vueIndex, handler);
+            }
+            if (this.dataSource instanceof Array) {
+                for (let i = 0; i < this.dataSource.length; i++) {
+                    MRFS.FeatureService.get(this.dataSource[i].url, function (result) {
+                        if (typeof result === "string") {
+                            result = JSON.parse(result);
+                        }
+                        vm.projectSet[vm.dataSource[i].uuid] = result;
+                        const {features, show, map} = result;
+                        if (show === false) {
+                            return;
+                        }
+                        if(map){
+                            vm.projectMaps.push(map);
+                        }
+                        for (let i = 0; i < features.length; i++) {
+                            const {map} = features[i];
+                            const {geometry} = features[i].baseUrl;
+                            const {x, y, z} = geometry;
+                            if (map) {
+                                map.id = features[i].id;
+                                vm.optArr.push(map);
+                            }
+                            if (x && y && z) {
+                                let img = document.createElement("img");
+                                let imgUrl = features[i].layerStyle.billboard.image;
+                                if (typeof imgUrl === 'number') {
+                                    imgUrl = Base64IconsKeyValue[imgUrl].value;
+                                }
+                                img.src = imgUrl;
+                                img.onload = function () {
+                                    vm.viewer.entities.add({
+                                        id: features[i].id,
+                                        position: new Cesium.Cartesian3(x, y, z),
+                                        billboard: {
+                                            image: img
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }, function (error) {
+                        console.error(error)
+                    });
+                }
             }
         },
         $_addPoint(callBack) {

@@ -1,19 +1,27 @@
 <template>
   <div>
     <mapgis-ui-story-panel-large
+        @closePanel="$_closePanel"
+        @flyTo="$_flyTo"
+        :showArrow="showArrow"
         :feature="storyFeature"
+        :height="panelHeight"
+        v-show="showPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
+    <map-collection v-if="projectMap" :options="projectMap"/>
   </div>
 </template>
 
 <script>
 import {MRFS} from "@mapgis/webclient-es6-service"
 import mapCollection from "./mapCollection";
+import mapStoryService from "./mapStoryService";
 import Base64IconsKeyValue from "@mapgis/webclient-vue-ui/src/components/iconfont/Base64IconsKeyValue";
 export default {
   name: "mapgis-3d-preview-map-story-layer",
   inject: ["Cesium", "viewer"],
+  mixins: [mapStoryService],
   components: {
     "map-collection": mapCollection,
   },
@@ -27,12 +35,20 @@ export default {
       dataSourceCopy: undefined,
       storyFeature: [],
       optArr: [],
+      panelHeight: undefined,
+      showArrow: true,
+      showPanel: true,
+      projectMap: undefined
     }
   },
   mounted() {
+    this.panelHeight = this.$_getContainerHeight();
     this.$_init();
   },
   methods: {
+    $_closePanel() {
+      this.showPanel = false;
+    },
     $_init() {
       let vm = this;
       if(typeof this.dataSource === "string"){
@@ -40,7 +56,8 @@ export default {
           if (typeof result === "string") {
             result = JSON.parse(result);
           }
-          const {features} = result;
+          const {features, map} = result;
+          vm.projectMap = map;
           if (features && features instanceof Array) {
             vm.storyFeature = features;
             for (let i = 0; i < features.length; i++) {

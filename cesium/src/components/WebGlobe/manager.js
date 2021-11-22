@@ -100,6 +100,8 @@ export function initVueCesium() {
     window.vueCesium.DataFlowManager || new DataFlowManager();
   window.vueCesium.SettingToolManager =
     window.vueCesium.SettingToolManager || new SettingToolManager();
+  window.vueCesium.MapStoryManager =
+    window.vueCesium.MapStoryManager || new MapStoryManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
   window.vueCesium.getViewer = function(vueKey) {
@@ -307,3 +309,4 @@ export class DynamicLightLineManager extends BaseManager {}
 export class SettingToolManager extends BaseManager {}
 export class SearchLightManager extends BaseManager {}
 export class Tileset3DManager extends BaseManager {}
+export class MapStoryManager extends BaseManager {}

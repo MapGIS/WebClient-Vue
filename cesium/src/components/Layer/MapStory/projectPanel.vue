@@ -1,6 +1,9 @@
 <template>
   <div>
     <mapgis-ui-project-panel
+        ref="projectP"
+        @addMap="$_addMap"
+        @deleteProject="$_deleteProject"
         @editProject="$_editProject"
         @addFeature="$_addFeature"
         @closeHoverPanel="$_closeHoverPanel"
@@ -8,6 +11,8 @@
         @deleteFeature="$_deleteFeature"
         @changeIcon="$_changeIcon"
         @showFeature="$_showFeature"
+        @showProject="$_showProject"
+        @featurePreview="$_featurePreview"
         :height="panelHeight"
         :dataSource="dataSource"
         v-show="showProjectPanel"
@@ -23,8 +28,11 @@
         :height="panelHeight"
     />
     <mapgis-ui-project-edit
+        @addMapToProject="$_addMapToProject"
         @addMap="$_addMap"
         @getCamera="$_getCamera"
+        @deleteProject="$_deleteProject"
+        @addFeature="$_addFeature"
         @deleteFeature="$_deleteFeature"
         @changeIcon="$_changeIcon"
         @textChanged="$_textChanged"
@@ -73,6 +81,7 @@ export default {
       showProjectPanel: true,
       showPlay: true,
       showArrow: true,
+      projectSet: {}
     }
   },
   watch: {
@@ -84,7 +93,7 @@ export default {
   },
   mounted() {
     this.projects = this.dataSource;
-    this.panelHeight = this.$_getContainerHeight() + "px";
+    this.panelHeight = this.$_getContainerHeight();
   },
   methods: {
     $_textChanged(text) {
@@ -109,47 +118,7 @@ export default {
       this.showLargePanel = false;
     },
     $_editProject(index) {
-      let vm = this;
-      if (this.projects[index].url) {
-        MRFS.FeatureService.get(this.projects[index].url, function (result) {
-          if (typeof result === "string") {
-            result = JSON.parse(result);
-          }
-          const {features} = result;
-          if (features && features instanceof Array) {
-            vm.showProjectPanel = false;
-            vm.currentProject = result;
-            for (let i = 0; i < features.length; i++) {
-              const {map} = features[i];
-              const {geometry} = features[i].baseUrl;
-              const {x, y, z} = geometry;
-              if (map) {
-                map.id = features[i].id;
-                vm.optArr.push(map);
-              }
-              if (x && y && z) {
-                let img = document.createElement("img");
-                let imgUrl = features[i].layerStyle.billboard.image;
-                if (typeof imgUrl === 'number') {
-                  imgUrl = Base64IconsKeyValue[imgUrl].value;
-                }
-                img.src = imgUrl;
-                img.onload = function () {
-                  vm.viewer.entities.add({
-                    id: features[i].id,
-                    position: new Cesium.Cartesian3(x, y, z),
-                    billboard: {
-                      image: img
-                    }
-                  });
-                }
-              }
-            }
-          }
-        }, function (error) {
-          console.error(error);
-        });
-      }
+      this.$emit("editProject", index);
     },
     $_addFeature(feature) {
       this.$emit("addFeature", feature);
@@ -163,6 +132,51 @@ export default {
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
+    $_deleteProject(project) {
+      for (let i = 0; i < this.projects.length; i++) {
+        if (this.projects[i].uuid === project.uuid) {
+          this.projects.splice(i, 1);
+        }
+      }
+      if (!project.features) {
+        if (this.projectSet.hasOwnProperty(project.uuid)) {
+          project = this.projectSet[project.uuid];
+        } else {
+          return;
+        }
+      }
+      for (let i = 0; i < project.features.length; i++) {
+        this.viewer.entities.removeById(project.features[i].id);
+        const {map} = project.features[i];
+        if (map) {
+          let layer;
+          const {vueKey, vueIndex, type} = map;
+          if (vueKey && vueIndex && type) {
+            switch (type) {
+              case "WMTS":
+                layer = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex).source;
+                break;
+              case "WMS":
+                layer = window.vueCesium.OGCWMSManager.findSource(vueKey, vueIndex).source;
+                break;
+              case "TILE":
+                layer = window.vueCesium.IgsTilecLayerManager.findSource(vueKey, vueIndex).source;
+                break;
+              case "DYNAMIC":
+                layer = window.vueCesium.IgsserverManager.findSource(vueKey, vueIndex).source;
+                break;
+              case "DOC":
+                layer = window.vueCesium.IgsDocLayerManager.findSource(vueKey, vueIndex).source;
+                break;
+            }
+            this.viewer.imageryLayers.remove(layer);
+          }
+        }
+      }
+    },
+    $_addMapToProject(type, map, project) {
+      this.$emit("addMapToProject", type, map, project);
+    },
     $_addMap(type, map, id) {
       window.map = map;
       let addMap = true, index;
@@ -175,7 +189,7 @@ export default {
       }
       if (addMap) {
         this.optArr.push(map);
-      }else {
+      } else {
         this.$set(this.optArr, index, map);
       }
     },
@@ -190,6 +204,9 @@ export default {
     },
     $_showFeature(id, flag, index, project) {
       this.$emit("showFeature", id, flag, index, project);
+    },
+    $_showProject(project) {
+      this.$emit("showProject", project);
     },
     $_titleChanged(title) {
       for (let i = 0; i < this.projects.length; i++) {
