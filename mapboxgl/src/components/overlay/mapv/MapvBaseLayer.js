@@ -1,9 +1,11 @@
 import {
   baiduMapLayer,
   DataSet,
-  utilDataRangeIntensity as Intensity
+  utilDataRangeIntensity as Intensity,
 } from "mapv";
 import mapboxgl from "@mapgis/mapbox-gl";
+
+import Supercluster from "./SuperCluster";
 
 var BaseLayer = baiduMapLayer ? baiduMapLayer.__proto__ : Function;
 
@@ -155,7 +157,7 @@ export class MapvBaseLayer extends BaseLayer {
     this.context = self.options.context || "2d";
 
     if (self.options.zIndex) {
-      if (this.canvasLayer && this.canvasLayer.setZIndex !== undefined){
+      if (this.canvasLayer && this.canvasLayer.setZIndex !== undefined) {
         this.canvasLayer && this.canvasLayer.setZIndex(self.options.zIndex);
       }
     }
@@ -174,7 +176,7 @@ export class MapvBaseLayer extends BaseLayer {
       var data = dataSet.get();
       data = dataSet.transferCoordinate(
         data,
-        function(coordinates) {
+        function (coordinates) {
           if (
             coordinates[0] < -180 ||
             coordinates[0] > 180 ||
@@ -195,6 +197,65 @@ export class MapvBaseLayer extends BaseLayer {
       );
       dataSet._set(data);
     }
+  }
+
+  dataOptions() {
+    const self = this;
+    const map = this.map;
+    return {
+      transferCoordinate: function (coordinate) {
+        var point = map.project(
+          new mapboxgl.LngLat(coordinate[0], coordinate[1])
+        );
+        return [point.x, point.y];
+      },
+    };
+  }
+
+  changeCluster() {
+    const self = this;
+    var zoom = this.getZoom();
+    let dataGetOptions = this.dataOptions();
+    var bounds = this.map.getBounds();
+    var ne = bounds.getNorthEast();
+    var sw = bounds.getSouthWest();
+    var clusterData = this.supercluster.getClusters(
+      [sw.lng, sw.lat, ne.lng, ne.lat],
+      zoom
+    );
+    this.pointCountMax = this.supercluster.trees[zoom].max;
+    this.pointCountMin = this.supercluster.trees[zoom].min;
+    var intensity = {};
+    var color = null;
+    var size = null;
+    if (this.pointCountMax === this.pointCountMin) {
+      color = this.options.fillStyle;
+      size = this.options.minSize || 8;
+    } else {
+      intensity = new Intensity({
+        min: this.pointCountMin,
+        max: this.pointCountMax,
+        minSize: this.options.minSize || 8,
+        maxSize: this.options.maxSize || 30,
+        gradient: this.options.gradient,
+      });
+    }
+    for (var i = 0; i < clusterData.length; i++) {
+      var item = clusterData[i];
+      if (item.properties && item.properties.cluster_id) {
+        clusterData[i].size =
+          size || intensity.getSize(item.properties.point_count);
+        clusterData[i].fillStyle =
+          color || intensity.getColor(item.properties.point_count);
+      } else {
+        clusterData[i].size = self.options.size;
+      }
+    }
+
+    this.clusterDataSet.set(clusterData);
+    this.transferToMercator(this.clusterDataSet);
+    let data = self.clusterDataSet.get(dataGetOptions);
+    return data;
   }
 
   _canvasUpdate(time) {
@@ -243,17 +304,10 @@ export class MapvBaseLayer extends BaseLayer {
       return;
     }
 
-    var dataGetOptions = {
-      transferCoordinate: function(coordinate) {
-        var point = map.project(
-          new mapboxgl.LngLat(coordinate[0], coordinate[1])
-        );
-        return [point.x, point.y];
-      }
-    };
+    var dataGetOptions = this.dataOptions();
 
     if (time !== undefined) {
-      dataGetOptions.filter = function(item) {
+      dataGetOptions.filter = function (item) {
         var trails = animationOptions.trails || 10;
         if (time && item.time > time - trails && item.time < time) {
           return true;
@@ -268,45 +322,7 @@ export class MapvBaseLayer extends BaseLayer {
       this.options.draw === "cluster" &&
       (!this.options.maxClusterZoom || this.options.maxClusterZoom >= zoom)
     ) {
-      var bounds = this.map.getBounds();
-      var ne = bounds.getNorthEast();
-      var sw = bounds.getSouthWest();
-      var clusterData = this.supercluster.getClusters(
-        [sw.lng, sw.lat, ne.lng, ne.lat],
-        zoom
-      );
-      this.pointCountMax = this.supercluster.trees[zoom].max;
-      this.pointCountMin = this.supercluster.trees[zoom].min;
-      var intensity = {};
-      var color = null;
-      var size = null;
-      if (this.pointCountMax === this.pointCountMin) {
-        color = this.options.fillStyle;
-        size = this.options.minSize || 8;
-      } else {
-        intensity = new Intensity({
-          min: this.pointCountMin,
-          max: this.pointCountMax,
-          minSize: this.options.minSize || 8,
-          maxSize: this.options.maxSize || 30,
-          gradient: this.options.gradient
-        });
-      }
-      for (var i = 0; i < clusterData.length; i++) {
-        var item = clusterData[i];
-        if (item.properties && item.properties.cluster_id) {
-          clusterData[i].size =
-            size || intensity.getSize(item.properties.point_count);
-          clusterData[i].fillStyle =
-            color || intensity.getColor(item.properties.point_count);
-        } else {
-          clusterData[i].size = self.options.size;
-        }
-      }
-
-      this.clusterDataSet.set(clusterData);
-      this.transferToMercator(this.clusterDataSet);
-      data = self.clusterDataSet.get(dataGetOptions);
+      data = this.changeCluster();
     } else {
       data = self.dataSet.get(dataGetOptions);
     }
@@ -332,11 +348,22 @@ export class MapvBaseLayer extends BaseLayer {
       _data = _data.get();
     }
     if (_data != undefined) {
-      this.dataSet.set(_data);
+      let zoom = this.getZoom();
+      if (
+        this.options.draw === "cluster" &&
+        (!this.options.maxClusterZoom || this.options.maxClusterZoom >= zoom)
+      ) {
+        this.dataSet = data;
+        this.refreshCluster(this.options);
+        _data = this.changeCluster();
+        this.dataSet.set(_data);
+      } else {
+        this.dataSet.set(_data);
+      }
     }
 
     super.update({
-      options: options
+      options: options,
     });
   }
 
@@ -347,7 +374,7 @@ export class MapvBaseLayer extends BaseLayer {
     }
     this.dataSet.add(_data);
     this.update({
-      options: options
+      options: options,
     });
   }
 
@@ -360,22 +387,22 @@ export class MapvBaseLayer extends BaseLayer {
       return;
     }
     var newData = this.dataSet.get({
-      filter: function(data) {
+      filter: function (data) {
         return filter != null && typeof filter === "function"
           ? !filter(data)
           : true;
-      }
+      },
     });
     this.dataSet.set(newData);
     this.update({
-      options: null
+      options: null,
     });
   }
 
   clearData() {
     this.dataSet && this.dataSet.clear();
     this.update({
-      options: null
+      options: null,
     });
   }
 

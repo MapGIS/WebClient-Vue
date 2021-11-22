@@ -1,6 +1,6 @@
 import { MapvBaseLayer } from "./MapvBaseLayer";
 
-var idIndex = 0;
+let idIndex = 0;
 
 /**
  * @author 基础平台/创新中心 潘卓然 ParnDeedlit

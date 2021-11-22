@@ -1,6 +1,7 @@
 import mapboxgl from "@mapgis/mapbox-gl";
 import { MapvBaseLayer } from "./MapvBaseLayer";
-import debounce from "lodash/debounce";
+
+let idIndex = 0;
 
 /**
  * @origin author kyle / http://nikai.us/
@@ -9,11 +10,13 @@ import debounce from "lodash/debounce";
  * @classdesc 基于mapboxgl的Layer对象进行的拓展
  * @param map - {Object} 传入的mapboxgl的地图对象
  * @param dataset - {MapvDataSet} 传入的mapv的属性。 <br>
- * @param mapvoption - {MapvOption} 可选参数。<br>
- * @param {Boolean} [MapvOption.postRender=false] 是否实时渲染
+ * @param mapVOptions - {MapvOption} 可选参数。<br>
+ * @param mapVOptions - mapboxgl的渲染模式
+ * @param {Boolean} [mapVOptions.postRender=false] 是否实时渲染
  * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
  * @example 
  * var options = {
+      postRender: false,
       size: 13,
       gradient: {
         0.25: "rgb(0,0,255)",
@@ -89,6 +92,7 @@ export class MapvLayer {
 
     if (this.postRender) {
       map.on("zoom", this.innerZoom);
+      map.on("move", this.innerZoom);
     }
     map.on("resize", this.innerResize);
 
@@ -112,6 +116,7 @@ export class MapvLayer {
     map.off("zoomend", this.innnerZoomEnd);
     if (this.postRender) {
       map.off("zoom", this.innerZoom);
+      map.off("move", this.innerZoom);
     }
 
     map.off("rotatestart", this.innnerRotateStart);
@@ -161,7 +166,17 @@ export class MapvLayer {
   }
 
   removeEvent() {
-    this.mapContainer.removeChild(this.canvas);
+    if (this.mapContainer) {
+      let findChild = false;
+      this.mapContainer.children.forEach((c) => {
+        if (c.id == this.canvas.id) {
+          findChild = true;
+        }
+      });
+      if (findChild) {
+        this.mapContainer.removeChild(this.canvas);
+      }
+    }
   }
   //-----------------------------------Event Methods----------------------------------------
 
@@ -234,7 +249,7 @@ export class MapvLayer {
   _createCanvas() {
     var canvas = document.createElement("canvas");
     var devicePixelRatio = this.devicePixelRatio;
-    canvas.id = this.layerID;
+    canvas.id = this.layerID || "mapv" + idIndex++;
     canvas.style.position = "absolute";
     canvas.style.top = "0px";
     canvas.style.left = "0px";

@@ -1,20 +1,31 @@
-import MapgisWebScene from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
-import Mapgis3dArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
+import MapgisMapvLayer from "../../mapboxgl/src/components/overlay/MapvLayer.vue";
+import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
+import MapgisNavigationControl from "../../mapboxgl/src/components/UI/controls/NavigationControl";
 import axios from "axios";
 
 export default {
-  title: "三维/可视化/MapV-聚类",
+  title: "二维/可视化/MapV-聚类",
+  component: MapgisMapvLayer,
+  argTypes: {
+    options: {},
+  },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebScene, Mapgis3dArcgisTileLayer },
+  components: { MapgisWebMap, MapgisMapvLayer, MapgisNavigationControl },
+  data() {
+    return {
+      mapStyle: "mapbox://styles/mapbox/dark-v9",
+      accessToken:
+        "pk.eyJ1IjoicGFybmRlZWRsaXQiLCJhIjoiY2o1MjBtYTRuMDhpaTMzbXhpdjd3YzhjdCJ9.sCoubaHF9-nhGTA-sgz0sA",
+      center: [114.321317, 30.398428],
+      zoom: 3,
+      geojson: {},
+    };
+  },
   mounted() {
     this.initData();
-  },
-  data() {
-    return{
-    }
   },
   methods: {
     async initData() {
@@ -32,24 +43,17 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `
-      <mapgis-web-scene :style="{height: '95vh'}">
-        <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
-        <mapgis-3d-mapv-layer :options="options" :geojson="geojson"></mapgis-3d-mapv-layer>
-      </mapgis-web-scene>
+      <mapgis-web-map :center="center" :accessToken="accessToken" :zoom="zoom" :map-style="mapStyle" style="height:95vh">
+        <mapgis-navigation-control position="top-right"/>
+        <mapgis-mapv-layer :options="options" :geojson="geojson"></mapgis-mapv-layer>
+      </mapgis-web-map>
     `,
 });
 
 export const 聚类 = Template.bind({});
 聚类.args = {
-  baseUrl:
-    "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
-  layerStyle: {
-    visible: true,
-    opacity: 1,
-    zIndex: 2,
-  },
-  tilingScheme: "EPSG:4326",
   options: {
+    postRender: true,
     // shadowColor: 'rgba(255, 250, 50, 1)',
     // shadowBlur: 10,
     // 非聚合点的颜色和大小，未设置icon或icon获取失败时使用
@@ -84,5 +88,4 @@ export const 聚类 = Template.bind({});
     gradient: { 0: "blue", 0.5: "yellow", 1.0: "rgb(255,0,0)" }, // 聚合图标渐变色
     draw: "cluster",
   },
-  geojson: {},
 };
