@@ -421,17 +421,26 @@ export class MapvLayer {
     canvas.style.position = "absolute";
     canvas.style.top = "0px";
     canvas.style.left = "0px";
-    canvas.width =
-      parseInt(this.map.canvas.width) ||
-      parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
-    canvas.height =
-      parseInt(this.map.canvas.height) ||
-      parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
     canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
     canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
-    var devicePixelRatio = this.devicePixelRatio;
-    if (this.mapVOptions.context == "2d") {
-      // canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+    if (window.Cesium.VERSION > 1.59) {
+      canvas.width =
+        parseInt(this.map.canvas.width) ||
+        parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
+      canvas.height =
+        parseInt(this.map.canvas.height) ||
+        parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
+    } else {
+      canvas.width =
+        parseInt(this.map.canvas.width) ||
+        parseInt(this.map.container.offsetWidth);
+      canvas.height =
+        parseInt(this.map.canvas.height) ||
+        parseInt(this.map.container.offsetHeight);
+      var devicePixelRatio = this.devicePixelRatio;
+      if (this.mapVOptions.context == "2d") {
+        canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+      }
     }
   }
 
