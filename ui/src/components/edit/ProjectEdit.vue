@@ -1,5 +1,5 @@
 <template>
-  <div @click="$_clickPanel" class="mapgis-ui-project-edit-panel" :style="{height: height}">
+  <div @click="$_clickPanel" class="mapgis-ui-project-edit-panel" :style="{transform: 'scale('+panelScale+')'}">
     <div v-show="!editFeature">
       <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
         <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
@@ -61,6 +61,10 @@
             @editFeature="$_editFeature"
             :features="projectCopy.features"/>
       </mapgis-ui-row>
+      <mapgis-ui-row class="mapgis-ui-project-edit-split"></mapgis-ui-row>
+      <mapgis-ui-row style="margin-top: 30px">
+        <mapgis-ui-map-outline :map="projectCopy.map" @addMap="$_addMapToProject" title="附加地图" placeholder="请输入地图Url"/>
+      </mapgis-ui-row>
     </div>
     <div v-show="editFeature">
       <mapgis-ui-feature-edit
@@ -85,6 +89,7 @@ export default {
   },
   data() {
     return {
+      panelScale: 1,
       currentFeature: undefined,
       editFeature: false,
       editTitle: false,
@@ -116,14 +121,20 @@ export default {
       }
     },
     height: {
-      type: String,
-      default: "900px"
+      type: Number,
+      default: 900
     }
   },
   watch: {
     project: {
       handler: function () {
         this.projectCopy = this.project;
+      },
+      deep: true
+    },
+    height: {
+      handler: function () {
+        this.panelScale = this.height / 900;
       },
       deep: true
     },
@@ -165,6 +176,9 @@ export default {
     $_addMap(type, map, id) {
       this.$emit("addMap", type, map, id);
     },
+    $_addMapToProject(type, map) {
+      this.$emit("addMapToProject", type, map, this.projectCopy);
+    },
     $_changeColor(color) {
       this.$emit("changeColor", color, this.currentFeature.id, this.currentFeature.drawType);
     },
@@ -178,7 +192,7 @@ export default {
       this.$emit("projectPreview");
     },
     $_deleteProject() {
-      this.$emit("deleteProject");
+      this.$emit("deleteProject", this.projectCopy);
       this.$_back();
     },
     $_titleChange() {
@@ -211,14 +225,15 @@ export default {
           "properties": {}
         },
         "camera": {
-          "type": "cartesian",
-          "latitude": 0,
-          "longitude": 0,
-          "height": 0,
           "heading": 0,
           "pitch": 0,
           "roll": 0,
-          "longLatPosition": [0, 0, 0]
+          "longLatPosition": [0, 0, 0],
+          "positionCartographic": {
+            "longitude": 0,
+            "latitude": 0,
+            "height": 0,
+          }
         }
       }
     },
@@ -274,7 +289,9 @@ export default {
   top: 0;
   left: 0;
   width: 400px;
+  height: 900px;
   background: rgb(32, 33, 36);
+  transform-origin: top left;
 }
 
 .mapgis-ui-project-edit-top-left {

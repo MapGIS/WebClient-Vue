@@ -13,7 +13,6 @@
       <img style="height: 100%" :src="currentImgUrl" alt="">
     </div>
     <div v-show="currentImgUrl" class="mapgis-ui-choose-picture-carousel">
-      <p style="color: white">{{currenImgIndex}}</p>
       <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
            :style="{marginRight: index && index % 3 === 0 ? 0 : '13px'}" :key="index" v-for="(imgUrl,index) in imgUrls"
            class="mapgis-ui-choose-picture-img" :src="imgUrl" alt="">
@@ -105,8 +104,6 @@ export default {
       let vm = this;
       this.$_chooseImg(function (url) {
         vm.currentImgUrl = url;
-        console.log("vm.currenImgIndex",vm.currenImgIndex)
-
         vm.$set(vm.imgUrls, vm.currenImgIndex, url);
       });
     },
@@ -155,6 +152,7 @@ export default {
   border-radius: 4px;
   margin: 20px auto;
   overflow: hidden;
+  text-align: center;
 }
 
 .mapgis-ui-choose-picture-carousel {

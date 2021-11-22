@@ -26,7 +26,7 @@
         <mapgis-ui-color-outline @changeColor="$_changeColor" title="填充颜色"/>
       </mapgis-ui-row>
       <mapgis-ui-row>
-        <mapgis-ui-map-outline @addMap="$_addMap" title="附加地图" placeholder="请输入地图Url"/>
+        <mapgis-ui-map-outline :map="featureCopy.map" @addMap="$_addMap" title="附加地图" placeholder="请输入地图Url"/>
       </mapgis-ui-row>
       <mapgis-ui-row class="mapgis-ui-feature-edit-panel-camera">
         <mapgis-ui-col :span="16">
@@ -64,7 +64,7 @@
         <mapgis-ui-input-outline v-model="featureCopy.camera.positionCartographic.height" title="高度"
                                  placeholder="请输入高度"/>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera" style="text-align: center;">
         <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-ui-feature-edit-reset-camera">获取当前视角
         </mapgis-ui-button>
       </mapgis-ui-row>
@@ -77,6 +77,10 @@ import E from 'wangeditor-antd'
 
 export default {
   name: "mapgis-ui-feature-edit",
+  model: {
+    prop: "feature",
+    event: "change"
+  },
   data() {
     return {
       featureCopy: undefined,
@@ -97,13 +101,18 @@ export default {
     feature: {
       handler: function () {
         this.featureCopy = this.feature;
-        console.log("-----featureCopy", this.featureCopy)
         this.$nextTick(function () {
           this.$_addEditor();
         });
       },
       deep: true
     },
+    featureCopy: {
+      handler: function () {
+        this.$emit("change", this.featureCopy);
+      },
+      deep: true
+    }
   },
   created() {
     this.featureCopy = this.feature;
@@ -152,7 +161,7 @@ export default {
           map.vueIndex = vueIndex;
         }
       }
-      this.$emit("addMap", "WMS", map, this.featureCopy.id);
+      this.$emit("addMap", type, map, this.featureCopy.id);
     },
     $_changeColor(color) {
       this.$emit("changeColor", color);
@@ -176,6 +185,7 @@ export default {
   height: 836px;
   overflow: hidden;
   overflow-y: scroll;
+  padding-bottom: 20px;
 }
 
 .mapgis-ui-feature-edit-panel-head {

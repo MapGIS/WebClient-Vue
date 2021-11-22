@@ -1,5 +1,6 @@
 <template>
-  <div v-if="currentFeature" class="mapgis-ui-story-panel-large" :style="{height: height}">
+  <div v-if="currentFeature" class="mapgis-ui-story-panel-large"
+       :style="{transform: 'scale('+panelScale+')'}">
     <img v-if="showFullImg" class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
     <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
                         :icon-style="iconStyle"
@@ -25,7 +26,7 @@
       <mapgis-ui-base64-icon width="24px" height="24px" type="fullScreen"/>
     </div>
     <div @click="$_flyTo" class="mapgis-ui-story-panel-large-fly">
-      <mapgis-ui-base64-icon width="28px" height="28px" type="flyTo"/>
+      <mapgis-ui-base64-icon style="display: block;margin: auto" width="28px" height="28px" type="flyTo"/>
     </div>
     <mapgis-ui-svg-icon @click="$_close" :icon-style="iconStyle" :container-style="containerStyle" type="close"/>
     <div class="mapgis-ui-story-panel-large-title">
@@ -34,7 +35,8 @@
     <div class="mapgis-ui-story-panel-large-content" :id="storyContentId">
     </div>
     <div class="mapgis-ui-story-panel-large-bottom">
-      <mapgis-ui-base64-icon v-show="!isPlay && showPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="play"/>
+      <mapgis-ui-base64-icon v-show="!isPlay && showPlay" @click="$_play" class="mapgis-ui-story-panel-large-play"
+                             type="play"/>
       <mapgis-ui-base64-icon v-show="isPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="pause"/>
       <mapgis-ui-iconfont v-show="!isPlay && showArrow" @click="$_prevFeature" style="width: 20px;cursor: pointer"
                           type="mapgis-left-circle"/>
@@ -58,8 +60,8 @@ export default {
       }
     },
     height: {
-      type: String,
-      default: "900px"
+      type: Number,
+      default: 900
     },
     showPlay: {
       type: Boolean,
@@ -72,6 +74,7 @@ export default {
   },
   data() {
     return {
+      panelScale: 1,
       interval: undefined,
       isPlay: false,
       storyContentId: "storyContentId" + parseInt(String(Math.random() * 1000000000)),
@@ -89,9 +92,10 @@ export default {
         right: "14px",
         width: "40px",
         height: "40px",
-        lineHeight: "51px",
+        lineHeight: "54px",
         borderRadius: "100%",
-        background: "rgb(111,108,107)"
+        background: "rgb(111,108,107)",
+        textAlign: "center"
       },
       iconStyle: {
         opacity: 1
@@ -107,6 +111,11 @@ export default {
         });
       },
       deep: true
+    },
+    height: {
+      handler: function () {
+        this.panelScale = this.height / 900;
+      }
     }
   },
   created() {
@@ -128,12 +137,14 @@ export default {
         vm.currentFeature = vm.featureCopy[vm.currentFeatureIndex - 1];
         vm.$_init();
         vm.$_flyTo();
+        vm.$_setContent();
         this.interval = setInterval(function () {
           if (vm.currentFeatureIndex < vm.featureCopy.length) {
             vm.currentFeatureIndex++;
             vm.currentFeature = vm.featureCopy[vm.currentFeatureIndex - 1];
             vm.$_init();
             vm.$_flyTo();
+            vm.$_setContent();
           } else {
             vm.isPlay = false;
             clearInterval(vm.interval);
@@ -169,6 +180,7 @@ export default {
         this.currentFeature = this.featureCopy[this.currentFeatureIndex - 1];
         this.$_init();
         this.$_flyTo();
+        this.$_setContent();
       }
     },
     $_nextFeature() {
@@ -177,6 +189,7 @@ export default {
         this.currentFeature = this.featureCopy[this.currentFeatureIndex - 1];
         this.$_init();
         this.$_flyTo();
+        this.$_setContent();
       }
     },
     $_close() {
@@ -210,6 +223,7 @@ export default {
   width: 435px;
   height: 900px;
   background: white;
+  transform-origin: top right;
 }
 
 .mapgis-ui-story-panel-large-carousel {

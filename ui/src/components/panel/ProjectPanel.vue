@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :style="{height: height}" @click="$_click" class="mapgis-ui-project-panel">
+    <div :style="{transform: 'scale('+panelScale+')'}" @click="$_click" class="mapgis-ui-project-panel">
       <div v-show="!addProject">
         <mapgis-ui-row>
           <mapgis-ui-col span="14">
@@ -23,6 +23,7 @@
       </div>
       <div v-if="addProject">
         <mapgis-ui-project-edit
+            @addMap="$_addMap"
             @getCamera="$_getCamera"
             @deleteFeature="$_deleteFeature"
             @changeIcon="$_changeIcon"
@@ -52,6 +53,12 @@ export default {
         this.projects = this.dataSource;
       },
       deep: true
+    },
+    height: {
+      handler: function () {
+        this.panelScale = this.height / 900;
+      },
+      deep: true
     }
   },
   props: {
@@ -62,14 +69,14 @@ export default {
       }
     },
     height: {
-      type: String,
-      default: "900px"
+      type: Number,
+      default: 900
     }
   },
   data() {
     return {
+      panelScale: 1,
       optArr: [],
-      showLargePanel: false,
       showEditPanel: false,
       addProject: false,
       project: undefined,
@@ -82,9 +89,6 @@ export default {
     this.projects = this.dataSource;
   },
   methods: {
-    $_closePanel() {
-      this.showLargePanel = false;
-    },
     $_deleteProject() {
       this.projects.splice(this.currentProjectIndex, 1);
     },
@@ -102,13 +106,14 @@ export default {
       }
     },
     $_deleted(index) {
-      this.projects.splice(index, 1);
+      this.$emit("deleteProject", this.projects[index]);
     },
     $_marker(index, type) {
       this.$set(this.projects[index], "type", type);
     },
     $_showProject(index, flag) {
       this.$set(this.projects[index], "show", flag);
+      this.$emit("showProject", this.projects[index]);
     },
     $_addProject() {
       this.project = {
@@ -141,6 +146,9 @@ export default {
       this.showEditPanel = false;
       this.$emit("closeHoverPanel");
     },
+    $_addMap(type, map, id) {
+      this.$emit("addMap", type, map, id);
+    },
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
@@ -157,12 +165,10 @@ export default {
       this.$emit("showFeature", id, flag);
     },
     $_projectPreview() {
-      this.showLargePanel = true;
       this.storyFeature = this.project.features;
     },
     $_featurePreview(feature) {
-      this.showLargePanel = true;
-      this.storyFeature = [feature];
+      this.$emit("featurePreview", feature);
     },
     $_addFeatureSet(feature) {
       this.project.features.push(feature);
@@ -181,6 +187,7 @@ export default {
   height: 900px;
   background: rgb(32, 33, 36);
   padding-bottom: 20px;
+  transform-origin: top left;
 }
 
 .mapgis-ui-project-panel-add {

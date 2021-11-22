@@ -206,6 +206,7 @@ export { default as MapgisUiMapOutline } from "./components/map/MapOutline";
 //panel
 export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditPanel";
 export { default as MapgisUiStoryPanelLarge } from "./components/panel/StoryPanelLarge";
+export { default as MapgisUiProjectPanel } from "./components/panel/ProjectPanel";
 
 //picture
 export { default as MapgisUiChoosePicture } from "./components/picture/ChoosePicture";
