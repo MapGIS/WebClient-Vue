@@ -97,7 +97,15 @@ export default {
       control:'boolean'
     } ,
 
-    layers: '北京市,绿地_1,绿地_2,绿地_3,绿地_4,水域_3,水域_2,水域_1,大学,学校,动物园,高尔夫,观光胜地,果园,住宅用地,医院',
+    layers: {
+      description:'传入OGC/WMS服务中图层的Name字段',
+      table:{
+        type: {
+          summary: 'String',
+          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中t78即为layers传参的内容'
+        },
+      }
+    },
     layerId: 'raster_layerId',
     sourceId: 'raster_sourceId',
     baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
@@ -108,14 +116,14 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisOgcWmsLayer },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[116.39, 40.20]" :zoom="7.5" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[116.39, 40.20]" :zoom="7.5" style="height:95vh">
     <mapgis-ogc-wms-layer v-bind="$props" />
   </mapgis-web-map>`,
 });
 
 export const IGS_3857 = Template.bind({});
 IGS_3857.args = {
-  layers: '北京市,区县点,首都点',
+  layers: 't0,t1,t2',
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
   baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
