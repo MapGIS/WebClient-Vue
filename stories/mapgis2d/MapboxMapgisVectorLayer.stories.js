@@ -86,14 +86,13 @@ export default {
     },
     gdbps: {
       description:'图层的 gdbps 地址，允许传入多个图层，以“,”隔开',
-      type:{ name: 'String', required: true },
       table:{
         type:{
-          summary: 'String',
+          summary: 'Array || String',
         },
         defaultValue: { summary: '必传' },
       },
-      control:'text'
+      control:'array'
     },
     filters:{
       description:'用户指定的图层过滤条件，它由多个键值对组成，值为过滤条件',
@@ -161,8 +160,8 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisIgsVectorLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[112.247175, 30.152892]" :zoom="6" style="height:60vh">
-    <mapgis-igs-vector-layer :filters="filters" :gdbps="gdbps" v-bind="$props" />
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[112.247175, 30.152892]" :zoom="6" style="height:95vh">
+    <mapgis-igs-vector-layer v-bind="$props"></mapgis-igs-vector-layer>
     <button style="position: absolute;z-index: 1;left:0;top:0;" @click="edit('filters','0:ID>4')">修改filter</button>
     <button style="position: absolute;z-index: 1;left:80px;top:0;" @click="edit('filters','')">置空filter</button>
     <button style="position: absolute;z-index: 1;left:160px;top:0;" @click="editGdbp">修改gdbps</button>
@@ -170,11 +169,6 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
   data(){
     return {
-      gdbps:[
-        "gdbp://MapGisLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
-        "gdbp://MapGisLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
-      ],
-      filters:""
     }
   },
   methods:{
@@ -183,13 +177,13 @@ const Template = (args, { argTypes }) => ({
     },
     editGdbp(){
       this.gdbps = [
-        "gdbp://MapGisLocal/ClientTheme/ds/epsg4326/sfcls/点编辑"
+        "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑"
       ]
     },
     reset(){
       this.gdbps = [
-        "gdbp://MapGisLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
-        "gdbp://MapGisLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
+        "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
+        "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
       ]
     }
   }
@@ -199,5 +193,10 @@ export const IGS矢量图层 = Template.bind({});
 IGS矢量图层.args = {
   layerId: "igs_layer_layerid",
   sourceId: "igs_layer_sourceid",
-  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`
+  baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+  gdbps:[
+    "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
+    "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
+  ],
+  filters:""
 };
