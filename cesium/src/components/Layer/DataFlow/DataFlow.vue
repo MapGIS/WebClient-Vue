@@ -256,7 +256,7 @@ export default {
         vm.firstAdd = false;
       }
       //如果已有points，如果imei相同则更新点，否则添加点
-      if (source) {
+      if (source && source.source) {
         points = source.source;
         for (let i = 0; i < points.length; i++) {
           if (points[i].properties[vm.UUID].getValue() === data.properties[vm.UUID]) {
