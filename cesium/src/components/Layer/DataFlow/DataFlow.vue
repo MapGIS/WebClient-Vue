@@ -73,22 +73,27 @@ export default {
       default() {
         return {}
       }
-    }
+    },
+    enableDirect: {
+      type: Boolean,
+      default: true
+    },
   },
   watch: {
     layerStyle: {
       handler: function () {
+        this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
         let source = window.vueCesium.DataFlowManager.findSource(this.vueKey, this.vueIndex);
         let points = source.source;
         let point, vm = this, newPoints = [];
-        if (this.currentType !== this.layerStyle.type) {
+        if (this.currentType !== this.layerStyleCopy.type) {
           this.websocket.close();
           clearInterval(this.interval);
           for (let i = 0; i < points.length; i++) {
             this.viewer.entities.remove(points[i]);
-            switch (this.layerStyle.type) {
+            switch (this.layerStyleCopy.type) {
               case "point":
-                let pStyle = new PointStyle(this.layerStyle);
+                let pStyle = new PointStyle(this.layerStyleCopy);
                 point = this.viewer.entities.add({
                   id: this.features[i].properties[this.UUID],
                   position: Cesium.Cartesian3.fromDegrees(this.features[i].geometry.coordinates[0], this.features[i].geometry.coordinates[1], 20),
@@ -98,7 +103,7 @@ export default {
                 });
                 break;
               case "model":
-                let mStyle = new ModelStyle(this.layerStyle);
+                let mStyle = new ModelStyle(this.layerStyleCopy);
                 point = this.viewer.entities.add({
                   id: this.features[i].properties[this.UUID],
                   position: Cesium.Cartesian3.fromDegrees(this.features[i].geometry.coordinates[0], this.features[i].geometry.coordinates[1], 20),
@@ -109,7 +114,7 @@ export default {
                 break;
               case "marker":
                 let markerStyle = new MarkerStyle();
-                markerStyle = markerStyle.toCesiumStyle(this.layerStyle, this.features[i], Cesium);
+                markerStyle = markerStyle.toCesiumStyle(this.layerStyleCopy, this.features[i], Cesium);
                 point = this.viewer.entities.add({
                   id: this.features[i].properties[this.UUID],
                   position: Cesium.Cartesian3.fromDegrees(this.features[i].geometry.coordinates[0], this.features[i].geometry.coordinates[1], 20),
@@ -124,7 +129,7 @@ export default {
           }
           window.vueCesium.DataFlowManager.deleteSource(this.vueKey, this.vueIndex);
           window.vueCesium.DataFlowManager.addSource(this.vueKey, this.vueIndex, newPoints);
-          this.currentType = this.layerStyle.type;
+          this.currentType = this.layerStyleCopy.type;
           //开启长链接
           this.websocket = new WebSocket(this.baseUrl);
           //接受消息
@@ -133,18 +138,18 @@ export default {
           };
           this.$_setUpdatedEvent();
         } else {
-          switch (this.layerStyle.type) {
+          switch (this.layerStyleCopy.type) {
             case "point":
               for (let i = 0; i < points.length; i++) {
-                let pointStyle = new Style.PointStyle(this.layerStyle);
+                let pointStyle = new Style.PointStyle(this.layerStyleCopy);
                 points[i]["point"] = points[i]["point"] || {};
-                points[i]["point"] = Object.assign(points[i][this.layerStyle.type], pointStyle.toCesiumStyle(Cesium));
+                points[i]["point"] = Object.assign(points[i][this.layerStyleCopy.type], pointStyle.toCesiumStyle(Cesium));
               }
               break;
             case "marker":
               for (let i = 0; i < points.length; i++) {
                 let markerStyle = new Style.MarkerStyle();
-                markerStyle = markerStyle.toCesiumStyle(this.layerStyle, {}, Cesium);
+                markerStyle = markerStyle.toCesiumStyle(this.layerStyleCopy, {}, Cesium);
                 points[i]["billboard"] = points[i]["billboard"] || {};
                 points[i]["billboard"] = Object.assign(points[i]["billboard"], markerStyle.billboard);
                 points[i]["label"] = points[i]["label"] || {text: ""};
@@ -154,9 +159,9 @@ export default {
               break;
             case "model":
               for (let i = 0; i < points.length; i++) {
-                let modelStyle = new Style.ModelStyle(this.layerStyle);
+                let modelStyle = new Style.ModelStyle(this.layerStyleCopy);
                 points[i]["model"] = points[i]["model"] || {};
-                points[i]["model"] = Object.assign(points[i][this.layerStyle.type], modelStyle.toCesiumStyle(Cesium));
+                points[i]["model"] = Object.assign(points[i][this.layerStyleCopy.type], modelStyle.toCesiumStyle(Cesium));
               }
               break;
           }
@@ -173,10 +178,12 @@ export default {
       popups: [],
       websocket: undefined,
       currentType: undefined,
-      interval: undefined
+      interval: undefined,
+      layerStyleCopy: {},
     }
   },
   mounted() {
+    this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
     this.$_addEntityLayer();
   },
   destroyed() {
@@ -266,9 +273,9 @@ export default {
           geometry: data.geometry,
           properties: data.properties,
         });
-        switch (vm.layerStyle.type) {
+        switch (vm.layerStyleCopy.type) {
           case "point":
-            let pStyle = new PointStyle(vm.layerStyle);
+            let pStyle = new PointStyle(vm.layerStyleCopy);
             point = vm.viewer.entities.add({
               id: data.properties[vm.UUID],
               position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
@@ -278,9 +285,16 @@ export default {
             });
             break;
           case "model":
-            let mStyle = new ModelStyle(vm.layerStyle);
+            let mStyle = new ModelStyle(vm.layerStyleCopy);
+            let hpr = new Cesium.HeadingPitchRoll(0, 0, 0);
+            //必须用一个当前的魔性的经纬度新生成一个笛卡尔坐标，不能用自带的position，否则地图会卡主
+            let orientation = Cesium.Transforms.headingPitchRollQuaternion(
+                Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1]),
+                hpr
+            );
             point = vm.viewer.entities.add({
               id: data.properties[vm.UUID],
+              orientation: orientation,
               position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
               model: mStyle.toCesiumStyle(Cesium),
               properties: data.properties,
@@ -289,7 +303,7 @@ export default {
             break;
           case "marker":
             let markerStyle = new MarkerStyle();
-            markerStyle = markerStyle.toCesiumStyle(vm.layerStyle, data, Cesium);
+            markerStyle = markerStyle.toCesiumStyle(vm.layerStyleCopy, data, Cesium);
             point = vm.viewer.entities.add({
               id: data.properties[vm.UUID],
               position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
@@ -302,15 +316,34 @@ export default {
         }
         points.push(point);
       } else {
+        let heading, x1, x2, y1, y2;
         for (let i = 0; i < vm.features.length; i++) {
           if (vm.features[i].properties[vm.UUID] === data.properties[vm.UUID]) {
+            if (vm.layerStyleCopy.type === "model" && vm.enableDirect) {
+              x1 = vm.features[i].geometry.coordinates[0];
+              y1 = vm.features[i].geometry.coordinates[1];
+              x2 = data.geometry.coordinates[0];
+              y2 = data.geometry.coordinates[1];
+              heading = Math.atan2(y2 - y1, x2 - x1);
+            }
             vm.features[i].geometry.coordinates = data.geometry.coordinates;
             break;
           }
         }
+
         //更新点
         points[pointId].properties = data.properties;
         points[pointId].position = Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20);
+        //更新方向
+        if (vm.layerStyleCopy.type === "model" && vm.enableDirect) {
+          let hpr = new Cesium.HeadingPitchRoll(heading * -1, 0, 0);
+          //必须用一个当前的魔性的经纬度新生成一个笛卡尔坐标，不能用自带的position，否则地图会卡主
+          points[pointId].orientation = Cesium.Transforms.headingPitchRollQuaternion(
+              Cesium.Cartesian3.fromDegrees(x1, y1),
+              hpr
+          );
+        }
+
         //更新popup
         for (let i = 0; i < vm.popups.length; i++) {
           if (vm.popups[i].properties[vm.UUID] === data.properties[vm.UUID]) {
@@ -331,7 +364,7 @@ export default {
     },
     $_addEntityLayer() {
       let vm = this;
-      this.currentType = this.layerStyle.type;
+      this.currentType = this.layerStyleCopy.type;
       //开启长链接
       this.websocket = new WebSocket(this.baseUrl);
       //设置点击事件
