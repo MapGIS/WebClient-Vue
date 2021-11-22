@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-widget-visual-analysis">
-    <mapgis-ui-setting-form v-model="formData" :wrapper-width="350">
+    <mapgis-ui-setting-form v-model="formData" :wrapper-width="280">
       <mapgis-ui-form-item label="水平视角">
         <mapgis-ui-input
           v-model.number="formData.horizontAngle"

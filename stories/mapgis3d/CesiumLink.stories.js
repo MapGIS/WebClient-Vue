@@ -20,11 +20,13 @@ const Template = (args, { argTypes }) => ({
         "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetWarm/MapServer/tile/{z}/{y}/{x}",
       url4:
         "https://map.geoq.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}",
+      info:"开启"
     };
   },
   methods: {
     changeMode() {
       this.link = !this.link;
+      this.info = this.info === "开启"?"关闭":"开启"
     },
   },
   template: `<div class="mapgis-link-test">
@@ -49,7 +51,7 @@ const Template = (args, { argTypes }) => ({
             <mapgis-3d-raster-layer :url="url4"> </mapgis-3d-raster-layer>
         </mapgis-web-scene>
     </div>
-    <div :class="{'control': true, active: link}" v-on:click="changeMode"></div>
+    <button :class="{'control': true, active: link}" v-on:click="changeMode">{{info}}</button>
   </div>`,
 });
 

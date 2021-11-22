@@ -33,6 +33,7 @@ export default {
     geojson: {
       deep: true,
       handler() {
+        const vm = this;
         this.dataSet = this.initData(this.geojson);
         if (!this.dataSet && this.mapvLayer) {
           this.mapvLayer.destroy();
@@ -42,6 +43,7 @@ export default {
           this.mount();
         } else {
           this.mapvLayer.updateData(this.dataSet, this.options);
+          // return new MapvLayer(this.webGlobe.viewer, this.dataset, this.options);
         }
       }
     },

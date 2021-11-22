@@ -16,7 +16,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-    <mapgis-web-scene>
+    <mapgis-web-scene :style="{height: '95vh'}">
         <mapgis-3d-raster-layer :url="url" />
         <mapgis-3d-igs-m3d 
             :vueKey="vueKey" 
