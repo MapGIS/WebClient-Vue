@@ -84,6 +84,9 @@ export default {
       handler: function () {
         this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
         let source = window.vueCesium.DataFlowManager.findSource(this.vueKey, this.vueIndex);
+        if(!source || !source.source){
+          return;
+        }
         let points = source.source;
         let point, vm = this, newPoints = [];
         if (this.currentType !== this.layerStyleCopy.type) {
@@ -189,6 +192,9 @@ export default {
   destroyed() {
     let {vueKey, vueIndex} = this;
     let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
+    if(!source || !source.source){
+      return;
+    }
     let points = source.source;
     this.websocket.close();
     for (let i = 0; i < points.length; i++) {
