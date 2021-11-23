@@ -1,7 +1,7 @@
 import Mapgis3dPopup from "../../cesium/src/components/UI/Popup/Popup.vue";
 
 export default {
-  title: "三维/场景子组件/Popup",
+  title: "三维/场景子组件/Popup-自定义槽",
   component: Mapgis3dPopup,
   argTypes: {
     position: {
@@ -24,8 +24,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const Popup = Template.bind({});
-Popup.args = {
+export const 自定义槽 = Template.bind({});
+自定义槽.args = {
   position: {
     longitude: 110,
     latitude: 30,

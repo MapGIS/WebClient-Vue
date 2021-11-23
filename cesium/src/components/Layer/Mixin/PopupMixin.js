@@ -9,6 +9,12 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
+    properties: {
+      type: Object
+      /* default: () => {
+        return { };
+      } */
+    },
     enablePopup: {
       type: Boolean,
       default: false
@@ -16,7 +22,12 @@ export default {
     popupOptions: {
       type: Object,
       default: () => {
-        return { type: "default", title: "name", popupType: "table" };
+        return {
+          type: "default",
+          title: "name",
+          popupType: "table",
+          fullHeight: 900
+        };
       }
     },
     enableTips: {
@@ -42,8 +53,8 @@ export default {
     return {
       pinMap: true,
       activeId: undefined,
-      visible: false,
-      position: {
+      clickvisible: false,
+      clickposition: {
         longitude: 110,
         latitude: 30,
         height: 0
@@ -67,8 +78,8 @@ export default {
   render(h) {
     let {
       pinMap,
-      visible,
-      position,
+      clickvisible,
+      clickposition,
       hovervisible,
       hoverposition,
       customPopup,
@@ -82,24 +93,30 @@ export default {
     } = this;
 
     const {
+      title = "name",
       type = "default",
       enableSeparate = true,
-      popupType = "table"
+      popupType = "table",
+      fullHeight = 900
     } = popupOptions;
-    const feature =
-      currentClickInfo && currentClickInfo.length > 0
-        ? currentClickInfo[0]
-        : { properties: {} };
-
-    let container = getPopupHtml(type, feature, {
-      enableSeparate: enableSeparate,
-      separateMap: this.$_separateMap,
-      title: feature.title,
-      fields: Object.keys(feature.properties),
-      style: {
-        containerStyle: { width: "360px" }
+    const feature = this.properties
+      ? { properties: this.properties }
+      : currentClickInfo && currentClickInfo.length > 0
+      ? currentClickInfo[0]
+      : { properties: {} };
+    let container = getPopupHtml(
+      type,
+      feature,
+      {
+        enableSeparate: enableSeparate,
+        separateMap: this.$_separateMap,
+        title: feature.properties[title],
+        fields: Object.keys(feature.properties),
+        style: {
+          containerStyle: { width: "360px" }
+        }
       }
-    });
+    );
     // 字符串或者数组
     const images = [
       "http://192.168.82.89:8086/static/assets/gallery/m3d.png",
@@ -112,22 +129,29 @@ export default {
       images: images,
       description: description
     };
+
     if (!pinMap) {
       const fs = currentClickInfo.forEach(f => {
         f.images = feature.properties.images || images;
         f.content = feature.properties.description || description;
       });
+      let features = feature ? [feature.properties] : currentClickInfo;
       return (
         <mapgis-ui-story-panel-large
           onClosePanel={this.$_onPinMap.bind(this)}
           onFlyTo={this.$_onFlyTo.bind(this)}
-          feature={currentClickInfo}
+          feature={features}
+          height={fullHeight}
         />
       );
     }
     if (customPopup || customTips) {
       return (
-        <Popup position={position} visible={visible} forceRender={true}>
+        <Popup
+          position={clickposition}
+          visible={clickvisible}
+          forceRender={true}
+        >
           <div ref="click">
             {customPopup && customPopup(currentClickInfo)}
             {!customPopup && (
@@ -150,12 +174,13 @@ export default {
       );
     } else {
       return (
-        <div class="mapgis-geojson-default-wrapper">
+        <div class="mapgis-popup-default-wrapper">
           <Popup
-            position={position}
-            visible={visible}
+            position={clickposition}
+            visible={clickvisible}
             forceRender={true}
             container={container}
+            onChange={this.$_changeVisible.bind(this)}
             onSeparate={this.$_separateMap.bind(this)}
             options={options}
           ></Popup>
@@ -165,7 +190,7 @@ export default {
             forceRender={true}
           >
             <mapgis-ui-card>
-              <span>{feature.title}</span>
+              <span>{feature.properties.title || feature.properties[title]}</span>
             </mapgis-ui-card>
           </Popup>
         </div>
@@ -173,81 +198,6 @@ export default {
     }
   },
   methods: {
-    $_render(h) {
-      let {
-        visible,
-        position,
-        hovervisible,
-        hoverposition,
-        customPopup,
-        customTips,
-        clickMode,
-        hoverMode,
-        currentClickInfo,
-        currentHoverInfo,
-        popupOptions,
-        tipsOptions
-      } = this;
-
-      const { type } = popupOptions;
-      const feature =
-        currentClickInfo && currentClickInfo.length > 0
-          ? currentClickInfo[0]
-          : { properties: {} };
-
-      let container = getPopupHtml(type, feature, {
-        title: feature.title,
-        fields: Object.keys(feature.properties),
-        style: {
-          containerStyle: { width: "360px" }
-        }
-      });
-
-      if (customPopup || customTips) {
-        return (
-          <Popup position={position} visible={visible} forceRender={true}>
-            <div ref="click">
-              {customPopup && customPopup(currentClickInfo)}
-              {!customPopup && (
-                <PopupContent
-                  mode={clickMode}
-                  currentLayerInfo={currentClickInfo}
-                ></PopupContent>
-              )}
-            </div>
-            <div ref="hover">
-              {customTips && customTips(currentHoverInfo)}
-              {!customTips && (
-                <PopupContent
-                  mode={hoverMode}
-                  currentLayerInfo={currentHoverInfo}
-                ></PopupContent>
-              )}
-            </div>
-          </Popup>
-        );
-      } else {
-        return (
-          <div class="mapgis-geojson-default-wrapper">
-            <Popup
-              position={position}
-              visible={visible}
-              forceRender={true}
-              container={container}
-            ></Popup>
-            <Popup
-              position={hoverposition}
-              visible={hovervisible}
-              forceRender={true}
-            >
-              <mapgis-ui-card>
-                <span>{feature.title}</span>
-              </mapgis-ui-card>
-            </Popup>
-          </div>
-        );
-      }
-    },
     $_pickEvent(movement, mode, onSuccess, onFail) {
       const vm = this;
       const { Cesium, viewer, popupOptions } = this;
@@ -268,7 +218,7 @@ export default {
         let entities = scene.drillPick(position);
         if (entities.length <= 0) {
           if (mode == clickMode) {
-            vm.visible = false;
+            vm.clickvisible = false;
           } else {
             vm.hovervisible = false;
           }
@@ -286,8 +236,8 @@ export default {
 
         if (cartesian || cartesian2) {
           if (mode == clickMode) {
-            vm.visible = true;
-            vm.position = {
+            vm.clickvisible = true;
+            vm.clickposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
               height: heightString2
@@ -332,7 +282,7 @@ export default {
           onSuccess && onSuccess({ entities, movement, currentClickInfo });
         } else {
           if (mode == clickMode) {
-            vm.visible = false;
+            vm.clickvisible = false;
           } else {
             vm.hovervisible = false;
           }
@@ -370,6 +320,7 @@ export default {
       );
       return handler;
     },
+    $_changeVisible(visible) {},
     $_separateMap() {
       this.pinMap = false;
     },

@@ -72,7 +72,8 @@ module.exports = {
                 title: "场景子组件",
                 collapsable: false
               },
-              ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/popup.md", "气泡-自定义槽"],
+              ["/api/ui/popupfeature.md", "气泡-默认样式"],
               ["/api/ui/marker.md", "标记点"],
               ["/api/ui/compare.md", "卷帘"],
               ["/api/ui/link.md", "多屏联动"],
