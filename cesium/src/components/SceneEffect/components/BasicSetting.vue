@@ -359,24 +359,12 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .mapgis-ui-switch-panel .mapgis-ui-slider-rail{
-  background-color: #FFFFFF;
-}
 ::v-deep .mapgis-ui-slider-track{
   background-color: #91D5FF;
 }
+
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
 }
-
-/*!*设置tab头宽度为80px*!
-
-.mapgis-ui-tabs-nav .mapgis-ui-tabs-tab{
-  padding: 12px;
-}
-
-.mapgis-ui-tabs-ink-bar[style]{
-  width: 80px!important;
-}*/
 
 </style>

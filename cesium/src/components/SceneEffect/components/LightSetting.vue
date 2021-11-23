@@ -34,7 +34,7 @@ export default {
   props:{
     layout: {
       type: String,
-      default: "horizontal" // 'horizontal' 'vertical' 'inline'
+      default:'horizontal' // 'horizontal' 'vertical' 'inline'
     }
   },
   data (){
@@ -114,10 +114,6 @@ export default {
   overflow: hidden;
 }
 
-/*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
-/*  padding-left: 11px!important;*/
-/*}*/
-
 .mapgis-ui-input-number{
   /* margin-right: 12px; */
   width: 60px;
@@ -129,10 +125,6 @@ export default {
 
 ::v-deep .mapgis-ui-slider-rail{
   background-color: #F0F0F0;
-}
-
-::v-deep .mapgis-ui-switch-panel .mapgis-ui-slider-rail{
-  background-color: #FFFFFF;
 }
 
 ::v-deep .mapgis-ui-slider-track{

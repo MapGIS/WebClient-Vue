@@ -21,187 +21,85 @@
       </mapgis-ui-row>
 
       <mapgis-ui-switch-panel label="云层" :checked="clouds" @changeChecked="$_enableClouds">
-        <mapgis-ui-form-model-item label="周期/秒">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="cloudsduration"
-                :max="10"
-                :min="1"
-                @change="cloudsDurationChange"
-            />
-            <mapgis-ui-input-number
-                v-model="cloudsduration"
-                :max="10"
-                :min="1"
-                @change="cloudsDurationChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
+        <mapgis-ui-input-number-panel 
+          label="周期/秒" 
+          :value="cloudsduration" 
+          :range="cloudsRange"
+          @change="cloudsDurationChange"
+        >
+        </mapgis-ui-input-number-panel> 
       </mapgis-ui-switch-panel>
 
       <mapgis-ui-switch-panel label="雨" :checked="rain" @changeChecked="$_enableRain">
-        <mapgis-ui-form-model-item label="雨速度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="speed"
-                :max="20.0"
-                :min="1.0"
-                @change="speedChange"
-            />
-            <mapgis-ui-input-number
-                v-model="speed"
-                :max="20.0"
-                :min="1.0"
-                @change="speedChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
+        <mapgis-ui-input-number-panel 
+          label="雨速度" 
+          :value="speed" 
+          :range="speedRange"
+          @change="speedChange"
+        >
+        </mapgis-ui-input-number-panel> 
 
-        <mapgis-ui-form-model-item label="雨透明度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="rainOpacity"
-                :max="1"
-                :min="0"
-                :step="0.1"
-                @change="rainOpacityChange"
-            />
-            <mapgis-ui-input-number
-                v-model="rainOpacity"
-                :max="1"
-                :min="0"
-                :step="0.1"
-                @change="rainOpacityChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
+        <mapgis-ui-input-number-panel 
+          label="雨透明度" 
+          :value="rainOpacity" 
+          :range="rainOpacityRange"
+          :step="0.1"
+          @change="rainOpacityChange"
+        >
+        </mapgis-ui-input-number-panel>
 
-        <mapgis-ui-form-model-item label="雨角度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="angle"
-                :max="90"
-                :min="0"
-                :step="10"
-                @change="angleChange"
-            />
-            <mapgis-ui-input-number
-                v-model="angle"
-                :max="90"
-                :min="0"
-                :step="10"
-                @change="angleChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
-      </mapgis-ui-switch-panel>
+        <mapgis-ui-input-number-panel 
+          label="雨角度" 
+          :value="angle" 
+          :range="angleRange"
+          :step="10"
+          @change="angleChange"
+        >
+        </mapgis-ui-input-number-panel> 
+     </mapgis-ui-switch-panel>
 
       <mapgis-ui-switch-panel label="雪" :checked="snow" @changeChecked="$_enableSnow">
-        <mapgis-ui-form-model-item label="雪粒大小" >
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="size"
-                :max="20"
-                :min="5"
-                :step="5"
-                @change="szChange"
-            />
-            <mapgis-ui-input-number
-                v-model="size"
-                :max="20"
-                :min="5"
-                :step="5"
-                @change="szChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
 
-        <mapgis-ui-form-model-item label="雪密度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="density"
-                :max="20"
-                :min="5"
-                :step="5"
-                @change="dstChange"
-            />
-            <mapgis-ui-input-number
-                v-model="density"
-                :max="20"
-                :min="5"
-                :step="5"
-                @change="dstChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
+        <mapgis-ui-input-number-panel 
+          label="雪粒大小" 
+          :value="size" 
+          :range="sizeRange"
+          :step="5"
+          @change="szChange"
+        >
+        </mapgis-ui-input-number-panel>
+
+        <mapgis-ui-input-number-panel 
+          label="雪密度" 
+          :value="density" 
+          :range="densityRange"
+          :step="5"
+          @change="dstChange"
+        >
+        </mapgis-ui-input-number-panel> 
+
       </mapgis-ui-switch-panel>
 
       <mapgis-ui-switch-panel label="雾" :checked="fog" @changeChecked="$_enableFog">
-        <mapgis-ui-form-model-item label="雾透明度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="fogOpacity"
-                :max="1"
-                :min="0"
-                :step="0.1"
-                @change="fogOpacityChange"
-            />
-            <mapgis-ui-input-number
-                v-model="fogOpacity"
-                :max="1"
-                :min="0"
-                :step="0.1"
-                @change="fogOpacityChange"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
+        <mapgis-ui-input-number-panel 
+          label="雾透明度" 
+          :value="fogOpacity" 
+          :range="fogOpacityRange"
+          :step="0.1"
+          @change="fogOpacityChange"
+        >
+        </mapgis-ui-input-number-panel>
       </mapgis-ui-switch-panel>
 
       <mapgis-ui-switch-panel label="雾化效果" :checked="surficialFog" @changeChecked="enableSurficialFog">
-        <mapgis-ui-form-model-item label="密度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="surfFogDst"
-                :max="0.002"
-                :min="0"
-                :step="0.0002"
-                @change="enableSurficialFog"
-            />
-            <mapgis-ui-input-number
-                v-model="surfFogDst"
-                :max="0.002"
-                :min="0"
-                :step="0.0002"
-                @change="enableSurficialFog"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
-
-        <!-- <mapgis-ui-form-model-item label="最小亮度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="surfFogMinBrt"
-                :max="10"
-                :min="0"
-                @change="enableSurficialFog"
-            />
-            <mapgis-ui-input-number
-                v-model="surfFogMinBrt"
-                :max="10"
-                :min="0"
-                @change="enableSurficialFog"
-                size="small"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item> -->
+        <mapgis-ui-input-number-panel 
+          label="密度" 
+          :value="surfFogDst" 
+          :range="surfFogDstRange"
+          :step="0.0002"
+          @change="enableSurficialFog"
+        >
+        </mapgis-ui-input-number-panel>
       </mapgis-ui-switch-panel>
 
     </mapgis-ui-form-model>
@@ -231,26 +129,34 @@ export default {
       clouds: false,
       cloudsParams:undefined,
       cloudsduration: 5,
+      cloudsRange:[1,10],
 
       weather: undefined,
       rain: false,
       rainParams:undefined,
       speed: 1.0,
+      speedRange:[1,20],
       rainOpacity: 1.0,
+      rainOpacityRange:[0.0,1.0],
       angle: 0,
+      angleRange:[0,90],
       snow: false,
       snowParams:undefined,
       size: 5,
+      sizeRange:[5,20],
       density: 5,
+      densityRange:[5,20],
       fog: false,
       fogParams:undefined,
       fogOpacity: 0.5,
+      fogOpacityRange:[0.0,1.0],
       color: "#FFFFFF",
       
       //雾化效果
       surficialFog:true,
       surfFogParams:"80px",
       surfFogDst:0.0002,
+      surfFogDstRange:[0.0002,0.002],
       // surfFogMinBrt:1,
 
     }
@@ -377,6 +283,7 @@ export default {
 
     cloudsDurationChange(e){
       let vm = this;
+      this.cloudsduration = e;
       if (this.clouds) {
         vm.removeClouds();
         vm.enableClouds();
@@ -424,18 +331,21 @@ export default {
     },
     speedChange(e) {
       let vm = this;
+      this.speed = e;
       if (this.rain) {
         vm.enableRain();
       }
     },
     rainOpacityChange(e) {
       let vm = this;
+      this.rainOpacity = e;
       if (this.rain) {
         vm.enableRain();
       }
     },
     angleChange(e) {
       let vm = this;
+      this.angle = e;
       if (this.rain) {
         vm.enableRain();
       }
@@ -460,12 +370,14 @@ export default {
     },
     szChange(e) {
       let vm = this;
+      this.size = e;
       if (this.snow) {
         vm.enableSnow();
       }
     },
     dstChange(e) {
       let vm = this;
+      this.density = e;
       if (this.snow) {
         vm.enableSnow();
       }
@@ -490,6 +402,7 @@ export default {
     },
     fogOpacityChange(e) {
       let vm = this;
+      this.fogOpacity = e;
       if (this.fog) {
         vm.enableFog();
       }
@@ -578,10 +491,11 @@ export default {
       let vm = this;
 
       if(typeof e ==='boolean'){
-
         vm.surficialFog = e;
-
+      }else{
+        vm.surfFogDst = e;
       }
+
       viewer.scene.fog.density = this.surfFogDst;
       // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
       viewer.scene.fog.enabled = this.surficialFog;
@@ -608,10 +522,6 @@ export default {
   overflow: hidden;
 }
 
-/*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
-/*  padding-left: 11px!important;*/
-/*}*/
-
 .mapgis-ui-input-number{
   /* margin-right: 12px; */
   width: 60px;
@@ -625,13 +535,10 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .mapgis-ui-switch-panel .mapgis-ui-slider-rail{
-  background-color: #FFFFFF;
-}
-
 ::v-deep .mapgis-ui-slider-track{
   background-color: #91D5FF;
 }
+
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
 }

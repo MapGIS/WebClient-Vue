@@ -3,25 +3,14 @@
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
       <mapgis-ui-switch-panel label="地下模式" :checked="undgrd" @changeChecked="enableUndgrd">
-        <mapgis-ui-form-model-item label="地表透明度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="groundAlpha"
-                :max="1"
-                :min="0"
-                :step="0.1"
-                @change="enableUndgrd"
-            />
-            <mapgis-ui-input-number
-                v-model="groundAlpha"
-                  :max="1"
-                :min="0"
-                :step="0.1"
-                size="small"
-                @change="enableUndgrd"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>     
+        <mapgis-ui-input-number-panel 
+          label="地表透明度" 
+          :value="groundAlpha" 
+          :range="range"
+          :step="0.1" 
+          @change="enableUndgrd"
+        >
+        </mapgis-ui-input-number-panel> 
       </mapgis-ui-switch-panel>
 
       <mapgis-ui-form-model-item label="FOV设置" >
@@ -66,6 +55,7 @@ export default {
       undgrd: false,
       undgrdParams:undefined,
       groundAlpha:0.5,
+      range:[0,1],
 
       fov:60.0,
     }
@@ -88,6 +78,8 @@ export default {
       const {viewer} = this;
       if(typeof e ==='boolean'){
        this.undgrd = e;
+      }else{
+        this.groundAlpha = e;
       }
       this.$emit('updateSpin',true);
       let vm = this;
@@ -147,27 +139,12 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .parameter .mapgis-ui-slider-rail{
-  background-color: #FFFFFF;
-}
 ::v-deep .mapgis-ui-slider-track{
   background-color: #91D5FF;
 }
+
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
 }
 
-/*!*设置tab头宽度为80px*!
-
-.mapgis-ui-tabs-nav .mapgis-ui-tabs-tab{
-  padding: 12px;
-}
-
-.mapgis-ui-tabs-ink-bar[style]{
-  width: 80px!important;
-}*/
-
-/*::v-deep .mapgis-ui-col-6{*/
-/*  padding-right: 16px;*/
-/*}*/
 </style>

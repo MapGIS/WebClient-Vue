@@ -12,45 +12,25 @@
       </mapgis-ui-row>
 
       <mapgis-ui-switch-panel label="场景泛光" :checked="bloom" @changeChecked="enableBloom">
-        <mapgis-ui-form-model-item label="亮度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="bloomBrt"
-                :max="0.2"
-                :min="-0.6"
-                :step="0.05"
-                @change="bloomBrtChange"
-            />
-            <mapgis-ui-input-number
-                v-model="bloomBrt"
-                :max="0.2"
-                :min="-0.6"
-                :step="0.05"
-                size="small"
-                @change="bloomBrtChange"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
 
-        <mapgis-ui-form-model-item label="对比度">
-          <mapgis-ui-space>
-            <mapgis-ui-slider
-                v-model="bloomCtrst"
-                :max="255"
-                :min="-255"
-                :step="10"
-                @change="bloomCtrstChange"
-            />
-            <mapgis-ui-input-number
-                v-model="bloomCtrst"
-                :max="255"
-                :min="-255"
-                :step="10"
-                size="small"
-                @change="bloomCtrstChange"
-            />
-          </mapgis-ui-space>
-        </mapgis-ui-form-model-item>
+        <mapgis-ui-input-number-panel 
+          label="亮度" 
+          :value="bloomBrt" 
+          :range="bloomBrtRange"
+          :step="0.05" 
+          @change="bloomBrtChange"
+        >
+        </mapgis-ui-input-number-panel> 
+
+        <mapgis-ui-input-number-panel 
+          label="对比度" 
+          :value="bloomCtrst" 
+          :range="bloomCtrstRange"
+          :step="10" 
+          @change="bloomCtrstChange"
+        >
+        </mapgis-ui-input-number-panel> 
+
       </mapgis-ui-switch-panel>
 
     </mapgis-ui-form-model>
@@ -73,7 +53,9 @@ export default {
       bloom: false,
       bloomParams:undefined,
       bloomBrt: -0.3,
+      bloomBrtRange:[-0.6,0.2],
       bloomCtrst: 128,
+      bloomCtrstRange:[-255,255],
 
       blckWhite: false,
       ntVision: false,
@@ -108,15 +90,17 @@ export default {
     /*
     * 泛光亮度
     * */
-    bloomBrtChange() {
+    bloomBrtChange(e) {
       const {viewer} = this;
+      this.bloomBrt = e;
       viewer.scene.postProcessStages.bloom.uniforms.brightness = this.bloomBrt;
     },
     /*
     * 泛光对比度
     * */
-    bloomCtrstChange() {
+    bloomCtrstChange(e) {
       const {viewer} = this;
+      this.bloomCtrst = e;
       viewer.scene.postProcessStages.bloom.uniforms.contrast = this.bloomCtrst;
     },
 
@@ -180,10 +164,6 @@ export default {
   overflow: hidden;
 }
 
-/*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
-/*  padding-left: 11px!important;*/
-/*}*/
-
 .mapgis-ui-input-number{
   /* margin-right: 12px; */
   width: 60px;
@@ -197,12 +177,10 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .parameter .mapgis-ui-slider-rail{
-  background-color: #FFFFFF;
-}
 ::v-deep .mapgis-ui-slider-track{
   background-color: #91D5FF;
 }
+
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
 }
