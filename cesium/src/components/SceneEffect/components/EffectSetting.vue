@@ -1,12 +1,17 @@
 <template>
   <div class="effect-setting">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
-      <mapgis-ui-form-model-item label="场景泛光" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="bloom" @change="enableBloom">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
 
-      <div class="parameter" :style="{maxHeight: bloomParams}">
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="黑白照片" :checked="blckWhite" @changeChecked="blackAndWhiteChange"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="夜视效果" :checked="ntVision" @changeChecked="nightVision"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+
+      <mapgis-ui-switch-panel label="场景泛光" :checked="bloom" @changeChecked="enableBloom">
         <mapgis-ui-form-model-item label="亮度">
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -46,26 +51,7 @@
             />
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
-      </div>
-
-      <mapgis-ui-form-model-item label="黑白照片" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="blckWhite" @change="blackAndWhiteChange">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="夜视效果" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="ntVision" @change="nightVision">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-<!--      <mapgis-ui-form-model-item label="其它特效">-->
-<!--        <mapgis-ui-space>-->
-<!--          <mapgis-ui-checkbox :checked="blckWhite" @change="blackAndWhiteChange">黑白照片-->
-<!--          </mapgis-ui-checkbox>-->
-<!--          <mapgis-ui-checkbox :checked="ntVision" @change="nightVision" >夜视效果-->
-<!--          </mapgis-ui-checkbox>-->
-<!--        </mapgis-ui-space>-->
-<!--      </mapgis-ui-form-model-item>-->
+      </mapgis-ui-switch-panel>
 
     </mapgis-ui-form-model>
   </div>
@@ -114,12 +100,6 @@ export default {
       this.$emit('updateSpin',true);
       let vm = this;
 
-      if(vm.bloom){
-        vm.bloomParams = "80px"
-      }else{
-        vm.bloomParams = "0px"
-      }
-
       setTimeout(function () {
         viewer.scene.postProcessStages.bloom.enabled = vm.bloom;
         vm.$emit('updateSpin',false);
@@ -143,6 +123,7 @@ export default {
     //黑白照片
     blackAndWhiteChange(e) {
       const { viewer,Cesium } = this;
+      this.blckWhite = e;
       let vm = this;
       if (vm.blckWhite) {
         vm.removeOtherStages();
@@ -159,6 +140,7 @@ export default {
     //夜视效果
     nightVision(e) {
       const { viewer,Cesium } = this;
+      this.ntVision = e;
       let vm = this;
       if (vm.ntVision) {
         vm.removeOtherStages();
@@ -173,7 +155,7 @@ export default {
       const { viewer } = this;
       let length = viewer.scene.postProcessStages._activeStages.length;
 
-      if (length > 1) {
+      if (length > 0) {
         viewer.scene.postProcessStages.removeAll();
       }
     },
@@ -198,17 +180,12 @@ export default {
   overflow: hidden;
 }
 
-::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
-  content: url("titlew.png");
-  margin-right: 6px;
-}
-
 /*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
 /*  padding-left: 11px!important;*/
 /*}*/
 
 .mapgis-ui-input-number{
-  margin-right: 12px;
+  /* margin-right: 12px; */
   width: 60px;
 }
 
@@ -228,18 +205,6 @@ export default {
 }
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
-}
-
-.parameter{
-  background: #F1F1F1;
-  border-radius: 4px;
-  /*margin-bottom: 10px;*/
-  overflow: hidden;
-  max-height: 0px;
-  transition:max-height .5s;
-  -moz-transition:max-height .5s; /* Firefox 4 */
-  -webkit-transition:max-height .5s; /* Safari and Chrome */
-  -o-transition:max-height .5s; /* Opera */
 }
 
 </style>

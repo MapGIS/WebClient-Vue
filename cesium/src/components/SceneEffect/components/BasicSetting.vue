@@ -2,48 +2,40 @@
   <div class="basic-setting">
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
-      <mapgis-ui-form-model-item label="地球" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="earth" @change="enableEarth">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="地球" :checked="earth" @changeChecked="enableEarth"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="大气层" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="阴影效果" :checked="shadow" @changeChecked="enableShadow"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="深度检测" :checked="depthTest" @changeChecked="enableDepthTest"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+          
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="显示帧率" :checked="FPS" @changeChecked="enableFPS"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="时间轴" :checked="timeline" @changeChecked="enableTimeline"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
 
-      <mapgis-ui-form-model-item label="大气层" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="skyAtmosphere" @change="enableSkyAtmosphere">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <!-- <mapgis-ui-switch-panel label="大气层" :layout="layout" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere">
-      </mapgis-ui-switch-panel> -->
-      
-      <mapgis-ui-form-model-item label="阴影效果" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="shadow" @change="enableShadow">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="深度检测" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="depthTest" @change="enableDepthTest">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="显示帧率" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="FPS" @change="enableFPS">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>      
-
-      <mapgis-ui-form-model-item label="罗盘控件" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="compass" @change="enableNavigation">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="缩放控件" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="zoom" @change="enableNavigation">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="时间轴" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="timeline" @change="enableTimeline">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="罗盘控件" :checked="compass" @changeChecked="enableCompass"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="缩放控件" :checked="zoom" @changeChecked="enableZoom"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
 
       <mapgis-ui-form-model-item label="亮度">
         <mapgis-ui-space>
@@ -125,7 +117,6 @@
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
 
-
     </mapgis-ui-form-model>
   </div>
 </template>
@@ -153,9 +144,9 @@ export default {
       depthTest:true,
       
       FPS:false,
+      timeline:false,      
       compass: false,
       zoom: false,
-      timeline:false,
 
       layerbrightness: 1,
       layercontrast: 1,
@@ -185,12 +176,13 @@ export default {
     /*
     * 地球
     * */
-    enableEarth(){
+    enableEarth(e){
       const {viewer} = this;
+      this.earth = e;
       if(this.earth){
         viewer.scene.skyAtmosphere.show = this.skyAtmosphere
       }else{
-        viewer.scene.skyAtmosphere.show = true;
+        viewer.scene.skyAtmosphere.show = false;
       }
       viewer.scene.globe.show = this.earth;
     },
@@ -206,44 +198,35 @@ export default {
     /*
     * 阴影效果
     * */
-    enableShadow(){
+    enableShadow(e){
       const {viewer,Cesium} = this;
+      this.shadow = e;
       viewer.shadows = this.shadow;
     },
     /*
     * 深度检测
     * */
-    enableDepthTest(){
+    enableDepthTest(e){
       const {viewer} = this;
+      this.depthTest = e;
       viewer.scene.globe.depthTestAgainstTerrain = this.depthTest;
     },
-
   
     /*
     * 显示帧率
     * */
-    enableFPS(){
+    enableFPS(e){
       const {viewer} = this;
+      this.FPS = e;
       viewer.scene.debugShowFramesPerSecond = this.FPS;
     },
-    /*
-    * 导航控件（罗盘控件和缩放控件的状态控制）
-    * */
-    enableNavigation(e) {
-      const {viewer} = this;
-      if (viewer.cesiumNavigation) {
-        viewer.cesiumNavigation.destroy();
-      }
-      let options = {};
-      options.enableCompass = this.compass;
-      options.enableZoomControls = this.zoom;
-      viewer.createNavigationTool(options);
-    },
+
     /*
     * 开启时间轴 
     * */
-    enableTimeline(){
+    enableTimeline(e){
       const {viewer,Cesium,vueKey, vueIndex} = this;
+      this.timeline = e;
       let vm = this;
       if(vm.timeline){
         
@@ -279,6 +262,34 @@ export default {
         // console.log("e",e);
         clock.currentTime = e.timeJulian;
         clock.shouldAnimate = false;
+    },
+    /*
+    * 导航控件（罗盘控件和缩放控件的状态控制）
+    * */
+    enableCompass(e) {
+      const {viewer} = this;
+      this.compass = e;
+      if (viewer.cesiumNavigation) {
+        viewer.cesiumNavigation.destroy();
+      }
+      let options = {};
+      options.enableCompass = this.compass;
+      options.enableZoomControls = this.zoom;
+      viewer.createNavigationTool(options);
+    },
+    /*
+    * 导航控件（罗盘控件和缩放控件的状态控制）
+    * */
+    enableZoom(e) {
+      const {viewer} = this;
+      this.zoom = e;
+      if (viewer.cesiumNavigation) {
+        viewer.cesiumNavigation.destroy();
+      }
+      let options = {};
+      options.enableCompass = this.compass;
+      options.enableZoomControls = this.zoom;
+      viewer.createNavigationTool(options);
     },
 
     /*
@@ -335,13 +346,8 @@ export default {
   overflow: hidden;
 }
 
-::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
-  content: url("titlew.png");
-  margin-right: 6px;
-}
-
 .mapgis-ui-input-number{
-  margin-right: 12px;
+  /* margin-right: 12px; */
   width: 60px;
 }
 
@@ -353,7 +359,7 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .parameter .mapgis-ui-slider-rail{
+::v-deep .mapgis-ui-switch-panel .mapgis-ui-slider-rail{
   background-color: #FFFFFF;
 }
 ::v-deep .mapgis-ui-slider-track{
@@ -373,19 +379,4 @@ export default {
   width: 80px!important;
 }*/
 
-.parameter{
-  background: #F1F1F1;
-  border-radius: 4px;
-  /*margin-bottom: 10px;*/
-  overflow: hidden;
-  max-height: 0px;
-  transition:max-height .5s;
-  -moz-transition:max-height .5s; /* Firefox 4 */
-  -webkit-transition:max-height .5s; /* Safari and Chrome */
-  -o-transition:max-height .5s; /* Opera */
-}
-
-/*::v-deep .mapgis-ui-col-6{*/
-/*  padding-right: 16px;*/
-/*}*/
 </style>

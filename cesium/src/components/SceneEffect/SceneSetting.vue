@@ -2,32 +2,33 @@
   <div class="mapgis-3d-scene-setting">
     <div v-show="show" :style="panelStyle" class="setting-control">
           
-      <div class="control-header" >
+      <!-- <div class="control-header" >
             <label class="title">设置</label>
             <div @mouseenter="hover=true" @mouseleave="hover=false">
               <img v-show="!hover" class="closeButton2" src="./components/关闭2.png" @click="closePanel">
               <img v-show="hover" class="closeButton2" src="./components/关闭2hover.png" @click="closePanel">
             </div>
       </div>
-      
+       -->
       <mapgis-ui-tabs
               :animated="false"
               :tabBarStyle="tabBarStyle"
               default-active-key="1"
+              :tabBarGutter="0"
           >
-            <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content">
+            <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content" style="padding:12px">
               <basic-setting ref="attr" :layout="layout" @updateSpin="changeSpinning"></basic-setting>
             </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="2" force-render tab="相机设置" class="control-content">
+            <mapgis-ui-tab-pane key="2" force-render tab="相机" class="control-content">
               <camera-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></camera-setting>
             </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="3" force-render tab="光照设置" class="control-content">
+            <mapgis-ui-tab-pane key="3" force-render tab="光照" class="control-content">
               <light-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></light-setting>
             </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="4" force-render tab="天气设置" class="control-content">
+            <mapgis-ui-tab-pane key="4" force-render tab="天气" class="control-content">
               <weather-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></weather-setting>
             </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="5" force-render tab="特效设置" class="control-content">
+            <mapgis-ui-tab-pane key="5" force-render tab="特效" class="control-content">
               <effect-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></effect-setting>
             </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
@@ -80,7 +81,8 @@ export default {
       tabBarStyle: {
         margin: '0px',
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0"
+        borderBottom: "1px solid #F0F0F0",
+
       },
       show: true,
       hover: false,
@@ -125,7 +127,7 @@ export default {
 
 .setting-control {
   /* width: 320px; */
-  max-width: 320px;
+  /* max-width: 320px; */
   height: fit-content;
   /* position: absolute;
   top: 30px;
@@ -136,11 +138,11 @@ export default {
   border-radius: 4px; */
 }
 
-.control-header {
+/* .control-header {
   height: 40px;
   border-bottom: 1px solid #F0F0F0;
   line-height: 40px;
-}
+} */
 
 .control-content{
   max-height: 460px;
@@ -148,27 +150,27 @@ export default {
   padding: 10px;
 }
 
-.title {
+/* .title {
   padding-left: 20px;
   font-size: 16px;
   color: #333333;
-}
+} */
 
-.closeButton2 {
+/* .closeButton2 {
   position: absolute;
   top: 12px;
   right: 16px;
   width: 16px;
   height: 16px;
-}
+} */
 
-.openButton {
+/* .openButton {
   position: absolute;
   top: 30px;
   right: 30px;
-}
+} */
 
-.closeButton {
+/* .closeButton {
   width: 33px;
   height: 33px;
   position: absolute;
@@ -176,7 +178,8 @@ export default {
   right: 0px;
   margin-top: -16.5px;
   margin-right: -16.5px;
-}
+} */
+
 ::v-deep .mapgis-ui-spin-spinning{
   position: absolute;
 }

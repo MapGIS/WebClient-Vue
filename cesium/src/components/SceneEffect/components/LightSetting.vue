@@ -1,33 +1,27 @@
 <template>
   <div class="light-setting">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
-
-      <mapgis-ui-form-model-item label="太阳光照" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sunlight" @change="enableSunlight">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      
-<!--      <mapgis-ui-switch-panel layout="horizontal" label="太阳ceshi" :checked="sunlight" @changeChecked="enableSunlight">-->
-<!--      </mapgis-ui-switch-panel>-->
-
-      <div class="parameter" :style="{ maxHeight: sunlightParams }">
-
-        <mapgis-ui-form-model-item label="光照颜色">
-          <mapgis-ui-sketch-color-picker
-              size="small"
+      <mapgis-ui-switch-panel label="太阳光照" 
+        :checked="sunlight" 
+        @changeChecked="enableSunlight" 
+      >
+        <mapgis-ui-space direction="vertical" style="padding:8px 10px;">
+          <mapgis-ui-row>
+            <label>光照颜色</label>
+          </mapgis-ui-row>
+          <mapgis-ui-row>
+            <mapgis-ui-sketch-color-picker
               :color.sync="lightColor"
               :disableAlpha="false"
-              :style="{padding:'8px 0'}"
+              :colorStyle="colorStyle"
               @input="
                 val =>
                   (lightColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
               "
-          />
-        </mapgis-ui-form-model-item>
-
-      </div>
-
+            />
+          </mapgis-ui-row>
+        </mapgis-ui-space>
+      </mapgis-ui-switch-panel>
     </mapgis-ui-form-model>
   </div>
 </template>
@@ -49,7 +43,11 @@ export default {
       sunlightParams:undefined,
       // 光照颜色
       lightColor: 'rgba(255,255,255,255)', 
-
+      colorStyle:{
+        width:'280px',
+        height:'32px',
+        lineHeight:'32px'
+      }
     }
   },
   computed: {
@@ -116,17 +114,12 @@ export default {
   overflow: hidden;
 }
 
-::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
-  content: url("titlew.png");
-  margin-right: 6px;
-}
-
 /*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
 /*  padding-left: 11px!important;*/
 /*}*/
 
 .mapgis-ui-input-number{
-  margin-right: 12px;
+  /* margin-right: 12px; */
   width: 60px;
 }
 
@@ -138,26 +131,15 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .parameter .mapgis-ui-slider-rail{
+::v-deep .mapgis-ui-switch-panel .mapgis-ui-slider-rail{
   background-color: #FFFFFF;
 }
+
 ::v-deep .mapgis-ui-slider-track{
   background-color: #91D5FF;
 }
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
-}
-
-.parameter{
-  background: #F1F1F1;
-  border-radius: 4px;
-  /*margin-bottom: 10px;*/
-  overflow: hidden;
-  max-height: 0px;
-  transition:max-height .5s;
-  -moz-transition:max-height .5s; /* Firefox 4 */
-  -webkit-transition:max-height .5s; /* Safari and Chrome */
-  -o-transition:max-height .5s; /* Opera */
 }
 
 </style>
