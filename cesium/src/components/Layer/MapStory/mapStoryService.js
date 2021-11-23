@@ -37,20 +37,20 @@ export default {
             });
         },
         $_getBillBoardIcon(index, callBack) {
-            let img = document.createElement("img");
-            if (typeof index === "number") {
-                img.src = Base64IconsKeyValue[index].value;
-            } else if (typeof index === "string") {
-                for (let i = 0; i < Base64IconsKeyValue.length; i++) {
-                    if (Base64IconsKeyValue[i].key === index) {
-                        img.src = Base64IconsKeyValue[i].value;
-                        break;
-                    }
-                }
-            }
-            img.onload = function () {
-                callBack(img);
-            }
+            // let img = document.createElement("img");
+            // if (typeof index === "number") {
+            //     img.src = Base64IconsKeyValue[index].value;
+            // } else if (typeof index === "string") {
+            //     for (let i = 0; i < Base64IconsKeyValue.length; i++) {
+            //         if (Base64IconsKeyValue[i].key === index) {
+            //             img.src = Base64IconsKeyValue[i].value;
+            //             break;
+            //         }
+            //     }
+            // }
+            // img.onload = function () {
+            //     callBack(img);
+            // }
         },
         $_setCamera() {
             window.feature.camera.orientation = {
