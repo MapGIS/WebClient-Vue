@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 数值面板 = Template.bind({});
-数值面板.args = { range: [0, 10] };
+数值面板.args = { range: [0, 10], step: 1 };
 
 数值面板.parameters = {
   docs: {

@@ -15,7 +15,7 @@
               <mapgis-ui-iconfont type="mapgis-info-circle" />
             </mapgis-ui-tooltip>
           </div>
-          <mapgis-ui-slider v-model="number" :min="range[0]" :max="range[1]">
+          <mapgis-ui-slider v-model="number" :min="range[0]" :max="range[1]" :step="step">
           </mapgis-ui-slider>
         </mapgis-ui-col>
         <mapgis-ui-col v-bind="wrapperCol" class="right-panel">
@@ -27,6 +27,7 @@
             v-model="number"
             :min="range[0]"
             :max="range[1]"
+            :step="step"
           >
           </mapgis-ui-input-number>
         </mapgis-ui-col>
@@ -39,6 +40,7 @@
           v-model="number"
           :min="range[0]"
           :max="range[1]"
+          :step="step"
         >
         </mapgis-ui-slider>
         <mapgis-ui-space>
@@ -59,6 +61,7 @@
           v-model="number"
           :min="range[0]"
           :max="range[1]"
+          :step="step"
         >
         </mapgis-ui-input-number>
       </mapgis-ui-col>
@@ -88,6 +91,10 @@ export default {
     range: {
       type: Array,
       default: () => [0, 100]
+    },
+    step: {
+      type: Number,
+      default: 1
     },
     labelCol: {
       type: Object,

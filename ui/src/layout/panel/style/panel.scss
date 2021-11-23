@@ -53,6 +53,10 @@
     margin-right: 6px;
   }
 
+  .mapgis-ui-slider-rail{
+    background-color: #FFFFFF;
+  }
+
   @include e(label, "-") {
     padding: 0 6px;
     line-height: 40px;
