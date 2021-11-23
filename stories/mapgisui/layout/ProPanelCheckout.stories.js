@@ -1,5 +1,6 @@
 import { setTheme } from "../../../ui/src/util/style/theme/set-theme";
 import MapgisUiSwitchPanel from "../../../ui/src/layout/panel/SwitchPanel.vue";
+import Markdown from "../../../ui/docs/api/panel/switch.md";
 
 export default {
   title: "界面/Pro/面板/开关面板",
@@ -68,3 +69,11 @@ const Template = (args, { argTypes }) => ({
 
 export const 开关面板 = Template.bind({});
 开关面板.args = {};
+
+开关面板.parameters = {
+  docs: {
+      description: {
+          component: Markdown,
+      },
+  },
+};
