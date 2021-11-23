@@ -21,6 +21,9 @@ let popupsIdIndex = 0;
  * @param {Function} [options.callback.onShow] 显示popup事件的回调
  * @param {Function} [options.callback.onHide] 隐藏popup事件的回调
  * @param {Function} [options.callback.onSeparate] 分离popup事件的回调
+ * @param {Function} [options.popupType = 'table'] Popup的默认样式 'table' 'card' 'relation'
+ * @param {Function} [options.images] Popup的样式为'relation'时，图片描述
+ * @param {Function} [options.description] Popup的样式为'relation'时，文字描述
  * @param {Element|String} container 外部传入的div的字符串描述方式，一般是文字或者echarts的div;
  *
  * @example 这里唯一要注意的是我们中地数码的ceisum的右键事件不是放大缩小而是旋转视角
@@ -118,6 +121,9 @@ export default class PopupLayer {
 
         // this.initDevicePixelRatio();
         this.showClose = options.showClose === undefined ? true : options.showClose;
+        this.popupType = options.popupType;
+        this.images = options.images;
+        this.description = options.description;
         this.popup = this._createPopup();
 
         this.moveStart = this.eventMoveStart.bind(this);
@@ -164,23 +170,47 @@ export default class PopupLayer {
             infoDiv.appendChild(popupContentDiv);
         }
 
+        let close = window.document.createElement('div');
+        close.className = 'cesium-popup-close-button';
+        close.addEventListener('click', () => self.hide());
+        close.innerText = 'x';
+        this.parent.appendChild(infoDiv);
+
+        if (this.popupType == 'table') {
+
+        } else if (this.popupType == 'card') {
+            let image = typeof this.images == 'string' ? this.images : 
+                this.images.length > 0 ?  this.images[0] : '';
+            let temptitle = window.document.createElement('div');          
+            let images = window.document.createElement('img');  
+            temptitle.className = 'cesium-popup-images-title';      
+            images.className = 'cesium-popup-images';
+            images.src = image;
+            let parent = window.document.getElementById(this.popupContentId);
+            let node = parent.children[0].children[0].children[0];
+            temptitle.innerText = node.innerText;
+            node.innerText = '';
+            node.style.height = 'fit-content';
+            node && node.appendChild(temptitle);
+            node && node.appendChild(images);
+            // parent && parent.insertBefore(images, node); 
+        } else if (this.popupType == 'rich-text') {
+            
+        }
+
         let separate = window.document.createElement('div');        
         separate.className = 'cesium-popup-separate-button';
         separate.addEventListener('click', () => self.separate());
         let icon = `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
         `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`
         separate.innerHTML = icon;
-
-        let close = window.document.createElement('div');
-        close.className = 'cesium-popup-close-button';
-        close.addEventListener('click', () => self.hide());
-        close.innerText = 'x';
-        this.parent.appendChild(infoDiv);
+        let parent = window.document.getElementById(this.popupContentId);
+        parent && parent.appendChild(separate);    
+        
         // window.document.getElementById(this.popupId).style.display = 'block';
         if (this.showClose) {
             let parent = window.document.getElementById(this.popupContentId);
             parent && parent.appendChild(close);
-            parent && parent.appendChild(separate);
         }
         this.infoDiv = infoDiv;
     }

@@ -16,7 +16,7 @@ export default {
     popupOptions: {
       type: Object,
       default: () => {
-        return { type: "default", title: "name" };
+        return { type: "default", title: "name", popupType: "table" };
       }
     },
     enableTips: {
@@ -81,7 +81,11 @@ export default {
       tipsOptions
     } = this;
 
-    const { type, enableSeparate } = popupOptions;
+    const {
+      type = "default",
+      enableSeparate = true,
+      popupType = "table"
+    } = popupOptions;
     const feature =
       currentClickInfo && currentClickInfo.length > 0
         ? currentClickInfo[0]
@@ -96,16 +100,22 @@ export default {
         containerStyle: { width: "360px" }
       }
     });
+    // 字符串或者数组
+    const images = [
+      "http://192.168.82.89:8086/static/assets/gallery/m3d.png",
+      "http://192.168.82.89:8086/static/assets/gallery/biggps.png"
+    ];
+    const description = "这是一段说明文字";
+    const options = {
+      type,
+      popupType,
+      images: images,
+      description: description
+    };
     if (!pinMap) {
-      const images = "http://192.168.82.89:8086/static/assets/gallery/m3d.png";
-      /* [
-        "http://192.168.82.89:8086/static/assets/gallery/m3d.png",
-        "http://192.168.82.89:8086/static/assets/gallery/biggps.png"
-      ]; */
-      const description = "这是一段说明文字";
       const fs = currentClickInfo.forEach(f => {
-        f.images = images;
-        f.content = description;
+        f.images = feature.properties.images || images;
+        f.content = feature.properties.description || description;
       });
       return (
         <mapgis-ui-story-panel-large
@@ -147,6 +157,7 @@ export default {
             forceRender={true}
             container={container}
             onSeparate={this.$_separateMap.bind(this)}
+            options={options}
           ></Popup>
           <Popup
             position={hoverposition}
@@ -191,9 +202,6 @@ export default {
           containerStyle: { width: "360px" }
         }
       });
-
-      console.log("feature", feature);
-      console.log("contarin", container);
 
       if (customPopup || customTips) {
         return (

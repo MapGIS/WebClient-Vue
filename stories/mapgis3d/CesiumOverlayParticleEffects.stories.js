@@ -108,7 +108,7 @@ const Template = (args, { argTypes }) => ({
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
-      <mapgis-ui-card class="storybook-ui-card">
+      <mapgis-ui-card class="storybook-ui-card thin">
       <mapgis-ui-toolbar>
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command
