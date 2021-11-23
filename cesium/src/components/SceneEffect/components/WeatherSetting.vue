@@ -2,33 +2,25 @@
   <div class="weather-setting">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
       
-      <mapgis-ui-form-model-item label="太阳" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="sun" @change="enableSun">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="太阳" :checked="sun" @changeChecked="enableSun"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="月亮" :checked="moon" @changeChecked="enableMoon"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
 
-      <mapgis-ui-form-model-item label="月亮" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="moon" @change="enableMoon">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="星空" :checked="sceneSkybox" @changeChecked="enableSceneSkybox"/>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel label="天空盒" :checked="skybox" @changeChecked="$_enableSkyBox"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
 
-      <mapgis-ui-form-model-item label="星空" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="sceneSkybox" @change="enableSceneSkybox">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>     
-
-      <mapgis-ui-form-model-item label="天空盒" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="skybox" @change="$_enableSkyBox">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="云层" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="clouds" @change="$_enableClouds">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <div class="parameter" :style="{ maxHeight: cloudsParams }">
-
+      <mapgis-ui-switch-panel label="云层" :checked="clouds" @changeChecked="$_enableClouds">
         <mapgis-ui-form-model-item label="周期/秒">
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -46,16 +38,9 @@
             />
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
+      </mapgis-ui-switch-panel>
 
-      </div>
-
-      <mapgis-ui-form-model-item label="雨" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="rain" @change="$_enableRain">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <div class="parameter" :style="{ maxHeight: rainParams }">
-
+      <mapgis-ui-switch-panel label="雨" :checked="rain" @changeChecked="$_enableRain">
         <mapgis-ui-form-model-item label="雨速度">
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -113,16 +98,9 @@
             />
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
+      </mapgis-ui-switch-panel>
 
-      </div>
-
-      <mapgis-ui-form-model-item label="雪" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="snow" @change="$_enableSnow">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <div class="parameter" :style="{ maxHeight: snowParams }">
-
+      <mapgis-ui-switch-panel label="雪" :checked="snow" @changeChecked="$_enableSnow">
         <mapgis-ui-form-model-item label="雪粒大小" >
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -162,16 +140,9 @@
             />
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
+      </mapgis-ui-switch-panel>
 
-      </div>
-
-      <mapgis-ui-form-model-item label="雾" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="fog" @change="$_enableFog">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <div class="parameter" :style="{ maxHeight: fogParams }">
-
+      <mapgis-ui-switch-panel label="雾" :checked="fog" @changeChecked="$_enableFog">
         <mapgis-ui-form-model-item label="雾透明度">
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -191,16 +162,9 @@
             />
           </mapgis-ui-space>
         </mapgis-ui-form-model-item>
+      </mapgis-ui-switch-panel>
 
-      </div>
-
-      <mapgis-ui-form-model-item label="雾化效果" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭" v-model="surficialFog" @change="enableSurficialFog">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <div class="parameter" :style="{ maxHeight: surfFogParams }">
-
+      <mapgis-ui-switch-panel label="雾化效果" :checked="surficialFog" @changeChecked="enableSurficialFog">
         <mapgis-ui-form-model-item label="密度">
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -238,8 +202,7 @@
             />
           </mapgis-ui-space>
         </mapgis-ui-form-model-item> -->
-
-      </div>
+      </mapgis-ui-switch-panel>
 
     </mapgis-ui-form-model>
   </div>
@@ -316,8 +279,9 @@ export default {
     /*
     * 太阳
     * */
-    enableSun(){
+    enableSun(e){
       const {viewer} = this;
+      this.sun = e;
       viewer.scene.sun.show = this.sun;
       if(this.sun){
         let sunPosition = viewer.scene.sun._boundingVolume.center;
@@ -333,8 +297,9 @@ export default {
     /*
     * 月亮
     * */
-    enableMoon(){
+    enableMoon(e){
       const {viewer} = this;
+      this.moon = e;
       viewer.scene.moon.show = this.moon;
       
       if(this.moon){
@@ -352,11 +317,13 @@ export default {
     //星空
     enableSceneSkybox(e) {
       const { viewer } = this;
+      this.sceneSkybox = e;
       viewer.scene.skyBox.show = this.sceneSkybox; //背景，星空
     },
     
     //天空盒
     $_enableSkyBox(e) {
+      this.skybox = e;
       let vm = this;
       if (vm.skybox) {
         vm.enableSkyBox();
@@ -392,9 +359,10 @@ export default {
     //云图
     $_enableClouds(e) {
       this.$emit('updateSpin',true);
-      let vm = this;
 
-      if(vm.clouds){ this.cloudsParams = "40px" }else{ this.cloudsParams = "0px" }
+      this.clouds = e;
+
+      let vm = this;
 
       setTimeout(function () {
         if (vm.clouds) {
@@ -406,6 +374,7 @@ export default {
       },400)
 
     },
+
     cloudsDurationChange(e){
       let vm = this;
       if (this.clouds) {
@@ -438,13 +407,10 @@ export default {
     //雨
     $_enableRain(e) {
       this.$emit('updateSpin',true);
-      let vm = this;
 
-      if(vm.rain){
-        this.rainParams = "120px"
-      }else{
-        this.rainParams = "0px";
-      }
+      this.rain = e;
+
+      let vm = this;
 
       setTimeout(function () {
         if (vm.rain) {
@@ -477,13 +443,10 @@ export default {
     //雪
     $_enableSnow(e) {
       this.$emit('updateSpin',true);
-      let vm = this;
 
-      if(vm.snow){
-        this.snowParams = "80px";
-      }else{
-        this.snowParams = "0px"
-      }
+      this.snow = e;
+
+      let vm = this;
 
       setTimeout(function () {
         if (vm.snow) {
@@ -510,12 +473,11 @@ export default {
     //雾
     $_enableFog(e) {
       this.$emit('updateSpin',true);
+
+      this.fog = e;
+      
       let vm = this;
-      if(vm.fog){
-        this.fogParams = "40px"
-      }else{
-        this.fogParams = "0px"
-      }
+      
       setTimeout(function () {
         if (vm.fog) {
           vm.enableFog();
@@ -611,14 +573,14 @@ export default {
     /*
     * 雾化效果
     * */
-    enableSurficialFog(){
+    enableSurficialFog(e){
       const {viewer} = this;
       let vm = this;
 
-      if(vm.surficialFog){
-        this.surfFogParams = "40px"
-      }else{
-        this.surfFogParams = "0px"
+      if(typeof e ==='boolean'){
+
+        vm.surficialFog = e;
+
       }
       viewer.scene.fog.density = this.surfFogDst;
       // viewer.scene.fog.minimumBrightness = this.surfFogMinBrt;
@@ -646,17 +608,12 @@ export default {
   overflow: hidden;
 }
 
-::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
-  content: url("titlew.png");
-  margin-right: 6px;
-}
-
 /*::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label{*/
 /*  padding-left: 11px!important;*/
 /*}*/
 
 .mapgis-ui-input-number{
-  margin-right: 12px;
+  /* margin-right: 12px; */
   width: 60px;
 }
 
@@ -668,26 +625,15 @@ export default {
   background-color: #F0F0F0;
 }
 
-::v-deep .parameter .mapgis-ui-slider-rail{
+::v-deep .mapgis-ui-switch-panel .mapgis-ui-slider-rail{
   background-color: #FFFFFF;
 }
+
 ::v-deep .mapgis-ui-slider-track{
   background-color: #91D5FF;
 }
 ::v-deep .mapgis-ui-slider-handle{
   border: 2px solid #91D5FF;
-}
-
-.parameter{
-  background: #F1F1F1;
-  border-radius: 4px;
-  /*margin-bottom: 10px;*/
-  overflow: hidden;
-  max-height: 0px;
-  transition:max-height .5s;
-  -moz-transition:max-height .5s; /* Firefox 4 */
-  -webkit-transition:max-height .5s; /* Safari and Chrome */
-  -o-transition:max-height .5s; /* Opera */
 }
 
 </style>

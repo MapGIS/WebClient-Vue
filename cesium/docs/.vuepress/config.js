@@ -88,6 +88,7 @@ module.exports = {
                 title: "图层",
                 collapsable: false
               },
+              ["/api/layer/PopupMixin/popup.md", "图层拾取"],
               ["/api/layer/IGServer/IgsDynamicLayer.md", "IGS二维矢量"],
               ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
               ["/api/layer/IGServer/IgsTileLayer.md", "IGS瓦片"],

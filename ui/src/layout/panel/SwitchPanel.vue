@@ -73,6 +73,12 @@ export default {
       this.innerChecked = next;
     }
   },
+  mounted(){
+    const { height = "fit-content" } = this;
+    if(this.checked){
+      this.maxHeight = height;
+    }
+  },
   computed: {
     formItemLayout({ layout }) {
       const { labelCol, wrapperCol } = this;

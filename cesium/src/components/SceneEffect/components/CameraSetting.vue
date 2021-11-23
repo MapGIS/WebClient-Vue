@@ -2,12 +2,7 @@
   <div class="camera-setting">
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
-      <mapgis-ui-form-model-item label="地下模式" >
-        <mapgis-ui-switch checked-children="开启" un-checked-children="关闭"  v-model="undgrd" @change="enableUndgrd">
-        </mapgis-ui-switch>
-      </mapgis-ui-form-model-item>
-
-      <div class="parameter" :style="{maxHeight: undgrdParams}">
+      <mapgis-ui-switch-panel label="地下模式" :checked="undgrd" @changeChecked="enableUndgrd">
         <mapgis-ui-form-model-item label="地表透明度">
           <mapgis-ui-space>
             <mapgis-ui-slider
@@ -26,8 +21,8 @@
                 @change="enableUndgrd"
             />
           </mapgis-ui-space>
-        </mapgis-ui-form-model-item>        
-      </div>
+        </mapgis-ui-form-model-item>     
+      </mapgis-ui-switch-panel>
 
       <mapgis-ui-form-model-item label="FOV设置" >
         <mapgis-ui-space>
@@ -89,16 +84,13 @@ export default {
     /*
     * 地下模式
     * */
-    enableUndgrd() {
+    enableUndgrd(e) {
       const {viewer} = this;
+      if(typeof e ==='boolean'){
+       this.undgrd = e;
+      }
       this.$emit('updateSpin',true);
       let vm = this;
-
-     if(vm.undgrd){
-        vm.undgrdParams = "40px"
-      }else{
-        vm.undgrdParams = "0px"
-      }
 
       setTimeout(function () {
         viewer.scene.screenSpaceCameraController.enableCollisionDetection = !vm.undgrd;
@@ -142,13 +134,8 @@ export default {
   overflow: hidden;
 }
 
-::v-deep .mapgis-ui-form > .mapgis-ui-form-item .mapgis-ui-form-item-label:before{
-  content: url("titlew.png");
-  margin-right: 6px;
-}
-
 .mapgis-ui-input-number{
-  margin-right: 12px;
+  /* margin-right: 12px; */
   width: 60px;
 }
 
@@ -179,18 +166,6 @@ export default {
 .mapgis-ui-tabs-ink-bar[style]{
   width: 80px!important;
 }*/
-
-.parameter{
-  background: #F1F1F1;
-  border-radius: 4px;
-  /*margin-bottom: 10px;*/
-  overflow: hidden;
-  max-height: 0px;
-  transition:max-height .5s;
-  -moz-transition:max-height .5s; /* Firefox 4 */
-  -webkit-transition:max-height .5s; /* Safari and Chrome */
-  -o-transition:max-height .5s; /* Opera */
-}
 
 /*::v-deep .mapgis-ui-col-6{*/
 /*  padding-right: 16px;*/

@@ -36,6 +36,10 @@ export const 点 = Template.bind({});
 点.args = {
   baseUrl: `http://${window.webclient.ip}/static/data/geojson/省会城市.geojson`,
   enablePopup: true,
+  popupOptions: {
+    "title": 'name',  
+    "popupType": 'table'
+  },
   enableTips: false,
   layerStyle: new PointStyle({
     radius: 25000,
@@ -65,6 +69,10 @@ export const 线 = Template.bind({});
 线.args = {
   baseUrl: `http://${window.webclient.ip}/static/data/geojson/长江黄河.geojson`,
   enablePopup: true,
+  popupOptions: {
+    "title": 'name',
+    "popupType": 'card'
+  },
   enableTips: false,
   layerStyle: new LineStyle({
     width: 6,
@@ -87,12 +95,16 @@ export const 线 = Template.bind({});
     polygon: new FillStyle({ color: "#ff0000", opacity: 0.7 }),
   },
 };
-
+ 
 export const 区 = Template.bind({});
 区.args = {
   baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
   enablePopup: true,
-  enableTips: true,
+  popupOptions: {
+    "title": 'name',
+    "popupType": 'relation'
+  },
+  enableTips: false,
   layerStyle: new FillStyle({
     color: "#1890ff",
     outlineColor: "#ff0000",

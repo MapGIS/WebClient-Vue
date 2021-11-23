@@ -251,6 +251,20 @@
   background: transparent;
 }
 
+.cesium-popup-title {
+}
+
+.cesium-popup-images {
+  height: 200px;
+  width: 330px;
+  background: $popup-background;
+}
+
+.cesium-popup-images-title {
+  height: 28px;
+  color: $primary-6;
+}
+
 .cesium-popup-content-wrapper {
   text-align: left;
   padding: 0px;
