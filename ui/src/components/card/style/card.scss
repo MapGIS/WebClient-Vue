@@ -11,6 +11,7 @@
 
   @include e(head, "-") {
     background-color: $card-body-background;
+    margin-bottom: 0px;
   }
 
   @include e(actions, "-") {
