@@ -11,7 +11,7 @@
              :class="popupOptionsCopy.class.titleClass"
              :style="popupOptionsCopy.style.titleStyle"
              v-if="popupOptionsCopy.title"
-             @click="$_click(popupOptionsCopy.title)"
+             @click="$_clickTitle(popupOptionsCopy.title)"
         >
           {{ popupOptionsCopy.title }}
         </div>
@@ -26,7 +26,7 @@
           <span :class="[defaultFieldClass,popupOptionsCopy.class.fieldClass]"
                 :style="popupOptionsCopy.style.fieldStyle"
                 :title="$_getField(field)"
-                @click="$_click(field, $_getField(field))"
+                @click="$_click(index, 0, field, $_getField(field))"
           >
           {{ $_getField(field) }}
         </span>
@@ -34,7 +34,7 @@
           <span :class="[defaultFieldClass,popupOptionsCopy.class.valueClass]"
                 :style="popupOptionsCopy.style.valueStyle"
                 :title="$_getValue(field)"
-                @click="$_click($_getValue(field))"
+                @click="$_click(index, 1, $_getValue(field))"
           >
           {{ $_getValue(field) }}
         </span>
@@ -131,8 +131,11 @@ export default {
     getElement() {
       return document.getElementById(String(this.id));
     },
-    $_click(value, value2) {
-      this.$emit("click", value, value2);
+    $_click(row, col, value, value2) {
+      this.$emit("click", row, col, value, value2);
+    },
+    $_clickTitle(value) {
+      this.$emit("clickTitle", value);
     },
     $_init() {
       this.popupOptionsCopy = Object.assign(this.popupOptionsCopy, this.popupOptions);
