@@ -27,7 +27,7 @@ const Template = (args, { argTypes }) => ({
       current: ["mail"],
     };
   },
-  template: `<mapgis-ui-menu v-model="current" :mode="mode" style="width:500px;">
+  template: `<mapgis-ui-menu v-model="current" :mode="mode">
       <mapgis-ui-menu-item key="mail"> <mapgis-ui-icon type="mail" />导航菜单一</mapgis-ui-menu-item>
       <mapgis-ui-menu-item key="app" disabled> <mapgis-ui-icon type="appstore" />导航菜单二-禁用</mapgis-ui-menu-item>
       <mapgis-ui-sub-menu>
