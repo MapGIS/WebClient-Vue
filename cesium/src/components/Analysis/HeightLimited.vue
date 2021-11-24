@@ -1,128 +1,306 @@
 <template>
   <div class="mapgis-widget-heightLimited-analysis">
-    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad" :enableControl="enableControl">
-        <mapgis-ui-row>
-          <mapgis-ui-col :span="5">分析区域：</mapgis-ui-col>
-          <mapgis-ui-col :span="19">
-            <mapgis-ui-button @click="drawRectangle">绘制矩形</mapgis-ui-button>
-            <mapgis-ui-button style="margin:0 8px" @click="drawPolygon">绘制面</mapgis-ui-button>
-            <mapgis-ui-button @click="toggleDelete">清除</mapgis-ui-button>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-        <mapgis-ui-row style="padding-top: 10px">
-          <mapgis-ui-col :span="5">
-            <span>限制高度：</span>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="10" style="padding-right: 8px">
-            <mapgis-ui-slider v-model="heightLimit" :disabled="excavateAn" :max="maxSliderHeight" :min="mindepth" :step="5"
-                      :value="parseFloat(heightLimit)" @change="setInput"/>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="5">
-            <mapgis-ui-input-number v-model="heightLimit" :max="maxSliderHeight" :min="mindepth"
-                            :style="{marginLeft: '16px'}"/>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
+    <mapgis-ui-group-tab
+        title="模型"
+        :has-top-margin="false"
+        v-if="models.length > 1"></mapgis-ui-group-tab>
+    <mapgis-ui-form-item v-if="models.length > 1">
+<!--    <mapgis-ui-row class="model" v-if="models.length > 1">-->
+      <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">
+        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
+          {{ node.title }}
+        </mapgis-ui-select-option>
+      </mapgis-ui-select>
+    </mapgis-ui-form-item>
+<!--    </mapgis-ui-row>-->
+    <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
+    <mapgis-ui-setting-form :label-width="72">
+      <mapgis-ui-form-item label="限高颜色">
+        <mapgis-ui-sketch-color-picker
+            :color.sync="colorCopy"
+            :disableAlpha="false"
+            class="colorCopy-picker"
+        >
+        </mapgis-ui-sketch-color-picker>
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="限制高度">
+        <mapgis-ui-slider  :disabled="readonly"
+                           :max="maxSliderHeight" :min="minSlider"
+                           :step="5"
+                           v-model="heightLimit"
+                           @change="setInput"/>
+      </mapgis-ui-form-item>
+    </mapgis-ui-setting-form>
+    <mapgis-3d-draw :vue-key="vueKey" v-on:draw-create="handleCreate" v-on:load="handleDrawLoad"
+                    :enableControl="enableControl">
+      <div class="parent_div">
+        <mapgis-ui-group-tab title="绘制区域"></mapgis-ui-group-tab>
+        <div style="text-align: right" class="child_div">
+          <mapgis-ui-tooltip
+              v-for="(item, i) in draws"
+              :key="i"
+              placement="bottom"
+          >
+            <template slot="title">
+              <span>{{ item.tip }}</span>
+            </template>
+            <mapgis-ui-button
+                shape="circle"
+                :type="item.type"
+                @click="item.click"
+                :class="item.className"
+                style="margin: 0 12px"
+            >
+              <mapgis-ui-iconfont
+                  :type="item.icon"
+                  :class="item.className"
+                  theme="filled"
+              />
+            </mapgis-ui-button>
+          </mapgis-ui-tooltip>
+        </div>
+      </div>
     </mapgis-3d-draw>
+    <mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="startHeightAnalysis">
+        分析
+      </mapgis-ui-button>
+      <mapgis-ui-button @click="toggleDelete">清除</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
   </div>
 </template>
 
 <script>
-import ServiceLayer from "../UI/Controls/ServiceLayer.js";
+import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../Utils/deepequal";
 
 export default {
   name: "mapgis-3d-heightlimited",
-  mixins: [ServiceLayer],
+  mixins: [BaseLayer],
   props: {
-    vueKey: {
-      type: String,
-      default: "default"
-    },
-    vueIndex: {
-      type: Number,
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
+    // 模型集合
+    models: {
+      type: Array,
+      default: () => []
     },
     color: {
       type: String,
       default: "#ff0000"
-    },
-    opacity: {
-      type: Number,
-      default: 0.5
-    },
-    maxSliderHeight: {
-      type: Number,
-      default: 50
     }
   },
   components: {Mapgis3dDraw},
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       //定义
       heightLimit: 10,
-      excavateAn: false,
-      mindepth: 0,
+      // slider滑块是否禁用
+      readonly: false,
+      minSlider:0,
       boundingSphere: "",
       waitManagerName: "M3DIgsManager",
       cartesianForHeight: [],
-      enableControl:false
+      enableControl: false,
+      // 选中模型
+      model: null,
+      size: "default",
+      // radio样式
+      radioStyle: {
+        display: "block",
+        height: "30px",
+        lineHeight: "30px"
+      },
+      colorCopy: "#ff0000",
+      opacityCopy: 0.5,
+      maxSliderHeight: 50,
+      draws: [
+        {
+          icon: "mapgis-huizhijuxing",
+          type: "primary",
+          tip: "绘制矩形",
+          click: this.drawRectangle
+        },
+        {
+          icon: "mapgis-draw-polygon",
+          type: "primary",
+          tip: "绘制多边形",
+          click: this.drawPolygon
+        },
+      ],
+      // m3d模型对象
+      m3d:undefined
     }
   },
   mounted() {
-    let vm = this;
-    Object.keys(this.$props).forEach(function (key) {
-      if (key!=="vueKey" && key!=="vueIndex"){
-        vm.$watch(key,function () {
-          this.heightLimitedAnalysis();
-        })
-      }
-    })
-    vm.$_init(vm.heightLimitedAnalysis);
+    this.mount();
   },
   destroyed() {
     this.unmount();
   },
   watch: {
-    heightLimit: {
+    models: {
+      handler: function (layers) {
+        if (layers && layers.length > 0) {
+          this.model = layers[layers.length - 1];
+        } else {
+          this.model = null;
+        }
+      },
+      deep: true,
+      immediate: true
+    },
+    model: {
+      deep: true,
+      immediate: true,
+      handler: function () {
+        // this.removeDraw();
+        this.remove();
+        this.changeModel();
+      }
+    },
+    color: {
+      immediate: true,
       handler(next, old) {
         if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
+          this.colorCopy = next;
         }
       }
     },
-    color:{
+    colorCopy: {
+      immediate: true,
       handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
-        }
+        this.remove();
+        this.heightLimitedAnalysis();
       }
     },
-    opacity:{
-      handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
-        }
-      }
-    },
-    maxSliderHeight:{
-      handler(next, old) {
-        if (!deepEqual(next, old)) {
-          this.heightLimitedAnalysis();
-        }
-      }
-    }
   },
   methods: {
+    async createCesiumObject() {
+      return new Promise(
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
+      );
+    },
+    mount() {
+      const {viewer, vueCesium, vueKey, vueIndex} = this;
+      const vm = this;
+      let promise = this.createCesiumObject();
+      promise.then(function (dataSource) {
+        vm.$emit("load", vm);
+        vueCesium.HeightLimitedAnalysisManager.addSource(
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              heightLimitedAnalysis: null,
+              lnglat: null
+            }
+        );
+      });
+    },
+
+    /**
+     * 判断传入的m3d图层是否加载完毕
+     */
+    m3dIsReady() {
+      const {vueCesium, vueKey, vueIndex, model} = this;
+      return new Promise((resolve, reject) => {
+        if (model && model.vueIndex) {
+          this.$_getM3DByInterval(
+              function (m3ds) {
+                if (m3ds && m3ds.length > 0) {
+                  if (
+                      !m3ds[0] ||
+                      !m3ds[0].hasOwnProperty("source") ||
+                      !m3ds[0].source
+                  ) {
+                    reject(null);
+                  } else {
+                    resolve(m3ds[0]);
+                  }
+                } else {
+                  reject(null);
+                }
+              },
+              vueKey,
+              model.vueIndex || vueIndex
+          );
+        } else {
+          reject(null);
+        }
+      });
+    },
+
+    changeModel() {
+      let vm = this;
+      this.m3dIsReady().then(m3d => {
+        const {source} = m3d;
+        vm.m3d = m3d;
+        vm.zoomToM3dLayerBySource(source[0]);
+        vm.getM3dHeight(source[0]);
+      });
+    },
+
+    /**
+     * 跳转到模型范围，视角不变。基于source
+     * @param source
+     */
+    zoomToM3dLayerBySource(source) {
+      const m3d = this.getM3D();
+      m3d.zoomToM3dLayer(source);
+    },
+
+    /**
+     * 获取M3DLayer对象
+     * @returns M3DLayer对象
+     */
+    getM3D() {
+      const {viewer} = this;
+      const m3d = new window.CesiumZondy.Layer.M3DLayer({
+        viewer: viewer
+      });
+      return m3d;
+    },
+
+    /**
+     * 获取模型的高度
+     */
+    getM3dHeight(source) {
+      let vm = this;
+      let _boundingVolume = source._root._boundingVolume;
+      //求外包盒的高度
+      let height = Math.abs(_boundingVolume.maximumHeight - _boundingVolume.minimumHeight);
+      this.maxSliderHeight = height;
+    },
+
+    /**
+     * 开始分析
+     */
+    startHeightAnalysis() {
+      this.heightLimitedAnalysis();
+    },
+
     setInput(data) {
       let vm = this;
       vm.heightLimit = data;
-      vm.heightLimitedAnalysis();
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.HeightLimitedAnalysisManager.findSource(
+          vueKey,
+          vueIndex
+      );
+      let { options } = find;
+      let { heightLimitedAnalysis } = options;
+      if (heightLimitedAnalysis) {
+        // 设置限高高度
+        heightLimitedAnalysis.height = data;
+      }
+      // vm.heightLimitedAnalysis();
     },
-    removeDraw(){
+    removeDraw() {
       this.drawer.unmount();
     },
     drawPolygon() {
@@ -141,32 +319,31 @@ export default {
 
     //绘制组件的回调函数
     handleCreate(cartesian3, lnglat) {
-      let vm = this;
-      this.drawer && this.drawer.removeEntities(true);
-      vm.cartesian3 = cartesian3;
-      vm.lnglat = lnglat;
-      this.heightLimitedAnalysis(lnglat);
+      // let vm = this;
+      // this.drawer && this.drawer.removeEntities(true);
+      // vm.cartesian3 = cartesian3;
+      // vm.lnglat = lnglat;
+      // this.heightLimitedAnalysis(lnglat);
+      // window.drawElement.stopDrawing();
     },
 
     //开始控高分析
     heightLimitedAnalysis(lnglat) {
       const vm = this;
+      // 先remove
+      // this.remove();
       let {vueKey, vueIndex} = this
-      let {heightLimit, CesiumZondy, webGlobe} = this;
-      let viewer = webGlobe.viewer;
-      let findSource = vm.$_getObject();
-
+      let {heightLimit, vueCesium, viewer} = this;
       //先判断m3d模型是否加载完成
-      if (findSource) {
-
+      vm.m3dIsReady().then(m3d => {
         //判断分析方式，不通过绘制矩形和绘制面的方式，则lnglat为空，走if,否则绘制方式就走else
         if (!lnglat) {
-          let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
-          if (find) {
-            lnglat = find.options;
-            this.remove();
+          let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+          if (find && find.options && find.options.lnglat) {
+            lnglat = find.options.lnglat;
+            // this.remove();
           } else {
-            vm._boundingVolume = findSource.source[0]._root._boundingVolume;
+            vm._boundingVolume = m3d.source[0]._root._boundingVolume;
             const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
             const southwestCornerCartesian = vm._boundingVolume.southwestCornerCartesian;
             lnglat = vm.getAllPoint(southwestCornerCartesian, northeastCornerCartesian);
@@ -183,33 +360,38 @@ export default {
           })
           lnglat = temp;
         }
-      }
+        vueCesium.HeightLimitedAnalysisManager.changeOptions(
+            vm.vueKey,
+            vm.vueIndex,
+            "lnglat",
+            lnglat
+        );
+        //控高分析边界点数组
+        let pnts = [];
+        for (let i = 0; i < lnglat.length; i++) {
+          pnts.push(new Cesium.Cartesian3(lnglat[i].longitude, lnglat[i].latitude, 0));
+        }
+        let cesiumColor = Cesium.Color.fromCssColorString(vm.colorCopy);
 
-      //控高分析边界点数组
-      let pnts = [];
-      for (let i = 0; i < lnglat.length; i++) {
-        pnts.push(new Cesium.Cartesian3(lnglat[i].longitude, lnglat[i].latitude, 0));
-      }
-      let cesiumColor = Cesium.Color.fromCssColorString(vm.color);
-
-      //调用控告分析接口
-      var heightLimited = new Cesium.HeightLimited(viewer, {
-        height: heightLimit,
-        limitedColor: cesiumColor,
-        blendTransparency: vm.opacity,
-        posArray: pnts,
-        polygonColor: Cesium.Color.WHITE.withAlpha(0),
-        useOutLine: false
-      });
-      webGlobe.addSceneEffect(heightLimited);
-
-      CesiumZondy.HeightLimitedAnalysisManager.addSource(
-          vm.vueKey,
-          vm.vueIndex,
-          heightLimited,
-          lnglat
-      );
+        //调用控高分析接口
+        let heightLimited = new Cesium.HeightLimited(viewer, {
+          height: heightLimit,
+          limitedColor: cesiumColor,
+          blendTransparency: vm.opacityCopy,
+          posArray: pnts,
+          polygonColor: Cesium.Color.WHITE.withAlpha(0),
+          useOutLine: false
+        });
+        heightLimited.add();
+        vueCesium.HeightLimitedAnalysisManager.changeOptions(
+            vm.vueKey,
+            vm.vueIndex,
+            "heightLimitedAnalysis",
+            heightLimited
+        );
+      })
     },
+
 
     transformToLocal(cartesian3, findSource) {
       let localCertesian3 = [];
@@ -272,18 +454,32 @@ export default {
       return point;
     },
 
-    remove() {
-      const {vueKey, vueIndex} = this;
-      let find = CesiumZondy.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
-      if (find && find.source) {
-        find.source.remove();
-      }
-      // 这段代码可以认为是对应的vue的获取destroyed生命周期
-      CesiumZondy.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
+    handleChange(e){
+      let a1 = this.models.filter((m)=>{
+        return m.title === e;
+      })
+      this.model = a1[0];
+      this.toggleDelete();
     },
-    unmount(){
+
+    remove() {
+      const {vueKey, vueIndex, vueCesium} = this;
+      let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        if (find.options.heightLimitedAnalysis) {
+          let analysis = find.options.heightLimitedAnalysis;
+          analysis.remove();
+          find.options.heightLimitedAnalysis = null;
+          find.options.lnglat = null;
+        }
+      }
+    },
+    unmount() {
+      let { vueCesium, vueKey, vueIndex} = this;
       this.removeDraw();
       this.remove();
+      // 这段代码可以认为是对应的vue的获取destroyed生命周期
+      vueCesium.HeightLimitedAnalysisManager.deleteSource(vueKey, vueIndex);
     }
   }
 }
@@ -291,28 +487,18 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .mapgis-ui-card-body {
-  max-height: 300px;
-  overflow: auto;
+::v-deep .mapgis-ui-select {
+  width: 100%;
 }
 
-.mapgis-ui-card-bordered{
-  border:unset;
+.parent_div{
+  width: 100%;
+  display: inline-block;
+  position: relative;
 }
-
-.mapgis-ui-card-body{
-  padding: 10px;
-}
-
-::v-deep .mapgis-ui-col-5{
-  padding-top: 8px
-}
-::v-deep .mapgis-ui-col-19{
-  display: flex;
-  padding-right: 5px;
-}
-
-.mapgis-widget-heightLimited-analysis{
-  font-size: 12px;
+.child_div{
+  position: absolute;
+  top:0;
+  right: 0px;
 }
 </style>

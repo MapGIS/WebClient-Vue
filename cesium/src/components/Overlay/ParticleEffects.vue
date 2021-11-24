@@ -7,19 +7,20 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="emissionRateCopy"
-                  :min="0"
-                  :max="100"
-                  @change="val => onChangeEffect(val, 'emissionRate')"
+                    class="slider-body"
+                    v-model="emissionRateCopy"
+                    :min="0"
+                    :max="100"
+                    @change="val => onChangeEffect(val, 'emissionRate')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="emissionRateCopy"
-                  :min="0"
-                  :max="100"
+                    class="slider-number"
+                    v-model="emissionRateCopy"
+                    :min="0"
+                    :max="100"
+                    @change="val => onChangeEffect(val, 'emissionRate')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -28,19 +29,20 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="imageSizeCopy"
-                  :min="2"
-                  :max="60"
-                  @change="val => onChangeEffect(val, 'imageSize')"
+                    class="slider-body"
+                    v-model="imageSizeCopy"
+                    :min="2"
+                    :max="60"
+                    @change="val => onChangeEffect(val, 'imageSize')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="imageSizeCopy"
-                  :min="2"
-                  :max="60"
+                    class="slider-number"
+                    v-model="imageSizeCopy"
+                    :min="2"
+                    :max="60"
+                    @change="val => onChangeEffect(val, 'imageSize')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -49,21 +51,22 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="minimumParticleLifeCopy"
-                  :min="0.1"
-                  :max="30.0"
-                  :step="0.1"
-                  @change="val => onChangeEffect(val, 'minimumParticleLife')"
+                    class="slider-body"
+                    v-model="minimumParticleLifeCopy"
+                    :min="0.1"
+                    :max="30.0"
+                    :step="0.1"
+                    @change="val => onChangeEffect(val, 'minimumParticleLife')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="minimumParticleLifeCopy"
-                  :min="0.1"
-                  :max="30.0"
-                  :step="0.1"
+                    class="slider-number"
+                    v-model="minimumParticleLifeCopy"
+                    :min="0.1"
+                    :max="30.0"
+                    :step="0.1"
+                    @change="val => onChangeEffect(val, 'minimumParticleLife')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -72,21 +75,22 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="maximumParticleLifeCopy"
-                  :min="0.1"
-                  :max="30.0"
-                  :step="0.1"
-                  @change="val => onChangeEffect(val, 'maximumParticleLife')"
+                    class="slider-body"
+                    v-model="maximumParticleLifeCopy"
+                    :min="0.1"
+                    :max="30.0"
+                    :step="0.1"
+                    @change="val => onChangeEffect(val, 'maximumParticleLife')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="maximumParticleLifeCopy"
-                  :min="0.1"
-                  :max="30.0"
-                  :step="0.1"
+                    class="slider-number"
+                    v-model="maximumParticleLifeCopy"
+                    :min="0.1"
+                    :max="30.0"
+                    :step="0.1"
+                    @change="val => onChangeEffect(val, 'maximumParticleLife')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -95,19 +99,20 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="minimumSpeedCopy"
-                  :min="0"
-                  :max="30"
-                  @change="val => onChangeEffect(val, 'minimumSpeed')"
+                    class="slider-body"
+                    v-model="minimumSpeedCopy"
+                    :min="0"
+                    :max="30"
+                    @change="val => onChangeEffect(val, 'minimumSpeed')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="minimumSpeedCopy"
-                  :min="0"
-                  :max="30"
+                    class="slider-number"
+                    v-model="minimumSpeedCopy"
+                    :min="0"
+                    :max="30"
+                    @change="val => onChangeEffect(val, 'minimumSpeed')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -116,19 +121,20 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="maximumSpeedCopy"
-                  :min="0"
-                  :max="30"
-                  @change="val => onChangeEffect(val, 'maximumSpeed')"
+                    class="slider-body"
+                    v-model="maximumSpeedCopy"
+                    :min="0"
+                    :max="30"
+                    @change="val => onChangeEffect(val, 'maximumSpeed')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="maximumSpeedCopy"
-                  :min="0"
-                  :max="30"
+                    class="slider-number"
+                    v-model="maximumSpeedCopy"
+                    :min="0"
+                    :max="30"
+                    @change="val => onChangeEffect(val, 'maximumSpeed')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -137,21 +143,22 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="startScaleCopy"
-                  :min="0.0"
-                  :max="10.0"
-                  :step="0.5"
-                  @change="val => onChangeEffect(val, 'startScale')"
+                    class="slider-body"
+                    v-model="startScaleCopy"
+                    :min="0.0"
+                    :max="10.0"
+                    :step="0.5"
+                    @change="val => onChangeEffect(val, 'startScale')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="startScaleCopy"
-                  :min="0.0"
-                  :max="10.0"
-                  :step="0.5"
+                    class="slider-number"
+                    v-model="startScaleCopy"
+                    :min="0.0"
+                    :max="10.0"
+                    :step="0.5"
+                    @change="val => onChangeEffect(val, 'startScale')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
@@ -160,33 +167,34 @@
             <mapgis-ui-row>
               <mapgis-ui-col :span="15">
                 <mapgis-ui-slider
-                  class="slider-body"
-                  v-model="endScaleCopy"
-                  :min="0.0"
-                  :max="10.0"
-                  :step="0.5"
-                  @change="val => onChangeEffect(val, 'endScale')"
+                    class="slider-body"
+                    v-model="endScaleCopy"
+                    :min="0.0"
+                    :max="10.0"
+                    :step="0.5"
+                    @change="val => onChangeEffect(val, 'endScale')"
                 />
               </mapgis-ui-col>
               <mapgis-ui-col :span="9">
                 <mapgis-ui-input-number
-                  class="slider-number"
-                  v-model="endScaleCopy"
-                  :min="0.0"
-                  :max="10.0"
-                  :step="0.5"
+                    class="slider-number"
+                    v-model="endScaleCopy"
+                    :min="0.0"
+                    :max="10.0"
+                    :step="0.5"
+                    @change="val => onChangeEffect(val, 'endScale')"
                 />
               </mapgis-ui-col>
             </mapgis-ui-row>
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="发射类型">
             <mapgis-ui-select
-              v-model="emitterTypeCopy"
-              @change="onEmitterChange"
+                v-model="emitterTypeCopy"
+                @change="onEmitterChange"
             >
               <mapgis-ui-select-option
-                v-for="item in emitterOptions"
-                :key="item"
+                  v-for="item in emitterOptions"
+                  :key="item"
               >
                 {{ item }}
               </mapgis-ui-select-option>
@@ -207,7 +215,7 @@ import {
 
 export default {
   name: "mapgis-3d-particle-effects",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -341,7 +349,8 @@ export default {
       emitterTypeCopy: "圆形放射", // 发射类型下拉值
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
       particleArr: [], // 粒子特效集
-      isLogarithmicDepthBufferEnable: undefined // 记录对数深度缓冲区状态
+      isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
+      handlerAction:undefined
     };
   },
 
@@ -355,10 +364,10 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
+          resolve => {
+            resolve();
+          },
+          reject => {}
       );
     },
     mount() {
@@ -378,64 +387,66 @@ export default {
           item.remove();
         });
       }
-      this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
       this.particleArr = [];
       if (
-        this.isLogarithmicDepthBufferEnable !==
-        isLogarithmicDepthBufferEnable(this.webGlobe)
+          this.isLogarithmicDepthBufferEnable !==
+          isLogarithmicDepthBufferEnable(this.viewer)
       ) {
         setLogarithmicDepthBufferEnable(
-          this.isLogarithmicDepthBufferEnable,
-          this.webGlobe
+            this.isLogarithmicDepthBufferEnable,
+            this.viewer
         );
       }
     },
     onCreateParticle() {
       this._addEventListener();
       this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        this.webGlobe
+          this.viewer
       );
       if (this.isLogarithmicDepthBufferEnable === true) {
-        setLogarithmicDepthBufferEnable(false, this.webGlobe);
+        setLogarithmicDepthBufferEnable(false, this.viewer);
       }
     },
     _addEventListener() {
-      this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction.setInputAction(event => {
         this._registerMouseLClickEvent(event);
-      });
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+      // this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
+      //   this._registerMouseLClickEvent(event);
+      // });
     },
     _registerMouseLClickEvent(event) {
       // 获取点击点的笛卡尔坐标
-      const cartesian = this.webGlobe.viewer.getCartesian3Position(
-        event.position
+      const cartesian = this.viewer.getCartesian3Position(
+          event.position
       );
       // 获取当前坐标系标准
-      const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid;
+      const ellipsoid = this.viewer.scene.globe.ellipsoid;
       // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
       const cartographic = ellipsoid.cartesianToCartographic(cartesian);
 
       // 获取该位置的经纬度坐标
       const centerLon = parseFloat(
-        this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
+          this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
       );
       const centerLat = parseFloat(
-        this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
+          this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
       );
 
-      // 初始化高级分析功能管理类
-      const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
-        {
-          viewer: this.webGlobe.viewer
-        }
-      );
+      // 开启计时
+      this.viewer.clock.shouldAnimate = true;
 
-      const options = {
+      // 创建粒子特效
+      let particle = new this.Cesium.StableParticle(this.viewer, this.imgUrl, [centerLon, centerLat, cartographic.height], {
         startColor: new this.Cesium.Color(1, 1, 1, 1),
         emissionRate: this.emissionRateCopy,
-        imageSize: new this.Cesium.Cartesian2(
-          this.imageSizeCopy,
-          this.imageSizeCopy
-        ),
+        imageSize: new this.Cesium.Cartesian2(this.imageSizeCopy,this.imageSizeCopy),
         minimumParticleLife: this.minimumParticleLifeCopy,
         maximumParticleLife: this.maximumParticleLifeCopy,
         minimumSpeed: this.minimumSpeedCopy,
@@ -446,20 +457,18 @@ export default {
         gravity: 0.5,
         heading: 0.0,
         pitch: 0.0,
-        roll: 0.0
-      };
-
-      // 创建粒子特效
-      const particle = advancedAnalysisManager.createStableParticle(
-        this.imgUrl,
-        [centerLon, centerLat, cartographic.height],
-        options
-      );
+        roll: 0.0,
+        minimumPixelSize:64.0,
+        endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
+        minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+        maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+        lifetime:16.0,
+        viewHeight:-1,
+      });
+      particle.start();
 
       this.particleArr.push(particle);
 
-      // 开启计时
-      this.webGlobe.viewer.clock.shouldAnimate = true;
       // 粒子特效初始参数
       const viewModel = {
         emissionRate: this.emissionRateCopy,
@@ -470,22 +479,25 @@ export default {
         startScale: this.startScaleCopy,
         endScale: this.endScaleCopy,
         imageSize: new this.Cesium.Cartesian2(
-          this.imageSizeCopy,
-          this.imageSizeCopy
+            this.imageSizeCopy,
+            this.imageSizeCopy
         )
       };
       // 粒子参数设置绑定UI
       this.Cesium.knockout.track(viewModel);
 
       // 注销鼠标的各项监听事件
-      this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
     },
     onEmitterChange(value) {
       let emitter;
       switch (value) {
         case "盒状放射":
           emitter = new this.Cesium.BoxEmitter(
-            new this.Cesium.Cartesian3(5.0, 5.0, 5.0)
+              new this.Cesium.Cartesian3(5.0, 5.0, 5.0)
           );
           break;
         case "圆形放射":
@@ -493,7 +505,7 @@ export default {
           break;
         case "锥形放射":
           emitter = new this.Cesium.ConeEmitter(
-            this.Cesium.Math.toRadians(30.0)
+              this.Cesium.Math.toRadians(30.0)
           );
           break;
         case "球形放射":

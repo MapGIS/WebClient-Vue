@@ -1,12 +1,62 @@
 import MapgisBuildingLayer from "../../mapboxgl/src/components/layer/building/BuildingLayer.vue";
 
 export default {
-  title: "二维/可视化/建筑白膜",
+  title: "二维/图层/建筑白膜",
   component: MapgisBuildingLayer,
   argTypes: {
-    geojson: "",
-    field: "height",
-    heightScale: 2,
+    geojson:{
+      description:'[官方白膜文档](https://docs.mapbox.com/mapbox-gl-js/example/3d-buildings/)',
+      type: { name: 'Object | String', required: false },
+      table:{
+        type: { summary: 'Object | String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'object'
+    },
+    color: {
+      description:'白膜颜色',
+      type:{ name: 'String', required: false },
+      defaultValue: '#ffffff',
+      table:{
+        type:{
+          summary: 'String',
+        },
+        defaultValue: { summary: '#ffffff' },
+      },
+      control:'color'
+    },
+    field: {
+      description:'白膜高度选取的字段',
+      type:{ name: 'String', required: false },
+      defaultValue: 'point_count',
+      table:{
+        type:{
+          summary: 'String',
+        },
+        defaultValue: { summary: 'point_count' },
+      },
+      control:'text'
+    },
+    opacity: {
+      description:'白膜透明度',
+      defaultValue:0.85 ,
+      type: { name: 'Number', required: false },
+      table:{
+        type: { summary: 'Number' },
+        defaultValue: { summary: '0.85' },
+      },
+      control:'number'
+    },
+    heightScale: {
+      description:'高程缩放比',
+      defaultValue:1.0 ,
+      type: { name: 'Number', required: false },
+      table:{
+        type: { summary: 'Number' },
+        defaultValue: { summary: '1.0' },
+      },
+      control:'number'
+    },
   },
 };
 
@@ -37,7 +87,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 小数据GEOJSON = Template.bind({});
 小数据GEOJSON.args = {
-  geojson: "http://develop.smaryun.com/static/data/geojson/building-500.geojson",
+  // geojson: "http://develop.smaryun.com/static/data/geojson/building-500.geojson",
+  geojson: `http://${window.webclient.ip}/static/data/geojson/building-500.geojson`,
   field: "height",
   heightScale: 2,
 };

@@ -6,7 +6,7 @@
 import ServiceLayer from "../ServiceLayer";
 export default {
   name: "mapgis-3d-ogc-wmts-layer",
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   mixins:[ServiceLayer],
   props: {
     wmtsLayer: {type: String, required: true},

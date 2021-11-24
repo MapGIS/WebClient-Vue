@@ -11,7 +11,8 @@ const Template = (args, { argTypes }) => ({
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
-      terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
+      //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
+      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
@@ -20,10 +21,12 @@ const Template = (args, { argTypes }) => ({
         key: "tk",
         value: "9c157e9585486c02edf817d2ecbc7752",
       },
+      m3dUrl1:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
+      m3dUrl2:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`
     };
   },
   template: `
-      <mapgis-web-scene style="{height: '100vh'}"
+      <mapgis-web-scene style="height: 95vh"
           v-on:load="handleLoad"
       >
         <mapgis-3d-ogc-wmts-layer
@@ -35,13 +38,13 @@ const Template = (args, { argTypes }) => ({
             :token="token"
         ></mapgis-3d-ogc-wmts-layer>
         <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-        <mapgis-3d-igs-m3d 
+        <mapgis-3d-m3d-layer
             :vueIndex="$props.models[0].vueIndex" 
-            url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s"
+            :url="m3dUrl1"
         />
-        <mapgis-3d-igs-m3d 
+        <mapgis-3d-m3d-layer 
             :vueIndex="$props.models[1].vueIndex" 
-            url="http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent"
+            :url="m3dUrl2"
         />
         <mapgis-ui-card class="storybook-ui-card">
           <mapgis-3d-dynamic-section @mounted="dynamicMounted" @destroyed="dynamicDestroyed" v-bind="$props"/>

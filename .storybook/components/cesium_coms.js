@@ -8,12 +8,15 @@ export { default as Mapgis3dTable } from "../../cesium/src/components/UI/Control
 export { default as Mapgis3dMeasure } from "../../cesium/src/components/UI/Controls/Measure/Measure";
 export { default as Mapgis3dCompare } from "../../cesium/src/components/UI/Controls/Compare/Compare.vue";
 export { default as Mapgis3dArcgisLegend } from "../../cesium/src/components/UI/Controls/Legend/Legend.vue";
+export { default as Mapgis3DDataFlow } from "../../cesium/src/components/Layer/DataFlow/DataFlow";
+export { default as Mapgis3DTrack } from "../../cesium/src/components/Layer/Track/Track";
+export { default as Mapgis3dLocate } from "../../cesium/src/components/UI/Controls/geoLocate/Locate.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "../../cesium/src/components/Provider/ImageProvider/ImageryLayer.vue";
 export { default as Mapgis3dIgsDocLayer } from "../../cesium/src/components/Layer/IGServer/IgsDocLayer.vue";
 export { default as Mapgis3dIgsTileLayer } from "../../cesium/src/components/Layer/IGServer/IgsTileLayer.vue";
-export { default as Mapgis3dIgsVectorLayer } from "../../cesium/src/components/Layer/IGServer/IgsVectorLayer.vue";
+export { default as Mapgis3dIgsDynamicLayer } from "../../cesium/src/components/Layer/IGServer/IgsDynamicLayer.vue";
 export { default as Mapgis3dRasterLayer } from "../../cesium/src/components/Layer/RasterTile/BaseRasterLayer.vue";
 export { default as Mapgis3dOgcWmtsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Layer/OGC/OGCWMSLayer.vue";
@@ -27,9 +30,10 @@ export { default as Mapgis3dGeojsonLayer } from "../../cesium/src/components/Lay
 export { default as Mapgis3dVectortileLayer } from "../../cesium/src/components/Layer/VectorTile/VectorTileLayer.vue";
 
 // 模型
-export { default as Mapgis3dFileM3d } from "../../cesium/src/components/M3D/M3dFile.vue";
-export { default as Mapgis3dIgsM3d } from "../../cesium/src/components/M3D/M3d.vue";
-export { default as Mapgis3dTileset } from "../../cesium/src/components/M3D/3dTileset.vue";
+export { default as Mapgis3dFileM3d } from "../../cesium/src/components/Layer/M3D/M3dFile.vue";
+export { default as Mapgis3dIgsM3d } from "../../cesium/src/components/Layer/M3D/M3d.vue";
+export { default as Mapgis3dG3dLayer } from "../../cesium/src/components/Layer/M3D/G3D.vue";
+export { default as Mapgis3dTileset } from "../../cesium/src/components/Layer/M3D/3dTileset.vue";
 
 export { default as Mapgis3dPopup } from "../../cesium/src/components/UI/Popup/Popup.vue";
 export { default as Mapgis3dMarker } from "../../cesium/src/components/UI/Marker/Marker";
@@ -63,6 +67,13 @@ export { default as Mapgis3dDynamicSection } from "../../cesium/src/components/A
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";
 export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
+
 export { default as Mapgis3dParticleEffects } from "../../cesium/src/components/Overlay/ParticleEffects";
 
+export { default as Mapgis3dSceneRoaming } from "../../cesium/src/components/SceneEffect/SceneRoaming";
+
+export { default as Mapgis3dPathRoaming } from "../../cesium/src/components/SceneEffect/PathRoaming/PathRoaming";
+
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";
+export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
+export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";

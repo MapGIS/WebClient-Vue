@@ -1,0 +1,11 @@
+.mapgis-test-2d-statebar {
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  z-index: 9999;
+}
+
+.mapgis-test-2d-statebar-item {
+  width: 25%;
+}

@@ -93,11 +93,11 @@ export default {
     geoJson: { type: Object },
     vueKey: { type: String, default: "default" },
     vueIndex: {
-      type: String | Number,
+      type: String || Number,
       default: (Math.random() * 10000).toFixed(0)
     }
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseMixin],
   data() {
     return {

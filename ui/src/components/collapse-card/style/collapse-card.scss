@@ -45,4 +45,16 @@
       font-size: 20px;
     }
   }
+
+  &-back {
+    padding: 0px 6px;
+    font-size: 14px;
+    line-height: 32px;
+    height: 32px;
+    width: 100%;
+    box-shadow: 0px 0px 2px 2px $shadow;
+    .anticon {
+      font-size: 20px;
+    }
+  }
 }

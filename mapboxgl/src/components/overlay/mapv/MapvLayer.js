@@ -1,6 +1,8 @@
 import mapboxgl from "@mapgis/mapbox-gl";
 import { MapvBaseLayer } from "./MapvBaseLayer";
 
+let idIndex = 0;
+
 /**
  * @origin author kyle / http://nikai.us/
  * @author 基础平台/创新中心 潘卓然 ParnDeedlit
@@ -8,10 +10,13 @@ import { MapvBaseLayer } from "./MapvBaseLayer";
  * @classdesc 基于mapboxgl的Layer对象进行的拓展
  * @param map - {Object} 传入的mapboxgl的地图对象
  * @param dataset - {MapvDataSet} 传入的mapv的属性。 <br>
- * @param mapvoption - {MapvOption} 可选参数。<br>
+ * @param mapVOptions - {MapvOption} 可选参数。<br>
+ * @param mapVOptions - mapboxgl的渲染模式
+ * @param {Boolean} [mapVOptions.postRender=false] 是否实时渲染
  * @see https://github.com/huiyan-fe/mapv/blob/master/API.md
  * @example 
  * var options = {
+      postRender: false,
       size: 13,
       gradient: {
         0.25: "rgb(0,0,255)",
@@ -38,6 +43,7 @@ export class MapvLayer {
   constructor(map, dataSet, mapVOptions) {
     this.map = map;
     this.layerID = mapVOptions.layerID;
+    this.postRender = mapVOptions.postRender || false;
     delete mapVOptions["layerID"];
     this.mapvBaseLayer = new MapvBaseLayer(map, dataSet, mapVOptions, this);
     this.mapVOptions = mapVOptions;
@@ -69,6 +75,12 @@ export class MapvLayer {
     this.innerMoveEnd = this.moveEndEvent.bind(this);
 
     this.innnerZoomStart = this.zoomStartEvent.bind(this);
+    this.innerZoom = this.zoomEvent.bind(this);
+    // this.innerZoom = debounce(
+    //     ()=>{
+    //       this.zoomEvent.bind(this)
+    //     },100,
+    //     { leading: true });
     this.innnerZoomEnd = this.zoomEndEvent.bind(this);
 
     this.innnerRotateStart = this.rotateStartEvent.bind(this);
@@ -78,6 +90,10 @@ export class MapvLayer {
 
     this.innerRemove = this.removeEvent.bind(this);
 
+    if (this.postRender) {
+      map.on("zoom", this.innerZoom);
+      map.on("move", this.innerZoom);
+    }
     map.on("resize", this.innerResize);
 
     map.on("zoomstart", this.innnerZoomStart);
@@ -98,6 +114,10 @@ export class MapvLayer {
 
     map.off("zoomstart", this.innnerZoomStart);
     map.off("zoomend", this.innnerZoomEnd);
+    if (this.postRender) {
+      map.off("zoom", this.innerZoom);
+      map.off("move", this.innerZoom);
+    }
 
     map.off("rotatestart", this.innnerRotateStart);
     map.off("rotateend", this.innnerRotateEnd);
@@ -122,6 +142,9 @@ export class MapvLayer {
     this._reset();
     // this._unvisiable();
   }
+  zoomEvent() {
+    this._reset();
+  }
   zoomEndEvent() {
     this._unvisiable();
   }
@@ -143,7 +166,17 @@ export class MapvLayer {
   }
 
   removeEvent() {
-    this.mapContainer.removeChild(this.canvas);
+    if (this.mapContainer) {
+      let findChild = false;
+      this.mapContainer.children.forEach((c) => {
+        if (c.id == this.canvas.id) {
+          findChild = true;
+        }
+      });
+      if (findChild) {
+        this.mapContainer.removeChild(this.canvas);
+      }
+    }
   }
   //-----------------------------------Event Methods----------------------------------------
 
@@ -216,7 +249,7 @@ export class MapvLayer {
   _createCanvas() {
     var canvas = document.createElement("canvas");
     var devicePixelRatio = this.devicePixelRatio;
-    canvas.id = this.layerID;
+    canvas.id = this.layerID || "mapv" + idIndex++;
     canvas.style.position = "absolute";
     canvas.style.top = "0px";
     canvas.style.left = "0px";
@@ -338,7 +371,9 @@ export class MapvLayer {
   remove() {
     this.removeAllData();
     this.unbindEvent();
-    this.mapContainer.removeChild(this.canvas);
+    var parent = this.canvas.parentElement;
+    parent.removeChild(this.canvas);
+    // this.mapContainer.removeChild(this.canvas);
     this.disposeFlag = true;
   }
 
@@ -347,9 +382,10 @@ export class MapvLayer {
    * @function mapboxgl.zondy.MapvLayer.prototype.destroy
    */
   destroy() {
-    this.removeAllData();
-    this.unbindEvent();
-    this.mapContainer.removeChild(this.canvas);
-    this.disposeFlag = true;
+    this.remove();
+    // this.removeAllData();
+    // this.unbindEvent();
+    // this.mapContainer.removeChild(this.canvas);
+    // this.disposeFlag = true;
   }
 }

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-const Feature = require("./util/feature.min.js");
+import * as Feature from "./util/feature";
 import PlaceNameMapbox from "./PlaceNameMapbox";
 
 export default {

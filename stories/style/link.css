@@ -2,10 +2,10 @@
   height: 90vh;
   width: 100%;
 }
-.item {
+.scene-item {
   position: absolute;
   height: 50vh;
-  width: 32vw;
+  width: 50vw;
 }
 .top-left {
   top: 0px;
@@ -28,11 +28,32 @@
   z-index: 9999;
   background: #cc5a5a;
   top: 47.2vh;
-  left: 39.5vw;
+  left: 47.5vw;
+  width: 5vw;
+  height: 5vh;
+  border-radius: 12px;
+}
+.control-2d-3d {
+  position: absolute;
+  z-index: 9999;
+  background: #cc5a5a;
+  top: 47.2vh;
+  left: 47.5vw;
   width: 5vw;
   height: 5vh;
   border-radius: 12px;
 }
 .active {
   background: #41b883;
+}
+
+.mapbox-item {
+  position: absolute;
+  height: 100vh;
+  width: 50vw;
+}
+.cesium-item {
+  position: absolute;
+  height: 100vh;
+  width: 50vw;
 }

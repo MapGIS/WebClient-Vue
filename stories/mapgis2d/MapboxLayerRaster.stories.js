@@ -5,11 +5,25 @@ export default {
   title: "二维/图层/栅格图层",
   component: MapgisRasterLayer,
   argTypes: {
-    layer: {},
-    layerId: "igsLayer_layerId",
-    sourceId: "igsLayer_sourceId",
-    url:
-    "http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+    url:  {
+      description: '栅格瓦片源的url',
+      type: { name: 'String', required: false },
+      defaultValue:null,
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: 'null' },
+      },
+      control:'text'
+    },
+    layerId:  {
+      description: '待添加的图层的id，不能与现有的图层冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'text'
+    },
   },
 };
 

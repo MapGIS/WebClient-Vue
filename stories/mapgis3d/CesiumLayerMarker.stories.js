@@ -32,7 +32,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
-    <mapgis-web-scene :libPath="libPath" :pluginPath="pluginPath" style="height: 95vh">
+    <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-ogc-wmts-layer
           :baseUrl="urlT"
           :wmtsLayer="layer"
@@ -42,17 +42,17 @@ const Template = (args, { argTypes }) => ({
           :token="token"
       />
       <mapgis-3d-dynamic-marker-layer v-bind="$props">
-        <mapigs-ui-card slot="popup" slot-scope="{ marker }">
+        <mapgis-ui-card slot="popup" slot-scope="{ marker }">
           {{marker.fid}}
-        </mapigs-ui-card>
+        </mapgis-ui-card>
       </mapgis-3d-dynamic-marker-layer>
     </mapgis-web-scene>
   `,
   data() {
     return {
-      libPath: "http://localhost:8888/static/libs/cdn/cesium/Cesium.js",
-      pluginPath:
-        "http://localhost:8888/static/libs/cdn/cesium/webclient-cesium-plugin.min.js",
+      // libPath: "http://localhost:8888/static/libs/cdn/cesium/Cesium.js",
+      // pluginPath:
+      //   "http://localhost:8888/static/libs/cdn/cesium/webclient-cesium-plugin.min.js",
       //天地图地址，请在url地址后面加token
       urlT: "http://t0.tianditu.gov.cn/img_c/wmts",
       //参考系

@@ -4,14 +4,15 @@
 
 ## 属性
 
-All common [layers props](/zh/api/Layers/README.md#props)
+All common [layers props](/api/Layers/README.md#props)
 
-### `source`
+### `layerId`
 
-- **类型:** `Object | String`
+- **类型:** `String`
+- **必传**
 - **非侦听属性**
-- **描述:** A raster tile source.
-- **参考:** `Raster source` in [Mapbox Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#sources-raster)
+- **描述:** 待添加的图层的 id，不能与现有的图层冲突.
+- **参考:** `layer-id` in [Mapbox Layer Style Spec](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layer-id)
 
 ### `baseUrl`
 
@@ -91,7 +92,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `guid`
 
 - **类型:** `String`
-- **默认值:** `newGuid()`in [Util](/zh/api/Util/util)
+- **默认值:** `new Date().getTime().toString()`
 - **非侦听属性**
 - **描述:** 唯一 ID，用户标识地图图层。
 
@@ -141,7 +142,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ## 事件
 
-All common layer [events](/zh/api/Layers/#events)
+All common layer [events](/api/Layers/#events)
 
 ## 示例
 

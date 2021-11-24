@@ -9,11 +9,43 @@ export default {
   // 中文 Data后缀的内容不是故事，而是Vue组件的方法
   excludeStories: /.*Data$/,
   argTypes: {
-    delay: true,
-    layer: {},
-    layerId: "video_layer_id",
-    source: {},
-    sourceId: "video_source_id",
+    layer: {
+      description:'[layer使用参考](https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers)',
+      type: { name: 'Object | String', required: true },
+      table:{
+        type: { summary: 'Object | String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'object'
+    },
+    source: {
+      description:'包含 video 的数据源<br/>' +
+          '详见[videosource使用参考](https://docs.mapbox.com/mapbox-gl-js/api/#videosource)',
+      type: { name: 'Object | String', required: false },
+      table:{
+        type: { summary: 'Object | String' },
+        // defaultValue: { summary: '' },
+      },
+      control:'object'
+    },
+    layerId:  {
+      description: '待添加的图层的id，不能与现有的图层冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'text'
+    },
+    sourceId: {
+      description: '待添加的数据源的id，不能与现有的数据源冲突',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: '必传' },
+      },
+      control:'text'
+    },
   },
 };
 
@@ -29,7 +61,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 视频图层 = Template.bind({});
 视频图层.args = {
-  delay: true,
   layer: {
     source: "video_source_id",
     type: "raster",
@@ -38,8 +69,8 @@ export const 视频图层 = Template.bind({});
   source: {
     type: "video",
     urls: [
-      "http://develop.smaryun.com:8899/static/data/video/drone.mp4",
-      "http://develop.smaryun.com:8899/static/data/video/drone.webm",
+      `http://${window.webclient.ip}/static/data/video/drone.mp4`,
+      `http://${window.webclient.ip}/static/data/video/drone.webm`,
     ],
     coordinates: [
       [-122.51596391201019, 37.56238816766053],

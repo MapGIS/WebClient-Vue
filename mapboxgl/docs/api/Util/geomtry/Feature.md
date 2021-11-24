@@ -7,7 +7,7 @@
 - **类型:** [Geometry]
 - **非侦听属性**
 - **描述:** 要素的几何信息，一个要素可包含多个几何信息，例如一个区要素可以包含多个区域坐标点集合.
-- **参考:** `Geometry` in [Geometry](/zh/api/Util/geomtry/Geometry.md)
+- **参考:** `Geometry` in [Geometry](/api/Util/geomtry/Geometry.md)
 
 ### `geometryType`
 

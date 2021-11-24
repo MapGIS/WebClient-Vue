@@ -72,11 +72,18 @@
 <mapgis-3d-link :includes="['one', 'two']" :enable="enable" />
 ```
 
+### `timestamp`
+- **类型:** `Number`
+- **非侦听属性**
+- **默认值:** `0`
+- **描述:** 视图刷新时间戳间隔，默认0时不激活该能力，只有大于0的时候才激活时间戳的判断，其意思是每隔timestamp毫秒向外面抛出一个更新事件。
+- > 当该参数大于0的时候下面的`interval`参数无效
+
 ### `interval`
 - **类型:** `Number`
 - **非侦听属性**
 - **默认值:** `60`
-- **描述:** 视图刷新间隔，默认60帧刷新一次，与Cesium PostRender机制保持一致。
+- **描述:** 视图刷新毫秒间隔，默认60帧刷新一次，与Cesium PostRender机制保持一致。，其意思是每隔interval帧数向外面抛出一个更新事件。
 
 ### `excludes`
 - **类型:** `Array`

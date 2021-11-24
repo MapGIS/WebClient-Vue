@@ -1,7 +1,7 @@
-import {getCesiumBaseObject} from "../Utils/util";
+import { getCesiumBaseObject } from "../Utils/util";
 
 export default {
-  inject: ["webGlobe", "Cesium","CesiumZondy"],
+  inject: ["viewer", "Cesium", "vueCesium"],
   props: {
     vueKey: {
       type: String,
@@ -40,73 +40,22 @@ export default {
       }
       return Cesium;
     },
-    $_draw(drawFunction, webGlobe, analyseFunction, analysisName) {
-      window.drawElement = new window.Cesium.DrawElement(webGlobe.viewer);
+    $_draw(drawFunction, viewer, analyseFunction, analysisName) {
+      window.drawElement = new window.Cesium.DrawElement(viewer);
       let vm = this;
       console.log("drawElement", drawElement);
       window.drawElement[drawFunction]({
-        callback: function(positions) {
-          console.log("positions", positions);
-          vm[analyseFunction](webGlobe, positions, analysisName);
+        callback: function(result) {
+          // console.log("positions", positions);
+          let positions = result.positions;
+          vm[analyseFunction](viewer, positions, analysisName);
         }
       });
     },
-    $_terrainAnalyse(webGlobe, positions, analysisName) {
-      if (positions.length > 0) {
-        let pointArr = new Array();
-        let Npositions = [];
-        let terrainAnalyse = new window.Cesium.TerrainAnalyse(
-          webGlobe.viewer,
-          {}
-        );
-        //必须要一个原点,可以写死
-        let transform = terrainAnalyse.getTransform(115.5, 30.5, 0.0);
-        let inverseTransform = Cesium.Matrix4.inverse(
-          transform,
-          new Cesium.Matrix4()
-        );
-        let globe = webGlobe.viewer.scene.globe;
-        globe.modifiedSlopeMatrix = inverseTransform;
-        //坐标转换、处理
-        for (let i = 0; i < positions.length; i++) {
-          let point = positions[i];
-          let ellipsoid = globe.ellipsoid;
-          let cartesian3 = new Cesium.Cartesian3(point.x, point.y, point.z);
-          let cartographic = ellipsoid.cartesianToCartographic(cartesian3);
-          let lat = Cesium.Math.toDegrees(cartographic.latitude);
-          let lon = Cesium.Math.toDegrees(cartographic.longitude);
-          let height = cartographic.height;
-          pointArr.push(lon, lat, height);
-          let geoPosition = Cesium.Matrix4.multiplyByPoint(
-            inverseTransform,
-            new Cesium.Cartesian3.fromDegrees(lon, lat, height),
-            new Cesium.Cartesian3()
-          );
-          Npositions.push(geoPosition);
-        }
-        Npositions.push(Npositions[0]);
-        globe.selectArea = Npositions;
-
-        //构造区对象
-        let polygon = {
-          name: "立体区",
-          polygon: {
-            //坐标点
-            hierarchy: Cesium.Cartesian3.fromDegreesArrayHeights(pointArr),
-            ...this.terrainGraphics
-          }
-        };
-        //绘制图形通用方法：对接Cesium原生特性
-        webGlobe.appendGraphics(polygon);
-
-        //更新地形
-        terrainAnalyse.updateMaterial(analysisName);
-      }
-    },
     $_initAnalysis(drawFunction, analyseFunction, analysisName) {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        vm.$_draw(drawFunction, webGlobe, analyseFunction, analysisName);
+      window.vueCesium.getViewerByInterval(function(viewer) {
+        vm.$_draw(drawFunction, viewer, analyseFunction, analysisName);
       }, this.vueKey);
     },
     /*
@@ -122,23 +71,20 @@ export default {
       }
       //如果是GlobesManager，则直接通过vueKey来寻找
       if (MName === "GlobesManager") {
-        const { webGlobe } = this;
+        const { viewer } = this;
         if (this.vueKey === "default") {
           // 使用注入的webGlobe
-          // codemirror使用的时候不能支持多屏，也无法获取.CesiumZondy.GlobesManager对象
-          source = webGlobe;
+          // codemirror使用的时候不能支持多屏，也无法获取.vueCesium.GlobesManager对象
+          source = viewer;
         } else {
-          let GlobesManager = window.CesiumZondy.GlobesManager;
+          let GlobesManager = window.vueCesium.GlobesManager;
           if (GlobesManager[this.vueKey]) {
             source = GlobesManager[this.vueKey][0].source;
           }
         }
       } else {
         //如果是其他的Manager，则通过vueKey和vueIndex来寻找
-        source = window.CesiumZondy[MName].findSource(
-          this.vueKey,
-          this.vueIndex
-        );
+        source = window.vueCesium[MName].findSource(this.vueKey, this.vueIndex);
       }
       if (deleteFunc) {
         deleteFunc(source);
@@ -152,45 +98,42 @@ export default {
      * **/
     $_deleteManager(managerName, callback) {
       const { vueKey, vueIndex } = this;
-      let manager = window.CesiumZondy[managerName].findSource(
-        vueKey,
-        vueIndex
-      );
+      let manager = window.vueCesium[managerName].findSource(vueKey, vueIndex);
       if (manager) {
         if (callback) {
           callback(manager);
         }
-        window.CesiumZondy.MeasureToolManager.deleteSource(vueKey, vueIndex);
+        window.vueCesium.MeasureToolManager.deleteSource(vueKey, vueIndex);
       }
     },
-    $_getM3DByInterval(callback,vueKey,vueIndex){
+    $_getM3DByInterval(callback, vueKey, vueIndex) {
       vueKey = vueKey || this.vueKey;
       vueIndex = vueIndex || this.vueIndex;
-      if(!(vueIndex instanceof Array)){
+      if (!(vueIndex instanceof Array)) {
         vueIndex = [vueIndex];
       }
-      let CesiumZondy = getCesiumBaseObject(this,"CesiumZondy");
+      let vueCesium = getCesiumBaseObject(this, "vueCesium");
       let m3d = undefined;
-      let m3dArr = []
-      let interval = setInterval(function () {
+      let m3dArr = [];
+      let interval = setInterval(function() {
         let allLoaded = true;
-        for (let i = 0;i < vueIndex.length;i++){
-          m3d = CesiumZondy.M3DIgsManager.findSource(vueKey,vueIndex[i]);
-          if(!m3d || !m3d.hasOwnProperty("source") || !m3d.source){
+        for (let i = 0; i < vueIndex.length; i++) {
+          m3d = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex[i]);
+          if (!m3d || !m3d.hasOwnProperty("source") || !m3d.source) {
             allLoaded = false;
           }
         }
-        if(allLoaded){
-          for (let i = 0;i < vueIndex.length;i++){
-            m3d = CesiumZondy.M3DIgsManager.findSource(vueKey,vueIndex[i]);
+        if (allLoaded) {
+          for (let i = 0; i < vueIndex.length; i++) {
+            m3d = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex[i]);
             m3dArr.push(m3d);
           }
           callback(m3dArr);
           clearInterval(interval);
         }
-      },50);
+      }, 50);
     },
-    $_degreeFromCartesian(p){
+    $_degreeFromCartesian(p) {
       let point = {};
       let cartographic = Cesium.Cartographic.fromCartesian(p);
       point.longitude = Cesium.Math.toDegrees(cartographic.longitude);
@@ -198,13 +141,16 @@ export default {
       point.height = cartographic.height; //模型高度
       return point;
     },
-    $_getM3DBox(m3d){
-      const northeastCornerCartesian = m3d._root.boundingVolume.northeastCornerCartesian;
-      const southwestCornerCartesian = m3d._root.boundingVolume.southwestCornerCartesian;
+    $_getM3DBox(m3d) {
+      const northeastCornerCartesian =
+        m3d._root.boundingVolume.northeastCornerCartesian;
+      const southwestCornerCartesian =
+        m3d._root.boundingVolume.southwestCornerCartesian;
       //这里：东南角和西北角在外包盒子的同一平面上
       let p1 = this.$_degreeFromCartesian(southwestCornerCartesian);
       let p2 = this.$_degreeFromCartesian(northeastCornerCartesian);
-      let p3 = {}, p4 = {};
+      let p3 = {},
+        p4 = {};
       p3.longitude = p1.longitude;
       p3.latitude = p2.latitude;
       p3.height = p1.height;
@@ -212,17 +158,33 @@ export default {
       p4.latitude = p1.latitude;
       p4.height = p2.height;
       //p3,p4的笛卡尔坐标
-      let p3Caetesian = Cesium.Cartesian3.fromDegrees(p3.longitude, p3.latitude, p3.height);
-      let p4Caetesian = Cesium.Cartesian3.fromDegrees(p4.longitude, p4.latitude, p4.height);
+      let p3Caetesian = Cesium.Cartesian3.fromDegrees(
+        p3.longitude,
+        p3.latitude,
+        p3.height
+      );
+      let p4Caetesian = Cesium.Cartesian3.fromDegrees(
+        p4.longitude,
+        p4.latitude,
+        p4.height
+      );
       //求出平面的长和宽，再求出distance
-      let length = Cesium.Cartesian3.distance(p4Caetesian, southwestCornerCartesian);
-      let width = Cesium.Cartesian3.distance(p3Caetesian, southwestCornerCartesian);
-      let height = m3d._root.boundingVolume.maximumHeight - m3d._root.boundingVolume.minimumHeight;
+      let length = Cesium.Cartesian3.distance(
+        p4Caetesian,
+        southwestCornerCartesian
+      );
+      let width = Cesium.Cartesian3.distance(
+        p3Caetesian,
+        southwestCornerCartesian
+      );
+      let height =
+        m3d._root.boundingVolume.maximumHeight -
+        m3d._root.boundingVolume.minimumHeight;
       return {
         length: length,
         width: width,
         height: height
-      }
+      };
     }
   }
 };

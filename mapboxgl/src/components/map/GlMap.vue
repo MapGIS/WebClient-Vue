@@ -190,4 +190,5 @@ export default {
   width: 100% !important;
   height: 100vh !important;
 }
+
 </style>

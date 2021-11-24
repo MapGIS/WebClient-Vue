@@ -5,6 +5,25 @@ import MapgisOgcWmtsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmtsL
 export default {
   title: "二维/地图子组件/卷帘",
   component: MapgisCompare,
+  argTypes:{
+    orientation: {
+      description:'卷帘显示方向',
+      type:{ name: 'String', required: false },
+      defaultValue:'vertical',
+      table:{
+        type:{
+          summary: 'String',
+          detail:'"vertical"   : 垂直方向\n' +
+              '"horizontal" : 水平方向'
+        },
+        defaultValue: { summary: 'vertical' },
+      },
+      control: {
+        type:'select',
+        options:['vertical','horizontal']
+      }
+    },
+  }
 };
 
 export const Compare = (args, { argTypes }) => ({

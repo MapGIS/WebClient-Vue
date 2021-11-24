@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "mapgis-3d-marker",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     fid: {
       type: String,
@@ -121,31 +121,32 @@ export default {
   methods: {
     $_mount() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        vm.$_init(webGlobe);
+      const { vueCesium } = this;
+      vueCesium.getViewerByInterval(function(viewer) {
+        vm.$_init(viewer);
       }, this.vueKey);
     },
     $_unmount() {
-      const { vueKey, vueIndex } = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        let MarkerManager = CesiumZondy.MarkerManager.findSource(
+      vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium.getViewerByInterval(function(viewer) {
+        let MarkerManager = vueCesium.MarkerManager.findSource(
           vueKey,
           vueIndex
         );
-        let webGlobeMarker = vm.webGlobe || webGlobe;
-        webGlobeMarker.viewer.entities.remove(MarkerManager.source);
-        CesiumZondy.MarkerManager.deleteSource(vueKey, vueIndex);
+        viewer = vm.viewer || viewer;
+        viewer.entities.remove(MarkerManager.source);
+        vueCesium.MarkerManager.deleteSource(vueKey, vueIndex);
       }, vueKey);
     },
-    $_init(webGlobe) {
-      const { CesiumZondy } = this;
+    $_init(viewer) {
+      const { vueCesium } = this;
       let vm = this;
       let Cesium = this.Cesium || window.Cesium;
-      let webGlobeMarker = this.webGlobe || webGlobe;
-      let labelLayer = new CesiumZondy.Manager.LabelLayer({
-        viewer: webGlobeMarker.viewer
+      let viewerMarker = this.viewer || viewer;
+      let labelLayer = new window.CesiumZondy.Manager.LabelLayer({
+        viewer: viewerMarker
       });
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
       switch (this.heightReference) {
@@ -188,10 +189,10 @@ export default {
       };
       this.$_append(labelLayer, heightReference, label);
       this.marker = this;
-      
+
       if (!window.DynamicMarkerHandler) {
         window.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
-          webGlobeMarker.viewer.scene.canvas
+          viewerMarker.scene.canvas
         );
       }
       window.DynamicMarkerHandler.removeInputAction(
@@ -204,9 +205,10 @@ export default {
       );
     },
     $_hasId(id) {
+      let { vueCesium } = this;
       let marker = {};
       marker.flag = false;
-      let markerManagers = CesiumZondy.MarkerManager[this.vueKey];
+      let markerManagers = vueCesium.MarkerManager[this.vueKey];
       for (let i = 0; i < markerManagers.length; i++) {
         if (markerManagers[i].source._id === id) {
           marker.flag = true;
@@ -217,11 +219,11 @@ export default {
       return marker;
     },
     $_markerMouseAction(movement) {
-      const { Cesium, CesiumZondy } = this;
+      const { Cesium, vueCesium, viewer } = this;
       const vm = this;
-      let webGlobeMarker = this.webGlobe;
-      let scene = webGlobeMarker.viewer.scene;
-      window.DynamicMarkerLastActiceId = window.DynamicMarkerLastActiceId || undefined;
+      let scene = viewer.scene;
+      window.DynamicMarkerLastActiceId =
+        window.DynamicMarkerLastActiceId || undefined;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);
         if (
@@ -233,8 +235,11 @@ export default {
           if (!vm.isMoveIn) {
             vm.isMoveIn = true;
             vm.isMoveOut = false;
-            let label = vm.$_hasId(pickedObject.id.id).label
-            if (window.DynamicMarkerLastActiceId && window.DynamicMarkerLastActiceId != label) {
+            let label = vm.$_hasId(pickedObject.id.id).label;
+            if (
+              window.DynamicMarkerLastActiceId &&
+              window.DynamicMarkerLastActiceId != label
+            ) {
               vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
             }
             vm.$emit("mouseEnter", label);
@@ -283,8 +288,8 @@ export default {
     },
     $_addIcon(icon) {
       const { vueKey, vueIndex } = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      CesiumZondy.MarkerManager.addSource(vueKey, vueIndex, icon);
+      let vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium.MarkerManager.addSource(vueKey, vueIndex, icon);
     },
     togglePopup() {
       const { longitude, latitude, height } = this;

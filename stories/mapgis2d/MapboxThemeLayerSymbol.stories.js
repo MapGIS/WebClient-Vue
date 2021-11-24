@@ -21,7 +21,7 @@ export default {
                 defaultValue: { summary: 'null' },
             },
         },
-        themeOption: {
+        themeOptions: {
             description:  "专题图样式，包含专题图图层样式、分段样式以及高亮样式，样式如下：<br>" +
                 "1、<span class='storybook-span'>layerStyle</span>(选填)：等级符号专题图样式<br>" +
                 "有如下值：<br>" +
@@ -46,7 +46,7 @@ const Template = (args, {argTypes}) => ({
       <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" 
                       :zoom="8" 
                       :mapStyle="mapStyle" 
-                      style="height:60vh"
+                      style="height:96vh"
       >
       <mapgis-theme-layer-custom v-bind="$props"/>
       </mapgis-web-map>`,
@@ -64,8 +64,9 @@ const Template = (args, {argTypes}) => ({
                         }
                     }
                 ],
-                glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
-            },
+                // glyphs: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf"
+                glyphs: `http://${window.webclient.ip}:${window.webclient.port}/${window.glyphs}/{fontstack}/{range}.pbf`,
+    },
         }
     }
 });
@@ -75,7 +76,7 @@ export const 自定义样式 = Template.bind({});
     dataSource: wuhan_house,
     type: "symbol",
     field: "display_x",
-    themeOption: {
+    themeOptions: {
         layerStyle: {
             symbolSize: 2,
             xOffset: 10,

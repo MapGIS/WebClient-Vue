@@ -81,7 +81,7 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       maximumScreenSpaceError: 8,
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
@@ -91,13 +91,14 @@ const Template = (args, { argTypes }) => ({
         key: "tk",
         value: "2ddaabf906d4b5418aed0078e1657029",
       },
+      autoReset:true,
       particleMode: "",
       imgUrl: "",
       particleEffects: null,
     };
   },
   template: `
-  <mapgis-web-scene style="{height: '100vh'}">
+  <mapgis-web-scene :style="{height: '95vh'}">
       <mapgis-3d-ogc-wmts-layer
           :baseUrl="url"
           :wmtsLayer="layer"
@@ -106,8 +107,8 @@ const Template = (args, { argTypes }) => ({
           :tilingScheme="tilingScheme"
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
-      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-igs-m3d>
-      <mapgis-ui-card class="storybook-ui-card">
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
+      <mapgis-ui-card class="storybook-ui-card thin">
       <mapgis-ui-toolbar>
       <mapgis-ui-toolbar-command-group>
         <mapgis-ui-toolbar-command

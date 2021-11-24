@@ -16,8 +16,9 @@ export { default as MapgisHawkeye } from "../../mapboxgl/src/components/UI/contr
 export { default as MapgisArcgisLegend } from "../../mapboxgl/src/components/UI/controls/legend/Legend";
 export { default as MapgisBaseTable } from "../../mapboxgl/src/components/UI/controls/table/MapBoxBaseTable";
 export { default as MapgisFeatureService } from "../../mapboxgl/src/components/map/mixins/FeatureService";
-// export { default as MapgisDraw } from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw";
-// export { default as MapgisMeasure } from "../../mapboxgl/src/components/UI/controls/measure/Measure";
+export { default as MapgisDraw } from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw";
+export { default as MapgisMeasure } from "../../mapboxgl/src/components/UI/controls/measure/Measure";
+export { default as MapgisEditor } from "../../mapboxgl/src/components/UI/controls/edit/Editor";
 // export { default as BaseDrawItem from "../../mapboxgl/src/components/UI/controls/draw/BaseDrawItem";
 // https://gist.github.com/godismyjudge95/a4ea43263db53b90b05511c911cd0034
 // export { default as MapgisFixDraw } from "../../mapboxgl/src/components/UI/controls/drawfix/FixDraw";

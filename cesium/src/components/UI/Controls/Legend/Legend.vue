@@ -25,7 +25,7 @@
 <script>
 export default {
   name: "mapgis-3d-arcgis-legend",
-  inject: ["Cesium", "webGlobe", "CesiumZondy"],
+  inject: ["Cesium", "viewer", "vueCesium"],
   data() {
     return {
       layers: [],
@@ -56,11 +56,11 @@ export default {
           });
     },
     getLegendUrl() {
-      const {CesiumZondy} = this;
+      const {vueCesium} = this;
       let layers = [];
-      Object.keys(CesiumZondy.ArcgisManager).forEach((key) => {
+      Object.keys(vueCesium.ArcgisManager).forEach((key) => {
         if (key !== "vueKey") {
-          layers = layers.concat(CesiumZondy.ArcgisManager[key]);
+          layers = layers.concat(vueCesium.ArcgisManager[key]);
         }
       });
       layers.forEach((layer) => {

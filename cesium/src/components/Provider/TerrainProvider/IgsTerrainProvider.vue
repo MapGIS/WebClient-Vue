@@ -3,8 +3,12 @@ import VueOptions from "../../Base/Vue/VueOptions";
 
 export default {
   name: "mapgis-3d-igs-terrain",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
+    autoReset: {
+      type: Boolean,
+      default: false,
+    },
     show: {
       type: Boolean,
       default: true,
@@ -12,10 +16,10 @@ export default {
     url: {
       type: String,
     },
-    scale: {
-      type: Number,
-      default: 1,
-    },
+    // scale: {
+    //   type: Number,
+    //   default: 1,
+    // },
     requestVertexNormals: {
       type: Boolean,
       default: false,
@@ -39,30 +43,19 @@ export default {
     },
   },
   methods: {
-    createCesiumObject() {
-      const { CesiumZondy, webGlobe } = this;
-      var terrianlayer = new CesiumZondy.Layer.TerrainLayer({
-        viewer: webGlobe.viewer,
-      });
-      return terrianlayer;
-    },
     mount() {
-      const { webGlobe, $props } = this;
-      const viewer = webGlobe.viewer;
-
-      if (viewer.isDestroyed()) return;
-      this.$emit("load", this);
-
-      let terrianlayer = this.createCesiumObject();
-      let terrainLayers = terrianlayer.append(`${this.url}`, {
+      let vm = this;
+      const { viewer, $props } = this;
+      if (viewer.isDestroyed()) return
+      let terrianlayer = viewer.scene.layers.appendG3DLayer(`${this.url}`, {
         ...$props,
-        getDocLayers: this.handleTerrianLoaded.bind(this),
+        getDocLayerIndexes:vm._handleTerrianLoaded
       });
+      this.$emit("load", this);
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
-      const viewer = webGlobe.viewer;
-      let find = window.CesiumZondy.IgsTerrainManager.findSource(
+      const { viewer, vueKey, vueIndex } = this;
+      let find = window.vueCesium.IgsTerrainManager.findSource(
         vueKey,
         vueIndex
       );
@@ -72,17 +65,16 @@ export default {
           terrains.forEach((l) => {
             l.destroy && l.destroy();
           });
-          webGlobe.deleteTerrain();
-          // viewer.scene.terrainProvider = new Cesium.EllipsoidTerrainProvider({});
+          viewer.scene.layers.removeAllTerrainLayers();
         }
       }
-      window.CesiumZondy.IgsTerrainManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.IgsTerrainManager.deleteSource(vueKey, vueIndex);
     },
-    handleTerrianLoaded(layers) {
+    _handleTerrianLoaded(layers) {
       const { vueIndex, vueKey } = this;
       this.$emit("terrain-loaded", layers);
       if (vueKey && vueIndex) {
-        window.CesiumZondy.IgsTerrainManager.addSource(
+        window.vueCesium.IgsTerrainManager.addSource(
           vueKey,
           vueIndex,
           layers

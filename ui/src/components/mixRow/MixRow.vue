@@ -121,6 +121,7 @@
       <mapgis-ui-col :span="inputProps.inputCol">
         <mapgis-ui-form-item
             :validate-status="validateStatus"
+            :style="formStyle"
         >
           <mapgis-ui-input
               v-model="valueCopy"
@@ -590,6 +591,15 @@ export default {
       default() {
         return {};
       }
+    },
+    /**
+     * 错误检查样式
+     * */
+    formStyle: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   model: {
@@ -602,7 +612,7 @@ export default {
     }
   },
   mounted() {
-    console.log("Empty.PRESENTED_IMAGE_DEFAULT",Empty.PRESENTED_IMAGE_DEFAULT)
+    console.log("Empty.PRESENTED_IMAGE_DEFAULT", Empty.PRESENTED_IMAGE_DEFAULT)
     this.valueCopy = this.value;
     this.fieldCopy = this.field;
     this.$_initProps();
@@ -799,11 +809,15 @@ export default {
         this.listProps.checkBoxArr[index] = !e;
         this.$emit("change", "MapgisUiThemeListCheckBox", !e, index, this.listProps.checkBoxArr, extra);
       } else {
-        this.$emit("change", e);
+        if (e instanceof Object) {
+          this.$emit("change", e.target.value);
+        } else {
+          this.$emit("change", e);
+        }
       }
     },
-    $_changeColorSketch(e){
-      let  rgba = `rgba(${e.rgba.r}, ${e.rgba.g}, ${e.rgba.b}, ${e.rgba.a})`;
+    $_changeColorSketch(e) {
+      let rgba = `rgba(${e.rgba.r}, ${e.rgba.g}, ${e.rgba.b}, ${e.rgba.a})`;
       this.$emit("change", rgba);
     },
     $_inputChange(index) {
@@ -839,9 +853,9 @@ export default {
         }
       } else {
         let addNum;
-        if(this.listProps.dataSource[index - 1]){
+        if (this.listProps.dataSource[index - 1]) {
           addNum = (this.listProps.dataSource[index] - this.listProps.dataSource[index - 1]) + this.listProps.dataSource[index];
-        }else {
+        } else {
           addNum = 2;
         }
         this.listProps.dataSource.push(addNum);

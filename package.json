@@ -4,19 +4,16 @@
   "private": true,
   "scripts": {
     "build-all": "cd ui && npm run build && cd ../ && npm run build-storybook &&  cd cesium && npm run docs:build && npm run build && cd ../mapboxgl && npm run docs:build && npm run build",
-    "build-all-cdn": "npm run build-storybook && cd ui && npm run build-cdn && cd ../cesium && npm run docs:build && npm run build-cdn && cd ../mapboxgl && npm run docs:build && npm run build-cdn",
-    "build-cesium-all": "cd cesium && npm run docs:build && npm run build-cdn",
+    "build-cesium-all": "cd cesium && npm run docs:build",
     "build-cesium-docs": "cd cesium && npm run docs:build",
     "build-cesium-umd": "cd cesium && npm run build",
-    "build-cesium-cdn": "cd cesium && npm run build-cdn",
-    "build-mapboxgl-all": "cd mapboxgl && npm run docs:build && npm run build-cdn",
+    "build-mapboxgl-all": "cd mapboxgl && npm run docs:build",
     "build-mapboxgl-docs": "cd mapboxgl && npm run docs:build",
     "build-mapboxgl-umd": "cd mapboxgl && npm run build",
-    "build-mapboxgl-cdn": "cd mapboxgl && npm run build-cdn",
     "build-ui-umd": "cd ui && npm run build",
     "build-ui-cdn": "cd ui && npm run build-cdn",
-    "build-storybook": "build-storybook -o storybook",
-    "storybook": "start-storybook -p 8895"
+    "build-storybook": "build-storybook -s ./stories/public -o storybook",
+    "storybook": "start-storybook -s ./stories/public -p 8895"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "^1.2.0",
@@ -54,6 +51,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/eslint-parser": "^7.12.1",
+    "@storybook/addon-a11y": "^6.3.7",
     "@storybook/addon-actions": "^6.2.9",
     "@storybook/addon-docs": "^6.3.7",
     "@storybook/addon-essentials": "^6.2.9",

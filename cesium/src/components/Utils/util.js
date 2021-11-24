@@ -463,7 +463,7 @@ export function getAllAttribution(viewer) {
 }
 
 /**
- * 取得Cesium、CesiumZondy或webGlobe对象，如果有注入就用注入，没有就用window上的
+ * 取得Cesium、vueCesium或webGlobe对象，如果有注入就用注入，没有就用window上的
  * @param vm Object 组件的this对象
  * @param name String 对象名称
  * */

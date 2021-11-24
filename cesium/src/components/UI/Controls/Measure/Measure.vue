@@ -86,8 +86,8 @@ export default {
     },
     $_enableMeasure(MeasureName) {
       const { vueKey, vueIndex } = this;
-      let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
-      let measure = new Cesium[MeasureName](webGlobe.viewer, {
+      let viewer = this.$_getObject(this.waitManagerName, this.deleteMeasure);
+      let measure = new Cesium[MeasureName](viewer, {
         lineColor: this.measureStyles.lineColor,
         callBack: result => {
           if (typeof callback === "function") {
@@ -97,7 +97,7 @@ export default {
           }
         }
       });
-      window.CesiumZondy.MeasureToolManager.addSource(
+      window.vueCesium.MeasureToolManager.addSource(
         vueKey,
         vueIndex,
         measure

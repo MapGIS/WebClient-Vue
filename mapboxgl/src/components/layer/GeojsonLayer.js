@@ -4,8 +4,11 @@ import { Style } from "@mapgis/webclient-es6-service";
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
 import clonedeep from "lodash.clonedeep";
-const MapboxInspect = require("mapbox-gl-inspect");
+const Inspect = require("@mapgis/mapbox-gl-inspect");
+const MapboxInspect = Inspect.default;
 import Popup from "./geojson/Popup";
+
+import { getPopupHtml } from "../UI/popupUtil";
 
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
@@ -16,16 +19,13 @@ export default {
   inject: ["map", "mapbox"],
   data() {
     return {
-      currentToolInfo: "",
-      userProsChecked: [],
-      inspectActive: false,
-      currentNum: "",
       currentClickInfo: [],
       currentHoverInfo: [],
-      popupTitle: "id",
       hoveredStateId: -1,
       clickMode: "click",
-      hoverMode: "hover"
+      hoverMode: "hover",
+      popupContainer: undefined,
+      tipContainer: undefined
     };
   },
   props: {
@@ -34,22 +34,22 @@ export default {
     },
     enablePopup: {
       type: Boolean,
-      defalut: false
+      default: false
     },
     popupOptions: {
       type: Object,
       default: () => {
-        return { title: "name" };
+        return { type: "default", title: "name" };
       }
     },
     enableTips: {
       type: Boolean,
-      defalut: false
+      default: false
     },
     tipsOptions: {
       type: Object,
       default: () => {
-        return { title: "name" };
+        return { type: "default", title: "name" };
       }
     },
     /**
@@ -189,8 +189,23 @@ export default {
       clickMode,
       hoverMode,
       currentClickInfo,
-      currentHoverInfo
+      currentHoverInfo,
+      popupOptions,
+      tipsOptions
     } = this;
+
+    const tipfeature =
+      currentHoverInfo && currentHoverInfo.length > 0
+        ? currentHoverInfo[0]
+        : { properties: {} };
+
+    this.tipContainer = getPopupHtml(tipsOptions.type, tipfeature, {
+      title: tipfeature.title,
+      fields: Object.keys(tipfeature.properties),
+      style: {
+        containerStyle: { width: "360px" }
+      }
+    });
 
     if (customPopup || customTips) {
       return (
@@ -199,7 +214,6 @@ export default {
             {customPopup && customPopup(currentClickInfo)}
             {!customPopup && (
               <Popup
-                ref="click"
                 mode={clickMode}
                 currentLayerInfo={currentClickInfo}
               ></Popup>
@@ -209,7 +223,6 @@ export default {
             {customTips && customTips(currentHoverInfo)}
             {!customTips && (
               <Popup
-                ref="hover"
                 mode={hoverMode}
                 currentLayerInfo={currentHoverInfo}
               ></Popup>
@@ -218,20 +231,7 @@ export default {
         </div>
       );
     } else {
-      return (
-        <div class="mapgis-geojson-default-wrapper">
-          <Popup
-            ref="click"
-            mode={clickMode}
-            currentLayerInfo={currentClickInfo}
-          ></Popup>
-          <Popup
-            ref="hover"
-            mode={hoverMode}
-            currentLayerInfo={currentHoverInfo}
-          ></Popup>
-        </div>
-      );
+      return <div class="mapgis-geojson-default-wrapper"></div>;
     }
   },
 
@@ -382,7 +382,8 @@ export default {
           }
           popup
             .setLngLat(e.lngLat)
-            .setDOMContent(vm.$refs.hover.$el || vm.$refs.hover)
+            .setHTML(vm.tipContainer)
+            // .setDOMContent(vm.$refs.hover.$el || vm.$refs.hover)
             .addTo(map);
         }
       });
@@ -411,12 +412,10 @@ export default {
           showMapPopupOnHover: false,
           showInspectMapPopupOnHover: false,
           showInspectButton: false,
-          blockHoverPopupOnClick: true,
+          blockHoverPopupOnClick: false,
           queryParameters: {
             layers: [this.layerId]
           },
-          // buildInspectStyle: (originalMapStyle, coloredLayers) =>
-          //     vm.buildInspectStyle(originalMapStyle, coloredLayers, "", vm),
           renderPopup: features => {
             let fs = clonedeep(features);
             let parentPopupLayers = this.$parent.popupLayers;
@@ -446,10 +445,24 @@ export default {
               }
               return f;
             });
-            // 针对高亮进行过滤显示
-            // vm.highlightLayer(newfeatrues);
             vm.currentClickInfo = newfeatrues;
-            return vm.$refs.click.$el || vm.$refs.click;
+            const popupfeature =
+              vm.currentClickInfo && vm.currentClickInfo.length > 0
+                ? vm.currentClickInfo[0]
+                : { properties: {} };
+            vm.popupContainer = getPopupHtml(
+              vm.popupOptions.type,
+              popupfeature,
+              {
+                title: popupfeature.title,
+                fields: Object.keys(popupfeature.properties),
+                style: {
+                  containerStyle: { width: "360px" }
+                }
+              }
+            );
+            // return vm.$refs.click.$el || vm.$refs.click;
+            return vm.popupContainer;
           }
         });
         map.addControl(inspect);
@@ -517,7 +530,7 @@ export default {
             ...point.toMapboxStyle({ highlight: true })
           };
         } else if (type == "line" || line) {
-          if (!line) return;  
+          if (!line) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -525,7 +538,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (type == "polygon" || polygon) {
-          if (!polygon) return;  
+          if (!polygon) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "fill",
@@ -536,7 +549,7 @@ export default {
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
       } else {
         if (this.layer.type === "fill") {
-          if (!line) return;  
+          if (!line) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -544,7 +557,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "line") {
-          if (!line) return;  
+          if (!line) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "line",
@@ -552,7 +565,7 @@ export default {
             ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "circle") {
-          if (!point) return;  
+          if (!point) return;
           highlight = {
             id: layerId + "_高亮边界线",
             type: "circle",

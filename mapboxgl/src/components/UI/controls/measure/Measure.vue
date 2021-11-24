@@ -3,7 +3,48 @@
     <slot v-if="measure"></slot>
     <!-- slot for measureTool -->
     <slot name="measureTool">
-      <measure-tool :result="measureResult" />
+      <div
+          v-show="enableControl"
+          :style="controlStyle"
+          class="measure-story-control"
+      >
+        <measure-tool :result="measureResult" v-if="isAdvanceControl"/>
+        <mapgis-ui-space
+            v-if="!isAdvanceControl"
+        >
+          <mapgis-ui-tooltip
+              v-for="(item, i) in toolbarBtns"
+              :key="i"
+              placement="bottom"
+          >
+            <span slot="title">{{ item.tip }}</span>
+            <mapgis-ui-button
+                shape="circle"
+                @click="item.click(item)"
+                :type="item.type"
+                :style="btnStyle(item)"
+            >
+              <mapgis-ui-iconfont
+                  :type="item.icon"
+                  theme="filled"
+              />
+            </mapgis-ui-button>
+          </mapgis-ui-tooltip>
+          <mapgis-marker
+              v-if="!!coordinates.length && enableControl"
+              :coordinates="coordinates"
+              color="#ff0000"
+          >
+            <div slot="marker" class="mapgis-measure-control-label">
+              <div v-if="measureResult.geographyArea">
+                面积：{{ measureResult.geographyArea }}
+              </div>
+              <div>长度：{{ measureResult.geographyPerimeter }}</div>
+            </div>
+          </mapgis-marker>
+        </mapgis-ui-space>
+      </div>
+
     </slot>
     <!-- slot for measureMarker -->
     <slot name="measureMarker">
@@ -29,7 +70,6 @@ import {
   measureModeMap,
   measureTypeToModeMap
 } from "./store/enums";
-
 const MapboxDraw = MapboxDrawCom.default;
 
 export default {
@@ -39,6 +79,7 @@ export default {
     MeasureTool,
     MeasureMarker
   },
+
   provide() {
     const self = this;
     return {
@@ -53,6 +94,14 @@ export default {
     editable: {
       type: Boolean,
       default: true
+    },
+    enableControl: {
+      type: Boolean,
+      default: false
+    },
+    isAdvanceControl: {
+      type: Boolean,
+      default: false
     },
     measureMode: {
       type: String,
@@ -80,9 +129,60 @@ export default {
       initial: true,
       measure: undefined,
       measureStyle: defaultStyle,
-      selfMeasureMode: measureModeMap.simple,
-      measureResult: null
+      selfMeasureMode: undefined,
+      measureResult: null,
+      toolbarBtns: [
+
+        {
+          icon: "mapgis-ruler",
+          type: "primary",
+          tip: "长度",
+          click: this.enableLengthMeasure,
+        },
+        {
+          icon: "mapgis-area",
+          type: "primary",
+          tip: "面积",
+          click: this.enableAreaMeasure,
+        },
+        {
+          icon: "mapgis-shanchu_dianji",
+          type: "primary",
+          tip: "清空图元",
+          click: this.remove,
+        },
+      ],
     };
+  },
+
+  computed: {
+    coordinates({ measureResult }) {
+      return measureResult && measureResult.center
+          ? measureResult.center.geometry.coordinates
+          : [];
+    },
+    controlStyle({ position, isAdvanceControl }) {
+      const [first, secend] = position.split("-");
+      return {
+        width: "fit-content",
+        position: "absolute",
+        maxHeight: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
+        zIndex: 1000,
+        top: "10px",
+        left: "10px",
+        [first]: "10px",
+        [secend]: "10px",
+        background: isAdvanceControl ? "#fff" : "transparent",
+      };
+    },
+    btnStyle() {
+      return () => ({
+        width: "32px !important",
+        height: "32px !important",
+      });
+    },
   },
 
   watch: {
@@ -232,7 +332,7 @@ export default {
       switch (eventName) {
         case measureSelfEvents.measureCreate:
         case measureSelfEvents.measurecreate:
-          this.disableDrag();
+          // this.disableDrag();
           this.$_setEditable();
           break;
         case measureSelfEvents.measureUpdate:
@@ -299,9 +399,9 @@ export default {
      * @return {array} 整合后的样式集合
      */
     combineStyle(newStyles = []) {
-      this.measureStyle = this.measureStyle
-        .filter(l => !newStyles.find(f => f.id === l.id))
-        .concat(newStyles);
+        this.measureStyle = this.measureStyle
+            .filter(l => !newStyles.find(f => f.id === l.id))
+            .concat(newStyles);
     },
 
     /**
@@ -334,7 +434,9 @@ export default {
     changeMode(mode = measureModeMap.simple, options) {
       try {
         if (this.measure) {
-          this.selfMeasureMode = mode;
+          if(mode === measureModeMap.line || mode === measureModeMap.polygon){
+            this.selfMeasureMode = mode;
+          }
           this.measure.changeMode(mode, options);
         }
       } catch (e) {}
@@ -346,6 +448,7 @@ export default {
       this.$_initMeasure();
       this.$_changeMapStyle();
       this.$_unbindDrawEvents();
+      this.$_unbindEditEvents();
       this.$_addMeasureControl(this.measure);
       this.$_emitEvent("added", { measure: this.measure });
       this.$_unbindMeasureEvents();
@@ -391,7 +494,23 @@ export default {
     handleMeasureResult(e) {
       this.disableDrag();
       this.measureResult = e;
-    }
+    },
+    startMeasure(mode) {
+      this.enableMeasure();
+      this.changeMode(mode);
+    },
+    // enableToolbar() {
+    //   this.toolbarVisible = !this.toolbarVisible;
+    // },
+    enableLengthMeasure() {
+      this.remove();
+      this.startMeasure("draw_line_string");
+    },
+    enableAreaMeasure() {
+      this.remove();
+      this.startMeasure("draw_polygon");
+    },
+
   }
 };
 </script>

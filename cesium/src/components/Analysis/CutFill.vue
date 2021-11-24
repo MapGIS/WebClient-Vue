@@ -109,7 +109,7 @@ import {
 
 export default {
   name: "mapgis-3d-analysis-cut-fill",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -263,13 +263,12 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.CutFillAnalysisManager.addSource(
+        vueCesium.CutFillAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -281,15 +280,15 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.CutFillAnalysisManager.findSource(
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.CutFillAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         this.remove();
       }
-      CesiumZondy.CutFillAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.CutFillAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -298,15 +297,15 @@ export default {
      * @return {Object} cesium内部color对象
      */
     _getColor(rgba) {
-      return colorToCesiumColor(rgba, this.webGlobe);
+      return colorToCesiumColor(rgba);
     },
     /**
      * @description 获取SourceOptions,以方便获取填挖方分析对象和绘制对象
      * @return SourceOptions对象
      */
     _getSourceOptions() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      const find = CesiumZondy.CutFillAnalysisManager.findSource(
+      const { vueCesium, vueKey, vueIndex } = this;
+      const find = vueCesium.CutFillAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -317,13 +316,12 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let { CesiumZondy, vueKey, vueIndex, Cesium } = this;
+      let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
       const options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
-      const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
-      CesiumZondy.CutFillAnalysisManager.changeOptions(
+      vueCesium.CutFillAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -335,15 +333,15 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: result => {
           this.$emit("start");
           this.remove();
-          this.positions = positions;
+          this.positions = result.positions;
           this.maskShow = true;
 
           const linePointArr = [];
           const polygonPointArr = [];
-          positions.forEach(element => {
+          this.positions.forEach(element => {
             const { lon, lat, height } = this._cartesianToDegrees(element);
             linePointArr.push(lon);
             linePointArr.push(lat);
@@ -353,7 +351,7 @@ export default {
           });
 
           // 构造几何绘制控制对象
-          this.entityController = new CesiumZondy.Manager.EntityController({
+          this.entityController = new window.CesiumZondy.Manager.EntityController({
             viewer
           });
 
@@ -402,7 +400,7 @@ export default {
      * @return {Object} 经纬度坐标
      */
     _cartesianToDegrees(cartesian) {
-      const { ellipsoid } = this.webGlobe.scene.globe;
+      const { ellipsoid } = this.viewer.scene.globe;
       // 将笛卡尔坐标转换为地理坐标
       const cartographic = ellipsoid.cartesianToCartographic(cartesian);
       // 将弧度转为度的十进制度表示
@@ -425,44 +423,39 @@ export default {
         return;
       }
       this._reset();
-      const { viewer } = this.webGlobe;
       const { xPaneNumCopy, yPaneNumCopy, heightCopy } = this;
 
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.webGlobe
+        this.viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.webGlobe);
+        setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
-
-      // 初始化高级分析功能管理类
-      const cutFillAnalysis = new this.CesiumZondy.Manager.AdvancedAnalysisManager(
-        {
-          viewer
-        }
-      );
       // 创建填挖方实例
-      const cutFill = cutFillAnalysis.createCutFill(this.dataType, {
-        // 设置x方向采样点个数
-        xPaneNum: xPaneNumCopy,
-        // 设置y方向采样点个数参数
-        yPaneNum: yPaneNumCopy,
-        // 设置填挖规整高度
-        height: heightCopy,
-        // 返回结果的回调函数
-        callback: this._analysisSuccess
+      const cutFill = new Cesium.CutFillAnalysis(this.viewer, {
+        callBack: this._analysisSuccess
       });
+
+      // 设置x方向采样点个数
+      cutFill.xPaneNum = xPaneNumCopy;
+      // 设置y方向采样点个数参数
+      cutFill.yPaneNum = yPaneNumCopy;
+      // 设置填挖规整高度
+      cutFill.height = heightCopy;
+      // 数据类型
+      cutFill.dataType = this.dataType;
+
       // 开始执行填挖方分析
-      cutFillAnalysis.startCutFill(cutFill, positions);
+      this.startCutFill(cutFill, positions);
 
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let { vueCesium, vueKey, vueIndex } = this;
 
-      CesiumZondy.CutFillAnalysisManager.changeOptions(
+      vueCesium.CutFillAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "cutFillAnalysis",
-        cutFillAnalysis
+          cutFill
       );
     },
     /**
@@ -475,8 +468,52 @@ export default {
         cutVolume: result.cutVolume,
         fillVolume: result.fillVolume
       };
+      let polygon = [];
+      let height = 100;
+      // 绘制填方结果
+      this.viewer.entities.add({
+        polygon: {
+          hierarchy: {
+            positions: polygon
+          },
+          height: height,
+          extrudedHeight: result.minHeight,
+          material: Cesium.Color.ORANGE
+        }
+      });
+      // 绘制挖方结果
+      let polygonGeometry = new Cesium.PolygonGeometry({
+        polygonHierarchy: new Cesium.PolygonHierarchy(polygon)
+      });
+      // var geometry = Cesium.PolygonGeometry.createGeometry(polygonGeometry);
+      let polygonInstance = new Cesium.GeometryInstance({
+        geometry: polygonGeometry,
+        id: 'polygon',
+        attributes: {
+          color: new Cesium.ColorGeometryInstanceAttribute(0.0, 0.0, 1.0, 0.8)
+        }
+      });
+      this.viewer.scene.primitives.add(
+          new Cesium.GroundPrimitive({
+            geometryInstances: polygonInstance
+          })
+      );
       this.maskShow = false;
       this.$emit("success", result);
+    },
+
+    /**
+     * 开始执行填挖方分析
+     * @function module:客户端可视化分析.AdvancedAnalysisManager.prototype.startCutFill
+     * @param {Object} cutFill 填挖方实例，使用createCutFill返回的实例
+     * @param {Array} positions 填挖区域多边形的顶点数组
+     */
+    startCutFill(cutFill, positions){
+      const cutfillObject = cutFill;
+      cutfillObject._pointsPolygon = positions;
+      const minMax = cutfillObject.getMinAndMaxCartesian();
+      cutfillObject.start(minMax);
+      // this.viewer.scene.requestRender();
     },
     /**
      * @description 重新计算
@@ -502,11 +539,11 @@ export default {
       if (
         this.isDepthTestAgainstTerrainEnable !== undefined &&
         this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.webGlobe)
+          isDepthTestAgainstTerrainEnable(this.viewer)
       ) {
         setDepthTestAgainstTerrainEnable(
           this.isDepthTestAgainstTerrainEnable,
-          this.webGlobe
+          this.viewer
         );
       }
     },
@@ -514,13 +551,13 @@ export default {
      * @description 移除填挖方分析结果，取消交互式绘制事件激活状态，恢复深度检测设置，重置结果显示
      */
     remove() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       let options = this._getSourceOptions();
       let { cutFillAnalysis, drawElement } = options;
 
       // 判断是否已有等值线分析结果
       if (cutFillAnalysis) {
-        CesiumZondy.CutFillAnalysisManager.changeOptions(
+        vueCesium.CutFillAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "cutFillAnalysis",
@@ -531,7 +568,7 @@ export default {
       if (drawElement) {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.CutFillAnalysisManager.changeOptions(
+        vueCesium.CutFillAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",

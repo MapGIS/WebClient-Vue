@@ -26,21 +26,24 @@
 </template>
 
 <script>
-import {rgbaToHex} from '../Utils/common/color-util';
+import { rgbaToHex } from "../Utils/common/color-util";
 /* import { Util } from "@mapgis/webclient-vue-ui";
 const { ColorUtil } = Util; */
 import VueOptions from "../Base/Vue/VueOptions";
 import {
   isEnableLighting,
   setEnableLighting,
-  getBrightness,
-  getBrightnessStatusAndUniformsBrightness,
-  setBrightnessStatusAndUniformsBrightness
+  getLight,
+  setLight,
+  getDynamicAtmosphereLighting,
+  setDynamicAtmosphereLighting,
+  getDynamicAtmosphereLightingFromSun,
+  setDynamicAtmosphereLightingFromSun
 } from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-analysis-slope",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -83,9 +86,11 @@ export default {
 
       isEnableLighting: undefined, // 光照是否已开启
 
-      noBrightness: undefined, // 是否有brightness对象
+      light: undefined, // 是否有light对象
 
-      brightnessStatusAndUniformsBrightness: undefined, // 光照参数
+      dynamicAtmosphereLighting: undefined,
+
+      dynamicAtmosphereLightingFromSun: undefined,
 
       info: "坡度分析需要带法线地形。"
     };
@@ -109,30 +114,24 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { viewer, vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.SlopeAnalysisManager.addSource(
-          vueKey,
-          vueIndex,
-          dataSource,
-          {
-            drawElement: null,
-            slopeAnalysis: null
-          }
-        );
+        vueCesium.SlopeAnalysisManager.addSource(vueKey, vueIndex, dataSource, {
+          drawElement: null,
+          slopeAnalysis: null
+        });
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.SlopeAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.SlopeAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
       }
-      CesiumZondy.SlopeAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.SlopeAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -141,47 +140,38 @@ export default {
     _enableBrightness() {
       // 开启光照，不然放大地图，分析结果显示异常
 
-      this.isEnableLighting = isEnableLighting(this.webGlobe);
+      this.isEnableLighting = isEnableLighting(this.viewer);
       if (!this.isEnableLighting) {
         // 未开启光照，开启
-        setEnableLighting(true, this.webGlobe);
+        setEnableLighting(true, this.viewer);
       }
       // 调高亮度
-      const { viewer } = this.webGlobe;
-      const stages = viewer.scene.postProcessStages;
-      const brightness = getBrightness(this.webGlobe);
-      if (!brightness) {
-        // 初始没有brightness对象
-        this.noBrightness = true;
-        viewer.scene.brightness = stages.add(
-          this.Cesium.PostProcessStageLibrary.createBrightnessStage()
-        );
-      }
-      // 设置前记录原有光照参数
-      this.brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
-        this.webGlobe
+      const { viewer } = this;
+      this.light = getLight(viewer);
+      this.dynamicAtmosphereLighting = getDynamicAtmosphereLighting(viewer);
+      this.dynamicAtmosphereLightingFromSun = getDynamicAtmosphereLightingFromSun(
+        viewer
       );
-      const statusAndUniformsBrightness = {
-        enabled: true,
-        brightness: 1.2
-      };
-      setBrightnessStatusAndUniformsBrightness(
-        statusAndUniformsBrightness,
-        this.webGlobe
-      );
+      const searchLight = new this.Cesium.DirectionalLight({
+        direction: viewer.scene.camera.directionWC, // Updated every frame
+        intensity: 2.0
+      });
+      setLight(searchLight, viewer);
+      setDynamicAtmosphereLighting(false, viewer);
+      setDynamicAtmosphereLightingFromSun(false, viewer);
     },
     /**
      * @description 开始绘制并分析
      */
     analysis() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.SlopeAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.SlopeAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { slopeAnalysis, drawElement } = options;
-      const { viewer } = this.webGlobe;
+      const { viewer } = this;
       // 初始化交互式绘制控件
       drawElement = drawElement || new this.Cesium.DrawElement(viewer);
-      CesiumZondy.SlopeAnalysisManager.changeOptions(
+      vueCesium.SlopeAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -201,7 +191,7 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: result => {
           this.remove();
           this._enableBrightness(); // 开启光照
           slopeAnalysis =
@@ -212,8 +202,8 @@ export default {
             });
           slopeAnalysis.enableContour(false);
           slopeAnalysis.updateMaterial("slope");
-          slopeAnalysis.changeAnalyseArea(positions);
-          CesiumZondy.SlopeAnalysisManager.changeOptions(
+          slopeAnalysis.changeAnalyseArea(result.positions);
+          vueCesium.SlopeAnalysisManager.changeOptions(
             vueKey,
             vueIndex,
             "slopeAnalysis",
@@ -245,8 +235,8 @@ export default {
      * @description 移除坡度分析结果，取消交互式绘制事件激活状态
      */
     remove() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.SlopeAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.SlopeAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       let { slopeAnalysis, drawElement } = options;
 
@@ -254,7 +244,7 @@ export default {
       if (slopeAnalysis) {
         // 移除坡度分析显示结果
         slopeAnalysis.updateMaterial("none");
-        CesiumZondy.SlopeAnalysisManager.changeOptions(
+        vueCesium.SlopeAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "slopeAnalysis",
@@ -265,7 +255,7 @@ export default {
       if (drawElement) {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.SlopeAnalysisManager.changeOptions(
+        vueCesium.SlopeAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",
@@ -280,37 +270,21 @@ export default {
      * 恢复光照设置
      */
     _restoreEnableLighting() {
+      const { viewer } = this;
       // 恢复光照开启状态设置
-      if (
-        this.isEnableLighting !== undefined &&
-        this.isEnableLighting !== isEnableLighting(this.webGlobe)
-      ) {
-        setEnableLighting(this.isEnableLighting, this.webGlobe);
+      if (this.isEnableLighting !== undefined) {
+        setEnableLighting(this.isEnableLighting, viewer);
       }
-      const stages = this.webGlobe.viewer.scene.postProcessStages;
-      if (this.noBrightness) {
-        // 如果开始没有brightness对象，恢复
-        stages.remove(this.webGlobe.viewer.scene.brightness);
-        this.webGlobe.viewer.scene.brightness = undefined;
-      } else {
-        // 恢复brightness参数设置
-        if (this.brightnessStatusAndUniformsBrightness !== undefined) {
-          const brightnessStatusAndUniformsBrightness = getBrightnessStatusAndUniformsBrightness(
-            this.webGlobe
-          );
-          if (
-            this.brightnessStatusAndUniformsBrightness.enabled !==
-              brightnessStatusAndUniformsBrightness.enabled ||
-            this.brightnessStatusAndUniformsBrightness.brightness !==
-              brightnessStatusAndUniformsBrightness.brightness
-          ) {
-            setBrightnessStatusAndUniformsBrightness(
-              this.brightnessStatusAndUniformsBrightness,
-              this.webGlobe
-            );
-          }
-        }
+
+      // 恢复brightness参数设置
+      if (this.light !== undefined) {
+        setLight(this.light, viewer);
       }
+      setDynamicAtmosphereLighting(this.dynamicAtmosphereLighting, viewer);
+      setDynamicAtmosphereLightingFromSun(
+        this.dynamicAtmosphereLightingFromSun,
+        viewer
+      );
     }
   }
 };

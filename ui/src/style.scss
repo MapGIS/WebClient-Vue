@@ -8,6 +8,8 @@
 @import "./components/space/style/space.scss";
 @import "./components/scroll/style/scroll.scss";
 @import "./components/setting-footer/style/setting-footer.scss";
+@import "./components/panel/style/panel.scss";
+
 /* MapGIS Design - General */
 @import "./components/button/style/button.scss";
 @import "./components/border/style/border.scss";
@@ -80,6 +82,7 @@
 @import "./components/iconfont/style/iconfont.scss";
 
 /* MapGIS Design - Color */
+@import "./components/charts/style/charts.scss";
 @import "./components/color/style/color.scss";
 @import "./components/color-picker/style/color-picker.scss";
 
@@ -91,6 +94,7 @@
 @import "./components/ribbon/style/ribbon.scss";
 @import "./layout/base/style/pro.scss";
 @import "./layout/base/SettingDrawer/style/index.scss";
+@import "./layout/panel/style/panel.scss";
 
 /* MapGIS Design Navs */
 @import "./layout/navs/style/navs.scss";
@@ -102,6 +106,8 @@
 
 /* MapGIS Design Mapbox Base*/
 @import "./components/map/style/map.scss";
+@import "./components/map/style/g3d.scss";
+@import "./components/map/style/analysis.scss";
 
 /* MapGIS Design THemePanel */
 @import "./components/themepanel/style/themepanel.scss";

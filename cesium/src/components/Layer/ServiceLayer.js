@@ -1,5 +1,5 @@
 export default {
-  inject: ["webGlobe"],
+  inject: ["viewer"],
   props: {
     baseUrl: {
       type: String,
@@ -48,7 +48,7 @@ export default {
           tileDiscardPolicy: undefined,
           tileHeight: 256,
           tileWidth: 256,
-          enablePickFeatures: undefined,
+          enablePickFeatures: false,
           minimumLevel: 0,
           maximumLevel: 20,
           credit: undefined
@@ -93,7 +93,7 @@ export default {
     layerStyle: {
       handler: function() {
         let { vueKey, vueIndex } = this;
-        let layer = window.CesiumZondy[this.managerName].findSource(
+        let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
@@ -125,7 +125,7 @@ export default {
     id: {
       handler: function() {
         const { vueIndex, vueKey } = this;
-        let layer = window.CesiumZondy[this.managerName].findSource(
+        let layer = window.vueCesium[this.managerName].findSource(
           vueKey,
           vueIndex
         );
@@ -167,9 +167,9 @@ export default {
      * }
      *
      * @param addOpt 需要额外添加的参数
-     * @param CesiumZondyLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
+     * @param vueCesiumLayer 该参数存在时，会替provier处的Cesium[this.providerName]方法，请参考webclient-javascript里的各种Cesium的layer
      * **/
-    $_mount(addOpt, CesiumZondyLayer) {
+    $_mount(addOpt, vueCesiumLayer) {
       //类型检测
       this.$_check();
       let opt = {},
@@ -206,32 +206,18 @@ export default {
         }
       }
 
-      //设置Headers
-      let checkHeaders = this.$_checkValue(this.options, "headers", ""),
-        urlSource;
-      if (checkHeaders === "null") {
-        urlSource = new Cesium.Resource({
-          url: options.baseUrl,
-          headers: options.headers
-        });
-      } else {
-        urlSource = options.baseUrl;
-      }
-
-      options.url = urlSource;
+      options.url = options.baseUrl;
 
       //取得webGlobe对象，防止当页面有多个webGlobe只会取得
-      let webGlobeObj = this.$_getWebGlobe();
-
       //根据对应的providerName设置provider
       const { layerStyle } = this;
       const { saturation, hue } = options;
       const { visible, opacity, zIndex } = layerStyle;
-      const { imageryLayers } = webGlobeObj.viewer;
+      const { imageryLayers } = this.$_getWebGlobe();
 
       let provider;
-      if (CesiumZondyLayer) {
-        provider = new CesiumZondyLayer(options);
+      if (vueCesiumLayer) {
+        provider = new vueCesiumLayer(options);
       } else {
         provider = new Cesium[this.providerName](options);
       }
@@ -304,7 +290,7 @@ export default {
       }
 
       //将图层加入对应的manager
-      window.CesiumZondy[this.managerName].addSource(
+      window.vueCesium[this.managerName].addSource(
         vueKey,
         vueIndex,
         imageryLayer,
@@ -315,16 +301,14 @@ export default {
       this.$emit("load", imageryLayer, this);
     },
     $_unmount() {
-      let webGlobeObj = this.$_getWebGlobe();
       let { vueKey, vueIndex } = this;
-      const { viewer } = webGlobeObj;
-      const { imageryLayers } = viewer;
-      let find = window.CesiumZondy[this.managerName].findSource(
+      const { imageryLayers } = this.$_getWebGlobe();
+      let find = window.vueCesium[this.managerName].findSource(
         vueKey,
         vueIndex
       );
       imageryLayers.remove(find.source, true);
-      window.CesiumZondy[this.managerName].deleteSource(vueKey, vueIndex);
+      window.vueCesium[this.managerName].deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     $_checkZIndex(imageryLayers) {
@@ -383,13 +367,13 @@ export default {
       let Layers = [],
         vm = this;
 
-      //遍历window.CesiumZondy下所有的Manager
-      Object.keys(window.CesiumZondy).forEach(function(key) {
+      //遍历window.vueCesium下所有的Manager
+      Object.keys(window.vueCesium).forEach(function(key) {
         if (key.indexOf("Manager") > -1 && key !== "GlobesManager") {
           //取出含有与webScene组件相同vueKey的Manager对象
-          if (window.CesiumZondy[key].hasOwnProperty("vueKey")) {
-            if (window.CesiumZondy[key].hasOwnProperty(vm.vueKey)) {
-              let layerManagers = window.CesiumZondy[key][vm.vueKey];
+          if (window.vueCesium[key].hasOwnProperty("vueKey")) {
+            if (window.vueCesium[key].hasOwnProperty(vm.vueKey)) {
+              let layerManagers = window.vueCesium[key][vm.vueKey];
               for (let i = 0; i < layerManagers.length; i++) {
                 //确保拥有options并且options里面含有zIndex
                 if (
@@ -440,18 +424,18 @@ export default {
     },
     $_getWebGlobe() {
       let webGlobeObj;
-      const { vueKey, webGlobe } = this;
+      const { vueKey, viewer } = this;
       //如果this.vueKey，则从GlobesManager中取得webGlobeObj
       if (vueKey) {
         if (vueKey === "default") {
-          webGlobeObj = webGlobe;
+          webGlobeObj = viewer;
         } else {
-          let GlobesManager = window.CesiumZondy.GlobesManager;
+          let GlobesManager = window.vueCesium.GlobesManager;
           webGlobeObj = GlobesManager[this.vueKey][0].source;
         }
       } else {
         //否则取this.webGlobe
-        webGlobeObj = webGlobe;
+        webGlobeObj = viewer;
       }
       return webGlobeObj;
     },
@@ -466,9 +450,7 @@ export default {
         throw new Error("zIndex不能为负数");
       }
       //取得webGlobe对象
-      let webGlobeObj = this.$_getWebGlobe();
-      const { viewer } = webGlobeObj;
-      const { imageryLayers } = viewer;
+      const { imageryLayers } = this.$_getWebGlobe();
       const { _layers } = imageryLayers;
       let currentLayer = this.$_getCurrentLayer(imageryLayers).currentLayer;
       let index = this.$_getCurrentLayer(imageryLayers).index;
@@ -566,9 +548,7 @@ export default {
      * 会在$_mount使用
      * **/
     $_initLayerIndex() {
-      let webGlobeObj = this.$_getWebGlobe();
-      const { viewer } = webGlobeObj;
-      const { imageryLayers } = viewer;
+      const { imageryLayers } = this.$_getWebGlobe();
       let _layers = imageryLayers._layers;
       let length = _layers.length;
       let currentLayer = _layers[length - 1];

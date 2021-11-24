@@ -20,7 +20,7 @@ export default {
         defaultValue: { summary: 'null' },
       },
     },
-    themeOption: {
+    themeOptions: {
       description:  "专题图样式，包含专题图图层样式、分段样式以及高亮样式，样式如下：<br>" +
           "1、<span class='storybook-span'>layerStyle</span>(选填)：专题图样式(略)<br>" +
           "2、<span class='storybook-span'>highlightStyle</span>(选填)：高亮样式<br>" +
@@ -52,7 +52,7 @@ export default {
 const Template = (args, {argTypes}) => ({
   props: Object.keys(argTypes),
   methods:{},
-  template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
+  template:`<mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:96vh">
     <mapgis-theme-layer-custom v-bind="$props"/>
     </mapgis-web-map>`,
 });
@@ -62,7 +62,7 @@ export const  开启高亮和PopUp = Template.bind({});
   dataSource: wuhan_subway,
   type: "range",
   field: "mpLength",
-  themeOption: {
+  themeOptions: {
     layerStyle: {
       color: "#D53E4F,#FB8D59,#FEE08B,#FFFFBF,#E6F598,#99D594,#3288BD",
       width: 5

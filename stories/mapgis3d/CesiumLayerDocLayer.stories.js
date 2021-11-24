@@ -6,7 +6,7 @@ export default {
   component: MapgisDocLayer,
   argTypes: {
     baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
-    layers: "exclude:1",
+    layers: "show:1,2,3,4,5,6,7,8,9,10",
     layerStyle: {
       visible: true,
       opacity: 1,
@@ -20,9 +20,9 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebGlobe, MapgisDocLayer },
-  template: `<mapgis-web-globe >
+  template: `<mapgis-web-scene>
     <mapgis-3d-igs-doc-layer v-bind="$props"/>
-  </mapgis-web-globe>`,
+  </mapgis-web-scene>`,
   data(){
     return {
     }
@@ -33,8 +33,8 @@ const Template = (args, { argTypes }) => ({
 
 export const DocLayer = Template.bind({});
 DocLayer.args = {
-  baseUrl:"http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
-  layers: "exclude:1",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/北京市`,
+  layers: "show:1,2,3,4,5,6,7,8,9,10",
   layerStyle: {
     visible: true,
     opacity: 1,

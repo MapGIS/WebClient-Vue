@@ -4,8 +4,32 @@ export default {
   title: "二维/图层/MVT/矢量瓦片样式",
   component: MapgisMvtStyleLayer,
   argTypes: {
-    mvtStyle: "",
-    mode: "add",
+    mvtStyle: {
+      description:'Mapbox 矢量瓦片样式<br/>' +
+          '详见[样式说明](https://docs.mapbox.com/mapbox-gl-js/style-spec)',
+      type: { name: 'Object | String', required: false },
+      defaultValue:undefined,
+      table:{
+        type: { summary: 'Object | String' },
+        defaultValue: { summary: 'undefined' },
+      },
+      control:'object'
+    },
+    mode:{
+      description:'样式显示模式',
+      type: { name: 'String', required: false },
+      defaultValue: 'merge',
+      table:{
+        type:{
+          summary: 'String',
+        },
+        defaultValue: { summary: 'merge' },
+      },
+      control:{
+        type:'select',
+        options:['merge','add','set']
+      }
+    } ,
     before: undefined,
   },
 };
@@ -24,23 +48,23 @@ const TemplateMerge = (args, { argTypes }) => ({
           IGServer: {
             type: "vector",
             tiles: [
-              "http://develop.smaryun.com:6163/igs/rest/mrms/tile/OSM全中国/{z}/{y}/{x}?type=cpbf&returnError=false",
-            ],
+              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/OSM全中国/{z}/{y}/{x}?type=cpbf&returnError=false`,
+  ],
             minZoom: 0,
             maxZoom: 24,
           },
           china: {
             type: "vector",
             tiles: [
-              "http://develop.smaryun.com:6163/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf",
+              `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf`,
             ],
             minZoom: 0,
             maxZoom: 10,
           },
         },
-        sprite: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/sprite",
+        sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
         glyphs:
-          "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf",
+          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         layers: [
           {
             id: "背景底色",
@@ -113,7 +137,7 @@ const TemplateMerge = (args, { argTypes }) => ({
 export const 合并 = TemplateMerge.bind({});
 合并.args = {
   mvtStyle:
-    "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/街道-墨卡托.json",
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "merge",
 };
 
@@ -130,14 +154,14 @@ const Template = (args, { argTypes }) => ({
 export const 追加 = Template.bind({});
 追加.args = {
   mvtStyle:
-    "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/街道-墨卡托.json",
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "add",
 };
 
 export const 覆盖 = Template.bind({});
 覆盖.args = {
   mvtStyle:
-    "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/styles/街道-墨卡托.json",
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "set",
 };
 
@@ -151,15 +175,15 @@ MvtJSON对象.args = {
       china: {
         type: "vector",
         tiles: [
-          "http://develop.smaryun.com:6163/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf",
+          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/中国行政区/{z}/{y}/{x}?type=cpbf`,
         ],
         minZoom: 0,
         maxZoom: 10,
       },
     },
-    sprite: "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/sprite",
+    sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
     glyphs:
-      "http://develop.smaryun.com:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf",
+      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
     layers: [
       {
         id: "中国行政区",

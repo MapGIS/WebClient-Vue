@@ -15,10 +15,10 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { "mapgis-3d-measure": Mapgis3dMeasure },
   template: `
-    <mapgis-web-scene
+    <mapgis-web-scene style="height:95vh"
       v-bind:animation="false"
       v-bind:timeline="false">
-      <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
+      <mapgis-3d-m3d-layer :url="m3durl"> </mapgis-3d-m3d-layer>
       <div
         v-show="enableControl"
         :style="controlStyle"
@@ -55,7 +55,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data() {
     return {
-      m3durl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3durl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       measure: null,
       toolbarVisible: this.hasSettingPanel,
       toolbarBtns: [
@@ -79,7 +79,7 @@ const Template = (args, { argTypes }) => ({
           click: this.enableAreaMeasure,
         },
         {
-          icon: "mapgis-huizhijuxing",
+          icon: "mapgis-sanjiaoceliang",
           type: "primary",
           tip: "三角测量",
           click: this.enableTriangleMeasure,
@@ -123,7 +123,7 @@ const Template = (args, { argTypes }) => ({
       return {
         overflow: "hidden",
         transition: "width 0.3s",
-        width: `${toolbarVisible ? 160 : 32}px`,
+        width: `${toolbarVisible ? 240 : 32}px`,
       };
     },
     btnStyle({ toolbarVisible }) {
@@ -145,6 +145,7 @@ const Template = (args, { argTypes }) => ({
       this.measure3dRef.remove();
     },
     startMeasure(measureName) {
+      this.clearMeasure();
       this.measure3dRef.$_enableMeasure(measureName);
     },
     enableToolbar() {

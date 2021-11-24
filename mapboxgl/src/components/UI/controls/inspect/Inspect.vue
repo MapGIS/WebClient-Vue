@@ -16,7 +16,8 @@
 
 import mapboxgl from "@mapgis/mapbox-gl";
 import cloneDeep from "lodash.clonedeep";
-const MapboxInspect = require("mapbox-gl-inspect");
+const Inspect = require("@mapgis/mapbox-gl-inspect");
+const MapboxInspect = Inspect.default;
 import Popup from "../../../layer/geojson/Popup";
 
 export default {
@@ -144,7 +145,7 @@ export default {
 
             return f;
           });
-          
+
           vm.currentLayerInfo = newfeatrues;
           return vm.$el;
         }
@@ -190,7 +191,7 @@ export default {
         sources: sources,
         layers: [backgroundLayer].concat(coloredLayers)
       };
-      console.log('inspectStyle', inspectStyle);
+      console.log("inspectStyle", inspectStyle);
       return inspectStyle;
     },
     recordStyle() {
@@ -216,3 +217,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.mapgis-inspect-content {
+  position: absolute;
+  width: 240px;
+  height: 0px; /* 此处不能屏蔽,不然初始化的时候会溢出 */
+}
+</style>

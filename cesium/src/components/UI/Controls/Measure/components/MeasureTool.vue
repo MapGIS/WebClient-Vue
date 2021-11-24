@@ -46,7 +46,7 @@ import Measure3dSetting from "./MeasureSetting.vue";
 //  todo 暂不支持样式的实时更改
 export default {
   name: "measure-3d-tool",
-  inject: ["webGlobe"],
+  inject: ["viewer"],
   components: {
     "measure-3d-result": Measure3dResult,
     "measure-3d-setting": Measure3dSetting

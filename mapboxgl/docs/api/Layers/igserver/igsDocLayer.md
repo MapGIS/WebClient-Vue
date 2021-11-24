@@ -4,7 +4,7 @@
 
 ## 属性
 
-All common [layers props](/zh/api/Layers/README.md#props)
+All common [layers props](/api/Layers/README.md#props)
 
 ### `baseUrl`
 
@@ -74,7 +74,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ### `guid`
 
 - **类型:** `String`
-- **默认值:** `newGuid()`in [Util](/zh/api/Util/util)
+- **默认值:** `newGuid()`in [Util](/api/Util/util)
 - **非侦听属性**
 - **描述:** 唯一 ID，用户标识地图文档。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）。
 
@@ -146,7 +146,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ## 事件
 
-All common layer [events](/zh/api/Layers/#events)
+All common layer [events](/api/Layers/#events)
 
 ## 示例
 

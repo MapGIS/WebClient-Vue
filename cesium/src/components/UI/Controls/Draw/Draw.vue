@@ -47,7 +47,7 @@ const drawEvents = {
 export default {
   name: "mapgis-3d-draw",
   mixins: [],
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     infinite: {
       type: Boolean,
@@ -68,15 +68,7 @@ export default {
     drawStyle: {
       type: Object,
       default: () => {
-        return {
-          color: '#FF0000',
-          opacity: 1,
-          outlineWidth: 1,
-          //边线颜色
-          outlineColor: '#FFA500',
-          //线宽
-          width: 2,
-        }
+        return {}
       }
     },
     vueKey: {
@@ -93,6 +85,15 @@ export default {
 
   data() {
     return {
+      drawStyleCopy: {
+        color: '#FF0000',
+        opacity: 1,
+        outlineWidth: 1,
+        //边线颜色
+        outlineColor: '#000000',
+        //线宽
+        width: 2,
+      },
       initial: false,
       drawOption: "",
       draws: [
@@ -145,6 +146,7 @@ export default {
   created() {
   },
   mounted() {
+    this.drawStyleCopy = Object.assign(this.drawStyleCopy, this.drawStyle);
     this.mount();
   },
   destroyed() {
@@ -157,6 +159,12 @@ export default {
         this.unmount();
         this.mount();
       }
+    },
+    drawStyle: {
+      handler: function () {
+        this.drawStyleCopy = Object.assign(this.drawStyleCopy, this.drawStyle);
+      },
+      deep: true
     }
   },
   methods: {
@@ -165,12 +173,12 @@ export default {
       const {vueKey, vueIndex} = this;
       //轮询，直到webGlobe有值，才会显示slot，这是为了保证draw组件不在webscene组件里面也能正常使用
       let interval = setInterval(function () {
-        let webGlobe = vm.getWebGlobe();
-        if (webGlobe) {
+        let viewer = vm.getWebGlobe();
+        if (viewer) {
           clearInterval(interval);
           vm.initial = true;
           vm.$emit("load", vm);
-          window.CesiumZondy.DrawToolManager.addSource(
+          window.vueCesium.DrawToolManager.addSource(
               vueKey,
               vueIndex,
               []
@@ -180,15 +188,15 @@ export default {
     },
 
     unmount() {
-      let {vueKey, vueIndex, CesiumZondy} = this;
-      if (!CesiumZondy) {
-        CesiumZondy = window.CesiumZondy;
+      let {vueKey, vueIndex, vueCesium} = this;
+      if (!vueCesium) {
+        vueCesium = window.vueCesium;
       }
-      let find = CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
       //清空实体，删除Draw组件
       if (find) {
         this.removeEntities(true);
-        CesiumZondy.DrawToolManager.deleteSource(vueKey, vueIndex);
+        vueCesium.DrawToolManager.deleteSource(vueKey, vueIndex);
       }
       //清空drawElement
       if (window.drawElement) {
@@ -201,19 +209,23 @@ export default {
 
     removeEntities(unmount) {
       let {vueKey, vueIndex} = this;
-      //移除所有实体
-      let webGlobeDraw = this.getWebGlobe();
-      // 取得webGlobe后，清空当前绘制
-      if (webGlobeDraw) {
-        let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+
+      let viewer = this.getWebGlobe();
+      // 取得viewer后，清空当前绘制
+      if (viewer) {
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
         if (drawEntities) {
           drawEntities = drawEntities.source;
           for (let i = 0; i < drawEntities.length; i++) {
-            webGlobeDraw.viewer.scene.primitives.remove(drawEntities[i]);
-            webGlobeDraw.viewer.entities.remove(drawEntities[i]);
+            viewer.scene.primitives.remove(drawEntities[i]);
+            viewer.entities.remove(drawEntities[i]);
           }
           drawEntities.source = [];
         }
+      }
+      //清空drawElement
+      if (window.drawElement) {
+        window.drawElement.stopDrawing();
       }
       if (!unmount) {
         if (this.drawOption.length > 0) {
@@ -222,110 +234,113 @@ export default {
       }
     },
     getWebGlobe() {
-      let webGlobeDraw;
-      let {webGlobe, CesiumZondy, Cesium, vueKey, vueIndex} = this;
-      if (!CesiumZondy) {
-        CesiumZondy = window.CesiumZondy;
+      let viewerDraw;
+      let {viewer, vueCesium, Cesium, vueKey, vueIndex} = this;
+      if (!vueCesium) {
+        vueCesium = window.vueCesium;
       }
       if (!Cesium) {
         Cesium = window.Cesium;
       }
-      //当webGlobe存在，则表示在web-scene组建中，使用注入的webGlobe
+      //当viewer存在，则表示在web-scene组件中，使用注入的webGlobe
       if (this.vueKey.length === 0) {
-        webGlobeDraw = webGlobe;
+        viewerDraw = viewer;
       } else {
-        //当webGlobe不存在，则表示要通过vueKey获取
-        let GlobesManager = CesiumZondy.GlobesManager;
+        //当viewer不存在，则表示要通过vueKey获取
+        let GlobesManager = vueCesium.GlobesManager;
         if (GlobesManager.hasOwnProperty(this.vueKey) && GlobesManager[this.vueKey].length > 0 && GlobesManager[this.vueKey][0].hasOwnProperty("source")) {
-          webGlobeDraw = GlobesManager[this.vueKey][0].source;
+          viewerDraw = GlobesManager[this.vueKey][0].source;
         }
       }
       if (!this.infinite) {
-        let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex);
+        let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex);
         if (drawEntities) {
           drawEntities = drawEntities.source;
           for (let i = 0; i < drawEntities.length; i++) {
-            webGlobeDraw.viewer.scene.primitives.remove(drawEntities[i]);
-            webGlobeDraw.viewer.entities.remove(drawEntities[i]);
+            viewerDraw.scene.primitives.remove(drawEntities[i]);
+            viewerDraw.entities.remove(drawEntities[i]);
           }
           drawEntities.source = [];
         }
       }
-      return webGlobeDraw;
+      return viewerDraw;
     },
-    getDrawElement(webGlobe) {
-      if (window.drawElement) {
-        if (!this.infinite) {
-          window.drawElement.stopDrawing();
-        }
-      } else {
-        window.drawElement = new Cesium.DrawElement(webGlobe.viewer);
+    getDrawElement(viewer) {
+      if (window.drawElement && !this.infinite) {
+        window.drawElement.stopDrawing();
       }
+      window.drawElement = new Cesium.DrawElement(viewer);
       return window.drawElement;
     },
     enableDrawPoint() {
       this.drawOption = "enableDrawPoint";
-      let webGlobeDraw = this.getWebGlobe();
+      let viewerDraw = this.getWebGlobe();
       const vm = this;
-      let {CesiumZondy, Cesium, vueKey, vueIndex, drawStyle} = this;
-      if (!CesiumZondy) {
-        CesiumZondy = window.CesiumZondy;
+      let {vueCesium, Cesium, vueKey, vueIndex, drawStyleCopy} = this;
+      if (!vueCesium) {
+        vueCesium = window.vueCesium;
       }
       if (!Cesium) {
         Cesium = window.Cesium;
       }
-      let entityController = new CesiumZondy.Manager.EntityController({
-        viewer: webGlobeDraw.viewer
-      });
-      let drawElement = this.getDrawElement(webGlobeDraw);
+      let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
         drawElement.setGroundPrimitiveType('BOTH');
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const outlineColor = new Cesium.Color.fromCssColorString(drawStyle.outlineColor).withAlpha(drawStyle.opacity);
-      const color = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const outlineColor = new Cesium.Color.fromCssColorString(drawStyleCopy.outlineColor).withAlpha(drawStyleCopy.opacity);
+      const color = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingMarker({
         addDefaultMark: false,
         color: color,
-        callback: function (position) {
+        callback: function (result) {
+          let position = result.position;
           let cartographic = Cesium.Cartographic.fromCartesian(position);
           let lng = Cesium.Math.toDegrees(cartographic.longitude);
           let lat = Cesium.Math.toDegrees(cartographic.latitude);
           let height = cartographic.height; //模型高度
           //添加点：经度、纬度、高程、名称、像素大小、颜色、外边线颜色、边线宽度
-          let drawEntity = entityController.appendPoint(lng, lat, height, '点', 10,
-              color,
-              outlineColor,
-              drawStyle.outlineWidth);
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntity = viewerDraw.entities.add({
+            name:'点',
+            position: Cesium.Cartesian3.fromDegrees(lng, lat, height),
+            point: {
+              // 点
+              pixelSize : 10,
+              color : color,
+              outlineColor : outlineColor,
+              outlineWidth : drawStyleCopy.outlineWidth
+            }
+          });
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', position, [lng, lat, height], webGlobeDraw);
-          vm.$emit('drawcreate', position, [lng, lat, height], webGlobeDraw);
+          vm.$emit('drawCreate', position, [lng, lat, height], viewerDraw);
+          vm.$emit('drawcreate', position, [lng, lat, height], viewerDraw);
         }
       });
     },
     enableDrawLine() {
       this.drawOption = "enableDrawLine";
-      let webGlobeDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyle} = this;
+      let viewerDraw = this.getWebGlobe();
+      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
-      let drawElement = this.getDrawElement(webGlobeDraw);
+      let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
         drawElement.setGroundPrimitiveType('BOTH');
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const color = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const color = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingPolyline({
         color: color,
-        callback: function (positions) {
+        callback: function (result) {
+          let positions = result.positions;
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
             let cartographic = Cesium.Cartographic.fromCartesian(positions[i]);
@@ -337,41 +352,42 @@ export default {
           let polyline = new Cesium.DrawElement.PolylinePrimitive({
             id: "polyline",
             positions: positions,
-            width: drawStyle.width,
+            width: drawStyleCopy.width,
             geodesic: true
           });
-          let drawEntity = webGlobeDraw.viewer.scene.primitives.add(polyline);
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntity = viewerDraw.scene.primitives.add(polyline);
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', positions, degreeArr, webGlobeDraw);
-          vm.$emit('drawcreate', positions, degreeArr, webGlobeDraw);
+          vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
+          vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
         }
       });
     },
     //绘制多边形
     enableDrawPolygon() {
       this.drawOption = "enableDrawPolygon";
-      let webGlobeDraw = this.getWebGlobe();
+      let viewerDraw = this.getWebGlobe();
       let {Cesium, vueKey, vueIndex} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
-      let {drawStyle} = this;
-      let drawElement = this.getDrawElement(webGlobeDraw);
+      let {drawStyleCopy} = this;
+      let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
         drawElement.setGroundPrimitiveType('BOTH');
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingPolygon({
         color: colorStyle,
-        callback: function (positions) {
+        callback: function (result) {
+          let positions = result.positions;
           let degreeArr = [];
           for (let i = 0; i < positions.length; i++) {
             let cartographic = Cesium.Cartographic.fromCartesian(positions[i]);
@@ -386,16 +402,16 @@ export default {
               color: colorStyle
             }),
           });
-          let drawEntity = webGlobeDraw.viewer.scene.primitives.add(polygon);
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntity = viewerDraw.scene.primitives.add(polygon);
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
 
-          vm.$emit('drawCreate', positions, degreeArr, webGlobeDraw);
-          vm.$emit('drawcreate', positions, degreeArr, webGlobeDraw);
+          vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
+          vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
         }
       });
     },
@@ -403,49 +419,51 @@ export default {
     //绘制矩形
     enableDrawRectangle() {
       this.drawOption = "enableDrawRectangle";
-      let webGlobeDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyle} = this;
+      let viewerDraw = this.getWebGlobe();
+      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
-      let drawElement = this.getDrawElement(webGlobeDraw);
+      let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
         drawElement.setGroundPrimitiveType('BOTH');
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
 
       drawElement.startDrawingExtent({
         color: colorStyle,
-        callback: function (positions) {
+        callback: function (result) {
+          let extent = result.extent;
           let rectangle = new Cesium.DrawElement.ExtentPrimitive({
-            extent: positions,
+            extent: extent,
             material: Cesium.Material.fromType('Color', {
               color: colorStyle
             }),
           });
-          let drawEntity = webGlobeDraw.viewer.scene.primitives.add(rectangle);
+          let drawEntity = viewerDraw.scene.primitives.add(rectangle);
 
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
-          let radianPoints = [positions.west, positions.north, positions.east, positions.south];
-          let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(radianPoints, webGlobeDraw.ellipsoid);
+          let radianPoints = [extent.west, extent.north, extent.east, extent.south];
+          let ellipsoid = viewerDraw.scene.globe.ellipsoid;
+          let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(radianPoints, ellipsoid);
           let degreeArr = [];
           for (let i = 0; i < Cartesian3Points.length; i++) {
             let cartographic = Cesium.Cartographic.fromCartesian(Cartesian3Points[i]);
             let lng = Cesium.Math.toDegrees(cartographic.longitude);
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
-            let height = positions.height;
+            let height = result.height;
             degreeArr.push([lng, lat, height]);
           }
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', Cartesian3Points, degreeArr, webGlobeDraw);
-          vm.$emit('drawcreate', Cartesian3Points, degreeArr, webGlobeDraw);
+          vm.$emit('drawCreate', Cartesian3Points, degreeArr, viewerDraw);
+          vm.$emit('drawcreate', Cartesian3Points, degreeArr, viewerDraw);
         }
       });
     },
@@ -453,22 +471,25 @@ export default {
     //绘制圆
     enableDrawCircle() {
       this.drawOption = "enableDrawCircle";
-      let webGlobeDraw = this.getWebGlobe();
-      let {Cesium, vueKey, vueIndex, drawStyle} = this;
+      let viewerDraw = this.getWebGlobe();
+      let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
       if (!Cesium) {
         Cesium = window.Cesium;
       }
       let vm = this;
-      let drawElement = this.getDrawElement(webGlobeDraw);
+      let drawElement = this.getDrawElement(viewerDraw);
       if (this.clampToGround) {
         drawElement.setGroundPrimitiveType('BOTH');
       } else {
         drawElement.setGroundPrimitiveType('NONE');
       }
-      const colorStyle = new Cesium.Color.fromCssColorString(drawStyle.color).withAlpha(drawStyle.opacity);
+      const colorStyle = new Cesium.Color.fromCssColorString(drawStyleCopy.color).withAlpha(drawStyleCopy.opacity);
       drawElement.startDrawingCircle({
         color: colorStyle,
-        callback: function (center, radius) {
+        callback: function (result) {
+          let center = result.center;
+          let radius = result.radius;
+          console.log('circle',center)
           // alert(center.toString() + ' ' + radius.toString());
           var centerCartographic = Cesium.Cartographic.fromCartesian(center);
           let height = centerCartographic.height;
@@ -482,17 +503,17 @@ export default {
             })
           });
 
-          let drawEntity = webGlobeDraw.viewer.scene.primitives.add(redCircle);
+          let drawEntity = viewerDraw.scene.primitives.add(redCircle);
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
 
-          let drawEntities = window.CesiumZondy.DrawToolManager.findSource(vueKey, vueIndex).source;
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
 
-          vm.$emit('drawCreate', center, radius, webGlobeDraw);
-          vm.$emit('drawcreate', center, radius, webGlobeDraw);
+          vm.$emit('drawCreate', center, radius, viewerDraw);
+          vm.$emit('drawcreate', center, radius, viewerDraw);
         }
       });
     }
@@ -503,6 +524,8 @@ export default {
 .mapgis-3d-draw-control {
   z-index: 1000;
   position: absolute;
+  top: 10px;
+  left: 10px;
   background: rgba(255, 255, 255, 0);
 }
 

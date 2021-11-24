@@ -70,7 +70,10 @@ module.exports = {
               ["/api/sprite/Sprite.md", "符号库"],
               ["/api/upload/Upload.md", "上传"],
               ["/api/clouddiskFileSelect/CDFileSelect.md", "从云盘选择"],
-              ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"]
+              ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
+              ["/api/panel/switch.md", "区域-开关"],
+              ["/api/panel/inputnumber.md", "区域-数值输入"],
+              ["/api/color/d3color.md", "颜色-D3色板"]
             ]
           },
           {

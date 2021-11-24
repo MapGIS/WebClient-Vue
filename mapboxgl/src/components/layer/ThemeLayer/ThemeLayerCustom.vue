@@ -6,11 +6,27 @@
         @formChanged="$_formChanged"
         @highlightChanged="$_highlightChanged"
     />
+    <slot name="legend" :colors="legendColors">
+      <div class="mapgis-theme-legend" :class="legendOptionsCopy.class.containerClass" v-if="enableLegend"
+           :style="legendOptionsCopy.style.containerStyle">
+        <div class="mapgis-theme-legend-title" :class="legendOptionsCopy.class.titleClass" :style="legendOptionsCopy.style.titleStyle">
+          {{ legendOptionsCopy.title }}
+        </div>
+        <div class="mapgis-theme-legend-row" :class="legendOptionsCopy.class.rowClass" :style="legendOptionsCopy.style.rowStyle" :key="index"
+             v-for="(color, index) in legendColors">
+          <div class="mapgis-theme-legend-color" :class="legendOptionsCopy.class.legendClass" :style="{background: color, ...legendOptionsCopy.style.legendStyle}"></div>
+          <div class="mapgis-theme-legend-content" :class="legendOptionsCopy.class.labelClass" :style="legendOptionsCopy.style.labelStyle">
+            {{ legendOptionsCopy.fields[index] }}
+          </div>
+        </div>
+      </div>
+    </slot>
   </div>
 </template>
 
 <script>
 import BaseLayer from "./BaseLayer";
+import gradients from "./gradient";
 
 export default {
   name: "mapgis-theme-layer-custom",
@@ -27,12 +43,17 @@ export default {
   data() {
     return {
       optionsCopy: undefined,
+      legendColors: undefined,
     }
   },
   created() {
     this.panelType = "custom";
   },
   mounted() {
+    const {layerStyle} = this.themeOptions;
+    let colors = layerStyle && layerStyle.color ? layerStyle.color : gradients[0].key;
+    this.legendColors = colors.split(",");
+    this.legendOptionsCopy = Object.assign(this.legendOptionsCopy, this.legendOptions);
   },
   methods: {
     $_highlightChanged(id) {
@@ -67,64 +88,6 @@ export default {
 </script>
 
 <style>
-.popup-content {
-  width: auto;
-}
-
-.mapgis-theme-popup-container {
-  padding: 10px 12px 20px 12px;
-}
-
-.mapgis-theme-popup-row:nth-child(2n + 2) {
-  background-color: rgb(231, 232, 233);
-}
-
-.mapgis-theme-popup-row:nth-child(2n + 3) {
-  background-color: rgb(244, 244, 244);
-}
-
-.mapgis-theme-popup-row:nth-child(2n + 2):hover, .mapgis-theme-popup-row:nth-child(2n + 3):hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
-}
-
-.mapgis-theme-popup-row {
-  text-align: left;
-  white-space: nowrap;
-  padding: 6px 12px;
-  height: 25px;
-  line-height: 11px;
-  min-width: 240px;
-  border-left: 2px solid rgba(115, 176, 251, 0);
-}
-
-.mapgis-theme-popup-title {
-  color: rgb(178, 178, 178);
-  font-weight: bold;
-  border-bottom: 1px solid rgb(232, 232, 232);
-  padding: 6px 0;
-  line-height: 8px;
-  height: 28px;
-  margin-bottom: 3px;
-}
-
-.mapgis-theme-popup-item {
-  display: inline-block;
-  line-height: 14px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  word-break: break-all;
-}
-
-.mapgis-theme-popup-field {
-  width: 30%;
-}
-
-.mapgis-theme-popup-value {
-  width: 70%;
-  text-align: right;
-}
-
 .mapgis-mask {
   position: absolute;
   top: 0;
@@ -140,5 +103,45 @@ export default {
   z-index: 10;
   top: 50%;
   left: 50%;
+}
+
+.mapgis-theme-legend {
+  width: 300px;
+  height: 306px;
+  border: 2px solid grey;
+  border-radius: 4px;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1;
+}
+
+.mapgis-theme-legend-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.mapgis-theme-legend-row {
+  margin-top: 12px;
+  height: 40px;
+}
+
+.mapgis-theme-legend-color {
+  width: 39%;
+  height: 40px;
+  float: left;
+  margin-left: 27px;
+}
+
+.mapgis-theme-legend-content {
+  width: 50%;
+  height: 40px;
+  float: left;
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 10px;
+  text-align: center;
 }
 </style>

@@ -3,17 +3,17 @@
     <mapgis-ui-setting-form v-model="formData" :wrapper-width="200">
       <mapgis-ui-form-item label="附加高度(米)">
         <mapgis-ui-input
-          v-model.number="formData.exHeight"
-          type="number"
-          :min="0"
-          :step="0.1"
+            v-model.number="formData.exHeight"
+            type="number"
+            :min="0"
+            :step="0.1"
         />
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="不可视区域颜色">
         <mapgis-ui-sketch-color-picker
-          :disableAlpha="false"
-          :color="formData.unVisibleColor"
-          @input="
+            :disableAlpha="false"
+            :color="formData.unVisibleColor"
+            @input="
             val =>
               (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           "
@@ -21,9 +21,9 @@
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="可视区域颜色">
         <mapgis-ui-sketch-color-picker
-          :disableAlpha="false"
-          :color="formData.visibleColor"
-          @input="
+            :disableAlpha="false"
+            :color="formData.visibleColor"
+            @input="
             val =>
               (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           "
@@ -32,7 +32,12 @@
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="onClickStart"
-        >分析</mapgis-ui-button
+      >通视分析
+      </mapgis-ui-button
+      >
+      <mapgis-ui-button type="primary" @click="lookAroundAnalysis"
+      >环视通视分析
+      </mapgis-ui-button
       >
       <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
@@ -48,7 +53,7 @@ import {
 
 export default {
   name: "mapgis-3d-sightline",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -104,54 +109,61 @@ export default {
       //通视分析结果集
       visibilityArr: [],
 
-      isDepthTestAgainstTerrainEnable: undefined // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
+      isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
+
+      handlerAction: undefined
     };
   },
-  computed:{
-    formDataNew(){
+  computed: {
+    formDataNew() {
       return JSON.parse(JSON.stringify(this.formData));
     }
   },
   watch: {
     exHeight: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.exHeight = newVal;
       },
       immediate: true
     },
     visibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.visibleColor = newVal;
       },
       immediate: true
     },
     unVisibleColor: {
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         this.formData.unVisibleColor = newVal;
       },
       immediate: true
     },
     formDataNew: {
       deep: true,
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-          newVal.unVisibleColor
+            newVal.unVisibleColor
         );
         const visibleColor = new this.Cesium.Color.fromCssColorString(
-          newVal.visibleColor
+            newVal.visibleColor
         );
+        let find = this.findSource();
         if (this.visibilityArr.length > 0) {
           this.visibilityArr.forEach(item => {
-            item._unvisibleColor = unVisibleColor;
-            item._visibleColor = visibleColor;
-            if (newVal.exHeight !== oldVal.exHeight) {
-              // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
-              item.exHeight = newVal.exHeight - oldVal.exHeight;
-
-              // 改变观察点坐标
-              this.viewPoint.position._value = item.viewPosition;
-              // 记录新的观察点坐标
-              this.viewPosition = item.viewPosition;
+            if (find.options.visiblityAnalysis) {
+              let visiblityAnalysis = find.options.visiblityAnalysis;
+              visiblityAnalysis.unvisibleColor = unVisibleColor;
+              visiblityAnalysis.visibleColor = visibleColor;
+              item.unvisibleColor = unVisibleColor;
+              item.visibleColor = visibleColor;
+              if (newVal.exHeight !== oldVal.exHeight) {
+                // 改变通视分析工具的附加高度(分析工具的观察点坐标也会同时更新)
+                visiblityAnalysis.exHeight = newVal.exHeight - oldVal.exHeight;
+                // 改变观察点坐标
+                this.viewPoint.position._value = item.viewPosition;
+                // 记录新的观察点坐标
+                this.viewPosition = item.viewPosition;
+              }
             }
           });
         }
@@ -160,82 +172,101 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const { baseUrl, options } = this;
+      const {baseUrl, options} = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const {vueCesium, vueKey, vueIndex} = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.VisiblityAnalysisManager.addSource(
-          vueKey,
-          vueIndex,
-          dataSource,
-          {
-            visiblityAnalysis: null
-          }
+        vueCesium.VisiblityAnalysisManager.addSource(
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              visiblityAnalysis: null
+            }
         );
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       this.onClickStop();
-      CesiumZondy.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.VisiblityAnalysisManager.deleteSource(vueKey, vueIndex);
     },
 
     findSource() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.VisiblityAnalysisManager.findSource(
-        vueKey,
-        vueIndex
+      let {vueCesium, vueKey, vueIndex} = this;
+      let find = vueCesium.VisiblityAnalysisManager.findSource(
+          vueKey,
+          vueIndex
       );
       return find;
     },
     // 点击“分析”按钮回调
     onClickStart() {
+      //开启三维视图事件处理（例如鼠标点击）
+      this.startEventHandler();
       this.onClickStop();
       //深度检测开启
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.webGlobe
+          this.viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.webGlobe);
+        setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
       this.addEventListener();
     },
+    lookAroundAnalysis() {
+      this.startEventHandler();
+      this.addEventListener();
+      let visibility;
+      let find = this.findSource();
+      if (find.options && find.options.visiblityAnalysis) {
+        visibility = find.options.visiblityAnalysis;
+      } else {
+        visibility = this.createVisibility();
+      }
+
+      let drawElement = new Cesium.DrawElement(this.viewer);
+      drawElement.startDrawingCircle({
+        color: new Cesium.Color(0.2, 0.4, 0.3, 1.0),
+        callback: function (result) {
+          drawElement.stopDrawing();
+          visibility.lookAroundAnalysis(result.center, result.radius);
+        }
+      });
+    },
+    startEventHandler() {
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+    },
     // 创建通视分析工具
     createVisibility() {
+      let {viewer} = this;
       const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-        this.formData.unVisibleColor
+          this.formData.unVisibleColor
       );
       const visibleColor = new this.Cesium.Color.fromCssColorString(
-        this.formData.visibleColor
-      );
-
-      // 初始化高级分析功能管理类
-      const advancedAnalysisManager = new window.CesiumZondy.Manager.AdvancedAnalysisManager(
-        {
-          viewer: this.webGlobe.viewer
-        }
+          this.formData.visibleColor
       );
 
       // 初始化通视分析类
-      const visibility = advancedAnalysisManager.createVisibilityAnalysis();
-      visibility._unvisibleColor = unVisibleColor;
-      visibility._visibleColor = visibleColor;
-
+      const visibility = new Cesium.VisiblityAnalysis({scene: viewer.scene});
+      visibility.unvisibleColor = unVisibleColor;
+      visibility.visibleColor = visibleColor;
+      // 添加通视分析结果显示
+      viewer.scene.visualAnalysisManager.add(visibility);
       this.visibilityArr.push(visibility);
-
       return visibility;
     },
     /**
@@ -243,13 +274,13 @@ export default {
      */
     _restoreDepthTestAgainstTerrain() {
       if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.webGlobe)
+          this.isDepthTestAgainstTerrainEnable !== undefined &&
+          this.isDepthTestAgainstTerrainEnable !==
+          isDepthTestAgainstTerrainEnable(this.viewer)
       ) {
         setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          this.webGlobe
+            this.isDepthTestAgainstTerrainEnable,
+            this.viewer
         );
       }
     },
@@ -257,15 +288,16 @@ export default {
     // 点击“结束分析”按钮回调
     onClickStop() {
       // 注销鼠标的各项监听事件
-      this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-      this.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
-
-      this.webGlobe.viewer.entities.removeAll();
+      if (this.handlerAction){
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+      }
+      this.viewer.entities.removeAll();
 
       if (this.visibilityArr.length > 0) {
         this.visibilityArr.forEach(item => {
           // 移除通视分析结果
-          this.webGlobe.viewer.scene.VisualAnalysisManager.remove(item);
+          this.viewer.scene.visualAnalysisManager.remove(item);
           // 销毁通视分析类
           item.destroy();
         });
@@ -281,12 +313,14 @@ export default {
     // 为鼠标的各种行为注册监听事件
     addEventListener() {
       if (!this.isAddEventListener) {
-        this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
+
+        this.handlerAction.setInputAction(event => {
           this.registerMouseLClickEvent(event);
-        });
-        this.webGlobe.registerMouseEvent("RIGHT_CLICK", event => {
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        this.handlerAction.setInputAction(event => {
           this.registerMouseRClickEvent(event);
-        });
+        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
         this.isAddEventListener = true;
       }
@@ -294,16 +328,16 @@ export default {
 
     // 注册通视分析鼠标左键点击事件
     registerMouseLClickEvent(event) {
-      let { vueKey, vueIndex } = this;
-      let cartesian = this.webGlobe.viewer.getCartesian3Position(
-        event.position
+      let {vueKey, vueIndex} = this;
+      let cartesian = this.viewer.getCartesian3Position(
+          event.position
       );
 
       if (!this.hasViewPosition && cartesian !== undefined) {
         // 若还未选择观察点,则记录下观察点坐标
 
         // 获取当前坐标系标准
-        const ellipsoid = this.webGlobe.viewer.scene.globe.ellipsoid;
+        const ellipsoid = this.viewer.scene.globe.ellipsoid;
         // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
         const cartographic = ellipsoid.cartesianToCartographic(cartesian);
         // 抬高观察点
@@ -313,7 +347,7 @@ export default {
         this.viewPosition = cartesian;
 
         // 添加观察点到地图
-        this.addViewPoint(cartesian);
+        // this.addViewPoint(cartesian);
         this.hasViewPosition = true;
       } else {
         const visibility = this.createVisibility();
@@ -325,23 +359,23 @@ export default {
         visibility.targetPosition = cartesian;
 
         //修改manager的options
-        CesiumZondy.VisiblityAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "visualAnalysis",
-          visibility
+        vueCesium.VisiblityAnalysisManager.changeOptions(
+            vueKey,
+            vueIndex,
+            "visiblityAnalysis",
+            visibility
         );
 
         // 添加目标点到地图
-        this.addTargetPoint(cartesian);
+        // this.addTargetPoint(cartesian);
       }
     },
 
     // 注册通视分析鼠标右键点击事件
     registerMouseRClickEvent(event) {
       // 注销鼠标的各项监听事件
-      this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
-      this.webGlobe.unRegisterMouseEvent("RIGHT_CLICK");
+      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
       this.isAddEventListener = false;
     },
 
@@ -349,7 +383,7 @@ export default {
     addViewPoint(cartesian) {
       this.removeViewPoint();
 
-      this.viewPoint = this.webGlobe.viewer.entities.add({
+      this.viewPoint = this.viewer.entities.add({
         position: cartesian,
         point: {
           color: this.Cesium.Color.BLUE,
@@ -362,7 +396,7 @@ export default {
     addTargetPoint(cartesian) {
       this.removeTargetPoint();
 
-      this.targetPoint = this.webGlobe.viewer.entities.add({
+      this.targetPoint = this.viewer.entities.add({
         position: cartesian,
         point: {
           color: this.Cesium.Color.RED,
@@ -373,13 +407,13 @@ export default {
 
     // 从地图上移除观察点
     removeViewPoint() {
-      if (this.viewPoint) this.webGlobe.viewer.entities.remove(this.viewPoint);
+      if (this.viewPoint) this.viewer.entities.remove(this.viewPoint);
     },
 
     // 从地图上移除目标点
     removeTargetPoint() {
       if (this.targetPoint)
-        this.webGlobe.viewer.entities.remove(this.targetPoint);
+        this.viewer.entities.remove(this.targetPoint);
     }
   },
   mounted() {

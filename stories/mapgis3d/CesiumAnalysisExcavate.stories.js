@@ -16,10 +16,10 @@ const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     data() {
         return {
-            m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s",
+            m3dUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
             autoReset:true,
             // m3dUrl2:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-            m3dUrl2:"http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent",
+            m3dUrl2:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
             maximumScreenSpaceError:1,
             vueIndex:22,
             excaveteStyle:{
@@ -30,8 +30,8 @@ const Template = (args, { argTypes }) => ({
         }
     },
     template: `
-    <mapgis-web-scene style="height: calc(90vh)">
-        <mapgis-3d-igs-m3d :url="m3dUrl2"  :vue-index="vueIndex" :auto-reset="autoReset" :maximum-screen-space-error="maximumScreenSpaceError"></mapgis-3d-igs-m3d>
+    <mapgis-web-scene style="height: 95vh">
+        <mapgis-3d-m3d-layer :url="m3dUrl2"  :vue-index="vueIndex" :auto-reset="autoReset" :maximum-screen-space-error="maximumScreenSpaceError"></mapgis-3d-m3d-layer>
         <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-excavate :vue-index="vueIndex" :excaveteStyle="excaveteStyle"></mapgis-3d-excavate>
         </mapgis-ui-card>

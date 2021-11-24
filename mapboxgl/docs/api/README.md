@@ -128,6 +128,7 @@
 - **非侦听属性**
 - **描述:** If true, the map's canvas can be exported to a PNG using map.getCanvas().toDataURL()
 - **查看:** `options.preserveDrawingBuffer` in [Map](https://docs.mapbox.com/mapbox-gl-js/api/#map)
+- **注意:** 目前可能由于浏览器原因导致该属性不论为 true 还是 false，都可以导出 PNG 图片。
 
 ### `refreshExpiredTiles`
 

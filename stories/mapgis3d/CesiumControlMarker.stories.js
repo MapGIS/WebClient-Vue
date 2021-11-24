@@ -46,7 +46,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      url: 'http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels',
+      url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       //天地图地址，请在url地址后面加token
       urlT: "http://t0.tianditu.gov.cn/img_c/wmts",
       //参考系

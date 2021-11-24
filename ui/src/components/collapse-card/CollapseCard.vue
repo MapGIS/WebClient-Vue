@@ -25,15 +25,32 @@
         class="mapgis-ui-collapse-card"
         :style="outStyle"
         hoverable
-        v-show="!collapse && mode == 'collapse'"
         :bordered="false"
         size="small"
+        v-show="!collapse && mode == 'collapse'"
       >
-        <slot name="title"></slot>
-        <div class="mapgis-ui-collapse-card-extra">
-          <slot name="extra"></slot>
-        </div>
-        <slot></slot>
+        <transition name="fade">
+          <div v-show="!showOther">
+            <slot name="title"></slot>
+            <div class="mapgis-ui-collapse-card-extra">
+              <slot name="extra"></slot>
+            </div>
+            <slot></slot>
+          </div>
+        </transition>
+        <transition name="slide-fade">
+          <div v-show="showOther">
+            <slot name="title"></slot>
+            <div class="mapgis-ui-collapse-card-extra">
+              <slot name="extra"></slot>
+            </div>
+            <div @click="toggleMain" class="mapgis-ui-collapse-card-back">
+              <mapgis-ui-iconfont type="mapgis-rollback" />
+              返回上一级
+            </div>
+            <slot name="panel"></slot>
+          </div>
+        </transition>
       </mapgis-ui-card>
     </transition>
   </div>
@@ -53,6 +70,10 @@ export default {
           bottom: "10px"
         };
       }
+    },
+    defaultCollapse: {
+      type: Boolean,
+      default: true
     },
     mode: {
       type: String,
@@ -81,7 +102,8 @@ export default {
   },
   data() {
     return {
-      collapse: true
+      collapse: this.defaultCollapse && true,
+      showOther: false
     };
   },
   computed: {
@@ -128,6 +150,12 @@ export default {
     hide() {
       this.collapse = true;
     },
+    togglePanel() {
+      this.showOther = true;
+    },
+    toggleMain() {
+      this.showOther = false;
+    },
     getPositionClassName() {
       let { position } = this;
       let className = "mapgis-ui-collapse-card-button ";
@@ -165,5 +193,26 @@ export default {
   100% {
     transform: scale(1);
   }
+}
+.slide-fade-enter-active {
+  transition: all 0.25s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s;
+  display: none;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

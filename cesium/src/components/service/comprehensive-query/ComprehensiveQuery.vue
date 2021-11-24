@@ -30,13 +30,13 @@
 </template>
 
 <script>
-const Feature = require("./util/feature.min.js");
+import * as Feature from "./util/feature";
 import PlaceNameCesium from "./PlaceNameCesium";
 
 export default {
   name: "mapgis-3d-comprehensive-query",
   components: { PlaceNameCesium },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     logo: {
       type: String,
@@ -120,7 +120,24 @@ export default {
      */
     clickItem(feature) {
       const center = Feature.getGeoJSONFeatureCenter(feature);
-      this.webGlobe.flyTo(center[0], center[1])
+      this.flyTo(center[0], center[1]);
+    },
+
+    flyTo(lon, lat, height, duration) {
+      const { viewer, Cesium } = this;
+        if (height === null || height === '' || height === undefined) {
+            var cameraHeight = Math.ceil(viewer.camera.positionCartographic.height);
+            height = cameraHeight;
+        }
+        viewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromDegrees(lon, lat, height),
+            duration: duration,
+            orientation: {
+                heading: Cesium.Math.toRadians(0), //0 //绕垂直于地心的轴旋转 ,相当于头部左右转
+                pitch: Cesium.Math.toRadians(-90), ///-90  //绕经度线旋转， 相当于头部上下
+                roll: Cesium.Math.toRadians(0) //0         //绕纬度线旋转 ，面对的一面瞬时针转
+            }
+        });
     },
 
     /**

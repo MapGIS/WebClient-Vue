@@ -28,7 +28,7 @@ export default {
       }
     }
   },
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   watch: {
     geojson: {
       deep: true,
@@ -63,8 +63,7 @@ export default {
   },
   methods: {
     createCesiumObject() {
-      const { webGlobe } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer } = this;
       this.dataset = this.initData();
       if (!this.dataset) {
         return;
@@ -160,8 +159,7 @@ export default {
       this.mapvLayer = this.createCesiumObject();
     },
     unmount() {
-      const { webGlobe, mapvLayer } = this;
-      const viewer = webGlobe.viewer;
+      const { viewer, mapvLayer } = this;
       return !viewer.isDestroyed() && mapvLayer.destroy();
     }
   },

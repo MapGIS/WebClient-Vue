@@ -3,7 +3,7 @@ import mapboxgl from "@mapgis/mapbox-gl";
 import * as echarts from "echarts";
 
 export function MapCoordSys(MapboxGLMap, api) {
-  this._MapboxGLMap = MapboxGLMap;
+  this._MapboxGLMap = MapboxGLMap || window["echartsMapboxMap"];
   this.dimensions = ["lng", "lat"];
   this._mapOffset = [0, 0];
 
@@ -17,10 +17,12 @@ MapCoordSys.prototype.setMapOffset = function(mapOffset) {
 };
 
 MapCoordSys.prototype.getBMap = function() {
+  this._MapboxGLMap = this._MapboxGLMap || window["echartsMapboxMap"];
   return this._MapboxGLMap;
 };
 
 MapCoordSys.prototype.dataToPoint = function(data) {
+  this._MapboxGLMap = this._MapboxGLMap || window["echartsMapboxMap"];
   var px = this._MapboxGLMap.project(data);
 
   var mapOffset = this._mapOffset;

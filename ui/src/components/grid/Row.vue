@@ -11,7 +11,6 @@ export const RowProps = {
   align: PropTypes.oneOf(['top', 'middle', 'bottom', 'stretch']),
   justify: PropTypes.oneOf(['start', 'end', 'center', 'space-around', 'space-between']),
   prefixCls: PropTypes.string,
-  gutter: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]).def(0)
 };
 
 export default {

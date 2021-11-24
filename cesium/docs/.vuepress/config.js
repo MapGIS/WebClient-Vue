@@ -72,7 +72,8 @@ module.exports = {
                 title: "场景子组件",
                 collapsable: false
               },
-              ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/popup.md", "气泡-自定义槽"],
+              ["/api/ui/popupfeature.md", "气泡-默认样式"],
               ["/api/ui/marker.md", "标记点"],
               ["/api/ui/compare.md", "卷帘"],
               ["/api/ui/link.md", "多屏联动"],
@@ -88,7 +89,8 @@ module.exports = {
                 title: "图层",
                 collapsable: false
               },
-              ["/api/layer/IGServer/IgsVectorLayer.md", "IGS二维矢量"],
+              ["/api/layer/PopupMixin/popup.md", "图层拾取"],
+              ["/api/layer/IGServer/IgsDynamicLayer.md", "IGS二维矢量"],
               ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
               ["/api/layer/IGServer/IgsTileLayer.md", "IGS瓦片"],
               ["/api/provider/igsterrain.md", "IGS地形"],

@@ -1,0 +1,8 @@
+{
+  "webclient": {
+    "ip": "localhost",
+    "port": "6163"
+  },
+  "VueCesiumLibPath": "http://localhost:8888/static/libs/cdn/cesium/Cesium.js",
+  "VueCesiumPluginPath": "http://localhost:8888/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
+}

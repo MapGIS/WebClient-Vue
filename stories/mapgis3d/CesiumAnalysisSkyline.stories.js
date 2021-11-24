@@ -27,7 +27,7 @@ const Template = (args, {argTypes}) => ({
     data() {
         return {
             url: "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
-            m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+            m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8,
             skyline2dChart: null,
@@ -38,7 +38,7 @@ const Template = (args, {argTypes}) => ({
     template: `
       <mapgis-web-scene style="height:95vh">
       <mapgis-3d-raster-layer :url="url"/>
-      <mapgis-3d-igs-m3d :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"/>
+      <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"/>
       <mapgis-ui-card customPosition="top-left">
         <mapgis-3d-skyline
             :skylineWidth='skylineWidth'

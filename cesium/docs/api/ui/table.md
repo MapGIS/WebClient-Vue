@@ -18,7 +18,6 @@
   > 将 GEOJSON 格式的 JSON 转为[Feature] <br/>
   > let featureSet = Feature.fromGeoJSON(GEOJSON); <br/>
   > 格式： <br/> > [{ <br/>
-  >
   > > geometry:"", <br/>
   > > geometryType:"", <br/>
   > > attributes:"", <br/>

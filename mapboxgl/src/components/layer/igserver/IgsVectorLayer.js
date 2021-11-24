@@ -9,7 +9,7 @@ export default {
   props: {
     ...igsOptions,
     gdbps: {
-      type: String | Array,
+      type: [String, Array],
       require: true
     },
     filters: {
@@ -35,10 +35,10 @@ export default {
   },
   methods: {
     $_init() {
-      if(this.baseUrl){
+      if (this.baseUrl) {
         let partUrl = this.$_initAllRequestParams().join("&");
         this._url = encodeURI(this.baseUrl + "?" + partUrl) + "&bbox={bbox}";
-      }else if (this.url) {
+      } else if (this.url) {
         let url = this.url;
         if (url.indexOf("?") === -1) {
           url += "?";
@@ -50,7 +50,7 @@ export default {
         url += partUrl;
         this._url = url;
         return;
-      }else {
+      } else {
         let domain = this.domain;
         if (!domain) {
           domain = this.protocol + "://" + this.ip + ":" + this.port;

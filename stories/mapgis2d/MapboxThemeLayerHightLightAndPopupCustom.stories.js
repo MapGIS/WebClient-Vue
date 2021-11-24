@@ -118,7 +118,7 @@ const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
     methods: {},
     template: `
-      <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
+      <mapgis-web-map crs="EPSG:4326" :center="[114.299039,30.594797]" :zoom="8" style="height:96vh">
       <mapgis-theme-layer-custom v-bind="$props"/>
       </mapgis-web-map>`,
 });
@@ -138,11 +138,13 @@ export const 开启Tips和Popup = Template.bind({});
             "name",
             "adcode",
             "center",
+            "gdp"
         ],
         alias: {
             "name": "行政区名",
             "adcode": "邮政编码",
             "center": "中心点",
+            "gdp": "GDP",
         },
         style: {
             containerStyle: {},
@@ -191,18 +193,12 @@ export const 开启Tips和Popup = Template.bind({});
         style: {
             containerStyle: {},
             rowStyle: {},
-            titleStyle: {
-                color: "blue"
-            },
-            fieldStyle: {
-                color: "red"
-            },
-            valueStyle: {
-                color: "#FF00FF"
-            }
+            titleStyle: {},
+            fieldStyle: {},
+            valueStyle: {}
         },
         class: {
-            containerClass: "mapgis-container-popup",
+            containerClass: "",
             rowClass: "",
             titleClass: "",
             fieldClass: "",

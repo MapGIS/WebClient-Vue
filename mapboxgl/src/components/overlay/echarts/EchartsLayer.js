@@ -1,6 +1,7 @@
 // import echarts from "echarts";
 import * as echarts from "echarts";
 import { MapCoordSys } from "./MapCoordSys";
+import debounce from "lodash/debounce";
 
 /**npm install echarts@5.0.2
  * mapboxgl的echars 4.0的实现
@@ -18,7 +19,8 @@ import { MapCoordSys } from "./MapCoordSys";
  *    },
  *    series: [{
  *       coordinateSystem: 'mapboxgl',//关键地方---2
- *    }]
+ *    }],
+ *    postRender: true // 是否实时刷新
  * };
  * 
  * @example
@@ -26,6 +28,7 @@ import { MapCoordSys } from "./MapCoordSys";
     // option 是个大的 JavaScript 对象。
     var option = {
         // option 每个属性是一类组件。
+        postRender: true，
         legend: {...},
         grid: {...},
         tooltip: {...},
@@ -76,6 +79,7 @@ import { MapCoordSys } from "./MapCoordSys";
 export class EchartsLayer {
   constructor(map, options) {
     this.map = map;
+    window["echartsMapboxMap"] = map;
     this.options = options;
     this.layerId = options.layerId || "echartlayerdefaultid";
     this.layerClass = options.classId || "echartlayerdefaultclass";
@@ -85,6 +89,7 @@ export class EchartsLayer {
     this.mapContainer = map.getCanvasContainer();
     this.canvas = this._createCanvas();
     this.mapContainer.appendChild(this.canvas);
+    this.postRender = options.postRender || true;
     this.mapContainer.style.perspective =
       this.map.transform.cameraToCenterDistance + "px";
     this.chart = echarts.init(this.canvas);
@@ -106,21 +111,21 @@ export class EchartsLayer {
 
     echarts.extendComponentModel({
       type: "mapboxgl",
-      getBMap: function() {
+      getBMap: function () {
         return this.__mapboxgl;
       },
       defaultOption: {
-        roam: false
-      }
+        roam: false,
+      },
     });
 
     echarts.registerAction(
       {
         type: "MapboxGLRoma",
         event: "MapboxGLRoma",
-        update: "updateLayout"
+        update: "updateLayout",
       },
-      function(payload, ecModel) {}
+      function (payload, ecModel) {}
     );
 
     return this;
@@ -151,7 +156,7 @@ export class EchartsLayer {
   _resizeCanvas() {
     const self = this;
 
-    window.onresize = function() {
+    window.onresize = function () {
       var canvas = self.canvas;
       var map = self.map;
 
@@ -173,14 +178,14 @@ export class EchartsLayer {
     echarts.extendComponentView({
       type: "mapboxgl",
 
-      render: function(mapModel, ecModel, api) {
+      render: function (mapModel, ecModel, api) {
         var rendering = true;
 
-        var mapboxglMap = echarts.mapboxglMap;
+        var mapboxglMap = echarts.mapboxglMap || window["echartsMapboxMap"];
 
         var viewportRoot = api.getZr().painter.getViewportRoot();
         var coordSys = mapModel.coordinateSystem;
-        var moveHandler = function(type, target) {
+        var moveHandler = function (type, target) {
           if (rendering) {
             return;
           }
@@ -189,7 +194,7 @@ export class EchartsLayer {
 
           var mapOffset = [
             -parseInt(offsetEl.style.left, 10) || 0,
-            -parseInt(offsetEl.style.top, 10) || 0
+            -parseInt(offsetEl.style.top, 10) || 0,
           ];
           viewportRoot.style.left = mapOffset[0] + "px";
           viewportRoot.style.top = mapOffset[1] + "px";
@@ -198,7 +203,16 @@ export class EchartsLayer {
           mapModel.__mapOffset = mapOffset;
 
           api.dispatchAction({
-            type: "MapboxGLRoma"
+            type: "MapboxGLRoma",
+          });
+        };
+
+        var zoomHandler = function () {
+          if (rendering) {
+            return;
+          }
+          api.dispatchAction({
+            type: "MapboxGLRoma",
           });
         };
 
@@ -207,19 +221,31 @@ export class EchartsLayer {
             return;
           }
           api.dispatchAction({
-            type: "MapboxGLRoma"
+            type: "MapboxGLRoma",
           });
         }
 
-        mapboxglMap.off("move", this._oldMoveHandler);
         // FIXME
         // Moveend may be triggered by centerAndZoom method when creating coordSys next time
         // mapboxglMap.removeEventListener('moveend', this._oldMoveHandler)
         mapboxglMap.off("zoomend", this._oldZoomEndHandler);
+        mapboxglMap.off("move", this._oldMoveHandler);
+        mapboxglMap.off("zoom", this._oldZoomHandler);
         mapboxglMap.on("move", moveHandler);
+        mapboxglMap.on(
+          "zoom",
+          debounce(
+            () => {
+              zoomHandler;
+            },
+            100,
+            { leading: true }
+          )
+        );
         // mapboxglMap.addEventListener('moveend', moveHandler)
         mapboxglMap.on("zoomend", zoomEndHandler);
 
+        this._oldZoomHandler = zoomHandler;
         this._oldMoveHandler = moveHandler;
         this._oldZoomEndHandler = zoomEndHandler;
 
@@ -236,7 +262,7 @@ export class EchartsLayer {
         }
 
         rendering = false;
-      }
+      },
     });
 
     this.chart.setOption(this.options);
@@ -273,12 +299,12 @@ export class EchartsLayer {
    */
   remove() {
     var self = this;
-    this.map._listeners.move.forEach(function(element) {
+    this.map._listeners.move.forEach(function (element) {
       if (element.name === "moveHandler") {
         self.map.off("move", element);
       }
     });
-    this.map._listeners.move.forEach(function(element) {
+    this.map._listeners.move.forEach(function (element) {
       if (element.name === "zoomEndHandler") {
         self.map.off("zoomend", element);
       }

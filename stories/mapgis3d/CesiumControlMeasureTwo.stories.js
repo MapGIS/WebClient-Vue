@@ -12,7 +12,7 @@ const Template = (args, { argTypes }) => ({
         :vueKey="vueKey"
         :animation="false"
         :timeline="false">
-      <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
+      <mapgis-3d-m3d-layer :url="m3durl"> </mapgis-3d-m3d-layer>
       <mapgis-3d-measure
           :vueKey="vueKey"
           @load="handleLoad"
@@ -34,7 +34,7 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      m3durl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      m3durl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       vueKey: "scene"
     }
   },

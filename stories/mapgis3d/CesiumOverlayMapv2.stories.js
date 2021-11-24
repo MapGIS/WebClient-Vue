@@ -165,7 +165,7 @@ const Template = (args, {argTypes}) => ({
             let onError = function (e) {
                 console.log(e);
             }
-            var service = new BaseServer.IgsServiceBase('http://develop.smaryun.com:8899/static/data/mapv/china.geojson', {
+            var service = new BaseServer.IgsServiceBase(`http://${window.webclient.ip}/static/data/mapv/china.geojson`, {
                 eventListeners: {
                     scope: this,
                     processCompleted: onSuccess,
@@ -181,7 +181,7 @@ const Template = (args, {argTypes}) => ({
         }
     },
     template: `
-      <mapgis-web-scene style="height:60vh">
+      <mapgis-web-scene style="height:95vh">
       <mapgis-3d-arcgis-tile-layer :baseUrl="baseUrl" :layer-style="layerStyle" :tilingScheme="tilingScheme"/>
       <mapgis-3d-mapv-layer v-bind="{...mapvGeojson}"></mapgis-3d-mapv-layer>
       <mapgis-3d-mapv-layer v-bind="{...mapvText}"></mapgis-3d-mapv-layer>

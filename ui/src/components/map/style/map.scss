@@ -1,6 +1,7 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
+// mapboxgl style
 .mapgis-zoom-wrapper {
   flex-direction: column;
   position: absolute;
@@ -57,6 +58,24 @@
   color: $text-color;
 }
 
+// popup
+.mapgis-popup-content {
+  &-title {
+    color: $primary-5;
+    font-weight: bolder;
+    margin-left: 6px;
+  }
+  padding: 0px;
+  background-color: $popup-background;
+}
+
+.mapboxgl-popup-close-button {
+  color: $primary-5;
+}
+
+.mapboxgl-popup-header {
+  background-color: $popup-background;
+}
 // geojson-layer
 .mapgis-geojson-default-wrapper {
   display: none;
@@ -85,5 +104,111 @@
     line-height: 20px;
     font-size: $font-size-base - 1px;
     font-family: $font-family;
+  }
+}
+
+.mapgis-3d-g3d-layer {
+  .mapgis-ui-card-small > .mapgis-ui-card-body {
+    padding: 3px;
+  }
+}
+
+// cesium style
+.mapgis-3d-m3d-menus {
+  padding: 4px;
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 2px;
+  // box-shadow: -0.5px -0.5px 2px 2px $shadow-color;
+  // box-shadow: -0.5px -0.5px 2px 2px $primary-3;
+  &-header {
+    display: flex;
+    font-size: 20px;
+    &-menu {
+      color: $text-color;
+    }
+    &-menu-active {
+      color: $primary-6;
+    }
+    &-menu-small {
+      font-size: 18px;
+    }
+  }
+  &-content {
+    display: block;
+  }
+  .mapgis-ui-divider-horizontal.mapgis-ui-divider-with-text-center {
+    margin: 4px 0px;
+  }
+
+  .mapgis-ui-form-item {
+    margin-bottom: 0px;
+  }
+
+  .m-colorPicker .box {
+    /* position: absolute;
+    z-index: 2000; */
+    left: -30px;
+    width: 190px;
+    padding: 0px;
+  }
+
+  .m-colorPicker .colorBtn {
+    width: 150px;
+  }
+  /* .m-colorPicker .tColor li {
+    height: 10px !important;
+    width: 10px !important;
+  }
+  .m-colorPicker .bColor li {
+    height: 10px !important;
+    width: 10px !important;
+  } */
+}
+
+.mapgis-3d-popup-props {
+  &-title {
+    font-size: 14px;
+    width: 345px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #999999;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  &-item {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    line-height: 36px;
+    width: 345px;
+    height: 36px;
+
+    &:nth-child(odd) {
+      background: #e7e8e9;
+    }
+
+    &:nth-child(even) {
+      margin-top: 1px;
+      background: #f3f4f4;
+    }
+
+    &-key {
+      margin-left: 18px;
+      color: #999999;
+      float: left;
+    }
+
+    &-value {
+      margin-right: 12px;
+      color: #333333;
+      float: right;
+    }
+  }
+}
+
+.mapgis-3d-m3d-menu-explosion {
+  .anticon {
+    font-size: 32px;
   }
 }
