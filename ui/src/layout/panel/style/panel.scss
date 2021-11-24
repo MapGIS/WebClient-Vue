@@ -169,3 +169,17 @@
     float: right;
   }
 }
+
+@include b(color-pick-panel) {
+  background: $panel-inner-color;
+  border-radius: 3px;
+  padding: 10px;
+  min-width: 250px;
+  height: 52px;
+  line-height: 52px;
+  overflow: hidden;
+  .mapgis-ui-color-pick-panel-label{
+    height: 32px;
+    line-height: 32px;
+  }
+}
