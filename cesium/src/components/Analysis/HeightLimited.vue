@@ -71,6 +71,7 @@
 </template>
 
 <script>
+// import ServiceLayer from "../UI/Controls/ServiceLayer.js";
 import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../Utils/deepequal";
@@ -210,24 +211,31 @@ export default {
       const {vueCesium, vueKey, vueIndex, model} = this;
       return new Promise((resolve, reject) => {
         if (model && model.vueIndex) {
+          let id = model.vueIndex;
+          let layerIndex = 0;
+          if (id.includes(":")) {
+            const strs = id.split(":");
+            id = strs[0];
+            layerIndex = strs[1];
+          }
           this.$_getM3DByInterval(
               function (m3ds) {
                 if (m3ds && m3ds.length > 0) {
                   if (
-                      !m3ds[0] ||
-                      !m3ds[0].hasOwnProperty("source") ||
-                      !m3ds[0].source
+                      !m3ds[layerIndex] ||
+                      !m3ds[layerIndex].hasOwnProperty("source") ||
+                      !m3ds[layerIndex].source
                   ) {
                     reject(null);
                   } else {
-                    resolve(m3ds[0]);
+                    resolve(m3ds[layerIndex]);
                   }
                 } else {
                   reject(null);
                 }
               },
               vueKey,
-              model.vueIndex || vueIndex
+              id
           );
         } else {
           reject(null);
@@ -238,10 +246,17 @@ export default {
     changeModel() {
       let vm = this;
       this.m3dIsReady().then(m3d => {
+        let id = this.model.vueIndex;
+        let layerIndex = 0;
+        if (id.includes(":")) {
+          const strs = id.split(":");
+          id = strs[0];
+          layerIndex = strs[1];
+        }
         const {source} = m3d;
         vm.m3d = m3d;
-        vm.zoomToM3dLayerBySource(source[0]);
-        vm.getM3dHeight(source[0]);
+        vm.zoomToM3dLayerBySource(source[layerIndex]);
+        vm.getM3dHeight(source[layerIndex]);
       });
     },
 

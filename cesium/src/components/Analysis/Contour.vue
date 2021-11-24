@@ -2,82 +2,82 @@
   <div>
     <slot>
       <div class="mapgis-widget-contour-analysis">
-        <mapgis-ui-group-tab title="参数设置" />
+        <mapgis-ui-group-tab title="参数设置"/>
         <!--        <mapgis-ui-setting-form>-->
         <mapgis-ui-switch-panel
-          :labelCol="{ span: 8 }"
-          :wrapperCol="{ span: 16 }"
-          layout="horizontal"
-          label="等值线"
-          :height="'154px'"
-          v-if="switchOptions.indexOf('isogram') >= 0"
-          @changeChecked="startIsogram"
+            :labelCol="{ span: 8 }"
+            :wrapperCol="{ span: 16 }"
+            layout="horizontal"
+            label="等值线"
+            :height="'154px'"
+            v-if="switchOptions.indexOf('isogram') >= 0"
+            @changeChecked="startIsogram"
         >
           <mapgis-ui-form-item label="等值距">
             <mapgis-ui-input
-              size="small"
-              v-model.number="formData1.contourSpacingCopy"
-              type="number"
-              min="0"
-              addon-after="(米)"
+                size="small"
+                v-model.number="formData1.contourSpacingCopy"
+                type="number"
+                min="0"
+                addon-after="(米)"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="线宽">
             <mapgis-ui-input
-              size="small"
-              v-model.number="formData1.contourWidthCopy"
-              type="number"
-              min="0"
+                size="small"
+                v-model.number="formData1.contourWidthCopy"
+                type="number"
+                min="0"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="线颜色">
             <mapgis-ui-sketch-color-picker
-              :color.sync="formData1.contourColorCopy"
-              :disableAlpha="false"
+                :color.sync="formData1.contourColorCopy"
+                :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
         </mapgis-ui-switch-panel>
 
         <mapgis-ui-switch-panel
-          :labelCol="{ span: 8 }"
-          :wrapperCol="{ span: 16 }"
-          :height="'312px'"
-          layout="horizontal"
-          label="等值面"
-          v-if="switchOptions.indexOf('isosurface') >= 0"
-          @changeChecked="startIsosurface"
+            :labelCol="{ span: 8 }"
+            :wrapperCol="{ span: 16 }"
+            :height="'312px'"
+            layout="horizontal"
+            label="等值面"
+            v-if="switchOptions.indexOf('isosurface') >= 0"
+            @changeChecked="startIsosurface"
         >
           <mapgis-ui-form-item label="等值面透明度">
             <mapgis-ui-input
-              size="small"
-              v-model.number="formData2.bandTransparencyCopy"
-              type="number"
-              min="0"
-              max="1"
-              :step="0.1"
+                size="small"
+                v-model.number="formData2.bandTransparencyCopy"
+                type="number"
+                min="0"
+                max="1"
+                :step="0.1"
             />
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="等值面宽度">
+          <mapgis-ui-form-item label="等值距">
             <mapgis-ui-input
-              size="small"
-              v-model.number="formData2.bandThicknessCopy"
-              type="number"
-              min="0"
+                size="small"
+                v-model.number="formData2.contourSpacingCopy"
+                type="number"
+                min="0"
             />
           </mapgis-ui-form-item>
-          <mapgis-ui-form-model-item label="是否渐变">
-            <mapgis-ui-switch
-              checked-children="开启"
-              un-checked-children="关闭"
-              v-model="formData2.isGradient"
-            >
-            </mapgis-ui-switch>
-          </mapgis-ui-form-model-item>
+          <!--          <mapgis-ui-form-model-item label="是否渐变">-->
+          <!--            <mapgis-ui-switch-->
+          <!--              checked-children="开启"-->
+          <!--              un-checked-children="关闭"-->
+          <!--              v-model="formData2.isGradient"-->
+          <!--            >-->
+          <!--            </mapgis-ui-switch>-->
+          <!--          </mapgis-ui-form-model-item>-->
           <mapgis-ui-space>
             <mapgis-ui-colors-setting
-              v-model="formData2.bandColorArray"
-              :rangeField="'高度'"
-              :singleNumber="true"
+                v-model="formData2.bandColorArray"
+                :rangeField="'高度'"
+                :singleNumber="true"
             >
             </mapgis-ui-colors-setting>
           </mapgis-ui-space>
@@ -85,7 +85,7 @@
         <!--        </mapgis-ui-setting-form>-->
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
-            >分析
+          >分析
           </mapgis-ui-button>
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
@@ -96,7 +96,8 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import { colorToCesiumColor } from "../WebGlobe/util";
+import {colorToCesiumColor} from "../WebGlobe/util";
+import * as d3 from "d3-scale-chromatic";
 
 export default {
   name: "mapgis-3d-analysis-contour",
@@ -148,7 +149,7 @@ export default {
      */
     bandThickness: {
       type: Number,
-      default: 200
+      default: 100
     },
     /**
      * @type Array
@@ -213,7 +214,7 @@ export default {
     isogram: {
       handler(next) {
         let options = this._findOptions();
-        let { contourAnalysis } = options;
+        let {contourAnalysis} = options;
         if (contourAnalysis) {
           if (next) {
             contourAnalysis.enableContour = true;
@@ -228,25 +229,25 @@ export default {
       handler(next) {
         let vm = this;
         let options = this._findOptions();
-        let { contourAnalysis } = options;
+        let {contourAnalysis} = options;
         if (contourAnalysis) {
           let color = this._edgeColor();
           contourAnalysis.changeContours(
-            next.contourSpacingCopy,
-            next.contourWidthCopy,
-            color
+              next.contourSpacingCopy,
+              next.contourWidthCopy,
+              color
           );
           if (vm.isogram && !vm.isosurface) {
             contourAnalysis.updateMaterial("none");
           } else if (vm.isosurface) {
             contourAnalysis.selectedShading = "elevationBand";
             contourAnalysis.updateElevationBandMaterial(
-              vm.bandPositionCopy,
-              vm.formData2.isGradient,
-              vm.formData2.bandThicknessCopy,
-              vm.formData2.bandTransparencyCopy,
-              vm.backgroundTransparency,
-              vm.colorsArrayCopy
+                vm.bandPositionCopy,
+                vm.formData2.isGradient,
+                vm.formData2.bandThicknessCopy,
+                vm.formData2.bandTransparencyCopy,
+                vm.backgroundTransparency,
+                vm.colorsArrayCopy
             );
           }
         }
@@ -258,17 +259,17 @@ export default {
         let vm = this;
         let options = this._findOptions();
         if (options) {
-          let { contourAnalysis } = options;
+          let {contourAnalysis} = options;
           if (contourAnalysis) {
             vm.getHeightAndColor();
             contourAnalysis.selectedShading = "elevationBand";
             contourAnalysis.updateElevationBandMaterial(
-              vm.bandPositionCopy,
-              vm.formData2.isGradient,
-              vm.formData2.bandThicknessCopy,
-              vm.formData2.bandTransparencyCopy,
-              vm.backgroundTransparency,
-              vm.colorsArrayCopy
+                vm.bandPositionCopy,
+                vm.formData2.isGradient,
+                vm.formData2.bandThicknessCopy,
+                vm.formData2.bandTransparencyCopy,
+                vm.backgroundTransparency,
+                vm.colorsArrayCopy
             );
           }
         }
@@ -291,49 +292,51 @@ export default {
         contourColorCopy: "rgb(255,0,0)"
       },
       formData2: {
-        bandColorArray: [
-          { min: 0, max: 60, color: "rgba(244, 67, 54, 0.5)" },
-          { min: 60, max: 120, color: "rgba(233, 30, 99, 0.5)" },
-          { min: 120, max: 180, color: "rgba(156, 39, 176, 0.5)" }
-        ],
+        bandColorArray: [],
         bandTransparencyCopy: 0.5,
         bandThicknessCopy: 200,
-        isGradient: false
+        isGradient: true,
+        contourSpacingCopy: 150
       },
       bandPositionCopy: [],
       colorsArrayCopy: [],
-      backgroundTransparency: 0.6
+      backgroundTransparency: 0.6,
+      getTerrianHeight: false
     };
   },
 
   created() {
-    let vm = this;
-    vm.$nextTick(() => {
-      // 轮询获取地形高度差
-      this.isTerrianReady().then(zIndex => {
-        // 高度差
-        let heightIntercept = Math.abs(zIndex.zMin - zIndex.zMax);
-        for (let i = 0; i < 3; i++) {
-          let heightUnit = heightIntercept / 3;
-          if (i === 0) {
-            vm.formData2.bandColorArray[i].min = Number(zIndex.zMin);
-            vm.formData2.bandColorArray[i].max = Number(
-              (zIndex.zMin + heightUnit).toFixed(2)
-            );
-          } else {
-            vm.formData2.bandColorArray[i].min = Number(
-              (zIndex.zMin + heightUnit * i).toFixed(2)
-            );
-            vm.formData2.bandColorArray[i].max = Number(
-              (zIndex.zMin + heightUnit * (i + 1)).toFixed(2)
-            );
-          }
-        }
-      });
-    });
   },
   mounted() {
+    let vm = this;
     this.mount();
+    // 轮询获取地形高度差
+    this.isTerrianReady().then(zIndex => {
+      // 高度差
+      let heightIntercept = Math.abs(zIndex.zMin - zIndex.zMax);
+      let space = vm.formData2.contourSpacingCopy;
+      let heightUnit = heightIntercept / space;
+      for (let i = 0; i < heightUnit; i++) {
+        let unit = {};
+        if (i === 0) {
+          unit.min = Number(zIndex.zMin);
+          unit.max = Number(
+              (zIndex.zMin + space).toFixed(2)
+          );
+        } else {
+          unit.min = Number(
+              (zIndex.zMin + space * i).toFixed(2)
+          );
+          unit.max = Number(
+              (zIndex.zMin + space * (i + 1)).toFixed(2)
+          );
+        }
+        let color = d3.interpolateRdYlBu(i / heightUnit);
+        unit.color = color;
+        vm.formData2.bandColorArray.push(unit);
+        vm.getTerrianHeight = true;
+      }
+    });
   },
   destroyed() {
     this.unmount();
@@ -341,42 +344,43 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
+          resolve => {
+            resolve();
+          },
+          reject => {
+          }
       );
     },
     mount() {
-      const { viewer, vueCesium, vueKey, vueIndex, Cesium } = this;
+      const {viewer, vueCesium, vueKey, vueIndex, Cesium} = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         vm.$emit("load", vm);
         vueCesium.ContourAnalysisManager.addSource(
-          vueKey,
-          vueIndex,
-          dataSource,
-          {
-            drawElement: null,
-            contourAnalysis: null
-          }
+            vueKey,
+            vueIndex,
+            dataSource,
+            {
+              drawElement: null,
+              contourAnalysis: null
+            }
         );
       });
       let utc = Cesium.JulianDate.fromDate(new Date("2019/11/04 15:00:00")); //UTC
       viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(
-        utc,
-        8,
-        new Cesium.JulianDate()
+          utc,
+          8,
+          new Cesium.JulianDate()
       ); //北京时间=UTC+8=GMT+8
     },
     unmount() {
-      let { vueCesium, vueKey, vueIndex } = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
-        let { options } = find;
-        let { contourAnalysis } = options;
+        let {options} = find;
+        let {contourAnalysis} = options;
 
         // 判断是否已有等值线分析结果
         if (contourAnalysis) {
@@ -387,7 +391,7 @@ export default {
       this.$emit("unload", this);
     },
     _findOptions() {
-      let { vueCesium, vueKey, vueIndex } = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         return find.options;
@@ -409,24 +413,34 @@ export default {
     startIsosurface(isosurface) {
       let vm = this;
       vm.isosurface = isosurface;
-      if (isosurface) {
-      } else {
-        let options = this._findOptions();
-        if (options) {
-          let { contourAnalysis } = options;
-          if (contourAnalysis) {
-            contourAnalysis.selectedShading = "none";
-            contourAnalysis = null;
-          }
+      let options = this._findOptions();
+      if (options) {
+        let {contourAnalysis} = options;
+        if (contourAnalysis) {
+          if (isosurface) {
+            vm.getHeightAndColor();
+            contourAnalysis.selectedShading = "elevationBand";
+            contourAnalysis.updateElevationBandMaterial(
+                vm.bandPositionCopy,
+                vm.formData2.isGradient,
+                vm.formData2.bandThicknessCopy,
+                vm.formData2.bandTransparencyCopy,
+                vm.backgroundTransparency,
+                vm.colorsArrayCopy
+            );
+          } else {
+          contourAnalysis.selectedShading = "none";
+          contourAnalysis = null;
+        }
         }
       }
     },
 
     isTerrianReady() {
-      const { viewer } = this;
+      const {viewer} = this;
       return new Promise((resolve, reject) => {
         if (viewer) {
-          let interval = setInterval(function() {
+          let interval = setInterval(function () {
             let range3D = viewer.terrainProvider.range3D;
             if (range3D) {
               clearInterval(interval);
@@ -443,20 +457,20 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
+      let {vueCesium, vueKey, vueIndex, Cesium, viewer} = this;
       let vm = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
-      let { options } = find;
-      let { contourAnalysis, drawElement } = options;
+      let {options} = find;
+      let {contourAnalysis, drawElement} = options;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
       vueCesium.ContourAnalysisManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "drawElement",
-        drawElement
+          vueKey,
+          vueIndex,
+          "drawElement",
+          drawElement
       );
-      const { contourWidthCopy, contourSpacingCopy } = this.formData1;
+      const {contourWidthCopy, contourSpacingCopy} = this.formData1;
       const color = this._edgeColor();
 
       // 激活交互式绘制工具
@@ -466,14 +480,14 @@ export default {
           // 分支判断
           this.remove();
           contourAnalysis =
-            contourAnalysis || new Cesium.TerrainAnalyse(viewer);
+              contourAnalysis || new Cesium.TerrainAnalyse(viewer);
           if (vm.isogram && !vm.isosurface) {
             contourAnalysis.enableContour = true;
             // contourAnalysis.updateMaterial("none");
             contourAnalysis.changeContours(
-              contourSpacingCopy,
-              contourWidthCopy,
-              color
+                contourSpacingCopy,
+                contourWidthCopy,
+                color
             );
             contourAnalysis.changeAnalyseArea(result.positions);
           } else if (vm.isosurface) {
@@ -487,29 +501,29 @@ export default {
             if (vm.isogram) {
               contourAnalysis.enableContour = true;
               contourAnalysis.changeContours(
-                contourSpacingCopy,
-                contourWidthCopy,
-                color
+                  contourSpacingCopy,
+                  contourWidthCopy,
+                  color
               );
             }
             contourAnalysis.changeAnalyseArea(result.positions);
             contourAnalysis.selectedShading = "elevationBand";
             contourAnalysis.updateElevationBandMaterial(
-              vm.bandPositionCopy,
-              isGradient,
-              bandThicknessCopy,
-              bandTransparencyCopy,
-              vm.backgroundTransparency,
-              vm.colorsArrayCopy
+                vm.bandPositionCopy,
+                isGradient,
+                bandThicknessCopy,
+                bandTransparencyCopy,
+                vm.backgroundTransparency,
+                vm.colorsArrayCopy
             );
           } else {
             this.$message.warning("请先开启分析类型");
           }
           vueCesium.ContourAnalysisManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "contourAnalysis",
-            contourAnalysis
+              vueKey,
+              vueIndex,
+              "contourAnalysis",
+              contourAnalysis
           );
         }
       });
@@ -522,7 +536,7 @@ export default {
         vm.bandPositionCopy.push(vm.formData2.bandColorArray[i].max);
         // color 转换成Cesium
         let cesiumColor = Cesium.Color.fromCssColorString(
-          vm.formData2.bandColorArray[i].color
+            vm.formData2.bandColorArray[i].color
         );
         vm.colorsArrayCopy.push(cesiumColor);
       }
@@ -531,10 +545,10 @@ export default {
      * @description 移除等值线分析结果，取消交互式绘制事件激活状态
      */
     remove() {
-      let { vueCesium, vueKey, vueIndex } = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
-      let { options } = find;
-      let { contourAnalysis, drawElement } = options;
+      let {options} = find;
+      let {contourAnalysis, drawElement} = options;
 
       // 判断是否已有等值线分析结果
       if (contourAnalysis) {
@@ -545,10 +559,10 @@ export default {
         contourAnalysis.selectedShading = "none";
 
         vueCesium.ContourAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "contourAnalysis",
-          null
+            vueKey,
+            vueIndex,
+            "contourAnalysis",
+            null
         );
       }
 
@@ -556,10 +570,10 @@ export default {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
         vueCesium.ContourAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "drawElement",
-          null
+            vueKey,
+            vueIndex,
+            "drawElement",
+            null
         );
       }
     }
@@ -567,4 +581,8 @@ export default {
 };
 </script>
 <style scoped>
+.mapgis-widget-contour-analysis {
+  max-height: calc(50vh);
+  overflow-y: auto;
+}
 </style>
