@@ -4,23 +4,17 @@
       <mapgis-ui-switch-panel label="太阳光照" 
         :checked="sunlight" 
         @changeChecked="enableSunlight" 
-      >
-        <mapgis-ui-space direction="vertical" style="padding:8px 10px;">
-          <mapgis-ui-row>
-            <label>光照颜色</label>
-          </mapgis-ui-row>
-          <mapgis-ui-row>
-            <mapgis-ui-sketch-color-picker
-              :color.sync="lightColor"
-              :disableAlpha="false"
-              :colorStyle="colorStyle"
-              @input="
+      >    
+        <mapgis-ui-color-pick-panel 
+          label="光照颜色" 
+          :color="lightColor"
+          :disableAlpha="false"
+          @input="
                 val =>
                   (lightColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-              "
-            />
-          </mapgis-ui-row>
-        </mapgis-ui-space>
+          "
+        >
+        </mapgis-ui-color-pick-panel>
       </mapgis-ui-switch-panel>
     </mapgis-ui-form-model>
   </div>
@@ -43,11 +37,7 @@ export default {
       sunlightParams:undefined,
       // 光照颜色
       lightColor: 'rgba(255,255,255,255)', 
-      colorStyle:{
-        width:'280px',
-        height:'32px',
-        lineHeight:'32px'
-      }
+
     }
   },
   computed: {
