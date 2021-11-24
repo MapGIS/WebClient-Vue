@@ -5,6 +5,7 @@ export default {
   title: "三维/图层/IGServer地形",
   component: Mapgis3dIgsTerrain,
   argTypes: {
+    // url: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
     url: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
     show: true,
     requestVertexNormals: false,
@@ -36,7 +37,8 @@ const Template = (args, { argTypes }) => ({
 // http://192.168.21.191:6163/igs/rest/g3d/DEM250_3D
 export const 有法向量 = Template.bind({});
 有法向量.args = {
-  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/250DEM_3D`,
+  // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/250DEM_3D`,
+  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
   show: true,
   requestVertexNormals: true,
 };

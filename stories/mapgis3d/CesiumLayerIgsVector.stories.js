@@ -55,7 +55,7 @@ const Template = (args, { argTypes }) => ({
     // `
     template: `
     <mapgis-web-scene style="height:95vh">
-        <mapgis-3d-igs-vector-layer v-bind="$prrops"></mapgis-3d-igs-vector-layer>
+        <mapgis-3d-igs-vector-layer v-bind="$props"></mapgis-3d-igs-vector-layer>
     </mapgis-web-scene>
     `
 });
@@ -63,5 +63,5 @@ const Template = (args, { argTypes }) => ({
 export const Vector = Template.bind({});
 Vector.args = {
     baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
-    gdbps: '["GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市", "GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/首都点"]'
+    gdbps: ["GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市", "GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/首都点"]
 }
