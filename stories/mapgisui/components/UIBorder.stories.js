@@ -5,6 +5,7 @@ export default {
   component: MapgisUiBorder,
   argTypes: {
     type: "border1",
+    customBorder: { table: { disable: true } },
   },
 };
 

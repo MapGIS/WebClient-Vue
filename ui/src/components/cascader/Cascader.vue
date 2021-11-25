@@ -84,8 +84,8 @@ export default {
     addListeners() {
       const vm = this;
       return {
-        'change': function(value) {
-          vm.$emit('change', value);
+        'change': function(value, selectedOptions) {
+          vm.$emit('change', value, selectedOptions);
         }
       };
     }
