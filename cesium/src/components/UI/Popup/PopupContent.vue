@@ -4,7 +4,7 @@
       <!--    外边框-->
       <div class="mapgis-popup-container"
            :class="popupOptionsCopy.class.containerClass"
-           :style="popupOptionsCopy.style.containerStyle"
+           :style="[{maxHeight: scrollNum * rowHeight + titleHeight + 10 + 'px', overflowY: popupOptionsCopy.fields.length > scrollNum ? 'scroll' : 'auto'},popupOptionsCopy.style.containerStyle]"
       >
         <!--标题-->
         <div class="mapgis-popup-title"
@@ -16,7 +16,8 @@
           {{ popupOptionsCopy.title }}
         </div>
         <!--一行数据-->
-        <div :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
+        <div class="mapgis-popup-row"
+             :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
              :style="popupOptionsCopy.style.rowStyle"
              :key="index" v-for="(field,index) in popupOptionsCopy.fields"
         >
@@ -59,6 +60,10 @@ export default {
       default() {
         return {}
       }
+    },
+    scrollNum: {
+      type: Number,
+      default: 4
     }
   },
   data() {
@@ -66,7 +71,7 @@ export default {
       id: new Date().getTime(),
       popupOptionsCopy: {
         type: "default",
-        title: "",
+        title: "asdasdasd",
         alias: {},
         class: {
           containerClass: "",
@@ -87,7 +92,9 @@ export default {
           geometry: {},
           properties: {}
         }
-      }
+      },
+      rowHeight: 30,
+      titleHeight: 30,
     }
   },
   watch: {
@@ -147,6 +154,12 @@ export default {
       if (this.popupOptionsCopy.fields.length === 0) {
         this.popupOptionsCopy.fields = Object.keys(this.popupOptionsCopy.feature.properties);
       }
+      this.$nextTick(function () {
+        let rows =  document.getElementsByClassName("mapgis-popup-row");
+        let title =  document.getElementsByClassName("mapgis-popup-title");
+        this.titleHeight = title[0].clientHeight + 2;
+        this.rowHeight = rows[0].clientHeight + 1;
+      });
     },
     $_getField(field) {
       let alias = this.popupOptionsCopy.alias;
