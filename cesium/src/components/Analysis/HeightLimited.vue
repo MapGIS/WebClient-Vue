@@ -1,18 +1,17 @@
 <template>
   <div class="mapgis-widget-heightLimited-analysis">
-    <mapgis-ui-group-tab
-        title="模型"
-        :has-top-margin="false"
-        v-if="models.length > 1"></mapgis-ui-group-tab>
-    <mapgis-ui-form-item v-if="models.length > 1">
-<!--    <mapgis-ui-row class="model" v-if="models.length > 1">-->
-      <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">
-        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
-          {{ node.title }}
-        </mapgis-ui-select-option>
-      </mapgis-ui-select>
-    </mapgis-ui-form-item>
-<!--    </mapgis-ui-row>-->
+<!--    <mapgis-ui-group-tab-->
+<!--        title="模型"-->
+<!--        :has-top-margin="false"-->
+<!--        v-if="models.length > 1"></mapgis-ui-group-tab>-->
+<!--    <mapgis-ui-form-item v-if="models.length > 1">-->
+<!--&lt;!&ndash;    <mapgis-ui-row class="model" v-if="models.length > 1">&ndash;&gt;-->
+<!--      <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">-->
+<!--        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">-->
+<!--          {{ node.title }}-->
+<!--        </mapgis-ui-select-option>-->
+<!--      </mapgis-ui-select>-->
+<!--    </mapgis-ui-form-item>-->
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
     <mapgis-ui-setting-form :label-width="72">
       <mapgis-ui-form-item label="限高颜色">
@@ -31,7 +30,7 @@
                            @change="setInput"/>
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
-    <mapgis-3d-draw :vue-key="vueKey" v-on:draw-create="handleCreate" v-on:load="handleDrawLoad"
+    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad" :drawStyle="drawStyle"
                     :enableControl="enableControl">
       <div class="parent_div">
         <mapgis-ui-group-tab title="绘制区域"></mapgis-ui-group-tab>
@@ -71,7 +70,6 @@
 </template>
 
 <script>
-// import ServiceLayer from "../UI/Controls/ServiceLayer.js";
 import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../Utils/deepequal";
@@ -115,6 +113,9 @@ export default {
       colorCopy: "#ff0000",
       opacityCopy: 0.5,
       maxSliderHeight: 50,
+      drawStyle:{
+        color:"#ff0000"
+      },
       draws: [
         {
           icon: "mapgis-huizhijuxing",
@@ -165,12 +166,14 @@ export default {
       handler(next, old) {
         if (!deepEqual(next, old)) {
           this.colorCopy = next;
+          this.drawStyle.color = next;
         }
       }
     },
     colorCopy: {
       immediate: true,
       handler(next, old) {
+        this.drawStyle.color = next;
         this.remove();
         this.heightLimitedAnalysis();
       }
@@ -334,19 +337,19 @@ export default {
 
     //绘制组件的回调函数
     handleCreate(cartesian3, lnglat) {
-      // let vm = this;
-      // this.drawer && this.drawer.removeEntities(true);
-      // vm.cartesian3 = cartesian3;
-      // vm.lnglat = lnglat;
-      // this.heightLimitedAnalysis(lnglat);
-      // window.drawElement.stopDrawing();
+      let vm = this;
+      this.drawer && this.drawer.removeEntities(true);
+      vm.cartesian3 = cartesian3;
+      vm.lnglat = lnglat;
+      this.heightLimitedAnalysis(lnglat);
+      window.drawElement.stopDrawing();
     },
 
     //开始控高分析
     heightLimitedAnalysis(lnglat) {
       const vm = this;
       // 先remove
-      // this.remove();
+      this.remove();
       let {vueKey, vueIndex} = this
       let {heightLimit, vueCesium, viewer} = this;
       //先判断m3d模型是否加载完成
