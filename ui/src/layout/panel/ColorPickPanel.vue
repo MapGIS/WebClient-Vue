@@ -6,7 +6,7 @@
             </mapgis-ui-col>
             <mapgis-ui-col :span="wrapperCol">
                 <mapgis-ui-sketch-color-picker
-                    :color.sync="color"
+                    :color="color"
                     :disableAlpha="disableAlpha"
                     @input="inputChange"
                 />

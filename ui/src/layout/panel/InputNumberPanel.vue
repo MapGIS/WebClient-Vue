@@ -2,7 +2,8 @@
   <div
     :class="{
       'mapgis-ui-input-number-panel': true,
-      'mapgis-ui-input-number-panel-sm': size == 'small'
+      'mapgis-ui-input-number-panel-sm': size == 'small',
+      'mapgis-ui-input-number-panel-md': size == 'medium'
     }"
   >
     <div v-if="size == 'large'">
@@ -33,7 +34,7 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
     </div>
-    <mapgis-ui-row v-else>
+    <mapgis-ui-row v-if="size == 'small'">
       <mapgis-ui-col :span="16">
         <mapgis-ui-slider
           class="slide-hover"
@@ -66,6 +67,23 @@
         </mapgis-ui-input-number>
       </mapgis-ui-col>
     </mapgis-ui-row>
+    <mapgis-ui-form-model-item :label="label" v-else>
+        <mapgis-ui-space>
+          <mapgis-ui-slider
+              v-model="number"
+              :min="range[0]"
+              :max="range[1]"
+              :step="step"
+          />
+          <mapgis-ui-input-number
+              v-model="number"
+              :min="range[0]"
+              :max="range[1]"
+              :step="step"
+              size="small"
+          />
+        </mapgis-ui-space>
+      </mapgis-ui-form-model-item>
   </div>
 </template>
 
@@ -75,7 +93,7 @@ export default {
   props: {
     size: {
       type: String,
-      default: "large" // small large
+      default: "large" // small large medium
     },
     label: {
       type: String,

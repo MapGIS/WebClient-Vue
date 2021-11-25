@@ -86,6 +86,7 @@
   padding: 7px;
   min-width: 250px;
   height: 66px;
+  margin-bottom: 4px;
   &-sm {
     height: 48px;
     padding: 10px;
@@ -132,7 +133,21 @@
       opacity: 1 !important;
     }
   }
+  &-md {
+    height: 40px;
+    padding:0 10px;
+    .mapgis-ui-input-number{
+      /* margin-right: 12px; */
+      width: 60px;
+    }
+    .mapgis-ui-slider{
+      width: 110px;
+    }
 
+    .mapgis-ui-slider-rail{
+      background-color: #FFFFFF;
+    }
+  }
   .mapgis-ui-row {
     // height: 46px;
   }
