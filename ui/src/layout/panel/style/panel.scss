@@ -49,8 +49,8 @@
   }
 
   .mapgis-ui-switch-panel-label:before {
-    content: url("./layout/panel/style/titlew.png");
-    margin-right: 6px;
+    content: "";
+    margin-right: 0;
   }
 
   .mapgis-ui-slider-rail{
@@ -166,6 +166,24 @@
   .right {
     display: block;
     float: right;
+  }
+}
+
+@include b(select-panel) {
+  background: $panel-inner-color;
+  border-radius: 1px;
+  padding: 7px;
+  .label-sm{
+    height: 32px;
+    line-height: 32px;
+    font-size: 13px;
+    font-family: Microsoft YaHei;
+    font-weight: 400;
+    color: $panel-text-color;
+  }
+  .mapgis-ui-select{
+    width:200px;
+    font-size: 13px;
   }
 }
 

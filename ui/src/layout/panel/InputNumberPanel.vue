@@ -121,7 +121,10 @@ export default {
   watch: {
     number(next) {
       this.$emit("change", next);
-    }
+    },
+    value(next) {
+      this.number = next;
+    },
   },
   mounted() {},
   methods: {
