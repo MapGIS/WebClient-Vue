@@ -67,7 +67,8 @@
         </mapgis-ui-input-number>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-form-model-item :label="label" v-else>
+    <mapgis-ui-form-model v-bind="formItemLayout" labelAlign="left" :colon="false" v-if="size == 'medium' ">
+      <mapgis-ui-form-model-item :label="label" >
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="number"
@@ -84,6 +85,7 @@
           />
         </mapgis-ui-space>
       </mapgis-ui-form-model-item>
+    </mapgis-ui-form-model>
   </div>
 </template>
 
@@ -129,7 +131,11 @@ export default {
   },
   data() {
     return {
-      number: this.value || 0
+      number: this.value || 0,
+      formItemLayout: {
+        labelCol: {span: 7},
+        wrapperCol: {span: 17}
+      }
     };
   },
   model: {
