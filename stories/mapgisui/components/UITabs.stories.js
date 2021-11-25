@@ -55,7 +55,7 @@ const Template2 = (args, { argTypes }) => ({
   methods: {
   },
   template: `
-  <div style="width: 500px">
+  <div>
     <mapgis-ui-radio-group v-model="mode" :style="{ marginBottom: '8px' }">
       <mapgis-ui-radio-button value="top">
         Horizontal

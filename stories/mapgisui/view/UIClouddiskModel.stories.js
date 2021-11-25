@@ -90,33 +90,37 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
   <div>
-    <mapgis-ui-radio-group v-model="modelName" @change="onModelChange">
-      <mapgis-ui-radio :style="radioStyle" :value="'createBuffer'">
-        大数据——创建缓冲分析
-      </mapgis-ui-radio>
-      <mapgis-ui-radio :style="radioStyle" :value="'overlaySummary'">
-        大数据——叠加分析
-      </mapgis-ui-radio>
-      <mapgis-ui-radio :style="radioStyle" :value="'igsBuffer'">
-        igs——类缓存分析（单圈）
-      </mapgis-ui-radio>
-    </mapgis-ui-radio-group>
-    <mapgis-ui-card v-if="open" style="width:30%" customPosition="top-right">
-      <mapgis-ui-clouddisk-model-fields
-        ref="fieldsData"
-        v-if="hackReset"
-        :title="modelname"
-        :id="modelid"
-        :params="params"
-        :modelGroup="modelGroup"
-        :modelType="modelType"
-        :handleParams="handleParams"
-        :getParmsData="getParmsData"
-        @handleConfirm="handleConfirm"
-        @handleClearParams="handleClearParams"
-      >
-      </mapgis-ui-clouddisk-model-fields>
-    </mapgis-ui-card>
+    <div>
+      <mapgis-ui-radio-group v-model="modelName" @change="onModelChange">
+        <mapgis-ui-radio :style="radioStyle" :value="'createBuffer'">
+          大数据——创建缓冲分析
+        </mapgis-ui-radio>
+        <mapgis-ui-radio :style="radioStyle" :value="'overlaySummary'">
+          大数据——叠加分析
+        </mapgis-ui-radio>
+        <mapgis-ui-radio :style="radioStyle" :value="'igsBuffer'">
+          igs——类缓存分析（单圈）
+        </mapgis-ui-radio>
+      </mapgis-ui-radio-group>
+    </div>
+    <div>
+      <mapgis-ui-card v-if="open">
+        <mapgis-ui-clouddisk-model-fields
+          ref="fieldsData"
+          v-if="hackReset"
+          :title="modelname"
+          :id="modelid"
+          :params="params"
+          :modelGroup="modelGroup"
+          :modelType="modelType"
+          :handleParams="handleParams"
+          :getParmsData="getParmsData"
+          @handleConfirm="handleConfirm"
+          @handleClearParams="handleClearParams"
+        >
+        </mapgis-ui-clouddisk-model-fields>
+      </mapgis-ui-card>
+    </div>
   </div>
   `,
 });

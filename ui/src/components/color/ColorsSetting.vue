@@ -64,6 +64,10 @@ export default {
     rangeField: { type: String, default: "角度范围" },
     singleNumber:{ type: Boolean, defalut: false}
   },
+  model: {
+    props: 'value',
+    event: 'change'
+  },
   data() {
     return {
       defaultColor: "rgb(64,169,255,0.5)",
@@ -96,6 +100,7 @@ export default {
       handler: function() {
         if (JSON.stringify(this.value) !== JSON.stringify(this.emitValue)) {
           this.initTableData();
+          this.$emit('change', this.value);
         }
       },
       immediate: true,
@@ -112,6 +117,14 @@ export default {
       },
       immediate: true,
       deep: true
+    },
+    singleNumber:{
+      handler:function (next) {
+        if (next){
+          this.tableColumns.splice(this.tableColumns.length - 1,1);
+        }
+      },
+      immediate: true,
     }
   },
   methods: {
