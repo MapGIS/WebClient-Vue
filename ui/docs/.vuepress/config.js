@@ -73,6 +73,7 @@ module.exports = {
               ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
               ["/api/panel/switch.md", "区域-开关"],
               ["/api/panel/inputnumber.md", "区域-数值输入"],
+              ["/api/panel/select.md", "区域-选择器"],
               ["/api/color/d3color.md", "颜色-D3色板"]
             ]
           },
