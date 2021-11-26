@@ -42,12 +42,13 @@
           <div v-show="showOther">
             <slot name="title"></slot>
             <div class="mapgis-ui-collapse-card-extra">
-              <slot name="extra"></slot>
+              <!-- <slot name="extra"></slot> -->
+              <mapgis-ui-iconfont type="mapgis-rollback" @click="toggleMain"/>
             </div>
-            <div @click="toggleMain" class="mapgis-ui-collapse-card-back">
+            <!-- <div @click="toggleMain" class="mapgis-ui-collapse-card-back">
               <mapgis-ui-iconfont type="mapgis-rollback" />
               返回上一级
-            </div>
+            </div> -->
             <slot name="panel"></slot>
           </div>
         </transition>

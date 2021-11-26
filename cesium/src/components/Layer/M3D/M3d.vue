@@ -181,7 +181,10 @@ export default {
 
       let clickhandler, hoverhandler;
       if (enablePopup) {
-        clickhandler = this.$_bindClickEvent(this.pickFeature);
+        clickhandler = this.$_bindClickEvent(
+          this.pickFeature,
+          this.cancelFeature
+        );
       }
       if (enableTips) {
         hoverhandler = this.$_bindHoverEvent(this.pickFeature);
@@ -202,7 +205,7 @@ export default {
     pickFeature(payload) {
       const vm = this;
       const { movement } = payload;
-      const { popupOptions, highlightStyle } = this;
+      const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
       const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer } = this;
       const { version, layerIndex } = this;
@@ -211,21 +214,47 @@ export default {
         let oid = viewer.scene.pickOid(movement.position);
         let feature = viewer.scene.pick(movement.position);
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+        vueCesium.M3DIgsManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "pick",
+          tileset
+        );
+        vueCesium.M3DIgsManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "pickStyle",
+          tileset.pickedColor
+        );
         tileset.pickedOid = oid;
         tileset.pickedColor = Cesium.Color.fromCssColorString(color);
         let titlefield = popupOptions ? popupOptions.title : undefined;
         if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
-          let result = feature.content.getAttributeByOID(oid);
+          let result = feature.content.getAttributeByOID(oid) || {};
           vm.currentClickInfo = [
             { properties: result, title: result[titlefield] }
           ];
         } else {
           tileset.queryAttributes(oid).then(function(result) {
+            result = result || {};
             vm.currentClickInfo = [
               { properties: result, title: result[titlefield] }
             ];
           });
         }
+      }
+    },
+    cancelFeature(payload) {
+      const { movement } = payload;
+      const { version, layerIndex } = this;
+      let oid = viewer.scene.pickOid(movement.position);
+      if (version == "0.0" || version == "1.0") {
+      } else if (version == "2.0") {
+        let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+        tileset.pickedOid = oid;
+        tileset.pickedColor = Cesium.Color.fromCssColorString(
+          "rgba(255, 255, 0, 0.6)"
+        );
       }
     },
     changeShow(show) {

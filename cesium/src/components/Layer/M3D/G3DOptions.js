@@ -77,5 +77,13 @@ export default {
   /**
    * @description 代理
    */
-  proxy: { type: Object }
+  proxy: { type: Object },
+  /**
+   * @description 是否激活查询弹窗
+   */
+  enablePopup: { type: Boolean, default: false },
+  /**
+   * @description 是否激活默认UI
+   */
+  enableControl: { type: Boolean, default: true },
 };
