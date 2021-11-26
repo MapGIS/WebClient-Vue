@@ -185,6 +185,7 @@ export { default as MapgisUiProlayout } from "./layout/base/BaseLayout.vue";
 export { default as MapgisUiSwitchPanel } from "./layout/panel/SwitchPanel.vue";
 export { default as MapgisUiInputNumberPanel } from "./layout/panel/InputNumberPanel.vue";
 export { default as MapgisUiColorPickPanel } from "./layout/panel/ColorPickPanel.vue";
+export { default as MapgisUiTabPanel } from "./layout/panel/TabPanel.vue";
 
 // CloudDisk
 export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";

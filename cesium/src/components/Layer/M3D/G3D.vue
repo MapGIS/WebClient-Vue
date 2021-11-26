@@ -1,139 +1,125 @@
 <template>
-  <div class="mapgis-3d-g3d-layer">
-    <slot name="control">
-      <mapgis-ui-collapse-card
-        v-if="enableControl"
-        ref="card"
-        position="top-left"
-        :defaultCollapse="false"
-        :outStyle="outStyle"
-        :title="title"
+  <mapgis-ui-collapse-card
+    class="mapgis-3d-g3d-layer"
+    v-if="enableControl"
+    ref="card"
+    position="top-left"
+    :defaultCollapse="false"
+    :outStyle="outStyle"
+    :title="title"
+  >
+    <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
+    <span class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</span>
+    <mapgis-ui-space slot="extra" class="mapgis-3d-g3d-layer-icons">
+      <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
+        <template slot="title">{{ m.title }}</template>
+        <mapgis-ui-iconfont
+          :class="{ active: m.active }"
+          :type="m.icon"
+          @click="handleMenu(m.title)"
+        />
+      </mapgis-ui-tooltip>
+    </mapgis-ui-space>
+    <mapgis-ui-row class="mapgis-3d-g3d-document">
+      <mapgis-ui-input-search
+        style="margin-bottom: 8px"
+        placeholder="搜索"
+        @change="onChange"
+      />
+      <mapgis-ui-tree
+        class="mapgis-3d-g3d-document-tree"
+        checkable
+        showIcon
+        v-model="layerIds"
+        :expanded-keys="expandedKeys"
+        :auto-expand-parent="autoExpandParent"
+        :tree-data="layerTree"
+        :selectedKeys="selectedKeys"
+        @expand="onExpand"
+        @select="onSelect"
       >
-        <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
-        <div class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</div>
-        <mapgis-ui-space slot="extra" class="mapgis-3d-g3d-layer-icons">
-          <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
-            <template slot="title">{{ m.title }}</template>
-            <mapgis-ui-iconfont
-              :class="{ active: m.active }"
-              :type="m.icon"
-              @click="handleMenu(m.title)"
-            />
-          </mapgis-ui-tooltip>
-        </mapgis-ui-space>
-        <div class="mapgis-3d-g3d-document">
-          <mapgis-ui-input-search
-            style="margin-bottom: 8px"
-            placeholder="搜索"
-            @change="onChange"
-          />
-          <mapgis-ui-tree
-            class="mapgis-3d-g3d-document-tree"
-            checkable
-            showIcon
-            v-model="layerIds"
-            :expanded-keys="expandedKeys"
-            :auto-expand-parent="autoExpandParent"
-            :tree-data="layerTree"
-            :selectedKeys="selectedKeys"
-            @expand="onExpand"
-            @select="onSelect"
+        <template slot="custom" slot-scope="{}">
+          <!-- <mapgis-ui-iconfont :type="icon" /> -->
+        </template>
+        <template
+          slot="title"
+          slot-scope="{ title, icon, version, gdbp, ip, port, layerIndex, key }"
+        >
+          <span
+            :class="{
+              'mapgis-3d-g3d-layer-span': true,
+              'mapgis-3d-g3d-layer-span-inline': true,
+              select: selectLayerIndex == layerIndex
+            }"
           >
-            <template slot="custom" slot-scope="{}">
-              <!-- <mapgis-ui-iconfont :type="icon" /> -->
-            </template>
-            <template
-              slot="title"
-              slot-scope="{
-                title,
-                icon,
-                version,
-                gdbp,
-                ip,
-                port,
-                layerIndex,
-                key
-              }"
+            <span v-if="title && title.indexOf(searchValue) > -1">
+              {{ title.substr(0, title.indexOf(searchValue)) }}
+              <span style="color: #f50">{{ searchValue }}</span>
+              {{
+                title.substr(title.indexOf(searchValue) + searchValue.length)
+              }}
+            </span>
+            <span v-else>{{ title }}</span>
+            <span
+              v-if="version && key == '地图场景默认键值'"
+              class="mapgis-3d-g3d-layer-version"
+              >版本:{{ version }}</span
             >
-              <span
-                :class="{
-                  'mapgis-3d-g3d-layer-span': true,
-                  'mapgis-3d-g3d-layer-span-inline': true,
-                  select: selectLayerIndex == layerIndex
-                }"
-              >
-                <span v-if="title && title.indexOf(searchValue) > -1">
-                  {{ title.substr(0, title.indexOf(searchValue)) }}
-                  <span style="color: #f50">{{ searchValue }}</span>
-                  {{
-                    title.substr(
-                      title.indexOf(searchValue) + searchValue.length
-                    )
-                  }}
-                </span>
-                <span v-else>{{ title }}</span>
-                <span
-                  v-if="version && key == '地图场景默认键值'"
-                  class="mapgis-3d-g3d-layer-version"
-                  >版本:{{ version }}</span
-                >
-                <mapgis-ui-iconfont
-                  v-if="
-                    key != '地图场景默认键值' &&
-                      (!isolation || selectLayerIndex == layerIndex)
-                  "
-                  :type="icon"
-                  class="iconfont"
-                  @click="() => handleActiveItemKey({ version, layerIndex })"
-                />
-                <mapgis-ui-iconfont
-                  v-if="
-                    key != '地图场景默认键值' &&
-                      (!isolation || selectLayerIndex == layerIndex)
-                  "
-                  :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
-                  class="iconfont"
-                  @click="
-                    () =>
-                      changeIsolation({
-                        title,
-                        icon,
-                        version,
-                        gdbp,
-                        ip,
-                        port,
-                        layerIndex,
-                        key
-                      })
-                  "
-                />
-              </span>
-            </template>
-          </mapgis-ui-tree>
-        </div>
+            <mapgis-ui-iconfont
+              v-if="
+                key != '地图场景默认键值' &&
+                  (!isolation || selectLayerIndex == layerIndex)
+              "
+              :type="icon"
+              class="iconfont"
+              @click="() => handleActiveItemKey({ version, layerIndex })"
+            />
+            <mapgis-ui-iconfont
+              v-if="
+                key != '地图场景默认键值' &&
+                  (!isolation || selectLayerIndex == layerIndex)
+              "
+              :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
+              class="iconfont"
+              @click="
+                () =>
+                  changeIsolation({
+                    title,
+                    icon,
+                    version,
+                    gdbp,
+                    ip,
+                    port,
+                    layerIndex,
+                    key
+                  })
+              "
+            />
+          </span>
+        </template>
+      </mapgis-ui-tree>
+    </mapgis-ui-row >
 
-        <m3d-menus
-          slot="panel"
-          size="big"
-          :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
-          :version="version"
-          :layerIndex="selectLayerIndex"
-          :gdbp="gdbp"
-          :ip="ip"
-          :port="port"
-        >
-        </m3d-menus>
+    <m3d-menus
+      slot="panel"
+      size="big"
+      :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
+      :version="version"
+      :layerIndex="selectLayerIndex"
+      :gdbp="gdbp"
+      :ip="ip"
+      :port="port"
+    >
+    </m3d-menus>
 
-        <mapgis-3d-feature-popup
-          v-if="featureposition"
-          :position="featureposition"
-          :properties="featureproperties"
-          v-model="featurevisible"
-        >
-        </mapgis-3d-feature-popup>
-      </mapgis-ui-collapse-card>
-    </slot>
-  </div>
+    <mapgis-3d-feature-popup
+      v-if="featureposition"
+      :position="featureposition"
+      :properties="featureproperties"
+      v-model="featurevisible"
+    >
+    </mapgis-3d-feature-popup>
+  </mapgis-ui-collapse-card>
 </template>
 
 <script>
