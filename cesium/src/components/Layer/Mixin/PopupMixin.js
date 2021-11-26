@@ -106,15 +106,6 @@ export default {
       : currentClickInfo && currentClickInfo.length > 0
       ? currentClickInfo[0]
       : { properties: {} };
-    let container = getPopupHtml(type, feature, {
-      enableSeparate: enableSeparate,
-      separateMap: this.$_separateMap,
-      title: feature.properties[title],
-      fields: Object.keys(feature.properties),
-      style: {
-        containerStyle: { width: "360px" }
-      }
-    });
     // 字符串或者数组
     const images = [];
     const description = "补充一段说明文字,默认字段description";
@@ -140,8 +131,6 @@ export default {
         />
       );
     }
-
-    console.log('feature', feature);
 
     if (customPopup || customTips) {
       return (
@@ -177,7 +166,6 @@ export default {
             position={clickposition}
             visible={clickvisible}
             forceRender={true}
-            // container={container}
             onChange={this.$_changeVisible.bind(this)}
             onSeparate={this.$_separateMap.bind(this)}
             options={options}

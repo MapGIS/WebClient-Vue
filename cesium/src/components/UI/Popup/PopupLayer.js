@@ -189,40 +189,6 @@ export default class PopupLayer {
     close.innerText = "x";
     this.parent.appendChild(infoDiv);
 
-    if (this.popupType == "table") {
-    } else if (this.popupType == "card") {
-      let image =
-        typeof this.images == "string"
-          ? this.images
-          : this.images.length > 0
-          ? this.images[0]
-          : "";
-      let temptitle = window.document.createElement("div");
-      let images = window.document.createElement("img");
-      temptitle.className = "cesium-popup-images-title";
-      images.className = "cesium-popup-images";
-      images.src = image;
-      let parent = window.document.getElementById(this.popupContentId);
-      if (
-        parent &&
-        parent.children &&
-        parent.children[0] &&
-        parent.children[0].children &&
-        parent.children[0].children[0] &&
-        parent.children[0].children[0].children &&
-        parent.children[0].children[0].children[0]
-      ) {
-        let node = parent.children[0].children[0].children[0];
-        // temptitle.innerHTML = this.container;
-        // node.innerText = "";
-        node.style.height = "fit-content";
-        node && node.appendChild(temptitle);
-        node && node.appendChild(images);
-        // parent && parent.insertBefore(images, node);
-      }
-    } else if (this.popupType == "rich-text") {
-    }
-
     let separate = window.document.createElement("div");
     separate.className = "cesium-popup-separate-button";
     separate.addEventListener("click", () => self.separate());
@@ -231,7 +197,12 @@ export default class PopupLayer {
       `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`;
     separate.innerHTML = icon;
     let parent = window.document.getElementById(this.popupContentId);
-    parent && parent.appendChild(separate);
+    if (this.popupType == "table") {
+    } else if (this.popupType == "card") {
+      parent && parent.appendChild(separate);
+    } else if (this.popupType == "rich-text") {
+      parent && parent.appendChild(separate);
+    }
 
     // window.document.getElementById(this.popupId).style.display = 'block';
     if (this.showClose) {
