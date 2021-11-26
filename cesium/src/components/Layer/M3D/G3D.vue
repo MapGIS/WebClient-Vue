@@ -72,7 +72,7 @@
               "
               :type="icon"
               class="iconfont"
-              @click="() => handleActiveItemKey({ version, layerIndex })"
+              @click="() => handleActiveItemKey({ title, version, gdbp, ip, port, layerIndex, key })"
             />
             <mapgis-ui-iconfont
               v-if="
@@ -470,7 +470,7 @@ export default {
       }
     },
     handleActiveItemKey(layer) {
-      const { title, icon, version, gdbp, ip, port, layerIndex, key } = layer;
+      const { title, version, gdbp, ip, port, layerIndex, key } = layer;
       this.title = title;
       this.gdbp = gdbp;
       this.version = version;

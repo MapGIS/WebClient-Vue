@@ -1,7 +1,7 @@
 <template>
   <div class="mapgis-ui-tab-panel">
     <mapgis-ui-space class="mapgis-ui-tab-panel-content">
-      <mapgis-ui-toolip v-for="(t, i) in tabs" :key="i">
+      <mapgis-ui-tooltip v-for="(t, i) in tabs" :key="i">
         <template slot="title"> {{ t.title }}</template>
         <div
           :class="{
@@ -12,7 +12,7 @@
         >
           <mapgis-ui-iconfont :type="t.icon" />
         </div>
-      </mapgis-ui-toolip>
+      </mapgis-ui-tooltip>
     </mapgis-ui-space>
   </div>
 </template>
