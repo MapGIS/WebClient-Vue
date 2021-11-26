@@ -4,7 +4,7 @@
       <!--    外边框-->
       <div class="mapgis-popup-container"
            :class="popupOptionsCopy.class.containerClass"
-           :style="[{maxHeight: scrollNum * rowHeight + titleHeight + 10 + 'px', overflowY: popupOptionsCopy.fields.length > scrollNum ? 'scroll' : 'auto'},popupOptionsCopy.style.containerStyle]"
+           :style="[{maxHeight: popupOptionsCopy.scrollNum * rowHeight + titleHeight + 10 + 'px', overflowY: popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum ? 'scroll' : 'auto'},popupOptionsCopy.style.containerStyle]"
       >
         <!--标题-->
         <div class="mapgis-popup-title"
@@ -60,10 +60,6 @@ export default {
       default() {
         return {}
       }
-    },
-    scrollNum: {
-      type: Number,
-      default: 4
     }
   },
   data() {
@@ -71,7 +67,7 @@ export default {
       id: new Date().getTime(),
       popupOptionsCopy: {
         type: "default",
-        title: "asdasdasd",
+        title: "",
         alias: {},
         class: {
           containerClass: "",
@@ -91,7 +87,8 @@ export default {
         feature: {
           geometry: {},
           properties: {}
-        }
+        },
+        scrollNum: 4
       },
       rowHeight: 30,
       titleHeight: 30,
