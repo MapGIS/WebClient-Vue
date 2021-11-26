@@ -7,6 +7,7 @@
     :defaultCollapse="false"
     :outStyle="outStyle"
     :title="title"
+    @toggle-main="handleBackMain"
   >
     <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
     <span class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</span>
@@ -72,7 +73,18 @@
               "
               :type="icon"
               class="iconfont"
-              @click="() => handleActiveItemKey({ title, version, gdbp, ip, port, layerIndex, key })"
+              @click="
+                () =>
+                  handleActiveItemKey({
+                    title,
+                    version,
+                    gdbp,
+                    ip,
+                    port,
+                    layerIndex,
+                    key
+                  })
+              "
             />
             <mapgis-ui-iconfont
               v-if="
@@ -98,17 +110,19 @@
           </span>
         </template>
       </mapgis-ui-tree>
-    </mapgis-ui-row >
+    </mapgis-ui-row>
 
     <m3d-menus
       slot="panel"
       size="big"
       :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
       :version="version"
+      :g3dLayerIndex="g3dLayerIndex"
       :layerIndex="selectLayerIndex"
       :gdbp="gdbp"
       :ip="ip"
       :port="port"
+      @enable-dynamic-query="handleDynamicQuery"
     >
     </m3d-menus>
 
@@ -191,7 +205,8 @@ export default {
       isolation: false,
       featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
       featureproperties: undefined,
-      featurevisible: undefined
+      featurevisible: undefined,
+      featureclickenable: this.enablePopup
     };
   },
   provide() {
@@ -211,6 +226,7 @@ export default {
   },
   watch: {
     enablePopup(next) {
+      this.featureclickenable = next;
       if (next) {
         this.$_bindPickFeature();
       } else {
@@ -612,7 +628,10 @@ export default {
         }
 
         if (cartesian || cartesian2) {
-          vm.featurevisible = true;
+          if (vm.featureclickenable) {
+            vm.featurevisible = true;
+          }
+
           vm.featureposition = {
             longitude: longitudeString2,
             latitude: latitudeString2,
@@ -757,6 +776,13 @@ export default {
         "dynamicquery",
         dynamicQueryHandler
       );
+    },
+    handleDynamicQuery() {
+      this.featurevisible = false;
+      this.featureclickenable = false;
+    },
+    handleBackMain() {
+      this.featureclickenable = this.enablePopup;
     }
   }
 };

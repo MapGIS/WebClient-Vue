@@ -30,7 +30,7 @@
         v-show="!collapse && mode == 'collapse'"
       >
         <transition name="fade">
-          <div v-show="!showOther">
+          <div v-if="!showOther">
             <div class="mapgis-ui-collapse-card-header">
               <div class="mapgis-ui-collapse-card-title">
                 <slot name="title"></slot>
@@ -43,7 +43,7 @@
           </div>
         </transition>
         <transition name="slide-fade">
-          <div v-show="showOther">
+          <div v-if="showOther">
             <div class="mapgis-ui-collapse-card-header">
               <div class="mapgis-ui-collapse-card-title">
                 <slot name="title"></slot>
@@ -162,6 +162,7 @@ export default {
     },
     toggleMain() {
       this.showOther = false;
+      this.$emit('toggle-main');
     },
     getPositionClassName() {
       let { position } = this;

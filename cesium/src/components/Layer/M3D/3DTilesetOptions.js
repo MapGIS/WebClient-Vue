@@ -78,7 +78,7 @@ export default {
    */
   /* shadows: { type: Object, default: undefined }, */
 
-  maximumScreenSpaceError: { type: Number, default: 16 },
+  maximumScreenSpaceError: { type: [Number, Array], default: 16 },
   maximumMemoryUsage: { type: Number, default: 512 },
 
   cullWithChildrenBounds: { type: Boolean, default: true },

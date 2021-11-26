@@ -20,6 +20,7 @@
       <m3d-menu-props
         v-if="currentMenu == 'properties'"
         :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
         :layerIndex="layerIndex"
         :gdbp="gdbp"
         :ip="ip"
@@ -29,24 +30,28 @@
       <m3d-menu-explosion
         v-if="currentMenu == 'explosion'"
         :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
         :layerIndex="layerIndex"
       >
       </m3d-menu-explosion>
       <m3d-menu-bloom
         v-if="currentMenu == 'bloom'"
         :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
         :layerIndex="layerIndex"
       >
       </m3d-menu-bloom>
       <m3d-menu-dynamic-line
         v-if="currentMenu == 'dynamic'"
         :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
         :layerIndex="layerIndex"
       >
       </m3d-menu-dynamic-line>
       <m3d-menu-searchlight
         v-if="currentMenu == 'searchlight'"
         :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
         :layerIndex="layerIndex"
       >
       </m3d-menu-searchlight>
@@ -57,8 +62,8 @@
 <script>
 import M3dMenuSetting from "./M3dMenuSetting.vue";
 
-import M3dMenuHighlight from "./M3dMenuHighlight.vue";
-import M3dMenuOid from "./M3dMenuOid.vue";
+/* import M3dMenuHighlight from "./M3dMenuHighlight.vue";
+import M3dMenuOid from "./M3dMenuOid.vue"; */
 import M3dMenuProps from "./M3dMenuProps.vue";
 import M3dMenuExplosion from "./M3dMenuExplosion.vue";
 import M3dMenuBloom from "./M3dMenuBloom.vue";
@@ -69,8 +74,8 @@ export default {
   name: "mapgis-3d-m3d-menus",
   components: {
     M3dMenuSetting,
-    M3dMenuHighlight,
-    M3dMenuOid,
+    /* M3dMenuHighlight,
+    M3dMenuOid, */
     M3dMenuProps,
     M3dMenuExplosion,
     M3dMenuBloom,
@@ -88,6 +93,9 @@ export default {
     },
     version: {
       type: String
+    },
+    g3dLayerIndex: {
+      type: Number
     },
     layerIndex: {
       type: Number
@@ -176,6 +184,13 @@ export default {
     handleMenuClick(tab) {
       const { type } = tab;
       this.currentMenu = type;
+      switch (type) {
+        case "properties":
+          this.$emit("enable-dynamic-query", tab);
+          break;
+        default:
+          break;
+      }
     }
   }
 };
