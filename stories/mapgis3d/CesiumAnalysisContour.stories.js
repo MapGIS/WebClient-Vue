@@ -102,7 +102,7 @@ const Template = (args, { argTypes }) => ({
 export const 等值线面 = Template.bind({});
 等值线面.args = {
   switchOptions:["isogram","isosurface"],
-  contourSpacing: 150,
+  contourSpacing: 270,
   contourWidth: 2,
   contourColor: "rgb(255,0,0)",
 };

@@ -3,7 +3,12 @@
     <slot>
       <div class="mapgis-widget-contour-analysis">
         <mapgis-ui-group-tab title="参数设置"/>
-        <!--        <mapgis-ui-setting-form>-->
+        <mapgis-ui-input-number-panel
+            size="small"
+            class="mapgis-ui-number-style"
+            label="等值距(米)"
+            :range="[0,zMax/2]"
+            v-model="contourSpacingCopy"/>
         <mapgis-ui-switch-panel
             :labelCol="{ span: 8 }"
             :wrapperCol="{ span: 16 }"
@@ -13,15 +18,6 @@
             v-if="switchOptions.indexOf('isogram') >= 0"
             @changeChecked="startIsogram"
         >
-          <mapgis-ui-form-item label="等值距">
-            <mapgis-ui-input
-                size="small"
-                v-model.number="formData1.contourSpacingCopy"
-                type="number"
-                min="0"
-                addon-after="(米)"
-            />
-          </mapgis-ui-form-item>
           <mapgis-ui-form-item label="线宽">
             <mapgis-ui-input
                 size="small"
@@ -47,42 +43,28 @@
             v-if="switchOptions.indexOf('isosurface') >= 0"
             @changeChecked="startIsosurface"
         >
-          <mapgis-ui-form-item label="等值面透明度">
-            <mapgis-ui-input
-                size="small"
-                v-model.number="formData2.bandTransparencyCopy"
-                type="number"
-                min="0"
-                max="1"
-                :step="0.1"
-            />
-          </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="等值距">
-            <mapgis-ui-input
-                size="small"
-                v-model.number="formData2.contourSpacingCopy"
-                type="number"
-                min="0"
-            />
-          </mapgis-ui-form-item>
-          <!--          <mapgis-ui-form-model-item label="是否渐变">-->
-          <!--            <mapgis-ui-switch-->
-          <!--              checked-children="开启"-->
-          <!--              un-checked-children="关闭"-->
-          <!--              v-model="formData2.isGradient"-->
-          <!--            >-->
-          <!--            </mapgis-ui-switch>-->
-          <!--          </mapgis-ui-form-model-item>-->
-          <mapgis-ui-space>
-            <mapgis-ui-colors-setting
-                v-model="formData2.bandColorArray"
-                :rangeField="'高度'"
-                :singleNumber="true"
-            >
-            </mapgis-ui-colors-setting>
-          </mapgis-ui-space>
+
+          <mapgis-ui-input-number-panel
+              size="small"
+              class="mapgis-ui-number-style"
+              label="等值面透明度"
+              :range="[0,1]"
+              :step="0.1"
+              v-model="formData2.bandTransparencyCopy"/>
+
         </mapgis-ui-switch-panel>
-        <!--        </mapgis-ui-setting-form>-->
+        <mapgis-ui-switch-panel
+            :labelCol="{ span: 8 }"
+            :wrapperCol="{ span: 16 }"
+            layout="horizontal"
+            label="颜色表">
+          <mapgis-ui-colors-setting
+              v-model="formData2.bandColorArray"
+              :rangeField="'高度'"
+              :singleNumber="true"
+          >
+          </mapgis-ui-colors-setting>
+        </mapgis-ui-switch-panel>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
           >分析
@@ -131,7 +113,7 @@ export default {
      */
     contourWidth: {
       type: Number,
-      default: 10
+      default: 200
     },
     /**
      * @type String
@@ -149,7 +131,7 @@ export default {
      */
     bandThickness: {
       type: Number,
-      default: 100
+      default: 300
     },
     /**
      * @type Array
@@ -176,8 +158,8 @@ export default {
   },
   watch: {
     contourSpacing: {
-      handler() {
-        this.formData1.contourSpacingCopy = this.contourSpacing;
+      handler(next) {
+        this.contourSpacingCopy = this.contourSpacing;
       },
       immediate: true
     },
@@ -195,7 +177,7 @@ export default {
     },
     bandThickness: {
       handler() {
-        this.formData2.bandThicknessCopy = this.bandThickness;
+        this.bandThicknessCopy = this.bandThickness;
       },
       immediate: true
     },
@@ -231,25 +213,7 @@ export default {
         let options = this._findOptions();
         let {contourAnalysis} = options;
         if (contourAnalysis) {
-          let color = this._edgeColor();
-          contourAnalysis.changeContours(
-              next.contourSpacingCopy,
-              next.contourWidthCopy,
-              color
-          );
-          if (vm.isogram && !vm.isosurface) {
-            contourAnalysis.updateMaterial("none");
-          } else if (vm.isosurface) {
-            contourAnalysis.selectedShading = "elevationBand";
-            contourAnalysis.updateElevationBandMaterial(
-                vm.bandPositionCopy,
-                vm.formData2.isGradient,
-                vm.formData2.bandThicknessCopy,
-                vm.formData2.bandTransparencyCopy,
-                vm.backgroundTransparency,
-                vm.colorsArrayCopy
-            );
-          }
+          vm.updateContourAnalysis(contourAnalysis);
         }
       }
     },
@@ -266,7 +230,7 @@ export default {
             contourAnalysis.updateElevationBandMaterial(
                 vm.bandPositionCopy,
                 vm.formData2.isGradient,
-                vm.formData2.bandThicknessCopy,
+                vm.bandThicknessCopy,
                 vm.formData2.bandTransparencyCopy,
                 vm.backgroundTransparency,
                 vm.colorsArrayCopy
@@ -274,7 +238,24 @@ export default {
           }
         }
       }
-    }
+    },
+    contourSpacingCopy: {
+      immediate: true,
+      handler(next) {
+        let vm = this;
+        this.bandThicknessCopy = next * 2;
+        let options = this._findOptions();
+        if (options) {
+          let {contourAnalysis} = options;
+          if (contourAnalysis) {
+            vm.updateContourAnalysis(contourAnalysis);
+          }
+        }
+        // 重新计算颜色表
+        this.calculateHeightAndColor();
+      }
+    },
+
   },
   data() {
     return {
@@ -286,22 +267,22 @@ export default {
       padVal1: undefined,
       //等值面开关
       isosurface: false,
+      contourSpacingCopy: 150,
+      bandThicknessCopy: 300,
       formData1: {
-        contourSpacingCopy: 150,
         contourWidthCopy: 10,
         contourColorCopy: "rgb(255,0,0)"
       },
       formData2: {
         bandColorArray: [],
         bandTransparencyCopy: 0.5,
-        bandThicknessCopy: 200,
-        isGradient: true,
-        contourSpacingCopy: 150
+        isGradient: false
       },
       bandPositionCopy: [],
       colorsArrayCopy: [],
       backgroundTransparency: 0.6,
-      getTerrianHeight: false
+      getTerrianHeight: false,
+      zMax: undefined
     };
   },
 
@@ -310,33 +291,8 @@ export default {
   mounted() {
     let vm = this;
     this.mount();
-    // 轮询获取地形高度差
-    this.isTerrianReady().then(zIndex => {
-      // 高度差
-      let heightIntercept = Math.abs(zIndex.zMin - zIndex.zMax);
-      let space = vm.formData2.contourSpacingCopy;
-      let heightUnit = heightIntercept / space;
-      for (let i = 0; i < heightUnit; i++) {
-        let unit = {};
-        if (i === 0) {
-          unit.min = Number(zIndex.zMin);
-          unit.max = Number(
-              (zIndex.zMin + space).toFixed(2)
-          );
-        } else {
-          unit.min = Number(
-              (zIndex.zMin + space * i).toFixed(2)
-          );
-          unit.max = Number(
-              (zIndex.zMin + space * (i + 1)).toFixed(2)
-          );
-        }
-        let color = d3.interpolateRdYlBu(i / heightUnit);
-        unit.color = color;
-        vm.formData2.bandColorArray.push(unit);
-        vm.getTerrianHeight = true;
-      }
-    });
+    // 获取颜色表
+    this.calculateHeightAndColor();
   },
   destroyed() {
     this.unmount();
@@ -367,15 +323,18 @@ export default {
             }
         );
       });
+      viewer.scene.globe.enableLighting = true;
       let utc = Cesium.JulianDate.fromDate(new Date("2019/11/04 15:00:00")); //UTC
       viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(
           utc,
           8,
           new Cesium.JulianDate()
-      ); //北京时间=UTC+8=GMT+8
+      );
+      // 北京时间=UTC+8=GMT+8
     },
     unmount() {
       let {vueCesium, vueKey, vueIndex} = this;
+      viewer.scene.globe.enableLighting = false;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
@@ -395,6 +354,28 @@ export default {
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         return find.options;
+      }
+    },
+    updateContourAnalysis(contourAnalysis) {
+      let vm = this;
+      let color = this._edgeColor();
+      contourAnalysis.changeContours(
+          vm.contourSpacingCopy,
+          this.formData1.contourWidthCopy,
+          color
+      );
+      if (vm.isogram && !vm.isosurface) {
+        contourAnalysis.updateMaterial("none");
+      } else if (vm.isosurface) {
+        contourAnalysis.selectedShading = "elevationBand";
+        contourAnalysis.updateElevationBandMaterial(
+            vm.bandPositionCopy,
+            vm.formData2.isGradient,
+            vm.bandThicknessCopy,
+            vm.formData2.bandTransparencyCopy,
+            vm.backgroundTransparency,
+            vm.colorsArrayCopy
+        );
       }
     },
     /**
@@ -423,19 +404,18 @@ export default {
             contourAnalysis.updateElevationBandMaterial(
                 vm.bandPositionCopy,
                 vm.formData2.isGradient,
-                vm.formData2.bandThicknessCopy,
+                vm.bandThicknessCopy,
                 vm.formData2.bandTransparencyCopy,
                 vm.backgroundTransparency,
                 vm.colorsArrayCopy
             );
           } else {
-          contourAnalysis.selectedShading = "none";
-          contourAnalysis = null;
-        }
+            contourAnalysis.selectedShading = "none";
+            contourAnalysis = null;
+          }
         }
       }
     },
-
     isTerrianReady() {
       const {viewer} = this;
       return new Promise((resolve, reject) => {
@@ -470,7 +450,7 @@ export default {
           "drawElement",
           drawElement
       );
-      const {contourWidthCopy, contourSpacingCopy} = this.formData1;
+      const {contourWidthCopy} = this.formData1;
       const color = this._edgeColor();
 
       // 激活交互式绘制工具
@@ -479,21 +459,22 @@ export default {
         callback: result => {
           // 分支判断
           this.remove();
-          contourAnalysis =
-              contourAnalysis || new Cesium.TerrainAnalyse(viewer);
           if (vm.isogram && !vm.isosurface) {
+            contourAnalysis =
+                contourAnalysis || new Cesium.TerrainAnalyse(viewer);
             contourAnalysis.enableContour = true;
             // contourAnalysis.updateMaterial("none");
             contourAnalysis.changeContours(
-                contourSpacingCopy,
+                vm.contourSpacingCopy,
                 contourWidthCopy,
                 color
             );
             contourAnalysis.changeAnalyseArea(result.positions);
           } else if (vm.isosurface) {
+            contourAnalysis =
+                contourAnalysis || new Cesium.TerrainAnalyse(viewer);
             let {
               isGradient,
-              bandThicknessCopy,
               bandTransparencyCopy
             } = vm.formData2;
             // 获取高度数组和颜色数组
@@ -501,7 +482,7 @@ export default {
             if (vm.isogram) {
               contourAnalysis.enableContour = true;
               contourAnalysis.changeContours(
-                  contourSpacingCopy,
+                  vm.contourSpacingCopy,
                   contourWidthCopy,
                   color
               );
@@ -511,7 +492,7 @@ export default {
             contourAnalysis.updateElevationBandMaterial(
                 vm.bandPositionCopy,
                 isGradient,
-                bandThicknessCopy,
+                vm.bandThicknessCopy,
                 bandTransparencyCopy,
                 vm.backgroundTransparency,
                 vm.colorsArrayCopy
@@ -531,15 +512,90 @@ export default {
     getHeightAndColor() {
       let vm = this;
       vm.bandPositionCopy = [];
-      vm.colorsArrayCopy = [];
+      // vm.colorsArrayCopy = [];
       for (let i = 0; i < vm.formData2.bandColorArray.length; i++) {
         vm.bandPositionCopy.push(vm.formData2.bandColorArray[i].max);
         // color 转换成Cesium
-        let cesiumColor = Cesium.Color.fromCssColorString(
-            vm.formData2.bandColorArray[i].color
-        );
-        vm.colorsArrayCopy.push(cesiumColor);
+        // let cesiumColor = Cesium.Color.fromCssColorString(
+        //     vm.formData2.bandColorArray[i].color
+        // );
+        // vm.colorsArrayCopy.push(vm.formData2.bandColorArray[i].color);
       }
+    },
+
+    calculateHeightAndColor() {
+      let vm = this;
+      this.isTerrianReady().then(zIndex => {
+        vm.formData2.bandColorArray = [];
+        // 高度差
+        vm.zMax = zIndex.zMax;
+        let heightIntercept = Math.abs(zIndex.zMin - zIndex.zMax);
+        console.log("heightIntercept", heightIntercept);
+        let space = vm.contourSpacingCopy;
+        let heightUnit = Math.round(heightIntercept / space);
+        for (let i = 0; i <= heightUnit; i++) {
+          let unit = {};
+          if (i === 0) {
+            unit.min = Number(zIndex.zMin);
+            unit.max = Number(
+                (zIndex.zMin + space).toFixed(2)
+            );
+          } else {
+            unit.min = Number(
+                (zIndex.zMin + space * i).toFixed(2)
+            );
+            unit.max = Number(
+                (zIndex.zMin + space * (i + 1)).toFixed(2)
+            );
+          }
+          unit = this.calculateColor(unit, i, heightUnit);
+          //   color = d3.interpolateOranges(i
+          // if (i % 2 == 0) { / heightUnit);
+          // } else {
+          //   color = d3.interpolateBlues(i / heightUnit);
+          // }
+          vm.formData2.bandColorArray.push(unit);
+          vm.getTerrianHeight = true;
+        }
+        console.log("this.colorsArrayCopy", this.colorsArrayCopy);
+
+        // console.log("vm.formData2.bandColorArray",vm.formData2.bandColorArray);
+      });
+
+    },
+    /**
+     * @description 计算每个高度对应的颜色
+     */
+    calculateColor(unit, index, heightUnit) {
+      let vm = this;
+      let color;
+      // 把Cesium.Color分为三段，每段分别设置r、g、b
+      for (let i = 0; i < heightUnit; i++) {
+        //第一段从低高度设置g
+        let onePoint = parseInt(heightUnit / 3);
+        let twoPoint = parseInt(onePoint * 2);
+        let a = parseInt(255 / onePoint);
+        if (i <= onePoint) {
+          if (i === index) {
+            color = new this.Cesium.Color(255 / 255, (a * i) / 255, 0);
+            this.colorsArrayCopy[i] = color;
+          }
+          //第二段从低高度设置r和b
+        } else if (onePoint < i && i <= twoPoint) {
+          if (i === index) {
+            color = new this.Cesium.Color((255 - a * (i - onePoint)) / 255, 255 / 255, (a * (i - onePoint)) / 255);
+            this.colorsArrayCopy[i] = color;
+          }
+        } else if (twoPoint < i && i <= heightUnit) {
+          if (i === index) {
+            color = new this.Cesium.Color(0, (255 - a * (i - onePoint * 2)) / 255, 255 / 255);
+            this.colorsArrayCopy[i] = color;
+          }
+        }
+
+      }
+      unit.color = color.toCssColorString();
+      return unit;
     },
     /**
      * @description 移除等值线分析结果，取消交互式绘制事件激活状态

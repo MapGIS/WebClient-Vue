@@ -1,17 +1,16 @@
 <template>
   <div class="mapgis-widget-heightLimited-analysis">
-<!--    <mapgis-ui-group-tab-->
-<!--        title="模型"-->
-<!--        :has-top-margin="false"-->
-<!--        v-if="models.length > 1"></mapgis-ui-group-tab>-->
-<!--    <mapgis-ui-form-item v-if="models.length > 1">-->
-<!--&lt;!&ndash;    <mapgis-ui-row class="model" v-if="models.length > 1">&ndash;&gt;-->
-<!--      <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">-->
-<!--        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">-->
-<!--          {{ node.title }}-->
-<!--        </mapgis-ui-select-option>-->
-<!--      </mapgis-ui-select>-->
-<!--    </mapgis-ui-form-item>-->
+    <mapgis-ui-group-tab
+        title="模型"
+        :has-top-margin="false"
+        v-if="models.length > 1"></mapgis-ui-group-tab>
+    <mapgis-ui-form-item v-if="models.length > 1">
+      <mapgis-ui-select :size="size" :default-value="model.title" @change="handleChange">
+        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
+          {{ node.title }}
+        </mapgis-ui-select-option>
+      </mapgis-ui-select>
+    </mapgis-ui-form-item>
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
     <mapgis-ui-setting-form :label-width="72">
       <mapgis-ui-form-item label="限高颜色">
@@ -23,11 +22,11 @@
         </mapgis-ui-sketch-color-picker>
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="限制高度">
-        <mapgis-ui-slider  :disabled="readonly"
-                           :max="maxSliderHeight" :min="minSlider"
-                           :step="5"
-                           v-model="heightLimit"
-                           @change="setInput"/>
+        <mapgis-ui-slider :disabled="readonly"
+                          :max="maxSliderHeight" :min="minSlider"
+                          :step="5"
+                          v-model="heightLimit"
+                          @change="setInput"/>
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
     <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad" :drawStyle="drawStyle"
@@ -96,7 +95,7 @@ export default {
       heightLimit: 10,
       // slider滑块是否禁用
       readonly: false,
-      minSlider:0,
+      minSlider: 0,
       boundingSphere: "",
       waitManagerName: "M3DIgsManager",
       cartesianForHeight: [],
@@ -113,8 +112,8 @@ export default {
       colorCopy: "#ff0000",
       opacityCopy: 0.5,
       maxSliderHeight: 50,
-      drawStyle:{
-        color:"#ff0000"
+      drawStyle: {
+        color: "#ff0000"
       },
       draws: [
         {
@@ -131,7 +130,7 @@ export default {
         },
       ],
       // m3d模型对象
-      m3d:undefined
+      m3d: undefined
     }
   },
   mounted() {
@@ -156,7 +155,6 @@ export default {
       deep: true,
       immediate: true,
       handler: function () {
-        // this.removeDraw();
         this.remove();
         this.changeModel();
       }
@@ -216,7 +214,7 @@ export default {
         if (model && model.vueIndex) {
           let id = model.vueIndex;
           let layerIndex = 0;
-          if (id.includes(":")) {
+          if (typeof (id) === "string" && id.includes(":")) {
             const strs = id.split(":");
             id = strs[0];
             layerIndex = strs[1];
@@ -251,7 +249,7 @@ export default {
       this.m3dIsReady().then(m3d => {
         let id = this.model.vueIndex;
         let layerIndex = 0;
-        if (id.includes(":")) {
+        if (typeof (id) === "string" && id.includes(":")) {
           const strs = id.split(":");
           id = strs[0];
           layerIndex = strs[1];
@@ -305,18 +303,17 @@ export default {
     setInput(data) {
       let vm = this;
       vm.heightLimit = data;
-      let { vueCesium, vueKey, vueIndex } = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       let find = vueCesium.HeightLimitedAnalysisManager.findSource(
           vueKey,
           vueIndex
       );
-      let { options } = find;
-      let { heightLimitedAnalysis } = options;
+      let {options} = find;
+      let {heightLimitedAnalysis} = options;
       if (heightLimitedAnalysis) {
         // 设置限高高度
         heightLimitedAnalysis.height = data;
       }
-      // vm.heightLimitedAnalysis();
     },
     removeDraw() {
       this.drawer.unmount();
@@ -329,6 +326,10 @@ export default {
     },
     toggleDelete() {
       this.drawer && this.drawer.removeEntities();
+      //清空drawElement
+      if (window.drawElement) {
+        window.drawElement.stopDrawing();
+      }
       this.remove();
     },
     handleDrawLoad(drawer) {
@@ -472,8 +473,8 @@ export default {
       return point;
     },
 
-    handleChange(e){
-      let a1 = this.models.filter((m)=>{
+    handleChange(e) {
+      let a1 = this.models.filter((m) => {
         return m.title === e;
       })
       this.model = a1[0];
@@ -493,7 +494,7 @@ export default {
       }
     },
     unmount() {
-      let { vueCesium, vueKey, vueIndex} = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       this.removeDraw();
       this.remove();
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
@@ -509,14 +510,15 @@ export default {
   width: 100%;
 }
 
-.parent_div{
+.parent_div {
   width: 100%;
   display: inline-block;
   position: relative;
 }
-.child_div{
+
+.child_div {
   position: absolute;
-  top:0;
+  top: 0;
   right: 0px;
 }
 </style>
