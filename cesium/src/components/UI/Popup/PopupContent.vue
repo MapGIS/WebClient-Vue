@@ -152,10 +152,10 @@ export default {
         this.popupOptionsCopy.fields = Object.keys(this.popupOptionsCopy.feature.properties);
       }
       this.$nextTick(function () {
-        let rows =  document.getElementsByClassName("mapgis-popup-row");
-        let title =  document.getElementsByClassName("mapgis-popup-title");
-        this.titleHeight = title[0].clientHeight + 2;
-        this.rowHeight = rows[0].clientHeight + 1;
+        // let rows =  document.getElementsByClassName("mapgis-popup-row");
+        // let title =  document.getElementsByClassName("mapgis-popup-title");
+        this.titleHeight = 36; // title[0].clientHeight + 2;
+        this.rowHeight =  42; // rows[0].clientHeight + 1;
       });
     },
     $_getField(field) {

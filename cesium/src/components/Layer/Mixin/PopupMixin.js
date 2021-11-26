@@ -1,6 +1,7 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 import Popup from "../../UI/Popup/Popup.vue";
 import PopupContent from "../../UI/Geojson/Popup";
+import PopupFeatureContent from "../../UI/Popup/PopupContent.vue";
 import { getPopupHtml } from "../../UI/Popup/popupUtil";
 
 import debounce from "lodash/debounce";
@@ -73,7 +74,8 @@ export default {
   },
   components: {
     Popup,
-    PopupContent
+    PopupContent,
+    PopupFeatureContent
   },
   render(h) {
     let {
@@ -138,6 +140,9 @@ export default {
         />
       );
     }
+    
+    console.log("feature", feature);
+
     if (customPopup || customTips) {
       return (
         <Popup
@@ -172,11 +177,16 @@ export default {
             position={clickposition}
             visible={clickvisible}
             forceRender={true}
-            container={container}
+            // container={container}
             onChange={this.$_changeVisible.bind(this)}
             onSeparate={this.$_separateMap.bind(this)}
             options={options}
-          ></Popup>
+          >
+            <PopupFeatureContent
+              feature={feature}
+              popupOptions={popupOptions}
+            ></PopupFeatureContent>
+          </Popup>
           <Popup
             position={hoverposition}
             visible={hovervisible}
