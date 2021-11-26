@@ -1,87 +1,64 @@
 <template>
   <div class="mapgis-3d-m3d-menu-explosion">
-    <mapgis-ui-divider> 方向设置 </mapgis-ui-divider>
+    <mapgis-ui-divider>爆炸设置</mapgis-ui-divider>
     <div class="mapgis-3d-m3d-menu-explosion-direction">
       <mapgis-ui-row>
         <mapgis-ui-col :span="8" :offset="8"
           ><mapgis-ui-button shape="circle" @click="() => changeHeadding(90)">
-            <mapgis-ui-iconfont type="mapgis-up-circle" />
+            <mapgis-ui-iconfont type="mapgis-arrow-up-filling" />
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="8"
           ><mapgis-ui-button shape="circle" @click="() => changeHeadding(180)">
-            <mapgis-ui-iconfont type="mapgis-left-circle" />
+            <mapgis-ui-iconfont type="mapgis-arrow-left-filling" />
           </mapgis-ui-button>
         </mapgis-ui-col>
         <mapgis-ui-col :span="8" :offset="8"
           ><mapgis-ui-button shape="circle" @click="() => changeHeadding(0)">
-            <mapgis-ui-iconfont type="mapgis-right-circle" />
+            <mapgis-ui-iconfont type="mapgis-arrow-right-filling" />
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="8" :offset="8"
           ><mapgis-ui-button shape="circle" @click="() => changeHeadding(-90)">
-            <mapgis-ui-iconfont type="mapgis-down-circle" />
+            <mapgis-ui-iconfont type="mapgis-arrow-down-filling" />
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
     </div>
-    <!-- <mapgis-ui-button @click="handleDrawDirection">
-      激活绘制方向
-    </mapgis-ui-button> -->
-    <mapgis-ui-divider> 数值设置 </mapgis-ui-divider>
-    <mapgis-ui-form-model
-      :layout="layout"
-      :labelCol="labelCol"
-      :wrapperCol="wrapperCol"
-      labelAlign="left"
-    >
-      <mapgis-ui-form-model-item label="朝向角度" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="-360"
-          :max="360"
-          v-model="headding"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="旋转角度" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="-360"
-          :max="360"
-          v-model="angle"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="距离设置" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="-1000000"
-          :max="1000000"
-          v-model="distance"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="速度设置" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="0"
-          :max="100"
-          v-model="speed"
-        />
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
-    <mapgis-ui-button
-      type="primary"
-      @click="explosionAction"
-      :style="{ width: '100%' }"
-      >指定单图层爆炸</mapgis-ui-button
-    >
+    <div class="mapgis-3d-m3d-menu-explosion-content">
+      <mapgis-ui-input-number-panel
+        size="small"
+        label="朝向角度"
+        v-model="headding"
+        :range="[-360, 360]"
+      >
+      </mapgis-ui-input-number-panel>
+      <mapgis-ui-input-number-panel
+        size="small"
+        label="旋转角度"
+        v-model="angle"
+        :range="[-360, 360]"
+      >
+      </mapgis-ui-input-number-panel>
+      <mapgis-ui-input-number-panel
+        size="small"
+        label="距离"
+        v-model="distance"
+        :range="[-10000, 10000]"
+      >
+      </mapgis-ui-input-number-panel>
+      <mapgis-ui-input-number-panel
+        size="small"
+        label="速度"
+        v-model="speed"
+        :range="[0, 100]"
+      >
+      </mapgis-ui-input-number-panel>
+    </div>
   </div>
 </template>
 

@@ -127,3 +127,19 @@
     width: 260px;
   }
 }
+
+.mapgis-3d-m3d-menu-explosion {
+  &-direction {
+    height: 100px;
+    .anticon {
+      font-size: 14px;
+    }
+  }
+
+  &-content {
+    padding: 0px 10px;
+    .mapgis-ui-input-number-panel {
+      margin: 10px 0px;
+    }
+  }
+}

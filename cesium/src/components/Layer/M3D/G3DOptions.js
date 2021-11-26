@@ -21,7 +21,7 @@ export default {
       return {
         position: "absolute",
         zIndex: 1000,
-        height: "450px",
+        height: "500px",
         width: "270px",
         top: "0px",
         left: "0px"

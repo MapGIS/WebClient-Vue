@@ -129,13 +129,21 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const { vueCesium, vueKey, vueIndex, version } = this;
+      const { vueCesium, vueKey, vueIndex, version, viewer } = this;
       this.show = false;
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
         if (version == "0.0" || version == "1.0") {
           let { version_0_0 } = find.options;
-          let { current, currentLayer, analysisManager } = version_0_0;
+          let {
+            current,
+            currentLayer,
+            analysisManager,
+            collection
+          } = version_0_0;
+          if (collection) {
+            viewer.scene.primitives.remove(collection);
+          }
           if (current.feature) {
             currentLayer = [current.feature.tileset];
             analysisManager.stopCustomDisplay(currentLayer);
