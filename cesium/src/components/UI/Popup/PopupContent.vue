@@ -4,7 +4,7 @@
       <!--    外边框-->
       <div class="mapgis-popup-container"
            :class="popupOptionsCopy.class.containerClass"
-           :style="[{maxHeight: popupOptionsCopy.scrollNum * rowHeight + titleHeight + 10 + 'px', overflowY: popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum ? 'scroll' : 'auto'},popupOptionsCopy.style.containerStyle]"
+           :style="[popupOptionsCopy.style.containerStyle]"
       >
         <!--标题-->
         <div class="mapgis-popup-title"
@@ -15,30 +15,34 @@
         >
           {{ popupOptionsCopy.title }}
         </div>
-        <!--一行数据-->
-        <div class="mapgis-popup-row"
-             :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
-             :style="popupOptionsCopy.style.rowStyle"
-             :key="index" v-for="(field,index) in popupOptionsCopy.fields"
+        <div class="mapgis-popup-content-row-container"
+             :style="{maxHeight: popupOptionsCopy.scrollNum * rowHeight + 'px', overflowY: popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum ? 'scroll' : 'auto'}"
         >
-          <!--前置元素-->
-          <span v-if="popupOptionsCopy.type === 'point'" class='mapgis-popup-point'></span>
-          <!--字段名-->
-          <span :class="[defaultFieldClass,popupOptionsCopy.class.fieldClass]"
-                :style="popupOptionsCopy.style.fieldStyle"
-                :title="$_getField(field)"
-                @click="$_click(index, 0, field, $_getField(field))"
+          <!--一行数据-->
+          <div class="mapgis-popup-row"
+               :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
+               :style="popupOptionsCopy.style.rowStyle"
+               :key="index" v-for="(field,index) in popupOptionsCopy.fields"
           >
+            <!--前置元素-->
+            <span v-if="popupOptionsCopy.type === 'point'" class='mapgis-popup-point'></span>
+            <!--字段名-->
+            <span :class="[defaultFieldClass,popupOptionsCopy.class.fieldClass]"
+                  :style="popupOptionsCopy.style.fieldStyle"
+                  :title="$_getField(field)"
+                  @click="$_click(index, 0, field, $_getField(field))"
+            >
           {{ $_getField(field) }}
-        </span>
-          <!--字段值-->
-          <span :class="[defaultFieldClass,popupOptionsCopy.class.valueClass]"
-                :style="popupOptionsCopy.style.valueStyle"
-                :title="$_getValue(field)"
-                @click="$_click(index, 1, $_getValue(field))"
-          >
+          </span>
+            <!--字段值-->
+            <span :class="[defaultFieldClass,popupOptionsCopy.class.valueClass]"
+                  :style="popupOptionsCopy.style.valueStyle"
+                  :title="$_getValue(field)"
+                  @click="$_click(index, 1, $_getValue(field))"
+            >
           {{ $_getValue(field) }}
-        </span>
+          </span>
+          </div>
         </div>
       </div>
     </slot>
@@ -149,13 +153,13 @@ export default {
       }
       //如果fields数量为0，则取得properties里的所有健名
       if (this.popupOptionsCopy.fields.length === 0) {
-        this.popupOptionsCopy.fields = Object.keys(this.popupOptionsCopy.feature.properties);
+        this.popupOptionsCopy.fields = Object.keys(this.feature.properties);
       }
       this.$nextTick(function () {
-        // let rows =  document.getElementsByClassName("mapgis-popup-row");
-        // let title =  document.getElementsByClassName("mapgis-popup-title");
-        this.titleHeight = 36; // title[0].clientHeight + 2;
-        this.rowHeight =  42; // rows[0].clientHeight + 1;
+        let rows =  document.getElementsByClassName("mapgis-popup-row");
+        let title =  document.getElementsByClassName("mapgis-popup-title");
+        this.titleHeight = title[0] ? title[0].clientHeight + 2 : 34;
+        this.rowHeight =  rows[0] ? rows[0].clientHeight + 1 : 33;
       });
     },
     $_getField(field) {
@@ -166,7 +170,7 @@ export default {
       return field;
     },
     $_getValue(field) {
-      let value = "", properties = this.popupOptionsCopy.feature.properties;
+      let value = "", properties = this.feature.properties;
       if (properties.hasOwnProperty(field)) {
         value = properties[field];
       }
@@ -177,5 +181,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
