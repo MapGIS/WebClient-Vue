@@ -1,12 +1,12 @@
 <template>
   <div class="mapgis-ui-select-panel">
     <mapgis-ui-row>
-      <mapgis-ui-col v-bind="labelCol" class="left">
+      <mapgis-ui-col :span="labelCol" class="left">
         <div class="label-sm">
           {{ label }}
         </div>
       </mapgis-ui-col>
-      <mapgis-ui-col v-bind="wrapperCol" class="right-panel">
+      <mapgis-ui-col :span="wrapperCol" class="right-panel">
         <mapgis-ui-select
             v-model="selected"
         >
@@ -41,17 +41,13 @@ name: "mapgis-ui-select-panel",
       }
     },
     labelCol: {
-      type: Object,
-      default: () => {
-        return { span: 8 };
-      }
+      type: Number,
+      default: 8,
     },
     wrapperCol: {
-      type: Object,
-      default: () => {
-        return { span: 16 };
-      }
-    }
+      type: Number,
+      default: 16,
+    },
   },
   watch: {
     value(next) {

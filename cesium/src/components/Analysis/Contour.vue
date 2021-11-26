@@ -100,7 +100,7 @@ export default {
     /**
      * @type Number
      * @default 150
-     * @description 等值线间距
+     * @description 等间距
      */
     contourSpacing: {
       type: Number,
@@ -123,15 +123,6 @@ export default {
     contourColor: {
       type: String,
       default: "rgb(255,0,0)"
-    },
-    /**
-     * @type Number
-     * @default 200
-     * @description 等值面宽度
-     */
-    bandThickness: {
-      type: Number,
-      default: 300
     },
     /**
      * @type Array

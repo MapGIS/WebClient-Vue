@@ -44,7 +44,7 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 颜色面板 = Template.bind({});
-数值面板.args = { 
+颜色面板.args = {
   label:"光照颜色", 
   disableAlpha:false
 };
