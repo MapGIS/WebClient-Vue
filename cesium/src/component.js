@@ -1,4 +1,5 @@
 export { default as MapgisWebScene } from "./components/WebGlobe/WebGlobe.vue";
+export { default as Mapgis3dViewpointManager } from "./components/WebGlobe/ViewpointManager.vue";
 
 // 工具
 export { default as Mapgis3dStatebar } from "./components/UI/Controls/State/StateControl.vue";
