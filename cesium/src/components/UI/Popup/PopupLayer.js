@@ -213,8 +213,8 @@ export default class PopupLayer {
         parent.children[0].children[0].children[0]
       ) {
         let node = parent.children[0].children[0].children[0];
-        temptitle.innerText = node.innerText;
-        node.innerText = "";
+        // temptitle.innerHTML = this.container;
+        // node.innerText = "";
         node.style.height = "fit-content";
         node && node.appendChild(temptitle);
         node && node.appendChild(images);
