@@ -1,27 +1,11 @@
 <template>
   <div class="mapgis-3d-m3d-menus">
-    <mapgis-ui-divider>
-      <div class="mapgis-3d-m3d-menus-header">
-        <mapgis-ui-tooltip placement="top" v-for="m in menus" :key="m.title">
-          <template slot="title">
-            <span>{{ m.title }}</span>
-          </template>
-          <mapgis-ui-iconfont
-            :class="{
-              'mapgis-3d-m3d-menus-header-menu': true,
-              'mapgis-3d-m3d-menus-header-menu-small': size == 'small',
-              'mapgis-3d-m3d-menus-header-menu-active': currentMenu == m.type
-            }"
-            :type="m.icon"
-            @click="() => handleMenuClick(m.type)"
-          />
-        </mapgis-ui-tooltip>
-      </div>
-    </mapgis-ui-divider>
+    <mapgis-ui-tab-panel :tabs="menus" @change="handleMenuClick">
+    </mapgis-ui-tab-panel>
     <div class="mapgis-3d-m3d-menus-content">
       <m3d-menu-setting v-if="currentMenu == 'setting'" :version="version">
       </m3d-menu-setting>
-      <m3d-menu-highlight
+      <!-- <m3d-menu-highlight
         v-if="currentMenu == 'highlight'"
         :version="version"
         :layerIndex="layerIndex"
@@ -32,7 +16,7 @@
         :version="version"
         :layerIndex="layerIndex"
       >
-      </m3d-menu-oid>
+      </m3d-menu-oid> -->
       <m3d-menu-props
         v-if="currentMenu == 'properties'"
         :version="version"
@@ -135,7 +119,7 @@ export default {
       mode = mode || this.mode;
       return mode == "m3d"
         ? [
-            {
+            /* {
               type: "highlight",
               title: "高亮",
               icon: "mapgis-target-lock"
@@ -144,10 +128,10 @@ export default {
               type: "oid",
               title: "OID查询",
               icon: "mapgis-bullseye"
-            },
+            }, */
             {
               type: "properties",
-              title: "属性查询",
+              title: "动态单体化查询",
               icon: "mapgis-table"
             },
             {
@@ -169,8 +153,8 @@ export default {
               type: "searchlight",
               title: "探照灯",
               icon: "mapgis-star"
-            },
-            {
+            }
+            /* {
               type: "radar",
               title: "雷达",
               icon: "mapgis-radarchart"
@@ -179,7 +163,7 @@ export default {
               type: "circle",
               title: "动态圆",
               icon: "mapgis-time-circle"
-            }
+            } */
           ]
         : [
             {
@@ -189,8 +173,8 @@ export default {
             }
           ];
     },
-    handleMenuClick(type) {
-      console.log("type", type);
+    handleMenuClick(tab) {
+      const { type } = tab;
       this.currentMenu = type;
     }
   }

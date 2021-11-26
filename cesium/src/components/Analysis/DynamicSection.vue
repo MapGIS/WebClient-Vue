@@ -12,7 +12,7 @@
       <mapgis-ui-row class="model">
         <mapgis-ui-checkbox-group
           v-if="checkboxOptions.length > 0"
-          @change="onCheckboxGroupChange"
+          @change="_onCheckboxGroupChange"
         >
           <mapgis-ui-row
             v-for="(option, index) in checkboxOptions"
@@ -93,7 +93,7 @@ export default {
     },
     color: {
       type: String,
-      default: "rgb(200,200,200,0.5)"
+      default: "rgba(200,200,200,0.5)"
     },
     time: {
       type: Number,
@@ -230,15 +230,15 @@ export default {
         vueIndex
       );
       if (find) {
-        this.removeDynaCut();
+        this._removeDynaCut();
       }
       vueCesium.DynamicSectionAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
       this.stopClipping();
     },
-    onCheckboxGroupChange(val) {
+    _onCheckboxGroupChange(val) {
       this.checked = [...val];
-      this.removeDynaCut();
+      this._removeDynaCut();
       this._getMaxMin();
     },
     /**
@@ -342,7 +342,7 @@ export default {
      */
     stopClipping() {
       this._clearTimer();
-      this.removeDynaCut();
+      this._removeDynaCut();
     },
 
     /**
@@ -351,7 +351,7 @@ export default {
     startClipping() {
       this._m3dIsReady().then(m3dSetArray => {
         this._clearTimer();
-        this.removeDynaCut();
+        this._removeDynaCut();
         let { vueCesium, vueKey, vueIndex } = this;
         let find = vueCesium.DynamicSectionAnalysisManager.findSource(
           vueKey,
@@ -393,7 +393,7 @@ export default {
     /**
      * 移除动态剖切对象
      */
-    removeDynaCut() {
+    _removeDynaCut() {
       let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.DynamicSectionAnalysisManager.findSource(
         vueKey,

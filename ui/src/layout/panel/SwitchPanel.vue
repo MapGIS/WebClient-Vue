@@ -15,10 +15,19 @@
           un-checked-children="关闭"
           v-model="innerChecked"
           @change="changeChecked"
+          v-if="size === 'default' "
         >
         </mapgis-ui-switch>
+        <mapgis-ui-switch
+          class="mapgis-ui-switch-panel-switch"
+          v-model="innerChecked"
+          @change="changeChecked"
+          size="small"
+          v-else
+        >
+        </mapgis-ui-switch>
+     
       </div>
-
       <div
         class="mapgis-ui-switch-panel-parameter"
         :style="{ maxHeight: maxHeight }"
@@ -60,6 +69,10 @@ export default {
       default: () => {
         return { span: 17 };
       }
+    },
+    size:{
+      type:String,
+      default:'default' //default small
     }
   },
   data() {

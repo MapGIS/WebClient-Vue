@@ -21,7 +21,7 @@
     </mapgis-ui-tooltip>
 
     <transition name="bounce">
-      <mapgis-ui-card
+      <mapgis-ui-div
         class="mapgis-ui-collapse-card"
         :style="outStyle"
         hoverable
@@ -31,27 +31,34 @@
       >
         <transition name="fade">
           <div v-show="!showOther">
-            <slot name="title"></slot>
-            <div class="mapgis-ui-collapse-card-extra">
-              <slot name="extra"></slot>
+            <div class="mapgis-ui-collapse-card-header">
+              <div class="mapgis-ui-collapse-card-title">
+                <slot name="title"></slot>
+              </div>
+              <div class="mapgis-ui-collapse-card-extra">
+                <slot name="extra"></slot>
+              </div>
             </div>
             <slot></slot>
           </div>
         </transition>
         <transition name="slide-fade">
           <div v-show="showOther">
-            <slot name="title"></slot>
-            <div class="mapgis-ui-collapse-card-extra">
-              <slot name="extra"></slot>
-            </div>
-            <div @click="toggleMain" class="mapgis-ui-collapse-card-back">
-              <mapgis-ui-iconfont type="mapgis-rollback" />
-              返回上一级
+            <div class="mapgis-ui-collapse-card-header">
+              <div class="mapgis-ui-collapse-card-title">
+                <slot name="title"></slot>
+              </div>
+              <div class="mapgis-ui-collapse-card-extra">
+                <mapgis-ui-iconfont
+                  type="mapgis-rollback"
+                  @click="toggleMain"
+                />
+              </div>
             </div>
             <slot name="panel"></slot>
           </div>
         </transition>
-      </mapgis-ui-card>
+      </mapgis-ui-div>
     </transition>
   </div>
 </template>
