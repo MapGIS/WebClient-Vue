@@ -3,7 +3,42 @@ import MapgisElasticsearchLayer from "../../mapboxgl/src/components/layer/elasti
 export default {
   title: "二维/可视化/弹性搜索",
   component: MapgisElasticsearchLayer,
-  argTypes: {},
+  argTypes: {
+    buckets:  {
+      description: 'ElasticSearch 搜索出来的桶结果',
+      type: { name: 'Array', required: true },
+      table:{
+        type: { summary: 'Array' },
+        defaultValue: { summary: '[]' },
+      },
+      control: 'text'
+    },
+    mode:  {
+      description: '显示效果类型',
+      type: { name: 'String', required: true },
+      table:{
+        type: { summary: 'String' },
+        defaultValue: { summary: 'heater' },
+      },
+      control: 'text'
+    },
+    heaterOptions:  {
+      description: '热力参数',
+      type: { name: 'String', required: false },
+      table:{
+        type: { summary: 'String' },
+      },
+      control: 'text'
+    },
+    clusterOptions:  {
+      description: '聚类参数',
+      type: { name: 'Object', required: false },
+      table:{
+        type: { summary: 'Object' },
+      },
+      control: 'text'
+    },
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -274,7 +309,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `
-    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
+    <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-ui-collapse-card
           v-show="elasticsearchVisible"
@@ -283,22 +318,24 @@ const Template = (args, { argTypes }) => ({
           ref="collapsecard"
         >
           <mapgis-ui-iconfont type="mapgis-ElasticSearch" slot="icon-hiden" />
-          <div slot="title">
+          <div slot="title" :style="{width: '155px'}">
             <span>
               ElasticSearch 弹性搜索
             </span>
           </div>
-          <div slot="extra" @click="hideEls">
-            <mapgis-ui-iconfont type="mapgis-ElasticSearch" />
+          <div slot="extra" @click="hideEls" :style="{position: 'absolute', right: '-10px'}">
+            <mapgis-ui-iconfont type="mapgis-ElasticSearch"/>
           </div>
-          <mapgis-ui-button-group>
-            <mapgis-ui-button @click="elasticsearchMode = 'heater'">
-              热力
-            </mapgis-ui-button>
-            <mapgis-ui-button @click="elasticsearchMode = 'cluster'">
-              聚类
-            </mapgis-ui-button>
-          </mapgis-ui-button-group>
+          <div :style="{position:'relative', right: '-12px'}">
+            <mapgis-ui-button-group>
+              <mapgis-ui-button @click="elasticsearchMode = 'heater'">
+                热力
+              </mapgis-ui-button>
+              <mapgis-ui-button @click="elasticsearchMode = 'cluster'">
+                聚类
+              </mapgis-ui-button>
+            </mapgis-ui-button-group>
+          <div>
         </mapgis-ui-collapse-card>
         <mapgis-elasticsearch-layer :buckets="innerbuckets" :mode="elasticsearchMode" />
     </mapgis-web-map>
@@ -306,4 +343,5 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 弹性搜索 = Template.bind({});
-弹性搜索.args = {};
+弹性搜索.args = {
+};
