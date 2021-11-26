@@ -141,6 +141,8 @@ export default {
       );
     }
 
+    console.log('feature', feature);
+
     if (customPopup || customTips) {
       return (
         <Popup
