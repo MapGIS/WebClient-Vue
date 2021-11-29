@@ -4,6 +4,7 @@ import {MRFS} from "@mapgis/webclient-es6-service";
 
 export default {
     inject: ["viewer", "Cesium"],
+    mixins: [Base64IconsKeyValue],
     props: {
         vueKey: {
             type: String,
@@ -20,7 +21,8 @@ export default {
         return {
             projectSet: {},
             optArr: [],
-            projectMaps: []
+            projectMaps: [],
+            popups: []
         }
     },
     methods: {
@@ -37,20 +39,20 @@ export default {
             });
         },
         $_getBillBoardIcon(index, callBack) {
-            // let img = document.createElement("img");
-            // if (typeof index === "number") {
-            //     img.src = Base64IconsKeyValue[index].value;
-            // } else if (typeof index === "string") {
-            //     for (let i = 0; i < Base64IconsKeyValue.length; i++) {
-            //         if (Base64IconsKeyValue[i].key === index) {
-            //             img.src = Base64IconsKeyValue[i].value;
-            //             break;
-            //         }
-            //     }
-            // }
-            // img.onload = function () {
-            //     callBack(img);
-            // }
+            let img = document.createElement("img");
+            if (typeof index === "number") {
+                img.src = this.Base64IconsKeyValue[index].value;
+            } else if (typeof index === "string") {
+                for (let i = 0; i < this.Base64IconsKeyValue.length; i++) {
+                    if (this.Base64IconsKeyValue[i].key === index) {
+                        img.src = this.Base64IconsKeyValue[i].value;
+                        break;
+                    }
+                }
+            }
+            img.onload = function () {
+                callBack(img);
+            }
         },
         $_setCamera() {
             window.feature.camera.orientation = {
@@ -104,6 +106,7 @@ export default {
                 window.vueCesium.MapStoryManager.addSource(this.vueKey, this.vueIndex, handler);
             }
             if (this.dataSource instanceof Array) {
+                let popups = [];
                 for (let i = 0; i < this.dataSource.length; i++) {
                     MRFS.FeatureService.get(this.dataSource[i].url, function (result) {
                         if (typeof result === "string") {
@@ -114,7 +117,7 @@ export default {
                         if (show === false) {
                             return;
                         }
-                        if(map){
+                        if (map) {
                             vm.projectMaps.push(map);
                         }
                         for (let i = 0; i < features.length; i++) {
@@ -125,11 +128,22 @@ export default {
                                 map.id = features[i].id;
                                 vm.optArr.push(map);
                             }
+                            let lnglatPosition = vm.$_cartesian3ToLongLat(features[i].baseUrl.geometry);
+                            popups.push({
+                                lng: lnglatPosition.lng,
+                                lat: lnglatPosition.lat,
+                                alt: 20,
+                                title: features[i].title,
+                                images: features[i].images,
+                                feature: features[i],
+                                show: features[i].show,
+                                vueIndex: parseInt(String(Math.random() * 10000))
+                            });
                             if (x && y && z) {
                                 let img = document.createElement("img");
                                 let imgUrl = features[i].layerStyle.billboard.image;
                                 if (typeof imgUrl === 'number') {
-                                    imgUrl = Base64IconsKeyValue[imgUrl].value;
+                                    imgUrl = vm.Base64IconsKeyValue[imgUrl].value;
                                 }
                                 img.src = imgUrl;
                                 img.onload = function () {
@@ -143,10 +157,19 @@ export default {
                                 }
                             }
                         }
+                        vm.$nextTick(function () {
+                            let icons = document.getElementsByClassName("mapgis-3d-map-story-small-popup-tolarge");
+                            for (let i = 0; i < icons.length; i++) {
+                                icons[i].onclick = function () {
+                                    vm.$emit("projectPreview", [features[i]], false);
+                                }
+                            }
+                        });
                     }, function (error) {
                         console.error(error)
                     });
                 }
+                vm.popups = popups;
             }
         },
         $_addPoint(callBack) {

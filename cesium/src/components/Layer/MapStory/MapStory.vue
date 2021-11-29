@@ -12,10 +12,39 @@
                    @titleChanged="$_titleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
                    @editProject="$_editProject"
-                   :dataSource="dataSourceCopy"/>
-    <mapgis-3d-draw :infinite="true" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
+                   @projectPreview="$_projectPreview"
+                   :dataSource="dataSourceCopy"
+                   :height="height"
+                   :width="width"
+                   :enablePreview="enablePreview"
+                   :enableClose="enableClose"
+    />
+    <mapgis-3d-draw :infinite="false" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <map-collection :key="opt.vueIndex" v-for="(opt) in projectMaps" :options="opt"/>
+    <template v-for="(popup) in popups">
+      <mapgis-3d-popup
+          :key="popup.vueIndex"
+          :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+          :forceRender="true"
+          v-model="popup.show"
+          :vueIndex="popup.vueIndex"
+      >
+        <div class="mapgis-3d-map-story-small-popup-container">
+          <slot name="content" :popup="popup">
+            <div class="mapgis-3d-map-story-small-popup-title">
+              {{popup.title}}
+              <mapgis-ui-base64-icon class="mapgis-3d-map-story-small-popup-tolarge" width="20px" type="toLarge"/>
+            </div>
+            <mapgis-ui-carousel class="mapgis-3d-map-story-small-popup-carousel" autoplay>
+              <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000" v-for="(image, index) in popup.images">
+                <img @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-img" :src="image" alt="">
+              </div>
+            </mapgis-ui-carousel>
+          </slot>
+        </div>
+      </mapgis-3d-popup>
+    </template>
   </div>
 </template>
 
@@ -23,10 +52,14 @@
 import projectPanel from "./projectPanel"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService"
-
+import {MapgisUiBase64IconsKeyValue} from "@mapgis/webclient-vue-ui";
+window.showPanels = {
+  currentPage: "",
+  showProjectEdit: false
+}
 export default {
   name: "mapgis-3d-map-story-layer",
-  mixins: [mapStoryService],
+  mixins: [mapStoryService, MapgisUiBase64IconsKeyValue],
   components: {
     "project-panel": projectPanel,
     "map-collection": mapCollection,
@@ -42,6 +75,20 @@ export default {
   props: {
     dataSource: {
       type: Array
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    enablePreview: {
+      type: Boolean,
+      default: true
+    },
+    enableClose: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -55,7 +102,13 @@ export default {
   created() {
     this.dataSourceCopy = this.dataSource;
   },
+  mounted() {
+    this.$_initManager();
+  },
   methods: {
+    $_toLarge(feature) {
+      this.$emit("projectPreview", [feature], false);
+    },
     $_drawCreate(Cartesian3Points, degreeArr, viewerDraw, radians) {
       this.currentPoints = degreeArr;
       switch (this.currentFeatureType) {
@@ -89,16 +142,22 @@ export default {
           break;
       }
       if (!this.$refs.projectPanel.showEditPanel) {
-        this.drawer && this.drawer.stopDraw();
-        this.$refs.projectPanel.showEditPanel = true;
+        this.$refs.projectPanel.$refs.projectP.$_addFeatureSet(window.feature);
       }
     },
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
     },
+    $_projectPreview(features, enableFullScreen) {
+      this.$emit("projectPreview", features, enableFullScreen);
+    },
     $_editProject(index) {
       if (this.dataSource instanceof Array) {
         this.$refs.projectPanel.showProjectPanel = false;
+        if (!this.enableClose) {
+          window.showPanels.showProjectEdit = true;
+          window.showPanels.currentPage = "projectEdit";
+        }
         this.$refs.projectPanel.currentProject = this.projectSet[this.dataSource[index].uuid];
       }
     },
@@ -179,26 +238,81 @@ export default {
         entity.billboard.image = img;
       });
     },
+    $_addEntity(feature, layerStyle, id) {
+      let vm = this;
+      switch (feature.type) {
+        case "point":
+          const {geometry} = feature;
+          if (!geometry) {
+            return;
+          }
+          const {x, y, z} = feature.geometry;
+          if (x && y && z) {
+            let img = document.createElement("img");
+            let imgUrl = layerStyle.billboard.image;
+            if (typeof imgUrl === 'number') {
+              imgUrl = this.Base64IconsKeyValue[imgUrl].value;
+            }
+            img.src = imgUrl;
+            img.onload = function () {
+              vm.viewer.entities.add({
+                id: id,
+                position: new Cesium.Cartesian3(x, y, z),
+                billboard: {
+                  image: img
+                }
+              });
+            }
+          }
+          break;
+      }
+    },
     $_showProject(project) {
       const {show, uuid} = project;
-      let newProject = this.projectSet[uuid];
-      const {features} = newProject;
-      for (let i = 0; i < features.length; i++) {
-        let entity = this.viewer.entities.getById(features[i].id);
-        const {layerStyle} = features[i]
-        if (show) {
-          if (layerStyle.hasOwnProperty("show") && layerStyle.show !== false) {
-            entity.show = show;
-            this.$_getLayer(i, newProject, function (layer) {
-              layer.show = show;
-            });
+      if (show) {
+        let newProject = this.projectSet[uuid];
+        const {features, map} = newProject;
+        for (let i = 0; i < features.length; i++) {
+          let entity = this.viewer.entities.getById(features[i].id);
+          const {layerStyle, baseUrl} = features[i];
+          if (entity) {
+            if (show) {
+              if (layerStyle.hasOwnProperty("show") && layerStyle.show !== false) {
+                entity.show = show;
+                this.$_getLayer(i, newProject, function (layer) {
+                  layer.show = show;
+                });
+              }
+            } else {
+              entity.show = show;
+              this.$_getLayer(i, newProject, function (layer) {
+                layer.show = show;
+              });
+            }
+          } else {
+            const {map} = features[i];
+            this.$_addEntity(baseUrl, features[i].layerStyle, features[i].id);
+            if (map) {
+              this.optArr.push(map);
+            }
           }
-        } else {
-          entity.show = show;
-          this.$_getLayer(i, newProject, function (layer) {
-            layer.show = show;
-          });
         }
+        if (map) {
+          const {vueKey, vueIndex, type} = map;
+          if (vueKey && vueIndex && type) {
+            let layer;
+            switch (type) {
+              case "WMTS":
+                layer = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex);
+                break;
+            }
+            if (!layer) {
+              this.projectMaps.push(map);
+            }
+          }
+        }
+      } else {
+
       }
     },
     $_showFeature(id, flag, index, project) {
@@ -240,6 +354,18 @@ export default {
               window.feature = feature.feature;
               vm.$_setCamera();
               vm.$refs.projectPanel.$refs.projectP.showEditPanel = true;
+              vm.$_getBillBoardIcon(0, function (img) {
+                vm.viewer.entities.add({
+                  id: window.feature.id,
+                  position: window.feature.camera.cartesian3Position,
+                  billboard: {
+                    image: img
+                  }
+                });
+                vm.$refs.projectPanel.$refs.projectP.$_addFeatureSet(window.feature);
+                vm.$refs.projectPanel.$refs.projectP.showEditPanel = false;
+              });
+              window.feature.drawType = "point";
             }
           });
           break;
@@ -260,13 +386,49 @@ export default {
           break;
       }
     }
-  },
-  mounted() {
-    this.$_initManager();
   }
 }
 </script>
 
 <style scoped>
+.mapgis-3d-map-story-small-popup-title {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 40px;
+  font-size: 14px;
+  position: relative;
+}
 
+.mapgis-3d-map-story-small-popup-tolarge {
+  position: absolute;
+  top: 10px;
+  right: 28px;
+}
+
+.mapgis-3d-map-story-small-popup-container {
+  width: 260px;
+  height: 200px;
+}
+
+.mapgis-3d-map-story-small-popup-carousel {
+  width: 240px;
+  height: 144px;
+  margin: 0 10px;
+}
+
+.mapgis-3d-map-story-small-popup-img-div {
+  width: 240px;
+  height: 144px;
+}
+
+.mapgis-3d-map-story-small-popup-img {
+  width: 240px;
+  height: 144px;
+}
 </style>

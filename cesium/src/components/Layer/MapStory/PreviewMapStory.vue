@@ -1,11 +1,14 @@
 <template>
-  <div>
+  <div :style="{height: panelHeight + 'px'}">
     <mapgis-ui-story-panel-large
         @closePanel="$_closePanel"
         @flyTo="$_flyTo"
-        :showArrow="showArrow"
-        :feature="storyFeature"
+        :showArrow="enableArrow"
+        :showPlay="enablePlay"
+        :dataSource="storyFeature"
         :height="panelHeight"
+        :width="width"
+        :enableFullScreen="enableFullScreen"
         v-show="showPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
@@ -18,6 +21,7 @@ import {MRFS} from "@mapgis/webclient-es6-service"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
 import Base64IconsKeyValue from "@mapgis/webclient-vue-ui/src/components/iconfont/Base64IconsKeyValue";
+
 export default {
   name: "mapgis-3d-preview-map-story-layer",
   inject: ["Cesium", "viewer"],
@@ -27,7 +31,33 @@ export default {
   },
   props: {
     dataSource: {
-      type: [Array,String]
+      type: [Array, String]
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    enableFullScreen: {
+      type: Boolean,
+      default: true
+    },
+    enableArrow: {
+      type: Boolean,
+      default: true
+    },
+    enablePlay: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    dataSource: {
+      handler: function () {
+        this.$_init();
+      },
+      deep: true
     }
   },
   data() {
@@ -36,13 +66,11 @@ export default {
       storyFeature: [],
       optArr: [],
       panelHeight: undefined,
-      showArrow: true,
       showPanel: true,
       projectMap: undefined
     }
   },
   mounted() {
-    this.panelHeight = this.$_getContainerHeight();
     this.$_init();
   },
   methods: {
@@ -51,7 +79,12 @@ export default {
     },
     $_init() {
       let vm = this;
-      if(typeof this.dataSource === "string"){
+      if (this.height) {
+        this.panelHeight = this.height;
+      } else {
+        this.panelHeight = this.$_getContainerHeight();
+      }
+      if (typeof this.dataSource === "string") {
         MRFS.FeatureService.get(this.dataSource, function (result) {
           if (typeof result === "string") {
             result = JSON.parse(result);
@@ -90,8 +123,8 @@ export default {
         }, function (error) {
           console.error(error);
         });
-      }else if(this.dataSource instanceof Array){
-
+      } else if (this.dataSource instanceof Array) {
+        this.storyFeature = this.dataSource;
       }
     }
   }

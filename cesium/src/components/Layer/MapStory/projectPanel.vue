@@ -14,6 +14,7 @@
         @showProject="$_showProject"
         @featurePreview="$_featurePreview"
         :height="panelHeight"
+        :width="width"
         :dataSource="dataSource"
         v-show="showProjectPanel"
     />
@@ -24,10 +25,12 @@
         @flyTo="$_flyTo"
         :showPlay="showPlay"
         :showArrow="showArrow"
-        :feature="storyFeature"
+        :dataSource="storyFeature"
         :height="panelHeight"
+        :enableFullScreen="enableFullScreen"
     />
     <mapgis-ui-project-edit
+        v-if="enableClose"
         @addMapToProject="$_addMapToProject"
         @addMap="$_addMap"
         @getCamera="$_getCamera"
@@ -44,6 +47,29 @@
         v-show="!showProjectPanel"
         v-model="currentProject"
         :height="panelHeight"
+        :width="width"
+        id="addProjectId"
+    />
+    <mapgis-ui-project-edit
+        v-if="!enableClose"
+        @addMapToProject="$_addMapToProject"
+        @addMap="$_addMap"
+        @getCamera="$_getCamera"
+        @deleteProject="$_deleteProject"
+        @addFeature="$_addFeature"
+        @deleteFeature="$_deleteFeature"
+        @changeIcon="$_changeIcon"
+        @textChanged="$_textChanged"
+        @featurePreview="$_featurePreview"
+        @projectPreview="$_projectPreview"
+        @backed="$_closeEdit"
+        @showFeature="$_showFeature"
+        @titleChanged="$_titleChanged"
+        v-show="showPanels.showProjectEdit"
+        v-model="currentProject"
+        :height="panelHeight"
+        :width="width"
+        id="addProjectId"
     />
   </div>
 </template>
@@ -54,6 +80,7 @@ import mapStoryService from "./mapStoryService";
 import {MRFS} from "@mapgis/webclient-es6-service"
 import Base64IconsKeyValue from "../../../../../ui/src/components/iconfont/Base64IconsKeyValue"
 
+window.showProjectEdit = false;
 export default {
   name: "projectPanel",
   mixins: [mapStoryService],
@@ -67,6 +94,16 @@ export default {
       default() {
         return [];
       }
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    enableClose: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -81,7 +118,9 @@ export default {
       showProjectPanel: true,
       showPlay: true,
       showArrow: true,
-      projectSet: {}
+      projectSet: {},
+      enableFullScreen: true,
+      showPanels: window.showPanels
     }
   },
   watch: {
@@ -93,31 +132,50 @@ export default {
   },
   mounted() {
     this.projects = this.dataSource;
-    this.panelHeight = this.$_getContainerHeight();
+    if (this.height) {
+      this.panelHeight = this.height;
+    } else {
+      this.panelHeight = this.$_getContainerHeight();
+    }
   },
   methods: {
     $_textChanged(text) {
       this.$set(this.storyFeature[0], "content", text);
     },
     $_featurePreview(feature) {
-      this.storyFeature = [feature];
-      this.showPlay = false;
-      this.showArrow = false;
-      this.showLargePanel = true;
+      if (this.enablePreview) {
+        this.storyFeature = [feature];
+        this.showPlay = false;
+        this.showArrow = false;
+        this.showLargePanel = true;
+        this.enableFullScreen = false;
+      } else {
+        this.$emit("projectPreview", [feature], false);
+      }
     },
     $_projectPreview() {
-      this.storyFeature = this.currentProject.features;
-      this.showPlay = true;
-      this.showArrow = true;
-      this.showLargePanel = true;
+      if (this.enablePreview) {
+        this.storyFeature = this.currentProject.features;
+        this.showPlay = true;
+        this.showArrow = true;
+        this.showLargePanel = true;
+      } else {
+        this.$emit("projectPreview", this.currentProject.features, true);
+      }
     },
     $_closeEdit() {
+      if (!this.enableClose && window.showPanels.currentPage === "projectEdit") {
+        this.showPanels.showProjectEdit = false;
+      }
       this.showProjectPanel = true;
     },
     $_closePanel() {
       this.showLargePanel = false;
     },
     $_editProject(index) {
+      if (!this.enableClose) {
+        this.showPanels.currentPage = "projectEdit";
+      }
       this.$emit("editProject", index);
     },
     $_addFeature(feature) {
