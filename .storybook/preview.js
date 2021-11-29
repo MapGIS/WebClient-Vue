@@ -29,7 +29,11 @@ window.VueCesiumLibPath =
   "http://192.168.81.103:8086/static/libs/cdn/cesium/Cesium.js";
 window.VueCesiumPluginPath =
   "http://192.168.81.103:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
-
+/* window.VueCesiumLibPath =
+  "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js";
+window.VueCesiumPluginPath =
+  "http://develop.smaryun.com/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
+ */
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {

@@ -68,7 +68,7 @@ export default {
         $scriptMain.src =
           this.libPath ||
           window.VueCesiumLibPath ||
-          "http://develop.smaryun.com:8899/static/libs/cdn/cesium/Cesium.js";
+          "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js";
 
         return new Promise(resolve => {
           $scriptMain.onload = () => {
@@ -76,7 +76,7 @@ export default {
               $scriptPlugin.src =
                 self.pluginPath ||
                 window.VueCesiumPluginPath ||
-                "http://develop.smaryun.com:8899/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
+                "http://develop.smaryun.com/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
               $scriptPlugin.onload = () => {
                 if (global.Cesium) {
                   self.globalLoad = true;
