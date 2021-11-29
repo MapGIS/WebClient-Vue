@@ -1,28 +1,27 @@
 <template>
   <div>
-    <div :style="{transform: 'scale('+panelScale+')'}" @click="$_click" class="mapgis-ui-project-panel">
-      <div v-show="!addProject">
-        <mapgis-ui-row>
-          <mapgis-ui-col span="14">
-            <div class="mapgis-ui-project-panel-title">工程文件</div>
-          </mapgis-ui-col>
-          <mapgis-ui-col span="10">
-            <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-ui-project-panel-add">
-              新建工程
-            </mapgis-ui-button>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-        <mapgis-ui-project-row title="我的最爱" @editProject="$_editProject" @deleted="$_deleted"
+    <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
+         class="mapgis-ui-project-panel">
+      <div class="mapgis-ui-project-panel-content" v-show="!addProject" :style="{height: height - 40 + 'px'}">
+        <mapgis-ui-project-header/>
+        <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
                                @showProjected="$_showProject"
                                @marked="$_marker"
-                               :projects="projects" type="favourite"/>
-        <mapgis-ui-project-row title="所有工程" @editProject="$_editProject" @deleted="$_deleted"
-                               @showProjected="$_showProject"
-                               @marked="$_marker"
-                               :projects="projects"/>
+                               :projects="projects"
+                               :width="width"
+        />
       </div>
+      <mapgis-ui-row class="mapgis-ui-project-add-story-row">
+        <mapgis-ui-col span="24">
+          <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-ui-project-add-story">
+            新建故事
+          </mapgis-ui-button>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
       <div v-if="addProject">
         <mapgis-ui-project-edit
+            :width="width"
+            :height="height"
             @addMap="$_addMap"
             @getCamera="$_getCamera"
             @deleteFeature="$_deleteFeature"
@@ -71,6 +70,10 @@ export default {
     height: {
       type: Number,
       default: 900
+    },
+    width: {
+      type: Number,
+      default: 400
     }
   },
   data() {
@@ -185,24 +188,28 @@ export default {
   z-index: 1;
   width: 400px;
   height: 900px;
-  background: rgb(32, 33, 36);
-  padding-bottom: 20px;
   transform-origin: top left;
 }
 
-.mapgis-ui-project-panel-add {
-  margin-top: 13px;
-  margin-right: -16px;
-  width: 126px;
-  height: 36px;
+.mapgis-ui-project-add-story-row {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
 }
 
-.mapgis-ui-project-panel-title {
-  color: white;
-  height: 64px;
-  line-height: 64px;
-  font-size: 18px;
-  text-align: left;
-  padding-left: 10px;
+.mapgis-ui-project-add-story {
+  width: 100%;
+  height: 40px;
+  background: #1890FF;
+}
+
+.mapgis-ui-project-panel-content {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.mapgis-ui-project-panel-content::-webkit-scrollbar {
+  display: none;
 }
 </style>
