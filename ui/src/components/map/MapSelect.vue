@@ -1,84 +1,36 @@
 <template>
-  <div class="mapgis-ui-map-outline-container">
-    <div class="mapgis-ui-map-outline-title">{{ title }}</div>
-    <mapgis-ui-row style="margin-bottom: 10px;padding-right: 11px;">
-      <mapgis-ui-col span="18">
-      </mapgis-ui-col>
-      <mapgis-ui-col span="6">
-        <mapgis-ui-button class="mapgis-ui-map-outline-add" @click="$_addMap">附加地图</mapgis-ui-button>
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-    <mapgis-ui-mix-row
-        title="地图类型"
-        type="MapgisUiSelect"
-        :titleStyle="titleStyle"
-        :mainStyle="mainStyle"
-        :formStyle="formStyle"
-        :dataSource="selectData"
-        v-model="currentSelect"
-    />
-    <mapgis-ui-mix-row
-        title="基地址"
-        type="MapgisUiInput"
-        v-model="baseUrl"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
-    <mapgis-ui-mix-row
-        v-if="currentSelect === 'WMS' || currentSelect === 'DOC'"
-        title="图层名称"
-        type="MapgisUiInput"
-        v-model="layers"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
-    <mapgis-ui-mix-row
-        v-if="currentSelect === 'WMTS'"
-        title="图层名称"
-        type="MapgisUiInput"
-        v-model="layer"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
-    <mapgis-ui-mix-row
-        v-if="currentSelect === 'DYNAMIC'"
-        title="gdbp地址"
-        type="MapgisUiInput"
-        v-model="gdbps"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
-    <mapgis-ui-mix-row
-        v-if="currentSelect === 'TILE' || currentSelect === 'WMTS'"
-        title="坐标系"
-        type="MapgisUiInput"
-        v-model="tilingScheme"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
-    <mapgis-ui-mix-row
-        v-if="currentSelect === 'TILE' || currentSelect === 'WMTS'"
-        title="比例尺"
-        type="MapgisUiInput"
-        v-model="tileMatrixSet"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
-    <mapgis-ui-mix-row
-        v-if="currentSelect === 'WMTS'"
-        title="返回格式"
-        type="MapgisUiInput"
-        v-model="format"
-        :titleStyle="titleStyle"
-        :formStyle="formStyle"
-    />
+  <div class="mapgis-ui-map-select-container">
+    <div class="mapgis-ui-map-select-title">
+      <mapgis-ui-title-icon/>
+      {{ title }}
+    </div>
+    <div class="mapgis-ui-map-select-content">
+      <mapgis-ui-mix-row
+          title="地图类型"
+          type="MapgisUiSelect"
+          :titleStyle="titleStyle"
+          :mainStyle="mainStyle"
+          :formStyle="formStyle"
+          :dataSource="selectData"
+          v-model="currentSelect"
+      />
+      <mapgis-ui-mix-row
+          title="地图名称"
+          type="MapgisUiSelect"
+          :titleStyle="titleStyle"
+          :mainStyle="mainStyle"
+          :formStyle="formStyle"
+          :dataSource="selectData"
+          v-model="currentSelect"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 
 export default {
-  name: "mapgis-ui-map-outline",
+  name: "mapgis-ui-map-select",
   data() {
     return {
       baseUrl: "",
@@ -97,8 +49,8 @@ export default {
         marginBottom: "0"
       },
       mainStyle: {
-        width: "211px",
-        marginLeft: "-26px",
+        width: "158px",
+        marginLeft: "-8px",
       },
       selectData: [{
         key: "IGS瓦片",
@@ -219,29 +171,30 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-ui-map-outline-container {
+.mapgis-ui-map-select-title {
+  margin-top: 6px;
+  margin-bottom: 4px;
+  padding-left: 12px;
+}
+.mapgis-ui-map-select-container {
   width: 100%;
   height: auto;
   position: relative;
-  border: 1px solid rgb(95, 99, 104);
   border-radius: 4px;
-  padding: 14px;
   margin-top: 0;
+  margin-bottom: 10px;
 }
 
-.mapgis-ui-map-outline-container:hover {
+.mapgis-ui-map-select-container:hover {
   border-color: #269ff0;
 }
 
-.mapgis-ui-map-outline-title {
-  position: absolute;
-  top: -10px;
-  left: 17px;
-  z-index: 1;
-  padding: 0 10px;
-}
-
-.mapgis-ui-map-outline-add {
-  margin-left: -10px;
+.mapgis-ui-map-select-content {
+  width: 100%;
+  height: 92px;
+  background: #F1F1F1;
+  border-radius: 3px;
+  padding-top: 6px;
+  padding-left: 10px;
 }
 </style>
