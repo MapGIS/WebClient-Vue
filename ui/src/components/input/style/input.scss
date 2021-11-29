@@ -49,3 +49,13 @@
   //   background-color: inset 0 0 0 1000px rgab(255, 255, 255, 0)!important;
   // }
 }
+
+.mapgis-ui-input-outline {
+  color: $text-color;
+  background: $panel-backgroud;
+}
+
+.mapgis-ui-input-outline-title, .mapgis-ui-input-border-title {
+  color: $text-color;
+  background: $panel-backgroud;
+}
