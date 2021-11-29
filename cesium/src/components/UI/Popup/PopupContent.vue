@@ -40,7 +40,7 @@
           {{ $_getField(field) }}
           </span>
               <!--字段值-->
-              <span :class="[defaultFieldClass,popupOptionsCopy.class.valueClass]"
+              <span :class="[defaultValueClass,popupOptionsCopy.class.valueClass]"
                     :style="popupOptionsCopy.style.valueStyle"
                     :title="$_getValue(field)"
                     @click="$_click(index, 1, $_getValue(field))"
@@ -126,9 +126,9 @@ export default {
     defaultValueClass() {
       return {
         "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value": this.popupOptionsCopy.popupType === "default" || this.popupOptionsCopy.popupType === "card",
-        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-field mapgis-popup-table-field": this.popupOptionsCopy.popupType === "table",
-        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-field mapgis-popup-point-field": this.popupOptionsCopy.popupType === "point",
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field mapgis-popup-underline-field": this.popupOptionsCopy.popupType === "underline",
+        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-value mapgis-popup-table-value": this.popupOptionsCopy.popupType === "table",
+        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value": this.popupOptionsCopy.popupType === "point",
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value mapgis-popup-underline-value": this.popupOptionsCopy.popupType === "underline",
       }
     },
     defaultFieldClass() {
@@ -202,11 +202,4 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-ui-story-panel-large-carousel {
-  width: 100%;
-}
-
-.mapgis-ui-story-panel-large-carousel-img {
-  width: 100%;
-}
 </style>
