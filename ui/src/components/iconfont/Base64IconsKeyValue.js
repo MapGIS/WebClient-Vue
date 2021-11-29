@@ -65,4 +65,11 @@ let Base64IconsKeyValue = [
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAh1BMVEUAAADmQzHqQzX75uL3vrr3urL3sq7qQzXzj4fzpqL/////ZzHqQzX75ub3sq7zl4/ve3Pva1/vY1fzoprqQzXqmpP70s7zj4fqRzzqPz/vf3PvRzX73t7vV0v72trzg3vqQzX3zsr3wr7zpp7qQzX/9/fzqqLzh38AAAAAAAAAAAAAAAAAAABdXKOTAAAALXRSTlMANWeTws7aQ57q/whb//////////+H////Dsog/////0+u//Nz/3euBggOFhw+vQPtAAACbUlEQVR4AZ2W0XaqQAxFBxTAYwcE4oAWirZqEfj/77vch7qwzRBhv/mwD5OYDCgrjrtae77vrVeuo2YThBuM2ITBHHv75gHQUbxL0jTZxZEG4L1tX/UdD9BZSiPSTAOe89rj9wY6L+gXRa5h9lvZPxyBrCCGIgOOB8l/96ETspBo+O+iX1ZkpSqFhO0RHwVNUJQ4TvUhhK5okkojtPuBQUICCUxgLcBHTCIZfFsRLspHA/KInojyURtcywE2qB8+ED35wCOhxoY/wgnlyAeiJ3+UUOKkOM6InwRElp8xzmwFn6iIVX75VOGLqyF4VDCSGH+gBLeXF0TEJDA+RbgwASvExCQwPsVYsT3cEZPA+LRju7hGQkwC41OCNRPgISEmgfEpgSeeQAhY8z0QShB6sEL8ahNjrIQ5EP7GCBdhEoVBKhFwu/CFShhlbhf4beSXSdhGdYIuXlnnQuOkWHzUr1woNXzrnagL+UorNFzFs/UQy5dqDG+rLAS4piSQXk2grITCm42o+ECo7Bx8RDRJBP+gJnAMYpoghnHUJCeDmqzUMCclcANqu4+LEtkDtdXfM4KQwPpyQk5/yFmf52YQM/1n6+dxHwkjn98Ae0L+fH7zpmbhPs1DzTxf4jZarPSKm5pN+PhiKkqEaj4HD9nPd5l3UAtwzLWigerKL5DMNzIayPCtlhFA04BGoJbRbFARVdg0y/TmfkZNVON8b5ol+r3dIyPKsG/v8yP++62LT6JPuG3b3pv5ftc5BlkE43Td7IRmeH7X9xcDmEvfLw7ogzAM+sUBXf+DHMAmtN0Pg7+kiyNknx2EgcEdmBqDf/PxmXIJkxQaAAAAAElFTkSuQmCC"
   }
 ];
-export default Base64IconsKeyValue;
+export default {
+  name: "mapgis-ui-base64-icons-key-value",
+  data() {
+    return {
+      Base64IconsKeyValue: Base64IconsKeyValue
+    };
+  }
+};
