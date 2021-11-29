@@ -199,7 +199,7 @@ export default class PopupLayer {
     let parent = window.document.getElementById(this.popupContentId);
     if (this.popupType == "table") {
     } else if (this.popupType == "card") {
-      parent && parent.appendChild(separate);
+      // parent && parent.appendChild(separate);
     } else if (this.popupType == "rich-text") {
       parent && parent.appendChild(separate);
     }

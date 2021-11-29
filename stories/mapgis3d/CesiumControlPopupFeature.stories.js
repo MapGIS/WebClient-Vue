@@ -30,6 +30,7 @@ export const 默认样式 = Template.bind({});
   properties: {
     name: "测试名称",
     id: "测试id",
+    images: ["http://develop.smaryun.com/static/assets/gallery/m3d.png"],
   },
   position: {
     longitude: 110,
@@ -38,7 +39,7 @@ export const 默认样式 = Template.bind({});
   },
   popupOptions: {
     title: "name",
-    popupType: "table",
+    popupType: "card",
     fullHeight: 400,
   },
   visible: true,

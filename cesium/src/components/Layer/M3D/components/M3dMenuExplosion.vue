@@ -31,28 +31,28 @@
     </div>
     <div class="mapgis-3d-m3d-menu-explosion-content">
       <mapgis-ui-input-number-panel
-        size="small"
+        size="large"
         label="朝向角度"
         v-model="headding"
         :range="[-360, 360]"
       >
       </mapgis-ui-input-number-panel>
       <mapgis-ui-input-number-panel
-        size="small"
+        size="large"
         label="旋转角度"
         v-model="angle"
         :range="[-360, 360]"
       >
       </mapgis-ui-input-number-panel>
       <mapgis-ui-input-number-panel
-        size="small"
+        size="large"
         label="距离"
         v-model="distance"
         :range="[-10000, 10000]"
       >
       </mapgis-ui-input-number-panel>
       <mapgis-ui-input-number-panel
-        size="small"
+        size="large"
         label="速度"
         v-model="speed"
         :range="[0, 100]"
