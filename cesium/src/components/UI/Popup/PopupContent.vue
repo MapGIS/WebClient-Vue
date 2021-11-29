@@ -202,4 +202,8 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-story-panel-large-carousel-img {
+  width: 100%;
+  height: 168.75px;
+}
 </style>
