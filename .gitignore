@@ -13,6 +13,7 @@ ui/node_modules
 dist
 package-lock.json
 yarn.lock
+stories/public/cesium
 
 # local env files
 .env.local
