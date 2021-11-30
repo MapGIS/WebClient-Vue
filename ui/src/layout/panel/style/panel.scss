@@ -209,9 +209,21 @@
   height: 52px;
   line-height: 52px;
   overflow: hidden;
+  &-sm{
+    height: 40px;
+    line-height: 40px;
+  }
   .mapgis-ui-color-pick-panel-label {
     height: 32px;
     line-height: 32px;
+  }
+  .mapgis-ui-color-pick-panel-label-sm{
+    height: 24px;
+    line-height: 24px;
+  }
+  .mapgis-ui-color-pick-panel-label-lg{
+    height: 40px;
+    line-height: 40px;
   }
 }
 

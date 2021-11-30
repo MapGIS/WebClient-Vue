@@ -1,6 +1,6 @@
 <template>
   <div class="mp-widget-shadow-analysis">
-    <mapgis-ui-setting-form :model="formData" :wrapperWidth="128" :labelWidth="80">
+    <mapgis-ui-setting-form :model="formData" :wrapperWidth="143" :labelWidth="100">
       <mapgis-ui-form-model-item label="日期">
         <mapgis-ui-date-picker
             :default-value="startDate"
@@ -14,6 +14,7 @@
               :default-value="startTime"
               size="small"
               @change="changeTime(val, 'startTime')"
+              style="width:100%"
           />
         </mapgis-ui-form-model-item>
         <mapgis-ui-form-model-item label="结束时间">
@@ -21,48 +22,59 @@
               :default-value="endTime"
               size="small"
               @change="changeTime(val, 'endTime')"
+              style="width:100%"
           />
         </mapgis-ui-form-model-item>
       </div>
-      <mapgis-ui-form-model-item label="底部高程">
-        <mapgis-ui-input
-            v-model.number="formData.minHeight"
-            addon-after="(米)"
-            size="small"
-            type="number"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="拉伸高度">
-        <mapgis-ui-input
-            v-model.number="formData.stretchHeight"
-            addon-after="(米)"
-            min="0"
-            size="small"
-            type="number"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="阴影颜色">
-        <mapgis-ui-sketch-color-picker
-            size="small"
-            :color.sync="formData.shadowColor"
-            :disableAlpha="true"
-            @input="
-              val =>
-                (formData.shadowColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-            "
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="非阴影颜色">
-        <mapgis-ui-sketch-color-picker
-            size="small"
-            :color.sync="formData.sunColor"
-            :disableAlpha="true"
-            @input="
-              val =>
-                (formData.sunColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-            "
-        />
-      </mapgis-ui-form-model-item>
+
+      <mapgis-ui-input-number-panel 
+        size="small"
+        label="底部高程(米)"
+        :panelStyle="{padding:'0px',background:'#ffffff'}"
+        :labelCol="{ span: 10 }"
+        :wrapperCol="{ span: 14 }" 
+        v-model="formData.minHeight" 
+        :range="[0,]"
+        :slider="false"
+      />
+
+      <mapgis-ui-input-number-panel 
+        size="small"
+        label="拉伸高度(米)"
+        :panelStyle="{padding:'0px',background:'#ffffff'}"
+        :labelCol="{ span: 10 }"
+        :wrapperCol="{ span: 14 }" 
+        v-model="formData.stretchHeight" 
+        :range="[0,]"
+        :slider="false"
+      />
+
+      <mapgis-ui-color-pick-panel 
+          label="阴影颜色" 
+          size="small"
+          :labelCol="10"
+          :wrapperCol="14"
+          :colorStyle="colorStyle"
+          :color.sync="formData.shadowColor"
+          :disableAlpha="true"
+          @input="
+                val =>
+                  (formData.shadowColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+          "
+      />
+      <mapgis-ui-color-pick-panel 
+          label="非阴影颜色" 
+          size="small"
+          :labelCol="10"
+          :wrapperCol="14"
+          :colorStyle="colorStyle"
+          :color.sync="formData.sunColor"
+          :disableAlpha="true"
+          @input="
+                val =>
+                  (formData.sunColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+          "
+      />
     </mapgis-ui-setting-form>
     <mapgis-ui-setting-footer class="settingButton">
       <mapgis-ui-space>
@@ -205,7 +217,12 @@ export default {
       },
       visible: false,
       currentClickInfo: undefined,
-      handler:undefined
+      handler:undefined,
+      colorStyle:{
+        padding:'0px',
+        marginBottom:'8px',
+        background:'#ffffff'
+      }
     }
   },
   components: {
@@ -614,26 +631,6 @@ export default {
   border-radius: 4px;
 }
 
-::v-deep .mapgis-ui-form-item {
-  margin-bottom: 0;
-}
-
-::v-deep .mapgis-ui-form label {
-  font-size: 12px;
-}
-
-::v-deep .mapgis-ui-form-item-label {
-  line-height: 40px;
-}
-
-::v-deep .mapgis-ui-input {
-  padding: 4px 11px;
-}
-
-::v-deep .mapgis-ui-col-5 {
-  width: 23.833333%;
-}
-
 ::v-deep .mapgis-popup-row-container{
   padding-top: 10px;
   height: fit-content;
@@ -654,11 +651,6 @@ export default {
   width: 50%;
   text-align: right;
   font-size: 14px;
-}
-
-::v-deep .mapgis-ui-form-item-label:before{
-  content: url("titlew.png");
-  margin-right: 6px;
 }
 
 </style>
