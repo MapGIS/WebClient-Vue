@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "10.5.5-4",
+  "version": "10.5.5-6",
   "description": "中地数码webclient-vue-mapboxgl",
   "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
-  "module": "src/main.js",
+  "module1": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js --watch",
@@ -29,7 +29,7 @@
     "@mapgis/mapbox-gl-compare": "^0.4.0",
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/mapbox-gl-inspect": "^10.5.6",
-    "@mapgis/webclient-es6-service": "^10.5.5",
+    "@mapgis/webclient-es6-service": "^10.5.5-3",
     "@mapgis/webclient-store": "^1.0.0",
     "@mapgis/webclient-vue-ui": "^10.5.5-2",
     "@turf/turf": "^5.1.6",

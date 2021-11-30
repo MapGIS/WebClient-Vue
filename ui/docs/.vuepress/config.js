@@ -52,6 +52,7 @@ module.exports = {
             title: "指南",
             collapsable: false,
             children: [
+              ["/local/yarn.md", "本地开发"],  
               ["/guide/", "快速上手"],
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],

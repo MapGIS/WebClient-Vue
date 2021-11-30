@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-ui",
-  "version": "10.5.5",
+  "version": "10.5.5-4",
   "description": "中地数码webclient-vue-ui",
-  "main1": "dist-libs/webclient-vue-ui.umd.min.js",
-  "module": "src/index.js",
+  "main": "dist-libs/webclient-vue-ui.umd.min.js",
+  "module1": "src/index.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/index.js",
     "build-cdn": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --inline-vue --name webclient-vue-ui src/index.js",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "2.1.1",
-    "@mapgis/webclient-es6-service": "^10.5.5",
+    "@mapgis/webclient-es6-service": "^10.5.5-3",
     "@vue/composition-api": "^1.0.0-rc.13",
     "@vuepress/plugin-active-header-links": "^1.8.2",
     "@vuepress/plugin-nprogress": "^1.8.2",
