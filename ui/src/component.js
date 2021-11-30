@@ -10,7 +10,7 @@ export { default as MapgisUiIcon } from "./components/iconfont/IconSvgImg.vue";
 export { default as MapgisUiIconFont } from "./components/iconfont/Icon.vue";
 export { default as MapgisUiSvgIcon } from "./components/iconfont/SvgIcon";
 export { default as MapgisUiBase64Icon } from "./components/iconfont/Base64Icon";
-export { default as MapgisUiBase64IconsKeyValue } from "./components/iconfont/Base64IconsKeyValue";
+// export { default as MapgisUiBase64IconsKeyValue } from "./components/iconfont/Base64IconsKeyValue";
 export { default as MapgisUiIconsPanel } from "./components/iconfont/IconsPanel";
 export { default as MapgisUiIconsPanelScrollX } from "./components/iconfont/IconsPanelScrollX";
 export { default as MapgisUiTitleIcon } from "./components/iconfont/TitleIcon";
