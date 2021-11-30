@@ -12,7 +12,7 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   outStyle: {
@@ -24,9 +24,9 @@ export default {
         height: "500px",
         width: "270px",
         top: "0px",
-        left: "0px"
+        left: "0px",
       };
-    }
+    },
   },
 
   /**
@@ -84,5 +84,5 @@ export default {
   /**
    * @description 是否激活默认UI
    */
-  enableControl: { type: Boolean, default: true }
+  enableControl: { type: Boolean, default: false },
 };
