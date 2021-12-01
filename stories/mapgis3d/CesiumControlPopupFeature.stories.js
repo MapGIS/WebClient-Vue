@@ -30,7 +30,10 @@ export const 默认样式 = Template.bind({});
   properties: {
     name: "测试名称",
     id: "测试id",
-    images: ["http://develop.smaryun.com/static/assets/gallery/m3d.png"],
+    name3: "测试名称",
+    id1: "测试id",
+    id2: "测试id",
+    images: ["https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F14090176146%2F1000&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640522366&t=d53479c6c63e01c044bc210c2fcdba90"]
   },
   position: {
     longitude: 110,

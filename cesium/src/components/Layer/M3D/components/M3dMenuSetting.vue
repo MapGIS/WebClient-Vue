@@ -11,7 +11,8 @@ import Mapgis3dSeneSetting from "../../../SceneEffect/SceneSetting";
 export default {
   name: "mapgis-3d-m3d-menu-setting",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
-  components: { Mapgis3dSeneSetting },
+  components: {
+    'mapgis-3d-scene-setting': Mapgis3dSeneSetting },
   props: {
     ...VueOptions,
     version: {

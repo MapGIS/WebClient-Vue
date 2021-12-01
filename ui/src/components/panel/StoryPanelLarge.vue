@@ -363,7 +363,7 @@ export default {
 
 .mapgis-ui-story-panel-large-play {
   float: left;
-  margin-top: 20px;
+  margin-top: -2px;
   margin-left: 12px;
 }
 </style>

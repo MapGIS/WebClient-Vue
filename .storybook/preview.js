@@ -22,17 +22,18 @@ Vue.use(MapgisCesiumComponents, {});
 }); */
 
 window.webclient = {
-  ip: "develop.smaryun.com",
-  port: "6163",
+  ip: "localhost",
+  port: "8895",
 };
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts";//java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
 window.VueCesiumLibPath =
-  "http://192.168.82.89:8086/static/libs/cdn/cesium-new/Cesium.js";
+    "http://localhost:8081/cesium/Cesium.js";
 window.VueCesiumPluginPath =
-  "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
+    "http://localhost:8081/cesium/webclient-cesium-plugin.js";
+
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

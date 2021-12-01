@@ -33,17 +33,23 @@
       <mapgis-ui-row :key="index" v-for="(project,index) in projects" class="mapgis-ui-project-row">
         <div v-if="project.type === type"
              @mouseenter="$_rowEnter(index)"
-             @mouseleave="$_rowLeave">
-          <div v-show="showMoreTool === index" class="mapgis-mapstory-more-tool">
+             @mouseleave="$_rowLeave"
+             @dblclick="$_edit(index)"
+        >
+          <div v-show="showMoreTool === index"
+               class="mapgis-mapstory-more-tool"
+               @mouseleave="$_hideMoreTool"
+          >
             <div @click="$_edit(index)" class="mapgis-mapstory-more-tool-row">
               <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="edit"/>
               <span>修改</span>
             </div>
             <div class="mapgis-mapstory-more-tool-row">
-              <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon" type="top"/>
+              <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px"
+                                     class="mapgis-mapstory-more-tool-row-icon" type="top"/>
               <span>置顶</span>
             </div>
-            <div class="mapgis-mapstory-more-tool-row">
+            <div @click="$_delete(index)" class="mapgis-mapstory-more-tool-row">
               <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
               <span>删除</span>
             </div>
@@ -55,13 +61,18 @@
             </div>
           </mapgis-ui-col>
           <mapgis-ui-col span="12" class="mapgis-mapstory-tool-bar">
-<!--            <mapgis-ui-svg-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>-->
-<!--            <mapgis-ui-svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>-->
-<!--            <mapgis-ui-svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>-->
-<!--            <mapgis-ui-svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>-->
-            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px" @click="$_showProject(index, false)" v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>
-            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px" @click="$_showProject(index, true)" v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>
-            <mapgis-ui-base64-icon class="mapgis-mapstory-tool-bar-more" width="22px" @click="$_showMoreTool(index)" type="more"/>
+            <!--            <mapgis-ui-svg-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>-->
+            <!--            <mapgis-ui-svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>-->
+            <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>-->
+            <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>-->
+            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"
+                                @click="$_showProject(index, false)"
+                                v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>
+            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"
+                                @click="$_showProject(index, true)"
+                                v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>
+            <mapgis-ui-base64-icon class="mapgis-mapstory-tool-bar-more" width="22px" @click="$_showMoreTool(index)"
+                                   type="more"/>
           </mapgis-ui-col>
         </div>
       </mapgis-ui-row>
@@ -145,9 +156,9 @@ export default {
       this.$emit("marked", index, type);
     },
     $_showMoreTool(index) {
-      if(this.showMoreTool === index) {
+      if (this.showMoreTool === index) {
         this.showMoreTool = undefined;
-      }else {
+      } else {
         this.showMoreTool = index;
       }
     },
@@ -155,6 +166,9 @@ export default {
       this.projects[index].show = flag;
       this.showToolIndex = index;
       this.$emit("showProjected", index, flag);
+    },
+    $_hideMoreTool() {
+      this.showMoreTool = undefined;
     },
     $_edit(index) {
       this.showMoreTool = undefined;
@@ -281,7 +295,7 @@ export default {
   -o-transition: transform .3s; /* Opera */
 }
 
-.mapgis-mapstory-project-panel-play{
+.mapgis-mapstory-project-panel-play {
   position: absolute;
   top: -2px;
   left: 11px;

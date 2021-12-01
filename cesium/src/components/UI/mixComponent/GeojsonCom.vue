@@ -5,7 +5,7 @@
 
 <script>
 import BaseMixin from "./BaseMixin";
-import Mapgis3dComponentLegend from "../mixComponent/Legend";
+// import Mapgis3dComponentLegend from "../mixComponent/Legend";
 import * as turf from "@turf/turf";
 
 let analysisManager;
@@ -13,7 +13,7 @@ export default {
   name: "mapgis-3d-component-mix",
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseMixin],
-  components: { Mapgis3dComponentLegend },
+  // components: { Mapgis3dComponentLegend },
   props: {
     geoJson: { type: Object },
     vueKey: { type: String, default: "default" },
