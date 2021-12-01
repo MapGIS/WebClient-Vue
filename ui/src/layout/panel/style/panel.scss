@@ -81,7 +81,7 @@
 }
 
 @include b(input-number-panel) {
-  background: $panel-inner-color;
+  //background: $panel-inner-color;
   border-radius: 3px;
   padding: 7px;
   min-width: 250px;
@@ -184,7 +184,7 @@
 }
 
 @include b(select-panel) {
-  background: $panel-inner-color;
+  //background: $panel-inner-color;
   border-radius: 1px;
   padding: 7px;
   .label-sm {
@@ -230,8 +230,9 @@
 @include b(tab-panel) {
   height: 56px;
   background: #f1f1f1;
-  padding: 16px 0px;
+  padding: 16px 10px;
   display: flex;
+  overflow: auto;
 
   &-content {
     margin: 0px auto;
