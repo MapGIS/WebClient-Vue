@@ -55,12 +55,12 @@ export default {
             }
         },
         $_setCamera() {
-            window.feature.camera.orientation = {
-                heading: this.viewer.scene.camera.heading,
-                pitch: this.viewer.scene.camera.pitch,
-                roll: this.viewer.scene.camera.roll,
-            };
-            window.feature.camera.height = this.viewer.camera.positionCartographic.height;
+            window.feature.camera.positionCartographic.height = this.viewer.camera.positionCartographic.height;
+            window.feature.camera.positionCartographic.longitude = this.viewer.camera.positionCartographic.longitude;
+            window.feature.camera.positionCartographic.latitude = this.viewer.camera.positionCartographic.latitude;
+            window.feature.camera.heading = this.viewer.scene.camera.heading;
+            window.feature.camera.pitch = this.viewer.scene.camera.pitch;
+            window.feature.camera.roll = this.viewer.scene.camera.roll;
         },
         $_getPolygonCenter(points) {
             let pPoints = [];
@@ -73,9 +73,9 @@ export default {
         $_getRectangleCenter(points) {
             let pPoints = [[
                 [points[0][0], points[0][1]],
-                [points[0][1], points[1][0]],
-                [points[1][0], points[1][1]],
                 [points[0][0], points[1][1]],
+                [points[1][0], points[1][1]],
+                [points[1][0], points[0][1]],
                 [points[0][0], points[0][1]]
             ]];
             let center = this.$_getCenter(pPoints);
@@ -97,6 +97,24 @@ export default {
             position.lng = Cesium.Math.toDegrees(graphicPosition.longitude);
             position.alt = graphicPosition.height;
             return position;
+        },
+        $_setCesiumClick() {
+            let vm = this;
+            this.viewer.scene.globe.depthTestAgainstTerrain = true;
+            this.viewer.screenSpaceEventHandler.setInputAction(function (movement) {
+                let pickedFeature = vm.viewer.scene.pick(movement.position);
+                if (Cesium.defined(pickedFeature)) {
+                    if (pickedFeature.id && pickedFeature.id.id) {
+                        let id = pickedFeature.id.id;
+                        for (let i = 0; i < vm.popups.length; i++) {
+                            if (id === vm.popups[i].id && !vm.popups[i].show) {
+                                vm.popups[i].show = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
         },
         $_initManager() {
             let mapStoryManager = window.vueCesium.MapStoryManager.findSource(this.vueKey, this.vueIndex);
@@ -136,6 +154,7 @@ export default {
                                 title: features[i].title,
                                 images: features[i].images,
                                 feature: features[i],
+                                id: features[i].id,
                                 show: features[i].show,
                                 vueIndex: parseInt(String(Math.random() * 10000))
                             });
@@ -151,12 +170,14 @@ export default {
                                         id: features[i].id,
                                         position: new Cesium.Cartesian3(x, y, z),
                                         billboard: {
-                                            image: img
+                                            image: img,
+                                            disableDepthTestDistance: Number.POSITIVE_INFINITY
                                         }
                                     });
                                 }
                             }
                         }
+                        vm.$_setCesiumClick();
                         vm.$nextTick(function () {
                             let icons = document.getElementsByClassName("mapgis-3d-map-story-small-popup-tolarge");
                             for (let i = 0; i < icons.length; i++) {

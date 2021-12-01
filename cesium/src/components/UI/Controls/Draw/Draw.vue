@@ -302,14 +302,14 @@ export default {
           let height = cartographic.height; //模型高度
           //添加点：经度、纬度、高程、名称、像素大小、颜色、外边线颜色、边线宽度
           let drawEntity = viewerDraw.entities.add({
-            name:'点',
+            name: '点',
             position: Cesium.Cartesian3.fromDegrees(lng, lat, height),
             point: {
               // 点
-              pixelSize : 10,
-              color : color,
-              outlineColor : outlineColor,
-              outlineWidth : drawStyleCopy.outlineWidth
+              pixelSize: 10,
+              color: color,
+              outlineColor: outlineColor,
+              outlineWidth: drawStyleCopy.outlineWidth
             }
           });
           let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
@@ -322,7 +322,7 @@ export default {
         }
       });
     },
-    enableDrawLine() {
+    enableDrawLine(disableDraw) {
       this.drawOption = "enableDrawLine";
       let viewerDraw = this.getWebGlobe();
       let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
@@ -349,15 +349,17 @@ export default {
             let height = cartographic.height;
             degreeArr.push([lng, lat, height]);
           }
-          let polyline = new Cesium.DrawElement.PolylinePrimitive({
-            id: "polyline",
-            positions: positions,
-            width: drawStyleCopy.width,
-            geodesic: true
-          });
-          let drawEntity = viewerDraw.scene.primitives.add(polyline);
-          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
-          drawEntities.push(drawEntity);
+          if (!disableDraw) {
+            let polyline = new Cesium.DrawElement.PolylinePrimitive({
+              id: "polyline",
+              positions: positions,
+              width: drawStyleCopy.width,
+              geodesic: true
+            });
+            let drawEntity = viewerDraw.scene.primitives.add(polyline);
+            let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+            drawEntities.push(drawEntity);
+          }
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
@@ -368,7 +370,7 @@ export default {
       });
     },
     //绘制多边形
-    enableDrawPolygon() {
+    enableDrawPolygon(disableDraw) {
       this.drawOption = "enableDrawPolygon";
       let viewerDraw = this.getWebGlobe();
       let {Cesium, vueKey, vueIndex} = this;
@@ -396,15 +398,17 @@ export default {
             let height = cartographic.height;
             degreeArr.push([lng, lat, height]);
           }
-          let polygon = new Cesium.DrawElement.PolygonPrimitive({
-            positions: positions,
-            material: Cesium.Material.fromType('Color', {
-              color: colorStyle
-            }),
-          });
-          let drawEntity = viewerDraw.scene.primitives.add(polygon);
-          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
-          drawEntities.push(drawEntity);
+          if (!disableDraw) {
+            let polygon = new Cesium.DrawElement.PolygonPrimitive({
+              positions: positions,
+              material: Cesium.Material.fromType('Color', {
+                color: colorStyle
+              }),
+            });
+            let drawEntity = viewerDraw.scene.primitives.add(polygon);
+            let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+            drawEntities.push(drawEntity);
+          }
 
           if (!vm.infinite) {
             drawElement.stopDrawing();
@@ -417,7 +421,7 @@ export default {
     },
 
     //绘制矩形
-    enableDrawRectangle() {
+    enableDrawRectangle(disableDraw) {
       this.drawOption = "enableDrawRectangle";
       let viewerDraw = this.getWebGlobe();
       let {Cesium, vueKey, vueIndex, drawStyleCopy} = this;
@@ -437,16 +441,18 @@ export default {
         color: colorStyle,
         callback: function (result) {
           let extent = result.extent;
-          let rectangle = new Cesium.DrawElement.ExtentPrimitive({
-            extent: extent,
-            material: Cesium.Material.fromType('Color', {
-              color: colorStyle
-            }),
-          });
-          let drawEntity = viewerDraw.scene.primitives.add(rectangle);
+          if (!disableDraw) {
+            let rectangle = new Cesium.DrawElement.ExtentPrimitive({
+              extent: extent,
+              material: Cesium.Material.fromType('Color', {
+                color: colorStyle
+              }),
+            });
+            let drawEntity = viewerDraw.scene.primitives.add(rectangle);
 
-          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
-          drawEntities.push(drawEntity);
+            let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+            drawEntities.push(drawEntity);
+          }
           let radianPoints = [extent.west, extent.north, extent.east, extent.south];
           let ellipsoid = viewerDraw.scene.globe.ellipsoid;
           let Cartesian3Points = Cesium.Cartesian3.fromRadiansArray(radianPoints, ellipsoid);
@@ -462,8 +468,8 @@ export default {
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-          vm.$emit('drawCreate', Cartesian3Points, degreeArr, viewerDraw);
-          vm.$emit('drawcreate', Cartesian3Points, degreeArr, viewerDraw);
+          vm.$emit('drawCreate', Cartesian3Points, degreeArr, viewerDraw, extent);
+          vm.$emit('drawcreate', Cartesian3Points, degreeArr, viewerDraw, extent);
         }
       });
     },
@@ -489,7 +495,7 @@ export default {
         callback: function (result) {
           let center = result.center;
           let radius = result.radius;
-          console.log('circle',center)
+          console.log('circle', center)
           // alert(center.toString() + ' ' + radius.toString());
           var centerCartographic = Cesium.Cartographic.fromCartesian(center);
           let height = centerCartographic.height;

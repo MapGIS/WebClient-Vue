@@ -2,6 +2,7 @@
   <div>
     <project-panel ref="projectPanel"
                    @deleteFeature="$_deleteFeature"
+                   @deleteProject="$_deleteProject"
                    @getCamera="$_getCamera"
                    @changeColor="$_changeColor"
                    @changeIcon="$_changeIcon"
@@ -10,10 +11,13 @@
                    @addMapToProject="$_addMapToProject"
                    @addFeature="$_addFeature"
                    @titleChanged="$_titleChanged"
+                   @featureTitleChanged="$_featureTitleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
                    @editProject="$_editProject"
                    @projectPreview="$_projectPreview"
+                   @firstAddPicture="$_firstAddPicture"
                    :dataSource="dataSourceCopy"
+                   :upProjectSet="projectSet"
                    :height="height"
                    :width="width"
                    :enablePreview="enablePreview"
@@ -33,12 +37,14 @@
         <div class="mapgis-3d-map-story-small-popup-container">
           <slot name="content" :popup="popup">
             <div class="mapgis-3d-map-story-small-popup-title">
-              {{popup.title}}
-              <mapgis-ui-base64-icon class="mapgis-3d-map-story-small-popup-tolarge" width="20px" type="toLarge"/>
+              {{ popup.title }}
+              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"
+                                     width="20px" type="toLarge"/>
             </div>
             <mapgis-ui-carousel class="mapgis-3d-map-story-small-popup-carousel" autoplay>
-              <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000" v-for="(image, index) in popup.images">
-                <img @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-img" :src="image" alt="">
+              <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000"
+                   v-for="(image, index) in popup.images">
+                <img class="mapgis-3d-map-story-small-popup-img" :src="image" alt="">
               </div>
             </mapgis-ui-carousel>
           </slot>
@@ -52,14 +58,15 @@
 import projectPanel from "./projectPanel"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService"
-import {MapgisUiBase64IconsKeyValue} from "@mapgis/webclient-vue-ui";
+import Base64IconsKeyValue from "./Base64IconsKeyValue"
+
 window.showPanels = {
   currentPage: "",
   showProjectEdit: false
 }
 export default {
   name: "mapgis-3d-map-story-layer",
-  mixins: [mapStoryService, MapgisUiBase64IconsKeyValue],
+  mixins: [mapStoryService],
   components: {
     "project-panel": projectPanel,
     "map-collection": mapCollection,
@@ -113,7 +120,10 @@ export default {
       this.currentPoints = degreeArr;
       switch (this.currentFeatureType) {
         case "rectangle":
-          let e = this.viewer.entities.add({
+          let points = [[Cesium.Math.toDegrees(radians.west), Cesium.Math.toDegrees(radians.south)], [Cesium.Math.toDegrees(radians.east), Cesium.Math.toDegrees(radians.north)]];
+          let center = this.$_getRectangleCenter(points);
+          window.feature.center = center;
+          this.viewer.entities.add({
             id: window.feature.id,
             rectangle: {
               coordinates: radians,
@@ -127,6 +137,7 @@ export default {
             polygon: {
               hierarchy: new Cesium.PolygonHierarchy(Cartesian3Points),
               material: Cesium.Color.RED,
+              fill: true
             }
           });
           break;
@@ -141,12 +152,34 @@ export default {
           });
           break;
       }
-      if (!this.$refs.projectPanel.showEditPanel) {
-        this.$refs.projectPanel.$refs.projectP.$_addFeatureSet(window.feature);
-      }
+      this.$refs.projectPanel.currentProject.features.push(window.feature);
+      this.$refs.projectPanel.$refs.projectP.showEditPanel = false;
     },
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
+    },
+    $_firstAddPicture(feature) {
+      let lnglatPosition;
+      if (feature.center) {
+        lnglatPosition = {
+          lng: feature.center[0],
+          lat: feature.center[1],
+          alt: feature.center[2],
+        };
+      }else {
+        lnglatPosition = this.$_cartesian3ToLongLat(feature.baseUrl.geometry);
+      }
+      this.popups.push({
+        lng: lnglatPosition.lng,
+        lat: lnglatPosition.lat,
+        alt: 20,
+        title: feature.title,
+        images: feature.images,
+        feature: feature,
+        id: feature.id,
+        show: feature.show,
+        vueIndex: parseInt(String(Math.random() * 10000))
+      });
     },
     $_projectPreview(features, enableFullScreen) {
       this.$emit("projectPreview", features, enableFullScreen);
@@ -170,7 +203,8 @@ export default {
               id: window.feature.id,
               position: window.feature.camera.cartesian3Position,
               billboard: {
-                image: img
+                image: img,
+                disableDepthTestDistance: Number.POSITIVE_INFINITY
               }
             });
           });
@@ -198,12 +232,37 @@ export default {
         window.feature.title = title;
       }
     },
-    $_changeColor(color, id, type) {
-      let entity = this.viewer.entities.getById(id);
-      entity[type].material = Cesium.Color.fromCssColorString(color.hex);
+    $_featureTitleChanged(feature) {
+      for (let i = 0; i < this.popups.length; i++) {
+        if (this.popups[i].id === feature.id) {
+          this.$set(this.popups[i], "title", feature.title);
+          break;
+        }
+      }
     },
-    $_getLayer(index, project, callBack) {
-      const {map} = project.features[index];
+    $_changeColor(color, type, id, geometryType) {
+      let entity = this.viewer.entities.getById(id);
+      switch (geometryType) {
+        case "polygon":
+          if (entity.polygon) {
+            entity[geometryType].material = new Cesium.Color.fromCssColorString(color.hex);
+          } else if (entity.rectangle) {
+            entity.rectangle.material = new Cesium.Color.fromCssColorString(color.hex);
+          }
+          break;
+        case "polyline":
+          entity[geometryType].material = new Cesium.Color.fromCssColorString(color.hex);
+          break;
+      }
+    },
+    $_getLayer(index, project, callBack, feature) {
+      let map;
+      if (feature) {
+        map = feature.map;
+      } else {
+        map = project.features[index].map;
+      }
+
       if (map) {
         const {vueKey, vueIndex} = map;
         if (vueKey && vueIndex) {
@@ -212,14 +271,23 @@ export default {
         }
       }
     },
-    $_deleteFeature(index, id, project) {
+    $_deleteProject() {
+      this.popups = [];
+    },
+    $_deleteFeature(index, id, project, feature) {
       let vm = this;
       if (id) {
         this.viewer.entities.removeById(id);
       }
       this.$_getLayer(index, project, function (layer) {
         vm.viewer.imageryLayers.remove(layer);
-      });
+      }, feature);
+      for (let i = 0; i < this.popups.length; i++) {
+        if (this.popups[i].id === feature.id) {
+          this.popups.splice(i, 1);
+          break;
+        }
+      }
     },
     $_getCamera(currentFeature) {
       let camera = this.viewer.camera;
@@ -251,7 +319,7 @@ export default {
             let img = document.createElement("img");
             let imgUrl = layerStyle.billboard.image;
             if (typeof imgUrl === 'number') {
-              imgUrl = this.Base64IconsKeyValue[imgUrl].value;
+              imgUrl = Base64IconsKeyValue[imgUrl].value;
             }
             img.src = imgUrl;
             img.onload = function () {
@@ -259,7 +327,8 @@ export default {
                 id: id,
                 position: new Cesium.Cartesian3(x, y, z),
                 billboard: {
-                  image: img
+                  image: img,
+                  disableDepthTestDistance: Number.POSITIVE_INFINITY
                 }
               });
             }
@@ -350,19 +419,19 @@ export default {
             if (!vm.$refs.projectPanel.$refs.projectP.showEditPanel) {
               feature.feature.baseUrl.geometry = cartesian3Position;
               feature.feature.camera.longLatPosition = [position.lng, position.lat, position.alt];
-              feature.feature.camera.cartesian3Position = cartesian3Position;
               window.feature = feature.feature;
               vm.$_setCamera();
               vm.$refs.projectPanel.$refs.projectP.showEditPanel = true;
               vm.$_getBillBoardIcon(0, function (img) {
                 vm.viewer.entities.add({
                   id: window.feature.id,
-                  position: window.feature.camera.cartesian3Position,
+                  position: feature.feature.baseUrl.geometry,
                   billboard: {
-                    image: img
+                    image: img,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY
                   }
                 });
-                vm.$refs.projectPanel.$refs.projectP.$_addFeatureSet(window.feature);
+                vm.$refs.projectPanel.currentProject.features.push(window.feature);
                 vm.$refs.projectPanel.$refs.projectP.showEditPanel = false;
               });
               window.feature.drawType = "point";
@@ -406,8 +475,8 @@ export default {
 }
 
 .mapgis-3d-map-story-small-popup-tolarge {
-  position: absolute;
-  top: 10px;
+  position: absolute !important;
+  top: 9px;
   right: 28px;
 }
 
