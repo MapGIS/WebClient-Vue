@@ -118,10 +118,11 @@ export default {
     },
     $_drawCreate(Cartesian3Points, degreeArr, viewerDraw, radians) {
       this.currentPoints = degreeArr;
+      let center;
       switch (this.currentFeatureType) {
         case "rectangle":
           let points = [[Cesium.Math.toDegrees(radians.west), Cesium.Math.toDegrees(radians.south)], [Cesium.Math.toDegrees(radians.east), Cesium.Math.toDegrees(radians.north)]];
-          let center = this.$_getRectangleCenter(points);
+          center = this.$_getRectangleCenter(points);
           window.feature.center = center;
           this.viewer.entities.add({
             id: window.feature.id,
@@ -132,6 +133,8 @@ export default {
           });
           break;
         case "polygon":
+          center = this.$_getPolygonCenter(degreeArr);
+          window.feature.center = center;
           this.viewer.entities.add({
             id: window.feature.id,
             polygon: {
@@ -142,6 +145,9 @@ export default {
           });
           break;
         case "polyline":
+          let newPoints = degreeArr.concat([degreeArr[0]]);
+          center = this.$_getPolygonCenter(newPoints);
+          window.feature.center = center;
           this.viewer.entities.add({
             id: window.feature.id,
             polyline: {

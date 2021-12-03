@@ -35,6 +35,10 @@
       <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
         <mapgis-ui-color-title @changeColor="$_changeFillColor" title="填充颜色"/>
       </mapgis-ui-row>
+      <!--透明度-->
+      <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
+        <mapgis-ui-slider-title title="透明度"/>
+      </mapgis-ui-row>
       <!--富文本-->
       <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
         <div v-if="editor">
