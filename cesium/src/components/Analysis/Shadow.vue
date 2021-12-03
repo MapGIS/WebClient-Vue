@@ -653,4 +653,9 @@ export default {
   font-size: 14px;
 }
 
+::v-deep .mapgis-ui-form-item-label:before{
+  /* content: url("titlew.png"); */
+  margin-right: 6px;
+}
+
 </style>

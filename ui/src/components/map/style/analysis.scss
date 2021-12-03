@@ -7,3 +7,149 @@
     background: $primary-6;
   } */
 }
+
+$tree-height: 400px;
+
+.mapgis-3d-stratified-household {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  height: $tree-height;
+  width: 270px;
+
+  .mapgis-ui-collapse-card {
+    /* margin: 0px;
+    padding: 0px; */
+    // overflow-x: hidden;
+    height: $tree-height;
+    width: 270px;
+    // background: #000;
+  }
+
+  .mapgis-ui-card-body {
+    /* margin: 0px;
+    padding: 0px; */
+    height: $tree-height;
+    width: 250px;
+    background: #f00;
+  }
+
+  .select {
+    /* background-color: $primary-6;  
+    border-radius: 4px; */
+  }
+
+  .active {
+    color: $primary-6;
+  }
+
+  &-version {
+    font-size: 12px;
+    font-weight: bolder;
+    color: transparent;
+  }
+
+  &-title {
+    font-size: 14;
+    font-weight: bold;
+    color: $panel-text-color;
+  }
+
+  &-icons {
+    .anticon {
+      line-height: 36px;
+      font-size: 16px;
+      float: right;
+      color: linear-gradient(0deg, #5a6a82, #7a8da0);
+    }
+    .anticon:hover {
+      color: $primary-6;
+    }
+  }
+
+  &-span {
+    display: inline-block;
+    justify-content: space-between;
+  }
+  &-span:hover {
+    .iconfont {
+      color: $primary-6;
+    }
+    .iconfont-disabled {
+      color: #666666 !important;
+    }
+    .mapgis-3d-stratified-household-version {
+      color: $primary-6;
+    }
+  }
+  &-span-inline {
+    width: 210px;
+  }
+  &-span {
+    .iconfont {
+      line-height: 28px;
+      font-size: 16px;
+      float: right;
+      color: transparent;
+    }
+
+    .iconfont-disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .mapgis-3d-g3d-document {
+    display: block;
+    height: fit-content;
+    &-tree {
+      max-height: 360px;
+      min-width: 200px;
+      /* max-width: 300px; */
+      overflow-y: scroll;
+    }
+  }
+
+  .mapgis-ui-tree li span.mapgis-ui-tree-switcher {
+    display: none;
+  }
+  .mapgis-ui-collapse-card-extra {
+    .anticon {
+      line-height: 36px;
+    }
+  }
+}
+
+.mapgis-3d-stratified-household-menus {
+  max-width: 265px;
+  &-content {
+    display: block;
+  }
+  .mapgis-ui-tab-panel {
+    width: 254px;
+  }
+  .m-colorPicker .box {
+    left: -30px;
+    width: 190px;
+    padding: 0px;
+  }
+
+  .m-colorPicker .colorBtn {
+    width: 150px;
+  }
+
+  .mapgis-3d-m3d-menu-explosion {
+    &-direction {
+      height: 100px;
+      .anticon {
+        font-size: 14px;
+      }
+    }
+
+    &-content {
+      padding: 0px;
+      .mapgis-ui-input-number-panel {
+        margin: 10px 0px;
+      }
+    }
+  }
+}

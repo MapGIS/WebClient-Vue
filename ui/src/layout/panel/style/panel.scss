@@ -195,8 +195,8 @@
     font-weight: 400;
     color: $panel-text-color;
   }
-  .mapgis-ui-select{
-    width:100%;
+  .mapgis-ui-select {
+    width: 100%;
     font-size: 13px;
   }
 }
@@ -254,6 +254,141 @@
         color: #ffffff;
       }
       background: linear-gradient(0deg, #52b0f2, #0081e2);
+    }
+  }
+}
+
+@include b(slider-panel) {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  display: flex;
+  width: 68px;
+  height: fit-content;
+  max-height: 360px;
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+  &-background {
+    position: absolute;
+    width: 40px;
+    height: 100%;
+    max-height: 360px;
+    z-index: 0;
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0),
+      #ffffff,
+      rgba(255, 255, 255, 0)
+    );
+  }
+  &-content {
+    width: 68px;
+    z-index: 2;
+    max-height: 360px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 0px;
+      background: transparent;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 0;
+      background: transparent;
+    }
+  }
+  &-value {
+    display: flex;
+    width: 40px;
+
+    &-vertical {
+      flex-direction: column;
+      height: fit-content;
+    }
+    &-horizontal {
+      flex-direction: row;
+    }
+  }
+
+  &-anchor {
+    width: 24px;
+    // padding: 50px 0px;
+    margin-left: -10px;
+    padding-top: 60px;
+    padding-bottom: 20px;
+    /* height: auto;
+    max-height: 360px; */
+    &-line {
+      width: 1px;
+      height: 100%;
+      max-height: 360px;
+      margin: 0 6px;
+      background: linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0),
+        #ffffff,
+        rgba(255, 255, 255, 0)
+      );
+    }
+    &-icon {
+      height: 14px;
+      width: 14px;
+      background: linear-gradient(0deg, #168de5, #91d5ff);
+      box-shadow: 0px 3px 7px 0px rgba(0, 41, 71, 0.2);
+    }
+    .mapgis-ui-slider-dot {
+      display: none;
+    }
+    .mapgis-ui-slider-track {
+      background: linear-gradient(90deg, #91d5ff, #168de5);
+      width: 2px;
+    }
+    .mapgis-ui-slider-rail {
+      width: 2px;
+    }
+    .mapgis-ui-slider-vertical .mapgis-ui-slider-handle {
+      margin-top: -6px;
+      margin-left: -4px;
+    }
+    .mapgis-ui-slider-handle {
+      width: 10px;
+      height: 10px;
+      border-radius: 0px;
+      transform: rotate(45deg) !important;
+    }
+
+    /* .mapgis-ui-slider {
+      margin: 60px 0px;
+    } */
+  }
+
+  &-item {
+    span {
+      min-width: 40px;
+      min-height: 40px;
+      font-size: 14px;
+      line-height: 40px;
+      text-align: center;
+      color: $text-color;
+    }
+
+    text-align: center;
+    color: $text-color;
+    min-width: 40px;
+    min-height: 40px;
+
+    &-active {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(-90deg, #0081e2, #91d5ff);
+      font-weight: bolder;
+      span {
+        color: #ffffff;
+      }
     }
   }
 }

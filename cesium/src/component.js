@@ -36,7 +36,6 @@ export { default as Mapgis3dVectortileLayer } from "./components/Layer/VectorTil
 // 模型
 export { default as Mapgis3dFileM3d } from "./components/Layer/M3D/M3dFile.vue";
 export { default as Mapgis3dG3dLayer } from "./components/Layer/M3D/G3D.vue";
-export { default as Mapgis3dG3dStratifiedHousehold } from "./components/Layer/M3D/G3DStratifiedHousehold.vue";
 export { default as Mapgis3dM3dLayer } from "./components/Layer/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue";
 
@@ -77,6 +76,7 @@ export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
 export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/particle/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
+export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";

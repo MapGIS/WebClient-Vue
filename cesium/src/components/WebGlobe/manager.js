@@ -88,6 +88,9 @@ export function initVueCesium() {
     window.vueCesium.SkyLineAnalysisManager || new SkyLineAnalysisManager();
   window.vueCesium.ContourAnalysisManager =
     window.vueCesium.ContourAnalysisManager || new ContourAnalysisManager();
+  window.vueCesium.StratifiedHousehouldManager =
+    window.vueCesium.StratifiedHousehouldManager ||
+    new StratifiedHousehouldManager();
   window.vueCesium.ViewshedAnalysisManager =
     window.vueCesium.ViewshedAnalysisManager || new ViewshedAnalysisManager();
   window.vueCesium.VisiblityAnalysisManager =
@@ -104,7 +107,7 @@ export function initVueCesium() {
     window.vueCesium.MapStoryManager || new MapStoryManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
-  window.vueCesium.getViewer = function(vueKey) {
+  window.vueCesium.getViewer = function (vueKey) {
     if (!vueKey) {
       vueKey = "default";
     }
@@ -119,13 +122,13 @@ export function initVueCesium() {
    * @param callback 回调函数
    * @param vueKey vueKey，唯一标识webscene组件
    * */
-  window.vueCesium.getViewerByInterval = function(callback, vueKey) {
+  window.vueCesium.getViewerByInterval = function (callback, vueKey) {
     if (!vueKey) {
       vueKey = "default";
     }
     let ViewerManager = window.vueCesium.ViewerManager,
       viewer;
-    let interval = setInterval(function() {
+    let interval = setInterval(function () {
       if (
         ViewerManager.hasOwnProperty(vueKey) &&
         ViewerManager[vueKey].length > 0
@@ -155,7 +158,7 @@ export class BaseManager {
       parent: vueKey,
       key: vueIndex,
       source: source,
-      options: options
+      options: options,
     });
   }
 
@@ -216,6 +219,7 @@ export class BaseManager {
       }
       return result;
     });
+
     find.options = find.options || {};
     find.options[key] = value;
 
@@ -241,7 +245,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index
+        index: index,
       };
     }
     return findSource;
@@ -254,7 +258,7 @@ export class BaseManager {
 
   flatAllSource() {
     let flat = [];
-    Object.keys(this).forEach(k => {
+    Object.keys(this).forEach((k) => {
       if (k !== "vueKey") {
         flat = flat.concat(this[k]);
       }
@@ -298,6 +302,7 @@ export class DynamicSectionAnalysisManager extends BaseManager {}
 export class SlopeAnalysisManager extends BaseManager {}
 export class SkyLineAnalysisManager extends BaseManager {}
 export class ContourAnalysisManager extends BaseManager {}
+export class StratifiedHousehouldManager extends BaseManager {}
 export class ViewshedAnalysisManager extends BaseManager {}
 export class VisiblityAnalysisManager extends BaseManager {}
 export class CutFillAnalysisManager extends BaseManager {}
