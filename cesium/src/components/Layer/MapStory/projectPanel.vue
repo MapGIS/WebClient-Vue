@@ -44,6 +44,10 @@
         @backed="$_closeEdit"
         @showFeature="$_showFeature"
         @titleChanged="$_titleChanged"
+        @featureTitleChanged="$_featureTitleChanged"
+        @firstAddPicture="$_firstAddPicture"
+        @changeColor="$_changeColor"
+        @changeOpacity="$_changeOpacity"
         v-show="!showProjectPanel"
         v-model="currentProject"
         :height="panelHeight"
@@ -65,6 +69,10 @@
         @backed="$_closeEdit"
         @showFeature="$_showFeature"
         @titleChanged="$_titleChanged"
+        @featureTitleChanged="$_featureTitleChanged"
+        @firstAddPicture="$_firstAddPicture"
+        @changeColor="$_changeColor"
+        @changeOpacity="$_changeOpacity"
         v-show="showPanels.showProjectEdit"
         v-model="currentProject"
         :height="panelHeight"
@@ -104,6 +112,9 @@ export default {
     enableClose: {
       type: Boolean,
       default: true
+    },
+    upProjectSet: {
+      type: Object,
     }
   },
   data() {
@@ -118,7 +129,6 @@ export default {
       showProjectPanel: true,
       showPlay: true,
       showArrow: true,
-      projectSet: {},
       enableFullScreen: true,
       showPanels: window.showPanels
     }
@@ -191,14 +201,15 @@ export default {
       this.$emit("getCamera", currentFeature);
     },
     $_deleteProject(project) {
+      this.$emit("deleteProject");
       for (let i = 0; i < this.projects.length; i++) {
         if (this.projects[i].uuid === project.uuid) {
           this.projects.splice(i, 1);
         }
       }
       if (!project.features) {
-        if (this.projectSet.hasOwnProperty(project.uuid)) {
-          project = this.projectSet[project.uuid];
+        if (this.upProjectSet.hasOwnProperty(project.uuid)) {
+          project = this.upProjectSet[project.uuid];
         } else {
           return;
         }
@@ -251,20 +262,29 @@ export default {
         this.$set(this.optArr, index, map);
       }
     },
-    $_deleteFeature(index, id, project) {
-      this.$emit("deleteFeature", index, id, project);
+    $_deleteFeature(index, id, project, feature) {
+      this.$emit("deleteFeature", index, id, project, feature[0]);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
     },
-    $_changeColor(color, id, type) {
-      this.$emit("changeColor", color, id, type);
+    $_changeColor(color, type, id, geometryType) {
+      this.$emit("changeColor", color, type, id, geometryType);
+    },
+    $_changeOpacity(opacity, color, id, geometryType) {
+      this.$emit("changeOpacity", opacity, color, id, geometryType);
     },
     $_showFeature(id, flag, index, project) {
       this.$emit("showFeature", id, flag, index, project);
     },
     $_showProject(project) {
       this.$emit("showProject", project);
+    },
+    $_firstAddPicture(feature) {
+      this.$emit("firstAddPicture", feature);
+    },
+    $_featureTitleChanged(feature) {
+      this.$emit("featureTitleChanged", feature);
     },
     $_titleChanged(title) {
       for (let i = 0; i < this.projects.length; i++) {

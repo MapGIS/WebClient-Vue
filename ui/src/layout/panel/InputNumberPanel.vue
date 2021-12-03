@@ -5,6 +5,7 @@
       'mapgis-ui-input-number-panel-sm': size == 'small',
       'mapgis-ui-input-number-panel-md': size == 'medium'
     }"
+    :style="panelStyle"
   >
     <div v-if="size == 'large'">
       <mapgis-ui-row>
@@ -35,13 +36,14 @@
       </mapgis-ui-row>
     </div>
     <mapgis-ui-row v-if="size == 'small'">
-      <mapgis-ui-col :span="16">
+      <mapgis-ui-col v-bind="labelCol">
         <mapgis-ui-slider
           class="slide-hover"
           v-model="number"
           :min="range[0]"
           :max="range[1]"
           :step="step"
+          v-show="slider"
         >
         </mapgis-ui-slider>
         <mapgis-ui-space>
@@ -52,10 +54,10 @@
               <mapgis-ui-iconfont type="mapgis-info-circle" />
             </mapgis-ui-tooltip>
           </div>
-          <div class="range-sm">{{ range[0] }} ~ {{ range[1] }}</div>
+          <div class="range-sm" v-if="range.length == 2">{{ range[0] }} ~ {{ range[1] }}</div>
         </mapgis-ui-space>
       </mapgis-ui-col>
-      <mapgis-ui-col :span="8">
+      <mapgis-ui-col v-bind="wrapperCol">
         <mapgis-ui-input-number
           autoWidth
           size="small"
@@ -75,6 +77,7 @@
               :min="range[0]"
               :max="range[1]"
               :step="step"
+              v-show="slider"
           />
           <mapgis-ui-input-number
               v-model="number"
@@ -119,15 +122,23 @@ export default {
     labelCol: {
       type: Object,
       default: () => {
-        return { span: 14 };
+        return { span: 16 };
       }
     },
     wrapperCol: {
       type: Object,
       default: () => {
-        return { span: 10 };
+        return { span: 8 };
       }
+    },
+    panelStyle: {
+      type: Object,
+    },
+    slider:{
+      type:Boolean,
+      default:true
     }
+    
   },
   data() {
     return {

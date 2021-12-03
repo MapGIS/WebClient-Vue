@@ -1,7 +1,14 @@
 <template>
-    <div class="mapgis-ui-color-pick-panel" :style="colorStyle">
+    <div :class="{'mapgis-ui-color-pick-panel-sm' : size == 'small' ,'mapgis-ui-color-pick-panel' : true}" :style="colorStyle">
         <mapgis-ui-row>
-            <mapgis-ui-col :span="labelCol" class="mapgis-ui-color-pick-panel-label">
+            <mapgis-ui-col 
+                :span="labelCol"     
+                :class="{
+                  'mapgis-ui-color-pick-panel-label': true,
+                  'mapgis-ui-color-pick-panel-label-sm': size == 'small',
+                  'mapgis-ui-color-pick-panel-label-lg': size == 'large'
+                }"
+            >
                 <label>{{ label }}</label>
             </mapgis-ui-col>
             <mapgis-ui-col :span="wrapperCol">
@@ -9,6 +16,7 @@
                     :color="color"
                     :disableAlpha="disableAlpha"
                     @input="inputChange"
+                    :size="size"
                 />
             </mapgis-ui-col>
         </mapgis-ui-row>
@@ -43,6 +51,10 @@ export default {
             type: Number,
             default: 18,
         },
+        size:{
+            type: String, //small default large
+            default:"default"
+        }
     },
     methods: {
         inputChange(e) {

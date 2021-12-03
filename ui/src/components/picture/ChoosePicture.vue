@@ -28,9 +28,11 @@
       >
         <!--遮罩-->
         <div v-show="shapeIndex === index" class="mapgis-ui-choose-picture-img-shape">
-          <mapgis-ui-svg-icon @click="$_reload(index)" style="width: 36px;text-align: center;margin-top: 10px;padding-left: 10px"
+          <mapgis-ui-svg-icon @click="$_reload(index)"
+                              style="width: 36px;text-align: center;margin-top: 10px;padding-left: 10px"
                               :iconStyle="shapeIcon" type="edit"/>
-          <mapgis-ui-svg-icon @click="$_delete(index)" style="width: 36px;text-align: center;margin-top: 10px;padding-right: 10px"
+          <mapgis-ui-svg-icon @click="$_delete(index)"
+                              style="width: 36px;text-align: center;margin-top: 10px;padding-right: 10px"
                               :iconStyle="shapeIcon" type="delete"/>
         </div>
         <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
@@ -199,6 +201,9 @@ export default {
           vm.imgUrls.push(url);
           vm.currentImgUrl = url;
           vm.currenImgIndex = vm.imgUrls.length - 1;
+          if (vm.imgUrls.length === 1) {
+            vm.$emit("firstAddPicture");
+          }
         }
       }
     }
@@ -227,14 +232,11 @@ export default {
 
 .mapgis-ui-choose-picture-carousel {
   width: 99%;
-  padding: 10px;
+  padding: 8px;
   height: auto;
   text-align: left;
-  margin: 10px auto;
-  margin-top: 0;
-  border: 1px solid rgb(217,217,217);
-  border-radius: 3px
-;
+  border: 1px solid rgb(217, 217, 217);
+  border-radius: 3px;
 }
 
 .mapgis-ui-choose-picture-img-container {

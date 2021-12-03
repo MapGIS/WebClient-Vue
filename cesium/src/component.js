@@ -1,5 +1,5 @@
 export { default as MapgisWebScene } from "./components/WebGlobe/WebGlobe.vue";
-// export { default as Mapgis3dViewpointManager } from "./components/WebGlobe/ViewpointManager.vue";
+export { default as Mapgis3dViewpointManager } from "./components/WebGlobe/ViewpointManager.vue";
 
 // 工具
 export { default as Mapgis3dStatebar } from "./components/UI/Controls/State/StateControl.vue";
@@ -75,7 +75,7 @@ export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
-export { default as Mapgis3dParticleEffects } from "./components/Overlay/ParticleEffects";
+export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/particle/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 
 //融合组件
@@ -94,5 +94,5 @@ export { default as Mapgis3DComprehensiveQuery } from "./components/service/comp
 export { default as Mapgis3DDataFlow } from "./components/Layer/DataFlow/DataFlow";
 export { default as Mapgis3DTack } from "./components/Layer/Track/Track";
 export { default as Mapgis3DPlottingLayer } from "./components/Layer/Plotting/PlottingLayer";
-// export { default as Mapgis3DMapStoryLayer } from "./components/Layer/MapStory/MapStory";
-// export { default as Mapgis3DPreviewMapStoryLayer } from "./components/Layer/MapStory/PreviewMapStory";
+export { default as Mapgis3DMapStoryLayer } from "./components/Layer/MapStory/MapStory";
+export { default as Mapgis3DPreviewMapStoryLayer } from "./components/Layer/MapStory/PreviewMapStory";

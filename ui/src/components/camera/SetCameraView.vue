@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mapgis-ui-row class="mapgis-ui-set-camera-panel-camera">
+    <mapgis-ui-row v-if="showTitle" class="mapgis-ui-set-camera-panel-camera">
       <mapgis-ui-col :span="24">
         <h4 class="mapgis-ui-set-camera-panel-camera-title">
           <mapgis-ui-title-icon/>
@@ -8,7 +8,7 @@
         </h4>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-row class="mapgis-ui-set-camera-set-camera" style="text-align: center;">
+    <mapgis-ui-row v-if="showButton" class="mapgis-ui-set-camera-set-camera" style="text-align: center;">
       <mapgis-ui-button @click="$_click" type="primary" class="mapgis-ui-set-camera-reset-camera-get">
         获取当前视角
       </mapgis-ui-button>
@@ -96,6 +96,14 @@ export default {
   props: {
     camera: {
       type: Object
+    },
+    showTitle: {
+      type: Boolean,
+      default: true
+    },
+    showButton: {
+      type: Boolean,
+      default: true
     }
   },
   model: {

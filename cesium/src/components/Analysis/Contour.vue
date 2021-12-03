@@ -16,6 +16,7 @@
             label="等值线"
             :height="'154px'"
             v-if="switchOptions.indexOf('isogram') >= 0"
+            :checked="isogram"
             @changeChecked="startIsogram"
         >
           <mapgis-ui-form-item label="线宽">
@@ -51,20 +52,29 @@
               :range="[0,1]"
               :step="0.1"
               v-model="formData2.bandTransparencyCopy"/>
-
+          <mapgis-ui-collapse>
+            <mapgis-ui-collapse-panel header="图例">
+              <mapgis-ui-colors-setting
+                  v-model="formData2.bandColorArray"
+                  :rangeField="'高度'"
+                  :singleNumber="true"
+              >
+              </mapgis-ui-colors-setting>
+            </mapgis-ui-collapse-panel>
+          </mapgis-ui-collapse>
         </mapgis-ui-switch-panel>
-        <mapgis-ui-switch-panel
-            :labelCol="{ span: 8 }"
-            :wrapperCol="{ span: 16 }"
-            layout="horizontal"
-            label="颜色表">
-          <mapgis-ui-colors-setting
-              v-model="formData2.bandColorArray"
-              :rangeField="'高度'"
-              :singleNumber="true"
-          >
-          </mapgis-ui-colors-setting>
-        </mapgis-ui-switch-panel>
+<!--        <mapgis-ui-switch-panel-->
+<!--            :labelCol="{ span: 8 }"-->
+<!--            :wrapperCol="{ span: 16 }"-->
+<!--            layout="horizontal"-->
+<!--            label="图例">-->
+<!--          <mapgis-ui-colors-setting-->
+<!--              v-model="formData2.bandColorArray"-->
+<!--              :rangeField="'高度'"-->
+<!--              :singleNumber="true"-->
+<!--          >-->
+<!--          </mapgis-ui-colors-setting>-->
+<!--        </mapgis-ui-switch-panel>-->
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
           >分析
@@ -251,7 +261,7 @@ export default {
   data() {
     return {
       //等值线开关
-      isogram: false,
+      isogram: true,
       maxIsogram: undefined,
       maxIsosurface: undefined,
       padVal: undefined,
@@ -272,7 +282,7 @@ export default {
       bandPositionCopy: [],
       colorsArrayCopy: [],
       backgroundTransparency: 0.6,
-      getTerrianHeight: false,
+      // getTerrianHeight: false,
       zMax: undefined
     };
   },
@@ -503,14 +513,14 @@ export default {
     getHeightAndColor() {
       let vm = this;
       vm.bandPositionCopy = [];
-      // vm.colorsArrayCopy = [];
+      vm.colorsArrayCopy = [];
       for (let i = 0; i < vm.formData2.bandColorArray.length; i++) {
         vm.bandPositionCopy.push(vm.formData2.bandColorArray[i].max);
         // color 转换成Cesium
-        // let cesiumColor = Cesium.Color.fromCssColorString(
-        //     vm.formData2.bandColorArray[i].color
-        // );
-        // vm.colorsArrayCopy.push(vm.formData2.bandColorArray[i].color);
+        let cesiumColor = Cesium.Color.fromCssColorString(
+            vm.formData2.bandColorArray[i].color
+        );
+        vm.colorsArrayCopy.push(cesiumColor);
       }
     },
 
@@ -546,7 +556,7 @@ export default {
           //   color = d3.interpolateBlues(i / heightUnit);
           // }
           vm.formData2.bandColorArray.push(unit);
-          vm.getTerrianHeight = true;
+          // vm.getTerrianHeight = true;
         }
         console.log("this.colorsArrayCopy", this.colorsArrayCopy);
 
@@ -631,5 +641,12 @@ export default {
 .mapgis-widget-contour-analysis {
   max-height: calc(50vh);
   overflow-y: auto;
+}
+::v-deep .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header{
+  border-left: unset !important;
+  font-size: 13px;
+}
+::v-deep .mapgis-ui-table-body{
+  max-height: 167px !important;
 }
 </style>
