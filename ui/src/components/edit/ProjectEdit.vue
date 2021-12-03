@@ -68,6 +68,7 @@
           @getCamera="$_getCamera"
           @addMap="$_addMap"
           @changeColor="$_changeColor"
+          @changeOpacity="$_changeOpacity"
           @changeIcon="$_changeIcon"
           @featurePreview="$_featurePreview"
           @back="$_featureBack"
@@ -214,6 +215,11 @@ export default {
     $_changeColor(color, type) {
       this.$emit("changeColor", color, type, this.currentFeature.id, this.currentFeature.baseUrl.type);
     },
+    $_changeOpacity(opacity) {
+      if (this.currentFeature) {
+        this.$emit("changeOpacity", opacity, this.currentFeature.layerStyle.color, this.currentFeature.id, this.currentFeature.baseUrl.type);
+      }
+    },
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon, this.currentFeature.id);
     },
@@ -258,9 +264,11 @@ export default {
         "containerType": "small",
         "images": "",
         "layerStyle": {
-          "show": true
+          "show": true,
+          "color": "#FF0000",
+          "opacity": 1
         },
-        show: true,
+        "show": true,
         "baseUrl": {
           "type": type,
           "geometry": {},

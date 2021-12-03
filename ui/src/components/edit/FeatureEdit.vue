@@ -37,7 +37,7 @@
       </mapgis-ui-row>
       <!--透明度-->
       <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-        <mapgis-ui-slider-title title="透明度"/>
+        <mapgis-ui-slider-title @change="$_changeOpacity" v-model="featureCopy.layerStyle.opacity" title="透明度"/>
       </mapgis-ui-row>
       <!--富文本-->
       <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
@@ -250,9 +250,16 @@ export default {
     },
     $_init() {
       this.featureCopy = this.feature;
-      const {map} = this.featureCopy;
+      const {map, layerStyle} = this.featureCopy;
       if (!map) {
         this.featureCopy.map = {};
+      }
+      if (!layerStyle) {
+        this.featureCopy.layerStyle = {
+          "show": true,
+          "color": "#FF0000",
+          "opacity": 1
+        };
       }
     },
     showImagePrompt(command) {
@@ -319,6 +326,9 @@ export default {
     },
     $_changeFillColor(color) {
       this.$emit("changeColor", color, "fill");
+    },
+    $_changeOpacity(opacity) {
+      this.$emit("changeOpacity", opacity, "fill");
     },
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon);

@@ -47,6 +47,7 @@
         @featureTitleChanged="$_featureTitleChanged"
         @firstAddPicture="$_firstAddPicture"
         @changeColor="$_changeColor"
+        @changeOpacity="$_changeOpacity"
         v-show="!showProjectPanel"
         v-model="currentProject"
         :height="panelHeight"
@@ -71,6 +72,7 @@
         @featureTitleChanged="$_featureTitleChanged"
         @firstAddPicture="$_firstAddPicture"
         @changeColor="$_changeColor"
+        @changeOpacity="$_changeOpacity"
         v-show="showPanels.showProjectEdit"
         v-model="currentProject"
         :height="panelHeight"
@@ -268,6 +270,9 @@ export default {
     },
     $_changeColor(color, type, id, geometryType) {
       this.$emit("changeColor", color, type, id, geometryType);
+    },
+    $_changeOpacity(opacity, color, id, geometryType) {
+      this.$emit("changeOpacity", opacity, color, id, geometryType);
     },
     $_showFeature(id, flag, index, project) {
       this.$emit("showFeature", id, flag, index, project);

@@ -8,16 +8,18 @@
       <mapgis-ui-col :span="16">
         <mapgis-ui-slider
             v-model="valueCopy"
-            :min="1"
-            :max="100"
+            :min="0"
+            :max="1"
+            :step="0.01"
             class="mapgis-ui-slider-title-slider"
         />
       </mapgis-ui-col>
       <mapgis-ui-col :span="8">
         <mapgis-ui-input-number
             v-model="valueCopy"
-            :min="1"
-            :max="100"
+            :min="0"
+            :max="1"
+            :step="0.01"
             class="mapgis-ui-slider-title-input"
         />
       </mapgis-ui-col>
@@ -79,6 +81,5 @@ export default {
   position: relative;
   padding-left: 13px;
   margin-top: 6px;
-  margin-bottom: 6px;
 }
 </style>

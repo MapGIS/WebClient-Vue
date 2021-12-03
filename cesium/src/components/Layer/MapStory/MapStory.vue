@@ -5,6 +5,7 @@
                    @deleteProject="$_deleteProject"
                    @getCamera="$_getCamera"
                    @changeColor="$_changeColor"
+                   @changeOpacity="$_changeOpacity"
                    @changeIcon="$_changeIcon"
                    @showFeature="$_showFeature"
                    @showProject="$_showProject"
@@ -158,6 +159,7 @@ export default {
           });
           break;
       }
+      window.feature.layerStyle.opacity = 1;
       this.$refs.projectPanel.currentProject.features.push(window.feature);
       this.$refs.projectPanel.$refs.projectP.showEditPanel = false;
     },
@@ -172,7 +174,7 @@ export default {
           lat: feature.center[1],
           alt: feature.center[2],
         };
-      }else {
+      } else {
         lnglatPosition = this.$_cartesian3ToLongLat(feature.baseUrl.geometry);
       }
       this.popups.push({
@@ -244,6 +246,22 @@ export default {
           this.$set(this.popups[i], "title", feature.title);
           break;
         }
+      }
+    },
+    $_changeOpacity(opacity, color, id, geometryType) {
+      let entity = this.viewer.entities.getById(id);
+      opacity = Number(opacity);
+      switch (geometryType) {
+        case "polygon":
+          if (entity.polygon) {
+            entity[geometryType].material = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(color), opacity);
+          } else if (entity.rectangle) {
+            entity.rectangle.material = new Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(color), opacity);
+          }
+          break;
+        case "polyline":
+          entity[geometryType].material = new Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(color), opacity);
+          break;
       }
     },
     $_changeColor(color, type, id, geometryType) {
