@@ -53,9 +53,9 @@
     margin-right: 0;
   }
 
-  .mapgis-ui-slider-rail {
-    background-color: #ffffff;
-  }
+  // .mapgis-ui-slider-rail {
+  //   background-color: #ffffff;
+  // }
 
   @include e(label, "-") {
     padding: 0 6px;
@@ -135,17 +135,25 @@
   &-md {
     height: 40px;
     padding: 0 10px;
+    .mapgis-ui-row{
+      height: 40px;
+      line-height: 40px;
+      overflow: hidden;
+    }
+    .label-md{
+      margin: 0;
+      color: $panel-text-color;
+      font-size: 14px;
+    }
     .mapgis-ui-input-number {
       /* margin-right: 12px; */
-      width: 60px;
+      width: 100%;
     }
     .mapgis-ui-slider {
-      width: 110px;
+      width: 120px;
+      margin: 0;
     }
 
-    .mapgis-ui-slider-rail {
-      background-color: #ffffff;
-    }
   }
   .mapgis-ui-row {
     // height: 46px;

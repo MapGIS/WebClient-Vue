@@ -30,7 +30,7 @@
       <mapgis-ui-input-number-panel 
         size="small"
         label="底部高程(米)"
-        :panelStyle="{padding:'0px',background:'#ffffff'}"
+        :panelStyle="{padding:'0px'}"
         :labelCol="{ span: 10 }"
         :wrapperCol="{ span: 14 }" 
         v-model="formData.minHeight" 
@@ -41,7 +41,7 @@
       <mapgis-ui-input-number-panel 
         size="small"
         label="拉伸高度(米)"
-        :panelStyle="{padding:'0px',background:'#ffffff'}"
+        :panelStyle="{padding:'0px'}"
         :labelCol="{ span: 10 }"
         :wrapperCol="{ span: 14 }" 
         v-model="formData.stretchHeight" 

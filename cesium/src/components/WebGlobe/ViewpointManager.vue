@@ -114,7 +114,7 @@ export default {
             selectMode: false,
             mode: undefined, //add edit
             selectItems: [],
-            editor: false,
+            editor: true,
             editItem: undefined,
             hover: undefined,
             manager:true,
