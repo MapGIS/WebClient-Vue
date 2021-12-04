@@ -239,3 +239,6 @@ export { default as MapgisUiProjectHeader } from "./components/head/ProjectHeade
 //camera
 export { default as MapgisUiSetCameraView } from "./components/camera/SetCameraView";
 export { default as MapgisUiSetCameraViewSelect } from "./components/camera/SetCameraViewSelect";
+
+//popup
+export { default as MapgisUiPopupContent } from "./components/popup/PopupContent";
