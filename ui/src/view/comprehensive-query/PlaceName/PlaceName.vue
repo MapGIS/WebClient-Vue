@@ -39,6 +39,7 @@
             :keyword="keyword"
             :activeTab="tab"
             :geometry="geometry"
+            :geoJSONExtent="geoJSONExtent"
             @select-markers="selectMarkers"
             @click-item="clickItem"
             @update-geojson="currentResult"
@@ -76,6 +77,13 @@ export default {
     geometry: {
       type: Object,
       default: () => ({})
+    },
+    /**
+     * dataStore多边形查询范围
+     */
+    geoJSONExtent: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -97,10 +105,10 @@ export default {
   },
   computed: {
     allItems() {
-      return this.widgetInfo.placeName.queryTable;
+      return this.config.queryTable;
     },
     showType() {
-      return this.widgetInfo.placeName.showType;
+      return this.config.showType;
     },
     config() {
       return this.widgetInfo.placeName || this.widgetInfo.dataStore;
@@ -138,7 +146,7 @@ export default {
         this.cluster = true;
       }
     },
-    colorCluster(color){
+    colorCluster(color) {
       this.$emit("color-cluster", color);
     },
     onChange(val) {
