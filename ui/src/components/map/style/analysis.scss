@@ -17,6 +17,13 @@ $tree-height: 400px;
   height: $tree-height;
   width: 270px;
 
+  &-slider-tree {
+    top: 80px;
+    right: 10px;
+    position: absolute;
+    z-index: 2000;
+  }
+
   .mapgis-ui-collapse-card {
     /* margin: 0px;
     padding: 0px; */

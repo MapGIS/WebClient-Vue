@@ -209,7 +209,7 @@
   height: 52px;
   line-height: 52px;
   overflow: hidden;
-  &-sm{
+  &-sm {
     height: 40px;
     line-height: 40px;
   }
@@ -217,11 +217,11 @@
     height: 32px;
     line-height: 32px;
   }
-  .mapgis-ui-color-pick-panel-label-sm{
+  .mapgis-ui-color-pick-panel-label-sm {
     height: 24px;
     line-height: 24px;
   }
-  .mapgis-ui-color-pick-panel-label-lg{
+  .mapgis-ui-color-pick-panel-label-lg {
     height: 40px;
     line-height: 40px;
   }
@@ -262,9 +262,59 @@
   overflow-x: hidden;
   overflow-y: scroll;
   display: flex;
-  width: 68px;
-  height: fit-content;
-  max-height: 360px;
+  &-vertical {
+    width: 68px;
+    height: fit-content;
+    max-height: 360px;
+  }
+  &-horizontal {
+    max-width: 360px;
+    width: fit-content;
+    height: 68px;
+    .mapgis-ui-slider-panel-background {
+      position: absolute;
+      width: 100%;
+      max-width: 360px;
+      height: 40px;
+      z-index: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0),
+        #ffffff,
+        rgba(255, 255, 255, 0)
+      );
+    }
+    .mapgis-ui-slider-panel-content {
+      max-width: 360px;
+      width: 100%;
+      overflow-x: scroll;
+      overflow-y: hidden;
+    }
+    .mapgis-ui-slider-panel-value {
+      width: 100%;
+      display: block;
+    }
+    .mapgis-ui-slider-panel-anchor {
+      width: 100%;
+      height: 24px;
+      margin-top: -10px;
+      margin-left: 0px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+      padding-left: 10px;
+      padding-right: 60px;
+    }
+    .mapgis-ui-slider-handle {
+      width: 10px;
+      height: 10px;
+      border-radius: 0px;
+      transform: rotate(45deg) !important;
+    }
+    .mapgis-ui-slider-track {
+      background: linear-gradient(90deg, #91d5ff, #168de5) !important;
+      width: 4px;
+    }
+  }
   &::-webkit-scrollbar {
     width: 0px;
     height: 0px;
@@ -303,25 +353,33 @@
   }
   &-value {
     display: flex;
-    width: 40px;
+    overflow-x: hidden;
+    overflow-y: hidden;
 
     &-vertical {
+      width: 40px;
+      display: flex;
       flex-direction: column;
       height: fit-content;
+      overflow-x: hidden;
+    }
+    &-horizontal-wrapper {
+      width: fit-content;
     }
     &-horizontal {
+      display: flex;
+      white-space: nowrap;
       flex-direction: row;
+      // overflow-x: scroll;
+      width: fit-content;
     }
   }
 
   &-anchor {
     width: 24px;
-    // padding: 50px 0px;
     margin-left: -10px;
     padding-top: 60px;
     padding-bottom: 20px;
-    /* height: auto;
-    max-height: 360px; */
     &-line {
       width: 1px;
       height: 100%;
@@ -344,15 +402,15 @@
       display: none;
     }
     .mapgis-ui-slider-track {
-      background: linear-gradient(90deg, #91d5ff, #168de5);
-      width: 2px;
+      background: linear-gradient(0deg, #91d5ff, #168de5);
+      width: 4px;
     }
     .mapgis-ui-slider-rail {
-      width: 2px;
+      width: 4px;
     }
     .mapgis-ui-slider-vertical .mapgis-ui-slider-handle {
       margin-top: -6px;
-      margin-left: -4px;
+      margin-left: -2px;
     }
     .mapgis-ui-slider-handle {
       width: 10px;
@@ -378,6 +436,8 @@
 
     text-align: center;
     color: $text-color;
+    height: 40px;
+    width: 40px;
     min-width: 40px;
     min-height: 40px;
 

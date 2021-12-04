@@ -9,6 +9,14 @@
     @toggle-main="handleBackMain"
   >
     <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
+    <mapgis-ui-slider-panel
+      class="mapgis-3d-stratified-household-slider-tree"
+      :values="layerTree"
+      @change="changeSimpleMenu"
+      @change-slider="changeSimpleSlider"
+    >
+    </mapgis-ui-slider-panel>
+
     <span class="mapgis-3d-stratified-household-title" slot="title">{{
       title
     }}</span>
@@ -135,8 +143,8 @@ export default {
         return {
           position: "absolute",
           zIndex: 1000,
-          padding: '0px',
-          margin: '0px',
+          padding: "0px",
+          margin: "0px",
           height: "450px",
           width: "270px",
           top: "0px",
@@ -336,6 +344,7 @@ export default {
               }
             });
           });
+          console.log('layerTree', vm.layerTree);
           vm.layerIds = all;
           vm.$emit("loaded", { component: vm });
           vm.version = g3dLayer.version;
@@ -826,7 +835,9 @@ export default {
           vm.clickvisible = false;
         }
       }
-    }
+    },
+    changeSimpleMenu(key) {},
+    changeSimpleSlider(keys) {}
   }
 };
 </script>

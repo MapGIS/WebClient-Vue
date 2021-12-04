@@ -23,11 +23,15 @@ const Template = (args, { argTypes }) => ({
     changeMenu(menu) {
       console.log("当前选中菜单:", menu);
     },
+    changeSlider(keys) {
+      console.log("当前框选菜单:", keys);
+    },
   },
-  template: `<div :style="{background: '#000', padding: '10px', height: '95vh'}">
-    <mapgis-ui-slider-panel v-bind="$props" @change="changeMenu">
+  template: `<div :style="{background: '#fff', padding: '10px', height: '95vh'}">
+    <mapgis-ui-slider-panel v-bind="$props" @change="changeMenu" @change-slider="changeSlider">
     </mapgis-ui-slider-panel>
-    <mapgis-ui-slider-panel v-bind="$props" layout="horizontal" @change="changeMenu">
+    <br />
+    <mapgis-ui-slider-panel v-bind="$props" layout="horizontal" @change="changeMenu" @change-slider="changeSlider">
     </mapgis-ui-slider-panel>
   </div>`,
 });
