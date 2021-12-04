@@ -9,9 +9,8 @@ export default {
   name: "mapgis-ui-pagination",
   wrapperUI: Pagination,
   mixins: [AntdMixin, ThemeMixin],
-  inheritAttrs: false,
   props: PaginationProps(),
-    model: {
+  model: {
     prop: 'current',
     event: 'change.current'
   },

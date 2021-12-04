@@ -517,21 +517,33 @@ export default {
                   let result = res.data;
                   let { errorCode, msg } = result;
                   if (errorCode < 0) {
-                    self.$Notice.error({ title: errorCode, desc: msg });
+                    let notification = {
+                      message: errorCode,
+                      description: msg,
+                      onClick: function () {
+                        console.warn('错误日志：', notification);
+                      }
+                    };
+                    self.$notification.error(notification);
                   } else {
-                    self.$Notice.success({
-                      title: "已添加导入任务",
-                      desc: "稍后可到任务日志中查看导入进程"
-                    });
+                    let notification = {
+                      message: "已添加导入任务",
+                      description: "稍后可到任务日志中查看导入进程"
+                    }
+                    self.$notification.success(notification);
                     addGisCurrent(dirResult[0].url);
                   }
                 }
               })
               .catch(error => {
-                self.$Notice.error({
-                  title: "网络异常,请检查链接",
-                  desc: error
-                });
+                let notification = {
+                  message: '网络异常,请检查链接',
+                  description: error,
+                  onClick: function () {
+                    console.warn('错误日志：', error);
+                  }
+                };
+                self.$notification.error(notification);
               });
           }
         })

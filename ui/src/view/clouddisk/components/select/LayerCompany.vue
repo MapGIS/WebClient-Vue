@@ -146,7 +146,14 @@ export default {
               resolve();
             })
             .catch(error => {
-              this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+              let notification = {
+                message: '网络异常,请检查链接',
+                description: error,
+                onClick: function () {
+                  console.warn('错误日志：', error);
+                }
+              };
+              this.$notification.error(notification);
               this.$store.commit("CHANGE_FILES", { files: [] });
               resolve();
             });
@@ -163,7 +170,14 @@ export default {
             let { data, errorCode, msg } = result;
             if (errorCode < 0) {
               this.$store.commit("CHANGE_FILES", { files: [] });
-              this.$Notice.error({ title: errorCode, desc: msg });
+              let notification = {
+                message: errorCode,
+                description: msg,
+                onClick: function () {
+                  console.warn('错误日志：', notification);
+                }
+              };
+              this.$notification.error(notification);
             } else {
               this.$store.commit("CHANGE_FILES", { files: data });
               this.$store.commit("CHANGE_CONTENT_TYPE", {
@@ -179,7 +193,14 @@ export default {
           this.$store.commit("CHANGE_FILES_LOADING", { loading: false });
         })
         .catch(error => {
-          this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
+          let notification = {
+            message: '网络异常,请检查链接',
+            description: error,
+            onClick: function () {
+              console.warn('错误日志：', error);
+            }
+          };
+          this.$notification.error(notification);
           this.$store.commit("CHANGE_FILES", { files: [] });
           this.$store.commit("CHANGE_FILES_LOADING", { loading: false });
         });
