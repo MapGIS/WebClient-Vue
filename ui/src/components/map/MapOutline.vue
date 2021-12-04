@@ -1,7 +1,7 @@
 <template>
   <div class="mapgis-ui-map-outline-container">
     <div class="mapgis-ui-map-outline-title">{{ title }}</div>
-    <mapgis-ui-row style="margin-bottom: 10px">
+    <mapgis-ui-row style="margin-bottom: 10px;padding-right: 11px;">
       <mapgis-ui-col span="18">
       </mapgis-ui-col>
       <mapgis-ui-col span="6">
@@ -90,14 +90,14 @@ export default {
       gdbps: "",
       currentSelect: "TILE",
       titleStyle: {
-        color: "#e8eaed",
-        paddingLeft: "12px"
+        fontSize: "14px",
+        top: "4px"
       },
       formStyle: {
         marginBottom: "0"
       },
       mainStyle: {
-        width: "234px",
+        width: "211px",
         marginLeft: "-26px",
       },
       selectData: [{
@@ -220,12 +220,11 @@ export default {
 
 <style scoped>
 .mapgis-ui-map-outline-container {
-  width: 342px;
+  width: 100%;
   height: auto;
   position: relative;
   border: 1px solid rgb(95, 99, 104);
   border-radius: 4px;
-  margin: 26px;
   padding: 14px;
   margin-top: 0;
 }
@@ -240,13 +239,9 @@ export default {
   left: 17px;
   z-index: 1;
   padding: 0 10px;
-  color: #e8eaed;
-  background: rgb(32, 33, 36);
 }
 
 .mapgis-ui-map-outline-add {
-  color: #e8eaed;
-  border-color: rgb(95, 99, 104);
   margin-left: -10px;
 }
 </style>

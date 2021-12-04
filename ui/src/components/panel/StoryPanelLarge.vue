@@ -1,13 +1,18 @@
 <template>
   <div v-if="currentFeature" class="mapgis-ui-story-panel-large"
-       :style="{transform: 'scale('+panelScale+')'}">
+       :style="{height: height + 'px', width: width + 'px'}">
     <img v-if="showFullImg" class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
     <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
                         :icon-style="iconStyle"
                         :container-style="containerStyle" type="close"/>
-    <img class="mapgis-ui-story-panel-large-carousel-img" v-if="!showCarousel" :src="currentFeature.images" alt="">
-    <mapgis-ui-carousel :afterChange="$_afterChange" v-if="showCarousel" class="mapgis-ui-story-panel-large-carousel"
-                        autoplay arrows>
+    <img :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
+        class="mapgis-ui-story-panel-large-carousel-img" v-if="!showCarousel" :src="currentFeature.images" alt="">
+    <mapgis-ui-carousel
+        :afterChange="$_afterChange"
+        v-if="showCarousel"
+        :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
+        class="mapgis-ui-story-panel-large-carousel"
+        autoplay arrows>
       <div
           slot="prevArrow"
           class="custom-slick-arrow"
@@ -19,20 +24,27 @@
         <mapgis-ui-iconfont type="mapgis-right-circle"/>
       </div>
       <div :key="index" v-for="(image,index) in currentFeature.images">
-        <img class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
+        <img :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
+             class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
       </div>
     </mapgis-ui-carousel>
-    <div @click="$_fullScreen" class="mapgis-ui-story-panel-large-full-screen">
+    <div v-if="enableFullScreen" @click="$_fullScreen" class="mapgis-ui-story-panel-large-full-screen">
       <mapgis-ui-base64-icon width="24px" height="24px" type="fullScreen"/>
     </div>
-    <div @click="$_flyTo" class="mapgis-ui-story-panel-large-fly">
-      <mapgis-ui-base64-icon style="display: block;margin: auto" width="28px" height="28px" type="flyTo"/>
+    <div @click="$_flyTo"
+         :style="{right: width / 400 * 30 + 'px',paddingTop: width / 400 * 12 + 'px', width: width / 400 * 56 + 'px', height: width / 400 * 56 + 'px', top: width * 9 / 16 - ( width / 400 * 56 ) / 2 + 'px'}"
+         class="mapgis-ui-story-panel-large-fly">
+      <mapgis-ui-base64-icon style="display: block;margin: auto" :width="width / 400 * 28 + 'px'"
+                             :height="width / 400 * 28 + 'px'" type="flyToView"/>
     </div>
-    <mapgis-ui-svg-icon @click="$_close" :icon-style="iconStyle" :container-style="containerStyle" type="close"/>
+    <mapgis-ui-svg-icon v-if="enableFullScreen" @click="$_close" :icon-style="iconStyle"
+                        :container-style="containerStyle" type="close"/>
     <div class="mapgis-ui-story-panel-large-title">
-      <h1>{{ currentFeature.title }}</h1>
+      {{ currentFeature.title }}
     </div>
-    <div class="mapgis-ui-story-panel-large-content" :id="storyContentId">
+    <!--减去图片高度、标题上边距、标题高度、内容上边距、底部高度-->
+    <div :style="{height: height - width * 9 / 16 - 20 -30 - 10 - 64 + 'px', overflowY: showContentScroll}"
+         class="mapgis-ui-story-panel-large-content" :id="storyContentId">
     </div>
     <div class="mapgis-ui-story-panel-large-bottom">
       <mapgis-ui-base64-icon v-show="!isPlay && showPlay" @click="$_play" class="mapgis-ui-story-panel-large-play"
@@ -40,7 +52,7 @@
       <mapgis-ui-base64-icon v-show="isPlay" @click="$_play" class="mapgis-ui-story-panel-large-play" type="pause"/>
       <mapgis-ui-iconfont v-show="!isPlay && showArrow" @click="$_prevFeature" style="width: 20px;cursor: pointer"
                           type="mapgis-left-circle"/>
-      {{ currentFeatureIndex }} / {{ this.featureCopy.length }}
+      {{ currentFeatureIndex }} / {{ this.dataSourceCopy.length }}
       <mapgis-ui-iconfont v-show="!isPlay && showArrow" @click="$_nextFeature" style="width: 20px;cursor: pointer"
                           type="mapgis-right-circle"/>
     </div>
@@ -53,7 +65,7 @@ import Base64IconsKeyValue from "../iconfont/Base64IconsKeyValue"
 export default {
   name: "mapgis-ui-story-panel-large",
   props: {
-    feature: {
+    dataSource: {
       type: Array,
       default() {
         return [];
@@ -63,11 +75,19 @@ export default {
       type: Number,
       default: 900
     },
+    width: {
+      type: Number,
+      default: 400
+    },
     showPlay: {
       type: Boolean,
       default: true
     },
     showArrow: {
+      type: Boolean,
+      default: true
+    },
+    enableFullScreen: {
       type: Boolean,
       default: true
     }
@@ -84,7 +104,7 @@ export default {
       currentFeatureIndex: 1,
       currentImgIndex: 0,
       currentImg: 0,
-      featureCopy: [],
+      dataSourceCopy: [],
       icon: Base64IconsKeyValue,
       containerStyle: {
         position: "absolute",
@@ -99,11 +119,12 @@ export default {
       },
       iconStyle: {
         opacity: 1
-      }
+      },
+      showContentScroll: false
     }
   },
   watch: {
-    feature: {
+    dataSource: {
       handler: function () {
         this.$_init();
         this.$nextTick(function () {
@@ -129,19 +150,19 @@ export default {
       if (!this.isPlay) {
         let vm = this;
         this.isPlay = true;
-        if (vm.currentFeatureIndex < vm.featureCopy.length && vm.currentFeatureIndex > 1) {
+        if (vm.currentFeatureIndex < vm.dataSourceCopy.length && vm.currentFeatureIndex > 1) {
           vm.currentFeatureIndex++;
         } else {
           vm.currentFeatureIndex = 1;
         }
-        vm.currentFeature = vm.featureCopy[vm.currentFeatureIndex - 1];
+        vm.currentFeature = vm.dataSourceCopy[vm.currentFeatureIndex - 1];
         vm.$_init();
         vm.$_flyTo();
         vm.$_setContent();
         this.interval = setInterval(function () {
-          if (vm.currentFeatureIndex < vm.featureCopy.length) {
+          if (vm.currentFeatureIndex < vm.dataSourceCopy.length) {
             vm.currentFeatureIndex++;
-            vm.currentFeature = vm.featureCopy[vm.currentFeatureIndex - 1];
+            vm.currentFeature = vm.dataSourceCopy[vm.currentFeatureIndex - 1];
             vm.$_init();
             vm.$_flyTo();
             vm.$_setContent();
@@ -158,7 +179,15 @@ export default {
     $_setContent() {
       let content = document.getElementById(this.storyContentId);
       if (content) {
-        content.innerHTML = this.currentFeature.content;
+        content.innerHTML = "<div id='" + this.storyContentId + "Div'>" + this.currentFeature.content + "</div>";
+        this.$nextTick(function () {
+          let contentDiv = document.getElementById(this.storyContentId + "Div");
+          if (contentDiv.clientHeight > (this.height - this.width * 9 / 16 - 20 - 30 - 10 - 64)) {
+            this.showContentScroll = true;
+          }else {
+            this.showContentScroll = false;
+          }
+        });
       }
     },
     $_closeFull() {
@@ -177,16 +206,16 @@ export default {
     $_prevFeature() {
       if (this.currentFeatureIndex > 1) {
         this.currentFeatureIndex--;
-        this.currentFeature = this.featureCopy[this.currentFeatureIndex - 1];
+        this.currentFeature = this.dataSourceCopy[this.currentFeatureIndex - 1];
         this.$_init();
         this.$_flyTo();
         this.$_setContent();
       }
     },
     $_nextFeature() {
-      if (this.currentFeatureIndex < this.featureCopy.length) {
+      if (this.currentFeatureIndex < this.dataSourceCopy.length) {
         this.currentFeatureIndex++;
-        this.currentFeature = this.featureCopy[this.currentFeatureIndex - 1];
+        this.currentFeature = this.dataSourceCopy[this.currentFeatureIndex - 1];
         this.$_init();
         this.$_flyTo();
         this.$_setContent();
@@ -196,9 +225,9 @@ export default {
       this.$emit("closePanel");
     },
     $_init() {
-      this.featureCopy = this.feature;
-      if (this.featureCopy.length > 0) {
-        this.currentFeature = this.featureCopy[this.currentFeatureIndex - 1];
+      this.dataSourceCopy = this.dataSource;
+      if (this.dataSourceCopy.length > 0) {
+        this.currentFeature = this.dataSourceCopy[this.currentFeatureIndex - 1];
       }
       if (!this.currentFeature) {
         return;
@@ -237,24 +266,26 @@ export default {
 }
 
 .mapgis-ui-story-panel-large-title {
+  width: 100%;
+  margin-top: 20px;
+  padding-left: 2px;
   text-align: left;
-  padding: 10px 14px;
-}
-
-.mapgis-ui-story-panel-large-title > h1 {
-  margin-bottom: 0;
+  font-size: 20px;
+  font-family: "Microsoft YaHei";
+  font-weight: bold;
 }
 
 .mapgis-ui-story-panel-large-content {
   width: 100%;
   word-break: break-word;
+  white-space: normal;
   text-align: left;
   font-size: 16px;
   color: rgba(0, 0, 0, .7);
-  padding: 0 14px 10px;
+  padding: 0 2px;
+  margin-top: 10px;
   height: calc(100% - 64px - 62px - 278px);
   overflow: hidden;
-  overflow-y: scroll;
 }
 
 .mapgis-ui-story-panel-large-content > img {
@@ -277,13 +308,11 @@ export default {
 
 .mapgis-ui-story-panel-large-fly {
   position: absolute;
-  top: 248px;
-  right: 30px;
   width: 56px;
   height: 56px;
-  border-radius: 100%;
   background: rgb(41, 121, 255);
-  padding-top: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 100%;
   transition: transform 0.5s;
   -moz-transition: transform 0.5s; /* Firefox 4 */
   -webkit-transition: transform 0.5s; /* Safari and Chrome */
@@ -292,9 +321,9 @@ export default {
 
 .mapgis-ui-story-panel-large-fly:hover {
   transform: scale(1.15);
-  -webkit-box-shadow: #666 0 0 10px;
-  -moz-box-shadow: #666 0 0 10px;
-  box-shadow: #666 0 0 10px;
+  -webkit-box-shadow: #7e9cf5 0 0 10px;
+  -moz-box-shadow: #7e9cf5 0 0 10px;
+  box-shadow: #7e9cf5 0 0 10px;
   cursor: pointer;
 }
 
@@ -334,7 +363,7 @@ export default {
 
 .mapgis-ui-story-panel-large-play {
   float: left;
-  margin-top: 20px;
+  margin-top: -2px;
   margin-left: 12px;
 }
 </style>

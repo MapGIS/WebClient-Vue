@@ -162,7 +162,7 @@ export default {
       this.locateFeature.features.push(Point);
       this.locateMarker = true;
       //先清空entity
-      viewer. entities.removeAll();
+      viewer.entities.removeAll();
       let entity = new Cesium.Entity({
         id: inputValue,
         position: Cesium.Cartesian3.fromDegrees(lon, lat,viewer.camera.positionCartographic.height),

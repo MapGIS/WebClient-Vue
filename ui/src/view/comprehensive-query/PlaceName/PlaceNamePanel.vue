@@ -5,7 +5,7 @@
         <ul class="comprehensive-place-name-panel">
           <li
             v-for="(item, i) in geojson.features"
-            :key="item.markerId"
+            :key="item.properties.markerId"
             @mouseover="mouseOver(i)"
             @mouseleave="mouseLeave(i)"
             @click="setActivePoint(i)"
@@ -57,6 +57,7 @@
 <script>
 import * as Feature from "../util/feature";
 import { Empty } from "ant-design-vue";
+import * as turf from "@turf/turf";
 export default {
   props: {
     widgetInfo: {
@@ -94,13 +95,19 @@ export default {
     geometry: {
       type: Object,
       default: () => ({})
+    },
+    /**
+     * dataStore多边形查询范围
+     */
+    geoJSONExtent: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
     return {
       fieldConfigs: [],
       fields: [],
-      isDataStoreQuery: false,
       currentPageIndex: 1,
       maxCount: 0,
       markersInfos: [],
@@ -113,7 +120,10 @@ export default {
   },
   computed: {
     allItems() {
-      return this.widgetInfo.placeName.queryTable;
+      return this.config.queryTable;
+    },
+    isDataStoreQuery() {
+      return !!this.widgetInfo.dataStore;
     },
     config() {
       return this.widgetInfo.placeName || this.widgetInfo.dataStore;
@@ -152,36 +162,133 @@ export default {
     this.queryFeature();
   },
   methods: {
+    /**
+     * 聚合展示时，面板展示内容
+     */
     setCounts() {
       return this.config.clusterMaxCount < this.maxCount
         ? `大于${this.config.clusterMaxCount}`
         : `为${this.maxCount}`;
     },
+    /**
+     * 通知外层组件更新标注点信息
+     */
     updataMarkers() {
       if (this.activeTab === this.name) {
-        // this.$emit("select-markers", []);
-        // this.$emit("update-geojson", {
-        //   type: "FeatureCollection",
-        //   features: []
-        // });
-        // this.$nextTick(() => {
         this.$emit("select-markers", this.selectMarkers);
         this.$emit("update-geojson", this.geojson);
         this.$emit("color-cluster", this.selectedItem.color);
-        // });
       }
     },
     async queryFeature() {
-      const where =
-        this.keyword && this.keyword !== ""
-          ? `${this.selectedItem.searchField ||
-              this.config.allSearchName} LIKE '%${this.keyword}%'`
-          : `${this.selectedItem.searchField ||
-              this.config.allSearchName} LIKE '%'`;
       if (!this.isDataStoreQuery) {
+        const where =
+          this.keyword && this.keyword !== ""
+            ? `${this.selectedItem.searchField ||
+                this.config.allSearchName} LIKE '%${this.keyword}%'`
+            : `${this.selectedItem.searchField ||
+                this.config.allSearchName} LIKE '%'`;
         await this.igsQuery(where);
       } else {
-        // await this.dsQuery(selectedItem, where, fields)
+        const where = this.keyword;
+        await this.dsQuery(where);
+      }
+    },
+    /**
+     * 当为dataStore查询时并且keyword为空，采用逆地理编码查询，获取中心点与查询范围
+     */
+    getLonLatDis() {
+      if (this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}") {
+        const { geometry } = this.geoJSONExtent;
+        const { coordinates } = geometry;
+        const from = turf.point(coordinates[0][0]);
+        const to = turf.point(coordinates[0][3]);
+        const options = { units: "kilometers" };
+
+        const distance = turf.rhumbDistance(from, to, options);
+
+        const center = turf.centerOfMass(this.geoJSONExtent);
+        return {
+          lon: center.geometry.coordinates[0],
+          lat: center.geometry.coordinates[1],
+          dis: distance / 2
+        };
+      }
+      return {};
+    },
+    /**
+     * dataStore查询，根据this.widgetInfo.dataStore该字段判断
+     */
+    async dsQuery(where) {
+      const { queryWay } = this.config;
+      let libName = this.selectedItem.mLibsName;
+      let lon;
+      let lat;
+      let dis;
+      if (this.isDataStoreQuery && !this.keyword) {
+        const lonLatDis = this.getLonLatDis();
+        lon = lonLatDis.lon;
+        lat = lonLatDis.lat;
+        dis = lonLatDis.dis;
+      }
+      const datastoreParams = {
+        ip: this.config.ip,
+        port: this.config.port,
+        pageCount: 10,
+        page: this.currentPageIndex,
+        where,
+        geometry:
+          this.geoJSONExtent &&
+          JSON.stringify(this.geoJSONExtent) !== "{}" &&
+          this.keyword
+            ? JSON.stringify(this.geoJSONExtent)
+            : undefined,
+        libName,
+        decode: !this.keyword,
+        lon,
+        lat,
+        dis,
+        isEsGeoCode: true,
+        isDataStoreQuery: true
+      };
+      try {
+        const geoCode = await Feature.FeatureQuery.query(datastoreParams);
+        if (geoCode) {
+          const features = geoCode.result;
+          const markerCoords = [];
+          for (let j = 0; j < features.length; j += 1) {
+            const feature = features[j];
+            const coordinates = [feature.lon, feature.lat];
+            const properties = {};
+            if (!this.cluster) {
+              for (let f = 0; f < this.fields.length; f += 1) {
+                const allProperties = {
+                  ...feature.detail,
+                  ...feature.areaAddr,
+                  ...feature
+                };
+                const field = this.fields[f];
+                properties[field] = allProperties[field];
+              }
+            }
+            properties.markerId = `place-name-${j}`;
+            markerCoords.push({
+              type: "Feature",
+              properties,
+              geometry: {
+                type: "Point",
+                coordinates
+              }
+            });
+          }
+          this.geojson = { type: "FeatureCollection", features: markerCoords };
+          this.maxCount = geoCode.totalCount
+            ? geoCode.totalCount
+            : features.length;
+          this.updataMarkers();
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
     /**

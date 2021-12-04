@@ -12,7 +12,11 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
+  },
+
+  layerId: {
+    type: String,
   },
 
   outStyle: {
@@ -20,14 +24,13 @@ export default {
     default: () => {
       return {
         position: "absolute",
-          zIndex: 1000,
-          height: "450px",
-          width: "270px",
-          top: "10px",
-          left: "10px",
-          padding: "2px",
+        zIndex: 1000,
+        height: "500px",
+        width: "270px",
+        top: "0px",
+        left: "0px",
       };
-    }
+    },
   },
 
   /**
@@ -77,5 +80,13 @@ export default {
   /**
    * @description 代理
    */
-  proxy: { type: Object }
+  proxy: { type: Object },
+  /**
+   * @description 是否激活查询弹窗
+   */
+  enablePopup: { type: Boolean, default: false },
+  /**
+   * @description 是否激活默认UI
+   */
+  enableControl: { type: Boolean, default: false },
 };

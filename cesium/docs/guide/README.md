@@ -87,7 +87,7 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
   <mapgis-web-scene
     ref="webgloberef"
     libPath="$path/cesium/dist/Cesium.js"
-    pluginPath="$path/cesium/dist/webclient-cesium-plugins.js"
+    pluginPath="$path/cesium/dist/webclient-cesium-plugin.js"
   >
     <mapgis-3d-igs-tile-layer />
   </mapgis-web-scene>

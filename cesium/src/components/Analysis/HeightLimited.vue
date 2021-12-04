@@ -5,14 +5,12 @@
         :has-top-margin="false"
         v-if="models.length > 1"></mapgis-ui-group-tab>
     <mapgis-ui-form-item v-if="models.length > 1">
-<!--    <mapgis-ui-row class="model" v-if="models.length > 1">-->
-      <mapgis-ui-select :size="size" :default-value="model.title"  @change="handleChange">
+      <mapgis-ui-select :size="size" :default-value="model.title" @change="handleChange">
         <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
           {{ node.title }}
         </mapgis-ui-select-option>
       </mapgis-ui-select>
     </mapgis-ui-form-item>
-<!--    </mapgis-ui-row>-->
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
     <mapgis-ui-setting-form :label-width="72">
       <mapgis-ui-form-item label="限高颜色">
@@ -24,14 +22,14 @@
         </mapgis-ui-sketch-color-picker>
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="限制高度">
-        <mapgis-ui-slider  :disabled="readonly"
-                           :max="maxSliderHeight" :min="minSlider"
-                           :step="5"
-                           v-model="heightLimit"
-                           @change="setInput"/>
+        <mapgis-ui-slider :disabled="readonly"
+                          :max="maxSliderHeight" :min="minSlider"
+                          :step="5"
+                          v-model="heightLimit"
+                          @change="setInput"/>
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
-    <mapgis-3d-draw :vue-key="vueKey" v-on:draw-create="handleCreate" v-on:load="handleDrawLoad"
+    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad" :drawStyle="drawStyle"
                     :enableControl="enableControl">
       <div class="parent_div">
         <mapgis-ui-group-tab title="绘制区域"></mapgis-ui-group-tab>
@@ -97,7 +95,7 @@ export default {
       heightLimit: 10,
       // slider滑块是否禁用
       readonly: false,
-      minSlider:0,
+      minSlider: 0,
       boundingSphere: "",
       waitManagerName: "M3DIgsManager",
       cartesianForHeight: [],
@@ -114,6 +112,9 @@ export default {
       colorCopy: "#ff0000",
       opacityCopy: 0.5,
       maxSliderHeight: 50,
+      drawStyle: {
+        color: "#ff0000"
+      },
       draws: [
         {
           icon: "mapgis-huizhijuxing",
@@ -129,7 +130,7 @@ export default {
         },
       ],
       // m3d模型对象
-      m3d:undefined
+      m3d: undefined
     }
   },
   mounted() {
@@ -154,7 +155,6 @@ export default {
       deep: true,
       immediate: true,
       handler: function () {
-        // this.removeDraw();
         this.remove();
         this.changeModel();
       }
@@ -164,12 +164,14 @@ export default {
       handler(next, old) {
         if (!deepEqual(next, old)) {
           this.colorCopy = next;
+          this.drawStyle.color = next;
         }
       }
     },
     colorCopy: {
       immediate: true,
       handler(next, old) {
+        this.drawStyle.color = next;
         this.remove();
         this.heightLimitedAnalysis();
       }
@@ -210,24 +212,31 @@ export default {
       const {vueCesium, vueKey, vueIndex, model} = this;
       return new Promise((resolve, reject) => {
         if (model && model.vueIndex) {
+          let id = model.vueIndex;
+          let layerIndex = 0;
+          if (typeof (id) === "string" && id.includes(":")) {
+            const strs = id.split(":");
+            id = strs[0];
+            layerIndex = strs[1];
+          }
           this.$_getM3DByInterval(
               function (m3ds) {
                 if (m3ds && m3ds.length > 0) {
                   if (
-                      !m3ds[0] ||
-                      !m3ds[0].hasOwnProperty("source") ||
-                      !m3ds[0].source
+                      !m3ds[layerIndex] ||
+                      !m3ds[layerIndex].hasOwnProperty("source") ||
+                      !m3ds[layerIndex].source
                   ) {
                     reject(null);
                   } else {
-                    resolve(m3ds[0]);
+                    resolve(m3ds[layerIndex]);
                   }
                 } else {
                   reject(null);
                 }
               },
               vueKey,
-              model.vueIndex || vueIndex
+              id
           );
         } else {
           reject(null);
@@ -238,10 +247,17 @@ export default {
     changeModel() {
       let vm = this;
       this.m3dIsReady().then(m3d => {
+        let id = this.model.vueIndex;
+        let layerIndex = 0;
+        if (typeof (id) === "string" && id.includes(":")) {
+          const strs = id.split(":");
+          id = strs[0];
+          layerIndex = strs[1];
+        }
         const {source} = m3d;
         vm.m3d = m3d;
-        vm.zoomToM3dLayerBySource(source[0]);
-        vm.getM3dHeight(source[0]);
+        vm.zoomToM3dLayerBySource(source[layerIndex]);
+        vm.getM3dHeight(source[layerIndex]);
       });
     },
 
@@ -287,18 +303,17 @@ export default {
     setInput(data) {
       let vm = this;
       vm.heightLimit = data;
-      let { vueCesium, vueKey, vueIndex } = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       let find = vueCesium.HeightLimitedAnalysisManager.findSource(
           vueKey,
           vueIndex
       );
-      let { options } = find;
-      let { heightLimitedAnalysis } = options;
+      let {options} = find;
+      let {heightLimitedAnalysis} = options;
       if (heightLimitedAnalysis) {
         // 设置限高高度
         heightLimitedAnalysis.height = data;
       }
-      // vm.heightLimitedAnalysis();
     },
     removeDraw() {
       this.drawer.unmount();
@@ -311,6 +326,10 @@ export default {
     },
     toggleDelete() {
       this.drawer && this.drawer.removeEntities();
+      //清空drawElement
+      if (window.drawElement) {
+        window.drawElement.stopDrawing();
+      }
       this.remove();
     },
     handleDrawLoad(drawer) {
@@ -319,19 +338,19 @@ export default {
 
     //绘制组件的回调函数
     handleCreate(cartesian3, lnglat) {
-      // let vm = this;
-      // this.drawer && this.drawer.removeEntities(true);
-      // vm.cartesian3 = cartesian3;
-      // vm.lnglat = lnglat;
-      // this.heightLimitedAnalysis(lnglat);
-      // window.drawElement.stopDrawing();
+      let vm = this;
+      this.drawer && this.drawer.removeEntities(true);
+      vm.cartesian3 = cartesian3;
+      vm.lnglat = lnglat;
+      this.heightLimitedAnalysis(lnglat);
+      window.drawElement.stopDrawing();
     },
 
     //开始控高分析
     heightLimitedAnalysis(lnglat) {
       const vm = this;
       // 先remove
-      // this.remove();
+      this.remove();
       let {vueKey, vueIndex} = this
       let {heightLimit, vueCesium, viewer} = this;
       //先判断m3d模型是否加载完成
@@ -454,8 +473,8 @@ export default {
       return point;
     },
 
-    handleChange(e){
-      let a1 = this.models.filter((m)=>{
+    handleChange(e) {
+      let a1 = this.models.filter((m) => {
         return m.title === e;
       })
       this.model = a1[0];
@@ -475,7 +494,7 @@ export default {
       }
     },
     unmount() {
-      let { vueCesium, vueKey, vueIndex} = this;
+      let {vueCesium, vueKey, vueIndex} = this;
       this.removeDraw();
       this.remove();
       // 这段代码可以认为是对应的vue的获取destroyed生命周期
@@ -491,14 +510,15 @@ export default {
   width: 100%;
 }
 
-.parent_div{
+.parent_div {
   width: 100%;
   display: inline-block;
   position: relative;
 }
-.child_div{
+
+.child_div {
   position: absolute;
-  top:0;
+  top: 0;
   right: 0px;
 }
 </style>

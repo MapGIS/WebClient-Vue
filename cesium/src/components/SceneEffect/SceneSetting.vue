@@ -145,7 +145,7 @@ export default {
 } */
 
 .control-content{
-  max-height: 460px;
+  max-height: 480px;
   overflow: auto;
   padding: 10px;
 }

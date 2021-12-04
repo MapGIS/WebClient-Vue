@@ -1,4 +1,5 @@
 export { default as MapgisWebScene } from "./components/WebGlobe/WebGlobe.vue";
+export { default as Mapgis3dViewpointManager } from "./components/WebGlobe/ViewpointManager.vue";
 
 // 工具
 export { default as Mapgis3dStatebar } from "./components/UI/Controls/State/StateControl.vue";
@@ -73,8 +74,10 @@ export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
-export { default as Mapgis3dParticleEffects } from "./components/Overlay/ParticleEffects";
+export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/particle/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
+export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
+export { default as Mapgis3dVideo } from "./components/Analysis/Video.vue";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";

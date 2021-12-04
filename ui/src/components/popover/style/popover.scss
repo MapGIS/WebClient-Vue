@@ -12,28 +12,37 @@
 
 .mapgis-popup-container {
   padding: 10px 12px 20px 12px;
+  overflow: hidden;
 }
 
-.mapgis-popup-row-container{
+.mapgis-popup-content-row-container {
+  overflow: hidden;
+}
+
+.mapgis-popup-row-container {
   height: 130px;
   overflow: auto;
 }
 
-.mapgis-popup-row-container-defaultField{
+.mapgis-popup-row-container-defaultField {
   height: 32.5px;
 }
 
-.mapgis-popup-row:nth-child(2n) {
-  background-color: rgb(231, 232, 233);
+.mapgis-popup-row-wrapper:nth-child(2n) {
+  div {
+    background-color: $nav-content-backgroud;
+  }
 }
 
-.mapgis-popup-row:nth-child(2n + 1) {
-  background-color: rgb(244, 244, 244);
+.mapgis-popup-row-wrapper:nth-child(2n + 1) {
+  div {
+    background-color: $nav-selected-backgroud;
+  }
 }
 
 .mapgis-popup-row:hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
+  background-color: $primary-1;
+  border-left: 2px solid $primary-5;
 }
 
 .mapgis-popup-row {
@@ -72,7 +81,6 @@
 .mapgis-popup-field {
   width: 30%;
   font-size: 14px;
-  font-weight: bold;
 }
 
 .mapgis-popup-value {
@@ -86,7 +94,7 @@
   height: 56px;
 }
 
-.mapgis-popup-row-left-container{
+.mapgis-popup-row-left-container {
   height: 224px;
 }
 
@@ -118,24 +126,24 @@
   line-height: 11px;
   min-width: 240px;
   border-left: 2px solid rgba(115, 176, 251, 0);
-  border-bottom: 1px solid rgb(246, 246, 246);
+  border-bottom: 0px solid rgb(246, 246, 246);
 }
 
 .mapgis-popup-underline-row:hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
+  background-color: $primary-1;
+  border-left: 2px solid $primary-5;
 }
 
-.mapgis-popup-underline-item, .mapgis-popup-point-item{
+.mapgis-popup-underline-item,
+.mapgis-popup-point-item {
   line-height: 22px;
 }
 
-.mapgis-popup-table-item{
+.mapgis-popup-table-item {
   line-height: 30px;
 }
 
 .mapgis-popup-underline-field {
-  font-weight: bold;
   color: rgb(152, 152, 152);
 }
 
@@ -169,7 +177,7 @@
   margin-bottom: 10px;
 }
 
-.mapgis-popup-point-value{
+.mapgis-popup-point-value {
   padding-right: 10px;
 }
 
@@ -188,7 +196,8 @@
   background: rgb(240, 241, 241);
   padding-left: 14px;
 }
-.mapgis-popup-table-value{
+
+.mapgis-popup-table-value {
   padding-right: 10px;
 }
 
@@ -204,6 +213,7 @@
 .mapboxgl-popup-close-button {
   color: $primary-5;
 }
+
 .mapboxgl-popup-content {
   width: auto;
   height: fit-content;
@@ -391,12 +401,14 @@ $popover-prefix-cls: $ant-prefix + "-popover";
     padding: 4px 0 12px;
     color: $popover-color;
     font-size: $font-size-base;
+
     > .#{iconfont-css-prefix} {
       position: absolute;
       top: 8px; // 4px for padding-top, 4px for vertical middle;
       color: $warning-color;
       font-size: $font-size-base;
     }
+
     &-title {
       padding-left: $font-size-base + 8px;
     }
@@ -405,6 +417,7 @@ $popover-prefix-cls: $ant-prefix + "-popover";
   &-buttons {
     margin-bottom: 4px;
     text-align: right;
+
     button {
       margin-left: 8px;
     }
@@ -434,13 +447,16 @@ $popover-prefix-cls: $ant-prefix + "-popover";
     border-left-color: transparent;
     box-shadow: 3px 3px 7px fade($black, 7%);
   }
+
   &-placement-top > &-content > &-arrow {
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
   }
+
   &-placement-topLeft > &-content > &-arrow {
     left: 16px;
   }
+
   &-placement-topRight > &-content > &-arrow {
     right: 16px;
   }
@@ -455,13 +471,16 @@ $popover-prefix-cls: $ant-prefix + "-popover";
     border-left-color: $popover-bg;
     box-shadow: -3px 3px 7px fade($black, 7%);
   }
+
   &-placement-right > &-content > &-arrow {
     top: 50%;
     transform: translateY(-50%) rotate(45deg);
   }
+
   &-placement-rightTop > &-content > &-arrow {
     top: 12px;
   }
+
   &-placement-rightBottom > &-content > &-arrow {
     bottom: 12px;
   }
@@ -476,13 +495,16 @@ $popover-prefix-cls: $ant-prefix + "-popover";
     border-left-color: $popover-bg;
     box-shadow: -2px -2px 5px fade($black, 6%);
   }
+
   &-placement-bottom > &-content > &-arrow {
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
   }
+
   &-placement-bottomLeft > &-content > &-arrow {
     left: 16px;
   }
+
   &-placement-bottomRight > &-content > &-arrow {
     right: 16px;
   }
@@ -497,13 +519,16 @@ $popover-prefix-cls: $ant-prefix + "-popover";
     border-left-color: transparent;
     box-shadow: 3px -3px 7px fade($black, 7%);
   }
+
   &-placement-left > &-content > &-arrow {
     top: 50%;
     transform: translateY(-50%) rotate(45deg);
   }
+
   &-placement-leftTop > &-content > &-arrow {
     top: 12px;
   }
+
   &-placement-leftBottom > &-content > &-arrow {
     bottom: 12px;
   }

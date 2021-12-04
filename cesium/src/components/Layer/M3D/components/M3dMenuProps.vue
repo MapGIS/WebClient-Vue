@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <mapgis-ui-input :value="gdbp" size="default">
+  <div class="mapgis-3d-m3d-menu-props">
+    <mapgis-ui-input v-if="enableQuery()" :value="gdbp" size="small">
       <mapgis-ui-tooltip slot="addonAfter" placement="bottom">
         <span slot="title"
           >0.0版本/1.0版本需要地图文档绑定模型，服务要重新发一下</span
@@ -8,21 +8,23 @@
         <mapgis-ui-iconfont type="mapgis-info-circle" />
       </mapgis-ui-tooltip>
     </mapgis-ui-input>
-    <mapgis-3d-popup v-model="show" :position="position" :forceRender="true">
-      <span>
-        <div class="mapgis-3d-popup-props-title">OID: {{ oid }}</div>
-        <div
-          class="mapgis-3d-popup-props-item"
-          v-for="key in Object.keys(properties)"
-          :key="key"
-        >
-          <span class="mapgis-3d-popup-props-item-key">{{ key }}</span>
-          <span class="mapgis-3d-popup-props-item-value">{{
-            properties[key]
-          }}</span>
-        </div>
-      </span>
-    </mapgis-3d-popup>
+    <mapgis-ui-divider>属性展示 </mapgis-ui-divider>
+    <div
+      class="mapgis-3d-popup-props-item"
+      v-for="key in Object.keys(properties)"
+      :key="key"
+    >
+      <span class="mapgis-3d-popup-props-item-key">{{ key }}</span>
+      <span class="mapgis-3d-popup-props-item-value">{{
+        properties[key]
+      }}</span>
+    </div>
+    <mapgis-3d-feature-popup
+      :position="position"
+      :properties="properties"
+      v-model="show"
+    >
+    </mapgis-3d-feature-popup>
   </div>
 </template>
 
@@ -36,6 +38,9 @@ export default {
     ...VueOptions,
     version: {
       type: String
+    },
+    g3dLayerIndex: {
+      type: Number
     },
     layerIndex: {
       type: Number
@@ -86,6 +91,7 @@ export default {
 
       let highlight = this.createCesiumObject();
       highlight.then(res => {
+        let collection = new Cesium.PrimitiveCollection();
         vueCesium.G3DManager.addSource(vueKey, vueIndex, this, {
           version_0_0: {
             current: {
@@ -95,7 +101,9 @@ export default {
             currentLayer: undefined,
             analysisManager: new window.CesiumZondy.Manager.AnalysisManager({
               viewer: viewer
-            })
+            }),
+            collection: collection,
+            primitiveCollection: viewer.scene.primitives.add(collection)
           },
           version_2_0: {}
         });
@@ -121,12 +129,61 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const { vueCesium, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex, version, viewer } = this;
+      this.show = false;
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
+        if (version == "0.0" || version == "1.0") {
+          let { version_0_0 } = find.options;
+          let {
+            current,
+            currentLayer,
+            analysisManager,
+            collection
+          } = version_0_0;
+          if (collection) {
+            viewer.scene.primitives.remove(collection);
+          }
+          if (current.feature) {
+            currentLayer = [current.feature.tileset];
+            analysisManager.stopCustomDisplay(currentLayer);
+            current.feature = undefined;
+          }
+        } else if (version == "2.0") {
+        }
       }
       this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
+    },
+    enableQuery() {
+      let { gdbp } = this;
+      let enable = false;
+      if (gdbp) {
+        gdbp = gdbp.toLowerCase();
+        if (gdbp.indexOf("gdbp") >= 0) {
+          // 0.0 1.0 的动态单体化的功能
+          enable = true;
+        } else if (gdbp.indexOf("file") >= 0) {
+          // 2.0 的动态单体化的功能
+          enable = true;
+        }
+      }
+      return enable;
+    },
+    parseRule() {
+      let { gdbp } = this;
+      let rule = undefined;
+      if (gdbp) {
+        gdbp = gdbp.toLowerCase();
+        if (gdbp.indexOf("gdbp") >= 0) {
+          // 0.0 1.0 的动态单体化的功能
+          rule = "gdbp";
+        } else if (gdbp.indexOf("file") >= 0) {
+          // 2.0 的动态单体化的功能
+          rule = "doc";
+        }
+      }
+      return rule;
     },
     $_highlightAction(movement) {
       const vm = this;
@@ -143,82 +200,68 @@ export default {
       }
 
       if (version == "0.0" || version == "1.0") {
-        let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-        if (find && find.options && find.options.version_0_0) {
-          let {
-            current,
-            currentLayer,
-            analysisManager
-          } = find.options.version_0_0;
-          //根据鼠标点击位置选择对象
-          let pickedFeature = viewer.scene.pick(movement.position);
+        let rule = this.parseRule();
+        if (rule == "gdbp") {
+          let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+          if (find && find.options && find.options.version_0_0) {
+            let {
+              current,
+              currentLayer,
+              analysisManager
+            } = find.options.version_0_0;
+            //根据鼠标点击位置选择对象
+            let pickedFeature = viewer.scene.pick(movement.position);
 
-          //判断current对象中要素有值，该值和鼠标点击位置不相同
-          if (
-            Cesium.defined(current.feature) &&
-            current.feature !== pickedFeature
-          ) {
-            currentLayer = [current.feature.tileset];
-            let title = current.feature.getProperty("name");
-            let values = title.split("_");
-            let vlueNumber = parseInt(values[2]);
-            let idList = [vlueNumber];
-            analysisManager.stopCustomDisplay(currentLayer);
-            current.feature = undefined;
+            //判断current对象中要素有值，该值和鼠标点击位置不相同
+            if (
+              Cesium.defined(current.feature) &&
+              current.feature !== pickedFeature
+            ) {
+              currentLayer = [current.feature.tileset];
+              analysisManager.stopCustomDisplay(currentLayer);
+              current.feature = undefined;
+            }
+
+            //判断点击位置是否有值，该值和鼠标点击位置不相同
+            if (
+              Cesium.defined(pickedFeature) &&
+              current.feature !== pickedFeature
+            ) {
+              current.feature = pickedFeature;
+              currentLayer = [current.feature.tileset];
+              let title = current.feature.getProperty("name");
+              let values = title.split("_");
+              let vlueNumber = parseInt(values[2]);
+              let idList = [vlueNumber];
+              let options = {
+                color: new Cesium.Color(255 / 255, 255 / 255, 0 / 255, 0.6),
+                colorBlendMode: Cesium.Cesium3DTileColorBlendMode.REPLACE
+              };
+              analysisManager.stopCustomDisplay(currentLayer);
+              analysisManager.startCustomDisplay(currentLayer, idList, options);
+
+              let ellipsoid = viewer.scene.globe.ellipsoid;
+              let center = current.feature.tileset.boundingSphere.center;
+              let cartographic = ellipsoid.cartesianToCartographic(center);
+              let lat = Cesium.Math.toDegrees(cartographic.latitude);
+              let lng = Cesium.Math.toDegrees(cartographic.longitude);
+              let height = cartographic.height;
+
+              vm.position.longitude = lng;
+              vm.position.latitude = lat;
+              vm.position.height = height;
+              vm.oid = vlueNumber;
+              vm.$_gdbpquery(vlueNumber, gdbp);
+            } else if (
+              Cesium.defined(pickedFeature) &&
+              current.feature == pickedFeature
+            ) {
+            } else {
+              vm.show = false;
+            }
           }
-
-          //判断点击位置是否有值，该值和鼠标点击位置不相同
-          if (
-            Cesium.defined(pickedFeature) &&
-            current.feature !== pickedFeature
-          ) {
-            current.feature = pickedFeature;
-            currentLayer = [current.feature.tileset];
-            let title = current.feature.getProperty("name");
-            let values = title.split("_");
-            let vlueNumber = parseInt(values[2]);
-            let idList = [vlueNumber];
-            let options = {
-              color: new Cesium.Color(255 / 255, 255 / 255, 0 / 255, 1),
-              colorBlendMode: Cesium.Cesium3DTileColorBlendMode.REPLACE
-            };
-            analysisManager.stopCustomDisplay(currentLayer);
-            analysisManager.startCustomDisplay(currentLayer, idList, options);
-
-            let ellipsoid = viewer.scene.globe.ellipsoid;
-            let center = current.feature.tileset.boundingSphere.center;
-            let cartographic = ellipsoid.cartesianToCartographic(center);
-            let lat = Cesium.Math.toDegrees(cartographic.latitude);
-            let lng = Cesium.Math.toDegrees(cartographic.longitude);
-            let height = cartographic.height;
-
-            vm.position.longitude = lng;
-            vm.position.latitude = lat;
-            vm.position.height = height;
-            vm.oid = vlueNumber;
-            vm.$_query(vlueNumber, gdbp);
-            /* let test = new Promise((resolve, rej) => {
-              window.setTimeout(() => {
-                let test = {
-                  name: "石家庄",
-                  mpArea: 1220.7382131131,
-                  mpLength: 120.7382131131,
-                  省份: "河北省"
-                };
-                resolve(test);
-              }, 1 * 1000);
-            });
-            test.then(res => {
-              vm.properties = res;
-              vm.show = true;
-            }); */
-          } else if (
-            Cesium.defined(pickedFeature) &&
-            current.feature == pickedFeature
-          ) {
-          } else {
-            vm.show = false;
-          }
+        } else if (rule == "doc") {
+          this.$_docquery(movement);
         }
       } else if (version == "2.0") {
         let oid = viewer.scene.pickOid(movement.position);
@@ -228,9 +271,17 @@ export default {
     },
     $_query(oid, gdbp) {
       if (!oid) return;
+      let rule = this.parseRule();
+      if (rule == "gdbp") {
+        this.$_gdbpquery(oid, gdbp);
+      } else if (rule == "doc") {
+        this.$_docquery();
+      }
+    },
+    $_gdbpquery(oid, gdbp) {
       const vm = this;
-      const { vueCesium, ip, port } = this;
-      var queryParam = new window.CesiumZondy.Query.G3DDocQuery();
+      const { ip, port } = this;
+      let queryParam = new window.CesiumZondy.Query.G3DDocQuery();
       queryParam.gdbp = encodeURI(gdbp);
       queryParam.structs =
         '{"IncludeAttribute":true,"IncludeGeometry":true,"IncludeWebGraphic":false}';
@@ -255,6 +306,67 @@ export default {
         },
         "post"
       );
+    },
+    /**
+     * @description 地图文档的查询由于是底层在查询服务端，然后再前端绘制几何
+     * 因此只地图文档关联的要素只支持经纬度的坐标系
+     */
+    $_docquery(movement) {
+      const vm = this;
+      const { vueKey, vueIndex, vueCesium, Cesium } = this;
+      const { viewer, g3dLayerIndex, layerIndex } = this;
+
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options && find.options.version_0_0) {
+        let { primitiveCollection } = find.options.version_0_0;
+        let cartesian = viewer.getCartesian3Position(movement.position);
+        if (Cesium.defined(cartesian)) {
+          let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+          let lng = Cesium.Math.toDegrees(cartographic.longitude);
+          let lat = Cesium.Math.toDegrees(cartographic.latitude);
+          let height = cartographic.height;
+          let mapPosition = { x: lng, y: lat, z: height };
+          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+
+          g3dLayer.Monomerization(
+            function callback(result) {
+              if (result && result.length > 0) {
+                let feature = result[0];
+                let find = vueCesium.G3DManager.changeOptions(vueKey, vueIndex);
+                if (find) {
+                  let last = find.options.feature;
+                  primitiveCollection.remove(last);
+                }
+                vm.show = true;
+                vm.position = {
+                  longitude: lng,
+                  latitude: lat,
+                  height: height
+                };
+                vm.properties = feature.property;
+                primitiveCollection.add(feature);
+                vueCesium.G3DManager.changeOptions(
+                  vueKey,
+                  vueIndex,
+                  "feature",
+                  feature
+                );
+              } else {
+                vm.show = false;
+              }
+            },
+            {
+              position: new Cesium.Cartesian3(
+                mapPosition.x,
+                mapPosition.y,
+                mapPosition.z
+              ),
+              tolerance: 0.0001,
+              layerIndex: layerIndex
+            }
+          );
+        }
+      }
     }
   }
 };

@@ -30,7 +30,7 @@ const Template = (args, { argTypes }) => ({
             autoReset: true,
             maximumScreenSpaceError: 8,
             m3dUrl1:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
-            m3dUrl2:`http://192.168.21.191:6163/igs/rest/g3d/school`
+            m3dUrl2:`http://192.168.21.192:6163/igs/rest/g3d/school`
         }
     },
     template: `
@@ -47,6 +47,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-heightlimited v-bind="$props"></mapgis-3d-heightlimited>
       </mapgis-ui-card>
+      <mapgis-3d-statebar></mapgis-3d-statebar>
       </mapgis-web-scene>
     `
 });

@@ -52,6 +52,7 @@ module.exports = {
             title: "指南",
             collapsable: false,
             children: [
+              ["/local/yarn.md", "本地开发"],  
               ["/guide/", "快速上手"],
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],
@@ -73,6 +74,9 @@ module.exports = {
               ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
               ["/api/panel/switch.md", "区域-开关"],
               ["/api/panel/inputnumber.md", "区域-数值输入"],
+              ["/api/panel/select.md", "区域-选择器"],
+              ["/api/panel/select.md", "区域-颜色选取"],
+              ["/api/panel/tab.md", "区域-页面切换"],
               ["/api/color/d3color.md", "颜色-D3色板"]
             ]
           },

@@ -1,0 +1,14 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.mapgis-mapstory-project-panel-filter-title, .mapgis-mapstory-project-panel-title {
+  color: $text-color;
+}
+
+.mapgis-mapstory-project-panel-filter {
+  background: $panel-backgroud;
+}
+
+.mapgis-mapstory-filter-icon {
+  color: $panel-option-color;
+}

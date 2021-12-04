@@ -1,5 +1,3 @@
-# 区域开关
-
 > mapgis-ui-input-number-panel
 
 ``` vue

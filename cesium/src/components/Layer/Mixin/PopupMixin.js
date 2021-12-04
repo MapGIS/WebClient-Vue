@@ -1,6 +1,7 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 import Popup from "../../UI/Popup/Popup.vue";
 import PopupContent from "../../UI/Geojson/Popup";
+import PopupFeatureContent from "../../UI/Popup/PopupContent.vue";
 import { getPopupHtml } from "../../UI/Popup/popupUtil";
 
 import debounce from "lodash/debounce";
@@ -73,7 +74,8 @@ export default {
   },
   components: {
     Popup,
-    PopupContent
+    PopupContent,
+    PopupFeatureContent
   },
   render(h) {
     let {
@@ -104,25 +106,9 @@ export default {
       : currentClickInfo && currentClickInfo.length > 0
       ? currentClickInfo[0]
       : { properties: {} };
-    let container = getPopupHtml(
-      type,
-      feature,
-      {
-        enableSeparate: enableSeparate,
-        separateMap: this.$_separateMap,
-        title: feature.properties[title],
-        fields: Object.keys(feature.properties),
-        style: {
-          containerStyle: { width: "360px" }
-        }
-      }
-    );
     // 字符串或者数组
-    const images = [
-      "http://192.168.82.89:8086/static/assets/gallery/m3d.png",
-      "http://192.168.82.89:8086/static/assets/gallery/biggps.png"
-    ];
-    const description = "这是一段说明文字";
+    const images = [];
+    const description = "补充一段说明文字,默认字段description";
     const options = {
       type,
       popupType,
@@ -145,6 +131,7 @@ export default {
         />
       );
     }
+
     if (customPopup || customTips) {
       return (
         <Popup
@@ -179,18 +166,24 @@ export default {
             position={clickposition}
             visible={clickvisible}
             forceRender={true}
-            container={container}
             onChange={this.$_changeVisible.bind(this)}
             onSeparate={this.$_separateMap.bind(this)}
             options={options}
-          ></Popup>
+          >
+            <PopupFeatureContent
+              feature={feature}
+              popupOptions={popupOptions}
+            ></PopupFeatureContent>
+          </Popup>
           <Popup
             position={hoverposition}
             visible={hovervisible}
             forceRender={true}
           >
             <mapgis-ui-card>
-              <span>{feature.properties.title || feature.properties[title]}</span>
+              <span>
+                {feature.properties.title || feature.properties[title]}
+              </span>
             </mapgis-ui-card>
           </Popup>
         </div>
@@ -222,6 +215,7 @@ export default {
           } else {
             vm.hovervisible = false;
           }
+          onFail && onFail({ movement });
           return;
         }
 

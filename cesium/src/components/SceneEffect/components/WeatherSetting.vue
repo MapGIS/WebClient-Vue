@@ -22,6 +22,7 @@
 
       <mapgis-ui-switch-panel label="云层" :checked="clouds" @changeChecked="$_enableClouds">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="周期/秒" 
           :value="cloudsduration" 
           :range="cloudsRange"
@@ -32,6 +33,7 @@
 
       <mapgis-ui-switch-panel label="雨" :checked="rain" @changeChecked="$_enableRain">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雨速度" 
           :value="speed" 
           :range="speedRange"
@@ -40,6 +42,7 @@
         </mapgis-ui-input-number-panel> 
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雨透明度" 
           :value="rainOpacity" 
           :range="rainOpacityRange"
@@ -49,6 +52,7 @@
         </mapgis-ui-input-number-panel>
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雨角度" 
           :value="angle" 
           :range="angleRange"
@@ -61,6 +65,7 @@
       <mapgis-ui-switch-panel label="雪" :checked="snow" @changeChecked="$_enableSnow">
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雪粒大小" 
           :value="size" 
           :range="sizeRange"
@@ -70,6 +75,7 @@
         </mapgis-ui-input-number-panel>
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雪密度" 
           :value="density" 
           :range="densityRange"
@@ -82,6 +88,7 @@
 
       <mapgis-ui-switch-panel label="雾" :checked="fog" @changeChecked="$_enableFog">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雾透明度" 
           :value="fogOpacity" 
           :range="fogOpacityRange"
@@ -93,6 +100,7 @@
 
       <mapgis-ui-switch-panel label="雾化效果" :checked="surficialFog" @changeChecked="enableSurficialFog">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="密度" 
           :value="surfFogDst" 
           :range="surfFogDstRange"
@@ -506,41 +514,4 @@ export default {
 </script>
 
 <style scoped>
-
-/* .weather-setting {
-} */
-
-.mapgis-ui-form-item{
-  margin: 0;
-  padding: 0 10px;
-}
-
-::v-deep .mapgis-ui-form-item-control{
-  text-align: right;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
-}
-
-.mapgis-ui-input-number{
-  /* margin-right: 12px; */
-  width: 60px;
-}
-
-.mapgis-ui-slider{
-  width: 110px;
-}
-
-::v-deep .mapgis-ui-slider-rail{
-  background-color: #F0F0F0;
-}
-
-::v-deep .mapgis-ui-slider-track{
-  background-color: #91D5FF;
-}
-
-::v-deep .mapgis-ui-slider-handle{
-  border: 2px solid #91D5FF;
-}
-
 </style>
