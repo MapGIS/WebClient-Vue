@@ -3,6 +3,9 @@
     <div class="mapgis-ui-map-select-title">
       <mapgis-ui-title-icon/>
       {{ title }}
+      <span @click="$_showMore" class="mapgis-ui-map-select-show-more">
+           {{ showMoreTitle }}
+      </span>
     </div>
     <div class="mapgis-ui-map-select-content">
       <mapgis-ui-mix-row
@@ -12,7 +15,7 @@
           :mainStyle="mainStyle"
           :formStyle="formStyle"
           :dataSource="selectData"
-          v-model="currentSelect"
+          v-model="mapCopy.type"
       />
       <mapgis-ui-mix-row
           title="地图名称"
@@ -20,8 +23,8 @@
           :titleStyle="titleStyle"
           :mainStyle="mainStyle"
           :formStyle="formStyle"
-          :dataSource="selectData"
-          v-model="currentSelect"
+          :dataSource="mapNamesCopy[mapCopy.type]"
+          v-model="currentMapName"
       />
     </div>
   </div>
@@ -33,14 +36,17 @@ export default {
   name: "mapgis-ui-map-select",
   data() {
     return {
-      baseUrl: "",
-      layers: "",
-      layer: "",
-      tilingScheme: "",
-      tileMatrixSet: "",
-      format: "image/png",
-      gdbps: "",
-      currentSelect: "TILE",
+      mapCopy: {
+        type: "TILE",
+        baseUrl: "",
+        layers: "",
+        layer: "",
+        tilingScheme: "",
+        tileMatrixSet: "",
+        format: "image/png",
+        gdbps: "",
+      },
+      currentMapName: "",
       titleStyle: {
         fontSize: "14px",
         top: "4px"
@@ -51,6 +57,14 @@ export default {
       mainStyle: {
         width: "158px",
         marginLeft: "-8px",
+      },
+      mapNamesCopy: {
+        "TILE": [],
+        "DOC": [],
+        "DYNAMIC": [],
+        "GeoJSON": [],
+        "WMTS": [],
+        "WMS": [],
       },
       selectData: [{
         key: "IGS瓦片",
@@ -70,13 +84,17 @@ export default {
       }, {
         key: "WMS地图",
         value: "WMS",
-      }]
+      }],
     }
   },
   props: {
     title: {
       type: String,
       default: "title"
+    },
+    showMoreTitle: {
+      type: String,
+      default: "展开高级选项"
     },
     map: {
       type: Object,
@@ -97,23 +115,25 @@ export default {
     this.$_initMap();
   },
   methods: {
+    $_showMore() {
+      this.$emit("showMore");
+    },
     $_initMap() {
-      const {
-        type = "TILE",
-        baseUrl = "",
-        layer = "",
-        layers = "",
-        tilingScheme = "",
-        tileMatrixSet = "",
-        format = "image/png"
-      } = this.map;
-      this.currentSelect = type;
-      this.baseUrl = baseUrl;
-      this.layer = layer;
-      this.layers = layers;
-      this.tilingScheme = tilingScheme;
-      this.tileMatrixSet = tileMatrixSet;
-      this.format = format;
+      this.mapCopy = Object.assign(this.mapCopy, this.map);
+      const {type, layers, layer} = this.mapCopy;
+      if (type && (type === "WMS" || type === "DOC")) {
+        this.mapNamesCopy[type].splice(0, 0, {
+          key: layers,
+          value: layers
+        });
+        this.currentMapName = layers;
+      } else if (type && (type === "WMTS")) {
+        this.mapNamesCopy[type].splice(0, 0, {
+          key: layer,
+          value: layer
+        });
+        this.currentMapName = layer;
+      }
     },
     $_addMap() {
       let map;
@@ -121,43 +141,43 @@ export default {
         case "WMS":
           map = {
             type: "WMS",
-            baseUrl: this.baseUrl,
-            layers: this.layers
+            baseUrl: this.mapCopy.baseUrl,
+            layers: this.mapCopy.layers
           };
           this.$emit("addMap", "WMS", map);
           break;
         case "WMTS":
           map = {
             type: "WMTS",
-            baseUrl: this.baseUrl,
-            layer: this.layer,
-            tilingScheme: this.tilingScheme,
-            tileMatrixSet: this.tileMatrixSet,
-            format: this.format,
+            baseUrl: this.mapCopy.baseUrl,
+            layer: this.mapCopy.layer,
+            tilingScheme: this.mapCopy.tilingScheme,
+            tileMatrixSet: this.mapCopy.tileMatrixSet,
+            format: this.mapCopy.format,
           };
           this.$emit("addMap", "WMTS", map);
           break;
         case "TILE":
           map = {
             type: "TILE",
-            baseUrl: this.baseUrl,
-            tilingScheme: this.tilingScheme
+            baseUrl: this.mapCopy.baseUrl,
+            tilingScheme: this.mapCopy.tilingScheme
           };
           this.$emit("addMap", "TILE", map);
           break;
         case "DYNAMIC":
           map = {
             type: "DYNAMIC",
-            baseUrl: this.baseUrl,
-            gdbps: this.gdbps
+            baseUrl: this.mapCopy.baseUrl,
+            gdbps: this.mapCopy.gdbps
           };
           this.$emit("addMap", "DYNAMIC", map);
           break;
         case "DOC":
           map = {
             type: "DOC",
-            baseUrl: this.baseUrl,
-            layers: this.layers
+            baseUrl: this.mapCopy.baseUrl,
+            layers: this.mapCopy.layers
           };
           this.$emit("addMap", "DOC", map);
           break;
@@ -176,6 +196,7 @@ export default {
   margin-bottom: 4px;
   padding-left: 12px;
 }
+
 .mapgis-ui-map-select-container {
   width: 100%;
   height: auto;
@@ -196,5 +217,11 @@ export default {
   border-radius: 3px;
   padding-top: 6px;
   padding-left: 10px;
+}
+
+.mapgis-ui-map-select-show-more {
+  float: right;
+  color: #0081E2;
+  cursor: pointer;
 }
 </style>

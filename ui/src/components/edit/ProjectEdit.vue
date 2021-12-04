@@ -68,10 +68,14 @@
           @getCamera="$_getCamera"
           @addMap="$_addMap"
           @changeColor="$_changeColor"
+          @changeOpacity="$_changeOpacity"
           @changeIcon="$_changeIcon"
           @featurePreview="$_featurePreview"
           @back="$_featureBack"
+          @titleChanged="$_featureTitleChanged"
+          @firstAddPicture="$_firstAddPicture"
           :feature="currentFeature"
+          :cameras="cameras"
           :height="height"
       />
     </div>
@@ -105,7 +109,8 @@ export default {
         marginLeft: "-14px",
         width: "358px"
       },
-      margin: 26
+      margin: 26,
+      cameras: []
     }
   },
   props: {
@@ -172,10 +177,10 @@ export default {
         title[i].innerHTML = "<img style='width: 12px;margin-bottom: 3px;margin-right: 4px; cursor: pointer;' src='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjM4MTEwNzU0MDU2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIzMDYiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTk1OS4yOTYgNDU1LjgwOEgyNzYuOTI4bDMyMC42NC0zMTMuMTUyLTc4LjY1Ni03Ny41NjgtNDUyLjkyOCA0NDYuNjU2IDQ1My44MjQgNDQ2Ljk3NiA3Ny4xODQtNzYuODY0TDI3Ny4xMiA1NjQuMDk2aDY4Mi4xNzZWNDU1LjgwOHoiIHAtaWQ9IjIzMDciPjwvcGF0aD48L3N2Zz4=' id='MapStoryClose'/>地图故事";
         let MapStoryClose = document.getElementById("MapStoryClose");
         MapStoryClose.onclick = function () {
-          if(vm.editFeature) {
+          if (vm.editFeature) {
             vm.editFeature = false;
             window.showPanels.currentPage = "projectEdit";
-          }else {
+          } else {
             vm.$emit("backed");
           }
         }
@@ -207,8 +212,13 @@ export default {
     $_addMapToProject(type, map) {
       this.$emit("addMapToProject", type, map, this.projectCopy);
     },
-    $_changeColor(color) {
-      this.$emit("changeColor", color, this.currentFeature.id, this.currentFeature.drawType);
+    $_changeColor(color, type) {
+      this.$emit("changeColor", color, type, this.currentFeature.id, this.currentFeature.baseUrl.type);
+    },
+    $_changeOpacity(opacity) {
+      if (this.currentFeature) {
+        this.$emit("changeOpacity", opacity, this.currentFeature.layerStyle.color, this.currentFeature.id, this.currentFeature.baseUrl.type);
+      }
     },
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon, this.currentFeature.id);
@@ -233,6 +243,12 @@ export default {
     $_editFeature(index) {
       this.editFeature = true;
       this.currentFeature = this.projectCopy.features[index];
+      let cameras = [];
+      for (let i = 0; i < this.projectCopy.features.length; i++) {
+        cameras.push(Object.assign({}, this.projectCopy.features[i].camera));
+        cameras[i].title = this.projectCopy.features[i].title;
+      }
+      this.cameras = cameras;
       if (window.showPanels) {
         window.showPanels.currentPage = "featureEdit";
       }
@@ -248,8 +264,11 @@ export default {
         "containerType": "small",
         "images": "",
         "layerStyle": {
-          "show": true
+          "show": true,
+          "color": "#FF0000",
+          "opacity": 1
         },
+        "show": true,
         "baseUrl": {
           "type": type,
           "geometry": {},
@@ -296,6 +315,12 @@ export default {
         feature: feature
       });
     },
+    $_firstAddPicture(feature) {
+      this.$emit("firstAddPicture", feature);
+    },
+    $_featureTitleChanged(feature) {
+      this.$emit("featureTitleChanged", feature);
+    },
     $_featureBack() {
       this.editFeature = false;
     },
@@ -303,8 +328,8 @@ export default {
       this.$emit("featurePreview", feature);
     },
     $_deleteFeature(index, id) {
-      this.$emit("deleteFeature", index, id, this.projectCopy);
-      this.projectCopy.features.splice(index, 1);
+      let feature = this.projectCopy.features.splice(index, 1);
+      this.$emit("deleteFeature", index, id, this.projectCopy, feature);
     }
   }
 }

@@ -30,7 +30,7 @@
         v-show="!collapse && mode == 'collapse'"
       >
         <transition name="fade">
-          <div v-if="!showOther">
+          <div v-if="!showOther" class="mapgis-ui-collapse-card-wrapper">
             <div class="mapgis-ui-collapse-card-header">
               <div class="mapgis-ui-collapse-card-title">
                 <slot name="title"></slot>
@@ -43,7 +43,7 @@
           </div>
         </transition>
         <transition name="slide-fade">
-          <div v-if="showOther">
+          <div v-if="showOther" class="mapgis-ui-collapse-card-wrapper">
             <div class="mapgis-ui-collapse-card-header">
               <div class="mapgis-ui-collapse-card-title">
                 <slot name="title"></slot>

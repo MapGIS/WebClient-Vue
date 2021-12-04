@@ -114,4 +114,17 @@
 @import "./components/svgselect/style/svgselect.scss";
 
 /* MapGIS Design Comprehensive Query */
-@import "./view/comprehensive-query/style/comprehensive-query.scss"
+@import "./view/comprehensive-query/style/comprehensive-query.scss";
+
+/* MapGIS Design Edit */
+@import "./components/edit/style/FeatureEdit";
+@import "./components/edit/style/ProjectEdit";
+
+/* MapGIS Design Picture */
+@import "./components/picture/style/ChoosePicture";
+
+/* MapGIS Design Row */
+@import "./components/row/style/ProjectRow";
+
+
+

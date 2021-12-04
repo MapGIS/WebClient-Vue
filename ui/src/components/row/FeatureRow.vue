@@ -3,18 +3,24 @@
     <mapgis-ui-row :class="{mapgisMapStoryFeatureActive: index === activeToolIndex}"
                    :key="index"
                    v-for="(feature,index) in featuresCopy" class="mapgis-ui-feature-row">
-      <div @click="$_clickRow(index)" :style="{width: width + 'px'}" class="mapgis-mapstory-feature-container" @mouseenter="$_rowEnter(index)"
+      <div @dblclick="$_editFeature(index)"
+           @click="$_clickRow(index)" :style="{width: width + 'px'}" class="mapgis-mapstory-feature-container"
+           @mouseenter="$_rowEnter(index)"
            @mouseleave="$_rowLeave">
-        <div v-show="showMoreTool === index" class="mapgis-mapstory-more-tool">
+        <div v-show="showMoreTool === index"
+             class="mapgis-mapstory-more-tool"
+             @mouseleave="$_hideMoreTool"
+        >
           <div @click="$_editFeature(index)" class="mapgis-mapstory-more-tool-row">
             <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="edit"/>
             <span>修改</span>
           </div>
           <div class="mapgis-mapstory-more-tool-row">
-            <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon" type="top"/>
+            <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon"
+                                   type="top"/>
             <span>置顶</span>
           </div>
-          <div class="mapgis-mapstory-more-tool-row">
+          <div @click="$_delete(index)" class="mapgis-mapstory-more-tool-row">
             <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
             <span>删除</span>
           </div>
@@ -22,42 +28,44 @@
         <mapgis-ui-col span="20">
           <div :title="feature.title" class="mapgis-mapstory-feature-panel-title">
             <mapgis-ui-svg-icon class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
-                          :iconStyle="iconStylePoint" :type="feature.baseUrl.type"/>
+                                :iconStyle="iconStylePoint" :type="feature.baseUrl.type"/>
             <div class="mapgis-mapstory-feature-panel-title-value">{{ feature.title }}</div>
           </div>
         </mapgis-ui-col>
         <mapgis-ui-col span="4" class="mapgis-mapstory-tool-bar">
-<!--          <mapgis-ui-svg-icon @click="$_editFeature(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"-->
-<!--                        v-show="showToolIndex === index"-->
-<!--                        type="edit"/>-->
-<!--          <mapgis-ui-svg-icon @click="$_delete(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"-->
-<!--                        v-show="showToolIndex === index"-->
-<!--                        type="delete"/>-->
-<!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
-<!--                        v-show="showToolIndex !== index && feature.layerStyle.show" type="eye"/>-->
-          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" @click="$_showFeature(index, true)"
-                        v-show="showToolIndex === index && !feature.layerStyle.show"
-                        type="eye"/>
+          <!--          <mapgis-ui-svg-icon @click="$_editFeature(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+          <!--                        v-show="showToolIndex === index"-->
+          <!--                        type="edit"/>-->
+          <!--          <mapgis-ui-svg-icon @click="$_delete(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+          <!--                        v-show="showToolIndex === index"-->
+          <!--                        type="delete"/>-->
+          <!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+          <!--                        v-show="showToolIndex !== index && feature.layerStyle.show" type="eye"/>-->
           <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
-                        @click="$_showFeature(index, false)"
-                        v-show="showToolIndex === index && feature.layerStyle.show"
-                        type="noEye"/>
-          <mapgis-ui-base64-icon @click="$_showMoreTool(index)" class="mapgis-mapstory-tool-bar-more" height="20px" type="more"/>
+                              @click="$_showFeature(index, true)"
+                              v-show="showToolIndex === index && !feature.layerStyle.show"
+                              type="eye"/>
+          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
+                              @click="$_showFeature(index, false)"
+                              v-show="showToolIndex === index && feature.layerStyle.show"
+                              type="noEye"/>
+          <mapgis-ui-base64-icon @click="$_showMoreTool(index)" class="mapgis-mapstory-tool-bar-more" height="20px"
+                                 type="more"/>
         </mapgis-ui-col>
-<!--        <div v-show="showMoreTool" class="mapgis-mapstory-more-tool">-->
-<!--          <div @click="$_edit(index)" class="mapgis-mapstory-more-tool-row">-->
-<!--            <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="edit"/>-->
-<!--            <span>修改</span>-->
-<!--          </div>-->
-<!--          <div class="mapgis-mapstory-more-tool-row">-->
-<!--            <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon" type="top"/>-->
-<!--            <span>置顶</span>-->
-<!--          </div>-->
-<!--          <div class="mapgis-mapstory-more-tool-row">-->
-<!--            <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>-->
-<!--            <span>删除</span>-->
-<!--          </div>-->
-<!--        </div>-->
+        <!--        <div v-show="showMoreTool" class="mapgis-mapstory-more-tool">-->
+        <!--          <div @click="$_edit(index)" class="mapgis-mapstory-more-tool-row">-->
+        <!--            <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="edit"/>-->
+        <!--            <span>修改</span>-->
+        <!--          </div>-->
+        <!--          <div class="mapgis-mapstory-more-tool-row">-->
+        <!--            <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon" type="top"/>-->
+        <!--            <span>置顶</span>-->
+        <!--          </div>-->
+        <!--          <div class="mapgis-mapstory-more-tool-row">-->
+        <!--            <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>-->
+        <!--            <span>删除</span>-->
+        <!--          </div>-->
+        <!--        </div>-->
       </div>
     </mapgis-ui-row>
   </div>
@@ -122,10 +130,13 @@ export default {
     this.featuresCopy = this.features;
   },
   methods: {
+    $_hideMoreTool() {
+      this.showMoreTool = undefined;
+    },
     $_showMoreTool(index) {
-      if(this.showMoreTool === index) {
+      if (this.showMoreTool === index) {
         this.showMoreTool = undefined;
-      }else {
+      } else {
         this.showMoreTool = index;
       }
     },
@@ -147,6 +158,7 @@ export default {
       this.$emit("showFeature", this.featuresCopy[index].id, flag, index);
     },
     $_delete(index) {
+      this.showMoreTool = undefined;
       const {id} = this.featuresCopy[index];
       this.$emit("deleteFeature", index, id);
     }
@@ -156,7 +168,7 @@ export default {
 
 <style scoped>
 .mapgisMapStoryFeatureActive {
-  background: $panel-backgroud!important;
+  background: #E7F4FF !important;
 }
 
 .mapgis-ui-feature-row {

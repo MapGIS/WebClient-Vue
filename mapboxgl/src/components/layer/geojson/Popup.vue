@@ -1,19 +1,10 @@
 <template>
   <div class="mapgis-popup-container" v-if="mode === 'click'">
     <div v-if="currentLayerInfo && currentLayerInfo.length > 0">
-      <div class="mapgis-popup-title" v-if="currentLayerInfo[0].title">
-        {{ currentLayerInfo[0].title}}
-      </div>
-      <div class="mapgis-popup-row-container">
-        <div
-            class="mapgis-popup-row"
-            v-for="(value, key) in currentLayerInfo[0].properties"
-            :key="key"
-        >
-          <span class="mapgis-popup-item mapgis-popup-field">{{key}}</span>
-          <span class="mapgis-popup-item mapgis-popup-value">{{ value }} ({{ parseType(typeof value) }})</span>
-        </div>
-      </div>
+      <mapgis-ui-popup-content
+        :feature="feature"
+        :popupOptions="popupOptions"
+      />
     </div>
   </div>
   <div v-else>
@@ -22,9 +13,9 @@
         {{ currentLayerInfo[0].title }}
       </div>
       <div
-          v-for="(value, key) in currentLayerInfo[0].properties"
-          class="mapgis-popup-row"
-          :key="key"
+        v-for="(value, key) in currentLayerInfo[0].properties"
+        class="mapgis-popup-row"
+        :key="key"
       >
         <div class="mapgis-3d-inspect-prop-key">
           <span style="padding-right: 5px">{{ key }}</span>
@@ -52,6 +43,14 @@ export default {
     currentLayerInfo: {
       type: Array,
       default: () => []
+    },
+    popupOptions: {
+      type: Object,
+      default() {
+        return {
+          popupType: "default"
+        };
+      }
     }
   },
   watch: {
@@ -75,6 +74,17 @@ export default {
       }
     });
   },
+  computed: {
+    // 计算属性的 getter
+    feature: function() {
+      const { currentLayerInfo } = this;
+      let fs = {};
+      if (currentLayerInfo && currentLayerInfo.length > 0) {
+        fs.properties = currentLayerInfo[0].properties;
+      }
+      return fs;
+    }
+  },
   methods: {
     parseType(type) {
       let string = "未知";
@@ -89,43 +99,4 @@ export default {
 };
 </script>
 
-<style>
-.mapgis-featuretool-content {
-  position: absolute;
-  z-index: 1000;
-  height: 0px;  /** 这里会触发draw绘制的时候溢出Bug */
-  /* width: 240px;*/ /* 此处不能给宽度,不然初始化的时候会溢出 */
-}
-
-.mapgis-inspect-prop-tabs {
-  width: 240px;
-}
-
-.mapgis-inspect-prop-content {
-  height: 220px;
-  width: 240px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  /* 针对火狐浏览器 */
-  scrollbar-color: transparent transparent;
-  scrollbar-width: thin;
-}
-
-.mapgis-inspect-layer-name {
-  width: 80px;
-}
-
-.mapgis-inspect-prop-style {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 2px dotted #bccbd7;
-  padding: 5px;
-}
-
-.mapgis-inspect-prop-key {
-  font-weight: 700;
-  padding-right: 10px;
-  display: flex;
-  justify-content: flex-start;
-}
-</style>
+<style></style>

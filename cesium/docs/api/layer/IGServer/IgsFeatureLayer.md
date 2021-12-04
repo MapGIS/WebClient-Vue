@@ -97,7 +97,7 @@
 
 | Name         | Type   | Description                                                                                                                                     |
 | :----------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| color        | String | rgba 或者十六进制颜色                                                                                                                           | layers 为空 null undefined，不显示图层 |
+| color        | String | rgba 或者十六进制颜色                                                                                                                           |
 | size         | Number | 点符号大小，仅当 options.style.type="point"时生效                                                                                               |
 | outlineColor | String | 边框线颜色，仅当 options.style.type="point 或 polygon 或 building"时生效，当传入边框线颜色或边框线宽度参数时启用边框线                          |
 | outlineWidth | Number | 边框线宽度，仅当 options.style.type="point"时生效，当传入边框线颜色或边框线宽度参数时启用边框线,"polygon 或 building"边框线宽度仅能为默认值 1。 |

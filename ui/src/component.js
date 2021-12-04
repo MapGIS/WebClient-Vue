@@ -97,6 +97,7 @@ export { default as MapgisUiSvgSelect } from "./components/svgselect/SvgSelect.v
 export { default as MapgisUiSelectOption } from "./components/select/SelectOption.vue";
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
+export { default as MapgisUiSliderTitle } from "./components/slider/SliderTitle.vue";
 export { default as MapgisUiSliderRow } from "./components/mixRow/MixRow.vue";
 export { default as MapgisUiCustomPanel } from "./components/customPanel/CustomPanel.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
@@ -167,6 +168,7 @@ export { default as MapgisUiWindowWrapper } from "./components/window/WindowWrap
 export { default as MapgisUiColorSimplePicker } from "./components/color/ColorSimple.vue";
 export { default as MapgisUiColorsSetting } from "./components/color/ColorsSetting.vue";
 export { default as MapgisUiColorOutline } from "./components/color/ColorOutline";
+export { default as MapgisUiColorTitle } from "./components/color/ColorTitle";
 export { default as MapgisUiD3ColorPicker } from "./components/color-picker/D3ColorPicker.vue";
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
@@ -191,6 +193,7 @@ export { default as MapgisUiInputNumberPanel } from "./layout/panel/InputNumberP
 export { default as MapgisUiColorPickPanel } from "./layout/panel/ColorPickPanel.vue";
 export { default as MapgisUiSelectPanel } from "./layout/panel/SelectPanel.vue";
 export { default as MapgisUiTabPanel } from "./layout/panel/TabPanel.vue";
+export { default as MapgisUiSliderPanel } from "./layout/panel/SliderPanel.vue";
 
 // CloudDisk
 export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
@@ -212,6 +215,7 @@ export { default as MapgisUiChartFlow } from "./components/charts/Flow.vue";
 //map
 export { default as MapgisUiMapOutline } from "./components/map/MapOutline";
 export { default as MapgisUiMapSelect } from "./components/map/MapSelect";
+export { default as MapgisUiMapMultiRows } from "./components/map/MapMultiRows";
 
 //panel
 export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditPanel";
@@ -235,3 +239,7 @@ export { default as MapgisUiProjectHeader } from "./components/head/ProjectHeade
 
 //camera
 export { default as MapgisUiSetCameraView } from "./components/camera/SetCameraView";
+export { default as MapgisUiSetCameraViewSelect } from "./components/camera/SetCameraViewSelect";
+
+//popup
+export { default as MapgisUiPopupContent } from "./components/popup/PopupContent";

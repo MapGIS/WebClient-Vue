@@ -3,7 +3,17 @@
     <mapgis-ui-space class="mapgis-ui-tab-panel-content">
       <mapgis-ui-tooltip v-for="(t, i) in tabs" :key="i">
         <template slot="title"> {{ t.title }}</template>
+        <div v-if="t.type && t.type === 'img'"
+             :class="{
+            'mapgis-ui-tab-panel-item': true,
+            'mapgis-ui-tab-panel-item-active': active == t.title
+          }"
+             @click="() => handleMenuClick(t)">
+          <img :src="t.icon" :style="t.style"
+               alt=""/>
+        </div>
         <div
+            v-else
           :class="{
             'mapgis-ui-tab-panel-item': true,
             'mapgis-ui-tab-panel-item-active': active == t.title

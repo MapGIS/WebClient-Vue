@@ -113,7 +113,8 @@ export default {
                     id: features[i].id,
                     position: new Cesium.Cartesian3(x, y, z),
                     billboard: {
-                      image: img
+                      image: img,
+                      disableDepthTestDistance: Number.POSITIVE_INFINITY
                     }
                   });
                 }

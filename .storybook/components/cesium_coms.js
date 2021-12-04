@@ -67,8 +67,9 @@ export { default as Mapgis3dDynamicSection } from "../../cesium/src/components/A
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";
 export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
+export { default as Mapgis3dVideo } from "../../cesium/src/components/Analysis/Video";
 
-export { default as Mapgis3dParticleEffects } from "../../cesium/src/components/Overlay/ParticleEffects";
+export { default as Mapgis3dParticleEffectsManager } from "../../cesium/src/components/Overlay/particle/ParticleEffects";
 
 export { default as Mapgis3dSceneRoaming } from "../../cesium/src/components/SceneEffect/SceneRoaming";
 

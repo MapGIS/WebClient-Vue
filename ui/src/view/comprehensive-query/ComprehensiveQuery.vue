@@ -53,6 +53,7 @@
         :selectedMarkerIcon="selectedMarkerIcon"
         :widgetInfo="widgetInfo"
         :geometry="geometry"
+        :geoJSONExtent="geoJSONExtent"
         @current-result="currentResult"
         @select-markers="selectMarkers"
         @click-item="clickItem"
@@ -114,6 +115,9 @@ export default {
     };
   },
   computed: {
+    isDataStoreQuery() {
+      return !!this.widgetInfo.dataStore;
+    },
     geometry() {
       if (this.geoJSONExtent && JSON.stringify(this.geoJSONExtent) !== "{}") {
         let geojson;
@@ -166,7 +170,13 @@ export default {
     onSearch() {
       this.searchPanelExpand = true;
       this.locationPanelExpand = false;
-      this.$emit("onSearch");
+      /**
+       * 点击搜索的回调函数
+       * @isDataStoreQuery 当前查询是否走的是大数据查询
+       * @keyword 当前查询关键字，当为大数据查询并且关键字为空时，这里会进行逆地理编码查询
+       *          采用当前视窗的中心点和视窗宽度的一半来进行逆地理编码查询
+       */
+      this.$emit("onSearch", this.isDataStoreQuery, this.keyword);
       this.$nextTick(() => {
         this.$refs.placeName.search(this.keyword);
       });
