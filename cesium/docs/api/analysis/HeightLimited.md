@@ -34,26 +34,54 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **侦听属性**
 - **描述:** 控高分析颜色，与 css 的 color 属性一致，使用 16 进制颜色或者 rba/rgba(包含透明度)
 
-### `models`
+### `drawStyle`
 
-- **类型:** `Array`
-- **默认值:** `[]`
+- **类型:** `Object`
+- **默认值:** `{color: "#FF8C00", opacity: 0.6}`
+- **非侦听属性**
+- **描述:** 控高分析绘制分析区域的绘制样式，有color、opacity、width。
+
+### `heightLimit`
+
+- **类型:** `Number`
+- **默认值:** 80
 - **侦听属性**
-- **描述:** 控高分析颜色，与 css 的 color 属性一致，使用 16 进制颜色或者 rba/rgba(包含透明度)
+- **描述:** 控高分析默认的分析高度。
+
+### `maxSliderHeight`
+
+- **类型:** `Number`
+- **默认值:** 180
+- **侦听属性**
+- **描述:** 分析时滑动条控高的最大值。
+
+### `minSliderHeight`
+
+- **类型:** `Number`
+- **默认值:** 0
+- **侦听属性**
+- **描述:** 分析时滑动条控高的最小值。
 
 ## 示例
 
 ```vue
+
 <template>
   <div style="width: 1200px;height: 800px;">
     <mapgis-web-scene style="height:90vh">
       <mapgis-3d-raster-layer
-        url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+          url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
       ></mapgis-3d-raster-layer>
-      <mapgis-3d-m3d-layer :vueIndex="models[0].vueIndex" :url="m3dUrl1" />
-      <mapgis-3d-m3d-layer :vueIndex="models[1].vueIndex" :url="m3dUrl2" />
+      <mapgis-3d-m3d-layer :url="m3dUrl1"
+                           :autoReset="autoReset"/>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-heightlimited :models="models"></mapgis-3d-heightlimited>
+        <mapgis-3d-heightlimited :color="heightLimitColor"
+                                 :heightLimit='heightLimit'
+                                 :maxSliderHeight='maxSliderHeight'
+                                 :minSliderHeight='minSliderHeight'
+                                 :drawStyle='drawStyle'
+                                 @load='load'>
+        </mapgis-3d-heightlimited>
       </mapgis-ui-card>
     </mapgis-web-scene>
   </div>
@@ -65,20 +93,21 @@ export default {
   data() {
     return {
       m3dUrl1: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-      m3dUrl2: "http://192.168.21.191:6163/igs/rest/g3d/school",
       autoReset: true,
-      models: [
-        {
-          vueIndex: 1,
-          title: "中地大楼模型"
-        },
-        {
-          vueIndex: 2,
-          title: "学校模型"
-        }
-      ],
-      color: "rgba(123,104,238,0.5)"
+      color: "rgba(255,0,0,0.5)",
+      drawStyle: {
+        color: "#FF8C00",
+        opacity: 0.6
+      },
+      heightLimit: 80,
+      maxSliderHeight: 180,
+      minSliderHeight: 0
     };
+  },
+  methods:{
+    load(e){
+      this.heightLimitedAnalysis = e
+    }
   }
 };
 </script>
