@@ -363,6 +363,12 @@ export default {
 
           let positions = results.positions;
           // self.remove();
+
+          //阻止浏览器默认的右键菜单行为
+          document.oncontextmenu = function(){
+          　　return false;
+          }
+
           self.toggleMask(true);
           this.$emit("analysisBegin");
           let xmin
@@ -500,7 +506,7 @@ export default {
           //获取鼠标点击位置的实体
           let pickedFeature = viewer.scene.pick(movement.endPosition,10,10);
 
-          if(pickedFeature.primitive && pickedFeature.primitive.id){
+          if(pickedFeature && pickedFeature.primitive && pickedFeature.primitive.id){
 
             // console.log('pickedFeature',pickedFeature);
 
@@ -651,11 +657,6 @@ export default {
   width: 50%;
   text-align: right;
   font-size: 14px;
-}
-
-::v-deep .mapgis-ui-form-item-label:before{
-  /* content: url("titlew.png"); */
-  margin-right: 6px;
 }
 
 </style>
