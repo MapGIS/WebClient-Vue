@@ -58,18 +58,22 @@
   // }
 
   @include e(label, "-") {
-    padding: 0 6px;
+    // padding: 0 6px;
     line-height: 40px;
   }
 
   @include e(switch, "-") {
     float: right;
     margin: 9px 0px;
+    &-sm{
+      float: right;
+      margin: 12px 0px;
+    }
   }
 
   @include e(parameter, "-") {
-    background: $panel-inner-color;
-    margin: 4px;
+    // background: $panel-inner-color;
+    // margin: 4px;
     border-radius: 4px;
     overflow: hidden;
     max-height: 0px;
@@ -88,7 +92,7 @@
   height: 66px;
   &-sm {
     height: 48px;
-    padding: 10px;
+    padding:10px 6px;
     &:hover {
       background: $primary-2;
     }
@@ -134,7 +138,7 @@
   }
   &-md {
     height: 40px;
-    padding: 0 10px;
+    padding: 0 6px;
     .mapgis-ui-row{
       height: 40px;
       line-height: 40px;
@@ -210,9 +214,9 @@
 }
 
 @include b(color-pick-panel) {
-  background: $panel-inner-color;
+  // background: $panel-inner-color;
   border-radius: 3px;
-  padding: 10px;
+  padding: 10px 6px;
   min-width: 250px;
   height: 52px;
   line-height: 52px;

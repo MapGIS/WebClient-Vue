@@ -443,7 +443,7 @@ export default {
 }
 
 .input-parameter-style {
-    padding: 10px;
+    padding:10px 6px ;
 }
 
 .input-parameter-style label {
