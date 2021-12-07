@@ -29,7 +29,12 @@
             :key="i"
             @click="() => handleClick(v)"
           >
-            <span v-if="v.title">{{ v.title }}</span>
+            <mapgis-ui-tooltip placement="left">
+              <span slot="title">{{ v.title }}</span>
+              <div v-if="v.title" class="mapgis-ui-slider-panel-item-span">
+                {{ customLabel ? customLabel(v.title) : v.title }}
+              </div>
+            </mapgis-ui-tooltip>
           </div>
         </div>
         <div class="mapgis-ui-slider-panel-anchor">
@@ -40,6 +45,7 @@
             :marks="marks"
             :min="min"
             :max="max"
+            @change="handleSlider"
           />
         </div>
       </div>
@@ -65,7 +71,12 @@
               :key="i"
               @click="() => handleClick(v)"
             >
-              <span v-if="v.title">{{ v.title }}</span>
+              <mapgis-ui-tooltip placement="top">
+                <span slot="title">{{ v.title }}</span>
+                <div v-if="v.title" class="mapgis-ui-slider-panel-item-span">
+                  {{ customLabel ? customLabel(v.title) : v.title }}
+                </div>
+              </mapgis-ui-tooltip>
             </div>
           </div>
           <div class="mapgis-ui-slider-panel-anchor">
@@ -73,7 +84,7 @@
               :tip-formatter="null"
               :vertical="layout == 'vertical'"
               :marks="marks"
-              v-model="key"
+              :value="key"
               :min="min"
               :max="max"
               @change="handleSlider"
@@ -104,6 +115,18 @@ export default {
     values: {
       type: Array,
       default: () => []
+    },
+    customLabel: {
+      type: Function
+      /*  default: (label) => {
+        let show = label;
+        let reg = new RegExp(/-(\S*)?楼?F?/g);
+        let res = reg.exec(label);
+        if (res && res.length > 0) {
+          show = res[res.length - 1];
+        }
+        return show;
+      } */
     }
   },
   data() {
@@ -138,26 +161,29 @@ export default {
       let marks = {};
       let min = Number.MAX_VALUE;
       let max = Number.MIN_VALUE;
-      result.forEach(v => {
+      result = result.map(v => {
+        let key = typeof v.key === "string" ? parseInt(v.key) : v.key;
+        v.key = key;
         marks[v.key] = ""; // v.key;
-        if (v.key >= max) {
-          max = v.key;
+        if (key >= max) {
+          max = key;
         }
-        if (v.key <= min) {
-          min = v.key;
+        if (key <= min) {
+          min = key;
         }
+        return v;
       });
       this.min = min - 1;
       this.max = max + 0;
       this.marks = marks;
       result.push(empty);
       if (layout == "vertical") {
-        this.innervalues = result.splice(0, 0, empty);
-      } else if (layout == "horizontal") {
         let temp = result.reverse();
         temp.push(empty);
         result = temp;
         this.innervalues = temp;
+      } else if (layout == "horizontal") {
+        this.innervalues = result.splice(0, 0, empty);
       }
 
       return result;
@@ -177,6 +203,7 @@ export default {
         this.key = key;
         this.sliderkey = key;
         this.sortkeys = [];
+        this.$emit("change", key);
       }
     },
     handleScoll() {
@@ -187,14 +214,14 @@ export default {
       };
     },
     handleSlider(value) {
-      // this.key = undefined;
+      this.key = value;
       let keys = [];
       this.innervalues.forEach(v => {
         if (v.key <= value) {
           keys.push(v.key);
         }
       });
-      this.$emit("change-slider", keys);
+      this.$emit("changeSlider", keys);
       this.sortkeys = keys;
     },
     computeStyle() {

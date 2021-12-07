@@ -340,7 +340,7 @@
     background: linear-gradient(
       0deg,
       rgba(255, 255, 255, 0),
-      #ffffff,
+      rgba(255, 255, 255, 0.85),
       rgba(255, 255, 255, 0)
     );
   }
@@ -415,14 +415,14 @@
     }
     .mapgis-ui-slider-track {
       background: linear-gradient(0deg, #91d5ff, #168de5);
-      width: 4px;
+      width: 2px;
     }
     .mapgis-ui-slider-rail {
-      width: 4px;
+      width: 2px;
     }
     .mapgis-ui-slider-vertical .mapgis-ui-slider-handle {
       margin-top: -6px;
-      margin-left: -2px;
+      margin-left: -4px;
     }
     .mapgis-ui-slider-handle {
       width: 10px;
@@ -437,13 +437,20 @@
   }
 
   &-item {
-    span {
+    &-span {
       min-width: 40px;
       min-height: 40px;
+      width: 40px;
+      height: 40px;
       font-size: 14px;
       line-height: 40px;
       text-align: center;
       color: $text-color;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-break: break-all;
     }
 
     text-align: center;
@@ -458,7 +465,7 @@
       height: 40px;
       background: linear-gradient(-90deg, #0081e2, #91d5ff);
       font-weight: bolder;
-      span {
+      div {
         color: #ffffff;
       }
     }
