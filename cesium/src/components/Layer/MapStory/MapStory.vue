@@ -4,6 +4,7 @@
                    @deleteFeature="$_deleteFeature"
                    @deleteProject="$_deleteProject"
                    @getCamera="$_getCamera"
+                   @selectCamera="$_selectCamera"
                    @changeColor="$_changeColor"
                    @changeOpacity="$_changeOpacity"
                    @changeIcon="$_changeIcon"
@@ -11,13 +12,17 @@
                    @showProject="$_showProject"
                    @addMapToProject="$_addMapToProject"
                    @addFeature="$_addFeature"
+                   @addChapter="$_addChapter"
+                   @toggleChapterFeatures="$_toggleChapterFeatures"
+                   @copyChapter="$_copyChapter"
                    @titleChanged="$_titleChanged"
                    @featureTitleChanged="$_featureTitleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
                    @editProject="$_editProject"
                    @projectPreview="$_projectPreview"
+                   @featurePreview="$_featurePreview"
                    @firstAddPicture="$_firstAddPicture"
-                   :dataSource="dataSourceCopy"
+                   v-model="dataSourceCopy"
                    :upProjectSet="projectSet"
                    :height="height"
                    :width="width"
@@ -75,9 +80,8 @@ export default {
   data() {
     return {
       drawer: undefined,
-      currentFeatureType: undefined,
       currentPoints: undefined,
-      dataSourceCopy: []
+      interval: undefined
     }
   },
   props: {
@@ -105,6 +109,11 @@ export default {
         this.dataSourceCopy = this.dataSource;
       },
       deep: true
+    },
+    dataSourceCopy: {
+      handler: function () {
+      },
+      deep: true
     }
   },
   created() {
@@ -120,8 +129,12 @@ export default {
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
     },
-    $_projectPreview(features, enableFullScreen) {
-      this.$emit("projectPreview", features, enableFullScreen);
+    $_featurePreview(feature) {
+      this.$emit("featurePreview", [feature]);
+    },
+    $_projectPreview(project) {
+      // this.$_play(chapters);
+      this.$emit("projectPreview", project, false);
     },
     $_deleteProject() {
       this.popups = [];
