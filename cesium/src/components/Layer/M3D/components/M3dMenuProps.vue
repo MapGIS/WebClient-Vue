@@ -307,6 +307,10 @@ export default {
         "post"
       );
     },
+    /**
+     * @description 地图文档的查询由于是底层在查询服务端，然后再前端绘制几何
+     * 因此只地图文档关联的要素只支持经纬度的坐标系
+     */
     $_docquery(movement) {
       const vm = this;
       const { vueKey, vueIndex, vueCesium, Cesium } = this;
@@ -326,7 +330,6 @@ export default {
 
           g3dLayer.Monomerization(
             function callback(result) {
-              console.log("result", result);
               if (result && result.length > 0) {
                 let feature = result[0];
                 let find = vueCesium.G3DManager.changeOptions(vueKey, vueIndex);

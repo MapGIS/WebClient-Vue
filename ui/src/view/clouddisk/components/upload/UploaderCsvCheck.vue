@@ -140,7 +140,14 @@ export default {
             let result = res.data
             let { errorCode, msg } = result
             if (errorCode < 0) {
-              this.$Notice.error({ title: errorCode, desc: msg })
+              let notification = {
+                message: errorCode,
+                description: msg,
+                onClick: function () {
+                  console.warn('错误日志：', notification)
+                }
+              }
+              this.$notification.error(notification)
             } else {
               // console.warn('获取结果', result)
               let csvHeader = result.data.header
@@ -154,7 +161,14 @@ export default {
           }
         })
         .catch(error => {
-          this.$Notice.error({ title: '网络异常,请检查链接', desc: error })
+          let notification = {
+            message: '网络异常,请检查链接',
+            description: error,
+            onClick: function () {
+              console.warn('错误日志：', error)
+            }
+          }
+          this.$notification.error(notification)
         })
     },
     setColumns (header) {

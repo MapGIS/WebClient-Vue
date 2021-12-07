@@ -7,7 +7,7 @@
             size="small"
             class="mapgis-ui-number-style"
             label="等值距(米)"
-            :range="[0,zMax/2]"
+            :range="[0,halfHeight]"
             v-model="contourSpacingCopy"/>
         <mapgis-ui-switch-panel
             :labelCol="{ span: 8 }"
@@ -63,18 +63,6 @@
             </mapgis-ui-collapse-panel>
           </mapgis-ui-collapse>
         </mapgis-ui-switch-panel>
-<!--        <mapgis-ui-switch-panel-->
-<!--            :labelCol="{ span: 8 }"-->
-<!--            :wrapperCol="{ span: 16 }"-->
-<!--            layout="horizontal"-->
-<!--            label="图例">-->
-<!--          <mapgis-ui-colors-setting-->
-<!--              v-model="formData2.bandColorArray"-->
-<!--              :rangeField="'高度'"-->
-<!--              :singleNumber="true"-->
-<!--          >-->
-<!--          </mapgis-ui-colors-setting>-->
-<!--        </mapgis-ui-switch-panel>-->
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
           >分析
@@ -282,8 +270,8 @@ export default {
       bandPositionCopy: [],
       colorsArrayCopy: [],
       backgroundTransparency: 0.6,
-      // getTerrianHeight: false,
-      zMax: undefined
+      zMax: undefined,
+      halfHeight:undefined
     };
   },
 
@@ -530,8 +518,8 @@ export default {
         vm.formData2.bandColorArray = [];
         // 高度差
         vm.zMax = zIndex.zMax;
+        vm.halfHeight = Math.round(vm.zMax/2);
         let heightIntercept = Math.abs(zIndex.zMin - zIndex.zMax);
-        console.log("heightIntercept", heightIntercept);
         let space = vm.contourSpacingCopy;
         let heightUnit = Math.round(heightIntercept / space);
         for (let i = 0; i <= heightUnit; i++) {
@@ -550,17 +538,8 @@ export default {
             );
           }
           unit = this.calculateColor(unit, i, heightUnit);
-          //   color = d3.interpolateOranges(i
-          // if (i % 2 == 0) { / heightUnit);
-          // } else {
-          //   color = d3.interpolateBlues(i / heightUnit);
-          // }
           vm.formData2.bandColorArray.push(unit);
-          // vm.getTerrianHeight = true;
         }
-        console.log("this.colorsArrayCopy", this.colorsArrayCopy);
-
-        // console.log("vm.formData2.bandColorArray",vm.formData2.bandColorArray);
       });
 
     },
@@ -645,8 +624,12 @@ export default {
 ::v-deep .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header{
   border-left: unset !important;
   font-size: 13px;
+  padding: 7px 27px;
 }
 ::v-deep .mapgis-ui-table-body{
   max-height: 167px !important;
+}
+::v-deep .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header .mapgis-ui-collapse-arrow{
+  left: 10px;
 }
 </style>

@@ -22,7 +22,7 @@
         <div class="mapgis-popup-content-row-container"
              :style="{maxHeight: popupOptionsCopy.scrollNum * rowHeight + 'px', overflowY: popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum ? 'scroll' : 'auto'}"
         >
-          <div :key="index" v-for="(field,index) in popupOptionsCopy.fields">
+          <div class="mapgis-popup-row-wrapper" :key="index" v-for="(field,index) in popupOptionsCopy.fields">
             <!--一行数据-->
             <div class="mapgis-popup-row"
                  :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
@@ -96,10 +96,6 @@ export default {
           valueStyle: {},
         },
         fields: [],
-        feature: {
-          geometry: {},
-          properties: {}
-        },
         scrollNum: 4
       },
       rowHeight: 30,

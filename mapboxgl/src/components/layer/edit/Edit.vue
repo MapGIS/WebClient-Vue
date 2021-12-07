@@ -1,11 +1,4 @@
 <template>
-  <!-- <mapgis-ui-card
-    v-show="visible"
-    :style="outStyle"
-    title="设置显示样式"
-    class="mapgis-mvt-editor-card"
-  >
-    <a slot="extra" @click="handleClose">x</a> -->
   <div class="mapgis-mvt-editor">
     <mapgis-ui-radio-group v-model="action" button-style="solid">
       <mapgis-ui-radio-button class="action-type" value="single">
@@ -22,7 +15,6 @@
     />
     <multi-action v-else :layerid="layerid" />
   </div>
-  <!-- </mapgis-ui-card> -->
 </template>
 
 <script>
@@ -37,26 +29,9 @@ export default {
   inject: ["map", "mapbox"],
   mixins: [EditMixin],
   props: {
-    // outStyle: {
-    //   type: Object,
-    //   default: () => {
-    //     return {
-    //       left: "10px",
-    //       top: "10px"
-    //     };
-    //   }
-    // },
     layerid: {
       type: String
     }
-    // visible: {
-    //   type: Boolean,
-    //   default: false
-    // }
-  },
-  model: {
-    // prop: "visible",
-    event: "change"
   },
   data() {
     return {
@@ -67,20 +42,12 @@ export default {
   methods: {
     onEditChange(event) {
       this.$_emitEvent(event);
-    },
-    handleClose() {
-      // this.show = false;
-      this.$emit("change", false);
     }
   }
 };
 </script>
 
 <style lang="css">
-.mapgis-mvt-editor {
-  max-height: calc(50vh);
-  overflow-y: auto;
-}
 .mapgis-mvt-editor .action-type {
   width: 120px;
   text-align: center;

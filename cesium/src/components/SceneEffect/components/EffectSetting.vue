@@ -4,14 +4,16 @@
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="黑白照片" :checked="blckWhite" @changeChecked="blackAndWhiteChange"/>
+          <mapgis-ui-switch-panel size="small" label="黑白照片" :checked="blckWhite" @changeChecked="blackAndWhiteChange"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="夜视效果" :checked="ntVision" @changeChecked="nightVision"/>
+          <mapgis-ui-switch-panel size="small" label="夜视效果" :checked="ntVision" @changeChecked="nightVision"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
-      <mapgis-ui-switch-panel label="场景泛光" :checked="bloom" @changeChecked="enableBloom">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="场景泛光" :checked="bloom" @changeChecked="enableBloom">
 
         <mapgis-ui-input-number-panel 
           size="small"
@@ -150,4 +152,37 @@ export default {
 </script>
 
 <style scoped>
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(odd) .mapgis-ui-switch-panel{
+  padding-right: 10px;
+}
+
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel::before{
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  background: #DCDCDC;
+}
+
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel{
+  padding-left: 10px;
+}
+
+.dividerWrapper{
+  height: 13px;
+}
+.divider{
+  display: block;
+  height: 1px;
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  margin: 6px 0;
+  background: #F0F0F0 ;
+}
 </style>

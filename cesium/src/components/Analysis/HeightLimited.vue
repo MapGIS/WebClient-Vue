@@ -1,39 +1,41 @@
 <template>
   <div class="mapgis-widget-heightLimited-analysis">
-    <mapgis-ui-group-tab
-        title="模型"
-        :has-top-margin="false"
-        v-if="models.length > 1"></mapgis-ui-group-tab>
-    <mapgis-ui-form-item v-if="models.length > 1">
-      <mapgis-ui-select :size="size" :default-value="model.title" @change="handleChange">
-        <mapgis-ui-select-option v-for="(node, index) in models" :key="index" :value="node.title">
-          {{ node.title }}
-        </mapgis-ui-select-option>
-      </mapgis-ui-select>
-    </mapgis-ui-form-item>
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-    <mapgis-ui-setting-form :label-width="72">
-      <mapgis-ui-form-item label="限高颜色">
-        <mapgis-ui-sketch-color-picker
-            :color.sync="colorCopy"
-            :disableAlpha="false"
-            class="colorCopy-picker"
-        >
-        </mapgis-ui-sketch-color-picker>
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="限制高度">
-        <mapgis-ui-slider :disabled="readonly"
-                          :max="maxSliderHeight" :min="minSlider"
-                          :step="5"
-                          v-model="heightLimit"
-                          @change="setInput"/>
-      </mapgis-ui-form-item>
-    </mapgis-ui-setting-form>
-    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad" :drawStyle="drawStyle"
+    <mapgis-ui-color-pick-panel
+        :label="colorLabel"
+        :color="colorCopy"
+        :size="size"
+        :disableAlpha="false"
+        style="font-size: 13px"
+        @input="val =>
+                  (colorCopy = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+          ">
+    </mapgis-ui-color-pick-panel>
+    <mapgis-ui-input-number-panel
+        label="控制高度"
+        :step="1"
+        :range="[minSliderHeightCopy,maxSliderHeightCopy]"
+        v-model="heightLimitCopy"
+        @change="val => setInput(val)"
+        style="font-size: 13px"/>
+    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
+                    :drawStyle="drawStyleCopy"
                     :enableControl="enableControl">
       <div class="parent_div">
-        <mapgis-ui-group-tab title="绘制区域"></mapgis-ui-group-tab>
-        <div style="text-align: right" class="child_div">
+        <mapgis-ui-group-tab title="分析范围"></mapgis-ui-group-tab>
+        <mapgis-ui-radio-group v-model="radioValue" style="padding: 10px 10px">
+          <mapgis-ui-radio
+              :value=1
+          >
+            绘制区域
+          </mapgis-ui-radio>
+          <mapgis-ui-radio
+              :value=2
+          >
+            输入区域
+          </mapgis-ui-radio>
+        </mapgis-ui-radio-group>
+        <div style="text-align: left;padding:8px 0px" v-if="radioValue === 1">
           <mapgis-ui-tooltip
               v-for="(item, i) in draws"
               :key="i"
@@ -57,6 +59,33 @@
             </mapgis-ui-button>
           </mapgis-ui-tooltip>
         </div>
+        <div v-if="radioValue === 2">
+          <mapgis-ui-setting-form  :label-width="24" :wrapper-width="224" style="padding: 0 10px" class="mapgis-ui-setting-form">
+            <mapgis-ui-form-item label="圆心" style="text-align: center">
+              <mapgis-ui-input
+                  :style="{ width: '48%',padding:'0 5px 0 0' }"
+                  v-model.number="circleCenter.longitude"
+                  :placeholder="inputDefaultVal1"
+                  allow-clear
+              />
+              <mapgis-ui-input
+                  :style="{ width: '48%' }"
+                  v-model.number="circleCenter.latitude"
+                  :placeholder="inputDefaultVal2"
+                  allow-clear
+              />
+            </mapgis-ui-form-item>
+            <mapgis-ui-form-item label="半径">
+              <mapgis-ui-input
+                  v-model.number="radius"
+                  type="number"
+                  min="0"
+                  addon-after="(米)"
+                  style="padding: 0 5px"
+              />
+            </mapgis-ui-form-item>
+          </mapgis-ui-setting-form>
+        </div>
       </div>
     </mapgis-3d-draw>
     <mapgis-ui-setting-footer>
@@ -72,36 +101,67 @@
 import BaseLayer from "./BaseLayer";
 import Mapgis3dDraw from "../UI/Controls/Draw/Draw";
 import {deepEqual} from "../Utils/deepequal";
+import * as turf from "@turf/turf";
 
 export default {
   name: "mapgis-3d-heightlimited",
   mixins: [BaseLayer],
   props: {
-    // 模型集合
-    models: {
-      type: Array,
-      default: () => []
+    /**
+     * @type Number
+     * @default 80
+     * @description 控高默认值
+     */
+    heightLimit: {
+      type: Number,
+      default: 80
     },
+    /**
+     * @type Number
+     * @default 10
+     * @description 滑动条最大值
+     */
+    maxSliderHeight: {
+      type: Number,
+      default: 180
+    },
+    /**
+     * @type Number
+     * @default 0
+     * @description 滑动条最小值
+     */
+    minSliderHeight: {
+      type: Number,
+      default: 0
+    },
+    /**
+     * @type String
+     * @default 0
+     * @description 控高分析结果颜色
+     */
     color: {
       type: String,
-      default: "#ff0000"
+      default: "rgba(255,0,0,0.5)"
+    },
+    drawStyle: {
+      type: Object,
+      default() {
+        return {
+          color: "#FF8C00",
+          opacity: 0.6
+        }
+      }
     }
   },
   components: {Mapgis3dDraw},
   inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
-      //定义
-      heightLimit: 10,
-      // slider滑块是否禁用
-      readonly: false,
-      minSlider: 0,
-      boundingSphere: "",
+      heightLimitCopy: 10,
+      isDrawCircle: false,
       waitManagerName: "M3DIgsManager",
       cartesianForHeight: [],
       enableControl: false,
-      // 选中模型
-      model: null,
       size: "default",
       // radio样式
       radioStyle: {
@@ -109,11 +169,14 @@ export default {
         height: "30px",
         lineHeight: "30px"
       },
-      colorCopy: "#ff0000",
+      colorLabel: "控高颜色",
+      colorCopy: "rgba(255,0,0,0.5)",
       opacityCopy: 0.5,
-      maxSliderHeight: 50,
-      drawStyle: {
-        color: "#ff0000"
+      minSliderHeightCopy: 0,
+      maxSliderHeightCopy: 180,
+      drawStyleCopy: {
+        color: "#FF8C00",
+        opacity: 0.6
       },
       draws: [
         {
@@ -128,9 +191,25 @@ export default {
           tip: "绘制多边形",
           click: this.drawPolygon
         },
+        {
+          icon: "mapgis-huizhiyuan1",
+          type: "primary",
+          tip: "绘制圆",
+          click: this.drawCircle
+        },
       ],
-      // m3d模型对象
-      m3d: undefined
+      radioValue: 1,
+      inputDefaultVal1: '经度',
+      inputDefaultVal2: '纬度',
+      circleCenter: {
+        longitude: "",
+        latitude: ""
+      },
+      radius: 0,
+      layout: "horizontal",
+      labelCol: {span: 5},
+      wrapperCol: {span: 19},
+      lnglat: undefined
     }
   },
   mounted() {
@@ -140,42 +219,53 @@ export default {
     this.unmount();
   },
   watch: {
-    models: {
-      handler: function (layers) {
-        if (layers && layers.length > 0) {
-          this.model = layers[layers.length - 1];
-        } else {
-          this.model = null;
-        }
-      },
-      deep: true,
-      immediate: true
-    },
-    model: {
-      deep: true,
-      immediate: true,
-      handler: function () {
-        this.remove();
-        this.changeModel();
-      }
-    },
     color: {
       immediate: true,
       handler(next, old) {
         if (!deepEqual(next, old)) {
           this.colorCopy = next;
-          this.drawStyle.color = next;
         }
       }
     },
     colorCopy: {
       immediate: true,
-      handler(next, old) {
-        this.drawStyle.color = next;
-        this.remove();
-        this.heightLimitedAnalysis();
+      handler(next) {
+        let {vueCesium, vueKey, vueIndex} = this;
+        let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+        if (find && find.options) {
+          if (this.lnglat) {
+            let {heightLimitedAnalysis} = find.options;
+            if (heightLimitedAnalysis) {
+              this.heightLimitedAnalysis(this.lnglat);
+            }
+          }
+        }
       }
     },
+    heightLimit: {
+      immediate: true,
+      handler(next) {
+        this.heightLimitCopy = next;
+      }
+    },
+    minSliderHeight: {
+      immediate: true,
+      handler(next) {
+        this.minSliderHeightCopy = next;
+      }
+    },
+    maxSliderHeight: {
+      immediate: true,
+      handler(next) {
+        this.maxSliderHeightCopy = next;
+      }
+    },
+    drawStyle: {
+      immediate: true,
+      handler(next) {
+        this.drawStyleCopy = next;
+      }
+    }
   },
   methods: {
     async createCesiumObject() {
@@ -206,103 +296,47 @@ export default {
     },
 
     /**
-     * 判断传入的m3d图层是否加载完毕
-     */
-    m3dIsReady() {
-      const {vueCesium, vueKey, vueIndex, model} = this;
-      return new Promise((resolve, reject) => {
-        if (model && model.vueIndex) {
-          let id = model.vueIndex;
-          let layerIndex = 0;
-          if (typeof (id) === "string" && id.includes(":")) {
-            const strs = id.split(":");
-            id = strs[0];
-            layerIndex = strs[1];
-          }
-          this.$_getM3DByInterval(
-              function (m3ds) {
-                if (m3ds && m3ds.length > 0) {
-                  if (
-                      !m3ds[layerIndex] ||
-                      !m3ds[layerIndex].hasOwnProperty("source") ||
-                      !m3ds[layerIndex].source
-                  ) {
-                    reject(null);
-                  } else {
-                    resolve(m3ds[layerIndex]);
-                  }
-                } else {
-                  reject(null);
-                }
-              },
-              vueKey,
-              id
-          );
-        } else {
-          reject(null);
-        }
-      });
-    },
-
-    changeModel() {
-      let vm = this;
-      this.m3dIsReady().then(m3d => {
-        let id = this.model.vueIndex;
-        let layerIndex = 0;
-        if (typeof (id) === "string" && id.includes(":")) {
-          const strs = id.split(":");
-          id = strs[0];
-          layerIndex = strs[1];
-        }
-        const {source} = m3d;
-        vm.m3d = m3d;
-        vm.zoomToM3dLayerBySource(source[layerIndex]);
-        vm.getM3dHeight(source[layerIndex]);
-      });
-    },
-
-    /**
-     * 跳转到模型范围，视角不变。基于source
-     * @param source
-     */
-    zoomToM3dLayerBySource(source) {
-      const m3d = this.getM3D();
-      m3d.zoomToM3dLayer(source);
-    },
-
-    /**
-     * 获取M3DLayer对象
-     * @returns M3DLayer对象
-     */
-    getM3D() {
-      const {viewer} = this;
-      const m3d = new window.CesiumZondy.Layer.M3DLayer({
-        viewer: viewer
-      });
-      return m3d;
-    },
-
-    /**
-     * 获取模型的高度
-     */
-    getM3dHeight(source) {
-      let vm = this;
-      let _boundingVolume = source._root._boundingVolume;
-      //求外包盒的高度
-      let height = Math.abs(_boundingVolume.maximumHeight - _boundingVolume.minimumHeight);
-      this.maxSliderHeight = height;
-    },
-
-    /**
      * 开始分析
      */
     startHeightAnalysis() {
-      this.heightLimitedAnalysis();
+      let vm = this;
+      // 先判断分析范围：绘制区域和输入区域
+      if (vm.radioValue) {
+        switch (vm.radioValue) {
+          case 1:
+            if (vm.lnglat) {
+              this.drawer && this.drawer.removeEntities(true);
+              this.heightLimitedAnalysis(vm.lnglat);
+            } else {
+              this.$message.warning("请先绘制控高区域");
+            }
+            break;
+          case 2:
+            if (vm.circleCenter.longitude && vm.circleCenter.latitude && vm.radius) {
+              //先清除
+              vm.lnglat = undefined;
+              // 根据用户输入的圆心和半径计算圆范围的坐标点
+              let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
+              vm.lnglat = vm.calculateCirclePosition(circle, vm.radius / 1000);
+              this.heightLimitedAnalysis(vm.lnglat);
+            } else {
+              this.$message.warning("请先输入控高区域");
+            }
+            break;
+        }
+      }
+    },
+
+    calculateCirclePosition(center, radius) {
+      // turf 计算坐标点
+      let options = {};
+      let positions = turf.circle(center, radius, options);
+      return positions.geometry.coordinates[0];
     },
 
     setInput(data) {
       let vm = this;
-      vm.heightLimit = data;
+      vm.heightLimitCopy = data;
       let {vueCesium, vueKey, vueIndex} = this;
       let find = vueCesium.HeightLimitedAnalysisManager.findSource(
           vueKey,
@@ -315,13 +349,27 @@ export default {
         heightLimitedAnalysis.height = data;
       }
     },
+
+    changeColor(e) {
+      this.colorCopy = e;
+      this.remove();
+      this.heightLimitedAnalysis(this.lnglat);
+    },
+
     removeDraw() {
       this.drawer.unmount();
     },
     drawPolygon() {
+      this.lnglat = undefined;
       this.drawer && this.drawer.enableDrawPolygon();
     },
+    drawCircle() {
+      this.lnglat = undefined;
+      this.isDrawCircle = true;
+      this.drawer && this.drawer.enableDrawCircle();
+    },
     drawRectangle() {
+      this.lnglat = undefined;
       this.drawer && this.drawer.enableDrawRectangle();
     },
     toggleDelete() {
@@ -339,11 +387,24 @@ export default {
     //绘制组件的回调函数
     handleCreate(cartesian3, lnglat) {
       let vm = this;
-      this.drawer && this.drawer.removeEntities(true);
+      if (vm.isDrawCircle) {
+        let center = [];
+        // 圆心 笛卡尔转换经纬度
+        let cartographic = Cesium.Cartographic.fromCartesian(cartesian3);
+        center.push(Cesium.Math.toDegrees(cartographic.longitude));
+        center.push(Cesium.Math.toDegrees(cartographic.latitude));
+        let radius = lnglat / 1000;
+        vm.lnglat = vm.calculateCirclePosition(center, radius);
+        vm.isDrawCircle = false;
+      } else {
+        // 矩形或者多边形，笛卡尔转换经纬度
+        if (lnglat.length === 2) {
+          vm.lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
+        } else {
+          vm.lnglat = lnglat;
+        }
+      }
       vm.cartesian3 = cartesian3;
-      vm.lnglat = lnglat;
-      this.heightLimitedAnalysis(lnglat);
-      window.drawElement.stopDrawing();
     },
 
     //开始控高分析
@@ -351,34 +412,8 @@ export default {
       const vm = this;
       // 先remove
       this.remove();
-      let {vueKey, vueIndex} = this
-      let {heightLimit, vueCesium, viewer} = this;
-      //先判断m3d模型是否加载完成
-      vm.m3dIsReady().then(m3d => {
-        //判断分析方式，不通过绘制矩形和绘制面的方式，则lnglat为空，走if,否则绘制方式就走else
-        if (!lnglat) {
-          let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
-          if (find && find.options && find.options.lnglat) {
-            lnglat = find.options.lnglat;
-            // this.remove();
-          } else {
-            vm._boundingVolume = m3d.source[0]._root._boundingVolume;
-            const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
-            const southwestCornerCartesian = vm._boundingVolume.southwestCornerCartesian;
-            lnglat = vm.getAllPoint(southwestCornerCartesian, northeastCornerCartesian);
-          }
-        } else if (lnglat.length === 2) {
-          lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
-        } else {
-          let temp = [];
-          lnglat.forEach((l, index) => {
-            let lTemp = {};
-            lTemp.longitude = l[0];
-            lTemp.latitude = l[1];
-            temp[index] = lTemp;
-          })
-          lnglat = temp;
-        }
+      let {heightLimitCopy, vueCesium, viewer} = this;
+      if (lnglat) {
         vueCesium.HeightLimitedAnalysisManager.changeOptions(
             vm.vueKey,
             vm.vueIndex,
@@ -388,13 +423,13 @@ export default {
         //控高分析边界点数组
         let pnts = [];
         for (let i = 0; i < lnglat.length; i++) {
-          pnts.push(new Cesium.Cartesian3(lnglat[i].longitude, lnglat[i].latitude, 0));
+          pnts.push(new Cesium.Cartesian3(lnglat[i][0], lnglat[i][1], 0));
         }
         let cesiumColor = Cesium.Color.fromCssColorString(vm.colorCopy);
 
         //调用控高分析接口
         let heightLimited = new Cesium.HeightLimited(viewer, {
-          height: heightLimit,
+          height: heightLimitCopy,
           limitedColor: cesiumColor,
           blendTransparency: vm.opacityCopy,
           posArray: pnts,
@@ -408,69 +443,44 @@ export default {
             "heightLimitedAnalysis",
             heightLimited
         );
-      })
-    },
-
-
-    transformToLocal(cartesian3, findSource) {
-      let localCertesian3 = [];
-      let transform = findSource.source[0]._root.transform;
-      //求逆矩阵
-      const inverMatrix = Cesium.Matrix4.inverse(transform, new Cesium.Matrix4());
-      //各点的相对坐标
-      for (let i = 0; i < cartesian3.length; i++) {
-        let point = cartesian3[i];
-        let result = Cesium.Matrix4.multiplyByPoint(inverMatrix, point, new Cesium.Cartesian3());
-        localCertesian3.push(result);
       }
-      return localCertesian3;
-    },
+      // if (!lnglat) {
+      //   let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
+      //   if (find && find.options && find.options.lnglat) {
+      //     lnglat = find.options.lnglat;
+      //     // this.remove();
+      //   } else {
+      //     vm._boundingVolume = m3d.source[0]._root._boundingVolume;
+      //     const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
+      //     const southwestCornerCartesian = vm._boundingVolume.southwestCornerCartesian;
+      //     lnglat = vm.getAllPoint(southwestCornerCartesian, northeastCornerCartesian);
+      //   }
+      // } else if (lnglat.length === 2) {
+      //   lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
+      // } else {
+      //   let temp = [];
+      //   lnglat.forEach((l, index) => {
+      //     let lTemp = {};
+      //     lTemp.longitude = l[0];
+      //     lTemp.latitude = l[1];
+      //     temp[index] = lTemp;
+      //   })
+      //   lnglat = temp;
+      // }
 
-    //根据外包盒子两个点求出四个点
-    getAllPoint(southwest, northeast) {
-      let p1 = this.degreefromCartesian(southwest);
-      let p2 = this.degreefromCartesian(northeast);
-      let p3 = {}, p4 = {};
-      p3.longitude = p1.longitude;
-      p3.latitude = p2.latitude;
-      p3.height = p1.height;
-      p4.longitude = p2.longitude;
-      p4.latitude = p1.latitude;
-      p4.height = p2.height;
-      //p3,p4的笛卡尔坐标
-      let p3Caetesian = Cesium.Cartesian3.fromDegrees(p3.longitude, p3.latitude, p3.height);
-      let p4Caetesian = Cesium.Cartesian3.fromDegrees(p4.longitude, p4.latitude, p4.height);
-      let allPoint = [p1, p4, p2, p3];
-      return allPoint;
     },
 
     //绘制方式返回的点坐标是经纬度坐标
     getAllPointByDegree(lnglat1, lnglat2) {
-      let p1 = {}, p2 = {}, p3 = {}, p4 = {};
-      p1.longitude = lnglat1[0];
-      p1.latitude = lnglat1[1];
-      p1.height = lnglat1[2];
-      p2.longitude = lnglat2[0];
-      p2.latitude = lnglat2[1];
-      p2.height = lnglat2[2];
-      p3.longitude = p1.longitude;
-      p3.latitude = p2.latitude;
-      p3.height = p1.height;
-      p4.longitude = p2.longitude;
-      p4.latitude = p1.latitude;
-      p4.height = p2.height;
-      let allPoint = [p1, p4, p2, p3];
+      let p3 = [], p4 = [];
+      p3.push(lnglat1[0]);
+      p3.push(lnglat2[1]);
+      p3.push(lnglat1[2]);
+      p4.push(lnglat2[0]);
+      p4.push(lnglat1[1]);
+      p4.push(lnglat2[2]);
+      let allPoint = [lnglat1, p4, lnglat2, p3];
       return allPoint;
-    },
-
-    //根据笛卡尔坐标求出点的经纬度坐标
-    degreefromCartesian(p) {
-      let point = {};
-      let cartographic = Cesium.Cartographic.fromCartesian(p);
-      point.longitude = Cesium.Math.toDegrees(cartographic.longitude);
-      point.latitude = Cesium.Math.toDegrees(cartographic.latitude);
-      point.height = cartographic.height; //模型高度
-      return point;
     },
 
     handleChange(e) {
@@ -509,16 +519,22 @@ export default {
 ::v-deep .mapgis-ui-select {
   width: 100%;
 }
-
 .parent_div {
   width: 100%;
   display: inline-block;
   position: relative;
 }
+.mapgis-ui-setting-form{
+  /*height: 16px;*/
+  font-size: 14px;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+}
 
-.child_div {
-  position: absolute;
-  top: 0;
-  right: 0px;
+::v-deep .mapgis-ui-form-item {
+  margin-bottom: 12px;
+}
+::v-deep .mapgis-ui-form-item-control{
+  text-align: center!important;
 }
 </style>
