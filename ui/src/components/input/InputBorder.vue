@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="mapgis-ui-input-border-title">
-      <mapgis-ui-title-icon/>
+    <div class="mapgis-ui-input-border-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
       {{ title }}
     </div>
     <div class="mapgis-ui-input-border-container">
-      <mapgis-ui-input :title="valueCopy" :id="id" :style="inputStyle" class="mapgis-ui-input-border" v-model="valueCopy" :placeholder="placeholder"/>
+      <mapgis-ui-input @change="$_change" :title="valueCopy" :id="id" :style="inputStyle" class="mapgis-ui-input-border" v-model="valueCopy" :placeholder="placeholder"/>
 <!--      <mapgis-ui-textarea contenteditable="true" :id="id" :style="inputStyle" class="mapgis-ui-input-textarea" v-model="valueCopy" :placeholder="placeholder"/>-->
     </div>
   </div>
@@ -28,6 +28,10 @@ export default {
     },
     placeholder: {
       type: String
+    },
+    showTitleIcon: {
+      type: Boolean,
+      default: true
     },
     value: {
       type: [String, Number]
@@ -60,12 +64,26 @@ export default {
   },
   created() {
     this.valueCopy = this.value;
+  },
+  mounted() {
+    this.valueCopy = this.value;
+  },
+  methods: {
+    $_change(e) {
+      if(!(e instanceof Object)){
+        this.$emit("change", e);
+      }
+    },
+    setValue(value) {
+      this.valueCopy = value;
+    },
   }
 }
 </script>
 
 <style scoped>
 .mapgis-ui-input-border-title {
+  font-weight: bolder;
   margin-bottom: 4px;
   padding-left: 12px;
 }

@@ -12,8 +12,8 @@
     </div>
     <input style="display: none" type="file" :id="inputId"
            accept="image/png, image/jpeg, image/gif, image/jpg, image/svg">
-    <div class="mapgis-ui-choose-picture-img-title" v-show="!enablePreview">
-      <mapgis-ui-title-icon/>
+    <div class="mapgis-ui-choose-picture-img-title" v-show="!enablePreview" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
       {{ title }}
     </div>
     <!--图片高度、图片下边距、区域内边距-->
@@ -58,6 +58,10 @@ export default {
     event: "change"
   },
   props: {
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
     images: {
       type: [Array, String]
     },
@@ -117,7 +121,6 @@ export default {
   },
   methods: {
     $_mouseenter(index) {
-      console.log(index)
       this.shapeIndex = index;
     },
     $_mouseleave() {
@@ -195,6 +198,7 @@ export default {
       inputFile.onchange = function () {
         let File = inputFile.files[0];
         let url = window.URL.createObjectURL(File);
+        inputFile.value = '';
         if (callBack) {
           callBack(url);
         } else {
@@ -213,6 +217,7 @@ export default {
 
 <style scoped>
 .mapgis-ui-choose-picture-img-title {
+  font-weight: bolder;
   position: relative;
   margin-top: 6px;
   margin-bottom: 4px;

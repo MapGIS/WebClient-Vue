@@ -3,7 +3,7 @@
     <div v-if="featureCopy" :style="{height: height - 48 + 'px'}" class="mapgis-ui-feature-edit-panel">
       <!--标题-->
       <mapgis-ui-row style="width: 100%">
-        <mapgis-ui-input-border v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
+        <mapgis-ui-input-border :showTitleIcon="false" v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
       </mapgis-ui-row>
       <!--展示框大小-->
       <!--      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">-->
@@ -12,33 +12,56 @@
       <!--选择图标-->
       <mapgis-ui-icons-panel-scroll-x v-if="featureCopy.drawType === 'point'" @changeIcon="$_changeIcon" title="选择图标"/>
       <!--附加地图-->
-      <mapgis-ui-map-select v-show="!showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
+      <mapgis-ui-map-select :showTitleIcon="false"
+                            v-show="!showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
                             :map="featureCopy.map" @addMap="$_addMap" title="附加地图"/>
       <mapgis-ui-map-multi-rows v-show="showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
                                 :map="featureCopy.map" title="附加地图"/>
       <!--设置相机视角-->
       <mapgis-ui-set-camera-view-select
+          :showTitleIcon="false"
           :cameras="cameras"
+          ref="cameraSelect"
           @click="$_getCamera"
           @showDetail="$_showDetail"
-          v-model="featureCopy.camera"/>
+          @selectCamera="$_selectCamera"
+          v-model="camera"/>
       <mapgis-ui-set-camera-view
           :showTitle="false"
           :showButton="false"
           v-show="showDetail"
           @click="$_getCamera"
-          v-model="featureCopy.camera"/>
+          v-model="camera"/>
+      <!--动画时间-->
+      <mapgis-ui-row style="width: 100%">
+        <mapgis-ui-input-border :showTitleIcon="false"
+                                ref="animationTime" @change="$_changeTime" v-model="featureCopy.animationTime"
+                                title="动画时间" placeholder="请输入动画时间"/>
+      </mapgis-ui-row>
       <!--图片展示-->
-      <mapgis-ui-choose-picture @firstAddPicture="$_firstAddPicture" :enablePreview="false"
+      <mapgis-ui-choose-picture :showTitleIcon="false"
+                                @firstAddPicture="$_firstAddPicture" :enablePreview="false"
                                 v-model="featureCopy.images"/>
       <!--填充颜色-->
       <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-        <mapgis-ui-color-title @changeColor="$_changeFillColor" title="填充颜色"/>
+        <mapgis-ui-color-title :showTitleIcon="false" @changeColor="$_changeFillColor" title="填充颜色"/>
       </mapgis-ui-row>
       <!--透明度-->
       <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-        <mapgis-ui-slider-title @change="$_changeOpacity" v-model="featureCopy.layerStyle.opacity" title="透明度"/>
+        <mapgis-ui-slider-title :showTitleIcon="false" @change="$_changeOpacity" v-model="featureCopy.layerStyle.opacity" title="透明度"/>
       </mapgis-ui-row>
+      <mapgis-ui-button @click="$_addFeature('point')">点</mapgis-ui-button>
+      <mapgis-ui-button @click="$_addFeature('polyline')">线</mapgis-ui-button>
+      <mapgis-ui-button @click="$_addFeature('polygon')">多边形</mapgis-ui-button>
+      <mapgis-ui-button @click="$_addFeature('rectangle')">矩形</mapgis-ui-button>
+      <mapgis-ui-button @click="$_addFeature('text')">文字</mapgis-ui-button>
+      <div :key="index" :style="{color: feature.show ? '#000' : 'rgb(218,218,218)'}"
+           v-for="(feature, index) in featureCopy.features">
+        {{ feature.uuid }}
+        <mapgis-ui-switch @click="$_toggleFeature" checked-children="显示" un-checked-children="隐藏"
+                          v-model="feature.show"/>
+        <!--        <mapgis-ui-svg-icon @click="$_deleteFeature(feature)" :iconStyle="deleteIconStyle" type="delete"/>-->
+      </div>
       <!--富文本-->
       <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
         <div v-if="editor">
@@ -162,7 +185,21 @@ export default {
   },
   data() {
     return {
-      featureCopy: undefined,
+      featureCopy: {
+        "uuid": "",
+        "camera": {
+          "heading": 0,
+          "pitch": 0,
+          "roll": 0,
+          "positionCartographic": {
+            "height": 0,
+            "latitude": 0,
+            "longitude": 0
+          }
+        },
+        "features": [],
+        "title": ""
+      },
       inputStyle: {},
       iconStyle: {
         opacity: 1
@@ -186,7 +223,12 @@ export default {
       },
       showMoreMap: false,
       showMoreTitle: "展开高级选项",
-      showDetail: false
+      showDetail: false,
+      camera: {},
+      deleteIconStyle: {
+        color: "#000"
+      },
+      isPreviewFeature: false
     }
   },
   props: {
@@ -240,6 +282,19 @@ export default {
   mounted() {
   },
   methods: {
+    $_changeTime(e) {
+      this.featureCopy.animationTime = e;
+      this.$emit("change", this.featureCopy);
+    },
+    $_toggleFeature() {
+      this.$emit("toggleFeature");
+    },
+    $_deleteFeature(feature) {
+      this.$emit("deleteFeature", feature);
+    },
+    $_addFeature(type) {
+      this.$emit("addFeature", type);
+    },
     $_showMore() {
       this.showMoreMap = !this.showMoreMap;
       if (this.showMoreMap) {
@@ -249,7 +304,13 @@ export default {
       }
     },
     $_init() {
-      this.featureCopy = this.feature;
+      this.featureCopy = Object.assign(this.featureCopy, this.feature);
+      if (this.$refs.animationTime) {
+        this.$refs.animationTime.setValue(this.featureCopy.animationTime);
+      }
+      if (this.$refs.cameraSelect) {
+        this.$refs.cameraSelect.setValue("当前视角");
+      }
       const {map, layerStyle} = this.featureCopy;
       if (!map) {
         this.featureCopy.map = {};
@@ -276,6 +337,9 @@ export default {
     },
     $_getCamera() {
       this.$emit("getCamera");
+    },
+    $_selectCamera(camera) {
+      this.$emit("selectCamera", camera);
     },
     $_addEditor() {
       let vm = this;
@@ -306,7 +370,12 @@ export default {
           ],
           content: this.featureCopy.content,
           onUpdate: ({getHTML}) => {
-            vm.featureCopy.content = getHTML();
+            let contentStr = getHTML();
+            contentStr = contentStr.replace("<img", "<img style='width:100%'");
+            vm.featureCopy.content = contentStr;
+            if (vm.isPreviewFeature) {
+              vm.$emit("featurePreview", vm.featureCopy);
+            }
           },
         });
       } else {
@@ -334,6 +403,7 @@ export default {
       this.$emit("changeIcon", icon);
     },
     $_preview() {
+      this.isPreviewFeature = true;
       this.$emit("featurePreview", this.featureCopy);
     },
     $_back() {
@@ -372,5 +442,9 @@ export default {
 
 .mapgis-3d-map-story-edit-container {
   width: 99%;
+}
+
+.ProseMirror > p > img {
+  width: 100%;
 }
 </style>

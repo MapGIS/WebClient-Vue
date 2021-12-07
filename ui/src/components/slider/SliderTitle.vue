@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="mapgis-ui-slider-title-title">
+    <div class="mapgis-ui-slider-title-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
       {{ title }}
-      <mapgis-ui-title-icon/>
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
     </div>
     <mapgis-ui-row>
       <mapgis-ui-col :span="16">
@@ -40,6 +40,10 @@ export default {
     }
   },
   props: {
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
     title: {
       type: String,
       default: "title"
@@ -78,6 +82,7 @@ export default {
 }
 
 .mapgis-ui-slider-title-title {
+  font-weight: bolder;
   position: relative;
   padding-left: 13px;
   margin-top: 6px;
