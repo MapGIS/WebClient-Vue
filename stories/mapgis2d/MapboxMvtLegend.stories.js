@@ -21,13 +21,13 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       mvtStyle:
-          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+          `http://${window.webclient.ip}:${window.webclient.port}/${window.styles}/街道-墨卡托.json`,
     };
   },
   methods: {
     changeEnable() {},
   },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh">
       <mapgis-mvt-style-layer :mvtStyle="mvtStyle" /> 
       <mapgis-mvt-legend v-bind="$props" />
     </mapgis-web-map>`,

@@ -43,10 +43,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebGlobe, MapgisOgcWmsLayer },
-  template: `<mapgis-web-globe style="height:95vh">
+  components: { MapgisOgcWmsLayer },
+  template: `<mapgis-web-scene style="height:95vh">
     <mapgis-3d-ogc-wms-layer v-bind="$props"/>
-  </mapgis-web-globe>`,
+  </mapgis-web-scene>`,
   methods:{
   }
 });

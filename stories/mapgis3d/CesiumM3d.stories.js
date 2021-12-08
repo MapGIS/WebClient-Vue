@@ -8,7 +8,6 @@ export default {
     url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
     show: true,
     opacity: 1.0,
-    // layers: undefined,
     layers: '',
   },
 };

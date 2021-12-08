@@ -28,7 +28,7 @@ const Template = (args, { argTypes }) => ({
         };
     },
     template: `
-    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
+    <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-scale v-bind="$props" />
     </mapgis-web-map>
