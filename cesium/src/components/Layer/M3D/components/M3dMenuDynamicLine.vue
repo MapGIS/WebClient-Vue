@@ -1,111 +1,77 @@
 <template>
   <div class="mapgis-3d-m3d-menu-dynamicline">
-    <mapgis-ui-divider> 泛光设置 </mapgis-ui-divider>
-    <mapgis-ui-form-model
-      :layout="layout"
-      :labelCol="labelCol"
-      :wrapperCol="wrapperCol"
-      labelAlign="left"
+    <mapgis-ui-divider> 扫描设置 </mapgis-ui-divider>
+    <mapgis-ui-color-pick-panel
+      transparent
+      label="光线颜色"
+      v-model="lightColor"
+      :disableAlpha="false"
+    />
+    <mapgis-ui-select-panel
+      transparent
+      label="扫描方向"
+      v-model="direction"
+      :selectOptions="Object.keys(directions)"
+    />
+
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="最小值"
+      v-model="min"
+      :range="[0, 1000]"
     >
-      <mapgis-ui-form-model-item label="光线颜色" required>
-        <mapgis-ui-button size="small">
-          <mapgis-ui-color-picker v-model="lightColor" />
-        </mapgis-ui-button>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="扫描方向" required>
-        <mapgis-ui-select
-          :style="{ width: '100%' }"
-          size="small"
-          v-model="direction"
-        >
-          <mapgis-ui-select-option
-            v-for="key in Object.keys(directions)"
-            :key="key"
-            :value="directions[key]"
-          >
-            {{ key }}
-          </mapgis-ui-select-option>
-        </mapgis-ui-select>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="最小值" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="100000"
-          v-model="min"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="最大值" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="100000"
-          v-model="max"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="持续时间" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="1000000"
-          v-model="duration"
-        />
-      </mapgis-ui-form-model-item>
+    </mapgis-ui-input-number-panel>
 
-      <mapgis-ui-form-model-item label="拖尾效果">
-        <mapgis-ui-switch size="small" v-model="isGridTrail" />
-      </mapgis-ui-form-model-item>
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="最大值"
+      v-model="max"
+      :range="[0, 1000]"
+    >
+    </mapgis-ui-input-number-panel>
 
-      <mapgis-ui-form-model-item label="栅格宽度" v-if="isGridTrail">
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="1"
-          :min="0"
-          :max="1000000"
-          v-model="gridWidth"
-        />
-      </mapgis-ui-form-model-item>
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="持续时间"
+      v-model="duration"
+      :range="[0, 10000]"
+    >
+    </mapgis-ui-input-number-panel>
 
-      <mapgis-ui-form-model-item label="栅格线宽度" v-if="isGridTrail">
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="1"
-          :min="0"
-          :max="1000000"
-          v-model="gridLineWidth"
-        />
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="栅格线宽度" v-if="isGridTrail">
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="1"
-          :min="0"
-          :max="1000000"
-          v-model="gridLineWidth"
-        />
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="栅格行数" v-if="isGridTrail">
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="1"
-          :min="0"
-          :max="1000000"
-          v-model="gridRowNum"
-        />
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
+    <mapgis-ui-switch-panel
+      v-model="isGridTrail"
+      label="拖尾效果"
+      size="small"
+      layout="horizontal"
+    >
+      <mapgis-ui-input-number-panel
+        transparent
+        size="small"
+        label="栅格宽度"
+        v-model="gridWidth"
+        :range="[0, 1000]"
+      >
+      </mapgis-ui-input-number-panel>
+      <mapgis-ui-input-number-panel
+        transparent
+        size="small"
+        label="栅格线宽度"
+        v-model="gridLineWidth"
+        :range="[0, 1000]"
+      >
+      </mapgis-ui-input-number-panel>
+      <mapgis-ui-input-number-panel
+        transparent
+        size="small"
+        label="栅格行数"
+        v-model="gridRowNum"
+        :range="[0, 1000]"
+      >
+      </mapgis-ui-input-number-panel>
+    </mapgis-ui-switch-panel>
 
     <mapgis-ui-button
       type="primary"
@@ -150,7 +116,7 @@ export default {
         Y轴负方向: -2.0,
         Z轴负方向: -3.0
       },
-      direction: 1.0,
+      direction: "Z轴正方向",
       max: 150.0,
       min: 0.0,
       lightColor: "rgb(0.38, 0.88, 0.92)",
@@ -182,18 +148,18 @@ export default {
           maxLength
         } = logic;
         switch (next) {
-          case 1.0:
-          case -1.0:
+          case "X轴正方向":
+          case "X轴负方向":
             this.min = minLength;
             this.max = maxLength;
             break;
-          case 2.0:
-          case -2.0:
+          case "Y轴正方向":
+          case "Y轴负方向":
             this.min = minWidth;
             this.max = maxWidth;
             break;
-          case 3.0:
-          case -3.0:
+          case "Z轴正方向":
+          case "Z轴负方向":
             this.min = minHeight;
             this.max = maxHeight;
             break;
@@ -251,6 +217,7 @@ export default {
       const { vueKey, vueIndex, vueCesium, Cesium, viewer } = this;
       const {
         direction,
+        directions,
         min,
         max,
         lightColor,
@@ -264,6 +231,7 @@ export default {
 
       let tileset = this.getM3DSet();
       if (!tileset) return;
+      let direct = directions[direction];
 
       this.removeEffect();
       let dynamicline = new Cesium.DynamicLightLineEffect(
@@ -271,7 +239,7 @@ export default {
         [],
         tileset.root.transform,
         {
-          direction,
+          direct,
           min,
           max,
           lightColor: new Cesium.Color.fromCssColorString(lightColor),

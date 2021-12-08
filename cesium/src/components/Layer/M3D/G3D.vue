@@ -349,7 +349,6 @@ export default {
                     layer.show = true;
                   }
                   loopM3ds(m3ds, types => {
-                    console.log('index', layerIndexs[i]);
                     vm.layerTree[0].children[
                       layerIndexs[i]
                     ].subLayerType = checkTypeIcon(types[i]);
@@ -571,14 +570,15 @@ export default {
       let indexes = g3dLayer.getAllLayerIndexes();
       indexes.forEach(index => {
         let layer = g3dLayer.getLayer(index);
-
         if (layers.indexOf(`${index}`) >= 0) {
           if (layer) {
             layer.show = true;
+            g3dLayer.show(index, true);
           }
         } else {
           if (layer) {
             layer.show = false;
+            g3dLayer.show(index, false);
           }
         }
       });
