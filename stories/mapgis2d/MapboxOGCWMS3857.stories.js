@@ -1,5 +1,6 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
+import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsWmsLayer.md"
 
 export default {
   title: "二维/图层/OGC/WMS-3857",
@@ -100,10 +101,6 @@ export default {
       },
       control:'boolean'
     } ,
-
-    layerId: 'raster_layerId',
-    sourceId: 'raster_sourceId',
-    crs:'EPSG:4326'
   },
 };
 
@@ -123,6 +120,13 @@ IGS_3857.args = {
   baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
   crs:'EPSG:3857'
 };
+IGS_3857.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};
 
 export const ArcGis_3857 = Template.bind({});
 ArcGis_3857.args = {
@@ -132,3 +136,5 @@ ArcGis_3857.args = {
   baseUrl:'http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer',
   crs:'EPSG:3857'
 };
+
+

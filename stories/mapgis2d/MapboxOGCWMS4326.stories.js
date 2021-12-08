@@ -1,4 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
+import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsWmsLayer.md"
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
 
 export default {
@@ -121,7 +122,13 @@ IGS_4326.args = {
   baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
   crs:'EPSG:4326'
 };
-
+IGS_4326.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};
 export const ArcGis_4326 = Template.bind({});
 ArcGis_4326.args = {
   layers: '0,1,2,3,5,7,9,11',

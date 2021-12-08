@@ -1,4 +1,4 @@
-# IgsWmsLayer
+<!-- # IgsWmsLayer -->
 
 ## 属性
 
@@ -75,6 +75,9 @@ All common [layers props](/api/Layers/README.md#props)
 - **必传**
 - **非侦听属性**
 - **描述:** 请求的图层名集合
+- **图层名获取方式**
+  1. IGS发布的WMS服务。通过图层的基地址（如`http://192.168.81.103:8089/igs/rest/ogc/doc/北京市/WMSServer`），查询地图图层信息。其中图层信息中的 `Name` 字段即为传入layers中的图层名
+  ![](./Wms.png)
 
 ### `version`
 

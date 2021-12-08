@@ -1,3 +1,4 @@
+import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsDocLayer.md";
 import MapgisIgsDocLayer from "../../mapboxgl/src/components/layer/igserver/IgsDocLayer";
 
 export default {
@@ -27,7 +28,7 @@ export default {
       control:'text'
     },
     layers:{
-      description: '指定需要被取图的图层序列号数组，以“，”分隔。默认为依据文档原始图层状态进行设置。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）<br/> ' +
+      description: '指定需要被取图的图层序号数组，以“，”分隔。图层序号为图层信息中的LayerIndex字段。当 cache 为 true 时此参数无效（仅在非动态裁图时才有意义）<br/> ' +
           '1. show：仅仅显示指定了图层序号的图层<br/> ' +
           '2. hide ：显示除 hide 参数指定图层外所有的图层<br/> ' +
           '3. include：除显示默认图层（地图文档内图层状态为可见的图层）外，另追加这些被指定的图层显示，追加的这些图层必须为地图中包含的图层<br/> ' +
@@ -171,10 +172,6 @@ export default {
       },
       control:'text'
     } ,
-    layerId: "igs_layer_layerid",
-    sourceId: "igs_layer_sourceid",
-    baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
-    layers: "show:0,1,2,3,4,5,6,7",
   },
 };
 
@@ -211,6 +208,14 @@ export const 地图文档 = Template.bind({});
   layers: "show:0,1,2,3,4,5,6,7",
   layer: {
     paint: { "raster-opacity": 0.75 },
+  },
+};
+
+地图文档.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
   },
 };
 
