@@ -64,7 +64,7 @@ const TemplateMerge = (args, { argTypes }) => ({
         },
         sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
         glyphs:
-          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+          `http://${window.webclient.ip}:${window.webclient.port}/{window.glyphs}/{fontstack}/{range}.pbf`,
         layers: [
           {
             id: "背景底色",
@@ -137,7 +137,7 @@ const TemplateMerge = (args, { argTypes }) => ({
 export const 合并 = TemplateMerge.bind({});
 合并.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrcs/vtiles/styles/北京_java_style.json`,
   mode: "merge",
 };
 
@@ -154,14 +154,14 @@ const Template = (args, { argTypes }) => ({
 export const 追加 = Template.bind({});
 追加.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrcs/vtiles/styles/北京_java_style.json`,
   mode: "add",
 };
 
 export const 覆盖 = Template.bind({});
 覆盖.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrcs/vtiles/styles/北京_java_style.json`,
   mode: "set",
 };
 
@@ -183,7 +183,7 @@ MvtJSON对象.args = {
     },
     sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
     glyphs:
-      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+      `http://${window.webclient.ip}:${window.webclient.port}/{window.glyphs}/{fontstack}/{range}.pbf`,
     layers: [
       {
         id: "中国行政区",
