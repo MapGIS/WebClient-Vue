@@ -22,7 +22,7 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <div>
-        <mapgis-web-scene vueKey="webGlobe">
+        <mapgis-web-scene vueKey="webGlobe" :style="{height: '95vh'}">
             <arcgis-map-layer vueKey="webGlobe" :baseUrl="mapUrl2" :id="mapId2" />
             <arcgis-tile-layer vueKey="webGlobe" :baseUrl="tileUrl" :id="tileId" />
             <arcgis-map-layer vueKey="webGlobe" :baseUrl="mapUrl1" :id="mapId1" />

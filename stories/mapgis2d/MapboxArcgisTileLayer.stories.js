@@ -61,7 +61,7 @@ const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { MapgisWebMap, MapgisArcgisTileLayer },
     template: `
-    <mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
+    <mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:95vh">
     <mapgis-arcgis-tile-layer v-bind="$props" />
     <mapgis-arcgis-legend :url="baseUrl"></mapgis-arcgis-legend>
     </mapgis-web-map>`,

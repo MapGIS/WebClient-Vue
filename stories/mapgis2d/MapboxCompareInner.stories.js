@@ -49,7 +49,7 @@ const Vertical = (args, { argTypes }) => ({
       }
     },
   },
-  template: `<div style="height:60vh">
+  template: `<div style="height:95vh">
             <mapgis-web-map ref="leftmap" style="height:100vh;width:100%;position:absolute;"
                 v-bind="{ ...beforeMapOptions }"
                 v-on:load="handleBeforeMapLoad"

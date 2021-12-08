@@ -11,7 +11,8 @@ const Template = (args, { argTypes }) => ({
     <mapgis-web-scene
         :vueKey="vueKey"
         :animation="false"
-        :timeline="false">
+        :timeline="false"
+        :style="{height: '95vh'}">
       <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
       <mapgis-3d-measure
           :vueKey="vueKey"
