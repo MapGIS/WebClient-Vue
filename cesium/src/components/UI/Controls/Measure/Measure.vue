@@ -2,14 +2,7 @@
   <div class="mapgis-3d-measure">
     <slot v-if="initial"> </slot>
     <slot name="measureTool">
-      <a-select
-        default-value="---请选择参考系---"
-        style="width: 100%"
-        @change="handleChange"
-      >
-        <a-select-option value="WGS84"> WGS84 </a-select-option>
-      </a-select>
-      <measure-3d-tool v-if="isShow" :result="result" />
+      <measure-3d-tool :result="result" />
     </slot>
   </div>
 </template>
@@ -44,9 +37,7 @@ export default {
       measure: undefined,
       initial: false,
       measureStyles: {},
-      waitManagerName: "GlobesManager",
-      // 控制3d测量组件显示与隐藏
-      isShow: false
+      waitManagerName: "GlobesManager"
     };
   },
   watch: {
@@ -75,11 +66,11 @@ export default {
       this.changeContour = e.target.checked;
     },
     // 获取量算模式
-    handleChange(value) {
-      if (value === "WGS84") {
-        this.isShow = true;
-      }
-    },
+    // handleChange(value) {
+    //   if (value === "WGS84") {
+    //     this.isShow = true;
+    //   }
+    // },
     initStyles() {
       this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
         this.styles.lineColor,
