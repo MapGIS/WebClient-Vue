@@ -8,10 +8,12 @@ export default {
       description:'Mapbox 矢量瓦片样式<br/>' +
           '详见[样式说明](https://docs.mapbox.com/mapbox-gl-js/style-spec)',
       type: { name: 'Object | String', required: false },
-      defaultValue:undefined,
+      // defaultValue:undefined,
+      defaultValue:'',
       table:{
         type: { summary: 'Object | String' },
-        defaultValue: { summary: 'undefined' },
+        // defaultValue: { summary: 'undefined' },
+        defaultValue: { summary: '' },
       },
       control:'object'
     },
@@ -30,7 +32,7 @@ export default {
         options:['merge','add','set']
       }
     } ,
-    before: undefined,
+    before: '',
   },
 };
 

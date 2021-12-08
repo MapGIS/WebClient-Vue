@@ -30,6 +30,7 @@ const Template = (args, { argTypes }) => ({
     return {
       url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ModelM3D`,
       dataSource: undefined,
+      // dataSource: '',
       pagination:{
         total:0,
         pageSize:10
