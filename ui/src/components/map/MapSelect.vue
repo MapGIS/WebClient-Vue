@@ -55,7 +55,7 @@ export default {
         marginBottom: "0"
       },
       mainStyle: {
-        width: "158px",
+        width: "177px",
         marginLeft: "-8px",
       },
       mapNamesCopy: {
@@ -197,8 +197,8 @@ export default {
 <style scoped>
 .mapgis-ui-map-select-title {
   font-weight: bolder;
-  margin-top: 24px;
-  margin-bottom: 16px;
+  margin-top: 12px;
+  margin-bottom: 0;
   padding-left: 12px;
 }
 
@@ -218,10 +218,9 @@ export default {
 .mapgis-ui-map-select-content {
   width: 100%;
   height: 92px;
-  background: #F1F1F1;
   border-radius: 3px;
   padding-top: 6px;
-  padding-left: 10px;
+  padding-left: 0;
 }
 
 .mapgis-ui-map-select-show-more {

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <mapgis-ui-row class="mapgis-ui-icons-panel-scroll-x-title">
-      <mapgis-ui-title-icon/>
-      <mapgis-ui-col span="24">{{ title }}</mapgis-ui-col>
+    <mapgis-ui-row class="mapgis-ui-icons-panel-scroll-x-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
+      <mapgis-ui-col span="24" style="margin-top: 6px;margin-bottom: 10px;">{{ title }}</mapgis-ui-col>
     </mapgis-ui-row>
     <div :style="{height: panelHeight}"
          class="mapgis-ui-icons-panel-scroll-x-container"
@@ -21,17 +21,21 @@ import Base64IconsKeyValue from "./Base64IconsKeyValue"
 
 export default {
   name: "mapgis-ui-icons-panel-scroll-x",
-  mixins: [Base64IconsKeyValue],
   data() {
     return {
-      panelHeight: "57px"
+      panelHeight: "57px",
+      Base64IconsKeyValue: Base64IconsKeyValue
     }
   },
   props: {
     title: {
       type: String,
       default: "title"
-    }
+    },
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
   },
   methods: {
     $_mouseenter() {

@@ -29,6 +29,8 @@
           @toggleChapterFeatures="$_toggleChapterFeatures"
           @changeIcon="$_changeIcon"
           @changeColor="$_changeColor"
+          @changeEntityTitle="$_changeEntityTitle"
+          @changeEntity="$_changeEntity"
           @showFeature="$_showFeature"
           @projectPreview="$_projectPreview"
           @featurePreview="$_featurePreview"
@@ -185,14 +187,20 @@ export default {
     $_toggleChapterFeatures(featureUUID, projectUUID, show) {
       this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
     },
-    $_deleteFeature(feature) {
-      this.$emit("deleteFeature", feature);
+    $_deleteFeature(index, uuid) {
+      this.$emit("deleteFeature", index, this.project.uuid);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
     },
     $_changeColor(color, id, type) {
       this.$emit("changeColor", color, id, type);
+    },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
     },
     $_showFeature(id, flag) {
       this.$emit("showFeature", id, flag);

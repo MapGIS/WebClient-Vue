@@ -158,7 +158,6 @@ export default {
 .mapgis-ui-set-camera-set-camera-content {
   width: 100%;
   height: 262px;
-  background: #F1F1F1;
   border-radius: 3px;
   padding-top: 1px;
 }

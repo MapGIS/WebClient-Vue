@@ -175,7 +175,8 @@ export default {
 
 .mapgis-ui-set-camera-panel-select-title {
   font-weight: bolder;
-  margin-bottom: 4px;
+  margin-top: 3px;
+  margin-bottom: 0;
   padding-left: 12px;
 }
 
@@ -183,7 +184,6 @@ export default {
   position: relative;
   width: 100%;
   height: auto;
-  background: #F1F1F1;
   border-radius: 3px;
   padding-top: 7px;
   padding-bottom: 11px;
@@ -192,7 +192,7 @@ export default {
 .mapgis-ui-set-camera-set-select-icon {
   position: absolute;
   top: 13px;
-  right: 10px;
+  right: 2px;
 }
 
 .mapgis-ui-set-camera-panel-select-show-more {
@@ -202,8 +202,8 @@ export default {
 }
 
 .mapgis-ui-set-camera-set-select {
-  width: 196px;
-  margin-left: 8px;
+  width: 214px;
+  margin-left: 0;
   margin-right: 6px;
   margin-top: 6px;
 }

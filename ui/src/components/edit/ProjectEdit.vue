@@ -10,24 +10,20 @@
             <mapgis-ui-base64-icon width="16px" @click="$_deleteProject" type="setting"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
-        <mapgis-ui-row v-show="!editTitle" class="mapgis-ui-project-edit-title">
+        <mapgis-ui-row class="mapgis-ui-project-edit-title">
           <mapgis-ui-col span="24">
-            <span class="mapgis-ui-project-edit-title-value">{{ projectCopy.title }}</span>
-            <mapgis-ui-svg-icon id="mpEdit" @click="$_editTitle"
+            <span v-show="!editTitle" class="mapgis-ui-project-edit-title-value">{{ projectCopy.title }}</span>
+            <mapgis-ui-svg-icon v-show="!editTitle"
+                                id="mpEdit" @click="$_editTitle"
                                 class="mapgis-ui-project-edit-edit-icon mapgis-ui-project-edit-edit-icon-p"
                                 type="edit"/>
+            <mapgis-ui-input v-show="editTitle"
+                             class="mapgis-ui-project-edit-title-edit"
+                             @change="$_titleChange" title="标题" id="mpTitle"
+                             v-model="projectCopy.title"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
       </div>
-      <mapgis-ui-row v-show="editTitle">
-        <mapgis-ui-input-outline @change="$_titleChange" title="标题" :inputStyle="inputStyle" id="mpTitle"
-                                 v-model="projectCopy.title"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row v-show="editTitle">
-        <mapgis-ui-textarea-outline @change="$_titleChange" :textareaStyle="textareaStyle" :hasToolBar="false"
-                                    id="mpDescription"
-                                    v-model="projectCopy.description" placeholder="描述信息"/>
-      </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-feature-row
             @showFeature="$_showFeature"
@@ -55,7 +51,7 @@
         </mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div v-show="editFeature">
+    <div v-show="editFeature" style="height: 100%;">
       <mapgis-ui-feature-edit
           @textChanged="$_textChanged"
           @getCamera="$_getCamera"
@@ -65,6 +61,8 @@
           @toggleFeature="$_toggleFeature"
           @deleteFeature="$_deleteFeature"
           @changeColor="$_changeColor"
+          @changeEntityTitle="$_changeEntityTitle"
+          @changeEntity="$_changeEntity"
           @changeOpacity="$_changeOpacity"
           @changeIcon="$_changeIcon"
           @featurePreview="$_featurePreview"
@@ -209,6 +207,12 @@ export default {
     $_addMapToProject(type, map) {
       this.$emit("addMapToProject", type, map, this.projectCopy);
     },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
+    },
     $_changeColor(color, type) {
       this.$emit("changeColor", color, type, this.currentFeature.id, this.currentFeature.baseUrl.type);
     },
@@ -280,7 +284,7 @@ export default {
     $_getFeature(type) {
       return {
         "uuid": type + parseInt(String(Math.random() * 100000000)),
-        "type": "type",
+        "type": type,
         "projectUUID": this.projectCopy.uuid,
         "featureUUID": this.currentFeature.uuid,
         "layerStyle": {
@@ -303,8 +307,8 @@ export default {
       chapter.projectUUID = this.projectCopy.uuid;
       this.$emit("addChapter", chapter);
     },
-    $_deleteFeature(feature) {
-      this.$emit("deleteFeature", feature);
+    $_deleteFeature(index, uuid) {
+      this.$emit("deleteFeature", index, uuid);
     },
     $_addFeature(type) {
       switch (type) {
@@ -387,6 +391,9 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-project-edit-title-edit {
+  width: 90%;
+}
 .mapgis-ui-project-edit-panel {
   position: absolute;
   z-index: 1;

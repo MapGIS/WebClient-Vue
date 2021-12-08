@@ -257,7 +257,6 @@ export default {
 .mapgis-ui-set-camera-set-camera-content {
   width: 100%;
   height: auto;
-  background: #F1F1F1;
   border-radius: 3px;
   padding-top: 7px;
   padding-bottom: 7px;
