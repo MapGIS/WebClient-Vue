@@ -43,7 +43,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisRasterLayer, MapgisMarker, MapgisPopup },
   methods: actionsData,
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.2]" :zoom="3" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.2]" :zoom="3" style="height:95vh">
     <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-marker :coordinates="[110, 30]" color="#F3F5F7" >
       <div slot="marker" style="background:#ffffff;padding:6px;border:3px solid #ccc;border-radius:3px;">点击弹出Popup</div>

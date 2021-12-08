@@ -8,10 +8,12 @@ export default {
       description:'Mapbox 矢量瓦片样式<br/>' +
           '详见[样式说明](https://docs.mapbox.com/mapbox-gl-js/style-spec)',
       type: { name: 'Object | String', required: false },
-      defaultValue:undefined,
+      // defaultValue:undefined,
+      defaultValue:'',
       table:{
         type: { summary: 'Object | String' },
-        defaultValue: { summary: 'undefined' },
+        // defaultValue: { summary: 'undefined' },
+        defaultValue: { summary: '' },
       },
       control:'object'
     },
@@ -30,7 +32,7 @@ export default {
         options:['merge','add','set']
       }
     } ,
-    before: undefined,
+    before: '',
   },
 };
 
@@ -64,7 +66,7 @@ const TemplateMerge = (args, { argTypes }) => ({
         },
         sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
         glyphs:
-          `http://${window.webclient.ip}:${window.webclient.port}/${window.glyphs}/{fontstack}/{range}.pbf`,
+          `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
         layers: [
           {
             id: "背景底色",
@@ -127,9 +129,9 @@ const TemplateMerge = (args, { argTypes }) => ({
       this.enable = !this.enable;
     }
   },
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[105.22,33.03]" :zoom="3" style="height:95vh" :mapStyle="mapStyle">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh" :mapStyle="mapStyle">
         <mapgis-ui-button type="primary" @click="changeEnable" style="position:absolute;zIndex:9999;left:10px;top:10px;"> 合并样式 </mapgis-ui-button>
-        <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" before="省级行政区"/>
+        <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" before="省级行政区"/>
         <mapgis-mvt-style-layer v-bind="$props" v-if="enable"/>
     </mapgis-web-map>`,
 });
@@ -137,7 +139,7 @@ const TemplateMerge = (args, { argTypes }) => ({
 export const 合并 = TemplateMerge.bind({});
 合并.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrcs/vtiles/styles/beijing.json`,
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "merge",
 };
 
@@ -145,8 +147,8 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisMvtStyleLayer },
   methods: {},
-  template: `<mapgis-web-map crs="EPSG:4326" :center="[105.22,33.03]" :zoom="3" style="height:95vh">
-        <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh">
+        <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-mvt-style-layer v-bind="$props" />
     </mapgis-web-map>`,
 });
@@ -154,14 +156,14 @@ const Template = (args, { argTypes }) => ({
 export const 追加 = Template.bind({});
 追加.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrcs/vtiles/styles/beijing.json`,
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "add",
 };
 
 export const 覆盖 = Template.bind({});
 覆盖.args = {
   mvtStyle:
-    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrcs/vtiles/styles/beijing.json`,
+    `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
   mode: "set",
 };
 
@@ -183,7 +185,7 @@ MvtJSON对象.args = {
     },
     sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
     glyphs:
-      `http://${window.webclient.ip}:${window.webclient.port}/{window.glyphs}/{fontstack}/{range}.pbf`,
+      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
     layers: [
       {
         id: "中国行政区",

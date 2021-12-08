@@ -80,14 +80,16 @@ export default {
         defaultValue: { summary: '0' },
       },
       control:'number'
-    }
+    },
+    layerId: 'ogcwmts_layerId',
+    sourceId: 'ogcwmts_sourceId',
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisOgcWmtsLayer },
-  template: `<mapgis-web-map crs="EPSG:4326" :zoom="mapZoom" :center="outerCenter" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:4326" :zoom="mapZoom" :center="outerCenter" style="height:95vh">
     <mapgis-ogc-wmts-layer v-bind="$props" />
   </mapgis-web-map>`,
   data(){

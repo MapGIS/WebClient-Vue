@@ -90,7 +90,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-    <mapgis-web-scene style="{height: '100vh'}"
+    <mapgis-web-scene :style="{height: '95vh'}"
           v-on:load="handleLoad"
       >
       <mapgis-3d-ogc-wmts-layer

@@ -17,7 +17,8 @@ const Template = (args, { argTypes }) => ({
   template: `
     <mapgis-web-scene
       v-bind:animation="false"
-      v-bind:timeline="false">
+      v-bind:timeline="false"
+      :style="{height: '95vh'}">
       <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
       <div
         v-show="enableControl"

@@ -28,6 +28,8 @@ window.webclient = {
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
+window.styles = "igs/rest/mrcs/vtiles/styles"; //java版igs的styles用这个接口
+// window.styles = "igs/rest/mrms/vtiles/styles";  //司马云用这个接口
 
 window.VueCesiumLibPath =
   "http://192.168.81.103:8086/static/libs/cdn/cesium/Cesium.js";

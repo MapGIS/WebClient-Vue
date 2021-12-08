@@ -222,7 +222,7 @@ export const 地图文档 = Template.bind({});
 // const TemplateTile = (args, { argTypes }) => ({
 //   props: Object.keys(args),
 //   components: { MapgisWebMap, MapgisIgsDocLayer },
-//   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:60vh">
+//   template: `<mapgis-web-map crs="EPSG:4326" :center="[116.39, 40.20]" :zoom="8" style="height:95vh">
 //   <mapgis-igs-doc-layer v-bind="$props" />
 //   </mapgis-web-map>`,
 //   data() {

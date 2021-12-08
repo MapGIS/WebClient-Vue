@@ -24,7 +24,7 @@ const Template = (args, { argTypes }) => ({
       layer: "",
       enableEditor: false,
       mvtStyle:
-        `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/styles/街道-墨卡托.json`,
+        `http://${window.webclient.ip}:${window.webclient.port}/${window.styles}/街道-墨卡托.json`,
   };
   },
   methods: {
@@ -43,7 +43,7 @@ const Template = (args, { argTypes }) => ({
       console.log("样式切换", event, this.map.getStyle());
     },
   },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="2" style="height:90vh" @load="handleMapLoad">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="2" style="height:95vh" @load="handleMapLoad">
       <mapgis-mvt-style-layer :mvtStyle="mvtStyle" @change-style="handleChangeStyle" />
       <mapgis-mvt-editor :outStyle="outStyle" :layerid="layer" :visible="enableEditor" @edit-change="handleEditChange"/>
     </mapgis-web-map>`,
