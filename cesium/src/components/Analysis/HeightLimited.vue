@@ -201,8 +201,8 @@ export default {
         polygonColor: Cesium.Color.WHITE.withAlpha(0),
         useOutLine: false
       });
-      webGlobe.addSceneEffect(heightLimited);
-
+      // webGlobe.addSceneEffect(heightLimited);
+      heightLimited.add();
       CesiumZondy.HeightLimitedAnalysisManager.addSource(
           vm.vueKey,
           vm.vueIndex,
