@@ -77,7 +77,7 @@ export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
 export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/particle/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
-export { default as Mapgis3dVideoManger } from "./components/Analysis/video/VideoManger.vue";
+export { default as Mapgis3dVideoManger } from "./components/Analysis/video/VideoManager.vue";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
