@@ -8,7 +8,7 @@ export default {
   argTypes: {
     label: "多行样式",
     range: [0, 10],
-    tooltip: undefined,
+    tooltip: '',
   },
 };
 

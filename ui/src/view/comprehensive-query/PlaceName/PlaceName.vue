@@ -53,9 +53,8 @@
 
 <script>
 import PlaceNamePanel from "./PlaceNamePanel";
-const layer = require("../util/layer");
+import { LayerType } from "../util/document/layer/layer.js";
 
-const { LayerType } = layer;
 export default {
   name: "place-name",
   components: {
@@ -112,6 +111,9 @@ export default {
     },
     config() {
       return this.widgetInfo.placeName || this.widgetInfo.dataStore;
+    },
+    isDataStoreQuery() {
+      return !!this.widgetInfo.dataStore;
     }
   },
   watch: {
@@ -182,10 +184,14 @@ export default {
           arr.push(item);
         });
         arr.forEach(item => {
-          this.openReseultSet(item, true);
+          this.isDataStoreQuery
+            ? this.openDSResultSet(item, true)
+            : this.openIGSReseultSet(item, true);
         });
         this.selected.forEach(item => {
-          this.openReseultSet(item);
+          this.isDataStoreQuery
+            ? this.openDSResultSet(item)
+            : this.openIGSReseultSet(item);
         });
         this.selectedCopy = JSON.parse(JSON.stringify(this.selected));
       } else {
@@ -212,7 +218,9 @@ export default {
       // 点击关闭面板的时候，删除属性表里面所有的tab
       if (this.showResultSet === true) {
         this.selectedCopy.forEach(item => {
-          this.openReseultSet(item, true);
+          this.isDataStoreQuery
+            ? this.openDSResultSet(item, true)
+            : this.openIGSReseultSet(item, true);
         });
       }
     },
@@ -234,7 +242,34 @@ export default {
     clickItem(feature) {
       this.$emit("click-item", feature);
     },
-    openReseultSet(item, isDelete) {
+    openDSResultSet(item, isDelete) {
+      const { queryWay, ip, port } = this.config;
+      const { mLibsName, placeName } = this.selectedItem(item);
+      const where = this.keyword;
+      const exhibition = {
+        id: `${placeName}`,
+        name: `${placeName} 查询结果`,
+        option: {
+          ip: ip,
+          port: Number(port),
+          serverType: LayerType.EsGeoCode,
+          libName: mLibsName,
+          where,
+          geometry:
+            this.geoJSONExtent &&
+            JSON.stringify(this.geoJSONExtent) !== "{}" &&
+            this.keyword
+              ? JSON.stringify(this.geoJSONExtent)
+              : undefined
+        }
+      };
+      if (!isDelete) {
+        this.$emit("open-attribute-table", exhibition);
+      } else {
+        this.$emit("remove-attribute-table", exhibition.id);
+      }
+    },
+    openIGSReseultSet(item, isDelete) {
       const { queryWay, ip, port, docName, allSearchName } = this.config;
       const {
         gdbp,

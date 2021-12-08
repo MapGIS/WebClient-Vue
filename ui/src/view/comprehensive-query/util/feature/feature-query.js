@@ -35,6 +35,7 @@ var __awaiter =
 import * as Zondy from "@mapgis/webclient-es6-service";
 import axios from "axios";
 import DocumentCatalog from "../catalog/document";
+import DataSourceCatalog from "../catalog/data-source";
 export default class FeatureQuery {
   /**
    * 查询通用接口
@@ -43,14 +44,52 @@ export default class FeatureQuery {
    * @param {boolean} combine 是否走聚合查询方式。不涉及分页的，走IGS默认的，设置为向前光标速度更快；聚合查询做了优化，查询速度 比IGS默认的快速，支持属性聚合
    */
   static query(option, combine, is3D) {
-    if (!option) {
-      return null;
-    }
-    if (option.isDataStoreQuery) {
-      // datastore
-      return this.dataStoreQuery(option);
-    } // igs
-    return this.igsQuery(option, combine, is3D);
+    return __awaiter(this, void 0, void 0, function* () {
+      if (!option) {
+        return null;
+      }
+      if (option.isEsGeoCode) {
+        // es地名地址查询
+        return this.dataStoreEsGeoCode(option);
+      }
+      if (option.isDataStoreQuery) {
+        // datastore
+        return this.dataStorePgQueryFeature(option);
+      } // igs
+      return this.igsQuery(option, combine, is3D);
+    });
+  }
+  static isDataStoreQuery(option) {
+    return __awaiter(this, void 0, void 0, function* () {
+      const { ip, port, gdbp } = option;
+      let isDataStoreQuery = false;
+      let DNSName = "";
+      if (
+        gdbp &&
+        gdbp.indexOf("MapGisLocal") === -1 &&
+        gdbp.indexOf("@") > -1
+      ) {
+        const result = yield DataSourceCatalog.getDataSource({
+          ip,
+          port,
+          isDetail: true,
+        });
+        const dsName = gdbp.split("@")[1].split("/")[0];
+        if (result && result.length > 0) {
+          for (let i = 0; i < result.length; i++) {
+            if (result[i].Name === dsName && result[i].Type === "DBPG") {
+              isDataStoreQuery = true;
+              DNSName = result[i].DNSName;
+              break;
+            }
+          }
+        }
+      }
+      return {
+        isDataStoreQuery,
+        DNSName,
+      };
+    });
   }
   /**
    * igs要素查询
@@ -190,7 +229,7 @@ export default class FeatureQuery {
       domain = `${protocol}://${ip}:${port}`;
     }
     let queryService;
-    if (option.gdbp) {
+    if (option.gdbp && !option.docName) {
       // 矢量图层
       queryService = new Zondy.MRFS.QueryLayerFeature(queryParam, {
         domain,
@@ -504,71 +543,25 @@ export default class FeatureQuery {
    * @param option 详见dataStorePgQueryFeature的option
    * @returns {Promise<*>}
    */
-  static dataStoreQuery(option) {
-    return __awaiter(this, void 0, void 0, function* () {
-      if (option.isEsGeoCode) {
-        // es地名地址查询
-        return this.dataStoreEsGeoCode(option);
-      }
-      // pg 要素查询
-      if (!option.gdbp && option.docName) {
-        const docInfo = yield DocumentCatalog.getDocInfo({
-          serverName: option.docName,
-          ip: option.ip,
-          port: option.port,
-        });
-        const data =
-          docInfo === null || docInfo === void 0
-            ? void 0
-            : docInfo.MapInfos[Number(option.mapIndex) || 0].CatalogLayer;
-        if (!data) {
-          return null;
-        }
-        if (option.layerIdxs) {
-          const vectors = DocumentCatalog.getLayersByIndexes(
-            option.layerIdxs,
-            data,
-            []
-          );
-          const gdbps = [];
-          for (let i = 0; i < vectors.length; i += 1) {
-            const { URL } = vectors[i];
-            if (URL) {
-              gdbps.push(URL);
-            }
-          }
-          option.gdbp = gdbps.join(",");
-        } else {
-          const layerName = option.layerName || "";
-          const gdbp = DocumentCatalog.getLayerIndexesByNames(
-            data,
-            layerName,
-            []
-          );
-          if (gdbp.length > 0) {
-            option.gdbp = gdbp.join(",");
-          }
-        }
-      }
-      let gdbpArray = [];
-      if (!option.gdbp) {
-        return null;
-      }
-      if (option.gdbp.includes(",")) {
-        gdbpArray = option.gdbp.split(",");
-      } else {
-        gdbpArray = [option.gdbp];
-      }
-      return Promise.all(
-        gdbpArray.map((gdbp) => {
-          return this.dataStorePgQueryFeature(gdbp, option);
-        })
-      );
-    });
-  }
+  // public static async dataStoreQuery(option: FeatureQueryParam) {
+  //   let gdbpArray: string[] = []
+  //   if (!option.gdbp) {
+  //     return null
+  //   }
+  //   if (option.gdbp.includes(',')) {
+  //     gdbpArray = option.gdbp.split(',')
+  //   } else {
+  //     gdbpArray = [option.gdbp]
+  //   }
+  //   debugger
+  //   return Promise.all(
+  //     gdbpArray.map((gdbp) => {
+  //       return this.dataStorePgQueryFeature(gdbp, option)
+  //     })
+  //   )
+  // }
   /**
    * dataStore pg的要素查询
-   * @param gdbp 发布在igs上的pg图层gdbp地址，可以从中解析libName（数据库名）、schemas（工作空间名）、tableName（表名）
    * @param option - {Object} 查询条件
    * @param {string} [option.domain=null] dataStore服务地址域名 （domain和[protocol，ip，port]，二选一）
    * @param {string} [option.protocol="http"] dataStore服务地址网络协议 （domain和[protocol，ip，port]，二选一）
@@ -583,12 +576,16 @@ export default class FeatureQuery {
    * @param {String} [option.geoFormat="wkt"] 几何类型，wkt、wkb、geojson、自定义等
    * @param {String} [option.sref] 动态投影坐标系 ID，支持 MapGIS 和 EPSG 标准编号，其中 MapGIS 只支持当前库中自带的坐标系的 ID，EPSG 标准请 使用 EPSG:4326 格式，若指定了该参数，则系统认为 geometry 的坐标系为此坐标系
    */
-  static dataStorePgQueryFeature(gdbp, option) {
+  static dataStorePgQueryFeature(
+    // gdbp: string,
+    option
+  ) {
     const queryParam = {};
-    const vecStr = gdbp.split("/");
-    queryParam.libName = vecStr[vecStr.length - 5];
-    queryParam.tableName = vecStr[vecStr.length - 1];
-    queryParam.schemas = vecStr[vecStr.length - 5];
+    const vecStr = option.gdbp.split("/");
+    const libName = option.DNSName.split("/")[1];
+    const schemas = option.gdbp.split("@")[1].split("/")[1];
+    const tableName = vecStr[vecStr.length - 1];
+    queryParam.path = `${libName}/${schemas}/${tableName}`;
     queryParam.pageNo = option.page !== undefined ? option.page : 1;
     queryParam.pageSize = option.pageCount || 10;
     queryParam.includeProperites = true;
@@ -603,6 +600,8 @@ export default class FeatureQuery {
         arr.push(`${option.geometry.xmax} ${option.geometry.ymax}`);
         arr.push(`${option.geometry.xmax} ${option.geometry.ymin}`);
         arr.push(`${option.geometry.xmin} ${option.geometry.ymin}`);
+        str = arr.join(",");
+        queryParam.geometry = `POLYGON(( ${str}))`;
       } else if (geometryType === "polygon" || geometryType === "polygon") {
         const { pointArr } = option.geometry;
         for (let i = 0; i < pointArr.length; i += 1) {
@@ -626,20 +625,17 @@ export default class FeatureQuery {
     }
     queryParam.sref = option.sref;
     let domain = option.domain || null;
-    const ip = option.ip;
-    const port = option.port;
+    queryParam.ip = option.ip;
+    queryParam.port = option.port;
     if (!domain) {
       const protocol = option.protocol || "http";
-      domain = `${protocol}://${ip}:${port}`;
+      domain = `${protocol}://${queryParam.ip}:${queryParam.port}`;
     }
     queryParam.domain = domain;
     const promise = new Promise((resolve, reject) => {
-      Zondy.DataStore.PGQueryStats(
-        ip,
-        port,
-        queryParam,
+      new Zondy.PostGIS.PostgisQueryService(queryParam).query(
         (res) => {
-          if (!res || !res.features || res.features.length <= 0) {
+          if (!res || !res.features) {
             reject("undefined");
           } else {
             resolve(res);
