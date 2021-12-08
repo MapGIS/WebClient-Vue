@@ -15,6 +15,8 @@
                    @addChapter="$_addChapter"
                    @toggleChapterFeatures="$_toggleChapterFeatures"
                    @copyChapter="$_copyChapter"
+                   @changeEntityTitle="$_changeEntityTitle"
+                   @changeEntity="$_changeEntity"
                    @titleChanged="$_titleChanged"
                    @featureTitleChanged="$_featureTitleChanged"
                    @closeHoverPanel="$_closeHoverPanel"

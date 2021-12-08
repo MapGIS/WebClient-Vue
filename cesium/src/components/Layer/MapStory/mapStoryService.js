@@ -193,6 +193,7 @@ export default {
                         [Cesium.Math.toDegrees(radians.east), Cesium.Math.toDegrees(radians.south), 0],
                         [Cesium.Math.toDegrees(radians.west), Cesium.Math.toDegrees(radians.south), 0]
                     ]];
+                    this.currentFeature.drawType = "rectangle";
                     this.currentFeature.feature = {
                         "type": "Feature",
                         "properties": {},
@@ -218,6 +219,7 @@ export default {
                     for (let i = 0; i < degreeArr.length; i++) {
                         polygonPoints[0].push([degreeArr[i][0], degreeArr[i][1], degreeArr[i][2]]);
                     }
+                    this.currentFeature.drawType = "polygon";
                     this.currentFeature.feature = {
                         "type": "Feature",
                         "properties": {},
@@ -245,6 +247,7 @@ export default {
                     for (let i = 0; i < degreeArr.length; i++) {
                         linePoints.push([degreeArr[i][0], degreeArr[i][1], degreeArr[i][2]]);
                     }
+                    this.currentFeature.drawType = "polyline";
                     this.currentFeature.feature = {
                         "type": "Feature",
                         "properties": {},
@@ -253,13 +256,14 @@ export default {
                             "coordinates": linePoints
                         }
                     };
+                    this.currentFeature.layerStyle.width = 4;
                     this.$_setFeature(this.currentFeature);
                     entity = this.viewer.entities.add({
                         id: this.currentFeature.uuid,
                         polyline: {
                             positions: Cartesian3Points,
                             material: Cesium.Color.RED,
-                            width: 3
+                            width: this.currentFeature.layerStyle.width
                         }
                     });
                     mapStoryManager.options[this.currentFeature.uuid] = entity;
@@ -392,7 +396,12 @@ export default {
                 }
             }
         },
-        $_deleteFeature(feature) {
+        $_deleteFeature(index, projectUUID) {
+            for (let i = 0; i < this.dataSourceCopy.length; i++) {
+                if (this.dataSourceCopy[i].uuid === projectUUID) {
+                    this.dataSourceCopy[i].chapters.splice(index, 1);
+                }
+            }
         },
         $_selectCamera(camera, currentFeature) {
             currentFeature.camera = this.$_cloneCamera(camera);
@@ -522,6 +531,40 @@ export default {
                 this.$emit(this.projectMaps, index, map);
             }
         },
+        $_changeEntityTitle(currentEntity) {
+            let entity = this.viewer.entities.getById(currentEntity.uuid);
+            entity.label.text = currentEntity.title;
+        },
+        $_changeEntity(type, uuid, value) {
+            console.log("type, uuid, value", type, uuid, value)
+            let entity = this.viewer.entities.getById(uuid);
+            switch (type) {
+                case "fontColor":
+                    entity.label.fillColor = Cesium.Color.fromCssColorString(value);
+                    break;
+                case "fontOpacity":
+                    entity.label.fillColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(value.color), value.opacity);
+                    break;
+                case "polylineOpacity":
+                case "polylineColor":
+                    entity.polyline.material = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(value.color), value.opacity);
+                    break;
+                case "polylineWidth":
+                    entity.polyline.width = value;
+                    break;
+                case "polygonOpacity":
+                case "polygonColor":
+                    entity.polygon.material = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(value.color), value.opacity);
+                    break;
+                case "rectangleColor":
+                case "rectangleOpacity":
+                    entity.rectangle.material = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(value.color), value.opacity);
+                    break;
+                case "changeEntityIcon":
+                    this.$_changeIcon(value, uuid);
+                    break;
+            }
+        },
         $_copyChapter(uuid) {
             let newUUID = "chapter_" + parseInt(String(Math.random() * 100000000));
             for (let i = 0; i < this.dataSourceCopy.length; i++) {
@@ -586,22 +629,36 @@ export default {
                 }
             }
         },
-        $_setFeature(feature) {
+        $_setFeature(feature, options) {
             for (let i = 0; i < this.dataSourceCopy.length; i++) {
                 if (this.dataSourceCopy[i].uuid === feature.projectUUID) {
                     this.dataSourceCopy[i].features.push(feature);
                     let chapters = this.dataSourceCopy[i].chapters;
                     for (let j = 0; j < chapters.length; j++) {
                         if (chapters[j].uuid === feature.featureUUID) {
-                            chapters[j].features.push({
+                            let newFeature = {
                                 uuid: feature.uuid,
-                                show: true
-                            });
+                                title: feature.uuid,
+                                drawType: feature.drawType,
+                                show: true,
+                                layerStyle: feature.layerStyle
+                            };
+                            if (options) {
+                                newFeature = Object.assign(newFeature, options);
+                            }
+                            chapters[j].features.push(newFeature);
                         } else {
-                            chapters[j].features.push({
+                            let newFeature = {
                                 uuid: feature.uuid,
-                                show: false
-                            });
+                                title: feature.uuid,
+                                drawType: feature.drawType,
+                                show: false,
+                                layerStyle: feature.layerStyle
+                            };
+                            if (options) {
+                                newFeature = Object.assign(newFeature, options);
+                            }
+                            chapters[j].features.push(newFeature);
                         }
                     }
                     break;
@@ -617,7 +674,9 @@ export default {
                 case "point":
                     this.$_addPoint(function (position, cartesian3Position) {
                         vm.$_getBillBoardIcon(0, function (img) {
+                            feature.feature.drawType = "point";
                             feature.feature.feature.geometry = {
+                                drawType: "point",
                                 type: "point",
                                 coordinates: [position.lng, position.lat, position.alt]
                             }
@@ -649,19 +708,24 @@ export default {
                 case "text":
                     this.$_addPoint(function (position) {
                         position.alt = 60000;
+                        feature.feature.drawType = "text";
+                        feature.feature.layerStyle.color = "#000000";
                         feature.feature.feature.geometry = {
                             type: "point",
                             coordinates: [position.lng, position.lat, position.alt]
                         }
                         feature.feature.feature.properties = {
-                            "title": "13213123123"
+                            "title": "无标题"
                         }
-                        vm.$_setFeature(feature.feature);
+                        vm.$_setFeature(feature.feature, {
+                            title: "无标题"
+                        });
                         entity = vm.viewer.entities.add({
                             id: feature.feature.uuid,
                             position: Cesium.Cartesian3.fromDegrees(position.lng, position.lat, position.alt),
                             label: {
-                                text: "13213123123"
+                                text: "无标题",
+                                fillColor: Cesium.Color.fromCssColorString(feature.feature.layerStyle.color)
                             }
                         });
                         mapStoryManager.options[feature.feature.uuid] = entity;

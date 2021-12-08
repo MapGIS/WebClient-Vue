@@ -13,6 +13,8 @@
         @projectPreview="$_projectPreview"
         @closeHoverPanel="$_closeHoverPanel"
         @getCamera="$_getCamera"
+        @changeEntityTitle="$_changeEntityTitle"
+        @changeEntity="$_changeEntity"
         @selectCamera="$_selectCamera"
         @changeIcon="$_changeIcon"
         @showFeature="$_showFeature"
@@ -33,57 +35,7 @@
         :dataSource="storyFeature"
         :height="panelHeight"
         :enableFullScreen="enableFullScreen"
-    />
-<!--    <mapgis-ui-project-edit-->
-<!--        v-if="enableClose"-->
-<!--        @addMapToProject="$_addMapToProject"-->
-<!--        @addMap="$_addMap"-->
-<!--        @getCamera="$_getCamera"-->
-<!--        @deleteProject="$_deleteProject"-->
-<!--        @addFeature="$_addFeature"-->
-<!--        @deleteFeature="$_deleteFeature"-->
-<!--        @changeIcon="$_changeIcon"-->
-<!--        @textChanged="$_textChanged"-->
-<!--        @featurePreview="$_featurePreview"-->
-<!--        @projectPreview="$_projectPreview"-->
-<!--        @backed="$_closeEdit"-->
-<!--        @showFeature="$_showFeature"-->
-<!--        @titleChanged="$_titleChanged"-->
-<!--        @featureTitleChanged="$_featureTitleChanged"-->
-<!--        @firstAddPicture="$_firstAddPicture"-->
-<!--        @changeColor="$_changeColor"-->
-<!--        @changeOpacity="$_changeOpacity"-->
-<!--        v-show="!showProjectPanel"-->
-<!--        v-model="currentProject"-->
-<!--        :height="panelHeight"-->
-<!--        :width="width"-->
-<!--        id="addProjectId"-->
-<!--    />-->
-<!--    <mapgis-ui-project-edit-->
-<!--        v-if="!enableClose"-->
-<!--        @addMapToProject="$_addMapToProject"-->
-<!--        @addMap="$_addMap"-->
-<!--        @getCamera="$_getCamera"-->
-<!--        @deleteProject="$_deleteProject"-->
-<!--        @addFeature="$_addFeature"-->
-<!--        @deleteFeature="$_deleteFeature"-->
-<!--        @changeIcon="$_changeIcon"-->
-<!--        @textChanged="$_textChanged"-->
-<!--        @featurePreview="$_featurePreview"-->
-<!--        @projectPreview="$_projectPreview"-->
-<!--        @backed="$_closeEdit"-->
-<!--        @showFeature="$_showFeature"-->
-<!--        @titleChanged="$_titleChanged"-->
-<!--        @featureTitleChanged="$_featureTitleChanged"-->
-<!--        @firstAddPicture="$_firstAddPicture"-->
-<!--        @changeColor="$_changeColor"-->
-<!--        @changeOpacity="$_changeOpacity"-->
-<!--        v-show="showPanels.showProjectEdit"-->
-<!--        v-model="currentProject"-->
-<!--        :height="panelHeight"-->
-<!--        :width="width"-->
-<!--        id="addProjectId"-->
-<!--    />-->
+    />`
   </div>
 </template>
 
@@ -219,6 +171,12 @@ export default {
     $_closeHoverPanel() {
       this.$emit("closeHoverPanel");
     },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
+    },
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
@@ -290,8 +248,8 @@ export default {
     $_toggleChapterFeatures(featureUUID, projectUUID, show) {
       this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
     },
-    $_deleteFeature(feature) {
-      this.$emit("deleteFeature", feature);
+    $_deleteFeature(index, projectUUID) {
+      this.$emit("deleteFeature", index, projectUUID);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
