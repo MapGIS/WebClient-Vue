@@ -12,7 +12,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components:MapgisBaseTable,
   template: `
-    <mapgis-web-map crs="EPSG:4326" :center="[116.3909, 39.9148]" :zoom="8">
+    <mapgis-web-map crs="EPSG:4326" :center="[116.3909, 39.9148]" :zoom="8" style="height:95vh">
       <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
       <mapgis-igs-doc-layer v-bind="$props" />
       <mapgis-base-table

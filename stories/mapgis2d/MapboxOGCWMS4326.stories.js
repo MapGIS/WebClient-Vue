@@ -18,16 +18,22 @@ export default {
       },
       control:'text'
     },
-    layers: {
-      description: '图层名称或 Id，多个值以逗号分隔，不传时不显示地图 <br/> ' +
+    layers:{
+      description: '图层name或 Id，多个值以逗号分隔，不传时不显示地图 <br/> ' +
           '1. igs 使用地图名称 <br/> ' +
           '2. arcgis 根据版本不同，可使用 id 或名称，具体依据 arcgis 的 wms 服务的 xml 文档',
-      type: { name: 'String', required: false},
-      defaultValue:null,
+      type: {
+        name: 'String',
+        required: false
+      },
       table:{
-        type: {summary: 'String'},
+        type: {
+          summary: 'String',
+          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中t78即为layers传参的内容'
+        },
         defaultValue: { summary: 'null' },
       },
+      defaultValue:null,
       control:'text'
     } ,
     version:{
@@ -93,18 +99,8 @@ export default {
       },
       control:'boolean'
     } ,
-    layers: {
-      description:'传入OGC/WMS服务中图层的Name字段',
-      table:{
-        type: {
-          summary: 'String',
-          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中t78即为layers传参的内容'
-        },
-      }
-    },
     layerId: 'raster_layerId',
     sourceId: 'raster_sourceId',
-    baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
     crs:'EPSG:4326'
   },
 };

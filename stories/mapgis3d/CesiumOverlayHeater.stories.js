@@ -185,7 +185,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `
-      <mapgis-web-scene>
+      <mapgis-web-scene style="height:95vh">
         <mapgis-3d-igs-m3d
           v-if="enableModel"
           :autoReset="autoReset"

@@ -148,7 +148,7 @@ const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
     components: {MapgisWebMap,MapgisArcgisMapLayer},
     methods:{},
-    template:`<mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:60vh">
+    template:`<mapgis-web-map crs="EPSG:3857" :center="[114.299039,30.594797]" :zoom="8" style="height:95vh">
     <mapgis-arcgis-map-layer v-bind="$props" />
     </mapgis-web-map>`,
 });

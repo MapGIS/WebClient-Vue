@@ -29,7 +29,7 @@ const Template = (args, { argTypes }) => ({
           pitch: -1.4832321184766042,
           roll: 3.1369303868636838,
         },
-      }">
+      }" style="height: 95vh">
         <mapgis-3d-igs-tile-layer v-bind="$props" />
     </mapgis-web-scene >`,
 });
