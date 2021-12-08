@@ -59,6 +59,9 @@ export { default as Mapgis3dGeojsonDatasource } from "./components/DataSource/Ge
 export { default as Mapgis3dCzmlDatasource } from "./components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
+export { default as Mapgis3dBufferAnalysis } from "./components/Analysis/Buffer.vue";
+export { default as Mapgis3dOverlayAanalysis } from "./components/Analysis/Overlay.vue";
+
 export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
