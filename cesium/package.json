@@ -41,7 +41,8 @@
     "vcolorpicker": "^1.1.0",
     "vuepress": "^1.8.2",
     "webfont-matcher": "1.1.0",
-    "wangeditor-antd": "^1.0.7"
+    "wangeditor-antd": "^1.0.7",
+    "html2canvas": "^1.3.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

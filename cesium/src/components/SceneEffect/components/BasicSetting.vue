@@ -4,46 +4,48 @@
       
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="地球" :checked="earth" @changeChecked="enableEarth"/>
+          <mapgis-ui-switch-panel size="small" label="地球" :checked="earth" @changeChecked="enableEarth"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="大气层" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere"/>
+          <mapgis-ui-switch-panel size="small" label="大气层" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="阴影效果" :checked="shadow" @changeChecked="enableShadow"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="阴影效果" :checked="shadow" @changeChecked="enableShadow"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="深度检测" :checked="depthTest" @changeChecked="enableDepthTest"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="深度检测" :checked="depthTest" @changeChecked="enableDepthTest"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
           
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="显示帧率" :checked="FPS" @changeChecked="enableFPS"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="显示帧率" :checked="FPS" @changeChecked="enableFPS"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="时间轴" :checked="timeline" @changeChecked="enableTimeline"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="时间轴" :checked="timeline" @changeChecked="enableTimeline"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="罗盘控件" :checked="compass" @changeChecked="enableCompass"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="罗盘控件" :checked="compass" @changeChecked="enableCompass"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="缩放控件" :checked="zoom" @changeChecked="enableZoom"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="缩放控件" :checked="zoom" @changeChecked="enableZoom"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="状态栏" :checked="statebar" @changeChecked="enableStatebar"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="状态栏" :checked="statebar" @changeChecked="enableStatebar"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
-      <mapgis-ui-input-number-panel 
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-input-number-panel
         size="small"
         label="亮度" 
         :value="layerbrightness" 
@@ -398,4 +400,34 @@ export default {
 </script>
 
 <style scoped>
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(odd) .mapgis-ui-switch-panel{
+  padding-right: 10px;
+}
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel::before{
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  background: #DCDCDC;
+}
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel{
+  padding-left: 10px;
+}
+.dividerWrapper{
+  height: 13px;
+}
+.divider{
+  display: block;
+  height: 1px;
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  margin: 6px 0;
+  background: #F0F0F0 ;
+}
 </style>

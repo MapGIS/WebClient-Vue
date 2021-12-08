@@ -2,8 +2,8 @@
   <div>
     <mapgis-ui-row class="mapgis-ui-set-camera-panel-select">
       <mapgis-ui-col :span="24">
-        <h4 class="mapgis-ui-set-camera-panel-select-title">
-          <mapgis-ui-title-icon/>
+        <h4 class="mapgis-ui-set-camera-panel-select-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+          <mapgis-ui-title-icon v-show="showTitleIcon"/>
           设置相机视角
           <span @click="$_showDetail" class="mapgis-ui-set-camera-panel-select-show-more">
             {{ showDetailTitle }}
@@ -60,10 +60,14 @@ export default {
       },
       camerasCopy: [],
       showDetail: false,
-      showDetailTitle: "显示详细视角信息"
+      showDetailTitle: "显示详细视角信息",
     }
   },
   props: {
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
     camera: {
       type: Object
     },
@@ -103,15 +107,34 @@ export default {
     this.$_setCameras();
   },
   methods: {
+    setValue(value) {
+      this.currentSelect = value;
+    },
     $_selectChange(e) {
+      let newCamera = {};
       for (let i = 0; i < this.camerasCopy.length; i++) {
-        if (this.camerasCopy[i].title === e) {
-          this.cameraCopy.heading = this.camerasCopy[i].heading;
-          this.cameraCopy.pitch = this.camerasCopy[i].pitch;
-          this.cameraCopy.roll = this.camerasCopy[i].roll;
+        if (this.camerasCopy[i].uuid === e) {
+          newCamera.heading = this.camerasCopy[i].heading || 0;
+          newCamera.pitch = this.camerasCopy[i].pitch || 0;
+          newCamera.roll = this.camerasCopy[i].roll || 0;
+          newCamera.uuid = this.camerasCopy[i].uuid;
+          if(!this.camerasCopy[i].positionCartographic){
+            newCamera.positionCartographic = {
+              height: 0,
+              latitude: 0,
+              longitude: 0
+            };
+          }else {
+            newCamera.positionCartographic = {
+              height: this.camerasCopy[i].positionCartographic.height,
+              latitude: this.camerasCopy[i].positionCartographic.latitude,
+              longitude: this.camerasCopy[i].positionCartographic.longitude
+            };
+          }
           break;
         }
       }
+      this.$emit("selectCamera", this.cameraCopy);
     },
     $_showDetail() {
       this.showDetail = !this.showDetail;
@@ -130,8 +153,9 @@ export default {
       }];
       for (let i = 0; i < this.camerasCopy.length; i++) {
         let title = this.camerasCopy[i].title;
+        let uuid = this.camerasCopy[i].uuid;
         this.selectData.push({
-          key: title,
+          key: uuid,
           value: title
         })
       }
@@ -150,6 +174,7 @@ export default {
 }
 
 .mapgis-ui-set-camera-panel-select-title {
+  font-weight: bolder;
   margin-bottom: 4px;
   padding-left: 12px;
 }

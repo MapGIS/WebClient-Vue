@@ -89,11 +89,11 @@ const Template = (args, { argTypes }) => ({
       <mapgis-ui-button :type="theme === 'light' ? 'primary' : 'default'" @click="setCustomTheme('light')">浅色主题</mapgis-ui-button>
     </div>
     <div style="display: flex;flex-direction: column; margin-bottom: 15px;">
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.avatar.title') }}：</label><mapgis-ui-avatar icon="user" /></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.input.title') }}：</label><mapgis-ui-input-search placeholder="input search text" enter-button style="width: 240px;" /></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.inputNumber.title') }}：</label><mapgis-ui-input-number v-model="inputValue" style="margin-right: 3px;"/>台机器 <mapgis-ui-button type="link">链接文字</mapgis-ui-button></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.switch.title') }}：</label><mapgis-ui-switch v-model="switch1" /> <mapgis-ui-checkbox v-model="checked1" style="margin-left: 25px;">Checkbox</mapgis-ui-checkbox></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.select.title') }}：</label><mapgis-ui-select allowClear v-model="select1" style="width: 240px;">
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.avatar.title') }}：</label><mapgis-ui-avatar icon="user" /></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.input.title') }}：</label><mapgis-ui-input-search placeholder="input search text" enter-button style="width: 240px;" /></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.inputNumber.title') }}：</label><mapgis-ui-input-number v-model="inputValue" style="margin-right: 3px;"/>台机器 <mapgis-ui-button type="link">链接文字</mapgis-ui-button></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.switch.title') }}：</label><mapgis-ui-switch v-model="switch1" /> <mapgis-ui-checkbox v-model="checked1" style="margin-left: 25px;">Checkbox</mapgis-ui-checkbox></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.select.title') }}：</label><mapgis-ui-select allowClear v-model="select1" style="width: 240px;">
           <mapgis-ui-select-option value="jack1">
             Jack
           </mapgis-ui-select-option>
@@ -108,9 +108,9 @@ const Template = (args, { argTypes }) => ({
           </mapgis-ui-select-option>
         </mapgis-ui-select>
       </div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.empty.title') }}：</label><mapgis-ui-empty /></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.datePicker.title') }}：</label><mapgis-ui-date-picker placeholder="Select Date" v-model="time1" /></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.radio.title') }}：</label><mapgis-ui-radio-group v-model="radio1">
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.empty.title') }}：</label><mapgis-ui-empty /></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.datePicker.title') }}：</label><mapgis-ui-date-picker placeholder="Select Date" v-model="time1" /></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.radio.title') }}：</label><mapgis-ui-radio-group v-model="radio1">
           <mapgis-ui-radio-button value="a">
             Hangzhou
           </mapgis-ui-radio-button>
@@ -125,10 +125,10 @@ const Template = (args, { argTypes }) => ({
           </mapgis-ui-radio-button>
         </mapgis-ui-radio-group>
       </div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.transfer.title') }}：</label><mapgis-ui-transfer :data-source="mockData" :titles="['Source', 'Target']" :target-keys="targetKeys" :selected-keys="selectedKeys" :render="item => item.title" @change="handleTransferChange" @selectChange="handleSelectChange" /></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.tooltip.title') }}：</label><mapgis-ui-tooltip placement="topLeft" title="Prompt Text"><mapgis-ui-button>Align edge / 边缘对齐</mapgis-ui-button></mapgis-ui-tooltip><mapgis-ui-tooltip placement="topLeft" title="Prompt Text" arrow-point-at-center><mapgis-ui-button style="margin-left: 10px;">Arrow points to center / 箭头指向中心</mapgis-ui-button></mapgis-ui-tooltip></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.message.title') }}：</label><mapgis-ui-button @click="success">Success</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="error">Error</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="warning">Warning</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="info">Info</mapgis-ui-button></div>
-      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="width: 35%; text-align: right; padding-right: 8px;">{{ ('basicComponent.modal.title') }}：</label><mapgis-ui-button type="primary" @click="showModal">Modal</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="confirm">Confirm</mapgis-ui-button><mapgis-ui-modal v-model="modalVisible" title="Modal" ok-text="confirm" cancel-text="cancel" @ok="hideModal">
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.transfer.title') }}：</label><mapgis-ui-transfer :data-source="mockData" :titles="['Source', 'Target']" :target-keys="targetKeys" :selected-keys="selectedKeys" :render="item => item.title" @change="handleTransferChange" @selectChange="handleSelectChange" /></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.tooltip.title') }}：</label><mapgis-ui-tooltip placement="topLeft" title="Prompt Text"><mapgis-ui-button>Align edge / 边缘对齐</mapgis-ui-button></mapgis-ui-tooltip><mapgis-ui-tooltip placement="topLeft" title="Prompt Text" arrow-point-at-center><mapgis-ui-button style="margin-left: 10px;">Arrow points to center / 箭头指向中心</mapgis-ui-button></mapgis-ui-tooltip></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.message.title') }}：</label><mapgis-ui-button @click="success">Success</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="error">Error</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="warning">Warning</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="info">Info</mapgis-ui-button></div>
+      <div style="display: flex; align-items: center; margin-bottom: 15px;"><label style="text-align: right; padding-right: 8px;">{{ ('basicComponent.modal.title') }}：</label><mapgis-ui-button type="primary" @click="showModal">Modal</mapgis-ui-button><mapgis-ui-button style="margin-left: 10px;" @click="confirm">Confirm</mapgis-ui-button><mapgis-ui-modal v-model="modalVisible" title="Modal" ok-text="confirm" cancel-text="cancel" @ok="hideModal">
           <p>Bla bla ...</p>
           <p>Bla bla ...</p>
           <p>Bla bla ...</p>

@@ -6,16 +6,21 @@
         @deleteProject="$_deleteProject"
         @editProject="$_editProject"
         @addFeature="$_addFeature"
+        @deleteFeature="$_deleteFeature"
+        @toggleChapterFeatures="$_toggleChapterFeatures"
+        @addChapter="$_addChapter"
+        @copyChapter="$_copyChapter"
+        @projectPreview="$_projectPreview"
         @closeHoverPanel="$_closeHoverPanel"
         @getCamera="$_getCamera"
-        @deleteFeature="$_deleteFeature"
+        @selectCamera="$_selectCamera"
         @changeIcon="$_changeIcon"
         @showFeature="$_showFeature"
         @showProject="$_showProject"
         @featurePreview="$_featurePreview"
         :height="panelHeight"
         :width="width"
-        :dataSource="dataSource"
+        v-model="dataSourceCopy"
         v-show="showProjectPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
@@ -29,64 +34,62 @@
         :height="panelHeight"
         :enableFullScreen="enableFullScreen"
     />
-    <mapgis-ui-project-edit
-        v-if="enableClose"
-        @addMapToProject="$_addMapToProject"
-        @addMap="$_addMap"
-        @getCamera="$_getCamera"
-        @deleteProject="$_deleteProject"
-        @addFeature="$_addFeature"
-        @deleteFeature="$_deleteFeature"
-        @changeIcon="$_changeIcon"
-        @textChanged="$_textChanged"
-        @featurePreview="$_featurePreview"
-        @projectPreview="$_projectPreview"
-        @backed="$_closeEdit"
-        @showFeature="$_showFeature"
-        @titleChanged="$_titleChanged"
-        @featureTitleChanged="$_featureTitleChanged"
-        @firstAddPicture="$_firstAddPicture"
-        @changeColor="$_changeColor"
-        @changeOpacity="$_changeOpacity"
-        v-show="!showProjectPanel"
-        v-model="currentProject"
-        :height="panelHeight"
-        :width="width"
-        id="addProjectId"
-    />
-    <mapgis-ui-project-edit
-        v-if="!enableClose"
-        @addMapToProject="$_addMapToProject"
-        @addMap="$_addMap"
-        @getCamera="$_getCamera"
-        @deleteProject="$_deleteProject"
-        @addFeature="$_addFeature"
-        @deleteFeature="$_deleteFeature"
-        @changeIcon="$_changeIcon"
-        @textChanged="$_textChanged"
-        @featurePreview="$_featurePreview"
-        @projectPreview="$_projectPreview"
-        @backed="$_closeEdit"
-        @showFeature="$_showFeature"
-        @titleChanged="$_titleChanged"
-        @featureTitleChanged="$_featureTitleChanged"
-        @firstAddPicture="$_firstAddPicture"
-        @changeColor="$_changeColor"
-        @changeOpacity="$_changeOpacity"
-        v-show="showPanels.showProjectEdit"
-        v-model="currentProject"
-        :height="panelHeight"
-        :width="width"
-        id="addProjectId"
-    />
+<!--    <mapgis-ui-project-edit-->
+<!--        v-if="enableClose"-->
+<!--        @addMapToProject="$_addMapToProject"-->
+<!--        @addMap="$_addMap"-->
+<!--        @getCamera="$_getCamera"-->
+<!--        @deleteProject="$_deleteProject"-->
+<!--        @addFeature="$_addFeature"-->
+<!--        @deleteFeature="$_deleteFeature"-->
+<!--        @changeIcon="$_changeIcon"-->
+<!--        @textChanged="$_textChanged"-->
+<!--        @featurePreview="$_featurePreview"-->
+<!--        @projectPreview="$_projectPreview"-->
+<!--        @backed="$_closeEdit"-->
+<!--        @showFeature="$_showFeature"-->
+<!--        @titleChanged="$_titleChanged"-->
+<!--        @featureTitleChanged="$_featureTitleChanged"-->
+<!--        @firstAddPicture="$_firstAddPicture"-->
+<!--        @changeColor="$_changeColor"-->
+<!--        @changeOpacity="$_changeOpacity"-->
+<!--        v-show="!showProjectPanel"-->
+<!--        v-model="currentProject"-->
+<!--        :height="panelHeight"-->
+<!--        :width="width"-->
+<!--        id="addProjectId"-->
+<!--    />-->
+<!--    <mapgis-ui-project-edit-->
+<!--        v-if="!enableClose"-->
+<!--        @addMapToProject="$_addMapToProject"-->
+<!--        @addMap="$_addMap"-->
+<!--        @getCamera="$_getCamera"-->
+<!--        @deleteProject="$_deleteProject"-->
+<!--        @addFeature="$_addFeature"-->
+<!--        @deleteFeature="$_deleteFeature"-->
+<!--        @changeIcon="$_changeIcon"-->
+<!--        @textChanged="$_textChanged"-->
+<!--        @featurePreview="$_featurePreview"-->
+<!--        @projectPreview="$_projectPreview"-->
+<!--        @backed="$_closeEdit"-->
+<!--        @showFeature="$_showFeature"-->
+<!--        @titleChanged="$_titleChanged"-->
+<!--        @featureTitleChanged="$_featureTitleChanged"-->
+<!--        @firstAddPicture="$_firstAddPicture"-->
+<!--        @changeColor="$_changeColor"-->
+<!--        @changeOpacity="$_changeOpacity"-->
+<!--        v-show="showPanels.showProjectEdit"-->
+<!--        v-model="currentProject"-->
+<!--        :height="panelHeight"-->
+<!--        :width="width"-->
+<!--        id="addProjectId"-->
+<!--    />-->
   </div>
 </template>
 
 <script>
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
-import {MRFS} from "@mapgis/webclient-es6-service"
-import Base64IconsKeyValue from "../../../../../ui/src/components/iconfont/Base64IconsKeyValue"
 
 window.showProjectEdit = false;
 export default {
@@ -96,6 +99,10 @@ export default {
     "map-collection": mapCollection,
   },
   inject: ["Cesium", "viewer"],
+  model: {
+    prop: "dataSource",
+    event: "change"
+  },
   props: {
     dataSource: {
       type: Array,
@@ -130,15 +137,24 @@ export default {
       showPlay: true,
       showArrow: true,
       enableFullScreen: true,
-      showPanels: window.showPanels
+      showPanels: window.showPanels,
+      dataSourceCopy: undefined,
     }
   },
   watch: {
     dataSource: {
       handler: function () {
-        this.projects = this.dataSource;
+        this.dataSourceCopy = this.dataSource;
       }
-    }
+    },
+    dataSourceCopy: {
+      handler: function () {
+        this.$emit("change", this.dataSourceCopy);
+      }
+    },
+  },
+  created() {
+    this.dataSourceCopy = this.dataSource;
   },
   mounted() {
     this.projects = this.dataSource;
@@ -160,17 +176,17 @@ export default {
         this.showLargePanel = true;
         this.enableFullScreen = false;
       } else {
-        this.$emit("projectPreview", [feature], false);
+        this.$emit("featurePreview", feature);
       }
     },
-    $_projectPreview() {
+    $_projectPreview(chapters) {
       if (this.enablePreview) {
         this.storyFeature = this.currentProject.features;
         this.showPlay = true;
         this.showArrow = true;
         this.showLargePanel = true;
       } else {
-        this.$emit("projectPreview", this.currentProject.features, true);
+        this.$emit("projectPreview", chapters);
       }
     },
     $_closeEdit() {
@@ -188,6 +204,12 @@ export default {
       }
       this.$emit("editProject", index);
     },
+    $_addChapter(chapter) {
+      this.$emit("addChapter", chapter);
+    },
+    $_copyChapter(uuid) {
+      this.$emit("copyChapter", uuid);
+    },
     $_addFeature(feature) {
       this.$emit("addFeature", feature);
     },
@@ -199,6 +221,9 @@ export default {
     },
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
+    },
+    $_selectCamera(camera, currentFeature) {
+      this.$emit("selectCamera", camera, currentFeature);
     },
     $_deleteProject(project) {
       this.$emit("deleteProject");
@@ -262,8 +287,11 @@ export default {
         this.$set(this.optArr, index, map);
       }
     },
-    $_deleteFeature(index, id, project, feature) {
-      this.$emit("deleteFeature", index, id, project, feature[0]);
+    $_toggleChapterFeatures(featureUUID, projectUUID, show) {
+      this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
+    },
+    $_deleteFeature(feature) {
+      this.$emit("deleteFeature", feature);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
@@ -285,6 +313,9 @@ export default {
     },
     $_featureTitleChanged(feature) {
       this.$emit("featureTitleChanged", feature);
+    },
+    $_animationTimeChanged(feature) {
+      this.$emit("animationTimeChanged", feature);
     },
     $_titleChanged(title) {
       for (let i = 0; i < this.projects.length; i++) {

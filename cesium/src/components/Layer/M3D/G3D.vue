@@ -254,7 +254,7 @@ export default {
     mount() {
       const vm = this;
       const { vueIndex, vueKey, vueCesium } = this;
-      const { viewer, url, $props, enablePopup } = this;
+      const { viewer, url, $props, enablePopup, layerId } = this;
 
       let server = this.parseServer();
       let { ip, port } = server;
@@ -271,6 +271,11 @@ export default {
           getDocLayerIndexes(indexes) {
             // 该回调只触发一次
             vm.g3dLayerIndex = indexes[0];
+            vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
+              m3ds: [],
+              layerId: layerId,
+              g3dLayerIndex: vm.g3dLayerIndex
+            });
             let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
             vm.layerTree[0].version = g3dLayer.version;
             vm.version = g3dLayer.version;
@@ -334,7 +339,6 @@ export default {
             }
           }
         });
-        vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, { m3ds: [] });
       });
 
       if (viewer.isDestroyed()) return;

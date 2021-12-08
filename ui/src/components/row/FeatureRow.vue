@@ -27,7 +27,7 @@
         </div>
         <mapgis-ui-col span="20">
           <div :title="feature.title" class="mapgis-mapstory-feature-panel-title">
-            <mapgis-ui-svg-icon class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
+            <mapgis-ui-svg-icon v-if="feature.baseUrl" class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
                                 :iconStyle="iconStylePoint" :type="feature.baseUrl.type"/>
             <div class="mapgis-mapstory-feature-panel-title-value">{{ feature.title }}</div>
           </div>
@@ -41,14 +41,14 @@
           <!--                        type="delete"/>-->
           <!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
           <!--                        v-show="showToolIndex !== index && feature.layerStyle.show" type="eye"/>-->
-          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
-                              @click="$_showFeature(index, true)"
-                              v-show="showToolIndex === index && !feature.layerStyle.show"
-                              type="eye"/>
-          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
-                              @click="$_showFeature(index, false)"
-                              v-show="showToolIndex === index && feature.layerStyle.show"
-                              type="noEye"/>
+<!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+<!--                              @click="$_showFeature(index, true)"-->
+<!--                              v-show="showToolIndex === index && !feature.layerStyle.show"-->
+<!--                              type="eye"/>-->
+<!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+<!--                              @click="$_showFeature(index, false)"-->
+<!--                              v-show="showToolIndex === index && feature.layerStyle.show"-->
+<!--                              type="noEye"/>-->
           <mapgis-ui-base64-icon @click="$_showMoreTool(index)" class="mapgis-mapstory-tool-bar-more" height="20px"
                                  type="more"/>
         </mapgis-ui-col>
@@ -106,6 +106,10 @@ export default {
       }
     }
   },
+  model: {
+    prop: "features",
+    event: "change"
+  },
   props: {
     features: {
       type: Array,
@@ -122,6 +126,12 @@ export default {
     features: {
       handler: function () {
         this.featuresCopy = this.features;
+      },
+      deep: true
+    },
+    featuresCopy: {
+      handler: function () {
+        this.$emit("change", this.featuresCopy);
       },
       deep: true
     }

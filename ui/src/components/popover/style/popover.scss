@@ -28,17 +28,21 @@
   height: 32.5px;
 }
 
-.mapgis-popup-row:nth-child(2n) {
-  background-color: rgb(231, 232, 233);
+.mapgis-popup-row-wrapper:nth-child(2n) {
+  div {
+    background-color: $nav-content-backgroud;
+  }
 }
 
-.mapgis-popup-row:nth-child(2n + 1) {
-  background-color: rgb(244, 244, 244);
+.mapgis-popup-row-wrapper:nth-child(2n + 1) {
+  div {
+    background-color: $nav-selected-backgroud;
+  }
 }
 
 .mapgis-popup-row:hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
+  background-color: $primary-1;
+  border-left: 2px solid $primary-5;
 }
 
 .mapgis-popup-row {
@@ -122,15 +126,16 @@
   line-height: 11px;
   min-width: 240px;
   border-left: 2px solid rgba(115, 176, 251, 0);
-  border-bottom: 1px solid rgb(246, 246, 246);
+  border-bottom: 0px solid rgb(246, 246, 246);
 }
 
 .mapgis-popup-underline-row:hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
+  background-color: $primary-1;
+  border-left: 2px solid $primary-5;
 }
 
-.mapgis-popup-underline-item, .mapgis-popup-point-item {
+.mapgis-popup-underline-item,
+.mapgis-popup-point-item {
   line-height: 22px;
 }
 

@@ -15,6 +15,10 @@ export default {
     default: () => (Math.random() * 100000000).toFixed(0),
   },
 
+  layerId: {
+    type: String,
+  },
+
   outStyle: {
     type: Object,
     default: () => {

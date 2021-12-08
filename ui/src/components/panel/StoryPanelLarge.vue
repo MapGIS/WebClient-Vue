@@ -5,11 +5,9 @@
     <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
                         :icon-style="iconStyle"
                         :container-style="containerStyle" type="close"/>
-    <img :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
-        class="mapgis-ui-story-panel-large-carousel-img" v-if="!showCarousel" :src="currentFeature.images" alt="">
+    <!--轮播图-->
     <mapgis-ui-carousel
         :afterChange="$_afterChange"
-        v-if="showCarousel"
         :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
         class="mapgis-ui-story-panel-large-carousel"
         autoplay arrows>
@@ -23,25 +21,30 @@
       <div slot="nextArrow" class="custom-slick-arrow" style="right: 10px">
         <mapgis-ui-iconfont type="mapgis-right-circle"/>
       </div>
-      <div :key="index" v-for="(image,index) in currentFeature.images">
+      <div :key="index" v-for="(image,index) in images">
         <img :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
              class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
       </div>
     </mapgis-ui-carousel>
+    <!--全屏图标-->
     <div v-if="enableFullScreen" @click="$_fullScreen" class="mapgis-ui-story-panel-large-full-screen">
       <mapgis-ui-base64-icon width="24px" height="24px" type="fullScreen"/>
     </div>
+    <!--视角定位图标-->
     <div @click="$_flyTo"
          :style="{right: width / 400 * 30 + 'px',paddingTop: width / 400 * 12 + 'px', width: width / 400 * 56 + 'px', height: width / 400 * 56 + 'px', top: width * 9 / 16 - ( width / 400 * 56 ) / 2 + 'px'}"
          class="mapgis-ui-story-panel-large-fly">
       <mapgis-ui-base64-icon style="display: block;margin: auto" :width="width / 400 * 28 + 'px'"
                              :height="width / 400 * 28 + 'px'" type="flyToView"/>
     </div>
+    <!--关闭图标-->
     <mapgis-ui-svg-icon v-if="enableFullScreen" @click="$_close" :icon-style="iconStyle"
                         :container-style="containerStyle" type="close"/>
+    <!--标题-->
     <div class="mapgis-ui-story-panel-large-title">
       {{ currentFeature.title }}
     </div>
+    <!--富文本-->
     <!--减去图片高度、标题上边距、标题高度、内容上边距、底部高度-->
     <div :style="{height: height - width * 9 / 16 - 20 -30 - 10 - 64 + 'px', overflowY: showContentScroll}"
          class="mapgis-ui-story-panel-large-content" :id="storyContentId">
@@ -99,7 +102,6 @@ export default {
       isPlay: false,
       storyContentId: "storyContentId" + parseInt(String(Math.random() * 1000000000)),
       showFullImg: false,
-      showCarousel: false,
       currentFeature: undefined,
       currentFeatureIndex: 1,
       currentImgIndex: 0,
@@ -120,7 +122,8 @@ export default {
       iconStyle: {
         opacity: 1
       },
-      showContentScroll: false
+      showContentScroll: false,
+      images: []
     }
   },
   watch: {
@@ -147,34 +150,7 @@ export default {
   },
   methods: {
     $_play() {
-      if (!this.isPlay) {
-        let vm = this;
-        this.isPlay = true;
-        if (vm.currentFeatureIndex < vm.dataSourceCopy.length && vm.currentFeatureIndex > 1) {
-          vm.currentFeatureIndex++;
-        } else {
-          vm.currentFeatureIndex = 1;
-        }
-        vm.currentFeature = vm.dataSourceCopy[vm.currentFeatureIndex - 1];
-        vm.$_init();
-        vm.$_flyTo();
-        vm.$_setContent();
-        this.interval = setInterval(function () {
-          if (vm.currentFeatureIndex < vm.dataSourceCopy.length) {
-            vm.currentFeatureIndex++;
-            vm.currentFeature = vm.dataSourceCopy[vm.currentFeatureIndex - 1];
-            vm.$_init();
-            vm.$_flyTo();
-            vm.$_setContent();
-          } else {
-            vm.isPlay = false;
-            clearInterval(vm.interval);
-          }
-        }, 5000);
-      } else {
-        this.isPlay = false;
-        clearInterval(this.interval);
-      }
+      this.$emit("play");
     },
     $_setContent() {
       let content = document.getElementById(this.storyContentId);
@@ -184,7 +160,7 @@ export default {
           let contentDiv = document.getElementById(this.storyContentId + "Div");
           if (contentDiv.clientHeight > (this.height - this.width * 9 / 16 - 20 - 30 - 10 - 64)) {
             this.showContentScroll = true;
-          }else {
+          } else {
             this.showContentScroll = false;
           }
         });
@@ -202,6 +178,13 @@ export default {
     },
     $_flyTo() {
       this.$emit("flyTo", this.currentFeature.camera);
+    },
+    $_resetFeature() {
+      this.currentFeatureIndex = 1;
+      this.currentFeature = this.dataSourceCopy[this.currentFeatureIndex - 1];
+      this.$_init();
+      this.$_flyTo();
+      this.$_setContent();
     },
     $_prevFeature() {
       if (this.currentFeatureIndex > 1) {
@@ -233,10 +216,13 @@ export default {
         return;
       }
       if (typeof this.currentFeature.images === "string") {
-        this.showCarousel = false;
+        this.images = [this.currentFeature.images];
       }
       if (this.currentFeature.images instanceof Array) {
-        this.showCarousel = this.currentFeature.images.length !== 1;
+        this.images = [];
+        for (let i = 0; i < this.currentFeature.images.length; i++) {
+          this.$set(this.images, i, this.currentFeature.images[i]);
+        }
       }
     }
   }
@@ -283,13 +269,10 @@ export default {
   font-size: 16px;
   color: rgba(0, 0, 0, .7);
   padding: 0 2px;
+  padding-right: 6px;
   margin-top: 10px;
   height: calc(100% - 64px - 62px - 278px);
   overflow: hidden;
-}
-
-.mapgis-ui-story-panel-large-content > img {
-  margin: 10px 0;
 }
 
 .mapgis-ui-story-panel-large-full-screen {

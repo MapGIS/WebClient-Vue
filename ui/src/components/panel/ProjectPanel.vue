@@ -7,7 +7,7 @@
         <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
                                @showProjected="$_showProject"
                                @marked="$_marker"
-                               :projects="projects"
+                               :projects="dataSourceCopy"
                                :width="width"
         />
       </div>
@@ -18,24 +18,28 @@
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <div v-if="addProject">
-        <mapgis-ui-project-edit
-            :width="width"
-            :height="height"
-            @addMap="$_addMap"
-            @getCamera="$_getCamera"
-            @deleteFeature="$_deleteFeature"
-            @changeIcon="$_changeIcon"
-            @changeColor="$_changeColor"
-            @showFeature="$_showFeature"
-            @projectPreview="$_projectPreview"
-            @featurePreview="$_featurePreview"
-            @addFeature="$_addFeature"
-            @deleteProject="$_deleteProject"
-            @titleChanged="$_titleChanged"
-            ref="panelEdit" v-model="project"
-            @backed="$_back"/>
-      </div>
+      <mapgis-ui-project-edit
+          v-show="showProjectEdit"
+          :width="width"
+          :height="height"
+          @addMap="$_addMap"
+          @getCamera="$_getCamera"
+          @selectCamera="$_selectCamera"
+          @deleteFeature="$_deleteFeature"
+          @toggleChapterFeatures="$_toggleChapterFeatures"
+          @changeIcon="$_changeIcon"
+          @changeColor="$_changeColor"
+          @showFeature="$_showFeature"
+          @projectPreview="$_projectPreview"
+          @featurePreview="$_featurePreview"
+          @addFeature="$_addFeature"
+          @addChapter="$_addChapter"
+          @copyChapter="$_copyChapter"
+          @deleteProject="$_deleteProject"
+          @titleChanged="$_titleChanged"
+          ref="panelEdit"
+          v-model="project"
+          @backed="$_back"/>
       <mapgis-ui-hover-edit-panel
           @closeHoverPanel="$_closeHoverPanel"
           @titleChanged="$_titleChange" v-if="showEditPanel"/>
@@ -46,10 +50,20 @@
 <script>
 export default {
   name: "mapgis-ui-project-panel",
+  model: {
+    prop: "dataSource",
+    event: "change"
+  },
   watch: {
     dataSource: {
       handler: function () {
-        this.projects = this.dataSource;
+        this.dataSourceCopy = this.dataSource;
+      },
+      deep: true
+    },
+    dataSourceCopy: {
+      handler: function () {
+        this.$emit("change", this.dataSourceCopy)
       },
       deep: true
     },
@@ -85,11 +99,13 @@ export default {
       project: undefined,
       projects: [],
       currentProjectIndex: undefined,
-      storyFeature: []
+      storyFeature: [],
+      dataSourceCopy: undefined,
+      showProjectEdit: false
     }
   },
   created() {
-    this.projects = this.dataSource;
+    this.dataSourceCopy = this.dataSource;
   },
   methods: {
     $_deleteProject() {
@@ -134,10 +150,18 @@ export default {
       this.addProject = true;
     },
     $_editProject(index) {
-      this.$emit("editProject", index, this.projects[index]);
+      this.project = this.dataSourceCopy[index];
+      this.showProjectEdit = true;
+      // this.$emit("editProject", index, this.projects[index]);
     },
     $_back() {
       this.addProject = false;
+    },
+    $_addChapter(chapter) {
+      this.$emit("addChapter", chapter);
+    },
+    $_copyChapter(uuid) {
+      this.$emit("copyChapter", uuid);
     },
     $_addFeature(feature) {
       this.$emit("addFeature", feature);
@@ -155,8 +179,14 @@ export default {
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
-    $_deleteFeature(index, id) {
-      this.$emit("deleteFeature", index, id, this.project);
+    $_selectCamera(camera, currentFeature) {
+      this.$emit("selectCamera", camera, currentFeature);
+    },
+    $_toggleChapterFeatures(featureUUID, projectUUID, show) {
+      this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
+    },
+    $_deleteFeature(feature) {
+      this.$emit("deleteFeature", feature);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
@@ -169,6 +199,7 @@ export default {
     },
     $_projectPreview() {
       this.storyFeature = this.project.features;
+      this.$emit("projectPreview", this.project);
     },
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);

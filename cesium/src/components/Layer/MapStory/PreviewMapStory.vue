@@ -3,12 +3,14 @@
     <mapgis-ui-story-panel-large
         @closePanel="$_closePanel"
         @flyTo="$_flyTo"
+        @play="$_preview"
         :showArrow="enableArrow"
         :showPlay="enablePlay"
         :dataSource="storyFeature"
         :height="panelHeight"
         :width="width"
         :enableFullScreen="enableFullScreen"
+        ref="storyPanel"
         v-show="showPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
@@ -20,7 +22,7 @@
 import {MRFS} from "@mapgis/webclient-es6-service"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
-import Base64IconsKeyValue from "@mapgis/webclient-vue-ui/src/components/iconfont/Base64IconsKeyValue";
+import Base64IconsKeyValue from "./Base64IconsKeyValue";
 
 export default {
   name: "mapgis-3d-preview-map-story-layer",
@@ -31,7 +33,7 @@ export default {
   },
   props: {
     dataSource: {
-      type: [Array, String]
+      type: [Object, String]
     },
     height: {
       type: Number
@@ -74,6 +76,17 @@ export default {
     this.$_init();
   },
   methods: {
+    $_preview() {
+      let vm = this;
+      this.$refs.storyPanel.$_resetFeature();
+      this.$_play(this.dataSource.chapters, [this.dataSource], function (index) {
+        if (vm.$refs.storyPanel) {
+          if(index > 0){
+            vm.$refs.storyPanel.$_nextFeature();
+          }
+        }
+      });
+    },
     $_closePanel() {
       this.showPanel = false;
     },
@@ -124,8 +137,8 @@ export default {
         }, function (error) {
           console.error(error);
         });
-      } else if (this.dataSource instanceof Array) {
-        this.storyFeature = this.dataSource;
+      } else if (this.dataSource instanceof Object) {
+        this.storyFeature = this.dataSource.chapters;
       }
     }
   }

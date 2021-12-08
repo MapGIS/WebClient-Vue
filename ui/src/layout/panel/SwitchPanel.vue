@@ -19,7 +19,7 @@
         >
         </mapgis-ui-switch>
         <mapgis-ui-switch
-          class="mapgis-ui-switch-panel-switch"
+          class="mapgis-ui-switch-panel-switch-sm"
           v-model="innerChecked"
           @change="changeChecked"
           size="small"
