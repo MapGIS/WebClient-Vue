@@ -128,8 +128,8 @@ import {
 
 import fireImg from "./fire.png";
 import smokeImg from "./smoke.png";
-import emptyImage from '@mapgis/webclient-vue-ui/src/components/iconfont/image/empty.png'
-import {newGuid} from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import emptyImage from './empty.png';
+import {newGuid} from "../../Utils/util";
 
 export default {
   name: "mapgis-3d-particle-effects-manager",
