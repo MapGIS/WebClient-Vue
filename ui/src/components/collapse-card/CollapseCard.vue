@@ -4,24 +4,33 @@
       <template slot="title">
         <span>{{ title }}</span>
       </template>
-      <mapgis-ui-button
-        :style="outStyle"
-        class="mapgis-ui-collapse-card-mini"
-        type="primary"
-        :shape="iconshape"
-        :class="getPositionClassName()"
-        @click="show"
+      <div
+        :class="{
+          top: expand == 'top',
+          top: expand == 'bottom',
+          top: expand == 'left',
+          top: expand == ''
+        }"
       >
-        <slot name="icon-hiden" />
-        <mapgis-ui-iconfont
-          :type="iconfont"
-          class="mapgis-ui-collapse-card-iconfont"
-        />
-      </mapgis-ui-button>
+        <mapgis-ui-button
+          :style="outStyle"
+          class="mapgis-ui-collapse-card-mini"
+          type="primary"
+          :shape="iconshape"
+          :class="getPositionClassName()"
+          @click="show"
+        >
+          <slot name="icon-hiden" />
+          <mapgis-ui-iconfont
+            :type="iconfont"
+            class="mapgis-ui-collapse-card-iconfont"
+          />
+        </mapgis-ui-button>
+      </div>
     </mapgis-ui-tooltip>
 
     <transition name="bounce">
-      <mapgis-ui-card
+      <mapgis-ui-div
         class="mapgis-ui-collapse-card"
         :style="outStyle"
         hoverable
@@ -30,28 +39,35 @@
         v-show="!collapse && mode == 'collapse'"
       >
         <transition name="fade">
-          <div v-show="!showOther">
-            <slot name="title"></slot>
-            <div class="mapgis-ui-collapse-card-extra">
-              <slot name="extra"></slot>
+          <div v-if="!showOther" class="mapgis-ui-collapse-card-wrapper">
+            <div class="mapgis-ui-collapse-card-header">
+              <div class="mapgis-ui-collapse-card-title">
+                <slot name="title"></slot>
+              </div>
+              <div class="mapgis-ui-collapse-card-extra">
+                <slot name="extra"></slot>
+              </div>
             </div>
             <slot></slot>
           </div>
         </transition>
         <transition name="slide-fade">
-          <div v-show="showOther">
-            <slot name="title"></slot>
-            <div class="mapgis-ui-collapse-card-extra">
-              <slot name="extra"></slot>
-            </div>
-            <div @click="toggleMain" class="mapgis-ui-collapse-card-back">
-              <mapgis-ui-iconfont type="mapgis-rollback" />
-              返回上一级
+          <div v-if="showOther" class="mapgis-ui-collapse-card-wrapper">
+            <div class="mapgis-ui-collapse-card-header">
+              <div class="mapgis-ui-collapse-card-title">
+                <slot name="title"></slot>
+              </div>
+              <div class="mapgis-ui-collapse-card-extra">
+                <mapgis-ui-iconfont
+                  type="mapgis-rollback"
+                  @click="toggleMain"
+                />
+              </div>
             </div>
             <slot name="panel"></slot>
           </div>
         </transition>
-      </mapgis-ui-card>
+      </mapgis-ui-div>
     </transition>
   </div>
 </template>
@@ -74,6 +90,10 @@ export default {
     defaultCollapse: {
       type: Boolean,
       default: true
+    },
+    expand: {
+      type: String,
+      default: "right" // 'top' 'bottom' 'left' 'right'
     },
     mode: {
       type: String,
@@ -155,6 +175,7 @@ export default {
     },
     toggleMain() {
       this.showOther = false;
+      this.$emit("toggle-main");
     },
     getPositionClassName() {
       let { position } = this;

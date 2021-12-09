@@ -5,13 +5,13 @@ export default {
   props: {
     vueKey: {
       type: String,
-      default: "default"
+      default: "default",
     },
     vueIndex: {
-      type: Number,
+      type: [Number, String],
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
-      }
+      },
     },
     terrainGraphics: {
       type: Object,
@@ -24,10 +24,10 @@ export default {
           //轮廓线是否显示
           outline: false,
           //轮廓线颜色
-          outlineColor: Cesium.Color.RED
+          outlineColor: Cesium.Color.RED,
         };
-      }
-    }
+      },
+    },
   },
   data() {
     return {};
@@ -45,16 +45,16 @@ export default {
       let vm = this;
       console.log("drawElement", drawElement);
       window.drawElement[drawFunction]({
-        callback: function(result) {
+        callback: function (result) {
           // console.log("positions", positions);
           let positions = result.positions;
           vm[analyseFunction](viewer, positions, analysisName);
-        }
+        },
       });
     },
     $_initAnalysis(drawFunction, analyseFunction, analysisName) {
       let vm = this;
-      window.vueCesium.getViewerByInterval(function(viewer) {
+      window.vueCesium.getViewerByInterval(function (viewer) {
         vm.$_draw(drawFunction, viewer, analyseFunction, analysisName);
       }, this.vueKey);
     },
@@ -115,7 +115,7 @@ export default {
       let vueCesium = getCesiumBaseObject(this, "vueCesium");
       let m3d = undefined;
       let m3dArr = [];
-      let interval = setInterval(function() {
+      let interval = setInterval(function () {
         let allLoaded = true;
         for (let i = 0; i < vueIndex.length; i++) {
           m3d = vueCesium.M3DIgsManager.findSource(vueKey, vueIndex[i]);
@@ -129,6 +129,40 @@ export default {
             m3dArr.push(m3d);
           }
           callback(m3dArr);
+          clearInterval(interval);
+        }
+      }, 50);
+    },
+    /**
+     *
+     * @param {*} callback 成功查询到对应的回调
+     * @param {*} vueKey 查询的三维球的实例对象
+     * @param {String|Number|Array<String|Number>} vueIndex 查询的图层下标
+     */
+    $_getG3DByInterval(callback, vueKey, vueIndex) {
+      vueKey = vueKey || this.vueKey;
+      vueIndex = vueIndex || this.vueIndex;
+      let vueCesium = getCesiumBaseObject(this, "vueCesium");
+      let g3d = undefined;
+      let g3dArr = [];
+      if (!(vueIndex instanceof Array)) {
+        vueIndex = [vueIndex];
+      }
+
+      let interval = setInterval(function () {
+        let allLoaded = true;
+        for (let i = 0; i < vueIndex.length; i++) {
+          g3d = vueCesium.G3DManager.findSource(vueKey, vueIndex[i]);
+          if (!g3d || !g3d.hasOwnProperty("options") || !g3d.options) {
+            allLoaded = false;
+          }
+        }
+        if (allLoaded) {
+          for (let i = 0; i < vueIndex.length; i++) {
+            g3d = vueCesium.G3DManager.findSource(vueKey, vueIndex[i]);
+            g3dArr.push(g3d);
+          }
+          callback(g3dArr);
           clearInterval(interval);
         }
       }, 50);
@@ -183,8 +217,8 @@ export default {
       return {
         length: length,
         width: width,
-        height: height
+        height: height,
       };
-    }
-  }
+    },
+  },
 };

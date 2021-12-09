@@ -24,7 +24,7 @@ const Template = (args, { argTypes }) => ({
   },
   template: `<div>
   <!-- <mapgis-ui-border type="border1" :style="{width: '280px', height:'300px'}"> -->
-    <mapgis-ui-switch-panel layout="horizontal">
+    <mapgis-ui-switch-panel size="small" layout="horizontal">
         <mapgis-ui-form-model-item label="周期/秒">
           <mapgis-ui-space>
           <mapgis-ui-slider

@@ -1,42 +1,47 @@
 <template>
   <div>
-    <div :style="{transform: 'scale('+panelScale+')'}" @click="$_click" class="mapgis-ui-project-panel">
-      <div v-show="!addProject">
-        <mapgis-ui-row>
-          <mapgis-ui-col span="14">
-            <div class="mapgis-ui-project-panel-title">工程文件</div>
-          </mapgis-ui-col>
-          <mapgis-ui-col span="10">
-            <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-ui-project-panel-add">
-              新建工程
-            </mapgis-ui-button>
-          </mapgis-ui-col>
-        </mapgis-ui-row>
-        <mapgis-ui-project-row title="我的最爱" @editProject="$_editProject" @deleted="$_deleted"
+    <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
+         class="mapgis-ui-project-panel">
+      <div class="mapgis-ui-project-panel-content" v-show="!addProject" :style="{height: height - 40 + 'px'}">
+        <mapgis-ui-project-header/>
+        <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
                                @showProjected="$_showProject"
                                @marked="$_marker"
-                               :projects="projects" type="favourite"/>
-        <mapgis-ui-project-row title="所有工程" @editProject="$_editProject" @deleted="$_deleted"
-                               @showProjected="$_showProject"
-                               @marked="$_marker"
-                               :projects="projects"/>
+                               :projects="dataSourceCopy"
+                               :width="width"
+        />
       </div>
-      <div v-if="addProject">
-        <mapgis-ui-project-edit
-            @addMap="$_addMap"
-            @getCamera="$_getCamera"
-            @deleteFeature="$_deleteFeature"
-            @changeIcon="$_changeIcon"
-            @changeColor="$_changeColor"
-            @showFeature="$_showFeature"
-            @projectPreview="$_projectPreview"
-            @featurePreview="$_featurePreview"
-            @addFeature="$_addFeature"
-            @deleteProject="$_deleteProject"
-            @titleChanged="$_titleChanged"
-            ref="panelEdit" v-model="project"
-            @backed="$_back"/>
-      </div>
+      <mapgis-ui-row class="mapgis-ui-project-add-story-row">
+        <mapgis-ui-col span="24">
+          <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-ui-project-add-story">
+            新建故事
+          </mapgis-ui-button>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+      <mapgis-ui-project-edit
+          v-show="showProjectEdit"
+          :width="width"
+          :height="height"
+          @addMap="$_addMap"
+          @getCamera="$_getCamera"
+          @selectCamera="$_selectCamera"
+          @deleteFeature="$_deleteFeature"
+          @toggleChapterFeatures="$_toggleChapterFeatures"
+          @changeIcon="$_changeIcon"
+          @changeColor="$_changeColor"
+          @changeEntityTitle="$_changeEntityTitle"
+          @changeEntity="$_changeEntity"
+          @showFeature="$_showFeature"
+          @projectPreview="$_projectPreview"
+          @featurePreview="$_featurePreview"
+          @addFeature="$_addFeature"
+          @addChapter="$_addChapter"
+          @copyChapter="$_copyChapter"
+          @deleteProject="$_deleteProject"
+          @titleChanged="$_titleChanged"
+          ref="panelEdit"
+          v-model="project"
+          @backed="$_back"/>
       <mapgis-ui-hover-edit-panel
           @closeHoverPanel="$_closeHoverPanel"
           @titleChanged="$_titleChange" v-if="showEditPanel"/>
@@ -47,10 +52,20 @@
 <script>
 export default {
   name: "mapgis-ui-project-panel",
+  model: {
+    prop: "dataSource",
+    event: "change"
+  },
   watch: {
     dataSource: {
       handler: function () {
-        this.projects = this.dataSource;
+        this.dataSourceCopy = this.dataSource;
+      },
+      deep: true
+    },
+    dataSourceCopy: {
+      handler: function () {
+        this.$emit("change", this.dataSourceCopy)
       },
       deep: true
     },
@@ -71,6 +86,10 @@ export default {
     height: {
       type: Number,
       default: 900
+    },
+    width: {
+      type: Number,
+      default: 400
     }
   },
   data() {
@@ -82,11 +101,13 @@ export default {
       project: undefined,
       projects: [],
       currentProjectIndex: undefined,
-      storyFeature: []
+      storyFeature: [],
+      dataSourceCopy: undefined,
+      showProjectEdit: false
     }
   },
   created() {
-    this.projects = this.dataSource;
+    this.dataSourceCopy = this.dataSource;
   },
   methods: {
     $_deleteProject() {
@@ -131,10 +152,18 @@ export default {
       this.addProject = true;
     },
     $_editProject(index) {
-      this.$emit("editProject", index, this.projects[index]);
+      this.project = this.dataSourceCopy[index];
+      this.showProjectEdit = true;
+      // this.$emit("editProject", index, this.projects[index]);
     },
     $_back() {
       this.addProject = false;
+    },
+    $_addChapter(chapter) {
+      this.$emit("addChapter", chapter);
+    },
+    $_copyChapter(uuid) {
+      this.$emit("copyChapter", uuid);
     },
     $_addFeature(feature) {
       this.$emit("addFeature", feature);
@@ -152,8 +181,14 @@ export default {
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
-    $_deleteFeature(index, id) {
-      this.$emit("deleteFeature", index, id, this.project);
+    $_selectCamera(camera, currentFeature) {
+      this.$emit("selectCamera", camera, currentFeature);
+    },
+    $_toggleChapterFeatures(featureUUID, projectUUID, show) {
+      this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
+    },
+    $_deleteFeature(index, uuid) {
+      this.$emit("deleteFeature", index, this.project.uuid);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
@@ -161,11 +196,18 @@ export default {
     $_changeColor(color, id, type) {
       this.$emit("changeColor", color, id, type);
     },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
+    },
     $_showFeature(id, flag) {
       this.$emit("showFeature", id, flag);
     },
     $_projectPreview() {
       this.storyFeature = this.project.features;
+      this.$emit("projectPreview", this.project);
     },
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);
@@ -185,24 +227,28 @@ export default {
   z-index: 1;
   width: 400px;
   height: 900px;
-  background: rgb(32, 33, 36);
-  padding-bottom: 20px;
   transform-origin: top left;
 }
 
-.mapgis-ui-project-panel-add {
-  margin-top: 13px;
-  margin-right: -16px;
-  width: 126px;
-  height: 36px;
+.mapgis-ui-project-add-story-row {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
 }
 
-.mapgis-ui-project-panel-title {
-  color: white;
-  height: 64px;
-  line-height: 64px;
-  font-size: 18px;
-  text-align: left;
-  padding-left: 10px;
+.mapgis-ui-project-add-story {
+  width: 100%;
+  height: 40px;
+  background: #1890FF;
+}
+
+.mapgis-ui-project-panel-content {
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.mapgis-ui-project-panel-content::-webkit-scrollbar {
+  display: none;
 }
 </style>

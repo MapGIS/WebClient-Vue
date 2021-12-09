@@ -1136,7 +1136,7 @@ export default {
       this.dataSourceCopy[dataIndex].attributes = data;
       data = this.$_removeNullData(data);
       let AllAttrData = this.$_getAllAttrData();
-      AllAttrData[dataIndex].attributes = data;
+      AllAttrData[dataIndex].properties = data;
       return AllAttrData[dataIndex];
     },
     /*

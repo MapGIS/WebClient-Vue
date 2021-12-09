@@ -4,16 +4,19 @@
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="黑白照片" :checked="blckWhite" @changeChecked="blackAndWhiteChange"/>
+          <mapgis-ui-switch-panel size="small" label="黑白照片" :checked="blckWhite" @changeChecked="blackAndWhiteChange"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="夜视效果" :checked="ntVision" @changeChecked="nightVision"/>
+          <mapgis-ui-switch-panel size="small" label="夜视效果" :checked="ntVision" @changeChecked="nightVision"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
-      <mapgis-ui-switch-panel label="场景泛光" :checked="bloom" @changeChecked="enableBloom">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="场景泛光" :checked="bloom" @changeChecked="enableBloom">
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="亮度" 
           :value="bloomBrt" 
           :range="bloomBrtRange"
@@ -23,6 +26,7 @@
         </mapgis-ui-input-number-panel> 
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="对比度" 
           :value="bloomCtrst" 
           :range="bloomCtrstRange"
@@ -148,41 +152,37 @@ export default {
 </script>
 
 <style scoped>
-
-/* .effect-setting {
-} */
-
-.mapgis-ui-form-item{
-  margin: 0;
-  padding: 0 10px;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(odd) .mapgis-ui-switch-panel{
+  padding-right: 10px;
 }
 
-::v-deep .mapgis-ui-form-item-control{
-  text-align: right;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel::before{
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  background: #DCDCDC;
 }
 
-.mapgis-ui-input-number{
-  /* margin-right: 12px; */
-  width: 60px;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel{
+  padding-left: 10px;
 }
 
-.mapgis-ui-slider{
-  width: 110px;
+.dividerWrapper{
+  height: 13px;
 }
-
-::v-deep .mapgis-ui-slider-rail{
-  background-color: #F0F0F0;
+.divider{
+  display: block;
+  height: 1px;
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  margin: 6px 0;
+  background: #F0F0F0 ;
 }
-
-::v-deep .mapgis-ui-slider-track{
-  background-color: #91D5FF;
-}
-
-::v-deep .mapgis-ui-slider-handle{
-  border: 2px solid #91D5FF;
-}
-
 </style>

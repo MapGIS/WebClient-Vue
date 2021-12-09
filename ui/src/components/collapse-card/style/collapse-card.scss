@@ -16,6 +16,41 @@
   /* -webkit-box-shadow: 0px 0px 3px 1px $shadow;
   box-shadow: 0px 0px 3px 1px $shadow; */
 
+  &-wrapper {
+    padding-left: 8px;
+    margin: 0px;
+  }
+
+  &-other-header {
+    width: fit-content;
+  }
+
+  &-header {
+    height: 36px;
+    width: 100%;
+    display: block;
+    position: relative;
+  }
+
+  &-title {
+    height: 36px;
+    line-height: 36px;
+    position: absolute;
+    z-index: 1000;
+    left: 0px;
+  }
+
+  &-extra {
+    height: 36px;
+    position: absolute;
+    line-height: 36px;
+    z-index: 1000;
+    right: 0px;
+    .anticon {
+      font-size: 20px;
+    }
+  }
+
   &-mini {
     height: 36px !important; // 用来固定收缩时候的高度，不可删除
     width: 36px !important; // 用来固定收缩时候的宽度，不可删除
@@ -34,16 +69,6 @@
 
   &-iconfont {
     font-size: 22px;
-  }
-
-  &-extra {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    float: right;
-    .anticon {
-      font-size: 20px;
-    }
   }
 
   &-back {

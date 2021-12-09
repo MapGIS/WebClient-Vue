@@ -1,0 +1,16 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+.mapgis-project-feature-preview {
+  color: $panel-option-color !important;
+}
+
+.mapgis-ui-feature-edit-panel-camera-title {
+  color: $panel-option-color;
+}
+
+.mapgis-ui-feature-edit-panel-camera {
+  background: $panel-backgroud;
+  border-top: 1px solid $panel-backgroud;
+  border-bottom: 1px solid $panel-backgroud;
+}

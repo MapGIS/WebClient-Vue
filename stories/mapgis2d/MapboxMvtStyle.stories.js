@@ -30,7 +30,7 @@ export default {
         options:['merge','add','set']
       }
     } ,
-    before: undefined,
+    before: '',
   },
 };
 

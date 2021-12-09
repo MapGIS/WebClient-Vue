@@ -1,79 +1,235 @@
 <template>
-  <div>
-    <mapgis-ui-row v-if="featureCopy" class="mapgis-ui-feature-edit-panel-head">
-      <mapgis-ui-col span="17" class="mapgis-ui-feature-edit-panel-head-left">
-        <mapgis-ui-svg-icon @click="$_back" :icon-style="iconStyle" type="back"/>
-      </mapgis-ui-col>
-      <mapgis-ui-col span="7">
-        <mapgis-ui-button @click="$_preview" class="mapgis-project-feature-preview">预览</mapgis-ui-button>
-      </mapgis-ui-col>
-    </mapgis-ui-row>
-    <div v-if="featureCopy" class="mapgis-ui-feature-edit-panel">
-      <mapgis-ui-choose-picture v-model="featureCopy.images"/>
+  <div style="height: 100%">
+    <div v-show="!editEntity" :style="{height: height + 'px'}" style="position: relative;width: 100%">
+      <div v-if="featureCopy" :style="{height: height - 48 + 'px'}" class="mapgis-ui-feature-edit-panel">
+        <!--标题-->
+        <mapgis-ui-row style="width: 100%">
+          <mapgis-ui-input-border :showTitleIcon="false" v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
+        </mapgis-ui-row>
+        <!--展示框大小-->
+        <!--      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">-->
+        <!--        <mapgis-ui-size-check-box title="展示框大小"/>-->
+        <!--      </mapgis-ui-row>-->
+        <!--选择图标-->
+        <mapgis-ui-icons-panel-scroll-x v-if="featureCopy.drawType === 'point'" @changeIcon="$_changeIcon"
+                                        title="选择图标"/>
+        <!--附加地图-->
+        <mapgis-ui-map-select :showTitleIcon="false"
+                              v-show="!showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
+                              :map="featureCopy.map" @addMap="$_addMap" title="附加地图"/>
+        <mapgis-ui-map-multi-rows v-show="showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
+                                  :map="featureCopy.map" title="附加地图"/>
+        <!--设置相机视角-->
+        <mapgis-ui-set-camera-view-select
+            :showTitleIcon="false"
+            :cameras="cameras"
+            ref="cameraSelect"
+            @click="$_getCamera"
+            @showDetail="$_showDetail"
+            @selectCamera="$_selectCamera"
+            v-model="camera"/>
+        <mapgis-ui-set-camera-view
+            :showTitle="false"
+            :showButton="false"
+            v-show="showDetail"
+            @click="$_getCamera"
+            v-model="camera"/>
+        <!--动画时间-->
+        <mapgis-ui-row style="width: 100%;margin-top: 12px;">
+          <mapgis-ui-input-border :showTitleIcon="false"
+                                  ref="animationTime" @change="$_changeTime" v-model="featureCopy.animationTime"
+                                  title="动画时间" placeholder="请输入动画时间"/>
+        </mapgis-ui-row>
+        <!--图片展示-->
+        <mapgis-ui-choose-picture :showTitleIcon="false"
+                                  @firstAddPicture="$_firstAddPicture" :enablePreview="false"
+                                  v-model="featureCopy.images"/>
+        <!--填充颜色-->
+        <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
+          <mapgis-ui-color-title :showTitleIcon="false" @changeColor="$_changeFillColor" title="填充颜色"/>
+        </mapgis-ui-row>
+        <!--透明度-->
+        <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
+          <mapgis-ui-slider-title :showTitleIcon="false" @change="$_changeOpacity"
+                                  v-model="featureCopy.layerStyle.opacity" title="透明度"/>
+        </mapgis-ui-row>
+        <mapgis-ui-button @click="$_addFeature('point')">点</mapgis-ui-button>
+        <mapgis-ui-button @click="$_addFeature('polyline')">线</mapgis-ui-button>
+        <mapgis-ui-button @click="$_addFeature('polygon')">多边形</mapgis-ui-button>
+        <mapgis-ui-button @click="$_addFeature('rectangle')">矩形</mapgis-ui-button>
+        <mapgis-ui-button @click="$_addFeature('text')">文字</mapgis-ui-button>
+        <div :key="index" :style="{color: feature.show ? '#000' : 'rgb(218,218,218)'}"
+             v-for="(feature, index) in featureCopy.features">
+          <span @dblclick="$_editEntity(feature)">
+            {{ feature.title }}
+          </span>
+          <mapgis-ui-switch @click="$_toggleFeature" checked-children="显示" un-checked-children="隐藏"
+                            v-model="feature.show"/>
+          <!--        <mapgis-ui-svg-icon @click="$_deleteFeature(feature)" :iconStyle="deleteIconStyle" type="delete"/>-->
+        </div>
+        <!--富文本-->
+        <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
+          <div v-if="editor">
+            <editor-menu-bar :editor="editor" v-slot="{ commands }">
+              <div>
+              <span
+                  @click="commands.bold"
+              >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
+                                    title="粗体"
+                                    type="border"/>
+              </span>
+                <span
+                    @click="showImagePrompt(commands.image)"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="pictureStyle"
+                                    title="图片"
+                                    type="picture"/>
+              </span>
+                <span
+                    @click="commands.italic"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
+                                    title="斜体"
+                                    type="italic"/>
+              </span>
+                <span
+                    @click="commands.strike"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="删除线"
+                                    type="strike"/>
+              </span>
+                <span
+                    @click="commands.underline"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="下划线"
+                                    type="underline"/>
+              </span>
+                <span
+                    @click="commands.bullet_list"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="无序列表"
+                                    type="ul"/>
+              </span>
+                <span
+                    @click="commands.ordered_list"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="有序列表"
+                                    type="ol"/>
+              </span>
+                <span
+                    @click="commands.blockquote"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="引用"
+                                    type="quote"/>
+              </span>
+                <span
+                    @click="commands.code"
+                >
+               <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                   :iconStyle="editButtonStyle"
+                                   title="代码"
+                                   type="code"/>
+              </span>
+
+              </div>
+            </editor-menu-bar>
+            <editor-content class="mapgis-3d-map-story-edit-container" :editor="editor"/>
+          </div>
+        </mapgis-ui-row>
+      </div>
+      <!--保存与预览-->
+      <mapgis-ui-project-bottom-panel v-if="featureCopy" class="mapgis-ui-feature-edit-bottom" @preview="$_preview"/>
+    </div>
+    <div v-if="editEntity" style="padding-left: 4px;height: 100%;position: relative;">
+      <!--标题-->
+      <mapgis-ui-row style="width: 100%">
+        <mapgis-ui-input-border @change="$_changeEntityTitle"
+                                :showTitleIcon="false"
+                                title="标题"
+                                v-model="currentEntity.title"
+                                placeholder="请输入标题"/>
+      </mapgis-ui-row>
+      <!--填充颜色-->
+      <mapgis-ui-row v-if="currentEntity.drawType !== 'text' && currentEntity.drawType !== 'point'">
+        <mapgis-ui-color-title
+            :color="currentEntity.layerStyle.color"
+            :showTitleIcon="false"
+            title="填充颜色"
+            @changeColor="$_changeEntityColor"
+        />
+      </mapgis-ui-row>
+      <!--字体颜色-->
+      <mapgis-ui-row v-if="currentEntity.drawType === 'text'">
+        <mapgis-ui-color-title :color="currentEntity.layerStyle.color"
+                               @changeColor="$_changeTextColor" :showTitleIcon="false" title="字体颜色"/>
+      </mapgis-ui-row>
+      <!--透明度-->
       <mapgis-ui-row>
-        <mapgis-ui-input-outline v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
+        <mapgis-ui-slider-title @change="$_changeEntityOpacity"
+                                :showTitleIcon="false"
+                                :enableWatchValue="false"
+                                v-model="currentEntity.layerStyle.opacity"
+                                title="透明度"/>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-        <div class="mapgis-ui-feature-edit-deitor" ref="editor"></div>
+      <!--线宽-->
+      <mapgis-ui-row style="width: 100%" v-if="currentEntity.drawType === 'polyline'">
+        <mapgis-ui-input-border :enableWatchValue="false"
+                                :showTitleIcon="false"
+                                @change="$_changeLineWidth"
+                                v-model="currentEntity.layerStyle.width"
+                                title="线宽"
+                                placeholder="请输入线宽"/>
       </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-select-outline title="展示框大小"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row v-if="featureCopy.drawType === 'point'">
-        <mapgis-ui-icons-panel @changeIcon="$_changeIcon" title="选择图标"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-        <mapgis-ui-color-outline @changeColor="$_changeColor" title="填充颜色"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row>
-        <mapgis-ui-map-outline :map="featureCopy.map" @addMap="$_addMap" title="附加地图" placeholder="请输入地图Url"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-panel-camera">
-        <mapgis-ui-col :span="16">
-          <h4 class="mapgis-ui-feature-edit-panel-camera-title">设置相机视角</h4>
-        </mapgis-ui-col>
-        <mapgis-ui-col :span="8">
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row style="padding: 0 10px;" class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-col span="12">
-          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.heading" title="方向角"
-                                   placeholder="请输入方向角"/>
-        </mapgis-ui-col>
-        <mapgis-ui-col span="12">
-          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.pitch" title="俯仰角"
-                                   placeholder="请输入俯仰角"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-input-outline v-model="featureCopy.camera.roll" title="滚动角" placeholder="请输入滚动角"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row style="padding: 0 10px;" class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-col span="12">
-          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.longitude"
-                                   title="经度"
-                                   placeholder="请输入经度"/>
-        </mapgis-ui-col>
-        <mapgis-ui-col span="12">
-          <mapgis-ui-input-outline :inputStyle="inputStyle" v-model="featureCopy.camera.positionCartographic.latitude"
-                                   title="纬度"
-                                   placeholder="请输入纬度"/>
-        </mapgis-ui-col>
-      </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-        <mapgis-ui-input-outline v-model="featureCopy.camera.positionCartographic.height" title="高度"
-                                 placeholder="请输入高度"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera" style="text-align: center;">
-        <mapgis-ui-button @click="$_getCamera" type="primary" class="mapgis-ui-feature-edit-reset-camera">获取当前视角
-        </mapgis-ui-button>
-      </mapgis-ui-row>
+      <!--选择图标-->
+      <mapgis-ui-icons-panel-scroll-x v-if="currentEntity.drawType === 'point'"
+                                      :showTitleIcon="false"
+                                      @changeIcon="$_changeEntityIcon"
+                                      title="选择图标"/>
+      <mapgis-ui-button class="mapgis-3d-map-story-edit-save-entity"
+                        @click="$_saveEntity"
+                        type="primary"
+      >
+        保存
+      </mapgis-ui-button>
     </div>
   </div>
 </template>
 
 <script>
-import E from 'wangeditor-antd'
+import {Editor, EditorContent, EditorMenuBar} from 'tiptap'
+import {
+  Blockquote,
+  CodeBlock,
+  HardBreak,
+  Heading,
+  Image,
+  HorizontalRule,
+  OrderedList,
+  BulletList,
+  ListItem,
+  TodoItem,
+  TodoList,
+  Bold,
+  Code,
+  Italic,
+  Link,
+  Strike,
+  Underline,
+  History,
+  Search,
+} from 'tiptap-extensions'
 
 export default {
   name: "mapgis-ui-feature-edit",
@@ -81,26 +237,86 @@ export default {
     prop: "feature",
     event: "change"
   },
+  components: {
+    EditorMenuBar,
+    EditorContent,
+  },
   data() {
     return {
-      featureCopy: undefined,
-      inputStyle: {
-        width: "162px",
+      featureCopy: {
+        "uuid": "",
+        "camera": {
+          "heading": 0,
+          "pitch": 0,
+          "roll": 0,
+          "positionCartographic": {
+            "height": 0,
+            "latitude": 0,
+            "longitude": 0
+          }
+        },
+        "features": [],
+        "title": ""
       },
+      inputStyle: {},
       iconStyle: {
         opacity: 1
-      }
+      },
+      editor: undefined,
+      editButtonStyle: {
+        color: "black",
+        width: "24px",
+        height: "24px",
+      },
+      pictureStyle: {
+        color: "black",
+        width: "18px",
+        height: "18px",
+        marginBottom: "2px",
+      },
+      editButtonContainerStyle: {
+        textAlign: "center",
+        width: "24px",
+        height: "30px",
+      },
+      showMoreMap: false,
+      showMoreTitle: "展开高级选项",
+      showDetail: false,
+      camera: {},
+      deleteIconStyle: {
+        color: "#000"
+      },
+      isPreviewFeature: false,
+      editEntity: false,
+      currentEntity: undefined
     }
   },
   props: {
     feature: {
-      type: Object
-    }
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    width: {
+      type: Number,
+      default: 400
+    },
+    height: {
+      type: Number,
+      default: 900
+    },
+    cameras: {
+      type: Array,
+      default() {
+        return [];
+      }
+    },
   },
   watch: {
     feature: {
       handler: function () {
-        this.featureCopy = this.feature;
+        this.$_init();
         this.$nextTick(function () {
           this.$_addEditor();
         });
@@ -112,44 +328,193 @@ export default {
         this.$emit("change", this.featureCopy);
       },
       deep: true
+    },
+    "featureCopy.title": {
+      handler: function () {
+        this.$emit("titleChanged", this.featureCopy);
+      },
+      deep: true
     }
   },
   created() {
-    this.featureCopy = this.feature;
+    this.$_init();
+  },
+  mounted() {
   },
   methods: {
+    $_changeEntityIcon(e) {
+      this.$emit("changeEntity", "changeEntityIcon", this.currentEntity.uuid, e);
+    },
+    $_changeLineWidth(e) {
+      this.$emit("changeEntity", "polylineWidth", this.currentEntity.uuid, Number(e));
+    },
+    $_changeEntityColor(e) {
+      this.currentEntity.layerStyle.color = e.hex;
+      switch (this.currentEntity.drawType) {
+        case "polyline":
+          this.$emit("changeEntity", "polylineColor", this.currentEntity.uuid, {
+            opacity: this.currentEntity.layerStyle.opacity,
+            color: e.hex
+          });
+          break;
+        case "polygon":
+          this.$emit("changeEntity", "polygonColor", this.currentEntity.uuid, {
+            opacity: this.currentEntity.layerStyle.opacity,
+            color: e.hex
+          });
+          break;
+        case "rectangle":
+          this.$emit("changeEntity", "rectangleColor", this.currentEntity.uuid, {
+            opacity: this.currentEntity.layerStyle.opacity,
+            color: e.hex
+          });
+          break;
+      }
+    },
+    $_changeEntityOpacity(e) {
+      this.currentEntity.layerStyle.opacity = e;
+      switch (this.currentEntity.drawType) {
+        case "text":
+          this.$emit("changeEntity", "fontOpacity", this.currentEntity.uuid, {
+            opacity: e,
+            color: this.currentEntity.layerStyle.color
+          });
+          break;
+        case "polyline":
+          this.$emit("changeEntity", "polylineOpacity", this.currentEntity.uuid, {
+            opacity: e,
+            color: this.currentEntity.layerStyle.color
+          });
+          break;
+        case "polygon":
+          this.$emit("changeEntity", "polygonOpacity", this.currentEntity.uuid, {
+            opacity: e,
+            color: this.currentEntity.layerStyle.color
+          });
+          break;
+        case "rectangle":
+          this.$emit("changeEntity", "rectangleOpacity", this.currentEntity.uuid, {
+            opacity: e,
+            color: this.currentEntity.layerStyle.color
+          });
+          break;
+      }
+    },
+    $_changeTextColor(e) {
+      this.currentEntity.layerStyle.color = e.hex;
+      this.$emit("changeEntity", "fontColor", this.currentEntity.uuid, e.hex);
+    },
+    $_changeEntityTitle() {
+      if (this.currentEntity.drawType === "text") {
+        this.$emit("changeEntityTitle", this.currentEntity);
+      }
+    },
+    $_saveEntity() {
+      this.editEntity = false;
+    },
+    $_editEntity(currentEntity) {
+      this.editEntity = true;
+      this.currentEntity = currentEntity;
+      console.log("currentEntity", currentEntity)
+    },
+    $_changeTime(e) {
+      this.featureCopy.animationTime = e;
+      this.$emit("change", this.featureCopy);
+    },
+    $_toggleFeature() {
+      this.$emit("toggleFeature");
+    },
+    $_deleteFeature(feature) {
+      this.$emit("deleteFeature", feature);
+    },
+    $_addFeature(type) {
+      this.$emit("addFeature", type);
+    },
+    $_showMore() {
+      this.showMoreMap = !this.showMoreMap;
+      if (this.showMoreMap) {
+        this.showMoreTitle = "收起高级选项";
+      } else {
+        this.showMoreTitle = "展开高级选项";
+      }
+    },
+    $_init() {
+      this.featureCopy = Object.assign(this.featureCopy, this.feature);
+      if (this.$refs.animationTime) {
+        this.$refs.animationTime.setValue(this.featureCopy.animationTime);
+      }
+      if (this.$refs.cameraSelect) {
+        this.$refs.cameraSelect.setValue("当前视角");
+      }
+      const {map, layerStyle} = this.featureCopy;
+      if (!map) {
+        this.featureCopy.map = {};
+      }
+      if (!layerStyle) {
+        this.featureCopy.layerStyle = {
+          "show": true,
+          "color": "#FF0000",
+          "opacity": 1
+        };
+      }
+    },
+    showImagePrompt(command) {
+      const src = prompt('Enter the url of your image here')
+      if (src !== null) {
+        command({src})
+      }
+    },
+    $_firstAddPicture() {
+      this.$emit("firstAddPicture", this.featureCopy);
+    },
+    $_showDetail(showDetail) {
+      this.showDetail = showDetail;
+    },
     $_getCamera() {
       this.$emit("getCamera");
     },
+    $_selectCamera(camera) {
+      this.$emit("selectCamera", camera);
+    },
     $_addEditor() {
       let vm = this;
-      if (this.$refs.editor) {
-        let editor = new E(this.$refs.editor);
-        editor.customConfig.onchange = (html) => {
-          vm.featureCopy.content = editor.txt.html();
-          vm.$emit("textChanged", editor.txt.html())
-        };
-        editor.customConfig.menus = [
-          'fontSize',  // 字号
-          'fontName',  // 字体
-          'italic',  // 斜体
-          'underline',  // 下划线
-          'foreColor',  // 文字颜色
-          'link',  // 插入链接
-          'justify',  // 对齐方式s
-          'image',  // 插入图片
-        ]
-        editor.customConfig.uploadImgServer = '你的上传地址';
-        editor.customConfig.uploadFileName = 'file';
-        editor.customConfig.zIndex = 100;
-        editor.customConfig.uploadImgParams = {
-          from: 'editor'
-        };
-        editor.customConfig.linkImgCallback = function (url) {
-          vm.featureCopy.content = editor.txt.html();
-        }
-        editor.create();
-        editor.txt.html(this.featureCopy.content);
+      if (!this.editor) {
+        this.editor = new Editor({
+          extensions: [
+            new Blockquote(),
+            new BulletList(),
+            new CodeBlock(),
+            new HardBreak(),
+            new Image(),
+            new Heading({levels: [1, 2, 3]}),
+            new HorizontalRule(),
+            new ListItem(),
+            new OrderedList(),
+            new TodoItem(),
+            new TodoList(),
+            new Link(),
+            new Bold(),
+            new Code(),
+            new Italic(),
+            new Strike(),
+            new Underline(),
+            new History(),
+            new Search({
+              disableRegex: false
+            }),
+          ],
+          content: this.featureCopy.content,
+          onUpdate: ({getHTML}) => {
+            let contentStr = getHTML();
+            contentStr = contentStr.replace("<img", "<img style='width:100%'");
+            vm.featureCopy.content = contentStr;
+            if (vm.isPreviewFeature) {
+              vm.$emit("featurePreview", vm.featureCopy);
+            }
+          },
+        });
+      } else {
+        this.editor.setContent(this.featureCopy.content);
       }
     },
     $_addMap(type, map) {
@@ -163,13 +528,17 @@ export default {
       }
       this.$emit("addMap", type, map, this.featureCopy.id);
     },
-    $_changeColor(color) {
-      this.$emit("changeColor", color);
+    $_changeFillColor(color) {
+      this.$emit("changeColor", color, "fill");
+    },
+    $_changeOpacity(opacity) {
+      this.$emit("changeOpacity", opacity, "fill");
     },
     $_changeIcon(icon) {
       this.$emit("changeIcon", icon);
     },
     $_preview() {
+      this.isPreviewFeature = true;
       this.$emit("featurePreview", this.featureCopy);
     },
     $_back() {
@@ -185,63 +554,38 @@ export default {
   height: 836px;
   overflow: hidden;
   overflow-y: scroll;
-  padding-bottom: 20px;
+  padding-left: 4px;
+  padding-right: 4px;
+  position: relative;
 }
 
-.mapgis-ui-feature-edit-panel-head {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 64px;
-  border-bottom: 1px solid rgb(95, 99, 104);
-}
-
-.mapgis-ui-feature-edit-panel-head-left {
-  text-align: left;
-  padding-left: 10px;
-}
-
-.mapgis-project-feature-preview {
-  color: white !important;
-  font-weight: bold;
-  width: 105px;
-  height: 36px;
-  margin-top: 14px;
-  margin-right: 14px;
-  border-color: rgb(95, 99, 104) !important;
-}
-
-.mapgis-project-feature-preview:hover {
-  color: black !important;
-}
-
-.mapgis-ui-feature-edit-panel-camera {
-  width: 400px;
-  height: 40px;
-  background: rgb(41, 42, 45);
-  border-top: 1px solid rgb(56, 57, 61);
-  border-bottom: 1px solid rgb(56, 57, 61);
-}
-
-.mapgis-ui-feature-edit-panel-camera-title {
-  color: white;
-  text-align: left;
-  padding-left: 28px;
-  height: 35px;
-  line-height: 40px;
-}
-
-.mapgis-ui-feature-edit-set-camera {
-  margin-top: 30px;
-}
-
-.mapgis-ui-feature-edit-reset-camera {
-  width: 344px;
+.mapgis-ui-feature-edit-panel::-webkit-scrollbar {
+  display: none;
 }
 
 .mapgis-ui-feature-edit-deitor {
-  width: 340px;
-  margin: 0 28px;
+  width: 100%;
+}
+
+.mapgis-ui-feature-edit-bottom {
+  width: 98%;
+  height: auto;
+  position: absolute;
+  left: 0;
+  bottom: 0
+}
+
+.mapgis-3d-map-story-edit-container {
+  width: 99%;
+}
+
+.ProseMirror > p > img {
+  width: 100%;
+}
+
+.mapgis-3d-map-story-edit-save-entity {
+  width: 100%;
+  position: absolute !important;
+  bottom: 0;
 }
 </style>

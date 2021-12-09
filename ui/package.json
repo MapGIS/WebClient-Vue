@@ -1,8 +1,8 @@
 {
   "name": "@mapgis/webclient-vue-ui",
-  "version": "10.5.5",
+  "version": "10.5.5-4",
   "description": "中地数码webclient-vue-ui",
-  "main": "dist-libs/webclient-vue-ui.umd.min.js",
+  "main1": "dist-libs/webclient-vue-ui.umd.min.js",
   "module": "src/index.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-ui src/index.js",
@@ -27,7 +27,7 @@
     "@vue/composition-api": "^1.0.0-rc.13",
     "@vuepress/plugin-active-header-links": "^1.8.2",
     "@vuepress/plugin-nprogress": "^1.8.2",
-    "ant-design-vue": "^1.7.5",
+    "ant-design-vue": "^1.7.8",
     "axios": "^0.21.1",
     "clone": "^2.1.2",
     "css-vars-ponyfill": "^2.4.5",
@@ -37,18 +37,19 @@
     "jsoneditor": "^9.5.6",
     "lodash": "^4.17.21",
     "lodash.uniqueid": "^4.0.1",
-    "qs": "^6.10.1",
+    "qs": "^6.9.4",
     "resize-detector": "^0.3.0",
     "simple-uploader.js": "^0.5.6",
     "spark-md5": "^3.0.1",
     "tinycolor2": "^1.4.2",
+    "tiptap": "^1.32.2",
+    "tiptap-extensions": "^1.35.2",
     "vcolorpicker": "^1.1.0",
     "vue-color": "^2.8.1",
     "vue-infinite-scroll": "^2.0.2",
     "vuepress": "^1.8.2",
     "vuepress-plugin-demo-block": "^0.7.2",
-    "vuepress-plugin-demo-code": "^0.6.0",
-    "wangeditor-antd": "^1.0.7"
+    "vuepress-plugin-demo-code": "^0.6.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

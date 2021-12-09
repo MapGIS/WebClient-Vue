@@ -200,7 +200,6 @@ export default {
               slopeRampColor: rampColor,
               slopeRamp: ramp
             });
-          slopeAnalysis.enableContour(false);
           slopeAnalysis.updateMaterial("slope");
           slopeAnalysis.changeAnalyseArea(result.positions);
           vueCesium.SlopeAnalysisManager.changeOptions(

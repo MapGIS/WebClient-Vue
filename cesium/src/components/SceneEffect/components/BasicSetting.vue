@@ -1,134 +1,103 @@
 <template>
   <div class="basic-setting">
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
-
+      
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="地球" :checked="earth" @changeChecked="enableEarth"/>
+          <mapgis-ui-switch-panel size="small" label="地球" :checked="earth" @changeChecked="enableEarth"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="大气层" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere"/>
+          <mapgis-ui-switch-panel size="small" label="大气层" :checked="skyAtmosphere" @changeChecked="enableSkyAtmosphere"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="阴影效果" :checked="shadow" @changeChecked="enableShadow"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="阴影效果" :checked="shadow" @changeChecked="enableShadow"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="深度检测" :checked="depthTest" @changeChecked="enableDepthTest"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="深度检测" :checked="depthTest" @changeChecked="enableDepthTest"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
           
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="显示帧率" :checked="FPS" @changeChecked="enableFPS"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="显示帧率" :checked="FPS" @changeChecked="enableFPS"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="时间轴" :checked="timeline" @changeChecked="enableTimeline"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="时间轴" :checked="timeline" @changeChecked="enableTimeline"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="罗盘控件" :checked="compass" @changeChecked="enableCompass"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="罗盘控件" :checked="compass" @changeChecked="enableCompass"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="缩放控件" :checked="zoom" @changeChecked="enableZoom"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="缩放控件" :checked="zoom" @changeChecked="enableZoom"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
-      <mapgis-ui-form-model-item label="亮度">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="layerbrightness"
-              :max="3"
-              :min="0"
-              :step="0.2"
-              @change="layerBrtChange"
-          />
-          <mapgis-ui-input-number
-              v-model="layerbrightness"
-              :max="3"
-              :min="0"
-              :step="0.2"
-              size="small"
-              @change="layerBrtChange"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-row>
+        <mapgis-ui-col :span="12">
+          <mapgis-ui-switch-panel class="odd" size="small" label="状态栏" :checked="statebar" @changeChecked="enableStatebar"/>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
 
-      <mapgis-ui-form-model-item label="对比度">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="layercontrast"
-              :max="3"
-              :min="0"
-              :step="0.2"
-              @change="layerCtrstChange"
-          />
-          <mapgis-ui-input-number
-              v-model="layercontrast"
-              :max="3"
-              :min="0"
-              :step="0.2"
-              size="small"
-              @change="layerCtrstChange"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <div class="dividerWrapper"><div class="divider"/></div>
 
-      <mapgis-ui-form-model-item label="色调">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="layerhue"
-              :max="1"
-              :min="-1"
-              :step="0.1"
-              @change="layerHueChange"
-          />
-          <mapgis-ui-input-number
-              v-model="layerhue"
-              :max="1"
-              :min="-1"
-              :step="0.1"
-              size="small"
-              @change="layerHueChange"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-input-number-panel
+        size="small"
+        label="亮度" 
+        :value="layerbrightness" 
+        :range="lyrBrtRange"
+        :step="0.2" 
+        @change="layerBrtChange"
+      >
+      </mapgis-ui-input-number-panel> 
 
-      <mapgis-ui-form-model-item label="饱和度">
-        <mapgis-ui-space>
-          <mapgis-ui-slider
-              v-model="layersaturation"
-              :max="3"
-              :min="0"
-              :step="0.2"
-              @change="layerSaturationChange"
-          />
-          <mapgis-ui-input-number
-              v-model="layersaturation"
-              :max="3"
-              :min="0"
-              :step="0.2"
-              size="small"
-              @change="layerSaturationChange"
-          />
-        </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
+      <mapgis-ui-input-number-panel 
+        size="small"
+        label="对比度" 
+        :value="layercontrast" 
+        :range="lyrBrtRange"
+        :step="0.2" 
+        @change="layerCtrstChange"
+      >
+      </mapgis-ui-input-number-panel>
+
+      <mapgis-ui-input-number-panel 
+        size="small"
+        label="色调" 
+        :value="layerhue" 
+        :range="lyrHueRange"
+        :step="0.1" 
+        @change="layerHueChange"
+      >
+      </mapgis-ui-input-number-panel>  
+
+      <mapgis-ui-input-number-panel 
+        size="small"
+        label="饱和度" 
+        :value="layersaturation" 
+        :range="lyrBrtRange"
+        :step="0.2" 
+        @change="layerSaturationChange"
+      >
+      </mapgis-ui-input-number-panel>  
 
     </mapgis-ui-form-model>
-  </div>
+  </div> 
 </template>
 
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "./navigation-all.css"
+import StateBar from "../../UI/Controls/State/StateControl.vue"
 
 export default {
   name: "BasicSetting",
-  mixins: [ServiceLayer],
+  mixins: [ServiceLayer,StateBar],
   props: {
     layout: {
       type: String,
@@ -147,10 +116,17 @@ export default {
       timeline:false,      
       compass: false,
       zoom: false,
+      statebar:false,
+      // longitude:undefined,
+      // latitude:undefined,
+      // height:undefined,
+      // cameraHeight:undefined,
 
       layerbrightness: 1,
+      lyrBrtRange:[0,3],
       layercontrast: 1,
       layerhue: 0,
+      lyrHueRange:[-1,1],
       layersaturation: 1,
     }
   },
@@ -171,6 +147,28 @@ export default {
       timeline: null,
     });
 
+  },
+  watch: {
+    longitude:{
+      handler:function(){
+        this.enableStatebar();
+      }
+    },
+    latitude:{
+      handler:function(){
+        this.enableStatebar();
+      }
+    },
+    height:{
+      handler:function(){
+        this.enableStatebar();
+      }
+    },
+    cameraHeight:{
+      handler:function(){
+        this.enableStatebar();
+      }
+    }
   },
   methods: {
     /*
@@ -229,7 +227,7 @@ export default {
       this.timeline = e;
       let vm = this;
       if(vm.timeline){
-        
+
         let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
         // console.log("list",list);
 
@@ -239,7 +237,19 @@ export default {
 
         var viewerContainer = viewer.container;
         var timelineContainer = document.createElement('div');
-        timelineContainer.className = 'cesium-viewer-timelineContainer';
+        timelineContainer.className = 'cesium-viewer-timelineContainer'; 
+        timelineContainer.style = 'left:0px;right:0px';
+        
+        if(vm.statebar){
+          //改变时间轴的上下位置
+          vm.$nextTick(function(){
+            let list = document.getElementsByClassName('scene-setting-statebar');
+            let style = window.getComputedStyle(list[0]);
+            if(style.bottom === '0px'){
+              timelineContainer.style.bottom = '30px';
+            }  
+          });
+        }
 
         viewerContainer.appendChild(timelineContainer);
         let timeline = new Cesium.Timeline(timelineContainer, viewer.clock);
@@ -253,6 +263,13 @@ export default {
         if (manager.options && manager.options.timeline) {
           manager.options.timeline.destroy();
           window.vueCesium['SettingToolManager'].changeOptions(vueKey, vueIndex, 'timeline', null);
+        }
+                
+        let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
+        // console.log("list",list);
+
+        if(list.length > 0){
+          list[0].parentNode.removeChild(list[0]);
         }
       }
     },
@@ -276,6 +293,7 @@ export default {
       options.enableCompass = this.compass;
       options.enableZoomControls = this.zoom;
       viewer.createNavigationTool(options);
+      // this.changeNavPos();
     },
     /*
     * 导航控件（罗盘控件和缩放控件的状态控制）
@@ -290,8 +308,60 @@ export default {
       options.enableCompass = this.compass;
       options.enableZoomControls = this.zoom;
       viewer.createNavigationTool(options);
+      // this.changeNavPos();
     },
+    /*
+    * 开启状态栏 
+    * */
+    enableStatebar(e){
+      const {viewer} = this;
+      
+      if(typeof e === 'boolean'){this.statebar = e;}
 
+      let vm = this;
+
+      if(vm.statebar){
+        
+        let list = document.getElementsByClassName('scene-setting-statebar');
+        // console.log("list",list);
+
+        if(list.length > 0){
+          list[0].parentNode.removeChild(list[0]);
+        }
+
+        vm.showPosition();
+        var viewerContainer = viewer.container;
+        var stateContainer = document.createElement('div');
+        stateContainer.className = 'scene-setting-statebar';
+        stateContainer.innerHTML = '经度:'+ vm.longitude + '°，纬度:' + vm.latitude 
+          +'°， 海拔高度:' + vm.height + '米，相机高度:' + vm.cameraHeight + '米';
+         
+        stateContainer.style = 'position: absolute;height: fit-content;line-height: 30px;' 
+          + 'text-align:center;color: #f0efef;background-color: rgba(31, 31, 31, 0.6);'
+          + 'z-index: 9999;left:0px;right:0px;bottom:0px';
+
+        // 改变状态栏的上下位置
+        if(vm.timeline){
+          vm.$nextTick(function(){
+            let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
+            let style = window.getComputedStyle(list[0]);
+            if(style.bottom === '0px'){
+              stateContainer.style.bottom = '24px';
+            }  
+          });
+        }
+
+        viewerContainer.appendChild(stateContainer);
+
+      }else{
+        let list = document.getElementsByClassName('scene-setting-statebar');
+        // console.log("list",list);
+        if(list.length > 0){
+          list[0].parentNode.removeChild(list[0]);
+        }
+        vm.unmount();
+      }
+    },
     /*
     * 图层亮度
     * */
@@ -330,41 +400,34 @@ export default {
 </script>
 
 <style scoped>
-
-/* .basic-setting {
-} */
-
-.mapgis-ui-form-item {
-  margin: 0;
-  padding: 0 10px;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(odd) .mapgis-ui-switch-panel{
+  padding-right: 10px;
 }
-
-::v-deep .mapgis-ui-form-item-control{
-  text-align: right;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel::before{
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  background: #DCDCDC;
 }
-
-.mapgis-ui-input-number{
-  /* margin-right: 12px; */
-  width: 60px;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel{
+  padding-left: 10px;
 }
-
-.mapgis-ui-slider{
-  width: 110px;
+.dividerWrapper{
+  height: 13px;
 }
-
-::v-deep .mapgis-ui-slider-rail{
-  background-color: #F0F0F0;
+.divider{
+  display: block;
+  height: 1px;
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  margin: 6px 0;
+  background: #F0F0F0 ;
 }
-
-::v-deep .mapgis-ui-slider-track{
-  background-color: #91D5FF;
-}
-
-::v-deep .mapgis-ui-slider-handle{
-  border: 2px solid #91D5FF;
-}
-
 </style>

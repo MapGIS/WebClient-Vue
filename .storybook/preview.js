@@ -26,11 +26,10 @@ window.webclient = {
   port: "6163",
 };
 
-window.glyphs = "igs/rest/mrcs/vtiles/fonts";//java版igs用这个接口
+window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
-window.VueCesiumLibPath =
-  "http://192.168.82.89:8086/static/libs/cdn/cesium-new/Cesium.js";
+window.VueCesiumLibPath = "http://localhost:8895/cesium/Cesium.js";
 window.VueCesiumPluginPath =
   "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
 
@@ -42,5 +41,5 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  viewMode: "canvas", // docs canvas
+  viewMode: "docs", // docs
 };

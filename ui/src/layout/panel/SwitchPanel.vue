@@ -15,12 +15,23 @@
           un-checked-children="关闭"
           v-model="innerChecked"
           @change="changeChecked"
+          v-if="size === 'default'"
+        >
+        </mapgis-ui-switch>
+        <mapgis-ui-switch
+          class="mapgis-ui-switch-panel-switch-sm"
+          v-model="innerChecked"
+          @change="changeChecked"
+          size="small"
+          v-else
         >
         </mapgis-ui-switch>
       </div>
-
       <div
-        class="mapgis-ui-switch-panel-parameter"
+        :class="{
+          'mapgis-ui-switch-panel-parameter': true,
+          'mapgis-ui-switch-panel-parameter-transparent': transparent
+        }"
         :style="{ maxHeight: maxHeight }"
       >
         <slot />
@@ -60,7 +71,19 @@ export default {
       default: () => {
         return { span: 17 };
       }
+    },
+    size: {
+      type: String,
+      default: "default" //default small
+    },
+    transparent: {
+      type: Boolean,
+      default: false
     }
+  },
+  model: {
+    props: "checked",
+    event: "changeChecked"
   },
   data() {
     return {
@@ -73,9 +96,9 @@ export default {
       this.innerChecked = next;
     }
   },
-  mounted(){
+  mounted() {
     const { height = "fit-content" } = this;
-    if(this.checked){
+    if (this.checked) {
       this.maxHeight = height;
     }
   },

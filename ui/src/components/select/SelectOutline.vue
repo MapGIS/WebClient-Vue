@@ -26,7 +26,7 @@ export default {
 
 <style>
 .mapgis-ui-select-outline-container {
-  width: auto;
+  width: 100%;
   height: auto;
   position: relative;
   text-align: center;
@@ -38,34 +38,21 @@ export default {
   left: 40px;
   z-index: 1;
   padding: 0 10px;
-  color: #e8eaed;
-  background: rgb(32, 33, 36);
 }
 
 .mapgis-ui-select-outline {
-  width: 342px;
+  width: 100%;
 }
 
 .mapgis-ui-select-outline > div {
-  background: rgb(32, 33, 36);
   border: 1px solid rgb(95, 99, 104);
   height: 54px;
   padding-top: 12px;
   padding-left: 4px;
-  color: #e8eaed;
   font-size: 18px;
 }
 
-.mapgis-ui-select-outline .mapgis-ui-select-arrow svg {
-  color: #e8eaed;
-}
-
-.mapgis-ui-select-outline-option, .mapgis-ui-select-dropdown-menu {
-  background: rgb(48, 50, 53);
-}
-
 .mapgis-ui-select-outline-option {
-  color: #e8eaed !important;
   font-size: 18px !important;
   height: 44px;
   padding-top: 10px !important;

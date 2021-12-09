@@ -12,7 +12,7 @@
       <mapgis-ui-row class="model">
         <mapgis-ui-checkbox-group
           v-if="checkboxOptions.length > 0"
-          @change="onCheckboxGroupChange"
+          @change="_onCheckboxGroupChange"
         >
           <mapgis-ui-row
             v-for="(option, index) in checkboxOptions"
@@ -93,7 +93,7 @@ export default {
     },
     color: {
       type: String,
-      default: "rgb(200,200,200,0.5)"
+      default: "rgba(200,200,200,0.5)"
     },
     time: {
       type: Number,
@@ -138,7 +138,7 @@ export default {
 
       // 提示信息
       info:
-        "多模型剖切适用于两个及以上模型，且模型之间在空间上有重叠部分，或者在某个面上有重叠部分，比如地面楼栋模型和楼栋地下管道模型"
+        "模型剖切支持对多个模型图层同时进行剖切分析,通常这些图层描述的是用户感兴趣的同一个空间内不同的构成元素，如：一个图层描述地上模型层，一个描述地下模型层，可以通过剖切分析同时剖切地上地下模型，以查看地上地下模型内部结构。"
     };
   },
   watch: {
@@ -230,15 +230,15 @@ export default {
         vueIndex
       );
       if (find) {
-        this.removeDynaCut();
+        this._removeDynaCut();
       }
       vueCesium.DynamicSectionAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
       this.stopClipping();
     },
-    onCheckboxGroupChange(val) {
+    _onCheckboxGroupChange(val) {
       this.checked = [...val];
-      this.removeDynaCut();
+      this._removeDynaCut();
       this._getMaxMin();
     },
     /**
@@ -342,7 +342,7 @@ export default {
      */
     stopClipping() {
       this._clearTimer();
-      this.removeDynaCut();
+      this._removeDynaCut();
     },
 
     /**
@@ -351,7 +351,7 @@ export default {
     startClipping() {
       this._m3dIsReady().then(m3dSetArray => {
         this._clearTimer();
-        this.removeDynaCut();
+        this._removeDynaCut();
         let { vueCesium, vueKey, vueIndex } = this;
         let find = vueCesium.DynamicSectionAnalysisManager.findSource(
           vueKey,
@@ -393,7 +393,7 @@ export default {
     /**
      * 移除动态剖切对象
      */
-    removeDynaCut() {
+    _removeDynaCut() {
       let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.DynamicSectionAnalysisManager.findSource(
         vueKey,

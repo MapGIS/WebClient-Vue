@@ -61,17 +61,15 @@ export default {
 <style scoped>
 .mapgis-ui-input-outline-container {
   position: relative;
-  width: auto;
+  width: 100%;
   height: auto;
   text-align: center;
 }
 
 .mapgis-ui-input-outline {
-  width: 344px;
+  width: 100%;
   height: 54px;
-  background: rgba(0, 0, 0, 0);
   border-color: rgb(95, 99, 104);
-  color: #e8eaed;
   font-size: 18px;
   padding-left: 14px;
 }
@@ -80,8 +78,6 @@ export default {
   position: absolute;
   top: -10px;
   left: 40px;
-  color: #e8eaed;
-  background: rgb(32, 33, 36);
   padding: 0 10px;
 }
 </style>

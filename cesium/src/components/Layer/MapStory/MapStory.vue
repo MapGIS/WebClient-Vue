@@ -2,20 +2,63 @@
   <div>
     <project-panel ref="projectPanel"
                    @deleteFeature="$_deleteFeature"
+                   @deleteProject="$_deleteProject"
                    @getCamera="$_getCamera"
+                   @selectCamera="$_selectCamera"
                    @changeColor="$_changeColor"
+                   @changeOpacity="$_changeOpacity"
                    @changeIcon="$_changeIcon"
                    @showFeature="$_showFeature"
                    @showProject="$_showProject"
                    @addMapToProject="$_addMapToProject"
                    @addFeature="$_addFeature"
+                   @addChapter="$_addChapter"
+                   @toggleChapterFeatures="$_toggleChapterFeatures"
+                   @copyChapter="$_copyChapter"
+                   @changeEntityTitle="$_changeEntityTitle"
+                   @changeEntity="$_changeEntity"
                    @titleChanged="$_titleChanged"
+                   @featureTitleChanged="$_featureTitleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
                    @editProject="$_editProject"
-                   :dataSource="dataSourceCopy"/>
-    <mapgis-3d-draw :infinite="true" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
+                   @projectPreview="$_projectPreview"
+                   @featurePreview="$_featurePreview"
+                   @firstAddPicture="$_firstAddPicture"
+                   v-model="dataSourceCopy"
+                   :upProjectSet="projectSet"
+                   :height="height"
+                   :width="width"
+                   :enablePreview="enablePreview"
+                   :enableClose="enableClose"
+    />
+    <mapgis-3d-draw :infinite="false" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <map-collection :key="opt.vueIndex" v-for="(opt) in projectMaps" :options="opt"/>
+    <template v-for="(popup) in popups">
+      <mapgis-3d-popup
+          :key="popup.vueIndex"
+          :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+          :forceRender="true"
+          v-model="popup.show"
+          :vueIndex="popup.vueIndex"
+      >
+        <div class="mapgis-3d-map-story-small-popup-container">
+          <slot name="content" :popup="popup">
+            <div class="mapgis-3d-map-story-small-popup-title">
+              {{ popup.title }}
+              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"
+                                     width="20px" type="toLarge"/>
+            </div>
+            <mapgis-ui-carousel class="mapgis-3d-map-story-small-popup-carousel" autoplay>
+              <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000"
+                   v-for="(image, index) in popup.images">
+                <img class="mapgis-3d-map-story-small-popup-img" :src="image" alt="">
+              </div>
+            </mapgis-ui-carousel>
+          </slot>
+        </div>
+      </mapgis-3d-popup>
+    </template>
   </div>
 </template>
 
@@ -23,7 +66,12 @@
 import projectPanel from "./projectPanel"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService"
+import Base64IconsKeyValue from "./Base64IconsKeyValue"
 
+window.showPanels = {
+  currentPage: "",
+  showProjectEdit: false
+}
 export default {
   name: "mapgis-3d-map-story-layer",
   mixins: [mapStoryService],
@@ -34,14 +82,27 @@ export default {
   data() {
     return {
       drawer: undefined,
-      currentFeatureType: undefined,
       currentPoints: undefined,
-      dataSourceCopy: []
+      interval: undefined
     }
   },
   props: {
     dataSource: {
       type: Array
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    enablePreview: {
+      type: Boolean,
+      default: true
+    },
+    enableClose: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -50,223 +111,79 @@ export default {
         this.dataSourceCopy = this.dataSource;
       },
       deep: true
+    },
+    dataSourceCopy: {
+      handler: function () {
+      },
+      deep: true
     }
   },
   created() {
     this.dataSourceCopy = this.dataSource;
   },
+  mounted() {
+    this.$_initManager();
+  },
   methods: {
-    $_drawCreate(Cartesian3Points, degreeArr, viewerDraw, radians) {
-      this.currentPoints = degreeArr;
-      switch (this.currentFeatureType) {
-        case "rectangle":
-          let e = this.viewer.entities.add({
-            id: window.feature.id,
-            rectangle: {
-              coordinates: radians,
-              material: Cesium.Color.RED,
-            },
-          });
-          break;
-        case "polygon":
-          this.viewer.entities.add({
-            id: window.feature.id,
-            polygon: {
-              hierarchy: new Cesium.PolygonHierarchy(Cartesian3Points),
-              material: Cesium.Color.RED,
-            }
-          });
-          break;
-        case "polyline":
-          this.viewer.entities.add({
-            id: window.feature.id,
-            polyline: {
-              positions: Cartesian3Points,
-              material: Cesium.Color.RED,
-              width: 3
-            }
-          });
-          break;
-      }
-      if (!this.$refs.projectPanel.showEditPanel) {
-        this.drawer && this.drawer.stopDraw();
-        this.$refs.projectPanel.showEditPanel = true;
-      }
+    $_toLarge(feature) {
+      this.$emit("projectPreview", [feature], false);
     },
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
     },
-    $_editProject(index) {
-      if (this.dataSource instanceof Array) {
-        this.$refs.projectPanel.showProjectPanel = false;
-        this.$refs.projectPanel.currentProject = this.projectSet[this.dataSource[index].uuid];
-      }
+    $_featurePreview(feature) {
+      this.$emit("featurePreview", [feature]);
     },
-    $_closeHoverPanel() {
-      let vm = this;
-      switch (this.currentFeatureType) {
-        case "point":
-          this.$_getBillBoardIcon(0, function (img) {
-            vm.viewer.entities.add({
-              id: window.feature.id,
-              position: window.feature.camera.cartesian3Position,
-              billboard: {
-                image: img
-              }
-            });
-          });
-          window.feature.drawType = "point";
-          break;
-        case "polyline":
-          this.currentPoints.push(this.currentPoints[0]);
-          window.feature.camera.longLatPosition = this.$_getPolygonCenter(this.currentPoints);
-          window.feature.drawType = "polyline";
-          break;
-        case "polygon":
-          window.feature.camera.longLatPosition = this.$_getPolygonCenter(this.currentPoints);
-          window.feature.drawType = "polygon";
-          break;
-        case "rectangle":
-          window.feature.camera.longLatPosition = this.$_getRectangleCenter(this.currentPoints);
-          window.feature.drawType = "rectangle";
-          break;
-      }
-      this.$refs.projectPanel.$refs.projectP.$_addFeatureSet(window.feature);
-      this.$refs.projectPanel.$refs.projectP.showEditPanel = false;
+    $_projectPreview(project) {
+      // this.$_play(chapters);
+      this.$emit("projectPreview", project, false);
     },
-    $_titleChanged(title) {
-      if (window.feature) {
-        window.feature.title = title;
-      }
-    },
-    $_changeColor(color, id, type) {
-      let entity = this.viewer.entities.getById(id);
-      entity[type].material = Cesium.Color.fromCssColorString(color.hex);
-    },
-    $_getLayer(index, project, callBack) {
-      const {map} = project.features[index];
-      if (map) {
-        const {vueKey, vueIndex} = map;
-        if (vueKey && vueIndex) {
-          let layerManager = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex);
-          callBack(layerManager.source);
-        }
-      }
-    },
-    $_deleteFeature(index, id, project) {
-      let vm = this;
-      if (id) {
-        this.viewer.entities.removeById(id);
-      }
-      this.$_getLayer(index, project, function (layer) {
-        vm.viewer.imageryLayers.remove(layer);
-      });
-    },
-    $_getCamera(currentFeature) {
-      let camera = this.viewer.camera;
-      currentFeature.camera.positionCartographic = {
-        height: camera.positionCartographic.height,
-        latitude: camera.positionCartographic.latitude,
-        longitude: camera.positionCartographic.longitude
-      };
-      currentFeature.camera.heading = camera.heading;
-      currentFeature.camera.pitch = camera.pitch;
-      currentFeature.camera.roll = camera.roll;
-    },
-    $_changeIcon(icon, id) {
-      let entity = this.viewer.entities.getById(id);
-      this.$_getBillBoardIcon(icon, function (img) {
-        entity.billboard.image = img;
-      });
-    },
-    $_showProject(project) {
-      const {show, uuid} = project;
-      let newProject = this.projectSet[uuid];
-      const {features} = newProject;
-      for (let i = 0; i < features.length; i++) {
-        let entity = this.viewer.entities.getById(features[i].id);
-        const {layerStyle} = features[i]
-        if (show) {
-          if (layerStyle.hasOwnProperty("show") && layerStyle.show !== false) {
-            entity.show = show;
-            this.$_getLayer(i, newProject, function (layer) {
-              layer.show = show;
-            });
-          }
-        } else {
-          entity.show = show;
-          this.$_getLayer(i, newProject, function (layer) {
-            layer.show = show;
-          });
-        }
-      }
-    },
-    $_showFeature(id, flag, index, project) {
-      if (id) {
-        let entity = this.viewer.entities.getById(id);
-        entity.show = flag;
-      }
-      this.$_getLayer(index, project, function (layer) {
-        layer.show = flag;
-      });
-    },
-    $_addMapToProject(type, map) {
-      map.vueKey = this.vueKey;
-      map.vueIndex = new Date().getTime();
-      let index, addMap = true;
-      for (let i = 0; i < this.projectMaps.length; i++) {
-        if (this.projectMaps[i].vueKey === map.vueKey && this.projectMaps[i].vueIndex === map.vueIndex) {
-          index = i;
-          addMap = false;
-          break;
-        }
-      }
-      if (addMap) {
-        this.projectMaps.push(map);
-      } else {
-        this.$emit(this.projectMaps, index, map);
-      }
-    },
-    $_addFeature(feature) {
-      let vm = this;
-      this.currentFeatureType = feature.type;
-      switch (feature.type) {
-        case "point":
-          this.$_addPoint(function (position, cartesian3Position) {
-            if (!vm.$refs.projectPanel.$refs.projectP.showEditPanel) {
-              feature.feature.baseUrl.geometry = cartesian3Position;
-              feature.feature.camera.longLatPosition = [position.lng, position.lat, position.alt];
-              feature.feature.camera.cartesian3Position = cartesian3Position;
-              window.feature = feature.feature;
-              vm.$_setCamera();
-              vm.$refs.projectPanel.$refs.projectP.showEditPanel = true;
-            }
-          });
-          break;
-        case "polyline":
-          window.feature = feature.feature;
-          vm.$_setCamera();
-          this.drawer && this.drawer.enableDrawLine(true);
-          break;
-        case "rectangle":
-          window.feature = feature.feature;
-          vm.$_setCamera();
-          this.drawer && this.drawer.enableDrawRectangle(true);
-          break;
-        case "polygon":
-          window.feature = feature.feature;
-          vm.$_setCamera();
-          this.drawer && this.drawer.enableDrawPolygon(true);
-          break;
-      }
+    $_deleteProject() {
+      this.popups = [];
     }
-  },
-  mounted() {
-    this.$_initManager();
   }
 }
 </script>
 
 <style scoped>
+.mapgis-3d-map-story-small-popup-title {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 40px;
+  font-size: 14px;
+  position: relative;
+}
 
+.mapgis-3d-map-story-small-popup-tolarge {
+  position: absolute !important;
+  top: 9px;
+  right: 28px;
+}
+
+.mapgis-3d-map-story-small-popup-container {
+  width: 260px;
+  height: 200px;
+}
+
+.mapgis-3d-map-story-small-popup-carousel {
+  width: 240px;
+  height: 144px;
+  margin: 0 10px;
+}
+
+.mapgis-3d-map-story-small-popup-img-div {
+  width: 240px;
+  height: 144px;
+}
+
+.mapgis-3d-map-story-small-popup-img {
+  width: 240px;
+  height: 144px;
+}
 </style>

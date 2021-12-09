@@ -4,8 +4,12 @@
       <!--    外边框-->
       <div class="mapgis-popup-container"
            :class="popupOptionsCopy.class.containerClass"
-           :style="popupOptionsCopy.style.containerStyle"
+           :style="[popupOptionsCopy.style.containerStyle]"
       >
+        <!--图片-->
+        <div :key="index" v-for="(image,index) in feature.properties.images">
+          <img class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
+        </div>
         <!--标题-->
         <div class="mapgis-popup-title"
              :class="popupOptionsCopy.class.titleClass"
@@ -15,29 +19,36 @@
         >
           {{ popupOptionsCopy.title }}
         </div>
-        <!--一行数据-->
-        <div :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
-             :style="popupOptionsCopy.style.rowStyle"
-             :key="index" v-for="(field,index) in popupOptionsCopy.fields"
+        <div class="mapgis-popup-content-row-container"
+             :style="{maxHeight: popupOptionsCopy.scrollNum * rowHeight + 'px', overflowY: popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum ? 'scroll' : 'auto'}"
         >
-          <!--前置元素-->
-          <span v-if="popupOptionsCopy.type === 'point'" class='mapgis-popup-point'></span>
-          <!--字段名-->
-          <span :class="[defaultFieldClass,popupOptionsCopy.class.fieldClass]"
-                :style="popupOptionsCopy.style.fieldStyle"
-                :title="$_getField(field)"
-                @click="$_click(index, 0, field, $_getField(field))"
-          >
+          <div :key="index" v-for="(field,index) in popupOptionsCopy.fields">
+            <!--一行数据-->
+            <div class="mapgis-popup-row"
+                 :class="[defaultRowClass,popupOptionsCopy.class.rowClass]"
+                 :style="popupOptionsCopy.style.rowStyle"
+                 v-if="field !== 'images'"
+            >
+              <!--前置元素-->
+              <span v-if="popupOptionsCopy.popupType === 'point'" class='mapgis-popup-point'></span>
+              <!--字段名-->
+              <span :class="[defaultFieldClass,popupOptionsCopy.class.fieldClass]"
+                    :style="popupOptionsCopy.style.fieldStyle"
+                    :title="$_getField(field)"
+                    @click="$_click(index, 0, field, $_getField(field))"
+              >
           {{ $_getField(field) }}
-        </span>
-          <!--字段值-->
-          <span :class="[defaultFieldClass,popupOptionsCopy.class.valueClass]"
-                :style="popupOptionsCopy.style.valueStyle"
-                :title="$_getValue(field)"
-                @click="$_click(index, 1, $_getValue(field))"
-          >
+          </span>
+              <!--字段值-->
+              <span :class="[defaultValueClass,popupOptionsCopy.class.valueClass]"
+                    :style="popupOptionsCopy.style.valueStyle"
+                    :title="$_getValue(field)"
+                    @click="$_click(index, 1, $_getValue(field))"
+              >
           {{ $_getValue(field) }}
-        </span>
+          </span>
+            </div>
+          </div>
         </div>
       </div>
     </slot>
@@ -76,7 +87,9 @@ export default {
           valueClass: "",
         },
         style: {
-          containerStyle: {},
+          containerStyle: {
+            width: "300px"
+          },
           titleStyle: {},
           rowStyle: {},
           fieldStyle: {},
@@ -86,13 +99,17 @@ export default {
         feature: {
           geometry: {},
           properties: {}
-        }
-      }
+        },
+        scrollNum: 4
+      },
+      rowHeight: 30,
+      titleHeight: 30,
+      showCarousel: false
     }
   },
   watch: {
     popupOptions: {
-      handle: function () {
+      handler: function () {
         this.$_init();
       },
       deep: true
@@ -101,25 +118,25 @@ export default {
   computed: {
     defaultRowClass() {
       return {
-        "mapgis-popup-underline-row": this.popupOptionsCopy.type === "default" || this.popupOptionsCopy.type === "underline",
-        "mapgis-popup-table-row": this.popupOptionsCopy.type === "table",
-        "mapgis-popup-point-row": this.popupOptionsCopy.type === "point",
+        "mapgis-popup-underline-row": this.popupOptionsCopy.popupType === "default" || this.popupOptionsCopy.popupType === "card" || this.popupOptionsCopy.popupType === "underline",
+        "mapgis-popup-table-row": this.popupOptionsCopy.popupType === "table",
+        "mapgis-popup-point-row": this.popupOptionsCopy.popupType === "point",
       }
     },
     defaultValueClass() {
       return {
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value": this.popupOptionsCopy.type === "default",
-        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-field mapgis-popup-table-field": this.popupOptionsCopy.type === "table",
-        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-field mapgis-popup-point-field": this.popupOptionsCopy.type === "point",
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field mapgis-popup-underline-field": this.popupOptionsCopy.type === "underline",
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value": this.popupOptionsCopy.popupType === "default" || this.popupOptionsCopy.popupType === "card",
+        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-value mapgis-popup-table-value": this.popupOptionsCopy.popupType === "table",
+        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value": this.popupOptionsCopy.popupType === "point",
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value mapgis-popup-underline-value": this.popupOptionsCopy.popupType === "underline",
       }
     },
     defaultFieldClass() {
       return {
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field mapgis-popup-underline-field": this.popupOptionsCopy.type === "default",
-        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-value mapgis-popup-table-value": this.popupOptionsCopy.type === "table",
-        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value": this.popupOptionsCopy.type === "point",
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value": this.popupOptionsCopy.type === "underline",
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field mapgis-popup-underline-field": this.popupOptionsCopy.popupType === "default" || this.popupOptionsCopy.popupType === "card",
+        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-value mapgis-popup-table-value": this.popupOptionsCopy.popupType === "table",
+        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value": this.popupOptionsCopy.popupType === "point",
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value": this.popupOptionsCopy.popupType === "underline",
       }
     }
   },
@@ -145,8 +162,26 @@ export default {
       }
       //如果fields数量为0，则取得properties里的所有健名
       if (this.popupOptionsCopy.fields.length === 0) {
-        this.popupOptionsCopy.fields = Object.keys(this.popupOptionsCopy.feature.properties);
+        this.popupOptionsCopy.fields = Object.keys(this.feature.properties);
       }
+      if (this.popupOptionsCopy.popupType === 'card') {
+        if (this.feature.properties && this.feature.properties.images) {
+          if (typeof this.feature.properties.images === "string") {
+            this.feature.properties.images = this.feature.properties.images.split(",");
+            this.showCarousel = true;
+          } else if (this.feature.properties.images instanceof Array) {
+            this.showCarousel = true;
+          }
+        }
+      }
+      this.$nextTick(function () {
+        // let rows =  document.getElementsByClassName("mapgis-popup-row");
+        // let title =  document.getElementsByClassName("mapgis-popup-title");
+        // this.titleHeight = title[0] ? title[0].clientHeight + 2 : 34;
+        // this.rowHeight =  rows[0] ? rows[0].clientHeight + 1 : 33;
+        this.titleHeight = 34;
+        this.rowHeight = 33;
+      });
     },
     $_getField(field) {
       let alias = this.popupOptionsCopy.alias;
@@ -156,7 +191,7 @@ export default {
       return field;
     },
     $_getValue(field) {
-      let value = "", properties = this.popupOptionsCopy.feature.properties;
+      let value = "", properties = this.feature.properties;
       if (properties.hasOwnProperty(field)) {
         value = properties[field];
       }
@@ -167,5 +202,8 @@ export default {
 </script>
 
 <style scoped>
-
+.mapgis-ui-story-panel-large-carousel-img {
+  width: 100%;
+  height: 168.75px;
+}
 </style>

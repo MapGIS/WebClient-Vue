@@ -4,24 +4,27 @@
       
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="太阳" :checked="sun" @changeChecked="enableSun"/>
+          <mapgis-ui-switch-panel size="small" label="太阳" :checked="sun" @changeChecked="enableSun"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="月亮" :checked="moon" @changeChecked="enableMoon"/>
+          <mapgis-ui-switch-panel size="small" label="月亮" :checked="moon" @changeChecked="enableMoon"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="星空" :checked="sceneSkybox" @changeChecked="enableSceneSkybox"/>
+          <mapgis-ui-switch-panel size="small" label="星空" :checked="sceneSkybox" @changeChecked="enableSceneSkybox"/>
         </mapgis-ui-col>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel label="天空盒" :checked="skybox" @changeChecked="$_enableSkyBox"/>
+          <mapgis-ui-switch-panel size="small" label="天空盒" :checked="skybox" @changeChecked="$_enableSkyBox"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
-      <mapgis-ui-switch-panel label="云层" :checked="clouds" @changeChecked="$_enableClouds">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="云层" :checked="clouds" @changeChecked="$_enableClouds">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="周期/秒" 
           :value="cloudsduration" 
           :range="cloudsRange"
@@ -30,8 +33,11 @@
         </mapgis-ui-input-number-panel> 
       </mapgis-ui-switch-panel>
 
-      <mapgis-ui-switch-panel label="雨" :checked="rain" @changeChecked="$_enableRain">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="雨" :checked="rain" @changeChecked="$_enableRain">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雨速度" 
           :value="speed" 
           :range="speedRange"
@@ -40,6 +46,7 @@
         </mapgis-ui-input-number-panel> 
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雨透明度" 
           :value="rainOpacity" 
           :range="rainOpacityRange"
@@ -49,6 +56,7 @@
         </mapgis-ui-input-number-panel>
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雨角度" 
           :value="angle" 
           :range="angleRange"
@@ -58,9 +66,12 @@
         </mapgis-ui-input-number-panel> 
      </mapgis-ui-switch-panel>
 
-      <mapgis-ui-switch-panel label="雪" :checked="snow" @changeChecked="$_enableSnow">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="雪" :checked="snow" @changeChecked="$_enableSnow">
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雪粒大小" 
           :value="size" 
           :range="sizeRange"
@@ -70,6 +81,7 @@
         </mapgis-ui-input-number-panel>
 
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雪密度" 
           :value="density" 
           :range="densityRange"
@@ -80,8 +92,11 @@
 
       </mapgis-ui-switch-panel>
 
-      <mapgis-ui-switch-panel label="雾" :checked="fog" @changeChecked="$_enableFog">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="雾" :checked="fog" @changeChecked="$_enableFog">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="雾透明度" 
           :value="fogOpacity" 
           :range="fogOpacityRange"
@@ -91,8 +106,11 @@
         </mapgis-ui-input-number-panel>
       </mapgis-ui-switch-panel>
 
-      <mapgis-ui-switch-panel label="雾化效果" :checked="surficialFog" @changeChecked="enableSurficialFog">
+      <div class="dividerWrapper"><div class="divider"/></div>
+
+      <mapgis-ui-switch-panel size="small" label="雾化效果" :checked="surficialFog" @changeChecked="enableSurficialFog">
         <mapgis-ui-input-number-panel 
+          size="small"
           label="密度" 
           :value="surfFogDst" 
           :range="surfFogDstRange"
@@ -506,41 +524,34 @@ export default {
 </script>
 
 <style scoped>
-
-/* .weather-setting {
-} */
-
-.mapgis-ui-form-item{
-  margin: 0;
-  padding: 0 10px;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(odd) .mapgis-ui-switch-panel{
+  padding-right: 10px;
 }
-
-::v-deep .mapgis-ui-form-item-control{
-  text-align: right;
-  height: 40px;
-  line-height: 40px;
-  overflow: hidden;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel::before{
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  left: 0;
+  background: #DCDCDC;
 }
-
-.mapgis-ui-input-number{
-  /* margin-right: 12px; */
-  width: 60px;
+::v-deep .mapgis-ui-row .mapgis-ui-col:nth-child(even) .mapgis-ui-switch-panel{
+  padding-left: 10px;
 }
-
-.mapgis-ui-slider{
-  width: 110px;
+.dividerWrapper{
+  height: 13px;
 }
-
-::v-deep .mapgis-ui-slider-rail{
-  background-color: #F0F0F0;
+.divider{
+  display: block;
+  height: 1px;
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  margin: 6px 0;
+  background: #F0F0F0 ;
 }
-
-::v-deep .mapgis-ui-slider-track{
-  background-color: #91D5FF;
-}
-
-::v-deep .mapgis-ui-slider-handle{
-  border: 2px solid #91D5FF;
-}
-
 </style>

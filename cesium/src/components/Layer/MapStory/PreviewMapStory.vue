@@ -1,11 +1,16 @@
 <template>
-  <div>
+  <div :style="{height: panelHeight + 'px'}">
     <mapgis-ui-story-panel-large
         @closePanel="$_closePanel"
         @flyTo="$_flyTo"
-        :showArrow="showArrow"
-        :feature="storyFeature"
+        @play="$_preview"
+        :showArrow="enableArrow"
+        :showPlay="enablePlay"
+        :dataSource="storyFeature"
         :height="panelHeight"
+        :width="width"
+        :enableFullScreen="enableFullScreen"
+        ref="storyPanel"
         v-show="showPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
@@ -17,7 +22,8 @@
 import {MRFS} from "@mapgis/webclient-es6-service"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
-import Base64IconsKeyValue from "@mapgis/webclient-vue-ui/src/components/iconfont/Base64IconsKeyValue";
+import Base64IconsKeyValue from "./Base64IconsKeyValue";
+
 export default {
   name: "mapgis-3d-preview-map-story-layer",
   inject: ["Cesium", "viewer"],
@@ -27,7 +33,33 @@ export default {
   },
   props: {
     dataSource: {
-      type: [Array,String]
+      type: [Object, String]
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    enableFullScreen: {
+      type: Boolean,
+      default: true
+    },
+    enableArrow: {
+      type: Boolean,
+      default: true
+    },
+    enablePlay: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    dataSource: {
+      handler: function () {
+        this.$_init();
+      },
+      deep: true
     }
   },
   data() {
@@ -36,22 +68,36 @@ export default {
       storyFeature: [],
       optArr: [],
       panelHeight: undefined,
-      showArrow: true,
       showPanel: true,
       projectMap: undefined
     }
   },
   mounted() {
-    this.panelHeight = this.$_getContainerHeight();
     this.$_init();
   },
   methods: {
+    $_preview() {
+      let vm = this;
+      this.$refs.storyPanel.$_resetFeature();
+      this.$_play(this.dataSource.chapters, [this.dataSource], function (index) {
+        if (vm.$refs.storyPanel) {
+          if(index > 0){
+            vm.$refs.storyPanel.$_nextFeature();
+          }
+        }
+      });
+    },
     $_closePanel() {
       this.showPanel = false;
     },
     $_init() {
       let vm = this;
-      if(typeof this.dataSource === "string"){
+      if (this.height) {
+        this.panelHeight = this.height;
+      } else {
+        this.panelHeight = this.$_getContainerHeight();
+      }
+      if (typeof this.dataSource === "string") {
         MRFS.FeatureService.get(this.dataSource, function (result) {
           if (typeof result === "string") {
             result = JSON.parse(result);
@@ -80,7 +126,8 @@ export default {
                     id: features[i].id,
                     position: new Cesium.Cartesian3(x, y, z),
                     billboard: {
-                      image: img
+                      image: img,
+                      disableDepthTestDistance: Number.POSITIVE_INFINITY
                     }
                   });
                 }
@@ -90,8 +137,8 @@ export default {
         }, function (error) {
           console.error(error);
         });
-      }else if(this.dataSource instanceof Array){
-
+      } else if (this.dataSource instanceof Object) {
+        this.storyFeature = this.dataSource.chapters;
       }
     }
   }

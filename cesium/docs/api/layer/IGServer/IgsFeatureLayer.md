@@ -97,7 +97,7 @@
 
 | Name         | Type   | Description                                                                                                                                     |
 | :----------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
-| color        | String | rgba 或者十六进制颜色                                                                                                                           | layers 为空 null undefined，不显示图层 |
+| color        | String | rgba 或者十六进制颜色                                                                                                                           |
 | size         | Number | 点符号大小，仅当 options.style.type="point"时生效                                                                                               |
 | outlineColor | String | 边框线颜色，仅当 options.style.type="point 或 polygon 或 building"时生效，当传入边框线颜色或边框线宽度参数时启用边框线                          |
 | outlineWidth | Number | 边框线宽度，仅当 options.style.type="point"时生效，当传入边框线颜色或边框线宽度参数时启用边框线,"polygon 或 building"边框线宽度仅能为默认值 1。 |
@@ -161,15 +161,15 @@ export default {
           parameters: {
             color: "rgba(218,98,125,0.6)",
             outline: true,
-            outlineColor: "rgba(255,255,0,0.5)"
-          }
-        }
+            outlineColor: "rgba(255,255,0,0.5)",
+          },
+        },
       ],
       filter: { where: "mpArea>2880000" },
       //layers 显示图层顺序为0的
-      layers: "0"
+      layers: "0",
     };
-  }
+  },
 };
 </script>
 ```
@@ -202,13 +202,13 @@ export default {
         parameters: {
           color: "rgba(218,98,125,0.6)",
           outline: true,
-          outlineColor: "rgba(255,255,0,0.5)"
-        }
+          outlineColor: "rgba(255,255,0,0.5)",
+        },
       },
       filter: { where: "mpArea>2880000" },
-      layers: "gdbp://MapGISLocalPlus/示例数据/sfcls/KS_buildings"
+      layers: "gdbp://MapGISLocalPlus/示例数据/sfcls/KS_buildings",
     };
-  }
+  },
 };
 </script>
 ```
@@ -244,14 +244,14 @@ export default {
             heightRatio: 20,
             color: "rgba(218,98,125,0.6)",
             outline: true,
-            outlineColor: "rgba(255,255,0,0.5)"
-          }
-        }
+            outlineColor: "rgba(255,255,0,0.5)",
+          },
+        },
       ],
       filter: { where: "mpArea>2880000" },
-      layers: "0"
+      layers: "0",
     };
-  }
+  },
 };
 </script>
 ```

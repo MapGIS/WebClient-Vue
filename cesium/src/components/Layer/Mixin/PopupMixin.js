@@ -1,6 +1,7 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 import Popup from "../../UI/Popup/Popup.vue";
 import PopupContent from "../../UI/Geojson/Popup";
+import PopupFeatureContent from "../../UI/Popup/PopupContent.vue";
 import { getPopupHtml } from "../../UI/Popup/popupUtil";
 
 import debounce from "lodash/debounce";
@@ -10,14 +11,14 @@ export default {
   props: {
     ...VueOptions,
     properties: {
-      type: Object
+      type: Object,
       /* default: () => {
         return { };
       } */
     },
     enablePopup: {
       type: Boolean,
-      default: false
+      default: false,
     },
     popupOptions: {
       type: Object,
@@ -26,19 +27,19 @@ export default {
           type: "default",
           title: "name",
           popupType: "table",
-          fullHeight: 900
+          fullHeight: 900,
         };
-      }
+      },
     },
     enableTips: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tipsOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      }
+      },
     },
     /**
      *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
@@ -47,7 +48,7 @@ export default {
     /**
      *  自定义Tips界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
      */
-    customTips: Function
+    customTips: Function,
   },
   data() {
     return {
@@ -57,23 +58,24 @@ export default {
       clickposition: {
         longitude: 110,
         latitude: 30,
-        height: 0
+        height: 0,
       },
       hovervisible: false,
       hoverposition: {
         longitude: 110,
         latitude: 30,
-        height: 0
+        height: 0,
       },
       currentClickInfo: [],
       currentHoverInfo: [],
       clickMode: "click",
-      hoverMode: "hover"
+      hoverMode: "hover",
     };
   },
   components: {
     Popup,
-    PopupContent
+    PopupContent,
+    PopupFeatureContent,
   },
   render(h) {
     let {
@@ -89,7 +91,7 @@ export default {
       currentClickInfo,
       currentHoverInfo,
       popupOptions,
-      tipsOptions
+      tipsOptions,
     } = this;
 
     const {
@@ -97,41 +99,25 @@ export default {
       type = "default",
       enableSeparate = true,
       popupType = "table",
-      fullHeight = 900
+      fullHeight = 900,
     } = popupOptions;
     const feature = this.properties
       ? { properties: this.properties }
       : currentClickInfo && currentClickInfo.length > 0
       ? currentClickInfo[0]
       : { properties: {} };
-    let container = getPopupHtml(
-      type,
-      feature,
-      {
-        enableSeparate: enableSeparate,
-        separateMap: this.$_separateMap,
-        title: feature.properties[title],
-        fields: Object.keys(feature.properties),
-        style: {
-          containerStyle: { width: "360px" }
-        }
-      }
-    );
     // 字符串或者数组
-    const images = [
-      "http://192.168.82.89:8086/static/assets/gallery/m3d.png",
-      "http://192.168.82.89:8086/static/assets/gallery/biggps.png"
-    ];
-    const description = "这是一段说明文字";
+    const images = [];
+    const description = "补充一段说明文字,默认字段description";
     const options = {
       type,
       popupType,
       images: images,
-      description: description
+      description: description,
     };
 
     if (!pinMap) {
-      const fs = currentClickInfo.forEach(f => {
+      const fs = currentClickInfo.forEach((f) => {
         f.images = feature.properties.images || images;
         f.content = feature.properties.description || description;
       });
@@ -145,6 +131,7 @@ export default {
         />
       );
     }
+
     if (customPopup || customTips) {
       return (
         <Popup
@@ -179,18 +166,24 @@ export default {
             position={clickposition}
             visible={clickvisible}
             forceRender={true}
-            container={container}
             onChange={this.$_changeVisible.bind(this)}
             onSeparate={this.$_separateMap.bind(this)}
             options={options}
-          ></Popup>
+          >
+            <PopupFeatureContent
+              feature={feature}
+              popupOptions={popupOptions}
+            ></PopupFeatureContent>
+          </Popup>
           <Popup
             position={hoverposition}
             visible={hovervisible}
             forceRender={true}
           >
             <mapgis-ui-card>
-              <span>{feature.properties.title || feature.properties[title]}</span>
+              <span>
+                {feature.properties.title || feature.properties[title]}
+              </span>
             </mapgis-ui-card>
           </Popup>
         </div>
@@ -222,6 +215,7 @@ export default {
           } else {
             vm.hovervisible = false;
           }
+          onFail && onFail({ movement });
           return;
         }
 
@@ -240,31 +234,33 @@ export default {
             vm.clickposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2
+              height: heightString2,
             };
           } else {
             vm.hovervisible = true;
             vm.hoverposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2
+              height: heightString2,
             };
           }
-          let currentClickInfo = entities.map(e => {
+          let currentClickInfo = entities.map((e) => {
             let info = {
               layer: { id: e.id ? e.id.id : "未知数据" },
-              properties: {}
+              properties: {},
             };
             vm.activeId = e.id ? e.id.id : undefined;
             if (e.id && e.id.properties) {
               Object.keys(e.id.properties)
-                .filter(p => {
+                .filter((p) => {
                   let inner =
                     p.indexOf("Subscription") <= 0 &&
-                    !["_propertyNames", "_definitionChanged"].find(n => n == p);
+                    !["_propertyNames", "_definitionChanged"].find(
+                      (n) => n == p
+                    );
                   return inner;
                 })
-                .forEach(p => {
+                .forEach((p) => {
                   let name = p.substr(1);
                   info.properties[name] = e.id.properties[p]._value;
                 });
@@ -295,7 +291,7 @@ export default {
       const { Cesium, viewer } = this;
       const { clickMode } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         vm.$_pickEvent(movement, clickMode, onSuccess, onFail);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
@@ -306,7 +302,7 @@ export default {
       const { hoverMode } = this;
 
       let hoverEvent = debounce(
-        movement => {
+        (movement) => {
           vm.$_pickEvent(movement, hoverMode, onSuccess, onFail);
         },
         100,
@@ -330,6 +326,6 @@ export default {
     $_onPinMap() {
       this.pinMap = true;
     },
-    $_onFlyTo() {}
-  }
+    $_onFlyTo() {},
+  },
 };

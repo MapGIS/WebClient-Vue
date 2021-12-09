@@ -8,7 +8,7 @@ export default {
   argTypes: {
     label: "多行样式",
     range: [0, 10],
-    tooltip: undefined,
+    tooltip: '',
   },
 };
 
@@ -25,7 +25,7 @@ const Template = (args, { argTypes }) => ({
     /* setTheme("technology"); */
   },
   template: `<div>
-      <mapgis-ui-input-number-panel v-bind="$props">
+      <mapgis-ui-input-number-panel v-bind="$props" size="medium">
       </mapgis-ui-input-number-panel>
       <br>
       <mapgis-ui-input-number-panel tooltip="这是提示">
