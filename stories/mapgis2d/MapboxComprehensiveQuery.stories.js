@@ -92,8 +92,8 @@ export const 综合查询 = Template.bind({});
   },
   widgetInfo: {
     placeName: {
-      ip: "192.168.21.191",
-      port: "6163",
+      ip: `${window.webclient.ip}`,
+      port: `${window.webclient.port}`,
       combine: "true",
       queryWay: "gdbp",
       docName: "",
