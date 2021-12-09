@@ -177,13 +177,13 @@ const Template = (args, { argTypes }) => ({
     },
     editGdbp(){
       this.gdbps = [
-        "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑"
+        // "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑"
       ]
     },
     reset(){
       this.gdbps = [
         "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
-        "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
+        // "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
       ]
     }
   }
@@ -196,7 +196,7 @@ IGS矢量图层.args = {
   baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
   gdbps:[
     "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/湖北省市级区划2",
-    "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
+    // "gdbp://MapGISLocal/ClientTheme/ds/epsg4326/sfcls/点编辑",
   ],
   filters:""
 };
