@@ -41,37 +41,29 @@
                                   title="动画时间" placeholder="请输入动画时间"/>
         </mapgis-ui-row>
         <!--图片展示-->
-        <mapgis-ui-choose-picture :showTitleIcon="false"
+        <mapgis-ui-choose-picture-right :showTitleIcon="false"
                                   @firstAddPicture="$_firstAddPicture" :enablePreview="false"
                                   v-model="featureCopy.images"/>
-        <!--填充颜色-->
-        <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-          <mapgis-ui-color-title :showTitleIcon="false" @changeColor="$_changeFillColor" title="填充颜色"/>
-        </mapgis-ui-row>
-        <!--透明度-->
-        <mapgis-ui-row v-if="featureCopy.drawType !== 'point'">
-          <mapgis-ui-slider-title :showTitleIcon="false" @change="$_changeOpacity"
-                                  v-model="featureCopy.layerStyle.opacity" title="透明度"/>
-        </mapgis-ui-row>
         <mapgis-ui-button @click="$_addFeature('point')">点</mapgis-ui-button>
         <mapgis-ui-button @click="$_addFeature('polyline')">线</mapgis-ui-button>
         <mapgis-ui-button @click="$_addFeature('polygon')">多边形</mapgis-ui-button>
         <mapgis-ui-button @click="$_addFeature('rectangle')">矩形</mapgis-ui-button>
         <mapgis-ui-button @click="$_addFeature('text')">文字</mapgis-ui-button>
-        <div :key="index" :style="{color: feature.show ? '#000' : 'rgb(218,218,218)'}"
+        <div :key="index" style="margin: 10px 0;" :style="{color: feature.show ? '#000' : 'rgb(218,218,218)'}"
              v-for="(feature, index) in featureCopy.features">
           <span @dblclick="$_editEntity(feature)">
             {{ feature.title }}
           </span>
-          <mapgis-ui-switch @click="$_toggleFeature" checked-children="显示" un-checked-children="隐藏"
+          <mapgis-ui-switch style="float: right;margin-right: 2px"
+                            @click="$_toggleFeature" checked-children="显示" un-checked-children="隐藏"
                             v-model="feature.show"/>
           <!--        <mapgis-ui-svg-icon @click="$_deleteFeature(feature)" :iconStyle="deleteIconStyle" type="delete"/>-->
         </div>
         <!--富文本-->
         <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-          <div v-if="editor">
+          <div v-if="editor" style="border: 2px solid black;width: 97%;">
             <editor-menu-bar :editor="editor" v-slot="{ commands }">
-              <div>
+              <div style="border-bottom: 2px solid black;">
               <span
                   @click="commands.bold"
               >
@@ -194,9 +186,111 @@
       </mapgis-ui-row>
       <!--选择图标-->
       <mapgis-ui-icons-panel-scroll-x v-if="currentEntity.drawType === 'point'"
+                                      style="margin-bottom: 4px"
                                       :showTitleIcon="false"
                                       @changeIcon="$_changeEntityIcon"
                                       title="选择图标"/>
+      <mapgis-ui-switch-panel @changeChecked="$_enablePopup" label="是否启用Popup" layout="horizontal">
+        <!--popup标题-->
+        <mapgis-ui-row style="width: 100%;margin-top: 6px;">
+          <mapgis-ui-input-border :showTitleIcon="false" v-model="currentEntity.popupOptions.title" title="popup标题"
+                                  placeholder="请输入popup标题"/>
+        </mapgis-ui-row>
+        <mapgis-ui-select-row style="margin-top: 15px"
+                              @change="$_changePopupOptionType" :defaultValue="defaultPopupOptionType"
+                              :dataSource="popupOptionTypes" title="点击类型"/>
+        <mapgis-ui-select-row style="margin-top: 23px"
+                              @change="$_changePopupType" :defaultValue="defaultPopupType" :dataSource="popupTypes"
+                              title="弹框类型"/>
+        <!--图片展示-->
+        <mapgis-ui-choose-picture-right v-show="currentEntity.popupOptions.type === 'card'"
+                                        :showTitleIcon="false"
+                                        title="图片"
+                                        v-model="currentEntity.popupOptions.images"
+                                        @firstAddPicture="$_firstAddPicture" :enablePreview="false"
+        />
+        <!--富文本-->
+        <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera" style="margin-top: 28px">
+          <div v-if="popupEditor" style="border: 2px solid black;width: 97%;">
+            <editor-menu-bar :editor="editor" v-slot="{ commands }">
+              <div style="border-bottom: 2px solid black;">
+              <span
+                  @click="commands.bold"
+              >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
+                                    title="粗体"
+                                    type="border"/>
+              </span>
+                <span v-if="currentEntity.popupOptions.type === 'text'"
+                      @click="showImagePrompt(commands.image)"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="pictureStyle"
+                                    title="图片"
+                                    type="picture"/>
+              </span>
+                <span
+                    @click="commands.italic"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
+                                    title="斜体"
+                                    type="italic"/>
+              </span>
+                <span
+                    @click="commands.strike"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="删除线"
+                                    type="strike"/>
+              </span>
+                <span
+                    @click="commands.underline"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="下划线"
+                                    type="underline"/>
+              </span>
+                <span
+                    @click="commands.bullet_list"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="无序列表"
+                                    type="ul"/>
+              </span>
+                <span
+                    @click="commands.ordered_list"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="有序列表"
+                                    type="ol"/>
+              </span>
+                <span
+                    @click="commands.blockquote"
+                >
+                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                    :iconStyle="editButtonStyle"
+                                    title="引用"
+                                    type="quote"/>
+              </span>
+                <span
+                    @click="commands.code"
+                >
+               <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
+                                   :iconStyle="editButtonStyle"
+                                   title="代码"
+                                   type="code"/>
+              </span>
+
+              </div>
+            </editor-menu-bar>
+            <editor-content class="mapgis-3d-map-story-edit-container" :editor="popupEditor"/>
+          </div>
+        </mapgis-ui-row>
+      </mapgis-ui-switch-panel>
       <mapgis-ui-button class="mapgis-3d-map-story-edit-save-entity"
                         @click="$_saveEntity"
                         type="primary"
@@ -263,6 +357,7 @@ export default {
         opacity: 1
       },
       editor: undefined,
+      popupEditor: undefined,
       editButtonStyle: {
         color: "black",
         width: "24px",
@@ -288,7 +383,26 @@ export default {
       },
       isPreviewFeature: false,
       editEntity: false,
-      currentEntity: undefined
+      currentEntity: undefined,
+      defaultPopupType: "text",
+      popupTypes: [{
+        key: "card",
+        value: "图片"
+      }, {
+        key: "text",
+        value: "文字"
+      }],
+      defaultPopupOptionType: "click",
+      popupOptionTypes: [{
+        key: "click",
+        value: "点击时显示Popup"
+      }, {
+        key: "hover",
+        value: "鼠标悬停时显示Popup"
+      }, {
+        key: "force",
+        value: "始终显示Popup"
+      }]
     }
   },
   props: {
@@ -342,6 +456,22 @@ export default {
   mounted() {
   },
   methods: {
+    $_changePopupOptionType(e) {
+      this.currentEntity.popupOptions.optionType = e;
+      if (e === "force") {
+        this.$emit("changeEntity", "forcePopup", this.currentEntity);
+      }
+    },
+    $_changePopupType(e) {
+      this.currentEntity.popupOptions.type = e;
+    },
+    $_enablePopup(e) {
+      this.$emit("changeEntity", "enablePopup", {
+        projectUUID: this.featureCopy.projectUUID,
+        featureUUID: this.featureCopy.uuid,
+        uuid: this.currentEntity.uuid
+      }, e);
+    },
     $_changeEntityIcon(e) {
       this.$emit("changeEntity", "changeEntityIcon", this.currentEntity.uuid, e);
     },
@@ -415,7 +545,9 @@ export default {
     $_editEntity(currentEntity) {
       this.editEntity = true;
       this.currentEntity = currentEntity;
-      console.log("currentEntity", currentEntity)
+      if (this.currentEntity.popupOptions.type === "text") {
+        this.$_addPopupEditor();
+      }
     },
     $_changeTime(e) {
       this.featureCopy.animationTime = e;
@@ -517,6 +649,44 @@ export default {
         this.editor.setContent(this.featureCopy.content);
       }
     },
+    $_addPopupEditor() {
+      let vm = this;
+      if (!this.popupEditor) {
+        this.popupEditor = new Editor({
+          extensions: [
+            new Blockquote(),
+            new BulletList(),
+            new CodeBlock(),
+            new HardBreak(),
+            new Image(),
+            new Heading({levels: [1, 2, 3]}),
+            new HorizontalRule(),
+            new ListItem(),
+            new OrderedList(),
+            new TodoItem(),
+            new TodoList(),
+            new Link(),
+            new Bold(),
+            new Code(),
+            new Italic(),
+            new Strike(),
+            new Underline(),
+            new History(),
+            new Search({
+              disableRegex: false
+            }),
+          ],
+          content: this.currentEntity.popupOptions.content,
+          onUpdate: ({getHTML}) => {
+            let content = getHTML();
+            content = content.slice(0,2) + " style='margin-bottom: 0;'" + content.slice(2);
+            vm.currentEntity.popupOptions.content = content;
+          },
+        });
+      } else {
+        this.popupEditor.setContent(this.currentEntity.popupOptions.content);
+      }
+    },
     $_addMap(type, map) {
       this.mapType = type;
       if (this.featureCopy.map) {
@@ -579,6 +749,16 @@ export default {
   width: 99%;
 }
 
+.ProseMirror-focused {
+  border: none;
+  border-style: none;
+}
+.ProseMirror:focus-visible {
+  outline: none;
+}
+div:focus-visible {
+  outline: none;
+}
 .ProseMirror > p > img {
   width: 100%;
 }
@@ -587,5 +767,13 @@ export default {
   width: 100%;
   position: absolute !important;
   bottom: 0;
+}
+
+.mapgis-ui-switch-panel-header {
+  padding-left: 0 !important;
+}
+
+.mapgis-ui-switch-panel-label {
+  font-weight: bolder;
 }
 </style>

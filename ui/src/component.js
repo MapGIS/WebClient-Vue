@@ -225,6 +225,7 @@ export { default as MapgisUiProjectBottomPanel } from "./components/panel/Projec
 
 //picture
 export { default as MapgisUiChoosePicture } from "./components/picture/ChoosePicture";
+export { default as MapgisUiChoosePictureRight } from "./components/picture/ChoosePictureRight";
 
 //row
 export { default as MapgisUiProjectRow } from "./components/row/ProjectRow";
@@ -243,3 +244,9 @@ export { default as MapgisUiSetCameraViewSelect } from "./components/camera/SetC
 
 //popup
 export { default as MapgisUiPopupContent } from "./components/popup/PopupContent";
+
+//switch
+export { default as MapgisUiSwitchRow } from "./components/switch/SwitchRow";
+
+//select
+export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
