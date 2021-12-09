@@ -14,8 +14,8 @@
   color: $primary-5;
 }
 .mapboxgl-popup-content {
-  width: auto;
-  height: fit-content;
+  width: 250px;
+  height: 280px;
   padding: 0;  
   background-color: $popup-background;
 }

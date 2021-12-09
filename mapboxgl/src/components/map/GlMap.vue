@@ -196,10 +196,6 @@ export default {
   width: auto;
 }
 
-.mapboxgl-popup-content {
-  width: 330px !important;
-}
-
 .mapgis-popup-container {
   padding: 10px 12px 20px 12px;
 }
