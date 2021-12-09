@@ -11,14 +11,14 @@ export default {
   props: {
     ...VueOptions,
     properties: {
-      type: Object
+      type: Object,
       /* default: () => {
         return { };
       } */
     },
     enablePopup: {
       type: Boolean,
-      default: false
+      default: false,
     },
     popupOptions: {
       type: Object,
@@ -27,19 +27,19 @@ export default {
           type: "default",
           title: "name",
           popupType: "table",
-          fullHeight: 900
+          fullHeight: 900,
         };
-      }
+      },
     },
     enableTips: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tipsOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      }
+      },
     },
     /**
      *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
@@ -48,7 +48,7 @@ export default {
     /**
      *  自定义Tips界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
      */
-    customTips: Function
+    customTips: Function,
   },
   data() {
     return {
@@ -58,24 +58,24 @@ export default {
       clickposition: {
         longitude: 110,
         latitude: 30,
-        height: 0
+        height: 0,
       },
       hovervisible: false,
       hoverposition: {
         longitude: 110,
         latitude: 30,
-        height: 0
+        height: 0,
       },
       currentClickInfo: [],
       currentHoverInfo: [],
       clickMode: "click",
-      hoverMode: "hover"
+      hoverMode: "hover",
     };
   },
   components: {
     Popup,
     PopupContent,
-    PopupFeatureContent
+    PopupFeatureContent,
   },
   render(h) {
     let {
@@ -91,7 +91,7 @@ export default {
       currentClickInfo,
       currentHoverInfo,
       popupOptions,
-      tipsOptions
+      tipsOptions,
     } = this;
 
     const {
@@ -99,7 +99,7 @@ export default {
       type = "default",
       enableSeparate = true,
       popupType = "table",
-      fullHeight = 900
+      fullHeight = 900,
     } = popupOptions;
     const feature = this.properties
       ? { properties: this.properties }
@@ -113,11 +113,11 @@ export default {
       type,
       popupType,
       images: images,
-      description: description
+      description: description,
     };
 
     if (!pinMap) {
-      const fs = currentClickInfo.forEach(f => {
+      const fs = currentClickInfo.forEach((f) => {
         f.images = feature.properties.images || images;
         f.content = feature.properties.description || description;
       });
@@ -234,31 +234,33 @@ export default {
             vm.clickposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2
+              height: heightString2,
             };
           } else {
             vm.hovervisible = true;
             vm.hoverposition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
-              height: heightString2
+              height: heightString2,
             };
           }
-          let currentClickInfo = entities.map(e => {
+          let currentClickInfo = entities.map((e) => {
             let info = {
               layer: { id: e.id ? e.id.id : "未知数据" },
-              properties: {}
+              properties: {},
             };
             vm.activeId = e.id ? e.id.id : undefined;
             if (e.id && e.id.properties) {
               Object.keys(e.id.properties)
-                .filter(p => {
+                .filter((p) => {
                   let inner =
                     p.indexOf("Subscription") <= 0 &&
-                    !["_propertyNames", "_definitionChanged"].find(n => n == p);
+                    !["_propertyNames", "_definitionChanged"].find(
+                      (n) => n == p
+                    );
                   return inner;
                 })
-                .forEach(p => {
+                .forEach((p) => {
                   let name = p.substr(1);
                   info.properties[name] = e.id.properties[p]._value;
                 });
@@ -289,7 +291,7 @@ export default {
       const { Cesium, viewer } = this;
       const { clickMode } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         vm.$_pickEvent(movement, clickMode, onSuccess, onFail);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
@@ -300,7 +302,7 @@ export default {
       const { hoverMode } = this;
 
       let hoverEvent = debounce(
-        movement => {
+        (movement) => {
           vm.$_pickEvent(movement, hoverMode, onSuccess, onFail);
         },
         100,
@@ -324,6 +326,6 @@ export default {
     $_onPinMap() {
       this.pinMap = true;
     },
-    $_onFlyTo() {}
-  }
+    $_onFlyTo() {},
+  },
 };

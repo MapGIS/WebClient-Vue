@@ -44,8 +44,23 @@
         </template>
         <template
           slot="title"
-          slot-scope="{ title, icon, version, gdbp, ip, port, layerIndex, key }"
+          slot-scope="{
+            title,
+            icon,
+            version,
+            gdbp,
+            ip,
+            port,
+            layerIndex,
+            layerType,
+            key,
+            subLayerType
+          }"
         >
+          <mapgis-ui-iconfont
+            :type="subLayerType"
+            :style="{ marginRight: '2px' }"
+          />
           <span
             :class="{
               'mapgis-3d-g3d-layer-span': true,
@@ -68,7 +83,7 @@
             >
             <mapgis-ui-iconfont
               v-if="
-                key != '地图场景默认键值' &&
+                layerType == type.cache &&
                   (!isolation || selectLayerIndex == layerIndex)
               "
               :type="icon"
@@ -88,7 +103,7 @@
             />
             <mapgis-ui-iconfont
               v-if="
-                key != '地图场景默认键值' &&
+                layerType == type.cache &&
                   (!isolation || selectLayerIndex == layerIndex)
               "
               :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
@@ -137,10 +152,12 @@
 </template>
 
 <script>
+import { G3D } from "@mapgis/webclient-es6-service";
 import G3DOptions from "./G3DOptions";
-// import { M3dType, M3dType_2_0 } from "./M3dType";
-
+import { checkTypeNode, loopM3ds, checkTypeIcon } from "./util";
 import M3dMenus from "./components/M3dMenus.vue";
+
+const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export default {
   name: "mapgis-3d-g3d-layer",
@@ -155,16 +172,15 @@ export default {
     return {
       title: "G3D场景图层",
       layerIds: this.parseLayers(),
+      type: {
+        terrain: G3DLayerType.g3dTerrainLayer,
+        cache: G3DLayerType.g3dCacheLayer
+      },
       menus: [
         {
           title: "静态单体化查询",
           icon: "mapgis-highlight",
           active: this.enablePopup
-        },
-        {
-          title: "模型爆炸",
-          icon: "mapgis-fire1",
-          active: false
         },
         {
           title: "批量设置",
@@ -285,8 +301,8 @@ export default {
             let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
 
             if (find && find.options && find.options.m3ds) {
-              let props = layerIndexs.map(i => {
-                let gIndex = layerIndexs[i];
+              let props = layerIndexs.map((i, j) => {
+                let gIndex = i;
                 let layer = g3dLayer.getLayer(gIndex);
                 return layer.readyPromise;
               });
@@ -307,7 +323,6 @@ export default {
                   let layer = g3dLayer.getLayer(gIndex);
                   let { layerName, gdbpUrl, layerType } = info;
                   all.push(`${gIndex}`);
-                  // let version = vm.parseVersion(layer);
                   vm.layerTree[0].children.push({
                     title: layerName,
                     key: `${gIndex}`,
@@ -333,8 +348,16 @@ export default {
                   } else {
                     layer.show = true;
                   }
+                  loopM3ds(m3ds, types => {
+                    vm.layerTree[0].children[
+                      layerIndexs[i]
+                    ].subLayerType = checkTypeIcon(types[i]);
+                  });
                 });
-                vm.layerIds = all;
+                vm.parseTerrain();
+                vm.parserVector();
+                vm.resortLayers();
+                vm.layerIds = vm.layerIds.concat(all);
               });
             }
           }
@@ -416,6 +439,83 @@ export default {
       }
     },
     // 图层解析
+    parseTerrain() {
+      const vm = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      const { g3dLayerIndex } = this;
+
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let indexes = g3dLayer.getTerrainLayerIndexes();
+      let terrains = g3dLayer.getTerrainLayers();
+      indexes.forEach(i => {
+        let info = g3dLayer.getLayerInfo(i);
+        let { layerName, layerType } = info;
+        layerType =
+          typeof layerType === "string" ? parseInt(layerType) : layerType;
+        if (layerType == G3DLayerType.g3dTerrainLayer) {
+          vm.layerTree[0].children.push({
+            title: layerName,
+            key: `${i}`,
+            layerIndex: i,
+            layerType,
+            subLayerType: "mapgis-terrain",
+            icon: "mapgis-terrain",
+            menu: "mapgis-down",
+            scopedSlots: {
+              icon: "custom",
+              title: "title"
+            }
+          });
+        }
+        vm.layerIds.push(`${i}`);
+      });
+      vueCesium.G3DManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "terrains",
+        terrains
+      );
+    },
+    parserVector() {
+      const vm = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      const { g3dLayerIndex } = this;
+
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let indexes = g3dLayer.getVectorLayerIndexes();
+      let vectors = g3dLayer.getVectorLayers();
+      console.log("indexes", indexes);
+      indexes.forEach(i => {
+        let info = g3dLayer.getLayerInfo(i);
+        let { layerName, layerType } = info;
+        layerType =
+          typeof layerType === "string" ? parseInt(layerType) : layerType;
+        if (layerType == G3DLayerType.g3dVectorLayer) {
+          vm.layerTree[0].children.push({
+            title: layerName,
+            key: `${i}`,
+            layerIndex: i,
+            layerType,
+            subLayerType: "mapgis-vector",
+            icon: "mapgis-vector",
+            menu: "mapgis-down",
+            scopedSlots: {
+              icon: "custom",
+              title: "title"
+            }
+          });
+        }
+        vm.layerIds.push(`${i}`);
+      });
+      vueCesium.G3DManager.changeOptions(vueKey, vueIndex, "vectors", vectors);
+    },
+    resortLayers() {
+      const vm = this;
+      let childern = vm.layerTree[0].children;
+      let news = childern.sort((a, b) => a.layerIndex - b.layerIndex);
+      console.log("news", news[1]);
+      // vm.layerTree.splice(0, 1, news);
+    },
     parseServer(url) {
       url = url || this.url;
       let ip = new RegExp(/^[http:]*[https:]*\/\/.*\//);
@@ -464,23 +564,24 @@ export default {
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
-      const { vueKey, vueIndex, vueCesium } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let m3ds = find.options.m3ds;
-        if (!m3ds) return;
-        m3ds.forEach((m3d, i) => {
-          if (layers) {
-            if (layers.indexOf(`${i}`) >= 0) {
-              m3d.show = true;
-            } else {
-              m3d.show = false;
-            }
-          } else {
-            m3d.show = true;
+      const { g3dLayerIndex, viewer } = this;
+      if (!g3dLayerIndex && g3dLayerIndex < 0) return;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let indexes = g3dLayer.getAllLayerIndexes();
+      indexes.forEach(index => {
+        let layer = g3dLayer.getLayer(index);
+        if (layers.indexOf(`${index}`) >= 0) {
+          if (layer) {
+            layer.show = true;
+            g3dLayer.show(index, true);
           }
-        });
-      }
+        } else {
+          if (layer) {
+            layer.show = false;
+            g3dLayer.show(index, false);
+          }
+        }
+      });
     },
     handleExpandItemKey(key) {
       if (key == this.expandItemKey) {

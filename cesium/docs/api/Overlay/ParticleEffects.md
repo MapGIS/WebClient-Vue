@@ -25,6 +25,7 @@
 - **侦听属性**
 - **描述:** 符号库参数配置
 - **默认值:**
+
 ```
   [
     {
@@ -43,11 +44,13 @@
 ```
 
 ### `particleList`
+
 - **类型:** `Array`
 - **可选**
 - **侦听属性**
 - **v-model**
 - **描述:** 粒子特效参数配置，传入该参数后在场景中自动生成对应的粒子特效，其中参数包括一下值：
+
   ```
   [{
             guid: "49A834D7-97C6-F452-4611-6F0739809B50",
@@ -69,31 +72,32 @@
                     height: 1
                 }
             }
-  }]  
+  }]
   ```
-  其中数组中每个粒子对象包含下列参数：
-  
-  | Name       | Type   | Description                                                                            |
-  | :--------- | :----- | :------------------------------------------------------------------------------------- |
-  | guid       | String | 粒子唯一的guid |
-  | name | String | 粒子名称                                                                           |
-  | param | Object | 粒子特效配置参数
-  
- 其中param对象中包含下列参数：
 
- | Name         | Type   | Description                                                                                                                                     |
- | :----------- | :----- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
- | emitterType        | String |  发射类型:可选 '盒状放射', '圆形放射', '锥形放射', '球形放射' |
- | emissionRate         | Number | 发射速率(个/秒)                                                                                            |
- | imageSize | Number | 尺寸(像素)                 |
- | minimumParticleLife | Number | 粒子最小存在时间(秒) |
- | maximumParticleLife | Number | 粒子最大存在时间(秒) |
- | minimumSpeed  | Number | 最小速度(个/秒) |
- | maximumSpeed  | Number | 最大速度(个/秒)  |
- | startScale | Number | 初始比例 |
- | endScale   | Number | 结束比例 |
- | symbolGuid  | String | 该粒子特效对应的符号的guid |
- | position  | Object | 该粒子特效生成所在的位置的坐标点，包含参数longitude、latitude和height|
+  其中数组中每个粒子对象包含下列参数：
+
+  | Name  | Type   | Description      |
+  | :---- | :----- | :--------------- |
+  | guid  | String | 粒子唯一的 guid  |
+  | name  | String | 粒子名称         |
+  | param | Object | 粒子特效配置参数 |
+
+其中 param 对象中包含下列参数：
+
+| Name                | Type   | Description                                                              |
+| :------------------ | :----- | :----------------------------------------------------------------------- |
+| emitterType         | String | 发射类型:可选 '盒状放射', '圆形放射', '锥形放射', '球形放射'             |
+| emissionRate        | Number | 发射速率(个/秒)                                                          |
+| imageSize           | Number | 尺寸(像素)                                                               |
+| minimumParticleLife | Number | 粒子最小存在时间(秒)                                                     |
+| maximumParticleLife | Number | 粒子最大存在时间(秒)                                                     |
+| minimumSpeed        | Number | 最小速度(个/秒)                                                          |
+| maximumSpeed        | Number | 最大速度(个/秒)                                                          |
+| startScale          | Number | 初始比例                                                                 |
+| endScale            | Number | 结束比例                                                                 |
+| symbolGuid          | String | 该粒子特效对应的符号的 guid                                              |
+| position            | Object | 该粒子特效生成所在的位置的坐标点，包含参数 longitude、latitude 和 height |
 
 - **默认值:** []
 
@@ -136,7 +140,7 @@
 
 ```vue
 <template>
-  <mapgis-web-scene :style="{height: '100vh'}">
+  <mapgis-web-scene :style="{ height: '100vh' }">
     <mapgis-3d-ogc-wmts-layer
       :baseUrl="url"
       :wmtsLayer="layer"
@@ -150,12 +154,12 @@
       :maximumScreenSpaceError="maximumScreenSpaceError"
       :url="m3dUrl"
     ></mapgis-3d-igs-m3d>
-    <mapgis-ui-card v-if="showParticle"
-                    class="storybook-ui-card">
+    <mapgis-ui-card v-if="showParticle" class="storybook-ui-card">
       <mapgis-3d-particle-effects-manager
-              :symbolList="symbolList"
-              :particleList="particleList"
-              @load="load"/>
+        :symbolList="symbolList"
+        :particleList="particleList"
+        @load="load"
+      />
     </mapgis-ui-card>
     <mapgis-3d-statebar></mapgis-3d-statebar>
   </mapgis-web-scene>
@@ -174,12 +178,12 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "2ddaabf906d4b5418aed0078e1657029"
+        value: "2ddaabf906d4b5418aed0078e1657029",
       },
-      autoReset:true,
+      autoReset: true,
       particleEffects: null,
       showParticle: true,
-      symbolList:[
+      symbolList: [
         {
           guid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",
           name: "外部火焰",
@@ -193,50 +197,50 @@ export default {
           iconUrl: "mapgis-smoke",
         },
       ],
-      particleList:[
+      particleList: [
         {
           guid: "49A834D7-97C6-F452-4611-6F0739809B50",
           name: "粒子名称1",
           param: {
-            emitterType: "圆形放射",  //发射类型
-            emissionRate: 20.0,     //发射速率
-            imageSize: 5.0,         //尺寸
-            minimumParticleLife: 2.0,  //粒子最小存在时间
-            maximumParticleLife: 3.0,  //粒子最大存在时间
-            minimumSpeed: 9.0,         //最小速度
-            maximumSpeed: 10.0,        //最大速度
-            startScale: 1.0,           //初始比例
-            endScale: 4.0,             //结束比例
+            emitterType: "圆形放射", //发射类型
+            emissionRate: 20.0, //发射速率
+            imageSize: 5.0, //尺寸
+            minimumParticleLife: 2.0, //粒子最小存在时间
+            maximumParticleLife: 3.0, //粒子最大存在时间
+            minimumSpeed: 9.0, //最小速度
+            maximumSpeed: 10.0, //最大速度
+            startScale: 1.0, //初始比例
+            endScale: 4.0, //结束比例
             symbolGuid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",
             position: {
               longitude: 115.0352606,
               latitude: 27.00688591,
-              height: 1
-            }
-          }
+              height: 1,
+            },
+          },
         },
         {
           guid: "36F335E8-1F3C-41E2-40AA-EE950D691761",
           name: "粒子名称2",
           param: {
-            emitterType: "球形放射",  //发射类型
-            emissionRate: 40.0,     //发射速率
-            imageSize: 6.0,         //尺寸
-            minimumParticleLife: 2.0,  //粒子最小存在时间
-            maximumParticleLife: 3.0,  //粒子最大存在时间
-            minimumSpeed: 9.0,         //最小速度
-            maximumSpeed: 10.0,        //最大速度
-            startScale: 1.0,           //初始比例
-            endScale: 4.0,             //结束比例
+            emitterType: "球形放射", //发射类型
+            emissionRate: 40.0, //发射速率
+            imageSize: 6.0, //尺寸
+            minimumParticleLife: 2.0, //粒子最小存在时间
+            maximumParticleLife: 3.0, //粒子最大存在时间
+            minimumSpeed: 9.0, //最小速度
+            maximumSpeed: 10.0, //最大速度
+            startScale: 1.0, //初始比例
+            endScale: 4.0, //结束比例
             symbolGuid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",
             position: {
               longitude: 115.03566638,
               latitude: 27.00743179,
-              height: 1
-            }
-          }
-        }
-      ]
+              height: 1,
+            },
+          },
+        },
+      ],
     };
   },
   methods: {
@@ -245,7 +249,7 @@ export default {
     },
     loaded(e) {
       this.showParticle = true;
-    }
+    },
   },
 };
 </script>

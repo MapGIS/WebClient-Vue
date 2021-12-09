@@ -161,15 +161,15 @@ export default {
           parameters: {
             color: "rgba(218,98,125,0.6)",
             outline: true,
-            outlineColor: "rgba(255,255,0,0.5)"
-          }
-        }
+            outlineColor: "rgba(255,255,0,0.5)",
+          },
+        },
       ],
       filter: { where: "mpArea>2880000" },
       //layers 显示图层顺序为0的
-      layers: "0"
+      layers: "0",
     };
-  }
+  },
 };
 </script>
 ```
@@ -202,13 +202,13 @@ export default {
         parameters: {
           color: "rgba(218,98,125,0.6)",
           outline: true,
-          outlineColor: "rgba(255,255,0,0.5)"
-        }
+          outlineColor: "rgba(255,255,0,0.5)",
+        },
       },
       filter: { where: "mpArea>2880000" },
-      layers: "gdbp://MapGISLocalPlus/示例数据/sfcls/KS_buildings"
+      layers: "gdbp://MapGISLocalPlus/示例数据/sfcls/KS_buildings",
     };
-  }
+  },
 };
 </script>
 ```
@@ -244,14 +244,14 @@ export default {
             heightRatio: 20,
             color: "rgba(218,98,125,0.6)",
             outline: true,
-            outlineColor: "rgba(255,255,0,0.5)"
-          }
-        }
+            outlineColor: "rgba(255,255,0,0.5)",
+          },
+        },
       ],
       filter: { where: "mpArea>2880000" },
-      layers: "0"
+      layers: "0",
     };
-  }
+  },
 };
 </script>
 ```

@@ -28,10 +28,16 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<div :style="{background: '#fff', padding: '10px', height: '95vh'}">
-    <mapgis-ui-slider-panel v-bind="$props" @change="changeMenu" @change-slider="changeSlider">
+    <mapgis-ui-slider-panel v-bind="$props" 
+      @change="changeMenu" 
+      @changeSlider="changeSlider"
+    >
     </mapgis-ui-slider-panel>
     <br />
-    <mapgis-ui-slider-panel v-bind="$props" layout="horizontal" @change="changeMenu" @change-slider="changeSlider">
+    <mapgis-ui-slider-panel v-bind="$props" layout="horizontal" 
+      @change="changeMenu" 
+      @changeSlider="changeSlider"
+    >
     </mapgis-ui-slider-panel>
   </div>`,
 });
@@ -40,48 +46,48 @@ export const 滑动面板 = Template.bind({});
 滑动面板.args = {
   values: [
     {
-      title: "10F",
-      key: 10,
-    },
-    {
-      title: "9F",
-      key: 9,
-    },
-    {
-      title: "8F",
-      key: 8,
-    },
-    {
-      title: "7F",
-      key: 7,
-    },
-    {
-      title: "6F",
-      key: 6,
-    },
-    {
-      title: "5F",
-      key: 5,
-    },
-    {
-      title: "4F",
-      key: 4,
-    },
-    {
-      title: "3F",
-      key: 3,
-    },
-    {
-      title: "2F",
-      key: 2,
+      title: "-1F",
+      key: 0,
     },
     {
       title: "1F",
       key: 1,
     },
     {
-      title: "-1F",
-      key: 0,
+      title: "2F",
+      key: 2,
+    },
+    {
+      title: "3F",
+      key: 3,
+    },
+    {
+      title: "4F",
+      key: 4,
+    },
+    {
+      title: "5F",
+      key: 5,
+    },
+    {
+      title: "6F",
+      key: 6,
+    },
+    {
+      title: "7F",
+      key: 7,
+    },
+    {
+      title: "8F",
+      key: 8,
+    },
+    {
+      title: "9F",
+      key: 9,
+    },
+    {
+      title: "10F",
+      key: 10,
     },
   ],
 };

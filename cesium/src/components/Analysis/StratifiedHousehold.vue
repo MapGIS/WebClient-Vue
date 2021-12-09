@@ -1,127 +1,143 @@
 <template>
-  <mapgis-ui-collapse-card
-    class="mapgis-3d-stratified-household"
-    ref="card"
-    position="top-left"
-    :defaultCollapse="false"
-    :outStyle="outStyle"
-    :title="title"
-    @toggle-main="handleBackMain"
-  >
-    <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
+  <div class="mapgis-3d-stratified-household-wrapper">
+    <mapgis-ui-collapse-card
+      class="mapgis-3d-stratified-household"
+      ref="card"
+      position="top-left"
+      :defaultCollapse="false"
+      :outStyle="outStyle"
+      :title="title"
+      @toggle-main="handleBackMain"
+    >
+      <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
+      <span class="mapgis-3d-stratified-household-title" slot="title">{{
+        title
+      }}</span>
+      <mapgis-ui-space
+        slot="extra"
+        class="mapgis-3d-stratified-household-icons"
+      >
+        <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
+          <template slot="title">{{ m.title }}</template>
+          <mapgis-ui-iconfont
+            :class="{ active: m.active }"
+            :type="m.icon"
+            @click="handleMenu(m.title)"
+          />
+        </mapgis-ui-tooltip>
+      </mapgis-ui-space>
+      <mapgis-ui-row class="mapgis-3d-g3d-document">
+        <mapgis-ui-input-search
+          style="margin-bottom: 8px"
+          placeholder="搜索"
+          @change="onChange"
+        />
+        <mapgis-ui-tree
+          class="mapgis-3d-g3d-document-tree"
+          checkable
+          showIcon
+          v-model="layerIds"
+          :expanded-keys="expandedKeys"
+          :auto-expand-parent="autoExpandParent"
+          :tree-data="layerTree"
+          :selectedKeys="selectedKeys"
+          @expand="onExpand"
+          @select="onSelect"
+        >
+          <template slot="custom" slot-scope="{}">
+            <!-- <mapgis-ui-iconfont :type="icon" /> -->
+          </template>
+          <template
+            slot="title"
+            slot-scope="{
+              title,
+              icon,
+              version,
+              gdbp,
+              ip,
+              port,
+              layerIndex,
+              key
+            }"
+          >
+            <span
+              :class="{
+                'mapgis-3d-stratified-household-span': true,
+                'mapgis-3d-stratified-household-span-inline': true,
+                select: selectLayerIndex == layerIndex
+              }"
+            >
+              <span v-if="title && title.indexOf(searchValue) > -1">
+                {{ title.substr(0, title.indexOf(searchValue)) }}
+                <span style="color: #f50">{{ searchValue }}</span>
+                {{
+                  title.substr(title.indexOf(searchValue) + searchValue.length)
+                }}
+              </span>
+              <span v-else>{{ title }}</span>
+              <span
+                v-if="version"
+                class="mapgis-3d-stratified-household-version"
+                >版本:{{ version }}</span
+              >
+              <mapgis-ui-tooltip v-for="(s, j) in submenus" :key="j">
+                <template slot="title">{{ s.tooltip() }}</template>
+                <mapgis-ui-iconfont
+                  v-if="!isolation || selectLayerIndex == layerIndex"
+                  :type="s.icon()"
+                  :class="{
+                    iconfont: true,
+                    'iconfont-disabled': !enableStratifiedHouse
+                  }"
+                  @click="
+                    s.click({
+                      title,
+                      icon,
+                      version,
+                      gdbp,
+                      ip,
+                      port,
+                      layerIndex,
+                      key
+                    })
+                  "
+                />
+              </mapgis-ui-tooltip>
+            </span>
+          </template>
+        </mapgis-ui-tree>
+      </mapgis-ui-row>
+
+      <StratifiedHouseholdMenus
+        slot="panel"
+        size="big"
+        mode="m3d"
+        :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
+        :layerIndex="selectLayerIndex"
+        :gdbp="gdbp"
+        @enable-dynamic-query="handleDynamicQuery"
+      >
+      </StratifiedHouseholdMenus>
+
+      <mapgis-3d-feature-popup
+        v-if="featureposition"
+        :position="featureposition"
+        :properties="featureproperties"
+        :popupOptions="popupOptions"
+        v-model="featurevisible"
+      >
+      </mapgis-3d-feature-popup>
+    </mapgis-ui-collapse-card>
     <mapgis-ui-slider-panel
       class="mapgis-3d-stratified-household-slider-tree"
       :values="layerTree"
+      :customLabel="customLabel"
       @change="changeSimpleMenu"
-      @change-slider="changeSimpleSlider"
+      @changeSlider="changeSimpleSlider"
     >
     </mapgis-ui-slider-panel>
-
-    <span class="mapgis-3d-stratified-household-title" slot="title">{{
-      title
-    }}</span>
-    <mapgis-ui-space slot="extra" class="mapgis-3d-stratified-household-icons">
-      <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
-        <template slot="title">{{ m.title }}</template>
-        <mapgis-ui-iconfont
-          :class="{ active: m.active }"
-          :type="m.icon"
-          @click="handleMenu(m.title)"
-        />
-      </mapgis-ui-tooltip>
-    </mapgis-ui-space>
-    <mapgis-ui-row class="mapgis-3d-g3d-document">
-      <mapgis-ui-input-search
-        style="margin-bottom: 8px"
-        placeholder="搜索"
-        @change="onChange"
-      />
-      <mapgis-ui-tree
-        class="mapgis-3d-g3d-document-tree"
-        checkable
-        showIcon
-        v-model="layerIds"
-        :expanded-keys="expandedKeys"
-        :auto-expand-parent="autoExpandParent"
-        :tree-data="layerTree"
-        :selectedKeys="selectedKeys"
-        @expand="onExpand"
-        @select="onSelect"
-      >
-        <template slot="custom" slot-scope="{}">
-          <!-- <mapgis-ui-iconfont :type="icon" /> -->
-        </template>
-        <template
-          slot="title"
-          slot-scope="{ title, icon, version, gdbp, ip, port, layerIndex, key }"
-        >
-          <span
-            :class="{
-              'mapgis-3d-stratified-household-span': true,
-              'mapgis-3d-stratified-household-span-inline': true,
-              select: selectLayerIndex == layerIndex
-            }"
-          >
-            <span v-if="title && title.indexOf(searchValue) > -1">
-              {{ title.substr(0, title.indexOf(searchValue)) }}
-              <span style="color: #f50">{{ searchValue }}</span>
-              {{
-                title.substr(title.indexOf(searchValue) + searchValue.length)
-              }}
-            </span>
-            <span v-else>{{ title }}</span>
-            <span v-if="version" class="mapgis-3d-stratified-household-version"
-              >版本:{{ version }}</span
-            >
-            <mapgis-ui-tooltip v-for="(s, j) in submenus" :key="j">
-              <template slot="title">{{ s.tooltip() }}</template>
-              <mapgis-ui-iconfont
-                v-if="!isolation || selectLayerIndex == layerIndex"
-                :type="s.icon()"
-                :class="{
-                  iconfont: true,
-                  'iconfont-disabled': !enableStratifiedHouse
-                }"
-                @click="
-                  s.click({
-                    title,
-                    icon,
-                    version,
-                    gdbp,
-                    ip,
-                    port,
-                    layerIndex,
-                    key
-                  })
-                "
-              />
-            </mapgis-ui-tooltip>
-          </span>
-        </template>
-      </mapgis-ui-tree>
-    </mapgis-ui-row>
-
-    <StratifiedHouseholdMenus
-      slot="panel"
-      size="big"
-      mode="m3d"
-      :version="version"
-      :g3dLayerIndex="g3dLayerIndex"
-      :layerIndex="selectLayerIndex"
-      :gdbp="gdbp"
-      @enable-dynamic-query="handleDynamicQuery"
-    >
-    </StratifiedHouseholdMenus>
-
-    <mapgis-3d-feature-popup
-      v-if="featureposition"
-      :position="featureposition"
-      :properties="featureproperties"
-      :popupOptions="popupOptions"
-      v-model="featurevisible"
-    >
-    </mapgis-3d-feature-popup>
-  </mapgis-ui-collapse-card>
+  </div>
 </template>
 
 <script>
@@ -344,7 +360,7 @@ export default {
               }
             });
           });
-          console.log('layerTree', vm.layerTree);
+          console.log("layerTree", vm.layerTree);
           vm.layerIds = all;
           vm.$emit("loaded", { component: vm });
           vm.version = g3dLayer.version;
@@ -836,8 +852,23 @@ export default {
         }
       }
     },
-    changeSimpleMenu(key) {},
-    changeSimpleSlider(keys) {}
+    changeSimpleMenu(key) {
+      this.layerIds = [`${key}`];
+    },
+    changeSimpleSlider(keys) {
+      console.log('keys', keys);
+      let keyStr = keys.map(k => `${k}`);
+      this.layerIds = keyStr;
+    },
+    customLabel(label) {
+      let show = label;
+      let reg = new RegExp(/-(\S*)?楼?F?/g);
+      let res = reg.exec(label);
+      if (res && res.length > 0) {
+        show = res[res.length - 1];
+      }
+      return show;
+    }
   }
 };
 </script>

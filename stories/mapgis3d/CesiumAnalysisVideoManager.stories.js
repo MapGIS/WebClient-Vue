@@ -23,9 +23,8 @@ const Template = (args, { argTypes }) => ({
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-video
-        >
-        </mapgis-3d-video>
+        <mapgis-3d-video-manager>
+        </mapgis-3d-video-manager>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,

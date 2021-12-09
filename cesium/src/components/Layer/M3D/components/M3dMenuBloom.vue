@@ -1,71 +1,59 @@
 <template>
   <div class="mapgis-3d-m3d-menu-bloom">
     <mapgis-ui-divider> 泛光设置 </mapgis-ui-divider>
-    <mapgis-ui-form-model
-      :layout="layout"
-      :labelCol="labelCol"
-      :wrapperCol="wrapperCol"
-      labelAlign="left"
+    <div class="mapgis-3d-m3d-menu-bloom-content">
+      <mapgis-ui-color-pick-panel
+        transparent
+        label="颜色设置"
+        v-model="lightColor"
+        :disableAlpha="false"
+      />
+
+      <mapgis-ui-input-number-panel
+        transparent
+        size="small"
+        label="最小高度"
+        v-model="minHeight"
+        :range="[0, 1000]"
+      >
+      </mapgis-ui-input-number-panel>
+
+      <mapgis-ui-input-number-panel
+        transparent
+        size="small"
+        label="最大高度"
+        v-model="maxHeight"
+        :range="[0, 1000]"
+      >
+      </mapgis-ui-input-number-panel>
+
+      <mapgis-ui-input-number-panel
+        transparent
+        size="small"
+        label="混合系数"
+        v-model="mixFactor"
+        :step="0.1"
+        :range="[0, 1]"
+      >
+      </mapgis-ui-input-number-panel>
+    </div>
+
+    <mapgis-ui-switch-panel
+      v-model="startBreath"
+      label="呼吸开启"
+      size="small"
+      layout="horizontal"
     >
-      <mapgis-ui-form-model-item label="颜色设置" required>
-        <mapgis-ui-button size="small">
-          <mapgis-ui-color-picker v-model="lightColor" />
-        </mapgis-ui-button>
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="最小高度" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="0"
-          :max="100000"
-          v-model="minHeight"
-        />
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="最大高度" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="0"
-          :max="100000"
-          v-model="maxHeight"
-        />
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="混合系数" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="1"
-          v-model="mixFactor"
-        />
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item label="呼吸开启">
-        <mapgis-ui-switch size="small" v-model="startBreath" />
-      </mapgis-ui-form-model-item>
-
-      <mapgis-ui-form-model-item>
-        <span slot="label">
-          <mapgis-ui-tooltip
-            title="呼吸灯速度,建议取值区间(0,0.1)，值越小，闪烁速度越慢"
-          >
-            <mapgis-ui-iconfont type="mapgis-info" />
-          </mapgis-ui-tooltip>
-          呼吸速度
-        </span>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :min="0"
-          :max="100000"
-          v-model="breathSpeed"
-        />
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
+      <mapgis-ui-input-number-panel
+        size="large"
+        label="呼吸速度"
+        tooltip="呼吸灯速度,建议取值区间(0,0.1)，值越小，闪烁速度越慢"
+        v-model="breathSpeed"
+        :step="0.1"
+        :range="[0, 1]"
+      >
+      </mapgis-ui-input-number-panel>
+    </mapgis-ui-switch-panel>
 
     <mapgis-ui-button
       type="primary"
