@@ -59,7 +59,7 @@ export default {
 "less": "3.12.2",
 "less-loader": "7.0.2",
 "node-sass": "^4.11.0",
-"sass-loader": "10.1.1",
+"sass-loader": "^10.1.1",
 ```
 :::
 
