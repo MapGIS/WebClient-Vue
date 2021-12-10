@@ -78,3 +78,5 @@ export { default as Mapgis3dPathRoaming } from "../../cesium/src/components/Scen
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";
 // export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
 // export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";
+// 模拟仿真
+export { default as Mapgis3dCityGrow } from "../../cesium/src/components/simulation/CityGrow";
