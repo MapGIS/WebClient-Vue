@@ -1,13 +1,13 @@
 <template>
   <div :id="id" @click="$_clickPanel" class="mapgis-ui-project-edit-panel"
        :style="{height: height + 'px', width: width + 'px'}">
-    <div v-show="!editFeature" :style="{height: height - 32 + 'px'}">
+    <div v-show="!editFeature && !showSetting" :style="{height: height - 32 + 'px'}">
       <div class="mapgis-ui-project-edit-top-bar">
         <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
           <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
           </mapgis-ui-col>
           <mapgis-ui-col span="6" class="mapgis-ui-project-edit-top-right">
-            <mapgis-ui-base64-icon width="16px" @click="$_deleteProject" type="setting"/>
+            <mapgis-ui-base64-icon width="16px" @click="$_showSetting" type="setting"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row class="mapgis-ui-project-edit-title">
@@ -34,7 +34,16 @@
         />
       </mapgis-ui-row>
     </div>
-    <mapgis-ui-row v-show="!editFeature">
+    <!--附加地图-->
+<!--    <mapgis-ui-map-select :showTitleIcon="false"-->
+<!--                          v-show="showSetting"-->
+<!--                          @addMap="$_addMap" title="附加地图"/>-->
+    <mapgis-ui-map-multi-rows v-show="showSetting"
+                              :showTitleIcon="false"
+                              showMoreTitle=""
+                              :map="projectCopy.map"
+                              @addMap="$_addMapToProject" title="附加地图"/>
+    <mapgis-ui-row v-show="!editFeature && !showSetting">
       <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
         <mapgis-ui-dropdown>
           <mapgis-ui-menu slot="overlay">
@@ -89,7 +98,8 @@ export default {
   data() {
     return {
       panelScale: 1,
-      currentFeature: undefined,
+      currentFeature: {},
+      showSetting: false,
       editFeature: false,
       editTitle: false,
       projectCopy: undefined,
@@ -180,6 +190,9 @@ export default {
     }
   },
   methods: {
+    $_showSetting() {
+      this.showSetting = true;
+    },
     $_clickPanel(e) {
       if (e.target.id !== "mpTitle" && e.target.id !== "mpDescription" && e.target.id !== "mpEdit") {
         this.editTitle = false;
@@ -205,6 +218,7 @@ export default {
       this.$emit("addMap", type, map, id);
     },
     $_addMapToProject(type, map) {
+      this.showSetting = false;
       this.$emit("addMapToProject", type, map, this.projectCopy);
     },
     $_changeEntityTitle(currentEntity) {
@@ -374,7 +388,7 @@ export default {
       this.$emit("animationTimeChanged", feature);
     },
     $_featureChange(feature) {
-      this.currentFeature = Object.assign(this.currentFeature, feature);
+      this.currentFeature = Object.assign(this.currentFeature, feature || {});
     },
     $_featureBack() {
       this.editFeature = false;

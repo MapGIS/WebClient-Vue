@@ -2,7 +2,7 @@
   <div>
     <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
          class="mapgis-ui-project-panel">
-      <div class="mapgis-ui-project-panel-content" v-show="!addProject" :style="{height: height - 40 + 'px'}">
+      <div class="mapgis-ui-project-panel-content" v-show="!showProjectEdit" :style="{height: height - 40 + 'px'}">
         <mapgis-ui-project-header/>
         <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
                                @showProjected="$_showProject"
@@ -127,37 +127,43 @@ export default {
       }
     },
     $_deleted(index) {
-      this.$emit("deleteProject", this.projects[index]);
+      this.$emit("deleteProject", this.dataSourceCopy[index]);
     },
     $_marker(index, type) {
       this.$set(this.projects[index], "type", type);
     },
     $_showProject(index, flag) {
-      this.$set(this.projects[index], "show", flag);
       this.$emit("showProject", this.projects[index]);
     },
     $_addProject() {
       this.project = {
-        title: "无标题",
-        description: "",
-        features: []
+        "title": "无标题",
+        "description": "",
+        "uuid": "mapStory" + parseInt(String(Math.random() * 100000000)),
+        "map": {
+          "type": "",
+          "baseUrl": "",
+          "layer": "",
+          "tilingScheme": "",
+          "tileMatrixSet": "",
+          "format": "",
+          "vueKey": "",
+          "vueIndex": ""
+        },
+        "features": [],
+        "chapters": []
       };
-      this.projects.push({
-        title: "无标题",
-        description: "",
-        url: "",
-        type: "normal",
-        show: true,
-      });
-      this.addProject = true;
+      this.dataSourceCopy.push(this.project);
+      this.showProjectEdit = true;
     },
     $_editProject(index) {
       this.project = this.dataSourceCopy[index];
       this.showProjectEdit = true;
-      // this.$emit("editProject", index, this.projects[index]);
+      this.$emit("editProject", index, this.projects[index]);
     },
     $_back() {
-      this.addProject = false;
+      this.showProjectEdit = false;
+      this.$emit("back", this.project);
     },
     $_addChapter(chapter) {
       this.$emit("addChapter", chapter);

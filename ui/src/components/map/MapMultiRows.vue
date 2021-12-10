@@ -1,7 +1,7 @@
 <template>
   <div class="mapgis-ui-map-multi-rows-container">
     <div v-if="showTitle" class="mapgis-ui-map-multi-rows-title">
-      <mapgis-ui-title-icon/>
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
       {{ title }}
       <span @click="$_showMore" class="mapgis-ui-map-multi-rows-show-more">
         {{ showMoreTitle }}
@@ -147,6 +147,10 @@ export default {
       type: String,
       default: "展开高级选项"
     },
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
     showTitle: {
       type: Boolean,
       default: true
@@ -177,47 +181,19 @@ export default {
       let map;
       switch (this.mapCopy.type) {
         case "WMS":
-          map = {
-            type: "WMS",
-            baseUrl: this.baseUrl,
-            layers: this.layers
-          };
-          this.$emit("addMap", "WMS", map);
+          this.$emit("addMap", "WMS", this.mapCopy);
           break;
         case "WMTS":
-          map = {
-            type: "WMTS",
-            baseUrl: this.baseUrl,
-            layer: this.layer,
-            tilingScheme: this.tilingScheme,
-            tileMatrixSet: this.tileMatrixSet,
-            format: this.format,
-          };
-          this.$emit("addMap", "WMTS", map);
+          this.$emit("addMap", "WMTS", this.mapCopy);
           break;
         case "TILE":
-          map = {
-            type: "TILE",
-            baseUrl: this.baseUrl,
-            tilingScheme: this.tilingScheme
-          };
-          this.$emit("addMap", "TILE", map);
+          this.$emit("addMap", "TILE", this.mapCopy);
           break;
         case "DYNAMIC":
-          map = {
-            type: "DYNAMIC",
-            baseUrl: this.baseUrl,
-            gdbps: this.gdbps
-          };
-          this.$emit("addMap", "DYNAMIC", map);
+          this.$emit("addMap", "DYNAMIC", this.mapCopy);
           break;
         case "DOC":
-          map = {
-            type: "DOC",
-            baseUrl: this.baseUrl,
-            layers: this.layers
-          };
-          this.$emit("addMap", "DOC", map);
+          this.$emit("addMap", "DOC", this.mapCopy);
           break;
       }
     },

@@ -43,15 +43,7 @@
           :vueIndex="popup.vueIndex"
       >
         <div>
-          <div v-if="popup.type === 'text' && (popup.title || popup.content)" class="mapgis-3d-map-story-small-popup-container">
-            <div v-if="popup.title" class="mapgis-3d-map-story-small-popup-title">
-              {{ popup.title }}
-<!--              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"-->
-<!--                                     width="20px" type="toLarge"/>-->
-            </div>
-            <div v-html="popup.content" class="mapgis-3d-map-story-small-popup"></div>
-          </div>
-          <div v-if="popup.type === 'card'" class="mapgis-3d-map-story-small-popup-container">
+          <div class="mapgis-3d-map-story-small-popup-container">
             <div v-if="popup.title" class="mapgis-3d-map-story-small-popup-title">
               {{ popup.title }}
 <!--              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"-->

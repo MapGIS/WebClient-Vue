@@ -20,6 +20,7 @@
         @showFeature="$_showFeature"
         @showProject="$_showProject"
         @featurePreview="$_featurePreview"
+        @back="$_back"
         :height="panelHeight"
         :width="width"
         v-model="dataSourceCopy"
@@ -35,7 +36,8 @@
         :dataSource="storyFeature"
         :height="panelHeight"
         :enableFullScreen="enableFullScreen"
-    />`
+    />
+    `
   </div>
 </template>
 
@@ -117,6 +119,15 @@ export default {
     }
   },
   methods: {
+    $_back(project) {
+      let features = project.features;
+      for (let i = 0; i < features.length; i++) {
+        let entity = this.viewer.entities.getById(features[i].uuid);
+        if (entity) {
+          entity.show = false;
+        }
+      }
+    },
     $_textChanged(text) {
       this.$set(this.storyFeature[0], "content", text);
     },
@@ -151,9 +162,6 @@ export default {
       this.showLargePanel = false;
     },
     $_editProject(index) {
-      if (!this.enableClose) {
-        this.showPanels.currentPage = "projectEdit";
-      }
       this.$emit("editProject", index);
     },
     $_addChapter(chapter) {
@@ -230,7 +238,6 @@ export default {
       this.$emit("addMapToProject", type, map, project);
     },
     $_addMap(type, map, id) {
-      window.map = map;
       let addMap = true, index;
       for (let i = 0; i < this.optArr.length; i++) {
         if (this.optArr[i].id === id) {

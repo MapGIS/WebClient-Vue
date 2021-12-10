@@ -18,12 +18,11 @@
                               v-show="!showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
                               :map="featureCopy.map" @addMap="$_addMap" title="附加地图"/>
         <mapgis-ui-map-multi-rows v-show="showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showMore"
-                                  :map="featureCopy.map" title="附加地图"/>
+                                  :map="featureCopy.map" @addMap="$_addMap" title="附加地图"/>
         <!--设置相机视角-->
         <mapgis-ui-set-camera-view-select
             :showTitleIcon="false"
             :cameras="cameras"
-            ref="cameraSelect"
             @click="$_getCamera"
             @showDetail="$_showDetail"
             @selectCamera="$_selectCamera"
@@ -42,8 +41,8 @@
         </mapgis-ui-row>
         <!--图片展示-->
         <mapgis-ui-choose-picture-right :showTitleIcon="false"
-                                  @firstAddPicture="$_firstAddPicture" :enablePreview="false"
-                                  v-model="featureCopy.images"/>
+                                        @firstAddPicture="$_firstAddPicture" :enablePreview="false"
+                                        v-model="featureCopy.images"/>
         <mapgis-ui-button @click="$_addFeature('point')">点</mapgis-ui-button>
         <mapgis-ui-button @click="$_addFeature('polyline')">线</mapgis-ui-button>
         <mapgis-ui-button @click="$_addFeature('polygon')">多边形</mapgis-ui-button>
@@ -57,7 +56,6 @@
           <mapgis-ui-switch style="float: right;margin-right: 2px"
                             @click="$_toggleFeature" checked-children="显示" un-checked-children="隐藏"
                             v-model="feature.show"/>
-          <!--        <mapgis-ui-svg-icon @click="$_deleteFeature(feature)" :iconStyle="deleteIconStyle" type="delete"/>-->
         </div>
         <!--富文本-->
         <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
@@ -175,6 +173,30 @@
                                 v-model="currentEntity.layerStyle.opacity"
                                 title="透明度"/>
       </mapgis-ui-row>
+      <!--经度-->
+      <mapgis-ui-row style="width: 100%;margin-top: 6px;">
+        <mapgis-ui-input-border @change="$_changeEntityLng"
+                                type="number"
+                                :showTitleIcon="false" title="经度"
+                                v-model="currentEntity.center[0]"
+                                placeholder="请输入经度"/>
+      </mapgis-ui-row>
+      <!--纬度-->
+      <mapgis-ui-row style="width: 100%;margin-top: 6px;">
+        <mapgis-ui-input-border @change="$_changeEntityLat"
+                                type="number"
+                                :showTitleIcon="false" title="纬度"
+                                v-model="currentEntity.center[1]"
+                                placeholder="请输入纬度"/>
+      </mapgis-ui-row>
+      <!--高度-->
+      <mapgis-ui-row style="width: 100%;margin-top: 6px;">
+        <mapgis-ui-input-border @change="$_changeEntityHeight"
+                                type="number"
+                                :showTitleIcon="false" title="高度"
+                                v-model="currentEntity.center[2]"
+                                placeholder="请输入高度"/>
+      </mapgis-ui-row>
       <!--线宽-->
       <mapgis-ui-row style="width: 100%" v-if="currentEntity.drawType === 'polyline'">
         <mapgis-ui-input-border :enableWatchValue="false"
@@ -190,6 +212,20 @@
                                       :showTitleIcon="false"
                                       @changeIcon="$_changeEntityIcon"
                                       title="选择图标"/>
+      <mapgis-ui-row>
+        <span>
+          是否填充文字
+        </span>
+        <mapgis-ui-switch style="float: right;margin-right: 2px"
+                          @click="$_toggleFillText"
+                          checked-children="是" un-checked-children="否"
+                          v-model="currentEntity.enableFillText"
+        />
+      </mapgis-ui-row>
+      <mapgis-ui-row v-show="currentEntity.enableFillText">
+        <mapgis-ui-input/>
+      </mapgis-ui-row>
+      <!--是否启用popup-->
       <mapgis-ui-switch-panel @changeChecked="$_enablePopup" label="是否启用Popup" layout="horizontal">
         <!--popup标题-->
         <mapgis-ui-row style="width: 100%;margin-top: 6px;">
@@ -199,15 +235,12 @@
         <mapgis-ui-select-row style="margin-top: 15px"
                               @change="$_changePopupOptionType" :defaultValue="defaultPopupOptionType"
                               :dataSource="popupOptionTypes" title="点击类型"/>
-        <mapgis-ui-select-row style="margin-top: 23px"
-                              @change="$_changePopupType" :defaultValue="defaultPopupType" :dataSource="popupTypes"
-                              title="弹框类型"/>
         <!--图片展示-->
-        <mapgis-ui-choose-picture-right v-show="currentEntity.popupOptions.type === 'card'"
-                                        :showTitleIcon="false"
-                                        title="图片"
-                                        v-model="currentEntity.popupOptions.images"
-                                        @firstAddPicture="$_firstAddPicture" :enablePreview="false"
+        <mapgis-ui-choose-picture-right
+            :showTitleIcon="false"
+            title="图片"
+            v-model="currentEntity.popupOptions.images"
+            @firstAddPicture="$_firstAddPicture" :enablePreview="false"
         />
         <!--富文本-->
         <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera" style="margin-top: 28px">
@@ -296,6 +329,12 @@
                         type="primary"
       >
         保存
+      </mapgis-ui-button>
+      <mapgis-ui-button class="mapgis-3d-map-story-edit-save-entity"
+                        @click="$_deleteEntity"
+                        style="left: 51%"
+      >
+        删除
       </mapgis-ui-button>
     </div>
   </div>
@@ -456,6 +495,9 @@ export default {
   mounted() {
   },
   methods: {
+    $_toggleFillText() {
+      this.$emit("changeEntity", "enableFillText", this.currentEntity);
+    },
     $_changePopupOptionType(e) {
       this.currentEntity.popupOptions.optionType = e;
       if (e === "force") {
@@ -501,6 +543,15 @@ export default {
           break;
       }
     },
+    $_changeEntityLng(e) {
+      this.$emit("changeEntity", "changeEntityLng", this.currentEntity.uuid, Number(e));
+    },
+    $_changeEntityLat(e) {
+      this.$emit("changeEntity", "changeEntityLat", this.currentEntity.uuid, Number(e));
+    },
+    $_changeEntityHeight(e) {
+      this.$emit("changeEntity", "changeEntityHeight", this.currentEntity.uuid, Number(e));
+    },
     $_changeEntityOpacity(e) {
       this.currentEntity.layerStyle.opacity = e;
       switch (this.currentEntity.drawType) {
@@ -536,11 +587,18 @@ export default {
     },
     $_changeEntityTitle() {
       if (this.currentEntity.drawType === "text") {
-        this.$emit("changeEntityTitle", this.currentEntity);
+        this.$emit("changeEntity", "changeEntityTitle", this.currentEntity.uuid, this.currentEntity.title);
       }
     },
     $_saveEntity() {
       this.editEntity = false;
+    },
+    $_deleteEntity() {
+      this.editEntity = false;
+      this.$emit("changeEntity", "deleteEntity", this.currentEntity.uuid, {
+        projectUUID: this.featureCopy.projectUUID,
+        featureUUID: this.featureCopy.uuid,
+      });
     },
     $_editEntity(currentEntity) {
       this.editEntity = true;
@@ -575,9 +633,6 @@ export default {
       if (this.$refs.animationTime) {
         this.$refs.animationTime.setValue(this.featureCopy.animationTime);
       }
-      if (this.$refs.cameraSelect) {
-        this.$refs.cameraSelect.setValue("当前视角");
-      }
       const {map, layerStyle} = this.featureCopy;
       if (!map) {
         this.featureCopy.map = {};
@@ -606,6 +661,7 @@ export default {
       this.$emit("getCamera");
     },
     $_selectCamera(camera) {
+      console.log("-----------")
       this.$emit("selectCamera", camera);
     },
     $_addEditor() {
@@ -679,7 +735,7 @@ export default {
           content: this.currentEntity.popupOptions.content,
           onUpdate: ({getHTML}) => {
             let content = getHTML();
-            content = content.slice(0,2) + " style='margin-bottom: 0;'" + content.slice(2);
+            content = content.slice(0, 2) + " style='margin-bottom: 0;'" + content.slice(2);
             vm.currentEntity.popupOptions.content = content;
           },
         });
@@ -753,18 +809,21 @@ export default {
   border: none;
   border-style: none;
 }
+
 .ProseMirror:focus-visible {
   outline: none;
 }
+
 div:focus-visible {
   outline: none;
 }
+
 .ProseMirror > p > img {
   width: 100%;
 }
 
 .mapgis-3d-map-story-edit-save-entity {
-  width: 100%;
+  width: 48%;
   position: absolute !important;
   bottom: 0;
 }

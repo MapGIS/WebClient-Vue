@@ -5,7 +5,9 @@
       {{ title }}
     </div>
     <div class="mapgis-ui-input-border-container">
-      <mapgis-ui-input @change="$_change" :title="valueCopy" :id="id" :style="inputStyle" class="mapgis-ui-input-border"
+      <mapgis-ui-input v-if="type === 'text'" @change="$_change" :title="valueCopy" :id="id" class="mapgis-ui-input-border"
+                       v-model="valueCopy" :placeholder="placeholder"/>
+      <mapgis-ui-input-number v-if="type === 'number'" @change="$_change" :title="String(valueCopy)" :id="id" class="mapgis-ui-input-border"
                        v-model="valueCopy" :placeholder="placeholder"/>
       <!--      <mapgis-ui-textarea contenteditable="true" :id="id" :style="inputStyle" class="mapgis-ui-input-textarea" v-model="valueCopy" :placeholder="placeholder"/>-->
     </div>
@@ -23,6 +25,10 @@ export default {
     title: {
       type: String,
       default: "title"
+    },
+    type: {
+      type: String,
+      default: "text"
     },
     id: {
       type: String
@@ -93,6 +99,9 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-input-border {
+  width: 100%;
+}
 .mapgis-ui-input-border-title {
   font-weight: bolder;
   margin-bottom: 2px;

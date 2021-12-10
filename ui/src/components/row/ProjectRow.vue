@@ -35,12 +35,12 @@
             <!--            <mapgis-ui-svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>-->
             <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>-->
             <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>-->
-            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"
-                                @click="$_showProject(index, false)"
-                                v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>
-            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"
-                                @click="$_showProject(index, true)"
-                                v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>
+<!--            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"-->
+<!--                                @click="$_showProject(index, false)"-->
+<!--                                v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>-->
+<!--            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"-->
+<!--                                @click="$_showProject(index, true)"-->
+<!--                                v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>-->
             <mapgis-ui-base64-icon class="mapgis-mapstory-tool-bar-more" width="22px" @click="$_showMoreTool(index)"
                                    type="more"/>
           </mapgis-ui-col>

@@ -207,6 +207,10 @@ export default {
     },
     //获取要素模板
     $_getFeature(feature) {
+      //是否填充文字
+      feature.enableFillText = false;
+      //填充文字参数
+      feature.fillTextOptions = {};
       //默认不启用弹框
       feature.enablePupup = false;
       //弹框参数
@@ -219,6 +223,19 @@ export default {
         keyValue: {},//类型为表格时的数据
       };
       return feature;
+    },
+    $_textToCanvas(text) {
+      let canvas = document.createElement('canvas');
+      canvas.height = 200;
+      let context = canvas.getContext('2d');
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.fillStyle = "#f00";
+      context.fillRect(0, 0, 200, 200);
+      context.fillStyle = "#fff";
+      context.font = 30 + "px Arial";
+      context.textBaseline = 'middle';
+      context.fillText(text, 0, 100);
+      return canvas.toDataURL();
     },
     $_drawCreate(Cartesian3Points, degreeArr, viewerDraw, radians) {
       let center, entity;
@@ -255,6 +272,15 @@ export default {
             featureUUID: this.currentFeature.uuid,
             projectUUID: this.currentFeature.projectUUID,
           });
+          // this.viewer.entities.add({
+          //   id: this.currentFeature.uuid + "_text",
+          //   rectangle: {
+          //     coordinates: radians,
+          //     material: this.$_textToCanvas(this.currentFeature.uuid + "_text"),
+          //   },
+          //   featureUUID: this.currentFeature.uuid,
+          //   projectUUID: this.currentFeature.projectUUID,
+          // });
           mapStoryManager.options[this.currentFeature.uuid] = entity;
           break;
         case "polygon":
@@ -346,13 +372,19 @@ export default {
       });
     },
     $_editProject(index) {
-      if (this.dataSource instanceof Array) {
-        this.$refs.projectPanel.showProjectPanel = false;
-        if (!this.enableClose) {
-          window.showPanels.showProjectEdit = true;
-          window.showPanels.currentPage = "projectEdit";
+      let map = this.dataSourceCopy[index].map;
+      let addMap = true, mapIndex;
+      for (let i = 0; i < this.projectMaps.length; i++) {
+        if (map.vueIndex === this.projectMaps[i].vueIndex) {
+          addMap = false;
+          mapIndex = i;
+          break;
         }
-        this.$refs.projectPanel.currentProject = this.projectSet[this.dataSource[index].uuid];
+      }
+      if (addMap) {
+        this.projectMaps.push(map);
+      } else {
+        this.$set(this.projectMaps, index, map);
       }
     },
     $_closeHoverPanel() {
@@ -588,14 +620,34 @@ export default {
       entity.label.text = currentEntity.title;
     },
     $_changeEntity(type, uuid, value) {
-      console.log("type, uuid, value", type, uuid, value)
-      let entity = this.viewer.entities.getById(uuid);
+      let graphicsLayer = window.graphicsLayer;
+      let entity = graphicsLayer.getPlottingPrimtiveByID(uuid);
+      let position;
+      console.log("----entity", entity)
       switch (type) {
         case "fontColor":
-          entity.label.fillColor = Cesium.Color.fromCssColorString(value);
+          entity.fillColor = Cesium.Color.fromCssColorString(value);
           break;
         case "fontOpacity":
-          entity.label.fillColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(value.color), value.opacity);
+          entity.fillColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(value.color), value.opacity);
+          break;
+        case "changeEntityTitle":
+          entity.text = value;
+          break;
+        case "changeEntityHeight":
+          position = this.$_cartesian3ToLongLat(entity.position);
+          position.alt = value;
+          entity.position = Cesium.Cartesian3.fromDegrees(position.lng, position.lat, position.alt);
+          break;
+        case "changeEntityLng":
+          position = this.$_cartesian3ToLongLat(entity.position);
+          position.lng = value;
+          entity.position = Cesium.Cartesian3.fromDegrees(position.lng, position.lat, position.alt);
+          break;
+        case "changeEntityLat":
+          position = this.$_cartesian3ToLongLat(entity.position);
+          position.lat = value;
+          entity.position = Cesium.Cartesian3.fromDegrees(position.lng, position.lat, position.alt);
           break;
         case "polylineOpacity":
         case "polylineColor":
@@ -617,7 +669,6 @@ export default {
           break;
         case "forcePopup":
           let hasPopup = this.$_hasPopup(uuid.uuid);
-          console.log("-------", hasPopup)
           let degree = {
             lng: uuid.center[0],
             lat: uuid.center[1],
@@ -628,6 +679,26 @@ export default {
         case "enablePopup":
           let feature = this.$_getFeatureByUUID(uuid.projectUUID, uuid.uuid);
           feature.enablePupup = value;
+          break;
+        case "deleteEntity":
+          graphicsLayer.removePlottingPrimiveByID(uuid);
+          let project;
+          for (let i = 0; i < this.dataSourceCopy.length; i++) {
+            if (this.dataSourceCopy[i].uuid === value.projectUUID) {
+              project = this.dataSourceCopy[i];
+              break;
+            }
+          }
+          let chapters = project.chapters;
+          for (let i = 0; i < chapters.length; i++) {
+            let features = chapters[i].features;
+            for (let j = 0; j < features.length; i++) {
+              if (features[j].uuid === uuid) {
+                features.splice(j, 1);
+                break;
+              }
+            }
+          }
           break;
       }
     },
@@ -652,6 +723,7 @@ export default {
       }
     },
     $_toggleChapterFeatures(chapterUUID, projectUUID, dataSource, show) {
+      let graphicsLayer = window.graphicsLayer;
       dataSource = dataSource || this.dataSourceCopy;
       for (let i = 0; i < dataSource.length; i++) {
         if (dataSource[i].uuid === projectUUID) {
@@ -660,7 +732,7 @@ export default {
             if (chapters[j].uuid === chapterUUID) {
               let features = chapters[j].features;
               for (let k = 0; k < features.length; k++) {
-                let entity = this.viewer.entities.getById(features[k].uuid);
+                let entity = graphicsLayer.getPlottingPrimtiveByID(features[k].uuid);
                 if (show === false || show === true) {
                   entity.show = show;
                 } else {
@@ -683,9 +755,33 @@ export default {
             let newFeatures = [];
             let features = chapters[chapters.length - 1].features;
             for (let j = 0; j < features.length; j++) {
+              console.log("----------features[j]", features[j])
+              //取得center
+              let center = [];
+              if (features[j].center instanceof Array) {
+                for (let k = 0; k < features[j].center.length; k++) {
+                  center.push(features[j].center[k]);
+                }
+              }
+              //取得layerStyle
+              let layerStyle = {};
+              Object.keys(features[j].layerStyle).forEach(function (key) {
+                layerStyle[key] = features[j].layerStyle[key];
+              });
+              //取得popupOptions
+              let popupOptions = {};
+              Object.keys(features[j].popupOptions).forEach(function (key) {
+                popupOptions[key] = features[j].popupOptions[key];
+              });
               newFeatures.push({
+                center: center,
+                drawType: features[j].drawType,
+                enablePupup: features[j].enablePupup,
+                layerStyle: layerStyle,
+                popupOptions: popupOptions,
+                title: features[j].title,
                 uuid: features[j].uuid,
-                show: features[j].show
+                show: features[j].show,
               });
             }
             chapter.features = newFeatures;
@@ -775,33 +871,41 @@ export default {
           this.$refs.projectPanel.currentProject.features.push(feature.feature);
           break;
         case "text":
-          this.$_addPoint(function (position) {
-            position.alt = 60000;
-            feature.feature.drawType = "text";
-            feature.feature.layerStyle.color = "#000000";
-            feature.feature.feature.geometry = {
-              type: "point",
-              coordinates: [position.lng, position.lat, position.alt]
+          window.graphicsLayer = new Cesium.GraphicsLayer(this.viewer);
+          this.viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
+          graphicsLayer.startDrawing({
+            id: feature.feature.uuid,
+            type: "label",
+            text: '无标题',
+            font: '50px Helvetica',
+            pixelSize: 20,
+            pixelOffsetScaleByDistance: false,
+            horizontalOrigin: Cesium.HorizontalOrigin.right,
+            fillColor: '#000',
+            isScaleByDistance: true, //是否远近缩放
+            getPrimitive: function (e) {
+              e.featureUUID = vm.currentFeature.uuid;
+              e.projectUUID = vm.currentFeature.projectUUID;
+              e.primitive.featureUUID = vm.currentFeature.uuid;
+              e.primitive.projectUUID = vm.currentFeature.projectUUID;
+              let position = vm.$_cartesian3ToLongLat(e.position);
+              feature.feature.drawType = "text";
+              feature.feature.center = [position.lng, position.lat, position.alt];
+              feature.feature.layerStyle.color = "#000000";
+              feature.feature.feature.geometry = {
+                type: "point",
+                coordinates: [position.lng, position.lat, position.alt]
+              }
+              feature.feature.feature.properties = {
+                "title": "无标题"
+              }
+              feature.feature = vm.$_getFeature(feature.feature);
+              vm.$_setFeature(feature.feature, {
+                title: "无标题"
+              });
+              mapStoryManager.options[feature.feature.uuid] = e;
+              vm.startDraw = false;
             }
-            feature.feature.feature.properties = {
-              "title": "无标题"
-            }
-            feature.feature = vm.$_getFeature(feature.feature);
-            vm.$_setFeature(feature.feature, {
-              title: "无标题"
-            });
-            entity = vm.viewer.entities.add({
-              id: feature.feature.uuid,
-              position: Cesium.Cartesian3.fromDegrees(position.lng, position.lat, position.alt),
-              label: {
-                text: "无标题",
-                fillColor: Cesium.Color.fromCssColorString(feature.feature.layerStyle.color)
-              },
-              featureUUID: vm.currentFeature.uuid,
-              projectUUID: vm.currentFeature.projectUUID,
-            });
-            mapStoryManager.options[feature.feature.uuid] = entity;
-            vm.startDraw = false;
           });
           break;
       }
@@ -942,14 +1046,16 @@ export default {
     },
     $_setPopup(position, type) {
       let pickedFeature = this.viewer.scene.pick(position);
+      if (!pickedFeature) {
+        return;
+      }
       let ray = this.viewer.scene.camera.getPickRay(position);
       let cartesian = this.viewer.scene.globe.pick(ray, this.viewer.scene);
       let degree = this.$_cartesian3ToLongLat(cartesian);
       if (pickedFeature && !this.startDraw) {
-        let hasPopup = this.$_hasPopup(pickedFeature.id.id);
-        let feature = this.$_getFeatureByUUID(pickedFeature.id.projectUUID, pickedFeature.id.featureUUID);
+        let hasPopup = this.$_hasPopup(pickedFeature.id);
+        let feature = this.$_getFeatureByUUID(pickedFeature.primitive.projectUUID, pickedFeature.primitive.featureUUID);
 
-        console.log("feature.enablePupup", feature)
         //如果不是点击显示popup则不执行代码
         if (feature.popupOptions.optionType !== type) {
           return;
