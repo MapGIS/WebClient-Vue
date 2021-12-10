@@ -53,6 +53,10 @@ export default {
       type: Boolean,
       default: false
     },
+    showPosition: {
+      type: Boolean,
+      default: true
+    },
     flyToOptions: {
       type: Object,
       default() {
@@ -84,7 +88,7 @@ export default {
       handler: function () {
         this.layerStyleCopy = Object.assign(this.layerStyleCopy, this.layerStyle);
         let source = window.vueCesium.DataFlowManager.findSource(this.vueKey, this.vueIndex);
-        if(!source || !source.source){
+        if (!source || !source.source) {
           return;
         }
         let points = source.source;
@@ -192,7 +196,7 @@ export default {
   destroyed() {
     let {vueKey, vueIndex} = this;
     let source = window.vueCesium.DataFlowManager.findSource(vueKey, vueIndex);
-    if(!source || !source.source){
+    if (!source || !source.source) {
       return;
     }
     let points = source.source;
@@ -385,6 +389,9 @@ export default {
               break;
             }
           }
+          for (let i = 0; i < vm.popups.length; i++) {
+            vm.popups[i].show = false;
+          }
           if (!hasPopup) {
             let popup = vm.$_cartesian3ToLongLat(pickedFeature.id.position.getValue());
             popup.height = 50;
@@ -405,6 +412,12 @@ export default {
               }
             };
             defaultOptions = Object.assign(defaultOptions, vm.popupOptions)
+            if (vm.showPosition) {
+              popup.keys.push("lng", "lat", "alt");
+              popup.properties.lng = popup.lng;
+              popup.properties.lat = popup.lat;
+              popup.properties.alt = popup.alt;
+            }
             popup.container = getPopupHtml(type, {properties: popup.properties}, defaultOptions);
             vm.popups.push(popup);
           } else {
