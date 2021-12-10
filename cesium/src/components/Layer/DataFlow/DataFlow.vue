@@ -413,10 +413,10 @@ export default {
             };
             defaultOptions = Object.assign(defaultOptions, vm.popupOptions)
             if (vm.showPosition) {
-              popup.keys.push("lng", "lat", "alt");
-              popup.properties.lng = popup.lng;
-              popup.properties.lat = popup.lat;
-              popup.properties.alt = popup.alt;
+              popup.keys.push("经度", "纬度", "高程");
+              popup.properties["经度"] = popup.lng;
+              popup.properties["纬度"] = popup.lat;
+              popup.properties["高程"] = popup.alt;
             }
             popup.container = getPopupHtml(type, {properties: popup.properties}, defaultOptions);
             vm.popups.push(popup);
