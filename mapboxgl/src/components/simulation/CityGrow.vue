@@ -4,7 +4,7 @@
       size="small"
       hoverable
       :style="{ width: `${width}px` }"
-      class="mapgis-city-glow"
+      class="mapgis-city-grow"
     >
       <mapgis-ui-popconfirm @confirm="confirmSetting" @cancel="cancelSetting">
         <template slot="title">
@@ -13,24 +13,24 @@
         </template>
         <mapgis-ui-iconfont
           type="mapgis-setting"
-          class="mapgis-city-glow-setting"
+          class="mapgis-city-grow-setting"
         />
       </mapgis-ui-popconfirm>
       <mapgis-ui-slider :style="{ width: width }"> </mapgis-ui-slider>
-      <span class="mapgis-city-glow-starttime">起始时间:{{ startTime }}</span>
-      <div class="mapgis-city-glow-toolbar">
+      <span class="mapgis-city-grow-starttime">起始时间:{{ startTime }}</span>
+      <div class="mapgis-city-grow-toolbar">
         <mapgis-ui-iconfont type="mapgis-chevrons-left" />
         <mapgis-ui-iconfont type="mapgis-chevron-left" />
         <!-- <mapgis-ui-button type="primary" shape="circle"> -->
         <mapgis-ui-iconfont
           type="mapgis-play-circle-fill"
-          class="mapgis-city-glow-toolbar-main"
+          class="mapgis-city-grow-toolbar-main"
         />
         <!-- </mapgis-ui-button> -->
         <mapgis-ui-iconfont type="mapgis-chevron-right" />
         <mapgis-ui-iconfont type="mapgis-chevrons-right" />
       </div>
-      <span class="mapgis-city-glow-endtime">结束时间:{{ endTime }}</span>
+      <span class="mapgis-city-grow-endtime">结束时间:{{ endTime }}</span>
     </mapgis-ui-card>
   </div>
 </template>
@@ -239,7 +239,7 @@ export default {
           .addTo(map);
       }
     },
-    startGlow() {
+    startGrow() {
       const { id, map, field, heightScale, stepTime, fps } = this;
       const vm = this;
       // const allTime = stepTime * 60;
@@ -315,23 +315,23 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-city-glow {
+.mapgis-city-grow {
   position: absolute;
   left: 10px;
   bottom: 10px;
   margin: 0px auto;
 }
-.mapgis-city-glow-toolbar {
+.mapgis-city-grow-toolbar {
   display: flex;
   width: 110px;
   margin: 0px auto;
 }
 
-.mapgis-city-glow-toolbar-main {
+.mapgis-city-grow-toolbar-main {
   color: #1890ff;
 }
 
-.mapgis-city-glow-toolbar > .anticon {
+.mapgis-city-grow-toolbar > .anticon {
   font-size: 22px;
 }
 
@@ -339,17 +339,17 @@ export default {
   padding: 6px 12px;
 }
 
-.mapgis-city-glow-starttime {
+.mapgis-city-grow-starttime {
   position: absolute;
   left: 10px;
 }
 
-.mapgis-city-glow-endtime {
+.mapgis-city-grow-endtime {
   position: absolute;
   right: 10px;
   bottom: 12px;
 }
-.mapgis-city-glow-setting {
+.mapgis-city-grow-setting {
   position: absolute;
   font-size: 18px;
   top: 4px;

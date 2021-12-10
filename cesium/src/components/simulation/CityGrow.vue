@@ -264,7 +264,6 @@ export default {
           ...options,
           getDocLayerIndexes: function (indexs) {
             let layerIndex = indexs[0];
-            debugger
             vm.layer = vm.viewer.scene.layers.getLayer(layerIndex);
             vm.$emit("CityGrow",vm.layer);
           }

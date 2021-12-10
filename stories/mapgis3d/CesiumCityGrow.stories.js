@@ -7,12 +7,10 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     handleLoad(e){
-
     },
     handleGlow(){
       this.$refs.citygrow.startGrow();
@@ -27,8 +25,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 城市生长 = Template.bind({});
-城市生长.args = {
+export const cityGrow = Template.bind({});
+cityGrow.args = {
   baseUrl:"http://192.168.88.204:6163/igs/rest/mrfs/docs/SZ2",
   heightField:'height',
   heightScale:3.0,
