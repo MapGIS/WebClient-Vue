@@ -1,5 +1,51 @@
-# 本地源使用方式
+# MapGIS 源使用方式
+## 快速使用
 
+``` sh
+# npm 
+npm config set prefix D:\develop\nodejs\global
+npm config set cache D:\develop\nodejs\cache
+# yarn 
+yarn config set prefix D:\develop\yarn\cache
+yarn config set global-folder D:\develop\yarn\global
+```
+
+## powershell
+``` sh
+set-ExecutionPolicy RemoteSigned
+```
+## yarn
+`` sh
+yarn config set registry http://192.168.82.89:4873/
+yarn global add node-gyp
+yarn global add node-sass@4.12.0
+``
+
+::: tip
+强烈建议走yarn的方式，不然很容易出现下面npm的错误情况
+:::
+## npm
+``` sh
+npm set registry http://192.168.82.89:4873/
+npm install -g nrm
+nrm add mapgis http://192.168.82.89:4873/
+nrm use mapgis
+npm install -g node-gyp
+npm install -g node-sass@4.12.0
+```
+|列表|使用|
+|:---|:---|
+|![mapgis](./yarn/mapgis.png)|![mapgis](./yarn/use_mapgis.png)|
+
+::: warning
+建议不要走npm, npm很容易出现下面的情况
+![mapgis](./yarn/npm_error.png)
+:::
+
+
+## yarn 
+
+# 本地源使用方式
 ## 清空原来的环境设置
 1. 下面步骤2选1推荐1
    1. 或者重新安装nodejs yarn
