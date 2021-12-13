@@ -4,14 +4,13 @@
       <div class="mapgis-widget-video">
         <mapgis-ui-group-tab title="视频预览" :has-top-margin="false" />
         <div class="video-style">
-          <video
-            :src="paramsCopy.videoSource.videoUrl"
-            alt="预览"
-            id="video"
-            width="300"
-            height="200"
-            controls="controls"
-          ></video>
+          <mapgis-video
+            :width="300"
+            :height="200"
+            :videoUrl="paramsCopy.videoSource.videoUrl"
+            :protocol="paramsCopy.videoSource.protocol"
+            @onPlayerReady="getPlayer"
+          ></mapgis-video>
         </div>
         <mapgis-ui-group-tab title="视频源设置"></mapgis-ui-group-tab>
         <mapgis-ui-setting-form>
@@ -130,10 +129,12 @@ import {
   isDepthTestAgainstTerrainEnable,
   setDepthTestAgainstTerrainEnable
 } from "../../WebGlobe/util";
+import MapgisVideo from "./components/Video.vue";
 
 export default {
-  name: "mapgis-3d-video",
+  name: "mapgis-video-setting",
   inject: ["Cesium", "vueCesium", "viewer"],
+  components: { MapgisVideo },
   props: {
     ...VueOptions,
     id: {
@@ -154,7 +155,7 @@ export default {
           },
           cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
           orientation: {
-            heading: 90, // 方向角
+            heading: 0, // 方向角
             pitch: 0, // 俯仰角
             roll: 0 // 滚动角
           },
@@ -191,7 +192,7 @@ export default {
         },
         cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
         orientation: {
-          heading: 90, // 方向角
+          heading: 0, // 方向角
           pitch: 0, // 俯仰角
           roll: 0 // 滚动角
         },
@@ -236,6 +237,7 @@ export default {
         vm.$emit("load", vm);
       });
       this.mouseEvent();
+      // this.videoEvent();
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -256,6 +258,23 @@ export default {
         default:
           break;
       }
+    },
+    getPlayer(val) {
+      console.log(val);
+      const player = val;
+      player.on("loadstart", function() {
+        //开始加载
+        console.log("loadstart");
+      });
+      player.on("waiting", function() {
+        console.log("waiting");
+      });
+      player.on("pause", function() {
+        console.log("pause");
+      });
+      player.on("play", function() {
+        console.log("play");
+      });
     },
     addVideo() {
       this.remove();
@@ -280,6 +299,27 @@ export default {
       }
 
       this._restoreSceneSetting();
+    },
+    /**
+     * video各事件
+     */
+    videoEvent() {
+      const video = document.getElementById("video-preview");
+      const vm = this;
+      video.addEventListener("play", function() {
+        if (vm.scenePro) {
+          vm.scenePro.isPaused = false;
+          vm.scenePro.videoCurrentTime = video.currentTime;
+        }
+      });
+      video.addEventListener("playing", function() {});
+      video.addEventListener("waiting", function() {});
+      video.addEventListener("pause", function() {
+        if (vm.scenePro) {
+          vm.scenePro.isPaused = true;
+        }
+      });
+      video.addEventListener("ended", function() {});
     },
     /**
      * 鼠标事件

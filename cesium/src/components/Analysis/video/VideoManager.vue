@@ -2,97 +2,145 @@
   <div>
     <slot>
       <div class="mapgis-widget-video-manager">
-        <div v-if="!edit">
-          <!-- 视频列表页面 -->
-          <div style="width:100%;padding:12px">
-            <mapgis-ui-select
-              v-model="currentVideoOverlayLayerId"
-              placeholder="选择图层"
-              style="width:100%;"
-              @change="changeLayer"
-            >
-              <mapgis-ui-select-option
-                v-for="{ id, name } in videoOverlayLayerList"
-                :key="id"
-                :value="id"
-                :title="name"
-              >
-                {{ name }}
-              </mapgis-ui-select-option>
-            </mapgis-ui-select>
-          </div>
-          <!-- 批量操作 -->
-          <div class="buttom-div">
-            <mapgis-ui-toolbar-command
-              icon="mapgis-shanchu"
-              title="删除"
-              @click="deleteVideos"
-            ></mapgis-ui-toolbar-command>
-            <mapgis-ui-toolbar-command
-              icon="mapgis-plus"
-              title="新建"
-              @click="newVideo"
-            ></mapgis-ui-toolbar-command>
-            <mapgis-ui-toolbar-command
-              icon="mapgis-shexiangji"
-              title="投放"
-              @click="putVideos"
-            ></mapgis-ui-toolbar-command>
-          </div>
+        <!-- 视频列表页面 -->
+        <div style="width:100%;padding:12px">
+          <video-layer-select
+            :selectOptions="videoOverlayLayerListCopy"
+            @selectedLayer="changeLayer"
+            @change-layer-name="changeLayerName"
+            @add-layer="addLayer"
+            @delete-layer="deleteLayer"
+          />
         </div>
-        <div v-if="videoList && videoList.length > 0">
-          <div v-if="!edit">
-            <div class="video-container">
-              <mapgis-ui-table
-                :key="reflush"
-                :rowKey="record => record.id"
-                :data-source="videoList"
-                :columns="columns"
-                :pagination="pagination"
-                :row-selection="rowSelection"
-                size="small"
+        <mapgis-ui-tabs
+          :animated="false"
+          :tabBarStyle="tabBarStyle"
+          :active-key="activeKey"
+          @change="tabChange"
+          size="small"
+        >
+          <mapgis-ui-tab-pane key="1" tab="投放列表" style="position: relative">
+            <mapgis-ui-list
+              :key="`list-${currentVideoOverlayLayer.id}`"
+              item-layout="horizontal"
+              size="small"
+              :data-source="videoList"
+              :pagination="pagination"
+              class="mapgis-list"
+              style="height:280px;overflow-y: auto;width:100%"
+            >
+              <mapgis-ui-empty
+                :image="emptyImage"
+                :image-style="imageStyle"
+                v-if="videoList.length === 0"
               >
-                <div slot="name" slot-scope="text, record">
-                  <video-item
-                    :name="text"
-                    @update-name="val => changeName(record.id, 'name', $event)"
-                    @edit-video="onGotoSetting(record)"
-                    @delete-video="onDeleteVideo(record.id)"
-                    @put-video="onPutVideo(record)"
-                  ></video-item>
+                <span slot="description" class="empty-style">
+                  请新建投放
+                </span>
+              </mapgis-ui-empty>
+              <mapgis-ui-list-item
+                style="padding: 4px 8px; cursor: pointer; display: inline-flex;width: 100%;align-items: center;"
+                :class="{ 'list-active': activeIndex === index }"
+                :key="item.id"
+                slot="renderItem"
+                slot-scope="item, index"
+                @click="clickListItem(item, index)"
+              >
+                <mapgis-ui-iconfont
+                  style="margin:0px 5px"
+                  type="mapgis-shexiangji"
+                >
+                </mapgis-ui-iconfont>
+                <operations-item
+                  style="width:100%"
+                  :key="item.id"
+                  :text="item.name"
+                  :operations="['setting', 'delete', 'put']"
+                  :showOperations="activeIndex === index"
+                  @setting="onGotoSetting(item, index)"
+                  @delete="onDeleteVideo(item.id)"
+                  @put="onPutVideo(item)"
+                ></operations-item>
+                <mapgis-ui-checkbox style="float:right" v-show="isBatch">
+                </mapgis-ui-checkbox>
+              </mapgis-ui-list-item>
+            </mapgis-ui-list>
+            <div style="bottom: 0;position: absolute;width: 100%;">
+              <mapgis-ui-pagination
+                v-show="!isBatch"
+                hideOnSinglePage
+                style="padding:6px 0;width:100%;display: flex;justify-content: flex-end;"
+                @change="pagination.onChange"
+                :pageSize="pagination.pageSize"
+                :total="videoList.length"
+                :size="pagination.size"
+              ></mapgis-ui-pagination>
+              <!-- 批量操作 -->
+              <div
+                style="display: flex;align-items: center;justify-content: flex-end;padding-top:6px;width:100%;border-top: 1px solid var(--border-color-split);"
+              >
+                <div v-show="isBatch" style="width:100%">
+                  <mapgis-ui-button @click="newVideo" class="control-button"
+                    >取消投放</mapgis-ui-button
+                  >
+                  <mapgis-ui-button @click="putVideos" class="control-button"
+                    >投放视频</mapgis-ui-button
+                  >
+                  <mapgis-ui-button @click="deleteVideos" class="control-button"
+                    >删除</mapgis-ui-button
+                  >
                 </div>
-              </mapgis-ui-table>
-            </div>
-          </div>
-          <div v-else>
-            <!-- video配置页面 -->
-            <div class="header" @click="onGotoHome">
-              <div>
-                <mapgis-ui-iconfont class="return" type="mapgis-left" />
+                <div v-show="!isBatch" style="width:100%">
+                  <mapgis-ui-button
+                    @click="newVideo"
+                    type="primary"
+                    style="width:100%"
+                  >
+                    新建投放视频
+                  </mapgis-ui-button>
+                </div>
               </div>
-              <div class="name">{{ currentEditVideo.name }}</div>
             </div>
+          </mapgis-ui-tab-pane>
+          <mapgis-ui-tab-pane
+            key="2"
+            tab="设置面板"
+            class="control-content"
+            id="parameter-formList"
+          >
             <video-setting
+              v-if="
+                currentEditVideo && Object.keys(currentEditVideo).length > 0
+              "
               :id="currentEditVideo.id"
               :isPubliced="currentEditVideo.isPubliced"
               :params="currentEditVideo.params"
             ></video-setting>
-          </div>
-        </div>
+          </mapgis-ui-tab-pane>
+          <mapgis-ui-checkbox
+            v-show="activeKey === '1'"
+            slot="tabBarExtraContent"
+            @change="changeBatch"
+          >
+            批量操作
+          </mapgis-ui-checkbox>
+        </mapgis-ui-tabs>
       </div>
     </slot>
   </div>
 </template>
 
 <script>
-import VueOptions from "../../Base/Vue/VueOptions";
-import VideoItem from "./VideoItem.vue";
+import emptyImage from "@mapgis/webclient-vue-ui/src/components/iconfont/image/empty.png";
+import VueOptions from "./components/OperationsItem.vue";
+import OperationsItem from "./components/OperationsItem.vue";
 import VideoSetting from "./VideoSetting.vue";
+import VideoLayerSelect from "./components/VideoLayerSelect.vue";
 import videoOverlayLayerList from "./videosData.js";
 export default {
   name: "mapgis-3d-video-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
-  components: { VideoItem, VideoSetting },
+  components: { OperationsItem, VideoSetting, VideoLayerSelect },
   props: {
     ...VueOptions,
     videoOverlayLayerList: {
@@ -146,6 +194,9 @@ export default {
       set: function(videoList) {
         this.currentVideoOverlayLayer.videoList = videoList;
       }
+    },
+    listPagination() {
+      return this.isBatch ? false : this.pagination;
     }
   },
   watch: {
@@ -156,6 +207,11 @@ export default {
           // 默认取第一个
           this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
           this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
+          this.layerSelectOptions = [];
+          for (let i = 0; i < this.videoOverlayLayerList.length; i++) {
+            const { id, name } = this.videoOverlayLayerList[i];
+            this.layerSelectOptions.push({ id, name });
+          }
         }
       },
       deep: true,
@@ -163,6 +219,7 @@ export default {
     },
     videoList: {
       handler() {
+        this.pagination.total = this.videoList.length;
         this.reflush = !this.reflush;
       },
       deep: true,
@@ -173,30 +230,32 @@ export default {
     return {
       reflush: true,
       videoOverlayLayerListCopy: [], //图层数组
-      currentVideoOverlayLayer: {}, //当前选中图层
+      layerSelectOptions: [], //图层选中框信息
       currentVideoOverlayLayerId: undefined, //当前选中图层的id
-      edit: false, //是否编辑
-      currentEditVideo: null, //当前编辑video对象
-      rowSelection: {
-        onChange: (selectedRowKeys, selectedRows) => {
-          this.rowSelection.selectedRowKeys = selectedRowKeys;
-          console.log(selectedRowKeys, selectedRows);
-        },
-        onSelect: (record, selected) => {
-          console.log(record, selected);
-        },
-        selectedRowKeys: []
+      currentVideoOverlayLayer: {}, //当前选中图层
+      tabBarStyle: {
+        margin: "0",
+        textAlign: "center",
+        borderBottom: "1px solid #F0F0F0"
       },
-      columns: [
-        {
-          title: "名称",
-          key: "name",
-          dataIndex: "name",
-          align: "left",
-          scopedSlots: { customRender: "name" }
-        }
-      ],
-      pagination: { total: 0, pageSize: 3 }
+      activeKey: "1",
+      isBatch: false, //是否批量操作
+      currentEditVideo: null, //当前编辑video对象
+      pagination: {
+        onChange: page => {
+          console.log(page);
+          this.pagination.current = page;
+        },
+        current: 1,
+        size: "small",
+        pageSize: 3
+      },
+      emptyImage: emptyImage,
+      imageStyle: {
+        height: "150px",
+        margin: "0 auto"
+      },
+      activeIndex: undefined
     };
   },
   created() {},
@@ -226,12 +285,53 @@ export default {
       this.$emit("unload", this);
     },
     /**
+     * 修改图层名
+     */
+    changeLayerName({ id, dataIndex, value }) {
+      const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
+      const target = videoOverlayLayerList.find(item => item.id === id);
+      if (target) {
+        target[dataIndex] = value;
+        this.videoOverlayLayerListCopy = videoOverlayLayerList;
+      }
+    },
+    /**
+     * 添加图层
+     */
+    addLayer(newLayer) {
+      this.videoOverlayLayerListCopy.push(newLayer);
+    },
+    /**
+     * 删除图层
+     */
+    deleteLayer(id) {
+      const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
+      this.videoOverlayLayerListCopy = videoOverlayLayerList.filter(
+        item => item.id !== id
+      );
+    },
+
+    /**
      * 更改layer
      */
     changeLayer(val) {
       this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
-        item => item.id === val
+        item => item.name === val
       );
+    },
+    tabChange(e) {
+      this.activeKey = e;
+      if (e === "2") {
+      }
+    },
+    changeBatch({ target }) {
+      this.isBatch = target.checked;
+    },
+
+    clickListItem(item, index) {
+      let vm = this;
+      this.activeIndex = index;
+      this.currentEditVideo = item;
     },
     /**
      * 从配置界面回到列表界面
@@ -260,21 +360,11 @@ export default {
     /**
      * 跳转到video配置界面
      */
-    onGotoSetting(video) {
+    onGotoSetting(video, index) {
       this.actionMenuVisible = false;
       this.currentEditVideo = video;
-      this.edit = true;
-    },
-    /**
-     * 修改video的name
-     */
-    changeName(id, dataIndex, value) {
-      const videoList = [...this.videoList];
-      const target = videoList.find(item => item.id === id);
-      if (target) {
-        target[dataIndex] = value;
-        this.videoList = videoList;
-      }
+      this.activeIndex = index;
+      this.activeKey = "2";
     },
     /**
      * 删除video
@@ -296,32 +386,47 @@ export default {
 
 <style lang="scss" scoped>
 .mapgis-widget-video-manager {
-  .buttom-div {
-    width: 100%;
-    padding: 3px 0;
-    margin-bottom: 12px;
-    text-align: center;
-    background: var(--panel-inner-color);
+  .control-content {
+    max-height: 394px;
+    /*overflow: hidden;*/
+    overflow-y: auto;
+    padding-top: 10px;
+    height: 394px;
   }
 
-  .video-container {
-  }
-
-  .header {
-    cursor: pointer;
-    display: flex;
-    align-content: center;
-    .return {
-      // color: @primary-color;
-      margin: 0 10px 0 0;
-    }
-    .name {
-      flex: 1;
+  .list-active {
+    background: #e0f0ff;
+    .operations-row-action {
+      display: block;
     }
   }
 }
 
-::v-deep .mapgis-ui-table-thead {
+.empty-style {
+  font-size: 14px;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+  color: #999999;
+}
+
+.control-button {
+  width: calc(33% - 2.5px);
+}
+
+.mapgis-ui-empty {
+  margin: 50px;
+}
+::v-deep .mapgis-ui-tabs-nav .mapgis-ui-tabs-tab {
+  margin: 0;
+}
+
+::v-deep .mapgis-ui-tabs-nav-scroll {
+  display: flex;
+  justify-content: flex-start;
+}
+
+::v-deep .mapgis-ui-list-pagination {
+  margin-top: 12px;
   display: none;
 }
 </style>
