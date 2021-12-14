@@ -7,6 +7,7 @@
         <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
                                @showProjected="$_showProject"
                                @marked="$_marker"
+                               @projectPreview="$_projectPreview"
                                :projects="dataSourceCopy"
                                :width="width"
         />
@@ -211,9 +212,12 @@ export default {
     $_showFeature(id, flag) {
       this.$emit("showFeature", id, flag);
     },
-    $_projectPreview() {
-      this.storyFeature = this.project.features;
-      this.$emit("projectPreview", this.project);
+    $_projectPreview(project) {
+      if(!project) {
+        this.storyFeature = this.project.features;
+      }
+      project = project || this.project;
+      this.$emit("projectPreview", project);
     },
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);

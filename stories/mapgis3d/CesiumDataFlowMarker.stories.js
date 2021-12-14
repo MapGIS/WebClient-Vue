@@ -46,7 +46,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 标签 = Template.bind({});
 标签.args = {
-  baseUrl: "ws://192.168.91.123:9382/dataflow/cars_xian/subscribe",
+  baseUrl: "ws://192.168.199.65:9382/dataflow/cars_xian/subscribe",
   layerStyle: {
     type: "marker",
     field: "imei",

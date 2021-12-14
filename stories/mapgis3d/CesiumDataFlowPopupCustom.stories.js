@@ -51,7 +51,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 点 = Template.bind({});
 点.args = {
-  baseUrl: "ws://192.168.91.123:9382/dataflow/cars_xian/subscribe",
+  baseUrl: "ws://192.168.199.65:9382/dataflow/cars_xian/subscribe",
   enablePopup: true,
   layerStyle: {
     type: "point",

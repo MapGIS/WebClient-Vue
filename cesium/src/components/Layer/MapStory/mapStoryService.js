@@ -511,12 +511,40 @@ export default {
         entity.billboard.image = img;
       });
     },
+    $_getFeatureFromFeatures(uuid, features) {
+      let feature;
+      for (let i = 0; i < features.length; i++) {
+        if (uuid === features[i].uuid) {
+          feature = features[i];
+          break;
+        }
+      }
+      return feature;
+    },
+    //取得GraphicsLayer对象，没有则新建
+    $_getGraphicsLayer() {
+      let graphicsLayerManager = window.vueCesium.GraphicsLayerManager.findSource(this.vueKey, this.vueIndex);
+      let graphicsLayer;
+      if (!graphicsLayerManager) {
+        graphicsLayer = new Cesium.GraphicsLayer(this.viewer, {});
+        this.viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
+        window.vueCesium.GraphicsLayerManager.addSource(this.vueKey, this.vueIndex, graphicsLayer);
+      }else {
+        graphicsLayer = graphicsLayerManager.source;
+      }
+      return graphicsLayer;
+    },
     $_addEntity(feature, layerStyle, id) {
       let vm = this;
+      let graphicsLayer = this.$_getGraphicsLayer();
       switch (feature.type) {
         case "point":
-          const {geometry} = feature;
+          const {geometry} = feature.feature;
           if (!geometry) {
+            return;
+          }
+          let entity = this.viewer.entities.getById(feature.uuid);
+          if (entity) {
             return;
           }
           const {x, y, z} = feature.geometry;
@@ -538,6 +566,42 @@ export default {
               });
             }
           }
+          break;
+        case "text":
+          graphicsLayer.startDrawing({
+            id: feature.feature.uuid,
+            type: "label",
+            text: '无标题',
+            font: '50px Helvetica',
+            pixelSize: 20,
+            pixelOffsetScaleByDistance: false,
+            horizontalOrigin: Cesium.HorizontalOrigin.right,
+            fillColor: '#000',
+            isScaleByDistance: true, //是否远近缩放
+            getPrimitive: function (e) {
+              e.featureUUID = vm.currentFeature.uuid;
+              e.projectUUID = vm.currentFeature.projectUUID;
+              e.primitive.featureUUID = vm.currentFeature.uuid;
+              e.primitive.projectUUID = vm.currentFeature.projectUUID;
+              let position = vm.$_cartesian3ToLongLat(e.position);
+              feature.feature.drawType = "text";
+              feature.feature.center = [position.lng, position.lat, position.alt];
+              feature.feature.layerStyle.color = "#000000";
+              feature.feature.feature.geometry = {
+                type: "point",
+                coordinates: [position.lng, position.lat, position.alt]
+              }
+              feature.feature.feature.properties = {
+                "title": "无标题"
+              }
+              feature.feature = vm.$_getFeature(feature.feature);
+              vm.$_setFeature(feature.feature, {
+                title: "无标题"
+              });
+              mapStoryManager.options[feature.feature.uuid] = e;
+              vm.startDraw = false;
+            }
+          });
           break;
       }
     },
@@ -620,10 +684,9 @@ export default {
       entity.label.text = currentEntity.title;
     },
     $_changeEntity(type, uuid, value) {
-      let graphicsLayer = window.graphicsLayer;
+      let graphicsLayer = window.vueCesium.GraphicsLayerManager.findSource(this.vueKey, this.vueIndex).source;
       let entity = graphicsLayer.getPlottingPrimtiveByID(uuid);
       let position;
-      console.log("----entity", entity)
       switch (type) {
         case "fontColor":
           entity.fillColor = Cesium.Color.fromCssColorString(value);
@@ -723,7 +786,11 @@ export default {
       }
     },
     $_toggleChapterFeatures(chapterUUID, projectUUID, dataSource, show) {
-      let graphicsLayer = window.graphicsLayer;
+      let graphicsLayerManager = window.vueCesium.GraphicsLayerManager.findSource(this.vueKey, this.vueIndex);
+      let graphicsLayer;
+      if (graphicsLayerManager) {
+        graphicsLayer = graphicsLayerManager.source;
+      }
       dataSource = dataSource || this.dataSourceCopy;
       for (let i = 0; i < dataSource.length; i++) {
         if (dataSource[i].uuid === projectUUID) {
@@ -827,6 +894,7 @@ export default {
     $_addFeature(feature) {
       let vm = this, entity;
       let mapStoryManager = window.vueCesium.MapStoryManager.findSource(this.vueKey, this.vueIndex);
+      let graphicsLayer = window.vueCesium.GraphicsLayerManager.findSource(this.vueKey, this.vueIndex).source;
       this.currentFeatureType = feature.type;
       this.currentFeature = feature.feature;
       //开始绘制
@@ -871,8 +939,6 @@ export default {
           this.$refs.projectPanel.currentProject.features.push(feature.feature);
           break;
         case "text":
-          window.graphicsLayer = new Cesium.GraphicsLayer(this.viewer);
-          this.viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
           graphicsLayer.startDrawing({
             id: feature.feature.uuid,
             type: "label",
@@ -1090,71 +1156,14 @@ export default {
         let entities = {};
         window.vueCesium.MapStoryManager.addSource(this.vueKey, this.vueIndex, handler, entities);
       }
+      let graphicsLayerManager = window.vueCesium.GraphicsLayerManager.findSource(this.vueKey, this.vueIndex);
+      if (!graphicsLayerManager) {
+        let graphicsLayer = new Cesium.GraphicsLayer(this.viewer);
+        this.viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
+        window.vueCesium.GraphicsLayerManager.addSource(this.vueKey, this.vueIndex, graphicsLayer);
+      }
       this.$_setCesiumClick();
       this.$_setCesiumMove();
-      // if (this.dataSource instanceof Array) {
-      //     let popups = [];
-      //     for (let i = 0; i < this.dataSource.length; i++) {
-      //         let result = this.dataSource[i].chapters;
-      //         vm.projectSet[vm.dataSource[i].uuid] = result;
-      //         const {features, show, map} = result;
-      //         if (show === false) {
-      //             return;
-      //         }
-      //         if (map) {
-      //             vm.projectMaps.push(map);
-      //         }
-      //         for (let i = 0; i < features.length; i++) {
-      //             const {map} = features[i];
-      //             const {geometry} = features[i].baseUrl;
-      //             const {x, y, z} = geometry;
-      //             if (map) {
-      //                 map.id = features[i].id;
-      //                 vm.optArr.push(map);
-      //             }
-      //             let lnglatPosition = vm.$_cartesian3ToLongLat(features[i].baseUrl.geometry);
-      //             popups.push({
-      //                 lng: lnglatPosition.lng,
-      //                 lat: lnglatPosition.lat,
-      //                 alt: 20,
-      //                 title: features[i].title,
-      //                 images: features[i].images,
-      //                 feature: features[i],
-      //                 id: features[i].id,
-      //                 show: features[i].show,
-      //                 vueIndex: parseInt(String(Math.random() * 10000))
-      //             });
-      //             if (x && y && z) {
-      //                 let img = document.createElement("img");
-      //                 let imgUrl = features[i].layerStyle.billboard.image;
-      //                 if (typeof imgUrl === 'number') {
-      //                     imgUrl = Base64IconsKeyValue[imgUrl].value;
-      //                 }
-      //                 img.src = imgUrl;
-      //                 img.onload = function () {
-      //                     vm.viewer.entities.add({
-      //                         id: features[i].id,
-      //                         position: new Cesium.Cartesian3(x, y, z),
-      //                         billboard: {
-      //                             image: img,
-      //                             disableDepthTestDistance: Number.POSITIVE_INFINITY
-      //                         }
-      //                     });
-      //                 }
-      //             }
-      //         }
-      //         vm.$_setCesiumClick();
-      //         vm.$nextTick(function () {
-      //             let icons = document.getElementsByClassName("mapgis-3d-map-story-small-popup-tolarge");
-      //             for (let i = 0; i < icons.length; i++) {
-      //                 icons[i].onclick = function () {
-      //                     vm.$emit("projectPreview", [features[i]], false);
-      //                 }
-      //             }
-      //         });
-      //     }
-      //     vm.popups = popups;
-      // }
     },
     $_addPoint(callBack) {
       let vm = this;

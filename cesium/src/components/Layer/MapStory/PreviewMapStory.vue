@@ -81,7 +81,7 @@ export default {
       this.$refs.storyPanel.$_resetFeature();
       this.$_play(this.dataSource.chapters, [this.dataSource], function (index) {
         if (vm.$refs.storyPanel) {
-          if(index > 0){
+          if (index > 0) {
             vm.$refs.storyPanel.$_nextFeature();
           }
         }
@@ -89,6 +89,21 @@ export default {
     },
     $_closePanel() {
       this.showPanel = false;
+    },
+    projectPreview() {
+      this.$nextTick(function () {
+        //添加缺失的entity
+        let chapters = this.dataSource.chapters;
+        let features = this.dataSource.features;
+        for (let i = 0; i < chapters.length; i++) {
+          let cFeatures = chapters[i].features;
+          for (let j = 0; j < cFeatures.length; j++) {
+            let feature = this.$_getFeatureFromFeatures(cFeatures[i].uuid,features);
+            this.$_addEntity(feature);
+          }
+        }
+        this.$_preview();
+      });
     },
     $_init() {
       let vm = this;
