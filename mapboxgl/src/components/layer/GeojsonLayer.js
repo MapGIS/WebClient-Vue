@@ -562,7 +562,7 @@ export default {
             ...point.toMapboxStyle({ highlight: true })
           };
         }
-        if (!map.getLayer(highlight.id)) map.addLayer(highlight);
+        if (!map.getLayer(id) && highlight) map.addLayer(highlight);
       }
     }
   }
