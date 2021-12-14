@@ -127,7 +127,7 @@
     "layoutBackground": "#F2F4F7",
     "siderBackground": "#F2F4F7",
     "drawerBackground": "#fff",
-    "popupBackground": "#fff",
+    "popupBackground": "#fff0",
     "popoverBackground": "#ffffff",
     "modalBackground": "#fff",
     "ribbonBackground": "#F2F4F7",
