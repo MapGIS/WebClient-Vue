@@ -2,20 +2,47 @@
   <div>
     <slot>
       <div class="mapgis-widget-video">
-        <mapgis-ui-group-tab title="视频预览" :has-top-margin="false" />
-        <div class="video-style">
+        <mapgis-ui-group-tab title="基本信息"></mapgis-ui-group-tab>
+        <mapgis-ui-setting-form
+          :label-width="50"
+          :wrapper-width="224"
+          style="padding: 0 10px"
+          class="mapgis-ui-setting-form"
+        >
+          <mapgis-ui-form-item label="名称">
+            <mapgis-ui-input
+              v-model="settingsCopy.name"
+              style="width: 100%"
+              allowClear
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="描述">
+            <mapgis-ui-textarea
+              v-model="settingsCopy.description"
+              style="width: 100%"
+              autoSize
+              allowClear
+            />
+          </mapgis-ui-form-item>
+        </mapgis-ui-setting-form>
+        <mapgis-ui-group-tab title="视频源" :has-top-margin="false" />
+        <div class="video-style" style="margin-bottom:12px">
           <mapgis-video
             :width="300"
             :height="200"
-            :videoUrl="paramsCopy.videoSource.videoUrl"
-            :protocol="paramsCopy.videoSource.protocol"
+            :videoUrl="params.videoSource.videoUrl"
+            :protocol="params.videoSource.protocol"
             @onPlayerReady="getPlayer"
           ></mapgis-video>
         </div>
-        <mapgis-ui-group-tab title="视频源设置"></mapgis-ui-group-tab>
-        <mapgis-ui-setting-form>
+        <mapgis-ui-setting-form
+          :label-width="50"
+          :wrapper-width="224"
+          style="padding: 0 10px"
+          class="mapgis-ui-setting-form"
+        >
           <mapgis-ui-form-item label="协议类型">
-            <mapgis-ui-select v-model="paramsCopy.videoSource.protocol">
+            <mapgis-ui-select v-model="params.videoSource.protocol">
               <mapgis-ui-select-option v-for="item in protocols" :key="item">
                 {{ item }}
               </mapgis-ui-select-option>
@@ -23,97 +50,163 @@
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="服务地址">
             <mapgis-ui-textarea
-              v-model="paramsCopy.videoSource.videoUrl"
+              v-model="params.videoSource.videoUrl"
               style="width: 100%"
               autoSize
               allowClear
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab title="投放参数设置"></mapgis-ui-group-tab>
-        <mapgis-ui-switch-panel
-          :labelCol="{ span: 8 }"
-          :wrapperCol="{ span: 16 }"
-          layout="horizontal"
-          label="摄像头位置"
-          :height="'140px'"
+        <mapgis-ui-group-tab title="摄像头参数"></mapgis-ui-group-tab>
+        <mapgis-ui-setting-form
+          :label-width="50"
+          :wrapper-width="224"
+          style="padding: 0 10px"
+          class="mapgis-ui-setting-form"
         >
-          <mapgis-ui-setting-form>
-            <mapgis-ui-form-item label="X坐标">
-              <mapgis-ui-input-number
-                :min="0"
-                v-model="paramsCopy.cameraPosition.x"
-                style="width: 100%"
-              />
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="Y坐标">
-              <mapgis-ui-input-number
-                :min="0"
-                v-model="paramsCopy.cameraPosition.y"
-                style="width: 100%"
-              />
-            </mapgis-ui-form-item>
-            <mapgis-ui-form-item label="Z坐标">
-              <mapgis-ui-input-number
-                :min="0"
-                v-model="paramsCopy.cameraPosition.z"
-                style="width: 100%"
-              />
-            </mapgis-ui-form-item>
-          </mapgis-ui-setting-form>
-        </mapgis-ui-switch-panel>
-        <mapgis-ui-input-number-panel
-          size="small"
-          class="mapgis-ui-number-style"
-          label="方位角"
-          :range="[-180, 180]"
-          v-model="paramsCopy.orientation.heading"
-          @change="val => onChangeSetting(val, 'heading')"
-        />
-        <mapgis-ui-input-number-panel
-          size="small"
-          class="mapgis-ui-number-style"
-          label="俯仰角"
-          :range="[-180, 180]"
-          v-model="paramsCopy.orientation.pitch"
-          @change="val => onChangeSetting(val, 'pitch')"
-        />
-        <mapgis-ui-input-number-panel
-          size="small"
-          class="mapgis-ui-number-style"
-          label="翻滚角"
-          :range="[-180, 180]"
-          v-model="paramsCopy.orientation.roll"
-          @change="val => onChangeSetting(val, 'roll')"
-        />
-        <mapgis-ui-input-number-panel
-          size="small"
-          class="mapgis-ui-number-style"
-          label="水平视角"
-          :range="[-180, 180]"
-          v-model="paramsCopy.hFOV"
-          @change="val => onChangeSetting(val, 'horizontAngle')"
-        />
-        <mapgis-ui-input-number-panel
-          size="small"
-          class="mapgis-ui-number-style"
-          label="垂直视角"
-          :range="[-180, 180]"
-          v-model="paramsCopy.vFOV"
-          @change="val => onChangeSetting(val, 'verticalAngle')"
-        />
-        <mapgis-ui-setting-form class="form">
-          <mapgis-ui-form-item label="显示锥体线">
-            <mapgis-ui-switch
-              size="small"
-              v-model="paramsCopy.hintLineVisible"
-              @change="val => onChangeSetting(val, 'showLine')"
+          <mapgis-ui-form-item>
+            <div slot="label">
+              <span>位置</span>
+              <mapgis-ui-iconfont
+                class="iconfont-btn"
+                type="mapgis-target-lock"
+                @click="addVideo"
+              ></mapgis-ui-iconfont>
+            </div>
+            <mapgis-ui-input
+              addon-before="X"
+              type="number"
+              :min="0"
+              v-model="params.cameraPosition.x"
+            />
+            <mapgis-ui-input
+              addon-before="Y"
+              type="number"
+              :min="0"
+              v-model="params.cameraPosition.y"
+            />
+            <mapgis-ui-input
+              addon-before="Z"
+              type="number"
+              :min="0"
+              v-model="params.cameraPosition.z"
             />
           </mapgis-ui-form-item>
+          <mapgis-ui-form-item>
+            <div slot="label">
+              <span>朝向</span>
+              <mapgis-ui-iconfont
+                class="iconfont-btn"
+                type="mapgis-target-lock"
+                @click="addVideo"
+              ></mapgis-ui-iconfont>
+            </div>
+            <mapgis-ui-input
+              addon-before="方位角"
+              type="number"
+              :min="0"
+              :max="360"
+              v-model="params.orientation.heading"
+              @change="val => onChangeSetting(val, 'heading')"
+            />
+            <mapgis-ui-slider
+              v-model="params.orientation.heading"
+              :min="0"
+              :max="360"
+              size="small"
+              :tooltipVisible="false"
+              @change="val => onChangeSetting(val, 'heading')"
+            />
+            <mapgis-ui-input
+              addon-before="俯仰角"
+              type="number"
+              :min="-90"
+              :max="90"
+              v-model="params.orientation.pitch"
+              @change="val => onChangeSetting(val, 'pitch')"
+            />
+            <mapgis-ui-slider
+              v-model="params.orientation.pitch"
+              :min="-90"
+              :max="90"
+              size="small"
+              :tooltipVisible="false"
+              @change="val => onChangeSetting(val, 'pitch')"
+            />
+            <mapgis-ui-input
+              addon-before="翻滚角"
+              type="number"
+              :min="0"
+              :max="360"
+              v-model="params.orientation.roll"
+              @change="val => onChangeSetting(val, 'roll')"
+            />
+            <mapgis-ui-slider
+              v-model="params.orientation.roll"
+              :min="0"
+              :max="360"
+              size="small"
+              :tooltipVisible="false"
+              @change="val => onChangeSetting(val, 'roll')"
+            />
+          </mapgis-ui-form-item>
+          <mapgis-ui-form-item label="视角">
+            <div :style="{ width: '50%', padding: '0 2px 0 0', float: 'left' }">
+              <mapgis-ui-input
+                addon-before="水平"
+                type="number"
+                :min="0"
+                :max="180"
+                v-model="params.hFOV"
+                @change="val => onChangeSetting(val, 'horizontAngle')"
+              />
+              <mapgis-ui-slider
+                v-model="params.hFOV"
+                :min="0"
+                :max="180"
+                size="small"
+                :tooltipVisible="false"
+                @change="val => onChangeSetting(val, 'horizontAngle')"
+              />
+            </div>
+            <div
+              :style="{ width: '50%', padding: '0 0 0 2px', float: 'right' }"
+            >
+              <mapgis-ui-input
+                addon-before="垂直"
+                type="number"
+                :min="0"
+                :max="180"
+                v-model="params.vFOV"
+                @change="val => onChangeSetting(val, 'verticalAngle')"
+              />
+              <mapgis-ui-slider
+                v-model="params.vFOV"
+                :min="0"
+                :max="180"
+                size="small"
+                :tooltipVisible="false"
+                @change="val => onChangeSetting(val, 'verticalAngle')"
+              />
+            </div>
+          </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
+        <mapgis-ui-row style="padding:0 10px">
+          <mapgis-ui-col :span="8">
+            <p style="font-size:12px">显示锥体线</p>
+          </mapgis-ui-col>
+          <mapgis-ui-col :span="16">
+            <mapgis-ui-switch
+              style="float:right"
+              size="small"
+              v-model="params.hintLineVisible"
+              @change="val => onChangeSetting(val, 'showLine')"
+            />
+          </mapgis-ui-col>
+        </mapgis-ui-row>
         <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="addVideo"
-            >投放</mapgis-ui-button
+          <mapgis-ui-button type="primary" @click="okClick"
+            >确定</mapgis-ui-button
           >
           <mapgis-ui-button @click="remove">取消</mapgis-ui-button>
         </mapgis-ui-setting-footer>
@@ -137,69 +230,59 @@ export default {
   components: { MapgisVideo },
   props: {
     ...VueOptions,
-    id: {
-      type: String,
-      default: ""
-    },
-    isPubliced: {
-      Type: Boolean,
-      default: false
-    },
-    params: {
+    settings: {
       type: Object,
       default: () => {
         return {
-          videoSource: {
-            protocol: "mp4", // 视频传输协议
-            videoUrl: "http://localhost:8895/video/DJI_0008.mp4" // 视频服务地址
-          },
-          cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
-          orientation: {
-            heading: 0, // 方向角
-            pitch: 0, // 俯仰角
-            roll: 0 // 滚动角
-          },
-          hFOV: 0, // 水平视场角
-          vFOV: 0, // 垂直视场角
-          hintLineVisible: true // 是否显示投放区域线
+          id: "543-123-987-765", // 视频id
+          name: "layer2Video2", // 视频名称
+          description: "", //描述
+          isPut: false, // 是否开启视频投放
+          params: {
+            videoSource: {
+              protocol: "mp4", // 视频传输协议
+              videoUrl: "http://localhost:8895/video/DJI_0008.mp4" // 视频服务地址
+            },
+            cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
+            orientation: {
+              heading: 0, // 方向角
+              pitch: 0, // 俯仰角
+              roll: 0 // 滚动角
+            },
+            hFOV: 15, // 水平视场角
+            vFOV: 15, // 垂直视场角
+            hintLineVisible: true // 是否显示投放区域线
+          }
         };
       }
     }
   },
   watch: {
-    isPubliced: {
+    settings: {
       handler() {
-        this.isPublicedCopy = this.isPubliced;
-      },
-      immediate: true
-    },
-    params: {
-      handler() {
-        this.paramsCopy = this.params;
+        this.settingsCopy = this.settings;
         this.changeProtocol();
       },
       deep: true,
       immediate: true
     }
   },
+  computed: {
+    id() {
+      return this.settingsCopy.id;
+    },
+    params: {
+      get: function() {
+        return this.settingsCopy.params;
+      },
+      set: function(params) {
+        this.settingsCopy.params = params;
+      }
+    }
+  },
   data() {
     return {
-      isPublicedCopy: false,
-      paramsCopy: {
-        videoSource: {
-          protocol: "mp4", // 视频传输协议
-          videoUrl: "http://localhost:8895/video/DJI_0008.mp4" // 视频服务地址
-        },
-        cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
-        orientation: {
-          heading: 0, // 方向角
-          pitch: 0, // 俯仰角
-          roll: 0 // 滚动角
-        },
-        hFOV: 0, // 水平视场角
-        vFOV: 0, // 垂直视场角
-        hintLineVisible: true // 是否显示投放区域线
-      },
+      settingsCopy: {},
       proType: undefined, //投影类型
       protocols: ["m3u8", "mp4"], // video协议集合
       sceneProAction: false, //是否进入鼠标事件函数
@@ -237,7 +320,6 @@ export default {
         vm.$emit("load", vm);
       });
       this.mouseEvent();
-      // this.videoEvent();
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
@@ -248,7 +330,7 @@ export default {
       this.$emit("unload", this);
     },
     changeProtocol() {
-      switch (this.paramsCopy.videoSource.protocol) {
+      switch (this.params.videoSource.protocol) {
         case "m3u8":
           this.proType = this.Cesium.SceneProjectorType.HLS;
           break;
@@ -283,7 +365,6 @@ export default {
       this.scenePro = new this.Cesium.SceneProjector(this.proType);
       this.scenePro.id = this.id;
       this.manager.add(this.scenePro);
-      this.isPublicedCopy = true;
       this.sceneProAction = true;
     },
     onChangeSetting(val, tag) {
@@ -291,35 +372,8 @@ export default {
       this.scenePro[tag] = val;
     },
     remove() {
-      const scenePro = this.viewer.scene.visualAnalysisManager._visualAnalysisList.find(
-        item => item.id === this.id
-      );
-      if (scenePro) {
-        this.viewer.scene.visualAnalysisManager.remove(scenePro);
-      }
-
+      this.viewer.scene.visualAnalysisManager.removeByID(this.id);
       this._restoreSceneSetting();
-    },
-    /**
-     * video各事件
-     */
-    videoEvent() {
-      const video = document.getElementById("video-preview");
-      const vm = this;
-      video.addEventListener("play", function() {
-        if (vm.scenePro) {
-          vm.scenePro.isPaused = false;
-          vm.scenePro.videoCurrentTime = video.currentTime;
-        }
-      });
-      video.addEventListener("playing", function() {});
-      video.addEventListener("waiting", function() {});
-      video.addEventListener("pause", function() {
-        if (vm.scenePro) {
-          vm.scenePro.isPaused = true;
-        }
-      });
-      video.addEventListener("ended", function() {});
     },
     /**
      * 鼠标事件
@@ -342,7 +396,7 @@ export default {
               case Cesium.SceneProjectorType.VIDEO:
               case Cesium.SceneProjectorType.HLS:
                 //仅支持 m3u8形式的链接, 因为需要逐帧将图片渲染到canvas上去
-                vm.scenePro.textureSource = vm.paramsCopy.videoSource.videoUrl;
+                vm.scenePro.textureSource = vm.params.videoSource.videoUrl;
                 break;
               case Cesium.SceneProjectorType.COLOR:
                 vm.scenePro.textureSource = new Cesium.Color(1, 0, 0, 1);
@@ -355,6 +409,11 @@ export default {
             vm.sceneProAction = false;
           }
           vm.sceneProing = true;
+          const coord = vm._cartesianToDegrees(cartesian);
+          const { params } = vm;
+          params.cameraPosition.x = coord.lon;
+          params.cameraPosition.y = coord.lat;
+          params.cameraPosition.z = coord.height;
         }
         scene.requestRender();
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -377,11 +436,40 @@ export default {
           // console.log(movement.position);
           if (cartesian) {
             vm.scenePro.targetPosition = cartesian;
+            const coord = vm._cartesianToDegrees(cartesian);
+            const { params } = vm;
+            params.orientation.heading = vm.scenePro.heading;
+            params.orientation.pitch = vm.scenePro.pitch;
+            params.orientation.roll = vm.scenePro.roll;
+            params.vFOV = vm.scenePro.verticalAngle;
+            params.hFOV = vm.scenePro.horizontAngle;
           }
         }
         vm.sceneProAction = false;
         vm.sceneProing = false;
       }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+    },
+    okClick() {
+      this.$emit("update-settings", this.settingsCopy);
+    },
+    /**
+     * @description 世界坐标转经纬度坐标
+     * @param cartesian - {Object} 世界坐标
+     * @return {Object} 经纬度坐标
+     */
+    _cartesianToDegrees(cartesian) {
+      const { ellipsoid } = this.viewer.scene.globe;
+      // 将笛卡尔坐标转换为地理坐标
+      const cartographic = ellipsoid.cartesianToCartographic(cartesian);
+      // 将弧度转为度的十进制度表示
+      const longitude = this.Cesium.Math.toDegrees(cartographic.longitude); // 转换后的经度
+      const latitude = this.Cesium.Math.toDegrees(cartographic.latitude); // 转换后的纬度
+      const coor = {
+        lon: longitude,
+        lat: latitude,
+        height: cartographic.height
+      };
+      return coor;
     },
     /**
      * 设置depthTestAgainstTerrain和logarithmicDepthBuffer
@@ -439,17 +527,28 @@ export default {
 };
 </script>
 <style scoped>
-.mapgis-widget-video {
-  max-height: calc(50vh);
-  overflow-y: auto;
-}
-.roaming-action {
-  width: calc(50% - 4px);
-}
 .video-style {
   text-align: center;
 }
-.form {
-  padding: 10px;
+
+.iconfont-btn {
+  border-radius: 4px;
+  margin-top: 3px;
+  padding: 3px;
+  border: 1px solid var(--primary-5);
+  color: var(--text-color);
+  background-color: transparent;
+  border-color: var(--button-border-default-color);
+}
+
+.iconfont-btn:hover,
+.iconfont-btn:focus {
+  color: var(--primary-5);
+  background-color: var(--background);
+  border-color: var(--primary-5);
+}
+
+::v-deep .mapgis-ui-input {
+  padding: 4px 2px;
 }
 </style>
