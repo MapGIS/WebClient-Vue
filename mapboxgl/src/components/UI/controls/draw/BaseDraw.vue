@@ -287,8 +287,8 @@ export default {
 
   methods: {
     enableDrawer() {
-      this.$_initDraw();
       this.$_compareStyle();
+      this.$_initDraw();
       this.$_unbindEditEvents();
       this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
