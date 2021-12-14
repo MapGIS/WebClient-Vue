@@ -66,20 +66,12 @@
 				</mapgis-ui-row>
 				<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 			</mapgis-ui-form-model-item>
-
 		</mapgis-ui-form-model>
 
-		<!-- button提交按钮 -->
-		<mapgis-ui-row>
-			<mapgis-ui-col :span=12>
-				<mapgis-ui-button type="primary" html-type="submit"  @click="run">分析</mapgis-ui-button>
-			</mapgis-ui-col>
-			<mapgis-ui-col :span=12>
-				<mapgis-ui-button type="default" html-type="submit"  @click="cancel">取消</mapgis-ui-button>
-			</mapgis-ui-col>
-		</mapgis-ui-row>
-		<!-- <mapgis-ui-button type="primary" html-type="submit"  @click="run">分析</mapgis-ui-button>
-		<mapgis-ui-button type="default" html-type="submit"  @click="cancel">取消</mapgis-ui-button> -->
+		<mapgis-ui-setting-footer>
+      <mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
+      <mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
+    </mapgis-ui-setting-footer>
 
 	</div>
 </template>
@@ -134,31 +126,11 @@ export default {
 			default: "gdbp://MapGISLocalPlus/sample/sfcls/等值线"
 		},
 		/**
-     * @type String
-     * @default ""
-     * @description 图层级缓冲 输出gdbp
-     */
-		destLayer: {
-			type: String,
-			default: "gdbp://MapGISLocalPlus/sample/sfcls/等值线1"
-		},
-		/**
      * @type Object
      * @default {}
      * @description 要素级缓冲 输入JSON
      */
 		srcFeature: {
-			type: Object,
-			default: function() {
-				return {}
-			}
-		},
-		/**
-     * @type Object
-     * @default {}
-     * @description 要素级缓冲 输出JSON
-     */
-		destFeature: {
 			type: Object,
 			default: function() {
 				return {}
@@ -174,8 +146,6 @@ export default {
 			equalLeftRight: true,
 
 			// 图层级属性缓冲
-			// 字节型 布尔型 短整型 长整型 64位长整型 浮点型 双精度型
-			// FldString / / FldLong / / FldDouble
 			fldName: [{"FldName": "", "FldType": ""}],  
 			selectedFldName: "UserID",
 
@@ -192,7 +162,8 @@ export default {
 			selectedUnit: "kilometers",
 			steps: 8,  
 
-			// 缓冲区分析结果展示
+			destLayer: '',
+
 			bufferAdd: true,
 
 			// 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
@@ -202,13 +173,12 @@ export default {
 	watch: {
 		srcLayer(val, oldval) {
 			if(val != oldval) {
-				console.log("图层变化，请重新获取属性字段")
+				this.destLayer = val + this.currentTime()
 				this.getAttribute()
 			}
 		},
 		isByAtt(val, oldval) {
 			if (val == true) {
-				console.log("属性缓冲")
 				this.getAttribute()
 			}
 		},
@@ -236,34 +206,25 @@ export default {
 	},
 	methods: {
 		mount() {
-			console.log("mount");
 			this.$emit('load',this);
 		},
 		unmount() {
-			console.log("unmount")
+			
 		},
 		sendBufferAdd() {
 			this.bufferAdd = !this.bufferAdd;
-			// this.$emit("listenBufferAdd", this.bufferAdd)
 		},
 		// 查询IGServer，实现获取gdbp图层中的属性字段名称与类型
 		getAttribute() {
 			var vectorLayer = new VectorLayer({
-				// ip: "localhost",
-				// port: "6163",
-				// ip: "192.168.21.192",
-				// port: "6163,"
 				ip: (this.baseUrl || "").split('/')[2].split(':')[0],
 				port: (this.baseUrl || "").split('/')[2].split(':')[1],
 			})
-			console.log("取图层属性字段", this.baseUrl, vectorLayer.ip, vectorLayer.port)
-			console.log("图层gdbp地址", this.srcLayer)
 			vectorLayer.getLayerInfo(this.srcLayer, this.onSuccess, () => {
 				console.log("获取图层详细信息请求失败")
 			})
 		},
 		onSuccess(data) {
-			console.log(data)
 			var tempFldName = []
 			for(var i = 0; i < data.FieldAtt.FldName.length; i++) {
 				var obj = {}
@@ -272,7 +233,6 @@ export default {
 				tempFldName.push(obj)
 			}
 			this.fldName = tempFldName
-			console.log("当前图层属性缓冲字段：", this.fldName)
 		},
 		selectAtt(event) {
 			this.selectedFldName = event
@@ -280,6 +240,20 @@ export default {
 		selectCurrentUnit(event) {
 			this.selectedUnit = event
 		},
+		currentTime() {
+			const now = new Date();
+			let hh = String(now.getHours());
+			let mm = String(now.getMinutes());
+			let ss = String(now.getSeconds());
+			if (hh.length == 1)
+				hh = `0${hh}`
+			if (mm.length == 1) 
+				mm = `0${mm}`
+			if (ss.length == 1) 
+				ss = `0${ss}`
+			return `-buffer${hh}${mm}${ss}`
+  	},
+
 		/**
 		* 图层级缓冲分析
 		* @function MRCS,MRFWS
@@ -305,15 +279,13 @@ export default {
 		* @param {Number} options.steps 缓冲步长 8
 		*/
 		run() {
+			this.$emit("listenBufferAdd", this.bufferAdd)
 			if (this.srcType === "Layer") {
-				alert("图层级缓冲区分析")
 				var clsBufBySRt = new ClassBufferBySingleRing({
 					ip: this.baseUrl.split('/')[2].split(':')[0],
 					port: this.baseUrl.split('/')[2].split(':')[1],
 					isByAtt: this.isByAtt,
 				})
-
-				console.log("分析", this.baseUrl, clsBufBySRt.ip, clsBufBySRt.port)
 
 				if (this.isByAtt == false) {
 					clsBufBySRt.leftRad = this.leftRad
@@ -328,53 +300,20 @@ export default {
 				clsBufBySRt.angelType = Number(this.angelType),
 				clsBufBySRt.isDissolve = this.isDissolve,
 
-				console.log("属性缓冲", this.isByAtt)
-				console.log("线端类型", Number(this.angelType))
-				console.log("合并样式", this.isDissolve)
-
-				console.log(clsBufBySRt)
-
 				clsBufBySRt.execute(this.AnalysisSuccess, 'post', false, 'json', () => {
-					console.log("缓冲区分析失败！")
+					console.log("缓冲区分析失败")
 				})
 
 			} else {
-				alert("要素级缓冲区分析！")
-				console.log(JSON.stringify(this.srcFeature))
-				console.log(this.radius, this.selectedUnit, this.steps)
-
 				var buffered = turf.buffer(this.srcFeature, this.radius, {units: this.selectedUnit, steps: Number(this.steps)});
-				console.log(JSON.stringify(buffered))
 				this.$emit("listenFeature", buffered)
-
-				// // 调用IGServer接口
-				// var featureBufBySR = new FeatureBuffBySingleRing({
-        //   ip: this.baseUrl.split('/')[2].split(':')[0],
-				// 	port: this.baseUrl.split('/')[2].split(':')[1],
-				// 	leftRad: this.leftRad,
-				// 	rightRad: this.rightRad,
-        // });
-
-				// var regGeo = this.srcFeature
-
-        // featureBufBySR.sfGeometryXML = JSON.stringify([regGeo]);
-        // featureBufBySR.attStrctXML = JSON.stringify(regAttStr);
-        // featureBufBySR.attRowsXML = JSON.stringify([valuesRow]);
-        // featureBufBySR.traceRadius = 0.0001;
-        // featureBufBySR.resultName = this.destFeature
-
-        // featureBufBySR.execute(this.AnalysisSuccess,"post",false,"json",()=>{});
 			}
 		},
 		AnalysisSuccess(data) {
-			console.log(data)
-			this.$emit("listenBufferAdd", this.bufferAdd)
-			if (this.bufferAdd == true) {
-				alert("将缓冲分析结果添加到当前图层")
-			}
+			this.$emit("listenLayer", this.destLayer)
 		},
 		cancel() {
-			alert("取消缓冲区分析")
+
 		}
 
 	},
