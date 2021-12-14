@@ -44,7 +44,7 @@
   }
 
   @include e(header, "-") {
-    padding: 0 6px;
+    padding: 0 0px;
     font-size: 14px;
   }
 
@@ -53,23 +53,31 @@
     margin-right: 0;
   }
 
-  .mapgis-ui-slider-rail {
-    background-color: #ffffff;
-  }
+  // .mapgis-ui-slider-rail {
+  //   background-color: #ffffff;
+  // }
 
   @include e(label, "-") {
-    padding: 0 6px;
+    // padding: 0 6px;
+    font-size: 14px;
     line-height: 40px;
   }
 
   @include e(switch, "-") {
     float: right;
     margin: 9px 0px;
+    &-sm {
+      float: right;
+      margin: 12px 0px;
+    }
   }
 
   @include e(parameter, "-") {
-    background: $panel-inner-color;
-    margin: 4px;
+    &-transparent {
+      background: transparent;
+    }
+    // background: $panel-inner-color;
+    // margin: 4px;
     border-radius: 4px;
     overflow: hidden;
     max-height: 0px;
@@ -86,16 +94,21 @@
   padding: 7px;
   min-width: 250px;
   height: 66px;
+
+  &-transparent {
+    background: transparent;
+  }
+
   &-sm {
     height: 48px;
-    padding: 10px;
+    padding: 10px 6px;
     &:hover {
       background: $primary-2;
     }
     .label-sm {
       height: 28px;
       line-height: 28px;
-      font-size: 13px;
+      font-size: 14px;
       font-family: Microsoft YaHei;
       font-weight: 400;
       color: $panel-text-color;
@@ -134,17 +147,24 @@
   }
   &-md {
     height: 40px;
-    padding: 0 10px;
+    padding: 0 6px;
+    .mapgis-ui-row {
+      height: 40px;
+      line-height: 40px;
+      overflow: hidden;
+    }
+    .label-md {
+      margin: 0;
+      color: $panel-text-color;
+      font-size: 14px;
+    }
     .mapgis-ui-input-number {
       /* margin-right: 12px; */
-      width: 60px;
+      width: 100%;
     }
     .mapgis-ui-slider {
-      width: 110px;
-    }
-
-    .mapgis-ui-slider-rail {
-      background-color: #ffffff;
+      width: 120px;
+      margin: 0;
     }
   }
   .mapgis-ui-row {
@@ -187,33 +207,42 @@
   //background: $panel-inner-color;
   border-radius: 1px;
   padding: 7px;
+
+  &-transparent {
+    background: transparent;
+  }
+
   .label-sm {
     height: 32px;
     line-height: 32px;
-    font-size: 13px;
+    font-size: 14px;
     font-family: Microsoft YaHei;
     font-weight: 400;
     color: $panel-text-color;
   }
   .mapgis-ui-select {
     width: 100%;
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
 @include b(color-pick-panel) {
-  background: $panel-inner-color;
+  // background: $panel-inner-color;
   border-radius: 3px;
-  padding: 10px;
+  padding: 10px 6px;
   min-width: 250px;
   height: 52px;
   line-height: 52px;
   overflow: hidden;
+  &-transparent {
+    background: transparent;
+  }
   &-sm {
     height: 40px;
     line-height: 40px;
   }
   .mapgis-ui-color-pick-panel-label {
+    font-size: 14px;
     height: 32px;
     line-height: 32px;
   }
@@ -328,7 +357,7 @@
     background: linear-gradient(
       0deg,
       rgba(255, 255, 255, 0),
-      #ffffff,
+      rgba(255, 255, 255, 0.85),
       rgba(255, 255, 255, 0)
     );
   }
@@ -403,14 +432,14 @@
     }
     .mapgis-ui-slider-track {
       background: linear-gradient(0deg, #91d5ff, #168de5);
-      width: 4px;
+      width: 2px;
     }
     .mapgis-ui-slider-rail {
-      width: 4px;
+      width: 2px;
     }
     .mapgis-ui-slider-vertical .mapgis-ui-slider-handle {
       margin-top: -6px;
-      margin-left: -2px;
+      margin-left: -4px;
     }
     .mapgis-ui-slider-handle {
       width: 10px;
@@ -425,13 +454,20 @@
   }
 
   &-item {
-    span {
+    &-span {
       min-width: 40px;
       min-height: 40px;
+      width: 40px;
+      height: 40px;
       font-size: 14px;
       line-height: 40px;
       text-align: center;
       color: $text-color;
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-break: break-all;
     }
 
     text-align: center;
@@ -446,7 +482,7 @@
       height: 40px;
       background: linear-gradient(-90deg, #0081e2, #91d5ff);
       font-weight: bolder;
-      span {
+      div {
         color: #ffffff;
       }
     }

@@ -82,24 +82,13 @@ export default {
       },
       control:'number'
     },
-    baseUrl: "http://t0.tianditu.gov.cn/vec_w/wmts",
-
-    /**
-     * @description 123123123
-     */
-    wmtsLayer: "vec",
-    tileMatrixSet: "w",
-    format: "tiles",
-    layerId: "ogcwmts_layerId",
-    sourceId: "ogcwmts_sourceId",
-    token: "f5347cab4b28410a6e8ba5143e3d5a35",
   },
 };
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebMap, MapgisOgcWmtsLayer },
-  template: `<mapgis-web-map crs="EPSG:3857" :zoom="mapZoom" :center="outerCenter" style="height:90vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :zoom="mapZoom" :center="outerCenter" style="height:95vh">
     <mapgis-ogc-wmts-layer v-bind="$props" />
   </mapgis-web-map>`,
   data() {

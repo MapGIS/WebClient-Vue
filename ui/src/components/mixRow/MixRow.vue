@@ -612,7 +612,6 @@ export default {
     }
   },
   mounted() {
-    console.log("Empty.PRESENTED_IMAGE_DEFAULT", Empty.PRESENTED_IMAGE_DEFAULT)
     this.valueCopy = this.value;
     this.fieldCopy = this.field;
     this.$_initProps();

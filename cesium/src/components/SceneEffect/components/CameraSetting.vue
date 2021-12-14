@@ -2,7 +2,7 @@
   <div class="camera-setting">
     <mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
-      <mapgis-ui-switch-panel label="地下模式" :checked="undgrd" @changeChecked="enableUndgrd">
+      <mapgis-ui-switch-panel size="small" label="地下模式" :checked="undgrd" @changeChecked="enableUndgrd">
         <mapgis-ui-input-number-panel 
           size="small"
           label="地表透明度" 
@@ -14,6 +14,7 @@
         </mapgis-ui-input-number-panel> 
       </mapgis-ui-switch-panel>
 
+      <div class="dividerWrapper"><div class="divider"/></div>
 
       <mapgis-ui-input-number-panel 
         size="small"
@@ -104,4 +105,16 @@ export default {
 </script>
 
 <style scoped>
+.dividerWrapper{
+  height: 13px;
+}
+.divider{
+  display: block;
+  height: 1px;
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  margin: 6px 0;
+  background: #F0F0F0 ;
+}
 </style>

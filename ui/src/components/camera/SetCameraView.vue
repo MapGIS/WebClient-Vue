@@ -104,6 +104,10 @@ export default {
     showButton: {
       type: Boolean,
       default: true
+    },
+    enableModel: {
+      type: Boolean,
+      default: true
     }
   },
   model: {
@@ -119,7 +123,9 @@ export default {
     },
     cameraCopy: {
       handler: function () {
-        this.$emit("change", this.cameraCopy);
+        if (this.enableModel) {
+          this.$emit("change", this.cameraCopy);
+        }
       },
       deep: true
     }
@@ -139,6 +145,7 @@ export default {
 .mapgis-ui-set-camera-set-camera {
   width: 99%;
 }
+
 .mapgis-ui-set-camera-panel-camera {
   margin-top: 6px;
 }
@@ -151,7 +158,6 @@ export default {
 .mapgis-ui-set-camera-set-camera-content {
   width: 100%;
   height: 262px;
-  background: #F1F1F1;
   border-radius: 3px;
   padding-top: 1px;
 }

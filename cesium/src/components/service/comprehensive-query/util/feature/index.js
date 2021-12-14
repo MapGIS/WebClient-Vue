@@ -1,7 +1,7 @@
 export {
   getGeoJSONFeatureCenter,
   getGeoJSONFeaturesCenter,
-  getGeoJSONFeatureBound
+  getGeoJSONFeatureBound,
 } from "./feature-geojson";
 export { default as FeatureConvert } from "./feature-convert";
 export { default as FeatureQuery } from "./feature-query";

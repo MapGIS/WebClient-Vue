@@ -1,131 +1,123 @@
 <template>
-    <div class="viewpoint-editor" v-show="innerShow" v-drag>
-        <div class="editor-header">
-            <label class="title">视角编辑器</label>
-            <div @mouseenter="hover = true" @mouseleave="hover = false">
-                <img
-                    v-show="!hover"
-                    class="closeButton2"
-                    src="./关闭2.png"
-                    @click="closePanel"
+    <mapgis-ui-modal 
+        title="视角编辑器" 
+        :visible="innerShow" 
+        :mask="false" 
+        @cancel="closePanel" 
+        @ok="getResultConfig" 
+        class="viewpoint-editor" 
+        v-show="innerShow" 
+        :bodyStyle="bodyStyle"
+        :width="320"
+        okText="确定"
+        cancelText="取消"
+        v-drag 
+    >
+        <mapgis-ui-row class="input-parameter-style">
+            <mapgis-ui-col :span="6"><label>名称</label></mapgis-ui-col>
+            <mapgis-ui-col :span="18">
+                <mapgis-ui-input v-model="name"></mapgis-ui-input>
+            </mapgis-ui-col>
+        </mapgis-ui-row>
+
+        <mapgis-ui-input-number-panel
+            size="medium"
+            label="飞行时间"
+            v-model="duration"
+            :labelCol="{span:6}"
+            :wrapperCol="{span:18}"
+        />
+
+        <mapgis-ui-row
+            class="input-parameter-style"
+        >
+            <mapgis-ui-col :span="6"><label>缩略图</label></mapgis-ui-col>
+            <mapgis-ui-col :span="10">
+                <img class="thumbnail" :src="image" />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="8" class="thumbnail-btn">
+                <mapgis-ui-button @click="screenshot" style="margin-bottom: 6px">截图</mapgis-ui-button>
+                <mapgis-ui-button @click="upload">上传<input type="file" id="file" /></mapgis-ui-button> 
+            </mapgis-ui-col>
+        </mapgis-ui-row>
+
+        <mapgis-ui-collapse expand-icon-position="right" :bordered="false">
+            <template #expandIcon="props">
+                <mapgis-ui-iconfont
+                    type="mapgis-chevrons-down"
+                    :rotate="props.isActive ? 180 : 0"
+                    style="display:none"
                 />
-                <img
-                    v-show="hover"
-                    class="closeButton2"
-                    src="./关闭2hover.png"
-                    @click="closePanel"
-                />
-            </div>
-        </div>
-
-        <div class="editor-content"  @mousemove.stop="">
-            <mapgis-ui-row class="input-parameter-style">
-                <mapgis-ui-col :span="6"><label>名称</label></mapgis-ui-col>
-                <mapgis-ui-col :span="18">
-                    <mapgis-ui-input v-model="name"></mapgis-ui-input>
-                </mapgis-ui-col>
-            </mapgis-ui-row>
-
-            <mapgis-ui-input-number-panel
-                size="medium"
-                label="飞行时间"
-                v-model="duration"
-                style="margin-bottom: 8px"
-            />
-
-            <mapgis-ui-row
-                class="input-parameter-style"
-                style="margin-bottom: 16px"
-            >
-                <mapgis-ui-col :span="6"><label>缩略图</label></mapgis-ui-col>
-                <mapgis-ui-col :span="10">
-                    <img class="thumbnail" :src="image" />
-                </mapgis-ui-col>
-                <mapgis-ui-col :span="8">
-                    <mapgis-ui-button @click="screenshot" style="margin-bottom: 6px; width: 80px">截图</mapgis-ui-button>
-                    <mapgis-ui-button @click="upload" style="width: 80px">上传<input type="file" id="file" /></mapgis-ui-button> 
-                </mapgis-ui-col>
-            </mapgis-ui-row>
-
-            <mapgis-ui-collapse expand-icon-position="right" :bordered="false">
-                <template #expandIcon="props">
-                    <mapgis-ui-iconfont
-                        type="mapgis-chevrons-down"
-                        :rotate="props.isActive ? 180 : 0"
-                        style="color: #0081e2"
-                    />
-                </template>
-                <mapgis-ui-collapse-panel :style="collapseStyle">
-                    <div class="current-camera" slot="header">
-                        <mapgis-ui-button
-                            @click.stop="getCameraConfig"
-                        >
-                            <mapgis-ui-iconfont type="mapgis-xiangji">
-                            </mapgis-ui-iconfont>
-                        </mapgis-ui-button>
-                        <label>获取时间 : {{ currentTime }}</label>
-                    </div>
-                    <label slot="extra">展开详细参数</label>
-
-                    <mapgis-ui-row
-                        class="input-parameter-style"
-                        style="margin-top: 8px"
-                    >
-
-                        <mapgis-ui-input-number-panel
-                            size="small"
-                            label="经度"
-                            v-model="longitude"
-                            :range="[0,180]"
-                            @change="setView"
-                        />
-
-                        <mapgis-ui-input-number-panel
-                            size="small"
-                            label="纬度"
-                            v-model="latitude"
-                            :range="[-90,90]"
-                            @change="setView"
-                        />
-
-                        <mapgis-ui-input-number-panel
-                            size="small"
-                            label="高度"
-                            v-model="height"
-                            :range="[0,100000000]"
-                            @change="setView"
-                        />
-
-                        <mapgis-ui-input-number-panel
-                            size="small"
-                            label="方向角"
-                            v-model="heading"
-                            :range="[0,360]"
-                            @change="setView"
-                        />
-                        <mapgis-ui-input-number-panel
-                            size="small"
-                            label="俯视角"
-                            v-model="pitch"
-                            :range="[-90,90]"
-                            @change="setView"
-                        />                        
-                        <mapgis-ui-input-number-panel
-                            size="small"
-                            label="翻滚角"
-                            v-model="roll"
-                            :range="[0,180]"
-                            @change="setView"
-                        />
+            </template>
+            <mapgis-ui-collapse-panel :style="collapseStyle">              
+                <div slot="header">
+                    <mapgis-ui-row class="input-parameter-style">
+                        <mapgis-ui-col :span="6"><label>视角</label></mapgis-ui-col>
+                        <mapgis-ui-col :span="18">
+                            <div class="current-camera" >
+                                <mapgis-ui-button
+                                    @click.stop="getCameraConfig"
+                                >
+                                    <mapgis-ui-iconfont type="mapgis-xiangji"/>
+                                </mapgis-ui-button>
+                                <label>获取时间 : {{ currentTime }}</label>
+                            </div>
+                            <div class="current-camera">
+                                <mapgis-ui-iconfont type="mapgis-chevrons-down"/>
+                                <label  style="color: #0081e2;">展开详细参数</label>
+                            </div>
+                        </mapgis-ui-col>
                     </mapgis-ui-row>
-                </mapgis-ui-collapse-panel>
-            </mapgis-ui-collapse>
-        </div>
-        <div class="editor-footer" @mousemove.stop="">
-            <mapgis-ui-button type="primary" @click="getResultConfig">确定</mapgis-ui-button>
-            <mapgis-ui-button @click="closePanel">取消</mapgis-ui-button>
-        </div>
-    </div>
+                </div>
+
+                <mapgis-ui-row>
+                    <mapgis-ui-input-number-panel
+                        size="small"
+                        label="经度"
+                        v-model="longitude"
+                        :range="[0,180]"
+                        :slider="false"
+                    />
+                    <mapgis-ui-input-number-panel
+                        size="small"
+                        label="纬度"
+                        v-model="latitude"
+                        :range="[-90,90]"
+                        :slider="false"
+                    />
+                    <mapgis-ui-input-number-panel
+                        size="small"
+                        label="高度"
+                        v-model="height"
+                        :range="[0,100000000]"
+                        :slider="false"
+                    />
+                    <mapgis-ui-input-number-panel
+                        size="small"
+                        label="方向角"
+                        v-model="heading"
+                        :range="[0,360]"
+                        :slider="false"
+                    />
+                    <mapgis-ui-input-number-panel
+                        size="small"
+                        label="俯视角"
+                        v-model="pitch"
+                        :range="[-90,90]"
+                        :slider="false"
+                    />                        
+                    <mapgis-ui-input-number-panel
+                        size="small"
+                        label="翻滚角"
+                        v-model="roll"
+                        :range="[0,180]"
+                        :slider="false"
+                    />
+                </mapgis-ui-row>
+
+            </mapgis-ui-collapse-panel>
+        </mapgis-ui-collapse>
+    </mapgis-ui-modal>
 </template>
 
 <script>
@@ -166,7 +158,10 @@ export default {
     },
     data() {
         return {
-            hover: false,
+            bodyStyle:{
+                padding: "10px",
+            },
+
             collapseStyle: {
                 background: "#ffffff",
                 border: "0",
@@ -224,9 +219,9 @@ export default {
             viewer.camera.setView({
                 destination : Cesium.Cartesian3.fromDegrees(vm.longitude, vm.latitude, vm.height),
                 orientation: {
-                    heading : Cesium.Math.toRadians(vm.heading), // east, default value is 0.0 (north)
-                    pitch : Cesium.Math.toRadians(vm.pitch),    // default value (looking down)
-                    roll : Cesium.Math.toRadians(vm.roll)                             // default value
+                    heading : Cesium.Math.toRadians(vm.heading), 
+                    pitch : Cesium.Math.toRadians(vm.pitch),
+                    roll : Cesium.Math.toRadians(vm.roll) 
                 }
             });
         },
@@ -394,56 +389,15 @@ export default {
 </script>
 
 <style scoped>
-.viewpoint-editor {
-    width: 320px;
-    /* height: 370px; */
-    position: absolute;
-    background: #ffffff;
-    top: 10px;
-    left: 400px;
-    border-radius: 3px;
-}
-
-.editor-header {
-    height: 40px;
-    border-bottom: 1px solid #f0f0f0;
-    line-height: 40px;
-    cursor: move;
-}
-
-.title {
-    padding-left: 10px;
-    font-size: 16px;
-    color: #333333;
-}
-
-.closeButton2 {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.editor-content {
-    padding: 10px;
-    /* max-height: 470px;
-    overflow: auto; */
-}
 
 .input-parameter-style {
-    /* background: #f1f1f1; */
-    border-radius: 3px;
-    padding: 10px 10px 2px 10px;
-    margin-bottom: 8px;
+    padding:10px 6px ;
 }
 
-.input-parameter-style .mapgis-ui-col {
+.input-parameter-style label {
     /* height: 32px; */
     line-height: 32px;
     font-size: 14px;
-    padding-bottom: 8px;
     color: #666666;
 }
 
@@ -456,6 +410,12 @@ export default {
     height: 70px;
 }
 
+.thumbnail-btn .mapgis-ui-btn{
+    width: 80px;
+    display: block;
+    margin-left: auto;
+}
+
 #file{
     position: absolute;
     height: 32px;
@@ -466,7 +426,6 @@ export default {
 }
 
 .current-camera {
-    display: inline-block;
     height: 32px;
     line-height: 32px;
 }
@@ -476,26 +435,17 @@ export default {
     padding: 0 8px;
 }
 
+.current-camera > .anticon {
+    margin-right: 8px;
+    color: #0081e2;
+}
+
 ::v-deep
     .mapgis-ui-collapse
     > .mapgis-ui-collapse-item
     > .mapgis-ui-collapse-header {
     border-left: unset !important;
     padding: 0;
-}
-
-::v-deep
-    .mapgis-ui-collapse-icon-position-right
-    > .mapgis-ui-collapse-item
-    > .mapgis-ui-collapse-header
-    .mapgis-ui-collapse-arrow {
-    right: 85px;
-}
-
-::v-deep .mapgis-ui-collapse-extra {
-    height: 32px;
-    line-height: 32px;
-    color: #0081e2;
 }
 
 ::v-deep .mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box {
@@ -510,17 +460,4 @@ export default {
     padding: 0;
 }
 
-.editor-footer {
-    height: 48px;
-    line-height: 48px;
-    border-top: 1px solid #f0f0f0;
-    padding: 0 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.editor-footer button {
-    width: 146px;
-}
 </style>

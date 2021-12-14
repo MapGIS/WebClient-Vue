@@ -2,6 +2,7 @@
   <div
     :class="{
       'mapgis-ui-input-number-panel': true,
+      'mapgis-ui-input-number-panel-transparent': transparent,
       'mapgis-ui-input-number-panel-sm': size == 'small',
       'mapgis-ui-input-number-panel-md': size == 'medium'
     }"
@@ -69,8 +70,11 @@
         </mapgis-ui-input-number>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <mapgis-ui-form-model v-bind="formItemLayout" labelAlign="left" :colon="false" v-if="size == 'medium' ">
-      <mapgis-ui-form-model-item :label="label" >
+    <mapgis-ui-row v-if="size == 'medium' ">
+      <mapgis-ui-col v-bind="labelCol" >
+         <div class="label-md"> {{ label }} </div>
+      </mapgis-ui-col>
+      <mapgis-ui-col v-bind="wrapperCol">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="number"
@@ -87,8 +91,8 @@
               size="small"
           />
         </mapgis-ui-space>
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
   </div>
 </template>
 
@@ -137,16 +141,15 @@ export default {
     slider:{
       type:Boolean,
       default:true
+    },
+    transparent: {
+      type: Boolean,
+      default: false
     }
-    
   },
   data() {
     return {
       number: this.value || 0,
-      formItemLayout: {
-        labelCol: {span: 7},
-        wrapperCol: {span: 17}
-      }
     };
   },
   model: {

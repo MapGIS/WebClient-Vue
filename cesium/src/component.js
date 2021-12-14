@@ -77,7 +77,7 @@ export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
 export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/particle/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
-export { default as Mapgis3dVideo } from "./components/Analysis/Video.vue";
+export { default as Mapgis3dVideoManger } from "./components/Analysis/video/VideoManager.vue";
 
 //融合组件
 export { default as Mapgis3dComponentMix } from "./components/UI/mixComponent/GeojsonCom";
@@ -97,3 +97,6 @@ export { default as Mapgis3DTack } from "./components/Layer/Track/Track";
 export { default as Mapgis3DPlottingLayer } from "./components/Layer/Plotting/PlottingLayer";
 export { default as Mapgis3DMapStoryLayer } from "./components/Layer/MapStory/MapStory";
 export { default as Mapgis3DPreviewMapStoryLayer } from "./components/Layer/MapStory/PreviewMapStory";
+
+//模拟仿真
+export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow";

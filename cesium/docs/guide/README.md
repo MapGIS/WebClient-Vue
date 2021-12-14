@@ -1,30 +1,28 @@
 # 快速上手
 
-``` vue
+```vue
 <template>
-
   <div id="app">
     <mapgis-web-scene @load="handleLoad">
-        <div>地图显示内容</div>
+      <div>地图显示内容</div>
     </mapgis-web-scene>
   </div>
 </template>
 <style>
-    #app {
-        height: 80px;
-        width: 100%;
-    }
+#app {
+  height: 80px;
+  width: 100%;
+}
 </style>
 <script type="module">
 export default {
-    data() {
-        return { };
-    },
-    methods: {
-        handleMapLoad(payload) {
-        }
-    }
-}
+  data() {
+    return {};
+  },
+  methods: {
+    handleMapLoad(payload) {},
+  },
+};
 </script>
 ```
 
@@ -47,8 +45,8 @@ yarn add @mapgis/webclient-vue-ui
 在 main.js 中全局引入组件
 
 ```js
-import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
-import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
+import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
@@ -125,8 +123,8 @@ yarn link @mapgis/webclient-vue-cesium
 5.在项目中 main.js 中全局引入组件和样式文件即可使用
 
 ```js
-import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
-import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
+import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";

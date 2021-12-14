@@ -15,24 +15,24 @@
             <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="edit"/>
             <span>修改</span>
           </div>
-          <div class="mapgis-mapstory-more-tool-row">
-            <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon"
-                                   type="top"/>
-            <span>置顶</span>
-          </div>
+<!--          <div class="mapgis-mapstory-more-tool-row">-->
+<!--            <mapgis-ui-base64-icon style="left: 9px;top: 10px;" width="19px" class="mapgis-mapstory-more-tool-row-icon"-->
+<!--                                   type="top"/>-->
+<!--            <span>置顶</span>-->
+<!--          </div>-->
           <div @click="$_delete(index)" class="mapgis-mapstory-more-tool-row">
             <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
             <span>删除</span>
           </div>
         </div>
-        <mapgis-ui-col span="20">
+        <mapgis-ui-col span="22">
           <div :title="feature.title" class="mapgis-mapstory-feature-panel-title">
-            <mapgis-ui-svg-icon class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
+            <mapgis-ui-svg-icon v-if="feature.baseUrl" class="mapgis-mapstory-feature-panel-title-icon" :containerStyle="containerStyle"
                                 :iconStyle="iconStylePoint" :type="feature.baseUrl.type"/>
             <div class="mapgis-mapstory-feature-panel-title-value">{{ feature.title }}</div>
           </div>
         </mapgis-ui-col>
-        <mapgis-ui-col span="4" class="mapgis-mapstory-tool-bar">
+        <mapgis-ui-col span="2" class="mapgis-mapstory-tool-bar">
           <!--          <mapgis-ui-svg-icon @click="$_editFeature(index)" :containerStyle="containerStyle" :iconStyle="iconStyle"-->
           <!--                        v-show="showToolIndex === index"-->
           <!--                        type="edit"/>-->
@@ -41,14 +41,14 @@
           <!--                        type="delete"/>-->
           <!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
           <!--                        v-show="showToolIndex !== index && feature.layerStyle.show" type="eye"/>-->
-          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
-                              @click="$_showFeature(index, true)"
-                              v-show="showToolIndex === index && !feature.layerStyle.show"
-                              type="eye"/>
-          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"
-                              @click="$_showFeature(index, false)"
-                              v-show="showToolIndex === index && feature.layerStyle.show"
-                              type="noEye"/>
+<!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+<!--                              @click="$_showFeature(index, true)"-->
+<!--                              v-show="showToolIndex === index && !feature.layerStyle.show"-->
+<!--                              type="eye"/>-->
+<!--          <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle"-->
+<!--                              @click="$_showFeature(index, false)"-->
+<!--                              v-show="showToolIndex === index && feature.layerStyle.show"-->
+<!--                              type="noEye"/>-->
           <mapgis-ui-base64-icon @click="$_showMoreTool(index)" class="mapgis-mapstory-tool-bar-more" height="20px"
                                  type="more"/>
         </mapgis-ui-col>
@@ -106,6 +106,10 @@ export default {
       }
     }
   },
+  model: {
+    prop: "features",
+    event: "change"
+  },
   props: {
     features: {
       type: Array,
@@ -122,6 +126,12 @@ export default {
     features: {
       handler: function () {
         this.featuresCopy = this.features;
+      },
+      deep: true
+    },
+    featuresCopy: {
+      handler: function () {
+        this.$emit("change", this.featuresCopy);
       },
       deep: true
     }
@@ -159,8 +169,8 @@ export default {
     },
     $_delete(index) {
       this.showMoreTool = undefined;
-      const {id} = this.featuresCopy[index];
-      this.$emit("deleteFeature", index, id);
+      const {uuid} = this.featuresCopy[index];
+      this.$emit("deleteFeature", index, uuid);
     }
   }
 }
@@ -210,7 +220,7 @@ export default {
 
 .mapgis-mapstory-feature-panel-title-value {
   position: absolute;
-  left: 50px;
+  left: 21px;
   width: 82%;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -230,7 +240,7 @@ export default {
   right: 7px;
   z-index: 100000;
   width: 88px;
-  height: 120px;
+  height: 80px;
   background: white;
   border-radius: 3px;
   box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);

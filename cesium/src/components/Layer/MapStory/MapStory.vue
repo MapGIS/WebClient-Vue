@@ -4,6 +4,7 @@
                    @deleteFeature="$_deleteFeature"
                    @deleteProject="$_deleteProject"
                    @getCamera="$_getCamera"
+                   @selectCamera="$_selectCamera"
                    @changeColor="$_changeColor"
                    @changeOpacity="$_changeOpacity"
                    @changeIcon="$_changeIcon"
@@ -11,13 +12,19 @@
                    @showProject="$_showProject"
                    @addMapToProject="$_addMapToProject"
                    @addFeature="$_addFeature"
+                   @addChapter="$_addChapter"
+                   @toggleChapterFeatures="$_toggleChapterFeatures"
+                   @copyChapter="$_copyChapter"
+                   @changeEntityTitle="$_changeEntityTitle"
+                   @changeEntity="$_changeEntity"
                    @titleChanged="$_titleChanged"
                    @featureTitleChanged="$_featureTitleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
                    @editProject="$_editProject"
                    @projectPreview="$_projectPreview"
+                   @featurePreview="$_featurePreview"
                    @firstAddPicture="$_firstAddPicture"
-                   :dataSource="dataSourceCopy"
+                   v-model="dataSourceCopy"
                    :upProjectSet="projectSet"
                    :height="height"
                    :width="width"
@@ -35,12 +42,12 @@
           v-model="popup.show"
           :vueIndex="popup.vueIndex"
       >
-        <div class="mapgis-3d-map-story-small-popup-container">
-          <slot name="content" :popup="popup">
-            <div class="mapgis-3d-map-story-small-popup-title">
+        <div>
+          <div class="mapgis-3d-map-story-small-popup-container">
+            <div v-if="popup.title" class="mapgis-3d-map-story-small-popup-title">
               {{ popup.title }}
-              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"
-                                     width="20px" type="toLarge"/>
+<!--              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"-->
+<!--                                     width="20px" type="toLarge"/>-->
             </div>
             <mapgis-ui-carousel class="mapgis-3d-map-story-small-popup-carousel" autoplay>
               <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000"
@@ -48,7 +55,8 @@
                 <img class="mapgis-3d-map-story-small-popup-img" :src="image" alt="">
               </div>
             </mapgis-ui-carousel>
-          </slot>
+            <div v-html="popup.content" class="mapgis-3d-map-story-small-popup"></div>
+          </div>
         </div>
       </mapgis-3d-popup>
     </template>
@@ -75,9 +83,8 @@ export default {
   data() {
     return {
       drawer: undefined,
-      currentFeatureType: undefined,
       currentPoints: undefined,
-      dataSourceCopy: []
+      interval: undefined
     }
   },
   props: {
@@ -105,6 +112,11 @@ export default {
         this.dataSourceCopy = this.dataSource;
       },
       deep: true
+    },
+    dataSourceCopy: {
+      handler: function () {
+      },
+      deep: true
     }
   },
   created() {
@@ -120,8 +132,12 @@ export default {
     $_drawerLoaded(drawer) {
       this.drawer = drawer;
     },
-    $_projectPreview(features, enableFullScreen) {
-      this.$emit("projectPreview", features, enableFullScreen);
+    $_featurePreview(feature) {
+      this.$emit("featurePreview", [feature]);
+    },
+    $_projectPreview(project) {
+      // this.$_play(chapters);
+      this.$emit("projectPreview", project, false);
     },
     $_deleteProject() {
       this.popups = [];
@@ -137,7 +153,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: break-all;
-  margin-bottom: 10px;
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 40px;
@@ -153,13 +168,18 @@ export default {
 
 .mapgis-3d-map-story-small-popup-container {
   width: 260px;
-  height: 200px;
+  height: auto;
+}
+
+.mapgis-3d-map-story-small-popup {
+  padding: 5px 10px;
+  font-size: 14px;
 }
 
 .mapgis-3d-map-story-small-popup-carousel {
   width: 240px;
   height: 144px;
-  margin: 0 10px;
+  margin: 10px 10px 0;
 }
 
 .mapgis-3d-map-story-small-popup-img-div {
@@ -170,5 +190,9 @@ export default {
 .mapgis-3d-map-story-small-popup-img {
   width: 240px;
   height: 144px;
+}
+
+.cesium-popup .cesium-popup-content-wrapper {
+  overflow: hidden;
 }
 </style>

@@ -1,0 +1,184 @@
+<template>
+  <div>
+    <div class="mapgis-select">
+      <mapgis-ui-input
+        v-model="selectedLayer"
+        class="mapgis-input"
+        size="small"
+        placeholder="请选择图层名"
+        @focus="showCardDialog = true"
+      >
+        <mapgis-ui-iconfont
+          slot="suffix"
+          :type="icon"
+          @click="showCardDialog = !showCardDialog"
+        />
+      </mapgis-ui-input>
+      <mapgis-ui-card v-show="showCardDialog" class="data-card">
+        <div v-show="!editLayerNameVisible">
+          <mapgis-ui-list
+            :key="reflush"
+            :data-source="selectOptionsCopy"
+            class="mapgis-list"
+          >
+            <mapgis-ui-list-item
+              style="padding: 4px 8px; cursor: pointer;"
+              slot="renderItem"
+              slot-scope="item"
+              :key="item.id"
+              @click="clickListItem(item)"
+            >
+              <operations-item
+                :key="item.id"
+                :text="item.name"
+                :operations="['edit', 'delete']"
+                @delete="onDelete(item.id)"
+                @edit="onEdit(item)"
+              ></operations-item>
+            </mapgis-ui-list-item>
+          </mapgis-ui-list>
+          <mapgis-ui-divider style="margin: 4px 0;" />
+          <div
+            style="padding: 4px 8px; cursor: pointer;"
+            @mousedown="e => e.preventDefault()"
+            @click="onAdd"
+          >
+            <mapgis-ui-iconfont type="mapgis-plus-circle" /> 新建图层
+          </div>
+        </div>
+        <edit-layer-name
+          v-show="editLayerNameVisible"
+          :selectOptions="selectOptionsCopy"
+          :editLayerName="editLayername"
+          @finished="onEditLayerNameFinished"
+          @edited="onEditLayerNameOk"
+        ></edit-layer-name>
+      </mapgis-ui-card>
+    </div>
+  </div>
+</template>
+
+<script>
+import OperationsItem from "./OperationsItem.vue";
+import EditLayerName from "./EditLayerName.vue";
+import { newGuid } from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+export default {
+  name: "video-layer-select",
+  components: {
+    OperationsItem,
+    EditLayerName
+  },
+  props: {
+    selectOptions: {
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    editLayername() {
+      return this.editLayer ? this.editLayer.name : "";
+    },
+    icon() {
+      return this.showCardDialog ? "mapgis-up" : "mapgis-down";
+    }
+  },
+  watch: {
+    selectOptions: {
+      handler() {
+        this.selectOptionsCopy = [...this.selectOptions];
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+  data() {
+    return {
+      selectOptionsCopy: [],
+      selectedLayer: "",
+      editLayerNameVisible: false,
+      editLayer: null,
+      showCardDialog: false,
+      reflush: false
+    };
+  },
+
+  methods: {
+    getLabel(item) {
+      const length = item.videoList ? item.videoList.length : 0;
+      return `${item.name}(${length})`;
+    },
+    clickListItem(item) {
+      this.selectedLayer = item.name;
+      this.$emit("selectedLayer", this.selectedLayer);
+      if (!this.editLayerNameVisible) {
+        this.showCardDialog = false;
+      }
+    },
+    /**
+     * 修改layerName
+     */
+    changeName(id, dataIndex, value) {
+      const selectOptions = [...this.selectOptionsCopy];
+      const target = selectOptions.find(item => item.id === id);
+      if (target) {
+        target[dataIndex] = value;
+        this.selectOptionsCopy = selectOptions;
+      }
+      this.$emit("change-layer-name", { id, dataIndex, value });
+    },
+    onEditLayerNameOk(val) {
+      if (this.editLayer) {
+        this.changeName(this.editLayer.id, "name", val);
+      } else {
+        const id = newGuid();
+        const newLayer = { id, name: val, videoList: [] };
+        this.selectOptionsCopy.push(newLayer);
+        this.$emit("add-layer", newLayer);
+      }
+      this.selectedLayer = val;
+      this.$emit("selectedLayer", this.selectedLayer);
+      this.showCardDialog = false;
+      this.reflush = !this.reflush;
+    },
+    onEditLayerNameFinished() {
+      this.editLayerNameVisible = false;
+      this.editLayer = null;
+    },
+    onAdd() {
+      this.editLayerNameVisible = true;
+      this.editLayer = null;
+    },
+    onEdit(item) {
+      this.editLayerNameVisible = true;
+      this.editLayer = item;
+    },
+    /**
+     * 删除选项
+     */
+    onDelete(id) {
+      const selectOptions = [...this.selectOptionsCopy];
+      this.selectOptionsCopy = selectOptions.filter(item => item.id !== id);
+      this.$emit("delete-layer", id);
+    }
+  }
+};
+</script>
+<style lang="less">
+.mapgis-select {
+  .data-card {
+    width: 89%;
+    margin-bottom: 12px;
+    position: absolute;
+    z-index: 1000;
+  }
+  .data-card .mapgis-ui-card-body {
+    padding: 0px;
+  }
+
+  .mapgis-list {
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
+</style>

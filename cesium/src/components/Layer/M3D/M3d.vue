@@ -1,7 +1,10 @@
 <script>
+import { G3D } from "@mapgis/webclient-es6-service";
 import Tileset3dOptions from "./3DTilesetOptions";
-import { M3dType, M3dType_0_0, M3dType_2_0 } from "./M3dType";
+import { M3dType, M3dType_0_0 } from "./M3dType";
 import PopupMixin from "../Mixin/PopupMixin";
+
+const { M3DTileDataInfo } = G3D;
 
 export default {
   name: "mapgis-3d-m3d-layer",
@@ -47,6 +50,7 @@ export default {
   }, */
   methods: {
     createCesiumObject() {
+      const vm = this;
       const { vueCesium, viewer, url, $props } = this;
       let version = this.parseCesiumVersion(url);
       if (version == "1.0") {
@@ -62,7 +66,10 @@ export default {
       } else if (version == "2.0") {
         return new Promise(
           resolve => {
-            let layerIndex = viewer.scene.layers.appendM3DLayer(url, $props);
+            let layerIndex = viewer.scene.layers.appendM3DLayer(url, {
+              ...$props,
+              loaded: vm.onM3dLoaded
+            });
             resolve({ layerIndex: layerIndex });
           },
           reject => {}
@@ -84,7 +91,9 @@ export default {
       return this.version;
     },
     parseM3dVersion() {},
-    onM3dLoaded(e) {},
+    onM3dLoaded(e, n) {
+      console.log(e, n);
+    },
     mount() {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
@@ -330,13 +339,13 @@ export default {
             }
           } else if (version == "2.0") {
             switch (type) {
-              case M3dType_2_0.Model:
+              case M3DTileDataInfo.Model:
                 m3dType = M3dType.Model;
                 break;
-              case M3dType_2_0.Instance:
+              case M3DTileDataInfo.Vector:
                 m3dType = M3dType.Instance;
                 break;
-              case M3dType_2_0.CloudPoint:
+              case M3DTileDataInfo.CloudPoint:
                 m3dType = M3dType.CloudPoint;
                 break;
             }

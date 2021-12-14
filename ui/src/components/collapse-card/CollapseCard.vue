@@ -4,20 +4,29 @@
       <template slot="title">
         <span>{{ title }}</span>
       </template>
-      <mapgis-ui-button
-        :style="outStyle"
-        class="mapgis-ui-collapse-card-mini"
-        type="primary"
-        :shape="iconshape"
-        :class="getPositionClassName()"
-        @click="show"
+      <div
+        :class="{
+          top: expand == 'top',
+          top: expand == 'bottom',
+          top: expand == 'left',
+          top: expand == ''
+        }"
       >
-        <slot name="icon-hiden" />
-        <mapgis-ui-iconfont
-          :type="iconfont"
-          class="mapgis-ui-collapse-card-iconfont"
-        />
-      </mapgis-ui-button>
+        <mapgis-ui-button
+          :style="outStyle"
+          class="mapgis-ui-collapse-card-mini"
+          type="primary"
+          :shape="iconshape"
+          :class="getPositionClassName()"
+          @click="show"
+        >
+          <slot name="icon-hiden" />
+          <mapgis-ui-iconfont
+            :type="iconfont"
+            class="mapgis-ui-collapse-card-iconfont"
+          />
+        </mapgis-ui-button>
+      </div>
     </mapgis-ui-tooltip>
 
     <transition name="bounce">
@@ -81,6 +90,10 @@ export default {
     defaultCollapse: {
       type: Boolean,
       default: true
+    },
+    expand: {
+      type: String,
+      default: "right" // 'top' 'bottom' 'left' 'right'
     },
     mode: {
       type: String,
@@ -162,7 +175,7 @@ export default {
     },
     toggleMain() {
       this.showOther = false;
-      this.$emit('toggle-main');
+      this.$emit("toggle-main");
     },
     getPositionClassName() {
       let { position } = this;

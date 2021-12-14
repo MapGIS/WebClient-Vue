@@ -1,38 +1,8 @@
 <template>
   <div>
-    <mapgis-ui-row v-if="title" class="mapgis-mapstory-project-panel-filter">
-      <mapgis-ui-col span="18">
-        <div @click="$_collapse" class="mapgis-mapstory-project-panel-filter-title">
-          {{ title }}
-        </div>
-      </mapgis-ui-col>
-      <mapgis-ui-col span="6" class="mapgis-mapstory-filter">
-        <div class="mapgis-mapstory-filter-container">
-          <svg class="mapgis-mapstory-filter-icon" viewBox="0 0 24 24"
-               preserveAspectRatio="xMidYMid meet"
-               focusable="false">
-            <g mirror-in-rtl="" viewBox="0 0 24 24">
-              <path d="M0 0h24v24H0V0z" fill="none"></path>
-              <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"></path>
-            </g>
-          </svg>
-        </div>
-        <div @click="$_collapse" class="mapgis-mapstory-filter-container">
-          <svg :style="{transform: collapse ? 'rotate(270deg)' : 'rotate(90deg)'}"
-               class="mapgis-mapstory-filter-icon mapgis-mapstory-transition-filter" viewBox="0 0 24 24"
-               preserveAspectRatio="xMidYMid meet"
-               focusable="false">
-            <g mirror-in-rtl="" width="24" height="24">
-              <path d="M16.41 5.41L15 4l-8 8 8 8 1.41-1.41L9.83 12"></path>
-            </g>
-          </svg>
-        </div>
-      </mapgis-ui-col>
-    </mapgis-ui-row>
     <div class="mapgis-ui-project-row-container">
-      <mapgis-ui-row :key="index" v-for="(project,index) in projects" class="mapgis-ui-project-row">
-        <div v-if="project.type === type"
-             @mouseenter="$_rowEnter(index)"
+      <mapgis-ui-row :key="index" v-for="(project,index) in projectsCopy" class="mapgis-ui-project-row">
+        <div @mouseenter="$_rowEnter(index)"
              @mouseleave="$_rowLeave"
              @dblclick="$_edit(index)"
         >
@@ -65,12 +35,12 @@
             <!--            <mapgis-ui-svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>-->
             <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>-->
             <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>-->
-            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"
-                                @click="$_showProject(index, false)"
-                                v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>
-            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"
-                                @click="$_showProject(index, true)"
-                                v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>
+<!--            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"-->
+<!--                                @click="$_showProject(index, false)"-->
+<!--                                v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>-->
+<!--            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"-->
+<!--                                @click="$_showProject(index, true)"-->
+<!--                                v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>-->
             <mapgis-ui-base64-icon class="mapgis-mapstory-tool-bar-more" width="22px" @click="$_showMoreTool(index)"
                                    type="more"/>
           </mapgis-ui-col>
@@ -83,6 +53,10 @@
 <script>
 export default {
   name: "mapgis-ui-project-row",
+  model: {
+    prop: "projects",
+    event: "change"
+  },
   data() {
     return {
       hoverIcon: undefined,
@@ -103,7 +77,8 @@ export default {
         color: "#7A8DA0",
         width: "20px",
         height: "20px"
-      }
+      },
+      projectsCopy: undefined
     }
   },
   props: {
@@ -128,24 +103,22 @@ export default {
   watch: {
     projects: {
       handler: function () {
-        this.$_getRowLength();
+        this.projectsCopy = this.projects;
+      },
+      deep: true
+    },
+    projectsCopy: {
+      handler: function () {
+        this.projectsCopy = this.projects;
+        this.$emit("change", this.projectsCopy);
       },
       deep: true
     }
   },
   mounted() {
-    this.$_getRowLength();
+    this.projectsCopy = this.projects;
   },
   methods: {
-    $_getRowLength() {
-      const {projects, type} = this;
-      this.rowLength = 0;
-      for (let i = 0; i < projects.length; i++) {
-        if (projects[i].type === type) {
-          this.rowLength++;
-        }
-      }
-    },
     $_rowLeave() {
       this.showToolIndex = undefined;
     },

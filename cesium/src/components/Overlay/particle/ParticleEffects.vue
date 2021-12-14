@@ -128,14 +128,19 @@ import {
 
 import fireImg from "./fire.png";
 import smokeImg from "./smoke.png";
-import emptyImage from '@mapgis/webclient-vue-ui/src/components/iconfont/image/empty.png'
-import {newGuid} from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import emptyImage from './empty.png';
+import {newGuid} from "../../Utils/util";
 
 export default {
   name: "mapgis-3d-particle-effects-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
+    /**
+     * @type Array
+     * @default []
+     * @description 符号库参数配置
+     */
     symbolList: {
       type: Array,
       default: () => {
@@ -375,8 +380,32 @@ export default {
       });
     },
     unmount() {
-      this.onClearParticle();
+      this.removeAllParticle();
       this.$emit("unload", this);
+    },
+    removeAllParticle(){
+      let vm = this;
+      if (vm.particleArr.length > 0) {
+        for (let i = 0; i < vm.particleArr.length; i++) {
+          vm.particleArr[i].remove();
+        }
+      }
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      }
+      // 粒子结果集
+      this.particleArr = [];
+      // 粒子列表
+      this.particleListCopy = [];
+      if (
+          this.isLogarithmicDepthBufferEnable !==
+          isLogarithmicDepthBufferEnable(this.viewer)
+      ) {
+        setLogarithmicDepthBufferEnable(
+            this.isLogarithmicDepthBufferEnable,
+            this.viewer
+        );
+      }
     },
     onClearParticle(index) {
       let vm = this;
@@ -390,27 +419,13 @@ export default {
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
-      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
       // 粒子结果集
       this.particleArr.splice(index, 1);
       // 粒子列表
       this.particleListCopy.splice(index, 1);
-      // 粒子
-      if (
-          this.isLogarithmicDepthBufferEnable !==
-          isLogarithmicDepthBufferEnable(this.viewer)
-      ) {
-        setLogarithmicDepthBufferEnable(
-            this.isLogarithmicDepthBufferEnable,
-            this.viewer
-        );
-      }
     },
     tabChange(e) {
       this.activeKey = e;
-      // if (this.particleListCopy.length > 0) {
-      //   this.changeParticleIndex = this.particleListCopy.length - 1;
-      // }
       if (e === '2') {
         this.changeParticleIndex = undefined;
         let viewModelCopy = {

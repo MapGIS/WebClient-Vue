@@ -8,10 +8,11 @@
 <script>
 export const measureModeMap = {
   MeasureLengthTool: "MeasureLengthTool",
+  MeasureStickLengthTool: "MeasureStickLengthTool",
+  MeasureStickAreaTool: "MeasureStickAreaTool",
   MeasureAreaTool: "MeasureAreaTool",
   TriangulationTool: "TriangulationTool"
 };
-
 export default {
   name: "measure-3d-result",
   props: {
@@ -20,23 +21,45 @@ export default {
     },
     result: {
       type: Object
+    },
+    type: {
+      type: String
     }
   },
   data: vm => ({
     selfResult: null,
+    resultOptions: null,
     selfResultMap: {
       [measureModeMap.MeasureLengthTool]: [
         {
-          label: "直线距离",
+          label: "空间距离",
           value: "cesiumLength",
-          unit: "千米"
+          unit: "千米",
+          type: "space"
+        }
+      ],
+      [measureModeMap.MeasureStickLengthTool]: [
+        {
+          label: "贴地距离",
+          value: "cesiumStickLength",
+          unit: "千米",
+          type: "tostick"
         }
       ],
       [measureModeMap.MeasureAreaTool]: [
         {
           label: "空间面积",
           value: "cesiumArea",
-          unit: "平方公里"
+          unit: "平方公里",
+          type: "space"
+        }
+      ],
+      [measureModeMap.MeasureStickAreaTool]: [
+        {
+          label: "贴地面积",
+          value: "cesiumStickArea",
+          unit: "平方公里",
+          type: "tostick"
         }
       ],
       [measureModeMap.TriangulationTool]: [

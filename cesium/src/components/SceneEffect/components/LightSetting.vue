@@ -1,7 +1,7 @@
 <template>
   <div class="light-setting">
     <mapgis-ui-form-model :layout="layout" v-bind="formItemLayout" labelAlign="left" class="formStyle" :colon="false">
-      <mapgis-ui-switch-panel label="太阳光照" 
+      <mapgis-ui-switch-panel size="small" label="太阳光照" 
         :checked="sunlight" 
         @changeChecked="enableSunlight" 
       >    

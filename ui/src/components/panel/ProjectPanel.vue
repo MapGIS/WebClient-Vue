@@ -2,12 +2,12 @@
   <div>
     <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
          class="mapgis-ui-project-panel">
-      <div class="mapgis-ui-project-panel-content" v-show="!addProject" :style="{height: height - 40 + 'px'}">
+      <div class="mapgis-ui-project-panel-content" v-show="!showProjectEdit" :style="{height: height - 40 + 'px'}">
         <mapgis-ui-project-header/>
         <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
                                @showProjected="$_showProject"
                                @marked="$_marker"
-                               :projects="projects"
+                               :projects="dataSourceCopy"
                                :width="width"
         />
       </div>
@@ -18,24 +18,30 @@
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <div v-if="addProject">
-        <mapgis-ui-project-edit
-            :width="width"
-            :height="height"
-            @addMap="$_addMap"
-            @getCamera="$_getCamera"
-            @deleteFeature="$_deleteFeature"
-            @changeIcon="$_changeIcon"
-            @changeColor="$_changeColor"
-            @showFeature="$_showFeature"
-            @projectPreview="$_projectPreview"
-            @featurePreview="$_featurePreview"
-            @addFeature="$_addFeature"
-            @deleteProject="$_deleteProject"
-            @titleChanged="$_titleChanged"
-            ref="panelEdit" v-model="project"
-            @backed="$_back"/>
-      </div>
+      <mapgis-ui-project-edit
+          v-show="showProjectEdit"
+          :width="width"
+          :height="height"
+          @addMap="$_addMap"
+          @getCamera="$_getCamera"
+          @selectCamera="$_selectCamera"
+          @deleteFeature="$_deleteFeature"
+          @toggleChapterFeatures="$_toggleChapterFeatures"
+          @changeIcon="$_changeIcon"
+          @changeColor="$_changeColor"
+          @changeEntityTitle="$_changeEntityTitle"
+          @changeEntity="$_changeEntity"
+          @showFeature="$_showFeature"
+          @projectPreview="$_projectPreview"
+          @featurePreview="$_featurePreview"
+          @addFeature="$_addFeature"
+          @addChapter="$_addChapter"
+          @copyChapter="$_copyChapter"
+          @deleteProject="$_deleteProject"
+          @titleChanged="$_titleChanged"
+          ref="panelEdit"
+          v-model="project"
+          @backed="$_back"/>
       <mapgis-ui-hover-edit-panel
           @closeHoverPanel="$_closeHoverPanel"
           @titleChanged="$_titleChange" v-if="showEditPanel"/>
@@ -46,10 +52,20 @@
 <script>
 export default {
   name: "mapgis-ui-project-panel",
+  model: {
+    prop: "dataSource",
+    event: "change"
+  },
   watch: {
     dataSource: {
       handler: function () {
-        this.projects = this.dataSource;
+        this.dataSourceCopy = this.dataSource;
+      },
+      deep: true
+    },
+    dataSourceCopy: {
+      handler: function () {
+        this.$emit("change", this.dataSourceCopy)
       },
       deep: true
     },
@@ -85,11 +101,13 @@ export default {
       project: undefined,
       projects: [],
       currentProjectIndex: undefined,
-      storyFeature: []
+      storyFeature: [],
+      dataSourceCopy: undefined,
+      showProjectEdit: false
     }
   },
   created() {
-    this.projects = this.dataSource;
+    this.dataSourceCopy = this.dataSource;
   },
   methods: {
     $_deleteProject() {
@@ -109,35 +127,49 @@ export default {
       }
     },
     $_deleted(index) {
-      this.$emit("deleteProject", this.projects[index]);
+      this.$emit("deleteProject", this.dataSourceCopy[index]);
     },
     $_marker(index, type) {
       this.$set(this.projects[index], "type", type);
     },
     $_showProject(index, flag) {
-      this.$set(this.projects[index], "show", flag);
       this.$emit("showProject", this.projects[index]);
     },
     $_addProject() {
       this.project = {
-        title: "无标题",
-        description: "",
-        features: []
+        "title": "无标题",
+        "description": "",
+        "uuid": "mapStory" + parseInt(String(Math.random() * 100000000)),
+        "map": {
+          "type": "",
+          "baseUrl": "",
+          "layer": "",
+          "tilingScheme": "",
+          "tileMatrixSet": "",
+          "format": "",
+          "vueKey": "",
+          "vueIndex": ""
+        },
+        "features": [],
+        "chapters": []
       };
-      this.projects.push({
-        title: "无标题",
-        description: "",
-        url: "",
-        type: "normal",
-        show: true,
-      });
-      this.addProject = true;
+      this.dataSourceCopy.push(this.project);
+      this.showProjectEdit = true;
     },
     $_editProject(index) {
+      this.project = this.dataSourceCopy[index];
+      this.showProjectEdit = true;
       this.$emit("editProject", index, this.projects[index]);
     },
     $_back() {
-      this.addProject = false;
+      this.showProjectEdit = false;
+      this.$emit("back", this.project);
+    },
+    $_addChapter(chapter) {
+      this.$emit("addChapter", chapter);
+    },
+    $_copyChapter(uuid) {
+      this.$emit("copyChapter", uuid);
     },
     $_addFeature(feature) {
       this.$emit("addFeature", feature);
@@ -155,8 +187,14 @@ export default {
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
-    $_deleteFeature(index, id) {
-      this.$emit("deleteFeature", index, id, this.project);
+    $_selectCamera(camera, currentFeature) {
+      this.$emit("selectCamera", camera, currentFeature);
+    },
+    $_toggleChapterFeatures(featureUUID, projectUUID, show) {
+      this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
+    },
+    $_deleteFeature(index, uuid) {
+      this.$emit("deleteFeature", index, this.project.uuid);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
@@ -164,11 +202,18 @@ export default {
     $_changeColor(color, id, type) {
       this.$emit("changeColor", color, id, type);
     },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
+    },
     $_showFeature(id, flag) {
       this.$emit("showFeature", id, flag);
     },
     $_projectPreview() {
       this.storyFeature = this.project.features;
+      this.$emit("projectPreview", this.project);
     },
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);

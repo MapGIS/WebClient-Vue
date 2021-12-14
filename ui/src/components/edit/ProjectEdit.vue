@@ -1,78 +1,84 @@
 <template>
   <div :id="id" @click="$_clickPanel" class="mapgis-ui-project-edit-panel"
        :style="{height: height + 'px', width: width + 'px'}">
-    <div v-show="!editFeature" :style="{height: height - 32 + 'px'}">
+    <div v-show="!editFeature && !showSetting" :style="{height: height - 32 + 'px'}">
       <div class="mapgis-ui-project-edit-top-bar">
         <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
           <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
           </mapgis-ui-col>
           <mapgis-ui-col span="6" class="mapgis-ui-project-edit-top-right">
-            <mapgis-ui-base64-icon width="16px" @click="$_deleteProject" type="setting"/>
+            <mapgis-ui-base64-icon width="16px" @click="$_showSetting" type="setting"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
-        <mapgis-ui-row v-show="!editTitle" class="mapgis-ui-project-edit-title">
+        <mapgis-ui-row class="mapgis-ui-project-edit-title">
           <mapgis-ui-col span="24">
-            <span class="mapgis-ui-project-edit-title-value">{{ projectCopy.title }}</span>
-            <mapgis-ui-svg-icon id="mpEdit" @click="$_editTitle"
+            <span v-show="!editTitle" class="mapgis-ui-project-edit-title-value">{{ projectCopy.title }}</span>
+            <mapgis-ui-svg-icon v-show="!editTitle"
+                                id="mpEdit" @click="$_editTitle"
                                 class="mapgis-ui-project-edit-edit-icon mapgis-ui-project-edit-edit-icon-p"
                                 type="edit"/>
+            <mapgis-ui-input v-show="editTitle"
+                             class="mapgis-ui-project-edit-title-edit"
+                             @change="$_titleChange" title="标题" id="mpTitle"
+                             v-model="projectCopy.title"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
       </div>
-      <mapgis-ui-row v-show="editTitle">
-        <mapgis-ui-input-outline @change="$_titleChange" title="标题" :inputStyle="inputStyle" id="mpTitle"
-                                 v-model="projectCopy.title"/>
-      </mapgis-ui-row>
-      <mapgis-ui-row v-show="editTitle">
-        <mapgis-ui-textarea-outline @change="$_titleChange" :textareaStyle="textareaStyle" :hasToolBar="false"
-                                    id="mpDescription"
-                                    v-model="projectCopy.description" placeholder="描述信息"/>
-      </mapgis-ui-row>
       <mapgis-ui-row>
         <mapgis-ui-feature-row
             @showFeature="$_showFeature"
             @deleteFeature="$_deleteFeature"
             @editFeature="$_editFeature"
-            :features="projectCopy.features"
+            v-model="projectCopy.chapters"
             :width="width"
         />
       </mapgis-ui-row>
     </div>
-    <mapgis-ui-row v-show="!editFeature">
+    <!--附加地图-->
+<!--    <mapgis-ui-map-select :showTitleIcon="false"-->
+<!--                          v-show="showSetting"-->
+<!--                          @addMap="$_addMap" title="附加地图"/>-->
+    <mapgis-ui-map-multi-rows v-show="showSetting"
+                              :showTitleIcon="false"
+                              showMoreTitle=""
+                              :map="projectCopy.map"
+                              @addMap="$_addMapToProject" title="附加地图"/>
+    <mapgis-ui-row v-show="!editFeature && !showSetting">
       <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
         <mapgis-ui-dropdown>
           <mapgis-ui-menu slot="overlay">
-            <mapgis-ui-menu-item key="1" @click="$_addPoint">
-              添加点
-            </mapgis-ui-menu-item>
-            <mapgis-ui-menu-item key="2" @click="$_addLine">
-              添加线
-            </mapgis-ui-menu-item>
-            <mapgis-ui-menu-item key="3" @click="$_addPolygon">
-              添加多边形
-            </mapgis-ui-menu-item>
-            <mapgis-ui-menu-item key="4" @click="$_addRectangle">
-              添加矩形
+            <mapgis-ui-menu-item key="4" @click="$_copyChapter">
+              复制上一章节
             </mapgis-ui-menu-item>
           </mapgis-ui-menu>
-          <mapgis-ui-button class="mapgis-ui-project-edit-feature-button">新建</mapgis-ui-button>
+          <mapgis-ui-button @click="$_addChapter" class="mapgis-ui-project-edit-feature-button">
+            新建章节
+          </mapgis-ui-button>
         </mapgis-ui-dropdown>
         <mapgis-ui-button type="primary" @click="$_projectPreview" class="mapgis-ui-project-edit-feature-preview">
           预览
         </mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div v-show="editFeature">
+    <div v-show="editFeature" style="height: 100%;">
       <mapgis-ui-feature-edit
           @textChanged="$_textChanged"
           @getCamera="$_getCamera"
+          @selectCamera="$_selectCamera"
           @addMap="$_addMap"
+          @addFeature="$_addFeature"
+          @toggleFeature="$_toggleFeature"
+          @deleteFeature="$_deleteFeature"
           @changeColor="$_changeColor"
+          @changeEntityTitle="$_changeEntityTitle"
+          @changeEntity="$_changeEntity"
           @changeOpacity="$_changeOpacity"
           @changeIcon="$_changeIcon"
           @featurePreview="$_featurePreview"
           @back="$_featureBack"
+          @change="$_featureChange"
           @titleChanged="$_featureTitleChanged"
+          @animationTimeChanged="$_animationTimeChanged"
           @firstAddPicture="$_firstAddPicture"
           :feature="currentFeature"
           :cameras="cameras"
@@ -92,7 +98,8 @@ export default {
   data() {
     return {
       panelScale: 1,
-      currentFeature: undefined,
+      currentFeature: {},
+      showSetting: false,
       editFeature: false,
       editTitle: false,
       projectCopy: undefined,
@@ -117,11 +124,7 @@ export default {
     project: {
       type: Object,
       default() {
-        return {
-          "title": "测试1",
-          "description": "",
-          "features": []
-        };
+        return {};
       }
     },
     height: {
@@ -150,15 +153,14 @@ export default {
       },
       deep: true
     },
-    "project.features": {
-      handler: function () {
-        this.projectCopy = this.project;
-      },
-      deep: true
-    },
     projectCopy: {
       handler: function () {
         this.$emit("change", this.projectCopy);
+      },
+      deep: true
+    },
+    currentFeature: {
+      handler: function () {
       },
       deep: true
     }
@@ -188,6 +190,9 @@ export default {
     }
   },
   methods: {
+    $_showSetting() {
+      this.showSetting = true;
+    },
     $_clickPanel(e) {
       if (e.target.id !== "mpTitle" && e.target.id !== "mpDescription" && e.target.id !== "mpEdit") {
         this.editTitle = false;
@@ -206,11 +211,21 @@ export default {
     $_getCamera() {
       this.$emit("getCamera", this.currentFeature);
     },
+    $_selectCamera(camera) {
+      this.$emit("selectCamera", camera, this.currentFeature);
+    },
     $_addMap(type, map, id) {
       this.$emit("addMap", type, map, id);
     },
     $_addMapToProject(type, map) {
+      this.showSetting = false;
       this.$emit("addMapToProject", type, map, this.projectCopy);
+    },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
     },
     $_changeColor(color, type) {
       this.$emit("changeColor", color, type, this.currentFeature.id, this.currentFeature.baseUrl.type);
@@ -240,13 +255,18 @@ export default {
         uuid: this.projectCopy.uuid,
       });
     },
+    $_toggleFeature() {
+      this.$emit("toggleChapterFeatures", this.currentFeature.uuid, this.currentFeature.projectUUID, false);
+    },
     $_editFeature(index) {
       this.editFeature = true;
-      this.currentFeature = this.projectCopy.features[index];
+      this.currentFeature = this.projectCopy.chapters[index];
+      this.$emit("toggleChapterFeatures", this.currentFeature.uuid, this.currentFeature.projectUUID);
       let cameras = [];
-      for (let i = 0; i < this.projectCopy.features.length; i++) {
-        cameras.push(Object.assign({}, this.projectCopy.features[i].camera));
-        cameras[i].title = this.projectCopy.features[i].title;
+      for (let i = 0; i < this.projectCopy.chapters.length; i++) {
+        cameras.push(Object.assign({}, this.projectCopy.chapters[i].camera));
+        cameras[i].title = this.projectCopy.chapters[i].title;
+        cameras[i].uuid = this.projectCopy.chapters[i].uuid;
       }
       this.cameras = cameras;
       if (window.showPanels) {
@@ -256,35 +276,71 @@ export default {
     $_editTitle() {
       this.editTitle = true;
     },
-    $_getFeature(type) {
+    $_getChapter() {
       return {
-        "title": "无标题",
-        "id": type + parseInt(String(Math.random() * 100000000)),
-        "content": "",
-        "containerType": "small",
-        "images": "",
-        "layerStyle": {
-          "show": true,
-          "color": "#FF0000",
-          "opacity": 1
-        },
-        "show": true,
-        "baseUrl": {
-          "type": type,
-          "geometry": {},
-          "properties": {}
-        },
+        "uuid": "Chapter_" + parseInt(String(Math.random() * 100000000)),
         "camera": {
+          "uuid": "Chapter_" + parseInt(String(Math.random() * 100000000)),
           "heading": 0,
           "pitch": 0,
           "roll": 0,
-          "longLatPosition": [0, 0, 0],
           "positionCartographic": {
             "longitude": 0,
             "latitude": 0,
             "height": 0,
           }
+        },
+        "features": [],
+        "title": "无标题",
+        "animationTime": "5000"
+      };
+    },
+    $_getFeature(type) {
+      return {
+        "uuid": type + parseInt(String(Math.random() * 100000000)),
+        "type": type,
+        "projectUUID": this.projectCopy.uuid,
+        "featureUUID": this.currentFeature.uuid,
+        "layerStyle": {
+          "show": true,
+          "color": "#FF0000",
+          "opacity": 1
+        },
+        "feature": {
+          "type": "Feature",
+          "geometry": {},
+          "properties": {}
         }
+      }
+    },
+    $_copyChapter() {
+      this.$emit("copyChapter", this.projectCopy.uuid);
+    },
+    $_addChapter() {
+      let chapter = this.$_getChapter();
+      chapter.projectUUID = this.projectCopy.uuid;
+      this.$emit("addChapter", chapter);
+    },
+    $_deleteFeature(index, uuid) {
+      this.$emit("deleteFeature", index, uuid);
+    },
+    $_addFeature(type) {
+      switch (type) {
+        case "point":
+          this.$_addPoint();
+          break;
+        case "polyline":
+          this.$_addLine();
+          break;
+        case "polygon":
+          this.$_addPolygon();
+          break;
+        case "rectangle":
+          this.$_addRectangle();
+          break;
+        case "text":
+          this.$_addText();
+          break;
       }
     },
     $_addPoint() {
@@ -308,6 +364,13 @@ export default {
         feature: feature
       });
     },
+    $_addText() {
+      let feature = this.$_getFeature("text");
+      this.$emit("addFeature", {
+        type: "text",
+        feature: feature
+      });
+    },
     $_addRectangle() {
       let feature = this.$_getFeature("polygon");
       this.$emit("addFeature", {
@@ -321,21 +384,30 @@ export default {
     $_featureTitleChanged(feature) {
       this.$emit("featureTitleChanged", feature);
     },
+    $_animationTimeChanged(feature) {
+      this.$emit("animationTimeChanged", feature);
+    },
+    $_featureChange(feature) {
+      this.currentFeature = Object.assign(this.currentFeature, feature || {});
+    },
     $_featureBack() {
       this.editFeature = false;
     },
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);
     },
-    $_deleteFeature(index, id) {
-      let feature = this.projectCopy.features.splice(index, 1);
-      this.$emit("deleteFeature", index, id, this.projectCopy, feature);
-    }
+    // $_deleteFeature(index, id) {
+    //   let feature = this.projectCopy.features.splice(index, 1);
+    //   this.$emit("deleteFeature", index, id, this.projectCopy, feature);
+    // }
   }
 }
 </script>
 
 <style scoped>
+.mapgis-ui-project-edit-title-edit {
+  width: 90%;
+}
 .mapgis-ui-project-edit-panel {
   position: absolute;
   z-index: 1;

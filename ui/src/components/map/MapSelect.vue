@@ -1,7 +1,7 @@
 <template>
   <div class="mapgis-ui-map-select-container">
-    <div class="mapgis-ui-map-select-title">
-      <mapgis-ui-title-icon/>
+    <div class="mapgis-ui-map-select-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
       {{ title }}
       <span @click="$_showMore" class="mapgis-ui-map-select-show-more">
            {{ showMoreTitle }}
@@ -55,7 +55,7 @@ export default {
         marginBottom: "0"
       },
       mainStyle: {
-        width: "158px",
+        width: "177px",
         marginLeft: "-8px",
       },
       mapNamesCopy: {
@@ -91,6 +91,10 @@ export default {
     title: {
       type: String,
       default: "title"
+    },
+    showTitleIcon: {
+      type: Boolean,
+      default: true
     },
     showMoreTitle: {
       type: String,
@@ -192,8 +196,9 @@ export default {
 
 <style scoped>
 .mapgis-ui-map-select-title {
-  margin-top: 6px;
-  margin-bottom: 4px;
+  font-weight: bolder;
+  margin-top: 12px;
+  margin-bottom: 0;
   padding-left: 12px;
 }
 
@@ -213,10 +218,9 @@ export default {
 .mapgis-ui-map-select-content {
   width: 100%;
   height: 92px;
-  background: #F1F1F1;
   border-radius: 3px;
   padding-top: 6px;
-  padding-left: 10px;
+  padding-left: 0;
 }
 
 .mapgis-ui-map-select-show-more {

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="mapgis-ui-slider-title-title">
+    <div class="mapgis-ui-slider-title-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
       {{ title }}
-      <mapgis-ui-title-icon/>
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
     </div>
     <mapgis-ui-row>
       <mapgis-ui-col :span="16">
@@ -11,6 +11,7 @@
             :min="0"
             :max="1"
             :step="0.01"
+            @change="$_change"
             class="mapgis-ui-slider-title-slider"
         />
       </mapgis-ui-col>
@@ -40,6 +41,14 @@ export default {
     }
   },
   props: {
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
+    enableWatchValue: {
+      type: Boolean,
+      default: true
+    },
     title: {
       type: String,
       default: "title"
@@ -56,12 +65,19 @@ export default {
     },
     valueCopy: {
       handler: function () {
-        this.$emit("change", this.valueCopy);
+        if(this.enableWatchValue){
+          this.$emit("change", this.valueCopy);
+        }
       }
     },
   },
   created() {
     this.valueCopy = this.value;
+  },
+  methods: {
+    $_change(e) {
+      this.$emit("change", e);
+    }
   }
 }
 </script>
@@ -74,12 +90,14 @@ export default {
 
 .mapgis-ui-slider-title-slider {
   width: 140px;
-  margin-left: 8px;
+  margin-left: 2px;
 }
 
 .mapgis-ui-slider-title-title {
+  font-weight: bolder;
   position: relative;
   padding-left: 13px;
-  margin-top: 6px;
+  margin-top: 24px;
+  margin-bottom: 8px;
 }
 </style>

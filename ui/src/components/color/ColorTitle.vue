@@ -1,8 +1,8 @@
 <template>
   <div class="mapgis-ui-color-title-container">
-    <div class="mapgis-ui-color-title-title">
+    <div class="mapgis-ui-color-title-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
       {{ title }}
-      <mapgis-ui-title-icon/>
+      <mapgis-ui-title-icon v-show="showTitleIcon"/>
     </div>
     <mapgis-ui-sketch-color-picker
         :color.sync="colorCopy"
@@ -21,6 +21,10 @@ export default {
     }
   },
   props: {
+    showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
     title: {
       type: String,
       default: "title"
@@ -50,7 +54,7 @@ export default {
 
 <style scoped>
 .mapgis-ui-color-title-container {
-  width: 99%;
+  width: 98%;
 }
 
 .mapgis-ui-color-title-container:hover{
@@ -58,9 +62,10 @@ export default {
 }
 
 .mapgis-ui-color-title-title {
+  font-weight: bolder;
   position: relative;
   padding-left: 13px;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  margin-top: 22px;
+  margin-bottom: 14px;
 }
 </style>
