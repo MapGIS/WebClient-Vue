@@ -33,16 +33,9 @@
 </template>
 
 <script>
-// import { MapgisUiIconFont } from "@mapgis/webclient-vue-ui";
-
-/* const MapgisUiIconfont = MapgisUiIconFont.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_2743527_adfkxoozjnc.js',
-}); */
 import * as turf from "@turf/turf";
-import mapboxgl from "@mapgis/mapbox-gl";
 import "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css";
 import DrawRectangle from "mapbox-gl-draw-rectangle-mode";
-// import { CircleMode, DragCircleMode } from "mapbox-gl-draw-circle";
 import * as MapboxDrawCom from "@mapbox/mapbox-gl-draw";
 import RadiusMode from "@mapgis/mapbox-gl-draw-radius";
 import {
@@ -50,7 +43,7 @@ import {
   DragCircleMode,
   DirectMode,
   SimpleSelectMode
-} from "mapbox-gl-draw-circle";
+} from "@mapgis/mapbox-gl-draw-circle";
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
 
 const modes = MapboxDrawCom.default.modes;
