@@ -57,18 +57,16 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-.measure-marker {
-  &-popup {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  &-popup-tip {
-    align-self: center;
-    width: 0;
-    height: 0;
-    border-bottom: none;
-    z-index: 1;
-  }
+<style scoped>
+.measure-marker-popup {
+  display: flex;
+  flex-direction: column-reverse;
+}
+.measure-marker-popup-tip {
+  align-self: center;
+  width: 0;
+  height: 0;
+  border-bottom: none;
+  z-index: 1;
 }
 </style>

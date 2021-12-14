@@ -22,7 +22,7 @@
 ## 一、开始
 
 ### 1、司马云
-[MapGIS Client for JavaScript](http://develop.smaryun.com:8899/)
+[MapGIS Client for JavaScript](http://develop.smaryun.com/)
 
 ### 2、特性
 1. `组件式风格` - Vue组件式开发

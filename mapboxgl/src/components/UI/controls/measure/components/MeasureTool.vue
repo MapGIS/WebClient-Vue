@@ -162,11 +162,9 @@ export default {
   }
 };
 </script>
-<style lang="scss" scoped>
-.measure-tool {
-  &-unit {
-    width: 120px;
-    margin: 0 12px;
-  }
+<style scoped>
+.measure-tool-unit {
+  width: 120px;
+  margin: 0 12px;
 }
 </style>

@@ -184,7 +184,7 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
+<style scoped>
 .measure-setting {
   padding: 0 10px;
 }
