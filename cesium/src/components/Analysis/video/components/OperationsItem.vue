@@ -43,7 +43,7 @@ export default {
   props: {
     text: String, // 传入要修改的text字段
     operations: {
-      // 功能集合，delete,edit,setting,put四个任意组合
+      // 功能集合，delete,edit,setting,locate四个任意组合
       type: Array,
       default: () => []
     },
@@ -80,10 +80,10 @@ export default {
             operation,
             key
           };
-        } else if (this.operations[i] === "put") {
+        } else if (this.operations[i] === "locate") {
           command = {
-            icon: "mapgis-shexiangji",
-            title: "投放",
+            icon: "mapgis-target-lock",
+            title: "定位",
             operation,
             key
           };

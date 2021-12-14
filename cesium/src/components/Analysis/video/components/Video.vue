@@ -48,11 +48,13 @@ export default {
         if (!this.player) {
           this.init();
         }
-        this.player.src({
-          src: this.videoUrl,
-          type: this.playerType
-        });
-        this.player.load();
+        if (this.videoUrl.length > 0) {
+          this.player.src({
+            src: this.videoUrl,
+            type: this.playerType
+          });
+          this.player.load();
+        }
       },
       immediate: true
     }

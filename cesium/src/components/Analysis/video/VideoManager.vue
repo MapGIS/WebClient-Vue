@@ -19,7 +19,12 @@
           @change="tabChange"
           size="small"
         >
-          <mapgis-ui-tab-pane key="1" tab="投放列表" style="position: relative">
+          <mapgis-ui-tab-pane
+            key="1"
+            tab="投放列表"
+            style="position: relative"
+            class="control-content"
+          >
             <mapgis-ui-list
               :key="`list-${currentVideoOverlayLayer.id}`"
               item-layout="horizontal"
@@ -27,7 +32,8 @@
               :data-source="videoList"
               :pagination="pagination"
               class="mapgis-list"
-              style="height:280px;overflow-y: auto;width:100%"
+              :split="false"
+              style="max-height: 310px;;overflow-y: auto;width:100%"
             >
               <mapgis-ui-empty
                 :image="emptyImage"
@@ -46,20 +52,21 @@
                 slot-scope="item, index"
                 @click="clickListItem(item, index)"
               >
-                <mapgis-ui-iconfont
-                  style="margin:0px 5px"
-                  type="mapgis-shexiangji"
-                >
-                </mapgis-ui-iconfont>
+                <mapgis-ui-toolbar-command
+                  :class="item.isPut ? 'camera-active' : 'camera'"
+                  icon="mapgis-shexiangji"
+                  title="投放"
+                  @click="onPutVideo(item)"
+                ></mapgis-ui-toolbar-command>
                 <operations-item
                   style="width:100%"
                   :key="item.id"
                   :text="item.name"
-                  :operations="['setting', 'delete', 'put']"
+                  :operations="['setting', 'delete', 'locate']"
                   :showOperations="activeIndex === index"
                   @setting="onGotoSetting(item, index)"
                   @delete="onDeleteVideo(item.id)"
-                  @put="onPutVideo(item)"
+                  @locate="onLocate(item)"
                 ></operations-item>
                 <mapgis-ui-checkbox style="float:right" v-show="isBatch">
                 </mapgis-ui-checkbox>
@@ -112,9 +119,7 @@
               v-if="
                 currentEditVideo && Object.keys(currentEditVideo).length > 0
               "
-              :id="currentEditVideo.id"
-              :isPubliced="currentEditVideo.isPubliced"
-              :params="currentEditVideo.params"
+              :settings="currentEditVideo"
             ></video-setting>
           </mapgis-ui-tab-pane>
           <mapgis-ui-checkbox
@@ -361,7 +366,6 @@ export default {
      * 跳转到video配置界面
      */
     onGotoSetting(video, index) {
-      this.actionMenuVisible = false;
       this.currentEditVideo = video;
       this.activeIndex = index;
       this.activeKey = "2";
@@ -370,16 +374,14 @@ export default {
      * 删除video
      */
     onDeleteVideo(id) {
-      this.actionMenuVisible = false;
       const videoList = [...this.videoList];
       this.videoList = videoList.filter(item => item.id !== id);
     },
     /**
      * 投放video
      */
-    onPutVideo(video) {
-      this.actionMenuVisible = false;
-    }
+    onPutVideo(video) {},
+    onLocate(item) {}
   }
 };
 </script>
@@ -400,6 +402,14 @@ export default {
       display: block;
     }
   }
+}
+
+.camera {
+  color: var(--text-color);
+}
+
+.camera-active {
+  color: var(--primary-color);
 }
 
 .empty-style {
