@@ -20,7 +20,8 @@ All common [layers props](/api/Layers/README.md#props)
 - **侦听属性**
 - **描述:** 图层名称或 Id
   > 图层名称或 Id，多个值以逗号分隔，不传时不显示地图 <br/>
-  > igs 使用地图名称 <br/>
+  > igs 使用地图名称,即为通过图层的基地址（如`http://192.168.81.103:8089/igs/rest/ogc/doc/北京市/WMSServer`）查询的地图图层信息中的 `Name` 字段  <br/>
+  ![](../igserver/Wms.png)
   > arcgis 根据版本不同，可使用 id 或名称，具体请看 arcgis 的 wms 服务的 xml 文档，例如： <br/> > http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WMSServer?request=GetCapabilities&service=WMS <br/>
   > ... <br/> > \<Layer queryable="1"\> <br/> > \<Name>0\</Name> <br/>
   > ... <br/> > \</Layer\> <br/>
