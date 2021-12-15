@@ -86,6 +86,7 @@ export default {
     selectOptions: {
       handler() {
         this.selectOptionsCopy = [...this.selectOptions];
+        this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
       },
       deep: true,
       immediate: true
@@ -103,10 +104,16 @@ export default {
   },
 
   methods: {
+    /**
+     * 图层名展示的时候后面加上对应图层视频列表总数
+     */
     getLabel(item) {
       const length = item.videoList ? item.videoList.length : 0;
       return `${item.name}(${length})`;
     },
+    /**
+     * 点击图层名
+     */
     clickListItem(item) {
       this.selectedLayer = item.name;
       this.$emit("selectedLayer", this.selectedLayer);
@@ -126,6 +133,9 @@ export default {
       }
       this.$emit("change-layer-name", { id, dataIndex, value });
     },
+    /**
+     * 图层名编辑界面确定按钮事件
+     */
     onEditLayerNameOk(val) {
       if (this.editLayer) {
         this.changeName(this.editLayer.id, "name", val);
@@ -140,14 +150,23 @@ export default {
       this.showCardDialog = false;
       this.reflush = !this.reflush;
     },
+    /**
+     * 图层名编辑结束事件
+     */
     onEditLayerNameFinished() {
       this.editLayerNameVisible = false;
       this.editLayer = null;
     },
+    /**
+     * 新建图层名
+     */
     onAdd() {
       this.editLayerNameVisible = true;
       this.editLayer = null;
     },
+    /**
+     * 编辑图层名
+     */
     onEdit(item) {
       this.editLayerNameVisible = true;
       this.editLayer = item;
