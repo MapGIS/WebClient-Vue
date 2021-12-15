@@ -74,7 +74,6 @@ export default {
         loaded: tileset => {
           if (vueKey && vueIndex) {
             CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
-            m3ds.forEach(m3d => console.log("m3d", m3d));
 
             if (!vm.show && m3ds) {
               m3ds.forEach(m3d => {
@@ -196,17 +195,13 @@ export default {
 
       const version = root.tileset._version;
 
-      console.log("version", version);
       if (version == 0.0 || version == 1.0) {
         // m3d 0.x  1.x版本逻辑判断 type =0是模型 =1是示例化数据 =2是点云
         let { children } = root;
-        console.log("root", root);
         if (!children || children.length <= 0) return m3dType;
         let child = children[0];
-        console.log("child", child.content);
         if (child.content) {
           let type = child.content._dataType;
-          console.log("type", type);
           if (callback) {
             callback();
           }

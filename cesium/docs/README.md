@@ -19,7 +19,7 @@ footer: MIT Licensed
 
 ```javascript
 // main.js
-import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
+import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
 Vue.use(Mapgis3d);
 ```
@@ -29,7 +29,7 @@ Vue.use(Mapgis3d);
   <mapgis-web-scene
     ref="webgloberef"
     libPath="statics/cesium/Cesium.js"
-    pluginPath="statics/cesium/webclient-cesium-plugins.js"
+    pluginPath="statics/cesium/webclient-cesium-plugin.min.js"
   >
     <mapgis-3d-igs-tile-layer
       :ip="ip"
@@ -49,14 +49,14 @@ export default {
       ip: "develop.smaryun.com",
       port: "6163",
       protocol: "http",
-      serverName: "北京市"
+      serverName: "北京市",
     };
   },
   methods: {
     handleLoad(e) {
       console.log("地图加初始化完毕！", e);
-    }
-  }
+    },
+  },
 };
 </script>
 ```

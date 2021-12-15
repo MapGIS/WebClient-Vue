@@ -42,7 +42,7 @@ export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/Marker3d
 export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/Marker3dSetPro.vue";
 export { default as Mapgis3dDynamicMarkerLayer } from "./components/Layer/Marker/DynamicMarkerLayer.vue";
 export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.vue";
-// export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
+export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 export { default as Mapgis3dCesiumHeaterLayer } from "./components/Overlay/themeLayer/heater/CesiumHeater.vue";
 export { default as Mapgis3dMapvHeaterLayer } from "./components/Overlay/themeLayer/heater/MapvHeater.vue";
 
