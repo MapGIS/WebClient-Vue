@@ -26,6 +26,7 @@ export { default as Mapgis3dIgsFeatureLayer } from "./components/Layer/IGServer/
 
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
+export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";
@@ -67,7 +68,7 @@ export { default as Mapgis3dExcavate } from "./components/Analysis/Excavate";
 export { default as Mapgis3dHeightlimited } from "./components/Analysis/HeightLimited";
 export { default as Mapgis3dShadow } from "./components/Analysis/Shadow";
 export { default as Mapgis3dDynamicCutting } from "./components/Analysis/DynamicCutting";
-export { default as DynamicSection } from "./components/Analysis/DynamicSection";
+export { default as Mapgis3dDynamicSection } from "./components/Analysis/DynamicSection";
 export { default as Mapgis3dFill } from "./components/Analysis/Fill";
 export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
 export { default as Mapgis3dSlope } from "./components/Analysis/Slope";

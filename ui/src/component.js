@@ -230,6 +230,7 @@ export { default as MapgisUiChoosePictureRight } from "./components/picture/Choo
 //row
 export { default as MapgisUiProjectRow } from "./components/row/ProjectRow";
 export { default as MapgisUiFeatureRow } from "./components/row/FeatureRow";
+export { default as MapgisUiInputRow } from "./components/row/InputRow";
 
 //edit
 export { default as MapgisUiFeatureEdit } from "./components/edit/FeatureEdit";
