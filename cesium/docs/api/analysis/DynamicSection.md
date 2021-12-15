@@ -146,17 +146,48 @@ export default {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
       //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
+      terrainUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
       format: "tiles",
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752",
+        value: "9c157e9585486c02edf817d2ecbc7752"
       },
-      m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
-      m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
+      m3dUrl1: "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s",
+      m3dUrl2:
+        "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent",
+      models: [
+        {
+          range: {
+            xmin: -10000,
+            xmax: 10000,
+            ymin: -10000,
+            ymax: 10000,
+            zmin: -10000,
+            zmax: 10000
+          },
+          vueIndex: 1,
+          title: "钻孔_2_钻孔模型s"
+        },
+        {
+          range: {
+            xmin: -10000,
+            xmax: 10000,
+            ymin: -10000,
+            ymax: 10000,
+            zmin: -10000,
+            zmax: 10000
+          },
+          vueIndex: 2,
+          title: "钻孔分层点"
+        }
+      ],
+      axis: "X",
+      color: "rgb(200,200,200,0.5)",
+      time: 10,
+      distance: 0
     };
   },
   methods: {
@@ -164,8 +195,8 @@ export default {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2Q0ZGMxYy1iZGZkLTQ4OWItODlhMy1iOWNkMDE0M2U3YWEiLCJpZCI6NTEzNSwiaWF0IjoxNjA2MjE0OTkyfQ.2aktNrUASlLsPwSFtkgKBTQLJTAnOTyjgKDRQmnafiE";
-    },
-  },
+    }
+  }
 };
 </script>
 ```
@@ -212,18 +243,49 @@ export default {
       url: "http://t0.tianditu.gov.cn/img_c/wmts",
       //地形url TODO这里地址打包的时候改一下
       //terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
-      terrainUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/terrain`,
+      terrainUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/terrain",
       tileMatrixSet: "c",
       tilingScheme: "EPSG:4326",
       layer: "img",
       format: "tiles",
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752",
+        value: "9c157e9585486c02edf817d2ecbc7752"
       },
-      m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
-      m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
+      m3dUrl1: "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔_2_钻孔模型s",
+      m3dUrl2:
+        "http://develop.smaryun.com:6163/igs/rest/g3d/钻孔分层点_Sur_000_Ent",
       dynamicSection: undefined,
+      models: [
+        {
+          range: {
+            xmin: -10000,
+            xmax: 10000,
+            ymin: -10000,
+            ymax: 10000,
+            zmin: -10000,
+            zmax: 10000
+          },
+          vueIndex: 1,
+          title: "钻孔_2_钻孔模型s"
+        },
+        {
+          range: {
+            xmin: -10000,
+            xmax: 10000,
+            ymin: -10000,
+            ymax: 10000,
+            zmin: -10000,
+            zmax: 10000
+          },
+          vueIndex: 2,
+          title: "钻孔分层点"
+        }
+      ],
+      axis: "X",
+      color: "rgb(200,200,200,0.5)",
+      time: 10,
+      distance: 0
     };
   },
   methods: {
@@ -237,8 +299,8 @@ export default {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2Q0ZGMxYy1iZGZkLTQ4OWItODlhMy1iOWNkMDE0M2U3YWEiLCJpZCI6NTEzNSwiaWF0IjoxNjA2MjE0OTkyfQ.2aktNrUASlLsPwSFtkgKBTQLJTAnOTyjgKDRQmnafiE";
-    },
-  },
+    }
+  }
 };
 </script>
 ```
