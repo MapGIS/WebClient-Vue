@@ -99,7 +99,6 @@ All common [layers props](/api/Layers/README.md#props)
   > https://docs.mapbox.com/help/glossary/filter/
   >
   > https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/#filter
-
 - **示例:**
   ```
   layer:{
@@ -116,7 +115,54 @@ All common [layers props](/api/Layers/README.md#props)
            }
         }
   ```
+### `tileSize`
+ - **类型:** `Number`
+- **默认值:** `512`
+- **描述:** 加载瓦片的大小，如果数据瓦片本身是256大小的设置512大小会被强制拉伸至512大小。
 
+| 512                     | 256                     |
+| :---------------------- | :---------------------- |
+| ![512](../tile/512.png) | ![256](../tile/256.png) |
+
+::: tip 天地图模糊
+请传入tileSize为256即可，2种方式
+``` vue
+<mapgis-ogc-wmts-layer :tileSize="256" />
+```
+``` vue
+<mapgis-ogc-wmts-layer :source="{'tileSize': 256}" />
+```
+:::
+
+``` vue
+<template>
+  <div class="hello">
+    <mapgis-web-map crs="EPSG:4326" :center="[107.19, 26.85]" :zoom="3">
+      <mapgis-ogc-wmts-layer v-bind="tdt"> </mapgis-ogc-wmts-layer>
+    </mapgis-web-map>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      tdt: {
+        tileSize: 256,
+        baseUrl: "http://t0.tianditu.gov.cn/vec_c/wmts",
+        wmtsLayer: "vec",
+        tileMatrixSet: "c",
+        format: "tiles",
+        layerId: "ogcwmts_layerId",
+        sourceId: "ogcwmts_sourceId",
+        token: {
+          key: "tk",
+          value: "f5347cab4b28410a6e8ba5143e3d5a35",
+        },
+      },
+    }
+  }
+};
+</script>
+```
 ## 事件
 
 All common layer [events](/api/Layers/#events)

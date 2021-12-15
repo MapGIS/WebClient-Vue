@@ -25,12 +25,36 @@ All common [layers props](/api/Layers/README.md#props)
   ```
 
 ### `tileSize`
-
-- **类型:** `Number`
+ - **类型:** `Number`
 - **默认值:** `512`
-- **非侦听属性**
-- **描述:** 输出瓦片大小。
+- **描述:** 加载瓦片的大小，如果数据瓦片本身是256大小的设置512大小会被强制拉伸至512大小。
 
+| 512                     | 256                     |
+| :---------------------- | :---------------------- |
+| ![512](../tile/512.png) | ![256](../tile/256.png) |
+
+::: tip 天地图模糊
+请传入tileSize为256即可，2种方式
+``` vue
+<mapgis-igs-tile-layer :tileSize="256" />
+```
+``` vue
+<mapgis-igs-tile-layer :source="{'tileSize': 256}" />
+```
+:::
+
+``` vue
+<template>
+  <div class="hello">
+    <mapgis-web-map crs="EPSG:4326" :center="[107.19, 26.85]" :zoom="3">
+      <mapgis-igs-tile-layer
+        layerId="igs_layer_layerid"
+        baseUrl="http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市"
+        :tileSize="256"
+      />
+    </mapgis-web-map>
+</template>
+```
 ### `zoomOffset`
 
 - **类型:** `Number`

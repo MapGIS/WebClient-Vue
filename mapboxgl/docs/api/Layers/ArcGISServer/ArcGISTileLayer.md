@@ -14,11 +14,36 @@ All common [layers props](/api/Layers/README.md#props)
 - **描述:** 地图请求的基地址路径。
 
 ### `tileSize`
+ - **类型:** `Number`
+- **默认值:** `512`
+- **描述:** 加载瓦片的大小，如果数据瓦片本身是256大小的设置512大小会被强制拉伸至512大小。
 
-- **类型:** `Number`
-- **默认值:** `256`
-- **非侦听属性**
-- **描述:** 若没传递该参数，则默认为地图坐标系。
+| 512                     | 256                     |
+| :---------------------- | :---------------------- |
+| ![512](../tile/512.png) | ![256](../tile/256.png) |
+
+::: tip 天地图模糊
+请传入tileSize为256即可，2种方式
+``` vue
+<mapgis-arcgis-tile-layer :tileSize="256" />
+```
+``` vue
+<mapgis-arcgis-tile-layer :source="{'tileSize': 256}" />
+```
+:::
+
+``` vue
+<template>
+  <div class="hello">
+    <mapgis-web-map crs="EPSG:4326" :center="[107.19, 26.85]" :zoom="3">
+      <mapgis-arcgis-tile-layer
+        layerId="arcgis_tile_layerId"
+        baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer"
+        :tileSize="256"
+      />
+    </mapgis-web-map>
+</template>
+```
 
 ### `zoomOffset`
 
