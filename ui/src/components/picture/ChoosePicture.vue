@@ -219,8 +219,8 @@ export default {
 .mapgis-ui-choose-picture-img-title {
   font-weight: bolder;
   position: relative;
-  margin-top: 6px;
-  margin-bottom: 4px;
+  margin-top: 11px;
+  margin-bottom: 11px;
   padding-left: 12px;
 }
 

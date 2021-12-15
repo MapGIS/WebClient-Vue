@@ -1,9 +1,9 @@
-export const checkType = val =>
+export const checkType = (val) =>
   Object.prototype.toString.call(val).slice(8, -1);
 
-export const toKebabCase = str =>
+export const toKebabCase = (str) =>
   str
-    .replace(new RegExp("[A-Z]", "g"), letter => `-${letter.toLowerCase()}`)
+    .replace(new RegExp("[A-Z]", "g"), (letter) => `-${letter.toLowerCase()}`)
     .replace(new RegExp("^-"), "");
 /**
  * 通过 class 名获取 Dom 元素。
@@ -14,7 +14,7 @@ export const getDocumentByClassName = (htmlCollection, className) => {
   let temp;
   const BreakException = {};
   try {
-    Array.prototype.slice.call(htmlCollection).forEach(element => {
+    Array.prototype.slice.call(htmlCollection).forEach((element) => {
       if (element.className === className) {
         temp = element;
         throw BreakException;
@@ -149,7 +149,7 @@ export function makeCartesian3Array(vals) {
   }
 
   const coordinates = [];
-  vals.forEach(item => {
+  vals.forEach((item) => {
     coordinates.push(item.lng);
     coordinates.push(item.lat);
     coordinates.push(item.height);
@@ -166,7 +166,7 @@ export function makeCartesian3Array(vals) {
  */
 export function makeCartesian2Array(vals) {
   const cartesian2Array = [];
-  vals.forEach(item => {
+  vals.forEach((item) => {
     cartesian2Array.push(new Cesium.Cartesian2(item.x, item.y));
   });
   return cartesian2Array;
@@ -185,7 +185,7 @@ export function makeQuaternion(val) {
  * @param {Object} val
  */
 function parsePolygonHierarchyJson(val) {
-  val.forEach(element => {
+  val.forEach((element) => {
     element.positions = makeCartesian3Array(element.positions);
     if (element.holes) {
       parsePolygonHierarchyJson(element.holes);
@@ -412,7 +412,7 @@ export function Platform() {
     isPhone: isPhone,
     isAndroid: isAndroid,
     isPc: isPc,
-    isChrome: isChrome
+    isChrome: isChrome,
   };
 }
 
@@ -420,7 +420,7 @@ export function captureScreenshot(viewer, showSplitter = false) {
   const { when } = Cesium;
   const deferred = when.defer();
   const scene = viewer.scene;
-  var removeCallback = scene.postRender.addEventListener(function() {
+  var removeCallback = scene.postRender.addEventListener(function () {
     removeCallback();
     try {
       const cesiumCanvas = viewer.scene.canvas;
@@ -455,11 +455,12 @@ export function captureScreenshot(viewer, showSplitter = false) {
 }
 
 export function getAllAttribution(viewer) {
-  const credits = viewer.scene.frameState.creditDisplay._currentFrameCredits.screenCredits.values.concat(
-    viewer.scene.frameState.creditDisplay._currentFrameCredits.lightboxCredits
-      .values
-  );
-  return credits.map(credit => credit.html);
+  const credits =
+    viewer.scene.frameState.creditDisplay._currentFrameCredits.screenCredits.values.concat(
+      viewer.scene.frameState.creditDisplay._currentFrameCredits.lightboxCredits
+        .values
+    );
+  return credits.map((credit) => credit.html);
 }
 
 /**
@@ -488,3 +489,36 @@ export function last(array) {
   return length ? array[length - 1] : undefined;
 }
 
+/**
+ * 随机生成一个guid
+ * @returns {string}
+ */
+ export const newGuid = function() {
+  let guid = "";
+  for (let i = 1; i <= 32; i++) {
+    let n = Math.floor(Math.random() * 16.0).toString(16);
+    guid += n;
+    if (i === 8 || i === 12 || i === 16 || i === 20) {
+      guid += "-";
+    }
+  }
+  return guid;
+};
+
+/**
+ * @description 生成UUID字符串
+ */
+export function uuid() {
+  let d = new Date().getTime();
+  if (window.performance && typeof window.performance.now === "function") {
+    d += performance.now();
+  }
+  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    // tslint:disable-next-line: no-bitwise
+    const r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    // tslint:disable-next-line: no-bitwise
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+  return UuidStr;
+}

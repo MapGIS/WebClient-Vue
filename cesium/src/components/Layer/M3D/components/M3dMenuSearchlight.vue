@@ -1,72 +1,63 @@
 <template>
   <div class="mapgis-3d-m3d-menu-searchlight">
     <mapgis-ui-divider> 探照灯设置 </mapgis-ui-divider>
-    <mapgis-ui-form-model
-      :layout="layout"
-      :labelCol="labelCol"
-      :wrapperCol="wrapperCol"
-      labelAlign="left"
+
+    <mapgis-ui-color-pick-panel
+      transparent
+      label="颜色"
+      v-model="searchlightColor"
+      :disableAlpha="false"
+    />
+
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="混合系数"
+      v-model="mixFactor"
+      :range="[0, 1000]"
     >
-      <mapgis-ui-form-model-item label="激活探照灯" required>
-        <mapgis-ui-tooltip
-          title="点击第一次设置灯光位置，点击第二次设置灯光的方向"
-        >
-          <mapgis-ui-button type="primary" size="small" @click="handleDraw">
-            交互绘制激活</mapgis-ui-button
-          >
-        </mapgis-ui-tooltip>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="颜色" required>
-        <mapgis-ui-button size="small">
-          <mapgis-ui-color-picker v-model="searchlightColor" />
-        </mapgis-ui-button>
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="混合系数" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="100000"
-          v-model="mixFactor"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="持续时间" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="1000000"
-          v-model="duration"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="类型" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="1000000"
-          v-model="type"
-        />
-      </mapgis-ui-form-model-item>
-      <mapgis-ui-form-model-item label="宽度" required>
-        <mapgis-ui-input-number
-          :style="{ width: '100%' }"
-          size="small"
-          :step="0.1"
-          :min="0"
-          :max="1000000"
-          v-model="width"
-        />
-      </mapgis-ui-form-model-item>
-    </mapgis-ui-form-model>
+    </mapgis-ui-input-number-panel>
+
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="持续时间"
+      v-model="duration"
+      :range="[0, 10000]"
+    >
+    </mapgis-ui-input-number-panel>
+
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="类型"
+      v-model="type"
+      :range="[0, 100000]"
+    >
+    </mapgis-ui-input-number-panel>
+
+    <mapgis-ui-input-number-panel
+      transparent
+      size="small"
+      label="宽度"
+      v-model="width"
+      :range="[0, 100000]"
+    >
+    </mapgis-ui-input-number-panel>
+
+    <mapgis-ui-tooltip title="点击第一次设置灯光位置，点击第二次设置灯光的方向">
+      <mapgis-ui-button
+        @click="handleDraw"
+        :style="{ width: '100%' }"
+      >
+        交互绘制激活</mapgis-ui-button
+      >
+    </mapgis-ui-tooltip>
 
     <mapgis-ui-button
       type="primary"
       @click="addEffect"
-      :style="{ width: '100%' }"
+      :style="{ width: '100%', marginTop: '4px' }"
       >执行探照灯</mapgis-ui-button
     >
     <mapgis-ui-button

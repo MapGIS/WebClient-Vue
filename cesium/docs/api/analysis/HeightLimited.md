@@ -39,7 +39,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **类型:** `Object`
 - **默认值:** `{color: "#FF8C00", opacity: 0.6}`
 - **非侦听属性**
-- **描述:** 控高分析绘制分析区域的绘制样式，有color、opacity、width。
+- **描述:** 控高分析绘制分析区域的绘制样式，有 color、opacity、width。
 
 ### `heightLimit`
 
@@ -65,22 +65,22 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ## 示例
 
 ```vue
-
 <template>
   <div style="width: 1200px;height: 800px;">
     <mapgis-web-scene style="height:90vh">
       <mapgis-3d-raster-layer
-          url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+        url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
       ></mapgis-3d-raster-layer>
-      <mapgis-3d-m3d-layer :url="m3dUrl1"
-                           :autoReset="autoReset"/>
+      <mapgis-3d-m3d-layer :url="m3dUrl1" :autoReset="autoReset" />
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-heightlimited :color="heightLimitColor"
-                                 :heightLimit='heightLimit'
-                                 :maxSliderHeight='maxSliderHeight'
-                                 :minSliderHeight='minSliderHeight'
-                                 :drawStyle='drawStyle'
-                                 @load='load'>
+        <mapgis-3d-heightlimited
+          :color="heightLimitColor"
+          :heightLimit="heightLimit"
+          :maxSliderHeight="maxSliderHeight"
+          :minSliderHeight="minSliderHeight"
+          :drawStyle="drawStyle"
+          @load="load"
+        >
         </mapgis-3d-heightlimited>
       </mapgis-ui-card>
     </mapgis-web-scene>
@@ -97,18 +97,18 @@ export default {
       color: "rgba(255,0,0,0.5)",
       drawStyle: {
         color: "#FF8C00",
-        opacity: 0.6
+        opacity: 0.6,
       },
       heightLimit: 80,
       maxSliderHeight: 180,
-      minSliderHeight: 0
+      minSliderHeight: 0,
     };
   },
-  methods:{
-    load(e){
-      this.heightLimitedAnalysis = e
-    }
-  }
+  methods: {
+    load(e) {
+      this.heightLimitedAnalysis = e;
+    },
+  },
 };
 </script>
 

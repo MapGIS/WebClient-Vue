@@ -15,6 +15,8 @@
                    @addChapter="$_addChapter"
                    @toggleChapterFeatures="$_toggleChapterFeatures"
                    @copyChapter="$_copyChapter"
+                   @changeEntityTitle="$_changeEntityTitle"
+                   @changeEntity="$_changeEntity"
                    @titleChanged="$_titleChanged"
                    @featureTitleChanged="$_featureTitleChanged"
                    @closeHoverPanel="$_closeHoverPanel"
@@ -40,12 +42,12 @@
           v-model="popup.show"
           :vueIndex="popup.vueIndex"
       >
-        <div class="mapgis-3d-map-story-small-popup-container">
-          <slot name="content" :popup="popup">
-            <div class="mapgis-3d-map-story-small-popup-title">
+        <div>
+          <div class="mapgis-3d-map-story-small-popup-container">
+            <div v-if="popup.title" class="mapgis-3d-map-story-small-popup-title">
               {{ popup.title }}
-              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"
-                                     width="20px" type="toLarge"/>
+<!--              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"-->
+<!--                                     width="20px" type="toLarge"/>-->
             </div>
             <mapgis-ui-carousel class="mapgis-3d-map-story-small-popup-carousel" autoplay>
               <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000"
@@ -53,7 +55,8 @@
                 <img class="mapgis-3d-map-story-small-popup-img" :src="image" alt="">
               </div>
             </mapgis-ui-carousel>
-          </slot>
+            <div v-html="popup.content" class="mapgis-3d-map-story-small-popup"></div>
+          </div>
         </div>
       </mapgis-3d-popup>
     </template>
@@ -150,7 +153,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   word-break: break-all;
-  margin-bottom: 10px;
   padding-top: 10px;
   padding-left: 10px;
   padding-right: 40px;
@@ -166,13 +168,18 @@ export default {
 
 .mapgis-3d-map-story-small-popup-container {
   width: 260px;
-  height: 200px;
+  height: auto;
+}
+
+.mapgis-3d-map-story-small-popup {
+  padding: 5px 10px;
+  font-size: 14px;
 }
 
 .mapgis-3d-map-story-small-popup-carousel {
   width: 240px;
   height: 144px;
-  margin: 0 10px;
+  margin: 10px 10px 0;
 }
 
 .mapgis-3d-map-story-small-popup-img-div {
@@ -183,5 +190,9 @@ export default {
 .mapgis-3d-map-story-small-popup-img {
   width: 240px;
   height: 144px;
+}
+
+.cesium-popup .cesium-popup-content-wrapper {
+  overflow: hidden;
 }
 </style>

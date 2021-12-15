@@ -71,7 +71,7 @@
     }
   }
   &-span-inline {
-    width: 170px;
+    width: 160px;
   }
   &-span {
     .iconfont {
@@ -108,7 +108,7 @@
     display: block;
   }
   .mapgis-ui-tab-panel {
-    width: 265px;
+    width: 250px;
   }
   .m-colorPicker .box {
     left: -30px;
@@ -137,9 +137,18 @@
   }
 
   &-content {
-    padding: 0px 10px;
+    padding: 0px 0px;
     .mapgis-ui-input-number-panel {
-      margin: 10px 0px;
+      margin: 0px 0px;
+    }
+  }
+}
+
+.mapgis-3d-m3d-menu-bloom {
+  &-content {
+    padding: 0px 0px;
+    .mapgis-ui-input-number-panel {
+      margin: 0px 0px;
     }
   }
 }

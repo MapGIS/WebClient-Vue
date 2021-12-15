@@ -24,7 +24,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `<mapgis-web-scene>
-    <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
+<!--    <mapgis-3d-raster-layer url="http://t5.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />-->
     <mapgis-3d-data-flow-layer
         v-bind="$props"
     />
@@ -33,10 +33,12 @@ const Template = (args, { argTypes }) => ({
 
 export const 模型 = Template.bind({});
 模型.args = {
-  baseUrl: "ws://192.168.91.123:9382/dataflow/cars_xian/subscribe",
+  baseUrl: "ws://192.168.199.65:9382/dataflow/cars_xian/subscribe",
   layerStyle: {
     type: "model",
     url: "./CesiumModels/CesiumMilkTruck.glb",
     scale: 10,
   },
+  enableAnimation: true,
+  enableFlyTo: true,
 };

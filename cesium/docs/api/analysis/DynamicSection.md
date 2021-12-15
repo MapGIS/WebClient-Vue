@@ -153,10 +153,10 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752"
+        value: "9c157e9585486c02edf817d2ecbc7752",
       },
       m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
-      m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`
+      m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
     };
   },
   methods: {
@@ -164,8 +164,8 @@ export default {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2Q0ZGMxYy1iZGZkLTQ4OWItODlhMy1iOWNkMDE0M2U3YWEiLCJpZCI6NTEzNSwiaWF0IjoxNjA2MjE0OTkyfQ.2aktNrUASlLsPwSFtkgKBTQLJTAnOTyjgKDRQmnafiE";
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -219,11 +219,11 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "9c157e9585486c02edf817d2ecbc7752"
+        value: "9c157e9585486c02edf817d2ecbc7752",
       },
       m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
       m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
-      dynamicSection: undefined
+      dynamicSection: undefined,
     };
   },
   methods: {
@@ -237,8 +237,8 @@ export default {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiM2Q0ZGMxYy1iZGZkLTQ4OWItODlhMy1iOWNkMDE0M2U3YWEiLCJpZCI6NTEzNSwiaWF0IjoxNjA2MjE0OTkyfQ.2aktNrUASlLsPwSFtkgKBTQLJTAnOTyjgKDRQmnafiE";
-    }
-  }
+    },
+  },
 };
 </script>
 ```

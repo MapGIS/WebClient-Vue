@@ -2,6 +2,7 @@
   <div
     :class="{
       'mapgis-ui-input-number-panel': true,
+      'mapgis-ui-input-number-panel-transparent': transparent,
       'mapgis-ui-input-number-panel-sm': size == 'small',
       'mapgis-ui-input-number-panel-md': size == 'medium'
     }"
@@ -140,8 +141,11 @@ export default {
     slider:{
       type:Boolean,
       default:true
+    },
+    transparent: {
+      type: Boolean,
+      default: false
     }
-    
   },
   data() {
     return {

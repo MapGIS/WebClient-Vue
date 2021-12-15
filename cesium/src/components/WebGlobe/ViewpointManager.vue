@@ -1,6 +1,6 @@
 <template>
     <div class="mapgis-3d-viewpoint-manager" v-show="manager">
-        <div class="viewpoint-header">
+        <!-- <div class="viewpoint-header">
             <label class="title">设置</label>
             <div @mouseenter="hover = true" @mouseleave="hover = false">
                 <img
@@ -16,7 +16,7 @@
                     @click="closePanel"
                 />
             </div>
-        </div>
+        </div> -->
 
         <viewpoint-editor
             v-model="config"
@@ -27,8 +27,7 @@
                 }
             "
             :show="editor"
-            style="z-index:10001"
-        ></viewpoint-editor>
+        />
 
         <div class="viewpoint-item-wrapper">
             <div class="viewpoint-item" v-for="(item, i) in items" :key="i">
@@ -114,7 +113,7 @@ export default {
             selectMode: false,
             mode: undefined, //add edit
             selectItems: [],
-            editor: true,
+            editor: false,
             editItem: undefined,
             hover: undefined,
             manager:true,
@@ -290,13 +289,13 @@ export default {
 
 <style scoped>
 .mapgis-3d-viewpoint-manager {
-    position: absolute;
+    /* position: absolute;
     top: 10px;
-    left: 10px;
+    left: 10px; */
     width: 326px;
     height: fit-content;
     background-color: #ffffff;
-    border-radius: 4px;
+    /* border-radius: 4px; */
 }
 
 .viewpoint-header {
@@ -414,7 +413,7 @@ export default {
     background: #ffffff;
     box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    position: absolute;
+    position: fixed;
     z-index: 10000;
     cursor: pointer;
     text-align: center;

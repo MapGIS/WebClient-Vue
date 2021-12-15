@@ -13,11 +13,14 @@
         @projectPreview="$_projectPreview"
         @closeHoverPanel="$_closeHoverPanel"
         @getCamera="$_getCamera"
+        @changeEntityTitle="$_changeEntityTitle"
+        @changeEntity="$_changeEntity"
         @selectCamera="$_selectCamera"
         @changeIcon="$_changeIcon"
         @showFeature="$_showFeature"
         @showProject="$_showProject"
         @featurePreview="$_featurePreview"
+        @back="$_back"
         :height="panelHeight"
         :width="width"
         v-model="dataSourceCopy"
@@ -34,56 +37,7 @@
         :height="panelHeight"
         :enableFullScreen="enableFullScreen"
     />
-<!--    <mapgis-ui-project-edit-->
-<!--        v-if="enableClose"-->
-<!--        @addMapToProject="$_addMapToProject"-->
-<!--        @addMap="$_addMap"-->
-<!--        @getCamera="$_getCamera"-->
-<!--        @deleteProject="$_deleteProject"-->
-<!--        @addFeature="$_addFeature"-->
-<!--        @deleteFeature="$_deleteFeature"-->
-<!--        @changeIcon="$_changeIcon"-->
-<!--        @textChanged="$_textChanged"-->
-<!--        @featurePreview="$_featurePreview"-->
-<!--        @projectPreview="$_projectPreview"-->
-<!--        @backed="$_closeEdit"-->
-<!--        @showFeature="$_showFeature"-->
-<!--        @titleChanged="$_titleChanged"-->
-<!--        @featureTitleChanged="$_featureTitleChanged"-->
-<!--        @firstAddPicture="$_firstAddPicture"-->
-<!--        @changeColor="$_changeColor"-->
-<!--        @changeOpacity="$_changeOpacity"-->
-<!--        v-show="!showProjectPanel"-->
-<!--        v-model="currentProject"-->
-<!--        :height="panelHeight"-->
-<!--        :width="width"-->
-<!--        id="addProjectId"-->
-<!--    />-->
-<!--    <mapgis-ui-project-edit-->
-<!--        v-if="!enableClose"-->
-<!--        @addMapToProject="$_addMapToProject"-->
-<!--        @addMap="$_addMap"-->
-<!--        @getCamera="$_getCamera"-->
-<!--        @deleteProject="$_deleteProject"-->
-<!--        @addFeature="$_addFeature"-->
-<!--        @deleteFeature="$_deleteFeature"-->
-<!--        @changeIcon="$_changeIcon"-->
-<!--        @textChanged="$_textChanged"-->
-<!--        @featurePreview="$_featurePreview"-->
-<!--        @projectPreview="$_projectPreview"-->
-<!--        @backed="$_closeEdit"-->
-<!--        @showFeature="$_showFeature"-->
-<!--        @titleChanged="$_titleChanged"-->
-<!--        @featureTitleChanged="$_featureTitleChanged"-->
-<!--        @firstAddPicture="$_firstAddPicture"-->
-<!--        @changeColor="$_changeColor"-->
-<!--        @changeOpacity="$_changeOpacity"-->
-<!--        v-show="showPanels.showProjectEdit"-->
-<!--        v-model="currentProject"-->
-<!--        :height="panelHeight"-->
-<!--        :width="width"-->
-<!--        id="addProjectId"-->
-<!--    />-->
+    `
   </div>
 </template>
 
@@ -165,6 +119,15 @@ export default {
     }
   },
   methods: {
+    $_back(project) {
+      let features = project.features;
+      for (let i = 0; i < features.length; i++) {
+        let entity = this.viewer.entities.getById(features[i].uuid);
+        if (entity) {
+          entity.show = false;
+        }
+      }
+    },
     $_textChanged(text) {
       this.$set(this.storyFeature[0], "content", text);
     },
@@ -199,9 +162,6 @@ export default {
       this.showLargePanel = false;
     },
     $_editProject(index) {
-      if (!this.enableClose) {
-        this.showPanels.currentPage = "projectEdit";
-      }
       this.$emit("editProject", index);
     },
     $_addChapter(chapter) {
@@ -218,6 +178,12 @@ export default {
     },
     $_closeHoverPanel() {
       this.$emit("closeHoverPanel");
+    },
+    $_changeEntityTitle(currentEntity) {
+      this.$emit("changeEntityTitle", currentEntity);
+    },
+    $_changeEntity(type, uuid, value) {
+      this.$emit("changeEntity", type, uuid, value);
     },
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
@@ -272,7 +238,6 @@ export default {
       this.$emit("addMapToProject", type, map, project);
     },
     $_addMap(type, map, id) {
-      window.map = map;
       let addMap = true, index;
       for (let i = 0; i < this.optArr.length; i++) {
         if (this.optArr[i].id === id) {
@@ -290,8 +255,8 @@ export default {
     $_toggleChapterFeatures(featureUUID, projectUUID, show) {
       this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
     },
-    $_deleteFeature(feature) {
-      this.$emit("deleteFeature", feature);
+    $_deleteFeature(index, projectUUID) {
+      this.$emit("deleteFeature", index, projectUUID);
     },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);

@@ -60,10 +60,20 @@
           label="雨角度" 
           :value="angle" 
           :range="angleRange"
-          :step="10"
+          :step="5"
           @change="angleChange"
         >
         </mapgis-ui-input-number-panel> 
+
+        <mapgis-ui-input-number-panel 
+          size="small"
+          label="雨丝长度" 
+          :value="length" 
+          :range="lengthRange"
+          :step="1"
+          @change="lengthChange"
+        />
+
      </mapgis-ui-switch-panel>
 
       <div class="dividerWrapper"><div class="divider"/></div>
@@ -152,16 +162,24 @@ export default {
       weather: undefined,
       rain: false,
       rainParams:undefined,
-      speed: 1.0,
+      //雨丝速度
+      speed: 18.0,
       speedRange:[1,20],
-      rainOpacity: 1.0,
+      //雨丝透明度
+      rainOpacity: 0.6,
       rainOpacityRange:[0.0,1.0],
-      angle: 0,
-      angleRange:[0,90],
+      //雨丝倾斜角度
+      angle: -30,
+      angleRange:[-30,30],
+      //雨丝附加长度
+      length:1,
+      lengthRange:[0,10],
       snow: false,
       snowParams:undefined,
+      //雪粒大小
       size: 5,
       sizeRange:[5,20],
+      //雪的密度
       density: 5,
       densityRange:[5,20],
       fog: false,
@@ -368,6 +386,13 @@ export default {
         vm.enableRain();
       }
     },
+    lengthChange(e){
+      let vm = this;
+      this.length = e;
+      if (this.rain) {
+        vm.enableRain();
+      }
+    },
     //雪
     $_enableSnow(e) {
       this.$emit('updateSpin',true);
@@ -430,7 +455,8 @@ export default {
       let rainOptions = {
         speed: this.speed,
         angle: this.angle,
-        alpha: this.rainOpacity
+        rainLength: this.length,
+        alpha: this.rainOpacity,
       };
       this.$_enableWeather("Rain", rainOptions);
     },

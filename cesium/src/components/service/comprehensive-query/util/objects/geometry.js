@@ -5,7 +5,7 @@ export class GeometryExp {
       xmin: dots[0][0],
       ymin: dots[0][1],
       xmax: dots[0][0],
-      ymax: dots[0][1]
+      ymax: dots[0][1],
     };
     for (let i = 0; i < dots.length; i += 1) {
       if (bound.xmin && dots[i][0] < bound.xmin) {

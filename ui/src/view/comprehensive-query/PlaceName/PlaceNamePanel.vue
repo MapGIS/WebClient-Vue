@@ -248,8 +248,7 @@ export default {
         lon,
         lat,
         dis,
-        isEsGeoCode: true,
-        isDataStoreQuery: true
+        isEsGeoCode: true
       };
       try {
         const geoCode = await Feature.FeatureQuery.query(datastoreParams);

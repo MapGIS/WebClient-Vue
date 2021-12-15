@@ -123,12 +123,12 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "2ddaabf906d4b5418aed0078e1657029"
+        value: "2ddaabf906d4b5418aed0078e1657029",
       },
       contourSpacing: 150,
       contourWidth: 2,
       contourColor: "rgb(255,0,0)",
-      switchOptions: ["isogram"]
+      switchOptions: ["isogram"],
     };
   },
   methods: {
@@ -141,27 +141,27 @@ export default {
         direction: {
           x: 0.4680575394156845,
           y: -0.8267033643312148,
-          z: 0.31222377744109403
+          z: 0.31222377744109403,
         },
         position: {
           x: -674271.5790185562,
           y: 5530042.656916835,
-          z: 3232882.3357299212
-        }
+          z: 3232882.3357299212,
+        },
       });
       //构造视图功能管理对象（视图）
       var sceneManager = new CesiumZondy.Manager.SceneManager({
-        viewer: webGlobe.viewer
+        viewer: webGlobe.viewer,
       });
       //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
       sceneManager.flyToEx(121, 24, {
         height: 5900,
         heading: 60,
         pitch: -16,
-        roll: 0
+        roll: 0,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -210,12 +210,12 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "2ddaabf906d4b5418aed0078e1657029"
+        value: "2ddaabf906d4b5418aed0078e1657029",
       },
       contourSpacing: 150,
       contourWidth: 2,
       contourColor: "rgb(255,0,0)",
-      contourAnalysis: null
+      contourAnalysis: null,
     };
   },
   methods: {
@@ -228,24 +228,24 @@ export default {
         direction: {
           x: 0.4680575394156845,
           y: -0.8267033643312148,
-          z: 0.31222377744109403
+          z: 0.31222377744109403,
         },
         position: {
           x: -674271.5790185562,
           y: 5530042.656916835,
-          z: 3232882.3357299212
-        }
+          z: 3232882.3357299212,
+        },
       });
       //构造视图功能管理对象（视图）
       var sceneManager = new CesiumZondy.Manager.SceneManager({
-        viewer: webGlobe.viewer
+        viewer: webGlobe.viewer,
       });
       //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
       sceneManager.flyToEx(121, 24, {
         height: 5900,
         heading: 60,
         pitch: -16,
-        roll: 0
+        roll: 0,
       });
     },
     //等值线分析组件加载完毕事件
@@ -259,8 +259,8 @@ export default {
     //移除等值线分析
     remove() {
       this.contourAnalysis.remove();
-    }
-  }
+    },
+  },
 };
 </script>
 ```

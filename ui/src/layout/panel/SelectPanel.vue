@@ -1,5 +1,10 @@
 <template>
-  <div class="mapgis-ui-select-panel">
+  <div
+    :class="{
+      'mapgis-ui-select-panel': true,
+      'mapgis-ui-select-panel-transparent': transparent
+    }"
+  >
     <mapgis-ui-row>
       <mapgis-ui-col :span="labelCol" class="left">
         <div class="label-sm">
@@ -7,13 +12,8 @@
         </div>
       </mapgis-ui-col>
       <mapgis-ui-col :span="wrapperCol" class="right-panel">
-        <mapgis-ui-select
-            v-model="selected"
-        >
-          <mapgis-ui-select-option
-              v-for="item in selectOptions"
-              :key="item"
-          >
+        <mapgis-ui-select v-model="selected" size="default">
+          <mapgis-ui-select-option v-for="item in selectOptions" :key="item">
             {{ item }}
           </mapgis-ui-select-option>
         </mapgis-ui-select>
@@ -24,30 +24,34 @@
 
 <script>
 export default {
-name: "mapgis-ui-select-panel",
-  props:{
+  name: "mapgis-ui-select-panel",
+  props: {
     label: {
       type: String,
       default: "标题"
     },
-    value:{
+    value: {
       type: String,
       default: ""
     },
-    selectOptions:{
-      type:Array,
+    selectOptions: {
+      type: Array,
       default: () => {
         return [];
       }
     },
     labelCol: {
       type: Number,
-      default: 8,
+      default: 8
     },
     wrapperCol: {
       type: Number,
-      default: 16,
+      default: 16
     },
+    transparent: {
+      type: Boolean,
+      default: false
+    }
   },
   watch: {
     value(next) {
@@ -66,11 +70,8 @@ name: "mapgis-ui-select-panel",
       selected: this.value
     };
   },
-  methods:{
-  }
-}
+  methods: {}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

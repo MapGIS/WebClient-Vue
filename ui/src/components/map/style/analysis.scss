@@ -17,9 +17,13 @@ $tree-height: 400px;
   height: $tree-height;
   width: 270px;
 
+  &-wrapper {
+    width: 320px;
+  }
+
   &-slider-tree {
-    top: 80px;
-    right: 10px;
+    top: 90px;
+    left: 290px;
     position: absolute;
     z-index: 2000;
   }

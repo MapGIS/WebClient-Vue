@@ -56,10 +56,10 @@ export default {
 ::: warning 样式冲突
 > 将你的工程下的样式依赖版本强行设置成下面依赖，再重新安装环境一般能够解决大部分的样式冲突问题
 ``` json
-"less": "3.12.2",
-"less-loader": "7.0.2",
+"less": "^3.12.2",
+"less-loader": "^7.0.2",
 "node-sass": "^4.11.0",
-"sass-loader": "10.1.1",
+"sass-loader": "^10.1.1",
 ```
 :::
 

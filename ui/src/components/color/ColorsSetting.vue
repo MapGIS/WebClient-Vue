@@ -1,29 +1,29 @@
 <template>
   <div class="mapgis-ui-colors-setting">
     <mapgis-ui-table
-      bordered
-      size="small"
-      :pagination="false"
-      :columns="tableColumns"
-      :data-source="tableData"
-      :scroll="{ y: 350 }"
+        bordered
+        size="small"
+        :pagination="false"
+        :columns="tableColumns"
+        :data-source="tableData"
+        :scroll="{ y: 350 }"
     >
       <template slot="color" slot-scope="text, record">
         <mapgis-ui-sketch-color-picker
-          :color.sync="record.color"
-          :disableAlpha="false"
+            :color.sync="record.color"
+            :disableAlpha="false"
         ></mapgis-ui-sketch-color-picker>
       </template>
-      <template slot="max" slot-scope="text, record, index">
+      <template slot="max" slot-scope="text, record, index" v-if="showNumber">
         <mapgis-ui-input
-          v-model="record.max"
-          size="small"
-          :min="record.min"
-          :max="getMax(index)"
-          :prefix="`${record.min}~`"
-          @change="changeMax(record, index)"
-          type="number"
-          v-if="!singleNumber"
+            v-model="record.max"
+            size="small"
+            :min="record.min"
+            :max="getMax(index)"
+            :prefix="`${record.min}~`"
+            @change="changeMax(record, index)"
+            type="number"
+            v-if="!singleNumber"
         />
         <mapgis-ui-input
             v-else
@@ -38,14 +38,14 @@
       <template slot="operation" slot-scope="text, record, index">
         <mapgis-ui-tooltip placement="top" title="删除">
           <mapgis-ui-iconfont
-            type="mapgis-delete"
-            @click="remove(index)"
+              type="mapgis-delete"
+              @click="remove(index)"
           ></mapgis-ui-iconfont>
         </mapgis-ui-tooltip>
-        <mapgis-ui-tooltip placement="top" title="向上插入一行">
+        <mapgis-ui-tooltip placement="top" title="向下插入一行">
           <mapgis-ui-iconfont
-            type="mapgis-plus"
-            @click="add(index)"
+              type="mapgis-plus"
+              @click="add(index)"
           ></mapgis-ui-iconfont>
         </mapgis-ui-tooltip>
       </template>
@@ -60,9 +60,10 @@ export default {
   name: "mapgis-ui-colors-setting",
   props: {
     // [{ min: 0, max: 60, color: 'rgba(244, 67, 54, 0.5)' }...]
-    value: { type: Array },
-    rangeField: { type: String, default: "角度范围" },
-    singleNumber:{ type: Boolean, defalut: false}
+    value: {type: Array},
+    rangeField: {type: String, default: "角度范围"},
+    singleNumber: {type: Boolean, defalut: false},
+    showNumber: {type: Boolean, default: true},
   },
   model: {
     props: 'value',
@@ -113,6 +114,7 @@ export default {
           max,
           color
         }));
+        this.$emit('change', this.emitValue);
         this.$emit("input", this.emitValue);
       },
       immediate: true,
@@ -122,6 +124,14 @@ export default {
       handler:function (next) {
         if (next){
           this.tableColumns.splice(this.tableColumns.length - 1,1);
+        }
+      },
+      immediate: true,
+    },
+    showNumber: {
+      handler: function (next) {
+        if (!next) {
+          this.tableColumns.splice(1, 1);
         }
       },
       immediate: true,

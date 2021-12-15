@@ -1,4 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
+import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsWmsLayer.md"
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
 
 export default {
@@ -98,14 +99,10 @@ export default {
       table:{
         type: {
           summary: 'String',
-          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中t78即为layers传参的内容'
+          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中 t78 即为layers传参的内容'
         },
       }
     },
-    layerId: 'raster_layerId',
-    sourceId: 'raster_sourceId',
-    baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
-    crs:'EPSG:4326'
   },
 };
 
@@ -119,13 +116,20 @@ const Template = (args, { argTypes }) => ({
 
 export const IGS_4326 = Template.bind({});
 IGS_4326.args = {
-  layers: 't0,t1,t2,t3,t56,t57,t65,t66,t67,t68,t69,t70,t74,t81,t82',
+  // layers: 't0,t1,t2,t3,t56,t57,t65,t66,t67,t68,t69,t70,t74,t81,t82',//java版本
+  layers: '北京市,绿地_1,绿地_2,绿地_3,中小学POI,幼儿园POI,纪念碑POI,博物馆POI,名胜古迹点,动物园poi,观光胜地poi,主题公园POI,书店POI,区县点,首都点',//.Net版本
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
   baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
   crs:'EPSG:4326'
 };
-
+IGS_4326.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};
 export const ArcGis_4326 = Template.bind({});
 ArcGis_4326.args = {
   layers: '0,1,2,3,5,7,9,11',

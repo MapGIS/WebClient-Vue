@@ -54,7 +54,7 @@ export default {
 
 <style scoped>
 .mapgis-ui-color-title-container {
-  width: 99%;
+  width: 98%;
 }
 
 .mapgis-ui-color-title-container:hover{
@@ -65,7 +65,7 @@ export default {
   font-weight: bolder;
   position: relative;
   padding-left: 13px;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  margin-top: 22px;
+  margin-bottom: 14px;
 }
 </style>

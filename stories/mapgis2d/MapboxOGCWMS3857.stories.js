@@ -1,5 +1,6 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
+import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsWmsLayer.md"
 
 export default {
   title: "二维/图层/OGC/WMS-3857",
@@ -102,14 +103,10 @@ export default {
       table:{
         type: {
           summary: 'String',
-          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中t78即为layers传参的内容'
+          detail:'示例:\n<Layer queryable="1">\n<Name>t78</Name>\n<Title>高尔夫POI</Title>\n<Abstract/>\n<SRS>EPSG:4326</SRS>\n<SRS>EPSG:3857</SRS>\n<LatLonBoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445"/>\n<BoundingBox minx="115.68781625002069" miny="39.485428600000006" maxx="116.72606048165855" maxy="40.40083445" SRS="EPSG:4326"/>\n<BoundingBox minx="1.2878308795938104E7" miny="4791445.516172612" maxx="1.2993885615123086E7" maxy="4924362.565474523" SRS="EPSG:3857"/>\n</Layer>\n 其中 t78 即为layers传参的内容'
         },
       }
     },
-    layerId: 'raster_layerId',
-    sourceId: 'raster_sourceId',
-    baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
-    crs:'EPSG:4326'
   },
 };
 
@@ -123,11 +120,19 @@ const Template = (args, { argTypes }) => ({
 
 export const IGS_3857 = Template.bind({});
 IGS_3857.args = {
-  layers: 't0,t1,t2',
+  // layers: 't0,t1,t2',//java版本
+  layers: '北京市,区县点,首都点',//.Net版本
   layerId: 'raster_layerId',
   sourceId: 'raster_sourceId',
   baseUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/ogc/doc/北京市/WMSServer`,
   crs:'EPSG:3857'
+};
+IGS_3857.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
 };
 
 export const ArcGis_3857 = Template.bind({});
@@ -138,3 +143,5 @@ ArcGis_3857.args = {
   baseUrl:'http://219.142.81.85/arcgis/services/矿产地数据库2019/ferrous_metal/MapServer/WmsServer',
   crs:'EPSG:3857'
 };
+
+

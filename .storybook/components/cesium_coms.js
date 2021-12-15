@@ -70,7 +70,7 @@ export { default as Mapgis3dDynamicSection } from "../../cesium/src/components/A
 export { default as Mapgis3dShadow } from "../../cesium/src/components/Analysis/Shadow";
 export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/Analysis/HeightLimited";
 export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
-export { default as Mapgis3dVideo } from "../../cesium/src/components/Analysis/Video";
+export { default as Mapgis3dVideoManager } from "../../cesium/src/components/Analysis/video/VideoManager";
 
 export { default as Mapgis3dParticleEffectsManager } from "../../cesium/src/components/Overlay/particle/ParticleEffects";
 
@@ -81,3 +81,5 @@ export { default as Mapgis3dPathRoaming } from "../../cesium/src/components/Scen
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";
 // export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
 // export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";
+// 模拟仿真
+export { default as Mapgis3dCityGrow } from "../../cesium/src/components/simulation/CityGrow";

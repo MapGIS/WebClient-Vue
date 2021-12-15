@@ -53,6 +53,7 @@ module.exports = {
             collapsable: false,
             children: [
               ["/local/yarn.md", "本地开发"],  
+              ["/local/mixlocal.md", "本地/互联网混合开发"],  
               ["/guide/", "快速上手"],
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],

@@ -5,8 +5,11 @@
       {{ title }}
     </div>
     <div class="mapgis-ui-input-border-container">
-      <mapgis-ui-input @change="$_change" :title="valueCopy" :id="id" :style="inputStyle" class="mapgis-ui-input-border" v-model="valueCopy" :placeholder="placeholder"/>
-<!--      <mapgis-ui-textarea contenteditable="true" :id="id" :style="inputStyle" class="mapgis-ui-input-textarea" v-model="valueCopy" :placeholder="placeholder"/>-->
+      <mapgis-ui-input v-if="type === 'text'" @change="$_change" :title="valueCopy" :id="id" class="mapgis-ui-input-border"
+                       v-model="valueCopy" :placeholder="placeholder"/>
+      <mapgis-ui-input-number v-if="type === 'number'" @change="$_change" :title="String(valueCopy)" :id="id" class="mapgis-ui-input-border"
+                       v-model="valueCopy" :placeholder="placeholder"/>
+      <!--      <mapgis-ui-textarea contenteditable="true" :id="id" :style="inputStyle" class="mapgis-ui-input-textarea" v-model="valueCopy" :placeholder="placeholder"/>-->
     </div>
   </div>
 </template>
@@ -23,6 +26,10 @@ export default {
       type: String,
       default: "title"
     },
+    type: {
+      type: String,
+      default: "text"
+    },
     id: {
       type: String
     },
@@ -30,6 +37,10 @@ export default {
       type: String
     },
     showTitleIcon: {
+      type: Boolean,
+      default: true
+    },
+    enableWatchValue: {
       type: Boolean,
       default: true
     },
@@ -57,7 +68,9 @@ export default {
     },
     valueCopy: {
       handler: function () {
-        this.$emit("change", this.valueCopy);
+        if (this.enableWatchValue) {
+          this.$emit("change", this.valueCopy);
+        }
       },
       deep: true
     }
@@ -70,8 +83,12 @@ export default {
   },
   methods: {
     $_change(e) {
-      if(!(e instanceof Object)){
-        this.$emit("change", e);
+      if (this.enableWatchValue) {
+        if (!(e instanceof Object)) {
+          this.$emit("change", e);
+        }
+      } else {
+        this.$emit("change", e.target.value);
       }
     },
     setValue(value) {
@@ -82,26 +99,23 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-ui-input-border {
+  width: 100%;
+}
 .mapgis-ui-input-border-title {
   font-weight: bolder;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   padding-left: 12px;
 }
 
 .mapgis-ui-input-border-container {
   position: relative;
-  width: 100%;
+  width: 98%;
   min-height: 54px;
-  background: #F1F1F1;
   border-radius: 3px;
   text-align: center;
   padding: 10px;
-}
-
-.mapgis-ui-input-textarea {
-  height:100%;
-  overflow-y:hidden;
-  word-break:break-all;
-  word-wrap:break-word;
+  padding-left: 0;
+  padding-right: 1px;
 }
 </style>

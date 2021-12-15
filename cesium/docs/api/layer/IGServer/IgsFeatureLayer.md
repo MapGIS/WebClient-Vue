@@ -41,7 +41,7 @@
 - **类型:** `Boolean`
 - **可选**
 - **非侦听属性**
-- **描述:** 图层 id，即要加载哪些图层，
+- **描述:** 视角是否自动切换到地图文档范围或第一个gdbp图层范围。
 
 ### loadAll
 
@@ -49,7 +49,7 @@
 - **可选**
 - **非侦听属性**
 - **默认值** `false`
-- **描述:** 是否加载所有数据，默认以矢量瓦片形式动态加载（即为 false），数据量大的建议动态加载。
+- **描述:** 是否加载所有数据，默认以网格形式动态加载（即为 false），数据量大的建议网格形式动态加载。
 
 ### setViewToExisting
 
@@ -161,15 +161,15 @@ export default {
           parameters: {
             color: "rgba(218,98,125,0.6)",
             outline: true,
-            outlineColor: "rgba(255,255,0,0.5)"
-          }
-        }
+            outlineColor: "rgba(255,255,0,0.5)",
+          },
+        },
       ],
       filter: { where: "mpArea>2880000" },
       //layers 显示图层顺序为0的
-      layers: "0"
+      layers: "0",
     };
-  }
+  },
 };
 </script>
 ```
@@ -202,13 +202,13 @@ export default {
         parameters: {
           color: "rgba(218,98,125,0.6)",
           outline: true,
-          outlineColor: "rgba(255,255,0,0.5)"
-        }
+          outlineColor: "rgba(255,255,0,0.5)",
+        },
       },
       filter: { where: "mpArea>2880000" },
-      layers: "gdbp://MapGISLocalPlus/示例数据/sfcls/KS_buildings"
+      layers: "gdbp://MapGISLocalPlus/示例数据/sfcls/KS_buildings",
     };
-  }
+  },
 };
 </script>
 ```
@@ -244,14 +244,14 @@ export default {
             heightRatio: 20,
             color: "rgba(218,98,125,0.6)",
             outline: true,
-            outlineColor: "rgba(255,255,0,0.5)"
-          }
-        }
+            outlineColor: "rgba(255,255,0,0.5)",
+          },
+        },
       ],
       filter: { where: "mpArea>2880000" },
-      layers: "0"
+      layers: "0",
     };
-  }
+  },
 };
 </script>
 ```

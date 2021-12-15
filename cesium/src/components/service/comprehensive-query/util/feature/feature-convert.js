@@ -72,7 +72,7 @@ class GGeometryPolygon {
     return this.geoCRS;
   }
   toFeatureGeometry() {
-    const arcs = this.coordinates.map(line => {
+    const arcs = this.coordinates.map((line) => {
       const coords = line.map(([x, y]) => {
         return new Zondy.Common.Point2D(x, y);
       });
@@ -105,7 +105,7 @@ class GGeometryMultiPolygon {
     return this.geoCRS;
   }
   toFeatureGeometry() {
-    const arcs = this.coordinates[0].map(line => {
+    const arcs = this.coordinates[0].map((line) => {
       const coords = line.map(([x, y]) => {
         return new Zondy.Common.Point2D(x, y);
       });
@@ -136,7 +136,7 @@ export default class FeatureConvert {
     const geojsonFeatures = {
       type: "FeatureCollection",
       features: [],
-      dataCount
+      dataCount,
     };
     if (!igsFeatures.SFEleArray) {
       return geojsonFeatures;
@@ -187,7 +187,7 @@ export default class FeatureConvert {
             if (Arcs) {
               const LineDots = Arcs[0].Dots;
               if (LineDots) {
-                for (let l = 0; l < LineDots.length; i += 1) {
+                for (let l = 0; l < LineDots.length; l += 1) {
                   const coord = [LineDots[l].x, LineDots[l].y];
                   coordinates.push(coord);
                 }
@@ -221,13 +221,13 @@ export default class FeatureConvert {
       }
       const geometry = {
         type,
-        coordinates
+        coordinates,
       };
       const feature = {
         type: "Feature",
         properties,
         geometry,
-        bound: Object.assign({}, bound)
+        bound: Object.assign({}, bound),
       };
       geojsonFeatures.features.push(feature);
     }
@@ -245,7 +245,7 @@ export default class FeatureConvert {
     const SFEleArray = [];
     if (geojsonFeatures.features.length > 0) {
       const pro = geojsonFeatures.features[0].properties;
-      Object.keys(pro).forEach(key => {
+      Object.keys(pro).forEach((key) => {
         if (key !== "geoCenter") {
           FldAlias.push(null);
           FldName.push(key);
@@ -262,7 +262,7 @@ export default class FeatureConvert {
       FldAlias,
       FldName,
       FldNumber,
-      FldType
+      FldType,
     };
     for (let i = 0; i < geojsonFeatures.features.length; i += 1) {
       const PntGeom = [];
@@ -276,11 +276,11 @@ export default class FeatureConvert {
         bound = GeometryExp.calculateBound([geometry.coordinates]);
         const Dot = {
           x: geometry.coordinates[0],
-          y: geometry.coordinates[1]
+          y: geometry.coordinates[1],
         };
         PntGeom.push({
           Dot,
-          GID: 0
+          GID: 0,
         });
       } else if (geometry.type === "LineString") {
         ftype = 2;
@@ -289,7 +289,7 @@ export default class FeatureConvert {
         for (let j = 0; j < geometry.coordinates.length; j += 1) {
           dots.push({
             x: geometry.coordinates[j][0],
-            y: geometry.coordinates[j][1]
+            y: geometry.coordinates[j][1],
           });
         }
         LinGeom.push({
@@ -298,10 +298,10 @@ export default class FeatureConvert {
             Arcs: [
               {
                 ArcID: 0,
-                Dots: dots
-              }
-            ]
-          }
+                Dots: dots,
+              },
+            ],
+          },
         });
       } else if (geometry.type === "Polygon") {
         ftype = 3;
@@ -310,7 +310,7 @@ export default class FeatureConvert {
         for (let j = 0; j < geometry.coordinates[0].length; j += 1) {
           dots.push({
             x: geometry.coordinates[0][j][0],
-            y: geometry.coordinates[0][j][1]
+            y: geometry.coordinates[0][j][1],
           });
         }
         RegGeom.push({
@@ -320,16 +320,16 @@ export default class FeatureConvert {
               Arcs: [
                 {
                   ArcID: 0,
-                  Dots: dots
-                }
-              ]
-            }
-          ]
+                  Dots: dots,
+                },
+              ],
+            },
+          ],
         });
       }
       const AttValue = [];
       const property = geojsonFeatures.features[i].properties;
-      Object.keys(property).forEach(key => {
+      Object.keys(property).forEach((key) => {
         if (key !== "geoCenter") {
           AttValue.push(property[key]);
         }
@@ -342,7 +342,7 @@ export default class FeatureConvert {
           InfoType: null,
           LinInfo: null,
           PntInfo: null,
-          RegInfo: null
+          RegInfo: null,
         },
         bound,
         fGeom: {
@@ -351,16 +351,16 @@ export default class FeatureConvert {
           PntGeom,
           RegGeom,
           StreamGeom: null,
-          SurfaceGeom: []
+          SurfaceGeom: [],
         },
-        ftype
+        ftype,
       };
       SFEleArray.push(data);
     }
     const result = {
       AttStruct,
       SFEleArray,
-      TotalCount: geojsonFeatures.dataCount || geojsonFeatures.features.length
+      TotalCount: geojsonFeatures.dataCount || geojsonFeatures.features.length,
     };
     const featureSet = new Zondy.Common.FeatureSet(result);
     return featureSet;
@@ -378,7 +378,7 @@ export default class FeatureConvert {
   }
   static toTangram(featureGeoJSON) {
     const { features } = featureGeoJSON;
-    return features.map(feature => this.featureToTangram(feature));
+    return features.map((feature) => this.featureToTangram(feature));
   }
   static featureToTangram(gFeature) {
     const { geometry } = gFeature;

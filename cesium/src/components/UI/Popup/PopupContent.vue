@@ -7,9 +7,11 @@
            :style="[popupOptionsCopy.style.containerStyle]"
       >
         <!--图片-->
-        <div :key="index" v-for="(image,index) in feature.properties.images">
-          <img class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
-        </div>
+        <mapgis-ui-carousel autoplay>
+          <div :key="index" v-for="(image,index) in feature.properties.images">
+            <img class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
+          </div>
+        </mapgis-ui-carousel>
         <!--标题-->
         <div class="mapgis-popup-title"
              :class="popupOptionsCopy.class.titleClass"
@@ -167,7 +169,7 @@ export default {
       if (this.popupOptionsCopy.popupType === 'card') {
         if (this.feature.properties && this.feature.properties.images) {
           if (typeof this.feature.properties.images === "string") {
-            this.feature.properties.images = this.feature.properties.images.split(",");
+            this.feature.properties.images = this.feature.properties.images.split(";");
             this.showCarousel = true;
           } else if (this.feature.properties.images instanceof Array) {
             this.showCarousel = true;
