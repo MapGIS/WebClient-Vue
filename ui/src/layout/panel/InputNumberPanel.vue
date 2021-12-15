@@ -22,7 +22,7 @@
           </mapgis-ui-slider>
         </mapgis-ui-col>
         <mapgis-ui-col v-bind="wrapperCol" class="right-panel">
-          <div class="right range">{{ range[0] }} ~ {{ range[1] }}</div>
+          <div class="right range" v-show="rangeShow">{{ range[0] }} ~ {{ range[1] }}</div>
           <mapgis-ui-input-number
             autoWidth
             class="right"
@@ -55,7 +55,7 @@
               <mapgis-ui-iconfont type="mapgis-info-circle" />
             </mapgis-ui-tooltip>
           </div>
-          <div class="range-sm" v-if="range.length == 2">{{ range[0] }} ~ {{ range[1] }}</div>
+          <div class="range-sm" v-show="rangeShow">{{ range[0] }} ~ {{ range[1] }}</div>
         </mapgis-ui-space>
       </mapgis-ui-col>
       <mapgis-ui-col v-bind="wrapperCol">
@@ -118,6 +118,10 @@ export default {
     range: {
       type: Array,
       default: () => [0, 100]
+    },
+    rangeShow:{
+      type:Boolean,
+      default:true
     },
     step: {
       type: Number,
