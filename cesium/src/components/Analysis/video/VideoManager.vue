@@ -409,6 +409,7 @@ export default {
           hintLineVisible: true // 是否显示投放区域线
         }
       };
+      this.putVideo(newVideo);
       this.currentEditVideo = newVideo;
       this.activeKey = "2";
     },

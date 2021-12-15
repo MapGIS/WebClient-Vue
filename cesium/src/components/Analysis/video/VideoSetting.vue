@@ -263,11 +263,21 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    videoSource: {
+      handler() {
+        this.changeVideo();
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {
     id() {
       return this.settingsCopy.id;
+    },
+    videoSource() {
+      return this.settingsCopy.params.videoSource;
     },
     params: {
       get: function() {
@@ -302,6 +312,27 @@ export default {
           break;
         case "mp4":
           this.proType = this.Cesium.SceneProjectorType.VIDEO;
+          break;
+        default:
+          break;
+      }
+    },
+    /**
+     * 更改视频源参数
+     */
+    changeVideo() {
+      if (!this.scenePro) {
+        return;
+      }
+      this.changeProtocol();
+      switch (this.proType) {
+        case Cesium.SceneProjectorType.IMAGE:
+        case Cesium.SceneProjectorType.VIDEO:
+        case Cesium.SceneProjectorType.HLS:
+          this.scenePro.textureSource = this.params.videoSource.videoUrl;
+          break;
+        case Cesium.SceneProjectorType.COLOR:
+          this.scenePro.textureSource = new this.Cesium.Color(1, 0, 0, 1);
           break;
         default:
           break;
