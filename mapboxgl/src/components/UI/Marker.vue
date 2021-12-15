@@ -77,6 +77,7 @@ export default {
   watch: {
     coordinates (lngLat) {
       if (this.initial) return;
+      lngLat = this.$_fixLngLat(lngLat);
       this.marker.setLngLat(lngLat);
     },
     draggable (next) {
@@ -120,8 +121,16 @@ export default {
   },
 
   methods: {
+    $_fixLngLat(lngLat) {
+      if (lngLat && lngLat.length >= 2) {
+        if (lngLat[0] == 0) lngLat[0] = 0.0001;
+        if (lngLat[1] == 0) lngLat[1] = 0.0001;
+      }
+      return lngLat;
+    },
     $_addMarker () {
-      this.marker.setLngLat(this.coordinates).addTo(this.map);
+      let coords = this.$_fixLngLat(this.coordinates);
+      this.marker.setLngLat(coords).addTo(this.map);
       this.$_bindMarkerDOMEvents();
       this.$_emitEvent("added", { marker: this.marker });
     },
