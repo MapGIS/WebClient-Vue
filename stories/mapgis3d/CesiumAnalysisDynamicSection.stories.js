@@ -1,5 +1,5 @@
 import "../style/card.css";
-// import Markdown from "../../cesium/docs/api/analysis/Aspect.md";
+import Markdown from "../../cesium/docs/api/analysis/DynamicSection.md";
 
 export default {
   title: "三维/分析/剖切分析",
@@ -21,12 +21,12 @@ const Template = (args, { argTypes }) => ({
         key: "tk",
         value: "9c157e9585486c02edf817d2ecbc7752",
       },
-      m3dUrl1:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
-      m3dUrl2:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`
+      m3dUrl1: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
+      m3dUrl2: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
     };
   },
   template: `
-      <mapgis-web-scene :style="{height: '95vh'}"
+      <mapgis-web-scene style="height: 95vh"
           v-on:load="handleLoad"
       >
         <mapgis-3d-ogc-wmts-layer
@@ -38,27 +38,20 @@ const Template = (args, { argTypes }) => ({
             :token="token"
         ></mapgis-3d-ogc-wmts-layer>
         <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-        <mapgis-3d-igs-m3d 
+        <mapgis-3d-m3d-layer
             :vueIndex="$props.models[0].vueIndex" 
             :url="m3dUrl1"
         />
-        <mapgis-3d-igs-m3d 
+        <mapgis-3d-m3d-layer 
             :vueIndex="$props.models[1].vueIndex" 
             :url="m3dUrl2"
         />
         <mapgis-ui-card class="storybook-ui-card">
-          <mapgis-3d-dynamic-section @mounted="dynamicMounted" @destroyed="dynamicDestroyed" v-bind="$props"/>
+          <mapgis-3d-dynamic-section :models="models" :axis="axis" :color="color" :time="time" :distance="distance"/>
         </mapgis-ui-card>
       </mapgis-web-scene>
     `,
   methods: {
-    dynamicMounted(component) {
-      component.onOpen();
-    },
-    dynamicDestroyed(component) {
-      // component.onClose();
-      // component.unmount();
-    },
     handleLoad(e) {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =
@@ -104,7 +97,7 @@ DynamicSection.args = {
 DynamicSection.parameters = {
   docs: {
     description: {
-      // component: Markdown,
+      component: Markdown,
     },
   },
 };
