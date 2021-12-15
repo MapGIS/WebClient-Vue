@@ -2,7 +2,7 @@ import "../style/card.css";
 import Mapgis3dPondingSimulation from "../../cesium/src/components/simulation/PondingSimulation.vue";
 
 export default {
-  title: "三维/场景子组件/积水仿真",
+  title: "三维/模拟仿真/积水仿真",
   component: Mapgis3dPondingSimulation,
   argTypes: {},
 };
@@ -23,7 +23,7 @@ const Template = (args, { argTypes }) => ({
         v-on:load="handleLoad"
     >
         <mapgis-3d-igs-terrain :url="terrainUrl" />
-        <mapgis-3d-ponding-simulation/>
+        <mapgis-3d-ponding-simulation style="position:absolute;top:10px;left:10px"/>
     </mapgis-web-scene>
     `,
   methods: {
