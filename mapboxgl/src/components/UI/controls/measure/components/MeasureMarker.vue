@@ -5,13 +5,13 @@
     :class="prefixCls"
     anchor="bottom"
   >
-    <div slot="marker" :class="`${prefixCls}-popup`">
+    <slot name="marker" :class="`${prefixCls}-popup`">
       <div :class="`${prefixCls}-popup-tip`"></div>
       <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
         <p>周长：{{ perimeter }}</p>
         <p v-if="area">面积：{{ area }}</p>
       </div>
-    </div>
+    </slot>
   </mapgis-marker>
 </template>
 <script>
