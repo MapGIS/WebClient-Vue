@@ -125,8 +125,8 @@
       :token="token"
     ></mapgis-3d-ogc-wmts-layer>
     <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
-    <mapgis-3d-m3d-layer :vueIndex="$props.models[0].vueIndex" :url="m3dUrl1" />
-    <mapgis-3d-m3d-layer :vueIndex="$props.models[1].vueIndex" :url="m3dUrl2" />
+    <mapgis-3d-m3d-layer :vueIndex="vueIndex" :url="m3dUrl1" />
+    <mapgis-3d-m3d-layer :vueIndex="vueIndex" :url="m3dUrl2" />
     <mapgis-ui-card class="storybook-ui-card">
       <mapgis-3d-dynamic-section
         :models="models"
@@ -199,6 +199,14 @@ export default {
   }
 };
 </script>
+<style scoped>
+.storybook-ui-card {
+  position: absolute;
+  width: 400px;
+  top: 0;
+  left: 0;
+}
+</style>
 ```
 
 ## 自定义界面-插槽方式
