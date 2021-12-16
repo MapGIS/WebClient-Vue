@@ -29,9 +29,15 @@ window.webclient = {
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
-window.VueCesiumLibPath = "http://localhost:8895/cesium/Cesium.js";
+// window.VueCesiumLibPath = "http://localhost:8895/cesium/Cesium.js";
+// window.VueCesiumPluginPath =
+//   "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
+
+  window.VueCesiumLibPath =
+  "http://localhost:8895/static/libs/cdn/cesium/Cesium.js";
+  
 window.VueCesiumPluginPath =
-  "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
+  "http://localhost:8895/static/libs/cdn/cesium/webclient-cesium-plugin.min.js";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

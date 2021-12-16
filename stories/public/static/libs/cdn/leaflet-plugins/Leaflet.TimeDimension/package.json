@@ -1,0 +1,48 @@
+{
+  "name": "leaflet-timedimension",
+  "version": "1.1.1",
+  "description": "Add time dimension capabilities on a Leaflet map",
+  "keywords": [
+    "gis",
+    "map",
+    "timedimension",
+    "leaflet"
+  ],
+  "homepage": "https://apps.socib.es/Leaflet.TimeDimension/",
+  "bugs": {
+    "url": "https://github.com/socib/Leaflet.TimeDimension/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Biel Frontera (ICTS SOCIB)",
+    "email": "datacenter@socib.es",
+    "url": "https://www.socib.es/"
+  },
+  "contributors": [
+    {
+      "name": "Sylvain Marcadal (Ram)",
+      "email": "sylvain@marcadal.me",
+      "url": "https://github.com/ram-one"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/socib/Leaflet.TimeDimension.git"
+  },
+  "dependencies": {
+    "iso8601-js-period": "^0.2.1",
+    "leaflet": "~0.7.4 || ~1"
+  },
+  "devDependencies": {
+    "grunt": "~1",
+    "grunt-contrib-clean": "~0.7.0",
+    "grunt-contrib-concat": "~1",
+    "grunt-contrib-cssmin": "~2.2",
+    "grunt-contrib-jshint": "~1.1",
+    "grunt-contrib-uglify": "~3.1.0",
+    "grunt-contrib-watch": "~1",
+    "grunt-remove-logging": "~0.2.0"
+  },
+  "main": "dist/leaflet.timedimension.src.js",
+  "style": "dist/leaflet.timedimension.control.css"
+}
