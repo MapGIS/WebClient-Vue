@@ -1,5 +1,6 @@
 <template>
 	<div id="overlay-setting">
+		<mapgis-ui-group-tab title="叠加参数设置" id="title-space"/>
 
 		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
 
@@ -18,7 +19,7 @@
 					<mapgis-ui-select-option v-for="(item, index) in infoOptType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
 				</mapgis-ui-select>
 			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item>
+			<mapgis-ui-form-model-item id="checkbox-group">
 				<mapgis-ui-checkbox :default-checked="attOptType" v-model="attOptType">进行属性操作</mapgis-ui-checkbox>
 				<br>
 				<mapgis-ui-checkbox :default-checked="isValidReg" v-model="isValidReg">检查区合法性</mapgis-ui-checkbox>
@@ -26,6 +27,7 @@
 
 			<!-- 3.输出结果 -->
 			<!-- <mapgis-ui-space>输出结果</mapgis-ui-space> -->
+			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
 			<mapgis-ui-form-model-item label="输出结果">
 				<mapgis-ui-row>
 					<mapgis-ui-col :span=24>
@@ -290,7 +292,6 @@ export default {
 		margin: 0;
 		padding: 0
 	}
-	/* 整体组件样式 */
 	#overlay-setting {
 		position: absolute;
 		top: 0;
@@ -298,55 +299,29 @@ export default {
 		z-index: 1000;
 		width: 320px;
 		height: auto;
-		/* margin-top: -240px; */
-		background-color: rgb(255, 255, 255);
-		/* border-radius: 4px;
-		box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2); */
+		background-color: #fff;
+		border-radius: 4px;
+		/* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2); */
 		padding: 10px;
 	}
 	#overlay-setting > form {
 		height: auto;
 	}
 
-	/* 分标题样式设置 */
-	/* .mapgis-ui-space-item {
-		margin-left: -140px;
-		font-size: 12px;
-	}
-	.mapgis-ui-space-item:before {
-		content: url("./titlew.png");
-		margin-right: 6px;
-	} */
-
-	/* 内容样式设置 */
-	/* .mapgis-ui-form {
-		width: 300px;
-		height: auto;
-		margin: auto;
-	} */
-
 	.mapgis-ui-form label {
 		font-size: 12px;
 	}
 
-	/* 样式bug所在 */
 	.mapgis-ui-form-item {
 		width: 300px;
 		margin-top: 15px;
-		/* margin: 0px 10px 8px 10px; */
-		/* background-color: rgb(240, 240, 240); */
+		margin: 0px 10px 8px 10px;
 	}
 
 	.mapgis-ui-row.mapgis-ui-form-item {
     margin: 10px 0px 10px 0px;
 	}
 
-	/* 用于控制左侧label标题 */
-	.mapgis-ui-form-item-label > label {
-		margin-left: 10px;
-		/* top: 9px; */
-	}
-	/* 用于控制右侧input输入框、checkbox和radio选择框 */
 	.mapgis-ui-form-item-control {
 		width: 214px;
 		text-align: left;
@@ -355,21 +330,9 @@ export default {
 		/* margin: 0; */
 	}
 
-
-	/* 按钮样式设置 */
- .mapgis-ui-btn {
-		font-size: 14px;
-		width: 80px;
-		height: 32px;
-		padding: 0;
-		margin-bottom: 8px;
+	#checkbox-group {
+		background-color: red;
+		padding-left: 10px;
 	}
-	/* .mapgis-ui-btn:nth-child(1) {
-		margin-left: 5px;
-	}
-	.mapgis-ui-btn:nth-child(2) {
-		margin-right: 5px;
-	} */
-
 
 </style>

@@ -1,5 +1,6 @@
 <template>
 	<div id="buffer-setting">
+		<mapgis-ui-group-tab title="缓冲区参数设置" id="title-space"/>
 		<!-- 要素级缓冲区分析UI面板 -->
 		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Feature'">
 			<mapgis-ui-form-model-item label="设置半径">
@@ -15,6 +16,7 @@
 				<mapgis-ui-input v-model=steps></mapgis-ui-input>
 			</mapgis-ui-form-model-item>
 
+			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
 			<mapgis-ui-form-model-item label="输出结果">
 				<mapgis-ui-row>
 					<mapgis-ui-col :span=24>
@@ -25,7 +27,6 @@
 			</mapgis-ui-form-model-item>
 		</mapgis-ui-form-model>
 
-
 		<!-- 图层级缓冲区分析UI面板 -->
 		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Layer'">
 			<mapgis-ui-form-model-item label="缓冲半径">
@@ -33,12 +34,12 @@
 				</mapgis-ui-radio-group>
 			</mapgis-ui-form-model-item>
 			<mapgis-ui-form-model-item label="设置半径" v-show="!isByAtt">
-				<mapgis-ui-row>
+				<mapgis-ui-row :gutter="8">
 					<mapgis-ui-col :span="12">	
-						<mapgis-ui-input prefix="左" v-model=leftRad ></mapgis-ui-input>			
+						<mapgis-ui-input addon-before="左" v-model=leftRad ></mapgis-ui-input>			
 					</mapgis-ui-col>
 					<mapgis-ui-col :span="12">
-						<mapgis-ui-input prefix="右" v-model=rightRad ></mapgis-ui-input>
+						<mapgis-ui-input addon-before="右" v-model=rightRad ></mapgis-ui-input>
 					</mapgis-ui-col>
 				</mapgis-ui-row>
 				<mapgis-ui-checkbox :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
@@ -58,6 +59,7 @@
 				</mapgis-ui-radio-group>
 			</mapgis-ui-form-model-item>
 
+			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
 			<mapgis-ui-form-model-item label="输出结果">
 				<mapgis-ui-row>
 					<mapgis-ui-col :span=24>
@@ -315,7 +317,6 @@ export default {
 		cancel() {
 
 		}
-
 	},
 	computed: {
     formItemLayout({layout}) {
@@ -336,7 +337,6 @@ export default {
 		margin: 0;
 		padding: 0
 	}
-	/* 整体组件样式 */
 	#buffer-setting {
 		position: absolute;
 		top: 0;
@@ -344,40 +344,30 @@ export default {
 		z-index: 1000;
 		width: 320px;
 		/* height: fit-content; */
-		/* height: 400px; */
 		height: auto;
-		/* max-height: 536px; */
-		background-color: rgb(255, 255, 255);
-		/* border-radius: 4px;
-		box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2); */
+		background-color: #fff;
+		border-radius: 4px;
+		/* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2); */
 		padding: 10px;
 	}
 	#buffer-setting > form {
 		height: auto;
 	}
 
-
-	/* 内容样式设置 */
 	.mapgis-ui-form label {
-		font-size: 12px;
+		font-size: 14px;
 	}
 
 	.mapgis-ui-form-item {
 		width: 300px;
 		margin-top: 15px;
-		/* background-color: rgb(240, 240, 240); */
+		margin: 0px 10px 8px 10px;
 	}
 
 	.mapgis-ui-row.mapgis-ui-form-item {
     margin: 10px 0px 10px 0px;
 	}
 
-
-	/* 用于控制左侧label标题 */
-	.mapgis-ui-form-item-label > label {
-		margin-left: 10px;
-	}
-	/* 用于控制右侧input输入框、checkbox和radio选择框 */
 	.mapgis-ui-form-item-control {
 		width: 214px;
 		text-align: left;
@@ -385,26 +375,13 @@ export default {
 		overflow: hidden;
 	}
 
-
-	/* 按钮样式设置 */
- .mapgis-ui-btn {
+	#title-space {
+		margin-left: -10px;
 		font-size: 14px;
-		width: 80px;
-		height: 32px;
-		padding: 0;
-		/* margin-bottom: 8px; */
-	}
-	.mapgis-ui-btn:nth-child(1) {
-		/* left: 120px; */
-		/* margin-right: 8px; */
-	}
-	.mapgis-ui-btn:nth-child(2) {
-		/* left: 224px; */
-		/* margin-right: 16px; */
 	}
 
-	/* .mapgis-ui-btn-primary {
-		margin-left: 10px;
-	} */
+	#title-space hr {
+		background-color: #fff;
+	}
 
 </style>

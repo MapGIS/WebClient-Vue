@@ -33,7 +33,7 @@ export default {
       control:'text'
     },
     srcAFeature: {
-      description: "输入被叠加要素的GeoJSON数据",
+      description: "输入叠加要素的GeoJSON数据",
       table:{
         defaultValue: { summary: {} },
       },
