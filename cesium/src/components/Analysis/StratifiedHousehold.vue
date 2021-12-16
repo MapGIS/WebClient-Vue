@@ -149,10 +149,6 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
-    layerId: {
-      type: [String, Array],
-      required: true
-    },
     outStyle: {
       type: Object,
       default: () => {

@@ -1,7 +1,7 @@
 import Mapgis3dG3dLayer from "../../cesium/src/components/Layer/M3D/G3D.vue";
 
 export default {
-  title: "三维/图层/G3D-动态单体化",
+  title: "三维/图层/G3D/动态单体化",
   component: Mapgis3dG3dLayer,
   argTypes: {
     url: "http://192.168.88.122:6163/igs/rest/g3d/dth",
@@ -27,8 +27,8 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 场景 = Template.bind({});
-场景.args = {
+export const 动态单体化 = Template.bind({});
+动态单体化.args = {
   url: "http://192.168.88.122:6163/igs/rest/g3d/dth",
   layers: "show:1,2",
 };

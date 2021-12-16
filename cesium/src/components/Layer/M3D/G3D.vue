@@ -160,202 +160,202 @@ import M3dMenus from "./components/M3dMenus.vue";
 const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export default {
-  name: "mapgis-3d-g3d-layer",
-  inject: ["Cesium", "vueCesium", "viewer"],
-  props: {
-    ...G3DOptions
-  },
-  components: {
-    M3dMenus
-  },
-  data() {
-    return {
-      title: "G3D场景图层",
-      layerIds: this.parseLayers(),
-      type: {
-        terrain: G3DLayerType.g3dTerrainLayer,
-        cache: G3DLayerType.g3dCacheLayer
-      },
-      menus: [
-        {
-          title: "静态单体化查询",
-          icon: "mapgis-highlight",
-          active: this.enablePopup
-        },
-        {
-          title: "批量设置",
-          icon: "mapgis-setting",
-          active: false
-        },
-        {
-          title: "隐藏面板",
-          icon: "mapgis-hide",
-          active: false
-        }
-      ],
-      layerTree: [
-        {
-          title: "地图场景",
-          key: "地图场景默认键值",
-          version: "",
-          layerIndex: -99,
-          icon: "mapgis-layer1",
-          menu: "mapgis-down",
-          children: [],
-          scopedSlots: { icon: "custom", title: "title" }
-        }
-      ],
-      expandedKeys: [],
-      searchValue: "",
-      autoExpandParent: true,
-      expandItemKey: undefined,
-      activeItemKey: undefined,
-      gdbp: undefined,
-      g3dLayerIndex: undefined, // g3d图层再整个viewer中的顺序
-      layerKey: undefined,
-      selectLayerIndex: undefined, // 当前g3d图层中子图层m3d的图层顺序
-      selectedKeys: [],
-      version: undefined,
-      ip: "localhost",
-      port: "6163",
-      isolation: false,
-      featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
-      featureproperties: undefined,
-      featurevisible: undefined,
-      featureclickenable: this.enablePopup
-    };
-  },
-  provide() {
-    const self = this;
-    return {
-      get m3ds() {
-        return self.m3ds;
-      }
-    };
-  },
-  created() {},
-  mounted() {
-    this.mount();
-  },
-  destroyed() {
-    this.unmount();
-  },
-  watch: {
-    enablePopup(next) {
-      this.featureclickenable = next;
-      if (next) {
-        this.$_bindPickFeature();
-      } else {
-        this.$_unbindPickFeature();
-      }
+    name: "mapgis-3d-g3d-layer",
+    inject: ["Cesium", "vueCesium", "viewer"],
+    props: {
+        ...G3DOptions
     },
-    layers(next) {
-      this.layerIds = this.parseLayers(next);
-      this.changeLayerVisible(this.layerIds);
+    components: {
+        M3dMenus
     },
-    layerIds(next) {
-      this.changeLayerVisible(this.layerIds);
-    }
-  },
-  methods: {
-    createCesiumObject() {
-      return new Promise(
-        resolve => {
-          resolve();
-        },
-        reject => {}
-      );
-    },
-    onM3dLoaded(e) {},
-    mount() {
-      const vm = this;
-      const { vueIndex, vueKey, vueCesium } = this;
-      const { viewer, url, $props, enablePopup, layerId } = this;
-
-      let server = this.parseServer();
-      let { ip, port } = server;
-
-      let g3dLayer = this.createCesiumObject();
-      let layers = this.parseLayers();
-      if (!layers) this.layerIds = [];
-      g3dLayer.then(e => {
-        let g3d = viewer.scene.layers.appendG3DLayer(url, {
-          $props,
-          loaded: function(layer) {
-            // 该回调有多少图层循环进多少次
-          },
-          getDocLayerIndexes(indexes) {
-            // 该回调只触发一次
-            vm.g3dLayerIndex = indexes[0];
-            vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
-              m3ds: [],
-              layerId: layerId,
-              g3dLayerIndex: vm.g3dLayerIndex
-            });
-            let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
-            vm.layerTree[0].version = g3dLayer.version;
-            vm.version = g3dLayer.version;
-            vm.layerTree[0].title = g3dLayer.name;
-            let layerIndexs = g3dLayer.getM3DLayerIndexes();
-
-            let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-
-            if (find && find.options && find.options.m3ds) {
-              let props = layerIndexs.map((i, j) => {
-                let gIndex = i;
-                let layer = g3dLayer.getLayer(gIndex);
-                return layer.readyPromise;
-              });
-
-              Promise.all(props).then(m3ds => {
-                vm.$emit("loaded", { g3d: vm });
-                vm.recordOriginStyle();
-                if (enablePopup) {
-                  vm.$_bindPickFeature();
+    data() {
+        return {
+            title: "G3D场景图层",
+            layerIds: this.parseLayers(),
+            type: {
+                terrain: G3DLayerType.g3dTerrainLayer,
+                cache: G3DLayerType.g3dCacheLayer
+            },
+            menus: [
+                {
+                    title: "静态单体化查询",
+                    icon: "mapgis-highlight",
+                    active: this.enablePopup
+                },
+                {
+                    title: "批量设置",
+                    icon: "mapgis-setting",
+                    active: false
+                },
+                {
+                    title: "隐藏面板",
+                    icon: "mapgis-hide",
+                    active: false
                 }
-                vm.m3ds = m3ds;
-                find.options.m3ds = m3ds;
-                let all = [];
-                m3ds.forEach((m3d, i) => {
-                  // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
-                  let gIndex = layerIndexs[i];
-                  let info = g3dLayer.getLayerInfo(gIndex);
-                  let layer = g3dLayer.getLayer(gIndex);
-                  let { layerName, gdbpUrl, layerType } = info;
-                  all.push(`${gIndex}`);
-                  vm.layerTree[0].children.push({
-                    title: layerName,
-                    key: `${gIndex}`,
-                    version: g3dLayer.version,
-                    layerIndex: gIndex,
-                    layerType,
-                    ip,
-                    port,
-                    gdbp: gdbpUrl,
-                    icon: "mapgis-layer",
+            ],
+            layerTree: [
+                {
+                    title: "地图场景",
+                    key: "地图场景默认键值",
+                    version: "",
+                    layerIndex: -99,
+                    icon: "mapgis-layer1",
                     menu: "mapgis-down",
-                    scopedSlots: {
-                      icon: "custom",
-                      title: "title"
-                    }
-                  });
-                  if (layers) {
-                    if (layers.indexOf(`${i}`) >= 0) {
-                      layer.show = true;
-                    } else {
-                      layer.show = false;
-                    }
-                  } else {
-                    layer.show = true;
-                  }
-                  loopM3ds(m3ds, types => {
-                    vm.layerTree[0].children[
-                      layerIndexs[i]
-                    ].subLayerType = checkTypeIcon(types[i]);
-                  });
-                });
-                vm.parseTerrain();
-                vm.parserVector();
+                    children: [],
+                    scopedSlots: { icon: "custom", title: "title" }
+                }
+            ],
+            expandedKeys: [],
+            searchValue: "",
+            autoExpandParent: true,
+            expandItemKey: undefined,
+            activeItemKey: undefined,
+            gdbp: undefined,
+            g3dLayerIndex: undefined, // g3d图层再整个viewer中的顺序
+            layerKey: undefined,
+            selectLayerIndex: undefined, // 当前g3d图层中子图层m3d的图层顺序
+            selectedKeys: [],
+            version: undefined,
+            ip: "localhost",
+            port: "6163",
+            isolation: false,
+            featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
+            featureproperties: undefined,
+            featurevisible: undefined,
+            featureclickenable: this.enablePopup
+        };
+    },
+    provide() {
+        const self = this;
+        return {
+            get m3ds() {
+                return self.m3ds;
+            }
+        };
+    },
+    created() {},
+    mounted() {
+        this.mount();
+    },
+    destroyed() {
+        this.unmount();
+    },
+    watch: {
+        enablePopup(next) {
+            this.featureclickenable = next;
+            if (next) {
+                this.$_bindPickFeature();
+            } else {
+                this.$_unbindPickFeature();
+            }
+        },
+        layers(next) {
+            this.layerIds = this.parseLayers(next);
+            this.changeLayerVisible(this.layerIds);
+        },
+        layerIds(next) {
+            this.changeLayerVisible(this.layerIds);
+        }
+    },
+    methods: {
+        createCesiumObject() {
+            return new Promise(
+                resolve => {
+                    resolve();
+                },
+                reject => {}
+            );
+        },
+        onM3dLoaded(e) {},
+        mount() {
+            const vm = this;
+            const { vueIndex, vueKey, vueCesium } = this;
+            const { viewer, url, $props, enablePopup } = this;
+            
+            let server = this.parseServer();
+            let { ip, port } = server;
+            
+            let g3dLayer = this.createCesiumObject();
+            let layers = this.parseLayers();
+            if (!layers) this.layerIds = [];
+            g3dLayer.then(e => {
+                let g3d = viewer.scene.layers.appendG3DLayer(url, {
+                    $props,
+                    loaded: function(layer) {
+                        // 该回调有多少图层循环进多少次
+                    },
+                    getDocLayerIndexes(indexes) {
+                        // 该回调只触发一次
+                        vm.g3dLayerIndex = indexes[0];
+                        vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
+                            m3ds: [],
+                            layerId: vueIndex,
+                            g3dLayerIndex: vm.g3dLayerIndex
+                        });
+                        let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
+                        vm.layerTree[0].version = g3dLayer.version;
+                        vm.version = g3dLayer.version;
+                        vm.layerTree[0].title = g3dLayer.name;
+                        let layerIndexs = g3dLayer.getM3DLayerIndexes();
+                        
+                        let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+                        
+                        if (find && find.options && find.options.m3ds) {
+                            let props = layerIndexs.map((i, j) => {
+                                let gIndex = i;
+                                let layer = g3dLayer.getLayer(gIndex);
+                                return layer.readyPromise;
+                            });
+                            
+                            Promise.all(props).then(m3ds => {
+                                vm.$emit("loaded", { g3d: vm });
+                                vm.recordOriginStyle();
+                                if (enablePopup) {
+                                    vm.$_bindPickFeature();
+                                }
+                                vm.m3ds = m3ds;
+                                find.options.m3ds = m3ds;
+                                let all = [];
+                                m3ds.forEach((m3d, i) => {
+                                    // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
+                                    let gIndex = layerIndexs[i];
+                                    let info = g3dLayer.getLayerInfo(gIndex);
+                                    let layer = g3dLayer.getLayer(gIndex);
+                                    let { layerName, gdbpUrl, layerType } = info;
+                                    all.push(`${gIndex}`);
+                                    vm.layerTree[0].children.push({
+                                        title: layerName,
+                                        key: `${gIndex}`,
+                                        version: g3dLayer.version,
+                                        layerIndex: gIndex,
+                                        layerType,
+                                        ip,
+                                        port,
+                                        gdbp: gdbpUrl,
+                                        icon: "mapgis-layer",
+                                        menu: "mapgis-down",
+                                        scopedSlots: {
+                                            icon: "custom",
+                                            title: "title"
+                                        }
+                                    });
+                                    if (layers) {
+                                        if (layers.indexOf(`${i}`) >= 0) {
+                                            layer.show = true;
+                                        } else {
+                                            layer.show = false;
+                                        }
+                                    } else {
+                                        layer.show = true;
+                                    }
+                                    loopM3ds(m3ds, types => {
+                                        vm.layerTree[0].children[
+                                            layerIndexs[i]
+                                        ].subLayerType = checkTypeIcon(types[i]);
+                                    });
+                                });
+                                vm.parseTerrain();
+                                vm.parserVector();
                 vm.resortLayers();
                 vm.layerIds = vm.layerIds.concat(all);
               });
@@ -368,14 +368,16 @@ export default {
     },
     unmount() {
       const { vueCesium, vueKey, vueIndex } = this;
-      const { viewer } = this;
+      const { viewer, g3dLayerIndex } = this;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let { m3ds } = find.options;
-        if (!viewer.isDestroyed() && m3ds) {
-          m3ds.forEach(l => l.destroy());
-        }
-      }
+      // if (find && find.options) {
+      //   let { m3ds } = find.options;
+      //   if (!viewer.isDestroyed() && m3ds) {
+      //     m3ds.forEach(l => l.destroy());
+      //   }
+      // }
+      g3dLayer.remove(true);
       this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
@@ -484,7 +486,6 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getVectorLayerIndexes();
       let vectors = g3dLayer.getVectorLayers();
-      console.log("indexes", indexes);
       indexes.forEach(i => {
         let info = g3dLayer.getLayerInfo(i);
         let { layerName, layerType } = info;
@@ -513,7 +514,6 @@ export default {
       const vm = this;
       let childern = vm.layerTree[0].children;
       let news = childern.sort((a, b) => a.layerIndex - b.layerIndex);
-      console.log("news", news[1]);
       // vm.layerTree.splice(0, 1, news);
     },
     parseServer(url) {
@@ -565,7 +565,7 @@ export default {
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
       const { g3dLayerIndex, viewer } = this;
-      if (!g3dLayerIndex && g3dLayerIndex < 0) return;
+      if (!g3dLayerIndex || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getAllLayerIndexes();
       indexes.forEach(index => {
@@ -694,11 +694,9 @@ export default {
       } else if (menu == "静态单体化查询") {
         if (this.menus[0].active) {
           this.menus[0].active = false;
-          console.log("unactive", this.menus[0].active);
           this.$_unbindPickFeature();
         } else {
           this.menus[0].active = true;
-          console.log("active", this.menus[0].active);
           this.$_bindPickFeature();
         }
       }
