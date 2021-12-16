@@ -125,7 +125,7 @@ export default {
             items: [
                 {
                     name: "全球",
-                    image: require("./ViewpointManager/upload/globe.png"),
+                    image: require("./ViewpointManager/upload/globe.jpg"),
                     destination: {
                         x: 104,
                         y: 28.011763478186143,
@@ -140,7 +140,7 @@ export default {
                 },
                 {
                     name: "中国",
-                    image: require("./ViewpointManager/upload/china.png"),
+                    image: require("./ViewpointManager/upload/china.jpg"),
                     destination: {
                         x: 108.91,
                         y: 32.52,
@@ -155,7 +155,7 @@ export default {
                 },
                 {
                     name: "武汉",
-                    image: require("./ViewpointManager/upload/wuhan.png"),
+                    image: require("./ViewpointManager/upload/wuhan.jpg"),
                     destination: {
                         x: 114.21,
                         y: 30.42,
