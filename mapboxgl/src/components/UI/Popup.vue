@@ -144,6 +144,9 @@ export default {
     coordinates (lngLat) {
       if (this.initial) return;
       this.popup.setLngLat(lngLat);
+      if (this.showed) {
+        this.open = true;
+      }
     },
 
     showed (next, prev) {
