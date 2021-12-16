@@ -16,11 +16,7 @@
       </mapgis-ui-input>
       <mapgis-ui-card v-show="showCardDialog" class="data-card">
         <div v-show="!editLayerNameVisible">
-          <mapgis-ui-list
-            :key="reflush"
-            :data-source="selectOptionsCopy"
-            class="mapgis-list"
-          >
+          <mapgis-ui-list :data-source="selectOptionsCopy" class="mapgis-list">
             <mapgis-ui-list-item
               style="padding: 4px 8px; cursor: pointer;"
               slot="renderItem"
@@ -29,7 +25,7 @@
               @click="clickListItem(item)"
             >
               <operations-item
-                :key="item.id"
+                :key="item.name"
                 :text="item.name"
                 :operations="['edit', 'delete']"
                 @delete="onDelete(item.id)"
@@ -60,8 +56,8 @@
 
 <script>
 import OperationsItem from "./OperationsItem.vue";
-import EditLayerName from "./EditLayerName.vue"
-import {newGuid} from "../../../Utils/util";
+import EditLayerName from "./EditLayerName.vue";
+import { newGuid } from "../../../Utils/util";
 
 export default {
   name: "video-layer-select",
@@ -86,8 +82,12 @@ export default {
   watch: {
     selectOptions: {
       handler() {
-        this.selectOptionsCopy = [...this.selectOptions];
-        this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
+        this.selectOptionsCopy = JSON.parse(JSON.stringify(this.selectOptions));
+        if (!this.isChangeBySelf) {
+          //如果不是内部触发的改变，则默认取第一个
+          this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
+        }
+        this.isChangeBySelf = false;
       },
       deep: true,
       immediate: true
@@ -100,7 +100,7 @@ export default {
       editLayerNameVisible: false,
       editLayer: null,
       showCardDialog: false,
-      reflush: false
+      isChangeBySelf: false // 是否为内部导致的options变化，比如内部增删改
     };
   },
 
@@ -148,8 +148,8 @@ export default {
       }
       this.selectedLayer = val;
       this.$emit("selectedLayer", this.selectedLayer);
+      this.isChangeBySelf = true;
       this.showCardDialog = false;
-      this.reflush = !this.reflush;
     },
     /**
      * 图层名编辑结束事件
@@ -179,6 +179,7 @@ export default {
       const selectOptions = [...this.selectOptionsCopy];
       this.selectOptionsCopy = selectOptions.filter(item => item.id !== id);
       this.$emit("delete-layer", id);
+      this.isChangeBySelf = true;
     }
   }
 };

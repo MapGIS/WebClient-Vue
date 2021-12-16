@@ -27,13 +27,13 @@
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="视频源" :has-top-margin="false" />
         <div class="video-style" style="margin-bottom:12px">
-          <mapgis-video
+          <mapgis-ui-video
             :width="300"
             :height="200"
             :videoUrl="params.videoSource.videoUrl"
             :protocol="params.videoSource.protocol"
             @onPlayerReady="getPlayer"
-          ></mapgis-video>
+          ></mapgis-ui-video>
         </div>
         <mapgis-ui-setting-form
           :label-width="50"
@@ -216,12 +216,10 @@
 </template>
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
-import MapgisVideo from "./components/Video.vue";
 
 export default {
   name: "mapgis-video-setting",
   inject: ["Cesium", "vueCesium", "viewer"],
-  components: { MapgisVideo },
   props: {
     ...VueOptions,
     settings: {
@@ -325,6 +323,7 @@ export default {
         return;
       }
       this.changeProtocol();
+      // this.scenePro.projectorType = this.proType;
       switch (this.proType) {
         case Cesium.SceneProjectorType.IMAGE:
         case Cesium.SceneProjectorType.VIDEO:
