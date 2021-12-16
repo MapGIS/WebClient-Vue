@@ -27,6 +27,7 @@ export { default as Mapgis3dIgsFeatureLayer } from "./components/Layer/IGServer/
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
 export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
+export { default as Mapgis3dGraphicLayers } from "./components/Layer/Graphic/GraphicLayers.vue";
 
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "./components/Layer/GeoJSON/GeoJsonLayer";

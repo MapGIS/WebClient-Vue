@@ -9,11 +9,11 @@
               <mapgis-ui-iconfont type="mapgis-down"/>
             </div>
             <mapgis-ui-menu slot="overlay">
-              <mapgis-ui-menu-item @click="$_chooseDrawType('三维几何体')">
-                <span>三维几何体</span>
-              </mapgis-ui-menu-item>
               <mapgis-ui-menu-item @click="$_chooseDrawType('二维几何体')">
                 <span>二维几何体</span>
+              </mapgis-ui-menu-item>
+              <mapgis-ui-menu-item @click="$_chooseDrawType('三维几何体')">
+                <span>三维几何体</span>
               </mapgis-ui-menu-item>
             </mapgis-ui-menu>
           </mapgis-ui-dropdown>
@@ -23,26 +23,96 @@
              @mouseenter="$_toggleIconsContainer(true)"
              @mouseleave="$_toggleIconsContainer(false)"
         >
-          <img @click="$_startDraw(icon.type)" class="mapgis-3d-graphic-icon" :key="index" v-for="(icon, index) in iconsInfo" :src="imgs[icon.type + 'Image']"
-               :title="icon.title" alt="">
+          <div class="mapgis-3d-graphic-icon-div"
+               :key="index"
+               v-for="(icon, index) in iconsInfo"
+               :style="{outline: icon.type === currentEditType ? '1px solid #1890FF' : 'none'}"
+          >
+            <img @click="$_startDraw(icon.type)"
+                 class="mapgis-3d-graphic-icon"
+                 :src="imgs[icon.type + 'Image']"
+                 :title="icon.title" alt="">
+          </div>
         </div>
       </div>
     </div>
     <div>
       <mapgis-ui-card
-        style="width:100%"
+        style="width:100%;"
         :tab-list="tabListNoTitle"
         :active-tab-key="noTitleKey"
+        :bodyStyle="cardBodyStyle"
         @tabChange="key => onTabChange(key, 'noTitleKey')"
       >
+        <!--标注列表-->
         <div v-if="noTitleKey === 'list'">
-          <div @dblclick="$_dbclick" :key="index" v-for="(row, index) in dataSourceCopy">
-            <mapgis-ui-icon-row :src="imgs[row.type + 'Image']" :title="row.name"/>
+          <div @dblclick="$_dbclick(row)" :key="index" v-for="(row, index) in dataSourceCopy">
+            <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)" :iconStyle="iconStyle" :mainStyle="rowStyle"
+                                :src="imgs[row.type + 'Image']" :title="row.name"/>
           </div>
         </div>
+        <!--设置面板-->
         <div v-else-if="noTitleKey === 'edit'">
-          <div :key="index" v-for="(row, index) in editList[currentEditType]">
-            <mapgis-ui-input-row v-if="row.type === 'inputRow'" :title="row.title"/>
+          <div v-if="editPanelValues" style="margin-bottom: 12px;">
+            <mapgis-ui-row class="mapgis-3d-graphic-type">
+              <span>
+                类型 :
+              </span>
+              <span style="margin-left: 30px">
+                {{ $_formatType(currentEditType) }}
+              </span>
+            </mapgis-ui-row>
+            <mapgis-ui-mix-row
+              title="名称"
+              :mainStyle="mainStyle"
+              :titleStyle="titleStyle"
+              v-model="editPanelValues.name"
+              type="MapgisUiInput"
+            />
+            <div :key="index" v-for="(row, index) in editList[currentEditType]">
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInput'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInput"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiSlider'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="sliderMainStyle"
+                :extraStyle="sliderInputStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiSlider"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiSelect'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="selectMainStyle"
+                :dataSource="row.dataSource"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiSelect"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiColorPicker'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="colorMainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiColorPicker"
+              />
+            </div>
           </div>
         </div>
       </mapgis-ui-card>
@@ -55,6 +125,7 @@ import GraphicLayerService from "./GraphicLayerService";
 import * as imgs from "../Plotting/base64Source"
 import iconsInfo3D from "./iconsInfo3D";
 import iconsInfo2D from "./iconsInfo2D";
+import editList from "./editList";
 
 export default {
   name: "mapgis-3d-graphic-layer",
@@ -66,7 +137,26 @@ export default {
   props: {
     //数据源
     dataSource: {
-      type: Array
+      type: Array,
+      default() {
+        return [{
+          //类型，point、text、line
+          type: "point",
+          //id，可不传
+          id: "111",
+          //点坐标
+          positions: [],
+          style: {},
+          editPointStyle: {},
+          attributes: {},
+          name: "测试",
+          show: true,
+          editing: true,
+          allowPicking: true,
+          modelMatrix: {},
+          asynchronous: true
+        }]
+      }
     }
   },
   data() {
@@ -85,32 +175,9 @@ export default {
       //当前显示面板
       noTitleKey: 'list',
       //设置面板显示参数
-      editList: {
-        point: [{
-          type: "inputRow",
-          title: "名称"
-        }, {
-          type: "inputRow",
-          title: "半径"
-        }, {
-          type: "inputRow",
-          title: "填充颜色"
-        }, {
-          type: "inputRow",
-          title: "透明度"
-        }, {
-          type: "inputRow",
-          title: "外边线"
-        }, {
-          type: "inputRow",
-          title: "外边线颜色"
-        }, {
-          type: "inputRow",
-          title: "外边线透明度"
-        }]
-      },
+      editList: editList,
       //当前编辑的类型
-      currentEditType: "point",
+      currentEditType: "label",
       //数据源副本
       dataSourceCopy: undefined,
       //图标资源
@@ -120,7 +187,50 @@ export default {
       //图标容器高度
       iconsContainerHeight: 62,
       //当前绘制模式，分为三维和二维
-      drawType: "二维几何体"
+      drawType: "二维几何体",
+      //设置面板的显示数据
+      editPanelValues: undefined,
+      //名称输入框样式
+      mainStyle: {
+        width: "220px"
+      },
+      //名称输入框的标题样式
+      titleStyle: {
+        marginLeft: "24px"
+      },
+      //颜色选择器主体样式
+      colorMainStyle: {
+        width: "220px",
+        marginLeft: "13px"
+      },
+      //滑动组件主体样式
+      sliderMainStyle: {
+        width: "106px",
+        marginLeft: "-13px"
+      },
+      //下拉框组件主体样式
+      selectMainStyle: {
+        width: "220px",
+        marginLeft: "-28px"
+      },
+      //滑动组件右边输入框样式
+      sliderInputStyle: {
+        marginLeft: "-64px"
+      },
+      //标注列表一行的样式
+      rowStyle: {
+        height: "40px",
+        lineHeight: "40px",
+        paddingLeft: "20px"
+      },
+      //标注列表一行中的图标样式
+      iconStyle: {
+        marginTop: "-4px"
+      },
+      //tab框的body样式
+      cardBodyStyle: {
+        padding: "0"
+      }
     };
   },
   watch: {
@@ -141,21 +251,170 @@ export default {
     this.$_init();
   },
   methods: {
+    /**
+     * 更多工具里面的按钮的点击事件
+     * @param type String 点击事件类型
+     * @param row Object 一个要素数据
+     * */
+    $_clickTool(type, row) {
+      switch (type) {
+        case "edit":
+          this.$_dbclick(row);
+          break;
+        case "delete":
+          break;
+      }
+    },
+    /**
+     * 将类型从英文转为中文
+     * @param type String 类型，英文
+     * @return type String 类型，中文
+     * */
+    $_formatType(type) {
+      let format = {
+        label: "文字",
+        marker: "标签",
+        point: "点",
+        line: "直线",
+        curve: "曲线",
+        polygon: "多边形",
+        rectangle: "矩形",
+        circle: "圆",
+        cube: "正方体",
+        polygonCube: "立体多边形",
+        cuboid: "长方体",
+        cylinder: "圆柱",
+        cone: "圆锥",
+        ellipsoid: "球",
+        model: "模型",
+      }
+
+      return format[type];
+    },
+    /**
+     * 根据当前的绘制类型，获取设置面板显示参数数据
+     * @param editList Array 设置面板
+     * @param currentEditType String 类型
+     * @return editPanelValues Object 设置面板里面要显示的数值
+     * */
+    $_getEditPanelValues(editList, currentEditType) {
+      let editInfo = this.editList[this.currentEditType];
+      let editPanelValues = {};
+      for (let i = 0; i < editInfo.length; i++) {
+        editPanelValues[editInfo[i].key] = editInfo[i].value;
+      }
+      editPanelValues.name = currentEditType + "_" + this.$_getUUID();
+      return editPanelValues;
+    },
+    /**
+     * 从一个绘制要素的JSON对象中取得设置面板显示参数
+     * @param json Object 一个绘制要素的JSON对象
+     * @return editPanelValues Object 设置面板里面要显示的数值
+     * */
+    $_getEditPanelValuesFromJSON(json) {
+      if (!json || !(json instanceof Object) || JSON.stringify(json) === "{}") {
+        console.warn("json对象不能为空！");
+        return;
+      }
+      if (!json.hasOwnProperty("type") || !json.hasOwnProperty("id")) {
+        console.warn("type或者id不存在！");
+        return;
+      }
+      const {
+        id,
+        positions,
+        style,
+        editPointStyle,
+        attributes,
+        name,
+        show,
+        editing,
+        allowPicking,
+        modelMatrix,
+        asynchronous
+      } = json;
+
+      const {
+        text, font, fillColor, backgroundColor
+      } = style;
+
+      let editPanelValues = {};
+
+      switch (json.type) {
+        case "label":
+          editPanelValues.text = text;
+          editPanelValues.name = name;
+          let fonts = font.split(" ");
+          editPanelValues.fontSize = fonts[0].split("px")[0];
+          editPanelValues.fontFamily = fonts[1];
+          editPanelValues.fontColor = "#000000";
+          editPanelValues.opacity = 100;
+          editPanelValues.backgroundColor = "#FFFFFF";
+          break;
+      }
+
+      return editPanelValues;
+    },
+    /**
+     * 据面板显示参数数据生成绘制参数
+     * @param editPanelValues Object 设置面板显示参数数据
+     * @param currentEditType String 当前绘制类型
+     * @param Cesium Object Cesium对象
+     * @return drawOptions Object 绘制参数
+     * */
+    $_getDrawOptions(editPanelValues, currentEditType, Cesium) {
+      let drawOptions = {};
+      switch (currentEditType) {
+        case "label":
+          drawOptions.text = editPanelValues.text;
+          drawOptions.font = editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          drawOptions.fillColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor), editPanelValues.opacity / 100);
+          drawOptions.backgroundColor = Cesium.Color.fromCssColorString(editPanelValues.backgroundColor);
+          break;
+      }
+      return drawOptions;
+    },
+    /**
+     * 获取UUID
+     * @param random Number 随机数银子
+     * @return id Number uuid
+     * */
+    $_getUUID(random) {
+      random = random || 10000000000;
+      return parseInt(String(Math.random() * random));
+    },
     //开始绘制
     $_startDraw(type) {
-      this.noTitleKey = "edit";
+      //设置当前绘制类型
+      this.currentEditType = type;
+      //根据当前的绘制类型，获取设置面板显示参数数据
+      this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+      //根据面板显示参数数据生成绘制参数
+      let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+      //根据编辑面板参数绘制图形
+      let vm = this;
+      //获取UUID
+      let uuid = this.$_getUUID();
       this.$_startDrawing({
-        id: "1111111",
-        type: "label",
-        text: '无标题',
-        font: '50px Helvetica',
-        pixelSize: 20,
-        pixelOffsetScaleByDistance: false,
-        horizontalOrigin: Cesium.HorizontalOrigin.right,
-        fillColor: '#000',
-        isScaleByDistance: true, //是否远近缩放
+        id: uuid,
+        type: this.currentEditType,
+        ...drawOptions,
         getPrimitive: function (e) {
-          console.log("------",e)
+          console.log("------", e)
+          vm.dataSourceCopy.push({
+            type: vm.currentEditType,
+            id: uuid,
+            positions: [],
+            style: drawOptions,
+            editPointStyle: {},
+            attributes: {},
+            name: vm.editPanelValues.name,
+            show: true,
+            editing: true,
+            allowPicking: true,
+            modelMatrix: {},
+            asynchronous: true
+          });
         }
       });
     },
@@ -178,14 +437,24 @@ export default {
       }
     },
     //双击一条标注列表里的要素，进入到设置面板
-    $_dbclick() {
+    $_dbclick(json) {
+      //显示设置面板
       this.noTitleKey = "edit";
+      //设置当前绘制类型
+      this.currentEditType = json.type;
+      //获取设置面板显示参数
+      this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
     },
     //初始化组件
     $_init() {
+      //复制数据源
       this.dataSourceCopy = this.dataSource;
       //初始化GraphicLayer对象
       this.$_initGraphicLayer();
+      //设置当前绘制类型
+      this.currentEditType = this.dataSourceCopy[0].type;
+      //获取设置面板显示参数
+      this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
     },
     onTabChange(key, type) {
       this[type] = key;
@@ -231,13 +500,26 @@ export default {
 .mapgis-3d-graphic-icon {
   width: 17px;
   height: 17px;
-  margin: 21px;
+  margin: 12px;
   cursor: pointer;
+}
+
+.mapgis-3d-graphic-icon-div {
+  display: inline-block;
+  width: auto;
+  height: auto;
+  margin: 10px 9px;
 }
 
 .mapgis-3d-graphic-dropdown {
   height: 100%;
   line-height: 32px;
   cursor: pointer;
+}
+
+.mapgis-3d-graphic-type {
+  text-align: left;
+  padding-left: 24px;
+  padding-top: 12px;
 }
 </style>

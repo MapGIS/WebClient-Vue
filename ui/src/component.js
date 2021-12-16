@@ -31,6 +31,7 @@ export { default as MapgisUiSpace } from "./components/space/Space.vue";
 
 // General
 export { default as MapgisUiButton } from "./components/button/Button.vue";
+export { default as MapgisUiMoreToolButton } from "./components/button/MoreToolButton";
 export { default as MapgisUiButtonGroup } from "./components/button/Group.vue";
 export { default as MapgisUiTooltipButton } from "./components/button/TooltipButton.vue";
 
