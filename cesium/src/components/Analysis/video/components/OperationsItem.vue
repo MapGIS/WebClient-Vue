@@ -37,7 +37,8 @@
 </template>
 
 <script>
-import { newGuid } from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import {newGuid} from "../../../Utils/util";
+
 export default {
   text: "operations-item",
   props: {

@@ -128,7 +128,7 @@ import {
 
 import fireImg from "./fire.png";
 import smokeImg from "./smoke.png";
-import emptyImage from './empty.png';
+import emptyImage from '../../../assets/image/empty.png';
 import {newGuid} from "../../Utils/util";
 
 export default {

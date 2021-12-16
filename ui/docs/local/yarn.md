@@ -21,6 +21,8 @@ set-ExecutionPolicy RemoteSigned
 
 ```sh
 yarn config set registry http://192.168.82.89:4873/
+# https://github.com/yarnpkg/yarn/issues/4862#issuecomment-368688262
+# npm config set registry https://registry.npm.taobao.org // 还原回公网仓库
 # yarn config set registry https://registry.npm.taobao.org // 还原回公网仓库
 yarn global add node-gyp
 yarn global add node-sass@4.12.0

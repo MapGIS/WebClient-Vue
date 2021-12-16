@@ -60,8 +60,9 @@
 
 <script>
 import OperationsItem from "./OperationsItem.vue";
-import EditLayerName from "./EditLayerName.vue";
-import { newGuid } from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import EditLayerName from "./EditLayerName.vue"
+import {newGuid} from "../../../Utils/util";
+
 export default {
   name: "video-layer-select",
   components: {

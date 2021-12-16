@@ -145,8 +145,8 @@
 </template>
 
 <script>
-import emptyImage from "@mapgis/webclient-vue-ui/src/components/iconfont/image/empty.png";
-import { newGuid } from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import emptyImage from '../../../assets/image/empty.png';
+import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
 import {
   isLogarithmicDepthBufferEnable,
