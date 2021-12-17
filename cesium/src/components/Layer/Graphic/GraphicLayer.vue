@@ -157,6 +157,16 @@ export default {
           asynchronous: true
         }]
       }
+    },
+    vueKey: {
+      type: String,
+      default: "default"
+    },
+    vueIndex: {
+      type: Number,
+      default() {
+        return Number((Math.random() * 100000000).toFixed(0));
+      }
     }
   },
   data() {
@@ -266,32 +276,6 @@ export default {
       }
     },
     /**
-     * 将类型从英文转为中文
-     * @param type String 类型，英文
-     * @return type String 类型，中文
-     * */
-    $_formatType(type) {
-      let format = {
-        label: "文字",
-        marker: "标签",
-        point: "点",
-        line: "直线",
-        curve: "曲线",
-        polygon: "多边形",
-        rectangle: "矩形",
-        circle: "圆",
-        cube: "正方体",
-        polygonCube: "立体多边形",
-        cuboid: "长方体",
-        cylinder: "圆柱",
-        cone: "圆锥",
-        ellipsoid: "球",
-        model: "模型",
-      }
-
-      return format[type];
-    },
-    /**
      * 根据当前的绘制类型，获取设置面板显示参数数据
      * @param editList Array 设置面板
      * @param currentEditType String 类型
@@ -374,15 +358,6 @@ export default {
       }
       return drawOptions;
     },
-    /**
-     * 获取UUID
-     * @param random Number 随机数银子
-     * @return id Number uuid
-     * */
-    $_getUUID(random) {
-      random = random || 10000000000;
-      return parseInt(String(Math.random() * random));
-    },
     //开始绘制
     $_startDraw(type) {
       //设置当前绘制类型
@@ -450,7 +425,7 @@ export default {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //初始化GraphicLayer对象
-      this.$_initGraphicLayer();
+      this.$_initGraphicLayer(this.vueIndex);
       //设置当前绘制类型
       this.currentEditType = this.dataSourceCopy[0].type;
       //获取设置面板显示参数

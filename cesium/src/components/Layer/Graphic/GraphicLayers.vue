@@ -1,11 +1,13 @@
 <template>
   <div style="position: absolute;left: 0;top: 0">
-    <mapgis-ui-select @change="$_selectLayer" :value="currenSelectLayer" style="width: 120px">
-      <mapgis-ui-select-option :key="index" v-for="(layer, index) in layerSelect" :value="layer.key">
-        {{ layer.value }}
-      </mapgis-ui-select-option>
-    </mapgis-ui-select>
-    <mapgis-3d-graphic-layer style="top: 20px;" :dataSource="currenLayer"/>
+    <div class="mapgis-3d-graphic-layers-select-container">
+      <mapgis-ui-select class="mapgis-3d-graphic-layers-select" @change="$_selectLayer" :value="currenSelectLayer">
+        <mapgis-ui-select-option :key="index" v-for="(layer, index) in layerSelect" :value="layer.key">
+          {{ layer.value }}
+        </mapgis-ui-select-option>
+      </mapgis-ui-select>
+    </div>
+    <mapgis-3d-graphic-layer style="top: 48px;" :dataSource="currenLayer"/>
   </div>
 </template>
 
@@ -84,5 +86,14 @@ export default {
 </script>
 
 <style scoped>
+.mapgis-3d-graphic-layers-select-container {
+  width: 332px;
+  height: 48px;
+  background: #F1F1F1;
+  padding-top: 7px;
+}
 
+.mapgis-3d-graphic-layers-select {
+  width: 300px;
+}
 </style>

@@ -2,28 +2,25 @@
 export default {
   name: "mapgis-3d-graphic-layer-service",
   inject: ["Cesium", "viewer"],
-  props: {
-    vueKey: {
-      type: String,
-      default: "default"
-    },
-    vueIndex: {
-      type: Number,
-      default() {
-        return Number((Math.random() * 100000000).toFixed(0));
-      }
-    }
-  },
   methods: {
-    //初始化graphicsLayer对象
-    $_initGraphicLayer() {
+    /**
+     * 通过vueIndex, vueKey，初始化一个graphicsLayer对象，请示用$_getGraphicLayer方法获取GraphicLayer对象，不要将此对象绑定在vue上
+     * @param vueIndex String or Number 必传，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * @param viewer Object 可选，Cesium的Viewer对象，不传则使用注入的Viewer对象
+     *  @return GraphicLayer Object 一个GraphicLayer对象
+     * */
+    $_initGraphicLayer(vueIndex, vueKey, viewer) {
+      viewer = viewer || this.viewer;
+      vueKey = vueKey || "default";
       if (!Cesium.hasOwnProperty("GraphicsLayer")) {
         console.warn("请升级最新版的Cesium库！");
         return;
       }
-      let graphicsLayer = new Cesium.GraphicsLayer(this.viewer, {});
-      this.viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
-      window.vueCesium.GraphicsLayerManager.addSource(this.vueKey, this.vueIndex, graphicsLayer);
+      let graphicsLayer = new Cesium.GraphicsLayer(viewer, {});
+      viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
+      window.vueCesium.GraphicsLayerManager.addSource(vueKey, vueIndex, graphicsLayer);
+      return graphicsLayer;
     },
     /**
      * 通过vueKey，vueIndex来获取graphicsLayer对象，默认不用传vueKey，vueIndex
@@ -166,7 +163,42 @@ export default {
     $_getAllPlottingPrimitive() {
       let graphicsLayer = this.$_getGraphicLayer();
       return graphicsLayer.getAllPlottingPrimitive();
-    }
+    },
+    /**
+     * 将类型从英文转为中文
+     * @param type String 类型，英文
+     * @return type String 类型，中文
+     * */
+    $_formatType(type) {
+      let format = {
+        label: "文字",
+        marker: "标签",
+        point: "点",
+        line: "直线",
+        curve: "曲线",
+        polygon: "多边形",
+        rectangle: "矩形",
+        circle: "圆",
+        cube: "正方体",
+        polygonCube: "立体多边形",
+        cuboid: "长方体",
+        cylinder: "圆柱",
+        cone: "圆锥",
+        ellipsoid: "球",
+        model: "模型",
+      }
+
+      return format[type];
+    },
+    /**
+     * 获取UUID
+     * @param random Number 随机数银子
+     * @return id Number uuid
+     * */
+    $_getUUID(random) {
+      random = random || 10000000000;
+      return parseInt(String(Math.random() * random));
+    },
   }
 }
 </script>
