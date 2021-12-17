@@ -1,7 +1,7 @@
 <template>
-  <div style="margin: 5px;">
-    <div style="display: flex;">
-      <mapgis-ui-space style="flex: 1">
+  <div class="edit-layer-name">
+    <div class="edit-row">
+      <mapgis-ui-space class="edit-space">
         <mapgis-ui-row>
           <label>图层名称</label>
         </mapgis-ui-row>
@@ -76,17 +76,23 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style scoped>
+.edit-layer-name {
+  margin: 5px;
+}
+.edit-row {
+  display: flex;
+}
+.edit-space {
+  flex: 1;
+}
 .control-button-container {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
   padding-top: 5px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-  .control-button {
-    width: calc(~"50% - 2.5px");
-  }
+}
+.control-button {
+  width: calc("50% - 2.5px");
 }
 </style>

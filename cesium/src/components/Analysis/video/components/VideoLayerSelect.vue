@@ -18,7 +18,7 @@
         <div v-show="!editLayerNameVisible">
           <mapgis-ui-list :data-source="selectOptionsCopy" class="mapgis-list">
             <mapgis-ui-list-item
-              style="padding: 4px 8px; cursor: pointer;"
+              class="card-content"
               slot="renderItem"
               slot-scope="item"
               :key="item.id"
@@ -33,9 +33,9 @@
               ></operations-item>
             </mapgis-ui-list-item>
           </mapgis-ui-list>
-          <mapgis-ui-divider style="margin: 4px 0;" />
+          <mapgis-ui-divider class="divider" />
           <div
-            style="padding: 4px 8px; cursor: pointer;"
+            class="card-content"
             @mousedown="e => e.preventDefault()"
             @click="onAdd"
           >
@@ -184,22 +184,29 @@ export default {
   }
 };
 </script>
-<style lang="less">
-.mapgis-select {
-  .data-card {
-    width: 89%;
-    margin-bottom: 12px;
-    position: absolute;
-    z-index: 1000;
-  }
-  .data-card .mapgis-ui-card-body {
-    padding: 0px;
-  }
+<style scoped>
+.data-card {
+  width: 89%;
+  margin-bottom: 12px;
+  position: absolute;
+  z-index: 1000;
+}
+.card-content {
+  padding: 4px 8px;
+  cursor: pointer;
+}
 
-  .mapgis-list {
-    width: 100%;
-    max-height: 300px;
-    overflow-y: auto;
-  }
+.divider {
+  margin: 4px 0;
+}
+
+::v-deep .mapgis-ui-card-body {
+  padding: 0px;
+}
+
+.mapgis-list {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
 }
 </style>

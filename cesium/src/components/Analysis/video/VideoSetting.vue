@@ -6,39 +6,48 @@
         <mapgis-ui-setting-form
           :label-width="50"
           :wrapper-width="224"
-          style="padding: 0 10px"
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item label="名称">
             <mapgis-ui-input
               v-model="settingsCopy.name"
-              style="width: 100%"
+              class="full-width"
               allowClear
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="描述">
             <mapgis-ui-textarea
               v-model="settingsCopy.description"
-              style="width: 100%"
+              class="full-width"
               autoSize
               allowClear
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="视频源" :has-top-margin="false" />
-        <div class="video-style" style="margin-bottom:12px">
+        <div class="video-style">
           <mapgis-ui-video
+            v-if="showVideoDiv"
             :width="300"
             :height="200"
             :videoUrl="params.videoSource.videoUrl"
             :protocol="params.videoSource.protocol"
             @onPlayerReady="getPlayer"
           ></mapgis-ui-video>
+          <mapgis-ui-empty
+            v-else
+            :image="emptyImage"
+            :image-style="imageStyle"
+            class="empty"
+          >
+            <span slot="description" class="empty-style">
+              请在下方设置视频源
+            </span>
+          </mapgis-ui-empty>
         </div>
         <mapgis-ui-setting-form
           :label-width="50"
           :wrapper-width="224"
-          style="padding: 0 10px"
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item label="协议类型">
@@ -51,7 +60,7 @@
           <mapgis-ui-form-item label="服务地址">
             <mapgis-ui-textarea
               v-model="params.videoSource.videoUrl"
-              style="width: 100%"
+              class="full-width"
               autoSize
               allowClear
             />
@@ -61,7 +70,6 @@
         <mapgis-ui-setting-form
           :label-width="50"
           :wrapper-width="224"
-          style="padding: 0 10px"
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item>
@@ -151,7 +159,7 @@
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="视角">
-            <div :style="{ width: '50%', padding: '0 2px 0 0', float: 'left' }">
+            <div class="item-left">
               <mapgis-ui-input
                 addon-before="水平"
                 type="number"
@@ -169,9 +177,7 @@
                 @change="val => onChangeSetting(val, 'horizontAngle')"
               />
             </div>
-            <div
-              :style="{ width: '50%', padding: '0 0 0 2px', float: 'right' }"
-            >
+            <div class="item-right">
               <mapgis-ui-input
                 addon-before="垂直"
                 type="number"
@@ -191,13 +197,13 @@
             </div>
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
-        <mapgis-ui-row style="padding:0 10px">
+        <mapgis-ui-row>
           <mapgis-ui-col :span="8">
-            <p style="font-size:12px">显示锥体线</p>
+            <p class="switch-label">显示锥体线</p>
           </mapgis-ui-col>
           <mapgis-ui-col :span="16">
             <mapgis-ui-switch
-              style="float:right"
+              class="switch"
               size="small"
               v-model="params.hintLineVisible"
               @change="val => onChangeSetting(val, 'showLine')"
@@ -216,6 +222,7 @@
 </template>
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
+import emptyImage from "../../../assets/image/empty.png";
 
 export default {
   name: "mapgis-video-setting",
@@ -284,6 +291,11 @@ export default {
       set: function(params) {
         this.settingsCopy.params = params;
       }
+    },
+    showVideoDiv() {
+      return this.params.videoSource.videoUrl.endsWith(
+        `.${this.params.videoSource.protocol}`
+      );
     }
   },
   data() {
@@ -293,7 +305,12 @@ export default {
       protocols: ["m3u8", "mp4"], // video协议集合
       scenePro: undefined, //投放对象
       isGetCameraPosition: false, //是否获取相机位置
-      isGetTargetPosition: false //是否获取视点位置
+      isGetTargetPosition: false, //是否获取视点位置
+      emptyImage: emptyImage,
+      imageStyle: {
+        height: "150px",
+        margin: "0 auto"
+      }
     };
   },
   mounted() {
@@ -556,6 +573,43 @@ export default {
 <style scoped>
 .video-style {
   text-align: center;
+  margin-bottom: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.item-left {
+  width: 50%;
+  padding: 0 2px 0 0;
+  float: left;
+}
+
+.item-right {
+  width: 50%;
+  padding: 0 0 0 2px;
+  float: right;
+}
+
+.switch-label {
+  font-size: 12px;
+}
+
+.switch {
+  float: right;
+}
+
+.empty {
+  border: 1px dashed var(--button-border-default-color);
+  border-radius: 4px;
+}
+
+.empty-style {
+  font-size: 12px;
+  font-family: Microsoft YaHei;
+  font-weight: 400;
+  color: #999999;
 }
 
 .iconfont-btn {
