@@ -308,7 +308,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
-        vm.$emit("load", vm);
+        vm.$emit("loaded", vm);
       });
       if (viewer.scene.globe.depthTestAgainstTerrain) {
         this.depthTestAgainstTerrain = true;

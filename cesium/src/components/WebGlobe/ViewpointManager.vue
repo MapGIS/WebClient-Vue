@@ -176,7 +176,7 @@ export default {
     },
     methods: {
         mount() {
-            this.$emit("load", this);
+            this.$emit("loaded", this);
         },
         unmount() {
             this.$emit("unload");
