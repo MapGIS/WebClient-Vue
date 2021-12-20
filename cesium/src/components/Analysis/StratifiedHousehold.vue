@@ -10,14 +10,30 @@
       @toggle-main="handleBackMain"
     >
       <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
-      <span class="mapgis-3d-stratified-household-title" slot="title">{{
-        title
-      }}</span>
+      <template slot="title">
+        <div v-if="layers && layers.length > 0">
+          <mapgis-ui-select
+            class="mapgis-3d-stratified-household-layers"
+            :disabled="disableLayerSelect"
+            :autoWidth="true" 
+            size="small"
+            @change="hancleSelectChange"
+            placeholder="请选择图层">
+             <mapgis-ui-select-option
+               v-for="(l,i) in layers" :key="i" 
+               :value="l.vueIndex"
+             >{{l.title}}</mapgis-ui-select-option>
+          </mapgis-ui-select> 
+        </div>
+        <span v-else class="mapgis-3d-stratified-household-title">{{
+          title
+        }}</span>
+      </template>
       <mapgis-ui-space
         slot="extra"
         class="mapgis-3d-stratified-household-icons"
       >
-        <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
+        <mapgis-ui-tooltip v-for="(m, i) in enableCollapse ? menus: collapsemenus" :key="i">
           <template slot="title">{{ m.title }}</template>
           <mapgis-ui-iconfont
             :class="{ active: m.active }"
@@ -129,14 +145,14 @@
       >
       </mapgis-3d-feature-popup>
     </mapgis-ui-collapse-card>
-    <mapgis-ui-slider-panel
+    <!-- <mapgis-ui-slider-panel
       class="mapgis-3d-stratified-household-slider-tree"
       :values="layerTree"
       :customLabel="customLabel"
       @change="changeSimpleMenu"
       @changeSlider="changeSimpleSlider"
     >
-    </mapgis-ui-slider-panel>
+    </mapgis-ui-slider-panel> -->
   </div>
 </template>
 
@@ -169,6 +185,11 @@ export default {
       }
     },
     /**
+     * @description 分层分户的图层列表, 每个内部{title, vueIndex}, 
+     * @see vueIndex表示当前激活的图层序号
+     */
+    layers: { type: Array, default: () => [] },
+    /**
      * @description 是否激活查询弹窗
      */
     enablePopup: { type: Boolean, default: false },
@@ -178,6 +199,7 @@ export default {
         return { popupType: "card" };
       }
     },
+    enableCollapse: { type: Boolean, default: true },
     enableStratifiedHouse: { type: Boolean, default: false },
     enableDynamicQuery: { type: Boolean, default: false }
   },
@@ -186,6 +208,7 @@ export default {
   },
   data() {
     return {
+      innerVueIndex: this.vueIndex,
       title: "分层分户",
       layerIds: [],
       menus: [
@@ -202,6 +225,18 @@ export default {
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
+          active: false
+        }
+      ],
+      collapsemenus:  [
+        {
+          title: "查询",
+          icon: "mapgis-highlight",
+          active: this.enablePopup
+        },
+        {
+          title: "模型爆炸",
+          icon: "mapgis-fire1",
           active: false
         }
       ],
@@ -266,7 +301,8 @@ export default {
       featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
       featureproperties: undefined,
       featurevisible: undefined,
-      featureclickenable: this.enablePopup
+      featureclickenable: this.enablePopup,
+      disableLayerSelect: false
     };
   },
   provide() {
@@ -295,6 +331,10 @@ export default {
     },
     layerIds(next) {
       this.changeLayerVisible(this.layerIds);
+    },
+    innerVueIndex(next) {
+      this.unmount();
+      this.mount();
     }
   },
   methods: {
@@ -305,7 +345,7 @@ export default {
      * 判断传入的m3d图层是否加载完毕
      */
     g3dIsReady() {
-      const { vueCesium, vueKey, vueIndex, model } = this;
+      const { vueCesium, vueKey, model, innerVueIndex } = this;
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
         this.$_getG3DByInterval(function(g3ds) {
@@ -322,12 +362,12 @@ export default {
           } else {
             reject(null);
           }
-        }, vueKey);
+        }, vueKey, innerVueIndex);
       });
     },
     mount() {
       const vm = this;
-      const { vueIndex, vueKey, vueCesium } = this;
+      const { innerVueIndex, vueKey, vueCesium } = this;
       const { viewer, enablePopup } = this;
 
       let promise = this.createCesiumObject();
@@ -360,7 +400,6 @@ export default {
               }
             });
           });
-          console.log("layerTree", vm.layerTree);
           vm.layerIds = all;
           vm.$emit("loaded", { component: vm });
           vm.version = g3dLayer.version;
@@ -368,7 +407,7 @@ export default {
           let collection = new Cesium.PrimitiveCollection();
           vueCesium.StratifiedHousehouldManager.addSource(
             vueKey,
-            vueIndex,
+            innerVueIndex,
             g3dLayer,
             {
               m3ds: m3ds,
@@ -387,11 +426,11 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      const { vueCesium, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, innerVueIndex } = this;
       const { viewer } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       if (find && find.options) {
         let { m3ds } = find.options;
@@ -400,12 +439,18 @@ export default {
         }
       }
       this.$emit("unload", { component: this });
-      vueCesium.StratifiedHousehouldManager.deleteSource(vueKey, vueIndex);
+      vueCesium.StratifiedHousehouldManager.deleteSource(vueKey, innerVueIndex);
+      if (this.interval) {
+         clearInterval(this.interval);
+      }
     },
     // 搜索需要
     onExpand(expandedKeys) {
       this.expandedKeys = expandedKeys;
       this.autoExpandParent = false;
+    },
+    hancleSelectChange(value) {
+      this.innerVueIndex = value;
     },
     getParentKey(key, tree) {
       let parentKey;
@@ -463,8 +508,8 @@ export default {
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
-      const { vueKey, vueIndex, vueCesium } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      const { vueKey, innerVueIndex, vueCesium } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
         let m3ds = find.options.m3ds;
         if (!m3ds) return;
@@ -498,10 +543,11 @@ export default {
       this.selectLayerIndex = layerIndex;
       this.layerKey = key;
       this.$refs.card && this.$refs.card.togglePanel();
+      this.disableLayerSelect = true;
     },
     recordOriginStyle() {
       const { g3dLayerIndex, viewer } = this;
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium } = this;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
@@ -511,16 +557,16 @@ export default {
       });
       vueCesium.StratifiedHousehouldManager.changeOptions(
         vueKey,
-        vueIndex,
+        innerVueIndex,
         "originStyles",
         originStyles
       );
     },
     restoreOriginStyle() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex } = this;
+      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
@@ -531,10 +577,10 @@ export default {
       }
     },
     restoreOrigindVisible() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex } = this;
+      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
@@ -594,13 +640,13 @@ export default {
     },
     enableExplror() {
       const { Cesium, g3dLayerIndex, viewer } = this;
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium } = this;
       const vector = new Cesium.Cartesian3(0, 0, 1); //向Z轴正方向爆炸
       const expDistance = 5;
       const speed = 0.5;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let m3ds = [];
@@ -619,10 +665,10 @@ export default {
       }
     },
     disableExplror() {
-      const { vueKey, vueIndex, vueCesium, g3dLayerIndex, viewer } = this;
+      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex, viewer } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       let m3ds = [];
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
@@ -666,28 +712,28 @@ export default {
       }
     },
     $_bindPickFeature() {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, innerVueIndex } = this;
       let clickhandler = this.$_bindClickHanlder();
       vueCesium.StratifiedHousehouldManager.changeOptions(
         vueKey,
-        vueIndex,
+        innerVueIndex,
         "clickhandler",
         clickhandler
       );
     },
     $_unbindPickFeature() {
-      const { vueKey, vueIndex } = this;
+      const { vueKey, innerVueIndex } = this;
       this.featurevisible = false;
       this.restoreM3d();
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       if (find && find.options.clickhandler) {
         find.options.clickhandler.destroy();
         vueCesium.StratifiedHousehouldManager.changeOptions(
           vueKey,
-          vueIndex,
+          innerVueIndex,
           "clickhandler",
           undefined
         );
@@ -706,20 +752,20 @@ export default {
       this.restoreOriginStyle();
     },
     highlightM3d(layerIndex) {
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium } = this;
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(layerIndex);
       this.restoreM3d();
       vueCesium.StratifiedHousehouldManager.changeOptions(
         vueKey,
-        vueIndex,
+        innerVueIndex,
         "pickerTileset",
         m3dlayer
       );
       vueCesium.StratifiedHousehouldManager.changeOptions(
         vueKey,
-        vueIndex,
+        innerVueIndex,
         "pickerTilesetStyle",
         m3dlayer.style
       );
@@ -733,14 +779,15 @@ export default {
     },
     handleBackMain() {
       this.featureclickenable = this.enablePopup;
+      this.disableLayerSelect = false;
     },
     queryDynamic(movement) {
       const vm = this;
       const { Cesium, viewer, g3dLayerIndex } = this;
-      const { vueKey, vueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium } = this;
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
-        vueIndex
+        innerVueIndex
       );
       if (find && find.options) {
         let { primitiveCollection } = find.options;
@@ -762,7 +809,7 @@ export default {
                 let feature = result[0];
                 let find = vueCesium.StratifiedHousehouldManager.findSource(
                   vueKey,
-                  vueIndex
+                  innerVueIndex
                 );
                 if (find) {
                   let last = find.options.feature;
@@ -778,7 +825,7 @@ export default {
                 primitiveCollection.add(feature);
                 vueCesium.StratifiedHousehouldManager.changeOptions(
                   vueKey,
-                  vueIndex,
+                  innerVueIndex,
                   "feature",
                   feature
                 );
@@ -856,7 +903,6 @@ export default {
       this.layerIds = [`${key}`];
     },
     changeSimpleSlider(keys) {
-      console.log('keys', keys);
       let keyStr = keys.map(k => `${k}`);
       this.layerIds = keyStr;
     },

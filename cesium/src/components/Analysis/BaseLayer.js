@@ -130,6 +130,7 @@ export default {
           }
           callback(m3dArr);
           clearInterval(interval);
+          this.interval = undefined;
         }
       }, 50);
     },
@@ -166,6 +167,7 @@ export default {
           clearInterval(interval);
         }
       }, 50);
+      this.interval = interval;
     },
     $_degreeFromCartesian(p) {
       let point = {};

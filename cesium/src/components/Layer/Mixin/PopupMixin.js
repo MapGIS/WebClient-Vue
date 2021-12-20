@@ -2,7 +2,6 @@ import VueOptions from "../../Base/Vue/VueOptions";
 import Popup from "../../UI/Popup/Popup.vue";
 import PopupContent from "../../UI/Geojson/Popup";
 import PopupFeatureContent from "../../UI/Popup/PopupContent.vue";
-import { getPopupHtml } from "../../UI/Popup/popupUtil";
 
 import debounce from "lodash/debounce";
 
@@ -93,7 +92,7 @@ export default {
       popupOptions,
       tipsOptions,
     } = this;
-
+    const vm = this;
     const {
       title = "name",
       type = "default",
@@ -131,6 +130,8 @@ export default {
         />
       );
     }
+
+    let defaultSlot = this.$slots.default;
 
     if (customPopup || customTips) {
       return (
@@ -170,10 +171,9 @@ export default {
             onSeparate={this.$_separateMap.bind(this)}
             options={options}
           >
-            <PopupFeatureContent
-              feature={feature}
-              popupOptions={popupOptions}
-            ></PopupFeatureContent>
+            <PopupFeatureContent feature={feature} popupOptions={popupOptions}>
+              {defaultSlot}
+            </PopupFeatureContent>
           </Popup>
           <Popup
             position={hoverposition}
