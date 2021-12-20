@@ -154,7 +154,6 @@ import {
 import OperationsItem from "./components/OperationsItem.vue";
 import VideoSetting from "./VideoSetting.vue";
 import VideoLayerSelect from "./components/VideoLayerSelect.vue";
-import videoOverlayLayerList from "./videosData.js";
 export default {
   name: "mapgis-3d-video-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -163,7 +162,7 @@ export default {
     ...VueOptions,
     videoOverlayLayerList: {
       type: Array,
-      default: () => videoOverlayLayerList()
+      default: () => []
     },
     protocol: {
       type: String,
@@ -275,7 +274,7 @@ export default {
         },
         current: 1,
         size: "small",
-        pageSize: 3
+        pageSize: 20
       },
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       //是否开启缓存区
@@ -378,7 +377,6 @@ export default {
      * 点击列表项
      */
     clickListItem(item, index) {
-      let vm = this;
       this.activeIndex = index;
       this.currentEditVideo = item;
     },
@@ -570,17 +568,36 @@ export default {
         vFOV,
         hintLineVisible
       } = params;
-      let cartesian = Cesium.Cartographic.toCartesian(
+      const viewPosition = Cesium.Cartographic.toCartesian(
         Cesium.Cartographic.fromDegrees(
           cameraPosition.x,
           cameraPosition.y,
           cameraPosition.z
         )
       );
-      cartesian.x -= 10;
-      scenePro.viewPosition = cartesian;
-      scenePro.heading = orientation.heading;
-      scenePro.pitch = orientation.pitch;
+      // viewPosition.x -= 10;
+      scenePro.viewPosition = viewPosition;
+      let targetPosition = Cesium.AlgorithmLib.pickFromRay(
+        viewer.scene,
+        viewPosition,
+        { heading: orientation.heading, pitch: orientation.pitch }
+      );
+      if (!targetPosition) {
+        targetPosition = Cesium.AlgorithmLib.pickFromRay(
+          viewer.scene,
+          viewPosition,
+          {
+            heading: orientation.heading,
+            pitch: orientation.pitch,
+            distance: 150
+          }
+        );
+        scenePro.targetPosition = targetPosition;
+      } else {
+        scenePro.targetPosition = targetPosition;
+      }
+      // scenePro.heading = orientation.heading;
+      // scenePro.pitch = orientation.pitch;
       scenePro.roll = orientation.roll;
       scenePro.hintLineVisible = hintLineVisible;
       scenePro.horizontAngle = hFOV;

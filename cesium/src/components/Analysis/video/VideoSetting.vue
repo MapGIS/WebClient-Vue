@@ -30,8 +30,8 @@
             v-if="showVideoDiv"
             :width="300"
             :height="200"
-            :videoUrl="params.videoSource.videoUrl"
-            :protocol="params.videoSource.protocol"
+            :videoUrl="videoSource.videoUrl"
+            :protocol="videoSource.protocol"
             @onPlayerReady="getPlayer"
           ></mapgis-ui-video>
           <mapgis-ui-empty
@@ -51,7 +51,7 @@
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item label="协议类型">
-            <mapgis-ui-select v-model="params.videoSource.protocol">
+            <mapgis-ui-select v-model="videoSource.protocol">
               <mapgis-ui-select-option v-for="item in protocols" :key="item">
                 {{ item }}
               </mapgis-ui-select-option>
@@ -59,7 +59,7 @@
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="服务地址">
             <mapgis-ui-textarea
-              v-model="params.videoSource.videoUrl"
+              v-model="videoSource.videoUrl"
               class="full-width"
               autoSize
               allowClear
@@ -85,19 +85,22 @@
               addon-before="X"
               type="number"
               :min="0"
-              v-model="params.cameraPosition.x"
+              :step="0.0001"
+              v-model.number="params.cameraPosition.x"
             />
             <mapgis-ui-input
               addon-before="Y"
               type="number"
               :min="0"
-              v-model="params.cameraPosition.y"
+              :step="0.0001"
+              v-model.number="params.cameraPosition.y"
             />
             <mapgis-ui-input
               addon-before="Z"
               type="number"
               :min="0"
-              v-model="params.cameraPosition.z"
+              :step="0.0001"
+              v-model.number="params.cameraPosition.z"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item>
@@ -114,14 +117,16 @@
               type="number"
               :min="0"
               :max="360"
-              v-model="params.orientation.heading"
-              @change="val => onChangeSetting(val, 'heading')"
+              :step="0.1"
+              v-model.number="params.orientation.heading"
+              @change="val => onChangeSetting(val.target.value, 'heading')"
             />
             <mapgis-ui-slider
               v-model="params.orientation.heading"
               :min="0"
               :max="360"
               size="small"
+              :step="0.1"
               :tooltipVisible="false"
               @change="val => onChangeSetting(val, 'heading')"
             />
@@ -130,13 +135,15 @@
               type="number"
               :min="-90"
               :max="90"
-              v-model="params.orientation.pitch"
-              @change="val => onChangeSetting(val, 'pitch')"
+              :step="0.1"
+              v-model.number="params.orientation.pitch"
+              @change="val => onChangeSetting(val.target.value, 'pitch')"
             />
             <mapgis-ui-slider
               v-model="params.orientation.pitch"
               :min="-90"
               :max="90"
+              :step="0.1"
               size="small"
               :tooltipVisible="false"
               @change="val => onChangeSetting(val, 'pitch')"
@@ -146,13 +153,15 @@
               type="number"
               :min="0"
               :max="360"
-              v-model="params.orientation.roll"
-              @change="val => onChangeSetting(val, 'roll')"
+              :step="0.1"
+              v-model.number="params.orientation.roll"
+              @change="val => onChangeSetting(val.target.value, 'roll')"
             />
             <mapgis-ui-slider
               v-model="params.orientation.roll"
               :min="0"
               :max="360"
+              :step="0.1"
               size="small"
               :tooltipVisible="false"
               @change="val => onChangeSetting(val, 'roll')"
@@ -165,13 +174,17 @@
                 type="number"
                 :min="0"
                 :max="180"
-                v-model="params.hFOV"
-                @change="val => onChangeSetting(val, 'horizontAngle')"
+                :step="0.1"
+                v-model.number="params.hFOV"
+                @change="
+                  val => onChangeSetting(val.target.value, 'horizontAngle')
+                "
               />
               <mapgis-ui-slider
                 v-model="params.hFOV"
                 :min="0"
                 :max="180"
+                :step="0.1"
                 size="small"
                 :tooltipVisible="false"
                 @change="val => onChangeSetting(val, 'horizontAngle')"
@@ -183,13 +196,17 @@
                 type="number"
                 :min="0"
                 :max="180"
-                v-model="params.vFOV"
-                @change="val => onChangeSetting(val, 'verticalAngle')"
+                :step="0.1"
+                v-model.number="params.vFOV"
+                @change="
+                  val => onChangeSetting(val.target.value, 'verticalAngle')
+                "
               />
               <mapgis-ui-slider
                 v-model="params.vFOV"
                 :min="0"
                 :max="180"
+                :step="0.1"
                 size="small"
                 :tooltipVisible="false"
                 @change="val => onChangeSetting(val, 'verticalAngle')"
@@ -251,7 +268,9 @@ export default {
             hFOV: 15, // 水平视场角
             vFOV: 15, // 垂直视场角
             hintLineVisible: true // 是否显示投放区域线
-          }
+          },
+          preHeading: 0,
+          prePitch: 0
         };
       }
     }
@@ -293,8 +312,8 @@ export default {
       }
     },
     showVideoDiv() {
-      return this.params.videoSource.videoUrl.endsWith(
-        `.${this.params.videoSource.protocol}`
+      return this.videoSource.videoUrl.endsWith(
+        `.${this.videoSource.protocol}`
       );
     }
   },
@@ -321,7 +340,7 @@ export default {
      * 修改视频协议
      */
     changeProtocol() {
-      switch (this.params.videoSource.protocol) {
+      switch (this.videoSource.protocol) {
         case "m3u8":
           this.proType = this.Cesium.SceneProjectorType.HLS;
           break;
@@ -345,7 +364,7 @@ export default {
         case Cesium.SceneProjectorType.IMAGE:
         case Cesium.SceneProjectorType.VIDEO:
         case Cesium.SceneProjectorType.HLS:
-          this.scenePro.textureSource = this.params.videoSource.videoUrl;
+          this.scenePro.textureSource = this.videoSource.videoUrl;
           break;
         case Cesium.SceneProjectorType.COLOR:
           this.scenePro.textureSource = new this.Cesium.Color(1, 0, 0, 1);
@@ -379,7 +398,7 @@ export default {
      */
     onChangeSetting(val, tag) {
       // console.log(val, tag);
-      this.scenePro[tag] = val;
+      this.scenePro[tag] = Number(val);
     },
     /**
      * 获取相机位置按钮事件
@@ -394,6 +413,20 @@ export default {
     getTargetPosition() {
       this.isGetTargetPosition = true;
       this.isGetCameraPosition = false;
+      this.preHeading = this.params.orientation.heading;
+      this.prePitch = this.params.orientation.pitch;
+    },
+    changeCameraPosition() {
+      const { Cesium, scenePro } = this;
+      const { cameraPosition } = this.params;
+      const viewPosition = Cesium.Cartographic.toCartesian(
+        Cesium.Cartographic.fromDegrees(
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z
+        )
+      );
+      scenePro.viewPosition = viewPosition;
     },
     /**
      * 鼠标事件
@@ -412,18 +445,50 @@ export default {
         if (vm.isGetCameraPosition) {
           if (cartesian !== undefined) {
             // cartesian.z += 0.08;
-            cartesian.x -= 10;
+            // cartesian.x -= 10;
             vm.scenePro.viewPosition = cartesian;
             const coord = vm._cartesianToDegrees(cartesian);
             const { params } = vm;
             params.cameraPosition.x = coord.lon;
             params.cameraPosition.y = coord.lat;
             params.cameraPosition.z = coord.height;
+            const { heading, pitch } = vm.params.orientation;
+            //根据相机视点和heading、pitch获取视点位置
+            const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+              viewer.scene,
+              cartesian,
+              { heading: heading, pitch: pitch }
+            );
+            if (targetPosition) {
+              if (!vm.scenePro.textureSource) {
+                vm.scenePro.textureSource = vm.videoSource.videoUrl;
+              }
+              vm.scenePro.targetPosition = targetPosition;
+            }
           }
           vm.isGetCameraPosition = false;
         } else if (vm.isGetTargetPosition) {
-          vm.scenePro.targetPosition = cartesian;
-          vm.updateOrientation();
+          // vm.scenePro.targetPosition = cartesian;
+          const { viewPosition } = vm.scenePro;
+          // 根据相机视点和鼠标位置获取heading和pitch
+          const { heading, pitch } = vm._getHeadingPitch(
+            viewPosition,
+            cartesian
+          );
+          //根据相机视点和heading、pitch获取视点位置
+          const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+            viewer.scene,
+            viewPosition,
+            { heading: heading, pitch: pitch }
+          );
+          if (targetPosition) {
+            if (!vm.scenePro.textureSource) {
+              vm.scenePro.textureSource = vm.videoSource.videoUrl;
+            }
+            vm.scenePro.targetPosition = targetPosition;
+          }
+          vm.updateOrientation(heading, pitch);
+          vm.isGetTargetPosition = false;
         }
         scene.requestRender();
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -436,14 +501,32 @@ export default {
         if (vm.isGetTargetPosition) {
           const cartesian = viewer.scene.pickPosition(movement.endPosition);
           if (cartesian !== undefined) {
-            vm.scenePro.targetPosition = cartesian;
-            vm.updateOrientation();
+            // vm.scenePro.targetPosition = cartesian;
+            const { viewPosition } = vm.scenePro;
+            // 根据相机视点和鼠标位置获取heading和pitch
+            const { heading, pitch } = vm._getHeadingPitch(
+              viewPosition,
+              cartesian
+            );
+            //根据相机视点和heading、pitch获取视点位置
+            const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+              viewer.scene,
+              viewPosition,
+              { heading: heading, pitch: pitch }
+            );
+            if (targetPosition) {
+              if (!vm.scenePro.textureSource) {
+                vm.scenePro.textureSource = vm.videoSource.videoUrl;
+              }
+              vm.scenePro.targetPosition = targetPosition;
+            }
+            vm.updateOrientation(heading, pitch);
           }
         }
         scene.requestRender();
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-      //鼠标右键结束
+      //鼠标右键取消，恢复到拾取之前的值
       handler.setInputAction(function(movement) {
         if (!vm.scenePro) {
           return;
@@ -452,8 +535,28 @@ export default {
           const cartesian = viewer.scene.pickPosition(movement.position);
           // console.log(movement.position);
           if (cartesian) {
-            vm.scenePro.targetPosition = cartesian;
-            vm.updateOrientation();
+            //vm.scenePro.targetPosition = cartesian;
+            // 恢复初始值
+            const { preHeading, prePitch } = vm;
+            const { viewPosition } = vm.scenePro;
+            //根据相机视点和heading、pitch获取视点位置
+            let targetPosition = Cesium.AlgorithmLib.pickFromRay(
+              viewer.scene,
+              viewPosition,
+              { heading: preHeading, pitch: prePitch }
+            );
+            if (targetPosition) {
+              vm.scenePro.targetPosition = targetPosition;
+            } else {
+              // 如果没有targetPosition，则通过默认设置的距离和朝向参数确定一个targetPosition
+              targetPosition = Cesium.AlgorithmLib.pickFromRay(
+                viewer.scene,
+                viewPosition,
+                { heading: preHeading, pitch: prePitch, distance: 150 }
+              );
+              vm.scenePro.targetPosition = targetPosition;
+            }
+            vm.updateOrientation(preHeading, prePitch);
           }
         }
         vm.isGetTargetPosition = false;
@@ -462,11 +565,9 @@ export default {
     /**
      * 更新界面投放参数显示
      */
-    updateOrientation() {
-      const { params } = this;
-      params.orientation.heading = this.scenePro.heading;
-      params.orientation.pitch = this.scenePro.pitch;
-      params.orientation.roll = this.scenePro.roll;
+    updateOrientation(heading, pitch) {
+      this.params.orientation.heading = heading;
+      this.params.orientation.pitch = pitch;
     },
     /**
      * 确定按钮事件
@@ -503,58 +604,56 @@ export default {
      * 获取朝向参数
      */
     _getHeadingPitch(viewPosition, targetPosition) {
+      const { Cesium } = this;
       // 计算heading初始值
-      const viewCartographic = this.Cesium.Cartographic.fromCartesian(
-        viewPosition
-      );
-      const longitude = this.Cesium.CesiumMath.toDegrees(
-        viewCartographic.longitude
-      );
-      const latitude = this.Cesium.CesiumMath.toDegrees(
-        viewCartographic.latitude
-      );
-      const matrix = this.Cesium.AlgorithmLib.getTransform(
+      const viewCartographic = Cesium.Cartographic.fromCartesian(viewPosition);
+      const longitude = Cesium.Math.toDegrees(viewCartographic.longitude);
+      const latitude = Cesium.Math.toDegrees(viewCartographic.latitude);
+      const matrix = Cesium.AlgorithmLib.getTransform(
         longitude,
         latitude,
         viewCartographic.height
       );
-      const inverseMatrix = this.Cesium.Matrix4.inverse(matrix, new Matrix4());
-      const viewLocal = this.Cesium.Matrix4.multiplyByPoint(
+      const inverseMatrix = Cesium.Matrix4.inverse(
+        matrix,
+        new Cesium.Matrix4()
+      );
+      const viewLocal = Cesium.Matrix4.multiplyByPoint(
         inverseMatrix,
         viewPosition,
-        new Cartesian3()
+        new Cesium.Cartesian3()
       );
-      const targetLocal = this.Cesium.Matrix4.multiplyByPoint(
+      const targetLocal = Cesium.Matrix4.multiplyByPoint(
         inverseMatrix,
         targetPosition,
-        new Cartesian3()
+        new Cesium.Cartesian3()
       );
-      const r = this.Cesium.Cartesian3.distance(viewLocal, targetLocal);
+      const r = Cesium.Cartesian3.distance(viewLocal, targetLocal);
       const y = Math.sqrt(Math.pow(r, 2) - Math.pow(targetLocal.z, 2));
-      const vectorLeft = this.Cesium.Cartesian3.subtract(
-        new Cartesian3(0, y, 0),
+      let vectorLeft = Cesium.Cartesian3.subtract(
+        new Cesium.Cartesian3(0, y, 0),
         viewLocal,
-        new Cartesian3()
+        new Cesium.Cartesian3()
       );
-      const vectorRight = this.Cesium.Cartesian3.subtract(
+      const vectorRight = Cesium.Cartesian3.subtract(
         targetLocal,
         viewLocal,
-        new Cartesian3()
+        new Cesium.Cartesian3()
       );
       vectorRight.z = 0;
 
-      const heading = this.Cesium.CesiumMath.toDegrees(
-        Cartesian3.angleBetween(vectorLeft, vectorRight)
+      let heading = Cesium.Math.toDegrees(
+        Cesium.Cartesian3.angleBetween(vectorLeft, vectorRight)
       );
       if (vectorLeft.x * vectorRight.y - vectorRight.x * vectorLeft.y > 0) {
         heading = -heading + 360;
       }
-      vectorLeft = new this.Cesium.Cartesian3(vectorRight.x, vectorRight.y, 0);
-      this.Cesium.Cartesian3.normalize(vectorLeft, vectorLeft);
+      vectorLeft = new Cesium.Cartesian3(vectorRight.x, vectorRight.y, 0);
+      Cesium.Cartesian3.normalize(vectorLeft, vectorLeft);
       vectorRight.z = targetLocal.z;
 
-      const pitch = this.Cesium.CesiumMath.toDegrees(
-        this.Cesium.Cartesian3.angleBetween(vectorLeft, vectorRight)
+      let pitch = Cesium.Math.toDegrees(
+        Cesium.Cartesian3.angleBetween(vectorLeft, vectorRight)
       );
       if (targetLocal.z < viewLocal.z) {
         pitch = -pitch;
