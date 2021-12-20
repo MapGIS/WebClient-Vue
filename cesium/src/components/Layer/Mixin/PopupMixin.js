@@ -125,7 +125,7 @@ export default {
         <mapgis-ui-story-panel-large
           onClosePanel={this.$_onPinMap.bind(this)}
           onFlyTo={this.$_onFlyTo.bind(this)}
-          feature={features}
+          dataSource={features}
           height={fullHeight}
         />
       );
