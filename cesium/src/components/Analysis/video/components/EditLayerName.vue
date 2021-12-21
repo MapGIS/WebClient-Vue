@@ -93,6 +93,6 @@ export default {
   padding-top: 5px;
 }
 .control-button {
-  width: calc("50% - 2.5px");
+  width: calc(50% - 2.5px);
 }
 </style>

@@ -73,7 +73,7 @@
           class="mapgis-ui-setting-form"
         >
           <mapgis-ui-form-item>
-            <div slot="label">
+            <div slot="label" class="form-label">
               <span>位置</span>
               <mapgis-ui-iconfont
                 class="iconfont-btn"
@@ -104,7 +104,7 @@
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item>
-            <div slot="label">
+            <div slot="label" class="form-label">
               <span>朝向</span>
               <mapgis-ui-iconfont
                 class="iconfont-btn"
@@ -683,6 +683,10 @@ export default {
   width: 50%;
   padding: 0 2px 0 0;
   float: left;
+}
+
+.form-label {
+  display: inherit;
 }
 
 .item-right {
