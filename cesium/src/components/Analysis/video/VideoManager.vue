@@ -422,6 +422,7 @@ export default {
         this.viewer.scene.visualAnalysisManager.removeByID(selectedIds[i]);
       }
       this.selectedIds = [];
+      this.$emit("update-config", this.videoOverlayLayerListCopy);
     },
     /**
      * 批量投放
@@ -494,6 +495,7 @@ export default {
       }
       this.currentEditVideo = settings;
       this.activeKey = "1";
+      this.$emit("update-config", this.videoOverlayLayerListCopy);
     },
     /**
      * 取消设置
@@ -784,6 +786,10 @@ export default {
 }
 ::v-deep .mapgis-ui-tabs-nav .mapgis-ui-tabs-tab {
   margin: 0;
+}
+
+::v-deep .mapgis-ui-list-items {
+  display: grid;
 }
 
 ::v-deep .mapgis-ui-tabs-nav-scroll {
