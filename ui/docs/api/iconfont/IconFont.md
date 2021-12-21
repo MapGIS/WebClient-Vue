@@ -259,23 +259,35 @@ const IconFont = MapgisUiIconFont.createFromIconfontCN({
 Vue.component("mapgis-ui-iconfont-NewName", IconFont);
 ```
 
-### storybook引入（针对开发人员）
+### 更新图标文件方式（针对开发人员）
 
-> 若使用的是现有的"WebClient-Vue-Icon"图标库中的图标，则无需手动注入，忽略本节内容即可。
+#### 1.storybook更新
 
 ::: tip
-需要手动注入的情形：假如开发人员最近添加了若干个图标到"WebClient-Vue-Icon"图标库，为方便立即在storybook上看到效果，可通过以下方式在ui.js文件（路径：`.storybook\components\ui.js`）中注入：
+假如开发人员最近添加了若干个图标到"WebClient-Vue-Icon"图标库，可通过以下方式在ui.js文件（路径：`.storybook\components\ui.js`）中注入：
 :::
 
 ``` js
 import MapgisUiIconFont from "../../ui/src/components/iconfont/Icon.vue";
 
 MapgisUiIconFont.createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_2749943_69c9cshqtiv.js", // 从iconfont.cn网站复制最新的在线地址
+  scriptUrl: "//at.alicdn.com/t/font_2749943_69c9cshqtiv.js", // 从iconfont.cn网站复制最新的在线地址（需联网）
 });
 ```
 
-> 注 ："WebClient-Vue-Icon"图标库更新后请联系相关人员及时更新UI代码。
+<!-- > 注 ："WebClient-Vue-Icon"图标库更新后请联系相关人员及时更新UI代码。 -->
+> 注 ：下方截图为iconfont.cn网站的图标地址获取方式
+
+<img alt="iconfont.cn网站图标在线地址获取" src="../../assets/images/iconfont.cn.png" width="70%">
+
+
+#### 2.mapgis-ui本地js文件替换
+
+::: tip
+若开发人员需要替换本地的图标js文件，可从iconfont.cn网站下载图标文件并替换iconfont.js文件，文件路径为：ui\src\components\iconfont\iconfont.js
+:::
+
+<img alt="iconfont.js文件路径" src="../../assets/images/iconfont.path.png" width="20%">
 
 
 ### 单个引入
