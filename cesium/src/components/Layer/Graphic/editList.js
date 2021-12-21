@@ -2,6 +2,11 @@ let editList = {
   label: [{
     type: "MapgisUiInput",
     title: "标题",
+    key: "title",
+    value: "无标题",
+  }, {
+    type: "MapgisUiInput",
+    title: "文本",
     key: "text",
     value: "无标题",
   }, {
@@ -30,6 +35,21 @@ let editList = {
     type: "MapgisUiSlider",
     title: "透明度",
     key: "opacity",
+    value: 100,
+  }, {
+    type: "MapgisUiInputNumber",
+    title: "边线宽度",
+    key: "outlineWidth",
+    value: 1,
+  }, {
+    type: "MapgisUiColorPicker",
+    title: "边线颜色",
+    value: "#000000",
+    key: "outlineColor",
+  }, {
+    type: "MapgisUiSlider",
+    title: "边线透明度",
+    key: "outlineOpacity",
     value: 100,
   }, {
     type: "MapgisUiColorPicker",
@@ -257,40 +277,26 @@ let editList = {
     type: "MapgisUiSlider",
     title: "填充透明度",
   }],
-  cuboid: [{
+  box: [{
     type: "MapgisUiInput",
     title: "标题",
-  }, {
-    type: "MapgisUiInputNumber",
-    title: "长度",
-  }, {
-    type: "MapgisUiInputNumber",
-    title: "宽度",
+    key: "title",
+    value: "盒子模型",
   }, {
     type: "MapgisUiInputNumber",
     title: "高度",
-  }, {
-    type: "MapgisUiSelect",
-    title: "填充类型",
-    dataSource: [{
-      key: "纯色",
-      value: "纯色"
-    }, {
-      key: "网格",
-      value: "网格"
-    }, {
-      key: "条纹",
-      value: "条纹"
-    }, {
-      key: "图片",
-      value: "图片"
-    }],
+    key: "extrudedHeight",
+    value: 10000,
   }, {
     type: "MapgisUiColorPicker",
-    title: "填充颜色"
+    title: "填充颜色",
+    key: "color",
+    value: "#FF0000",
   }, {
     type: "MapgisUiSlider",
     title: "填充透明度",
+    key: "opacity",
+    value: 100,
   }],
   polygonCube: [{
     type: "MapgisUiInput",

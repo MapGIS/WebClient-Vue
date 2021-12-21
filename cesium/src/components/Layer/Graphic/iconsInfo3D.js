@@ -1,11 +1,14 @@
 let iconsInfo3D = [{
+  type: "mouse",
+  title: "选择"
+}, {
   type: "cube",
   title: "正方体"
 },{
   type: "polygonCube",
   title: "立体多边形"
 },{
-  type: "cuboid",
+  type: "box",
   title: "长方体"
 },{
   type: "cylinder",

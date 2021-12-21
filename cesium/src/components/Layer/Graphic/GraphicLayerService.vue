@@ -2,35 +2,46 @@
 export default {
   name: "mapgis-3d-graphic-layer-service",
   inject: ["Cesium", "viewer"],
+  data() {
+    return {
+      localVueIndex: undefined,
+      localVueKey: undefined
+    }
+  },
   methods: {
     /**
-     * 通过vueIndex, vueKey，初始化一个graphicsLayer对象，请示用$_getGraphicLayer方法获取GraphicLayer对象，不要将此对象绑定在vue上
-     * @param vueIndex String or Number 必传，graphicLayer的唯一标识，随机生成的数字或字符串
-     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
-     * @param viewer Object 可选，Cesium的Viewer对象，不传则使用注入的Viewer对象
-     *  @return GraphicLayer Object 一个GraphicLayer对象
+     * 通过vueIndex, vueKey，初始化一个graphicsLayer对象，请通过$_getGraphicLayer方法获取GraphicLayer对象，不要将GraphicLayer对象绑定在vue上
+     // * @param vueIndex String or Number 必传，graphicLayer的唯一标识，随机生成的数字或字符串
+     // * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     // * @param viewer Object 可选，Cesium的Viewer对象，不传则使用注入的Viewer对象
      * */
-    $_initGraphicLayer(vueIndex, vueKey, viewer) {
+    $_newGraphicLayer(options) {
+      options = options || {};
+      let {vueIndex, vueKey, viewer, getGraphic} = options;
       viewer = viewer || this.viewer;
+      vueIndex = vueIndex || this.$_getId();
       vueKey = vueKey || "default";
+      this.localVueIndex = vueIndex;
+      this.localVueKey = vueKey;
       if (!Cesium.hasOwnProperty("GraphicsLayer")) {
         console.warn("请升级最新版的Cesium库！");
         return;
       }
-      let graphicsLayer = new Cesium.GraphicsLayer(viewer, {});
+      let graphicsLayer = new Cesium.GraphicsLayer(viewer, {
+        getGraphic: getGraphic
+      });
       viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
       window.vueCesium.GraphicsLayerManager.addSource(vueKey, vueIndex, graphicsLayer);
-      return graphicsLayer;
     },
     /**
      * 通过vueKey，vueIndex来获取graphicsLayer对象，默认不用传vueKey，vueIndex
-     * @param vueKey String
-     * @param vueIndex Number
+     * @param vueIndex String or Number 必传，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return graphicsLayer Object graphicsLayer对象
      * */
-    $_getGraphicLayer(vueKey, vueIndex) {
-      vueKey = vueKey || this.vueKey;
-      vueIndex = vueIndex || this.vueIndex;
+    $_getGraphicLayer(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
       let GraphicsLayerManager = window.vueCesium.GraphicsLayerManager.findSource(vueKey, vueIndex);
       if (!GraphicsLayerManager) {
         console.warn("请初始化GraphicsLayer对象");
@@ -39,7 +50,16 @@ export default {
       return GraphicsLayerManager.source;
     },
     /**
-     * 通过vueKey，vueIndex来获取graphicsLayer对象，默认不用传vueKey，vueIndex
+     * 通过vueKey，vueIndex来切换graphicsLayerService默认对应的graphicsLayer对象
+     * @param vueIndex String or Number 必传，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 必传，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * */
+    $_switchGraphicLayer(vueIndex, vueKey) {
+      this.localVueIndex = vueIndex;
+      this.localVueKey = vueKey;
+    },
+    /**
+     * 通过绘制参数options来绘制要素，可通过vueIndex，vueKey来指定要绘制在哪一个graphicsLayer图层上
      * @param options Object 绘制参数，有如下值
      *  type: 类型，必选,
      *  id: 要素ID，可选,
@@ -54,9 +74,11 @@ export default {
      *  modelMatrix: 矩阵,
      *  asynchronous:
      *  getPrimitive: 绘制完成后的回调事件，返回绘制好的对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
-    $_startDrawing(options) {
-      let graphicsLayer = this.$_getGraphicLayer();
+    $_startDrawing(options, vueIndex, vueKey) {
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       options = options || {};
       if (!options.hasOwnProperty("type")) {
         console.warn("请输入绘制类型！");
@@ -65,9 +87,11 @@ export default {
     },
     /**
      * 停止绘制标绘图形对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
-    $_stopDrawing() {
-      let graphicsLayer = this.$_getGraphicLayer();
+    $_stopDrawing(vueIndex, vueKey) {
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return graphicsLayer.stopDrawing();
     },
     /**
@@ -83,6 +107,36 @@ export default {
     $_stopEdit() {
       let graphicsLayer = this.$_getGraphicLayer();
       return graphicsLayer.stopEdit();
+    },
+    $_updateStyle(primitive, key, value) {
+      primitive.style[key] = value;
+    },
+    $_updateStyleByStyle(id, style) {
+      let graphicsLayer = this.$_getGraphicLayer();
+      let primitive = graphicsLayer.getGraphicByID(id);
+      Object.keys(style).forEach(function (key) {
+        primitive.style[key] = style[key];
+      });
+      primitive.update();
+    },
+    $_updateStyleBySource(source) {
+      let graphicsLayer = this.$_getGraphicLayer();
+      const {dataSource} = source;
+      for (let i = 0; i < dataSource.length; i++) {
+        let primitive = graphicsLayer.getGraphicByID(dataSource[i].id);
+        if(primitive) {
+          Object.keys(dataSource[i].style).forEach(function (key) {
+            primitive.style[key] = dataSource[i].style[key];
+          });
+          primitive.update();
+        }
+      }
+    },
+    $_updateStyleById(id, key, value) {
+      let graphicsLayer = this.$_getGraphicLayer();
+      let primitive = graphicsLayer.getGraphicByID(id);
+      primitive.style[key] = value;
+      primitive.update();
     },
     /**
      * 根据id获取标绘图形对象
@@ -104,11 +158,25 @@ export default {
     },
     /**
      * 加载json文件
-     * @param json Object 标绘元素生成的json对象
+     * @param json Object or String 标绘元素生成的json对象
      * */
     $_loadJson(json) {
       let graphicsLayer = this.$_getGraphicLayer();
+      if(json instanceof Object) {
+        json = JSON.stringify(json);
+      }
       return graphicsLayer.loadJson(json);
+    },
+    $_getJsonById(id) {
+      let jsons = this.$_exportToJson();
+      let json;
+      for (let i = 0; i < jsons.length; i++) {
+        if (jsons[i].id === id) {
+          json = jsons[i];
+          break;
+        }
+      }
+      return json;
     },
     /**
      * 将整个图层导出为json文件
@@ -191,11 +259,11 @@ export default {
       return format[type];
     },
     /**
-     * 获取UUID
+     * 获取id
      * @param random Number 随机数银子
-     * @return id Number uuid
+     * @return id Number id
      * */
-    $_getUUID(random) {
+    $_getId(random) {
       random = random || 10000000000;
       return parseInt(String(Math.random() * random));
     },

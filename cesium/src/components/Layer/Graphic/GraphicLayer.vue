@@ -48,7 +48,7 @@
         <div v-if="noTitleKey === 'list'">
           <div @dblclick="$_dbclick(row)" :key="index" v-for="(row, index) in dataSourceCopy">
             <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)" :iconStyle="iconStyle" :mainStyle="rowStyle"
-                                :src="imgs[row.type + 'Image']" :title="row.name"/>
+                                :src="imgs[row.type + 'Image']" :title="row.title"/>
           </div>
         </div>
         <!--设置面板-->
@@ -62,13 +62,6 @@
                 {{ $_formatType(currentEditType) }}
               </span>
             </mapgis-ui-row>
-            <mapgis-ui-mix-row
-              title="名称"
-              :mainStyle="mainStyle"
-              :titleStyle="titleStyle"
-              v-model="editPanelValues.name"
-              type="MapgisUiInput"
-            />
             <div :key="index" v-for="(row, index) in editList[currentEditType]">
               <mapgis-ui-mix-row
                 v-if="row.type === 'MapgisUiInput'"
@@ -187,7 +180,7 @@ export default {
       //设置面板显示参数
       editList: editList,
       //当前编辑的类型
-      currentEditType: "label",
+      currentEditType: "",
       //数据源副本
       dataSourceCopy: undefined,
       //图标资源
@@ -240,19 +233,43 @@ export default {
       //tab框的body样式
       cardBodyStyle: {
         padding: "0"
-      }
+      },
+      //是否开始编辑
+      isEdit: false,
+      //是否在添加数据
+      addSource: false
     };
   },
   watch: {
     dataSource: {
       handler: function () {
-        this.$_init();
+        if (!this.isEdit && !this.addSource) {
+          this.$_init();
+        }
       },
       deep: true
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
+        // this.$emit("change", this.dataSourceCopy);
+      },
+      deep: true
+    },
+    editPanelValues: {
+      handler: function () {
+        if (this.isEdit) {
+          //先存起来title
+          let title = this.editPanelValues.title;
+          //更新样式
+          let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+          // this.$_updateStyleById(this.editPanelValues.id, "text", this.editPanelValues.text);
+          console.log("--options.style", options.style)
+          this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
+          //更新数据
+          let dataSource = this.$_getJsonById(this.editPanelValues.id);
+          dataSource.title = title;
+          this.$_updateSourceById(this.editPanelValues.id, dataSource);
+        }
       },
       deep: true
     }
@@ -261,6 +278,16 @@ export default {
     this.$_init();
   },
   methods: {
+    $_updateSourceById(id, data) {
+      let index;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].id === id) {
+          index = i;
+          break;
+        }
+      }
+      this.$set(this.dataSourceCopy, index, data);
+    },
     /**
      * 更多工具里面的按钮的点击事件
      * @param type String 点击事件类型
@@ -272,6 +299,16 @@ export default {
           this.$_dbclick(row);
           break;
         case "delete":
+          let index;
+          for (let i = 0; i < this.dataSourceCopy.length; i++) {
+            if (this.dataSourceCopy[i].id === row.id) {
+              index = i;
+              break;
+            }
+          }
+          this.dataSourceCopy.splice(index, 1);
+          let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+          graphicsLayer.removeGraphicByID(row.id);
           break;
       }
     },
@@ -287,7 +324,6 @@ export default {
       for (let i = 0; i < editInfo.length; i++) {
         editPanelValues[editInfo[i].key] = editInfo[i].value;
       }
-      editPanelValues.name = currentEditType + "_" + this.$_getUUID();
       return editPanelValues;
     },
     /**
@@ -315,25 +351,47 @@ export default {
         editing,
         allowPicking,
         modelMatrix,
-        asynchronous
+        asynchronous,
+        title
       } = json;
 
       const {
-        text, font, fillColor, backgroundColor
+        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, extrudedHeight
       } = style;
 
       let editPanelValues = {};
 
       switch (json.type) {
         case "label":
+          editPanelValues.id = id;
           editPanelValues.text = text;
+          editPanelValues.title = title;
           editPanelValues.name = name;
-          let fonts = font.split(" ");
-          editPanelValues.fontSize = fonts[0].split("px")[0];
+          let fonts;
+          if (typeof font === "number") {
+            fonts = [font, "sans-serif"];
+          } else if (font.indexOf(" ") > -1) {
+            fonts = font.split(" ");
+          } else {
+            fonts = [font, "sans-serif"];
+          }
+          editPanelValues.fontSize = fonts[0];
           editPanelValues.fontFamily = fonts[1];
           editPanelValues.fontColor = "#000000";
           editPanelValues.opacity = 100;
           editPanelValues.backgroundColor = "#FFFFFF";
+          editPanelValues.outlineWidth = outlineWidth;
+          editPanelValues.outlineColor = "#000000";
+          editPanelValues.outlineOpacity = 100;
+          break;
+        case "box":
+          editPanelValues.id = id;
+          editPanelValues.color = "#FF0000";
+          editPanelValues.opacity = color[0] * 100;
+          editPanelValues.extrudedHeight = extrudedHeight;
+          if (title) {
+            editPanelValues.title = title;
+          }
           break;
       }
 
@@ -350,10 +408,30 @@ export default {
       let drawOptions = {};
       switch (currentEditType) {
         case "label":
-          drawOptions.text = editPanelValues.text;
-          drawOptions.font = editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
-          drawOptions.fillColor = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor), editPanelValues.opacity / 100);
-          drawOptions.backgroundColor = Cesium.Color.fromCssColorString(editPanelValues.backgroundColor);
+          let font;
+          if (typeof editPanelValues.fontSize === "number") {
+            font = editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          } else if (editPanelValues.fontSize.indexOf("px") > -1) {
+            font = editPanelValues.fontSize + " " + editPanelValues.fontFamily;
+          } else {
+            font = editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          }
+          drawOptions.style = {
+            text: editPanelValues.text || "",
+            font: font,
+            style: 2,
+            fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity || 100 / 100),
+            outlineWidth: editPanelValues.outlineWidth || 0,
+            outlineColor: editPanelValues.outlineColor || "#000000",
+            outlineOpacity: editPanelValues.outlineOpacity || 100,
+          };
+          break;
+        case "box":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            arcType: Cesium.ArcType.GEODESIC,
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
           break;
       }
       return drawOptions;
@@ -362,36 +440,23 @@ export default {
     $_startDraw(type) {
       //设置当前绘制类型
       this.currentEditType = type;
-      //根据当前的绘制类型，获取设置面板显示参数数据
-      this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
-      //根据面板显示参数数据生成绘制参数
-      let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-      //根据编辑面板参数绘制图形
-      let vm = this;
-      //获取UUID
-      let uuid = this.$_getUUID();
-      this.$_startDrawing({
-        id: uuid,
-        type: this.currentEditType,
-        ...drawOptions,
-        getPrimitive: function (e) {
-          console.log("------", e)
-          vm.dataSourceCopy.push({
-            type: vm.currentEditType,
-            id: uuid,
-            positions: [],
-            style: drawOptions,
-            editPointStyle: {},
-            attributes: {},
-            name: vm.editPanelValues.name,
-            show: true,
-            editing: true,
-            allowPicking: true,
-            modelMatrix: {},
-            asynchronous: true
-          });
-        }
-      });
+      //如果选择鼠标，则停止绘制，开启编辑模式，否则开始绘制
+      if (type === "mouse") {
+        let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+        graphicsLayer.stopDrawing();
+        graphicsLayer.startEdit();
+      } else {
+        //根据当前的绘制类型，获取设置面板显示参数数据
+        this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+        //根据面板显示参数数据生成绘制参数
+        let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+        console.log("drawOptions", drawOptions)
+        //根据编辑面板参数绘制图形
+        this.$_startDrawing({
+          type: this.currentEditType,
+          ...drawOptions
+        });
+      }
     },
     //展开或收缩图标容器
     $_toggleIconsContainer(flag) {
@@ -415,24 +480,63 @@ export default {
     $_dbclick(json) {
       //显示设置面板
       this.noTitleKey = "edit";
+      //开时编辑
+      this.$nextTick(function () {
+        this.isEdit = true;
+      });
       //设置当前绘制类型
       this.currentEditType = json.type;
       //获取设置面板显示参数
       this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
+      console.log("this.editPanelValues", this.editPanelValues)
+    },
+    //根据类型获取标题
+    $_getTitle(type) {
+      let title;
+      switch (type) {
+        case "label":
+          title = "文本";
+          break;
+        case "box":
+          title = "盒子模型";
+          break;
+      }
+      return title;
     },
     //初始化组件
     $_init() {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //初始化GraphicLayer对象
-      this.$_initGraphicLayer(this.vueIndex);
-      //设置当前绘制类型
-      this.currentEditType = this.dataSourceCopy[0].type;
+      let vm = this;
+      this.$_newGraphicLayer({
+        vueIndex: this.vueIndex,
+        getGraphic: function (e) {
+          //开始添加数据
+          vm.addSource = true;
+          let data = vm.$_getJsonById(e.id)
+          data.title = vm.$_getTitle(data.type);
+          vm.dataSourceCopy.push(data);
+          vm.editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+          //数据添加完毕
+          vm.$nextTick(function () {
+            vm.addSource = false;
+          });
+        }
+      });
       //获取设置面板显示参数
-      this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
+      if (this.dataSourceCopy.length > 0) {
+        this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
+      }
     },
     onTabChange(key, type) {
       this[type] = key;
+      //进制编辑
+      if (this.noTitleKey === "list") {
+        this.isEdit = false;
+      } else {
+        this.isEdit = true;
+      }
     },
   },
 }
@@ -484,12 +588,14 @@ export default {
   width: auto;
   height: auto;
   margin: 10px 9px;
+  float: left;
 }
 
 .mapgis-3d-graphic-dropdown {
   height: 100%;
   line-height: 32px;
   cursor: pointer;
+  text-align: center;
 }
 
 .mapgis-3d-graphic-type {

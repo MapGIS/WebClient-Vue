@@ -44,7 +44,8 @@
     "videojs-contrib-hls": "^5.15.0",
     "vuepress": "^1.8.2",
     "wangeditor-antd": "^1.0.7",
-    "webfont-matcher": "1.1.0"
+    "webfont-matcher": "1.1.0",
+    "file-saver": "^2.0.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",

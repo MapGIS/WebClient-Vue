@@ -1,4 +1,7 @@
 let iconsInfo = [{
+  type: "mouse",
+  title: "选择"
+}, {
   type: "label",
   title: "文字"
 }, {
