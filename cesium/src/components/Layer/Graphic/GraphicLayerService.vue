@@ -1,4 +1,6 @@
 <script>
+import {saveAs} from "file-saver";
+
 export default {
   name: "mapgis-3d-graphic-layer-service",
   inject: ["Cesium", "viewer"],
@@ -9,11 +11,23 @@ export default {
     }
   },
   methods: {
+    hasObject(obj, callBack, warn) {
+      warn = warn || "graphicsLayer不存在！";
+      if (!obj) {
+        console.warn(warn);
+        return;
+      }
+      return callBack(obj);
+    },
     /**
-     * 通过vueIndex, vueKey，初始化一个graphicsLayer对象，请通过$_getGraphicLayer方法获取GraphicLayer对象，不要将GraphicLayer对象绑定在vue上
-     // * @param vueIndex String or Number 必传，graphicLayer的唯一标识，随机生成的数字或字符串
-     // * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
-     // * @param viewer Object 可选，Cesium的Viewer对象，不传则使用注入的Viewer对象
+     * 初始化一个graphicsLayer对象，请通过$_getGraphicLayer方法获取GraphicLayer对象，不要将GraphicLayer对象绑定在vue上
+     * @param options Object 初始化参数 可选
+     * {
+     *   vueIndex: vueIndex,//String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串，不传则自动生成
+     *   vueKey: vueIndex,//String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     *   viewer: viewer,//Object 可选，Cesium的Viewer对象，不传则使用注入的Viewer对象
+     *   getGraphic: getGraphic(e),//Function 可选，绘制完成后的回调事件，返回绘制完成的对象
+     * }
      * */
     $_newGraphicLayer(options) {
       options = options || {};
@@ -43,11 +57,9 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let GraphicsLayerManager = window.vueCesium.GraphicsLayerManager.findSource(vueKey, vueIndex);
-      if (!GraphicsLayerManager) {
-        console.warn("请初始化GraphicsLayer对象");
-        return;
-      }
-      return GraphicsLayerManager.source;
+      return this.hasObject(GraphicsLayerManager, function (GraphicsLayerManager) {
+        return GraphicsLayerManager.source;
+      }, "请初始化GraphicsLayer对象");
     },
     /**
      * 通过vueKey，vueIndex来切换graphicsLayerService默认对应的graphicsLayer对象
@@ -83,7 +95,9 @@ export default {
       if (!options.hasOwnProperty("type")) {
         console.warn("请输入绘制类型！");
       }
-      graphicsLayer.startDrawing(options);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.startDrawing(options);
+      });
     },
     /**
      * 停止绘制标绘图形对象
@@ -91,84 +105,179 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
     $_stopDrawing(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      return graphicsLayer.stopDrawing();
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.stopDrawing();
+      });
     },
     /**
      * 开始编辑标绘图形对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
-    $_startEdit() {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.startEdit();
+    $_startEdit(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.startEdit();
+      });
     },
     /**
      * 停止编辑标绘图形对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
-    $_stopEdit() {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.stopEdit();
+    $_stopEdit(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.stopEdit();
+      });
     },
+    /**
+     * 更新标绘图形对象样式
+     * @param primitive Object 必传，标绘图形对象
+     * @param key String 必传，样式名
+     * @param value Any 必传，样式值
+     * */
     $_updateStyle(primitive, key, value) {
       primitive.style[key] = value;
     },
-    $_updateStyleByStyle(id, style) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      let primitive = graphicsLayer.getGraphicByID(id);
-      Object.keys(style).forEach(function (key) {
-        primitive.style[key] = style[key];
-      });
-      primitive.update();
-    },
-    $_updateStyleBySource(source) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      const {dataSource} = source;
-      for (let i = 0; i < dataSource.length; i++) {
-        let primitive = graphicsLayer.getGraphicByID(dataSource[i].id);
-        if(primitive) {
-          Object.keys(dataSource[i].style).forEach(function (key) {
-            primitive.style[key] = dataSource[i].style[key];
-          });
-          primitive.update();
-        }
+    /**
+     * 通过style对象，更新标绘图形对象样式，一次可同时更新多个值
+     * @param id String 必传，标绘图形对象ID
+     * @param style Object 必传，样式对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * */
+    $_updateStyleByStyle(id, style, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      let vm = this;
+      if(!style || !(style instanceof Object)){
+        console.warn("样式为空或者不是对象！");
+        return;
       }
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        let primitive = graphicsLayer.getGraphicByID(id);
+        vm.hasObject(primitive, function (primitive) {
+          Object.keys(style).forEach(function (key) {
+            primitive.style[key] = style[key];
+          });
+        }, "标绘对象不存在");
+      });
     },
-    $_updateStyleById(id, key, value) {
+    /**
+     * 通过一个标绘图层对象，更新标绘图形对象样式，一次可同时更新多个标绘对象的多个值
+     * @param layer Object 必传，标绘图层对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * */
+    $_updateStyleByLayer(layer, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      const {dataSource} = layer;
+      if(!dataSource || !(dataSource instanceof Array)){
+        console.warn("dataSource为空或者不是数组！");
+        return;
+      }
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        for (let i = 0; i < dataSource.length; i++) {
+          let primitive = graphicsLayer.getGraphicByID(dataSource[i].id);
+          if (primitive) {
+            if(dataSource[i].style && dataSource[i].style instanceof Object){
+              Object.keys(dataSource[i].style).forEach(function (key) {
+                primitive.style[key] = dataSource[i].style[key];
+              });
+            }
+          }
+        }
+      });
+    },
+    /**
+     * 通过ID更新标绘图形对象样式
+     * @param id String 必传，标绘图形对象ID
+     * @param key String 必传，样式名
+     * @param value Any 必传，样式值
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * */
+    $_updateStyleById(id, key, value, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer();
-      let primitive = graphicsLayer.getGraphicByID(id);
-      primitive.style[key] = value;
-      primitive.update();
+      let vm = this;
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        let primitive = graphicsLayer.getGraphicByID(id);
+        vm.hasObject(primitive, function (primitive) {
+          primitive.style[key] = value;
+        }, "标绘对象不存在");
+      });
     },
     /**
      * 根据id获取标绘图形对象
      * @param id String 标绘图形对象的id
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return primitive Object 标绘图形对象
      * */
-    $_getPlottingPrimtiveByID(id) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.getPlottingPrimtiveByID(id);
+    $_getPlottingPrimtiveByID(id, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
+        return graphicsLayer.getPlottingPrimtiveByID(id);
+      });
     },
     /**
      * 根据index获取标绘图形对象
      * @param index Number 标绘图形对象的index
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return primitive Object 标绘图形对象
      * */
-    $_getPlottingPrimtiveByIndex(index) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.getPlottingPrimtiveByIndex(index);
+    $_getPlottingPrimtiveByIndex(index, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
+        return graphicsLayer.getPlottingPrimtiveByIndex(index);
+      });
     },
     /**
-     * 加载json文件
+     * 加载json数据
      * @param json Object or String 标绘元素生成的json对象
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
-    $_loadJson(json) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      if(json instanceof Object) {
+    $_loadJson(json, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      if (json instanceof Object) {
         json = JSON.stringify(json);
       }
-      return graphicsLayer.loadJson(json);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.loadJson(json);
+      });
     },
-    $_getJsonById(id) {
-      let jsons = this.$_exportToJson();
+    /**
+     * 通过id来获取标绘对象的json数据
+     * @param id String 标绘对象的ID
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * @return json Object 标绘对象的json数据
+     * */
+    $_getJsonById(id, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let jsons = this.$_exportToJson(vueIndex, vueKey);
       let json;
       for (let i = 0; i < jsons.length; i++) {
         if (jsons[i].id === id) {
@@ -179,20 +288,46 @@ export default {
       return json;
     },
     /**
-     * 将整个图层导出为json文件
-     * return json Object 标绘图层的JSON对象
+     * 将整个图层导出为数据
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * @return json Object 标绘图层的JSON对象
      * */
-    $_exportToJson() {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return JSON.parse(graphicsLayer.exportToJson());
+    $_exportToJson(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
+        return JSON.parse(graphicsLayer.exportToJson());
+      });
+    },
+    /**
+     * 将数据导出为文件
+     * @param dataSource Any 必传，要导出为文件的数据
+     * @param title String 可选，文件名，不传时为无标题
+     * */
+    $_exportToFile(dataSource, title) {
+      title = title || "无标题";
+      this.hasObject(dataSource, function (dataSource) {
+        const blob = new Blob([JSON.stringify(dataSource)], {
+          type: "application/json;charset=utf-8",
+        });
+        saveAs(blob, title + ".json");
+      }, "请传入数据");
     },
     /**
      * 移除图层所有标绘图形
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return isRemove Boolean 是否移除成功
      * */
-    $_removeAllPirmive() {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.removeAllPirmive();
+    $_removeAllPirmive(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.removeAllPirmive();
+      });
     },
     /**
      * 移除选中标绘图形
@@ -204,33 +339,59 @@ export default {
     /**
      * 根据index移除选中标绘图形
      * @param index Number 要移除的标绘图形的index
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * @return isRemove Boolean 是否移除成功
      * */
-    $_removePlottingPrimitiveByIndex(index) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.removePickingPrimive(index);
+    $_removePlottingPrimitiveByIndex(index, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.removePickingPrimive(index);
+      });
     },
     /**
      * 根据id移除选中标绘图形
      * @param id String 要移除的标绘图形的id
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * @return isRemove Boolean 是否移除成功
      * */
-    $_removePlottingPrimiveByID(id) {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.removePlottingPrimiveByID(id);
+    $_removePlottingPrimiveByID(id, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.removePlottingPrimiveByID(id);
+      });
     },
     /**
-     * 移除整个图层
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * 销毁整个图层
      * */
-    $_destroy() {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.destroy();
+    $_destroy(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.hasObject(graphicsLayer, function (graphicsLayer) {
+        graphicsLayer.destroy();
+      });
     },
     /**
      * 获取图层所有标绘图形
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return [Primitive] Array 返回所有图形对象
      * */
-    $_getAllPlottingPrimitive() {
-      let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.getAllPlottingPrimitive();
+    $_getAllPlottingPrimitive(vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
+        return graphicsLayer.getAllPlottingPrimitive();
+      });
     },
     /**
      * 将类型从英文转为中文
@@ -240,7 +401,7 @@ export default {
     $_formatType(type) {
       let format = {
         label: "文字",
-        marker: "标签",
+        billboard: "广告牌",
         point: "点",
         line: "直线",
         curve: "曲线",
@@ -259,8 +420,8 @@ export default {
       return format[type];
     },
     /**
-     * 获取id
-     * @param random Number 随机数银子
+     * 获取随机数字id
+     * @param random Number 随机数因子
      * @return id Number id
      * */
     $_getId(random) {

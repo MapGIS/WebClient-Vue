@@ -2,13 +2,15 @@
   <mapgis-ui-row>
     <input style="display: none" type="file" :id="inputId"
            accept="image/png, image/jpeg, image/gif, image/jpg, image/svg">
-    <div class="mapgis-ui-choose-picture-right-img-title" v-show="!enablePreview" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+    <div class="mapgis-ui-choose-picture-right-img-title" v-show="!enablePreview"
+         :style="{...titleStyle,paddingLeft: showTitleIcon ? '13px' : '0'}">
       <mapgis-ui-title-icon v-show="showTitleIcon"/>
       {{ title }}
     </div>
     <!--图片高度、图片下边距、区域内边距-->
-    <div :style="{height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (58 + 10 + 8) + 'px'}"
-         v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
+    <div
+      :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (58 + 10 + 8) + 'px'}"
+      v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
       <div :key="index"
            class="mapgis-ui-choose-picture-right-img-container"
            v-for="(imgUrl,index) in imgUrls"
@@ -29,13 +31,13 @@
              class="mapgis-ui-choose-picture-right-img" :src="imgUrl" alt="">
       </div>
       <mapgis-ui-base64-icon
-          title="添加图片"
-          :iconStyle="addIconStyle"
-          :titleStyle="titleStyle"
-          @click="$_clickSmall"
-          :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
-          class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
-          type="addPicture"/>
+        title="添加图片"
+        :iconStyle="addIconStyle"
+        :titleStyle="titleStyle"
+        @click="$_clickSmall"
+        :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
+        class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
+        type="addPicture"/>
     </div>
   </mapgis-ui-row>
 </template>
@@ -62,6 +64,18 @@ export default {
     title: {
       type: String,
       default: "图片展示"
+    },
+    carouselStyle: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    titleStyle: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   data() {

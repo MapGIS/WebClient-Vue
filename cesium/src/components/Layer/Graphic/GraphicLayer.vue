@@ -105,6 +105,15 @@
                 v-model="editPanelValues[row.key]"
                 type="MapgisUiColorPicker"
               />
+              <mapgis-ui-choose-picture-right
+                v-if="row.type === 'MapgisUiPicture'"
+                :showTitleIcon="false"
+                :title="row.title"
+                :carouselStyle="carouselStyle"
+                :titleStyle="pTitleStyle"
+                v-model="editPanelValues[row.key]"
+                :enablePreview="false"
+              />
             </div>
           </div>
         </div>
@@ -236,8 +245,18 @@ export default {
       },
       //是否开始编辑
       isEdit: false,
+      //是否开始绘制
+      isStartDrawing: false,
       //是否在添加数据
-      addSource: false
+      addSource: false,
+      //本地图片样式
+      carouselStyle: {
+        paddingRight: "11px"
+      },
+      //本地图片样式
+      pTitleStyle: {
+        fontWeight: "normal"
+      }
     };
   },
   watch: {
@@ -258,17 +277,32 @@ export default {
     editPanelValues: {
       handler: function () {
         if (this.isEdit) {
-          //先存起来title
-          let title = this.editPanelValues.title;
-          //更新样式
-          let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-          // this.$_updateStyleById(this.editPanelValues.id, "text", this.editPanelValues.text);
-          console.log("--options.style", options.style)
-          this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
-          //更新数据
-          let dataSource = this.$_getJsonById(this.editPanelValues.id);
-          dataSource.title = title;
-          this.$_updateSourceById(this.editPanelValues.id, dataSource);
+          //在绘制中，更改参数时先停止绘制，应用参数，在开始绘制
+          if (this.isStartDrawing) {
+            //停止绘制
+            this.$_stopDrawing();
+            //根据当前的绘制类型，获取设置面板显示参数数据
+            let editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+            //根据面板显示参数数据生成绘制参数
+            let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+            //根据编辑面板参数绘制图形
+            this.$_startDrawing({
+              type: this.currentEditType,
+              ...drawOptions
+            });
+          } else {
+            //结束绘制
+            //先存起来title
+            let title = this.editPanelValues.title;
+            //更新样式
+            console.log("-------this.editPanelValues",this.editPanelValues)
+            let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+            this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
+            //更新数据
+            let dataSource = this.$_getJsonById(this.editPanelValues.id);
+            dataSource.title = title;
+            this.$_updateSourceById(this.editPanelValues.id, dataSource);
+          }
         }
       },
       deep: true
@@ -356,7 +390,8 @@ export default {
       } = json;
 
       const {
-        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, extrudedHeight
+        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
+        extrudedHeight
       } = style;
 
       let editPanelValues = {};
@@ -387,8 +422,17 @@ export default {
         case "box":
           editPanelValues.id = id;
           editPanelValues.color = "#FF0000";
-          editPanelValues.opacity = color[0] * 100;
+          editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "billboard":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.image = image;
           if (title) {
             editPanelValues.title = title;
           }
@@ -433,24 +477,35 @@ export default {
             extrudedHeight: editPanelValues.extrudedHeight,
           };
           break;
+        case "billboard":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            image: editPanelValues.image,
+          };
+          break;
       }
       return drawOptions;
     },
     //开始绘制
     $_startDraw(type) {
-      //设置当前绘制类型
-      this.currentEditType = type;
       //如果选择鼠标，则停止绘制，开启编辑模式，否则开始绘制
       if (type === "mouse") {
         let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
         graphicsLayer.stopDrawing();
-        graphicsLayer.startEdit();
+        if (this.noTitleKey !== "edit") {
+          graphicsLayer.startEdit();
+        }
+        //结束绘制
+        this.isStartDrawing = false;
       } else {
+        //设置当前绘制类型
+        this.currentEditType = type;
         //根据当前的绘制类型，获取设置面板显示参数数据
         this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
         //根据面板显示参数数据生成绘制参数
         let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-        console.log("drawOptions", drawOptions)
+        //开始绘制
+        this.isStartDrawing = true;
         //根据编辑面板参数绘制图形
         this.$_startDrawing({
           type: this.currentEditType,
@@ -499,6 +554,9 @@ export default {
           break;
         case "box":
           title = "盒子模型";
+          break;
+        case "billboard":
+          title = "广告牌";
           break;
       }
       return title;

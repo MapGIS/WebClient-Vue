@@ -5,8 +5,8 @@ let iconsInfo = [{
   type: "label",
   title: "文字"
 }, {
-  type: "marker",
-  title: "图标"
+  type: "billboard",
+  title: "广告牌"
 }, {
   type: "point",
   title: "点"

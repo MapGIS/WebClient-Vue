@@ -57,6 +57,27 @@ let editList = {
     value: "#FFFFFF",
     key: "backgroundColor",
   }],
+  billboard: [{
+    type: "MapgisUiInput",
+    title: "标题",
+    key: "title",
+    value: "无标题",
+  }, {
+    type: "MapgisUiInput",
+    title: "图片",
+    key: "image",
+    value: "https://img0.baidu.com/it/u=3119542616,1165410720&fm=26&fmt=auto",
+  }, {
+    type: "MapgisUiColorPicker",
+    title: "颜色",
+    key: "color",
+    value: "#FFFFFF",
+  }, {
+    type: "MapgisUiSlider",
+    title: "透明度",
+    key: "opacity",
+    value: 100,
+  }],
   point: [{
     type: "MapgisUiInput",
     title: "标题",
