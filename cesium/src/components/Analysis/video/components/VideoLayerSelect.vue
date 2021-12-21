@@ -16,20 +16,16 @@
       </mapgis-ui-input>
       <mapgis-ui-card v-show="showCardDialog" class="data-card">
         <div v-show="!editLayerNameVisible">
-          <mapgis-ui-list
-            :key="reflush"
-            :data-source="selectOptionsCopy"
-            class="mapgis-list"
-          >
+          <mapgis-ui-list :data-source="selectOptionsCopy" class="mapgis-list">
             <mapgis-ui-list-item
-              style="padding: 4px 8px; cursor: pointer;"
+              class="card-content"
               slot="renderItem"
               slot-scope="item"
               :key="item.id"
               @click="clickListItem(item)"
             >
               <operations-item
-                :key="item.id"
+                :key="item.name"
                 :text="item.name"
                 :operations="['edit', 'delete']"
                 @delete="onDelete(item.id)"
@@ -37,9 +33,9 @@
               ></operations-item>
             </mapgis-ui-list-item>
           </mapgis-ui-list>
-          <mapgis-ui-divider style="margin: 4px 0;" />
+          <mapgis-ui-divider class="divider" />
           <div
-            style="padding: 4px 8px; cursor: pointer;"
+            class="card-content"
             @mousedown="e => e.preventDefault()"
             @click="onAdd"
           >
@@ -61,7 +57,8 @@
 <script>
 import OperationsItem from "./OperationsItem.vue";
 import EditLayerName from "./EditLayerName.vue";
-import { newGuid } from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import { newGuid } from "../../../Utils/util";
+
 export default {
   name: "video-layer-select",
   components: {
@@ -85,8 +82,12 @@ export default {
   watch: {
     selectOptions: {
       handler() {
-        this.selectOptionsCopy = [...this.selectOptions];
-        this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
+        this.selectOptionsCopy = JSON.parse(JSON.stringify(this.selectOptions));
+        if (!this.isChangeBySelf) {
+          //如果不是内部触发的改变，则默认取第一个
+          this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
+        }
+        this.isChangeBySelf = false;
       },
       deep: true,
       immediate: true
@@ -99,7 +100,7 @@ export default {
       editLayerNameVisible: false,
       editLayer: null,
       showCardDialog: false,
-      reflush: false
+      isChangeBySelf: false // 是否为内部导致的options变化，比如内部增删改
     };
   },
 
@@ -147,8 +148,8 @@ export default {
       }
       this.selectedLayer = val;
       this.$emit("selectedLayer", this.selectedLayer);
+      this.isChangeBySelf = true;
       this.showCardDialog = false;
-      this.reflush = !this.reflush;
     },
     /**
      * 图层名编辑结束事件
@@ -178,26 +179,34 @@ export default {
       const selectOptions = [...this.selectOptionsCopy];
       this.selectOptionsCopy = selectOptions.filter(item => item.id !== id);
       this.$emit("delete-layer", id);
+      this.isChangeBySelf = true;
     }
   }
 };
 </script>
-<style lang="less">
-.mapgis-select {
-  .data-card {
-    width: 89%;
-    margin-bottom: 12px;
-    position: absolute;
-    z-index: 1000;
-  }
-  .data-card .mapgis-ui-card-body {
-    padding: 0px;
-  }
+<style scoped>
+.data-card {
+  width: 89%;
+  margin-bottom: 12px;
+  position: absolute;
+  z-index: 1000;
+}
+.card-content {
+  padding: 4px 8px;
+  cursor: pointer;
+}
 
-  .mapgis-list {
-    width: 100%;
-    max-height: 300px;
-    overflow-y: auto;
-  }
+.divider {
+  margin: 4px 0;
+}
+
+::v-deep .mapgis-ui-card-body {
+  padding: 0px;
+}
+
+.mapgis-list {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
 }
 </style>

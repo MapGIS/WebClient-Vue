@@ -1,7 +1,7 @@
 import Mapgis3dFeaturePopup from "../../cesium/src/components/UI/Popup/PopupFeature.vue";
 
 export default {
-  title: "三维/场景子组件/要素Popup/默认样式",
+  title: "三维/场景子组件/要素Popup/自定义槽",
   component: Mapgis3dFeaturePopup,
   argTypes: {
     properties: {},
@@ -25,14 +25,11 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-scene>`,
 });
 
-export const 默认样式 = Template.bind({});
-默认样式.args = {
+export const 自定义槽 = Template.bind({});
+自定义槽.args = {
   properties: {
-    name: "测试名称",
-    id: "测试id",
-    name3: "测试名称",
-    id1: "测试id",
-    id2: "测试id",
+    title: "测试名称",
+    content: "富文本字符内容",
     images: ["https://gimg2.baidu.com/image_search/src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_bt%2F0%2F14090176146%2F1000&refer=http%3A%2F%2Finews.gtimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1640522366&t=d53479c6c63e01c044bc210c2fcdba90"]
   },
   position: {
@@ -42,8 +39,8 @@ export const 默认样式 = Template.bind({});
   },
   popupOptions: {
     title: "name",
-    popupType: "card",
-    fullHeight: 400,
+    popupType: "rich-text",
+    fullHeight: 600,
   },
   visible: true,
 };

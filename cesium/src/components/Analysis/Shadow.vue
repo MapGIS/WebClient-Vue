@@ -35,6 +35,7 @@
         :wrapperCol="{ span: 14 }" 
         v-model="formData.minHeight" 
         :range="[0,]"
+        :rangeShow="false"
         :slider="false"
       />
 
@@ -46,6 +47,7 @@
         :wrapperCol="{ span: 14 }" 
         v-model="formData.stretchHeight" 
         :range="[0,]"
+        :rangeShow="false"
         :slider="false"
       />
 
@@ -120,7 +122,6 @@ import {hexToRgba} from '../Utils/common/color-util';
 import VueOptions from "../Base/Vue/VueOptions";
 import Popup from "../UI/Popup/Popup.vue";
 import PopupContent from "../UI/Geojson/Popup";
-import { getPopupHtml } from "../UI/Popup/popupUtil";
 
 const shadowMoment = require('moment');
 const manager = "shadowAnalysisManager";
@@ -307,7 +308,7 @@ export default {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
-        vm.$emit("load", vm);
+        vm.$emit("loaded", vm);
       });
       if (viewer.scene.globe.depthTestAgainstTerrain) {
         this.depthTestAgainstTerrain = true;
@@ -414,7 +415,7 @@ export default {
             sunColor: sunColor,
             percentCallback: this.setPercent,
             intervalTime: 10,
-            // pointSize:10
+            pointSize:10
           })
           // 时间段范围阴影分析
           shadowAnalysis.calcPointsArrayInShadowTime(
@@ -638,9 +639,8 @@ export default {
 }
 
 ::v-deep .mapgis-popup-row-container{
-  padding-top: 10px;
   height: fit-content;
-  overflow: auto;
+  background: #fff;
 }
 
 ::v-deep .mapgis-popup-row {

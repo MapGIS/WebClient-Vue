@@ -21,6 +21,10 @@ $tree-height: 400px;
     width: 320px;
   }
 
+  &-layers {
+      min-width: 160px;
+  }
+
   &-slider-tree {
     top: 90px;
     left: 290px;

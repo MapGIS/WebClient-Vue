@@ -143,6 +143,7 @@ export { default as MapgisUiTimeline } from "./components/timeline/Timeline.vue"
 export { default as MapgisUiTimelineItem } from "./components/timeline/TimelineItem.vue";
 export { default as MapgisUiTooltip } from "./components/tooltip/Tooltip.vue";
 export { default as MapgisUiTree } from "./components/tree/Tree.vue";
+export { default as MapgisUiVideo } from "./components/media/Video.vue";
 
 // Feedback
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
@@ -231,6 +232,7 @@ export { default as MapgisUiChoosePictureRight } from "./components/picture/Choo
 export { default as MapgisUiProjectRow } from "./components/row/ProjectRow";
 export { default as MapgisUiFeatureRow } from "./components/row/FeatureRow";
 export { default as MapgisUiInputRow } from "./components/row/InputRow";
+export { default as MapgisUiIconRow } from "./components/row/IconRow";
 
 //edit
 export { default as MapgisUiFeatureEdit } from "./components/edit/FeatureEdit";

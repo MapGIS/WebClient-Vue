@@ -21,6 +21,8 @@ set-ExecutionPolicy RemoteSigned
 
 ```sh
 yarn config set registry http://192.168.82.89:4873/
+# https://github.com/yarnpkg/yarn/issues/4862#issuecomment-368688262
+# npm config set registry https://registry.npm.taobao.org // 还原回公网仓库
 # yarn config set registry https://registry.npm.taobao.org // 还原回公网仓库
 yarn global add node-gyp
 yarn global add node-sass@4.12.0
@@ -51,12 +53,17 @@ npm adduser --registry http://192.168.82.89:4873/
 npm who am i
 
 # 发布仓库  一定要再对应的发布库的根目录下发布
+
 npm publish --registry http://192.168.82.89:4873/
 ```
 
+::: tip 仓库过大无法发布
+npm config set max_body_size 100mb --registry http://192.168.82.89:4873/
+:::
+
 ## 发布外网仓库
 
-```
+``` sh
 # 设置npm官方源
 npm set registry http://www.npmjs.org
 

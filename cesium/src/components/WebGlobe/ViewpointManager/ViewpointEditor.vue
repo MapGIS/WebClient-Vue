@@ -171,7 +171,7 @@ export default {
 
             innerShow: this.show,
             name:'',
-            image:require("./upload/wuhan.png"),
+            image:require("./upload/wuhan.jpg"),
             duration:0.5,
             currentTime: undefined,
             longitude:undefined,
@@ -230,56 +230,16 @@ export default {
             const { viewer , Cesium} = this;
             const vm = this;
             
-            let rect = document.createElement('div');
-            // viewer.scene.canvas.appendChild(rect);
-            viewer.container.appendChild(rect);
-            rect.style = 'position: fixed;background-color: rgba(0, 0, 0, 0.3);border: 2px dashed yellow;z-index: 10000;'
-
-            this.innerShow = false;
-            let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-
-            handler.setInputAction(function(e){
-
-                // console.log('first-click',e);
-                rect.style.left =  `${e.position.x}px`;
-                rect.style.top =  `${e.position.y}px`;
-
-                handler.setInputAction(function(ev){
-                    rect.style.width = `${ev.endPosition.x - e.position.x}px`;
-                    rect.style.height = `${ev.endPosition.y - e.position.y}px`;  
-                },Cesium.ScreenSpaceEventType.MOUSE_MOVE )
-                
-                handler.setInputAction(function(){
-                    
-                    handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-                    handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-                    // console.log('second-click');
-
-                    vm.innerShow = true;
-
-                    let opt  = { 
-                        allowTaint:true, 
-                        useCORS:true,
-                        width:parseFloat(rect.style.width),
-                        height:parseFloat(rect.style.height),
-                        x:parseFloat(rect.style.left),
-                        y:parseFloat(rect.style.top)
-                    };
-
-                    html2canvas(viewer.scene.canvas, opt ).then(function(canvas) {
-
-                        let image = document.querySelector(".thumbnail");
-                        // document.body.appendChild(canvas);
-                        image.setAttribute("src", canvas.toDataURL());
-                        vm.image = canvas.toDataURL();
-
-                        rect.parentNode.removeChild(rect);
-                        handler.destroy();
-
-                    });
-                },Cesium.ScreenSpaceEventType.LEFT_CLICK )
-
-            },Cesium.ScreenSpaceEventType.LEFT_CLICK )
+            let opt  = { 
+                allowTaint:true, 
+                useCORS:true,
+            };
+            html2canvas(viewer.scene.canvas, opt ).then(function(canvas) {
+                let image = document.querySelector(".thumbnail");
+                // document.body.appendChild(canvas);
+                image.setAttribute("src", canvas.toDataURL());
+                vm.image = canvas.toDataURL();
+            });
         },
         /* 上传本地图片 */
         upload(){            

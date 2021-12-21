@@ -1,142 +1,175 @@
 <template>
   <div class="mapgis-widget-visual-analysis">
-    <mapgis-ui-setting-form v-model="formData" :wrapper-width="350">
-      <mapgis-ui-form-item label="水平视角">
-        <mapgis-ui-input
-            v-model.number="formData.horizontAngle"
-            :min="1"
-            type="number"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="垂直视角">
-        <mapgis-ui-input
-            v-model.number="formData.verticalAngle"
-            :min="1"
-            type="number"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="附加高度(米)">
-        <mapgis-ui-input
-            v-model.number="formData.exHeight"
+    <mapgis-ui-setting-form
+      v-model="formData"
+      :label-width="50"
+      :wrapper-width="224"
+    >
+      <mapgis-ui-form-item label="视角">
+        <div class="item-left">
+          <mapgis-ui-input
+            addon-before="水平"
             type="number"
             :min="0"
-            :step="0.1"
-        />
+            :max="180"
+            v-model="formData.horizontAngle"
+          />
+          <mapgis-ui-slider
+            v-model="formData.horizontAngle"
+            :min="0"
+            :max="180"
+            size="small"
+            :tooltipVisible="false"
+          />
+        </div>
+        <div class="item-right">
+          <mapgis-ui-input
+            addon-before="垂直"
+            type="number"
+            :min="0"
+            :max="180"
+            v-model="formData.verticalAngle"
+          />
+          <mapgis-ui-slider
+            v-model="formData.verticalAngle"
+            :min="0"
+            :max="180"
+            size="small"
+            :tooltipVisible="false"
+          />
+        </div>
       </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="方向角">
-        <mapgis-ui-input
-            v-model.number="angleSet.heading"
+      <mapgis-ui-form-item label="朝向">
+        <div class="item-left">
+          <mapgis-ui-input
+            addon-before="方向"
+            type="number"
             :min="0"
             :max="360"
-            type="number"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="俯仰角">
-        <mapgis-ui-input
-            v-model.number="angleSet.pitch"
-            :min="-90"
-            :max="90"
-            type="number"
-        />
-      </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="可视距离(米)">
-        <mapgis-ui-input
-            v-model.number="angleSet.viewRadius"
+            v-model="angleSet.heading"
+          />
+          <mapgis-ui-slider
+            v-model="angleSet.heading"
             :min="0"
+            :max="360"
+            size="small"
+            :tooltipVisible="false"
+          />
+        </div>
+        <div class="item-right">
+          <mapgis-ui-input
+            addon-before="俯仰"
             type="number"
-        />
+            :min="0"
+            :max="360"
+            v-model="angleSet.pitch"
+          />
+          <mapgis-ui-slider
+            v-model="angleSet.pitch"
+            :min="0"
+            :max="360"
+            size="small"
+            :tooltipVisible="false"
+          />
+        </div>
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="观察点坐标">
-        <mapgis-ui-row>
-          <mapgis-ui-col :span="8">
-            <mapgis-ui-input
-                v-model.number="posData.viewPositionX"
-                :step="0.0001"
-                type="number"
-                placeholder="经度"
-            />
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="8">
-            <mapgis-ui-input
-                v-model.number="posData.viewPositionY"
-                :step="0.0001"
-                type="number"
-                placeholder="纬度"
-            />
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="8">
-            <mapgis-ui-input
-                v-model.number="posData.viewPositionZ"
-                type="number"
-                placeholder="高度"
-            />
-          </mapgis-ui-col>
-        </mapgis-ui-row>
+        <mapgis-ui-input
+          v-model.number="posData.viewPositionX"
+          :step="0.0001"
+          type="number"
+          addon-before="经度"
+        />
+        <mapgis-ui-input
+          v-model.number="posData.viewPositionY"
+          :step="0.0001"
+          type="number"
+          addon-before="纬度"
+        />
+        <mapgis-ui-input
+          v-model.number="posData.viewPositionZ"
+          type="number"
+          addon-before="高度"
+        />
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="目标点坐标">
-        <mapgis-ui-row>
-          <mapgis-ui-col :span="8">
-            <mapgis-ui-input
-                v-model.number="posData.targetPositionX"
-                :step="0.0001"
-                type="number"
-                placeholder="经度"
-            />
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="8">
-            <mapgis-ui-input
-                v-model.number="posData.targetPositionY"
-                :step="0.0001"
-                type="number"
-                placeholder="纬度"
-            />
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="8">
-            <mapgis-ui-input
-                v-model.number="posData.targetPositionZ"
-                type="number"
-                placeholder="高度"
-            />
-          </mapgis-ui-col>
-        </mapgis-ui-row>
+        <mapgis-ui-input
+          v-model="posData.targetPositionX"
+          :step="0.0001"
+          type="number"
+          addon-before="经度"
+        />
+        <mapgis-ui-input
+          v-model="posData.targetPositionY"
+          :step="0.0001"
+          type="number"
+          addon-before="纬度"
+        />
+        <mapgis-ui-input
+          v-model="posData.targetPositionZ"
+          type="number"
+          addon-before="高度"
+        />
       </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="不可视区域颜色">
-        <mapgis-ui-sketch-color-picker
-            :disableAlpha="false"
-            :color="formData.unVisibleColor"
-            @input="
-            val =>
-              (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-          "
-        ></mapgis-ui-sketch-color-picker>
+      <mapgis-ui-form-item label="附加高度">
+        <mapgis-ui-input
+          v-model="formData.exHeight"
+          type="number"
+          :min="0"
+          :step="0.1"
+          addon-after="米"
+        />
       </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="可视区域颜色">
-        <mapgis-ui-sketch-color-picker
+      <mapgis-ui-form-item label="可视距离">
+        <mapgis-ui-input
+          v-model="angleSet.viewRadius"
+          :min="0"
+          type="number"
+          addon-after="米"
+        />
+      </mapgis-ui-form-item>
+      <mapgis-ui-form-item label="区域颜色">
+        <div class="item-left">
+          <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
             :color="formData.visibleColor"
+            addon-before="可视"
             @input="
-            val =>
-              (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-          "
-        ></mapgis-ui-sketch-color-picker>
+              val =>
+                (formData.visibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+          ></mapgis-ui-sketch-color-picker>
+        </div>
+        <div class="item-right">
+          <mapgis-ui-sketch-color-picker
+            :disableAlpha="false"
+            :color="formData.unVisibleColor"
+            addon-before="不可视"
+            @input="
+              val =>
+                (formData.unVisibleColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+          ></mapgis-ui-sketch-color-picker>
+        </div>
       </mapgis-ui-form-item>
-      <mapgis-ui-form-item label="可视遮罩颜色">
-        <mapgis-ui-sketch-color-picker
+      <mapgis-ui-form-item label="遮罩颜色">
+        <div class="item-left">
+          <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
             :color="formData.maskColor"
+            addon-before="可视"
             @input="
-            val =>
-              (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-          "
-        ></mapgis-ui-sketch-color-picker>
+              val =>
+                (formData.maskColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+            "
+          ></mapgis-ui-sketch-color-picker>
+        </div>
       </mapgis-ui-form-item>
     </mapgis-ui-setting-form>
-    <!--    </div>-->
     <mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="onClickStart"
-      >分析
-      </mapgis-ui-button
-      >
+        >分析
+      </mapgis-ui-button>
       <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
   </div>
@@ -254,56 +287,56 @@ export default {
 
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
 
-      handlerAction:undefined
+      handlerAction: undefined
     };
   },
   watch: {
     horizontAngle: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.horizontAngle = newVal;
       },
       immediate: true
     },
     verticalAngle: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.verticalAngle = newVal;
       },
       immediate: true
     },
     unVisibleColor: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.unVisibleColor = newVal;
       },
       immediate: true
     },
     visibleColor: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.visibleColor = newVal;
       },
       immediate: true
     },
     maskColor: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.maskColor = newVal;
       },
       immediate: true
     },
     exHeight: {
-      handler: function (newVal, oldVal) {
+      handler: function(newVal, oldVal) {
         this.formData.exHeight = newVal;
       },
       immediate: true
     },
     formData: {
       deep: true,
-      handler: function (newVal, oldVal) {
-        let {Cesium} = this;
+      handler: function(newVal, oldVal) {
+        let { Cesium } = this;
         let find = this.findSource();
         const unVisibleColor = new Cesium.Color.fromCssColorString(
-            newVal.unVisibleColor
+          newVal.unVisibleColor
         );
         const visibleColor = new Cesium.Color.fromCssColorString(
-            newVal.visibleColor
+          newVal.visibleColor
         );
         const maskColor = new Cesium.Color.fromCssColorString(newVal.maskColor);
 
@@ -327,10 +360,10 @@ export default {
             visualAnalysis.viewPosition = cartesian;
             //赋值给manager
             vueCesium.ViewshedAnalysisManager.changeOptions(
-                vueKey,
-                vueIndex,
-                "visualAnalysis",
-                visualAnalysis
+              vueKey,
+              vueIndex,
+              "visualAnalysis",
+              visualAnalysis
             );
             // 改变观察点坐标
             this.viewPoint.position._value = cartesian;
@@ -340,8 +373,8 @@ export default {
     },
     angleSet: {
       deep: true,
-      handler: function (newVal) {
-        let {vueKey, vueIndex} = this;
+      handler: function(newVal) {
+        let { vueKey, vueIndex } = this;
         let find = this.findSource();
         if (find && find.options.visualAnalysis) {
           let visualAnalysis = find.options.visualAnalysis;
@@ -349,10 +382,10 @@ export default {
           visualAnalysis.pitch = newVal.pitch;
           visualAnalysis.viewRadius = newVal.viewRadius;
           vueCesium.ViewshedAnalysisManager.changeOptions(
-              vueKey,
-              vueIndex,
-              "visualAnalysis",
-              visualAnalysis
+            vueKey,
+            vueIndex,
+            "visualAnalysis",
+            visualAnalysis
           );
           this.updateTargetPosition(find.options.visualAnalysis.targetPosition);
         }
@@ -367,34 +400,33 @@ export default {
   },
   methods: {
     async createCesiumObject() {
-      const {baseUrl, options} = this;
+      const { baseUrl, options } = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
       return new Promise(
-          resolve => {
-            resolve();
-          },
-          reject => {
-          }
+        resolve => {
+          resolve();
+        },
+        reject => {}
       );
     },
     mount() {
-      const { vueCesium, vueKey, vueIndex} = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function (dataSource) {
+      promise.then(function(dataSource) {
         vm.$emit("load", vm);
         vueCesium.ViewshedAnalysisManager.addSource(
-            vueKey,
-            vueIndex,
-            dataSource,
-            {
-              visualAnalysis: null
-            }
+          vueKey,
+          vueIndex,
+          dataSource,
+          {
+            visualAnalysis: null
+          }
         );
       });
     },
     unmount() {
-      let {vueKey, vueIndex} = this;
+      let { vueKey, vueIndex } = this;
       this.onClickStop();
       vueCesium.ViewshedAnalysisManager.deleteSource(vueKey, vueIndex);
     },
@@ -420,10 +452,10 @@ export default {
 
       // 获取该位置的经纬度坐标
       const centerLon = parseFloat(
-          this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
+        this.Cesium.Math.toDegrees(cartographic.longitude).toFixed(8)
       );
       const centerLat = parseFloat(
-          this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
+        this.Cesium.Math.toDegrees(cartographic.latitude).toFixed(8)
       );
 
       if (type === "view") {
@@ -442,44 +474,50 @@ export default {
       this.startVisualAnalysis();
 
       if (
-          this.posData.viewPositionX !== "" &&
-          this.posData.viewPositionY !== "" &&
-          this.posData.viewPositionZ !== "" &&
-          this.posData.targetPositionX !== "" &&
-          this.posData.targetPositionY !== "" &&
-          this.posData.targetPositionZ !== ""
+        this.posData.viewPositionX !== "" &&
+        this.posData.viewPositionY !== "" &&
+        this.posData.viewPositionZ !== "" &&
+        this.posData.targetPositionX !== "" &&
+        this.posData.targetPositionY !== "" &&
+        this.posData.targetPositionZ !== ""
       ) {
         this.isHasTargetPos = false;
         // 注销鼠标的各项监听事件
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        );
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.RIGHT_CLICK
+        );
         this.isAddEventListener = false;
 
         this.onInputStart();
       } else if (
-          this.posData.viewPositionX === "" &&
-          this.posData.viewPositionY === "" &&
-          this.posData.viewPositionZ === "" &&
-          this.posData.targetPositionX === "" &&
-          this.posData.targetPositionY === "" &&
-          this.posData.targetPositionZ === ""
+        this.posData.viewPositionX === "" &&
+        this.posData.viewPositionY === "" &&
+        this.posData.viewPositionZ === "" &&
+        this.posData.targetPositionX === "" &&
+        this.posData.targetPositionY === "" &&
+        this.posData.targetPositionZ === ""
       ) {
         this.isHasTargetPos = false;
         this.addEventListener();
       } else if (
-          this.posData.viewPositionX !== "" &&
-          this.posData.viewPositionY !== "" &&
-          this.posData.viewPositionZ !== "" &&
-          this.posData.targetPositionX === "" &&
-          this.posData.targetPositionY === "" &&
-          this.posData.targetPositionZ === ""
+        this.posData.viewPositionX !== "" &&
+        this.posData.viewPositionY !== "" &&
+        this.posData.viewPositionZ !== "" &&
+        this.posData.targetPositionX === "" &&
+        this.posData.targetPositionY === "" &&
+        this.posData.targetPositionZ === ""
       ) {
         this.isHasTargetPos = false;
         let viewCartesian = this.Cesium.Cartesian3.fromDegrees(
-            this.posData.viewPositionX,
-            this.posData.viewPositionY,
-            this.posData.viewPositionZ
+          this.posData.viewPositionX,
+          this.posData.viewPositionY,
+          this.posData.viewPositionZ
         );
 
         const cartographic = this.updateExheight(viewCartesian);
@@ -495,12 +533,12 @@ export default {
         this.hasViewPosition = true;
         this.addEventListener();
       } else if (
-          this.posData.viewPositionX === "" &&
-          this.posData.viewPositionY === "" &&
-          this.posData.viewPositionZ === "" &&
-          this.posData.targetPositionX !== "" &&
-          this.posData.targetPositionY !== "" &&
-          this.posData.targetPositionZ !== ""
+        this.posData.viewPositionX === "" &&
+        this.posData.viewPositionY === "" &&
+        this.posData.viewPositionZ === "" &&
+        this.posData.targetPositionX !== "" &&
+        this.posData.targetPositionY !== "" &&
+        this.posData.targetPositionZ !== ""
       ) {
         this.isHasTargetPos = true;
         this.addEventListener();
@@ -512,12 +550,12 @@ export default {
 
     // 开启可视域分析工具
     startVisualAnalysis() {
-      let {viewer, Cesium, vueKey, vueIndex} = this;
+      let { viewer, Cesium, vueKey, vueIndex } = this;
       this.isAnalyze = true;
       // this.tilesetArray = this.webGlobe._m3dServerLayer;
       //深度检测开启
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-          viewer
+        viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
@@ -525,7 +563,7 @@ export default {
       }
       // 初始化分析工具
       let find = this.findSource();
-      let {options} = find;
+      let { options } = find;
       let visualAnalysis = options.visualAnalysis;
       visualAnalysis = new Cesium.ViewshedAnalysis();
 
@@ -537,13 +575,13 @@ export default {
 
       // 设置可视域分析工具的配置
       const unVisibleColor = new this.Cesium.Color.fromCssColorString(
-          this.formData.unVisibleColor
+        this.formData.unVisibleColor
       );
       const visibleColor = new this.Cesium.Color.fromCssColorString(
-          this.formData.visibleColor
+        this.formData.visibleColor
       );
       const maskColor = new this.Cesium.Color.fromCssColorString(
-          this.formData.maskColor
+        this.formData.maskColor
       );
 
       visualAnalysis.horizontAngle = this.formData.horizontAngle;
@@ -556,27 +594,27 @@ export default {
       viewer.scene.visualAnalysisManager.add(visualAnalysis);
       //更新manager
       vueCesium.ViewshedAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "visualAnalysis",
-          visualAnalysis
+        vueKey,
+        vueIndex,
+        "visualAnalysis",
+        visualAnalysis
       );
     },
     // 通过输入坐标开始分析按钮
     onInputStart() {
       let viewCartesian = this.Cesium.Cartesian3.fromDegrees(
-          this.posData.viewPositionX,
-          this.posData.viewPositionY,
-          this.posData.viewPositionZ
+        this.posData.viewPositionX,
+        this.posData.viewPositionY,
+        this.posData.viewPositionZ
       );
 
       const cartographic = this.updateExheight(viewCartesian);
       viewCartesian = this.Cesium.Cartographic.toCartesian(cartographic);
 
       const targetCartesian = this.Cesium.Cartesian3.fromDegrees(
-          this.posData.targetPositionX,
-          this.posData.targetPositionY,
-          this.posData.targetPositionZ
+        this.posData.targetPositionX,
+        this.posData.targetPositionY,
+        this.posData.targetPositionZ
       );
 
       let find = this.findSource();
@@ -604,7 +642,7 @@ export default {
     // 分析完成时显示方向角、俯仰角、可视距离三种属性
     setVisualAttrs() {
       let find = this.findSource();
-      const {heading, pitch, viewRadius} = find.options.visualAnalysis;
+      const { heading, pitch, viewRadius } = find.options.visualAnalysis;
 
       this.angleSet.heading = heading.toFixed(2);
       this.angleSet.pitch = pitch.toFixed(2);
@@ -629,25 +667,31 @@ export default {
      */
     _restoreDepthTestAgainstTerrain() {
       if (
-          this.isDepthTestAgainstTerrainEnable !== undefined &&
-          this.isDepthTestAgainstTerrainEnable !==
+        this.isDepthTestAgainstTerrainEnable !== undefined &&
+        this.isDepthTestAgainstTerrainEnable !==
           isDepthTestAgainstTerrainEnable(this.viewer)
       ) {
         setDepthTestAgainstTerrainEnable(
-            this.isDepthTestAgainstTerrainEnable,
-            this.viewer
+          this.isDepthTestAgainstTerrainEnable,
+          this.viewer
         );
       }
     },
 
     // 点击结束分析按钮回调
     onClickStop() {
-      let {vueKey, vueIndex} = this;
+      let { vueKey, vueIndex } = this;
       // 注销鼠标的各项监听事件
-      if (this.handlerAction){
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+      if (this.handlerAction) {
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.MOUSE_MOVE
+        );
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        this.handlerAction.removeInputAction(
+          Cesium.ScreenSpaceEventType.RIGHT_CLICK
+        );
       }
 
       // 清空观察点与目标点坐标
@@ -673,7 +717,9 @@ export default {
       // 移除可视域分析工具
       let find = this.findSource();
       if (find && find.options) {
-        this.viewer.scene.visualAnalysisManager.remove(find.options.visualAnalysis);
+        this.viewer.scene.visualAnalysisManager.remove(
+          find.options.visualAnalysis
+        );
         find.options.visualAnalysis = null;
       }
 
@@ -690,9 +736,11 @@ export default {
 
     // 为鼠标的各种行为注册监听事件
     addEventListener() {
-      let {Cesium, viewer} = this;
+      let { Cesium, viewer } = this;
       if (!this.isAddEventListener) {
-        this.handlerAction = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        this.handlerAction = new Cesium.ScreenSpaceEventHandler(
+          viewer.scene.canvas
+        );
         this.handlerAction.setInputAction(event => {
           this.registerMouseMoveEvent(event);
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
@@ -710,9 +758,7 @@ export default {
     // 注册可视域分析鼠标移动事件
     registerMouseMoveEvent(event) {
       if (this.hasViewPosition) {
-        const cartesian = this.viewer.getCartesian3Position(
-            event.endPosition
-        );
+        const cartesian = this.viewer.getCartesian3Position(event.endPosition);
         if (cartesian) {
           // 设置可视域结束点坐标
           let find = this.findSource();
@@ -723,9 +769,7 @@ export default {
 
     // 注册可视域分析鼠标左键点击事件
     registerMouseLClickEvent(event) {
-      let cartesian = this.viewer.getCartesian3Position(
-          event.position
-      );
+      let cartesian = this.viewer.getCartesian3Position(event.position);
       let find = this.findSource();
 
       if (this.isAnalyze) {
@@ -745,9 +789,9 @@ export default {
           // 如果拥有初始目标点，则相当于在选择观察点后，又自动点击了鼠标左键一次来选择目标点
           if (this.isHasTargetPos) {
             const targetCartesian = this.Cesium.Cartesian3.fromDegrees(
-                this.posData.targetPositionX,
-                this.posData.targetPositionY,
-                this.posData.targetPositionZ
+              this.posData.targetPositionX,
+              this.posData.targetPositionY,
+              this.posData.targetPositionZ
             );
             find.options.visualAnalysis.targetPosition = targetCartesian;
 
@@ -774,9 +818,7 @@ export default {
 
     // 注册可视域分析鼠标右键点击事件
     registerMouseRClickEvent(event) {
-      const cartesian = this.viewer.getCartesian3Position(
-          event.position
-      );
+      const cartesian = this.viewer.getCartesian3Position(event.position);
       let find = this.findSource();
 
       if (this.hasViewPosition) {
@@ -791,11 +833,8 @@ export default {
       this.isAnalyze = false;
     },
     findSource() {
-      let {vueCesium, vueKey, vueIndex} = this;
-      let find = vueCesium.ViewshedAnalysisManager.findSource(
-          vueKey,
-          vueIndex
-      );
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.ViewshedAnalysisManager.findSource(vueKey, vueIndex);
       return find;
     }
   }
@@ -807,6 +846,18 @@ export default {
   /*max-width: calc(42vw);*/
   max-height: calc(60vh);
   overflow-y: auto;
+}
+
+.item-left {
+  width: 50%;
+  padding: 0 2px 0 0;
+  float: left;
+}
+
+.item-right {
+  width: 50%;
+  padding: 0 0 0 2px;
+  float: right;
 }
 
 ::v-deep .mapgis-ui-form-item {

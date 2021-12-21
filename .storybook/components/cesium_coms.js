@@ -51,6 +51,9 @@ export { default as Mapgis3dGeojsonDatasource } from "../../cesium/src/component
 export { default as Mapgis3dCzmlDatasource } from "../../cesium/src/components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
+export { default as Mapgis3dBufferAnalysis } from "../../cesium/src/components/Analysis/Buffer.vue";
+export { default as Mapgis3dOverlayAanalysis } from "../../cesium/src/components/Analysis/Overlay.vue";
+
 export { default as Mapgis3dViewshed } from "../../cesium/src/components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "../../cesium/src/components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "../../cesium/src/components/Analysis/SkyLine";

@@ -15,15 +15,18 @@
           <mapgis-ui-select
             class="mapgis-3d-stratified-household-layers"
             :disabled="disableLayerSelect"
-            :autoWidth="true" 
+            :autoWidth="true"
             size="small"
             @change="hancleSelectChange"
-            placeholder="请选择图层">
-             <mapgis-ui-select-option
-               v-for="(l,i) in layers" :key="i" 
-               :value="l.vueIndex"
-             >{{l.title}}</mapgis-ui-select-option>
-          </mapgis-ui-select> 
+            placeholder="请选择图层"
+          >
+            <mapgis-ui-select-option
+              v-for="(l, i) in layers"
+              :key="i"
+              :value="l.vueIndex"
+              >{{ l.title }}</mapgis-ui-select-option
+            >
+          </mapgis-ui-select>
         </div>
         <span v-else class="mapgis-3d-stratified-household-title">{{
           title
@@ -33,7 +36,10 @@
         slot="extra"
         class="mapgis-3d-stratified-household-icons"
       >
-        <mapgis-ui-tooltip v-for="(m, i) in enableCollapse ? menus: collapsemenus" :key="i">
+        <mapgis-ui-tooltip
+          v-for="(m, i) in enableCollapse ? menus : collapsemenus"
+          :key="i"
+        >
           <template slot="title">{{ m.title }}</template>
           <mapgis-ui-iconfont
             :class="{ active: m.active }"
@@ -73,14 +79,14 @@
               ip,
               port,
               layerIndex,
-              key
+              key,
             }"
           >
             <span
               :class="{
                 'mapgis-3d-stratified-household-span': true,
                 'mapgis-3d-stratified-household-span-inline': true,
-                select: selectLayerIndex == layerIndex
+                select: selectLayerIndex == layerIndex,
               }"
             >
               <span v-if="title && title.indexOf(searchValue) > -1">
@@ -103,7 +109,7 @@
                   :type="s.icon()"
                   :class="{
                     iconfont: true,
-                    'iconfont-disabled': !enableStratifiedHouse
+                    'iconfont-disabled': !enableStratifiedHouse,
                   }"
                   @click="
                     s.click({
@@ -114,7 +120,7 @@
                       ip,
                       port,
                       layerIndex,
-                      key
+                      key,
                     })
                   "
                 />
@@ -123,18 +129,6 @@
           </template>
         </mapgis-ui-tree>
       </mapgis-ui-row>
-
-      <StratifiedHouseholdMenus
-        slot="panel"
-        size="big"
-        mode="m3d"
-        :version="version"
-        :g3dLayerIndex="g3dLayerIndex"
-        :layerIndex="selectLayerIndex"
-        :gdbp="gdbp"
-        @enable-dynamic-query="handleDynamicQuery"
-      >
-      </StratifiedHouseholdMenus>
 
       <mapgis-3d-feature-popup
         v-if="featureposition"
@@ -145,30 +139,17 @@
       >
       </mapgis-3d-feature-popup>
     </mapgis-ui-collapse-card>
-    <!-- <mapgis-ui-slider-panel
-      class="mapgis-3d-stratified-household-slider-tree"
-      :values="layerTree"
-      :customLabel="customLabel"
-      @change="changeSimpleMenu"
-      @changeSlider="changeSimpleSlider"
-    >
-    </mapgis-ui-slider-panel> -->
   </div>
 </template>
 
 <script>
 import BaseLayer from "./BaseLayer";
-import StratifiedHouseholdMenus from "./StratifiedHouseholdMenus.vue";
 
 export default {
-  name: "mapgis-3d-stratified-household",
+  name: "mapgis-3d-bim-component",
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
-    layerId: {
-      type: [String, Array],
-      required: true
-    },
     outStyle: {
       type: Object,
       default: () => {
@@ -180,12 +161,12 @@ export default {
           height: "450px",
           width: "270px",
           top: "0px",
-          left: "0px"
+          left: "0px",
         };
-      }
+      },
     },
     /**
-     * @description 分层分户的图层列表, 每个内部{title, vueIndex}, 
+     * @description 分层分户的图层列表, 每个内部{title, vueIndex},
      * @see vueIndex表示当前激活的图层序号
      */
     layers: { type: Array, default: () => [] },
@@ -197,14 +178,11 @@ export default {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     enableCollapse: { type: Boolean, default: true },
     enableStratifiedHouse: { type: Boolean, default: false },
-    enableDynamicQuery: { type: Boolean, default: false }
-  },
-  components: {
-    StratifiedHouseholdMenus
+    enableDynamicQuery: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -215,29 +193,19 @@ export default {
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
-        },
-        {
-          title: "模型爆炸",
-          icon: "mapgis-fire1",
-          active: false
+          active: this.enablePopup,
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false
-        }
+          active: false,
+        },
       ],
-      collapsemenus:  [
+      collapsemenus: [
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
-        },
-        {
-          title: "模型爆炸",
-          icon: "mapgis-fire1",
-          active: false
+          active: this.enablePopup,
         }
       ],
       submenus: [
@@ -248,11 +216,11 @@ export default {
               ? "进入图层菜单"
               : "请按照分层分户要求制作数据",
           icon: () => "mapgis-layer",
-          click: payload => {
+          click: (payload) => {
             if (this.enableStratifiedHouse) {
               this.handleActiveItemKey(payload);
             }
-          }
+          },
         },
         {
           title: "锁定/解锁图层",
@@ -260,30 +228,15 @@ export default {
             this.enableStratifiedHouse
               ? "锁定/解锁图层"
               : "请按照分层分户要求制作数据",
-          icon: key => (this.layerKey == key ? "mapgis-lock" : "mapgis-lock"),
-          click: payload => {
+          icon: (key) => (this.layerKey == key ? "mapgis-lock" : "mapgis-lock"),
+          click: (payload) => {
             if (this.enableStratifiedHouse) {
               this.changeIsolation(payload);
             }
-          }
-        }
+          },
+        },
       ],
-      layerTree: [
-        /* {
-          title: "标题",
-          key: `999`,
-          version: "0.0",
-          layerIndex: 0,
-          layerType: "m3d",
-          gdbp: "",
-          icon: "mapgis-layer",
-          menu: "mapgis-down",
-          scopedSlots: {
-            icon: "custom",
-            title: "title"
-          }
-        } */
-      ],
+      layerTree: [],
       expandedKeys: [],
       searchValue: "",
       autoExpandParent: true,
@@ -302,7 +255,7 @@ export default {
       featureproperties: undefined,
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
-      disableLayerSelect: false
+      disableLayerSelect: false,
     };
   },
   provide() {
@@ -310,7 +263,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      }
+      },
     };
   },
   created() {},
@@ -335,7 +288,7 @@ export default {
     innerVueIndex(next) {
       this.unmount();
       this.mount();
-    }
+    },
   },
   methods: {
     createCesiumObject() {
@@ -348,21 +301,25 @@ export default {
       const { vueCesium, vueKey, model, innerVueIndex } = this;
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
-        this.$_getG3DByInterval(function(g3ds) {
-          if (g3ds && g3ds.length > 0) {
-            if (
-              !g3ds[layerIndex] ||
-              !g3ds[layerIndex].hasOwnProperty("options") ||
-              !g3ds[layerIndex].options
-            ) {
-              reject(null);
+        this.$_getG3DByInterval(
+          function (g3ds) {
+            if (g3ds && g3ds.length > 0) {
+              if (
+                !g3ds[layerIndex] ||
+                !g3ds[layerIndex].hasOwnProperty("options") ||
+                !g3ds[layerIndex].options
+              ) {
+                reject(null);
+              } else {
+                resolve(g3ds[layerIndex]);
+              }
             } else {
-              resolve(g3ds[layerIndex]);
+              reject(null);
             }
-          } else {
-            reject(null);
-          }
-        }, vueKey, innerVueIndex);
+          },
+          vueKey,
+          innerVueIndex
+        );
       });
     },
     mount() {
@@ -371,7 +328,7 @@ export default {
       const { viewer, enablePopup } = this;
 
       let promise = this.createCesiumObject();
-      promise.then(find => {
+      promise.then((find) => {
         if (find && find.options) {
           let { m3ds, g3dLayerIndex } = find.options;
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
@@ -396,8 +353,8 @@ export default {
               menu: "mapgis-down",
               scopedSlots: {
                 icon: "custom",
-                title: "title"
-              }
+                title: "title",
+              },
             });
           });
           vm.layerIds = all;
@@ -413,7 +370,7 @@ export default {
               m3ds: m3ds,
               modelExplosion: modelExplosion,
               collection: collection,
-              primitiveCollection: viewer.scene.primitives.add(collection)
+              primitiveCollection: viewer.scene.primitives.add(collection),
             }
           );
           vm.recordOriginStyle();
@@ -435,13 +392,13 @@ export default {
       if (find && find.options) {
         let { m3ds } = find.options;
         if (!viewer.isDestroyed() && m3ds) {
-          m3ds.forEach(l => l.destroy());
+          m3ds.forEach((l) => l.destroy());
         }
       }
       this.$emit("unload", { component: this });
       vueCesium.StratifiedHousehouldManager.deleteSource(vueKey, innerVueIndex);
       if (this.interval) {
-         clearInterval(this.interval);
+        clearInterval(this.interval);
       }
     },
     // 搜索需要
@@ -457,7 +414,7 @@ export default {
       for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
-          if (node.children.some(item => item.key === key)) {
+          if (node.children.some((item) => item.key === key)) {
             parentKey = node.key;
           } else if (this.getParentKey(key, node.children)) {
             parentKey = this.getParentKey(key, node.children);
@@ -469,7 +426,7 @@ export default {
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
-      const generateList = data => {
+      const generateList = (data) => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { key } = node;
@@ -483,7 +440,7 @@ export default {
 
       const value = e.target.value;
       const expandedKeys = dataList
-        .map(item => {
+        .map((item) => {
           if (item.title.indexOf(value) > -1) {
             return this.getParentKey(item.key, layerTree);
           }
@@ -493,7 +450,7 @@ export default {
       Object.assign(this, {
         expandedKeys,
         searchValue: value,
-        autoExpandParent: true
+        autoExpandParent: true,
       });
     },
     onSelect(e, payload) {
@@ -551,7 +508,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         originStyles.push(m3dlayer.style);
       });
@@ -610,7 +567,7 @@ export default {
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach(index => {
+      layerIndexs.forEach((index) => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (index != layerIndex) {
           m3dlayer.show = false;
@@ -619,7 +576,7 @@ export default {
           viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
         }
       });
-      let children = this.layerTree.map(c => {
+      let children = this.layerTree.map((c) => {
         if (c.layerIndex == layerIndex) {
           c.disabled = false;
         } else {
@@ -630,57 +587,13 @@ export default {
       this.layerTree.splice(0, 1, children[0]);
     },
     disableIsolation() {
-      let children = this.layerTree.map(c => {
+      let children = this.layerTree.map((c) => {
         c.disabled = false;
         return c;
       });
       this.layerTree.splice(0, 1, children[0]);
       this.restoreOrigindVisible();
       // this.restoreOriginStyle();
-    },
-    enableExplror() {
-      const { Cesium, g3dLayerIndex, viewer } = this;
-      const { vueKey, innerVueIndex, vueCesium } = this;
-      const vector = new Cesium.Cartesian3(0, 0, 1); //向Z轴正方向爆炸
-      const expDistance = 5;
-      const speed = 0.5;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let m3ds = [];
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        let layerIndexs = g3dLayer.getM3DLayerIndexes();
-        layerIndexs.forEach(index => {
-          let m3dlayer = g3dLayer.getLayer(index);
-          m3ds.push(m3dlayer);
-        });
-        modelExplosion.multiLayerAxisExplosionWithAnimate(m3ds, {
-          direction: vector,
-          expDistance: expDistance,
-          speed: speed
-        });
-      }
-    },
-    disableExplror() {
-      const { vueKey, innerVueIndex, vueCesium, g3dLayerIndex, viewer } = this;
-      let find = vueCesium.StratifiedHousehouldManager.findSource(
-        vueKey,
-        innerVueIndex
-      );
-      let m3ds = [];
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
-      layerIndexs.forEach(index => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        m3ds.push(m3dlayer);
-      });
-      if (find && find.options) {
-        const { modelExplosion } = find.options;
-        modelExplosion.removeModelExplosion(m3ds);
-      }
     },
     handleMenu(menu) {
       if (menu == "隐藏面板") {
@@ -692,14 +605,6 @@ export default {
         } else {
           this.menus[0].active = true;
           this.$_bindPickFeature();
-        }
-      } else if (menu == "模型爆炸") {
-        if (this.menus[1].active) {
-          this.menus[1].active = false;
-          this.disableExplror();
-        } else {
-          this.menus[1].active = true;
-          this.enableExplror();
         }
       }
     },
@@ -743,7 +648,7 @@ export default {
       const vm = this;
       const { Cesium, viewer } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         vm.$_pickEvent(movement);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
@@ -770,7 +675,7 @@ export default {
         m3dlayer.style
       );
       m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`
+        color: `color('#FFFF00', 1)`,
       });
     },
     handleDynamicQuery() {
@@ -819,7 +724,7 @@ export default {
                 vm.featureposition = {
                   longitude: lng,
                   latitude: lat,
-                  height: height
+                  height: height,
                 };
                 vm.featureproperties = feature.property;
                 primitiveCollection.add(feature);
@@ -840,7 +745,7 @@ export default {
                 mapPosition.z
               ),
               tolerance: 0.0001,
-              layerIndex: layerIndex
+              layerIndex: layerIndex,
             }
           );
         }
@@ -883,7 +788,7 @@ export default {
           vm.featureposition = {
             longitude: longitudeString2,
             latitude: latitudeString2,
-            height: heightString2
+            height: heightString2,
           };
 
           let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
@@ -903,7 +808,7 @@ export default {
       this.layerIds = [`${key}`];
     },
     changeSimpleSlider(keys) {
-      let keyStr = keys.map(k => `${k}`);
+      let keyStr = keys.map((k) => `${k}`);
       this.layerIds = keyStr;
     },
     customLabel(label) {
@@ -914,7 +819,7 @@ export default {
         show = res[res.length - 1];
       }
       return show;
-    }
-  }
+    },
+  },
 };
 </script>

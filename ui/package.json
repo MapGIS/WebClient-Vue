@@ -51,7 +51,9 @@
     "vue-infinite-scroll": "^2.0.2",
     "vuepress": "^1.8.2",
     "vuepress-plugin-demo-block": "^0.7.2",
-    "vuepress-plugin-demo-code": "^0.6.0"
+    "vuepress-plugin-demo-code": "^0.6.0",
+    "video.js": "^7.17.0",
+    "videojs-contrib-hls": "^5.15.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.2.0",
