@@ -103,5 +103,6 @@ export { default as Mapgis3DMapStoryLayer } from "./components/Layer/MapStory/Ma
 export { default as Mapgis3DPreviewMapStoryLayer } from "./components/Layer/MapStory/PreviewMapStory";
 
 //模拟仿真
-export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow";
+export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow/CityGrow";
+export { default as Mapgis3dCityGrowOptions } from "./components/simulation/CityGrow/CityGrowOptions";
 export { default as Mapgis3dPondingSimulation } from "./components/simulation/PondingSimulation.vue";

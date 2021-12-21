@@ -82,4 +82,5 @@ export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/componen
 // export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
 // export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";
 // 模拟仿真
-export { default as Mapgis3dCityGrow } from "../../cesium/src/components/simulation/CityGrow";
+export { default as Mapgis3dCityGrow } from "../../cesium/src/components/simulation/CityGrow/CityGrow";
+export { default as Mapgis3dCityGrowOptions } from "../../cesium/src/components/simulation/CityGrow/CityGrowOptions";

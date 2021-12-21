@@ -6,7 +6,7 @@
 
 > 若要实现 3857 坐标系要素查询，则需要在矢量地图文档发布前，
 > 在 igserver 桌面端先动态投影成经纬度，再发布地图文档。
-> 若以 gdpb 的形式加载图层，也需要提前转换成经纬度坐标系才能查询要素。
+> 目前三维底层暂时只支持二维矢量文档，后期会补充其他形式。
 
 ## 属性
 
@@ -16,32 +16,14 @@
 - **必填**
 - **侦听属性**
 - **描述:**
-  > 服务基地址：发布的文档地址，或 Igs 图层服务地址，对应的 layers 参数不同， 使用 Igs 图层服务地址通过 gdbp 仅能加载二维矢量图层。 eg：二维地图文档地址：http://[host]:[port]/igs/rest/mrfs/docs/{docName}， 三维地图文档地址：http://[host]:[port]/igs/rest/g3d/{docName}， Igs 图层服务地址：http://[host]:[port]/igs/rest/mrfs/layer
-
-### `mapIndex`
-
-- **类型:** `Number`
-- **可选**
-- **非侦听属性**
-- **默认值:** `0`
-- **描述:** 地图在发布的文档的序号，一般是文档的第一个序号中的地图
-
-### `layers`
-
-- **类型:** `String`
-- **可选**
-- **侦听属性**
-- **描述:**
-  > 图层 id，即要加载哪些图层，
-  > 分为地图文档加载（layers 为 0,1,2...）和 gdbp 地址加载（layers 为 gdbp1,gdbp2,...），分别对应两种 url 参数，
-  > 地图文档加载示例：layers:0,1 表示只显示 layerIndex 为 0, 1 的图层。
+  > 服务基地址：发布的二维文档地址， eg：二维地图文档地址：http://[host]:[port]/igs/rest/mrfs/docs/{docName}/mapIndex/LayerIndex。
 
 ### autoReset
 
 - **类型:** `Boolean`
 - **可选**
 - **非侦听属性**
-- **描述:** 视角是否自动切换到地图文档范围或第一个gdbp图层范围。
+- **描述:** 视角是否自动切换到地图文档范围。
 
 ### loadAll
 
@@ -72,7 +54,7 @@
 - **类型:** `Object|Array`
 - **可选**
 - **侦听属性**
-- **描述:** 全局过滤条件对象，或过滤条件数组对象，过滤条件数组顺序与图层顺序一致，空对象则默认无过滤。
+- **描述:** 过滤条件对象，空对象则默认无过滤。
 - **示例:**
   ```json
       filter: {
@@ -82,10 +64,10 @@
 
 ### featureStyle
 
-- **类型:** `Object|Array`
+- **类型:** `Object`
 - **可选**
 - **侦听属性**
-- **描述:** 矢量地图文档的全局 style 样式对象,或分图层 style 样式对象数组，样式顺序与图层顺序一致，空对象则使用符号系统库或默认样式
+- **描述:** 矢量地图文档对应图层的style 样式对象,
   featureStyle 包含一下两个属性：
 
 | Name       | Type   | Description                                                                            |
@@ -153,7 +135,7 @@ export default {
   data() {
     return {
       //要加载的url,本地发布的二维文档，坐标系为4326
-      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/kunshan",
+      baseUrl: "http://localhost:6163/igs/rest/mrfs/docs/kunshan",
       //featureStyle:传对象或数组对象
       featureStyle: [
         {
@@ -233,7 +215,7 @@ export default {
   data() {
     return {
       //要加载的url,本地发布的二维文档，坐标系为4326
-      baseUrl: "http://localhost:6163/igs/rest/mrms/docs/kunshan",
+      baseUrl: "http://localhost:6163/igs/rest/mrfs/docs/kunshan",
       //featureStyle:传对象或数组对象
       featureStyle: [
         {
