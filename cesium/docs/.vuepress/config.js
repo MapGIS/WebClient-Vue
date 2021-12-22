@@ -11,8 +11,8 @@ module.exports = {
     "/": {
       lang: "zh-CN",
       title: "中地数码",
-      description: "@mapgis/webclient-vue-cesium"
-    }
+      description: "@mapgis/webclient-vue-cesium",
+    },
   },
   themeConfig: {
     locales: {
@@ -27,25 +27,25 @@ module.exports = {
         serviceWorker: {
           updatePopup: {
             message: "发现新内容可用.",
-            buttonText: "刷新"
-          }
+            buttonText: "刷新",
+          },
         },
         // 当前 locale 的 algolia docsearch 选项
         algolia: {},
         nav: [
           {
             text: "向导",
-            link: "/guide/"
+            link: "/guide/",
           },
           {
             text: "API",
-            link: "/api/"
+            link: "/api/",
           },
           {
             text: "WebClient",
-            link: "http://develop.smaryun.com"
+            link: "http://develop.smaryun.com",
           },
-          { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" }
+          { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" },
         ],
         sidebar: [
           {
@@ -55,8 +55,8 @@ module.exports = {
               ["/guide/", "快速上手"],
               ["/guide/introduction.md", "产品介绍"],
               ["/guide/basemap.md", "基础地图"],
-              ["/guide/wms&map&doc.md", "子图层控制"]
-            ]
+              ["/guide/wms&map&doc.md", "子图层控制"],
+            ],
           },
           {
             title: "组件",
@@ -64,13 +64,13 @@ module.exports = {
             children: [
               {
                 title: "场景",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/", "地图场景"],
 
               {
                 title: "场景子组件",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/ui/popup.md", "气泡"],
               ["/api/ui/marker.md", "标记点"],
@@ -86,7 +86,7 @@ module.exports = {
 
               {
                 title: "图层",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/layer/IGServer/IgsVectorLayer.md", "IGS二维矢量"],
               ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
@@ -108,14 +108,14 @@ module.exports = {
 
               {
                 title: "可视化",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
 
               {
                 title: "空间分析",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/analysis/Viewshed.md", "可视域分析"],
               ["/api/analysis/Sightline.md", "通视分析"],
@@ -125,8 +125,8 @@ module.exports = {
               // ["/api/analysis/Fill.md", "填挖方分析"],
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],
-              ["/api/analysis/Skyline.md", "天际线分析"]
-            ]
+              ["/api/analysis/Skyline.md", "天际线分析"],
+            ],
           },
           {
             title: "组件开发",
@@ -135,61 +135,60 @@ module.exports = {
               ["/plugin_components/", "使用组件"],
               [
                 "/plugin_components/plugin_components_development.md",
-                "创建组件"
+                "创建组件",
               ],
               ["/plugin_components/create_storybook.md", "创建Storybook示例"],
-            ]
+            ],
           },
           {
             title: "版本",
             collapsable: false,
-            children: [["/version/diff.md", "版本对比"]]
-          }
-        ]
-      }
-    }
+            children: [
+              ["/version/version.md", "更新说明"],
+              ["/version/diff.md", "版本对比"],
+            ],
+          },
+        ],
+      },
+    },
   },
   serviceWorker: true,
   head: [
     [
       "script",
       {
-        src:
-          "https://cdn.jsdelivr.net/npm/react@16.6.3/umd/react.production.min.js"
-      }
+        src: "https://cdn.jsdelivr.net/npm/react@16.6.3/umd/react.production.min.js",
+      },
     ],
     [
       "script",
       {
-        src:
-          "https://cdn.jsdelivr.net/npm/react-dom@16.6.3/umd/react-dom.production.min.js"
-      }
+        src: "https://cdn.jsdelivr.net/npm/react-dom@16.6.3/umd/react-dom.production.min.js",
+      },
     ],
     ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
     [
       "script",
-      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
+      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" },
     ],
     [
       "script",
-      { src: "https://cdn.jsdelivr.net/npm/numerify/lib/index.umd.min.js" }
+      { src: "https://cdn.jsdelivr.net/npm/numerify/lib/index.umd.min.js" },
     ],
     [
       "link",
       {
-        href:
-          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-cesium.css",
+        href: "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-cesium.css",
         rel: "stylesheet",
-        type: "text/css"
-      }
+        type: "text/css",
+      },
     ],
     [
       "script",
       {
-        src:
-          "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-cesium.umd.js"
-      }
-    ]
+        src: "http://develop.smaryun.com/static/libs/cdn/zondyclient/npm/webclient-vue-cesium.umd.js",
+      },
+    ],
   ],
   plugins: [
     [
@@ -200,9 +199,9 @@ module.exports = {
           cssLibs: [],
           jsfiddle: true, // 是否显示 jsfiddle 链接
           codepen: true, // 是否显示 codepen 链接
-          horizontal: false // 是否展示为横向样式
-        }
-      }
-    ]
-  ]
+          horizontal: false, // 是否展示为横向样式
+        },
+      },
+    ],
+  ],
 };

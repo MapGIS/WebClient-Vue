@@ -1,7 +1,8 @@
-# 对比分析 
-## 1.07 vs 4.25
+# 对比分析
 
-| 文件                                     | 类型 | 10.5.2   (2021-04)        | 1.0.13  (2020-12)         | 10.5.2(按需引入)        | 1.0.13(按需引入)        | 备注 |
+## 1.x.x vs 10.x.x
+
+| 文件                                     | 类型 | 10.5.2 (2021-04)             | 1.0.13 (2020-12)          | 10.5.2(按需引入)        | 1.0.13(按需引入)        | 备注 |
 | :--------------------------------------- | :--- | :--------------------------- | :------------------------ | :---------------------- | :---------------------- | :--- |
 | WebGlobe\WebGlobe.vue                    | 改名 | mapgis-web-scene             | cesium-web-globe          | MapgisWebScene          |                         | 无   |
 | DataSource\Czml\CzmlDataSource.vue       | 改名 | mapgis-3d-czml-datasource    | cesium-czml-datasource    | MapgisCzmlDatasource    | CesiumCzmlDatasource    | 无   |
@@ -19,4 +20,3 @@
 | UI\Controls\Link\Link.vue                | 改名 | mapgis-3d-link               |                           | Mapgis3dLink            |                         | 无   |
 | UI\Controls\State\StateControl.vue       | 新增 | mapgis-3d-statebar           |                           | Mapgis3dState           |                         | 无   |
 | UI\Popup\Popup.vue                       | 改名 | mapgis-3d-popup              |                           | Mapgis3dPopup           |                         | 无   |
-

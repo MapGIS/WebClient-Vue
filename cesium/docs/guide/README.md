@@ -1,30 +1,28 @@
 # 快速上手
 
-``` vue
+```vue
 <template>
-
   <div id="app">
     <mapgis-web-scene @load="handleLoad">
-        <div>地图显示内容</div>
+      <div>地图显示内容</div>
     </mapgis-web-scene>
   </div>
 </template>
 <style>
-    #app {
-        height: 80px;
-        width: 100%;
-    }
+#app {
+  height: 80px;
+  width: 100%;
+}
 </style>
 <script type="module">
 export default {
-    data() {
-        return { };
-    },
-    methods: {
-        handleMapLoad(payload) {
-        }
-    }
-}
+  data() {
+    return {};
+  },
+  methods: {
+    handleMapLoad(payload) {},
+  },
+};
 </script>
 ```
 
@@ -32,23 +30,22 @@ export default {
 
 ### ES6 方式
 
-```bash
-安装webclient-vue-cesium:
-npm install --save @mapgis/webclient-vue-cesium
-# 或者
-yarn add @mapgis/webclient-vue-cesium
+::: tip 三维默认 UI 是 webclient-vue-ui
+由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui,因此需要同步安装 webclient-vue-ui
+:::
 
-安装webclient-vue-ui:
-npm install --save @mapgis/webclient-vue-ui
+```bash
+# 安装webclient-vue-cesium webclient-vue-ui
+npm install --save @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
 # 或者
-yarn add @mapgis/webclient-vue-ui
+yarn add @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
 ```
 
 在 main.js 中全局引入组件
 
 ```js
-import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
-import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
+import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
@@ -77,7 +74,7 @@ webclient-vue-cesium 只是一层封装，底层依赖 `@mapgis/cesium`。 除�
 # 主Cesium主体路径
 $path/cesium/dist/Cesium.js # public/cesium/dist/Cesium.js
 # Cesium拓展插件路径
-$path/cesium/dist/webclient-cesium-plugins.js # public/cesium/dist/webclient-cesium-plugins.js
+$path/cesium/dist/webclient-cesium-plugin.min.js # public/cesium/dist/webclient-cesium-plugin.min.js
 ```
 
 WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
@@ -87,7 +84,7 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
   <mapgis-web-scene
     ref="webgloberef"
     libPath="$path/cesium/dist/Cesium.js"
-    pluginPath="$path/cesium/dist/webclient-cesium-plugins.js"
+    pluginPath="$path/cesium/dist/webclient-cesium-plugin.min.js"
   >
     <mapgis-3d-igs-tile-layer />
   </mapgis-web-scene>
@@ -125,8 +122,8 @@ yarn link @mapgis/webclient-vue-cesium
 5.在项目中 main.js 中全局引入组件和样式文件即可使用
 
 ```js
-import '@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css';
-import '@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css';
+import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";

@@ -21,9 +21,9 @@
   export default {
     components: {
       "mapgis-web-scene": window.Mapgis3d.MapgisWebScene,
-      "mapgis-3d-ogc-wmts-layer": window.Mapgis3d.Mapgis3dOgcWmtsLayer
+      "mapgis-3d-ogc-wmts-layer": window.Mapgis3d.Mapgis3dOgcWmtsLayer,
     },
-    data: function() {
+    data: function () {
       return {
         baseUrl:
           "http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752",
@@ -32,11 +32,11 @@
         tilingScheme: "EPSG:4326",
         format: "tiles",
         layerStyle: {
-          zIndex: 1
-        }
+          zIndex: 1,
+        },
       };
     },
-    methods: {}
+    methods: {},
   };
 </script>
 <style>
@@ -65,7 +65,7 @@
 # 主Cesium主体路径 对应 libPath
 path/to/statics/cesium/Cesium.js
 # Cesium拓展插件路径 对应 pluginPath
-path/to/statics/cesium/webclient-cesium-plugins.js
+path/to/statics/cesium/webclient-cesium-plugin.min.js
 ```
 
 :::
@@ -91,7 +91,7 @@ import { MapgisWebScene } from "@mapgis/webclient-vue-cesium";
 
 export default {
   components: {
-    MapgisWebScene
+    MapgisWebScene,
   },
   methods: {
     handleLoad(payload) {
@@ -99,8 +99,8 @@ export default {
       this.Cesium = Cesium;
       this.CesiumZondy = CesiumZondy;
       let webGlobe = window.webGlobe; // 获取实例化的Cesium场景对象
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -139,8 +139,8 @@ export default {
   methods: {
     onClick: () => {
       window.alert(1);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -221,8 +221,8 @@ export default {
       // 或者只是存起来，加入全局vuex的状态存储中，以方便其他组件使用map对象，
       // 强烈禁止,应为很容易在其他地方误触this.$store.map的setter事件
       this.$store.webGlobe = window.webGlobe;
-    }
-  }
+    },
+  },
 };
 </script>
 ```
