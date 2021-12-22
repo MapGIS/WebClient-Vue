@@ -14,6 +14,24 @@ export default {
       },
       control: "object",
     },
+    modelUrl: {
+      description: "相机模型路径",
+      table: {
+        defaultValue: {
+          summary: `./CesiumModels/Cesium_Camera.glb`,
+        },
+      },
+      control: "text",
+    },
+    modelOffset: {
+      description: "相机模型朝向偏移量",
+      table: {
+        defaultValue: {
+          summary: `{ headingOffset: -90, pitchOffset: 0, rollOffset: 0 }`,
+        },
+      },
+      control: "object",
+    },
   },
 };
 
@@ -31,7 +49,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card" style="max-height:500px;overflow-y:auto">
-      <mapgis-3d-video-setting :settings="settings"></mapgis-3d-video-setting>
+      <mapgis-3d-video-setting :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset"></mapgis-3d-video-setting>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -47,6 +65,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 投放配置 = Template.bind({});
 投放配置.args = {
+  modelUrl: "./CesiumModels/Cesium_Camera.glb",
+  modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
   settings: {
     id: "987-765-543-124",
     name: "testVideo3",
