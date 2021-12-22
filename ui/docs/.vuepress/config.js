@@ -90,6 +90,13 @@ module.exports = {
             title: "组件开发",
             collapsable: false,
             children: [["/plugin_components/onemap.md", "移植组件"]]
+          },
+          {
+            title: "版本",
+            collapsable: false,
+            children: [
+              ["/version/version.md", "更新说明"],
+            ],
           }
         ]
       }
