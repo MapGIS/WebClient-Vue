@@ -6,17 +6,17 @@
         <div class="video-layer-select-div">
           <video-layer-select
             :selectOptions="videoOverlayLayerListCopy"
-            @selectedLayer="changeLayer"
-            @change-layer-name="changeLayerName"
-            @add-layer="addLayer"
-            @delete-layer="deleteLayer"
+            @selectedLayer="_changeLayer"
+            @change-layer-name="_changeLayerName"
+            @add-layer="_addLayer"
+            @delete-layer="_deleteLayer"
           />
         </div>
         <mapgis-ui-tabs
           :animated="false"
           :tabBarStyle="tabBarStyle"
           :active-key="activeKey"
-          @change="tabChange"
+          @change="_tabChange"
           size="small"
         >
           <mapgis-ui-tab-pane
@@ -48,13 +48,13 @@
                 :key="item.id"
                 slot="renderItem"
                 slot-scope="item, index"
-                @click="clickListItem(item, index)"
+                @click="_clickListItem(item, index)"
               >
                 <mapgis-ui-toolbar-command
                   :class="item.isProjected ? 'camera-active' : 'camera'"
                   icon="mapgis-shexiangji"
                   title="投放"
-                  @click="onPutVideo(item)"
+                  @click="_onPutVideo(item)"
                 ></mapgis-ui-toolbar-command>
                 <operations-item
                   class="full-width"
@@ -62,15 +62,15 @@
                   :text="item.name"
                   :operations="['setting', 'delete', 'locate']"
                   :showOperations="activeIndex === index"
-                  @setting="onGotoSetting(item, index)"
-                  @delete="onDeleteVideo(item.id)"
-                  @locate="onLocate(item)"
+                  @setting="_onGotoSetting(item, index)"
+                  @delete="_onDeleteVideo(item.id)"
+                  @locate="_onLocate(item)"
                 ></operations-item>
                 <mapgis-ui-checkbox
                   class="item-checkbox"
                   v-show="isBatch"
                   :checked="selectedIds.includes(item.id)"
-                  @change="changeItemChecked(item.id, $event)"
+                  @change="_changeItemChecked(item.id, $event)"
                 >
                 </mapgis-ui-checkbox>
               </mapgis-ui-list-item>
@@ -90,20 +90,22 @@
               <div class="buttons">
                 <div v-show="isBatch" class="full-width">
                   <mapgis-ui-button
-                    @click="cancelPutVideos"
+                    @click="_cancelPutVideos"
                     class="control-button"
                     >取消投放</mapgis-ui-button
                   >
-                  <mapgis-ui-button @click="putVideos" class="control-button"
+                  <mapgis-ui-button @click="_putVideos" class="control-button"
                     >投放视频</mapgis-ui-button
                   >
-                  <mapgis-ui-button @click="deleteVideos" class="control-button"
+                  <mapgis-ui-button
+                    @click="_deleteVideos"
+                    class="control-button"
                     >删除</mapgis-ui-button
                   >
                 </div>
                 <div v-show="!isBatch" class="full-width">
                   <mapgis-ui-button
-                    @click="newVideo"
+                    @click="_newVideo"
                     type="primary"
                     class="full-width"
                   >
@@ -119,19 +121,19 @@
             class="control-content"
             id="parameter-formList"
           >
-            <video-setting
+            <mapgis-3d-video-setting
               v-if="
                 currentEditVideo && Object.keys(currentEditVideo).length > 0
               "
               :settings="currentEditVideo"
-              @update-settings="updateSettings"
-              @cancel="cancelSetting"
-            ></video-setting>
+              @update-settings="_updateSettings"
+              @cancel="_cancelSetting"
+            ></mapgis-3d-video-setting>
           </mapgis-ui-tab-pane>
           <mapgis-ui-checkbox
             v-show="activeKey === '1'"
             slot="tabBarExtraContent"
-            @change="changeBatch"
+            @change="_changeBatch"
           >
             批量操作
           </mapgis-ui-checkbox>
@@ -152,12 +154,11 @@ import {
   setDepthTestAgainstTerrainEnable
 } from "../../WebGlobe/util";
 import OperationsItem from "./components/OperationsItem.vue";
-import VideoSetting from "./VideoSetting.vue";
 import VideoLayerSelect from "./components/VideoLayerSelect.vue";
 export default {
   name: "mapgis-3d-video-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
-  components: { OperationsItem, VideoSetting, VideoLayerSelect },
+  components: { OperationsItem, VideoLayerSelect },
   props: {
     ...VueOptions,
     videoOverlayLayerList: {
@@ -310,7 +311,7 @@ export default {
     /**
      * 修改图层名
      */
-    changeLayerName({ id, dataIndex, value }) {
+    _changeLayerName({ id, dataIndex, value }) {
       const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
       const target = videoOverlayLayerList.find(item => item.id === id);
       if (target) {
@@ -321,13 +322,13 @@ export default {
     /**
      * 添加图层
      */
-    addLayer(newLayer) {
+    _addLayer(newLayer) {
       this.videoOverlayLayerListCopy.push(newLayer);
     },
     /**
      * 删除图层
      */
-    deleteLayer(id) {
+    _deleteLayer(id) {
       const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
       this.videoOverlayLayerListCopy = videoOverlayLayerList.filter(
         item => item.id !== id
@@ -336,7 +337,7 @@ export default {
     /**
      * 更改图层名
      */
-    changeLayer(val) {
+    _changeLayer(val) {
       this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
         item => item.name === val
       );
@@ -344,7 +345,7 @@ export default {
     /**
      * 更改tab标签
      */
-    tabChange(e) {
+    _tabChange(e) {
       this.activeKey = e;
       if (e === "2") {
       }
@@ -352,13 +353,13 @@ export default {
     /**
      * 是否批量操作
      */
-    changeBatch({ target }) {
+    _changeBatch({ target }) {
       this.isBatch = target.checked;
     },
     /**
      * 列表中checbox事件
      */
-    changeItemChecked(id, event) {
+    _changeItemChecked(id, event) {
       const checked = event.target.checked;
       if (checked) {
         if (!this.selectedIds.includes(id)) {
@@ -376,14 +377,14 @@ export default {
     /**
      * 点击列表项
      */
-    clickListItem(item, index) {
+    _clickListItem(item, index) {
       this.activeIndex = index;
       this.currentEditVideo = item;
     },
     /**
      * 新建video
      */
-    newVideo() {
+    _newVideo() {
       const guid = newGuid();
       const newVideo = {
         id: guid, // 视频id
@@ -413,13 +414,13 @@ export default {
     /**
      * 批量删除
      */
-    deleteVideos() {
+    _deleteVideos() {
       const videoList = [...this.videoList];
       const { selectedIds } = this;
       this.videoList = videoList.filter(item => !selectedIds.includes(item.id));
       // 取消被删除video的投放
       for (let i = 0; i < selectedIds.length; i++) {
-        this.viewer.scene.visualAnalysisManager.removeByID(selectedIds[i]);
+        this.cancelPutVideo(selectedIds[i]);
       }
       this.selectedIds = [];
       this.$emit("update-config", this.videoOverlayLayerListCopy);
@@ -427,7 +428,7 @@ export default {
     /**
      * 批量投放
      */
-    putVideos() {
+    _putVideos() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
         const video = this.videoList.find(item => item.id === selectedIds[i]);
@@ -445,10 +446,10 @@ export default {
     /**
      * 批量取消投放
      */
-    cancelPutVideos() {
+    _cancelPutVideos() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
-        this.viewer.scene.visualAnalysisManager.removeByID(selectedIds[i]);
+        this.cancelPutVideo(selectedIds[i]);
       }
       const videoList = [...this.videoList];
       videoList.map(item => {
@@ -462,23 +463,15 @@ export default {
     /**
      * 跳转到video配置界面
      */
-    onGotoSetting(video, index) {
+    _onGotoSetting(video, index) {
       this.activeIndex = index;
       this.activeKey = "2";
-      // 设置前先投放
-      this.putVideo(video);
       this.currentEditVideo = video;
     },
     /**
      * 更新video参数
      */
-    updateSettings(settings) {
-      // 先恢复投放状态
-      if (!this.currentEditVideo.isProjected) {
-        this.viewer.scene.visualAnalysisManager.removeByID(
-          this.currentEditVideo.id
-        );
-      }
+    _updateSettings(settings) {
       let target = this.videoList.find(item => item.id === settings.id);
       if (target) {
         const videoList = [...this.videoList];
@@ -500,27 +493,21 @@ export default {
     /**
      * 取消设置
      */
-    cancelSetting() {
-      //恢复投放状态
-      if (!this.currentEditVideo.isProjected) {
-        this.viewer.scene.visualAnalysisManager.removeByID(
-          this.currentEditVideo.id
-        );
-      }
+    _cancelSetting() {
       this.activeKey = "1";
     },
     /**
      * 删除video
      */
-    onDeleteVideo(id) {
+    _onDeleteVideo(id) {
       const videoList = [...this.videoList];
       this.videoList = videoList.filter(item => item.id !== id);
-      this.viewer.scene.visualAnalysisManager.removeByID(id);
+      this.cancelPutVideo(id);
     },
     /**
      * 获取投放视频协议
      */
-    getProType(protocol) {
+    _getProType(protocol) {
       let proType;
       switch (protocol) {
         case "m3u8":
@@ -548,7 +535,7 @@ export default {
       }
       const { viewer, Cesium } = this;
       const { id, params } = video;
-      const proType = this.getProType(video.params.videoSource.protocol);
+      const proType = this._getProType(video.params.videoSource.protocol);
       scenePro = new Cesium.SceneProjector(proType);
       viewer.scene.visualAnalysisManager.add(scenePro, id);
       switch (proType) {
@@ -606,16 +593,22 @@ export default {
       scenePro.verticalAngle = vFOV;
     },
     /**
+     * 取消投放
+     */
+    cancelPutVideo(id) {
+      this.viewer.scene.visualAnalysisManager.removeByID(id);
+    },
+    /**
      * 单个投放/取消投放
      */
-    onPutVideo(video) {
+    _onPutVideo(video) {
       let isProjected = false;
       let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
         video.id
       );
       if (scenePro) {
         // 视频已经被投放，则取消投放
-        this.viewer.scene.visualAnalysisManager.removeByID(video.id);
+        this.cancelPutVideo(video.id);
         isProjected = false;
       } else {
         // 未投放，则投放
@@ -632,20 +625,20 @@ export default {
     /**
      * 定位到摄像机位置
      */
-    onLocate(item) {
-      const { cameraPosition } = item.params;
+    _onLocate(item) {
+      const { cameraPosition, orientation } = item.params;
       const { Cesium, viewer } = this;
       const destination = Cesium.Cartesian3.fromDegrees(
         cameraPosition.x,
         cameraPosition.y,
-        viewer.camera.positionCartographic.height
+        cameraPosition.z
       );
       viewer.camera.flyTo({
         destination,
         orientation: {
-          heading: Cesium.Math.toRadians(0), // 0 // 绕垂直于地心的轴旋转 ,相当于头部左右转
-          pitch: Cesium.Math.toRadians(-90), // -90  //绕经度线旋转， 相当于头部上下
-          roll: Cesium.Math.toRadians(0) // 0         //绕纬度线旋转 ，面对的一面瞬时针转
+          heading: Cesium.Math.toRadians(orientation.heading), // 0 // 绕垂直于地心的轴旋转 ,相当于头部左右转
+          pitch: Cesium.Math.toRadians(orientation.pitch), // -90  //绕经度线旋转， 相当于头部上下
+          roll: Cesium.Math.toRadians(orientation.roll) // 0         //绕纬度线旋转 ，面对的一面瞬时针转
         }
       });
     },
