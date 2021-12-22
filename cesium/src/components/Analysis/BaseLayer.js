@@ -43,7 +43,6 @@ export default {
     $_draw(drawFunction, viewer, analyseFunction, analysisName) {
       window.drawElement = new window.Cesium.DrawElement(viewer);
       let vm = this;
-      console.log("drawElement", drawElement);
       window.drawElement[drawFunction]({
         callback: function (result) {
           // console.log("positions", positions);

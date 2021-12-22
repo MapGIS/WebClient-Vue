@@ -10,6 +10,125 @@
 
 $tree-height: 400px;
 
+.mapgis-3d-bim-component {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  height: $tree-height;
+  width: 270px;
+
+  &-wrapper {
+  }
+
+  &-layers {
+      min-width: 160px;
+  }
+
+  &-slider-tree {
+    top: 90px;
+    left: 290px;
+    position: absolute;
+    z-index: 2000;
+  }
+
+  .mapgis-ui-collapse-card {
+    /* margin: 0px;
+    padding: 0px; */
+    // overflow-x: hidden;
+    height: $tree-height;
+    width: 270px;
+    // background: #000;
+  }
+
+  .mapgis-ui-card-body {
+    /* margin: 0px;
+    padding: 0px; */
+    height: $tree-height;
+    width: 250px;
+    background: #f00;
+  }
+
+  .select {
+    /* background-color: $primary-6;  
+    border-radius: 4px; */
+  }
+
+  .active {
+    color: $primary-6;
+  }
+
+  &-version {
+    font-size: 12px;
+    font-weight: bolder;
+    color: transparent;
+  }
+
+  &-title {
+    font-size: 14;
+    font-weight: bold;
+    color: $panel-text-color;
+  }
+
+  &-icons {
+    .anticon {
+      line-height: 36px;
+      font-size: 16px;
+      float: right;
+      color: linear-gradient(0deg, #5a6a82, #7a8da0);
+    }
+    .anticon:hover {
+      color: $primary-6;
+    }
+  }
+
+  &-span {
+    display: inline-block;
+    justify-content: space-between;
+  }
+  &-span:hover {
+    .iconfont {
+      color: $primary-6;
+    }
+    .iconfont-disabled {
+      color: #666666 !important;
+    }
+    .mapgis-3d-stratified-household-version {
+      color: $primary-6;
+    }
+  }
+  &-span-inline {
+    width: 240px;
+  }
+  &-span {
+    .iconfont {
+      line-height: 28px;
+      font-size: 16px;
+      float: right;
+      color: transparent;
+    }
+
+    .iconfont-disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .mapgis-3d-g3d-document {
+    display: block;
+    height: fit-content;
+    &-tree {
+      max-height: 360px;
+      min-width: 200px;
+      overflow-y: scroll;
+    }
+  }
+
+  .mapgis-ui-collapse-card-extra {
+    .anticon {
+      line-height: 36px;
+    }
+  }
+}
+
 .mapgis-3d-stratified-household {
   position: absolute;
   top: 10px;
