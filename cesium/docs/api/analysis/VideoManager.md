@@ -18,6 +18,22 @@
 - **默认值:** `(Math.random() * 100000000).toFixed(0)`随机计算值
 - **描述:** 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
+### `modelUrl`
+
+- **类型:** `String`
+- **必选**
+- **侦听属性**
+- **描述:** 相机模型路径
+- **默认值:**
+
+### `modelOffset`
+
+- **类型:** `Object`
+- **可选**
+- **侦听属性**
+- **描述:** 相机模型朝向偏移量
+- **默认值:** { headingOffset: -90, pitchOffset: 0, rollOffset: 0 }
+
 ### `videoOverlayLayerList`
 
 - **类型:** `Array`
@@ -213,7 +229,11 @@
       :url="m3dUrl"
     ></mapgis-3d-m3d-layer>
     <mapgis-ui-card class="storybook-ui-card">
-      <mapgis-3d-video-manager :videoOverlayLayerList="videoOverlayLayerList">
+      <mapgis-3d-video-manager
+        :videoOverlayLayerList="videoOverlayLayerList"
+        :modelUrl="modelUrl"
+        :modelOffset="modelOffset"
+      >
       </mapgis-3d-video-manager>
     </mapgis-ui-card>
   </mapgis-web-scene>
@@ -226,6 +246,8 @@ export default {
       m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       autoReset: true,
       maximumScreenSpaceError: 8,
+      modelUrl: "./CesiumModels/Cesium_Camera.glb",
+      modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
       videoOverlayLayerList: [
         {
           id: "123-345-567-789",

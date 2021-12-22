@@ -126,6 +126,8 @@
                 currentEditVideo && Object.keys(currentEditVideo).length > 0
               "
               :settings="currentEditVideo"
+              :modelUrl="modelUrl"
+              :modelOffset="modelOffset"
               @update-settings="_updateSettings"
               @cancel="_cancelSetting"
             ></mapgis-3d-video-setting>
@@ -202,6 +204,15 @@ export default {
     hintLineVisible: {
       type: Boolean,
       default: true
+    },
+    modelUrl: {
+      type: String
+    },
+    modelOffset: {
+      type: Object,
+      default: () => {
+        return { headingOffset: -90, pitchOffset: 0, rollOffset: 0 };
+      }
     }
   },
   computed: {
@@ -591,12 +602,14 @@ export default {
       scenePro.hintLineVisible = hintLineVisible;
       scenePro.horizontAngle = hFOV;
       scenePro.verticalAngle = vFOV;
+      this.addCameraMarker(video, this.modelUrl, this.modelOffset);
     },
     /**
      * 取消投放
      */
     cancelPutVideo(id) {
       this.viewer.scene.visualAnalysisManager.removeByID(id);
+      this.removeCameraMarker(id);
     },
     /**
      * 单个投放/取消投放
@@ -636,11 +649,56 @@ export default {
       viewer.camera.flyTo({
         destination,
         orientation: {
-          heading: Cesium.Math.toRadians(orientation.heading), // 0 // 绕垂直于地心的轴旋转 ,相当于头部左右转
-          pitch: Cesium.Math.toRadians(orientation.pitch), // -90  //绕经度线旋转， 相当于头部上下
-          roll: Cesium.Math.toRadians(orientation.roll) // 0         //绕纬度线旋转 ，面对的一面瞬时针转
+          heading: Cesium.Math.toRadians(orientation.heading), // 绕垂直于地心的轴旋转 ,相当于头部左右转
+          pitch: Cesium.Math.toRadians(orientation.pitch), // 绕经度线旋转， 相当于头部上下
+          roll: Cesium.Math.toRadians(orientation.roll) // 绕纬度线旋转 ，面对的一面瞬时针转
         }
       });
+    },
+    /**
+     * 添加相机标注
+     */
+    addCameraMarker(video, modelUrl, modelOffset) {
+      const { Cesium, viewer } = this;
+      const { id, params } = video;
+      const { cameraPosition, orientation } = params;
+      const position = Cesium.Cartesian3.fromDegrees(
+        cameraPosition.x,
+        cameraPosition.y,
+        cameraPosition.z
+      );
+      const { headingOffset, pitchOffset, rollOffset } = modelOffset;
+      //弧度的航向分量。
+      const heading = Cesium.Math.toRadians(
+        orientation.heading + headingOffset
+      );
+      //弧度的螺距分量。
+      const pitch = Cesium.Math.toRadians(orientation.pitch + pitchOffset);
+      //滚动分量（以弧度为单位）
+      const roll = Cesium.Math.toRadians(orientation.roll + rollOffset);
+      //HeadingPitchRoll旋转表示为航向，俯仰和滚动。围绕Z轴。节距是绕负y轴的旋转。滚动是关于正x轴。
+      const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+      const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
+        position,
+        hpr
+      );
+      const modelObj = {
+        id,
+        url: modelUrl,
+        modelMatrix: modelMatrix,
+        scale: 1.0
+      };
+
+      viewer.scene.primitives.add(Cesium.Model.fromGltf(modelObj));
+    },
+    removeCameraMarker(id) {
+      const { primitives } = this.viewer.scene;
+      for (let i = 0; i < primitives.length; i++) {
+        const p = primitives.get(i);
+        if (p.id === id) {
+          this.viewer.scene.primitives.remove(p);
+        }
+      }
     },
     /**
      * 设置depthTestAgainstTerrain和logarithmicDepthBuffer

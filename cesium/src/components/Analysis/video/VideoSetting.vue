@@ -279,6 +279,15 @@ export default {
           prePitch: 0
         };
       }
+    },
+    modelUrl: {
+      type: String
+    },
+    modelOffset: {
+      type: Object,
+      default: () => {
+        return { headingOffset: -90, pitchOffset: 0, rollOffset: 0 };
+      }
     }
   },
   watch: {
@@ -297,6 +306,19 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    orientation: {
+      handler() {
+        if (this.modelPrimitive) {
+          const modelMatrix = this.getModelMatrix(
+            this.params,
+            this.modelOffset
+          );
+          this.modelPrimitive.modelMatrix = modelMatrix;
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   computed: {
@@ -305,6 +327,9 @@ export default {
     },
     videoSource() {
       return this.settingsCopy.params.videoSource;
+    },
+    orientation() {
+      return this.settingsCopy.params.orientation;
     },
     params: {
       get: function() {
@@ -332,7 +357,8 @@ export default {
       imageStyle: {
         height: "150px",
         margin: "0 auto"
-      }
+      },
+      modelPrimitive: undefined
     };
   },
   mounted() {
@@ -604,6 +630,7 @@ export default {
      */
     putVideo(video) {
       this._openSceneSetting();
+      this.addCameraMarker(video, this.modelUrl, this.modelOffset);
       let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
         video.id
       );
@@ -677,6 +704,65 @@ export default {
      */
     cancelPutVideo(id) {
       this.viewer.scene.visualAnalysisManager.removeByID(id);
+      this.removeCameraMarker();
+    },
+    getModelMatrix(params, modelOffset) {
+      const { Cesium, viewer } = this;
+      const { cameraPosition, orientation } = params;
+      const position = Cesium.Cartesian3.fromDegrees(
+        cameraPosition.x,
+        cameraPosition.y,
+        cameraPosition.z
+      );
+      const { headingOffset, pitchOffset, rollOffset } = modelOffset;
+      //弧度的航向分量。
+      const heading = Cesium.Math.toRadians(
+        orientation.heading + headingOffset
+      );
+      //弧度的螺距分量。
+      const pitch = Cesium.Math.toRadians(orientation.pitch + pitchOffset);
+      //滚动分量（以弧度为单位）
+      const roll = Cesium.Math.toRadians(orientation.roll + rollOffset);
+      //HeadingPitchRoll旋转表示为航向，俯仰和滚动。围绕Z轴。节距是绕负y轴的旋转。滚动是关于正x轴。
+      const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+      const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
+        position,
+        hpr
+      );
+      return modelMatrix;
+    },
+    /**
+     * 添加相机标注
+     */
+    addCameraMarker(video, modelUrl, modelOffset) {
+      const { primitives } = this.viewer.scene;
+      for (let i = 0; i < primitives.length; i++) {
+        const p = primitives.get(i);
+        if (p.id === video.id) {
+          this.modelPrimitive = p;
+          break;
+        }
+      }
+      if (!this.modelPrimitive) {
+        const { Cesium, viewer } = this;
+        const { id } = video;
+        const modelMatrix = this.getModelMatrix(video.params, modelOffset);
+        const modelObj = {
+          id,
+          url: modelUrl,
+          modelMatrix: modelMatrix,
+          scale: 1.0
+        };
+
+        this.modelPrimitive = viewer.scene.primitives.add(
+          Cesium.Model.fromGltf(modelObj)
+        );
+      }
+    },
+    removeCameraMarker() {
+      if (this.primitive) {
+        this.viewer.scene.primitives.remove(this.primitive);
+      }
     },
     /**
      * @description 世界坐标转经纬度坐标
