@@ -77,8 +77,12 @@ export default {
         this.mounted();
     },
     watch: {
-        rainOption() {
+        rainOption(e) {
             this.rain();
+            let floodSpeeds =  [100,300,500,600];
+            this.floodSpeedCopy = floodSpeeds[e];
+
+            this.computeStartHeight();
         },
         angle() {
             this.rain();
@@ -92,9 +96,6 @@ export default {
             angle: 30,
             //积水初始高度
             mHeight: 0,
-            maxHeightCopy:2000,
-            startHeightCopy:0,
-            floodSpeedCopy:200
         };
     },
     destroyed() {
@@ -113,7 +114,7 @@ export default {
                 }
             );
             this.mount();
-            this.$emit("load", this);
+            this.$emit("loaded", this);
         },
         destroyed() {
             const { vueCesium, vueKey, vueIndex } = this;
@@ -206,10 +207,10 @@ export default {
             for(m=0;m<yn;m++){
                 for(n=0;n<xn;n++){
                     let pt = Cesium.Cartographic.fromRadians( xmin+n*x , ymin+m*y );
-                    samplePoints.push(pt);
+                        samplePoints.push(pt);
                 }
             }
-
+            
             const vm = this;
             
             var promise = Cesium.sampleTerrain(viewer.terrainProvider,11, samplePoints);
@@ -221,9 +222,10 @@ export default {
                     }
 
                 })
-                // console.log("minHeight",minHeight);
                 vm.startHeightCopy = minHeight;
-                vm._doAnalysis()
+                
+                vm._removeFlood();
+                vm._doAnalysis();
             });
 
         },

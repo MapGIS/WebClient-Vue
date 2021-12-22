@@ -92,7 +92,6 @@ export default {
     },
     parseM3dVersion() {},
     onM3dLoaded(e, n) {
-      console.log(e, n);
     },
     mount() {
       const vm = this;
@@ -160,7 +159,8 @@ export default {
           let m3dLayer = viewer.scene.layers.getM3DLayer(layerIndex);
           let m3ds = [m3dLayer];
           vm.loopM3d(m3ds, "2.0");
-          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+          vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
+          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {version: '2.0'});
           vm.initPopupEvent();
         }
       });

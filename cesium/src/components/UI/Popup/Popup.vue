@@ -143,13 +143,12 @@ export default {
       if (find) {
         popup = find.source;
       }
-
+      
       if (popup && popup.remove) {
         popup.remove();
         popup = undefined;
         vueCesium.PopupManager.deleteSource(vueKey, vueIndex);
       }
-
       if (this.visible && this.show) {
         popup = this.createCesiumObject();
         this.$emit("load", { popup: popup });

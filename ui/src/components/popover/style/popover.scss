@@ -218,11 +218,11 @@
   width: auto;
   height: fit-content;
   padding: 0;
-  background-color: $popup-background;
+  background-color: $popover-background;
 }
 
 .mapboxgl-popup-header {
-  background-color: $popup-background;
+  background-color: $popover-background;
 }
 
 // cesium popup
@@ -267,7 +267,7 @@
 .cesium-popup-images {
   height: 200px;
   width: 330px;
-  background: $popup-background;
+  background: $popover-background;
 }
 
 .cesium-popup-images-title {
@@ -281,12 +281,12 @@
   overflow-y: auto;
   font-size: 1.2em;
   z-index: 9999;
-  border: 1px solid $popup-background;
+  border: 1px solid $popover-background;
   box-shadow: 0px 0px 20px $primary-6;
-  -moz-box-shadow: 0px 0px 10px $popup-background;
-  -webkit-box-shadow: 0px 0px 10px $popup-background;
+  -moz-box-shadow: 0px 0px 10px $popover-background;
+  -webkit-box-shadow: 0px 0px 10px $popover-background;
   border-radius: 3px 3px 3px 3px;
-  background: $popup-background;
+  background: $popover-background;
   background-size: 50% 50%;
   background-repeat: no-repeat;
 }
@@ -303,8 +303,8 @@
 }
 
 .cesium-popup-tip {
-  background: $popup-background;
-  box-shadow: 0 3px 14px $popup-background;
+  background: $popover-background;
+  box-shadow: 0 3px 14px $popover-background;
   width: 17px;
   height: 17px;
   padding: 1px;
@@ -320,7 +320,7 @@ $popover-prefix-cls: $ant-prefix + "-popover";
 
 .#{$popover-prefix-cls} {
   // .reset-component;
-  background: $popup-background;
+  background: $popover-background;
   position: absolute;
   top: 0;
   left: 0;

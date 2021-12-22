@@ -99,7 +99,7 @@ export default {
   methods: {
     mount(){
       // this.initial = true;
-      this.$emit("load", this);
+      this.$emit("loaded", this);
     },
     unmount(){
       this.$_deleteManger("SettingToolManager", function (manager) {

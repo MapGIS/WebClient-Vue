@@ -12,13 +12,6 @@ export default {
       type: String,
       default: null
     },
-    mapIndex: {
-      type: Number
-    },
-    layers: {
-      type: String,
-      default: null
-    },
     autoReset: {
       type: Boolean,
       default: true
@@ -32,7 +25,7 @@ export default {
       default: false
     },
     filter: {
-      type: [Object, Array],
+      type: Object,
       default: null
     },
     clampToGround: {
@@ -50,7 +43,10 @@ export default {
       }
     },
     featureStyle: {
-      type: [Object, Array]
+      type: Object,
+      default(){
+        return {}
+      }
     }
   },
   data() {
@@ -64,12 +60,6 @@ export default {
   },
   watch: {
     baseUrl: {
-      handler: function () {
-        this.unmount();
-        this.mount();
-      },
-    },
-    layers: {
       handler: function () {
         this.unmount();
         this.mount();
@@ -95,17 +85,17 @@ export default {
       let layerIndex;
       let options = {};
       options = vm.initOptions(options);
-      if (vm.baseUrl.indexOf("/g3d") > -1) {
-        layerIndex = viewer.scene.layers.appendG3DLayer(vm.baseUrl, {
-          ...options,
-          getDocLayerIndexes: vm._handleCallback
-        });
-      } else {
+      // if (vm.baseUrl.indexOf("/g3d") > -1) {
+      //   layerIndex = viewer.scene.layers.appendG3DLayer(vm.baseUrl, {
+      //     ...options,
+      //     getDocLayerIndexes: vm._handleCallback
+      //   });
+      // } else {
         layerIndex = viewer.scene.layers.appendVectorLayer(vm.baseUrl, {
           ...options,
           getDocLayerIndexes: vm._handleCallback
         });
-      }
+      // }
 
       vueCesium.IgsFeatureManager.addSource(
           vm.vueKey,
@@ -126,13 +116,7 @@ export default {
     },
     initOptions(options) {
       const {Cesium} = this;
-      let {layers, autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
-      if (layers) {
-        if (layers.indexOf("gdbp") <= -1 && layers.indexOf("layers") <= -1) {
-          layers = 'layers=show:' + layers;
-        }
-        options.layers = layers;
-      }
+      let {autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
       if (autoReset) {
         options.autoReset = autoReset;
       }
@@ -141,28 +125,28 @@ export default {
       }
       if (featureStyle) {
         let featureStyleCopy = clonedeep(featureStyle);
-        if (Array.isArray(featureStyle)) {
-          // 先做key值替换
-          let tempArr = [];
-          featureStyleCopy.map((currentVal, index, array) => {
-            tempArr.push({
-              'type': currentVal.type, 'styleOptions': currentVal.parameters
-            })
-          })
-          tempArr.forEach((fs) => {
-            let styleOptions = fs.styleOptions;
-            if (styleOptions && styleOptions.color) {
-              let colorTrans = Cesium.Color.fromCssColorString(styleOptions.color);
-              styleOptions.color = colorTrans;
-            }
-            if (styleOptions && styleOptions.outlineColor) {
-              let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
-              styleOptions.outlineColor = outlineColorTemp;
-            }
-            fs.styleOptions = styleOptions;
-          })
-          options.style = tempArr;
-        } else {
+        // if (Array.isArray(featureStyle)) {
+        //   // 先做key值替换
+        //   let tempArr = [];
+        //   featureStyleCopy.map((currentVal, index, array) => {
+        //     tempArr.push({
+        //       'type': currentVal.type, 'styleOptions': currentVal.parameters
+        //     })
+        //   })
+        //   tempArr.forEach((fs) => {
+        //     let styleOptions = fs.styleOptions;
+        //     if (styleOptions && styleOptions.color) {
+        //       let colorTrans = Cesium.Color.fromCssColorString(styleOptions.color);
+        //       styleOptions.color = colorTrans;
+        //     }
+        //     if (styleOptions && styleOptions.outlineColor) {
+        //       let outlineColorTemp = Cesium.Color.fromCssColorString(styleOptions.outlineColor);
+        //       styleOptions.outlineColor = outlineColorTemp;
+        //     }
+        //     fs.styleOptions = styleOptions;
+        //   })
+        //   options.style = tempArr;
+        // } else {
           // 先做key值替换
           featureStyleCopy = this.$_changeKey(featureStyleCopy);
           let styleOptions = featureStyleCopy.styleOptions;
@@ -174,7 +158,7 @@ export default {
             styleOptions.outlineColor = outlineColorTemp;
           }
           options.style = featureStyleCopy;
-        }
+        // }
       }
       if (mapIndex) {
         options.mapIndex = mapIndex;
@@ -204,10 +188,9 @@ export default {
     },
 
     _handleCallback(indexs) {
-      console.log(indexs);
       let layerIndex = indexs;
       //抛出load事件
-      this.$emit("load", {layerIndex: layerIndex});
+      this.$emit("loaded", {layerIndex: layerIndex});
     }
   }
 }

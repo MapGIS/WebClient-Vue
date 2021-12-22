@@ -43,7 +43,6 @@ export default {
     $_draw(drawFunction, viewer, analyseFunction, analysisName) {
       window.drawElement = new window.Cesium.DrawElement(viewer);
       let vm = this;
-      console.log("drawElement", drawElement);
       window.drawElement[drawFunction]({
         callback: function (result) {
           // console.log("positions", positions);
@@ -130,6 +129,7 @@ export default {
           }
           callback(m3dArr);
           clearInterval(interval);
+          this.interval = undefined;
         }
       }, 50);
     },
@@ -166,6 +166,7 @@ export default {
           clearInterval(interval);
         }
       }, 50);
+      this.interval = interval;
     },
     $_degreeFromCartesian(p) {
       let point = {};

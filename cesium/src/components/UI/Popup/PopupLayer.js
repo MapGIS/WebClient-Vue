@@ -142,6 +142,8 @@ export default class PopupLayer {
     this.movement = this.movement.bind(this);
     this.update = this.update.bind(this);
 
+    this.updateEvent = () => this.update();
+
     this.bindEvent();
 
     return this;
@@ -223,9 +225,9 @@ export default class PopupLayer {
     }
 
     if (this.options.postRender) {
-      this.map.scene.postRender.addEventListener(() => self.update());
+      this.map.scene.postRender.addEventListener(self.updateEvent);
     } else {
-      this.map.camera.changed.addEventListener(() => self.update());
+      this.map.camera.changed.addEventListener(self.updateEvent);
       this.handler.setInputAction(
         this.moveStart,
         this.Cesium.ScreenSpaceEventType.LEFT_DOWN
@@ -234,7 +236,7 @@ export default class PopupLayer {
         this.moveEnd,
         this.Cesium.ScreenSpaceEventType.LEFT_UP
       );
-      this.map.scene.camera.moveEnd.addEventListener(() => self.update());
+      this.map.scene.camera.moveEnd.addEventListener(self.updateEvent);
     }
   }
 
@@ -245,10 +247,10 @@ export default class PopupLayer {
     }
 
     if (this.options.postRender) {
-      this.map.scene.postRender.removeEventListener(() => self.update());
+      this.map.scene.postRender.removeEventListener(self.updateEvent);
     } else {
-      this.map.camera.changed.removeEventListener(() => self.update());
-      this.map.scene.camera.moveEnd.removeEventListener(() => self.update());
+      this.map.camera.changed.removeEventListener(self.updateEvent);
+      this.map.scene.camera.moveEnd.removeEventListener(self.updateEvent);
       this.handler.destroy();
     }
   }

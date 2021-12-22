@@ -3,7 +3,7 @@
     <slot>
       <div class="mapgis-widget-video-manager">
         <!-- 视频列表页面 -->
-        <div style="width:100%;padding:12px">
+        <div class="video-layer-select-div">
           <video-layer-select
             :selectOptions="videoOverlayLayerListCopy"
             @selectedLayer="changeLayer"
@@ -22,8 +22,7 @@
           <mapgis-ui-tab-pane
             key="1"
             tab="投放列表"
-            style="position: relative"
-            class="control-content"
+            class="control-content list-pane"
           >
             <mapgis-ui-list
               :key="`list-${currentVideoOverlayLayer.id}`"
@@ -31,9 +30,8 @@
               size="small"
               :data-source="videoList"
               :pagination="pagination"
-              class="mapgis-list"
+              class="mapgis-list video-list"
               :split="false"
-              style="max-height: 310px;;overflow-y: auto;width:100%"
             >
               <mapgis-ui-empty
                 :image="emptyImage"
@@ -45,7 +43,7 @@
                 </span>
               </mapgis-ui-empty>
               <mapgis-ui-list-item
-                style="padding: 4px 8px; cursor: pointer; display: inline-flex;width: 100%;align-items: center;"
+                class="list-item"
                 :class="{ 'list-active': activeIndex === index }"
                 :key="item.id"
                 slot="renderItem"
@@ -59,7 +57,7 @@
                   @click="onPutVideo(item)"
                 ></mapgis-ui-toolbar-command>
                 <operations-item
-                  style="width:100%"
+                  class="full-width"
                   :key="item.id"
                   :text="item.name"
                   :operations="['setting', 'delete', 'locate']"
@@ -69,7 +67,7 @@
                   @locate="onLocate(item)"
                 ></operations-item>
                 <mapgis-ui-checkbox
-                  style="float:right"
+                  class="item-checkbox"
                   v-show="isBatch"
                   :checked="selectedIds.includes(item.id)"
                   @change="changeItemChecked(item.id, $event)"
@@ -77,21 +75,20 @@
                 </mapgis-ui-checkbox>
               </mapgis-ui-list-item>
             </mapgis-ui-list>
-            <div style="bottom: 0;position: absolute;width: 100%;">
+            <div class="pagination-div">
               <mapgis-ui-pagination
                 v-show="!isBatch"
                 hideOnSinglePage
-                style="padding:6px 0;width:100%;display: flex;justify-content: flex-end;"
+                class="pagination"
                 @change="pagination.onChange"
                 :pageSize="pagination.pageSize"
                 :total="videoList.length"
                 :size="pagination.size"
+                :show-total="total => `共${total}条数据`"
               ></mapgis-ui-pagination>
               <!-- 批量操作 -->
-              <div
-                style="display: flex;align-items: center;justify-content: flex-end;padding-top:6px;width:100%;border-top: 1px solid var(--border-color-split);"
-              >
-                <div v-show="isBatch" style="width:100%">
+              <div class="buttons">
+                <div v-show="isBatch" class="full-width">
                   <mapgis-ui-button
                     @click="cancelPutVideos"
                     class="control-button"
@@ -104,11 +101,11 @@
                     >删除</mapgis-ui-button
                   >
                 </div>
-                <div v-show="!isBatch" style="width:100%">
+                <div v-show="!isBatch" class="full-width">
                   <mapgis-ui-button
                     @click="newVideo"
                     type="primary"
-                    style="width:100%"
+                    class="full-width"
                   >
                     新建投放视频
                   </mapgis-ui-button>
@@ -145,8 +142,8 @@
 </template>
 
 <script>
-import emptyImage from "@mapgis/webclient-vue-ui/src/components/iconfont/image/empty.png";
-import { newGuid } from "@mapgis/webclient-vue-ui/src/util/common/util.js";
+import emptyImage from "../../../assets/image/empty.png";
+import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
 import {
   isLogarithmicDepthBufferEnable,
@@ -157,7 +154,6 @@ import {
 import OperationsItem from "./components/OperationsItem.vue";
 import VideoSetting from "./VideoSetting.vue";
 import VideoLayerSelect from "./components/VideoLayerSelect.vue";
-import videoOverlayLayerList from "./videosData.js";
 export default {
   name: "mapgis-3d-video-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -166,7 +162,7 @@ export default {
     ...VueOptions,
     videoOverlayLayerList: {
       type: Array,
-      default: () => videoOverlayLayerList()
+      default: () => []
     },
     protocol: {
       type: String,
@@ -223,14 +219,16 @@ export default {
   watch: {
     videoOverlayLayerList: {
       handler() {
-        this.videoOverlayLayerListCopy = this.videoOverlayLayerList;
+        this.videoOverlayLayerListCopy = JSON.parse(
+          JSON.stringify(this.videoOverlayLayerList)
+        );
         if (this.videoOverlayLayerListCopy.length > 0) {
           // 默认取第一个
           this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
           this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
           this.layerSelectOptions = [];
-          for (let i = 0; i < this.videoOverlayLayerList.length; i++) {
-            const { id, name } = this.videoOverlayLayerList[i];
+          for (let i = 0; i < this.videoOverlayLayerListCopy.length; i++) {
+            const { id, name } = this.videoOverlayLayerListCopy[i];
             this.layerSelectOptions.push({ id, name });
           }
         }
@@ -276,7 +274,7 @@ export default {
         },
         current: 1,
         size: "small",
-        pageSize: 3
+        pageSize: 20
       },
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
       //是否开启缓存区
@@ -379,7 +377,6 @@ export default {
      * 点击列表项
      */
     clickListItem(item, index) {
-      let vm = this;
       this.activeIndex = index;
       this.currentEditVideo = item;
     },
@@ -396,7 +393,7 @@ export default {
         params: {
           videoSource: {
             protocol: "mp4", // 视频传输协议
-            videoUrl: "" // 视频服务地址
+            videoUrl: undefined // 视频服务地址
           },
           cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
           orientation: {
@@ -425,6 +422,7 @@ export default {
         this.viewer.scene.visualAnalysisManager.removeByID(selectedIds[i]);
       }
       this.selectedIds = [];
+      this.$emit("update-config", this.videoOverlayLayerListCopy);
     },
     /**
      * 批量投放
@@ -497,6 +495,7 @@ export default {
       }
       this.currentEditVideo = settings;
       this.activeKey = "1";
+      this.$emit("update-config", this.videoOverlayLayerListCopy);
     },
     /**
      * 取消设置
@@ -571,17 +570,36 @@ export default {
         vFOV,
         hintLineVisible
       } = params;
-      let cartesian = Cesium.Cartographic.toCartesian(
+      const viewPosition = Cesium.Cartographic.toCartesian(
         Cesium.Cartographic.fromDegrees(
           cameraPosition.x,
           cameraPosition.y,
           cameraPosition.z
         )
       );
-      cartesian.x -= 10;
-      scenePro.viewPosition = cartesian;
-      scenePro.heading = orientation.heading;
-      scenePro.pitch = orientation.pitch;
+      // viewPosition.x -= 10;
+      scenePro.viewPosition = viewPosition;
+      let targetPosition = Cesium.AlgorithmLib.pickFromRay(
+        viewer.scene,
+        viewPosition,
+        { heading: orientation.heading, pitch: orientation.pitch }
+      );
+      if (!targetPosition) {
+        targetPosition = Cesium.AlgorithmLib.pickFromRay(
+          viewer.scene,
+          viewPosition,
+          {
+            heading: orientation.heading,
+            pitch: orientation.pitch,
+            distance: 150
+          }
+        );
+        scenePro.targetPosition = targetPosition;
+      } else {
+        scenePro.targetPosition = targetPosition;
+      }
+      // scenePro.heading = orientation.heading;
+      // scenePro.pitch = orientation.pitch;
       scenePro.roll = orientation.roll;
       scenePro.hintLineVisible = hintLineVisible;
       scenePro.horizontAngle = hFOV;
@@ -687,22 +705,61 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.mapgis-widget-video-manager {
-  .control-content {
-    max-height: 394px;
-    /*overflow: hidden;*/
-    overflow-y: auto;
-    padding-top: 10px;
-    height: 394px;
-  }
+<style scoped>
+.video-layer-select-div {
+  width: 100%;
+  padding: 12px;
+}
+.list-pane {
+  position: relative;
+}
+.video-list {
+  max-height: 310px;
+  overflow-y: auto;
+  width: 100%;
+}
+.list-item {
+  padding: 4px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+}
+.full-width {
+  width: 100%;
+}
+.item-checkbox {
+  float: right;
+}
+.pagination-div {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
+.pagination {
+  padding: 6px 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 6px;
+  width: 100%;
+  border-top: 1px solid var(--border-color-split);
+}
+.control-content {
+  max-height: 394px;
+  overflow: hidden;
+  overflow-y: auto;
+  padding-top: 10px;
+  height: 394px;
+}
 
-  .list-active {
-    background: #e0f0ff;
-    .operations-row-action {
-      display: block;
-    }
-  }
+.list-active {
+  background: #e0f0ff;
 }
 
 .camera {
@@ -714,7 +771,7 @@ export default {
 }
 
 .empty-style {
-  font-size: 14px;
+  font-size: 12px;
   font-family: Microsoft YaHei;
   font-weight: 400;
   color: #999999;
@@ -729,6 +786,10 @@ export default {
 }
 ::v-deep .mapgis-ui-tabs-nav .mapgis-ui-tabs-tab {
   margin: 0;
+}
+
+::v-deep .mapgis-ui-list-items {
+  display: grid;
 }
 
 ::v-deep .mapgis-ui-tabs-nav-scroll {
