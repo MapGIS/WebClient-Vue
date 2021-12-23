@@ -12,7 +12,7 @@
             type="number"
             :min="0"
             :max="180"
-            v-model="formData.horizontAngle"
+            v-model.number="formData.horizontAngle"
           />
           <mapgis-ui-slider
             v-model="formData.horizontAngle"
@@ -28,7 +28,7 @@
             type="number"
             :min="0"
             :max="180"
-            v-model="formData.verticalAngle"
+            v-model.number="formData.verticalAngle"
           />
           <mapgis-ui-slider
             v-model="formData.verticalAngle"
@@ -46,7 +46,7 @@
             type="number"
             :min="0"
             :max="360"
-            v-model="angleSet.heading"
+            v-model.number="angleSet.heading"
           />
           <mapgis-ui-slider
             v-model="angleSet.heading"
@@ -62,7 +62,7 @@
             type="number"
             :min="0"
             :max="360"
-            v-model="angleSet.pitch"
+            v-model.number="angleSet.pitch"
           />
           <mapgis-ui-slider
             v-model="angleSet.pitch"
@@ -94,26 +94,26 @@
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="目标点坐标">
         <mapgis-ui-input
-          v-model="posData.targetPositionX"
+          v-model.number="posData.targetPositionX"
           :step="0.0001"
           type="number"
           addon-before="经度"
         />
         <mapgis-ui-input
-          v-model="posData.targetPositionY"
+          v-model.number="posData.targetPositionY"
           :step="0.0001"
           type="number"
           addon-before="纬度"
         />
         <mapgis-ui-input
-          v-model="posData.targetPositionZ"
+          v-model.number="posData.targetPositionZ"
           type="number"
           addon-before="高度"
         />
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="附加高度">
         <mapgis-ui-input
-          v-model="formData.exHeight"
+          v-model.number="formData.exHeight"
           type="number"
           :min="0"
           :step="0.1"
@@ -122,7 +122,7 @@
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="可视距离">
         <mapgis-ui-input
-          v-model="angleSet.viewRadius"
+          v-model.number="angleSet.viewRadius"
           :min="0"
           type="number"
           addon-after="米"
