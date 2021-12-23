@@ -433,18 +433,24 @@ export default {
     _getPlayer(val) {
       console.log(val);
       const player = val;
-      player.on("loadstart", function() {
+      player.on("loadstart", () => {
         //开始加载
         console.log("loadstart");
       });
-      player.on("waiting", function() {
+      player.on("waiting", () => {
         console.log("waiting");
       });
-      player.on("pause", function() {
+      player.on("pause", () => {
         console.log("pause");
+        if (this.scenePro) {
+          this.scenePro.isPaused = true;
+        }
       });
-      player.on("play", function() {
+      player.on("play", () => {
         console.log("play");
+        if (this.scenePro) {
+          this.scenePro.isPaused = false;
+        }
       });
     },
     /**
