@@ -365,10 +365,10 @@ export default {
           let positions = results.positions;
           // self.remove();
 
-          //阻止浏览器默认的右键菜单行为
-          document.oncontextmenu = function(){
-          　　return false;
-          }
+          // //阻止浏览器默认的右键菜单行为
+          // document.oncontextmenu = function(){
+          // 　　return false;
+          // }
 
           self.toggleMask(true);
           this.$emit("analysisBegin");
@@ -414,7 +414,7 @@ export default {
             shadowColor: shadowColor,
             sunColor: sunColor,
             percentCallback: this.setPercent,
-            intervalTime: 10,
+            intervalTime: 60,
             pointSize:10
           })
           // 时间段范围阴影分析
