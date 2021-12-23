@@ -504,6 +504,7 @@ export default {
           find.options.lnglat = null;
         }
       }
+      this.lnglat = undefined;
     },
     unmount() {
       let {vueCesium, vueKey, vueIndex} = this;
