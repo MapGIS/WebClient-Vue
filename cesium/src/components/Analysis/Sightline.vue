@@ -35,7 +35,7 @@
       >通视分析
       </mapgis-ui-button
       >
-      <mapgis-ui-button type="primary" @click="lookAroundAnalysis"
+      <mapgis-ui-button type="primary" @click="doLookAroundAnalysis"
       >环视通视分析
       </mapgis-ui-button
       >
@@ -227,20 +227,28 @@ export default {
       }
       this.addEventListener();
     },
-    lookAroundAnalysis() {
-      this.startEventHandler();
-      this.addEventListener();
+    doLookAroundAnalysis() {
+      // this.startEventHandler();
+      if (!this.isDepthTestAgainstTerrainEnable) {
+        // 如果深度检测没有开启，则开启
+        setDepthTestAgainstTerrainEnable(true, this.viewer);
+      }
+      // this.addEventListener();
       let visibility;
       let find = this.findSource();
-      if (find.options && find.options.visiblityAnalysis) {
+      if (find && find.options && find.options.visiblityAnalysis) {
         visibility = find.options.visiblityAnalysis;
+        this.visibilityArr.push(visibility);
       } else {
         visibility = this.createVisibility();
       }
 
       let drawElement = new Cesium.DrawElement(this.viewer);
+      let cesiumColor = Cesium.Color.fromCssColorString("#FF0000"
+      ).withAlpha(0.5);
       drawElement.startDrawingCircle({
-        color: new Cesium.Color(0.2, 0.4, 0.3, 1.0),
+        // color: new Cesium.Color(0.2, 0.4, 0.3, 1.0),
+        color:cesiumColor,
         callback: function (result) {
           drawElement.stopDrawing();
           visibility.lookAroundAnalysis(result.center, result.radius);
