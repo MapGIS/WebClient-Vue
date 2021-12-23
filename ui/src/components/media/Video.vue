@@ -72,18 +72,19 @@ export default {
       if (this.player) {
         return;
       }
+      const vm = this;
       this.$nextTick(() => {
         const options = {
           autoplay: true
         };
-        this.player = videojs(
-          this.$refs.videoPlayer,
+        vm.player = videojs(
+          vm.$refs.videoPlayer,
           options,
           function onPlayerReady() {
-            console.log("onPlayerReady", this);
+            vm.$emit("onPlayerReady", this);
           }
         );
-        this.addVideo();
+        vm.addVideo();
       });
     },
     addVideo() {
