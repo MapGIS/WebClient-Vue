@@ -1,21 +1,36 @@
 let iconsInfo3D = [{
-  type: "point",
-  title: "点"
+  type: "mouse",
+  title: "选择"
+}, {
+  type: "cube",
+  title: "正方体"
 },{
-  type: "text",
-  title: "文字"
+  type: "polygonCube",
+  title: "立体多边形"
 },{
-  type: "marker",
-  title: "图标"
+  type: "box",
+  title: "长方体"
 },{
-  type: "line",
-  title: "线"
+  type: "cylinder",
+  title: "圆锥"
 },{
-  type: "polygon",
-  title: "多边形"
+  type: "cone",
+  title: "圆柱"
 },{
-  type: "rectangle",
-  title: "矩形"
+  type: "ellipsoid",
+  title: "球"
+},{
+  type: "polylineVolume",
+  title: "圆管线"
+},{
+  type: "corridor",
+  title: "方管线"
+},{
+  type: "wall",
+  title: "墙"
+},{
+  type: "model",
+  title: "模型"
 }];
 
 export default iconsInfo3D;

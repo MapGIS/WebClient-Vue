@@ -68,10 +68,17 @@ import Base64IconsKeyValue from "../iconfont/Base64IconsKeyValue"
 export default {
   name: "mapgis-ui-story-panel-large",
   props: {
+    //数据源
     dataSource: {
       type: Array,
       default() {
-        return [];
+        return [
+          {
+            images: [],//图片数组
+            title: "",//标题
+            content: ""//内容
+          }
+        ];
       }
     },
     height: {

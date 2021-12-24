@@ -87,7 +87,7 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="colorPickerProps.colorCol">
-        <div class="mix-row-color-outer">
+        <div class="mix-row-color-outer" :style="mainStyle">
           <mapgis-ui-sketch-color-picker
               :color="valueCopy"
               @input="$_changeColorSketch"
@@ -119,32 +119,22 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputProps.inputCol">
-        <mapgis-ui-form-item
-            :validate-status="validateStatus"
-            :style="formStyle"
-        >
-          <mapgis-ui-input
-              v-model="valueCopy"
-              :placeholder="inputProps.placeholder"
-              :addonAfter="inputProps.addonAfter"
-              :addonBefore="inputProps.addonBefore"
-              :disabled="inputProps.disabled"
-              :id="inputProps.id"
-              :maxLength="inputProps.maxLength"
-              :prefix="inputProps.prefix"
-              :size="inputProps.size"
-              :suffix="inputProps.suffix"
-              :type="inputProps.type"
-              :allowClear="inputProps.allowClear"
-              @change="$_change"
-              @pressEnter="$_pressEnter"
-              :style="mainStyle"
-          />
-        </mapgis-ui-form-item>
-        <mapgis-ui-form-item
-            validate-status="error"
-            help="Should be combination of numbers & alphabets"
-            v-if="validateStatus === 'error'"
+        <mapgis-ui-input
+          v-model="valueCopy"
+          :placeholder="inputProps.placeholder"
+          :addonAfter="inputProps.addonAfter"
+          :addonBefore="inputProps.addonBefore"
+          :disabled="inputProps.disabled"
+          :id="inputProps.id"
+          :maxLength="inputProps.maxLength"
+          :prefix="inputProps.prefix"
+          :size="inputProps.size"
+          :suffix="inputProps.suffix"
+          :type="inputProps.type"
+          :allowClear="inputProps.allowClear"
+          @change="$_change"
+          @pressEnter="$_pressEnter"
+          :style="mainStyle"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -598,7 +588,9 @@ export default {
     formStyle: {
       type: Object,
       default() {
-        return {};
+        return {
+          marginBottom: "0"
+        };
       }
     }
   },
@@ -944,7 +936,6 @@ export default {
   width: 100%;
   height: 32px;
   border-radius: 4px;
-  border: 1px solid var(--border-color-base);
 }
 
 .mix-row-input-number {

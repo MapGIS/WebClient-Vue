@@ -1,10 +1,12 @@
 <template>
   <div>
-    <mapgis-ui-row class="mapgis-ui-icon-row-container">
-      <img
+    <mapgis-ui-row class="mapgis-ui-icon-row-container" :style="mainStyle">
+      <img class="mapgis-ui-icon-row-img"
+           :style="iconStyle"
            :src="src"
            :title="imgTitle" alt="">
       {{ title }}
+      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools" class="mapgis-ui-icon-row-more-tool"/>
     </mapgis-ui-row>
   </div>
 </template>
@@ -24,12 +26,53 @@ export default {
     imgTitle: {
       type: String
     },
+    mainStyle: {
+      type: Object
+    },
+    iconStyle: {
+      type: Object
+    },
+    moreTools: {
+      type: Array,
+      default() {
+        return [{
+          event: "edit",
+          icon: "edit",
+          title: "修改"
+        }, {
+          event: "delete",
+          icon: "delete",
+          title: "删除"
+        }];
+      }
+    }
   },
+  methods: {
+    $_clickTool(type) {
+      this.$emit("clickTool", type);
+    }
+  }
 }
 </script>
 
 <style scoped>
 .mapgis-ui-icon-row-container {
   text-align: left;
+  font-size: 17px;
+}
+
+.mapgis-ui-icon-row-container:hover {
+  background: #E7F4FF;
+}
+
+.mapgis-ui-icon-row-more-tool {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mapgis-ui-icon-row-img {
+  width: 16px;
+  height: 16px;
 }
 </style>

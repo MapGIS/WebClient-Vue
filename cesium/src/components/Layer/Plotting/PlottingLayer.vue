@@ -14,7 +14,7 @@
 <script>
 import PanelOne from "./PanelOne"
 import EditPanel from "./EditPanel"
-import editOptions from "./panelOptions";
+import editList from "./panelOptions";
 import DrawPlotting from "./DrawPlotting";
 import DrawModeEnum from "./drawModeEnum";
 
