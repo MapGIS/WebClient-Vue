@@ -32,7 +32,7 @@ const Template = (args, { argTypes }) => ({
 export const BIM = Template.bind({});
 BIM.args = {
   // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
-  url: "http://192.168.88.204:8089/M3D/2.0/CIM/3栋/3栋.mcj",
+  url: "http://192.168.88.204:8089/M3D/2.0/高级住所模型/高级住所模型.mcj",
   show: true,
   opacity: 1.0,
   highlightStyle: {color: 'rgba(255, 255, 0, 0.6)'},
