@@ -97,7 +97,7 @@ export default {
           for (let i = 0; i < dataSource.length; i++) {
             json.push(dataSource[i]);
           }
-          this.$refs.graphicLayer.$_loadJson(json);
+          this.$refs.graphicLayer.$_fromJson(json);
           this.dataSourceCopy.push(data);
         }
       }

@@ -425,13 +425,18 @@ export default {
           if (this.isStartDrawing) {
             //停止绘制
             this.$_stopDrawing();
-            //根据当前的绘制类型，获取设置面板显示参数数据
-            let editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
             //根据面板显示参数数据生成绘制参数
-            let drawOptions = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
+            let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
             //根据编辑面板参数绘制图形
+            let drawType = this.currentEditType;
+            if (drawType === "cone") {
+              drawType = "circle";
+            }
+            if (drawType === "polygonCube") {
+              drawType = "polygon";
+            }
             this.$_startDrawing({
-              type: this.currentEditType,
+              type: drawType,
               ...drawOptions
             });
           } else {
@@ -626,16 +631,21 @@ export default {
           break;
         case "billboard":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.image = image;
+          editPanelValues.width = width;
+          editPanelValues.height = height;
+          editPanelValues.outlineWidth = outlineWidth;
+          editPanelValues.outlineOpacity = outlineColor[3] * 100;
+          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
           if (title) {
             editPanelValues.title = title;
           }
           break;
         case "polyline":
           editPanelValues.id = id;
-          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.materialType = materialType;
@@ -806,6 +816,10 @@ export default {
           drawOptions.style = {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             image: editPanelValues.image,
+            width: editPanelValues.width,
+            height: editPanelValues.height,
+            outlineColor: Cesium.Color.RED,
+            outlineWidth:10,
           };
           break;
         case "polyline":

@@ -227,12 +227,12 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return primitive Object 标绘图形对象
      * */
-    $_getPlottingPrimtiveByID(id, vueIndex, vueKey) {
+    $_getGraphicByID(id, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return this.hasObject(graphicsLayer, function (graphicsLayer) {
-        return graphicsLayer.getPlottingPrimtiveByID(id);
+        return graphicsLayer.getGraphicByID(id);
       });
     },
     /**
@@ -242,12 +242,12 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return primitive Object 标绘图形对象
      * */
-    $_getPlottingPrimtiveByIndex(index, vueIndex, vueKey) {
+    $_getGraphicByIndex(index, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return this.hasObject(graphicsLayer, function (graphicsLayer) {
-        return graphicsLayer.getPlottingPrimtiveByIndex(index);
+        return graphicsLayer.getGraphicByIndex(index);
       });
     },
     /**
@@ -256,7 +256,7 @@ export default {
      * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
-    $_loadJson(json, vueIndex, vueKey) {
+    $_fromJson(json, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
@@ -265,7 +265,6 @@ export default {
       } else if (json instanceof Object) {
         json = JSON.stringify([json]);
       }
-      console.log(json)
       this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.loadJson(json);
       });
@@ -280,7 +279,7 @@ export default {
     $_getJsonById(id, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
-      let jsons = this.$_exportToJson(vueIndex, vueKey);
+      let jsons = this.$_toJSON(vueIndex, vueKey);
       let json;
       for (let i = 0; i < jsons.length; i++) {
         if (jsons[i].id === id) {
@@ -296,7 +295,7 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return json Object 标绘图层的JSON对象
      * */
-    $_exportToJson(vueIndex, vueKey) {
+    $_toJSON(vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
@@ -309,7 +308,7 @@ export default {
      * @param dataSource Any 必传，要导出为文件的数据
      * @param title String 可选，文件名，不传时为无标题
      * */
-    $_exportToFile(dataSource, title) {
+    $_toFile(dataSource, title) {
       title = title || "无标题";
       this.hasObject(dataSource, function (dataSource) {
         const blob = new Blob([JSON.stringify(dataSource)], {
@@ -324,20 +323,20 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return isRemove Boolean 是否移除成功
      * */
-    $_removeAllPirmive(vueIndex, vueKey) {
+    $_removeAllGraphic(vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       this.hasObject(graphicsLayer, function (graphicsLayer) {
-        graphicsLayer.removeAllPirmive();
+        graphicsLayer.removeAllGraphic();
       });
     },
     /**
      * 移除选中标绘图形
      * */
-    $_removePickingPrimive() {
+    $_removePickingGraphic() {
       let graphicsLayer = this.$_getGraphicLayer();
-      return graphicsLayer.removePickingPrimive();
+      return graphicsLayer.removePickingGraphic();
     },
     /**
      * 根据index移除选中标绘图形
@@ -346,12 +345,12 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return isRemove Boolean 是否移除成功
      * */
-    $_removePlottingPrimitiveByIndex(index, vueIndex, vueKey) {
+    $_removeGraphicByIndex(index, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       this.hasObject(graphicsLayer, function (graphicsLayer) {
-        graphicsLayer.removePickingPrimive(index);
+        graphicsLayer.removeGraphicByIndex(index);
       });
     },
     /**
@@ -361,12 +360,12 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return isRemove Boolean 是否移除成功
      * */
-    $_removePlottingPrimiveByID(id, vueIndex, vueKey) {
+    $_removeGraphicByID(id, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       this.hasObject(graphicsLayer, function (graphicsLayer) {
-        graphicsLayer.removePlottingPrimiveByID(id);
+        graphicsLayer.removeGraphicByID(id);
       });
     },
     /**
@@ -388,12 +387,12 @@ export default {
      * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * @return [Primitive] Array 返回所有图形对象
      * */
-    $_getAllPlottingPrimitive(vueIndex, vueKey) {
+    $_getAllGraphic(vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return this.hasObject(graphicsLayer, function (graphicsLayer) {
-        return graphicsLayer.getAllPlottingPrimitive();
+        return graphicsLayer.getAllGraphic();
       });
     },
     /**
