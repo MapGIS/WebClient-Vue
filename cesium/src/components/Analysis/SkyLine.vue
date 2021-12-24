@@ -303,65 +303,9 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
-::v-deep {
-  .mapgis-ui-row-flex {
-    margin-bottom: 12px;
-
-    .row-flex-col-left {
-      margin-bottom: 2px;
-    }
-  }
-
-  .mapgis-ui-input-number {
-    width: 100%;
-  }
-
-  .mapgi-ui-input-disabled {
-    //color:fade($text-color, 40%);
-    background: transparent;
-  }
-
-  .mapgis-ui-sketch-color-picker .color-container {
-    border: unset;
-  }
-}
-
+<style scoped>
 #skyline-2d-chart {
   width: 300px;
   height: 230px;
-}
-
-.mapgis-widget-skyline-analysis {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-
-  .skyline-analysis-mask {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    //background: fade($white, 40%);
-    z-index: 2;
-  }
-}
-
-.ui-card.right {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  background-color: #fff;
-}
-
-.ui-card.left {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background-color: #fff;
 }
 </style>
