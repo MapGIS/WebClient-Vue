@@ -4,16 +4,14 @@
 
 ```html
 <template>
-  <mapgis-web-scene
-    class="mapgis-3d-scene"
-  >
+  <mapgis-web-scene class="mapgis-3d-scene">
     <mapgis-3d-ogc-wmts-layer
-        :baseUrl="baseUrl"
-        :wmtsLayer="wmtsLayer"
-        :tilingScheme="tilingScheme"
-        :tileMatrixSet="tileMatrixSet"
-        :format="format"
-        :layerStyle="layerStyle"
+      :baseUrl="baseUrl"
+      :wmtsLayer="wmtsLayer"
+      :tilingScheme="tilingScheme"
+      :tileMatrixSet="tileMatrixSet"
+      :format="format"
+      :layerStyle="layerStyle"
     >
     </mapgis-3d-ogc-wmts-layer>
   </mapgis-web-scene>
@@ -23,22 +21,22 @@
   export default {
     components: {
       "mapgis-web-scene": window.Mapgis3d.MapgisWebScene,
-      "mapgis-3d-ogc-wmts-layer": window.Mapgis3d.Mapgis3dOgcWmtsLayer
+      "mapgis-3d-ogc-wmts-layer": window.Mapgis3d.Mapgis3dOgcWmtsLayer,
     },
-    data: function() {
+    data: function () {
       return {
-        baseUrl: 'http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752',
-        wmtsLayer: 'vec',
-        tileMatrixSet: 'c',
-        tilingScheme: 'EPSG:4326',
-        format: 'tiles',
+        baseUrl:
+          "http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752",
+        wmtsLayer: "vec",
+        tileMatrixSet: "c",
+        tilingScheme: "EPSG:4326",
+        format: "tiles",
         layerStyle: {
-            zIndex: 1
-        }
+          zIndex: 1,
+        },
       };
     },
-    methods: {
-    }
+    methods: {},
   };
 </script>
 <style>
@@ -67,7 +65,7 @@
 # 主Cesium主体路径 对应 libPath
 path/to/statics/cesium/Cesium.js
 # Cesium拓展插件路径 对应 pluginPath
-path/to/statics/cesium/webclient-cesium-plugins.js
+path/to/statics/cesium/webclient-cesium-plugin.min.js
 ```
 
 :::
@@ -93,7 +91,7 @@ import { MapgisWebScene } from "@mapgis/webclient-vue-cesium";
 
 export default {
   components: {
-    MapgisWebScene
+    MapgisWebScene,
   },
   methods: {
     handleLoad(payload) {
@@ -101,8 +99,8 @@ export default {
       this.Cesium = Cesium;
       this.CesiumZondy = CesiumZondy;
       let webGlobe = window.webGlobe; // 获取实例化的Cesium场景对象
-    }
-  }
+    },
+  },
 };
 </script>
 ```
@@ -133,20 +131,22 @@ button {
 
 ```vue
 <template>
-<button class="animated shake infinite" @click="onClick">Click me!</button>
+  <button class="animated shake infinite" @click="onClick">Click me!</button>
 </template>
 
 <script>
 export default {
-    methods: {
-        onClick: () => { window.alert(1) },
+  methods: {
+    onClick: () => {
+      window.alert(1);
     },
-}
+  },
+};
 </script>
 
 <style>
 button {
-    color: blue;
+  color: blue;
 }
 </style>
 ```
@@ -204,7 +204,7 @@ Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 Map �
 
 ```vue
 <template>
-  <mapgis-web-scene  @load="onMapLoaded" />
+  <mapgis-web-scene @load="onMapLoaded" />
 </template>
 
 <script>
@@ -221,8 +221,8 @@ export default {
       // 或者只是存起来，加入全局vuex的状态存储中，以方便其他组件使用map对象，
       // 强烈禁止,应为很容易在其他地方误触this.$store.map的setter事件
       this.$store.webGlobe = window.webGlobe;
-    }
-  }
+    },
+  },
 };
 </script>
 ```

@@ -260,7 +260,7 @@ export default {
             this.enableStratifiedHouse
               ? "锁定/解锁图层"
               : "请按照分层分户要求制作数据",
-          icon: key => (this.layerKey == key ? "mapgis-lock" : "mapgis-lock"),
+          icon: key => (this.layerKey == key ? "mapgis-unlock" : "mapgis-lock"),
           click: payload => {
             if (this.enableStratifiedHouse) {
               this.changeIsolation(payload);

@@ -12,7 +12,7 @@
             type="number"
             :min="0"
             :max="180"
-            v-model="formData.horizontAngle"
+            v-model.number="formData.horizontAngle"
           />
           <mapgis-ui-slider
             v-model="formData.horizontAngle"
@@ -28,7 +28,7 @@
             type="number"
             :min="0"
             :max="180"
-            v-model="formData.verticalAngle"
+            v-model.number="formData.verticalAngle"
           />
           <mapgis-ui-slider
             v-model="formData.verticalAngle"
@@ -46,7 +46,7 @@
             type="number"
             :min="0"
             :max="360"
-            v-model="angleSet.heading"
+            v-model.number="angleSet.heading"
           />
           <mapgis-ui-slider
             v-model="angleSet.heading"
@@ -62,7 +62,7 @@
             type="number"
             :min="0"
             :max="360"
-            v-model="angleSet.pitch"
+            v-model.number="angleSet.pitch"
           />
           <mapgis-ui-slider
             v-model="angleSet.pitch"
@@ -94,26 +94,26 @@
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="目标点坐标">
         <mapgis-ui-input
-          v-model="posData.targetPositionX"
+          v-model.number="posData.targetPositionX"
           :step="0.0001"
           type="number"
           addon-before="经度"
         />
         <mapgis-ui-input
-          v-model="posData.targetPositionY"
+          v-model.number="posData.targetPositionY"
           :step="0.0001"
           type="number"
           addon-before="纬度"
         />
         <mapgis-ui-input
-          v-model="posData.targetPositionZ"
+          v-model.number="posData.targetPositionZ"
           type="number"
           addon-before="高度"
         />
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="附加高度">
         <mapgis-ui-input
-          v-model="formData.exHeight"
+          v-model.number="formData.exHeight"
           type="number"
           :min="0"
           :step="0.1"
@@ -122,7 +122,7 @@
       </mapgis-ui-form-item>
       <mapgis-ui-form-item label="可视距离">
         <mapgis-ui-input
-          v-model="angleSet.viewRadius"
+          v-model.number="angleSet.viewRadius"
           :min="0"
           type="number"
           addon-after="米"
@@ -184,6 +184,7 @@ import {
 
 export default {
   name: "mapgis-3d-viewshed",
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -241,7 +242,6 @@ export default {
       default: 1.85
     }
   },
-  inject: ["Cesium", "vueCesium", "viewer"],
   data() {
     return {
       formData: {
@@ -262,12 +262,12 @@ export default {
       },
       // 坐标数据
       posData: {
-        viewPositionX: "",
-        viewPositionY: "",
-        viewPositionZ: "",
-        targetPositionX: "",
-        targetPositionY: "",
-        targetPositionZ: ""
+        viewPositionX: undefined,
+        viewPositionY: undefined,
+        viewPositionZ: undefined,
+        targetPositionX: undefined,
+        targetPositionY: undefined,
+        targetPositionZ: undefined
       },
 
       // 是否为鼠标注册了监听事件
@@ -448,7 +448,7 @@ export default {
       // 根据坐标系标准，将笛卡尔坐标转换为地理坐标
       const cartographic = ellipsoid.cartesianToCartographic(position);
       // 获取高度
-      const height = cartographic.height.toFixed(8);
+      const height = Number(cartographic.height.toFixed(8));
 
       // 获取该位置的经纬度坐标
       const centerLon = parseFloat(
@@ -474,12 +474,12 @@ export default {
       this.startVisualAnalysis();
 
       if (
-        this.posData.viewPositionX !== "" &&
-        this.posData.viewPositionY !== "" &&
-        this.posData.viewPositionZ !== "" &&
-        this.posData.targetPositionX !== "" &&
-        this.posData.targetPositionY !== "" &&
-        this.posData.targetPositionZ !== ""
+        this.posData.viewPositionX !== undefined &&
+        this.posData.viewPositionY !== undefined &&
+        this.posData.viewPositionZ !== undefined &&
+        this.posData.targetPositionX !== undefined &&
+        this.posData.targetPositionY !== undefined &&
+        this.posData.targetPositionZ !== undefined
       ) {
         this.isHasTargetPos = false;
         // 注销鼠标的各项监听事件
@@ -496,22 +496,22 @@ export default {
 
         this.onInputStart();
       } else if (
-        this.posData.viewPositionX === "" &&
-        this.posData.viewPositionY === "" &&
-        this.posData.viewPositionZ === "" &&
-        this.posData.targetPositionX === "" &&
-        this.posData.targetPositionY === "" &&
-        this.posData.targetPositionZ === ""
+        this.posData.viewPositionX === undefined &&
+        this.posData.viewPositionY === undefined &&
+        this.posData.viewPositionZ === undefined &&
+        this.posData.targetPositionX === undefined &&
+        this.posData.targetPositionY === undefined &&
+        this.posData.targetPositionZ === undefined
       ) {
         this.isHasTargetPos = false;
         this.addEventListener();
       } else if (
-        this.posData.viewPositionX !== "" &&
-        this.posData.viewPositionY !== "" &&
-        this.posData.viewPositionZ !== "" &&
-        this.posData.targetPositionX === "" &&
-        this.posData.targetPositionY === "" &&
-        this.posData.targetPositionZ === ""
+        this.posData.viewPositionX !== undefined &&
+        this.posData.viewPositionY !== undefined &&
+        this.posData.viewPositionZ !== undefined &&
+        this.posData.targetPositionX === undefined &&
+        this.posData.targetPositionY === undefined &&
+        this.posData.targetPositionZ === undefined
       ) {
         this.isHasTargetPos = false;
         let viewCartesian = this.Cesium.Cartesian3.fromDegrees(
@@ -533,12 +533,12 @@ export default {
         this.hasViewPosition = true;
         this.addEventListener();
       } else if (
-        this.posData.viewPositionX === "" &&
-        this.posData.viewPositionY === "" &&
-        this.posData.viewPositionZ === "" &&
-        this.posData.targetPositionX !== "" &&
-        this.posData.targetPositionY !== "" &&
-        this.posData.targetPositionZ !== ""
+        this.posData.viewPositionX === undefined &&
+        this.posData.viewPositionY === undefined &&
+        this.posData.viewPositionZ === undefined &&
+        this.posData.targetPositionX !== undefined &&
+        this.posData.targetPositionY !== undefined &&
+        this.posData.targetPositionZ !== undefined
       ) {
         this.isHasTargetPos = true;
         this.addEventListener();
@@ -550,9 +550,10 @@ export default {
 
     // 开启可视域分析工具
     startVisualAnalysis() {
+      // 分析之前先清空之前的分析结果，包括观察点和目标点
+      this._removeVisualAnalysis();
+      this._resetPos();
       let { viewer, Cesium, vueKey, vueIndex } = this;
-      this.isAnalyze = true;
-      // this.tilesetArray = this.webGlobe._m3dServerLayer;
       //深度检测开启
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
         viewer
@@ -561,17 +562,11 @@ export default {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
+
+      this.isAnalyze = true;
+
       // 初始化分析工具
-      let find = this.findSource();
-      let { options } = find;
-      let visualAnalysis = options.visualAnalysis;
-      visualAnalysis = new Cesium.ViewshedAnalysis();
-
-      // 移除可视域分析结果
-      viewer.scene.visualAnalysisManager._visualAnalysisList = [];
-
-      // 移除所有观察点
-      viewer.entities.removeAll();
+      let visualAnalysis = new Cesium.ViewshedAnalysis();
 
       // 设置可视域分析工具的配置
       const unVisibleColor = new this.Cesium.Color.fromCssColorString(
@@ -644,8 +639,8 @@ export default {
       let find = this.findSource();
       const { heading, pitch, viewRadius } = find.options.visualAnalysis;
 
-      this.angleSet.heading = heading.toFixed(2);
-      this.angleSet.pitch = pitch.toFixed(2);
+      this.angleSet.heading = Number(heading.toFixed(2));
+      this.angleSet.pitch = Number(pitch.toFixed(2));
       this.angleSet.viewRadius = parseInt(viewRadius);
     },
 
@@ -680,7 +675,6 @@ export default {
 
     // 点击结束分析按钮回调
     onClickStop() {
-      let { vueKey, vueIndex } = this;
       // 注销鼠标的各项监听事件
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(
@@ -694,26 +688,23 @@ export default {
         );
       }
 
-      // 清空观察点与目标点坐标
-      this.posData.viewPositionX = "";
-      this.posData.viewPositionY = "";
-      this.posData.viewPositionZ = "";
-      this.posData.targetPositionX = "";
-      this.posData.targetPositionY = "";
-      this.posData.targetPositionZ = "";
+      this.isAddEventListener = false;
+
+      this._removeVisualAnalysis();
+      this._resetPos();
 
       // 清空方向角、俯仰角、可视距离
       this.angleSet.heading = 0;
       this.angleSet.pitch = 0;
       this.angleSet.viewRadius = 0;
 
-      // 移除所有观察点
-      this.viewer.entities.removeAll();
-
-      // for (let i = 0; i < (this.tilesetArray || []).length; i++) {
-      //   this.tilesetArray[i][0].debugFreezeFrame = false;
-      // }
-
+      //恢复深度检测的原始设置
+      this._restoreDepthTestAgainstTerrain();
+    },
+    /**
+     * 移除可视域分析结果
+     */
+    _removeVisualAnalysis() {
       // 移除可视域分析工具
       let find = this.findSource();
       if (find && find.options) {
@@ -725,13 +716,22 @@ export default {
 
       // 移除可视域分析结果
       this.viewer.scene.visualAnalysisManager._visualAnalysisList = [];
-
-      this.isAddEventListener = false;
-
-      //恢复深度检测的原始设置
-      this._restoreDepthTestAgainstTerrain();
-      this.hasViewPosition = false;
       this.isAnalyze = false;
+    },
+    /**
+     * 清空观察点与目标点
+     */
+    _resetPos() {
+      // 移除所有观察点
+      this.viewer.entities.removeAll();
+      // 清空观察点与目标点坐标
+      this.posData.viewPositionX = undefined;
+      this.posData.viewPositionY = undefined;
+      this.posData.viewPositionZ = undefined;
+      this.posData.targetPositionX = undefined;
+      this.posData.targetPositionY = undefined;
+      this.posData.targetPositionZ = undefined;
+      this.hasViewPosition = false;
     },
 
     // 为鼠标的各种行为注册监听事件

@@ -133,7 +133,6 @@ export default {
   top: 30px;
   left: 30px; */
   /* padding: 0 10px; */
-  background: #FFFFFF;
   /* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2);
   border-radius: 4px; */
 }

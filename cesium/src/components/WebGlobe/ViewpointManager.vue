@@ -294,7 +294,6 @@ export default {
     left: 10px; */
     width: 326px;
     height: fit-content;
-    background-color: #ffffff;
     /* border-radius: 4px; */
 }
 
@@ -390,7 +389,6 @@ export default {
 
 .item-name {
     font-size: 14px;
-    color: #666666;
     text-align: center;
     width: 100%;
     height: 33px;
@@ -422,6 +420,7 @@ export default {
 .more-tool-btn {
     height: 40px;
     line-height: 40px;
+    color: #333333;
 }
 
 .more-tool-btn:hover {

@@ -10,6 +10,7 @@ export { default as Mapgis3dCompare } from "./components/UI/Controls/Compare/Com
 export { default as Mapgis3dArcgisLegend } from "./components/UI/Controls/Legend/Legend.vue";
 export { default as Mapgis3dTable } from "./components/UI/Controls/Table/BaseTable.vue";
 export { default as Mapgis3dLocate } from "./components/UI/Controls/geoLocate/Locate.vue";
+export { default as Mapgis3dDebug } from "./components/UI/Controls/Debug/Debug.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -84,6 +85,7 @@ export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
 export { default as Mapgis3dVideoManger } from "./components/Analysis/video/VideoManager.vue";
+export { default as Mapgis3dVideoSetting } from "./components/Analysis/video/VideoSetting.vue";
 export { default as Mapgis3dBimComponent } from "./components/Analysis/BIM.vue";
 
 //融合组件

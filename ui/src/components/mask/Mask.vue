@@ -66,7 +66,13 @@ export default {
   methods: {
     addMask() {
       // 添加遮罩层
-      this.removeMask()
+      this.removeMask();
+
+      //阻止浏览器默认的右键菜单行为
+      document.oncontextmenu = function(){
+      　　return false;
+      }
+
       const parentDivClass = this.parentDivClass || 'mapgis-ui-map-container'
       const parent = document.getElementsByClassName(parentDivClass)
       const mask = document.createElement('mapgis-ui-mask')

@@ -18,7 +18,7 @@
         v-model="heightLimitCopy"
         @change="val => setInput(val)"
         style="font-size: 13px"/>
-    <mapgis-3d-draw :vue-key="vueKey" v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
+    <mapgis-3d-draw v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
                     :drawStyle="drawStyleCopy"
                     :enableControl="enableControl">
       <div class="parent_div">
@@ -373,6 +373,8 @@ export default {
       this.drawer && this.drawer.enableDrawRectangle();
     },
     toggleDelete() {
+      let vm = this;
+      vm.lnglat = undefined;
       this.drawer && this.drawer.removeEntities();
       //清空drawElement
       if (window.drawElement) {
@@ -502,6 +504,7 @@ export default {
           find.options.lnglat = null;
         }
       }
+      this.lnglat = undefined;
     },
     unmount() {
       let {vueCesium, vueKey, vueIndex} = this;

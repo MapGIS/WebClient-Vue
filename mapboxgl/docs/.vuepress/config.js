@@ -237,7 +237,10 @@ module.exports = {
           {
             title: "版本",
             collapsable: false,
-            children: [["/version/diff.md", "版本对比"]]
+            children: [
+              ["/version/version.md", "更新说明"],
+              ["/version/diff.md", "版本对比"]
+            ],
           }
           // ['/plugins/', 'Plugins'],
         ]

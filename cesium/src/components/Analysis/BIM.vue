@@ -54,6 +54,7 @@
           class="mapgis-3d-bim-component-tree"
           :checkedKeys="layerIds"
           :show-line="false"
+          :multiple="false"
           :checkable="true"
           :checkStrictly="false"
           :tree-data="layerTree"
@@ -65,7 +66,7 @@
           @check="onCheck"
         >
           <template slot="icon" slot-scope="{}"> </template>
-          <template slot="title" slot-scope="{ title, icon, count }">
+          <template slot="title" slot-scope="{ title, icon, key, count }">
             <span
               :class="{
                 'mapgis-3d-bim-component-span': true,
@@ -85,7 +86,7 @@
               <mapgis-ui-tooltip v-for="(s, j) in submenus" :key="j">
                 <template slot="title">{{ s.tooltip() }}</template>
                 <mapgis-ui-iconfont
-                  v-if="!isolation"
+                  v-if="!isolation || selectLayerIndex == key"
                   :type="s.icon()"
                   :class="{
                     iconfont: true,
@@ -94,6 +95,7 @@
                   @click="
                     s.click({
                       title,
+                      index,
                       icon,
                       key,
                     })
@@ -199,7 +201,7 @@ export default {
           icon: () => "mapgis-layer",
           click: (payload) => {
             if (this.enableBim) {
-              this.handleActiveItemKey(payload);
+              // this.handleActiveItemKey(payload);
             }
           },
         },
@@ -207,7 +209,8 @@ export default {
           title: "锁定/解锁图层",
           tooltip: () =>
             this.enableBim ? "锁定/解锁图层" : "请按照BIM要求制作数据",
-          icon: (key) => (this.layerKey == key ? "mapgis-lock" : "mapgis-lock"),
+          icon: (key) =>
+            this.layerKey == key ? "mapgis-lock" : "mapgis-unlock",
           click: (payload) => {
             if (this.enableBim) {
               this.changeIsolation(payload);
@@ -339,11 +342,12 @@ export default {
         clearInterval(this.interval);
       }
     },
+    // 构建树内部逻辑
     parseTree(tree) {
-      let cbtree = this.loopTreeNode(tree, "");
+      let cbtree = this.loopTreeNode(tree, "", undefined);
       this.layerTree.splice(0, 1, cbtree);
     },
-    loopTreeNode(node, prefix) {
+    loopTreeNode(node, prefix, parent) {
       const vm = this;
       let key = `${prefix}_${node.depth}`;
       vm.layerIds.push(/* key +  */ node.index);
@@ -351,21 +355,100 @@ export default {
       let cbnode = {
         title: node.index,
         key: /*  key +  */ node.index,
+        index: node.index,
         icon: "mapgis-sanweiditu",
         children: [],
+        parent: parent,
+        isleaf: false,
         count: 0,
         scopedSlots: { icon: "icon", title: "title" },
       };
       node.treeChildren.forEach((child) => {
-        let c = vm.loopTreeNode(child, key);
+        let c = vm.loopTreeNode(child, key, cbnode);
         cbnode.children.push(c);
         cbnode.count += c.count;
       });
       if (cbnode.children.length <= 0) {
         [delete cbnode.children];
         cbnode.count = 1;
+        cbnode.isleaf = true;
       }
       return cbnode;
+    },
+    findRoot() {
+      const { layerTree } = this;
+      if (!layerTree || layerTree.length <= 0) return undefined;
+      let root = layerTree[0];
+      return root;
+    },
+    findTreePath(index) {
+      let result = {
+        paths: [],
+        node: undefined,
+      };
+      let root = this.findRoot();
+      let find = this.findNode(root, index);
+      let paths = [];
+      this.findParent(find, paths);
+      this.findChildren(find, paths);
+      result.paths = paths;
+      result.node = find;
+      return result;
+    },
+    findNode(node, index) {
+      const vm = this;
+      let find = undefined;
+      if (!node) return find;
+      if (node.index == index) {
+        return node;
+      }
+      if (node.children) {
+        for (let i = 0; i < node.children.length; i++) {
+          let child = node.children[i];
+          find = vm.findNode(child, index);
+          if (find) {
+            break;
+          }
+        }
+      }
+      return find;
+    },
+    findParent(node, paths) {
+      if (node && node.parent) {
+        paths.push(node.parent);
+        this.findParent(node.parent, paths);
+      }
+    },
+    findChildren(node, paths) {
+      if (node) {
+        paths.push(node);
+        if (node && node.children) {
+          node.children.forEach((child) => {
+            this.findChildren(child, paths);
+          });
+        }
+      }
+    },
+    actionTree(node, action) {
+      const vm = this;
+      action(node);
+      if (node && node.children) {
+        node.children.forEach((child) => vm.actionTree(child, action));
+      }
+    },
+    disableTree(node) {
+      let root = this.findRoot();
+      this.actionTree(root, (n) => {
+        n.disabled = true;
+      });
+      this.actionTree(node, (n) => {
+        n.disabled = false;
+      });
+    },
+    enableTree(node) {
+      this.actionTree(node, (n) => {
+        n.disabled = false;
+      });
     },
     // 搜索需要
     onExpand(expandedKeys) {
@@ -425,8 +508,10 @@ export default {
       if (selectedNodes && selectedNodes.length > 0) {
         let { data } = selectedNodes[0];
         let { props } = data;
-        let { layerIndex } = props;
-        this.highlightM3d(layerIndex);
+        let { index } = props;
+        this.highlightM3d(index);
+      } else {
+        this.resetAllLayer();
       }
     },
     onCheck(checks, payload) {
@@ -464,13 +549,13 @@ export default {
       }
     },
     handleActiveItemKey(layer) {
-      const { title, version, gdbp, ip, port, layerIndex, key } = layer;
+      const { title, version, gdbp, ip, port, index, key } = layer;
       this.title = title;
       this.gdbp = gdbp;
       this.version = version;
       this.ip = ip;
       this.port = port;
-      this.selectLayerIndex = layerIndex;
+      this.selectLayerIndex = index;
       this.layerKey = key;
       this.$refs.card && this.$refs.card.togglePanel();
       this.disableLayerSelect = true;
@@ -530,38 +615,27 @@ export default {
       }
     },
     enableIsolation(layer) {
-      /* const { g3dLayerIndex, viewer } = this;
-      const { layerIndex } = layer;
-      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-      let layerIndexs = g3dLayer.getM3DLayerIndexes();
+      const { viewer } = this;
+      const { title } = layer;
       this.featurevisible = false;
-      this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach((index) => {
-        let m3dlayer = g3dLayer.getLayer(index);
-        if (index != layerIndex) {
-          m3dlayer.show = false;
-        } else {
-          m3dlayer.show = true;
-          viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
-        }
-      });
-      let children = this.layerTree.map((c) => {
-        if (c.layerIndex == layerIndex) {
-          c.disabled = false;
-        } else {
-          c.disabled = true;
-        }
-        return c;
-      });
-      this.layerTree.splice(0, 1, children[0]); */
+      this.selectedKeys = [`${title}`];
+
+      let find = this.findTreePath(title);
+      const { paths, node } = find;
+      let indexs = paths.map((p) => p.index);
+      this.changeLayerVisible(indexs);
+      this.flyToLayer(node.index);
+      this.disableTree(node);
+
+      let root = this.findRoot();
+      this.layerTree.splice(0, 1, root);
     },
     disableIsolation() {
-      /* let children = this.layerTree.map((c) => {
-        c.disabled = false;
-        return c;
-      });
-      this.layerTree.splice(0, 1, children[0]);
-      this.restoreOrigindVisible(); */
+      let root = this.findRoot();
+      this.enableTree(root);
+      this.resetAllLayer();
+      this.showAllLayer();
+      this.layerTree.splice(0, 1, root);
     },
     handleMenu(menu) {
       if (menu == "隐藏面板") {
@@ -575,20 +649,45 @@ export default {
           this.$_bindPickFeature();
         }
       } else if (menu == "重置图层") {
-        this.$_resetLayer();
+        this.resetAllLayer();
       }
     },
-    $_resetLayer() {
-      const { innerVueIndex, vueKey, vueCesium } = this;
+    flyToLayer(index) {
+      const { innerVueIndex, vueKey, vueCesium, viewer } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.source) {
-        let m3d = find.source;
-        m3d.reset();
+        let { tree } = find.source;
+        let mapgism3dNode = tree.getM3DByName(index);
+        if (mapgism3dNode) {
+          viewer.camera.flyToBoundingSphere(mapgism3dNode.boundingSphere);
+        }
+      }
+    },
+    resetAllLayer() {
+      const { innerVueIndex, vueKey, vueCesium } = this;
+      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      if (find && find.options) {
+        let { m3d } = find.options;
+        m3d.reset && m3d.reset();
+      }
+    },
+    showAllLayer() {
+      const { innerVueIndex, vueKey, vueCesium, allLayerIds } = this;
+      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      if (find && find.options) {
+        let { tree } = find.options;
+        allLayerIds.forEach((layer) => {
+          let mapgism3dNode = tree.getM3DByName(layer);
+          if (mapgism3dNode) {
+            mapgism3dNode.forceInvisible = false;
+          }
+        });
       }
     },
     $_pickEvent(movement) {
       const { enableBim, enableDynamicQuery } = this;
       if (enableDynamicQuery) {
+        // m3d 不支持动态查询 只有g3d支持动态查询
         this.queryDynamic(movement);
       } else {
         this.queryStatic(movement);
@@ -634,27 +733,17 @@ export default {
     restoreM3d() {
       this.restoreOriginStyle();
     },
-    highlightM3d(layerIndex) {
-      const { vueKey, innerVueIndex, vueCesium } = this;
-      this.selectLayerIndex = layerIndex;
-      let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
-      let m3dlayer = g3dLayer.getLayer(layerIndex);
-      this.restoreM3d();
-      vueCesium.StratifiedHousehouldManager.changeOptions(
-        vueKey,
-        innerVueIndex,
-        "pickerTileset",
-        m3dlayer
-      );
-      vueCesium.StratifiedHousehouldManager.changeOptions(
-        vueKey,
-        innerVueIndex,
-        "pickerTilesetStyle",
-        m3dlayer.style
-      );
-      m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`,
-      });
+    highlightM3d(index) {
+      const { vueKey, innerVueIndex, vueCesium, Cesium } = this;
+      this.selectLayerIndex = index;
+      let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
+      if (find && find.options) {
+        let { tree } = find.options;
+        let mapgism3dNode = tree.getM3DByName(index);
+        if (mapgism3dNode) {
+          mapgism3dNode.setNodeColor(new Cesium.Color(0, 1, 0, 0.9));
+        }
+      }
     },
     handleDynamicQuery() {
       this.featurevisible = false;
@@ -708,10 +797,11 @@ export default {
             height: heightString2,
           };
 
-          m3d.pickedOid = oid;
-          m3d.pickedColor = Cesium.Color.fromCssColorString(
+          // 等修复好卡顿后再放开
+          /*m3d.pickedOid = oid;
+           m3d.pickedColor = Cesium.Color.fromCssColorString(
             "rgba(255, 255, 0, 0.75)"
-          );
+          ); */
 
           if (m3d._useRawSaveAtt && Cesium.defined(feature)) {
             let result = feature.content.getAttributeByOID(oid) || {};
@@ -723,11 +813,12 @@ export default {
             });
           }
         } else {
+          vm.featureposition = undefined;
           vm.featurevisible = false;
-          m3d.pickedOid = undefined;
+          /* m3d.pickedOid = undefined; */
         }
       }
-    }
+    },
   },
 };
 </script>
