@@ -103,6 +103,10 @@ export default {
       type: String,
       default: "horizontal" // 'horizontal' 'vertical' 'inline'
     },
+    initialStatebar: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -116,7 +120,7 @@ export default {
       timeline:false,      
       compass: false,
       zoom: false,
-      statebar:false,
+      statebar:this.initialStatebar,
       // longitude:undefined,
       // latitude:undefined,
       // height:undefined,
@@ -168,6 +172,12 @@ export default {
       handler:function(){
         this.enableStatebar();
       }
+    },
+    statebar:{
+      handler:function(){
+        this.enableStatebar();
+      },
+      immediate:true
     }
   },
   methods: {

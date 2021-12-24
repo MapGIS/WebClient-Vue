@@ -25,7 +25,6 @@ const Template = (args, { argTypes }) => ({
     template: `
       <mapgis-web-scene
           style="height:95vh"
-          :timeline="true"
       >
       <mapgis-3d-m3d-layer
           :auto-reset="autoReset"
@@ -33,7 +32,7 @@ const Template = (args, { argTypes }) => ({
           :url="m3dUrl"
       >
       </mapgis-3d-m3d-layer>
-      <mapgis-3d-scene-setting v-bind="$props" class="sceneSetting"></mapgis-3d-scene-setting>
+      <mapgis-3d-scene-setting v-bind="$props" :initialStatebar="true"></mapgis-3d-scene-setting>
       </mapgis-web-scene>
     `,
     data() {
