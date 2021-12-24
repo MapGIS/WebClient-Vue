@@ -17,7 +17,7 @@
               :tabBarGutter="0"
           >
             <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content" style="padding:12px">
-              <basic-setting ref="attr" :layout="layout" @updateSpin="changeSpinning"></basic-setting>
+              <basic-setting ref="attr" :layout="layout" @updateSpin="changeSpinning" :initialStatebar="initialStatebar"></basic-setting>
             </mapgis-ui-tab-pane>
             <mapgis-ui-tab-pane key="2" force-render tab="相机" class="control-content">
               <camera-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></camera-setting>
@@ -71,6 +71,11 @@ export default {
      */
     panelStyle: {
       type: Object,
+    },
+    //默认状态栏的开启
+    initialStatebar: {
+      type: Boolean,
+      default: false,
     }
   },
   data() {
