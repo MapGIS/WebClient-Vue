@@ -88,20 +88,17 @@ export default {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         //uuid相同，更新数据
         if (this.dataSourceCopy[i].uuid === data.uuid) {
-          console.log("更新数据")
           this.$set(this.dataSourceCopy, i, data);
-          this.$refs.graphicLayer.$_updateStyleBySource(data);
-          console.log(this.dataSourceCopy)
-          break;
+          this.$refs.graphicLayer.$_updateStyleByLayer(data);
         } else {
           //uuid不相同，新增数据
-          console.log("新增数据", data)
           let {dataSource} = data;
+          let json = [];
           for (let i = 0; i < dataSource.length; i++) {
-            this.$refs.graphicLayer.$_loadJson(dataSource[i]);
+            json.push(dataSource[i]);
           }
+          this.$refs.graphicLayer.$_loadJson(json);
           this.dataSourceCopy.push(data);
-          break;
         }
       }
     },

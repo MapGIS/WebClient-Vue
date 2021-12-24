@@ -159,7 +159,7 @@ export default {
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       let vm = this;
-      if(!style || !(style instanceof Object)){
+      if (!style || !(style instanceof Object)) {
         console.warn("样式为空或者不是对象！");
         return;
       }
@@ -183,7 +183,7 @@ export default {
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       const {dataSource} = layer;
-      if(!dataSource || !(dataSource instanceof Array)){
+      if (!dataSource || !(dataSource instanceof Array)) {
         console.warn("dataSource为空或者不是数组！");
         return;
       }
@@ -191,7 +191,7 @@ export default {
         for (let i = 0; i < dataSource.length; i++) {
           let primitive = graphicsLayer.getGraphicByID(dataSource[i].id);
           if (primitive) {
-            if(dataSource[i].style && dataSource[i].style instanceof Object){
+            if (dataSource[i].style && dataSource[i].style instanceof Object) {
               Object.keys(dataSource[i].style).forEach(function (key) {
                 primitive.style[key] = dataSource[i].style[key];
               });
@@ -260,9 +260,12 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      if (json instanceof Object) {
+      if (json instanceof Array) {
         json = JSON.stringify(json);
+      } else if (json instanceof Object) {
+        json = JSON.stringify([json]);
       }
+      console.log(json)
       this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.loadJson(json);
       });
@@ -411,9 +414,11 @@ export default {
         cube: "正方体",
         polygonCube: "立体多边形",
         cuboid: "长方体",
-        cylinder: "圆柱",
-        cone: "圆锥",
+        cone: "圆柱",
+        cylinder: "圆锥",
         ellipsoid: "球",
+        polylineVolume: "圆管线",
+        corridor: "方管线",
         model: "模型",
       }
 
@@ -427,6 +432,14 @@ export default {
     $_getId(random) {
       random = random || 10000000000;
       return parseInt(String(Math.random() * random));
+    },
+    $_cartesian3ToLongLat(cartesian3) {
+      let position = {};
+      let graphicPosition = Cesium.Cartographic.fromCartesian(cartesian3);
+      position.lat = Cesium.Math.toDegrees(graphicPosition.latitude);
+      position.lng = Cesium.Math.toDegrees(graphicPosition.longitude);
+      position.alt = graphicPosition.height;
+      return position;
     },
   }
 }

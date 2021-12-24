@@ -1,7 +1,8 @@
 <template>
   <div>
     <mapgis-ui-row class="mapgis-ui-icon-row-container" :style="mainStyle">
-      <img :style="iconStyle"
+      <img class="mapgis-ui-icon-row-img"
+           :style="iconStyle"
            :src="src"
            :title="imgTitle" alt="">
       {{ title }}
@@ -68,5 +69,10 @@ export default {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.mapgis-ui-icon-row-img {
+  width: 16px;
+  height: 16px;
 }
 </style>

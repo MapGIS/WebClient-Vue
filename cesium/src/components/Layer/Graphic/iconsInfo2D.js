@@ -11,7 +11,7 @@ let iconsInfo = [{
   type: "point",
   title: "点"
 }, {
-  type: "line",
+  type: "polyline",
   title: "直线"
 }, {
   type: "curve",

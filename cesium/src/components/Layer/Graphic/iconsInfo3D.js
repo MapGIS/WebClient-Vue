@@ -12,13 +12,22 @@ let iconsInfo3D = [{
   title: "长方体"
 },{
   type: "cylinder",
-  title: "圆柱"
+  title: "圆锥"
 },{
   type: "cone",
-  title: "圆锥"
+  title: "圆柱"
 },{
   type: "ellipsoid",
   title: "球"
+},{
+  type: "polylineVolume",
+  title: "圆管线"
+},{
+  type: "corridor",
+  title: "方管线"
+},{
+  type: "wall",
+  title: "墙"
 },{
   type: "model",
   title: "模型"

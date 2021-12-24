@@ -119,32 +119,22 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputProps.inputCol">
-        <mapgis-ui-form-item
-            :validate-status="validateStatus"
-            :style="formStyle"
-        >
-          <mapgis-ui-input
-              v-model="valueCopy"
-              :placeholder="inputProps.placeholder"
-              :addonAfter="inputProps.addonAfter"
-              :addonBefore="inputProps.addonBefore"
-              :disabled="inputProps.disabled"
-              :id="inputProps.id"
-              :maxLength="inputProps.maxLength"
-              :prefix="inputProps.prefix"
-              :size="inputProps.size"
-              :suffix="inputProps.suffix"
-              :type="inputProps.type"
-              :allowClear="inputProps.allowClear"
-              @change="$_change"
-              @pressEnter="$_pressEnter"
-              :style="mainStyle"
-          />
-        </mapgis-ui-form-item>
-        <mapgis-ui-form-item
-            validate-status="error"
-            help="Should be combination of numbers & alphabets"
-            v-if="validateStatus === 'error'"
+        <mapgis-ui-input
+          v-model="valueCopy"
+          :placeholder="inputProps.placeholder"
+          :addonAfter="inputProps.addonAfter"
+          :addonBefore="inputProps.addonBefore"
+          :disabled="inputProps.disabled"
+          :id="inputProps.id"
+          :maxLength="inputProps.maxLength"
+          :prefix="inputProps.prefix"
+          :size="inputProps.size"
+          :suffix="inputProps.suffix"
+          :type="inputProps.type"
+          :allowClear="inputProps.allowClear"
+          @change="$_change"
+          @pressEnter="$_pressEnter"
+          :style="mainStyle"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>

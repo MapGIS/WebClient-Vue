@@ -26,7 +26,7 @@
           <div class="mapgis-3d-graphic-icon-div"
                :key="index"
                v-for="(icon, index) in iconsInfo"
-               :style="{outline: icon.type === currentEditType ? '1px solid #1890FF' : 'none'}"
+               :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none'}"
           >
             <img @click="$_startDraw(icon.type)"
                  class="mapgis-3d-graphic-icon"
@@ -78,6 +78,61 @@
                 :mainStyle="mainStyle"
                 v-model="editPanelValues[row.key]"
                 type="MapgisUiInputNumber"
+                v-show="['outlineWidth','backgroundPadding','speed','duration','gradient','count'].indexOf(row.key) < 0"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+                v-show="row.key === 'outlineWidth' && editPanelValues.showOutline"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+                v-show="row.key === 'backgroundPadding' && editPanelValues.showBackground"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+                v-show="row.key === 'speed' && editPanelValues.materialType === 'RadarMaterial'"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+                v-show="row.key === 'duration' && editPanelValues.materialType === 'CircleWaveMaterial'"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+                v-show="row.key === 'gradient' && editPanelValues.materialType === 'CircleWaveMaterial'"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiInputNumber'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="mainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiInputNumber"
+                v-show="row.key === 'count' && editPanelValues.materialType === 'CircleWaveMaterial'"
               />
               <mapgis-ui-mix-row
                 v-if="row.type === 'MapgisUiSlider'"
@@ -87,6 +142,37 @@
                 :extraStyle="sliderInputStyle"
                 v-model="editPanelValues[row.key]"
                 type="MapgisUiSlider"
+                v-show="row.key !== 'outlineOpacity' && row.key !== 'backgroundOpacity'"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiSlider'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="sliderMainStyle"
+                :extraStyle="sliderInputStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiSlider"
+                v-show="row.key === 'outlineOpacity' && editPanelValues.showOutline"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiSlider'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="sliderMainStyle"
+                :extraStyle="sliderInputStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiSlider"
+                v-show="row.key === 'backgroundOpacity' && editPanelValues.showBackground"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiSlider'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="sliderMainStyle"
+                :extraStyle="sliderInputStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiSlider"
+                v-show="row.key === 'pureOpacity' && (editPanelValues.materialType === 'RadarMaterial' || editPanelValues.materialType === 'CircleWaveMaterial')"
               />
               <mapgis-ui-mix-row
                 v-if="row.type === 'MapgisUiSelect'"
@@ -104,6 +190,43 @@
                 :mainStyle="colorMainStyle"
                 v-model="editPanelValues[row.key]"
                 type="MapgisUiColorPicker"
+                v-show="['outlineColor','backgroundColor','materialColor','pureColor'].indexOf(row.key) < 0"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiColorPicker'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="colorMainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiColorPicker"
+                v-show="row.key === 'outlineColor' && editPanelValues.showOutline"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiColorPicker'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="colorMainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiColorPicker"
+                v-show="row.key === 'backgroundColor' && editPanelValues.showBackground"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiColorPicker'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="colorMainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiColorPicker"
+                v-show="row.key === 'materialColor' && (editPanelValues.materialType === 'RadarMaterial' || editPanelValues.materialType === 'CircleWaveMaterial')"
+              />
+              <mapgis-ui-mix-row
+                v-if="row.type === 'MapgisUiColorPicker'"
+                :title="row.title"
+                :titleStyle="titleStyle"
+                :mainStyle="colorMainStyle"
+                v-model="editPanelValues[row.key]"
+                type="MapgisUiColorPicker"
+                v-show="row.key === 'pureColor' && editPanelValues.materialType === 'Color'"
               />
               <mapgis-ui-choose-picture-right
                 v-if="row.type === 'MapgisUiPicture'"
@@ -114,6 +237,24 @@
                 v-model="editPanelValues[row.key]"
                 :enablePreview="false"
               />
+              <mapgis-ui-row class="mapgis-3d-graphic-switch"
+                             v-if="row.type === 'MapgisUiShowOutline'">
+                <span class="mapgis-3d-graphic-switch-title">
+                  {{ row.title }} :
+                </span>
+                <mapgis-ui-switch class="mapgis-3d-graphic-switch-button"
+                                  @change="$_showOutLine" checked-children="是" un-checked-children="否"
+                                  v-model="row.value"/>
+              </mapgis-ui-row>
+              <mapgis-ui-row class="mapgis-3d-graphic-switch"
+                             v-if="row.type === 'MapgisUiShowBackground'">
+                <span class="mapgis-3d-graphic-switch-title">
+                  {{ row.title }} :
+                </span>
+                <mapgis-ui-switch class="mapgis-3d-graphic-switch-button"
+                                  @change="$_showBackground" checked-children="是" un-checked-children="否"
+                                  v-model="row.value"/>
+              </mapgis-ui-row>
             </div>
           </div>
         </div>
@@ -141,23 +282,7 @@ export default {
     dataSource: {
       type: Array,
       default() {
-        return [{
-          //类型，point、text、line
-          type: "point",
-          //id，可不传
-          id: "111",
-          //点坐标
-          positions: [],
-          style: {},
-          editPointStyle: {},
-          attributes: {},
-          name: "测试",
-          show: true,
-          editing: true,
-          allowPicking: true,
-          modelMatrix: {},
-          asynchronous: true
-        }]
+        return []
       }
     },
     vueKey: {
@@ -190,6 +315,8 @@ export default {
       editList: editList,
       //当前编辑的类型
       currentEditType: "",
+      //当前图标类型
+      currentIconType: "",
       //数据源副本
       dataSourceCopy: undefined,
       //图标资源
@@ -256,6 +383,23 @@ export default {
       //本地图片样式
       pTitleStyle: {
         fontWeight: "normal"
+      },
+      //绘制的数量
+      drawNum: {
+        label: 0,
+        box: 0,
+        billboard: 0,
+        polyline: 0,
+        polygon: 0,
+        point: 0,
+        circle: 0,
+        cylinder: 0,
+        cone: 0,
+        polylineVolume: 0,
+        corridor: 0,
+        wall: 0,
+        rectangle: 0,
+        ellipsoid: 0,
       }
     };
   },
@@ -284,7 +428,7 @@ export default {
             //根据当前的绘制类型，获取设置面板显示参数数据
             let editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
             //根据面板显示参数数据生成绘制参数
-            let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+            let drawOptions = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
             //根据编辑面板参数绘制图形
             this.$_startDrawing({
               type: this.currentEditType,
@@ -295,9 +439,13 @@ export default {
             //先存起来title
             let title = this.editPanelValues.title;
             //更新样式
-            console.log("-------this.editPanelValues",this.editPanelValues)
             let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
             this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
+            if (options.hasOwnProperty("position")) {
+              let graphicsLayer = this.$_getGraphicLayer();
+              let primitive = graphicsLayer.getGraphicByID(this.editPanelValues.id);
+              primitive.primitive.position = Cesium.Cartesian3.fromDegrees(options.position.lng, options.position.lat, this.editPanelValues.height);
+            }
             //更新数据
             let dataSource = this.$_getJsonById(this.editPanelValues.id);
             dataSource.title = title;
@@ -312,6 +460,30 @@ export default {
     this.$_init();
   },
   methods: {
+    $_showBackground(e) {
+      this.editPanelValues.showBackground = e;
+      this.$_update();
+    },
+    $_showOutLine(e) {
+      this.editPanelValues.showOutline = e;
+      // this.$_update();
+    },
+    $_update() {
+      //先存起来title
+      let title = this.editPanelValues.title;
+      //更新样式
+      let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+      this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
+      if (options.hasOwnProperty("position")) {
+        let graphicsLayer = this.$_getGraphicLayer();
+        let primitive = graphicsLayer.getGraphicByID(this.editPanelValues.id);
+        primitive.primitive.position = Cesium.Cartesian3.fromDegrees(options.position.lng, options.position.lat, this.editPanelValues.height);
+      }
+      //更新数据
+      let dataSource = this.$_getJsonById(this.editPanelValues.id);
+      dataSource.title = title;
+      this.$_updateSourceById(this.editPanelValues.id, dataSource);
+    },
     $_updateSourceById(id, data) {
       let index;
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
@@ -391,12 +563,26 @@ export default {
 
       const {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
-        extrudedHeight
+        extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
+        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ
       } = style;
 
       let editPanelValues = {};
 
       switch (json.type) {
+        case "point":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.pixelSize = pixelSize;
+          editPanelValues.height = height;
+          editPanelValues.outlineWidth = outlineWidth;
+          editPanelValues.outlineOpacity = outlineColor[3] * 100;
+          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
         case "label":
           editPanelValues.id = id;
           editPanelValues.text = text;
@@ -412,18 +598,28 @@ export default {
           }
           editPanelValues.fontSize = fonts[0];
           editPanelValues.fontFamily = fonts[1];
-          editPanelValues.fontColor = "#000000";
-          editPanelValues.opacity = 100;
-          editPanelValues.backgroundColor = "#FFFFFF";
+          editPanelValues.fontColor = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+          editPanelValues.opacity = fillColor[3] * 100;
+          editPanelValues.backgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+          editPanelValues.backgroundOpacity = backgroundColor[3] * 100;
+          editPanelValues.backgroundPadding = backgroundPadding.x;
           editPanelValues.outlineWidth = outlineWidth;
-          editPanelValues.outlineColor = "#000000";
-          editPanelValues.outlineOpacity = 100;
+          editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
+          editPanelValues.outlineOpacity = outlineColor[3] * 100;
+          let position = this.$_cartesian3ToLongLat({
+            x: positions[0],
+            y: positions[1],
+            z: positions[2]
+          });
+          editPanelValues.height = position.alt;
+          editPanelValues.position = position;
           break;
         case "box":
           editPanelValues.id = id;
           editPanelValues.color = "#FF0000";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
+          editPanelValues.height = height;
           if (title) {
             editPanelValues.title = title;
           }
@@ -433,6 +629,119 @@ export default {
           editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.image = image;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "polyline":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.width = width;
+          editPanelValues.materialType = materialType;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "polylineVolume":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.width = width;
+          editPanelValues.cornerType = cornerType;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "polygon":
+          editPanelValues.id = id;
+          editPanelValues.title = title;
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.extrudedHeight = extrudedHeight;
+          editPanelValues.height = height;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "rectangle":
+          editPanelValues.id = id;
+          editPanelValues.title = title;
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.height = height;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "circle":
+          if (this.currentEditType === "circle") {
+            editPanelValues.id = id;
+            editPanelValues.pureColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.pureOpacity = color[3] * 100;
+            editPanelValues.radius = radius;
+            editPanelValues.height = height;
+            editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.materialOpacity = color[3] * 100;
+            if (title) {
+              editPanelValues.title = title;
+            }
+          }else {
+            editPanelValues.id = id;
+            editPanelValues.title = title;
+            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.opacity = color[3] * 100;
+            editPanelValues.radius = radius;
+            editPanelValues.extrudedHeight = extrudedHeight;
+            if (title) {
+              editPanelValues.title = title;
+            }
+          }
+          break;
+        case "ellipsoid":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.radiusX = radiusX;
+          editPanelValues.radiusY = radiusY;
+          editPanelValues.radiusZ = radiusZ;
+          editPanelValues.height = height;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "wall":
+          editPanelValues.id = id;
+          editPanelValues.title = title;
+          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.extrudedHeight = extrudedHeight;
+          editPanelValues.height = height;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "corridor":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.width = width;
+          editPanelValues.cornerType = cornerType;
+          editPanelValues.height = height;
+          editPanelValues.extrudedHeight = extrudedHeight;
+          if (title) {
+            editPanelValues.title = title;
+          }
+          break;
+        case "cylinder":
+          editPanelValues.id = id;
+          editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+          editPanelValues.opacity = color[3] * 100;
+          editPanelValues.width = width;
+          editPanelValues.topRadius = topRadius;
+          editPanelValues.bottomRadius = bottomRadius;
+          editPanelValues.height = height;
+          editPanelValues.extrudedHeight = extrudedHeight;
           if (title) {
             editPanelValues.title = title;
           }
@@ -451,6 +760,16 @@ export default {
     $_getDrawOptions(editPanelValues, currentEditType, Cesium) {
       let drawOptions = {};
       switch (currentEditType) {
+        case "point":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            arcType: Cesium.ArcType.GEODESIC,
+            pixelSize: editPanelValues.pixelSize,
+            height: editPanelValues.height,
+            outlineWidth: editPanelValues.outlineWidth || 0,
+            outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
+          };
+          break;
         case "label":
           let font;
           if (typeof editPanelValues.fontSize === "number") {
@@ -464,17 +783,23 @@ export default {
             text: editPanelValues.text || "",
             font: font,
             style: 2,
-            fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity || 100 / 100),
+            fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity / 100),
             outlineWidth: editPanelValues.outlineWidth || 0,
-            outlineColor: editPanelValues.outlineColor || "#000000",
-            outlineOpacity: editPanelValues.outlineOpacity || 100,
+            outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
+            showBackground: editPanelValues.showBackground,
+            backgroundColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.backgroundColor || "#000000"), editPanelValues.backgroundOpacity / 100),
+            backgroundPadding: new Cesium.Cartesian2(editPanelValues.backgroundPadding, editPanelValues.backgroundPadding)
           };
+          if (editPanelValues.hasOwnProperty("position")) {
+            drawOptions.position = editPanelValues.position;
+          }
           break;
         case "box":
           drawOptions.style = {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             arcType: Cesium.ArcType.GEODESIC,
             extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
           };
           break;
         case "billboard":
@@ -483,32 +808,139 @@ export default {
             image: editPanelValues.image,
           };
           break;
+        case "polyline":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            width: editPanelValues.width,
+            materialType: editPanelValues.materialType,
+          };
+          break;
+        case "polygonCube":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+            isPlanePolygon: true
+          };
+          break;
+        case "polygon":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+            isPlanePolygon: false
+          };
+          break;
+        case "rectangle":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            height: editPanelValues.height,
+          };
+          break;
+        case "circle":
+          drawOptions.style = {
+            // color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.pureColor), editPanelValues.pureOpacity / 100),
+            radius: Number(editPanelValues.radius),
+            height: editPanelValues.height,
+            materialType: editPanelValues.materialType,
+            material: {
+              color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.materialColor), editPanelValues.materialOpacity / 100),
+              speed: 1
+            }
+          };
+          if (editPanelValues.materialType === "color") {
+            // delete drawOptions.style.color;
+          }
+          break;
+        case "ellipsoid":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            height: editPanelValues.height,
+            radiusX: editPanelValues.radiusX,
+            radiusY: editPanelValues.radiusY,
+            radiusZ: editPanelValues.radiusZ,
+          };
+          break;
+        case "cone":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            radius: Number(editPanelValues.radius),
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
+        case "wall":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+          };
+          break;
+        case "polylineVolume":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            width: editPanelValues.width,
+            cornerType: editPanelValues.cornerType,
+          };
+          break;
+        case "corridor":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            width: editPanelValues.width,
+            cornerType: editPanelValues.cornerType,
+            height: editPanelValues.height,
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
+        case "cylinder":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            topRadius: editPanelValues.topRadius,
+            bottomRadius: editPanelValues.bottomRadius,
+            height: editPanelValues.height,
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
       }
       return drawOptions;
     },
     //开始绘制
     $_startDraw(type) {
-      //如果选择鼠标，则停止绘制，开启编辑模式，否则开始绘制
+      //设置当前绘制类型
+      if (type !== "mouse") {
+        this.currentEditType = type;
+      }
+      //取得图层对象
+      let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+      //停止上一次的绘制
+      graphicsLayer.stopDrawing();
+      //设置当前绘制图标类型
+      this.currentIconType = type;
+      //如果选择鼠标，开启编辑模式，否则开始绘制
       if (type === "mouse") {
-        let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
-        graphicsLayer.stopDrawing();
         if (this.noTitleKey !== "edit") {
           graphicsLayer.startEdit();
         }
         //结束绘制
         this.isStartDrawing = false;
       } else {
-        //设置当前绘制类型
-        this.currentEditType = type;
         //根据当前的绘制类型，获取设置面板显示参数数据
         this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
         //根据面板显示参数数据生成绘制参数
         let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
         //开始绘制
         this.isStartDrawing = true;
+        //停止编辑
+        this.$_startEdit();
         //根据编辑面板参数绘制图形
+        let drawType = this.currentEditType;
+        if (drawType === "cone") {
+          drawType = "circle";
+        }
+        if (drawType === "polygonCube") {
+          drawType = "polygon";
+        }
         this.$_startDrawing({
-          type: this.currentEditType,
+          type: drawType,
           ...drawOptions
         });
       }
@@ -535,15 +967,19 @@ export default {
     $_dbclick(json) {
       //显示设置面板
       this.noTitleKey = "edit";
-      //开时编辑
+      //停止绘制
+      this.$_stopDrawing();
+      this.isStartDrawing = false;
+      //开始编辑
       this.$nextTick(function () {
         this.isEdit = true;
+        this.$_startEdit();
       });
-      //设置当前绘制类型
-      this.currentEditType = json.type;
+      //设置当前绘制图标类型为鼠标选中
+      this.currentIconType = "mouse";
       //获取设置面板显示参数
       this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
-      console.log("this.editPanelValues", this.editPanelValues)
+      this.editPanelValues.showOutline = false;
     },
     //根据类型获取标题
     $_getTitle(type) {
@@ -553,13 +989,52 @@ export default {
           title = "文本";
           break;
         case "box":
-          title = "盒子模型";
+          title = "盒子";
           break;
         case "billboard":
           title = "广告牌";
           break;
+        case "polyline":
+          title = "线";
+          break;
+        case "rectangle":
+          title = "矩形";
+          break;
+        case "polygon":
+          if (this.currentEditType === "polygonCube") {
+            title = "立体多边形";
+          } else {
+            title = "多边形";
+          }
+          break;
+        case "point":
+          title = "点";
+          break;
+        case "circle":
+          if (this.currentEditType === "circle") {
+            title = "圆";
+          } else {
+            title = "圆柱";
+          }
+          break;
+        case "ellipsoid":
+          title = "球体";
+          break;
+        case "cylinder":
+          title = "圆锥";
+          break;
+        case "polylineVolume":
+          title = "圆管线";
+          break;
+        case "corridor":
+          title = "方管线";
+          break;
+        case "wall":
+          title = "墙";
+          break;
       }
-      return title;
+      this.drawNum[type] += 1;
+      return title + "_" + this.drawNum[type];
     },
     //初始化组件
     $_init() {
@@ -660,5 +1135,23 @@ export default {
   text-align: left;
   padding-left: 24px;
   padding-top: 12px;
+}
+
+.mapgis-3d-graphic-switch {
+  margin: 6px 0;
+}
+
+.mapgis-3d-graphic-switch-title {
+  float: left;
+  margin-left: 24px;
+}
+
+.mapgis-3d-graphic-switch-button {
+  float: right;
+  margin-right: 14px;
+}
+
+/deep/ .mapgis-ui-select-selection-selected-value {
+  text-align: left;
 }
 </style>
