@@ -337,6 +337,7 @@ export default {
               heading = Math.atan2(y2 - y1, x2 - x1);
             }
             vm.features[i].geometry.coordinates = data.geometry.coordinates;
+            vm.features[i].properties = data.properties;
             break;
           }
         }
@@ -369,6 +370,7 @@ export default {
       let vm = this;
       //定时发送updated事件
       this.interval = setInterval(function () {
+        console.log(vm.features)
         vm.$emit("updated", vm.features);
       }, this.updateInterval);
     },
