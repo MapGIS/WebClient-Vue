@@ -810,7 +810,7 @@ export default {
 }
 
 .list-active {
-  background: #e0f0ff;
+  background: var(--primary-2);
 }
 
 .camera {
