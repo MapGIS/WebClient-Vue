@@ -41,6 +41,12 @@
       >
       <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
+    <mapgis-ui-mask
+        :loading="maskShow"
+        :parentDivClass="'cesium-map-wrapper'"
+        :percent="percent"
+        :text="maskText"
+    ></mapgis-ui-mask>
   </div>
 </template>
 
@@ -111,7 +117,11 @@ export default {
 
       isDepthTestAgainstTerrainEnable: undefined, // 深度检测是否已开启，默认为undefined，当这个值为undefined的时候，说明没有赋值，不做任何处理
 
-      handlerAction: undefined
+      handlerAction: undefined,
+
+      percent: 0,
+      maskShow: false,
+      maskText: '正在分析中, 请稍等...0%',
     };
   },
   computed: {
@@ -228,6 +238,7 @@ export default {
       this.addEventListener();
     },
     doLookAroundAnalysis() {
+      let vm  = this;
       // this.startEventHandler();
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
@@ -242,19 +253,43 @@ export default {
       } else {
         visibility = this.createVisibility();
       }
-
       let drawElement = new Cesium.DrawElement(this.viewer);
       let cesiumColor = Cesium.Color.fromCssColorString("#FF0000"
       ).withAlpha(0.5);
+      drawElement.setGroundPrimitiveType('BOTH');
       drawElement.startDrawingCircle({
-        // color: new Cesium.Color(0.2, 0.4, 0.3, 1.0),
         color:cesiumColor,
         callback: function (result) {
+          drawElement.setGroundPrimitiveType('NONE');
           drawElement.stopDrawing();
-          visibility.lookAroundAnalysis(result.center, result.radius);
+
+          vm.toggleMask(true);
+
+          visibility.lookAroundAnalysis({
+            viewPosition: result.center,
+            radius: result.radius,
+            percentCallback: vm.setPercent
+          });
         }
       });
     },
+    setPercent(result) {
+      let vm = this;
+      vm.percent = result;
+      vm.maskText = `正在分析中, 请稍等...${Number((result * 100).toFixed(2))}%`;
+      const timer = setInterval(() => {
+        if (vm.percent === 1) {
+          vm.toggleMask(false);
+          vm.$emit("success");
+        }
+        clearInterval(timer);
+      }, 100)
+    },
+
+    toggleMask(status) {
+      this.maskShow = status;
+    },
+
     startEventHandler() {
       this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
     },
@@ -299,6 +334,7 @@ export default {
       if (this.handlerAction){
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
       }
       this.viewer.entities.removeAll();
 
@@ -322,25 +358,30 @@ export default {
     addEventListener() {
       if (!this.isAddEventListener) {
 
+        const visibility = this.createVisibility();
+
         this.handlerAction.setInputAction(event => {
-          this.registerMouseLClickEvent(event);
+          this.registerMouseLClickEvent(event,visibility);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         this.handlerAction.setInputAction(event => {
           this.registerMouseRClickEvent(event);
         }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
 
+        this.handlerAction.setInputAction(event => {
+          this.registerMouseMoveEvent(event,visibility);
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
         this.isAddEventListener = true;
       }
     },
 
     // 注册通视分析鼠标左键点击事件
-    registerMouseLClickEvent(event) {
-      let {vueKey, vueIndex} = this;
+    registerMouseLClickEvent(event,visibility) {
+      let {vueKey, vueIndex,vueCesium} = this;
       let cartesian = this.viewer.getCartesian3Position(
           event.position
       );
-
       if (!this.hasViewPosition && cartesian !== undefined) {
         // 若还未选择观察点,则记录下观察点坐标
 
@@ -352,12 +393,14 @@ export default {
         cartographic.height += this.formData.exHeight;
 
         cartesian = this.Cesium.Cartographic.toCartesian(cartographic);
-        this.viewPosition = cartesian;
+        visibility.viewPosition = cartesian;
 
+        this.viewPosition = cartesian;
         // 添加观察点到地图
         // this.addViewPoint(cartesian);
         this.hasViewPosition = true;
       } else {
+
         const visibility = this.createVisibility();
 
         // 设置通视分析观察点坐标
@@ -381,10 +424,24 @@ export default {
 
     // 注册通视分析鼠标右键点击事件
     registerMouseRClickEvent(event) {
+
+
       // 注销鼠标的各项监听事件
       this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
       this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+      this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
       this.isAddEventListener = false;
+    },
+
+    // 注册通视分析鼠标移动事件
+    registerMouseMoveEvent(event,visiblity) {
+      let {vueKey, vueIndex} = this;
+      let cartesian = this.viewer.getCartesian3Position(
+          event.endPosition
+      );
+      if (cartesian) {
+        visiblity.targetPosition = cartesian;
+      }
     },
 
     // 添加观察点到地图上
