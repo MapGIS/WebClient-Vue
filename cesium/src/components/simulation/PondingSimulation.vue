@@ -15,25 +15,100 @@
             :wrapperCol="{ span: 12 }"
         />
         
-        <mapgis-ui-radio-group v-model="rainOption"  style="padding:10px 6px">
+        <mapgis-ui-radio-group v-model="rainOption"  class="padding">
             <mapgis-ui-radio :value="0"> 小雨 </mapgis-ui-radio>
             <mapgis-ui-radio :value="1"> 中雨 </mapgis-ui-radio>
             <mapgis-ui-radio :value="2"> 大雨 </mapgis-ui-radio>
             <mapgis-ui-radio :value="3"> 暴雨 </mapgis-ui-radio>
         </mapgis-ui-radio-group>
 
+        <mapgis-3d-draw 
+            v-on:drawcreate="handleCreate" 
+            v-on:load="handleDrawLoad"
+            :drawStyle="drawStyleCopy"
+            :enableControl="enableControl"
+        >
+                <label class="title-label">仿真区域</label>
+
+                <mapgis-ui-radio-group v-model="radioValue" class="padding">
+                    <mapgis-ui-radio :value=1>绘制区域</mapgis-ui-radio>
+                    <mapgis-ui-radio :value=2>输入区域</mapgis-ui-radio>
+                </mapgis-ui-radio-group>
+
+                <div v-if="radioValue === 1" class="padding">
+                    <mapgis-ui-tooltip
+                        v-for="(item, i) in draws"
+                        :key="i"
+                        placement="bottom"
+                    >
+                        <template slot="title">
+                            <span>{{ item.tip }}</span>
+                        </template>
+                        <mapgis-ui-button
+                            shape="circle"
+                            :type="item.type"
+                            @click="item.click"
+                            :class="item.className"
+                            style="margin-right:12px"
+                        >
+                            <mapgis-ui-iconfont
+                                :type="item.icon"
+                                :class="item.className"
+                                theme="filled"
+                            />
+                        </mapgis-ui-button>
+                    </mapgis-ui-tooltip>
+                </div>
+
+                <div v-if="radioValue === 2">
+                    <mapgis-ui-row class="padding">
+                        <mapgis-ui-col span="4">
+                            <label>圆心</label>
+                        </mapgis-ui-col>
+                        <mapgis-ui-col span="20">
+                            <mapgis-ui-space>
+                                <mapgis-ui-input
+                                    v-model.number="circleCenter.longitude"
+                                    :placeholder="inputDefaultVal1"
+                                    allow-clear
+                                />
+                                <mapgis-ui-input
+                                    v-model.number="circleCenter.latitude"
+                                    :placeholder="inputDefaultVal2"
+                                    allow-clear
+                                />
+                            </mapgis-ui-space>
+                        </mapgis-ui-col>
+                    </mapgis-ui-row>
+
+                    <mapgis-ui-row  class="padding">
+                        <mapgis-ui-col span="4">
+                            <label>半径</label>
+                        </mapgis-ui-col>
+                        <mapgis-ui-col span="20">
+                            <mapgis-ui-input
+                                v-model.number="radius"
+                                type="number"
+                                min="0"
+                                addon-after="(米)"
+                            />
+                        </mapgis-ui-col>
+                    </mapgis-ui-row>
+                </div>
+
+        </mapgis-3d-draw>
+
         <mapgis-ui-collapse expand-icon-position="left" :bordered="false">
             <template #expandIcon="props">
                 <mapgis-ui-iconfont
                     type="mapgis-chevrons-down"
                     :rotate="props.isActive ? 180 : 0"
-                    style="left:6px;font-size:14px"
+                    style="left:6px;font-size:14px;color: #0081e2;"
                 />
             </template>
             <mapgis-ui-collapse-panel :style="collapseStyle">              
                 <div slot="header">
-                    <!-- <mapgis-ui-iconfont type="mapgis-chevrons-down"/> -->
-                    <label  style="color: #0081e2;margin-left:16px">展开详细参数</label>
+                    <label  style="color: #0081e2;margin-left:16px;">展开详细参数</label>
                 </div>
 
                 <label class="title-label">积水参数设置</label>
@@ -153,6 +228,44 @@ export default {
     },
     data() {
         return {
+            
+            drawStyleCopy: {
+              color: "#FF8C00",
+              opacity: 0.6
+            },
+            draws: [
+              {
+                icon: "mapgis-huizhijuxing",
+                type: "primary",
+                tip: "绘制矩形",
+                click: this.drawRectangle
+              },
+              {
+                icon: "mapgis-draw-polygon",
+                type: "primary",
+                tip: "绘制多边形",
+                click: this.drawPolygon
+              },
+              {
+                icon: "mapgis-huizhiyuan1",
+                type: "primary",
+                tip: "绘制圆",
+                click: this.drawCircle
+              },
+            ],
+            //绘制方式的选择
+            radioValue: 1,
+            enableControl: false,
+            
+            inputDefaultVal1: '经度',
+            inputDefaultVal2: '纬度',
+            circleCenter: {
+              longitude: "",
+              latitude: ""
+            },
+            radius: 0,
+
+
             //绘制区域面积
             area: undefined,
             //绘制区域高程的中程数
@@ -179,19 +292,21 @@ export default {
             rainOption: 2,
             //雨倾斜角度
             angle: 30,
-
+            
+            //  折叠面板的样式
             collapseStyle: {
-                background: "#ffffff",
                 border: "0",
                 overflow: "hidden",
                 padding: "0",
             },
 
+            //分析时的遮罩效果
             maskShow: false,
             maskText: '正在分析中, 请稍等...',
 
             //判断是否存在积水仿真效果
             pond: false,
+
 
         };
     },
@@ -224,30 +339,133 @@ export default {
 
             this.$emit("unload");
         },
+        
+        removeDraw() {
+          this.drawer.unmount();
+        },
+        drawPolygon() {
+          this.lnglat = undefined;
+          this.drawer && this.drawer.enableDrawPolygon();
+        },
+        drawCircle() {
+          this.lnglat = undefined;
+          this.isDrawCircle = true;
+          this.drawer && this.drawer.enableDrawCircle();
+        },
+        drawRectangle() {
+          this.lnglat = undefined;
+          this.drawer && this.drawer.enableDrawRectangle();
+        },
+        toggleDelete() {
+          let vm = this;
+          vm.lnglat = undefined;
+          this.drawer && this.drawer.removeEntities();
+          //清空drawElement
+          if (window.drawElement) {
+            window.drawElement.stopDrawing();
+          }
+          this.remove();
+        },
+
+        //绘制组件的回调函数
+        handleCreate(cartesian3, lnglat) {
+          const vm = this;
+          if (vm.isDrawCircle) {
+            let center = [];
+            // 圆心 笛卡尔转换经纬度
+            let cartographic = Cesium.Cartographic.fromCartesian    (cartesian3);
+            center.push(Cesium.Math.toDegrees(cartographic.longitude));
+            center.push(Cesium.Math.toDegrees(cartographic.latitude));
+            let radius = lnglat / 1000;
+            vm.lnglat = vm.calculateCirclePosition(center, radius);
+            vm.isDrawCircle = false;
+          } else {
+            // 矩形或者多边形，笛卡尔转换经纬度
+            if (lnglat.length === 2) {
+              vm.lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
+            } else {
+              vm.lnglat = lnglat;
+            }
+          }
+          vm.cartesian3 = cartesian3;
+        },
+        //绘制方式返回的点坐标是经纬度坐标
+        getAllPointByDegree(lnglat1, lnglat2) {
+          let p3 = [], p4 = [];
+          p3.push(lnglat1[0]);
+          p3.push(lnglat2[1]);
+          p3.push(lnglat1[2]);
+          p4.push(lnglat2[0]);
+          p4.push(lnglat1[1]);
+          p4.push(lnglat2[2]);
+          let allPoint = [lnglat1, p4, lnglat2, p3];
+          return allPoint;
+        },
+        handleDrawLoad(drawer) {
+          this.drawer = drawer;
+        },
+        draw(){
+            const vm = this;
+            switch (vm.radioValue) {
+              case 1:
+                if (vm.lnglat) {
+                  this.drawer && this.drawer.removeEntities(true);
+                  this.heightLimitedAnalysis(vm.lnglat);
+                } else {
+                  this.$message.warning("请先绘制控高区域");
+                }
+                break;
+              case 2:
+                if (vm.circleCenter.longitude && vm.circleCenter.latitude && vm.radius) {
+                  //先清除
+                  vm.lnglat = undefined;
+                  // 根据用户输入的圆心和半径计算圆范围的坐标点
+                  let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
+                  vm.lnglat = vm.calculateCirclePosition(circle, vm.radius / 1000);
+                  this.heightLimitedAnalysis(vm.lnglat);
+                } else {
+                  this.$message.warning("请先输入控高区域");
+                }
+                break;
+            }
+        },
+        calculateCirclePosition(center, radius) {
+          // turf 计算坐标点
+          let options = {};
+          let positions = turf.circle(center, radius, options);
+          return positions.geometry.coordinates[0];
+        },
+
+        //开始模拟仿真
         simulation() {
             const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
             const vm = this;
             this.stopSimulation();
+            
+            // let drawElement = new Cesium.DrawElement(viewer);
+            // vueCesium.PondingSimulationManager.changeOptions(
+            //     vueKey,
+            //     vueIndex,
+            //     "drawElement",
+            //     drawElement
+            // );
+            // // 激活交互式绘制工具
+            // drawElement.startDrawingPolygon({
+            //     // 绘制完成回调函数
+            //     callback: (result) => {
+            //         vm.stopSimulation();
+            //         vm.positions = result.positions;
+            //         vm.maskShow = true;
+            //         vm.computeRainfallVol(result.positions);
+            //         vm.computeHeight();
+            //         // vm.rain();
+            //     },
+            // });
 
-            let drawElement = new Cesium.DrawElement(viewer);
-            vueCesium.PondingSimulationManager.changeOptions(
-                vueKey,
-                vueIndex,
-                "drawElement",
-                drawElement
-            );
-            // 激活交互式绘制工具
-            drawElement.startDrawingPolygon({
-                // 绘制完成回调函数
-                callback: (result) => {
-                    vm.stopSimulation();
-                    vm.positions = result.positions;
-                    vm.maskShow = true;
-                    vm.computeRainfallVol(result.positions);
-                    vm.computeHeight();
-                    // vm.rain();
-                },
-            });
+            vm.maskShow = true;
+            vm.computeRainfallVol(vm.positions);
+            vm.computeHeight();
+
         },
         //根据降雨量计算绘制区域的降雨体积
         computeRainfallVol(cartesians) {
@@ -467,23 +685,30 @@ export default {
         stopSimulation() {
             this._removeFlood();
             this.removeRain();
-            const { vueCesium, vueKey, vueIndex } = this;
-            let find = vueCesium.PondingSimulationManager.findSource(
-                vueKey,
-                vueIndex
-            );
-            const { options } = find;
-            const { drawElement } = options;
+            // const { vueCesium, vueKey, vueIndex } = this;
+            // let find = vueCesium.PondingSimulationManager.findSource(
+            //     vueKey,
+            //     vueIndex
+            // );
+            // const { options } = find;
+            // const { drawElement } = options;
 
-            if (drawElement) {
-                // 取消交互式绘制事件激活状态
-                drawElement.stopDrawing();
-                vueCesium.PondingSimulationManager.changeOptions(
-                    vueKey,
-                    vueIndex,
-                    "drawElement",
-                    null
-                );
+            // if (drawElement) {
+            //     // 取消交互式绘制事件激活状态
+            //     drawElement.stopDrawing();
+            //     vueCesium.PondingSimulationManager.changeOptions(
+            //         vueKey,
+            //         vueIndex,
+            //         "drawElement",
+            //         null
+            //     );
+            // }
+
+            this.lnglat = undefined;
+            this.drawer && this.drawer.removeEntities();
+            //清空drawElement
+            if (window.drawElement) {
+              window.drawElement.stopDrawing();
             }
 
             this.pond = false;
@@ -517,15 +742,14 @@ export default {
     /* position: absolute;
     top: 10px;
     left: 10px; */
-    background-color: #fff;
     padding: 10px;
 }
 
 .title-label {
-    display: inline-block;
+    display: block;
     padding: 6px;
     font-size: 14px;
-    color: #333;
+    /* color: #333; */
     font-weight: 700;
 }
 
@@ -534,7 +758,7 @@ export default {
     > .mapgis-ui-collapse-item
     > .mapgis-ui-collapse-header {
     border-left: unset !important;
-    padding: 6px;
+    padding: 10px 6px;
 }
 
 ::v-deep .mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box {
@@ -548,4 +772,9 @@ export default {
     > .mapgis-ui-collapse-content-box {
     padding: 0;
 }
+
+.padding{
+    padding: 10px 6px;
+}
+
 </style>
