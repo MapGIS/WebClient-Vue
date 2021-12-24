@@ -30,7 +30,6 @@
       <mapgis-ui-input-number-panel 
         size="small"
         label="底部高程(米)"
-        :panelStyle="{padding:'0px'}"
         :labelCol="{ span: 10 }"
         :wrapperCol="{ span: 14 }" 
         v-model="formData.minHeight" 
@@ -42,7 +41,6 @@
       <mapgis-ui-input-number-panel 
         size="small"
         label="拉伸高度(米)"
-        :panelStyle="{padding:'0px'}"
         :labelCol="{ span: 10 }"
         :wrapperCol="{ span: 14 }" 
         v-model="formData.stretchHeight" 
@@ -56,7 +54,6 @@
           size="small"
           :labelCol="10"
           :wrapperCol="14"
-          :colorStyle="colorStyle"
           :color.sync="formData.shadowColor"
           :disableAlpha="true"
           @input="
@@ -69,7 +66,6 @@
           size="small"
           :labelCol="10"
           :wrapperCol="14"
-          :colorStyle="colorStyle"
           :color.sync="formData.sunColor"
           :disableAlpha="true"
           @input="
@@ -219,11 +215,7 @@ export default {
       visible: false,
       currentClickInfo: undefined,
       handler:undefined,
-      colorStyle:{
-        padding:'0px',
-        marginBottom:'8px',
-        background:'#ffffff'
-      }
+      
     }
   },
   components: {
@@ -634,13 +626,13 @@ export default {
 <style scoped>
 
 .mp-widget-shadow-analysis{
-  padding:10px 20px;
+  padding:10px;
   border-radius: 4px;
 }
 
 ::v-deep .mapgis-popup-row-container{
   height: fit-content;
-  background: #fff;
+  /* background: #fff; */
 }
 
 ::v-deep .mapgis-popup-row {

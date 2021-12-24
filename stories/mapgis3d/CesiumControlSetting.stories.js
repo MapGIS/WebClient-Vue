@@ -52,6 +52,7 @@ export const 场景设置 = Template.bind({});
         position:"absolute",
         top:"10px",
         left:"10px",
-        width:"320px"
+        width:"320px",
+        background:"#fff"
     }
 };

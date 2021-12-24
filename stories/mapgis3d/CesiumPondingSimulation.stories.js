@@ -23,7 +23,7 @@ const Template = (args, { argTypes }) => ({
         v-on:load="handleLoad"
     >
         <mapgis-3d-igs-terrain :url="terrainUrl" />
-        <mapgis-3d-ponding-simulation style="position:absolute;top:10px;left:10px"/>
+        <mapgis-3d-ponding-simulation style="position:absolute;top:10px;left:10px;background:#fff"/>
     </mapgis-web-scene>
     `,
   methods: {

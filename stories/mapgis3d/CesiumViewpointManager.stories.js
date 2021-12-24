@@ -28,7 +28,7 @@ const Template = (args, { argTypes }) => ({
       :maximumScreenSpaceError="maximumScreenSpaceError"
       :url="m3dUrl"
   />
-  <mapgis-3d-viewpoint-manager style="position:absolute;top:10px;left:10px"></mapgis-3d-viewpoint-manager>
+  <mapgis-3d-viewpoint-manager style="position:absolute;top:10px;left:10px;background:#fff"></mapgis-3d-viewpoint-manager>
 </mapgis-web-scene>
     `,
 });

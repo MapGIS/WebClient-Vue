@@ -163,7 +163,6 @@ export default {
             },
 
             collapseStyle: {
-                background: "#ffffff",
                 border: "0",
                 overflow: "hidden",
                 padding: "0",
@@ -358,7 +357,6 @@ export default {
     /* height: 32px; */
     line-height: 32px;
     font-size: 14px;
-    color: #666666;
 }
 
 .input-parameter-style .mapgis-ui-input-number {
