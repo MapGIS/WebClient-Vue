@@ -759,6 +759,7 @@ export default {
 .redo-button-style{
     position: absolute;
     left: 0px;
+    font-size: 21px;
 }
 
 </style>
