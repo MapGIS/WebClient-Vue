@@ -33,7 +33,7 @@
       <mapgis-ui-base64-icon
         title="添加图片"
         :iconStyle="addIconStyle"
-        :titleStyle="titleStyle"
+        :titleStyle="chooseTitleStyle"
         @click="$_clickSmall"
         :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
         class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
@@ -74,7 +74,23 @@ export default {
     titleStyle: {
       type: Object,
       default() {
-        return {}
+        return {
+          color: "#747070",
+          top: "-4px",
+          left: "0",
+          fontWeight: "border"
+        }
+      }
+    },
+    chooseTitleStyle: {
+      type: Object,
+      default() {
+        return {
+          color: "#747070",
+          top: "30px",
+          left: "8px",
+          fontWeight: "border"
+        }
       }
     }
   },
@@ -97,12 +113,6 @@ export default {
         width: "20px",
         marginTop: "calc(25% - 10px)",
         marginLeft: "calc((100% - 20px)/2)",
-      },
-      titleStyle: {
-        color: "#747070",
-        top: "34px",
-        left: "11px",
-        fontWeight: "border"
       }
     }
   },
@@ -243,7 +253,7 @@ export default {
 
 .mapgis-ui-choose-picture-right-carousel {
   width: 66%;
-  padding: 8px 4px 8px 8px;
+  padding: 8px 0 8px 8px;
   height: auto;
   text-align: left;
   border-radius: 3px;
@@ -257,7 +267,6 @@ export default {
   width: 46%;
   height: 58px;
   margin-left: 1%;
-  margin-right: 1%;
   margin-bottom: 10px;
   cursor: pointer;
 }
