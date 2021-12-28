@@ -7,7 +7,24 @@ export default {
   data() {
     return {
       localVueIndex: undefined,
-      localVueKey: undefined
+      localVueKey: undefined,
+      //绘制的数量
+      drawNum: {
+        label: 0,
+        box: 0,
+        billboard: 0,
+        polyline: 0,
+        polygon: 0,
+        point: 0,
+        circle: 0,
+        cylinder: 0,
+        cone: 0,
+        polylineVolume: 0,
+        corridor: 0,
+        wall: 0,
+        rectangle: 0,
+        ellipsoid: 0,
+      }
     }
   },
   methods: {
@@ -232,6 +249,7 @@ export default {
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return this.hasObject(graphicsLayer, function (graphicsLayer) {
+        console.log("graphicsLayer.getGraphicByID(id)",graphicsLayer.getGraphicByID(id))
         return graphicsLayer.getGraphicByID(id);
       });
     },
@@ -260,13 +278,8 @@ export default {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
-      if (json instanceof Array) {
-        json = JSON.stringify(json);
-      } else if (json instanceof Object) {
-        json = JSON.stringify([json]);
-      }
       this.hasObject(graphicsLayer, function (graphicsLayer) {
-        graphicsLayer.loadJson(json);
+        graphicsLayer.loadJson(JSON.stringify(json));
       });
     },
     /**
@@ -279,11 +292,11 @@ export default {
     $_getJsonById(id, vueIndex, vueKey) {
       vueIndex = vueIndex || this.localVueIndex;
       vueKey = vueKey || this.localVueKey;
-      let jsons = this.$_toJSON(vueIndex, vueKey);
+      let GeoJSON = this.$_toJSON(vueIndex, vueKey);
       let json;
-      for (let i = 0; i < jsons.length; i++) {
-        if (jsons[i].id === id) {
-          json = jsons[i];
+      for (let i = 0; i < GeoJSON.features.length; i++) {
+        if (GeoJSON.features[i].id === id) {
+          json = GeoJSON.features[i];
           break;
         }
       }
@@ -301,6 +314,31 @@ export default {
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return this.hasObject(graphicsLayer, function (graphicsLayer) {
         return JSON.parse(graphicsLayer.exportToJson());
+      });
+    },
+    /**
+     * 根据ID，将某个标绘对象导出为数据
+     * @param id String 必传，标绘对象的id
+     * @param vueIndex String or Number 可选，graphicLayer的唯一标识，随机生成的数字或字符串
+     * @param vueKey String 可选，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
+     * @return json Object 标绘图层的JSON对象
+     * */
+    $_toJSONById(id, vueIndex, vueKey) {
+      vueIndex = vueIndex || this.localVueIndex;
+      vueKey = vueKey || this.localVueKey;
+      let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      return this.hasObject(graphicsLayer, function (graphicsLayer) {
+        let json = graphicsLayer.exportToJson(), graphic;
+        if (typeof json === "string") {
+          json = JSON.parse(json);
+        }
+        for (let i = 0; i < json.length; i++) {
+          if (id === json[i].id) {
+            graphic = json[i];
+            break;
+          }
+        }
+        return graphic;
       });
     },
     /**
@@ -439,6 +477,232 @@ export default {
       position.lng = Cesium.Math.toDegrees(graphicPosition.longitude);
       position.alt = graphicPosition.height;
       return position;
+    },
+    //根据类型获取标题
+    $_getTitle(type, currentEditType) {
+      let title;
+      switch (type) {
+        case "label":
+          title = "文本";
+          break;
+        case "box":
+          title = "盒子";
+          break;
+        case "billboard":
+          title = "广告牌";
+          break;
+        case "polyline":
+          title = "线";
+          break;
+        case "rectangle":
+          title = "矩形";
+          break;
+        case "polygon":
+          if (currentEditType === "polygonCube") {
+            title = "立体多边形";
+          } else {
+            title = "多边形";
+          }
+          break;
+        case "point":
+          title = "点";
+          break;
+        case "circle":
+          if (currentEditType === "circle") {
+            title = "圆";
+          } else {
+            title = "圆柱";
+          }
+          break;
+        case "ellipsoid":
+          title = "球体";
+          break;
+        case "cylinder":
+          title = "圆锥";
+          break;
+        case "polylineVolume":
+          title = "圆管线";
+          break;
+        case "corridor":
+          title = "方管线";
+          break;
+        case "wall":
+          title = "墙";
+          break;
+      }
+      this.drawNum[type] += 1;
+      return title + "_" + this.drawNum[type];
+    },
+    /**
+     * 根据当前的绘制类型，获取设置面板显示参数数据
+     * @param editList Array 设置面板
+     * @param currentEditType String 类型
+     * @return editPanelValues Object 设置面板里面要显示的数值
+     * */
+    $_getEditPanelValues(editList, currentEditType) {
+      let editInfo = this.editList[currentEditType];
+      let editPanelValues = {};
+      for (let i = 0; i < editInfo.length; i++) {
+        editPanelValues[editInfo[i].key] = editInfo[i].value;
+      }
+      return editPanelValues;
+    },
+    /**
+     * 据面板显示参数数据生成绘制参数
+     * @param editPanelValues Object 设置面板显示参数数据
+     * @param currentEditType String 当前绘制类型
+     * @param Cesium Object Cesium对象
+     * @return drawOptions Object 绘制参数
+     * */
+    $_getDrawOptions(editPanelValues, currentEditType, Cesium) {
+      let drawOptions = {};
+      switch (currentEditType) {
+        case "point":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            arcType: Cesium.ArcType.GEODESIC,
+            pixelSize: editPanelValues.pixelSize,
+            height: editPanelValues.height,
+            outlineWidth: editPanelValues.outlineWidth || 0,
+            outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
+          };
+          break;
+        case "label":
+          let font;
+          if (typeof editPanelValues.fontSize === "number") {
+            font = editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          } else if (editPanelValues.fontSize.indexOf("px") > -1) {
+            font = editPanelValues.fontSize + " " + editPanelValues.fontFamily;
+          } else {
+            font = editPanelValues.fontSize + "px " + editPanelValues.fontFamily;
+          }
+          drawOptions.style = {
+            text: editPanelValues.text || "",
+            font: font,
+            style: 2,
+            fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity / 100),
+            outlineWidth: editPanelValues.outlineWidth || 0,
+            outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
+            showBackground: editPanelValues.showBackground,
+            backgroundColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.backgroundColor || "#000000"), editPanelValues.backgroundOpacity / 100),
+            backgroundPadding: new Cesium.Cartesian2(editPanelValues.backgroundPadding, editPanelValues.backgroundPadding)
+          };
+          if (editPanelValues.hasOwnProperty("position")) {
+            drawOptions.position = editPanelValues.position;
+          }
+          break;
+        case "box":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            arcType: Cesium.ArcType.GEODESIC,
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+          };
+          break;
+        case "billboard":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            image: editPanelValues.image,
+            width: editPanelValues.width,
+            height: editPanelValues.height,
+            outlineColor: Cesium.Color.RED,
+            outlineWidth:10,
+          };
+          break;
+        case "polyline":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            width: editPanelValues.width,
+            materialType: editPanelValues.materialType,
+          };
+          break;
+        case "polygonCube":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+            isPlanePolygon: true
+          };
+          break;
+        case "polygon":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+            isPlanePolygon: false
+          };
+          break;
+        case "rectangle":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            height: editPanelValues.height,
+          };
+          break;
+        case "circle":
+          drawOptions.style = {
+            // color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.pureColor), editPanelValues.pureOpacity / 100),
+            radius: Number(editPanelValues.radius),
+            height: editPanelValues.height,
+            materialType: editPanelValues.materialType,
+            material: {
+              color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.materialColor), editPanelValues.materialOpacity / 100),
+              speed: 1
+            }
+          };
+          if (editPanelValues.materialType === "color") {
+            // delete drawOptions.style.color;
+          }
+          break;
+        case "ellipsoid":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            height: editPanelValues.height,
+            radiusX: editPanelValues.radiusX,
+            radiusY: editPanelValues.radiusY,
+            radiusZ: editPanelValues.radiusZ,
+          };
+          break;
+        case "cone":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            radius: Number(editPanelValues.radius),
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
+        case "wall":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            height: editPanelValues.height,
+          };
+          break;
+        case "polylineVolume":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            width: editPanelValues.width,
+            cornerType: editPanelValues.cornerType,
+          };
+          break;
+        case "corridor":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            width: editPanelValues.width,
+            cornerType: editPanelValues.cornerType,
+            height: editPanelValues.height,
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
+        case "cylinder":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            topRadius: editPanelValues.topRadius,
+            bottomRadius: editPanelValues.bottomRadius,
+            height: editPanelValues.height,
+            extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
+      }
+      return drawOptions;
     },
   }
 }

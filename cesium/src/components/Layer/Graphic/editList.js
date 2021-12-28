@@ -153,30 +153,6 @@ let editList = {
       title: "图片高度",
       key: "height",
       value: 100
-    },
-    {
-      type: "MapgisUiShowOutline",
-      title: "是否显示边线",
-      key: "showOutline",
-      value: false
-    },
-    {
-      type: "MapgisUiColorPicker",
-      title: "边线颜色",
-      key: "outlineColor",
-      value: "#FFFFFF"
-    },
-    {
-      type: "MapgisUiSlider",
-      title: "边线透明度",
-      key: "outlineOpacity",
-      value: 100
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "边线宽度",
-      key: "outlineWidth",
-      value: 0
     }
   ],
   point: [

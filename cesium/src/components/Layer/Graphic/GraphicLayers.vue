@@ -77,30 +77,41 @@ export default {
       }
     },
     $_export() {
-      const blob = new Blob([JSON.stringify(this.dataSourceCopy[this.currenSelectIndex])], {
+      let json = this.dataSourceCopy[this.currenSelectIndex];
+      let exportJSON = {
+        name: json.name,
+        uuid: json.uuid,
+        dataSource: {
+          "type": "FeatureCollection",
+          "features": json.dataSource
+        }
+      }
+      const blob = new Blob([JSON.stringify(exportJSON)], {
         type: "application/json;charset=utf-8",
       });
-      let title = this.dataSourceCopy[this.currenSelectIndex].title || "无标题";
+      let title = json.name || "无标题";
       saveAs(blob, title + ".json");
     },
     //更新数据
     $_updateData(data) {
-      for (let i = 0; i < this.dataSourceCopy.length; i++) {
-        //uuid相同，更新数据
-        if (this.dataSourceCopy[i].uuid === data.uuid) {
-          this.$set(this.dataSourceCopy, i, data);
-          this.$refs.graphicLayer.$_updateStyleByLayer(data);
-        } else {
-          //uuid不相同，新增数据
-          let {dataSource} = data;
-          let json = [];
-          for (let i = 0; i < dataSource.length; i++) {
-            json.push(dataSource[i]);
-          }
-          this.$refs.graphicLayer.$_fromJson(json);
-          this.dataSourceCopy.push(data);
-        }
-      }
+      console.log("data",data)
+      this.$refs.graphicLayer.$_fromJson(data.dataSource);
+      // for (let i = 0; i < this.dataSourceCopy.length; i++) {
+      //   //uuid相同，更新数据
+      //   if (this.dataSourceCopy[i].uuid === data.uuid) {
+      //     this.$set(this.dataSourceCopy, i, data);
+      //     this.$refs.graphicLayer.$_updateStyleByLayer(data);
+      //   } else {
+      //     //uuid不相同，新增数据
+      //     let {dataSource} = data;
+      //     let json = [];
+      //     for (let i = 0; i < dataSource.length; i++) {
+      //       json.push(dataSource[i]);
+      //     }
+      //     this.$refs.graphicLayer.$_fromJson(json);
+      //     this.dataSourceCopy.push(data);
+      //   }
+      // }
     },
     //选择图层
     $_selectLayer(e) {
