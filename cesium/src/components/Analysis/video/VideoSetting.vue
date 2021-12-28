@@ -288,6 +288,10 @@ export default {
       default: () => {
         return { headingOffset: -90, pitchOffset: 0, rollOffset: 0 };
       }
+    },
+    modelScale: {
+      type: Number,
+      default: 1
     }
   },
   watch: {
@@ -310,9 +314,24 @@ export default {
     orientation: {
       handler() {
         if (this.modelPrimitive) {
-          const modelMatrix = this.getModelMatrix(
-            this.params,
-            this.modelOffset
+          const { Cesium, viewer, scenePro, params, modelOffset } = this;
+          const { boundingSphere } = this.modelPrimitive;
+          const { heading, pitch } = params.orientation;
+          const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+            viewer.scene,
+            scenePro.viewPosition,
+            { heading, pitch, distance: 150 }
+          );
+          const cameraModelPosition = this._getCameraModelPosition(
+            targetPosition,
+            scenePro.viewPosition,
+            params.orientation,
+            boundingSphere.radius
+          );
+          const modelMatrix = this._getModelMatrix(
+            cameraModelPosition,
+            params.orientation,
+            modelOffset
           );
           this.modelPrimitive.modelMatrix = modelMatrix;
         }
@@ -413,7 +432,6 @@ export default {
         return;
       }
       this._changeProtocol();
-      // this.scenePro.projectorType = this.proType;
       switch (this.proType) {
         case Cesium.SceneProjectorType.IMAGE:
         case Cesium.SceneProjectorType.VIDEO:
@@ -636,7 +654,7 @@ export default {
      */
     putVideo(video) {
       this._openSceneSetting();
-      this.addCameraMarker(video, this.modelUrl, this.modelOffset);
+      this._addCameraMarker(video, this.modelUrl, this.modelOffset);
       let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
         video.id
       );
@@ -676,7 +694,6 @@ export default {
           cameraPosition.z
         )
       );
-      // viewPosition.x -= 10;
       scenePro.viewPosition = viewPosition;
       let targetPosition = Cesium.AlgorithmLib.pickFromRay(
         viewer.scene,
@@ -697,8 +714,6 @@ export default {
       } else {
         scenePro.targetPosition = targetPosition;
       }
-      // scenePro.heading = orientation.heading;
-      // scenePro.pitch = orientation.pitch;
       scenePro.roll = orientation.roll;
       scenePro.hintLineVisible = hintLineVisible;
       scenePro.horizontAngle = hFOV;
@@ -710,16 +725,13 @@ export default {
      */
     cancelPutVideo(id) {
       this.viewer.scene.visualAnalysisManager.removeByID(id);
-      this.removeCameraMarker();
+      this._removeCameraMarker();
     },
-    getModelMatrix(params, modelOffset) {
+    /**
+     * 获取相机模型矩阵
+     */
+    _getModelMatrix(cartesian3Position, orientation, modelOffset) {
       const { Cesium, viewer } = this;
-      const { cameraPosition, orientation } = params;
-      const position = Cesium.Cartesian3.fromDegrees(
-        cameraPosition.x,
-        cameraPosition.y,
-        cameraPosition.z
-      );
       const { headingOffset, pitchOffset, rollOffset } = modelOffset;
       //弧度的航向分量。
       const heading = Cesium.Math.toRadians(
@@ -732,15 +744,53 @@ export default {
       //HeadingPitchRoll旋转表示为航向，俯仰和滚动。围绕Z轴。节距是绕负y轴的旋转。滚动是关于正x轴。
       const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
       const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
-        position,
+        cartesian3Position,
         hpr
       );
       return modelMatrix;
     },
     /**
-     * 添加相机标注
+     * 获取相机模型位置，为确保视频投放(不被相机模型遮挡，需将相机模型往观察点和视点反方向移动)
      */
-    addCameraMarker(video, modelUrl, modelOffset) {
+    _getCameraModelPosition(
+      targetPosition,
+      viewPosition,
+      orientation,
+      distance
+    ) {
+      const { Cesium, viewer, modelOffset } = this;
+      const { heading, pitch } = orientation;
+      // 根据相机的观察点和视点计算两点的方向，
+      // 取反，将相机往计算的反方向移动包围球半径的距离，
+      // 确保相机模型不在相机的观察点和视点之间，以防遮挡视频投放(防止视频部分投放在相机模型上)
+      let direction = new Cesium.Cartesian3();
+      let dist = new Cesium.Cartesian3();
+      let position = new Cesium.Cartesian3();
+      direction = Cesium.Cartesian3.subtract(
+        targetPosition,
+        viewPosition,
+        direction
+      );
+      direction = Cesium.Cartesian3.normalize(
+        direction,
+        new Cesium.Cartesian3()
+      );
+      dist = Cesium.Cartesian3.multiplyByScalar(
+        direction,
+        -distance,
+        new Cesium.Cartesian3()
+      );
+      position = Cesium.Cartesian3.add(
+        viewPosition,
+        dist,
+        new Cesium.Cartesian3()
+      );
+      return position;
+    },
+    /**
+     * 添加相机模型
+     */
+    _addCameraMarker(video, modelUrl, modelOffset) {
       const { primitives } = this.viewer.scene;
       for (let i = 0; i < primitives.length; i++) {
         const p = primitives.get(i);
@@ -751,21 +801,63 @@ export default {
       }
       if (!this.modelPrimitive) {
         const { Cesium, viewer } = this;
-        const { id } = video;
-        const modelMatrix = this.getModelMatrix(video.params, modelOffset);
-        const modelObj = {
+        const { id, params } = video;
+        const { cameraPosition } = params;
+        const viewPosition = Cesium.Cartesian3.fromDegrees(
+          cameraPosition.x,
+          cameraPosition.y,
+          cameraPosition.z
+        );
+        let modelMatrix = this._getModelMatrix(
+          viewPosition,
+          params.orientation,
+          modelOffset
+        );
+        let modelObj = {
           id,
           url: modelUrl,
           modelMatrix: modelMatrix,
-          scale: 1.0
+          scale: this.modelScale
         };
 
-        this.modelPrimitive = viewer.scene.primitives.add(
+        let modelPrimitive = viewer.scene.primitives.add(
           Cesium.Model.fromGltf(modelObj)
         );
+        modelPrimitive.readyPromise.then(() => {
+          console.log(modelPrimitive);
+          // 获取模型的包围球
+          const { boundingSphere } = modelPrimitive;
+          const cameraModelPosition = this._getCameraModelPosition(
+            this.scenePro.targetPosition,
+            viewPosition,
+            params.orientation,
+            boundingSphere.radius
+          );
+          modelMatrix = this._getModelMatrix(
+            cameraModelPosition,
+            params.orientation,
+            modelOffset
+          );
+
+          viewer.scene.primitives.remove(modelPrimitive);
+
+          modelObj = {
+            id,
+            url: modelUrl,
+            modelMatrix: modelMatrix,
+            scale: this.modelScale
+          };
+
+          this.modelPrimitive = viewer.scene.primitives.add(
+            Cesium.Model.fromGltf(modelObj)
+          );
+        });
       }
     },
-    removeCameraMarker() {
+    /**
+     * 移除相机模型
+     */
+    _removeCameraMarker() {
       if (this.primitive) {
         this.viewer.scene.primitives.remove(this.primitive);
       }

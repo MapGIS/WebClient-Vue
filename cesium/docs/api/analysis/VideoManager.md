@@ -34,6 +34,14 @@
 - **描述:** 相机模型朝向偏移量
 - **默认值:** { headingOffset: -90, pitchOffset: 0, rollOffset: 0 }
 
+### `modelScale`
+
+- **类型:** `Number`
+- **可选**
+- **侦听属性**
+- **描述:** 相机模型尺寸比例
+- **默认值:** 1
+
 ### `videoOverlayLayerList`
 
 - **类型:** `Array`

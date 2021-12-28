@@ -23,7 +23,7 @@
         </mapgis-ui-radio-group>
 
         <mapgis-3d-draw 
-            v-on:drawcreate="handleCreate" 
+            v-on:drawCreate="handleDrawCreate" 
             v-on:load="handleDrawLoad"
             :drawStyle="drawStyleCopy"
             :enableControl="enableControl"
@@ -69,12 +69,12 @@
                             <mapgis-ui-space>
                                 <mapgis-ui-input
                                     v-model.number="circleCenter.longitude"
-                                    :placeholder="inputDefaultVal1"
+                                    placeholder="经度"
                                     allow-clear
                                 />
                                 <mapgis-ui-input
                                     v-model.number="circleCenter.latitude"
-                                    :placeholder="inputDefaultVal2"
+                                    placeholder="纬度"
                                     allow-clear
                                 />
                             </mapgis-ui-space>
@@ -164,9 +164,15 @@
 
             </mapgis-ui-collapse-panel>
         </mapgis-ui-collapse>
-        
+
         <mapgis-ui-setting-footer>
-            <mapgis-ui-button type="primary" @click="simulation">分析</mapgis-ui-button>
+            <mapgis-ui-tooltip placement="bottom">
+                    <template slot="title">
+                        <span>重现积水上涨效果</span>
+                    </template>
+                <mapgis-ui-iconfont type="mapgis-revision" @click="addflood" v-show="pond" class="redo-button-style"/>
+            </mapgis-ui-tooltip>
+            <mapgis-ui-button type="primary" @click="simulation">开始</mapgis-ui-button>
             <mapgis-ui-button @click="stopSimulation">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
 
@@ -185,7 +191,6 @@ import * as turf from "@turf/turf";
 
 export default {
     name: "mapgis-3d-ponding-simulation",
-    components: {},
     mixins: [ServiceLayer, flood],
     mounted() {
         this.mounted();
@@ -210,19 +215,11 @@ export default {
                 vm.rainOption =3
             }
             
-            if(vm.pond){
-                vm.maskShow = true;
-                vm.removeRain();
-                vm._removeFlood();
-                vm.computeRainfallVol();
-                vm.loopCutFill(vm.midRange, "first_calc", undefined);
-            }
-
         },
         angle() {
             const vm = this;
             if(vm.pond){
-                vm.rain();
+                vm.addrain();
             }
         },
     },
@@ -257,8 +254,7 @@ export default {
             radioValue: 1,
             enableControl: false,
             
-            inputDefaultVal1: '经度',
-            inputDefaultVal2: '纬度',
+            //输入的圆半径
             circleCenter: {
               longitude: "",
               latitude: ""
@@ -315,176 +311,161 @@ export default {
     },
     methods: {
         mounted() {
-            const { vueCesium, vueKey, vueIndex, viewer } = this;
+            const { vueCesium, vueKey, vueIndex } = this;
             vueCesium.PondingSimulationManager.addSource(
                 vueKey,
                 vueIndex,
                 null,
                 {
                     rain: null,
-                    drawElement: null,
                 }
             );
-            const vm = this;
             this.mount();
             this.$emit("loaded", this);
         },
         destroyed() {
             const { vueCesium, vueKey, vueIndex } = this;
-
+            //积水仿真
             this.stopSimulation();
             vueCesium.PondingSimulationManager.deleteSource(vueKey, vueIndex);
 
+            //绘制组件
+            this.drawer.unmount();
+            //洪水淹没分析
             this.unmount();
 
             this.$emit("unload");
         },
-        
-        removeDraw() {
-          this.drawer.unmount();
+        handleDrawLoad(drawer) {
+          this.drawer = drawer;
         },
         drawPolygon() {
-          this.lnglat = undefined;
+          this.stopSimulation();
           this.drawer && this.drawer.enableDrawPolygon();
         },
         drawCircle() {
-          this.lnglat = undefined;
+          this.stopSimulation();
           this.isDrawCircle = true;
           this.drawer && this.drawer.enableDrawCircle();
         },
         drawRectangle() {
-          this.lnglat = undefined;
+          this.stopSimulation();
           this.drawer && this.drawer.enableDrawRectangle();
         },
-        toggleDelete() {
-          let vm = this;
-          vm.lnglat = undefined;
-          this.drawer && this.drawer.removeEntities();
-          //清空drawElement
-          if (window.drawElement) {
-            window.drawElement.stopDrawing();
-          }
-          this.remove();
-        },
-
         //绘制组件的回调函数
-        handleCreate(cartesian3, lnglat) {
+        handleDrawCreate(cartesian3, param2) { //圆形的第二个参数为半径，多边形和矩形的第二个参数为经纬度数组
+          const{ Cesium,viewer} = this;
           const vm = this;
+          let ellipsoid = viewer.scene.globe.ellipsoid;
+
           if (vm.isDrawCircle) {
             let center = [];
             // 圆心 笛卡尔转换经纬度
-            let cartographic = Cesium.Cartographic.fromCartesian    (cartesian3);
+            let cartographic = Cesium.Cartographic.fromCartesian(cartesian3);
             center.push(Cesium.Math.toDegrees(cartographic.longitude));
             center.push(Cesium.Math.toDegrees(cartographic.latitude));
-            let radius = lnglat / 1000;
-            vm.lnglat = vm.calculateCirclePosition(center, radius);
+            let radius = param2 / 1000;
+            let lnglatArr = vm.getCircleDegrees(center, radius);
+            vm.positions = Cesium.Cartesian3.fromDegreesArray(lnglatArr,ellipsoid);
+            // console.log("circlelng",vm.lnglat);
+            // console.log("circlecartesian",vm.positions);
             vm.isDrawCircle = false;
           } else {
-            // 矩形或者多边形，笛卡尔转换经纬度
-            if (lnglat.length === 2) {
-              vm.lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
+            // 获取矩形或者多边形的位置坐标
+            if (param2.length === 2) {
+              let lnglatArr = vm.getRectDegrees(param2[0], param2[1]);
+              vm.positions = Cesium.Cartesian3.fromDegreesArray(lnglatArr,ellipsoid);
+            //   console.log("rectanglelng",vm.lnglat);
+            //   console.log("rectanglecartesian",vm.positions);
             } else {
-              vm.lnglat = lnglat;
+              vm.getPolygonDegrees(param2);
+              vm.positions = cartesian3;
+            //   console.log("polygonlng",vm.lnglat);
+            //   console.log("polygoncartesian",vm.positions);
             }
           }
-          vm.cartesian3 = cartesian3;
         },
-        //绘制方式返回的点坐标是经纬度坐标
-        getAllPointByDegree(lnglat1, lnglat2) {
-          let p3 = [], p4 = [];
-          p3.push(lnglat1[0]);
-          p3.push(lnglat2[1]);
-          p3.push(lnglat1[2]);
-          p4.push(lnglat2[0]);
-          p4.push(lnglat1[1]);
-          p4.push(lnglat2[2]);
-          let allPoint = [lnglat1, p4, lnglat2, p3];
+        //获取圆形边界的经纬度坐标点
+        getCircleDegrees(center, radius) {
+          // turf 计算坐标点
+          let options = {};
+          let circle = turf.circle(center, radius, options);
+          let degrees = circle.geometry.coordinates[0];
+          this.lnglat = degrees;
+          let allPoint = [];
+          degrees.forEach(function(degree){
+              allPoint.push(degree[0],degree[1]);
+          })
           return allPoint;
         },
-        handleDrawLoad(drawer) {
-          this.drawer = drawer;
+        //获取矩形的经纬度坐标点
+        getRectDegrees(lnglat1, lnglat2) {
+          let p1=[],p2=[], p3 = [], p4 = [];
+          p1.push(lnglat1[0]);
+          p1.push(lnglat1[1]);
+
+          p2.push(lnglat2[0]);
+          p2.push(lnglat2[1]);
+
+          p3.push(lnglat1[0]);
+          p3.push(lnglat2[1]);
+
+          p4.push(lnglat2[0]);
+          p4.push(lnglat1[1]);
+          this.lnglat = [p1, p4, p2, p3,p1];
+
+          let allPoint = [lnglat1[0],lnglat1[1],lnglat2[0],lnglat1[1], lnglat2[0],lnglat2[1], lnglat1[0],lnglat2[1],lnglat1[0],lnglat1[1]];
+          return allPoint;
         },
-        draw(){
+        getPolygonDegrees(degreeArr3){
+            let degreeArr2 = [];
+            degreeArr3.forEach(function(degree){
+                degreeArr2.push(degree[0],degree[1]);
+            });
+            this.lnglat = degreeArr2;
+        },
+        //开始模拟仿真计算
+        simulation() {
+            const { Cesium } = this;
             const vm = this;
+
             switch (vm.radioValue) {
               case 1:
                 if (vm.lnglat) {
-                  this.drawer && this.drawer.removeEntities(true);
-                  this.heightLimitedAnalysis(vm.lnglat);
+                    this.drawer && this.drawer.removeEntities(true);
+                    
+                    vm.maskShow = true;
+                    vm.computeRainfallVol();
+                    vm.computeHeight();
                 } else {
-                  this.$message.warning("请先绘制控高区域");
+                  this.$message.warning("请先绘制仿真区域");
                 }
                 break;
               case 2:
                 if (vm.circleCenter.longitude && vm.circleCenter.latitude && vm.radius) {
-                  //先清除
-                  vm.lnglat = undefined;
-                  // 根据用户输入的圆心和半径计算圆范围的坐标点
-                  let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
-                  vm.lnglat = vm.calculateCirclePosition(circle, vm.radius / 1000);
-                  this.heightLimitedAnalysis(vm.lnglat);
+                    //先清除
+                    vm.lnglat = undefined;
+                    // 根据用户输入的圆心和半径计算圆范围的坐标点
+                    let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
+                    let lnglatArr = vm.getCircleDegrees(circle, vm.radius / 1000); //turf创建圆的半径单位为km
+                    vm.positions = Cesium.Cartesian3.fromDegreesArray(lnglatArr,ellipsoid);
+
+                    vm.maskShow = true;
+                    vm.computeRainfallVol();
+                    vm.computeHeight();
                 } else {
-                  this.$message.warning("请先输入控高区域");
+                  this.$message.warning("请先输入仿真区域");
                 }
                 break;
             }
-        },
-        calculateCirclePosition(center, radius) {
-          // turf 计算坐标点
-          let options = {};
-          let positions = turf.circle(center, radius, options);
-          return positions.geometry.coordinates[0];
-        },
-
-        //开始模拟仿真
-        simulation() {
-            const { viewer, Cesium, vueCesium, vueKey, vueIndex } = this;
-            const vm = this;
-            this.stopSimulation();
-            
-            // let drawElement = new Cesium.DrawElement(viewer);
-            // vueCesium.PondingSimulationManager.changeOptions(
-            //     vueKey,
-            //     vueIndex,
-            //     "drawElement",
-            //     drawElement
-            // );
-            // // 激活交互式绘制工具
-            // drawElement.startDrawingPolygon({
-            //     // 绘制完成回调函数
-            //     callback: (result) => {
-            //         vm.stopSimulation();
-            //         vm.positions = result.positions;
-            //         vm.maskShow = true;
-            //         vm.computeRainfallVol(result.positions);
-            //         vm.computeHeight();
-            //         // vm.rain();
-            //     },
-            // });
-
-            vm.maskShow = true;
-            vm.computeRainfallVol(vm.positions);
-            vm.computeHeight();
 
         },
         //根据降雨量计算绘制区域的降雨体积
-        computeRainfallVol(cartesians) {
-            const { viewer, Cesium } = this;
-            
+        computeRainfallVol() {
+            const vm = this;
             if(!this.pond){
                 //计算绘制区域面积
-                let ellipsoid = viewer.scene.globe.ellipsoid;
-                let polygon = [];
-                cartesians.forEach(function (cartesian) {
-                    let radian = Cesium.Cartographic.fromCartesian(
-                        cartesian,
-                        ellipsoid
-                    );
-                    let lng = Cesium.Math.toDegrees(radian.longitude);
-                    let lat = Cesium.Math.toDegrees(radian.latitude);
-                    polygon.push([lng, lat]);
-                });
-                let turfPoly = turf.polygon([polygon]);
+                let turfPoly = turf.polygon([vm.lnglat]);
                 this.area = turf.area(turfPoly); //square meters
             }
 
@@ -546,21 +527,23 @@ export default {
             if (Math.abs(err) < vm.VolErr) {
                 //若误差满足条件，将使用的高度设置为积水上涨的高度
                 vm.maxHeightCopy = Math.round(midRange * 100 ) / 100;
-
+                //在实际计算出来的积水高度上增加一米以优化积水显示的效果
+                vm.maxHeightCopy += 1;
+                console.log("heightflood",vm.maxHeightCopy);
                 //积水上涨高度的步长值
                 vm.heightStep = (vm.maxH - vm.startHeightCopy) / 10;
                 
                 //积水上涨的速度
                 let speed = (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime;
                 vm.floodSpeedCopy = Math.round(speed * 100) / 100;
-                //下雨
-                vm.rain();
-                vm._removeFlood();
-                //积水上涨
-                vm._doAnalysis();
+
                 vm.maskShow = false;
-                vm.loopCount = 0;
                 vm.pond = true;
+                //下雨
+                vm.addrain();
+                //积水上涨
+                vm.addflood();
+                vm.loopCount = 0;
                 return;
             }
             
@@ -627,9 +610,8 @@ export default {
                 resolve(eventdata);
             }
         },
-        rain() {
-            const { viewer, Cesium, vueCesium, vueKey, vueIndex, positions } =
-                this;
+        addrain() {
+            const { viewer, Cesium, vueCesium, vueKey, vueIndex, positions } = this;
             const vm = this;
             if (positions) {
                 vm.removeRain();
@@ -682,35 +664,20 @@ export default {
                 );
             }
         },
+        addflood(){
+            const vm = this;
+            if(vm.pond){
+                vm._removeFlood();
+                vm._doAnalysis();
+            }else{
+                this.$message.warning("请先进行分析！");
+            }
+            
+        },
         stopSimulation() {
             this._removeFlood();
             this.removeRain();
-            // const { vueCesium, vueKey, vueIndex } = this;
-            // let find = vueCesium.PondingSimulationManager.findSource(
-            //     vueKey,
-            //     vueIndex
-            // );
-            // const { options } = find;
-            // const { drawElement } = options;
-
-            // if (drawElement) {
-            //     // 取消交互式绘制事件激活状态
-            //     drawElement.stopDrawing();
-            //     vueCesium.PondingSimulationManager.changeOptions(
-            //         vueKey,
-            //         vueIndex,
-            //         "drawElement",
-            //         null
-            //     );
-            // }
-
-            this.lnglat = undefined;
-            this.drawer && this.drawer.removeEntities();
-            //清空drawElement
-            if (window.drawElement) {
-              window.drawElement.stopDrawing();
-            }
-
+            this.removeDraw();
             this.pond = false;
         },
         removeRain() {
@@ -731,7 +698,15 @@ export default {
                     null
                 );
             }
-        }
+        },
+        removeDraw() {
+        //   this.lnglat = undefined;
+          this.drawer && this.drawer.removeEntities();
+          //清空drawElement
+          if (window.drawElement) {
+            window.drawElement.stopDrawing();
+          }
+        },
     },
 };
 </script>
@@ -775,6 +750,16 @@ export default {
 
 .padding{
     padding: 10px 6px;
+}
+
+.mapgis-ui-setting-footer{
+    position: relative;
+}
+
+.redo-button-style{
+    position: absolute;
+    left: 0px;
+    font-size: 21px;
 }
 
 </style>

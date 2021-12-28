@@ -97,7 +97,18 @@ $tree-height: 400px;
     }
   }
   &-span-inline {
-    width: 240px;
+    max-width: 200px;
+    display: flex;
+    .anticon {
+      line-height: 28px;
+    }
+    div {
+      max-width: 150px;
+      width: 150px;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      overflow:hidden;
+    }
   }
   &-span {
     .iconfont {

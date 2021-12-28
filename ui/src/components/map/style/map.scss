@@ -225,6 +225,54 @@
   }
 }
 
+.cesium-timeline-bar {
+  background: linear-gradient(to bottom,$background-color-light 0%,$background-color-light 50%, $body-background 100%);
+}
+
+.cesium-timeline-ticLabel {
+  color: $text-color;
+}
+
+.cesium-animation-shuttleRingBack {
+  fill: $background-color-light;
+}
+
+.cesium-animation-knobInner {
+  fill: $background-color-base;  
+}
+
+.cesium-animation-svgText {
+  fill: $text-color;
+}
+
+.cesium-animation-shuttleRingG .cesium-animation-shuttleRingSwoosh {
+  fill: $primary-6;
+}
+
+.cesium-animation-knobOuter {
+  fill: $primary-5;
+}
+.cesium-animation-shuttleRingPointer {
+  fill: $primary-6;
+}
+.cesium-animation-buttonToggled:hover .cesium-animation-buttonMain {
+  stroke: $primary-7;
+}
+.cesium-animation-buttonToggled .cesium-animation-buttonMain {
+  stroke: $primary-7;
+}
+.cesium-animation-buttonToggled .cesium-animation-buttonGlow {
+  fill: $primary-7;
+}
+.cesium-animation-buttonToggled:hover .cesium-animation-buttonMain {
+  stroke: $primary-6;
+}
+
+.cesium-animation-rectButton .cesium-animation-buttonMain {
+  fill: $primary-2;  
+  stroke: $primary-1;  
+}
+
 .mapgis-ui-map-outline-title {
   color: $panel-option-color;
   background: $panel-backgroud;

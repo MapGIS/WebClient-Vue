@@ -66,7 +66,10 @@
           @check="onCheck"
         >
           <template slot="icon" slot-scope="{}"> </template>
-          <template slot="title" slot-scope="{ title, icon, key, count }">
+          <template
+            slot="title"
+            slot-scope="{ title, index, icon, key, count }"
+          >
             <span
               :class="{
                 'mapgis-3d-bim-component-span': true,
@@ -74,15 +77,26 @@
               }"
             >
               <mapgis-ui-iconfont :type="icon" />
-              <span v-if="title && title.indexOf(searchValue) > -1">
-                {{ title.substr(0, title.indexOf(searchValue)) }}
-                <span style="color: #f50">{{ searchValue }}</span>
-                {{
-                  title.substr(title.indexOf(searchValue) + searchValue.length)
-                }}
-                ({{ count }})
-              </span>
-              <span v-else>{{ title }} </span>
+              <mapgis-ui-tooltip
+                v-if="title && title.indexOf(searchValue) > -1"
+              >
+                <template slot="title">{{ title }}({{ count }})</template>
+                <div>
+                  {{ title.substr(0, title.indexOf(searchValue)) }}
+                  <span style="color: #f50">{{ searchValue }}</span>
+                  {{
+                    title.substr(
+                      title.indexOf(searchValue) + searchValue.length
+                    )
+                  }}
+                  ({{ count }})
+                </div>
+              </mapgis-ui-tooltip>
+              <mapgis-ui-tooltip v-else>
+                <template slot="title">{{ title }}</template>
+                <div>{{ title }}</div>
+              </mapgis-ui-tooltip>
+
               <mapgis-ui-tooltip v-for="(s, j) in submenus" :key="j">
                 <template slot="title">{{ s.tooltip() }}</template>
                 <mapgis-ui-iconfont
@@ -135,9 +149,8 @@ export default {
           zIndex: 1000,
           padding: "0px",
           margin: "0px",
-          height: "450px",
-          width: "fit-content",
-          minWidth: "270px",
+          height: "600px",
+          width: "400px",
           top: "0px",
           left: "0px",
         };
@@ -194,7 +207,7 @@ export default {
         },
       ],
       submenus: [
-        {
+        /* {
           title: "进入图层菜单",
           tooltip: () =>
             this.enableBim ? "进入图层菜单" : "请按照BIM要求制作数据",
@@ -204,7 +217,7 @@ export default {
               // this.handleActiveItemKey(payload);
             }
           },
-        },
+        }, */
         {
           title: "锁定/解锁图层",
           tooltip: () =>
@@ -350,12 +363,14 @@ export default {
     loopTreeNode(node, prefix, parent) {
       const vm = this;
       let key = `${prefix}_${node.depth}`;
-      vm.layerIds.push(/* key +  */ node.index);
-      vm.allLayerIds.push(/* key +  */ node.index);
+      vm.layerIds.push(node.index);
+      vm.allLayerIds.push(node.index);
+
       let cbnode = {
-        title: node.index,
-        key: /*  key +  */ node.index,
+        title: node.nodeName,
+        key: node.index,
         index: node.index,
+        attMap: node.attMap && node.attMap._obj ? node.attMap._obj : {},
         icon: "mapgis-sanweiditu",
         children: [],
         parent: parent,
@@ -406,6 +421,24 @@ export default {
         for (let i = 0; i < node.children.length; i++) {
           let child = node.children[i];
           find = vm.findNode(child, index);
+          if (find) {
+            break;
+          }
+        }
+      }
+      return find;
+    },
+    findOid(node, oid) {
+      const vm = this;
+      let find = undefined;
+      if (!node) return find;
+      if (node.attMap && Object.keys(node.attMap).indexOf(`${oid}`) >= 0) {
+        return node;
+      }
+      if (node.children) {
+        for (let i = 0; i < node.children.length; i++) {
+          let child = node.children[i];
+          find = vm.findOid(child, oid);
           if (find) {
             break;
           }
@@ -616,11 +649,11 @@ export default {
     },
     enableIsolation(layer) {
       const { viewer } = this;
-      const { title } = layer;
+      const { index } = layer;
       this.featurevisible = false;
-      this.selectedKeys = [`${title}`];
+      this.selectedKeys = [`${index}`];
 
-      let find = this.findTreePath(title);
+      let find = this.findTreePath(index);
       const { paths, node } = find;
       let indexs = paths.map((p) => p.index);
       this.changeLayerVisible(indexs);
@@ -761,6 +794,7 @@ export default {
       const { Cesium, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
       const scene = viewer.scene;
+      let root = this.findRoot();
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
@@ -802,6 +836,16 @@ export default {
            m3d.pickedColor = Cesium.Color.fromCssColorString(
             "rgba(255, 255, 0, 0.75)"
           ); */
+
+          let paths = [];
+          let find = vm.findOid(root, oid);
+
+          if (find) {
+            this.findParent(find, paths);
+            let expends = paths.map((p) => p.index);
+            vm.selectedKeys = [find.index];
+            vm.expandedKeys = expends;
+          }
 
           if (m3d._useRawSaveAtt && Cesium.defined(feature)) {
             let result = feature.content.getAttributeByOID(oid) || {};

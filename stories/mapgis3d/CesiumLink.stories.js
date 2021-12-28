@@ -49,7 +49,7 @@ const Template = (args, { argTypes }) => ({
             <mapgis-3d-raster-layer :url="url4"> </mapgis-3d-raster-layer>
         </mapgis-web-scene>
     </div>
-    <div :class="{'control': true, active: link}" v-on:click="changeMode"></div>
+    <div :class="{'control': true, link-active: link}" v-on:click="changeMode"></div>
   </div>`,
 });
 
