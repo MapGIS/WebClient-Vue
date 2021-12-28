@@ -13,7 +13,7 @@ export default {
       padding: "0px",
       margin: "0px",
       height: "450px",
-      width: "300px",
+      width: "400px",
       top: "10px",
     },
     layers: [
@@ -58,7 +58,7 @@ BIM.args = {
     padding: "0px",
     margin: "0px",
     height: "450px",
-    width: "300px",
+    width: "400px",
     top: "10px",
   },
   layers: [
