@@ -39,7 +39,7 @@
 
       <mapgis-ui-row>
         <mapgis-ui-col :span="12">
-          <mapgis-ui-switch-panel class="odd" size="small" label="状态栏" :checked="statebar" @changeChecked="enableStatebar"/>
+          <mapgis-ui-switch-panel class="odd" size="small" label="状态栏" :checked="statebar" @changeChecked="handleChangeStatebar"/>
         </mapgis-ui-col>
       </mapgis-ui-row>
 
@@ -86,6 +86,7 @@
       </mapgis-ui-input-number-panel>  
 
     </mapgis-ui-form-model>
+    <mapgis-3d-statebar v-if="statebar" :frame="60" :bottomMap="true" />
   </div> 
 </template>
 
@@ -120,7 +121,7 @@ export default {
       timeline:false,      
       compass: false,
       zoom: false,
-      statebar:this.initialStatebar,
+      statebar: this.initialStatebar,
       // longitude:undefined,
       // latitude:undefined,
       // height:undefined,
@@ -151,34 +152,6 @@ export default {
       timeline: null,
     });
 
-  },
-  watch: {
-    longitude:{
-      handler:function(){
-        this.enableStatebar();
-      }
-    },
-    latitude:{
-      handler:function(){
-        this.enableStatebar();
-      }
-    },
-    height:{
-      handler:function(){
-        this.enableStatebar();
-      }
-    },
-    cameraHeight:{
-      handler:function(){
-        this.enableStatebar();
-      }
-    },
-    statebar:{
-      handler:function(){
-        this.enableStatebar();
-      },
-      immediate:true
-    }
   },
   methods: {
     /*
@@ -321,58 +294,6 @@ export default {
       // this.changeNavPos();
     },
     /*
-    * 开启状态栏 
-    * */
-    enableStatebar(e){
-      const {viewer} = this;
-      
-      if(typeof e === 'boolean'){this.statebar = e;}
-
-      let vm = this;
-
-      if(vm.statebar){
-        
-        let list = document.getElementsByClassName('scene-setting-statebar');
-        // console.log("list",list);
-
-        if(list.length > 0){
-          list[0].parentNode.removeChild(list[0]);
-        }
-
-        vm.showPosition();
-        var viewerContainer = viewer.container;
-        var stateContainer = document.createElement('div');
-        stateContainer.className = 'scene-setting-statebar';
-        stateContainer.innerHTML = '经度:'+ vm.longitude + '°，纬度:' + vm.latitude 
-          +'°， 海拔高度:' + vm.height + '米，相机高度:' + vm.cameraHeight + '米';
-         
-        stateContainer.style = 'position: absolute;height: fit-content;line-height: 30px;' 
-          + 'text-align:center;color: #f0efef;background-color: rgba(31, 31, 31, 0.6);'
-          + 'z-index: 9999;left:0px;right:0px;bottom:0px';
-
-        // 改变状态栏的上下位置
-        if(vm.timeline){
-          vm.$nextTick(function(){
-            let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
-            let style = window.getComputedStyle(list[0]);
-            if(style.bottom === '0px'){
-              stateContainer.style.bottom = '24px';
-            }  
-          });
-        }
-
-        viewerContainer.appendChild(stateContainer);
-
-      }else{
-        let list = document.getElementsByClassName('scene-setting-statebar');
-        // console.log("list",list);
-        if(list.length > 0){
-          list[0].parentNode.removeChild(list[0]);
-        }
-        vm.unmount();
-      }
-    },
-    /*
     * 图层亮度
     * */
     layerBrtChange(e) {
@@ -404,6 +325,11 @@ export default {
       this.layersaturation = e;
       viewer.scene.imageryLayers._layers[0].saturation = this.layersaturation;
     },
+
+    handleChangeStatebar(next) {
+      console.log(next);
+      this.statebar = next;
+    }
   },
 
 }

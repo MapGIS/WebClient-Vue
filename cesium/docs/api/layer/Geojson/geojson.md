@@ -73,11 +73,11 @@
   title: "name",
   fields: ["acroutes", "adcode"]
   }
-  ```  
+  ```
 
 ### `customPopup`
 
-- ![自定义Popup](./GeojsonLayer/custom_popup_list.png)
+- ![自定义Popup](../PopupMixin/custom_popup_list.png)
 - **类型:** `Function`
 - **描述:** JSX 风格的自定义 popup 样式内容, (features) => {}, features 为选中或者点击的样式
 - 详情请看下面的示例
@@ -202,12 +202,12 @@ export default {
 
 ### `customTips`
 
-- ![自定义Popup](./GeojsonLayer/custom_popup_tips.png)
+- ![自定义Popup](../PopupMixin/custom_popup_tips.png)
 - **类型:** `Function`
 - **描述:** JSX 风格的自定义 tips 样式内容, (features) => {}, features 为选中或者点击的样式
 - 详情请看下面的示例
 - **示例**
-  
+
 ```vue
 <template>
   <mapgis-web-scene>
@@ -326,16 +326,17 @@ export default {
 ```
 
 ### `layerStyle`
+
 - **类型:** `Object`
 - **非侦听属性**
 - **描述:** 当前图层的显示样式
 - **默认值**
-  ``` javascript
+  ```javascript
   import { Style } from "@mapgis/webclient-es6-service";
   const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
   let highlightStyle = {
     point: new PointStyle(),
     line: new LineStyle(),
-    polygon: new FillStyle()
+    polygon: new FillStyle(),
   };
   ```
