@@ -15,7 +15,7 @@
             填充颜色
           </mapgis-ui-radio>
         </mapgis-ui-radio-group>
-        <mapgis-ui-group-tab title="坡向图例设置">
+        <mapgis-ui-group-tab title="坡向图例设置" v-show="value === 2" >
           <mapgis-ui-tooltip slot="handle" placement="bottomRight">
             <template slot="title">
               <span>{{ info }}</span>
@@ -26,6 +26,7 @@
         <mapgis-ui-colors-setting
           v-model="rampColorsCopy"
           :rangeField="'坡向范围'"
+          v-show="value === 2" 
         >
         </mapgis-ui-colors-setting>
 
