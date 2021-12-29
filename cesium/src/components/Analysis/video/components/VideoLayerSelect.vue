@@ -85,7 +85,7 @@ export default {
         this.selectOptionsCopy = JSON.parse(JSON.stringify(this.selectOptions));
         if (!this.isChangeBySelf) {
           //如果不是内部触发的改变，则默认取第一个
-          this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
+          // this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
         }
         this.isChangeBySelf = false;
       },

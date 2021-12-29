@@ -149,18 +149,14 @@
 import emptyImage from "../../../assets/image/empty.png";
 import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
-import {
-  isLogarithmicDepthBufferEnable,
-  setLogarithmicDepthBufferEnable,
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
-} from "../../WebGlobe/util";
 import OperationsItem from "./components/OperationsItem.vue";
 import VideoLayerSelect from "./components/VideoLayerSelect.vue";
+import videoMixins from "./mixins/video-mixins";
 export default {
   name: "mapgis-3d-video-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
   components: { OperationsItem, VideoLayerSelect },
+  mixins: [videoMixins],
   props: {
     ...VueOptions,
     videoOverlayLayerList: {
@@ -204,25 +200,12 @@ export default {
     hintLineVisible: {
       type: Boolean,
       default: true
-    },
-    modelUrl: {
-      type: String
-    },
-    modelOffset: {
-      type: Object,
-      default: () => {
-        return { headingOffset: -90, pitchOffset: 0, rollOffset: 0 };
-      }
-    },
-    modelScale: {
-      type: Number,
-      default: 1
     }
   },
   computed: {
     videoList: {
       get: function() {
-        return this.currentVideoOverlayLayer.videoList;
+        return this.currentVideoOverlayLayer.videoList || [];
       },
       set: function(videoList) {
         this.currentVideoOverlayLayer.videoList = videoList;
@@ -240,8 +223,8 @@ export default {
         );
         if (this.videoOverlayLayerListCopy.length > 0) {
           // 默认取第一个
-          this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
-          this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
+          // this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
+          // this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
           this.layerSelectOptions = [];
           for (let i = 0; i < this.videoOverlayLayerListCopy.length; i++) {
             const { id, name } = this.videoOverlayLayerListCopy[i];
@@ -332,6 +315,10 @@ export default {
       if (target) {
         target[dataIndex] = value;
         this.videoOverlayLayerListCopy = videoOverlayLayerList;
+        this.$emit(
+          "update-videoOverlayLayerList",
+          this.videoOverlayLayerListCopy
+        );
       }
     },
     /**
@@ -339,6 +326,10 @@ export default {
      */
     _addLayer(newLayer) {
       this.videoOverlayLayerListCopy.push(newLayer);
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 删除图层
@@ -348,6 +339,10 @@ export default {
       this.videoOverlayLayerListCopy = videoOverlayLayerList.filter(
         item => item.id !== id
       );
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 更改图层名
@@ -356,6 +351,14 @@ export default {
       this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
         item => item.name === val
       );
+      for (let i = 0; i < this.videoList.length; i++) {
+        const video = this.videoList[i];
+        if (video.isProjected) {
+          this.putVideo(video);
+        } else {
+          this.cancelPutVideo(video.id);
+        }
+      }
     },
     /**
      * 更改tab标签
@@ -438,7 +441,10 @@ export default {
         this.cancelPutVideo(selectedIds[i]);
       }
       this.selectedIds = [];
-      this.$emit("update-config", this.videoOverlayLayerListCopy);
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 批量投放
@@ -457,6 +463,10 @@ export default {
         }
       });
       this.videoList = videoList;
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 批量取消投放
@@ -474,6 +484,10 @@ export default {
         }
       });
       this.videoList = videoList;
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 跳转到video配置界面
@@ -503,7 +517,10 @@ export default {
       }
       this.currentEditVideo = settings;
       this.activeKey = "1";
-      this.$emit("update-config", this.videoOverlayLayerListCopy);
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 取消设置
@@ -518,102 +535,10 @@ export default {
       const videoList = [...this.videoList];
       this.videoList = videoList.filter(item => item.id !== id);
       this.cancelPutVideo(id);
-    },
-    /**
-     * 获取投放视频协议
-     */
-    _getProType(protocol) {
-      let proType;
-      switch (protocol) {
-        case "m3u8":
-          proType = this.Cesium.SceneProjectorType.HLS;
-          break;
-        case "mp4":
-          proType = this.Cesium.SceneProjectorType.VIDEO;
-          break;
-        default:
-          break;
-      }
-      return proType;
-    },
-    /**
-     * 投放视频
-     */
-    putVideo(video) {
-      this._openSceneSetting();
-      let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
-        video.id
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
       );
-      if (scenePro) {
-        // 视频已经被投放
-        return;
-      }
-      const { viewer, Cesium } = this;
-      const { id, params } = video;
-      const proType = this._getProType(video.params.videoSource.protocol);
-      scenePro = new Cesium.SceneProjector(proType);
-      viewer.scene.visualAnalysisManager.add(scenePro, id);
-      switch (proType) {
-        case Cesium.SceneProjectorType.IMAGE:
-        case Cesium.SceneProjectorType.VIDEO:
-        case Cesium.SceneProjectorType.HLS:
-          scenePro.textureSource = params.videoSource.videoUrl;
-          break;
-        case Cesium.SceneProjectorType.COLOR:
-          scenePro.textureSource = new Cesium.Color(1, 0, 0, 1);
-          break;
-        default:
-          break;
-      }
-      const {
-        cameraPosition,
-        orientation,
-        hFOV,
-        vFOV,
-        hintLineVisible
-      } = params;
-      const viewPosition = Cesium.Cartographic.toCartesian(
-        Cesium.Cartographic.fromDegrees(
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z
-        )
-      );
-      // viewPosition.x -= 10;
-      scenePro.viewPosition = viewPosition;
-      let targetPosition = Cesium.AlgorithmLib.pickFromRay(
-        viewer.scene,
-        viewPosition,
-        { heading: orientation.heading, pitch: orientation.pitch }
-      );
-      if (!targetPosition) {
-        targetPosition = Cesium.AlgorithmLib.pickFromRay(
-          viewer.scene,
-          viewPosition,
-          {
-            heading: orientation.heading,
-            pitch: orientation.pitch,
-            distance: 150
-          }
-        );
-        scenePro.targetPosition = targetPosition;
-      } else {
-        scenePro.targetPosition = targetPosition;
-      }
-      // scenePro.heading = orientation.heading;
-      // scenePro.pitch = orientation.pitch;
-      scenePro.roll = orientation.roll;
-      scenePro.hintLineVisible = hintLineVisible;
-      scenePro.horizontAngle = hFOV;
-      scenePro.verticalAngle = vFOV;
-      this._addCameraMarker(video, this.modelUrl, this.modelOffset);
-    },
-    /**
-     * 取消投放
-     */
-    cancelPutVideo(id) {
-      this.viewer.scene.visualAnalysisManager.removeByID(id);
-      this._removeCameraMarker(id);
     },
     /**
      * 单个投放/取消投放
@@ -638,6 +563,10 @@ export default {
         target.isProjected = isProjected;
         this.videoList = videoList;
       }
+      this.$emit(
+        "update-videoOverlayLayerList",
+        this.videoOverlayLayerListCopy
+      );
     },
     /**
      * 定位到摄像机位置
@@ -658,199 +587,6 @@ export default {
           roll: Cesium.Math.toRadians(orientation.roll) // 绕纬度线旋转 ，面对的一面瞬时针转
         }
       });
-    },
-    /**
-     * 获取相机模型矩阵
-     */
-    _getModelMatrix(cartesian3Position, orientation, modelOffset) {
-      const { Cesium, viewer } = this;
-      const { headingOffset, pitchOffset, rollOffset } = modelOffset;
-      //弧度的航向分量。
-      const heading = Cesium.Math.toRadians(
-        orientation.heading + headingOffset
-      );
-      //弧度的螺距分量。
-      const pitch = Cesium.Math.toRadians(orientation.pitch + pitchOffset);
-      //滚动分量（以弧度为单位）
-      const roll = Cesium.Math.toRadians(orientation.roll + rollOffset);
-      //HeadingPitchRoll旋转表示为航向，俯仰和滚动。围绕Z轴。节距是绕负y轴的旋转。滚动是关于正x轴。
-      const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-      const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(
-        cartesian3Position,
-        hpr
-      );
-      return modelMatrix;
-    },
-    /**
-     * 获取相机模型位置，为确保视频投放(不被相机模型遮挡，需将相机模型往观察点和视点反方向移动)
-     */
-    _getCameraModelPosition(
-      targetPosition,
-      viewPosition,
-      orientation,
-      distance
-    ) {
-      const { Cesium, viewer, params, modelOffset } = this;
-      const { heading, pitch } = orientation;
-      // 根据相机的观察点和视点计算两点的方向，
-      // 取反，将相机往计算的反方向移动包围球半径的距离，
-      // 确保相机模型不在相机的观察点和视点之间，以防遮挡视频投放(防止视频部分投放在相机模型上)
-      let direction = new Cesium.Cartesian3();
-      let dist = new Cesium.Cartesian3();
-      let position = new Cesium.Cartesian3();
-      direction = Cesium.Cartesian3.subtract(
-        targetPosition,
-        viewPosition,
-        direction
-      );
-      direction = Cesium.Cartesian3.normalize(
-        direction,
-        new Cesium.Cartesian3()
-      );
-      dist = Cesium.Cartesian3.multiplyByScalar(
-        direction,
-        -distance,
-        new Cesium.Cartesian3()
-      );
-      position = Cesium.Cartesian3.add(
-        viewPosition,
-        dist,
-        new Cesium.Cartesian3()
-      );
-      return position;
-    },
-    /**
-     * 添加相机标注
-     */
-    _addCameraMarker(video, modelUrl, modelOffset) {
-      let modelPrimitive = undefined;
-      const { primitives } = this.viewer.scene;
-      for (let i = 0; i < primitives.length; i++) {
-        const p = primitives.get(i);
-        if (p.id === video.id) {
-          modelPrimitive = p;
-          break;
-        }
-      }
-      if (!modelPrimitive) {
-        const { Cesium, viewer } = this;
-        const { id, params } = video;
-        const { cameraPosition } = params;
-        const viewPosition = Cesium.Cartesian3.fromDegrees(
-          cameraPosition.x,
-          cameraPosition.y,
-          cameraPosition.z
-        );
-        let modelMatrix = this._getModelMatrix(
-          viewPosition,
-          params.orientation,
-          modelOffset
-        );
-        let modelObj = {
-          id,
-          url: modelUrl,
-          modelMatrix: modelMatrix,
-          scale: this.modelScale
-        };
-
-        modelPrimitive = viewer.scene.primitives.add(
-          Cesium.Model.fromGltf(modelObj)
-        );
-        modelPrimitive.readyPromise.then(() => {
-          console.log(modelPrimitive);
-          // 获取模型的包围球
-          const { boundingSphere } = modelPrimitive;
-          const { heading, pitch } = params.orientation;
-          const targetPosition = Cesium.AlgorithmLib.pickFromRay(
-            viewer.scene,
-            viewPosition,
-            { heading, pitch, distance: 150 }
-          );
-          const cameraModelPosition = this._getCameraModelPosition(
-            targetPosition,
-            viewPosition,
-            params.orientation,
-            boundingSphere.radius
-          );
-          modelMatrix = this._getModelMatrix(
-            cameraModelPosition,
-            params.orientation,
-            modelOffset
-          );
-
-          viewer.scene.primitives.remove(modelPrimitive);
-
-          modelObj = {
-            id,
-            url: modelUrl,
-            modelMatrix: modelMatrix,
-            scale: this.modelScale
-          };
-
-          viewer.scene.primitives.add(Cesium.Model.fromGltf(modelObj));
-        });
-      }
-    },
-    _removeCameraMarker(id) {
-      const { primitives } = this.viewer.scene;
-      for (let i = 0; i < primitives.length; i++) {
-        const p = primitives.get(i);
-        if (p.id === id) {
-          this.viewer.scene.primitives.remove(p);
-        }
-      }
-    },
-    /**
-     * 设置depthTestAgainstTerrain和logarithmicDepthBuffer
-     */
-    _openSceneSetting() {
-      const { viewer } = this;
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, viewer);
-      }
-      //缓存区设置
-      this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-        viewer
-      );
-      if (
-        navigator.userAgent.indexOf("Linux") > 0 &&
-        navigator.userAgent.indexOf("Firefox") > 0
-      ) {
-        setLogarithmicDepthBufferEnable(false, viewer);
-      } else {
-        // 其他浏览器还是设置为true，不然会导致分析结果不正确
-        setLogarithmicDepthBufferEnable(true, viewer);
-      }
-    },
-    /**
-     * 恢复depthTestAgainstTerrain和logarithmicDepthBuffer设置
-     */
-    _restoreSceneSetting() {
-      const { viewer } = this;
-      if (
-        this.isDepthTestAgainstTerrainEnable !== undefined &&
-        this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(viewer)
-      ) {
-        setDepthTestAgainstTerrainEnable(
-          this.isDepthTestAgainstTerrainEnable,
-          viewer
-        );
-      }
-      if (
-        this.isLogarithmicDepthBufferEnable !== undefined &&
-        this.isLogarithmicDepthBufferEnable !==
-          isLogarithmicDepthBufferEnable(viewer)
-      ) {
-        setLogarithmicDepthBufferEnable(
-          this.isLogarithmicDepthBufferEnable,
-          viewer
-        );
-      }
     }
   }
 };
