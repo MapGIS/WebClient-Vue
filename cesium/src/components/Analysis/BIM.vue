@@ -76,7 +76,7 @@
                 'mapgis-3d-bim-component-span-inline': true,
               }"
             >
-              <mapgis-ui-iconfont :type="icon" />
+              <!-- <mapgis-ui-iconfont :type="icon" /> -->
               <mapgis-ui-tooltip
                 v-if="title && title.indexOf(searchValue) > -1"
               >
@@ -135,6 +135,7 @@
 
 <script>
 import BaseLayer from "./BaseLayer";
+import clonedeep from 'lodash.clonedeep';
 
 export default {
   name: "mapgis-3d-bim-component",
@@ -207,17 +208,6 @@ export default {
         },
       ],
       submenus: [
-        /* {
-          title: "进入图层菜单",
-          tooltip: () =>
-            this.enableBim ? "进入图层菜单" : "请按照BIM要求制作数据",
-          icon: () => "mapgis-layer",
-          click: (payload) => {
-            if (this.enableBim) {
-              // this.handleActiveItemKey(payload);
-            }
-          },
-        }, */
         {
           title: "锁定/解锁图层",
           tooltip: () =>
@@ -308,10 +298,7 @@ export default {
             } else {
               reject(null);
             }
-          },
-          vueKey,
-          innerVueIndex
-        );
+          }, vueKey, innerVueIndex);
       });
     },
     mount() {
@@ -321,16 +308,16 @@ export default {
 
       let promise = this.createCesiumObject();
       promise.then((find) => {
-        if (find && find.options) {
+        if (find && find.source) {
           let { source } = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
-          let tree = m3d ? m3d.tree : undefined;
+          let tree = m3d ? clonedeep(m3d.tree) : undefined;
           vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
           let collection = new Cesium.PrimitiveCollection();
           vueCesium.BimManager.addSource(vueKey, innerVueIndex, m3d, {
             m3d: m3d,
-            tree: m3d.tree,
+            tree: tree,
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection),
           });
@@ -344,16 +331,30 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
+      this.clearData();  
       const { vueCesium, vueKey, innerVueIndex } = this;
       const { viewer } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
+        
       }
       this.$emit("unload", { component: this });
       vueCesium.BimManager.deleteSource(vueKey, innerVueIndex);
       if (this.interval) {
         clearInterval(this.interval);
       }
+    },
+    clearData() {
+      this.showAllLayer();
+      this.resetAllLayer();  
+      this.allLayerIds = [];
+      this.layerTree = [];
+      this.layerIds = [];
+      this.allLayerIds = [];
+      this.halfCheckedKeys = [];
+      this.layerTree = [];
+      this.expandedKeys = [];
+      this.selectedKeys = [];
     },
     // 构建树内部逻辑
     parseTree(tree) {

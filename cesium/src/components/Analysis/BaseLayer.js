@@ -132,6 +132,7 @@ export default {
           this.interval = undefined;
         }
       }, 50);
+      this.interval = interval;
     },
     /**
      *
