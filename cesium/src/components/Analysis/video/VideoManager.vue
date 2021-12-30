@@ -365,7 +365,16 @@ export default {
      */
     _tabChange(e) {
       this.activeKey = e;
-      if (e === "2") {
+      if (this.currentEditVideo && Object.keys(currentEditVideo).length > 0) {
+        if (e === "2") {
+          // 切换到配置界面，直接投放已选中的视频
+          this.putVideo(this.currentEditVideo);
+        } else if (e === "1") {
+          if (!this.currentEditVideo.isProjected) {
+            // 切换到列表界面，如果已选中的视频未投放，则取消投放（在配置界面会默认投放，切回后恢复状态）
+            this.cancelPutVideo(this.currentEditVideo.id);
+          }
+        }
       }
     },
     /**
