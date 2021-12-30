@@ -396,51 +396,58 @@ export default {
         uuid: project.uuid
       };
       let map = project.map;
-      newProject.map = {
-        baseUrl: map.baseUrl,
-        format: map.format,
-        layer: map.layer,
-        tileMatrixSet: map.tileMatrixSet,
-        tilingScheme: map.tilingScheme,
-        type: map.type,
-        vueIndex: map.vueIndex,
-        vueKey: map.vueKey
-      };
-      let chapters = project.chapters;
-      for (let i = 0; i < chapters.length; i++) {
-        let camera = chapters[i].camera;
-        let chapter = {
-          animationTime: Number(chapters[i].animationTime),
-          camera: {
-            heading: camera.heading,
-            pitch: camera.pitch,
-            roll: camera.roll,
-            uuid: camera.uuid,
-            positionCartographic: {
-              height: camera.positionCartographic.height,
-              latitude: camera.positionCartographic.latitude,
-              longitude: camera.positionCartographic.longitude
-            }
-          },
-          content: chapters[i].content,
-          features: [],
-          images: [],
-          layerStyle: {},
-          map: {},
-          projectUUID: chapters[i].projectUUID,
-          title: chapters[i].title,
-          uuid: chapters[i].uuid
+      if (map) {
+        newProject.map = {
+          baseUrl: map.baseUrl,
+          format: map.format,
+          layer: map.layer,
+          tileMatrixSet: map.tileMatrixSet,
+          tilingScheme: map.tilingScheme,
+          type: map.type,
+          vueIndex: map.vueIndex,
+          vueKey: map.vueKey
         };
-        let images = chapters[i].images;
-        for (let i = 0; i < images.length; i++) {
-          chapter.images.push(images[i]);
+      }
+      let chapters = project.chapters;
+      if (chapters) {
+        for (let i = 0; i < chapters.length; i++) {
+          let camera = chapters[i].camera;
+          let chapter = {
+            animationTime: Number(chapters[i].animationTime),
+            camera: {
+              heading: camera.heading,
+              pitch: camera.pitch,
+              roll: camera.roll,
+              uuid: camera.uuid,
+              positionCartographic: {
+                height: camera.positionCartographic.height,
+                latitude: camera.positionCartographic.latitude,
+                longitude: camera.positionCartographic.longitude
+              }
+            },
+            content: chapters[i].content,
+            features: [],
+            images: [],
+            layerStyle: {},
+            map: {},
+            projectUUID: chapters[i].projectUUID,
+            title: chapters[i].title,
+            uuid: chapters[i].uuid
+          };
+          let images = chapters[i].images;
+          if (images) {
+            for (let i = 0; i < images.length; i++) {
+              chapter.images.push(images[i]);
+            }
+          }
+          let features = chapters[i].features;
+          for (let i = 0; i < features.length; i++) {
+            let feature = this.$_toJSONById(features[i].id);
+            feature.title = features[i].title;
+            chapter.features.push(feature);
+          }
+          newProject.chapters.push(chapter);
         }
-        let features = chapters[i].features;
-        for (let i = 0; i < features.length; i++) {
-          let feature = this.$_toJSONById(features[i].id);
-          chapter.features.push(feature);
-        }
-        newProject.chapters.push(chapter);
       }
       return newProject;
     },
@@ -449,6 +456,34 @@ export default {
         type: "application/json;charset=utf-8"
       });
       saveAs(blob, project.title + ".json");
+    },
+    $_import() {
+      let inputFile = document.getElementById(this.inputId),
+        vm = this;
+      inputFile.click();
+      inputFile.onchange = function() {
+        let File = inputFile.files[0];
+        // 使用 FileReader 来读取文件
+        let reader = new FileReader();
+        // 读取纯文本文件,且编码格式为 utf-8
+        reader.readAsText(File, "UTF-8");
+        // 读取文件
+        reader.onload = function(e) {
+          let fileContent = JSON.parse(e.target.result);
+          console.log("fileContent", fileContent);
+          let hasProject = false;
+          for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+            if (vm.dataSourceCopy[i].uuid === fileContent.uuid) {
+              vm.$set(vm.dataSourceCopy, i, fileContent);
+              hasProject = true;
+              break;
+            }
+          }
+          if (!hasProject) {
+            vm.dataSourceCopy.push(fileContent);
+          }
+        };
+      };
     },
     $_firstAddPicture(feature) {
       let lnglatPosition;
@@ -978,6 +1013,7 @@ export default {
                     features: [features[k]]
                   };
                   this.$_fromJson(GeoJSON);
+                  graphic = this.$_getGraphicByID(features[k].id);
                 }
                 graphic.show = false;
               }
@@ -989,6 +1025,14 @@ export default {
               let features = chapters[j].features;
               for (let k = 0; k < features.length; k++) {
                 let graphic = this.$_getGraphicByID(features[k].id);
+                if (!graphic) {
+                  let GeoJSON = {
+                    type: "FeatureCollection",
+                    features: [features[k]]
+                  };
+                  this.$_fromJson(GeoJSON);
+                  graphic = this.$_getGraphicByID(features[k].id);
+                }
                 graphic.show = true;
               }
               break;

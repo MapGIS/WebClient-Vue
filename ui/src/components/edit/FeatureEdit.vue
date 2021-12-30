@@ -163,7 +163,9 @@
         </mapgis-ui-row>
       </div>
       <!--保存与预览-->
-      <mapgis-ui-project-bottom-panel v-if="featureCopy" class="mapgis-ui-feature-edit-bottom" @preview="$_preview"/>
+      <mapgis-ui-project-bottom-panel v-if="featureCopy" class="mapgis-ui-feature-edit-bottom"
+                                      @save="$_saveEntity"
+                                      @preview="$_preview"/>
     </div>
     <div v-if="editEntity" style="padding-left: 4px;height: 100%;position: relative;">
       <!--标题-->
@@ -626,6 +628,7 @@ export default {
     },
     $_saveEntity() {
       this.editEntity = false;
+      this.$emit("closeFeatureEdit");
     },
     $_deleteEntity() {
       this.editEntity = false;

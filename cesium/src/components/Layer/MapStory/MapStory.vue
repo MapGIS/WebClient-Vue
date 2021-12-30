@@ -25,6 +25,7 @@
                    @featurePreview="$_featurePreview"
                    @firstAddPicture="$_firstAddPicture"
                    @export="$_export"
+                   @import="$_import"
                    v-model="dataSourceCopy"
                    :upProjectSet="projectSet"
                    :height="height"
@@ -32,7 +33,8 @@
                    :enablePreview="enablePreview"
                    :enableClose="enableClose"
     />
-    <mapgis-3d-draw :infinite="false" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
+    <input style="display: none" type="file" :id="inputId"
+           accept=".json">
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <map-collection :key="opt.vueIndex" v-for="(opt) in projectMaps" :options="opt"/>
     <template v-for="(popup) in popups">
@@ -86,6 +88,8 @@ export default {
       drawer: undefined,
       currentPoints: undefined,
       interval: undefined,
+      //导入文件按钮id
+      inputId: "mapgisMapStoryImport" + parseInt(String(Math.random() * 10000)),
     }
   },
   props: {

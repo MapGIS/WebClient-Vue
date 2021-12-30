@@ -3,8 +3,10 @@
     <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
          class="mapgis-ui-project-panel">
       <div class="mapgis-ui-project-panel-content" v-show="!showProjectEdit" :style="{height: height - 40 + 'px'}">
-        <mapgis-ui-project-header/>
+        <mapgis-ui-project-header @import="$_import"/>
         <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
+                               @export="$_export"
+                               @import="$_import"
                                @showProjected="$_showProject"
                                @marked="$_marker"
                                @projectPreview="$_projectPreview"
@@ -118,7 +120,13 @@ export default {
   },
   methods: {
     $_export(project) {
+      if (typeof project === "number") {
+        project = this.dataSourceCopy[project];
+      }
       this.$emit("export", project);
+    },
+    $_import() {
+      this.$emit("import");
     },
     $_deleteProject() {
       this.projects.splice(this.currentProjectIndex, 1);

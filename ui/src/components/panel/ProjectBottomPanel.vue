@@ -2,7 +2,7 @@
   <div>
     <mapgis-ui-row class="mapgis-ui-project-bottom-panel">
       <mapgis-ui-col span="12">
-        <mapgis-ui-button class="mapgis-ui-project-bottom-panel-save" type="primary">保存</mapgis-ui-button>
+        <mapgis-ui-button @click="$_save" class="mapgis-ui-project-bottom-panel-save" type="primary">保存</mapgis-ui-button>
       </mapgis-ui-col>
       <mapgis-ui-col span="12">
         <mapgis-ui-button @click="$_click" class="mapgis-ui-project-bottom-panel-preview" type="primary">预览</mapgis-ui-button>
@@ -17,6 +17,9 @@ export default {
   methods: {
     $_click() {
       this.$emit("preview");
+    },
+    $_save() {
+      this.$emit("save");
     }
   }
 }

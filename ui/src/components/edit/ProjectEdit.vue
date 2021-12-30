@@ -82,6 +82,7 @@
         @titleChanged="$_featureTitleChanged"
         @animationTimeChanged="$_animationTimeChanged"
         @firstAddPicture="$_firstAddPicture"
+        @closeFeatureEdit="$_closeFeatureEdit"
         :feature="currentFeature"
         :cameras="cameras"
         :height="height"
@@ -471,6 +472,10 @@ export default {
         type: "rectangle",
         feature: feature
       });
+    },
+    $_closeFeatureEdit() {
+      this.editFeature = false;
+      window.showPanels.currentPage = "projectEdit";
     },
     $_firstAddPicture(feature) {
       this.$emit("firstAddPicture", feature);

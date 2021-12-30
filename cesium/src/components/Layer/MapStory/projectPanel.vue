@@ -22,6 +22,7 @@
         @featurePreview="$_featurePreview"
         @back="$_back"
         @export="$_export"
+        @import="$_import"
         :height="panelHeight"
         :width="width"
         :editList="editList"
@@ -123,6 +124,9 @@ export default {
     }
   },
   methods: {
+    $_import() {
+      this.$emit("import");
+    },
     $_export(project) {
       this.$emit("export", project);
     },

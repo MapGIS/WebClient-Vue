@@ -19,6 +19,14 @@
             <!--                                     class="mapgis-mapstory-more-tool-row-icon" type="top"/>-->
             <!--              <span>置顶</span>-->
             <!--            </div>-->
+            <div @click="$_import" class="mapgis-mapstory-more-tool-row">
+              <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
+              <span>导入</span>
+            </div>
+            <div @click="$_export(index)" class="mapgis-mapstory-more-tool-row">
+              <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
+              <span>导出</span>
+            </div>
             <div @click="$_delete(index)" class="mapgis-mapstory-more-tool-row">
               <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
               <span>删除</span>
@@ -151,6 +159,13 @@ export default {
       this.showMoreTool = undefined;
       this.$emit("editProject", index);
     },
+    $_export(index) {
+      this.showMoreTool = undefined;
+      this.$emit("export", index);
+    },
+    $_import() {
+      this.$emit("import");
+    },
     $_delete(index) {
       this.showMoreTool = undefined;
       this.$emit("deleted", index);
@@ -197,7 +212,7 @@ export default {
   right: 7px;
   z-index: 100000;
   width: 88px;
-  height: 80px;
+  height: 160px;
   background: white;
   border-radius: 3px;
   box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
