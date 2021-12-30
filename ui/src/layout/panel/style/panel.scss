@@ -258,7 +258,7 @@
 
 @include b(tab-panel) {
   height: 56px;
-  background: #f1f1f1;
+  background: $panel-inner-color;
   padding: 16px 10px;
   display: flex;
   overflow: auto;
@@ -270,7 +270,7 @@
   &-item {
     width: 24px;
     height: 24px;
-    background: #ffffff;
+    background: $panel-backgroud;
     box-shadow: 0px 3px 7px 0px rgba(0, 41, 71, 0.2);
     border-radius: 3px;
     .anticon {
@@ -280,7 +280,7 @@
 
     &-active {
       .anticon {
-        color: #ffffff;
+        color: $nav-selected-backgroud;
       }
       background: linear-gradient(0deg, #52b0f2, #0081e2);
     }

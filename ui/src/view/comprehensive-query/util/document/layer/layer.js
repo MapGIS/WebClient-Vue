@@ -113,39 +113,50 @@ export var LayerType;
    */
   LayerType[(LayerType["ModelCache"] = 18)] = "ModelCache";
   /**
-   * IGS三维模型缓存图层,用于显示IGS发布的m3d格式的三维模型缓存。
-   */
-  LayerType[(LayerType["IGSModelCache"] = 19)] = "IGSModelCache";
-  /**
    * 高程图层，用于接入地形服务
    */
-  LayerType[(LayerType["Elevation"] = 20)] = "Elevation";
+  LayerType[(LayerType["Elevation"] = 19)] = "Elevation";
   /**
    * IGS高程图层，用于接入IGS三维服务中的地形服务
    */
-  LayerType[(LayerType["IGSElevation"] = 21)] = "IGSElevation";
+  LayerType[(LayerType["IGSElevation"] = 20)] = "IGSElevation";
   /**
    *IGS场景图层,用于对接IGS的三维场景服务
    */
-  LayerType[(LayerType["Scene"] = 22)] = "Scene";
+  LayerType[(LayerType["Scene"] = 21)] = "Scene";
   /**
    *IGS场景图层,用于对接IGS的三维场景服务
    */
-  LayerType[(LayerType["IGSScene"] = 23)] = "IGSScene";
+  LayerType[(LayerType["IGSScene"] = 22)] = "IGSScene";
   /**
    * 覆盖物(临时绘制)图层
    *
    */
-  LayerType[(LayerType["Graphics"] = 24)] = "Graphics";
+  LayerType[(LayerType["Graphics"] = 23)] = "Graphics";
   /**
    * 数据流
    *
    */
-  LayerType[(LayerType["DataFlow"] = 25)] = "DataFlow";
+  LayerType[(LayerType["DataFlow"] = 24)] = "DataFlow";
   /**
-   * 地理编码
+  
+     * 地理编码
+     */
+  LayerType[(LayerType["EsGeoCode"] = 25)] = "EsGeoCode";
+  /**
+   * 要素图层
+   *
    */
-  LayerType[(LayerType["EsGeoCode"] = 26)] = "EsGeoCode";
+  LayerType[(LayerType["Feature"] = 26)] = "Feature";
+  /**
+   * IGServer要素图层
+   *
+   */
+  LayerType[(LayerType["IGSFeature"] = 27)] = "IGSFeature";
+  /**
+   * geoJson图层
+   */
+  LayerType[(LayerType["GeoJson"] = 28)] = "GeoJson";
 })(LayerType || (LayerType = {}));
 /**
  * 图层

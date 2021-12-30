@@ -16,7 +16,7 @@
                 <span slot="description" class="empty-style"> 选择上方粒子类型 <br>在地图上点击添加粒子 </span>
               </mapgis-ui-empty>
               <mapgis-ui-list-item
-                  :class="{'list-active':activeIndex === index}"
+                  :class="{'mapgis-3d-particle-effects-list-active':activeIndex === index}"
                   slot="renderItem"
                   slot-scope="item, index"
                   @mouseenter="mouseenter(index)"
@@ -681,9 +681,5 @@ export default {
 ::v-deep .mapgis-ui-tabs-nav-scroll {
   display: flex;
   justify-content: flex-start;
-}
-
-.list-active {
-  background: #E0F0FF;
 }
 </style>

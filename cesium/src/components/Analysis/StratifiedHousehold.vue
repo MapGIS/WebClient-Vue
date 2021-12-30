@@ -165,10 +165,6 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
-    layerId: {
-      type: [String, Array],
-      required: true
-    },
     outStyle: {
       type: Object,
       default: () => {
@@ -433,10 +429,10 @@ export default {
         innerVueIndex
       );
       if (find && find.options) {
-        let { m3ds } = find.options;
+        /* let { m3ds } = find.options;
         if (!viewer.isDestroyed() && m3ds) {
           m3ds.forEach(l => l.destroy());
-        }
+        } */
       }
       this.$emit("unload", { component: this });
       vueCesium.StratifiedHousehouldManager.deleteSource(vueKey, innerVueIndex);

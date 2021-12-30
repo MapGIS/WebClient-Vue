@@ -81,6 +81,7 @@ module.exports = {
               ["/api/ui/table.md", "表格"],
               ["/api/ui/draw.md", "绘制"],
               ["/api/ui/measure.md", "量测"],
+              ["/api/ui/statebar.md", "状态栏"],
               // ["/api/sceneeffect/fogeffect.md", "雾组件"],
               // ["/api/sceneeffect/raineffect.md", "雨组件"],
               // ["/api/sceneeffect/snoweffect.md", "雪组件"],
@@ -105,7 +106,7 @@ module.exports = {
 
               ["/api/m3d/m3d.md", "M3D"],
 
-              ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/Geojson/geojson.md", "GeoJSON"],
               ["/api/layer/marker/DynamicMarker.md", "动态注记"],
 
               {
@@ -128,6 +129,7 @@ module.exports = {
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],
               ["/api/analysis/Skyline.md", "天际线分析"],
+              ["/api/analysis/Household.md", "分层分户"],
             ],
           },
           {
