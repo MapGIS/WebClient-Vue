@@ -7,10 +7,13 @@
     </div>
     <div>
       <mapgis-ui-graphic-edit-panel
+        ref="editPanel"
         :editPanelValues="editPanelValues"
         :editList="editList"
         :dataSourceCopy="dataSourceCopy"
         :currentEditType="currentEditType"
+        @change="$_changeEditPanelValues"
+        @stopDrawing="$_stopDrawing"
         @dbclick="$_dbclick"
       />
     </div>
@@ -98,48 +101,6 @@ export default {
       },
       deep: true
     },
-    editPanelValues: {
-      handler: function () {
-        if (this.isEdit) {
-          //在绘制中，更改参数时先停止绘制，应用参数，在开始绘制
-          if (this.isStartDrawing) {
-            //停止绘制
-            this.$_stopDrawing();
-            //根据面板显示参数数据生成绘制参数
-            let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-            //根据编辑面板参数绘制图形
-            let drawType = this.currentEditType;
-            if (drawType === "cone") {
-              drawType = "circle";
-            }
-            if (drawType === "polygonCube") {
-              drawType = "polygon";
-            }
-            this.$_startDrawing({
-              type: drawType,
-              ...drawOptions
-            });
-          } else {
-            //结束绘制
-            //先存起来title
-            let title = this.editPanelValues.title;
-            //更新样式
-            let options = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-            this.$_updateStyleByStyle(this.editPanelValues.id, options.style);
-            if (options.hasOwnProperty("position")) {
-              let graphicsLayer = this.$_getGraphicLayer();
-              let primitive = graphicsLayer.getGraphicByID(this.editPanelValues.id);
-              primitive.primitive.position = Cesium.Cartesian3.fromDegrees(options.position.lng, options.position.lat, this.editPanelValues.height);
-            }
-            //更新数据
-            let dataSource = this.$_getJsonById(this.editPanelValues.id);
-            dataSource.title = title;
-            this.$_updateSourceById(this.editPanelValues.id, dataSource);
-          }
-        }
-      },
-      deep: true
-    }
   },
   mounted() {
     this.$_init();
@@ -178,6 +139,16 @@ export default {
         }
       }
       this.$set(this.dataSourceCopy, index, data);
+    },
+    $_updateSourceTitleById(id, title) {
+      let index;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].id === id) {
+          index = i;
+          break;
+        }
+      }
+      this.dataSourceCopy[index].title = title;
     },
     /**
      * 更多工具里面的按钮的点击事件
@@ -232,11 +203,15 @@ export default {
         title
       } = json;
 
-      const {
+      let {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ
       } = style;
+
+      material = material || {};
+
+      const {speed, duration, gradient, count} = material;
 
       let editPanelValues = {};
 
@@ -357,12 +332,22 @@ export default {
             editPanelValues.pureOpacity = color[3] * 100;
             editPanelValues.radius = radius;
             editPanelValues.height = height;
-            editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
-            editPanelValues.materialOpacity = color[3] * 100;
+            editPanelValues.speed = speed || 1;
+            editPanelValues.duration = duration || 2000;
+            editPanelValues.gradient = gradient || 0.5;
+            editPanelValues.count = count || 4;
+            editPanelValues.materialType = materialType;
+            if (materialType === "Color") {
+              editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+              editPanelValues.materialOpacity = color[3] * 100;
+            } else {
+              editPanelValues.materialColor = "rgb(" + material.color.red * 255 + "," + material.color.green * 255 + "," + material.color.blue * 255 + ")";
+              editPanelValues.materialOpacity = material.color.alpha * 100;
+            }
             if (title) {
               editPanelValues.title = title;
             }
-          }else {
+          } else {
             editPanelValues.id = id;
             editPanelValues.title = title;
             editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
@@ -413,7 +398,6 @@ export default {
           editPanelValues.id = id;
           editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
-          editPanelValues.width = width;
           editPanelValues.topRadius = topRadius;
           editPanelValues.bottomRadius = bottomRadius;
           editPanelValues.height = height;
@@ -432,20 +416,20 @@ export default {
       if (type !== "mouse") {
         this.currentEditType = type;
       }
-      //取得图层对象
-      let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
       //停止上一次的绘制
-      graphicsLayer.stopDrawing();
+      this.$_stopDrawing();
       //如果选择鼠标，开启编辑模式，否则开始绘制
       if (type === "mouse") {
         if (this.noTitleKey !== "edit") {
-          graphicsLayer.startEdit();
+          this.$_startEdit();
         }
         //结束绘制
         this.isStartDrawing = false;
       } else {
         //根据当前的绘制类型，获取设置面板显示参数数据
         this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+        //更新编辑面板
+        this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
         //根据面板显示参数数据生成绘制参数
         let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
         //开始绘制
@@ -462,8 +446,45 @@ export default {
         }
         this.$_startDrawing({
           type: drawType,
+          isContinued: false,
           ...drawOptions
         });
+      }
+    },
+    $_changeEditPanelValues(editPanelValues, isEdit) {
+      if (isEdit) {
+        //在绘制中，更改参数时先停止绘制，应用参数，在开始绘制
+        if (this.isStartDrawing) {
+          //停止绘制
+          this.$_stopDrawing();
+          //根据面板显示参数数据生成绘制参数
+          let drawOptions = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
+          //根据编辑面板参数绘制图形
+          let drawType = this.currentEditType;
+          if (drawType === "cone") {
+            drawType = "circle";
+          }
+          if (drawType === "polygonCube") {
+            drawType = "polygon";
+          }
+          this.$_startDrawing({
+            type: drawType,
+            ...drawOptions
+          });
+        } else {
+          //结束绘制
+          //先存起来title
+          let title = editPanelValues.title;
+          //更新样式
+          let options = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
+          this.$_updateStyleByStyle(editPanelValues.id, options.style);
+          //更新title
+          this.$refs.editPanel.isUpdatePanel = false;
+          this.$_updateSourceTitleById(editPanelValues.id, title);
+          this.$nextTick(function () {
+            this.$refs.editPanel.isUpdatePanel = true;
+          });
+        }
       }
     },
     //双击一条标注列表里的要素，进入到设置面板
@@ -478,6 +499,12 @@ export default {
         this.isEdit = true;
         this.$_startEdit();
       });
+      this.currentEditType = json.type;
+      if (this.currentEditType === "circle") {
+        if (json.style.hasOwnProperty("extrudedHeight") && json.style.extrudedHeight > 0) {
+          this.currentEditType = "cone";
+        }
+      }
       //设置当前绘制图标类型为鼠标选中
       this.currentIconType = "mouse";
       //获取设置面板显示参数
@@ -496,9 +523,21 @@ export default {
           //开始添加数据
           vm.addSource = true;
           let data = vm.$_getJsonById(e.id)
-          data.title = vm.$_getTitle(data.type, vm.currentEditType);
+          let type = data.type;
+          if (type === "circle") {
+            if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+              type = "cone";
+            }
+          }
+          if (type === "polygon") {
+            if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+              type = "polygonCube";
+            }
+          }
+          data.title = vm.$_getTitle(type);
           vm.dataSourceCopy.push(data);
-          vm.editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+          let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+          vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
           //数据添加完毕
           vm.$nextTick(function () {
             vm.addSource = false;

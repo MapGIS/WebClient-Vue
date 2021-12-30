@@ -197,7 +197,7 @@ export default {
 <style scoped>
 .mapgis-ui-map-select-title {
   font-weight: bolder;
-  margin-top: 12px;
+  margin-top: 0;
   margin-bottom: 0;
   padding-left: 12px;
 }
@@ -217,9 +217,9 @@ export default {
 
 .mapgis-ui-map-select-content {
   width: 100%;
-  height: 92px;
+  height: 65px;
   border-radius: 3px;
-  padding-top: 6px;
+  padding-top: 0;
   padding-left: 0;
 }
 

@@ -4,7 +4,7 @@
       <mapgis-ui-col :span="24">
         <h4 class="mapgis-ui-set-camera-panel-select-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
           <mapgis-ui-title-icon v-show="showTitleIcon"/>
-          设置相机视角
+          <span style="width: 90px;margin-right: 4px">设置相机视角</span>
           <span @click="$_showDetail" class="mapgis-ui-set-camera-panel-select-show-more">
             {{ showDetailTitle }}
           </span>
@@ -188,13 +188,12 @@ export default {
   width: 100%;
   height: auto;
   border-radius: 3px;
-  padding-top: 7px;
-  padding-bottom: 11px;
+  text-align: left;
 }
 
 .mapgis-ui-set-camera-set-select-icon {
   position: absolute;
-  top: 13px;
+  top: 6px;
   right: 2px;
 }
 
@@ -202,10 +201,12 @@ export default {
   float: right;
   cursor: pointer;
   color: #0081E2;
+  width: calc(100% - 90px);
+  text-align: right;
 }
 
 .mapgis-ui-set-camera-set-select {
-  width: 214px;
+  width: calc(100% - 42px);
   margin-left: 0;
   margin-right: 6px;
   margin-top: 6px;

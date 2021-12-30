@@ -23,11 +23,12 @@ import {MRFS} from "@mapgis/webclient-es6-service"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
 import Base64IconsKeyValue from "./Base64IconsKeyValue";
+import GraphicLayerService from "../Graphic/GraphicLayerService";
 
 export default {
   name: "mapgis-3d-preview-map-story-layer",
   inject: ["Cesium", "viewer"],
-  mixins: [mapStoryService],
+  mixins: [mapStoryService, GraphicLayerService],
   components: {
     "map-collection": mapCollection,
   },
@@ -74,6 +75,7 @@ export default {
   },
   mounted() {
     this.$_init();
+    this.$_newGraphicLayer();
   },
   methods: {
     $_preview() {
@@ -92,15 +94,15 @@ export default {
     },
     projectPreview() {
       this.$nextTick(function () {
+        this.$_switchGraphicLayer(this.dataSource.vueIndex, this.dataSource.vueKey);
         //添加缺失的entity
         let chapters = this.dataSource.chapters;
-        let features = this.dataSource.features;
         for (let i = 0; i < chapters.length; i++) {
-          let cFeatures = chapters[i].features;
-          for (let j = 0; j < cFeatures.length; j++) {
-            let feature = this.$_getFeatureFromFeatures(cFeatures[i].uuid,features);
-            this.$_addEntity(feature);
+          let GeoJSON = {
+            "type":"FeatureCollection",
+            "features": chapters[i].features
           }
+          this.$_fromJson(GeoJSON);
         }
         this.$_preview();
       });
@@ -153,6 +155,7 @@ export default {
           console.error(error);
         });
       } else if (this.dataSource instanceof Object) {
+        console.log("this.dataSource",this.dataSource)
         this.storyFeature = this.dataSource.chapters;
       }
     }

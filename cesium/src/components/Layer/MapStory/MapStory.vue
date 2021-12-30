@@ -24,6 +24,7 @@
                    @projectPreview="$_projectPreview"
                    @featurePreview="$_featurePreview"
                    @firstAddPicture="$_firstAddPicture"
+                   @export="$_export"
                    v-model="dataSourceCopy"
                    :upProjectSet="projectSet"
                    :height="height"
@@ -67,7 +68,7 @@
 import projectPanel from "./projectPanel"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService"
-import Base64IconsKeyValue from "./Base64IconsKeyValue"
+import GraphicLayerService from "../Graphic/GraphicLayerService";
 
 window.showPanels = {
   currentPage: "",
@@ -75,7 +76,7 @@ window.showPanels = {
 }
 export default {
   name: "mapgis-3d-map-story-layer",
-  mixins: [mapStoryService],
+  mixins: [mapStoryService, GraphicLayerService],
   components: {
     "project-panel": projectPanel,
     "map-collection": mapCollection,
@@ -84,7 +85,7 @@ export default {
     return {
       drawer: undefined,
       currentPoints: undefined,
-      interval: undefined
+      interval: undefined,
     }
   },
   props: {
@@ -137,6 +138,9 @@ export default {
     },
     $_projectPreview(project) {
       // this.$_play(chapters);
+      console.log("project",project)
+      project.vueIndex = this.vueIndex;
+      project.vueKey = this.vueKey;
       this.$emit("projectPreview", project, false);
     },
     $_deleteProject() {

@@ -3,9 +3,13 @@
     <div v-show="!editEntity" :style="{height: height + 'px'}" style="position: relative;width: 100%">
       <div v-if="featureCopy" :style="{height: height - 48 + 'px'}" class="mapgis-ui-feature-edit-panel">
         <!--标题-->
-        <mapgis-ui-row style="width: 100%">
-          <mapgis-ui-input-border :showTitleIcon="false" v-model="featureCopy.title" title="标题" placeholder="请输入标题"/>
-        </mapgis-ui-row>
+        <mapgis-ui-input-row-left
+          title="标题"
+          paddingLeft="0"
+          paddingRight="0"
+          fontSize="14px"
+          v-model="featureCopy.title"
+        />
         <!--展示框大小-->
         <!--      <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">-->
         <!--        <mapgis-ui-size-check-box title="展示框大小"/>-->
@@ -21,56 +25,75 @@
                                   :map="featureCopy.map" @addMap="$_addMap" title="附加地图"/>
         <!--设置相机视角-->
         <mapgis-ui-set-camera-view-select
-            :showTitleIcon="false"
-            :cameras="cameras"
-            @click="$_getCamera"
-            @showDetail="$_showDetail"
-            @selectCamera="$_selectCamera"
-            v-model="camera"/>
+          :showTitleIcon="false"
+          :cameras="cameras"
+          @click="$_getCamera"
+          @showDetail="$_showDetail"
+          @selectCamera="$_selectCamera"
+          v-model="camera"/>
         <mapgis-ui-set-camera-view
-            :showTitle="false"
-            :showButton="false"
-            v-show="showDetail"
-            @click="$_getCamera"
-            v-model="camera"/>
+          :showTitle="false"
+          :showButton="false"
+          v-show="showDetail"
+          @click="$_getCamera"
+          v-model="camera"/>
         <!--动画时间-->
-        <mapgis-ui-row style="width: 100%;margin-top: 12px;">
-          <mapgis-ui-input-border :showTitleIcon="false"
-                                  ref="animationTime" @change="$_changeTime" v-model="featureCopy.animationTime"
-                                  title="动画时间" placeholder="请输入动画时间"/>
-        </mapgis-ui-row>
+<!--        <mapgis-ui-row style="width: 100%;margin-top: 6px;">-->
+<!--          <mapgis-ui-input-border :showTitleIcon="false"-->
+<!--                                  ref="animationTime" @change="$_changeTime" v-model="featureCopy.animationTime"-->
+<!--                                  title="动画时间" placeholder="请输入动画时间"/>-->
+<!--        </mapgis-ui-row>-->
+        <mapgis-ui-input-row-left
+          title="动画时间"
+          paddingLeft="0"
+          paddingRight="0"
+          fontSize="14px"
+          @change="$_changeTime"
+          v-model="featureCopy.animationTime"
+        />
         <!--图片展示-->
         <mapgis-ui-choose-picture-right :showTitleIcon="false"
                                         @firstAddPicture="$_firstAddPicture" :enablePreview="false"
                                         v-model="featureCopy.images"/>
-        <mapgis-ui-button @click="$_addFeature('point')">点</mapgis-ui-button>
-        <mapgis-ui-button @click="$_addFeature('polyline')">线</mapgis-ui-button>
-        <mapgis-ui-button @click="$_addFeature('polygon')">多边形</mapgis-ui-button>
-        <mapgis-ui-button @click="$_addFeature('rectangle')">矩形</mapgis-ui-button>
-        <mapgis-ui-button @click="$_addFeature('text')">文字</mapgis-ui-button>
-        <div :key="index" style="margin: 10px 0;" :style="{color: feature.show ? '#000' : 'rgb(218,218,218)'}"
-             v-for="(feature, index) in featureCopy.features">
-          <span @dblclick="$_editEntity(feature)">
-            {{ feature.title }}
-          </span>
-          <mapgis-ui-switch style="float: right;margin-right: 2px"
-                            @click="$_toggleFeature" checked-children="显示" un-checked-children="隐藏"
-                            v-model="feature.show"/>
-        </div>
+        <mapgis-ui-title-row-left
+          title="标绘工具"
+          paddingLeft="0"
+          paddingRight="0"
+          margin="0"
+          fontSize="14px"
+        />
+        <mapgis-ui-graphic-icons-panel
+          :containerStyle="containerStyle"
+          @startDraw="$_addFeature"
+        />
+        <mapgis-ui-graphic-edit-panel
+          style="margin-top: 10px"
+          @change="$_changeEntity"
+          :editList="editList"
+          :currentEditType="currentEditType"
+          :dataSourceCopy="featureCopy.features"
+        />
         <!--富文本-->
-        <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera">
-          <div v-if="editor" style="border: 2px solid black;width: 97%;">
+        <mapgis-ui-title-row-left
+          title="富文本编辑"
+          paddingLeft="0"
+          paddingRight="0"
+          margin="0"
+          fontSize="14px"
+        />
+        <mapgis-ui-row>
+          <div v-if="editor" style="border: 2px solid black;">
             <editor-menu-bar :editor="editor" v-slot="{ commands }">
               <div style="border-bottom: 2px solid black;">
               <span
-                  @click="commands.bold"
+                @click="commands.bold"
               >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
                                     title="粗体"
                                     type="border"/>
               </span>
                 <span
-                    @click="showImagePrompt(commands.image)"
+                  @click="showImagePrompt(commands.image)"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="pictureStyle"
@@ -78,14 +101,14 @@
                                     type="picture"/>
               </span>
                 <span
-                    @click="commands.italic"
+                  @click="commands.italic"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
                                     title="斜体"
                                     type="italic"/>
               </span>
                 <span
-                    @click="commands.strike"
+                  @click="commands.strike"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -93,7 +116,7 @@
                                     type="strike"/>
               </span>
                 <span
-                    @click="commands.underline"
+                  @click="commands.underline"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -101,7 +124,7 @@
                                     type="underline"/>
               </span>
                 <span
-                    @click="commands.bullet_list"
+                  @click="commands.bullet_list"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -109,7 +132,7 @@
                                     type="ul"/>
               </span>
                 <span
-                    @click="commands.ordered_list"
+                  @click="commands.ordered_list"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -117,7 +140,7 @@
                                     type="ol"/>
               </span>
                 <span
-                    @click="commands.blockquote"
+                  @click="commands.blockquote"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -125,7 +148,7 @@
                                     type="quote"/>
               </span>
                 <span
-                    @click="commands.code"
+                  @click="commands.code"
                 >
                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                    :iconStyle="editButtonStyle"
@@ -154,10 +177,10 @@
       <!--填充颜色-->
       <mapgis-ui-row v-if="currentEntity.drawType !== 'text' && currentEntity.drawType !== 'point'">
         <mapgis-ui-color-title
-            :color="currentEntity.layerStyle.color"
-            :showTitleIcon="false"
-            title="填充颜色"
-            @changeColor="$_changeEntityColor"
+          :color="currentEntity.layerStyle.color"
+          :showTitleIcon="false"
+          title="填充颜色"
+          @changeColor="$_changeEntityColor"
         />
       </mapgis-ui-row>
       <!--字体颜色-->
@@ -237,10 +260,10 @@
                               :dataSource="popupOptionTypes" title="点击类型"/>
         <!--图片展示-->
         <mapgis-ui-choose-picture-right
-            :showTitleIcon="false"
-            title="图片"
-            v-model="currentEntity.popupOptions.images"
-            @firstAddPicture="$_firstAddPicture" :enablePreview="false"
+          :showTitleIcon="false"
+          title="图片"
+          v-model="currentEntity.popupOptions.images"
+          @firstAddPicture="$_firstAddPicture" :enablePreview="false"
         />
         <!--富文本-->
         <mapgis-ui-row class="mapgis-ui-feature-edit-set-camera" style="margin-top: 28px">
@@ -248,7 +271,7 @@
             <editor-menu-bar :editor="editor" v-slot="{ commands }">
               <div style="border-bottom: 2px solid black;">
               <span
-                  @click="commands.bold"
+                @click="commands.bold"
               >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
                                     title="粗体"
@@ -263,14 +286,14 @@
                                     type="picture"/>
               </span>
                 <span
-                    @click="commands.italic"
+                  @click="commands.italic"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
                                     title="斜体"
                                     type="italic"/>
               </span>
                 <span
-                    @click="commands.strike"
+                  @click="commands.strike"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -278,7 +301,7 @@
                                     type="strike"/>
               </span>
                 <span
-                    @click="commands.underline"
+                  @click="commands.underline"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -286,7 +309,7 @@
                                     type="underline"/>
               </span>
                 <span
-                    @click="commands.bullet_list"
+                  @click="commands.bullet_list"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -294,7 +317,7 @@
                                     type="ul"/>
               </span>
                 <span
-                    @click="commands.ordered_list"
+                  @click="commands.ordered_list"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -302,7 +325,7 @@
                                     type="ol"/>
               </span>
                 <span
-                    @click="commands.blockquote"
+                  @click="commands.blockquote"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -310,7 +333,7 @@
                                     type="quote"/>
               </span>
                 <span
-                    @click="commands.code"
+                  @click="commands.code"
                 >
                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                    :iconStyle="editButtonStyle"
@@ -441,7 +464,12 @@ export default {
       }, {
         key: "force",
         value: "始终显示Popup"
-      }]
+      }],
+      currentEditType: undefined,
+      containerStyle: {
+        margin: 0,
+        width: "100%"
+      }
     }
   },
   props: {
@@ -465,6 +493,9 @@ export default {
         return [];
       }
     },
+    editList: {
+      type: Object
+    }
   },
   watch: {
     feature: {
@@ -590,6 +621,9 @@ export default {
         this.$emit("changeEntity", "changeEntityTitle", this.currentEntity.uuid, this.currentEntity.title);
       }
     },
+    $_changeEntity(editPanelValues) {
+      this.$emit("changeEntity", "changeEntity", this.currentEditType, editPanelValues);
+    },
     $_saveEntity() {
       this.editEntity = false;
     },
@@ -618,6 +652,13 @@ export default {
       this.$emit("deleteFeature", feature);
     },
     $_addFeature(type) {
+      //设置当前绘制类型
+      if (type !== "mouse") {
+        this.currentEditType = type;
+      }
+      if (type === "label") {
+        type = "text";
+      }
       this.$emit("addFeature", type);
     },
     $_showMore() {
@@ -696,6 +737,9 @@ export default {
             let contentStr = getHTML();
             contentStr = contentStr.replace("<img", "<img style='width:100%'");
             vm.featureCopy.content = contentStr;
+            console.log("vm.featureCopy.content",vm.featureCopy.content)
+            console.log("vm.featureCopy.content",vm.featureCopy)
+            vm.$emit("changeContent", vm.featureCopy);
             if (vm.isPreviewFeature) {
               vm.$emit("featurePreview", vm.featureCopy);
             }
@@ -834,5 +878,9 @@ div:focus-visible {
 
 .mapgis-ui-switch-panel-label {
   font-weight: bolder;
+}
+
+.mapgis-ui-feature-edit-set-camera {
+  margin-top: 10px;
 }
 </style>

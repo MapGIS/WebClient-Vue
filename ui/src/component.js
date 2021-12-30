@@ -14,6 +14,7 @@ export { default as MapgisUiBase64Icon } from "./components/iconfont/Base64Icon"
 export { default as MapgisUiIconsPanel } from "./components/iconfont/IconsPanel";
 export { default as MapgisUiIconsPanelScrollX } from "./components/iconfont/IconsPanelScrollX";
 export { default as MapgisUiTitleIcon } from "./components/iconfont/TitleIcon";
+export { default as MapgisUiGraphicIconsPanel } from "./components/iconfont/GraphicIconsPanel";
 
 // Layout
 export { default as MapgisUiDiv } from "./components/div/Div.vue";
@@ -71,6 +72,7 @@ export { default as MapgisUiRangePicker } from "./components/date-picker/RangePi
 export { default as MapgisUiMonthPicker } from "./components/date-picker/MonthPicker.vue";
 export { default as MapgisUiWeekPicker } from "./components/date-picker/WeekPicker.vue";
 export { default as MapgisUiInput } from "./components/input/Input.vue";
+export { default as MapgisUiInputRowLeft } from "./components/input/InputRowLeft";
 export { default as MapgisUiTextareaOutline } from "./components/input/TextareaOutline.vue";
 export { default as MapgisUiInputOutline } from "./components/input/InputOutline";
 export { default as MapgisUiInputBorder } from "./components/input/InputBorder";
@@ -99,6 +101,7 @@ export { default as MapgisUiSelectOption } from "./components/select/SelectOptio
 export { default as MapgisUiSelectOptGroup } from "./components/select/SelectOptGroup.vue";
 export { default as MapgisUiSlider } from "./components/slider/Slider.vue";
 export { default as MapgisUiSliderTitle } from "./components/slider/SliderTitle.vue";
+export { default as MapgisUiSliderRowLeft } from "./components/slider/SliderRowLeft.vue";
 export { default as MapgisUiSliderRow } from "./components/mixRow/MixRow.vue";
 export { default as MapgisUiCustomPanel } from "./components/customPanel/CustomPanel.vue";
 export { default as MapgisUiSwitch } from "./components/switch/Switch.vue";
@@ -144,7 +147,7 @@ export { default as MapgisUiTimeline } from "./components/timeline/Timeline.vue"
 export { default as MapgisUiTimelineItem } from "./components/timeline/TimelineItem.vue";
 export { default as MapgisUiTooltip } from "./components/tooltip/Tooltip.vue";
 export { default as MapgisUiTree } from "./components/tree/Tree.vue";
-export { default as MapgisUiVideo } from "./components/media/Video.vue";
+// export { default as MapgisUiVideo } from "./components/media/Video.vue";
 
 // Feedback
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
@@ -173,6 +176,7 @@ export { default as MapgisUiColorOutline } from "./components/color/ColorOutline
 export { default as MapgisUiColorTitle } from "./components/color/ColorTitle";
 export { default as MapgisUiD3ColorPicker } from "./components/color-picker/D3ColorPicker.vue";
 export { default as MapgisUiSketchColorPicker } from "./components/color-picker/SketchColorPicker.vue";
+export { default as MapgisUiColorPickerLeft } from "./components/color-picker/ColorPickerLeft.vue";
 export { default as MapgisUiSketchColorPickerConfirm } from "./components/color-picker/SketchColorPickerConfirm.vue";
 export { default as MapgisUiColorPicker } from "./components/color-picker/ColorPicker.vue";
 export { default as MapgisUiColorPickerSetting } from "./components/colorPickerSetting/ColorPickerSetting";
@@ -224,6 +228,7 @@ export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditP
 export { default as MapgisUiStoryPanelLarge } from "./components/panel/StoryPanelLarge";
 export { default as MapgisUiProjectPanel } from "./components/panel/ProjectPanel";
 export { default as MapgisUiProjectBottomPanel } from "./components/panel/ProjectBottomPanel";
+export { default as MapgisUiGraphicEditPanel } from "./components/panel/GraphicEditPanel";
 
 //picture
 export { default as MapgisUiChoosePicture } from "./components/picture/ChoosePicture";
@@ -234,6 +239,7 @@ export { default as MapgisUiProjectRow } from "./components/row/ProjectRow";
 export { default as MapgisUiFeatureRow } from "./components/row/FeatureRow";
 export { default as MapgisUiInputRow } from "./components/row/InputRow";
 export { default as MapgisUiIconRow } from "./components/row/IconRow";
+export { default as MapgisUiTitleRowLeft} from "./components/row/TitleRowLeft";
 
 //edit
 export { default as MapgisUiFeatureEdit } from "./components/edit/FeatureEdit";
@@ -251,6 +257,8 @@ export { default as MapgisUiPopupContent } from "./components/popup/PopupContent
 
 //switch
 export { default as MapgisUiSwitchRow } from "./components/switch/SwitchRow";
+export { default as MapgisUiSwitchRowLeft} from "./components/switch/SwitchRowLeft";
 
 //select
 export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
+export { default as MapgisUiSelectRowLeft } from "./components/select/SelectRowLeft";

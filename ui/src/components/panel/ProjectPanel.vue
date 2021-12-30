@@ -20,32 +20,35 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
       <mapgis-ui-project-edit
-          v-show="showProjectEdit"
-          :width="width"
-          :height="height"
-          @addMap="$_addMap"
-          @getCamera="$_getCamera"
-          @selectCamera="$_selectCamera"
-          @deleteFeature="$_deleteFeature"
-          @toggleChapterFeatures="$_toggleChapterFeatures"
-          @changeIcon="$_changeIcon"
-          @changeColor="$_changeColor"
-          @changeEntityTitle="$_changeEntityTitle"
-          @changeEntity="$_changeEntity"
-          @showFeature="$_showFeature"
-          @projectPreview="$_projectPreview"
-          @featurePreview="$_featurePreview"
-          @addFeature="$_addFeature"
-          @addChapter="$_addChapter"
-          @copyChapter="$_copyChapter"
-          @deleteProject="$_deleteProject"
-          @titleChanged="$_titleChanged"
-          ref="panelEdit"
-          v-model="project"
-          @backed="$_back"/>
+        v-show="showProjectEdit"
+        :width="width"
+        :height="height"
+        :editList="editList"
+        @addMap="$_addMap"
+        @getCamera="$_getCamera"
+        @selectCamera="$_selectCamera"
+        @deleteFeature="$_deleteFeature"
+        @toggleChapterFeatures="$_toggleChapterFeatures"
+        @changeContent="$_changeContent"
+        @changeIcon="$_changeIcon"
+        @changeColor="$_changeColor"
+        @changeEntityTitle="$_changeEntityTitle"
+        @changeEntity="$_changeEntity"
+        @showFeature="$_showFeature"
+        @projectPreview="$_projectPreview"
+        @featurePreview="$_featurePreview"
+        @addFeature="$_addFeature"
+        @addChapter="$_addChapter"
+        @copyChapter="$_copyChapter"
+        @deleteProject="$_deleteProject"
+        @titleChanged="$_titleChanged"
+        @export="$_export"
+        ref="panelEdit"
+        v-model="project"
+        @backed="$_back"/>
       <mapgis-ui-hover-edit-panel
-          @closeHoverPanel="$_closeHoverPanel"
-          @titleChanged="$_titleChange" v-if="showEditPanel"/>
+        @closeHoverPanel="$_closeHoverPanel"
+        @titleChanged="$_titleChange" v-if="showEditPanel"/>
     </div>
   </div>
 </template>
@@ -91,6 +94,9 @@ export default {
     width: {
       type: Number,
       default: 400
+    },
+    editList: {
+      type: Object
     }
   },
   data() {
@@ -111,6 +117,9 @@ export default {
     this.dataSourceCopy = this.dataSource;
   },
   methods: {
+    $_export(project) {
+      this.$emit("export", project);
+    },
     $_deleteProject() {
       this.projects.splice(this.currentProjectIndex, 1);
     },
@@ -197,6 +206,15 @@ export default {
     $_deleteFeature(index, uuid) {
       this.$emit("deleteFeature", index, this.project.uuid);
     },
+    $_changeContent(chapter) {
+      let chapters = this.project.chapters;
+      for (let i = 0; i < chapters.length; i++) {
+        if (chapters[i].uuid === chapter.uuid) {
+          chapters[i].content = chapter.content;
+          break;
+        }
+      }
+    },
     $_changeIcon(icon, id) {
       this.$emit("changeIcon", icon, id);
     },
@@ -213,7 +231,7 @@ export default {
       this.$emit("showFeature", id, flag);
     },
     $_projectPreview(project) {
-      if(!project) {
+      if (!project) {
         this.storyFeature = this.project.features;
       }
       project = project || this.project;

@@ -32,6 +32,9 @@
     <img :style="[{width: width,height: height},iconStyle]" v-if="type === 'toLarge'" title="toLarge"
          src="./img/toLarge.svg"
          alt="">
+    <img :style="[{width: width,height: height},iconStyle]" v-if="type === 'export'" title="export"
+         src="./img/export.svg"
+         alt="">
     <span v-if="title" :style="titleStyle" class="mapgis-ui-local-base64-icon-title">{{title}}</span>
   </div>
 </template>

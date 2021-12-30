@@ -96,22 +96,21 @@ export default {
     $_updateData(data) {
       console.log("data",data)
       this.$refs.graphicLayer.$_fromJson(data.dataSource);
-      // for (let i = 0; i < this.dataSourceCopy.length; i++) {
-      //   //uuid相同，更新数据
-      //   if (this.dataSourceCopy[i].uuid === data.uuid) {
-      //     this.$set(this.dataSourceCopy, i, data);
-      //     this.$refs.graphicLayer.$_updateStyleByLayer(data);
-      //   } else {
-      //     //uuid不相同，新增数据
-      //     let {dataSource} = data;
-      //     let json = [];
-      //     for (let i = 0; i < dataSource.length; i++) {
-      //       json.push(dataSource[i]);
-      //     }
-      //     this.$refs.graphicLayer.$_fromJson(json);
-      //     this.dataSourceCopy.push(data);
-      //   }
-      // }
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        //uuid相同，更新数据
+        if (this.dataSourceCopy[i].uuid === data.uuid) {
+          this.$refs.graphicLayer.$_updateStyleByLayer(data);
+          this.dataSourceCopy[i].dataSource = data.dataSource.features;
+          console.log("this.dataSourceCopy",this.dataSourceCopy)
+          break;
+        } else {
+          //uuid不相同，新增数据
+          let {dataSource} = data;
+          this.$refs.graphicLayer.$_fromJson(dataSource);
+          this.dataSourceCopy.push(data);
+          break;
+        }
+      }
     },
     //选择图层
     $_selectLayer(e) {

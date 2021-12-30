@@ -9,7 +9,7 @@
     </div>
     <!--图片高度、图片下边距、区域内边距-->
     <div
-      :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (58 + 10 + 8) + 'px'}"
+      :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (62) + 'px'}"
       v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
       <div :key="index"
            class="mapgis-ui-choose-picture-right-img-container"
@@ -113,19 +113,24 @@ export default {
         width: "20px",
         marginTop: "calc(25% - 10px)",
         marginLeft: "calc((100% - 20px)/2)",
-      }
+      },
+      isUpdate: true
     }
   },
   watch: {
     images: {
       handler: function () {
-        this.getImagesCopy();
+        if (this.isUpdate) {
+          this.getImagesCopy();
+        }
       },
       deep: true
     },
     imgUrls: {
       handler: function () {
-        this.$emit("change", this.imgUrls);
+        if (this.isUpdate) {
+          this.$emit("change", this.imgUrls);
+        }
       },
       deep: true
     }
@@ -150,11 +155,15 @@ export default {
           if (this.imagesCopy.length > 0) {
             this.currentImgUrl = this.imagesCopy[this.currenImgIndex];
             this.imgUrls = this.imagesCopy;
+          } else {
+            this.isUpdate = false;
+            this.currentImgUrl = undefined;
+            this.imgUrls = [];
+            this.$nextTick(function () {
+              this.isUpdate = true;
+            });
           }
         }
-      } else {
-        this.imagesCopy = [];
-        this.imgUrls = this.imagesCopy;
       }
     },
     $_delete(index) {

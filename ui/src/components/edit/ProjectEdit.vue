@@ -7,6 +7,7 @@
           <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
           </mapgis-ui-col>
           <mapgis-ui-col span="6" class="mapgis-ui-project-edit-top-right">
+            <mapgis-ui-base64-icon style="margin-right: 4px;" width="18px" @click="$_export" type="export"/>
             <mapgis-ui-base64-icon width="16px" @click="$_showSetting" type="setting"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
@@ -26,18 +27,18 @@
       </div>
       <mapgis-ui-row>
         <mapgis-ui-feature-row
-            @showFeature="$_showFeature"
-            @deleteFeature="$_deleteFeature"
-            @editFeature="$_editFeature"
-            v-model="projectCopy.chapters"
-            :width="width"
+          @showFeature="$_showFeature"
+          @deleteFeature="$_deleteFeature"
+          @editFeature="$_editFeature"
+          v-model="projectCopy.chapters"
+          :width="width"
         />
       </mapgis-ui-row>
     </div>
     <!--附加地图-->
-<!--    <mapgis-ui-map-select :showTitleIcon="false"-->
-<!--                          v-show="showSetting"-->
-<!--                          @addMap="$_addMap" title="附加地图"/>-->
+    <!--    <mapgis-ui-map-select :showTitleIcon="false"-->
+    <!--                          v-show="showSetting"-->
+    <!--                          @addMap="$_addMap" title="附加地图"/>-->
     <mapgis-ui-map-multi-rows v-show="showSetting"
                               :showTitleIcon="false"
                               showMoreTitle=""
@@ -62,27 +63,29 @@
     </mapgis-ui-row>
     <div v-show="editFeature" style="height: 100%;">
       <mapgis-ui-feature-edit
-          @textChanged="$_textChanged"
-          @getCamera="$_getCamera"
-          @selectCamera="$_selectCamera"
-          @addMap="$_addMap"
-          @addFeature="$_addFeature"
-          @toggleFeature="$_toggleFeature"
-          @deleteFeature="$_deleteFeature"
-          @changeColor="$_changeColor"
-          @changeEntityTitle="$_changeEntityTitle"
-          @changeEntity="$_changeEntity"
-          @changeOpacity="$_changeOpacity"
-          @changeIcon="$_changeIcon"
-          @featurePreview="$_featurePreview"
-          @back="$_featureBack"
-          @change="$_featureChange"
-          @titleChanged="$_featureTitleChanged"
-          @animationTimeChanged="$_animationTimeChanged"
-          @firstAddPicture="$_firstAddPicture"
-          :feature="currentFeature"
-          :cameras="cameras"
-          :height="height"
+        @textChanged="$_textChanged"
+        @getCamera="$_getCamera"
+        @selectCamera="$_selectCamera"
+        @addMap="$_addMap"
+        @addFeature="$_addFeature"
+        @toggleFeature="$_toggleFeature"
+        @deleteFeature="$_deleteFeature"
+        @changeColor="$_changeColor"
+        @changeEntityTitle="$_changeEntityTitle"
+        @changeEntity="$_changeEntity"
+        @changeOpacity="$_changeOpacity"
+        @changeIcon="$_changeIcon"
+        @featurePreview="$_featurePreview"
+        @back="$_featureBack"
+        @change="$_featureChange"
+        @changeContent="$_changeContent"
+        @titleChanged="$_featureTitleChanged"
+        @animationTimeChanged="$_animationTimeChanged"
+        @firstAddPicture="$_firstAddPicture"
+        :feature="currentFeature"
+        :cameras="cameras"
+        :height="height"
+        :editList="editList"
       />
     </div>
   </div>
@@ -138,6 +141,9 @@ export default {
     id: {
       type: String,
       default: "defaultProjectEditId"
+    },
+    editList: {
+      type: Object
     }
   },
   watch: {
@@ -244,6 +250,9 @@ export default {
     $_projectPreview() {
       this.$emit("projectPreview");
     },
+    $_export() {
+      this.$emit("export", this.projectCopy);
+    },
     $_deleteProject() {
       this.$emit("deleteProject", this.projectCopy);
       this.$_back();
@@ -341,6 +350,35 @@ export default {
         case "text":
           this.$_addText();
           break;
+        case "circle":
+          this.$_addCircle();
+          break;
+        case "ellipsoid":
+          this.$_addEllipsoid();
+          break;
+        case "box":
+          this.$_addBox();
+          break;
+        case "polylineVolume":
+          this.$_addPolylineVolume();
+          break;
+        case "cylinder":
+          this.$_addCylinder();
+          break;
+        case "wall":
+          this.$_addWall();
+          break;
+        case "corridor":
+          this.$_addCorridor();
+          break;
+        case "polygonCube":
+          this.$_addPolygonCube();
+          break;
+        case "mouse":
+          this.$emit("addFeature", {
+            type: "mouse",
+          });
+          break;
       }
     },
     $_addPoint() {
@@ -361,6 +399,62 @@ export default {
       let feature = this.$_getFeature("polygon");
       this.$emit("addFeature", {
         type: "polygon",
+        feature: feature
+      });
+    },
+    $_addCircle() {
+      let feature = this.$_getFeature("circle");
+      this.$emit("addFeature", {
+        type: "circle",
+        feature: feature
+      });
+    },
+    $_addEllipsoid() {
+      let feature = this.$_getFeature("ellipsoid");
+      this.$emit("addFeature", {
+        type: "ellipsoid",
+        feature: feature
+      });
+    },
+    $_addBox() {
+      let feature = this.$_getFeature("box");
+      this.$emit("addFeature", {
+        type: "box",
+        feature: feature
+      });
+    },
+    $_addCylinder() {
+      let feature = this.$_getFeature("cylinder");
+      this.$emit("addFeature", {
+        type: "cylinder",
+        feature: feature
+      });
+    },
+    $_addWall() {
+      let feature = this.$_getFeature("wall");
+      this.$emit("addFeature", {
+        type: "wall",
+        feature: feature
+      });
+    },
+    $_addCorridor() {
+      let feature = this.$_getFeature("corridor");
+      this.$emit("addFeature", {
+        type: "corridor",
+        feature: feature
+      });
+    },
+    $_addPolylineVolume() {
+      let feature = this.$_getFeature("polylineVolume");
+      this.$emit("addFeature", {
+        type: "polylineVolume",
+        feature: feature
+      });
+    },
+    $_addPolygonCube() {
+      let feature = this.$_getFeature("polygonCube");
+      this.$emit("addFeature", {
+        type: "polygonCube",
         feature: feature
       });
     },
@@ -390,6 +484,9 @@ export default {
     $_featureChange(feature) {
       this.currentFeature = Object.assign(this.currentFeature, feature || {});
     },
+    $_changeContent(feature) {
+      this.$emit("changeContent", feature);
+    },
     $_featureBack() {
       this.editFeature = false;
     },
@@ -408,6 +505,7 @@ export default {
 .mapgis-ui-project-edit-title-edit {
   width: 90%;
 }
+
 .mapgis-ui-project-edit-panel {
   position: absolute;
   z-index: 1;

@@ -21,8 +21,10 @@
         @showProject="$_showProject"
         @featurePreview="$_featurePreview"
         @back="$_back"
+        @export="$_export"
         :height="panelHeight"
         :width="width"
+        :editList="editList"
         v-model="dataSourceCopy"
         v-show="showProjectPanel"
     />
@@ -44,6 +46,7 @@
 <script>
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
+import editList from "../Graphic/editList";
 
 window.showProjectEdit = false;
 export default {
@@ -93,6 +96,7 @@ export default {
       enableFullScreen: true,
       showPanels: window.showPanels,
       dataSourceCopy: undefined,
+      editList: editList
     }
   },
   watch: {
@@ -119,6 +123,9 @@ export default {
     }
   },
   methods: {
+    $_export(project) {
+      this.$emit("export", project);
+    },
     $_back(project) {
       let features = project.features;
       for (let i = 0; i < features.length; i++) {

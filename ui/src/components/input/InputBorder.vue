@@ -1,16 +1,18 @@
 <template>
   <div>
-    <div class="mapgis-ui-input-border-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
-      <mapgis-ui-title-icon v-show="showTitleIcon"/>
-      {{ title }}
-    </div>
-    <div class="mapgis-ui-input-border-container">
-      <mapgis-ui-input v-if="type === 'text'" @change="$_change" :title="valueCopy" :id="id" class="mapgis-ui-input-border"
-                       v-model="valueCopy" :placeholder="placeholder"/>
-      <mapgis-ui-input-number v-if="type === 'number'" @change="$_change" :title="String(valueCopy)" :id="id" class="mapgis-ui-input-border"
-                       v-model="valueCopy" :placeholder="placeholder"/>
-      <!--      <mapgis-ui-textarea contenteditable="true" :id="id" :style="inputStyle" class="mapgis-ui-input-textarea" v-model="valueCopy" :placeholder="placeholder"/>-->
-    </div>
+    <mapgis-ui-row style="width: 100%">
+      <mapgis-ui-col span="6" class="mapgis-ui-input-border-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+        <mapgis-ui-title-icon v-show="showTitleIcon"/>
+        {{ title }}
+      </mapgis-ui-col>
+      <mapgis-ui-col span="18" class="mapgis-ui-input-border-container">
+        <mapgis-ui-input v-if="type === 'text'" @change="$_change" :title="valueCopy" :id="id" class="mapgis-ui-input-border"
+                         v-model="valueCopy" :placeholder="placeholder"/>
+        <mapgis-ui-input-number v-if="type === 'number'" @change="$_change" :title="String(valueCopy)" :id="id" class="mapgis-ui-input-border"
+                                v-model="valueCopy" :placeholder="placeholder"/>
+        <!--      <mapgis-ui-textarea contenteditable="true" :id="id" :style="inputStyle" class="mapgis-ui-input-textarea" v-model="valueCopy" :placeholder="placeholder"/>-->
+      </mapgis-ui-col>
+    </mapgis-ui-row>
   </div>
 </template>
 
@@ -100,22 +102,25 @@ export default {
 
 <style scoped>
 .mapgis-ui-input-border {
-  width: 100%;
+  /*width: 100%;*/
 }
 .mapgis-ui-input-border-title {
   font-weight: bolder;
   margin-bottom: 2px;
-  padding-left: 12px;
+  padding-left: 16px;
+  text-align: left;
+  height: 40px;
+  line-height: 40px;
 }
 
 .mapgis-ui-input-border-container {
   position: relative;
-  width: 98%;
-  min-height: 54px;
   border-radius: 3px;
   text-align: center;
-  padding: 10px;
+  padding: 5px;
   padding-left: 0;
   padding-right: 1px;
+  width: 178px;
+  margin-left: 11px;
 }
 </style>

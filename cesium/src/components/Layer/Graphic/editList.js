@@ -54,13 +54,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "字体颜色",
       key: "fontColor",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -83,14 +83,14 @@ let editList = {
     {
       type: "MapgisUiColorPicker",
       title: "边线颜色",
-      value: "#000000",
+      value: "#F04155",
       key: "outlineColor"
     },
     {
       type: "MapgisUiSlider",
       title: "边线透明度",
       key: "outlineOpacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiShowBackground",
@@ -101,7 +101,7 @@ let editList = {
     {
       type: "MapgisUiColorPicker",
       title: "背景颜色",
-      value: "#000000",
+      value: "#F04155",
       key: "backgroundColor"
     },
     {
@@ -140,19 +140,19 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
       title: "图片宽度",
       key: "width",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
       title: "图片高度",
       key: "height",
-      value: 100
+      value: 90
     }
   ],
   point: [
@@ -172,13 +172,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -202,13 +202,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "边线颜色",
       key: "outlineColor",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "边线透明度",
       key: "outlineOpacity",
-      value: 100
+      value: 90
     }
   ],
   polyline: [
@@ -225,16 +225,16 @@ let editList = {
       value: "Color",
       dataSource: [
         {
-          key: "实线",
-          value: "Color"
+          key: "Color",
+          value: "实线"
         },
         {
-          key: "虚线",
-          value: "PolylineDash"
+          key: "PolylineDash",
+          value: "虚线"
         },
         {
-          key: "箭头",
-          value: "PolylineArrow"
+          key: "PolylineArrow",
+          value: "箭头"
         }
       ]
     },
@@ -248,13 +248,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     }
   ],
   polylineVolume: [
@@ -274,13 +274,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiSelect",
@@ -289,16 +289,16 @@ let editList = {
       value: 0,
       dataSource: [
         {
-          key: "圆角",
-          value: 0
+          key: 0,
+          value: "圆角"
         },
         {
-          key: "方角",
-          value: 1
+          key: 1,
+          value: "方角"
         },
         {
-          key: "斜边角",
-          value: 2
+          key: 2,
+          value: "斜边角"
         }
       ]
     }
@@ -320,7 +320,7 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "墙体高度",
       key: "extrudedHeight",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -332,13 +332,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiSelect",
@@ -412,13 +412,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -466,13 +466,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -492,13 +492,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -527,30 +527,18 @@ let editList = {
       value: "Color",
       dataSource: [
         {
-          key: "纯色",
-          value: "Color"
+          key: "Color",
+          value: "纯色"
         },
         {
-          key: "雷达波",
-          value: "RadarMaterial"
+          key: "RadarMaterial",
+          value: "雷达波"
         },
         {
-          key: "动态圆波",
-          value: "CircleWaveMaterial"
+          key: "CircleWaveMaterial",
+          value: "动态圆波"
         }
       ]
-    },
-    {
-      type: "MapgisUiColorPicker",
-      title: "颜色",
-      key: "pureColor",
-      value: "#000000"
-    },
-    {
-      type: "MapgisUiSlider",
-      title: "透明度",
-      key: "pureOpacity",
-      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -562,13 +550,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "材质颜色",
       key: "materialColor",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "材质透明度",
       key: "materialOpacity",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
@@ -578,19 +566,19 @@ let editList = {
     },
     {
       type: "MapgisUiInputNumber",
-      title: "持续时间",
+      title: "动画时间",
       key: "duration",
       value: 2000
     },
     {
       type: "MapgisUiInputNumber",
-      title: "倾斜",
+      title: "倾斜度",
       key: "gradient",
       value: 0.5
     },
     {
       type: "MapgisUiInputNumber",
-      title: "数量",
+      title: "圆波数量",
       key: "count",
       value: 4
     }
@@ -664,7 +652,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "填充透明度",
       key: "opacity",
-      value: 100
+      value: 90
     }
   ],
   cylinder: [
@@ -702,13 +690,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     }
   ],
   cone: [
@@ -728,19 +716,25 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "圆柱高度",
       key: "extrudedHeight",
-      value: 100
+      value: 90
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "离地高度",
+      key: "height",
+      value: 0
     },
     {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
-      title: "填充透明度",
+      title: "透明度",
       key: "opacity",
-      value: 100
+      value: 90
     }
   ],
   ellipsoid: [
@@ -778,13 +772,13 @@ let editList = {
       type: "MapgisUiColorPicker",
       title: "填充颜色",
       key: "color",
-      value: "#000000"
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
       title: "填充透明度",
       key: "opacity",
-      value: 100
+      value: 90
     }
   ],
   model: [
@@ -809,22 +803,86 @@ let editList = {
       value: "无标题"
     },
     {
+      type: "MapgisUiSelect",
+      title: "填充类型",
+      key: "materialType",
+      value: "Color",
+      dataSource: [
+        {
+          key: "Color",
+          value: "纯色"
+        },
+        {
+          key: "PolylineTrailLink",
+          value: "流动纹理"
+        }
+      ]
+    },
+    {
       type: "MapgisUiColorPicker",
-      title: "填充颜色",
-      key: "color",
-      value: "#000000"
+      title: "材质颜色",
+      key: "linkColor",
+      value: "#FFFFFF"
+    },
+    {
+      type: "MapgisUiColorPicker",
+      title: "材质颜色",
+      key: "materialColor",
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
-      title: "填充透明度",
-      key: "opacity",
-      value: 100
+      title: "材质透明度",
+      key: "materialOpacity",
+      value: 90
+    },
+    {
+      type: "MapgisUiInput",
+      title: "材质贴图",
+      key: "image",
+      value: "http://localhost:8080/assets/png/lineClr.png"
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "动画时间",
+      key: "duration",
+      value: 2000
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "方向",
+      key: "direction",
+      value: 1
+    },
+    {
+      type: "MapgisUiSelect",
+      title: "流动方向",
+      key: "direction",
+      value: 1,
+      dataSource: [
+        {
+          key: 1,
+          value: "从左到右"
+        },
+        {
+          key: 2,
+          value: "从右到左"
+        },
+        {
+          key: 3,
+          value: "从上到下"
+        },
+        {
+          key: 4,
+          value: "从下到上"
+        }
+      ]
     },
     {
       type: "MapgisUiInputNumber",
       title: "墙体高度",
       key: "extrudedHeight",
-      value: 100
+      value: 90
     },
     {
       type: "MapgisUiInputNumber",
