@@ -448,30 +448,6 @@ export default {
             heightLimited
         );
       }
-      // if (!lnglat) {
-      //   let find = vueCesium.HeightLimitedAnalysisManager.findSource(vueKey, vueIndex);
-      //   if (find && find.options && find.options.lnglat) {
-      //     lnglat = find.options.lnglat;
-      //     // this.remove();
-      //   } else {
-      //     vm._boundingVolume = m3d.source[0]._root._boundingVolume;
-      //     const northeastCornerCartesian = vm._boundingVolume.northeastCornerCartesian;
-      //     const southwestCornerCartesian = vm._boundingVolume.southwestCornerCartesian;
-      //     lnglat = vm.getAllPoint(southwestCornerCartesian, northeastCornerCartesian);
-      //   }
-      // } else if (lnglat.length === 2) {
-      //   lnglat = vm.getAllPointByDegree(lnglat[0], lnglat[1]);
-      // } else {
-      //   let temp = [];
-      //   lnglat.forEach((l, index) => {
-      //     let lTemp = {};
-      //     lTemp.longitude = l[0];
-      //     lTemp.latitude = l[1];
-      //     temp[index] = lTemp;
-      //   })
-      //   lnglat = temp;
-      // }
-
     },
 
     //绘制方式返回的点坐标是经纬度坐标
@@ -504,9 +480,9 @@ export default {
           analysis.remove();
           find.options.heightLimitedAnalysis = null;
           find.options.lnglat = null;
+          this.lnglat = undefined;
         }
       }
-      this.lnglat = undefined;
     },
     unmount() {
       let {vueCesium, vueKey, vueIndex} = this;
