@@ -34,10 +34,22 @@ export default {
           polygon: new FillStyle()
         };
       }
-    }
+    },
+    visible: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {};
+  },
+  watch: {
+    visible(val, oldval) {
+      if (val != oldval) {
+        this.unmount();
+        this.mount();
+      }
+    }
   },
   mounted() {
     this.mount();
@@ -59,6 +71,8 @@ export default {
         // viewer.zoomTo(dataSource);
         viewer.dataSources.add(dataSource);
         vm.changeColor(dataSource);
+        // 新增visible属性，控制图层可见性
+        vm.changeVisisbe(dataSource);
         vm.$emit("load", { component: this });
         let clickhandler, hoverhandler;
         if (enablePopup) {
@@ -208,6 +222,14 @@ export default {
     changePopup(payload) {
       const { currentClickInfo } = payload;
       this.currentClickInfo = currentClickInfo;
+    },
+    changeVisisbe(dataSource) {
+      const {vueKey, vueIndex, visible} = this;
+      let entities = dataSource.entities.values;
+      for (let i = 0; i < entities.length; i++) {
+        let entity = entities[i];
+        entity.show = visible;
+      }
     }
   }
 };

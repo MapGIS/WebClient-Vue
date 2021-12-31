@@ -1,13 +1,11 @@
 <template>
 	<div id="overlay-setting">
 		<mapgis-ui-group-tab title="叠加参数设置" id="title-space"/>
-
 		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
-
 			<!-- 2.叠加参数设置 -->
 			<!-- <mapgis-ui-space>叠加参数设置</mapgis-ui-space> -->
 			<mapgis-ui-form-model-item label="叠加方式">
-				<mapgis-ui-select :placeholder=overType[3].name @change="selectCurrentMethod($event)">
+				<mapgis-ui-select :placeholder=overType[1].name @change="selectCurrentMethod($event)">
 					<mapgis-ui-select-option v-for="(item, index) in overType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
 				</mapgis-ui-select>
 			</mapgis-ui-form-model-item>
@@ -24,7 +22,6 @@
 				<br>
 				<mapgis-ui-checkbox :default-checked="isValidReg" v-model="isValidReg">检查区合法性</mapgis-ui-checkbox>
 			</mapgis-ui-form-model-item>
-
 			<!-- 3.输出结果 -->
 			<!-- <mapgis-ui-space>输出结果</mapgis-ui-space> -->
 			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
@@ -37,12 +34,10 @@
 				<mapgis-ui-checkbox :default-checked="overlayAdd" @change="sendOverlayAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 			</mapgis-ui-form-model-item>
 		</mapgis-ui-form-model>
-
 		<mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
       <mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
     </mapgis-ui-setting-footer>
-
 	</div>
 </template>
 
@@ -128,7 +123,7 @@ export default {
 				{"name": "对称差", "type": "Ovly_SymDiff", "typeValue": 6},
 				{"name": "判别", "type": "Ovly_Ident", "typeValue": 7},
 			],
-			selectedOverType: 3,  // 叠加分析类型，取值0-7，默认为3 Ovly_InClip
+			selectedOverType: 1,  // 叠加分析类型，取值0-7，默认为1 Ovly_Inter
 			radius: 0.001,  // 容差半径 Number
 			infoOptType: [
 				{"name": "使用随机图层样式", "type": "RandomInfo", "typeValue": 0},
@@ -138,9 +133,7 @@ export default {
 			selectedInfoOptType: 1,  // 图形参数操作，取值0-2，默认为1 UsesAInfo
 			attOptType: true,  // 是否进行属性操作，0不允许 1允许，默认为1 Number
 			isValidReg: false,  // 检查区合法性，false true，默认为false
-
 			destLayer: '',
-
 			overlayAdd: true,  // 结果添加到地图文档，默认为true
 		}
 	},
@@ -184,60 +177,47 @@ export default {
 				mm = `0${mm}`
 			if (ss.length == 1) 
 				ss = `0${ss}`
-			return `-overlay${hh}${mm}${ss}`
+			return `overlay${hh}${mm}${ss}`
   	},
-
 		run() {
 			this.$emit("listenOverlayAdd", this.overlayAdd)
-
 			if (this.srcType == "Layer") {
-
 				var overlayLayer = new OverlayByLayer({
 					ip: this.baseUrl.split('/')[2].split(':')[0],
 					port: this.baseUrl.split('/')[2].split(':')[1],
-
 					overType: this.selectedOverType,
 					radius: Number(this.radius),
 					infoOptType: this.selectedInfoOptType,
 					attOptType: Number(this.attOptType),
 					isValidReg: this.isValidReg,
-
 					srcInfo1: this.srcALayer,
 					srcInfo2: this.srcBLayer,
 					desInfo: this.destLayer,
 				})
-
 				overlayLayer.execute(this.AnalysisSuccess, 'post', false, 'json', () => {
 					console.log("叠加分析失败!")
 				})
-
 			} else if (this.srcType == "Feature") {
-
 				var overlayFeature = new OverlayByPolygon({
 					ip: this.baseUrl.split('/')[2].split(':')[0],
 					port: this.baseUrl.split('/')[2].split(':')[1],
-
 					overType: this.selectedOverType,
 					radius: Number(this.radius),
 					infoOptType: this.selectedInfoOptType,
 					attOptType: Number(this.attOptType),
 					isValidReg: this.isValidReg,
-
 					srcInfo1: this.srcALayer,
 					desInfo: this.destLayer
 				})
-
 				var polygonList = this.transformToPoint(this.srcAFeature)
 				var anyLineList = this.transformToAnyLine(polygonList);
 				var gReg = new Zondy.Object.GRegion(anyLineList);
 				overlayFeature.strGRegionXML = JSON.stringify(gReg)
-
 				overlayFeature.execute(this.AnalysisSuccess, 'post', false, 'json', () => {
 					console.log("叠加分析失败!")
 				})
 			}
 		},
-
 		// 将一张图的当前结果集GeoJSON数据转化为点集数组
 		transformToPoint(geojson) {
 			var polygonList = []
@@ -249,7 +229,6 @@ export default {
 			}
 			return polygonList
 		},
-
 		// 将点集数组转化为MapGIS区要素几何图形信息类
 		transformToAnyLine(pointList) {
 			var anyLineList = []
@@ -267,7 +246,6 @@ export default {
 		},
 
 		cancel() {
-			alert("取消叠加分析")
 		},
 		AnalysisSuccess(data) {
 			this.$emit("listenLayer", this.destLayer)
@@ -307,21 +285,17 @@ export default {
 	#overlay-setting > form {
 		height: auto;
 	}
-
 	.mapgis-ui-form label {
 		font-size: 12px;
 	}
-
 	.mapgis-ui-form-item {
 		width: 300px;
 		margin-top: 15px;
 		margin: 0px 10px 8px 10px;
 	}
-
 	.mapgis-ui-row.mapgis-ui-form-item {
     margin: 10px 0px 10px 0px;
 	}
-
 	.mapgis-ui-form-item-control {
 		width: 214px;
 		text-align: left;
@@ -329,10 +303,8 @@ export default {
 		overflow: hidden;
 		/* margin: 0; */
 	}
-
 	#checkbox-group {
 		background-color: red;
 		padding-left: 10px;
 	}
-
 </style>
