@@ -84,6 +84,9 @@ export function initVueCesium() {
     window.vueCesium.AspectAnalysisManager || new AspectAnalysisManager();
   window.vueCesium.SlopeAnalysisManager =
     window.vueCesium.SlopeAnalysisManager || new SlopeAnalysisManager();
+    window.vueCesium.AspectAnalysisManager || new AspectAnalysisManager();
+  window.vueCesium.AspectSlopeAnalysisManager =
+    window.vueCesium.AspectSlopeAnalysisManager || new AspectSlopeAnalysisManager();
   window.vueCesium.SkyLineAnalysisManager =
     window.vueCesium.SkyLineAnalysisManager || new SkyLineAnalysisManager();
   window.vueCesium.ContourAnalysisManager =
@@ -323,3 +326,4 @@ export class MapStoryManager extends BaseManager {}
 export class PondingSimulationManager extends BaseManager {}
 export class GraphicsLayerManager extends BaseManager {}
 export class BimManager extends BaseManager {}
+export class AspectSlopeAnalysisManager extends BaseManager {}
