@@ -15,8 +15,8 @@
           @change="onSliderChange"></mapgis-ui-slider>
       <span class="mapgis-city-grow-starttime" v-if="startTimeCopy!==''">起始时间:{{ startTimeCopy }}</span>
       <div class="mapgis-city-grow-toolbar">
-        <mapgis-ui-iconfont type="mapgis-chevrons-left"/>
-        <mapgis-ui-iconfont type="mapgis-chevron-left"/>
+<!--        <mapgis-ui-iconfont type="mapgis-chevrons-left"/>-->
+<!--        <mapgis-ui-iconfont type="mapgis-chevron-left"/>-->
         <mapgis-ui-iconfont
             v-if="!isStartGrow"
             type="mapgis-play-circle-fill"
@@ -29,8 +29,8 @@
             class="mapgis-city-grow-toolbar-main"
             @click.capture.stop="stopGrow"
         />
-        <mapgis-ui-iconfont type="mapgis-chevron-right"/>
-        <mapgis-ui-iconfont type="mapgis-chevrons-right"/>
+<!--        <mapgis-ui-iconfont type="mapgis-chevron-right"/>-->
+<!--        <mapgis-ui-iconfont type="mapgis-chevrons-right"/>-->
       </div>
       <span class="mapgis-city-grow-endtime" v-if="endTimeCopy!==''">结束时间:{{ endTimeCopy }}</span>
     </mapgis-ui-card>
@@ -71,20 +71,6 @@ export default {
         return {}
       }
     },
-    // featureStyle: {
-    //   type: Object,
-    //   default:() => {
-    //     return {
-    //       displayWithTile:false,
-    //       growTime:60, //总播放时长 默认60秒  60秒演示完整个播放流程
-    //       updateInterval:1, // 建筑生长的颜色和高度更新间隔，默认1s更新一次
-    //       colors:["#fff0f6","#ff85c0","#eb2f96"],
-    //       buildingsLimit:200,
-    //       heightRadio:1
-    //       //必传项 startTimeField、endTimeField、heightField
-    //     }
-    //   }
-    // }
   },
   watch: {
     featureStyle:{
@@ -282,7 +268,7 @@ export default {
 
 .mapgis-city-grow-toolbar {
   display: flex;
-  width: 110px;
+  width: 0px;
   margin: 0px auto;
 }
 
