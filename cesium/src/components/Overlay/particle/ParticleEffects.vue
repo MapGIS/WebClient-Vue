@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot>
-      <div class="mapgis-widget-particle-effects">
+      <div class="mapgis-3d-particle-effects">
         <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle">
         </mapgis-ui-tab-panel>
         <mapgis-ui-tabs
@@ -10,10 +10,10 @@
             :active-key="activeKey"
             @change="tabChange"
         >
-          <mapgis-ui-tab-pane key="1" tab="粒子列表" class="control-content">
+          <mapgis-ui-tab-pane key="1" tab="粒子列表" class="mapgis-3d-particle-effects-control-content">
             <mapgis-ui-list item-layout="horizontal" :data-source="particleListCopy">
               <mapgis-ui-empty :image="emptyImage" :image-style="imageStyle" v-if="particleListCopy.length === 0">
-                <span slot="description" class="empty-style"> 选择上方粒子类型 <br>在地图上点击添加粒子 </span>
+                <span slot="description" class="mapgis-3d-particle-effects-empty-style"> 选择上方粒子类型 <br>在地图上点击添加粒子 </span>
               </mapgis-ui-empty>
               <mapgis-ui-list-item
                   :class="{'mapgis-3d-particle-effects-list-active':activeIndex === index}"
@@ -49,7 +49,7 @@
               </mapgis-ui-list-item>
             </mapgis-ui-list>
           </mapgis-ui-tab-pane>
-          <mapgis-ui-tab-pane key="2" tab="设置面板" class="control-content" id="parameter-formList">
+          <mapgis-ui-tab-pane key="2" tab="设置面板" class="mapgis-3d-particle-effects-control-content" id="parameter-formList">
             <mapgis-ui-select-panel
                 class="mapgis-ui-number-style"
                 label="发射类型"
@@ -641,39 +641,6 @@ export default {
 };
 </script>
 <style scoped>
-.mapgis-widget-particle-effects {
-  padding: 5px;
-}
-
-.control-content {
-  max-height: 394px;
-  /*overflow: hidden;*/
-  overflow-y: auto;
-  padding-top: 10px;
-  height: 394px;
-}
-
-/*.mapgis-ui-number-style {*/
-/*  margin-bottom: 8px;*/
-/*}*/
-
-.mapgis-ui-form-style {
-  background: #F1F1F1;
-  padding: 10px;
-  border-radius: 3px;
-}
-
-.empty-style {
-  font-size: 14px;
-  font-family: Microsoft YaHei;
-  font-weight: 400;
-  color: #999999;
-}
-
-.mapgis-ui-empty {
-  margin: 50px;
-}
-
 ::v-deep .mapgis-ui-tabs-nav .mapgis-ui-tabs-tab {
   margin: 0;
 }

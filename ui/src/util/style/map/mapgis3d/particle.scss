@@ -2,7 +2,19 @@
 @import "../../theme/theme.scss";
 
 .mapgis-3d-particle-effects {
+    padding: 5px;
     &-list-active {
         background: $primary-2;
+    }
+    &-empty-style {
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+    }
+    &-control-content {
+        max-height: 394px;
+        overflow-y: auto;
+        padding-top: 10px;
+        height: 394px;
     }
 }
