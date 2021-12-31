@@ -72,6 +72,8 @@ export { default as Mapgis3dHeightlimited } from "../../cesium/src/components/An
 export { default as Mapgis3dContour } from "../../cesium/src/components/Analysis/Contour";
 export { default as Mapgis3dVideoManager } from "../../cesium/src/components/Analysis/video/VideoManager";
 export { default as Mapgis3dVideoSetting } from "../../cesium/src/components/Analysis/video/VideoSetting";
+export { default as Mapgis3dBimComponent } from "../../cesium/src/components/Analysis/BIM.vue";
+
 
 export { default as Mapgis3dParticleEffectsManager } from "../../cesium/src/components/Overlay/particle/ParticleEffects";
 
@@ -85,3 +87,4 @@ export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/componen
 // 模拟仿真
 export { default as Mapgis3dCityGrow } from "../../cesium/src/components/simulation/CityGrow/CityGrow";
 export { default as Mapgis3dCityGrowOptions } from "../../cesium/src/components/simulation/CityGrow/CityGrowOptions";
+export { default as Mapgis3dBuildingGlow } from "../../cesium/src/components/simulation/BuildingGrow";
