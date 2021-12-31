@@ -407,6 +407,8 @@ export default {
         }
       }
       vm.cartesian3 = cartesian3;
+      // 绘制完直接进行控高分析
+      vm.startHeightAnalysis()
     },
 
     //开始控高分析
