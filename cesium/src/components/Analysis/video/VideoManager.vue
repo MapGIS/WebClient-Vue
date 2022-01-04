@@ -420,7 +420,7 @@ export default {
         isProjected: false, // 是否开启视频投放
         params: {
           videoSource: {
-            protocol: "mp4", // 视频传输协议
+            protocol: "m3u8", // 视频传输协议
             videoUrl: undefined // 视频服务地址
           },
           cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
