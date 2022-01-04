@@ -1,0 +1,234 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(borderbox1) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .border {
+    position: absolute;
+    display: block;
+  }
+
+  .right-top {
+    right: 0px;
+    transform: rotateY(180deg);
+  }
+
+  .left-bottom {
+    bottom: 0px;
+    transform: rotateX(180deg);
+  }
+
+  .right-bottom {
+    right: 0px;
+    bottom: 0px;
+    transform: rotateX(180deg) rotateY(180deg);
+  }
+
+  .border-box-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@include b(borderbox2) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .border-svg-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+
+    & > polyline {
+      fill: none;
+      stroke-width: 1;
+    }
+  }
+
+  .border-box-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@include b(borderbox3) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .border-svg-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+
+    & > polyline {
+      fill: none;
+    }
+  }
+
+  .mapgis-ui-bb3-line1 {
+    stroke-width: 3;
+  }
+
+  .mapgis-ui-bb3-line2 {
+    stroke-width: 1;
+  }
+
+  .border-box-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@include b(borderbox4) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  .mapgis-ui-reverse {
+    transform: rotate(180deg);
+  }
+
+  .mapgis-ui-border-svg-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+
+    & > polyline {
+      fill: none;
+    }
+  }
+
+  .mapgis-ui-bb4-line-1 {
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb4-line-2 {
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb4-line-3 {
+    stroke-width: 3px;
+    stroke-linecap: round;
+  }
+
+  .mapgis-ui-bb4-line-4 {
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb4-line-5 {
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb4-line-6 {
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb4-line-7 {
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb4-line-8 {
+    stroke-width: 3px;
+    stroke-linecap: round;
+  }
+
+  .mapgis-ui-bb4-line-9 {
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-dasharray: 100 250;
+  }
+
+  .mapgis-ui-bb4-line-10 {
+    stroke-width: 1;
+    stroke-dasharray: 80 270;
+  }
+
+  .border-box-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@include b(borderbox5) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .mapgis-ui-reverse {
+    transform: rotate(180deg);
+  }
+
+  .mapgis-ui-border-svg-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+
+    & > polyline {
+      fill: none;
+    }
+  }
+
+  .mapgis-ui-bb5-line-1,
+  .mapgis-ui-bb5-line-2 {
+    stroke-width: 1;
+  }
+
+  .mapgis-ui-bb5-line-3,
+  .mapgis-ui-bb5-line-6 {
+    stroke-width: 5;
+  }
+
+  .mapgis-ui-bb5-line-4,
+  .mapgis-ui-bb5-line-5 {
+    stroke-width: 2;
+  }
+
+  .border-box-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+@include b(borderbox6) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .mapgis-ui-border-svg-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+
+    & > polyline {
+      fill: none;
+      stroke-width: 1;
+    }
+  }
+
+  .border-box-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+}
