@@ -15,7 +15,31 @@
 			<mapgis-ui-form-model-item label="步长">
 				<mapgis-ui-input v-model=steps></mapgis-ui-input>
 			</mapgis-ui-form-model-item>
-
+			<mapgis-ui-form-model-item label="轮廓宽度">
+				<mapgis-ui-input v-model=colorLineWidth></mapgis-ui-input>
+			</mapgis-ui-form-model-item>
+			<mapgis-ui-color-pick-panel
+				label="轮廓颜色"
+				:color="colorCopyLine"
+				:wrapperCol="17"
+				:size="size"
+				:disableAlpha="false"
+				:colorStyle="colorStyle"
+				@input="val =>
+					(colorCopyLine = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)"
+			>
+			</mapgis-ui-color-pick-panel>
+			<mapgis-ui-color-pick-panel
+				label="填充颜色"
+				:color="colorCopyFill"
+				:wrapperCol="17"
+				:size="size"
+				:disableAlpha="false"
+				:colorStyle="colorStyle"
+				@input="val =>
+					(colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)"
+			>
+			</mapgis-ui-color-pick-panel>
 			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
 			<mapgis-ui-form-model-item label="输出结果">
 				<mapgis-ui-row>
@@ -26,7 +50,6 @@
 				<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 			</mapgis-ui-form-model-item>
 		</mapgis-ui-form-model>
-
 		<!-- 图层级缓冲区分析UI面板 -->
 		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Layer'">
 			<mapgis-ui-form-model-item label="缓冲半径">
@@ -49,7 +72,6 @@
 					<mapgis-ui-select-option v-for="(item, index) in fldName" :key="index" :value="item.FldName">{{item.FldName}}</mapgis-ui-select-option>
 				</mapgis-ui-select>
 			</mapgis-ui-form-model-item>
-
 			<mapgis-ui-form-model-item label="线端类型">
 				<mapgis-ui-radio-group v-model="angelType" :options='[{"label":"圆头","value":false}, {"label":"平头","value":true}]'>
 				</mapgis-ui-radio-group>
@@ -58,7 +80,6 @@
 				<mapgis-ui-radio-group v-model="isDissolve" :options='[{"label":"合并", "value":true},{"label":"不合并", "value":false}]'>
 				</mapgis-ui-radio-group>
 			</mapgis-ui-form-model-item>
-
 			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
 			<mapgis-ui-form-model-item label="输出结果">
 				<mapgis-ui-row>
@@ -69,12 +90,10 @@
 				<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 			</mapgis-ui-form-model-item>
 		</mapgis-ui-form-model>
-
 		<mapgis-ui-setting-footer>
       <mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
       <mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
     </mapgis-ui-setting-footer>
-
 	</div>
 </template>
 
@@ -115,7 +134,6 @@ export default {
      */
 		srcType: {
 			type: String,
-			// Layer Feature
 			default: "Feature"
 		},
 		/**
@@ -141,19 +159,24 @@ export default {
 	},
 	data() {
 		return {
+      colorCopyFill: "rgba(255,0,0,1)",
+      colorCopyLine: "rgba(255,0,0,1)",
+			colorLineWidth: 3,
+      size: "default",
+			colorStyle:{
+				fontSize: '14px',
+				padding:"10px 0",
+			},
 			// 图层级半径缓冲
 			isByAtt: false,
 			leftRad: 100,
 			rightRad: 100,
 			equalLeftRight: true,
-
 			// 图层级属性缓冲
 			fldName: [{"FldName": "", "FldType": ""}],  
 			selectedFldName: "UserID",
-
 			angelType: false,
 			isDissolve: true,
-
 			// 要素级半径缓冲
 			radius: 100,
 			unit: [
@@ -163,16 +186,20 @@ export default {
 			],
 			selectedUnit: "kilometers",
 			steps: 8,  
-
 			destLayer: '',
-
 			bufferAdd: true,
-
 			// 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
 			finish: false,
 		}
 	},
 	watch: {
+		srcType(val, oldval) {
+			if (val == "Feature") {
+				this.destLayer = this.currentTime()
+			} else {
+				this.destLayer = ''
+			}
+		},
 		srcLayer(val, oldval) {
 			if(val != oldval) {
 				this.destLayer = val + this.currentTime()
@@ -211,7 +238,7 @@ export default {
 			this.$emit('load',this);
 		},
 		unmount() {
-			
+			// this.destLayer = ''
 		},
 		sendBufferAdd() {
 			this.bufferAdd = !this.bufferAdd;
@@ -253,9 +280,8 @@ export default {
 				mm = `0${mm}`
 			if (ss.length == 1) 
 				ss = `0${ss}`
-			return `-buffer${hh}${mm}${ss}`
+			return `buffer${hh}${mm}${ss}`
   	},
-
 		/**
 		* 图层级缓冲分析
 		* @function MRCS,MRFWS
@@ -288,27 +314,23 @@ export default {
 					port: this.baseUrl.split('/')[2].split(':')[1],
 					isByAtt: this.isByAtt,
 				})
-
 				if (this.isByAtt == false) {
 					clsBufBySRt.leftRad = this.leftRad
 					clsBufBySRt.rightRad = this.rightRad
 				}	else {
 					clsBufBySRt.fldName = this.selectedFldName
 				}
-
 				clsBufBySRt.srcInfo = this.srcLayer
 				clsBufBySRt.desInfo = this.destLayer
-
 				clsBufBySRt.angelType = Number(this.angelType),
 				clsBufBySRt.isDissolve = this.isDissolve,
-
 				clsBufBySRt.execute(this.AnalysisSuccess, 'post', false, 'json', () => {
 					console.log("缓冲区分析失败")
 				})
-
 			} else {
 				var buffered = turf.buffer(this.srcFeature, this.radius, {units: this.selectedUnit, steps: Number(this.steps)});
-				this.$emit("listenFeature", buffered)
+				this.$emit("listenFeature", buffered, this.destLayer, this.colorCopyFill, this.colorCopyLine, Number(this.colorLineWidth))
+				// this.$emit("listenFeature", buffered, this.destLayer, this.colorCopyFill)
 			}
 		},
 		AnalysisSuccess(data) {
@@ -353,35 +375,28 @@ export default {
 	#buffer-setting > form {
 		height: auto;
 	}
-
 	.mapgis-ui-form label {
 		font-size: 14px;
 	}
-
 	.mapgis-ui-form-item {
 		width: 300px;
 		margin-top: 15px;
 		margin: 0px 10px 8px 10px;
 	}
-
 	.mapgis-ui-row.mapgis-ui-form-item {
     margin: 10px 0px 10px 0px;
 	}
-
 	.mapgis-ui-form-item-control {
 		width: 214px;
 		text-align: left;
 		line-height: 40px;
 		overflow: hidden;
 	}
-
 	#title-space {
 		margin-left: -10px;
 		font-size: 14px;
 	}
-
 	#title-space hr {
 		background-color: #fff;
 	}
-
 </style>
