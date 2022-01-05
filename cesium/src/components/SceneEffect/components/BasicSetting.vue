@@ -226,7 +226,7 @@ export default {
         if(vm.statebar){
           //改变时间轴的上下位置
           vm.$nextTick(function(){
-            let list = document.getElementsByClassName('scene-setting-statebar');
+            let list = document.getElementsByClassName('mapgis-3d-statebar');
             let style = window.getComputedStyle(list[0]);
             if(style.bottom === '0px'){
               timelineContainer.style.bottom = '30px';

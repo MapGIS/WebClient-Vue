@@ -117,6 +117,7 @@
 
             </mapgis-ui-collapse-panel>
         </mapgis-ui-collapse>
+        <mapgis-ui-spin :spinning="spinning" size="large" style="top: 50%;left: 50%"/>
     </mapgis-ui-modal>
 </template>
 
@@ -181,6 +182,7 @@ export default {
             roll:undefined,
 
             resultConfig: undefined,
+            spinning: false,
 
         };
     },
@@ -226,6 +228,7 @@ export default {
         },
         /* 截图 */
         screenshot(){
+            this.spinning = true;
             const { viewer , Cesium} = this;
             const vm = this;
             
@@ -238,11 +241,14 @@ export default {
                 // document.body.appendChild(canvas);
                 image.setAttribute("src", canvas.toDataURL());
                 vm.image = canvas.toDataURL();
+                vm.spinning = false;
             });
         },
         /* 上传本地图片 */
-        upload(){            
-            let file = document.getElementById('file');
+        upload(){
+          this.spinning = true;
+
+          let file = document.getElementById('file');
             let image = document.querySelector(".thumbnail");
             const vm = this;
             
@@ -264,6 +270,7 @@ export default {
                     // console.log(this.result);//要的数据 这里的this指向FileReader（）对象的实例reader
                     image.setAttribute("src", this.result);
                     vm.image = this.result;
+                    vm.spinning = false;
                 }
             }
         },  
@@ -418,4 +425,7 @@ export default {
     padding: 0;
 }
 
+::v-deep .mapgis-ui-spin-spinning{
+  position: absolute;
+}
 </style>
