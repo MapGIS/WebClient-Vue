@@ -41,7 +41,7 @@
 }
 
 .mapgis-popup-row:hover {
-  background-color: $primary-1;
+  background-color: $nav-selected-backgroud;
   border-left: 2px solid $primary-5;
 }
 
@@ -130,7 +130,7 @@
 }
 
 .mapgis-popup-underline-row:hover {
-  background-color: $primary-1;
+  background-color: $nav-selected-backgroud;
   border-left: 2px solid $primary-5;
 }
 
@@ -159,8 +159,8 @@
 }
 
 .mapgis-popup-point-row:hover {
-  background-color: rgb(220, 235, 254);
-  border-left: 2px solid rgb(115, 176, 251);
+  background-color: $nav-selected-backgroud;
+  border-left: 2px solid $primary-5;
 }
 
 .mapgis-popup-point-field {
