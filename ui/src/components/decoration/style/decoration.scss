@@ -1,0 +1,158 @@
+@import "../../../util/style/mixins/mixins.scss";
+@import "../../../util/style/theme/theme.scss";
+
+@include b(decoration1) {
+  width: 100%;
+  height: 100%;
+
+  svg {
+    transform-origin: left top;
+  }
+}
+
+@include b(decoration2) {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+@include b(decoration3) {
+  width: 100%;
+  height: 100%;
+
+  svg {
+    transform-origin: left top;
+  }
+}
+@include b(decoration4) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .container {
+    display: flex;
+    overflow: hidden;
+    position: absolute;
+    flex: 1;
+  }
+
+  .normal {
+    animation: ani-height ease-in-out infinite;
+    left: 50%;
+    margin-left: -2px;
+  }
+
+  .reverse {
+    animation: ani-width ease-in-out infinite;
+    top: 50%;
+    margin-top: -2px;
+  }
+
+  @keyframes ani-height {
+    0% {
+      height: 0%;
+    }
+
+    70% {
+      height: 100%;
+    }
+
+    100% {
+      height: 100%;
+    }
+  }
+
+  @keyframes ani-width {
+    0% {
+      width: 0%;
+    }
+
+    70% {
+      width: 100%;
+    }
+
+    100% {
+      width: 100%;
+    }
+  }
+}
+@include b(decoration5) {
+  width: 100%;
+  height: 100%;
+}
+@include b(decoration6) {
+  width: 100%;
+  height: 100%;
+
+  svg {
+    transform-origin: left top;
+  }
+}
+@include b(decoration7) {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+@include b(decoration8) {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+@include b(decoration9) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    transform-origin: left top;
+  }
+}
+@include b(decoration10) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+@include b(decoration11) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .decoration-content {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@include b(decoration12) {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .decoration-content {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

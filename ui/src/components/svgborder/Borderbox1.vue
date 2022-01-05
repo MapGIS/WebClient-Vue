@@ -120,7 +120,8 @@ export default {
     mergeColor() {
       const { color, defaultColor } = this;
       let colors = color || [];
-      this.mergedColor = clonedeep(defaultColor).concat(colors);
+      
+      this.mergedColor = colors.concat(clonedeep(defaultColor));
     },
   },
   mounted() {

@@ -3,7 +3,9 @@ import MapgisUiBorderbox4 from "../../../ui/src/components/svgborder/Borderbox4.
 export default {
   title: "界面/科技风/边框4",
   component: MapgisUiBorderbox4,
-  argTypes: {},
+  argTypes: {
+    reverse: false,
+  },
 };
 
 const Template = (args, { argTypes }) => ({
@@ -15,4 +17,11 @@ const Template = (args, { argTypes }) => ({
 });
 
 export const 边框4 = Template.bind({});
-边框4.args = {};
+边框4.args = {
+  reverse: false,
+};
+
+export const 边框4反向 = Template.bind({});
+边框4反向.args = {
+  reverse: true,
+};

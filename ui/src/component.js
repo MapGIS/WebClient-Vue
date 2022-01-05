@@ -1,11 +1,31 @@
 /** components */
+// tech style
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
-export { default as MapgisUiorderbox1 } from "./components/svgborder/Borderbox1.vue";
-export { default as MapgisUiorderbox2 } from "./components/svgborder/Borderbox2.vue";
-export { default as MapgisUiorderbox3 } from "./components/svgborder/Borderbox3.vue";
-export { default as MapgisUiorderbox4 } from "./components/svgborder/Borderbox4.vue";
-export { default as MapgisUiorderbox5 } from "./components/svgborder/Borderbox5.vue";
-export { default as MapgisUiorderbox6 } from "./components/svgborder/Borderbox6.vue";
+export { default as MapgisUiBorderbox1 } from "./components/svgborder/Borderbox1.vue";
+export { default as MapgisUiBorderbox2 } from "./components/svgborder/Borderbox2.vue";
+export { default as MapgisUiBorderbox3 } from "./components/svgborder/Borderbox3.vue";
+export { default as MapgisUiBorderbox4 } from "./components/svgborder/Borderbox4.vue";
+export { default as MapgisUiBorderbox5 } from "./components/svgborder/Borderbox5.vue";
+export { default as MapgisUiBorderbox6 } from "./components/svgborder/Borderbox6.vue";
+export { default as MapgisUiBorderbox7 } from "./components/svgborder/Borderbox7.vue";
+export { default as MapgisUiBorderbox8 } from "./components/svgborder/Borderbox8.vue";
+export { default as MapgisUiBorderbox9 } from "./components/svgborder/Borderbox9.vue";
+export { default as MapgisUiBorderbox10 } from "./components/svgborder/Borderbox10.vue";
+export { default as MapgisUiBorderbox11 } from "./components/svgborder/Borderbox11.vue";
+export { default as MapgisUiBorderbox12 } from "./components/svgborder/Borderbox12.vue";
+export { default as MapgisUiBorderbox13 } from "./components/svgborder/Borderbox13.vue";
+export { default as MapgisUiDecoration1 } from "./components/decoration/Decoration1.vue";
+export { default as MapgisUiDecoration2 } from "./components/decoration/Decoration2.vue";
+export { default as MapgisUiDecoration3 } from "./components/decoration/Decoration3.vue";
+export { default as MapgisUiDecoration4 } from "./components/decoration/Decoration4.vue";
+export { default as MapgisUiDecoration5 } from "./components/decoration/Decoration5.vue";
+export { default as MapgisUiDecoration6 } from "./components/decoration/Decoration6.vue";
+export { default as MapgisUiDecoration7 } from "./components/decoration/Decoration7.vue";
+export { default as MapgisUiDecoration8 } from "./components/decoration/Decoration8.vue";
+export { default as MapgisUiDecoration9 } from "./components/decoration/Decoration9.vue";
+export { default as MapgisUiDecoration10 } from "./components/decoration/Decoration10.vue";
+export { default as MapgisUiDecoration11 } from "./components/decoration/Decoration11.vue";
+export { default as MapgisUiDecoration12 } from "./components/decoration/Decoration12.vue";
 
 // 目前echart 5.0 和 vue-echarts 6.0 冲突过大，等官方解决后再接入，目前是自己封装echarts5.0
 export { default as MapgisUiCharts } from "./components/charts/Charts.vue";
