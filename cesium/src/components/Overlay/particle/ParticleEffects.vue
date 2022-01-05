@@ -496,17 +496,15 @@ export default {
       this.imgUrl = tab.image;
       this.title = tab.title;
       this.symbolGuid = tab.guid;
-      this._addEventListener();
+      if (!this.handlerAction){
+        this._addEventListener();
+      }
     },
     _addEventListener() {
       this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
       this.handlerAction.setInputAction(event => {
         this._registerMouseLClickEvent(event);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-      // this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
-      //   this._registerMouseLClickEvent(event);
-      // });
     },
     _registerMouseLClickEvent(event) {
       // 获取点击点的笛卡尔坐标
