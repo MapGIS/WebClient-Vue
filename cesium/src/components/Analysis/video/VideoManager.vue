@@ -411,7 +411,10 @@ export default {
      */
     _tabChange(e) {
       this.activeKey = e;
-      if (this.currentEditVideo && Object.keys(currentEditVideo).length > 0) {
+      if (
+        this.currentEditVideo &&
+        Object.keys(this.currentEditVideo).length > 0
+      ) {
         if (e === "2") {
           // 切换到配置界面，直接投放已选中的视频
           this.putVideo(this.currentEditVideo);
