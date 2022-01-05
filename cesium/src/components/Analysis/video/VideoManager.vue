@@ -419,9 +419,11 @@ export default {
           // 切换到配置界面，直接投放已选中的视频
           this.putVideo(this.currentEditVideo);
         } else if (e === "1") {
-          if (!this.currentEditVideo.isProjected) {
-            // 切换到列表界面，如果已选中的视频未投放，则取消投放（在配置界面会默认投放，切回后恢复状态）
-            this.cancelPutVideo(this.currentEditVideo.id);
+          // 切换到列表界面，恢复投放状态，先取消投放
+          // 如果在进入配置界面之前已投放，则重新投放（以确保投放参数与之前投放的参数保持一致）
+          this.cancelPutVideo(this.currentEditVideo.id);
+          if (this.currentEditVideo.isProjected) {
+            this.putVideo(this.currentEditVideo);
           }
         }
       }
