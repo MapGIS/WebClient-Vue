@@ -163,10 +163,10 @@ export default {
   name: "mapgis-3d-g3d-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
-    ...G3DOptions
+    ...G3DOptions,
   },
   components: {
-    M3dMenus
+    M3dMenus,
   },
   data() {
     return {
@@ -174,24 +174,24 @@ export default {
       layerIds: this.parseLayers(),
       type: {
         terrain: G3DLayerType.g3dTerrainLayer,
-        cache: G3DLayerType.g3dCacheLayer
+        cache: G3DLayerType.g3dCacheLayer,
       },
       menus: [
         {
           title: "静态单体化查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
+          active: this.enablePopup,
         },
         {
           title: "批量设置",
           icon: "mapgis-setting",
-          active: false
+          active: false,
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false
-        }
+          active: false,
+        },
       ],
       layerTree: [
         {
@@ -202,8 +202,8 @@ export default {
           icon: "mapgis-layer1",
           menu: "mapgis-down",
           children: [],
-          scopedSlots: { icon: "custom", title: "title" }
-        }
+          scopedSlots: { icon: "custom", title: "title" },
+        },
       ],
       expandedKeys: [],
       searchValue: "",
@@ -222,7 +222,7 @@ export default {
       featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
       featureproperties: undefined,
       featurevisible: undefined,
-      featureclickenable: this.enablePopup
+      featureclickenable: this.enablePopup,
     };
   },
   provide() {
@@ -230,7 +230,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      }
+      },
     };
   },
   created() {},
@@ -255,15 +255,15 @@ export default {
     },
     layerIds(next) {
       this.changeLayerVisible(this.layerIds);
-    }
+    },
   },
   methods: {
     createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     onM3dLoaded(e) {},
@@ -278,10 +278,10 @@ export default {
       let g3dLayer = this.createCesiumObject();
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
-      g3dLayer.then(e => {
+      g3dLayer.then((e) => {
         let g3d = viewer.scene.layers.appendG3DLayer(url, {
           $props,
-          loaded: function(layer) {
+          loaded: function (layer) {
             // 该回调有多少图层循环进多少次
           },
           getDocLayerIndexes(indexes) {
@@ -369,13 +369,10 @@ export default {
     unmount() {
       const { vueCesium, vueKey, vueIndex } = this;
       const { viewer } = this;
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options) {
-        let { m3ds } = find.options;
-        if (!viewer.isDestroyed() && m3ds) {
-          m3ds.forEach(l => l.destroy());
-        }
-      }
+      const { g3dLayerIndex } = this;
+
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      g3dLayer.remove(true);
       this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
     },
