@@ -302,6 +302,8 @@ export default {
 
             //判断是否存在积水仿真效果
             pond: false,
+            //判断是否停止积水分析计算
+            stopCaculate:true,
 
 
         };
@@ -426,25 +428,30 @@ export default {
         },
         //开始模拟仿真计算
         simulation() {
-            const { Cesium } = this;
+            const { Cesium, viewer } = this;
             const vm = this;
-
-            switch (vm.radioValue) {
-              case 1:
-                if (vm.lnglat) {
+            if (viewer.terrainProvider && viewer.terrainProvider.range3D){
+              switch (vm.radioValue) {
+                case 1:
+                  if (vm.lnglat) {
+                    vm.stopCaculate = false;
                     this.drawer && this.drawer.removeEntities(true);
-                    
+
                     vm.maskShow = true;
                     vm.computeRainfallVol();
                     vm.computeHeight();
-                } else {
-                  this.$message.warning("请先绘制仿真区域");
-                }
-                break;
-              case 2:
-                if (vm.circleCenter.longitude && vm.circleCenter.latitude && vm.radius) {
+                  } else {
+                    this.$message.warning("请先绘制仿真区域");
+                  }
+                  break;
+                case 2:
+                  if (vm.circleCenter.longitude && vm.circleCenter.latitude && vm.radius) {
+                    vm.stopCaculate = false;
                     //先清除
                     vm.lnglat = undefined;
+
+                    let ellipsoid = this.viewer.scene.globe.ellipsoid;
+
                     // 根据用户输入的圆心和半径计算圆范围的坐标点
                     let circle = [vm.circleCenter.longitude, vm.circleCenter.latitude];
                     let lnglatArr = vm.getCircleDegrees(circle, vm.radius / 1000); //turf创建圆的半径单位为km
@@ -453,10 +460,14 @@ export default {
                     vm.maskShow = true;
                     vm.computeRainfallVol();
                     vm.computeHeight();
-                } else {
-                  this.$message.warning("请先输入仿真区域");
-                }
-                break;
+                  } else {
+                    this.$message.warning("请先输入仿真区域");
+                  }
+                  break;
+              }
+            } else {
+              this.$message.warning("请先加载地形");
+              return;
             }
 
         },
@@ -517,11 +528,11 @@ export default {
         //计算积水上涨的高度
         computePondingHeight(result, resolve) {
             const vm = this;
-            console.log("third callback",result)
+            // console.log("third callback",result)
             let { Vol, min, midRange, max } = result;
             //计算指定高度计算所得体积与雨水体积的误差
             let err = Vol - this.rainFallVol;
-            console.log('err', err);
+            // console.log('err', err);
 
             //判断误差是否满足条件
             if (Math.abs(err) < vm.VolErr) {
@@ -529,7 +540,7 @@ export default {
                 vm.maxHeightCopy = Math.round(midRange * 100 ) / 100;
                 //在实际计算出来的积水高度上增加一米以优化积水显示的效果
                 vm.maxHeightCopy += 1;
-                console.log("heightflood",vm.maxHeightCopy);
+                // console.log("heightflood",vm.maxHeightCopy);
                 //积水上涨高度的步长值
                 vm.heightStep = (vm.maxH - vm.startHeightCopy) / 10;
                 
@@ -557,8 +568,10 @@ export default {
             }
             let promise = new Promise(
                 (resolve) => {
+                  if (!vm.stopCaculate){
                     vm.maskText = "正在进行第 " + vm.loopCount +" 次计算..."
                     vm.loopCutFill(midRange, "loop", resolve);
+                  }
                 },
                 (reject) => {}
             );
@@ -586,17 +599,17 @@ export default {
             cutFill._pointsPolygon = positions;
             let minMax = cutFill.getMinAndMaxCartesian();
             cutFill.start(minMax);
-            console.log("docutfill");
+            // console.log("docutfill");
         },
         //填挖方分析的回调函数
         handleCallback(eventtype, eventdata, height, resolve) {
-            console.log(eventtype, eventdata);
+            // console.log(eventtype, eventdata);
             const vm = this;
             
             if (eventtype == "minmax") {
                 let min = eventdata.minHeight;
                 let max = eventdata.maxHeight;
-                console.log("minmax callback");
+                // console.log("minmax callback");
                 resolve({min:min,max:max});
             } else if (eventtype == "first_calc") {
                 // console.log("first_calc callback");
@@ -606,7 +619,7 @@ export default {
 
             } else if (eventtype == "loop") {
                 vm.loopCount ++;
-                console.log("loop callback");
+                // console.log("loop callback");
                 resolve(eventdata);
             }
         },
@@ -675,6 +688,10 @@ export default {
             
         },
         stopSimulation() {
+            this.stopCaculate = true;
+            this.maskShow = false;
+            this.lnglat = undefined;
+
             this._removeFlood();
             this.removeRain();
             this.removeDraw();

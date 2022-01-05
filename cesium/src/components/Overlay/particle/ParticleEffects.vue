@@ -126,8 +126,6 @@ import {
   setLogarithmicDepthBufferEnable
 } from "../../WebGlobe/util";
 
-import fireImg from "./fire.png";
-import smokeImg from "./smoke.png";
 import emptyImage from '../../../assets/image/empty.png';
 import {newGuid} from "../../Utils/util";
 
@@ -427,28 +425,44 @@ export default {
     tabChange(e) {
       this.activeKey = e;
       if (e === '2') {
-        this.changeParticleIndex = undefined;
-        let viewModelCopy = {
-          emitterType: "圆形放射",
-          emissionRate: 2.0,
-          imageSize: 5.0,
-          minimumParticleLife: 2.0,
-          maximumParticleLife: 3.0,
-          minimumSpeed: 9.0,
-          maximumSpeed: 9.5,
-          startScale: 1.0,
-          endScale: 4.0
+        // 当tab切换到设置面板时，先判断粒子列表是否有选中粒子，若有则设置面板为该选中粒子的参数，否则为生成粒子时的初始化参数
+        if (this.activeIndex === undefined ){
+          this.changeParticleIndex = undefined;
+          let viewModelCopy = {
+            emitterType: "圆形放射",
+            emissionRate: 2.0,
+            imageSize: 5.0,
+            minimumParticleLife: 2.0,
+            maximumParticleLife: 3.0,
+            minimumSpeed: 9.0,
+            maximumSpeed: 9.5,
+            startScale: 1.0,
+            endScale: 4.0
+          }
+          this.viewModel = JSON.parse(JSON.stringify(viewModelCopy));
+          this.emitterTypeCopy = viewModelCopy.emitterType;
+          this.emissionRateCopy = viewModelCopy.emissionRate;
+          this.imageSizeCopy = viewModelCopy.imageSize;
+          this.minimumParticleLifeCopy = viewModelCopy.minimumParticleLife;
+          this.maximumParticleLifeCopy = viewModelCopy.maximumParticleLife;
+          this.minimumSpeedCopy = viewModelCopy.minimumSpeed;
+          this.maximumSpeedCopy = viewModelCopy.maximumSpeed;
+          this.startScaleCopy = viewModelCopy.startScale;
+          this.endScaleCopy = viewModelCopy.endScale;
+        } else {
+          let currentParticle = this.particleListCopy[this.activeIndex].param;
+          this.emitterTypeCopy = currentParticle.emitterType;
+          this.emissionRateCopy = currentParticle.emissionRate;
+          this.imageSizeCopy = currentParticle.imageSize;
+          this.minimumParticleLifeCopy = currentParticle.minimumParticleLife;
+          this.maximumParticleLifeCopy = currentParticle.maximumParticleLife;
+          this.minimumSpeedCopy = currentParticle.minimumSpeed;
+          this.maximumSpeedCopy = currentParticle.maximumSpeed;
+          this.startScaleCopy = currentParticle.startScale;
+          this.endScaleCopy = currentParticle.endScale;
+
+          this.changeParticleIndex = this.activeIndex;
         }
-        this.viewModel = JSON.parse(JSON.stringify(viewModelCopy));
-        this.emitterTypeCopy = viewModelCopy.emitterType;
-        this.emissionRateCopy = viewModelCopy.emissionRate;
-        this.imageSizeCopy = viewModelCopy.imageSize;
-        this.minimumParticleLifeCopy = viewModelCopy.minimumParticleLife;
-        this.maximumParticleLifeCopy = viewModelCopy.maximumParticleLife;
-        this.minimumSpeedCopy = viewModelCopy.minimumSpeed;
-        this.maximumSpeedCopy = viewModelCopy.maximumSpeed;
-        this.startScaleCopy = viewModelCopy.startScale;
-        this.endScaleCopy = viewModelCopy.endScale;
       }
     },
     setParticleParameter(index) {
@@ -468,11 +482,17 @@ export default {
       this.changeParticleIndex = index;
     },
     onCreateParticle(tab) {
-      // if (tab.type === 'img') {
-      //   this.imgUrl = tab.image;
-      // } else {
-      //   this.iconUrl = tab.icon;
-      // }
+      // 先把面板参数重设
+      this.emitterTypeCopy = this.viewModel.emitterType;
+      this.emissionRateCopy = this.viewModel.emissionRate;
+      this.imageSizeCopy = this.viewModel.imageSize;
+      this.minimumParticleLifeCopy = this.viewModel.minimumParticleLife;
+      this.maximumParticleLifeCopy = this.viewModel.maximumParticleLife;
+      this.minimumSpeedCopy = this.viewModel.minimumSpeed;
+      this.maximumSpeedCopy = this.viewModel.maximumSpeed;
+      this.startScaleCopy = this.viewModel.startScale;
+      this.endScaleCopy = this.viewModel.endScale;
+
       this.imgUrl = tab.image;
       this.title = tab.title;
       this.symbolGuid = tab.guid;
@@ -512,7 +532,6 @@ export default {
       degrees.longitude = longitude;
       degrees.latitude = latitude;
       degrees.height = cartographic.height;
-      console.log("degree",degrees);
       this.createParticleEffects(degrees, viewModel);
 
       // 粒子列表新增一个粒子
@@ -525,7 +544,6 @@ export default {
       let particleItem;
       particleItem = {name: this.title.concat(this.particleArr.length), guid: guid, param: param}
       this.particleListCopy.push(particleItem);
-      // this.webGlobe.unRegisterMouseEvent("LEFT_CLICK");
     },
     createParticleEffects(degrees, viewModel) {
       let vm = this;
@@ -573,9 +591,9 @@ export default {
       this.Cesium.knockout.track(viewModel);
 
       // 注销鼠标的各项监听事件
-      if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      }
+      // if (this.handlerAction) {
+      //   this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      // }
     },
     onEmitterChange(value) {
       let emitter = this.changeEmitterTypeCesium(value);

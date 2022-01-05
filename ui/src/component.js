@@ -1,5 +1,11 @@
 /** components */
 export { default as MapgisUiBorder } from "./components/border/Border.vue";
+export { default as MapgisUiorderbox1 } from "./components/svgborder/Borderbox1.vue";
+export { default as MapgisUiorderbox2 } from "./components/svgborder/Borderbox2.vue";
+export { default as MapgisUiorderbox3 } from "./components/svgborder/Borderbox3.vue";
+export { default as MapgisUiorderbox4 } from "./components/svgborder/Borderbox4.vue";
+export { default as MapgisUiorderbox5 } from "./components/svgborder/Borderbox5.vue";
+export { default as MapgisUiorderbox6 } from "./components/svgborder/Borderbox6.vue";
 
 // 目前echart 5.0 和 vue-echarts 6.0 冲突过大，等官方解决后再接入，目前是自己封装echarts5.0
 export { default as MapgisUiCharts } from "./components/charts/Charts.vue";

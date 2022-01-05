@@ -82,7 +82,7 @@ export default {
     }
   },
   model: {
-    props: "checked",
+    prop: "checked",
     event: "changeChecked"
   },
   data() {

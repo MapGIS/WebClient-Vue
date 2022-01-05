@@ -3,7 +3,7 @@ import StoryPanelLarge from "../../../ui/src/components/panel/StoryPanelLarge.vu
 
 export default {
   title: "界面/通用/图文关联界面",
-  component: MapgisUiLayoutPro,
+  component: StoryPanelLarge,
   argTypes: {
     mode: "admin",
   },

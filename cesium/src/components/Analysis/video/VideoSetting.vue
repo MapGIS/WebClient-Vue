@@ -342,8 +342,10 @@ export default {
       }
     },
     showVideoDiv() {
-      return this.videoSource.videoUrl.endsWith(
-        `.${this.videoSource.protocol}`
+      return (
+        this.videoSource &&
+        this.videoSource.videoUrl &&
+        this.videoSource.videoUrl.endsWith(`.${this.videoSource.protocol}`)
       );
     }
   },

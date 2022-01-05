@@ -78,6 +78,7 @@ export { default as Mapgis3dDynamicSection } from "./components/Analysis/Dynamic
 export { default as Mapgis3dFill } from "./components/Analysis/Fill";
 export { default as Mapgis3dAspect } from "./components/Analysis/Aspect";
 export { default as Mapgis3dSlope } from "./components/Analysis/Slope";
+export { default as Mapgis3dAspectSlope } from "./components/Analysis/AspectSlope";
 export { default as Mapgis3dContour } from "./components/Analysis/Contour";
 export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
