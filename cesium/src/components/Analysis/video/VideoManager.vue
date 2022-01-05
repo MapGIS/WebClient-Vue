@@ -6,6 +6,7 @@
         <div class="video-layer-select-div">
           <video-layer-select
             :selectOptions="videoOverlayLayerListCopy"
+            :defaultValue="layerSelectDefaultValue"
             @selectedLayer="_changeLayer"
             @change-layer-name="_changeLayerName"
             @add-layer="_addLayer"
@@ -25,6 +26,7 @@
             class="control-content list-pane"
           >
             <mapgis-ui-list
+              v-if="currentVideoOverlayLayer"
               :key="`list-${currentVideoOverlayLayer.id}`"
               item-layout="horizontal"
               size="small"
@@ -163,6 +165,14 @@ export default {
       type: Array,
       default: () => []
     },
+    currrentLayerId: {
+      type: String,
+      default: ""
+    },
+    currentVideoId: {
+      type: String,
+      default: ""
+    },
     protocol: {
       type: String,
       default: "mp4"
@@ -205,7 +215,9 @@ export default {
   computed: {
     videoList: {
       get: function() {
-        return this.currentVideoOverlayLayer.videoList || [];
+        return this.currentVideoOverlayLayer
+          ? this.currentVideoOverlayLayer.videoList
+          : [];
       },
       set: function(videoList) {
         this.currentVideoOverlayLayer.videoList = videoList;
@@ -213,6 +225,12 @@ export default {
     },
     listPagination() {
       return this.isBatch ? false : this.pagination;
+    },
+    layerSelectDefaultValue() {
+      return this.currentVideoOverlayLayer &&
+        Object.keys(this.currentVideoOverlayLayer).length > 0
+        ? this.currentVideoOverlayLayer.name
+        : "";
     }
   },
   watch: {
@@ -224,7 +242,6 @@ export default {
         if (this.videoOverlayLayerListCopy.length > 0) {
           // 默认取第一个
           // this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
-          // this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
           this.layerSelectOptions = [];
           for (let i = 0; i < this.videoOverlayLayerListCopy.length; i++) {
             const { id, name } = this.videoOverlayLayerListCopy[i];
@@ -237,10 +254,40 @@ export default {
     },
     videoList: {
       handler() {
-        this.pagination.total = this.videoList.length;
+        this.pagination.total = this.videoList ? this.videoList.length : 0;
         this.reflush = !this.reflush;
       },
       deep: true,
+      immediate: true
+    },
+    currrentLayerId: {
+      handler() {
+        this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+          item => item.id === this.currrentLayerId
+        );
+        for (let i = 0; i < this.videoList.length; i++) {
+          const video = this.videoList[i];
+          if (video.isProjected) {
+            this.putVideo(video);
+          } else {
+            this.cancelPutVideo(video.id);
+          }
+        }
+      },
+      immediate: true
+    },
+    currentVideoId: {
+      handler() {
+        this.currentEditVideo = this.videoList.find(
+          item => item.id === this.currentVideoId
+        );
+        if (this.currentEditVideo) {
+          const { x, y, z } = this.currentEditVideo.params.cameraPosition;
+          if (x === 0 && y === 0 && z === 0) {
+            this.activeKey = "2";
+          }
+        }
+      },
       immediate: true
     }
   },
@@ -249,7 +296,6 @@ export default {
       reflush: true,
       videoOverlayLayerListCopy: [], //图层数组
       layerSelectOptions: [], //图层选中框信息
-      currentVideoOverlayLayerId: undefined, //当前选中图层的id
       currentVideoOverlayLayer: {}, //当前选中图层
       currentEditVideo: null, //当前编辑video对象
       tabBarStyle: {
@@ -365,7 +411,10 @@ export default {
      */
     _tabChange(e) {
       this.activeKey = e;
-      if (this.currentEditVideo && Object.keys(currentEditVideo).length > 0) {
+      if (
+        this.currentEditVideo &&
+        Object.keys(this.currentEditVideo).length > 0
+      ) {
         if (e === "2") {
           // 切换到配置界面，直接投放已选中的视频
           this.putVideo(this.currentEditVideo);
@@ -420,7 +469,7 @@ export default {
         isProjected: false, // 是否开启视频投放
         params: {
           videoSource: {
-            protocol: "mp4", // 视频传输协议
+            protocol: "m3u8", // 视频传输协议
             videoUrl: undefined // 视频服务地址
           },
           cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置

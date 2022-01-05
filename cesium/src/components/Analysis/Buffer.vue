@@ -1,80 +1,103 @@
 <template>
-	<div id="buffer-setting">
-		<mapgis-ui-group-tab title="缓冲区参数设置" id="title-space"/>
-		<!-- 要素级缓冲区分析UI面板 -->
-		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Feature'">
-			<mapgis-ui-form-model-item label="设置半径">
-				<mapgis-ui-input v-model=radius></mapgis-ui-input>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item label="半径单位">
-				<mapgis-ui-select :placeholder=unit[0].name @change="selectCurrentUnit($event)">
-					<mapgis-ui-select-option v-for="(item, index) in unit" :key="index" :value="item.unitParam">{{item.name}}</mapgis-ui-select-option>
-				</mapgis-ui-select>
-			</mapgis-ui-form-model-item>
-			<!-- <mapgis-ui-select-panel label="半径单位" /> -->
-			<mapgis-ui-form-model-item label="步长">
-				<mapgis-ui-input v-model=steps></mapgis-ui-input>
-			</mapgis-ui-form-model-item>
-
-			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
-			<mapgis-ui-form-model-item label="输出结果">
-				<mapgis-ui-row>
-					<mapgis-ui-col :span=24>
-						<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
-					</mapgis-ui-col>				
-				</mapgis-ui-row>
-				<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
-			</mapgis-ui-form-model-item>
-		</mapgis-ui-form-model>
-
-		<!-- 图层级缓冲区分析UI面板 -->
-		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Layer'">
-			<mapgis-ui-form-model-item label="缓冲半径">
-				<mapgis-ui-radio-group v-model="isByAtt" :options='[{"label":"指定半径","value":false},{"label":"根据属性值","value":true}]'>
-				</mapgis-ui-radio-group>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item label="设置半径" v-show="!isByAtt">
-				<mapgis-ui-row :gutter="8">
-					<mapgis-ui-col :span="12">	
-						<mapgis-ui-input addon-before="左" v-model=leftRad ></mapgis-ui-input>			
-					</mapgis-ui-col>
-					<mapgis-ui-col :span="12">
-						<mapgis-ui-input addon-before="右" v-model=rightRad ></mapgis-ui-input>
-					</mapgis-ui-col>
-				</mapgis-ui-row>
-				<mapgis-ui-checkbox :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item label="选择字段" v-show="isByAtt">
-				<mapgis-ui-select :placeholder=fldName[0].FldName @change="selectAtt($event)">
-					<mapgis-ui-select-option v-for="(item, index) in fldName" :key="index" :value="item.FldName">{{item.FldName}}</mapgis-ui-select-option>
-				</mapgis-ui-select>
-			</mapgis-ui-form-model-item>
-
-			<mapgis-ui-form-model-item label="线端类型">
-				<mapgis-ui-radio-group v-model="angelType" :options='[{"label":"圆头","value":false}, {"label":"平头","value":true}]'>
-				</mapgis-ui-radio-group>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item label="合并样式">
-				<mapgis-ui-radio-group v-model="isDissolve" :options='[{"label":"合并", "value":true},{"label":"不合并", "value":false}]'>
-				</mapgis-ui-radio-group>
-			</mapgis-ui-form-model-item>
-
-			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
-			<mapgis-ui-form-model-item label="输出结果">
-				<mapgis-ui-row>
-					<mapgis-ui-col :span=24>
-						<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
-					</mapgis-ui-col>				
-				</mapgis-ui-row>
-				<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
-			</mapgis-ui-form-model-item>
-		</mapgis-ui-form-model>
-
-		<mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
-      <mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
-    </mapgis-ui-setting-footer>
-
+	<div>
+		<slot>
+			<div class="mapgis-widget-buffer-analysis">
+				<mapgis-ui-group-tab title="缓冲区参数设置" id="title-space"/>
+				<!-- 要素级缓冲区分析UI面板 -->
+				<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Feature'">
+					<mapgis-ui-form-model-item label="设置半径">
+						<mapgis-ui-input v-model=radius></mapgis-ui-input>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="半径单位">
+						<mapgis-ui-select :placeholder=unit[0].name @change="selectCurrentUnit($event)">
+							<mapgis-ui-select-option v-for="(item, index) in unit" :key="index" :value="item.unitParam">{{item.name}}</mapgis-ui-select-option>
+						</mapgis-ui-select>
+					</mapgis-ui-form-model-item>
+					<!-- <mapgis-ui-select-panel label="半径单位" /> -->
+					<mapgis-ui-form-model-item label="步长">
+						<mapgis-ui-input v-model=steps></mapgis-ui-input>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="轮廓宽度">
+						<mapgis-ui-input v-model=colorLineWidth></mapgis-ui-input>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-color-pick-panel
+						label="轮廓颜色"
+						:color="colorCopyLine"
+						:wrapperCol="17"
+						:size="size"
+						:disableAlpha="false"
+						:colorStyle="colorStyle"
+						@input="val =>
+							(colorCopyLine = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)"
+					>
+					</mapgis-ui-color-pick-panel>
+					<mapgis-ui-color-pick-panel
+						label="填充颜色"
+						:color="colorCopyFill"
+						:wrapperCol="17"
+						:size="size"
+						:disableAlpha="false"
+						:colorStyle="colorStyle"
+						@input="val =>
+							(colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)"
+					>
+					</mapgis-ui-color-pick-panel>
+					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
+					<mapgis-ui-form-model-item label="输出结果">
+						<mapgis-ui-row>
+							<mapgis-ui-col :span=24>
+								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
+							</mapgis-ui-col>				
+						</mapgis-ui-row>
+						<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
+					</mapgis-ui-form-model-item>
+				</mapgis-ui-form-model>
+				<!-- 图层级缓冲区分析UI面板 -->
+				<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Layer'">
+					<mapgis-ui-form-model-item label="缓冲半径">
+						<mapgis-ui-radio-group v-model="isByAtt" :options='[{"label":"指定半径","value":false},{"label":"根据属性值","value":true}]'>
+						</mapgis-ui-radio-group>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="设置半径" v-show="!isByAtt">
+						<mapgis-ui-row :gutter="8">
+							<mapgis-ui-col :span="12">	
+								<mapgis-ui-input addon-before="左" v-model=leftRad ></mapgis-ui-input>			
+							</mapgis-ui-col>
+							<mapgis-ui-col :span="12">
+								<mapgis-ui-input addon-before="右" v-model=rightRad ></mapgis-ui-input>
+							</mapgis-ui-col>
+						</mapgis-ui-row>
+						<mapgis-ui-checkbox :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="选择字段" v-show="isByAtt">
+						<mapgis-ui-select :placeholder=fldName[0].FldName @change="selectAtt($event)">
+							<mapgis-ui-select-option v-for="(item, index) in fldName" :key="index" :value="item.FldName">{{item.FldName}}</mapgis-ui-select-option>
+						</mapgis-ui-select>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="线端类型">
+						<mapgis-ui-radio-group v-model="angelType" :options='[{"label":"圆头","value":false}, {"label":"平头","value":true}]'>
+						</mapgis-ui-radio-group>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="合并样式">
+						<mapgis-ui-radio-group v-model="isDissolve" :options='[{"label":"合并", "value":true},{"label":"不合并", "value":false}]'>
+						</mapgis-ui-radio-group>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
+					<mapgis-ui-form-model-item label="输出结果">
+						<mapgis-ui-row>
+							<mapgis-ui-col :span=24>
+								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
+							</mapgis-ui-col>				
+						</mapgis-ui-row>
+						<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
+					</mapgis-ui-form-model-item>
+				</mapgis-ui-form-model>
+				<mapgis-ui-setting-footer>
+					<mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
+					<mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
+				</mapgis-ui-setting-footer>
+			</div>
+		</slot>
 	</div>
 </template>
 
@@ -115,7 +138,6 @@ export default {
      */
 		srcType: {
 			type: String,
-			// Layer Feature
 			default: "Feature"
 		},
 		/**
@@ -141,19 +163,24 @@ export default {
 	},
 	data() {
 		return {
+      colorCopyFill: "rgba(255,0,0,1)",
+      colorCopyLine: "rgba(255,0,0,1)",
+			colorLineWidth: 3,
+      size: "default",
+			colorStyle:{
+				fontSize: '14px',
+				padding:"10px 0",
+			},
 			// 图层级半径缓冲
 			isByAtt: false,
 			leftRad: 100,
 			rightRad: 100,
 			equalLeftRight: true,
-
 			// 图层级属性缓冲
 			fldName: [{"FldName": "", "FldType": ""}],  
 			selectedFldName: "UserID",
-
 			angelType: false,
 			isDissolve: true,
-
 			// 要素级半径缓冲
 			radius: 100,
 			unit: [
@@ -163,16 +190,20 @@ export default {
 			],
 			selectedUnit: "kilometers",
 			steps: 8,  
-
 			destLayer: '',
-
 			bufferAdd: true,
-
 			// 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
 			finish: false,
 		}
 	},
 	watch: {
+		srcType(val, oldval) {
+			if (val == "Feature") {
+				this.destLayer = this.currentTime()
+			} else {
+				this.destLayer = ''
+			}
+		},
 		srcLayer(val, oldval) {
 			if(val != oldval) {
 				this.destLayer = val + this.currentTime()
@@ -211,7 +242,7 @@ export default {
 			this.$emit('load',this);
 		},
 		unmount() {
-			
+			// this.destLayer = ''
 		},
 		sendBufferAdd() {
 			this.bufferAdd = !this.bufferAdd;
@@ -253,9 +284,8 @@ export default {
 				mm = `0${mm}`
 			if (ss.length == 1) 
 				ss = `0${ss}`
-			return `-buffer${hh}${mm}${ss}`
+			return `buffer${hh}${mm}${ss}`
   	},
-
 		/**
 		* 图层级缓冲分析
 		* @function MRCS,MRFWS
@@ -288,27 +318,23 @@ export default {
 					port: this.baseUrl.split('/')[2].split(':')[1],
 					isByAtt: this.isByAtt,
 				})
-
 				if (this.isByAtt == false) {
 					clsBufBySRt.leftRad = this.leftRad
 					clsBufBySRt.rightRad = this.rightRad
 				}	else {
 					clsBufBySRt.fldName = this.selectedFldName
 				}
-
 				clsBufBySRt.srcInfo = this.srcLayer
 				clsBufBySRt.desInfo = this.destLayer
-
 				clsBufBySRt.angelType = Number(this.angelType),
 				clsBufBySRt.isDissolve = this.isDissolve,
-
 				clsBufBySRt.execute(this.AnalysisSuccess, 'post', false, 'json', () => {
 					console.log("缓冲区分析失败")
 				})
-
 			} else {
 				var buffered = turf.buffer(this.srcFeature, this.radius, {units: this.selectedUnit, steps: Number(this.steps)});
-				this.$emit("listenFeature", buffered)
+				this.$emit("listenFeature", buffered, this.destLayer, this.colorCopyFill, this.colorCopyLine, Number(this.colorLineWidth))
+				// this.$emit("listenFeature", buffered, this.destLayer, this.colorCopyFill)
 			}
 		},
 		AnalysisSuccess(data) {
@@ -332,56 +358,20 @@ export default {
 </script>
 
 
-<style scope>
-	* {
-		margin: 0;
-		padding: 0
-	}
-	#buffer-setting {
-		position: absolute;
-		top: 0;
-		left: 0;
-		z-index: 1000;
-		width: 320px;
-		/* height: fit-content; */
-		height: auto;
-		background-color: #fff;
-		border-radius: 4px;
-		/* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2); */
-		padding: 10px;
-	}
-	#buffer-setting > form {
-		height: auto;
-	}
-
-	.mapgis-ui-form label {
-		font-size: 14px;
-	}
-
-	.mapgis-ui-form-item {
-		width: 300px;
-		margin-top: 15px;
-		margin: 0px 10px 8px 10px;
-	}
-
-	.mapgis-ui-row.mapgis-ui-form-item {
-    margin: 10px 0px 10px 0px;
-	}
-
-	.mapgis-ui-form-item-control {
-		width: 214px;
-		text-align: left;
-		line-height: 40px;
-		overflow: hidden;
-	}
-
-	#title-space {
-		margin-left: -10px;
-		font-size: 14px;
-	}
-
-	#title-space hr {
-		background-color: #fff;
-	}
-
+<style scoped>
+.mapgis-widget-buffer-analysis {
+	height: auto;
+}
+.mapgis-ui-form-item {
+	width: 300px;
+}
+.mapgis-ui-row.mapgis-ui-form-item {
+  margin: 10px 0px 10px 0px;
+}
+.mapgis-ui-form-item-control {
+	width: 214px;
+	text-align: left;
+	line-height: 40px;
+	overflow: hidden;
+}
 </style>

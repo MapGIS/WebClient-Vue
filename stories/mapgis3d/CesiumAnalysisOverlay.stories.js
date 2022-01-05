@@ -46,7 +46,6 @@ export default {
       },
       control:'object'
     },
-
   },
 };
 
@@ -103,7 +102,9 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
-      <mapgis-3d-overlay-analysis v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
+      <mapgis-ui-card class="storybook-ui-card">
+        <mapgis-3d-overlay-analysis v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
+      </mapgis-ui-card>
       <mapgis-3d-igs-dynamic-layer v-if="finishL && add" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="gdbps"></mapgis-3d-igs-dynamic-layer>
     </mapgis-web-scene>
     `,
@@ -116,7 +117,6 @@ export const 叠加分析组件 = Template.bind({});
   srcType: "Feature",
   srcALayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
   srcBLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市建筑物",
-
   srcAFeature: {
     "type": "FeatureCollection",
     "features": [

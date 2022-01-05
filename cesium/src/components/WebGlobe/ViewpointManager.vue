@@ -30,35 +30,36 @@
         />
 
         <div class="viewpoint-item-wrapper">
-            <div class="viewpoint-item" v-for="(item, i) in items" :key="i">
+            <div  :class="['viewpoint-item',{ active:clickActive === i }]" v-for="(item, i) in items" :key="i">
                 <div
+                    :class="['item-image',{ active:clickActive === true }]"
                     class="item-image"
                     @mouseenter="imgIndex = i"
                     @mouseleave="imgIndex = undefined"
                     @click="flyTo(item, i)"
                 >
-                    <img :src="item.image" />
-                    <div
-                        class="item-mask"
-                        v-show="imgIndex === i || selectMode"
-                    >
-                        <mapgis-ui-checkbox
-                            @change="selectItem($event, i)"
-                            @click.stop=""
-                        />
-                    </div>
-                    <mapgis-ui-iconfont
-                        class="item-locate"
-                        type="mapgis-dingwei"
+                  <img :src="item.image" />
+                  <div
+                      class="item-mask"
+                      v-show="imgIndex === i || selectMode"
+                  >
+                    <mapgis-ui-checkbox
+                        @change="selectItem($event, i)"
+                        @click.stop=""
                     />
+                  </div>
+                  <mapgis-ui-iconfont
+                      class="item-locate"
+                      type="mapgis-dingwei"
+                  />
                 </div>
                 <div class="item-name">
-                    <label>{{ item.name }}</label>
-                    <mapgis-ui-iconfont
-                        class="item-more-icon"
-                        type="mapgis-gengduo"
-                        @click="(e) => handleMenu(i, e)"
-                    />
+                  <label>{{ item.name }}</label>
+                  <mapgis-ui-iconfont
+                      class="item-more-icon"
+                      type="mapgis-gengduo"
+                      @click="(e) => handleMenu(i, e)"
+                  />
                 </div>
             </div>
         </div>
@@ -89,6 +90,7 @@
                 @click="deleteViewpoint"
             >删除视点</mapgis-ui-button>
         </div>
+
     </div>
 </template>
 
@@ -120,6 +122,7 @@ export default {
             imgIndex: undefined,
             active: -1,
             config: undefined,
+            clickActive:false,
 
             /* 视点列表 */
             items: [
@@ -183,6 +186,11 @@ export default {
         },
         /* 视点跳转 */
         flyTo(item, i) {
+            if (this.clickActive === i){
+              this.clickActive = undefined;
+            } else {
+              this.clickActive = i;
+            }
             const { viewer, Cesium } = this;
             this.currentItem = i;
 
@@ -218,9 +226,14 @@ export default {
             // console.log(i, e);
             this.active = i;
             if(this.active >= 0){
+              if (this.active % 2 === 0){
                 /* 设置菜单的位置 */
                 this.$refs.menu.style.left = `${e.x}px`;
                 this.$refs.menu.style.top = `${e.y}px`;
+              } else {
+                this.$refs.menu.style.left = `${e.x - 88}px`;
+                this.$refs.menu.style.top = `${e.y}px`;
+              }
             }
         },
         /* 编辑视点 */
@@ -282,158 +295,10 @@ export default {
         /* 关闭视点编辑器 */
         closePanel() {
             this.manager = false;
-        },
+        }
     },
 };
 </script>
 
 <style scoped>
-.mapgis-3d-viewpoint-manager {
-    /* position: absolute;
-    top: 10px;
-    left: 10px; */
-    width: 326px;
-    height: fit-content;
-    /* border-radius: 4px; */
-}
-
-.viewpoint-header {
-    height: 38px;
-    line-height: 38px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.title {
-    padding-left: 16px;
-    font-size: 16px;
-    color: #333333;
-}
-
-.closeButton2 {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    width: 16px;
-    height: 16px;
-}
-
-.viewpoint-item-wrapper {
-    width: 100%;
-    height: fit-content;
-    max-height: 360px;
-    padding: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    overflow-y: auto;
-}
-
-.viewpoint-item {
-    display: inline-block;
-    vertical-align: top;
-    width: 140px;
-    height: 125px;
-    margin-bottom: 6px;
-    text-align: center;
-}
-
-.viewpoint-item:nth-child(odd) {
-    margin-right: 8px;
-}
-
-.item-image {
-    position: relative;
-    width: 100%;
-    height: 92px;
-    box-sizing: border-box;
-    cursor: pointer;
-}
-
-.item-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: solid 1px #f0f0f0;
-}
-
-.item-mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.item-mask > .mapgis-ui-checkbox-wrapper {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-}
-
-.item-locate {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 32px;
-    width: 100%;
-    height: 100%;
-    line-height: 92px;
-}
-
-.item-image:hover .item-locate {
-    display: block;
-}
-
-.item-name {
-    font-size: 14px;
-    text-align: center;
-    width: 100%;
-    height: 33px;
-    line-height: 33px;
-    word-wrap: break-word;
-    white-space: pre-wrap;
-    position: relative;
-}
-
-.item-more-icon {
-    position: absolute;
-    right: -6px;
-    line-height: 33px;
-    cursor: pointer;
-}
-
-.item-more-tool {
-    width: 88px;
-    height: 80px;
-    background: #ffffff;
-    box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-    position: fixed;
-    z-index: 10000;
-    cursor: pointer;
-    text-align: center;
-}
-
-.more-tool-btn {
-    height: 40px;
-    line-height: 40px;
-    color: #333333;
-}
-
-.more-tool-btn:hover {
-    background: #e7f4ff;
-    color: #0081e2;
-}
-
-.viewpoint-footer {
-    /* height: 48px; */
-    line-height: 48px;
-    border-top: 1px solid #f0f0f0;
-    text-align: center;
-    padding: 0px 10px;
-    box-sizing: border-box;
-}
 </style>

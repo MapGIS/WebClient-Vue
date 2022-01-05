@@ -260,15 +260,10 @@ export default {
       const { vueKey, checked } = this;
       return new Promise((resolve, reject) => {
         if (checked.length > 0) {
-          this.$_getM3DByInterval(
+          this.$_getM3DSetArray(
             function(m3ds) {
               if (m3ds && m3ds.length > 0) {
-                let sources = [];
-                for (let i = 0; i < m3ds.length; i++) {
-                  const { source } = m3ds[i];
-                  sources = sources.concat(source);
-                }
-                resolve(sources);
+                resolve(m3ds);
               } else {
                 reject(null);
               }
