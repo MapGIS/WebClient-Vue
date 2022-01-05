@@ -26,6 +26,7 @@
             class="control-content list-pane"
           >
             <mapgis-ui-list
+              v-if="currentVideoOverlayLayer"
               :key="`list-${currentVideoOverlayLayer.id}`"
               item-layout="horizontal"
               size="small"
@@ -168,7 +169,7 @@ export default {
       type: String,
       default: ""
     },
-    currrentVideoId: {
+    currentVideoId: {
       type: String,
       default: ""
     },
@@ -214,7 +215,9 @@ export default {
   computed: {
     videoList: {
       get: function() {
-        return this.currentVideoOverlayLayer.videoList || [];
+        return this.currentVideoOverlayLayer
+          ? this.currentVideoOverlayLayer.videoList
+          : [];
       },
       set: function(videoList) {
         this.currentVideoOverlayLayer.videoList = videoList;
@@ -224,7 +227,8 @@ export default {
       return this.isBatch ? false : this.pagination;
     },
     layerSelectDefaultValue() {
-      return JSON.keys(this.currentVideoOverlayLayer).length > 0
+      return this.currentVideoOverlayLayer &&
+        Object.keys(this.currentVideoOverlayLayer).length > 0
         ? this.currentVideoOverlayLayer.name
         : "";
     }
@@ -250,7 +254,7 @@ export default {
     },
     videoList: {
       handler() {
-        this.pagination.total = this.videoList.length;
+        this.pagination.total = this.videoList ? this.videoList.length : 0;
         this.reflush = !this.reflush;
       },
       deep: true,
@@ -272,14 +276,16 @@ export default {
       },
       immediate: true
     },
-    currrentVideoId: {
+    currentVideoId: {
       handler() {
         this.currentEditVideo = this.videoList.find(
-          item => item.id === this.currrentVideoId
+          item => item.id === this.currentVideoId
         );
-        const { x, y, z } = this.currentEditVideo.params.cameraPosition;
-        if (x === 0 && y === 0 && z === 0) {
-          this.activeKey = "2";
+        if (this.currentEditVideo) {
+          const { x, y, z } = this.currentEditVideo.params.cameraPosition;
+          if (x === 0 && y === 0 && z === 0) {
+            this.activeKey = "2";
+          }
         }
       },
       immediate: true
