@@ -6,6 +6,7 @@
         <div class="video-layer-select-div">
           <video-layer-select
             :selectOptions="videoOverlayLayerListCopy"
+            :defaultValue="layerSelectDefaultValue"
             @selectedLayer="_changeLayer"
             @change-layer-name="_changeLayerName"
             @add-layer="_addLayer"
@@ -163,6 +164,14 @@ export default {
       type: Array,
       default: () => []
     },
+    currrentLayerId: {
+      type: String,
+      default: ""
+    },
+    currrentVideoId: {
+      type: String,
+      default: ""
+    },
     protocol: {
       type: String,
       default: "mp4"
@@ -213,6 +222,11 @@ export default {
     },
     listPagination() {
       return this.isBatch ? false : this.pagination;
+    },
+    layerSelectDefaultValue() {
+      return JSON.keys(this.currentVideoOverlayLayer).length > 0
+        ? this.currentVideoOverlayLayer.name
+        : "";
     }
   },
   watch: {
@@ -224,7 +238,6 @@ export default {
         if (this.videoOverlayLayerListCopy.length > 0) {
           // 默认取第一个
           // this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
-          // this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
           this.layerSelectOptions = [];
           for (let i = 0; i < this.videoOverlayLayerListCopy.length; i++) {
             const { id, name } = this.videoOverlayLayerListCopy[i];
@@ -242,6 +255,34 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    currrentLayerId: {
+      handler() {
+        this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+          item => item.id === this.currrentLayerId
+        );
+        for (let i = 0; i < this.videoList.length; i++) {
+          const video = this.videoList[i];
+          if (video.isProjected) {
+            this.putVideo(video);
+          } else {
+            this.cancelPutVideo(video.id);
+          }
+        }
+      },
+      immediate: true
+    },
+    currrentVideoId: {
+      handler() {
+        this.currentEditVideo = this.videoList.find(
+          item => item.id === this.currrentVideoId
+        );
+        const { x, y, z } = this.currentEditVideo.params.cameraPosition;
+        if (x === 0 && y === 0 && z === 0) {
+          this.activeKey = "2";
+        }
+      },
+      immediate: true
     }
   },
   data() {
@@ -249,7 +290,6 @@ export default {
       reflush: true,
       videoOverlayLayerListCopy: [], //图层数组
       layerSelectOptions: [], //图层选中框信息
-      currentVideoOverlayLayerId: undefined, //当前选中图层的id
       currentVideoOverlayLayer: {}, //当前选中图层
       currentEditVideo: null, //当前编辑video对象
       tabBarStyle: {
