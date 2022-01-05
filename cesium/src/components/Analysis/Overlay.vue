@@ -1,43 +1,47 @@
 <template>
-	<div id="overlay-setting">
-		<mapgis-ui-group-tab title="叠加参数设置" id="title-space"/>
-		<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
-			<!-- 2.叠加参数设置 -->
-			<!-- <mapgis-ui-space>叠加参数设置</mapgis-ui-space> -->
-			<mapgis-ui-form-model-item label="叠加方式">
-				<mapgis-ui-select :placeholder=overType[1].name @change="selectCurrentMethod($event)">
-					<mapgis-ui-select-option v-for="(item, index) in overType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
-				</mapgis-ui-select>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item label="容差半径">
-				<mapgis-ui-input v-model="radius"></mapgis-ui-input>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item label="图层样式">
-				<mapgis-ui-select :placeholder=infoOptType[1].name @change="selectCurrentPar($event)">
-					<mapgis-ui-select-option v-for="(item, index) in infoOptType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
-				</mapgis-ui-select>
-			</mapgis-ui-form-model-item>
-			<mapgis-ui-form-model-item id="checkbox-group">
-				<mapgis-ui-checkbox :default-checked="attOptType" v-model="attOptType">进行属性操作</mapgis-ui-checkbox>
-				<br>
-				<mapgis-ui-checkbox :default-checked="isValidReg" v-model="isValidReg">检查区合法性</mapgis-ui-checkbox>
-			</mapgis-ui-form-model-item>
-			<!-- 3.输出结果 -->
-			<!-- <mapgis-ui-space>输出结果</mapgis-ui-space> -->
-			<mapgis-ui-group-tab title="输出结果" id="title-space"/>
-			<mapgis-ui-form-model-item label="输出结果">
-				<mapgis-ui-row>
-					<mapgis-ui-col :span=24>
-						<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
-					</mapgis-ui-col>				
-				</mapgis-ui-row>
-				<mapgis-ui-checkbox :default-checked="overlayAdd" @change="sendOverlayAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
-			</mapgis-ui-form-model-item>
-		</mapgis-ui-form-model>
-		<mapgis-ui-setting-footer>
-      <mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
-      <mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
-    </mapgis-ui-setting-footer>
+	<div>
+		<slot>
+			<div class="mapgis-widget-overlay-analysis">
+				<mapgis-ui-group-tab title="叠加参数设置" id="title-space"/>
+				<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false">
+					<!-- 2.叠加参数设置 -->
+					<!-- <mapgis-ui-space>叠加参数设置</mapgis-ui-space> -->
+					<mapgis-ui-form-model-item label="叠加方式">
+						<mapgis-ui-select :placeholder=overType[1].name @change="selectCurrentMethod($event)">
+							<mapgis-ui-select-option v-for="(item, index) in overType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
+						</mapgis-ui-select>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="容差半径">
+						<mapgis-ui-input v-model="radius"></mapgis-ui-input>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="图层样式">
+						<mapgis-ui-select :placeholder=infoOptType[1].name @change="selectCurrentPar($event)">
+							<mapgis-ui-select-option v-for="(item, index) in infoOptType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
+						</mapgis-ui-select>
+					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item id="checkbox-group">
+						<mapgis-ui-checkbox :default-checked="attOptType" v-model="attOptType">进行属性操作</mapgis-ui-checkbox>
+						<br>
+						<mapgis-ui-checkbox :default-checked="isValidReg" v-model="isValidReg">检查区合法性</mapgis-ui-checkbox>
+					</mapgis-ui-form-model-item>
+					<!-- 3.输出结果 -->
+					<!-- <mapgis-ui-space>输出结果</mapgis-ui-space> -->
+					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
+					<mapgis-ui-form-model-item label="输出结果">
+						<mapgis-ui-row>
+							<mapgis-ui-col :span=24>
+								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
+							</mapgis-ui-col>				
+						</mapgis-ui-row>
+						<mapgis-ui-checkbox :default-checked="overlayAdd" @change="sendOverlayAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
+					</mapgis-ui-form-model-item>
+				</mapgis-ui-form-model>
+				<mapgis-ui-setting-footer>
+					<mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
+					<mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
+				</mapgis-ui-setting-footer>
+			</div>
+		</slot>
 	</div>
 </template>
 
@@ -265,46 +269,20 @@ export default {
 </script>
 
 
-<style>
-	* {
-		margin: 0;
-		padding: 0
-	}
-	#overlay-setting {
-		position: absolute;
-		top: 0;
-		left: 0;
-		z-index: 1000;
-		width: 320px;
-		height: auto;
-		background-color: #fff;
-		border-radius: 4px;
-		/* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2); */
-		padding: 10px;
-	}
-	#overlay-setting > form {
-		height: auto;
-	}
-	.mapgis-ui-form label {
-		font-size: 12px;
-	}
-	.mapgis-ui-form-item {
-		width: 300px;
-		margin-top: 15px;
-		margin: 0px 10px 8px 10px;
-	}
-	.mapgis-ui-row.mapgis-ui-form-item {
-    margin: 10px 0px 10px 0px;
-	}
-	.mapgis-ui-form-item-control {
-		width: 214px;
-		text-align: left;
-		line-height: 40px;
-		overflow: hidden;
-		/* margin: 0; */
-	}
-	#checkbox-group {
-		background-color: red;
-		padding-left: 10px;
-	}
+<style scoped>
+.mapgis-widget-overlay-analysis {
+	height: auto;
+}
+.mapgis-ui-form-item {
+	width: 300px;
+}
+.mapgis-ui-row.mapgis-ui-form-item {
+  margin: 10px 0px 10px 0px;
+}
+.mapgis-ui-form-item-control {
+	width: 214px;
+	text-align: left;
+	line-height: 40px;
+	overflow: hidden;
+}
 </style>
