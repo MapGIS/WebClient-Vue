@@ -173,6 +173,10 @@ export default {
       type: String,
       default: ""
     },
+    maxProjected: {
+      type: Number,
+      default: 10
+    },
     protocol: {
       type: String,
       default: "mp4"
@@ -277,6 +281,7 @@ export default {
         this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
           item => item.id === this.currentLayerId
         );
+        this.viewer.scene.visualAnalysisManager.removeAll();
         for (let i = 0; i < this.videoList.length; i++) {
           const video = this.videoList[i];
           if (video.isProjected) {
@@ -414,6 +419,7 @@ export default {
       this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
         item => item.name === val
       );
+      this.viewer.scene.visualAnalysisManager.removeAll();
       for (let i = 0; i < this.videoList.length; i++) {
         const video = this.videoList[i];
         if (video.isProjected) {
@@ -522,10 +528,33 @@ export default {
       }
       this.selectedIds = [];
     },
+    _isProjectedList() {
+      const videoList = [...this.videoList];
+      const list = videoList.filter(item => item.isProjected);
+      return list || [];
+    },
     /**
      * 批量投放
      */
     _putVideos() {
+      const length = this._isProjectedList().length;
+      const num =
+        this.maxProjected - length > 0 ? this.maxProjected - length : 0;
+      if (this.selectedIds.length >= num) {
+        const vm = this;
+        this.$warning({
+          content: `最大投放数为${this.maxProjected}，已投放${length},还可投放${num},所选数目已超出可投放数,是否继续?`,
+          okText: "确认",
+          cancelText: "取消",
+          onOk() {
+            vm._continuePutVideos();
+          }
+        });
+      } else {
+        this._continuePutVideos();
+      }
+    },
+    _continuePutVideos() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
         const video = this.videoList.find(item => item.id === selectedIds[i]);
@@ -619,13 +648,34 @@ export default {
         // 视频已经被投放，则取消投放
         this.cancelPutVideo(video.id);
         isProjected = false;
+        this._changeIsProjected(isProjected, video.id);
       } else {
         // 未投放，则投放
-        this.putVideo(video);
-        isProjected = true;
+        const length = this._isProjectedList().length;
+        const num =
+          this.maxProjected - length > 0 ? this.maxProjected - length : 0;
+        if (this.maxProjected <= length) {
+          const vm = this;
+          this.$warning({
+            content: `最大投放数为${this.maxProjected}，已投放${length},还可投放${num},所选数目已超出可投放数,是否继续?`,
+            okText: "确认",
+            cancelText: "取消",
+            onOk() {
+              vm.putVideo(video);
+              isProjected = true;
+              vm._changeIsProjected(isProjected, video.id);
+            }
+          });
+        } else {
+          this.putVideo(video);
+          isProjected = true;
+          this._changeIsProjected(isProjected, video.id);
+        }
       }
+    },
+    _changeIsProjected(isProjected, id) {
       const videoList = [...this.videoList];
-      let target = videoList.find(item => item.id === video.id);
+      let target = videoList.find(item => item.id === id);
       if (target) {
         target.isProjected = isProjected;
         this.videoList = videoList;
