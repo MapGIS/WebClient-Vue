@@ -1,6 +1,7 @@
 <template>
   <div class="mapgis-ui-borderbox4" :ref="ref">
-    <svg :class="`mapgis-ui-border-svg-container ${reverse && 'mapgis-ui-reverse'}`" :width="width" :height="height">
+    <svg :class="{'mapgis-ui-border-svg-container': true, 'mapgis-ui-reverse': reverse}" 
+      :width="width" :height="height">
       <polygon :fill="backgroundColor" :points="`
         ${width - 15}, 22 170, 22 150, 7 40, 7 28, 21 32, 24
         16, 42 16, ${height - 32} 41, ${height - 7} ${width - 15}, ${height - 7}
@@ -43,12 +44,16 @@ export default {
   props: {
     color: {
       type: Array,
-      default: () => [],
+      default: () => ([])
+    },
+    reverse: {
+      type: Boolean,
+      default: false
     },
     backgroundColor: {
       type: String,
-      default: "transparent",
-    },
+      default: 'transparent'
+    }
   },
   data() {
     return {
@@ -68,7 +73,7 @@ export default {
     mergeColor() {
       const { color, defaultColor } = this;
       let colors = color || [];
-      this.mergedColor = clonedeep(defaultColor).concat(colors);
+      this.mergedColor = colors.concat(clonedeep(defaultColor));
     },
   },
   mounted() {

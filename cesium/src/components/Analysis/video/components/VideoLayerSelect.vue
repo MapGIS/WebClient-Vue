@@ -69,6 +69,10 @@ export default {
     selectOptions: {
       type: Array,
       default: () => []
+    },
+    defaultValue: {
+      type: String,
+      default: ""
     }
   },
   computed: {
@@ -88,6 +92,15 @@ export default {
           // this.selectedLayer = this.selectOptionsCopy[0].name; // 默认选择第一个
         }
         this.isChangeBySelf = false;
+      },
+      deep: true,
+      immediate: true
+    },
+    defaultValue: {
+      handler() {
+        if (this.defaultValue.length > 0) {
+          this.selectedLayer = this.defaultValue;
+        }
       },
       deep: true,
       immediate: true

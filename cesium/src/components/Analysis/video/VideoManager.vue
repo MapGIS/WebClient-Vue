@@ -6,6 +6,7 @@
         <div class="video-layer-select-div">
           <video-layer-select
             :selectOptions="videoOverlayLayerListCopy"
+            :defaultValue="layerSelectDefaultValue"
             @selectedLayer="_changeLayer"
             @change-layer-name="_changeLayerName"
             @add-layer="_addLayer"
@@ -25,6 +26,7 @@
             class="control-content list-pane"
           >
             <mapgis-ui-list
+              v-if="currentVideoOverlayLayer"
               :key="`list-${currentVideoOverlayLayer.id}`"
               item-layout="horizontal"
               size="small"
@@ -163,6 +165,18 @@ export default {
       type: Array,
       default: () => []
     },
+    currentLayerId: {
+      type: String,
+      default: ""
+    },
+    currentVideoId: {
+      type: String,
+      default: ""
+    },
+    maxProjected: {
+      type: Number,
+      default: 10
+    },
     protocol: {
       type: String,
       default: "mp4"
@@ -205,14 +219,34 @@ export default {
   computed: {
     videoList: {
       get: function() {
-        return this.currentVideoOverlayLayer.videoList || [];
+        return this.currentVideoOverlayLayer
+          ? this.currentVideoOverlayLayer.videoList
+          : [];
       },
       set: function(videoList) {
         this.currentVideoOverlayLayer.videoList = videoList;
+        const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
+        videoOverlayLayerList.map(item => {
+          if (item.id === this.currentVideoOverlayLayer.id) {
+            item.videoList = [...this.currentVideoOverlayLayer.videoList];
+            return item;
+          }
+        });
+        this.videoOverlayLayerListCopy = videoOverlayLayerList;
+        this.$emit(
+          "update-videoOverlayLayerList",
+          this.videoOverlayLayerListCopy
+        );
       }
     },
     listPagination() {
       return this.isBatch ? false : this.pagination;
+    },
+    layerSelectDefaultValue() {
+      return this.currentVideoOverlayLayer &&
+        Object.keys(this.currentVideoOverlayLayer).length > 0
+        ? this.currentVideoOverlayLayer.name
+        : "";
     }
   },
   watch: {
@@ -224,7 +258,6 @@ export default {
         if (this.videoOverlayLayerListCopy.length > 0) {
           // 默认取第一个
           // this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
-          // this.currentVideoOverlayLayerId = this.currentVideoOverlayLayer.id;
           this.layerSelectOptions = [];
           for (let i = 0; i < this.videoOverlayLayerListCopy.length; i++) {
             const { id, name } = this.videoOverlayLayerListCopy[i];
@@ -237,10 +270,41 @@ export default {
     },
     videoList: {
       handler() {
-        this.pagination.total = this.videoList.length;
+        this.pagination.total = this.videoList ? this.videoList.length : 0;
         this.reflush = !this.reflush;
       },
       deep: true,
+      immediate: true
+    },
+    currentLayerId: {
+      handler() {
+        this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+          item => item.id === this.currentLayerId
+        );
+        this.viewer.scene.visualAnalysisManager.removeAll();
+        for (let i = 0; i < this.videoList.length; i++) {
+          const video = this.videoList[i];
+          if (video.isProjected) {
+            this.putVideo(video);
+          } else {
+            this.cancelPutVideo(video.id);
+          }
+        }
+      },
+      immediate: true
+    },
+    currentVideoId: {
+      handler() {
+        this.currentEditVideo = this.videoList.find(
+          item => item.id === this.currentVideoId
+        );
+        if (this.currentEditVideo) {
+          const { x, y, z } = this.currentEditVideo.params.cameraPosition;
+          if (x === 0 && y === 0 && z === 0) {
+            this.activeKey = "2";
+          }
+        }
+      },
       immediate: true
     }
   },
@@ -249,7 +313,6 @@ export default {
       reflush: true,
       videoOverlayLayerListCopy: [], //图层数组
       layerSelectOptions: [], //图层选中框信息
-      currentVideoOverlayLayerId: undefined, //当前选中图层的id
       currentVideoOverlayLayer: {}, //当前选中图层
       currentEditVideo: null, //当前编辑video对象
       tabBarStyle: {
@@ -311,7 +374,7 @@ export default {
      */
     _changeLayerName({ id, dataIndex, value }) {
       const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
-      const target = videoOverlayLayerList.find(item => item.id === id);
+      let target = videoOverlayLayerList.find(item => item.id === id);
       if (target) {
         target[dataIndex] = value;
         this.videoOverlayLayerListCopy = videoOverlayLayerList;
@@ -339,6 +402,11 @@ export default {
       this.videoOverlayLayerListCopy = videoOverlayLayerList.filter(
         item => item.id !== id
       );
+      if (this.currentVideoOverlayLayer.id === id) {
+        // currentEditVideo一定在currentVideoOverlayLayer里
+        this.currentVideoOverlayLayer = {};
+        this.currentEditVideo = null;
+      }
       this.$emit(
         "update-videoOverlayLayerList",
         this.videoOverlayLayerListCopy
@@ -351,6 +419,7 @@ export default {
       this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
         item => item.name === val
       );
+      this.viewer.scene.visualAnalysisManager.removeAll();
       for (let i = 0; i < this.videoList.length; i++) {
         const video = this.videoList[i];
         if (video.isProjected) {
@@ -365,14 +434,19 @@ export default {
      */
     _tabChange(e) {
       this.activeKey = e;
-      if (this.currentEditVideo && Object.keys(currentEditVideo).length > 0) {
+      if (
+        this.currentEditVideo &&
+        Object.keys(this.currentEditVideo).length > 0
+      ) {
         if (e === "2") {
           // 切换到配置界面，直接投放已选中的视频
           this.putVideo(this.currentEditVideo);
         } else if (e === "1") {
-          if (!this.currentEditVideo.isProjected) {
-            // 切换到列表界面，如果已选中的视频未投放，则取消投放（在配置界面会默认投放，切回后恢复状态）
-            this.cancelPutVideo(this.currentEditVideo.id);
+          // 切换到列表界面，恢复投放状态，先取消投放
+          // 如果在进入配置界面之前已投放，则重新投放（以确保投放参数与之前投放的参数保持一致）
+          this.cancelPutVideo(this.currentEditVideo.id);
+          if (this.currentEditVideo.isProjected) {
+            this.putVideo(this.currentEditVideo);
           }
         }
       }
@@ -420,7 +494,7 @@ export default {
         isProjected: false, // 是否开启视频投放
         params: {
           videoSource: {
-            protocol: "mp4", // 视频传输协议
+            protocol: "m3u8", // 视频传输协议
             videoUrl: undefined // 视频服务地址
           },
           cameraPosition: { x: 0, y: 0, Z: 0 }, // 相机位置
@@ -448,17 +522,39 @@ export default {
       // 取消被删除video的投放
       for (let i = 0; i < selectedIds.length; i++) {
         this.cancelPutVideo(selectedIds[i]);
+        if (this.currentEditVideo.id === selectedIds[i]) {
+          this.currentEditVideo = null;
+        }
       }
       this.selectedIds = [];
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
+    },
+    _isProjectedList() {
+      const videoList = [...this.videoList];
+      const list = videoList.filter(item => item.isProjected);
+      return list || [];
     },
     /**
      * 批量投放
      */
     _putVideos() {
+      const length = this._isProjectedList().length;
+      const num =
+        this.maxProjected - length > 0 ? this.maxProjected - length : 0;
+      if (this.selectedIds.length >= num) {
+        const vm = this;
+        this.$warning({
+          content: `最大投放数为${this.maxProjected}，已投放${length},还可投放${num},所选数目已超出可投放数,是否继续?`,
+          okText: "确认",
+          cancelText: "取消",
+          onOk() {
+            vm._continuePutVideos();
+          }
+        });
+      } else {
+        this._continuePutVideos();
+      }
+    },
+    _continuePutVideos() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
         const video = this.videoList.find(item => item.id === selectedIds[i]);
@@ -472,10 +568,6 @@ export default {
         }
       });
       this.videoList = videoList;
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 批量取消投放
@@ -493,10 +585,6 @@ export default {
         }
       });
       this.videoList = videoList;
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 跳转到video配置界面
@@ -523,13 +611,13 @@ export default {
       } else {
         // 新建
         this.videoList.push(settings);
+        this.$emit(
+          "update-videoOverlayLayerList",
+          this.videoOverlayLayerListCopy
+        );
       }
       this.currentEditVideo = settings;
       this.activeKey = "1";
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 取消设置
@@ -544,10 +632,9 @@ export default {
       const videoList = [...this.videoList];
       this.videoList = videoList.filter(item => item.id !== id);
       this.cancelPutVideo(id);
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
+      if (this.currentEditVideo.id === id) {
+        this.currentEditVideo = null;
+      }
     },
     /**
      * 单个投放/取消投放
@@ -561,21 +648,38 @@ export default {
         // 视频已经被投放，则取消投放
         this.cancelPutVideo(video.id);
         isProjected = false;
+        this._changeIsProjected(isProjected, video.id);
       } else {
         // 未投放，则投放
-        this.putVideo(video);
-        isProjected = true;
+        const length = this._isProjectedList().length;
+        const num =
+          this.maxProjected - length > 0 ? this.maxProjected - length : 0;
+        if (this.maxProjected <= length) {
+          const vm = this;
+          this.$warning({
+            content: `最大投放数为${this.maxProjected}，已投放${length},还可投放${num},所选数目已超出可投放数,是否继续?`,
+            okText: "确认",
+            cancelText: "取消",
+            onOk() {
+              vm.putVideo(video);
+              isProjected = true;
+              vm._changeIsProjected(isProjected, video.id);
+            }
+          });
+        } else {
+          this.putVideo(video);
+          isProjected = true;
+          this._changeIsProjected(isProjected, video.id);
+        }
       }
+    },
+    _changeIsProjected(isProjected, id) {
       const videoList = [...this.videoList];
-      const target = videoList.find(item => item.id === video.id);
+      let target = videoList.find(item => item.id === id);
       if (target) {
         target.isProjected = isProjected;
         this.videoList = videoList;
       }
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 定位到摄像机位置

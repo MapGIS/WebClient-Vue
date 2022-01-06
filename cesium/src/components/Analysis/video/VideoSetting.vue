@@ -342,8 +342,10 @@ export default {
       }
     },
     showVideoDiv() {
-      return this.videoSource.videoUrl.endsWith(
-        `.${this.videoSource.protocol}`
+      return (
+        this.videoSource &&
+        this.videoSource.videoUrl &&
+        this.videoSource.videoUrl.endsWith(`.${this.videoSource.protocol}`)
       );
     }
   },
@@ -626,9 +628,10 @@ export default {
      * 取消按钮事件
      */
     _cancelClick() {
-      // 退出配置前，先恢复投放状态
-      if (!this.settings.isProjected) {
-        this.cancelPutVideo(this.settings.id);
+      // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
+      this.cancelPutVideo(this.settings.id);
+      if (this.settings.isProjected) {
+        this.putVideo(this.settings);
       }
       this.$emit("cancel");
     }

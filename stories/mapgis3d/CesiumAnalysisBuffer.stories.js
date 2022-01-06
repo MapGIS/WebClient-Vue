@@ -67,7 +67,9 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
-      <mapgis-3d-buffer-analysis v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
+      <mapgis-ui-card class="storybook-ui-card">
+        <mapgis-3d-buffer-analysis v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
+      </mapgis-ui-card>
       <mapgis-3d-igs-dynamic-layer v-if="finishL && add" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="gdbps"></mapgis-3d-igs-dynamic-layer>
       <mapgis-3d-geojson-layer v-if="finishF && add" :layerStyle="layerStyle" :baseUrl="feature"/>
     </mapgis-web-scene>
@@ -76,11 +78,9 @@ const Template = (args, { argTypes }) => ({
 
 export const 缓冲区分析 = Template.bind({});
 缓冲区分析.args = {
-
   baseUrl: "http://localhost:6163",
   srcType: "Layer",
   // srcType: "Feature",
-
   srcLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
 
   srcFeature: {

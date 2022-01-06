@@ -311,7 +311,7 @@ export default {
         if (find && find.source) {
           let { source } = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
-          let tree = m3d ? clonedeep(m3d.tree) : undefined;
+          let tree = m3d ? m3d.tree : undefined;
           vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
           let collection = new Cesium.PrimitiveCollection();
