@@ -1,9 +1,14 @@
 <template>
   <div class="operations-row">
     <template>
-      <div class="text">
-        {{ textCopy }}
-      </div>
+      <mapgis-ui-tooltip placement="bottom">
+        <template slot="title">
+          <span>{{ textCopy }}</span>
+        </template>
+        <div class="text">
+          {{ itemtext }}
+        </div>
+      </mapgis-ui-tooltip>
       <div
         :class="
           showOperations
@@ -79,6 +84,12 @@ export default {
         commands.push(command);
       }
       return commands;
+    },
+    itemtext() {
+      if (this.textCopy.length > 20) {
+        return `${this.textCopy.substring(0, 16)}...`;
+      }
+      return this.textCopy;
     }
   },
   data() {

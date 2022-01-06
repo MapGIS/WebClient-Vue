@@ -39,6 +39,7 @@
 
 <script>
 import moment from "moment";
+import {deepEqual} from "../../Utils/deepequal";
 
 export default {
   name: "mapgis-3d-city-grow",
@@ -82,6 +83,10 @@ export default {
         if (next.endTime){
           this.endTimeCopy = this.formatDate(next.endTime);
           this.maxSlider = next.endTime;
+        }
+        if (!deepEqual(next.colors, this.featureStyleCopy.colors)){
+          this.unmount();
+          this.mount();
         }
       },
       deep: true,
@@ -135,6 +140,8 @@ export default {
       if (this.Cesium.defined(vm.layerIndex)) {
         this.viewer.scene.layers.removeVectorLayerByID(vm.layerIndex);
       }
+      vm.isStartGrow = false;
+      vm.sliderValue = 0;
     },
     //开始加载
     startGrow() {
