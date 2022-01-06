@@ -165,7 +165,7 @@ export default {
       type: Array,
       default: () => []
     },
-    currrentLayerId: {
+    currentLayerId: {
       type: String,
       default: ""
     },
@@ -221,6 +221,18 @@ export default {
       },
       set: function(videoList) {
         this.currentVideoOverlayLayer.videoList = videoList;
+        const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
+        videoOverlayLayerList.map(item => {
+          if (item.id === this.currentVideoOverlayLayer.id) {
+            item.videoList = [...this.currentVideoOverlayLayer.videoList];
+            return item;
+          }
+        });
+        this.videoOverlayLayerListCopy = videoOverlayLayerList;
+        this.$emit(
+          "update-videoOverlayLayerList",
+          this.videoOverlayLayerListCopy
+        );
       }
     },
     listPagination() {
@@ -260,10 +272,10 @@ export default {
       deep: true,
       immediate: true
     },
-    currrentLayerId: {
+    currentLayerId: {
       handler() {
         this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
-          item => item.id === this.currrentLayerId
+          item => item.id === this.currentLayerId
         );
         for (let i = 0; i < this.videoList.length; i++) {
           const video = this.videoList[i];
@@ -357,7 +369,7 @@ export default {
      */
     _changeLayerName({ id, dataIndex, value }) {
       const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
-      const target = videoOverlayLayerList.find(item => item.id === id);
+      let target = videoOverlayLayerList.find(item => item.id === id);
       if (target) {
         target[dataIndex] = value;
         this.videoOverlayLayerListCopy = videoOverlayLayerList;
@@ -385,6 +397,11 @@ export default {
       this.videoOverlayLayerListCopy = videoOverlayLayerList.filter(
         item => item.id !== id
       );
+      if (this.currentVideoOverlayLayer.id === id) {
+        // currentEditVideo一定在currentVideoOverlayLayer里
+        this.currentVideoOverlayLayer = {};
+        this.currentEditVideo = null;
+      }
       this.$emit(
         "update-videoOverlayLayerList",
         this.videoOverlayLayerListCopy
@@ -499,12 +516,11 @@ export default {
       // 取消被删除video的投放
       for (let i = 0; i < selectedIds.length; i++) {
         this.cancelPutVideo(selectedIds[i]);
+        if (this.currentEditVideo.id === selectedIds[i]) {
+          this.currentEditVideo = null;
+        }
       }
       this.selectedIds = [];
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 批量投放
@@ -523,10 +539,6 @@ export default {
         }
       });
       this.videoList = videoList;
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 批量取消投放
@@ -544,10 +556,6 @@ export default {
         }
       });
       this.videoList = videoList;
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 跳转到video配置界面
@@ -574,13 +582,13 @@ export default {
       } else {
         // 新建
         this.videoList.push(settings);
+        this.$emit(
+          "update-videoOverlayLayerList",
+          this.videoOverlayLayerListCopy
+        );
       }
       this.currentEditVideo = settings;
       this.activeKey = "1";
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 取消设置
@@ -595,10 +603,9 @@ export default {
       const videoList = [...this.videoList];
       this.videoList = videoList.filter(item => item.id !== id);
       this.cancelPutVideo(id);
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
+      if (this.currentEditVideo.id === id) {
+        this.currentEditVideo = null;
+      }
     },
     /**
      * 单个投放/取消投放
@@ -618,15 +625,11 @@ export default {
         isProjected = true;
       }
       const videoList = [...this.videoList];
-      const target = videoList.find(item => item.id === video.id);
+      let target = videoList.find(item => item.id === video.id);
       if (target) {
         target.isProjected = isProjected;
         this.videoList = videoList;
       }
-      this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
-      );
     },
     /**
      * 定位到摄像机位置
