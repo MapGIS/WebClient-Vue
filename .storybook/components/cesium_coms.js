@@ -23,6 +23,10 @@ export { default as Mapgis3dOgcWmsLayer } from "../../cesium/src/components/Laye
 export { default as Mapgis3dArcgisTileLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "../../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
 
+export { default as Mapgis3dGraphicLayer } from "../../cesium/src/components/Layer/Graphic/GraphicLayer.vue";
+export { default as Mapgis3dGraphicLayers } from "../../cesium/src/components/Layer/Graphic/GraphicLayers.vue";
+export { default as Mapgis3dGraphicLayerService } from "../../cesium/src/components/Layer/Graphic/GraphicLayerService.vue";
+
 // 要素图层
 export { default as Mapgis3dGeojsonLayer } from "../../cesium/src/components/Layer/GeoJSON/GeoJsonLayer";
 
@@ -82,8 +86,10 @@ export { default as Mapgis3dSceneRoaming } from "../../cesium/src/components/Sce
 export { default as Mapgis3dPathRoaming } from "../../cesium/src/components/SceneEffect/PathRoaming/PathRoaming";
 
 export { default as Mapgis3DComprehensiveQuery } from "../../cesium/src/components/service/comprehensive-query/ComprehensiveQuery";
-// export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
-// export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";
+export { default as Mapgis3DPlottingLayer } from "../../cesium/src/components/Layer/Plotting/PlottingLayer";
+export { default as Mapgis3DMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/MapStory";
+export { default as Mapgis3DPreviewMapStoryLayer } from "../../cesium/src/components/Layer/MapStory/PreviewMapStory";
+
 // 模拟仿真
 export { default as Mapgis3dCityGrow } from "../../cesium/src/components/simulation/CityGrow/CityGrow";
 export { default as Mapgis3dCityGrowOptions } from "../../cesium/src/components/simulation/CityGrow/CityGrowOptions";

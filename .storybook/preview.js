@@ -21,6 +21,10 @@ Vue.use(MapgisCesiumComponents, {});
   });
 }); */
 
+/* window.webclient = {
+  ip: "192.168.21.192",
+  port: "6163",
+}; */
 window.webclient = {
   ip: "develop.smaryun.com",
   port: "6163",
