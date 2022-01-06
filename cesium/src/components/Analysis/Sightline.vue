@@ -338,20 +338,19 @@ export default {
       }
       this.viewer.entities.removeAll();
 
-      if (this.visibilityArr.length > 0) {
+      if (this.visibilityArr.length > 0 && !this.maskShow) {
         this.visibilityArr.forEach(item => {
           // 移除通视分析结果
           this.viewer.scene.visualAnalysisManager.remove(item);
           // 销毁通视分析类
           item.destroy();
         });
+        this.visibilityArr = [];
       }
-
       //恢复深度检测的原始设置
       this._restoreDepthTestAgainstTerrain();
       this.hasViewPosition = false;
       this.isAddEventListener = false;
-      this.visibilityArr = [];
     },
 
     // 为鼠标的各种行为注册监听事件
