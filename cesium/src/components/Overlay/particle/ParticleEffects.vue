@@ -423,9 +423,9 @@ export default {
           }
         }
       }
-      if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      }
+      // if (this.handlerAction) {
+      //   this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      // }
       // 粒子结果集
       this.particleArr.splice(index, 1);
       // 粒子列表
