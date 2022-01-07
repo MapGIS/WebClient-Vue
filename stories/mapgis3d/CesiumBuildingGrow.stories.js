@@ -19,7 +19,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene style="height:95vh">
-      <mapgis-ui-button type="primary" @click="getTree" :style="{position: 'absolute', zIndex:3000,top:0px}">
+      <mapgis-ui-button type="primary" @click="getTree" :style="{position: 'absolute', zIndex:3000,top:'0px'}">
         开启单体化生长播放条
       </mapgis-ui-button>
       <mapgis-rastertile-layer v-if="false" layerId="tdt"
