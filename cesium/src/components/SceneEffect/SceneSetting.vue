@@ -1,7 +1,6 @@
 <template>
   <div class="mapgis-3d-scene-setting">
     <div v-show="show" :style="panelStyle" class="setting-control">
-          
       <!-- <div class="control-header" >
             <label class="title">设置</label>
             <div @mouseenter="hover=true" @mouseleave="hover=false">
@@ -11,32 +10,82 @@
       </div>
        -->
       <mapgis-ui-tabs
-              :animated="false"
-              :tabBarStyle="tabBarStyle"
-              default-active-key="1"
-              :tabBarGutter="0"
-          >
-            <mapgis-ui-tab-pane key="1" tab="基本设置" class="control-content" style="padding:12px">
-              <basic-setting ref="attr" :layout="layout" @updateSpin="changeSpinning" :initialStatebar="initialStatebar"></basic-setting>
-            </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="2" force-render tab="相机" class="control-content">
-              <camera-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></camera-setting>
-            </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="3" force-render tab="光照" class="control-content">
-              <light-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></light-setting>
-            </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="4" force-render tab="天气" class="control-content">
-              <weather-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></weather-setting>
-            </mapgis-ui-tab-pane>
-            <mapgis-ui-tab-pane key="5" force-render tab="特效" class="control-content">
-              <effect-setting ref="effect" :layout="layout" @updateSpin="changeSpinning"></effect-setting>
-            </mapgis-ui-tab-pane>
+        :animated="false"
+        :tabBarStyle="tabBarStyle"
+        default-active-key="1"
+        :tabBarGutter="0"
+      >
+        <mapgis-ui-tab-pane
+          key="1"
+          tab="基本设置"
+          class="control-content"
+          style="padding: 12px"
+        >
+          <basic-setting
+            ref="attr"
+            :layout="layout"
+            @updateSpin="changeSpinning"
+            :initialStatebar="initialStatebar"
+          ></basic-setting>
+        </mapgis-ui-tab-pane>
+        <mapgis-ui-tab-pane
+          key="2"
+          force-render
+          tab="相机"
+          class="control-content"
+        >
+          <camera-setting
+            ref="effect"
+            :layout="layout"
+            @updateSpin="changeSpinning"
+          ></camera-setting>
+        </mapgis-ui-tab-pane>
+        <mapgis-ui-tab-pane
+          key="3"
+          force-render
+          tab="光照"
+          class="control-content"
+        >
+          <light-setting
+            ref="effect"
+            :layout="layout"
+            @updateSpin="changeSpinning"
+          ></light-setting>
+        </mapgis-ui-tab-pane>
+        <mapgis-ui-tab-pane
+          key="4"
+          force-render
+          tab="天气"
+          class="control-content"
+        >
+          <weather-setting
+            ref="effect"
+            :layout="layout"
+            @updateSpin="changeSpinning"
+          ></weather-setting>
+        </mapgis-ui-tab-pane>
+        <mapgis-ui-tab-pane
+          key="5"
+          force-render
+          tab="特效"
+          class="control-content"
+        >
+          <effect-setting
+            ref="effect"
+            :layout="layout"
+            @updateSpin="changeSpinning"
+          ></effect-setting>
+        </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
     </div>
     <!-- <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="openPanel">
       <mapgis-ui-iconfont type="mapgis-setting"/>
     </mapgis-ui-button> -->
-    <mapgis-ui-spin :spinning="spinning" size="large" style="top: 50%;left: 50%"/>
+    <mapgis-ui-spin
+      :spinning="spinning"
+      size="large"
+      style="top: 50%; left: 50%"
+    />
   </div>
 </template>
 
@@ -49,7 +98,7 @@ import WeatherSetting from "./components/WeatherSetting";
 import EffectSetting from "./components/EffectSetting";
 import {
   isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable
+  setDepthTestAgainstTerrainEnable,
 } from "../WebGlobe/util";
 export default {
   name: "mapgis-3d-scene-setting",
@@ -58,16 +107,16 @@ export default {
     CameraSetting,
     LightSetting,
     WeatherSetting,
-    EffectSetting
+    EffectSetting,
   },
   mixins: [ServiceLayer],
   props: {
     /**
-    * 组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项。
-    */
+     * 组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项。
+     */
     layout: {
       type: String,
-      default: "horizontal" // 'horizontal' 'vertical' 'inline'
+      default: "horizontal", // 'horizontal' 'vertical' 'inline'
     },
     /**
      * 面板样式
@@ -79,21 +128,20 @@ export default {
     initialStatebar: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
       modelBloom: false,
       transform: undefined,
       tabBarStyle: {
-        margin: '0px',
+        margin: "0px",
         textAlign: "center",
         borderBottom: "1px solid #F0F0F0",
-
       },
       show: true,
       hover: false,
-      spinning: false
+      spinning: false,
     };
   },
 
@@ -104,19 +152,19 @@ export default {
     this.unmount();
   },
   methods: {
-    mount(){
+    mount() {
       this.$emit("loaded", this);
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-          this.viewer
+        this.viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
         setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
     },
-    unmount(){
+    unmount() {
       this.$_deleteManger("SettingToolManager", function (manager) {
-        console.log('destroyed');
+        console.log("destroyed");
       });
       this.$emit("unload");
     },
@@ -128,16 +176,14 @@ export default {
       this.show = false;
     },
 
-    changeSpinning(e){
+    changeSpinning(e) {
       this.spinning = e;
-    }
-
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-
 .setting-control {
   /* width: 320px; */
   /* max-width: 320px; */
@@ -156,7 +202,7 @@ export default {
   line-height: 40px;
 } */
 
-.control-content{
+.control-content {
   max-height: 480px;
   overflow: auto;
   padding: 10px;
@@ -192,7 +238,7 @@ export default {
   margin-right: -16.5px;
 } */
 
-::v-deep .mapgis-ui-spin-spinning{
+::v-deep .mapgis-ui-spin-spinning {
   position: absolute;
 }
 </style>

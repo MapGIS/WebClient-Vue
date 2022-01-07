@@ -2,18 +2,19 @@
 @import "../../theme/theme.scss";
 
 .mapgis-3d-statebar {
-    position: absolute;
-    height: fit-content;
-    width: 100%;
-    bottom: 0px;
-    z-index: 9999;
-    line-height: 30px;
-    font-size: 80%;
+  position: absolute;
+  height: fit-content;
+  width: 100%;
+  bottom: 0px;
+  z-index: 9999;
+  line-height: 30px;
+  font-size: 80%;
+  opacity: 0.85;
 
-    color: $text-color;
-    background: $body-background;
+  color: $text-color;
+  background: $body-background;
 
-    span {
-        margin-left: 35%;
-    }
+  span {
+    margin-left: 35%;
+  }
 }
