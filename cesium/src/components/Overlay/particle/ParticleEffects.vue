@@ -2,7 +2,7 @@
   <div>
     <slot>
       <div class="mapgis-3d-particle-effects">
-        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle">
+        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle" ref="tabPanel">
         </mapgis-ui-tab-panel>
         <mapgis-ui-tabs
             :animated="false"
@@ -390,7 +390,10 @@ export default {
       }
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction = undefined;
       }
+      this.$refs.tabPanel.active = undefined
+
       // 粒子结果集
       this.particleArr = [];
       // 粒子列表
@@ -450,7 +453,7 @@ export default {
           this.startScaleCopy = viewModelCopy.startScale;
           this.endScaleCopy = viewModelCopy.endScale;
         } else {
-          let currentParticle = this.particleListCopy[this.activeIndex].param;
+          let currentParticle = Object.assign({},this.particleListCopy[this.activeIndex].param);
           this.emitterTypeCopy = currentParticle.emitterType;
           this.emissionRateCopy = currentParticle.emissionRate;
           this.imageSizeCopy = currentParticle.imageSize;
@@ -468,7 +471,7 @@ export default {
     setParticleParameter(index) {
       this.activeKey = '2';
       // 参数为该粒子的参数，初始化时是初始化参数，修改后是修改后存放在particleArr结果集中的参数。
-      let currentParticle = this.particleListCopy[index].param;
+      let currentParticle = Object.assign({},this.particleListCopy[index].param);
       this.emitterTypeCopy = currentParticle.emitterType;
       this.emissionRateCopy = currentParticle.emissionRate;
       this.imageSizeCopy = currentParticle.imageSize;
@@ -483,15 +486,16 @@ export default {
     },
     onCreateParticle(tab) {
       // 先把面板参数重设
-      this.emitterTypeCopy = this.viewModel.emitterType;
-      this.emissionRateCopy = this.viewModel.emissionRate;
-      this.imageSizeCopy = this.viewModel.imageSize;
-      this.minimumParticleLifeCopy = this.viewModel.minimumParticleLife;
-      this.maximumParticleLifeCopy = this.viewModel.maximumParticleLife;
-      this.minimumSpeedCopy = this.viewModel.minimumSpeed;
-      this.maximumSpeedCopy = this.viewModel.maximumSpeed;
-      this.startScaleCopy = this.viewModel.startScale;
-      this.endScaleCopy = this.viewModel.endScale;
+      // this.emitterTypeCopy = this.viewModel.emitterType;
+      // this.emissionRateCopy = this.viewModel.emissionRate;
+      // this.imageSizeCopy = this.viewModel.imageSize;
+      // console.log("this.particleListCopy",this.particleListCopy);
+      // this.minimumParticleLifeCopy = this.viewModel.minimumParticleLife;
+      // this.maximumParticleLifeCopy = this.viewModel.maximumParticleLife;
+      // this.minimumSpeedCopy = this.viewModel.minimumSpeed;
+      // this.maximumSpeedCopy = this.viewModel.maximumSpeed;
+      // this.startScaleCopy = this.viewModel.startScale;
+      // this.endScaleCopy = this.viewModel.endScale;
 
       this.imgUrl = tab.image;
       this.title = tab.title;
