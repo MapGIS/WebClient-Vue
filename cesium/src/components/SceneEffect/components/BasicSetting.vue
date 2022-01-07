@@ -329,6 +329,21 @@ export default {
     handleChangeStatebar(next) {
       console.log(next);
       this.statebar = next;
+      const vm = this;
+
+      // 改变状态栏的上下位置
+      if(vm.timeline){
+        vm.$nextTick(function(){
+          let list = document.getElementsByClassName('cesium-viewer-timelineContainer');
+          let style = window.getComputedStyle(list[0]);
+          if(style.bottom === '0px' && vm.statebar){
+            let list = document.getElementsByClassName('mapgis-3d-statebar');
+            let stateContainer = list[0];
+            stateContainer.style.bottom = '24px';
+          }  
+        });
+      }
+
     }
   },
 
