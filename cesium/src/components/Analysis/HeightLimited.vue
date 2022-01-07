@@ -418,6 +418,7 @@ export default {
       this.remove();
       let {heightLimitCopy, vueCesium, viewer} = this;
       if (lnglat) {
+        vm.lnglat = lnglat;
         vueCesium.HeightLimitedAnalysisManager.changeOptions(
             vm.vueKey,
             vm.vueIndex,
