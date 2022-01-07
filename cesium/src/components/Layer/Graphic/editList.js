@@ -60,12 +60,12 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "addHeight",
       value: 0
     },
     {
@@ -90,7 +90,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "边线透明度",
       key: "outlineOpacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiShowBackground",
@@ -140,19 +140,19 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
       title: "图片宽度",
       key: "width",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
       title: "图片高度",
       key: "height",
-      value: 90
+      value: 100
     }
   ],
   point: [
@@ -178,7 +178,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -208,7 +208,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "边线透明度",
       key: "outlineOpacity",
-      value: 90
+      value: 100
     }
   ],
   polyline: [
@@ -254,7 +254,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     }
   ],
   polylineVolume: [
@@ -280,7 +280,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiSelect",
@@ -320,7 +320,7 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "墙体高度",
       key: "extrudedHeight",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -338,7 +338,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiSelect",
@@ -418,7 +418,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -443,24 +443,42 @@ let editList = {
     {
       type: "MapgisUiSelect",
       title: "填充类型",
+      key: "materialType",
+      value: "Color",
       dataSource: [
         {
-          key: "纯色",
+          key: "Color",
           value: "纯色"
         },
         {
-          key: "网格",
-          value: "网格"
-        },
-        {
-          key: "条纹",
-          value: "条纹"
-        },
-        {
-          key: "图片",
+          key: "Image",
           value: "图片"
         }
       ]
+    },
+    {
+      type: "MapgisUiInput",
+      title: "图片",
+      key: "image",
+      value: ""
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "X轴重复",
+      key: "repeatX",
+      value: 1
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "Y轴重复",
+      key: "repeatY",
+      value: 1
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "纹理旋转角",
+      key: "stRotation",
+      value: 0
     },
     {
       type: "MapgisUiColorPicker",
@@ -472,7 +490,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -489,6 +507,40 @@ let editList = {
       value: "无标题"
     },
     {
+      type: "MapgisUiSelect",
+      title: "填充类型",
+      key: "materialType",
+      value: "Color",
+      dataSource: [
+        {
+          key: "Color",
+          value: "纯色"
+        },
+        {
+          key: "Image",
+          value: "图片"
+        }
+      ]
+    },
+    {
+      type: "MapgisUiInput",
+      title: "图片",
+      key: "image",
+      value: ""
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "X轴重复",
+      key: "repeatX",
+      value: 1
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "Y轴重复",
+      key: "repeatY",
+      value: 1
+    },
+    {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
@@ -498,7 +550,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -556,7 +608,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "材质透明度",
       key: "materialOpacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -583,44 +635,24 @@ let editList = {
       value: 4
     }
   ],
-  cube: [
+  square: [
     {
       type: "MapgisUiInput",
-      title: "标题"
+      title: "标题",
+      key: "title",
+      value: "无标题"
     },
     {
       type: "MapgisUiInputNumber",
       title: "长度"
     },
     {
-      type: "MapgisUiSelect",
-      title: "填充类型",
-      dataSource: [
-        {
-          key: "纯色",
-          value: "纯色"
-        },
-        {
-          key: "网格",
-          value: "网格"
-        },
-        {
-          key: "条纹",
-          value: "条纹"
-        },
-        {
-          key: "图片",
-          value: "图片"
-        }
-      ]
-    },
-    {
       type: "MapgisUiColorPicker",
-      title: "填充颜色"
+      title: "颜色"
     },
     {
       type: "MapgisUiSlider",
-      title: "填充透明度"
+      title: "透明度"
     }
   ],
   box: [
@@ -652,7 +684,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "填充透明度",
       key: "opacity",
-      value: 90
+      value: 100
     }
   ],
   cylinder: [
@@ -696,7 +728,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     }
   ],
   cone: [
@@ -716,7 +748,7 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "圆柱高度",
       key: "extrudedHeight",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",
@@ -734,7 +766,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "透明度",
       key: "opacity",
-      value: 90
+      value: 100
     }
   ],
   ellipsoid: [
@@ -778,21 +810,27 @@ let editList = {
       type: "MapgisUiSlider",
       title: "填充透明度",
       key: "opacity",
-      value: 90
+      value: 100
     }
   ],
   model: [
     {
       type: "MapgisUiInput",
-      title: "标题"
+      title: "标题",
+      key: "title",
+      value: "无标题"
     },
     {
       type: "MapgisUiInput",
-      title: "URL"
+      title: "URL",
+      key: "url",
+      value: "http://localhost:8080/assets/glb/tree4.glb"
     },
     {
       type: "MapgisUiInputNumber",
-      title: "比例尺"
+      title: "比例尺",
+      key: "scale",
+      value: 1
     }
   ],
   wall: [
@@ -834,7 +872,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "材质透明度",
       key: "materialOpacity",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInput",
@@ -847,12 +885,6 @@ let editList = {
       title: "动画时间",
       key: "duration",
       value: 2000
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "方向",
-      key: "direction",
-      value: 1
     },
     {
       type: "MapgisUiSelect",
@@ -882,7 +914,7 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "墙体高度",
       key: "extrudedHeight",
-      value: 90
+      value: 100
     },
     {
       type: "MapgisUiInputNumber",

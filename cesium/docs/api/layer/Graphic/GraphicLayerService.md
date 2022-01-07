@@ -31,6 +31,13 @@ this.$_removeGraphicByIndex(); this.$_removeGraphicByID(); //销毁图层
 this.$_destroy();
 ```
 
+# 通过鼠标控制矩形高度
+
+```vue
+this.$_startDrawing({ type: "绘制类型", style: {}, drawWithHeight: true
+//通过鼠标控制矩形高度 });
+```
+
 ## 注入
 
 ### `Cesium`

@@ -66,7 +66,11 @@ export default {
   },
   methods: {
     $_change(e) {
-      this.$emit("change", e.target.value);
+      if (typeof e === "number") {
+        this.$emit("change", e);
+      } else {
+        this.$emit("change", e.target.value);
+      }
     }
   },
   mounted() {

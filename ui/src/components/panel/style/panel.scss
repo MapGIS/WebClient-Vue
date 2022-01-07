@@ -22,7 +22,8 @@
     }
   }
 
-  @-webkit-keyframes myfirst /* Safari and Chrome */ {
+  @-webkit-keyframes myfirst /* Safari and Chrome */
+  {
     0% {
       background: $primary-8;
       // left: 0px;
@@ -39,5 +40,10 @@
 }
 
 .mapgis-ui-project-panel-content {
+  background: $panel-backgroud;
+}
+
+.mapgis-3d-graphic-container, .mapgis-3d-graphic-layers-select-container, .mapgis-ui-graphic-icons-container,
+.mapgis-ui-graphic-icons-head, .mapgis-ui-more-tool-button {
   background: $panel-backgroud;
 }

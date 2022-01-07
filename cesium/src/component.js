@@ -27,8 +27,8 @@ export { default as Mapgis3dIgsFeatureLayer } from "./components/Layer/IGServer/
 
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
+export { default as Mapgis3dGraphicSingleLayer } from "./components/Layer/Graphic/GraphicSingleLayer.vue";
 export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
-export { default as Mapgis3dGraphicLayers } from "./components/Layer/Graphic/GraphicLayers.vue";
 export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graphic/GraphicLayerService.vue";
 
 // 要素图层

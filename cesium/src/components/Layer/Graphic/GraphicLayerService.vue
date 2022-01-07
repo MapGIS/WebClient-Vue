@@ -15,6 +15,7 @@ export default {
         billboard: 0,
         polyline: 0,
         polygon: 0,
+        polygonCube: 0,
         point: 0,
         circle: 0,
         cylinder: 0,
@@ -24,6 +25,7 @@ export default {
         wall: 0,
         rectangle: 0,
         ellipsoid: 0,
+        model: 0
       }
     }
   },
@@ -48,10 +50,12 @@ export default {
      * */
     $_newGraphicLayer(options) {
       options = options || {};
-      let {vueIndex, vueKey, viewer, getGraphic} = options;
+      let {vueIndex, vueKey, viewer, getGraphic, finishEdit} = options;
       viewer = viewer || this.viewer;
       vueIndex = vueIndex || this.$_getId();
       vueKey = vueKey || "default";
+      viewer.scene.fxaa = true;
+      viewer.scene.postProcessStages.fxaa.enabled = true;
       this.localVueIndex = vueIndex;
       this.localVueKey = vueKey;
       if (!Cesium.hasOwnProperty("GraphicsLayer")) {
@@ -59,7 +63,8 @@ export default {
         return;
       }
       let graphicsLayer = new Cesium.GraphicsLayer(viewer, {
-        getGraphic: getGraphic
+        getGraphic: getGraphic,
+        finishEdit: finishEdit,
       });
       viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
       window.vueCesium.GraphicsLayerManager.addSource(vueKey, vueIndex, graphicsLayer);
@@ -84,6 +89,7 @@ export default {
      * @param vueKey String 必传，cesium球体的唯一标识，默认值default，当分屏时使用此对象标识多个球体
      * */
     $_switchGraphicLayer(vueIndex, vueKey) {
+      vueKey = vueKey || "default";
       this.localVueIndex = vueIndex;
       this.localVueKey = vueKey;
     },
@@ -250,7 +256,6 @@ export default {
       vueKey = vueKey || this.localVueKey;
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       return this.hasObject(graphicsLayer, function (graphicsLayer) {
-        console.log("graphicsLayer.getGraphicByID(id)",graphicsLayer.getGraphicByID(id))
         return graphicsLayer.getGraphicByID(id);
       });
     },
@@ -499,11 +504,10 @@ export default {
           title = "矩形";
           break;
         case "polygon":
-          if (currentEditType === "polygonCube") {
-            title = "立体多边形";
-          } else {
-            title = "多边形";
-          }
+          title = "多边形";
+          break;
+        case "polygonCube":
+          title = "立体多边形";
           break;
         case "point":
           title = "点";
@@ -528,6 +532,9 @@ export default {
           break;
         case "wall":
           title = "墙";
+          break;
+        case "model":
+          title = "模型";
           break;
       }
       this.drawNum[type] += 1;
@@ -580,8 +587,10 @@ export default {
           drawOptions.style = {
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             text: editPanelValues.text || "",
+            addHeight: editPanelValues.addHeight || 0,
             font: font,
             style: 2,
+            scaleByDistance: new Cesium.NearFarScalar(1, 0.5, 10000, 0.1),
             fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity / 100),
             outlineWidth: editPanelValues.outlineWidth || 0,
             outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
@@ -609,7 +618,7 @@ export default {
             width: editPanelValues.width,
             height: editPanelValues.height,
             outlineColor: Cesium.Color.RED,
-            outlineWidth:10,
+            outlineWidth: 10,
           };
           break;
         case "polyline":
@@ -644,18 +653,51 @@ export default {
           };
           break;
         case "polygon":
-          drawOptions.style = {
-            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
-            extrudedHeight: editPanelValues.extrudedHeight,
-            height: editPanelValues.height,
-            isPlanePolygon: false
-          };
+          editPanelValues.materialType = editPanelValues.materialType || "Color";
+          switch (editPanelValues.materialType) {
+            case "Color":
+              style = {
+                color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+                height: editPanelValues.height,
+                isPlanePolygon: false
+              };
+              break;
+            case "Image":
+              style = {
+                materialType: 'Image',
+                stRotation: editPanelValues.stRotation,
+                material: {
+                  image: editPanelValues.image,
+                  repeat: new Cesium.Cartesian2(editPanelValues.repeatX, editPanelValues.repeatY)
+                },
+                height: editPanelValues.height,
+                isPlanePolygon: false
+              };
+              break;
+          }
+          drawOptions.style = style;
           break;
         case "rectangle":
-          drawOptions.style = {
-            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
-            height: editPanelValues.height,
-          };
+          editPanelValues.materialType = editPanelValues.materialType || "Color";
+          switch (editPanelValues.materialType) {
+            case "Color":
+              style = {
+                color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+                height: editPanelValues.height,
+              };
+              break;
+            case "Image":
+              style = {
+                materialType: 'Image',
+                material: {
+                  image: editPanelValues.image,
+                  repeat: new Cesium.Cartesian2(editPanelValues.repeatX, editPanelValues.repeatY)
+                },
+                stRotation: 90
+              };
+              break;
+          }
+          drawOptions.style = style;
           break;
         case "circle":
           style = {
@@ -663,6 +705,7 @@ export default {
             height: editPanelValues.height,
             materialType: editPanelValues.materialType,
           }
+          editPanelValues.materialType = editPanelValues.materialType || "Color";
           switch (editPanelValues.materialType) {
             case "Color":
               style.color = Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.materialColor), editPanelValues.materialOpacity / 100);
@@ -745,6 +788,12 @@ export default {
             bottomRadius: editPanelValues.bottomRadius,
             height: editPanelValues.height,
             extrudedHeight: editPanelValues.extrudedHeight,
+          };
+          break;
+        case "model":
+          drawOptions.style = {
+            url: editPanelValues.url,
+            scale: editPanelValues.scale,
           };
           break;
       }
