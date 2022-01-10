@@ -80,7 +80,7 @@
       >执行动态线</mapgis-ui-button
     >
     <mapgis-ui-button
-      :style="{ width: '100%', marginTop: '4px' }"
+      :style="{ width: '100%', marginTop: '4px', display: 'block' }"
       @click="removeEffect"
       >删除动态线</mapgis-ui-button
     >
@@ -119,12 +119,12 @@ export default {
       direction: "Z轴正方向",
       max: 150.0,
       min: 0.0,
-      lightColor: "rgb(0.38, 0.88, 0.92)",
+      lightColor: "#FFFF00",
       duration: 5000,
       isGridTrail: false,
       gridWidth: 20,
       gridLineWidth: 0.05,
-      gridLineColor: "rgb(0.38, 0.28, 1)",
+      gridLineColor: "#FF0000",
       gridRowNum: 2
     };
   },

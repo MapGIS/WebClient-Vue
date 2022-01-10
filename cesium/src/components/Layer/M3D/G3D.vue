@@ -275,11 +275,16 @@ export default {
       let version = this.parseVersion();
       let server = this.parseServer();
       let { ip, port } = server;
-
+      this.ip = ip;
+      this.port = port;
       let g3dLayer = this.createCesiumObject();
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
-      console.log('version', version);
+
+      /* version = "2.0";
+      let url1 =
+        "http://192.168.199.71:8089/igs/rest/services/V2_分层分户-静态单体化/SceneServer"; */
+
       if (version == "2.0") {
         g3dLayer.then((e) => {
           let g3d = viewer.scene.layers.appendSceneServer(url, {
@@ -316,8 +321,10 @@ export default {
     },
     // 图层回调解析
     getDocLayerIndexes(indexes, g3d) {
-      const { vueIndex, vueKey, vueCesium, viewer } = this;
+      const { vueIndex, vueKey, vueCesium, viewer, enablePopup } = this;
+      const { ip, port } = this;
       const vm = this;
+      let layers = this.parseLayers();
       // 该回调只触发一次
       vm.g3dLayerIndex = indexes[0];
       vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
@@ -346,7 +353,7 @@ export default {
             vm.$_bindPickFeature();
           }
           vm.m3ds = m3ds;
-          find.options.m3ds = m3ds;
+          vueCesium.G3DManager.changeOptions(vueKey, vueIndex, "m3ds", m3ds);
           let all = [];
           m3ds.forEach((m3d, i) => {
             // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
@@ -558,7 +565,7 @@ export default {
         // 2.0 版本
         this.version = "2.0";
       } else {
-        this.version = "2.0";
+        this.version = "1.0";
       }
       return this.version;
     },

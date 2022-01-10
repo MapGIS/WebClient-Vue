@@ -75,7 +75,6 @@ export default {
     inputChange(e) {
       this.$emit("input", e);
       this.$emit("change", e.hex);
-      console.log('e.rgba', e.hex);
     }
   }
 };

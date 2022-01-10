@@ -46,6 +46,7 @@ export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dPopupContent } from "./components/UI/Popup/PopupContent.vue";
 export { default as Mapgis3dFeaturePopup } from "./components/UI/Popup/PopupFeature.vue";
+export { default as Mapgis3dPopupIot } from "./components/UI/Popup/PopupIOT.vue";
 export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
 export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/Marker3dPro.vue";
 export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/Marker3dSetPro.vue";
