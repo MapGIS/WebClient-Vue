@@ -7,7 +7,7 @@
 					<!-- 2.叠加参数设置 -->
 					<!-- <mapgis-ui-space>叠加参数设置</mapgis-ui-space> -->
 					<mapgis-ui-form-model-item label="叠加方式">
-						<mapgis-ui-select :placeholder=overType[1].name @change="selectCurrentMethod($event)">
+						<mapgis-ui-select v-model="selectedOverType" :placeholder=overType[1].name @change="selectCurrentMethod($event)">
 							<mapgis-ui-select-option v-for="(item, index) in overType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
@@ -15,7 +15,7 @@
 						<mapgis-ui-input v-model="radius"></mapgis-ui-input>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="图层样式">
-						<mapgis-ui-select :placeholder=infoOptType[1].name @change="selectCurrentPar($event)">
+						<mapgis-ui-select v-model="selectedInfoOptType" :placeholder=infoOptType[1].name @change="selectCurrentPar($event)">
 							<mapgis-ui-select-option v-for="(item, index) in infoOptType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
@@ -37,8 +37,8 @@
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
 				<mapgis-ui-setting-footer>
-					<mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
-					<mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
+					<mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
+					<mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
 				</mapgis-ui-setting-footer>
 			</div>
 		</slot>
@@ -68,7 +68,7 @@ export default {
 		/**
      * @type String
      * @default "Layer"
-     * @description 图层级缓冲 "Layer" 要素级缓冲 "Feature"
+     * @description 图层级叠加 "Layer" 要素级叠加 "Feature"
      */
 		srcType: {
 			type: String,
@@ -156,10 +156,9 @@ export default {
 	},
 	methods: {
 		mount() {
-			this.$emit('load',this);
+			this.$emit('load', this);
 		},
 		unmount() {
-			
 		},
 		selectCurrentMethod(event) {
 			this.selectedOverType = event
@@ -248,10 +247,11 @@ export default {
 			}
 			return anyLineList
 		},
-
 		cancel() {
+			Object.assign(this.$data, this.$options.data());
 		},
 		AnalysisSuccess(data) {
+			console.log('----------叠加分析成功--------------')
 			this.$emit("listenLayer", this.destLayer)
 		},
 	},
