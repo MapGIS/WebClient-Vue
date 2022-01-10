@@ -27,19 +27,15 @@
                  <div v-if="item.param.symbolGuid === tab.guid" :key="i">
                    <div v-if="tab.type === 'icon'" >
                      <mapgis-ui-iconfont
-                         :class="{'mapgis-3d-particle-effects-item-active':isShow === true && activeIndex === index}"
                          :type="tab.icon"
-                         style="font-size: 16px;padding-right: 4px"
-                         @click.capture.stop="showOrHide(index)"></mapgis-ui-iconfont>
+                         style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
                      <span>{{ item.name }}</span>
                    </div>
                    <div v-else >
                      <img
                          :src="tab.image"
                          style="width: 24px;padding-right: 4px"
-                         alt=""
-                         :class="{'mapgis-3d-particle-effects-item-active':isShow === true && activeIndex === index}"
-                         @click="showOrHide(index)"/>
+                         alt=""/>
                      <span>{{ item.name }}</span>
                    </div>
                  </div>
