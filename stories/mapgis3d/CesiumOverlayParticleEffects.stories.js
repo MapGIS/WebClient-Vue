@@ -109,11 +109,38 @@ export const 粒子特效 = Template.bind({});
             image: `http://localhost:8895/img/smoke.png`,
             iconUrl: "mapgis-yanwu",
         },
+        {
+            "guid": "A35C78FF-DD27-66C8-DD61-027CAE317145",
+            "name": "外部喷泉",
+            "image": `http://localhost:8895/img/fountain.png`,
+            "iconUrl": "mapgis-penquan"
+        }
     ],
     particleList:[
         {
+            "guid": "80811AA9-A47F-709C-936C-C647FBD098E0",
+            "name": "粒子名称1",
+            "param": {
+                "emitterType": "圆形放射",
+                "emissionRate": 20.0,
+                "imageSize": 5.0,
+                "minimumParticleLife": 2.0,
+                "maximumParticleLife": 3.0,
+                "minimumSpeed": 9.0,
+                "maximumSpeed": 10.0,
+                "startScale": 1.0,
+                "endScale": 4.0,
+                "symbolGuid": "A35C78FF-DD27-66C8-DD61-027CAE317145",
+                "position": {
+                    "longitude": 114.4023,
+                    "latitude": 30.465911,
+                    "height": 10.0
+                }
+            }
+        },
+        {
             guid: "49A834D7-97C6-F452-4611-6F0739809B50",
-            name: "粒子名称1",
+            name: "粒子名称2",
             param: {
                 emitterType: "圆形放射",  //发射类型
                 emissionRate: 20.0,     //发射速率
@@ -134,7 +161,7 @@ export const 粒子特效 = Template.bind({});
         },
         {
             guid: "36F335E8-1F3C-41E2-40AA-EE950D691761",
-            name: "粒子名称2",
+            name: "粒子名称3",
             param: {
                 emitterType: "球形放射",  //发射类型
                 emissionRate: 40.0,     //发射速率
@@ -149,7 +176,7 @@ export const 粒子特效 = Template.bind({});
                 position: {
                     longitude: 114.40092382,
                     latitude: 30.46549092,
-                    height: 1
+                    height: 10
                 }
             }
         }
