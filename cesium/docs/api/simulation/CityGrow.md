@@ -1,4 +1,3 @@
-# 城市生长
 > mapgis-3d-city-grow
 
 <font style="color:red;fontsize=5px;"> 注意：</font>由于三维底层支持原因，目前仅支持二维矢量文档形式的数据。
@@ -51,7 +50,7 @@
 - **侦听属性**
 - **描述:** 过滤条件数组对象，空对象则默认无过滤。
 - **示例:**
-  ```json
+  ```
       filter: {
              where: 'OBJECTID>500'
        }

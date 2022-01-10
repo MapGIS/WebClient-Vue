@@ -142,7 +142,6 @@ export default {
      * 修改选中行的最大值，后面一行的最小值同步变化
      */
     changeMax(record, index) {
-      // console.log(record, index)
       if (record.max > this.tableData[index + 1].max) {
         record.max = this.tableData[index + 1].max;
       }

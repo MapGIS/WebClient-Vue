@@ -85,14 +85,12 @@ export default {
   watch: {
     camera: {
       handler: function () {
-        console.log("----------camera")
         this.cameraCopy = Object.assign(this.cameraCopy, this.camera);
       },
       deep: true
     },
     cameras: {
       handler: function () {
-        console.log("----------cameras")
         this.$_setCameras();
       },
       deep: true

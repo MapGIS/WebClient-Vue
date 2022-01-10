@@ -2,7 +2,7 @@
   <div>
     <slot>
       <div class="mapgis-3d-particle-effects">
-        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle">
+        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle" ref="tabPanel">
         </mapgis-ui-tab-panel>
         <mapgis-ui-tabs
             :animated="false"
@@ -26,12 +26,16 @@
                 <template v-for="(tab,i) in tabIcons">
                  <div v-if="item.param.symbolGuid === tab.guid" :key="i">
                    <div v-if="tab.type === 'icon'" >
-                     <mapgis-ui-iconfont :type="tab.icon" style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
+                     <mapgis-ui-iconfont
+                         :type="tab.icon"
+                         style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
                      <span>{{ item.name }}</span>
                    </div>
-                   <div v-else>
-                     <img :src="tab.image" style="width: 24px;padding-right: 4px"
-                          alt=""/>
+                   <div v-else >
+                     <img
+                         :src="tab.image"
+                         style="width: 24px;padding-right: 4px"
+                         alt=""/>
                      <span>{{ item.name }}</span>
                    </div>
                  </div>
@@ -128,6 +132,7 @@ import {
 
 import emptyImage from '../../../assets/image/empty.png';
 import {newGuid} from "../../Utils/util";
+import clonedeep from 'lodash.clonedeep';
 
 export default {
   name: "mapgis-3d-particle-effects-manager",
@@ -281,7 +286,11 @@ export default {
           image: "./smoke.png",
           iconUrl: "mapgis-smoke",
         }],
+      // 修改已有粒子参数的索引
       changeParticleIndex: undefined,
+      // 粒子类型: create(新建) | selected(选中)
+      mode:undefined,
+
       emptyImage: emptyImage,
       imageStyle: {
         height: '150px',
@@ -315,6 +324,7 @@ export default {
     this.mount();
   },
   destroyed() {
+    this.removeAllParticle();
     this.unmount();
   },
   methods: {
@@ -327,6 +337,7 @@ export default {
     clickListItem(index) {
       let vm = this;
       this.activeIndex = index;
+      this.mode = 'selected';
       // 相机视角跳转至选中的粒子所在
       let particlePosition = this.particleArr[index].position;
       // viewer.flyTo和camera.flyTo定位点时，添加倾斜角有差别，camera.flyTo飞行到点有偏差
@@ -378,23 +389,13 @@ export default {
       });
     },
     unmount() {
-      this.removeAllParticle();
-      this.$emit("unload", this);
-    },
-    removeAllParticle(){
-      let vm = this;
-      if (vm.particleArr.length > 0) {
-        for (let i = 0; i < vm.particleArr.length; i++) {
-          vm.particleArr[i].remove();
-        }
-      }
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction = undefined;
       }
-      // 粒子结果集
-      this.particleArr = [];
-      // 粒子列表
-      this.particleListCopy = [];
+      if (this.$refs.tabPanel){
+        this.$refs.tabPanel.active = undefined
+      }
       if (
           this.isLogarithmicDepthBufferEnable !==
           isLogarithmicDepthBufferEnable(this.viewer)
@@ -404,6 +405,19 @@ export default {
             this.viewer
         );
       }
+      this.$emit("unload", this);
+    },
+    removeAllParticle(){
+      let vm = this;
+      if (vm.particleArr.length > 0) {
+        for (let i = 0; i < vm.particleArr.length; i++) {
+          vm.particleArr[i].remove();
+        }
+      }
+      // 粒子结果集
+      this.particleArr = [];
+      // 粒子列表
+      this.particleListCopy = [];
     },
     onClearParticle(index) {
       let vm = this;
@@ -414,9 +428,9 @@ export default {
           }
         }
       }
-      if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      }
+      // if (this.handlerAction) {
+      //   this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      // }
       // 粒子结果集
       this.particleArr.splice(index, 1);
       // 粒子列表
@@ -450,7 +464,8 @@ export default {
           this.startScaleCopy = viewModelCopy.startScale;
           this.endScaleCopy = viewModelCopy.endScale;
         } else {
-          let currentParticle = this.particleListCopy[this.activeIndex].param;
+          let currentParticle = Object.assign({},this.particleListCopy[this.activeIndex].param);
+
           this.emitterTypeCopy = currentParticle.emitterType;
           this.emissionRateCopy = currentParticle.emissionRate;
           this.imageSizeCopy = currentParticle.imageSize;
@@ -467,8 +482,12 @@ export default {
     },
     setParticleParameter(index) {
       this.activeKey = '2';
+      this.mode = 'selected';
+      this.changeParticleIndex = index;
+
       // 参数为该粒子的参数，初始化时是初始化参数，修改后是修改后存放在particleArr结果集中的参数。
-      let currentParticle = this.particleListCopy[index].param;
+      let currentParticle = Object.assign({},this.particleListCopy[index].param);
+      // let currentParticle = clonedeep(this.particleListCopy[index].param);
       this.emitterTypeCopy = currentParticle.emitterType;
       this.emissionRateCopy = currentParticle.emissionRate;
       this.imageSizeCopy = currentParticle.imageSize;
@@ -479,10 +498,10 @@ export default {
       this.startScaleCopy = currentParticle.startScale;
       this.endScaleCopy = currentParticle.endScale;
 
-      this.changeParticleIndex = index;
     },
     onCreateParticle(tab) {
       // 先把面板参数重设
+      this.mode = 'create';
       this.emitterTypeCopy = this.viewModel.emitterType;
       this.emissionRateCopy = this.viewModel.emissionRate;
       this.imageSizeCopy = this.viewModel.imageSize;
@@ -492,21 +511,21 @@ export default {
       this.maximumSpeedCopy = this.viewModel.maximumSpeed;
       this.startScaleCopy = this.viewModel.startScale;
       this.endScaleCopy = this.viewModel.endScale;
+      this.changeParticleIndex = undefined;
 
       this.imgUrl = tab.image;
       this.title = tab.title;
       this.symbolGuid = tab.guid;
-      this._addEventListener();
+      if (!this.handlerAction){
+        this._addEventListener();
+      }
     },
+
     _addEventListener() {
       this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
       this.handlerAction.setInputAction(event => {
         this._registerMouseLClickEvent(event);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-      // this.webGlobe.registerMouseEvent("LEFT_CLICK", event => {
-      //   this._registerMouseLClickEvent(event);
-      // });
     },
     _registerMouseLClickEvent(event) {
       // 获取点击点的笛卡尔坐标
@@ -597,13 +616,11 @@ export default {
     },
     onEmitterChange(value) {
       let emitter = this.changeEmitterTypeCesium(value);
-      // this.emitterTypeCopy = value;
       for (let i = 0; i < this.particleArr.length; i++) {
-        if (i === this.changeParticleIndex) {
+        if (i === this.changeParticleIndex && this.mode === 'selected') {
           this.particleArr[i].emitter = emitter;
           this.particleListCopy[i].param.emitterType = value;
-          // this.changeParticleIndex = undefined;
-        } else if (this.changeParticleIndex === undefined){
+        } else if (this.mode === 'create'){
           this.viewModel.emitterType = value
         }
       }
@@ -636,7 +653,7 @@ export default {
     onChangeEffect(val, key) {
       if (this.particleArr.length > 0) {
         for (let i = 0; i < this.particleArr.length; i++) {
-          if (i === this.changeParticleIndex) {
+          if (i === this.changeParticleIndex && this.mode === 'selected') {
             if (key === "imageSize") {
               this.particleArr[i].maximumImageSize = new this.Cesium.Cartesian2(val, val);
               this.particleArr[i].minimumImageSize = new this.Cesium.Cartesian2(val, val);
@@ -645,7 +662,7 @@ export default {
               this.particleArr[i][key] = val;
               this.particleListCopy[i].param[key] = val;
             }
-          } else if (this.changeParticleIndex === undefined){
+          } else if (this.mode === 'create'){
             if (key === "imageSize") {
               this.viewModel.imageSize = val;
             } else {
@@ -654,7 +671,18 @@ export default {
           }
         }
       }
-    }
+    },
+    // 对粒子列表中已有的粒子进行显隐操作
+    // showOrHide(index){
+    //   let vm = this;
+    //   if (vm.isShow){
+    //
+    //     vm.particleListCopy[index].isShow = false;
+    //   } else {
+    //   }
+    //   console.log("1111111111111",vm.particleListCopy[index]);
+    //
+    // }
   }
 };
 </script>

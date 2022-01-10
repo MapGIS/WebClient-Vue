@@ -1,4 +1,5 @@
 import "../style/card.css";
+import Markdown from "../../cesium/docs/api/simulation/BuildingGrow.md";
 
 export default {
     title: "三维/模拟仿真/单体建筑生长",
@@ -19,7 +20,7 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene style="height:95vh">
-      <mapgis-ui-button type="primary" @click="getTree" :style="{position: 'absolute', zIndex:3000,top:0px}">
+      <mapgis-ui-button type="primary" @click="getTree" :style="{position: 'absolute', zIndex:3000,top:'0px'}">
         开启单体化生长播放条
       </mapgis-ui-button>
       <mapgis-rastertile-layer v-if="false" layerId="tdt"
@@ -34,4 +35,11 @@ const Template = (args, {argTypes}) => ({
 export const buildingGrow = Template.bind({});
 buildingGrow.args = {
     m3d: 'http://192.168.88.204:8089/M3D/2.0/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime/BIM%E6%A8%A1%E5%9E%8B%E7%94%9F%E9%95%BFtime.mcj'
+};
+buildingGrow.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
 };

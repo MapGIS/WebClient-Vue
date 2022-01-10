@@ -75,17 +75,21 @@
           }
         }
         &:hover {
-          img {
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.15);
-            border-radius: 5px;
+          .item-image{
+            img {
+              box-shadow: 0 0 8px rgba(0, 0, 0, 0.15), 0 0 8px rgba(0, 0, 0, 0.15);
+              border-radius: 5px;
+            }
           }
           .item-name {
             text-decoration: underline;
           }
         }
         &.active {
-          img {
+          .item-image{
+            img {
               border: double 4px $primary-6;
+            }
           }
           .item-name {
             color: $primary-6;

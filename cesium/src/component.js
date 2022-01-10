@@ -27,8 +27,8 @@ export { default as Mapgis3dIgsFeatureLayer } from "./components/Layer/IGServer/
 
 export { default as Mapgis3dArcgisTileLayer } from "./components/Layer/ArcGISServer/ArcGISTileLayer";
 export { default as Mapgis3dArcgisMapLayer } from "./components/Layer/ArcGISServer/ArcGISMapLayer";
+export { default as Mapgis3dGraphicSingleLayer } from "./components/Layer/Graphic/GraphicSingleLayer.vue";
 export { default as Mapgis3dGraphicLayer } from "./components/Layer/Graphic/GraphicLayer.vue";
-export { default as Mapgis3dGraphicLayers } from "./components/Layer/Graphic/GraphicLayers.vue";
 export { default as Mapgis3dGraphicLayerService } from "./components/Layer/Graphic/GraphicLayerService.vue";
 
 // 要素图层
@@ -54,6 +54,7 @@ export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.v
 export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 export { default as Mapgis3dCesiumHeaterLayer } from "./components/Overlay/themeLayer/heater/CesiumHeater.vue";
 export { default as Mapgis3dMapvHeaterLayer } from "./components/Overlay/themeLayer/heater/MapvHeater.vue";
+export { default as Mapgis3dGraphThemeLayer } from "./components/Overlay/themeLayer/GraphThemeLayer.vue";
 
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";

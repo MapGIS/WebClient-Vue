@@ -85,7 +85,6 @@ export default {
         to,
         value
       };
-      console.log("payload", payload);
       this.$emit("hover", payload);
     },
     orderType(type) {},

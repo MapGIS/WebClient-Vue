@@ -1,17 +1,17 @@
 <template>
-    <mapgis-ui-modal 
-        title="视角编辑器" 
-        :visible="innerShow" 
-        :mask="false" 
-        @cancel="closePanel" 
-        @ok="getResultConfig" 
-        class="viewpoint-editor" 
-        v-show="innerShow" 
+    <mapgis-ui-modal
+        title="视角编辑器"
+        :visible="innerShow"
+        :mask="false"
+        @cancel="closePanel"
+        @ok="getResultConfig"
+        class="viewpoint-editor"
+        v-show="innerShow"
         :bodyStyle="bodyStyle"
         :width="320"
         okText="确定"
         cancelText="取消"
-        v-drag 
+        v-drag
     >
         <mapgis-ui-row class="input-parameter-style">
             <mapgis-ui-col :span="6"><label>名称</label></mapgis-ui-col>
@@ -24,20 +24,22 @@
             size="medium"
             label="飞行时间"
             v-model="duration"
-            :labelCol="{span:6}"
-            :wrapperCol="{span:18}"
+            :labelCol="{ span: 6 }"
+            :wrapperCol="{ span: 18 }"
         />
 
-        <mapgis-ui-row
-            class="input-parameter-style"
-        >
+        <mapgis-ui-row class="input-parameter-style">
             <mapgis-ui-col :span="6"><label>缩略图</label></mapgis-ui-col>
             <mapgis-ui-col :span="10">
                 <img class="thumbnail" :src="image" />
             </mapgis-ui-col>
             <mapgis-ui-col :span="8" class="thumbnail-btn">
-                <mapgis-ui-button @click="screenshot" style="margin-bottom: 6px">截图</mapgis-ui-button>
-                <mapgis-ui-button @click="upload">上传<input type="file" id="file" /></mapgis-ui-button> 
+                <mapgis-ui-button @click="screenshot" style="margin-bottom: 6px"
+                    >截图</mapgis-ui-button
+                >
+                <mapgis-ui-button @click="upload"
+                    >上传<input type="file" id="file"
+                /></mapgis-ui-button>
             </mapgis-ui-col>
         </mapgis-ui-row>
 
@@ -46,25 +48,29 @@
                 <mapgis-ui-iconfont
                     type="mapgis-chevrons-down"
                     :rotate="props.isActive ? 180 : 0"
-                    style="display:none"
+                    style="display: none"
                 />
             </template>
-            <mapgis-ui-collapse-panel :style="collapseStyle">              
+            <mapgis-ui-collapse-panel :style="collapseStyle">
                 <div slot="header">
                     <mapgis-ui-row class="input-parameter-style">
-                        <mapgis-ui-col :span="6"><label>视角</label></mapgis-ui-col>
+                        <mapgis-ui-col :span="6"
+                            ><label>视角</label></mapgis-ui-col
+                        >
                         <mapgis-ui-col :span="18">
-                            <div class="current-camera" >
-                                <mapgis-ui-button
-                                    @click.stop="getCameraConfig"
-                                >
-                                    <mapgis-ui-iconfont type="mapgis-xiangji"/>
+                            <div class="current-camera">
+                                <mapgis-ui-button @click.stop="getCameraConfig">
+                                    <mapgis-ui-iconfont type="mapgis-xiangji" />
                                 </mapgis-ui-button>
                                 <label>获取时间 : {{ currentTime }}</label>
                             </div>
                             <div class="current-camera">
-                                <mapgis-ui-iconfont type="mapgis-chevrons-down"/>
-                                <label  style="color: #0081e2;">展开详细参数</label>
+                                <mapgis-ui-iconfont
+                                    type="mapgis-chevrons-down"
+                                />
+                                <label style="color: #0081e2"
+                                    >展开详细参数</label
+                                >
                             </div>
                         </mapgis-ui-col>
                     </mapgis-ui-row>
@@ -75,55 +81,58 @@
                         size="small"
                         label="经度"
                         v-model="longitude"
-                        :range="[0,180]"
+                        :range="[0, 180]"
                         :slider="false"
                     />
                     <mapgis-ui-input-number-panel
                         size="small"
                         label="纬度"
                         v-model="latitude"
-                        :range="[-90,90]"
+                        :range="[-90, 90]"
                         :slider="false"
                     />
                     <mapgis-ui-input-number-panel
                         size="small"
                         label="高度"
                         v-model="height"
-                        :range="[0,100000000]"
+                        :range="[0, 100000000]"
                         :slider="false"
                     />
                     <mapgis-ui-input-number-panel
                         size="small"
                         label="方向角"
                         v-model="heading"
-                        :range="[0,360]"
+                        :range="[0, 360]"
                         :slider="false"
                     />
                     <mapgis-ui-input-number-panel
                         size="small"
                         label="俯视角"
                         v-model="pitch"
-                        :range="[-90,90]"
+                        :range="[-90, 90]"
                         :slider="false"
-                    />                        
+                    />
                     <mapgis-ui-input-number-panel
                         size="small"
                         label="翻滚角"
                         v-model="roll"
-                        :range="[0,180]"
+                        :range="[0, 180]"
                         :slider="false"
                     />
                 </mapgis-ui-row>
-
             </mapgis-ui-collapse-panel>
         </mapgis-ui-collapse>
-        <mapgis-ui-spin :spinning="spinning" size="large" style="top: 50%;left: 50%"/>
+        <mapgis-ui-spin
+            :spinning="spinning"
+            size="large"
+            style="top: 50%; left: 50%"
+        />
     </mapgis-ui-modal>
 </template>
 
 <script>
 import ServiceLayer from "../../UI/Controls/ServiceLayer";
-import html2canvas from 'html2canvas';  
+import html2canvas from "html2canvas";
 
 export default {
     name: "viewpoint-editor",
@@ -136,6 +145,9 @@ export default {
         config: {
             type: Object,
         },
+        mode: {
+            type: String,
+        },
     },
     model: {
         prop: "config",
@@ -144,13 +156,17 @@ export default {
     watch: {
         show(val) {
             this.innerShow = val;
+            if (val) {
+                //新增视点时，初始化设置当前视点camera参数
+                this.initConfig(this.config);
+            }
         },
         innerShow(val) {
             this.$emit("change", val);
         },
         config: {
             handler: function (val) {
-                if(val){
+                if (val) {
                     this.initConfig(val);
                 }
             },
@@ -159,7 +175,7 @@ export default {
     },
     data() {
         return {
-            bodyStyle:{
+            bodyStyle: {
                 padding: "10px",
             },
 
@@ -170,20 +186,19 @@ export default {
             },
 
             innerShow: this.show,
-            name:'',
-            image:require("./upload/wuhan.jpg"),
-            duration:0.5,
+            name: "",
+            image: require("./upload/wuhan.jpg"),
+            duration: 0.5,
             currentTime: undefined,
-            longitude:undefined,
-            latitude:undefined,
-            height:undefined,
-            heading:undefined,
-            pitch:undefined,
-            roll:undefined,
+            longitude: undefined,
+            latitude: undefined,
+            height: undefined,
+            heading: undefined,
+            pitch: undefined,
+            roll: undefined,
 
             resultConfig: undefined,
             spinning: false,
-
         };
     },
     mounted() {
@@ -199,7 +214,7 @@ export default {
         unmount() {
             this.$emit("unload");
         },
-        initConfig(val){
+        initConfig(val) {
             this.name = val.name;
 
             this.image = val.image;
@@ -213,30 +228,39 @@ export default {
             this.roll = val.orientation.roll;
 
             this.duration = val.duration;
+
+            //初始化设置当前视点camera参数
+            if (this.mode === "add") {
+                this.getCameraConfig();
+            }
         },
-        setView(){
+        setView() {
             const { viewer, Cesium } = this;
             const vm = this;
             viewer.camera.setView({
-                destination : Cesium.Cartesian3.fromDegrees(vm.longitude, vm.latitude, vm.height),
+                destination: Cesium.Cartesian3.fromDegrees(
+                    vm.longitude,
+                    vm.latitude,
+                    vm.height
+                ),
                 orientation: {
-                    heading : Cesium.Math.toRadians(vm.heading), 
-                    pitch : Cesium.Math.toRadians(vm.pitch),
-                    roll : Cesium.Math.toRadians(vm.roll) 
-                }
+                    heading: Cesium.Math.toRadians(vm.heading),
+                    pitch: Cesium.Math.toRadians(vm.pitch),
+                    roll: Cesium.Math.toRadians(vm.roll),
+                },
             });
         },
         /* 截图 */
-        screenshot(){
+        screenshot() {
             this.spinning = true;
-            const { viewer , Cesium} = this;
+            const { viewer, Cesium } = this;
             const vm = this;
-            
-            let opt  = { 
-                allowTaint:true, 
-                useCORS:true,
+
+            let opt = {
+                allowTaint: true,
+                useCORS: true,
             };
-            html2canvas(viewer.scene.canvas, opt ).then(function(canvas) {
+            html2canvas(viewer.scene.canvas, opt).then(function (canvas) {
                 let image = document.querySelector(".thumbnail");
                 // document.body.appendChild(canvas);
                 image.setAttribute("src", canvas.toDataURL());
@@ -245,17 +269,15 @@ export default {
             });
         },
         /* 上传本地图片 */
-        upload(){
-          this.spinning = true;
-
-          let file = document.getElementById('file');
+        upload() {
+            let file = document.getElementById("file");
             let image = document.querySelector(".thumbnail");
             const vm = this;
-            
-            file.onchange = function() {
-                let fileData = this.files[0];//获取到一个FileList对象中的第一个文件( File 对象),是我们上传的文件
+
+            file.onchange = function () {
+                let fileData = this.files[0]; //获取到一个FileList对象中的第一个文件( File 对象),是我们上传的文件
                 let pettern = /^image/;
-                
+
                 // console.info(fileData.type)
 
                 if (!pettern.test(fileData.type)) {
@@ -263,30 +285,45 @@ export default {
                     return;
                 }
                 let reader = new FileReader();
-                reader.readAsDataURL(fileData);//异步读取文件内容，结果用data:url的字符串形式表示
+                reader.onloadstart = function () {
+                    this.spinning = true;
+                };
+                reader.readAsDataURL(fileData); //异步读取文件内容，结果用data:url的字符串形式表示
                 /*当读取操作成功完成时调用*/
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     // console.log(e); //查看对象
                     // console.log(this.result);//要的数据 这里的this指向FileReader（）对象的实例reader
                     image.setAttribute("src", this.result);
                     vm.image = this.result;
                     vm.spinning = false;
-                }
-            }
-        },  
+                };
+                reader.onabort = function () {
+                    vm.spinning = false;
+                };
+            };
+        },
         getCameraConfig() {
-            const { viewer , Cesium } = this;
+            const { viewer, Cesium } = this;
 
             let myDate = new Date();
             // let mytime = myDate.toLocaleTimeString();
-            let hour = myDate.getHours() > 9 ? myDate.getHours() : '0' + myDate.getHours();
-            let min = myDate.getMinutes() > 9 ? myDate.getMinutes() : '0' + myDate.getMinutes();
-            let sec = myDate.getSeconds() > 9 ? myDate.getSeconds() : '0' + myDate.getSeconds();
+            let hour =
+                myDate.getHours() > 9
+                    ? myDate.getHours()
+                    : "0" + myDate.getHours();
+            let min =
+                myDate.getMinutes() > 9
+                    ? myDate.getMinutes()
+                    : "0" + myDate.getMinutes();
+            let sec =
+                myDate.getSeconds() > 9
+                    ? myDate.getSeconds()
+                    : "0" + myDate.getSeconds();
             this.currentTime = hour + " : " + min + " : " + sec;
 
             let cartesian3 = viewer.camera.position;
-            let ellipsoid=viewer.scene.globe.ellipsoid;
-            let cartographic=ellipsoid.cartesianToCartographic(cartesian3);
+            let ellipsoid = viewer.scene.globe.ellipsoid;
+            let cartographic = ellipsoid.cartesianToCartographic(cartesian3);
             this.latitude = Cesium.Math.toDegrees(cartographic.latitude);
             this.longitude = Cesium.Math.toDegrees(cartographic.longitude);
             this.height = cartographic.height;
@@ -297,8 +334,8 @@ export default {
         },
         getResultConfig() {
             const vm = this;
-            this.resultConfig =  {
-                name: vm.name || '未命名',
+            this.resultConfig = {
+                name: vm.name,
                 image: vm.image,
                 destination: {
                     x: vm.longitude,
@@ -312,7 +349,7 @@ export default {
                 },
                 duration: vm.duration,
             };
-            this.$emit("update",this.resultConfig);
+            this.$emit("update", this.resultConfig);
             this.innerShow = false;
         },
         closePanel() {
@@ -338,7 +375,7 @@ export default {
                         //绑定元素位置到positionX和positionY上面
                         // vm.positionX = top;
                         // vm.positionY = left;
-                        
+
                         //移动当前元素
                         odiv.style.left = left + "px";
                         odiv.style.top = top + "px";
@@ -355,9 +392,8 @@ export default {
 </script>
 
 <style scoped>
-
 .input-parameter-style {
-    padding:10px 6px ;
+    padding: 10px 6px;
 }
 
 .input-parameter-style label {
@@ -375,13 +411,13 @@ export default {
     height: 70px;
 }
 
-.thumbnail-btn .mapgis-ui-btn{
+.thumbnail-btn .mapgis-ui-btn {
     width: 80px;
     display: block;
     margin-left: auto;
 }
 
-#file{
+#file {
     position: absolute;
     height: 32px;
     width: 80px;
@@ -425,7 +461,7 @@ export default {
     padding: 0;
 }
 
-::v-deep .mapgis-ui-spin-spinning{
-  position: absolute;
+::v-deep .mapgis-ui-spin-spinning {
+    position: absolute;
 }
 </style>

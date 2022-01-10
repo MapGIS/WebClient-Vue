@@ -11,7 +11,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisUiBorderbox1 },
 
-  template: `<mapgis-ui-borderbox1 v-bind="$props" style="width:600px; height:300px">
+  template: `<mapgis-ui-borderbox1 v-bind="$props" style="width:600px; height:300px;background: #282c34;">
     </mapgis-ui-borderbox1>`,
 });
 

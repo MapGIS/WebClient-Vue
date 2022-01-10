@@ -1,22 +1,22 @@
 <template>
     <div class="mapgis-3d-viewpoint-manager" v-show="manager">
         <!-- <div class="viewpoint-header">
-            <label class="title">设置</label>
-            <div @mouseenter="hover = true" @mouseleave="hover = false">
-                <img
-                    v-show="!hover"
-                    class="closeButton2"
-                    src="./ViewpointManager/关闭2.png"
-                    @click="closePanel"
-                />
-                <img
-                    v-show="hover"
-                    class="closeButton2"
-                    src="./ViewpointManager/关闭2hover.png"
-                    @click="closePanel"
-                />
-            </div>
-        </div> -->
+        <label class="title">设置</label>
+        <div @mouseenter="hover = true" @mouseleave="hover = false">
+            <img
+                v-show="!hover"
+                class="closeButton2"
+                src="./ViewpointManager/关闭2.png"
+                @click="closePanel"
+            />
+            <img
+                v-show="hover"
+                class="closeButton2"
+                src="./ViewpointManager/关闭2hover.png"
+                @click="closePanel"
+            />
+        </div>
+    </div> -->
 
         <viewpoint-editor
             v-model="config"
@@ -27,49 +27,58 @@
                 }
             "
             :show="editor"
+            :mode="mode"
         />
 
         <div class="viewpoint-item-wrapper">
-            <div  :class="['viewpoint-item',{ active:clickActive === i }]" v-for="(item, i) in items" :key="i">
+            <div
+                :class="['viewpoint-item', { active: clickActive === i }]"
+                v-for="(item, i) in items"
+                :key="i"
+            >
                 <div
-                    :class="['item-image',{ active:clickActive === true }]"
                     class="item-image"
                     @mouseenter="imgIndex = i"
                     @mouseleave="imgIndex = undefined"
                     @click="flyTo(item, i)"
                 >
-                  <img :src="item.image" />
-                  <div
-                      class="item-mask"
-                      v-show="imgIndex === i || selectMode"
-                  >
-                    <mapgis-ui-checkbox
-                        @change="selectItem($event, i)"
-                        @click.stop=""
+                    <img :src="item.image" />
+                    <div
+                        class="item-mask"
+                        v-show="imgIndex === i || selectMode"
+                    >
+                        <mapgis-ui-checkbox
+                            @change="selectItem($event, i)"
+                            @click.stop=""
+                        />
+                    </div>
+                    <mapgis-ui-iconfont
+                        class="item-locate"
+                        type="mapgis-dingwei"
                     />
-                  </div>
-                  <mapgis-ui-iconfont
-                      class="item-locate"
-                      type="mapgis-dingwei"
-                  />
                 </div>
                 <div class="item-name">
-                  <label>{{ item.name }}</label>
-                  <mapgis-ui-iconfont
-                      class="item-more-icon"
-                      type="mapgis-gengduo"
-                      @click="(e) => handleMenu(i, e)"
-                  />
+                    <label>{{ item.name }}</label>
+                    <mapgis-ui-iconfont
+                        class="item-more-icon"
+                        type="mapgis-gengduo"
+                        @click="(e) => handleMenu(i, e)"
+                    />
                 </div>
             </div>
         </div>
 
-        <div class="item-more-tool" v-show="active >= 0" ref="menu" @mouseleave="active = -1">
+        <div
+            class="item-more-tool"
+            v-show="active >= 0"
+            ref="menu"
+            @mouseleave="active = -1"
+        >
             <div @click="editViewpoint(active)" class="more-tool-btn">
                 <mapgis-ui-iconfont type="mapgis-bianji"></mapgis-ui-iconfont>
                 编辑
             </div>
-            <div @click="deleteViewpoint(active)" class="more-tool-btn">                           
+            <div @click="deleteViewpoint(active)" class="more-tool-btn">
                 <mapgis-ui-iconfont type="mapgis-shanchu"></mapgis-ui-iconfont>
                 删除
             </div>
@@ -81,22 +90,24 @@
                 :block="true"
                 v-if="!selectMode"
                 @click="addViewpoint"
-            >添加视点</mapgis-ui-button>
-            
+                >添加视点
+            </mapgis-ui-button>
+
             <mapgis-ui-button
                 type="default"
                 :block="true"
                 v-else
                 @click="deleteViewpoint"
-            >删除视点</mapgis-ui-button>
+                >删除视点
+            </mapgis-ui-button>
         </div>
-
     </div>
 </template>
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer";
 import ViewpointEditor from "./ViewpointManager/ViewpointEditor";
+import emptyImage from "../../assets/image/empty.png";
 
 export default {
     name: "mapgis-3d-viewpoint-manager",
@@ -118,11 +129,27 @@ export default {
             editor: false,
             editItem: undefined,
             hover: undefined,
-            manager:true,
+            manager: true,
             imgIndex: undefined,
             active: -1,
             config: undefined,
-            clickActive:false,
+            clickActive: false,
+            // 设置初始视点对象
+            originViewPoint: {
+                name: "",
+                image: emptyImage,
+                destination: {
+                    x: 0,
+                    y: 0,
+                    z: 0,
+                },
+                orientation: {
+                    heading: 0,
+                    pitch: 0,
+                    roll: 0,
+                },
+                duration: 0.5,
+            },
 
             /* 视点列表 */
             items: [
@@ -186,10 +213,10 @@ export default {
         },
         /* 视点跳转 */
         flyTo(item, i) {
-            if (this.clickActive === i){
-              this.clickActive = undefined;
+            if (this.clickActive === i) {
+                this.clickActive = undefined;
             } else {
-              this.clickActive = i;
+                this.clickActive = i;
             }
             const { viewer, Cesium } = this;
             this.currentItem = i;
@@ -201,39 +228,38 @@ export default {
                     item.destination.z
                 ),
                 orientation: {
-                    heading: Cesium.Math.toRadians(
-                        item.orientation.heading
-                    ),
+                    heading: Cesium.Math.toRadians(item.orientation.heading),
                     pitch: Cesium.Math.toRadians(item.orientation.pitch),
                     roll: Cesium.Math.toRadians(item.orientation.roll),
                 },
                 duration: item.duration,
             });
-
         },
         /* 增加视点 */
         addViewpoint() {
             const vm = this;
             this.editor = true;
             this.mode = "add";
-            if (vm.currentItem >= 0 ) {
-                /* 新增视点时默认填充已有的视点参数 */
-                vm.config = vm.items[vm.currentItem];
-            }
+            // if (vm.currentItem >= 0 ) {
+            //     /* 新增视点时默认填充已有的视点参数 */
+            //     vm.config = vm.items[vm.currentItem];
+            // }
+            // 修改：新增视点默认为初始化参数
+            vm.config = vm.originViewPoint;
         },
         /* 激活单个视点的编辑、删除菜单 */
         handleMenu(i, e) {
             // console.log(i, e);
             this.active = i;
-            if(this.active >= 0){
-              if (this.active % 2 === 0){
-                /* 设置菜单的位置 */
-                this.$refs.menu.style.left = `${e.x}px`;
-                this.$refs.menu.style.top = `${e.y}px`;
-              } else {
-                this.$refs.menu.style.left = `${e.x - 88}px`;
-                this.$refs.menu.style.top = `${e.y}px`;
-              }
+            if (this.active >= 0) {
+                if (this.active % 2 === 0) {
+                    /* 设置菜单的位置 */
+                    this.$refs.menu.style.left = `${e.x}px`;
+                    this.$refs.menu.style.top = `${e.y}px`;
+                } else {
+                    this.$refs.menu.style.left = `${e.x - 88}px`;
+                    this.$refs.menu.style.top = `${e.y}px`;
+                }
             }
         },
         /* 编辑视点 */
@@ -246,10 +272,18 @@ export default {
         /* 处理编辑器传回的config参数 */
         changeViewpoint(val) {
             const vm = this;
+            // 先判断新增或编辑视点的name是否为空
+
             if (vm.mode === "add") {
+                if (val.name === "") {
+                    val.name = "视点" + "_" + (vm.items.length + 1);
+                }
                 /* 增加视点 */
                 vm.items.push(val);
             } else if (vm.mode === "edit") {
+                if (val.name === "") {
+                    val.name = "视点" + "_" + (vm.editItem + 1);
+                }
                 /* 编辑视点 */
                 Object.assign(vm.items[vm.editItem], val);
             }
@@ -284,10 +318,10 @@ export default {
                 vm.items.splice(i, 1);
             }
 
-            if (vm.items.length === 0 ) {
+            if (vm.items.length === 0) {
                 /* 视点列表为空时，当前视点为空 */
                 vm.currentItem = -1;
-            }else if(vm.items.length <= vm.currentItem) {
+            } else if (vm.items.length <= vm.currentItem) {
                 /* 当前视点被删除时，将当前视点设为第一个视点 */
                 vm.currentItem = -1;
             }
@@ -295,7 +329,7 @@ export default {
         /* 关闭视点编辑器 */
         closePanel() {
             this.manager = false;
-        }
+        },
     },
 };
 </script>

@@ -11,7 +11,7 @@
       <div @click="$_clickTool(tool.event)" :key="index" v-for="(tool, index) in dataSource"
            class="mapgis-ui-more-tool-button-row">
         <mapgis-ui-svg-icon class="mapgis-ui-more-tool-button-row-icon" :iconStyle="editStyle" :type="tool.icon"/>
-        <span>{{ tool.title }}</span>
+        <span style="padding-right: 10px;">{{ tool.title }}</span>
       </div>
     </div>
   </div>
@@ -70,7 +70,6 @@ export default {
 
 .mapgis-ui-more-tool-button-row:hover {
   color: #0081E2;
-  background: #E7F4FF;
 }
 
 .mapgis-ui-more-tool-button-row-icon {
@@ -84,11 +83,11 @@ export default {
   top: 40px;
   right: 7px;
   z-index: 100000;
-  width: 88px;
+  width: auto;
   height: auto;
-  background: white;
   border-radius: 3px;
   box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 </style>

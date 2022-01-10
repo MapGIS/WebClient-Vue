@@ -6,10 +6,9 @@
       :tree-data="treeData"
       @select="onSelect"
     >
-      <template slot="folderIcon" slot-scope="{ expanded }">
-        <mapgis-ui-iconfont
-          :id="expanded ? 'mapgis-tianjiatuceng' : 'mapgis-tuichuX'"
-        />
+      <template slot="title" slot-scope="{ title, icon }">
+        <mapgis-ui-iconfont :type="icon" />
+        <span> {{ title }} </span>
       </template>
     </mapgis-ui-tree>
   </div>
@@ -32,12 +31,11 @@ export default {
   mounted() {
     this.treeData = [
       {
-        title: "组织文件夹",
+        title: "常规文件夹",
         key: "0-0",
-        scopedSlots: {
-          icon: "folderIcon"
-        },
-        url: getMapgisGroupPath()
+        icon: "mapgis-tubiaoqietu_wenjianjia-29",
+        scopedSlots: { icon: "icon", title: "title" },
+        url: getMapgisPath()
       }
     ];
   },
@@ -61,9 +59,8 @@ export default {
                 // console.warn("dirnavigation结果");
                 let items = data.filter(item => item.isfolder === true);
                 items = items.map(d => {
-                  d.scopedSlots = {
-                    icon: "folderIcon"
-                  };
+                  d.icon = 'mapgis-tubiaoqietu_wenjianjia-29'
+                  d.scopedSlots = { icon: "icon", title: "title" };
                   return d;
                 });
                 treeNode.dataRef.children = items;

@@ -4,7 +4,7 @@
       :loadData="loadCompany"
       :treeData="data"
       @select="handleSelect"
-      :default-selected-keys="['我的数据']"
+      :default-selected-keys="['个人空间']"
     >
       <template slot="title" slot-scope="{ title, icon }">
         <mapgis-ui-iconfont :type="icon" />
@@ -17,6 +17,7 @@
 import {
   OWNERSHIPS,
   OWNERSHIP_USER_FOLDER,
+  OWNERSHIP_GROUP_FOLDER,
   OWNERSHIP_PUBLIC_SHARE_TO_USER,
   OWNERSHIP_OTHER_SHARE_TO_USER
 } from "../../util/codeType";
@@ -25,12 +26,21 @@ import { getFilesByOrganization, getFileByRecycle } from "../../axios/files";
 
 const ReadFromCloudDisk = [
   {
-    title: "我的数据",
-    key: "我的数据",
-    icon: "mapgis-dilishujuyuan",
+    title: "个人空间",
+    key: "个人空间",
+    icon: "mapgis-user",
     // selected: true,
     isLeaf: true,
     groupId: OWNERSHIP_USER_FOLDER,
+    scopedSlots: { icon: "icon", title: "title" }
+  },
+  {
+    title: "团队空间",
+    key: "团队空间",
+    icon: "mapgis-deleteteam",
+    // selected: true,
+    isLeaf: true,
+    groupId: OWNERSHIP_GROUP_FOLDER,
     scopedSlots: { icon: "icon", title: "title" }
   }
   // {
@@ -55,8 +65,8 @@ const ReadFromCloudDisk = [
 
 const SaveToCloudDisk = [
   {
-    title: "我的数据",
-    key: "我的数据",
+    title: "个人空间",
+    key: "个人空间",
     icon: "mapgis-dilishujuyuan",
 
     // selected: true,

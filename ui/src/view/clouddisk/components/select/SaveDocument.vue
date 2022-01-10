@@ -57,7 +57,7 @@ export default {
     return {
       saveForm: {
         saveUrl: "",
-        fileName: ""
+        fileName: "默认地图文档"
       },
       saveTree: false,
       temUrl: "",
@@ -103,8 +103,17 @@ export default {
     // },
     // handleNewDocument: Function
   },
+  created () {
+    this.getDefaultSavePath()
+  },
   watch: {},
   methods: {
+    getDefaultSavePath () {
+      let savePath = window.localStorage.getItem('mapgis_clouddisk_save_path')
+      if (savePath) {
+        this.saveForm.saveUrl = savePath
+      }
+    },
     handleSaveDocument() {
       const vm = this;
       this.$emit("emitDocumentSaveThemeLayer");
@@ -148,7 +157,7 @@ export default {
                   this.$notification.success({ message: "保存成功！" });
                   this.saveForm = {
                     saveUrl: "",
-                    fileName: ""
+                    fileName: "默认地图文档"
                   };
                   this.$emit("closeDialog");
                 }
