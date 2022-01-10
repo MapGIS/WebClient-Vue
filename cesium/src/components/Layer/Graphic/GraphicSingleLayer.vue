@@ -19,9 +19,21 @@
         @stopDrawing="$_stopDraw"
         @dbclick="$_dbclick"
         @clickTool="$_clickTool"
+        @changeAttributes="$_changeAttributes"
         @test="test"
       />
     </div>
+    <mapgis-3d-popup
+      v-if="enablePopup"
+      :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+      :forceRender="true"
+    >
+      <div>
+        <slot name="content" :popup="popup">
+          <div v-html="popup.container"></div>
+        </slot>
+      </div>
+    </mapgis-3d-popup>
   </div>
 </template>
 
@@ -30,6 +42,7 @@ import GraphicLayerService from "./GraphicLayerService";
 import icons from "../Plotting/base64Source"
 import editList from "./editList";
 import * as turf from "@turf/turf";
+import {getPopupHtml} from "../../UI/Popup/popupUtil";
 
 export default {
   name: "mapgis-3d-graphic-single-layer",
@@ -100,7 +113,10 @@ export default {
       drawDistance: 0,
       modelUrl: undefined,
       lastGraphicId: undefined,
-      lastGraphicColor: undefined
+      lastGraphicColor: undefined,
+      groupNum: 0,
+      enablePopup: false,
+      popup: {}
     };
   },
   watch: {
@@ -207,6 +223,18 @@ export default {
       }
       this.dataSourceCopy[index].title = title;
     },
+    $_changeAttributes(attributes, graphicId) {
+      if (graphicId) {
+        let graphic = this.$_getGraphicByID(graphicId);
+        Object.keys(attributes).forEach(function (key) {
+          graphic.attributes[key] = attributes[key];
+        });
+        this.enablePopup = false;
+        this.$nextTick(function () {
+          this.$_setPopUp(graphic, true);
+        });
+      }
+    },
     /**
      * 更多工具里面的按钮的点击事件
      * @param type String 点击事件类型
@@ -265,7 +293,7 @@ export default {
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale
       } = style;
 
-      const { title } = attributes;
+      const {title} = attributes;
       material = material || {};
 
       const {speed, duration, gradient, count, direction} = material;
@@ -487,8 +515,11 @@ export default {
 
       return editPanelValues;
     },
-    $_startDrawModel(type, model, drawMode, drawDistance) {
+    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius) {
       //停止上一次的绘制
+      let graphicsLayer, DrawTool;
+      graphicsLayer = this.$_getGraphicLayer();
+      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer);
       this.$_stopDrawing();
       this.isStartDrawLine = true;
       this.isStartDrawing = true;
@@ -513,19 +544,33 @@ export default {
           });
           break;
         case "polyline":
-          this.$_startDrawing({
-            type: "polyline",
+          DrawTool.DrawModelsByLine({
+            intervalDistance: drawDistance,
+            modelRadius: modelRadius,
             style: {
-              color: Cesium.Color.AQUA,
-              width: 4
+              scale: 1,
+              url: model
             }
           });
           break;
         case "polygon":
-          this.$_startDrawing({
-            type: "polygon",
+          let str = model.split("/");
+          let name = str[str.length - 1];
+          name = name.split(".")[0];
+          this.groupNum++;
+          DrawTool.DrawModelsByArea({
+            intervalDistance: drawDistance,
+            modelRadius: modelRadius,
             style: {
-              color: Cesium.Color.AQUA,
+              scale: 1,
+              url: model
+            },
+            name: "模型组_" + name + "_" + this.groupNum
+          });
+          this.dataSourceCopy.push({
+            type: "group",
+            attributes: {
+              title: "模型组_" + name + "_" + this.groupNum
             }
           });
           break;
@@ -564,6 +609,9 @@ export default {
         }
         if (drawType === "polygonCube") {
           drawType = "polygon";
+        }
+        if (drawType === "square") {
+          drawType = "box";
         }
         this.drawMode = "point";
         this.$_startDrawing({
@@ -641,6 +689,13 @@ export default {
         this.$_startEdit();
       });
       this.currentEditType = json.type;
+      if (this.currentEditType === "group") {
+        let graphicLayer = this.$_getGraphicLayer();
+        let group = graphicLayer.getGraphicByName(json.attributes.title);
+      }
+      if (json.style.hasOwnProperty("isSquare") && json.style.isSquare) {
+        this.currentEditType = "square";
+      }
       if (this.currentEditType === "circle") {
         if (json.style.hasOwnProperty("extrudedHeight") && json.style.extrudedHeight > 0) {
           this.currentEditType = "cone";
@@ -689,6 +744,7 @@ export default {
           center = turf.centerOfMass(polygon);
           destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], 100);
           break;
+        case "rectangle":
         case "box":
           let p1 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
           let p2 = new Cesium.Cartesian3(json.positions[3], json.positions[4], json.positions[5]);
@@ -701,7 +757,7 @@ export default {
           positions[0].push([p1.lng, p1.lat]);
           polygon = turf.polygon(positions);
           center = turf.centerOfMass(polygon);
-          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], json.style.height + json.style.extrudedHeight + 200);
+          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], json.style.height + (json.style.extrudedHeight || 0) + 200);
           break;
         case "model":
           let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
@@ -718,6 +774,45 @@ export default {
           roll: 0
         }
       });
+    },
+    $_getCenter(json) {
+      let positions = [[]], center, polygon;
+      switch (json.type) {
+        case "polygon":
+          for (let i = 0; i < json.positions.length / 3; i++) {
+            let lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(json.positions[i * 3], json.positions[i * 3 + 1], json.positions[i * 3 + 2]));
+            positions[0].push([lla.lng, lla.lat]);
+          }
+          positions[0].push(positions[0][0]);
+          polygon = turf.polygon(positions);
+          center = turf.centerOfMass(polygon);
+          break;
+        case "rectangle":
+        case "box":
+          let p1, p2;
+          if (json.type === "box") {
+            p1 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
+            p2 = new Cesium.Cartesian3(json.positions[3], json.positions[4], json.positions[5]);
+          } else {
+            p1 = json.positions[0];
+            p2 = json.positions[1];
+          }
+          p1 = this.$_cartesian3ToLongLat(p1);
+          p2 = this.$_cartesian3ToLongLat(p2);
+          positions[0].push([p1.lng, p1.lat]);
+          positions[0].push([p2.lng, p1.lat]);
+          positions[0].push([p2.lng, p2.lat]);
+          positions[0].push([p1.lng, p2.lat]);
+          positions[0].push([p1.lng, p1.lat]);
+          polygon = turf.polygon(positions);
+          center = turf.centerOfMass(polygon);
+          break;
+        case "model":
+          let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
+          center = this.$_cartesian3ToLongLat(Cartesian3);
+          break;
+      }
+      return center;
     },
     //初始化组件
     $_init(dataSource) {
@@ -885,6 +980,51 @@ export default {
       if (this.dataSourceCopy.length > 0) {
         this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
       }
+      //设置点击事件
+      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+        let pickedFeature = vm.viewer.scene.pick(movement.position);
+        if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
+          vm.$_setPopUp(pickedFeature);
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    },
+    $_setPopUp(graphic, isGraphic) {
+      let center;
+      if(isGraphic){
+        center = this.$_getCenter(graphic);
+      }else {
+        center = this.$_getCenter(graphic.primitive);
+      }
+      let vm = this;
+      let coordinates = center.geometry.coordinates;
+      let attributes;
+      if(isGraphic){
+        attributes = graphic.attributes;
+      }else {
+        attributes = graphic.primitive.attributes;
+      }
+      this.popup = {
+        lng: coordinates[0],
+        lat: coordinates[1],
+        alt: 1000,
+        properties: {}
+      };
+      Object.keys(attributes).forEach(function (key) {
+        vm.popup.properties[key] = attributes[key];
+      })
+      this.popup.container = getPopupHtml("underline",
+        {properties: this.popup.properties},
+        {
+          fields: Object.keys(this.popup.properties),
+          alias: {
+            title: "标题"
+          },
+          title: this.popup.properties.title,
+          style: {
+            containerStyle: {width: "244px"}
+          }
+        });
+      this.enablePopup = true;
     },
     onTabChange(key, type) {
       this[type] = key;
@@ -902,6 +1042,7 @@ export default {
 <style scoped>
 /*--------------标绘容器--------------*/
 .mapgis-3d-graphic-container {
+  padding-top: 10px;
   margin-top: -16px;
   width: 332px;
   max-height: 785px;

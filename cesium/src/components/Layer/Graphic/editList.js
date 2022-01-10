@@ -644,15 +644,21 @@ let editList = {
     },
     {
       type: "MapgisUiInputNumber",
-      title: "长度"
+      title: "宽度",
+      key: "extrudedHeight",
+      value: 100
     },
     {
       type: "MapgisUiColorPicker",
-      title: "颜色"
+      title: "颜色",
+      key: "color",
+      value: "#F04155"
     },
     {
       type: "MapgisUiSlider",
-      title: "透明度"
+      title: "透明度",
+      key: "opacity",
+      value: 100
     }
   ],
   box: [

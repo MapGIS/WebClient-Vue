@@ -790,6 +790,13 @@ export default {
             extrudedHeight: editPanelValues.extrudedHeight,
           };
           break;
+        case "square":
+          drawOptions.style = {
+            color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+            extrudedHeight: editPanelValues.extrudedHeight,
+            isSquare: true
+          };
+          break;
         case "model":
           drawOptions.style = {
             url: editPanelValues.url,

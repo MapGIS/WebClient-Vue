@@ -13,8 +13,18 @@
       <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"
                                   class="mapgis-ui-graphic-layers-more-tool"/>
     </div>
-    <mapgis-3d-graphic-single-layer :vueIndex="vueIndex" :models="models" ref="graphicLayer" style="top: 48px;"
-                             v-model="currentLayer"/>
+    <mapgis-ui-input-row-left
+      style="margin: 0"
+      v-show="showEditTitle"
+      title="修改标题"
+      :enableButton=true
+      paddingLeft="16px"
+      @finish="$_finishEditTitle"
+      v-model="currenSelectLayer"
+    />
+    <mapgis-3d-graphic-single-layer
+      :vueIndex="vueIndex" :models="models" ref="graphicLayer"
+      v-model="currentLayer"/>
   </div>
 </template>
 
@@ -68,19 +78,28 @@ export default {
       moreTools: [{
         event: "add",
         icon: "edit",
-        title: "新增"
+        title: "新增图层"
+      }, {
+        event: "editTitle",
+        icon: "editTitle",
+        title: "编辑标题"
       }, {
         event: "delete",
         icon: "delete",
-        title: "删除"
+        title: "删除图层"
       }],
-      vueIndex: undefined
+      vueIndex: undefined,
+      showEditTitle: false
     }
   },
   mounted() {
     this.$_init();
   },
   methods: {
+    $_finishEditTitle() {
+      this.showEditTitle = false;
+      this.dataSourceCopy[this.currenSelectIndex - 1].name = this.currenSelectLayer;
+    },
     $_clickTool(e) {
       switch (e) {
         //新增标绘图层
@@ -125,6 +144,9 @@ export default {
             this.currenSelectLayer = "无数据";
             this.currentLayer = [];
           }
+          break;
+        case "editTitle":
+          this.showEditTitle = true;
           break;
       }
     },
@@ -285,5 +307,9 @@ export default {
   position: absolute !important;
   right: 9px;
   top: 22px;
+}
+
+.mapgis-ui-input-row-left-input {
+  width: calc(100% - 148px);
 }
 </style>
