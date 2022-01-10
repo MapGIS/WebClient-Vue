@@ -9,7 +9,7 @@
 						<mapgis-ui-input v-model=radius></mapgis-ui-input>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="半径单位">
-						<mapgis-ui-select :placeholder=unit[0].name @change="selectCurrentUnit($event)">
+						<mapgis-ui-select v-model="selectedUnit" :placeholder=unit[0].name @change="selectCurrentUnit($event)">
 							<mapgis-ui-select-option v-for="(item, index) in unit" :key="index" :value="item.unitParam">{{item.name}}</mapgis-ui-select-option>
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
@@ -69,8 +69,13 @@
 						</mapgis-ui-row>
 						<mapgis-ui-checkbox :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
+					<mapgis-ui-form-model-item label="半径单位" v-show="!isByAtt">
+						<mapgis-ui-select v-model="selectedUnit" :placeholder=unit[0].name @change="selectCurrentUnit($event)">
+							<mapgis-ui-select-option v-for="(item, index) in unit" :key="index" :value="item.unitParam">{{item.name}}</mapgis-ui-select-option>
+						</mapgis-ui-select>
+					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="选择字段" v-show="isByAtt">
-						<mapgis-ui-select :placeholder=fldName[0].FldName @change="selectAtt($event)">
+						<mapgis-ui-select v-model="selectedFldName" :placeholder=fldName[0].FldName @change="selectAtt($event)">
 							<mapgis-ui-select-option v-for="(item, index) in fldName" :key="index" :value="item.FldName">{{item.FldName}}</mapgis-ui-select-option>
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
@@ -93,8 +98,8 @@
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
 				<mapgis-ui-setting-footer>
-					<mapgis-ui-button type="primary" @click="run">确定</mapgis-ui-button>
-					<mapgis-ui-button @click="cancel">取消</mapgis-ui-button>
+					<mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
+					<mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
 				</mapgis-ui-setting-footer>
 			</div>
 		</slot>
@@ -108,6 +113,8 @@ const { ClassBufferBySingleRing, FeatureBuffBySingleRing } = MRFWS
 const { VectorLayer } = MRCS
 // 引入第三方turf->buffer
 import * as turf from '@turf/turf'
+import { setDepthTestAgainstTerrainEnable } from '../WebGlobe/util'
+import Div from '../../../../ui/src/components/div/Div.vue'
 
 export default {
 	name: "mapgis-3d-buffer-analysis",
@@ -174,7 +181,9 @@ export default {
 			// 图层级半径缓冲
 			isByAtt: false,
 			leftRad: 100,
-			rightRad: 100,
+			rightRad: 100,			
+			realLeftRad: 100,
+			realRightRad: 100,
 			equalLeftRight: true,
 			// 图层级属性缓冲
 			fldName: [{"FldName": "", "FldType": ""}],  
@@ -201,7 +210,7 @@ export default {
 			if (val == "Feature") {
 				this.destLayer = this.currentTime()
 			} else {
-				this.destLayer = ''
+				this.destLayer = this.srcLayer + this.currentTime()
 			}
 		},
 		srcLayer(val, oldval) {
@@ -240,6 +249,8 @@ export default {
 	methods: {
 		mount() {
 			this.$emit('load',this);
+			// 进行缓冲区分析前，优先关闭深度检测
+      setDepthTestAgainstTerrainEnable(false, this.viewer);
 		},
 		unmount() {
 			// this.destLayer = ''
@@ -272,6 +283,23 @@ export default {
 		},
 		selectCurrentUnit(event) {
 			this.selectedUnit = event
+		},
+		convertRadUnit(currentRad, currentUnit) {
+			const earthRadius = 6371.393;  // 地球半径, km
+			switch(currentUnit) {
+				case 'kilometers':
+					// 千米转度公式: degree（圆心角）=l(弧长) × 180/(π（圆周率）× r（半径）)  纬度1°约等于111km
+					currentRad = currentRad * 180 / (Math.PI * earthRadius)
+					break
+				case 'miles':
+					// 英里转度 1英里=1.609344千米
+					currentRad = currentRad * 1.609344 * 180 / (Math.PI * earthRadius)
+					break
+				case 'degrees':
+					currentRad = currentRad * 1
+					break
+			}
+			return currentRad
 		},
 		currentTime() {
 			const now = new Date();
@@ -313,14 +341,18 @@ export default {
 		run() {
 			this.$emit("listenBufferAdd", this.bufferAdd)
 			if (this.srcType === "Layer") {
+				var newLeftRad = this.convertRadUnit(this.leftRad, this.selectedUnit)
+				var newRightRad = this.convertRadUnit(this.rightRad, this.selectedUnit)
+				this.realLeftRad = newLeftRad
+				this.realRightRad = newRightRad
 				var clsBufBySRt = new ClassBufferBySingleRing({
 					ip: this.baseUrl.split('/')[2].split(':')[0],
 					port: this.baseUrl.split('/')[2].split(':')[1],
 					isByAtt: this.isByAtt,
 				})
 				if (this.isByAtt == false) {
-					clsBufBySRt.leftRad = this.leftRad
-					clsBufBySRt.rightRad = this.rightRad
+					clsBufBySRt.leftRad = this.realLeftRad
+					clsBufBySRt.rightRad = this.realRightRad
 				}	else {
 					clsBufBySRt.fldName = this.selectedFldName
 				}
@@ -341,7 +373,7 @@ export default {
 			this.$emit("listenLayer", this.destLayer)
 		},
 		cancel() {
-
+			Object.assign(this.$data, this.$options.data());
 		}
 	},
 	computed: {
