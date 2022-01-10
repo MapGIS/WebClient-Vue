@@ -1,5 +1,3 @@
-# 单体建筑生长
-
 > mapgis-3d-building-glow
 
 ## 属性

@@ -54,6 +54,7 @@ export { default as Mapgis3dMapvLayer } from "./components/Overlay/Mapv3dLayer.v
 export { default as Mapgis3dEchartsLayer } from "./components/Overlay/Echarts.vue";
 export { default as Mapgis3dCesiumHeaterLayer } from "./components/Overlay/themeLayer/heater/CesiumHeater.vue";
 export { default as Mapgis3dMapvHeaterLayer } from "./components/Overlay/themeLayer/heater/MapvHeater.vue";
+export { default as Mapgis3dGraphThemeLayer } from "./components/Overlay/themeLayer/GraphThemeLayer.vue";
 
 export { default as Mapgis3dIgsTerrain } from "./components/Provider/TerrainProvider/IgsTerrainProvider.vue";
 export { default as Mapgis3dTerrainProvider } from "./components/Provider/TerrainProvider/TerrainProvider.vue";
