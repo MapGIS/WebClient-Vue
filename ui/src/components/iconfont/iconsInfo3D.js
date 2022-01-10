@@ -2,7 +2,7 @@ let iconsInfo3D = [{
   type: "mouse",
   title: "选择"
 }, {
-  type: "cube",
+  type: "square",
   title: "正方体"
 },{
   type: "polygonCube",

@@ -1,6 +1,6 @@
 <template>
   <mapgis-ui-row class="mapgis-ui-project-panel-head">
-    <mapgis-ui-col span="19">
+    <mapgis-ui-col span="17">
       <mapgis-ui-input-search placeholder="请输入关键词搜索" @search="$_search" class="mapgis-ui-project-panel-search"/>
     </mapgis-ui-col>
     <mapgis-ui-col style="margin-left: 6px;" span="4">

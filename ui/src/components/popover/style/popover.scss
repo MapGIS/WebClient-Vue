@@ -20,7 +20,7 @@
 }
 
 .mapgis-popup-row-container {
-  height: 130px;
+  height: 195px;
   overflow: auto;
 }
 
@@ -58,7 +58,7 @@
 .mapgis-popup-title {
   color: rgb(178, 178, 178);
   font-weight: bold;
-  border-bottom: 2px solid rgb(232, 232, 232);
+  border-bottom: 2px solid $panel-backgroud;
   padding: 6px 0;
   line-height: 11px;
   margin-bottom: 3px;
@@ -124,9 +124,9 @@
   padding: 6px 12px;
   height: 32px;
   line-height: 11px;
-  min-width: 240px;
-  border-left: 2px solid rgba(115, 176, 251, 0);
-  border-bottom: 0px solid rgb(246, 246, 246);
+  min-width: 220px;
+  border-left: 2px solid $panel-backgroud;
+  border-bottom: 2px solid $panel-backgroud;
 }
 
 .mapgis-popup-underline-row:hover {
@@ -189,7 +189,7 @@
   height: 32px;
   line-height: 11px;
   min-width: 240px;
-  border-bottom: 2px solid rgb(235, 235, 235);
+  border-bottom: 2px solid $panel-backgroud;
 }
 
 .mapgis-popup-table-field {

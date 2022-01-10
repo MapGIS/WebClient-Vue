@@ -204,6 +204,43 @@
         </div>
       </div>
     </div>
+    <!--属性面板-->
+    <div class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'attributes'">
+      <div>
+        <div :key="index" v-for="(value, index) in attributeKayArray">
+          <mapgis-ui-input-row-left
+            v-if="value === 'title'"
+            title="标题"
+            v-model="attributeValueArray[index]"
+          />
+          <mapgis-ui-input-row-left
+            v-else
+            :title="value"
+            v-model="attributeValueArray[index]"
+          />
+        </div>
+        <div class="mapgis-ui-graphic-edit-addAttribute" v-show="addAttribute">
+          <div>
+            <span style="font-size: 12px;">属性名</span>
+            <mapgis-ui-input
+              class="mapgis-ui-graphic-edit-addAttribute-input"
+              v-model="attributeKey"
+            />
+          </div>
+          <div style="padding-top: 10px;">
+            <span style="font-size: 12px;">属性值</span>
+            <mapgis-ui-input
+              class="mapgis-ui-graphic-edit-addAttribute-input"
+              v-model="attributeValue"
+            />
+          </div>
+        </div>
+        <mapgis-ui-button type="primary" class="mapgis-ui-graphic-edit-addAttribute-add"
+                          @click="$_addAttribute">
+          {{ addAttributeTitle }}
+        </mapgis-ui-button>
+      </div>
+    </div>
   </mapgis-ui-card>
 </template>
 
@@ -235,7 +272,7 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        if(this.dataSourceCopy.length > 0){
+        if (this.dataSourceCopy.length > 0) {
           //获取设置面板显示参数
           if (this.isUpdatePanel) {
             this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[this.dataSourceCopy.length - 1]);
@@ -258,6 +295,10 @@ export default {
         {
           key: 'edit',
           tab: '设置面板',
+        },
+        {
+          key: 'attributes',
+          tab: '属性面板',
         }
       ],
       //当前显示面板
@@ -318,10 +359,41 @@ export default {
       //是否进行编辑
       isEdit: true,
       //是都更新面板
-      isUpdatePanel: true
+      isUpdatePanel: true,
+      //当前的属性面板参数
+      attributeKayArray: [],
+      attributeValueArray: [],
+      //是否添加属性
+      addAttribute: false,
+      //属性名
+      attributeKey: "",
+      //属性值
+      attributeValue: "",
+      //添加属性按钮名称
+      addAttributeTitle: "添加属性",
+      //当前的GrapicId
+      currentGrapicId: undefined
     }
   },
   methods: {
+    $_addAttribute() {
+      if (this.addAttribute) {
+        this.addAttributeTitle = "添加属性";
+        this.attributeKayArray.push(this.attributeKey);
+        this.attributeValueArray.push(this.attributeValue);
+        //更新属性
+        let attributes = {};
+        for (let i = 0; i < this.attributeKayArray.length; i++) {
+          attributes[this.attributeKayArray[i]] = this.attributeValueArray[i];
+        }
+        this.$emit("changeAttributes", attributes, this.currentGrapicId);
+      } else {
+        this.addAttributeTitle = "确定添加";
+        this.attributeKey = "";
+        this.attributeValue = "";
+      }
+      this.addAttribute = !this.addAttribute;
+    },
     test() {
       this.$emit("test");
     },
@@ -343,14 +415,17 @@ export default {
       }
     },
     $_dbclick(json) {
-      debugger
       //显示设置面板
       this.noTitleKey = "edit";
       //设置为编辑状态
       this.isEdit = true;
+      //获取当前GraphicId
+      this.currentGrapicId = json.id;
       //获取设置面板显示参数
       this.isUpdatePanel = false;
-      this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
+      if (json.type !== "group") {
+        this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
+      }
       this.$nextTick(function () {
         this.isUpdatePanel = true;
       });
@@ -408,9 +483,17 @@ export default {
         stRotation
       } = style;
 
-      const { title } = attributes;
+      const {title} = attributes;
 
-      let editPanelValues = {};
+      let editPanelValues = {}, vm = this;
+
+      //取得属性面板参数，由于object无法设置顺序，因此使用数组代替
+      vm.attributeKayArray = [];
+      vm.attributeValueArray = [];
+      Object.keys(attributes).forEach(function (key) {
+        vm.attributeKayArray.push(key);
+        vm.attributeValueArray.push(attributes[key]);
+      })
 
       let type = json.type;
       if (type === "circle" && this.currentEditType !== "circle" && this.currentEditType !== "mouse") {
@@ -519,7 +602,7 @@ export default {
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.height = height;
           editPanelValues.materialType = materialType || "Color";
-          if(materialType === "Image"){
+          if (materialType === "Image") {
             editPanelValues.image = material.image;
             editPanelValues.stRotation = stRotation;
           }
@@ -678,6 +761,7 @@ export default {
         corridor: "方管线",
         model: "模型",
         wall: "墙",
+        square: "正方体",
       }
 
       return format[type];
@@ -691,5 +775,21 @@ export default {
   max-height: 618px;
   overflow: hidden;
   overflow-y: scroll;
+}
+
+.mapgis-ui-graphic-edit-addAttribute {
+  width: 100%;
+  margin: 10px 10px;
+}
+
+.mapgis-ui-graphic-edit-addAttribute-input {
+  width: calc(100% - 80px);
+  margin-left: 24px;
+}
+
+.mapgis-ui-graphic-edit-addAttribute-add {
+  float: right;
+  margin-right: 14px;
+  margin-bottom: 10px;
 }
 </style>

@@ -814,15 +814,12 @@ export default {
     $_inputChange(index) {
       if (index === 0) {
         if (this.listProps.dataSource[index] <= this.listProps.startData || this.listProps.dataSource[index] >= this.listProps.dataSource[index + 1]) {
-          console.log("----------错误")
         }
       } else if (index < this.listProps.dataSource.length - 1) {
         if (this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1] || this.listProps.dataSource[index] >= this.listProps.dataSource[index + 1]) {
-          console.log("----------错误")
         }
       } else {
         if (this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1]) {
-          console.log("----------错误")
         }
       }
     },

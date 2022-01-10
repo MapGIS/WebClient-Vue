@@ -81,6 +81,12 @@
       type="Number"
       v-model="drawDistance"
     />
+    <mapgis-ui-input-row-left
+      v-show="currentIconType === 'model'"
+      title="模型大小"
+      type="Number"
+      v-model="modelRadius"
+    />
   </div>
 </template>
 
@@ -120,7 +126,8 @@ export default {
       //绘制模式，点、线、多边形等
       drawMode: "point",
       //绘制间隔（距离）
-      drawDistance: 100,
+      drawDistance: 500,
+      modelRadius: 1000,
       chooseMode: "point",
       drawModes: [
         {
@@ -185,7 +192,7 @@ export default {
     },
     //开始绘制
     $_startDrawModel(model) {
-      this.$emit("startDrawModel", "model", model, this.drawMode, this.drawDistance);
+      this.$emit("startDrawModel", "model", model, this.drawMode, this.drawDistance, this.modelRadius);
     },
     $_chooseModelType(type) {
       this.currentModelType = type;
