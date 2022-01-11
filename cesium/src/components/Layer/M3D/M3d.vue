@@ -88,6 +88,7 @@ export default {
         // 2.0 版本
         this.version = "2.0";
       }
+      console.log('version', this.version);
       return this.version;
     },
     parseM3dVersion() {},

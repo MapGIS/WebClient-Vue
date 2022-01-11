@@ -133,14 +133,15 @@
 
       <mapgis-3d-feature-popup
         v-if="featureposition"
-        :position="featureposition"        
+        :position="featureposition"
         :popupOptions="popupOptions"
         v-model="featurevisible"
       >
         <mapgis-3d-popup-iot
-        :properties="featureproperties"
+          :properties="featureproperties"
+          @project-screen="handleProjectScreen"
         >
-        </mapgis-3d-popup-iot>  
+        </mapgis-3d-popup-iot>
       </mapgis-3d-feature-popup>
     </mapgis-ui-collapse-card>
     <!-- <mapgis-ui-slider-panel
@@ -431,8 +432,12 @@ export default {
       this.expandedKeys = expandedKeys;
       this.autoExpandParent = false;
     },
-    hancleSelectChange(value) {
-      this.innerVueIndex = value;
+    hancleSelectChange(vueIndex) {
+      this.innerVueIndex = vueIndex;
+      let finds = this.layers.filter((l) => l.vueindex == vueIndex);
+      if (finds && finds.length > 0) {
+        this.$emit("change-layer", finds[0]);
+      }
     },
     getParentKey(key, tree) {
       let parentKey;
@@ -524,6 +529,9 @@ export default {
       this.layerKey = key;
       this.$refs.card && this.$refs.card.togglePanel();
       this.disableLayerSelect = true;
+    },
+    handleProjectScreen(payload) {
+      this.$emit("project-screen", payload);
     },
     recordOriginStyle() {
       const { g3dLayerIndex, viewer } = this;
@@ -899,11 +907,11 @@ export default {
             tileset.pickedColor = Cesium.Color.fromCssColorString("#ffff00"); */
             if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
               let result = feature.content.getAttributeByOID(oid) || {};
-              vm.featureproperties = {...result, Euid: "000000000000********************00000000000020201106000u"};
+              vm.featureproperties = result;
             } else {
               tileset.queryAttributes(oid).then(function (result) {
                 result = result || {};
-                vm.featureproperties = {...result, Euid: "000000000000********************00000000000020201106000u"};
+                vm.featureproperties = result;
               });
             }
           }

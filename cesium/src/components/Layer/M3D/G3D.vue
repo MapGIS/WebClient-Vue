@@ -281,16 +281,13 @@ export default {
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
 
-      /* version = "2.0";
-      let url1 =
-        "http://192.168.199.71:8089/igs/rest/services/V2_分层分户-静态单体化/SceneServer"; */
-
       if (version == "2.0") {
         g3dLayer.then((e) => {
           let g3d = viewer.scene.layers.appendSceneServer(url, {
             $props,
             loaded: function (layer) {
               // 该回调有多少图层循环进多少次
+              console.log("layer", layer);
             },
             getDocLayerIndexes: vm.getDocLayerIndexes,
           });
@@ -327,10 +324,13 @@ export default {
       let layers = this.parseLayers();
       // 该回调只触发一次
       vm.g3dLayerIndex = indexes[0];
+      let collection = new Cesium.PrimitiveCollection();
       vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
         m3ds: [],
         layerId: vueIndex,
         g3dLayerIndex: vm.g3dLayerIndex,
+        collection: collection,
+        primitiveCollection: viewer.scene.primitives.add(collection),
       });
       let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
       vm.layerTree[0].version = g3dLayer.version;
@@ -349,7 +349,7 @@ export default {
         Promise.all(props).then((m3ds) => {
           vm.$emit("loaded", { g3d: vm, component: vm });
           vm.recordOriginStyle();
-          if (enablePopup) {
+          if (true || enablePopup) {
             vm.$_bindPickFeature();
           }
           vm.m3ds = m3ds;
@@ -739,17 +739,10 @@ export default {
     },
     $_pickEvent(movement) {
       const vm = this;
-      const { Cesium, viewer, popupOptions } = this;
+      const { Cesium, viewer, g3dLayerIndex } = this;
       const scene = viewer.scene;
-      let tempRay = new Cesium.Ray();
-      let tempPos = new Cesium.Cartesian3();
       if (!movement) return;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
-        let position = movement.position || movement.endPosition;
-        let cartesian = viewer.getCartesian3Position(position);
-        let ray = scene.camera.getPickRay(position, tempRay);
-        let cartesian2 = scene.globe.pick(ray, scene, tempPos);
-
         let pickedFeature = viewer.scene.pick(movement.position);
 
         if (!pickedFeature) {
@@ -757,36 +750,21 @@ export default {
           return;
         }
 
-        let longitudeString2, latitudeString2, heightString2;
-
-        if (Cesium.defined(cartesian2)) {
-          let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
-          longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
-          latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
-          heightString2 = cartographic2.height;
+        if (vm.featureclickenable) {
+          vm.featurevisible = true;
         }
 
-        if (cartesian || cartesian2) {
-          if (vm.featureclickenable) {
-            vm.featurevisible = true;
-          }
-
-          vm.featureposition = {
-            longitude: longitudeString2,
-            latitude: latitudeString2,
-            height: heightString2,
-          };
-
-          let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
-          let index = pickedFeature._content._tileset._layerIndex;
-          vm.selectLayerIndex = index;
-          vm.selectedKeys = [`${index}`];
-          let layerInfo = g3dLayer.getLayerInfo(index);
-          const { layerName, gdbpUrl } = layerInfo;
-          vm.featureproperties = { layerName, gdbpUrl };
-          vm.highlightM3d(index);
+        let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+        let index = pickedFeature._content._tileset._layerIndex;
+        vm.selectLayerIndex = index;
+        vm.selectedKeys = [`${index}`];
+        let layerInfo = g3dLayer.getLayerInfo(index);
+        const { children } = layerInfo;
+        let enableDynamic = children && children.length > 0 ? true : false;
+        if (enableDynamic) {
+          this.queryDynamic(movement, index);
         } else {
-          vm.clickvisible = false;
+          this.queryStatic(movement);
         }
       }
     },
@@ -849,16 +827,13 @@ export default {
         color: `color('#FFFF00', 1)`,
       });
     },
-    enableQuery() {
+    queryDynamic(movement, layerIndex) {
       const vm = this;
-      const { vueKey, vueIndex, vueCesium, Cesium } = this;
-      const { viewer, selectLayerIndex = 0, g3dLayerIndex } = this;
-      var collection = new Cesium.PrimitiveCollection();
-      var primitiveCollection = viewer.scene.primitives.add(collection);
-      let dynamicQueryHandler = new Cesium.ScreenSpaceEventHandler(
-        viewer.scene.canvas
-      );
-      dynamicQueryHandler.setInputAction(function (movement) {
+      const { Cesium, viewer, g3dLayerIndex } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let { primitiveCollection } = find.options;
         let cartesian = viewer.getCartesian3Position(movement.position);
         if (Cesium.defined(cartesian)) {
           let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
@@ -868,13 +843,20 @@ export default {
           let mapPosition = { x: lng, y: lat, z: height };
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let layerIndexs = g3dLayer.getM3DLayerIndexes();
-          let layerIndex =
-            layerIndexs && layerIndexs.length > 0 ? layerIndexs[0] : 0;
+          if (layerIndex == undefined || layerIndex < 0) {
+            vm.featurevisible = false;
+            return;
+          } else {
+            if (typeof layerIndex === "string") {
+              layerIndex = parseInt(layerIndex);
+            }
+          }
+
           g3dLayer.Monomerization(
             function callback(result) {
               if (result && result.length > 0) {
                 let feature = result[0];
-                let find = vueCesium.G3DManager.changeOptions(vueKey, vueIndex);
+                let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
                 if (find) {
                   let last = find.options.feature;
                   primitiveCollection.remove(last);
@@ -908,13 +890,89 @@ export default {
             }
           );
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "dynamicquery",
-        dynamicQueryHandler
-      );
+      }
+    },
+    queryStatic(movement) {
+      const vm = this;
+      const { Cesium, viewer, version, g3dLayerIndex, popupOptions } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      const scene = viewer.scene;
+
+      let tempRay = new Cesium.Ray();
+      let tempPos = new Cesium.Cartesian3();
+      if (!movement) return;
+      if (scene.mode !== Cesium.SceneMode.MORPHING) {
+        let position = movement.position || movement.endPosition;
+        let cartesian = viewer.getCartesian3Position(position);
+        let ray = scene.camera.getPickRay(position, tempRay);
+        let cartesian2 = scene.globe.pick(ray, scene, tempPos);
+
+        let pickedFeature = viewer.scene.pick(movement.position);
+
+        if (!pickedFeature) {
+          vm.clickvisible = false;
+          return;
+        }
+
+        let longitudeString2, latitudeString2, heightString2;
+
+        if (Cesium.defined(cartesian2)) {
+          let cartographic2 = Cesium.Cartographic.fromCartesian(cartesian);
+          longitudeString2 = Cesium.Math.toDegrees(cartographic2.longitude);
+          latitudeString2 = Cesium.Math.toDegrees(cartographic2.latitude);
+          heightString2 = cartographic2.height;
+        }
+
+        if (cartesian || cartesian2) {
+          if (vm.featureclickenable) {
+            vm.featurevisible = true;
+          }
+
+          vm.featureposition = {
+            longitude: longitudeString2,
+            latitude: latitudeString2,
+            height: heightString2,
+          };
+
+          let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
+          let index = pickedFeature._content._tileset._layerIndex;
+          vm.selectLayerIndex = index;
+          vm.selectedKeys = [`${index}`];
+          if (version == "1.0" || version == "0.0") {
+            let layerInfo = g3dLayer.getLayerInfo(index);
+            const { layerName, gdbpUrl } = layerInfo;
+            vm.featureproperties = { layerName, gdbpUrl };
+            vm.highlightM3d(index);
+          } else if (version == "2.0") {
+            let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+
+            let oid = viewer.scene.pickOid(movement.position);
+            let feature = viewer.scene.pick(movement.position);
+
+            let m3ds = g3dLayer.getM3DLayerIndexes();
+            let tileset = g3dLayer.getLayer(index);
+
+            /* m3ds.forEach((index) => {
+              let m3d = g3dLayer.getLayer(index);
+              m3d && m3d.reset();
+            });
+
+            tileset.pickedOid = oid;
+            tileset.pickedColor = Cesium.Color.fromCssColorString("#ffff00"); */
+            if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
+              let result = feature.content.getAttributeByOID(oid) || {};
+              vm.featureproperties = result;
+            } else {
+              tileset.queryAttributes(oid).then(function (result) {
+                result = result || {};
+                vm.featureproperties = result;
+              });
+            }
+          }
+        } else {
+          vm.clickvisible = false;
+        }
+      }
     },
     handleDynamicQuery() {
       this.featurevisible = false;
