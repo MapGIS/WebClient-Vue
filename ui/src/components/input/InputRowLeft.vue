@@ -6,11 +6,12 @@
       {{ title }}
     </div>
     <div class="mapgis-ui-input-row-left-input"
-         :style="{paddingRight: paddingRight}"
+         :style="{paddingRight: paddingRight, width: enableButton ? 'calc(100% - 148px)' : 'calc(100% - 70px)'}"
     >
       <mapgis-ui-input style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Text'"/>
       <mapgis-ui-input-number style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Number'"/>
     </div>
+    <mapgis-ui-button v-if="enableButton" type="primary" @click="$_finish">完成</mapgis-ui-button>
   </mapgis-ui-row>
 </template>
 
@@ -44,6 +45,14 @@ export default {
       type: String,
       default: "10px"
     },
+    inputWidth: {
+      type: String,
+      default: "10px"
+    },
+    enableButton: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -66,7 +75,14 @@ export default {
   },
   methods: {
     $_change(e) {
-      this.$emit("change", e.target.value);
+      if (typeof e === "number") {
+        this.$emit("change", e);
+      } else {
+        this.$emit("change", e.target.value);
+      }
+    },
+    $_finish() {
+      this.$emit("finish");
     }
   },
   mounted() {
@@ -97,6 +113,5 @@ export default {
 }
 
 .mapgis-ui-input-row-left-input {
-  width: calc(100% - 70px);
 }
 </style>

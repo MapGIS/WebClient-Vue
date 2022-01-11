@@ -705,7 +705,6 @@ export default {
       this.$emit("getCamera");
     },
     $_selectCamera(camera) {
-      console.log("-----------")
       this.$emit("selectCamera", camera);
     },
     $_addEditor() {
@@ -740,8 +739,6 @@ export default {
             let contentStr = getHTML();
             contentStr = contentStr.replace("<img", "<img style='width:100%'");
             vm.featureCopy.content = contentStr;
-            console.log("vm.featureCopy.content",vm.featureCopy.content)
-            console.log("vm.featureCopy.content",vm.featureCopy)
             vm.$emit("changeContent", vm.featureCopy);
             if (vm.isPreviewFeature) {
               vm.$emit("featurePreview", vm.featureCopy);

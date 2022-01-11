@@ -1,13 +1,12 @@
 <template>
     <div class="aspect-slope-analysis">
-
         <mapgis-ui-switch-panel
             size="small"
             label="坡度分析"
             v-model="slopeFill"
             class="paddingStyle"
         >
-            <div  class="slope-parameter-title">
+            <div class="slope-parameter-title">
                 <label>坡向坡度显示模式</label>
                 <mapgis-ui-tooltip placement="bottomRight">
                     <template slot="title">
@@ -15,7 +14,7 @@
                     </template>
                     <mapgis-ui-iconfont
                         type="mapgis-info"
-                        style="right:0"
+                        style="right: 0"
                     ></mapgis-ui-iconfont>
                 </mapgis-ui-tooltip>
             </div>
@@ -74,13 +73,13 @@ export default {
     mixins: [aspect, slope],
     components: {
         Popup,
-        PopupContent
+        PopupContent,
     },
     watch: {
         displayOption(newOpt) {
-            if(!newOpt){
+            if (!newOpt) {
                 this.$message.warning("请至少开启一种分析");
-                return
+                return;
             }
             let options = this.getManagerOptions();
             let { aspectSlopeAnalysis } = options;
@@ -90,49 +89,46 @@ export default {
                 aspectSlopeAnalysis.updateMaterial(newOpt);
             }
         },
-        aspectArrow :{
-            handler:function(e) {
-                const { slopeFill} = this;
+        aspectArrow: {
+            handler: function (e) {
+                const { slopeFill } = this;
                 const vm = this;
-                if(e){
-                    if(slopeFill){
+                if (e) {
+                    if (slopeFill) {
                         vm.displayOption = "arrowAspectSlope";
-                    }else{
+                    } else {
                         vm.displayOption = "aspectArrow";
                     }
-                }else{
-                    if(slopeFill){
+                } else {
+                    if (slopeFill) {
                         vm.displayOption = "slope";
-                    }else{
+                    } else {
                         vm.displayOption = undefined;
                     }
                 }
             },
-            immediate:true
-
+            immediate: true,
         },
-        slopeFill :{
-            handler:function(e) {
-                const { aspectArrow} = this;
+        slopeFill: {
+            handler: function (e) {
+                const { aspectArrow } = this;
                 const vm = this;
 
-                if(e){
-                    if(aspectArrow){
+                if (e) {
+                    if (aspectArrow) {
                         vm.displayOption = "arrowAspectSlope";
-                    }else{
+                    } else {
                         vm.displayOption = "slope";
                     }
-                }else{
-                    if(aspectArrow){
+                } else {
+                    if (aspectArrow) {
                         vm.displayOption = "aspectArrow";
-                    }else{
+                    } else {
                         vm.displayOption = undefined;
                     }
-
                 }
             },
-            immediate:true
-
+            immediate: true,
         },
         arrowRepeat() {
             let options = this.getManagerOptions();
@@ -150,9 +146,9 @@ export default {
     data() {
         return {
             aspectArrow: true,
-            slopeFill:true,
+            slopeFill: true,
             arrowRepeat: 1.0,
-            displayOption: "arrowAspectSlope",//"aspectArrow", "slope", "arrowAspectSlope"
+            displayOption: "arrowAspectSlope", //"aspectArrow", "slope", "arrowAspectSlope"
 
             //popup参数设置
             currentClickInfo: undefined,
@@ -162,7 +158,6 @@ export default {
                 latitude: 30,
                 height: 0,
             },
-
         };
     },
     mounted() {

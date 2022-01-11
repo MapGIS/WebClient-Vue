@@ -2,7 +2,7 @@
   <div>
     <slot>
       <div class="mapgis-3d-particle-effects">
-        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle">
+        <mapgis-ui-tab-panel :tabs="tabIcons" @change="onCreateParticle" ref="tabPanel">
         </mapgis-ui-tab-panel>
         <mapgis-ui-tabs
             :animated="false"
@@ -26,12 +26,20 @@
                 <template v-for="(tab,i) in tabIcons">
                  <div v-if="item.param.symbolGuid === tab.guid" :key="i">
                    <div v-if="tab.type === 'icon'" >
-                     <mapgis-ui-iconfont :type="tab.icon" style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
+                     <mapgis-ui-iconfont
+                         :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
+                         :type="tab.icon"
+                         style="font-size: 16px;padding-right: 4px"
+                         @click.capture.stop="showOrHide(index)"></mapgis-ui-iconfont>
                      <span>{{ item.name }}</span>
                    </div>
-                   <div v-else>
-                     <img :src="tab.image" style="width: 24px;padding-right: 4px"
-                          alt=""/>
+                   <div v-else >
+                     <img
+                         :src="tab.image"
+                         style="width: 24px;padding-right: 4px"
+                         alt=""
+                         :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
+                         @click="showOrHide(index)"/>
                      <span>{{ item.name }}</span>
                    </div>
                  </div>
@@ -128,6 +136,7 @@ import {
 
 import emptyImage from '../../../assets/image/empty.png';
 import {newGuid} from "../../Utils/util";
+import clonedeep from 'lodash.clonedeep';
 
 export default {
   name: "mapgis-3d-particle-effects-manager",
@@ -204,6 +213,7 @@ export default {
             return f.guid === viewModel.symbolGuid;
           });
           this.imgUrl = checkedSymbol[0].image;
+          vm.particleListCopy[i].imageUrl = this.imgUrl;
           this.createParticleEffects(viewModel.position, viewModel);
         }
       }
@@ -281,7 +291,11 @@ export default {
           image: "./smoke.png",
           iconUrl: "mapgis-smoke",
         }],
+      // 修改已有粒子参数的索引
       changeParticleIndex: undefined,
+      // 粒子类型: create(新建) | selected(选中)
+      mode:undefined,
+
       emptyImage: emptyImage,
       imageStyle: {
         height: '150px',
@@ -305,7 +319,7 @@ export default {
       // 当前选中符号图标
       iconUrl: undefined,
       // 当前选中符号对应的粒子图片
-      imgUrl: undefined
+      imgUrl: undefined,
     };
   },
 
@@ -315,6 +329,7 @@ export default {
     this.mount();
   },
   destroyed() {
+    this.removeAllParticle();
     this.unmount();
   },
   methods: {
@@ -327,6 +342,7 @@ export default {
     clickListItem(index) {
       let vm = this;
       this.activeIndex = index;
+      this.mode = 'selected';
       // 相机视角跳转至选中的粒子所在
       let particlePosition = this.particleArr[index].position;
       // viewer.flyTo和camera.flyTo定位点时，添加倾斜角有差别，camera.flyTo飞行到点有偏差
@@ -378,23 +394,13 @@ export default {
       });
     },
     unmount() {
-      this.removeAllParticle();
-      this.$emit("unload", this);
-    },
-    removeAllParticle(){
-      let vm = this;
-      if (vm.particleArr.length > 0) {
-        for (let i = 0; i < vm.particleArr.length; i++) {
-          vm.particleArr[i].remove();
-        }
-      }
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+        this.handlerAction = undefined;
       }
-      // 粒子结果集
-      this.particleArr = [];
-      // 粒子列表
-      this.particleListCopy = [];
+      if (this.$refs.tabPanel){
+        this.$refs.tabPanel.active = undefined
+      }
       if (
           this.isLogarithmicDepthBufferEnable !==
           isLogarithmicDepthBufferEnable(this.viewer)
@@ -404,6 +410,19 @@ export default {
             this.viewer
         );
       }
+      this.$emit("unload", this);
+    },
+    removeAllParticle(){
+      let vm = this;
+      if (vm.particleArr.length > 0) {
+        for (let i = 0; i < vm.particleArr.length; i++) {
+          vm.particleArr[i].remove();
+        }
+      }
+      // 粒子结果集
+      this.particleArr = [];
+      // 粒子列表
+      this.particleListCopy = [];
     },
     onClearParticle(index) {
       let vm = this;
@@ -414,9 +433,9 @@ export default {
           }
         }
       }
-      if (this.handlerAction) {
-        this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      }
+      // if (this.handlerAction) {
+      //   this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      // }
       // 粒子结果集
       this.particleArr.splice(index, 1);
       // 粒子列表
@@ -450,7 +469,8 @@ export default {
           this.startScaleCopy = viewModelCopy.startScale;
           this.endScaleCopy = viewModelCopy.endScale;
         } else {
-          let currentParticle = this.particleListCopy[this.activeIndex].param;
+          let currentParticle = Object.assign({},this.particleListCopy[this.activeIndex].param);
+
           this.emitterTypeCopy = currentParticle.emitterType;
           this.emissionRateCopy = currentParticle.emissionRate;
           this.imageSizeCopy = currentParticle.imageSize;
@@ -467,8 +487,12 @@ export default {
     },
     setParticleParameter(index) {
       this.activeKey = '2';
+      this.mode = 'selected';
+      this.changeParticleIndex = index;
+
       // 参数为该粒子的参数，初始化时是初始化参数，修改后是修改后存放在particleArr结果集中的参数。
-      let currentParticle = this.particleListCopy[index].param;
+      let currentParticle = Object.assign({},this.particleListCopy[index].param);
+      // let currentParticle = clonedeep(this.particleListCopy[index].param);
       this.emitterTypeCopy = currentParticle.emitterType;
       this.emissionRateCopy = currentParticle.emissionRate;
       this.imageSizeCopy = currentParticle.imageSize;
@@ -479,10 +503,10 @@ export default {
       this.startScaleCopy = currentParticle.startScale;
       this.endScaleCopy = currentParticle.endScale;
 
-      this.changeParticleIndex = index;
     },
     onCreateParticle(tab) {
       // 先把面板参数重设
+      this.mode = 'create';
       this.emitterTypeCopy = this.viewModel.emitterType;
       this.emissionRateCopy = this.viewModel.emissionRate;
       this.imageSizeCopy = this.viewModel.imageSize;
@@ -492,6 +516,7 @@ export default {
       this.maximumSpeedCopy = this.viewModel.maximumSpeed;
       this.startScaleCopy = this.viewModel.startScale;
       this.endScaleCopy = this.viewModel.endScale;
+      this.changeParticleIndex = undefined;
 
       this.imgUrl = tab.image;
       this.title = tab.title;
@@ -500,6 +525,7 @@ export default {
         this._addEventListener();
       }
     },
+
     _addEventListener() {
       this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
       this.handlerAction.setInputAction(event => {
@@ -540,7 +566,7 @@ export default {
       const guid = newGuid();
 
       let particleItem;
-      particleItem = {name: this.title.concat(this.particleArr.length), guid: guid, param: param}
+      particleItem = {name: this.title.concat(this.particleArr.length), guid: guid,imageUrl:this.imgUrl,isShow:true,param: param}
       this.particleListCopy.push(particleItem);
     },
     createParticleEffects(degrees, viewModel) {
@@ -595,13 +621,11 @@ export default {
     },
     onEmitterChange(value) {
       let emitter = this.changeEmitterTypeCesium(value);
-      // this.emitterTypeCopy = value;
       for (let i = 0; i < this.particleArr.length; i++) {
-        if (i === this.changeParticleIndex) {
+        if (i === this.changeParticleIndex && this.mode === 'selected') {
           this.particleArr[i].emitter = emitter;
           this.particleListCopy[i].param.emitterType = value;
-          // this.changeParticleIndex = undefined;
-        } else if (this.changeParticleIndex === undefined){
+        } else if (this.mode === 'create'){
           this.viewModel.emitterType = value
         }
       }
@@ -634,7 +658,7 @@ export default {
     onChangeEffect(val, key) {
       if (this.particleArr.length > 0) {
         for (let i = 0; i < this.particleArr.length; i++) {
-          if (i === this.changeParticleIndex) {
+          if (i === this.changeParticleIndex && this.mode === 'selected') {
             if (key === "imageSize") {
               this.particleArr[i].maximumImageSize = new this.Cesium.Cartesian2(val, val);
               this.particleArr[i].minimumImageSize = new this.Cesium.Cartesian2(val, val);
@@ -643,7 +667,7 @@ export default {
               this.particleArr[i][key] = val;
               this.particleListCopy[i].param[key] = val;
             }
-          } else if (this.changeParticleIndex === undefined){
+          } else if (this.mode === 'create'){
             if (key === "imageSize") {
               this.viewModel.imageSize = val;
             } else {
@@ -652,6 +676,53 @@ export default {
           }
         }
       }
+    },
+    // 对粒子列表中已有的粒子进行显隐操作
+    showOrHide(index){
+      let vm = this;
+      if (vm.particleListCopy[index].isShow){
+        // 隐藏
+        vm.particleListCopy[index].isShow = false;
+        vm.particleArr[index].remove();
+      } else {
+        // 显示
+        vm.particleListCopy[index].isShow = true;
+        vm.showParticleEffects(index);
+      }
+    },
+    showParticleEffects(index){
+      let vm = this;
+      let oneParticle = Object.assign({},vm.particleListCopy[index].param);
+      oneParticle.emitterTypeCesium = vm.changeEmitterTypeCesium(oneParticle.emitterType);
+      const imgUrl = vm.particleListCopy[index].imageUrl;
+      const degrees = oneParticle.position;
+      // 开启计时
+      this.viewer.clock.shouldAnimate = true;
+      // 创建粒子特效
+      let particle = new this.Cesium.StableParticle(this.viewer, imgUrl, [degrees.longitude, degrees.latitude, degrees.height], {
+        startColor: new this.Cesium.Color(1, 1, 1, 1),
+        emissionRate: oneParticle.emissionRate,
+        imageSize: new this.Cesium.Cartesian2(oneParticle.imageSize, oneParticle.imageSize),
+        minimumParticleLife: oneParticle.minimumParticleLife,
+        maximumParticleLife: oneParticle.maximumParticleLife,
+        minimumSpeed: oneParticle.minimumSpeed,
+        maximumSpeed: oneParticle.maximumSpeed,
+        startScale: oneParticle.startScale,
+        endScale: oneParticle.endScale,
+        emitter: oneParticle.emitterTypeCesium,
+        gravity: 0.5,
+        heading: 0.0,
+        pitch: 0.0,
+        roll: 0.0,
+        minimumPixelSize: 64.0,
+        endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
+        minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+        maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+        lifetime: 16.0,
+        viewHeight: -1,
+      });
+      particle.start();
+      vm.particleArr[index] = particle;
     }
   }
 };

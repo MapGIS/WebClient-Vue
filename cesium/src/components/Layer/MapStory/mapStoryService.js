@@ -1006,15 +1006,7 @@ export default {
             if (chapters[j].uuid !== chapterUUID) {
               let features = chapters[j].features;
               for (let k = 0; k < features.length; k++) {
-                let graphic = this.$_getGraphicByID(features[k].id);
-                if (!graphic) {
-                  let GeoJSON = {
-                    type: "FeatureCollection",
-                    features: [features[k]]
-                  };
-                  this.$_fromJson(GeoJSON);
-                  graphic = this.$_getGraphicByID(features[k].id);
-                }
+                let graphic = this.$_getGraphic(features[k]);
                 graphic.show = false;
               }
             }
@@ -1024,15 +1016,7 @@ export default {
             if (chapters[j].uuid === chapterUUID) {
               let features = chapters[j].features;
               for (let k = 0; k < features.length; k++) {
-                let graphic = this.$_getGraphicByID(features[k].id);
-                if (!graphic) {
-                  let GeoJSON = {
-                    type: "FeatureCollection",
-                    features: [features[k]]
-                  };
-                  this.$_fromJson(GeoJSON);
-                  graphic = this.$_getGraphicByID(features[k].id);
-                }
+                let graphic = this.$_getGraphic(features[k]);
                 graphic.show = true;
               }
               break;
@@ -1041,6 +1025,18 @@ export default {
           break;
         }
       }
+    },
+    $_getGraphic(feature) {
+      let graphic = this.$_toJSONById(feature.id);
+      if (!graphic) {
+        let GeoJSON = {
+          type: "FeatureCollection",
+          features: [feature]
+        };
+        this.$_fromJson(GeoJSON);
+        graphic = this.$_getGraphicByID(feature.id);
+      }
+      return graphic;
     },
     $_addChapter(chapter) {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
@@ -1063,7 +1059,8 @@ export default {
               // Object.keys(features[j].popupOptions).forEach(function (key) {
               //   popupOptions[key] = features[j].popupOptions[key];
               // });
-              let graphic = this.$_toJSONById(features[j].id);
+              let graphic = this.$_getGraphic(features[j]);
+              graphic.show = false;
               graphic.title = features[j].title;
               newFeatures.push(graphic);
             }

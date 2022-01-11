@@ -461,7 +461,6 @@ export default {
         this.$_showError(filter(id, value, this), id);
       }
       if (id === "MapgisUiThemeListCheckBox") {
-        console.log("---value, filter, id", value, filter, id)
         this.$emit("formChanged", value, filter, id, extra, extra2);
       } else if (id === "MapgisUiThemeListColor") {
         this.$emit("formChanged", value, filter, id);

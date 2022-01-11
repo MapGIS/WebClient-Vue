@@ -2,14 +2,13 @@ import Vue from "vue";
 import axios from "axios";
 
 import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
-import MapgisMapboxComponents from "./components/mapbox";
-import MapgisCesiumComponents from "./components/cesium";
-// import AntdUIComponents from "./components/ui";
+
+import MapgisMapboxComponents from "../mapboxgl/src/main";
+import MapgisCesiumComponents from "../cesium/src/main";
 
 import "../ui/dist-libs/webclient-vue-ui.css";
 import MapgisUIComponents from "../ui/src/index";
 
-// Vue.use(AntdUIComponents, {});
 Vue.use(MapgisUIComponents, {});
 Vue.use(MapgisMapboxComponents, {});
 Vue.use(MapgisCesiumComponents, {});
@@ -21,6 +20,10 @@ Vue.use(MapgisCesiumComponents, {});
   });
 }); */
 
+/* window.webclient = {
+  ip: "192.168.21.192",
+  port: "6163",
+}; */
 window.webclient = {
   ip: "develop.smaryun.com",
   port: "6163",

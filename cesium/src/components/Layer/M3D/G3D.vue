@@ -272,97 +272,40 @@ export default {
       const { vueIndex, vueKey, vueCesium } = this;
       const { viewer, url, $props, enablePopup, layerId } = this;
 
+      let version = this.parseVersion();
       let server = this.parseServer();
       let { ip, port } = server;
-
+      this.ip = ip;
+      this.port = port;
       let g3dLayer = this.createCesiumObject();
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
-      g3dLayer.then((e) => {
-        let g3d = viewer.scene.layers.appendG3DLayer(url, {
-          $props,
-          loaded: function (layer) {
-            // 该回调有多少图层循环进多少次
-          },
-          getDocLayerIndexes(indexes) {
-            // 该回调只触发一次
-            vm.g3dLayerIndex = indexes[0];
-            vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
-              m3ds: [],
-              layerId: vueIndex,
-              g3dLayerIndex: vm.g3dLayerIndex,
-            });
-            let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
-            vm.layerTree[0].version = g3dLayer.version;
-            vm.version = g3dLayer.version;
-            vm.layerTree[0].title = g3dLayer.name;
-            let layerIndexs = g3dLayer.getM3DLayerIndexes();
 
-            let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      /* version = "2.0";
+      let url1 =
+        "http://192.168.199.71:8089/igs/rest/services/V2_分层分户-静态单体化/SceneServer"; */
 
-            if (find && find.options && find.options.m3ds) {
-              let props = layerIndexs.map((i, j) => {
-                let gIndex = i;
-                let layer = g3dLayer.getLayer(gIndex);
-                return layer.readyPromise;
-              });
-              Promise.all(props).then((m3ds) => {
-                vm.$emit("loaded", { g3d: vm, component: vm });
-                vm.recordOriginStyle();
-                if (enablePopup) {
-                  vm.$_bindPickFeature();
-                }
-                vm.m3ds = m3ds;
-                find.options.m3ds = m3ds;
-                let all = [];
-                m3ds.forEach((m3d, i) => {
-                  // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
-                  let gIndex = layerIndexs[i];
-                  let info = g3dLayer.getLayerInfo(gIndex);
-                  let layer = g3dLayer.getLayer(gIndex);
-                  let { layerName, gdbpUrl, layerType } = info;
-                  all.push(`${gIndex}`);
-                  vm.layerTree[0].children.push({
-                    title: layerName,
-                    key: `${gIndex}`,
-                    version: g3dLayer.version,
-                    layerIndex: gIndex,
-                    layerType,
-                    ip,
-                    port,
-                    gdbp: gdbpUrl,
-                    icon: "mapgis-layer",
-                    menu: "mapgis-down",
-                    scopedSlots: {
-                      icon: "custom",
-                      title: "title",
-                    },
-                  });
-                  if (layers) {
-                    if (layers.indexOf(`${i}`) >= 0) {
-                      layer.show = true;
-                    } else {
-                      layer.show = false;
-                    }
-                  } else {
-                    layer.show = true;
-                  }
-                });
-                loopM3ds(m3ds, (types) => {
-                  types.forEach((t, i) => {
-                    const child = vm.layerTree[0].children;
-                    child[layerIndexs[i]].subLayerType = checkTypeIcon(t);
-                  });
-                });
-                vm.parseTerrain();
-                vm.parserVector();
-                vm.resortLayers();
-                vm.layerIds = vm.layerIds.concat(all);
-              });
-            }
-          },
+      if (version == "2.0") {
+        g3dLayer.then((e) => {
+          let g3d = viewer.scene.layers.appendSceneServer(url, {
+            $props,
+            loaded: function (layer) {
+              // 该回调有多少图层循环进多少次
+            },
+            getDocLayerIndexes: vm.getDocLayerIndexes,
+          });
         });
-      });
+      } else if (version == "1.0" || version == "0.0") {
+        g3dLayer.then((e) => {
+          let g3d = viewer.scene.layers.appendG3DLayer(url, {
+            $props,
+            loaded: function (layer) {
+              // 该回调有多少图层循环进多少次
+            },
+            getDocLayerIndexes: vm.getDocLayerIndexes,
+          });
+        });
+      }
 
       if (viewer.isDestroyed()) return;
     },
@@ -375,6 +318,88 @@ export default {
       g3dLayer.remove(true);
       this.$emit("unload", { component: this });
       vueCesium.G3DManager.deleteSource(vueKey, vueIndex);
+    },
+    // 图层回调解析
+    getDocLayerIndexes(indexes, g3d) {
+      const { vueIndex, vueKey, vueCesium, viewer, enablePopup } = this;
+      const { ip, port } = this;
+      const vm = this;
+      let layers = this.parseLayers();
+      // 该回调只触发一次
+      vm.g3dLayerIndex = indexes[0];
+      vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
+        m3ds: [],
+        layerId: vueIndex,
+        g3dLayerIndex: vm.g3dLayerIndex,
+      });
+      let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
+      vm.layerTree[0].version = g3dLayer.version;
+      vm.version = g3dLayer.version;
+      vm.layerTree[0].title = g3dLayer.name;
+      let layerIndexs = g3dLayer.getM3DLayerIndexes();
+
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+
+      if (find && find.options && find.options.m3ds) {
+        let props = layerIndexs.map((i, j) => {
+          let gIndex = i;
+          let layer = g3dLayer.getLayer(gIndex);
+          return layer.readyPromise;
+        });
+        Promise.all(props).then((m3ds) => {
+          vm.$emit("loaded", { g3d: vm, component: vm });
+          vm.recordOriginStyle();
+          if (enablePopup) {
+            vm.$_bindPickFeature();
+          }
+          vm.m3ds = m3ds;
+          vueCesium.G3DManager.changeOptions(vueKey, vueIndex, "m3ds", m3ds);
+          let all = [];
+          m3ds.forEach((m3d, i) => {
+            // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
+            let gIndex = layerIndexs[i];
+            let info = g3dLayer.getLayerInfo(gIndex);
+            let layer = g3dLayer.getLayer(gIndex);
+            let { layerName, gdbpUrl, layerType } = info;
+            all.push(`${gIndex}`);
+            vm.layerTree[0].children.push({
+              title: layerName,
+              key: `${gIndex}`,
+              version: g3dLayer.version,
+              layerIndex: gIndex,
+              layerType,
+              ip,
+              port,
+              gdbp: gdbpUrl,
+              icon: "mapgis-layer",
+              menu: "mapgis-down",
+              scopedSlots: {
+                icon: "custom",
+                title: "title",
+              },
+            });
+            if (layers) {
+              if (layers.indexOf(`${i}`) >= 0) {
+                layer.show = true;
+              } else {
+                layer.show = false;
+              }
+            } else {
+              layer.show = true;
+            }
+          });
+          loopM3ds(m3ds, (types) => {
+            types.forEach((t, i) => {
+              const child = vm.layerTree[0].children;
+              child[layerIndexs[i]].subLayerType = checkTypeIcon(t);
+            });
+          });
+          vm.parseTerrain();
+          vm.parserVector();
+          vm.resortLayers();
+          vm.layerIds = vm.layerIds.concat(all);
+        });
+      }
     },
     // 搜索需要
     onExpand(expandedKeys) {
@@ -527,10 +552,22 @@ export default {
         port,
       };
     },
-    parseVersion(m3d) {
-      const { asset } = m3d;
-      const { version } = asset;
-      return version;
+    parseVersion(url) {
+      url = url || this.url;
+      let g3d = new RegExp("/igs/rest/g3d/");
+      let scene = new RegExp("/SceneServer");
+      let find = url.search(g3d);
+      let findScene = url.search(scene);
+      if (find >= 0) {
+        // 0.0 1.0版本的m3d图层，等于2.0版本的g3d图层
+        this.version = "1.0";
+      } else if (findScene >= 0) {
+        // 2.0 版本
+        this.version = "2.0";
+      } else {
+        this.version = "1.0";
+      }
+      return this.version;
     },
     parseName(m3d) {
       let { _gdbpUrl } = m3d;

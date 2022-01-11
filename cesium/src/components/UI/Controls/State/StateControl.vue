@@ -94,11 +94,17 @@ export default {
       if (bottomMap) {
         let dom = false;
         const name = "mapgis-3d-statebar";
-        container.children.forEach((element) => {
+        /* container.children.forEach((element) => {
           if (element.className == name) {
             dom = element;
           }
-        });
+        }); */
+        for (let i = 0; i < container.children.length; i++) {
+          let element = container.children[i];
+          if (element.className == name) {
+            dom = element;
+          }
+        }
         if (dom) {
           container.removeChild(dom);
         }
@@ -279,11 +285,19 @@ export default {
     const name = "mapgis-3d-statebar";
     if (bottomMap) {
       let dom = false;
-      container.children.forEach((element) => {
-        if (element.className == name) {
-          dom = element;
+      if (container && container.children) {
+        for (let i = 0; i < container.children.length; i++) {
+          let element = container.children[i];
+          if (element.className == name) {
+            dom = element;
+          }
         }
-      });
+        /* container.children.forEach((element) => {
+          if (element.className == name) {
+            dom = element;
+          }
+        }); */
+      }
       if (dom) {
         dom.children[0].innerText = span;
       } else {

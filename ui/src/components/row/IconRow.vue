@@ -59,10 +59,7 @@ export default {
 .mapgis-ui-icon-row-container {
   text-align: left;
   font-size: 17px;
-}
-
-.mapgis-ui-icon-row-container:hover {
-  background: #E7F4FF;
+  cursor: pointer;
 }
 
 .mapgis-ui-icon-row-more-tool {

@@ -1,4 +1,6 @@
 import "../style/card.css";
+import Markdown from "../../cesium/docs/api/simulation/CityGrow.md";
+
 export default {
   title: "三维/模拟仿真/城市生长",
   argTypes: {
@@ -38,3 +40,11 @@ cityGrow.args = {
     heightScale:3.0,
   }
 };
+cityGrow.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
+};
+
