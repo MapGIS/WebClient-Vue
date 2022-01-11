@@ -3,7 +3,7 @@
     <div v-show="viewInfo === true" class="chart-legend-wrapper">
       <div class="header">
         <div class="buttons">图例信息</div>
-        <a-icon class="header-close" type="close" @click="handleClose" />
+        <mapgis-ui-icon class="header-close" type="close" @click="handleClose" />
       </div>
       <div class="area-count">面积:{{ allAreaString }} ㎡</div>
       <!-- <div :id="echartid" :style="{ width: '320px', height: '180px' }" /> -->
@@ -93,8 +93,8 @@ export default {
     geoJson: { type: Object },
     vueKey: { type: String, default: "default" },
     vueIndex: {
-      type: String || Number,
-      default: (Math.random() * 10000).toFixed(0)
+      type: [String, Number],
+      default: () => (Math.random() * 100000000).toFixed(0)
     }
   },
   inject: ["Cesium", "vueCesium", "viewer"],
