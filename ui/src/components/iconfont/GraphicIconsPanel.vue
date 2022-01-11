@@ -155,6 +155,9 @@ export default {
     }
   },
   methods: {
+    $_resetIconsPanel() {
+      this.currentIconType = "mouse";
+    },
     //确定当前的绘制模式，是三维还是二维
     $_chooseDrawType(type) {
       this.drawType = type;
