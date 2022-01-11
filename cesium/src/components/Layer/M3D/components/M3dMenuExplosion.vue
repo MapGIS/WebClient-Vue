@@ -9,13 +9,18 @@
           </mapgis-ui-button>
         </mapgis-ui-col>
       </mapgis-ui-row>
-      <mapgis-ui-row>
+      <mapgis-ui-row :style="{ margin: '8px 0px' }">
         <mapgis-ui-col :span="8"
           ><mapgis-ui-button shape="circle" @click="() => changeHeadding(180)">
             <mapgis-ui-iconfont type="mapgis-arrow-left-filling" />
           </mapgis-ui-button>
         </mapgis-ui-col>
-        <mapgis-ui-col :span="8" :offset="8"
+        <mapgis-ui-col :span="8"
+          ><mapgis-ui-button shape="circle" @click="() => resetHeadding()">
+            <mapgis-ui-iconfont type="mapgis-redo" />
+          </mapgis-ui-button>
+        </mapgis-ui-col>
+        <mapgis-ui-col :span="8"
           ><mapgis-ui-button shape="circle" @click="() => changeHeadding(0)">
             <mapgis-ui-iconfont type="mapgis-arrow-right-filling" />
           </mapgis-ui-button>
@@ -75,11 +80,11 @@ export default {
   props: {
     ...VueOptions,
     version: {
-      type: String
+      type: String,
     },
     layerIndex: {
-      type: Number
-    }
+      type: Number,
+    },
   },
   data() {
     return {
@@ -91,7 +96,7 @@ export default {
       angle: 0,
       distance: 5,
       speed: 1,
-      moveDirection: undefined
+      moveDirection: undefined,
     };
   },
   created() {},
@@ -104,10 +109,10 @@ export default {
   methods: {
     createCesiumObject() {
       return new Promise(
-        resolve => {
+        (resolve) => {
           resolve();
         },
-        reject => {}
+        (reject) => {}
       );
     },
     mount() {
@@ -116,10 +121,10 @@ export default {
       const { viewer } = this;
 
       let explosion = this.createCesiumObject();
-      explosion.then(res => {
+      explosion.then((res) => {
         let modelExplosion = new Cesium.ModelExplosion(viewer);
         vueCesium.ExplosionManager.addSource(vueKey, vueIndex, this, {
-          explosion: modelExplosion
+          explosion: modelExplosion,
         });
       });
 
@@ -166,7 +171,7 @@ export default {
         modelExplosion.multiLayerAxisExplosionWithAnimate([layer], {
           direction: vector,
           expDistance: distance,
-          speed: speed
+          speed: speed,
         });
       }
     },
@@ -176,25 +181,42 @@ export default {
       let drawElement = new Cesium.DrawElement(viewer);
       drawElement.startDrawingPolyline({
         color: new Cesium.Color(0.3, 0.7, 0.8, 1.0),
-        callback: function(result) {
-          console.warn("pos", result);
+        callback: function (result) {
           // vm.moveDirection = result.positions;
           var polyline = new Cesium.DrawElement.PolylinePrimitive({
             positions: result.positions,
             width: 1,
-            geodesic: true
+            geodesic: true,
           });
           scene.primitives.add(polyline);
           polyline.setEditable();
           primitivesList.push(polyline);
-        }
+        },
       });
     },
     changeHeadding(rotate) {
       this.angle = this.headding + rotate;
       this.explosionAction();
-    }
-  }
+    },
+    resetHeadding() {
+      const { layerIndex, viewer, m3ds } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      let tileset;
+      let find = vueCesium.ExplosionManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let modelExplosion = find.options.explosion;
+        if (m3ds) {
+          tileset = m3ds[layerIndex];
+        } else {
+          tileset = viewer.scene.layers.getM3DLayer(layerIndex);
+        }
+        if (!tileset || !modelExplosion) {
+          return;
+        }
+        modelExplosion.removeModelExplosion([tileset]);
+      }
+    },
+  },
 };
 </script>
 

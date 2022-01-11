@@ -102,6 +102,8 @@ const Template = (args, { argTypes }) => ({
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
+      <mapgis-3d-igs-dynamic-layer baseUrl="http://192.168.21.192:6163/igs/rest/mrms/layers" gdbps="gdbp://MapGisLocal/专题图数据/sfcls/县城驻地"></mapgis-3d-igs-dynamic-layer>
+      <mapgis-3d-igs-dynamic-layer baseUrl="http://192.168.21.192:6163/igs/rest/mrms/layers" gdbps="gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划"></mapgis-3d-igs-dynamic-layer>
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-overlay-analysis v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
       </mapgis-ui-card>
@@ -112,11 +114,12 @@ const Template = (args, { argTypes }) => ({
 
 export const 叠加分析组件 = Template.bind({});
 叠加分析组件.args = {
-  baseUrl: "http://localhost:6163/",
-  // srcType: "Layer",
-  srcType: "Feature",
-  srcALayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
-  srcBLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市建筑物",
+  baseUrl: "http://192.168.21.192:6163/",
+  srcType: "Layer",
+  // srcALayer: "gdbp://MapGISLocalPlus/sample/sfcls/湖北省路网",
+  srcALayer: "gdbp://MapGisLocal/专题图数据/sfcls/县城驻地",
+  // srcBLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
+  srcBLayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
   srcAFeature: {
     "type": "FeatureCollection",
     "features": [

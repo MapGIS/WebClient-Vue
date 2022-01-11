@@ -1,4 +1,7 @@
-<template><div></div></template>
+<template>
+  <div></div>
+</template>
+
 <script>
 export default {
   name: "mapgis-3d-graph-theme-layer",
@@ -89,17 +92,19 @@ export default {
       this.$emit("unload", this);
     },
     addGraphLayer() {
-      this.removeGraphLayer();
-      const { Cesium, viewer } = this;
-      this.thematicMapLayer = new Cesium.ThemeManager(viewer);
-      this.thematicMapLayer.width = this.width;
-      this.thematicMapLayer.attributeName = this.attributeName;
-      this.thematicMapLayer.addGeoGeometry = false;
-      this.thematicMapLayer.attributeColor = this.ceisumColors;
-      if (this.type === "Pie") {
-        this.thematicMapLayer.addExtrudedHeight = this.addExtrudedHeight;
+      if (this.geojson && Object.keys(this.geojson).length > 0) {
+        this.removeGraphLayer();
+        const { Cesium, viewer } = this;
+        this.thematicMapLayer = new Cesium.ThemeManager(viewer);
+        this.thematicMapLayer.width = this.width;
+        this.thematicMapLayer.attributeName = this.attributeName;
+        this.thematicMapLayer.addGeoGeometry = false;
+        this.thematicMapLayer.attributeColor = this.ceisumColors;
+        if (this.type === "Pie") {
+          this.thematicMapLayer.addExtrudedHeight = this.addExtrudedHeight;
+        }
+        this.thematicMapLayer.addByGeoJson(this.geojson, this.type);
       }
-      this.thematicMapLayer.addByGeoJson(this.geojson, this.type);
     },
     removeGraphLayer() {
       if (this.thematicMapLayer) {

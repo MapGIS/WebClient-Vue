@@ -1,7 +1,7 @@
 import Mapgis3dStratifiedHousehold from "../../cesium/src/components/Analysis/StratifiedHousehold.vue";
 
 export default {
-    title: "三维/图层/G3D/分层分户",
+    title: "三维/图层/G3D/静态单体化",
     component: Mapgis3dStratifiedHousehold,
     argTypes: {
         enablePopup: true,
@@ -16,8 +16,8 @@ const Template = (args, { argTypes }) => ({
     data() {
         return {
             g3d: {
-                url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
-                // url: "http://192.168.199.71:8089/igs/rest/g3d/G3D_分层分户",
+                // url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
+                url: "http://192.168.199.71:8089/igs/rest/services/分层分户-静态单体化/SceneServer",
                 enableControl: false,
             }
         };

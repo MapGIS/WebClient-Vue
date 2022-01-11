@@ -136,11 +136,11 @@ export default {
               title: "扫描",
               icon: "mapgis-wifi"
             },
-            {
+           /*  {
               type: "searchlight",
               title: "探照灯",
               icon: "mapgis-star"
-            }
+            } */
             /* {
               type: "radar",
               title: "雷达",

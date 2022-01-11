@@ -238,6 +238,9 @@ export { default as MapgisUiClouddiskModelFields } from "./view/clouddisk/compon
 export { default as MapgisUiPortalDataresource } from "./view/portal/components/select/DataResource.vue";
 export { default as MapgisUiPortalServiceresource } from "./view/portal/components/select/ServiceResource.vue";
 
+// DataStore
+export { default as MapgisUiFilePreview } from "./view/datastore/iot/FilePreview.vue";
+
 // comprehensive-query
 export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-query/ComprehensiveQuery.vue";
 

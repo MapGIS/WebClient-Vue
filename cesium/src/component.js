@@ -46,6 +46,7 @@ export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dPopupContent } from "./components/UI/Popup/PopupContent.vue";
 export { default as Mapgis3dFeaturePopup } from "./components/UI/Popup/PopupFeature.vue";
+export { default as Mapgis3dPopupIot } from "./components/UI/Popup/PopupIOT.vue";
 export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
 export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/Marker3dPro.vue";
 export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/Marker3dSetPro.vue";
@@ -64,9 +65,6 @@ export { default as Mapgis3dGeojsonDatasource } from "./components/DataSource/Ge
 export { default as Mapgis3dCzmlDatasource } from "./components/DataSource/Czml/CzmlDataSource";
 
 //三维空间分析
-export { default as Mapgis3dBufferAnalysis } from "./components/Analysis/Buffer.vue";
-export { default as Mapgis3dOverlayAanalysis } from "./components/Analysis/Overlay.vue";
-
 export { default as Mapgis3dViewshed } from "./components/Analysis/Viewshed.vue";
 export { default as Mapgis3dSightline } from "./components/Analysis/Sightline.vue";
 export { default as Mapgis3dSkyline } from "./components/Analysis/SkyLine";
@@ -85,6 +83,8 @@ export { default as Mapgis3dCutFill } from "./components/Analysis/CutFill";
 export { default as Mapgis3dProfile } from "./components/Analysis/Profile";
 export { default as Mapgis3dParticleEffectsManager } from "./components/Overlay/particle/ParticleEffects";
 export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
+export { default as Mapgis3dBufferAnalysis } from "./components/Analysis/Buffer.vue";
+export { default as Mapgis3dOverlayAanalysis } from "./components/Analysis/Overlay.vue";
 export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
 export { default as Mapgis3dVideoManger } from "./components/Analysis/video/VideoManager.vue";
 export { default as Mapgis3dVideoSetting } from "./components/Analysis/video/VideoSetting.vue";

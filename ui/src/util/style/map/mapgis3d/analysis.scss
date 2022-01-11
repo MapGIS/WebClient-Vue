@@ -1,5 +1,5 @@
-@import "../../../util/style/mixins/mixins.scss";
-@import "../../../util/style/theme/theme.scss";
+@import "../../mixins/mixins.scss";
+@import "../../theme/theme.scss";
 
 .mapgis-widget-particle-effects {
   /* v-deep .mapgis-ui-card-body {
@@ -22,7 +22,7 @@ $tree-height: 400px;
   }
 
   &-layers {
-      min-width: 160px;
+    min-width: 160px;
   }
 
   &-slider-tree {
@@ -150,6 +150,10 @@ $tree-height: 400px;
 
   .m-colorPicker .colorBtn {
     width: 150px;
+  }
+
+  .mapgis-ui-button {
+    display: block;
   }
 
   .mapgis-3d-m3d-menu-explosion {

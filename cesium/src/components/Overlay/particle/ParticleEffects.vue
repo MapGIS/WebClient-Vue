@@ -26,12 +26,16 @@
                 <template v-for="(tab,i) in tabIcons">
                  <div v-if="item.param.symbolGuid === tab.guid" :key="i">
                    <div v-if="tab.type === 'icon'" >
-                     <mapgis-ui-iconfont :type="tab.icon" style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
+                     <mapgis-ui-iconfont
+                         :type="tab.icon"
+                         style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
                      <span>{{ item.name }}</span>
                    </div>
-                   <div v-else>
-                     <img :src="tab.image" style="width: 24px;padding-right: 4px"
-                          alt=""/>
+                   <div v-else >
+                     <img
+                         :src="tab.image"
+                         style="width: 24px;padding-right: 4px"
+                         alt=""/>
                      <span>{{ item.name }}</span>
                    </div>
                  </div>
@@ -320,6 +324,7 @@ export default {
     this.mount();
   },
   destroyed() {
+    this.removeAllParticle();
     this.unmount();
   },
   methods: {
@@ -384,26 +389,13 @@ export default {
       });
     },
     unmount() {
-      this.removeAllParticle();
-      this.$emit("unload", this);
-    },
-    removeAllParticle(){
-      let vm = this;
-      if (vm.particleArr.length > 0) {
-        for (let i = 0; i < vm.particleArr.length; i++) {
-          vm.particleArr[i].remove();
-        }
-      }
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         this.handlerAction = undefined;
       }
-      this.$refs.tabPanel.active = undefined
-
-      // 粒子结果集
-      this.particleArr = [];
-      // 粒子列表
-      this.particleListCopy = [];
+      if (this.$refs.tabPanel){
+        this.$refs.tabPanel.active = undefined
+      }
       if (
           this.isLogarithmicDepthBufferEnable !==
           isLogarithmicDepthBufferEnable(this.viewer)
@@ -413,6 +405,19 @@ export default {
             this.viewer
         );
       }
+      this.$emit("unload", this);
+    },
+    removeAllParticle(){
+      let vm = this;
+      if (vm.particleArr.length > 0) {
+        for (let i = 0; i < vm.particleArr.length; i++) {
+          vm.particleArr[i].remove();
+        }
+      }
+      // 粒子结果集
+      this.particleArr = [];
+      // 粒子列表
+      this.particleListCopy = [];
     },
     onClearParticle(index) {
       let vm = this;
@@ -666,7 +671,18 @@ export default {
           }
         }
       }
-    }
+    },
+    // 对粒子列表中已有的粒子进行显隐操作
+    // showOrHide(index){
+    //   let vm = this;
+    //   if (vm.isShow){
+    //
+    //     vm.particleListCopy[index].isShow = false;
+    //   } else {
+    //   }
+    //   console.log("1111111111111",vm.particleListCopy[index]);
+    //
+    // }
   }
 };
 </script>

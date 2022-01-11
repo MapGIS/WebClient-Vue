@@ -96,10 +96,7 @@ import CameraSetting from "./components/CameraSetting";
 import LightSetting from "./components/LightSetting";
 import WeatherSetting from "./components/WeatherSetting";
 import EffectSetting from "./components/EffectSetting";
-import {
-  isDepthTestAgainstTerrainEnable,
-  setDepthTestAgainstTerrainEnable,
-} from "../WebGlobe/util";
+
 export default {
   name: "mapgis-3d-scene-setting",
   components: {
@@ -154,13 +151,6 @@ export default {
   methods: {
     mount() {
       this.$emit("loaded", this);
-      this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.viewer
-      );
-      if (!this.isDepthTestAgainstTerrainEnable) {
-        // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.viewer);
-      }
     },
     unmount() {
       this.$_deleteManger("SettingToolManager", function (manager) {
