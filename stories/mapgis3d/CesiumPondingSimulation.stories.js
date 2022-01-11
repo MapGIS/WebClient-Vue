@@ -15,6 +15,11 @@ const Template = (args, { argTypes }) => ({
       terrainUrl: "http://192.168.21.192:6163/igs/rest/g3d/terrain",
       m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
       maximumScreenSpaceError: 8,
+
+      //ponding-simulation
+      time: undefined,
+      pond: undefined,
+      sliderValue: undefined,
     };
   },
   template: `
@@ -23,7 +28,19 @@ const Template = (args, { argTypes }) => ({
         v-on:load="handleLoad"
     >
         <mapgis-3d-igs-terrain :url="terrainUrl" />
-        <mapgis-3d-ponding-simulation style="position:absolute;top:10px;left:10px;background:#fff"/>
+        <mapgis-3d-ponding-simulation
+            ref="simulation"
+            @isPonding="e=>{pond = e}"
+            @updateValue="e=>{sliderValue = e}"
+            :pondingTime="time"
+            style="position: absolute; top: 10px; left: 10px;background:#fff"
+        />
+        <mapgis-3d-ponding-simulation-timeline 
+            :value="sliderValue" 
+            :pond="pond" 
+            @updateTime="e=>{time = e}"
+            @play="addSimulation"
+        />
     </mapgis-web-scene>
     `,
   methods: {
@@ -55,6 +72,9 @@ const Template = (args, { argTypes }) => ({
         duration: 1,
       });
     },
+    addSimulation() {
+      this.$refs.simulation.addSimulation();
+  },
   },
 });
 
