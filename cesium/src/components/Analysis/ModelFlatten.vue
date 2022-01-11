@@ -5,34 +5,35 @@
       { right: position === 'right', left: position === 'left' }
     ]"
   >
-    <div
-      class="card-title"
-      :style="{
-        background: 'rgb(38, 151, 204)',
-        padding: '5px',
-        color: 'white'
-      }"
-    >
-      模型压平
-    </div>
     <mapgis-ui-card>
-      <mapgis-ui-button-group>
+      <div class="mapgis-3d-model-flatten-container">
+        <mapgis-ui-select-row-left
+          title="M3D模型"
+          :dataSource="dataSource"
+          :titleStyle="titleStyle"
+          :selectStyle="selectStyle"
+          @change="$_chooseM3D"
+        />
         <mapgis-ui-button
-          class="content"
           type="primary"
-          @click="startModelFlatten"
-          >开始绘制</mapgis-ui-button
-        >
-        <mapgis-ui-button class="content-clear" @click="clearModelFlatten"
-          >还原</mapgis-ui-button
-        >
-      </mapgis-ui-button-group>
+          style="float: right;margin-left: 10px;"
+          @click="clearModelFlatten">
+          还原
+        </mapgis-ui-button>
+        <mapgis-ui-button
+          type="primary"
+          style="float: right"
+          @click="startModelFlatten">
+          开始绘制
+        </mapgis-ui-button>
+      </div>
     </mapgis-ui-card>
   </div>
 </template>
 
 <script>
 import BaseMixin from "./BaseLayer";
+import {G3DManager} from "../WebGlobe/manager";
 
 const Managger = "AnalysisModelFlattenManager";
 export default {
@@ -42,13 +43,43 @@ export default {
     position: {
       type: String,
       default: "right"
+    },
+    M3Ds: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   inject: ["Cesium", "vueCesium", "viewer"],
   data() {
-    return {};
+    return {
+      dataSource: [],
+      m3dVueIndex: undefined,
+      titleStyle: {
+        paddingLeft: 0,
+        fontsize: "14px"
+      },
+      selectStyle: {
+        paddingRight: 0
+      }
+    };
   },
-  mounted() {},
+  watch: {
+    M3Ds: {
+      handler: function () {
+        for (let i = 0; i < this.M3Ds.length; i++) {
+          this.dataSource.push({
+            key: this.M3Ds[i].guid,
+            value: this.M3Ds[i].name
+          });
+        }
+      },
+      deep: true
+    },
+  },
+  mounted() {
+  },
   destroyed() {
     this.clearModelFlatten();
     let find = this.findSource();
@@ -59,41 +90,44 @@ export default {
     this.$_deleteManager(Managger);
   },
   methods: {
+    $_chooseM3D(e) {
+      this.m3dVueIndex = e;
+    },
     findSource() {
       return this.$_getManager(Managger);
     },
     startModelFlatten() {
-      const { vueKey, vueIndex, viewer} = this;
+      const {vueKey, vueIndex, viewer} = this;
       let m3d;
       let find = this.findSource();
       if (!find) {
         // 创建交互式绘制工具
         var tool = new Cesium.DrawElement(viewer);
         // 激活交互式绘制工具
-        tool.startDrawingPolygon({ callback: this.getDrawResult });
-        let m3ds = this.$_getManager("M3DIgsManager");
-        if (m3ds && m3ds.source && m3ds.source.length > 0) {
-          m3d = m3ds.source[0];
+        tool.startDrawingPolygon({callback: this.getDrawResult});
+        let m3d = vueCesium.G3DManager.findSource("default", this.m3dVueIndex);
+        if(m3d){
+          m3d = m3d.options.m3ds[0];
+          const {_arrayLength, _height, _isFlatten, _positionArray} = m3d;
+          window.vueCesium[Managger].addSource(vueKey, vueIndex, tool, {
+            m3d: m3d,
+            origin: {
+              _arrayLength,
+              _height,
+              _isFlatten,
+              _positionArray
+            }
+          });
         }
-        const { _arrayLength, _height, _isFlatten, _positionArray } = m3d;
-        window.vueCesium[Managger].addSource(vueKey, vueIndex, tool, {
-          m3d: m3d,
-          origin: {
-            _arrayLength,
-            _height,
-            _isFlatten,
-            _positionArray
-          }
-        });
       }
     },
     clearModelFlatten() {
       const { viewer } = this;
       let find = this.findSource();
       if (find && find.source) {
-        let tool = find.source;
-        let m3d = find.options.m3d;
+        let m3d = vueCesium.G3DManager.findSource("default", this.m3dVueIndex);
         let origin = find.options.origin;
+        m3d = m3d.options.m3ds[0];
         m3d._height = origin._height;
         m3d._isFlatten = origin._isFlatten;
         m3d._arrayLength = origin._arrayLength;
@@ -102,11 +136,11 @@ export default {
       }
     },
     getDrawResult(result) {
-      const { Cesium, vueCesium, viewer } = this;
-      let find = this.findSource();
-      if (!find) return;
-      let m3d = find.options.m3d;
-      if (!m3d) return;
+      const {Cesium, vueCesium, viewer} = this;
+      let m3d = vueCesium.G3DManager.findSource("default", this.m3dVueIndex);
+      if(m3d){
+        m3d = m3d.options.m3ds[0];
+      }
 
       //获取绘制多边形区域的定点（这是三维的点xyz）
       let positionsArray = result.positions;
@@ -126,7 +160,12 @@ export default {
       m3d.height = 0.0;
       m3d.positionArray = array;
       //场景渲染（渲染最新的压平效果）
-     viewer.scene.requestRender();
+      viewer.scene.requestRender();
+      let find = this.findSource();
+      if (find && find.source) {
+        let tool = find.source;
+        tool.stopDrawing();
+      }
     }
   }
 };
@@ -138,14 +177,20 @@ export default {
   width: fit-content;
   overflow: auto;
 }
+
 .modelflatten.right {
   position: absolute;
   top: 20px;
   right: 20px;
 }
+
 .modelflatten.left {
   position: absolute;
   top: 20px;
   left: 20px;
+}
+
+.mapgis-3d-model-flatten-container {
+  width: 238px;
 }
 </style>
