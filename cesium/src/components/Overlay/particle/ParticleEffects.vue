@@ -27,15 +27,19 @@
                  <div v-if="item.param.symbolGuid === tab.guid" :key="i">
                    <div v-if="tab.type === 'icon'" >
                      <mapgis-ui-iconfont
+                         :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
                          :type="tab.icon"
-                         style="font-size: 16px;padding-right: 4px"></mapgis-ui-iconfont>
+                         style="font-size: 16px;padding-right: 4px"
+                         @click.capture.stop="showOrHide(index)"></mapgis-ui-iconfont>
                      <span>{{ item.name }}</span>
                    </div>
                    <div v-else >
                      <img
                          :src="tab.image"
                          style="width: 24px;padding-right: 4px"
-                         alt=""/>
+                         alt=""
+                         :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
+                         @click="showOrHide(index)"/>
                      <span>{{ item.name }}</span>
                    </div>
                  </div>
@@ -209,6 +213,7 @@ export default {
             return f.guid === viewModel.symbolGuid;
           });
           this.imgUrl = checkedSymbol[0].image;
+          vm.particleListCopy[i].imageUrl = this.imgUrl;
           this.createParticleEffects(viewModel.position, viewModel);
         }
       }
@@ -314,7 +319,7 @@ export default {
       // 当前选中符号图标
       iconUrl: undefined,
       // 当前选中符号对应的粒子图片
-      imgUrl: undefined
+      imgUrl: undefined,
     };
   },
 
@@ -561,7 +566,7 @@ export default {
       const guid = newGuid();
 
       let particleItem;
-      particleItem = {name: this.title.concat(this.particleArr.length), guid: guid, param: param}
+      particleItem = {name: this.title.concat(this.particleArr.length), guid: guid,imageUrl:this.imgUrl,isShow:true,param: param}
       this.particleListCopy.push(particleItem);
     },
     createParticleEffects(degrees, viewModel) {
@@ -673,16 +678,52 @@ export default {
       }
     },
     // 对粒子列表中已有的粒子进行显隐操作
-    // showOrHide(index){
-    //   let vm = this;
-    //   if (vm.isShow){
-    //
-    //     vm.particleListCopy[index].isShow = false;
-    //   } else {
-    //   }
-    //   console.log("1111111111111",vm.particleListCopy[index]);
-    //
-    // }
+    showOrHide(index){
+      let vm = this;
+      if (vm.particleListCopy[index].isShow){
+        // 隐藏
+        vm.particleListCopy[index].isShow = false;
+        vm.particleArr[index].remove();
+      } else {
+        // 显示
+        vm.particleListCopy[index].isShow = true;
+        vm.showParticleEffects(index);
+      }
+    },
+    showParticleEffects(index){
+      let vm = this;
+      let oneParticle = Object.assign({},vm.particleListCopy[index].param);
+      oneParticle.emitterTypeCesium = vm.changeEmitterTypeCesium(oneParticle.emitterType);
+      const imgUrl = vm.particleListCopy[index].imageUrl;
+      const degrees = oneParticle.position;
+      // 开启计时
+      this.viewer.clock.shouldAnimate = true;
+      // 创建粒子特效
+      let particle = new this.Cesium.StableParticle(this.viewer, imgUrl, [degrees.longitude, degrees.latitude, degrees.height], {
+        startColor: new this.Cesium.Color(1, 1, 1, 1),
+        emissionRate: oneParticle.emissionRate,
+        imageSize: new this.Cesium.Cartesian2(oneParticle.imageSize, oneParticle.imageSize),
+        minimumParticleLife: oneParticle.minimumParticleLife,
+        maximumParticleLife: oneParticle.maximumParticleLife,
+        minimumSpeed: oneParticle.minimumSpeed,
+        maximumSpeed: oneParticle.maximumSpeed,
+        startScale: oneParticle.startScale,
+        endScale: oneParticle.endScale,
+        emitter: oneParticle.emitterTypeCesium,
+        gravity: 0.5,
+        heading: 0.0,
+        pitch: 0.0,
+        roll: 0.0,
+        minimumPixelSize: 64.0,
+        endColor: this.Cesium.Color.WHITE.withAlpha(0.0),
+        minimumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+        maximumImageSize: new this.Cesium.Cartesian2(25.0, 25.0),
+        lifetime: 16.0,
+        viewHeight: -1,
+      });
+      particle.start();
+      vm.particleArr[index] = particle;
+    }
   }
 };
 </script>
