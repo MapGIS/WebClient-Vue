@@ -1,18 +1,38 @@
 <template>
   <div class="mapgis-ui-clouddisk-save-document">
     <mapgis-ui-form-model :layout="layout" :model="saveForm">
-      <mapgis-ui-form-model-item label="文件路径">
+      <mapgis-ui-form-model-item label="保存方式">
+        <mapgis-ui-select
+          v-model="saveType"
+          placeholder="请选择保存方式"
+          @change="handleSaveType"
+        >
+          <mapgis-ui-select-option v-for="(type,index) in saveTypeList" :key="index" :value="type.value">
+            {{type.label}}
+          </mapgis-ui-select-option>
+        </mapgis-ui-select>
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-divider />
+      <mapgis-ui-form-model-item label="文件路径" v-if="saveType==='directSave'">
+        <mapgis-ui-input
+          disabled
+          v-model="saveForm.saveUrl"
+          read-only
+          placeholder="请选择路径"
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="文件路径" v-else>
         <mapgis-ui-input-search
           v-model="saveForm.saveUrl"
           read-only
           enter-button
-          placeholder="请选择云盘路径"
+          placeholder="请选择路径"
           @click="handleSaveModal"
           @search="handleSaveModal"
         />
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="文件名称">
-        <mapgis-ui-input :addon-after="fileType" v-model="saveForm.fileName" />
+        <mapgis-ui-input :addon-after="fileType" v-model="saveForm.fileName" :disabled="saveType==='directSave'" />
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item>
         <mapgis-ui-button
@@ -22,7 +42,8 @@
           @click="handleSaveDocument"
           v-if="layout == 'vertical'"
         >
-          保存
+          <span v-if="saveType==='directSave'">保存</span>
+          <span v-else>另存</span>
         </mapgis-ui-button>
       </mapgis-ui-form-model-item>
     </mapgis-ui-form-model>
@@ -38,6 +59,7 @@
     >
       <mapgis-ui-clouddisk-layerselect
         ref="layerselect"
+        mode="save"
         :onlyFolder="true"
         :isLayers="false"
         @change="handleFolderChange"
@@ -59,6 +81,17 @@ export default {
         saveUrl: "",
         fileName: "默认地图文档"
       },
+      saveType: 'directSave',
+      saveTypeList: [
+        {
+          label: '直接保存',
+          value: 'directSave'
+        },
+        {
+          label: '另存',
+          value: 'otherSave'
+        },
+      ],
       saveTree: false,
       temUrl: "",
       // form: this.$form.createForm(this, { name: 'save' }),
@@ -110,9 +143,17 @@ export default {
   methods: {
     getDefaultSavePath () {
       let savePath = window.localStorage.getItem('mapgis_clouddisk_save_path')
-      if (savePath) {
-        this.saveForm.saveUrl = savePath
+      let saveName = window.localStorage.getItem('mapgis_clouddisk_save_name')
+
+      if (!savePath || savePath === '') {
+        this.saveType = 'otherSave'
+        this.saveTypeList = [{
+          label: '另存',
+          value: 'otherSave'
+        }]
       }
+      this.saveForm.saveUrl = savePath || ''
+      this.saveForm.fileName = saveName || '默认地图文档'
     },
     handleSaveDocument() {
       const vm = this;
@@ -155,10 +196,7 @@ export default {
                 } else {
                   vm.saveloading = false;
                   this.$notification.success({ message: "保存成功！" });
-                  this.saveForm = {
-                    saveUrl: "",
-                    fileName: "默认地图文档"
-                  };
+                  // this.saveForm.saveUrl = ''
                   this.$emit("closeDialog");
                 }
               }
@@ -177,6 +215,11 @@ export default {
         }
       }, 1000)
       
+    },
+    handleSaveType (value) {
+      if (value === 'directSave') {
+        this.getDefaultSavePath()
+      }
     },
     handleSaveModal() {
       this.saveTree = true;

@@ -6,6 +6,9 @@
     &-list-active {
         background: $primary-2;
     }
+    &-item-active {
+        color: $primary-6;
+    }
     &-empty-style {
         font-size: 14px;
         font-family: Microsoft YaHei;

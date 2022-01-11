@@ -187,6 +187,7 @@ export default {
           if (m3d.tree === undefined){
             this.$message.warning("该m3d模型不能进行单体化建筑生长");
           }
+          m3d.treeOptions = { createType:'ModelLoaded' };
           let tree = m3d ? m3d.tree : undefined;
           vm.parseTree(tree);
           vm.$emit("loaded", {component: vm});

@@ -268,7 +268,7 @@ export { default as MapgisUiProjectRow } from "./components/row/ProjectRow";
 export { default as MapgisUiFeatureRow } from "./components/row/FeatureRow";
 export { default as MapgisUiInputRow } from "./components/row/InputRow";
 export { default as MapgisUiIconRow } from "./components/row/IconRow";
-export { default as MapgisUiTitleRowLeft} from "./components/row/TitleRowLeft";
+export { default as MapgisUiTitleRowLeft } from "./components/row/TitleRowLeft";
 
 //edit
 export { default as MapgisUiFeatureEdit } from "./components/edit/FeatureEdit";
@@ -286,7 +286,7 @@ export { default as MapgisUiPopupContent } from "./components/popup/PopupContent
 
 //switch
 export { default as MapgisUiSwitchRow } from "./components/switch/SwitchRow";
-export { default as MapgisUiSwitchRowLeft} from "./components/switch/SwitchRowLeft";
+export { default as MapgisUiSwitchRowLeft } from "./components/switch/SwitchRowLeft";
 
 //select
 export { default as MapgisUiSelectRow } from "./components/select/SelectRow";

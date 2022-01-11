@@ -3,6 +3,7 @@
     <mapgis-ui-row>
       <mapgis-ui-col :span="simple ? 0 : 9" class="demo-split-pane">
         <mapgis-ui-clouddisk-company
+          :mode="mode"
           :isMulti="isLayers"
           :tiffListsObj="tiffListsObj"
           @url="handleUrl"
@@ -63,6 +64,10 @@ export default {
     };
   },
   props: {
+    mode: {
+      type: String,
+      default: "read" // read save
+    },
     simple: {
       type: Boolean,  
       default: false
