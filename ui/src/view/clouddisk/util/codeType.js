@@ -4,9 +4,9 @@
 export const OWNERSHIP_USER_FOLDER = -100;
 
 /**
- * @description 当前用户打开的组织文件夹
+ * @description 组织文件夹的根目录
  */
-export const OWNERSHIP_GROUP_FOLDER = -99;
+export const OWNERSHIP_GROUP_FOLDER = 0;
 
 /**
  * @description 全局公共资源分享给当前用户,强调当前目录的归属权在公共资源那边

@@ -1,7 +1,12 @@
 import API from "./API";
 import md5 from "js-md5";
 
-import { getMapGISUrl, getMapgisToken, getMapgisPath, getMapgisGroupPath } from "../config/mapgis";
+import {
+  getMapGISUrl,
+  getMapgisToken,
+  getMapgisPath,
+  getMapgisGroupPath
+} from "../config/mapgis";
 
 export function dirnavigation(folderDir) {
   const api = new API();
@@ -84,8 +89,8 @@ export function getFilesByOrganization(pGroupId) {
   const token = getMapgisToken();
   api.setBaseUrl(url);
   api.setAuthorization(token);
-  const group = "pGroupId=" + (pGroupId || -1);
-  return api.get("/clouddisk/rest/userGroups?" + group);
+  const group = "pGroupId=" + pGroupId;
+  return api.get("/clouddisk/rest/userGroups?includeChilds=true&" + group);
 }
 
 // 枚举组织结构_第三方
@@ -418,14 +423,23 @@ export function exportVector(convertType, srcUrl, destPath, destFileName) {
  * @param {*} charset 文件编码
  * @param {*} separator 分隔符
  */
-export function getCSVTableData (srcUrl, charset, separator) {
-  const url = getMapGISUrl()
-  const api = new API()
-  const token = getMapgisToken()
+export function getCSVTableData(srcUrl, charset, separator) {
+  const url = getMapGISUrl();
+  const api = new API();
+  const token = getMapgisToken();
 
-  api.setBaseUrl(url)
-  api.setAuthorization(token)
-  return api.get(url + '/clouddisk/rest/tools/table/preview?srcUrl=' + srcUrl + '&charset=' + charset + '&separator=' + separator + '&count=10')
+  api.setBaseUrl(url);
+  api.setAuthorization(token);
+  return api.get(
+    url +
+      "/clouddisk/rest/tools/table/preview?srcUrl=" +
+      srcUrl +
+      "&charset=" +
+      charset +
+      "&separator=" +
+      separator +
+      "&count=10"
+  );
 }
 
 // 获取外部业务数据表的元数据
