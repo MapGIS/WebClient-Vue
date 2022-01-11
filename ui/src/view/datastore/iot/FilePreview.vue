@@ -243,7 +243,7 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
-  border: 1px solid @border-color;
+  border: 1px solid var(--border-color-base);
   border-radius: 4px;
   padding-top: 10px;
   max-height: 300px;

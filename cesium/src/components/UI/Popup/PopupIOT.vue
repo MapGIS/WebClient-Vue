@@ -155,72 +155,79 @@ export default {
 }
 </script>
 
-<style lang="less">
-.attribute-model {
-  .mapgis-ui-modal-close-x {
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-  }
+<style scoped>
+.attribute-model > .mapgis-ui-modal-close-x {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
 }
-.attribute-popup-content-wrapper {
-  .ant-carousel {
-    .slick-slide {
-      background-color: @hover-bg-color;
-      color: white;
-    }
-    .carousel-image-container {
-      height: 180px;
-    }
-  }
-  .table-marker {
-    max-height: 130px;
-    overflow: auto;
-    margin-top: 10px;
-    border-radius: 0;
-    border-color: @border-color;
-    .table-marker-item {
-      display: flex;
-      padding: 0;
-      &:nth-child(2n) {
-        background-color: @hover-bg-color;
-      }
-      div {
-        padding: 2px 2px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        padding: 3px 6px;
-        &:first-child {
-          width: 120px;
-          border-right: 1px solid @border-color;
-        }
-        &:last-child {
-          flex: 1 0 0%;
-        }
-      }
-    }
-  }
-  .iot-enclosure-title {
-    font-size: 15px;
-    color: @title-color;
-    font-weight: bold;
-    margin-top: 10px;
-  }
-  .iot-enclosure-container {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    li {
-      margin: 0;
-      padding: 0 5px;
-      margin-right: 5px;
-      &:hover {
-        background-color: @shadow-color;
-        cursor: pointer;
-      }
-    }
-  }
+
+.attribute-popup-content-wrapper > .ant-carousel > .slick-slide {
+  background-color: var(--background);
+  color: white;
 }
+
+.carousel-image-container {
+  height: 180px;
+}
+
+
+.table-marker {
+  max-height: 130px;
+  overflow: auto;
+  margin-top: 10px;
+  border-radius: 0;
+  border-color: var(--primary-5);
+}
+
+.table-marker-item {
+  display: flex;
+  padding: 0;
+}
+
+.table-marker-item:nth-child(2n) {
+  background-color: var(--primary-1);
+}
+
+.table-marker-item > div {
+  padding: 2px 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px 6px;
+}
+
+.table-marker-item > div:first-child {
+  width: 120px;
+  border-right: 1px solid var(--primary-5);
+}
+
+.table-marker-item > div:last-child {
+  flex: 1 0 0%;
+}
+
+.iot-enclosure-title {
+  font-size: 15px;
+  color:var(--text-color);
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.iot-enclosure-container {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}
+
+.iot-enclosure-container > li {
+  margin: 0 5px 0 0;
+  padding: 0 5px;
+}
+
+.iot-enclosure-container > li:hover {
+  background-color:  var(--shadow-color);
+  cursor: pointer;
+}
+
 </style>
