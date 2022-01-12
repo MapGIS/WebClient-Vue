@@ -263,6 +263,12 @@ export default {
             const { id, name } = this.videoOverlayLayerListCopy[i];
             this.layerSelectOptions.push({ id, name });
           }
+          if (this.currentLayerId) {
+            this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+              item => item.id === this.currentLayerId
+            );
+            this._initPutVideos();
+          }
         }
       },
       deep: true,
@@ -281,15 +287,7 @@ export default {
         this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
           item => item.id === this.currentLayerId
         );
-        this.viewer.scene.visualAnalysisManager.removeAll();
-        for (let i = 0; i < this.videoList.length; i++) {
-          const video = this.videoList[i];
-          if (video.isProjected) {
-            this.putVideo(video);
-          } else {
-            this.cancelPutVideo(video.id);
-          }
-        }
+        this._initPutVideos();
       },
       immediate: true
     },
@@ -368,6 +366,17 @@ export default {
     },
     unmount() {
       this.$emit("unload", this);
+    },
+    _initPutVideos() {
+      this.viewer.scene.visualAnalysisManager.removeAll();
+      for (let i = 0; i < this.videoList.length; i++) {
+        const video = this.videoList[i];
+        if (video.isProjected) {
+          this.putVideo(video);
+        } else {
+          this.cancelPutVideo(video.id);
+        }
+      }
     },
     /**
      * 修改图层名
