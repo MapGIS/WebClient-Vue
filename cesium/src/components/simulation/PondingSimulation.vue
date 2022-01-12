@@ -785,6 +785,8 @@ export default {
             this.currentMaxHeight = null;
             this.currentSpeed = null;
             this.sliderValue = 0;
+            this.loopCount = 0;
+
         },
         removeRain() {
             const { vueCesium, vueKey, vueIndex } = this;
