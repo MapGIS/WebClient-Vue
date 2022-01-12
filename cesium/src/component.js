@@ -46,6 +46,7 @@ export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dPopupContent } from "./components/UI/Popup/PopupContent.vue";
 export { default as Mapgis3dFeaturePopup } from "./components/UI/Popup/PopupFeature.vue";
+export { default as Mapgis3dPopupIot } from "./components/UI/Popup/PopupIOT.vue";
 export { default as Mapgis3dMarker } from "./components/UI/Marker/Marker";
 export { default as Mapgis3dMarkerPro } from "./components/Layer/Marker/Marker3dPro.vue";
 export { default as Mapgis3dMarkerSetPro } from "./components/Layer/Marker/Marker3dSetPro.vue";
@@ -112,4 +113,5 @@ export { default as Mapgis3DPreviewMapStoryLayer } from "./components/Layer/MapS
 export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow/CityGrow";
 export { default as Mapgis3dCityGrowOptions } from "./components/simulation/CityGrow/CityGrowOptions";
 export { default as Mapgis3dPondingSimulation } from "./components/simulation/PondingSimulation.vue";
+export { default as Mapgis3dPondingSimulationTimeline } from "./components/simulation/PondingSimulation/PondingSimulationTimeline.vue";
 export { default as Mapgis3dBuildingGlow } from "./components/simulation/BuildingGrow";

@@ -150,9 +150,6 @@ import ServiceLayer from "../../UI/Controls/ServiceLayer";
 // import "@mapgis/cesium/dist/MapGIS/css/mapgis.css"
 import "./navigation-all.css";
 import StateBar from "../../UI/Controls/State/StateControl.vue";
-import {
-    isDepthTestAgainstTerrainEnable
-} from "../../WebGlobe/util";
 
 export default {
     name: "BasicSetting",
@@ -166,6 +163,10 @@ export default {
             type: Boolean,
             default: false,
         },
+        initialDepthTest: {
+            type: Boolean,
+            default: false,
+        }
     },
     data() {
         return {
@@ -173,7 +174,7 @@ export default {
             skyAtmosphere: true,
 
             shadow: false,
-            depthTest: true,
+            depthTest: this.initialDepthTest,
 
             FPS: false,
             timeline: false,
@@ -204,13 +205,17 @@ export default {
         },
     },
     mounted() {
-        const { vueKey, vueIndex, viewer } = this;
+        const { vueKey, vueIndex } = this;
 
         window.vueCesium.SettingToolManager.addSource(vueKey, vueIndex, null, {
             timeline: null,
         });
 
-        this.depthTest = isDepthTestAgainstTerrainEnable( viewer );
+    },
+    watch:{
+        initialDepthTest(e){
+            this.depthTest = e;
+        }
     },
     methods: {
         /*

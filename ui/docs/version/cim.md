@@ -1,6 +1,6 @@
 | **分类**       | **子分类** | **名称**                           | **文档**                            | **故事** | **说明**                   |
 | :------------- | :--------- | :--------------------------------- | :---------------------------------- | :------- | :------------------------- |
-| **vue-cesium** | 场景子组件 | mapgis-3d-feature-popup            | ✔                                   | ✔✔       | 要素popup                  |
+| **vue-cesium** | 场景子组件 | mapgis-3d-feature-popup            | ✔                                   | ✔✔       | 要素 popup                 |
 |                |            | mapgis-3d-scene-setting            | ✖（存在子雨雪雾文档，没有总体文档） | ✔✖       | 场景设置                   |
 |                |            | mapgis-3d-debug                    | ✔                                   | ✔✖       | 调试组件                   |
 |                |            | mapgis-3d-measure                  | ✔                                   | ✔✖       | 贴地测量                   |
@@ -12,7 +12,7 @@
 |                |            | mapgis-3d-heightlimited            | ✔                                   | ✔✔       | 控高分析                   |
 |                |            | mapgis-3d-dynamic-section          | ✔                                   | ✔✖       | 剖切分析                   |
 |                |            | mapgis-3d-stratified-household     | ✔                                   | ✔✖       | 分层分户<br>88.204         |
-|                |            | mapgis-3d-bim-component            | ✔                                   | ✔✖       | BIM构建树<br>88.204        |
+|                |            | mapgis-3d-bim-component            | ✔                                   | ✔✖       | BIM 构建树<br>88.204       |
 |                |            | mapgis-3d-video-manager            | ✔                                   | ✔✔       | 投放管理<br>91.123         |
 |                |            | mapgis-3d-video-setting            | ✔                                   | ✔✔       | 投放配置<br>91.123         |
 |                |            | mapgis-3d-buffer-analysis          | ✔                                   | ✔✔       | 缓冲分析<br>localhost      |
@@ -23,7 +23,7 @@
 |                |            | mapgis-3d-ponding-simulation       | ✖                                   | ✔✖       | 积水仿真                   |
 |                | 场景漫游   | mapgis-3d-path-roaming             | ✔                                   | ✔✔       | 单路径                     |
 |                |            | mapgis-3d-scene-roaming            | ✔                                   | ✔✔       | 路径管理                   |
-| vue-ui         | 颜色       | mapgis-ui-d3-colorpick             | ✔                                   | ✔✖       | D3颜色                     |
+| vue-ui         | 颜色       | mapgis-ui-d3-colorpick             | ✔                                   | ✔✖       | D3 颜色                    |
 |                | 面板       | mapgis-ui-input-number-panel       | ✔                                   | ✔✔       | 数值面板                   |
 |                |            | mapgis-ui-d3-color-pick            | ✔                                   | ✔✔       | 颜色面板                   |
 |                |            | mapgis-ui-tab-panel                | ✔                                   | ✔✖       | 页面面板                   |
@@ -34,6 +34,3 @@
 |                | 科技风     | mapgis-ui-borderbox                | ✔                                   | ✔✖       | 边框                       |
 |                |            | mapgis-ui-decoration               | ✔                                   | ✔✖       | 装饰                       |
 |                | 图表       | mapgis-ui-chart-flow               | ✔                                   | ✔✖       | 流向分析                   |
-
-
-

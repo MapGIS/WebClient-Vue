@@ -3,6 +3,7 @@
     <!-- <mapgis-ui-spin v-show="isLoading"> -->
       <mapgis-ui-tree
         v-show="!isLoading"
+        :key="treeKey"
         class="layout-tree-company"
         ref="folderTree"
         :loadData="loadCompany"
@@ -14,7 +15,7 @@
         @select="handelClick"
       >
         <template slot="title" slot-scope="{ title, icon }">
-          <mapgis-ui-iconfont :type="icon" />
+          <mapgis-ui-iconfont :type="icon" v-if="icon.indexOf('mapgis')>=0"/>
           <span> {{ title }} </span>
         </template>
       </mapgis-ui-tree>
@@ -51,7 +52,8 @@ export default {
       data: [],
       // defaultURL: getMapgisPath() + '/.gis',
       selectListsObj: {},
-      isLoading: false
+      isLoading: false,
+      treeKey: 1
     };
   },
   props: {
@@ -114,6 +116,7 @@ export default {
       this.showDirFiles(this.url);
     },
     showDirFiles(url) {
+      this.treeKey += 1
       let vm = this;
       vm.isLoading = true;
       if (url === -1) {
@@ -172,8 +175,8 @@ export default {
                 });
                 // commonData = this.checkSelected(url, "", commonData);
                 let newDefaultData = {
-                  title: "目录",
-                  icon: "mapgis-tubiaoqietu_wenjianjia-29",
+                  title: url === -97 ? "我收到的共享" : "公共数据",
+                  icon: "mapgis-gongxiangwenjian",
                   scopedSlots: { icon: "icon", title: "title" },
                   loading: false,
                   expand: true,
@@ -192,7 +195,7 @@ export default {
             this.$notification.error({ message: "网络异常,请检查链接", description: error });            
             vm.isLoading = false;
           });
-      } else if (url === -99) {
+      } else if (url > 0) {
         let defaultURL = getMapgisGroupPath();
         dirnavigation(defaultURL)
           .then(res => {

@@ -62,7 +62,7 @@
       >执行泛光</mapgis-ui-button
     >
     <mapgis-ui-button
-      :style="{ width: '100%', marginTop: '4px' }"
+      :style="{ width: '100%', marginTop: '4px', display: 'block' }"
       @click="removeEffect"
       >删除泛光</mapgis-ui-button
     >
@@ -97,7 +97,7 @@ export default {
       currentMenu: undefined,
       maxHeight: 20,
       minHeight: 0.00000001,
-      lightColor: "rgba(0, 0, 0.5, 0.4)",
+      lightColor: "#FF0000",
       mixFactor: 0.8,
       startBreath: false,
       breathSpeed: 0.05

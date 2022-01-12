@@ -61,7 +61,7 @@
       >执行探照灯</mapgis-ui-button
     >
     <mapgis-ui-button
-      :style="{ width: '100%', marginTop: '4px' }"
+      :style="{ width: '100%', marginTop: '4px', display: 'block' }"
       @click="removeEffect"
       >删除探照灯</mapgis-ui-button
     >
@@ -89,7 +89,7 @@ export default {
       labelCol: { span: 8 },
       wrapperCol: { span: 16 },
       direction: 1.0,
-      searchlightColor: "rgb(0.38, 0.88, 0.92)",
+      searchlightColor: "#FFFF00",
       mixFactor: 0.9,
       duration: 5000,
       type: 2.0,

@@ -135,7 +135,7 @@
 
 <script>
 import BaseLayer from "./BaseLayer";
-import clonedeep from 'lodash.clonedeep';
+import clonedeep from "lodash.clonedeep";
 
 export default {
   name: "mapgis-3d-bim-component",
@@ -298,7 +298,10 @@ export default {
             } else {
               reject(null);
             }
-          }, vueKey, innerVueIndex);
+          },
+          vueKey,
+          innerVueIndex
+        );
       });
     },
     mount() {
@@ -311,6 +314,7 @@ export default {
         if (find && find.source) {
           let { source } = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
+          m3d.treeOptions = { createType: "ModelLoaded" };
           let tree = m3d ? m3d.tree : undefined;
           vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
@@ -331,12 +335,11 @@ export default {
       if (viewer.isDestroyed()) return;
     },
     unmount() {
-      this.clearData();  
+      this.clearData();
       const { vueCesium, vueKey, innerVueIndex } = this;
       const { viewer } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
-        
       }
       this.$emit("unload", { component: this });
       vueCesium.BimManager.deleteSource(vueKey, innerVueIndex);
@@ -346,7 +349,7 @@ export default {
     },
     clearData() {
       this.showAllLayer();
-      this.resetAllLayer();  
+      this.resetAllLayer();
       this.allLayerIds = [];
       this.layerTree = [];
       this.layerIds = [];

@@ -5,24 +5,24 @@
 
 <script>
 import BaseMixin from "./BaseMixin";
-import Mapgis3dComponentLegend from "../mixComponent/Legend";
+// import Mapgis3dComponentLegend from "../mixComponent/Legend";
 import * as turf from "@turf/turf";
 
 let analysisManager;
 export default {
   name: "mapgis-3d-component-mix",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseMixin],
-  components: { Mapgis3dComponentLegend },
+  // components: { Mapgis3dComponentLegend },
   props: {
     geoJson: { type: Object },
     vueKey: { type: String, default: "default" },
     vueIndex: {
-      type: String | Number,
-      default: () => (Math.random() * 10000000).toFixed(0)
+      type: [String, Number],
+      default: () => (Math.random() * 100000000).toFixed(0)
     },
     url: {
-      type: String | Object,
+      type: [String, Object],
       required: true
     },
     options: { type: Object },
@@ -45,7 +45,8 @@ export default {
       current: {
         feature: undefined,
         originalColor: new Cesium.Color()
-      }
+      },
+      handlerAction:undefined
     };
   },
   created() {},
@@ -91,7 +92,7 @@ export default {
     mount() {
       let vm = this;
       const {
-        webGlobe,
+        viewer,
         options,
         layerStyle,
         ruleJson,
@@ -100,7 +101,6 @@ export default {
         vueIndex,
         activeCircle
       } = this;
-      const { viewer } = webGlobe;
       const { dataSources, scene } = viewer;
       // let findSource = vm.$_getObject(vm.waitManagerName);
 
@@ -137,16 +137,15 @@ export default {
       vm.pickModel();
     },
     unmount() {
-      let { webGlobe, vueKey, vueIndex } = this;
+      let { viewer, vueKey, vueIndex } = this;
       console.log("vueKey", vueKey, vueIndex);
-      const { viewer } = webGlobe;
       const { dataSources, scene } = viewer;
       let find = window.CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
         // scene.primitives.remove(find.options.labels);
         if (dataSources) {
           dataSources.remove(find.source, true);
-          webGlobe.viewer.entities.remove(find.options.outline);
+          viewer.entities.remove(find.options.outline);
           // webGlobe.viewer.entities.remove(find.options.popup);
         }
       }
@@ -184,7 +183,7 @@ export default {
       let find = this.findSource();
       if (!find || !find.source) return;
       if (find.options && find.options.popup) {
-        webGlobe.viewer.entities.remove(find.options.popup);
+        this.viewer.entities.remove(find.options.popup);
       }
       // this.initColor();
       let entities = find.source;
@@ -238,21 +237,24 @@ export default {
     },
     pickModel() {
       let vm = this;
-      let { webGlobe } = this;
-      webGlobe.registerMouseEvent("LEFT_CLICK", vm.highlightPicking);
+      let { viewer } = this;
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction.setInputAction(event => {
+        vm.highlightPicking;
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
       // webGlobe.registerMouseEvent("RIGHT_CLICK", vm.stopPick);
       //构造分析功能管理对象
       analysisManager = new CesiumZondy.Manager.AnalysisManager({
-        viewer: webGlobe.viewer
+        viewer: viewer
       });
     },
     // 鼠标左键单击事件回调：模型高亮
     highlightPicking(movement) {
       let vm = this;
-      const { webGlobe, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { viewer, vueKey, vueIndex } = this;
       //根据鼠标点击位置选择对象
-      let pickedFeature = webGlobe.scene.pick(movement.position);
+      let pickedFeature = viewer.scene.pick(movement.position);
 
       //判断current对象（即上一次鼠标选中要素）中要素有值，该值和鼠标点击位置不相同,
       // 则要移除上一次的要素高亮和popup
@@ -264,7 +266,7 @@ export default {
             vueKey,
             vueIndex
         );
-        webGlobe.viewer.entities.remove(find.options.popup);
+        viewer.entities.remove(find.options.popup);
         if (find.options.id && find.options.originColor) {
           const entities = find.source;
           for (let i = 0; i < entities.length; i++) {
