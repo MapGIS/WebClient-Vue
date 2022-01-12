@@ -114,7 +114,6 @@ const { VectorLayer } = MRCS
 // 引入第三方turf->buffer
 import * as turf from '@turf/turf'
 import { setDepthTestAgainstTerrainEnable } from '../WebGlobe/util'
-import Div from '../../../../ui/src/components/div/Div.vue'
 
 export default {
 	name: "mapgis-3d-buffer-analysis",
@@ -180,10 +179,10 @@ export default {
 			},
 			// 图层级半径缓冲
 			isByAtt: false,
-			leftRad: 100,
-			rightRad: 100,			
-			realLeftRad: 100,
-			realRightRad: 100,
+			leftRad: 0.01,
+			rightRad: 0.01,			
+			realLeftRad: 0.01,
+			realRightRad: 0.01,
 			equalLeftRight: true,
 			// 图层级属性缓冲
 			fldName: [{"FldName": "", "FldType": ""}],  
@@ -191,7 +190,7 @@ export default {
 			angelType: false,
 			isDissolve: true,
 			// 要素级半径缓冲
-			radius: 100,
+			radius: 0.01,
 			unit: [
 				{"name": "千米", "unitParam": "kilometers"},
 				{"name": "英里", "unitParam": "miles"},
@@ -321,8 +320,8 @@ export default {
     * @param {String} options.ip ip地址或域名 localhost
     * @param {String} options.port 端口号 6163
 		* @param {Boolean} options.isByAtt 指定缓冲方式 半径缓冲 false
-		* @param {Number} options.leftRad 左半径 100 
-		* @param {Number} options.rightRad 右半径 100 
+		* @param {Number} options.leftRad 左半径 0.01 
+		* @param {Number} options.rightRad 右半径 0.01 
 		* @param {String} options.fldName 缓冲字段
 		* @param {String} options.srcInfo 输入gdbp
 		* @param {String} options.desInfo 输出gdbp
@@ -334,7 +333,7 @@ export default {
 		* @function turf
     * @param {Object} options 缓冲参数
     * @param {GeoJSON} options.srcFeature 缓冲数据源
-    * @param {Number} options.radius 缓冲半径 100
+    * @param {Number} options.radius 缓冲半径 0.01
     * @param {String} options.units 缓冲单位 默认千米 kilometers 英里 miles 经纬度 degrees
 		* @param {Number} options.steps 缓冲步长 8
 		*/
