@@ -561,7 +561,7 @@ export default {
 
       return editPanelValues;
     },
-    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius) {
+    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius, scale) {
       //停止上一次的绘制
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
@@ -578,13 +578,13 @@ export default {
           if (!this.editPanelValues) {
             //根据当前的绘制类型，获取设置面板显示参数数据
             this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
-            this.editPanelValues.url = model;
-            //更新编辑面板
-            this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           }
+          this.editPanelValues.url = model;
+          this.editPanelValues.scale = scale;
+          //更新编辑面板
+          this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           //根据面板显示参数数据生成绘制参数
           let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-          drawOptions.style.url = model;
           this.$_startDrawing({
             type: "model",
             ...drawOptions
@@ -692,7 +692,7 @@ export default {
             drawType = "polygon";
           }
           if (drawType === "model") {
-            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance)
+            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance, 0, editPanelValues.scale)
           } else {
             this.$_startDrawing({
               type: drawType,
