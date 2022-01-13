@@ -366,6 +366,8 @@ export default {
       // BIM树节点向下缩短两层
       for (var i = 0; i < 2; i ++) {
         this.layerTree = this.layerTree[0].children
+        this.layerIds.splice(0, 1)
+        this.allLayerIds.splice(0, 1)
       }
     },
     loopTreeNode(node, prefix, parent) {
