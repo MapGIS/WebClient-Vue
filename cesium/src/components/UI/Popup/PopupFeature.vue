@@ -35,12 +35,14 @@ export default {
   watch: {
     position: {
       deep: true,
+      immediate: true,
       handler() {
         this.update();
       }
     },
     visible: {
       deep: true,
+      immediate: true,
       handler() {
         this.update();
       }
