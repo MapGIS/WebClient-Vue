@@ -4,6 +4,7 @@
       <mapgis-ui-graphic-icons-panel
         ref="iconsPanel"
         :models="models"
+        :containerStyle="iconsPanelStyle"
         @startDraw="$_startDraw"
         @startDrawModel="$_startDrawModel"
       />
@@ -78,6 +79,12 @@ export default {
     autoFlyToGraphic: {
       type: Boolean,
       default: true
+    },
+    containerStyle: {
+      type: Object
+    },
+    iconsPanelStyle: {
+      type: Object
     }
   },
   data() {
@@ -130,7 +137,7 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        if (!this.isEdit && !this.addSource && this.dataSource.length > 0 && !this.editTitle) {
+        if (!this.isEdit && !this.addSource && !this.editTitle) {
           this.$_init();
         }
       },
@@ -138,7 +145,6 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
       },
       deep: true
     },
@@ -572,6 +578,7 @@ export default {
           if (!this.editPanelValues) {
             //根据当前的绘制类型，获取设置面板显示参数数据
             this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+            this.editPanelValues.url = model;
             //更新编辑面板
             this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           }
@@ -910,6 +917,7 @@ export default {
             vm.$nextTick(function () {
               vm.addSource = false;
             });
+            vm.$emit("change", vm.dataSourceCopy);
           }
         }
       });
@@ -924,6 +932,11 @@ export default {
           vm.$_setPopUp(pickedFeature);
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      //如果有数据，绘制数据
+      this.$_fromJson({
+        type: "FeatureCollection",
+        features: this.dataSourceCopy
+      });
     },
     $_setPopUp(graphic, isGraphic) {
       let center;
@@ -931,6 +944,9 @@ export default {
         center = this.$_getCenter(graphic);
       } else {
         center = this.$_getCenter(graphic.primitive);
+      }
+      if (!center) {
+        return;
       }
       let vm = this;
       let coordinates = center.geometry.coordinates;

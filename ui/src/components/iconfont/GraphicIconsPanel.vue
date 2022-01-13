@@ -221,6 +221,9 @@ export default {
         case "lamp":
           title = "灯";
           break;
+        case "house":
+          title = "房屋";
+          break;
       }
       return title;
     }

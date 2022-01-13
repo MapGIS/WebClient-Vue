@@ -32,6 +32,7 @@
       ref="graphicLayer"
       v-model="currentLayer"
       @saveCamera="$_saveCamera"
+      @change="$_addFeature"
     />
     <div
       v-show="showSetting"
@@ -78,7 +79,7 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        this.$_init(this.currenSelectIndex);
+        this.$_init();
       },
       deep: true
     },
@@ -127,6 +128,10 @@ export default {
         event: "setting",
         icon: "setting",
         title: "配置参数"
+      }, {
+        event: "save",
+        icon: "save",
+        title: "保存"
       }],
       vueIndex: undefined,
       showEditTitle: false,
@@ -145,6 +150,9 @@ export default {
     this.$_init();
   },
   methods: {
+    $_addFeature(e) {
+      this.dataSourceCopy[this.currenSelectIndex - 1].dataSource.features = e;
+    },
     $_saveCamera() {
       if (this.currenSelectLayer) {
         this.dataSourceCopy[this.currenSelectIndex - 1].camera = getCamera(viewer);
@@ -197,9 +205,20 @@ export default {
           break;
         case "delete":
           this.dataSourceCopy.splice(this.currenSelectIndex, 1);
+          this.$refs.graphicLayer.$_stopEdit();
+          this.$refs.graphicLayer.$_stopDrawing();
+          this.$refs.graphicLayer.$_removeAllGraphic();
+          this.$refs.graphicLayer.$_destroy();
+          this.$refs.graphicLayer.$_resetEditPanel();
+          this.$refs.graphicLayer.$_resetIconsPanel();
           if (this.dataSourceCopy.length === 0) {
             this.currenSelectLayer = "无数据";
             this.currentLayer = [];
+          }
+          if (this.currenSelectIndex <= this.dataSourceCopy.length && this.currenSelectIndex > 0) {
+            this.currenSelectIndex--;
+            this.currenSelectLayer = this.dataSourceCopy[this.currenSelectIndex].name;
+            this.currentLayer = this.dataSourceCopy[this.currenSelectIndex].dataSource.features;
           }
           break;
         case "editTitle":
@@ -235,6 +254,22 @@ export default {
           break;
         case "setting":
           this.showSetting = !this.showSetting;
+          break;
+        case "save":
+          let saveObj = [];
+          for (let i = 0; i < this.dataSourceCopy.length; i++) {
+            let json = this.dataSourceCopy[i];
+            let dataSource = this.$refs.graphicLayer.$_toJSON(json.uuid, "default");
+            saveObj.push({
+              name: json.name,
+              uuid: json.uuid,
+              autoFlyTo: json.autoFlyTo,
+              autoFlyToGraphic: json.autoFlyToGraphic,
+              camera: clonedeep(json.camera),
+              dataSource: dataSource
+            });
+          }
+          this.$emit("save", saveObj);
           break;
       }
     },
@@ -407,15 +442,15 @@ export default {
       }
     },
     //初始化数据
-    $_init(layerIndex) {
-      layerIndex = layerIndex || 0;
+    $_init() {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //设置当前图层
       if (this.dataSourceCopy.length > 0) {
-        this.currentLayer = this.dataSourceCopy[layerIndex - 1].dataSource.features;
+        this.currentLayer = this.dataSourceCopy[0].dataSource.features;
         //初始化graphicLayer图层列表
-        this.$_layerSelect(layerIndex);
+        this.$_layerSelect();
+        this.currenSelectLayer = this.dataSourceCopy[0].name;
       } else {
         this.currentLayer = [];
       }
