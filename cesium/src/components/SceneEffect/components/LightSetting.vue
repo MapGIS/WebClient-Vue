@@ -24,6 +24,17 @@
                 >
                 </mapgis-ui-color-pick-panel>
             </mapgis-ui-switch-panel>
+
+            <div class="dividerWrapper"><div class="divider" /></div>
+
+            <mapgis-ui-input-number-panel
+                size="small"
+                label="模型亮度"
+                v-model="lightIntensity"
+                :range="[1,200]"
+                @change="lightIntensityChange"
+            >
+            </mapgis-ui-input-number-panel>
         </mapgis-ui-form-model>
     </div>
 </template>
@@ -42,9 +53,9 @@ export default {
     data() {
         return {
             sunlight: false,
-            sunlightParams: undefined,
             // 光照颜色
             lightColor: "rgba(255,255,255,255)",
+            lightIntensity: 10
         };
     },
     computed: {
@@ -56,6 +67,9 @@ export default {
                   }
                 : {};
         },
+    },
+    mounted(){
+        this.lightIntensityChange();
     },
     watch: {
         lightColor: {
@@ -73,11 +87,6 @@ export default {
             this.$emit("updateSpin", true);
             let vm = this;
 
-            if (vm.sunlight) {
-                this.sunlightParams = "40px";
-            } else {
-                this.sunlightParams = "0px";
-            }
 
             setTimeout(function () {
                 viewer.scene.globe.enableLighting = vm.sunlight;
@@ -86,16 +95,33 @@ export default {
                 vm.$emit("updateSpin", false);
             }, 400);
         },
-        //光照颜色
+        //光照颜色、带有法线数据的模型的颜色
         lightColorChange(e) {
-            const { Cesium } = this;
+            const { Cesium,viewer } = this;
             let color = Cesium.Color.fromCssColorString(e);
-            let sunLight = new Cesium.SunLight({ color: color });
-            viewer.scene.light = sunLight;
+            viewer.scene.light.color = color;
         },
+        //带有法线数据的模型的亮度
+        lightIntensityChange() {
+            const { viewer } = this;
+
+            viewer.scene.light.intensity = this.lightIntensity;
+        }
     },
 };
 </script>
 
 <style scoped>
+.dividerWrapper {
+    height: 13px;
+}
+.divider {
+    display: block;
+    height: 1px;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    margin: 6px 0;
+    background: #f0f0f0;
+}
 </style>
