@@ -28,9 +28,6 @@
     </div>
     <!--设置面板-->
     <div v-else-if="noTitleKey === 'edit'">
-      <div v-show="currentEditType === 'model'">
-        <mapgis-ui-button @click="test">旋转模型</mapgis-ui-button>
-      </div>
       <div v-if="editPanelValues" style="margin-bottom: 12px;">
         <mapgis-ui-title-row-left
           title="类型"
