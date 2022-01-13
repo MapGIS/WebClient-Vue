@@ -363,6 +363,10 @@ export default {
     parseTree(tree) {
       let cbtree = this.loopTreeNode(tree, "", undefined);
       this.layerTree.splice(0, 1, cbtree);
+      // BIM树节点向下缩短两层
+      for (var i = 0; i < 2; i ++) {
+        this.layerTree = this.layerTree[0].children
+      }
     },
     loopTreeNode(node, prefix, parent) {
       const vm = this;
