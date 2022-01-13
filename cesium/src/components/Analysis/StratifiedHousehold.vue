@@ -159,6 +159,7 @@
 <script>
 import BaseLayer from "./BaseLayer";
 import StratifiedHouseholdMenus from "./StratifiedHouseholdMenus.vue";
+import { rgbToHex } from "../Utils/common/color-util";
 
 export default {
   name: "mapgis-3d-stratified-household",
@@ -201,10 +202,34 @@ export default {
     },
     enableCollapse: { type: Boolean, default: true },
     enableStratifiedHouse: { type: Boolean, default: false },
-    enableDynamicQuery: { type: Boolean, default: false }
+    enableDynamicQuery: { type: Boolean, default: false },
+    /**
+     * 高亮颜色，支持rgb，rgba和十六进制格式
+     */
+    highlightColorProp: {
+      type: String,
+      default: "rgba(255,255,0,1)"
+    }
   },
   components: {
     StratifiedHouseholdMenus
+  },
+  computed: {
+    highlightColor() {
+      let color = `color('#FFFF00', 1)`;
+      if (this.highlightColorProp.includes("#")) {
+        color = `color('${this.highlightColorProp}',1)`;
+      } else if (this.highlightColorProp.includes("rgb")) {
+        const hex = rgbToHex(this.highlightColorProp);
+        let a = 1;
+        if (this.highlightColorProp.includes("rgba")) {
+          const strs = this.highlightColorProp.split(",");
+          a = strs[strs.length - 1].split(")")[0];
+        }
+        color = `color('${hex}',${a})`;
+      }
+      return color;
+    }
   },
   data() {
     return {
@@ -285,7 +310,9 @@ export default {
       featureproperties: undefined,
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
-      disableLayerSelect: false
+      disableLayerSelect: false,
+      prePickFeature: undefined, // 上次选中的要素
+      prePickFeatureColor: undefined // 上次选中要素的颜色，便于恢复
     };
   },
   provide() {
@@ -717,6 +744,9 @@ export default {
       const { vueKey, innerVueIndex } = this;
       this.featurevisible = false;
       this.restoreM3d();
+      if (vm.prePickFeature && vm.prePickFeatureColor) {
+        vm.prePickFeature.color = vm.prePickFeatureColor;
+      }
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
         innerVueIndex
@@ -744,7 +774,7 @@ export default {
       this.restoreOriginStyle();
     },
     highlightM3d(layerIndex) {
-      const { vueKey, innerVueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium, highlightColor } = this;
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(layerIndex);
@@ -761,8 +791,13 @@ export default {
         "pickerTilesetStyle",
         m3dlayer.style
       );
+      /**
+       * @修改说明 使用组件传入的高亮颜色
+       * @修改人 龚跃健
+       * @修改时间 2022/1/13
+       */
       m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`
+        color: highlightColor
       });
     },
     handleDynamicQuery() {
@@ -912,6 +947,19 @@ export default {
             if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
               let result = feature.content.getAttributeByOID(oid) || {};
               vm.featureproperties = result;
+              /**
+               * @修改说明 高亮选中要素，并恢复之前选中要素。暂时临时处理了这里，其它地方未处理
+               * @修改人 龚跃健
+               * @修改时间 2022/1/13
+               */
+              if (vm.prePickFeature && vm.prePickFeatureColor) {
+                vm.prePickFeature.color = vm.prePickFeatureColor;
+              }
+              vm.prePickFeature = feature;
+              vm.prePickFeatureColor = feature.color;
+              feature.color = vm.Cesium.Color.fromCssColorString(
+                vm.highlightColorProp
+              );
             } else {
               tileset.queryAttributes(oid).then(function(result) {
                 result = result || {};
