@@ -23,15 +23,18 @@
                     "
                 >
                 </mapgis-ui-color-pick-panel>
-                <mapgis-ui-input-number-panel
-                    size="small"
-                    label="模型亮度"
-                    v-model="lightIntensity"
-                    :range="[1,200]"
-                    @change="lightIntensityChange"
-                >
-                </mapgis-ui-input-number-panel>
             </mapgis-ui-switch-panel>
+
+            <div class="dividerWrapper"><div class="divider" /></div>
+
+            <mapgis-ui-input-number-panel
+                size="small"
+                label="模型亮度"
+                v-model="lightIntensity"
+                :range="[1,200]"
+                @change="lightIntensityChange"
+            >
+            </mapgis-ui-input-number-panel>
         </mapgis-ui-form-model>
     </div>
 </template>
@@ -109,4 +112,16 @@ export default {
 </script>
 
 <style scoped>
+.dividerWrapper {
+    height: 13px;
+}
+.divider {
+    display: block;
+    height: 1px;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    margin: 6px 0;
+    background: #f0f0f0;
+}
 </style>
