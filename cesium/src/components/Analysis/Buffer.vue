@@ -14,9 +14,9 @@
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
 					<!-- <mapgis-ui-select-panel label="半径单位" /> -->
-					<mapgis-ui-form-model-item label="步长">
+					<!-- <mapgis-ui-form-model-item label="步长">
 						<mapgis-ui-input v-model=steps></mapgis-ui-input>
-					</mapgis-ui-form-model-item>
+					</mapgis-ui-form-model-item> -->
 					<mapgis-ui-form-model-item label="轮廓宽度">
 						<mapgis-ui-input v-model=colorLineWidth></mapgis-ui-input>
 					</mapgis-ui-form-model-item>
@@ -39,7 +39,8 @@
 						:disableAlpha="false"
 						:colorStyle="colorStyle"
 						@input="val =>
-							(colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)"
+							(colorCopyFill = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`,
+							colorCopyOpacity = `${val.rgba.a}`)"
 					>
 					</mapgis-ui-color-pick-panel>
 					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
@@ -114,6 +115,8 @@ const { VectorLayer } = MRCS
 // 引入第三方turf->buffer
 import * as turf from '@turf/turf'
 import { setDepthTestAgainstTerrainEnable } from '../WebGlobe/util'
+import { Style } from "@mapgis/webclient-es6-service";
+const { FillStyle } = Style;
 
 export default {
 	name: "mapgis-3d-buffer-analysis",
@@ -172,6 +175,7 @@ export default {
       colorCopyFill: "rgba(255,0,0,1)",
       colorCopyLine: "rgba(255,0,0,1)",
 			colorLineWidth: 3,
+			colorCopyOpacity: 1,
       size: "default",
 			colorStyle:{
 				fontSize: '14px',
@@ -197,7 +201,7 @@ export default {
 				{"name": "度", "unitParam": "degrees"}
 			],
 			selectedUnit: "kilometers",
-			steps: 8,  
+			// steps: 8,  
 			destLayer: '',
 			bufferAdd: true,
 			// 监听组件内部缓冲状态，结束this.$emit("listenFinish", finish)
@@ -363,9 +367,15 @@ export default {
 					console.log("缓冲区分析失败")
 				})
 			} else {
-				var buffered = turf.buffer(this.srcFeature, this.radius, {units: this.selectedUnit, steps: Number(this.steps)});
-				this.$emit("listenFeature", buffered, this.destLayer, this.colorCopyFill, this.colorCopyLine, Number(this.colorLineWidth))
-				// this.$emit("listenFeature", buffered, this.destLayer, this.colorCopyFill)
+				// var buffered = turf.buffer(this.srcFeature, this.radius, {units: this.selectedUnit, steps: Number(this.steps)});
+				var buffered = turf.buffer(this.srcFeature, this.radius, {units: this.selectedUnit});
+				var bufferStyle = new FillStyle({
+					color: this.colorCopyFill,
+					outlineColor: this.colorCopyLine,
+					outlineWidth: Number(this.colorLineWidth),
+					opacity: Number(this.colorCopyOpacity),
+				})
+				this.$emit("listenFeature", buffered, this.destLayer, bufferStyle)
 			}
 		},
 		AnalysisSuccess(data) {
