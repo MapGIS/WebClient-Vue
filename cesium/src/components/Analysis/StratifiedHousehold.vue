@@ -130,21 +130,20 @@
         @enable-dynamic-query="handleDynamicQuery"
       >
       </StratifiedHouseholdMenus>
-
-      <mapgis-3d-feature-popup
-        v-if="featureposition"
-        :position="featureposition"
-        :popupOptions="popupOptions"
-        v-model="featurevisible"
-      >
-        <mapgis-3d-popup-iot
-          :properties="featureproperties"
-          :getVideoStatus="getVideoStatus"
-          @project-screen="handleProjectScreen"
-        >
-        </mapgis-3d-popup-iot>
-      </mapgis-3d-feature-popup>
     </mapgis-ui-collapse-card>
+    <mapgis-3d-feature-popup
+      v-if="featureposition"
+      :position="featureposition"
+      :popupOptions="popupOptions"
+      v-model="featurevisible"
+    >
+      <mapgis-3d-popup-iot
+        :properties="featureproperties"
+        :getVideoStatus="getVideoStatus"
+        @project-screen="handleProjectScreen"
+      >
+      </mapgis-3d-popup-iot>
+    </mapgis-3d-feature-popup>
     <!-- <mapgis-ui-slider-panel
       class="mapgis-3d-stratified-household-slider-tree"
       :values="layerTree"
