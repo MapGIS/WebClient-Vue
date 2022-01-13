@@ -204,26 +204,33 @@ export default {
     enableStratifiedHouse: { type: Boolean, default: false },
     enableDynamicQuery: { type: Boolean, default: false },
     /**
-     * 高亮颜色，支持rgb，rgba和十六进制格式
+     * 选中要素高亮颜色，支持rgb，rgba和十六进制格式
      */
-    highlightColorProp: {
+    featureHighlightColorProp: {
       type: String,
-      default: "rgba(255,255,0,1)"
+      default: "rgba(255,255,0,0.5)"
+    },
+    /**
+     * 选中图层高亮颜色，支持rgb，rgba和十六进制格式
+     */
+    layerHighlightColorProp: {
+      type: String,
+      default: "rgba(255,0,0,0.5)"
     }
   },
   components: {
     StratifiedHouseholdMenus
   },
   computed: {
-    highlightColor() {
+    layerHighlightColor() {
       let color = `color('#FFFF00', 1)`;
-      if (this.highlightColorProp.includes("#")) {
-        color = `color('${this.highlightColorProp}',1)`;
-      } else if (this.highlightColorProp.includes("rgb")) {
-        const hex = rgbToHex(this.highlightColorProp);
+      if (this.layerHighlightColorProp.includes("#")) {
+        color = `color('${this.layerHighlightColorProp}',1)`;
+      } else if (this.layerHighlightColorProp.includes("rgb")) {
+        const hex = rgbToHex(this.layerHighlightColorProp);
         let a = 1;
-        if (this.highlightColorProp.includes("rgba")) {
-          const strs = this.highlightColorProp.split(",");
+        if (this.layerHighlightColorProp.includes("rgba")) {
+          const strs = this.layerHighlightColorProp.split(",");
           a = strs[strs.length - 1].split(")")[0];
         }
         color = `color('${hex}',${a})`;
@@ -774,7 +781,7 @@ export default {
       this.restoreOriginStyle();
     },
     highlightM3d(layerIndex) {
-      const { vueKey, innerVueIndex, vueCesium, highlightColor } = this;
+      const { vueKey, innerVueIndex, vueCesium, layerHighlightColor } = this;
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(layerIndex);
@@ -797,7 +804,7 @@ export default {
        * @修改时间 2022/1/13
        */
       m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: highlightColor
+        color: layerHighlightColor
       });
     },
     handleDynamicQuery() {
@@ -958,7 +965,7 @@ export default {
               vm.prePickFeature = feature;
               vm.prePickFeatureColor = feature.color;
               feature.color = vm.Cesium.Color.fromCssColorString(
-                vm.highlightColorProp
+                vm.featureHighlightColorProp
               );
             } else {
               tileset.queryAttributes(oid).then(function(result) {
