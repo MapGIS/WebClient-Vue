@@ -42,43 +42,43 @@
 </template>
 
 <script>
-import axios from 'axios'
-import { fileType } from './fileType.js'
+import axios from "axios";
+import { fileType } from "./fileType.js";
 
 export default {
-  name: 'Preview',
-  inject: ['getVideoStatus'],
+  name: "Preview",
+  inject: ["getVideoStatus"],
   props: {
     url: {
       type: String,
-      default: ''
+      default: ""
     },
     type: {
       type: String,
-      default: ''
+      default: ""
     },
     name: {
       type: String,
-      default: ''
+      default: ""
     }
   },
   data() {
     return {
-      sourceUrl: '',
-      sourceType: '',
+      sourceUrl: "",
+      sourceType: "",
       video: fileType.video,
       image: fileType.image,
       text: fileType.text,
       isProjected: false,
       featureProperties: null
-    }
+    };
   },
   mounted() {
-    this.getHlsSource()
+    this.getHlsSource();
   },
   methods: {
     close() {
-      this.$emit('close')
+      this.$emit("close");
     },
     projectScreen() {
       const {
@@ -90,7 +90,7 @@ export default {
         positionZ,
         hFOV,
         orientationPitch
-      } = this.featureProperties
+      } = this.featureProperties;
       const file = {
         url: this.sourceUrl,
         type: this.sourceType,
@@ -103,47 +103,47 @@ export default {
         positionZ,
         hFOV,
         orientationPitch
-      }
-      this.$emit('project-screen', file)
+      };
+      this.$emit("project-screen", file);
       this.$nextTick(() => {
-        this.isProjected = this.getVideoStatus(this.sourceUrl)
-      })
+        this.isProjected = this.getVideoStatus(this.name);
+      });
     },
     async getHlsSource() {
-      if (this.type === 'hls') {
+      if (this.type === "hls") {
         const res = await axios.get(this.url, {
           params: {
             deviceIDs: this.name,
             pageSize: 20,
             pageNo: 1
           }
-        })
+        });
         if (res.status === 200) {
-          const { total, features } = res.data
+          const { total, features } = res.data;
           if (features && features.length > 0) {
-            const { properties } = features[0]
-            const { stremDataUrl } = properties
-            this.featureProperties = properties
-            this.sourceUrl = stremDataUrl
-            const typeArr = stremDataUrl.split('.')
+            const { properties } = features[0];
+            const { stremDataUrl } = properties;
+            this.featureProperties = properties;
+            this.sourceUrl = stremDataUrl;
+            const typeArr = stremDataUrl.split(".");
             if (typeArr && typeArr.length > 1) {
-              this.sourceType = typeArr[typeArr.length - 1]
+              this.sourceType = typeArr[typeArr.length - 1];
             } else {
-              this.sourceType = ''
+              this.sourceType = "";
             }
           }
         }
       } else {
-        this.sourceUrl = this.url
-        this.sourceType = this.type
+        this.sourceUrl = this.url;
+        this.sourceType = this.type;
       }
 
-      if (this.video.includes(this.sourceType)) {
-        this.isProjected = this.getVideoStatus(this.sourceUrl)
+      if (this.type === "hls") {
+        this.isProjected = this.getVideoStatus(this.name);
       }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

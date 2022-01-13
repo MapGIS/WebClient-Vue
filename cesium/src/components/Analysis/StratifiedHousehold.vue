@@ -139,6 +139,7 @@
       >
         <mapgis-3d-popup-iot
           :properties="featureproperties"
+          :getVideoStatus="getVideoStatus"
           @project-screen="handleProjectScreen"
         >
         </mapgis-3d-popup-iot>
@@ -164,6 +165,10 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
+    getVideoStatus: {
+      type: Function,
+      default: () => {}
+    },
     outStyle: {
       type: Object,
       default: () => {

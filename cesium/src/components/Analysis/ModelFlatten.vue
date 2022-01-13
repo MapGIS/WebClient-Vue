@@ -5,37 +5,42 @@
       { right: position === 'right', left: position === 'left' }
     ]"
   >
-    <mapgis-ui-card>
-      <div class="mapgis-3d-model-flatten-container">
-        <mapgis-ui-select-row-left
-          title="M3D模型"
-          :dataSource="dataSource"
-          :titleStyle="titleStyle"
-          :selectStyle="selectStyle"
-          @change="$_chooseM3D"
-        />
-        <mapgis-ui-select-row-left
-          title="是否贴模型"
-          :dataSource="classify"
-          :titleStyle="titleStyle"
-          :selectStyle="selectStyle"
-          v-model="mode"
-          @change="$_chooseMode"
-        />
-        <mapgis-ui-button
-          type="primary"
-          style="float: right;margin-left: 10px;"
-          @click="clearModelFlatten">
-          还原
-        </mapgis-ui-button>
-        <mapgis-ui-button
-          type="primary"
-          style="float: right"
-          @click="startModelFlatten">
-          开始绘制
-        </mapgis-ui-button>
-      </div>
-    </mapgis-ui-card>
+    <div class="mapgis-3d-model-flatten-container">
+      <mapgis-ui-select-row-left
+        title="M3D模型"
+        :dataSource="dataSource"
+        :titleStyle="titleStyle"
+        :selectStyle="selectStyle"
+        @change="$_chooseM3D"
+      />
+      <mapgis-ui-select-row-left
+        title="是否贴模型"
+        :dataSource="classify"
+        :titleStyle="titleStyle"
+        :selectStyle="selectStyle"
+        v-model="mode"
+        @change="$_chooseMode"
+      />
+      <mapgis-ui-input-row-left
+        title="压平高度"
+        type="Number"
+        v-model="flattenHeight"
+        paddingRight="0"
+        @change="$_change"
+      />
+      <mapgis-ui-button
+        type="primary"
+        style="float: right;margin-left: 10px;"
+        @click="clearModelFlatten(true)">
+        还原
+      </mapgis-ui-button>
+      <mapgis-ui-button
+        type="primary"
+        style="float: right"
+        @click="startModelFlatten">
+        开始绘制
+      </mapgis-ui-button>
+    </div>
   </div>
 </template>
 
@@ -71,21 +76,27 @@ export default {
       selectStyle: {
         paddingRight: 0
       },
+      containerStyle: {
+        paddingRight: 0
+      },
       classify: [{
-        key: 1,
+        key: "1",
         value: "贴模型"
       }, {
-        key: 0,
+        key: "0",
         value: "贴地"
       }, {
-        key: 2,
+        key: "2",
         value: "贴模型和贴地"
       }, {
-        key: -1,
+        key: "-1",
         value: "都不贴"
       }],
-      mode: 1,
-      isStartDrawing: false
+      mode: "2",
+      isStartDrawing: false,
+      flattenHeight: 0,
+      max: 100,
+      min: 0
     };
   },
   watch: {
@@ -110,20 +121,45 @@ export default {
   },
   destroyed() {
     this.clearModelFlatten();
-    this.$_stopDrawing();
-    this.$_destroy();
+    window.__graphicsLayer__.stopDrawing();
+    window.__graphicsLayer__.destroy();
+    window.__graphicsLayer__ = undefined;
+    delete window.__graphicsLayer__;
     this.$_deleteManager(Managger);
   },
   methods: {
+    $_change() {
+      this.clearModelFlatten();
+      if (window._result_) {
+        this.getDrawResult(window._result_);
+      }
+    },
+    $_getClassificationType(type) {
+      type = Number(type);
+      switch (type) {
+        case -1:
+          return undefined;
+        case 0:
+          return Cesium.ClassificationType.TERRAIN;
+        case 1:
+          return Cesium.ClassificationType.CESIUM_3D_TILE;
+        case 2:
+          return Cesium.ClassificationType.BOTH;
+      }
+    },
     $_chooseMode() {
       if (this.isStartDrawing) {
-        this.$_stopDrawing();
-        this.$_startDrawing({
+        window.__graphicsLayer__.stopDrawing();
+        let options = {
           type: "polygon",
           style: {
-            classificationType: this.mode
+            color: Cesium.Color.RED.withAlpha(0.8),
+            height: 0,
+            isPlanePolygon: false,
+            classificationType: this.$_getClassificationType(this.mode)
           }
-        });
+        };
+        window.__graphicsLayer__.startDrawing(options);
       }
     },
     $_chooseM3D(e) {
@@ -135,12 +171,22 @@ export default {
     startModelFlatten() {
       const {vueKey, vueIndex} = this;
       this.isStartDrawing = true;
-      this.$_startDrawing({
+      let options = {
         type: "polygon",
         style: {
-          classificationType: this.mode
+          color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString("#F04155"), 0.8),
+          height: 0,
+          isPlanePolygon: false,
+          classificationType: this.$_getClassificationType(this.mode)
         }
-      });
+      };
+      //无法通过manager获取graphicLayer，否则贴地贴模型失效，暂时只能这样
+      if (!window.hasOwnProperty("__graphicsLayer__")) {
+        window.__graphicsLayer__ = new Cesium.GraphicsLayer(viewer, {
+          getGraphic: this.getDrawResult,
+        });
+      }
+      window.__graphicsLayer__.startDrawing(options);
       let m3d = vueCesium.G3DManager.findSource(this.vueKey, this.m3dVueIndex);
       if (m3d) {
         m3d = m3d.options.m3ds[0];
@@ -156,9 +202,12 @@ export default {
         });
       }
     },
-    clearModelFlatten() {
+    clearModelFlatten(clearPosition) {
       const {viewer} = this;
       let find = this.findSource();
+      if (clearPosition) {
+        window._result_ = undefined;
+      }
       if (find && find.source) {
         let m3d = vueCesium.G3DManager.findSource(this.vueKey, this.m3dVueIndex);
         let origin = find.options.origin;
@@ -177,27 +226,11 @@ export default {
         m3d = m3d.options.m3ds[0];
       }
 
-      //获取绘制多边形区域的定点（这是三维的点xyz）
-      let positionsArray = result.positions;
-      /*对绘制区域的顶点循环处理一下，以便用于模型压平参数的赋值*/
-      var array = [];
-      for (let i = 0; i < positionsArray.length; i++) {
-        let point = positionsArray[i];
-        let resPoint = new Cesium.Cartesian3();
-        let invserTran = new Cesium.Matrix4();
-        Cesium.Matrix4.inverse(m3d._root.transform, invserTran);
-        Cesium.Matrix4.multiplyByPoint(invserTran, point, resPoint);
-        resPoint.y = -resPoint.y;
-        array.push(new Cesium.Cartesian2(resPoint.x, resPoint.y));
-      }
-      array.push(array[0]);
-      m3d.isFlatten = true;
-      m3d.height = 0.0;
-      m3d.positionArray = array;
-      //场景渲染（渲染最新的压平效果）
-      viewer.scene.requestRender();
-      this.$_removeAllGraphic();
-      this.$_stopDrawing();
+      //模型压平
+      m3d.modelFlatten(result.positions, this.flattenHeight);
+      window.__graphicsLayer__.removeAllGraphic();
+      window.__graphicsLayer__.stopDrawing();
+      window._result_ = result;
       this.isStartDrawing = false;
     }
   }

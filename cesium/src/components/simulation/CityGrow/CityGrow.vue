@@ -6,14 +6,15 @@
         :style="{ width: `${width}px` }"
         class="mapgis-city-grow"
     >
+      <div class="mapgis-city-grow-time">{{formatDate(sliderValue)}}</div>
       <mapgis-ui-slider
-          :style="{ width: width }"
+          class="mapgis-city-grow-slider"
           :tip-formatter="formatter"
           :min="minSlider"
           :max="maxSlider"
           v-model="sliderValue"
           @change="onSliderChange"></mapgis-ui-slider>
-      <span class="mapgis-city-grow-starttime" v-if="startTimeCopy!==''">起始时间:{{ startTimeCopy }}</span>
+      <span class="mapgis-city-grow-starttime" v-if="startTimeCopy!==''">{{ startTimeCopy }}</span>
       <div class="mapgis-city-grow-toolbar">
 <!--        <mapgis-ui-iconfont type="mapgis-chevrons-left"/>-->
 <!--        <mapgis-ui-iconfont type="mapgis-chevron-left"/>-->
@@ -32,7 +33,7 @@
 <!--        <mapgis-ui-iconfont type="mapgis-chevron-right"/>-->
 <!--        <mapgis-ui-iconfont type="mapgis-chevrons-right"/>-->
       </div>
-      <span class="mapgis-city-grow-endtime" v-if="endTimeCopy!==''">结束时间:{{ endTimeCopy }}</span>
+      <span class="mapgis-city-grow-endtime" v-if="endTimeCopy!==''">{{ endTimeCopy }}</span>
     </mapgis-ui-card>
   </div>
 </template>
@@ -72,6 +73,10 @@ export default {
         return {}
       }
     },
+    formatType: {
+      type: String,
+      default: "month"
+    }
   },
   watch: {
     featureStyle:{
@@ -118,7 +123,8 @@ export default {
         heightRadio:1
       },
       info: "注意：颜色设置只能在城市生长未开启时设置，生长开启后设置颜色无效。",
-      showColorSetting: false
+      showColorSetting: false,
+      tooltipVisible: true
     }
   },
   created() {
@@ -156,6 +162,8 @@ export default {
         let url = vm.baseUrl;
         let colors = [];
         let options = {};
+        //始终显示时间
+        // vm.tooltipVisible = true;
         vm.featureStyleCopy = Object.assign(vm.featureStyleCopy,vm.featureStyle);
         for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
           let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
@@ -236,7 +244,14 @@ export default {
       let y = time.getFullYear();
       let m = time.getMonth() + 1;
       let d = time.getDate();
-      return y + '-' + this.addT(m) + '-' + this.addT(d);
+      switch (this.formatType) {
+        case "year":
+          return y;
+        case "month":
+          return y + '-' + this.addT(m);
+        case "day":
+          return y + '-' + this.addT(m) + '-' + this.addT(d);
+      }
       // 时间戳转时间 方法二：
       // return moment(timestamp).format("YYYY-MM-DD");
 
@@ -297,13 +312,15 @@ export default {
 
 .mapgis-city-grow-starttime {
   position: absolute;
-  left: 10px;
+  left: 100px;
+  font-size: 12px;
 }
 
 .mapgis-city-grow-endtime {
   position: absolute;
-  right: 10px;
-  bottom: 12px;
+  right: 17px;
+  bottom: 14px;
+  font-size: 12px;
 }
 
 .mapgis-city-grow-setting {
@@ -321,4 +338,15 @@ export default {
   display: inline;
 }
 
+.mapgis-city-grow-slider {
+  width: 460px;
+  margin-left: 90px;
+}
+
+.mapgis-city-grow-time {
+  position: absolute;
+  top: 15px;
+  left: 11px;
+  font-size: 22px;
+}
 </style>
