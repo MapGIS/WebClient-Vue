@@ -8,16 +8,26 @@
   >
     <!--标注列表-->
     <div class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
-      <div @dblclick="$_dbclick(row)" :key="index" v-for="(row, index) in dataSourceCopy">
-        <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)" :iconStyle="iconStyle" :mainStyle="rowStyle"
+      <div :key="index" v-for="(row, index) in dataSourceCopy">
+        <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)"
+                            @dblclick="$_dbclick(row)"
+                            @open="$_open($event, row)"
+                            :iconStyle="iconStyle"
+                            :mainStyle="rowStyle"
+                            :enableGroup="row.type === 'group'"
                             :src="icons[row.type + 'Image']" :title="row.attributes.title"/>
+        <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 13px;" v-show="editTitleGraphicId === row.id" v-model="row.attributes.title"/>
+        <mapgis-ui-button v-show="editTitleGraphicId === row.id" @click="$_finishEditTitle(row.attributes.title)" style="height: 30px;padding-top: 3px" type="primary">完成修改</mapgis-ui-button>
+        <div v-if="row.type === 'group'" v-show='openGroup === row.id'>
+          <mapgis-ui-icon-row :key="gIndex" v-for="(graphic, gIndex) in graphicGroups"
+                              @clickTool="$_clickTool($event, graphic)" :iconStyle="iconStyle"
+                              :mainStyle="groupRowStyle"
+                              :src="icons[graphic.type + 'Image']" :title="graphic.name"/>
+        </div>
       </div>
     </div>
     <!--设置面板-->
     <div v-else-if="noTitleKey === 'edit'">
-      <div v-show="currentEditType === 'model'">
-        <mapgis-ui-button @click="test">旋转模型</mapgis-ui-button>
-      </div>
       <div v-if="editPanelValues" style="margin-bottom: 12px;">
         <mapgis-ui-title-row-left
           title="类型"
@@ -259,12 +269,18 @@ export default {
     //当前编辑的类型
     currentEditType: {
       type: String
+    },
+    graphicGroups: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   watch: {
     editPanelValues: {
       handler: function () {
-        if (this.isUpdatePanel) {
+        if (this.isUpdatePanel && !this.editTitle) {
           this.$emit("change", this.editPanelValues, this.isEdit);
         }
       },
@@ -272,7 +288,7 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        if (this.dataSourceCopy.length > 0) {
+        if (this.dataSourceCopy.length > 0 && !this.editTitle) {
           //获取设置面板显示参数
           if (this.isUpdatePanel) {
             this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[this.dataSourceCopy.length - 1]);
@@ -316,6 +332,12 @@ export default {
         height: "40px",
         lineHeight: "40px",
         paddingLeft: "20px"
+      },
+      //标注列表组一行的样式
+      groupRowStyle: {
+        height: "40px",
+        lineHeight: "40px",
+        paddingLeft: "54px"
       },
       //名称输入框样式
       mainStyle: {
@@ -371,11 +393,29 @@ export default {
       attributeValue: "",
       //添加属性按钮名称
       addAttributeTitle: "添加属性",
-      //当前的GrapicId
-      currentGrapicId: undefined
+      //当前的GraphicId
+      currentGraphicId: undefined,
+      //展开组
+      openGroup: undefined,
+      //要编辑标题的标会对象ID
+      editTitleGraphicId: undefined,
+      //是否编辑标题
+      editTitle: false
     }
   },
   methods: {
+    $_resetEditPanel() {
+      this.noTitleKey = "list";
+    },
+    $_changeTitle() {
+      this.editTitle = true;
+      this.$emit("editTitle", true);
+    },
+    $_finishEditTitle(title) {
+      this.$emit("editTitle", false, title, this.editTitleGraphicId);
+      this.editTitleGraphicId = undefined;
+      this.editTitle = false;
+    },
     $_addAttribute() {
       if (this.addAttribute) {
         this.addAttributeTitle = "添加属性";
@@ -386,7 +426,7 @@ export default {
         for (let i = 0; i < this.attributeKayArray.length; i++) {
           attributes[this.attributeKayArray[i]] = this.attributeValueArray[i];
         }
-        this.$emit("changeAttributes", attributes, this.currentGrapicId);
+        this.$emit("changeAttributes", attributes, this.currentGraphicId);
       } else {
         this.addAttributeTitle = "确定添加";
         this.attributeKey = "";
@@ -415,12 +455,16 @@ export default {
       }
     },
     $_dbclick(json) {
+      debugger
+      if (json.type === "group") {
+        return;
+      }
       //显示设置面板
       this.noTitleKey = "edit";
       //设置为编辑状态
       this.isEdit = true;
       //获取当前GraphicId
-      this.currentGrapicId = json.id;
+      this.currentGraphicId = json.id;
       //获取设置面板显示参数
       this.isUpdatePanel = false;
       if (json.type !== "group") {
@@ -431,7 +475,18 @@ export default {
       });
       this.$emit("dbclick", json);
     },
+    $_open(open, row) {
+      if (open) {
+        this.openGroup = row.id;
+        this.$emit("open", row.attributes.title);
+      } else {
+        this.openGroup = undefined;
+      }
+    },
     $_clickTool(type, row) {
+      if(type === "editTitle") {
+        this.editTitleGraphicId = row.id;
+      }
       this.$emit("clickTool", type, row);
     },
     $_showOutLine(e) {
@@ -773,6 +828,7 @@ export default {
 <style scoped>
 .mapgis-ui-graphic-edit-list {
   max-height: 618px;
+  min-height: 200px;
   overflow: hidden;
   overflow-y: scroll;
 }

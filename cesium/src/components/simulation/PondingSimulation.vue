@@ -170,8 +170,8 @@
                 </template>
                 <mapgis-ui-iconfont
                     type="mapgis-revision"
-                    @click="addflood"
-                    v-show="pond"
+                    @click="addSimulation"
+                    v-show="isSimulation"
                     class="redo-button-style"
                 />
             </mapgis-ui-tooltip>
@@ -186,26 +186,27 @@
             :parentDivClass="'cesium-map-wrapper'"
             :text="maskText"
         />
+
     </div>
 </template>
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer";
+// import PondingSimulationTimeline from "./PondingSimulation/timeline.vue"
 import flood from "../Analysis/Flood.vue";
 import * as turf from "@turf/turf";
 
 export default {
     name: "mapgis-3d-ponding-simulation",
     mixins: [ServiceLayer, flood],
+    // components:{PondingSimulationTimeline},
     mounted() {
         this.mounted();
     },
     watch: {
         rainOption(e) {
             let rainfalls = [9, 19, 49, 99];
-            let pondingTimes = [7, 5, 3, 1];
             this.rainFall = rainfalls[e];
-            this.pondingTime = pondingTimes[e];
         },
         rainFall() {
             const vm = this;
@@ -220,15 +221,35 @@ export default {
                 vm.rainOption = 3;
             }
         },
-        angle() {
-            const vm = this;
-            if (vm.pond) {
-                vm.addrain();
-            }
+        pondingTime(e) {
+            let speed =
+                (this.maxHeightCopy - this.startHeightCopy) / e;
+            this.currentSpeed = Math.round(speed * 100) / 100;
         },
+        sliderValue:{
+            handler:function(e){
+                this.$emit('updateValue',e)
+            },
+            immediate:true
+        },
+        pond:{
+            handler:function(e){
+                this.$emit('isPonding',e)
+            },
+            immediate:true
+        },
+    },
+    props:{
+        //积水上涨的时间
+        pondingTime:{
+            type:Number,
+            default:4
+        }
     },
     data() {
         return {
+            sliderValue: 0,
+
             drawStyleCopy: {
                 color: "#FF8C00",
                 opacity: 0.6,
@@ -275,8 +296,7 @@ export default {
             maxH: undefined,
             //积水上涨高度调整的步长值
             heightStep: 100,
-            //积水上涨的时间
-            pondingTime: 3,
+            
             //计算体积的误差
             VolErr: undefined,
             //计算不同高度填方体积的次数
@@ -303,9 +323,14 @@ export default {
             maskText: "正在分析中, 请稍等...",
 
             //判断是否存在积水仿真效果
-            pond: false,
+            isSimulation: false,
+            currentMaxHeight: null,
+            currentSpeed: null,
             //判断是否停止积水分析计算
             stopCaculate: true,
+            //判断积水是否正在进行积水仿真
+            pond: false,
+            timer: undefined,
         };
     },
     destroyed() {
@@ -444,7 +469,7 @@ export default {
         getPolygonDegrees(degreeArr3) {
             let degreeArr2 = [];
             degreeArr3.forEach(function (degree) {
-                degreeArr2.push(degree[0], degree[1]);
+                degreeArr2.push([degree[0], degree[1]]);
             });
             this.lnglat = degreeArr2;
         },
@@ -508,7 +533,7 @@ export default {
         //根据降雨量计算绘制区域的降雨体积
         computeRainfallVol() {
             const vm = this;
-            if (!this.pond) {
+            if (!this.isSimulation) {
                 //计算绘制区域面积
                 let turfPoly = turf.polygon([vm.lnglat]);
                 this.area = turf.area(turfPoly); //square meters
@@ -584,11 +609,12 @@ export default {
                 vm.floodSpeedCopy = Math.round(speed * 100) / 100;
 
                 vm.maskShow = false;
-                vm.pond = true;
-                //下雨
-                vm.addrain();
+                vm.isSimulation = true;
+                vm.currentMaxHeight = vm.maxHeightCopy;
+                vm.currentSpeed = vm.floodSpeedCopy;
+
                 //积水上涨
-                vm.addflood();
+                vm.addSimulation();
                 vm.loopCount = 0;
                 return;
             }
@@ -668,6 +694,30 @@ export default {
                 resolve(eventdata);
             }
         },
+        addSimulation() {
+            const vm = this;
+            if (vm.isSimulation) {
+                //下雨
+                vm.addrain();
+                vm.pond = true;
+                vm.maxHeightCopy = vm.currentMaxHeight;
+                vm.floodSpeedCopy = vm.currentSpeed;
+                vm.sliderValue = 0;
+                vm.timer = setInterval(() => {
+                    vm.sliderValue += 24 * (0.5 / vm.pondingTime);
+                    if (vm.sliderValue >= 24) {
+                        clearInterval(vm.timer);
+                        vm.removeRain();
+                        vm.pond = false;
+                    }
+                }, 500);
+
+                vm._removeFlood();
+                vm._doAnalysis();
+            } else {
+                this.$message.warning("请先开始仿真！");
+            }
+        },
         addrain() {
             const { viewer, Cesium, vueCesium, vueKey, vueIndex, positions } =
                 this;
@@ -723,15 +773,6 @@ export default {
                 );
             }
         },
-        addflood() {
-            const vm = this;
-            if (vm.pond) {
-                vm._removeFlood();
-                vm._doAnalysis();
-            } else {
-                this.$message.warning("请先进行分析！");
-            }
-        },
         stopSimulation() {
             this.stopCaculate = true;
             this.maskShow = false;
@@ -740,7 +781,12 @@ export default {
             this._removeFlood();
             this.removeRain();
             this.removeDraw();
-            this.pond = false;
+            this.isSimulation = false;
+            this.currentMaxHeight = null;
+            this.currentSpeed = null;
+            this.sliderValue = 0;
+            this.loopCount = 0;
+
         },
         removeRain() {
             const { vueCesium, vueKey, vueIndex } = this;
@@ -823,4 +869,5 @@ export default {
     left: 0px;
     font-size: 21px;
 }
+
 </style>

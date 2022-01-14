@@ -59,6 +59,14 @@
           </mapgis-ui-tab-pane>
           <mapgis-ui-tab-pane key="2" tab="设置面板" class="mapgis-3d-particle-effects-control-content" id="parameter-formList">
             <mapgis-ui-select-panel
+              class="mapgis-ui-number-style"
+              label="预设特效"
+              v-model="currentEffectName"
+              :selectOptions="effectOptions"
+              @change="onEffectNameChange">
+            >
+            </mapgis-ui-select-panel>
+            <mapgis-ui-select-panel
                 class="mapgis-ui-number-style"
                 label="发射类型"
                 v-model="emitterTypeCopy"
@@ -252,7 +260,72 @@ export default {
       endScaleCopy: 4.0, // 结束比例
       emitterTypeCesium: undefined, // 发射类型
       emitterTypeCopy: "圆形放射", // 发射类型下拉值
+      currentEffectType: "火焰",//当前预设特效类型
+      currentEffectName: "火焰1",//当前预设特效名称
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
+      effectFireOptions: ["火焰1", "火焰2"], // 预设特效火焰下拉项
+      effectFire: {
+        "火焰1": {
+          "emitterType": "圆形放射",
+          "emissionRate": 13.0,
+          "imageSize": 5.0,
+          "minimumParticleLife": 2.0,
+          "maximumParticleLife": 3.0,
+          "minimumSpeed": 9.0,
+          "maximumSpeed": 10.0,
+          "startScale": 1.0,
+          "endScale": 4.0,
+          "symbolGuid": "9D09DB87-7955-9295-2E34-61E83C30D3AA",
+        },
+        "火焰2": {
+          "emitterType": "锥形放射",
+          "emissionRate": 29.0,
+          "imageSize": 6.0,
+          "minimumParticleLife": 2.0,
+          "maximumParticleLife": 3.0,
+          "minimumSpeed": 9.0,
+          "maximumSpeed": 10.0,
+          "startScale": 1.0,
+          "endScale": 4.0,
+          "symbolGuid": "9D09DB87-7955-9295-2E34-61E83C30D3AA",
+          "position": {
+            "longitude": 114.40092382,
+            "latitude": 30.46549092,
+            "height": 10
+          }
+        }
+      },
+      effectSmokeOptions: ["烟雾1"], // 预设特效烟雾下拉项
+      effectSmoke: {
+        "烟雾1": {
+          "emitterType": "盒状放射",
+          "emissionRate": 6.0,
+          "imageSize":7.0,
+          "minimumParticleLife": 2.5,
+          "maximumParticleLife": 2.4,
+          "minimumSpeed": 2.0,
+          "maximumSpeed": 6.0,
+          "startScale": 3,
+          "endScale": 3,
+          "symbolGuid": "A35C78FF-DD27-66C8-DD61-027CAE317145"
+        }
+      },
+      effectFountainOptions: ["喷泉"], // 预设特效喷泉下拉项
+      effectFountain: {
+        "喷泉1": {
+          "emitterType": "锥形放射",
+          "emissionRate": 10.0,
+          "imageSize": 7.0,
+          "minimumParticleLife": 1.5,
+          "maximumParticleLife": 1.8,
+          "minimumSpeed": 1.0,
+          "maximumSpeed": 9.0,
+          "startScale": 2.5,
+          "endScale": 4.0,
+          "symbolGuid": "A35C78FF-DD27-66C8-DD61-027CAE317145"
+        }
+      },
+      effectOptions: [], // 预设特效下拉项
       particleArr: [], // 粒子特效集
       isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
       handlerAction: undefined,
@@ -386,12 +459,26 @@ export default {
           }
       );
     },
+    setEffectOptions(effect) {
+      this.emitterTypeCopy = effect.emitterType;
+      this.emissionRateCopy = effect.emissionRate;
+      this.imageSizeCopy = effect.imageSize;
+      this.minimumParticleLifeCopy = effect.minimumParticleLife;
+      this.maximumParticleLifeCopy = effect.maximumParticleLife;
+      this.minimumSpeedCopy = effect.minimumSpeed;
+      this.maximumSpeedCopy = effect.maximumSpeed;
+      this.startScaleCopy = effect.startScale;
+      this.endScaleCopy = effect.endScale;
+      this.viewModel = effect;
+    },
     mount() {
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
+      this.effectOptions = this.effectFireOptions;
+      this.setEffectOptions(this.effectFire[this.currentEffectName]);
     },
     unmount() {
       if (this.handlerAction) {
@@ -447,17 +534,7 @@ export default {
         // 当tab切换到设置面板时，先判断粒子列表是否有选中粒子，若有则设置面板为该选中粒子的参数，否则为生成粒子时的初始化参数
         if (this.activeIndex === undefined ){
           this.changeParticleIndex = undefined;
-          let viewModelCopy = {
-            emitterType: "圆形放射",
-            emissionRate: 2.0,
-            imageSize: 5.0,
-            minimumParticleLife: 2.0,
-            maximumParticleLife: 3.0,
-            minimumSpeed: 9.0,
-            maximumSpeed: 9.5,
-            startScale: 1.0,
-            endScale: 4.0
-          }
+          let viewModelCopy = this.effectFire[this.currentEffectName];
           this.viewModel = JSON.parse(JSON.stringify(viewModelCopy));
           this.emitterTypeCopy = viewModelCopy.emitterType;
           this.emissionRateCopy = viewModelCopy.emissionRate;
@@ -507,16 +584,23 @@ export default {
     onCreateParticle(tab) {
       // 先把面板参数重设
       this.mode = 'create';
-      this.emitterTypeCopy = this.viewModel.emitterType;
-      this.emissionRateCopy = this.viewModel.emissionRate;
-      this.imageSizeCopy = this.viewModel.imageSize;
-      this.minimumParticleLifeCopy = this.viewModel.minimumParticleLife;
-      this.maximumParticleLifeCopy = this.viewModel.maximumParticleLife;
-      this.minimumSpeedCopy = this.viewModel.minimumSpeed;
-      this.maximumSpeedCopy = this.viewModel.maximumSpeed;
-      this.startScaleCopy = this.viewModel.startScale;
-      this.endScaleCopy = this.viewModel.endScale;
+      // this.setEffectOptions(this.viewModel);
       this.changeParticleIndex = undefined;
+      if(this.currentEffectType !== tab.title){
+        switch (tab.title){
+          case "火焰":
+            this.effectOptions = this.effectFireOptions;
+            break;
+          case "烟雾":
+            this.effectOptions = this.effectSmokeOptions;
+            break;
+          case "喷泉":
+            this.effectOptions = this.effectFountainOptions;
+            break;
+        }
+        this.currentEffectName = tab.title + 1;
+        this.currentEffectType = tab.title;
+      }
 
       this.imgUrl = tab.image;
       this.title = tab.title;
@@ -628,6 +712,19 @@ export default {
         } else if (this.mode === 'create'){
           this.viewModel.emitterType = value
         }
+      }
+    },
+    onEffectNameChange(type) {
+      switch (this.currentEffectType) {
+        case "火焰":
+          this.setEffectOptions(this.effectFire[this.currentEffectName]);
+          break;
+        case "烟雾":
+          this.setEffectOptions(this.effectSmoke[this.currentEffectName]);
+          break;
+        case "喷泉":
+          this.setEffectOptions(this.effectFountain[this.currentEffectName]);
+          break;
       }
     },
     changeEmitterTypeCesium(value) {

@@ -4,6 +4,7 @@
       <mapgis-ui-graphic-icons-panel
         ref="iconsPanel"
         :models="models"
+        :containerStyle="iconsPanelStyle"
         @startDraw="$_startDraw"
         @startDrawModel="$_startDrawModel"
       />
@@ -15,12 +16,14 @@
         :editList="editList"
         :dataSourceCopy="dataSourceCopy"
         :currentEditType="currentEditType"
+        :graphicGroups="graphicGroups"
         @change="$_changeEditPanelValues"
         @stopDrawing="$_stopDraw"
-        @dbclick="$_dbclick"
+        @dblclick="$_dbclick"
         @clickTool="$_clickTool"
         @changeAttributes="$_changeAttributes"
-        @test="test"
+        @open="$_open"
+        @editTitle="$_editTitle"
       />
     </div>
     <mapgis-3d-popup
@@ -43,6 +46,7 @@ import icons from "../Plotting/base64Source"
 import editList from "./editList";
 import * as turf from "@turf/turf";
 import {getPopupHtml} from "../../UI/Popup/popupUtil";
+import clonedeep from 'lodash.clonedeep';
 
 export default {
   name: "mapgis-3d-graphic-single-layer",
@@ -71,6 +75,16 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    },
+    autoFlyToGraphic: {
+      type: Boolean,
+      default: true
+    },
+    containerStyle: {
+      type: Object
+    },
+    iconsPanelStyle: {
+      type: Object
     }
   },
   data() {
@@ -116,13 +130,14 @@ export default {
       lastGraphicColor: undefined,
       groupNum: 0,
       enablePopup: false,
-      popup: {}
+      popup: {},
+      graphicGroups: []
     };
   },
   watch: {
     dataSource: {
       handler: function () {
-        if (!this.isEdit && !this.addSource && this.dataSource.length > 0) {
+        if (!this.isEdit && !this.addSource && !this.editTitle) {
           this.$_init();
         }
       },
@@ -130,7 +145,6 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
       },
       deep: true
     },
@@ -138,6 +152,16 @@ export default {
   mounted() {
   },
   methods: {
+    $_resetEditPanel() {
+      if (this.$refs.editPanel) {
+        this.$refs.editPanel.$_resetEditPanel();
+      }
+    },
+    $_resetIconsPanel() {
+      if (this.$refs.iconsPanel) {
+        this.$refs.iconsPanel.$_resetIconsPanel();
+      }
+    },
     $_setIconMode(type) {
       this.$refs.iconsPanel.currentIconType = type;
     },
@@ -234,6 +258,28 @@ export default {
           this.$_setPopUp(graphic, true);
         });
       }
+    },
+    $_editTitle(flag, title, id) {
+      if (!flag) {
+        let graphic = this.$_getGraphicByID(id);
+        graphic.attributes.title = title;
+      }
+      this.editTitle = flag;
+    },
+    $_open(name) {
+      let graphicLayer = this.$_getGraphicLayer();
+      let graphicGroups = graphicLayer.getGraphicByName(name);
+      let groups = [];
+      for (let i = 0; i < graphicGroups.length; i++) {
+        groups.push({
+          name: graphicGroups[i].name + "_" + (i + 1),
+          attributes: clonedeep(graphicGroups[i].attributes),
+          type: graphicGroups[i].type
+        });
+      }
+      this.graphicGroups = groups;
+      console.log("this.graphicGroups", this.graphicGroups)
+      console.log("this.graphicGroups", typeof this.graphicGroups)
     },
     /**
      * 更多工具里面的按钮的点击事件
@@ -515,7 +561,7 @@ export default {
 
       return editPanelValues;
     },
-    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius) {
+    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius, scale) {
       //停止上一次的绘制
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
@@ -532,12 +578,13 @@ export default {
           if (!this.editPanelValues) {
             //根据当前的绘制类型，获取设置面板显示参数数据
             this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
-            //更新编辑面板
-            this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           }
+          this.editPanelValues.url = model;
+          this.editPanelValues.scale = scale;
+          //更新编辑面板
+          this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           //根据面板显示参数数据生成绘制参数
           let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-          drawOptions.style.url = model;
           this.$_startDrawing({
             type: "model",
             ...drawOptions
@@ -558,6 +605,7 @@ export default {
           let name = str[str.length - 1];
           name = name.split(".")[0];
           this.groupNum++;
+          let groupName = name + "模型组" + this.groupNum;
           DrawTool.DrawModelsByArea({
             intervalDistance: drawDistance,
             modelRadius: modelRadius,
@@ -565,12 +613,13 @@ export default {
               scale: 1,
               url: model
             },
-            name: "模型组_" + name + "_" + this.groupNum
+            name: groupName
           });
           this.dataSourceCopy.push({
             type: "group",
+            id: Number((Math.random() * 100000000).toFixed(0)),
             attributes: {
-              title: "模型组_" + name + "_" + this.groupNum
+              title: groupName
             }
           });
           break;
@@ -643,7 +692,7 @@ export default {
             drawType = "polygon";
           }
           if (drawType === "model") {
-            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance)
+            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance, 0, editPanelValues.scale)
           } else {
             this.$_startDrawing({
               type: drawType,
@@ -765,15 +814,17 @@ export default {
           destination = Cesium.Cartesian3.fromDegrees(center.lng, center.lat, 100);
           break;
       }
-      this.viewer.camera.flyTo({
-        duration: 1,
-        destination: destination,
-        orientation: {
-          heading: Cesium.Math.toRadians(-90.0),
-          pitch: Cesium.Math.toRadians(-90.0),
-          roll: 0
-        }
-      });
+      if (this.autoFlyToGraphic) {
+        this.viewer.camera.flyTo({
+          duration: 1,
+          destination: destination,
+          orientation: {
+            heading: Cesium.Math.toRadians(-90.0),
+            pitch: Cesium.Math.toRadians(-90.0),
+            roll: 0
+          }
+        });
+      }
     },
     $_getCenter(json) {
       let positions = [[]], center, polygon;
@@ -836,117 +887,7 @@ export default {
           }
         },
         getGraphic: function (e) {
-          let distance = 50;
-          if (vm.drawMode === "polyline") {
-            let G = new Cesium.Graphic(vm.viewer, {
-              type: "model",
-              style: {
-                url: vm.modelUrl
-              },
-              positions: [0, 0, 0],
-              show: false
-            });
-            vm.drawMode = undefined;
-            let pArr = [];
-            let distances = e.getDistances();
-            for (let k = 0; k < e.positions.length - 1; k++) {
-              let p1 = vm.$_cartesian3ToLongLat(e.positions[k]);
-              let p2 = vm.$_cartesian3ToLongLat(e.positions[k + 1]);
-              let length = Math.floor(distances[k + 1] / vm.drawDistance);
-              for (let i = 0; i < length; i++) {
-                pArr.push([p1.lng + (p2.lng - p1.lng) / length * i,
-                  p1.lat + (p2.lat - p1.lat) / length * i,
-                  p1.alt + (p2.alt - p1.alt) / length * i
-                ]);
-              }
-            }
-            let lastP = vm.$_cartesian3ToLongLat(e.positions[e.positions.length - 1]);
-            pArr.push([lastP.lng, lastP.lat, lastP.alt]);
-            vm.add = false
-            let graphicLayer = vm.$_getGraphicLayer();
-            graphicLayer.addGraphic(G);
-            let interval = setInterval(function () {
-              const {boundingSphere} = G.primitive;
-              if (boundingSphere) {
-                let radius = G.primitive.boundingSphere.radius;
-                let scale = 200 / radius;
-                for (let i = 0; i < pArr.length; i++) {
-                  let g = new Cesium.Graphic(vm.viewer, {
-                    type: "model",
-                    style: {
-                      url: vm.modelUrl,
-                      scale: scale
-                    },
-                    positions: [pArr[i][0], pArr[i][1], pArr[i][2]],
-                  });
-                  graphicLayer.addGraphic(g);
-                }
-                vm.add = true;
-                graphicLayer.removeGraphicByID(e.id);
-                setTimeout(function () {
-                  vm.drawMode = "polyline";
-                }, 20);
-                clearInterval(interval)
-              }
-            }, 10);
-            // setTimeout(function () {
-            //
-            // }, 500);
-          } else if (vm.drawMode === "polygon") {
-            vm.drawMode = undefined;
-            let pArr = [], lineP = [];
-            for (let k = 0; k < e.positions.length - 1; k++) {
-              let p = vm.$_cartesian3ToLongLat(e.positions[k]);
-              pArr.push(p);
-            }
-            for (let k = 0; k < e.positions.length; k++) {
-              let p = vm.$_cartesian3ToLongLat(e.positions[k]);
-              lineP.push([p.lng, p.lat]);
-            }
-            let line = turf.lineString(lineP);
-            let bbox = turf.bbox(line);
-            let bboxPolygon = turf.bboxPolygon(bbox);
-            let mPLng = [], mPLat = [];
-            for (let i = 0; i < 10; i++) {
-              mPLng.push(bbox[0] + (bbox[2] - bbox[0]) / 10 * i);
-            }
-            mPLng.push(bbox[2]);
-            for (let i = 0; i < 10; i++) {
-              mPLat.push(bbox[1] + (bbox[3] - bbox[1]) / 10 * i);
-            }
-            mPLat.push(bbox[3]);
-            let boxP = [];
-            for (let i = 0; i < mPLng.length; i++) {
-              for (let j = 0; j < mPLat.length; j++) {
-                boxP.push([mPLng[i], mPLat[j]]);
-              }
-            }
-            lineP.push(lineP[0]);
-            let poly = turf.polygon([lineP]), drawP = [];
-            for (let i = 0; i < boxP.length; i++) {
-              let p = turf.point([boxP[i][0], boxP[i][1]]);
-              if (turf.booleanPointInPolygon(p, poly)) {
-                drawP.push([boxP[i][0], boxP[i][1]]);
-              }
-            }
-            vm.add = false
-            let graphicLayer = vm.$_getGraphicLayer();
-            for (let i = 0; i < drawP.length; i++) {
-              let g = new Cesium.Graphic(vm.viewer, {
-                type: "model",
-                style: {
-                  url: "http://localhost:8080/assets/glb/gltf/ground/grass.glb",
-                  scale: 20
-                },
-                positions: [drawP[i][0], drawP[i][1], 0],
-              });
-              graphicLayer.addGraphic(g);
-            }
-            vm.add = true;
-            setTimeout(function () {
-              vm.drawMode = "polygon";
-            }, 20);
-          } else if (vm.drawMode === "point") {
+          if (vm.drawMode === "point") {
             if (!vm.add) {
               return;
             }
@@ -967,12 +908,16 @@ export default {
             e.attributes.title = e.attributes.title || vm.$_getTitle(type);
             data.attributes.title = e.attributes.title;
             vm.dataSourceCopy.push(data);
+            if (vm.dataSourceCopy.length === 1) {
+              vm.$emit("saveCamera");
+            }
             let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
             vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
             //数据添加完毕
             vm.$nextTick(function () {
               vm.addSource = false;
             });
+            vm.$emit("change", vm.dataSourceCopy);
           }
         }
       });
@@ -987,20 +932,28 @@ export default {
           vm.$_setPopUp(pickedFeature);
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      //如果有数据，绘制数据
+      this.$_fromJson({
+        type: "FeatureCollection",
+        features: this.dataSourceCopy
+      });
     },
     $_setPopUp(graphic, isGraphic) {
       let center;
-      if(isGraphic){
+      if (isGraphic) {
         center = this.$_getCenter(graphic);
-      }else {
+      } else {
         center = this.$_getCenter(graphic.primitive);
+      }
+      if (!center) {
+        return;
       }
       let vm = this;
       let coordinates = center.geometry.coordinates;
       let attributes;
-      if(isGraphic){
+      if (isGraphic) {
         attributes = graphic.attributes;
-      }else {
+      } else {
         attributes = graphic.primitive.attributes;
       }
       this.popup = {

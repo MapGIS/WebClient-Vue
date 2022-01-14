@@ -60,7 +60,8 @@ export default {
   methods: {
     async createCesiumObject() {
       const { baseUrl, options } = this;
-      return new Cesium.GeoJsonDataSource.load(baseUrl, options);
+      // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
+      return new Cesium.GeoJsonDataSource.load(baseUrl, {clampToGround: true});
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;

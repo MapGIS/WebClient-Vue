@@ -17,7 +17,7 @@
             :disabled="disableLayerSelect"
             :autoWidth="true"
             size="small"
-            @change="hancleSelectChange"
+            @change="handleSelectChange"
             placeholder="请选择图层"
           >
             <mapgis-ui-select-option
@@ -77,7 +77,7 @@
               :class="{
                 'mapgis-3d-stratified-household-span': true,
                 'mapgis-3d-stratified-household-span-inline': true,
-                select: selectLayerIndex == layerIndex,
+                select: selectLayerIndex == layerIndex
               }"
             >
               <span v-if="title && title.indexOf(searchValue) > -1">
@@ -100,7 +100,7 @@
                   :type="s.icon()"
                   :class="{
                     iconfont: true,
-                    'iconfont-disabled': !enableStratifiedHouse,
+                    'iconfont-disabled': !enableStratifiedHouse
                   }"
                   @click="
                     s.click({
@@ -109,7 +109,7 @@
                       version,
                       gdbp,
                       layerIndex,
-                      key,
+                      key
                     })
                   "
                 />
@@ -130,19 +130,20 @@
         @enable-dynamic-query="handleDynamicQuery"
       >
       </StratifiedHouseholdMenus>
-
-      <mapgis-3d-feature-popup
-        v-if="featureposition"
-        :position="featureposition"        
-        :popupOptions="popupOptions"
-        v-model="featurevisible"
-      >
-        <mapgis-3d-popup-iot
-        :properties="featureproperties"
-        >
-        </mapgis-3d-popup-iot>  
-      </mapgis-3d-feature-popup>
     </mapgis-ui-collapse-card>
+    <mapgis-3d-feature-popup
+      v-if="featureposition"
+      :position="featureposition"
+      :popupOptions="popupOptions"
+      v-model="featurevisible"
+    >
+      <mapgis-3d-popup-iot
+        :properties="featureproperties"
+        :getVideoStatus="getVideoStatus"
+        @project-screen="handleProjectScreen"
+      >
+      </mapgis-3d-popup-iot>
+    </mapgis-3d-feature-popup>
     <!-- <mapgis-ui-slider-panel
       class="mapgis-3d-stratified-household-slider-tree"
       :values="layerTree"
@@ -157,12 +158,17 @@
 <script>
 import BaseLayer from "./BaseLayer";
 import StratifiedHouseholdMenus from "./StratifiedHouseholdMenus.vue";
+import { rgbToHex } from "../Utils/common/color-util";
 
 export default {
   name: "mapgis-3d-stratified-household",
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {
+    getVideoStatus: {
+      type: Function,
+      default: () => {}
+    },
     outStyle: {
       type: Object,
       default: () => {
@@ -174,9 +180,9 @@ export default {
           height: "450px",
           width: "270px",
           top: "0px",
-          left: "0px",
+          left: "0px"
         };
-      },
+      }
     },
     /**
      * @description 分层分户的图层列表, 每个内部{title, vueIndex},
@@ -191,14 +197,45 @@ export default {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      },
+      }
     },
     enableCollapse: { type: Boolean, default: true },
     enableStratifiedHouse: { type: Boolean, default: false },
     enableDynamicQuery: { type: Boolean, default: false },
+    /**
+     * 选中要素高亮颜色，支持rgb，rgba和十六进制格式
+     */
+    featureHighlightColorProp: {
+      type: String,
+      default: "rgba(255,255,0,0.5)"
+    },
+    /**
+     * 选中图层高亮颜色，支持rgb，rgba和十六进制格式
+     */
+    layerHighlightColorProp: {
+      type: String,
+      default: "rgba(255,0,0,0.5)"
+    }
   },
   components: {
-    StratifiedHouseholdMenus,
+    StratifiedHouseholdMenus
+  },
+  computed: {
+    layerHighlightColor() {
+      let color = `color('#FFFF00', 1)`;
+      if (this.layerHighlightColorProp.includes("#")) {
+        color = `color('${this.layerHighlightColorProp}',1)`;
+      } else if (this.layerHighlightColorProp.includes("rgb")) {
+        const hex = rgbToHex(this.layerHighlightColorProp);
+        let a = 1;
+        if (this.layerHighlightColorProp.includes("rgba")) {
+          const strs = this.layerHighlightColorProp.split(",");
+          a = strs[strs.length - 1].split(")")[0];
+        }
+        color = `color('${hex}',${a})`;
+      }
+      return color;
+    }
   },
   data() {
     return {
@@ -209,30 +246,30 @@ export default {
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup,
+          active: this.enablePopup
         },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
-          active: false,
+          active: false
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false,
-        },
+          active: false
+        }
       ],
       collapsemenus: [
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup,
+          active: this.enablePopup
         },
         {
           title: "模型爆炸",
           icon: "mapgis-fire1",
-          active: false,
-        },
+          active: false
+        }
       ],
       submenus: [
         {
@@ -242,11 +279,11 @@ export default {
               ? "进入图层菜单"
               : "请按照分层分户要求制作数据",
           icon: () => "mapgis-layer",
-          click: (payload) => {
+          click: payload => {
             if (this.enableStratifiedHouse) {
               this.handleActiveItemKey(payload);
             }
-          },
+          }
         },
         {
           title: "锁定/解锁图层",
@@ -254,14 +291,13 @@ export default {
             this.enableStratifiedHouse
               ? "锁定/解锁图层"
               : "请按照分层分户要求制作数据",
-          icon: (key) =>
-            this.layerKey == key ? "mapgis-lock" : "mapgis-unlock",
-          click: (payload) => {
+          icon: key => (this.layerKey == key ? "mapgis-lock" : "mapgis-unlock"),
+          click: payload => {
             if (this.enableStratifiedHouse) {
               this.changeIsolation(payload);
             }
-          },
-        },
+          }
+        }
       ],
       layerTree: [],
       expandedKeys: [],
@@ -281,6 +317,8 @@ export default {
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
       disableLayerSelect: false,
+      prePickFeature: undefined, // 上次选中的要素
+      prePickFeatureColor: undefined // 上次选中要素的颜色，便于恢复
     };
   },
   provide() {
@@ -288,7 +326,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      },
+      }
     };
   },
   created() {},
@@ -313,7 +351,7 @@ export default {
     innerVueIndex(next) {
       this.unmount();
       this.mount();
-    },
+    }
   },
   methods: {
     createCesiumObject() {
@@ -327,7 +365,7 @@ export default {
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
         this.$_getG3DByInterval(
-          function (g3ds) {
+          function(g3ds) {
             if (g3ds && g3ds.length > 0) {
               if (
                 !g3ds[layerIndex] ||
@@ -353,7 +391,7 @@ export default {
       const { viewer, enablePopup } = this;
 
       let promise = this.createCesiumObject();
-      promise.then((find) => {
+      promise.then(find => {
         if (find && find.options) {
           let { m3ds, g3dLayerIndex } = find.options;
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
@@ -378,8 +416,8 @@ export default {
               menu: "mapgis-down",
               scopedSlots: {
                 icon: "custom",
-                title: "title",
-              },
+                title: "title"
+              }
             });
           });
           vm.layerIds = all;
@@ -395,7 +433,7 @@ export default {
               m3ds: m3ds,
               modelExplosion: modelExplosion,
               collection: collection,
-              primitiveCollection: viewer.scene.primitives.add(collection),
+              primitiveCollection: viewer.scene.primitives.add(collection)
             }
           );
           vm.recordOriginStyle();
@@ -431,15 +469,19 @@ export default {
       this.expandedKeys = expandedKeys;
       this.autoExpandParent = false;
     },
-    hancleSelectChange(value) {
-      this.innerVueIndex = value;
+    handleSelectChange(vueIndex) {
+      this.innerVueIndex = vueIndex;
+      let finds = this.layers.filter(l => l.vueIndex == vueIndex);
+      if (finds && finds.length > 0) {
+        this.$emit("change-layer", finds[0]);
+      }
     },
     getParentKey(key, tree) {
       let parentKey;
       for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
-          if (node.children.some((item) => item.key === key)) {
+          if (node.children.some(item => item.key === key)) {
             parentKey = node.key;
           } else if (this.getParentKey(key, node.children)) {
             parentKey = this.getParentKey(key, node.children);
@@ -451,7 +493,7 @@ export default {
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
-      const generateList = (data) => {
+      const generateList = data => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { key } = node;
@@ -465,7 +507,7 @@ export default {
 
       const value = e.target.value;
       const expandedKeys = dataList
-        .map((item) => {
+        .map(item => {
           if (item.title.indexOf(value) > -1) {
             return this.getParentKey(item.key, layerTree);
           }
@@ -475,7 +517,7 @@ export default {
       Object.assign(this, {
         expandedKeys,
         searchValue: value,
-        autoExpandParent: true,
+        autoExpandParent: true
       });
     },
     onSelect(e, payload) {
@@ -525,13 +567,16 @@ export default {
       this.$refs.card && this.$refs.card.togglePanel();
       this.disableLayerSelect = true;
     },
+    handleProjectScreen(payload) {
+      this.$emit("project-screen", payload);
+    },
     recordOriginStyle() {
       const { g3dLayerIndex, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
-      layerIndexs.forEach((index) => {
+      layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
         originStyles.push(m3dlayer.style);
       });
@@ -590,7 +635,7 @@ export default {
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach((index) => {
+      layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (index != layerIndex) {
           m3dlayer.show = false;
@@ -599,7 +644,7 @@ export default {
           viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
         }
       });
-      let children = this.layerTree.map((c) => {
+      let children = this.layerTree.map(c => {
         if (c.layerIndex == layerIndex) {
           c.disabled = false;
         } else {
@@ -610,7 +655,7 @@ export default {
       this.layerTree.splice(0, 1, children[0]);
     },
     disableIsolation() {
-      let children = this.layerTree.map((c) => {
+      let children = this.layerTree.map(c => {
         c.disabled = false;
         return c;
       });
@@ -633,14 +678,14 @@ export default {
       if (find && find.options) {
         const { modelExplosion } = find.options;
         let layerIndexs = g3dLayer.getM3DLayerIndexes();
-        layerIndexs.forEach((index) => {
+        layerIndexs.forEach(index => {
           let m3dlayer = g3dLayer.getLayer(index);
           m3ds.push(m3dlayer);
         });
         modelExplosion.multiLayerAxisExplosionWithAnimate(m3ds, {
           direction: vector,
           expDistance: expDistance,
-          speed: speed,
+          speed: speed
         });
       }
     },
@@ -653,7 +698,7 @@ export default {
       let m3ds = [];
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
-      layerIndexs.forEach((index) => {
+      layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
         m3ds.push(m3dlayer);
       });
@@ -705,6 +750,9 @@ export default {
       const { vueKey, innerVueIndex } = this;
       this.featurevisible = false;
       this.restoreM3d();
+      if (vm.prePickFeature && vm.prePickFeatureColor) {
+        vm.prePickFeature.color = vm.prePickFeatureColor;
+      }
       let find = vueCesium.StratifiedHousehouldManager.findSource(
         vueKey,
         innerVueIndex
@@ -723,7 +771,7 @@ export default {
       const vm = this;
       const { Cesium, viewer } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function (movement) {
+      handler.setInputAction(function(movement) {
         vm.$_pickEvent(movement);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
@@ -732,7 +780,7 @@ export default {
       this.restoreOriginStyle();
     },
     highlightM3d(layerIndex) {
-      const { vueKey, innerVueIndex, vueCesium } = this;
+      const { vueKey, innerVueIndex, vueCesium, layerHighlightColor } = this;
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
       let m3dlayer = g3dLayer.getLayer(layerIndex);
@@ -749,8 +797,13 @@ export default {
         "pickerTilesetStyle",
         m3dlayer.style
       );
+      /**
+       * @修改说明 使用组件传入的高亮颜色
+       * @修改人 龚跃健
+       * @修改时间 2022/1/13
+       */
       m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`,
+        color: layerHighlightColor
       });
     },
     handleDynamicQuery() {
@@ -803,7 +856,7 @@ export default {
                 vm.featureposition = {
                   longitude: lng,
                   latitude: lat,
-                  height: height,
+                  height: height
                 };
                 vm.featureproperties = feature.property;
                 primitiveCollection.add(feature);
@@ -824,7 +877,7 @@ export default {
                 mapPosition.z
               ),
               tolerance: 0.0001,
-              layerIndex: layerIndex,
+              layerIndex: layerIndex
             }
           );
         }
@@ -869,7 +922,7 @@ export default {
           vm.featureposition = {
             longitude: longitudeString2,
             latitude: latitudeString2,
-            height: heightString2,
+            height: heightString2
           };
 
           let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
@@ -899,11 +952,24 @@ export default {
             tileset.pickedColor = Cesium.Color.fromCssColorString("#ffff00"); */
             if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
               let result = feature.content.getAttributeByOID(oid) || {};
-              vm.featureproperties = {...result, Euid: "000000000000********************00000000000020201106000u"};
+              vm.featureproperties = result;
+              /**
+               * @修改说明 高亮选中要素，并恢复之前选中要素。暂时临时处理了这里，其它地方未处理
+               * @修改人 龚跃健
+               * @修改时间 2022/1/13
+               */
+              if (vm.prePickFeature && vm.prePickFeatureColor) {
+                vm.prePickFeature.color = vm.prePickFeatureColor;
+              }
+              vm.prePickFeature = feature;
+              vm.prePickFeatureColor = feature.color;
+              feature.color = vm.Cesium.Color.fromCssColorString(
+                vm.featureHighlightColorProp
+              );
             } else {
-              tileset.queryAttributes(oid).then(function (result) {
+              tileset.queryAttributes(oid).then(function(result) {
                 result = result || {};
-                vm.featureproperties = {...result, Euid: "000000000000********************00000000000020201106000u"};
+                vm.featureproperties = result;
               });
             }
           }
@@ -916,7 +982,7 @@ export default {
       this.layerIds = [`${key}`];
     },
     changeSimpleSlider(keys) {
-      let keyStr = keys.map((k) => `${k}`);
+      let keyStr = keys.map(k => `${k}`);
       this.layerIds = keyStr;
     },
     customLabel(label) {
@@ -927,7 +993,7 @@ export default {
         show = res[res.length - 1];
       }
       return show;
-    },
-  },
+    }
+  }
 };
 </script>

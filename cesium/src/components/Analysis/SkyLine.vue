@@ -3,33 +3,57 @@
     <slot>
       <div>
         <mapgis-ui-setting-form :wrapper-width="200">
-          <mapgis-ui-mix-row
+          <mapgis-ui-form-item label="观察者信息">
+            <mapgis-ui-input
+              v-model="centerPosition"
+              placeholder="经度，纬度，高程"
+              disabled
+            />
+          </mapgis-ui-form-item>
+          <!-- <mapgis-ui-mix-row
             title="观察者信息："
             type="MapgisUiInput"
             :value="centerPosition"
             :props="observerProps"
-          />
-          <mapgis-ui-mix-row
+          /> -->
+          <mapgis-ui-form-item label="线宽度">
+            <mapgis-ui-input
+              v-model.number="formData.skylineWidth"
+              type="number"
+              min="0"
+            />
+          </mapgis-ui-form-item>
+          <!-- <mapgis-ui-mix-row
             title="线宽度："
             type="MapgisUiInputNumber"
             v-model="formData.skylineWidth"
             :props="lineWidthProps"
-          />
-          <mapgis-ui-mix-row
+          /> -->
+          <mapgis-ui-form-item label="线颜色">
+            <mapgis-ui-sketch-color-picker
+              :color.sync="formData.skylineColor"
+              :disableAlpha="true"
+            ></mapgis-ui-sketch-color-picker>
+          </mapgis-ui-form-item>
+          <!-- <mapgis-ui-mix-row
             title="线颜色："
             type="MapgisUiColorPicker"
             v-model="formData.skylineColor"
-          />
+          /> -->
         </mapgis-ui-setting-form>
         <mapgis-ui-setting-footer>
-          <mapgis-ui-button type="primary" @click="addSkyLine">天际线</mapgis-ui-button>
-          <mapgis-ui-button @click="showAnalysis2d">二维天际线</mapgis-ui-button>
+          <mapgis-ui-button type="primary" @click="addSkyLine"
+            >天际线</mapgis-ui-button
+          >
+          <!-- <mapgis-ui-button @click="showAnalysis2d"
+            >二维天际线</mapgis-ui-button
+          > -->
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
         <mapgis-ui-mask
-            :parentDivClass="'cesium-map-wrapper'"
-            :loading="maskShow"
-            :text="maskText"
+          :parentDivClass="'cesium-map-wrapper'"
+          :loading="maskShow"
+          :text="maskText"
         ></mapgis-ui-mask>
       </div>
     </slot>
@@ -81,13 +105,13 @@ export default {
       centerPosition: "",
       positions2D: [],
       skyline2dChart: null,
-      observerProps: {
-        disabled: true,
-        placeholder: "经度，纬度，高程"
-      },
-      lineWidthProps: {
-        min: 0
-      },
+      // observerProps: {
+      //   disabled: true,
+      //   placeholder: "经度，纬度，高程"
+      // },
+      // lineWidthProps: {
+      //   min: 0
+      // },
       maskShow: false,
       maskText: "正在分析中, 请稍等...",
       //是否开启缓存区
@@ -145,7 +169,7 @@ export default {
       });
       //缓存区设置
       this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
-          viewer
+        viewer
       );
       if (
         navigator.userAgent.indexOf("Linux") > 0 &&
@@ -159,10 +183,7 @@ export default {
     },
     unmount() {
       let { vueCesium, vueKey, vueIndex } = this;
-      let find = vueCesium.SkyLineAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = vueCesium.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
       }
@@ -182,10 +203,7 @@ export default {
     },
     remove() {
       let { vueCesium, vueKey, vueIndex } = this;
-      let find = vueCesium.SkyLineAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = vueCesium.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
       if (find && find.options) {
         let { options } = find;
         let { skyLineAnalysis } = options;
@@ -227,18 +245,18 @@ export default {
      * 展示二维天际线
      * todo 绘制完成回调添加二维坐标点 #143
      */
-    showAnalysis2d() {
-      if (!this.positions2D.length) {
-        this.$message.warning("请先进行天际线分析");
-      } else {
-        this.skyline2dChart.clear();
-        this.skyline2dChart.showLoading();
-        this.skyline2dChart.setOption(chartOptions(this.getChartOptions()));
-        this.skyline2dChart.resize();
-        this.skyline2dChart.hideLoading();
-        this.$emit("showAnalysis2d", this.skyline2dChart);
-      }
-    },
+    // showAnalysis2d() {
+    //   if (!this.positions2D.length) {
+    //     this.$message.warning("请先进行天际线分析");
+    //   } else {
+    //     this.skyline2dChart.clear();
+    //     this.skyline2dChart.showLoading();
+    //     this.skyline2dChart.setOption(chartOptions(this.getChartOptions()));
+    //     this.skyline2dChart.resize();
+    //     this.skyline2dChart.hideLoading();
+    //     this.$emit("showAnalysis2d", this.skyline2dChart);
+    //   }
+    // },
     /**
      * 分析结束
      * @param positions2D 二维坐标点
@@ -247,16 +265,20 @@ export default {
     analysisEndCallBack({ positions2D = [], positions3D }) {
       this.positions2D = positions2D.length ? _cloneDeep(positions2D) : [];
       this.maskShow = false;
+      this.skyline2dChart.clear();
+      this.skyline2dChart.showLoading();
+      this.skyline2dChart.setOption(chartOptions(this.getChartOptions()));
+      this.skyline2dChart.resize();
+      this.skyline2dChart.hideLoading();
+      this.$emit("success");
+      this.$emit("showAnalysis2d", this.skyline2dChart);
     },
     addSkyLine() {
       this.remove();
       this.maskShow = true;
       let { vueCesium, vueKey, vueIndex, viewer } = this;
       let scene = viewer.scene;
-      let find = vueCesium.SkyLineAnalysisManager.findSource(
-        vueKey,
-        vueIndex
-      );
+      let find = vueCesium.SkyLineAnalysisManager.findSource(vueKey, vueIndex);
       let { options } = find;
       scene.skyAtmosphere.showGroundAtmosphere = false;
       //
@@ -273,8 +295,6 @@ export default {
       skylineAnalysisVal.lineWidth = this.formData.skylineWidth;
       // 添加到地图上
       viewer.scene.visualAnalysisManager.add(skylineAnalysisVal);
-
-      this.$emit("success");
       vueCesium.SkyLineAnalysisManager.changeOptions(
         vueKey,
         vueIndex,

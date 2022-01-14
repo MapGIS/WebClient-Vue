@@ -4,7 +4,6 @@
             :layout="layout"
             v-bind="formItemLayout"
             labelAlign="left"
-            class="formStyle"
             :colon="false"
         >
             <mapgis-ui-row>

@@ -26,6 +26,7 @@
             :layout="layout"
             @updateSpin="changeSpinning"
             :initialStatebar="initialStatebar"
+            :initialDepthTest="depthTest"
           ></basic-setting>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane
@@ -96,6 +97,7 @@ import CameraSetting from "./components/CameraSetting";
 import LightSetting from "./components/LightSetting";
 import WeatherSetting from "./components/WeatherSetting";
 import EffectSetting from "./components/EffectSetting";
+import { isDepthTestAgainstTerrainEnable } from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-scene-setting",
@@ -139,6 +141,7 @@ export default {
       show: true,
       hover: false,
       spinning: false,
+      depthTest:undefined
     };
   },
 
@@ -150,6 +153,10 @@ export default {
   },
   methods: {
     mount() {
+      const{ viewer } = this;
+
+      this.depthTest = isDepthTestAgainstTerrainEnable( viewer );
+
       this.$emit("loaded", this);
     },
     unmount() {

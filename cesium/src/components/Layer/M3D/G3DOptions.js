@@ -12,11 +12,11 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0),
+    default: () => (Math.random() * 100000000).toFixed(0)
   },
 
   layerId: {
-    type: String,
+    type: String
   },
 
   outStyle: {
@@ -28,9 +28,9 @@ export default {
         height: "450px",
         width: "270px",
         top: "0px",
-        left: "0px",
+        left: "0px"
       };
-    },
+    }
   },
 
   /**
@@ -76,7 +76,7 @@ export default {
    * @see Cesium.HeadingPitchRange
    * @default new HeadingPitchRange(0.0, -0.5, mergeBoundingSphere.radius * 2.5
    */
-  orientation: { type: Object, default: 0 },
+  orientation: { type: Object },
   /**
    * @description 代理
    */
@@ -88,5 +88,5 @@ export default {
   /**
    * @description 是否激活默认UI
    */
-  enableControl: { type: Boolean, default: false },
+  enableControl: { type: Boolean, default: false }
 };

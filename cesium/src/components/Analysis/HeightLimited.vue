@@ -18,6 +18,9 @@
         v-model="heightLimitCopy"
         @change="val => setInput(val)"
         style="font-size: 13px"/>
+
+    <mapgis-ui-switch-panel label="控高面显示" v-model="enablePolygonCopy" size="small" style="padding:0 6px"></mapgis-ui-switch-panel>
+
     <mapgis-3d-draw v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
                     :drawStyle="drawStyleCopy"
                     :enableControl="enableControl">
@@ -151,6 +154,11 @@ export default {
           opacity: 0.6
         }
       }
+    },
+    /* 是否显示控高面 */
+    enablePolygon: {
+      type: Boolean,
+      default: false
     }
   },
   components: {Mapgis3dDraw},
@@ -209,7 +217,9 @@ export default {
       layout: "horizontal",
       labelCol: {span: 5},
       wrapperCol: {span: 19},
-      lnglat: undefined
+      lnglat: undefined,
+
+      enablePolygonCopy: this.enablePolygon
     }
   },
   mounted() {
@@ -265,6 +275,9 @@ export default {
       handler(next) {
         this.drawStyleCopy = next;
       }
+    },
+    enablePolygon(e){
+      this.enablePolygonCopy = e;
     }
   },
   methods: {
@@ -431,6 +444,13 @@ export default {
           pnts.push(new Cesium.Cartesian3(lnglat[i][0], lnglat[i][1], 0));
         }
         let cesiumColor = Cesium.Color.fromCssColorString(vm.colorCopy);
+        
+        let polygonColor; 
+        if( vm.enablePolygonCopy ) {
+          polygonColor = Cesium.Color.BLACK.withAlpha(0.5)
+        }else {
+          polygonColor = Cesium.Color.BLACK.withAlpha(0)
+        }
 
         //调用控高分析接口
         let heightLimited = new Cesium.HeightLimited(viewer, {
@@ -438,7 +458,7 @@ export default {
           limitedColor: cesiumColor,
           blendTransparency: vm.opacityCopy,
           posArray: pnts,
-          polygonColor: Cesium.Color.WHITE.withAlpha(0),
+          polygonColor: polygonColor,
           useOutLine: false
         });
         heightLimited.add();

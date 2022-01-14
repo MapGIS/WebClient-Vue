@@ -1,154 +1,157 @@
 <template>
-  <mapgis-ui-collapse-card
-    class="mapgis-3d-g3d-layer"
-    v-if="enableControl"
-    ref="card"
-    position="top-left"
-    :defaultCollapse="false"
-    :outStyle="outStyle"
-    :title="title"
-    @toggle-main="handleBackMain"
-  >
-    <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
-    <span class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</span>
-    <mapgis-ui-space slot="extra" class="mapgis-3d-g3d-layer-icons">
-      <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
-        <template slot="title">{{ m.title }}</template>
-        <mapgis-ui-iconfont
-          :class="{ active: m.active }"
-          :type="m.icon"
-          @click="handleMenu(m.title)"
-        />
-      </mapgis-ui-tooltip>
-    </mapgis-ui-space>
-    <mapgis-ui-row class="mapgis-3d-g3d-document">
-      <mapgis-ui-input-search
-        style="margin-bottom: 8px"
-        placeholder="搜索"
-        @change="onChange"
-      />
-      <mapgis-ui-tree
-        class="mapgis-3d-g3d-document-tree"
-        checkable
-        showIcon
-        v-model="layerIds"
-        :expanded-keys="expandedKeys"
-        :auto-expand-parent="autoExpandParent"
-        :tree-data="layerTree"
-        :selectedKeys="selectedKeys"
-        @expand="onExpand"
-        @select="onSelect"
-      >
-        <template slot="custom" slot-scope="{}">
-          <!-- <mapgis-ui-iconfont :type="icon" /> -->
-        </template>
-        <template
-          slot="title"
-          slot-scope="{
-            title,
-            icon,
-            version,
-            gdbp,
-            ip,
-            port,
-            layerIndex,
-            layerType,
-            key,
-            subLayerType,
-          }"
-        >
+  <div>
+    <mapgis-ui-collapse-card
+      class="mapgis-3d-g3d-layer"
+      v-if="enableControl"
+      ref="card"
+      position="top-left"
+      :defaultCollapse="false"
+      :outStyle="outStyle"
+      :title="title"
+      @toggle-main="handleBackMain"
+    >
+      <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
+      <span class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</span>
+      <mapgis-ui-space slot="extra" class="mapgis-3d-g3d-layer-icons">
+        <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
+          <template slot="title">{{ m.title }}</template>
           <mapgis-ui-iconfont
-            :type="subLayerType"
-            :style="{ marginRight: '2px' }"
+            :class="{ active: m.active }"
+            :type="m.icon"
+            @click="handleMenu(m.title)"
           />
-          <span
-            :class="{
-              'mapgis-3d-g3d-layer-span': true,
-              'mapgis-3d-g3d-layer-span-inline': true,
-              select: selectLayerIndex == layerIndex,
+        </mapgis-ui-tooltip>
+      </mapgis-ui-space>
+      <mapgis-ui-row class="mapgis-3d-g3d-document">
+        <mapgis-ui-input-search
+          style="margin-bottom: 8px"
+          placeholder="搜索"
+          @change="onChange"
+        />
+        <mapgis-ui-tree
+          class="mapgis-3d-g3d-document-tree"
+          checkable
+          showIcon
+          v-model="layerIds"
+          :expanded-keys="expandedKeys"
+          :auto-expand-parent="autoExpandParent"
+          :tree-data="layerTree"
+          :selectedKeys="selectedKeys"
+          @expand="onExpand"
+          @select="onSelect"
+        >
+          <template slot="custom" slot-scope="{}">
+            <!-- <mapgis-ui-iconfont :type="icon" /> -->
+          </template>
+          <template
+            slot="title"
+            slot-scope="{
+              title,
+              icon,
+              version,
+              gdbp,
+              ip,
+              port,
+              layerIndex,
+              layerType,
+              key,
+              subLayerType
             }"
           >
-            <span v-if="title && title.indexOf(searchValue) > -1">
-              {{ title.substr(0, title.indexOf(searchValue)) }}
-              <span style="color: #f50">{{ searchValue }}</span>
-              {{
-                title.substr(title.indexOf(searchValue) + searchValue.length)
-              }}
-            </span>
-            <span v-else>{{ title }}</span>
+            <mapgis-ui-iconfont
+              :type="subLayerType"
+              :style="{ marginRight: '2px' }"
+            />
             <span
-              v-if="version && key == '地图场景默认键值'"
-              class="mapgis-3d-g3d-layer-version"
-              >版本:{{ version }}</span
+              :class="{
+                'mapgis-3d-g3d-layer-span': true,
+                'mapgis-3d-g3d-layer-span-inline': true,
+                select: selectLayerIndex == layerIndex
+              }"
             >
-            <mapgis-ui-iconfont
-              v-if="
-                layerType == type.cache &&
-                (!isolation || selectLayerIndex == layerIndex)
-              "
-              :type="icon"
-              class="iconfont"
-              @click="
-                () =>
-                  handleActiveItemKey({
-                    title,
-                    version,
-                    gdbp,
-                    ip,
-                    port,
-                    layerIndex,
-                    key,
-                  })
-              "
-            />
-            <mapgis-ui-iconfont
-              v-if="
-                layerType == type.cache &&
-                (!isolation || selectLayerIndex == layerIndex)
-              "
-              :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
-              class="iconfont"
-              @click="
-                () =>
-                  changeIsolation({
-                    title,
-                    icon,
-                    version,
-                    gdbp,
-                    ip,
-                    port,
-                    layerIndex,
-                    key,
-                  })
-              "
-            />
-          </span>
-        </template>
-      </mapgis-ui-tree>
-    </mapgis-ui-row>
+              <span v-if="title && title.indexOf(searchValue) > -1">
+                {{ title.substr(0, title.indexOf(searchValue)) }}
+                <span style="color: #f50">{{ searchValue }}</span>
+                {{
+                  title.substr(title.indexOf(searchValue) + searchValue.length)
+                }}
+              </span>
+              <span v-else>{{ title }}</span>
+              <span
+                v-if="version && key == '地图场景默认键值'"
+                class="mapgis-3d-g3d-layer-version"
+                >版本:{{ version }}</span
+              >
+              <mapgis-ui-iconfont
+                v-if="
+                  layerType == type.cache &&
+                    (!isolation || selectLayerIndex == layerIndex)
+                "
+                :type="icon"
+                class="iconfont"
+                @click="
+                  () =>
+                    handleActiveItemKey({
+                      title,
+                      version,
+                      gdbp,
+                      ip,
+                      port,
+                      layerIndex,
+                      key
+                    })
+                "
+              />
+              <mapgis-ui-iconfont
+                v-if="
+                  layerType == type.cache &&
+                    (!isolation || selectLayerIndex == layerIndex)
+                "
+                :type="layerKey == key ? 'mapgis-unlock' : 'mapgis-lock'"
+                class="iconfont"
+                @click="
+                  () =>
+                    changeIsolation({
+                      title,
+                      icon,
+                      version,
+                      gdbp,
+                      ip,
+                      port,
+                      layerIndex,
+                      key
+                    })
+                "
+              />
+            </span>
+          </template>
+        </mapgis-ui-tree>
+      </mapgis-ui-row>
 
-    <m3d-menus
-      slot="panel"
-      size="big"
-      :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
-      :version="version"
-      :g3dLayerIndex="g3dLayerIndex"
-      :layerIndex="selectLayerIndex"
-      :gdbp="gdbp"
-      :ip="ip"
-      :port="port"
-      @enable-dynamic-query="handleDynamicQuery"
-    >
-    </m3d-menus>
-
+      <m3d-menus
+        slot="panel"
+        size="big"
+        :mode="layerKey == '地图场景默认键值' ? 'g3d' : 'm3d'"
+        :version="version"
+        :g3dLayerIndex="g3dLayerIndex"
+        :layerIndex="selectLayerIndex"
+        :gdbp="gdbp"
+        :ip="ip"
+        :port="port"
+        @enable-dynamic-query="handleDynamicQuery"
+      >
+      </m3d-menus>
+    </mapgis-ui-collapse-card>
     <mapgis-3d-feature-popup
       v-if="featureposition"
       :position="featureposition"
-      :properties="featureproperties"
+      :popupOptions="popupOptions"
       v-model="featurevisible"
     >
+      <mapgis-3d-popup-iot :properties="featureproperties">
+      </mapgis-3d-popup-iot>
     </mapgis-3d-feature-popup>
-  </mapgis-ui-collapse-card>
+  </div>
 </template>
 
 <script>
@@ -164,9 +167,15 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...G3DOptions,
+    popupOptions: {
+      type: Object,
+      default: () => {
+        return { popupType: "card" };
+      }
+    }
   },
   components: {
-    M3dMenus,
+    M3dMenus
   },
   data() {
     return {
@@ -174,24 +183,24 @@ export default {
       layerIds: this.parseLayers(),
       type: {
         terrain: G3DLayerType.g3dTerrainLayer,
-        cache: G3DLayerType.g3dCacheLayer,
+        cache: G3DLayerType.g3dCacheLayer
       },
       menus: [
         {
           title: "静态单体化查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup,
+          active: this.enablePopup
         },
         {
           title: "批量设置",
           icon: "mapgis-setting",
-          active: false,
+          active: false
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false,
-        },
+          active: false
+        }
       ],
       layerTree: [
         {
@@ -202,8 +211,8 @@ export default {
           icon: "mapgis-layer1",
           menu: "mapgis-down",
           children: [],
-          scopedSlots: { icon: "custom", title: "title" },
-        },
+          scopedSlots: { icon: "custom", title: "title" }
+        }
       ],
       expandedKeys: [],
       searchValue: "",
@@ -222,7 +231,7 @@ export default {
       featureposition: undefined, // {longitude: 0, latitude: 0, height: 0},
       featureproperties: undefined,
       featurevisible: undefined,
-      featureclickenable: this.enablePopup,
+      featureclickenable: this.enablePopup
     };
   },
   provide() {
@@ -230,7 +239,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      },
+      }
     };
   },
   created() {},
@@ -255,15 +264,15 @@ export default {
     },
     layerIds(next) {
       this.changeLayerVisible(this.layerIds);
-    },
+    }
   },
   methods: {
     createCesiumObject() {
       return new Promise(
-        (resolve) => {
+        resolve => {
           resolve();
         },
-        (reject) => {}
+        reject => {}
       );
     },
     onM3dLoaded(e) {},
@@ -281,28 +290,25 @@ export default {
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
 
-      /* version = "2.0";
-      let url1 =
-        "http://192.168.199.71:8089/igs/rest/services/V2_分层分户-静态单体化/SceneServer"; */
-
       if (version == "2.0") {
-        g3dLayer.then((e) => {
+        g3dLayer.then(e => {
           let g3d = viewer.scene.layers.appendSceneServer(url, {
             $props,
-            loaded: function (layer) {
+            loaded: function(layer) {
               // 该回调有多少图层循环进多少次
+              console.log("layer", layer);
             },
-            getDocLayerIndexes: vm.getDocLayerIndexes,
+            getDocLayerIndexes: vm.getDocLayerIndexes
           });
         });
       } else if (version == "1.0" || version == "0.0") {
-        g3dLayer.then((e) => {
+        g3dLayer.then(e => {
           let g3d = viewer.scene.layers.appendG3DLayer(url, {
             $props,
-            loaded: function (layer) {
+            loaded: function(layer) {
               // 该回调有多少图层循环进多少次
             },
-            getDocLayerIndexes: vm.getDocLayerIndexes,
+            getDocLayerIndexes: vm.getDocLayerIndexes
           });
         });
       }
@@ -327,10 +333,13 @@ export default {
       let layers = this.parseLayers();
       // 该回调只触发一次
       vm.g3dLayerIndex = indexes[0];
+      let collection = new Cesium.PrimitiveCollection();
       vueCesium.G3DManager.addSource(vueKey, vueIndex, g3d, {
         m3ds: [],
         layerId: vueIndex,
         g3dLayerIndex: vm.g3dLayerIndex,
+        collection: collection,
+        primitiveCollection: viewer.scene.primitives.add(collection)
       });
       let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
       vm.layerTree[0].version = g3dLayer.version;
@@ -343,10 +352,10 @@ export default {
       if (find && find.options && find.options.m3ds) {
         let props = layerIndexs.map((i, j) => {
           let gIndex = i;
-          let layer = g3dLayer.getLayer(gIndex);
+          let layer = g3dLayer.getLayer(`${gIndex}`);
           return layer.readyPromise;
         });
-        Promise.all(props).then((m3ds) => {
+        Promise.all(props).then(m3ds => {
           vm.$emit("loaded", { g3d: vm, component: vm });
           vm.recordOriginStyle();
           if (enablePopup) {
@@ -359,7 +368,7 @@ export default {
             // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
             let gIndex = layerIndexs[i];
             let info = g3dLayer.getLayerInfo(gIndex);
-            let layer = g3dLayer.getLayer(gIndex);
+            let layer = g3dLayer.getLayer(`${gIndex}`);
             let { layerName, gdbpUrl, layerType } = info;
             all.push(`${gIndex}`);
             vm.layerTree[0].children.push({
@@ -375,8 +384,8 @@ export default {
               menu: "mapgis-down",
               scopedSlots: {
                 icon: "custom",
-                title: "title",
-              },
+                title: "title"
+              }
             });
             if (layers) {
               if (layers.indexOf(`${i}`) >= 0) {
@@ -388,7 +397,7 @@ export default {
               layer.show = true;
             }
           });
-          loopM3ds(m3ds, (types) => {
+          loopM3ds(m3ds, types => {
             types.forEach((t, i) => {
               const child = vm.layerTree[0].children;
               child[layerIndexs[i]].subLayerType = checkTypeIcon(t);
@@ -411,7 +420,7 @@ export default {
       for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
-          if (node.children.some((item) => item.key === key)) {
+          if (node.children.some(item => item.key === key)) {
             parentKey = node.key;
           } else if (this.getParentKey(key, node.children)) {
             parentKey = this.getParentKey(key, node.children);
@@ -423,7 +432,7 @@ export default {
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
-      const generateList = (data) => {
+      const generateList = data => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { key } = node;
@@ -437,7 +446,7 @@ export default {
 
       const value = e.target.value;
       const expandedKeys = dataList
-        .map((item) => {
+        .map(item => {
           if (item.title.indexOf(value) > -1) {
             return this.getParentKey(item.key, layerTree);
           }
@@ -447,7 +456,7 @@ export default {
       Object.assign(this, {
         expandedKeys,
         searchValue: value,
-        autoExpandParent: true,
+        autoExpandParent: true
       });
     },
     onSelect(e, payload) {
@@ -469,7 +478,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getTerrainLayerIndexes();
       let terrains = g3dLayer.getTerrainLayers();
-      indexes.forEach((i) => {
+      indexes.forEach(i => {
         let info = g3dLayer.getLayerInfo(i);
         let { layerName, layerType } = info;
         layerType =
@@ -485,8 +494,8 @@ export default {
             menu: "mapgis-down",
             scopedSlots: {
               icon: "custom",
-              title: "title",
-            },
+              title: "title"
+            }
           });
         }
         vm.layerIds.push(`${i}`);
@@ -506,7 +515,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getVectorLayerIndexes();
       let vectors = g3dLayer.getVectorLayers();
-      indexes.forEach((i) => {
+      indexes.forEach(i => {
         let info = g3dLayer.getLayerInfo(i);
         let { layerName, layerType } = info;
         layerType =
@@ -522,8 +531,8 @@ export default {
             menu: "mapgis-down",
             scopedSlots: {
               icon: "custom",
-              title: "title",
-            },
+              title: "title"
+            }
           });
         }
         vm.layerIds.push(`${i}`);
@@ -549,7 +558,7 @@ export default {
       this.port = port;
       return {
         ip,
-        port,
+        port
       };
     },
     parseVersion(url) {
@@ -592,7 +601,7 @@ export default {
       }
       let layerStr = layerString.replace(/show:/i, "");
       let layerStrs = layerStr.split(",");
-      let layers = layerStrs.map((l) => l);
+      let layers = layerStrs.map(l => l);
 
       return layers;
     },
@@ -602,17 +611,17 @@ export default {
       if (!g3dLayerIndex && g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let indexes = g3dLayer.getAllLayerIndexes();
-      indexes.forEach((index) => {
+      indexes.forEach(index => {
         let layer = g3dLayer.getLayer(index);
         if (layers.indexOf(`${index}`) >= 0) {
           if (layer) {
             layer.show = true;
-            g3dLayer.show(index, true);
+            g3dLayer.showByLayerIndex(index, true);
           }
         } else {
           if (layer) {
             layer.show = false;
-            g3dLayer.show(index, false);
+            g3dLayer.showByLayerIndex(index, false);
           }
         }
       });
@@ -641,7 +650,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
-      layerIndexs.forEach((index) => {
+      layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
         originStyles.push(m3dlayer.style);
       });
@@ -658,7 +667,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(i);
+          let m3dlayer = g3dLayer.getLayer(String(i));
           m3dlayer.style = s;
         });
       }
@@ -669,7 +678,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(i);
+          let m3dlayer = g3dLayer.getLayer(String(i));
           m3dlayer.show = true;
         });
       }
@@ -694,7 +703,7 @@ export default {
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
       this.selectedKeys = [`${layerIndex}`];
-      layerIndexs.forEach((index) => {
+      layerIndexs.forEach(index => {
         let m3dlayer = g3dLayer.getLayer(index);
         if (index != layerIndex) {
           m3dlayer.show = false;
@@ -703,7 +712,7 @@ export default {
           viewer.camera.flyToBoundingSphere(m3dlayer.boundingSphere);
         }
       });
-      let children = this.layerTree[0].children.map((c) => {
+      let children = this.layerTree[0].children.map(c => {
         if (c.layerIndex == layerIndex) {
           c.disabled = false;
         } else {
@@ -714,7 +723,7 @@ export default {
       this.layerTree[0].children.splice(0, 1, children[0]);
     },
     disableIsolation() {
-      let children = this.layerTree[0].children.map((c) => {
+      let children = this.layerTree[0].children.map(c => {
         c.disabled = false;
         return c;
       });
@@ -739,8 +748,165 @@ export default {
     },
     $_pickEvent(movement) {
       const vm = this;
-      const { Cesium, viewer, popupOptions } = this;
+      const { Cesium, viewer, g3dLayerIndex } = this;
       const scene = viewer.scene;
+      if (!movement) return;
+      if (scene.mode !== Cesium.SceneMode.MORPHING) {
+        let pickedFeature = viewer.scene.pick(movement.position);
+
+        if (!pickedFeature) {
+          vm.clickvisible = false;
+          return;
+        }
+
+        if (vm.featureclickenable) {
+          vm.featurevisible = true;
+        }
+
+        let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+        let index = pickedFeature._content._tileset._layerIndex;
+        vm.selectLayerIndex = index;
+        vm.selectedKeys = [`${index}`];
+        let layerInfo = g3dLayer.getLayerInfo(index);
+        const { children } = layerInfo;
+        let enableDynamic = children && children.length > 0 ? true : false;
+        if (enableDynamic) {
+          this.queryDynamic(movement, index);
+        } else {
+          this.queryStatic(movement);
+        }
+      }
+    },
+    $_bindPickFeature() {
+      const { vueKey, vueIndex } = this;
+      let clickhandler = this.$_bindClickHanlder();
+      vueCesium.G3DManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "clickhandler",
+        clickhandler
+      );
+    },
+    $_unbindPickFeature() {
+      const { vueKey, vueIndex } = this;
+      this.featurevisible = false;
+      this.restoreM3d();
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options.clickhandler) {
+        find.options.clickhandler.destroy();
+        vueCesium.G3DManager.changeOptions(
+          vueKey,
+          vueIndex,
+          "clickhandler",
+          undefined
+        );
+      }
+    },
+    $_bindClickHanlder() {
+      const vm = this;
+      const { Cesium, viewer } = this;
+      let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+      handler.setInputAction(function(movement) {
+        vm.$_pickEvent(movement);
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      return handler;
+    },
+    restoreM3d() {
+      this.restoreOriginStyle();
+    },
+    highlightM3d(layerIndex) {
+      const { vueKey, vueIndex, vueCesium } = this;
+      this.selectLayerIndex = layerIndex;
+      let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
+      let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
+      this.restoreM3d();
+      vueCesium.G3DManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "pickerTileset",
+        m3dlayer
+      );
+      vueCesium.G3DManager.changeOptions(
+        vueKey,
+        vueIndex,
+        "pickerTilesetStyle",
+        m3dlayer.style
+      );
+      m3dlayer.style = new Cesium.Cesium3DTileStyle({
+        color: `color('#FFFF00', 1)`
+      });
+    },
+    queryDynamic(movement, layerIndex) {
+      const vm = this;
+      const { Cesium, viewer, g3dLayerIndex } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+      if (find && find.options) {
+        let { primitiveCollection } = find.options;
+        let cartesian = viewer.getCartesian3Position(movement.position);
+        if (Cesium.defined(cartesian)) {
+          let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+          let lng = Cesium.Math.toDegrees(cartographic.longitude);
+          let lat = Cesium.Math.toDegrees(cartographic.latitude);
+          let height = cartographic.height;
+          let mapPosition = { x: lng, y: lat, z: height };
+          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+          let layerIndexs = g3dLayer.getM3DLayerIndexes();
+          if (layerIndex == undefined || layerIndex < 0) {
+            vm.featurevisible = false;
+            return;
+          } else {
+            if (typeof layerIndex === "string") {
+              layerIndex = parseInt(layerIndex);
+            }
+          }
+
+          g3dLayer.Monomerization(
+            function callback(result) {
+              if (result && result.length > 0) {
+                let feature = result[0];
+                let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
+                if (find) {
+                  let last = find.options.feature;
+                  primitiveCollection.remove(last);
+                }
+                vm.featurevisible = true;
+                vm.featureposition = {
+                  longitude: lng,
+                  latitude: lat,
+                  height: height
+                };
+                vm.featureproperties = feature.property;
+                primitiveCollection.add(feature);
+                vueCesium.G3DManager.changeOptions(
+                  vueKey,
+                  vueIndex,
+                  "feature",
+                  feature
+                );
+              } else {
+                vm.featurevisible = false;
+              }
+            },
+            {
+              position: new Cesium.Cartesian3(
+                mapPosition.x,
+                mapPosition.y,
+                mapPosition.z
+              ),
+              tolerance: 0.0001,
+              layerIndex: String(layerIndex)
+            }
+          );
+        }
+      }
+    },
+    queryStatic(movement) {
+      const vm = this;
+      const { Cesium, viewer, version, g3dLayerIndex, popupOptions } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      const scene = viewer.scene;
+
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
       if (!movement) return;
@@ -774,147 +940,48 @@ export default {
           vm.featureposition = {
             longitude: longitudeString2,
             latitude: latitudeString2,
-            height: heightString2,
+            height: heightString2
           };
 
           let g3dLayer = viewer.scene.layers.getLayer(vm.g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
           vm.selectLayerIndex = index;
           vm.selectedKeys = [`${index}`];
-          let layerInfo = g3dLayer.getLayerInfo(index);
-          const { layerName, gdbpUrl } = layerInfo;
-          vm.featureproperties = { layerName, gdbpUrl };
-          vm.highlightM3d(index);
+          if (version == "1.0" || version == "0.0") {
+            let layerInfo = g3dLayer.getLayerInfo(index);
+            const { layerName, gdbpUrl } = layerInfo;
+            vm.featureproperties = { layerName, gdbpUrl };
+            vm.highlightM3d(index);
+          } else if (version == "2.0") {
+            let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+
+            let oid = viewer.scene.pickOid(movement.position);
+            let feature = viewer.scene.pick(movement.position);
+
+            let m3ds = g3dLayer.getM3DLayerIndexes();
+            let tileset = g3dLayer.getLayer(`${index}`);
+
+            /* m3ds.forEach((index) => {
+              let m3d = g3dLayer.getLayer(index);
+              m3d && m3d.reset();
+            });
+
+            tileset.pickedOid = oid;
+            tileset.pickedColor = Cesium.Color.fromCssColorString("#ffff00"); */
+            if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
+              let result = feature.content.getAttributeByOID(oid) || {};
+              vm.featureproperties = result;
+            } else {
+              tileset.queryAttributes(oid).then(function(result) {
+                result = result || {};
+                vm.featureproperties = result;
+              });
+            }
+          }
         } else {
           vm.clickvisible = false;
         }
       }
-    },
-    $_bindPickFeature() {
-      const { vueKey, vueIndex } = this;
-      let clickhandler = this.$_bindClickHanlder();
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "clickhandler",
-        clickhandler
-      );
-    },
-    $_unbindPickFeature() {
-      const { vueKey, vueIndex } = this;
-      this.featurevisible = false;
-      this.restoreM3d();
-      let find = vueCesium.G3DManager.findSource(vueKey, vueIndex);
-      if (find && find.options.clickhandler) {
-        find.options.clickhandler.destroy();
-        vueCesium.G3DManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "clickhandler",
-          undefined
-        );
-      }
-    },
-    $_bindClickHanlder() {
-      const vm = this;
-      const { Cesium, viewer } = this;
-      let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function (movement) {
-        vm.$_pickEvent(movement);
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      return handler;
-    },
-    restoreM3d() {
-      this.restoreOriginStyle();
-    },
-    highlightM3d(layerIndex) {
-      const { vueKey, vueIndex, vueCesium } = this;
-      this.selectLayerIndex = layerIndex;
-      let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
-      let m3dlayer = g3dLayer.getLayer(layerIndex);
-      this.restoreM3d();
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "pickerTileset",
-        m3dlayer
-      );
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "pickerTilesetStyle",
-        m3dlayer.style
-      );
-      m3dlayer.style = new Cesium.Cesium3DTileStyle({
-        color: `color('#FFFF00', 1)`,
-      });
-    },
-    enableQuery() {
-      const vm = this;
-      const { vueKey, vueIndex, vueCesium, Cesium } = this;
-      const { viewer, selectLayerIndex = 0, g3dLayerIndex } = this;
-      var collection = new Cesium.PrimitiveCollection();
-      var primitiveCollection = viewer.scene.primitives.add(collection);
-      let dynamicQueryHandler = new Cesium.ScreenSpaceEventHandler(
-        viewer.scene.canvas
-      );
-      dynamicQueryHandler.setInputAction(function (movement) {
-        let cartesian = viewer.getCartesian3Position(movement.position);
-        if (Cesium.defined(cartesian)) {
-          let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-          let lng = Cesium.Math.toDegrees(cartographic.longitude);
-          let lat = Cesium.Math.toDegrees(cartographic.latitude);
-          let height = cartographic.height;
-          let mapPosition = { x: lng, y: lat, z: height };
-          let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
-          let layerIndexs = g3dLayer.getM3DLayerIndexes();
-          let layerIndex =
-            layerIndexs && layerIndexs.length > 0 ? layerIndexs[0] : 0;
-          g3dLayer.Monomerization(
-            function callback(result) {
-              if (result && result.length > 0) {
-                let feature = result[0];
-                let find = vueCesium.G3DManager.changeOptions(vueKey, vueIndex);
-                if (find) {
-                  let last = find.options.feature;
-                  primitiveCollection.remove(last);
-                }
-                vm.featurevisible = true;
-                vm.featureposition = {
-                  longitude: lng,
-                  latitude: lat,
-                  height: height,
-                };
-                vm.featureproperties = feature.property;
-                primitiveCollection.add(feature);
-                vueCesium.G3DManager.changeOptions(
-                  vueKey,
-                  vueIndex,
-                  "feature",
-                  feature
-                );
-              } else {
-                vm.featurevisible = false;
-              }
-            },
-            {
-              position: new Cesium.Cartesian3(
-                mapPosition.x,
-                mapPosition.y,
-                mapPosition.z
-              ),
-              tolerance: 0.0001,
-              layerIndex: layerIndex,
-            }
-          );
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      vueCesium.G3DManager.changeOptions(
-        vueKey,
-        vueIndex,
-        "dynamicquery",
-        dynamicQueryHandler
-      );
     },
     handleDynamicQuery() {
       this.featurevisible = false;
@@ -922,7 +989,7 @@ export default {
     },
     handleBackMain() {
       this.featureclickenable = this.enablePopup;
-    },
-  },
+    }
+  }
 };
 </script>
