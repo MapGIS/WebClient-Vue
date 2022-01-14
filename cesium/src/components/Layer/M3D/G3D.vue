@@ -358,7 +358,7 @@ export default {
         Promise.all(props).then(m3ds => {
           vm.$emit("loaded", { g3d: vm, component: vm });
           vm.recordOriginStyle();
-          if (true || enablePopup) {
+          if (enablePopup) {
             vm.$_bindPickFeature();
           }
           vm.m3ds = m3ds;
