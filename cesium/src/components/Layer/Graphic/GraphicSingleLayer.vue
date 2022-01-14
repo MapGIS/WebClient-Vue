@@ -19,7 +19,7 @@
         :graphicGroups="graphicGroups"
         @change="$_changeEditPanelValues"
         @stopDrawing="$_stopDraw"
-        @dbclick="$_dbclick"
+        @dblclick="$_dbclick"
         @clickTool="$_clickTool"
         @changeAttributes="$_changeAttributes"
         @open="$_open"
