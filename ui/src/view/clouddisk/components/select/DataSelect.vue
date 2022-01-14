@@ -4,7 +4,7 @@
       <mapgis-ui-col :span="simple ? 0 : 9" class="demo-split-pane">
         <mapgis-ui-clouddisk-company
           :mode="mode"
-          :isMulti="isLayers"
+          :isMulti="multiDatas"
           :tiffListsObj="tiffListsObj"
           @url="handleUrl"
         />
@@ -15,7 +15,7 @@
           ref="folder"
           :url="url"
           :simple="simple"
-          :isMulti="isLayers"
+          :isMulti="multiDatas"
           :isStyle="isStyle"
           :curTiffUrl="curTiffUrl"
           :tiffListsObj="tiffListsObj"
@@ -46,7 +46,7 @@ import shareaim from './shareaim.vue'
 import ShowShareList from './showShareList.vue' */
 
 export default {
-  name: "mapgis-ui-clouddisk-layerselect",
+  name: "mapgis-ui-clouddisk-dataselect",
   components: {
     MapgisUiClouddiskCompany,
     MapgisUiClouddiskFolder,
@@ -96,7 +96,7 @@ export default {
         return {};
       }
     },
-    isLayers: {
+    multiDatas: {
       type: Boolean,
       default: false
     },

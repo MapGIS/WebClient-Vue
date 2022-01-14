@@ -61,7 +61,7 @@ import shareaim from './shareaim.vue'
 import ShowShareList from './showShareList.vue' */
 
 export default {
-  name: "mapgis-ui-clouddisk-layerselect",
+  name: "mapgis-ui-clouddisk-share",
   components: {
     /* company,
     folder,

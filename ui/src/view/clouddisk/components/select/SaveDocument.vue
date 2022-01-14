@@ -57,11 +57,10 @@
       @ok="handleFolderConfirm"
       @cancel="handleFolderCancel"
     >
-      <mapgis-ui-clouddisk-layerselect
-        ref="layerselect"
+      <mapgis-ui-clouddisk-dataselect
         mode="save"
         :onlyFolder="true"
-        :isLayers="false"
+        :multiDatas="false"
         @change="handleFolderChange"
       />
     </mapgis-ui-modal>

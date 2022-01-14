@@ -228,7 +228,7 @@ export { default as MapgisUiTabPanel } from "./layout/panel/TabPanel.vue";
 export { default as MapgisUiSliderPanel } from "./layout/panel/SliderPanel.vue";
 
 // CloudDisk
-export { default as MapgisUiClouddiskLayerselect } from "./view/clouddisk/components/select/LayerSelect.vue";
+export { default as MapgisUiClouddiskDataselect } from "./view/clouddisk/components/select/DataSelect.vue";
 export { default as MapgisUiClouddiskGlobalUploader } from "./view/clouddisk/components/upload/GlobalUploader.vue";
 export { default as MapgisUiClouddiskUploaderModal } from "./view/clouddisk/components/upload/UploaderModal.vue";
 export { default as MapgisUiClouddiskSaveDocument } from "./view/clouddisk/components/select/SaveDocument.vue";
