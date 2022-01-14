@@ -4,6 +4,7 @@
       <mapgis-ui-graphic-icons-panel
         ref="iconsPanel"
         :models="models"
+        :containerStyle="iconsPanelStyle"
         @startDraw="$_startDraw"
         @startDrawModel="$_startDrawModel"
       />
@@ -78,6 +79,12 @@ export default {
     autoFlyToGraphic: {
       type: Boolean,
       default: true
+    },
+    containerStyle: {
+      type: Object
+    },
+    iconsPanelStyle: {
+      type: Object
     }
   },
   data() {
@@ -130,7 +137,7 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        if (!this.isEdit && !this.addSource && this.dataSource.length > 0 && !this.editTitle) {
+        if (!this.isEdit && !this.addSource && !this.editTitle) {
           this.$_init();
         }
       },
@@ -138,7 +145,6 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
       },
       deep: true
     },
@@ -555,7 +561,7 @@ export default {
 
       return editPanelValues;
     },
-    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius) {
+    $_startDrawModel(type, model, drawMode, drawDistance, modelRadius, scale) {
       //停止上一次的绘制
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
@@ -572,12 +578,13 @@ export default {
           if (!this.editPanelValues) {
             //根据当前的绘制类型，获取设置面板显示参数数据
             this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
-            //更新编辑面板
-            this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           }
+          this.editPanelValues.url = model;
+          this.editPanelValues.scale = scale;
+          //更新编辑面板
+          this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           //根据面板显示参数数据生成绘制参数
           let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
-          drawOptions.style.url = model;
           this.$_startDrawing({
             type: "model",
             ...drawOptions
@@ -685,7 +692,7 @@ export default {
             drawType = "polygon";
           }
           if (drawType === "model") {
-            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance)
+            this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance, 0, editPanelValues.scale)
           } else {
             this.$_startDrawing({
               type: drawType,
@@ -910,6 +917,7 @@ export default {
             vm.$nextTick(function () {
               vm.addSource = false;
             });
+            vm.$emit("change", vm.dataSourceCopy);
           }
         }
       });
@@ -924,6 +932,11 @@ export default {
           vm.$_setPopUp(pickedFeature);
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      //如果有数据，绘制数据
+      this.$_fromJson({
+        type: "FeatureCollection",
+        features: this.dataSourceCopy
+      });
     },
     $_setPopUp(graphic, isGraphic) {
       let center;
@@ -931,6 +944,9 @@ export default {
         center = this.$_getCenter(graphic);
       } else {
         center = this.$_getCenter(graphic.primitive);
+      }
+      if (!center) {
+        return;
       }
       let vm = this;
       let coordinates = center.geometry.coordinates;

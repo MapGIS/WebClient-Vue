@@ -63,7 +63,7 @@
              :key="index"
              v-for="(model, index) in models[currentModelType]"
         >
-          <img @click="$_startDrawModel(model.model)"
+          <img @click="$_startDrawModel(model.model, model)"
                class="mapgis-ui-graphic-icons-model"
                :src="model.img" alt="">
         </div>
@@ -194,8 +194,12 @@ export default {
       }
     },
     //开始绘制
-    $_startDrawModel(model) {
-      this.$emit("startDrawModel", "model", model, this.drawMode, this.drawDistance, this.modelRadius);
+    $_startDrawModel(url, model) {
+      let scale = 1;
+      if (model.hasOwnProperty("scale")) {
+        scale = model.scale;
+      }
+      this.$emit("startDrawModel", "model", url, this.drawMode, this.drawDistance, this.modelRadius, scale);
     },
     $_chooseModelType(type) {
       this.currentModelType = type;
@@ -220,6 +224,12 @@ export default {
           break;
         case "lamp":
           title = "灯";
+          break;
+        case "house":
+          title = "房屋";
+          break;
+        case "billboard":
+          title = "广告牌";
           break;
       }
       return title;

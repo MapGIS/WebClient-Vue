@@ -17,7 +17,7 @@
                     <mapgis-ui-time-picker
                         :default-value="startTime"
                         size="small"
-                        @change="changeTime(val, 'startTime')"
+                        @change="changeTime($event, 'startTime')"
                         style="width: 100%"
                     />
                 </mapgis-ui-form-model-item>
@@ -25,7 +25,7 @@
                     <mapgis-ui-time-picker
                         :default-value="endTime"
                         size="small"
-                        @change="changeTime(val, 'endTime')"
+                        @change="changeTime($event, 'endTime')"
                         style="width: 100%"
                     />
                 </mapgis-ui-form-model-item>
@@ -231,7 +231,7 @@ export default {
     },
     created() {
         this.startDate = shadowMoment(this.formData.date, "YYYY-MM-DD");
-        this.formDataTime = shadowMoment(this.formData.time, "HH:mm:ss");
+        // this.formDataTime = shadowMoment(this.formData.time, "HH:mm:ss");
         this.startTime = shadowMoment(this.formData.startTime, "HH:mm:ss");
         this.endTime = shadowMoment(this.formData.endTime, "HH:mm:ss");
     },
@@ -302,15 +302,11 @@ export default {
             );
         },
         mount() {
-            const { viewer } = this;
             const vm = this;
             let promise = this.createCesiumObject();
             promise.then(function (dataSource) {
                 vm.$emit("loaded", vm);
             });
-            if (viewer.scene.globe.depthTestAgainstTerrain) {
-                this.depthTestAgainstTerrain = true;
-            }
         },
         /**
          * 日期组件值变化
@@ -336,7 +332,7 @@ export default {
             const utc = this.Cesium.JulianDate.fromDate(new Date(timeStr)); // UTC
             return this.Cesium.JulianDate.addHours(
                 utc,
-                timeZone,
+                timeZone,//默认北京时区，8
                 new this.Cesium.JulianDate()
             ); // 北京时间
         },
@@ -346,15 +342,15 @@ export default {
          */
         shadow() {
             this.remove();
-            let { viewer, vueCesium } = this;
+            const { viewer, vueCesium, Cesium } = this;
 
             // 初始化交互式绘制控件
-            let drawElement = new this.Cesium.DrawElement(viewer);
+            let drawElement = new Cesium.DrawElement(viewer);
             let { date, minHeight, stretchHeight, shadowColor, sunColor } =
                 this.formData;
-            const time = new Date(`${date} ${this.formData.time}`);
-            const startTime = new Date(`${date} ${this.formData.startTime}`);
-            const endTime = new Date(`${date} ${this.formData.endTime}`);
+            // const time = new Date(`${date} ${this.formData.time}`);
+            const startTime = this.timeTransfer(`${date} ${this.formData.startTime}`);
+            const endTime = this.timeTransfer(`${date} ${this.formData.endTime}`);
 
             const self = this;
             let shadowAnalysis;
@@ -368,17 +364,15 @@ export default {
                     let positions = results.positions;
                     // self.remove();
 
-                    // //阻止浏览器默认的右键菜单行为
-                    // document.oncontextmenu = function(){
-                    // 　　return false;
-                    // }
-
                     self.toggleMask(true);
+
                     this.$emit("analysisBegin");
                     let xmin;
                     let ymin;
                     let xmax;
                     let ymax;
+
+                    viewer.scene.globe.depthTestAgainstTerrain = true;
 
                     positions.forEach((point) => {
                         const { x, y } = point;
@@ -411,15 +405,17 @@ export default {
                     const zPaneNum = Math.ceil((stretchHeight - minHeight) / 4); // Z轴方向插值点个数
 
                     shadowAnalysis = new Cesium.ShadowAnalysis(viewer, {
-                        xPaneNum,
-                        yPaneNum,
-                        zPaneNum,
+                        xPaneNum: xPaneNum,
+                        yPaneNum: yPaneNum,
+                        zPaneNum: zPaneNum,
                         shadowColor: shadowColor,
                         sunColor: sunColor,
                         percentCallback: this.setPercent,
                         intervalTime: 60,
                         pointSize: 10,
                     });
+                    console.log("startTime",startTime);
+                    console.log("endTime",endTime);
                     // 时间段范围阴影分析
                     shadowAnalysis.calcPointsArrayInShadowTime(
                         positions,
@@ -448,6 +444,15 @@ export default {
                 },
             });
         },
+        timeTransfer(time){
+            const { timeZone } = this;
+            let timeInTimezone = new Date(time);
+            let timezoneInms = timeInTimezone.getTime();
+            let utcInms = timezoneInms + timeZone * 3600000;
+            let timeInUTC =  new Date(utcInms);
+
+            return timeInUTC
+        },
 
         /**
          * 原生日照分析
@@ -458,7 +463,7 @@ export default {
             let { viewer } = this;
             viewer.scene.globe.enableLighting = true; // 开启日照
             viewer.shadows = true; // 开启阴影
-            const { date, startTime, endTime, time, timeType } = this.formData;
+            const { date, startTime, endTime } = this.formData;
             // 时间段日照分析
             viewer.clock.shouldAnimate = true; // 开启计时
 
@@ -466,14 +471,16 @@ export default {
             // viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(utc, 8, new Cesium.JulianDate()); //北京时间=UTC+8=GMT+8
 
             viewer.clock.startTime = this.getJulianDate(
-                `${date} ${this.formData.startTime}`
+                `${date} ${startTime}`
             );
             viewer.clock.stopTime = this.getJulianDate(
-                `${date} ${this.formData.endTime}`
+                `${date} ${endTime}`
             );
             viewer.clock.currentTime = this.getJulianDate(
-                `${date} ${this.formData.startTime}`
+                `${date} ${startTime}`
             );
+            console.log("sun starttime",viewer.clock.startTime)
+            console.log("sun endTime",viewer.clock.stopTime)
             viewer.clock.multiplier = 3600; // cesium中1秒表示现实中1个小时
             viewer.clock.clockRange = this.Cesium.ClockRange.LOOP_STOP; // 循环动画
         },
