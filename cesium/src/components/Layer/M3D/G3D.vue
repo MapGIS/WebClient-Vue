@@ -352,7 +352,7 @@ export default {
       if (find && find.options && find.options.m3ds) {
         let props = layerIndexs.map((i, j) => {
           let gIndex = i;
-          let layer = g3dLayer.getLayer(gIndex);
+          let layer = g3dLayer.getLayer(`${gIndex}`);
           return layer.readyPromise;
         });
         Promise.all(props).then(m3ds => {
@@ -368,7 +368,7 @@ export default {
             // 形参的m3d并不是表示序号i对应的图层，下一行才是序号i对应的图层
             let gIndex = layerIndexs[i];
             let info = g3dLayer.getLayerInfo(gIndex);
-            let layer = g3dLayer.getLayer(gIndex);
+            let layer = g3dLayer.getLayer(`${gIndex}`);
             let { layerName, gdbpUrl, layerType } = info;
             all.push(`${gIndex}`);
             vm.layerTree[0].children.push({
@@ -667,7 +667,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(i);
+          let m3dlayer = g3dLayer.getLayer(String(i));
           m3dlayer.style = s;
         });
       }
@@ -678,7 +678,7 @@ export default {
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
-          let m3dlayer = g3dLayer.getLayer(i);
+          let m3dlayer = g3dLayer.getLayer(String(i));
           m3dlayer.show = true;
         });
       }
@@ -818,7 +818,7 @@ export default {
       const { vueKey, vueIndex, vueCesium } = this;
       this.selectLayerIndex = layerIndex;
       let g3dLayer = viewer.scene.layers.getLayer(this.g3dLayerIndex);
-      let m3dlayer = g3dLayer.getLayer(layerIndex);
+      let m3dlayer = g3dLayer.getLayer(`${layerIndex}`);
       this.restoreM3d();
       vueCesium.G3DManager.changeOptions(
         vueKey,
@@ -959,7 +959,7 @@ export default {
             let feature = viewer.scene.pick(movement.position);
 
             let m3ds = g3dLayer.getM3DLayerIndexes();
-            let tileset = g3dLayer.getLayer(index);
+            let tileset = g3dLayer.getLayer(`${index}`);
 
             /* m3ds.forEach((index) => {
               let m3d = g3dLayer.getLayer(index);
