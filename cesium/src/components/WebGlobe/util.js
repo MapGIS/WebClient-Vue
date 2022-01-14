@@ -150,6 +150,18 @@ export function isLogarithmicDepthBufferEnable(viewer) {
 }
 
 /**
+ * 判断当前浏览器是否支持开启对数深度缓存区
+ * @returns true:支持,false:不支持
+ */
+export function isLogarithmicDepthBufferSupport() {
+  if(navigator.userAgent.indexOf("Linux") > 0 && navigator.userAgent.indexOf("Firefox") > 0){
+    return false
+  } else {
+    return true
+  }
+}
+
+/**
  * 设置是否开启对数深度缓存区
  * @param {*} isEnable true:开启，false:关闭
  */

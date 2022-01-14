@@ -195,6 +195,11 @@ import ServiceLayer from "../UI/Controls/ServiceLayer";
 // import PondingSimulationTimeline from "./PondingSimulation/timeline.vue"
 import flood from "../Analysis/Flood.vue";
 import * as turf from "@turf/turf";
+import {
+  isLogarithmicDepthBufferEnable,
+  isLogarithmicDepthBufferSupport,
+  setLogarithmicDepthBufferEnable
+} from "../WebGlobe/util";
 
 export default {
     name: "mapgis-3d-ponding-simulation",
@@ -331,6 +336,8 @@ export default {
             //判断积水是否正在进行积水仿真
             pond: false,
             timer: undefined,
+
+            isLogarithmicDepthBufferEnable: undefined
         };
     },
     destroyed() {
@@ -338,7 +345,7 @@ export default {
     },
     methods: {
         mounted() {
-            const { vueCesium, vueKey, vueIndex } = this;
+            const { vueCesium, vueKey, vueIndex, viewer } = this;
             vueCesium.PondingSimulationManager.addSource(
                 vueKey,
                 vueIndex,
@@ -347,14 +354,26 @@ export default {
                     rain: null,
                 }
             );
+            //viewer.scene.logarithmicDepthBuffer
+            //记录对数深度缓冲更改前的状态
+            this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(viewer);
+
+            // setLogarithmicDepthBufferEnable( true, viewer);
+            setLogarithmicDepthBufferEnable( isLogarithmicDepthBufferSupport(), viewer);
+
             this.mount();
             this.$emit("loaded", this);
         },
         destroyed() {
-            const { vueCesium, vueKey, vueIndex } = this;
+            const { vueCesium, vueKey, vueIndex, viewer } = this;
             //积水仿真
             this.stopSimulation();
             vueCesium.PondingSimulationManager.deleteSource(vueKey, vueIndex);
+
+            //对数深度缓冲区恢复最初状态
+            if ( this.isLogarithmicDepthBufferEnable !== isLogarithmicDepthBufferEnable( viewer) ) {
+              setLogarithmicDepthBufferEnable( this.isLogarithmicDepthBufferEnable, viewer )
+            }
 
             //绘制组件
             this.drawer.unmount();
@@ -597,8 +616,8 @@ export default {
             if (Math.abs(err) < vm.VolErr) {
                 //若误差满足条件，将使用的高度设置为积水上涨的高度
                 vm.maxHeightCopy = Math.round(midRange * 100) / 100;
-                //在实际计算出来的积水高度上增加一米以优化积水显示的效果
-                vm.maxHeightCopy += 1;
+                // //在实际计算出来的积水高度上增加一米以优化积水显示的效果
+                // vm.maxHeightCopy += 1;
                 // console.log("heightflood",vm.maxHeightCopy);
                 //积水上涨高度的步长值
                 vm.heightStep = (vm.maxH - vm.startHeightCopy) / 10;
@@ -713,6 +732,8 @@ export default {
                 }, 500);
 
                 vm._removeFlood();
+                setLogarithmicDepthBufferEnable( isLogarithmicDepthBufferSupport(), viewer);
+                // console.log("_doAnalysis",this.viewer.scene.logarithmicDepthBuffer)
                 vm._doAnalysis();
             } else {
                 this.$message.warning("请先开始仿真！");
@@ -761,8 +782,6 @@ export default {
                 // 雨特效的长度
                 let option = options[vm.rainOption];
                 option.angle = vm.angle;
-
-                weather.removeAll();
                 weather.addRain(option);
 
                 vueCesium.PondingSimulationManager.changeOptions(
