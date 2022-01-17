@@ -1,4 +1,6 @@
 <script>
+import bbox from "@turf/bbox";
+
 import VueOptions from "../../Base/Vue/VueOptions";
 import PopupMixin from "../Mixin/PopupMixin";
 
@@ -13,17 +15,17 @@ export default {
     ...VueOptions,
     baseUrl: {
       type: [String, Object],
-      required: true
+      required: true,
     },
     layerId: {
       type: String,
-      default: "矢量图层"
+      default: "矢量图层",
     },
     layerStyle: {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     highlightStyle: {
       type: Object,
@@ -31,17 +33,19 @@ export default {
         return {
           point: new PointStyle(),
           line: new LineStyle(),
-          polygon: new FillStyle()
+          polygon: new FillStyle(),
         };
-      }
+      },
     },
     visible: {
       type: Boolean,
-      default: true
+      default: true,
     },
   },
   data() {
-    return {};
+    return {
+      bbox: undefined,
+    };
   },
   watch: {
     visible(val, oldval) {
@@ -49,7 +53,7 @@ export default {
         this.unmount();
         this.mount();
       }
-    }
+    },
   },
   mounted() {
     this.mount();
@@ -61,20 +65,23 @@ export default {
     async createCesiumObject() {
       const { baseUrl, options } = this;
       // return new Cesium.GeoJsonDataSource.load(baseUrl, options);
-      return new Cesium.GeoJsonDataSource.load(baseUrl, {clampToGround: true});
+      return new Cesium.GeoJsonDataSource.load(baseUrl, {
+        clampToGround: true,
+      });
     },
     mount() {
       const { viewer, vueCesium, vueKey, vueIndex } = this;
-      const { enablePopup, enableTips } = this;
+      const { enablePopup, enableTips, baseUrl } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function(dataSource) {
+      promise.then(function (dataSource) {
         // viewer.zoomTo(dataSource);
         viewer.dataSources.add(dataSource);
         vm.changeColor(dataSource);
         // 新增visible属性，控制图层可见性
         vm.changeVisisbe(dataSource);
         vm.$emit("load", { component: this });
+        vm.parseData(baseUrl);
         let clickhandler, hoverhandler;
         if (enablePopup) {
           clickhandler = vm.$_bindClickEvent(vm.highlight);
@@ -84,7 +91,7 @@ export default {
         }
         vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
           clickhandler: clickhandler,
-          hoverhandler: hoverhandler
+          hoverhandler: hoverhandler,
         });
       });
     },
@@ -122,7 +129,7 @@ export default {
             semiMajorAxis: pixelSize,
             semiMinorAxis: pixelSize,
             outline: outlineColor,
-            material: color
+            material: color,
           });
         } else if (type == "line" || entity.polyline) {
           const style = layerStyle.toCesiumStyle(Cesium);
@@ -161,7 +168,7 @@ export default {
               semiMajorAxis: pixelSize,
               semiMinorAxis: pixelSize,
               outline: outlineColor,
-              material: color
+              material: color,
             });
           } else if (entity.polyline) {
             const style = hline.toCesiumStyle(Cesium);
@@ -183,10 +190,10 @@ export default {
                 positions: entity.polygon.hierarchy._value.positions,
                 material: new Cesium.PolylineGlowMaterialProperty({
                   glowPower: 0.7,
-                  color: new Cesium.Color.fromCssColorString("#7cc4db")
+                  color: new Cesium.Color.fromCssColorString("#7cc4db"),
                 }),
-                clampToGround: true
-              }
+                clampToGround: true,
+              },
             });
             viewer.entities.add(outlineEntity);
             vueCesium.GeojsonManager.changeOptions(
@@ -204,7 +211,7 @@ export default {
               semiMajorAxis: pixelSize,
               semiMinorAxis: pixelSize,
               outline: outlineColor,
-              material: color
+              material: color,
             });
           } else if (type == "line" || entity.polyline) {
             const style = layerStyle.toCesiumStyle(Cesium);
@@ -225,13 +232,29 @@ export default {
       this.currentClickInfo = currentClickInfo;
     },
     changeVisisbe(dataSource) {
-      const {vueKey, vueIndex, visible} = this;
+      const { vueKey, vueIndex, visible } = this;
       let entities = dataSource.entities.values;
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         entity.show = visible;
       }
-    }
-  }
+    },
+    parseData(data) {
+      const vm = this;
+      if (typeof data === "string") {
+        fetch(data)
+          .then((res) => res.json())
+          .then((geojson) => {
+            vm.parseBBox(geojson);
+          });
+      } else {
+        vm.parseBBox(data);
+      }
+    },
+    parseBBox(geojson) {
+      this.bbox = bbox(geojson);
+      this.$emit("bbox", { bbox: this.bbox });
+    },
+  },
 };
 </script>

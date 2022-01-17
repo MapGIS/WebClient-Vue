@@ -340,3 +340,18 @@ export default {
     polygon: new FillStyle(),
   };
   ```
+
+## 事件
+
+### load
+
+事件载荷包含以下部分:
+
+- `component` 组件自身 this 引用
+
+### bbox
+
+> 由于计算 bbox 过于耗费时间，该事件是异步执行，发生在 load 事件之后
+> 事件载荷包含以下部分:
+
+- `bbox` 数据对应的空间范围 [`minx`, `miny`, `maxx`, `maxy`]

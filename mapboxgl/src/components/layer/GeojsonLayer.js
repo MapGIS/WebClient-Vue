@@ -1,5 +1,6 @@
 import mapboxgl from "@mapgis/mapbox-gl";
 import { Style } from "@mapgis/webclient-es6-service";
+import bbox from '@turf/bbox';
 
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
@@ -25,7 +26,8 @@ export default {
       clickMode: "click",
       hoverMode: "hover",
       popupContainer: undefined,
-      tipContainer: undefined
+      tipContainer: undefined,
+      bbox: undefined,
     };
   },
   props: {
@@ -245,6 +247,7 @@ export default {
           type: "geojson",
           data: this.data
         };
+        this.parseData(this.data);
       } else if (this.source) {
         source = {
           type: "geojson",
@@ -323,6 +326,24 @@ export default {
       };
       this.map.addLayer(addlayer, this.before);
       this.$_emitEvent("added", { layerId: this.layerId });
+    },
+
+    parseData(data) {
+      const vm = this;
+      if (typeof data === "string") {
+        fetch(data)
+          .then(res => res.json())
+          .then(geojson => {
+            vm.parseBBox(geojson);
+          });
+      } else {
+        vm.parseBBox(data);
+      }
+    },
+
+    parseBBox(geojson) {
+      this.bbox = bbox(geojson);
+      this.$emit("bbox", { bbox: this.bbox });
     },
 
     setFeatureState(featureId, state) {
@@ -573,7 +594,8 @@ export default {
             ...point.toMapboxStyle({ highlight: true })
           };
         }
-        if (highlight && !map.getLayer(highlight.id)) map.addLayer(highlight);      }
+        if (highlight && !map.getLayer(highlight.id)) map.addLayer(highlight);
+      }
     }
   }
 };

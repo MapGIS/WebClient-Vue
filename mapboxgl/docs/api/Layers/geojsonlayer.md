@@ -540,3 +540,10 @@ export default {
 
 <style scoped></style>
 ```
+
+## 事件
+### bbox
+> 由于计算bbox过于耗费时间，该事件是异步执行
+事件载荷包含以下部分:
+
+- `bbox` 数据对应的空间范围 [`minx`, `miny`, `maxx`, `maxy`]
