@@ -1,7 +1,6 @@
 import VueOptions from "../../Base/Vue/VueOptions";
 import Popup from "../../UI/Popup/Popup.vue";
 import PopupContent from "../../UI/Geojson/Popup";
-import PopupFeatureContent from "../../UI/Popup/PopupContent.vue";
 
 import debounce from "lodash/debounce";
 
@@ -74,7 +73,6 @@ export default {
   components: {
     Popup,
     PopupContent,
-    PopupFeatureContent,
   },
   render(h) {
     let {
@@ -133,7 +131,6 @@ export default {
 
     let defaultSlot = this.$slots.default;
     let enableDefaultSlot = defaultSlot ? true : false;
-    console.log("enableDefaultSlot", enableDefaultSlot, feature, popupOptions);
 
     if (customPopup || customTips) {
       return (
@@ -173,9 +170,12 @@ export default {
             onSeparate={this.$_separateMap.bind(this)}
             options={options}
           >
-            <PopupFeatureContent feature={feature} popupOptions={popupOptions}>
+            <mapgis-ui-popup-content
+              feature={feature}
+              popupOptions={popupOptions}
+            >
               {enableDefaultSlot && defaultSlot}
-            </PopupFeatureContent>
+            </mapgis-ui-popup-content>
           </Popup>
           <Popup
             position={hoverposition}

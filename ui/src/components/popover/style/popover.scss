@@ -10,6 +10,27 @@
   width: 360px !important;
 }
 
+.mapgis-feature-popup-container {
+  padding: 10px 12px 20px 12px;
+  overflow: hidden;
+}
+
+.mapgis-feature-popup-title {
+  color: $text-color;
+  font-weight: bold;
+  border-bottom: 2px solid $nav-content-backgroud;
+  padding: 6px 0;
+  line-height: 11px;
+  margin-bottom: 3px;
+  text-align: left;
+  white-space: nowrap;
+  // height: 32px; // 这里给高度的话会产生抖动，请不要给个固定高度
+  min-width: 240px;
+  font-size: 16px;
+  border-left: 2px solid rgba(115, 176, 251, 0);
+}
+
+
 .mapgis-popup-container {
   padding: 10px 12px 20px 12px;
   overflow: hidden;
@@ -64,7 +85,7 @@
   margin-bottom: 3px;
   text-align: left;
   white-space: nowrap;
-  height: 32px;
+  // height: 32px; 这里给高度的话会产生抖动，请不要给个固定高度
   min-width: 240px;
   font-size: 16px;
   border-left: 2px solid rgba(115, 176, 251, 0);
