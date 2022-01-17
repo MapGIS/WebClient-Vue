@@ -132,6 +132,8 @@ export default {
     }
 
     let defaultSlot = this.$slots.default;
+    let enableDefaultSlot = defaultSlot ? true : false;
+    console.log("enableDefaultSlot", enableDefaultSlot, feature, popupOptions);
 
     if (customPopup || customTips) {
       return (
@@ -172,7 +174,7 @@ export default {
             options={options}
           >
             <PopupFeatureContent feature={feature} popupOptions={popupOptions}>
-              {defaultSlot}
+              {enableDefaultSlot && defaultSlot}
             </PopupFeatureContent>
           </Popup>
           <Popup
