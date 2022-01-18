@@ -278,6 +278,11 @@ export default {
     },
     enablePolygon(e){
       this.enablePolygonCopy = e;
+    },
+    enablePolygonCopy(){
+      if(this.lnglat){
+        this.startHeightAnalysis();
+      }
     }
   },
   methods: {
