@@ -21,11 +21,11 @@
   border-bottom: 2px solid $nav-content-backgroud;
   padding: 6px 0;
   line-height: 11px;
-  margin-bottom: 3px;
+  margin-bottom: 1px;
   text-align: left;
   white-space: nowrap;
   // height: 32px; // 这里给高度的话会产生抖动，请不要给个固定高度
-  min-width: 240px;
+  width: 100%;
   font-size: 16px;
   border-left: 2px solid rgba(115, 176, 251, 0);
 }
@@ -69,10 +69,10 @@
 .mapgis-popup-row {
   text-align: left;
   white-space: nowrap;
-  padding: 6px 12px;
+  padding: 6px 6px 6px 0;
   height: 32px;
   line-height: 11px;
-  min-width: 240px;
+  width: 100%;
   border-left: 2px solid rgba(115, 176, 251, 0);
 }
 
@@ -100,12 +100,12 @@
 }
 
 .mapgis-popup-field {
-  width: 30%;
+  width: 50%;
   font-size: 14px;
 }
 
 .mapgis-popup-value {
-  width: 70%;
+  width: 50%;
   text-align: right;
   font-size: 14px;
 }
@@ -142,10 +142,10 @@
 .mapgis-popup-underline-row {
   text-align: left;
   white-space: nowrap;
-  padding: 6px 12px;
+  padding: 6px 6px 6px 0;
   height: 32px;
   line-height: 11px;
-  min-width: 220px;
+  width: 100%;
   border-left: 2px solid $panel-backgroud;
   border-bottom: 2px solid $panel-backgroud;
 }
@@ -160,12 +160,17 @@
   line-height: 22px;
 }
 
+.mapgis-popup-underline-item {
+  padding-right: 4px;
+}
+
 .mapgis-popup-table-item {
   line-height: 30px;
 }
 
 .mapgis-popup-underline-field {
   color: rgb(152, 152, 152);
+  padding-left: 4px;
 }
 
 /*第四种popup样式*/
@@ -207,10 +212,11 @@
   text-align: left;
   white-space: nowrap;
   padding: 0;
+  padding-right: 6px;
   height: 32px;
   line-height: 11px;
-  min-width: 240px;
-  border-bottom: 2px solid $panel-backgroud;
+  width: 100%;
+  border-bottom: 2px solid $nav-content-backgroud;
 }
 
 .mapgis-popup-table-field {
@@ -218,7 +224,31 @@
   padding-left: 14px;
 }
 
+.mapgis-3d-popup-content-field {
+  width: 50%;
+  display: inline-block;
+  line-height: 20px;
+  padding-left: 4px;
+  white-space:nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 2px solid $nav-content-backgroud;
+  border-right: 2px solid $nav-content-backgroud;
+}
+
+.mapgis-3d-popup-content-value {
+  width: 50%;
+  display: inline-block;
+  padding-right: 4px;
+  white-space:nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 20px;
+  border-right: 2px solid $nav-content-backgroud;
+}
+
 .mapgis-popup-table-value {
+  line-height: 30px;
   padding-right: 10px;
 }
 

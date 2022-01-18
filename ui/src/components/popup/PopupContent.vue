@@ -29,7 +29,7 @@
             overflowY:
               popupOptionsCopy.fields.length > popupOptionsCopy.scrollNum
                 ? 'scroll'
-                : 'auto',
+                : 'none',
           }"
         >
           <div :key="index" v-for="(field, index) in popupOptionsCopy.fields">
