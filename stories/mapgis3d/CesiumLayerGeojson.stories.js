@@ -38,7 +38,8 @@ export const 点 = Template.bind({});
   enablePopup: true,
   popupOptions: {
     "title": 'name',  
-    "popupType": 'table'
+    "popupType": 'table',
+    "scrollNum": 6
   },
   enableTips: false,
   layerStyle: new PointStyle({
@@ -71,7 +72,8 @@ export const 线 = Template.bind({});
   enablePopup: true,
   popupOptions: {
     "title": 'name',
-    "popupType": 'card'
+    "popupType": 'card',
+    "scrollNum": 6
   },
   enableTips: false,
   layerStyle: new LineStyle({
@@ -102,7 +104,8 @@ export const 区 = Template.bind({});
   enablePopup: true,
   popupOptions: {
     "title": 'name',
-    "popupType": 'relation'
+    "popupType": 'rich-text',
+    "scrollNum": 6
   },
   enableTips: false,
   layerStyle: new FillStyle({
