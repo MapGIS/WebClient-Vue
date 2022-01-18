@@ -423,31 +423,33 @@ export default {
      * 获取剖切面离包围盒中心点的最大最小值
      */
     _getMaxMinByRange(range) {
-      let m3dBox = this._getBoxXYZLength(range);
-      const { xLength, yLength, height } = m3dBox;
+      const { xmin, ymin, xmax, ymax, zmin, zmax } = range;
       let max = 10000;
       let min = -max;
       let length = max - min;
-      switch (this.axis) {
+      switch (this.axisCopy) {
         case "X":
-          length = xLength;
+          this.min = xmin;
+          this.max = xmax;
+          this.distanceCopy = (xmin + xmax) / 2;
           break;
         case "Y":
-          length = yLength;
+          this.min = ymin;
+          this.max = ymax;
+          this.distanceCopy = (ymin + ymax) / 2;
           break;
         case "Z":
-          length = height;
+          const height = zmax - zmin;
+          this.min = -height;
+          this.max = height;
+          this.distanceCopy = 0;
           break;
         default:
           break;
       }
-      this.distanceCopy = length / 2;
-      this.max = length;
-      this.min = -length;
     },
-
     /**
-     * 获取多个M3D的最大包围盒范围
+     * 获取多个M3D的最大包围盒范围(世界坐标系下)
      */
     _getM3DSetArrayRange(m3dSetArray) {
       let xmin;
@@ -481,88 +483,101 @@ export default {
       return { xmin, ymin, xmax, ymax, zmin, zmax };
     },
     /**
-     * 获取包围盒的长宽高
-     */
-    _getBoxXYZLength(range) {
-      const { xmin, ymin, xmax, ymax, zmin, zmax } = range;
-      // 西南角
-      const nP1 = Cesium.Cartesian3.fromDegrees(xmin, ymin, 0);
-      // 东北角
-      const nP2 = Cesium.Cartesian3.fromDegrees(xmax, ymax, 0);
-      // 西北角
-      const nP3 = Cesium.Cartesian3.fromDegrees(xmin, ymax, 0);
-      // 东南角
-      const nP4 = Cesium.Cartesian3.fromDegrees(xmax, ymin, 0);
-      //求出平面的长和宽
-      let xLength = Cesium.Cartesian3.distance(nP4, nP1);
-      let yLength = Cesium.Cartesian3.distance(nP3, nP1);
-      const height = zmax - zmin;
-      return {
-        xLength,
-        yLength,
-        height
-      };
-    },
-    /**
-     * 获取一个m3d的包围盒范围
+     * 获取一个m3d的包围盒范围(世界坐标系下)
      */
     _getM3DSetRange(m3dSet) {
+      // m3dSet.debugShowBoundingVolume = true;
+      const transform = m3dSet._transform;
+      const inverseMatrix = Cesium.Matrix4.inverse(
+        transform,
+        new Cesium.Matrix4()
+      );
+      // 东北角
       const northeastCornerCartesian =
         m3dSet._root.boundingVolume.northeastCornerCartesian;
+      // 东北角本地坐标
+      const northeastCornerLocal = Cesium.Matrix4.multiplyByPoint(
+        inverseMatrix,
+        northeastCornerCartesian,
+        new Cesium.Cartesian3()
+      );
+      // 西南角
       const southwestCornerCartesian =
         m3dSet._root.boundingVolume.southwestCornerCartesian;
-      //这里：东南角和西北角在外包盒子的同一平面上
-      const p1 = this.$_degreeFromCartesian(southwestCornerCartesian); // 西南角
-      const p2 = this.$_degreeFromCartesian(northeastCornerCartesian); // 东北角
-      const xmin = p1.longitude;
-      const ymin = p1.latitude;
-      const xmax = p2.longitude;
-      const ymax = p2.latitude;
+      // 西南角本地坐标
+      const southwestCornerLocal = Cesium.Matrix4.multiplyByPoint(
+        inverseMatrix,
+        southwestCornerCartesian,
+        new Cesium.Cartesian3()
+      );
       const zmin = m3dSet._root.boundingVolume.minimumHeight;
       const zmax = m3dSet._root.boundingVolume.maximumHeight;
+      // 模型中心点本地坐标
+      const centerLocal = {
+        x: (northeastCornerLocal.x + southwestCornerLocal.x) / 2,
+        y: (northeastCornerLocal.y + southwestCornerLocal.y) / 2,
+        z: (zmin + zmax) / 2
+      };
+      // 模型中心点世界坐标
+      // const center = Cesium.Matrix4.multiplyByPoint(
+      //   transform,
+      //   new Cesium.Cartesian3(centerLocal.x, centerLocal.y, centerLocal.z),
+      //   new Cesium.Cartesian3()
+      // );
+      // this.viewer.entities.add({
+      //   position: center,
+      //   point: {
+      //     color: Cesium.Color.GREEN,
+      //     pixelSize: 20
+      //   }
+      // });
+
+      // 模型原点世界坐标
+      // const modelCoord = new Cesium.Cartesian3(
+      //   transform[12],
+      //   transform[13],
+      //   transform[14]
+      // );
+      // this.viewer.entities.add({
+      //   position: modelCoord,
+      //   point: {
+      //     color: Cesium.Color.RED,
+      //     pixelSize: 15
+      //   }
+      // });
+
+      // 模型中心点到y轴(以模型原点为坐标轴原点)的垂直距离
+      const xDistance = centerLocal.x;
+
+      // 模型中心点到x轴(以模型原点为坐标轴原点)的垂直距离
+      const yDistance = centerLocal.y;
+
+      // 模型x方向的长度
+      const xLength = Cesium.Cartesian3.distance(
+        new Cesium.Cartesian3(
+          northeastCornerLocal.x,
+          southwestCornerLocal.y,
+          0
+        ),
+        new Cesium.Cartesian3(southwestCornerLocal.x, southwestCornerLocal.y, 0)
+      );
+
+      // 模型y方向的长度
+      const yLength = Cesium.Cartesian3.distance(
+        new Cesium.Cartesian3(
+          southwestCornerLocal.x,
+          northeastCornerLocal.y,
+          0
+        ),
+        new Cesium.Cartesian3(southwestCornerLocal.x, southwestCornerLocal.y, 0)
+      );
+
+      const xmin = xDistance - xLength / 2;
+      const xmax = xDistance + xLength / 2;
+      const ymin = yDistance - yLength / 2;
+      const ymax = yDistance + yLength / 2;
       return { xmin, ymin, xmax, ymax, zmin, zmax };
     }
-    /**
-     * 判断多个m3d的包围盒是否存在交集，暂时只判断了，单个模型与其他模型的最大包围盒没有交集的情况
-     */
-    // _isM3DSetArrayBoxIntersect(m3dSetArray) {
-    //   for (let i = 0; i < m3dSetArray.length; i++) {
-    //     const m3dSet = m3dSetArray[i];
-    //     const m3dSetCopy = [...m3dSetArray]; //拷贝m3dSetCopy
-    //     m3dSetCopy.splice(i, 1);
-    //     const rangeSingle = this._getM3DSetRange(m3dSet);
-    //     const rangeArray = this._getM3DSetArrayRange(m3dSetCopy);
-    //     // 如果当前的m3d包围盒与包含其他m3d的最大包围盒没有交集，则直接判断模型之间，有模型是单个的
-    //     if (!this._isBoxsIntersect(rangeSingle, rangeArray)) {
-    //       return false;
-    //     }
-    //   }
-    //   return true;
-    // },
-    // /**
-    //  * 判断两个包围盒是否有交集
-    //  */
-    // _isBoxsIntersect(range1, range2) {
-    //   const xInterset = this._isIntersect(
-    //     [range1.xmin, range1.xmax],
-    //     [range2.xmin, range2.xmax]
-    //   );
-    //   const yInterset = this._isIntersect(
-    //     [range1.xmin, range1.xmax],
-    //     [range2.xmin, range2.xmax]
-    //   );
-    //   const zInterset = this._isIntersect(
-    //     [range1.zmin, range1.zmax],
-    //     [range2.zmin, range2.zmax]
-    //   );
-    //   return xInterset && yInterset && zInterset;
-    // },
-    // // 判断两个数值区间是否有相交
-    // _isIntersect(arr1, arr2) {
-    //   let start = [Math.min(...arr1), Math.min(...arr2)]; //区间的两个最小值
-    //   let end = [Math.max(...arr1), Math.max(...arr2)]; //区间的两个最大值
-    //   return Math.max(...start) <= Math.min(...end); //最大值里的最小值 是否 小于等于 最大值的最小值
-    // }
   }
 };
 </script>
