@@ -295,6 +295,10 @@
   text-decoration: none;
   font-weight: bold;
   background: transparent;
+
+  &-header {
+
+  }
 }
 
 .cesium-popup-separate-button {
@@ -310,6 +314,9 @@
   text-decoration: none;
   font-weight: bold;
   background: transparent;
+  &-header {
+    
+  }
 }
 
 .cesium-popup-title {

@@ -1,6 +1,5 @@
 import mapboxgl from "@mapgis/mapbox-gl";
-import { Style } from "@mapgis/webclient-es6-service";
-import bbox from '@turf/bbox';
+import bbox from "@turf/bbox";
 
 import layerEvents from "../../lib/layerEvents";
 import mixin from "./layerMixin";
@@ -8,10 +7,6 @@ import clonedeep from "lodash.clonedeep";
 const Inspect = require("@mapgis/mapbox-gl-inspect");
 const MapboxInspect = Inspect.default;
 import Popup from "./geojson/Popup";
-
-import { getPopupHtml } from "../UI/popupUtil";
-
-const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 
 export default {
   name: "mapgis-geojson-layer",
@@ -27,7 +22,7 @@ export default {
       hoverMode: "hover",
       popupContainer: undefined,
       tipContainer: undefined,
-      bbox: undefined,
+      bbox: undefined
     };
   },
   props: {
@@ -201,13 +196,18 @@ export default {
         ? currentHoverInfo[0]
         : { properties: {} };
 
-    this.tipContainer = getPopupHtml(tipsOptions.type, tipfeature, {
+    const clickfeature =
+    currentClickInfo && currentClickInfo.length > 0
+        ? currentClickInfo[0]
+        : { properties: {} };
+
+    /* this.tipContainer = getPopupHtml(tipsOptions.type, tipfeature, {
       title: tipfeature.title,
       fields: Object.keys(tipfeature.properties),
       style: {
         containerStyle: { width: "360px" }
       }
-    });
+    }); */
 
     if (customPopup || customTips) {
       return (
@@ -233,7 +233,20 @@ export default {
         </div>
       );
     } else {
-      return <div class="mapgis-geojson-default-wrapper"></div>;
+      return (
+        <div class="mapgis-geojson-default-wrapper">
+          <mapgis-ui-popup-content
+            ref="click"
+            feature={clickfeature}
+            popupOptions={popupOptions}
+          ></mapgis-ui-popup-content>
+          <mapgis-ui-popup-content
+            ref="hover"
+            feature={tipfeature}
+            popupOptions={popupOptions}
+          ></mapgis-ui-popup-content>
+        </div>
+      );
     }
   },
 
@@ -403,8 +416,8 @@ export default {
           }
           popup
             .setLngLat(e.lngLat)
-            .setHTML(vm.tipContainer)
-            // .setDOMContent(vm.$refs.hover.$el || vm.$refs.hover)
+            // .setHTML(vm.tipContainer)
+            .setDOMContent(vm.$refs.hover.$el || vm.$refs.hover)
             .addTo(map);
         }
       });
@@ -467,7 +480,7 @@ export default {
               return f;
             });
             vm.currentClickInfo = newfeatrues;
-            const popupfeature =
+            /* const popupfeature =
               vm.currentClickInfo && vm.currentClickInfo.length > 0
                 ? vm.currentClickInfo[0]
                 : { properties: {} };
@@ -481,9 +494,9 @@ export default {
                   containerStyle: { width: "360px" }
                 }
               }
-            );
-            // return vm.$refs.click.$el || vm.$refs.click;
-            return vm.popupContainer;
+            ); */
+            return vm.$refs.click.$el || vm.$refs.click;
+            // return vm.popupContainer;
           }
         });
         map.addControl(inspect);
