@@ -211,12 +211,28 @@ export default class PopupLayer {
 
       let popupHeader = window.document.createElement("div");
       popupHeader.className = "cesium-popup-content-header";
+
+      let popupHeaderTitle = window.document.createElement("div");
+      popupHeaderTitle.className = "cesium-popup-content-header-title";
+      popupHeaderTitle.innerText = this.popupTitle || "";
+
+      let popupHeaderExtra = window.document.createElement("div");
+      popupHeaderExtra.className = "cesium-popup-content-header-extra";
+
+      popupHeader.appendChild(popupHeaderTitle);
+      popupHeader.appendChild(popupHeaderExtra);
+
       let close = window.document.createElement("div");
-      close.className = "cesium-popup-close-button-header";
+      close.className = "cesium-popup-close-button";
       close.addEventListener("click", () => self.hide());
-      close.innerText = "x";
+      // close.innerText = "x";
+      let closeicon =
+        `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
+        `<use xlink:href="#mapgis-close"></use></svg>`;
+      close.innerHTML = closeicon;
+
       let separate = window.document.createElement("div");
-      separate.className = "cesium-popup-separate-button-header";
+      separate.className = "cesium-popup-separate-button";
       separate.addEventListener("click", () => self.separate());
       let icon =
         `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
@@ -226,16 +242,17 @@ export default class PopupLayer {
       } else if (this.popupType == "card") {
         // parent && parent.appendChild(separate);
       } else if (this.popupType == "rich-text") {
-        popupHeader.appendChild(separate);
+        popupHeaderExtra.appendChild(separate);
       }
 
       if (this.showClose) {
-        popupHeader.appendChild(close);
+        popupHeaderExtra.appendChild(close);
       }
-      popupContentDiv.appendChild(popupHeader);
+      // popupContentDiv.appendChild(popupHeader);
 
       let popupContentWrapperDiv = window.document.createElement("div");
       popupContentWrapperDiv.className = "cesium-popup-content-wrapper";
+      popupContentWrapperDiv.appendChild(popupHeader);
       popupContentWrapperDiv.appendChild(this.container);
       popupContentDiv.appendChild(popupContentWrapperDiv);
 

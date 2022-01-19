@@ -107,10 +107,12 @@ export default {
     const images = [];
     const description = "补充一段说明文字,默认字段description";
     const options = {
+      ...popupOptions,
       type,
       popupType,
       images: images,
       description: description,
+      title: title ? feature.properties[title] : "标题",
     };
 
     if (!pinMap) {
@@ -130,6 +132,7 @@ export default {
     }
 
     let defaultSlot = this.$slots.default;
+    delete popupOptions.title;
 
     if (customPopup || customTips) {
       return (

@@ -1,18 +1,21 @@
 @import "../../../util/style/mixins/mixins.scss";
 @import "../../../util/style/theme/theme.scss";
 
+$popup-width: 280px;
+
 // mapgis popup 样式
 .popup-content {
   width: auto;
 }
 
 .mapboxgl-popup-content {
-  width: 360px;
+  width: $popup-width;
 }
 
 .mapgis-feature-popup-container {
   padding: 10px 12px 20px 12px;
   overflow: hidden;
+  width: $popup-width;
 }
 .mapgis-2d-geojson-default-popup {
   position: absolute;
@@ -84,11 +87,12 @@
 .mapgis-popup-row {
   text-align: left;
   white-space: nowrap;
-  padding: 6px 6px 6px 0;
+  padding: 0px 6px;
   height: 32px;
   line-height: 11px;
   width: 100%;
-  border-left: 2px solid rgba(115, 176, 251, 0);
+  margin: 4px 0px;
+  border-left: 2px solid $nav-content-backgroud;
 }
 
 .mapgis-popup-title {
@@ -242,24 +246,26 @@
 .mapgis-ui-popup-content-field {
   width: 50%;
   display: inline-block;
-  line-height: 20px;
+  font-size: 12px;
+  line-height: 30px;
   padding-left: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: 2px solid $nav-content-backgroud;
-  border-right: 2px solid $nav-content-backgroud;
+  /* border-left: 2px solid $nav-content-backgroud;
+  border-right: 2px solid $nav-content-backgroud; */
 }
 
 .mapgis-ui-popup-content-value {
   width: 50%;
+  font-size: 12px;
   display: inline-block;
   padding-right: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 20px;
-  border-right: 2px solid $nav-content-backgroud;
+  line-height: 30px;
+  /* border-right: 2px solid $nav-content-backgroud; */
 }
 
 .mapgis-popup-table-value {
@@ -297,10 +303,42 @@
   text-align: center;
 }
 
+.cesium-popup-content-header {
+  height: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 12px;
+
+  &-title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  &-extra {
+    display: flex;
+  }
+
+  .cesium-popup-close-button {
+    float: right;
+    position: relative;
+    right: 0px;
+    width: 16px;
+    height: 16px;
+  }
+  .cesium-popup-separate-button {
+    float: right;
+    position: relative;
+    right: 0px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
 .cesium-popup-close-button {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 0px;
   padding: 4px 4px 0 0;
   text-align: center;
   width: 18px;
@@ -310,9 +348,6 @@
   text-decoration: none;
   font-weight: bold;
   background: transparent;
-
-  &-header {
-  }
 }
 
 .cesium-popup-separate-button {
@@ -328,8 +363,6 @@
   text-decoration: none;
   font-weight: bold;
   background: transparent;
-  &-header {
-  }
 }
 
 .cesium-popup-title {
