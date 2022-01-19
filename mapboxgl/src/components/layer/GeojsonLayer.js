@@ -234,7 +234,7 @@ export default {
       );
     } else {
       return (
-        <div class="mapgis-geojson-default-wrapper">
+        <div class="mapgis-2d-geojson-default-popup">
           <mapgis-ui-popup-content
             ref="click"
             feature={clickfeature}

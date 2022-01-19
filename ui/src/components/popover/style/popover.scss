@@ -7,12 +7,28 @@
 }
 
 .mapboxgl-popup-content {
-  width: 360px !important;
+  width: 360px;
 }
 
 .mapgis-feature-popup-container {
   padding: 10px 12px 20px 12px;
   overflow: hidden;
+}
+.mapgis-2d-geojson-default-popup {
+  position: absolute;
+  z-index: 1000;
+  display: block;
+}
+.mapboxgl-popup-content {
+  /**
+   * 绘制的时候如果产生溢出问题，即绘制的时候绘制结果在绘制轨迹的上方
+   * 请把mapgis-web-map中含有绝对布局的组件的顺序移动到draw measure enablePopup能力的下方
+   * mapgis-draw mapgis-geojson-laye
+   */
+  .mapgis-feature-popup-container {
+    height: fit-content; /** 这里会触发draw绘制的时候溢出Bug */
+    width: 360px; /* 此处不能给宽度,不然初始化的时候会溢出 */
+  }
 }
 
 .mapgis-feature-popup-title {
@@ -29,7 +45,6 @@
   font-size: 16px;
   border-left: 2px solid rgba(115, 176, 251, 0);
 }
-
 
 .mapgis-popup-container {
   padding: 10px 12px 20px 12px;
@@ -224,23 +239,23 @@
   padding-left: 14px;
 }
 
-.mapgis-3d-popup-content-field {
+.mapgis-ui-popup-content-field {
   width: 50%;
   display: inline-block;
   line-height: 20px;
   padding-left: 4px;
-  white-space:nowrap;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   border-left: 2px solid $nav-content-backgroud;
   border-right: 2px solid $nav-content-backgroud;
 }
 
-.mapgis-3d-popup-content-value {
+.mapgis-ui-popup-content-value {
   width: 50%;
   display: inline-block;
   padding-right: 4px;
-  white-space:nowrap;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 20px;
@@ -297,7 +312,6 @@
   background: transparent;
 
   &-header {
-
   }
 }
 
@@ -315,7 +329,6 @@
   font-weight: bold;
   background: transparent;
   &-header {
-    
   }
 }
 

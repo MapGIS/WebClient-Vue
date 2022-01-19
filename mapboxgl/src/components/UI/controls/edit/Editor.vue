@@ -51,7 +51,7 @@ import DefaultEditStyle from "./DefaultEditStyle";
 
 import { uuid } from "../../../util/util";
 
-const drawEvents = {
+const editEvents = {
   // es6
   drawCreate: "draw.create",
   drawDelete: "draw.delete",
@@ -183,9 +183,8 @@ export default {
       this.$_unbindMeasureEvents();
       this.$_addEditControl(this.editor);
       this.$_emitEvent("added", { editor: this.editor });
-      const eventNames = Object.keys(drawEvents);
       this.$_unbindEditEvents();
-      this.$_bindSelfEvents(eventNames);
+      this.$_bindSelfEvents(Object.keys(editEvents));
     },
 
     $_initEdit() {
@@ -213,7 +212,7 @@ export default {
       listeners.forEach(eventName => {
         if (events.includes(eventName)) {
           this.$_bindEditEvents(
-            drawEvents[eventName],
+            editEvents[eventName],
             vm.$_emitEditEvent.bind(vm, eventName)
           );
         }

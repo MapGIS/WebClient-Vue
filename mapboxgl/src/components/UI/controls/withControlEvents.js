@@ -17,7 +17,6 @@ export default {
       window.mapboxDom.measure = window.mapboxDom.measure || {};
       window.mapboxDom.edit = window.mapboxDom.edit || {};
       window.mapboxDom.measureCom = window.mapboxDom.measureCom || {};
-      window.mapboxDom.edit = window.mapboxDom.edit || {};
       return window.mapboxDom;
     },
 
@@ -127,47 +126,6 @@ export default {
         this.map && this.map.off(e.name, e.callback);
       });
       this.measureEvents.length = 0;
-    },
-
-    $_addEditControl(control) {
-      if (!control) return;
-      this.$_removeDrawControl();
-      this.$_removeMeasureControl();
-      this.$_removeEditControl();
-      window.mapboxDom.edit = control;
-      this.map && this.map.addControl(control);
-    },
-
-    $_removeEditControl() {
-      this.$_removeSource(DrawSources.HOT);
-      this.$_removeSource(DrawSources.COLD);
-      if (
-        window.mapboxDom.edit &&
-        window.mapboxDom.edit.onAdd &&
-        window.mapboxDom.edit.onRemove
-      ) {
-        if (!this.map) return;
-        this.map.removeControl(window.mapboxDom.edit);
-        window.mapboxDom.edit = undefined;
-      }
-    },
-
-    $_bindEditEvents(eventName, eventCallback) {
-      if (!this.map) return;
-      this.editEvents.push({
-        name: eventName,
-        callback: eventCallback
-      });
-      this.map.on(eventName, eventCallback);
-    },
-
-    $_unbindEditEvents() {
-      if (!this.map) return;
-      if (this.editEvents.length <= 0) return;
-      this.editEvents.forEach(e => {
-        this.map && this.map.off(e.name, e.callback);
-      });
-      this.editEvents.length = 0;
       if (window.mapboxDom.measureCom) {
         window.mapboxDom.measureCom.coordinates = [];
       }
