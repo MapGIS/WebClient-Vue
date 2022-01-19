@@ -293,34 +293,6 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    orientation: {
-      handler() {
-        if (this.modelPrimitive) {
-          const { Cesium, viewer, scenePro, params, modelOffset } = this;
-          const { boundingSphere } = this.modelPrimitive;
-          const { heading, pitch } = params.orientation;
-          const targetPosition = Cesium.AlgorithmLib.pickFromRay(
-            viewer.scene,
-            scenePro.viewPosition,
-            { heading, pitch, distance: 150 }
-          );
-          const cameraModelPosition = this._getCameraModelPosition(
-            targetPosition,
-            scenePro.viewPosition,
-            params.orientation,
-            boundingSphere.radius
-          );
-          const modelMatrix = this._getModelMatrix(
-            cameraModelPosition,
-            params.orientation,
-            modelOffset
-          );
-          this.modelPrimitive.modelMatrix = modelMatrix;
-        }
-      },
-      deep: true,
-      immediate: true
     }
   },
   computed: {
@@ -613,6 +585,36 @@ export default {
     _updateOrientation(heading, pitch) {
       this.params.orientation.heading = heading;
       this.params.orientation.pitch = pitch;
+      this._updateCameraModel();
+    },
+
+    _updateCameraModel() {
+      if (this.modelPrimitive) {
+        const { Cesium, viewer, scenePro, params, modelOffset } = this;
+        if (!this.modelPrimitive._boundingSphere) {
+          // 说明模型还未加载完
+          return;
+        }
+        const { boundingSphere } = this.modelPrimitive;
+        const { heading, pitch } = params.orientation;
+        const targetPosition = Cesium.AlgorithmLib.pickFromRay(
+          viewer.scene,
+          scenePro.viewPosition,
+          { heading, pitch, distance: 150 }
+        );
+        const cameraModelPosition = this._getCameraModelPosition(
+          targetPosition,
+          scenePro.viewPosition,
+          params.orientation,
+          boundingSphere.radius
+        );
+        const modelMatrix = this._getModelMatrix(
+          cameraModelPosition,
+          params.orientation,
+          modelOffset
+        );
+        this.modelPrimitive.modelMatrix = modelMatrix;
+      }
     },
     /**
      * 确定按钮事件
