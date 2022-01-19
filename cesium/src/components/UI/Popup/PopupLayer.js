@@ -70,6 +70,7 @@ export default class PopupLayer {
 
     this.popupId = options.popupId || "cesium-popup-id-" + popupsIdIndex++;
     this.popupClass = options.popupClass || "cesium-popup";
+    this.popupTitle = options.title;
     this.popupContentId =
       options.popupContentId || "cesium-popup-content-id-" + popupsIdIndex++;
 
@@ -149,6 +150,12 @@ export default class PopupLayer {
     return this;
   }
 
+  /**
+   * @description 当时是为了刻意适配一张图的需求才做下面的分支的
+   * 核心思想是走dom-slot机制的就通过jsx的方式来渲染，走innerHtml的通过v-html/string的方式来渲染
+   * 直观表达就是走jsx的title close sperate在独立的同一行 而html的是解决布局的方式实现
+   * @date 2022/1/18 潘卓然
+   */
   _createPopup() {
     const self = this;
     this.hide = this.hide.bind(this);
@@ -156,6 +163,7 @@ export default class PopupLayer {
     infoDiv.id = this.popupId;
     infoDiv.style.display = "none";
     if (typeof this.container === "string") {
+      // v-html/string实现
       infoDiv.innerHTML =
         '<div id="' +
         this.popupContentId +
@@ -167,10 +175,65 @@ export default class PopupLayer {
         '<div class="cesium-popup-tip" />' +
         "</div>" +
         "</div>";
+
+      let parent = window.document.getElementById(this.popupContentId);
+      let close = window.document.createElement("div");
+      close.className = "cesium-popup-close-button";
+      close.addEventListener("click", () => self.hide());
+      close.innerText = "x";
+      this.parent.appendChild(infoDiv);
+
+      let separate = window.document.createElement("div");
+      separate.className = "cesium-popup-separate-button";
+      separate.addEventListener("click", () => self.separate());
+      let icon =
+        `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
+        `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`;
+      separate.innerHTML = icon;
+      if (this.popupType == "table") {
+      } else if (this.popupType == "card") {
+        // parent && parent.appendChild(separate);
+      } else if (this.popupType == "rich-text") {
+        parent && parent.appendChild(separate);
+      }
+
+      // window.document.getElementById(this.popupId).style.display = 'block';
+      if (this.showClose) {
+        let parent = window.document.getElementById(this.popupContentId);
+        parent && parent.appendChild(close);
+      }
+      this.infoDiv = infoDiv;
     } else {
+      // dom-slot机制实现jsx
       let popupContentDiv = window.document.createElement("div");
       popupContentDiv.id = this.popupContentId;
       popupContentDiv.className = "cesium-popup";
+
+      let popupHeader = window.document.createElement("div");
+      popupHeader.className = "cesium-popup-content-header";
+      let close = window.document.createElement("div");
+      close.className = "cesium-popup-close-button-header";
+      close.addEventListener("click", () => self.hide());
+      close.innerText = "x";
+      let separate = window.document.createElement("div");
+      separate.className = "cesium-popup-separate-button-header";
+      separate.addEventListener("click", () => self.separate());
+      let icon =
+        `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
+        `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`;
+      separate.innerHTML = icon;
+      if (this.popupType == "table") {
+      } else if (this.popupType == "card") {
+        // parent && parent.appendChild(separate);
+      } else if (this.popupType == "rich-text") {
+        popupHeader.appendChild(separate);
+      }
+
+      if (this.showClose) {
+        popupHeader.appendChild(close);
+      }
+      popupContentDiv.appendChild(popupHeader);
+
       let popupContentWrapperDiv = window.document.createElement("div");
       popupContentWrapperDiv.className = "cesium-popup-content-wrapper";
       popupContentWrapperDiv.appendChild(this.container);
@@ -183,35 +246,10 @@ export default class PopupLayer {
       tipContainerDiv.appendChild(tipDiv);
       popupContentDiv.appendChild(tipContainerDiv);
       infoDiv.appendChild(popupContentDiv);
-    }
 
-    let close = window.document.createElement("div");
-    close.className = "cesium-popup-close-button";
-    close.addEventListener("click", () => self.hide());
-    close.innerText = "x";
-    this.parent.appendChild(infoDiv);
-
-    let separate = window.document.createElement("div");
-    separate.className = "cesium-popup-separate-button";
-    separate.addEventListener("click", () => self.separate());
-    let icon =
-      `<svg width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class="">` +
-      `<use xlink:href="#mapgis-Matchsizeup"></use></svg>`;
-    separate.innerHTML = icon;
-    let parent = window.document.getElementById(this.popupContentId);
-    if (this.popupType == "table") {
-    } else if (this.popupType == "card") {
-      // parent && parent.appendChild(separate);
-    } else if (this.popupType == "rich-text") {
-      parent && parent.appendChild(separate);
+      this.infoDiv = infoDiv;
+      this.parent.appendChild(infoDiv);
     }
-
-    // window.document.getElementById(this.popupId).style.display = 'block';
-    if (this.showClose) {
-      let parent = window.document.getElementById(this.popupContentId);
-      parent && parent.appendChild(close);
-    }
-    this.infoDiv = infoDiv;
   }
 
   bindEvent() {
