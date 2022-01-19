@@ -26,7 +26,10 @@
             class="control-content list-pane"
           >
             <mapgis-ui-list
-              v-if="currentVideoOverlayLayer"
+              v-if="
+                currentVideoOverlayLayer &&
+                  Object.keys(currentVideoOverlayLayer).length > 0
+              "
               :key="`list-${currentVideoOverlayLayer.id}`"
               item-layout="horizontal"
               size="small"
@@ -38,7 +41,7 @@
               <mapgis-ui-empty
                 :image="emptyImage"
                 :image-style="imageStyle"
-                v-if="videoList.length === 0"
+                v-if="videoList && videoList.length === 0"
               >
                 <span slot="description" class="empty-style">
                   请新建投放
@@ -84,7 +87,7 @@
                 class="pagination"
                 @change="pagination.onChange"
                 :pageSize="pagination.pageSize"
-                :total="videoList.length"
+                :total="pagination.total"
                 :size="pagination.size"
                 :show-total="total => `共${total}条数据`"
               ></mapgis-ui-pagination>
@@ -219,7 +222,8 @@ export default {
   computed: {
     videoList: {
       get: function() {
-        return this.currentVideoOverlayLayer
+        return this.currentVideoOverlayLayer &&
+          Object.keys(this.currentVideoOverlayLayer).length > 0
           ? this.currentVideoOverlayLayer.videoList
           : [];
       },
@@ -413,6 +417,7 @@ export default {
       );
       if (
         this.currentVideoOverlayLayer &&
+        Object.keys(this.currentVideoOverlayLayer).length > 0 &&
         this.currentVideoOverlayLayer.id === id
       ) {
         // currentEditVideo一定在currentVideoOverlayLayer里
