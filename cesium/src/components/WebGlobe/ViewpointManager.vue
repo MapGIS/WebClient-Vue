@@ -115,10 +115,36 @@ export default {
         ViewpointEditor,
     },
     mixins: [ServiceLayer],
-    props: {},
-
+    props: {
+        // 视点管理配置信息
+        viewpointConfig:{
+            type:Array,
+            default: undefined
+        }
+    },
+    model:{
+        prop:"viewpointConfig",
+        event:"change"
+    },
     mounted() {
         this.mount();
+    },
+    watch:{
+        items:{
+            handler:function(){
+                this.$emit('change',this.items)
+            },
+            deep:true
+        },
+        viewpointConfig:{
+            handler:function(e){
+                if(e !== undefined && e !== null){
+                    this.items = e;
+                }
+            },
+            immediate:true,
+            deep:true
+        }
     },
     data() {
         return {
@@ -244,6 +270,7 @@ export default {
             //     /* 新增视点时默认填充已有的视点参数 */
             //     vm.config = vm.items[vm.currentItem];
             // }
+
             // 修改：新增视点默认为初始化参数
             vm.config = vm.originViewPoint;
         },

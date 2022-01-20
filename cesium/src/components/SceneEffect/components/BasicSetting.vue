@@ -386,35 +386,45 @@ export default {
          * 图层亮度
          * */
         layerBrtChange(e) {
-            const { viewer } = this;
             this.layerbrightness = e;
-            viewer.scene.imageryLayers._layers[0].brightness =
-                this.layerbrightness;
+            // viewer.scene.imageryLayers._layers[0].brightness = this.layerbrightness;
+            this.valueChange('brightness',this.layerbrightness);
+
         },
         /*
          * 图层对比度
          * */
         layerCtrstChange(e) {
-            const { viewer } = this;
             this.layercontrast = e;
-            viewer.scene.imageryLayers._layers[0].contrast = this.layercontrast;
+            // viewer.scene.imageryLayers._layers[0].contrast = this.layercontrast;
+            this.valueChange('contrast',this.layercontrast);
         },
         /*
          * 图层色调
          */
         layerHueChange(e) {
-            const { viewer } = this;
             this.layerhue = e;
-            viewer.scene.imageryLayers._layers[0].hue = this.layerhue;
+            // viewer.scene.imageryLayers._layers[0].hue = this.layerhue;
+            this.valueChange('hue',this.layerhue);
         },
         /*
          * 图层饱和度
          * */
         layerSaturationChange(e) {
-            const { viewer } = this;
             this.layersaturation = e;
-            viewer.scene.imageryLayers._layers[0].saturation =
-                this.layersaturation;
+            // viewer.scene.imageryLayers._layers[0].saturation = this.layersaturation;
+            this.valueChange('saturation',this.layersaturation);
+            
+        },
+        valueChange(parameter,value){
+            const { viewer } = this;
+
+            let length = viewer.scene.imageryLayers._layers.length;
+            let i;
+            for(i=0;i<length;i++){
+                let layer = viewer.scene.imageryLayers._layers[i];
+                layer[parameter] = value;
+            }
         },
 
         handleChangeStatebar(next) {

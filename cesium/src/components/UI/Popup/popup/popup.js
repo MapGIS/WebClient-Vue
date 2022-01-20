@@ -85,7 +85,6 @@ export function updataPopupPosition(
     var poph = document.getElementById(popupContentId).offsetHeight;
     trackPopUpContent.style.left = px_position.x - popw / 2 + "px";
     trackPopUpContent.style.top = px_position.y - (poph - 10) + "px";
-    console.log("trackPopUpContent", trackPopUpContent.innerHTML);
   } else {
     popup.style.display = "none";
   }

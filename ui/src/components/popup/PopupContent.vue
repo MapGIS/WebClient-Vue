@@ -1,10 +1,7 @@
 <template>
-  <div :id="id">
+  <div :id="id" class="mapgis-feature-popup-container">
     <slot :popup="popupOptionsCopy">
-      <div
-        class="mapgis-feature-popup-container"
-        :class="popupOptionsCopy.class.containerClass"
-      >
+      <div :class="popupOptionsCopy.class.containerClass">
         <mapgis-ui-carousel autoplay>
           <div :key="index" v-for="(image, index) in feature.properties.images">
             <img
@@ -92,11 +89,11 @@ export default {
         title: "",
         alias: {},
         class: {
-          containerClass: "mapgis-3d-popup-content-container",
-          titleClass: "mapgis-3d-popup-content-title",
-          rowClass: "mapgis-3d-popup-content-row",
-          fieldClass: "mapgis-3d-popup-content-field",
-          valueClass: "mapgis-3d-popup-content-value",
+          containerClass: "mapgis-ui-popup-content-container",
+          titleClass: "mapgis-ui-popup-content-title",
+          rowClass: "mapgis-ui-popup-content-row",
+          fieldClass: "mapgis-ui-popup-content-field",
+          valueClass: "mapgis-ui-popup-content-value",
         },
         style: {
           containerStyle: {

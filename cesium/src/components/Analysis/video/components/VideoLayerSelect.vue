@@ -129,7 +129,14 @@ export default {
      * 点击图层名
      */
     clickListItem(item) {
-      this.selectedLayer = item.name;
+      const selectOptions = [...this.selectOptionsCopy];
+      const target = selectOptions.find(option => option.name === item.name);
+      // 如果删除的图层刚好是选中的图层，则置空选中图层
+      if (!target) {
+        this.selectedLayer = "";
+      } else {
+        this.selectedLayer = item.name;
+      }
       this.$emit("selectedLayer", this.selectedLayer);
       if (!this.editLayerNameVisible) {
         this.showCardDialog = false;

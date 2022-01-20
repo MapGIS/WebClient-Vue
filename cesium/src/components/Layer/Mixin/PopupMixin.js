@@ -107,10 +107,12 @@ export default {
     const images = [];
     const description = "补充一段说明文字,默认字段description";
     const options = {
+      ...popupOptions,
       type,
       popupType,
       images: images,
       description: description,
+      title: title ? feature.properties[title] : "标题",
     };
 
     if (!pinMap) {
@@ -130,7 +132,7 @@ export default {
     }
 
     let defaultSlot = this.$slots.default;
-    let enableDefaultSlot = defaultSlot ? true : false;
+    delete popupOptions.title;
 
     if (customPopup || customTips) {
       return (
@@ -174,10 +176,10 @@ export default {
               feature={feature}
               popupOptions={popupOptions}
             >
-              {enableDefaultSlot && defaultSlot}
+              {defaultSlot}
             </mapgis-ui-popup-content>
           </Popup>
-          <Popup
+          {/* <Popup
             position={hoverposition}
             visible={hovervisible}
             forceRender={true}
@@ -187,7 +189,7 @@ export default {
                 {feature.properties.title || feature.properties[title]}
               </span>
             </mapgis-ui-card>
-          </Popup>
+          </Popup> */}
         </div>
       );
     }

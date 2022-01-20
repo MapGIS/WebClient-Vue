@@ -53,6 +53,17 @@
                 :slider="false"
             />
 
+            <mapgis-ui-input-number-panel
+                size="small"
+                label="间隔时间(分钟)"
+                :labelCol="{ span: 10 }"
+                :wrapperCol="{ span: 14 }"
+                v-model="formData.intervalTime"
+                :range="[1]"
+                :rangeShow="false"
+                :slider="false"
+            />
+
             <mapgis-ui-color-pick-panel
                 label="阴影颜色"
                 size="small"
@@ -174,6 +185,15 @@ export default {
         },
         /**
          * @type Number
+         * @default 60
+         * @description 间隔时间（分钟）
+         */
+        intervalTime: {
+            type: Number,
+            default: 60,
+        },
+        /**
+         * @type Number
          * @default 8
          * @description 时区，UTC标准时间 + 时区 = 本地时间
          */
@@ -200,6 +220,7 @@ export default {
                 dateTimeVal: "10:00:00",
                 minHeight: 0, // 最低高程(米)
                 stretchHeight: 20, // 拉伸高度(米)
+                intervalTime: 60, //间隔时间
                 shadowColor: "rgba(0,255,0,255)", // 阴影颜色
                 sunColor: "rgba(255,0,0,255)", // 非阴影颜色
             },
@@ -277,6 +298,12 @@ export default {
             },
             immediate: true,
         },
+        intervalTime: {
+            handler: function () {
+                this.formData.intervalTime = this.intervalTime;
+            },
+            immediate: true,
+        },
         formDataNew: {
             deep: true,
             handler: function (newVal, oldVal) {
@@ -346,7 +373,7 @@ export default {
 
             // 初始化交互式绘制控件
             let drawElement = new Cesium.DrawElement(viewer);
-            let { date, minHeight, stretchHeight, shadowColor, sunColor } =
+            let { date, minHeight, stretchHeight, intervalTime, shadowColor, sunColor } =
                 this.formData;
             // const time = new Date(`${date} ${this.formData.time}`);
             const startTime = this.timeTransfer(`${date} ${this.formData.startTime}`);
@@ -411,7 +438,7 @@ export default {
                         shadowColor: shadowColor,
                         sunColor: sunColor,
                         percentCallback: this.setPercent,
-                        intervalTime: 60,
+                        intervalTime: intervalTime,
                         pointSize: 10,
                     });
                     console.log("startTime",startTime);
