@@ -79,7 +79,8 @@
     "svgSelectPanelColor": "rgb(74, 74, 74)",
     "svgSelectPanelHeadColor": "rgb(44, 44, 44)",
     "svgActiveTypeColor": "rgb(255, 255, 255)",
-    "oneMapBg": "rgb(20, 20, 20)"
+    "oneMapBg": "rgb(20, 20, 20)",
+    "mapStoryHover": "rgb(114, 114, 114)"
   },
   {
     "title": "经典浅色",
@@ -161,7 +162,8 @@
     "svgSelectPanelColor": "rgb(255, 255, 255)",
     "svgSelectPanelHeadColor": "rgb(233, 233, 233)",
     "svgActiveTypeColor": "rgb(186, 181, 181)",
-    "oneMapBg": "rgb(255, 255, 255)"
+    "oneMapBg": "rgb(255, 255, 255)",
+    "mapStoryHover": "rgb(230, 247, 255)"
   },
   {
     "title": "科技风格",
