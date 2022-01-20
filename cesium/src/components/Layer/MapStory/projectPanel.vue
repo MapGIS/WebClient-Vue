@@ -1,6 +1,6 @@
 <template>
   <div>
-    <mapgis-ui-project-panel
+    <project-panel-ui
         ref="projectP"
         @addMap="$_addMap"
         @deleteProject="$_deleteProject"
@@ -23,6 +23,7 @@
         @back="$_back"
         @export="$_export"
         @import="$_import"
+        @save="$_save"
         :height="panelHeight"
         :width="width"
         :editList="editList"
@@ -30,7 +31,7 @@
         v-show="showProjectPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
-    <mapgis-ui-story-panel-large
+    <story-panel-large-ui
         v-show="showLargePanel"
         @closePanel="$_closePanel"
         @flyTo="$_flyTo"
@@ -48,6 +49,8 @@
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService";
 import editList from "../Graphic/editList";
+import ProjectPanelUI from "./ProjectPanelUI";
+import StoryPanelLargeUI from "./StoryPanelLargeUI";
 
 window.showProjectEdit = false;
 export default {
@@ -55,6 +58,8 @@ export default {
   mixins: [mapStoryService],
   components: {
     "map-collection": mapCollection,
+    "project-panel-ui": ProjectPanelUI,
+    "story-panel-large-ui": StoryPanelLargeUI,
   },
   inject: ["Cesium", "viewer"],
   model: {
@@ -103,17 +108,16 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        this.dataSourceCopy = this.dataSource;
+        this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
       }
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
       }
     },
   },
   created() {
-    this.dataSourceCopy = this.dataSource;
+    this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
   },
   mounted() {
     this.projects = this.dataSource;
@@ -124,6 +128,9 @@ export default {
     }
   },
   methods: {
+    $_save() {
+      this.$emit("save");
+    },
     $_import() {
       this.$emit("import");
     },
@@ -181,8 +188,8 @@ export default {
     $_copyChapter(uuid) {
       this.$emit("copyChapter", uuid);
     },
-    $_addFeature(feature) {
-      this.$emit("addFeature", feature);
+    $_addFeature(graphic, projectUUID, chapterUUID) {
+      this.$emit("addFeature", graphic, projectUUID, chapterUUID);
     },
     $_titleChange(value) {
       this.$emit("titleChanged", value);

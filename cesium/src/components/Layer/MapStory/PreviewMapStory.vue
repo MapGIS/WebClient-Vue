@@ -1,17 +1,17 @@
 <template>
   <div :style="{height: panelHeight + 'px'}">
     <mapgis-ui-story-panel-large
-        @closePanel="$_closePanel"
-        @flyTo="$_flyTo"
-        @play="$_preview"
-        :showArrow="enableArrow"
-        :showPlay="enablePlay"
-        :dataSource="storyFeature"
-        :height="panelHeight"
-        :width="width"
-        :enableFullScreen="enableFullScreen"
-        ref="storyPanel"
-        v-show="showPanel"
+      @closePanel="$_closePanel"
+      @flyTo="$_flyTo"
+      @play="$_preview"
+      :showArrow="enableArrow"
+      :showPlay="enablePlay"
+      :dataSource="storyFeature"
+      :height="panelHeight"
+      :width="width"
+      :enableFullScreen="enableFullScreen"
+      ref="storyPanel"
+      v-show="showPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <map-collection v-if="projectMap" :options="projectMap"/>
@@ -94,16 +94,6 @@ export default {
     },
     projectPreview() {
       this.$nextTick(function () {
-        this.$_switchGraphicLayer(this.dataSource.vueIndex, this.dataSource.vueKey);
-        //添加缺失的entity
-        let chapters = this.dataSource.chapters;
-        for (let i = 0; i < chapters.length; i++) {
-          let GeoJSON = {
-            "type":"FeatureCollection",
-            "features": chapters[i].features
-          }
-          this.$_fromJson(GeoJSON);
-        }
         this.$_preview();
       });
     },
@@ -155,7 +145,6 @@ export default {
           console.error(error);
         });
       } else if (this.dataSource instanceof Object) {
-        console.log("this.dataSource",this.dataSource)
         this.storyFeature = this.dataSource.chapters;
       }
     }

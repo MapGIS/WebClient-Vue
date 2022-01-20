@@ -26,6 +26,7 @@
                    @firstAddPicture="$_firstAddPicture"
                    @export="$_export"
                    @import="$_import"
+                   @save="$_save"
                    v-model="dataSourceCopy"
                    :upProjectSet="projectSet"
                    :height="height"
@@ -142,10 +143,14 @@ export default {
     },
     $_projectPreview(project) {
       // this.$_play(chapters);
-      console.log("project",project)
-      project.vueIndex = this.vueIndex;
-      project.vueKey = this.vueKey;
-      this.$emit("projectPreview", project, false);
+      let newP;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].uuid === project.uuid) {
+          newP = this.dataSourceCopy[i];
+          break;
+        }
+      }
+      this.$emit("projectPreview", newP, false);
     },
     $_deleteProject() {
       this.popups = [];

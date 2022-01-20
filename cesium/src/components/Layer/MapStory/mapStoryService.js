@@ -59,8 +59,14 @@ export default {
       for (let i = 0; i < chapters.length; i++) {
         let graphics = chapters[i].features;
         for (let j = 0; j < graphics.length; j++) {
-          let graphic = this.$_getGraphicByID(graphics[i].id);
-          graphic.show = false;
+          let graphic = this.$_getGraphicByID(
+            graphics[j].id,
+            chapters[i].projectUUID,
+            chapters[i].projectUUID
+          );
+          if (graphic) {
+            graphic.show = false;
+          }
         }
       }
       //先飞到第一个章节
@@ -234,159 +240,6 @@ export default {
       context.fillText(text, 0, 100);
       return canvas.toDataURL();
     },
-    $_drawCreate(Cartesian3Points, degreeArr, viewerDraw, radians) {
-      let center, entity;
-      let mapStoryManager = window.vueCesium.MapStoryManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      switch (this.currentFeatureType) {
-        case "rectangle":
-          let points = [
-            [
-              Cesium.Math.toDegrees(radians.west),
-              Cesium.Math.toDegrees(radians.south)
-            ],
-            [
-              Cesium.Math.toDegrees(radians.east),
-              Cesium.Math.toDegrees(radians.north)
-            ]
-          ];
-          center = this.$_getRectangleCenter(points);
-          this.currentFeature.center = center;
-          let rectanglePoints = [
-            [
-              [
-                Cesium.Math.toDegrees(radians.west),
-                Cesium.Math.toDegrees(radians.south),
-                0
-              ],
-              [
-                Cesium.Math.toDegrees(radians.west),
-                Cesium.Math.toDegrees(radians.north),
-                0
-              ],
-              [
-                Cesium.Math.toDegrees(radians.east),
-                Cesium.Math.toDegrees(radians.north),
-                0
-              ],
-              [
-                Cesium.Math.toDegrees(radians.east),
-                Cesium.Math.toDegrees(radians.south),
-                0
-              ],
-              [
-                Cesium.Math.toDegrees(radians.west),
-                Cesium.Math.toDegrees(radians.south),
-                0
-              ]
-            ]
-          ];
-          this.currentFeature.drawType = "rectangle";
-          this.currentFeature.feature = {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              type: "Polygon",
-              coordinates: rectanglePoints
-            }
-          };
-          this.currentFeature = this.$_getFeature(this.currentFeature);
-          this.$_setFeature(this.currentFeature);
-          entity = this.viewer.entities.add({
-            id: this.currentFeature.uuid,
-            rectangle: {
-              coordinates: radians,
-              material: Cesium.Color.RED
-            },
-            featureUUID: this.currentFeature.uuid,
-            projectUUID: this.currentFeature.projectUUID
-          });
-          // this.viewer.entities.add({
-          //   id: this.currentFeature.uuid + "_text",
-          //   rectangle: {
-          //     coordinates: radians,
-          //     material: this.$_textToCanvas(this.currentFeature.uuid + "_text"),
-          //   },
-          //   featureUUID: this.currentFeature.uuid,
-          //   projectUUID: this.currentFeature.projectUUID,
-          // });
-          mapStoryManager.options[this.currentFeature.uuid] = entity;
-          break;
-        case "polygon":
-          center = this.$_getPolygonCenter(degreeArr);
-          this.currentFeature.center = center;
-          let polygonPoints = [[]];
-          for (let i = 0; i < degreeArr.length; i++) {
-            polygonPoints[0].push([
-              degreeArr[i][0],
-              degreeArr[i][1],
-              degreeArr[i][2]
-            ]);
-          }
-          this.currentFeature.drawType = "polygon";
-          this.currentFeature.feature = {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              type: "Polygon",
-              coordinates: polygonPoints
-            }
-          };
-          this.currentFeature = this.$_getFeature(this.currentFeature);
-          this.$_setFeature(this.currentFeature);
-          entity = this.viewer.entities.add({
-            id: this.currentFeature.uuid,
-            polygon: {
-              hierarchy: new Cesium.PolygonHierarchy(Cartesian3Points),
-              material: Cesium.Color.RED,
-              fill: true
-            },
-            featureUUID: this.currentFeature.uuid,
-            projectUUID: this.currentFeature.projectUUID
-          });
-          mapStoryManager.options[this.currentFeature.uuid] = entity;
-          break;
-        case "polyline":
-          let newPoints = degreeArr.concat([degreeArr[0]]);
-          center = this.$_getPolygonCenter(newPoints);
-          this.currentFeature.center = center;
-          let linePoints = [];
-          for (let i = 0; i < degreeArr.length; i++) {
-            linePoints.push([
-              degreeArr[i][0],
-              degreeArr[i][1],
-              degreeArr[i][2]
-            ]);
-          }
-          this.currentFeature.drawType = "polyline";
-          this.currentFeature.feature = {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              type: "LineString",
-              coordinates: linePoints
-            }
-          };
-          this.currentFeature.layerStyle.width = 4;
-          this.currentFeature = this.$_getFeature(this.currentFeature);
-          this.$_setFeature(this.currentFeature);
-          entity = this.viewer.entities.add({
-            id: this.currentFeature.uuid,
-            polyline: {
-              positions: Cartesian3Points,
-              material: Cesium.Color.RED,
-              width: this.currentFeature.layerStyle.width
-            },
-            featureUUID: this.currentFeature.uuid,
-            projectUUID: this.currentFeature.projectUUID
-          });
-          mapStoryManager.options[this.currentFeature.uuid] = entity;
-          break;
-      }
-      this.startDraw = false;
-    },
     $_getProject(project) {
       let newProject = {
         chapters: [],
@@ -457,6 +310,9 @@ export default {
       });
       saveAs(blob, project.title + ".json");
     },
+    $_save() {
+      this.$emit("save", this.dataSourceCopy);
+    },
     $_import() {
       let inputFile = document.getElementById(this.inputId),
         vm = this;
@@ -470,7 +326,6 @@ export default {
         // 读取文件
         reader.onload = function(e) {
           let fileContent = JSON.parse(e.target.result);
-          console.log("fileContent", fileContent);
           let hasProject = false;
           for (let i = 0; i < vm.dataSourceCopy.length; i++) {
             if (vm.dataSourceCopy[i].uuid === fileContent.uuid) {
@@ -702,81 +557,6 @@ export default {
         graphicsLayer = graphicsLayerManager.source;
       }
       return graphicsLayer;
-    },
-    $_addEntity(feature, layerStyle, id) {
-      let vm = this;
-      let graphicsLayer = this.$_getGraphicsLayer();
-      switch (feature.type) {
-        case "point":
-          const { geometry } = feature.feature;
-          if (!geometry) {
-            return;
-          }
-          let entity = this.viewer.entities.getById(feature.uuid);
-          if (entity) {
-            return;
-          }
-          const { x, y, z } = feature.geometry;
-          if (x && y && z) {
-            let img = document.createElement("img");
-            let imgUrl = layerStyle.billboard.image;
-            if (typeof imgUrl === "number") {
-              imgUrl = Base64IconsKeyValue[imgUrl].value;
-            }
-            img.src = imgUrl;
-            img.onload = function() {
-              vm.viewer.entities.add({
-                id: id,
-                position: new Cesium.Cartesian3(x, y, z),
-                billboard: {
-                  image: img,
-                  disableDepthTestDistance: Number.POSITIVE_INFINITY
-                }
-              });
-            };
-          }
-          break;
-        case "text":
-          graphicsLayer.startDrawing({
-            id: feature.feature.uuid,
-            type: "label",
-            text: "无标题",
-            font: "50px Helvetica",
-            pixelSize: 20,
-            pixelOffsetScaleByDistance: false,
-            horizontalOrigin: Cesium.HorizontalOrigin.right,
-            fillColor: "#000",
-            isScaleByDistance: true, //是否远近缩放
-            getPrimitive: function(e) {
-              e.featureUUID = vm.currentFeature.uuid;
-              e.projectUUID = vm.currentFeature.projectUUID;
-              e.primitive.featureUUID = vm.currentFeature.uuid;
-              e.primitive.projectUUID = vm.currentFeature.projectUUID;
-              let position = vm.$_cartesian3ToLongLat(e.position);
-              feature.feature.drawType = "text";
-              feature.feature.center = [
-                position.lng,
-                position.lat,
-                position.alt
-              ];
-              feature.feature.layerStyle.color = "#000000";
-              feature.feature.feature.geometry = {
-                type: "point",
-                coordinates: [position.lng, position.lat, position.alt]
-              };
-              feature.feature.feature.properties = {
-                title: "无标题"
-              };
-              feature.feature = vm.$_getFeature(feature.feature);
-              vm.$_setFeature(feature.feature, {
-                title: "无标题"
-              });
-              mapStoryManager.options[feature.feature.uuid] = e;
-              vm.startDraw = false;
-            }
-          });
-          break;
-      }
     },
     $_showProject(project) {
       const { show, uuid } = project;
@@ -1016,8 +796,59 @@ export default {
             if (chapters[j].uuid === chapterUUID) {
               let features = chapters[j].features;
               for (let k = 0; k < features.length; k++) {
-                let graphic = this.$_getGraphic(features[k]);
-                graphic.show = true;
+                let graphic = this.$_getGraphicByID(
+                  features[k].id,
+                  chapters[j].projectUUID,
+                  chapters[j].projectUUID
+                );
+                if (graphic) {
+                  graphic.show = true;
+                  if (graphic.attributes.__enableFlash) {
+                    let e = graphic;
+                    let flashStyle = e.attributes.__flashStyle;
+                    window["flog_" + e.id] = flashStyle.flog;
+                    window["alpha_" + e.id] = flashStyle.flashAlpha;
+                    window["alphaEnd_" + e.id] = flashStyle.flashAlpha;
+                    window["alphaSpace_" + e.id] = flashStyle.alphaSpace;
+                    window["flashTime_" + e.id] = flashStyle.flashTime;
+                    window["flashRunningTime_" + e.id] = 0;
+                    window["interval_" + e.id] = setInterval(function() {
+                      if (window["flog_" + e.id]) {
+                        window["alpha_" + e.id] =
+                          window["alpha_" + e.id] -
+                          window["alphaSpace_" + e.id];
+                        if (window["alpha_" + e.id] <= 0) {
+                          window["alpha_" + e.id] = 0;
+                          window["flog_" + e.id] = false;
+                        }
+                      } else {
+                        window["alpha_" + e.id] =
+                          window["alpha_" + e.id] +
+                          window["alphaSpace_" + e.id];
+                        if (
+                          window["alpha_" + e.id] >= window["alphaEnd_" + e.id]
+                        ) {
+                          window["flog_" + e.id] = true;
+                        }
+                      }
+                      e.style.color.alpha = window["alpha_" + e.id].toFixed(2);
+                      window["flashRunningTime_" + e.id] += 100;
+                      if (
+                        window["flashRunningTime_" + e.id] >
+                        window["flashTime_" + e.id]
+                      ) {
+                        clearInterval(window["interval_" + e.id]);
+                        e.show = false;
+                        delete window["flog_" + e.id];
+                        delete window["alpha_" + e.id];
+                        delete window["alphaEnd_" + e.id];
+                        delete window["alphaSpace_" + e.id];
+                        delete window["flashTime_" + e.id];
+                        delete window["flashRunningTime_" + e.id];
+                      }
+                    }, 100);
+                  }
+                }
               }
               break;
             }
@@ -1073,39 +904,22 @@ export default {
         }
       }
     },
-    $_setFeature(feature, options) {
+    $_setFeature(feature, projectUUID, chapterUUID) {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
-        if (this.dataSourceCopy[i].uuid === feature.projectUUID) {
+        if (this.dataSourceCopy[i].uuid === projectUUID) {
           let chapters = this.dataSourceCopy[i].chapters;
           for (let j = 0; j < chapters.length; j++) {
-            if (chapters[j].uuid === feature.featureUUID) {
-              chapters[j].features.push(feature.feature);
+            if (chapters[j].uuid === chapterUUID) {
+              chapters[j].features.push(feature);
             }
           }
           break;
         }
       }
+      // this.$emit("save", dataSourceCopy);
     },
-    $_addFeature(feature) {
-      console.log("feature", feature);
-      let type = feature.type;
-      this.currentFeature = feature.feature;
-      if (type === "text") {
-        type = "label";
-      }
-      if (type === "mouse") {
-        this.$_stopDrawing();
-        this.$_startEdit();
-      } else {
-        //根据当前的绘制类型，获取设置面板显示参数数据
-        let editPanelValues = this.$_getEditPanelValues(this.editList, type);
-        //根据面板显示参数数据生成绘制参数
-        let drawOptions = this.$_getDrawOptions(editPanelValues, type, Cesium);
-        this.$_startDrawing({
-          type: type,
-          ...drawOptions
-        });
-      }
+    $_addFeature(feature, projectUUID, chapterUUID) {
+      this.$_setFeature(feature, projectUUID, chapterUUID);
     },
     $_flyTo(camera, time, easingFunction) {
       const { positionCartographic, heading, pitch, roll } = camera;
@@ -1285,11 +1099,11 @@ export default {
       // }
     },
     $_setCesiumClick() {
-      let vm = this;
-      this.viewer.scene.globe.depthTestAgainstTerrain = true;
-      this.viewer.screenSpaceEventHandler.setInputAction(function(movement) {
-        vm.$_setPopup(movement.position, "click");
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      // let vm = this;
+      // this.viewer.scene.globe.depthTestAgainstTerrain = true;
+      // this.viewer.screenSpaceEventHandler.setInputAction(function (movement) {
+      //   vm.$_setPopup(movement.position, "click");
+      // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
     },
     $_setCesiumMove() {
       let vm = this;
@@ -1315,18 +1129,6 @@ export default {
           entities
         );
       }
-      //初始化graphicsLayerManager
-      this.$_newGraphicLayer({
-        vueIndex: this.vueIndex,
-        vueKey: this.vueKey,
-        getGraphic: function(e) {
-          if (vm.currentFeature) {
-            vm.currentFeature.feature = vm.$_toJSONById(e.id);
-            vm.currentFeature.feature.title = vm.$_getTitle(e.type);
-            vm.$_setFeature(vm.currentFeature);
-          }
-        }
-      });
       this.$_setCesiumClick();
       this.$_setCesiumMove();
     },
