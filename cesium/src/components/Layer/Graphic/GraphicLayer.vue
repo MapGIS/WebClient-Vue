@@ -58,9 +58,11 @@
 import {saveAs} from "file-saver";
 import {getCamera} from "../../Utils/util";
 import clonedeep from 'lodash.clonedeep';
+import GraphicLayerService from "./GraphicLayerService";
 
 export default {
   name: "mapgis-3d-graphic-layer",
+  mixins: [GraphicLayerService],
   inject: ["Cesium", "viewer"],
   props: {
     dataSource: {
@@ -74,12 +76,18 @@ export default {
       default() {
         return {}
       }
-    }
+    },
+    enableRelativePath: {
+      type: Boolean,
+      default: true
+    },
   },
   watch: {
     dataSource: {
       handler: function () {
-        this.$_init();
+        if (this.updatable) {
+          this.$_init();
+        }
       },
       deep: true
     },
@@ -143,7 +151,8 @@ export default {
         color: "#7A8DA0",
         width: "20px",
         height: "20px"
-      }
+      },
+      updatable: true
     }
   },
   mounted() {
@@ -293,10 +302,29 @@ export default {
         }
       }
     },
+    $_getRelativeUrl(url) {
+      let rUrl = "";
+      let ip = url.split("//")[1];
+      let strArr = ip.split("/");
+      for (let i = 1; i < strArr.length; i++) {
+        rUrl += strArr[i] + "/";
+      }
+      rUrl = rUrl.substr(0, rUrl.length - 1);
+      return rUrl;
+    },
     $_export() {
       let json = this.dataSourceCopy[this.currenSelectIndex - 1];
       this.$refs.graphicLayer.$_stopEdit();
       let dataSource = this.$refs.graphicLayer.$_toJSON();
+      if (this.enableRelativePath) {
+        let features = dataSource.features;
+        for (let i = 0; i < features.length; i++) {
+          let {style} = features[i];
+          if (style && style.hasOwnProperty("url")) {
+            features[i].style.url = this.$_getRelativeUrl(features[i].style.url);
+          }
+        }
+      }
       let exportJSON = {
         name: json.name,
         uuid: json.uuid,
@@ -326,6 +354,7 @@ export default {
         } else {
           //uuid不相同，新增数据
           let {dataSource} = data;
+          this.updatable = false;
           this.$refs.graphicLayer.$_fromJson(dataSource);
           this.dataSourceCopy.push(data);
           this.currenSelectIndex++;
@@ -348,6 +377,7 @@ export default {
             this.$refs.graphicLayer.$_init();
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_fromJson(data.dataSource);
+            this.updatable = true;
           });
           break;
         }
@@ -448,11 +478,34 @@ export default {
       //设置当前图层
       if (this.dataSourceCopy.length > 0) {
         this.currentLayer = this.dataSourceCopy[0].dataSource.features;
+        this.vueIndex = this.dataSourceCopy[0].uuid;
         //初始化graphicLayer图层列表
         this.$_layerSelect();
         this.currenSelectLayer = this.dataSourceCopy[0].name;
       } else {
         this.currentLayer = [];
+        this.$_clickTool("add");
+      }
+    },
+    $_hideAllGraphic() {
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        let features = this.dataSourceCopy[i].dataSource.features;
+        for (let j = 0; j < features.length; j++) {
+          let graphic = this.$_getGraphicByID(features[j].id, this.dataSourceCopy[i].uuid);
+          graphic.show = false;
+        }
+      }
+    },
+    $_showCurrentGraphic() {
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.currenSelectLayer === this.dataSourceCopy[i].name) {
+          let features = this.dataSourceCopy[i].dataSource.features;
+          for (let j = 0; j < features.length; j++) {
+            let graphic = this.$_getGraphicByID(features[j].id, this.dataSourceCopy[i].uuid);
+            graphic.show = true;
+          }
+          break;
+        }
       }
     }
   }

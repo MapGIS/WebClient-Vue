@@ -1,5 +1,6 @@
 <script>
 import {saveAs} from "file-saver";
+import * as turf from "@turf/turf";
 
 export default {
   name: "mapgis-3d-graphic-layer-service",
@@ -590,7 +591,6 @@ export default {
             addHeight: editPanelValues.addHeight || 0,
             font: font,
             style: 2,
-            scaleByDistance: new Cesium.NearFarScalar(1, 0.5, 10000, 0.1),
             fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity / 100),
             outlineWidth: editPanelValues.outlineWidth || 0,
             outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
@@ -626,6 +626,7 @@ export default {
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             width: editPanelValues.width,
             materialType: editPanelValues.materialType,
+            isHermiteSpline: editPanelValues.isHermiteSpline,
           };
           switch (editPanelValues.materialType) {
             case "Color":
@@ -655,6 +656,7 @@ export default {
         case "polygon":
           editPanelValues.materialType = editPanelValues.materialType || "Color";
           switch (editPanelValues.materialType) {
+            case "flash":
             case "Color":
               style = {
                 color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
@@ -693,7 +695,19 @@ export default {
                   image: editPanelValues.image,
                   repeat: new Cesium.Cartesian2(editPanelValues.repeatX, editPanelValues.repeatY)
                 },
-                stRotation: 90
+                stRotation: Math.PI / 180 * editPanelValues.stRotation
+              };
+              break;
+            case "text":
+              style = {
+                color: Cesium.Color.WHITE,
+                materialType: 'text',
+                material: {
+                  text: editPanelValues.rectangleText,
+                  fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
+                  font: editPanelValues.rtFontSize + "px " + editPanelValues.rtFontFamily,
+                  backgroundColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.rtBackgroundColor), editPanelValues.rtBackgroundOpacity / 100)
+                }
               };
               break;
           }
@@ -806,6 +820,27 @@ export default {
       }
       return drawOptions;
     },
+    $_bezierSpline(positions, close) {
+      let line = [];
+      for (let i = 0; i < positions.length; i++) {
+        let position = this.$_cartesian3ToLongLat(positions[i]);
+        line.push([position.lng, position.lat]);
+      }
+      if (close) {
+        line.push(line[0]);
+      }
+      line = turf.lineString(line);
+      let curved = turf.bezierSpline(line);
+      let coordinates = curved.geometry.coordinates;
+      for (let i = 0; i < coordinates.length; i++) {
+        coordinates[i].push(10);
+      }
+      let cP = [];
+      for (let i = 0; i < coordinates.length; i++) {
+        cP.push(Cesium.Cartesian3.fromDegrees(coordinates[i][0], coordinates[i][1], coordinates[i][2]));
+      }
+      return cP;
+    }
   }
 }
 </script>

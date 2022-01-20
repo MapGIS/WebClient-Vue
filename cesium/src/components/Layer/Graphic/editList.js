@@ -128,7 +128,8 @@ let editList = {
       type: "MapgisUiInput",
       title: "图片",
       key: "image",
-      value: "https://img0.baidu.com/it/u=3119542616,1165410720&fm=26&fmt=auto"
+      value:
+        "data:image/png;base64,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"
     },
     {
       type: "MapgisUiColorPicker",
@@ -146,13 +147,13 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "图片宽度",
       key: "width",
-      value: 100
+      value: 40
     },
     {
       type: "MapgisUiInputNumber",
       title: "图片高度",
       key: "height",
-      value: 100
+      value: 40
     }
   ],
   point: [
@@ -255,6 +256,12 @@ let editList = {
       title: "透明度",
       key: "opacity",
       value: 100
+    },
+    {
+      type: "MapgisUiSwitch",
+      title: "是否为曲线",
+      key: "isHermiteSpline",
+      value: false
     }
   ],
   polylineVolume: [
@@ -424,7 +431,7 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "高度",
       key: "extrudedHeight",
-      value: 500
+      value: 40
     },
     {
       type: "MapgisUiInputNumber",
@@ -453,6 +460,10 @@ let editList = {
         {
           key: "Image",
           value: "图片"
+        },
+        {
+          key: "flash",
+          value: "闪烁"
         }
       ]
     },
@@ -497,6 +508,24 @@ let editList = {
       title: "离地高度",
       key: "height",
       value: 0
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "透明度",
+      key: "flashAlpha",
+      value: 0.5
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "闪烁步长",
+      key: "alphaSpace",
+      value: 0.05
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "闪烁时间",
+      key: "flashTime",
+      value: 4000
     }
   ],
   rectangle: [
@@ -519,6 +548,10 @@ let editList = {
         {
           key: "Image",
           value: "图片"
+        },
+        {
+          key: "text",
+          value: "文字"
         }
       ]
     },
@@ -541,6 +574,12 @@ let editList = {
       value: 1
     },
     {
+      type: "MapgisUiInputNumber",
+      title: "纹理旋转角",
+      key: "stRotation",
+      value: 0
+    },
+    {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
@@ -556,6 +595,62 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "离地高度",
       key: "height",
+      value: 0
+    },
+    {
+      type: "MapgisUiInput",
+      title: "文本",
+      key: "rectangleText",
+      value: "无标题"
+    },
+    {
+      type: "MapgisUiSelect",
+      title: "字体",
+      key: "rtFontFamily",
+      value: "微软雅黑",
+      dataSource: [
+        {
+          key: "微软雅黑",
+          value: "微软雅黑"
+        },
+        {
+          key: "宋体",
+          value: "宋体"
+        },
+        {
+          key: "楷体",
+          value: "楷体"
+        },
+        {
+          key: "隶书",
+          value: "隶书"
+        },
+        {
+          key: "黑体",
+          value: "黑体"
+        },
+        {
+          key: "sans-serif",
+          value: "sans-serif"
+        }
+      ]
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "字体大小",
+      key: "rtFontSize",
+      value: 30
+    },
+    {
+      type: "MapgisUiColorPicker",
+      title: "背景颜色",
+      key: "rtBackgroundColor",
+      value: "#FFFFFF"
+    },
+    {
+      type: "MapgisUiSlider",
+      title: "背景明度",
+      key: "rtBackgroundOpacity",
       value: 0
     }
   ],
@@ -672,7 +767,7 @@ let editList = {
       type: "MapgisUiInputNumber",
       title: "盒子高度",
       key: "extrudedHeight",
-      value: 500
+      value: 40
     },
     {
       type: "MapgisUiInputNumber",

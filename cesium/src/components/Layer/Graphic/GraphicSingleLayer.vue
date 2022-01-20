@@ -1,5 +1,5 @@
 <template>
-  <div class="mapgis-3d-graphic-container" v-if="dataSourceCopy">
+  <div class="mapgis-3d-graphic-container" :style="containerStyle">
     <div>
       <mapgis-ui-graphic-icons-panel
         ref="iconsPanel"
@@ -71,7 +71,7 @@ export default {
       default: "default"
     },
     vueIndex: {
-      type: Number,
+      type: [Number, String],
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
@@ -278,8 +278,6 @@ export default {
         });
       }
       this.graphicGroups = groups;
-      console.log("this.graphicGroups", this.graphicGroups)
-      console.log("this.graphicGroups", typeof this.graphicGroups)
     },
     /**
      * 更多工具里面的按钮的点击事件
@@ -299,9 +297,14 @@ export default {
               break;
             }
           }
+          this.$refs.editPanel.isUpdatePanel = false;
           this.dataSourceCopy.splice(index, 1);
-          let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
-          graphicsLayer.removeGraphicByID(row.id);
+          this.$emit("delete", index);
+          this.$nextTick(function () {
+            let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+            graphicsLayer.removeGraphicByID(row.id);
+            this.$refs.editPanel.isUpdatePanel = true;
+          });
           break;
       }
     },
@@ -336,10 +339,11 @@ export default {
       let {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
-        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale
+        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale,
+        isHermiteSpline, stRotation
       } = style;
 
-      const {title} = attributes;
+      const {title, __flashStyle} = attributes;
       material = material || {};
 
       const {speed, duration, gradient, count, direction} = material;
@@ -420,6 +424,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
+          editPanelValues.isHermiteSpline = isHermiteSpline;
           editPanelValues.materialType = materialType;
           if (title) {
             editPanelValues.title = title;
@@ -442,19 +447,45 @@ export default {
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.height = height;
+          editPanelValues.materialType = materialType || "Color";
           if (title) {
             editPanelValues.title = title;
+          }
+          if (__flashStyle) {
+            editPanelValues.alphaSpace = __flashStyle.alphaSpace;
+            editPanelValues.flashTime = __flashStyle.flashTime;
+            editPanelValues.flashAlpha = __flashStyle.flashAlpha;
+            editPanelValues.materialType = "flash";
           }
           break;
         case "rectangle":
           editPanelValues.id = id;
           editPanelValues.title = title;
-          editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
-          editPanelValues.opacity = color[3] * 100;
           editPanelValues.height = height;
           editPanelValues.materialType = materialType;
           if (title) {
             editPanelValues.title = title;
+          }
+          if (materialType === "text") {
+            const {backgroundColor, text, font, fillColor} = material;
+            editPanelValues.rtBackgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+            editPanelValues.rtBackgroundOpacity = backgroundColor[3] * 100;
+            editPanelValues.rectangleText = text;
+            let fonts = font.split(" ");
+            editPanelValues.rtFontSize = fonts[0].split("px")[0];
+            editPanelValues.rtFontFamily = fonts[1];
+            editPanelValues.color = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+            editPanelValues.opacity = fillColor[3] * 100;
+          } else {
+            editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
+            editPanelValues.opacity = color[3] * 100;
+          }
+          if (materialType === "Image") {
+            const {repeat} = material;
+            editPanelValues.image = material.image;
+            editPanelValues.stRotation = stRotation;
+            editPanelValues.repeatX = repeat.x;
+            editPanelValues.repeatY = repeat.y;
           }
           break;
         case "circle":
@@ -674,6 +705,11 @@ export default {
       this.$_stopDrawing();
       this.$_startEdit();
     },
+    $_stopDrawAll() {
+      this.$refs.iconsPanel.currentIconType = "mouse";
+      this.$_stopDrawing();
+      this.$_stopEdit();
+    },
     $_changeEditPanelValues(editPanelValues, isEdit) {
       this.editPanelValues = editPanelValues;
       if (isEdit) {
@@ -694,6 +730,18 @@ export default {
           if (drawType === "model") {
             this.$_startDrawModel("model", this.modelUrl, this.drawMode, this.drawDistance, 0, editPanelValues.scale)
           } else {
+            const {materialType} = editPanelValues;
+            if (materialType === "flash") {
+              drawOptions.attributes = {
+                "__enableFlash": true,
+                "__flashStyle": {
+                  flog: true,
+                  flashAlpha: editPanelValues.flashAlpha,
+                  alphaSpace: editPanelValues.alphaSpace,
+                  flashTime: editPanelValues.flashTime
+                }
+              }
+            }
             this.$_startDrawing({
               type: drawType,
               ...drawOptions
@@ -713,7 +761,9 @@ export default {
           this.$refs.editPanel.isUpdatePanel = false;
           this.$_updateSourceTitleById(editPanelValues.id, title);
           let Graphic = this.$_getGraphicByID(editPanelValues.id);
-          Graphic.attributes.title = title;
+          if (Graphic) {
+            Graphic.attributes.title = title;
+          }
           this.$nextTick(function () {
             this.$refs.editPanel.isUpdatePanel = true;
           });
@@ -866,9 +916,9 @@ export default {
       return center;
     },
     //初始化组件
-    $_init(dataSource) {
+    $_init(dataSource, vueIndex, vueKey) {
       //复制数据源
-      this.dataSourceCopy = dataSource || this.dataSource;
+      this.dataSourceCopy = dataSource || JSON.parse(JSON.stringify(this.dataSource));
       if (this.dataSourceCopy.length === 0) {
         this.$nextTick(function () {
           this.$_setIconMode("mouse");
@@ -876,51 +926,137 @@ export default {
       }
       //初始化GraphicLayer对象
       let vm = this;
-      this.$_newGraphicLayer({
-        vueIndex: this.vueIndex,
-        finishEdit: function (e) {
-          for (let i = 0; i < vm.dataSourceCopy.length; i++) {
-            if (vm.dataSourceCopy[i].id === e.id && e.style.extrudedHeight) {
-              vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
-              break;
+      vueIndex = vueIndex || this.vueIndex;
+      vueKey = vueKey || this.vueKey;
+      let graphicLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      if (!graphicLayer) {
+        this.$_newGraphicLayer({
+          vueIndex: vueIndex,
+          vueKey: vueKey,
+          finishEdit: function (e) {
+            for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+              if (vm.dataSourceCopy[i].id === e.id && e.style.extrudedHeight) {
+                vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
+                break;
+              }
             }
-          }
-        },
-        getGraphic: function (e) {
-          if (vm.drawMode === "point") {
-            if (!vm.add) {
-              return;
-            }
-            //开始添加数据
-            vm.addSource = true;
+          },
+          getGraphic: function (e) {
             let data = vm.$_getJsonById(e.id)
             let type = data.type;
-            if (type === "circle") {
-              if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
-                type = "cone";
+            if (vm.drawMode === "point") {
+              if (!vm.add) {
+                return;
               }
-            }
-            if (type === "polygon") {
-              if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
-                type = "polygonCube";
+              //开始添加数据
+              vm.addSource = true;
+              if (type === "circle") {
+                if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+                  type = "cone";
+                }
               }
+              if (type === "polygon") {
+                if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+                  type = "polygonCube";
+                }
+              }
+              const {attributes} = e
+              if (attributes.hasOwnProperty("__enableFlash")) {
+                let color = e.style.color;
+                let flashStyle = e.attributes.__flashStyle;
+                color.alpha = flashStyle.flashAlpha;
+                let newFlashP2D = vm.$_bezierSpline(e.positions, true);
+                let newPolygon = new Cesium.Graphic({
+                  type: 'polygon',
+                  positions: newFlashP2D,
+                  style: {
+                    color: color
+                  }
+                });
+                let graphicLayer = vm.$_getGraphicLayer();
+                vm.drawMode = "addFlashGraphic";
+                newPolygon.attributes.__flashStyle = e.attributes.__flashStyle;
+                newPolygon.attributes.__enableFlash = e.attributes.__enableFlash;
+                graphicLayer.addGraphic(newPolygon);
+                vm.$_removeGraphicByID(e.id);
+              } else {
+                e.attributes.title = e.attributes.title || vm.$_getTitle(type);
+                data.attributes.title = e.attributes.title;
+                vm.dataSourceCopy.push(data);
+                if (vm.dataSourceCopy.length === 1) {
+                  vm.$emit("saveCamera");
+                }
+                let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+                vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
+                //数据添加完毕
+                vm.$nextTick(function () {
+                  vm.addSource = false;
+                });
+                vm.$emit("change", vm.dataSourceCopy);
+                vm.$emit("addFeature", vm.$_getJsonById(e.id));
+              }
+            } else if (vm.drawMode === "addGraphic") {
+              vm.drawMode = "point"
+            } else if (vm.drawMode === "addFlashGraphic") {
+              vm.drawMode = "point"
+              let flashStyle = e.attributes.__flashStyle;
+              window["flog_" + e.id] = flashStyle.flog;
+              window["alpha_" + e.id] = flashStyle.flashAlpha;
+              window["alphaEnd_" + e.id] = flashStyle.flashAlpha;
+              window["alphaSpace_" + e.id] = flashStyle.alphaSpace;
+              window["flashTime_" + e.id] = flashStyle.flashTime;
+              window["flashRunningTime_" + e.id] = 0;
+              window["interval_" + e.id] = setInterval(function () {
+                if (window["flog_" + e.id]) {
+                  window["alpha_" + e.id] = window["alpha_" + e.id] - window["alphaSpace_" + e.id];
+                  if (window["alpha_" + e.id] <= 0) {
+                    window["alpha_" + e.id] = 0;
+                    window["flog_" + e.id] = false;
+                  }
+                } else {
+                  window["alpha_" + e.id] = window["alpha_" + e.id] + window["alphaSpace_" + e.id];
+                  if (window["alpha_" + e.id] >= window["alphaEnd_" + e.id]) {
+                    window["flog_" + e.id] = true;
+                  }
+                }
+                e.style.color.alpha = window["alpha_" + e.id].toFixed(2);
+                window["flashRunningTime_" + e.id] += 100;
+                if (window["flashRunningTime_" + e.id] > window["flashTime_" + e.id]) {
+                  clearInterval(window["interval_" + e.id]);
+                  e.show = false;
+                  delete window["flog_" + e.id];
+                  delete window["alpha_" + e.id];
+                  delete window["alphaEnd_" + e.id];
+                  delete window["alphaSpace_" + e.id];
+                  delete window["flashTime_" + e.id];
+                  delete window["flashRunningTime_" + e.id];
+                }
+              }, 100);
+              e.attributes.title = e.attributes.title || vm.$_getTitle(type);
+              data.attributes.title = e.attributes.title;
+              vm.dataSourceCopy.push(data);
+              if (vm.dataSourceCopy.length === 1) {
+                vm.$emit("saveCamera");
+              }
+              let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+              vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
+              //数据添加完毕
+              vm.$nextTick(function () {
+                vm.addSource = false;
+              });
+              vm.$emit("change", vm.dataSourceCopy);
+              vm.$emit("addFeature", vm.$_getJsonById(e.id));
             }
-            e.attributes.title = e.attributes.title || vm.$_getTitle(type);
-            data.attributes.title = e.attributes.title;
-            vm.dataSourceCopy.push(data);
-            if (vm.dataSourceCopy.length === 1) {
-              vm.$emit("saveCamera");
-            }
-            let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
-            vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
-            //数据添加完毕
-            vm.$nextTick(function () {
-              vm.addSource = false;
-            });
-            vm.$emit("change", vm.dataSourceCopy);
           }
-        }
-      });
+        });
+      }
+      if (this.dataSourceCopy.length > 0) {
+        //如果有数据，绘制数据
+        this.$_fromJson({
+          type: "FeatureCollection",
+          features: this.dataSourceCopy
+        });
+      }
       //获取设置面板显示参数
       if (this.dataSourceCopy.length > 0) {
         this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
@@ -932,11 +1068,18 @@ export default {
           vm.$_setPopUp(pickedFeature);
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      //如果有数据，绘制数据
-      this.$_fromJson({
-        type: "FeatureCollection",
-        features: this.dataSourceCopy
-      });
+      //设置双击事件
+      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+        let pickedFeature = vm.viewer.scene.pick(movement.position);
+        if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
+          if (pickedFeature.hasOwnProperty("id")) {
+            let graphic = vm.$_getGraphicByID(pickedFeature.id);
+            if (graphic) {
+              vm.$refs.editPanel.$_dbclick(undefined, vm.$_getJsonById(pickedFeature.id));
+            }
+          }
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     },
     $_setPopUp(graphic, isGraphic) {
       let center;
