@@ -1,7 +1,7 @@
 <template>
   <mapgis-ui-row class="mapgis-ui-title-row-left" :style="{margin: margin}">
     <div class="mapgis-ui-title-row-left-title"
-         :style="{paddingLeft: paddingLeft, fontSize: fontSize}"
+         :style="{paddingLeft: paddingLeft, fontSize: fontSize, width: width}"
     >
       {{ title }}
     </div>
@@ -38,6 +38,10 @@ export default {
     margin: {
       type: String,
       default: "10px 0"
+    },
+    width: {
+      type: String,
+      default: "70px"
     },
   }
 }

@@ -7,17 +7,21 @@
     @tabChange="key => onTabChange(key, 'noTitleKey')"
   >
     <!--标注列表-->
-    <div class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
+    <div :style="{height: listHeight + 'px','overflow-y': dataSourceCopy.length > scrollNum ? 'scroll' : 'hidden'}" class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
       <div :key="index" v-for="(row, index) in dataSourceCopy">
         <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)"
-                            @dblclick="$_dbclick(row)"
+                            @dblclick="$_dbclick($event, row)"
                             @open="$_open($event, row)"
                             :iconStyle="iconStyle"
                             :mainStyle="rowStyle"
+                            :top="index < dataSourceCopy.length - 3"
                             :enableGroup="row.type === 'group'"
                             :src="icons[row.type + 'Image']" :title="row.attributes.title"/>
-        <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 13px;" v-show="editTitleGraphicId === row.id" v-model="row.attributes.title"/>
-        <mapgis-ui-button v-show="editTitleGraphicId === row.id" @click="$_finishEditTitle(row.attributes.title)" style="height: 30px;padding-top: 3px" type="primary">完成修改</mapgis-ui-button>
+        <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 13px;"
+                         v-show="editTitleGraphicId === row.id" v-model="row.attributes.title"/>
+        <mapgis-ui-button v-show="editTitleGraphicId === row.id" @click="$_finishEditTitle(row.attributes.title)"
+                          style="height: 30px;padding-top: 3px" type="primary">完成修改
+        </mapgis-ui-button>
         <div v-if="row.type === 'group'" v-show='openGroup === row.id'>
           <mapgis-ui-icon-row :key="gIndex" v-for="(graphic, gIndex) in graphicGroups"
                               @clickTool="$_clickTool($event, graphic)" :iconStyle="iconStyle"
@@ -38,7 +42,7 @@
             v-if="row.type === 'MapgisUiInput'"
             :title="row.title"
             v-model="editPanelValues[row.key]"
-            v-show="['image'].indexOf(row.key) < 0"
+            v-show="['image', 'rectangleText'].indexOf(row.key) < 0"
           />
           <mapgis-ui-input-row-left
             v-if="row.type === 'MapgisUiInput'"
@@ -47,11 +51,23 @@
             v-show="row.key === 'image' && ['PolylineTrailLink', 'Image'].indexOf(editPanelValues.materialType) > -1"
           />
           <mapgis-ui-input-row-left
+            v-if="row.type === 'MapgisUiInput'"
+            :title="row.title"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'image' && currentEditType === 'billboard'"
+          />
+          <mapgis-ui-input-row-left
+            v-if="row.type === 'MapgisUiInput'"
+            :title="row.title"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'rectangleText' && editPanelValues.materialType === 'text'"
+          />
+          <mapgis-ui-input-row-left
             v-if="row.type === 'MapgisUiInputNumber'"
             :title="row.title"
             type="Number"
             v-model="editPanelValues[row.key]"
-            v-show="['outlineWidth','backgroundPadding','speed','duration','gradient','count', 'direction', 'stRotation', 'repeatX', 'repeatY'].indexOf(row.key) < 0"
+            v-show="['rtFontSize', 'flashTime', 'alphaSpace', 'flashAlpha', 'outlineWidth','backgroundPadding','speed','duration','gradient','count', 'direction', 'stRotation', 'repeatX', 'repeatY'].indexOf(row.key) < 0"
           />
           <mapgis-ui-input-row-left
             v-if="row.type === 'MapgisUiInputNumber'"
@@ -116,11 +132,39 @@
             v-model="editPanelValues[row.key]"
             v-show="row.key === 'repeatY' && editPanelValues.materialType === 'Image'"
           />
+          <mapgis-ui-input-row-left
+            v-if="row.type === 'MapgisUiInputNumber'"
+            :title="row.title"
+            type="Number"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'flashAlpha' && editPanelValues.materialType === 'flash'"
+          />
+          <mapgis-ui-input-row-left
+            v-if="row.type === 'MapgisUiInputNumber'"
+            :title="row.title"
+            type="Number"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'alphaSpace' && editPanelValues.materialType === 'flash'"
+          />
+          <mapgis-ui-input-row-left
+            v-if="row.type === 'MapgisUiInputNumber'"
+            :title="row.title"
+            type="Number"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'flashTime' && editPanelValues.materialType === 'flash'"
+          />
+          <mapgis-ui-input-row-left
+            v-if="row.type === 'MapgisUiInputNumber'"
+            :title="row.title"
+            type="Number"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'rtFontSize' && editPanelValues.materialType === 'text'"
+          />
           <mapgis-ui-slider-row-left
             v-if="row.type === 'MapgisUiSlider'"
             :title="row.title"
             v-model="editPanelValues[row.key]"
-            v-show="['outlineOpacity', 'backgroundOpacity', 'materialOpacity'].indexOf(row.key) < 0"
+            v-show="['outlineOpacity', 'backgroundOpacity', 'materialOpacity', 'rtBackgroundOpacity'].indexOf(row.key) < 0"
           />
           <mapgis-ui-slider-row-left
             v-if="row.type === 'MapgisUiSlider'"
@@ -140,12 +184,18 @@
             v-model="editPanelValues[row.key]"
             v-show="row.key === 'materialOpacity' && ['Color', 'RadarMaterial', 'CircleWaveMaterial', 'PolylineTrailLink'].indexOf(editPanelValues.materialType) > -1"
           />
+          <mapgis-ui-slider-row-left
+            v-if="row.type === 'MapgisUiSlider'"
+            :title="row.title"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'rtBackgroundOpacity' && editPanelValues.materialType === 'text'"
+          />
           <mapgis-ui-select-row-left
             v-if="row.type === 'MapgisUiSelect'"
             :title="row.title"
             :dataSource="row.dataSource"
             v-model="editPanelValues[row.key]"
-            v-show="['direction'].indexOf(row.key) < 0"
+            v-show="['direction', 'rtFontFamily'].indexOf(row.key) < 0"
           />
           <mapgis-ui-select-row-left
             v-if="row.type === 'MapgisUiSelect'"
@@ -154,11 +204,18 @@
             v-model="editPanelValues[row.key]"
             v-show="row.key === 'direction' && editPanelValues.materialType === 'PolylineTrailLink'"
           />
+          <mapgis-ui-select-row-left
+            v-if="row.type === 'MapgisUiSelect'"
+            :title="row.title"
+            :dataSource="row.dataSource"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'rtFontFamily' && editPanelValues.materialType === 'text'"
+          />
           <mapgis-ui-color-picker-left
             v-if="row.type === 'MapgisUiColorPicker'"
             :title="row.title"
             v-model="editPanelValues[row.key]"
-            v-show="['outlineColor','backgroundColor','materialColor','pureColor', 'linkColor'].indexOf(row.key) < 0"
+            v-show="['outlineColor','backgroundColor','materialColor','pureColor', 'linkColor', 'rtBackgroundColor'].indexOf(row.key) < 0"
           />
           <mapgis-ui-color-picker-left
             v-if="row.type === 'MapgisUiColorPicker'"
@@ -190,6 +247,12 @@
             v-model="editPanelValues[row.key]"
             v-show="row.key === 'pureColor' && editPanelValues.materialType === 'Color'"
           />
+          <mapgis-ui-color-picker-left
+            v-if="row.type === 'MapgisUiColorPicker'"
+            :title="row.title"
+            v-model="editPanelValues[row.key]"
+            v-show="row.key === 'rtBackgroundColor' && editPanelValues.materialType === 'text'"
+          />
           <mapgis-ui-choose-picture-right
             v-if="row.type === 'MapgisUiPicture'"
             :showTitleIcon="false"
@@ -204,6 +267,13 @@
             :title="row.title"
             @change="$_showOutLine"
             v-model="row.value"
+          />
+          <mapgis-ui-switch-row-left
+            v-if="row.type === 'MapgisUiSwitch'"
+            :title="row.title"
+            @change="$_isHermiteSpline"
+            v-model="row.value"
+            v-show="row.key === 'isHermiteSpline'"
           />
           <mapgis-ui-switch-row-left
             v-if="row.type === 'MapgisUiShowBackground'"
@@ -264,7 +334,10 @@ export default {
       type: Object
     },
     dataSourceCopy: {
-      type: Array
+      type: Array,
+      default() {
+        return [];
+      }
     },
     //当前编辑的类型
     currentEditType: {
@@ -292,9 +365,9 @@ export default {
           //获取设置面板显示参数
           if (this.isUpdatePanel) {
             this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[this.dataSourceCopy.length - 1]);
+            this.noTitleKey = "edit";
+            this.isEdit = true;
           }
-          this.noTitleKey = "edit";
-          this.isEdit = true;
         }
       },
       deep: true
@@ -400,8 +473,17 @@ export default {
       //要编辑标题的标会对象ID
       editTitleGraphicId: undefined,
       //是否编辑标题
-      editTitle: false
+      editTitle: false,
+      //列表高度
+      listHeight: 200,
+      //添加滚动条的数量
+      scrollNum: 6
     }
+  },
+  mounted() {
+    let canvas = document.getElementsByClassName("mapboxgl-canvas");
+    this.listHeight = canvas[0].offsetHeight - 370;
+    this.scrollNum = Math.ceil(this.listHeight / 40);
   },
   methods: {
     $_resetEditPanel() {
@@ -454,8 +536,7 @@ export default {
         this.isEdit = true;
       }
     },
-    $_dbclick(json) {
-      debugger
+    $_dbclick(event, json) {
       if (json.type === "group") {
         return;
       }
@@ -473,7 +554,7 @@ export default {
       this.$nextTick(function () {
         this.isUpdatePanel = true;
       });
-      this.$emit("dbclick", json);
+      this.$emit("dblclick", json);
     },
     $_open(open, row) {
       if (open) {
@@ -484,13 +565,16 @@ export default {
       }
     },
     $_clickTool(type, row) {
-      if(type === "editTitle") {
+      if (type === "editTitle") {
         this.editTitleGraphicId = row.id;
       }
       this.$emit("clickTool", type, row);
     },
     $_showOutLine(e) {
       this.editPanelValues.showOutline = e;
+    },
+    $_isHermiteSpline(e) {
+      this.editPanelValues.isHermiteSpline = e;
     },
     $_showBackground(e) {
       this.editPanelValues.showBackground = e;
@@ -535,10 +619,10 @@ export default {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
-        stRotation
+        stRotation, isHermiteSpline
       } = style;
 
-      const {title} = attributes;
+      const {title, __flashStyle} = attributes;
 
       let editPanelValues = {}, vm = this;
 
@@ -627,6 +711,7 @@ export default {
         case "polyline":
           editPanelValues.id = id;
           editPanelValues.width = width;
+          editPanelValues.isHermiteSpline = isHermiteSpline;
           editPanelValues.materialType = materialType;
           if (materialType === "Color") {
             editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
@@ -657,6 +742,11 @@ export default {
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.height = height;
           editPanelValues.materialType = materialType || "Color";
+          if(__flashStyle) {
+            editPanelValues.alphaSpace = __flashStyle.alphaSpace;
+            editPanelValues.flashTime = __flashStyle.flashTime;
+            editPanelValues.flashAlpha = __flashStyle.flashAlpha;
+          }
           if (materialType === "Image") {
             editPanelValues.image = material.image;
             editPanelValues.stRotation = stRotation;
@@ -674,6 +764,24 @@ export default {
           editPanelValues.materialType = materialType;
           if (title) {
             editPanelValues.title = title;
+          }
+          if( materialType === "text"){
+            const {backgroundColor, text, font, fillColor} = material;
+            editPanelValues.rtBackgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
+            editPanelValues.rtBackgroundOpacity = backgroundColor[3] * 100;
+            editPanelValues.rectangleText = text;
+            let fonts = font.split(" ");
+            editPanelValues.rtFontSize = fonts[0].split("px")[0];
+            editPanelValues.rtFontFamily = fonts[1];
+            editPanelValues.color = "rgb(" + fillColor[0] * 255 + "," + fillColor[1] * 255 + "," + fillColor[2] * 255 + ")";
+            editPanelValues.opacity = fillColor[3] * 100;
+          }
+          if (materialType === "Image") {
+            const { repeat } = material;
+            editPanelValues.image = material.image;
+            editPanelValues.stRotation = stRotation;
+            editPanelValues.repeatX = repeat.x;
+            editPanelValues.repeatY = repeat.y;
           }
           break;
         case "circle":
@@ -827,10 +935,7 @@ export default {
 
 <style scoped>
 .mapgis-ui-graphic-edit-list {
-  max-height: 618px;
-  min-height: 200px;
   overflow: hidden;
-  overflow-y: scroll;
 }
 
 .mapgis-ui-graphic-edit-addAttribute {

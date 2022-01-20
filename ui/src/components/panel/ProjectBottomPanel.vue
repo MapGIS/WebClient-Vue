@@ -29,7 +29,6 @@ export default {
 .mapgis-ui-project-bottom-panel {
   width: 100%;
   height: 48px;
-  background: #F1F1F1;
   padding: 8px 0;
 }
 

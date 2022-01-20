@@ -2,7 +2,7 @@
   <div>
     <mapgis-ui-row class="mapgis-ui-set-camera-panel-select">
       <mapgis-ui-col :span="24">
-        <h4 class="mapgis-ui-set-camera-panel-select-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+        <h4 class="mapgis-ui-set-camera-panel-select-title" :style="titleStyle">
           <mapgis-ui-title-icon v-show="showTitleIcon"/>
           <span style="width: 90px;margin-right: 4px">设置相机视角</span>
           <span @click="$_showDetail" class="mapgis-ui-set-camera-panel-select-show-more">
@@ -11,7 +11,7 @@
         </h4>
       </mapgis-ui-col>
     </mapgis-ui-row>
-    <div class="mapgis-ui-set-camera-set-content">
+    <div class="mapgis-ui-set-camera-set-content" :style="mainStyle">
       <mapgis-ui-select v-model="currentSelect" class="mapgis-ui-set-camera-set-select" @change="$_selectChange">
         <mapgis-ui-select-option :key="index" v-for="(select,index) in selectData" :value="select.key">
           {{ select.value }}
@@ -76,6 +76,12 @@ export default {
       default() {
         return [];
       }
+    },
+    titleStyle: {
+      type: Object
+    },
+    mainStyle: {
+      type: Object
     }
   },
   model: {
@@ -192,7 +198,7 @@ export default {
 .mapgis-ui-set-camera-set-select-icon {
   position: absolute;
   top: 6px;
-  right: 2px;
+  right: 7px;
 }
 
 .mapgis-ui-set-camera-panel-select-show-more {

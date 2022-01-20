@@ -81,12 +81,6 @@
       type="Number"
       v-model="drawDistance"
     />
-    <mapgis-ui-input-row-left
-      v-show="currentIconType === 'model'"
-      title="模型大小"
-      type="Number"
-      v-model="modelRadius"
-    />
   </div>
 </template>
 
@@ -102,7 +96,10 @@ export default {
       type: Object
     },
     models: {
-      type: Object
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -145,16 +142,27 @@ export default {
       ]
     }
   },
-  mounted() {
-    let vm = this;
-    Object.keys(this.models).forEach(function (key) {
-      vm.modelTypes.push(key);
-    });
-    if (this.modelTypes.length > 0) {
-      this.currentModelType = vm.modelTypes[0];
+  watch: {
+    models: {
+      handler: function () {
+        this.$_init();
+      },
+      deep: true
     }
   },
+  mounted() {
+    this.$_init();
+  },
   methods: {
+    $_init() {
+      let vm = this;
+      Object.keys(this.models).forEach(function (key) {
+        vm.modelTypes.push(key);
+      });
+      if (this.modelTypes.length > 0) {
+        this.currentModelType = vm.modelTypes[0];
+      }
+    },
     $_resetIconsPanel() {
       this.currentIconType = "mouse";
     },

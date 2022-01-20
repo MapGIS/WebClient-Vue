@@ -1,21 +1,28 @@
 <template>
   <div>
     <mapgis-ui-row class="mapgis-ui-icon-row-container" :style="mainStyle">
-      <svg v-if="enableGroup"
-           @click="$_open"
-           :style="{transform: open ? 'rotate(0deg)' : 'rotate(-90deg)'}"
-           class="mapgis-ui-icon-row-group"
-           viewBox="0 0 1024 1024" data-icon="caret-down" width="1em" height="1em" fill="currentColor"
-           aria-hidden="true" focusable="false">
-        <path
-          d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
-      </svg>
-      <img class="mapgis-ui-icon-row-img"
-           :style="iconStyle"
-           :src="src"
-           :title="imgTitle" alt="">
-      {{ title }}
-      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools" class="mapgis-ui-icon-row-more-tool"/>
+      <div @dblclick="$_dbclick">
+        <svg v-if="enableGroup"
+             @click="$_open"
+             :style="{transform: open ? 'rotate(0deg)' : 'rotate(-90deg)'}"
+             class="mapgis-ui-icon-row-group"
+             viewBox="0 0 1024 1024" data-icon="caret-down" width="1em" height="1em" fill="currentColor"
+             aria-hidden="true" focusable="false">
+          <path
+            d="M840.4 300H183.6c-19.7 0-30.7 20.8-18.5 35l328.4 380.8c9.4 10.9 27.5 10.9 37 0L858.9 335c12.2-14.2 1.2-35-18.5-35z"></path>
+        </svg>
+        <img class="mapgis-ui-icon-row-img"
+             :style="iconStyle"
+             :src="src"
+             :title="imgTitle" alt="">
+        {{ title }}
+      </div>
+      <mapgis-ui-more-tool-button
+        @click="$_clickTool"
+        :dataSource="moreTools"
+        :top="top"
+        :width="width"
+        class="mapgis-ui-icon-row-more-tool"/>
     </mapgis-ui-row>
   </div>
 </template>
@@ -40,6 +47,14 @@ export default {
     },
     iconStyle: {
       type: Object
+    },
+    top: {
+      type: Boolean,
+      default: true
+    },
+    width: {
+      type: String,
+      default: "110px"
     },
     enableGroup: {
       type: Boolean,
@@ -76,6 +91,9 @@ export default {
     },
     $_clickTool(type) {
       this.$emit("clickTool", type);
+    },
+    $_dbclick() {
+      this.$emit("dblclick");
     }
   }
 }

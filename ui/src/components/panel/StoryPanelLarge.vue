@@ -242,9 +242,9 @@ export default {
   z-index: 2;
   right: 0;
   top: 0;
+  margin-right: 3px;
   width: 435px;
   height: 900px;
-  background: white;
   transform-origin: top right;
 }
 
@@ -261,7 +261,7 @@ export default {
 .mapgis-ui-story-panel-large-title {
   width: 100%;
   margin-top: 20px;
-  padding-left: 2px;
+  padding-left: 15px;
   text-align: left;
   font-size: 20px;
   font-family: "Microsoft YaHei";
@@ -329,7 +329,6 @@ export default {
   width: 100%;
   height: 64px;
   line-height: 64px;
-  border-top: 1px solid rgb(217, 217, 217);
   font-size: 18px;
   text-align: right;
   padding-right: 20px;

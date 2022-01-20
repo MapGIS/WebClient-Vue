@@ -32,24 +32,14 @@
               <span>删除</span>
             </div>
           </div>
-          <mapgis-ui-col span="12">
+          <mapgis-ui-col span="20">
             <div class="mapgis-mapstory-project-panel-title">
               <mapgis-ui-base64-icon @click="$_projectPreview(project)" width="20px" height="20px"
                                      class="mapgis-mapstory-project-panel-play" type="play"/>
               {{ project.title }}
             </div>
           </mapgis-ui-col>
-          <mapgis-ui-col span="12" class="mapgis-mapstory-tool-bar">
-            <!--            <mapgis-ui-svg-icon @click="$_edit(index)" v-show="showToolIndex === index" type="edit"/>-->
-            <!--            <mapgis-ui-svg-icon @click="$_delete(index)" v-show="showToolIndex === index" type="delete"/>-->
-            <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'normal')" v-show="showToolIndex === index && project.type === 'favourite'" type="marker"/>-->
-            <!--            <mapgis-ui-svg-icon @click="$_marker(index, 'favourite')" v-show="showToolIndex === index && project.type === 'normal'" type="noMarker"/>-->
-            <!--            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"-->
-            <!--                                @click="$_showProject(index, false)"-->
-            <!--                                v-show="(showToolIndex === index && project.show) || project.show" type="eye"/>-->
-            <!--            <mapgis-ui-svg-icon :containerStyle="containerStyle" :iconStyle="iconStyle" width="16px" height="16px"-->
-            <!--                                @click="$_showProject(index, true)"-->
-            <!--                                v-show="(showToolIndex === index && !project.show) || !project.show" type="noEye"/>-->
+          <mapgis-ui-col span="4" class="mapgis-mapstory-tool-bar">
             <mapgis-ui-base64-icon class="mapgis-mapstory-tool-bar-more" width="22px" @click="$_showMoreTool(index)"
                                    type="more"/>
           </mapgis-ui-col>
@@ -189,7 +179,6 @@ export default {
 }
 
 .mapgis-ui-project-row:hover {
-  background: rgb(230, 247, 255);
   cursor: pointer;
   position: relative;
 }

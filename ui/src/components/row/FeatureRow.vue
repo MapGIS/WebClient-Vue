@@ -177,16 +177,11 @@ export default {
 </script>
 
 <style scoped>
-.mapgisMapStoryFeatureActive {
-  background: #E7F4FF !important;
-}
-
 .mapgis-ui-feature-row {
   margin-top: 10px;
 }
 
 .mapgis-ui-feature-row:hover {
-  background: rgb(230, 247, 255);
   cursor: pointer;
 }
 

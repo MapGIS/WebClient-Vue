@@ -1,45 +1,55 @@
 <template>
-  <mapgis-ui-row>
-    <input style="display: none" type="file" :id="inputId"
-           accept="image/png, image/jpeg, image/gif, image/jpg, image/svg">
-    <div class="mapgis-ui-choose-picture-right-img-title" v-show="!enablePreview"
-         :style="{...titleStyle,paddingLeft: showTitleIcon ? '13px' : '0'}">
-      <mapgis-ui-title-icon v-show="showTitleIcon"/>
-      {{ title }}
-    </div>
-    <!--图片高度、图片下边距、区域内边距-->
-    <div
-      :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (62) + 'px'}"
-      v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
-      <div :key="index"
-           class="mapgis-ui-choose-picture-right-img-container"
-           v-for="(imgUrl,index) in imgUrls"
-           @mouseenter="$_mouseenter(index)"
-           @mouseleave="$_mouseleave()"
-           :style="{marginLeft: index % 2 === 0 ? '0' : '1%',marginRight: index % 2 === 1 ? '0' : '5%'}"
-      >
-        <!--遮罩-->
-        <div v-show="shapeIndex === index" class="mapgis-ui-choose-picture-right-img-shape">
-          <mapgis-ui-svg-icon @click="$_reload(index)"
-                              style="width: 36px;text-align: center;margin-top: 10px;padding-left: 10px"
-                              :iconStyle="shapeIcon" type="edit"/>
-          <mapgis-ui-svg-icon @click="$_delete(index)"
-                              style="width: 36px;text-align: center;margin-top: 10px;padding-right: 10px"
-                              :iconStyle="shapeIcon" type="delete"/>
-        </div>
-        <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
-             class="mapgis-ui-choose-picture-right-img" :src="imgUrl" alt="">
+  <div>
+    <mapgis-ui-row>
+      <input style="display: none" type="file" :id="inputId"
+             accept="image/png, image/jpeg, image/gif, image/jpg, image/svg">
+      <div class="mapgis-ui-choose-picture-right-img-title" v-show="!enablePreview"
+           :style="{...titleStyle,paddingLeft: showTitleIcon ? '13px' : '8px'}">
+        <mapgis-ui-title-icon v-show="showTitleIcon"/>
+        {{ title }}
       </div>
-      <mapgis-ui-base64-icon
-        title="添加图片"
-        :iconStyle="addIconStyle"
-        :titleStyle="chooseTitleStyle"
-        @click="$_clickSmall"
-        :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
-        class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
-        type="addPicture"/>
-    </div>
-  </mapgis-ui-row>
+      <!--图片高度、图片下边距、区域内边距-->
+      <div
+        :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (62) + 'px'}"
+        v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
+        <div :key="index"
+             class="mapgis-ui-choose-picture-right-img-container"
+             v-for="(imgUrl,index) in imgUrls"
+             @mouseenter="$_mouseenter(index)"
+             @mouseleave="$_mouseleave()"
+             :style="{marginLeft: index % 2 === 0 ? '0' : '1%',marginRight: index % 2 === 1 ? '0' : '5%'}"
+        >
+          <!--遮罩-->
+          <div v-show="shapeIndex === index" class="mapgis-ui-choose-picture-right-img-shape">
+            <mapgis-ui-svg-icon @click="$_reload(index)"
+                                style="width: 36px;text-align: center;margin-top: 10px;padding-left: 10px"
+                                :iconStyle="shapeIcon" type="edit"/>
+            <mapgis-ui-svg-icon @click="$_delete(index)"
+                                style="width: 36px;text-align: center;margin-top: 10px;padding-right: 10px"
+                                :iconStyle="shapeIcon" type="delete"/>
+          </div>
+          <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
+               class="mapgis-ui-choose-picture-right-img" :src="imgUrl" alt="">
+        </div>
+        <mapgis-ui-base64-icon
+          title="添加图片"
+          :iconStyle="addIconStyle"
+          :titleStyle="chooseTitleStyle"
+          @click="$_clickSmall"
+          :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
+          class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
+          type="addPicture"/>
+      </div>
+    </mapgis-ui-row>
+    <mapgis-ui-row v-show="showAddInternetImg">
+      <mapgis-ui-col span="16">
+        <mapgis-ui-input v-model="internetImg"/>
+      </mapgis-ui-col>
+      <mapgis-ui-col span="8">
+        <mapgis-ui-button type="primary" @click="$_addInternetImg">添加</mapgis-ui-button>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+  </div>
 </template>
 
 <script>
@@ -92,6 +102,10 @@ export default {
           fontWeight: "border"
         }
       }
+    },
+    useInternetImg: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -114,7 +128,9 @@ export default {
         marginTop: "calc(25% - 10px)",
         marginLeft: "calc((100% - 20px)/2)",
       },
-      isUpdate: true
+      isUpdate: true,
+      showAddInternetImg: false,
+      internetImg: undefined
     }
   },
   watch: {
@@ -207,9 +223,23 @@ export default {
         this.$_chooseImg();
       }
     },
+    $_addInternetImg() {
+      this.imgUrls.push(this.internetImg);
+      this.currentImgUrl = this.internetImg;
+      this.currenImgIndex = this.imgUrls.length - 1;
+      if (this.imgUrls.length === 1) {
+        this.$emit("firstAddPicture");
+      }
+      this.showAddInternetImg = false;
+      this.$emit("changeImage", this.imgUrls)
+    },
     $_clickSmall() {
-      if (this.currentImgUrl || !this.enablePreview) {
-        this.$_chooseImg();
+      if (!this.useInternetImg){
+        if (this.currentImgUrl || !this.enablePreview) {
+          this.$_chooseImg();
+        }
+      }else {
+        this.showAddInternetImg = true;
       }
     },
     $_chooseImg(callBack) {
@@ -262,7 +292,7 @@ export default {
 
 .mapgis-ui-choose-picture-right-carousel {
   width: 66%;
-  padding: 8px 0 8px 8px;
+  padding: 8px 3px 8px 8px;
   height: auto;
   text-align: left;
   border-radius: 3px;

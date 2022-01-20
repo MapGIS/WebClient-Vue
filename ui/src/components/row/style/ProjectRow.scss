@@ -12,3 +12,7 @@
 .mapgis-mapstory-filter-icon {
   color: $panel-option-color;
 }
+
+.mapgis-ui-project-row:hover, .mapgis-ui-feature-row:hover {
+  background: $map-story-hover;
+}

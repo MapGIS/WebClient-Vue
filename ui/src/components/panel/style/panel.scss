@@ -44,10 +44,14 @@
 }
 
 .mapgis-3d-graphic-container, .mapgis-3d-graphic-layers-select-container, .mapgis-ui-graphic-icons-container,
-.mapgis-ui-graphic-icons-head, .mapgis-ui-more-tool-button {
+.mapgis-ui-graphic-icons-head, .mapgis-ui-more-tool-button, .mapgis-ui-project-bottom-panel, .mapgis-ui-story-panel-large-content {
   background: $panel-backgroud;
 }
 
 .mapgis-ui-more-tool-button-row:hover, .mapgis-ui-icon-row-container:hover{
   background: $component-background;
+}
+
+.mapgis-ui-story-panel-large-bottom  {
+  border-top: 1px solid $panel-backgroud;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-ui-map-select-container">
-    <div class="mapgis-ui-map-select-title" :style="{paddingLeft: showTitleIcon ? '13px' : '0'}">
+    <div class="mapgis-ui-map-select-title" :style="topTitleStyle">
       <mapgis-ui-title-icon v-show="showTitleIcon"/>
       {{ title }}
       <span @click="$_showMore" class="mapgis-ui-map-select-show-more">
@@ -9,22 +9,22 @@
     </div>
     <div class="mapgis-ui-map-select-content">
       <mapgis-ui-mix-row
-          title="地图类型"
-          type="MapgisUiSelect"
-          :titleStyle="titleStyle"
-          :mainStyle="mainStyle"
-          :formStyle="formStyle"
-          :dataSource="selectData"
-          v-model="mapCopy.type"
+        title="地图类型"
+        type="MapgisUiSelect"
+        :titleStyle="titleStyle"
+        :mainStyle="mainStyle"
+        :formStyle="formStyle"
+        :dataSource="selectData"
+        v-model="mapCopy.type"
       />
       <mapgis-ui-mix-row
-          title="地图名称"
-          type="MapgisUiSelect"
-          :titleStyle="titleStyle"
-          :mainStyle="mainStyle"
-          :formStyle="formStyle"
-          :dataSource="mapNamesCopy[mapCopy.type]"
-          v-model="currentMapName"
+        title="地图名称"
+        type="MapgisUiSelect"
+        :titleStyle="titleStyle"
+        :mainStyle="mainStyle"
+        :formStyle="formStyle"
+        :dataSource="mapNamesCopy[mapCopy.type]"
+        v-model="currentMapName"
       />
     </div>
   </div>
@@ -47,16 +47,8 @@ export default {
         gdbps: "",
       },
       currentMapName: "",
-      titleStyle: {
-        fontSize: "14px",
-        top: "4px"
-      },
       formStyle: {
         marginBottom: "0"
-      },
-      mainStyle: {
-        width: "177px",
-        marginLeft: "-8px",
       },
       mapNamesCopy: {
         "TILE": [],
@@ -106,6 +98,15 @@ export default {
         return {}
       }
     },
+    topTitleStyle: {
+      type: Object
+    },
+    titleStyle: {
+      type: Object
+    },
+    mainStyle: {
+      type: Object
+    }
   },
   watch: {
     map: {

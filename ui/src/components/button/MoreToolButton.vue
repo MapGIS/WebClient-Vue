@@ -6,9 +6,11 @@
       type="more"/>
     <div v-show="showTool"
          class="mapgis-ui-more-tool-button"
+         :class="{'mapgis-ui-more-tool-button-top:': top,'mapgis-ui-more-tool-button-bottom': !top}"
          @mouseleave="$_hideTool"
     >
       <div @click="$_clickTool(tool.event)" :key="index" v-for="(tool, index) in dataSource"
+           :style="{width: width}"
            class="mapgis-ui-more-tool-button-row">
         <mapgis-ui-svg-icon class="mapgis-ui-more-tool-button-row-icon" :iconStyle="editStyle" :type="tool.icon"/>
         <span style="padding-right: 10px;">{{ tool.title }}</span>
@@ -23,7 +25,15 @@ export default {
   props: {
     dataSource: {
       type: Array
-    }
+    },
+    top: {
+      type: Boolean,
+      default: true
+    },
+    width: {
+      type: String,
+      default: "110px"
+    },
   },
   data() {
     return {
@@ -80,7 +90,6 @@ export default {
 
 .mapgis-ui-more-tool-button {
   position: absolute;
-  top: 40px;
   right: 7px;
   z-index: 100000;
   width: auto;
@@ -90,4 +99,11 @@ export default {
   cursor: pointer;
 }
 
+.mapgis-ui-more-tool-button-top {
+  top: 40px;
+}
+
+.mapgis-ui-more-tool-button-bottom {
+  bottom: 0;
+}
 </style>

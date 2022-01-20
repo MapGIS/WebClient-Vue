@@ -1,9 +1,11 @@
 <template>
   <mapgis-ui-row class="mapgis-ui-slider-row-left">
     <div class="mapgis-ui-slider-row-left-title">{{ title }}</div>
-    <div class="mapgis-ui-slider-row-left-container">
+    <div class="mapgis-ui-slider-row-left-container" :style="containerStyle">
       <mapgis-ui-slider
         class="mapgis-ui-slider-row-left-slider"
+        :max="max"
+        :min="min"
         v-model="valueCopy"
       />
       <mapgis-ui-input-number
@@ -31,6 +33,17 @@ export default {
     type: {
       type: String,
       default: "Text"
+    },
+    max: {
+      type: Number,
+      default: 100
+    },
+    min: {
+      type: Number,
+      default: 0
+    },
+    containerStyle: {
+      type: Object
     }
   },
   data() {
