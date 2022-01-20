@@ -152,6 +152,7 @@ export default {
           const obj = { label: title, value: vueIndex };
           this.checkboxOptions.push(obj);
         });
+        this._removeDynaCut();
       },
       deep: true,
       immediate: true
@@ -344,9 +345,9 @@ export default {
      * 开始分析
      */
     startClipping() {
+      this._removeDynaCut();
+      this._clearTimer();
       this._m3dIsReady().then(m3dSetArray => {
-        this._clearTimer();
-        this._removeDynaCut();
         let { vueCesium, vueKey, vueIndex } = this;
         let find = vueCesium.DynamicSectionAnalysisManager.findSource(
           vueKey,
@@ -449,7 +450,7 @@ export default {
       }
     },
     /**
-     * 获取多个M3D的最大包围盒范围(世界坐标系下)
+     * 获取多个M3D的最大包围盒范围(以最大包围盒中心点为原点)
      */
     _getM3DSetArrayRange(m3dSetArray) {
       let xmin;
@@ -458,9 +459,16 @@ export default {
       let ymax;
       let zmin;
       let zmax;
+      const boundingSphere = this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(
+        m3dSetArray
+      );
+      const layersBoundingSphereCenter = boundingSphere.center;
       for (let i = 0; i < m3dSetArray.length; i++) {
         const m3d = m3dSetArray[i];
-        const range = this._getM3DSetRange(m3d);
+        const range = this._getM3DSetRange(m3d, layersBoundingSphereCenter);
+        if (!range) {
+          continue;
+        }
         if (xmin == undefined || range.xmin < xmin) {
           xmin = range.xmin;
         }
@@ -483,11 +491,15 @@ export default {
       return { xmin, ymin, xmax, ymax, zmin, zmax };
     },
     /**
-     * 获取一个m3d的包围盒范围(世界坐标系下)
+     * 获取一个m3d的包围盒范围(以最大包围盒中心点为原点)
      */
-    _getM3DSetRange(m3dSet) {
+    _getM3DSetRange(m3dSet, layersBoundingSphereCenter) {
       // m3dSet.debugShowBoundingVolume = true;
+      // 如果模型未加载完，这里transform为undefined
       const transform = m3dSet._transform;
+      if (!transform) {
+        return null;
+      }
       const inverseMatrix = Cesium.Matrix4.inverse(
         transform,
         new Cesium.Matrix4()
@@ -513,11 +525,11 @@ export default {
       const zmin = m3dSet._root.boundingVolume.minimumHeight;
       const zmax = m3dSet._root.boundingVolume.maximumHeight;
       // 模型中心点本地坐标
-      const centerLocal = {
-        x: (northeastCornerLocal.x + southwestCornerLocal.x) / 2,
-        y: (northeastCornerLocal.y + southwestCornerLocal.y) / 2,
-        z: (zmin + zmax) / 2
-      };
+      // const centerLocal = {
+      //   x: (northeastCornerLocal.x + southwestCornerLocal.x) / 2,
+      //   y: (northeastCornerLocal.y + southwestCornerLocal.y) / 2,
+      //   z: (zmin + zmax) / 2
+      // };
       // 模型中心点世界坐标
       // const center = Cesium.Matrix4.multiplyByPoint(
       //   transform,
@@ -532,50 +544,26 @@ export default {
       //   }
       // });
 
-      // 模型原点世界坐标
-      // const modelCoord = new Cesium.Cartesian3(
-      //   transform[12],
-      //   transform[13],
-      //   transform[14]
-      // );
+      // 多个模型合并包围盒中心点
       // this.viewer.entities.add({
-      //   position: modelCoord,
+      //   position: layersBoundingSphereCenter,
       //   point: {
       //     color: Cesium.Color.RED,
-      //     pixelSize: 15
+      //     pixelSize: 20
       //   }
       // });
 
-      // 模型中心点到y轴(以模型原点为坐标轴原点)的垂直距离
-      const xDistance = centerLocal.x;
-
-      // 模型中心点到x轴(以模型原点为坐标轴原点)的垂直距离
-      const yDistance = centerLocal.y;
-
-      // 模型x方向的长度
-      const xLength = Cesium.Cartesian3.distance(
-        new Cesium.Cartesian3(
-          northeastCornerLocal.x,
-          southwestCornerLocal.y,
-          0
-        ),
-        new Cesium.Cartesian3(southwestCornerLocal.x, southwestCornerLocal.y, 0)
+      // 多个模型合并包围盒中心点本地坐标
+      const layersBoundingSphereCenterLocal = Cesium.Matrix4.multiplyByPoint(
+        inverseMatrix,
+        layersBoundingSphereCenter,
+        new Cesium.Cartesian3()
       );
 
-      // 模型y方向的长度
-      const yLength = Cesium.Cartesian3.distance(
-        new Cesium.Cartesian3(
-          southwestCornerLocal.x,
-          northeastCornerLocal.y,
-          0
-        ),
-        new Cesium.Cartesian3(southwestCornerLocal.x, southwestCornerLocal.y, 0)
-      );
-
-      const xmin = xDistance - xLength / 2;
-      const xmax = xDistance + xLength / 2;
-      const ymin = yDistance - yLength / 2;
-      const ymax = yDistance + yLength / 2;
+      const xmin = southwestCornerLocal.x - layersBoundingSphereCenterLocal.x;
+      const ymin = southwestCornerLocal.y - layersBoundingSphereCenterLocal.y;
+      const xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
+      const ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
       return { xmin, ymin, xmax, ymax, zmin, zmax };
     }
   }
