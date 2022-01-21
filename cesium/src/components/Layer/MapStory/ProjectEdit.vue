@@ -27,23 +27,19 @@
       </div>
       <mapgis-ui-row>
         <mapgis-ui-feature-row
-          @showFeature="$_showFeature"
           @deleteFeature="$_deleteFeature"
-          @editFeature="$_editFeature"
           v-model="projectCopy.chapters"
           :width="width"
         />
       </mapgis-ui-row>
     </div>
     <!--附加地图-->
-    <!--    <mapgis-ui-map-select :showTitleIcon="false"-->
-    <!--                          v-show="showSetting"-->
-    <!--                          @addMap="$_addMap" title="附加地图"/>-->
     <mapgis-ui-map-multi-rows v-show="showSetting"
                               :showTitleIcon="false"
                               showMoreTitle=""
                               :map="projectCopy.map"
-                              @addMap="$_addMapToProject" title="附加地图"/>
+                              @addMap="$_addProjectMap" title="附加地图"/>
+    <!--按钮区域-->
     <mapgis-ui-row v-show="!editFeature && !showSetting">
       <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
         <mapgis-ui-dropdown>
@@ -61,31 +57,17 @@
         </mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
+    <!--编辑章节区域-->
     <div v-show="editFeature" style="height: 100%;">
       <feature-edit
         ref="featureEdit"
-        @textChanged="$_textChanged"
-        @getCamera="$_getCamera"
+        @getCamera="$_setCamera"
         @selectCamera="$_selectCamera"
         @addMap="$_addMap"
-        @addFeature="$_addFeature"
-        @toggleFeature="$_toggleFeature"
-        @deleteFeature="$_deleteFeature"
-        @changeColor="$_changeColor"
-        @changeEntityTitle="$_changeEntityTitle"
-        @changeEntity="$_changeEntity"
-        @changeOpacity="$_changeOpacity"
-        @changeIcon="$_changeIcon"
         @featurePreview="$_featurePreview"
-        @back="$_featureBack"
-        @change="$_featureChange"
-        @changeContent="$_changeContent"
-        @titleChanged="$_featureTitleChanged"
-        @animationTimeChanged="$_animationTimeChanged"
-        @firstAddPicture="$_firstAddPicture"
-        @closeFeatureEdit="$_closeFeatureEdit"
+        @animationTimeChanged="$_changeAnimationTime"
         @save="$_save"
-        :feature="currentFeature"
+        :data-source="currentChapter"
         :cameras="cameras"
         :height="height"
         :editList="editList"
@@ -104,37 +86,20 @@ export default {
   components: {
     "feature-edit": FeatureEdit
   },
-  model: {
-    prop: "project",
-    event: "change"
-  },
   data() {
     return {
-      panelScale: 1,
-      currentFeature: {},
+      //当前章节
+      currentChapter: {},
       showSetting: false,
       editFeature: false,
       editTitle: false,
-      projectCopy: undefined,
-      iconStyle: {
-        opacity: 1
-      },
-      textareaStyle: {
-        marginBottom: "20px",
-        marginLeft: "-14px",
-        width: "358px"
-      },
-      inputStyle: {
-        marginBottom: "20px",
-        marginLeft: "-14px",
-        width: "358px"
-      },
+      dataSourceCopy: undefined,
       margin: 26,
       cameras: []
     }
   },
   props: {
-    project: {
+    dataSource: {
       type: Object,
       default() {
         return {};
@@ -157,45 +122,28 @@ export default {
     }
   },
   watch: {
-    project: {
+    dataSource: {
       handler: function () {
-        this.projectCopy = this.project;
-        //预先加载所有模型
-        let uuid = this.projectCopy.uuid;
-        this.$refs.featureEdit.$_initGraphicLayer(uuid, uuid);
-        let {chapters} = this.projectCopy;
-        if (chapters) {
-          for (let i = 0; i < chapters.length; i++) {
-            let features = chapters[i].features;
-            this.$_fromJson({
-              features: JSON.parse(JSON.stringify(features)),
-              type: "FeatureCollections"
-            }, uuid, uuid);
-          }
-        }
+        this.$_init();
       },
       deep: true
     },
     height: {
       handler: function () {
-        this.panelScale = this.height / 900;
       },
       deep: true
     },
-    projectCopy: {
+    dataSourceCopy: {
       handler: function () {
         this.$emit("change", this.projectCopy);
       },
       deep: true
     },
-    currentFeature: {
+    currentChapter: {
       handler: function () {
       },
       deep: true
     }
-  },
-  created() {
-    this.projectCopy = this.project;
   },
   mounted() {
     if (this.width < 310) {
@@ -220,67 +168,52 @@ export default {
     }
   },
   methods: {
+    //初始化函数
+    $_init() {
+      //复制数据源
+      this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+    },
+    //显示设置信息
     $_showSetting() {
       this.showSetting = true;
     },
+    //点击面板事件
     $_clickPanel(e) {
       if (e.target.id !== "mpTitle" && e.target.id !== "mpDescription" && e.target.id !== "mpEdit") {
         this.editTitle = false;
       }
     },
-    $_textChanged(text) {
-      let features = this.projectCopy.features, index;
-      for (let i = 0; i < features.length; i++) {
-        if (features[i].id === this.currentFeature.id) {
-          index = i;
-          break;
-        }
-      }
-      this.$emit("textChanged", text, index);
+    //设置相机视角
+    $_setCamera() {
+      this.$emit("setCamera", this.currentChapter);
     },
-    $_getCamera() {
-      this.$emit("getCamera", this.currentFeature);
-    },
+    //选择相机视角
     $_selectCamera(camera) {
-      this.$emit("selectCamera", camera, this.currentFeature);
+      this.$emit("selectCamera", camera, this.currentChapter);
     },
+    //添加章节底图
     $_addMap(type, map, id) {
       this.$emit("addMap", type, map, id);
     },
-    $_addMapToProject(type, map) {
+    //添加故事
+    $_addProjectMap(type, map) {
       this.showSetting = false;
       this.$emit("addMapToProject", type, map, this.projectCopy);
     },
-    $_changeEntityTitle(currentEntity) {
-      this.$emit("changeEntityTitle", currentEntity);
-    },
-    $_changeEntity(type, uuid, value) {
-      this.$emit("changeEntity", type, uuid, value);
-    },
-    $_changeColor(color, type) {
-      this.$emit("changeColor", color, type, this.currentFeature.id, this.currentFeature.baseUrl.type);
-    },
-    $_changeOpacity(opacity) {
-      if (this.currentFeature) {
-        this.$emit("changeOpacity", opacity, this.currentFeature.layerStyle.color, this.currentFeature.id, this.currentFeature.baseUrl.type);
-      }
-    },
-    $_changeIcon(icon) {
-      this.$emit("changeIcon", icon, this.currentFeature.id);
-    },
-    $_showFeature(id, flag, index) {
-      this.$emit("showFeature", id, flag, index, this.projectCopy);
-    },
+    //预览故事
     $_projectPreview() {
       this.$emit("projectPreview");
     },
+    //导出
     $_export() {
       this.$emit("export", this.projectCopy);
     },
+    //删除故事
     $_deleteProject() {
       this.$emit("deleteProject", this.projectCopy);
       this.$_back();
     },
+    //修改标题
     $_titleChange() {
       this.$emit("titleChanged", {
         title: this.projectCopy.title,
@@ -288,27 +221,11 @@ export default {
         uuid: this.projectCopy.uuid,
       });
     },
-    $_toggleFeature() {
-      this.$emit("toggleChapterFeatures", this.currentFeature.uuid, this.currentFeature.projectUUID, false);
-    },
-    $_editFeature(index) {
-      this.editFeature = true;
-      this.currentFeature = this.projectCopy.chapters[index];
-      this.$emit("toggleChapterFeatures", this.currentFeature.uuid, this.currentFeature.projectUUID);
-      let cameras = [];
-      for (let i = 0; i < this.projectCopy.chapters.length; i++) {
-        cameras.push(Object.assign({}, this.projectCopy.chapters[i].camera));
-        cameras[i].title = this.projectCopy.chapters[i].title;
-        cameras[i].uuid = this.projectCopy.chapters[i].uuid;
-      }
-      this.cameras = cameras;
-      if (window.showPanels) {
-        window.showPanels.currentPage = "featureEdit";
-      }
-    },
+    //修改标题
     $_editTitle() {
       this.editTitle = true;
     },
+    //取得空章节数据
     $_getChapter() {
       return {
         "uuid": "Chapter_" + parseInt(String(Math.random() * 100000000)),
@@ -328,161 +245,24 @@ export default {
         "animationTime": "5000"
       };
     },
-    $_getFeature(type) {
-      return {
-        "uuid": type + parseInt(String(Math.random() * 100000000)),
-        "type": type,
-        "projectUUID": this.projectCopy.uuid,
-        "featureUUID": this.currentFeature.uuid,
-        "layerStyle": {
-          "show": true,
-          "color": "#FF0000",
-          "opacity": 1
-        },
-        "feature": {
-          "type": "Feature",
-          "geometry": {},
-          "properties": {}
-        }
-      }
-    },
-    $_copyChapter() {
-      this.$emit("copyChapter", this.projectCopy.uuid);
-    },
+    //新增章节
     $_addChapter() {
       let chapter = this.$_getChapter();
       chapter.projectUUID = this.projectCopy.uuid;
       this.$emit("addChapter", chapter);
     },
-    $_deleteFeature(index, uuid) {
-      this.$emit("deleteFeature", index, uuid);
-    },
-    $_addFeature(graphic, projectUUID, chapterUUID) {
-      this.$emit("addFeature", graphic, projectUUID, chapterUUID);
-    },
-    $_addPoint() {
-      let feature = this.$_getFeature("point");
-      this.$emit("addFeature", {
-        type: "point",
-        feature: feature
-      });
-    },
-    $_addLine() {
-      let feature = this.$_getFeature("polyline");
-      this.$emit("addFeature", {
-        type: "polyline",
-        feature: feature
-      });
-    },
-    $_addPolygon() {
-      let feature = this.$_getFeature("polygon");
-      this.$emit("addFeature", {
-        type: "polygon",
-        feature: feature
-      });
-    },
-    $_addCircle() {
-      let feature = this.$_getFeature("circle");
-      this.$emit("addFeature", {
-        type: "circle",
-        feature: feature
-      });
-    },
-    $_addEllipsoid() {
-      let feature = this.$_getFeature("ellipsoid");
-      this.$emit("addFeature", {
-        type: "ellipsoid",
-        feature: feature
-      });
-    },
-    $_addBox() {
-      let feature = this.$_getFeature("box");
-      this.$emit("addFeature", {
-        type: "box",
-        feature: feature
-      });
-    },
-    $_addCylinder() {
-      let feature = this.$_getFeature("cylinder");
-      this.$emit("addFeature", {
-        type: "cylinder",
-        feature: feature
-      });
-    },
-    $_addWall() {
-      let feature = this.$_getFeature("wall");
-      this.$emit("addFeature", {
-        type: "wall",
-        feature: feature
-      });
-    },
-    $_addCorridor() {
-      let feature = this.$_getFeature("corridor");
-      this.$emit("addFeature", {
-        type: "corridor",
-        feature: feature
-      });
-    },
-    $_addPolylineVolume() {
-      let feature = this.$_getFeature("polylineVolume");
-      this.$emit("addFeature", {
-        type: "polylineVolume",
-        feature: feature
-      });
-    },
-    $_addPolygonCube() {
-      let feature = this.$_getFeature("polygonCube");
-      this.$emit("addFeature", {
-        type: "polygonCube",
-        feature: feature
-      });
-    },
-    $_addText() {
-      let feature = this.$_getFeature("text");
-      this.$emit("addFeature", {
-        type: "text",
-        feature: feature
-      });
-    },
-    $_addRectangle() {
-      let feature = this.$_getFeature("polygon");
-      this.$emit("addFeature", {
-        type: "rectangle",
-        feature: feature
-      });
-    },
-    $_closeFeatureEdit() {
-      this.editFeature = false;
-      window.showPanels.currentPage = "projectEdit";
-    },
+    //保存数据
     $_save() {
       this.$emit("save");
     },
-    $_firstAddPicture(feature) {
-      this.$emit("firstAddPicture", feature);
-    },
-    $_featureTitleChanged(feature) {
-      this.$emit("featureTitleChanged", feature);
-    },
-    $_animationTimeChanged(feature) {
+    //更新动画时间
+    $_changeAnimationTime(feature) {
       this.$emit("animationTimeChanged", feature);
     },
-    $_featureChange(feature) {
-      this.currentFeature = Object.assign(this.currentFeature, feature || {});
-    },
-    $_changeContent(feature) {
-      this.$emit("changeContent", feature);
-    },
-    $_featureBack() {
-      this.editFeature = false;
-    },
+    //预览一个章节
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);
     },
-    // $_deleteFeature(index, id) {
-    //   let feature = this.projectCopy.features.splice(index, 1);
-    //   this.$emit("deleteFeature", index, id, this.projectCopy, feature);
-    // }
   }
 }
 </script>
