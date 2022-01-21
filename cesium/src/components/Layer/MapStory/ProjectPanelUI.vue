@@ -4,19 +4,20 @@
          class="mapgis-ui-project-panel">
       <div class="mapgis-ui-project-panel-content" v-show="!showProjectEdit" :style="{height: height - 40 + 'px'}">
         <mapgis-ui-project-header @import="$_import"/>
-        <mapgis-ui-project-row @editProject="$_editProject" @deleted="$_deleted"
+        <mapgis-ui-project-row @editProject="$_editStory"
+                               @deleted="$_deleteStory"
                                @export="$_export"
                                @import="$_import"
                                @showProjected="$_showProject"
-                               @marked="$_marker"
-                               @projectPreview="$_projectPreview"
+                               @marked="$_markerStory"
+                               @projectPreview="$_storyPreview"
                                :projects="dataSourceCopy"
                                :width="width"
         />
       </div>
       <mapgis-ui-row class="mapgis-ui-project-add-story-row">
         <mapgis-ui-col span="24">
-          <mapgis-ui-button @click="$_addProject" type="primary" class="mapgis-ui-project-add-story">
+          <mapgis-ui-button @click="$_addStory" type="primary" class="mapgis-ui-project-add-story">
             新建故事
           </mapgis-ui-button>
         </mapgis-ui-col>
@@ -27,31 +28,18 @@
         :height="height"
         :editList="editList"
         @addMap="$_addMap"
-        @getCamera="$_getCamera"
+        @setCamera="$_setCamera"
         @selectCamera="$_selectCamera"
-        @deleteFeature="$_deleteFeature"
         @toggleChapterFeatures="$_toggleChapterFeatures"
-        @changeContent="$_changeContent"
-        @changeIcon="$_changeIcon"
-        @changeColor="$_changeColor"
-        @changeEntityTitle="$_changeEntityTitle"
-        @changeEntity="$_changeEntity"
-        @showFeature="$_showFeature"
-        @projectPreview="$_projectPreview"
-        @featurePreview="$_featurePreview"
-        @addFeature="$_addFeature"
+        @storyPreview="$_storyPreview"
+        @chapterPreview="$_chapterPreview"
         @addChapter="$_addChapter"
         @copyChapter="$_copyChapter"
-        @deleteProject="$_deleteProject"
-        @titleChanged="$_titleChanged"
         @export="$_export"
         @save="$_save"
+        @backed="$_back"
         ref="panelEdit"
-        v-model="project"
-        @backed="$_back"/>
-      <mapgis-ui-hover-edit-panel
-        @closeHoverPanel="$_closeHoverPanel"
-        @titleChanged="$_titleChange" v-if="showEditPanel"/>
+        data-source="project"/>
     </div>
   </div>
 </template>
@@ -71,7 +59,7 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        this.dataSourceCopy = this.dataSource;
+        this.$_init();
       },
       deep: true
     },
@@ -83,7 +71,6 @@ export default {
     },
     height: {
       handler: function () {
-        this.panelScale = this.height / 900;
       },
       deep: true
     }
@@ -109,43 +96,45 @@ export default {
   },
   data() {
     return {
-      panelScale: 1,
       optArr: [],
       showEditPanel: false,
       addProject: false,
-      project: undefined,
-      projects: [],
+      story: undefined,
+      storys: [],
       currentProjectIndex: undefined,
       storyFeature: [],
       dataSourceCopy: undefined,
       showProjectEdit: false
     }
   },
-  created() {
-    this.dataSourceCopy = this.dataSource;
+  mounted() {
+    this.$_init();
   },
   methods: {
+    //初始化函数
+    $_init() {
+      this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+    },
+    //保存数据
     $_save() {
       this.$emit("save");
     },
+    //导出数据
     $_export(project) {
       if (typeof project === "number") {
         project = this.dataSourceCopy[project];
       }
       this.$emit("export", project);
     },
+    //导入数据
     $_import() {
       this.$emit("import");
     },
-    $_deleteProject() {
-      this.projects.splice(this.currentProjectIndex, 1);
+    //删除故事
+    $_deleteStory() {
+      this.storys.splice(this.currentProjectIndex, 1);
     },
-    $_titleChanged(titleObj) {
-      if (this.currentProjectIndex !== undefined) {
-        this.$set(this.projects[this.currentProjectIndex], "title", titleObj.title);
-        this.$set(this.projects[this.currentProjectIndex], "description", titleObj.description);
-      }
-    },
+    //保存标题
     $_click(e) {
       if (this.$refs.panelEdit && e.target.id !== "mpTitle" && e.target.id !== "mpDescription" && e.target.id !== "mpEdit") {
         if (this.$refs.panelEdit.editTitle) {
@@ -153,17 +142,17 @@ export default {
         }
       }
     },
-    $_deleted(index) {
-      this.$emit("deleteProject", this.dataSourceCopy[index]);
+    //指定故事
+    $_markerStory(index, type) {
+      this.$set(this.storys[index], "type", type);
     },
-    $_marker(index, type) {
-      this.$set(this.projects[index], "type", type);
-    },
+    //显示故事
     $_showProject(index, flag) {
-      this.$emit("showProject", this.projects[index]);
+      this.$emit("showProject", this.storys[index]);
     },
-    $_addProject() {
-      this.project = {
+    //添加故事
+    $_addStory() {
+      this.story = {
         "title": "无标题",
         "description": "",
         "uuid": "mapStory" + parseInt(String(Math.random() * 100000000)),
@@ -180,85 +169,55 @@ export default {
         "features": [],
         "chapters": []
       };
-      this.dataSourceCopy.push(this.project);
+      this.dataSourceCopy.push(this.story);
       this.showProjectEdit = true;
     },
-    $_editProject(index) {
-      this.project = this.dataSourceCopy[index];
+    //编辑故事
+    $_editStory(index) {
+      this.story = this.dataSourceCopy[index];
       this.showProjectEdit = true;
-      this.$emit("editProject", index, this.projects[index]);
+      this.$emit("editProject", index, this.storys[index]);
     },
+    //回退
     $_back() {
       this.showProjectEdit = false;
-      this.$emit("back", this.project);
+      this.$emit("back", this.story);
     },
+    //新增章节
     $_addChapter(chapter) {
       this.$emit("addChapter", chapter);
     },
+    //复制章节
     $_copyChapter(uuid) {
       this.$emit("copyChapter", uuid);
     },
-    $_addFeature(graphic, projectUUID, chapterUUID) {
-      this.$emit("addFeature", graphic, projectUUID, chapterUUID);
-    },
-    $_titleChange(value) {
-      this.$emit("titleChanged", value);
-    },
-    $_closeHoverPanel() {
-      this.showEditPanel = false;
-      this.$emit("closeHoverPanel");
-    },
+    //添加章节地图
     $_addMap(type, map, id) {
       this.$emit("addMap", type, map, id);
     },
-    $_getCamera(currentFeature) {
-      this.$emit("getCamera", currentFeature);
+    //设置视角
+    $_setCamera(currentFeature) {
+      this.$emit("setCamera", currentFeature);
     },
+    //选择视角
     $_selectCamera(camera, currentFeature) {
       this.$emit("selectCamera", camera, currentFeature);
     },
+    //显示或隐藏章节要素
     $_toggleChapterFeatures(featureUUID, projectUUID, show) {
       this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
     },
-    $_deleteFeature(index, uuid) {
-      this.$emit("deleteFeature", index, this.project.uuid);
-    },
-    $_changeContent(chapter) {
-      let chapters = this.project.chapters;
-      for (let i = 0; i < chapters.length; i++) {
-        if (chapters[i].uuid === chapter.uuid) {
-          chapters[i].content = chapter.content;
-          break;
-        }
-      }
-    },
-    $_changeIcon(icon, id) {
-      this.$emit("changeIcon", icon, id);
-    },
-    $_changeColor(color, id, type) {
-      this.$emit("changeColor", color, id, type);
-    },
-    $_changeEntityTitle(currentEntity) {
-      this.$emit("changeEntityTitle", currentEntity);
-    },
-    $_changeEntity(type, uuid, value) {
-      this.$emit("changeEntity", type, uuid, value);
-    },
-    $_showFeature(id, flag) {
-      this.$emit("showFeature", id, flag);
-    },
-    $_projectPreview(project) {
+    //预览故事
+    $_storyPreview(project) {
       if (!project) {
-        this.storyFeature = this.project.features;
+        this.storyFeature = this.story.features;
       }
-      project = project || this.project;
+      project = project || this.story;
       this.$emit("projectPreview", project);
     },
-    $_featurePreview(feature) {
+    //预览章节
+    $_chapterPreview(feature) {
       this.$emit("featurePreview", feature);
-    },
-    $_addFeatureSet(feature) {
-      this.project.features.push(feature);
     }
   }
 }
