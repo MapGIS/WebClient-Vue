@@ -1106,6 +1106,22 @@ export default {
           callBack(lnglatPosition, cartesian3Position);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
+    },
+    //修改章节内容
+    $_changeChapter(chapter) {
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        let story = this.dataSourceCopy[i];
+        if (story.uuid === chapter.projectUUID) {
+          let chapters = story.chapters;
+          for (let j = 0; j < chapters.length; i++) {
+            if (chapter.uuid === chapters[j].uuid) {
+              this.$set(this.dataSourceCopy[i].chapters, j, chapter);
+              break;
+            }
+          }
+          break;
+        }
+      }
     }
   }
 };

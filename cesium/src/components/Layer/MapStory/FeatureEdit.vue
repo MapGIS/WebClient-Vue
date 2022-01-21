@@ -204,6 +204,7 @@ export default {
   },
   data() {
     return {
+      isInit: false,
       //数据源副本
       dataSourceCopy: {},
       //图标样式
@@ -336,7 +337,9 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
+        if (!this.isInit) {
+          this.$emit("change", this.dataSourceCopy);
+        }
       },
       deep: true
     },
@@ -354,12 +357,10 @@ export default {
     //更细轮播图
     $_changeImage(images) {
       this.dataSourceCopy.images = images;
-      this.$emit("change", this.dataSourceCopy);
     },
     //更新动画时间
     $_changeAnimationTime(e) {
       this.dataSourceCopy.animationTime = e;
-      this.$emit("change", this.dataSourceCopy);
     },
     //展开高级选项
     $_showAdvance() {
@@ -373,14 +374,20 @@ export default {
     //删除标绘对象
     $_deleteGraphic(index) {
       this.dataSourceCopy.features.splice(index, 1);
-      this.$emit("change", this.dataSourceCopy);
     },
     //初始化函数
     $_init() {
+      this.isInit = true;
       //复制数据源
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
-      //取得标绘对象集合
-      this.graphics = JSON.parse(JSON.stringify(this.dataSourceCopy.features));
+      const {features} = this.dataSourceCopy;
+      if (features) {
+        //取得标绘对象集合
+        this.graphics = JSON.parse(JSON.stringify(features));
+      }
+      this.$nextTick(function () {
+        this.isInit = false;
+      });
     },
     showImagePrompt(command) {
       const src = prompt('Enter the url of your image here')
@@ -462,7 +469,6 @@ export default {
     //添加Graphic
     $_addGraphic(e) {
       this.dataSourceCopy.features.push(e);
-      this.$emit("change", this.dataSourceCopy);
     },
     //保存数据
     $_save() {

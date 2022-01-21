@@ -1,7 +1,7 @@
 <template>
   <div :id="id" @click="$_clickPanel" class="mapgis-ui-project-edit-panel"
        :style="{height: height + 'px', width: width + 'px'}">
-    <div v-show="!editFeature && !showSetting" :style="{height: height - 32 + 'px'}">
+    <div v-show="!editChapter && !showSetting" :style="{height: height - 32 + 'px'}">
       <div class="mapgis-ui-project-edit-top-bar">
         <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
           <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
@@ -12,8 +12,8 @@
           </mapgis-ui-col>
         </mapgis-ui-row>
         <mapgis-ui-row class="mapgis-ui-project-edit-title">
-          <mapgis-ui-col span="24">
-            <span v-show="!editTitle" class="mapgis-ui-project-edit-title-value">{{ projectCopy.title }}</span>
+          <mapgis-ui-col span="24" v-if="dataSourceCopy && dataSourceCopy.title">
+            <span v-show="!editTitle" class="mapgis-ui-project-edit-title-value">{{ dataSourceCopy.title }}</span>
             <mapgis-ui-svg-icon v-show="!editTitle"
                                 id="mpEdit" @click="$_editTitle"
                                 class="mapgis-ui-project-edit-edit-icon mapgis-ui-project-edit-edit-icon-p"
@@ -21,30 +21,32 @@
             <mapgis-ui-input v-show="editTitle"
                              class="mapgis-ui-project-edit-title-edit"
                              @change="$_titleChange" title="标题" id="mpTitle"
-                             v-model="projectCopy.title"/>
+                             v-model="dataSourceCopy.title"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
       </div>
       <mapgis-ui-row>
         <mapgis-ui-feature-row
-          @deleteFeature="$_deleteFeature"
-          v-model="projectCopy.chapters"
+          v-if="dataSourceCopy && dataSourceCopy.chapters"
+          v-model="dataSourceCopy.chapters"
           :width="width"
+          @editChapter="$_editChapter"
         />
       </mapgis-ui-row>
     </div>
     <!--附加地图-->
     <mapgis-ui-map-multi-rows v-show="showSetting"
+                              v-if="dataSourceCopy && dataSourceCopy.map"
                               :showTitleIcon="false"
                               showMoreTitle=""
-                              :map="projectCopy.map"
+                              :map="dataSourceCopy.map"
                               @addMap="$_addProjectMap" title="附加地图"/>
     <!--按钮区域-->
-    <mapgis-ui-row v-show="!editFeature && !showSetting">
+    <mapgis-ui-row v-show="!editChapter && !showSetting">
       <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
         <mapgis-ui-dropdown>
           <mapgis-ui-menu slot="overlay">
-            <mapgis-ui-menu-item key="4" @click="$_copyChapter">
+            <mapgis-ui-menu-item key="4">
               复制上一章节
             </mapgis-ui-menu-item>
           </mapgis-ui-menu>
@@ -58,9 +60,10 @@
       </mapgis-ui-col>
     </mapgis-ui-row>
     <!--编辑章节区域-->
-    <div v-show="editFeature" style="height: 100%;">
+    <div v-show="editChapter" style="height: 100%;">
       <feature-edit
         ref="featureEdit"
+        @change="$_changeChapter"
         @getCamera="$_setCamera"
         @selectCamera="$_selectCamera"
         @addMap="$_addMap"
@@ -91,7 +94,7 @@ export default {
       //当前章节
       currentChapter: {},
       showSetting: false,
-      editFeature: false,
+      editChapter: false,
       editTitle: false,
       dataSourceCopy: undefined,
       margin: 26,
@@ -135,7 +138,7 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.projectCopy);
+        this.$emit("change", this.dataSourceCopy);
       },
       deep: true
     },
@@ -156,9 +159,9 @@ export default {
         title[i].innerHTML = "<img style='width: 12px;margin-bottom: 3px;margin-right: 4px; cursor: pointer;' src='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjM4MTEwNzU0MDU2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIzMDYiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTk1OS4yOTYgNDU1LjgwOEgyNzYuOTI4bDMyMC42NC0zMTMuMTUyLTc4LjY1Ni03Ny41NjgtNDUyLjkyOCA0NDYuNjU2IDQ1My44MjQgNDQ2Ljk3NiA3Ny4xODQtNzYuODY0TDI3Ny4xMiA1NjQuMDk2aDY4Mi4xNzZWNDU1LjgwOHoiIHAtaWQ9IjIzMDciPjwvcGF0aD48L3N2Zz4=' id='MapStoryClose'/>地图故事";
         let MapStoryClose = document.getElementById("MapStoryClose");
         MapStoryClose.onclick = function () {
-          if (vm.editFeature) {
-            vm.$refs.featureEdit.$_stopDraw();
-            vm.editFeature = false;
+          if (vm.editChapter) {
+            // vm.$refs.featureEdit.$_stopDraw();
+            vm.editChapter = false;
             window.showPanels.currentPage = "projectEdit";
           } else {
             vm.$emit("backed");
@@ -172,6 +175,10 @@ export default {
     $_init() {
       //复制数据源
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+    },
+    //修改章节内容
+    $_changeChapter(chapter) {
+      this.$emit("changeChapter", chapter);
     },
     //显示设置信息
     $_showSetting() {
@@ -198,7 +205,7 @@ export default {
     //添加故事
     $_addProjectMap(type, map) {
       this.showSetting = false;
-      this.$emit("addMapToProject", type, map, this.projectCopy);
+      // this.$emit("addMapToProject", type, map, this.dataSourceCopy);
     },
     //预览故事
     $_projectPreview() {
@@ -206,20 +213,15 @@ export default {
     },
     //导出
     $_export() {
-      this.$emit("export", this.projectCopy);
+      this.$emit("export");
     },
     //删除故事
     $_deleteProject() {
-      this.$emit("deleteProject", this.projectCopy);
+      this.$emit("deleteProject");
       this.$_back();
     },
     //修改标题
     $_titleChange() {
-      this.$emit("titleChanged", {
-        title: this.projectCopy.title,
-        description: this.projectCopy.description,
-        uuid: this.projectCopy.uuid,
-      });
     },
     //修改标题
     $_editTitle() {
@@ -248,7 +250,7 @@ export default {
     //新增章节
     $_addChapter() {
       let chapter = this.$_getChapter();
-      chapter.projectUUID = this.projectCopy.uuid;
+      chapter.projectUUID = this.dataSourceCopy.uuid;
       this.$emit("addChapter", chapter);
     },
     //保存数据
@@ -263,6 +265,12 @@ export default {
     $_featurePreview(feature) {
       this.$emit("featurePreview", feature);
     },
+    //编辑章节
+    $_editChapter(index) {
+      let chapters = JSON.parse(JSON.stringify(this.dataSourceCopy.chapters))
+      this.currentChapter = chapters[index];
+      this.editChapter = true;
+    }
   }
 }
 </script>

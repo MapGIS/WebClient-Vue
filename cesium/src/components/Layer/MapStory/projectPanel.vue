@@ -17,10 +17,10 @@
         @export="$_export"
         @import="$_import"
         @save="$_save"
+        @changeChapter="$_changeChapter"
         :height="panelHeight"
         :width="width"
-        :editList="editList"
-        data-source="dataSourceCopy"
+        :data-source="dataSourceCopy"
         v-show="showProjectPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
@@ -102,13 +102,9 @@ export default {
     dataSource: {
       handler: function () {
         this.$_init();
-      }
-    },
-    dataSourceCopy: {
-      handler: function () {
       },
       deep: true
-    },
+    }
   },
   mounted() {
     this.$_init();
@@ -122,6 +118,10 @@ export default {
       } else {
         this.panelHeight = this.$_getContainerHeight();
       }
+    },
+    //修改章节内容
+    $_changeChapter(chapter) {
+      this.$emit("changeChapter", chapter);
     },
     //保存
     $_save() {

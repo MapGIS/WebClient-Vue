@@ -8,7 +8,6 @@
                    @changeOpacity="$_changeOpacity"
                    @changeIcon="$_changeIcon"
                    @showFeature="$_showFeature"
-                   @showProject="$_showProject"
                    @addMapToProject="$_addMapToProject"
                    @addFeature="$_addFeature"
                    @titleChanged="$_titleChanged"
@@ -24,7 +23,6 @@
                    :enablePreview="enablePreview"
                    :enableClose="enableClose"
     />
-    <mapgis-3d-draw :infinite="false" @drawcreate="$_drawCreate" @load="$_drawerLoaded"/>
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <map-collection :key="opt.vueIndex" v-for="(opt) in projectMaps" :options="opt"/>
     <template v-for="(popup) in popups">

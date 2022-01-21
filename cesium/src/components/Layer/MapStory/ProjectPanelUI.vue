@@ -2,7 +2,7 @@
   <div>
     <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
          class="mapgis-ui-project-panel">
-      <div class="mapgis-ui-project-panel-content" v-show="!showProjectEdit" :style="{height: height - 40 + 'px'}">
+      <div class="mapgis-ui-project-panel-content" v-show="!showStoryEdit" :style="{height: height - 40 + 'px'}">
         <mapgis-ui-project-header @import="$_import"/>
         <mapgis-ui-project-row @editProject="$_editStory"
                                @deleted="$_deleteStory"
@@ -23,10 +23,10 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
       <project-edit
-        v-show="showProjectEdit"
+        v-show="showStoryEdit"
         :width="width"
         :height="height"
-        :editList="editList"
+        @changeChapter="$_changeChapter"
         @addMap="$_addMap"
         @setCamera="$_setCamera"
         @selectCamera="$_selectCamera"
@@ -39,7 +39,7 @@
         @save="$_save"
         @backed="$_back"
         ref="panelEdit"
-        data-source="project"/>
+        :data-source="currentStory"/>
     </div>
   </div>
 </template>
@@ -60,12 +60,6 @@ export default {
     dataSource: {
       handler: function () {
         this.$_init();
-      },
-      deep: true
-    },
-    dataSourceCopy: {
-      handler: function () {
-        this.$emit("change", this.dataSourceCopy)
       },
       deep: true
     },
@@ -99,12 +93,12 @@ export default {
       optArr: [],
       showEditPanel: false,
       addProject: false,
-      story: undefined,
+      currentStory: undefined,
       storys: [],
       currentProjectIndex: undefined,
       storyFeature: [],
       dataSourceCopy: undefined,
-      showProjectEdit: false
+      showStoryEdit: false
     }
   },
   mounted() {
@@ -114,6 +108,14 @@ export default {
     //初始化函数
     $_init() {
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+      //如果currentStory存在，则更新
+      if (this.currentStory) {
+        for (let i = 0; i < this.dataSourceCopy.length; i++) {
+          if (this.dataSourceCopy[i].uuid === this.currentStory.uuid) {
+            this.currentStory = JSON.parse(JSON.stringify(this.dataSourceCopy[i]));
+          }
+        }
+      }
     },
     //保存数据
     $_save() {
@@ -132,7 +134,7 @@ export default {
     },
     //删除故事
     $_deleteStory() {
-      this.storys.splice(this.currentProjectIndex, 1);
+      this.currentStorys.splice(this.currentProjectIndex, 1);
     },
     //保存标题
     $_click(e) {
@@ -144,15 +146,15 @@ export default {
     },
     //指定故事
     $_markerStory(index, type) {
-      this.$set(this.storys[index], "type", type);
+      this.$set(this.currentStorys[index], "type", type);
     },
     //显示故事
     $_showProject(index, flag) {
-      this.$emit("showProject", this.storys[index]);
+      this.$emit("showProject", this.currentStorys[index]);
     },
     //添加故事
     $_addStory() {
-      this.story = {
+      this.currentStory = {
         "title": "无标题",
         "description": "",
         "uuid": "mapStory" + parseInt(String(Math.random() * 100000000)),
@@ -169,19 +171,18 @@ export default {
         "features": [],
         "chapters": []
       };
-      this.dataSourceCopy.push(this.story);
-      this.showProjectEdit = true;
+      this.dataSourceCopy.push(this.currentStory);
+      this.showStoryEdit = true;
     },
     //编辑故事
     $_editStory(index) {
-      this.story = this.dataSourceCopy[index];
-      this.showProjectEdit = true;
-      this.$emit("editProject", index, this.storys[index]);
+      this.currentStory = JSON.parse(JSON.stringify(this.dataSourceCopy[index]));
+      this.showStoryEdit = true;
     },
     //回退
     $_back() {
-      this.showProjectEdit = false;
-      this.$emit("back", this.story);
+      this.showStoryEdit = false;
+      this.$emit("back", this.currentStory);
     },
     //新增章节
     $_addChapter(chapter) {
@@ -194,6 +195,10 @@ export default {
     //添加章节地图
     $_addMap(type, map, id) {
       this.$emit("addMap", type, map, id);
+    },
+    //修改章节内容
+    $_changeChapter(chapter) {
+      this.$emit("changeChapter", chapter);
     },
     //设置视角
     $_setCamera(currentFeature) {
@@ -210,9 +215,9 @@ export default {
     //预览故事
     $_storyPreview(project) {
       if (!project) {
-        this.storyFeature = this.story.features;
+        this.currentStoryFeature = this.currentStory.features;
       }
-      project = project || this.story;
+      project = project || this.currentStory;
       this.$emit("projectPreview", project);
     },
     //预览章节

@@ -1,11 +1,12 @@
 <template>
   <div>
     <project-panel ref="projectPanel"
-                   data-source="dataSourceCopy"
+                   :data-source="dataSourceCopy"
                    :height="height"
                    :width="width"
                    :enablePreview="enablePreview"
                    :enableClose="enableClose"
+                   @changeChapter="$_changeChapter"
     />
     <input style="display: none" type="file" :id="inputId"
            accept=".json">
