@@ -2,24 +2,17 @@
   <div>
     <project-panel-ui
         ref="projectP"
-        @addMap="$_addMap"
-        @deleteProject="$_deleteProject"
-        @editProject="$_editProject"
-        @addFeature="$_addFeature"
-        @deleteFeature="$_deleteFeature"
+        @addMap="$_addChapterMap"
+        @deleteProject="$_deleteStory"
+        @editProject="$_editStory"
         @toggleChapterFeatures="$_toggleChapterFeatures"
         @addChapter="$_addChapter"
         @copyChapter="$_copyChapter"
-        @projectPreview="$_projectPreview"
-        @closeHoverPanel="$_closeHoverPanel"
+        @storyPreview="$_storyPreview"
         @getCamera="$_getCamera"
-        @changeEntityTitle="$_changeEntityTitle"
-        @changeEntity="$_changeEntity"
         @selectCamera="$_selectCamera"
-        @changeIcon="$_changeIcon"
-        @showFeature="$_showFeature"
-        @showProject="$_showProject"
-        @featurePreview="$_featurePreview"
+        @showProject="$_showStory"
+        @chapterPreview="$_chapterPreview"
         @back="$_back"
         @export="$_export"
         @import="$_import"
@@ -27,7 +20,7 @@
         :height="panelHeight"
         :width="width"
         :editList="editList"
-        v-model="dataSourceCopy"
+        data-source="dataSourceCopy"
         v-show="showProjectPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
@@ -108,35 +101,41 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+        this.$_init();
       }
     },
     dataSourceCopy: {
       handler: function () {
-      }
+      },
+      deep: true
     },
   },
-  created() {
-    this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
-  },
   mounted() {
-    this.projects = this.dataSource;
-    if (this.height) {
-      this.panelHeight = this.height;
-    } else {
-      this.panelHeight = this.$_getContainerHeight();
-    }
+    this.$_init();
   },
   methods: {
+    //初始化函数
+    $_init() {
+      this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+      if (this.height) {
+        this.panelHeight = this.height;
+      } else {
+        this.panelHeight = this.$_getContainerHeight();
+      }
+    },
+    //保存
     $_save() {
       this.$emit("save");
     },
+    //导入
     $_import() {
       this.$emit("import");
     },
+    //导出
     $_export(project) {
       this.$emit("export", project);
     },
+    //回退
     $_back(project) {
       let features = project.features;
       for (let i = 0; i < features.length; i++) {
@@ -146,10 +145,8 @@ export default {
         }
       }
     },
-    $_textChanged(text) {
-      this.$set(this.storyFeature[0], "content", text);
-    },
-    $_featurePreview(feature) {
+    //预览章节
+    $_chapterPreview(feature) {
       if (this.enablePreview) {
         this.storyFeature = [feature];
         this.showPlay = false;
@@ -160,7 +157,8 @@ export default {
         this.$emit("featurePreview", feature);
       }
     },
-    $_projectPreview(chapters) {
+    //预览地图故事
+    $_storyPreview(chapters) {
       if (this.enablePreview) {
         this.storyFeature = this.currentProject.features;
         this.showPlay = true;
@@ -170,50 +168,36 @@ export default {
         this.$emit("projectPreview", chapters);
       }
     },
-    $_closeEdit() {
-      if (!this.enableClose && window.showPanels.currentPage === "projectEdit") {
-        this.showPanels.showProjectEdit = false;
-      }
-      this.showProjectPanel = true;
-    },
+    //关闭右侧轮播面板
     $_closePanel() {
       this.showLargePanel = false;
     },
-    $_editProject(index) {
+    //编辑故事
+    $_editStory(index) {
       this.$emit("editProject", index);
     },
+    //新增章节
     $_addChapter(chapter) {
       this.$emit("addChapter", chapter);
     },
+    //保存章节
     $_copyChapter(uuid) {
       this.$emit("copyChapter", uuid);
     },
-    $_addFeature(graphic, projectUUID, chapterUUID) {
-      this.$emit("addFeature", graphic, projectUUID, chapterUUID);
-    },
-    $_titleChange(value) {
-      this.$emit("titleChanged", value);
-    },
-    $_closeHoverPanel() {
-      this.$emit("closeHoverPanel");
-    },
-    $_changeEntityTitle(currentEntity) {
-      this.$emit("changeEntityTitle", currentEntity);
-    },
-    $_changeEntity(type, uuid, value) {
-      this.$emit("changeEntity", type, uuid, value);
-    },
+    //取得视角
     $_getCamera(currentFeature) {
       this.$emit("getCamera", currentFeature);
     },
+    //选择视角
     $_selectCamera(camera, currentFeature) {
       this.$emit("selectCamera", camera, currentFeature);
     },
-    $_deleteProject(project) {
+    //删除故事
+    $_deleteStory(project) {
       this.$emit("deleteProject");
-      for (let i = 0; i < this.projects.length; i++) {
-        if (this.projects[i].uuid === project.uuid) {
-          this.projects.splice(i, 1);
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].uuid === project.uuid) {
+          this.dataSourceCopy.splice(i, 1);
         }
       }
       if (!project.features) {
@@ -252,10 +236,12 @@ export default {
         }
       }
     },
-    $_addMapToProject(type, map, project) {
+    //天机故事底图
+    $_addStoryMap(type, map, project) {
       this.$emit("addMapToProject", type, map, project);
     },
-    $_addMap(type, map, id) {
+    //添加章节地图
+    $_addChapterMap(type, map, id) {
       let addMap = true, index;
       for (let i = 0; i < this.optArr.length; i++) {
         if (this.optArr[i].id === id) {
@@ -270,44 +256,13 @@ export default {
         this.$set(this.optArr, index, map);
       }
     },
+    //是否显示章节要素
     $_toggleChapterFeatures(featureUUID, projectUUID, show) {
       this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
     },
-    $_deleteFeature(index, projectUUID) {
-      this.$emit("deleteFeature", index, projectUUID);
-    },
-    $_changeIcon(icon, id) {
-      this.$emit("changeIcon", icon, id);
-    },
-    $_changeColor(color, type, id, geometryType) {
-      this.$emit("changeColor", color, type, id, geometryType);
-    },
-    $_changeOpacity(opacity, color, id, geometryType) {
-      this.$emit("changeOpacity", opacity, color, id, geometryType);
-    },
-    $_showFeature(id, flag, index, project) {
-      this.$emit("showFeature", id, flag, index, project);
-    },
-    $_showProject(project) {
+    //显示故事
+    $_showStory(project) {
       this.$emit("showProject", project);
-    },
-    $_firstAddPicture(feature) {
-      this.$emit("firstAddPicture", feature);
-    },
-    $_featureTitleChanged(feature) {
-      this.$emit("featureTitleChanged", feature);
-    },
-    $_animationTimeChanged(feature) {
-      this.$emit("animationTimeChanged", feature);
-    },
-    $_titleChanged(title) {
-      for (let i = 0; i < this.projects.length; i++) {
-        if (this.projects[i].uuid === title.uuid) {
-          this.projects[i].title = title.title;
-          this.projects[i].description = title.description;
-          break;
-        }
-      }
     }
   }
 }
