@@ -1,35 +1,36 @@
 import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
+
 export default {
   title: "三维/分析/缓冲分析",
   argTypes: {
-    baseUrl:{
-      description: "http://localhost:6163",
-      table:{
-        defaultValue: { summary: "http://localhost:6163" },
-      },
-      control:'text'
-    },
     srcType: {
-      description: "缓冲数据源类型: 图层级缓冲Layer/要素级缓冲Feature",
+      description: "缓冲数据源类型：图层级缓冲Layer；要素级缓冲Feature",
       table:{
         defaultValue: { summary: "Layer" },
       },
       control: 'text'
+    },
+    baseUrl:{
+      description: "输入图层的baseUrl",
+      table:{
+        defaultValue: { summary: "http://localhost:6163" },
+      },
+      control:'text'
     },
     srcLayer: {
       description: "输入图层的gdbp",
       table:{
         defaultValue: { summary: "" },
       },
-      control:'text'
+      control: 'text'
     },
     srcFeature: {
       description: "输入要素的GeoJSON数据",
       table:{
         defaultValue: { summary: {} },
       },
-      control:'object'
+      control: 'object'
     },
   },
 };
@@ -38,51 +39,49 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
-      finishL: false,
-      finishF: false,
-      add: false,
-      gdbps: "",
-      feature: undefined,
+      finishedLayer: false,
+      finishedFeature: false,
+      addResultToLayer: false,
+      resultLayer: "",
+      resultFeature: undefined,
       layerStyle: new FillStyle({
         color: "#ff0000",
         outlineColor: "#ff0000",
         outlineWidth: 2.5,
         opacity: 1,
-      }),
+      })
     };
   },
   methods: {
     showLayer(data) {
-      this.finishL = true
-      this.gdbps = data
+      this.finishedLayer = true
+      this.resultLayer = data
     },
     showFeature(data) {
-      this.finishF = true
-      this.feature = data
+      this.finishedFeature = true
+      this.resultFeature = data
     },
     showAdd(data) {
-      this.add = data
-    },
-    
+      this.addResultToLayer = data
+    }
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-buffer-analysis v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
       </mapgis-ui-card>
-      <mapgis-3d-igs-dynamic-layer v-if="finishL && add" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="gdbps"></mapgis-3d-igs-dynamic-layer>
-      <mapgis-3d-geojson-layer v-if="finishF && add" :layerStyle="layerStyle" :baseUrl="feature"/>
+      <mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
+      <mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>
     </mapgis-web-scene>
     `,
 });
 
 export const 缓冲区分析 = Template.bind({});
 缓冲区分析.args = {
-  baseUrl: "http://localhost:6163",
   srcType: "Layer",
   // srcType: "Feature",
+  baseUrl: "http://localhost:6163",
   srcLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
-
   srcFeature: {
     "type": "FeatureCollection",
     "features": [
@@ -123,5 +122,5 @@ export const 缓冲区分析 = Template.bind({});
         },
       }
     ]
-  },
+  }
 };
