@@ -9,14 +9,10 @@
 
   @keyframes myfirst {
     0% {
-      background: $primary-8;
-      // left: 0px;
       right: 400px;
       top: 0px;
     }
     100% {
-      background: $primary-1;
-      // left: calc(100vw - 400px);
       right: 0px;
       top: 0px;
     }
@@ -25,14 +21,10 @@
   @-webkit-keyframes myfirst /* Safari and Chrome */
   {
     0% {
-      background: $primary-8;
-      // left: 0px;
       right: 400px;
       top: 0px;
     }
     100% {
-      background: $primary-1;
-      // left: calc(100vw - 400px);
       right: 0px;
       top: 0px;
     }
