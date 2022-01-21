@@ -62,6 +62,10 @@ export default {
       default() {
         return [];
       }
+    },
+    heightOffset: {
+      type: Number,
+      default: 0
     }
   },
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -102,12 +106,7 @@ export default {
   watch: {
     M3Ds: {
       handler: function () {
-        for (let i = 0; i < this.M3Ds.length; i++) {
-          this.dataSource.push({
-            key: this.M3Ds[i].guid,
-            value: this.M3Ds[i].name
-          });
-        }
+        this.dataSource = this.M3Ds;
       },
       deep: true
     },
@@ -220,14 +219,15 @@ export default {
       }
     },
     getDrawResult(result) {
-      const {Cesium, vueCesium, viewer} = this;
+      const {vueCesium} = this;
       let m3d = vueCesium.G3DManager.findSource(this.vueKey, this.m3dVueIndex);
       if (m3d) {
         m3d = m3d.options.m3ds[0];
       }
 
       //模型压平
-      m3d.modelFlatten(result.positions, this.flattenHeight);
+      result.positions.push(result.positions[0]);
+      m3d.modelFlatten(result.positions, this.flattenHeight + this.heightOffset);
       window.__graphicsLayer__.removeAllGraphic();
       window.__graphicsLayer__.stopDrawing();
       window._result_ = result;
