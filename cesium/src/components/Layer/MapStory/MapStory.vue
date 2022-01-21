@@ -1,34 +1,7 @@
 <template>
   <div>
     <project-panel ref="projectPanel"
-                   @deleteFeature="$_deleteFeature"
-                   @deleteProject="$_deleteProject"
-                   @getCamera="$_getCamera"
-                   @selectCamera="$_selectCamera"
-                   @changeColor="$_changeColor"
-                   @changeOpacity="$_changeOpacity"
-                   @changeIcon="$_changeIcon"
-                   @showFeature="$_showFeature"
-                   @showProject="$_showProject"
-                   @addMapToProject="$_addMapToProject"
-                   @addFeature="$_addFeature"
-                   @addChapter="$_addChapter"
-                   @toggleChapterFeatures="$_toggleChapterFeatures"
-                   @copyChapter="$_copyChapter"
-                   @changeEntityTitle="$_changeEntityTitle"
-                   @changeEntity="$_changeEntity"
-                   @titleChanged="$_titleChanged"
-                   @featureTitleChanged="$_featureTitleChanged"
-                   @closeHoverPanel="$_closeHoverPanel"
-                   @editProject="$_editProject"
-                   @projectPreview="$_projectPreview"
-                   @featurePreview="$_featurePreview"
-                   @firstAddPicture="$_firstAddPicture"
-                   @export="$_export"
-                   @import="$_import"
-                   @save="$_save"
-                   v-model="dataSourceCopy"
-                   :upProjectSet="projectSet"
+                   data-source="dataSourceCopy"
                    :height="height"
                    :width="width"
                    :enablePreview="enablePreview"
@@ -50,8 +23,6 @@
           <div class="mapgis-3d-map-story-small-popup-container">
             <div v-if="popup.title" class="mapgis-3d-map-story-small-popup-title">
               {{ popup.title }}
-<!--              <mapgis-ui-base64-icon @click="$_toLarge(popup.feature)" class="mapgis-3d-map-story-small-popup-tolarge"-->
-<!--                                     width="20px" type="toLarge"/>-->
             </div>
             <mapgis-ui-carousel class="mapgis-3d-map-story-small-popup-carousel" autoplay>
               <div class="mapgis-3d-map-story-small-popup-img-div" :key="index + 10000"
@@ -84,77 +55,8 @@ export default {
     "project-panel": projectPanel,
     "map-collection": mapCollection,
   },
-  data() {
-    return {
-      drawer: undefined,
-      currentPoints: undefined,
-      interval: undefined,
-      //导入文件按钮id
-      inputId: "mapgisMapStoryImport" + parseInt(String(Math.random() * 10000)),
-    }
-  },
-  props: {
-    dataSource: {
-      type: Array
-    },
-    height: {
-      type: Number
-    },
-    width: {
-      type: Number
-    },
-    enablePreview: {
-      type: Boolean,
-      default: true
-    },
-    enableClose: {
-      type: Boolean,
-      default: true
-    }
-  },
-  watch: {
-    dataSource: {
-      handler: function () {
-        this.dataSourceCopy = this.dataSource;
-      },
-      deep: true
-    },
-    dataSourceCopy: {
-      handler: function () {
-      },
-      deep: true
-    }
-  },
-  created() {
-    this.dataSourceCopy = this.dataSource;
-  },
   mounted() {
-    this.$_initManager();
-  },
-  methods: {
-    $_toLarge(feature) {
-      this.$emit("projectPreview", [feature], false);
-    },
-    $_drawerLoaded(drawer) {
-      this.drawer = drawer;
-    },
-    $_featurePreview(feature) {
-      this.$emit("featurePreview", [feature]);
-    },
-    $_projectPreview(project) {
-      // this.$_play(chapters);
-      let newP;
-      for (let i = 0; i < this.dataSourceCopy.length; i++) {
-        if (this.dataSourceCopy[i].uuid === project.uuid) {
-          newP = this.dataSourceCopy[i];
-          break;
-        }
-      }
-      this.$emit("projectPreview", newP, false);
-    },
-    $_deleteProject() {
-      this.popups = [];
-    }
+    this.$_init();
   }
 }
 </script>

@@ -7,6 +7,23 @@ export default {
   inject: ["viewer", "Cesium"],
   mixins: [Base64IconsKeyValue],
   props: {
+    dataSource: {
+      type: Array
+    },
+    height: {
+      type: Number
+    },
+    width: {
+      type: Number
+    },
+    enablePreview: {
+      type: Boolean,
+      default: true
+    },
+    enableClose: {
+      type: Boolean,
+      default: true
+    },
     vueKey: {
       type: String,
       default: "default"
@@ -16,6 +33,14 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
+    }
+  },
+  watch: {
+    dataSource: {
+      handler: function() {
+        this.$_init();
+      },
+      deep: true
     }
   },
   data() {
@@ -28,10 +53,15 @@ export default {
       currentFeatureType: undefined,
       currentFeature: undefined,
       startDraw: false,
-      editList: editList
+      editList: editList,
+      //导入文件按钮id
+      inputId: "mapgisMapStoryImport" + parseInt(String(Math.random() * 10000))
     };
   },
   methods: {
+    $_init() {
+      this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+    },
     $_autoFlyto(features, dataSource, index, callBack) {
       let vm = this;
       if (index < features.length) {
@@ -558,59 +588,6 @@ export default {
       }
       return graphicsLayer;
     },
-    $_showProject(project) {
-      const { show, uuid } = project;
-      if (show) {
-        let newProject = this.projectSet[uuid];
-        const { features, map } = newProject;
-        for (let i = 0; i < features.length; i++) {
-          let entity = this.viewer.entities.getById(features[i].id);
-          const { layerStyle, baseUrl } = features[i];
-          if (entity) {
-            if (show) {
-              if (
-                layerStyle.hasOwnProperty("show") &&
-                layerStyle.show !== false
-              ) {
-                entity.show = show;
-                this.$_getLayer(i, newProject, function(layer) {
-                  layer.show = show;
-                });
-              }
-            } else {
-              entity.show = show;
-              this.$_getLayer(i, newProject, function(layer) {
-                layer.show = show;
-              });
-            }
-          } else {
-            const { map } = features[i];
-            this.$_addEntity(baseUrl, features[i].layerStyle, features[i].id);
-            if (map) {
-              this.optArr.push(map);
-            }
-          }
-        }
-        if (map) {
-          const { vueKey, vueIndex, type } = map;
-          if (vueKey && vueIndex && type) {
-            let layer;
-            switch (type) {
-              case "WMTS":
-                layer = window.vueCesium.OGCWMTSManager.findSource(
-                  vueKey,
-                  vueIndex
-                );
-                break;
-            }
-            if (!layer) {
-              this.projectMaps.push(map);
-            }
-          }
-        }
-      } else {
-      }
-    },
     $_showFeature(id, flag, index, project) {
       if (id) {
         let entity = this.viewer.entities.getById(id);
@@ -1111,26 +1088,6 @@ export default {
       this.viewer.screenSpaceEventHandler.setInputAction(function(movement) {
         vm.$_setPopup(movement.endPosition, "hover");
       }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    },
-    $_initManager() {
-      let vm = this;
-      //初始化mapStoryManager
-      let mapStoryManager = window.vueCesium.MapStoryManager.findSource(
-        this.vueKey,
-        this.vueIndex
-      );
-      if (!mapStoryManager) {
-        let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
-        let entities = {};
-        window.vueCesium.MapStoryManager.addSource(
-          this.vueKey,
-          this.vueIndex,
-          handler,
-          entities
-        );
-      }
-      this.$_setCesiumClick();
-      this.$_setCesiumMove();
     },
     $_addPoint(callBack) {
       let vm = this;
