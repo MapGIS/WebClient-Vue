@@ -75,28 +75,18 @@ export default {
     PopupContent,
   },
   render(h) {
-    let {
-      pinMap,
-      clickvisible,
-      clickposition,
-      hovervisible,
-      hoverposition,
-      customPopup,
-      customTips,
-      clickMode,
-      hoverMode,
-      currentClickInfo,
-      currentHoverInfo,
-      popupOptions,
-      tipsOptions,
-    } = this;
+    let { enablePopup, enableTips, popupOptions, tipsOptions } = this;
+    let { customPopup, customTips } = this;
+    let { clickvisible, clickposition, hovervisible, hoverposition } = this;
+    let { clickMode, hoverMode, currentClickInfo, currentHoverInfo } = this;
+    let { pinMap } = this;
     const vm = this;
     const {
       title = "name",
       type = "default",
       enableSeparate = true,
       popupType = "table",
-      fullHeight = 900,
+      fullHeight = 600,
     } = popupOptions;
     const feature = this.properties
       ? { properties: this.properties }
@@ -164,21 +154,23 @@ export default {
     } else {
       return (
         <div class="mapgis-popup-default-wrapper">
-          <Popup
-            position={clickposition}
-            visible={clickvisible}
-            forceRender={true}
-            onChange={this.$_changeVisible.bind(this)}
-            onSeparate={this.$_separateMap.bind(this)}
-            options={options}
-          >
-            <mapgis-ui-popup-content
-              feature={feature}
-              popupOptions={popupOptions}
+          {enablePopup && (
+            <Popup
+              position={clickposition}
+              visible={clickvisible}
+              forceRender={true}
+              onChange={this.$_changeVisible.bind(this)}
+              onSeparate={this.$_separateMap.bind(this)}
+              options={options}
             >
-              {defaultSlot}
-            </mapgis-ui-popup-content>
-          </Popup>
+              <mapgis-ui-popup-content
+                feature={feature}
+                popupOptions={popupOptions}
+              >
+                {defaultSlot}
+              </mapgis-ui-popup-content>
+            </Popup>
+          )}
           {/* <Popup
             position={hoverposition}
             visible={hovervisible}
