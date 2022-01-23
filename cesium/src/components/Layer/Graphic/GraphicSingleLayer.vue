@@ -915,6 +915,135 @@ export default {
       }
       return center;
     },
+    $_updateGraphicList(graphics) {
+      this.dataSourceCopy = graphics;
+    },
+    $_resetGetGraphic(vueIndex, vueKey) {
+      let graphicLayer = this.$_getGraphicLayer(vueIndex, vueKey);
+      this.$_switchGraphicLayer(vueIndex, vueKey);
+      graphicLayer._getGraphic = this.$_getGraphic;
+    },
+    $_getGraphic(e) {
+      let vm = this;
+      let data = vm.$_getJsonById(e.id);
+      let type = data.type;
+      if (vm.drawMode === "point") {
+        if (!vm.add) {
+          return;
+        }
+        //开始添加数据
+        vm.addSource = true;
+        if (type === "circle") {
+          if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+            type = "cone";
+          }
+        }
+        if (type === "polygon") {
+          if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
+            type = "polygonCube";
+          }
+        }
+        const {attributes} = e
+        if (attributes.hasOwnProperty("__enableFlash")) {
+          let color = e.style.color;
+          let flashStyle = e.attributes.__flashStyle;
+          color.alpha = flashStyle.flashAlpha;
+          let newFlashP2D = vm.$_bezierSpline(e.positions, true);
+          let newPolygon = new Cesium.Graphic({
+            type: 'polygon',
+            positions: newFlashP2D,
+            style: {
+              color: color
+            }
+          });
+          let graphicLayer = vm.$_getGraphicLayer();
+          vm.drawMode = "addFlashGraphic";
+          newPolygon.attributes.__flashStyle = e.attributes.__flashStyle;
+          newPolygon.attributes.__enableFlash = e.attributes.__enableFlash;
+          graphicLayer.addGraphic(newPolygon);
+          vm.$_removeGraphicByID(e.id);
+        } else {
+          e.attributes.title = e.attributes.title || vm.$_getTitle(type);
+          data.attributes.title = e.attributes.title;
+          vm.dataSourceCopy.push(data);
+          if (vm.dataSourceCopy.length === 1) {
+            vm.$emit("saveCamera");
+          }
+          let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+          vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
+          //数据添加完毕
+          vm.$nextTick(function () {
+            vm.addSource = false;
+          });
+          vm.$emit("change", vm.dataSourceCopy);
+          vm.$emit("addFeature", vm.$_getJsonById(e.id));
+        }
+      } else if (vm.drawMode === "addGraphic") {
+        vm.drawMode = "point"
+      } else if (vm.drawMode === "addFlashGraphic") {
+        vm.drawMode = "point"
+        let flashStyle = e.attributes.__flashStyle;
+        window["flog_" + e.id] = flashStyle.flog;
+        window["alpha_" + e.id] = flashStyle.flashAlpha;
+        window["alphaEnd_" + e.id] = flashStyle.flashAlpha;
+        window["alphaSpace_" + e.id] = flashStyle.alphaSpace;
+        window["flashTime_" + e.id] = flashStyle.flashTime;
+        window["flashRunningTime_" + e.id] = 0;
+        window["interval_" + e.id] = setInterval(function () {
+          if (window["flog_" + e.id]) {
+            window["alpha_" + e.id] = window["alpha_" + e.id] - window["alphaSpace_" + e.id];
+            if (window["alpha_" + e.id] <= 0) {
+              window["alpha_" + e.id] = 0;
+              window["flog_" + e.id] = false;
+            }
+          } else {
+            window["alpha_" + e.id] = window["alpha_" + e.id] + window["alphaSpace_" + e.id];
+            if (window["alpha_" + e.id] >= window["alphaEnd_" + e.id]) {
+              window["flog_" + e.id] = true;
+            }
+          }
+          e.style.color.alpha = window["alpha_" + e.id].toFixed(2);
+          window["flashRunningTime_" + e.id] += 100;
+          if (window["flashRunningTime_" + e.id] > window["flashTime_" + e.id]) {
+            clearInterval(window["interval_" + e.id]);
+            e.show = false;
+            delete window["flog_" + e.id];
+            delete window["alpha_" + e.id];
+            delete window["alphaEnd_" + e.id];
+            delete window["alphaSpace_" + e.id];
+            delete window["flashTime_" + e.id];
+            delete window["flashRunningTime_" + e.id];
+          }
+        }, 100);
+        e.attributes.title = e.attributes.title || vm.$_getTitle(type);
+        data.attributes.title = e.attributes.title;
+        vm.dataSourceCopy.push(data);
+        if (vm.dataSourceCopy.length === 1) {
+          vm.$emit("saveCamera");
+        }
+        let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+        vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
+        //数据添加完毕
+        vm.$nextTick(function () {
+          vm.addSource = false;
+        });
+        vm.$emit("change", vm.dataSourceCopy);
+        vm.$emit("addFeature", vm.$_getJsonById(e.id));
+      } else {
+        //通过fromJSON方式导入
+        let hasData = false;
+        for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+          if (vm.dataSourceCopy[i].id === data.id) {
+            vm.$set(vm.dataSourceCopy, i, data);
+            hasData = true;
+            break;
+          }
+        }
+        if (!hasData) {
+          vm.dataSourceCopy.push(data);
+        }
+      }
+    },
     //初始化组件
     $_init(dataSource, vueIndex, vueKey) {
       //复制数据源
@@ -941,113 +1070,7 @@ export default {
               }
             }
           },
-          getGraphic: function (e) {
-            let data = vm.$_getJsonById(e.id)
-            let type = data.type;
-            if (vm.drawMode === "point") {
-              if (!vm.add) {
-                return;
-              }
-              //开始添加数据
-              vm.addSource = true;
-              if (type === "circle") {
-                if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
-                  type = "cone";
-                }
-              }
-              if (type === "polygon") {
-                if (data.style.hasOwnProperty("extrudedHeight") && data.style.extrudedHeight > 0) {
-                  type = "polygonCube";
-                }
-              }
-              const {attributes} = e
-              if (attributes.hasOwnProperty("__enableFlash")) {
-                let color = e.style.color;
-                let flashStyle = e.attributes.__flashStyle;
-                color.alpha = flashStyle.flashAlpha;
-                let newFlashP2D = vm.$_bezierSpline(e.positions, true);
-                let newPolygon = new Cesium.Graphic({
-                  type: 'polygon',
-                  positions: newFlashP2D,
-                  style: {
-                    color: color
-                  }
-                });
-                let graphicLayer = vm.$_getGraphicLayer();
-                vm.drawMode = "addFlashGraphic";
-                newPolygon.attributes.__flashStyle = e.attributes.__flashStyle;
-                newPolygon.attributes.__enableFlash = e.attributes.__enableFlash;
-                graphicLayer.addGraphic(newPolygon);
-                vm.$_removeGraphicByID(e.id);
-              } else {
-                e.attributes.title = e.attributes.title || vm.$_getTitle(type);
-                data.attributes.title = e.attributes.title;
-                vm.dataSourceCopy.push(data);
-                if (vm.dataSourceCopy.length === 1) {
-                  vm.$emit("saveCamera");
-                }
-                let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
-                vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
-                //数据添加完毕
-                vm.$nextTick(function () {
-                  vm.addSource = false;
-                });
-                vm.$emit("change", vm.dataSourceCopy);
-                vm.$emit("addFeature", vm.$_getJsonById(e.id));
-              }
-            } else if (vm.drawMode === "addGraphic") {
-              vm.drawMode = "point"
-            } else if (vm.drawMode === "addFlashGraphic") {
-              vm.drawMode = "point"
-              let flashStyle = e.attributes.__flashStyle;
-              window["flog_" + e.id] = flashStyle.flog;
-              window["alpha_" + e.id] = flashStyle.flashAlpha;
-              window["alphaEnd_" + e.id] = flashStyle.flashAlpha;
-              window["alphaSpace_" + e.id] = flashStyle.alphaSpace;
-              window["flashTime_" + e.id] = flashStyle.flashTime;
-              window["flashRunningTime_" + e.id] = 0;
-              window["interval_" + e.id] = setInterval(function () {
-                if (window["flog_" + e.id]) {
-                  window["alpha_" + e.id] = window["alpha_" + e.id] - window["alphaSpace_" + e.id];
-                  if (window["alpha_" + e.id] <= 0) {
-                    window["alpha_" + e.id] = 0;
-                    window["flog_" + e.id] = false;
-                  }
-                } else {
-                  window["alpha_" + e.id] = window["alpha_" + e.id] + window["alphaSpace_" + e.id];
-                  if (window["alpha_" + e.id] >= window["alphaEnd_" + e.id]) {
-                    window["flog_" + e.id] = true;
-                  }
-                }
-                e.style.color.alpha = window["alpha_" + e.id].toFixed(2);
-                window["flashRunningTime_" + e.id] += 100;
-                if (window["flashRunningTime_" + e.id] > window["flashTime_" + e.id]) {
-                  clearInterval(window["interval_" + e.id]);
-                  e.show = false;
-                  delete window["flog_" + e.id];
-                  delete window["alpha_" + e.id];
-                  delete window["alphaEnd_" + e.id];
-                  delete window["alphaSpace_" + e.id];
-                  delete window["flashTime_" + e.id];
-                  delete window["flashRunningTime_" + e.id];
-                }
-              }, 100);
-              e.attributes.title = e.attributes.title || vm.$_getTitle(type);
-              data.attributes.title = e.attributes.title;
-              vm.dataSourceCopy.push(data);
-              if (vm.dataSourceCopy.length === 1) {
-                vm.$emit("saveCamera");
-              }
-              let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
-              vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
-              //数据添加完毕
-              vm.$nextTick(function () {
-                vm.addSource = false;
-              });
-              vm.$emit("change", vm.dataSourceCopy);
-              vm.$emit("addFeature", vm.$_getJsonById(e.id));
-            }
-          }
+          getGraphic: this.$_getGraphic
         });
       }
       if (this.dataSourceCopy.length > 0) {
