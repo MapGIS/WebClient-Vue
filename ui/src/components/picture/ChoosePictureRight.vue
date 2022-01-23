@@ -41,12 +41,12 @@
           type="addPicture"/>
       </div>
     </mapgis-ui-row>
-    <mapgis-ui-row v-show="showAddInternetImg">
+    <mapgis-ui-row v-show="showAddInternetImg" style="margin-top: 10px;padding-left: 7px;">
       <mapgis-ui-col span="16">
         <mapgis-ui-input v-model="internetImg"/>
       </mapgis-ui-col>
-      <mapgis-ui-col span="8">
-        <mapgis-ui-button type="primary" @click="$_addInternetImg">添加</mapgis-ui-button>
+      <mapgis-ui-col span="8" style="padding-left: 12px">
+        <mapgis-ui-button type="primary" @click="$_addInternetImg">确定</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
   </div>
@@ -328,7 +328,6 @@ export default {
 }
 
 .mapgis-ui-choose-picture-right-upload {
-  background: #DCDCDC;
   border: 1px dashed #CCCCCC;
 }
 

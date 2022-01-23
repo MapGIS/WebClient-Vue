@@ -6,7 +6,7 @@
       {{ title }}
     </div>
     <div class="mapgis-ui-input-row-left-input"
-         :style="{paddingRight: paddingRight, width: enableButton ? 'calc(100% - 148px)' : 'calc(100% - 70px)'}"
+         :style="{paddingRight: paddingRight, marginLeft: marginLeft, width: enableButton ? 'calc(100% - 148px)' : 'calc(100% - 85px)'}"
     >
       <mapgis-ui-input style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Text'"/>
       <mapgis-ui-input-number style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Number'"/>
@@ -52,7 +52,11 @@ export default {
     enableButton: {
       type: Boolean,
       default: false
-    }
+    },
+    marginLeft: {
+      type: String,
+      default: "14px"
+    },
   },
   data() {
     return {

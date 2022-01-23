@@ -13,6 +13,14 @@
   color: $panel-option-color;
 }
 
-.mapgis-ui-project-row:hover, .mapgis-ui-feature-row:hover {
+.mapgis-ui-project-row:hover, .mapgis-ui-feature-row:hover, .mapgis-mapstory-more-tool-row:hover {
   background: $map-story-hover;
+}
+
+.mapgis-mapstory-more-tool {
+  background: $panel-backgroud;
+}
+
+.mapgis-mapstory-more-tool-row:hover {
+  color: #0081E2;
 }

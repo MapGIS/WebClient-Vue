@@ -1,10 +1,15 @@
 <template>
   <div>
-    <mapgis-ui-row class="mapgis-ui-project-bottom-panel">
+    <mapgis-ui-row v-if="enableSave" class="mapgis-ui-project-bottom-panel">
       <mapgis-ui-col span="12">
         <mapgis-ui-button @click="$_save" class="mapgis-ui-project-bottom-panel-save" type="primary">保存</mapgis-ui-button>
       </mapgis-ui-col>
       <mapgis-ui-col span="12">
+        <mapgis-ui-button @click="$_click" class="mapgis-ui-project-bottom-panel-preview mapgis-ui-project-bottom-panel-preview-save" type="primary">预览</mapgis-ui-button>
+      </mapgis-ui-col>
+    </mapgis-ui-row>
+    <mapgis-ui-row v-if="!enableSave" class="mapgis-ui-project-bottom-panel">
+      <mapgis-ui-col span="24">
         <mapgis-ui-button @click="$_click" class="mapgis-ui-project-bottom-panel-preview" type="primary">预览</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -14,6 +19,12 @@
 <script>
 export default {
   name: "mapgis-ui-project-bottom-panel",
+  props: {
+    enableSave: {
+      type: Boolean,
+      default: true
+    }
+  },
   methods: {
     $_click() {
       this.$emit("preview");
@@ -41,14 +52,18 @@ export default {
   border-radius: 3px;
 }
 
-.mapgis-ui-project-bottom-panel-preview {
+.mapgis-ui-project-bottom-panel-preview-save {
   color: #1890FF;
-  font-size: 14px;
-  width: 96%;
-  margin-left: 4%;
-  height: 32px;
   background: #FFFFFF;
   border: 1px solid #1890FF;
+  width: 96%;
+}
+
+.mapgis-ui-project-bottom-panel-preview{
+  font-size: 14px;
+  width: 93%;
+  margin-left: 4%;
+  height: 32px;
   border-radius: 3px;
 }
 </style>

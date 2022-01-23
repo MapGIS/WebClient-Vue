@@ -20,7 +20,7 @@
     <img :style="{width: width,height: height}" v-if="type === 'top'" title="置顶"
          :src="Base64Icons.top"
          alt="">
-    <img :style="{width: width,height: height}" v-if="type === 'setting'" title="setting"
+    <img :style="{width: width,height: height}" v-if="type === 'setting'" title="设置"
          src="./img/setting.svg"
          alt="">
     <img :style="[{width: width,height: height},iconStyle]" v-if="type === 'addPicture'" title="addPicture"

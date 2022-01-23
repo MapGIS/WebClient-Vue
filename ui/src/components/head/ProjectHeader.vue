@@ -1,9 +1,9 @@
 <template>
   <mapgis-ui-row class="mapgis-ui-project-panel-head">
-    <mapgis-ui-col span="17">
-      <mapgis-ui-input-search placeholder="请输入关键词搜索" @search="$_search" class="mapgis-ui-project-panel-search"/>
+    <mapgis-ui-col :span="enableImport ? 17 : 24">
+      <mapgis-ui-input-search placeholder="请输入关键词搜索" @change="$_search" class="mapgis-ui-project-panel-search"/>
     </mapgis-ui-col>
-    <mapgis-ui-col style="margin-left: 6px;" span="4">
+    <mapgis-ui-col style="margin-left: 6px;" span="4" v-if="enableImport">
       <mapgis-ui-button type="primary" @click="$_import">导入</mapgis-ui-button>
     </mapgis-ui-col>
   </mapgis-ui-row>
@@ -12,9 +12,15 @@
 <script>
 export default {
   name: "mapgis-ui-project-header",
+  props: {
+    enableImport: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
-    $_search() {
-      this.$emit("search");
+    $_search(e) {
+      this.$emit("search", e);
     },
     $_import() {
       this.$emit("import");

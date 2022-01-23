@@ -121,23 +121,7 @@ export default {
       let newCamera = {};
       for (let i = 0; i < this.camerasCopy.length; i++) {
         if (this.camerasCopy[i].uuid === e) {
-          newCamera.heading = this.camerasCopy[i].heading || 0;
-          newCamera.pitch = this.camerasCopy[i].pitch || 0;
-          newCamera.roll = this.camerasCopy[i].roll || 0;
-          newCamera.uuid = this.camerasCopy[i].uuid;
-          if(!this.camerasCopy[i].positionCartographic){
-            newCamera.positionCartographic = {
-              height: 0,
-              latitude: 0,
-              longitude: 0
-            };
-          }else {
-            newCamera.positionCartographic = {
-              height: this.camerasCopy[i].positionCartographic.height,
-              latitude: this.camerasCopy[i].positionCartographic.latitude,
-              longitude: this.camerasCopy[i].positionCartographic.longitude
-            };
-          }
+          newCamera = JSON.parse(JSON.stringify(this.camerasCopy[i]));
           break;
         }
       }

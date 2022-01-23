@@ -80,7 +80,7 @@
     "svgSelectPanelHeadColor": "rgb(44, 44, 44)",
     "svgActiveTypeColor": "rgb(255, 255, 255)",
     "oneMapBg": "rgb(20, 20, 20)",
-    "mapStoryHover": "rgb(114, 114, 114)"
+    "mapStoryHover": "#2c455c"
   },
   {
     "title": "经典浅色",

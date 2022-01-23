@@ -4,6 +4,7 @@
     <img v-if="showFullImg" class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
     <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
                         :icon-style="iconStyle"
+                        v-show="enableClose"
                         :container-style="containerStyle" type="close"/>
     <!--轮播图-->
     <mapgis-ui-carousel
@@ -39,6 +40,7 @@
     </div>
     <!--关闭图标-->
     <mapgis-ui-svg-icon v-if="enableFullScreen" @click="$_close" :icon-style="iconStyle"
+                        v-show="enableClose"
                         :container-style="containerStyle" type="close"/>
     <!--标题-->
     <div class="mapgis-ui-story-panel-large-title">
@@ -98,6 +100,10 @@ export default {
       default: true
     },
     enableFullScreen: {
+      type: Boolean,
+      default: true
+    },
+    enableClose: {
       type: Boolean,
       default: true
     }
@@ -184,13 +190,12 @@ export default {
       this.showFullImg = true;
     },
     $_flyTo() {
-      this.$emit("flyTo", this.currentFeature.camera);
+      this.$emit("flyTo", this.currentFeature.camera, this.currentFeature.animationTime);
     },
     $_resetFeature() {
       this.currentFeatureIndex = 1;
       this.currentFeature = this.dataSourceCopy[this.currentFeatureIndex - 1];
       this.$_init();
-      this.$_flyTo();
       this.$_setContent();
     },
     $_prevFeature() {
@@ -275,11 +280,10 @@ export default {
   text-align: left;
   font-size: 16px;
   color: rgba(0, 0, 0, .7);
-  padding: 0 2px;
-  padding-right: 6px;
   margin-top: 10px;
   height: calc(100% - 64px - 62px - 278px);
   overflow: hidden;
+  padding: 0 15px;
 }
 
 .mapgis-ui-story-panel-large-full-screen {

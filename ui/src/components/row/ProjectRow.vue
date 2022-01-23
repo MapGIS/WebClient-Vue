@@ -5,6 +5,7 @@
         <div @mouseenter="$_rowEnter(index)"
              @mouseleave="$_rowLeave"
              @dblclick="$_edit(index)"
+             v-show="hideArr.indexOf(index) < 0"
         >
           <div v-show="showMoreTool === index"
                class="mapgis-mapstory-more-tool"
@@ -19,14 +20,6 @@
             <!--                                     class="mapgis-mapstory-more-tool-row-icon" type="top"/>-->
             <!--              <span>置顶</span>-->
             <!--            </div>-->
-            <div @click="$_import" class="mapgis-mapstory-more-tool-row">
-              <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
-              <span>导入</span>
-            </div>
-            <div @click="$_export(index)" class="mapgis-mapstory-more-tool-row">
-              <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
-              <span>导出</span>
-            </div>
             <div @click="$_delete(index)" class="mapgis-mapstory-more-tool-row">
               <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
               <span>删除</span>
@@ -97,6 +90,12 @@ export default {
     width: {
       type: Number,
       default: 400
+    },
+    hideArr: {
+      type: Array,
+      default() {
+        return []
+      }
     }
   },
   watch: {
@@ -201,10 +200,9 @@ export default {
   right: 7px;
   z-index: 100000;
   width: 88px;
-  height: 160px;
-  background: white;
+  height: 80px;
   border-radius: 3px;
-  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.6);
 }
 
 .mapgis-mapstory-more-tool-row {
@@ -214,11 +212,6 @@ export default {
   padding-left: 40px;
   position: relative;
   padding-top: 10px;
-}
-
-.mapgis-mapstory-more-tool-row:hover {
-  color: #0081E2;
-  background: #E7F4FF;
 }
 
 .mapgis-mapstory-project-panel-title {
@@ -238,10 +231,6 @@ export default {
   padding-left: 10px;
   text-align: left;
   cursor: pointer;
-}
-
-.mapgis-mapstory-project-panel-filter:hover {
-  background-color: #E7F4FF;
 }
 
 .mapgis-mapstory-project-panel-filter-title {

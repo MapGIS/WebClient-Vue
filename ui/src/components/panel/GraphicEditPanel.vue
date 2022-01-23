@@ -482,7 +482,7 @@ export default {
   },
   mounted() {
     let canvas = document.getElementsByClassName("mapboxgl-canvas");
-    this.listHeight = canvas[0].offsetHeight - 370;
+    this.listHeight = canvas[0].offsetHeight - 370 > 200 ? canvas[0].offsetHeight - 370 > 200 : 200;
     this.scrollNum = Math.ceil(this.listHeight / 40);
   },
   methods: {
