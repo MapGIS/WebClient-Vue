@@ -255,7 +255,6 @@ export { default as MapgisUiMapMultiRows } from "./components/map/MapMultiRows";
 //panel
 export { default as MapgisUiHoverEditPanel } from "./components/panel/HoverEditPanel";
 export { default as MapgisUiStoryPanelLarge } from "./components/panel/StoryPanelLarge";
-export { default as MapgisUiProjectPanel } from "./components/panel/ProjectPanel";
 export { default as MapgisUiProjectBottomPanel } from "./components/panel/ProjectBottomPanel";
 export { default as MapgisUiGraphicEditPanel } from "./components/panel/GraphicEditPanel";
 
@@ -271,8 +270,6 @@ export { default as MapgisUiIconRow } from "./components/row/IconRow";
 export { default as MapgisUiTitleRowLeft } from "./components/row/TitleRowLeft";
 
 //edit
-export { default as MapgisUiFeatureEdit } from "./components/edit/FeatureEdit";
-export { default as MapgisUiProjectEdit } from "./components/edit/ProjectEdit";
 
 //header
 export { default as MapgisUiProjectHeader } from "./components/head/ProjectHeader";
