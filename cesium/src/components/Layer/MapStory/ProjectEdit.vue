@@ -7,15 +7,17 @@
           <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
           </mapgis-ui-col>
           <mapgis-ui-col span="6" class="mapgis-ui-project-edit-top-right">
-            <mapgis-ui-base64-icon style="margin-right: 4px;" width="18px" @click="$_export" type="export"/>
+<!--            <mapgis-ui-base64-icon style="margin-right: 4px;" width="18px" @click="$_export" type="export"/>-->
             <mapgis-ui-base64-icon width="16px" @click="$_showSetting" type="setting"/>
           </mapgis-ui-col>
         </mapgis-ui-row>
+        <!--编辑故事标题-->
         <mapgis-ui-row class="mapgis-ui-project-edit-title">
           <mapgis-ui-col span="24" v-if="dataSourceCopy && dataSourceCopy.title">
             <span v-show="!editTitle" class="mapgis-ui-project-edit-title-value">{{ dataSourceCopy.title }}</span>
             <mapgis-ui-svg-icon v-show="!editTitle"
                                 id="mpEdit" @click="$_editTitle"
+                                :iconStyle="{color: 'white'}"
                                 class="mapgis-ui-project-edit-edit-icon mapgis-ui-project-edit-edit-icon-p"
                                 type="edit"/>
             <mapgis-ui-input v-show="editTitle"
@@ -25,12 +27,14 @@
           </mapgis-ui-col>
         </mapgis-ui-row>
       </div>
+      <!-- 一行章节-->
       <mapgis-ui-row>
         <mapgis-ui-feature-row
           v-if="dataSourceCopy && dataSourceCopy.chapters"
           v-model="dataSourceCopy.chapters"
           :width="width"
           @editChapter="$_editChapter"
+          @deleteChapter="$_deleteChapter"
         />
       </mapgis-ui-row>
     </div>
@@ -46,7 +50,7 @@
       <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
         <mapgis-ui-dropdown>
           <mapgis-ui-menu slot="overlay">
-            <mapgis-ui-menu-item key="4">
+            <mapgis-ui-menu-item @click="$_copyChapter" key="4">
               复制上一章节
             </mapgis-ui-menu-item>
           </mapgis-ui-menu>
@@ -54,7 +58,7 @@
             新建章节
           </mapgis-ui-button>
         </mapgis-ui-dropdown>
-        <mapgis-ui-button type="primary" @click="$_projectPreview" class="mapgis-ui-project-edit-feature-preview">
+        <mapgis-ui-button type="primary" @click="$_storyPreview" class="mapgis-ui-project-edit-feature-preview">
           预览
         </mapgis-ui-button>
       </mapgis-ui-col>
@@ -64,10 +68,10 @@
       <feature-edit
         ref="featureEdit"
         @change="$_changeChapter"
-        @getCamera="$_setCamera"
+        @setCamera="$_setCamera"
         @selectCamera="$_selectCamera"
         @addMap="$_addMap"
-        @featurePreview="$_featurePreview"
+        @chapterPreview="$_chapterPreview"
         @animationTimeChanged="$_changeAnimationTime"
         @save="$_save"
         :data-source="currentChapter"
@@ -91,14 +95,15 @@ export default {
   },
   data() {
     return {
+      //是否初始化
+      isInit: false,
       //当前章节
-      currentChapter: {},
+      currentChapter: undefined,
       showSetting: false,
       editChapter: false,
       editTitle: false,
       dataSourceCopy: undefined,
-      margin: 26,
-      cameras: []
+      margin: 26
     }
   },
   props: {
@@ -122,6 +127,12 @@ export default {
     },
     editList: {
       type: Object
+    },
+    cameras: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   watch: {
@@ -138,7 +149,9 @@ export default {
     },
     dataSourceCopy: {
       handler: function () {
-        this.$emit("change", this.dataSourceCopy);
+        if (!this.isInit) {
+          this.$emit("changeStory", this.dataSourceCopy);
+        }
       },
       deep: true
     },
@@ -156,11 +169,12 @@ export default {
     let vm = this;
     for (let i = 0; i < title.length; i++) {
       if (title[i].innerText === "地图故事") {
-        title[i].innerHTML = "<img style='width: 12px;margin-bottom: 3px;margin-right: 4px; cursor: pointer;' src='data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjM4MTEwNzU0MDU2IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIzMDYiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT48L2RlZnM+PHBhdGggZD0iTTk1OS4yOTYgNDU1LjgwOEgyNzYuOTI4bDMyMC42NC0zMTMuMTUyLTc4LjY1Ni03Ny41NjgtNDUyLjkyOCA0NDYuNjU2IDQ1My44MjQgNDQ2Ljk3NiA3Ny4xODQtNzYuODY0TDI3Ny4xMiA1NjQuMDk2aDY4Mi4xNzZWNDU1LjgwOHoiIHAtaWQ9IjIzMDciPjwvcGF0aD48L3N2Zz4=' id='MapStoryClose'/>地图故事";
+        title[i].innerHTML = "<img style='width: 12px;margin-bottom: 3px;margin-right: 4px; cursor: pointer;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABMZJREFUeF7tm09oXUUUxs+5DwyCIAiCoiiKogiKoigGzZszLyYq1gZDo9VatbXWYlVSiUiVoFQJatWqtWppbbXapm7sqgvz7sy8hzvBpTtxpTtd6SLE3CMDE0ja9M3k/Zm5NJntnHvv9/3unHPn3XsewiofuMr9wxqA1Cug2WzeNDAw8GsqHUlXQL1ev6VSqRzPsmxdtVr9PQWEZABmZmZuq1QqJxDxBgD4eW5ubmRoaOjP2BCSANBa3wEAJwDgukWGTV9f32h/f//fMSFEB6CUugsRrflrzjSKiKdnZ2fHhoeH/40FISqAPM/7rXlEvKqFwR8AYIyI/osBIRoAY8y9zGzv/BUeYyeJ6LEY5u01ogDQWguX85d5jH1HRJtimY8CQClVczl/qcfYUSJ6Jqb5ngPI83zI5fwlHmOHiGhbbPM9BZDn+QNZltmcv9hj7Asi2pHCfM8AaK0fcjl/kcfYfiJ6MZX5ngBQSq13OX9hK2OI+JEQYldK810HoJR6xC57Zr6glTFmfl9K+Wpq810FkOf5BpfzFY/5KSnl7jKY7xoArbXduNiC13Iw8x4p5aQvLuZ8xxshrfUTAPCtTzQiTgoh9vjiYs93BMAY8yQzf+MTzcy7pZRTvrgU820D0Fo/DQBHAkRPENHegLgkIW0B0FpvBYBDAYrHiWhfQFyykBUDaDQazxVF8WWA4p1E9FlAXNKQFQEwxuxg5gM+xVmWba9Wqwd9cWWYDwagtd4JAJ/6RDPzVinlV764sswHAdBavwwA3lxGxM1CiGNlMReiwwtAKbULET/wnawoisdrtZp3M+Q7T+z5lgCMMRPM/F6AqDcDYkoRQkRvLRZyTgBa69cAoJSbl05IEtESz8sC0Fq/DgBvd3Khsh7rBaCUmkTEJcukrGba0bUGYC0FAmqAXVqruggu5JZSagIRQx6DtmaYdnIy9jFEtESndyNkjBln5g99Qsv4tsen2c57AdggY8xLzPxxwAnfIaI3AuJKExIEwNWEFwBgv085Ik4JIUrz0tOr1xeweF5r/TwAfB5wzLtEZHeSpR/BK2DBiTFmGzOH/NbfS0QTZSewYgDWkFJqCyIe9pmzxVNK+YovLuV8WwBcTXgKAI4GiN9HROMBcUlC2gbgINhmBu8LEET8RAhhX6qUbnQEwD0iNzLz8QBnyb8EL6exYwCuJowh4kkfBEQ8IISwj9PSjK4AcBBGHYSWH0cBIGlDxJnkuwbA1YQRC8H3eRwRDwohtpdhGXQVgKsJ65jZpkPLBgkAOExEz6aG0HUA1lCj0XiwKAoLoWWLDDMfkVJuSQmhJwBcOtwPANMBTVJfE5H90Jpk9AyAdVOv1+/LsmwaEVu2ySHiMSHE5hQEegrAGsrzXFoIAOBrlIzeJWr19RyAe0RWXfPU5Z67PE1EG2OuhCgAXE24x/URXdnKICJ+L4R4NBaEaADcI/Ju1zF+dQuDpwBgw3nXLr9guNls3lkUhe0lvPasXRnij8w8SkT/nJcrYMGUUup21016/SKjP83Pz48MDg7+Fct8tCK4nCGt9a2uJtzIzL8w88O1Wu2PmOaTAnA7xpttOhRFsb5Wq/0W23xyAFbAqv7jZIo7flbhLYOIlBqi7gNSGj3Xtf8H3j6JUDQ6P+IAAAAASUVORK5CYII=' id='MapStoryClose'/>地图故事";
         let MapStoryClose = document.getElementById("MapStoryClose");
         MapStoryClose.onclick = function () {
           if (vm.editChapter) {
-            // vm.$refs.featureEdit.$_stopDraw();
+            vm.$refs.featureEdit.$_stopDraw();
+            vm.$refs.featureEdit.$_hideChapterGraphics();
             vm.editChapter = false;
             window.showPanels.currentPage = "projectEdit";
           } else {
@@ -173,8 +187,21 @@ export default {
   methods: {
     //初始化函数
     $_init() {
+      this.isInit = true;
       //复制数据源
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+      if (this.currentChapter) {
+        let {chapters} = this.dataSourceCopy;
+        for (let i = 0; i < chapters.length; i++) {
+          if (this.currentChapter.uuid === chapters[i].uuid) {
+            this.currentChapter = JSON.parse(JSON.stringify(chapters[i]));
+            break;
+          }
+        }
+      }
+      this.$nextTick(function () {
+        this.isInit = false;
+      });
     },
     //修改章节内容
     $_changeChapter(chapter) {
@@ -191,8 +218,8 @@ export default {
       }
     },
     //设置相机视角
-    $_setCamera() {
-      this.$emit("setCamera", this.currentChapter);
+    $_setCamera(camera) {
+      this.$emit("setCamera", this.currentChapter, camera);
     },
     //选择相机视角
     $_selectCamera(camera) {
@@ -208,8 +235,8 @@ export default {
       // this.$emit("addMapToProject", type, map, this.dataSourceCopy);
     },
     //预览故事
-    $_projectPreview() {
-      this.$emit("projectPreview");
+    $_storyPreview() {
+      this.$emit("storyPreview", this.dataSourceCopy);
     },
     //导出
     $_export() {
@@ -253,6 +280,13 @@ export default {
       chapter.projectUUID = this.dataSourceCopy.uuid;
       this.$emit("addChapter", chapter);
     },
+    //复制上一章节
+    $_copyChapter() {
+      let chapters = JSON.parse(JSON.stringify(this.dataSourceCopy.chapters))
+      let chapter = chapters[chapters.length - 1];
+      chapter.uuid = "Chapter_" + parseInt(String(Math.random() * 100000000));
+      this.$emit("copyChapter", chapter);
+    },
     //保存数据
     $_save() {
       this.$emit("save");
@@ -262,13 +296,60 @@ export default {
       this.$emit("animationTimeChanged", feature);
     },
     //预览一个章节
-    $_featurePreview(feature) {
-      this.$emit("featurePreview", feature);
+    $_chapterPreview(chapter) {
+      this.$emit("chapterPreview", chapter);
+    },
+    //删除章节
+    $_deleteChapter(index) {
+      this.$emit("deleteChapter", index, this.dataSourceCopy.uuid);
     },
     //编辑章节
     $_editChapter(index) {
       let chapters = JSON.parse(JSON.stringify(this.dataSourceCopy.chapters))
       this.currentChapter = chapters[index];
+      let uuid = this.currentChapter.projectUUID;
+      let features = this.currentChapter.features;
+      let graphicLayer = this.$_getGraphicLayer(uuid, uuid);
+      if (!graphicLayer) {
+        this.$refs.featureEdit.$_initGraphicLayer(uuid);
+      } else {
+        //如果是由预览组件生成的标会图层
+        if (graphicLayer.hasOwnProperty("initByPreview") && graphicLayer.initByPreview) {
+          graphicLayer.initByPreview = false;
+          //先重置getGraphic函数
+          this.$refs.featureEdit.$_resetGetGraphic(uuid, uuid);
+        }
+      }
+      //先隐藏其他章节的标绘对象
+      for (let i = 0; i < chapters.length; i++) {
+        if (i !== index) {
+          const {features} = chapters[i];
+          if (features) {
+            for (let j = 0; j < features.length; j++) {
+              let graphic = this.$_getGraphicByID(features[j].id, uuid, uuid);
+              if (graphic) {
+                graphic.show = false;
+              }
+            }
+          }
+        }
+      }
+      //在显示当前章节的标会对象
+      if (features) {
+        //通过预览组件生成的数据，没有传入标会组件里面，因此更新标会列表数据
+        this.$refs.featureEdit.$_updateGraphicList(JSON.parse(JSON.stringify(features)));
+        for (let i = 0; i < features.length; i++) {
+          let graphic = this.$_getGraphicByID(features[i].id, uuid, uuid);
+          if (graphic) {
+            graphic.show = true;
+          } else {
+            this.$_fromJson({
+              features: [features[i]],
+              type: "FeatureCollection"
+            }, uuid, uuid);
+          }
+        }
+      }
       this.editChapter = true;
     }
   }

@@ -3,15 +3,19 @@
     <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
          class="mapgis-ui-project-panel">
       <div class="mapgis-ui-project-panel-content" v-show="!showStoryEdit" :style="{height: height - 40 + 'px'}">
-        <mapgis-ui-project-header @import="$_import"/>
+        <mapgis-ui-project-header
+          @import="$_import"
+          @search="$_search"
+          :enableImport="enableImport"/>
         <mapgis-ui-project-row @editProject="$_editStory"
                                @deleted="$_deleteStory"
                                @export="$_export"
                                @import="$_import"
                                @showProjected="$_showProject"
                                @marked="$_markerStory"
-                               @projectPreview="$_storyPreview"
+                               @storyPreview="$_storyPreview"
                                :projects="dataSourceCopy"
+                               :hideArr="hideArr"
                                :width="width"
         />
       </div>
@@ -23,10 +27,10 @@
         </mapgis-ui-col>
       </mapgis-ui-row>
       <project-edit
+        ref="panelEdit"
         v-show="showStoryEdit"
-        :width="width"
-        :height="height"
         @changeChapter="$_changeChapter"
+        @changeStory="$_changeStory"
         @addMap="$_addMap"
         @setCamera="$_setCamera"
         @selectCamera="$_selectCamera"
@@ -34,12 +38,16 @@
         @storyPreview="$_storyPreview"
         @chapterPreview="$_chapterPreview"
         @addChapter="$_addChapter"
+        @deleteChapter="$_deleteChapter"
         @copyChapter="$_copyChapter"
         @export="$_export"
         @save="$_save"
         @backed="$_back"
-        ref="panelEdit"
-        :data-source="currentStory"/>
+        :data-source="currentStory"
+        :width="width"
+        :height="height"
+        :cameras="cameras"
+      />
     </div>
   </div>
 </template>
@@ -86,6 +94,10 @@ export default {
     },
     editList: {
       type: Object
+    },
+    enableImport: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -98,7 +110,9 @@ export default {
       currentProjectIndex: undefined,
       storyFeature: [],
       dataSourceCopy: undefined,
-      showStoryEdit: false
+      showStoryEdit: false,
+      hideArr: [],
+      cameras: [],
     }
   },
   mounted() {
@@ -128,13 +142,26 @@ export default {
       }
       this.$emit("export", project);
     },
+    //搜索
+    $_search(e) {
+      let hideArr = [];
+      //不想触发数据更新，因此隐藏不包含搜索内容的数据
+      if (e.target.value) {
+        for (let i = 0; i < this.dataSourceCopy.length; i++) {
+          if (this.dataSourceCopy[i].title.indexOf(e) < 0) {
+            hideArr.push(i);
+          }
+        }
+      }
+      this.hideArr = hideArr;
+    },
     //导入数据
     $_import() {
       this.$emit("import");
     },
     //删除故事
-    $_deleteStory() {
-      this.currentStorys.splice(this.currentProjectIndex, 1);
+    $_deleteStory(index) {
+      this.$emit("deleteStory", index);
     },
     //保存标题
     $_click(e) {
@@ -154,29 +181,17 @@ export default {
     },
     //添加故事
     $_addStory() {
-      this.currentStory = {
-        "title": "无标题",
-        "description": "",
-        "uuid": "mapStory" + parseInt(String(Math.random() * 100000000)),
-        "map": {
-          "type": "",
-          "baseUrl": "",
-          "layer": "",
-          "tilingScheme": "",
-          "tileMatrixSet": "",
-          "format": "",
-          "vueKey": "",
-          "vueIndex": ""
-        },
-        "features": [],
-        "chapters": []
-      };
-      this.dataSourceCopy.push(this.currentStory);
-      this.showStoryEdit = true;
+      this.$emit("addStory");
     },
     //编辑故事
     $_editStory(index) {
       this.currentStory = JSON.parse(JSON.stringify(this.dataSourceCopy[index]));
+      let chapters = this.currentStory.chapters;
+      let cameras = [];
+      for (let i = 0; i < chapters.length; i++) {
+        cameras.push(chapters[i].camera);
+      }
+      this.cameras = cameras
       this.showStoryEdit = true;
     },
     //回退
@@ -189,8 +204,12 @@ export default {
       this.$emit("addChapter", chapter);
     },
     //复制章节
-    $_copyChapter(uuid) {
-      this.$emit("copyChapter", uuid);
+    $_copyChapter(chapter) {
+      this.$emit("copyChapter", chapter);
+    },
+    //删除章节
+    $_deleteChapter(index, uuid) {
+      this.$emit("deleteChapter", index, uuid);
     },
     //添加章节地图
     $_addMap(type, map, id) {
@@ -200,9 +219,13 @@ export default {
     $_changeChapter(chapter) {
       this.$emit("changeChapter", chapter);
     },
+    //修改故事内容
+    $_changeStory(story) {
+      this.$emit("changeStory", story);
+    },
     //设置视角
-    $_setCamera(currentFeature) {
-      this.$emit("setCamera", currentFeature);
+    $_setCamera(currentChapter, camera) {
+      this.$emit("setCamera", currentChapter, camera);
     },
     //选择视角
     $_selectCamera(camera, currentFeature) {
@@ -213,16 +236,12 @@ export default {
       this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
     },
     //预览故事
-    $_storyPreview(project) {
-      if (!project) {
-        this.currentStoryFeature = this.currentStory.features;
-      }
-      project = project || this.currentStory;
-      this.$emit("projectPreview", project);
+    $_storyPreview(story) {
+      this.$emit("storyPreview", story);
     },
     //预览章节
-    $_chapterPreview(feature) {
-      this.$emit("featurePreview", feature);
+    $_chapterPreview(chapter) {
+      this.$emit("chapterPreview", chapter);
     }
   }
 }

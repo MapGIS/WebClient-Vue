@@ -3,13 +3,17 @@
     <project-panel-ui
         ref="projectP"
         @addMap="$_addChapterMap"
-        @deleteProject="$_deleteStory"
+        @addStory="$_addStory"
+        @deleteStory="$_deleteStory"
         @editProject="$_editStory"
         @toggleChapterFeatures="$_toggleChapterFeatures"
         @addChapter="$_addChapter"
         @copyChapter="$_copyChapter"
+        @deleteChapter="$_deleteChapter"
+        @changeChapter="$_changeChapter"
+        @changeStory="$_changeStory"
         @storyPreview="$_storyPreview"
-        @getCamera="$_getCamera"
+        @setCamera="$_setCamera"
         @selectCamera="$_selectCamera"
         @showProject="$_showStory"
         @chapterPreview="$_chapterPreview"
@@ -17,17 +21,16 @@
         @export="$_export"
         @import="$_import"
         @save="$_save"
-        @changeChapter="$_changeChapter"
         :height="panelHeight"
         :width="width"
         :data-source="dataSourceCopy"
+        :enableImport="enableImport"
         v-show="showProjectPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <story-panel-large-ui
         v-show="showLargePanel"
         @closePanel="$_closePanel"
-        @flyTo="$_flyTo"
         :showPlay="showPlay"
         :showArrow="showArrow"
         :dataSource="storyFeature"
@@ -40,7 +43,6 @@
 
 <script>
 import mapCollection from "./mapCollection";
-import mapStoryService from "./mapStoryService";
 import editList from "../Graphic/editList";
 import ProjectPanelUI from "./ProjectPanelUI";
 import StoryPanelLargeUI from "./StoryPanelLargeUI";
@@ -48,7 +50,6 @@ import StoryPanelLargeUI from "./StoryPanelLargeUI";
 window.showProjectEdit = false;
 export default {
   name: "projectPanel",
-  mixins: [mapStoryService],
   components: {
     "map-collection": mapCollection,
     "project-panel-ui": ProjectPanelUI,
@@ -78,6 +79,10 @@ export default {
     },
     upProjectSet: {
       type: Object,
+    },
+    enableImport: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -123,6 +128,10 @@ export default {
     $_changeChapter(chapter) {
       this.$emit("changeChapter", chapter);
     },
+    //修改故事内容
+    $_changeStory(story) {
+      this.$emit("changeStory", story);
+    },
     //保存
     $_save() {
       this.$emit("save");
@@ -146,26 +155,26 @@ export default {
       }
     },
     //预览章节
-    $_chapterPreview(feature) {
+    $_chapterPreview(chapter) {
       if (this.enablePreview) {
-        this.storyFeature = [feature];
+        this.storyFeature = [chapter];
         this.showPlay = false;
         this.showArrow = false;
         this.showLargePanel = true;
         this.enableFullScreen = false;
       } else {
-        this.$emit("featurePreview", feature);
+        this.$emit("chapterPreview", chapter);
       }
     },
     //预览地图故事
-    $_storyPreview(chapters) {
+    $_storyPreview(story) {
       if (this.enablePreview) {
         this.storyFeature = this.currentProject.features;
         this.showPlay = true;
         this.showArrow = true;
         this.showLargePanel = true;
       } else {
-        this.$emit("projectPreview", chapters);
+        this.$emit("storyPreview", story);
       }
     },
     //关闭右侧轮播面板
@@ -180,61 +189,29 @@ export default {
     $_addChapter(chapter) {
       this.$emit("addChapter", chapter);
     },
-    //保存章节
-    $_copyChapter(uuid) {
-      this.$emit("copyChapter", uuid);
+    //复制上一章节
+    $_copyChapter(chapter) {
+      this.$emit("copyChapter", chapter);
+    },
+    //删除章节
+    $_deleteChapter(index, uuid) {
+      this.$emit("deleteChapter", index, uuid);
     },
     //取得视角
-    $_getCamera(currentFeature) {
-      this.$emit("getCamera", currentFeature);
+    $_setCamera(currentChapter, camera) {
+      this.$emit("setCamera", currentChapter, camera);
     },
     //选择视角
     $_selectCamera(camera, currentFeature) {
       this.$emit("selectCamera", camera, currentFeature);
     },
+    //新增故事
+    $_addStory() {
+      this.$emit("addStory");
+    },
     //删除故事
-    $_deleteStory(project) {
-      this.$emit("deleteProject");
-      for (let i = 0; i < this.dataSourceCopy.length; i++) {
-        if (this.dataSourceCopy[i].uuid === project.uuid) {
-          this.dataSourceCopy.splice(i, 1);
-        }
-      }
-      if (!project.features) {
-        if (this.upProjectSet.hasOwnProperty(project.uuid)) {
-          project = this.upProjectSet[project.uuid];
-        } else {
-          return;
-        }
-      }
-      for (let i = 0; i < project.features.length; i++) {
-        this.viewer.entities.removeById(project.features[i].id);
-        const {map} = project.features[i];
-        if (map) {
-          let layer;
-          const {vueKey, vueIndex, type} = map;
-          if (vueKey && vueIndex && type) {
-            switch (type) {
-              case "WMTS":
-                layer = window.vueCesium.OGCWMTSManager.findSource(vueKey, vueIndex).source;
-                break;
-              case "WMS":
-                layer = window.vueCesium.OGCWMSManager.findSource(vueKey, vueIndex).source;
-                break;
-              case "TILE":
-                layer = window.vueCesium.IgsTilecLayerManager.findSource(vueKey, vueIndex).source;
-                break;
-              case "DYNAMIC":
-                layer = window.vueCesium.IgsserverManager.findSource(vueKey, vueIndex).source;
-                break;
-              case "DOC":
-                layer = window.vueCesium.IgsDocLayerManager.findSource(vueKey, vueIndex).source;
-                break;
-            }
-            this.viewer.imageryLayers.remove(layer);
-          }
-        }
-      }
+    $_deleteStory(index) {
+      this.$emit("deleteStory", index);
     },
     //天机故事底图
     $_addStoryMap(type, map, project) {

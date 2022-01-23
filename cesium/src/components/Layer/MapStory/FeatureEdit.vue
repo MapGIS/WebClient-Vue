@@ -32,8 +32,7 @@
           :mainStyle="cameraMainStyle"
           @click="$_setCamera"
           @showDetail="$_showCameraDetail"
-          @selectCamera="$_selectCamera"
-          v-model="camera"/>
+          @selectCamera="$_selectCamera"/>
         <mapgis-ui-set-camera-view
           :showTitle="false"
           :showButton="false"
@@ -46,7 +45,7 @@
           paddingLeft="7px"
           paddingRight="5px"
           fontSize="14px"
-          @change="$_changeAnimationTime"
+          @change="$_setAnimationTime"
           v-model="dataSourceCopy.animationTime"
         />
         <!--图片展示-->
@@ -64,6 +63,7 @@
           fontSize="14px"
         />
         <mapgis-3d-graphic-single-layer
+          v-if="dataSourceCopy"
           ref="graphicLayer"
           :data-source="graphics"
           :containerStyle="graphicContainerStyle"
@@ -84,9 +84,9 @@
           width="80px"
         />
         <mapgis-ui-row style="width: 100%;padding-left: 8px;padding-right: 9px;">
-          <div v-if="editor" style="border: 2px solid black;">
+          <div v-if="editor" style="border: 1px solid #DCDCDC;">
             <editor-menu-bar :editor="editor" v-slot="{ commands }">
-              <div style="border-bottom: 2px solid black;">
+              <div style="border-bottom: 1px solid #DCDCDC;">
               <span
                 @click="commands.bold"
               >
@@ -165,7 +165,9 @@
         </mapgis-ui-row>
       </div>
       <!--保存与预览-->
-      <mapgis-ui-project-bottom-panel v-if="dataSourceCopy" class="mapgis-ui-feature-edit-bottom"
+      <mapgis-ui-project-bottom-panel v-if="dataSourceCopy"
+                                      class="mapgis-ui-feature-edit-bottom"
+                                      :enableSave="false"
                                       @save="$_save"
                                       @preview="$_preview"/>
     </div>
@@ -173,6 +175,7 @@
 </template>
 
 <script>
+import GraphicLayerService from "../Graphic/GraphicLayerService";
 import {Editor, EditorContent, EditorMenuBar} from 'tiptap'
 import {
   Blockquote,
@@ -198,15 +201,17 @@ import {
 
 export default {
   name: "mapgis-3d-feature-edit",
+  mixins: [GraphicLayerService],
   components: {
     EditorMenuBar,
     EditorContent,
   },
   data() {
     return {
+      //是否初始化
       isInit: false,
       //数据源副本
-      dataSourceCopy: {},
+      dataSourceCopy: undefined,
       //图标样式
       iconStyle: {
         opacity: 1
@@ -215,13 +220,11 @@ export default {
       editor: undefined,
       //富文本编辑器按钮样式
       editButtonStyle: {
-        color: "black",
         width: "24px",
         height: "24px",
       },
       //图片选择样式
       pictureStyle: {
-        color: "black",
         width: "18px",
         height: "18px",
         marginBottom: "2px",
@@ -231,6 +234,7 @@ export default {
         textAlign: "center",
         width: "24px",
         height: "30px",
+        marginLeft: "1.5px",
       },
       //附加地图样式
       topTitleStyle: {
@@ -342,25 +346,19 @@ export default {
         }
       },
       deep: true
-    },
-    "dataSourceCopy.title": {
-      handler: function () {
-        this.$emit("titleChanged", this.dataSourceCopy);
-      },
-      deep: true
     }
   },
   mounted() {
     this.$_init();
   },
   methods: {
-    //更细轮播图
+    //更新轮播图
     $_changeImage(images) {
       this.dataSourceCopy.images = images;
     },
     //更新动画时间
-    $_changeAnimationTime(e) {
-      this.dataSourceCopy.animationTime = e;
+    $_setAnimationTime(e) {
+      this.dataSourceCopy.animationTime = e / 1;
     },
     //展开高级选项
     $_showAdvance() {
@@ -380,11 +378,6 @@ export default {
       this.isInit = true;
       //复制数据源
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
-      const {features} = this.dataSourceCopy;
-      if (features) {
-        //取得标绘对象集合
-        this.graphics = JSON.parse(JSON.stringify(features));
-      }
       this.$nextTick(function () {
         this.isInit = false;
       });
@@ -405,7 +398,9 @@ export default {
     },
     //选择相机视角
     $_selectCamera(camera) {
-      this.$emit("selectCamera", camera);
+      camera.title = this.dataSourceCopy.title;
+      camera.uuid = this.dataSourceCopy.uuid;
+      this.$emit("setCamera", camera);
     },
     //初始化富文本编辑
     $_initEditor() {
@@ -464,15 +459,47 @@ export default {
     //预览
     $_preview() {
       this.isPreviewFeature = true;
-      this.$emit("featurePreview", this.dataSourceCopy);
+      this.$emit("chapterPreview", this.dataSourceCopy);
     },
     //添加Graphic
     $_addGraphic(e) {
-      this.dataSourceCopy.features.push(e);
+      if (this.dataSourceCopy.features.length === 0){
+        this.$set(this.dataSourceCopy.features, this.dataSourceCopy.features.length, e);
+        this.$emit("change", this.dataSourceCopy);
+      }else {
+        this.$set(this.dataSourceCopy.features, this.dataSourceCopy.features.length, e);
+      }
     },
     //保存数据
     $_save() {
       this.$emit("save");
+    },
+    //初始化标绘图层
+    $_initGraphicLayer(uuid) {
+      this.$refs.graphicLayer.$_init(undefined, uuid, uuid);
+    },
+    //更新标会列表数据
+    $_updateGraphicList(graphics) {
+      this.$refs.graphicLayer.$_updateGraphicList(graphics);
+    },
+    //重置getGraphic函数
+    $_resetGetGraphic(vueIndex, vueKey) {
+      this.$refs.graphicLayer.$_resetGetGraphic(vueIndex, vueKey);
+    },
+    //停止绘制
+    $_stopDraw() {
+      this.$refs.graphicLayer.$_stopDraw();
+    },
+    //隐藏当前章节的标绘内容
+    $_hideChapterGraphics() {
+      let uuid = this.dataSourceCopy.projectUUID;
+      let graphics = this.dataSourceCopy.features;
+      for (let i = 0; i < graphics.length; i++) {
+        let graphic = this.$_getGraphicByID(graphics[i].id, uuid, uuid);
+        if (graphic) {
+          graphic.show = false;
+        }
+      }
     }
   }
 }
@@ -507,6 +534,7 @@ export default {
 
 .mapgis-3d-map-story-edit-container {
   width: 99%;
+  padding: 10px;
 }
 
 .ProseMirror-focused {

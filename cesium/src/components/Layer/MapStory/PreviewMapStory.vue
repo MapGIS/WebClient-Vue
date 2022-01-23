@@ -10,6 +10,7 @@
       :height="panelHeight"
       :width="width"
       :enableFullScreen="enableFullScreen"
+      :enableClose="enableClose"
       ref="storyPanel"
       v-show="showPanel"
     />
@@ -53,6 +54,10 @@ export default {
     enablePlay: {
       type: Boolean,
       default: true
+    },
+    enableClose: {
+      type: Boolean,
+      default: true
     }
   },
   watch: {
@@ -75,18 +80,19 @@ export default {
   },
   mounted() {
     this.$_init();
-    this.$_newGraphicLayer();
   },
   methods: {
     $_preview() {
       let vm = this;
       this.$refs.storyPanel.$_resetFeature();
-      this.$_play(this.dataSource.chapters, [this.dataSource], function (index) {
-        if (vm.$refs.storyPanel) {
-          if (index > 0) {
-            vm.$refs.storyPanel.$_nextFeature();
+      this.$_addGraphicByStory(this.dataSource, function () {
+        vm.$_play(vm.dataSource.chapters, [vm.dataSource], function (index) {
+          if (vm.$refs.storyPanel) {
+            if (index > 0) {
+              vm.$refs.storyPanel.$_nextFeature();
+            }
           }
-        }
+        });
       });
     },
     $_closePanel() {
@@ -96,6 +102,9 @@ export default {
       this.$nextTick(function () {
         this.$_preview();
       });
+    },
+    chapterPreview(chapters) {
+      this.storyFeature = dataSource.chapters;
     },
     $_init() {
       let vm = this;

@@ -6,7 +6,18 @@
                    :width="width"
                    :enablePreview="enablePreview"
                    :enableClose="enableClose"
+                   :enableImport="enableImport"
                    @changeChapter="$_changeChapter"
+                   @setCamera="$_setCamera"
+                   @save="$_save"
+                   @addChapter="$_addChapter"
+                   @copyChapter="$_addChapter"
+                   @deleteChapter="$_deleteChapter"
+                   @addStory="$_addStory"
+                   @deleteStory="$_deleteStory"
+                   @changeStory="$_changeStory"
+                   @storyPreview="$_storyPreview"
+                   @chapterPreview="$_chapterPreview"
     />
     <input style="display: none" type="file" :id="inputId"
            accept=".json">
@@ -14,11 +25,11 @@
     <map-collection :key="opt.vueIndex" v-for="(opt) in projectMaps" :options="opt"/>
     <template v-for="(popup) in popups">
       <mapgis-3d-popup
-          :key="popup.vueIndex"
-          :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
-          :forceRender="true"
-          v-model="popup.show"
-          :vueIndex="popup.vueIndex"
+        :key="popup.vueIndex"
+        :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+        :forceRender="true"
+        v-model="popup.show"
+        :vueIndex="popup.vueIndex"
       >
         <div>
           <div class="mapgis-3d-map-story-small-popup-container">
@@ -43,7 +54,6 @@
 import projectPanel from "./projectPanel"
 import mapCollection from "./mapCollection";
 import mapStoryService from "./mapStoryService"
-import GraphicLayerService from "../Graphic/GraphicLayerService";
 
 window.showPanels = {
   currentPage: "",
@@ -51,13 +61,84 @@ window.showPanels = {
 }
 export default {
   name: "mapgis-3d-map-story-layer",
-  mixins: [mapStoryService, GraphicLayerService],
+  mixins: [mapStoryService],
   components: {
     "project-panel": projectPanel,
     "map-collection": mapCollection,
   },
   mounted() {
     this.$_init();
+  },
+  methods: {
+    //修改章节内容
+    $_changeChapter(chapter) {
+      this.$_setChapter(chapter);
+      this.$_save();
+    },
+    //保存数据
+    $_save() {
+      this.$emit("save", JSON.parse(JSON.stringify(this.dataSourceCopy)));
+    },
+    //新增章节
+    $_addChapter(chapter) {
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].uuid === chapter.projectUUID) {
+          this.dataSourceCopy[i].chapters.push(chapter);
+          break;
+        }
+      }
+    },
+    //删除章节
+    $_deleteChapter(index, uuid) {
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].uuid === uuid) {
+          this.dataSourceCopy[i].chapters.splice(index, 1);
+          break;
+        }
+      }
+    },
+    //删除故事
+    $_deleteStory(index) {
+      this.dataSourceCopy.splice(index, 1);
+    },
+    //修改故事
+    $_changeStory(story) {
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].uuid === story.uuid) {
+          this.$set(this.dataSourceCopy, i, story);
+          break;
+        }
+      }
+    },
+    //新增故事
+    $_addStory(index) {
+      let story = {
+        "title": "无标题",
+        "description": "",
+        "uuid": "mapStory" + parseInt(String(Math.random() * 100000000)),
+        "map": {
+          "type": "",
+          "baseUrl": "",
+          "layer": "",
+          "tilingScheme": "",
+          "tileMatrixSet": "",
+          "format": "",
+          "vueKey": "",
+          "vueIndex": ""
+        },
+        "features": [],
+        "chapters": []
+      };
+      this.dataSourceCopy.push(story);
+    },
+    $_storyPreview(story) {
+      this.$emit("storyPreview", story);
+    },
+    $_chapterPreview(chapter) {
+      this.$emit("chapterPreview", {
+        chapters: [chapter]
+      });
+    }
   }
 }
 </script>
