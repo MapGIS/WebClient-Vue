@@ -1,5 +1,17 @@
 <template>
+  <Popup
+    v-if="modelSwitchVisible"
+    :visible="modelSwitchVisible"
+    :position="iClickPosition"
+    forceRender
+  >
+    <mapgis-ui-popup-content style="width: 200px !important; top: 10px">
+      <modelSwitchPopup :tile="tile" @handleModel="handleModel">
+      </modelSwitchPopup>
+    </mapgis-ui-popup-content>
+  </Popup>
   <mapgis-3d-virtual-popup
+    v-else
     :enablePopup="enablePopup"
     :enableTips="enableTips"
     :enableIot="enableIot"
@@ -18,6 +30,8 @@ import { G3D } from "@mapgis/webclient-es6-service";
 import Tileset3dOptions from "./3DTilesetOptions";
 import { M3dType, M3dType_0_0 } from "./M3dType";
 import PopupMixin from "../Mixin/PopupMixin";
+import modelSwitchPopup from "./components/M3dModelSwitch";
+import Popup from "../../UI/Popup/Popup.vue";
 
 const { M3DTileDataInfo } = G3D;
 
@@ -26,13 +40,20 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [PopupMixin],
   props: {
-    ...Tileset3dOptions,
+    ...Tileset3dOptions
+  },
+  components: {
+    modelSwitchPopup,
+    Popup
   },
   data() {
     return {
       layerIndex: undefined,
       layerList: undefined,
       version: undefined,
+      modelSwitchVisible: false,
+      tileIndex: undefined,
+      tile: {}
     };
   },
   created() {},
@@ -44,6 +65,9 @@ export default {
     this.unmount();
   },
   watch: {
+    tileIndex(next) {
+      this.tile.tileIndex = next;
+    },
     layers(next) {
       if (this.initial) return;
       this.layerList = this.parseLayers(next);
@@ -65,12 +89,17 @@ export default {
       } else {
         this.unbindPopupEvent();
       }
-    },
+    }
   },
   /* render(h) {
     return this.$_render(h);
   }, */
   methods: {
+    handleModel(index) {
+      const vm = this;
+      vm.tileIndex = index;
+      vm.modelSwitchVisible = false;
+    },
     createCesiumObject() {
       const vm = this;
       const { vueCesium, viewer, url, $props } = this;
@@ -207,10 +236,16 @@ export default {
       }
     },
     bindPopupEvent() {
-      const { vueKey, vueIndex, enablePopup, enableTips } = this;
+      const {
+        vueKey,
+        vueIndex,
+        enablePopup,
+        enableTips,
+        enableModelSwitch
+      } = this;
 
       let clickhandler, hoverhandler;
-      if (enablePopup) {
+      if (enablePopup || enableModelSwitch) {
         clickhandler = this.$_bindClickEvent(
           this.pickFeature,
           this.cancelFeature
@@ -246,7 +281,6 @@ export default {
     },
     pickFeature(payload) {
       console.log("payload", payload);
-      
       const vm = this;
       const { movement } = payload;
 
@@ -257,8 +291,16 @@ export default {
 
       if (version == "0.0" || version == "1.0") {
       } else if (version == "2.0") {
-        let oid = viewer.scene.pickOid(movement.position);
+        /* 只有在多模态下为真 */
+        vm.modelSwitchVisible = false;
         let feature = viewer.scene.pick(movement.position);
+        /* 多模态切换 */
+        if (vm.enableModelSwitch) {
+          vm.tile = feature.content.tile.searchMultimodalTile();
+          vm.modelSwitchVisible = true;
+          return;
+        }
+        let oid = viewer.scene.pickOid(movement.position);
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
         vueCesium.M3DIgsManager.changeOptions(
           vueKey,
