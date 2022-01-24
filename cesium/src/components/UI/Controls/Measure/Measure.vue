@@ -27,6 +27,12 @@ export default {
           lineColor: "black"
         };
       }
+    },
+    measureOptions: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -43,10 +49,17 @@ export default {
         this.initStyles();
       },
       deep: true
+    },
+    measureOptions: {
+      handler: function () {
+        this.measureOptions = this.$_formatOptions(this.measureOptions);
+      },
+      deep: true
     }
   },
   mounted() {
     let vm = this;
+    this.measureOptions = this.$_formatOptions(this.measureOptions);
     this.$_init(function () {
       vm.initStyles();
       vm.initial = true;
@@ -72,17 +85,17 @@ export default {
       }
       this.$emit("measured", result);
     },
-    enableMeasureLength(options) {
-      this.$_enableMeasure("MeasureLengthTool", options);
+    enableMeasureLength() {
+      this.$_enableMeasure("MeasureLengthTool");
     },
-    enableMeasureArea(options) {
-      this.$_enableMeasure("MeasureAreaTool", options);
+    enableMeasureArea() {
+      this.$_enableMeasure("MeasureAreaTool");
     },
-    enableMeasureTriangle(options) {
-      this.$_enableMeasure("TriangulationTool", options);
+    enableMeasureTriangle() {
+      this.$_enableMeasure("TriangulationTool");
     },
-    enableMeasureSlope(options) {
-      this.$_enableMeasure("MeasureSlopeTool", options);
+    enableMeasureSlope() {
+      this.$_enableMeasure("MeasureSlopeTool");
     },
     $_formatOptions(options) {
       const colorArr = ["fillColor", "outlineColor", "backgroundColor", "lineColor", "areaColor"];
@@ -93,7 +106,7 @@ export default {
       }
       return options;
     },
-    $_enableMeasure(MeasureName, options) {
+    $_enableMeasure(MeasureName) {
       const {vueKey, vueIndex} = this;
       let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
       let measureOptions = {
@@ -106,10 +119,7 @@ export default {
           }
         }
       }
-      if (options) {
-        options = this.$_formatOptions(options);
-        measureOptions = Object.assign(measureOptions, options);
-      }
+      measureOptions = Object.assign(measureOptions, this.measureOptions);
       let measure = new Cesium[MeasureName](webGlobe.viewer, measureOptions);
       window.CesiumZondy.MeasureToolManager.addSource(
         vueKey,

@@ -27,7 +27,7 @@ const Template = (args, { argTypes }) => ({
         :style="controlStyle"
         class="measure-story-control"
       >
-        <mapgis-3d-measure ref="measure3d" @load="measure = $event">
+        <mapgis-3d-measure ref="measure3d" :measureOptions="measureOptions" @load="measure = $event">
           <mapgis-ui-space
             v-if="!hasSettingPanel"
             slot="measureTool"
@@ -60,6 +60,7 @@ const Template = (args, { argTypes }) => ({
     return {
       m3durl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
       measure: null,
+      measureOptions: {},
       toolbarVisible: this.hasSettingPanel,
       toolbarBtns: [
         {
@@ -148,10 +149,7 @@ const Template = (args, { argTypes }) => ({
       this.toolbarVisible = !this.toolbarVisible;
     },
     enableLengthMeasure() {
-      //输入量测参数
-      this.startMeasure("MeasureLengthTool", {
-        fillColor: "rgba(255, 0,0, 0.2)"
-      });
+      this.startMeasure("MeasureLengthTool");
     },
     enableAreaMeasure() {
       this.startMeasure("MeasureAreaTool");
@@ -168,6 +166,7 @@ const Template = (args, { argTypes }) => ({
     if (!this.hasSettingPanel) {
       this.toolbarVisible = this.expandControl;
     }
+    this.measureOptions = {fillColor: "rgba(255, 255,0, 0.8)"};
   },
 });
 

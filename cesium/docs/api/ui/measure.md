@@ -22,53 +22,13 @@
 - **描述:**
   > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
-## 槽
+### `measureOptions`
 
-### `default`
-
-- **描述:** Measure 的自定义槽的实现，可以自定义绘制控件样式
-
-## 事件
-
-### `@load`
-
-- **描述:** 在 Measure 加载完毕后发送该事件
-- **回调参数** `{ Measure }`
-- `Measure` Measure 对象
-
-### `@unload`
-
-- **描述:** 在 Measure 注销完毕后发送该事件
-
-### `@measured`
-
-- **描述:** 在 Measure 测量完毕后发送该事件
-  > 直线测量结果：Array,[起始点（0），第一次点击距离起始点的长度，第二次点击距离起始点的长度，...，右键结束测量后，最后一个点距离起始点的长度]，
-  > 单位：千米 <br/>
-  > 面积测量结果：Number,测量的面积，单位：平方米 <br/>
-  > 三角测量结果：Object,{horizontalDiatance（水平距离）,slantDiatance（直线距离）,verticalDiatance（高差）} <br/>
-  > 坡度测量：number，坡度，单位：度
-- **回调参数** `{ result }`
-
-## 方法
-
-### `enableMeasureLength(options)`
-
-- **描述:** 激活直线测量功能，测量参数 options，详见下面说明
-
-### `enableMeasureArea(options)`
-
-- **描述:** 激活面积测量功能，测量参数 options，详见下面说明
-
-### `enableMeasureTriangle(options)`
-
-- **描述:** 激活三角测量功能，测量参数 options，详见下面说明
-
-### `enableMeasureSlope(options)`
-
-- **描述:** 激活坡度测量功能，测量参数 options，详见下面说明
-
-## 测量参数
+- **类型:** `Object`
+- **可选**
+- **侦听属性**
+- **描述:**
+  > 测量参数。
 
 ### `enableMeasureLength(直线测量)参数`
 
@@ -131,6 +91,52 @@
 | pixelOffset              | Cesium.Cartesian2      | new Cartesian2(0, -4)           | 相对于设定点的偏移位置                                                           |
 | verticalOrigin           | Cesium.VerticalOrigin  | VerticalOrigin.BOTTOM           | 面积测量结果的 label 的摆放位置                                                  |
 
+## 槽
+
+### `default`
+
+- **描述:** Measure 的自定义槽的实现，可以自定义绘制控件样式
+
+## 事件
+
+### `@load`
+
+- **描述:** 在 Measure 加载完毕后发送该事件
+- **回调参数** `{ Measure }`
+- `Measure` Measure 对象
+
+### `@unload`
+
+- **描述:** 在 Measure 注销完毕后发送该事件
+
+### `@measured`
+
+- **描述:** 在 Measure 测量完毕后发送该事件
+  > 直线测量结果：Array,[起始点（0），第一次点击距离起始点的长度，第二次点击距离起始点的长度，...，右键结束测量后，最后一个点距离起始点的长度]，
+  > 单位：千米 <br/>
+  > 面积测量结果：Number,测量的面积，单位：平方米 <br/>
+  > 三角测量结果：Object,{horizontalDiatance（水平距离）,slantDiatance（直线距离）,verticalDiatance（高差）} <br/>
+  > 坡度测量：number，坡度，单位：度
+- **回调参数** `{ result }`
+
+## 方法
+
+### `enableMeasureLength()`
+
+- **描述:** 激活直线测量功能
+
+### `enableMeasureArea()`
+
+- **描述:** 激活面积测量功能
+
+### `enableMeasureTriangle()`
+
+- **描述:** 激活三角测量功能
+
+### `enableMeasureSlope()`
+
+- **描述:** 激活坡度测量功能
+
 ## 示例
 
 ### 简单使用
@@ -141,7 +147,11 @@
 <template>
   <div id="app">
     <mapgis-web-scene>
-      <mapgis-3d-measure @load="handleLoad" @measured="measured">
+      <mapgis-3d-measure
+        :measureOptions="measureOptions"
+        @load="handleLoad"
+        @measured="measured"
+      >
         <div id="toolbar-wrapper">
           <div class="toolbar-item" v-on:click="measureLength">直线测量</div>
           <div class="toolbar-item" v-on:click="measureArea">面积测量</div>
@@ -158,7 +168,10 @@
 export default {
   components: {},
   data() {
-    return {};
+    return {
+      //测量参数
+      measureOptions: {}
+    };
   },
   methods: {
     handleLoad(measure) {
@@ -171,19 +184,16 @@ export default {
       console.log("result", result);
     },
     measureLength() {
-      //激活直线测距，可在options轴设置样式或其他测量参数
-      let options = {};
-      this.measure && this.measure.enableMeasureLength(options);
+      //激活直线测距
+      this.measure && this.measure.enableMeasureLength();
     },
     measureArea() {
-      //激活面积测量，可在options轴设置样式或其他测量参数
-      let options = {};
-      this.measure && this.measure.enableMeasureArea(options);
+      //激活面积测量
+      this.measure && this.measure.enableMeasureArea();
     },
     measureTriangle() {
-      //激活三角测量，可在options轴设置样式或其他测量参数
-      let options = {};
-      this.measure && this.measure.enableMeasureTriangle(options);
+      //激活三角测量
+      this.measure && this.measure.enableMeasureTriangle();
     },
     deleteMeasure() {
       //删除测量结果
