@@ -72,7 +72,8 @@
 | heightRatio         | Number | 1 | 建筑生长高程的缩放比例 |
 | startTime        | Number |  | 城市建筑生长的起始时间（）                     |
 | endTime        | Number |  | 城市建筑生长的结束时间（）                          |
-| colors | Array | ["#fff0f6","#ff85c0","#eb2f96"] | 城市生长的颜色设置 |
+| colors | Array | ["#fff0f6","#ff85c0","#eb2f96"] | 城市生长的时间段对应颜色设置 |
+| times | Array | [] | 城市生长的时间段设置，默认值为空，不传该参数则按colors数组长度等分设置时间段|
 | displayWithTile        | Boolean | false | Line或Tile 根据时间线性加载(false)或网格动态加载(true)，适用不同的数据量展示，默认为线性加载。1. Line：线性加载，是指依照时间段进行加载，每个时间段的加载量由buildingLimit来限制；2.Tile：网格动态加载，是指内部逻辑实现根据当前视角距离计算满足显示精度的瓦片，并请求加载数据渲染城市建筑。                                                                                                                 |
 | growTime         | Number | 60 |城市生长的总播放时长，单位秒。                  |
 | buildingsLimit | Number |400 |线性加载时每一时段的矢量要素数量限制    |
@@ -121,6 +122,7 @@
 export default {
   data() {
     return {
+      width:720,
       baseUrl:"http://192.168.21.192:6163/igs/rest/mrfs/docs/shengZhenBaiMo/0/0",
       featureStyle:{
         startTimeField:"startTime",
@@ -128,7 +130,10 @@ export default {
         heightField:"height",
         startTime: 1068543416,
         endTime: 1636639287,
-        heightScale:3.0,
+        heightRadio:3.0,
+        isGrowHeight:false,
+        colors:["rgba(245,33,0,1)", "rgba(255,121,26,1)", "rgba(255,164,46,1)", "rgba(255,209,82,1)"],
+        times:[2005,2010,2015]
       }
     }
   },

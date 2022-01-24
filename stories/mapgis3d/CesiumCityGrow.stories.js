@@ -30,6 +30,7 @@ const Template = (args, { argTypes }) => ({
 
 export const cityGrow = Template.bind({});
 cityGrow.args = {
+  width:720,
   baseUrl:"http://192.168.21.192:6163/igs/rest/mrfs/docs/shengZhenBaiMo/0/0",
   featureStyle:{
     startTimeField:"startTime",
@@ -37,7 +38,10 @@ cityGrow.args = {
     heightField:"height",
     startTime: 1068543416,
     endTime: 1636639287,
-    heightScale:3.0,
+    heightRadio:3.0,
+    isGrowHeight:false,
+    colors:["rgba(245,33,0,1)", "rgba(255,121,26,1)", "rgba(255,164,46,1)", "rgba(255,209,82,1)"],
+    times:[2005,2010,2015]
   }
 };
 cityGrow.parameters = {

@@ -254,7 +254,9 @@ export default {
       vm.featureStyle.times = [];
       for (let i = 0; i < vm.colorsCopy.length; i++) {
         vm.featureStyle.colors.push(vm.colorsCopy[i].color);
-        vm.featureStyle.times.push(vm.colorsCopy[i].min);
+        if (i!== 0){
+          vm.featureStyle.times.push(vm.colorsCopy[i].min);
+        }
       }
       // 先判断必须的值是否有：startTimeField、endTimeField、heightField
       if (vm.baseUrl !== '' && vm.featureStyle.startTimeField !== '' && vm.featureStyle.endTimeField !== '' && vm.featureStyle.heightField !== '') {
