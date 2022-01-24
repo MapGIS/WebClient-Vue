@@ -22,6 +22,75 @@
 - **描述:**
   > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
+### `measureOptions`
+
+- **类型:** `Object`
+- **可选**
+- **侦听属性**
+- **描述:**
+  > 测量参数。
+
+### `enableMeasureLength(直线测量)参数`
+
+| 名称                     | 类型                   | 默认值                         | 描述                                                                             |
+| ------------------------ | ---------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
+| callBack                 | function               | function(e){}                  | 回调函数，回调结果单位为米                                                       |
+| lineColor                | Cesium.Color Or String | Color.AQUA                     | 边线颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）         |
+| font                     | String                 | '12pt 楷体'                    | 字体以及大小，详见https://html.spec.whatwg.org/multipage/canvas.html#text-styles |
+| fillColor                | Cesium.Color Or String | Color.WHITE                    | 字体颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）         |
+| outlineColor             | Cesium.Color Or String | Color.WHITE                    | 文字外边线的颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'） |
+| outlineWidth             | Number                 | 4.0                            | 文字外边线的宽度                                                                 |
+| showBackground           | Boolean                | true                           | 是否显示文字的背景                                                               |
+| backgroundColor          | Cesium.Color Or String | new Cesium.Color(0, 0, 0, 0.4) | 文字背景的颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）   |
+| showMoreInfo             | Boolean                | false                          | 是否显示详细测量信息                                                             |
+| exHeight                 | Number                 | 0                              | 附加高程偏移 （避免遮挡）                                                        |
+| disableDepthTestDistance | Number                 | Number.POSITIVE_INFINITY       | 只要小于这个距离深度检测就会失效，就会一直显示在最前面 不会被遮挡                |
+| isTerrain                | Boolean                | false                          | 是否针对地形，为 true 时对地形数据进行贴地距离测量，为 false 时进行直线距离测量  |
+| paneNum                  | Number                 | 32                             | 地形贴地距离测量中，向每段中插入采样点的数量                                     |
+| pixelOffset              | Cesium.Cartesian2      | new Cartesian2(0, -4)          | 相对于设定点的偏移位置                                                           |
+
+### `enableMeasureArea(面积测量)参数`
+
+| 名称                     | 类型                   | 默认值                          | 描述                                                                             |
+| ------------------------ | ---------------------- | ------------------------------- | -------------------------------------------------------------------------------- |
+| callBack                 | function               | function(e){}                   | 回调函数，回调结果单位为米                                                       |
+| lineColor                | Cesium.Color Or String | Color.AQUA                      | 边线颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）         |
+| areaColor                | Cesium.Color Or String | Color.CHARTREUSE.withAlpha(0.5) | 选定区域颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）     |
+| font                     | String                 | '12pt 楷体'                     | 字体以及大小，详见https://html.spec.whatwg.org/multipage/canvas.html#text-styles |
+| fillColor                | Cesium.Color Or String | Color.WHITE                     | 字体颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）         |
+| outlineColor             | Cesium.Color Or String | Color.WHITE                     | 文字外边线的颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'） |
+| outlineWidth             | Number                 | 4.0                             | 文字外边线的宽度                                                                 |
+| showBackground           | Boolean                | true                            | 是否显示文字的背景                                                               |
+| backgroundColor          | Cesium.Color Or String | new Cesium.Color(0, 0, 0, 0.4)  | 文字背景的颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）   |
+| showMoreInfo             | Boolean                | false                           | 是否显示详细测量信息                                                             |
+| exHeight                 | Number                 | 0                               | 附加高程偏移 （避免遮挡）                                                        |
+| disableDepthTestDistance | Number                 | Number.POSITIVE_INFINITY        | 只要小于这个距离深度检测就会失效，就会一直显示在最前面 不会被遮挡                |
+| isTerrain                | Boolean                | false                           | 是否针对地形，为 true 时对地形数据进行贴地距离测量，为 false 时进行直线距离测量  |
+| paneNum                  | Number                 | 32                              | 地形贴地距离测量中，向每段中插入采样点的数量                                     |
+| pixelOffset              | Cesium.Cartesian2      | new Cartesian2(0, -4)           | 相对于设定点的偏移位置                                                           |
+| xPaneNum                 | Number                 | 32                              | 地形贴地面积测量中，向经度方向插入采样点的数量                                   |
+| yPaneNum                 | Number                 | 32                              | 地形贴地面积测量中，向纬度方向插入采样点的数量                                   |
+| verticalOrigin           | Cesium.VerticalOrigin  | VerticalOrigin.BOTTOM           | 面积测量结果的 label 的摆放位置                                                  |
+| spaceArea                | Boolean                | false                           | 是否计算空间点面积 默认计算的是球面投影面积                                      |
+
+### `enableMeasureTriangle(三角测量)参数`
+
+| 名称                     | 类型                   | 默认值                          | 描述                                                                             |
+| ------------------------ | ---------------------- | ------------------------------- | -------------------------------------------------------------------------------- |
+| callBack                 | function               | function(e){}                   | 回调函数，回调结果单位为米                                                       |
+| lineColor                | Cesium.Color Or String | Color.AQUA                      | 边线颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）         |
+| lineMaterial             | Cesium.Material        | 纯色                            | 线材质，详见 Cesium 材质对象                                                     |
+| pointColor               | Cesium.Color Or String | Color.CHARTREUSE.withAlpha(0.5) | 点颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）           |
+| font                     | String                 | '12pt 楷体'                     | 字体以及大小，详见https://html.spec.whatwg.org/multipage/canvas.html#text-styles |
+| fillColor                | Cesium.Color Or String | Color.WHITE                     | 字体颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）         |
+| outlineColor             | Cesium.Color Or String | Color.WHITE                     | 文字外边线的颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'） |
+| outlineWidth             | Number                 | 4.0                             | 文字外边线的宽度                                                                 |
+| showBackground           | Boolean                | true                            | 是否显示文字的背景                                                               |
+| backgroundColor          | Cesium.Color Or String | new Cesium.Color(0, 0, 0, 0.4)  | 文字背景的颜色，Cesium 颜色对象或者 css 颜色字符串（'#XXX 或 rgb()或 rgba()'）   |
+| disableDepthTestDistance | Number                 | Number.POSITIVE_INFINITY        | 只要小于这个距离深度检测就会失效，就会一直显示在最前面 不会被遮挡                |
+| pixelOffset              | Cesium.Cartesian2      | new Cartesian2(0, -4)           | 相对于设定点的偏移位置                                                           |
+| verticalOrigin           | Cesium.VerticalOrigin  | VerticalOrigin.BOTTOM           | 面积测量结果的 label 的摆放位置                                                  |
+
 ## 槽
 
 ### `default`
@@ -52,19 +121,19 @@
 
 ## 方法
 
-### `enableMeasureLength`
+### `enableMeasureLength()`
 
 - **描述:** 激活直线测量功能
 
-### `enableMeasureArea`
+### `enableMeasureArea()`
 
 - **描述:** 激活面积测量功能
 
-### `enableMeasureTriangle`
+### `enableMeasureTriangle()`
 
 - **描述:** 激活三角测量功能
 
-### `enableMeasureSlope`
+### `enableMeasureSlope()`
 
 - **描述:** 激活坡度测量功能
 
@@ -78,7 +147,11 @@
 <template>
   <div id="app">
     <mapgis-web-scene>
-      <mapgis-3d-measure @load="handleLoad" @measured="measured">
+      <mapgis-3d-measure
+        :measureOptions="measureOptions"
+        @load="handleLoad"
+        @measured="measured"
+      >
         <div id="toolbar-wrapper">
           <div class="toolbar-item" v-on:click="measureLength">直线测量</div>
           <div class="toolbar-item" v-on:click="measureArea">面积测量</div>
@@ -95,7 +168,10 @@
 export default {
   components: {},
   data() {
-    return {};
+    return {
+      //测量参数
+      measureOptions: {}
+    };
   },
   methods: {
     handleLoad(measure) {
@@ -118,10 +194,6 @@ export default {
     measureTriangle() {
       //激活三角测量
       this.measure && this.measure.enableMeasureTriangle();
-    },
-    measureSlope() {
-      //激活坡度测量
-      this.measure && this.measure.enableMeasureSlope();
     },
     deleteMeasure() {
       //删除测量结果

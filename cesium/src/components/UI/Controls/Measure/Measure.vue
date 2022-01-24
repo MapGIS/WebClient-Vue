@@ -1,8 +1,8 @@
 <template>
   <div class="mapgis-3d-measure">
-    <slot v-if="initial"> </slot>
+    <slot v-if="initial"></slot>
     <slot name="measureTool">
-      <measure-3d-tool />
+      <measure-3d-tool/>
     </slot>
   </div>
 </template>
@@ -27,6 +27,12 @@ export default {
           lineColor: "black"
         };
       }
+    },
+    measureOptions: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -39,15 +45,22 @@ export default {
   },
   watch: {
     styles: {
-      handler: function() {
+      handler: function () {
         this.initStyles();
+      },
+      deep: true
+    },
+    measureOptions: {
+      handler: function () {
+        this.measureOptions = this.$_formatOptions(this.measureOptions);
       },
       deep: true
     }
   },
   mounted() {
     let vm = this;
-    this.$_init(function() {
+    this.measureOptions = this.$_formatOptions(this.measureOptions);
+    this.$_init(function () {
       vm.initStyles();
       vm.initial = true;
       vm.$emit("load", vm);
@@ -84,10 +97,19 @@ export default {
     enableMeasureSlope() {
       this.$_enableMeasure("MeasureSlopeTool");
     },
+    $_formatOptions(options) {
+      const colorArr = ["fillColor", "outlineColor", "backgroundColor", "lineColor", "areaColor"];
+      for (let i=0;i<colorArr.length;i++){
+        if(options.hasOwnProperty(colorArr[i]) && typeof options[colorArr[i]] === "string"){
+          options[colorArr[i]] = Cesium.Color.fromCssColorString(options[colorArr[i]]);
+        }
+      }
+      return options;
+    },
     $_enableMeasure(MeasureName) {
-      const { vueKey, vueIndex } = this;
+      const {vueKey, vueIndex} = this;
       let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
-      let measure = new Cesium[MeasureName](webGlobe.viewer, {
+      let measureOptions = {
         lineColor: this.measureStyles.lineColor,
         callBack: result => {
           if (typeof callback === "function") {
@@ -96,7 +118,9 @@ export default {
             this.measureCallBack(result);
           }
         }
-      });
+      }
+      measureOptions = Object.assign(measureOptions, this.measureOptions);
+      let measure = new Cesium[MeasureName](webGlobe.viewer, measureOptions);
       window.CesiumZondy.MeasureToolManager.addSource(
         vueKey,
         vueIndex,
@@ -105,7 +129,7 @@ export default {
       measure.startTool();
     },
     deleteMeasure() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
+      this.$_deleteManger("MeasureToolManager", function (manager) {
         if (manager.source) {
           manager.source.stopTool();
         }
