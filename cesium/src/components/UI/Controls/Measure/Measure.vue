@@ -75,14 +75,23 @@ export default {
     enableMeasureLength(options) {
       this.$_enableMeasure("MeasureLengthTool", options);
     },
-    enableMeasureArea() {
-      this.$_enableMeasure("MeasureAreaTool");
+    enableMeasureArea(options) {
+      this.$_enableMeasure("MeasureAreaTool", options);
     },
-    enableMeasureTriangle() {
-      this.$_enableMeasure("TriangulationTool");
+    enableMeasureTriangle(options) {
+      this.$_enableMeasure("TriangulationTool", options);
     },
-    enableMeasureSlope() {
-      this.$_enableMeasure("MeasureSlopeTool");
+    enableMeasureSlope(options) {
+      this.$_enableMeasure("MeasureSlopeTool", options);
+    },
+    $_formatOptions(options) {
+      const colorArr = ["fillColor", "outlineColor", "backgroundColor", "lineColor", "areaColor"];
+      for (let i=0;i<colorArr.length;i++){
+        if(options.hasOwnProperty(colorArr[i]) && typeof options[colorArr[i]] === "string"){
+          options[colorArr[i]] = Cesium.Color.fromCssColorString(options[colorArr[i]]);
+        }
+      }
+      return options;
     },
     $_enableMeasure(MeasureName, options) {
       const {vueKey, vueIndex} = this;
@@ -98,6 +107,7 @@ export default {
         }
       }
       if (options) {
+        options = this.$_formatOptions(options);
         measureOptions = Object.assign(measureOptions, options);
       }
       let measure = new Cesium[MeasureName](webGlobe.viewer, measureOptions);
