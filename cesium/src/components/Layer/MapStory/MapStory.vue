@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="{width: containerWidth, height: containerHeight}" class="mapgis-3d-map-story-container">
     <project-panel ref="projectPanel"
                    :data-source="dataSourceCopy"
                    :height="height"
@@ -47,6 +47,14 @@
         </div>
       </mapgis-3d-popup>
     </template>
+    <mapgis-3d-preview-map-story-layer
+      v-if="enablePreview"
+      v-show='showPreview'
+      :height='height'
+      :width='width'
+      :dataSource='storyDataSource'
+      ref='preview'
+    />
   </div>
 </template>
 
@@ -68,8 +76,17 @@ export default {
   },
   mounted() {
     this.$_init();
+    this.$_setContainerStyle();
   },
   methods: {
+    //设置容器宽高
+    $_setContainerStyle() {
+      let cesiumWidget = document.getElementsByClassName("cesium-widget");
+      if (cesiumWidget && cesiumWidget.length > 0) {
+        this.containerWidth = cesiumWidget[0].offsetWidth + "px";
+        this.containerHeight = cesiumWidget[0].offsetHeight + "px";
+      }
+    },
     //修改章节内容
     $_changeChapter(chapter) {
       this.$_setChapter(chapter);
@@ -132,12 +149,22 @@ export default {
       this.dataSourceCopy.push(story);
     },
     $_storyPreview(story) {
+      if (this.enablePreview) {
+        this.storyDataSource = story;
+        this.showPreview = true;
+        this.$refs.preview.projectPreview()
+      }
       this.$emit("storyPreview", story);
     },
     $_chapterPreview(chapter) {
-      this.$emit("chapterPreview", {
+      let story = {
         chapters: [chapter]
-      });
+      };
+      if (this.enablePreview) {
+        this.storyDataSource = story
+        this.showPreview = true
+      }
+      this.$emit("chapterPreview", story);
     }
   }
 }
@@ -191,5 +218,11 @@ export default {
 
 .cesium-popup .cesium-popup-content-wrapper {
   overflow: hidden;
+}
+
+.mapgis-3d-map-story-container {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>

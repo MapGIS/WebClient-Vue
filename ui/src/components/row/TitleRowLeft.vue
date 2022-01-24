@@ -71,6 +71,6 @@ export default {
 .mapgis-ui-title-row-left-value {
   padding-right: 10px;
   font-size: 12px;
-  width: calc(100% - 70px);
+  width: calc(100% - 74px);
 }
 </style>

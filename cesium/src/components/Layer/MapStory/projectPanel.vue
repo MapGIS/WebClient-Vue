@@ -27,33 +27,18 @@
         :enableImport="enableImport"
         v-show="showProjectPanel"
     />
-    <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
-    <story-panel-large-ui
-        v-show="showLargePanel"
-        @closePanel="$_closePanel"
-        :showPlay="showPlay"
-        :showArrow="showArrow"
-        :dataSource="storyFeature"
-        :height="panelHeight"
-        :enableFullScreen="enableFullScreen"
-    />
-    `
   </div>
 </template>
 
 <script>
-import mapCollection from "./mapCollection";
 import editList from "../Graphic/editList";
 import ProjectPanelUI from "./ProjectPanelUI";
-import StoryPanelLargeUI from "./StoryPanelLargeUI";
 
 window.showProjectEdit = false;
 export default {
   name: "projectPanel",
   components: {
-    "map-collection": mapCollection,
     "project-panel-ui": ProjectPanelUI,
-    "story-panel-large-ui": StoryPanelLargeUI,
   },
   inject: ["Cesium", "viewer"],
   model: {
@@ -120,8 +105,6 @@ export default {
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
       if (this.height) {
         this.panelHeight = this.height;
-      } else {
-        this.panelHeight = this.$_getContainerHeight();
       }
     },
     //修改章节内容
@@ -246,14 +229,4 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-mapstory-project-panel-edit {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 400px;
-  height: 900px;
-  background: rgb(32, 33, 36);
-  padding-bottom: 20px;
-}
 </style>

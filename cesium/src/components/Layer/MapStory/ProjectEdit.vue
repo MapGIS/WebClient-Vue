@@ -1,6 +1,9 @@
 <template>
   <div :id="id" @click="$_clickPanel" class="mapgis-ui-project-edit-panel"
        :style="{height: height + 'px', width: width + 'px'}">
+    <mapgis-ui-row class="mapgis-ui-project-edit-back">
+      返回上一级
+    </mapgis-ui-row>
     <div v-show="!editChapter && !showSetting" :style="{height: height - 32 + 'px'}">
       <div class="mapgis-ui-project-edit-top-bar">
         <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
@@ -46,8 +49,8 @@
                               :map="dataSourceCopy.map"
                               @addMap="$_addProjectMap" title="附加地图"/>
     <!--按钮区域-->
-    <mapgis-ui-row v-show="!editChapter && !showSetting">
-      <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
+    <mapgis-ui-row v-show="!editChapter && !showSetting" class="mapgis-ui-project-edit-new-feature">
+      <mapgis-ui-col span="24">
         <mapgis-ui-dropdown>
           <mapgis-ui-menu slot="overlay">
             <mapgis-ui-menu-item @click="$_copyChapter" key="4">
@@ -424,15 +427,19 @@ export default {
 }
 
 .mapgis-ui-project-edit-new-feature {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
   text-align: left;
-  padding-left: 4px;
+  width: 100%;
   height: 36px;
+  padding-left: 8px;
 }
 
 .mapgis-ui-project-edit-feature-button {
   width: 47%;
   height: 32px;
-  margin-right: 10px;
+  margin-right: 5px;
   background: white;
   color: #0081E2;
   font-size: 14px;

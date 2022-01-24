@@ -21,6 +21,10 @@ export default {
       type: Boolean,
       default: true
     },
+    showPreview: {
+      type: Boolean,
+      default: true
+    },
     enableClose: {
       type: Boolean,
       default: true
@@ -36,6 +40,11 @@ export default {
       }
     },
     enableImport: {
+      type: Boolean,
+      default: false
+    },
+    //一张图模式
+    enableOneMap: {
       type: Boolean,
       default: false
     }
@@ -57,6 +66,9 @@ export default {
       dataSourceCopy: [],
       currentFeatureType: undefined,
       currentFeature: undefined,
+      storyDataSource: undefined,
+      containerWidth: "600px",
+      containerHeight: "600px",
       startDraw: false,
       editList: editList,
       //导入文件按钮id

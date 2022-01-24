@@ -110,8 +110,6 @@ export default {
       let vm = this;
       if (this.height) {
         this.panelHeight = this.height;
-      } else {
-        this.panelHeight = this.$_getContainerHeight();
       }
       if (typeof this.dataSource === "string") {
         MRFS.FeatureService.get(this.dataSource, function (result) {
