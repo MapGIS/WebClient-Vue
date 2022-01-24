@@ -13,7 +13,7 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <mapgis-web-scene :cameraView = "cameraView" :style="{height: '95vh'}">
-        <arcgis-tile-layer tilingScheme="EPSG:4326" baseUrl="http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer" />
+        <mapgis-3d-arcgis-tile-layer tilingScheme="EPSG:4326" baseUrl="http://219.142.81.85/arcgis/rest/services/10wanZH/MapServer" />
         <mapgis-3d-arcgis-legend></mapgis-3d-arcgis-legend>
     </mapgis-web-scene>
     `
