@@ -1,3 +1,18 @@
+<template>
+  <mapgis-3d-virtual-popup
+    :enablePopup="enablePopup"
+    :enableTips="enableTips"
+    :enableIot="enableIot"
+    :popupOptions="popupOptions"
+    :tipsOptions="tipsOptions"
+    :iotOptions="iotOptions"
+    :clickVisible="iClickVisible"
+    :clickPosition="iClickPosition"
+    :clickFeatures="iClickFeatures"
+  >
+  </mapgis-3d-virtual-popup>
+</template>
+
 <script>
 import { G3D } from "@mapgis/webclient-es6-service";
 import Tileset3dOptions from "./3DTilesetOptions";
@@ -230,12 +245,16 @@ export default {
       }
     },
     pickFeature(payload) {
+      console.log("payload", payload);
+      
       const vm = this;
       const { movement } = payload;
+
       const { popupOptions, highlightStyle, vueKey, vueIndex } = this;
       const { color = "rgba(255, 255, 0, 0.6)" } = highlightStyle;
       const { viewer } = this;
       const { version, layerIndex } = this;
+
       if (version == "0.0" || version == "1.0") {
       } else if (version == "2.0") {
         let oid = viewer.scene.pickOid(movement.position);
@@ -259,15 +278,15 @@ export default {
         let titlefield = popupOptions ? popupOptions.title : undefined;
         if (tileset._useRawSaveAtt && Cesium.defined(feature)) {
           let result = feature.content.getAttributeByOID(oid) || {};
-          vm.currentClickInfo = [
+          vm.iClickFeatures = [
             { properties: result, title: result[titlefield] },
           ];
         } else {
           tileset.queryAttributes(oid).then(function (result) {
             result = result || {};
-            vm.currentClickInfo = [
+            /* vm.iClickFeatures = [
               { properties: result, title: result[titlefield] },
-            ];
+            ]; */
           });
         }
       }
@@ -279,10 +298,11 @@ export default {
       if (version == "0.0" || version == "1.0") {
       } else if (version == "2.0") {
         let tileset = viewer.scene.layers.getM3DLayer(layerIndex);
-        tileset.pickedOid = oid;
+        // @date 潘卓然 2022/01/21等cesium底层修复后再放开
+        /* tileset.pickedOid = oid;
         tileset.pickedColor = Cesium.Color.fromCssColorString(
           "rgba(255, 255, 0, 0.6)"
-        );
+        ); */
       }
     },
     changeShow(show) {

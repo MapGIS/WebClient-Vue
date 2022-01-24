@@ -1,5 +1,5 @@
 <script>
-import PopupMixin from "../../Layer/Mixin/PopupMixin";
+import PopupMixin from "../../Layer/Mixin/PopupVirtual";
 
 export default {
   name: "mapgis-3d-feature-popup",

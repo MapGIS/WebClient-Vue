@@ -43,6 +43,7 @@ export { default as Mapgis3dG3dLayer } from "./components/Layer/M3D/G3D.vue";
 export { default as Mapgis3dM3dLayer } from "./components/Layer/M3D/M3d.vue";
 export { default as Mapgis3dTileset } from "./components/Layer/M3D/3dTileset.vue";
 
+export { default as Mapgis3dVirtualPopup } from "./components/Layer/Mixin/PopupVirtual";
 export { default as Mapgis3dPopup } from "./components/UI/Popup/Popup.vue";
 export { default as Mapgis3dFeaturePopup } from "./components/UI/Popup/PopupFeature.vue";
 export { default as Mapgis3dPopupIot } from "./components/UI/Popup/PopupIOT.vue";

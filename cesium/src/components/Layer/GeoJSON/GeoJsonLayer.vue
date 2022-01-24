@@ -2,7 +2,7 @@
 import bbox from "@turf/bbox";
 
 import VueOptions from "../../Base/Vue/VueOptions";
-import PopupMixin from "../Mixin/PopupMixin";
+import PopupMixin from "../Mixin/PopupVirtual";
 
 import { Style } from "@mapgis/webclient-es6-service";
 const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;

@@ -159,11 +159,11 @@ export default {
         "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field mapgis-popup-underline-field":
           this.popupOptionsCopy.popupType === "default" ||
           this.popupOptionsCopy.popupType === "card",
-        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-value mapgis-popup-table-value":
+        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-field mapgis-popup-table-value":
           this.popupOptionsCopy.popupType === "table",
-        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value":
+        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-field mapgis-popup-point-value":
           this.popupOptionsCopy.popupType === "point",
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value":
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field":
           this.popupOptionsCopy.popupType === "underline",
       };
     },
