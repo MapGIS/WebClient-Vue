@@ -1,8 +1,8 @@
 <template>
   <div class="mapgis-3d-measure">
-    <slot v-if="initial"> </slot>
+    <slot v-if="initial"></slot>
     <slot name="measureTool">
-      <measure-3d-tool />
+      <measure-3d-tool/>
     </slot>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
   },
   watch: {
     styles: {
-      handler: function() {
+      handler: function () {
         this.initStyles();
       },
       deep: true
@@ -47,7 +47,7 @@ export default {
   },
   mounted() {
     let vm = this;
-    this.$_init(function() {
+    this.$_init(function () {
       vm.initStyles();
       vm.initial = true;
       vm.$emit("load", vm);
@@ -72,8 +72,8 @@ export default {
       }
       this.$emit("measured", result);
     },
-    enableMeasureLength() {
-      this.$_enableMeasure("MeasureLengthTool");
+    enableMeasureLength(options) {
+      this.$_enableMeasure("MeasureLengthTool", options);
     },
     enableMeasureArea() {
       this.$_enableMeasure("MeasureAreaTool");
@@ -84,10 +84,10 @@ export default {
     enableMeasureSlope() {
       this.$_enableMeasure("MeasureSlopeTool");
     },
-    $_enableMeasure(MeasureName) {
-      const { vueKey, vueIndex } = this;
+    $_enableMeasure(MeasureName, options) {
+      const {vueKey, vueIndex} = this;
       let webGlobe = this.$_getObject(this.waitManagerName, this.deleteMeasure);
-      let measure = new Cesium[MeasureName](webGlobe.viewer, {
+      let measureOptions = {
         lineColor: this.measureStyles.lineColor,
         callBack: result => {
           if (typeof callback === "function") {
@@ -96,7 +96,11 @@ export default {
             this.measureCallBack(result);
           }
         }
-      });
+      }
+      if (options) {
+        measureOptions = Object.assign(measureOptions, options);
+      }
+      let measure = new Cesium[MeasureName](webGlobe.viewer, measureOptions);
       window.CesiumZondy.MeasureToolManager.addSource(
         vueKey,
         vueIndex,
@@ -105,7 +109,7 @@ export default {
       measure.startTool();
     },
     deleteMeasure() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
+      this.$_deleteManger("MeasureToolManager", function (manager) {
         if (manager.source) {
           manager.source.stopTool();
         }
