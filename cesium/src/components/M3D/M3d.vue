@@ -6,11 +6,11 @@ export default {
   name: "mapgis-3d-igs-m3d",
   inject: ["Cesium", "CesiumZondy", "webGlobe"],
   props: {
-    ...Tileset3dOptions
+    ...Tileset3dOptions,
   },
   data() {
     return {
-      layerList: undefined
+      layerList: undefined,
     };
   },
   created() {},
@@ -26,26 +26,26 @@ export default {
     layers(next) {
       this.layerList = this.parseLayers(next);
       this.changeLayerVisible(this.layerList);
-    }
+    },
   },
   methods: {
     createCesiumObject() {
       const { CesiumZondy, webGlobe } = this;
       let m3dLayer = new CesiumZondy.Layer.M3DLayer({
-        viewer: webGlobe.viewer
+        viewer: webGlobe.viewer,
       });
       return m3dLayer;
     },
     watchProp() {
       let { show, opacity } = this;
       if (show) {
-        this.$watch("show", function(next) {
+        this.$watch("show", function (next) {
           if (this.initial) return;
           this.changeShow(next);
         });
       }
       if (opacity >= 0 && opacity <= 1) {
-        this.$watch("opacity", function(next) {
+        this.$watch("opacity", function (next) {
           if (this.initial) return;
           this.changeOpacity(next);
         });
@@ -54,15 +54,8 @@ export default {
     onM3dLoaded(e) {},
     mount() {
       const vm = this;
-      const {
-        webGlobe,
-        vueIndex,
-        vueKey,
-        $props,
-        offset,
-        scale,
-        opacity
-      } = this;
+      const { webGlobe, vueIndex, vueKey, $props, offset, scale, opacity } =
+        this;
       const viewer = webGlobe.viewer;
 
       if (viewer.isDestroyed()) return;
@@ -71,12 +64,12 @@ export default {
       let m3dLayer = this.createCesiumObject();
       let m3ds = m3dLayer.append(`${this.url}`, {
         ...$props,
-        loaded: tileset => {
+        loaded: (tileset) => {
           if (vueKey && vueIndex) {
             CesiumZondy.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
 
             if (!vm.show && m3ds) {
-              m3ds.forEach(m3d => {
+              m3ds.forEach((m3d) => {
                 m3d.show = vm.show;
               });
             }
@@ -114,14 +107,14 @@ export default {
               if (loop) {
                 window.clearInterval(loop);
                 loop = undefined;
-                m3ds.forEach(m3d => {
+                m3ds.forEach((m3d) => {
                   let type = vm.checkType(m3d);
                   m3d.type = type;
                   switch (type) {
                     case M3dType.Model:
                     case M3dType.Instance:
                       m3d.style = new Cesium.Cesium3DTileStyle({
-                        color: `color('#FFFFFF', ${opacity})`
+                        color: `color('#FFFFFF', ${opacity})`,
                       });
                       break;
                     case M3dType.CloudPoint:
@@ -139,13 +132,13 @@ export default {
               }
             };
             let loop = window.setInterval(() => {
-              m3ds.forEach(m3d => {
+              m3ds.forEach((m3d) => {
                 vm.checkType(m3d, dataCallback);
               });
             }, 100);
           }
           vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
-        }
+        },
       });
     },
     unmount() {
@@ -156,7 +149,7 @@ export default {
         let m3ds = find.source;
         !viewer.isDestroyed() &&
           m3ds &&
-          m3ds.forEach(l => {
+          m3ds.forEach((l) => {
             l.destroy();
           });
       }
@@ -168,7 +161,7 @@ export default {
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
-        m3ds && m3ds.forEach(m3d => (m3d.show = show));
+        m3ds && m3ds.forEach((m3d) => (m3d.show = show));
       }
       this.layerList = this.parseLayers();
       this.changeLayerVisible(this.layerList);
@@ -179,10 +172,10 @@ export default {
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
-        m3ds.forEach(m3d => {
+        m3ds.forEach((m3d) => {
           if (m3d.type == M3dType.Model || m3d.type == M3dType.Instance) {
             m3d.style = new Cesium.Cesium3DTileStyle({
-              color: `color('#FFFFFF', ${opacity})`
+              color: `color('#FFFFFF', ${opacity})`,
             });
           }
         });
@@ -231,35 +224,37 @@ export default {
       }
       let layerStr = layerString.replace(/layers=show:/i, "");
       let layerStrs = layerStr.split(",");
-      let layers = layerStrs.map(l => parseInt(l));
+      let layers = layerStrs.map((l) => parseInt(l));
       return layers;
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerList;
-      const { vueKey, vueIndex } = this;
+      const { vueKey, vueIndex, show } = this;
       let find = CesiumZondy.M3DIgsManager.findSource(vueKey, vueIndex);
       if (find) {
         let m3ds = find.source;
         if (!m3ds) return;
-        m3ds.forEach(m3d => {
+        m3ds.forEach((m3d) => {
           if (layers) {
             m3d.show = true;
             if (layers.indexOf(m3d.layerIndex) >= 0) {
             } else {
               m3d.show = false;
             }
+          } else if (!show) {
+            m3d.show = false;
           } else {
             m3d.show = true;
           }
         });
       }
-    }
+    },
   },
   render(h) {
     return h("span", {
       class: "mapgis-3d-igs-m3d",
-      ref: "m3d"
+      ref: "m3d",
     });
-  }
+  },
 };
 </script>
