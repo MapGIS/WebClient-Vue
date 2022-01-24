@@ -25,7 +25,7 @@
         </mapgis-ui-checkbox-group>
         <div v-else>暂无数据！</div>
       </mapgis-ui-row>
-      <mapgis-ui-group-tab title="坐标轴">
+      <mapgis-ui-group-tab title="剖切方向">
         <a-checkbox
           slot="handle"
           placement="bottomRight"
@@ -33,7 +33,7 @@
           :checked="reverse"
           @change="_onCheckboxChange"
         >
-          反选
+          逆向
         </a-checkbox>
       </mapgis-ui-group-tab>
       <mapgis-ui-row class="axis">
