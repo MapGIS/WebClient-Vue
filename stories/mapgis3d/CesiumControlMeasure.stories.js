@@ -86,12 +86,6 @@ const Template = (args, { argTypes }) => ({
           click: this.enableTriangleMeasure,
         },
         {
-          icon: "mapgis-huizhijuxing",
-          type: "primary",
-          tip: "坡度测量",
-          click: this.enableSlopeMeasure,
-        },
-        {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "清空图元",
