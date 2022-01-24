@@ -15,6 +15,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    enableModelSwitch: {
+      type: Boolean,
+      default: false
+    },
     enableTips: {
       type: Boolean,
       default: false,

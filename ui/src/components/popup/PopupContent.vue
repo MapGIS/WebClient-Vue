@@ -192,7 +192,7 @@ export default {
         this.popupOptionsCopy.fields = [];
       }
       //如果fields数量为0，则取得properties里的所有健名
-      if (this.popupOptionsCopy.fields.length === 0) {
+      if (this.popupOptionsCopy.fields.length === 0 && this.feature.properties) {
         this.popupOptionsCopy.fields = Object.keys(this.feature.properties);
       }
       if (this.popupOptionsCopy.popupType === "card") {
