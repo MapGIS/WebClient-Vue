@@ -2,7 +2,19 @@
   <div>
     <div :style="{height: height + 'px',width: width + 'px'}" @click="$_click"
          class="mapgis-ui-project-panel">
-      <div class="mapgis-ui-project-panel-content" v-show="!showStoryEdit" :style="{height: height - 40 + 'px'}">
+      <div class="mapgis-ui-project-panel-content" v-show="!showStoryEdit" :style="{height: height + 'px'}">
+        <mapgis-ui-row class="mapgis-ui-project-panel-back"
+          v-if="!enableOneMap"
+        >
+          <span>
+            地图故事
+          </span>
+          <mapgis-ui-svg-icon
+            style="position:absolute;right: -16px;top: 0;"
+            :iconStyle="{width: '18px'}"
+            @click="$_close"
+            type="close"/>
+        </mapgis-ui-row>
         <mapgis-ui-project-header
           @import="$_import"
           @search="$_search"
@@ -42,11 +54,13 @@
         @copyChapter="$_copyChapter"
         @export="$_export"
         @save="$_save"
-        @backed="$_back"
+        @back="$_back"
+        @close="$_close"
         :data-source="currentStory"
         :width="width"
         :height="height"
         :cameras="cameras"
+        :enableOneMap="enableOneMap"
       />
     </div>
   </div>
@@ -59,10 +73,6 @@ export default {
   name: "mapgis-3d-project-panel-ui",
   components: {
     "project-edit": ProjectEdit
-  },
-  model: {
-    prop: "dataSource",
-    event: "change"
   },
   watch: {
     dataSource: {
@@ -96,6 +106,11 @@ export default {
       type: Object
     },
     enableImport: {
+      type: Boolean,
+      default: false
+    },
+    //一张图模式
+    enableOneMap: {
       type: Boolean,
       default: false
     }
@@ -194,10 +209,13 @@ export default {
       this.cameras = cameras
       this.showStoryEdit = true;
     },
-    //回退
+    //返回上一级
     $_back() {
       this.showStoryEdit = false;
-      this.$emit("back", this.currentStory);
+    },
+    //关闭面板
+    $_close() {
+      this.$emit("close");
     },
     //新增章节
     $_addChapter(chapter) {
@@ -250,8 +268,8 @@ export default {
 <style scoped>
 .mapgis-ui-project-panel {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 10px;
+  left: 10px;
   z-index: 1;
   width: 400px;
   height: 900px;
@@ -260,9 +278,9 @@ export default {
 
 .mapgis-ui-project-add-story-row {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
+  left: 8px;
+  bottom: 8px;
+  width: calc(100% - 16px);
 }
 
 .mapgis-ui-project-add-story {
@@ -278,5 +296,10 @@ export default {
 
 .mapgis-ui-project-panel-content::-webkit-scrollbar {
   display: none;
+}
+
+.mapgis-ui-project-panel-back {
+  padding: 8px;
+  border-bottom: 1px solid rgb(217, 217, 217);
 }
 </style>

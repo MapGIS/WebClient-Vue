@@ -248,11 +248,11 @@ export default {
 
 <style scoped>
 .mapgis-ui-graphic-icons-panel {
-  width: 300px;
+  width: 100%;
   height: auto;
   background: #FFFFFF;
   border: 1px solid #DCDCDC;
-  margin: 16px;
+  margin: 10px 0;
 }
 
 .mapgis-ui-graphic-icons-head {

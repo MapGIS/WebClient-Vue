@@ -95,7 +95,7 @@ export default {
 
 .mapgis-ui-slider-row-left-container {
   padding-right: 10px;
-  width: calc(100% - 70px);
+  width: calc(100% - 74px);
 }
 
 .mapgis-ui-slider-row-left-slider {
@@ -106,7 +106,7 @@ export default {
 }
 
 .mapgis-ui-slider-row-left-input {
-  width: 70px;
+  width: 66px;
   margin-left: 10px;
   display: inline-block;
   vertical-align: middle;

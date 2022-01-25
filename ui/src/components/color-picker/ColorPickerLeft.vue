@@ -74,6 +74,6 @@ export default {
 
 .mapgis-ui-color-picker-left-color {
   padding-right: 10px;
-  width: calc(100% - 70px);
+  width: calc(100% - 74px);
 }
 </style>

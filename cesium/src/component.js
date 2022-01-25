@@ -106,8 +106,8 @@ export { default as Mapgis3DComprehensiveQuery } from "./components/service/comp
 export { default as Mapgis3DDataFlow } from "./components/Layer/DataFlow/DataFlow";
 export { default as Mapgis3DTack } from "./components/Layer/Track/Track";
 export { default as Mapgis3DPlottingLayer } from "./components/Layer/Plotting/PlottingLayer";
-export { default as Mapgis3DMapStoryLayer } from "./components/Layer/MapStory/MapStory";
-export { default as Mapgis3DPreviewMapStoryLayer } from "./components/Layer/MapStory/PreviewMapStory";
+export { default as Mapgis3DMapStory } from "./components/Layer/MapStory/MapStory";
+export { default as Mapgis3DPreviewMapStory } from "./components/Layer/MapStory/PreviewMapStory";
 
 //模拟仿真
 export { default as Mapgis3dCityGrow } from "./components/simulation/CityGrow/CityGrow";

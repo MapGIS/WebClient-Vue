@@ -17,43 +17,29 @@
         @selectCamera="$_selectCamera"
         @showProject="$_showStory"
         @chapterPreview="$_chapterPreview"
-        @back="$_back"
         @export="$_export"
         @import="$_import"
         @save="$_save"
-        :height="panelHeight"
+        @close="$_close"
+        :height="height"
         :width="width"
         :data-source="dataSourceCopy"
         :enableImport="enableImport"
+        :enableOneMap="enableOneMap"
         v-show="showProjectPanel"
     />
-    <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
-    <story-panel-large-ui
-        v-show="showLargePanel"
-        @closePanel="$_closePanel"
-        :showPlay="showPlay"
-        :showArrow="showArrow"
-        :dataSource="storyFeature"
-        :height="panelHeight"
-        :enableFullScreen="enableFullScreen"
-    />
-    `
   </div>
 </template>
 
 <script>
-import mapCollection from "./mapCollection";
 import editList from "../Graphic/editList";
 import ProjectPanelUI from "./ProjectPanelUI";
-import StoryPanelLargeUI from "./StoryPanelLargeUI";
 
 window.showProjectEdit = false;
 export default {
   name: "projectPanel",
   components: {
-    "map-collection": mapCollection,
     "project-panel-ui": ProjectPanelUI,
-    "story-panel-large-ui": StoryPanelLargeUI,
   },
   inject: ["Cesium", "viewer"],
   model: {
@@ -83,6 +69,11 @@ export default {
     enableImport: {
       type: Boolean,
       default: false
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -91,7 +82,6 @@ export default {
       projects: [],
       panelHeight: undefined,
       showLargePanel: false,
-      storyFeature: [],
       //当前的工程
       currentProject: {},
       showProjectPanel: true,
@@ -118,11 +108,6 @@ export default {
     //初始化函数
     $_init() {
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
-      if (this.height) {
-        this.panelHeight = this.height;
-      } else {
-        this.panelHeight = this.$_getContainerHeight();
-      }
     },
     //修改章节内容
     $_changeChapter(chapter) {
@@ -136,6 +121,10 @@ export default {
     $_save() {
       this.$emit("save");
     },
+    //关闭面板
+    $_close() {
+      this.$emit("close");
+    },
     //导入
     $_import() {
       this.$emit("import");
@@ -144,38 +133,13 @@ export default {
     $_export(project) {
       this.$emit("export", project);
     },
-    //回退
-    $_back(project) {
-      let features = project.features;
-      for (let i = 0; i < features.length; i++) {
-        let entity = this.viewer.entities.getById(features[i].uuid);
-        if (entity) {
-          entity.show = false;
-        }
-      }
-    },
     //预览章节
     $_chapterPreview(chapter) {
-      if (this.enablePreview) {
-        this.storyFeature = [chapter];
-        this.showPlay = false;
-        this.showArrow = false;
-        this.showLargePanel = true;
-        this.enableFullScreen = false;
-      } else {
-        this.$emit("chapterPreview", chapter);
-      }
+      this.$emit("chapterPreview", chapter);
     },
     //预览地图故事
     $_storyPreview(story) {
-      if (this.enablePreview) {
-        this.storyFeature = this.currentProject.features;
-        this.showPlay = true;
-        this.showArrow = true;
-        this.showLargePanel = true;
-      } else {
-        this.$emit("storyPreview", story);
-      }
+      this.$emit("storyPreview", story);
     },
     //关闭右侧轮播面板
     $_closePanel() {
@@ -246,14 +210,4 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-mapstory-project-panel-edit {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  width: 400px;
-  height: 900px;
-  background: rgb(32, 33, 36);
-  padding-bottom: 20px;
-}
 </style>

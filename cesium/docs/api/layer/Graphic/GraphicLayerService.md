@@ -52,6 +52,14 @@ this.$_startDrawing({ type: "绘制类型", style: {}, drawWithHeight: true
 - **描述:** Cesium 对象的 Viewer 对象
   > 在线文档：http://develop.smaryun.com/docs/other/mapgis-cesium/Viewer.html?classFilter=vie
 
+## 绘制样式
+
+### `点(point)`
+
+| 名称  | 类型         | 默认值             | 说明       |
+| ----- | ------------ | ------------------ | ---------- |
+| color | Cesium.Color | Cesium.Color.WHITE | 点填充颜色 |
+
 ## 方法
 
 ### `$_newGraphicLayer(options)`

@@ -61,8 +61,8 @@ export default {
 
 .mapgis-ui-project-bottom-panel-preview{
   font-size: 14px;
-  width: 93%;
-  margin-left: 4%;
+  width: calc(100% - 24px);
+  margin-left: 12px;
   height: 32px;
   border-radius: 3px;
 }
