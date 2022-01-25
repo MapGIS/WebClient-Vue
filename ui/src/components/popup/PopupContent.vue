@@ -159,11 +159,11 @@ export default {
         "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field mapgis-popup-underline-field":
           this.popupOptionsCopy.popupType === "default" ||
           this.popupOptionsCopy.popupType === "card",
-        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-value mapgis-popup-table-value":
+        "mapgis-popup-item mapgis-popup-table-item mapgis-popup-field mapgis-popup-table-value":
           this.popupOptionsCopy.popupType === "table",
-        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-value mapgis-popup-point-value":
+        "mapgis-popup-item mapgis-popup-point-item mapgis-popup-field mapgis-popup-point-value":
           this.popupOptionsCopy.popupType === "point",
-        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-value":
+        "mapgis-popup-item mapgis-popup-underline-item mapgis-popup-field":
           this.popupOptionsCopy.popupType === "underline",
       };
     },
@@ -192,7 +192,7 @@ export default {
         this.popupOptionsCopy.fields = [];
       }
       //如果fields数量为0，则取得properties里的所有健名
-      if (this.popupOptionsCopy.fields.length === 0) {
+      if (this.popupOptionsCopy.fields.length === 0 && this.feature.properties) {
         this.popupOptionsCopy.fields = Object.keys(this.feature.properties);
       }
       if (this.popupOptionsCopy.popupType === "card") {

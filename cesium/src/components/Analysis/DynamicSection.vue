@@ -25,7 +25,17 @@
         </mapgis-ui-checkbox-group>
         <div v-else>暂无数据！</div>
       </mapgis-ui-row>
-      <mapgis-ui-group-tab title="坐标轴"> </mapgis-ui-group-tab>
+      <mapgis-ui-group-tab title="剖切方向">
+        <mapgis-ui-checkbox
+          slot="handle"
+          placement="bottomRight"
+          class="checkbox"
+          :checked="reverse"
+          @change="_onCheckboxChange"
+        >
+          逆向
+        </mapgis-ui-checkbox>
+      </mapgis-ui-group-tab>
       <mapgis-ui-row class="axis">
         <mapgis-ui-radio-group v-model="axisCopy" size="small">
           <mapgis-ui-radio value="X"> X轴 </mapgis-ui-radio>
@@ -138,7 +148,8 @@ export default {
 
       // 提示信息
       info:
-        "模型剖切支持对多个模型图层同时进行剖切分析,通常这些图层描述的是用户感兴趣的同一个空间内不同的构成元素，如：一个图层描述地上模型层，一个描述地下模型层，可以通过剖切分析同时剖切地上地下模型，以查看地上地下模型内部结构。"
+        "模型剖切支持对多个模型图层同时进行剖切分析,通常这些图层描述的是用户感兴趣的同一个空间内不同的构成元素，如：一个图层描述地上模型层，一个描述地下模型层，可以通过剖切分析同时剖切地上地下模型，以查看地上地下模型内部结构。",
+      reverse: false
     };
   },
   watch: {
@@ -242,6 +253,11 @@ export default {
       this._removeDynaCut();
       this._getMaxMin();
     },
+    _onCheckboxChange(e) {
+      this.reverse = e.target.checked;
+      // 选择切换后，重新进行分析
+      this.startClipping();
+    },
     /**
      * 获取剖切距离的最大最小值
      */
@@ -282,15 +298,19 @@ export default {
      * 剖切方向，Cesium.Cartesian3中第一个参数是左右，第二个参数是前后，第三个参数是上下
      */
     _clippingDirection() {
+      let direction = -1;
+      if (this.reverse) {
+        direction = 1;
+      }
       switch (this.axisCopy) {
         case "X":
-          return new this.Cesium.Cartesian3(-1.0, 0.0, 0.0);
+          return new this.Cesium.Cartesian3(direction, 0.0, 0.0);
         case "Y":
-          return new this.Cesium.Cartesian3(0.0, -1.0, 0.0);
+          return new this.Cesium.Cartesian3(0.0, direction, 0.0);
         case "Z":
-          return new this.Cesium.Cartesian3(0.0, 0.0, -1.0);
+          return new this.Cesium.Cartesian3(0.0, 0.0, direction);
         default:
-          return new this.Cesium.Cartesian3(-1.0, 0.0, 0.0);
+          return new this.Cesium.Cartesian3(direction, 0.0, 0.0);
       }
     },
     /**
@@ -582,5 +602,9 @@ export default {
 .model {
   max-height: 100px;
   overflow-y: auto;
+}
+
+.checkbox {
+  font-size: 12px;
 }
 </style>

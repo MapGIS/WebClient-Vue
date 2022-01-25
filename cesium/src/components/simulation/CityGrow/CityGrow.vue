@@ -145,9 +145,9 @@ export default {
         displayWithTile: false,
         growTime: 60, //总播放时长 默认60秒  60秒演示完整个播放流程
         updateInterval: 1, // 建筑生长的颜色和高度更新间隔，默认1s更新一次
-        colors: ["#fff0f6", "#ff85c0", "#eb2f96"],
         buildingsLimit: 200,
-        heightRadio: 1
+        heightRadio: 1,
+        colors:["#fff0f6","#ff85c0","#eb2f96"]
       },
       info: "注意：颜色设置只能在城市生长未开启时设置，生长开启后设置颜色无效。",
       showColorSetting: false,
@@ -203,14 +203,7 @@ export default {
         //始终显示时间
         // vm.tooltipVisible = true;
         vm.featureStyleCopy = Object.assign(vm.featureStyleCopy, vm.featureStyle);
-        for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
-          let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
-          colors.push(color);
-        }
-        for (let j = 1; j < vm.featureStyleCopy.times.length; j++) {
-          let timestamp = new Date(vm.featureStyleCopy.times[j],1,1).valueOf() / 1000;
-          times.push(timestamp);
-        }
+
         let cityGrowOptions = {
           heightField: vm.featureStyleCopy.heightField,
           heightRatio: vm.featureStyleCopy.heightRadio,
@@ -221,8 +214,6 @@ export default {
           buildingsLimit: vm.featureStyleCopy.buildingsLimit,
           updateInterval: vm.featureStyleCopy.updateInterval,
           playTime: vm.featureStyleCopy.growTime,
-          colors: colors,
-          times: times,
           colorSampling: false,
           updateHeight: vm.featureStyleCopy.isGrowHeight,
           replay: true,
@@ -239,6 +230,21 @@ export default {
             vm.timeSliderPlay(currentPlayTime, currentTimeStamp);
           }
         };
+        if (vm.featureStyleCopy.colors){
+          for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
+            let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
+            colors.push(color);
+          }
+          cityGrowOptions.colors = colors
+        }
+        if (vm.featureStyleCopy.times){
+          for (let j = 0; j < vm.featureStyleCopy.times.length; j++) {
+            let timestamp = new Date(vm.featureStyleCopy.times[j],1,1).valueOf() / 1000;
+            times.push(timestamp);
+          }
+          cityGrowOptions.times = times
+        }
+
         if (vm.featureStyleCopy.displayWithTile) {
           options.tileFeaturesCount = vm.tileFeaturesCount;
         } else {

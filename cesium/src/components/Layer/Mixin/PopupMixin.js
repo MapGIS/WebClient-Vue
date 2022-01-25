@@ -1,7 +1,4 @@
 import VueOptions from "../../Base/Vue/VueOptions";
-import Popup from "../../UI/Popup/Popup.vue";
-import PopupContent from "../../UI/Geojson/Popup";
-
 import debounce from "lodash/debounce";
 
 export default {
@@ -18,6 +15,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    enableModelSwitch: {
+      type: Boolean,
+      default: false
+    },
+    enableTips: {
+      type: Boolean,
+      default: false,
+    },
+    enableIot: {
+      type: Boolean,
+      default: false,
+    },
     popupOptions: {
       type: Object,
       default: () => {
@@ -29,14 +38,18 @@ export default {
         };
       },
     },
-    enableTips: {
-      type: Boolean,
-      default: false,
-    },
     tipsOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
+      },
+    },
+    iotOptions: {
+      type: Object,
+      default: () => {
+        return {
+          field: "Euid",
+        };
       },
     },
     /**
@@ -47,150 +60,78 @@ export default {
      *  自定义Tips界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
      */
     customTips: Function,
+    clickVisible: { type: Boolean, default: false },
+    hoverVisible: { type: Boolean, default: false },
+    clickPosition: {
+      type: Object,
+      default: () => {
+        return { longitude: 0, latitude: 0, height: 0 };
+      },
+    },
+    hoverPosition: {
+      type: Object,
+      default: () => {
+        return { longitude: 0, latitude: 0, height: 0 };
+      },
+    },
+    clickFeatures: {
+      type: Array,
+      default: () => [],
+    },
+    hoverFeatures: {
+      type: Array,
+      default: () => [],
+    },
+    clickMode: { type: String, default: "click" },
+    hoverMode: { type: String, default: "hover" },
   },
   data() {
     return {
-      pinMap: true,
+      iPinMap: true,
       activeId: undefined,
-      clickvisible: false,
-      clickposition: {
+      iClickVisible: false,
+      iClickPosition: {
         longitude: 110,
         latitude: 30,
         height: 0,
       },
-      hovervisible: false,
-      hoverposition: {
+      iHoverVisible: false,
+      iHoverPosition: {
         longitude: 110,
         latitude: 30,
         height: 0,
       },
-      currentClickInfo: [],
-      currentHoverInfo: [],
-      clickMode: "click",
-      hoverMode: "hover",
+      iClickFeatures: [],
+      iHoverFeatures: [],
+      iClickMode: "click",
+      iHoverMode: "hover",
     };
   },
-  components: {
-    Popup,
-    PopupContent,
-  },
-  render(h) {
-    let { enablePopup, enableTips, popupOptions, tipsOptions } = this;
-    let { customPopup, customTips } = this;
-    let { clickvisible, clickposition, hovervisible, hoverposition } = this;
-    let { clickMode, hoverMode, currentClickInfo, currentHoverInfo } = this;
-    let { pinMap } = this;
-    const vm = this;
-    const {
-      title = "name",
-      type = "default",
-      enableSeparate = true,
-      popupType = "table",
-      fullHeight = 600,
-    } = popupOptions;
-    const feature = this.properties
-      ? { properties: this.properties }
-      : currentClickInfo && currentClickInfo.length > 0
-      ? currentClickInfo[0]
-      : { properties: {} };
-    // 字符串或者数组
-    const images = [];
-    const description = "补充一段说明文字,默认字段description";
-    const options = {
-      ...popupOptions,
-      type,
-      popupType,
-      images: images,
-      description: description,
-      title: title ? feature.properties[title] : "标题",
-    };
-
-    if (!pinMap) {
-      const fs = currentClickInfo.forEach((f) => {
-        f.images = feature.properties.images || images;
-        f.content = feature.properties.description || description;
-      });
-      let features = feature ? [feature.properties] : currentClickInfo;
-      return (
-        <mapgis-ui-story-panel-large
-          onClosePanel={this.$_onPinMap.bind(this)}
-          onFlyTo={this.$_onFlyTo.bind(this)}
-          dataSource={features}
-          height={fullHeight}
-        />
-      );
-    }
-
-    let defaultSlot = this.$slots.default;
-    delete popupOptions.title;
-
-    if (customPopup || customTips) {
-      return (
-        <Popup
-          position={clickposition}
-          visible={clickvisible}
-          forceRender={true}
-        >
-          <div ref="click">
-            {customPopup && customPopup(currentClickInfo)}
-            {!customPopup && (
-              <PopupContent
-                mode={clickMode}
-                currentLayerInfo={currentClickInfo}
-              ></PopupContent>
-            )}
-          </div>
-          <div ref="hover">
-            {customTips && customTips(currentHoverInfo)}
-            {!customTips && (
-              <PopupContent
-                mode={hoverMode}
-                currentLayerInfo={currentHoverInfo}
-              ></PopupContent>
-            )}
-          </div>
-        </Popup>
-      );
-    } else {
-      return (
-        <div class="mapgis-popup-default-wrapper">
-          {enablePopup && (
-            <Popup
-              position={clickposition}
-              visible={clickvisible}
-              forceRender={true}
-              onChange={this.$_changeVisible.bind(this)}
-              onSeparate={this.$_separateMap.bind(this)}
-              options={options}
-            >
-              <mapgis-ui-popup-content
-                feature={feature}
-                popupOptions={popupOptions}
-              >
-                {defaultSlot}
-              </mapgis-ui-popup-content>
-            </Popup>
-          )}
-          {/* <Popup
-            position={hoverposition}
-            visible={hovervisible}
-            forceRender={true}
-          >
-            <mapgis-ui-card>
-              <span>
-                {feature.properties.title || feature.properties[title]}
-              </span>
-            </mapgis-ui-card>
-          </Popup> */}
-        </div>
-      );
-    }
+  watch: {
+    clickVisible(next) {
+      this.iClickVisible = next;
+    },
+    clickPosition(next) {
+      this.iClickPosition = next;
+    },
+    hoverVisible(next) {
+      this.iHoverPosition = next;
+    },
+    hoverPosition(next) {
+      this.iHoverPosition = next;
+    },
+    clickFeatures(next) {
+      this.iClickFeatures = next;
+    },
+    hoverFeatures(next) {
+      this.iHoverFeatures = next;
+    },
   },
   methods: {
     $_pickEvent(movement, mode, onSuccess, onFail) {
       const vm = this;
       const { Cesium, viewer, popupOptions } = this;
-      const { clickMode, hoverMode } = this;
+      const { iClickMode, iHoverMode } = this;
       const scene = viewer.scene;
       let tempRay = new Cesium.Ray();
       let tempPos = new Cesium.Cartesian3();
@@ -206,10 +147,10 @@ export default {
         // 多选模式
         let entities = scene.drillPick(position);
         if (entities.length <= 0) {
-          if (mode == clickMode) {
-            vm.clickvisible = false;
+          if (mode == iClickMode) {
+            vm.iClickVisible = false;
           } else {
-            vm.hovervisible = false;
+            vm.iHoverVisible = false;
           }
           onFail && onFail({ movement });
           return;
@@ -225,22 +166,22 @@ export default {
         }
 
         if (cartesian || cartesian2) {
-          if (mode == clickMode) {
-            vm.clickvisible = true;
-            vm.clickposition = {
+          if (mode == iClickMode) {
+            vm.iClickVisible = true;
+            vm.iClickPosition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
               height: heightString2,
             };
           } else {
-            vm.hovervisible = true;
-            vm.hoverposition = {
+            vm.iHoverVisible = true;
+            vm.iHoverPosition = {
               longitude: longitudeString2,
               latitude: latitudeString2,
               height: heightString2,
             };
           }
-          let currentClickInfo = entities.map((e) => {
+          let iClickFeatures = entities.map((e) => {
             let info = {
               layer: { id: e.id ? e.id.id : "未知数据" },
               properties: {},
@@ -271,12 +212,13 @@ export default {
             }
             return info;
           });
-          onSuccess && onSuccess({ entities, movement, currentClickInfo });
+          vm.iClickFeatures = iClickFeatures;
+          onSuccess && onSuccess({ entities, movement, iClickFeatures });
         } else {
-          if (mode == clickMode) {
-            vm.clickvisible = false;
+          if (mode == iClickMode) {
+            vm.iClickVisible = false;
           } else {
-            vm.hovervisible = false;
+            vm.iHoverVisible = false;
           }
           onFail && onFail();
         }
@@ -285,21 +227,21 @@ export default {
     $_bindClickEvent(onSuccess, onFail) {
       const vm = this;
       const { Cesium, viewer } = this;
-      const { clickMode } = this;
+      const { iClickMode } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (movement) {
-        vm.$_pickEvent(movement, clickMode, onSuccess, onFail);
+        vm.$_pickEvent(movement, iClickMode, onSuccess, onFail);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
     },
     $_bindHoverEvent(onSuccess, onFail) {
       const vm = this;
       const { Cesium, viewer } = this;
-      const { hoverMode } = this;
+      const { iHoverMode } = this;
 
       let hoverEvent = debounce(
         (movement) => {
-          vm.$_pickEvent(movement, hoverMode, onSuccess, onFail);
+          vm.$_pickEvent(movement, iHoverMode, onSuccess, onFail);
         },
         100,
         { leading: true }
@@ -314,14 +256,16 @@ export default {
     },
     $_changeVisible(visible) {},
     $_separateMap() {
-      this.pinMap = false;
+      this.iPinMap = false;
     },
     $_pinMap() {
-      this.pinMap = true;
+      this.iPinMap = true;
     },
     $_onPinMap() {
-      this.pinMap = true;
+      this.iPinMap = true;
     },
     $_onFlyTo() {},
+    $_getVideoStatus() {},
+    $_handleProjectScreen() {},
   },
 };
