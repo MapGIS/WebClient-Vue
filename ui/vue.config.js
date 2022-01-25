@@ -24,8 +24,8 @@ module.exports = {
           from: "build/webclient-vue-ui.scss",
           to: "webclient-vue-ui.scss"
         }
-      ])
-      // new BundleAnalyzerPlugin(),
+      ]),
+      new BundleAnalyzerPlugin()
       // new IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     resolve: {

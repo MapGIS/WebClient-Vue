@@ -120,7 +120,7 @@ export default {
       let layers = []
       if (this.selectLists.length <= 0) return
       for (let i = 0; i < this.selectLists.length; i++) {
-        let layer = this.selectLists[i]
+        let layer = this.selectLists[i].dataRef
         let { xattrs, type, title, url } = layer
         // console.warn('xattrs格式1', typeof xattrs, xattrs)
         // if (typeof xattrs === 'string') {
