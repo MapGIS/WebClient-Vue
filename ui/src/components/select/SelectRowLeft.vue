@@ -82,6 +82,6 @@ export default {
 
 .mapgis-ui-select-row-left-select {
   padding-right: 10px;
-  width: calc(100% - 70px);
+  width: calc(100% - 74px);
 }
 </style>

@@ -1161,10 +1161,10 @@ export default {
 <style scoped>
 /*--------------标绘容器--------------*/
 .mapgis-3d-graphic-container {
-  padding-top: 10px;
-  margin-top: -16px;
+  margin-top: -20px;
   width: 332px;
   max-height: 785px;
+  padding: 10px 15px;
 }
 
 /deep/ .mapgis-ui-select-selection-selected-value {

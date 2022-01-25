@@ -27,7 +27,7 @@ import Base64IconsKeyValue from "./Base64IconsKeyValue";
 import GraphicLayerService from "../Graphic/GraphicLayerService";
 
 export default {
-  name: "mapgis-3d-preview-map-story-layer",
+  name: "mapgis-3d-preview-map-story",
   inject: ["Cesium", "viewer"],
   mixins: [mapStoryService, GraphicLayerService],
   components: {
@@ -110,8 +110,6 @@ export default {
       let vm = this;
       if (this.height) {
         this.panelHeight = this.height;
-      } else {
-        this.panelHeight = this.$_getContainerHeight();
       }
       if (typeof this.dataSource === "string") {
         MRFS.FeatureService.get(this.dataSource, function (result) {

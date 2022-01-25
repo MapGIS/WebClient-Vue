@@ -1,14 +1,32 @@
 <template>
   <div :id="id" @click="$_clickPanel" class="mapgis-ui-project-edit-panel"
        :style="{height: height + 'px', width: width + 'px'}">
-    <div v-show="!editChapter && !showSetting" :style="{height: height - 32 + 'px'}">
+    <mapgis-ui-row class="mapgis-ui-project-edit-back"
+      v-if="!enableOneMap"
+    >
+      <mapgis-ui-svg-icon
+        style="position:absolute;left: 5px;top: 0;"
+        :iconStyle="{width: '18px'}"
+        @click="$_back"
+        type="back"/>
+      <span @click="$_back">
+            返回上一级
+      </span>
+      <mapgis-ui-svg-icon
+        style="position:absolute;right: -16px;top: 0;"
+        :iconStyle="{width: '18px'}"
+        type="close"
+        @click="$_close"
+      />
+    </mapgis-ui-row>
+    <div v-show="!editChapter && !showSetting" :style="{height: height - 38 + 'px'}">
       <div class="mapgis-ui-project-edit-top-bar">
         <mapgis-ui-row class="mapgis-ui-project-edit-top-tool">
           <mapgis-ui-col span="18" class="mapgis-ui-project-edit-top-left">
           </mapgis-ui-col>
           <mapgis-ui-col span="6" class="mapgis-ui-project-edit-top-right">
-<!--            <mapgis-ui-base64-icon style="margin-right: 4px;" width="18px" @click="$_export" type="export"/>-->
-            <mapgis-ui-base64-icon width="16px" @click="$_showSetting" type="setting"/>
+            <!--            <mapgis-ui-base64-icon style="margin-right: 4px;" width="18px" @click="$_export" type="export"/>-->
+<!--            <mapgis-ui-base64-icon width="16px" @click="$_showSetting" type="setting"/>-->
           </mapgis-ui-col>
         </mapgis-ui-row>
         <!--编辑故事标题-->
@@ -46,8 +64,8 @@
                               :map="dataSourceCopy.map"
                               @addMap="$_addProjectMap" title="附加地图"/>
     <!--按钮区域-->
-    <mapgis-ui-row v-show="!editChapter && !showSetting">
-      <mapgis-ui-col span="24" class="mapgis-ui-project-edit-new-feature">
+    <mapgis-ui-row v-show="!editChapter && !showSetting" class="mapgis-ui-project-edit-new-feature">
+      <mapgis-ui-col span="24">
         <mapgis-ui-dropdown>
           <mapgis-ui-menu slot="overlay">
             <mapgis-ui-menu-item @click="$_copyChapter" key="4">
@@ -64,7 +82,7 @@
       </mapgis-ui-col>
     </mapgis-ui-row>
     <!--编辑章节区域-->
-    <div v-show="editChapter" style="height: 100%;">
+    <div v-show="editChapter">
       <feature-edit
         ref="featureEdit"
         @change="$_changeChapter"
@@ -76,7 +94,7 @@
         @save="$_save"
         :data-source="currentChapter"
         :cameras="cameras"
-        :height="height"
+        :height="panelHeight"
         :editList="editList"
       />
     </div>
@@ -103,7 +121,8 @@ export default {
       editChapter: false,
       editTitle: false,
       dataSourceCopy: undefined,
-      margin: 26
+      margin: 26,
+      panelHeight: 0
     }
   },
   props: {
@@ -133,6 +152,11 @@ export default {
       default() {
         return [];
       }
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -144,6 +168,7 @@ export default {
     },
     height: {
       handler: function () {
+        this.$_setFeatureEditHeight();
       },
       deep: true
     },
@@ -165,24 +190,28 @@ export default {
     if (this.width < 310) {
       this.margin = 0;
     }
-    let title = document.getElementsByClassName("ant-card-head-title");
-    let vm = this;
-    for (let i = 0; i < title.length; i++) {
-      if (title[i].innerText === "地图故事") {
-        title[i].innerHTML = "<img style='width: 12px;margin-bottom: 3px;margin-right: 4px; cursor: pointer;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABMZJREFUeF7tm09oXUUUxs+5DwyCIAiCoiiKogiKoigGzZszLyYq1gZDo9VatbXWYlVSiUiVoFQJatWqtWppbbXapm7sqgvz7sy8hzvBpTtxpTtd6SLE3CMDE0ja9M3k/Zm5NJntnHvv9/3unHPn3XsewiofuMr9wxqA1Cug2WzeNDAw8GsqHUlXQL1ev6VSqRzPsmxdtVr9PQWEZABmZmZuq1QqJxDxBgD4eW5ubmRoaOjP2BCSANBa3wEAJwDgukWGTV9f32h/f//fMSFEB6CUugsRrflrzjSKiKdnZ2fHhoeH/40FISqAPM/7rXlEvKqFwR8AYIyI/osBIRoAY8y9zGzv/BUeYyeJ6LEY5u01ogDQWguX85d5jH1HRJtimY8CQClVczl/qcfYUSJ6Jqb5ngPI83zI5fwlHmOHiGhbbPM9BZDn+QNZltmcv9hj7Asi2pHCfM8AaK0fcjl/kcfYfiJ6MZX5ngBQSq13OX9hK2OI+JEQYldK810HoJR6xC57Zr6glTFmfl9K+Wpq810FkOf5BpfzFY/5KSnl7jKY7xoArbXduNiC13Iw8x4p5aQvLuZ8xxshrfUTAPCtTzQiTgoh9vjiYs93BMAY8yQzf+MTzcy7pZRTvrgU820D0Fo/DQBHAkRPENHegLgkIW0B0FpvBYBDAYrHiWhfQFyykBUDaDQazxVF8WWA4p1E9FlAXNKQFQEwxuxg5gM+xVmWba9Wqwd9cWWYDwagtd4JAJ/6RDPzVinlV764sswHAdBavwwA3lxGxM1CiGNlMReiwwtAKbULET/wnawoisdrtZp3M+Q7T+z5lgCMMRPM/F6AqDcDYkoRQkRvLRZyTgBa69cAoJSbl05IEtESz8sC0Fq/DgBvd3Khsh7rBaCUmkTEJcukrGba0bUGYC0FAmqAXVqruggu5JZSagIRQx6DtmaYdnIy9jFEtESndyNkjBln5g99Qsv4tsen2c57AdggY8xLzPxxwAnfIaI3AuJKExIEwNWEFwBgv085Ik4JIUrz0tOr1xeweF5r/TwAfB5wzLtEZHeSpR/BK2DBiTFmGzOH/NbfS0QTZSewYgDWkFJqCyIe9pmzxVNK+YovLuV8WwBcTXgKAI4GiN9HROMBcUlC2gbgINhmBu8LEET8RAhhX6qUbnQEwD0iNzLz8QBnyb8EL6exYwCuJowh4kkfBEQ8IISwj9PSjK4AcBBGHYSWH0cBIGlDxJnkuwbA1YQRC8H3eRwRDwohtpdhGXQVgKsJ65jZpkPLBgkAOExEz6aG0HUA1lCj0XiwKAoLoWWLDDMfkVJuSQmhJwBcOtwPANMBTVJfE5H90Jpk9AyAdVOv1+/LsmwaEVu2ySHiMSHE5hQEegrAGsrzXFoIAOBrlIzeJWr19RyAe0RWXfPU5Z67PE1EG2OuhCgAXE24x/URXdnKICJ+L4R4NBaEaADcI/Ju1zF+dQuDpwBgw3nXLr9guNls3lkUhe0lvPasXRnij8w8SkT/nJcrYMGUUup21016/SKjP83Pz48MDg7+Fct8tCK4nCGt9a2uJtzIzL8w88O1Wu2PmOaTAnA7xpttOhRFsb5Wq/0W23xyAFbAqv7jZIo7flbhLYOIlBqi7gNSGj3Xtf8H3j6JUDQ6P+IAAAAASUVORK5CYII=' id='MapStoryClose'/>地图故事";
-        let MapStoryClose = document.getElementById("MapStoryClose");
-        MapStoryClose.onclick = function () {
-          if (vm.editChapter) {
-            vm.$refs.featureEdit.$_stopDraw();
-            vm.$refs.featureEdit.$_hideChapterGraphics();
-            vm.editChapter = false;
-            window.showPanels.currentPage = "projectEdit";
-          } else {
-            vm.$emit("backed");
+    //如果是一张图模式，添加返回按钮
+    if(this.enableOneMap) {
+      let title = document.getElementsByClassName("ant-card-head-title");
+      let vm = this;
+      for (let i = 0; i < title.length; i++) {
+        if (title[i].innerText === "地图故事") {
+          title[i].innerHTML = "<img style='width: 12px;margin-bottom: 3px;margin-right: 4px; cursor: pointer;' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAABMZJREFUeF7tm09oXUUUxs+5DwyCIAiCoiiKogiKoigGzZszLyYq1gZDo9VatbXWYlVSiUiVoFQJatWqtWppbbXapm7sqgvz7sy8hzvBpTtxpTtd6SLE3CMDE0ja9M3k/Zm5NJntnHvv9/3unHPn3XsewiofuMr9wxqA1Cug2WzeNDAw8GsqHUlXQL1ev6VSqRzPsmxdtVr9PQWEZABmZmZuq1QqJxDxBgD4eW5ubmRoaOjP2BCSANBa3wEAJwDgukWGTV9f32h/f//fMSFEB6CUugsRrflrzjSKiKdnZ2fHhoeH/40FISqAPM/7rXlEvKqFwR8AYIyI/osBIRoAY8y9zGzv/BUeYyeJ6LEY5u01ogDQWguX85d5jH1HRJtimY8CQClVczl/qcfYUSJ6Jqb5ngPI83zI5fwlHmOHiGhbbPM9BZDn+QNZltmcv9hj7Asi2pHCfM8AaK0fcjl/kcfYfiJ6MZX5ngBQSq13OX9hK2OI+JEQYldK810HoJR6xC57Zr6glTFmfl9K+Wpq810FkOf5BpfzFY/5KSnl7jKY7xoArbXduNiC13Iw8x4p5aQvLuZ8xxshrfUTAPCtTzQiTgoh9vjiYs93BMAY8yQzf+MTzcy7pZRTvrgU820D0Fo/DQBHAkRPENHegLgkIW0B0FpvBYBDAYrHiWhfQFyykBUDaDQazxVF8WWA4p1E9FlAXNKQFQEwxuxg5gM+xVmWba9Wqwd9cWWYDwagtd4JAJ/6RDPzVinlV764sswHAdBavwwA3lxGxM1CiGNlMReiwwtAKbULET/wnawoisdrtZp3M+Q7T+z5lgCMMRPM/F6AqDcDYkoRQkRvLRZyTgBa69cAoJSbl05IEtESz8sC0Fq/DgBvd3Khsh7rBaCUmkTEJcukrGba0bUGYC0FAmqAXVqruggu5JZSagIRQx6DtmaYdnIy9jFEtESndyNkjBln5g99Qsv4tsen2c57AdggY8xLzPxxwAnfIaI3AuJKExIEwNWEFwBgv085Ik4JIUrz0tOr1xeweF5r/TwAfB5wzLtEZHeSpR/BK2DBiTFmGzOH/NbfS0QTZSewYgDWkFJqCyIe9pmzxVNK+YovLuV8WwBcTXgKAI4GiN9HROMBcUlC2gbgINhmBu8LEET8RAhhX6qUbnQEwD0iNzLz8QBnyb8EL6exYwCuJowh4kkfBEQ8IISwj9PSjK4AcBBGHYSWH0cBIGlDxJnkuwbA1YQRC8H3eRwRDwohtpdhGXQVgKsJ65jZpkPLBgkAOExEz6aG0HUA1lCj0XiwKAoLoWWLDDMfkVJuSQmhJwBcOtwPANMBTVJfE5H90Jpk9AyAdVOv1+/LsmwaEVu2ySHiMSHE5hQEegrAGsrzXFoIAOBrlIzeJWr19RyAe0RWXfPU5Z67PE1EG2OuhCgAXE24x/URXdnKICJ+L4R4NBaEaADcI/Ju1zF+dQuDpwBgw3nXLr9guNls3lkUhe0lvPasXRnij8w8SkT/nJcrYMGUUup21016/SKjP83Pz48MDg7+Fct8tCK4nCGt9a2uJtzIzL8w88O1Wu2PmOaTAnA7xpttOhRFsb5Wq/0W23xyAFbAqv7jZIo7flbhLYOIlBqi7gNSGj3Xtf8H3j6JUDQ6P+IAAAAASUVORK5CYII=' id='MapStoryClose'/>地图故事";
+          let MapStoryClose = document.getElementById("MapStoryClose");
+          MapStoryClose.onclick = function () {
+            if (vm.editChapter) {
+              vm.$refs.featureEdit.$_stopDraw();
+              vm.$refs.featureEdit.$_hideChapterGraphics();
+              vm.editChapter = false;
+              window.showPanels.currentPage = "projectEdit";
+            } else {
+              vm.$emit("back");
+            }
           }
         }
       }
     }
+    this.$_setFeatureEditHeight();
   },
   methods: {
     //初始化函数
@@ -351,6 +380,25 @@ export default {
         }
       }
       this.editChapter = true;
+    },
+    //返回上一级
+    $_back() {
+      if (this.editChapter) {
+        this.editChapter = false;
+      }else {
+        this.$emit("back");
+      }
+    },
+    //关闭面板
+    $_close() {
+      this.$emit("close");
+    },
+    //设置编辑面板高度
+    $_setFeatureEditHeight() {
+      this.panelHeight = this.height;
+      if(this.enableOneMap){
+        this.panelHeight += 30;
+      }
     }
   }
 }
@@ -424,15 +472,19 @@ export default {
 }
 
 .mapgis-ui-project-edit-new-feature {
+  position: absolute;
+  left: 0;
+  bottom: 4px;
   text-align: left;
-  padding-left: 4px;
+  width: 100%;
   height: 36px;
+  padding-left: 8px;
 }
 
 .mapgis-ui-project-edit-feature-button {
   width: 47%;
   height: 32px;
-  margin-right: 10px;
+  margin-right: 5px;
   background: white;
   color: #0081E2;
   font-size: 14px;
@@ -445,5 +497,11 @@ export default {
   font-weight: bold;
   border: 1px solid #75BAED;
   background: #0081E2;
+}
+
+.mapgis-ui-project-edit-back {
+  padding: 8px 8px 8px 28px;
+  border-bottom: 1px solid rgb(217, 217, 217);
+  cursor: pointer;
 }
 </style>

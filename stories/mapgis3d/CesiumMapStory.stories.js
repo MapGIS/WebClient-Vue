@@ -1,5 +1,7 @@
+import Markdown from "../../cesium/docs/api/MapStory/MapStory.md";
+
 export default {
-    title: "三维/图层/时空漫游",
+    title: "三维/图层/地图故事",
     argTypes:{
     }
 }
@@ -12,19 +14,22 @@ const Template = (args, {argTypes}) => ({
     },
     template: `
       <mapgis-web-scene style="height:95vh">
-        <mapgis-3d-map-story-layer v-bind="$props"/>
+        <mapgis-3d-map-story v-bind="$props"/>
       </mapgis-web-scene>
     `
 });
 
-export const 时空漫游 = Template.bind({});
-时空漫游.args = {
-    dataSource: [{
-        title: "国家地理",
-        description: "",
-        url: `http://${window.webclient.ip}:${window.webclient.port}/geojson/mapStory.json`,
-        type: "normal",
-        show: true,
-        uuid: "1"
-    }]
+export const 地图故事 = Template.bind({});
+地图故事.args = {
+    dataSource: [],
+    height: 700,
+    width: 300
+};
+
+地图故事.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
 };

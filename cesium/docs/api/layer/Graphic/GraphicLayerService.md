@@ -52,6 +52,12 @@ this.$_startDrawing({ type: "绘制类型", style: {}, drawWithHeight: true
 - **描述:** Cesium 对象的 Viewer 对象
   > 在线文档：http://develop.smaryun.com/docs/other/mapgis-cesium/Viewer.html?classFilter=vie
 
+## 绘制样式
+
+[绘制样式(外网)](http://develop.smaryun.com/docs/other/mapgis-cesium/Graphic.html)
+<br>
+[绘制样式(内网)](http://192.168.88.204:8888/Demo/Build/Documentation/Graphic.html)
+
 ## 方法
 
 ### `$_newGraphicLayer(options)`
