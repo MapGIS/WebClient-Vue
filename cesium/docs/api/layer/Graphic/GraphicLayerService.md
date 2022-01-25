@@ -54,11 +54,9 @@ this.$_startDrawing({ type: "绘制类型", style: {}, drawWithHeight: true
 
 ## 绘制样式
 
-### `点(point)`
-
-| 名称  | 类型         | 默认值             | 说明       |
-| ----- | ------------ | ------------------ | ---------- |
-| color | Cesium.Color | Cesium.Color.WHITE | 点填充颜色 |
+[绘制样式(外网)](http://develop.smaryun.com/docs/other/mapgis-cesium/Graphic.html)
+<br>
+[绘制样式(内网)](http://192.168.88.204:8888/Demo/Build/Documentation/Graphic.html)
 
 ## 方法
 
