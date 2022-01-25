@@ -16,14 +16,14 @@
       <mapgis-ui-form-model-item label="文件路径" v-if="saveType==='directSave'">
         <mapgis-ui-input
           disabled
-          v-model="saveForm.saveUrl"
+          v-model="saveForm.saveShowUrl"
           read-only
           placeholder="请选择路径"
         />
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="文件路径" v-else>
         <mapgis-ui-input-search
-          v-model="saveForm.saveUrl"
+          v-model="saveForm.saveShowUrl"
           read-only
           enter-button
           placeholder="请选择路径"
@@ -69,7 +69,7 @@
 
 <script>
 import { saveJsonFile, getFileDownloadUrlWithAuth } from "../../axios/files";
-import { getMapGISUrl } from "../../config/mapgis";
+import { getMapGISUrl, getMapgisPath } from "../../config/mapgis";
 
 export default {
   name: "mapgis-ui-clouddisk-savedocument",
@@ -78,6 +78,7 @@ export default {
     return {
       saveForm: {
         saveUrl: "",
+        saveShowUrl: "",
         fileName: "默认地图文档"
       },
       saveType: 'directSave',
@@ -152,7 +153,25 @@ export default {
         }]
       }
       this.saveForm.saveUrl = savePath || ''
+      this.saveForm.saveShowUrl = this.modefyUrl(this.saveForm.saveUrl)
       this.saveForm.fileName = saveName || '默认地图文档'
+    },
+    modefyUrl (url) {
+      if (url === '') {
+        return ''
+      }
+      let rootUrl = url.split('/')[0]
+      let rootName = '常规文件夹'
+      if (rootUrl !== getMapgisPath()) {
+        rootName = '组织文件夹'
+      }
+      let rootIndex = url.indexOf("/");
+      if (rootIndex >= 0) {
+        url = rootName + url.slice(rootIndex);
+      } else {
+        url = rootName;
+      }
+      return url;
     },
     handleSaveDocument() {
       const vm = this;
@@ -228,6 +247,7 @@ export default {
     },
     handleFolderConfirm() {
       this.saveForm.saveUrl = this.temUrl;
+      this.saveForm.saveShowUrl = this.modefyUrl(this.saveForm.saveUrl)
       this.saveTree = false;
     },
     handleFolderCancel() {
