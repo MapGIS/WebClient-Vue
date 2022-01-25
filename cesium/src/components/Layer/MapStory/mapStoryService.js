@@ -17,18 +17,6 @@ export default {
     width: {
       type: Number
     },
-    enablePreview: {
-      type: Boolean,
-      default: true
-    },
-    showPreview: {
-      type: Boolean,
-      default: true
-    },
-    enableClose: {
-      type: Boolean,
-      default: true
-    },
     vueKey: {
       type: String,
       default: "default"
@@ -38,10 +26,6 @@ export default {
       default() {
         return Number((Math.random() * 100000000).toFixed(0));
       }
-    },
-    enableImport: {
-      type: Boolean,
-      default: false
     },
     //一张图模式
     enableOneMap: {
@@ -67,8 +51,9 @@ export default {
       currentFeatureType: undefined,
       currentFeature: undefined,
       storyDataSource: undefined,
-      containerWidth: "600px",
-      containerHeight: "600px",
+      containerWidth: 0,
+      containerHeight: 0,
+      showPreview: true,
       startDraw: false,
       editList: editList,
       //导入文件按钮id

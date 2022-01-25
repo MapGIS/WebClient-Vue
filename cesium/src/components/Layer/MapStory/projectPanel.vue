@@ -17,14 +17,15 @@
         @selectCamera="$_selectCamera"
         @showProject="$_showStory"
         @chapterPreview="$_chapterPreview"
-        @back="$_back"
         @export="$_export"
         @import="$_import"
         @save="$_save"
-        :height="panelHeight"
+        @close="$_close"
+        :height="height"
         :width="width"
         :data-source="dataSourceCopy"
         :enableImport="enableImport"
+        :enableOneMap="enableOneMap"
         v-show="showProjectPanel"
     />
   </div>
@@ -68,6 +69,11 @@ export default {
     enableImport: {
       type: Boolean,
       default: false
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -76,7 +82,6 @@ export default {
       projects: [],
       panelHeight: undefined,
       showLargePanel: false,
-      storyFeature: [],
       //当前的工程
       currentProject: {},
       showProjectPanel: true,
@@ -103,9 +108,6 @@ export default {
     //初始化函数
     $_init() {
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
-      if (this.height) {
-        this.panelHeight = this.height;
-      }
     },
     //修改章节内容
     $_changeChapter(chapter) {
@@ -119,6 +121,10 @@ export default {
     $_save() {
       this.$emit("save");
     },
+    //关闭面板
+    $_close() {
+      this.$emit("close");
+    },
     //导入
     $_import() {
       this.$emit("import");
@@ -127,38 +133,13 @@ export default {
     $_export(project) {
       this.$emit("export", project);
     },
-    //回退
-    $_back(project) {
-      let features = project.features;
-      for (let i = 0; i < features.length; i++) {
-        let entity = this.viewer.entities.getById(features[i].uuid);
-        if (entity) {
-          entity.show = false;
-        }
-      }
-    },
     //预览章节
     $_chapterPreview(chapter) {
-      if (this.enablePreview) {
-        this.storyFeature = [chapter];
-        this.showPlay = false;
-        this.showArrow = false;
-        this.showLargePanel = true;
-        this.enableFullScreen = false;
-      } else {
-        this.$emit("chapterPreview", chapter);
-      }
+      this.$emit("chapterPreview", chapter);
     },
     //预览地图故事
     $_storyPreview(story) {
-      if (this.enablePreview) {
-        this.storyFeature = this.currentProject.features;
-        this.showPlay = true;
-        this.showArrow = true;
-        this.showLargePanel = true;
-      } else {
-        this.$emit("storyPreview", story);
-      }
+      this.$emit("storyPreview", story);
     },
     //关闭右侧轮播面板
     $_closePanel() {

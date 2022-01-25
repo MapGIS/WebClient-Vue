@@ -27,7 +27,7 @@ import Base64IconsKeyValue from "./Base64IconsKeyValue";
 import GraphicLayerService from "../Graphic/GraphicLayerService";
 
 export default {
-  name: "mapgis-3d-preview-map-story-layer",
+  name: "mapgis-3d-preview-map-story",
   inject: ["Cesium", "viewer"],
   mixins: [mapStoryService, GraphicLayerService],
   components: {

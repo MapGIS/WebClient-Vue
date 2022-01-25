@@ -4,12 +4,11 @@
                    :data-source="dataSourceCopy"
                    :height="height"
                    :width="width"
-                   :enablePreview="enablePreview"
-                   :enableClose="enableClose"
-                   :enableImport="enableImport"
+                   :enableOneMap="enableOneMap"
                    @changeChapter="$_changeChapter"
                    @setCamera="$_setCamera"
                    @save="$_save"
+                   @close="$_close"
                    @addChapter="$_addChapter"
                    @copyChapter="$_addChapter"
                    @deleteChapter="$_deleteChapter"
@@ -47,8 +46,8 @@
         </div>
       </mapgis-3d-popup>
     </template>
-    <mapgis-3d-preview-map-story-layer
-      v-if="enablePreview"
+    <mapgis-3d-preview-map-story
+      v-if="!enableOneMap"
       v-show='showPreview'
       :height='height'
       :width='width'
@@ -68,7 +67,7 @@ window.showPanels = {
   showProjectEdit: false
 }
 export default {
-  name: "mapgis-3d-map-story-layer",
+  name: "mapgis-3d-map-story",
   mixins: [mapStoryService],
   components: {
     "project-panel": projectPanel,
@@ -81,10 +80,12 @@ export default {
   methods: {
     //设置容器宽高
     $_setContainerStyle() {
-      let cesiumWidget = document.getElementsByClassName("cesium-widget");
-      if (cesiumWidget && cesiumWidget.length > 0) {
-        this.containerWidth = cesiumWidget[0].offsetWidth + "px";
-        this.containerHeight = cesiumWidget[0].offsetHeight + "px";
+      if (!this.enableOneMap) {
+        let cesiumWidget = document.getElementsByClassName("cesium-widget");
+        if (cesiumWidget && cesiumWidget.length > 0) {
+          this.containerWidth = cesiumWidget[0].offsetWidth + "px";
+          this.containerHeight = cesiumWidget[0].offsetHeight + "px";
+        }
       }
     },
     //修改章节内容
@@ -95,6 +96,10 @@ export default {
     //保存数据
     $_save() {
       this.$emit("save", JSON.parse(JSON.stringify(this.dataSourceCopy)));
+    },
+    //关闭面板
+    $_close() {
+      this.$emit("close");
     },
     //新增章节
     $_addChapter(chapter) {
@@ -149,7 +154,7 @@ export default {
       this.dataSourceCopy.push(story);
     },
     $_storyPreview(story) {
-      if (this.enablePreview) {
+      if (!this.enableOneMap) {
         this.storyDataSource = story;
         this.showPreview = true;
         this.$refs.preview.projectPreview()
@@ -160,7 +165,7 @@ export default {
       let story = {
         chapters: [chapter]
       };
-      if (this.enablePreview) {
+      if (!this.enableOneMap) {
         this.storyDataSource = story
         this.showPreview = true
       }

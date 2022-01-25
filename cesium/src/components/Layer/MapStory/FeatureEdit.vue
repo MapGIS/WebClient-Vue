@@ -1,7 +1,7 @@
 <template>
-  <div style="height: 100%">
-    <div :style="{height: height + 'px'}" style="position: relative;width: 100%">
-      <div v-if="dataSourceCopy" :style="{height: height - 48 + 'px'}" class="mapgis-ui-feature-edit-panel">
+  <div>
+    <div :style="{height: height - 40 + 'px'}" style="position: relative;width: 100%">
+      <div v-if="dataSourceCopy" :style="{height: height - 85 + 'px'}" class="mapgis-ui-feature-edit-panel">
         <!--标题-->
         <mapgis-ui-input-row-left
           title="标题"
@@ -11,17 +11,17 @@
           v-model="dataSourceCopy.title"
         />
         <!--附加地图-->
-        <mapgis-ui-map-select v-show="!showMoreMap"
-                              title="附加地图"
-                              :topTitleStyle="topTitleStyle"
-                              :showTitleIcon="false"
-                              :showMoreTitle="showMoreTitle"
-                              :titleStyle="titleStyle"
-                              :mainStyle="mainStyle"
-                              :map="dataSourceCopy.map"
-                              @showMore="$_showAdvance"
-                              @addMap="$_addMap"
-        />
+<!--        <mapgis-ui-map-select v-show="!showMoreMap"-->
+<!--                              title="附加地图"-->
+<!--                              :topTitleStyle="topTitleStyle"-->
+<!--                              :showTitleIcon="false"-->
+<!--                              :showMoreTitle="showMoreTitle"-->
+<!--                              :titleStyle="titleStyle"-->
+<!--                              :mainStyle="mainStyle"-->
+<!--                              :map="dataSourceCopy.map"-->
+<!--                              @showMore="$_showAdvance"-->
+<!--                              @addMap="$_addMap"-->
+<!--        />-->
         <mapgis-ui-map-multi-rows v-show="showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showAdvance"
                                   :map="dataSourceCopy.map" @addMap="$_addMap" title="附加地图"/>
         <!--设置相机视角-->
@@ -508,12 +508,12 @@ export default {
 <style>
 .mapgis-ui-feature-edit-panel {
   width: 100%;
-  height: 836px;
   overflow: hidden;
   overflow-y: scroll;
   padding-left: 4px;
   padding-right: 4px;
   position: relative;
+  padding-bottom: 7px;
 }
 
 .mapgis-ui-feature-edit-panel::-webkit-scrollbar {
@@ -525,7 +525,7 @@ export default {
 }
 
 .mapgis-ui-feature-edit-bottom {
-  width: 98%;
+  width: 100%;
   height: auto;
   position: absolute;
   left: 0;
