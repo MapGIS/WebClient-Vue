@@ -387,8 +387,7 @@ export default {
          * */
         layerBrtChange(e) {
             this.layerbrightness = e;
-            // viewer.scene.imageryLayers._layers[0].brightness = this.layerbrightness;
-            this.valueChange('brightness',this.layerbrightness);
+            this.layerValueChange('brightness',this.layerbrightness);
 
         },
         /*
@@ -396,31 +395,28 @@ export default {
          * */
         layerCtrstChange(e) {
             this.layercontrast = e;
-            // viewer.scene.imageryLayers._layers[0].contrast = this.layercontrast;
-            this.valueChange('contrast',this.layercontrast);
+            this.layerValueChange('contrast',this.layercontrast);
         },
         /*
          * 图层色调
          */
         layerHueChange(e) {
             this.layerhue = e;
-            // viewer.scene.imageryLayers._layers[0].hue = this.layerhue;
-            this.valueChange('hue',this.layerhue);
+            this.layerValueChange('hue',this.layerhue);
         },
         /*
          * 图层饱和度
          * */
         layerSaturationChange(e) {
             this.layersaturation = e;
-            // viewer.scene.imageryLayers._layers[0].saturation = this.layersaturation;
-            this.valueChange('saturation',this.layersaturation);
+            this.layerValueChange('saturation',this.layersaturation);
             
         },
-        valueChange(parameter,value){
+        layerValueChange(parameter,value){
             const { viewer } = this;
 
-            let length = viewer.scene.imageryLayers._layers.length;
             let i;
+            let length = viewer.scene.imageryLayers._layers.length;
             for(i=0;i<length;i++){
                 let layer = viewer.scene.imageryLayers._layers[i];
                 layer[parameter] = value;

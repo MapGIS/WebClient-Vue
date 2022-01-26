@@ -148,6 +148,18 @@
                     :wrapperCol="12"
                 />
 
+                <mapgis-ui-input-number-panel
+                    label="排水体积(m³)"
+                    size="small"
+                    v-model="drainageVol"
+                    :range="[0, 100]"
+                    :rangeShow="false"
+                    :step="1"
+                    :slider="false"
+                    :labelCol="{ span: 12 }"
+                    :wrapperCol="{ span: 12 }"
+                />
+
                 <label class="title-label">雨参数设置</label>
 
                 <mapgis-ui-input-number-panel
@@ -226,11 +238,6 @@ export default {
                 vm.rainOption = 3;
             }
         },
-        pondingTime(e) {
-            let speed =
-                (this.maxHeightCopy - this.startHeightCopy) / e;
-            this.currentSpeed = Math.round(speed * 100) / 100;
-        },
         sliderValue:{
             handler:function(e){
                 this.$emit('updateValue',e)
@@ -248,7 +255,11 @@ export default {
         //积水上涨的时间
         pondingTime:{
             type:Number,
-            default:4
+            default:24
+        },
+        multiSpeed:{
+            type:Number,
+            default:1
         }
     },
     data() {
@@ -311,6 +322,8 @@ export default {
             rainFall: 36,
             //降雨体积
             rainFallVol: undefined,
+            //排水体积
+            drainageVol:0,
             //雨大小的选项，0-3分别对应小雨，中雨，大雨，暴雨
             rainOption: 2,
             //雨倾斜角度
@@ -329,8 +342,6 @@ export default {
 
             //判断是否存在积水仿真效果
             isSimulation: false,
-            currentMaxHeight: null,
-            currentSpeed: null,
             //判断是否停止积水分析计算
             stopCaculate: true,
             //判断积水是否正在进行积水仿真
@@ -559,7 +570,7 @@ export default {
             }
 
             //计算绘制区域体积
-            let rainFallVol = this.area * this.rainFall * 0.001; //cubic meters
+            let rainFallVol = this.area * this.rainFall * 0.001 - this.drainageVol; //cubic meters
             this.VolErr = rainFallVol * 0.1;
             this.rainFallVol = rainFallVol;
         },
@@ -567,7 +578,13 @@ export default {
         computeHeight() {
             const { viewer } = this;
             const vm = this;
-            vm.maskText = "正在计算积水的起始高度，请稍等...";
+
+            if(this.rainFallVol < 0 ){
+                vm.$message.warning('排水体积大于降雨体积，无积水效果！')
+                return;
+            }
+
+            this.maskText = "正在计算积水的起始高度，请稍等...";
 
             //获取地形的高度最值
             let minH, maxH;
@@ -625,12 +642,10 @@ export default {
                 //积水上涨的速度
                 let speed =
                     (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime;
-                vm.floodSpeedCopy = Math.round(speed * 100) / 100;
+                vm.floodSpeedCopy = Math.round(speed * 100) / 100 * vm.multiSpeed;
 
                 vm.maskShow = false;
                 vm.isSimulation = true;
-                vm.currentMaxHeight = vm.maxHeightCopy;
-                vm.currentSpeed = vm.floodSpeedCopy;
 
                 //积水上涨
                 vm.addSimulation();
@@ -719,17 +734,16 @@ export default {
                 //下雨
                 vm.addrain();
                 vm.pond = true;
-                vm.maxHeightCopy = vm.currentMaxHeight;
-                vm.floodSpeedCopy = vm.currentSpeed;
                 vm.sliderValue = 0;
                 vm.timer = setInterval(() => {
-                    vm.sliderValue += 24 * (0.5 / vm.pondingTime);
-                    if (vm.sliderValue >= 24) {
+                    if (vm.sliderValue >= vm.pondingTime) {
                         clearInterval(vm.timer);
                         vm.removeRain();
-                        vm.pond = false;
+                        vm.pond = false;    
+                    }else{
+                        vm.sliderValue += 1 * vm.multiSpeed;
                     }
-                }, 500);
+                }, 1000);
 
                 vm._removeFlood();
                 setLogarithmicDepthBufferEnable( isLogarithmicDepthBufferSupport(), viewer);
@@ -801,9 +815,8 @@ export default {
             this.removeRain();
             this.removeDraw();
             this.isSimulation = false;
-            this.currentMaxHeight = null;
-            this.currentSpeed = null;
             this.sliderValue = 0;
+            clearInterval(this.timer);
             this.loopCount = 0;
 
         },
