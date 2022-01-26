@@ -14,7 +14,7 @@
     v-else
     :enablePopup="enablePopup"
     :enableTips="enableTips"
-    :enableIot="enableIot"
+    :enableIot="iEnableIot"
     :popupOptions="popupOptions"
     :tipsOptions="tipsOptions"
     :iotOptions="iotOptions"
@@ -40,11 +40,11 @@ export default {
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [PopupMixin],
   props: {
-    ...Tileset3dOptions
+    ...Tileset3dOptions,
   },
   components: {
     modelSwitchPopup,
-    Popup
+    Popup,
   },
   data() {
     return {
@@ -53,7 +53,8 @@ export default {
       version: undefined,
       modelSwitchVisible: false,
       tileIndex: undefined,
-      tile: {}
+      tile: {},
+      iEnableIot: false,
     };
   },
   created() {},
@@ -89,7 +90,10 @@ export default {
       } else {
         this.unbindPopupEvent();
       }
-    }
+    },
+    enableIot(next) {
+      this.iEnableIot = next;
+    },
   },
   /* render(h) {
     return this.$_render(h);
@@ -236,13 +240,8 @@ export default {
       }
     },
     bindPopupEvent() {
-      const {
-        vueKey,
-        vueIndex,
-        enablePopup,
-        enableTips,
-        enableModelSwitch
-      } = this;
+      const { vueKey, vueIndex, enablePopup, enableTips, enableModelSwitch } =
+        this;
 
       let clickhandler, hoverhandler;
       if (enablePopup || enableModelSwitch) {
@@ -326,10 +325,19 @@ export default {
         } else {
           tileset.queryAttributes(oid).then(function (result) {
             result = result || {};
-            /* vm.iClickFeatures = [
+            vm.iClickFeatures = [
               { properties: result, title: result[titlefield] },
-            ]; */
+            ];
           });
+        }
+        if (vm.iClickFeatures && vm.iClickFeatures.length > 0) {
+          let clickinfo = vm.iClickFeatures[0];
+          const { properties } = clickinfo;
+          if (properties) {
+            Object.keys(properties).forEach((k) => {
+              if (k.toLowerCase() == "euid") vm.iEnableIot = true;
+            });
+          }
         }
       }
     },

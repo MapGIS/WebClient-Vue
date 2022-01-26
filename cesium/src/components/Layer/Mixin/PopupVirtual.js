@@ -70,16 +70,6 @@ export default {
       );
     }
 
-    /* if (iClickFeatures && iClickFeatures.length > 0) {
-      let clickinfo = iClickFeatures[0];
-      const { properties } = clickinfo;
-      if (properties) {
-        Object.keys(properties).forEach(k => {
-          if (k.toLowerCase() == "euid") enableIot = true;
-        });
-      }
-    } */
-
     let defaultSlot = this.$slots.default;
     delete popupOptions.title;
 
