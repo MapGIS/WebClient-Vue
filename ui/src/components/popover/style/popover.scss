@@ -34,6 +34,11 @@ $popup-width: 280px;
   }
 }
 
+.mapgis-multi-model-status-popup {
+  width: 200px;
+  top: 10px;
+}
+
 .mapgis-feature-popup-title {
   color: $text-color;
   font-weight: bold;
@@ -380,7 +385,7 @@ $popup-width: 280px;
 }
 
 .cesium-popup-content-wrapper {
-  width: 100%;  
+  width: 100%;
   height: 100%;
   text-align: left;
   padding: 0px;

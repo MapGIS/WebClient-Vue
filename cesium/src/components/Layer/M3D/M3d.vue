@@ -5,7 +5,7 @@
     :position="iClickPosition"
     forceRender
   >
-    <mapgis-ui-popup-content style="width: 200px !important; top: 10px">
+    <mapgis-ui-popup-content class="mapgis-multi-model-status-popup">
       <modelSwitchPopup :tile="tile" @handleModel="handleModel">
       </modelSwitchPopup>
     </mapgis-ui-popup-content>
@@ -240,8 +240,8 @@ export default {
       }
     },
     bindPopupEvent() {
-      const { vueKey, vueIndex, enablePopup, enableTips, enableModelSwitch } =
-        this;
+      const { vueKey, vueIndex } = this;
+      const { enablePopup, enableTips, enableModelSwitch } = this;
 
       let clickhandler, hoverhandler;
       if (enablePopup || enableModelSwitch) {
@@ -279,7 +279,6 @@ export default {
       }
     },
     pickFeature(payload) {
-      console.log("payload", payload);
       const vm = this;
       const { movement } = payload;
 
