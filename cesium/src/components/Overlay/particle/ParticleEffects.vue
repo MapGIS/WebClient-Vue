@@ -10,8 +10,9 @@
             :active-key="activeKey"
             @change="tabChange"
         >
-          <mapgis-ui-tab-pane key="1" tab="粒子列表" class="mapgis-3d-particle-effects-control-content">
-            <mapgis-ui-list item-layout="horizontal" :data-source="particleListCopy">
+          <mapgis-ui-tab-pane key="1" tab="粒子列表" class="mapgis-3d-particle-effects-control-content list-pane">
+            <mapgis-ui-list item-layout="horizontal" :data-source="particleListCopy" :pagination="pagination"
+                            :split="false">
               <mapgis-ui-empty :image="emptyImage" :image-style="imageStyle" v-if="particleListCopy.length === 0">
                 <span slot="description" class="mapgis-3d-particle-effects-empty-style"> 选择上方粒子类型 <br>在地图上点击添加粒子 </span>
               </mapgis-ui-empty>
@@ -24,27 +25,29 @@
                   @click="clickListItem(index)"
               >
                 <template v-for="(tab,i) in tabIcons">
-                 <div v-if="item.param.symbolGuid === tab.guid" :key="i">
-                   <div v-if="tab.type === 'icon'" >
-                     <mapgis-ui-iconfont
-                         :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
-                         :type="tab.icon"
-                         style="font-size: 16px;padding-right: 4px"
-                         @click.capture.stop="showOrHide(index)"></mapgis-ui-iconfont>
-                     <span>{{ item.name }}</span>
-                   </div>
-                   <div v-else >
-                     <img
-                         :src="tab.image"
-                         style="width: 24px;padding-right: 4px"
-                         alt=""
-                         :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
-                         @click="showOrHide(index)"/>
-                     <span>{{ item.name }}</span>
-                   </div>
-                 </div>
+                  <div v-if="item.param.symbolGuid === tab.guid" :key="i">
+                    <div v-if="tab.type === 'icon'">
+                      <mapgis-ui-iconfont
+                          :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
+                          :type="tab.icon"
+                          style="font-size: 16px;padding-right: 4px"
+                          @click.capture.stop="showOrHide(index)"></mapgis-ui-iconfont>
+                      <span>{{ item.name }}</span>
+                    </div>
+                    <div v-else>
+                      <img
+                          :src="tab.image"
+                          style="width: 24px;padding-right: 4px"
+                          alt=""
+                          :class="{'mapgis-3d-particle-effects-item-active':particleListCopy[index].isShow === true}"
+                          @click="showOrHide(index)"/>
+                      <span>{{ item.name }}</span>
+                    </div>
+                  </div>
                 </template>
-                <div v-show="enterIndex === index || activeIndex === index">
+                <div
+                    :class="['mapgis-3d-particle-effects-opearation',{'mapgis-3d-particle-effects-isBatch':isBatch === true}]"
+                    v-show="enterIndex === index || activeIndex === index">
                   <mapgis-ui-tooltip title="删除">
                     <mapgis-ui-iconfont type="mapgis-shanchu" style="font-size: 16px;padding-right: 4px"
                                         @click.capture.stop="onClearParticle(index)"></mapgis-ui-iconfont>
@@ -54,18 +57,49 @@
                                         @click.capture.stop="setParticleParameter(index)"></mapgis-ui-iconfont>
                   </mapgis-ui-tooltip>
                 </div>
+                <div @click.stop>
+                  <mapgis-ui-checkbox
+                      class="item-checkbox"
+                      v-show="isBatch"
+                      :checked="selectedIds.includes(index)"
+                      @change="_changeItemChecked(index, $event)"
+                  ></mapgis-ui-checkbox>
+                </div>
               </mapgis-ui-list-item>
             </mapgis-ui-list>
+            <div class="pagination-div">
+              <mapgis-ui-pagination
+                  v-show="!isBatch"
+                  hideOnSinglePage
+                  class="pagination"
+                  @change="pagination.onChange"
+                  :pageSize="pagination.pageSize"
+                  :total="pagination.total"
+                  :size="pagination.size"
+                  :show-total="total => `共${total}条数据`"
+              ></mapgis-ui-pagination>
+              <!-- 批量操作 -->
+              <div class="buttons">
+                <div v-show="isBatch" class="full-width">
+                  <mapgis-ui-button @click="allVisible" class="control-button"
+                  >可见
+                  </mapgis-ui-button>
+                  <mapgis-ui-button
+                      @click="allInvisible"
+                      class="control-button"
+                  >不可见
+                  </mapgis-ui-button>
+                  <mapgis-ui-button
+                      @click="allDelete"
+                      class="control-button"
+                  >删除
+                  </mapgis-ui-button>
+                </div>
+              </div>
+            </div>
           </mapgis-ui-tab-pane>
-          <mapgis-ui-tab-pane key="2" tab="设置面板" class="mapgis-3d-particle-effects-control-content" id="parameter-formList">
-            <mapgis-ui-select-panel
-              class="mapgis-ui-number-style"
-              label="预设特效"
-              v-model="currentEffectName"
-              :selectOptions="effectOptions"
-              @change="onEffectNameChange">
-            >
-            </mapgis-ui-select-panel>
+          <mapgis-ui-tab-pane key="2" tab="设置面板" class="mapgis-3d-particle-effects-control-content"
+                              id="parameter-formList">
             <mapgis-ui-select-panel
                 class="mapgis-ui-number-style"
                 label="发射类型"
@@ -129,6 +163,13 @@
                 v-model="endScaleCopy"
                 @change="val => onChangeEffect(val, 'endScale')"/>
           </mapgis-ui-tab-pane>
+          <mapgis-ui-checkbox
+              v-show="activeKey === '1'"
+              slot="tabBarExtraContent"
+              @change="_changeBatch"
+          >
+            批量操作
+          </mapgis-ui-checkbox>
         </mapgis-ui-tabs>
       </div>
     </slot>
@@ -202,6 +243,11 @@ export default {
           particle.title = next[i].name;
           particle.guid = next[i].guid;
           particle.image = next[i].image;
+          if (next[i].config) {
+            particle.config = next[i].config;
+          } else {
+            particle.config = JSON.parse(JSON.stringify(vm.viewModel));
+          }
           vm.tabIcons.push(particle);
         }
       }
@@ -223,18 +269,21 @@ export default {
           this.imgUrl = checkedSymbol[0].image;
           vm.particleListCopy[i].imageUrl = this.imgUrl;
           this.createParticleEffects(viewModel.position, viewModel);
+          if (!vm.particleListCopy[i].isShow){
+            vm.particleArr[i].remove();
+          }
         }
       }
     },
-    particleListCopy: {
+    particleArr: {
       handler(next) {
-        this.$emit("changeParticel", next);
+        this.pagination.total = this.particleListCopy ? this.particleListCopy.length : 0;
       }
     }
   },
   model: {
     prop: "particleList",
-    event: "changeParticel"
+    event: "changeParticle"
   },
   data() {
     return {
@@ -263,69 +312,6 @@ export default {
       currentEffectType: "火焰",//当前预设特效类型
       currentEffectName: "火焰1",//当前预设特效名称
       emitterOptions: ["盒状放射", "圆形放射", "锥形放射", "球形放射"], // 发射类型下拉项
-      effectFireOptions: ["火焰1", "火焰2"], // 预设特效火焰下拉项
-      effectFire: {
-        "火焰1": {
-          "emitterType": "圆形放射",
-          "emissionRate": 13.0,
-          "imageSize": 5.0,
-          "minimumParticleLife": 2.0,
-          "maximumParticleLife": 3.0,
-          "minimumSpeed": 9.0,
-          "maximumSpeed": 10.0,
-          "startScale": 1.0,
-          "endScale": 4.0,
-          "symbolGuid": "9D09DB87-7955-9295-2E34-61E83C30D3AA",
-        },
-        "火焰2": {
-          "emitterType": "锥形放射",
-          "emissionRate": 29.0,
-          "imageSize": 6.0,
-          "minimumParticleLife": 2.0,
-          "maximumParticleLife": 3.0,
-          "minimumSpeed": 9.0,
-          "maximumSpeed": 10.0,
-          "startScale": 1.0,
-          "endScale": 4.0,
-          "symbolGuid": "9D09DB87-7955-9295-2E34-61E83C30D3AA",
-          "position": {
-            "longitude": 114.40092382,
-            "latitude": 30.46549092,
-            "height": 10
-          }
-        }
-      },
-      effectSmokeOptions: ["烟雾1"], // 预设特效烟雾下拉项
-      effectSmoke: {
-        "烟雾1": {
-          "emitterType": "盒状放射",
-          "emissionRate": 6.0,
-          "imageSize":7.0,
-          "minimumParticleLife": 2.5,
-          "maximumParticleLife": 2.4,
-          "minimumSpeed": 2.0,
-          "maximumSpeed": 6.0,
-          "startScale": 3,
-          "endScale": 3,
-          "symbolGuid": "A35C78FF-DD27-66C8-DD61-027CAE317145"
-        }
-      },
-      effectFountainOptions: ["喷泉"], // 预设特效喷泉下拉项
-      effectFountain: {
-        "喷泉1": {
-          "emitterType": "锥形放射",
-          "emissionRate": 10.0,
-          "imageSize": 7.0,
-          "minimumParticleLife": 1.5,
-          "maximumParticleLife": 1.8,
-          "minimumSpeed": 1.0,
-          "maximumSpeed": 9.0,
-          "startScale": 2.5,
-          "endScale": 4.0,
-          "symbolGuid": "A35C78FF-DD27-66C8-DD61-027CAE317145"
-        }
-      },
-      effectOptions: [], // 预设特效下拉项
       particleArr: [], // 粒子特效集
       isLogarithmicDepthBufferEnable: undefined, // 记录对数深度缓冲区状态
       handlerAction: undefined,
@@ -367,7 +353,7 @@ export default {
       // 修改已有粒子参数的索引
       changeParticleIndex: undefined,
       // 粒子类型: create(新建) | selected(选中)
-      mode:undefined,
+      mode: undefined,
 
       emptyImage: emptyImage,
       imageStyle: {
@@ -393,6 +379,21 @@ export default {
       iconUrl: undefined,
       // 当前选中符号对应的粒子图片
       imgUrl: undefined,
+
+      // 分页
+      pagination: {
+        onChange: page => {
+          console.log(page);
+          this.pagination.current = page;
+          this.selectedIds = [];
+        },
+        current: 1,
+        size: "small",
+        pageSize: 7
+      },
+      isBatch: false, //是否批量操作
+
+      selectedIds: [], //选中video的id集合
     };
   },
 
@@ -416,13 +417,18 @@ export default {
       let vm = this;
       this.activeIndex = index;
       this.mode = 'selected';
+      // 当前分页对应的页数
+      const currentPage = vm.pagination.current;
+      const pageSize = vm.pagination.pageSize;
       // 相机视角跳转至选中的粒子所在
-      let particlePosition = this.particleArr[index].position;
+      const currentChooseIndex = index + (currentPage - 1) * pageSize;
+
+      let particlePosition = this.particleArr[currentChooseIndex].position;
       // viewer.flyTo和camera.flyTo定位点时，添加倾斜角有差别，camera.flyTo飞行到点有偏差
       // 方法一：viewer.flyTo
       this.viewer.entities.removeAll();
       let entity = new Cesium.Entity({
-        id: index,
+        id: currentChooseIndex,
         position: Cesium.Cartesian3.fromDegrees(particlePosition[0], particlePosition[1], particlePosition[2]),
         point: {
           pixelSize: 10,
@@ -477,15 +483,15 @@ export default {
       promise.then(function (dataSource) {
         vm.$emit("load", vm);
       });
-      this.effectOptions = this.effectFireOptions;
-      this.setEffectOptions(this.effectFire[this.currentEffectName]);
+      // this.effectOptions = this.effectFireOptions;
+      // this.setEffectOptions(this.effectFire[this.currentEffectName]);
     },
     unmount() {
       if (this.handlerAction) {
         this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
         this.handlerAction = undefined;
       }
-      if (this.$refs.tabPanel){
+      if (this.$refs.tabPanel) {
         this.$refs.tabPanel.active = undefined
       }
       if (
@@ -499,7 +505,7 @@ export default {
       }
       this.$emit("unload", this);
     },
-    removeAllParticle(){
+    removeAllParticle() {
       let vm = this;
       if (vm.particleArr.length > 0) {
         for (let i = 0; i < vm.particleArr.length; i++) {
@@ -511,12 +517,17 @@ export default {
       // 粒子列表
       this.particleListCopy = [];
     },
+    // 删除
     onClearParticle(index) {
       let vm = this;
+      const currentPage = this.pagination.current;
+      const pageSize = this.pagination.pageSize;
+      this.changeParticleIndex = index + (currentPage - 1) * pageSize;
+
       if (vm.particleArr.length > 0) {
         for (let i = 0; i < vm.particleArr.length; i++) {
-          if (i === index) {
-            vm.particleArr[i].remove();
+          if (i === this.changeParticleIndex) {
+            vm.particleArr[this.changeParticleIndex].remove();
           }
         }
       }
@@ -527,26 +538,57 @@ export default {
       this.particleArr.splice(index, 1);
       // 粒子列表
       this.particleListCopy.splice(index, 1);
+      // this.$emit("changeParticle", this.particleListCopy);
+      this.$emit("changeParticle", this.particleListCopy);
     },
     tabChange(e) {
       this.activeKey = e;
       if (e === '2') {
         // 当tab切换到设置面板时，先判断粒子列表是否有选中粒子，若有则设置面板为该选中粒子的参数，否则为生成粒子时的初始化参数
-        if (this.activeIndex === undefined ){
+        if (this.activeIndex === undefined) {
           this.changeParticleIndex = undefined;
-          let viewModelCopy = this.effectFire[this.currentEffectName];
-          this.viewModel = JSON.parse(JSON.stringify(viewModelCopy));
-          this.emitterTypeCopy = viewModelCopy.emitterType;
-          this.emissionRateCopy = viewModelCopy.emissionRate;
-          this.imageSizeCopy = viewModelCopy.imageSize;
-          this.minimumParticleLifeCopy = viewModelCopy.minimumParticleLife;
-          this.maximumParticleLifeCopy = viewModelCopy.maximumParticleLife;
-          this.minimumSpeedCopy = viewModelCopy.minimumSpeed;
-          this.maximumSpeedCopy = viewModelCopy.maximumSpeed;
-          this.startScaleCopy = viewModelCopy.startScale;
-          this.endScaleCopy = viewModelCopy.endScale;
+          if (this.mode = 'create') {
+            //选中符号，创建粒子时的参数
+            const viewModelCopy = JSON.parse(JSON.stringify(this.viewModel));
+            this.emitterTypeCopy = viewModelCopy.emitterType;
+            this.emissionRateCopy = viewModelCopy.emissionRate;
+            this.imageSizeCopy = viewModelCopy.imageSize;
+            this.minimumParticleLifeCopy = viewModelCopy.minimumParticleLife;
+            this.maximumParticleLifeCopy = viewModelCopy.maximumParticleLife;
+            this.minimumSpeedCopy = viewModelCopy.minimumSpeed;
+            this.maximumSpeedCopy = viewModelCopy.maximumSpeed;
+            this.startScaleCopy = viewModelCopy.startScale;
+            this.endScaleCopy = viewModelCopy.endScale;
+          } else {
+            //没有选中符号，并且没有选中粒子列表中粒子
+            let initOperationConfig = {
+              emitterType: "圆形放射",
+              emissionRate: 2.0,
+              imageSize: 5.0,
+              minimumParticleLife: 2.0,
+              maximumParticleLife: 3.0,
+              minimumSpeed: 9.0,
+              maximumSpeed: 9.5,
+              startScale: 1.0,
+              endScale: 4.0
+            }
+            this.emitterTypeCopy = initOperationConfig.emitterType;
+            this.emissionRateCopy = initOperationConfig.emissionRate;
+            this.imageSizeCopy = initOperationConfig.imageSize;
+            this.minimumParticleLifeCopy = initOperationConfig.minimumParticleLife;
+            this.maximumParticleLifeCopy = initOperationConfig.maximumParticleLife;
+            this.minimumSpeedCopy = initOperationConfig.minimumSpeed;
+            this.maximumSpeedCopy = initOperationConfig.maximumSpeed;
+            this.startScaleCopy = initOperationConfig.startScale;
+            this.endScaleCopy = initOperationConfig.endScale;
+          }
         } else {
-          let currentParticle = Object.assign({},this.particleListCopy[this.activeIndex].param);
+          // 选中粒子列表中的已有粒子时：
+          const currentPage = this.pagination.current;
+          const pageSize = this.pagination.pageSize;
+          this.changeParticleIndex = this.activeIndex + (currentPage - 1) * pageSize;
+
+          let currentParticle = Object.assign({}, this.particleListCopy[this.changeParticleIndex].param);
 
           this.emitterTypeCopy = currentParticle.emitterType;
           this.emissionRateCopy = currentParticle.emissionRate;
@@ -558,17 +600,19 @@ export default {
           this.startScaleCopy = currentParticle.startScale;
           this.endScaleCopy = currentParticle.endScale;
 
-          this.changeParticleIndex = this.activeIndex;
+          // this.changeParticleIndex = this.activeIndex;
         }
       }
     },
     setParticleParameter(index) {
       this.activeKey = '2';
       this.mode = 'selected';
-      this.changeParticleIndex = index;
+      const currentPage = this.pagination.current;
+      const pageSize = this.pagination.pageSize;
+      this.changeParticleIndex = index + (currentPage - 1) * pageSize;
 
       // 参数为该粒子的参数，初始化时是初始化参数，修改后是修改后存放在particleArr结果集中的参数。
-      let currentParticle = Object.assign({},this.particleListCopy[index].param);
+      let currentParticle = Object.assign({}, this.particleListCopy[this.changeParticleIndex].param);
       // let currentParticle = clonedeep(this.particleListCopy[index].param);
       this.emitterTypeCopy = currentParticle.emitterType;
       this.emissionRateCopy = currentParticle.emissionRate;
@@ -579,33 +623,18 @@ export default {
       this.maximumSpeedCopy = currentParticle.maximumSpeed;
       this.startScaleCopy = currentParticle.startScale;
       this.endScaleCopy = currentParticle.endScale;
-
     },
     onCreateParticle(tab) {
       // 先把面板参数重设
       this.mode = 'create';
       // this.setEffectOptions(this.viewModel);
+      this.viewModel = Object.assign({}, tab.config);
       this.changeParticleIndex = undefined;
-      if(this.currentEffectType !== tab.title){
-        switch (tab.title){
-          case "火焰":
-            this.effectOptions = this.effectFireOptions;
-            break;
-          case "烟雾":
-            this.effectOptions = this.effectSmokeOptions;
-            break;
-          case "喷泉":
-            this.effectOptions = this.effectFountainOptions;
-            break;
-        }
-        this.currentEffectName = tab.title + 1;
-        this.currentEffectType = tab.title;
-      }
 
       this.imgUrl = tab.image;
       this.title = tab.title;
       this.symbolGuid = tab.guid;
-      if (!this.handlerAction){
+      if (!this.handlerAction) {
         this._addEventListener();
       }
     },
@@ -643,19 +672,26 @@ export default {
       this.createParticleEffects(degrees, viewModel);
 
       // 粒子列表新增一个粒子
-      let param = Object.assign({},this.viewModel);
+      let param = Object.assign({}, this.viewModel);
 
       param.position = degrees;
       param.symbolGuid = this.symbolGuid;
       const guid = newGuid();
 
       let particleItem;
-      particleItem = {name: this.title.concat(this.particleArr.length), guid: guid,imageUrl:this.imgUrl,isShow:true,param: param}
+      particleItem = {
+        name: this.title.concat(this.particleArr.length),
+        guid: guid,
+        imageUrl: this.imgUrl,
+        isShow: true,
+        param: param
+      }
       this.particleListCopy.push(particleItem);
+      this.$emit("changeParticle", this.particleListCopy);
     },
     createParticleEffects(degrees, viewModel) {
       let vm = this;
-      viewModel.emitterTypeCesium = vm.changeEmitterTypeCesium(viewModel.emitterType);
+      let emitterTypeCesium = vm.changeEmitterTypeCesium(viewModel.emitterType);
 
       this.isLogarithmicDepthBufferEnable = isLogarithmicDepthBufferEnable(
           this.viewer
@@ -677,7 +713,7 @@ export default {
         maximumSpeed: viewModel.maximumSpeed,
         startScale: viewModel.startScale,
         endScale: viewModel.endScale,
-        emitter: viewModel.emitterTypeCesium,
+        emitter: emitterTypeCesium,
         gravity: 0.5,
         heading: 0.0,
         pitch: 0.0,
@@ -709,22 +745,10 @@ export default {
         if (i === this.changeParticleIndex && this.mode === 'selected') {
           this.particleArr[i].emitter = emitter;
           this.particleListCopy[i].param.emitterType = value;
-        } else if (this.mode === 'create'){
+          this.$emit("changeParticle", this.particleListCopy);
+        } else if (this.mode === 'create') {
           this.viewModel.emitterType = value
         }
-      }
-    },
-    onEffectNameChange(type) {
-      switch (this.currentEffectType) {
-        case "火焰":
-          this.setEffectOptions(this.effectFire[this.currentEffectName]);
-          break;
-        case "烟雾":
-          this.setEffectOptions(this.effectSmoke[this.currentEffectName]);
-          break;
-        case "喷泉":
-          this.setEffectOptions(this.effectFountain[this.currentEffectName]);
-          break;
       }
     },
     changeEmitterTypeCesium(value) {
@@ -764,7 +788,8 @@ export default {
               this.particleArr[i][key] = val;
               this.particleListCopy[i].param[key] = val;
             }
-          } else if (this.mode === 'create'){
+            this.$emit("changeParticle", this.particleListCopy);
+          } else if (this.mode === 'create') {
             if (key === "imageSize") {
               this.viewModel.imageSize = val;
             } else {
@@ -775,22 +800,27 @@ export default {
       }
     },
     // 对粒子列表中已有的粒子进行显隐操作
-    showOrHide(index){
+    showOrHide(index) {
       let vm = this;
-      if (vm.particleListCopy[index].isShow){
+      const currentPage = this.pagination.current;
+      const pageSize = this.pagination.pageSize;
+      const changeParticleIndex = index + (currentPage - 1) * pageSize;
+      if (vm.particleListCopy[changeParticleIndex].isShow) {
         // 隐藏
-        vm.particleListCopy[index].isShow = false;
-        vm.particleArr[index].remove();
+        vm.particleListCopy[changeParticleIndex].isShow = false;
+        vm.particleArr[changeParticleIndex].remove();
       } else {
         // 显示
-        vm.particleListCopy[index].isShow = true;
-        vm.showParticleEffects(index);
+        vm.particleListCopy[changeParticleIndex].isShow = true;
+        vm.showParticleEffects(changeParticleIndex);
       }
+      this.$emit("changeParticle", this.particleListCopy);
     },
-    showParticleEffects(index){
+    // 对隐藏的粒子进行显示
+    showParticleEffects(index) {
       let vm = this;
-      let oneParticle = Object.assign({},vm.particleListCopy[index].param);
-      oneParticle.emitterTypeCesium = vm.changeEmitterTypeCesium(oneParticle.emitterType);
+      let oneParticle = Object.assign({}, vm.particleListCopy[index].param);
+      let emitterTypeCesium = vm.changeEmitterTypeCesium(oneParticle.emitterType);
       const imgUrl = vm.particleListCopy[index].imageUrl;
       const degrees = oneParticle.position;
       // 开启计时
@@ -806,7 +836,7 @@ export default {
         maximumSpeed: oneParticle.maximumSpeed,
         startScale: oneParticle.startScale,
         endScale: oneParticle.endScale,
-        emitter: oneParticle.emitterTypeCesium,
+        emitter: emitterTypeCesium,
         gravity: 0.5,
         heading: 0.0,
         pitch: 0.0,
@@ -820,7 +850,86 @@ export default {
       });
       particle.start();
       vm.particleArr[index] = particle;
-    }
+    },
+
+    listPagination() {
+      return this.isBatch ? false : this.pagination;
+    },
+    /**
+     * 列表中checbox事件
+     */
+    _changeItemChecked(id, event) {
+      const checked = event.target.checked;
+      if (checked) {
+        if (!this.selectedIds.includes(id)) {
+          this.selectedIds.push(id);
+        }
+      } else {
+        if (this.selectedIds.includes(id)) {
+          const index = this.selectedIds.indexOf(id);
+          if (index > -1) {
+            this.selectedIds.splice(index, 1);
+          }
+        }
+      }
+    },
+
+    /**
+     * 是否批量操作
+     */
+    _changeBatch({target}) {
+      this.isBatch = target.checked;
+    },
+    /**
+     * 批量隐藏
+     */
+    allInvisible() {
+      let vm = this;
+      const {selectedIds, pagination} = this;
+      const currentPage = pagination.current;
+      const pageSize = pagination.pageSize;
+      for (let i = 0; i < selectedIds.length; i++) {
+        const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        if (vm.particleListCopy[currentChooseIndex].isShow) {
+          // 隐藏
+          vm.particleListCopy[currentChooseIndex].isShow = false;
+          vm.particleArr[currentChooseIndex].remove();
+        }
+      }
+    },
+    /**
+     * 批量显示
+     */
+    allVisible() {
+      let vm = this;
+      const {selectedIds, pagination} = this;
+      const currentPage = pagination.current;
+      const pageSize = pagination.pageSize;
+      for (let i = 0; i < selectedIds.length; i++) {
+        // 显示
+        const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        if (!vm.particleListCopy[currentChooseIndex].isShow) {
+          vm.particleListCopy[currentChooseIndex].isShow = true;
+          vm.showParticleEffects(currentChooseIndex);
+        }
+      }
+    },
+    /**
+     * 批量删除
+     */
+    allDelete() {
+      let vm = this;
+      const {selectedIds, pagination} = this;
+      const currentPage = pagination.current;
+      const pageSize = pagination.pageSize;
+      // 移除被选中的删除项
+      for (let i = 0; i < selectedIds.length; i++) {
+        const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        vm.particleArr[currentChooseIndex].remove();
+        this.particleListCopy.splice(currentChooseIndex, 1);
+      }
+      this.selectedIds = [];
+    },
   }
 };
 </script>
@@ -832,5 +941,49 @@ export default {
 ::v-deep .mapgis-ui-tabs-nav-scroll {
   display: flex;
   justify-content: flex-start;
+}
+
+.list-pane {
+  position: relative;
+}
+
+.pagination-div {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.pagination {
+  padding: 6px 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 6px;
+  width: 100%;
+  border-top: 1px solid var(--border-color-split);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.control-button {
+  width: calc(33% - 2.5px);
+  margin: 0 1px;
+}
+
+::v-deep .mapgis-ui-list-pagination {
+  margin-top: 12px;
+  display: none;
+}
+
+.item-checkbox {
+  float: right;
 }
 </style>
