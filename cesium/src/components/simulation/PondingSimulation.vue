@@ -212,6 +212,7 @@ import {
   isLogarithmicDepthBufferSupport,
   setLogarithmicDepthBufferEnable
 } from "../WebGlobe/util";
+import { log } from '../Utils/log';
 
 export default {
     name: "mapgis-3d-ponding-simulation",
@@ -221,6 +222,16 @@ export default {
         this.mounted();
     },
     watch: {
+        pondingTime() {
+            if(this.pond){
+                this.addSimulation();
+            }
+        },
+        multiSpeed() {
+            if(this.pond){
+                this.addSimulation();
+            }
+        },
         rainOption(e) {
             let rainfalls = [9, 19, 49, 99];
             this.rainFall = rainfalls[e];
@@ -638,12 +649,7 @@ export default {
                 // console.log("heightflood",vm.maxHeightCopy);
                 //积水上涨高度的步长值
                 vm.heightStep = (vm.maxH - vm.startHeightCopy) / 10;
-
-                //积水上涨的速度
-                let speed =
-                    (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime;
-                vm.floodSpeedCopy = Math.round(speed * 100) / 100 * vm.multiSpeed;
-
+                
                 vm.maskShow = false;
                 vm.isSimulation = true;
 
@@ -735,6 +741,9 @@ export default {
                 vm.addrain();
                 vm.pond = true;
                 vm.sliderValue = 0;
+
+                console.log('pondingTime',vm.pondingTime)
+
                 vm.timer = setInterval(() => {
                     if (vm.sliderValue >= vm.pondingTime) {
                         clearInterval(vm.timer);
@@ -745,6 +754,12 @@ export default {
                     }
                 }, 1000);
 
+                //积水上涨的速度
+                let speed =
+                    (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime; 
+                vm.floodSpeedCopy = Math.round(speed * 10000000) / 10000000 * vm.multiSpeed;
+                console.log('speeddddddddd',vm.floodSpeedCopy);
+                
                 vm._removeFlood();
                 setLogarithmicDepthBufferEnable( isLogarithmicDepthBufferSupport(), viewer);
                 // console.log("_doAnalysis",this.viewer.scene.logarithmicDepthBuffer)

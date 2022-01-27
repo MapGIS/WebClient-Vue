@@ -1,80 +1,23 @@
 <template>
-    <div>
-        <mapgis-ui-card
-            size="small"
-            hoverable
-            :style="{ width: '500px' }"
-            class="ponding-simulation-timeline"
-        >
-            <label class="title-label">倍速播放时间</label>
-            <mapgis-ui-radio-group v-model="pondingTime">
-                <mapgis-ui-radio :value="1"> 1s </mapgis-ui-radio>
-                <mapgis-ui-radio :value="2"> 2s </mapgis-ui-radio>
-                <mapgis-ui-radio :value="4"> 4s </mapgis-ui-radio>
-                <mapgis-ui-radio :value="8"> 8s </mapgis-ui-radio>
-                <mapgis-ui-radio :value="86400"> 24h </mapgis-ui-radio>
-            </mapgis-ui-radio-group>
-
-            <mapgis-ui-slider
-                :tip-formatter="formatter"
-                :min="0"
-                :max="24"
-                v-model="sliderValue"
-                :marks="marks"
-                :step="1"
-            ></mapgis-ui-slider>
-            <span class="ponding-simulation-timeline-starttime"
-                >起始时间：{{ startTimeCopy }}</span
-            >
-            <div class="ponding-simulation-timeline-toolbar">
-                <!-- <mapgis-ui-tooltip>
-                    <template slot="title"> 跳转至开头 </template>
-                    <mapgis-ui-iconfont
-                        type="mapgis-chevrons-left"
-                        @click.capture.stop="JumpToBegin"
-                    />
-                </mapgis-ui-tooltip> -->
-                <!-- <mapgis-ui-tooltip>
-                    <template slot="title"> 快退一步 </template>
-                    <mapgis-ui-iconfont
-                        type="mapgis-chevron-left"
-                        @click.capture.stop="stepBack"
-                    />
-                </mapgis-ui-tooltip> -->
-
-                <mapgis-ui-iconfont
-                    :class="pond ? 
-                      'mapgis-iconfont-disabled': 'mapgis-iconfont'
-                    "
-                    type="mapgis-play-circle-fill"
-                    class="ponding-simulation-timeline-toolbar-main"
-                    @click.capture.stop="addflood"
-                />
-                <!-- <mapgis-ui-iconfont
-                    v-else
-                    type="mapgis-zanting"
-                    class="ponding-simulation-timeline-toolbar-main"
-                    @click.capture.stop="stopFlood"
-                /> -->
-                <!-- <mapgis-ui-tooltip>
-                    <template slot="title"> 快进一步 </template>
-                    <mapgis-ui-iconfont
-                        type="mapgis-chevron-right"
-                        @click.capture.stop="stepForward"
-                    />
-                </mapgis-ui-tooltip> -->
-                <!-- <mapgis-ui-tooltip>
-                    <template slot="title"> 跳转至结尾 </template>
-                    <mapgis-ui-iconfont
-                        type="mapgis-chevrons-right"
-                        @click.capture.stop="JumpToEnd"
-                    />
-                </mapgis-ui-tooltip> -->
-            </div>
-            <span class="ponding-simulation-timeline-endtime"
-                >结束时间：{{ endTimeCopy }}</span
-            >
-        </mapgis-ui-card>
+    <div :style="{ width: `${width}px`,height:'80px' }">
+        <mapgis-ui-timeline-panel
+            v-model="sliderValue"
+            :max="pondingTime"
+            :interval="intvl"
+            :intervalOptions="intvlOptions"
+            :intervalPlaceholder="intvlPlaceholder"
+            :speedOptions="spdOptions"
+            :tipFormatter="formatter"
+            :isPlaying="playing"
+            :currentTime="crtTime"
+            :disabled="true"
+            :width="width"
+            :sliderStyle="sliderStyle"
+            @startPlay="addflood"
+            @stopPlay="stop"
+            @intervalChange="intvlChange"
+            @speedChange="spdChange"
+        ></mapgis-ui-timeline-panel>
     </div>
 </template>
 
@@ -91,10 +34,26 @@ export default {
             type: Boolean,
             default: false,
         },
+        width: {
+            type: Number,
+            default: 500,
+        },
+        sliderStyle:{
+            type: Object,
+            default: ()=>{
+                return { marginLeft:'90px', width:'240px' } 
+            }
+        }
     },
     watch: {
         value(e) {
             this.sliderValue = e;
+        },
+        sliderValue:{
+          handler:function(e){
+            this.crtTime = this.formatter(e)
+          },
+          immediate:true
         },
         pondingTime: {
             handler: function (e) {
@@ -102,11 +61,15 @@ export default {
             },
             immediate: true,
         },
+        pond: {
+            handler: function (e) {
+                this.playing = e;
+            },
+            immediate: true,
+        },
     },
     data() {
         return {
-            startTimeCopy: "0:00",
-            endTimeCopy: "24:00",
             sliderValue: this.value,
             marks: {
                 0: "0:00",
@@ -119,7 +82,18 @@ export default {
             },
 
             //积水上涨的时间
-            pondingTime: 4,
+            pondingTime: 24,
+
+            
+            timer: undefined,
+            playing: this.pond,
+            spd:'1x',
+            intvl: '时',
+            crtTime:undefined,
+
+            intvlOptions: ['时', '分', '秒'],
+            intvlPlaceholder: '时',
+            spdOptions: ['60x','12x','6x','3x', '2x', '1x'],
         };
     },
     mounted() {
@@ -137,119 +111,55 @@ export default {
             vm.sliderValue = 0;
         },
         formatter(value) {
-            return `${value}:00`;
+          const vm = this;
+          if(vm.intvl == '时'){
+            return vm.addT(value) + ':00:00';
+          }else if(vm.intvl == '分'){
+            let ms = new Date((value - 8 * 60) * 60 * 1000);
+            let h = ms.getHours();
+            let m = ms.getMinutes();
+            return vm.addT(h) + ':' + vm.addT(m) + ':00';
+          }else if(vm.intvl == '秒'){
+            let ms = new Date((value-8*60*60) * 1000);
+            let h = ms.getHours();
+            let m = ms.getMinutes();
+            let s = ms.getSeconds();
+            return vm.addT(h) + ':' + vm.addT(m) + ':' + vm.addT(s);
+          }
+        },
+        addT(m) {
+              return m < 10 ? '0' + m : m
+            },    
+        spdChange(e){
+          this.spd = e;
+          this.$emit('updateSpeed',parseFloat(this.spd))
+        },
+        intvlChange(e){
+          this.intvl = e;
+          this.sliderValue = 0;
+
+          const vm = this;
+          switch (e) {
+            case "时":
+              return vm.pondingTime = 24;
+            case "分":
+              return vm.pondingTime = 24 * 60 ;
+            case "秒":
+              return vm.pondingTime = 24* 60* 60;
+          }
         },
         
         /* 开始播放 */
         addflood() {
+            this.playing = true;
             this.$emit("play");
         },
-        // /* 跳转至开始 */
-        // JumpToBegin(e) {
-        //     if (this.timer) {
-        //         clearInterval(this.timer);
-        //     }
-        //     this.sliderValue = 0;
-        //     this.maxHeightCopy = this.startHeightCopy;
-        //     console.log("JumpToBegin", e);
-        // },
-
-        // /* 回退一步 */
-        // stepBack(e) {
-        //     if (this.sliderValue == 0) return;
-        //     this.sliderValue -= 24 * (0.5 / this.pondingTime);
-        //     console.log("stepBack", e);
-        // },
-
-        // /* 暂停分析 */
-        // stopFlood() {
-        //     console.log("stopFlood");
-
-        //     const options = this._getSourceOptions();
-        //     const { floodAnalysis } = options;
-        //     console.log("stopFlood", floodAnalysis);
-        //     if (this.timer) {
-        //         clearInterval(this.timer);
-        //     }
-        //     this.maxHeightCopy =
-        //         (this.sliderValue / 24) *
-        //             (this.currentMaxHeight - this.startHeightCopy) +
-        //         this.startHeightCopy;
-        //     this.pond = false;
-        // },
-
-        // /* 快进一步 */
-        // stepForward(e) {
-        //     if (this.sliderValue >= 24) return;
-        //     this.sliderValue += 24 * (0.5 / this.pondingTime);
-
-        //     console.log("stepForward", e);
-        // },
-
-        // /* 跳转至结尾 */
-        // JumpToEnd() {
-        //     if (this.currentSpeed) {
-        //         this.sliderValue = 24;
-        //         // this.floodSpeedCopy = this.floodSpeedCopy * (this.pondingTime / 0.1);
-        //         this.maxHeightCopy = this.currentMaxHeight;
-
-        //         // this._removeFlood();
-        //         // this._doAnalysis();
-        //     } else {
-        //         this.$message.warning("请先进行分析！");
-        //     }
-        // },
+        stop(){
+          this.playing = false;
+        },
     },
 };
 </script>
 
 <style scoped>
-.ponding-simulation-timeline {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-}
-
-.ponding-simulation-timeline-toolbar {
-    display: flex;
-    width: 110px;
-    margin: 0px auto;
-}
-
-.ponding-simulation-timeline-toolbar-main:hover {
-    color: #49a8ff;
-}
-
-.ponding-simulation-timeline-toolbar-main {
-    color: #1890ff;
-}
-
-.ponding-simulation-timeline-toolbar > .anticon {
-    font-size: 22px;
-}
-
-.mapgis-ui-card-small > .mapgis-ui-card-body {
-    padding: 6px 12px;
-}
-
-.ponding-simulation-timeline-starttime {
-    position: absolute;
-    left: 10px;
-}
-
-.ponding-simulation-timeline-endtime {
-    position: absolute;
-    right: 10px;
-    bottom: 12px;
-}
-
-.title-label {
-    padding: 6px;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.mapgis-iconfont-disabled{
-    cursor: not-allowed;
-}
 </style>
