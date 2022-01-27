@@ -31,7 +31,7 @@
             </mapgis-ui-button>
           </mapgis-ui-tooltip>
           <mapgis-marker
-              v-if="!!coordinates.length && enableControl"
+              v-if="!!coordinates.length && enableControl && showTip"
               :coordinates="coordinates"
               color="#ff0000"
           >
@@ -152,6 +152,7 @@ export default {
           click: this.remove,
         },
       ],
+      showTip: true
     };
   },
 
@@ -393,6 +394,12 @@ export default {
     $_changeMapStyle() {
       this.changeMapStyle(this.measureStyle);
     },
+
+    // 
+    $_handleMapMeasureRemove() {
+      this.showTip = false;
+    },
+
     /**
      * 融合样式
      * @param {array} 样式数据
@@ -453,6 +460,7 @@ export default {
       this.$_emitEvent("added", { measure: this.measure });
       this.$_unbindMeasureEvents();
       this.$_bindSelfEvents(Object.keys(measureEvents));
+      this.showTip = true;
     },
     /**
      * 移除测量组件和事件解绑
