@@ -17,7 +17,7 @@ export default {
     },
     enableModelSwitch: {
       type: Boolean,
-      default: false
+      default: false,
     },
     enableTips: {
       type: Boolean,
@@ -143,6 +143,7 @@ export default {
         let cartesian = viewer.getCartesian3Position(position);
         let ray = scene.camera.getPickRay(position, tempRay);
         let cartesian2 = scene.globe.pick(ray, scene, tempPos);
+        let pickedFeature = viewer.scene.pick(position);
 
         // 多选模式
         let entities = scene.drillPick(position);
@@ -213,7 +214,8 @@ export default {
             return info;
           });
           vm.iClickFeatures = iClickFeatures;
-          onSuccess && onSuccess({ entities, movement, iClickFeatures });
+          onSuccess &&
+            onSuccess({ entities, movement, iClickFeatures, pickedFeature });
         } else {
           if (mode == iClickMode) {
             vm.iClickVisible = false;

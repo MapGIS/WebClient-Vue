@@ -22,6 +22,10 @@ export default {
     visible: {
       type: Boolean,
       default: true
+    },
+    enablePopup: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -49,7 +53,7 @@ export default {
     }
   },
   mounted() {
-    this.clickvisible = this.visible;
+    this.iClickVisible = this.visible;
     // this.mount();
   },
   destroyed() {
@@ -99,8 +103,8 @@ export default {
     },
     update() {
       const { position, visible } = this;
-      this.clickposition = position;
-      this.clickvisible = visible;
+      this.iClickPosition = position;
+      this.iClickVisible = visible;
     },
     $_changeVisible(visible) {
       this.$emit("change", visible);

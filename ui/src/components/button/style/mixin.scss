@@ -21,6 +21,10 @@
     @include button-color($active-color, $active-bg, $active-border);
   }
   @include button-color($hover-color, $hover-bg, $hover-border);
+  // 一张图build的的bugfix
+  // color: $hover-color !important;
+  // background-color: #177ddc !important;
+  // border-color: #177ddc !important;
 }
 
 @mixin button-variant-other($background) {

@@ -288,3 +288,5 @@ export { default as MapgisUiSwitchRowLeft } from "./components/switch/SwitchRowL
 //select
 export { default as MapgisUiSelectRow } from "./components/select/SelectRow";
 export { default as MapgisUiSelectRowLeft } from "./components/select/SelectRowLeft";
+
+export { default as MapgisUiTimelinePanel } from "./layout/panel/TimelinePanel.vue";
