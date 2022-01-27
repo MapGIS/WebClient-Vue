@@ -345,6 +345,7 @@
                 <mapgis-ui-svg-select
                     ref="wenli"
                     :icons="icons"
+                    @reset="$_resetColor"
                     @change="$_clickWenliIcon"
                 ></mapgis-ui-svg-select>
               </mapgis-ui-col>
@@ -463,6 +464,7 @@
                 <mapgis-ui-svg-select
                     ref="wenli"
                     :icons="icons"
+                    @reset="$_resetColor"
                     @change="$_clickWenliIcon"
                 ></mapgis-ui-svg-select>
               </mapgis-ui-col>
@@ -1360,6 +1362,9 @@ export default {
     ;
   },
   methods: {
+    $_resetColor() {
+      this.$emit("resetColor");
+    },
     $_popupContainer() {
       return document.querySelector('#theme-panel');
     },
@@ -2368,7 +2373,7 @@ export default {
 }
 
 /deep/ .mapgis-ui-collapse-content > .mapgis-ui-collapse-content-box {
-  padding: 16px 16px 0 16px;;
+  padding: 0 16px 0 16px;;
 }
 
 .range-theme-num {

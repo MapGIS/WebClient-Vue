@@ -1914,7 +1914,7 @@ export default {
         for (let j = 0; j < features.length; j++) {
           let value = features[j].properties[originFields[i]];
           //如果有值，则设置为false
-          if (value) {
+          if (value || value === 0) {
             //表示含有属性，会保留该字段
             hasValueFlag[originFields[i]] = true;
             allNull = false;
@@ -2773,6 +2773,7 @@ export default {
           let range = dataSourceCopy[length - 1] - dataSourceCopy[0];
           if (range === 0) {
             newDataSourceCopy.push(dataSourceCopy[0]);
+            newDataSourceCopy.push(dataSourceCopy[0] + 1);
             this.startData = dataSourceCopy[0];
             this.$refs.themePanel.startData = this.startData;
             this.$refs.themePanel.startDataCopy = this.startData;
@@ -3909,7 +3910,7 @@ export default {
               vm.currentGradient = gradients[0].key;
               vm.$_setRangeColors(
                 gradients[0].key,
-                vm.dataSourceCopy,
+                dataSource,
                 vm.selectValue,
                 features
               );
@@ -3966,7 +3967,7 @@ export default {
                 vm.layerIdCopy,
                 "numberFields"
               );
-              vm.selectValue = this.field || fields[0];
+              vm.selectValue = vm.field || fields[0];
               themeManager.initThemeProps(
                 vm.layerIdCopy,
                 vm.themeType,
@@ -5612,6 +5613,9 @@ export default {
         "checkBoxArr",
         newCheckBoxArr
       );
+    },
+    $_resetColor() {
+      this.$_gradientChanged(this.currentGradient);
     },
     $_gradientChanged(color) {
       if (this.dataType === "fill") {
