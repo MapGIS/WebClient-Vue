@@ -6,7 +6,10 @@ import mixin from "./layerMixin";
 import clonedeep from "lodash.clonedeep";
 const Inspect = require("@mapgis/mapbox-gl-inspect");
 const MapboxInspect = Inspect.default;
+
+import Vue from 'vue'
 import Popup from "./geojson/Popup";
+const customPopup = Vue.extend(Popup)
 
 export default {
   name: "mapgis-geojson-layer",
@@ -20,6 +23,7 @@ export default {
       hoveredStateId: -1,
       clickMode: "click",
       hoverMode: "hover",
+      popup:undefined,
       popupContainer: undefined,
       tipContainer: undefined,
       bbox: undefined,
@@ -306,7 +310,7 @@ export default {
       });
       //添加map click/mousemove事件
       if (this.enablePopup) {
-        this.$_addPopupEvents();
+        this.$_addPopupEvents2();
         this.$_bindHightLayerEvent();
       }
       if (this.enableTips) {
@@ -442,6 +446,7 @@ export default {
         popup.remove();
       });
     },
+    /** 通过inspect插件查询geojson属性 */
     $_addPopupEvents() {
       let { map } = this;
       let vm = this;
@@ -535,6 +540,65 @@ export default {
           }
         }
       }
+    },
+    /** 通过mapboxgl原生方法查询 */
+    $_addPopupEvents2() {
+      let { map } = this;
+      let vm = this;
+
+      map.on('click', vm.layerId, function(e){
+
+        if (vm.popup) {
+          vm.popup.remove();
+          vm.popup = undefined;
+        } 
+
+        const bbox = [[e.point.x-5, e.point.y-5],[e.point.x + 5, e.point.y + 5]];
+        const feature = map.queryRenderedFeatures(bbox,{layers: [vm.layerId]});
+        
+        if (!map || !map.getStyle()) {
+          return;
+        }
+
+        if (feature.length > 0) {
+          let fs = clonedeep(feature);
+
+          if (vm.popupOptions) {
+            let newfeatrues;
+            newfeatrues = fs.map((f) => {
+              let properties = f.properties;
+              f.properties = {};
+              //  赋值fields
+              let fields = vm.popupOptions.fields;
+              if (!fields) {
+                f.properties = properties;
+              } else {
+                fields.forEach((field) => {
+                  f.properties[field] = properties[field];
+                });
+              }
+              //  赋值title
+              let titlefield = vm.popupOptions.title;
+              if (titlefield) {
+                f.title = properties[titlefield];
+              } else {
+                // f.title = "";
+              }
+              return f;
+            });
+            vm.currentClickInfo = [newfeatrues[0]];
+          }
+
+          vm.popup =  new mapboxgl.Popup({
+            closeButton: true,
+            closeOnClick: false,
+          }).setLngLat(e.lngLat)
+            .setDOMContent(vm.$refs.click.$el || vm.$refs.click)
+            .addTo(map);
+        }
+
+      });
+
     },
     changePane(key) {
       let vm = this;

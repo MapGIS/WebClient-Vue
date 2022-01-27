@@ -7,7 +7,7 @@
             class="paddingStyle"
         >
             <div class="slope-parameter-title">
-                <label>坡向坡度显示模式</label>
+                <label>坡度图例设置</label>
                 <mapgis-ui-tooltip placement="bottomRight">
                     <template slot="title">
                         <span>{{ info }}</span>
