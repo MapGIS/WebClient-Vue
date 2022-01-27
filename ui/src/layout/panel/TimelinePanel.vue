@@ -288,8 +288,6 @@ export default {
 <style scoped>
 .mapgis-ui-timeline-panel {
   position: absolute;
-  right: 10px;
-  top: 10px;
   margin: 0px auto;
 }
 

@@ -31,7 +31,7 @@ const Template = (args, { argTypes }) => ({
 export const cityGrow = Template.bind({});
 cityGrow.args = {
   width:720,
-  baseUrl:"http://192.168.21.192:6163/igs/rest/mrfs/docs/shengZhenBaiMo/0/0",
+  baseUrl:"http://192.168.21.191:6163/igs/rest/mrfs/docs/shengZhenBaiMo/0/0",
   featureStyle:{
     startTimeField:"startTime",
     endTimeField:"endTime",

@@ -132,28 +132,11 @@ export default {
           vm.featureStyle.startTimeField = ''
           vm.featureStyle.endTimeField = ''
           vm.featureStyle.heightField = ''
-          vm.colorsCopy = []
+          vm.colorsCopy = [];
+          vm.dataFields = [];
         }
       }
     },
-    // buildingColors: {
-    //   handler(next) {
-    //     let vm = this;
-    //     let colors = next;
-    //     if (colors.length > 0) {
-    //       for (let i = 0; i < colors.length; i++) {
-    //         let obj = {};
-    //         obj.min = 60 * i;
-    //         obj.max = 60 * (i + 1);
-    //         obj.color = colors[i];
-    //         vm.colorsCopy.push(obj);
-    //         vm.featureStyle.colors = vm.colorsCopy;
-    //       }
-    //     }
-    //   },
-    //   deep: true,
-    //   immediate: true
-    // },
   },
   methods: {
     queryFields(url) {
@@ -273,6 +256,7 @@ export default {
       // 清空数据
       let vm = this;
       vm.featureStyle.startTimeField = '';
+      vm.dataFields = [];
       vm.featureStyle.endTimeField = '';
       vm.featureStyle.heightField = '';
       vm.featureStyle.heightScale = 1;

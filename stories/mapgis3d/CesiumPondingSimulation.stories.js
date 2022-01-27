@@ -12,14 +12,17 @@ const Template = (args, { argTypes }) => ({
   components: { "mapgis-3d-ponding-simulation": Mapgis3dPondingSimulation },
   data() {
     return {
-      terrainUrl: "http://192.168.21.192:6163/igs/rest/g3d/terrain",
+      // terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/terrain",
+      terrainUrl: "http://192.168.21.191:6163/igs/rest/g3d/武汉地形",
       m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+      rasterUrl:"http://t4.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=2ddaabf906d4b5418aed0078e1657029",
       maximumScreenSpaceError: 8,
 
       //ponding-simulation
       time: undefined,
       pond: undefined,
       sliderValue: undefined,
+      mltSpeed: undefined
     };
   },
   template: `
@@ -27,19 +30,23 @@ const Template = (args, { argTypes }) => ({
         style="height: 100vh"
         v-on:load="handleLoad"
     >
+        <mapgis-3d-raster-layer :url="rasterUrl" />
         <mapgis-3d-igs-terrain :url="terrainUrl" />
         <mapgis-3d-ponding-simulation
             ref="simulation"
             @isPonding="e=>{pond = e}"
             @updateValue="e=>{sliderValue = e}"
             :pondingTime="time"
+            :multiSpeed="mltSpeed"
             style="position: absolute; top: 10px; left: 10px;background:#fff"
         />
         <mapgis-3d-ponding-simulation-timeline 
             :value="sliderValue" 
             :pond="pond" 
             @updateTime="e=>{time = e}"
+            @updateSpeed="e=>{mltSpeed = e}"
             @play="addSimulation"
+            style="position: absolute;bottom: 30px; right: 300px;"
         />
     </mapgis-web-scene>
     `,
@@ -63,7 +70,8 @@ const Template = (args, { argTypes }) => ({
       });
       //视点跳转（经度，纬度，视角高度，方位角，俯仰角，翻滚角）
       viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(121, 24, 5900),
+        // destination: Cesium.Cartesian3.fromDegrees(121, 24, 5900),//台湾
+        destination: Cesium.Cartesian3.fromDegrees(114.35, 30.65, 5900),
         orientation: {
           heading: Cesium.Math.toRadians(60),
           pitch: Cesium.Math.toRadians(-16),

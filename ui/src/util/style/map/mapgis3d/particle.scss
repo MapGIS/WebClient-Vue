@@ -16,8 +16,17 @@
     }
     &-control-content {
         max-height: 394px;
+        overflow: hidden;
         overflow-y: auto;
         padding-top: 10px;
         height: 394px;
+    }
+    &-opearation {
+        position: absolute;
+        right: 4px;
+    }
+    &-isBatch {
+        position: absolute;
+        right: 28px;
     }
 }
