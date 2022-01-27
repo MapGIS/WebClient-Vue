@@ -9,6 +9,8 @@ export function initVueCesium() {
     window.vueCesium.ViewerManager || new ViewerManager();
   window.vueCesium.HighlightManager =
     window.vueCesium.HighlightManager || new HighlightManager();
+  window.vueCesium.RasterManager =
+    window.vueCesium.RasterManager || new RasterManager();
   window.vueCesium.GeojsonManager =
     window.vueCesium.GeojsonManager || new GeojsonManager();
   window.vueCesium.PopupManager =
@@ -84,9 +86,10 @@ export function initVueCesium() {
     window.vueCesium.AspectAnalysisManager || new AspectAnalysisManager();
   window.vueCesium.SlopeAnalysisManager =
     window.vueCesium.SlopeAnalysisManager || new SlopeAnalysisManager();
-    window.vueCesium.AspectAnalysisManager || new AspectAnalysisManager();
+  window.vueCesium.AspectAnalysisManager || new AspectAnalysisManager();
   window.vueCesium.AspectSlopeAnalysisManager =
-    window.vueCesium.AspectSlopeAnalysisManager || new AspectSlopeAnalysisManager();
+    window.vueCesium.AspectSlopeAnalysisManager ||
+    new AspectSlopeAnalysisManager();
   window.vueCesium.SkyLineAnalysisManager =
     window.vueCesium.SkyLineAnalysisManager || new SkyLineAnalysisManager();
   window.vueCesium.ContourAnalysisManager =
