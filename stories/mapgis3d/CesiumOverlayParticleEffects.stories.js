@@ -99,48 +99,50 @@ export const 粒子特效 = Template.bind({});
     symbolList:[
         {
             guid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",
-            name: "外部火焰",
+            name: "火焰",
             image: `http://localhost:8895/img/fire.png`,
             iconUrl: "mapgis-huoyan",
         },
         {
             guid: "F9FDE880-8F5B-AEDF-CA95-ADC54F02A34F",
-            name: "外部烟雾",
+            name: "烟雾",
             image: `http://localhost:8895/img/smoke.png`,
             iconUrl: "mapgis-yanwu",
         },
         {
-            "guid": "A35C78FF-DD27-66C8-DD61-027CAE317145",
-            "name": "外部喷泉",
-            "image": `http://localhost:8895/img/fountain.png`,
-            "iconUrl": "mapgis-penquan"
+            guid: "A35C78FF-DD27-66C8-DD61-027CAE317145",
+            name: "喷泉",
+            image: `http://localhost:8895/img/fountain.png`,
+            iconUrl: "mapgis-penquan"
         }
     ],
     particleList:[
         {
-            "guid": "80811AA9-A47F-709C-936C-C647FBD098E0",
-            "name": "粒子名称1",
-            "param": {
-                "emitterType": "圆形放射",
-                "emissionRate": 20.0,
-                "imageSize": 5.0,
-                "minimumParticleLife": 2.0,
-                "maximumParticleLife": 3.0,
-                "minimumSpeed": 9.0,
-                "maximumSpeed": 10.0,
-                "startScale": 1.0,
-                "endScale": 4.0,
-                "symbolGuid": "A35C78FF-DD27-66C8-DD61-027CAE317145",
-                "position": {
-                    "longitude": 114.4023,
-                    "latitude": 30.465911,
-                    "height": 10.0
+            guid: "80811AA9-A47F-709C-936C-C647FBD098E0",
+            name: "粒子名称1",
+            isShow:true,
+            param: {
+                emitterType: "锥形放射",
+                emissionRate: 20.0,
+                imageSize: 25.0,
+                minimumParticleLife: 1.5,
+                maximumParticleLife: 3.0,
+                minimumSpeed: 9.0,
+                maximumSpeed: 10.0,
+                startScale: 2.5,
+                endScale: 4.0,
+                symbolGuid: "A35C78FF-DD27-66C8-DD61-027CAE317145",
+                position: {
+                    longitude: 114.4023,
+                    latitude: 30.465911,
+                    height: 10.0
                 }
             }
         },
         {
             guid: "49A834D7-97C6-F452-4611-6F0739809B50",
             name: "粒子名称2",
+            isShow:true,
             param: {
                 emitterType: "圆形放射",  //发射类型
                 emissionRate: 20.0,     //发射速率
@@ -162,6 +164,7 @@ export const 粒子特效 = Template.bind({});
         {
             guid: "36F335E8-1F3C-41E2-40AA-EE950D691761",
             name: "粒子名称3",
+            isShow:true,
             param: {
                 emitterType: "球形放射",  //发射类型
                 emissionRate: 40.0,     //发射速率
