@@ -12,7 +12,6 @@
       :enableFullScreen="enableFullScreen"
       :enableClose="enableClose"
       ref="storyPanel"
-      v-show="showPanel"
     />
     <map-collection :key="index" v-for="(opt,index) in optArr" :options="opt"/>
     <map-collection v-if="projectMap" :options="projectMap"/>
@@ -74,7 +73,6 @@ export default {
       storyFeature: [],
       optArr: [],
       panelHeight: undefined,
-      showPanel: true,
       projectMap: undefined
     }
   },
@@ -96,7 +94,7 @@ export default {
       });
     },
     $_closePanel() {
-      this.showPanel = false;
+      this.$emit("closePanel");
     },
     projectPreview() {
       this.$nextTick(function () {

@@ -274,6 +274,8 @@ export default {
   width: 400px;
   height: 900px;
   transform-origin: top left;
+  /*div点击穿透*/
+  pointer-events: auto;
 }
 
 .mapgis-ui-project-add-story-row {

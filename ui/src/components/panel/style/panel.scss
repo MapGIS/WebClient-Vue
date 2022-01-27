@@ -2,7 +2,6 @@
 @import "../../../util/style/theme/theme.scss";
 
 @include b(story-panel-large) {
-  opacity: 0.85;
   position: relative;
   animation: myfirst 1s;
   -webkit-animation: myfirst 1s; /* Safari and Chrome */
@@ -10,11 +9,11 @@
   @keyframes myfirst {
     0% {
       right: 400px;
-      top: 0px;
+      top: 10px;
     }
     100% {
-      right: 0px;
-      top: 0px;
+      right: 10px;
+      top: 10px;
     }
   }
 
@@ -22,11 +21,11 @@
   {
     0% {
       right: 400px;
-      top: 0px;
+      top: 10px;
     }
     100% {
-      right: 0px;
-      top: 0px;
+      right: 10px;
+      top: 10px;
     }
   }
 }

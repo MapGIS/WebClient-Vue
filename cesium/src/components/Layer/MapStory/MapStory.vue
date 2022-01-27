@@ -52,6 +52,7 @@
       :height='height'
       :width='width'
       :dataSource='storyDataSource'
+      @closePanel='$_closePreview'
       ref='preview'
     />
   </div>
@@ -170,6 +171,9 @@ export default {
         this.showPreview = true
       }
       this.$emit("chapterPreview", story);
+    },
+    $_closePreview() {
+      this.showPreview = false;
     }
   }
 }
@@ -229,5 +233,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
+  /*div点击穿透*/
+  pointer-events: none;
 }
 </style>

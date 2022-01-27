@@ -98,7 +98,7 @@ export default {
         return {
           color: "#747070",
           top: "30px",
-          left: "8px",
+          left: "calc(50% - 28px)",
           fontWeight: "border"
         }
       }
