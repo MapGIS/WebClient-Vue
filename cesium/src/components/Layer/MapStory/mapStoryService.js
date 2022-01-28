@@ -19,6 +19,9 @@ export default {
       type: Number,
       default: 300
     },
+    models: {
+      type: Object
+    },
     vueKey: {
       type: String,
       default: "default"

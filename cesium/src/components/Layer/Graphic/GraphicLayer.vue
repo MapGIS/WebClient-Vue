@@ -13,6 +13,7 @@
       <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>
       <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>
       <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"
+                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"
                                   class="mapgis-ui-graphic-layers-more-tool"/>
     </div>
     <mapgis-ui-input-row-left
@@ -80,6 +81,11 @@ export default {
     enableRelativePath: {
       type: Boolean,
       default: true
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     },
   },
   watch: {

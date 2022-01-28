@@ -11,17 +11,17 @@
           v-model="dataSourceCopy.title"
         />
         <!--附加地图-->
-<!--        <mapgis-ui-map-select v-show="!showMoreMap"-->
-<!--                              title="附加地图"-->
-<!--                              :topTitleStyle="topTitleStyle"-->
-<!--                              :showTitleIcon="false"-->
-<!--                              :showMoreTitle="showMoreTitle"-->
-<!--                              :titleStyle="titleStyle"-->
-<!--                              :mainStyle="mainStyle"-->
-<!--                              :map="dataSourceCopy.map"-->
-<!--                              @showMore="$_showAdvance"-->
-<!--                              @addMap="$_addMap"-->
-<!--        />-->
+        <!--        <mapgis-ui-map-select v-show="!showMoreMap"-->
+        <!--                              title="附加地图"-->
+        <!--                              :topTitleStyle="topTitleStyle"-->
+        <!--                              :showTitleIcon="false"-->
+        <!--                              :showMoreTitle="showMoreTitle"-->
+        <!--                              :titleStyle="titleStyle"-->
+        <!--                              :mainStyle="mainStyle"-->
+        <!--                              :map="dataSourceCopy.map"-->
+        <!--                              @showMore="$_showAdvance"-->
+        <!--                              @addMap="$_addMap"-->
+        <!--        />-->
         <mapgis-ui-map-multi-rows v-show="showMoreMap" :showMoreTitle="showMoreTitle" @showMore="$_showAdvance"
                                   :map="dataSourceCopy.map" @addMap="$_addMap" title="附加地图"/>
         <!--设置相机视角-->
@@ -69,6 +69,8 @@
           :containerStyle="graphicContainerStyle"
           :iconsPanelStyle="iconsPanelStyle"
           :enableOneMap="enableOneMap"
+          :enableMapStory="true"
+          :models="models"
           :vueIndex="dataSourceCopy.mapStoryUUID"
           :vueKey="dataSourceCopy.mapStoryUUID"
           @addFeature="$_addGraphic"
@@ -318,6 +320,9 @@ export default {
       type: Number,
       default: 900
     },
+    models: {
+      type: Object
+    },
     cameras: {
       type: Array,
       default() {
@@ -469,10 +474,10 @@ export default {
     },
     //添加Graphic
     $_addGraphic(e) {
-      if (this.dataSourceCopy.features.length === 0){
+      if (this.dataSourceCopy.features.length === 0) {
         this.$set(this.dataSourceCopy.features, this.dataSourceCopy.features.length, e);
         this.$emit("change", this.dataSourceCopy);
-      }else {
+      } else {
         this.$set(this.dataSourceCopy.features, this.dataSourceCopy.features.length, e);
       }
     },

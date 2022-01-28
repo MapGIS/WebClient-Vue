@@ -6,6 +6,7 @@
         :models="models"
         :containerStyle="iconsPanelStyle"
         :enableOneMap="enableOneMap"
+        :enableMapStory="enableMapStory"
         @startDraw="$_startDraw"
         @startDrawModel="$_startDrawModel"
       />
@@ -89,6 +90,10 @@ export default {
     },
     //一张图模式
     enableOneMap: {
+      type: Boolean,
+      default: false
+    },
+    enableMapStory: {
       type: Boolean,
       default: false
     }

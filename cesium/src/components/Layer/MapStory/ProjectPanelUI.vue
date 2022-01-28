@@ -59,6 +59,7 @@
         :data-source="currentStory"
         :width="width"
         :height="height"
+        :models="models"
         :cameras="cameras"
         :enableOneMap="enableOneMap"
       />
@@ -101,6 +102,9 @@ export default {
     width: {
       type: Number,
       default: 400
+    },
+    models: {
+      type: Object
     },
     editList: {
       type: Object

@@ -5,6 +5,7 @@
                    :height="height"
                    :width="width"
                    :enableOneMap="enableOneMap"
+                   :models="models"
                    @changeChapter="$_changeChapter"
                    @setCamera="$_setCamera"
                    @save="$_save"

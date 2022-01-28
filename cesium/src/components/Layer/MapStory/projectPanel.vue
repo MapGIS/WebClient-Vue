@@ -23,6 +23,7 @@
         @close="$_close"
         :height="height"
         :width="width"
+        :models="models"
         :data-source="dataSourceCopy"
         :enableImport="enableImport"
         :enableOneMap="enableOneMap"
@@ -58,6 +59,9 @@ export default {
     },
     width: {
       type: Number
+    },
+    models: {
+      type: Object
     },
     enableClose: {
       type: Boolean,

@@ -97,6 +97,7 @@
         :height="panelHeight"
         :editList="editList"
         :enableOneMap="enableOneMap"
+        :models="models"
       />
     </div>
   </div>
@@ -140,6 +141,9 @@ export default {
     width: {
       type: Number,
       default: 400
+    },
+    models: {
+      type: Object
     },
     id: {
       type: String,
