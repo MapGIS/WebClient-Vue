@@ -974,7 +974,7 @@ export default {
 }
 
 .control-button {
-  width: calc(33% - 2.5px);
+  width: calc(32% - 2.5px);
   margin: 0 1px;
 }
 

@@ -742,7 +742,7 @@ export default {
                 vm.pond = true;
                 vm.sliderValue = 0;
 
-                console.log('pondingTime',vm.pondingTime)
+                //console.log('pondingTime',vm.pondingTime)
 
                 vm.timer = setInterval(() => {
                     if (vm.sliderValue >= vm.pondingTime) {
@@ -758,7 +758,7 @@ export default {
                 let speed =
                     (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime; 
                 vm.floodSpeedCopy = Math.round(speed * 10000000) / 10000000 * vm.multiSpeed;
-                console.log('speeddddddddd',vm.floodSpeedCopy);
+                //console.log('speeddddddddd',vm.floodSpeedCopy);
                 
                 vm._removeFlood();
                 setLogarithmicDepthBufferEnable( isLogarithmicDepthBufferSupport(), viewer);
