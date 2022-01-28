@@ -33,6 +33,13 @@
 - **侦听属性**
 - **描述:** 是否为一张图模式，此模式下 UI 有所调整，不用一张图的项目可忽略
 
+### `models`
+
+- **类型:** `Object`
+- **非侦听属性**
+- **选填**
+- **描述:** 模型信息对象，添加模型时使用，格式入下：[models(点击跳转到说明文档)](#modelObj)
+
 ## 事件
 
 ### `@storyPreview`
@@ -131,3 +138,11 @@ export default {
 | positionCartographic.longitude | Number | 0      | 经度             |
 | positionCartographic.latitude  | Number | 0      | 纬度             |
 | positionCartographic.height    | Number | 0      | 高程             |
+
+<span id="modelObj">### `models（模型信息）`</span>
+
+| 名称         | 类型   | 默认值 | 描述                 |
+| ------------ | ------ | ------ | -------------------- |
+| models       | Object | {}     | 模型分类对象         |
+| models.img   | String | 无     | 模型缩略图的相对路径 |
+| models.model | String | 无     | 模型的相对路径       |
