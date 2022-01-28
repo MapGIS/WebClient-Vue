@@ -268,6 +268,10 @@ export default {
     }
   },
 
+  mounted(){
+    document.querySelector(".mapgis-2d-geojson-default-popup").style.display = "none";
+  },
+
   methods: {
     $_deferredMount() {
       let { map, mapbox } = this;
