@@ -7,9 +7,7 @@ import clonedeep from "lodash.clonedeep";
 const Inspect = require("@mapgis/mapbox-gl-inspect");
 const MapboxInspect = Inspect.default;
 
-import Vue from 'vue'
 import Popup from "./geojson/Popup";
-const customPopup = Vue.extend(Popup)
 
 export default {
   name: "mapgis-geojson-layer",
@@ -236,6 +234,7 @@ export default {
             {!customPopup && (
               <Popup
                 mode={clickMode}
+                popupOptions={popupOptions}
                 currentLayerInfo={currentClickInfo}
               ></Popup>
             )}
@@ -411,27 +410,31 @@ export default {
           let fs = clonedeep(e.features);
           if (vm.tipsOptions) {
             let newfeatrues;
-            newfeatrues = fs.map((f) => {
-              let properties = f.properties;
-              f.properties = {};
-              //  赋值fields
-              let fields = vm.tipsOptions.fields;
-              if (!fields) {
+            if(vm.customTips){
+              newfeatrues = fs.map((f) => {
+                let properties = f.properties;
                 f.properties = {};
-              } else {
-                fields.forEach((field) => {
-                  f.properties[field] = properties[field];
-                });
-              }
-              //  赋值title
-              let titlefield = vm.tipsOptions.title;
-              if (titlefield) {
-                f.title = properties[titlefield];
-              } else {
-                // f.title = "";
-              }
-              return f;
-            });
+                //  赋值fields
+                let fields = vm.tipsOptions.fields;
+                if (!fields) {
+                  f.properties = {};
+                } else {
+                  fields.forEach((field) => {
+                    f.properties[field] = properties[field];
+                  });
+                }
+                //  赋值title
+                let titlefield = vm.tipsOptions.title;
+                if (titlefield) {
+                  f.title = properties[titlefield];
+                } else {
+                  // f.title = "";
+                }
+                return f;
+              });
+            }else{
+              newfeatrues = fs;
+            }
             vm.currentHoverInfo = [newfeatrues[0]];
           }
           popup
@@ -561,34 +564,7 @@ export default {
         }
 
         if (feature.length > 0) {
-          let fs = clonedeep(feature);
-
-          if (vm.popupOptions) {
-            let newfeatrues;
-            newfeatrues = fs.map((f) => {
-              let properties = f.properties;
-              f.properties = {};
-              //  赋值fields
-              let fields = vm.popupOptions.fields;
-              if (!fields) {
-                f.properties = properties;
-              } else {
-                fields.forEach((field) => {
-                  f.properties[field] = properties[field];
-                });
-              }
-              //  赋值title
-              let titlefield = vm.popupOptions.title;
-              if (titlefield) {
-                f.title = properties[titlefield];
-              } else {
-                // f.title = "";
-              }
-              return f;
-            });
-            vm.currentClickInfo = [newfeatrues[0]];
-          }
-
+          vm.currentClickInfo = [feature[0]];
           vm.popup =  new mapboxgl.Popup({
             closeButton: true,
             closeOnClick: false,
