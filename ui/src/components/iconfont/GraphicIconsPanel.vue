@@ -25,7 +25,7 @@
         <div class="mapgis-ui-graphic-icon-div"
              :key="index"
              v-for="(icon, index) in iconsInfo"
-             :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none'}"
+             :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none',margin: enableOneMap ? '10px 9px' : '10px 13.7px'}"
         >
           <img @click="$_startDraw(icon.type)"
                class="mapgis-ui-graphic-icon"
@@ -100,6 +100,11 @@ export default {
       default() {
         return {};
       }
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

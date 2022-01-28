@@ -96,6 +96,7 @@
         :cameras="cameras"
         :height="panelHeight"
         :editList="editList"
+        :enableOneMap="enableOneMap"
       />
     </div>
   </div>
@@ -306,7 +307,7 @@ export default {
     //新增章节
     $_addChapter() {
       let chapter = this.$_getChapter();
-      chapter.projectUUID = this.dataSourceCopy.uuid;
+      chapter.mapStoryUUID = this.dataSourceCopy.uuid;
       this.$emit("addChapter", chapter);
     },
     //复制上一章节
@@ -336,7 +337,7 @@ export default {
     $_editChapter(index) {
       let chapters = JSON.parse(JSON.stringify(this.dataSourceCopy.chapters))
       this.currentChapter = chapters[index];
-      let uuid = this.currentChapter.projectUUID;
+      let uuid = this.currentChapter.mapStoryUUID;
       let features = this.currentChapter.features;
       let graphicLayer = this.$_getGraphicLayer(uuid, uuid);
       if (!graphicLayer) {

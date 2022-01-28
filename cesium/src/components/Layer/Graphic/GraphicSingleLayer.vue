@@ -5,6 +5,7 @@
         ref="iconsPanel"
         :models="models"
         :containerStyle="iconsPanelStyle"
+        :enableOneMap="enableOneMap"
         @startDraw="$_startDraw"
         @startDrawModel="$_startDrawModel"
       />
@@ -85,6 +86,11 @@ export default {
     },
     iconsPanelStyle: {
       type: Object
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

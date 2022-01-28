@@ -250,8 +250,8 @@ export default {
       this.$emit("selectCamera", camera, currentFeature);
     },
     //显示或隐藏章节要素
-    $_toggleChapterFeatures(featureUUID, projectUUID, show) {
-      this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
+    $_toggleChapterFeatures(featureUUID, mapStoryUUID, show) {
+      this.$emit("toggleChapterFeatures", featureUUID, mapStoryUUID, show);
     },
     //预览故事
     $_storyPreview(story) {

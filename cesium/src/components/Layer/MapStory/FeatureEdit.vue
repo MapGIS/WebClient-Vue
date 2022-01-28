@@ -68,8 +68,9 @@
           :data-source="graphics"
           :containerStyle="graphicContainerStyle"
           :iconsPanelStyle="iconsPanelStyle"
-          :vueIndex="dataSourceCopy.projectUUID"
-          :vueKey="dataSourceCopy.projectUUID"
+          :enableOneMap="enableOneMap"
+          :vueIndex="dataSourceCopy.mapStoryUUID"
+          :vueKey="dataSourceCopy.mapStoryUUID"
           @addFeature="$_addGraphic"
           @saveCamera="$_setCamera"
           @delete="$_deleteGraphic"
@@ -325,6 +326,11 @@ export default {
     },
     editList: {
       type: Object
+    },
+    //一张图模式
+    enableOneMap: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
@@ -492,7 +498,7 @@ export default {
     },
     //隐藏当前章节的标绘内容
     $_hideChapterGraphics() {
-      let uuid = this.dataSourceCopy.projectUUID;
+      let uuid = this.dataSourceCopy.mapStoryUUID;
       let graphics = this.dataSourceCopy.features;
       for (let i = 0; i < graphics.length; i++) {
         let graphic = this.$_getGraphicByID(graphics[i].id, uuid, uuid);

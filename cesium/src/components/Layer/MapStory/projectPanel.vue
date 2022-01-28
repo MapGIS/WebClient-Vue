@@ -198,8 +198,8 @@ export default {
       }
     },
     //是否显示章节要素
-    $_toggleChapterFeatures(featureUUID, projectUUID, show) {
-      this.$emit("toggleChapterFeatures", featureUUID, projectUUID, show);
+    $_toggleChapterFeatures(featureUUID, mapStoryUUID, show) {
+      this.$emit("toggleChapterFeatures", featureUUID, mapStoryUUID, show);
     },
     //显示故事
     $_showStory(project) {

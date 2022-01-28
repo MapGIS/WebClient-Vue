@@ -105,7 +105,7 @@ export default {
     //新增章节
     $_addChapter(chapter) {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
-        if (this.dataSourceCopy[i].uuid === chapter.projectUUID) {
+        if (this.dataSourceCopy[i].uuid === chapter.mapStoryUUID) {
           this.dataSourceCopy[i].chapters.push(chapter);
           break;
         }

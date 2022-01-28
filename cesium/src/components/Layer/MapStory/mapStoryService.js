@@ -12,10 +12,12 @@ export default {
       type: Array
     },
     height: {
-      type: Number
+      type: Number,
+      default: 700
     },
     width: {
-      type: Number
+      type: Number,
+      default: 300
     },
     vueKey: {
       type: String,
@@ -263,24 +265,24 @@ export default {
     },
     //显示或隐藏标绘对象
     $_toggleGraphicsByChapter(chapter) {
-      let { features, projectUUID } = chapter;
+      let { features, mapStoryUUID } = chapter;
       for (let i = 0; i < features.length; i++) {
         let graphic = this.$_getGraphicByID(
           features[i].id,
-          projectUUID,
-          projectUUID
+          mapStoryUUID,
+          mapStoryUUID
         );
         graphic.show = !graphic.show;
       }
     },
     //闪烁标绘对象
     $_flashGraphicByChapter(chapter) {
-      let { features, projectUUID } = chapter;
+      let { features, mapStoryUUID } = chapter;
       for (let i = 0; i < features.length; i++) {
         let graphic = this.$_getGraphicByID(
           features[i].id,
-          projectUUID,
-          projectUUID
+          mapStoryUUID,
+          mapStoryUUID
         );
         if (graphic.attributes.hasOwnProperty("__enableFlash")) {
           let e = graphic;
@@ -356,7 +358,7 @@ export default {
     $_setChapter(chapter) {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         let story = this.dataSourceCopy[i];
-        if (story.uuid === chapter.projectUUID) {
+        if (story.uuid === chapter.mapStoryUUID) {
           let chapters = story.chapters;
           for (let j = 0; j < chapters.length; j++) {
             if (chapter.uuid === chapters[j].uuid) {

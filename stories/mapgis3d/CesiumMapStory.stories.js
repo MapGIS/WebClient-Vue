@@ -21,9 +21,7 @@ const Template = (args, {argTypes}) => ({
 
 export const 地图故事 = Template.bind({});
 地图故事.args = {
-    dataSource: [],
-    height: 700,
-    width: 300
+    dataSource: []
 };
 
 地图故事.parameters = {
