@@ -5,94 +5,23 @@
 
 ## 属性
 
-### `dataSource`
+| 名称                      | 类型                | 默认值 | 描述                                                           | 是否监听 |
+| ------------------------- | ------------------- | ------ | -------------------------------------------------------------- | -------- |
+| [dataSource](#dataSource) | Array               | []     | mapStory 数组                                                  | 是       |
+| height                    | Number              | 700    | 地图故事面板高度                                               | 是       |
+| width                     | Number              | 300    | 地图故事面板宽度                                               | 是       |
+| enableOneMap              | Boolean             | false  | 是否为一张图模式，此模式下 UI 有所调整，不用一张图的项目可忽略 | 是       |
+| [models](#modelObj)       | [models](#modelObj) | {}     | 模型信息对象，添加模型时使用                                   | 是       |
 
-- **类型:** `Array`
-- **默认值:** ``
-- **侦听属性**
-- **描述:** 地图故事源数据，如下所示：[dataSource(点击跳转到说明文档)](#dataSource)
-
-### `height`
-
-- **类型:** `Number`
-- **默认值:** `700`
-- **侦听属性**
-- **描述:** 地图故事面板高度
-
-### `width`
-
-- **类型:** `Array`
-- **默认值:** `300`
-- **侦听属性**
-- **描述:** 地图故事面板宽度
-
-### `enableOneMap`
-
-- **类型:** `Boolean`
-- **默认值:** `false`
-- **侦听属性**
-- **描述:** 是否为一张图模式，此模式下 UI 有所调整，不用一张图的项目可忽略
-
-### `models`
-
-- **类型:** `Object`
-- **非侦听属性**
-- **选填**
-- **描述:** 模型信息对象，添加模型时使用，格式入下：[models(点击跳转到说明文档)](#modelObj)
-
-## 事件
-
-### `@storyPreview`
-
-- **描述** 预览地图故事
-- **Payload** `{ mapStoryData }`
-- - `mapStoryData` 地图故事数据，预览功能默已经包含在地图故事里，当希望自己实现预览功能时，可使用此事件
-
-### `@chapterPreview`
-
-- **描述** 预览地图里的某一章节
-- **Payload** `{ mapStoryData }`
-- - `mapStoryData` 地图故事数据，预览功能默已经包含在地图故事里，当希望自己实现预览功能时，可使用此事件
-
-### `@save`
-
-- **描述** 保存地图故事
-- **Payload** `{ mapStoryData }`
-- - `mapStoryData` 地图故事数据
-
-<span id="example">## 示例</span>
-
-```vue
-<template>
-  <mapgis-web-scene style="height:95vh">
-    <mapgis-3d-map-story
-      @storyPreview="storyPreview"
-      @chapterPreview="chapterPreview"
-      @save="save"
-      :dataSource="dataSource"
-    />
-  </mapgis-web-scene>
-</template>
-<script>
-export default {
-  data() {
-    return {
-      dataSource: []
-    };
-  },
-  methods: {
-    storyPreview(mapStoryData) {},
-    chapterPreview(mapStoryData) {},
-    save(mapStoryData) {}
-  }
-};
-</script>
-<style lang="css"></style>
-```
-
-## 说明文档
+## 参数详情
 
 <span id="dataSource">### `dataSource（地图故事数据源）`</span>
+
+| 名称       | 类型                    | 默认值 | 描述          |
+| ---------- | ----------------------- | ------ | ------------- |
+| dataSource | [[mapStory]](#mapStory) | []     | mapStory 数组 |
+
+<span id="mapStory">### `mapStory（地图故事对象）`</span>
 
 | 名称        | 类型                  | 默认值        | 描述                                         |
 | ----------- | --------------------- | ------------- | -------------------------------------------- |
@@ -146,3 +75,53 @@ export default {
 | models       | Object | {}     | 模型分类对象         |
 | models.img   | String | 无     | 模型缩略图的相对路径 |
 | models.model | String | 无     | 模型的相对路径       |
+
+## 事件
+
+### `@storyPreview`
+
+- **描述** 预览地图故事
+- **Payload** `{ mapStoryData }`
+- - `mapStoryData` 地图故事数据，预览功能默已经包含在地图故事里，当希望自己实现预览功能时，可使用此事件
+
+### `@chapterPreview`
+
+- **描述** 预览地图里的某一章节
+- **Payload** `{ mapStoryData }`
+- - `mapStoryData` 地图故事数据，预览功能默已经包含在地图故事里，当希望自己实现预览功能时，可使用此事件
+
+### `@save`
+
+- **描述** 保存地图故事
+- **Payload** `{ mapStoryData }`
+- - `mapStoryData` 地图故事数据
+
+<span id="example">## 示例</span>
+
+```vue
+<template>
+  <mapgis-web-scene style="height:95vh">
+    <mapgis-3d-map-story
+      @storyPreview="storyPreview"
+      @chapterPreview="chapterPreview"
+      @save="save"
+      :dataSource="dataSource"
+    />
+  </mapgis-web-scene>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      dataSource: []
+    };
+  },
+  methods: {
+    storyPreview(mapStoryData) {},
+    chapterPreview(mapStoryData) {},
+    save(mapStoryData) {}
+  }
+};
+</script>
+<style lang="css"></style>
+```
