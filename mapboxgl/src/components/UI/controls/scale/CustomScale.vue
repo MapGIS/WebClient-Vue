@@ -1,7 +1,7 @@
 <template>
   <div class="mapgis-custom-scale" id="mapgis-legend-rule" :style="outStyle">
     <div :style="{ width: width + 'px' }">
-      <strong>{{ scaleLabel }}</strong>
+      <strong class="mapgis-custom-scale-number">{{ scaleLabel }}</strong>
       <div class="mapgis-custom-scale-ruler">
         <div class="mapgis-custom-scale-ruler-block upper_firstpiece" />
         <div class="mapgis-custom-scale-ruler-block upper_secondpiece" />
@@ -9,7 +9,14 @@
         <div class="mapgis-custom-scale-ruler-block lower_secondpiece" />
       </div>
       <div class="mapgis-custom-scale-label-div">
-        <div class="mapgis-custom-scale-label" style="{left: '-3%' }">
+        <div
+          class="mapgis-custom-scale-label"
+          style="
+             {
+              left: '-3%';
+            }
+          "
+        >
           0
         </div>
         <div class="mapgis-custom-scale-label mapgis-custom-scale-first-number">
@@ -38,17 +45,17 @@ export default {
       default: () => {
         return {
           left: "10px",
-          top: "10px"
+          top: "10px",
         };
-      }
-    }
+      },
+    },
   },
   data() {
     return {
-      scaleLabel: "",
+      scaleLabel: "比例尺",
       midLabel: "",
       endLabel: "",
-      width: 200
+      width: 200,
     };
   },
   mounted() {
@@ -152,12 +159,15 @@ export default {
       this.endLabel = this.getShowLabel(showScale);
       // this.width = this.getScaleWidth(showScale, scale);
       this.scaleLabel = "1: " + scale.toFixed(0);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
+.mapgis-custom-scale-number {
+  color: #666666;
+}
 .mapgis-custom-scale {
   z-index: 30;
   position: absolute;

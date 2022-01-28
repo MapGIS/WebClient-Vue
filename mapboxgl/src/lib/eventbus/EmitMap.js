@@ -66,6 +66,16 @@ export const emitMapPrintFull = payload => {
   EventBus.$emit("map-print-full", payload);
 };
 
+export const emitMapDrawRemove = payload => {
+  EventBus.$emit("map-draw-remove", payload);
+};
+export const emitMapMeasureRemove = payload => {
+  EventBus.$emit("map-measure-remove", payload);
+};
+export const emitMapEditRemove = payload => {
+  EventBus.$emit("map-edit-remove", payload);
+};
+
 export const emitDocumentImportThemeLayer = payload => {
   EventBus.$emit("document-import-theme-layer", payload);
 };
@@ -111,6 +121,9 @@ export default {
   emitMapRemoveThemeLayer,
   emitMapOpenTable,
   emitMapPrint,
+  emitMapDrawRemove,
+  emitMapMeasureRemove,
+  emitMapEditRemove,
   emitDocumentImportThemeLayer,
   emitDocumentExportThemeLayer,
   emitDocumentAddThemeLayer,
