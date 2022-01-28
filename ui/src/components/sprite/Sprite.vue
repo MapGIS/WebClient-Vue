@@ -22,6 +22,9 @@
         </div>
       </mapgis-ui-select-option>
     </mapgis-ui-select>
+    <mapgis-ui-button :size="size" shape="circle" @click="clearSprite"
+      >删</mapgis-ui-button
+    >
     <mapgis-ui-button :size="size" shape="circle" @click="showModal"
       >符</mapgis-ui-button
     >
@@ -159,6 +162,9 @@ export default {
     },
     handleSpriteSelect(item) {
       this.$emit("change", item);
+    },
+    clearSprite() {
+      this.$emit("remove");
     }
   }
 };
