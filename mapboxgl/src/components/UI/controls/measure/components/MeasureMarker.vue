@@ -32,7 +32,7 @@ export default {
       return marker.planeLength || marker.planePerimeter;
     },
     coordinates({ marker }) {
-      return marker.coordinates || [0, 0];
+      return marker.coordinates || [];
     }
   },
   methods: {
