@@ -7,7 +7,7 @@ const { MarkerStyle, LineStyle, PointStyle, FillStyle } = Style;
 import '../style/popup.css';
 
 export default {
-  title: "二维/图层/GeoJSON图层/点",
+  title: "二维/图层/GeoJSON图层/区",
   component: MapgisGeojsonLayer,
   argTypes: {
     layer: {},
@@ -27,22 +27,20 @@ const Template = (args, { argTypes }) => ({
   </mapgis-web-map>`,
 });
 
-export const 点 = Template.bind({});
-点.args = {
+export const 区 = Template.bind({});
+区.args = {
   layerId: "geojson_layer_id",
-  layerStyle: new PointStyle({
-    radius: 12,
+  layerStyle: new FillStyle({
     color: "#ffffff",
     opacity: 0.8,
-    outlineWidth: 5,
     outlineColor: "#52B883",
   }),
+
   highlightStyle: {
-    point: new PointStyle({
-      radius: 15,
+    polygon: new FillStyle({
+      width: 8,
       color: "#ffff00",
       opacity: 0.8,
-      outlineWidth: 6,
       outlineColor: "#ff0000",
     }),
   },
