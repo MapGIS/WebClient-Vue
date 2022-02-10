@@ -24,8 +24,8 @@
 - **可选**
 - **侦听属性**
 - **描述:** 符号库参数配置
-- **默认值:**
-
+- **默认值:** 其中config和iconUrl是非必传参数，config是指当前符号的粒子特效预设参数配置，当初始化生成该符号的粒子特效时使用这套config参数。
+      iconUrl是指当前符号对象的iconfont图标的type,若不传则默认图标使用image的png图片。
 ```
   [
     {
@@ -33,6 +33,17 @@
       name: "火焰",
       image: "./fire.png",
       iconUrl: "mapgis-fire",
+      config:{
+        emitterType: "圆形放射",
+        emissionRate: 13.0,
+        imageSize: 5.0,
+        minimumParticleLife: 2.0,
+        maximumParticleLife: 3.0,
+        minimumSpeed: 9.0,
+        maximumSpeed: 10.0,
+        startScale: 1.0,
+        endScale: 4.0
+      },
     },
     {
       guid: "B8AF7BAC-082F-14C6-BECD-8F7AB44C5019",
@@ -129,13 +140,17 @@
 ### `@load`
 
 - **Description:** 在 ParticleEffects 加载完毕后发送该事件
-- **Payload** ParticleEffects 对象
+- **Payload** ParticleEffects组件 对象
 
 ### `@unload`
 
 - **Description:** 关闭 ParticleEffects 组件前发送该事件
-- **Payload** ParticleEffects 对象
+- **Payload** ParticleEffects组件对象
 
+### `@changeParticle`
+
+- **Description:**  ParticleEffects 组件 修改或新增、删除粒子列表参数时发送该事件
+- **Payload** particleList 数组
 ## 示例
 
 ```vue
@@ -246,10 +261,7 @@ export default {
   methods: {
     load(particleEffects) {
       this.particleEffects = particleEffects;
-    },
-    loaded(e) {
-      this.showParticle = true;
-    },
+    }
   },
 };
 </script>

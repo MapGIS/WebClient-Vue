@@ -261,7 +261,7 @@ export default {
           <mapgis-ui-popup-content
             ref="hover"
             feature={tipfeature}
-            popupOptions={popupOptions}
+            popupOptions={tipsOptions}
           ></mapgis-ui-popup-content>
         </div>
       );
@@ -412,16 +412,16 @@ export default {
       map.on("mousemove", vm.layerId, function (e) {
         if (e.features.length > 0) {
           let fs = clonedeep(e.features);
+          let newfeatrues;
           if (vm.tipsOptions) {
-            let newfeatrues;
-            if(vm.customTips){
+            // if(vm.customTips){
               newfeatrues = fs.map((f) => {
                 let properties = f.properties;
                 f.properties = {};
                 //  赋值fields
                 let fields = vm.tipsOptions.fields;
                 if (!fields) {
-                  f.properties = {};
+                  f.properties = properties;
                 } else {
                   fields.forEach((field) => {
                     f.properties[field] = properties[field];
@@ -440,7 +440,7 @@ export default {
               newfeatrues = fs;
             }
             vm.currentHoverInfo = [newfeatrues[0]];
-          }
+          // }
           popup
             .setLngLat(e.lngLat)
             // .setHTML(vm.tipContainer)
@@ -558,7 +558,7 @@ export default {
         if (vm.popup) {
           vm.popup.remove();
           vm.popup = undefined;
-        } 
+        }
 
         const bbox = [[e.point.x-5, e.point.y-5],[e.point.x + 5, e.point.y + 5]];
         const feature = map.queryRenderedFeatures(bbox,{layers: [vm.layerId]});
