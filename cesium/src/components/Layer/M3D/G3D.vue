@@ -307,7 +307,7 @@ export default {
 
       g3dLayer.then((e) => {
         let g3d = viewer.scene.layers.appendSceneLayer(url, {
-          $props,
+          ...$props,
           loaded: function (layer) {
             // 该回调有多少图层循环进多少次
           },
