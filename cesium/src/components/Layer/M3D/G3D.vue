@@ -305,28 +305,15 @@ export default {
       let layers = this.parseLayers();
       if (!layers) this.layerIds = [];
 
-      if (version == "2.0") {
-        g3dLayer.then((e) => {
-          let g3d = viewer.scene.layers.appendSceneServer(url, {
-            $props,
-            loaded: function (layer) {
-              // 该回调有多少图层循环进多少次
-              console.log("layer", layer);
-            },
-            getDocLayerIndexes: vm.getDocLayerIndexes,
-          });
+      g3dLayer.then((e) => {
+        let g3d = viewer.scene.layers.appendSceneLayer(url, {
+          $props,
+          loaded: function (layer) {
+            // 该回调有多少图层循环进多少次
+          },
+          getDocLayerIndexes: vm.getDocLayerIndexes,
         });
-      } else if (version == "1.0" || version == "0.0") {
-        g3dLayer.then((e) => {
-          let g3d = viewer.scene.layers.appendG3DLayer(url, {
-            $props,
-            loaded: function (layer) {
-              // 该回调有多少图层循环进多少次
-            },
-            getDocLayerIndexes: vm.getDocLayerIndexes,
-          });
-        });
-      }
+      });
 
       if (viewer.isDestroyed()) return;
     },
@@ -790,7 +777,7 @@ export default {
     bindPopupEvent() {
       const { vueKey, vueIndex } = this;
       const { enablePopup, enableTips } = this;
-      
+
       let clickhandler, hoverhandler;
       if (enablePopup) {
         clickhandler = this.$_bindClickEvent(

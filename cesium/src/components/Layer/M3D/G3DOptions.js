@@ -12,11 +12,11 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0)
+    default: () => (Math.random() * 100000000).toFixed(0),
   },
 
   layerId: {
-    type: String
+    type: String,
   },
 
   outStyle: {
@@ -28,9 +28,9 @@ export default {
         height: "450px",
         width: "270px",
         top: "0px",
-        left: "0px"
+        left: "0px",
       };
-    }
+    },
   },
 
   /**
@@ -54,7 +54,7 @@ export default {
   /**
    * @description 图层过滤功能
    */
-  layers: { type: [String], default: undefined },
+  layers: { type: String, default: undefined },
   /**
    * @description 是否使用前端缓存
    */
@@ -62,7 +62,7 @@ export default {
   /**
    * @description 前端最大缓存级别
    */
-  maxCacheLevel: { type: Boolean, default: false },
+  maxCacheLevel: { type: Number, default: 3 },
   /**
    * @description 矢量图层单个瓦片加载的矢量要素数量
    */
@@ -78,6 +78,10 @@ export default {
    */
   orientation: { type: Object },
   /**
+   * @description 是否激活地形法向量
+   */
+  requestVertexNormals: { type: Boolean, default: false },
+  /**
    * @description 代理
    */
   proxy: { type: Object },
@@ -88,5 +92,5 @@ export default {
   /**
    * @description 是否激活默认UI
    */
-  enableControl: { type: Boolean, default: false }
+  enableControl: { type: Boolean, default: false },
 };
