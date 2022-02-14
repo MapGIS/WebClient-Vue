@@ -351,7 +351,7 @@ export default {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale,
-        isHermiteSpline, stRotation
+        isHermiteSpline, stRotation, offsetHeight
       } = style;
 
       const {title, __flashStyle} = attributes;
@@ -367,7 +367,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.pixelSize = pixelSize;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
           editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
@@ -403,7 +403,7 @@ export default {
             y: positions[1],
             z: positions[2]
           });
-          editPanelValues.height = position.alt;
+          editPanelValues.offsetHeight = position.alt;
           editPanelValues.position = position;
           break;
         case "box":
@@ -411,7 +411,7 @@ export default {
           editPanelValues.color = "#FF0000";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           if (title) {
             editPanelValues.title = title;
           }
@@ -423,6 +423,7 @@ export default {
           editPanelValues.image = image;
           editPanelValues.width = width;
           editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
           editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
@@ -446,6 +447,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.cornerType = cornerType;
           if (title) {
             editPanelValues.title = title;
@@ -457,7 +459,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType || "Color";
           if (title) {
             editPanelValues.title = title;
@@ -472,7 +474,7 @@ export default {
         case "rectangle":
           editPanelValues.id = id;
           editPanelValues.title = title;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType;
           if (title) {
             editPanelValues.title = title;
@@ -505,7 +507,7 @@ export default {
             editPanelValues.pureColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
             editPanelValues.pureOpacity = color[3] * 100;
             editPanelValues.radius = radius;
-            editPanelValues.height = height;
+            editPanelValues.offsetHeight = offsetHeight;
             editPanelValues.speed = speed || 1;
             editPanelValues.duration = duration || 2000;
             editPanelValues.gradient = gradient || 0.5;
@@ -540,7 +542,7 @@ export default {
           editPanelValues.radiusX = radiusX;
           editPanelValues.radiusY = radiusY;
           editPanelValues.radiusZ = radiusZ;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           if (title) {
             editPanelValues.title = title;
           }
@@ -549,7 +551,7 @@ export default {
           editPanelValues.id = id;
           editPanelValues.title = title;
           editPanelValues.extrudedHeight = extrudedHeight;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.speed = speed || 1;
           editPanelValues.image = material.image || "http://localhost:8080/assets/png/lineClr.png";
           editPanelValues.duration = duration || 2000;
@@ -573,7 +575,7 @@ export default {
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.cornerType = cornerType;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.extrudedHeight = extrudedHeight;
           if (title) {
             editPanelValues.title = title;
@@ -585,7 +587,7 @@ export default {
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.topRadius = topRadius;
           editPanelValues.bottomRadius = bottomRadius;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.extrudedHeight = extrudedHeight;
           if (title) {
             editPanelValues.title = title;
@@ -783,8 +785,18 @@ export default {
     },
     test() {
       let graphicLayer = this.$_getGraphicLayer();
-      let editTool = graphicLayer.editTool;
-      editTool.activeRotationMode();
+      let SelectTool = new Cesium.SelectTool(graphicLayer);
+      SelectTool.selectByRectangle({
+        type: 'polygon',
+        style: {
+          color: Cesium.Color.BLUE.withAlpha(0.2),
+          height: 0
+        },
+        isContinued: false,
+        getSelectedGraphic: function (graphics) {
+          console.log("-----------",graphics)
+        }
+      });
     },
     //双击一条标注列表里的要素，进入到设置面板
     $_dbclick(json) {

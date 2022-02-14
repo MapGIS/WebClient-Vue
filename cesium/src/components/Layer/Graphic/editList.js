@@ -65,7 +65,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "addHeight",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -154,6 +154,12 @@ let editList = {
       title: "图片高度",
       key: "height",
       value: 40
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "离地高度",
+      key: "offsetHeight",
+      value: 0
     }
   ],
   point: [
@@ -184,7 +190,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -332,7 +338,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -436,7 +442,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     }
   ],
@@ -506,7 +512,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -594,7 +600,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -690,7 +696,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -754,6 +760,12 @@ let editList = {
       title: "透明度",
       key: "opacity",
       value: 100
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "离地高度",
+      key: "offsetHeight",
+      value: 0
     }
   ],
   box: [
@@ -772,7 +784,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -816,7 +828,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -854,7 +866,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -898,7 +910,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -1020,7 +1032,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     }
   ]

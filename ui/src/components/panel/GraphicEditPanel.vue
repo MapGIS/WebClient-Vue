@@ -558,7 +558,7 @@ export default {
       this.$nextTick(function () {
         this.isUpdatePanel = true;
       });
-      this.$emit("dblclick", json);
+      // this.$emit("dblclick", json);
     },
     $_open(open, row) {
       if (open) {
@@ -623,7 +623,7 @@ export default {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
-        stRotation, isHermiteSpline
+        stRotation, isHermiteSpline, offsetHeight
       } = style;
 
       const {title, __flashStyle} = attributes;
@@ -648,7 +648,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.pixelSize = pixelSize;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
           editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
@@ -661,7 +661,7 @@ export default {
           editPanelValues.text = text;
           editPanelValues.title = title;
           editPanelValues.name = name;
-          editPanelValues.addHeight = addHeight;
+          editPanelValues.offsetHeight = offsetHeight;
           let fonts;
           if (typeof font === "number") {
             fonts = [font, "sans-serif"];
@@ -693,7 +693,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           if (title) {
             editPanelValues.title = title;
           }
@@ -705,6 +705,7 @@ export default {
           editPanelValues.image = image;
           editPanelValues.width = width;
           editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.outlineWidth = outlineWidth;
           editPanelValues.outlineOpacity = outlineColor[3] * 100;
           editPanelValues.outlineColor = "rgb(" + outlineColor[0] * 255 + "," + outlineColor[1] * 255 + "," + outlineColor[2] * 255 + ")";
@@ -733,6 +734,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.cornerType = cornerType;
           if (title) {
             editPanelValues.title = title;
@@ -744,7 +746,7 @@ export default {
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.extrudedHeight = extrudedHeight;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType || "Color";
           if(__flashStyle) {
             editPanelValues.alphaSpace = __flashStyle.alphaSpace;
@@ -764,7 +766,7 @@ export default {
           editPanelValues.title = title;
           editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType;
           if (title) {
             editPanelValues.title = title;
@@ -792,7 +794,7 @@ export default {
           if (this.currentEditType === "circle") {
             editPanelValues.id = id;
             editPanelValues.radius = radius;
-            editPanelValues.height = height;
+            editPanelValues.offsetHeight = offsetHeight;
             editPanelValues.materialType = materialType;
             if (materialType === "Color") {
               editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
@@ -831,7 +833,7 @@ export default {
           editPanelValues.radiusX = radiusX;
           editPanelValues.radiusY = radiusY;
           editPanelValues.radiusZ = radiusZ;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           if (title) {
             editPanelValues.title = title;
           }
@@ -862,7 +864,7 @@ export default {
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.width = width;
           editPanelValues.cornerType = cornerType;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.extrudedHeight = extrudedHeight;
           if (title) {
             editPanelValues.title = title;
@@ -874,7 +876,7 @@ export default {
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.topRadius = topRadius;
           editPanelValues.bottomRadius = bottomRadius;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.extrudedHeight = extrudedHeight;
           if (title) {
             editPanelValues.title = title;
@@ -885,7 +887,7 @@ export default {
           editPanelValues.color = "rgba(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
           editPanelValues.opacity = color[3] * 100;
           editPanelValues.radius = radius;
-          editPanelValues.height = height;
+          editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.extrudedHeight = extrudedHeight;
           if (title) {
             editPanelValues.title = title;

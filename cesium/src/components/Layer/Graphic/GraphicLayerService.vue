@@ -571,7 +571,7 @@ export default {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             arcType: Cesium.ArcType.GEODESIC,
             pixelSize: editPanelValues.pixelSize,
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             outlineWidth: editPanelValues.outlineWidth || 0,
             outlineColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.outlineColor || "#000000"), editPanelValues.outlineOpacity / 100),
           };
@@ -588,7 +588,7 @@ export default {
           drawOptions.style = {
             disableDepthTestDistance: Number.POSITIVE_INFINITY,
             text: editPanelValues.text || "",
-            addHeight: editPanelValues.addHeight || 0,
+            offsetHeight: editPanelValues.offsetHeight || 0,
             font: font,
             style: 2,
             fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.fontColor || "#000000"), editPanelValues.opacity / 100),
@@ -607,7 +607,7 @@ export default {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             arcType: Cesium.ArcType.GEODESIC,
             extrudedHeight: editPanelValues.extrudedHeight,
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
           };
           break;
         case "billboard":
@@ -617,6 +617,7 @@ export default {
             image: editPanelValues.image,
             width: editPanelValues.width,
             height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             outlineColor: Cesium.Color.RED,
             outlineWidth: 10,
           };
@@ -649,7 +650,7 @@ export default {
           drawOptions.style = {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             extrudedHeight: editPanelValues.extrudedHeight,
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             isPlanePolygon: true
           };
           break;
@@ -660,7 +661,7 @@ export default {
             case "Color":
               style = {
                 color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
-                height: editPanelValues.height,
+                offsetHeight: editPanelValues.offsetHeight,
                 isPlanePolygon: false
               };
               break;
@@ -685,7 +686,7 @@ export default {
             case "Color":
               style = {
                 color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
-                height: editPanelValues.height,
+                offsetHeight: editPanelValues.offsetHeight,
               };
               break;
             case "Image":
@@ -716,7 +717,7 @@ export default {
         case "circle":
           style = {
             radius: Number(editPanelValues.radius),
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             materialType: editPanelValues.materialType,
           }
           editPanelValues.materialType = editPanelValues.materialType || "Color";
@@ -744,7 +745,7 @@ export default {
         case "ellipsoid":
           drawOptions.style = {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             radiusX: editPanelValues.radiusX,
             radiusY: editPanelValues.radiusY,
             radiusZ: editPanelValues.radiusZ,
@@ -755,6 +756,7 @@ export default {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             radius: Number(editPanelValues.radius),
             extrudedHeight: editPanelValues.extrudedHeight,
+            offsetHeight: editPanelValues.offsetHeight,
           };
           break;
         case "wall":
@@ -783,6 +785,7 @@ export default {
           drawOptions.style = {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             width: editPanelValues.width,
+            offsetHeight: editPanelValues.offsetHeight,
             cornerType: editPanelValues.cornerType,
           };
           break;
@@ -791,7 +794,7 @@ export default {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             width: editPanelValues.width,
             cornerType: editPanelValues.cornerType,
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             extrudedHeight: editPanelValues.extrudedHeight,
           };
           break;
@@ -800,7 +803,7 @@ export default {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             topRadius: editPanelValues.topRadius,
             bottomRadius: editPanelValues.bottomRadius,
-            height: editPanelValues.height,
+            offsetHeight: editPanelValues.offsetHeight,
             extrudedHeight: editPanelValues.extrudedHeight,
           };
           break;
@@ -808,6 +811,7 @@ export default {
           drawOptions.style = {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             extrudedHeight: editPanelValues.extrudedHeight,
+            offsetHeight: editPanelValues.offsetHeight,
             isSquare: true
           };
           break;
