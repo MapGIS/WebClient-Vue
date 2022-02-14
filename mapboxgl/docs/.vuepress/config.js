@@ -168,6 +168,7 @@ module.exports = {
 
               ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
               ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
+              ["/api/UI/Print/print.md", "打印"],
 
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],

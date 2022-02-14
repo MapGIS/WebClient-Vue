@@ -1,8 +1,12 @@
+import MapgisEventBusMapMixin from '../../../lib/eventbus/EventBusMapMixin';
+
 const DrawSources = {
   HOT: "mapbox-gl-draw-hot",
   COLD: "mapbox-gl-draw-cold"
 };
 export default {
+  mixins: [MapgisEventBusMapMixin],
+
   created() {
     this.$_initMapboxDom();
     this.drawEvents = this.$_initMapboxEvent().draw;
@@ -62,7 +66,7 @@ export default {
         if (!this.map) return;
         this.map.removeControl(window.mapboxDom.draw);
         window.mapboxDom.draw = undefined;
-      }
+      }      
     },
 
     $_bindDrawEvents(eventName, eventCallback) {
@@ -81,6 +85,7 @@ export default {
         this.map && this.map.off(e.name, e.callback);
       });
       this.drawEvents.length = 0;
+      this.emitMapDrawRemove();
     },
 
     $_addMeasureControl(control, com) {
@@ -129,6 +134,7 @@ export default {
       if (window.mapboxDom.measureCom) {
         window.mapboxDom.measureCom.coordinates = [];
       }
+      this.emitMapMeasureRemove();
     },
 
     $_addEditControl(control) {
@@ -170,6 +176,7 @@ export default {
         this.map && this.map.off(e.name, e.callback);
       });
       this.editEvents.length = 0;
+      this.emitMapEditRemove();
     }
   }
 };

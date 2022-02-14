@@ -2284,11 +2284,11 @@ export default {
 }
 
 .theme-panel-img-border:hover {
-  box-shadow: 1px 1px 1px 2px rgb(94, 183, 242);
+  box-shadow: 0px 0px 2px 2px rgb(94, 183, 242);
 }
 
 .themePanelImgOutline {
-  box-shadow: 1px 1px 1px 2px rgb(94, 183, 242);
+  box-shadow: 0px 0px 2px 2px rgb(94, 183, 242);
 }
 
 .theme-panel-img-out {

@@ -3,37 +3,28 @@
     <slot v-if="measure"></slot>
     <!-- slot for measureTool -->
     <slot name="measureTool">
-      <div
-          v-show="enableControl"
-          :style="controlStyle"
-          class="measure-story-control"
-      >
-        <measure-tool :result="measureResult" v-if="isAdvanceControl"/>
-        <mapgis-ui-space
-            v-if="!isAdvanceControl"
-        >
+      <div v-show="enableControl">
+        <measure-tool :result="measureResult" v-if="isAdvanceControl" />
+        <mapgis-ui-space v-if="!isAdvanceControl">
           <mapgis-ui-tooltip
-              v-for="(item, i) in toolbarBtns"
-              :key="i"
-              placement="bottom"
+            v-for="(item, i) in toolbarBtns"
+            :key="i"
+            placement="bottom"
           >
             <span slot="title">{{ item.tip }}</span>
             <mapgis-ui-button
-                shape="circle"
-                @click="item.click(item)"
-                :type="item.type"
-                :style="btnStyle(item)"
+              shape="circle"
+              @click="item.click(item)"
+              :type="item.type"
+              :style="btnStyle(item)"
             >
-              <mapgis-ui-iconfont
-                  :type="item.icon"
-                  theme="filled"
-              />
+              <mapgis-ui-iconfont :type="item.icon" theme="filled" />
             </mapgis-ui-button>
           </mapgis-ui-tooltip>
           <mapgis-marker
-              v-if="!!coordinates.length && enableControl"
-              :coordinates="coordinates"
-              color="#ff0000"
+            v-if="!!coordinates.length && enableControl && showTip"
+            :coordinates="coordinates"
+            color="#ff0000"
           >
             <div slot="marker" class="mapgis-measure-control-label">
               <div v-if="measureResult.geographyArea">
@@ -44,7 +35,6 @@
           </mapgis-marker>
         </mapgis-ui-space>
       </div>
-
     </slot>
     <!-- slot for measureMarker -->
     <slot name="measureMarker">
@@ -132,34 +122,34 @@ export default {
       selfMeasureMode: undefined,
       measureResult: null,
       toolbarBtns: [
-
         {
           icon: "mapgis-ruler",
           type: "primary",
           tip: "长度",
-          click: this.enableLengthMeasure,
+          click: this.enableLengthMeasure
         },
         {
           icon: "mapgis-area",
           type: "primary",
           tip: "面积",
-          click: this.enableAreaMeasure,
+          click: this.enableAreaMeasure
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "清空图元",
-          click: this.remove,
-        },
+          click: this.remove
+        }
       ],
+      showTip: true
     };
   },
 
   computed: {
     coordinates({ measureResult }) {
       return measureResult && measureResult.center
-          ? measureResult.center.geometry.coordinates
-          : [];
+        ? measureResult.center.geometry.coordinates
+        : [];
     },
     controlStyle({ position, isAdvanceControl }) {
       const [first, secend] = position.split("-");
@@ -174,15 +164,15 @@ export default {
         left: "10px",
         [first]: "10px",
         [secend]: "10px",
-        background: isAdvanceControl ? "#fff" : "transparent",
+        background: isAdvanceControl ? "#fff" : "transparent"
       };
     },
     btnStyle() {
       return () => ({
         width: "32px !important",
-        height: "32px !important",
+        height: "32px !important"
       });
-    },
+    }
   },
 
   watch: {
@@ -393,15 +383,21 @@ export default {
     $_changeMapStyle() {
       this.changeMapStyle(this.measureStyle);
     },
+
+    //
+    $_handleMapMeasureRemove() {
+      this.showTip = false;
+    },
+
     /**
      * 融合样式
      * @param {array} 样式数据
      * @return {array} 整合后的样式集合
      */
     combineStyle(newStyles = []) {
-        this.measureStyle = this.measureStyle
-            .filter(l => !newStyles.find(f => f.id === l.id))
-            .concat(newStyles);
+      this.measureStyle = this.measureStyle
+        .filter(l => !newStyles.find(f => f.id === l.id))
+        .concat(newStyles);
     },
 
     /**
@@ -434,7 +430,7 @@ export default {
     changeMode(mode = measureModeMap.simple, options) {
       try {
         if (this.measure) {
-          if(mode === measureModeMap.line || mode === measureModeMap.polygon){
+          if (mode === measureModeMap.line || mode === measureModeMap.polygon) {
             this.selfMeasureMode = mode;
           }
           this.measure.changeMode(mode, options);
@@ -453,6 +449,7 @@ export default {
       this.$_emitEvent("added", { measure: this.measure });
       this.$_unbindMeasureEvents();
       this.$_bindSelfEvents(Object.keys(measureEvents));
+      this.showTip = true;
     },
     /**
      * 移除测量组件和事件解绑
@@ -509,8 +506,7 @@ export default {
     enableAreaMeasure() {
       this.remove();
       this.startMeasure("draw_polygon");
-    },
-
+    }
   }
 };
 </script>

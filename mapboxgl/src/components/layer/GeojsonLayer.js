@@ -9,6 +9,8 @@ const MapboxInspect = Inspect.default;
 
 import Popup from "./geojson/Popup";
 
+const HighLightPrefix = "_高亮边界线";
+
 export default {
   name: "mapgis-geojson-layer",
   mixins: [mixin],
@@ -21,35 +23,35 @@ export default {
       hoveredStateId: -1,
       clickMode: "click",
       hoverMode: "hover",
-      popup:undefined,
+      popup: undefined,
       popupContainer: undefined,
       tipContainer: undefined,
-      bbox: undefined,
+      bbox: undefined
     };
   },
   props: {
     data: {
-      type: [String, Object],
+      type: [String, Object]
     },
     enablePopup: {
       type: Boolean,
-      default: false,
+      default: false
     },
     popupOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      },
+      }
     },
     enableTips: {
       type: Boolean,
-      default: false,
+      default: false
     },
     tipsOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      },
+      }
     },
     /**
      * 当前图层的显示样式
@@ -58,7 +60,7 @@ export default {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
     /**
      * 当前图层的高亮样式
@@ -67,7 +69,7 @@ export default {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
     /**
      *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
@@ -82,15 +84,15 @@ export default {
      */
     visible: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   computed: {
     getSourceFeatures() {
-      return (filter) => {
+      return filter => {
         if (this.map) {
           return this.map.querySourceFeatures(this.sourceId || this.layerId, {
-            filter,
+            filter
           });
         }
         return null;
@@ -102,7 +104,7 @@ export default {
         if (this.map) {
           return this.map.queryRenderedFeatures(geometry, {
             layers: [this.layerId],
-            filter,
+            filter
           });
         }
         return null;
@@ -110,7 +112,7 @@ export default {
     },
 
     getClusterExpansionZoom() {
-      return (clusterId) => {
+      return clusterId => {
         return new Promise((resolve, reject) => {
           if (this.mapSource) {
             this.mapSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
@@ -131,7 +133,7 @@ export default {
     },
 
     getClusterChildren() {
-      return (clusterId) => {
+      return clusterId => {
         return new Promise((resolve, reject) => {
           const source = this.mapSource;
           if (source) {
@@ -171,7 +173,7 @@ export default {
           }
         });
       };
-    },
+    }
   },
   watch: {
     visible(val, oldval) {
@@ -180,13 +182,13 @@ export default {
       } else {
         this.map.setLayoutProperty(this.layerId, "visibility", "none");
       }
-    },
+    }
   },
   created() {
     if (this.data) {
       this.$watch(
         () => this.data,
-        function (next) {
+        function(next) {
           if (this.initial) return;
           this.mapSource.setData(next);
         },
@@ -205,7 +207,7 @@ export default {
       currentClickInfo,
       currentHoverInfo,
       popupOptions,
-      tipsOptions,
+      tipsOptions
     } = this;
 
     const tipfeature =
@@ -261,15 +263,16 @@ export default {
           <mapgis-ui-popup-content
             ref="hover"
             feature={tipfeature}
-            popupOptions={popupOptions}
+            popupOptions={tipsOptions}
           ></mapgis-ui-popup-content>
         </div>
       );
     }
   },
 
-  mounted(){
-    document.querySelector(".mapgis-2d-geojson-default-popup").style.display = "none";
+  mounted() {
+    document.querySelector(".mapgis-2d-geojson-default-popup").style.display =
+      "none";
   },
 
   methods: {
@@ -280,13 +283,13 @@ export default {
       if (this.data) {
         source = {
           type: "geojson",
-          data: this.data,
+          data: this.data
         };
         this.parseData(this.data);
       } else if (this.source) {
         source = {
           type: "geojson",
-          ...this.source,
+          ...this.source
         };
       }
       if (this.enablePopup) {
@@ -307,17 +310,46 @@ export default {
       this.map.off("dataloading", this.$_watchSourceLoading);
       this.initial = false;
 
-      let popup = new mapbox.Popup({
+      let clickpopup = new mapbox.Popup({
         closeButton: true,
-        closeOnClick: false,
+        closeOnClick: false
       });
+      let hoverpopup = new mapbox.Popup({
+        closeButton: true,
+        closeOnClick: false
+      });
+
+      this.clickpopup = clickpopup;
+      this.hoverpopup = hoverpopup;
+
       //添加map click/mousemove事件
       if (this.enablePopup) {
-        this.$_addPopupEvents2();
+        this.$_addPopupEvents2(clickpopup);
         this.$_bindHightLayerEvent();
       }
       if (this.enableTips) {
-        this.$_addMousemoveEvents(popup);
+        this.$_addMousemoveEvents(hoverpopup);
+      }
+    },
+
+    /**
+     * @description 此处和混入的beforeDestroy配合使用
+     */
+    $_beforeDestroy() {
+      const { layerId, map, clickpopup, hoverpopup } = this;
+      if (map) {
+        try {
+          if (map.getLayer(layerId + HighLightPrefix)) {
+            map.removeLayer(layerId + HighLightPrefix);
+          }
+          if (clickpopup) {
+            clickpopup.remove();
+          }
+          if (hoverpopup) {
+            hoverpopup.remove();
+          }
+          map.off("click", layerId, function(e) {});
+        } catch (err) {}
       }
     },
 
@@ -338,17 +370,17 @@ export default {
         if (type == "point") {
           style = {
             type: "circle",
-            ...layerStyle.toMapboxStyle(),
+            ...layerStyle.toMapboxStyle()
           };
         } else if (type == "line") {
           style = {
             type: "line",
-            ...layerStyle.toMapboxStyle(),
+            ...layerStyle.toMapboxStyle()
           };
         } else if (type == "fill") {
           style = {
             type: "fill",
-            ...layerStyle.toMapboxStyle(),
+            ...layerStyle.toMapboxStyle()
           };
         }
       } else {
@@ -358,7 +390,7 @@ export default {
         id: this.layerId,
         source: this.sourceId || this.layerId,
         layout: { visibility: "visible" },
-        ...style,
+        ...style
       };
       this.map.addLayer(addlayer, this.before);
       this.$_emitEvent("added", { layerId: this.layerId });
@@ -368,8 +400,8 @@ export default {
       const vm = this;
       if (typeof data === "string") {
         fetch(data)
-          .then((res) => res.json())
-          .then((geojson) => {
+          .then(res => res.json())
+          .then(geojson => {
             vm.parseBBox(geojson);
           });
       } else {
@@ -401,7 +433,7 @@ export default {
         const params = {
           id: featureId,
           source: this.source,
-          sourceLayer,
+          sourceLayer
         };
         return this.map.removeFeatureState(params, key);
       }
@@ -409,38 +441,38 @@ export default {
     $_addMousemoveEvents(popup) {
       let vm = this;
       let { map } = this;
-      map.on("mousemove", vm.layerId, function (e) {
+      map.on("mousemove", vm.layerId, function(e) {
         if (e.features.length > 0) {
           let fs = clonedeep(e.features);
+          let newfeatrues;
           if (vm.tipsOptions) {
-            let newfeatrues;
-            if(vm.customTips){
-              newfeatrues = fs.map((f) => {
-                let properties = f.properties;
-                f.properties = {};
-                //  赋值fields
-                let fields = vm.tipsOptions.fields;
-                if (!fields) {
-                  f.properties = {};
-                } else {
-                  fields.forEach((field) => {
-                    f.properties[field] = properties[field];
-                  });
-                }
-                //  赋值title
-                let titlefield = vm.tipsOptions.title;
-                if (titlefield) {
-                  f.title = properties[titlefield];
-                } else {
-                  // f.title = "";
-                }
-                return f;
-              });
-            }else{
-              newfeatrues = fs;
-            }
-            vm.currentHoverInfo = [newfeatrues[0]];
+            // if(vm.customTips){
+            newfeatrues = fs.map(f => {
+              let properties = f.properties;
+              f.properties = {};
+              //  赋值fields
+              let fields = vm.tipsOptions.fields;
+              if (!fields) {
+                f.properties = properties;
+              } else {
+                fields.forEach(field => {
+                  f.properties[field] = properties[field];
+                });
+              }
+              //  赋值title
+              let titlefield = vm.tipsOptions.title;
+              if (titlefield) {
+                f.title = properties[titlefield];
+              } else {
+                // f.title = "";
+              }
+              return f;
+            });
+          } else {
+            newfeatrues = fs;
           }
+          vm.currentHoverInfo = [newfeatrues[0]];
+          // }
           popup
             .setLngLat(e.lngLat)
             // .setHTML(vm.tipContainer)
@@ -448,7 +480,7 @@ export default {
             .addTo(map);
         }
       });
-      map.on("mouseleave", vm.layerId, function () {
+      map.on("mouseleave", vm.layerId, function() {
         map.getCanvas().style.cursor = "";
         popup.remove();
       });
@@ -467,7 +499,7 @@ export default {
         const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
             closeOnClick: false,
-            closeButton: true,
+            closeButton: true
           }),
           // showInspectMap: true,
           showMapPopup: vm.enablePopup,
@@ -476,15 +508,15 @@ export default {
           showInspectButton: false,
           blockHoverPopupOnClick: false,
           queryParameters: {
-            layers: [this.layerId],
+            layers: [this.layerId]
           },
-          renderPopup: (features) => {
+          renderPopup: features => {
             let fs = clonedeep(features);
             let parentPopupLayers = this.$parent.popupLayers;
             let newfeatrues;
             // 针对属性进行过滤显示
             let layerIds = Object.keys(parentPopupLayers);
-            newfeatrues = fs.map((f) => {
+            newfeatrues = fs.map(f => {
               if (parentPopupLayers.hasOwnProperty(f.layer.id)) {
                 let properties = f.properties;
                 f.properties = {};
@@ -493,7 +525,7 @@ export default {
                 if (!fields) {
                   f.properties = properties;
                 } else {
-                  fields.forEach((field) => {
+                  fields.forEach(field => {
                     f.properties[field] = properties[field];
                   });
                 }
@@ -525,7 +557,7 @@ export default {
             ); */
             return vm.$refs.click.$el || vm.$refs.click;
             // return vm.popupContainer;
-          },
+          }
         });
         map.addControl(inspect);
         this.$parent.popupInspect = inspect;
@@ -549,36 +581,37 @@ export default {
       }
     },
     /** 通过mapboxgl原生方法查询 */
-    $_addPopupEvents2() {
+    $_addPopupEvents2(popup) {
       let { map } = this;
+      const { layerId } = this;
       let vm = this;
 
-      map.on('click', vm.layerId, function(e){
+      map.on("click", layerId, function(e) {
+        if (vm.clickpopup) {
+          vm.clickpopup.remove();
+          vm.clickpopup = undefined;
+        }
 
-        if (vm.popup) {
-          vm.popup.remove();
-          vm.popup = undefined;
-        } 
+        const bbox = [
+          [e.point.x - 5, e.point.y - 5],
+          [e.point.x + 5, e.point.y + 5]
+        ];
+        const feature = map.queryRenderedFeatures(bbox, {
+          layers: [layerId]
+        });
 
-        const bbox = [[e.point.x-5, e.point.y-5],[e.point.x + 5, e.point.y + 5]];
-        const feature = map.queryRenderedFeatures(bbox,{layers: [vm.layerId]});
-        
         if (!map || !map.getStyle()) {
           return;
         }
 
         if (feature.length > 0) {
           vm.currentClickInfo = [feature[0]];
-          vm.popup =  new mapboxgl.Popup({
-            closeButton: true,
-            closeOnClick: false,
-          }).setLngLat(e.lngLat)
+          popup
+            .setLngLat(e.lngLat)
             .setDOMContent(vm.$refs.click.$el || vm.$refs.click)
             .addTo(map);
         }
-
       });
-
     },
     changePane(key) {
       let vm = this;
@@ -593,7 +626,7 @@ export default {
     $_bindHightLayerEvent() {
       const vm = this;
       let { map } = this;
-      map.on("click", this.layerId, function (e) {
+      map.on("click", this.layerId, function(e) {
         if (e.features.length > 0) {
           if (vm.hoveredStateId !== null) {
             map.setFeatureState(
@@ -618,26 +651,26 @@ export default {
         if (type == "point" || point) {
           if (!point) return;
           highlight = {
-            id: layerId + "_高亮边界线",
+            id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...point.toMapboxStyle({ highlight: true }),
+            ...point.toMapboxStyle({ highlight: true })
           };
         } else if (type == "line" || line) {
           if (!line) return;
           highlight = {
-            id: layerId + "_高亮边界线",
+            id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true }),
+            ...line.toMapboxStyle({ highlight: true })
           };
         } else if (type == "polygon" || polygon) {
           if (!polygon) return;
           highlight = {
-            id: layerId + "_高亮边界线",
+            id: layerId + HighLightPrefix,
             type: "fill",
             source: sourceId,
-            ...polygon.toMapboxStyle({ highlight: true }),
+            ...polygon.toMapboxStyle({ highlight: true })
           };
         }
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
@@ -645,30 +678,30 @@ export default {
         if (this.layer.type === "fill") {
           if (!line) return;
           highlight = {
-            id: layerId + "_高亮边界线",
+            id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true }),
+            ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "line") {
           if (!line) return;
           highlight = {
-            id: layerId + "_高亮边界线",
+            id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true }),
+            ...line.toMapboxStyle({ highlight: true })
           };
         } else if (this.layer.type === "circle") {
           if (!point) return;
           highlight = {
-            id: layerId + "_高亮边界线",
+            id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...point.toMapboxStyle({ highlight: true }),
+            ...point.toMapboxStyle({ highlight: true })
           };
         }
         if (highlight && !map.getLayer(highlight.id)) map.addLayer(highlight);
       }
-    },
-  },
+    }
+  }
 };

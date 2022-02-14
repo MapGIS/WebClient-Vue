@@ -159,6 +159,12 @@ export class MvtLegend {
         point.strokeWidth = paint["circle-stroke-width"];
         point.fill = paint["circle-color"];
         base64 = legenditem.drawPoint(point);
+      } else {
+        point.r = 4;
+        point.stroke = 'transparent';
+        point.strokeWidth = 0;
+        point.fill = '#000000';
+        base64 = legenditem.drawPoint(point);
       }
     } else if (layer.type === "line") {
       let line = {};

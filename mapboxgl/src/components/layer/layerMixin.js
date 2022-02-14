@@ -157,8 +157,10 @@ export default {
   },
 
   beforeDestroy() {
+    const { $_beforeDestroy } = this;
     if (this.map) {
       try {
+        $_beforeDestroy && $_beforeDestroy(); // geojson-layer
         this.map.removeLayer(this.layerId);
       } catch (err) {
         this.$_emitEvent("layer-does-not-exist", {

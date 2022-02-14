@@ -90,6 +90,17 @@ export default {
     EventBus.$on("map-print-full", payload => {
       this.$_handleMapPrintFull(payload);
     });
+
+    // 绘制 测量 变基相关
+    EventBus.$on("map-draw-remove", payload => {
+      this.$_handleMapDrawRemove(payload);
+    });
+    EventBus.$on("map-measure-remove", payload => {
+      this.$_handleMapMeasureRemove(payload);
+    });
+    EventBus.$on("map-edit-remove", payload => {
+      this.$_handleMapEditRemove(payload);
+    });
   },
   methods: {
     ...EmitEvent,
@@ -191,6 +202,10 @@ export default {
 
     $_handleMapPrintRect(payload) {},
 
-    $_handleMapPrintFull(payload) {}
+    $_handleMapPrintFull(payload) {},
+
+    $_handleMapDrawRemove(payload) {},
+    $_handleMapMeasureRemove(payload) {},
+    $_handleMapEditRemove(payload) {}
   }
 };

@@ -4,7 +4,7 @@
       <mapgis-ui-radio-button class="action-type" value="single">
         单级别配置
       </mapgis-ui-radio-button>
-      <mapgis-ui-radio-button class="action-type" value="multi">
+      <mapgis-ui-radio-button disabled class="action-type" value="multi">
         分级别配置
       </mapgis-ui-radio-button>
     </mapgis-ui-radio-group>
@@ -30,20 +30,20 @@ export default {
   mixins: [EditMixin],
   props: {
     layerid: {
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     return {
       action: "single",
-      show: true
+      show: true,
     };
   },
   methods: {
     onEditChange(event) {
       this.$_emitEvent(event);
-    }
-  }
+    },
+  },
 };
 </script>
 
