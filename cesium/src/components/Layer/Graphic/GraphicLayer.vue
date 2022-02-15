@@ -219,7 +219,6 @@ export default {
           });
           break;
         case "delete":
-          this.dataSourceCopy.splice(this.currenSelectIndex, 1);
           this.$refs.graphicLayer.$_stopEdit();
           this.$refs.graphicLayer.$_stopDrawing();
           this.$refs.graphicLayer.$_removeAllGraphic();

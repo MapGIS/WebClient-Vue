@@ -309,12 +309,14 @@ export default {
             }
           }
           this.$refs.editPanel.isUpdatePanel = false;
+          this.addSource = true;
           this.dataSourceCopy.splice(index, 1);
           this.$emit("delete", index);
           this.$nextTick(function () {
             let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
             graphicsLayer.removeGraphicByID(row.id);
             this.$refs.editPanel.isUpdatePanel = true;
+            this.addSource = false;
           });
           break;
       }
