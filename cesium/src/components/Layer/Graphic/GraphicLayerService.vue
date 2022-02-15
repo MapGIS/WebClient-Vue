@@ -51,7 +51,7 @@ export default {
      * */
     $_newGraphicLayer(options) {
       options = options || {};
-      let {vueIndex, vueKey, viewer, getGraphic, finishEdit} = options;
+      let {vueIndex, vueKey, viewer, getGraphic, finishEdit, revokeModel} = options;
       viewer = viewer || this.viewer;
       vueIndex = vueIndex || this.$_getId();
       vueKey = vueKey || "default";
@@ -66,6 +66,7 @@ export default {
       let graphicsLayer = new Cesium.GraphicsLayer(viewer, {
         getGraphic: getGraphic,
         finishEdit: finishEdit,
+        revokeModel: revokeModel,
       });
       viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
       window.vueCesium.GraphicsLayerManager.addSource(vueKey, vueIndex, graphicsLayer);

@@ -799,7 +799,7 @@ export default {
         },
         isContinued: false,
         getSelectedGraphic: function (graphics) {
-          console.log("-----------",graphics)
+          console.log("-----------", graphics)
         }
       });
     },
@@ -1098,14 +1098,28 @@ export default {
               }
             }
           },
-          getGraphic: this.$_getGraphic
+          getGraphic: this.$_getGraphic,
+          revokeModel: function (e) {
+            //撤销模型的同时，删除标绘列表
+            let index = undefined;
+            for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+              if (vm.dataSourceCopy[i].id === e.id) {
+                index = i;
+                break;
+              }
+            }
+            if (index !== undefined) {
+              vm.$refs.editPanel.isUpdatePanel = false;
+              vm.dataSourceCopy.splice(index, 1);
+            }
+          }
         });
       }
       if (this.dataSourceCopy.length > 0) {
         let dataArr = [];
-        for (let i=0;i<this.dataSourceCopy.length;i++){
+        for (let i = 0; i < this.dataSourceCopy.length; i++) {
           let graphic = this.$_getGraphicByID(this.dataSourceCopy[i].id);
-          if(!graphic){
+          if (!graphic) {
             dataArr.push(this.dataSourceCopy[i]);
           }
         }
