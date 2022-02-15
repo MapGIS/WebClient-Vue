@@ -106,6 +106,7 @@ module.exports = {
 
               ["/api/layer/m3d/scene.md", "Scene图层"],              
               ["/api/layer/m3d/m3d.md", "M3D图层"],
+              ["/api/layer/Tileset/tileset.md", "3DTiles"],
 
               ["/api/layer/Geojson/geojson.md", "GeoJSON"],
               ["/api/layer/marker/DynamicMarker.md", "动态注记"],
