@@ -182,8 +182,9 @@ export default {
         //新增标绘图层
         case "add":
           //新建空图层数据
+          let title = "新建图层_" + (this.dataSourceCopy.length + 1);
           let data = {
-            "name": "图层_" + (this.dataSourceCopy.length + 1),
+            "name": title,
             "uuid": parseInt(String(Math.random() * 10000000)),
             "autoFlyTo": true,
             "autoFlyToGraphic": true,
@@ -194,6 +195,7 @@ export default {
           };
           this.currenSelectIndex++;
           this.dataSourceCopy.push(data);
+          this.$message.success(title + "添加成功！");
           //如果上一个图层有数据，则隐藏
           if (this.currentLayer.length > 0) {
             this.$refs.graphicLayer.$_hideAllGraphics();
@@ -202,7 +204,6 @@ export default {
           this.currentLayer = [];
           this.currenSelectLayer = data.name;
           //创建一个新的标绘图层
-          this.vueIndex = data.uuid;
           this.$nextTick(function () {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
@@ -214,8 +215,8 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.isStartDrawing = false;
             this.$refs.graphicLayer.$_clearList();
-            this.$refs.graphicLayer.$_init([]);
-            this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
+            this.$refs.graphicLayer.$_init([], data.uuid);
+            this.$refs.graphicLayer.$_switchGraphicLayer(data.uuid);
           });
           break;
         case "delete":
@@ -225,14 +226,20 @@ export default {
           this.$refs.graphicLayer.$_destroy();
           this.$refs.graphicLayer.$_resetEditPanel();
           this.$refs.graphicLayer.$_resetIconsPanel();
+          this.$message.success(this.dataSourceCopy[this.currenSelectIndex - 1].name + "删除成功！");
+          this.dataSourceCopy.splice(this.currenSelectIndex - 1, 1);
+          this.layerSelect.splice(this.currenSelectIndex - 1, 1);
+          this.currenSelectIndex--;
+          if (this.currenSelectIndex < 0) {
+            this.currenSelectIndex = 0;
+          }
           if (this.dataSourceCopy.length === 0) {
             this.currenSelectLayer = "无数据";
             this.currentLayer = [];
-          }
-          if (this.currenSelectIndex <= this.dataSourceCopy.length && this.currenSelectIndex > 0) {
-            this.currenSelectIndex--;
-            this.currenSelectLayer = this.dataSourceCopy[this.currenSelectIndex].name;
-            this.currentLayer = this.dataSourceCopy[this.currenSelectIndex].dataSource.features;
+          } else {
+            let index = this.currenSelectIndex - 1 < 0 ? 0 : this.currenSelectIndex - 1;
+            this.currenSelectLayer = this.dataSourceCopy[index].name;
+            this.currentLayer = this.dataSourceCopy[index].dataSource.features;
           }
           break;
         case "editTitle":
@@ -429,7 +436,6 @@ export default {
       //设置当前选中的图层
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         if (this.dataSourceCopy[i].uuid === e) {
-          this.currentLayer = this.dataSourceCopy[i].dataSource.features;
           this.autoFlyTo = this.dataSourceCopy[i].autoFlyTo;
           this.autoFlyToGraphic = this.dataSourceCopy[i].autoFlyToGraphic;
           this.currenSelectLayer = this.dataSourceCopy[i].name;
@@ -447,6 +453,7 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_showAllGraphics();
+            this.currentLayer = this.dataSourceCopy[i].dataSource.features;
           });
           const {camera} = this.dataSourceCopy[i];
           if (this.autoFlyTo && camera) {
@@ -486,7 +493,6 @@ export default {
         this.vueIndex = this.dataSourceCopy[0].uuid;
         //初始化graphicLayer图层列表
         this.$_layerSelect();
-        this.currenSelectLayer = this.dataSourceCopy[0].name;
       } else {
         this.currentLayer = [];
         this.$_clickTool("add");

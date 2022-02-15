@@ -166,6 +166,9 @@ export default {
     $_resetEditPanel() {
       if (this.$refs.editPanel) {
         this.$refs.editPanel.$_resetEditPanel();
+        this.dataSourceCopy = [];
+        this.$refs.editPanel.isUpdatePanel = false;
+        this.$_clearList();
       }
     },
     $_resetIconsPanel() {
@@ -1099,10 +1102,17 @@ export default {
         });
       }
       if (this.dataSourceCopy.length > 0) {
+        let dataArr = [];
+        for (let i=0;i<this.dataSourceCopy.length;i++){
+          let graphic = this.$_getGraphicByID(this.dataSourceCopy[i].id);
+          if(!graphic){
+            dataArr.push(this.dataSourceCopy[i]);
+          }
+        }
         //如果有数据，绘制数据
         this.$_fromJson({
           type: "FeatureCollection",
-          features: this.dataSourceCopy
+          features: dataArr
         });
       }
       //获取设置面板显示参数
