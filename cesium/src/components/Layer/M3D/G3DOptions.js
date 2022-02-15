@@ -12,25 +12,14 @@ export default {
    */
   vueIndex: {
     type: [String, Number],
-    default: () => (Math.random() * 100000000).toFixed(0),
+    default: () => (Math.random() * 100000000).toFixed(0)
   },
 
+  /**
+   * @description 图层过滤功能:'show:0,1'表示显示第0，1个图层，'hide:0，2'表示隐藏第0，2个图层
+   */
   layerId: {
-    type: String,
-  },
-
-  outStyle: {
-    type: Object,
-    default: () => {
-      return {
-        position: "absolute",
-        zIndex: 1000,
-        height: "450px",
-        width: "270px",
-        top: "0px",
-        left: "0px",
-      };
-    },
+    type: String
   },
 
   /**
@@ -38,7 +27,7 @@ export default {
    */
   url: { type: String, required: true },
 
-  opacity: { type: Number, default: 1 },  
+  opacity: { type: Number, default: 1 },
 
   autoReset: { type: Boolean, default: true },
   /**
@@ -95,4 +84,18 @@ export default {
    * @description 是否激活默认UI
    */
   enableControl: { type: Boolean, default: false },
+
+  outStyle: {
+    type: Object,
+    default: () => {
+      return {
+        position: "absolute",
+        zIndex: 1000,
+        height: "450px",
+        width: "270px",
+        top: "0px",
+        left: "0px"
+      };
+    }
+  }
 };

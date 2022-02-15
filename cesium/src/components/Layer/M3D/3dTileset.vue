@@ -1,7 +1,7 @@
 <script>
 import Tileset from "./3DTileset";
 export default {
-  name: "mapgis-3d-tileset",
+  name: "mapgis-3d-3dtiles-layer",
   mixins: [Tileset],
   watch: {
     opacity(next) {

@@ -64,8 +64,8 @@
    ```vue
    <template>
      <mapgis-web-scene>
-       <mapgis-3d-g3d-layer vueIndex="test_g3d_layer_1" />
-       <mapgis-3d-g3d-layer vueIndex="test_g3d_layer_2" />
+       <mapgis-3d-scene-layer vueIndex="test_g3d_layer_1" />
+       <mapgis-3d-scene-layer vueIndex="test_g3d_layer_2" />
        <mapgis-3d-stratified-household :layers="layers" />
        <mapgis-3d-statebar />
      </mapgis-web-scene>

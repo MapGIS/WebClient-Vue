@@ -104,7 +104,8 @@ module.exports = {
 
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
 
-              ["/api/m3d/m3d.md", "M3D"],
+              ["/api/layer/m3d/scene.md", "Scene图层"],              
+              ["/api/layer/m3d/m3d.md", "M3D图层"],
 
               ["/api/layer/Geojson/geojson.md", "GeoJSON"],
               ["/api/layer/marker/DynamicMarker.md", "动态注记"],
