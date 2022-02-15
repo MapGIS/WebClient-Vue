@@ -64,11 +64,6 @@
                                 <label>获取时间 : {{ currentTime }}</label>
                             </div>
                             <div class="current-camera">
-                                <mapgis-ui-iconfont
-                                    :rotate="isExpand ? 180 : 0"
-                                    type="mapgis-chevrons-down"
-                                    v-show="false"
-                                />
                                 <label style="color: #0081e2"
                                     >展开详细参数</label
                                 >
@@ -200,8 +195,6 @@ export default {
 
             resultConfig: undefined,
             spinning: false,
-
-            isExpand: false
         };
     },
     mounted() {
