@@ -48,7 +48,6 @@
                 <mapgis-ui-iconfont
                     type="mapgis-chevrons-down"
                     :rotate="props.isActive ? 180 : 0"
-                    style="display: none"
                 />
             </template>
             <mapgis-ui-collapse-panel :style="collapseStyle">
@@ -66,7 +65,9 @@
                             </div>
                             <div class="current-camera">
                                 <mapgis-ui-iconfont
+                                    :rotate="isExpand ? 180 : 0"
                                     type="mapgis-chevrons-down"
+                                    v-show="false"
                                 />
                                 <label style="color: #0081e2"
                                     >展开详细参数</label
@@ -199,6 +200,8 @@ export default {
 
             resultConfig: undefined,
             spinning: false,
+
+            isExpand: false
         };
     },
     mounted() {
@@ -436,8 +439,9 @@ export default {
     padding: 0 8px;
 }
 
-.current-camera > .anticon {
-    margin-right: 8px;
+.mapgis-ui-collapse-icon-position-right > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header .mapgis-ui-collapse-arrow{
+    right: 120px;
+    top: 58px;
     color: #0081e2;
 }
 
