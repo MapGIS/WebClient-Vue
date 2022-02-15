@@ -273,6 +273,9 @@ export default {
         this.unbindPopupEvent();
       }
     },
+    opacity(next) {
+      this.changeLayerOpacity(next);
+    },
     layers(next) {
       this.layerIds = this.parseLayers(next);
       this.changeLayerVisible(this.layerIds);
@@ -606,6 +609,25 @@ export default {
       let layers = layerStrs.map((l) => l);
 
       return layers;
+    },
+    changeLayerOpacity(opacity, layers) {
+      layers = layers || this.layerIds;
+      const { g3dLayerIndex, viewer } = this;
+      if (!g3dLayerIndex && g3dLayerIndex < 0) return;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let indexes = g3dLayer.getAllLayerIndexes();
+      indexes.forEach((index) => {
+        let layer = g3dLayer.getLayer(index);
+        if (layers.indexOf(`${index}`) >= 0) {
+          if (layer) {
+            g3dLayer.translucencyByLayerIndex(index, opacity);
+          }
+        } else {
+          if (layer) {
+            g3dLayer.translucencyByLayerIndex(index, opacity);  
+          }
+        }
+      });
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;

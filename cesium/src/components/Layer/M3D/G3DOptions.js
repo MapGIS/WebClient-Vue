@@ -38,6 +38,8 @@ export default {
    */
   url: { type: String, required: true },
 
+  opacity: { type: Number, default: 1 },  
+
   autoReset: { type: Boolean, default: true },
   /**
    * @description 是否异步请求

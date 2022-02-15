@@ -4,8 +4,10 @@ export default {
   title: "三维/图层/G3D/场景",
   component: Mapgis3dG3dLayer,
   argTypes: {
-    url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
+    url: "http://192.168.199.71:8089/igs/rest/services/CIMyanshi/倾斜临时/SceneServer",
     layers: "show",
+    maximumScreenSpaceError: 16,
+    opacity: 1,
   },
 };
 
@@ -34,6 +36,8 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景 = Template.bind({});
 场景.args = {
-  url: "http://192.168.88.204:6163/igs/rest/g3d/临海3号楼",
-  // layers: "show:1,2",
+  url: "http://192.168.199.71:8089/igs/rest/services/CIMyanshi/倾斜临时/SceneServer",
+  layers: "show:0,1",
+  maximumScreenSpaceError: 4,
+  opacity: 0.5,
 };
