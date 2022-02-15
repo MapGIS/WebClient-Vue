@@ -1,7 +1,7 @@
 import Mapgis3dStratifiedHousehold from "../../cesium/src/components/Analysis/StratifiedHousehold.vue";
 
 export default {
-    title: "三维/图层/M3D/场景图层/静态单体化",
+    title: "三维/图层/场景图层/静态单体化",
     component: Mapgis3dStratifiedHousehold,
     argTypes: {
         enablePopup: true,

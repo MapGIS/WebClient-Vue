@@ -2,7 +2,7 @@ import Mapgis3dSceneLayer from "../../cesium/src/components/Layer/M3D/Scene.vue"
 import Markdown from "../../cesium/docs/api/layer/m3d/scene.md";
 
 export default {
-  title: "三维/图层/M3D/场景图层",
+  title: "三维/图层/场景图层",
   component: Mapgis3dSceneLayer,
   argTypes: {
     url: "http://192.168.199.71:8089/igs/rest/services/CIMyanshi/倾斜临时/SceneServer",
