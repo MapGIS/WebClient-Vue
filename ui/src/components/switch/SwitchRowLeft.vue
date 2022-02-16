@@ -74,7 +74,7 @@ export default {
 
 .mapgis-ui-switch-row-left-switch {
   padding-right: 10px;
-  width: calc(100% - 90px);
+  width: calc(100% - 94px);
   text-align: right;
 }
 </style>
