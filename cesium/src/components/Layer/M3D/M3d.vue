@@ -151,7 +151,7 @@ export default {
     mount() {
       const vm = this;
       const { viewer, vueIndex, vueKey, vueCesium, $props } = this;
-      const { offset, scale, opacity, enablePopup } = this;
+      const { offset, scale, opacity, enablePopup, url } = this;
 
       if (viewer.isDestroyed()) return;
 
@@ -160,11 +160,11 @@ export default {
         const { layer, layerIndex } = payload;
         if (layer) {
           // 0.0 1.0版本的处理方式
-          let m3ds = layer.append(`${this.url}`, {
+          let m3ds = layer.append(`${url}`, {
             ...$props,
             loaded: (tileset) => {
               if (vueKey && vueIndex) {
-                vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+                vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, { url: url });
                 vm.bindPopupEvent();
                 if (!vm.show && m3ds) {
                   m3ds.forEach((m3d) => {
@@ -215,6 +215,7 @@ export default {
           vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
           vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
             version: "2.0",
+            url: url,
           });
           vm.bindPopupEvent();
         }
@@ -454,7 +455,7 @@ export default {
     },
     loopM3d(m3ds, version) {
       const vm = this;
-      const { vueKey, vueIndex, vueCesium, opacity } = this;
+      const { vueKey, vueIndex, vueCesium, opacity, url } = this;
       let dataCallback = (cbtype) => {
         if (loop) {
           window.clearInterval(loop);
@@ -481,7 +482,7 @@ export default {
                 break;
             }
           });
-          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds);
+          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, { url: url });
         }
       };
       let loop = window.setInterval(() => {
