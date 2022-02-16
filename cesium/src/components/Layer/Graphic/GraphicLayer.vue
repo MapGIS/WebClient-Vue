@@ -10,11 +10,20 @@
       </mapgis-ui-select>
       <input style="display: none" type="file" :id="inputId"
              accept=".json">
-      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>
-      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>
-      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"
-                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"
-                                  class="mapgis-ui-graphic-layers-more-tool"/>
+<!--      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>-->
+<!--      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>-->
+<!--      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"-->
+<!--                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"-->
+<!--                                  class="mapgis-ui-graphic-layers-more-tool"/>-->
+      <div class="mapgis-ui-graphic-layers-toll-bar">
+        <mapgis-ui-svg-icon :key="index" v-for="(tool, index) in moreTools"
+                            :iconStyle="toolStyle"
+                            :containerStyle="toolContainerStyle"
+                            :title="tool.title"
+                            :type="tool.icon"
+                            @click="$_clickTool(tool.icon)"
+        />
+      </div>
     </div>
     <mapgis-ui-input-row-left
       style="margin: 0"
@@ -22,6 +31,7 @@
       title="修改标题"
       :enableButton=true
       paddingLeft="16px"
+      class="mapgis-ui-graphic-layers-edit-title"
       @finish="$_finishEditTitle"
       v-model="currenSelectLayer"
     />
@@ -120,33 +130,46 @@ export default {
       inputId: "mapgisPlottingImport" + parseInt(String(Math.random() * 10000)),
       moreTools: [{
         event: "add",
-        icon: "edit",
+        icon: "add",
         title: "新增图层"
       }, {
         event: "editTitle",
         icon: "editTitle",
         title: "编辑标题"
-      }, {
-        event: "saveCamera",
-        icon: "camera2",
-        title: "保存视角"
-      }, {
-        event: "flyTo",
-        icon: "flyToView",
-        title: "视角跳转"
-      }, {
-        event: "delete",
-        icon: "delete",
-        title: "删除图层"
-      }, {
-        event: "setting",
-        icon: "setting",
-        title: "配置参数"
-      }, {
-        event: "save",
-        icon: "save",
-        title: "保存"
-      }],
+      },
+        // {
+        //   event: "saveCamera",
+        //   icon: "camera2",
+        //   title: "保存视角"
+        // }, {
+        //   event: "flyTo",
+        //   icon: "flyToView",
+        //   title: "视角跳转"
+        // },
+        {
+          event: "delete",
+          icon: "delete",
+          title: "删除图层"
+        },
+        // {
+        //   event: "setting",
+        //   icon: "setting",
+        //   title: "配置参数"
+        // },
+        {
+          event: "import",
+          icon: "import",
+          title: "导入"
+        }, {
+          event: "export",
+          icon: "export",
+          title: "导出"
+        },
+        {
+          event: "save",
+          icon: "save",
+          title: "保存"
+        }],
       vueIndex: undefined,
       showEditTitle: false,
       //是否显示配置信息
@@ -158,7 +181,17 @@ export default {
         width: "20px",
         height: "20px"
       },
-      updatable: true
+      updatable: true,
+      toolStyle: {
+        color: "rgb(80, 93, 113)",
+        width: "16px",
+        height: "16px"
+      },
+      toolContainerStyle: {
+        width: "30px",
+        height: "32px",
+        lineHeight: "36px",
+      },
     }
   },
   mounted() {
@@ -291,6 +324,12 @@ export default {
             });
           }
           this.$emit("save", saveObj);
+          break;
+        case "import":
+          this.$_import();
+          break;
+        case "export":
+          this.$_export();
           break;
       }
     },
@@ -526,13 +565,27 @@ export default {
 <style scoped>
 .mapgis-3d-graphic-layers-select-container {
   width: 332px;
-  height: 48px;
+  height: 46px;
   padding: 7px 15px;
+  transition: height 0.8s;
+  -moz-transition: height 0.8s; /* Firefox 4 */
+  -webkit-transition: height 0.8s; /* Safari and Chrome */
+  -o-transition: height 0.8s; /* Opera */
+  overflow: hidden;
+}
+
+.mapgis-3d-graphic-layers-select-container:hover {
+  height: 68px;
 }
 
 .mapgis-3d-graphic-layers-select {
-  width: 160px;
+  width: 100%;
   float: left;
+}
+
+.mapgis-ui-graphic-layers-edit-title {
+  height: 40px!important;
+  width: 332px;
 }
 
 .mapgis-3d-graphic-layers-export {
