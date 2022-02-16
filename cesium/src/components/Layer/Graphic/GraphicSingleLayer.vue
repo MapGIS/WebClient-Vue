@@ -46,7 +46,9 @@
 import GraphicLayerService from "./GraphicLayerService";
 import icons from "../Plotting/base64Source"
 import editList from "./editList";
-import * as turf from "@turf/turf";
+import {polygon} from "@turf/helpers";
+import centerOfMass from "@turf/center-of-mass";
+import bbox from "@turf/bbox";
 import {getPopupHtml} from "../../UI/Popup/popupUtil";
 import clonedeep from 'lodash.clonedeep';
 
@@ -96,6 +98,11 @@ export default {
     enableMapStory: {
       type: Boolean,
       default: false
+    },
+    //视角偏移高度
+    destinationHeight: {
+      type: Number,
+      default: 100
     }
   },
   data() {
@@ -799,7 +806,7 @@ export default {
         },
         isContinued: false,
         getSelectedGraphic: function (graphics) {
-          console.log("-----------", graphics)
+          // console.log("-----------", graphics)
         }
       });
     },
@@ -807,6 +814,7 @@ export default {
     $_dbclick(json) {
       //显示设置面板
       this.noTitleKey = "edit";
+      this.$refs.iconsPanel.$_resetIconsPanel();
       //停止绘制
       this.$_stopDrawing();
       this.isStartDrawing = false;
@@ -853,27 +861,71 @@ export default {
       }
       this.lastGraphicId = json.id;
       let graphic = this.$_getGraphicByID(json.id);
+      //定义视角高度
+      const {style} = graphic;
+      const {offsetHeight, extrudedHeight, radiusX, width, radius} = style;
+      //如果有offsetHeight，则加上这个高度
+      if (offsetHeight) {
+        this.destinationHeight += Number(offsetHeight);
+      }
+      //如果有extrudedHeight，则加上这个高度
+      if (extrudedHeight) {
+        this.destinationHeight += Number(extrudedHeight);
+      }
+      //如果是球体，暂时不考虑椭球，则加上两倍半径
+      if (graphic.type === "ellipsoid" && radiusX) {
+        this.destinationHeight += Number(radiusX * 2);
+      }
+      //如果是圆管线，则加上两倍宽度
+      if (graphic.type === "polylineVolume" && width) {
+        this.destinationHeight += Number(width * 2);
+      }
+      //如果是圆，则加上两倍半径
+      if (graphic.type === "circle" && radius) {
+        this.destinationHeight += Number(radius * 2);
+      }
       if (graphic.type === "model") {
         this.lastGraphicColor = Cesium.Color.WHITE;
       } else {
         this.lastGraphicColor = graphic.style.color;
       }
       setColor(graphic, Cesium.Color.BLUEVIOLET.withAlpha(0.5));
-      let positions = [[]], center, destination, polygon;
+      let positions = [[]], center, destination, polygonG, position, lla;
       switch (json.type) {
+        case "label":
+        case "billboard":
+        case "point":
+          //计算中心点
+          position = graphic.positions[0];
+          lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
+          //生成视角位置
+          destination = Cesium.Cartesian3.fromDegrees(lla.lng, lla.lat, this.destinationHeight);
+          break;
         case "polygon":
+        case "polyline":
+        case "polylineVolume":
+        case "corridor":
+        case "wall":
           for (let i = 0; i < json.positions.length / 3; i++) {
             let lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(json.positions[i * 3], json.positions[i * 3 + 1], json.positions[i * 3 + 2]));
             positions[0].push([lla.lng, lla.lat]);
           }
           positions[0].push(positions[0][0]);
-          polygon = turf.polygon(positions);
-          center = turf.centerOfMass(polygon);
-          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], 100);
+          polygonG = polygon(positions);
+          center = centerOfMass(polygonG);
+          //计算边界框长度
+          let boxP = bbox(polygonG);
+          let x = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(boxP[0], boxP[1]), Cesium.Cartesian3.fromDegrees(boxP[2], boxP[1]));
+          let y = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(boxP[0], boxP[1]), Cesium.Cartesian3.fromDegrees(boxP[0], boxP[3]));
+          //加上边界框的最大值
+          this.destinationHeight += Number(x > y ? x : y);
+          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], this.destinationHeight);
           break;
         case "rectangle":
         case "box":
+          //左下角
           let p1 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
+          //右上角
           let p2 = new Cesium.Cartesian3(json.positions[3], json.positions[4], json.positions[5]);
           p1 = this.$_cartesian3ToLongLat(p1);
           p2 = this.$_cartesian3ToLongLat(p2);
@@ -882,9 +934,23 @@ export default {
           positions[0].push([p2.lng, p2.lat]);
           positions[0].push([p1.lng, p2.lat]);
           positions[0].push([p1.lng, p1.lat]);
-          polygon = turf.polygon(positions);
-          center = turf.centerOfMass(polygon);
-          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], json.style.height + (json.style.extrudedHeight || 0) + 200);
+          polygonG = polygon(positions);
+          center = centerOfMass(polygonG);
+          //计算边界框长度
+          let xB = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(p1.lng, p1.lat), Cesium.Cartesian3.fromDegrees(p2.lng, p1.lat));
+          let yB = Cesium.Cartesian3.distance(Cesium.Cartesian3.fromDegrees(p1.lng, p1.lat), Cesium.Cartesian3.fromDegrees(p1.lng, p2.lat));
+          //加上边界框长度的最大值
+          this.destinationHeight += Number(xB > yB ? xB : yB);
+          destination = Cesium.Cartesian3.fromDegrees(center.geometry.coordinates[0], center.geometry.coordinates[1], this.destinationHeight);
+          break;
+        case "circle":
+        case "cylinder":
+        case "ellipsoid":
+          //计算中心点
+          position = graphic.centerPosition;
+          lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
+          //生成视角位置
+          destination = Cesium.Cartesian3.fromDegrees(lla.lng, lla.lat, this.destinationHeight);
           break;
         case "model":
           let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
@@ -905,7 +971,7 @@ export default {
       }
     },
     $_getCenter(json) {
-      let positions = [[]], center, polygon;
+      let positions = [[]], center, polygonG;
       switch (json.type) {
         case "polygon":
           for (let i = 0; i < json.positions.length / 3; i++) {
@@ -913,8 +979,8 @@ export default {
             positions[0].push([lla.lng, lla.lat]);
           }
           positions[0].push(positions[0][0]);
-          polygon = turf.polygon(positions);
-          center = turf.centerOfMass(polygon);
+          polygonG = polygon(positions);
+          center = centerOfMass(polygonG);
           break;
         case "rectangle":
         case "box":
@@ -933,8 +999,8 @@ export default {
           positions[0].push([p2.lng, p2.lat]);
           positions[0].push([p1.lng, p2.lat]);
           positions[0].push([p1.lng, p1.lat]);
-          polygon = turf.polygon(positions);
-          center = turf.centerOfMass(polygon);
+          polygonG = polygon(positions);
+          center = centerOfMass(polygonG);
           break;
         case "model":
           let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);

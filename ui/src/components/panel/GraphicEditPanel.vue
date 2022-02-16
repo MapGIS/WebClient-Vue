@@ -558,7 +558,7 @@ export default {
       this.$nextTick(function () {
         this.isUpdatePanel = true;
       });
-      // this.$emit("dblclick", json);
+      this.$emit("dblclick", json);
     },
     $_open(open, row) {
       if (open) {
