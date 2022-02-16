@@ -21,18 +21,6 @@
               <mapgis-ui-iconfont :type="item.icon" theme="filled" />
             </mapgis-ui-button>
           </mapgis-ui-tooltip>
-          <mapgis-marker
-            v-if="!!coordinates.length && enableControl && showTip"
-            :coordinates="coordinates"
-            color="#ff0000"
-          >
-            <div slot="marker" class="mapgis-measure-control-label">
-              <div v-if="measureResult.geographyArea">
-                面积：{{ measureResult.geographyArea }}
-              </div>
-              <div>长度：{{ measureResult.geographyPerimeter }}</div>
-            </div>
-          </mapgis-marker>
         </mapgis-ui-space>
       </div>
     </slot>
