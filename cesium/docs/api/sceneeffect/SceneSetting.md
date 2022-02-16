@@ -25,7 +25,7 @@
 
 ## 事件
 
-### `loaded`
+### `@loaded`
 
 - **Description:** 在 场景设置组件 加载完毕后发送该事件
 - **Payload** 场景设置组件对象
