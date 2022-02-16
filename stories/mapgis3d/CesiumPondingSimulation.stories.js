@@ -43,7 +43,7 @@ const Template = (args, { argTypes }) => ({
         />
         <mapgis-3d-ponding-simulation-timeline 
             :value="sliderValue" 
-            :pond="pond" 
+            :isPlaying="pond" 
             @updateTime="e=>{time = e}"
             @updateSpeed="e=>{mltSpeed = e}"
             @play="addSimulation"
