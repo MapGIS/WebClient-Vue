@@ -1,41 +1,31 @@
 <template>
     <div class="light-setting">
-        <mapgis-ui-form-model
-            :layout="layout"
-            v-bind="formItemLayout"
-            labelAlign="left"
-            class="formStyle"
-            :colon="false"
+        <mapgis-ui-switch-panel
+            size="small"
+            label="太阳光照"
+            :checked="sunlight"
+            @changeChecked="enableSunlight"
         >
-            <mapgis-ui-switch-panel
-                size="small"
-                label="太阳光照"
-                :checked="sunlight"
-                @changeChecked="enableSunlight"
-            >
-                <mapgis-ui-color-pick-panel
-                    label="光照颜色"
-                    :color="lightColor"
-                    :disableAlpha="false"
-                    @input="
-                        (val) =>
-                            (lightColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
-                    "
-                >
-                </mapgis-ui-color-pick-panel>
-            </mapgis-ui-switch-panel>
+            <mapgis-ui-color-pick-panel
+                label="光照颜色"
+                :color="lightColor"
+                :disableAlpha="false"
+                @input="
+                    (val) =>
+                        (lightColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
+                "
+            />
+        </mapgis-ui-switch-panel>
 
-            <div class="dividerWrapper"><div class="divider" /></div>
+        <div class="dividerWrapper"><div class="divider" /></div>
 
-            <mapgis-ui-input-number-panel
-                size="small"
-                label="模型亮度"
-                v-model="lightIntensity"
-                :range="[1,200]"
-                @change="lightIntensityChange"
-            >
-            </mapgis-ui-input-number-panel>
-        </mapgis-ui-form-model>
+        <mapgis-ui-input-number-panel
+            size="small"
+            label="模型亮度"
+            v-model="lightIntensity"
+            :range="[1,200]"
+            @change="lightIntensityChange"
+        />
     </div>
 </template>
 
@@ -44,12 +34,6 @@ import ServiceLayer from "../../UI/Controls/ServiceLayer";
 export default {
     name: "SceneEffect",
     mixins: [ServiceLayer],
-    props: {
-        layout: {
-            type: String,
-            default: "horizontal", // 'horizontal' 'vertical' 'inline'
-        },
-    },
     data() {
         return {
             sunlight: false,
@@ -57,16 +41,6 @@ export default {
             lightColor: "rgba(255,255,255,255)",
             lightIntensity: 10
         };
-    },
-    computed: {
-        formItemLayout({ layout }) {
-            return layout === "horizontal"
-                ? {
-                      labelCol: { span: 7 },
-                      wrapperCol: { span: 17 },
-                  }
-                : {};
-        },
     },
     mounted(){
         this.lightIntensityChange();

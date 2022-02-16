@@ -1,59 +1,50 @@
 <template>
     <div class="effect-setting">
-        <mapgis-ui-form-model
-            :layout="layout"
-            v-bind="formItemLayout"
-            labelAlign="left"
-            :colon="false"
+        <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    size="small"
+                    label="黑白照片"
+                    :checked="blckWhite"
+                    @changeChecked="blackAndWhiteChange"
+                />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    size="small"
+                    label="夜视效果"
+                    :checked="ntVision"
+                    @changeChecked="nightVision"
+                />
+            </mapgis-ui-col>
+        </mapgis-ui-row>
+
+        <div class="dividerWrapper"><div class="divider" /></div>
+
+        <mapgis-ui-switch-panel
+            size="small"
+            label="场景泛光"
+            :checked="bloom"
+            @changeChecked="enableBloom"
         >
-            <mapgis-ui-row>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        size="small"
-                        label="黑白照片"
-                        :checked="blckWhite"
-                        @changeChecked="blackAndWhiteChange"
-                    />
-                </mapgis-ui-col>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        size="small"
-                        label="夜视效果"
-                        :checked="ntVision"
-                        @changeChecked="nightVision"
-                    />
-                </mapgis-ui-col>
-            </mapgis-ui-row>
-
-            <div class="dividerWrapper"><div class="divider" /></div>
-
-            <mapgis-ui-switch-panel
+            <mapgis-ui-input-number-panel
                 size="small"
-                label="场景泛光"
-                :checked="bloom"
-                @changeChecked="enableBloom"
-            >
-                <mapgis-ui-input-number-panel
-                    size="small"
-                    label="亮度"
-                    :value="bloomBrt"
-                    :range="bloomBrtRange"
-                    :step="0.05"
-                    @change="bloomBrtChange"
-                >
-                </mapgis-ui-input-number-panel>
-
-                <mapgis-ui-input-number-panel
-                    size="small"
-                    label="对比度"
-                    :value="bloomCtrst"
-                    :range="bloomCtrstRange"
-                    :step="10"
-                    @change="bloomCtrstChange"
-                >
-                </mapgis-ui-input-number-panel>
-            </mapgis-ui-switch-panel>
-        </mapgis-ui-form-model>
+                label="亮度"
+                :value="bloomBrt"
+                :range="bloomBrtRange"
+                :step="0.05"
+                @change="bloomBrtChange"
+            />
+            
+            <mapgis-ui-input-number-panel
+                size="small"
+                label="对比度"
+                :value="bloomCtrst"
+                :range="bloomCtrstRange"
+                :step="10"
+                @change="bloomCtrstChange"
+            />
+        </mapgis-ui-switch-panel>
     </div>
 </template>
 
@@ -62,12 +53,6 @@ import ServiceLayer from "../../UI/Controls/ServiceLayer";
 export default {
     name: "EffectSetting",
     mixins: [ServiceLayer],
-    props: {
-        layout: {
-            type: String,
-            default: "horizontal", // 'horizontal' 'vertical' 'inline'
-        },
-    },
     data() {
         return {
             bloom: false,
@@ -80,16 +65,6 @@ export default {
             blckWhite: false,
             ntVision: false,
         };
-    },
-    computed: {
-        formItemLayout({ layout }) {
-            return layout === "horizontal"
-                ? {
-                      labelCol: { span: 7 },
-                      wrapperCol: { span: 17 },
-                  }
-                : {};
-        },
     },
     methods: {
         /*
