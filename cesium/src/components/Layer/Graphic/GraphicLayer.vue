@@ -10,11 +10,11 @@
       </mapgis-ui-select>
       <input style="display: none" type="file" :id="inputId"
              accept=".json">
-<!--      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>-->
-<!--      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>-->
-<!--      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"-->
-<!--                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"-->
-<!--                                  class="mapgis-ui-graphic-layers-more-tool"/>-->
+      <!--      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>-->
+      <!--      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>-->
+      <!--      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"-->
+      <!--                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"-->
+      <!--                                  class="mapgis-ui-graphic-layers-more-tool"/>-->
       <div class="mapgis-ui-graphic-layers-toll-bar">
         <mapgis-ui-svg-icon :key="index" v-for="(tool, index) in moreTools"
                             :iconStyle="toolStyle"
@@ -195,7 +195,7 @@ export default {
     }
   },
   mounted() {
-    this.$_init();
+    this.$_init(true);
   },
   methods: {
     $_addFeature(e) {
@@ -523,7 +523,7 @@ export default {
       }
     },
     //初始化数据
-    $_init() {
+    $_init(addLayer) {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //设置当前图层
@@ -535,7 +535,9 @@ export default {
       } else {
         this.currenSelectLayer = "请添加图层";
         this.currentLayer = [];
-        // this.$_clickTool("add");
+        if (addLayer) {
+          this.$_clickTool("add");
+        }
       }
     },
     $_hideAllGraphic() {
@@ -585,7 +587,7 @@ export default {
 }
 
 .mapgis-ui-graphic-layers-edit-title {
-  height: 40px!important;
+  height: 40px !important;
   width: 332px;
 }
 
