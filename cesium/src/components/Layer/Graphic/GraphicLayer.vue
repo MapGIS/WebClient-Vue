@@ -267,7 +267,7 @@ export default {
             this.currenSelectIndex = 0;
           }
           if (this.dataSourceCopy.length === 0) {
-            this.currenSelectLayer = "无数据";
+            this.currenSelectLayer = "请添加图层";
             this.currentLayer = [];
           } else {
             let index = this.currenSelectIndex - 1 < 0 ? 0 : this.currenSelectIndex - 1;
@@ -533,8 +533,9 @@ export default {
         //初始化graphicLayer图层列表
         this.$_layerSelect();
       } else {
+        this.currenSelectLayer = "请添加图层";
         this.currentLayer = [];
-        this.$_clickTool("add");
+        // this.$_clickTool("add");
       }
     },
     $_hideAllGraphic() {
