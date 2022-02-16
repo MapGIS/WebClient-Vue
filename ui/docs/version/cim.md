@@ -19,7 +19,7 @@
 |                |            | mapgis-3d-overlay-analysis         | ✔                                   | ✔✔       | 叠加分析<br>localhost      |
 |                | 可视化     | mapgis-3d-particle-effects-manager | ✔                                   | ✔✔       | 粒子特效                   |
 |                | 模拟仿真   | mapgis-3d-city-grow                | ✔                                   | ✔✖       | 城市生长<br>21.191         |
-|                |            | mapgis-3d-building-glow            | ✔                                   | ✔✖       | 单体建筑生长<br>88.204     |
+|                |            | mapgis-3d-building-grow            | ✔                                   | ✔✖       | 单体建筑生长<br>88.204     |
 |                |            | mapgis-3d-ponding-simulation       | ✖                                   | ✔✖       | 积水仿真                   |
 |                | 场景漫游   | mapgis-3d-path-roaming             | ✔                                   | ✔✔       | 单路径                     |
 |                |            | mapgis-3d-scene-roaming            | ✔                                   | ✔✔       | 路径管理                   |
