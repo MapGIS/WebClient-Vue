@@ -1,4 +1,5 @@
 import "../style/card.css";
+import Markdown from "../../cesium/docs/api/simulation/PondingSimulation.md"
 import Mapgis3dPondingSimulation from "../../cesium/src/components/simulation/PondingSimulation.vue";
 
 export default {
@@ -82,9 +83,16 @@ const Template = (args, { argTypes }) => ({
     },
     addSimulation() {
       this.$refs.simulation.addSimulation();
-  },
+    },
   },
 });
 
 export const 积水仿真 = Template.bind({});
 积水仿真.args = {};
+积水仿真.parameters = {
+  docs:{
+    description:{
+      component:Markdown
+    }
+  }
+}
