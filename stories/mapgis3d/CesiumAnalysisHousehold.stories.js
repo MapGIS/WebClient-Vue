@@ -29,7 +29,7 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">    
-    <mapgis-3d-g3d-layer v-bind="g3d" />
+    <mapgis-3d-scene-layer v-bind="g3d" />
     <mapgis-3d-stratified-household v-bind="$props" />
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,

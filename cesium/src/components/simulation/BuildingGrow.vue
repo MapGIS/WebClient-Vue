@@ -75,7 +75,7 @@ import BaseLayer from "../Analysis/BaseLayer";
 import moment from "moment";
 
 export default {
-  name: "mapgis-3d-building-glow",
+  name: "mapgis-3d-building-grow",
   inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseLayer],
   props: {

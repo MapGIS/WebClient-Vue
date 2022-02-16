@@ -26,7 +26,7 @@
     <mapgis-ui-input-number-panel
         size="small"
         label="高程比"
-        v-model="heightScale"
+        v-model="featureStyle.heightRatio"
         :placeholder="placeholder"
         @change="val => onHeightScale(val,  'heightRatio')"/>
 
@@ -40,13 +40,14 @@
         @changeChecked="changeGrowHeight"
     ></mapgis-ui-switch-panel>
 
-    <mapgis-ui-range-picker @change="onDateChange" style="margin:7px 0"></mapgis-ui-range-picker>
+    <mapgis-ui-range-picker @change="onDateChange" v-model="dataRange" style="margin:7px 0"></mapgis-ui-range-picker>
 
     <mapgis-ui-colors-setting
         v-model="colorsCopy"
         :rangeField="'时间段'"
         style="margin-top: 7px"
         v-if='colorsCopy.length > 0'
+        @change="colorChanged"
     >
     </mapgis-ui-colors-setting>
     <mapgis-ui-setting-footer>
@@ -54,7 +55,7 @@
       >确认
       </mapgis-ui-button
       >
-      <mapgis-ui-button @click="remove">取消</mapgis-ui-button>
+      <mapgis-ui-button @click="remove" :disabled="disabled">取消</mapgis-ui-button>
       <!--      <mapgis-ui-button @click="deleteCityGrow">消除城市生长</mapgis-ui-button>-->
     </mapgis-ui-setting-footer>
   </div>
@@ -65,6 +66,7 @@ import {MRFS} from "@mapgis/webclient-es6-service";
 
 const {QueryDocFeature} = MRFS;
 import moment from "moment";
+import clonedeep from 'lodash.clonedeep';
 
 export default {
   name: "mapgis-3d-city-grow-options",
@@ -85,30 +87,54 @@ export default {
   },
   data() {
     return {
+      initial: true,
       baseUrl: "",
       isDisabled: true,
       placeholder: '请选择对应字段',
       dataFields: [],
-      heightScale: 1,
       colorsCopy: [],
       featureStyle: {
         startTimeField: "",
         endTimeField: "",
         heightField: "",
-        isGrowHeight:false
+        heightRatio: 1,
+        isGrowHeight: false
       },
-      layerIndexArray:[],
-      switchSize:'small'
+      layerIndexArray: [],
+      switchSize: 'small',
+      disabled: true,
+      // 定义url的方式是选择还是手输
+      urlWays: undefined,
+      dataRange: undefined,
+      // 时间数据暂存状态
+      dataRangeTemp: undefined,
+      // 颜色列表是否修改的标志
+      colorChangedTag: false,
+      // 把获取到的颜色设置表参数暂存
+      colorSettingTemp: [],
+      //确认按钮保存参数面板数据
+      submitFeatureStyle: {}
     }
   },
   mounted() {
   },
+  beforeDestroy() {
+    this.unmount();
+  },
   watch: {
+    dataRange:{
+      deep: true,
+      handler: function (newValue, oldValue) {
+        this.dataRangeTemp = oldValue;
+      },
+    },
     cityGrowOptions: {
       deep: true,
       immediate: true,
       handler(next) {
         let vm = this;
+        vm.initial = true;
+        vm.disabled = true;
         if (typeof next === 'string' && next !== '') {
           // 先判断是二维地图文档还是三维地图文档
           if (next.indexOf("/g3d") > -1) {
@@ -120,19 +146,18 @@ export default {
           } else if (next.indexOf('igs/rest/mrfs/docs') > -1) {
             vm.queryFields(next);
             vm.baseUrl = next;
+            vm.urlWays = 'wrote';
           }
-        } else if(Object.keys(next).length !== 0) {
+        } else if (Object.keys(next).length !== 0) {
+          vm.urlWays = 'selected';
           vm.baseUrl = next.baseUrl;
-          vm.featureStyle.startTimeField = next.startTimeField
-          vm.featureStyle.endTimeField = next.endTimeField
-          vm.featureStyle.heightField = next.heightField
+          vm.featureStyle.startTimeField = next.startTimeField;
+          vm.featureStyle.endTimeField = next.endTimeField;
+          vm.featureStyle.heightField = next.heightField;
           vm.getGrowTime();
         } else {
           vm.baseUrl = '';
-          vm.featureStyle.startTimeField = ''
-          vm.featureStyle.endTimeField = ''
-          vm.featureStyle.heightField = ''
-          vm.colorsCopy = [];
+          vm.$_clearData();
           vm.dataFields = [];
         }
       }
@@ -213,7 +238,7 @@ export default {
     onFieldChange(val, key) {
       let vm = this;
       vm.featureStyle[key] = val;
-      if (key === 'endTimeField' && val !== ''){
+      if (key === 'endTimeField' && val !== '') {
         vm.getGrowTime();
       }
     },
@@ -224,11 +249,13 @@ export default {
       let endTime = parseInt(moment(date[1]).valueOf() / 1000);
       vm.featureStyle['startTime'] = startTime;
       vm.featureStyle['endTime'] = endTime;
+      vm.disabled = false;
     },
 
     onHeightScale(val, key) {
       let vm = this;
       vm.featureStyle[key] = val;
+      vm.disabled = false;
     },
 
     onCommitOptions() {
@@ -237,14 +264,19 @@ export default {
       vm.featureStyle.times = [];
       for (let i = 0; i < vm.colorsCopy.length; i++) {
         vm.featureStyle.colors.push(vm.colorsCopy[i].color);
-        if (i!== 0){
+        if (i !== 0) {
           vm.featureStyle.times.push(vm.colorsCopy[i].min);
         }
       }
+
       // 先判断必须的值是否有：startTimeField、endTimeField、heightField
       if (vm.baseUrl !== '' && vm.featureStyle.startTimeField !== '' && vm.featureStyle.endTimeField !== '' && vm.featureStyle.heightField !== '') {
-        this.$emit('commitOptions', vm.featureStyle);
-        for (let i=0;i<vm.layerIndexArray.length;i++){
+        // 深拷贝
+        vm.submitFeatureStyle = clonedeep(vm.featureStyle);
+        vm.colorSettingTemp = vm.colorsCopy;
+        this.$emit('commitOptions', vm.submitFeatureStyle);
+        vm.disabled = true;
+        for (let i = 0; i < vm.layerIndexArray.length; i++) {
           if (this.Cesium.defined(vm.layerIndexArray[i])) {
             this.viewer.scene.layers.removeVectorLayerByID(vm.layerIndexArray[i]);
           }
@@ -252,16 +284,49 @@ export default {
       }
     },
 
+    $_clearData() {
+      const vm = this;
+      vm.featureStyle.startTimeField = '';
+      vm.featureStyle.endTimeField = '';
+      vm.featureStyle.heightField = '';
+      vm.featureStyle.startTime = undefined;
+      vm.featureStyle.endTime = undefined;
+      vm.dataRange = undefined;
+      vm.colorsCopy = [];
+      vm.featureStyle.heightRatio = 1;
+      vm.featureStyle.isGrowHeight = false
+    },
+
     remove() {
       // 清空数据
       let vm = this;
-      vm.featureStyle.startTimeField = '';
-      vm.dataFields = [];
-      vm.featureStyle.endTimeField = '';
-      vm.featureStyle.heightField = '';
-      vm.featureStyle.heightScale = 1;
-      vm.heightScale = 1;
-      for (let i=0;i<vm.layerIndexArray.length;i++){
+      vm.disabled = true;
+      vm.initial = false;
+      if (Object.keys(vm.submitFeatureStyle).length !== 0) {
+        vm.featureStyle.startTimeField = vm.submitFeatureStyle.startTimeField;
+        vm.featureStyle.endTimeField = vm.submitFeatureStyle.endTimeField;
+        vm.featureStyle.heightField = vm.submitFeatureStyle.heightField;
+        vm.featureStyle.startTime = vm.submitFeatureStyle.startTime;
+        vm.featureStyle.endTime = vm.submitFeatureStyle.endTime;
+        vm.featureStyle.heightRatio = vm.submitFeatureStyle.heightRatio;
+        vm.featureStyle.isGrowHeight = vm.submitFeatureStyle.isGrowHeight;
+        vm.dataRange = vm.dataRangeTemp;
+      } else if (vm.urlWays !== undefined) {
+        if (vm.urlWays === 'wrote') {
+          vm.$_clearData();
+        } else if (vm.urlWays === 'selected') {
+          vm.featureStyle.startTime = undefined;
+          vm.featureStyle.endTime = undefined;
+          vm.dataRange = undefined;
+        }
+        vm.featureStyle.heightRatio = 1;
+        vm.featureStyle.isGrowHeight = false
+      }
+      if (vm.colorChangedTag) {
+        vm.colorsCopy = vm.colorSettingTemp;
+        vm.colorChangedTag = false;
+      }
+      for (let i = 0; i < vm.layerIndexArray.length; i++) {
         if (this.Cesium.defined(vm.layerIndexArray[i])) {
           this.viewer.scene.layers.removeVectorLayerByID(vm.layerIndexArray[i]);
         }
@@ -278,10 +343,9 @@ export default {
               startTimeField: vm.featureStyle.startTimeField,
               endTimeField: vm.featureStyle.endTimeField,
               onReady: function (timeControl) {
-                console.log(timeControl.startTime, timeControl.endTime);
                 vm.formatType = 'year';
                 vm.colorsCopy = [];
-                vm.featureStyle.colors = [];
+                // vm.featureStyle.colors = [];
                 let startYear = vm.formatDate(timeControl.startTime);
                 let endYear = vm.formatDate(timeControl.endTime);
                 let steps = Math.floor((endYear - startYear) / vm.buildingColors.length);
@@ -293,27 +357,30 @@ export default {
                       obj.min = startYear;
                       obj.max = startYear + steps;
                       obj.color = colors[i];
-                    } else if(i === colors.length -1){
+                    } else if (i === colors.length - 1) {
                       obj.min = startYear + steps * i;
                       obj.max = endYear;
                       obj.color = colors[i];
                     } else {
                       obj.min = startYear + steps * i;
-                      obj.max = startYear + steps * (i+1) ;
+                      obj.max = startYear + steps * (i + 1);
                       obj.color = colors[i];
                     }
                     vm.colorsCopy.push(obj);
-                    vm.featureStyle.colors = vm.colorsCopy;
+                    vm.colorSettingTemp = vm.colorsCopy;
                   }
                 }
+                vm.initial = false
               },
             }
           }
         }
-        vm.viewer.scene.layers.appendVectorLayer(vm.baseUrl, {...options,
+        vm.viewer.scene.layers.appendVectorLayer(vm.baseUrl, {
+          ...options,
           getDocLayerIndexes: function (indexs) {
             vm.layerIndexArray.push(indexs[0]);
-          }});
+          }
+        });
       }
     },
     formatDate(timestamp) {
@@ -333,8 +400,27 @@ export default {
       // 时间戳转时间 方法二：
       // return moment(timestamp).format("YYYY-MM-DD");
     },
-    changeGrowHeight(val){
+    changeGrowHeight(val) {
+      const vm = this;
       this.featureStyle.isGrowHeight = val;
+      vm.disabled = false;
+    },
+    colorChanged() {
+      const vm = this;
+      vm.colorChangedTag = true;
+      if (!vm.initial) {
+        vm.disabled = false;
+      }
+    },
+    unmount() {
+      this.baseUrl = '';
+      this.urlWays = undefined;
+      this.$_clearData();
+      this.dataFields = [];
+      this.colorsCopy = [];
+      this.submitFeatureStyle = {};
+      this.colorSettingTemp = [];
+      this.remove();
     }
   }
 }
@@ -345,6 +431,7 @@ export default {
   max-height: calc(60vh);
   overflow-y: auto;
 }
+
 ::v-deep .mapgis-ui-input-affix-wrapper .mapgis-ui-input:not(:first-child) {
   padding-left: 38px;
 }

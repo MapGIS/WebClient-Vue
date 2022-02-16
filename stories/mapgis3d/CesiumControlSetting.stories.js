@@ -1,21 +1,10 @@
+import Markdown from "../../cesium/docs/api/sceneeffect/SceneSetting.md";
 import Mapgis3dSeneSetting from "../../cesium/src/components/SceneEffect/SceneSetting";
 
 export default {
     title: "三维/场景子组件/场景设置",
     component: Mapgis3dSeneSetting,
     argTypes: {
-        layout: {
-            description: "场景设置组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项",
-            table: {
-                defaultValue: {
-                    summary:'horizontal'
-                },
-            },
-            control:{
-                type:"select",
-                options:['horizontal','vertical','inline']
-            } ,
-        },
     },
 };
 
@@ -46,7 +35,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景设置 = Template.bind({});
 场景设置.args = {
-    layout:'horizontal',
     panelStyle:{
         position:"absolute",
         top:"10px",
@@ -55,3 +43,10 @@ export const 场景设置 = Template.bind({});
         background:"#fff"
     }
 };
+场景设置.parameters = {
+    docs:{
+        description: {
+            component: Markdown
+        }
+    }
+}

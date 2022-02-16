@@ -45,7 +45,7 @@ export default {
       viewer.terrainProvider = provider;
 
       if (vueKey && vueIndex) {
-        window.vueCesium.Tileset3DManager.addSource(
+        window.vueCesium.TerrainManager.addSource(
           vueKey,
           vueIndex,
           provider
@@ -56,11 +56,11 @@ export default {
     unmount() {
       let { webGlobe, vueKey, vueIndex } = this;
       webGlobe.deleteTerrain();
-      let find = window.vueCesium.Tileset3DManager.findSource(
+      let find = window.vueCesium.TerrainManager.findSource(
         vueKey,
         vueIndex
       );
-      window.vueCesium.Tileset3DManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.TerrainManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this.layer, this);
     },
   },

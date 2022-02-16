@@ -1,7 +1,7 @@
 <template>
   <div>
     <mapgis-ui-collapse-card
-      class="mapgis-3d-g3d-layer"
+      class="mapgis-3d-scene-layer"
       v-if="enableControl"
       ref="card"
       position="top-left"
@@ -11,8 +11,8 @@
       @toggle-main="handleBackMain"
     >
       <mapgis-ui-iconfont type="mapgis-layer1" slot="icon-hiden" />
-      <span class="mapgis-3d-g3d-layer-title" slot="title">{{ title }}</span>
-      <mapgis-ui-space slot="extra" class="mapgis-3d-g3d-layer-icons">
+      <span class="mapgis-3d-scene-layer-title" slot="title">{{ title }}</span>
+      <mapgis-ui-space slot="extra" class="mapgis-3d-scene-layer-icons">
         <mapgis-ui-tooltip v-for="(m, i) in menus" :key="i">
           <template slot="title">{{ m.title }}</template>
           <mapgis-ui-iconfont
@@ -64,8 +64,8 @@
             />
             <span
               :class="{
-                'mapgis-3d-g3d-layer-span': true,
-                'mapgis-3d-g3d-layer-span-inline': true,
+                'mapgis-3d-scene-layer-span': true,
+                'mapgis-3d-scene-layer-span-inline': true,
                 select: selectLayerIndex == layerIndex,
               }"
             >
@@ -79,7 +79,7 @@
               <span v-else>{{ title }}</span>
               <span
                 v-if="version && key == '地图场景默认键值'"
-                class="mapgis-3d-g3d-layer-version"
+                class="mapgis-3d-scene-layer-version"
                 >版本:{{ version }}</span
               >
               <mapgis-ui-iconfont
@@ -176,7 +176,7 @@ import PopupMixin from "../Mixin/PopupMixin";
 const { G3DLayerType, M3DTileDataInfo } = G3D;
 
 export default {
-  name: "mapgis-3d-g3d-layer",
+  name: "mapgis-3d-scene-layer",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...G3DOptions,
@@ -272,6 +272,9 @@ export default {
       } else {
         this.unbindPopupEvent();
       }
+    },
+    opacity(next) {
+      this.changeLayerOpacity(next);
     },
     layers(next) {
       this.layerIds = this.parseLayers(next);
@@ -606,6 +609,25 @@ export default {
       let layers = layerStrs.map((l) => l);
 
       return layers;
+    },
+    changeLayerOpacity(opacity, layers) {
+      layers = layers || this.layerIds;
+      const { g3dLayerIndex, viewer } = this;
+      if (!g3dLayerIndex && g3dLayerIndex < 0) return;
+      let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
+      let indexes = g3dLayer.getAllLayerIndexes();
+      indexes.forEach((index) => {
+        let layer = g3dLayer.getLayer(index);
+        if (layers.indexOf(`${index}`) >= 0) {
+          if (layer) {
+            g3dLayer.translucencyByLayerIndex(index, opacity);
+          }
+        } else {
+          if (layer) {
+            g3dLayer.translucencyByLayerIndex(index, opacity);  
+          }
+        }
+      });
     },
     changeLayerVisible(layers) {
       layers = layers || this.layerIds;
