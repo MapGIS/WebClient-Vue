@@ -25,7 +25,7 @@
 
 ### `attributeColor`
 
-- **类型:** `Array`
+- **类型:** `Array<String>`
 - **必选:**
 - **非侦听属性**
 - **描述:** 各个属性对应的颜色
@@ -46,6 +46,30 @@
 - **描述:** 是否为饼状体添加高度
 - **默认值:** true
 
+### `textFont`
+
+- **类型:** `String`
+- **可选:**
+- **非侦听属性**
+- **描述:** 标注字体
+- **默认值:** "50px Helvetica"
+
+### `textColor`
+
+- **类型:** `String`
+- **可选:**
+- **非侦听属性**
+- **描述:** 标注颜色
+- **默认值:** "#008000"
+
+### `textHeightOffset`
+
+- **类型:** `Number`
+- **可选:**
+- **非侦听属性**
+- **描述:** 字体高度的偏移值
+- **默认值:** 10000
+
 ## 示例
 
 ```vue
@@ -60,6 +84,9 @@ import axios from "axios";
       :attributeColor="attributeColor"
       :width="width"
       :addExtrudedHeight="addExtrudedHeight"
+      :textFont="textFont"
+      :textColor="textColor"
+      :textHeightOffset="textHeightOffset"
       @load="load"
     />
   </mapgis-web-scene>
@@ -74,7 +101,10 @@ export default {
       attributeName: ["GDP_2007", "GDP_2008"],
       attributeColor: ["#FFB980", "#5AB1EF"],
       width: 50000,
-      addExtrudedHeight: true
+      addExtrudedHeight: true,
+      textFont: "50px Helvetica",
+      textColor: "#008000",
+      textHeightOffset: 10000
     };
   },
   mounted() {

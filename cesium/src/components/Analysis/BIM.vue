@@ -73,7 +73,7 @@
             <span
               :class="{
                 'mapgis-3d-bim-component-span': true,
-                'mapgis-3d-bim-component-span-inline': true
+                'mapgis-3d-bim-component-span-inline': true,
               }"
             >
               <!-- <mapgis-ui-iconfont :type="icon" /> -->
@@ -104,14 +104,14 @@
                   :type="s.icon()"
                   :class="{
                     iconfont: true,
-                    'iconfont-disabled': !enableBim
+                    'iconfont-disabled': !enableBim,
                   }"
                   @click="
                     s.click({
                       title,
                       index,
                       icon,
-                      key
+                      key,
                     })
                   "
                 />
@@ -153,10 +153,11 @@ export default {
           height: "600px",
           width: "400px",
           top: "0px",
-          left: "0px"
+          left: "0px",
         };
-      }
+      },
     },
+    type: { type: String, default: "ModelLoaded" /* ModelUrl ModelLoaded */ },
     /**
      * @description 分层分户的图层列表, 每个内部{title, vueIndex},
      * @see vueIndex表示当前激活的图层序号
@@ -170,11 +171,11 @@ export default {
       type: Object,
       default: () => {
         return { popupType: "card" };
-      }
+      },
     },
     enableCollapse: { type: Boolean, default: true },
     enableBim: { type: Boolean, default: false },
-    enableDynamicQuery: { type: Boolean, default: false }
+    enableDynamicQuery: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -187,38 +188,39 @@ export default {
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
+          active: this.enablePopup,
         },
         {
           title: "重置图层",
           icon: "mapgis-redo",
-          active: false
+          active: false,
         },
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
-          active: false
-        }
+          active: false,
+        },
       ],
       collapsemenus: [
         {
           title: "查询",
           icon: "mapgis-highlight",
-          active: this.enablePopup
-        }
+          active: this.enablePopup,
+        },
       ],
       submenus: [
         {
           title: "锁定/解锁图层",
           tooltip: () =>
             this.enableBim ? "锁定/解锁图层" : "请按照BIM要求制作数据",
-          icon: key => (this.layerKey == key ? "mapgis-lock" : "mapgis-unlock"),
-          click: payload => {
+          icon: (key) =>
+            this.layerKey == key ? "mapgis-lock" : "mapgis-unlock",
+          click: (payload) => {
             if (this.enableBim) {
               this.changeIsolation(payload);
             }
-          }
-        }
+          },
+        },
       ],
       layerTree: [],
       expandedKeys: [],
@@ -236,7 +238,7 @@ export default {
       featureproperties: undefined,
       featurevisible: undefined,
       featureclickenable: this.enablePopup,
-      disableLayerSelect: false
+      disableLayerSelect: false,
     };
   },
   provide() {
@@ -244,7 +246,7 @@ export default {
     return {
       get m3ds() {
         return self.m3ds;
-      }
+      },
     };
   },
   created() {},
@@ -269,7 +271,7 @@ export default {
     innerVueIndex(next) {
       this.unmount();
       this.mount();
-    }
+    },
   },
   methods: {
     createCesiumObject() {
@@ -283,7 +285,7 @@ export default {
       return new Promise((resolve, reject) => {
         let layerIndex = 0;
         this.$_getM3DByInterval(
-          function(m3ds) {
+          function (m3ds) {
             if (m3ds && m3ds.length > 0) {
               if (
                 !m3ds[layerIndex] ||
@@ -306,15 +308,29 @@ export default {
     mount() {
       const vm = this;
       const { innerVueIndex, vueKey, vueCesium } = this;
-      const { viewer, enablePopup } = this;
+      const { viewer, enablePopup, type } = this;
 
       let promise = this.createCesiumObject();
-      promise.then(find => {
+      promise.then((find) => {
         if (find && find.source) {
           let { source } = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
-          m3d.treeOptions = { createType: "ModelLoaded" };
-          let tree = m3d ? m3d.tree : undefined;
+          if (type == "ModelUrl") {
+            let find = vueCesium.M3DIgsManager.findSource(
+              vueKey,
+              innerVueIndex
+            );
+            if (find && find.options) {
+              const { url } = find.options;
+              m3d.m3dtreeOptions = { createType: type, url: url };
+            }
+          } else if (type == "ModelLoaded") {
+            m3d.m3dtreeOptions = { createType: type };
+          } else {
+            return;
+          }
+
+          let tree = m3d ? m3d.m3dtree : undefined;
           vm.parseTree(tree);
           vm.$emit("loaded", { component: vm });
           let collection = new Cesium.PrimitiveCollection();
@@ -322,7 +338,7 @@ export default {
             m3d: m3d,
             tree: tree,
             collection: collection,
-            primitiveCollection: viewer.scene.primitives.add(collection)
+            primitiveCollection: viewer.scene.primitives.add(collection),
           });
           vm.recordOriginStyle();
           if (enablePopup) {
@@ -350,7 +366,6 @@ export default {
       this.showAllLayer();
       this.resetAllLayer();
       this.allLayerIds = [];
-      this.layerTree = [];
       this.layerIds = [];
       this.allLayerIds = [];
       this.halfCheckedKeys = [];
@@ -360,14 +375,9 @@ export default {
     },
     // 构建树内部逻辑
     parseTree(tree) {
-      let cbtree = this.loopTreeNode(tree, "", undefined);
+      const displaytree = this.findDisplayTree(tree);
+      let cbtree = this.loopTreeNode(displaytree, "", undefined);
       this.layerTree.splice(0, 1, cbtree);
-      // BIM树节点向下缩短两层
-      for (var i = 0; i < 2; i++) {
-        this.layerTree = this.layerTree[0].children;
-        this.layerIds.splice(0, 1)
-        this.allLayerIds.splice(0, 1)
-      }
     },
     loopTreeNode(node, prefix, parent) {
       const vm = this;
@@ -385,9 +395,12 @@ export default {
         parent: parent,
         isleaf: false,
         count: 0,
-        scopedSlots: { icon: "icon", title: "title" }
+        scopedSlots: { icon: "icon", title: "title" },
       };
-      node.treeChildren.forEach(child => {
+      if (cbnode.index == "rootNode") {
+        cbnode.rootNode = true;
+      }
+      node.m3dtreeChildren.forEach((child) => {
         let c = vm.loopTreeNode(child, key, cbnode);
         cbnode.children.push(c);
         cbnode.count += c.count;
@@ -408,7 +421,7 @@ export default {
     findTreePath(index) {
       let result = {
         paths: [],
-        node: undefined
+        node: undefined,
       };
       let root = this.findRoot();
       let find = this.findNode(root, index);
@@ -465,30 +478,52 @@ export default {
       if (node) {
         paths.push(node);
         if (node && node.children) {
-          node.children.forEach(child => {
+          node.children.forEach((child) => {
             this.findChildren(child, paths);
           });
         }
       }
     },
+    findDisplayTree(tree) {
+      if (!tree) return;
+      if (tree.index == "rootNode") {
+        return tree;
+      } else {
+        const next = tree.m3dtreeChildren;
+        if (next && next.length > 0) {
+          return this.findDisplayTree(next[0]);
+        }
+      }
+      /* if (!tree || tree.length <= 0) return;
+      const node = tree[0];
+      const { index, rootNode } = node;
+      const { children } = node;
+      if (rootNode) {
+        this.layerTree = children;
+      } else {
+        this.layerIds = this.layerIds.filter((l) => l.index != index);
+        this.allLayerIds = this.allLayerIds.filter((l) => l.index != index);
+        this.findDisplayTree(children);
+      } */
+    },
     actionTree(node, action) {
       const vm = this;
       action(node);
       if (node && node.children) {
-        node.children.forEach(child => vm.actionTree(child, action));
+        node.children.forEach((child) => vm.actionTree(child, action));
       }
     },
     disableTree(node) {
       let root = this.findRoot();
-      this.actionTree(root, n => {
+      this.actionTree(root, (n) => {
         n.disabled = true;
       });
-      this.actionTree(node, n => {
+      this.actionTree(node, (n) => {
         n.disabled = false;
       });
     },
     enableTree(node) {
-      this.actionTree(node, n => {
+      this.actionTree(node, (n) => {
         n.disabled = false;
       });
     },
@@ -505,7 +540,7 @@ export default {
       for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
-          if (node.children.some(item => item.key === key)) {
+          if (node.children.some((item) => item.key === key)) {
             parentKey = node.key;
           } else if (this.getParentKey(key, node.children)) {
             parentKey = this.getParentKey(key, node.children);
@@ -517,7 +552,7 @@ export default {
     onChange(e) {
       let { layerTree } = this;
       const dataList = [];
-      const generateList = data => {
+      const generateList = (data) => {
         for (let i = 0; i < data.length; i++) {
           const node = data[i];
           const { key } = node;
@@ -531,7 +566,7 @@ export default {
 
       const value = e.target.value;
       const expandedKeys = dataList
-        .map(item => {
+        .map((item) => {
           if (item.title.indexOf(value) > -1) {
             return this.getParentKey(item.key, layerTree);
           }
@@ -541,7 +576,7 @@ export default {
       Object.assign(this, {
         expandedKeys,
         searchValue: value,
-        autoExpandParent: true
+        autoExpandParent: true,
       });
     },
     onSelect(e, payload) {
@@ -568,7 +603,7 @@ export default {
       if (find && find.options) {
         const { tree } = find.options;
         if (!tree) return;
-        allLayerIds.forEach(layer => {
+        allLayerIds.forEach((layer) => {
           let mapgism3dNode = tree.getM3DByName(layer);
           if (mapgism3dNode) {
             mapgism3dNode.forceInvisible = true;
@@ -606,7 +641,7 @@ export default {
       const { vueKey, innerVueIndex, vueCesium, allLayerIds } = this;
       let originStyles = [];
 
-      allLayerIds.forEach(l => {
+      allLayerIds.forEach((l) => {
         originStyles.push({ name: l, style: undefined });
       });
 
@@ -621,7 +656,7 @@ export default {
       const { vueKey, innerVueIndex, vueCesium } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options.originStyles) {
-        find.options.originStyles.forEach(i => {
+        find.options.originStyles.forEach((i) => {
           let mapgism3dNode = tree.getM3DByName(i.name);
           if (mapgism3dNode) {
             mapgism3dNode.reset();
@@ -664,7 +699,7 @@ export default {
 
       let find = this.findTreePath(index);
       const { paths, node } = find;
-      let indexs = paths.map(p => p.index);
+      let indexs = paths.map((p) => p.index);
       this.changeLayerVisible(indexs);
       this.flyToLayer(node.index);
       this.disableTree(node);
@@ -697,8 +732,8 @@ export default {
     flyToLayer(index) {
       const { innerVueIndex, vueKey, vueCesium, viewer } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
-      if (find && find.source) {
-        let { tree } = find.source;
+      if (find && find.options) {
+        let { tree } = find.options;
         let mapgism3dNode = tree.getM3DByName(index);
         if (mapgism3dNode) {
           viewer.camera.flyToBoundingSphere(mapgism3dNode.boundingSphere);
@@ -718,7 +753,7 @@ export default {
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options) {
         let { tree } = find.options;
-        allLayerIds.forEach(layer => {
+        allLayerIds.forEach((layer) => {
           let mapgism3dNode = tree.getM3DByName(layer);
           if (mapgism3dNode) {
             mapgism3dNode.forceInvisible = false;
@@ -727,7 +762,7 @@ export default {
       }
     },
     $_pickEvent(movement) {
-      const { enableBim, enableDynamicQuery } = this;
+      const { enableDynamicQuery } = this;
       if (enableDynamicQuery) {
         // m3d 不支持动态查询 只有g3d支持动态查询
         this.queryDynamic(movement);
@@ -767,7 +802,7 @@ export default {
       const vm = this;
       const { Cesium, viewer } = this;
       let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-      handler.setInputAction(function(movement) {
+      handler.setInputAction(function (movement) {
         vm.$_pickEvent(movement);
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       return handler;
@@ -837,7 +872,7 @@ export default {
           vm.featureposition = {
             longitude: longitudeString2,
             latitude: latitudeString2,
-            height: heightString2
+            height: heightString2,
           };
 
           // 等修复好卡顿后再放开
@@ -851,7 +886,7 @@ export default {
 
           if (find) {
             this.findParent(find, paths);
-            let expends = paths.map(p => p.index);
+            let expends = paths.map((p) => p.index);
             vm.selectedKeys = [find.index];
             vm.expandedKeys = expends;
           }
@@ -860,7 +895,7 @@ export default {
             let result = feature.content.getAttributeByOID(oid) || {};
             vm.featureproperties = result;
           } else {
-            m3d.queryAttributes(oid).then(function(result) {
+            m3d.queryAttributes(oid).then(function (result) {
               result = result || {};
               vm.featureproperties = result;
             });
@@ -871,7 +906,7 @@ export default {
           /* m3d.pickedOid = undefined; */
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>

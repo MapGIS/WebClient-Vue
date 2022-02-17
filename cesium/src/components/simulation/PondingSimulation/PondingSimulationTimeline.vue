@@ -30,7 +30,7 @@ export default {
             type: Number,
             default: 0,
         },
-        pond: {
+        isPlaying: {
             type: Boolean,
             default: false,
         },
@@ -61,7 +61,7 @@ export default {
             },
             immediate: true,
         },
-        pond: {
+        isPlaying: {
             handler: function (e) {
                 this.playing = e;
             },
@@ -86,7 +86,7 @@ export default {
 
             
             timer: undefined,
-            playing: this.pond,
+            playing: this.isPlaying,
             spd:'1x',
             intvl: '时',
             crtTime:undefined,
