@@ -18,7 +18,6 @@
           <span class="slideradd" @click.capture.stop="addSliderVal">+</span>
           <mapgis-ui-slider
               class="xbsj-slider"
-              :default-value="sliderDefaultVal"
               :tooltip-visible="false"
               :step="0.01"
               :min="minSpeed"
@@ -143,7 +142,7 @@ export default {
     speedValue:{
       handler(next){
         if (!this.suspendBtn){
-          if (next >= this.middleSpeed){
+          if (next >= 0){
             this.playBtn = true;
             this.backBtn = false;
             this.suspendBtn = false;
@@ -172,8 +171,6 @@ export default {
   },
   data() {
     return {
-      // 符号标记
-      isStartGrow: false,
       startTimeCopy: '',
       endTimeCopy: '',
       sliderValue: 0,
@@ -203,11 +200,9 @@ export default {
       placeholder1: '月',
       // 倍速播放
       growSpeed: '1x',
-      sliderDefaultVal: 26,
-      minSpeed:0,
-      maxSpeed:50,
-      middleSpeed:25,
-      speedValue: 26,
+      minSpeed:-25,
+      maxSpeed:25,
+      speedValue: 1,
       speedOptions: ['2.5x', '2x', '1.5x', '1.2x', '1x', '0.5x'],
       placeholder2: '1x',
       formatTypeCopy: 'month',
@@ -236,10 +231,9 @@ export default {
       if (this.Cesium.defined(vm.layerIndex)) {
         this.viewer.scene.layers.removeVectorLayerByID(vm.layerIndex);
       }
-      vm.isStartGrow = false;
       vm.sliderValue = 0;
       vm.growSpeed = '1x';
-      vm.speedValue = vm.middleSpeed + 1;
+      vm.speedValue = 1;
       vm.playBtn = true;
       vm.suspendBtn = false;
     },
@@ -329,7 +323,6 @@ export default {
     //开始加载
     startGrow() {
       let vm = this;
-      vm.isStartGrow = true;
       if (vm.layer && vm.startTimeCopy && vm.endTimeCopy) {
         vm.layer.cityGrowPlay();
       }
@@ -337,7 +330,6 @@ export default {
     //暂停生长
     stopGrow() {
       let vm = this;
-      vm.isStartGrow = false;
       if (vm.layer) {
         vm.layer.cityGrowStop();
       }
@@ -414,21 +406,20 @@ export default {
     recoverSetting() {
       this.clickBtn = true;
       this.growSpeed = '1x';
-      this.speedValue = this.middleSpeed + 1;
+      this.speedValue = 1;
     },
     backSetting() {
       this.backBtn = true;
       this.suspendBtn = false;
       this.playBtn = false;
-      this.growSpeed = -Math.abs(parseFloat(this.growSpeed)) +'x';
-      this.speedValue = this.middleSpeed + parseFloat(this.growSpeed);
+      this.speedValue = -this.speedValue;
+      this.growSpeed = this.speedValue + 'x';
     },
     suspendSetting() {
       const vm = this;
       this.suspendBtn = true;
       this.backBtn = false;
       this.playBtn = false;
-      vm.isStartGrow = false;
       if (vm.layer) {
         vm.layer.cityGrowStop();
       }
@@ -437,58 +428,28 @@ export default {
       this.playBtn = true;
       this.backBtn = false;
       this.suspendBtn = false;
-      this.growSpeed = Math.abs(parseFloat(this.growSpeed)) +'x';
-      this.speedValue = this.middleSpeed + parseFloat(this.growSpeed);
+      this.speedValue = Math.abs(this.speedValue);
+      this.growSpeed = this.speedValue + 'x';
     },
     onChange(value) {
-      const vm = this;
-      let speed;
-      vm.middleSpeed = (vm.maxSpeed - vm.minSpeed)/2;
       this.clickBtn = false;
-      switch (true) {
-        case value === vm.middleSpeed:
-          speed = 0 + 'x';
-          break;
-        case value > vm.middleSpeed:
-          speed = (value - vm.middleSpeed).toFixed(2) + 'x';
-          break;
-        case value < vm.middleSpeed:
-          speed = -(vm.middleSpeed - value).toFixed(2) + 'x';
-      }
-      this.growSpeed = speed;
+      this.growSpeed = value + 'x';
     },
     addSliderVal() {
-      const vm = this;
       this.clickBtn = false;
-      if (this.growSpeed !== (vm.middleSpeed +'x') && this.growSpeed !== '0x') {
-        this.growSpeed = parseFloat(this.growSpeed) + 1 + 'x';
-      } else if (this.growSpeed === '0x') {
-        this.growSpeed = '1x';
-      }
       this.speedValue++;
+      this.growSpeed = this.speedValue + 'x';
     },
     reduceSliderVal() {
-      const vm = this;
       this.clickBtn = false;
-      if (this.growSpeed !== (-vm.middleSpeed +'x') && this.growSpeed !== '0x') {
-        this.growSpeed = parseFloat(this.growSpeed) - 1 + 'x';
-      } else if (this.growSpeed === '0x') {
-        this.growSpeed = '-1x';
-      }
       this.speedValue--;
+      this.growSpeed = this.speedValue + 'x';
     }
   }
 }
 </script>
 
 <style scoped>
-/*.mapgis-city-grow {*/
-/*  position: absolute;*/
-/*  left: 10px;*/
-/*  bottom: 10px;*/
-/*  margin: 0px auto;*/
-/*}*/
-
 .mapgis-city-grow-toolbar > .anticon {
   font-size: 22px;
 }
