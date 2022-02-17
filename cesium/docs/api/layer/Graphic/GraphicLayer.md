@@ -40,13 +40,19 @@
 
 ## 事件
 
-### `@storyPreview`
+| 事件名称 | 参数                  | 默认值 | 描述                                     |
+| -------- | --------------------- | ------ | ---------------------------------------- |
+| save     | [saveData](#saveData) | {}     | 保存标绘图层事件，仅保存当前标绘图层数据 |
 
-### `@save`
-
-- **描述** 保存标绘数据
-- **Payload** `{ graphicsData }`
-- - `graphicsData` 标绘数据
+<span id="saveData">### `saveData（标绘图层保存数据）`</span>
+| 名称 | 类型 | 默认值 | 描述 |
+| ------------ | ------ | ------ | -------------------- |
+| name | String | 无 | 标绘图层名称 |
+| uuid | String | 无 | 标绘图层 id |
+| autoFlyTo | Boolean | true | 切换图层时，是否进跳转到图层范围 |
+| autoFlyToGraphic | Boolean | true | 点击标绘列表时，是否自动跳转到标绘对象上方 |
+| camera | Object | {} | 相机视角对象 |
+| dataSource | Array | [] | 当前标绘图层所包含的所有标绘对象的集合 |
 
 <span id="example">## 示例</span>
 
