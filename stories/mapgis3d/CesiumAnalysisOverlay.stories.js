@@ -1,5 +1,6 @@
 import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle } = Style;
+import Markdown from "../../cesium/docs/api/analysis/Overlay.md";
 
 export default {
   title: "三维/分析/叠加分析",
@@ -70,8 +71,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 叠加分析组件 = Template.bind({});
-叠加分析组件.args = {
+export const Overlay = Template.bind({});
+Overlay.args = {
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: "http://localhost:6163",
@@ -104,4 +105,11 @@ export const 叠加分析组件 = Template.bind({});
       },
     ]
   }
+};
+Overlay.parameters = {
+  docs: {
+      description: {
+          component: Markdown,
+      },
+  },
 };
