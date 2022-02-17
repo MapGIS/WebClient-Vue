@@ -181,20 +181,20 @@ export default {
 
       let promise = this.createCesiumObject();
       promise.then((find) => {
-        if (find && find.options) {
+        if (find && find.source) {
           let {source} = find;
           let m3d = source && source.length > 0 ? source[0] : undefined;
-          if (m3d.tree === undefined){
+          if (m3d.m3dtree === undefined){
             this.$message.warning("该m3d模型不能进行单体化建筑生长");
           }
-          m3d.treeOptions = { createType:'ModelLoaded' };
-          let tree = m3d ? m3d.tree : undefined;
+          m3d.m3dtreeOptions = { createType:'ModelLoaded' };
+          let tree = m3d ? m3d.m3dtree : undefined;
           vm.parseTree(tree);
           vm.$emit("loaded", {component: vm});
           let collection = new Cesium.PrimitiveCollection();
           vueCesium.BimManager.addSource(vueKey, innerVueIndex, m3d, {
             m3d: m3d,
-            tree: m3d.tree,
+            tree: tree,
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection),
           });
@@ -202,10 +202,6 @@ export default {
           this.hideRootNode();
           // 2.对获取的树数据中name:时间 进行升序排序
           this.sortDateTime();
-
-          // if (enablePopup) {
-          //   vm.$_bindPickFeature();
-          // }
         }
       });
       if (viewer.isDestroyed()) return;
@@ -272,7 +268,7 @@ export default {
         count: 0,
         scopedSlots: {icon: "icon", title: "title"},
       };
-      node.treeChildren.forEach((child) => {
+      node.m3dtreeChildren.forEach((child) => {
         let c = vm.loopTreeNode(child, key, cbnode);
         cbnode.children.push(c);
         cbnode.count += c.count;
