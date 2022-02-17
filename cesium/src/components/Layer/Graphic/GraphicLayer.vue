@@ -543,6 +543,8 @@ export default {
       }
     },
     $_hideAllGraphic() {
+      this.$refs.graphicLayer.$_stopEdit();
+      this.$refs.graphicLayer.$_stopDrawing();
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         let features = this.dataSourceCopy[i].dataSource.features;
         for (let j = 0; j < features.length; j++) {
@@ -591,6 +593,10 @@ export default {
 .mapgis-ui-graphic-layers-edit-title {
   height: 40px !important;
   width: 332px;
+}
+
+.mapgis-ui-graphic-layers-toll-bar {
+  float: left;
 }
 
 .mapgis-3d-graphic-layers-export {

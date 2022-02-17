@@ -1297,7 +1297,7 @@ export default {
           fields: Object.keys(properties),
           title: this.popup.properties.title,
           style: {
-            containerStyle: {width: "244px"}
+            containerStyle: {width: "360px"}
           }
         });
       this.enablePopup = true;
