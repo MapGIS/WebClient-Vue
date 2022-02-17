@@ -18,6 +18,10 @@ export default {
     modelScale: {
       type: Number,
       default: 1
+    },
+    hideVPInvisible: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -43,7 +47,7 @@ export default {
         // 视频已经被投放
         return scenePro;
       }
-      const { viewer, Cesium } = this;
+      const { viewer, Cesium, hideVPInvisible } = this;
       const { id, params } = video;
       const proType = this._getProType(video.params.videoSource.protocol);
       scenePro = new Cesium.SceneProjector(proType);
@@ -98,6 +102,7 @@ export default {
       scenePro.hintLineVisible = hintLineVisible;
       scenePro.horizontAngle = hFOV;
       scenePro.verticalAngle = vFOV;
+      scenePro.hideVPInvisible = hideVPInvisible;
       return scenePro;
     },
     /**

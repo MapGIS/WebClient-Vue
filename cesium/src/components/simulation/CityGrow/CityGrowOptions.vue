@@ -237,6 +237,7 @@ export default {
 
     onFieldChange(val, key) {
       let vm = this;
+      vm.disabled = false;
       vm.featureStyle[key] = val;
       if (key === 'endTimeField' && val !== '') {
         vm.getGrowTime();
@@ -370,7 +371,7 @@ export default {
                     vm.colorSettingTemp = vm.colorsCopy;
                   }
                 }
-                vm.initial = false
+                vm.initial = true
               },
             }
           }
@@ -383,6 +384,7 @@ export default {
         });
       }
     },
+
     formatDate(timestamp) {
       // 时间戳转时间 方法一：
       let time = new Date(timestamp * 1000);
@@ -407,9 +409,10 @@ export default {
     },
     colorChanged() {
       const vm = this;
-      vm.colorChangedTag = true;
       if (!vm.initial) {
         vm.disabled = false;
+        vm.colorChangedTag = true;
+        vm.initial = false;
       }
     },
     unmount() {

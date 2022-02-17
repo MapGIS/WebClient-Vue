@@ -32,6 +32,25 @@ export default {
       },
       control: "object",
     },
+    maxProjected: {
+      description: "最大投放数",
+      table: {
+        defaultValue: {
+          summary: `10`,
+        },
+      },
+      control: "number",
+    },
+    hideVPInvisible: {
+      description:
+        "当摄像头不在当前视图范围内，隐藏投影；参数设置后，对新投放或者重新投放的对象有效，对于已经投放的对象无效",
+      table: {
+        defaultValue: {
+          summary: `false`,
+        },
+      },
+      control: "boolean",
+    },
   },
 };
 
@@ -48,7 +67,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-video-manager :modelUrl="modelUrl" :modelOffset="modelOffset" :videoOverlayLayerList="videoOverlayLayerList">
+        <mapgis-3d-video-manager :modelUrl="modelUrl" :modelOffset="modelOffset" :maxProjected="maxProjected" :hideVPInvisible="hideVPInvisible" :videoOverlayLayerList="videoOverlayLayerList">
         </mapgis-3d-video-manager>
       </mapgis-ui-card>
       </mapgis-web-scene>
@@ -59,6 +78,8 @@ export const 投放管理 = Template.bind({});
 投放管理.args = {
   modelUrl: "./CesiumModels/Cesium_Camera.glb",
   modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
+  maxProjected: 10,
+  hideVPInvisible: false,
   videoOverlayLayerList: [
     {
       id: "123-345-567-789",
