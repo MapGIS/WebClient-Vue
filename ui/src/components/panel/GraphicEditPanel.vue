@@ -8,7 +8,7 @@
       @tabChange="key => onTabChange(key, 'noTitleKey')"
     >
       <!--标注列表-->
-      <div :style="{height: listHeight + 'px','overflow-y': dataSourceCopy.length > scrollNum ? 'scroll' : 'hidden'}" class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
+      <div :style="{height: listHeight + 'px','overflow-y': dataSourceCopy.length >= scrollNum ? 'scroll' : 'hidden'}" class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
         <div :key="index" v-for="(row, index) in dataSourceCopy">
           <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)"
                               @dblclick="$_dbclick($event, row)"
@@ -292,11 +292,13 @@
             <mapgis-ui-input-row-left
               v-if="value === 'title'"
               title="标题"
+              paddingRight="4px"
               v-model="attributeValueArray[index]"
             />
             <mapgis-ui-input-row-left
               v-else
               :title="value"
+              paddingRight="4px"
               v-model="attributeValueArray[index]"
             />
           </div>
@@ -479,7 +481,7 @@ export default {
       //列表高度
       listHeight: 200,
       //添加滚动条的数量
-      scrollNum: 6
+      scrollNum: 5
     }
   },
   mounted() {
@@ -956,7 +958,7 @@ export default {
 
 .mapgis-ui-graphic-edit-addAttribute-add {
   float: right;
-  margin-right: 14px;
-  margin-bottom: 10px;
+  margin-right: 7px;
+  margin-bottom: 7px;
 }
 </style>

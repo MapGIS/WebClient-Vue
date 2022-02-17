@@ -99,11 +99,6 @@ export default {
       type: Boolean,
       default: false
     },
-    //视角偏移高度
-    destinationHeight: {
-      type: Number,
-      default: 100
-    }
   },
   data() {
     return {
@@ -149,7 +144,15 @@ export default {
       groupNum: 0,
       enablePopup: false,
       popup: {},
-      graphicGroups: []
+      graphicGroups: [],
+      //视角偏移高度
+      destinationHeight: 100,
+      //点击标绘对象次数，1次为单击，2次为双击
+      clickTime: 0,
+      //点击间隔，小于这个数就弹出popup
+      clickInterval: 200,
+      //弹出popup的定时器
+      firstClickFlag: undefined
     };
   },
   watch: {
@@ -275,9 +278,9 @@ export default {
           graphic.attributes[key] = attributes[key];
         });
         this.enablePopup = false;
-        this.$nextTick(function () {
-          this.$_setPopUp(graphic, true);
-        });
+        // this.$nextTick(function () {
+        //   this.$_setPopUp(graphic, true);
+        // });
       }
     },
     $_editTitle(flag, title, id) {
@@ -971,11 +974,15 @@ export default {
       }
     },
     $_getCenter(json) {
-      let positions = [[]], center, polygonG;
+      let positions = [[]], center, polygonG, position, lla;
+      const {style} = json;
+      //extrudedHeight拉伸高度，offsetHeight离地高度，radiusX圆的半径
+      const {extrudedHeight, offsetHeight, radiusX} = style;
       switch (json.type) {
+        case "polyline":
         case "polygon":
-          for (let i = 0; i < json.positions.length / 3; i++) {
-            let lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(json.positions[i * 3], json.positions[i * 3 + 1], json.positions[i * 3 + 2]));
+          for (let i = 0; i < json.positions.length; i++) {
+            let lla = this.$_cartesian3ToLongLat(json.positions[i]);
             positions[0].push([lla.lng, lla.lat]);
           }
           positions[0].push(positions[0][0]);
@@ -985,13 +992,8 @@ export default {
         case "rectangle":
         case "box":
           let p1, p2;
-          if (json.type === "box") {
-            p1 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
-            p2 = new Cesium.Cartesian3(json.positions[3], json.positions[4], json.positions[5]);
-          } else {
-            p1 = json.positions[0];
-            p2 = json.positions[1];
-          }
+          p1 = json.positions[0];
+          p2 = json.positions[1];
           p1 = this.$_cartesian3ToLongLat(p1);
           p2 = this.$_cartesian3ToLongLat(p2);
           positions[0].push([p1.lng, p1.lat]);
@@ -1002,11 +1004,25 @@ export default {
           polygonG = polygon(positions);
           center = centerOfMass(polygonG);
           break;
+        case "cylinder":
+        case "circle":
+        case "ellipsoid":
+          //计算中心点
+          position = json.centerPosition;
+          lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
+          center = {
+            geometry: {
+              coordinates: [lla.lng, lla.lat]
+            }
+          }
+          break;
         case "model":
           let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
           center = this.$_cartesian3ToLongLat(Cartesian3);
           break;
       }
+      //加上拉伸高度、离地高度、半径
+      center.geometry.coordinates.push((extrudedHeight || 0) + (offsetHeight || 0) + (radiusX * 2 || 0));
       return center;
     },
     $_updateGraphicList(graphics) {
@@ -1202,57 +1218,83 @@ export default {
       //设置点击事件
       this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
+        let worldPosition = vm.viewer.scene.pickPosition(movement.position);
         if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
-          vm.$_setPopUp(pickedFeature);
-        }
-      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      //设置双击事件
-      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
-        let pickedFeature = vm.viewer.scene.pick(movement.position);
-        if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
-          if (pickedFeature.hasOwnProperty("id")) {
-            let graphic = vm.$_getGraphicByID(pickedFeature.id);
-            if (graphic) {
-              vm.$refs.editPanel.$_dbclick(undefined, vm.$_getJsonById(pickedFeature.id));
-            }
+          console.log("new date().getTime()", new Date().getTime())
+          vm.clickTime++;
+          //如果clickTime等于2，则表明在clickInterval毫秒内，点击了第二次，因此为双击事件，不弹框
+          if (vm.clickTime === 2) {
+            clearTimeout(vm.firstClickFlag);
+            //重置点击次数
+            vm.clickTime = 0;
+          } else if (vm.clickTime === 1) {
+            //单击标绘对象，在clickInterval毫秒后，弹框
+            vm.firstClickFlag = setTimeout(function () {
+              vm.$_setPopUp(pickedFeature, false, worldPosition);
+              //重置点击次数
+              vm.clickTime = 0;
+            }, vm.clickInterval);
           }
         }
-      }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      // //设置双击事件
+      // this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+      //   let pickedFeature = vm.viewer.scene.pick(movement.position);
+      //   if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
+      //     if (pickedFeature.hasOwnProperty("id")) {
+      //       let graphic = vm.$_getGraphicByID(pickedFeature.id);
+      //       if (graphic) {
+      //         vm.$refs.editPanel.$_dbclick(undefined, vm.$_getJsonById(pickedFeature.id));
+      //       }
+      //     }
+      //   }
+      // }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     },
-    $_setPopUp(graphic, isGraphic) {
+    $_setPopUp(graphic, isGraphic, worldPosition) {
       let center;
-      if (isGraphic) {
-        center = this.$_getCenter(graphic);
-      } else {
-        center = this.$_getCenter(graphic.primitive);
-      }
-      if (!center) {
-        return;
-      }
       let vm = this;
-      let coordinates = center.geometry.coordinates;
       let attributes;
       if (isGraphic) {
         attributes = graphic.attributes;
       } else {
         attributes = graphic.primitive.attributes;
       }
-      this.popup = {
-        lng: coordinates[0],
-        lat: coordinates[1],
-        alt: 1000,
-        properties: {}
-      };
+      //使用点击时的坐标
+      if(worldPosition){
+        let lla = this.$_cartesian3ToLongLat(worldPosition);
+        this.popup = {
+          lng: lla.lng,
+          lat: lla.lat,
+          alt: lla.alt,
+          properties: {}
+        };
+      }else {
+        if (isGraphic) {
+          center = this.$_getCenter(graphic);
+        } else {
+          center = this.$_getCenter(graphic.primitive);
+        }
+        if (!center) {
+          return;
+        }
+        let coordinates = center.geometry.coordinates;
+        //使用中心点坐标
+        this.popup = {
+          lng: coordinates[0],
+          lat: coordinates[1],
+          alt: coordinates[2],
+          properties: {}
+        };
+      }
       Object.keys(attributes).forEach(function (key) {
         vm.popup.properties[key] = attributes[key];
       })
+      let properties = JSON.parse(JSON.stringify(this.popup.properties));
+      delete properties.title;
       this.popup.container = getPopupHtml("underline",
-        {properties: this.popup.properties},
+        {properties: properties},
         {
-          fields: Object.keys(this.popup.properties),
-          alias: {
-            title: "标题"
-          },
+          fields: Object.keys(properties),
           title: this.popup.properties.title,
           style: {
             containerStyle: {width: "244px"}
