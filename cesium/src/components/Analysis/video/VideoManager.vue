@@ -133,6 +133,7 @@
               :settings="currentEditVideo"
               :modelUrl="modelUrl"
               :modelOffset="modelOffset"
+              :hideVPInvisible="hideVPInvisible"
               @update-settings="_updateSettings"
               @cancel="_cancelSetting"
             ></mapgis-3d-video-setting>

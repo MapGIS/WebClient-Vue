@@ -42,6 +42,14 @@
 - **描述:** 相机模型尺寸比例
 - **默认值:** 1
 
+### `hideVPInvisible`
+
+- **类型:** `Boolean`
+- **可选**
+- **侦听属性**
+- **描述:** 当摄像头不在当前视图范围内，隐藏投影
+- **默认值:** false
+
 ### `settings`
 
 - **类型:** `Object`
@@ -138,6 +146,7 @@ onChangeSetting(val, tag)
         :settings="settings"
         :modelUrl="modelUrl"
         :modelOffset="modelOffset"
+        :hideVPInvisible="hideVPInvisible"
       ></mapgis-3d-video-setting>
     </mapgis-ui-card>
   </mapgis-web-scene>
@@ -153,6 +162,7 @@ export default {
       isM3DLoaded: false,
       modelUrl: "./CesiumModels/Cesium_Camera.glb",
       modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
+      hideVPInvisible: false,
       settings: {
         id: "987-765-543-124",
         name: "testVideo3",

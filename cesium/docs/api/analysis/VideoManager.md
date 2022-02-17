@@ -42,6 +42,22 @@
 - **描述:** 相机模型尺寸比例
 - **默认值:** 1
 
+### `maxProjected`
+
+- **类型:** `Number`
+- **可选**
+- **侦听属性**
+- **描述:** 最大投放数
+- **默认值:** 10
+
+### `hideVPInvisible`
+
+- **类型:** `Boolean`
+- **可选**
+- **侦听属性**
+- **描述:** 当摄像头不在当前视图范围内，隐藏投放
+- **默认值:** false
+
 ### `videoOverlayLayerList`
 
 - **类型:** `Array`
@@ -241,6 +257,8 @@
         :videoOverlayLayerList="videoOverlayLayerList"
         :modelUrl="modelUrl"
         :modelOffset="modelOffset"
+        :maxProjected="maxProjected"
+        :hideVPInvisible="hideVPInvisible"
       >
       </mapgis-3d-video-manager>
     </mapgis-ui-card>
@@ -256,6 +274,8 @@ export default {
       maximumScreenSpaceError: 8,
       modelUrl: "./CesiumModels/Cesium_Camera.glb",
       modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
+      maxProjected: 10,
+      hideVPInvisible: false,
       videoOverlayLayerList: [
         {
           id: "123-345-567-789",
