@@ -33,7 +33,8 @@ export default {
       control: "object",
     },
     hideVPInvisible: {
-      description: "当摄像头不在当前视图范围内，隐藏投放",
+      description:
+        "当摄像头不在当前视图范围内，隐藏投影；参数设置后，对新投放或者重新投放的对象有效，对于已经投放的对象无效",
       table: {
         defaultValue: {
           summary: `false`,
