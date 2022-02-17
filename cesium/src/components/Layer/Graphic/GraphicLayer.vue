@@ -195,7 +195,7 @@ export default {
     }
   },
   mounted() {
-    this.$_init(true);
+    this.$_init(true, true);
   },
   methods: {
     $_addFeature(e) {
@@ -210,7 +210,7 @@ export default {
       this.showEditTitle = false;
       this.dataSourceCopy[this.currenSelectIndex - 1].name = this.currenSelectLayer;
     },
-    $_clickTool(e) {
+    $_clickTool(e, noMessage) {
       switch (e) {
         //新增标绘图层
         case "add":
@@ -228,7 +228,9 @@ export default {
           };
           this.currenSelectIndex++;
           this.dataSourceCopy.push(data);
-          this.$message.success(title + "添加成功！");
+          if(!noMessage){
+            this.$message.success(title + "添加成功！");
+          }
           //如果上一个图层有数据，则隐藏
           if (this.currentLayer.length > 0) {
             this.$refs.graphicLayer.$_hideAllGraphics();
@@ -523,7 +525,7 @@ export default {
       }
     },
     //初始化数据
-    $_init(addLayer) {
+    $_init(addLayer, noMessage) {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //设置当前图层
@@ -536,7 +538,7 @@ export default {
         this.currenSelectLayer = "请添加图层";
         this.currentLayer = [];
         if (addLayer) {
-          this.$_clickTool("add");
+          this.$_clickTool("add", noMessage);
         }
       }
     },
