@@ -24,7 +24,7 @@ export default {
       type: Object,
       default() {
         return {
-          lineColor: "black"
+          lineColor: "#1890ff"
         };
       }
     }
@@ -43,7 +43,7 @@ export default {
   watch: {
     styles: {
       handler: function() {
-        this.initStyles();
+        this.initStyles(this.styles);
       },
       deep: true
     }
@@ -51,7 +51,7 @@ export default {
   mounted() {
     let vm = this;
     this.$_init(function() {
-      vm.initStyles();
+      vm.initStyles(vm.styles);
       vm.initial = true;
       vm.$emit("load", vm);
     });
@@ -71,10 +71,9 @@ export default {
     //     this.isShow = true;
     //   }
     // },
-    initStyles() {
+    initStyles(style) {
       this.measureStyles.lineColor = Cesium.Color.fromCssColorString(
-        this.styles.lineColor,
-        this.measureStyles.lineColor
+        style.lineColor
       );
     },
     measureCallBack(result) {
