@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="mapgis-ui-graphic-icons-panel" :style="containerStyle">
-      <div class="mapgis-ui-graphic-icons-head">
-        <mapgis-ui-dropdown>
+      <div class="mapgis-ui-graphic-icons-head" id="mapgis-ui-graphic-icons-head">
+        <mapgis-ui-dropdown
+          :getPopupContainer="$_popupContainer"
+        >
           <div class="mapgis-ui-graphic-dropdown" @click="e => e.preventDefault()">
             {{ drawType }}
             <mapgis-ui-iconfont type="mapgis-down"/>
@@ -164,6 +166,9 @@ export default {
     this.$_init();
   },
   methods: {
+    $_popupContainer(){
+      return document.querySelector('#mapgis-ui-graphic-icons-head');
+    },
     $_init() {
       let vm = this;
       Object.keys(this.models).forEach(function (key) {
