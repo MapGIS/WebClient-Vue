@@ -14,23 +14,23 @@
 
 ## 参数详情
 
-<span id="dataSource">### `dataSource（标绘图层数据源）`</span>
+### <span id="dataSource">`dataSource（标绘图层数据源）`</span>
 
 | 名称       | 类型                            | 默认值 | 描述         |
 | ---------- | ------------------------------- | ------ | ------------ |
 | dataSource | [[GraphicLayer]](#GraphicLayer) | []     | 标绘图层数组 |
 
-<span id="GraphicLayer">### `GeaphicLayer（标绘图层）`</span>
+### <span id="GraphicLayer">`GeaphicLayer（标绘图层）`</span>
 
-| 名称             | 类型                                                                                                                                                                               | 默认值        | 描述                                                   |
-| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------ |
-| dataSource       | [[Graphic](司马云地址)](http://develop.smaryun.com/docs/other/mapgis-cesium/Graphic.html)，[[Graphic](内网地址)](http://192.168.88.204:8888/Demo/Build/Documentation/Graphic.html) | []            | 标绘对象数组                                           |
-| models           | [models](#modelObj)                                                                                                                                                                | {}            | 模型信息对象，添加模型时使用                           |
-| autoFlyToGraphic | Boolean                                                                                                                                                                            | true          | 双击标绘列表，编辑标绘对象时，是否自动飞到该标绘对象处 |
-| vueKey           | String                                                                                                                                                                             | default       | vueKey，唯一标识一个 Cesium 球体，分屏时使用           |
-| vueIndex         | String                                                                                                                                                                             | Math.random() | vueIndex，唯一标识一个标绘图层                         |
+| 名称             | 类型                                                                                                                                                                           | 默认值        | 描述                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------- | ------------------------------------------------------ |
+| dataSource       | [Graphic(司马云地址)](http://develop.smaryun.com/docs/other/mapgis-cesium/Graphic.html)，[Graphic(内网地址)](http://192.168.88.204:8888/Demo/Build/Documentation/Graphic.html) | []            | 标绘对象数组                                           |
+| models           | [models](#modelObj)                                                                                                                                                            | {}            | 模型信息对象，添加模型时使用                           |
+| autoFlyToGraphic | Boolean                                                                                                                                                                        | true          | 双击标绘列表，编辑标绘对象时，是否自动飞到该标绘对象处 |
+| vueKey           | String                                                                                                                                                                         | default       | vueKey，唯一标识一个 Cesium 球体，分屏时使用           |
+| vueIndex         | String                                                                                                                                                                         | Math.random() | vueIndex，唯一标识一个标绘图层                         |
 
-<span id="modelObj">### `models（模型信息）`</span>
+### <span id="modelObj">`models（模型信息）`</span>
 
 | 名称         | 类型   | 默认值 | 描述                 |
 | ------------ | ------ | ------ | -------------------- |
@@ -44,17 +44,18 @@
 | -------- | --------------------- | ------ | ---------------------------------------- |
 | save     | [saveData](#saveData) | {}     | 保存标绘图层事件，仅保存当前标绘图层数据 |
 
-<span id="saveData">### `saveData（标绘图层保存数据）`</span>
-| 名称 | 类型 | 默认值 | 描述 |
-| ------------ | ------ | ------ | -------------------- |
-| name | String | 无 | 标绘图层名称 |
-| uuid | String | 无 | 标绘图层 id |
-| autoFlyTo | Boolean | true | 切换图层时，是否进跳转到图层范围 |
-| autoFlyToGraphic | Boolean | true | 点击标绘列表时，是否自动跳转到标绘对象上方 |
-| camera | Object | {} | 相机视角对象 |
-| dataSource | Array | [] | 当前标绘图层所包含的所有标绘对象的集合 |
+### <span id="saveData">`saveData（标绘图层保存数据）`</span>
 
-<span id="example">## 示例</span>
+| 名称             | 类型    | 默认值 | 描述                                       |
+| ---------------- | ------- | ------ | ------------------------------------------ |
+| name             | String  | 无     | 标绘图层名称                               |
+| uuid             | String  | 无     | 标绘图层 id                                |
+| autoFlyTo        | Boolean | true   | 切换图层时，是否进跳转到图层范围           |
+| autoFlyToGraphic | Boolean | true   | 点击标绘列表时，是否自动跳转到标绘对象上方 |
+| camera           | Object  | {}     | 相机视角对象                               |
+| dataSource       | Array   | []     | 当前标绘图层所包含的所有标绘对象的集合     |
+
+## <span id="example">示例</span>
 
 ```vue
 <template>
