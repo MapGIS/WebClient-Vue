@@ -8,7 +8,8 @@
       @tabChange="key => onTabChange(key, 'noTitleKey')"
     >
       <!--标注列表-->
-      <div :style="{height: listHeight + 'px','overflow-y': dataSourceCopy.length >= scrollNum ? 'scroll' : 'hidden'}" class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
+      <div :style="{height: listHeight + 'px','overflow-y': dataSourceCopy.length >= scrollNum ? 'scroll' : 'hidden'}"
+           class="mapgis-ui-graphic-edit-list" v-if="noTitleKey === 'list'">
         <div :key="index" v-for="(row, index) in dataSourceCopy">
           <mapgis-ui-icon-row @clickTool="$_clickTool($event, row)"
                               @dblclick="$_dbclick($event, row)"
@@ -486,7 +487,7 @@ export default {
   },
   mounted() {
     let canvas = document.getElementsByClassName("mapboxgl-canvas");
-    if(canvas && canvas.length > 0){
+    if (canvas && canvas.length > 0) {
       this.listHeight = canvas[0].offsetHeight - 370 > 200 ? canvas[0].offsetHeight - 370 > 200 : 200;
       this.scrollNum = Math.ceil(this.listHeight / 40);
     }
@@ -542,7 +543,7 @@ export default {
         this.isEdit = true;
       }
     },
-    $_dbclick(event, json) {
+    $_dbclick(event, json, noEmit) {
       if (json.type === "group") {
         return;
       }
@@ -560,7 +561,9 @@ export default {
       this.$nextTick(function () {
         this.isUpdatePanel = true;
       });
-      this.$emit("dblclick", json);
+      if (!noEmit) {
+        this.$emit("dblclick", json);
+      }
     },
     $_open(open, row) {
       if (open) {
@@ -750,7 +753,7 @@ export default {
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType || "Color";
-          if(__flashStyle) {
+          if (__flashStyle) {
             editPanelValues.alphaSpace = __flashStyle.alphaSpace;
             editPanelValues.flashTime = __flashStyle.flashTime;
             editPanelValues.flashAlpha = __flashStyle.flashAlpha;
@@ -773,7 +776,7 @@ export default {
           if (title) {
             editPanelValues.title = title;
           }
-          if( materialType === "text"){
+          if (materialType === "text") {
             const {backgroundColor, text, font, fillColor} = material;
             editPanelValues.rtBackgroundColor = "rgb(" + backgroundColor[0] * 255 + "," + backgroundColor[1] * 255 + "," + backgroundColor[2] * 255 + ")";
             editPanelValues.rtBackgroundOpacity = backgroundColor[3] * 100;
@@ -785,7 +788,7 @@ export default {
             editPanelValues.opacity = fillColor[3] * 100;
           }
           if (materialType === "Image") {
-            const { repeat } = material;
+            const {repeat} = material;
             editPanelValues.image = material.image;
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;

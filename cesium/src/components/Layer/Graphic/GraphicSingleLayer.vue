@@ -1237,18 +1237,18 @@ export default {
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-      // //设置双击事件
-      // this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
-      //   let pickedFeature = vm.viewer.scene.pick(movement.position);
-      //   if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
-      //     if (pickedFeature.hasOwnProperty("id")) {
-      //       let graphic = vm.$_getGraphicByID(pickedFeature.id);
-      //       if (graphic) {
-      //         vm.$refs.editPanel.$_dbclick(undefined, vm.$_getJsonById(pickedFeature.id));
-      //       }
-      //     }
-      //   }
-      // }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+      //设置双击事件
+      this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {
+        let pickedFeature = vm.viewer.scene.pick(movement.position);
+        if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
+          if (pickedFeature.hasOwnProperty("id")) {
+            let graphic = vm.$_getGraphicByID(pickedFeature.id);
+            if (graphic) {
+              vm.$refs.editPanel.$_dbclick(undefined, vm.$_getJsonById(pickedFeature.id), true);
+            }
+          }
+        }
+      }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
     },
     $_setPopUp(graphic, isGraphic, worldPosition) {
       let center;
