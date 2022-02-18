@@ -69,7 +69,7 @@ const Template = (args, { argTypes }) => ({
   template: `
     <mapgis-web-scene style="height: 95vh">
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-buffer-analysis v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
+        <mapgis-3d-analysis-buffer v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
       </mapgis-ui-card>
       <mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
       <mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>

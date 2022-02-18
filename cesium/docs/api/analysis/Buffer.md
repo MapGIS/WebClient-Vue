@@ -1,4 +1,4 @@
-> mapgis-3d-buffer-analysis
+> mapgis-3d-analysis-buffer
 
 ## 属性
 
@@ -65,7 +65,7 @@
       plugin-path="statics/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
     >
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-buffer-analysis 
+        <mapgis-3d-analysis-buffer 
           :baseUrl='baseBufferUrl'
           :srcType='srcType'
           :srcLayer='srcLayer'

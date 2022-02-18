@@ -64,7 +64,7 @@ const Template = (args, { argTypes }) => ({
   template: `
     <mapgis-web-scene style="height: 95vh">
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-overlay-analysis v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
+        <mapgis-3d-analysis-overlay v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
       </mapgis-ui-card>
       <mapgis-3d-igs-dynamic-layer v-if="finishedResult && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
     </mapgis-web-scene>

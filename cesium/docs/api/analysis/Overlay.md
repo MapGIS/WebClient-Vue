@@ -1,4 +1,4 @@
-> mapgis-3d-overlay-analysis
+> mapgis-3d-analysis-overlay
 
 ## 属性
 
@@ -68,7 +68,7 @@
       plugin-path="statics/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"
     >
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-overlay-analysis 
+        <mapgis-3d-analysis-overlay 
           :baseUrl='baseOverlayUrl'
           :srcType='srcType'
           :srcALayer='srcALayer'

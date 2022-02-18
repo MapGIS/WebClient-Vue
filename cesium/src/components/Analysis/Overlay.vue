@@ -50,7 +50,7 @@ import { MRCS, MRFWS } from '@mapgis/webclient-es6-service'
 const { OverlayByLayer, OverlayByPolygon } = MRFWS
 
 export default {
-	name: "mapgis-3d-overlay-analysis",
+	name: "mapgis-3d-analysis-overlay",
 	props: {
 		layout: {
 			type: String,

@@ -119,7 +119,7 @@ import { Style } from "@mapgis/webclient-es6-service";
 const { FillStyle } = Style;
 
 export default {
-	name: "mapgis-3d-buffer-analysis",
+	name: "mapgis-3d-analysis-buffer",
 	inject: ["Cesium", "vueCesium", "viewer"],
 	props: {
 		/**
