@@ -1,5 +1,5 @@
 <template>
-  <span/>
+  <span />
 </template>
 
 <script>
@@ -24,8 +24,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   watch: {
     beforeLayers: {
@@ -42,23 +41,26 @@ export default {
     },
     vueKey() {
       this.initCompare();
-    }
+    },
   },
   mounted() {
-    this.initCompare();
+    this.mount();
+  },
+  beforeDestroy() {
+    this.umount();
   },
   methods: {
-    initCompare() {
+    mount() {
       let vm = this;
       window.vueCesium.getViewerByInterval(function (viewer) {
         let slider = document.getElementsByClassName("slider");
-        if(slider.length === 0){
+        if (slider.length === 0) {
           slider = document.createElement("div");
           slider.className = "slider";
           let swiper = document.createElement("div");
           swiper.className = "compare-swiper";
           slider.appendChild(swiper);
-        }else {
+        } else {
           slider = slider[0];
         }
         let container = document.getElementById(viewer.container.id).parentNode;
@@ -69,24 +71,22 @@ export default {
           for (let i = 1; i < layers.length; i++) {
             layers[i].show = true;
             if (vm.beforeLayers.includes(layers[i].id)) {
-              layers[i].splitDirection =
-                  Cesium.ImagerySplitDirection.LEFT;
+              layers[i].splitDirection = Cesium.ImagerySplitDirection.LEFT;
             } else if (vm.afterLayers.includes(layers[i].id)) {
-              layers[i].splitDirection =
-                  Cesium.ImagerySplitDirection.RIGHT;
+              layers[i].splitDirection = Cesium.ImagerySplitDirection.RIGHT;
             } else {
               layers[i].show = false;
             }
           }
         } else {
           layers[layers.length - 2].splitDirection =
-              Cesium.ImagerySplitDirection.LEFT;
+            Cesium.ImagerySplitDirection.LEFT;
           layers[layers.length - 1].splitDirection =
-              Cesium.ImagerySplitDirection.RIGHT;
+            Cesium.ImagerySplitDirection.RIGHT;
         }
 
         viewer.scene.imagerySplitPosition =
-            slider.offsetLeft / slider.parentElement.offsetWidth;
+          slider.offsetLeft / slider.parentElement.offsetWidth;
 
         let handler = new Cesium.ScreenSpaceEventHandler(slider);
         let moveActive = false;
@@ -97,8 +97,8 @@ export default {
           }
           let relativeOffset = movement.endPosition.x;
           let splitPosition =
-              (slider.offsetLeft + relativeOffset) /
-              slider.parentElement.offsetWidth;
+            (slider.offsetLeft + relativeOffset) /
+            slider.parentElement.offsetWidth;
           slider.style.left = 100.0 * splitPosition + "%";
           viewer.scene.imagerySplitPosition = splitPosition;
         }
@@ -120,32 +120,29 @@ export default {
           moveActive = false;
         }, Cesium.ScreenSpaceEventType.PINCH_END);
         //鼠标移动事件
-        handler.setInputAction(
-            move,
-            Cesium.ScreenSpaceEventType.MOUSE_MOVE
-        );
+        handler.setInputAction(move, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
         //滑动事件
-        handler.setInputAction(
-            move,
-            Cesium.ScreenSpaceEventType.PINCH_MOVE
-        );
-      },vm.vueKey);
+        handler.setInputAction(move, Cesium.ScreenSpaceEventType.PINCH_MOVE);
+      }, vm.vueKey);
     },
-  },
-  destroyed() {
-    let viewer = window.vueCesium.getViewer(this.vueKey);
-    if(viewer){
-      let layers = viewer.imageryLayers._layers;
-      layers.forEach((layer) => {
-        layer.show = true;
-        layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
-      });
-      let slider = document.getElementsByClassName("slider");
-      if(slider.length > 0){
-        let container =  document.getElementById(viewer.container.id).parentNode;
-        container.removeChild(slider[0]);
+    umount() {
+      this.$emit('unload');
+      let viewer = window.vueCesium.getViewer(this.vueKey);
+      if (viewer) {
+        let layers = viewer.imageryLayers._layers;
+        layers.forEach((layer) => {
+          layer.show = true;
+          layer.splitDirection = Cesium.ImagerySplitDirection.NONE;
+        });
+        let slider = document.getElementsByClassName("slider");
+        if (slider.length > 0) {
+          let container = document.getElementById(
+            viewer.container.id
+          ).parentNode;
+          container.removeChild(slider[0]);
+        }
       }
-    }
+    },
   },
 };
 </script>
@@ -165,7 +162,7 @@ export default {
   cursor: ew-resize;
 }
 
-.cesium-map-wrapper .compare-swiper{
+.cesium-map-wrapper .compare-swiper {
   background-color: #3887be;
   -webkit-box-shadow: inset 0 0 0 2px #fff;
   box-shadow: inset 0 0 0 2px #fff;
