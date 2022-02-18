@@ -139,7 +139,6 @@ export default {
       drawMode: "",
       drawDistance: 0,
       modelUrl: undefined,
-      lastGraphicId: undefined,
       lastGraphicColor: undefined,
       groupNum: 0,
       enablePopup: false,
@@ -495,6 +494,11 @@ export default {
           editPanelValues.title = title;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.materialType = materialType;
+          editPanelValues.rtFontSize = 30;
+          editPanelValues.rtFontFamily = "微软雅黑";
+          editPanelValues.rectangleText = "无标题";
+          editPanelValues.rtBackgroundColor = "#FFFFFF";
+          editPanelValues.rtBackgroundOpacity = 0;
           if (title) {
             editPanelValues.title = title;
           }
@@ -862,16 +866,6 @@ export default {
       //获取设置面板显示参数
       this.editPanelValues = this.$_getEditPanelValuesFromJSON(json);
       this.editPanelValues.showOutline = false;
-
-      function setColor(Graphic, color) {
-        if (Graphic.style.hasOwnProperty("materialType") && Graphic.style.materialType === "Image") {
-
-        } else {
-          Graphic.style.color = color;
-        }
-      }
-
-      this.lastGraphicId = json.id;
       let graphic = this.$_getGraphicByID(json.id);
       let graphicJSON = this.$_getJsonById(json.id);
       this.$refs.editPanel.$_setEditPanelValues(this.$_getEditPanelValuesFromJSON(graphicJSON));
@@ -903,7 +897,6 @@ export default {
       } else {
         this.lastGraphicColor = graphic.style.color;
       }
-      // setColor(graphic, Cesium.Color.BLUEVIOLET.withAlpha(0.5));
       let positions = [[]], center, destination, polygonG, position, lla;
       switch (json.type) {
         case "label":

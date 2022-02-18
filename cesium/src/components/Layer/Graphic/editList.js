@@ -548,6 +548,12 @@ let editList = {
       value: "无标题"
     },
     {
+      type: "MapgisUiInput",
+      title: "文本",
+      key: "rectangleText",
+      value: "无标题"
+    },
+    {
       type: "MapgisUiSelect",
       title: "填充类型",
       key: "materialType",
@@ -608,12 +614,6 @@ let editList = {
       title: "离地高度",
       key: "offsetHeight",
       value: 0
-    },
-    {
-      type: "MapgisUiInput",
-      title: "文本",
-      key: "rectangleText",
-      value: "无标题"
     },
     {
       type: "MapgisUiSelect",
