@@ -785,8 +785,10 @@ export default {
           }
           //更新样式
           let options = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
-          const {showBackground} = Graphic.style;
-          options.style.showBackground = showBackground;
+          if (Graphic.type === "label") {
+            const {showBackground} = Graphic.style;
+            options.style.showBackground = showBackground;
+          }
           this.$_updateStyleByStyle(editPanelValues.id, options.style);
           this.$nextTick(function () {
             this.$refs.editPanel.isUpdatePanel = true;
