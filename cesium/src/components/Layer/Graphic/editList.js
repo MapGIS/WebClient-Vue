@@ -70,7 +70,7 @@ let editList = {
     },
     {
       type: "MapgisUiShowOutline",
-      title: "是否显示边线",
+      title: "边线设置",
       key: "showOutline",
       value: false
     },
@@ -94,9 +94,9 @@ let editList = {
     },
     {
       type: "MapgisUiShowBackground",
-      title: "是否显示背景",
+      title: "背景设置",
       key: "showBackground",
-      value: false
+      value: true
     },
     {
       type: "MapgisUiColorPicker",
@@ -108,7 +108,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "背景明度",
       key: "backgroundOpacity",
-      value: 20
+      value: 0
     },
     {
       type: "MapgisUiInputNumber",
@@ -195,7 +195,7 @@ let editList = {
     },
     {
       type: "MapgisUiShowOutline",
-      title: "是否显示边线",
+      title: "边线设置",
       key: "showOutline",
       value: false
     },

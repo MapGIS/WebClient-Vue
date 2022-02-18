@@ -227,14 +227,6 @@ export default {
         graphics[i].show = false;
       }
     },
-    $_showBackground(e) {
-      this.editPanelValues.showBackground = e;
-      this.$_update();
-    },
-    $_showOutLine(e) {
-      this.editPanelValues.showOutline = e;
-      // this.$_update();
-    },
     $_update() {
       //先存起来title
       let title = this.editPanelValues.title;
@@ -784,9 +776,6 @@ export default {
           //结束绘制
           //先存起来title
           let title = editPanelValues.title;
-          //更新样式
-          let options = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
-          this.$_updateStyleByStyle(editPanelValues.id, options.style);
           //更新title
           this.$refs.editPanel.isUpdatePanel = false;
           this.$_updateSourceTitleById(editPanelValues.id, title);
@@ -794,6 +783,11 @@ export default {
           if (Graphic) {
             Graphic.attributes.title = title;
           }
+          //更新样式
+          let options = this.$_getDrawOptions(editPanelValues, this.currentEditType, Cesium);
+          const {showBackground} = Graphic.style;
+          options.style.showBackground = showBackground;
+          this.$_updateStyleByStyle(editPanelValues.id, options.style);
           this.$nextTick(function () {
             this.$refs.editPanel.isUpdatePanel = true;
           });
@@ -860,12 +854,10 @@ export default {
         }
       }
 
-      if (this.lastGraphicId) {
-        let lastGraphic = this.$_getGraphicByID(this.lastGraphicId);
-        setColor(lastGraphic, this.lastGraphicColor);
-      }
       this.lastGraphicId = json.id;
       let graphic = this.$_getGraphicByID(json.id);
+      let graphicJSON = this.$_getJsonById(json.id);
+      this.$refs.editPanel.$_setEditPanelValues(this.$_getEditPanelValuesFromJSON(graphicJSON));
       //定义视角高度
       const {style} = graphic;
       const {offsetHeight, extrudedHeight, radiusX, width, radius} = style;
@@ -894,7 +886,7 @@ export default {
       } else {
         this.lastGraphicColor = graphic.style.color;
       }
-      setColor(graphic, Cesium.Color.BLUEVIOLET.withAlpha(0.5));
+      // setColor(graphic, Cesium.Color.BLUEVIOLET.withAlpha(0.5));
       let positions = [[]], center, destination, polygonG, position, lla;
       switch (json.type) {
         case "label":
@@ -1262,7 +1254,7 @@ export default {
         attributes = graphic.primitive.attributes;
       }
       //使用点击时的坐标
-      if(worldPosition){
+      if (worldPosition) {
         let lla = this.$_cartesian3ToLongLat(worldPosition);
         this.popup = {
           lng: lla.lng,
@@ -1270,7 +1262,7 @@ export default {
           alt: lla.alt,
           properties: {}
         };
-      }else {
+      } else {
         if (isGraphic) {
           center = this.$_getCenter(graphic);
         } else {
