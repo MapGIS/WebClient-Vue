@@ -278,7 +278,7 @@ export default {
       return this.m3dIsReady();
     },
     /**
-     * 判断传入的m3d图层是否加载完毕
+     * 判断传入的m3d图层是否被加载，不等于子图层数据全部加载完毕
      */
     m3dIsReady() {
       const { vueCesium, vueKey, model, innerVueIndex } = this;
