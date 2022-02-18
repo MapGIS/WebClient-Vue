@@ -702,15 +702,16 @@ export default {
               };
               break;
             case "text":
+              //这里先赋值material，再赋值materialType，不然cesium那一层会获取到空的material，因而报错
               style = {
                 color: Cesium.Color.WHITE,
-                materialType: 'text',
                 material: {
-                  text: editPanelValues.rectangleText,
+                  text: editPanelValues.rectangleText || "无标题",
                   fillColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
-                  font: editPanelValues.rtFontSize + "px " + editPanelValues.rtFontFamily,
-                  backgroundColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.rtBackgroundColor), editPanelValues.rtBackgroundOpacity / 100)
-                }
+                  font: (editPanelValues.rtFontSize || 30) + "px " + (editPanelValues.rtFontFamily || "微软雅黑"),
+                  backgroundColor: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.rtBackgroundColor || "#FFFFFF"), (editPanelValues.rtBackgroundOpacity || 0) / 100)
+                },
+                materialType: 'text'
               };
               break;
           }
