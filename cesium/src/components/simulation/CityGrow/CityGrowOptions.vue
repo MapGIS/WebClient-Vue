@@ -48,6 +48,7 @@
         style="margin-top: 7px"
         v-if='colorsCopy.length > 0'
         @change="colorChanged"
+        @input="colorInput"
     >
     </mapgis-ui-colors-setting>
     <mapgis-ui-setting-footer>
@@ -56,7 +57,6 @@
       </mapgis-ui-button
       >
       <mapgis-ui-button @click="remove" :disabled="disabled">取消</mapgis-ui-button>
-      <!--      <mapgis-ui-button @click="deleteCityGrow">消除城市生长</mapgis-ui-button>-->
     </mapgis-ui-setting-footer>
   </div>
 </template>
@@ -326,6 +326,7 @@ export default {
       if (vm.colorChangedTag) {
         vm.colorsCopy = vm.colorSettingTemp;
         vm.colorChangedTag = false;
+        vm.disabled = true
       }
       for (let i = 0; i < vm.layerIndexArray.length; i++) {
         if (this.Cesium.defined(vm.layerIndexArray[i])) {
@@ -408,12 +409,11 @@ export default {
       vm.disabled = false;
     },
     colorChanged() {
+    },
+    colorInput(){
       const vm = this;
-      if (!vm.initial) {
-        vm.disabled = false;
-        vm.colorChangedTag = true;
-        vm.initial = false;
-      }
+      vm.disabled = false;
+      vm.colorChangedTag = true;
     },
     unmount() {
       this.baseUrl = '';

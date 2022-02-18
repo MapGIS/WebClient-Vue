@@ -63,7 +63,7 @@
           />
         </div>
 
-        <div class="timeline-current-time">{{ currentTime }}</div>  
+        <div class="timeline-current-time" :style="{ width: `${curTimeWidth}px` }">{{ currentTime }}</div>
 
         <div class="timeline-select">
           <mapgis-ui-select-panel
@@ -106,6 +106,10 @@ export default {
     currentTime: {
       type: String,
       default: '2022-02'
+    },
+    curTimeWidth:{
+      type: Number,
+      default: null
     },
     /** 滑动条的值 */
     value: {
@@ -231,6 +235,26 @@ export default {
       },
       immediate:true
     },
+    resetActive:{
+      handler(next) {
+        this.resetBtn = next;
+      },
+    },
+    backActive:{
+      handler(next) {
+        this.backBtn = next;
+      },
+    },
+    forwardActive:{
+      handler(next) {
+        this.forwardBtn = next;
+      },
+    },
+    pauseActive:{
+      handler(next) {
+        this.pauseBtn = next;
+      },
+    }
   },
   data() {
     return {
@@ -263,6 +287,16 @@ export default {
       this.$emit('accelerate');
     },
     speedChange(e) {
+      this.resetBtn = false;
+      if (this.enableBackforward){
+        if (e > 0){
+           this.forward();
+        }else if (e === 0){
+          this.pause();
+        } else {
+          this.backward();
+        }
+      }
       this.$emit("speedChange", e);
     },
     backward() {
@@ -428,7 +462,8 @@ export default {
   display: inline-block; 
   line-height: 32px; 
   margin-left: 20px;
-  font-size: 19px
+  font-size: 19px;
+  text-align:center;
 }
 
 .timeline-select {

@@ -1,69 +1,33 @@
 <template>
-  <div>
-    <mapgis-ui-card
-        size="small"
-        hoverable
-        :style="{ width: `${width}px` }"
-        class="mapgis-city-grow-animationBox">
-      <div style="width: 32px;height: 32px;margin: 0 0 0 10px">
-        <mapgis-ui-iconfont
-            type="mapgis-crosshair"
-            :class="['recoverBtn',{'recoverBtnActive':clickBtn === true}]"
-            @click.capture.stop="recoverSetting"/>
-      </div>
-      <div class="animationContainer">
-        <div style="position: relative;width: 152px;margin-left: 20px;">
-          <span class="sliderline"></span>
-          <span class="sliderreduce" @click.capture.stop="reduceSliderVal">-</span>
-          <span class="slideradd" @click.capture.stop="addSliderVal">+</span>
-          <mapgis-ui-slider
-              class="xbsj-slider"
-              :tooltip-visible="false"
-              :step="0.01"
-              :min="minSpeed"
-              :max="maxSpeed"
-              v-model="speedValue"
-              @change="onChange"
-          />
-        </div>
-        <span style="display: inline-block; width: 64px; line-height: 32px; margin-left: 6px;">{{ growSpeed }}</span>
-        <div>
-          <mapgis-ui-iconfont type="mapgis-arrow-left-filling"
-                              :class="['backbtn',{'backbtnactive':backBtn === true}]"
-                              @click.capture.stop="backSetting"/>
-        </div>
-        <div>
-          <mapgis-ui-iconfont type="mapgis-pause"
-                              :class="['suspendbtn',{'suspendbtnactive':suspendBtn === true}]"
-                              @click.capture.stop="suspendSetting"/>
-        </div>
-        <div>
-          <mapgis-ui-iconfont type="mapgis-arrow-right-filling"
-                              :class="['playbtn',{'playbtnactive': playBtn === true}]"
-                              @click.capture.stop="playSetting"/>
-        </div>
-        <span style="display: inline-block; line-height: 32px; margin-left: 20px;font-size: 19px">{{ formatDate(sliderValue) }}</span>
-        <div style="position: absolute;right: 10px">
-          <span style="display: inline-block; line-height: 32px; padding: 0 7px 0 15px">播放间隔:</span>
-          <mapgis-ui-select v-model="growInterval" size="default" style="height: 30px"
-                            @change="val => onFieldChange(val)">
-            <mapgis-ui-select-option v-for="item in dataFields" :key="item">
-              {{ item }}
-            </mapgis-ui-select-option>
-          </mapgis-ui-select>
-        </div>
-      </div>
-      <div  :style="{ width: `${width-20}px` }">
-        <mapgis-ui-slider
-            class="mapgis-city-grow-slider"
-            :tip-formatter="formatter"
-            :min="minSlider"
-            :max="maxSlider"
-            v-model="sliderValue"
-            @change="onSliderChange"></mapgis-ui-slider>
-      </div>
-    </mapgis-ui-card>
-  </div>
+      <mapgis-ui-timeline-panel
+          v-model="sliderValue"
+          :curTimeWidth="curTimeWidth"
+          :max="maxSlider"
+          :min="minSlider"
+          :speed="speedValue"
+          :speedStep="0.01"
+          :minSpeed="minSpeed"
+          :maxSpeed="maxSpeed"
+          :interval="growInterval"
+          :intervalOptions="dataFields"
+          :tipFormatter="formatter"
+          :currentTime="String(formatDate(sliderValue))"
+          :enableBackforward="true"
+          :disabled="true"
+          :resetActive="clickBtn"
+          :forwardActive="playBtn"
+          :backActive="backBtn"
+          :pauseActive="suspendBtn"
+          @backward="backSetting"
+          @pause="suspendSetting"
+          @forward="playSetting"
+          @intervalChange="onFieldChange"
+          @resetSpeed="recoverSetting"
+          @speedChange="onChange"
+          @decelerate="reduceSliderVal"
+          @accelerate="addSliderVal"
+          @change="onSliderChange"
+      ></mapgis-ui-timeline-panel>
 </template>
 
 <script>
@@ -74,10 +38,6 @@ export default {
   name: "mapgis-3d-city-grow",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
-    width: {
-      type: Number,
-      default: 500
-    },
     baseUrl: {
       type: [String, Object],
       default: null
@@ -130,28 +90,25 @@ export default {
         this.formatTypeCopy = next;
       }
     },
-    growSpeed:{
-      handler(next){
-        let vm = this;
-        let speed = parseFloat(next);
-        if (vm.layer) {
-          vm.layer.setCityGrowPlayRate(speed);
-        }
-      }
-    },
     speedValue:{
       handler(next){
-        if (!this.suspendBtn){
-          if (next >= 0){
+        let vm = this;
+        if (vm.layer) {
+          vm.layer.setCityGrowPlayRate(next);
+        }
+          if (next > 0){
             this.playBtn = true;
             this.backBtn = false;
             this.suspendBtn = false;
-          } else {
+          } else if (next<0){
             this.playBtn = false;
             this.backBtn = true;
             this.suspendBtn = false;
+          } else {
+            this.playBtn = false;
+            this.backBtn = false;
+            this.suspendBtn = true;
           }
-        }
       }
     },
     playBtn:{
@@ -161,16 +118,10 @@ export default {
         }
       }
     },
-    backBtn:{
-      handler(next){
-        if (next){
-          this.startGrow()
-        }
-      }
-    }
   },
   data() {
     return {
+      curTimeWidth:98,
       startTimeCopy: '',
       endTimeCopy: '',
       sliderValue: 0,
@@ -192,24 +143,17 @@ export default {
         colors: ["#fff0f6", "#ff85c0", "#eb2f96"]
       },
       info: "注意：颜色设置只能在城市生长未开启时设置，生长开启后设置颜色无效。",
-      showColorSetting: false,
-      tooltipVisible: true,
       // 播放间隔
       growInterval: "月",
       dataFields: ['年', '月', '日'],
-      placeholder1: '月',
-      // 倍速播放
-      growSpeed: '1x',
-      minSpeed:-25,
-      maxSpeed:25,
+      minSpeed: -25,
+      maxSpeed: 25,
       speedValue: 1,
-      speedOptions: ['2.5x', '2x', '1.5x', '1.2x', '1x', '0.5x'],
-      placeholder2: '1x',
       formatTypeCopy: 'month',
       clickBtn: false,
       backBtn: false,
-      suspendBtn:false,
-      playBtn:true
+      suspendBtn: false,
+      playBtn: true
     }
   },
   created() {
@@ -232,92 +176,83 @@ export default {
         this.viewer.scene.layers.removeVectorLayerByID(vm.layerIndex);
       }
       vm.sliderValue = 0;
-      vm.growSpeed = '1x';
       vm.speedValue = 1;
       vm.playBtn = true;
       vm.suspendBtn = false;
     },
     initCityGrowObject() {
       let vm = this;
-      // if (vm.sliderValue === 0) {
-      //   vm.initial = true
-      // } else {
-      //   vm.initial = false
-      // }
-      // if (vm.initial) {
-        let url = vm.baseUrl;
-        let colors = [];
-        let times = [];
-        let options = {};
-        //始终显示时间
-        // vm.tooltipVisible = true;
-        vm.featureStyleCopy = Object.assign(vm.featureStyleCopy, vm.featureStyle);
+      let url = vm.baseUrl;
+      let colors = [];
+      let times = [];
+      let options = {};
 
-        let cityGrowOptions = {
-          heightField: vm.featureStyleCopy.heightField,
-          heightRatio: vm.featureStyleCopy.heightRatio,
-          startTimeField: vm.featureStyleCopy.startTimeField,
-          endTimeField: vm.featureStyleCopy.endTimeField,
-          startTime: vm.featureStyleCopy.startTime,
-          endTime: vm.featureStyleCopy.endTime,
-          buildingsLimit: vm.featureStyleCopy.buildingsLimit,
-          updateInterval: vm.featureStyleCopy.updateInterval,
-          playTime: vm.featureStyleCopy.growTime,
-          colorSampling: false,
-          updateHeight: vm.featureStyleCopy.isGrowHeight,
-          replay: true,
-          displayWithTile: vm.featureStyleCopy.displayWithTile,
-          onReady: function (timeControl) {
-            let startTime = timeControl.startTime;
-            let endTime = timeControl.endTime;
-            vm.startTimeCopy = vm.formatDate(startTime);
-            vm.minSlider = startTime;
-            vm.endTimeCopy = vm.formatDate(endTime);
-            vm.maxSlider = endTime;
-            vm.startGrow();
-            // if (!vm.featureStyleCopy.startTime || !vm.featureStyleCopy.endTime){
-            //   vm.startGrow();
-            // }
-          },
-          onUpdate: function (currentPlayTime, currentTimeStamp) {
-            vm.timeSliderPlay(currentPlayTime, currentTimeStamp);
-          }
-        };
-        if (vm.featureStyleCopy.colors) {
-          for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
-            let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
-            colors.push(color);
-          }
-          cityGrowOptions.colors = colors
+      vm.featureStyleCopy = Object.assign(vm.featureStyleCopy, vm.featureStyle);
+      let cityGrowOptions = {
+        heightField: vm.featureStyleCopy.heightField,
+        heightRatio: vm.featureStyleCopy.heightRatio,
+        startTimeField: vm.featureStyleCopy.startTimeField,
+        endTimeField: vm.featureStyleCopy.endTimeField,
+        startTime: vm.featureStyleCopy.startTime,
+        endTime: vm.featureStyleCopy.endTime,
+        buildingsLimit: vm.featureStyleCopy.buildingsLimit,
+        updateInterval: vm.featureStyleCopy.updateInterval,
+        playTime: vm.featureStyleCopy.growTime,
+        colorSampling: false,
+        updateHeight: vm.featureStyleCopy.isGrowHeight,
+        replay: true,
+        displayWithTile: vm.featureStyleCopy.displayWithTile,
+        onReady: function (timeControl) {
+          let startTime = timeControl.startTime;
+          let endTime = timeControl.endTime;
+          vm.startTimeCopy = vm.formatDate(startTime);
+          vm.minSlider = startTime;
+          vm.endTimeCopy = vm.formatDate(endTime);
+          vm.maxSlider = endTime;
+          vm.startGrow();
+          // if (!vm.featureStyleCopy.startTime || !vm.featureStyleCopy.endTime){
+          //   vm.startGrow();
+          // }
+        },
+        onUpdate: function (currentPlayTime, currentTimeStamp) {
+          vm.timeSliderPlay(currentPlayTime, currentTimeStamp);
         }
-        if (vm.featureStyleCopy.times) {
-          for (let j = 0; j < vm.featureStyleCopy.times.length; j++) {
-            let timestamp = new Date(vm.featureStyleCopy.times[j], 1, 1).valueOf() / 1000;
-            times.push(timestamp);
-          }
-          cityGrowOptions.times = times
+      };
+      if (vm.featureStyleCopy.colors) {
+        for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
+          let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
+          colors.push(color);
         }
+        cityGrowOptions.colors = colors
+      }
+      if (vm.featureStyleCopy.times) {
+        for (let j = 0; j < vm.featureStyleCopy.times.length; j++) {
+          let timestamp = new Date(vm.featureStyleCopy.times[j], 1, 1).valueOf() / 1000;
+          times.push(timestamp);
+        }
+        cityGrowOptions.times = times
+      }
 
-        if (vm.featureStyleCopy.displayWithTile) {
-          options.tileFeaturesCount = vm.tileFeaturesCount;
-        } else {
-          cityGrowOptions.buildingsLimit = vm.featureStyleCopy.buildingsLimit;
-        }
-        let style = {
-          type: 'cityGrow',
-          styleOptions: cityGrowOptions
-        };
-        options = {autoReset: vm.autoReset, style: style};
+      if (vm.featureStyleCopy.displayWithTile) {
+        options.tileFeaturesCount = vm.tileFeaturesCount;
+      } else {
+        cityGrowOptions.buildingsLimit = vm.featureStyleCopy.buildingsLimit;
+      }
+      let style = {
+        type: 'cityGrow',
+        styleOptions: cityGrowOptions
+      };
+      options = {autoReset: vm.autoReset, style: style};
 
-        vm.viewer.scene.layers.appendVectorLayer(url, {
-          ...options,
-          getDocLayerIndexes: function (indexs) {
-            vm.layerIndex = indexs[0];
-            vm.layer = vm.viewer.scene.layers.getLayer(vm.layerIndex);
-            vm.$emit("CityGrow", vm.layer);
-            vm.startGrow();
-          }
-        });
+      vm.viewer.scene.layers.appendVectorLayer(url, {
+        ...options,
+        getDocLayerIndexes: function (indexs) {
+          vm.layerIndex = indexs[0];
+          vm.layer = vm.viewer.scene.layers.getLayer(vm.layerIndex);
+          vm.$emit("CityGrow", vm.layer);
+          vm.startGrow();
+        }
+      });
       // }
     },
     //开始加载
@@ -375,6 +310,9 @@ export default {
     },
     onFieldChange(val) {
       let vm = this
+      this.playBtn = true;
+      this.backBtn = false;
+      this.suspendBtn = false;
       let startDate = new Date(vm.minSlider * 1000);
       let endDate = new Date(vm.maxSlider * 1000);
       let years = (endDate.getFullYear() - startDate.getFullYear());
@@ -404,189 +342,34 @@ export default {
       }
     },
     recoverSetting() {
-      this.clickBtn = true;
-      this.growSpeed = '1x';
       this.speedValue = 1;
     },
     backSetting() {
-      this.backBtn = true;
-      this.suspendBtn = false;
-      this.playBtn = false;
+      this.startGrow();
       this.speedValue = -this.speedValue;
-      this.growSpeed = this.speedValue + 'x';
     },
     suspendSetting() {
       const vm = this;
-      this.suspendBtn = true;
-      this.backBtn = false;
-      this.playBtn = false;
       if (vm.layer) {
         vm.layer.cityGrowStop();
       }
     },
     playSetting() {
-      this.playBtn = true;
-      this.backBtn = false;
-      this.suspendBtn = false;
+      this.startGrow();
       this.speedValue = Math.abs(this.speedValue);
-      this.growSpeed = this.speedValue + 'x';
     },
     onChange(value) {
-      this.clickBtn = false;
-      this.growSpeed = value + 'x';
+      this.speedValue = value;
     },
     addSliderVal() {
-      this.clickBtn = false;
       this.speedValue++;
-      this.growSpeed = this.speedValue + 'x';
     },
     reduceSliderVal() {
-      this.clickBtn = false;
       this.speedValue--;
-      this.growSpeed = this.speedValue + 'x';
     }
   }
 }
 </script>
 
 <style scoped>
-.mapgis-city-grow-toolbar > .anticon {
-  font-size: 22px;
-}
-
-.mapgis-ui-card-small > .mapgis-ui-card-body {
-  padding: 6px 12px;
-}
-
-.mapgis-city-grow-slider {
-  width: 100%;
-}
-
-::v-deep .mapgis-ui-select-panel {
-  padding: 0px !important;
-}
-
-
-.mapgis-city-grow-animationBox {
-  position: absolute;
-  height: 62px;
-  bottom: 10px;
-  left: 10px;
-  display: flex;
-  padding: 0 !important;
-}
-
-::v-deep .mapgis-ui-card-small > .mapgis-ui-card-body {
-  padding: 0 5px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.recoverBtn {
-  font-size: 32px;
-  border: none
-}
-
-.recoverBtnActive {
-  color: #0081e2;
-}
-
-.animationContainer {
-  display: flex;
-  /*width: 676px;*/
-  height: 30px;
-}
-
-.sliderline {
-  position: absolute;
-  left: 50%;
-  top: 6px;
-  display: inline-block;
-  width: 1px;
-  height: 18px;
-  background-color: hsl(0deg 17% 20% / 79%);
-  z-index: 100;
-  cursor: pointer;
-}
-
-.sliderreduce {
-  left: 10px;
-  position: absolute;
-  top: 0;
-  font-size: 17px;
-  color: hsl(0deg 17% 20% / 79%);
-  z-index: 100;
-  user-select: none;
-  cursor: pointer;
-}
-
-.slideradd {
-  right: 10px;
-  line-height: 26px;
-  position: absolute;
-  top: 0;
-  font-size: 17px;
-  color: hsl(0deg 17% 20% / 79%);
-  z-index: 100;
-  user-select: none;
-  cursor: pointer;
-}
-
-.xbsj-slider {
-  line-height: normal;
-}
-
-.backbtn, .playbtn, .suspendbtn {
-  font-size: 26px;
-  margin-top: 3px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.suspendbtn {
-  margin-left: 35px;
-}
-
-.playbtn {
-  margin-left: 35px;
-}
-
-.backbtnactive, .playbtnactive, .suspendbtnactive {
-  background-color: #33333347 !important;
-  color: #0081e2;
-}
-
-
-::v-deep .xbsj-slider >.mapgis-ui-select-selection--single {
-  height: 30px;
-}
-
-::v-deep .mapgis-ui-slider {
-  margin: 4px 6px 4px;
-  padding: unset;
-}
-
-::v-deep .xbsj-slider >.mapgis-ui-slider-handle {
-  border: unset;
-  border-radius: 0;
-  width: 6px;
-  height: 22px;
-  background: url("./slider.png");
-  background-size: contain;
-  outline: 0;
-  margin-top: 0px;
-}
-
-::v-deep .xbsj-slider >.mapgis-ui-slider-rail {
-  height: 22px;
-}
-
-::v-deep .xbsj-slider >.mapgis-ui-slider-track {
-  height: 22px;
-  background-color: unset;
-}
-
-::v-deep .mapgis-ui-slider:hover .mapgis-ui-slider-track{
-  background-color: unset;
-}
 </style>
