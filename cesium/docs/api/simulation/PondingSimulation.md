@@ -63,15 +63,22 @@
 
 - **类型:** `Number`
 - **可选**
-- **默认值:** `500`
+- **默认值:** `560`
 - **描述:** 积水仿真时间轴组件的宽度，单位为 px。
 
-### `sliderStyle`
+### `resetSpeedVal`
 
-- **类型:** `Object`
+- **类型:** `Number`
 - **可选**
-- **默认值:** `{ marginLeft:'90px', width:'240px' }`
-- **描述:** 积水仿真时间轴组件滑动条的样式。
+- **默认值:** `1`
+- **描述:** 积水仿真时间轴组件点击重置按钮后的倍速值。
+
+### `speedStep`
+
+- **类型:** `Number`
+- **可选**
+- **默认值:** `1`
+- **描述:** 积水仿真时间轴组件倍速的步长值。
 
 ## 事件
 
@@ -126,7 +133,7 @@
         }
       "
       @play="addSimulation"
-      style="position: absolute;bottom: 30px; right: 300px;"
+      style="position: absolute;bottom: 30px; right: 50%;margin-right:-280px;"
     />
   </mapgis-web-scene>
 </template>

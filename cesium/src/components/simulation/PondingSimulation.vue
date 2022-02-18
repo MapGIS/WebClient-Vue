@@ -743,6 +743,7 @@ export default {
                 vm.addrain();
                 vm.pond = true;
                 vm.sliderValue = 0;
+                clearInterval(vm.timer);
 
                 //console.log('pondingTime',vm.pondingTime)
 
