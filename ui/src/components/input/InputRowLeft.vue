@@ -79,11 +79,16 @@ export default {
   },
   methods: {
     $_change(e) {
-      if (typeof e === "number") {
-        this.$emit("change", e);
+      let value;
+      if(!e){
+        value = 0;
+        this.valueCopy = 0;
+      }else if (typeof e === "number") {
+        value = e;
       } else {
-        this.$emit("change", e.target.value);
+        value = e.target.value;
       }
+      this.$emit("change", value);
     },
     $_finish() {
       this.$emit("finish");
