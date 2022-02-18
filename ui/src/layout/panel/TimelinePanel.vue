@@ -1,109 +1,95 @@
 <template>
-  <div>
     <mapgis-ui-card
         size="small"
         hoverable
         :style="{ width: `${width}px` }"
         class="mapgis-ui-timeline-panel"
     >
-      <div class="timeline-current-time">{{ currentTime }}</div>  
+      <div class="animationContainer">
+
+        <mapgis-ui-iconfont
+            :class="['reset-btn',{'reset-btn-active' : resetBtn === true}]"
+            type="mapgis-crosshair"
+            @click.capture.stop="resetSpeed"
+        />
+
+        <div class="speed-slider-toolbar">
+          <span class="center-line"></span>
+          <span class="minus speed-change-btn" @click.capture.stop="decelerate">-</span>
+          <span class="plus speed-change-btn" @click.capture.stop="accelerate">+</span>
+          <mapgis-ui-slider
+              class="speed-slider"
+              :tooltip-visible="false"
+              :step="speedStep"
+              :min="minSpeed"
+              :max="maxSpeed"
+              v-model="speedCopy"
+              @change="speedChange"
+          />
+        </div>
+
+        <div class="timeline-current-speed">{{ speedCopy }}x</div>  
+
+        <div v-if="enableBackforward">
+          <mapgis-ui-iconfont
+            :class="['play-btn', {'btn-active' : backBtn === true}]"
+            type="mapgis-arrow-left-filling"
+            @click.capture.stop="backward"
+          />
+          <mapgis-ui-iconfont 
+            :class="['play-btn', {'btn-active' : pauseBtn === true}]"
+            type="mapgis-pause"
+            @click.capture.stop="pause"
+          />
+          <mapgis-ui-iconfont 
+            :class="['play-btn', {'btn-active' : forwardBtn === true}]"
+            type="mapgis-arrow-right-filling"
+            @click.capture.stop="forward"
+          />
+        </div>
+        
+        <div v-else>
+          <mapgis-ui-iconfont
+              v-if="!isPlayingCopy"
+              type="mapgis-play-circle-fill"
+              class="play-btn"
+              @click.capture.stop="startPlay"
+          />
+          <mapgis-ui-iconfont
+              v-else
+              type="mapgis-zanting"
+              :class="['play-btn', {'disabled' : disabled === true}]"
+              @click.capture.stop="stopPlay"
+          />
+        </div>
+
+        <div class="timeline-current-time">{{ currentTime }}</div>  
+
+        <div class="timeline-select">
+          <mapgis-ui-select-panel
+              label="播放间隔"
+              v-model="intervalCopy"
+              :selectOptions="intervalOptions"
+              :placeholder="intervalPlaceholder"
+              :wrapperCol="10"
+              @change="intervalChange">
+          </mapgis-ui-select-panel>
+        </div>
+
+      </div>
+
       <mapgis-ui-slider
-          class="timeline-slider"
-          :style="sliderStyle"
-          :tip-formatter="tipFormatter"
-          :min="min"
-          :max="max"
-          :marks="marks"
-          :step="step"
-          v-model="sliderValueCopy"
-          @change="sliderValueChange"
+        class="timeline-slider"
+        :tip-formatter="tipFormatter"
+        :min="min"
+        :max="max"
+        :marks="marks"
+        :step="step"
+        v-model="valueCopy"
+        @change="valueChange"
       />
-      <div class="timeline-select">
-        <mapgis-ui-select-panel
-            label="播放间隔"
-            v-model="intervalCopy"
-            :selectOptions="intervalOptions"
-            :placeholder="intervalPlaceholder"
-            :wrapperCol="10"
-            @change="intervalChange">
-        </mapgis-ui-select-panel>
-        <mapgis-ui-select-panel
-            label="倍速播放"
-            v-model="speedCopy"
-            :selectOptions="speedOptions"
-            :placeholder="speedPlaceholder"
-            :wrapperCol="10"
-            @change="speedChange">
-        </mapgis-ui-select-panel>
-      </div>
-      <div class="timeline-toolbar">
-        <mapgis-ui-iconfont
-            v-if="!isPlayingCopy"
-            type="mapgis-play-circle-fill"
-            class="timeline-toolbar-main"
-            @click.capture.stop="startPlay"
-        />
-        <mapgis-ui-iconfont
-            v-else
-            type="mapgis-zanting"
-            :class="['timeline-toolbar-main', {disabled}]"
-            @click.capture.stop="stopPlay"
-        />
-      </div>
-      
-      <!-- <mapgis-ui-row>
-          <mapgis-ui-col :span="5">
-            <div class="timeline-current-time">{{ currentTime }}</div>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="12">
-            <mapgis-ui-slider
-                class="timeline-slider"
-                :style="sliderStyle"
-                :tip-formatter="tipFormatter"
-                :min="0"
-                :max="playTime"
-                v-model="sliderValueCopy"
-            />
-            
-            <div class="timeline-toolbar">
-              <mapgis-ui-iconfont
-                  v-if="!isPlaying"
-                  type="mapgis-play-circle-fill"
-                  class="timeline-toolbar-main"
-                  @click.capture.stop="startPlay"
-              />
-              <mapgis-ui-iconfont
-                  v-else
-                  type="mapgis-zanting"
-                  class="timeline-toolbar-main"
-                  @click.capture.stop="stopPlay"
-              />
-            </div>
-          </mapgis-ui-col>
-          <mapgis-ui-col :span="7">
-            <div class="timeline-select">
-              <mapgis-ui-select-panel
-                  label="播放间隔"
-                  v-model="interval"
-                  :selectOptions="intervalOptions"
-                  :placeholder="intervalPlaceholder"
-                  :wrapperCol="10"
-                  @change="intervalChange">
-              </mapgis-ui-select-panel>
-              <mapgis-ui-select-panel
-                  label="倍速播放"
-                  v-model="speedCopy"
-                  :selectOptions="speedOptions"
-                  :placeholder="speedPlaceholder"
-                  :wrapperCol="10"
-                  @change="speedChange">
-              </mapgis-ui-select-panel>
-            </div>
-          </mapgis-ui-col>
-      </mapgis-ui-row> -->
 
     </mapgis-ui-card>
-  </div>
 </template>
 
 <script>
@@ -115,19 +101,14 @@ export default {
     /** 时间轴的宽度 */
     width: {
       type: Number,
-      default: 500
+      default: null
     },
     currentTime: {
       type: String,
       default: '2022-02'
     },
-    /** 滑动条样式 */
-    sliderStyle: {
-      type: Object,
-      default: null
-    },
     /** 滑动条的值 */
-    sliderValue: {
+    value: {
       type: Number,
       default: 0
     },
@@ -172,21 +153,45 @@ export default {
           return ['年', '月', '日', '时', '分', '秒']
       }
     },
-    /** 选择的倍速大小 */
+    /** 倍速大小 */
     speed: {
-      type: String,
-      default: '1x'
+      type: Number,
+      default: 1
     },
-    speedPlaceholder: {
-      type: String,
-      default: '1x'
+    /** 倍速改变步长值 */
+    speedStep: {
+      type: Number,
+      default: 1
     },
-    /** 倍速选项 */
-    speedOptions:{
-      type: Array,
-      default: ()=>{
-          return ['5x','3x', '2x', '1.5x', '1x', '0.5x']
-      }
+    /** 倍速最小值 */
+    minSpeed: {
+      type: Number,
+      default: 0
+    },
+    /** 倍速最大值 */
+    maxSpeed: {
+      type: Number,
+      default: 50
+    },
+    resetActive:{
+      type:Boolean,
+      default:false
+    },
+    enableBackforward: {
+      type:Boolean,
+      default:true
+    },
+    backActive:{
+      type:Boolean,
+      default:false
+    },
+    pauseActive:{
+      type:Boolean,
+      default:false
+    },
+    forwardActive:{
+      type:Boolean,
+      default:false
     },
     /** 是否禁用暂停选项 */
     disabled:{
@@ -196,13 +201,13 @@ export default {
 
   },
   model:{
-    prop: 'sliderValue',
+    prop: 'value',
     event: 'change'
   },
   watch: {
-    sliderValue: {
+    value: {
       handler(next) {
-        this.sliderValueCopy = next
+        this.valueCopy = next
       },
       deep: true,
       immediate: true
@@ -229,57 +234,68 @@ export default {
   },
   data() {
     return {
-        sliderValueCopy: this.sliderValue,
+        valueCopy: this.value,
         speedCopy: this.speed,
         intervalCopy: this.interval,
 
         isPlayingCopy: this.isPlaying,
-        // timer: undefined,
+
+        resetBtn: this.resetActive,
+        backBtn: this.backActive,
+        pauseBtn: this.pauseActive,
+        forwardBtn: this.forwardActive,
     }
   },
   created() {
     moment.locale();
   },
   methods: {
-    sliderValueChange(e) {
-      this.$emit("change", e);
+    resetSpeed() {
+      this.resetBtn = true;
+      this.$emit('resetSpeed');
+    },
+    decelerate() {
+      this.resetBtn = false;
+      this.$emit('decelerate');
+    },
+    accelerate() {
+      this.resetBtn = false;
+      this.$emit('accelerate');
+    },
+    speedChange(e) {
+      this.$emit("speedChange", e);
+    },
+    backward() {
+      this.backBtn = true;
+      this.pauseBtn = false;
+      this.forwardBtn = false;
+      this.$emit("backward");
+    },
+    pause() {
+      this.pauseBtn = true;
+      this.backBtn = false;
+      this.forwardBtn = false;
+      this.$emit("pause");
+    },
+    forward() {
+      this.forwardBtn = true;
+      this.backBtn = false;
+      this.pauseBtn = false;
+      this.$emit("forward");
+    },
+    startPlay(){
+      this.isPlayingCopy = true;
+      this.$emit('startPlay')
+    },
+    stopPlay(){
+      this.isPlayingCopy = false;
+      this.$emit('stopPlay')
     },
     intervalChange(e) {
       this.$emit("intervalChange", e);
     },
-    speedChange(e) {      
-      this.$emit("speedChange", e);
-    },
-    startPlay(){
-      const vm = this;
-      this.isPlayingCopy = true;
-      
-      // if(vm.sliderValueCopy >= vm.playTime){
-      //     vm.sliderValueCopy = 0
-      // }
-
-      // this.timer = window.setInterval(function(){
-      //     if(vm.sliderValueCopy >= vm.playTime){
-      //         if(vm.loopPlay){
-      //           vm.sliderValueCopy = 0;
-      //         }else{
-      //           vm.isPlaying = false;
-      //           window.clearInterval(vm.timer);
-                
-      //         }
-      //     }else{
-      //       vm.sliderValueCopy += 1 * parseFloat(vm.speedCopy);
-      //     }
-
-      // },1000)
-
-      this.$emit('startPlay')
-    },
-
-    stopPlay(){
-      // window.clearInterval(this.timer);
-      this.isPlayingCopy = false;
-      this.$emit('stopPlay')
+    valueChange(e) {
+      this.$emit("change", e);
     }
   }
 }
@@ -288,84 +304,151 @@ export default {
 <style scoped>
 .mapgis-ui-timeline-panel {
   position: absolute;
-  margin: 0px auto;
-}
-
-.timeline-toolbar {
+  height: 62px;
   display: flex;
-  width: 70px;
-  margin: 0px auto;
+  padding: 0 !important;
 }
 
-.timeline-toolbar-main:hover {
-  color: #49A8FF;
+::v-deep .mapgis-ui-card-small > .mapgis-ui-card-body {
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.timeline-toolbar-main {
-  color: #1890ff;
+.animationContainer {
+  display: flex;
+  /*width: 676px;*/
+  height: 32px;
 }
 
-.timeline-toolbar > .anticon {
-  font-size: 22px;
+.reset-btn {
+  font-size: 32px;
+  border: none
 }
 
-.mapgis-ui-card-small > .mapgis-ui-card-body {
-  padding: 6px 12px;
+.reset-btn-active {
+  color: #0081e2;
 }
 
-.timeline-starttime {
+.speed-slider-toolbar{
+  position: relative;
+  width: 152px;
+  margin-left: 20px;
+}
+
+.center-line {
   position: absolute;
-  left: 100px;
-  font-size: 12px;
+  left: 50%;
+  top: 6px;
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background-color: hsl(0deg 17% 20% / 79%);
+  z-index: 100;
+  cursor: pointer;
 }
 
-.timeline-endtime {
+.speed-change-btn {
   position: absolute;
-  right: 212px;
-  bottom: 14px;
-  font-size: 12px;
+  top: 0;
+  font-size: 17px;
+  color: hsl(0deg 17% 20% / 79%);
+  z-index: 100;
+  user-select: none;
+  cursor: pointer;
 }
 
-.timeline-setting {
-  position: absolute;
-  font-size: 18px;
-  top: 4px;
-  right: 4px;
+.minus {
+  left: 10px;
+
 }
 
-.mapgis-ui-popover {
-  background: transparent;
+.plus {
+  right: 10px;
 }
 
-.mapgis-ui-popconfirm-style {
-  display: inline;
+.speed-slider {
+  line-height: normal;
 }
 
-.timeline-slider {
-  width: 240px;
-  margin-left: 90px;
+::v-deep .speed-slider >.mapgis-ui-select-selection--single {
+  height: 30px;
+}
+
+::v-deep .mapgis-ui-slider {
+  margin: 4px 6px 4px;
+  padding: unset;
+}
+
+::v-deep .speed-slider >.mapgis-ui-slider-handle {
+  border: unset;
+  border-radius: 0;
+  width: 6px;
+  height: 22px;
+  background: url("./slider.png");
+  background-size: contain;
+  outline: 0;
+  margin-top: 0px;
+}
+
+::v-deep .speed-slider >.mapgis-ui-slider-rail {
+  height: 22px;
+}
+
+::v-deep .speed-slider >.mapgis-ui-slider-track {
+  height: 22px;
+  background-color: unset;
+}
+
+::v-deep .mapgis-ui-slider:hover .mapgis-ui-slider-track{
+  background-color: unset;
+}
+
+.timeline-current-speed{
+  display: inline-block; 
+  /* width: 64px;  */
+  line-height: 32px; 
+  margin-left: 6px;
+}
+
+.play-btn {
+  font-size: 26px;
+  margin-top: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 35px;
+}
+
+.btn-active {
+  background-color: #33333347 !important;
+  color: #0081e2;
 }
 
 .timeline-current-time {
-  position: absolute;
-  top: 15px;
-  left: 11px;
-  font-size: 22px;
+  display: inline-block; 
+  line-height: 32px; 
+  margin-left: 20px;
+  font-size: 19px
 }
 
 .timeline-select {
-  position: absolute;
-  width: 186px;
-  top: 2px;
-  right: -39px;
-  font-size: 14px;
+  display: inline-block;
+  width: 140px;
+  overflow: hidden;
+  margin-left: 20px;
 }
 
 ::v-deep .mapgis-ui-select-panel {
-  padding: 2px;
+  padding: 0px;
+  width: 186px;
 }
 
 .disabled{
   cursor: not-allowed;
 }
+
+.timeline-slider {
+  width: 100%;
+}
+
 </style>
