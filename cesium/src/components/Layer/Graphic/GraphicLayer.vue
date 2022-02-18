@@ -192,10 +192,11 @@ export default {
         height: "32px",
         lineHeight: "36px",
       },
+      addLayer: true
     }
   },
   mounted() {
-    this.$_init(true, true);
+    this.$_init(true);
   },
   methods: {
     $_addFeature(e) {
@@ -271,6 +272,7 @@ export default {
           if (this.dataSourceCopy.length === 0) {
             this.currenSelectLayer = "请添加图层";
             this.currentLayer = [];
+            this.addLayer = false;
           } else {
             let index = this.currenSelectIndex - 1 < 0 ? 0 : this.currenSelectIndex - 1;
             this.currenSelectLayer = this.dataSourceCopy[index].name;
@@ -525,7 +527,7 @@ export default {
       }
     },
     //初始化数据
-    $_init(addLayer, noMessage) {
+    $_init(noMessage) {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //设置当前图层
@@ -537,7 +539,7 @@ export default {
       } else {
         this.currenSelectLayer = "请添加图层";
         this.currentLayer = [];
-        if (addLayer) {
+        if (this.addLayer) {
           this.$_clickTool("add", noMessage);
         }
       }

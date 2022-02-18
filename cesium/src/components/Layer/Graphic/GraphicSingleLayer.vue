@@ -644,19 +644,19 @@ export default {
       this.drawMode = drawMode;
       this.drawDistance = drawDistance;
       this.modelUrl = model;
-      this.currentEditType = type;
+      // this.currentEditType = type;
       switch (drawMode) {
         case "point":
           if (!this.editPanelValues) {
             //根据当前的绘制类型，获取设置面板显示参数数据
-            this.editPanelValues = this.$_getEditPanelValues(this.editList, this.currentEditType);
+            this.editPanelValues = this.$_getEditPanelValues(this.editList, "model");
           }
           this.editPanelValues.url = model;
           this.editPanelValues.scale = scale;
           //更新编辑面板
           this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
           //根据面板显示参数数据生成绘制参数
-          let drawOptions = this.$_getDrawOptions(this.editPanelValues, this.currentEditType, Cesium);
+          let drawOptions = this.$_getDrawOptions(this.editPanelValues, "model", Cesium);
           this.$_startDrawing({
             type: "model",
             ...drawOptions
