@@ -366,7 +366,7 @@ export default {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale,
-        isHermiteSpline, stRotation, offsetHeight
+        isHermiteSpline, stRotation, offsetHeight, loop
       } = style;
 
       const {title, __flashStyle} = attributes;
@@ -453,6 +453,7 @@ export default {
           editPanelValues.width = width;
           editPanelValues.isHermiteSpline = isHermiteSpline;
           editPanelValues.materialType = materialType;
+          editPanelValues.loop = loop;
           if (title) {
             editPanelValues.title = title;
           }
@@ -572,6 +573,7 @@ export default {
           editPanelValues.duration = duration || 2000;
           editPanelValues.direction = direction || 1;
           editPanelValues.materialType = materialType;
+          editPanelValues.loop = loop;
           if (materialType === "Color") {
             editPanelValues.materialColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
             editPanelValues.materialOpacity = color[3] * 100;

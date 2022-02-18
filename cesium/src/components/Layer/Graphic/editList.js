@@ -268,6 +268,12 @@ let editList = {
       title: "是否为曲线",
       key: "isHermiteSpline",
       value: false
+    },
+    {
+      type: "MapgisUiLoop",
+      title: "是否闭环",
+      key: "loop",
+      value: false
     }
   ],
   polylineVolume: [
@@ -1034,6 +1040,12 @@ let editList = {
       title: "离地高度",
       key: "offsetHeight",
       value: 0
+    },
+    {
+      type: "MapgisUiLoop",
+      title: "是否闭环",
+      key: "loop",
+      value: false
     }
   ]
 };

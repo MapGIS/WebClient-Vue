@@ -629,6 +629,7 @@ export default {
             width: editPanelValues.width,
             materialType: editPanelValues.materialType,
             isHermiteSpline: editPanelValues.isHermiteSpline,
+            loop: editPanelValues.loop,
           };
           switch (editPanelValues.materialType) {
             case "Color":
@@ -765,6 +766,7 @@ export default {
             extrudedHeight: editPanelValues.extrudedHeight,
             // height: editPanelValues.height,
             materialType: editPanelValues.materialType,
+            loop: editPanelValues.loop,
           };
           switch (editPanelValues.materialType) {
             case "Color":

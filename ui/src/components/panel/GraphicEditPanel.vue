@@ -283,6 +283,12 @@
               @change="$_showBackground"
               v-model="row.value"
             />
+            <mapgis-ui-switch-row-left
+              v-if="row.type === 'MapgisUiLoop'"
+              :title="row.title"
+              @change="$_loop"
+              v-model="editPanelValues[row.key]"
+            />
           </div>
         </div>
       </div>
@@ -588,6 +594,9 @@ export default {
     $_showBackground(e) {
       this.editPanelValues.showBackground = e;
     },
+    $_loop(e) {
+      this.editPanelValues.loop = e;
+    },
     $_cartesian3ToLongLat(cartesian3) {
       let position = {};
       let graphicPosition = Cesium.Cartographic.fromCartesian(cartesian3);
@@ -628,7 +637,7 @@ export default {
         text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
         extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
         pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
-        stRotation, isHermiteSpline, offsetHeight
+        stRotation, isHermiteSpline, offsetHeight, loop
       } = style;
 
       const {title, __flashStyle} = attributes;
@@ -723,6 +732,7 @@ export default {
           editPanelValues.width = width;
           editPanelValues.isHermiteSpline = isHermiteSpline;
           editPanelValues.materialType = materialType;
+          editPanelValues.loop = loop;
           if (materialType === "Color") {
             editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
             editPanelValues.opacity = color[3] * 100;
@@ -848,7 +858,7 @@ export default {
           editPanelValues.title = title;
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.materialType = materialType;
-          // editPanelValues.height = height;
+          editPanelValues.loop = loop;
           if (materialType === "Color") {
             editPanelValues.color = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
             editPanelValues.opacity = color[3] * 100;
