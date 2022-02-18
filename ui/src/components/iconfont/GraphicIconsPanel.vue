@@ -151,13 +151,20 @@ export default {
           key: "polygon",
           value: "多边形"
         }
-      ]
+      ],
+      modelUrl: undefined
     }
   },
   watch: {
     models: {
       handler: function () {
         this.$_init();
+      },
+      deep: true
+    },
+    drawMode: {
+      handler: function () {
+        this.$emit("startDrawModel", "model", this.modelUrl, this.drawMode, this.drawDistance, this.modelRadius, 1);
       },
       deep: true
     }
@@ -222,6 +229,7 @@ export default {
       if (model.hasOwnProperty("scale")) {
         scale = model.scale;
       }
+      this.modelUrl = url;
       this.$emit("startDrawModel", "model", url, this.drawMode, this.drawDistance, this.modelRadius, scale);
     },
     $_chooseModelType(type) {
