@@ -478,6 +478,17 @@ export default {
             editPanelValues.flashAlpha = __flashStyle.flashAlpha;
             editPanelValues.materialType = "flash";
           }
+          if (materialType === "Image") {
+            const {repeat} = material;
+            editPanelValues.image = material.image;
+            editPanelValues.stRotation = stRotation;
+            editPanelValues.repeatX = repeat.x;
+            editPanelValues.repeatY = repeat.y;
+          }else {
+            editPanelValues.stRotation = 0;
+            editPanelValues.repeatX = 1;
+            editPanelValues.repeatY = 1;
+          }
           break;
         case "rectangle":
           editPanelValues.id = id;
@@ -507,6 +518,10 @@ export default {
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;
             editPanelValues.repeatY = repeat.y;
+          }else {
+            editPanelValues.stRotation = 0;
+            editPanelValues.repeatX = 1;
+            editPanelValues.repeatY = 1;
           }
           break;
         case "circle":
