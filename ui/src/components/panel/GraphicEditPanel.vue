@@ -184,7 +184,7 @@
               v-if="row.type === 'MapgisUiSlider'"
               :title="row.title"
               v-model="editPanelValues[row.key]"
-              v-show="row.key === 'materialOpacity' && ['Color', 'RadarMaterial', 'CircleWaveMaterial', 'PolylineTrailLink'].indexOf(editPanelValues.materialType) > -1"
+              v-show="row.key === 'materialOpacity' && ['Color', 'PolylineTrailLink'].indexOf(editPanelValues.materialType) > -1"
             />
             <mapgis-ui-slider-row-left
               v-if="row.type === 'MapgisUiSlider'"

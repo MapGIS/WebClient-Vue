@@ -83,10 +83,10 @@ export default {
       if(!e){
         value = 0;
         this.valueCopy = 0;
-      }else if (typeof e === "number") {
-        value = e;
-      } else {
+      }else if (typeof e === "object") {
         value = e.target.value;
+      } else {
+        value = Number(e);
       }
       this.$emit("change", value);
     },

@@ -610,6 +610,7 @@ export default {
             extrudedHeight: editPanelValues.extrudedHeight,
             offsetHeight: editPanelValues.offsetHeight,
           };
+          drawOptions.drawWithHeight = true;
           break;
         case "billboard":
           drawOptions.style = {
@@ -655,6 +656,7 @@ export default {
             offsetHeight: editPanelValues.offsetHeight,
             isPlanePolygon: true
           };
+          drawOptions.drawWithHeight = true;
           break;
         case "polygon":
           editPanelValues.materialType = editPanelValues.materialType || "Color";
@@ -816,8 +818,8 @@ export default {
             color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString(editPanelValues.color), editPanelValues.opacity / 100),
             extrudedHeight: editPanelValues.extrudedHeight,
             offsetHeight: editPanelValues.offsetHeight,
-            isSquare: true
           };
+          drawOptions.drawWithHeight = true;
           break;
         case "model":
           drawOptions.style = {
