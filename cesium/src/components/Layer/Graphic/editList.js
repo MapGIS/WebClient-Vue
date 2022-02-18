@@ -342,12 +342,6 @@ let editList = {
       value: 100
     },
     {
-      type: "MapgisUiInputNumber",
-      title: "离地高度",
-      key: "offsetHeight",
-      value: 0
-    },
-    {
       type: "MapgisUiColorPicker",
       title: "颜色",
       key: "color",
@@ -997,7 +991,7 @@ let editList = {
       type: "MapgisUiInput",
       title: "材质贴图",
       key: "image",
-      value: "http://localhost:8080/assets/png/lineClr.png"
+      value: ""
     },
     {
       type: "MapgisUiInputNumber",
@@ -1034,12 +1028,6 @@ let editList = {
       title: "墙体高度",
       key: "extrudedHeight",
       value: 100
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "离地高度",
-      key: "offsetHeight",
-      value: 0
     },
     {
       type: "MapgisUiLoop",

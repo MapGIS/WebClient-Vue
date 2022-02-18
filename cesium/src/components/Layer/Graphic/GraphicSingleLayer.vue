@@ -529,12 +529,12 @@ export default {
           }
           break;
         case "circle":
+          editPanelValues.offsetHeight = offsetHeight;
           if (this.currentEditType === "circle") {
             editPanelValues.id = id;
             editPanelValues.pureColor = "rgb(" + color[0] * 255 + "," + color[1] * 255 + "," + color[2] * 255 + ")";
             editPanelValues.pureOpacity = color[3] * 100;
             editPanelValues.radius = radius;
-            editPanelValues.offsetHeight = offsetHeight;
             editPanelValues.speed = speed || 1;
             editPanelValues.duration = duration || 2000;
             editPanelValues.gradient = gradient || 0.5;
@@ -580,7 +580,7 @@ export default {
           editPanelValues.extrudedHeight = extrudedHeight;
           editPanelValues.offsetHeight = offsetHeight;
           editPanelValues.speed = speed || 1;
-          editPanelValues.image = material.image || "http://localhost:8080/assets/png/lineClr.png";
+          editPanelValues.image = material.image || "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAAUCAYAAAA3IwABAAABv0lEQVR4nO2cwW7DMAiGSbrbTnuCvf8DrtplzQ5dNWSBwa4bCen7JMsONn8MiTiyHcch8v25yT/b4Kz9rDOezTvTe1/WzxrtPT29aG9GY+bcWb672vfWkfasn6exKsZd2dq1vm/0Th2XFWdWZ/S/jPIhifWITZw5s7Z8vH1x7FZOtP36Js+jRXfDlgkmSrj33P4k7bmZD69/9sgvq99qrhirtC7q/lbhyd5ln/Dz8n2Z1LBiE6Wv1yNxtndqc9Xqj367nt/IXu+fzdh6z16cYsyv4mNFwdIci/Uibn/z6g+/yT2WyC+r/xi3pNaZ40fd/5mCNeO3WsPSFGc98q72XJurVn909Pxm9ix7xtZ7jtbtHO33/MSxf+0CAFAEChYAlIGCBQBloGABQBkoWABQBgoWAJSBggUAZaBgAUAZKFgAUAYKFgCUgYIFAGWgYAFAGShYAFAGChYAlIGCBQBlWN0Pq9ffZrbfTu+ZBn7PDxr45b4tDfzsOMWYX8X7ioKlm/bphnqP2QqqlxAvCZbfaAM/bz/yy5ztacycO8uXFsnxO3VcVpxZndH/MsqHJNYjNnHmzNry8fbFsVs50fbrLwRiE9BpH2RgAAAAAElFTkSuQmCC";
           editPanelValues.duration = duration || 2000;
           editPanelValues.direction = direction || 1;
           editPanelValues.materialType = materialType;

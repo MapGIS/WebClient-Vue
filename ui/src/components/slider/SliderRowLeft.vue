@@ -9,6 +9,8 @@
         v-model="valueCopy"
       />
       <mapgis-ui-input-number
+        :max="max"
+        :min="min"
         class="mapgis-ui-slider-row-left-input"
         v-model="valueCopy"
       />
