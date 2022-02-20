@@ -1,0 +1,18 @@
+.mapgis-tech-innermap {
+  width: 85vw;
+  height: 80vh;
+  top: 10vh;
+  left: 5vw;
+}
+
+.mapgis-custom-actions {
+  position: absolute;
+  width: 280px;
+  top: 10px;
+  left: 10px;
+  z-index: 2000;
+}
+
+.mapgis-ui-popup-content-container {
+  /* display: none; */
+}
