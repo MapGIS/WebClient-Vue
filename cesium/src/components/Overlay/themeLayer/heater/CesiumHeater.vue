@@ -82,7 +82,6 @@ export default {
       }
       const dataSource = this.$_getCesiumDataArr(this.dataSource, this.field);
       const [min, max] = this.$_getCesiumDataRange(dataSource);
-      console.log("this.selfOptions",this.selfOptions);
       this.heaterInstance = this.Cesium.CesiumHeatmap.create(this.viewer, this.bound, this.selfOptions);
       this.heaterInstance.setWGS84Data(min, max, dataSource);
     },
@@ -135,7 +134,6 @@ export default {
     bound: {
       deep: true,
       handler(v) {
-        debugger
         this.$_removeCesiumHeater();
         this.$_updateCesiumHeater(v);
       }
@@ -143,7 +141,6 @@ export default {
     dataSource: {
       deep: true,
       handler(v) {
-        debugger
         this.$_removeCesiumHeater();
         this.$_updateCesiumHeater(v);
       }
