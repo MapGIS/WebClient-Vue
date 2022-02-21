@@ -27,7 +27,7 @@ const Template = (args, { argTypes }) => ({
   methods: {
     changeEnable() {},
   },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh">
       <mapgis-mvt-style-layer :mvtStyle="mvtStyle" /> 
       <mapgis-mvt-legend v-bind="$props" />
     </mapgis-web-map>`,

@@ -55,7 +55,7 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-link :enable="link" v-model="rect" ></mapgis-3d-link>
       </mapgis-web-scene>
     </div>
-    <div :class="{'control-2d-3d': true, active: link}" v-on:click="changeMode"></div>
+    <div :class="{'control-2d-3d': true, 'link-active': link}" v-on:click="changeMode"></div>
   </div>`,
 });
 

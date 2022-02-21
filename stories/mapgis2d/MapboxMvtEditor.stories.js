@@ -32,7 +32,7 @@ const Template = (args, { argTypes }) => ({
       console.log("样式切换", event, this.map.getStyle());
     },
   },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="2" style="height:90vh" @load="handleMapLoad">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="2" style="height:95vh" @load="handleMapLoad">
       <mapgis-mvt-style-layer :mvtStyle="mvtStyle" @change-style="handleChangeStyle" />
       <mapgis-ui-card class="storybook-ui-card">
       <mapgis-mvt-editor :layerid="layer" @edit-change="handleEditChange"/>
