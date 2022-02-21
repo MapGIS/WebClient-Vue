@@ -20,6 +20,7 @@
         :currentEditType="currentEditType"
         :graphicGroups="graphicGroups"
         @change="$_changeEditPanelValues"
+        @changeGroup="$_changeGroup"
         @stopDrawing="$_stopDraw"
         @dblclick="$_dbclick"
         @clickTool="$_clickTool"
@@ -99,6 +100,12 @@ export default {
       type: Boolean,
       default: false
     },
+    groupGraphicIDs: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
   },
   data() {
     return {
@@ -172,6 +179,22 @@ export default {
   mounted() {
   },
   methods: {
+    $_getGroups() {
+      let dataSource = [];
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].type === "group") {
+          let group = JSON.parse(JSON.stringify(this.dataSourceCopy[i]));
+          let graphicLayer = this.$_getGraphicLayer();
+          let graphics = graphicLayer.getGraphicByName(group.attributes.title);
+          group.dataSource = [];
+          for (let j = 0; j < graphics.length; j++) {
+            group.dataSource.push(graphics[j].id);
+          }
+          dataSource.push(group);
+        }
+      }
+      return dataSource;
+    },
     $_resetEditPanel() {
       if (this.$refs.editPanel) {
         this.$refs.editPanel.$_resetEditPanel();
@@ -289,7 +312,8 @@ export default {
         groups.push({
           name: graphicGroups[i].name + "_" + (i + 1),
           attributes: clonedeep(graphicGroups[i].attributes),
-          type: graphicGroups[i].type
+          type: graphicGroups[i].type,
+          id: graphicGroups[i].id
         });
       }
       this.graphicGroups = groups;
@@ -302,7 +326,28 @@ export default {
     $_clickTool(type, row) {
       switch (type) {
         case "edit":
-          this.$_dbclick(row);
+          if (row.type === "group") {
+            //显示设置面板
+            this.$refs.iconsPanel.$_resetIconsPanel();
+            //停止绘制
+            this.$_stopDrawing();
+            this.isStartDrawing = false;
+            //开始编辑
+            this.$nextTick(function () {
+              this.isEdit = true;
+              this.$_startEdit();
+            });
+            //获取设置面板显示参数
+            this.editPanelValues = {
+              scale: 1,
+              heading: 0,//x轴
+              pitch: 0,//y轴
+              roll: 0,//z轴
+            };
+            this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
+          } else {
+            this.$_dbclick(row);
+          }
           break;
         case "delete":
           let index;
@@ -315,6 +360,13 @@ export default {
           this.$refs.editPanel.isUpdatePanel = false;
           this.addSource = true;
           this.dataSourceCopy.splice(index, 1);
+          if (row.type === "group") {
+            let graphicLayer = this.$_getGraphicLayer();
+            let groups = graphicLayer.getGraphicByName(row.attributes.title);
+            for (let i = 0; i < groups.length; i++) {
+              this.$_removeGraphicByID(groups[i].id);
+            }
+          }
           this.$emit("delete", index);
           this.$nextTick(function () {
             let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
@@ -483,7 +535,7 @@ export default {
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;
             editPanelValues.repeatY = repeat.y;
-          }else {
+          } else {
             editPanelValues.stRotation = 0;
             editPanelValues.repeatX = 1;
             editPanelValues.repeatY = 1;
@@ -522,7 +574,7 @@ export default {
             editPanelValues.stRotation = stRotation;
             editPanelValues.repeatX = repeat.x;
             editPanelValues.repeatY = repeat.y;
-          }else {
+          } else {
             editPanelValues.stRotation = 0;
             editPanelValues.repeatX = 1;
             editPanelValues.repeatY = 1;
@@ -641,7 +693,6 @@ export default {
       this.$_stopDrawing();
       this.isStartDrawLine = true;
       this.isStartDrawing = true;
-      this.drawMode = drawMode;
       this.drawDistance = drawDistance;
       this.modelUrl = model;
       // this.currentEditType = type;
@@ -675,6 +726,7 @@ export default {
         case "polygon":
           let str = model.split("/");
           let name = str[str.length - 1];
+          this.drawMode = "group";
           name = name.split(".")[0];
           this.groupNum++;
           let groupName = name + "模型组" + this.groupNum;
@@ -815,6 +867,29 @@ export default {
         }
       }
     },
+    $_changeGroup(editPanelValues, groupId) {
+      let group;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].id === groupId) {
+          group = this.dataSourceCopy[i];
+        }
+      }
+      if (group) {
+        let graphicIDs = group.dataSource;
+        for (let i = 0; i < graphicIDs.length; i++) {
+          let graphic = this.$_getGraphicByID(graphicIDs[i]);
+          if (graphic) {
+            Object.keys(editPanelValues).forEach(function (key) {
+              if (key === "scale") {
+                graphic.style[key] = editPanelValues[key];
+              } else {
+                graphic[key] = Cesium.Math.toRadians(editPanelValues[key]);
+              }
+            });
+          }
+        }
+      }
+    },
     test() {
       let graphicLayer = this.$_getGraphicLayer();
       let SelectTool = new Cesium.SelectTool(graphicLayer);
@@ -843,6 +918,9 @@ export default {
         this.isEdit = true;
         this.$_startEdit();
       });
+      if (!json.hasOwnProperty("style")) {
+        json = this.$_getJsonById(json.id);
+      }
       this.currentEditType = json.type;
       if (this.currentEditType === "group") {
         let graphicLayer = this.$_getGraphicLayer();
@@ -882,18 +960,19 @@ export default {
       }
       //如果是球体，暂时不考虑椭球，则加上两倍半径
       if (graphic.type === "ellipsoid" && radiusX) {
-        this.destinationHeight += Number(radiusX * 2);
+        this.destinationHeight += Number(radiusX * 8);
       }
       //如果是圆管线，则加上两倍宽度
       if (graphic.type === "polylineVolume" && width) {
-        this.destinationHeight += Number(width * 2);
+        this.destinationHeight += Number(width * 8);
       }
       //如果是圆，则加上两倍半径
       if (graphic.type === "circle" && radius) {
-        this.destinationHeight += Number(radius * 2);
+        this.destinationHeight += Number(radius * 8);
       }
       if (graphic.type === "model") {
         this.lastGraphicColor = Cesium.Color.WHITE;
+        this.destinationHeight += Number(graphic.boundingSphere.radius * 4);
       } else {
         this.lastGraphicColor = graphic.style.color;
       }
@@ -962,17 +1041,18 @@ export default {
         case "model":
           let Cartesian3 = new Cesium.Cartesian3(json.positions[0], json.positions[1], json.positions[2]);
           center = this.$_cartesian3ToLongLat(Cartesian3);
-          destination = Cesium.Cartesian3.fromDegrees(center.lng, center.lat, 100);
+          destination = Cesium.Cartesian3.fromDegrees(center.lng, center.lat, this.destinationHeight);
           break;
       }
+      let camera = viewer.camera;
       if (this.autoFlyToGraphic) {
         this.viewer.camera.flyTo({
           duration: 1,
           destination: destination,
           orientation: {
-            heading: Cesium.Math.toRadians(-90.0),
-            pitch: Cesium.Math.toRadians(-90.0),
-            roll: 0
+            heading: camera.heading,
+            pitch: camera.pitch,
+            roll: camera.roll
           }
         });
       }
@@ -1041,6 +1121,9 @@ export default {
       let vm = this;
       let data = vm.$_getJsonById(e.id);
       let type = data.type;
+      if (this.groupGraphicIDs.indexOf(data.id) > -1) {
+        return;
+      }
       if (vm.drawMode === "point") {
         if (!vm.add) {
           return;
@@ -1143,6 +1226,8 @@ export default {
         });
         vm.$emit("change", vm.dataSourceCopy);
         vm.$emit("addFeature", vm.$_getJsonById(e.id));
+      } else if (vm.drawMode === "group") {
+
       } else {
         //通过fromJSON方式导入
         let hasData = false;
@@ -1154,6 +1239,10 @@ export default {
           }
         }
         if (!hasData) {
+          if (!data.attributes.hasOwnProperty("title")) {
+            let graphic = vm.$_getGraphicByID(data.id);
+            data.attributes.title = graphic.attributes.title = vm.$_getTitle(data.type);
+          }
           vm.dataSourceCopy.push(data);
         }
       }
@@ -1205,7 +1294,7 @@ export default {
         let dataArr = [];
         for (let i = 0; i < this.dataSourceCopy.length; i++) {
           let graphic = this.$_getGraphicByID(this.dataSourceCopy[i].id);
-          if (!graphic) {
+          if (!graphic && this.dataSourceCopy[i].type !== "group") {
             dataArr.push(this.dataSourceCopy[i]);
           }
         }
@@ -1217,7 +1306,9 @@ export default {
       }
       //获取设置面板显示参数
       if (this.dataSourceCopy.length > 0) {
-        this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
+        if (this.dataSourceCopy[0].type !== "group") {
+          this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[0]);
+        }
       }
       //设置点击事件
       this.viewer.screenSpaceEventHandler.setInputAction(function onLeftClick(movement) {

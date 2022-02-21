@@ -16,7 +16,7 @@
                               @open="$_open($event, row)"
                               :iconStyle="iconStyle"
                               :mainStyle="rowStyle"
-                              :top="index < dataSourceCopy.length - 3"
+                              :top="(index < dataSourceCopy.length - 3) || (index < 3)"
                               :enableGroup="row.type === 'group'"
                               :src="icons[row.type + 'Image']" :title="row.attributes.title"/>
           <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 13px;"
@@ -26,9 +26,14 @@
           </mapgis-ui-button>
           <div v-if="row.type === 'group'" v-show='openGroup === row.id'>
             <mapgis-ui-icon-row :key="gIndex" v-for="(graphic, gIndex) in graphicGroups"
-                                @clickTool="$_clickTool($event, graphic)" :iconStyle="iconStyle"
+                                @clickTool="$_clickTool($event, graphic)"
+                                @dblclick="$_dbclick($event, graphic)"
+                                :iconStyle="iconStyle"
                                 :mainStyle="groupRowStyle"
-                                :src="icons[graphic.type + 'Image']" :title="graphic.name"/>
+                                :top="(gIndex < graphicGroups.length - 3) || (gIndex < 3)"
+                                :src="icons[graphic.type + 'Image']"
+                                :title="graphic.name"
+            />
           </div>
         </div>
       </div>
@@ -337,6 +342,31 @@
           </mapgis-ui-button>
         </div>
       </div>
+      <!--批处理面板-->
+      <div v-show="noTitleKey === 'batch'" style="min-height: 200px;max-height: 430px;overflow:auto;">
+        <div v-if="editPanelValues">
+          <mapgis-ui-input-row-left
+            title="比例尺"
+            type="Number"
+            v-model="editPanelValues.scale"
+          />
+          <mapgis-ui-input-row-left
+            title="X轴旋转"
+            type="Number"
+            v-model="editPanelValues.heading"
+          />
+          <mapgis-ui-input-row-left
+            title="Y轴旋转"
+            type="Number"
+            v-model="editPanelValues.pitch"
+          />
+          <mapgis-ui-input-row-left
+            title="Z轴旋转"
+            type="Number"
+            v-model="editPanelValues.roll"
+          />
+        </div>
+      </div>
     </mapgis-ui-card>
   </div>
 </template>
@@ -371,7 +401,11 @@ export default {
     editPanelValues: {
       handler: function () {
         if (this.isUpdatePanel && !this.editTitle) {
-          this.$emit("change", this.editPanelValues, this.isEdit);
+          if (this.noTitleKey === "batch") {
+            this.$emit("changeGroup", this.editPanelValues, this.groupId);
+          } else {
+            this.$emit("change", this.editPanelValues, this.isEdit);
+          }
         }
       },
       deep: true
@@ -405,6 +439,10 @@ export default {
         {
           key: 'attributes',
           tab: '属性面板',
+        },
+        {
+          key: 'batch',
+          tab: '批处理面板',
         }
       ],
       //当前显示面板
@@ -498,7 +536,8 @@ export default {
       //是否展开外边线参数
       showOutline: false,
       //是否展开北京参数
-      showBackground: false
+      showBackground: false,
+      groupId: undefined
     }
   },
   mounted() {
@@ -585,6 +624,11 @@ export default {
       if (type === "editTitle") {
         this.editTitleGraphicId = row.id;
       }
+      if (row.type === "group" && type === "edit") {
+        //显示批处理面板
+        this.noTitleKey = "batch";
+        this.groupId = row.id;
+      }
       this.$emit("clickTool", type, row);
     },
     $_showOutLine(e) {
@@ -635,14 +679,18 @@ export default {
         asynchronous
       } = json;
 
-      const {
-        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
-        extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
-        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
-        stRotation, isHermiteSpline, offsetHeight, loop
-      } = style;
+      if (style) {
+        const {
+          text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
+          extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
+          pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
+          stRotation, isHermiteSpline, offsetHeight, loop
+        } = style;
+      }
 
-      const {title, __flashStyle} = attributes;
+      if (attributes) {
+        const {title, __flashStyle} = attributes;
+      }
 
       let editPanelValues = {}, vm = this;
 

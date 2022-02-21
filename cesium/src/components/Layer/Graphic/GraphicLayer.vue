@@ -40,6 +40,7 @@
       :vueIndex="vueIndex"
       :models="models"
       :autoFlyToGraphic="autoFlyToGraphic"
+      :groupGraphicIDs="groupGraphicIDs"
       ref="graphicLayer"
       v-model="currentLayer"
       @saveCamera="$_saveCamera"
@@ -97,6 +98,10 @@ export default {
       type: Boolean,
       default: false
     },
+    baseUrl: {
+      type: String,
+      default: ""
+    }
   },
   watch: {
     dataSource: {
@@ -192,7 +197,8 @@ export default {
         height: "32px",
         lineHeight: "36px",
       },
-      addLayer: true
+      addLayer: true,
+      groupGraphicIDs: []
     }
   },
   mounted() {
@@ -229,7 +235,7 @@ export default {
           };
           this.currenSelectIndex++;
           this.dataSourceCopy.push(data);
-          if(!noMessage){
+          if (!noMessage) {
             this.$message.success(title + "添加成功！");
           }
           //如果上一个图层有数据，则隐藏
@@ -318,13 +324,15 @@ export default {
           for (let i = 0; i < this.dataSourceCopy.length; i++) {
             let json = this.dataSourceCopy[i];
             let dataSource = this.$refs.graphicLayer.$_toJSON(json.uuid, "default");
+            let groups = this.$refs.graphicLayer.$_getGroups();
             saveObj.push({
               name: json.name,
               uuid: json.uuid,
               autoFlyTo: json.autoFlyTo,
               autoFlyToGraphic: json.autoFlyToGraphic,
               camera: clonedeep(json.camera),
-              dataSource: dataSource
+              dataSource: dataSource,
+              groups: groups
             });
           }
           this.$emit("save", saveObj);
@@ -368,9 +376,16 @@ export default {
       return rUrl;
     },
     $_export() {
-      let json = this.dataSourceCopy[this.currenSelectIndex - 1];
+      let json;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.currenSelectLayer === this.dataSourceCopy[i].name) {
+          json = this.dataSourceCopy[i];
+          break;
+        }
+      }
       this.$refs.graphicLayer.$_stopEdit();
       let dataSource = this.$refs.graphicLayer.$_toJSON();
+      let groups = this.$refs.graphicLayer.$_getGroups();
       if (this.enableRelativePath) {
         let features = dataSource.features;
         for (let i = 0; i < features.length; i++) {
@@ -386,7 +401,8 @@ export default {
         autoFlyTo: this.autoFlyTo,
         autoFlyToGraphic: this.autoFlyToGraphic,
         camera: clonedeep(json.camera),
-        dataSource: dataSource
+        dataSource: dataSource,
+        groups: groups
       }
       const blob = new Blob([JSON.stringify(exportJSON)], {
         type: "application/json;charset=utf-8",
@@ -413,7 +429,26 @@ export default {
           this.$refs.graphicLayer.$_fromJson(dataSource);
           this.dataSourceCopy.push(data);
           this.currenSelectIndex++;
-          this.currentLayer = data.dataSource.features;
+          let groupGraphicIDs = [];
+          let features = [];
+          for (let j = 0; j < data.groups.length; j++) {
+            groupGraphicIDs = groupGraphicIDs.concat(data.groups[i].dataSource);
+            features.push(data.groups[i]);
+          }
+          for (let j = 0; j < data.dataSource.features.length; j++) {
+            if (groupGraphicIDs.indexOf(data.dataSource.features[j].id) < 0) {
+              features.push(data.dataSource.features[j]);
+            }
+          }
+          if(this.enableRelativePath){
+            for (let j = 0; j < data.dataSource.features.length; j++) {
+              if (data.dataSource.features[j].type === "model") {
+                data.dataSource.features[j].style.url = this.baseUrl + "/" + data.dataSource.features[j].style.url;
+              }
+            }
+          }
+          this.groupGraphicIDs = groupGraphicIDs;
+          this.currentLayer = features;
           this.autoFlyTo = data.autoFlyTo;
           this.autoFlyToGraphic = data.autoFlyToGraphic;
           this.vueIndex = Number(data.uuid);
@@ -429,7 +464,7 @@ export default {
             this.$refs.graphicLayer.currentEditType = "mouse";
             this.$refs.graphicLayer.isStartDrawing = false;
             this.$refs.graphicLayer.$_clearList();
-            this.$refs.graphicLayer.$_init();
+            this.$refs.graphicLayer.$_init(undefined, this.vueIndex);
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_fromJson(data.dataSource);
             this.updatable = true;
