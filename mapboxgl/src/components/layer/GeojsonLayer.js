@@ -382,7 +382,17 @@ export default {
             type: "fill",
             ...layerStyle.toMapboxStyle(),
           };
+        } else if (type == "extrude") {
+          style = {
+            type: "fill-extrusion",
+            ...layerStyle.toMapboxStyle(),
+          };
         } else if (type == "text") {
+          style = {
+            type: "symbol",
+            ...layerStyle.toMapboxStyle(),
+          };
+        } else if (type == "marker") {
           style = {
             type: "symbol",
             ...layerStyle.toMapboxStyle(),
@@ -651,7 +661,8 @@ export default {
       let highlight;
       let { map, layer, layerId, sourceId, highlightStyle } = this;
       sourceId = sourceId || layerId;
-      const { type, point, line, polygon, text } = highlightStyle;
+      const { type, point, line, polygon, extrude, text, marker } =
+        highlightStyle;
 
       if (Object.keys(layer).length == 0) {
         if (!type) return;
@@ -679,6 +690,14 @@ export default {
             source: sourceId,
             ...polygon.toMapboxStyle({ highlight: true }),
           };
+        } else if (type == "extrude" || extrude) {
+          if (!extrude) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "fill-extrusion",
+            source: sourceId,
+            ...extrude.toMapboxStyle({ highlight: true }),
+          };
         } else if (type == "text" || text) {
           if (!text) return;
           highlight = {
@@ -686,6 +705,14 @@ export default {
             type: "symbol",
             source: sourceId,
             ...text.toMapboxStyle({ highlight: true }),
+          };
+        } else if (type == "marker" || marker) {
+          if (!marker) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "symbol",
+            source: sourceId,
+            ...marker.toMapboxStyle({ highlight: true }),
           };
         }
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
@@ -697,6 +724,14 @@ export default {
             type: "line",
             source: sourceId,
             ...line.toMapboxStyle({ highlight: true }),
+          };
+        } else if (this.layer.type === "fill-extrusion") {
+          if (!extrude) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "fill-extrusion",
+            source: sourceId,
+            ...extrude.toMapboxStyle({ highlight: true }),
           };
         } else if (this.layer.type === "line") {
           if (!line) return;
@@ -715,12 +750,20 @@ export default {
             ...point.toMapboxStyle({ highlight: true }),
           };
         } else if (this.layer.type === "text") {
-          if (!point) return;
+          if (!text) return;
           highlight = {
             id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...point.toMapboxStyle({ highlight: true }),
+            ...text.toMapboxStyle({ highlight: true }),
+          };
+        } else if (this.layer.type === "marker") {
+          if (!marker) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "circle",
+            source: sourceId,
+            ...marker.toMapboxStyle({ highlight: true }),
           };
         }
         if (highlight && !map.getLayer(highlight.id)) map.addLayer(highlight);
