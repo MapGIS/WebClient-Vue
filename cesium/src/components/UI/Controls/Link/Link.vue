@@ -207,6 +207,7 @@ export default {
       }
     },
     deleteHandler() {
+      let vm = this;
       let { vueCesium, screenSpaceEventType } = this;
       vueCesium = vueCesium || window.vueCesium;
       /* 这段代码要结合WebGlobe里面的如下代码才能明白
