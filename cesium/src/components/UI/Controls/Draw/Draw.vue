@@ -312,6 +312,9 @@ export default {
               outlineWidth: drawStyleCopy.outlineWidth
             }
           });
+          if (!vm.infinite) {
+            drawElement.stopDrawing();
+          }
           let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
           vm.$emit('drawCreate', position, [lng, lat, height], viewerDraw);
@@ -357,6 +360,9 @@ export default {
             let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
             drawEntities.push(drawEntity);
           }
+          if (!vm.infinite) {
+            drawElement.stopDrawing();
+          }
           vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
           vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
         }
@@ -401,6 +407,9 @@ export default {
             let drawEntity = viewerDraw.scene.primitives.add(polygon);
             let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
             drawEntities.push(drawEntity);
+          }
+          if (!vm.infinite) {
+            drawElement.stopDrawing();
           }
           vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
           vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
@@ -452,6 +461,9 @@ export default {
             let height = result.height;
             degreeArr.push([lng, lat, height]);
           }
+          if (!vm.infinite) {
+            drawElement.stopDrawing();
+          }
           vm.$emit('drawCreate', Cartesian3Points, degreeArr, viewerDraw, extent);
           vm.$emit('drawcreate', Cartesian3Points, degreeArr, viewerDraw, extent);
         }
@@ -492,7 +504,9 @@ export default {
               color: colorStyle
             })
           });
-
+          if (!vm.infinite) {
+            drawElement.stopDrawing();
+          }
           let drawEntity = viewerDraw.scene.primitives.add(redCircle);
 
           let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
