@@ -158,7 +158,8 @@ export default {
       //点击间隔，小于这个数就弹出popup
       clickInterval: 200,
       //弹出popup的定时器
-      firstClickFlag: undefined
+      firstClickFlag: undefined,
+      currentGroupId: undefined
     };
   },
   watch: {
@@ -339,7 +340,7 @@ export default {
             });
             //获取设置面板显示参数
             this.editPanelValues = {
-              scale: 1,
+              scale: row.style.scale,
               heading: 0,//x轴
               pitch: 0,//y轴
               roll: 0,//z轴
@@ -695,7 +696,9 @@ export default {
       this.isStartDrawing = true;
       this.drawDistance = drawDistance;
       this.modelUrl = model;
-      // this.currentEditType = type;
+      if(!model) {
+        return;
+      }
       switch (drawMode) {
         case "point":
           if (!this.editPanelValues) {
@@ -714,40 +717,60 @@ export default {
           });
           break;
         case "polyline":
+          this.$_DrawGroup("polyline", model, scale, drawDistance, modelRadius);
+          break;
+        case "polygon":
+          this.$_DrawGroup("polygon", model, scale, drawDistance, modelRadius);
+          break;
+      }
+    },
+    $_DrawGroup(type, model, scale, drawDistance, modelRadius) {
+      let str = model.split("/");
+      let name = str[str.length - 1];
+      this.drawMode = "group";
+      name = name.split(".")[0];
+      this.groupNum++;
+      let groupName = name + "模型组" + this.groupNum;
+      let graphicsLayer, DrawTool;
+      graphicsLayer = this.$_getGraphicLayer();
+      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer);
+      switch (type) {
+        case "polyline":
           DrawTool.DrawModelsByLine({
             intervalDistance: drawDistance,
             modelRadius: modelRadius,
             style: {
-              scale: 1,
-              url: model
-            }
-          });
-          break;
-        case "polygon":
-          let str = model.split("/");
-          let name = str[str.length - 1];
-          this.drawMode = "group";
-          name = name.split(".")[0];
-          this.groupNum++;
-          let groupName = name + "模型组" + this.groupNum;
-          DrawTool.DrawModelsByArea({
-            intervalDistance: drawDistance,
-            modelRadius: modelRadius,
-            style: {
-              scale: 1,
+              scale: scale || 1,
               url: model
             },
             name: groupName
           });
-          this.dataSourceCopy.push({
-            type: "group",
-            id: Number((Math.random() * 100000000).toFixed(0)),
-            attributes: {
-              title: groupName
-            }
+          break;
+        case "polygon":
+          DrawTool.DrawModelsByArea({
+            intervalDistance: drawDistance,
+            modelRadius: modelRadius,
+            style: {
+              scale: scale || 1,
+              url: model
+            },
+            name: groupName
           });
           break;
       }
+      let groupId = Number((Math.random() * 100000000).toFixed(0));
+      this.currentGroupId = groupId;
+      this.dataSourceCopy.push({
+        type: "group",
+        id: groupId,
+        attributes: {
+          title: groupName
+        },
+        style: {
+          scale: scale || 1
+        },
+        dataSource: []
+      });
     },
     //开始绘制
     $_startDraw(type, chooseMode) {
@@ -1227,7 +1250,12 @@ export default {
         vm.$emit("change", vm.dataSourceCopy);
         vm.$emit("addFeature", vm.$_getJsonById(e.id));
       } else if (vm.drawMode === "group") {
-
+        for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+          if (vm.currentGroupId === vm.dataSourceCopy[i].id) {
+            vm.dataSourceCopy[i].dataSource.push(e.id);
+            break;
+          }
+        }
       } else {
         //通过fromJSON方式导入
         let hasData = false;

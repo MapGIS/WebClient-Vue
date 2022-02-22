@@ -206,16 +206,16 @@ export default {
   },
   methods: {
     $_addFeature(e) {
-      this.dataSourceCopy[this.currenSelectIndex - 1].dataSource.features = e;
+      this.dataSourceCopy[this.currenSelectIndex].dataSource.features = e;
     },
     $_saveCamera() {
       if (this.currenSelectLayer) {
-        this.dataSourceCopy[this.currenSelectIndex - 1].camera = getCamera(viewer);
+        this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(viewer);
       }
     },
     $_finishEditTitle() {
       this.showEditTitle = false;
-      this.dataSourceCopy[this.currenSelectIndex - 1].name = this.currenSelectLayer;
+      this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
     },
     $_clickTool(e, noMessage) {
       switch (e) {
@@ -233,7 +233,9 @@ export default {
               "features": []
             }
           };
-          this.currenSelectIndex++;
+          if(this.dataSourceCopy.length > 0){
+            this.currenSelectIndex++;
+          }
           this.dataSourceCopy.push(data);
           if (!noMessage) {
             this.$message.success(title + "添加成功！");
@@ -268,9 +270,9 @@ export default {
           this.$refs.graphicLayer.$_destroy();
           this.$refs.graphicLayer.$_resetEditPanel();
           this.$refs.graphicLayer.$_resetIconsPanel();
-          this.$message.success(this.dataSourceCopy[this.currenSelectIndex - 1].name + "删除成功！");
-          this.dataSourceCopy.splice(this.currenSelectIndex - 1, 1);
-          this.layerSelect.splice(this.currenSelectIndex - 1, 1);
+          this.$message.success(this.dataSourceCopy[this.currenSelectIndex].name + "删除成功！");
+          this.dataSourceCopy.splice(this.currenSelectIndex, 1);
+          this.layerSelect.splice(this.currenSelectIndex, 1);
           this.currenSelectIndex--;
           if (this.currenSelectIndex < 0) {
             this.currenSelectIndex = 0;
@@ -280,7 +282,7 @@ export default {
             this.currentLayer = [];
             this.addLayer = false;
           } else {
-            let index = this.currenSelectIndex - 1 < 0 ? 0 : this.currenSelectIndex - 1;
+            let index = this.currenSelectIndex < 0 ? 0 : this.currenSelectIndex;
             this.currenSelectLayer = this.dataSourceCopy[index].name;
             this.currentLayer = this.dataSourceCopy[index].dataSource.features;
           }
@@ -290,12 +292,12 @@ export default {
           break;
         case "saveCamera":
           if (this.currenSelectLayer) {
-            this.dataSourceCopy[this.currenSelectIndex - 1].camera = getCamera(viewer);
+            this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(viewer);
           }
           break;
         case "flyTo":
           if (this.currenSelectLayer) {
-            let layer = this.dataSourceCopy[this.currenSelectIndex - 1];
+            let layer = this.dataSourceCopy[this.currenSelectIndex];
             const {camera} = layer;
             if (camera) {
               const {positionCartographic, heading, pitch, roll} = camera;
@@ -427,8 +429,11 @@ export default {
           let {dataSource} = data;
           this.updatable = false;
           this.$refs.graphicLayer.$_fromJson(dataSource);
+          if(this.dataSourceCopy.length > 0){
+            this.currenSelectIndex++;
+          }
           this.dataSourceCopy.push(data);
-          this.currenSelectIndex++;
+          this.$_layerSelect();
           let groupGraphicIDs = [];
           let features = [];
           for (let j = 0; j < data.groups.length; j++) {
@@ -493,7 +498,6 @@ export default {
           this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
           this.$refs.graphicLayer.$_fromJson(data.dataSource);
         });
-        this.currenSelectIndex++;
       }
       if (this.autoFlyTo && data.hasOwnProperty("camera")) {
         const {heading, pitch, roll, positionCartographic} = data.camera;
@@ -519,7 +523,7 @@ export default {
           this.currenSelectLayer = this.dataSourceCopy[i].name;
           this.$refs.graphicLayer.$_hideAllGraphics();
           this.vueIndex = Number(this.dataSourceCopy[i].uuid);
-          this.currenSelectIndex = i + 1;
+          this.currenSelectIndex = i;
           this.$nextTick(function () {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
