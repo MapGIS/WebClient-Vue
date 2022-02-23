@@ -4,8 +4,8 @@
 }
 .scene-item {
   position: absolute;
-  height: 50vh;
-  width: 50vw;
+  height: 50%;
+  width: 50%;
 }
 .top-left {
   top: 0px;
@@ -27,8 +27,8 @@
   position: absolute;
   z-index: 9999;
   background: #cc5a5a;
-  top: 47.2vh;
-  left: 47.5vw;
+  top: 47.5%;
+  left: 47.5%;
   width: 5vw;
   height: 5vh;
   border-radius: 12px;
@@ -37,8 +37,8 @@
   position: absolute;
   z-index: 9999;
   background: #cc5a5a;
-  top: 47.2vh;
-  left: 47.5vw;
+  top: 47.5%;
+  left: 47.5%;
   width: 5vw;
   height: 5vh;
   border-radius: 12px;
@@ -50,10 +50,10 @@
 .mapbox-item {
   position: absolute;
   height: 100vh;
-  width: 50vw;
+  width: 50%;
 }
 .cesium-item {
   position: absolute;
   height: 100vh;
-  width: 50vw;
+  width: 50%;
 }

@@ -26,32 +26,32 @@ export default {
       popup: undefined,
       popupContainer: undefined,
       tipContainer: undefined,
-      bbox: undefined
+      bbox: undefined,
     };
   },
   props: {
     data: {
-      type: [String, Object]
+      type: [String, Object],
     },
     enablePopup: {
       type: Boolean,
-      default: false
+      default: false,
     },
     popupOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      }
+      },
     },
     enableTips: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tipsOptions: {
       type: Object,
       default: () => {
         return { type: "default", title: "name" };
-      }
+      },
     },
     /**
      * 当前图层的显示样式
@@ -60,7 +60,7 @@ export default {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     /**
      * 当前图层的高亮样式
@@ -69,7 +69,7 @@ export default {
       type: Object,
       default: () => {
         return {};
-      }
+      },
     },
     /**
      *  自定义Popup界面,JSX语法Function(features) { return <div>自定义元素 {features[0]}</div>}
@@ -84,15 +84,15 @@ export default {
      */
     visible: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   computed: {
     getSourceFeatures() {
-      return filter => {
+      return (filter) => {
         if (this.map) {
           return this.map.querySourceFeatures(this.sourceId || this.layerId, {
-            filter
+            filter,
           });
         }
         return null;
@@ -104,7 +104,7 @@ export default {
         if (this.map) {
           return this.map.queryRenderedFeatures(geometry, {
             layers: [this.layerId],
-            filter
+            filter,
           });
         }
         return null;
@@ -112,7 +112,7 @@ export default {
     },
 
     getClusterExpansionZoom() {
-      return clusterId => {
+      return (clusterId) => {
         return new Promise((resolve, reject) => {
           if (this.mapSource) {
             this.mapSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
@@ -133,7 +133,7 @@ export default {
     },
 
     getClusterChildren() {
-      return clusterId => {
+      return (clusterId) => {
         return new Promise((resolve, reject) => {
           const source = this.mapSource;
           if (source) {
@@ -173,7 +173,7 @@ export default {
           }
         });
       };
-    }
+    },
   },
   watch: {
     visible(val, oldval) {
@@ -182,13 +182,13 @@ export default {
       } else {
         this.map.setLayoutProperty(this.layerId, "visibility", "none");
       }
-    }
+    },
   },
   created() {
     if (this.data) {
       this.$watch(
         () => this.data,
-        function(next) {
+        function (next) {
           if (this.initial) return;
           this.mapSource.setData(next);
         },
@@ -207,7 +207,7 @@ export default {
       currentClickInfo,
       currentHoverInfo,
       popupOptions,
-      tipsOptions
+      tipsOptions,
     } = this;
 
     const tipfeature =
@@ -283,13 +283,13 @@ export default {
       if (this.data) {
         source = {
           type: "geojson",
-          data: this.data
+          data: this.data,
         };
         this.parseData(this.data);
       } else if (this.source) {
         source = {
           type: "geojson",
-          ...this.source
+          ...this.source,
         };
       }
       if (this.enablePopup) {
@@ -312,11 +312,11 @@ export default {
 
       let clickpopup = new mapbox.Popup({
         closeButton: true,
-        closeOnClick: false
+        closeOnClick: false,
       });
       let hoverpopup = new mapbox.Popup({
         closeButton: true,
-        closeOnClick: false
+        closeOnClick: false,
       });
 
       this.clickpopup = clickpopup;
@@ -348,7 +348,7 @@ export default {
           if (hoverpopup) {
             hoverpopup.remove();
           }
-          map.off("click", layerId, function(e) {});
+          map.off("click", layerId, function (e) {});
         } catch (err) {}
       }
     },
@@ -370,17 +370,32 @@ export default {
         if (type == "point") {
           style = {
             type: "circle",
-            ...layerStyle.toMapboxStyle()
+            ...layerStyle.toMapboxStyle(),
           };
         } else if (type == "line") {
           style = {
             type: "line",
-            ...layerStyle.toMapboxStyle()
+            ...layerStyle.toMapboxStyle(),
           };
         } else if (type == "fill") {
           style = {
             type: "fill",
-            ...layerStyle.toMapboxStyle()
+            ...layerStyle.toMapboxStyle(),
+          };
+        } else if (type == "extrude") {
+          style = {
+            type: "fill-extrusion",
+            ...layerStyle.toMapboxStyle(),
+          };
+        } else if (type == "text") {
+          style = {
+            type: "symbol",
+            ...layerStyle.toMapboxStyle(),
+          };
+        } else if (type == "marker") {
+          style = {
+            type: "symbol",
+            ...layerStyle.toMapboxStyle(),
           };
         }
       } else {
@@ -390,7 +405,7 @@ export default {
         id: this.layerId,
         source: this.sourceId || this.layerId,
         layout: { visibility: "visible" },
-        ...style
+        ...style,
       };
       this.map.addLayer(addlayer, this.before);
       this.$_emitEvent("added", { layerId: this.layerId });
@@ -400,8 +415,8 @@ export default {
       const vm = this;
       if (typeof data === "string") {
         fetch(data)
-          .then(res => res.json())
-          .then(geojson => {
+          .then((res) => res.json())
+          .then((geojson) => {
             vm.parseBBox(geojson);
           });
       } else {
@@ -433,7 +448,7 @@ export default {
         const params = {
           id: featureId,
           source: this.source,
-          sourceLayer
+          sourceLayer,
         };
         return this.map.removeFeatureState(params, key);
       }
@@ -441,13 +456,13 @@ export default {
     $_addMousemoveEvents(popup) {
       let vm = this;
       let { map } = this;
-      map.on("mousemove", vm.layerId, function(e) {
+      map.on("mousemove", vm.layerId, function (e) {
         if (e.features.length > 0) {
           let fs = clonedeep(e.features);
           let newfeatrues;
           if (vm.tipsOptions) {
             // if(vm.customTips){
-            newfeatrues = fs.map(f => {
+            newfeatrues = fs.map((f) => {
               let properties = f.properties;
               f.properties = {};
               //  赋值fields
@@ -455,7 +470,7 @@ export default {
               if (!fields) {
                 f.properties = properties;
               } else {
-                fields.forEach(field => {
+                fields.forEach((field) => {
                   f.properties[field] = properties[field];
                 });
               }
@@ -480,7 +495,7 @@ export default {
             .addTo(map);
         }
       });
-      map.on("mouseleave", vm.layerId, function() {
+      map.on("mouseleave", vm.layerId, function () {
         map.getCanvas().style.cursor = "";
         popup.remove();
       });
@@ -499,7 +514,7 @@ export default {
         const inspect = new MapboxInspect({
           popup: new mapboxgl.Popup({
             closeOnClick: false,
-            closeButton: true
+            closeButton: true,
           }),
           // showInspectMap: true,
           showMapPopup: vm.enablePopup,
@@ -508,15 +523,15 @@ export default {
           showInspectButton: false,
           blockHoverPopupOnClick: false,
           queryParameters: {
-            layers: [this.layerId]
+            layers: [this.layerId],
           },
-          renderPopup: features => {
+          renderPopup: (features) => {
             let fs = clonedeep(features);
             let parentPopupLayers = this.$parent.popupLayers;
             let newfeatrues;
             // 针对属性进行过滤显示
             let layerIds = Object.keys(parentPopupLayers);
-            newfeatrues = fs.map(f => {
+            newfeatrues = fs.map((f) => {
               if (parentPopupLayers.hasOwnProperty(f.layer.id)) {
                 let properties = f.properties;
                 f.properties = {};
@@ -525,7 +540,7 @@ export default {
                 if (!fields) {
                   f.properties = properties;
                 } else {
-                  fields.forEach(field => {
+                  fields.forEach((field) => {
                     f.properties[field] = properties[field];
                   });
                 }
@@ -557,7 +572,7 @@ export default {
             ); */
             return vm.$refs.click.$el || vm.$refs.click;
             // return vm.popupContainer;
-          }
+          },
         });
         map.addControl(inspect);
         this.$parent.popupInspect = inspect;
@@ -586,7 +601,7 @@ export default {
       const { layerId } = this;
       let vm = this;
 
-      map.on("click", layerId, function(e) {
+      map.on("click", layerId, function (e) {
         if (vm.clickpopup) {
           vm.clickpopup.remove();
           vm.clickpopup = undefined;
@@ -594,10 +609,10 @@ export default {
 
         const bbox = [
           [e.point.x - 5, e.point.y - 5],
-          [e.point.x + 5, e.point.y + 5]
+          [e.point.x + 5, e.point.y + 5],
         ];
         const feature = map.queryRenderedFeatures(bbox, {
-          layers: [layerId]
+          layers: [layerId],
         });
 
         if (!map || !map.getStyle()) {
@@ -626,7 +641,7 @@ export default {
     $_bindHightLayerEvent() {
       const vm = this;
       let { map } = this;
-      map.on("click", this.layerId, function(e) {
+      map.on("click", this.layerId, function (e) {
         if (e.features.length > 0) {
           if (vm.hoveredStateId !== null) {
             map.setFeatureState(
@@ -646,15 +661,18 @@ export default {
       let highlight;
       let { map, layer, layerId, sourceId, highlightStyle } = this;
       sourceId = sourceId || layerId;
-      const { type, point, line, polygon } = highlightStyle;
+      const { type, point, line, polygon, extrude, text, marker } =
+        highlightStyle;
+
       if (Object.keys(layer).length == 0) {
+        if (!type) return;
         if (type == "point" || point) {
           if (!point) return;
           highlight = {
             id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...point.toMapboxStyle({ highlight: true })
+            ...point.toMapboxStyle({ highlight: true }),
           };
         } else if (type == "line" || line) {
           if (!line) return;
@@ -662,7 +680,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true })
+            ...line.toMapboxStyle({ highlight: true }),
           };
         } else if (type == "polygon" || polygon) {
           if (!polygon) return;
@@ -670,7 +688,31 @@ export default {
             id: layerId + HighLightPrefix,
             type: "fill",
             source: sourceId,
-            ...polygon.toMapboxStyle({ highlight: true })
+            ...polygon.toMapboxStyle({ highlight: true }),
+          };
+        } else if (type == "extrude" || extrude) {
+          if (!extrude) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "fill-extrusion",
+            source: sourceId,
+            ...extrude.toMapboxStyle({ highlight: true }),
+          };
+        } else if (type == "text" || text) {
+          if (!text) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "symbol",
+            source: sourceId,
+            ...text.toMapboxStyle({ highlight: true }),
+          };
+        } else if (type == "marker" || marker) {
+          if (!marker) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "symbol",
+            source: sourceId,
+            ...marker.toMapboxStyle({ highlight: true }),
           };
         }
         if (!map.getLayer(highlight.id)) map.addLayer(highlight);
@@ -681,7 +723,15 @@ export default {
             id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true })
+            ...line.toMapboxStyle({ highlight: true }),
+          };
+        } else if (this.layer.type === "fill-extrusion") {
+          if (!extrude) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "fill-extrusion",
+            source: sourceId,
+            ...extrude.toMapboxStyle({ highlight: true }),
           };
         } else if (this.layer.type === "line") {
           if (!line) return;
@@ -689,7 +739,7 @@ export default {
             id: layerId + HighLightPrefix,
             type: "line",
             source: sourceId,
-            ...line.toMapboxStyle({ highlight: true })
+            ...line.toMapboxStyle({ highlight: true }),
           };
         } else if (this.layer.type === "circle") {
           if (!point) return;
@@ -697,11 +747,27 @@ export default {
             id: layerId + HighLightPrefix,
             type: "circle",
             source: sourceId,
-            ...point.toMapboxStyle({ highlight: true })
+            ...point.toMapboxStyle({ highlight: true }),
+          };
+        } else if (this.layer.type === "text") {
+          if (!text) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "circle",
+            source: sourceId,
+            ...text.toMapboxStyle({ highlight: true }),
+          };
+        } else if (this.layer.type === "marker") {
+          if (!marker) return;
+          highlight = {
+            id: layerId + HighLightPrefix,
+            type: "circle",
+            source: sourceId,
+            ...marker.toMapboxStyle({ highlight: true }),
           };
         }
         if (highlight && !map.getLayer(highlight.id)) map.addLayer(highlight);
       }
-    }
-  }
+    },
+  },
 };

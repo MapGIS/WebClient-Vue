@@ -11,6 +11,13 @@
                   (colorCopy = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
           ">
     </mapgis-ui-color-pick-panel>
+        <mapgis-ui-input-number-panel
+            label="最高高度"
+            :step="1"
+            :range="[minSliderHeightCopy,10000]"
+            v-model="maxSliderHeightCopy"
+            @change="val => setMaxHeight(val)"
+            style="font-size: 13px"/>
     <mapgis-ui-input-number-panel
         label="控制高度"
         :step="1"
@@ -18,7 +25,6 @@
         v-model="heightLimitCopy"
         @change="val => setInput(val)"
         style="font-size: 13px"/>
-
     <mapgis-ui-switch-panel label="控高面显示" v-model="enablePolygonCopy" size="small" style="padding:0 6px"></mapgis-ui-switch-panel>
 
     <mapgis-3d-draw v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
@@ -367,6 +373,7 @@ export default {
         heightLimitedAnalysis.height = data;
       }
     },
+    setMaxHeight(val){},
 
     changeColor(e) {
       this.colorCopy = e;
@@ -543,5 +550,8 @@ export default {
 }
 ::v-deep .mapgis-ui-form-item-control{
   text-align: center!important;
+}
+::v-deep .mapgis-ui-input-number-panel{
+  padding: 0;
 }
 </style>

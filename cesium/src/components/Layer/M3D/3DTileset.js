@@ -27,6 +27,7 @@ export default {
     },
     mount() {
       const { viewer, autoReset, vueIndex, vueKey } = this;
+      const vm = this;
       if (viewer.isDestroyed()) return;
       this.$emit("load", this);
 
@@ -39,7 +40,7 @@ export default {
 
       tileset.readyPromise
         .then(function(primitives) {
-          // viewer.scene.primitives.add(primitives);
+          vm.$emit('loaded', {tileset: tileset});
           if (autoReset) {
             viewer.zoomTo(
               primitives,
@@ -62,6 +63,7 @@ export default {
         !viewer.isDestroyed() && viewer.scene.primitives.remove(find.source);
         find.source.destroy && find.source.destroy();
       }
+      this.$emit("unload");
       window.vueCesium.Tileset3DManager.deleteSource(vueKey, vueIndex);
     }
   },

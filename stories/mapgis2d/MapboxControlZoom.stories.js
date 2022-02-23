@@ -62,7 +62,7 @@ const Template = (args, { argTypes }) => ({
     };
   },
   template: `
-    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
+    <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
         <mapgis-zoom></mapgis-zoom>
     </mapgis-web-map>
     `,

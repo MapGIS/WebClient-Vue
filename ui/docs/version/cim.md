@@ -15,11 +15,11 @@
 |                |            | mapgis-3d-bim-component            | ✔                                   | ✔✖       | BIM 构建树<br>88.204       |
 |                |            | mapgis-3d-video-manager            | ✔                                   | ✔✔       | 投放管理<br>91.123         |
 |                |            | mapgis-3d-video-setting            | ✔                                   | ✔✔       | 投放配置<br>91.123         |
-|                |            | mapgis-3d-buffer-analysis          | ✔                                   | ✔✔       | 缓冲分析<br>localhost      |
-|                |            | mapgis-3d-overlay-analysis         | ✔                                   | ✔✔       | 叠加分析<br>localhost      |
+|                |            | mapgis-3d-analysis-buffer          | ✔                                   | ✔✔       | 缓冲分析<br>localhost      |
+|                |            | mapgis-3d-analysis-overlay         | ✔                                   | ✔✔       | 叠加分析<br>localhost      |
 |                | 可视化     | mapgis-3d-particle-effects-manager | ✔                                   | ✔✔       | 粒子特效                   |
 |                | 模拟仿真   | mapgis-3d-city-grow                | ✔                                   | ✔✖       | 城市生长<br>21.191         |
-|                |            | mapgis-3d-building-glow            | ✔                                   | ✔✖       | 单体建筑生长<br>88.204     |
+|                |            | mapgis-3d-building-grow            | ✔                                   | ✔✖       | 单体建筑生长<br>88.204     |
 |                |            | mapgis-3d-ponding-simulation       | ✖                                   | ✔✖       | 积水仿真                   |
 |                | 场景漫游   | mapgis-3d-path-roaming             | ✔                                   | ✔✔       | 单路径                     |
 |                |            | mapgis-3d-scene-roaming            | ✔                                   | ✔✔       | 路径管理                   |

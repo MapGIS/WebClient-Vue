@@ -20,7 +20,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisWebGlobe, MapgisDocLayer },
-  template: `<mapgis-web-scene>
+  template: `<mapgis-web-scene style="height:95vh">
     <mapgis-3d-igs-doc-layer v-bind="$props"/>
   </mapgis-web-scene>`,
   data(){

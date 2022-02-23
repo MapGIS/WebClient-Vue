@@ -19,7 +19,7 @@
       </div>
       <mapgis-ui-more-tool-button
         @click="$_clickTool"
-        :dataSource="moreTools"
+        :dataSource="enableGroup ? groupTools : moreTools"
         :top="top"
         :width="width"
         class="mapgis-ui-icon-row-more-tool"/>
@@ -75,6 +75,20 @@ export default {
           event: "delete",
           icon: "delete",
           title: "删除"
+        }];
+      }
+    },
+    groupTools: {
+      type: Array,
+      default() {
+        return [{
+          event: "edit",
+          icon: "edit",
+          title: "批量修改"
+        }, {
+          event: "delete",
+          icon: "delete",
+          title: "批量删除"
         }];
       }
     }

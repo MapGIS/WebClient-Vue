@@ -6,7 +6,7 @@
       type="more"/>
     <div v-show="showTool"
          class="mapgis-ui-more-tool-button"
-         :class="{'mapgis-ui-more-tool-button-top:': top,'mapgis-ui-more-tool-button-bottom': !top}"
+         :class="{'mapgis-ui-more-tool-button-top': top,'mapgis-ui-more-tool-button-bottom': !top}"
          @mouseleave="$_hideTool"
     >
       <div @click="$_clickTool(tool.event)" :key="index" v-for="(tool, index) in dataSource"

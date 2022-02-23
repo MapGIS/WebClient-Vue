@@ -48,7 +48,7 @@ export default {
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { MapgisWebMap, MapgisVectorLayer },
-    template: `<mapgis-web-map crs="EPSG:4326" :center="[105.247175, 36.152892]" :zoom="3" style="height:60vh">
+    template: `<mapgis-web-map crs="EPSG:4326" :center="[105.247175, 36.152892]" :zoom="3" style="height:95vh">
     <mapgis-vector-layer v-bind="$props" />
   </mapgis-web-map>`,
     data(){

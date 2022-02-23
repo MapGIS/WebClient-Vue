@@ -103,8 +103,13 @@ const Template = (args, { argTypes }) => ({
   template: `
       <mapgis-web-scene :style="{height: '95vh'}">
         <mapgis-3d-graph-theme-layer v-if="geojsonCopy" :geojson="geojsonCopy" :type="type" 
-        :attributeName="attributeName" :attributeColor="attributeColor"
-        :width="width" :addExtrudedHeight="addExtrudedHeight"
+        :attributeName="attributeName" 
+        :attributeColor="attributeColor"
+        :width="width" 
+        :addExtrudedHeight="addExtrudedHeight" 
+        :textFont="textFont"
+        :textColor="textColor" 
+        :textHeightOffset="textHeightOffset"
         @load="load"/>
       </mapgis-web-scene>
     `,
@@ -118,6 +123,9 @@ export const 统计专题图 = Template.bind({});
   attributeColor: ["#FFB980", "#5AB1EF"],
   width: 50000,
   addExtrudedHeight: true,
+  textFont: "50px Helvetica",
+  textColor: "#008000",
+  textHeightOffset: 10000,
 };
 统计专题图.parameters = {
   docs: {

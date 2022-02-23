@@ -65,12 +65,12 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "addHeight",
+      key: "offsetHeight",
       value: 0
     },
     {
       type: "MapgisUiShowOutline",
-      title: "是否显示边线",
+      title: "边线设置",
       key: "showOutline",
       value: false
     },
@@ -94,9 +94,9 @@ let editList = {
     },
     {
       type: "MapgisUiShowBackground",
-      title: "是否显示背景",
+      title: "背景设置",
       key: "showBackground",
-      value: false
+      value: true
     },
     {
       type: "MapgisUiColorPicker",
@@ -108,7 +108,7 @@ let editList = {
       type: "MapgisUiSlider",
       title: "背景明度",
       key: "backgroundOpacity",
-      value: 20
+      value: 0
     },
     {
       type: "MapgisUiInputNumber",
@@ -154,6 +154,12 @@ let editList = {
       title: "图片高度",
       key: "height",
       value: 40
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "离地高度",
+      key: "offsetHeight",
+      value: 0
     }
   ],
   point: [
@@ -184,12 +190,12 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
       type: "MapgisUiShowOutline",
-      title: "是否显示边线",
+      title: "边线设置",
       key: "showOutline",
       value: false
     },
@@ -262,6 +268,12 @@ let editList = {
       title: "是否为曲线",
       key: "isHermiteSpline",
       value: false
+    },
+    {
+      type: "MapgisUiLoop",
+      title: "是否闭环",
+      key: "loop",
+      value: false
     }
   ],
   polylineVolume: [
@@ -328,12 +340,6 @@ let editList = {
       title: "墙体高度",
       key: "extrudedHeight",
       value: 100
-    },
-    {
-      type: "MapgisUiInputNumber",
-      title: "离地高度",
-      key: "height",
-      value: 0
     },
     {
       type: "MapgisUiColorPicker",
@@ -436,7 +442,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     }
   ],
@@ -506,7 +512,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -533,6 +539,12 @@ let editList = {
       type: "MapgisUiInput",
       title: "标题",
       key: "title",
+      value: "无标题"
+    },
+    {
+      type: "MapgisUiInput",
+      title: "文本",
+      key: "rectangleText",
       value: "无标题"
     },
     {
@@ -594,14 +606,8 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
-    },
-    {
-      type: "MapgisUiInput",
-      title: "文本",
-      key: "rectangleText",
-      value: "无标题"
     },
     {
       type: "MapgisUiSelect",
@@ -690,7 +696,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -754,6 +760,12 @@ let editList = {
       title: "透明度",
       key: "opacity",
       value: 100
+    },
+    {
+      type: "MapgisUiInputNumber",
+      title: "离地高度",
+      key: "offsetHeight",
+      value: 0
     }
   ],
   box: [
@@ -772,7 +784,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -816,7 +828,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -854,7 +866,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -898,7 +910,7 @@ let editList = {
     {
       type: "MapgisUiInputNumber",
       title: "离地高度",
-      key: "height",
+      key: "offsetHeight",
       value: 0
     },
     {
@@ -979,7 +991,7 @@ let editList = {
       type: "MapgisUiInput",
       title: "材质贴图",
       key: "image",
-      value: "http://localhost:8080/assets/png/lineClr.png"
+      value: ""
     },
     {
       type: "MapgisUiInputNumber",
@@ -1018,10 +1030,10 @@ let editList = {
       value: 100
     },
     {
-      type: "MapgisUiInputNumber",
-      title: "离地高度",
-      key: "height",
-      value: 0
+      type: "MapgisUiLoop",
+      title: "是否闭环",
+      key: "loop",
+      value: false
     }
   ]
 };

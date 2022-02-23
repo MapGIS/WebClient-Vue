@@ -137,6 +137,7 @@ export default {
       }
       this.$emit("unload", { component: this });
       vueCesium.ExplosionManager.deleteSource(vueKey, vueIndex);
+      this.resetHeadding();
     },
     explosionAction() {
       const { vueKey, vueIndex, vueCesium, Cesium } = this;

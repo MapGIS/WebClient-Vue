@@ -1,4 +1,4 @@
-import { MapvBaseLayer } from "./MapvBaseLayer";
+import {MapvBaseLayer} from "./MapvBaseLayer";
 
 let idIndex = 0;
 
@@ -296,67 +296,94 @@ export class MapvLayer {
     return this;
   }
 
-  _createCanvas() {
-    var canvas = document.createElement("canvas");
-    canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
-    canvas.style.position = "absolute";
-    canvas.style.top = "0px";
-    canvas.style.left = "0px";
+    _createCanvas() {
+        var canvas = document.createElement("canvas");
+        canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
+        canvas.style.position = "absolute";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
 
-    canvas.style.pointerEvents = "none";
-    canvas.style.zIndex = this.mapVOptions.zIndex || 100;
+        canvas.style.pointerEvents = "none";
+        canvas.style.zIndex = this.mapVOptions.zIndex || 100;
 
-    canvas.width =
-      parseInt(this.map.canvas.width) ||
-      parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
-    canvas.height =
-      parseInt(this.map.canvas.height) ||
-      parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
-    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
-    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
-
-    var devicePixelRatio = this.devicePixelRatio;
-    if (this.mapVOptions.context == "2d") {
-      canvas
-        .getContext(this.mapVOptions.context)
-        .scale(devicePixelRatio, devicePixelRatio);
-    }
-    return canvas;
-  }
-
-  _creteWidgetCanvas() {
-    var canvas = document.createElement("canvas");
-
-    canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
-    canvas.style.position = "absolute";
-    canvas.style.top = "0px";
-    canvas.style.left = "0px";
-
-    canvas.style.pointerEvents = "none";
-    canvas.style.zIndex = this.mapVOptions.zIndex || 100;
-
-    canvas.width =
-      parseInt(this.map.canvas.width) ||
-      parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
-    canvas.height =
-      parseInt(this.map.canvas.height) ||
-      parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
-    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
-    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
-    var devicePixelRatio = this.devicePixelRatio;
-    if (this.mapVOptions.context == "2d") {
-      canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+        if (window.Cesium.VERSION > 1.59) {
+            if (this.mapVOptions.draw === "cluster" || this.mapVOptions.draw === "heatmap") {
+                canvas.width =
+                    parseInt(this.map.canvas.width) * this.devicePixelRatio ||
+                    parseInt(this.map.container.offsetWidth);
+                canvas.height =
+                    parseInt(this.map.canvas.height) * this.devicePixelRatio ||
+                    parseInt(this.map.container.offsetHeight);
+            } else {
+                canvas.width =
+                    parseInt(this.map.canvas.width) ||
+                    parseInt(this.map.container.offsetWidth);
+                canvas.height =
+                    parseInt(this.map.canvas.height) ||
+                    parseInt(this.map.container.offsetHeight);
+            }
+        } else {
+            canvas.width =
+                parseInt(this.map.canvas.width) ||
+                parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
+            canvas.height =
+                parseInt(this.map.canvas.height) ||
+                parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
+            var devicePixelRatio = this.devicePixelRatio;
+            if (this.mapVOptions.context == "2d") {
+                canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+            }
+        }
+        return canvas;
     }
 
-    return canvas;
-  }
+    _creteWidgetCanvas() {
+        var canvas = document.createElement("canvas");
 
-  _reset() {
-    this.resizeCanvas();
-    this.fixPosition();
-    this.onResize();
-    this.render();
-  }
+        canvas.id = this.mapVOptions.layerid || "mapv" + idIndex++;
+        canvas.style.position = "absolute";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
+
+        canvas.style.pointerEvents = "none";
+        canvas.style.zIndex = this.mapVOptions.zIndex || 100;
+        if (window.Cesium.VERSION > 1.59) {
+            if (this.mapVOptions.draw === "cluster" || this.mapVOptions.draw === "heatmap") {
+                canvas.width =
+                    parseInt(this.map.canvas.width) * this.devicePixelRatio ||
+                    parseInt(this.map.container.offsetWidth);
+                canvas.height =
+                    parseInt(this.map.canvas.height) * this.devicePixelRatio ||
+                    parseInt(this.map.container.offsetHeight);
+            } else {
+                canvas.width =
+                    parseInt(this.map.canvas.width) ||
+                    parseInt(this.map.container.offsetWidth);
+                canvas.height =
+                    parseInt(this.map.canvas.height) ||
+                    parseInt(this.map.container.offsetHeight);
+            }
+        } else {
+            canvas.width =
+                parseInt(this.map.canvas.width) ||
+                parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
+            canvas.height =
+                parseInt(this.map.canvas.height) ||
+                parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
+            var devicePixelRatio = this.devicePixelRatio;
+            if (this.mapVOptions.context == "2d") {
+                canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+            }
+        }
+        return canvas;
+    }
+
+    _reset() {
+        this.resizeCanvas();
+        this.fixPosition();
+        this.onResize();
+        this.render();
+    }
 
   /**
    * 强制重回图层
@@ -414,35 +441,44 @@ export class MapvLayer {
     this.updateData(opt.data, opt.options);
   }
 
-  resizeCanvas() {
-    //this.mapContainer.style.perspective = this.map.transform.cameraToCenterDistance + 'px';
-    if (this.canvas == undefined || this.canvas == null) return;
-    var canvas = this.canvas;
-    canvas.style.position = "absolute";
-    canvas.style.top = "0px";
-    canvas.style.left = "0px";
-    canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
-    canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
-    if (window.Cesium.VERSION > 1.59) {
-      canvas.width =
-        parseInt(this.map.canvas.width) ||
-        parseInt(this.map.container.offsetWidth);
-      canvas.height =
-        parseInt(this.map.canvas.height) ||
-        parseInt(this.map.container.offsetHeight);
-    } else {
-      canvas.width =
-        parseInt(this.map.canvas.width) ||
-        parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
-      canvas.height =
-        parseInt(this.map.canvas.height) ||
-        parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
-      var devicePixelRatio = this.devicePixelRatio;
-      if (this.mapVOptions.context == "2d") {
-        canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
-      }
+    resizeCanvas() {
+        //this.mapContainer.style.perspective = this.map.transform.cameraToCenterDistance + 'px';
+        if (this.canvas == undefined || this.canvas == null) return;
+        var canvas = this.canvas;
+        canvas.style.position = "absolute";
+        canvas.style.top = "0px";
+        canvas.style.left = "0px";
+        canvas.style.width = parseInt(this.map.container.offsetWidth) + "px";
+        canvas.style.height = parseInt(this.map.container.offsetHeight) + "px";
+        if (window.Cesium.VERSION > 1.59) {
+            if (this.mapVOptions.draw === "cluster" || this.mapVOptions.draw === "heatmap") {
+                canvas.width =
+                    parseInt(this.map.canvas.width) * this.devicePixelRatio ||
+                    parseInt(this.map.container.offsetWidth);
+                canvas.height =
+                    parseInt(this.map.canvas.height) * this.devicePixelRatio ||
+                    parseInt(this.map.container.offsetHeight);
+            } else {
+                canvas.width =
+                    parseInt(this.map.canvas.width) ||
+                    parseInt(this.map.container.offsetWidth);
+                canvas.height =
+                    parseInt(this.map.canvas.height) ||
+                    parseInt(this.map.container.offsetHeight);
+            }
+        } else {
+            canvas.width =
+                parseInt(this.map.canvas.width) ||
+                parseInt(this.map.container.offsetWidth) * this.devicePixelRatio;
+            canvas.height =
+                parseInt(this.map.canvas.height) ||
+                parseInt(this.map.container.offsetHeight) * this.devicePixelRatio;
+            var devicePixelRatio = this.devicePixelRatio;
+            if (this.mapVOptions.context == "2d") {
+                canvas.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
+            }
+        }
     }
-  }
 
   fixPosition() {}
 

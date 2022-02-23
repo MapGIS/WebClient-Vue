@@ -77,7 +77,7 @@ export const Compare = (args, { argTypes }) => ({
     }
   },
   template: `
-        <mapgis-compare :orientation="orientation" style="height:60vh">
+        <mapgis-compare :orientation="orientation" style="height:95vh">
             <mapgis-web-map slot="beforeMap"
                 v-bind="{ ...beforeMapOptions }"
             >

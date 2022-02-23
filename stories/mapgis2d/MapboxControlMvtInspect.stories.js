@@ -20,7 +20,7 @@ const TemplateMerge = (args, { argTypes }) => ({
   methods: {
     changeEnable() {},
   },
-  template: `<mapgis-web-map :mapStyle="mvtStyle" crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh" >
+  template: `<mapgis-web-map :mapStyle="mvtStyle" crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh" >
       <mapgis-inspect :mode="mode"/>
     </mapgis-web-map>`,
 });

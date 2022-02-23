@@ -1,5 +1,6 @@
 import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle, Shadow } = Style;
+import Markdown from "../../cesium/docs/api/analysis/Buffer.md";
 
 export default {
   title: "三维/分析/缓冲分析",
@@ -68,7 +69,7 @@ const Template = (args, { argTypes }) => ({
   template: `
     <mapgis-web-scene style="height: 95vh">
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-buffer-analysis v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
+        <mapgis-3d-analysis-buffer v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
       </mapgis-ui-card>
       <mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
       <mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>
@@ -76,8 +77,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const 缓冲区分析 = Template.bind({});
-缓冲区分析.args = {
+export const Buffer = Template.bind({});
+Buffer.args = {
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: "http://localhost:6163",
@@ -123,4 +124,11 @@ export const 缓冲区分析 = Template.bind({});
       }
     ]
   }
+};
+Buffer.parameters = {
+  docs: {
+      description: {
+          component: Markdown,
+      },
+  },
 };

@@ -4,19 +4,24 @@
             v-model="sliderValue"
             :max="pondingTime"
             :interval="intvl"
+            :speed="multiSpeedCopy"
+            :speedStep="speedStep"
+            :maxSpeed="60"
             :intervalOptions="intvlOptions"
             :intervalPlaceholder="intvlPlaceholder"
-            :speedOptions="spdOptions"
             :tipFormatter="formatter"
             :isPlaying="playing"
             :currentTime="crtTime"
+            :enableBackforward="false"
             :disabled="true"
             :width="width"
-            :sliderStyle="sliderStyle"
-            @startPlay="addflood"
+            @startPlay="play"
             @stopPlay="stop"
             @intervalChange="intvlChange"
+            @resetSpeed="resetSpeed"
             @speedChange="spdChange"
+            @decelerate="decelerate"
+            @accelerate="accelerate"
         ></mapgis-ui-timeline-panel>
     </div>
 </template>
@@ -30,24 +35,29 @@ export default {
             type: Number,
             default: 0,
         },
-        pond: {
+        resetSpeedVal: {
+            type: Number,
+            default: 1,
+        },
+        speedStep: {
+            type: Number,
+            default: 1,
+        },
+        isPlaying: {
             type: Boolean,
             default: false,
         },
         width: {
             type: Number,
-            default: 500,
-        },
-        sliderStyle:{
-            type: Object,
-            default: ()=>{
-                return { marginLeft:'90px', width:'240px' } 
-            }
+            default: 560,
         }
     },
     watch: {
         value(e) {
             this.sliderValue = e;
+        },
+        multiSpeedCopy(e) {
+            this.$emit('updateSpeed',e)
         },
         sliderValue:{
           handler:function(e){
@@ -61,7 +71,7 @@ export default {
             },
             immediate: true,
         },
-        pond: {
+        isPlaying: {
             handler: function (e) {
                 this.playing = e;
             },
@@ -86,14 +96,13 @@ export default {
 
             
             timer: undefined,
-            playing: this.pond,
-            spd:'1x',
+            playing: this.isPlaying,
             intvl: '时',
             crtTime:undefined,
 
             intvlOptions: ['时', '分', '秒'],
             intvlPlaceholder: '时',
-            spdOptions: ['60x','12x','6x','3x', '2x', '1x'],
+            multiSpeedCopy: 1,
         };
     },
     mounted() {
@@ -128,11 +137,26 @@ export default {
           }
         },
         addT(m) {
-              return m < 10 ? '0' + m : m
-            },    
+            return m < 10 ? '0' + m : m
+        }, 
+        resetSpeed(){
+            this.multiSpeedCopy = this.resetSpeedVal;
+        },
+        decelerate(){
+            if(this.multiSpeedCopy >= this.speedStep){
+                this.multiSpeedCopy -= this.speedStep;
+            }
+            this.$emit('decelerate') 
+        },
+        accelerate(){
+            if(this.multiSpeedCopy <= 60 - this.speedStep){
+                this.multiSpeedCopy += this.speedStep;
+            }
+            this.$emit('accelerate') 
+        },
         spdChange(e){
-          this.spd = e;
-          this.$emit('updateSpeed',parseFloat(this.spd))
+          this.sliderValue = 0;
+          this.multiSpeedCopy = e;
         },
         intvlChange(e){
           this.intvl = e;
@@ -150,7 +174,7 @@ export default {
         },
         
         /* 开始播放 */
-        addflood() {
+        play() {
             this.playing = true;
             this.$emit("play");
         },

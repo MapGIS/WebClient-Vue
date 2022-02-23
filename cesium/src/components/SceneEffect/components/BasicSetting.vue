@@ -1,146 +1,136 @@
 <template>
     <div class="basic-setting">
-        <mapgis-ui-form-model
-            v-bind="formItemLayout"
-            :layout="layout"
-            labelAlign="left"
-            :colon="false"
-        >
-            <mapgis-ui-row>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        size="small"
-                        label="地球"
-                        :checked="earth"
-                        @changeChecked="enableEarth"
-                    />
-                </mapgis-ui-col>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        size="small"
-                        label="大气层"
-                        :checked="skyAtmosphere"
-                        @changeChecked="enableSkyAtmosphere"
-                    />
-                </mapgis-ui-col>
-            </mapgis-ui-row>
-            <mapgis-ui-row>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="阴影效果"
-                        :checked="shadow"
-                        @changeChecked="enableShadow"
-                    />
-                </mapgis-ui-col>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="深度检测"
-                        :checked="depthTest"
-                        @changeChecked="enableDepthTest"
-                    />
-                </mapgis-ui-col>
-            </mapgis-ui-row>
+        <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    size="small"
+                    label="地球"
+                    :checked="earth"
+                    @changeChecked="enableEarth"
+                />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    size="small"
+                    label="大气层"
+                    :checked="skyAtmosphere"
+                    @changeChecked="enableSkyAtmosphere"
+                />
+            </mapgis-ui-col>
+        </mapgis-ui-row>
+        <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="阴影效果"
+                    :checked="shadow"
+                    @changeChecked="enableShadow"
+                />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="深度检测"
+                    :checked="depthTest"
+                    @changeChecked="enableDepthTest"
+                />
+            </mapgis-ui-col>
+        </mapgis-ui-row>
 
-            <mapgis-ui-row>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="显示帧率"
-                        :checked="FPS"
-                        @changeChecked="enableFPS"
-                    />
-                </mapgis-ui-col>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="时间轴"
-                        :checked="timeline"
-                        @changeChecked="enableTimeline"
-                    />
-                </mapgis-ui-col>
-            </mapgis-ui-row>
+        <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="显示帧率"
+                    :checked="FPS"
+                    @changeChecked="enableFPS"
+                />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="时间轴"
+                    :checked="timeline"
+                    @changeChecked="enableTimeline"
+                />
+            </mapgis-ui-col>
+        </mapgis-ui-row>
 
-            <mapgis-ui-row>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="罗盘控件"
-                        :checked="compass"
-                        @changeChecked="enableCompass"
-                    />
-                </mapgis-ui-col>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="缩放控件"
-                        :checked="zoom"
-                        @changeChecked="enableZoom"
-                    />
-                </mapgis-ui-col>
-            </mapgis-ui-row>
+        <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="罗盘控件"
+                    :checked="compass"
+                    @changeChecked="enableCompass"
+                />
+            </mapgis-ui-col>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="缩放控件"
+                    :checked="zoom"
+                    @changeChecked="enableZoom"
+                />
+            </mapgis-ui-col>
+        </mapgis-ui-row>
 
-            <mapgis-ui-row>
-                <mapgis-ui-col :span="12">
-                    <mapgis-ui-switch-panel
-                        class="odd"
-                        size="small"
-                        label="状态栏"
-                        :checked="statebar"
-                        @changeChecked="handleChangeStatebar"
-                    />
-                </mapgis-ui-col>
-            </mapgis-ui-row>
+        <mapgis-ui-row>
+            <mapgis-ui-col :span="12">
+                <mapgis-ui-switch-panel
+                    class="odd"
+                    size="small"
+                    label="状态栏"
+                    :checked="statebar"
+                    @changeChecked="handleChangeStatebar"
+                />
+            </mapgis-ui-col>
+        </mapgis-ui-row>
 
-            <div class="dividerWrapper"><div class="divider" /></div>
+        <div class="dividerWrapper"><div class="divider" /></div>
 
-            <mapgis-ui-input-number-panel
-                size="small"
-                label="亮度"
-                :value="layerbrightness"
-                :range="lyrBrtRange"
-                :step="0.2"
-                @change="layerBrtChange"
-            >
-            </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+            size="small"
+            label="亮度"
+            :value="layerbrightness"
+            :range="lyrBrtRange"
+            :step="0.2"
+            @change="layerBrtChange"
+        />
 
-            <mapgis-ui-input-number-panel
-                size="small"
-                label="对比度"
-                :value="layercontrast"
-                :range="lyrBrtRange"
-                :step="0.2"
-                @change="layerCtrstChange"
-            >
-            </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+            size="small"
+            label="对比度"
+            :value="layercontrast"
+            :range="lyrBrtRange"
+            :step="0.2"
+            @change="layerCtrstChange"
+        />
 
-            <mapgis-ui-input-number-panel
-                size="small"
-                label="色调"
-                :value="layerhue"
-                :range="lyrHueRange"
-                :step="0.1"
-                @change="layerHueChange"
-            >
-            </mapgis-ui-input-number-panel>
+        <mapgis-ui-input-number-panel
+            size="small"
+            label="色调"
+            :value="layerhue"
+            :range="lyrHueRange"
+            :step="0.1"
+            @change="layerHueChange"
+        />
 
-            <mapgis-ui-input-number-panel
-                size="small"
-                label="饱和度"
-                :value="layersaturation"
-                :range="lyrBrtRange"
-                :step="0.2"
-                @change="layerSaturationChange"
-            >
-            </mapgis-ui-input-number-panel>
-        </mapgis-ui-form-model>
+        <mapgis-ui-input-number-panel
+            size="small"
+            label="饱和度"
+            :value="layersaturation"
+            :range="lyrBrtRange"
+            :step="0.2"
+            @change="layerSaturationChange"
+        />
+        
         <mapgis-3d-statebar v-if="statebar" :frame="60" :bottomMap="true" />
     </div>
 </template>
@@ -155,10 +145,6 @@ export default {
     name: "BasicSetting",
     mixins: [ServiceLayer, StateBar],
     props: {
-        layout: {
-            type: String,
-            default: "horizontal", // 'horizontal' 'vertical' 'inline'
-        },
         initialStatebar: {
             type: Boolean,
             default: false,
@@ -193,16 +179,6 @@ export default {
             lyrHueRange: [-1, 1],
             layersaturation: 1,
         };
-    },
-    computed: {
-        formItemLayout({ layout }) {
-            return layout === "horizontal"
-                ? {
-                      labelCol: { span: 7 },
-                      wrapperCol: { span: 17 },
-                  }
-                : {};
-        },
     },
     mounted() {
         const { vueKey, vueIndex } = this;

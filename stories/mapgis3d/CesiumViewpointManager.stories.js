@@ -1,4 +1,5 @@
 import "../style/card.css";
+import Markdown from "../../cesium/docs/api/analysis/ViewpointManager.md";
 import Mapgis3dViewpointManager from "../../cesium/src/components/WebGlobe/ViewpointManager.vue";
 
 export default {
@@ -35,5 +36,12 @@ const Template = (args, { argTypes }) => ({
 
 export const 视点管理 = Template.bind({});
 视点管理.args = {
+};
+视点管理.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
 };
 

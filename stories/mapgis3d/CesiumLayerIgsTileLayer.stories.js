@@ -18,7 +18,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
-    <mapgis-web-scene :cameraView="{
+    <mapgis-web-scene style="height:95vh" :cameraView="{
         destination: {
           x: -2409221.7854387695,
           y: 4705113.697479787,

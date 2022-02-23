@@ -23,7 +23,6 @@
         >
           <basic-setting
             ref="attr"
-            :layout="layout"
             @updateSpin="changeSpinning"
             :initialStatebar="initialStatebar"
             :initialDepthTest="depthTest"
@@ -37,7 +36,6 @@
         >
           <camera-setting
             ref="effect"
-            :layout="layout"
             @updateSpin="changeSpinning"
           ></camera-setting>
         </mapgis-ui-tab-pane>
@@ -49,7 +47,6 @@
         >
           <light-setting
             ref="effect"
-            :layout="layout"
             @updateSpin="changeSpinning"
           ></light-setting>
         </mapgis-ui-tab-pane>
@@ -61,7 +58,6 @@
         >
           <weather-setting
             ref="effect"
-            :layout="layout"
             @updateSpin="changeSpinning"
           ></weather-setting>
         </mapgis-ui-tab-pane>
@@ -73,13 +69,12 @@
         >
           <effect-setting
             ref="effect"
-            :layout="layout"
             @updateSpin="changeSpinning"
           ></effect-setting>
         </mapgis-ui-tab-pane>
       </mapgis-ui-tabs>
     </div>
-    <!-- <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="openPanel">
+    <!-- <mapgis-ui-button class="openButton" shape="circle" type="primary" @click="togglePanel">
       <mapgis-ui-iconfont type="mapgis-setting"/>
     </mapgis-ui-button> -->
     <mapgis-ui-spin
@@ -110,13 +105,6 @@ export default {
   },
   mixins: [ServiceLayer],
   props: {
-    /**
-     * 组件的布局方式，有'horizontal' 'vertical' 'inline'三种选项。
-     */
-    layout: {
-      type: String,
-      default: "horizontal", // 'horizontal' 'vertical' 'inline'
-    },
     /**
      * 面板样式
      */
@@ -165,7 +153,7 @@ export default {
       });
       this.$emit("unload");
     },
-    openPanel() {
+    togglePanel() {
       this.show = !this.show;
     },
 

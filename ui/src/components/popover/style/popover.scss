@@ -13,15 +13,17 @@ $popup-width: 280px;
 }
 
 .mapgis-feature-popup-container {
-  padding: 10px 12px 10px 12px;
+  padding: 0px 12px 10px 12px;
   overflow: hidden;
   width: $popup-width;
 }
+
 .mapgis-2d-geojson-default-popup {
   position: absolute;
   z-index: 1000;
   display: block;
 }
+
 .mapboxgl-popup-content {
   /**
    * 绘制的时候如果产生溢出问题，即绘制的时候绘制结果在绘制轨迹的上方
@@ -104,9 +106,8 @@ $popup-width: 280px;
   color: rgb(178, 178, 178);
   font-weight: bold;
   border-bottom: 2px solid $panel-backgroud;
-  padding: 6px 0;
+  padding: 6px 0 14px 0;
   line-height: 11px;
-  margin-bottom: 3px;
   text-align: left;
   white-space: nowrap;
   // height: 32px; 这里给高度的话会产生抖动，请不要给个固定高度
@@ -170,7 +171,7 @@ $popup-width: 280px;
   height: 32px;
   line-height: 11px;
   width: 100%;
-  border-left: 2px solid $panel-backgroud;
+  border-left: 2px solid rgba(0, 0, 0, 0);
   border-bottom: 2px solid $panel-backgroud;
 }
 
@@ -309,7 +310,7 @@ $popup-width: 280px;
 }
 
 .cesium-popup-content-header {
-  height: 16px;
+  height: 0;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -327,10 +328,12 @@ $popup-width: 280px;
   .cesium-popup-close-button {
     float: right;
     position: relative;
-    right: 0px;
+    top: -5px;
+    right: 4px;
     width: 16px;
     height: 16px;
   }
+
   .cesium-popup-separate-button {
     float: right;
     position: relative;

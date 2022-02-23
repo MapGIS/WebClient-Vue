@@ -16,7 +16,7 @@ const Template = (args, { argTypes }) => ({
       sliderValue: 0,
       timer: undefined,
       playing: undefined,
-      spd:'1x',
+      spd: 1,
       intvl: '时',
       maxV:24,
       crtTime:undefined
@@ -68,7 +68,7 @@ const Template = (args, { argTypes }) => ({
                 vm.playing = false;
                 window.clearInterval(vm.timer);
           }else{
-            vm.sliderValue += 1 * parseFloat(vm.spd);
+            vm.sliderValue += 1 * vm.spd;
           }
       },1000)
 
@@ -79,6 +79,19 @@ const Template = (args, { argTypes }) => ({
     },
     spdChange(e){
       this.spd = e;
+    },
+    spdReset(){
+      this.spd = 1;
+    },
+    reduceSpeed(){
+      if(this.spd >= 1){
+        this.spd -= 1;
+      }
+    },
+    addSpeed(){
+      if(this.spd <= 49){
+        this.spd += 1;
+      } 
     },
     intvlChange(e){
       this.intvl = e;
@@ -101,13 +114,19 @@ const Template = (args, { argTypes }) => ({
       v-bind="$props" 
       v-model="sliderValue"
       :interval="intvl"
+      :speed="spd"
       :tipFormatter="formatter"
       :isPlaying="playing"
       :max="maxV"
+      :maxSpeed="60"
+      :enableBackforward="false"
       :currentTime="crtTime"
       @startPlay="start"
       @stopPlay="stop"
       @intervalChange="intvlChange"
+      @resetSpeed="spdReset"
+      @decelerate="reduceSpeed"
+      @accelerate="addSpeed"
       @speedChange="spdChange"
     >
     </mapgis-ui-timeline-panel>
@@ -118,10 +137,5 @@ export const 时间轴面板 = Template.bind({});
 时间轴面板.args = {
   intervalOptions: ['时', '分', '秒'],
   intervalPlaceholder: '时',
-  speedOptions: ['60x','12x','6x','3x', '2x', '1x'],
-  sliderStyle:{
-    marginLeft:'90px',
-    width:'240px'
-  }
 };
 

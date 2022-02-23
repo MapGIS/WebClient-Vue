@@ -281,12 +281,11 @@ const Template = (args, {argTypes}) => ({
           </mapgis-ui-form-item> -->
         </mapgis-ui-setting-form>
         <!--            <template v-if="activeType">-->
-        <!--              <mapgis-3d-mapv-heater-layer-->
-        <!--                v-if="isMapv"-->
-        <!--                :options="mapvOptions"-->
-        <!--                :geojson="geojson"-->
-        <!--                :field="field"-->
-        <!--              />-->
+<!--                      <mapgis-3d-mapv-heater-layer-->
+<!--                        :options="mapvOptions"-->
+<!--                        :geojson="geojson"-->
+<!--                        :field="field"-->
+<!--                      />-->
         <mapgis-3d-cesium-heater-layer
             :options="cesiumOptions"
             :blur="blur"

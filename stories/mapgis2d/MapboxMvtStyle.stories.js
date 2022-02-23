@@ -127,7 +127,7 @@ const TemplateMerge = (args, { argTypes }) => ({
       this.enable = !this.enable;
     }
   },
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh" :mapStyle="mapStyle">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh" :mapStyle="mapStyle">
         <mapgis-ui-button type="primary" @click="changeEnable" style="position:absolute;zIndex:9999;left:10px;top:10px;"> 合并样式 </mapgis-ui-button>
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" before="省级行政区"/>
         <mapgis-mvt-style-layer v-bind="$props" v-if="enable"/>
@@ -145,7 +145,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisMvtStyleLayer },
   methods: {},
-  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :center="[105.22,33.03]" :zoom="3" style="height:95vh">
         <mapgis-rastertile-layer layerId="tdt" url="http://t0.tianditu.com/DataServer?T=img_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
         <mapgis-mvt-style-layer v-bind="$props" />
     </mapgis-web-map>`,

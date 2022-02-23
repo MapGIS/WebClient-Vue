@@ -212,7 +212,6 @@ import {
   isLogarithmicDepthBufferSupport,
   setLogarithmicDepthBufferEnable
 } from "../WebGlobe/util";
-import { log } from '../Utils/log';
 
 export default {
     name: "mapgis-3d-ponding-simulation",
@@ -396,9 +395,12 @@ export default {
             if ( this.isLogarithmicDepthBufferEnable !== isLogarithmicDepthBufferEnable( viewer) ) {
               setLogarithmicDepthBufferEnable( this.isLogarithmicDepthBufferEnable, viewer )
             }
+            
+            if(this.drawer){
+              //绘制组件
+              this.drawer.unmount();
+            }
 
-            //绘制组件
-            this.drawer.unmount();
             //洪水淹没分析
             this.unmount();
 
@@ -741,6 +743,7 @@ export default {
                 vm.addrain();
                 vm.pond = true;
                 vm.sliderValue = 0;
+                clearInterval(vm.timer);
 
                 //console.log('pondingTime',vm.pondingTime)
 

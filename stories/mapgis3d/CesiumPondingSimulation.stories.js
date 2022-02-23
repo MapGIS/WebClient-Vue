@@ -1,4 +1,5 @@
 import "../style/card.css";
+import Markdown from "../../cesium/docs/api/simulation/PondingSimulation.md"
 import Mapgis3dPondingSimulation from "../../cesium/src/components/simulation/PondingSimulation.vue";
 
 export default {
@@ -42,11 +43,11 @@ const Template = (args, { argTypes }) => ({
         />
         <mapgis-3d-ponding-simulation-timeline 
             :value="sliderValue" 
-            :pond="pond" 
+            :isPlaying="pond" 
             @updateTime="e=>{time = e}"
             @updateSpeed="e=>{mltSpeed = e}"
             @play="addSimulation"
-            style="position: absolute;bottom: 30px; right: 300px;"
+            style="position: absolute;bottom: 30px; right: 50%;margin-right:-280px;"
         />
     </mapgis-web-scene>
     `,
@@ -82,9 +83,16 @@ const Template = (args, { argTypes }) => ({
     },
     addSimulation() {
       this.$refs.simulation.addSimulation();
-  },
+    },
   },
 });
 
 export const 积水仿真 = Template.bind({});
 积水仿真.args = {};
+积水仿真.parameters = {
+  docs:{
+    description:{
+      component:Markdown
+    }
+  }
+}

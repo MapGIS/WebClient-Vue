@@ -1,63 +1,33 @@
 <template>
-  <div>
-    <mapgis-ui-card
-        size="small"
-        hoverable
-        :style="{ width: `${width}px` }"
-        class="mapgis-city-grow"
-    >
-      <div class="mapgis-city-grow-time">{{ formatDate(sliderValue) }}</div>
-      <mapgis-ui-slider
-          class="mapgis-city-grow-slider"
-          :style="{width:sliderWidth, marginLeft:sliderMargin}"
-          :tip-formatter="formatter"
-          :min="minSlider"
-          :max="maxSlider"
+      <mapgis-ui-timeline-panel
           v-model="sliderValue"
-          @change="onSliderChange"></mapgis-ui-slider>
-      <div class="mapgis-city-grow-select">
-        <mapgis-ui-select-panel
-            label="播放间隔"
-            v-model="growInterval"
-            :selectOptions="dataFields"
-            :placeholder="placeholder1"
-            :wrapperCol="10"
-            @change="val => onFieldChange(val) ">
-        </mapgis-ui-select-panel>
-        <mapgis-ui-select-panel
-            label="倍速播放"
-            v-model="growSpeed"
-            :selectOptions="speedOptions"
-            :placeholder="placeholder2"
-            :wrapperCol="10"
-            @change="val => onSpeedChange(val) ">
-        </mapgis-ui-select-panel>
-      </div>
-<!--      <span class="mapgis-city-grow-starttime" v-if="startTimeCopy!==''">{{ startTimeCopy }}</span>-->
-      <div class="mapgis-city-grow-toolbar">
-        <!--        <mapgis-ui-iconfont type="mapgis-chevrons-left"/>-->
-        <!--        <mapgis-ui-iconfont type="mapgis-chevron-left"/>-->
-        <mapgis-ui-iconfont
-            v-if="!isStartGrow"
-            type="mapgis-play-circle-fill"
-            class="mapgis-city-grow-toolbar-main"
-            @click.capture.stop="startGrow"
-        />
-        <mapgis-ui-iconfont
-            v-else
-            type="mapgis-zanting"
-            class="mapgis-city-grow-toolbar-main"
-            @click.capture.stop="stopGrow"
-        />
-        <!--        <mapgis-ui-iconfont type="mapgis-chevron-right"/>-->
-        <!--        <mapgis-ui-iconfont type="mapgis-chevrons-right"/>-->
-      </div>
-<!--      <span class="mapgis-city-grow-endtime" v-if="endTimeCopy!==''">{{ endTimeCopy }}</span>-->
-      <div>
-
-      </div>
-    </mapgis-ui-card>
-  </div>
+          :curTimeWidth="curTimeWidth"
+          :max="maxSlider"
+          :min="minSlider"
+          :speed="speedValue"
+          :speedStep="0.01"
+          :minSpeed="minSpeed"
+          :maxSpeed="maxSpeed"
+          :interval="growInterval"
+          :intervalOptions="dataFields"
+          :tipFormatter="formatter"
+          :currentTime="String(formatDate(sliderValue))"
+          :enableBackforward="true"
+          :disabled="true"
+          :resetActive="clickBtn"
+          :forwardActive="playBtn"
+          :backActive="backBtn"
+          :pauseActive="suspendBtn"
+          @backward="backSetting"
+          @pause="suspendSetting"
+          @forward="playSetting"
+          @intervalChange="onFieldChange"
+          @resetSpeed="recoverSetting"
+          @speedChange="onChange"
+          @decelerate="reduceSliderVal"
+          @accelerate="addSliderVal"
+          @change="onSliderChange"
+      ></mapgis-ui-timeline-panel>
 </template>
 
 <script>
@@ -68,10 +38,6 @@ export default {
   name: "mapgis-3d-city-grow",
   inject: ["Cesium", "vueCesium", "viewer"],
   props: {
-    width: {
-      type: Number,
-      default: 500
-    },
     baseUrl: {
       type: [String, Object],
       default: null
@@ -119,16 +85,43 @@ export default {
       deep: true,
       immediate: true
     },
-    formatType:{
-      handler(next){
+    formatType: {
+      handler(next) {
         this.formatTypeCopy = next;
       }
-    }
+    },
+    speedValue:{
+      handler(next){
+        let vm = this;
+        if (vm.layer) {
+          vm.layer.setCityGrowPlayRate(next);
+        }
+          if (next > 0){
+            this.playBtn = true;
+            this.backBtn = false;
+            this.suspendBtn = false;
+          } else if (next<0){
+            this.playBtn = false;
+            this.backBtn = true;
+            this.suspendBtn = false;
+          } else {
+            this.playBtn = false;
+            this.backBtn = false;
+            this.suspendBtn = true;
+          }
+      }
+    },
+    playBtn:{
+      handler(next){
+        if (next){
+          this.startGrow()
+        }
+      }
+    },
   },
   data() {
     return {
-      // 符号标记
-      isStartGrow: false,
+      curTimeWidth:98,
       startTimeCopy: '',
       endTimeCopy: '',
       sliderValue: 0,
@@ -146,23 +139,21 @@ export default {
         growTime: 60, //总播放时长 默认60秒  60秒演示完整个播放流程
         updateInterval: 1, // 建筑生长的颜色和高度更新间隔，默认1s更新一次
         buildingsLimit: 200,
-        heightRadio: 1,
-        colors:["#fff0f6","#ff85c0","#eb2f96"]
+        heightRatio: 1,
+        colors: ["#fff0f6", "#ff85c0", "#eb2f96"]
       },
       info: "注意：颜色设置只能在城市生长未开启时设置，生长开启后设置颜色无效。",
-      showColorSetting: false,
-      tooltipVisible: true,
       // 播放间隔
       growInterval: "月",
       dataFields: ['年', '月', '日'],
-      placeholder1: '月',
-      // 倍速播放
-      growSpeed: '1x',
-      speedOptions: ['2.5x', '2x', '1.5x', '1.2x', '1x', '0.5x'],
-      placeholder2: '1x',
-      sliderWidth: '441px',
-      sliderMargin:'90px',
-      formatTypeCopy: 'month'
+      minSpeed: -25,
+      maxSpeed: 25,
+      speedValue: 1,
+      formatTypeCopy: 'month',
+      clickBtn: false,
+      backBtn: false,
+      suspendBtn: false,
+      playBtn: true
     }
   },
   created() {
@@ -184,100 +175,96 @@ export default {
       if (this.Cesium.defined(vm.layerIndex)) {
         this.viewer.scene.layers.removeVectorLayerByID(vm.layerIndex);
       }
-      vm.isStartGrow = false;
       vm.sliderValue = 0;
-      vm.growSpeed = '1x';
+      vm.speedValue = 1;
+      vm.playBtn = true;
+      vm.suspendBtn = false;
     },
     initCityGrowObject() {
       let vm = this;
-      if (vm.sliderValue === 0) {
-        vm.initial = true
+      let url = vm.baseUrl;
+      let colors = [];
+      let times = [];
+      let options = {};
+
+      vm.featureStyleCopy = Object.assign(vm.featureStyleCopy, vm.featureStyle);
+      let cityGrowOptions = {
+        heightField: vm.featureStyleCopy.heightField,
+        heightRatio: vm.featureStyleCopy.heightRatio,
+        startTimeField: vm.featureStyleCopy.startTimeField,
+        endTimeField: vm.featureStyleCopy.endTimeField,
+        startTime: vm.featureStyleCopy.startTime,
+        endTime: vm.featureStyleCopy.endTime,
+        buildingsLimit: vm.featureStyleCopy.buildingsLimit,
+        updateInterval: vm.featureStyleCopy.updateInterval,
+        playTime: vm.featureStyleCopy.growTime,
+        colorSampling: false,
+        updateHeight: vm.featureStyleCopy.isGrowHeight,
+        replay: true,
+        displayWithTile: vm.featureStyleCopy.displayWithTile,
+        onReady: function (timeControl) {
+          let startTime = timeControl.startTime;
+          let endTime = timeControl.endTime;
+          vm.startTimeCopy = vm.formatDate(startTime);
+          vm.minSlider = startTime;
+          vm.endTimeCopy = vm.formatDate(endTime);
+          vm.maxSlider = endTime;
+          vm.startGrow();
+          // if (!vm.featureStyleCopy.startTime || !vm.featureStyleCopy.endTime){
+          //   vm.startGrow();
+          // }
+        },
+        onUpdate: function (currentPlayTime, currentTimeStamp) {
+          vm.timeSliderPlay(currentPlayTime, currentTimeStamp);
+        }
+      };
+      if (vm.featureStyleCopy.colors) {
+        for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
+          let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
+          colors.push(color);
+        }
+        cityGrowOptions.colors = colors
+      }
+      if (vm.featureStyleCopy.times) {
+        for (let j = 0; j < vm.featureStyleCopy.times.length; j++) {
+          let timestamp = new Date(vm.featureStyleCopy.times[j], 1, 1).valueOf() / 1000;
+          times.push(timestamp);
+        }
+        cityGrowOptions.times = times
+      }
+
+      if (vm.featureStyleCopy.displayWithTile) {
+        options.tileFeaturesCount = vm.tileFeaturesCount;
       } else {
-        vm.initial = false
+        cityGrowOptions.buildingsLimit = vm.featureStyleCopy.buildingsLimit;
       }
-      if (vm.initial) {
-        let url = vm.baseUrl;
-        let colors = [];
-        let times = [];
-        let options = {};
-        //始终显示时间
-        // vm.tooltipVisible = true;
-        vm.featureStyleCopy = Object.assign(vm.featureStyleCopy, vm.featureStyle);
+      let style = {
+        type: 'cityGrow',
+        styleOptions: cityGrowOptions
+      };
+      options = {autoReset: vm.autoReset, style: style};
 
-        let cityGrowOptions = {
-          heightField: vm.featureStyleCopy.heightField,
-          heightRatio: vm.featureStyleCopy.heightRadio,
-          startTimeField: vm.featureStyleCopy.startTimeField,
-          endTimeField: vm.featureStyleCopy.endTimeField,
-          startTime: vm.featureStyleCopy.startTime,
-          endTime: vm.featureStyleCopy.endTime,
-          buildingsLimit: vm.featureStyleCopy.buildingsLimit,
-          updateInterval: vm.featureStyleCopy.updateInterval,
-          playTime: vm.featureStyleCopy.growTime,
-          colorSampling: false,
-          updateHeight: vm.featureStyleCopy.isGrowHeight,
-          replay: true,
-          displayWithTile: vm.featureStyleCopy.displayWithTile,
-          onReady: function (timeControl) {
-            let startTime = timeControl.startTime;
-            let endTime = timeControl.endTime;
-            vm.startTimeCopy = vm.formatDate(startTime);
-            vm.minSlider = startTime;
-            vm.endTimeCopy = vm.formatDate(endTime);
-            vm.maxSlider = endTime;
-          },
-          onUpdate: function (currentPlayTime, currentTimeStamp) {
-            vm.timeSliderPlay(currentPlayTime, currentTimeStamp);
-          }
-        };
-        if (vm.featureStyleCopy.colors){
-          for (let i = 0; i < vm.featureStyleCopy.colors.length; i++) {
-            let color = this.Cesium.Color.fromCssColorString(vm.featureStyleCopy.colors[i]);
-            colors.push(color);
-          }
-          cityGrowOptions.colors = colors
+      vm.viewer.scene.layers.appendVectorLayer(url, {
+        ...options,
+        getDocLayerIndexes: function (indexs) {
+          vm.layerIndex = indexs[0];
+          vm.layer = vm.viewer.scene.layers.getLayer(vm.layerIndex);
+          vm.$emit("CityGrow", vm.layer);
+          vm.startGrow();
         }
-        if (vm.featureStyleCopy.times){
-          for (let j = 0; j < vm.featureStyleCopy.times.length; j++) {
-            let timestamp = new Date(vm.featureStyleCopy.times[j],1,1).valueOf() / 1000;
-            times.push(timestamp);
-          }
-          cityGrowOptions.times = times
-        }
-
-        if (vm.featureStyleCopy.displayWithTile) {
-          options.tileFeaturesCount = vm.tileFeaturesCount;
-        } else {
-          cityGrowOptions.buildingsLimit = vm.featureStyleCopy.buildingsLimit;
-        }
-        let style = {
-          type: 'cityGrow',
-          styleOptions: cityGrowOptions
-        };
-        options = {autoReset: vm.autoReset, style: style};
-
-        vm.viewer.scene.layers.appendVectorLayer(url, {
-          ...options,
-          getDocLayerIndexes: function (indexs) {
-            vm.layerIndex = indexs[0];
-            vm.layer = vm.viewer.scene.layers.getLayer(vm.layerIndex);
-            vm.$emit("CityGrow", vm.layer);
-          }
-        });
-      }
+      });
+      // }
     },
     //开始加载
     startGrow() {
       let vm = this;
-      vm.isStartGrow = true;
-      if (vm.layer) {
+      if (vm.layer && vm.startTimeCopy && vm.endTimeCopy) {
         vm.layer.cityGrowPlay();
       }
     },
     //暂停生长
     stopGrow() {
       let vm = this;
-      vm.isStartGrow = false;
       if (vm.layer) {
         vm.layer.cityGrowStop();
       }
@@ -293,6 +280,7 @@ export default {
       let date = this.formatDate(value);
       return `${date}`;
     },
+
     formatDate(timestamp) {
       // 时间戳转时间 方法一：
       let time = new Date(timestamp * 1000);
@@ -320,138 +308,68 @@ export default {
         vm.layer.cityGrowSetTime(e, false);
       }
     },
-    confirmSetting() {
-    },
-    changeModelValue(e) {
-      this.colorsCopy = e;
-    },
-    confirmSetColo() {
-      this.showColorSetting = true;
-    },
-    hideModal() {
-      this.showColorSetting = false;
-    },
     onFieldChange(val) {
       let vm = this
-      // if (val!== '月'){
-        let startDate = new Date(vm.minSlider * 1000);
-        let endDate = new Date(vm.maxSlider * 1000);
-        let years = (endDate.getFullYear() - startDate.getFullYear());
-        switch (val) {
-          case "年":
-            this.formatTypeCopy = 'year';
-            vm.featureStyleCopy.growTime = years;
-            vm.sliderMargin = '62px'
-            vm.sliderWidth = '467px'
-            break;
-          case "月":
-            this.formatTypeCopy = 'month';
-            let months = (years * 365)/30;
-            vm.featureStyleCopy.growTime = months;
-            vm.sliderMargin = '90px'
-            vm.sliderWidth = '441px'
-            break;
-          case "日":
-            this.formatTypeCopy = 'day';
-            vm.featureStyleCopy.growTime = (years*365);
-            vm.sliderMargin = '124px'
-            vm.sliderWidth = '406px'
-            break;
-        }
-        this.unmount();
-        this.initCityGrowObject();
-      // }
+      this.playBtn = true;
+      this.backBtn = false;
+      this.suspendBtn = false;
+      let startDate = new Date(vm.minSlider * 1000);
+      let endDate = new Date(vm.maxSlider * 1000);
+      let years = (endDate.getFullYear() - startDate.getFullYear());
+      switch (val) {
+        case "年":
+          this.formatTypeCopy = 'year';
+          vm.featureStyleCopy.growTime = years;
+          break;
+        case "月":
+          this.formatTypeCopy = 'month';
+          let months = (years * 365) / 30;
+          vm.featureStyleCopy.growTime = months;
+          break;
+        case "日":
+          this.formatTypeCopy = 'day';
+          vm.featureStyleCopy.growTime = (years * 365);
+          break;
+      }
+      this.unmount();
+      this.initCityGrowObject();
     },
     onSpeedChange(val) {
       let vm = this;
       let speed = parseFloat(val);
-      if(vm.layer){
+      if (vm.layer) {
         vm.layer.setCityGrowPlayRate(speed);
       }
+    },
+    recoverSetting() {
+      this.speedValue = 1;
+    },
+    backSetting() {
+      this.startGrow();
+      this.speedValue = -this.speedValue;
+    },
+    suspendSetting() {
+      const vm = this;
+      if (vm.layer) {
+        vm.layer.cityGrowStop();
+      }
+    },
+    playSetting() {
+      this.startGrow();
+      this.speedValue = Math.abs(this.speedValue);
+    },
+    onChange(value) {
+      this.speedValue = value;
+    },
+    addSliderVal() {
+      this.speedValue++;
+    },
+    reduceSliderVal() {
+      this.speedValue--;
     }
   }
 }
 </script>
 
 <style scoped>
-.mapgis-city-grow {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-  margin: 0px auto;
-}
-
-.mapgis-city-grow-toolbar {
-  display: flex;
-  width: 0px;
-  margin: 0px auto;
-}
-
-.mapgis-city-grow-toolbar-main:hover {
-  color: #49A8FF;
-}
-
-.mapgis-city-grow-toolbar-main {
-  color: #1890ff;
-}
-
-.mapgis-city-grow-toolbar > .anticon {
-  font-size: 22px;
-}
-
-.mapgis-ui-card-small > .mapgis-ui-card-body {
-  padding: 6px 12px;
-}
-
-.mapgis-city-grow-starttime {
-  position: absolute;
-  left: 100px;
-  font-size: 12px;
-}
-
-.mapgis-city-grow-endtime {
-  position: absolute;
-  right: 212px;
-  bottom: 14px;
-  font-size: 12px;
-}
-
-.mapgis-city-grow-setting {
-  position: absolute;
-  font-size: 18px;
-  top: 4px;
-  right: 4px;
-}
-
-.mapgis-ui-popover {
-  background: transparent;
-}
-
-.mapgis-ui-popconfirm-style {
-  display: inline;
-}
-
-.mapgis-city-grow-slider {
-  width: 441px;
-  margin-left: 90px;
-}
-
-.mapgis-city-grow-time {
-  position: absolute;
-  top: 15px;
-  left: 11px;
-  font-size: 22px;
-}
-
-.mapgis-city-grow-select {
-  position: absolute;
-  width: 186px;
-  top: 2px;
-  right: -39px;
-  font-size: 14px;
-}
-
-::v-deep .mapgis-ui-select-panel {
-  padding: 2px;
-}
 </style>

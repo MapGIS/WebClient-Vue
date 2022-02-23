@@ -10,11 +10,20 @@
       </mapgis-ui-select>
       <input style="display: none" type="file" :id="inputId"
              accept=".json">
-      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>
-      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>
-      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"
-                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"
-                                  class="mapgis-ui-graphic-layers-more-tool"/>
+      <!--      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>-->
+      <!--      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>-->
+      <!--      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"-->
+      <!--                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"-->
+      <!--                                  class="mapgis-ui-graphic-layers-more-tool"/>-->
+      <div class="mapgis-ui-graphic-layers-toll-bar">
+        <mapgis-ui-svg-icon :key="index" v-for="(tool, index) in moreTools"
+                            :iconStyle="toolStyle"
+                            :containerStyle="toolContainerStyle"
+                            :title="tool.title"
+                            :type="tool.icon"
+                            @click="$_clickTool(tool.icon)"
+        />
+      </div>
     </div>
     <mapgis-ui-input-row-left
       style="margin: 0"
@@ -22,6 +31,7 @@
       title="修改标题"
       :enableButton=true
       paddingLeft="16px"
+      class="mapgis-ui-graphic-layers-edit-title"
       @finish="$_finishEditTitle"
       v-model="currenSelectLayer"
     />
@@ -30,6 +40,7 @@
       :vueIndex="vueIndex"
       :models="models"
       :autoFlyToGraphic="autoFlyToGraphic"
+      :groupGraphicIDs="groupGraphicIDs"
       ref="graphicLayer"
       v-model="currentLayer"
       @saveCamera="$_saveCamera"
@@ -87,6 +98,10 @@ export default {
       type: Boolean,
       default: false
     },
+    baseUrl: {
+      type: String,
+      default: ""
+    }
   },
   watch: {
     dataSource: {
@@ -120,33 +135,46 @@ export default {
       inputId: "mapgisPlottingImport" + parseInt(String(Math.random() * 10000)),
       moreTools: [{
         event: "add",
-        icon: "edit",
+        icon: "add",
         title: "新增图层"
       }, {
         event: "editTitle",
         icon: "editTitle",
         title: "编辑标题"
-      }, {
-        event: "saveCamera",
-        icon: "camera2",
-        title: "保存视角"
-      }, {
-        event: "flyTo",
-        icon: "flyToView",
-        title: "视角跳转"
-      }, {
-        event: "delete",
-        icon: "delete",
-        title: "删除图层"
-      }, {
-        event: "setting",
-        icon: "setting",
-        title: "配置参数"
-      }, {
-        event: "save",
-        icon: "save",
-        title: "保存"
-      }],
+      },
+        // {
+        //   event: "saveCamera",
+        //   icon: "camera2",
+        //   title: "保存视角"
+        // }, {
+        //   event: "flyTo",
+        //   icon: "flyToView",
+        //   title: "视角跳转"
+        // },
+        {
+          event: "delete",
+          icon: "delete",
+          title: "删除图层"
+        },
+        // {
+        //   event: "setting",
+        //   icon: "setting",
+        //   title: "配置参数"
+        // },
+        {
+          event: "import",
+          icon: "import",
+          title: "导入"
+        }, {
+          event: "export",
+          icon: "export",
+          title: "导出"
+        },
+        {
+          event: "save",
+          icon: "save",
+          title: "保存"
+        }],
       vueIndex: undefined,
       showEditTitle: false,
       //是否显示配置信息
@@ -158,32 +186,45 @@ export default {
         width: "20px",
         height: "20px"
       },
-      updatable: true
+      updatable: true,
+      toolStyle: {
+        color: "rgb(80, 93, 113)",
+        width: "16px",
+        height: "16px"
+      },
+      toolContainerStyle: {
+        width: "30px",
+        height: "32px",
+        lineHeight: "36px",
+      },
+      addLayer: true,
+      groupGraphicIDs: []
     }
   },
   mounted() {
-    this.$_init();
+    this.$_init(true);
   },
   methods: {
     $_addFeature(e) {
-      this.dataSourceCopy[this.currenSelectIndex - 1].dataSource.features = e;
+      this.dataSourceCopy[this.currenSelectIndex].dataSource.features = e;
     },
     $_saveCamera() {
       if (this.currenSelectLayer) {
-        this.dataSourceCopy[this.currenSelectIndex - 1].camera = getCamera(viewer);
+        this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(viewer);
       }
     },
     $_finishEditTitle() {
       this.showEditTitle = false;
-      this.dataSourceCopy[this.currenSelectIndex - 1].name = this.currenSelectLayer;
+      this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
     },
-    $_clickTool(e) {
+    $_clickTool(e, noMessage) {
       switch (e) {
         //新增标绘图层
         case "add":
           //新建空图层数据
+          let title = "新建图层_" + (this.dataSourceCopy.length + 1);
           let data = {
-            "name": "图层_" + (this.dataSourceCopy.length + 1),
+            "name": title,
             "uuid": parseInt(String(Math.random() * 10000000)),
             "autoFlyTo": true,
             "autoFlyToGraphic": true,
@@ -192,8 +233,13 @@ export default {
               "features": []
             }
           };
-          this.currenSelectIndex++;
+          if(this.dataSourceCopy.length > 0){
+            this.currenSelectIndex++;
+          }
           this.dataSourceCopy.push(data);
+          if (!noMessage) {
+            this.$message.success(title + "添加成功！");
+          }
           //如果上一个图层有数据，则隐藏
           if (this.currentLayer.length > 0) {
             this.$refs.graphicLayer.$_hideAllGraphics();
@@ -202,7 +248,6 @@ export default {
           this.currentLayer = [];
           this.currenSelectLayer = data.name;
           //创建一个新的标绘图层
-          this.vueIndex = data.uuid;
           this.$nextTick(function () {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
@@ -214,26 +259,32 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.isStartDrawing = false;
             this.$refs.graphicLayer.$_clearList();
-            this.$refs.graphicLayer.$_init([]);
-            this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
+            this.$refs.graphicLayer.$_init([], data.uuid);
+            this.$refs.graphicLayer.$_switchGraphicLayer(data.uuid);
           });
           break;
         case "delete":
-          this.dataSourceCopy.splice(this.currenSelectIndex, 1);
           this.$refs.graphicLayer.$_stopEdit();
           this.$refs.graphicLayer.$_stopDrawing();
           this.$refs.graphicLayer.$_removeAllGraphic();
           this.$refs.graphicLayer.$_destroy();
           this.$refs.graphicLayer.$_resetEditPanel();
           this.$refs.graphicLayer.$_resetIconsPanel();
-          if (this.dataSourceCopy.length === 0) {
-            this.currenSelectLayer = "无数据";
-            this.currentLayer = [];
+          this.$message.success(this.dataSourceCopy[this.currenSelectIndex].name + "删除成功！");
+          this.dataSourceCopy.splice(this.currenSelectIndex, 1);
+          this.layerSelect.splice(this.currenSelectIndex, 1);
+          this.currenSelectIndex--;
+          if (this.currenSelectIndex < 0) {
+            this.currenSelectIndex = 0;
           }
-          if (this.currenSelectIndex <= this.dataSourceCopy.length && this.currenSelectIndex > 0) {
-            this.currenSelectIndex--;
-            this.currenSelectLayer = this.dataSourceCopy[this.currenSelectIndex].name;
-            this.currentLayer = this.dataSourceCopy[this.currenSelectIndex].dataSource.features;
+          if (this.dataSourceCopy.length === 0) {
+            this.currenSelectLayer = "请添加图层";
+            this.currentLayer = [];
+            this.addLayer = false;
+          } else {
+            let index = this.currenSelectIndex < 0 ? 0 : this.currenSelectIndex;
+            this.currenSelectLayer = this.dataSourceCopy[index].name;
+            this.currentLayer = this.dataSourceCopy[index].dataSource.features;
           }
           break;
         case "editTitle":
@@ -241,12 +292,12 @@ export default {
           break;
         case "saveCamera":
           if (this.currenSelectLayer) {
-            this.dataSourceCopy[this.currenSelectIndex - 1].camera = getCamera(viewer);
+            this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(viewer);
           }
           break;
         case "flyTo":
           if (this.currenSelectLayer) {
-            let layer = this.dataSourceCopy[this.currenSelectIndex - 1];
+            let layer = this.dataSourceCopy[this.currenSelectIndex];
             const {camera} = layer;
             if (camera) {
               const {positionCartographic, heading, pitch, roll} = camera;
@@ -275,16 +326,24 @@ export default {
           for (let i = 0; i < this.dataSourceCopy.length; i++) {
             let json = this.dataSourceCopy[i];
             let dataSource = this.$refs.graphicLayer.$_toJSON(json.uuid, "default");
+            let groups = this.$refs.graphicLayer.$_getGroups();
             saveObj.push({
               name: json.name,
               uuid: json.uuid,
               autoFlyTo: json.autoFlyTo,
               autoFlyToGraphic: json.autoFlyToGraphic,
               camera: clonedeep(json.camera),
-              dataSource: dataSource
+              dataSource: dataSource,
+              groups: groups
             });
           }
           this.$emit("save", saveObj);
+          break;
+        case "import":
+          this.$_import();
+          break;
+        case "export":
+          this.$_export();
           break;
       }
     },
@@ -319,9 +378,16 @@ export default {
       return rUrl;
     },
     $_export() {
-      let json = this.dataSourceCopy[this.currenSelectIndex - 1];
+      let json;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.currenSelectLayer === this.dataSourceCopy[i].name) {
+          json = this.dataSourceCopy[i];
+          break;
+        }
+      }
       this.$refs.graphicLayer.$_stopEdit();
       let dataSource = this.$refs.graphicLayer.$_toJSON();
+      let groups = this.$refs.graphicLayer.$_getGroups();
       if (this.enableRelativePath) {
         let features = dataSource.features;
         for (let i = 0; i < features.length; i++) {
@@ -337,7 +403,8 @@ export default {
         autoFlyTo: this.autoFlyTo,
         autoFlyToGraphic: this.autoFlyToGraphic,
         camera: clonedeep(json.camera),
-        dataSource: dataSource
+        dataSource: dataSource,
+        groups: groups
       }
       const blob = new Blob([JSON.stringify(exportJSON)], {
         type: "application/json;charset=utf-8",
@@ -362,9 +429,31 @@ export default {
           let {dataSource} = data;
           this.updatable = false;
           this.$refs.graphicLayer.$_fromJson(dataSource);
+          if(this.dataSourceCopy.length > 0){
+            this.currenSelectIndex++;
+          }
           this.dataSourceCopy.push(data);
-          this.currenSelectIndex++;
-          this.currentLayer = data.dataSource.features;
+          this.$_layerSelect();
+          let groupGraphicIDs = [];
+          let features = [];
+          for (let j = 0; j < data.groups.length; j++) {
+            groupGraphicIDs = groupGraphicIDs.concat(data.groups[i].dataSource);
+            features.push(data.groups[i]);
+          }
+          for (let j = 0; j < data.dataSource.features.length; j++) {
+            if (groupGraphicIDs.indexOf(data.dataSource.features[j].id) < 0) {
+              features.push(data.dataSource.features[j]);
+            }
+          }
+          if(this.enableRelativePath){
+            for (let j = 0; j < data.dataSource.features.length; j++) {
+              if (data.dataSource.features[j].type === "model") {
+                data.dataSource.features[j].style.url = this.baseUrl + "/" + data.dataSource.features[j].style.url;
+              }
+            }
+          }
+          this.groupGraphicIDs = groupGraphicIDs;
+          this.currentLayer = features;
           this.autoFlyTo = data.autoFlyTo;
           this.autoFlyToGraphic = data.autoFlyToGraphic;
           this.vueIndex = Number(data.uuid);
@@ -380,7 +469,7 @@ export default {
             this.$refs.graphicLayer.currentEditType = "mouse";
             this.$refs.graphicLayer.isStartDrawing = false;
             this.$refs.graphicLayer.$_clearList();
-            this.$refs.graphicLayer.$_init();
+            this.$refs.graphicLayer.$_init(undefined, this.vueIndex);
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_fromJson(data.dataSource);
             this.updatable = true;
@@ -409,7 +498,6 @@ export default {
           this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
           this.$refs.graphicLayer.$_fromJson(data.dataSource);
         });
-        this.currenSelectIndex++;
       }
       if (this.autoFlyTo && data.hasOwnProperty("camera")) {
         const {heading, pitch, roll, positionCartographic} = data.camera;
@@ -430,13 +518,12 @@ export default {
       //设置当前选中的图层
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         if (this.dataSourceCopy[i].uuid === e) {
-          this.currentLayer = this.dataSourceCopy[i].dataSource.features;
           this.autoFlyTo = this.dataSourceCopy[i].autoFlyTo;
           this.autoFlyToGraphic = this.dataSourceCopy[i].autoFlyToGraphic;
           this.currenSelectLayer = this.dataSourceCopy[i].name;
           this.$refs.graphicLayer.$_hideAllGraphics();
           this.vueIndex = Number(this.dataSourceCopy[i].uuid);
-          this.currenSelectIndex = i + 1;
+          this.currenSelectIndex = i;
           this.$nextTick(function () {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
@@ -448,6 +535,7 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_showAllGraphics();
+            this.currentLayer = this.dataSourceCopy[i].dataSource.features;
           });
           const {camera} = this.dataSourceCopy[i];
           if (this.autoFlyTo && camera) {
@@ -478,7 +566,7 @@ export default {
       }
     },
     //初始化数据
-    $_init() {
+    $_init(noMessage) {
       //复制数据源
       this.dataSourceCopy = this.dataSource;
       //设置当前图层
@@ -487,13 +575,17 @@ export default {
         this.vueIndex = this.dataSourceCopy[0].uuid;
         //初始化graphicLayer图层列表
         this.$_layerSelect();
-        this.currenSelectLayer = this.dataSourceCopy[0].name;
       } else {
+        this.currenSelectLayer = "请添加图层";
         this.currentLayer = [];
-        this.$_clickTool("add");
+        if (this.addLayer) {
+          this.$_clickTool("add", noMessage);
+        }
       }
     },
     $_hideAllGraphic() {
+      this.$refs.graphicLayer.$_stopEdit();
+      this.$refs.graphicLayer.$_stopDrawing();
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         let features = this.dataSourceCopy[i].dataSource.features;
         for (let j = 0; j < features.length; j++) {
@@ -521,12 +613,30 @@ export default {
 <style scoped>
 .mapgis-3d-graphic-layers-select-container {
   width: 332px;
-  height: 48px;
+  height: 46px;
   padding: 7px 15px;
+  transition: height 0.8s;
+  -moz-transition: height 0.8s; /* Firefox 4 */
+  -webkit-transition: height 0.8s; /* Safari and Chrome */
+  -o-transition: height 0.8s; /* Opera */
+  overflow: hidden;
+}
+
+.mapgis-3d-graphic-layers-select-container:hover {
+  height: 68px;
 }
 
 .mapgis-3d-graphic-layers-select {
-  width: 160px;
+  width: 100%;
+  float: left;
+}
+
+.mapgis-ui-graphic-layers-edit-title {
+  height: 40px !important;
+  width: 332px;
+}
+
+.mapgis-ui-graphic-layers-toll-bar {
   float: left;
 }
 

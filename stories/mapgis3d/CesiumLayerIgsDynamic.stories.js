@@ -12,7 +12,7 @@ const Template = (args, { argTypes }) => ({
         }
     },
     template: `
-    <mapgis-web-scene>
+    <mapgis-web-scene style="height: 95vh">
         <mapgis-3d-igs-dynamic-layer
             :gdbps="gdbps"
             :baseUrl="baseUrl"

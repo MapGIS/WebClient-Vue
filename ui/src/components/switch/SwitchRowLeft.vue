@@ -2,7 +2,7 @@
   <mapgis-ui-row class="mapgis-ui-switch-row-left">
     <div class="mapgis-ui-switch-row-left-title">{{ title }}</div>
     <div class="mapgis-ui-switch-row-left-switch">
-      <mapgis-ui-switch @change="$_change" checked-children="是" un-checked-children="否"
+      <mapgis-ui-switch @change="$_change" :checked-children="checkTitle" :un-checked-children="unCheckTitle"
                         v-model="valueCopy"/>
     </div>
   </mapgis-ui-row>
@@ -25,6 +25,14 @@ export default {
     type: {
       type: String,
       default: "Text"
+    },
+    checkTitle: {
+      type: String,
+      default: "是"
+    },
+    unCheckTitle: {
+      type: String,
+      default: "否"
     }
   },
   data() {
@@ -74,7 +82,7 @@ export default {
 
 .mapgis-ui-switch-row-left-switch {
   padding-right: 10px;
-  width: calc(100% - 90px);
+  width: calc(100% - 94px);
   text-align: right;
 }
 </style>

@@ -1,5 +1,6 @@
 import { Style } from "@mapgis/webclient-es6-service";
 const { LineStyle, PointStyle, FillStyle } = Style;
+import Markdown from "../../cesium/docs/api/analysis/Overlay.md";
 
 export default {
   title: "三维/分析/叠加分析",
@@ -63,15 +64,15 @@ const Template = (args, { argTypes }) => ({
   template: `
     <mapgis-web-scene style="height: 95vh">
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-overlay-analysis v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
+        <mapgis-3d-analysis-overlay v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
       </mapgis-ui-card>
       <mapgis-3d-igs-dynamic-layer v-if="finishedResult && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
     </mapgis-web-scene>
     `,
 });
 
-export const 叠加分析组件 = Template.bind({});
-叠加分析组件.args = {
+export const Overlay = Template.bind({});
+Overlay.args = {
   srcType: "Layer",
   // srcType: "Feature",
   baseUrl: "http://localhost:6163",
@@ -104,4 +105,11 @@ export const 叠加分析组件 = Template.bind({});
       },
     ]
   }
+};
+Overlay.parameters = {
+  docs: {
+      description: {
+          component: Markdown,
+      },
+  },
 };

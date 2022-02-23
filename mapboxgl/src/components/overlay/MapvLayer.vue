@@ -133,7 +133,7 @@ export default {
           data.push(obj);
         }
       }
-      var dataSet = new DataSet(data);
+      let dataSet = new DataSet(data);
       return dataSet;
     },
     isNumber(obj){

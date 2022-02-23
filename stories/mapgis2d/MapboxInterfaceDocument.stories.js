@@ -14,7 +14,7 @@ export default {
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { MapgisDocument },
-  template: `<mapgis-web-map crs="EPSG:3857" :zoom="1" style="height:60vh">
+  template: `<mapgis-web-map crs="EPSG:3857" :zoom="1" style="height:95vh">
     <mapgis-arcgis-map-layer layerId="ArcGIS地图图层" baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer" />
     <mapgis-arcgis-tile-layer layerId="ArcGIS瓦片图层" baseUrl="http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer" />
     <mapgis-document />

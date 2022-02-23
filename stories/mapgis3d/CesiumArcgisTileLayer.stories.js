@@ -1,4 +1,4 @@
-import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
+import Markdown from "../../cesium/docs/api/layer/ArcGISServer/ArcGISTileLayer.md"
 
 export default {
     title: "三维/图层/ArcGISServer/瓦片图层",
@@ -6,11 +6,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { MapgisWebGlobe },
     template: `
-    <mapgis-web-globe>
+      <mapgis-web-scene style="height:95vh">
     <mapgis-3d-arcgis-tile-layer v-bind="$props" />
-    </mapgis-web-globe >`,
+    </mapgis-web-scene >`,
 });
 
 export const Tile = Template.bind({});

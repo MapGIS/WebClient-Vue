@@ -61,6 +61,8 @@ export function initVueCesium() {
     window.vueCesium.EventHandlerManager || new EventHandlerManager();
   window.vueCesium.IgsTerrainManager =
     window.vueCesium.IgsTerrainManager || new IgsTerrainManager();
+  window.vueCesium.TerrainManager =
+    window.vueCesium.TerrainManager || new TerrainManager();
   window.vueCesium.M3DIgsManager =
     window.vueCesium.M3DIgsManager || new EventHandlerManager();
   window.vueCesium.ArcgisManager =
@@ -118,7 +120,7 @@ export function initVueCesium() {
   window.vueCesium.BimManager = window.vueCesium.BimManager || new BimManager();
 
   //在window.vueCesium下添加取得WebGlobe对象的方法
-  window.vueCesium.getViewer = function (vueKey) {
+  window.vueCesium.getViewer = function(vueKey) {
     if (!vueKey) {
       vueKey = "default";
     }
@@ -133,13 +135,13 @@ export function initVueCesium() {
    * @param callback 回调函数
    * @param vueKey vueKey，唯一标识webscene组件
    * */
-  window.vueCesium.getViewerByInterval = function (callback, vueKey) {
+  window.vueCesium.getViewerByInterval = function(callback, vueKey) {
     if (!vueKey) {
       vueKey = "default";
     }
     let ViewerManager = window.vueCesium.ViewerManager,
       viewer;
-    let interval = setInterval(function () {
+    let interval = setInterval(function() {
       if (
         ViewerManager.hasOwnProperty(vueKey) &&
         ViewerManager[vueKey].length > 0
@@ -169,7 +171,7 @@ export class BaseManager {
       parent: vueKey,
       key: vueIndex,
       source: source,
-      options: options,
+      options: options
     });
   }
 
@@ -256,7 +258,7 @@ export class BaseManager {
     if (find) {
       findSource = {
         ...find,
-        index: index,
+        index: index
       };
     }
     return findSource;
@@ -269,7 +271,7 @@ export class BaseManager {
 
   flatAllSource() {
     let flat = [];
-    Object.keys(this).forEach((k) => {
+    Object.keys(this).forEach(k => {
       if (k !== "vueKey") {
         flat = flat.concat(this[k]);
       }
@@ -291,6 +293,7 @@ export class DrawToolManager extends BaseManager {}
 export class MeasureToolManager extends BaseManager {}
 export class EventHandlerManager extends BaseManager {}
 export class IgsTerrainManager extends BaseManager {}
+export class TerrainManager extends BaseManager {}
 export class M3DIgsManager extends BaseManager {}
 export class G3DManager extends BaseManager {}
 export class ViewerManager extends BaseManager {}

@@ -76,7 +76,7 @@ const Template = (args, { argTypes }) => ({
         }
     },
     template: `
-    <mapgis-web-map v-bind="{...mapOptions}" style="height:60vh">
+    <mapgis-web-map v-bind="{...mapOptions}" style="height:95vh">
         <arcgis-tile-layer v-bind="{...layerOptions}"></arcgis-tile-layer>
         <mapgis-arcgis-legend></mapgis-arcgis-legend>
     </mapgis-web-map>

@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="mapgis-ui-graphic-icons-panel" :style="containerStyle">
-      <div class="mapgis-ui-graphic-icons-head">
-        <mapgis-ui-dropdown>
+      <div class="mapgis-ui-graphic-icons-head" id="mapgis-ui-graphic-icons-head">
+        <mapgis-ui-dropdown
+          :getPopupContainer="$_popupContainer"
+        >
           <div class="mapgis-ui-graphic-dropdown" @click="e => e.preventDefault()">
             {{ drawType }}
             <mapgis-ui-iconfont type="mapgis-down"/>
@@ -149,7 +151,8 @@ export default {
           key: "polygon",
           value: "多边形"
         }
-      ]
+      ],
+      modelUrl: undefined
     }
   },
   watch: {
@@ -158,12 +161,21 @@ export default {
         this.$_init();
       },
       deep: true
+    },
+    drawMode: {
+      handler: function () {
+        this.$emit("startDrawModel", "model", this.modelUrl, this.drawMode, this.drawDistance, this.modelRadius, 1);
+      },
+      deep: true
     }
   },
   mounted() {
     this.$_init();
   },
   methods: {
+    $_popupContainer(){
+      return document.querySelector('#mapgis-ui-graphic-icons-head');
+    },
     $_init() {
       let vm = this;
       Object.keys(this.models).forEach(function (key) {
@@ -217,6 +229,7 @@ export default {
       if (model.hasOwnProperty("scale")) {
         scale = model.scale;
       }
+      this.modelUrl = url;
       this.$emit("startDrawModel", "model", url, this.drawMode, this.drawDistance, this.modelRadius, scale);
     },
     $_chooseModelType(type) {

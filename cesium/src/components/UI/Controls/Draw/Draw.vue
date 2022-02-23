@@ -266,7 +266,7 @@ export default {
       return viewerDraw;
     },
     getDrawElement(viewer) {
-      if (window.drawElement && !this.infinite) {
+      if (window.drawElement) {
         window.drawElement.stopDrawing();
       }
       window.drawElement = new Cesium.DrawElement(viewer);
@@ -312,11 +312,11 @@ export default {
               outlineWidth: drawStyleCopy.outlineWidth
             }
           });
-          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
-          drawEntities.push(drawEntity);
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
+          let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
+          drawEntities.push(drawEntity);
           vm.$emit('drawCreate', position, [lng, lat, height], viewerDraw);
           vm.$emit('drawcreate', position, [lng, lat, height], viewerDraw);
         }
@@ -349,7 +349,7 @@ export default {
             let height = cartographic.height;
             degreeArr.push([lng, lat, height]);
           }
-          if (!disableDraw) {
+          if (!disableDraw || typeof disableDraw !== "boolean") {
             let polyline = new Cesium.DrawElement.PolylinePrimitive({
               id: "polyline",
               positions: positions,
@@ -360,7 +360,6 @@ export default {
             let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
             drawEntities.push(drawEntity);
           }
-
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
@@ -398,7 +397,7 @@ export default {
             let height = cartographic.height;
             degreeArr.push([lng, lat, height]);
           }
-          if (!disableDraw) {
+          if (!disableDraw || typeof disableDraw !== "boolean") {
             let polygon = new Cesium.DrawElement.PolygonPrimitive({
               positions: positions,
               material: Cesium.Material.fromType('Color', {
@@ -409,11 +408,9 @@ export default {
             let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
             drawEntities.push(drawEntity);
           }
-
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
-
           vm.$emit('drawCreate', positions, degreeArr, viewerDraw);
           vm.$emit('drawcreate', positions, degreeArr, viewerDraw);
         }
@@ -441,7 +438,7 @@ export default {
         color: colorStyle,
         callback: function (result) {
           let extent = result.extent;
-          if (!disableDraw) {
+          if (!disableDraw || typeof disableDraw !== "boolean") {
             let rectangle = new Cesium.DrawElement.ExtentPrimitive({
               extent: extent,
               material: Cesium.Material.fromType('Color', {
@@ -464,7 +461,6 @@ export default {
             let height = result.height;
             degreeArr.push([lng, lat, height]);
           }
-
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
@@ -508,12 +504,10 @@ export default {
               color: colorStyle
             })
           });
-
-          let drawEntity = viewerDraw.scene.primitives.add(redCircle);
-
           if (!vm.infinite) {
             drawElement.stopDrawing();
           }
+          let drawEntity = viewerDraw.scene.primitives.add(redCircle);
 
           let drawEntities = window.vueCesium.DrawToolManager.findSource(vueKey, vueIndex).source;
           drawEntities.push(drawEntity);
