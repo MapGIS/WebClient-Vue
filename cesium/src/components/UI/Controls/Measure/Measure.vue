@@ -1,8 +1,8 @@
 <template>
   <div class="mapgis-3d-measure">
-    <slot v-if="initial"> </slot>
+    <slot v-if="initial"></slot>
     <slot name="measureTool">
-      <measure-3d-tool :result="result" />
+      <measure-3d-tool :result="result"/>
     </slot>
   </div>
 </template>
@@ -27,6 +27,12 @@ export default {
           lineColor: "#1890ff"
         };
       }
+    },
+    options: {
+      type: Object,
+      default() {
+        return {};
+      }
     }
   },
   data() {
@@ -42,7 +48,7 @@ export default {
   },
   watch: {
     styles: {
-      handler: function() {
+      handler: function () {
         this.initStyles(this.styles);
       },
       deep: true
@@ -50,7 +56,7 @@ export default {
   },
   mounted() {
     let vm = this;
-    this.$_init(function() {
+    this.$_init(function () {
       vm.initStyles(vm.styles);
       vm.initial = true;
       vm.$emit("load", vm);
@@ -109,7 +115,7 @@ export default {
       } else if (MeasureName === "MeasureAreaTool") {
         (MeasureObject.xPaneNum = 64), (MeasureObject.yPaneNum = 64);
       }
-      const { vueKey, vueIndex } = this;
+      const {vueKey, vueIndex} = this;
       let viewer = this.$_getObject(this.waitManagerName, this.deleteMeasure);
       this.viewer = viewer;
       // 地形测量参数对象
@@ -133,6 +139,7 @@ export default {
       for (let element of Object.keys(MeasureObject)) {
         measureObject[element] = MeasureObject[element];
       }
+      measureObject = Object.assign(measureObject, this.options);
       // 贴底线面接口一致
       if (MeasureName === "MeasureStickLengthTool") {
         MeasureName = "MeasureLengthTool";
@@ -145,7 +152,7 @@ export default {
       measure.startTool();
     },
     deleteMeasure() {
-      this.$_deleteManger("MeasureToolManager", function(manager) {
+      this.$_deleteManger("MeasureToolManager", function (manager) {
         if (manager.source) {
           manager.source.stopTool();
         }
