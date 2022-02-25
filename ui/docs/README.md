@@ -53,7 +53,8 @@ export default {
 
 [Node.js v8.9+](https://nodejs.org/zh-cn/download)[目前 node-sass 不支持 v17 版本]
 
-[Less]
+<!-- [Less] -->
+
 :::
 
 ::: warning 样式冲突
