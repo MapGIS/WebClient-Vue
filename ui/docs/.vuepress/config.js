@@ -52,10 +52,10 @@ module.exports = {
             title: "指南",
             collapsable: false,
             children: [
-              ["/local/publish.md", "开发流程"],
-              ["/local/yarn.md", "本地开发"],
-              ["/local/mixlocal.md", "本地/互联网混合开发"],
+              //   ["/local/yarn.md", "本地开发"],
+              //   ["/local/mixlocal.md", "本地/互联网混合开发"],
               ["/guide/", "快速上手"],
+              ["/local/publish.md", "发布流程"],
               ["/guide/base.md", "基础组件"],
               ["/guide/dev.md", "本地link部署包方式"],
               ["/guide/build.md", "解决打包内存溢出问题"],
