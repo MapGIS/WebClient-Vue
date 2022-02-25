@@ -15,7 +15,7 @@
 3. Electron
 4. Cordova
 
-## ES6 方式
+## ES6 方式（外网）
 
 使用 npm 或 yarn 安装 #
 我们推荐使用 npm 或 yarn 的方式进行开发，不仅可在开发环境轻松调试，也可放心地在生产环境打包部署使用，享受整个生态圈和工具链带来的诸多好处。
@@ -38,3 +38,21 @@ import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
 
 import mapgisui from "@mapgis/webclient-vue-ui";
 ```
+
+## 基于内网仓库开发（内网）
+
+内网仓库建议使用 yarn 安装
+
+```sh
+npm set registry http://192.168.82.89:4873/   （这里设置yarn的内部仓库源时需要先设置npm的内部，否则容易出问题）
+yarn config set registry http://192.168.82.89:4873/
+yarn add @mapgis/webclient-vue-ui
+# https://github.com/yarnpkg/yarn/issues/4862#issuecomment-368688262
+# npm config set registry https://registry.npm.taobao.org // 还原回公网仓库
+# yarn config set registry https://registry.npm.taobao.org // 还原回公网仓库
+```
+
+::: warning
+内网安装建议不要走 npm, npm 很容易出现下面的情况
+![mapgis](./yarn/npm_error.png)
+:::
