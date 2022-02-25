@@ -2,7 +2,7 @@ import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisWebMapMd from "../../mapboxgl/docs/guide/basemap.md";
 
 export default {
-    title: "二维/地图/地图对象",
+    title: "二维/地图/基础",
     component: MapgisWebMap,
     argTypes: {
         mapStyle: {
@@ -92,8 +92,8 @@ const Template = (args, {argTypes}) => ({
 });
 
 
-export const 地图 = Template.bind({});
-地图.args = {
+export const 基础 = Template.bind({});
+基础.args = {
   mapStyle: {
     version: 8,
     sources: {},
@@ -112,7 +112,7 @@ export const 地图 = Template.bind({});
   crs: "EPSG:4326",
 };
 
-地图.parameters = {
+基础.parameters = {
     docs: {
         description: {
             component: MapgisWebMapMd,

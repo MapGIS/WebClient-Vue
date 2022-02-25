@@ -10,7 +10,7 @@
 <script>
 export default {
   name: "mapgis-3d-marker",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     fid: {
       type: String,
@@ -121,32 +121,30 @@ export default {
   methods: {
     $_mount() {
       let vm = this;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        vm.$_init(webGlobe);
+      const { vueCesium } = this;
+      vueCesium.getViewerByInterval(function(viewer) {
+        vm.$_init(viewer);
       }, this.vueKey);
     },
     $_unmount() {
-      const { vueKey, vueIndex } = this;
+      let { vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      window.CesiumZondy.getWebGlobeByInterval(function(webGlobe) {
-        let MarkerManager = CesiumZondy.MarkerManager.findSource(
+      vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium.getViewerByInterval(function(viewer) {
+        let MarkerManager = vueCesium.MarkerManager.findSource(
           vueKey,
           vueIndex
         );
-        let webGlobeMarker = vm.webGlobe || webGlobe;
-        webGlobeMarker.viewer.entities.remove(MarkerManager.source);
-        CesiumZondy.MarkerManager.deleteSource(vueKey, vueIndex);
+        viewer = vm.viewer || viewer;
+        viewer.entities.remove(MarkerManager.source);
+        vueCesium.MarkerManager.deleteSource(vueKey, vueIndex);
       }, vueKey);
     },
-    $_init(webGlobe) {
-      const { CesiumZondy } = this;
+    $_init(viewer) {
+      const { vueCesium } = this;
       let vm = this;
       let Cesium = this.Cesium || window.Cesium;
-      let webGlobeMarker = this.webGlobe || webGlobe;
-      let labelLayer = new CesiumZondy.Manager.LabelLayer({
-        viewer: webGlobeMarker.viewer
-      });
+      let viewerMarker = this.viewer || viewer;
       let heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
       switch (this.heightReference) {
         case "clamped":
@@ -186,12 +184,12 @@ export default {
         //相对位置
         heightReference: heightReference
       };
-      this.$_append(labelLayer, heightReference, label);
+      this.$_append(heightReference, label);
       this.marker = this;
-      
+
       if (!window.DynamicMarkerHandler) {
         window.DynamicMarkerHandler = new Cesium.ScreenSpaceEventHandler(
-          webGlobeMarker.viewer.scene.canvas
+          viewerMarker.scene.canvas
         );
       }
       window.DynamicMarkerHandler.removeInputAction(
@@ -204,9 +202,10 @@ export default {
       );
     },
     $_hasId(id) {
+      let { vueCesium } = this;
       let marker = {};
       marker.flag = false;
-      let markerManagers = CesiumZondy.MarkerManager[this.vueKey];
+      let markerManagers = vueCesium.MarkerManager[this.vueKey];
       for (let i = 0; i < markerManagers.length; i++) {
         if (markerManagers[i].source._id === id) {
           marker.flag = true;
@@ -217,11 +216,11 @@ export default {
       return marker;
     },
     $_markerMouseAction(movement) {
-      const { Cesium, CesiumZondy } = this;
+      const { Cesium, vueCesium, viewer } = this;
       const vm = this;
-      let webGlobeMarker = this.webGlobe;
-      let scene = webGlobeMarker.viewer.scene;
-      window.DynamicMarkerLastActiceId = window.DynamicMarkerLastActiceId || undefined;
+      let scene = viewer.scene;
+      window.DynamicMarkerLastActiceId =
+        window.DynamicMarkerLastActiceId || undefined;
       if (scene.mode !== Cesium.SceneMode.MORPHING) {
         let pickedObject = scene.pick(movement.endPosition);
         if (
@@ -233,8 +232,11 @@ export default {
           if (!vm.isMoveIn) {
             vm.isMoveIn = true;
             vm.isMoveOut = false;
-            let label = vm.$_hasId(pickedObject.id.id).label
-            if (window.DynamicMarkerLastActiceId && window.DynamicMarkerLastActiceId != label) {
+            let label = vm.$_hasId(pickedObject.id.id).label;
+            if (
+              window.DynamicMarkerLastActiceId &&
+              window.DynamicMarkerLastActiceId != label
+            ) {
               vm.$emit("mouseLeave", window.DynamicMarkerLastActiceId);
             }
             vm.$emit("mouseEnter", label);
@@ -250,8 +252,8 @@ export default {
         }
       }
     },
-    $_append(labelLayer, heightReference, label) {
-      let icon = labelLayer.appendLabelIcon(
+    $_append(heightReference, label) {
+      let icon = this.$_addLabelIcon(
         //文本内容
         this.text,
         //经度、纬度、高度
@@ -270,21 +272,139 @@ export default {
         this.farDist,
         //最近显示距离：相机到注记的距离小于该值 注记不显示
         this.nearDist,
-        //图片位置：'center','top','bottom'
-        this.iconPos,
-        "",
-        //相对位置
-        heightReference
+        ""
       );
       label.fid = this.fid;
       label.changeEvent = this.changeEvent;
       icon.markLabel = label;
       this.$_addIcon(icon);
     },
+
+    /**
+     * @修改说明 添加图标注记
+     * @修改人 龚跃健
+     * @修改时间 2022/1/21
+     * 添加图标注记
+     * @param  {String} text       注记文字内容
+     * @param  {Number} lon        经度(必须)
+     * @param  {Number} lat        纬度(必须)
+     * @param  {Number} height     高程
+     * @param  {String} font       字体 这里将字体和大小放在一起 eg:'14pt 楷体'
+     * @param  {Color}  fillColor  字体的填充色
+     * @param  {String} iconUrl    图标路径
+     * @param  {Number} iconWidth  图标宽度
+     * @param  {Number} iconHeight 图标高度
+     * @param  {Number} farDist    最远显示距离
+     * @param  {Number} nearDist   最近显示距离
+     * @param  {String} attribute  其他属性信息
+     * @return {entity} labelIcon  图标注记对象
+     */
+    $_addLabelIcon(
+      text,
+      lon,
+      lat,
+      height,
+      font,
+      fillColor,
+      iconUrl,
+      iconWidth,
+      iconHeight,
+      farDist,
+      nearDist,
+      attribute
+    ) {
+      if (!this.Cesium) {
+        console.log("Cesium缺失");
+        return null;
+      }
+      if (!lon || !lat) {
+        return null;
+      }
+      text = text || "";
+      lon = lon || 0;
+      lat = lat || 0;
+      height = height || 0;
+      font = font || "14pt 宋体";
+      fillColor = fillColor || "";
+      iconUrl = iconUrl || null;
+      iconWidth = iconWidth || 27;
+      iconHeight = iconHeight || 32;
+      farDist = farDist || 10000000000000;
+      nearDist = nearDist || 1;
+      attribute = attribute || "";
+      name = name || "pictureLabel";
+      const labelIcon = this.viewer.entities.add({
+        name: text,
+        position: this.Cesium.Cartesian3.fromDegrees(lon, lat, height),
+        billboard: {
+          // 图标
+          image: iconUrl,
+          width: iconWidth,
+          height: iconHeight,
+          // heightReference: this.root.HeightReference.CLAMP_TO_GROUND,
+          // 随远近缩放
+          // pixelOffset:new this.root.Cartesian2(0.0, -image.height),
+          pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
+            1.5e5,
+            3.0,
+            1.5e7,
+            0.5
+          ),
+          // 随远近隐藏
+          translucencyByDistance: new this.Cesium.NearFarScalar(
+            1.5e5,
+            1.0,
+            1.5e7,
+            0.0
+          ),
+          // 定位点
+          // verticalOrigin: this.root.VerticalOrigin.BOTTOM
+          horizontalOrigin: this.Cesium.HorizontalOrigin.TOP
+        },
+        label: {
+          // 文字标签
+          text: text,
+          font: font,
+          style: this.Cesium.LabelStyle.FILL_AND_OUTLINE,
+          fillColor: fillColor,
+          outlineWidth: 1,
+          verticalOrigin: this.Cesium.VerticalOrigin.BOTTOM, // 垂直方向以底部来计算标签的位置
+          horizontalOrigin: this.Cesium.HorizontalOrigin.BOTTOM, // 原点在下方
+          // pixelOffset: lPixelOffset, // 偏移量
+          // heightReference : this.root.HeightReference.CLAMP_TO_GROUND ,
+          // 随远近缩放
+          pixelOffset: new this.Cesium.Cartesian2(0.0, -iconHeight / 4), // x,y方向偏移 相对于屏幕
+          pixelOffsetScaleByDistance: new this.Cesium.NearFarScalar(
+            1.5e2,
+            3.0,
+            1.5e7,
+            0.5
+          ),
+          // 随远近隐藏
+          translucencyByDistance: new this.Cesium.NearFarScalar(
+            1.5e5,
+            1.0,
+            1.5e7,
+            0.0
+          )
+        },
+        description: attribute
+      });
+      labelIcon.billboard.translucencyByDistance = new this.Cesium.NearFarScalar(
+        1.5e5,
+        1.0,
+        1.5e7,
+        1.0
+      ); // 不随距离的远近改变透明度
+      // labelIcon.pixelOffsetScaleByDistance = new cesium.NearFarScalar(1.5e2, 0.0, 8.0e6, 10.0);// 随远近改变大小
+      labelIcon.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
+      labelIcon.name = name;
+      return labelIcon;
+    },
     $_addIcon(icon) {
       const { vueKey, vueIndex } = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      CesiumZondy.MarkerManager.addSource(vueKey, vueIndex, icon);
+      let vueCesium = this.vueCesium || window.vueCesium;
+      vueCesium.MarkerManager.addSource(vueKey, vueIndex, icon);
     },
     togglePopup() {
       const { longitude, latitude, height } = this;

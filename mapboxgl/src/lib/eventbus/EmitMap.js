@@ -1,6 +1,6 @@
 import EventBus from "./EventBusMap";
 
-export const emitMapChangeStyle = mvtStyle => {
+export const emitMapChangeStyle = (mvtStyle) => {
   EventBus.$options.mapaction.eventBusMvtStyle = mvtStyle;
   EventBus.$emit("map-change-style", mvtStyle);
 };
@@ -40,61 +40,71 @@ export const emitMapSetLayerMaxzoom = () => {
   EventBus.$emit("map-set-layer-maxzoom", count);
 };
 
-export const emitMapAddThemeLayer = payload => {
+export const emitMapAddThemeLayer = (payload) => {
   EventBus.$emit("map-add-theme-layer", payload);
 };
 
-export const emitMapEditThemeLayer = payload => {
+export const emitMapEditThemeLayer = (payload) => {
   EventBus.$emit("map-edit-theme-layer", payload);
 };
 
-export const emitMapRemoveThemeLayer = payload => {
+export const emitMapRemoveThemeLayer = (payload) => {
   EventBus.$emit("map-remove-theme-layer", payload);
 };
 
-export const emitMapOpenTable = payload => {
+export const emitMapOpenTable = (payload) => {
   EventBus.$emit("map-open-table", payload);
 };
 
-export const emitMapPrint = payload => {
+export const emitMapPrint = (payload) => {
   EventBus.$emit("map-print", payload);
 };
-export const emitMapPrintRect = payload => {
+export const emitMapPrintRect = (payload) => {
   EventBus.$emit("map-print-rect", payload);
 };
-export const emitMapPrintFull = payload => {
+export const emitMapPrintFull = (payload) => {
   EventBus.$emit("map-print-full", payload);
 };
 
-export const emitDocumentImportThemeLayer = payload => {
+export const emitMapDrawRemove = (payload) => {
+  EventBus.$emit("map-draw-remove", payload);
+};
+export const emitMapMeasureRemove = (payload) => {
+  EventBus.$emit("map-measure-remove", payload);
+};
+export const emitMapEditRemove = (payload) => {
+  EventBus.$emit("map-edit-remove", payload);
+};
+
+export const emitDocumentImportThemeLayer = (payload) => {
   EventBus.$emit("document-import-theme-layer", payload);
 };
 
-export const emitDocumentExportThemeLayer = payload => {
+export const emitDocumentExportThemeLayer = (payload) => {
   EventBus.$emit("document-export-theme-layer", payload);
 };
 
-export const emitDocumentAddThemeLayer = payload => {
+export const emitDocumentAddThemeLayer = (payload) => {
   EventBus.$emit("document-add-theme-layer", payload);
 };
 
-export const emitDocumentEditThemeLayer = payload => {
+export const emitDocumentEditThemeLayer = (payload) => {
   EventBus.$emit("document-edit-theme-layer", payload);
 };
 
-export const emitDocumentShowThemeLayer = payload => {
+export const emitDocumentShowThemeLayer = (payload) => {
   EventBus.$emit("document-show-theme-layer", payload);
 };
 
-export const emitDocumentHideThemeLayer = payload => {
+export const emitDocumentHideThemeLayer = (payload) => {
   EventBus.$emit("document-hide-theme-layer", payload);
 };
 
-export const emitDocumentRemoveThemeLayer = payload => {
+export const emitDocumentRemoveThemeLayer = (payload) => {
   EventBus.$emit("document-remove-theme-layer", payload);
 };
 
-export const emitDocumentSaveThemeLayer = payload => {
+export const emitDocumentSaveThemeLayer = (payload) => {
   EventBus.$emit("document-save-theme-layer", payload);
 };
 
@@ -111,6 +121,9 @@ export default {
   emitMapRemoveThemeLayer,
   emitMapOpenTable,
   emitMapPrint,
+  emitMapDrawRemove,
+  emitMapMeasureRemove,
+  emitMapEditRemove,
   emitDocumentImportThemeLayer,
   emitDocumentExportThemeLayer,
   emitDocumentAddThemeLayer,
@@ -120,5 +133,5 @@ export default {
   emitDocumentHideThemeLayer,
   emitDocumentSaveThemeLayer,
   emitMapPrintRect,
-  emitMapPrintFull
+  emitMapPrintFull,
 };

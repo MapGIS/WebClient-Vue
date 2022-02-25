@@ -15,6 +15,8 @@ import { default as MapgisUiForm } from "./components/form/Form.vue";
 
 import { default as IconFont } from "./components/iconfont/Icon.vue";
 
+import { default as zhCN } from "./components/locale/zh_CN";
+
 const install = function(Vue, options) {
   options = options || {};
   let theme = options.theme || "light";
@@ -53,6 +55,8 @@ if (typeof window !== "undefined" && window["Vue"]) {
 
 export * from "./component";
 export { Util };
+
+export { zhCN };
 
 export { MapgisUiMessage, MapgisUiNotification, ModalInstance };
 export default {

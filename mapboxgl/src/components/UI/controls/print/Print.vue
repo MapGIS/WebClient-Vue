@@ -47,12 +47,12 @@ export default {
   props: {
     delay: {
       type: Boolean,
-      default: false
+      default: false,
     },
     delayTime: {
       type: Number,
-      default: 1000
-    }
+      default: 1000,
+    },
   },
   data() {
     return {
@@ -61,21 +61,23 @@ export default {
         baseinfo: {
           title: "地图标题",
           author: "中地数码有限公司",
-          date: new Date().toISOString()
+          date: new Date().toISOString(),
         },
         scale: {
-          domid: "mapgis-legend-rule"
+          domid: "mapgis-legend-rule",
         },
         legend: {
-          domid: "mapgis-legend-standard"
-        }
-      }
+          domid: "mapgis-legend-standard",
+        },
+      },
     };
   },
   watch: {},
   mounted() {},
   methods: {
     handlePrintEnd() {
+      debugger;
+      this.$emit("after-print", {});
       this.loading = false;
     },
     print() {
@@ -90,8 +92,8 @@ export default {
       } else {
         printCanvas(map, this.handlePrintEnd, info);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

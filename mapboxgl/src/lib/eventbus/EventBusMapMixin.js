@@ -8,7 +8,7 @@ export default {
     return {
       // 原始云盘的uploader模块
       count: 0,
-      eventBusMvtStyle: undefined
+      eventBusMvtStyle: undefined,
     };
   },
   created() {
@@ -29,66 +29,77 @@ export default {
       this.$emit("themeStyleChanged");
     }); */
     const vm = this;
-    EventBus.$on("map-change-style", payload => {
+    EventBus.$on("map-change-style", (payload) => {
       this.$_handleMapChangeStyle(payload);
     });
-    EventBus.$on("map-add-layer", payload => {
+    EventBus.$on("map-add-layer", (payload) => {
       this.$_handleMapAddLayer(payload);
     });
-    EventBus.$on("map-remove-layer", payload => {
+    EventBus.$on("map-remove-layer", (payload) => {
       this.$_handleMapRemoveLayer(payload);
     });
-    EventBus.$on("map-set-layer-paint", payload => {});
-    EventBus.$on("map-set-layer-layout", payload => {});
-    EventBus.$on("map-set-layer-filter", payload => {});
-    EventBus.$on("map-set-layer-minzoom", payload => {});
-    EventBus.$on("map-set-layer-maxzoom", payload => {});
+    EventBus.$on("map-set-layer-paint", (payload) => {});
+    EventBus.$on("map-set-layer-layout", (payload) => {});
+    EventBus.$on("map-set-layer-filter", (payload) => {});
+    EventBus.$on("map-set-layer-minzoom", (payload) => {});
+    EventBus.$on("map-set-layer-maxzoom", (payload) => {});
 
-    EventBus.$on("map-add-theme-layer", payload => {
+    EventBus.$on("map-add-theme-layer", (payload) => {
       this.$_handleMapAddThemeLayer(payload);
     });
-    EventBus.$on("map-edit-theme-layer", payload => {
+    EventBus.$on("map-edit-theme-layer", (payload) => {
       this.$_handleMapEditThemeLayer(payload);
     });
-    EventBus.$on("map-remove-theme-layer", payload => {
+    EventBus.$on("map-remove-theme-layer", (payload) => {
       this.$_handleMapRemoveThemeLayer(payload);
     });
-    EventBus.$on("map-open-table", payload => {
+    EventBus.$on("map-open-table", (payload) => {
       this.$_handleMapOpenTable(payload);
     });
 
     // 专题图相关
-    EventBus.$on("document-import-theme-layer", payload => {
+    EventBus.$on("document-import-theme-layer", (payload) => {
       this.$_handleDocumentImportThemeLayer(payload);
     });
-    EventBus.$on("document-export-theme-layer", payload => {
+    EventBus.$on("document-export-theme-layer", (payload) => {
       this.$_handleDocumentExportThemeLayer(payload);
     });
-    EventBus.$on("document-add-theme-layer", payload => {
+    EventBus.$on("document-add-theme-layer", (payload) => {
       this.$_handleDocumentAddThemeLayer(payload);
     });
-    EventBus.$on("document-edit-theme-layer", payload => {
+    EventBus.$on("document-edit-theme-layer", (payload) => {
       this.$_handleDocumentEditThemeLayer(payload);
     });
-    EventBus.$on("document-remove-theme-layer", payload => {
+    EventBus.$on("document-remove-theme-layer", (payload) => {
       this.$_handleDocumentRemoveThemeLayer(payload);
     });
-    EventBus.$on("document-show-theme-layer", payload => {
+    EventBus.$on("document-show-theme-layer", (payload) => {
       this.$_handleDocumentShowThemeLayer(payload);
     });
-    EventBus.$on("document-hide-theme-layer", payload => {
+    EventBus.$on("document-hide-theme-layer", (payload) => {
       this.$_handleDocumentHideThemeLayer(payload);
     });
-    EventBus.$on("document-save-theme-layer", payload => {
+    EventBus.$on("document-save-theme-layer", (payload) => {
       this.$_handleDocumentSaveThemeLayer(payload);
     });
 
     // 打印相关
-    EventBus.$on("map-print-rect", payload => {
+    EventBus.$on("map-print-rect", (payload) => {
       this.$_handleMapPrintRect(payload);
     });
-    EventBus.$on("map-print-full", payload => {
+    EventBus.$on("map-print-full", (payload) => {
       this.$_handleMapPrintFull(payload);
+    });
+
+    // 绘制 测量 变基相关
+    EventBus.$on("map-draw-remove", (payload) => {
+      this.$_handleMapDrawRemove(payload);
+    });
+    EventBus.$on("map-measure-remove", (payload) => {
+      this.$_handleMapMeasureRemove(payload);
+    });
+    EventBus.$on("map-edit-remove", (payload) => {
+      this.$_handleMapEditRemove(payload);
     });
   },
   methods: {
@@ -105,8 +116,8 @@ export default {
       const upload = EventBus.$options.upload || defaultUpload;
       const vm = this;
       const $props = this.getSelfProps();
-      $props.forEach(prop => {
-        this.$watch(prop, function(next) {
+      $props.forEach((prop) => {
+        this.$watch(prop, function (next) {
           const dataName = this.getDataNameOfProp(prop);
           vm[dataName] = next;
         });
@@ -191,6 +202,10 @@ export default {
 
     $_handleMapPrintRect(payload) {},
 
-    $_handleMapPrintFull(payload) {}
-  }
+    $_handleMapPrintFull(payload) {},
+
+    $_handleMapDrawRemove(payload) {},
+    $_handleMapMeasureRemove(payload) {},
+    $_handleMapEditRemove(payload) {},
+  },
 };

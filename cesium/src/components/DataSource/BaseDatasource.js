@@ -3,8 +3,7 @@ import { Events } from "../Base/Cesium/CesiumEvents";
 
 const methods = {
   async mount() {
-    const { webGlobe, datasource } = this;
-    const { viewer } = webGlobe;
+    const { viewer, datasource } = this;
     const { dataSources } = viewer;
     bindEvents.call(this, datasource, Events["datasource-events"], true);
     Events["datasource-property-events"].forEach(eventName => {
@@ -34,7 +33,7 @@ const methods = {
   }
 };
 export default {
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   methods,
   props: {
     /**

@@ -2,13 +2,6 @@
 
 ## 属性
 
-### `position`
-
-- **类型:** `String`
-- **默认值:** `right`
-- **非侦听属性**
-- **描述:** 分析面板的位置（right:右边 | left: 左边）
-
 ### `vueKey`
 
 - **类型:** `String`
@@ -25,8 +18,9 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 ### `vueIndex`
 
 - **类型:** `Number`
-- **必传**
+- **可选**
 - **非侦听属性**
+- **默认值:** `(Math.random() * 100000000).toFixed(0)`随机计算值
 - **描述:**
 
 ```
@@ -37,22 +31,36 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 
 - **类型:** `String`
 - **默认值:** `#ff0000`
-- **非侦听属性**
-- **描述:** 控高分析颜色，与 css 的 color 属性一致，使用 16 进制颜色
+- **侦听属性**
+- **描述:** 控高分析颜色，与 css 的 color 属性一致，使用 16 进制颜色或者 rba/rgba(包含透明度)
 
-### `opacity`
+### `drawStyle`
+
+- **类型:** `Object`
+- **默认值:** `{color: "#FF8C00", opacity: 0.6}`
+- **非侦听属性**
+- **描述:** 控高分析绘制分析区域的绘制样式，有 color、opacity、width。
+
+### `heightLimit`
 
 - **类型:** `Number`
-- **默认值:** `0.5`
-- **非侦听属性**
-- **描述:** 控高分析墙体透明度，与 css 的 opacity 属性一致
+- **默认值:** 80
+- **侦听属性**
+- **描述:** 控高分析默认的分析高度。
 
 ### `maxSliderHeight`
 
 - **类型:** `Number`
-- **默认值:** `50`
-- **非侦听属性**
-- **描述:** 控高分析面板滑动条控制高度的最大值
+- **默认值:** 180
+- **侦听属性**
+- **描述:** 分析时滑动条控高的最大值。
+
+### `minSliderHeight`
+
+- **类型:** `Number`
+- **默认值:** 0
+- **侦听属性**
+- **描述:** 分析时滑动条控高的最小值。
 
 ## 示例
 
@@ -60,15 +68,20 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 <template>
   <div style="width: 1200px;height: 800px;">
     <mapgis-web-scene style="height:90vh">
-      <mapgis-3d-igs-m3d
-        :autoReset="autoReset"
-        :maximumScreenSpaceError="maximumScreenSpaceError"
-        :url="m3dUrl"
-        :vue-index="vueIndex"
-        :debugShowBoundingVolume="debugShowBoundingVolume"
-      />
+      <mapgis-3d-raster-layer
+        url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+      ></mapgis-3d-raster-layer>
+      <mapgis-3d-m3d-layer :url="m3dUrl1" :autoReset="autoReset" />
       <mapgis-ui-card class="storybook-ui-card">
-      <mapgis-3d-heightlimited :vue-index="vueIndex"></mapgis-3d-heightlimited>
+        <mapgis-3d-heightlimited
+          :color="heightLimitColor"
+          :heightLimit="heightLimit"
+          :maxSliderHeight="maxSliderHeight"
+          :minSliderHeight="minSliderHeight"
+          :drawStyle="drawStyle"
+          @load="load"
+        >
+        </mapgis-3d-heightlimited>
       </mapgis-ui-card>
     </mapgis-web-scene>
   </div>
@@ -79,28 +92,28 @@ export default {
   name: "cesiumHeightLimited",
   data() {
     return {
-      m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-      // m3dUrl: "http://localhost:6163/igs/rest/g3d/BIM模型",
+      m3dUrl1: "http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
       autoReset: true,
-      maximumScreenSpaceError: 6,
-      debugShowBoundingVolume: true,
-      vueIndex: 22,
-      baseUrl:
-        "http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752",
-      wmtsLayer: "vec",
-      tileMatrixSet: "c",
-      tilingScheme: "EPSG:4326",
-      format: "tiles",
-      layerStyle: {
-        zIndex: 1
-      }
+      color: "rgba(255,0,0,0.5)",
+      drawStyle: {
+        color: "#FF8C00",
+        opacity: 0.6,
+      },
+      heightLimit: 80,
+      maxSliderHeight: 180,
+      minSliderHeight: 0,
     };
-  }
+  },
+  methods: {
+    load(e) {
+      this.heightLimitedAnalysis = e;
+    },
+  },
 };
 </script>
 
 <style scoped>
-.storybook-ui-card{
+.storybook-ui-card {
   position: absolute;
   top: 10px;
   left: 10px;

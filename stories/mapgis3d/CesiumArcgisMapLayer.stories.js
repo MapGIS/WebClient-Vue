@@ -1,16 +1,14 @@
-import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
-
+import Markdown from "../../cesium/docs/api/layer/ArcGISServer/ArcGISMapLayer.md"
 export default {
     title: "三维/图层/ArcGISServer/地图图层"
 };
 
 const Template = (args, {argTypes}) => ({
     props: Object.keys(argTypes),
-    components: {MapgisWebGlobe},
     template: `
-      <mapgis-web-scene :style="{height: '95vh'}">
-      <mapgis-3d-arcgis-map-layer v-bind="$props"/>
-      </mapgis-web-scene>`,
+    <mapgis-web-scene style="height:95vh">
+    <mapgis-3d-arcgis-map-layer v-bind="$props"/>
+    </mapgis-web-scene >`,
 });
 
 export const exportMap = Template.bind({});
@@ -27,4 +25,11 @@ exportMap.args = {
         tileHeight: 256,
     },
     srs: "EPSG:4326"
+};
+exportMap.parameters = {
+    docs: {
+        description: {
+            component: Markdown,
+        },
+    },
 };

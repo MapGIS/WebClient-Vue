@@ -293,9 +293,8 @@ export default {
       this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
       this.$_emitEvent("added", { drawer: this.drawer });
-      const eventNames = Object.keys(drawEvents);
       this.$_unbindDrawEvents();
-      this.$_bindSelfEvents(eventNames);
+      this.$_bindSelfEvents(Object.keys(drawEvents));
     },
 
     $_initDraw() {

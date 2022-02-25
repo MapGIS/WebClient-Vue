@@ -33,7 +33,7 @@ export function getGeoJSONFeatureCenter(feature) {
       if (centers.length === 3) {
         center = [
           (centers[0][0] + centers[1][0]) / 2,
-          (centers[0][1] + centers[1][1]) / 2
+          (centers[0][1] + centers[1][1]) / 2,
         ];
       } else if (centers.length > 3) {
         center = GeometryExp.getCenterOfGravityPoint(centers);
@@ -62,7 +62,7 @@ export function getGeoJSONFeaturesCenter(features) {
   if (centers.length === 3) {
     center = [
       (centers[0][0] + centers[1][0]) / 2,
-      (centers[0][1] + centers[1][1]) / 2
+      (centers[0][1] + centers[1][1]) / 2,
     ];
   } else if (centers.length > 3) {
     center = GeometryExp.getCenterOfGravityPoint(centers);
@@ -81,13 +81,13 @@ export function getGeoJSONFeatureBound(feature) {
       return [obj];
     }
     if (Array.isArray(coordinates[0])) {
-      const arr = coordinates.map(item => getNumbers(item, index));
+      const arr = coordinates.map((item) => getNumbers(item, index));
       return arr.reduce((a, b) => [...a, ...b]);
     }
     return [];
   };
   const {
-    geometry: { coordinates }
+    geometry: { coordinates },
   } = feature;
   const x = getNumbers(coordinates, 0);
   const y = getNumbers(coordinates, 1);
@@ -95,6 +95,6 @@ export function getGeoJSONFeatureBound(feature) {
     xmin: Math.min(...x),
     ymin: Math.min(...y),
     xmax: Math.max(...x),
-    ymax: Math.max(...y)
+    ymax: Math.max(...y),
   };
 }

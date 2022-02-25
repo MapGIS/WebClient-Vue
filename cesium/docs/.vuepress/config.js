@@ -72,7 +72,8 @@ module.exports = {
                 title: "场景子组件",
                 collapsable: false,
               },
-              ["/api/ui/popup.md", "气泡"],
+              ["/api/ui/popup.md", "气泡-自定义槽"],
+              ["/api/ui/popupfeature.md", "气泡-默认样式"],
               ["/api/ui/marker.md", "标记点"],
               ["/api/ui/compare.md", "卷帘"],
               ["/api/ui/link.md", "多屏联动"],
@@ -80,6 +81,8 @@ module.exports = {
               ["/api/ui/table.md", "表格"],
               ["/api/ui/draw.md", "绘制"],
               ["/api/ui/measure.md", "量测"],
+              ["/api/ui/statebar.md", "状态栏"],
+              ["/api/ui/debug.md", "调试"],
               // ["/api/sceneeffect/fogeffect.md", "雾组件"],
               // ["/api/sceneeffect/raineffect.md", "雨组件"],
               // ["/api/sceneeffect/snoweffect.md", "雪组件"],
@@ -88,7 +91,8 @@ module.exports = {
                 title: "图层",
                 collapsable: false,
               },
-              ["/api/layer/IGServer/IgsVectorLayer.md", "IGS二维矢量"],
+              ["/api/layer/PopupMixin/popup.md", "图层拾取"],
+              ["/api/layer/IGServer/IgsDynamicLayer.md", "IGS二维矢量"],
               ["/api/layer/IGServer/IgsDocLayer.md", "IGS地图文档"],
               ["/api/layer/IGServer/IgsTileLayer.md", "IGS瓦片"],
               ["/api/provider/igsterrain.md", "IGS地形"],
@@ -98,13 +102,19 @@ module.exports = {
 
               ["/api/layer/OGC/CesiumOgcWmsLayer.md", "WMS"],
               ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
-
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
 
-              ["/api/m3d/m3d.md", "M3D"],
+              ["/api/layer/m3d/scene.md", "Scene图层"],              
+              ["/api/layer/m3d/m3d.md", "M3D图层"],
+              ["/api/layer/Tileset/tileset.md", "3DTiles"],
 
-              ["/api/datasource/geojson.md", "GeoJSON"],
+              ["/api/layer/Geojson/geojson.md", "GeoJSON"],
               ["/api/layer/marker/DynamicMarker.md", "动态注记"],
+
+              ["/api/layer/Graphic/GraphicLayer.md", "标绘图层"],
+              ["/api/layer/Graphic/GraphicLayerService.md", "标绘图层-工具类"],
+
+              ["/api/MapStory/MapStory.md", "地图故事图层"],              
 
               {
                 title: "可视化",
@@ -112,7 +122,17 @@ module.exports = {
               },
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
+              ["/api/Overlay/ParticleEffects.md", "粒子特效"],
+              ["/api/sceneeffect/pathroaming.md", "单路径"],
+              ["/api/sceneeffect/sceneroaming.md", "路径管理"],
 
+              {
+                title: "模拟仿真",
+                collapsable: false,
+              },
+              ["/api/simulation/CityGrow.md", "城市生长"],
+              ["/api/simulation/BuildingGrow.md", "单体建筑生长"],
+              
               {
                 title: "空间分析",
                 collapsable: false,
@@ -121,11 +141,20 @@ module.exports = {
               ["/api/analysis/Sightline.md", "通视分析"],
               ["/api/analysis/Flood.md", "洪水淹没分析"],
               ["/api/analysis/DynamicCutting.md", "动态剖切"],
+              ["/api/analysis/DynamicSection.md", "动态剖切-高级"],
               ["/api/analysis/Excavate.md", "开挖分析"],
               // ["/api/analysis/Fill.md", "填挖方分析"],
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],
               ["/api/analysis/Skyline.md", "天际线分析"],
+              ["/api/analysis/Household.md", "分层分户"],
+              ["/api/analysis/Contour.md", "等值面分析"],
+              ["/api/analysis/Household.md", "分层分户"],
+              ["/api/analysis/Bim.md", "BIM构建树"],
+              ["/api/analysis/VideoManager.md", "投放管理"],
+              ["/api/analysis/VideoSetting.md", "投放配置"],
+              // ["/api/analysis/Buffer.md", "缓冲分析"],
+              // ["/api/analysis/Buffer.md", "叠加分析"],
             ],
           },
           {

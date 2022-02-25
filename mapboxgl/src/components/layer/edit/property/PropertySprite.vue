@@ -3,6 +3,7 @@
     v-model="value"
     :url="sprite"
     @change="onChange"
+    @remove="onRemove"
     :size="size"
   />
 </template>
@@ -56,6 +57,19 @@ export default {
         }
         let event = { layertype, layerprop, layervalue: sprite };
         this.$_emitEvent(event);
+      }
+    },
+    onRemove() {
+      const { map, rule, layerid } = this;
+      if (layerid && rule) {
+        const { layertype, layerprop } = rule;
+        if (rule.layertype === "paint") {
+          map.setPaintProperty(layerid, layerprop, null);
+        } else if (rule.layertype === "layout") {
+          map.setLayoutProperty(layerid, layerprop, null);
+        }
+        // let event = { layertype, layerprop, layervalue: null };
+        // this.$_emitEvent(event);
       }
     },
     getValue(id) {

@@ -20,7 +20,7 @@ export default {
       providerName: "ArcGisMapServerImageryProvider",
     }
   },
-  inject: ["Cesium", "CesiumZondy"],
+  inject: ["Cesium", "vueCesium"],
   mixins: [ServiceLayer],
   created() {
   },

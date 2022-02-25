@@ -265,7 +265,7 @@ export function getFileIcon(name) {
     case FOLDER:
     case FOLDER1:
     case FOLDER2:
-      return "iconwenjianjia-shouqi-";
+      return "mapgis-tubiaoqietu_wenjianjia-29";
     case PNG:
     case JPG:
     case PNG1:

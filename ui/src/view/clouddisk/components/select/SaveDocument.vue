@@ -1,18 +1,38 @@
 <template>
   <div class="mapgis-ui-clouddisk-save-document">
     <mapgis-ui-form-model :layout="layout" :model="saveForm">
-      <mapgis-ui-form-model-item label="文件路径">
+      <mapgis-ui-form-model-item label="保存方式">
+        <mapgis-ui-select
+          v-model="saveType"
+          placeholder="请选择保存方式"
+          @change="handleSaveType"
+        >
+          <mapgis-ui-select-option v-for="(type,index) in saveTypeList" :key="index" :value="type.value">
+            {{type.label}}
+          </mapgis-ui-select-option>
+        </mapgis-ui-select>
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-divider />
+      <mapgis-ui-form-model-item label="文件路径" v-if="saveType==='directSave'">
+        <mapgis-ui-input
+          disabled
+          v-model="saveForm.saveShowUrl"
+          read-only
+          placeholder="请选择路径"
+        />
+      </mapgis-ui-form-model-item>
+      <mapgis-ui-form-model-item label="文件路径" v-else>
         <mapgis-ui-input-search
-          v-model="saveForm.saveUrl"
+          v-model="saveForm.saveShowUrl"
           read-only
           enter-button
-          placeholder="请选择云盘路径"
+          placeholder="请选择路径"
           @click="handleSaveModal"
           @search="handleSaveModal"
         />
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item label="文件名称">
-        <mapgis-ui-input :addon-after="fileType" v-model="saveForm.fileName" />
+        <mapgis-ui-input :addon-after="fileType" v-model="saveForm.fileName" :disabled="saveType==='directSave'" />
       </mapgis-ui-form-model-item>
       <mapgis-ui-form-model-item>
         <mapgis-ui-button
@@ -22,7 +42,8 @@
           @click="handleSaveDocument"
           v-if="layout == 'vertical'"
         >
-          保存
+          <span v-if="saveType==='directSave'">保存</span>
+          <span v-else>另存</span>
         </mapgis-ui-button>
       </mapgis-ui-form-model-item>
     </mapgis-ui-form-model>
@@ -36,10 +57,10 @@
       @ok="handleFolderConfirm"
       @cancel="handleFolderCancel"
     >
-      <mapgis-ui-clouddisk-layerselect
-        ref="layerselect"
+      <mapgis-ui-clouddisk-dataselect
+        mode="save"
         :onlyFolder="true"
-        :isLayers="false"
+        :multiDatas="false"
         @change="handleFolderChange"
       />
     </mapgis-ui-modal>
@@ -48,7 +69,7 @@
 
 <script>
 import { saveJsonFile, getFileDownloadUrlWithAuth } from "../../axios/files";
-import { getMapGISUrl } from "../../config/mapgis";
+import { getMapGISUrl, getMapgisPath } from "../../config/mapgis";
 
 export default {
   name: "mapgis-ui-clouddisk-savedocument",
@@ -57,8 +78,20 @@ export default {
     return {
       saveForm: {
         saveUrl: "",
-        fileName: ""
+        saveShowUrl: "",
+        fileName: "默认地图文档"
       },
+      saveType: 'directSave',
+      saveTypeList: [
+        {
+          label: '直接保存',
+          value: 'directSave'
+        },
+        {
+          label: '另存',
+          value: 'otherSave'
+        },
+      ],
       saveTree: false,
       temUrl: "",
       // form: this.$form.createForm(this, { name: 'save' }),
@@ -103,8 +136,43 @@ export default {
     // },
     // handleNewDocument: Function
   },
+  created () {
+    this.getDefaultSavePath()
+  },
   watch: {},
   methods: {
+    getDefaultSavePath () {
+      let savePath = window.localStorage.getItem('mapgis_clouddisk_save_path')
+      let saveName = window.localStorage.getItem('mapgis_clouddisk_save_name')
+
+      if (!savePath || savePath === '') {
+        this.saveType = 'otherSave'
+        this.saveTypeList = [{
+          label: '另存',
+          value: 'otherSave'
+        }]
+      }
+      this.saveForm.saveUrl = savePath || ''
+      this.saveForm.saveShowUrl = this.modefyUrl(this.saveForm.saveUrl)
+      this.saveForm.fileName = saveName || '默认地图文档'
+    },
+    modefyUrl (url) {
+      if (url === '') {
+        return ''
+      }
+      let rootUrl = url.split('/')[0]
+      let rootName = '常规文件夹'
+      if (rootUrl !== getMapgisPath()) {
+        rootName = '组织文件夹'
+      }
+      let rootIndex = url.indexOf("/");
+      if (rootIndex >= 0) {
+        url = rootName + url.slice(rootIndex);
+      } else {
+        url = rootName;
+      }
+      return url;
+    },
     handleSaveDocument() {
       const vm = this;
       this.$emit("emitDocumentSaveThemeLayer");
@@ -146,10 +214,7 @@ export default {
                 } else {
                   vm.saveloading = false;
                   this.$notification.success({ message: "保存成功！" });
-                  this.saveForm = {
-                    saveUrl: "",
-                    fileName: ""
-                  };
+                  // this.saveForm.saveUrl = ''
                   this.$emit("closeDialog");
                 }
               }
@@ -169,6 +234,11 @@ export default {
       }, 1000)
       
     },
+    handleSaveType (value) {
+      if (value === 'directSave') {
+        this.getDefaultSavePath()
+      }
+    },
     handleSaveModal() {
       this.saveTree = true;
     },
@@ -177,6 +247,7 @@ export default {
     },
     handleFolderConfirm() {
       this.saveForm.saveUrl = this.temUrl;
+      this.saveForm.saveShowUrl = this.modefyUrl(this.saveForm.saveUrl)
       this.saveTree = false;
     },
     handleFolderCancel() {

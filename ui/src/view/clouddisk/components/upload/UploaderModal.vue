@@ -54,7 +54,7 @@ import MapgisUiUploaderProgress from "./UploaderProgress.vue";
 import MapgisUiClouddiskTransform from "../select/LayerTransform";
 import UploadMixin from "../../../../mixin/UploaderMixin";
 import { changeUiState, changeCsvUploadComplete, changePathUploaduri } from "../../../../util/emit/upload";
-import { getMapgisGroupPath } from "../../config/mapgis";
+import { getMapgisPath, getMapgisGroupPath } from "../../config/mapgis";
 import { getFileByWebsocketCallback, importVector } from "../../axios/files";
 
 export default {
@@ -85,7 +85,7 @@ export default {
     },
     defaultPath: {
       type: String,
-      default: 'data'
+      default: ''
     },
     isMapstudio: {
       type: Boolean,
@@ -127,7 +127,7 @@ export default {
     defaultPath: {
       handler (next) {
         if (next !== '') {
-          let url = getMapgisGroupPath() + '/' + next
+          let url = getMapgisPath() + '/' + next
           changePathUploaduri({ uri: url })
           this.changePathText(url)
         }
@@ -190,9 +190,9 @@ export default {
     importFileInfo(url) {
       let gisindex = url.indexOf("/");
       if (gisindex >= 0) {
-        url = "组织文件夹" + url.slice(gisindex);
+        url = "常规文件夹" + url.slice(gisindex);
       } else {
-        url = "组织文件夹";
+        url = "常规文件夹";
       }
       return url;
     },

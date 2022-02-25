@@ -180,7 +180,7 @@
 // import AddJsonData from './addJsonData'
 // import AddExpression from './addExpression'
 // import SrcUrlSetting from './srcUrlSetting'
-import { getGeoMetadata } from '../../axios/files'
+import { getGeoMetadata } from '../../axios/files.js'
 // const EnumType = ['FLOAT', 'STRING', 'INT', 'BOOLEAN']
 const EnumTree = ['srcInfo', 'srcInfo1', 'srcInfo2', 'desInfo', 'desInfo1', 'desInfo2']
 
@@ -400,7 +400,7 @@ export default {
           this.temUrl = this.temUrl === '' ? '' : this.temUrl + '/modelTask_' + dateTime
         }
         this.list[this.index].value = this.temUrl
-        console.warn('mmmmmmmmm', this.list, this.selectsInfo)
+        // console.warn('mmmmmmmmm', this.list, this.selectsInfo)
         this.updateParams()
         this.outputTree = false
       } else {
@@ -413,7 +413,7 @@ export default {
           if (!this.isMulti) { // 常用，单个图层选择
             this.handleInputUrlParams()
           } else { // 用于多图层合并
-            console.warn('多选', this.selectsListInfo)
+            // console.warn('多选', this.selectsListInfo)
             this.handleMultiInputUrlParams()
           }
         }
@@ -434,7 +434,14 @@ export default {
       let self = this
       this.treeLoading = true
       if (this.selectsInfo.xattrs === undefined || this.selectsInfo.xattrs.dataSource === undefined || this.selectsInfo.xattrs.dataSource === '') {
-        this.$Notice.error({ title: '当前选择的图层文件有误！', desc: '请重新选择已导入的图层文件！' })
+        let notification = {
+          message: '当前选择的图层文件有误！',
+          description: '请重新选择已导入的图层文件！',
+          onClick: function () {
+            console.warn('错误日志：', notification)
+          }
+        }
+        this.$notification.error(notification)
         this.treeLoading = false
         // this.$nextTick(() => {
         //   this.treeLoading = true
@@ -445,10 +452,17 @@ export default {
           .then(res => {
             if (res.status === 200) {
               let result = res.data
-              console.warn('result', result)
+              // console.warn('result', result)
               let { data, errorCode, msg } = result[0]
               if (errorCode < 0) {
-                this.$Notice.error({ title: errorCode, desc: msg + ' 请重新选择已导入的图层文件！' })
+                let notification = {
+                  message: errorCode,
+                  description: msg + ' 请重新选择已导入的图层文件！',
+                  onClick: function () {
+                    console.warn('错误日志：', notification)
+                  }
+                }
+                this.$notification.error(notification)
                 this.treeLoading = false
                 // this.$nextTick(() => {
                 //   this.treeLoading = true
@@ -485,7 +499,7 @@ export default {
                 this.list[this.index].value = srcUrlParamsStr
                 this.list[this.index].defaultSrcUrlParams = srcUrlParamsStr
                 this.list[this.index].valueShow = this.selectsInfo.url
-                console.warn('结果', srcUrlParams, this.index, this.list)
+                // console.warn('结果', srcUrlParams, this.index, this.list)
                 this.updateParams()
                 self.inputTree = false
                 self.treeLoading = false
@@ -493,7 +507,14 @@ export default {
             }
           })
           .catch(error => {
-            this.$Notice.error({ title: '网络异常,请检查链接', desc: error })
+            let notification = {
+              message: '网络异常,请检查链接',
+              description: error,
+              onClick: function () {
+                console.warn('错误日志：', error)
+              }
+            }
+            this.$notification.error(notification)
             this.treeLoading = false
             // this.$nextTick(() => {
             //   this.treeLoading = true
@@ -510,7 +531,14 @@ export default {
         }
       })
       if (flag === false) {
-        this.$Notice.error({ title: '当前选择的图层文件有误！', desc: '请重新选择已导入的图层文件！' })
+        let notification = {
+          message: '当前选择的图层文件有误！',
+          description: '请重新选择已导入的图层文件！',
+          onClick: function () {
+            console.warn('错误日志：', notification)
+          }
+        }
+        this.$notification.error(notification)
         this.treeLoading = false
         // this.$nextTick(() => {
         //   this.treeLoading = true
@@ -527,7 +555,7 @@ export default {
         })
         Promise.all(allPromiseFuns)
           .then(res => {
-            console.warn('返回结果', res)
+            // console.warn('返回结果', res)
             let srcUrlParams = this.handleMultiUrl(res)
             // let srcUrlParams = []
             // res.forEach((item, index) => {
@@ -538,7 +566,7 @@ export default {
             this.list[this.index].value = srcUrlParamsStr // 汇总多个请求结果
 
             let valueShowText = ''
-            console.warn('返回srcUrlParams', srcUrlParams)
+            // console.warn('返回srcUrlParams', srcUrlParams)
             srcUrlParams.forEach(item => {
               valueShowText += item.srcUrl + ','
             })
@@ -549,12 +577,14 @@ export default {
             this.inputTree = false
           })
           .catch(err => {
-            console.warn('错误', err, typeof err)
-            if (err.title) {
-              this.$Notice.error(err)
-            } else {
-              this.$Notice.error({ title: '前端解析出现错误', desc: err })
+            let notification = {
+              message: '网络异常,请检查链接',
+              description: err,
+              onClick: function () {
+                console.warn('错误日志：', err)
+              }
             }
+            this.$notification.error(notification)
             this.treeLoading = false
             // this.$nextTick(() => {
             //   this.treeLoading = true
@@ -590,7 +620,7 @@ export default {
       let result = []
       items.forEach((item, index) => {
         if (item === null) return null
-        console.warn('拿到结果', item, index, this.selectsListInfo)
+        // console.warn('拿到结果', item, index, this.selectsListInfo)
         let srcUrlRes = {
           srcUrl: null,
           gdbp: null,
@@ -612,7 +642,7 @@ export default {
         }
         let range = item.geometry.spatialAttr
         srcUrlRes.srcUrl = this.selectsListInfo[index].url
-        console.warn('拿到srcUrl', srcUrlRes.srcUrl)
+        // console.warn('拿到srcUrl', srcUrlRes.srcUrl)
         srcUrlRes.gdbp = this.selectsListInfo[index].xattrs.dataSource || ''
         srcUrlRes.xmin = range.xmin
         srcUrlRes.ymin = range.ymin
@@ -621,7 +651,7 @@ export default {
         srcUrlRes.fields = item.schema.fields
         srcUrlRes.filter.spatialCondition.geometry = []
         srcUrlRes.filter.attributeCondition = ''
-        console.warn('拿到src数组', srcUrlRes)
+        // console.warn('拿到src数组', srcUrlRes)
         // result.push(srcUrlRes)
         result[index] = srcUrlRes
       })
@@ -635,7 +665,7 @@ export default {
     },
     updataUrlParams (urlParams) {
       this.list[this.index].value = urlParams
-      console.warn('sssssssss', this.list, urlParams)
+      // console.warn('sssssssss', this.list, urlParams)
       this.updateParams()
     },
     updataSrcFields (fields) {
@@ -681,7 +711,7 @@ export default {
         })
         fieldValue = fieldValue.slice(0, -1)
         this.list[index].valueShow = value
-        console.warn('dayin ziduan', value)
+        // console.warn('dayin ziduan', value)
         this.list[index].value = fieldValue
         this.updateParams()
       } else {
@@ -734,7 +764,7 @@ export default {
     handleShowModal (params, index) {
       this.index = index
       this.currentSummaryJson = params
-      console.warn('查看一些值', this.currentSummaryJson)
+      // console.warn('查看一些值', this.currentSummaryJson)
       let paramsData = {}
       // let url = ''
       if (this.getParmsData) {
@@ -781,7 +811,14 @@ export default {
                 temSrcUrl[key] = inputParams[key]
                 resultList.push(temSrcUrl)
               } else {
-                this.$Notice.error({ title: '无法获取图层字段信息！！！', desc: '请确认是否填写图层信息' })
+                let notification = {
+                  message: '无法获取图层字段信息！！！',
+                  description: '请确认是否填写图层信息',
+                  onClick: function () {
+                    console.warn('错误日志：', notification)
+                  }
+                }
+                this.$notification.error(notification)
                 flag = false
               }
             }
@@ -789,7 +826,16 @@ export default {
         })
       }
       if (flag) {
-        if (resultList.length <= 0) this.$Notice.error({ title: '无法获取图层字段信息！！！', desc: '请确认是否填写图层信息' })
+        if (resultList.length <= 0) {
+          let notification = {
+            message: '无法获取图层字段信息！！！',
+            description: '请确认是否填写图层信息',
+            onClick: function () {
+              console.warn('错误日志：', notification)
+            }
+          }
+          this.$notification.error(notification)
+        }
         return resultList
       } else return []
     },
@@ -812,44 +858,44 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// .workflow-wrapper {
-//   text-align: left;
-//   .mapgis-ui-card-body {
-//     padding: 0px 16px 10px 16px;
-//   }
-//   .switch-detail {
-//     text-align: right;
-//     margin: 5px 0px;
-//   }
-//   .ivu-tag {
-//     margin: 0px 4px 4px 0;
-//   }
-// }
-// .parmsName {
-//  text-align: left;
-//  width: 100%;
-//  padding: 5px 0 8px 0;
-// //  font-weight: bold;
-// }
-// .parmsInput {
-//   padding: 0px 5px;
-// }
-// .parmsButton {
-//   // width: 40px;
-//   margin-left: 5px; 
-//   float: left;
-// }
-// .parmsInputUrl {
-//   width: calc(100% - 40px);
-//   float: left;
-// }
-// .parmsCommon {
-//   width: calc(100% - 4px);
-//   float: left;
-// }
-// .modelTask {
-//   height: calc(100vh - 240px);
-//   overflow-y: scroll;
-// }
-</style>
+<!-- <style lang="scss">
+.workflow-wrapper {
+  text-align: left;
+  .mapgis-ui-card-body {
+    padding: 0px 16px 10px 16px;
+  }
+  .switch-detail {
+    text-align: right;
+    margin: 5px 0px;
+  }
+  .ivu-tag {
+    margin: 0px 4px 4px 0;
+  }
+}
+.parmsName {
+ text-align: left;
+ width: 100%;
+ padding: 5px 0 8px 0;
+//  font-weight: bold;
+}
+.parmsInput {
+  padding: 0px 5px;
+}
+.parmsButton {
+  // width: 40px;
+  margin-left: 5px; 
+  float: left;
+}
+.parmsInputUrl {
+  width: calc(100% - 40px);
+  float: left;
+}
+.parmsCommon {
+  width: calc(100% - 4px);
+  float: left;
+}
+.modelTask {
+  height: calc(100vh - 240px);
+  overflow-y: scroll;
+}
+</style> -->

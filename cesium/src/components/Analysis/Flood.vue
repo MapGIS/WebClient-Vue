@@ -65,7 +65,7 @@ import {
 
 export default {
   name: "mapgis-3d-analysis-flood",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     /**
@@ -212,7 +212,7 @@ export default {
     },
     maxHeightCopy: {
       handler: function(e) {
-        const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
+        const { viewer, vueCesium, vueKey, vueIndex } = this;
         const options = this._getSourceOptions();
         const { floodAnalysis } = options;
         if (!floodAnalysis) {
@@ -232,7 +232,7 @@ export default {
               floodAnalysis.isDownFlood = false;
             }
             this.mHeight = maxHeightCopy;
-            webGlobe.scene.requestRender();
+            viewer.scene.requestRender();
           }, 1000);
         }
       }
@@ -248,13 +248,12 @@ export default {
       );
     },
     mount() {
-      const { webGlobe, CesiumZondy, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { vueCesium, vueKey, vueIndex } = this;
       const vm = this;
       let promise = this.createCesiumObject();
       promise.then(function(dataSource) {
         vm.$emit("load", vm);
-        CesiumZondy.FloodAnalysisManager.addSource(
+        vueCesium.FloodAnalysisManager.addSource(
           vueKey,
           vueIndex,
           dataSource,
@@ -266,12 +265,12 @@ export default {
       });
     },
     unmount() {
-      let { CesiumZondy, vueKey, vueIndex } = this;
-      let find = CesiumZondy.FloodAnalysisManager.findSource(vueKey, vueIndex);
+      let { vueCesium, vueKey, vueIndex } = this;
+      let find = vueCesium.FloodAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
       }
-      CesiumZondy.FloodAnalysisManager.deleteSource(vueKey, vueIndex);
+      vueCesium.FloodAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     /**
@@ -280,19 +279,18 @@ export default {
      * @return {Object} cesium内部color对象
      */
     _getColor(rgba) {
-      return colorToCesiumColor(rgba, this.webGlobe);
+      return colorToCesiumColor(rgba);
     },
     /**
      * @description 开始绘制并分析
      */
     analysis() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       let { drawElement } = options;
-      const { viewer } = this.webGlobe;
       // 初始化交互式绘制控件
-      drawElement = drawElement || new Cesium.DrawElement(viewer);
-      CesiumZondy.FloodAnalysisManager.changeOptions(
+      drawElement = drawElement || new Cesium.DrawElement(this.viewer);
+      vueCesium.FloodAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "drawElement",
@@ -302,9 +300,9 @@ export default {
       // 激活交互式绘制工具
       drawElement.startDrawingPolygon({
         // 绘制完成回调函数
-        callback: positions => {
+        callback: result => {
           this.remove();
-          this.positions = positions;
+          this.positions = result.positions;
           this._doAnalysis();
         }
       });
@@ -318,10 +316,9 @@ export default {
         this.$message.warning("请绘制分析区域");
         return;
       }
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       let { floodAnalysis } = options;
-      const { viewer } = this.webGlobe;
       const {
         startHeightCopy,
         minHeight,
@@ -333,24 +330,15 @@ export default {
         animationSpeed,
         frequency
       } = this;
-      // 初始化高级分析功能管理类
-      const advancedAnalysisManager = new this.CesiumZondy.Manager.AdvancedAnalysisManager(
-        {
-          viewer: viewer
-        }
-      );
-      // 初始化洪水淹没分析类
-      floodAnalysis =
-        floodAnalysis ||
-        advancedAnalysisManager.createFlood(positions, {
-          // 设置洪水淹没区域动画最低高度
-          minHeight: Number(minHeight), // 设置洪水淹没区域动画最低高度
-          // 设置洪水淹没区域最高高度
-          maxHeight: Number(maxHeightCopy),
-          // 设置洪水上涨速度
-          floodSpeed: Number(floodSpeedCopy)
-        });
 
+      // 初始化洪水淹没分析类
+      floodAnalysis = floodAnalysis || new Cesium.FloodAnalysis(this.viewer, positions);
+      //设置洪水淹没区域最低开始高度
+      floodAnalysis.minHeight = Number(minHeight);
+      //设置洪水淹没区域最高高度
+      floodAnalysis.maxHeight = Number(maxHeightCopy);
+      // 设置洪水上涨速度
+      floodAnalysis.floodSpeed = Number(floodSpeedCopy);
       // 洪水淹没区域最低高度
       floodAnalysis.startHeight = Number(startHeightCopy);
       // 洪水颜色
@@ -365,16 +353,16 @@ export default {
       floodAnalysis.specularIntensity = Number(specularIntensity);
 
       this.isDepthTestAgainstTerrainEnable = isDepthTestAgainstTerrainEnable(
-        this.webGlobe
+        this.viewer
       );
       if (!this.isDepthTestAgainstTerrainEnable) {
         // 如果深度检测没有开启，则开启
-        setDepthTestAgainstTerrainEnable(true, this.webGlobe);
+        setDepthTestAgainstTerrainEnable(true, this.viewer);
       }
       // 添加洪水淹没结果显示
-      this.webGlobe.scene.VisualAnalysisManager.add(floodAnalysis);
+      this.viewer.scene.visualAnalysisManager.add(floodAnalysis);
       this.mHeight = maxHeightCopy;
-      CesiumZondy.FloodAnalysisManager.changeOptions(
+      vueCesium.FloodAnalysisManager.changeOptions(
         vueKey,
         vueIndex,
         "floodAnalysis",
@@ -386,8 +374,8 @@ export default {
      * @return SourceOptions对象
      */
     _getSourceOptions() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
-      const find = CesiumZondy.FloodAnalysisManager.findSource(
+      const { vueCesium, vueKey, vueIndex } = this;
+      const find = vueCesium.FloodAnalysisManager.findSource(
         vueKey,
         vueIndex
       );
@@ -408,11 +396,11 @@ export default {
       if (
         this.isDepthTestAgainstTerrainEnable !== undefined &&
         this.isDepthTestAgainstTerrainEnable !==
-          isDepthTestAgainstTerrainEnable(this.webGlobe)
+          isDepthTestAgainstTerrainEnable(this.viewer)
       ) {
         setDepthTestAgainstTerrainEnable(
           this.isDepthTestAgainstTerrainEnable,
-          this.webGlobe
+          this.viewer
         );
       }
     },
@@ -420,15 +408,15 @@ export default {
      * @description 移除洪水淹没分析结果
      */
     _removeFlood() {
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       const { floodAnalysis } = options;
 
       // 判断是否已有洪水淹没分析结果
       if (floodAnalysis) {
         // 移除洪水淹没分析显示结果
-        this.webGlobe.scene.VisualAnalysisManager.remove(floodAnalysis);
-        CesiumZondy.FloodAnalysisManager.changeOptions(
+        this.viewer.scene.visualAnalysisManager.remove(floodAnalysis);
+        vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "floodAnalysis",
@@ -442,14 +430,14 @@ export default {
      */
     remove() {
       this._removeFlood();
-      const { CesiumZondy, vueKey, vueIndex } = this;
+      const { vueCesium, vueKey, vueIndex } = this;
       const options = this._getSourceOptions();
       const { drawElement } = options;
 
       if (drawElement) {
         // 取消交互式绘制事件激活状态
         drawElement.stopDrawing();
-        CesiumZondy.FloodAnalysisManager.changeOptions(
+        vueCesium.FloodAnalysisManager.changeOptions(
           vueKey,
           vueIndex,
           "drawElement",

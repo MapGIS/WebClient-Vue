@@ -3,6 +3,7 @@
     <!-- <mapgis-ui-spin v-show="isLoading"> -->
       <mapgis-ui-tree
         v-show="!isLoading"
+        :key="treeKey"
         class="layout-tree-company"
         ref="folderTree"
         :loadData="loadCompany"
@@ -13,6 +14,10 @@
         @expand="handelExpand"
         @select="handelClick"
       >
+        <template slot="title" slot-scope="{ title, icon }">
+          <mapgis-ui-iconfont :type="icon" v-if="icon.indexOf('mapgis')>=0"/>
+          <span> {{ title }} </span>
+        </template>
       </mapgis-ui-tree>
       <!-- <Tree
       :selected="true"
@@ -47,7 +52,8 @@ export default {
       data: [],
       // defaultURL: getMapgisPath() + '/.gis',
       selectListsObj: {},
-      isLoading: false
+      isLoading: false,
+      treeKey: 1
     };
   },
   props: {
@@ -110,12 +116,14 @@ export default {
       this.showDirFiles(this.url);
     },
     showDirFiles(url) {
+      this.treeKey += 1
       let vm = this;
       vm.isLoading = true;
       if (url === -1) {
         let nullData = {
           title: "目录",
-          icon: "iconwenjianjia-shouqi-",
+          icon: "mapgis-tubiaoqietu_wenjianjia-29",
+          scopedSlots: { icon: "icon", title: "title" },
           loading: false,
           expand: false,
           // children: [],
@@ -135,7 +143,8 @@ export default {
               if (errorCode < 0) {
                 let nullData = {
                   title: "目录",
-                  icon: "iconwenjianjia-shouqi-",
+                  icon: "mapgis-tubiaoqietu_wenjianjia-29",
+                  scopedSlots: { icon: "icon", title: "title" },
                   loading: false,
                   expand: false,
                   // children: [],
@@ -166,8 +175,9 @@ export default {
                 });
                 // commonData = this.checkSelected(url, "", commonData);
                 let newDefaultData = {
-                  title: "目录",
-                  icon: "iconwenjianjia-shouqi-",
+                  title: url === -97 ? "我收到的共享" : "公共数据",
+                  icon: "mapgis-gongxiangwenjian",
+                  scopedSlots: { icon: "icon", title: "title" },
                   loading: false,
                   expand: true,
                   disableCheckbox: true,
@@ -185,7 +195,7 @@ export default {
             this.$notification.error({ message: "网络异常,请检查链接", description: error });            
             vm.isLoading = false;
           });
-      } else if (url === -100) {
+      } else if (url > 0) {
         let defaultURL = getMapgisGroupPath();
         dirnavigation(defaultURL)
           .then(res => {
@@ -194,8 +204,9 @@ export default {
               let { data, errorCode, msg } = result;
               if (errorCode < 0) {
                 let nullData = {
-                  title: "目录",
-                  icon: "iconwenjianjia-shouqi-",
+                  title: "组织文件夹",
+                  icon: "mapgis-tubiaoqietu_wenjianjia-29",
+                  scopedSlots: { icon: "icon", title: "title" },
                   loading: false,
                   expand: false,
                   // children: [],
@@ -235,8 +246,9 @@ export default {
                 });
                 // items = this.checkSelected(url, defaultURL, items);
                 let newDefaultData = {
-                  title: "目录",
-                  icon: "iconwenjianjia-shouqi-",
+                  title: "组织文件夹",
+                  icon: "mapgis-tubiaoqietu_wenjianjia-29",
+                  scopedSlots: { icon: "icon", title: "title" },
                   loading: false,
                   expand: true,
                   disableCheckbox: true,
@@ -244,6 +256,77 @@ export default {
                   groupId: -1,
                   url: defaultURL,
                   key: '0-5'
+                };
+                vm.data = [newDefaultData];
+                vm.isLoading = false;
+              }
+            }
+          })
+          .catch(error => {
+            this.$notification.error({ message: "网络异常,请检查链接", description: error });
+            vm.isLoading = false;
+          });
+      } else if (url === -100) {
+        let defaultURL = getMapgisPath();
+        dirnavigation(defaultURL)
+          .then(res => {
+            if (res.status === 200) {
+              let result = res.data;
+              let { data, errorCode, msg } = result;
+              if (errorCode < 0) {
+                let nullData = {
+                  title: "常规文件夹",
+                  icon: "mapgis-tubiaoqietu_wenjianjia-29",
+                  scopedSlots: { icon: "icon", title: "title" },
+                  loading: false,
+                  expand: false,
+                  // children: [],
+                  groupId: -1,
+                  key: '0-6'
+                };
+                vm.data = [{ ...nullData }];
+                this.$notification.error({ message: errorCode, description: msg });
+                vm.isLoading = false;
+              } else {
+                let items = this.onlyFolder
+                  ? data.filter(item => item.isfolder === true)
+                  : data;
+                items = items.filter(item => {
+                  if (item.isfolder) {
+                    return true
+                  } else if (this.isStyle) {
+                    return item.type === '.style'
+                  } else {
+                    let hasImport = item.xattrs && item.xattrs.dataSource && item.xattrs.dataSource !== ''
+                    return hasImport
+                  }
+                })
+                items = items.map(d => {
+                  d.commonUrl = defaultURL;
+                  d.icon = getFileIcon(d.ext);
+                  if (d.isfolder) {
+                    d.loading = false;
+                    // d.children = [];
+                    d.disableCheckbox = true;
+                  } else {
+                    d.isLeaf = true;
+                    d.expand = false;
+                    delete d.loading;
+                  }
+                  return d;
+                });
+                // items = this.checkSelected(url, defaultURL, items);
+                let newDefaultData = {
+                  title: "常规文件夹",
+                  icon: "mapgis-tubiaoqietu_wenjianjia-29",
+                  scopedSlots: { icon: "icon", title: "title" },
+                  loading: false,
+                  expand: true,
+                  disableCheckbox: true,
+                  children: items,
+                  groupId: -1,
+                  url: defaultURL,
+                  key: '0-7'
                 };
                 vm.data = [newDefaultData];
                 vm.isLoading = false;

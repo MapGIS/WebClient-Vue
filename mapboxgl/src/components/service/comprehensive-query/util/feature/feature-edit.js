@@ -32,10 +32,10 @@ export default class FeatureEdit {
       port: tempParams.port,
       guid: tempParams.guid,
       updateAttribute: tempParams.updateAttribute,
-      updateGeometry: tempParams.updateGeometry
+      updateGeometry: tempParams.updateGeometry,
     });
     const promise = new Promise((resolve, reject) => {
-      editService.update(tempParams.featureSet, data => {
+      editService.update(tempParams.featureSet, (data) => {
         if (data) {
           resolve(data);
         } else {
@@ -43,7 +43,7 @@ export default class FeatureEdit {
         }
       });
     });
-    return promise.then(data => {
+    return promise.then((data) => {
       return data;
     });
   }

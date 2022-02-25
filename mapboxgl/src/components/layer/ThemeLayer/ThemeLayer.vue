@@ -16,6 +16,7 @@
         @colorChanged="$_colorChanged"
         @checked="$_checked"
         @gradientChanged="$_gradientChanged"
+        @resetColor="$_resetColor"
         @uniformColorChanged="$_uniformColorChanged"
         @iconOpacityChanged="$_iconOpacityChanged"
         @iconTranslateXChanged="$_iconTranslateXChanged"

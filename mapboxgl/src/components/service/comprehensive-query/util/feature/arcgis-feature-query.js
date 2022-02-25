@@ -53,7 +53,7 @@ export default class ArcGISFeatureQuery {
     const url = `${tempParams.serverUrl}/${tempParams.layerIndex}/query`;
     const promise = new Promise((resolve, reject) => {
       const instance = axios.create();
-      instance.interceptors.request.use(config => {
+      instance.interceptors.request.use((config) => {
         let url = config.url;
         // get参数编码
         if (config.method === "get" && config.params) {
@@ -76,9 +76,9 @@ export default class ArcGISFeatureQuery {
           paramsSerializer(param) {
             return qs.stringify(param);
           },
-          params: tempParams
+          params: tempParams,
         })
-        .then(res => {
+        .then((res) => {
           const { data } = res;
           if (!data) {
             resolve(undefined);
@@ -90,7 +90,7 @@ export default class ArcGISFeatureQuery {
             const geojsonFeatures = {
               type: "FeatureCollection",
               features: [],
-              dataCount: params.totalCount
+              dataCount: params.totalCount,
             };
             const { features, geometryType } = data;
             for (let i = 0; i < features.length; i += 1) {
@@ -105,7 +105,7 @@ export default class ArcGISFeatureQuery {
                   xmin: features[i].geometry.x,
                   ymin: features[i].geometry.y,
                   xmax: features[i].geometry.x,
-                  ymax: features[i].geometry.y
+                  ymax: features[i].geometry.y,
                 };
               } else if (geometryType === "esriGeometryPolyline") {
                 // 如果为线要素
@@ -146,13 +146,13 @@ export default class ArcGISFeatureQuery {
               }
               const geometry = {
                 type,
-                coordinates
+                coordinates,
               };
               const feature = {
                 type: "Feature",
                 properties: Object.assign({}, features[i].attributes),
                 geometry,
-                bound
+                bound,
               };
               geojsonFeatures.features.push(feature);
             }
@@ -160,7 +160,7 @@ export default class ArcGISFeatureQuery {
           }
         });
     });
-    return promise.then(data => {
+    return promise.then((data) => {
       return data;
     });
   }
@@ -219,8 +219,8 @@ export default class ArcGISFeatureQuery {
           ymax: geometry.ymax,
           spatialReference: {
             // EPSG: Zondy.OneMap.defaultData.projection.split(':')[1]
-            EPSG: 4326
-          }
+            EPSG: 4326,
+          },
         }); // [geometry.xmin, geometry.ymin, geometry.xmax, geometry.ymax].toString();
         tempParams.geometryType = "esriGeometryEnvelope";
         tempParams.distance = params.geometry.nearDis || "";
@@ -228,7 +228,7 @@ export default class ArcGISFeatureQuery {
         tempParams.geometry = JSON.stringify({
           x: geometry.x,
           y: geometry.y,
-          spatialReference: { EPSG: EPSGNo }
+          spatialReference: { EPSG: EPSGNo },
         }); // [geometry.x, geometry.y].toString();
         tempParams.geometryType = "esriGeometryPoint";
         tempParams.distance = params.geometry.nearDis || "";
@@ -240,7 +240,7 @@ export default class ArcGISFeatureQuery {
         }
         tempParams.geometry = JSON.stringify({
           rings: [pointArr],
-          spatialReference: { EPSG: EPSGNo }
+          spatialReference: { EPSG: EPSGNo },
         });
       } else if (geoType === "line") {
         tempParams.geometryType = "esriGeometryPolyline";
@@ -250,7 +250,7 @@ export default class ArcGISFeatureQuery {
         }
         tempParams.geometry = JSON.stringify({
           paths: [pointArr],
-          spatialReference: { EPSG: EPSGNo }
+          spatialReference: { EPSG: EPSGNo },
         });
       } else if (geoType === "Circle") {
         // ArcGIS没有圆几何，将圆构造为polygon
@@ -315,7 +315,7 @@ export default class ArcGISFeatureQuery {
     const url = `${tempParams.serverUrl}/${tempParams.layerIndex}/query`;
     const promise = new Promise((resolve, reject) => {
       const instance = axios.create();
-      instance.interceptors.request.use(config => {
+      instance.interceptors.request.use((config) => {
         let url = config.url;
         // get参数编码
         if (config.method === "get" && config.params) {
@@ -333,7 +333,7 @@ export default class ArcGISFeatureQuery {
         config.url = url;
         return config;
       });
-      instance.get(url, { params: tempParams }).then(res => {
+      instance.get(url, { params: tempParams }).then((res) => {
         const { data } = res;
         if (!data) {
           resolve(undefined);
@@ -342,7 +342,7 @@ export default class ArcGISFeatureQuery {
         }
       });
     });
-    return promise.then(data => {
+    return promise.then((data) => {
       return data;
     });
   }
@@ -376,7 +376,7 @@ export default class ArcGISFeatureQuery {
     const url = `${tempParams.serverUrl}/${tempParams.layerIndex}/query`;
     const promise = new Promise((resolve, reject) => {
       const instance = axios.create();
-      instance.interceptors.request.use(config => {
+      instance.interceptors.request.use((config) => {
         let url = config.url;
         // get参数编码
         if (config.method === "get" && config.params) {
@@ -394,7 +394,7 @@ export default class ArcGISFeatureQuery {
         config.url = url;
         return config;
       });
-      axios.get(url, { params: tempParams }).then(res => {
+      axios.get(url, { params: tempParams }).then((res) => {
         const { data } = res;
         if (!data) {
           resolve(undefined);
@@ -434,14 +434,14 @@ export default class ArcGISFeatureQuery {
             }
             const obj = {
               fields: tempFields,
-              value
+              value,
             };
             resolve(obj);
           }
         }
       });
     });
-    return promise.then(data => {
+    return promise.then((data) => {
       return data;
     });
   }

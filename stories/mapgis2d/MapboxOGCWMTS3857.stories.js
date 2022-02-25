@@ -82,9 +82,6 @@ export default {
       },
       control:'number'
     },
-    layerId: "ogcwmts_layerId",
-    sourceId: "ogcwmts_sourceId",
-    token: "f5347cab4b28410a6e8ba5143e3d5a35",
   },
 };
 

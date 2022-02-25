@@ -16,18 +16,17 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   components: { "mapgis-3d-measure": Mapgis3dMeasure },
   template: `
-    <mapgis-web-scene
+    <mapgis-web-scene style="height:95vh"
       v-bind:animation="false"
-      v-bind:timeline="false"
-      :style="{height: '95vh'}">
-      <mapgis-3d-igs-m3d :url="m3durl"> </mapgis-3d-igs-m3d>
+      v-bind:timeline="false">
+      <mapgis-3d-m3d-layer :url="m3durl"> </mapgis-3d-m3d-layer>
       <div
         v-show="enableControl"
         :style="controlStyle"
         class="measure-story-control"
       >
         <mapgis-3d-measure ref="measure3d" @load="measure = $event"
-          :measureOptions="measureOptionsObj"
+          :options="measureOptions"
         >
           <mapgis-ui-space
             v-if="!hasSettingPanel"
@@ -83,11 +82,17 @@ const Template = (args, { argTypes }) => ({
           click: this.enableAreaMeasure,
         },
         {
-          icon: "mapgis-huizhijuxing",
+          icon: "mapgis-sanjiaoceliang",
           type: "primary",
           tip: "三角测量",
           click: this.enableTriangleMeasure,
         },
+        // {
+        //   icon: "mapgis-huizhijuxing",
+        //   type: "primary",
+        //   tip: "坡度测量",
+        //   click: this.enableSlopeMeasure,
+        // },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
@@ -95,7 +100,7 @@ const Template = (args, { argTypes }) => ({
           click: this.clearMeasure,
         },
       ],
-      measureOptionsObj: {
+      measureOptions: {
         //设置测量单位
         unit: "meters",
         //设置测量图标参数
@@ -130,7 +135,7 @@ const Template = (args, { argTypes }) => ({
       return {
         overflow: "hidden",
         transition: "width 0.3s",
-        width: `${toolbarVisible ? 160 : 32}px`,
+        width: `${toolbarVisible ? 240 : 32}px`,
       };
     },
     btnStyle({ toolbarVisible }) {
@@ -152,6 +157,7 @@ const Template = (args, { argTypes }) => ({
       this.measure3dRef.remove();
     },
     startMeasure(measureName) {
+      this.clearMeasure();
       this.measure3dRef.$_enableMeasure(measureName);
     },
     enableToolbar() {

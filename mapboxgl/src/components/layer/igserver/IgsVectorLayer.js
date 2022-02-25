@@ -9,36 +9,36 @@ export default {
   props: {
     ...igsOptions,
     gdbps: {
-      type: String | Array,
-      require: true
+      type: [String, Array],
+      require: true,
     },
     filters: {
       type: String,
-      default: null
+      default: null,
     },
     igsMapStyle: {
       type: Object,
-      default: null
+      default: null,
     },
     f: {
       type: String,
-      default: "png"
+      default: "png",
     },
     guid: {
       type: String,
-      default: new Date().getTime().toString()
+      default: new Date().getTime().toString(),
     },
     keepCache: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   methods: {
     $_init() {
-      if(this.baseUrl){
+      if (this.baseUrl) {
         let partUrl = this.$_initAllRequestParams().join("&");
         this._url = encodeURI(this.baseUrl + "?" + partUrl) + "&bbox={bbox}";
-      }else if (this.url) {
+      } else if (this.url) {
         let url = this.url;
         if (url.indexOf("?") === -1) {
           url += "?";
@@ -50,7 +50,7 @@ export default {
         url += partUrl;
         this._url = url;
         return;
-      }else {
+      } else {
         let domain = this.domain;
         if (!domain) {
           domain = this.protocol + "://" + this.ip + ":" + this.port;
@@ -95,7 +95,7 @@ export default {
         tiles: [this._url],
         tileSize: this.tileSize,
         mapgisOffset: this.zoomOffset,
-        ...this.source
+        ...this.source,
       };
 
       this.map.on("dataloading", this.$_watchSourceLoading);
@@ -111,6 +111,6 @@ export default {
       this.$_bindLayerEvents(layerEvents);
       this.map.off("dataloading", this.$_watchSourceLoading);
       this.initial = false;
-    }
-  }
+    },
+  },
 };

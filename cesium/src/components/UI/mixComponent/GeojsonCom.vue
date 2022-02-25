@@ -5,24 +5,24 @@
 
 <script>
 import BaseMixin from "./BaseMixin";
-import Mapgis3dComponentLegend from "../mixComponent/Legend";
+// import Mapgis3dComponentLegend from "../mixComponent/Legend";
 import * as turf from "@turf/turf";
 
 let analysisManager;
 export default {
   name: "mapgis-3d-component-mix",
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   mixins: [BaseMixin],
-  components: { Mapgis3dComponentLegend },
+  // components: { Mapgis3dComponentLegend },
   props: {
     geoJson: { type: Object },
     vueKey: { type: String, default: "default" },
     vueIndex: {
-      type: String | Number,
-      default: () => (Math.random() * 10000000).toFixed(0)
+      type: [String, Number],
+      default: () => (Math.random() * 100000000).toFixed(0)
     },
     url: {
-      type: String | Object,
+      type: [String, Object],
       required: true
     },
     options: { type: Object },
@@ -45,7 +45,8 @@ export default {
       current: {
         feature: undefined,
         originalColor: new Cesium.Color()
-      }
+      },
+      handlerAction:undefined
     };
   },
   created() {},
@@ -91,7 +92,7 @@ export default {
     mount() {
       let vm = this;
       const {
-        webGlobe,
+        viewer,
         options,
         layerStyle,
         ruleJson,
@@ -100,7 +101,6 @@ export default {
         vueIndex,
         activeCircle
       } = this;
-      const { viewer } = webGlobe;
       const { dataSources, scene } = viewer;
       // let findSource = vm.$_getObject(vm.waitManagerName);
 
@@ -115,20 +115,20 @@ export default {
           clipCesiumobj.then(function(clip) {
             dataSources.add(clip).then(() => {
               window.CesiumZondy.GeojsonManager.addSource(
-                vueKey,
-                vueIndex,
-                clip.entities.values,
-                { outline: undefined, rule: ruleJson }
+                  vueKey,
+                  vueIndex,
+                  clip.entities.values,
+                  { outline: undefined, rule: ruleJson }
               );
             });
           });
         } else {
           dataSources.add(origin).then(() => {
             window.CesiumZondy.GeojsonManager.addSource(
-              vueKey,
-              vueIndex,
-              origin.entities.values,
-              { outline: undefined, rule: ruleJson }
+                vueKey,
+                vueIndex,
+                origin.entities.values,
+                { outline: undefined, rule: ruleJson }
             );
           });
         }
@@ -137,16 +137,15 @@ export default {
       vm.pickModel();
     },
     unmount() {
-      let { webGlobe, vueKey, vueIndex } = this;
+      let { viewer, vueKey, vueIndex } = this;
       console.log("vueKey", vueKey, vueIndex);
-      const { viewer } = webGlobe;
       const { dataSources, scene } = viewer;
       let find = window.CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
         // scene.primitives.remove(find.options.labels);
         if (dataSources) {
           dataSources.remove(find.source, true);
-          webGlobe.viewer.entities.remove(find.options.outline);
+          viewer.entities.remove(find.options.outline);
           // webGlobe.viewer.entities.remove(find.options.popup);
         }
       }
@@ -172,7 +171,7 @@ export default {
             let findsubrule = secondRule.find(r => r.name === regionName);
             if (findsubrule) {
               let pc = new Cesium.Color.fromCssColorString(
-                firstColor
+                  firstColor
               ).withAlpha(alpha);
               entity.polygon.material = pc;
             }
@@ -184,7 +183,7 @@ export default {
       let find = this.findSource();
       if (!find || !find.source) return;
       if (find.options && find.options.popup) {
-        webGlobe.viewer.entities.remove(find.options.popup);
+        this.viewer.entities.remove(find.options.popup);
       }
       // this.initColor();
       let entities = find.source;
@@ -214,7 +213,7 @@ export default {
               let cssColor = activeRule[j].color; // ;
               if (cssColor) {
                 let pc = new Cesium.Color.fromCssColorString(
-                  cssColor
+                    cssColor
                 ).withAlpha(alpha);
                 entity.polygon.material = pc;
                 entity.polygon.outlineColor = pc;
@@ -222,7 +221,7 @@ export default {
               if (clampToGround) {
                 entity.polygon.clampToGround = clampToGround;
                 entity.polygon.classificationType =
-                  Cesium.ClassificationType.BOTH;
+                    Cesium.ClassificationType.BOTH;
               }
               break;
             }
@@ -230,7 +229,7 @@ export default {
           if (!isPatch) {
             let cssColor = "#000000";
             entity.polygon.material = new Cesium.Color.fromCssColorString(
-              cssColor
+                cssColor
             ).withAlpha(0.0);
           }
         }
@@ -238,40 +237,43 @@ export default {
     },
     pickModel() {
       let vm = this;
-      let { webGlobe } = this;
-      webGlobe.registerMouseEvent("LEFT_CLICK", vm.highlightPicking);
+      let { viewer } = this;
+      this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+      this.handlerAction.setInputAction(event => {
+        vm.highlightPicking;
+      }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
       // webGlobe.registerMouseEvent("RIGHT_CLICK", vm.stopPick);
       //构造分析功能管理对象
       analysisManager = new CesiumZondy.Manager.AnalysisManager({
-        viewer: webGlobe.viewer
+        viewer: viewer
       });
     },
     // 鼠标左键单击事件回调：模型高亮
     highlightPicking(movement) {
       let vm = this;
-      const { webGlobe, vueKey, vueIndex } = this;
-      const { viewer } = webGlobe;
+      const { viewer, vueKey, vueIndex } = this;
       //根据鼠标点击位置选择对象
-      let pickedFeature = webGlobe.scene.pick(movement.position);
+      let pickedFeature = viewer.scene.pick(movement.position);
 
       //判断current对象（即上一次鼠标选中要素）中要素有值，该值和鼠标点击位置不相同,
       // 则要移除上一次的要素高亮和popup
       if (
-        Cesium.defined(vm.current.feature) &&
-        vm.current.feature !== pickedFeature
+          Cesium.defined(vm.current.feature) &&
+          vm.current.feature !== pickedFeature
       ) {
         let find = window.CesiumZondy.GeojsonManager.findSource(
-          vueKey,
-          vueIndex
+            vueKey,
+            vueIndex
         );
-        webGlobe.viewer.entities.remove(find.options.popup);
+        viewer.entities.remove(find.options.popup);
         if (find.options.id && find.options.originColor) {
           const entities = find.source;
           for (let i = 0; i < entities.length; i++) {
             let entity = entities[i];
             if (
-              entity.id === find.options.id &&
-              find.options.name === entity.properties.地类名称._value
+                entity.id === find.options.id &&
+                find.options.name === entity.properties.地类名称._value
             ) {
               entity.polygon.material.color = find.options.originColor;
             }
@@ -282,8 +284,8 @@ export default {
 
       //判断点击位置是否有值，该值和鼠标点击位置不相同
       if (
-        Cesium.defined(pickedFeature) &&
-        vm.current.feature !== pickedFeature
+          Cesium.defined(pickedFeature) &&
+          vm.current.feature !== pickedFeature
       ) {
         vm.current.feature = pickedFeature;
         //获取要素的瓦片集
@@ -295,8 +297,8 @@ export default {
         let ID = currentLayer[0].id;
 
         let find = window.CesiumZondy.GeojsonManager.findSource(
-          vueKey,
-          vueIndex
+            vueKey,
+            vueIndex
         );
         let originColor;
         //判断查找的点在矢量图层的哪个区域
@@ -319,7 +321,7 @@ export default {
               for (let j = 0; j < coordinates.length; j++) {
                 let point = [];
                 let cartographic = Cesium.Cartographic.fromCartesian(
-                  coordinates[j]
+                    coordinates[j]
                 );
                 const longitude = Cesium.Math.toDegrees(cartographic.longitude);
                 const latitude = Cesium.Math.toDegrees(cartographic.latitude);
@@ -336,40 +338,40 @@ export default {
               vm.position.longitude = point[0];
               vm.position.latitude = point[1];
               vm.position.height =
-                area < 100000 ? Math.log(area) * 4 : Math.log(area) * 20;
+                  area < 100000 ? Math.log(area) * 4 : Math.log(area) * 20;
 
               var b = parseInt(area).toString();
               var len = b.length;
               if (len > 3) {
                 var r = len % 3;
                 b =
-                  r > 0
-                    ? b.slice(0, r) +
-                      "," +
-                      b
-                        .slice(r, len)
-                        .match(/\d{3}/g)
-                        .join(",")
-                    : b
-                        .slice(r, len)
-                        .match(/\d{3}/g)
-                        .join(",");
+                    r > 0
+                        ? b.slice(0, r) +
+                        "," +
+                        b
+                            .slice(r, len)
+                            .match(/\d{3}/g)
+                            .join(",")
+                        : b
+                            .slice(r, len)
+                            .match(/\d{3}/g)
+                            .join(",");
               }
               console.log("viewer.entities", viewer.entities);
               let popup = viewer.entities.add({
                 position: Cesium.Cartesian3.fromDegrees(
-                  vm.position.longitude,
-                  vm.position.latitude,
-                  vm.position.height
+                    vm.position.longitude,
+                    vm.position.latitude,
+                    vm.position.height
                 ),
                 label: {
                   text:
-                    "地块名称：" +
-                    regionName +
-                    "\r\n" +
-                    "地块面积：" +
-                    b +
-                    "m²",
+                      "地块名称：" +
+                      regionName +
+                      "\r\n" +
+                      "地块面积：" +
+                      b +
+                      "m²",
                   showBackground: true,
                   font: "16px bold 微软雅黑",
                   backgroundColor: Cesium.Color.GREY.withAlpha(0.7),
@@ -379,14 +381,14 @@ export default {
                 polyline: {
                   positions: [
                     Cesium.Cartesian3.fromDegrees(
-                      vm.position.longitude,
-                      vm.position.latitude,
-                      0
+                        vm.position.longitude,
+                        vm.position.latitude,
+                        0
                     ),
                     Cesium.Cartesian3.fromDegrees(
-                      vm.position.longitude,
-                      vm.position.latitude,
-                      vm.position.height
+                        vm.position.longitude,
+                        vm.position.latitude,
+                        vm.position.height
                     )
                   ],
                   material: Cesium.PolylineGlowMaterialProperty({
@@ -398,15 +400,15 @@ export default {
               window.CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
 
               window.CesiumZondy.GeojsonManager.addSource(
-                vueKey,
-                vueIndex,
-                entities,
-                {
-                  popup: popup,
-                  originColor: originColor,
-                  id: ID,
-                  name: regionName
-                }
+                  vueKey,
+                  vueIndex,
+                  entities,
+                  {
+                    popup: popup,
+                    originColor: originColor,
+                    id: ID,
+                    name: regionName
+                  }
               );
             }
           }

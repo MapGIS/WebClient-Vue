@@ -5,13 +5,14 @@
     :class="prefixCls"
     anchor="bottom"
   >
-    <slot name="marker" :class="`${prefixCls}-popup`">
-      <div :class="`${prefixCls}-popup-tip`"></div>
-      <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
-        <p>周长：{{ perimeter }}</p>
-        <p v-if="area">面积：{{ area }}</p>
-      </div>
-    </slot>
+    <mapgis-popup :coordinates="coordinates" :offset="popupOffset">
+      <slot name="popup">
+        <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
+          <p>周长：{{ perimeter }}</p>
+          <p v-if="area">面积：{{ area }}</p>
+        </div>
+      </slot>
+    </mapgis-popup>
   </mapgis-marker>
 </template>
 <script>
@@ -32,7 +33,11 @@ export default {
       return marker.planeLength || marker.planePerimeter;
     },
     coordinates({ marker }) {
-      return marker.coordinates || [0, 0];
+      return marker.coordinates || [];
+    },
+    popupOffset() {
+      // mapboxgl默认标注图片高度为41px
+      return [0, -21];
     }
   },
   methods: {

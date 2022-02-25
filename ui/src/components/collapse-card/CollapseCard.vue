@@ -4,37 +4,70 @@
       <template slot="title">
         <span>{{ title }}</span>
       </template>
-      <mapgis-ui-button
-        :style="outStyle"
-        class="mapgis-ui-collapse-card-mini"
-        type="primary"
-        :shape="iconshape"
-        :class="getPositionClassName()"
-        @click="show"
+      <div
+        :class="{
+          top: expand == 'top',
+          top: expand == 'bottom',
+          top: expand == 'left',
+          top: expand == ''
+        }"
       >
-        <slot name="icon-hiden" />
-        <mapgis-ui-iconfont
-          :type="iconfont"
-          class="mapgis-ui-collapse-card-iconfont"
-        />
-      </mapgis-ui-button>
+        <mapgis-ui-button
+          :style="outStyle"
+          class="mapgis-ui-collapse-card-mini"
+          type="primary"
+          :shape="iconshape"
+          :class="getPositionClassName()"
+          @click="show"
+        >
+          <slot name="icon-hiden" />
+          <mapgis-ui-iconfont
+            :type="iconfont"
+            class="mapgis-ui-collapse-card-iconfont"
+          />
+        </mapgis-ui-button>
+      </div>
     </mapgis-ui-tooltip>
 
     <transition name="bounce">
-      <mapgis-ui-card
+      <mapgis-ui-div
         class="mapgis-ui-collapse-card"
         :style="outStyle"
         hoverable
-        v-show="!collapse && mode == 'collapse'"
         :bordered="false"
         size="small"
+        v-show="!collapse && mode == 'collapse'"
       >
-        <slot name="title"></slot>
-        <div class="mapgis-ui-collapse-card-extra">
-          <slot name="extra"></slot>
-        </div>
-        <slot></slot>
-      </mapgis-ui-card>
+        <transition name="fade">
+          <div v-if="!showOther" class="mapgis-ui-collapse-card-wrapper">
+            <div class="mapgis-ui-collapse-card-header">
+              <div class="mapgis-ui-collapse-card-title">
+                <slot name="title"></slot>
+              </div>
+              <div class="mapgis-ui-collapse-card-extra">
+                <slot name="extra"></slot>
+              </div>
+            </div>
+            <slot></slot>
+          </div>
+        </transition>
+        <transition name="slide-fade">
+          <div v-if="showOther" class="mapgis-ui-collapse-card-wrapper">
+            <div class="mapgis-ui-collapse-card-header">
+              <div class="mapgis-ui-collapse-card-title">
+                <slot name="title"></slot>
+              </div>
+              <div class="mapgis-ui-collapse-card-extra">
+                <mapgis-ui-iconfont
+                  type="mapgis-rollback"
+                  @click="toggleMain"
+                />
+              </div>
+            </div>
+            <slot name="panel"></slot>
+          </div>
+        </transition>
+      </mapgis-ui-div>
     </transition>
   </div>
 </template>
@@ -53,6 +86,14 @@ export default {
           bottom: "10px"
         };
       }
+    },
+    defaultCollapse: {
+      type: Boolean,
+      default: true
+    },
+    expand: {
+      type: String,
+      default: "right" // 'top' 'bottom' 'left' 'right'
     },
     mode: {
       type: String,
@@ -81,7 +122,8 @@ export default {
   },
   data() {
     return {
-      collapse: true
+      collapse: this.defaultCollapse && true,
+      showOther: false
     };
   },
   computed: {
@@ -128,6 +170,13 @@ export default {
     hide() {
       this.collapse = true;
     },
+    togglePanel() {
+      this.showOther = true;
+    },
+    toggleMain() {
+      this.showOther = false;
+      this.$emit("toggle-main");
+    },
     getPositionClassName() {
       let { position } = this;
       let className = "mapgis-ui-collapse-card-button ";
@@ -165,5 +214,26 @@ export default {
   100% {
     transform: scale(1);
   }
+}
+.slide-fade-enter-active {
+  transition: all 0.25s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s;
+  display: none;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

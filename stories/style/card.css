@@ -3,4 +3,9 @@
   top: 10px;
   left: 10px;
   z-index: 1000;
+  width: 320px;
+}
+
+.storybook-ui-card > .mapgis-ui-card-body {
+  padding: 4px;
 }

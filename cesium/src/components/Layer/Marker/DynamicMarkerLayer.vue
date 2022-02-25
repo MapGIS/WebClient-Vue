@@ -29,7 +29,7 @@ const DefaultInactiveImagePlotting =
 export default {
   name: "mapgis-3d-dynamic-marker-layer",
   components: { Mapgis3dMarkerSetPro },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   props: {
     ...VueOptions,
     data: {
@@ -103,11 +103,20 @@ export default {
         markers.forEach(this.onHighlightFeature);
       }
     },
-    fitBound(nV) {
-      if (nV) {
-        this.zoomTo(nV);
-      }
+    fitBound: {
+      handler(nV) {
+        if (nV && Object.keys(nV).length > 0) {
+          this.zoomTo(nV);
+        }
+      },
+      immediate: true,
+      deep: true
     },
+    // fitBound(nV) {
+    //   if (nV) {
+    //     this.zoomTo(nV);
+    //   }
+    // },
     selectionBound(nV) {
       this.zoomOrPanTo(nV);
     },
@@ -127,10 +136,9 @@ export default {
       this.parseData();
 
       const vm = this;
-      const { CesiumZondy, vueKey, vueIndex, data } = this;
-      const webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || this.webGlobe;
-      const { viewer } = webGlobe;
-      let analysisManager = new CesiumZondy.Manager.AnalysisManager({
+      const { vueCesium, vueKey, vueIndex, data } = this;
+      const viewer = vueCesium.getViewer(vueKey) || this.viewer;
+      let analysisManager = new window.CesiumZondy.Manager.AnalysisManager({
         viewer: viewer
       });
 
@@ -138,24 +146,23 @@ export default {
       promise.then(function(dataSource) {
         viewer.dataSources.add(dataSource);
         vm.changeColor(dataSource);
-        CesiumZondy.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
+        vueCesium.GeojsonManager.addSource(vueKey, vueIndex, dataSource, {
           analysisManager: analysisManager
         });
       });
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
+      let { viewer, vueKey, vueIndex, vueCesium } = this;
       const vm = this;
-      let CesiumZondy = this.CesiumZondy || window.CesiumZondy;
-      const { viewer } = webGlobe;
+      vueCesium = this.vueCesium || window.vueCesium;
       const { dataSources } = viewer;
-      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (find) {
         if (dataSources) {
           dataSources.remove(find.source, true);
         }
       }
-      CesiumZondy.GeojsonManager.deleteSource(vueKey, vueIndex);
+      vueCesium.GeojsonManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
     parseData(data) {
@@ -202,11 +209,11 @@ export default {
       return this.selects.findIndex(idField => idField === id) !== -1;
     },
     changeFilterWithMap() {
-      const { webGlobe } = this;
+      const { viewer } = this;
       if (!this.filterWithMap) {
         return;
       }
-      const rectangle = webGlobe.viewer.camera.computeViewRectangle();
+      const rectangle = viewer.camera.computeViewRectangle();
       const bounds = {
         xmin: (rectangle.west / Math.PI) * 180,
         ymin: (rectangle.south / Math.PI) * 180,
@@ -216,16 +223,16 @@ export default {
       this.$emit("map-bound-change", bounds);
     },
     zoomToCartesian3(x, y) {
-      const { Cesium, webGlobe } = this;
+      const { Cesium, viewer } = this;
       const destination = Cesium.Cartesian3.fromDegrees(
         x,
         y,
-        webGlobe.viewer.camera.positionCartographic.height
+        viewer.camera.positionCartographic.height
       );
-      webGlobe.viewer.camera.flyTo({ destination });
+      viewer.camera.flyTo({ destination });
     },
     zoomTo(bound) {
-      const { Cesium, webGlobe } = this;
+      const { Cesium, viewer } = this;
       const { xmin, ymin, xmax, ymax } = bound;
       const destination = new Cesium.Rectangle.fromDegrees(
         xmin,
@@ -233,7 +240,7 @@ export default {
         xmax,
         ymax
       );
-      webGlobe.viewer.camera.flyTo({ destination });
+      viewer.camera.flyTo({ destination });
     },
     zoomOrPanTo({ xmin, ymin, xmax, ymax }) {
       const {
@@ -289,12 +296,12 @@ export default {
         if (entity.billboard) {
           entity.billboard.show = false;
           const style = point.toCesiumStyle(Cesium);
-          const { material, radius, outline } = style;
+          const { color, pixelSize, outlineColor } = style;
           entity.ellipse = new Cesium.EllipseGraphics({
-            semiMajorAxis: radius,
-            semiMinorAxis: radius,
-            outline: outline,
-            material: material
+            semiMajorAxis: pixelSize,
+            semiMinorAxis: pixelSize,
+            outline: outlineColor,
+            material: color
           });
           entity.ellipse.show = false;
         } else if (entity.polyline) {
@@ -305,13 +312,13 @@ export default {
       }
     },
     getViewExtend() {
-      let { vueKey, webGlobe } = this;
+      let { vueKey, vueCesium, viewer } = this;
       const params = {};
-      webGlobe = this.CesiumZondy.getWebGlobe(vueKey) || webGlobe;
-      const extend = webGlobe.viewer.camera.computeViewRectangle();
+      viewer = vueCesium.getViewer(vueKey) || viewer;
+      const extend = viewer.camera.computeViewRectangle();
       if (typeof extend === "undefined") {
         // 2D下会可能拾取不到坐标，extend返回undefined,所以做以下转换
-        const canvas = webGlobe.viewer.scene.canvas;
+        const canvas = viewer.scene.canvas;
         // canvas左上角坐标转2d坐标
         const upperLeft = new this.Cesium.Cartesian2(0, 0);
         // canvas右下角坐标转2d坐标
@@ -320,18 +327,12 @@ export default {
           canvas.clientHeight
         );
 
-        const ellipsoid = webGlobe.viewer.scene.globe.ellipsoid;
+        const ellipsoid = viewer.scene.globe.ellipsoid;
         // 2D转3D世界坐标
-        const upperLeft3 = webGlobe.viewer.camera.pickEllipsoid(
-          upperLeft,
-          ellipsoid
-        );
+        const upperLeft3 = viewer.camera.pickEllipsoid(upperLeft, ellipsoid);
 
         // 2D转3D世界坐标
-        const lowerRight3 = webGlobe.viewer.camera.pickEllipsoid(
-          lowerRight,
-          ellipsoid
-        );
+        const lowerRight3 = viewer.camera.pickEllipsoid(lowerRight, ellipsoid);
 
         // 3D世界坐标转弧度
         const upperLeftCartographic = ellipsoid.cartesianToCartographic(
@@ -375,28 +376,28 @@ export default {
     },
     highlightFeature(marker) {
       const vm = this;
-      const { vueKey, vueIndex } = this;
-      const { webGlobe, Cesium, CesiumZondy } = this;
+      const { vueKey, vueIndex, vueCesium } = this;
+      const { Cesium } = this;
       const { layerStyle, highlightStyle, idField } = this;
       const { point, line, polygon } = layerStyle;
       const hpolygon = highlightStyle.polygon;
       const hline = highlightStyle.line;
       const hpoint = highlightStyle.point;
 
-      let find = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       if (!find) return;
       for (let i = 0; i < find.source.entities.values.length; i++) {
         let entity = find.source.entities.values[i];
         if (entity.properties[idField] == marker.feature.properties.fid) {
           if (entity.ellipse) {
             const style = hpoint.toCesiumStyle(Cesium);
-            const { material, radius, outline } = style;
+            const { color, pixelSize, outlineColor } = style;
             entity.ellipse.show = true;
             entity.ellipse = new Cesium.EllipseGraphics({
-              semiMajorAxis: radius,
-              semiMinorAxis: radius,
-              outline: outline,
-              material: material
+              semiMajorAxis: pixelSize,
+              semiMinorAxis: pixelSize,
+              outline: outlineColor,
+              material: color
             });
           } else if (entity.polyline) {
             const style = hline.toCesiumStyle(Cesium);
@@ -453,8 +454,8 @@ export default {
       }
     },
     clearHighlightFeature(marker) {
-      const { CesiumZondy, vueKey, vueIndex, layerStyle } = this;
-      let dataSource = CesiumZondy.GeojsonManager.findSource(vueKey, vueIndex);
+      const { vueCesium, vueKey, vueIndex, layerStyle } = this;
+      let dataSource = vueCesium.GeojsonManager.findSource(vueKey, vueIndex);
       this.changeColor(dataSource.source);
     },
     highlightMarker(marker) {

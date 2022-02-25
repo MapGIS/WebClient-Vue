@@ -63,6 +63,33 @@ const Template1 = (args, { argTypes }) => ({
   components: { MapgisUiButton },
   data() {
     return {
+      buttons: [
+        {
+          tip: 'aaaaa',
+          type: 'primary',
+          icon: 'mapgis-join-1'
+        },{
+          tip: 'bbbbb',
+          type: 'default',
+          icon: 'mapgis-filter'
+        },{
+          tip: 'cccc',
+          type: 'default',
+          icon: 'mapgis-filter'
+        },{
+          tip: 'ddddd',
+          type: 'default',
+          icon: 'mapgis-filter'
+        },{
+          tip: 'eeeee',
+          type: 'dashed',
+          icon: 'mapgis-fire'
+        },{
+          tip: 'fffff',
+          type: 'default',
+          icon: 'mapgis-filter'
+        }
+      ]
     };
   },
   methods: {},
@@ -96,6 +123,31 @@ const Template1 = (args, { argTypes }) => ({
           R
         </mapgis-ui-button>
       </mapgis-ui-button-group>
+      <div style="padding-top:30px;">
+      <mapgis-draw
+        position="top-left"
+        ref="drawref"
+      >
+        <mapgis-ui-button-group>
+          <mapgis-ui-tooltip
+            v-for="(item, index) in buttons"
+            placement="bottom"
+            :key="index"
+          >
+            <template slot="title">
+              <span>{{ item.tip }}</span>
+            </template>
+            <mapgis-ui-button
+              shape="circle"
+              size="small"
+              :type="item.type"
+            >
+              <mapgis-ui-iconfont :type="item.icon"/>
+            </mapgis-ui-button>
+          </mapgis-ui-tooltip>
+        </mapgis-ui-button-group>
+      </mapgis-draw>
+      </div>
     </div>
   </template>
   `,

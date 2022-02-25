@@ -62,7 +62,7 @@
   }
   ```
 
-  ### `customPopup`
+### `customPopup`
 
 - ![自定义Popup](./GeojsonLayer/custom_popup_list.png)
 - **类型:** `Function`
@@ -87,12 +87,12 @@
 export default {
   name: "custom-popup",
   props: {
-    msg: String
+    msg: String,
   },
   watch: {
-    center: function(next) {
+    center: function (next) {
       this.rightmap && this.rightmap.setCenter(next);
-    }
+    },
   },
   data() {
     return {
@@ -102,7 +102,7 @@ export default {
       mapOptions: {
         zoom: 3,
         center: [117.4058, 38.914],
-        crs: "EPSG:3857"
+        crs: "EPSG:3857",
       },
       geojson: {
         layer: {
@@ -110,16 +110,16 @@ export default {
           source: "geojson_source_id", //必须和上面的geojsonCollections一致
           filter: ["==", "$type", "Polygon"], //关键点：$type是固定语法，类型是Point、LineString、Polygon
           layout: {
-            visibility: "visible" //是否可见  visible / none
+            visibility: "visible", //是否可见  visible / none
           },
           paint: {
             "fill-antialias": true, //抗锯齿，true表示针对边界缝隙进行填充
             "fill-color": "#FFFFFF", //颜色
             "fill-opacity": 0.8, //透明度
-            "fill-outline-color": "#52B883" //边线颜色，没错,确实没有边线宽度这个选项
+            "fill-outline-color": "#52B883", //边线颜色，没错,确实没有边线宽度这个选项
             //"fill-pattern":"picture_name", //线的拉伸图片类型，一定要与对应的样式库的图片名字一一对应
             //"fill-translate": [0,0] //表示显示位置基于原始位置上,再按照屏幕坐标进行偏移,这个应该绝大部分都用不上
-          }
+          },
         },
         layerId: "geojsonLayer",
         data: "http://develop.smaryun.com/static/data/geojson/china.geojson",
@@ -128,22 +128,22 @@ export default {
         enableTips: false,
         popupOptions: {
           title: "name",
-          fields: ["adcode", "行政区代码", "mpArea", "mpPerimeter", "GDP_2011"]
+          fields: ["adcode", "行政区代码", "mpArea", "mpPerimeter", "GDP_2011"],
         },
         tipsOptions: {
           title: "name",
-          fields: ["行政区代码", "adcode", "mpArea"]
+          fields: ["行政区代码", "adcode", "mpArea"],
         },
-        customPopup: features => (
+        customPopup: (features) => (
           <mapgis-ui-list class="custom-popup" item-layout="horizontal">
-            {features.map(feature => {
+            {features.map((feature) => {
               return (
                 <mapgis-ui-list-item>
                   <mapgis-ui-div
                     title={feature.title}
                     style={{ width: "100%" }}
                   >
-                    {Object.keys(feature.properties).map(p => {
+                    {Object.keys(feature.properties).map((p) => {
                       return (
                         <mapgis-ui-row>
                           <mapgis-ui-col span={8}>{p}</mapgis-ui-col>
@@ -159,13 +159,13 @@ export default {
             })}
           </mapgis-ui-list>
         ),
-        customTips: features => {
+        customTips: (features) => {
           if (features.length <= 0) {
             return <div class="custom-tips">未选中</div>;
           } else {
             return (
               <mapgis-ui-div class="custom-tips" title={features[0]}>
-                {Object.keys(features[0].properties).map(p => {
+                {Object.keys(features[0].properties).map((p) => {
                   return (
                     <mapgis-ui-row>
                       <mapgis-ui-col span={8}>{p}</mapgis-ui-col>
@@ -178,16 +178,16 @@ export default {
               </mapgis-ui-div>
             );
           }
-        }
-      }
+        },
+      },
     };
   },
   methods: {
     handleRightMap(e) {
       console.log("e", e);
       this.rightmap = e.map;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -235,12 +235,12 @@ export default {
 export default {
   name: "custom-popup",
   props: {
-    msg: String
+    msg: String,
   },
   watch: {
-    center: function(next) {
+    center: function (next) {
       this.rightmap && this.rightmap.setCenter(next);
-    }
+    },
   },
   data() {
     return {
@@ -250,7 +250,7 @@ export default {
       mapOptions: {
         zoom: 3,
         center: [117.4058, 38.914],
-        crs: "EPSG:3857"
+        crs: "EPSG:3857",
       },
       geojson: {
         layer: {
@@ -258,16 +258,16 @@ export default {
           source: "geojson_source_id", //必须和上面的geojsonCollections一致
           filter: ["==", "$type", "Polygon"], //关键点：$type是固定语法，类型是Point、LineString、Polygon
           layout: {
-            visibility: "visible" //是否可见  visible / none
+            visibility: "visible", //是否可见  visible / none
           },
           paint: {
             "fill-antialias": true, //抗锯齿，true表示针对边界缝隙进行填充
             "fill-color": "#FFFFFF", //颜色
             "fill-opacity": 0.8, //透明度
-            "fill-outline-color": "#52B883" //边线颜色，没错,确实没有边线宽度这个选项
+            "fill-outline-color": "#52B883", //边线颜色，没错,确实没有边线宽度这个选项
             //"fill-pattern":"picture_name", //线的拉伸图片类型，一定要与对应的样式库的图片名字一一对应
             //"fill-translate": [0,0] //表示显示位置基于原始位置上,再按照屏幕坐标进行偏移,这个应该绝大部分都用不上
-          }
+          },
         },
         layerId: "geojsonLayer",
         data: "http://develop.smaryun.com/static/data/geojson/china.geojson",
@@ -276,22 +276,22 @@ export default {
         enableTips: true,
         popupOptions: {
           title: "name",
-          fields: ["adcode", "行政区代码", "mpArea", "mpPerimeter", "GDP_2011"]
+          fields: ["adcode", "行政区代码", "mpArea", "mpPerimeter", "GDP_2011"],
         },
         tipsOptions: {
           title: "name",
-          fields: ["行政区代码", "adcode", "mpArea"]
+          fields: ["行政区代码", "adcode", "mpArea"],
         },
-        customPopup: features => (
+        customPopup: (features) => (
           <mapgis-ui-list class="custom-popup" item-layout="horizontal">
-            {features.map(feature => {
+            {features.map((feature) => {
               return (
                 <mapgis-ui-list-item>
                   <mapgis-ui-div
                     title={feature.title}
                     style={{ width: "100%" }}
                   >
-                    {Object.keys(feature.properties).map(p => {
+                    {Object.keys(feature.properties).map((p) => {
                       return (
                         <mapgis-ui-row>
                           <mapgis-ui-col span={8}>{p}</mapgis-ui-col>
@@ -307,13 +307,13 @@ export default {
             })}
           </mapgis-ui-list>
         ),
-        customTips: features => {
+        customTips: (features) => {
           if (features.length <= 0) {
             return <div class="custom-tips">未选中</div>;
           } else {
             return (
               <mapgis-ui-div class="custom-tips" title={features[0]}>
-                {Object.keys(features[0].properties).map(p => {
+                {Object.keys(features[0].properties).map((p) => {
                   return (
                     <mapgis-ui-row>
                       <mapgis-ui-col span={8}>{p}</mapgis-ui-col>
@@ -326,16 +326,16 @@ export default {
               </mapgis-ui-div>
             );
           }
-        }
-      }
+        },
+      },
     };
   },
   methods: {
     handleRightMap(e) {
       console.log("e", e);
       this.rightmap = e.map;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -486,7 +486,7 @@ export default {
       mapStyle: {
         version: 8,
         sources: {},
-        layers: []
+        layers: [],
       },
       mapZoom: 10,
       outerCenter: [114.3, 30.5],
@@ -496,7 +496,7 @@ export default {
       format: "tiles",
       token: {
         key: "tk",
-        value: "f5347cab4b28410a6e8ba5143e3d5a35"
+        value: "f5347cab4b28410a6e8ba5143e3d5a35",
       },
       enablePopup: true,
       enableTips: true,
@@ -508,24 +508,24 @@ export default {
         source: "geojsonCollections1", //必须和上面的geojsonCollections一致
         // "filter": ["==", "$type", "Polygon"], //关键点：$type是固定语法，类型是Point、LineString、Polygon
         layout: {
-          visibility: "visible" //是否可见  visible / none
+          visibility: "visible", //是否可见  visible / none
         },
         paint: {
           "fill-antialias": true, //抗锯齿，true表示针对边界缝隙进行填充
           "fill-color": "#000", //颜色
           "fill-opacity": 0.8, //透明度
-          "fill-outline-color": "#52B883" //边线颜色，没错,确实没有边线宽度这个选项
+          "fill-outline-color": "#52B883", //边线颜色，没错,确实没有边线宽度这个选项
           //"fill-pattern":"picture_name", //线的拉伸图片类型，一定要与对应的样式库的图片名字一一对应
           //"fill-translate": [0,0] //表示显示位置基于原始位置上,再按照屏幕坐标进行偏移,这个应该绝大部分都用不上
-        }
+        },
       },
       popupContent: {
         title: "name",
-        fields: ["acroutes", "adcode"]
+        fields: ["acroutes", "adcode"],
       },
       tipsContent: {
-        title: "name"
-      }
+        title: "name",
+      },
     };
   },
   methods: {
@@ -533,10 +533,19 @@ export default {
       let vm = this;
       this.map = payload.map;
       window.map = payload.map;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped></style>
 ```
+
+## 事件
+
+### bbox
+
+> 由于计算 bbox 过于耗费时间，该事件是异步执行
+> 事件载荷包含以下部分:
+
+- `bbox` 数据对应的空间范围 [`minx`, `miny`, `maxx`, `maxy`]

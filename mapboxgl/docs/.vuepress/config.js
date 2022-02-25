@@ -9,8 +9,8 @@ module.exports = {
     "/": {
       lang: "zh-CN",
       title: "中地数码",
-      description: "@mapgis/webclient-vue-mapboxgl"
-    }
+      description: "@mapgis/webclient-vue-mapboxgl",
+    },
   },
   themeConfig: {
     locales: {
@@ -22,24 +22,24 @@ module.exports = {
         serviceWorker: {
           updatePopup: {
             message: "New content is available.",
-            buttonText: "Refresh"
-          }
+            buttonText: "Refresh",
+          },
         },
         algolia: {},
         nav: [
           {
             text: "Guide",
-            link: "/en/guide/"
+            link: "/en/guide/",
           },
           {
             text: "API",
-            link: "/en/api/"
+            link: "/en/api/",
           },
           {
             text: "WebClient",
-            link: "http://develop.smaryun.com:8899/#/index"
+            link: "http://develop.smaryun.com:8899/#/index",
           },
-          { text: "Github", link: "https://github.com/soal/vue-mapbox" }
+          { text: "Github", link: "https://github.com/soal/vue-mapbox" },
           /* {
             text: "map-promisified",
             link: "https://github.com/soal/map-promisified"
@@ -56,8 +56,8 @@ module.exports = {
               ["/en/guide/composition.md", "Composition"],
               ["/en/guide/controls.md", "Controls"],
               ["/en/guide/markers&popups.md", "Markers and popups"],
-              ["/en/guide/layers&sources.md", "Layers and sources"]
-            ]
+              ["/en/guide/layers&sources.md", "Layers and sources"],
+            ],
           },
           {
             title: "API",
@@ -73,8 +73,8 @@ module.exports = {
               ["/en/api/Layers/rasterlayer.md", "RasterLayer"],
               ["/en/api/Layers/imagelayer.md", "ImageLayer"],
               ["/en/api/Layers/videolayer.md", "VideoLayer"],
-              ["/en/api/Layers/canvaslayer.md", "CanvasLayer"]
-            ]
+              ["/en/api/Layers/canvaslayer.md", "CanvasLayer"],
+            ],
           },
           {
             title: "Plugin components",
@@ -83,12 +83,12 @@ module.exports = {
               ["/en/plugin_components/", "Using plugin components"],
               [
                 "/en/plugin_components/plugin_components_development.md",
-                "Create a plugin component"
-              ]
-            ]
-          }
+                "Create a plugin component",
+              ],
+            ],
+          },
           // ['/plugins/', 'Plugins'],
-        ]
+        ],
         // search: false
       },
       "/": {
@@ -102,25 +102,25 @@ module.exports = {
         serviceWorker: {
           updatePopup: {
             message: "发现新内容可用.",
-            buttonText: "刷新"
-          }
+            buttonText: "刷新",
+          },
         },
         // 当前 locale 的 algolia docsearch 选项
         algolia: {},
         nav: [
           {
             text: "向导",
-            link: "/guide/"
+            link: "/guide/",
           },
           {
             text: "API",
-            link: "/api/"
+            link: "/api/",
           },
           {
             text: "WebClient",
-            link: "http://develop.smaryun.com"
+            link: "http://develop.smaryun.com",
           },
-          { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" }
+          { text: "开源", link: "https://github.com/MapGIS/WebClient-Vue" },
         ],
         sidebar: [
           {
@@ -136,8 +136,8 @@ module.exports = {
               ["/guide/draw.md", "绘制视图"],
               ["/guide/layers&sources.md", "图层与数据源"],
               ["/guide/wms&map&doc.md", "子图层控制"],
-              ["/guide/cartography.md", "制图综合"]
-            ]
+              ["/guide/cartography.md", "制图综合"],
+            ],
           },
           {
             title: "样式模板",
@@ -146,8 +146,8 @@ module.exports = {
               ["/template/", "样式模板"],
               ["/template/zondy.md", "通用模板"],
               ["/template/guotu.md", "国土模板"],
-              ["/template/militray.md", "军标模板"]
-            ]
+              ["/template/militray.md", "军标模板"],
+            ],
           },
           {
             title: "组件",
@@ -155,12 +155,12 @@ module.exports = {
             children: [
               {
                 title: "地图",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/", "地图对象"],
               {
                 title: "地图子组件",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/controls.md", "控制组件"],
               ["/api/marker.md", "标注"],
@@ -168,6 +168,7 @@ module.exports = {
 
               ["/api/UI/Scale/scale-mvt.md", "MVT比例尺"],
               ["/api/UI/Legend/legend-mvt.md", "MVT图例"],
+              ["/api/UI/Print/print.md", "打印"],
 
               ["/api/UI/Draw/draw.md", " 绘制"],
               ["/api/UI/Measure/measure.md", "测量"],
@@ -182,7 +183,7 @@ module.exports = {
               // ["/api/map/mixin/FeatureService.md", "要素服务"],
               {
                 title: "图层",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/Layers/geojsonlayer.md", "GeoJSON图层"],
               ["/api/Layers/Marker/DynamicMarker.md", "动态注记图层"],
@@ -201,7 +202,7 @@ module.exports = {
               ["/api/Layers/VectorTile/mvtstyle.md", "MVT样式图层"],
               {
                 title: "可视化",
-                collapsable: false
+                collapsable: false,
               },
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
@@ -209,8 +210,8 @@ module.exports = {
               ["/api/Layers/Heater/heater.md", "热力"],
               ["/api/Layers/Building/building.md", "建筑白膜"],
               ["/api/Layers/Tracker/tracker.md", "轨迹跟踪"],
-              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"]
-            ]
+              ["/api/Layers/Elasticsearch/elasticsearch.md", "弹性搜索"],
+            ],
           },
 
           // {
@@ -230,23 +231,23 @@ module.exports = {
               ["/plugin_components/", "使用插件组件"],
               [
                 "/plugin_components/plugin_components_development.md",
-                "创建插件组件"
-              ]
-            ]
+                "创建插件组件",
+              ],
+            ],
           },
           {
             title: "版本",
             collapsable: false,
             children: [
               ["/version/version.md", "更新说明"],
-              ["/version/diff.md", "版本对比"]
+              ["/version/diff.md", "版本对比"],
             ],
-          }
+          },
           // ['/plugins/', 'Plugins'],
-        ]
+        ],
         // search: false
-      }
-    }
+      },
+    },
   },
   serviceWorker: true,
   // base: '/vuepress-plugin-demo-block/',
@@ -254,42 +255,38 @@ module.exports = {
     [
       "script",
       {
-        src:
-          "https://cdn.jsdelivr.net/npm/react@16.6.3/umd/react.production.min.js"
-      }
+        src: "https://cdn.jsdelivr.net/npm/react@16.6.3/umd/react.production.min.js",
+      },
     ],
     [
       "script",
       {
-        src:
-          "https://cdn.jsdelivr.net/npm/react-dom@16.6.3/umd/react-dom.production.min.js"
-      }
+        src: "https://cdn.jsdelivr.net/npm/react-dom@16.6.3/umd/react-dom.production.min.js",
+      },
     ],
     ["script", { src: "https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js" }],
     [
       "script",
-      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" }
+      { src: "https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js" },
     ],
     [
       "script",
-      { src: "https://cdn.jsdelivr.net/npm/numerify/lib/index.umd.min.js" }
+      { src: "https://cdn.jsdelivr.net/npm/numerify/lib/index.umd.min.js" },
     ],
     [
       "link",
       {
-        href:
-          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
+        href: "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.css",
         rel: "stylesheet",
-        type: "text/css"
-      }
+        type: "text/css",
+      },
     ],
     [
       "script",
       {
-        src:
-          "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js"
-      }
-    ]
+        src: "http://localhost:8888/static/libs/cdn/zondyclient/npm/webclient-vue-mapboxgl.umd.js",
+      },
+    ],
     /* [
       "link",
       {
@@ -320,9 +317,9 @@ module.exports = {
           ],
           jsfiddle: true, // 是否显示 jsfiddle 链接
           codepen: true, // 是否显示 codepen 链接
-          horizontal: false // 是否展示为横向样式
-        }
-      }
-    ]
-  ]
+          horizontal: false, // 是否展示为横向样式
+        },
+      },
+    ],
+  ],
 };

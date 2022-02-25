@@ -89,6 +89,7 @@ export default {
       table:{
         type:{
           summary: 'Array || String',
+          required: true
         },
         defaultValue: { summary: '必传' },
       },

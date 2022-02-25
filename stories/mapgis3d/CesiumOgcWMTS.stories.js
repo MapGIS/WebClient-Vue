@@ -1,4 +1,3 @@
-import MapgisWebGlobe from "../../cesium/src/components/WebGlobe/WebGlobe.vue";
 import MapgisOgcWmtsLayer from "../../cesium/src/components/Layer/OGC/OGCWMTSLayer.vue";
 
 export default {
@@ -21,10 +20,10 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  components: { MapgisWebGlobe, MapgisOgcWmtsLayer },
-  template: `<mapgis-web-scene style="height:95vh">
+  components: { MapgisOgcWmtsLayer },
+  template: `<mapgis-web-scene style="height: 95vh">
     <mapgis-3d-ogc-wmts-layer v-bind="$props"/>
-    </mapgis-web-scene>`,
+  </mapgis-web-scene>`,
   data(){
     return {
     }

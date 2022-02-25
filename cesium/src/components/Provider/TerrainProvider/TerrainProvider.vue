@@ -7,7 +7,7 @@ import VueOptions from '../../Base/Vue/VueOptions';
 
 export default {
   name: "mapgis-3d-terrain-provider",
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   props: {
     layer: Object,
     url: { type: [String, Object], required: true },
@@ -38,15 +38,14 @@ export default {
       return new Cesium.CesiumTerrainProvider({ ...options, url: url });
     },
     mount() {
-      const { webGlobe, options, layer, vueIndex, vueKey } = this;
-      const { viewer } = webGlobe;
+      const { viewer, options, layer, vueIndex, vueKey } = this;
       const { dataSources } = viewer;
-      window.Zondy = window.Zondy || window.CesiumZondy;
+      window.Zondy = window.Zondy || window.vueCesium;
       let provider = this.createCesiumObject();
-      webGlobe.viewer.terrainProvider = provider;
+      viewer.terrainProvider = provider;
 
       if (vueKey && vueIndex) {
-        window.CesiumZondy.Tileset3DManager.addSource(
+        window.vueCesium.TerrainManager.addSource(
           vueKey,
           vueIndex,
           provider
@@ -57,11 +56,11 @@ export default {
     unmount() {
       let { webGlobe, vueKey, vueIndex } = this;
       webGlobe.deleteTerrain();
-      let find = window.CesiumZondy.Tileset3DManager.findSource(
+      let find = window.vueCesium.TerrainManager.findSource(
         vueKey,
         vueIndex
       );
-      window.CesiumZondy.Tileset3DManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.TerrainManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this.layer, this);
     },
   },

@@ -1,3 +1,7 @@
+<template>
+  <span />
+</template>
+
 <script>
 import RasterLayer from "../RasterLayer";
 export default {

@@ -39,7 +39,7 @@ const FilterLayers = [
   "gl-draw-polygon-fill-static.hot",
   "gl-draw-polygon-stroke-static.hot",
   "gl-draw-line-static.hot",
-  "gl-draw-point-static.hot"
+  "gl-draw-point-static.hot",
 ];
 
 export class MvtLegend {
@@ -70,8 +70,8 @@ export class MvtLegend {
     const style = map.getStyle();
     const { layers } = style;
     layers
-      .filter(l => FilterLayers.indexOf(l.id) < 0)
-      .forEach(layer => {
+      .filter((l) => FilterLayers.indexOf(l.id) < 0)
+      .forEach((layer) => {
         if (this.checkVectorLayer(layer)) {
           let title = layer["source-layer"] || layer.id;
           if (title) {
@@ -82,7 +82,7 @@ export class MvtLegend {
                 layerName: title,
                 legend: [],
                 maxScale: 99999999,
-                minScale: 0
+                minScale: 0,
               };
             }
           } else if (layer.id) {
@@ -92,7 +92,7 @@ export class MvtLegend {
               layerName: title,
               legend: [],
               maxScale: 99999999,
-              minScale: 0
+              minScale: 0,
             };
           }
           const item = this.getLegendItemByMap(layer);
@@ -107,7 +107,7 @@ export class MvtLegend {
             layerName: title,
             legend: [],
             maxScale: 99999999,
-            minScale: 0
+            minScale: 0,
           };
           const item = this.getLegendItemByMap(layer);
           if (layerObj[title]) {
@@ -116,7 +116,7 @@ export class MvtLegend {
         }
       });
 
-    Object.keys(layerObj).forEach(k => {
+    Object.keys(layerObj).forEach((k) => {
       const item = layerObj[k];
       // const { layerId, layerName, legend, maxScale, minScale } = item;
       const legend = new Legend(item);
@@ -158,6 +158,12 @@ export class MvtLegend {
         point.stroke = paint["circle-stroke-color"];
         point.strokeWidth = paint["circle-stroke-width"];
         point.fill = paint["circle-color"];
+        base64 = legenditem.drawPoint(point);
+      } else {
+        point.r = 4;
+        point.stroke = "transparent";
+        point.strokeWidth = 0;
+        point.fill = "#000000";
         base64 = legenditem.drawPoint(point);
       }
     } else if (layer.type === "line") {

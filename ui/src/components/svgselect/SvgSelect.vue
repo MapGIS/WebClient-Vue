@@ -1,5 +1,10 @@
 <template>
   <div class="svg-select-outer">
+    <img class="svg-select-reset"
+         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA6xJREFUWEfFlk2IHEUUx/+vdsC4ixFBCQiRFQ0EL+pFYyJEBGEHBUFhXMxBF0H0IDibrtfOYrAF3Z2u6Z3gGPGTuIpCEDwoEg0oRmHxprlEchz0IARyCexuDj39pJrqpTNOz0zPSlKXYbrex6/ee/VeEa7zouvsHxMDdDqdGzY2Nh7qP0Cj0Thb5lClANrt9t1xHFeJqCoi1QJHXSJai+P4s0aj0R0FkwIYY54A8K5V1Fq/OUjJGFMH0B5lsG//rIi85fv+T0V6GcDPAB6xQsx8VVQ6nc7ura2tNhG90GekKyKnlVIXs+8isoeIjojI7pxsLCJ13/dPDIIYCtBsNu9VSr0PYDvXRBTEcfxLUa6DIKjMzMzMJ0kyT0SPZ06J6ITW+pV+iEKAKIoeTpJkDcBdTuk8gNeY+btx09Bqtd4QkSAXobbv+0fz+gMBoiiqJknyCYDbrTARnapUKov1ev2fcZ1ncmEYPkZE7wHY575VmfmH7ci4ItyuARF5mois81uc0IfM/FJZx3n5Vqv1rIh86b6tz87OHq7Var30cP0AALYA3OiEjzPz4k6c5yLxNRE95SIaZLdtEECqQ0Rva61f/z+cWxvNZvOgUmrd2T6jtZ4risAwn2vMvDAplDEmS/VlZr55EoAuM985KUD+VhDRQa31b9tNx22mzWjIWi1zDfvtRFF0T5Ik9jrbtcjMx0vNgklPnukFQTA9PT294f5rZo6uKcDq6ureXq/3lyvEF7XWH19rgPt7vd7vDuAZrfVXAwFWVlbSWig720elKN+QlFJznued+Q+AdT41NWWvC0TkSd/3vx1leNx9Y4wdy49a+TiOb11aWro0FICIftVaHx7XwTA5Y8x9AP5wMqeZOZ2UA1NgjPkeQNqpALzKzO/sFKJvMj7HzJ8XAuTTAOBvl68/J4UIw/AIEX3h9Lubm5v7giCICwHsRhiGJ4koa7vnlVI1z/NKQ4RheICIbE3tcgALzGzfGekqvIZRFO1PkuRTAAecbGkIV/XHAOx3Rb3k+/5KPpJD+0AYhjcppT4SkXmndNE+TgCcsn28KCV28hHR0Wz8OrkPmPnlfp2xGpExJgJw1VMKwI8A7MPUPsMviMguInoQwAMA7G9+GWb2BwGPBWAVjTFzIrJARLVxi5GIvhGRFjOn74AdAWTKxphDAJ53p7wDQDrX3boC4BwAW6zrzHxyFOzYESgytLy8fFulUtmrlNr0PO/CKIcT1UBZo2XkdxyBMs4Gyf4LHSR7MFf1C5MAAAAASUVORK5CYII="
+         title="还原样式"
+         @click="$_reset"
+         alt="">
     <div class="svg-select-inner" @click="$_toggle">
       <img class="svg-select-inner-img" :src="selectIcon" v-if="selectIcon">
       <img class="svg-select-inner-img" v-if="!selectIcon"
@@ -67,10 +72,10 @@ export default {
     }
   },
   mounted() {
-    if(this.icons && this.icons.length > 0){
+    if (this.icons && this.icons.length > 0) {
       this.activeType = this.icons[0].type;
       this.selectIcon = this.defaultIcon;
-    }else {
+    } else {
       // let basicFiles = require
       //     .context("./basic", false, /.svg$/)
       //     .keys();
@@ -93,19 +98,22 @@ export default {
     let vm = this;
     window.onclick = function (event) {
       if (event.target.className !== "theme-panel-options" &&
-          event.target.className !== "svg-select-inner-img" &&
-          event.target.className !== "svg-select-panel-content" &&
-          event.target.className !== "svg-select-panel-tab" &&
-          event.target.className !== "svg-select-panel-tab svgActiveType" &&
-          event.target.className !== "svg-select-panel-head-translateX" &&
-          event.target.className !== "svg-select-triangle-right" &&
-          event.target.className !== "svg-select-triangle-left"
+        event.target.className !== "svg-select-inner-img" &&
+        event.target.className !== "svg-select-panel-content" &&
+        event.target.className !== "svg-select-panel-tab" &&
+        event.target.className !== "svg-select-panel-tab svgActiveType" &&
+        event.target.className !== "svg-select-panel-head-translateX" &&
+        event.target.className !== "svg-select-triangle-right" &&
+        event.target.className !== "svg-select-triangle-left"
       ) {
         vm.showPanel = false;
       }
     }
   },
   methods: {
+    $_reset() {
+      this.$emit("reset");
+    },
     $_getTranslateLength() {
       if (this.translateLength === 0) {
         let translateLength = 0;
@@ -268,5 +276,13 @@ export default {
   border-bottom: 6px solid transparent;
   margin-left: -2px;
   margin-top: 4px;
+}
+
+.svg-select-reset {
+  width: 18px;
+  position: absolute;
+  top: 1px;
+  right: 28px;
+  cursor: pointer;
 }
 </style>

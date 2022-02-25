@@ -87,7 +87,7 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="colorPickerProps.colorCol">
-        <div class="mix-row-color-outer">
+        <div class="mix-row-color-outer" :style="mainStyle">
           <mapgis-ui-sketch-color-picker
               :color="valueCopy"
               @input="$_changeColorSketch"
@@ -119,31 +119,22 @@
         <p class="mix-row-title" :style="titleStyle">{{ title }}</p>
       </mapgis-ui-col>
       <mapgis-ui-col :span="inputProps.inputCol">
-        <mapgis-ui-form-item
-            :validate-status="validateStatus"
-        >
-          <mapgis-ui-input
-              v-model="valueCopy"
-              :placeholder="inputProps.placeholder"
-              :addonAfter="inputProps.addonAfter"
-              :addonBefore="inputProps.addonBefore"
-              :disabled="inputProps.disabled"
-              :id="inputProps.id"
-              :maxLength="inputProps.maxLength"
-              :prefix="inputProps.prefix"
-              :size="inputProps.size"
-              :suffix="inputProps.suffix"
-              :type="inputProps.type"
-              :allowClear="inputProps.allowClear"
-              @change="$_change"
-              @pressEnter="$_pressEnter"
-              :style="mainStyle"
-          />
-        </mapgis-ui-form-item>
-        <mapgis-ui-form-item
-            validate-status="error"
-            help="Should be combination of numbers & alphabets"
-            v-if="validateStatus === 'error'"
+        <mapgis-ui-input
+          v-model="valueCopy"
+          :placeholder="inputProps.placeholder"
+          :addonAfter="inputProps.addonAfter"
+          :addonBefore="inputProps.addonBefore"
+          :disabled="inputProps.disabled"
+          :id="inputProps.id"
+          :maxLength="inputProps.maxLength"
+          :prefix="inputProps.prefix"
+          :size="inputProps.size"
+          :suffix="inputProps.suffix"
+          :type="inputProps.type"
+          :allowClear="inputProps.allowClear"
+          @change="$_change"
+          @pressEnter="$_pressEnter"
+          :style="mainStyle"
         />
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -590,6 +581,17 @@ export default {
       default() {
         return {};
       }
+    },
+    /**
+     * 错误检查样式
+     * */
+    formStyle: {
+      type: Object,
+      default() {
+        return {
+          marginBottom: "0"
+        };
+      }
     }
   },
   model: {
@@ -602,7 +604,6 @@ export default {
     }
   },
   mounted() {
-    console.log("Empty.PRESENTED_IMAGE_DEFAULT",Empty.PRESENTED_IMAGE_DEFAULT)
     this.valueCopy = this.value;
     this.fieldCopy = this.field;
     this.$_initProps();
@@ -799,25 +800,26 @@ export default {
         this.listProps.checkBoxArr[index] = !e;
         this.$emit("change", "MapgisUiThemeListCheckBox", !e, index, this.listProps.checkBoxArr, extra);
       } else {
-        this.$emit("change", e);
+        if (e instanceof Object) {
+          this.$emit("change", e.target.value);
+        } else {
+          this.$emit("change", e);
+        }
       }
     },
-    $_changeColorSketch(e){
-      let  rgba = `rgba(${e.rgba.r}, ${e.rgba.g}, ${e.rgba.b}, ${e.rgba.a})`;
+    $_changeColorSketch(e) {
+      let rgba = `rgba(${e.rgba.r}, ${e.rgba.g}, ${e.rgba.b}, ${e.rgba.a})`;
       this.$emit("change", rgba);
     },
     $_inputChange(index) {
       if (index === 0) {
         if (this.listProps.dataSource[index] <= this.listProps.startData || this.listProps.dataSource[index] >= this.listProps.dataSource[index + 1]) {
-          console.log("----------错误")
         }
       } else if (index < this.listProps.dataSource.length - 1) {
         if (this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1] || this.listProps.dataSource[index] >= this.listProps.dataSource[index + 1]) {
-          console.log("----------错误")
         }
       } else {
         if (this.listProps.dataSource[index] <= this.listProps.dataSource[index - 1]) {
-          console.log("----------错误")
         }
       }
     },
@@ -839,9 +841,9 @@ export default {
         }
       } else {
         let addNum;
-        if(this.listProps.dataSource[index - 1]){
+        if (this.listProps.dataSource[index - 1]) {
           addNum = (this.listProps.dataSource[index] - this.listProps.dataSource[index - 1]) + this.listProps.dataSource[index];
-        }else {
+        } else {
           addNum = 2;
         }
         this.listProps.dataSource.push(addNum);
@@ -931,7 +933,6 @@ export default {
   width: 100%;
   height: 32px;
   border-radius: 4px;
-  border: 1px solid var(--border-color-base);
 }
 
 .mix-row-input-number {

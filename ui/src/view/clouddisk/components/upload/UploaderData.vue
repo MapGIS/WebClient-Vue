@@ -3,7 +3,7 @@
     <div class="mapgis-ui-uploader-path">
       <p class="mapgis-ui-uploader-path-text" :title="importDestUrl">
         <img src="./images/save.png" style="padding-bottom:4px;" />
-        导入到：{{ importDestUrl }}
+        目标路径：{{ importDestUrl }}
       </p>
       <!-- <mapgis-ui-button
         type="link"

@@ -44,13 +44,13 @@
       "all",
       ["==", "active", "false"],
       ["==", "$type", "Polygon"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "fill-color": "#3bb2d0",
       "fill-outline-color": "#3bb2d0",
-      "fill-opacity": 0.1
-    }
+      "fill-opacity": 0.1,
+    },
   },
   {
     id: "gl-draw-polygon-fill-active",
@@ -59,8 +59,8 @@
     paint: {
       "fill-color": "#fbb03b",
       "fill-outline-color": "#fbb03b",
-      "fill-opacity": 0.1
-    }
+      "fill-opacity": 0.1,
+    },
   },
   {
     id: "gl-draw-polygon-midpoint",
@@ -68,8 +68,8 @@
     filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#fbb03b"
-    }
+      "circle-color": "#fbb03b",
+    },
   },
   {
     id: "gl-draw-polygon-stroke-inactive",
@@ -78,16 +78,16 @@
       "all",
       ["==", "active", "false"],
       ["==", "$type", "Polygon"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#3bb2d0",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-polygon-stroke-active",
@@ -95,13 +95,13 @@
     filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#fbb03b",
       "line-dasharray": [0.2, 2],
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-line-inactive",
@@ -110,16 +110,16 @@
       "all",
       ["==", "active", "false"],
       ["==", "$type", "LineString"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#3bb2d0",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-line-active",
@@ -127,13 +127,13 @@
     filter: ["all", ["==", "$type", "LineString"], ["==", "active", "true"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#fbb03b",
       "line-dasharray": [0.2, 2],
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-polygon-and-line-vertex-stroke-inactive",
@@ -142,12 +142,12 @@
       "all",
       ["==", "meta", "vertex"],
       ["==", "$type", "Point"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#fff"
-    }
+      "circle-color": "#fff",
+    },
   },
   {
     id: "gl-draw-polygon-and-line-vertex-inactive",
@@ -156,12 +156,12 @@
       "all",
       ["==", "meta", "vertex"],
       ["==", "$type", "Point"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#fbb03b"
-    }
+      "circle-color": "#fbb03b",
+    },
   },
   {
     id: "gl-draw-point-point-stroke-inactive",
@@ -171,13 +171,13 @@
       ["==", "active", "false"],
       ["==", "$type", "Point"],
       ["==", "meta", "feature"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 5,
       "circle-opacity": 1,
-      "circle-color": "#fff"
-    }
+      "circle-color": "#fff",
+    },
   },
   {
     id: "gl-draw-point-inactive",
@@ -187,12 +187,12 @@
       ["==", "active", "false"],
       ["==", "$type", "Point"],
       ["==", "meta", "feature"],
-      ["!=", "mode", "static"]
+      ["!=", "mode", "static"],
     ],
     paint: {
       "circle-radius": 3,
-      "circle-color": "#3bb2d0"
-    }
+      "circle-color": "#3bb2d0",
+    },
   },
   {
     id: "gl-draw-point-stroke-active",
@@ -201,12 +201,12 @@
       "all",
       ["==", "$type", "Point"],
       ["==", "active", "true"],
-      ["!=", "meta", "midpoint"]
+      ["!=", "meta", "midpoint"],
     ],
     paint: {
       "circle-radius": 7,
-      "circle-color": "#fff"
-    }
+      "circle-color": "#fff",
+    },
   },
   {
     id: "gl-draw-point-active",
@@ -215,12 +215,12 @@
       "all",
       ["==", "$type", "Point"],
       ["!=", "meta", "midpoint"],
-      ["==", "active", "true"]
+      ["==", "active", "true"],
     ],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#fbb03b"
-    }
+      "circle-color": "#fbb03b",
+    },
   },
   {
     id: "gl-draw-polygon-fill-static",
@@ -229,8 +229,8 @@
     paint: {
       "fill-color": "#404040",
       "fill-outline-color": "#404040",
-      "fill-opacity": 0.1
-    }
+      "fill-opacity": 0.1,
+    },
   },
   {
     id: "gl-draw-polygon-stroke-static",
@@ -238,12 +238,12 @@
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "Polygon"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#404040",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-line-static",
@@ -251,12 +251,12 @@
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "LineString"]],
     layout: {
       "line-cap": "round",
-      "line-join": "round"
+      "line-join": "round",
     },
     paint: {
       "line-color": "#404040",
-      "line-width": 2
-    }
+      "line-width": 2,
+    },
   },
   {
     id: "gl-draw-point-static",
@@ -264,9 +264,9 @@
     filter: ["all", ["==", "mode", "static"], ["==", "$type", "Point"]],
     paint: {
       "circle-radius": 5,
-      "circle-color": "#404040"
-    }
-  }
+      "circle-color": "#404040",
+    },
+  },
 ];
 ```
 
@@ -378,28 +378,28 @@
   <mapgis-web-map>
     <mapgis-rastertile-layer :layerId="layerId" :url="url" />
     <mapgis-draw
-        position="top-left"
-        :styles="styles"
-        :controls="controls"
-        v-on:added="handleDrawAdded"
-        v-on:drawcreate="handleDrawCreate"
-        ref="draw"
-        class="mapgisDrawStyle"
+      position="top-left"
+      :styles="styles"
+      :controls="controls"
+      v-on:added="handleDrawAdded"
+      v-on:drawcreate="handleDrawCreate"
+      ref="draw"
+      class="mapgisDrawStyle"
     >
       <mapgis-ui-button-group class="mapgis-2d-draw-wrapper">
         <mapgis-ui-tooltip
-            v-for="(item, i) in draws"
-            :key="i"
-            placement="bottom"
+          v-for="(item, i) in draws"
+          :key="i"
+          placement="bottom"
         >
           <template slot="title">
             <span>{{ item.tip }}</span>
           </template>
           <mapgis-ui-button
-              circle
-              size="small"
-              :type="item.type"
-              @click="item.click"
+            circle
+            size="small"
+            :type="item.type"
+            @click="item.click"
           >
             <mapgis-ui-iconfont :type="item.icon" />
           </mapgis-ui-button>
@@ -415,15 +415,14 @@ export default {
   data() {
     return {
       layerId: "igsLayer_layerId",
-      url:
-          "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
+      url: "http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752",
       controls: {
         point: false,
         line_string: false,
         polygon: false,
         trash: false,
         combine_features: false,
-        uncombine_features: false
+        uncombine_features: false,
       },
       styles: [
         {
@@ -432,14 +431,14 @@ export default {
           filter: ["all", ["==", "active", "true"], ["==", "$type", "Polygon"]],
           layout: {
             "line-cap": "round",
-            "line-join": "round"
+            "line-join": "round",
           },
           paint: {
             "line-color": "#FF0000",
             "line-dasharray": [0.2, 2],
-            "line-width": 2
-          }
-        }
+            "line-width": 2,
+          },
+        },
       ],
       drawer: undefined,
       draws: [
@@ -447,69 +446,69 @@ export default {
           icon: "mapgis-huizhidian2",
           type: "default",
           tip: "点选几何,按住shift可以框选",
-          click: this.toggleSimple
+          click: this.toggleSimple,
         },
         {
           icon: "mapgis-huizhidian2",
           type: "primary",
           tip: "画点",
-          click: this.togglePoint
+          click: this.togglePoint,
         },
         {
           icon: "mapgis-huizhixian1",
           type: "primary",
           tip: "画线",
-          click: this.togglePolyline
+          click: this.togglePolyline,
         },
         {
           icon: "mapgis-huizhijuxing",
           type: "primary",
           tip: "画矩形",
-          click: this.toggleRect
+          click: this.toggleRect,
         },
         {
           icon: "mapgis-draw-polygon",
           type: "primary",
           tip: "画多边形",
-          click: this.togglePolygon
+          click: this.togglePolygon,
         },
         {
           icon: "mapgis-huizhiyuan1",
           type: "primary",
           tip: "画圆",
-          click: this.toggleCircle
+          click: this.toggleCircle,
         },
         {
           icon: "mapgis-icon_huizhiyuanxing",
           type: "primary",
           tip: "画半径",
-          click: this.toggleRadius
+          click: this.toggleRadius,
         },
         {
           icon: "mapgis-clear",
           type: "primary",
           tip: "删除选中图元",
-          click: this.toggleDelete
+          click: this.toggleDelete,
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除全部",
-          click: this.toggleDeleteAll
+          click: this.toggleDeleteAll,
         },
         {
           icon: "mapgis-huizhijuxing",
           type: "default",
           tip: "矩形查询",
-          click: this.toggleQueryByRect
+          click: this.toggleQueryByRect,
         },
         {
           icon: "mapgis-draw-polygon",
           type: "default",
           tip: "多边形查询",
-          click: this.toggleQueryByPolygon
-        }
-      ]
+          click: this.toggleQueryByPolygon,
+        },
+      ],
     };
   },
   created() {},
@@ -562,19 +561,18 @@ export default {
     },
     toggleQueryByRect() {},
     toggleQueryByPolygon() {},
-    handleDrawCreate() {}
-  }
+    handleDrawCreate() {},
+  },
 };
 </script>
 <style>
-.mapgisDrawStyle{
+.mapgisDrawStyle {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 3000;
 }
 </style>
-
 ```
 
 ## 事件

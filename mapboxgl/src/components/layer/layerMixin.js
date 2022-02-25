@@ -4,58 +4,58 @@ import withEvents from "../../lib/withEvents";
 const mapgisCustomProps = {
   url: {
     type: String,
-    default: null
+    default: null,
   },
   mapgisOffset: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 };
 
 const mapboxSourceProps = {
   sourceId: {
     type: String,
-    default: undefined
+    default: undefined,
   },
   source: {
     type: [Object, String],
-    default: undefined
-  }
+    default: undefined,
+  },
 };
 
 const mapboxLayerStyleProps = {
   layerId: {
     type: String,
-    required: true
+    required: true,
   },
   layer: {
     type: Object,
     default: () => {
       return {};
-    }
+    },
   },
   before: {
     type: String,
-    default: undefined
-  }
+    default: undefined,
+  },
 };
 
 const componentProps = {
   clearSource: {
     type: Boolean,
-    default: true
+    default: true,
   },
   replaceSource: {
     type: Boolean,
-    default: false
+    default: false,
   },
   replace: {
     type: Boolean,
-    default: false
+    default: false,
   },
   token: {
-    type: Object
-  }
+    type: Object,
+  },
 };
 
 export default {
@@ -64,7 +64,7 @@ export default {
     ...mapboxSourceProps,
     ...mapboxLayerStyleProps,
     ...componentProps,
-    ...mapgisCustomProps
+    ...mapgisCustomProps,
   },
 
   inject: ["mapbox", "map"],
@@ -74,12 +74,12 @@ export default {
       // 特别声明，这个before的监听行为必须在replaceSource=false
       // &&replace=false 的前提下才能成立，这是先决条件
       this.move(val);
-    }
+    },
   },
 
   data() {
     return {
-      initial: true
+      initial: true,
     };
   },
 
@@ -96,19 +96,19 @@ export default {
       return this.map
         ? this.map.getSource(this.sourceId || this.layerId)
         : null;
-    }
+    },
   },
 
   created() {
     if (this.layer.minzoom) {
-      this.$watch("layer.minzoom", function(next) {
+      this.$watch("layer.minzoom", function (next) {
         if (this.initial) return;
         this.map.setLayerZoomRange(this.layerId, next, this.layer.maxzoom);
       });
     }
 
     if (this.layer.maxzoom) {
-      this.$watch("layer.maxzoom", function(next) {
+      this.$watch("layer.maxzoom", function (next) {
         if (this.initial) return;
         this.map.setLayerZoomRange(this.layerId, this.layer.minzoom, next);
       });
@@ -117,7 +117,7 @@ export default {
     if (this.layer.paint) {
       this.$watch(
         "layer.paint",
-        function(next) {
+        function (next) {
           if (this.initial) return;
           if (next) {
             for (let prop of Object.keys(next)) {
@@ -132,7 +132,7 @@ export default {
     if (this.layer.layout) {
       this.$watch(
         "layer.layout",
-        function(next) {
+        function (next) {
           if (this.initial) return;
           if (next) {
             for (let prop of Object.keys(next)) {
@@ -147,7 +147,7 @@ export default {
     if (this.layer.filter) {
       this.$watch(
         "layer.filter",
-        function(next) {
+        function (next) {
           if (this.initial) return;
           this.map.setFilter(this.layerId, next);
         },
@@ -157,13 +157,15 @@ export default {
   },
 
   beforeDestroy() {
+    const { $_beforeDestroy } = this;
     if (this.map) {
       try {
+        $_beforeDestroy && $_beforeDestroy(); // geojson-layer
         this.map.removeLayer(this.layerId);
       } catch (err) {
         this.$_emitEvent("layer-does-not-exist", {
           layerId: this.sourceId || this.layerId,
-          error: err
+          error: err,
         });
       }
       if (this.clearSource) {
@@ -172,7 +174,7 @@ export default {
         } catch (err) {
           this.$_emitEvent("source-does-not-exist", {
             sourceId: this.sourceId || this.layerId,
-            error: err
+            error: err,
           });
         }
       }
@@ -185,7 +187,7 @@ export default {
     },
 
     $_bindLayerEvents(events) {
-      Object.keys(this.$listeners).forEach(eventName => {
+      Object.keys(this.$listeners).forEach((eventName) => {
         if (events.includes(eventName)) {
           this.map.on(eventName, this.layerId, this.$_emitLayerMapEvent);
         }
@@ -194,7 +196,7 @@ export default {
 
     $_unbindEvents(events) {
       if (this.map) {
-        events.forEach(eventName => {
+        events.forEach((eventName) => {
           this.map.off(eventName, this.layerId, this.$_emitLayerMapEvent);
         });
       }
@@ -212,7 +214,7 @@ export default {
       this.map.moveLayer(this.layerId, beforeId);
       this.$_emitEvent("layer-moved", {
         layerId: this.layerId,
-        beforeId: beforeId
+        beforeId: beforeId,
       });
     },
 
@@ -221,8 +223,8 @@ export default {
       this.map.removeSource(this.sourceId || this.layerId);
       this.$_emitEvent("layer-removed", { layerId: this.layerId });
       this.$destroy();
-    }
+    },
   },
 
-  render() {}
+  render() {},
 };

@@ -4,7 +4,7 @@
       :loadData="loadCompany"
       :treeData="data"
       @select="handleSelect"
-      :default-selected-keys="['我的数据']"
+      :default-selected-keys="['个人空间']"
     >
       <template slot="title" slot-scope="{ title, icon }">
         <mapgis-ui-iconfont :type="icon" />
@@ -17,6 +17,7 @@
 import {
   OWNERSHIPS,
   OWNERSHIP_USER_FOLDER,
+  OWNERSHIP_GROUP_FOLDER,
   OWNERSHIP_PUBLIC_SHARE_TO_USER,
   OWNERSHIP_OTHER_SHARE_TO_USER
 } from "../../util/codeType";
@@ -25,44 +26,62 @@ import { getFilesByOrganization, getFileByRecycle } from "../../axios/files";
 
 const ReadFromCloudDisk = [
   {
-    title: "我的数据",
-    key: "我的数据",
-    icon: "mapgis-dilishujuyuan",
+    title: "个人空间",
+    key: "个人空间",
+    icon: "mapgis-user",
     // selected: true,
     isLeaf: true,
     groupId: OWNERSHIP_USER_FOLDER,
     scopedSlots: { icon: "icon", title: "title" }
+  },
+  {
+    title: "公共数据",
+    key: "公共数据",
+    icon: "mapgis-gongkai",
+    // selected: false,
+    isLeaf: true,
+    groupId: OWNERSHIP_PUBLIC_SHARE_TO_USER,
+    scopedSlots: { icon: "icon", title: "title" }
+  },
+  {
+    title: "我收到的共享",
+    key: "我收到的共享",
+    icon: "mapgis-shoudaodegongxiang",
+    // selected: false,
+    isLeaf: true,
+    groupId: OWNERSHIP_OTHER_SHARE_TO_USER,
+    scopedSlots: { icon: "icon", title: "title" }
+  },
+  {
+    title: "团队空间",
+    key: "团队空间",
+    icon: "mapgis-deleteteam",
+    // selected: true,
+    // isLeaf: true,
+    groupId: OWNERSHIP_GROUP_FOLDER,
+    scopedSlots: { icon: "icon", title: "title" }
   }
-  // {
-  //   title: "公共数据",
-  //   key: "公共数据",
-  //   icon: "mapgis-shujuziyuan",
-  //   // selected: false,
-  //   isLeaf: true,
-  //   groupId: OWNERSHIP_PUBLIC_SHARE_TO_USER,
-  //   scopedSlots: { icon: "icon", title: "title" }
-  // },
-  // {
-  //   title: "我的接收文件",
-  //   key: "我的接收文件",
-  //   icon: "mapgis-daorumoxinghuancun",
-  //   // selected: false,
-  //   isLeaf: true,
-  //   groupId: OWNERSHIP_OTHER_SHARE_TO_USER,
-  //   scopedSlots: { icon: "icon", title: "title" }
-  // }
 ];
 
 const SaveToCloudDisk = [
   {
-    title: "我的数据",
-    key: "我的数据",
-    icon: "mapgis-dilishujuyuan",
-
+    title: "个人空间",
+    key: "个人空间",
+    icon: "mapgis-user",
     // selected: true,
+    isLeaf: true,
     groupId: OWNERSHIP_USER_FOLDER,
     scopedSlots: { icon: "icon", title: "title" }
-  }
+  },
+  {
+    title: "团队空间",
+    key: "团队空间",
+    icon: "mapgis-deleteteam",
+    // selected: true,
+    // isLeaf: true,
+    groupId: OWNERSHIP_GROUP_FOLDER,
+    scopedSlots: { icon: "icon", title: "title" }
+  },
 ];
 
 export default {
@@ -117,76 +136,55 @@ export default {
   methods: {
     loadCompany(item) {
       return new Promise(resolve => {
-        if (OWNERSHIPS.indexOf(item.groupId) < 0) {
-          let groupId = item.groupId;
-          getFilesByOrganization(groupId)
-            .then(res => {
-              if (res.status === 200) {
-              }
-              let children = res.data.data.list;
-              children = children.map(child => {
-                let url = {
-                  title: child.name,
-                  prefix: "/" + child.name,
-                  alias: "/" + child.name,
-                  uri: child.path
-                };
-                child.url = url;
-                if (child.childs && child.childs.length > 0) {
-                  child.children = [];
-                  child.loading = false;
-                } else if (!child.childs) {
-                  child.loading = false;
-                  child.children = [];
-                }
-                return child;
-              });
-              console.log("loadcompany", children);
-              // this.treeData = [...this.treeData];
-              resolve();
-            })
-            .catch(error => {
-              this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
-              this.$store.commit("CHANGE_FILES", { files: [] });
-              resolve();
-            });
-        }
-      });
-    },
-    storeTrash(data) {
-      let url = data.url;
-      this.$store.commit("CHANGE_FILES_LOADING", { loading: true });
-      getFileByRecycle(url.uri)
-        .then(res => {
-          if (res.status === 200) {
-            let result = res.data;
-            let { data, errorCode, msg } = result;
-            if (errorCode < 0) {
-              this.$store.commit("CHANGE_FILES", { files: [] });
-              this.$Notice.error({ title: errorCode, desc: msg });
-            } else {
-              this.$store.commit("CHANGE_FILES", { files: data });
-              this.$store.commit("CHANGE_CONTENT_TYPE", {
-                contentType: "recycle"
-              });
-              this.$store.commit("CHANGE_RECYCLE", { recycle: false });
-              this.$store.commit("CHANGE_DELETE", { delete: false });
-              this.$store.commit("CHANGE_SECRETFUNCTION", {
-                secretFunction: false
-              });
+        // if (OWNERSHIPS.indexOf(item.dataRef.groupId) < 0) {
+        let groupId = item.dataRef.groupId;
+        getFilesByOrganization(groupId)
+          .then(res => {
+            if (res.status === 200) {
             }
-          }
-          this.$store.commit("CHANGE_FILES_LOADING", { loading: false });
-        })
-        .catch(error => {
-          this.$Notice.error({ title: "网络异常,请检查链接", desc: error });
-          this.$store.commit("CHANGE_FILES", { files: [] });
-          this.$store.commit("CHANGE_FILES_LOADING", { loading: false });
-        });
+            let children = res.data.data.list;
+            children = children.map(child => {
+              // child.icon = "mapgis-deleteteam";
+              child.title = child.name;
+              child.scopedSlots = { icon: "icon", title: "title" };
+              if (child.childs && child.childs.length === 0) {
+                child.isLeaf = true
+              }
+              // else if (!child.childs) {
+              //   child.loading = false;
+              //   child.children = [];
+              // }
+              return child;
+            });
+            console.log("loadcompany", children);
+            item.dataRef.children = children;
+            this.data = [...this.data];
+            resolve();
+          })
+          .catch(error => {
+            let notification = {
+              message: '网络异常,请检查链接',
+              description: error,
+              onClick: function () {
+                console.warn('错误日志：', error);
+              }
+            };
+            this.$notification.error(notification);
+            // this.$store.commit("CHANGE_FILES", { files: [] });
+            resolve();
+          });
+        // }
+      });
     },
     handleSelect(keys, e) {
       if (keys.length > 0) {
-        this.$emit("url", e.node.dataRef.groupId);
+        let groupId = e.node.dataRef.groupId
+        if (groupId >= 0) {
+          if (groupId !== OWNERSHIP_GROUP_FOLDER) {
+            window.localStorage.setItem("mapgis_clouddisk_group_path", e.node.dataRef.path);
+          }
+        }
+        this.$emit("url", groupId);
       }
     }
   }

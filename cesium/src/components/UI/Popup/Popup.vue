@@ -5,6 +5,7 @@
 </template>
 <script>
 import PopupOptions from "./PopupOptions";
+import PopupLayer from "./PopupLayer";
 
 export default {
   name: "mapgis-3d-popup",
@@ -23,7 +24,7 @@ export default {
       show: true
     };
   },
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
   watch: {
     position: {
       deep: true,
@@ -60,20 +61,16 @@ export default {
       let value = !this.show;
       this.show = value;
     },
-    getWebGlobe() {
-      let { webGlobe, vueKey, CesiumZondy } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
-      const { GlobesManager } = CesiumZondy;
-      let instance = webGlobe;
-      if (vueKey !== "default") {
-        instance = GlobesManager[vueKey][0].source;
-      }
+    getViewer() {
+      let { viewer, vueKey, vueCesium } = this;
+      vueCesium = vueCesium || window.vueCesium;
+      let instance = viewer || vueCesium.getViewer(vueKey);
       return instance;
     },
     createCesiumObject() {
       const vm = this;
-      let { CesiumZondy, position, options, container, destroyOnClose } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let { Cesium, vueCesium, position, options, container } = this;
+      vueCesium = vueCesium || window.vueCesium;
 
       if (this.$slots.default) {
         if (this.$slots.default[0].elm) {
@@ -86,36 +83,35 @@ export default {
 
       options = {
         ...options,
+        Cesium: Cesium,
         callback: {
           onShow: () => {
             vm.$emit("change", true);
           },
           onHide: () => {
-            vm.$emit("change", false);
+            vm.$emit("change", false, vm.vueIndex);
             if (vm.destroyOnClose) {
               // 这里其实是无效的，本质上是通过update来实现的
               // vm.unmount();
             }
-          }
+          },
+          onSeparate: (payload) => {
+            vm.$emit("separate", payload);
+          },
         }
       };
 
-      let webGlobe = this.getWebGlobe();
+      let viewer = this.getViewer();
 
-      return new CesiumZondy.Overlayer.PopupLayer(
-        webGlobe.viewer,
-        position,
-        options,
-        container
-      );
+      return new PopupLayer(viewer, position, options, container);
     },
     mount() {
-      let { webGlobe, vueKey, vueIndex } = this;
-      webGlobe = webGlobe || this.getWebGlobe();
-      const viewer = webGlobe.viewer;
+      let { viewer, vueKey, vueIndex, vueCesium } = this;
+      vueCesium = vueCesium || window.vueCesium;
+      viewer = viewer || this.getViewer();
       let popup;
 
-      let find = window.CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.PopupManager.findSource(vueKey, vueIndex);
       if (find) {
         popup = find.source;
       }
@@ -123,13 +119,12 @@ export default {
       return !viewer.isDestroyed() && popup && popup.show();
     },
     unmount() {
-      let { webGlobe, vueKey, vueIndex } = this;
-      webGlobe = webGlobe || this.getWebGlobe();
-      const viewer = webGlobe.viewer;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let { viewer, vueKey, vueIndex, vueCesium } = this;
+      viewer = viewer || this.getViewer();
+      vueCesium = vueCesium || window.vueCesium;
       let popup;
 
-      let find = window.CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.PopupManager.findSource(vueKey, vueIndex);
       if (find) {
         popup = find.source;
       }
@@ -141,31 +136,30 @@ export default {
       return !viewer.isDestroyed();
     },
     update() {
-      let { CesiumZondy, vueIndex, vueKey } = this;
-      CesiumZondy = CesiumZondy || window.CesiumZondy;
+      let { vueCesium, vueIndex, vueKey } = this;
+      vueCesium = vueCesium || window.vueCesium;
       let popup;
-      let find = CesiumZondy.PopupManager.findSource(vueKey, vueIndex);
+      let find = vueCesium.PopupManager.findSource(vueKey, vueIndex);
       if (find) {
         popup = find.source;
       }
-
+      
       if (popup && popup.remove) {
         popup.remove();
         popup = undefined;
-        CesiumZondy.PopupManager.deleteSource(vueKey, vueIndex);
+        vueCesium.PopupManager.deleteSource(vueKey, vueIndex);
       }
-
       if (this.visible && this.show) {
         popup = this.createCesiumObject();
         this.$emit("load", { popup: popup });
         if (vueKey && (vueIndex || vueIndex === 0)) {
-          CesiumZondy.PopupManager.addSource(vueKey, vueIndex, popup);
+          vueCesium.PopupManager.addSource(vueKey, vueIndex, popup);
         }
         this.mount();
       }
     },
     removeAll() {
-      let popups = window.CesiumZondy.PopupManager.findAllSource();
+      let popups = window.vueCesium.PopupManager.findAllSource();
       popups.forEach(p => {
         let popup = p.source;
         popup && popup.remove();

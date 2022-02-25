@@ -1,8 +1,12 @@
+import MapgisEventBusMapMixin from "../../../lib/eventbus/EventBusMapMixin";
+
 const DrawSources = {
   HOT: "mapbox-gl-draw-hot",
-  COLD: "mapbox-gl-draw-cold"
+  COLD: "mapbox-gl-draw-cold",
 };
 export default {
+  mixins: [MapgisEventBusMapMixin],
+
   created() {
     this.$_initMapboxDom();
     this.drawEvents = this.$_initMapboxEvent().draw;
@@ -35,8 +39,8 @@ export default {
 
         if (layers) {
           layers
-            .filter(layer => layer.source === source)
-            .forEach(layer => this.map.removeLayer(layer.id));
+            .filter((layer) => layer.source === source)
+            .forEach((layer) => this.map.removeLayer(layer.id));
         }
         this.map.removeSource(source);
       }
@@ -69,7 +73,7 @@ export default {
       if (!this.map) return;
       this.drawEvents.push({
         name: eventName,
-        callback: eventCallback
+        callback: eventCallback,
       });
       this.map.on(eventName, eventCallback);
     },
@@ -77,10 +81,11 @@ export default {
     $_unbindDrawEvents() {
       if (!this.map) return;
       if (this.drawEvents.length <= 0) return;
-      this.drawEvents.forEach(e => {
+      this.drawEvents.forEach((e) => {
         this.map && this.map.off(e.name, e.callback);
       });
       this.drawEvents.length = 0;
+      this.emitMapDrawRemove();
     },
 
     $_addMeasureControl(control, com) {
@@ -114,7 +119,7 @@ export default {
       if (!this.map) return;
       this.measureEvents.push({
         name: eventName,
-        callback: eventCallback
+        callback: eventCallback,
       });
       this.map.on(eventName, eventCallback);
     },
@@ -122,10 +127,14 @@ export default {
     $_unbindMeasureEvents() {
       if (!this.map) return;
       if (this.measureEvents.length <= 0) return;
-      this.measureEvents.forEach(e => {
+      this.measureEvents.forEach((e) => {
         this.map && this.map.off(e.name, e.callback);
       });
       this.measureEvents.length = 0;
+      if (window.mapboxDom.measureCom) {
+        window.mapboxDom.measureCom.coordinates = [];
+      }
+      this.emitMapMeasureRemove();
     },
 
     $_addEditControl(control) {
@@ -155,7 +164,7 @@ export default {
       if (!this.map) return;
       this.editEvents.push({
         name: eventName,
-        callback: eventCallback
+        callback: eventCallback,
       });
       this.map.on(eventName, eventCallback);
     },
@@ -163,13 +172,11 @@ export default {
     $_unbindEditEvents() {
       if (!this.map) return;
       if (this.editEvents.length <= 0) return;
-      this.editEvents.forEach(e => {
+      this.editEvents.forEach((e) => {
         this.map && this.map.off(e.name, e.callback);
       });
       this.editEvents.length = 0;
-      if (window.mapboxDom.measureCom) {
-        window.mapboxDom.measureCom.coordinates = [];
-      }
-    }
-  }
+      this.emitMapEditRemove();
+    },
+  },
 };

@@ -80,9 +80,7 @@ export default {
         defaultValue: { summary: '0' },
       },
       control:'number'
-    },
-    layerId: 'ogcwmts_layerId',
-    sourceId: 'ogcwmts_sourceId',
+    }
   },
 };
 

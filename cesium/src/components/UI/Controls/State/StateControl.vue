@@ -1,16 +1,3 @@
-<template>
-  <div class="mapgis-web-scene-statebar">
-    <span>
-      经度:{{ longitude }}°，纬度:{{ latitude }}°， 海拔高度:{{
-        height
-      }}米，相机视角高度:{{ cameraHeight }}米
-    </span>
-    <span v-if="showHpr"></span>
-    <span v-if="showSelectTileInfo"></span>
-    <span v-if="showViewLevelInfo"></span>
-  </div>
-</template>
-
 <script>
 import VueOptions from "../../../Base/Vue/VueOptions";
 import debounce from "lodash/debounce";
@@ -18,28 +5,44 @@ import debounce from "lodash/debounce";
 export default {
   name: "mapgis-3d-statebar",
   mixins: [],
-  inject: ["Cesium", "webGlobe"],
+  inject: ["Cesium", "viewer"],
   props: {
     ...VueOptions,
+    outStyle: {
+      type: Object,
+    },
+    info: {
+      type: Object,
+    },
     showHpr: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showSelectTileInfo: {
       type: Boolean,
-      default: false
+      default: false,
     },
     showViewLevelInfo: {
       type: Boolean,
-      default: false
+      default: false,
     },
     frame: {
       type: Number,
-      default: 10
-    }
+      default: 10,
+    },
+    /** 是否强制显示在地图底部，false时用户自定义样式 */
+    bottomMap: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {},
+
+  model: {
+    props: "info",
+    event: "change",
+  },
 
   data() {
     return {
@@ -50,7 +53,7 @@ export default {
       latitude: 0,
       cameraHeight: 0,
       height: 0,
-      selectedTile: undefined
+      selectedTile: undefined,
     };
   },
 
@@ -79,28 +82,45 @@ export default {
       this.showPosition();
     },
     unmount() {
-      const { webGlobe, vueKey, vueIndex } = this;
-      let find = window.CesiumZondy.EventHandlerManager.findSource(
+      const { viewer, vueKey, vueIndex, bottomMap } = this;
+      const { container } = viewer;
+      let find = window.vueCesium.EventHandlerManager.findSource(
         vueKey,
         vueIndex
       );
       if (find) {
         find.source.destroy && find.source.destroy();
       }
-      window.CesiumZondy.EventHandlerManager.deleteSource(vueKey, vueIndex);
+      window.vueCesium.EventHandlerManager.deleteSource(vueKey, vueIndex);
+      if (bottomMap) {
+        let dom = false;
+        const name = "mapgis-3d-statebar";
+        /* container.children.forEach((element) => {
+          if (element.className == name) {
+            dom = element;
+          }
+        }); */
+        for (let i = 0; i < container.children.length; i++) {
+          let element = container.children[i];
+          if (element.className == name) {
+            dom = element;
+          }
+        }
+        if (dom) {
+          container.removeChild(dom);
+        }
+      }
     },
     showPosition() {
       const vm = this;
-      let { Cesium, webGlobe, vueIndex, vueKey, frame } = this;
-
-      const { viewer } = webGlobe;
+      let { Cesium, viewer, vueIndex, vueKey, frame } = this;
 
       if (vueKey && vueIndex) {
         let screenSpaceMouseEventHandler = new Cesium.ScreenSpaceEventHandler(
           viewer.scene.canvas
         );
 
-        screenSpaceMouseEventHandler.setInputAction(movement => {
+        screenSpaceMouseEventHandler.setInputAction((movement) => {
           // vm.updateViewLevel();
           // vm.selectTile(movement.endPosition);
           // vm.selectedTile = vm.selectTile(movement.endPosition);
@@ -123,7 +143,7 @@ export default {
             vm.$_frame = 0;
           }
         }, Cesium.ScreenSpaceEventType.WHEEL);
-        window.CesiumZondy.EventHandlerManager.addSource(
+        window.vueCesium.EventHandlerManager.addSource(
           vueKey,
           vueIndex,
           screenSpaceMouseEventHandler
@@ -142,9 +162,8 @@ export default {
       });
     },
     selectTile(e) {
-      let { Cesium, webGlobe } = this;
+      let { Cesium, viewer } = this;
       let selectedTileTmp;
-      const { viewer } = webGlobe;
       const ellipsoid = viewer.scene.globe.ellipsoid;
 
       let cartesian = viewer.scene.camera.pickEllipsoid(e, ellipsoid);
@@ -176,8 +195,7 @@ export default {
       return selectedTileTmp;
     },
     updateViewLevel() {
-      let { Cesium, webGlobe } = this;
-      const { viewer } = webGlobe;
+      let { Cesium, viewer } = this;
       const tilesToRender =
         viewer.scene.globe._surface.tileProvider._tilesToRenderByTextureCount;
       for (let i = 0; i < tilesToRender.length; i += 1) {
@@ -204,15 +222,14 @@ export default {
         viewLevel,
         height,
         Cesium,
-        webGlobe,
+        viewer,
         showHpr,
         showSelectTileInfo,
-        showViewLevelInfo
+        showViewLevelInfo,
       } = this;
 
       let vm = this;
 
-      const { viewer } = webGlobe;
       let cartesian = viewer.getCartesian3Position(screenPos, cartesian);
       const ellipsoid = viewer.scene.globe.ellipsoid;
       const { camera } = viewer;
@@ -230,6 +247,12 @@ export default {
           viewer.scene.globe.getHeight(cartographic),
           cartographic.height
         ).toFixed(0);
+        this.$emit("change", {
+          longitude: this.longitude,
+          latitude: this.latitude,
+          cameraHeight: this.cameraHeight,
+          height: this.height,
+        });
       }
       /* let strHpr = "";
       if (showHpr) {
@@ -252,20 +275,59 @@ export default {
       }
       const iHtml = longlatHeight + strHpr + selectTileInfo + level;
       document.getElementById(elementId).innerHTML = iHtml; */
+    },
+  },
+
+  render(h) {
+    const { longitude, latitude, height, cameraHeight } = this;
+    const { viewer, bottomMap } = this;
+    let span = `经度:${longitude}°，纬度:${latitude}°， 海拔高度: ${height},米，相机高度:${cameraHeight}米`;
+    const { container, outStyle } = viewer;
+    const name = "mapgis-3d-statebar";
+    if (bottomMap) {
+      let dom = false;
+      if (container && container.children) {
+        for (let i = 0; i < container.children.length; i++) {
+          let element = container.children[i];
+          if (element.className == name) {
+            dom = element;
+          }
+        }
+        /* container.children.forEach((element) => {
+          if (element.className == name) {
+            dom = element;
+          }
+        }); */
+      }
+      if (dom) {
+        dom.children[0].innerText = span;
+      } else {
+        dom = window.document.createElement("div");
+        dom.className = name;
+        let spandom = window.document.createElement("span");
+        spandom.innerText = span;
+        dom.appendChild(spandom);
+        // dom.style = outStyle;
+        container.appendChild(dom);
+      }
+      return h("span");
+    } else {
+      return h(
+        "div",
+        {
+          class: "mapgis-3d-statebar",
+        },
+        [
+          h(
+            "span",
+            {
+              innerText: span,
+            },
+            [span]
+          ),
+        ]
+      );
     }
-  }
+  },
 };
 </script>
-
-<style>
-.mapgis-web-scene-statebar {
-  position: absolute;
-  height: fit-content;
-  bottom: 0px;
-  z-index: 9999;
-  color: #f0efef;
-  line-height: 30px;
-  margin-left: 30%;
-  font-size: 80%;
-}
-</style>

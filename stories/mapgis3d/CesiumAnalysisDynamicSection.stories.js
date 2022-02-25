@@ -38,27 +38,20 @@ const Template = (args, { argTypes }) => ({
             :token="token"
         ></mapgis-3d-ogc-wmts-layer>
         <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-        <mapgis-3d-igs-m3d 
+        <mapgis-3d-m3d-layer
             :vueIndex="$props.models[0].vueIndex" 
             :url="m3dUrl1"
         />
-        <mapgis-3d-igs-m3d 
+        <mapgis-3d-m3d-layer 
             :vueIndex="$props.models[1].vueIndex" 
             :url="m3dUrl2"
         />
         <mapgis-ui-card class="storybook-ui-card">
-          <mapgis-3d-dynamic-section @mounted="dynamicMounted" @destroyed="dynamicDestroyed" v-bind="$props"/>
+          <mapgis-3d-dynamic-section :models="models" :axis="axis" :color="color" :time="time" :distance="distance"/>
         </mapgis-ui-card>
       </mapgis-web-scene>
     `,
   methods: {
-    dynamicMounted(component) {
-      component.onOpen();
-    },
-    dynamicDestroyed(component) {
-      component.onClose();
-      component.unmount();
-    },
     handleLoad(e) {
       const { component, Cesium } = e;
       Cesium.Ion.defaultAccessToken =

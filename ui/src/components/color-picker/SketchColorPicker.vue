@@ -1,27 +1,55 @@
 <template>
-  <div :style="{...colorStyle}" class="mapgis-ui-sketch-color-picker" :class="{colorContainerLarge: size === 'large',colorContainerSmall: size === 'small'}">
+  <div
+    :style="{ ...colorStyle }"
+    class="mapgis-ui-sketch-color-picker"
+    :class="{
+      colorContainerLarge: size === 'large',
+      colorContainerSmall: size === 'small'
+    }"
+  >
     <mapgis-ui-popover trigger="click">
       <template slot="content">
         <sketch-picker
-            class="sketch-color"
-            :disableAlpha="disableAlpha"
-            :value="pickColor"
-            @input="onColorChange"
+          class="sketch-color"
+          :disableAlpha="disableAlpha"
+          :value="pickColor"
+          @input="onColorChange"
         />
       </template>
-      <div class="color-container" :style="{padding: showBorder ? '9px 8px' : '0',border: showBorder ? 'border: 1px solid $border-color-base;' : 'none'}">
-        <div :style="{ background: pickColor }" :title="color" class="color-div"></div>
-      </div>
+      <mapgis-ui-row class="color-row">
+        <span
+          v-if="hasAddonBefore"
+          class="mapgis-ui-input-group-addon addon-before"
+          >{{ addonBefore }}</span
+        >
+        <div
+          class="color-container"
+          :style="{
+            padding: showBorder ? '9px 8px' : '0',
+            border: showBorder
+              ? 'border: 1px solid $border-color-base;'
+              : 'none',
+            flex: '1',
+            'border-radius': hasAddonBefore ? '0 4px 4px 0px' : '4px'
+          }"
+        >
+          <div
+            :style="{ background: pickColor }"
+            :title="color"
+            class="color-div"
+          ></div>
+        </div>
+      </mapgis-ui-row>
     </mapgis-ui-popover>
   </div>
 </template>
 
 <script>
-import {Sketch} from "vue-color";
+import { Sketch } from "vue-color";
 
 export default {
   name: "mapgis-ui-sketch-color-picker",
-  components: {"sketch-picker": Sketch},
+  components: { "sketch-picker": Sketch },
   props: {
     color: {
       type: String,
@@ -45,6 +73,9 @@ export default {
     },
     colorStyle: {
       type: Object
+    },
+    addonBefore: {
+      type: String
     }
   },
   computed: {
@@ -55,6 +86,9 @@ export default {
       set(val) {
         this.$emit("update:color", val);
       }
+    },
+    hasAddonBefore() {
+      return this.addonBefore && this.addonBefore.length > 0;
     }
   },
   methods: {
@@ -82,3 +116,13 @@ export default {
   }
 };
 </script>
+<style scoped>
+.color-row {
+  display: flex;
+}
+
+.addon-before {
+  height: 32px;
+  width: fit-content;
+}
+</style>

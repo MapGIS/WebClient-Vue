@@ -1,13 +1,9 @@
-import ArcgisTileLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcGISTileLayer";
-import ArcgisMapLayer from "../../cesium/src/components/Layer/ArcGISServer/ArcGISMapLayer";
-
 export default {
     title: "三维/场景子组件/卷帘"
 };
 
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
-    components: { ArcgisTileLayer, ArcgisMapLayer },
     data() {
         return {
             tileUrl: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
@@ -22,10 +18,10 @@ const Template = (args, { argTypes }) => ({
     },
     template: `
     <div>
-        <mapgis-web-scene vueKey="webGlobe" :style="{height: '95vh'}">
-            <arcgis-map-layer vueKey="webGlobe" :baseUrl="mapUrl2" :id="mapId2" />
-            <arcgis-tile-layer vueKey="webGlobe" :baseUrl="tileUrl" :id="tileId" />
-            <arcgis-map-layer vueKey="webGlobe" :baseUrl="mapUrl1" :id="mapId1" />
+        <mapgis-web-scene vueKey="webGlobe" style="height:95vh">
+            <mapgis-3d-arcgis-map-layer vueKey="webGlobe" :baseUrl="mapUrl2" :id="mapId2" />
+            <mapgis-3d-arcgis-tile-layer vueKey="webGlobe" :baseUrl="tileUrl" :id="tileId" />
+            <mapgis-3d-arcgis-map-layer vueKey="webGlobe" :baseUrl="mapUrl1" :id="mapId1" />
         </mapgis-web-scene>
         <mapgis-3d-compare vueKey="webGlobe" :beforeLayers="beforeLayers" :afterLayers="afterLayers">
         </mapgis-3d-compare>

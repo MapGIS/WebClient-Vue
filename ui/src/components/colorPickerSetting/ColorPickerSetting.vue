@@ -110,7 +110,6 @@ export default {
     }
   },
   mounted(){
-    console.log("-----------------------====")
     this.initTableData();
   },
   methods: {
@@ -124,7 +123,6 @@ export default {
         key: percent * 100,
         percent: percent * 100
       }));
-      console.log("this.tableData",this.tableData)
     },
     removeRow: function () {
       

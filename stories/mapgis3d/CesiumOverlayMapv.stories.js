@@ -4,7 +4,7 @@ import { BaseServer } from "@mapgis/webclient-es6-service";
 import axios from "axios";
 
 export default {
-  title: "三维/可视化/MapV-基础",
+  title: "三维/可视化/MapV-方形网格密度",
 };
 
 const Template = (args, { argTypes }) => ({
@@ -14,10 +14,22 @@ const Template = (args, { argTypes }) => ({
     this.initData();
   },
   methods: {
-    initData() {
+    async initData() {
       const vm = this;
       this.geojson = {};
-      axios.get("./geojson/china-city.geojson").then((res) => {
+
+      let res = await axios.get("./geojson/china-city.geojson");
+
+      const { data } = res;
+
+      let fs = data.features.map((f) => {
+        f.properties.count = Math.random() * 30;
+        return f;
+      });
+      vm.geojson = {
+        features: fs,
+      };
+      /* .then((res) => {
         const { data } = res;
         let fs = data.features.map((f) => {
           f.properties.count = Math.random() * 30;
@@ -26,7 +38,7 @@ const Template = (args, { argTypes }) => ({
         vm.geojson = {
           features: fs,
         };
-      });
+      }); */
     },
   },
   template: `
@@ -37,8 +49,8 @@ const Template = (args, { argTypes }) => ({
     `,
 });
 
-export const mapv = Template.bind({});
-mapv.args = {
+export const 方形网格密度 = Template.bind({});
+方形网格密度.args = {
   baseUrl:
     "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
   layerStyle: {
@@ -78,4 +90,3 @@ mapv.args = {
   },
   geojson: {},
 };
-

@@ -8,9 +8,13 @@
 @import "./components/space/style/space.scss";
 @import "./components/scroll/style/scroll.scss";
 @import "./components/setting-footer/style/setting-footer.scss";
+@import "./components/panel/style/panel.scss";
+
 /* MapGIS Design - General */
 @import "./components/button/style/button.scss";
 @import "./components/border/style/border.scss";
+@import "./components/svgborder/style/svgborder.scss";
+@import "./components/decoration/style/decoration.scss";
 
 /* MapGIS Design - Navigation */
 @import "./components/affix/style/affix.scss";
@@ -80,6 +84,7 @@
 @import "./components/iconfont/style/iconfont.scss";
 
 /* MapGIS Design - Color */
+@import "./components/charts/style/charts.scss";
 @import "./components/color/style/color.scss";
 @import "./components/color-picker/style/color-picker.scss";
 
@@ -91,6 +96,7 @@
 @import "./components/ribbon/style/ribbon.scss";
 @import "./layout/base/style/pro.scss";
 @import "./layout/base/SettingDrawer/style/index.scss";
+@import "./layout/panel/style/panel.scss";
 
 /* MapGIS Design Navs */
 @import "./layout/navs/style/navs.scss";
@@ -101,11 +107,25 @@
 @import "./view/clouddisk/components/model/style/model.scss";
 
 /* MapGIS Design Mapbox Base*/
-@import "./components/map/style/map.scss";
+@import "./util/style/map/mapgis2d/style.scss";
+@import "./util/style/map/mapgis3d/style.scss";
 
 /* MapGIS Design THemePanel */
 @import "./components/themepanel/style/themepanel.scss";
 @import "./components/svgselect/style/svgselect.scss";
 
 /* MapGIS Design Comprehensive Query */
-@import "./view/comprehensive-query/style/comprehensive-query.scss"
+@import "./view/comprehensive-query/style/comprehensive-query.scss";
+
+/* MapGIS Design Edit */
+@import "./components/edit/style/FeatureEdit";
+@import "./components/edit/style/ProjectEdit";
+
+/* MapGIS Design Picture */
+@import "./components/picture/style/ChoosePicture";
+
+/* MapGIS Design Row */
+@import "./components/row/style/ProjectRow";
+
+
+

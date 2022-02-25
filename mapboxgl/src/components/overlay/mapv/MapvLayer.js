@@ -168,7 +168,11 @@ export class MapvLayer {
   removeEvent() {
     if (this.mapContainer) {
       let findChild = false;
-      this.mapContainer.children.forEach((c) => {
+      // HTMLCollection不能作为数组直接遍历，需先转换成数组。
+      let mapContainerChildrenArray = Array.prototype.slice.call(
+        this.mapContainer.children
+      );
+      mapContainerChildrenArray.forEach((c) => {
         if (c.id == this.canvas.id) {
           findChild = true;
         }

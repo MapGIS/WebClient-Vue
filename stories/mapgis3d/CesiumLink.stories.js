@@ -30,28 +30,28 @@ const Template = (args, { argTypes }) => ({
     },
   },
   template: `<div class="mapgis-link-test">
-    <div class="item top-left">
+    <div class="scene-item top-left">
         <mapgis-web-scene>
             <mapgis-3d-raster-layer :url="url1"> </mapgis-3d-raster-layer>
             <mapgis-3d-link :enable="link"></mapgis-3d-link>
         </mapgis-web-scene>
     </div>
-    <div class="item top-right">
+    <div class="scene-item top-right">
         <mapgis-web-scene>
             <mapgis-3d-raster-layer :url="url2"> </mapgis-3d-raster-layer>
         </mapgis-web-scene>
     </div>
-    <div class="item bottom-left">
+    <div class="scene-item bottom-left">
         <mapgis-web-scene>
             <mapgis-3d-raster-layer :url="url3"> </mapgis-3d-raster-layer>
         </mapgis-web-scene>
     </div>
-    <div class="item bottom-right">
+    <div class="scene-item bottom-right">
         <mapgis-web-scene>
             <mapgis-3d-raster-layer :url="url4"> </mapgis-3d-raster-layer>
         </mapgis-web-scene>
     </div>
-    <button :class="{'control': true, active: link}" v-on:click="changeMode">{{info}}</button>
+    <div :class="{'control': true, 'link-active': link}" v-on:click="changeMode"></div>
   </div>`,
 });
 

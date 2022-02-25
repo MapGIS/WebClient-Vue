@@ -1,0 +1,284 @@
+@import "../../mixins/mixins.scss";
+@import "../../theme/theme.scss";
+
+// mapboxgl style
+.mapgis-zoom-wrapper {
+  flex-direction: column;
+  position: absolute;
+  top: 32px;
+  right: 30px;
+  width: 36px;
+  height: 73px;
+  padding: 0;
+  outline: none;
+  border-radius: 4px;
+  background-color: $content-background;
+  -webkit-box-shadow: 0px 2px 2px 1px $deep-shadow;
+  box-shadow: 0px 1px 2px 1px $deep-shadow;
+  z-index: 100;
+}
+
+.mapgis-zoom-wrapper .mapgis-zoom-item {
+  font-size: 25px;
+  line-height: 16px;
+  height: 36px;
+  width: 36px;
+  margin: 0 auto;
+  /* padding: 11px; */
+  outline: none;
+  font-weight: 500;
+  cursor: pointer;
+  color: $text-color;
+  text-align: center;
+}
+
+.mapgis-zoom-wrapper .mapgis-zoom-item:hover {
+  color: $primary-6;
+}
+
+.mapgis-zoom-wrapper .mapgis-zoom-item:not(:last-of-type):after {
+  display: block;
+  width: 16px;
+  height: 1px;
+  margin: 4px 10px;
+  background: $shadow;
+  content: "";
+}
+
+.mapgis-zoom-wrapper .anticon {
+  font-size: 24px;
+  margin: 6px;
+}
+
+#mapgis-legend-rule {
+  color: $text-color;
+}
+
+.mapgis-mvt-legend-label {
+  color: $text-color;
+}
+
+// popup
+.mapgis-popup-content {
+  &-title {
+    color: $primary-5;
+    font-weight: bolder;
+    margin-left: 6px;
+  }
+
+  padding: 0px;
+  background-color: $popup-background;
+}
+
+.mapboxgl-popup-close-button {
+  color: $primary-5;
+}
+
+.mapboxgl-popup-header {
+  background-color: $popup-background;
+}
+
+// geojson-layer
+.mapgis-geojson-default-wrapper {
+  display: none;
+}
+
+.mapgis-geojson-custom-wrapper {
+  display: none;
+}
+
+.measure-marker-popup-tip {
+  border: 10px solid transparent;
+  border-top-color: $component-background;
+}
+
+.measure-marker-popup-content {
+  padding: 4px $font-size-base;
+  box-shadow: $box-shadow-base;
+  border-radius: $border-radius-base;
+  background-color: $component-background;
+
+  > p {
+    margin-bottom: 0;
+  }
+}
+
+.measure-result {
+  margin: $font-size-sm / 2 0;
+
+  > div {
+    line-height: 20px;
+    font-size: $font-size-base - 1px;
+    font-family: $font-family;
+  }
+}
+
+.mapgis-3d-scene-layer {
+  .mapgis-ui-card-small > .mapgis-ui-card-body {
+    padding: 3px;
+  }
+}
+
+// cesium style
+.mapgis-3d-m3d-menus {
+  padding: 4px;
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 2px;
+  // box-shadow: -0.5px -0.5px 2px 2px $shadow-color;
+  // box-shadow: -0.5px -0.5px 2px 2px $primary-3;
+  &-header {
+    display: flex;
+    font-size: 20px;
+
+    &-menu {
+      color: $text-color;
+    }
+
+    &-menu-active {
+      color: $primary-6;
+    }
+
+    &-menu-small {
+      font-size: 18px;
+    }
+  }
+
+  &-content {
+    display: block;
+  }
+
+  .mapgis-ui-divider-horizontal.mapgis-ui-divider-with-text-center {
+    margin: 4px 0px;
+  }
+
+  .mapgis-ui-form-item {
+    margin-bottom: 0px;
+  }
+
+  .m-colorPicker .box {
+    /* position: absolute;
+    z-index: 2000; */
+    left: -30px;
+    width: 190px;
+    padding: 0px;
+  }
+
+  .m-colorPicker .colorBtn {
+    width: 150px;
+  }
+
+  /* .m-colorPicker .tColor li {
+    height: 10px !important;
+    width: 10px !important;
+  }
+  .m-colorPicker .bColor li {
+    height: 10px !important;
+    width: 10px !important;
+  } */
+}
+
+.mapgis-3d-popup-props {
+  &-title {
+    font-size: 14px;
+    width: 345px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    color: #999999;
+    border-bottom: 1px solid #dcdcdc;
+  }
+
+  &-item {
+    font-size: 14px;
+    font-family: Microsoft YaHei;
+    font-weight: bold;
+    line-height: 36px;
+    width: 345px;
+    height: 36px;
+
+    &:nth-child(odd) {
+      background: #e7e8e9;
+    }
+
+    &:nth-child(even) {
+      margin-top: 1px;
+      background: #f3f4f4;
+    }
+
+    &-key {
+      margin-left: 18px;
+      color: #999999;
+      float: left;
+    }
+
+    &-value {
+      margin-right: 12px;
+      color: #333333;
+      float: right;
+    }
+  }
+}
+
+.mapgis-3d-m3d-menu-explosion {
+  .anticon {
+    font-size: 32px;
+  }
+}
+
+.cesium-timeline-bar {
+  background: linear-gradient(to bottom,$background-color-light 0%,$background-color-light 50%, $body-background 100%);
+}
+
+.cesium-timeline-ticLabel {
+  color: $text-color;
+}
+
+.cesium-animation-shuttleRingBack {
+  fill: $background-color-light;
+}
+
+.cesium-animation-knobInner {
+  fill: $background-color-base;  
+}
+
+.cesium-animation-svgText {
+  fill: $text-color;
+}
+
+.cesium-animation-shuttleRingG .cesium-animation-shuttleRingSwoosh {
+  fill: $primary-6;
+}
+
+.cesium-animation-knobOuter {
+  fill: $primary-5;
+}
+.cesium-animation-shuttleRingPointer {
+  fill: $primary-6;
+}
+.cesium-animation-buttonToggled:hover .cesium-animation-buttonMain {
+  stroke: $primary-7;
+}
+.cesium-animation-buttonToggled .cesium-animation-buttonMain {
+  stroke: $primary-7;
+}
+.cesium-animation-buttonToggled .cesium-animation-buttonGlow {
+  fill: $primary-7;
+}
+.cesium-animation-buttonToggled:hover .cesium-animation-buttonMain {
+  stroke: $primary-6;
+}
+
+.cesium-animation-rectButton .cesium-animation-buttonMain {
+  fill: $primary-2;  
+  stroke: $primary-1;  
+}
+
+.mapgis-ui-map-outline-title {
+  color: $panel-option-color;
+  background: $panel-backgroud;
+}
+
+.mapgis-ui-map-outline-add {
+  color: $panel-option-color;
+  background: $panel-backgroud;
+}

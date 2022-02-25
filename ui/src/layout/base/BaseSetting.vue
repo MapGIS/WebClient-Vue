@@ -112,6 +112,11 @@ export default {
           title: "黑暗主题"
         },
         {
+          key: "technology",
+          url: require("./SettingDrawer/style/technology.png"),
+          title: "科技风主题"
+        },
+        {
           key: "warmGray",
           url: require("./SettingDrawer/style/grey.svg"),
           title: "灰色主题"

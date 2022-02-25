@@ -5,7 +5,7 @@
 
 <script>
 export default {
-  inject: ["Cesium", "CesiumZondy", "webGlobe"],
+  inject: ["Cesium", "vueCesium", "viewer"],
 
   props: {
     positions: {
@@ -41,13 +41,13 @@ export default {
   watch: {},
   methods: {
     createCesiumObject () {
-      const { Cesium, CesiumZondy, webGlobe } = this;
-      return new CesiumZondy.Manager.AdvancedAnalysisManager({
-        viewer: webGlobe.viewer
+      const { Cesium, vueCesium, viewer } = this;
+      return new window.CesiumZondy.Manager.AdvancedAnalysisManager({
+        viewer: viewer
       });
     },
     mount () {
-      const { webGlobe, vueIndex, vueKey, positions, options = {}, } = this;
+      const { viewer, vueIndex, vueKey, positions, options = {}, } = this;
       const { minHeight, maxHeight, floodSpeed, floodColor, frequency, animationSpeed, amplitude, specularIntensity } = options;
       let advancedAnalysisManager = this.createCesiumObject();
 
@@ -72,19 +72,19 @@ export default {
       flood.specularIntensity = specularIntensity;
 
       //添加洪水淹没结果显示
-      webGlobe.scene.VisualAnalysisManager.add(flood);
+      viewer.scene.VisualAnalysisManager.add(flood);
 
-      CesiumZondy.AdvancedAnalysisManager.addSource(vueKey, vueIndex, advancedAnalysisManager, {
+      vueCesium.AdvancedAnalysisManager.addSource(vueKey, vueIndex, advancedAnalysisManager, {
         flood: flood
       });
 
       this.$emit("load", this);
     },
     unmount () {
-      let { webGlobe, vueKey, vueIndex } = this;
-      let find = CesiumZondy.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
+      let { viewer, vueKey, vueIndex } = this;
+      let find = vueCesium.AdvancedAnalysisManager.findSource(vueKey, vueIndex);
       if (find && find.options && find.options.flood) {
-        webGlobe.scene.VisualAnalysisManager.remove(find.options.flood);
+        viewer.scene.VisualAnalysisManager.remove(find.options.flood);
       }
       this.$emit("unload", this);
     }

@@ -47,7 +47,7 @@ export default {
 
 const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<mapgis-web-scene style="height: 95vh">
+  template: `<mapgis-web-scene style="height:95vh">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
     <mapgis-3d-draw :enableControl="enableControl" 
                     :drawStyle="drawStyle"
@@ -65,9 +65,9 @@ draw.args = {
   drawStyle:{
     color:'#FF8C00',
     opacity:0.6,
-    // outlineColor:'#FFA500',
-    // width:4,
-    // outlineWidth:2
+    outlineColor:'#FFA500',
+    width:4,
+    outlineWidth:2
   },
   clampToGround:true,
   infinite:true

@@ -463,7 +463,7 @@ export function getAllAttribution(viewer) {
 }
 
 /**
- * 取得Cesium、CesiumZondy或webGlobe对象，如果有注入就用注入，没有就用window上的
+ * 取得Cesium、vueCesium或webGlobe对象，如果有注入就用注入，没有就用window上的
  * @param vm Object 组件的this对象
  * @param name String 对象名称
  * */
@@ -476,4 +476,69 @@ export function getCesiumBaseObject(vm, name) {
     }
   }
   return baseObject;
+}
+
+/**
+ * 获取数组最后一个元素
+ * @param {array} array
+ * @returns  元素
+ */
+export function last(array) {
+  const length = array == null ? 0 : array.length;
+  return length ? array[length - 1] : undefined;
+}
+
+/**
+ * 随机生成一个guid
+ * @returns {string}
+ */
+export const newGuid = function() {
+  let guid = "";
+  for (let i = 1; i <= 32; i++) {
+    let n = Math.floor(Math.random() * 16.0).toString(16);
+    guid += n;
+    if (i === 8 || i === 12 || i === 16 || i === 20) {
+      guid += "-";
+    }
+  }
+  return guid;
+};
+
+/**
+ * @description 生成UUID字符串
+ */
+export function uuid() {
+  let d = new Date().getTime();
+  if (window.performance && typeof window.performance.now === "function") {
+    d += performance.now();
+  }
+  const UuidStr = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+    // tslint:disable-next-line: no-bitwise
+    const r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    // tslint:disable-next-line: no-bitwise
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+  return UuidStr;
+}
+
+/**
+ * @description 获取当前相机视角
+ * @param viewer Cesium的viewer对象
+ * @return 相机视角对象
+ */
+export function getCamera(viewer) {
+  let camera = {
+    positionCartographic: {}
+  };
+  camera.positionCartographic.height =
+    viewer.camera.positionCartographic.height;
+  camera.positionCartographic.longitude =
+    viewer.camera.positionCartographic.longitude;
+  camera.positionCartographic.latitude =
+    viewer.camera.positionCartographic.latitude;
+  camera.heading = viewer.scene.camera.heading;
+  camera.pitch = viewer.scene.camera.pitch;
+  camera.roll = viewer.scene.camera.roll;
+  return camera;
 }
