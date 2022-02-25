@@ -30,6 +30,7 @@ export default {
       type: Number,
       default: 10,
     },
+    /** 是否强制显示在地图底部，false时用户自定义样式 */
     bottomMap: {
       type: Boolean,
       default: false,
@@ -322,7 +323,7 @@ export default {
             {
               innerText: span,
             },
-            []
+            [span]
           ),
         ]
       );

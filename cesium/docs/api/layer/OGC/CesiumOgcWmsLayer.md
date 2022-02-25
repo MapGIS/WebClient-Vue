@@ -207,9 +207,9 @@ export default {
 
 ```vue
 <template>
-  <mapgis-web-globe>
+  <mapgis-web-scene>
     <mapgis-3d-ogc-wms-layer :baseUrl="baseUrl" :layers="layers" :srs="srs" />
-  </mapgis-web-globe>
+  </mapgis-web-scene>>
   <button @click="changeProjection">动态投影</button>
 </template>
 
