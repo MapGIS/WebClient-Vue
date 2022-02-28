@@ -668,9 +668,9 @@ export default {
       const {
         id,
         positions,
-        style,
+        style = {},
         editPointStyle,
-        attributes,
+        attributes = {},
         name,
         show,
         editing,
@@ -679,18 +679,14 @@ export default {
         asynchronous
       } = json;
 
-      if (style) {
-        const {
-          text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
-          extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
-          pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
-          stRotation, isHermiteSpline, offsetHeight, loop
-        } = style;
-      }
+      const {
+        text, font, color, fillColor, backgroundColor, outlineWidth, outlineColor, image,
+        extrudedHeight, width, height, topRadius, backgroundOpacity, backgroundPadding, bottomRadius,
+        pixelSize, radius, materialType, material, cornerType, radiusX, radiusY, radiusZ, url, scale, addHeight,
+        stRotation, isHermiteSpline, offsetHeight, loop
+      } = style;
 
-      if (attributes) {
-        const {title, __flashStyle} = attributes;
-      }
+      const {title, __flashStyle} = attributes;
 
       let editPanelValues = {}, vm = this;
 

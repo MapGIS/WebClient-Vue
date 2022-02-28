@@ -24,6 +24,10 @@
               <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="delete"/>
               <span>删除</span>
             </div>
+            <div @click="$_export(index)" class="mapgis-mapstory-more-tool-row">
+              <mapgis-ui-svg-icon class="mapgis-mapstory-more-tool-row-icon" :iconStyle="editStyle" type="export"/>
+              <span>导出</span>
+            </div>
           </div>
           <mapgis-ui-col span="20">
             <div class="mapgis-mapstory-project-panel-title">
@@ -200,7 +204,7 @@ export default {
   right: 7px;
   z-index: 100000;
   width: 88px;
-  height: 80px;
+  height: 120px;
   border-radius: 3px;
   box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.6);
 }

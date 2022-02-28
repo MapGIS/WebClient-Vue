@@ -279,7 +279,6 @@ export default {
   white-space: normal;
   text-align: left;
   font-size: 16px;
-  color: rgba(0, 0, 0, .7);
   margin-top: 10px;
   height: calc(100% - 64px - 62px - 278px);
   overflow: hidden;
