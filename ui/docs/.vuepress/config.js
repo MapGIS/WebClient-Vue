@@ -55,9 +55,10 @@ module.exports = {
               //   ["/local/yarn.md", "本地开发"],
               //   ["/local/mixlocal.md", "本地/互联网混合开发"],
               ["/guide/", "快速上手"],
-              ["/local/publish.md", "发布流程"],
-              ["/guide/base.md", "基础组件"],
+              ["/guide/introduction.md", "产品介绍"],
               ["/guide/dev.md", "本地link部署包方式"],
+              ["/local/publish.md", "发布流程"],
+              // ["/guide/base.md", "基础组件"],
               ["/guide/build.md", "解决打包内存溢出问题"],
               ["/guide/borderBox.md", "解决全局设置为盒模型问题"],
               ["/guide/fontSize.md", "解决字体大小被全局设置的问题"]
