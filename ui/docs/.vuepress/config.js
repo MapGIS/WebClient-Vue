@@ -39,7 +39,7 @@ module.exports = {
           },
           {
             text: "API",
-            link: "/api/"
+            link: "/api/iconfont/IconFont.md"
           },
           {
             text: "WebClient",
@@ -52,17 +52,14 @@ module.exports = {
             title: "指南",
             collapsable: false,
             children: [
-              ["/local/yarn1.md", "本地开发"],
-              ["/local/mixlocal.md", "本地/互联网混合开发"],
+              // ["/local/yarn1.md", "本地开发"],
+              // ["/local/mixlocal1.md", "本地/互联网混合开发"],
               ["/guide/", "快速上手"],
               ["/guide/introduction.md", "产品介绍"],
               ["/guide/dev.md", "本地link部署包方式"],
               ["/local/publish.md", "发布流程"],
-              ["/local/yarn.md", "环境配置"],
+              ["/local/mixlocal.md", "环境配置"]
               // ["/guide/base.md", "基础组件"],
-              ["/guide/build.md", "解决打包内存溢出问题"],
-              ["/guide/borderBox.md", "解决全局设置为盒模型问题"],
-              ["/guide/fontSize.md", "解决字体大小被全局设置的问题"]
             ]
           },
           {
@@ -104,6 +101,15 @@ module.exports = {
               },
               ["/api/technology/borderbox.md", "科技风-卡片"],
               ["/api/technology/decoration.md", "科技风-装饰"]
+            ]
+          },
+          {
+            title: "问题解决",
+            collapsable: false,
+            children: [
+              ["/guide/build.md", "解决打包内存溢出问题"],
+              ["/guide/borderBox.md", "解决全局设置为盒模型问题"],
+              ["/guide/fontSize.md", "解决字体大小被全局设置的问题"]
             ]
           },
           {
