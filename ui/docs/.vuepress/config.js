@@ -52,12 +52,13 @@ module.exports = {
             title: "指南",
             collapsable: false,
             children: [
-              //   ["/local/yarn.md", "本地开发"],
-              //   ["/local/mixlocal.md", "本地/互联网混合开发"],
+              ["/local/yarn1.md", "本地开发"],
+              ["/local/mixlocal.md", "本地/互联网混合开发"],
               ["/guide/", "快速上手"],
               ["/guide/introduction.md", "产品介绍"],
               ["/guide/dev.md", "本地link部署包方式"],
               ["/local/publish.md", "发布流程"],
+              ["/local/yarn.md", "环境配置"],
               // ["/guide/base.md", "基础组件"],
               ["/guide/build.md", "解决打包内存溢出问题"],
               ["/guide/borderBox.md", "解决全局设置为盒模型问题"],
@@ -68,19 +69,39 @@ module.exports = {
             title: "API",
             collapsable: false,
             children: [
+              {
+                title: "图标",
+                collapsable: false
+              },
               ["/api/iconfont/IconFont.md", "图标"],
-              ["/api/div/Div.md", "区块"],
+              // ["/api/div/Div.md", "区块"],
               ["/api/collapsecard/CollapseCard.md", "收缩卡片"],
-              ["/api/sprite/Sprite.md", "符号库"],
+              // ["/api/sprite/Sprite.md", "符号库"],
+              {
+                title: "云盘组件",
+                collapsable: false
+              },
               ["/api/upload/Upload.md", "上传"],
               ["/api/clouddiskFileSelect/CDFileSelect.md", "从云盘选择"],
               ["/api/saveToClouddisk/SaveToCd.md", "保存至云盘"],
-              ["/api/panel/switch.md", "区域-开关"],
-              ["/api/panel/inputnumber.md", "区域-数值输入"],
-              ["/api/panel/select.md", "区域-选择器"],
-              ["/api/panel/select.md", "区域-颜色选取"],
-              ["/api/panel/tab.md", "区域-页面切换"],
+              {
+                title: "区域组件",
+                collapsable: false
+              },
+              ["/api/panel/switch.md", "开关"],
+              ["/api/panel/inputnumber.md", "数值输入"],
+              ["/api/panel/select.md", "选择器"],
+              ["/api/panel/select.md", "颜色选取"],
+              ["/api/panel/tab.md", "页面切换"],
+              {
+                title: "颜色",
+                collapsable: false
+              },
               ["/api/color/d3color.md", "颜色-D3色板"],
+              {
+                title: "科技风",
+                collapsable: false
+              },
               ["/api/technology/borderbox.md", "科技风-卡片"],
               ["/api/technology/decoration.md", "科技风-装饰"]
             ]
