@@ -175,6 +175,7 @@ const Template = (args, { argTypes }) => ({
           </mapgis-marker>
         </mapgis-ui-space>
       </mapgis-measure>
+    </div>
 </mapgis-web-map>`,
 });
 
