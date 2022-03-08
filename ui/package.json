@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-ui",
-  "version": "10.5.10",
+  "version": "10.5.13",
   "description": "中地数码webclient-vue-ui",
   "main": "dist-libs/webclient-vue-ui.umd.min.js",
   "module1": "src/index.js",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "2.1.1",
-    "@mapgis/webclient-es6-service": "^10.5.10",
+    "@mapgis/webclient-es6-service": "^10.5.13",
     "@mapgis/webclient-store": "^10.5.5",
     "@vue/composition-api": "^1.0.0-rc.13",
     "@vuepress/plugin-active-header-links": "^1.8.2",
@@ -79,6 +79,11 @@
     "vue",
     "mapgis-ui"
   ],
+  "repository": "https://github.com/MapGIS/WebClient-Vue/tree/main/ui",
+  "bugs": {
+    "url": "https://github.com/MapGIS/WebClient-Vue/issues"
+  },
+  "homepage": "https://github.com/MapGIS/WebClient-Vue/tree/main/ui",
   "author": "Wuhan Zondy Cyber Science&Technology Co.Ltd.",
   "license": "Apache2"
 }
