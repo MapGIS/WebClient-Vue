@@ -35,12 +35,17 @@ export default {
           if (!this.echartsLayer) {
             return;
           }
-          this.unmount();
-          this.mount();
+          this.update(next);
+          // this.unmount();
+          // this.mount();
         },
         deep:true,
         immediate:true
       })
+    },
+    update(options) {
+      const {echartsLayer} = this;
+      echartsLayer.update(options);
     },
     mount() {
       const {viewer} = this;

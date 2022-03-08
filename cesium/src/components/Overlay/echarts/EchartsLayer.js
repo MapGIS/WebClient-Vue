@@ -1,8 +1,9 @@
 import * as echarts from "echarts";
+import "echarts-gl";
 
 import { MapCoordSys } from "./MapCoordSys";
 
-var echartsIdIndex = 0;
+window.EchartsIdIndex = 0;
 
 /**
  * @author 基础平台/创新中心 潘卓然 ParnDeedlit
@@ -22,7 +23,7 @@ export class EchartsLayer {
     this.options = options;
     this.initStats = false;
 
-    this.layerId = options.layerId || "echarts" + echartsIdIndex++;
+    this.layerId = options.layerId || "echarts" + ++window.EchartsIdIndex;
     this.layerClass = options.layerClass || "echartlayerdefaultclass";
 
     this.initDevicePixelRatio();
@@ -59,27 +60,37 @@ export class EchartsLayer {
   }
 
   initEcharts() {
-    echarts.cesiumMap = this.map;
-
-    echarts.registerCoordinateSystem("cesium", MapCoordSys);
+    // echarts.cesiumMap = this.map; echart 5.0版本结构调整后不再允许动态增加字段了，因此用全局的window来替代
+    window.EchartCesiumMap = window.EchartCesiumMap || {};
+    window.EchartCesiumMap[window.EchartsIdIndex] = this.map;
 
     echarts.extendComponentModel({
       type: "cesium",
-      getBMap: function() {
+      getBMap: function () {
         return this.__cesium;
       },
       defaultOption: {
-        roam: false
-      }
+        roam: false,
+      },
     });
+
+    echarts.registerCoordinateSystem("cesium", MapCoordSys);
 
     echarts.registerAction(
       {
         type: "CesiumRoma",
         event: "CesiumRoma",
-        update: "updateLayout"
+        update: "updateLayout",
       },
-      function(payload, ecModel) {}
+      function (payload, ecModel) {
+        ecModel.eachComponent(
+          {
+            mainType: "cesium",
+            query: payload,
+          },
+          function (componentModel) {}
+        );
+      }
     );
 
     return this;
@@ -119,7 +130,7 @@ export class EchartsLayer {
   _resizeCanvas() {
     const self = this;
 
-    window.onresize = function() {
+    window.onresize = function () {
       var canvas = self.canvas;
       var map = self.map;
 
@@ -154,14 +165,13 @@ export class EchartsLayer {
     echarts.extendComponentView({
       type: "cesium",
 
-      render: function(mapModel, ecModel, api) {
+      render: function (mapModel, ecModel, api) {
         var rendering = true;
 
-        var cesiumMap = echarts.cesiumMap;
-
+        var cesiumMap = window.EchartCesiumMap[window.EchartsIdIndex]; // echarts.cesiumMap;
         var viewportRoot = api.getZr().painter.getViewportRoot();
         var coordSys = mapModel.coordinateSystem;
-        var moveHandler = function(type, target) {
+        var moveHandler = function (type, target) {
           if (rendering) {
             return;
           }
@@ -170,7 +180,7 @@ export class EchartsLayer {
 
           var mapOffset = [
             -parseInt(offsetEl.style.left, 10) || 0,
-            -parseInt(offsetEl.style.top, 10) || 0
+            -parseInt(offsetEl.style.top, 10) || 0,
           ];
           viewportRoot.style.left = mapOffset[0] + "px";
           viewportRoot.style.top = mapOffset[1] + "px";
@@ -181,11 +191,11 @@ export class EchartsLayer {
           //mapModel.__mapViewRect = cesiumMap.scene.camera.computeViewRectangle();
 
           api.dispatchAction({
-            type: "CesiumRoma"
+            type: "CesiumRoma",
           });
         };
 
-        var moveEndHandler = function(type, target) {
+        var moveEndHandler = function (type, target) {
           if (rendering) {
             return;
           }
@@ -193,7 +203,7 @@ export class EchartsLayer {
 
           var mapOffset = [
             -parseInt(offsetEl.style.left, 10) || 0,
-            -parseInt(offsetEl.style.top, 10) || 0
+            -parseInt(offsetEl.style.top, 10) || 0,
           ];
           viewportRoot.style.left = mapOffset[0] + "px";
           viewportRoot.style.top = mapOffset[1] + "px";
@@ -202,7 +212,9 @@ export class EchartsLayer {
           mapModel.__mapOffset = mapOffset;
 
           api.dispatchAction({
-            type: "CesiumRoma"
+            type: "CesiumRoma",
+            pitch: 0, // self.map.camera.pitch,
+            bearing: 0, // self.map,
           });
           self._visible();
         };
@@ -213,7 +225,7 @@ export class EchartsLayer {
             return;
           }
           api.dispatchAction({
-            type: "CesiumRoma"
+            type: "CesiumRoma",
           });
         }
 
@@ -222,7 +234,7 @@ export class EchartsLayer {
             return;
           }
           api.dispatchAction({
-            type: "CesiumRoma"
+            type: "CesiumRoma",
           });
         }
 
@@ -250,7 +262,7 @@ export class EchartsLayer {
             moveEndHandler,
             Cesium.ScreenSpaceEventType.RIGHT_UP
           );
-          self.map.scene.camera.moveEnd.addEventListener(function() {
+          self.map.scene.camera.moveEnd.addEventListener(function () {
             //获取当前相机高度
             moveEndHandler();
           });
@@ -274,7 +286,7 @@ export class EchartsLayer {
         }
 
         rendering = false;
-      }
+      },
     });
 
     this.chart.setOption(this.options);
@@ -295,6 +307,15 @@ export class EchartsLayer {
    */
   hide() {
     this._unvisible();
+  }
+
+  /**
+   * 更新图层
+   * @param options - {Object} echarts.options
+   * @function vueCesium.zondy.EchartsLayer.prototype.hide*
+   */
+  update(options) {
+    this.chart.setOption(options);
   }
 
   /**

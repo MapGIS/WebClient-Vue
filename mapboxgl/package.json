@@ -1,9 +1,9 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "10.5.10",
+  "version": "10.5.13",
   "description": "中地数码webclient-vue-mapboxgl",
-  "main1": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
-  "module": "src/main.js",
+  "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
+  "module1": "src/main.js",
   "scripts": {
     "build": "node --max_old_space_size=8196 ./node_modules/@vue/cli-service/bin/vue-cli-service build --target lib --name webclient-vue-mapboxgl src/main.js",
     "serve": "vue-cli-service build --target lib --name webclient-vue-mapboxgl src/index.js --watch",
@@ -30,9 +30,9 @@
     "@mapgis/mapbox-gl-draw-circle": "^10.5.5",
     "@mapgis/mapbox-gl-draw-radius": "^1.0.0",
     "@mapgis/mapbox-gl-inspect": "^10.5.6",
-    "@mapgis/webclient-es6-service": "^10.5.10",
+    "@mapgis/webclient-es6-service": "^10.5.13",
     "@mapgis/webclient-store": "^10.5.5",
-    "@mapgis/webclient-vue-ui": "^10.5.10",
+    "@mapgis/webclient-vue-ui": "^10.5.11",
     "@turf/turf": "^6.5.0",
     "echarts": "^5.3.0",
     "file-saver": "^2.0.5",
@@ -77,6 +77,11 @@
     "vue",
     "mapbox"
   ],
+  "repository": "https://github.com/MapGIS/WebClient-Vue/tree/main/mapboxgl",
+  "bugs": {
+    "url": "https://github.com/MapGIS/WebClient-Vue/issues"
+  },
+  "homepage": "https://github.com/MapGIS/WebClient-Vue/tree/main/mapboxgl",
   "author": "Wuhan Zondy Cyber Science&Technology Co.Ltd.",
   "license": "Apache2"
 }
