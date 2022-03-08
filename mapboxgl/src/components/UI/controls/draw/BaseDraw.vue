@@ -29,7 +29,7 @@
         </mapgis-ui-tooltip>
       </mapgis-ui-space>
     </div>
-    <mapgis-marker v-if="showMarkerCopy"  :coordinates="markerCoordinate">
+    <mapgis-marker v-if="showMarkerCopy" :coordinates="markerCoordinate">
       <div slot="marker" class="label">
         <div>半径：{{ radius }}米</div>
       </div>
@@ -47,7 +47,7 @@ import {
   CircleMode,
   DragCircleMode,
   DirectMode,
-  SimpleSelectMode
+  SimpleSelectMode,
 } from "@mapgis/mapbox-gl-draw-circle";
 import StaticMode from "@mapbox/mapbox-gl-draw-static-mode";
 
@@ -85,7 +85,7 @@ const drawEvents = {
   drawselectionchange: "draw.selectionchange",
   drawmodechange: "draw.modechange",
   drawrender: "draw.render",
-  drawactionable: "draw.actionable"
+  drawactionable: "draw.actionable",
 };
 
 export default {
@@ -103,14 +103,14 @@ export default {
       get drawer() {
         // 提供marker给子组件popup或者插槽槽
         return self.drawer;
-      }
+      },
     };
   },
 
   props: {
     editable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // expandControl: {
     //   type: Boolean,
@@ -118,28 +118,28 @@ export default {
     // },
     enableControl: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // mapbox drawer options
     keybindings: {
       type: Boolean,
-      default: true
+      default: true,
     },
     touchEnabled: {
       type: Boolean,
-      default: true
+      default: true,
     },
     boxSelect: {
       type: Boolean,
-      default: true
+      default: true,
     },
     clickBuffer: {
       type: Number,
-      default: 2
+      default: 2,
     },
     touchBuffer: {
       type: Number,
-      default: 25
+      default: 25,
     },
     controls: {
       type: Object,
@@ -150,38 +150,38 @@ export default {
           polygon: false,
           trash: false,
           combine_features: false,
-          uncombine_features: false
+          uncombine_features: false,
         };
-      }
+      },
     },
     displayControlsDefault: {
       type: Boolean,
-      default: true
+      default: true,
     },
     styles: {
       type: Array,
-      default: () => DefaultDrawStyle
+      default: () => DefaultDrawStyle,
     },
     modes: {
       type: Object,
-      default: () => modes
+      default: () => modes,
     },
     defaultMode: {
       type: String,
-      default: "simple_select"
+      default: "simple_select",
     },
     userProperties: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    showMarker:{
-      type:Boolean,
-      default:true
+    showMarker: {
+      type: Boolean,
+      default: true,
     },
-    addLineLayer:{
-      type:Boolean,
-      default:true
-    }
+    addLineLayer: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   data() {
@@ -201,44 +201,44 @@ export default {
           icon: "mapgis-huizhidian2",
           type: "primary",
           tip: "画点",
-          click: this.togglePoint
+          click: this.togglePoint,
         },
         {
           icon: "mapgis-huizhixian1",
           type: "primary",
           tip: "画线",
-          click: this.togglePolyline
+          click: this.togglePolyline,
         },
         {
           icon: "mapgis-huizhijuxing",
           type: "primary",
           tip: "画矩形",
-          click: this.toggleRect
+          click: this.toggleRect,
         },
         {
           icon: "mapgis-draw-polygon",
           type: "primary",
           tip: "画多边形",
-          click: this.togglePolygon
+          click: this.togglePolygon,
         },
         {
           icon: "mapgis-huizhiyuan1",
           type: "primary",
           tip: "画圆",
-          click: this.toggleCircle
+          click: this.toggleCircle,
         },
         {
           icon: "mapgis-icon_huizhiyuanxing",
           type: "primary",
           tip: "画半径",
-          click: this.toggleRadius
+          click: this.toggleRadius,
         },
         {
           icon: "mapgis-shanchu_dianji",
           type: "primary",
           tip: "删除选中图元",
-          click: this.toggleDelete
-        }
+          click: this.toggleDelete,
+        },
         /*{
           icon: "mapgis-shanchudangqianziceng",
           type: "primary",
@@ -258,11 +258,11 @@ export default {
           click: this.toggleQueryByPolygon
         } */
       ],
-      markerCoordinate:[],
-      centerCoordinate:[],
+      markerCoordinate: [],
+      centerCoordinate: [],
       radius: 0,
-      showMarkerCopy:false,
-      addLineLayerCopy:this.addLineLayer
+      showMarkerCopy: false,
+      addLineLayerCopy: this.addLineLayer,
     };
   },
 
@@ -276,10 +276,10 @@ export default {
       this.drawer.setDraggable(next);
     },
     styles: {
-      handler: function(news) {
+      handler: function (news) {
         this.oldStyles = this.combineStyle(news);
-      }
-    }
+      },
+    },
   },
 
   mounted() {
@@ -305,13 +305,13 @@ export default {
 
   methods: {
     enableDrawer() {
-      if (this.map.getLayer('extent')){
-        this.map.removeLayer('extent');
-        this.map.removeSource('extent');
+      if (this.map.getLayer("extent")) {
+        this.map.removeLayer("extent");
+        this.map.removeSource("extent");
       }
-      if (this.map.getLayer('centerPoint')){
-        this.map.removeLayer('centerPoint');
-        this.map.removeSource('centerPoint');
+      if (this.map.getLayer("centerPoint")) {
+        this.map.removeLayer("centerPoint");
+        this.map.removeSource("centerPoint");
       }
       this.$_compareStyle();
       this.$_initDraw();
@@ -326,7 +326,7 @@ export default {
     $_initDraw() {
       const draweroptions = {
         ...this.$props,
-        styles: this.oldStyles
+        styles: this.oldStyles,
       };
       this.drawer = new MapboxDraw(draweroptions);
 
@@ -343,14 +343,14 @@ export default {
       // if (this.editable) {
       //   listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
       // } else {
-        listeners = ["drawUpdate", "drawCreate"].concat(
-          Object.keys(this.$listeners)
-        );
+      listeners = ["drawUpdate", "drawCreate", "drawRender"].concat(
+        Object.keys(this.$listeners)
+      );
       // }
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       // Object.keys(this.$listeners).forEach(eventName => {
-      listeners.forEach(eventName => {
+      listeners.forEach((eventName) => {
         if (events.includes(eventName)) {
           this.$_bindDrawEvents(
             drawEvents[eventName],
@@ -361,14 +361,18 @@ export default {
     },
 
     // 按照@mapgis/webclient-vue-mapboxgl的规范 发送事件 ，其实就是用{type：eventName}包装事件名
-    $_emitDrawEvent(eventName, eventData) {
-      // console.log("_emitDrawEvent", eventName, eventData);
+    $_emitDrawEvent(eventName, eventData, payload) {
+      // console.log("_emitDrawEvent", eventName, eventData, payload);
       const vm = this;
       let mode = this.drawer.getMode();
-      if (vm.drawRadius && mode== "simple_select"){
+      if (vm.drawRadius && eventName == "drawRender" ) {
+        let result = this.drawer.getSelected();
+        vm.addMarkerAndLine(result);
+      }
+      if (vm.drawRadius && mode == "simple_select") {
         vm.addMarkerAndLine(eventData);
       }
-      if (mode == "draw_radius"){
+      if (mode == "draw_radius") {
         vm.addMarkerAndLine(eventData);
       }
       if (eventName == "drawUpdate" && mode == "direct_select") {
@@ -404,8 +408,8 @@ export default {
     combineStyle(news) {
       let olds = this.oldStyles || DefaultDrawStyle;
       news = news || this.styles;
-      let combines = olds.filter(l => {
-        return !news.find(f => f.id === l.id);
+      let combines = olds.filter((l) => {
+        return !news.find((f) => f.id === l.id);
       });
       combines = combines.concat(news);
       return combines;
@@ -413,18 +417,18 @@ export default {
 
     changeMapStyle(layers) {
       let { map } = this;
-      layers.forEach(layer => {
+      layers.forEach((layer) => {
         if (map.getLayer(layer)) {
           if (layer.filter) {
             map.setFilter(layer.id, layer.filter);
           }
           if (layer.paint) {
-            Object.keys(layer.paint).forEach(key => {
+            Object.keys(layer.paint).forEach((key) => {
               map.setPaintProperty(layer.id, key, layer.paint[key]);
             });
           }
           if (layer.layout) {
-            Object.keys(layer.layout).forEach(key => {
+            Object.keys(layer.layout).forEach((key) => {
               map.setLayoutProperty(layer.id, key, layer.layout[key]);
             });
           }
@@ -488,7 +492,7 @@ export default {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
       this.drawRadius = false;
-      if (this.showMarkerCopy){
+      if (this.showMarkerCopy) {
         this.showMarkerCopy = false;
         this.markerCoordinate = [];
       }
@@ -505,25 +509,31 @@ export default {
       let center = feature.properties.center;
       let onePoint = feature.geometry.coordinates[0][0];
 
-      vm.markerCoordinate = [onePoint[0],onePoint[1]];
-      let lineString = turf.lineString([[onePoint[0],onePoint[1]],[center[0],center[1]]],{name:'line1'});
-      let point = turf.point([center[0],center[1]]);
+      vm.markerCoordinate = [onePoint[0], onePoint[1]];
+      let lineString = turf.lineString(
+        [
+          [onePoint[0], onePoint[1]],
+          [center[0], center[1]],
+        ],
+        { name: "line1" }
+      );
+      let point = turf.point([center[0], center[1]]);
       // let radiusinkm = Math.round(Math.sqrt(area / Math.PI));
       let radiusinkm = feature.properties.radiusInKm;
-      if (vm.showMarker){
+      if (vm.showMarker) {
         vm.showMarkerCopy = true;
       }
-      vm.centerCoordinate = [center[0],center[1]];
+      vm.centerCoordinate = [center[0], center[1]];
       vm.radius = parseInt(radiusinkm * 1000);
-      if (vm.addLineLayer){
+      if (vm.addLineLayer) {
         // 先判断是否存在id为extent的线图层，有则删除，无则添加线图层
-        if (vm.map.getLayer('centerPoint')){
-          vm.map.removeLayer('centerPoint');
-          vm.map.removeSource('centerPoint');
+        if (vm.map.getLayer("centerPoint")) {
+          vm.map.removeLayer("centerPoint");
+          vm.map.removeSource("centerPoint");
         }
-        if (vm.map.getLayer('extent')){
-          vm.map.removeLayer('extent');
-          vm.map.removeSource('extent');
+        if (vm.map.getLayer("extent")) {
+          vm.map.removeLayer("extent");
+          vm.map.removeSource("extent");
         }
 
         vm.map.addSource("centerPoint", {
@@ -535,9 +545,9 @@ export default {
           type: "circle",
           source: "centerPoint",
           paint: {
-            'circle-color':'#3bb2d0',
-            'circle-radius':3,
-            'circle-opacity': 0.8,
+            "circle-color": "#3bb2d0",
+            "circle-radius": 3,
+            "circle-opacity": 0.8,
           },
         });
         vm.map.addSource("extent", {
@@ -549,13 +559,13 @@ export default {
           type: "line",
           source: "extent",
           paint: {
-            'line-color': '#3bb2d0',
-            'line-width': 2
+            "line-color": "#3bb2d0",
+            "line-width": 2,
           },
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
