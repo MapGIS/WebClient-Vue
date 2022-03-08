@@ -309,6 +309,10 @@ export default {
         this.map.removeLayer('extent');
         this.map.removeSource('extent');
       }
+      if (this.map.getLayer('centerPoint')){
+        this.map.removeLayer('centerPoint');
+        this.map.removeSource('centerPoint');
+      }
       this.$_compareStyle();
       this.$_initDraw();
       this.$_unbindEditEvents();
