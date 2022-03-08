@@ -29,6 +29,11 @@
         </mapgis-ui-tooltip>
       </mapgis-ui-space>
     </div>
+    <mapgis-marker v-if="showMarkerCopy"  :coordinates="markerCoordinate">
+      <div slot="marker" class="label">
+        <div>半径：{{ radius }}米</div>
+      </div>
+    </mapgis-marker>
   </div>
 </template>
 
@@ -96,7 +101,7 @@ export default {
     const self = this;
     return {
       get drawer() {
-        // 提供markerg给子组件popup或者插槽槽
+        // 提供marker给子组件popup或者插槽槽
         return self.drawer;
       }
     };
@@ -168,6 +173,14 @@ export default {
     userProperties: {
       type: Boolean,
       default: false
+    },
+    showMarker:{
+      type:Boolean,
+      default:true
+    },
+    addLineLayer:{
+      type:Boolean,
+      default:true
     }
   },
 
@@ -244,7 +257,12 @@ export default {
           tip: "多边形查询",
           click: this.toggleQueryByPolygon
         } */
-      ]
+      ],
+      markerCoordinate:[],
+      centerCoordinate:[],
+      radius: 0,
+      showMarkerCopy:false,
+      addLineLayerCopy:this.addLineLayer
     };
   },
 
@@ -287,6 +305,10 @@ export default {
 
   methods: {
     enableDrawer() {
+      if (this.map.getLayer('extent')){
+        this.map.removeLayer('extent');
+        this.map.removeSource('extent');
+      }
       this.$_compareStyle();
       this.$_initDraw();
       this.$_unbindEditEvents();
@@ -314,13 +336,13 @@ export default {
       // 因此我们需要覆盖该方法, 按照对应的业务方式实现
       const vm = this;
       let listeners;
-      if (this.editable) {
-        listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
-      } else {
+      // if (this.editable) {
+      //   listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
+      // } else {
         listeners = ["drawUpdate", "drawCreate"].concat(
           Object.keys(this.$listeners)
         );
-      }
+      // }
 
       // 使用vue的this.$listeners方式来订阅用户指定的事件
       // Object.keys(this.$listeners).forEach(eventName => {
@@ -339,16 +361,23 @@ export default {
       // console.log("_emitDrawEvent", eventName, eventData);
       const vm = this;
       let mode = this.drawer.getMode();
+      if (vm.drawRadius && mode== "simple_select"){
+        vm.addMarkerAndLine(eventData);
+      }
+      if (mode == "draw_radius"){
+        vm.addMarkerAndLine(eventData);
+      }
       if (eventName == "drawUpdate" && mode == "direct_select") {
         if (
           eventData.action == "change_coordinates" &&
           eventData.features &&
           eventData.features.length >= 0
         ) {
+          vm.addMarkerAndLine(eventData);
           let feature = eventData.features[0];
-          let center = turf.center(feature);
+          let center = feature.properties.center;
           let area = Math.round(turf.area(feature)) / 1000000;
-          let radiusinkm = Math.round(Math.sqrt(area / Math.PI)) / 1000;
+          let radiusinkm = feature.properties.radiusInKm;
           this.$emit("update-radius", { area, radiusinkm, center });
         }
       } else if (eventName == "drawCreate" && !this.editable) {
@@ -448,18 +477,80 @@ export default {
     },
     toggleRadius() {
       this.enableDrawer();
+      this.drawRadius = true;
       this.drawer && this.drawer.changeMode("draw_radius");
     },
     toggleDelete() {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
+      this.drawRadius = false;
+      if (this.showMarkerCopy){
+        this.showMarkerCopy = false;
+        this.markerCoordinate = [];
+      }
     },
     toggleDeleteAll() {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
     },
     toggleQueryByRect() {},
-    toggleQueryByPolygon() {}
+    toggleQueryByPolygon() {},
+    addMarkerAndLine(eventData) {
+      const vm = this;
+      let feature = eventData.features[0];
+      let center = feature.properties.center;
+      let onePoint = feature.geometry.coordinates[0][0];
+
+      vm.markerCoordinate = [onePoint[0],onePoint[1]];
+      let lineString = turf.lineString([[onePoint[0],onePoint[1]],[center[0],center[1]]],{name:'line1'});
+      let point = turf.point([center[0],center[1]]);
+      // let radiusinkm = Math.round(Math.sqrt(area / Math.PI));
+      let radiusinkm = feature.properties.radiusInKm;
+      if (vm.showMarker){
+        vm.showMarkerCopy = true;
+      }
+      vm.centerCoordinate = [center[0],center[1]];
+      vm.radius = parseInt(radiusinkm * 1000);
+      if (vm.addLineLayer){
+        // 先判断是否存在id为extent的线图层，有则删除，无则添加线图层
+        if (vm.map.getLayer('centerPoint')){
+          vm.map.removeLayer('centerPoint');
+          vm.map.removeSource('centerPoint');
+        }
+        if (vm.map.getLayer('extent')){
+          vm.map.removeLayer('extent');
+          vm.map.removeSource('extent');
+        }
+
+        vm.map.addSource("centerPoint", {
+          type: "geojson",
+          data: point,
+        });
+        vm.map.addLayer({
+          id: "centerPoint",
+          type: "circle",
+          source: "centerPoint",
+          paint: {
+            'circle-color':'#3bb2d0',
+            'circle-radius':3,
+            'circle-opacity': 0.8,
+          },
+        });
+        vm.map.addSource("extent", {
+          type: "geojson",
+          data: lineString,
+        });
+        vm.map.addLayer({
+          id: "extent",
+          type: "line",
+          source: "extent",
+          paint: {
+            'line-color': '#3bb2d0',
+            'line-width': 2
+          },
+        });
+      }
+    }
   }
 };
 </script>
