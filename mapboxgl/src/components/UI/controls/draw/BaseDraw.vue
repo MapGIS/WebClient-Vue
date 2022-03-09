@@ -31,7 +31,7 @@
     </div>
     <mapgis-marker v-if="showMarkerCopy" :coordinates="markerCoordinate">
       <div slot="marker" class="label">
-        <div style="margin-bottom:calc(4vh) ">{{ radius }}米</div>
+        <div class="radiusValue">{{ radius }}米</div>
       </div>
     </mapgis-marker>
   </div>
@@ -608,7 +608,6 @@ export default {
   overflow: hidden;
   /*transition: width 0.5s;*/
 }
-
 .mapgis-draw-control {
   width: fit-content;
   position: absolute;
@@ -616,4 +615,11 @@ export default {
   /*left: 10px;*/
   z-index: 3000;
 }
+.radiusValue{
+  margin-bottom: calc(6vh);
+  padding: 5px;
+  border-radius: 5px;
+  background-color: cornsilk;
+}
+
 </style>

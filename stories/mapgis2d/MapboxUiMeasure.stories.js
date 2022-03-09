@@ -80,6 +80,14 @@ const Template = (args, { argTypes }) => ({
         background: isAdvanceControl ? "#fff" : "transparent",
       };
     },
+    showSize(){
+      return {
+        marginBottom:"calc(6vh)",
+        padding:"5px",
+        borderRadius:"5px",
+        backgroundColor:"cornsilk"
+      }
+    },
     toolbarStyle({ toolbarVisible }) {
       return {
         overflow: "hidden",
@@ -128,6 +136,11 @@ const Template = (args, { argTypes }) => ({
       layerId="tdt"
       url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
     />
+<!--        <mapgis-arcgis-tile-layer       layerId="arcgis_tile_layerId"-->
+<!--                                        baseUrl="http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer"-->
+<!--                                        :tileSize="256"-->
+<!--                                        :zoomOffset="0"-->
+<!--                                        :forceOffset="false"/>-->
     <div
       v-show="enableControl"
       :style="controlStyle"
@@ -135,6 +148,8 @@ const Template = (args, { argTypes }) => ({
     >
       <mapgis-measure
         ref="mapgisMeasure"
+        :enable-control="enableControl"
+        :is-advance-control="isAdvanceControl"
         @measureresult="measureResult = $event"
       >
         <mapgis-ui-space
@@ -167,11 +182,12 @@ const Template = (args, { argTypes }) => ({
             color="#ff0000"
           >
             <div slot="marker" class="mapgis-measure-control-label">
-              <div v-if="measureResult.geographyArea">
-                面积：{{ measureResult.geographyArea }}
+              <div :style="showSize">
+                <div v-if="measureResult.geographyArea">
+                  面积：{{ measureResult.geographyArea }}</div>
+                <div>周长：{{ measureResult.geographyPerimeter }}</div>
               </div>
-              <div>周长：{{ measureResult.geographyPerimeter }}</div>
-            </div>
+             </div>
           </mapgis-marker>
         </mapgis-ui-space>
       </mapgis-measure>
