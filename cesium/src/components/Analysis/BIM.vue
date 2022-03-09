@@ -656,6 +656,7 @@ export default {
       const { vueKey, innerVueIndex, vueCesium } = this;
       let find = vueCesium.BimManager.findSource(vueKey, innerVueIndex);
       if (find && find.options.originStyles) {
+        let { tree } = find.options;
         find.options.originStyles.forEach((i) => {
           let mapgism3dNode = tree.getM3DByName(i.name);
           if (mapgism3dNode) {
