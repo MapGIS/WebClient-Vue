@@ -1,29 +1,29 @@
 <template>
   <div>
     <!-- slot for toolbar -->
-    <slot name="toolbar" />
+    <slot name="toolbar"/>
     <!-- slot for toolbar-item -->
-    <slot v-if="drawer" />
+    <slot v-if="drawer"/>
     <div class="mapgis-draw-control" v-show="enableControl">
       <mapgis-ui-space>
         <mapgis-ui-tooltip
-          v-for="(item, i) in draws"
-          :key="i"
-          placement="bottom"
+            v-for="(item, i) in draws"
+            :key="i"
+            placement="bottom"
         >
           <template slot="title">
             <span>{{ item.tip }}</span>
           </template>
           <mapgis-ui-button
-            shape="circle"
-            :type="item.type"
-            @click="item.click"
-            :class="item.className"
+              shape="circle"
+              :type="item.type"
+              @click="item.click"
+              :class="item.className"
           >
             <mapgis-ui-iconfont
-              :type="item.icon"
-              :class="item.className"
-              theme="filled"
+                :type="item.icon"
+                :class="item.className"
+                theme="filled"
             />
           </mapgis-ui-button>
         </mapgis-ui-tooltip>
@@ -31,7 +31,7 @@
     </div>
     <mapgis-marker v-if="showMarkerCopy" :coordinates="markerCoordinate">
       <div slot="marker" class="label">
-        <div>半径：{{ radius }}米</div>
+        <div style="margin-bottom:calc(4vh) ">{{ radius }}米</div>
       </div>
     </mapgis-marker>
   </div>
@@ -174,14 +174,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    showMarker: {
+    showSize: {
       type: Boolean,
       default: true,
-    },
-    addLineLayer: {
-      type: Boolean,
-      default: true,
-    },
+    }
   },
 
   data() {
@@ -261,8 +257,17 @@ export default {
       markerCoordinate: [],
       centerCoordinate: [],
       radius: 0,
+      pushRadius: "mapgis-lashen",
       showMarkerCopy: false,
-      addLineLayerCopy: this.addLineLayer,
+      oldFeature: [{
+        geometry: {
+          coordinates: [],
+        },
+        id: "",
+        properties: {},
+        type: "Feature"
+      }],
+      showSizeStyle: this.styles
     };
   },
 
@@ -278,6 +283,7 @@ export default {
     styles: {
       handler: function (news) {
         this.oldStyles = this.combineStyle(news);
+        this.showSizeStyle = news;
       },
     },
   },
@@ -288,7 +294,7 @@ export default {
       let position = this.position;
       let pos = position.split("-");
       document.querySelector(".mapgis-draw-control").style =
-        pos[0] + ": 10px;" + pos[1] + ": 10px;";
+          pos[0] + ": 10px;" + pos[1] + ": 10px;";
       // if (this.expandControl) {
       //   this.changeFold();
       // } else {
@@ -313,12 +319,17 @@ export default {
         this.map.removeLayer("centerPoint");
         this.map.removeSource("centerPoint");
       }
+      if (this.showMarkerCopy) {
+        this.showMarkerCopy = false;
+        this.markerCoordinate = [];
+      }
+      this.drawRadius = false;
       this.$_compareStyle();
       this.$_initDraw();
       this.$_unbindEditEvents();
       this.$_unbindMeasureEvents();
       this.$_addDrawControl(this.drawer);
-      this.$_emitEvent("added", { drawer: this.drawer });
+      this.$_emitEvent("added", {drawer: this.drawer});
       this.$_unbindDrawEvents();
       this.$_bindSelfEvents(Object.keys(drawEvents));
     },
@@ -343,8 +354,8 @@ export default {
       // if (this.editable) {
       //   listeners = ["drawUpdate"].concat(Object.keys(this.$listeners));
       // } else {
-      listeners = ["drawUpdate", "drawCreate", "drawRender"].concat(
-        Object.keys(this.$listeners)
+      listeners = ["drawUpdate", "drawCreate", "drawRender", "drawActionable"].concat(
+          Object.keys(this.$listeners)
       );
       // }
 
@@ -353,8 +364,8 @@ export default {
       listeners.forEach((eventName) => {
         if (events.includes(eventName)) {
           this.$_bindDrawEvents(
-            drawEvents[eventName],
-            vm.$_emitDrawEvent.bind(vm, eventName)
+              drawEvents[eventName],
+              vm.$_emitDrawEvent.bind(vm, eventName)
           );
         }
       });
@@ -365,28 +376,43 @@ export default {
       // console.log("_emitDrawEvent", eventName, eventData, payload);
       const vm = this;
       let mode = this.drawer.getMode();
-      if (vm.drawRadius && eventName == "drawRender" ) {
+      if (vm.drawRadius && eventName === "drawActionable") {
+        if (!eventData.actions.trash) {
+          let style = vm.oldStyles.filter(s =>
+              s.id === "gl-draw-point-inactive")
+          if (vm.map.getLayer("centerPoint")) {
+            vm.map.setPaintProperty("centerPoint", "circle-radius", style[0].paint['circle-radius']);
+            vm.map.setPaintProperty("centerPoint", "circle-color", style[0].paint['circle-color']);
+          }
+          style = vm.oldStyles.filter(s =>
+              s.id === "gl-draw-line-inactive")
+          if (vm.map.getLayer("extent")) {
+            vm.map.setPaintProperty("extent", "line-color", style[0].paint['line-color']);
+            vm.map.setPaintProperty("extent", "line-width", style[0].paint['line-width']);
+          }
+        }
+      }
+      if (vm.drawRadius && eventName === "drawRender") {
         let result = this.drawer.getSelected();
-        vm.addMarkerAndLine(result);
+        if (result.features.length > 0) {
+          vm.addMarkerAndLine(result);
+          this.oldFeature = turf.clone(result.features[0]);
+        }
       }
-      if (vm.drawRadius && mode == "simple_select") {
-        vm.addMarkerAndLine(eventData);
-      }
-      if (mode == "draw_radius") {
-        vm.addMarkerAndLine(eventData);
-      }
-      if (eventName == "drawUpdate" && mode == "direct_select") {
+      if (eventName === "drawUpdate" && mode === "direct_select") {
         if (
-          eventData.action == "change_coordinates" &&
-          eventData.features &&
-          eventData.features.length >= 0
+            eventData.action == "change_coordinates" &&
+            eventData.features &&
+            eventData.features.length >= 0
         ) {
-          vm.addMarkerAndLine(eventData);
-          let feature = eventData.features[0];
-          let center = feature.properties.center;
-          let area = Math.round(turf.area(feature)) / 1000000;
-          let radiusinkm = feature.properties.radiusInKm;
-          this.$emit("update-radius", { area, radiusinkm, center });
+          if (!turf.booleanEqual(eventData.features[0], vm.oldFeature)) {
+            vm.addMarkerAndLine(eventData);
+            let feature = eventData.features[0];
+            let center = feature.properties.center;
+            let area = Math.round(turf.area(feature)) / 1000000;
+            let radiusinkm = feature.properties.radiusInKm;
+            this.$emit("update-radius", {area, radiusinkm, center});
+          }
         }
       } else if (eventName == "drawCreate" && !this.editable) {
         window.setTimeout(() => {
@@ -396,7 +422,7 @@ export default {
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
       // }
-      return this.$_emitSelfEvent({ type: eventName }, eventData);
+      return this.$_emitSelfEvent({type: eventName}, eventData);
     },
 
     $_compareStyle() {
@@ -416,7 +442,7 @@ export default {
     },
 
     changeMapStyle(layers) {
-      let { map } = this;
+      let {map} = this;
       layers.forEach((layer) => {
         if (map.getLayer(layer)) {
           if (layer.filter) {
@@ -501,68 +527,75 @@ export default {
       this.enableDrawer();
       this.drawer && this.drawer.deleteAll();
     },
-    toggleQueryByRect() {},
-    toggleQueryByPolygon() {},
+    toggleQueryByRect() {
+    },
+    toggleQueryByPolygon() {
+    },
     addMarkerAndLine(eventData) {
       const vm = this;
       let feature = eventData.features[0];
       let center = feature.properties.center;
-      let onePoint = feature.geometry.coordinates[0][0];
+      let onePoint = turf.point(feature.geometry.coordinates[0][0]);
 
-      vm.markerCoordinate = [onePoint[0], onePoint[1]];
+      // vm.markerCoordinate = [onePoint[0], onePoint[1]];
       let lineString = turf.lineString(
-        [
-          [onePoint[0], onePoint[1]],
-          [center[0], center[1]],
-        ],
-        { name: "line1" }
+          [
+            [onePoint.geometry.coordinates[0], onePoint.geometry.coordinates[1]],
+            [center[0], center[1]],
+          ],
+          {name: "line1"}
       );
       let point = turf.point([center[0], center[1]]);
       // let radiusinkm = Math.round(Math.sqrt(area / Math.PI));
       let radiusinkm = feature.properties.radiusInKm;
-      if (vm.showMarker) {
-        vm.showMarkerCopy = true;
-      }
       vm.centerCoordinate = [center[0], center[1]];
+      let midPoint = turf.midpoint(onePoint, point);
+      vm.markerCoordinate = [midPoint.geometry.coordinates[0], midPoint.geometry.coordinates[1]]
       vm.radius = parseInt(radiusinkm * 1000);
-      if (vm.addLineLayer) {
+      if (vm.showSize) {
+        vm.showMarkerCopy = true;
+        let pointStyle = vm.oldStyles.filter(s =>
+            s.id === "gl-draw-point-active")
+        let lineStyle = vm.oldStyles.filter(s =>
+            s.id === "gl-draw-line-active")
         // 先判断是否存在id为extent的线图层，有则删除，无则添加线图层
         if (vm.map.getLayer("centerPoint")) {
-          vm.map.removeLayer("centerPoint");
-          vm.map.removeSource("centerPoint");
+          vm.map.getSource('centerPoint').setData(point);
+          if (vm.map.getLayer("centerPoint")) {
+            vm.map.setPaintProperty("centerPoint", "circle-radius", pointStyle[0].paint['circle-radius']);
+            vm.map.setPaintProperty("centerPoint", "circle-color", pointStyle[0].paint['circle-color']);
+          }
+        } else {
+          vm.map.addSource("centerPoint", {
+            type: "geojson",
+            data: point,
+          });
+          vm.map.addLayer({
+            id: "centerPoint",
+            type: "circle",
+            source: "centerPoint",
+            paint: pointStyle[0].paint
+          });
         }
         if (vm.map.getLayer("extent")) {
-          vm.map.removeLayer("extent");
-          vm.map.removeSource("extent");
+          vm.map.getSource('extent').setData(lineString);
+          if (vm.map.getLayer("extent")) {
+            vm.map.setPaintProperty("extent", "line-color", lineStyle[0].paint['line-color']);
+            vm.map.setPaintProperty("extent", "line-width", lineStyle[0].paint['line-width']);
+          }
+        } else {
+          vm.map.addSource("extent", {
+            type: "geojson",
+            data: lineString,
+          });
+          vm.map.addLayer({
+            id: "extent",
+            type: "line",
+            source: "extent",
+            // layout:style[0].layout,
+            paint: lineStyle[0].paint
+          });
         }
-
-        vm.map.addSource("centerPoint", {
-          type: "geojson",
-          data: point,
-        });
-        vm.map.addLayer({
-          id: "centerPoint",
-          type: "circle",
-          source: "centerPoint",
-          paint: {
-            "circle-color": "#3bb2d0",
-            "circle-radius": 3,
-            "circle-opacity": 0.8,
-          },
-        });
-        vm.map.addSource("extent", {
-          type: "geojson",
-          data: lineString,
-        });
-        vm.map.addLayer({
-          id: "extent",
-          type: "line",
-          source: "extent",
-          paint: {
-            "line-color": "#3bb2d0",
-            "line-width": 2,
-          },
-        });
       }
     },
   },
@@ -575,14 +608,6 @@ export default {
   overflow: hidden;
   /*transition: width 0.5s;*/
 }
-
-/*.mapgis-draw-expand.mapgis-ui-btn {*/
-/*  width: 40px !important;*/
-/*  height: 40px !important;*/
-/*}*/
-/*.mapgis-draw-expand.anticon {*/
-/*  font-size: 19px !important;*/
-/*}*/
 
 .mapgis-draw-control {
   width: fit-content;
