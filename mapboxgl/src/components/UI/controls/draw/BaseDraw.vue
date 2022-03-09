@@ -176,7 +176,7 @@ export default {
     },
     showSize: {
       type: Boolean,
-      default: true,
+      default: false,
     }
   },
 

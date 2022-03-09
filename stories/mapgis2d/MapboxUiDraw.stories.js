@@ -39,6 +39,7 @@ const Template = (args, { argTypes }) => ({
 export const 绘制 = Template.bind({});
 绘制.args = {
   enableControl: true,
+  showSize: true,
   styles: [
     {
       id: "gl-draw-polygon-stroke-active",
