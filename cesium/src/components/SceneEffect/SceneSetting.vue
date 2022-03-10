@@ -22,10 +22,11 @@
           style="padding: 12px"
         >
           <basic-setting
-            ref="attr"
-            @updateSpin="changeSpinning"
-            :initialStatebar="initialStatebar"
-            :initialDepthTest="depthTest"
+              ref="attr"
+              @updateSpin="changeSpinning"
+              :initialStatebar="initialStatebar"
+              :initialDepthTest="depthTest"
+              :initial-scene-mode="sceneMode"
           ></basic-setting>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane
@@ -129,7 +130,8 @@ export default {
       show: true,
       hover: false,
       spinning: false,
-      depthTest:undefined
+      depthTest: undefined,
+      sceneMode: undefined,
     };
   },
 
@@ -143,7 +145,8 @@ export default {
     mount() {
       const{ viewer } = this;
 
-      this.depthTest = isDepthTestAgainstTerrainEnable( viewer );
+      this.depthTest = isDepthTestAgainstTerrainEnable(viewer);
+      this.sceneMode = viewer.scene.mode !== 3;
 
       this.$emit("loaded", this);
     },
