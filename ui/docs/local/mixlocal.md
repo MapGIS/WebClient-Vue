@@ -65,3 +65,33 @@ yarn add node-sass sass-loader -g
 <!-- ::: tip 发布前提示
 由于版本号只支持 x.x.x 三位显示，因此需要将之间的版本10.5.5-1 统一修改成10.5.6 或者 10.5.7依次追加序号
 ::: -->
+
+## windows环境
+
+### 安装Visual C++ 环境
+1. 安装Windows C++环境
+[Visual Studio Tools](https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=BuildTools) 或者 [Visual Studio Community](https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=Community) (选择"Desktop development with C++")
+
+2. npm上设置msvs的版本为下载的版本
+``` sh
+npm config set msvs_version 2017
+```
+
+3. 常见错误
+
+`node-sass@4.12.0` 下依赖的node-gyp只支持`2015及以下版本`的visual studio 库。	<br/>
+![MSVSVersion](./yarn/MSVSVersion.png)	<br/>
+若版本不一致会报`Inability to find msbuild, Visual Studio, or VC compiler`、`MSB4019`相关错误，可以通过以上步骤`安装要求版本的库`或者`更新node-sass`版本解决问题。
+
+
+### 安装windows-build-tool
+参考链接安装windows编译环境
+[windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)。
+
+``` sh
+npm install --global windows-build-tools
+```
+或者
+``` sh
+yarn global add windows-build-tools
+```
