@@ -91,6 +91,15 @@
                     @changeChecked="handleChangeStatebar"
                 />
             </mapgis-ui-col>
+          <mapgis-ui-col :span="12">
+            <mapgis-ui-switch-panel
+                class="odd"
+                size="small"
+                label="平面模式"
+                :checked="sceneMode"
+                @changeChecked="handleChangeSceneMode"
+            />
+          </mapgis-ui-col>
         </mapgis-ui-row>
 
         <div class="dividerWrapper"><div class="divider" /></div>
@@ -152,6 +161,10 @@ export default {
         initialDepthTest: {
             type: Boolean,
             default: false,
+        },
+        initialSceneMode:{
+            type: Boolean,
+            default:false
         }
     },
     data() {
@@ -167,6 +180,7 @@ export default {
             compass: false,
             zoom: false,
             statebar: this.initialStatebar,
+            sceneMode:this.initialSceneMode,
             // longitude:undefined,
             // latitude:undefined,
             // height:undefined,
@@ -422,6 +436,15 @@ export default {
                 });
             }
         },
+      handleChangeSceneMode(next){
+          this.sceneMode = next;
+          const vm = this;
+          if (next){
+            vm.viewer.scene.mode = 1
+          } else {
+            vm.viewer.scene.mode = 3
+          }
+      }
     },
 };
 </script>
