@@ -1,5 +1,5 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/analysis/VideoSetting.md";
+import Markdown from "../../cesium/docs/api/analysis/ProjectorSetting.md";
 
 export default {
   title: "三维/分析/视频投放/投放配置",
@@ -9,7 +9,7 @@ export default {
       table: {
         defaultValue: {
           summary:
-            '{id: "987-765-543-321",name: "testVideo1",description: "",isProjected: false,params: {videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video1/20211221/out.m3u8"},cameraPosition: {x: 114.401228136856,y: 30.467421377675457,z: 84.94989410478892},orientation: {heading: 6.053866507322313,pitch: -73.6,roll: 354.1},hFOV: 34.6,vFOV: 18.9,hintLineVisible: true}}',
+            '{id: "987-765-543-321",name: "testProjector1",description: "",isProjected: false,params: {projectorType:"video",imgUrl:"",videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video1/20211221/out.m3u8"},cameraPosition: {x: 114.401228136856,y: 30.467421377675457,z: 84.94989410478892},orientation: {heading: 6.053866507322313,pitch: -73.6,roll: 354.1},hFOV: 34.6,vFOV: 18.9,hintLineVisible: true}}',
         },
       },
       control: "object",
@@ -59,7 +59,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="height: 95vh" v-on:load="handleLoad">
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card v-if="isM3DLoaded" class="storybook-ui-card" style="max-height:500px;overflow-y:auto">
-      <mapgis-3d-video-setting :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-video-setting>
+      <mapgis-3d-projector-setting :settings="settings" :modelUrl="modelUrl" :modelOffset="modelOffset" :hideVPInvisible="hideVPInvisible"></mapgis-3d-projector-setting>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -80,10 +80,12 @@ export const 投放配置 = Template.bind({});
   hideVPInvisible: false,
   settings: {
     id: "987-765-543-124",
-    name: "testVideo3",
+    name: "testProjector3",
     description: "",
     isProjected: false,
     params: {
+      projectorType: "video",
+      imgUrl: "",
       videoSource: {
         protocol: "m3u8",
         videoUrl: "http://192.168.91.123:10008/record/video3/20211221/out.m3u8",
