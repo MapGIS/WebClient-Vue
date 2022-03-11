@@ -13,8 +13,8 @@
 |                |            | mapgis-3d-dynamic-section          | ✔                                   | ✔✖       | 剖切分析                   |
 |                |            | mapgis-3d-stratified-household     | ✔                                   | ✔✖       | 分层分户<br>88.204         |
 |                |            | mapgis-3d-bim-component            | ✔                                   | ✔✖       | BIM 构建树<br>88.204       |
-|                |            | mapgis-3d-video-manager            | ✔                                   | ✔✔       | 投放管理<br>91.123         |
-|                |            | mapgis-3d-video-setting            | ✔                                   | ✔✔       | 投放配置<br>91.123         |
+|                |            | mapgis-3d-projector-manager        | ✔                                   | ✔✔       | 投放管理<br>91.123         |
+|                |            | mapgis-3d-projector-setting        | ✔                                   | ✔✔       | 投放配置<br>91.123         |
 |                |            | mapgis-3d-analysis-buffer          | ✔                                   | ✔✔       | 缓冲分析<br>localhost      |
 |                |            | mapgis-3d-analysis-overlay         | ✔                                   | ✔✔       | 叠加分析<br>localhost      |
 |                | 可视化     | mapgis-3d-particle-effects-manager | ✔                                   | ✔✔       | 粒子特效                   |
