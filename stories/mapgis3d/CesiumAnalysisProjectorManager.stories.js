@@ -1,15 +1,15 @@
 import "../style/card.css";
-import Markdown from "../../cesium/docs/api/analysis/VideoManager.md";
+import Markdown from "../../cesium/docs/api/analysis/ProjectorManager.md";
 
 export default {
   title: "三维/分析/视频投放/投放管理",
   argTypes: {
-    videoOverlayLayerList: {
+    projectorOverlayLayerList: {
       description: "视频投放图层数组",
       table: {
         defaultValue: {
           summary:
-            '[{id: "123-345-567-789",name: "test",videoList: [{id: "987-765-543-321",name: "testVideo1",description: "",isProjected: false,params: {videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video1/20211221/out.m3u8"},cameraPosition: {x: 114.401228136856,y: 30.467421377675457,z: 84.94989410478892},orientation: {heading: 6.053866507322313,pitch: -73.6,roll: 354.1},hFOV: 34.6,vFOV: 18.9,hintLineVisible: true}},{id: "987-765-543-123",name: "testVideo2",description: "",isProjected: false,params: {videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video2/20211221/out.m3u8"},cameraPosition: {x: 114.40088870656619,y: 30.467421563975016,z: 84.91172691510191},orientation: {heading: 359.89407747239846,pitch: -74.2,roll: 0},hFOV: 33.1,vFOV: 19.2,hintLineVisible: true}},{id: "987-765-543-124",name: "testVideo3",description: "",isProjected: false,params: {videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video3/20211221/out.m3u8"},cameraPosition: {x: 114.4006886798949,y: 30.467287432107295,z: 85.46751512564336},orientation: {heading: 271.628505216584,pitch: -78.4,roll: 359.3},hFOV: 32.5,vFOV: 19,hintLineVisible: true}}]},{id: "567-789-123-345",name: "layer2",videoList: [{id: "765-987-543-321",name: "layer2Video1",description: "",isProjected: false,params: {videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video1/20211221/out.m3u8"},cameraPosition: {x: 114.401228136856,y: 30.467421377675457,z: 84.94989410478892},orientation: {heading: 6.053866507322313,pitch: -73.6,roll: 354.1},hFOV: 34.6,vFOV: 18.9,hintLineVisible: true}},{id: "765-987-543-123",name: "layer2Video2",description: "",isProjected: false,params: {videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video2/20211221/out.m3u8"},cameraPosition: {x: 114.40088870656619,y: 30.467421563975016,z: 84.91172691510191},orientation: {heading: 359.89407747239846,pitch: -74.2,roll: 0},hFOV: 33.1,vFOV: 19.2,hintLineVisible: true}}]}]',
+            '[{id: "123-345-567-789",name: "test",projectorList: [{id: "987-765-543-321",name: "testProjector1",description: "",isProjected: false,params: {projectorType: "video",imgUrl: "",videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video1/20211221/out.m3u8"},cameraPosition: {x: 114.401228136856,y: 30.467421377675457,z: 84.94989410478892},orientation: {heading: 6.053866507322313,pitch: -73.6,roll: 354.1},hFOV: 34.6,vFOV: 18.9,hintLineVisible: true}},{id: "987-765-543-123",name: "testProjector2",description: "",isProjected: false,params: {projectorType: "video",imgUrl: "",videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video2/20211221/out.m3u8"},cameraPosition: {x: 114.40088870656619,y: 30.467421563975016,z: 84.91172691510191},orientation: {heading: 359.89407747239846,pitch: -74.2,roll: 0},hFOV: 33.1,vFOV: 19.2,hintLineVisible: true}},{id: "987-765-543-124",name: "testProjector3",description: "",isProjected: false,params: {projectorType: "video",imgUrl: "",videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video3/20211221/out.m3u8"},cameraPosition: {x: 114.4006886798949,y: 30.467287432107295,z: 85.46751512564336},orientation: {heading: 271.628505216584,pitch: -78.4,roll: 359.3},hFOV: 32.5,vFOV: 19,hintLineVisible: true}}]},{id: "567-789-123-345",name: "layer2",projectorList: [{id: "765-987-543-321",name: "layer2Projector1",description: "",isProjected: false,params: {projectorType: "video",imgUrl: "",videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video1/20211221/out.m3u8"},cameraPosition: {x: 114.401228136856,y: 30.467421377675457,z: 84.94989410478892},orientation: {heading: 6.053866507322313,pitch: -73.6,roll: 354.1},hFOV: 34.6,vFOV: 18.9,hintLineVisible: true}},{id: "765-987-543-123",name: "layer2Projector2",description: "",isProjected: false,params: {projectorType: "video",imgUrl: "",videoSource: {protocol: "m3u8",videoUrl:"http://192.168.91.123:10008/record/video2/20211221/out.m3u8"},cameraPosition: {x: 114.40088870656619,y: 30.467421563975016,z: 84.91172691510191},orientation: {heading: 359.89407747239846,pitch: -74.2,roll: 0},hFOV: 33.1,vFOV: 19.2,hintLineVisible: true}}]}]',
         },
       },
       control: "array",
@@ -67,8 +67,8 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
       <mapgis-ui-card class="storybook-ui-card">
-        <mapgis-3d-video-manager :modelUrl="modelUrl" :modelOffset="modelOffset" :maxProjected="maxProjected" :hideVPInvisible="hideVPInvisible" :videoOverlayLayerList="videoOverlayLayerList">
-        </mapgis-3d-video-manager>
+        <mapgis-3d-projector-manager :modelUrl="modelUrl" :modelOffset="modelOffset" :maxProjected="maxProjected" :hideVPInvisible="hideVPInvisible" :projectorOverlayLayerList="projectorOverlayLayerList">
+        </mapgis-3d-projector-manager>
       </mapgis-ui-card>
       </mapgis-web-scene>
     `,
@@ -80,17 +80,19 @@ export const 投放管理 = Template.bind({});
   modelOffset: { headingOffset: -90, pitchOffset: 0, rollOffset: 0 },
   maxProjected: 10,
   hideVPInvisible: false,
-  videoOverlayLayerList: [
+  projectorOverlayLayerList: [
     {
       id: "123-345-567-789",
       name: "test",
-      videoList: [
+      projectorList: [
         {
           id: "987-765-543-321",
-          name: "testVideo1",
+          name: "testProjector1",
           description: "",
           isProjected: false,
           params: {
+            projectorType: "video",
+            imgUrl: "",
             videoSource: {
               protocol: "m3u8",
               videoUrl:
@@ -113,10 +115,12 @@ export const 投放管理 = Template.bind({});
         },
         {
           id: "987-765-543-123",
-          name: "testVideo2",
+          name: "testProjector2",
           description: "",
           isProjected: false,
           params: {
+            projectorType: "video",
+            imgUrl: "",
             videoSource: {
               protocol: "m3u8",
               videoUrl:
@@ -139,10 +143,12 @@ export const 投放管理 = Template.bind({});
         },
         {
           id: "987-765-543-124",
-          name: "testVideo3",
+          name: "testProjector3",
           description: "",
           isProjected: false,
           params: {
+            projectorType: "video",
+            imgUrl: "",
             videoSource: {
               protocol: "m3u8",
               videoUrl:
@@ -168,13 +174,15 @@ export const 投放管理 = Template.bind({});
     {
       id: "567-789-123-345",
       name: "layer2",
-      videoList: [
+      projectorList: [
         {
           id: "765-987-543-321",
-          name: "layer2Video1",
+          name: "layer2Projector1",
           description: "",
           isProjected: false,
           params: {
+            projectorType: "video",
+            imgUrl: "",
             videoSource: {
               protocol: "m3u8",
               videoUrl:
@@ -197,10 +205,12 @@ export const 投放管理 = Template.bind({});
         },
         {
           id: "765-987-543-123",
-          name: "layer2Video2",
+          name: "layer2Projector2",
           description: "",
           isProjected: false,
           params: {
+            projectorType: "video",
+            imgUrl: "",
             videoSource: {
               protocol: "m3u8",
               videoUrl:
