@@ -1,11 +1,11 @@
 <template>
   <div>
     <slot>
-      <div class="mapgis-widget-video-manager">
+      <div class="mapgis-widget-projector-manager">
         <!-- 视频列表页面 -->
-        <div class="video-layer-select-div">
-          <video-layer-select
-            :selectOptions="videoOverlayLayerListCopy"
+        <div class="projector-layer-select-div">
+          <projector-layer-select
+            :selectOptions="projectorOverlayLayerListCopy"
             :defaultValue="layerSelectDefaultValue"
             @selectedLayer="_changeLayer"
             @change-layer-name="_changeLayerName"
@@ -27,21 +27,21 @@
           >
             <mapgis-ui-list
               v-if="
-                currentVideoOverlayLayer &&
-                  Object.keys(currentVideoOverlayLayer).length > 0
+                currentProjectorOverlayLayer &&
+                  Object.keys(currentProjectorOverlayLayer).length > 0
               "
-              :key="`list-${currentVideoOverlayLayer.id}`"
+              :key="`list-${currentProjectorOverlayLayer.id}`"
               item-layout="horizontal"
               size="small"
-              :data-source="videoList"
+              :data-source="projectorList"
               :pagination="pagination"
-              class="mapgis-list video-list"
+              class="mapgis-list projector-list"
               :split="false"
             >
               <mapgis-ui-empty
                 :image="emptyImage"
                 :image-style="imageStyle"
-                v-if="videoList && videoList.length === 0"
+                v-if="projectorList && projectorList.length === 0"
               >
                 <span slot="description" class="empty-style">
                   请新建投放
@@ -59,7 +59,7 @@
                   :class="item.isProjected ? 'camera-active' : 'camera'"
                   icon="mapgis-shexiangji"
                   title="投放"
-                  @click="_onPutVideo(item)"
+                  @click="_onPutProjector(item)"
                 ></mapgis-ui-toolbar-command>
                 <operations-item
                   class="full-width"
@@ -68,7 +68,7 @@
                   :operations="['setting', 'delete', 'locate']"
                   :showOperations="activeIndex === index"
                   @setting="_onGotoSetting(item, index)"
-                  @delete="_onDeleteVideo(item.id)"
+                  @delete="_onDeleteProjector(item.id)"
                   @locate="_onLocate(item)"
                 ></operations-item>
                 <mapgis-ui-checkbox
@@ -95,22 +95,24 @@
               <div class="buttons">
                 <div v-show="isBatch" class="full-width">
                   <mapgis-ui-button
-                    @click="_cancelPutVideos"
+                    @click="_cancelPutProjectors"
                     class="control-button"
                     >取消投放</mapgis-ui-button
                   >
-                  <mapgis-ui-button @click="_putVideos" class="control-button"
+                  <mapgis-ui-button
+                    @click="_putProjectors"
+                    class="control-button"
                     >投放视频</mapgis-ui-button
                   >
                   <mapgis-ui-button
-                    @click="_deleteVideos"
+                    @click="_deleteProjectors"
                     class="control-button"
                     >删除</mapgis-ui-button
                   >
                 </div>
                 <div v-show="!isBatch" class="full-width">
                   <mapgis-ui-button
-                    @click="_newVideo"
+                    @click="_newProjector"
                     type="primary"
                     class="full-width"
                   >
@@ -126,17 +128,18 @@
             class="control-content"
             id="parameter-formList"
           >
-            <mapgis-3d-video-setting
+            <mapgis-3d-projector-setting
               v-if="
-                currentEditVideo && Object.keys(currentEditVideo).length > 0
+                currentEditProjector &&
+                  Object.keys(currentEditProjector).length > 0
               "
-              :settings="currentEditVideo"
+              :settings="currentEditProjector"
               :modelUrl="modelUrl"
               :modelOffset="modelOffset"
               :hideVPInvisible="hideVPInvisible"
               @update-settings="_updateSettings"
               @cancel="_cancelSetting"
-            ></mapgis-3d-video-setting>
+            ></mapgis-3d-projector-setting>
           </mapgis-ui-tab-pane>
           <mapgis-ui-checkbox
             v-show="activeKey === '1'"
@@ -156,16 +159,16 @@ import emptyImage from "../../../assets/image/empty.png";
 import { newGuid } from "../../Utils/util";
 import VueOptions from "./components/OperationsItem.vue";
 import OperationsItem from "./components/OperationsItem.vue";
-import VideoLayerSelect from "./components/VideoLayerSelect.vue";
-import videoMixins from "./mixins/video-mixins";
+import ProjectorLayerSelect from "./components/ProjectorLayerSelect.vue";
+import projectorMixins from "./mixins/projector-mixins";
 export default {
-  name: "mapgis-3d-video-manager",
+  name: "mapgis-3d-projector-manager",
   inject: ["Cesium", "vueCesium", "viewer"],
-  components: { OperationsItem, VideoLayerSelect },
-  mixins: [videoMixins],
+  components: { OperationsItem, ProjectorLayerSelect },
+  mixins: [projectorMixins],
   props: {
     ...VueOptions,
-    videoOverlayLayerList: {
+    projectorOverlayLayerList: {
       type: Array,
       default: () => []
     },
@@ -173,7 +176,7 @@ export default {
       type: String,
       default: ""
     },
-    currentVideoId: {
+    currentProjectorId: {
       type: String,
       default: ""
     },
@@ -221,26 +224,30 @@ export default {
     }
   },
   computed: {
-    videoList: {
+    projectorList: {
       get: function() {
-        return this.currentVideoOverlayLayer &&
-          Object.keys(this.currentVideoOverlayLayer).length > 0
-          ? this.currentVideoOverlayLayer.videoList
+        return this.currentProjectorOverlayLayer &&
+          Object.keys(this.currentProjectorOverlayLayer).length > 0
+          ? this.currentProjectorOverlayLayer.projectorList
           : [];
       },
-      set: function(videoList) {
-        this.currentVideoOverlayLayer.videoList = videoList;
-        const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
-        videoOverlayLayerList.map(item => {
-          if (item.id === this.currentVideoOverlayLayer.id) {
-            item.videoList = [...this.currentVideoOverlayLayer.videoList];
+      set: function(projectorList) {
+        this.currentProjectorOverlayLayer.projectorList = projectorList;
+        const projectorOverlayLayerList = [
+          ...this.projectorOverlayLayerListCopy
+        ];
+        projectorOverlayLayerList.map(item => {
+          if (item.id === this.currentProjectorOverlayLayer.id) {
+            item.projectorList = [
+              ...this.currentProjectorOverlayLayer.projectorList
+            ];
             return item;
           }
         });
-        this.videoOverlayLayerListCopy = videoOverlayLayerList;
+        this.projectorOverlayLayerListCopy = projectorOverlayLayerList;
         this.$emit(
-          "update-videoOverlayLayerList",
-          this.videoOverlayLayerListCopy
+          "update-projectorOverlayLayerList",
+          this.projectorOverlayLayerListCopy
         );
       }
     },
@@ -248,40 +255,42 @@ export default {
       return this.isBatch ? false : this.pagination;
     },
     layerSelectDefaultValue() {
-      return this.currentVideoOverlayLayer &&
-        Object.keys(this.currentVideoOverlayLayer).length > 0
-        ? this.currentVideoOverlayLayer.name
+      return this.currentProjectorOverlayLayer &&
+        Object.keys(this.currentProjectorOverlayLayer).length > 0
+        ? this.currentProjectorOverlayLayer.name
         : "";
     }
   },
   watch: {
-    videoOverlayLayerList: {
+    projectorOverlayLayerList: {
       handler() {
-        this.videoOverlayLayerListCopy = JSON.parse(
-          JSON.stringify(this.videoOverlayLayerList)
+        this.projectorOverlayLayerListCopy = JSON.parse(
+          JSON.stringify(this.projectorOverlayLayerList)
         );
-        if (this.videoOverlayLayerListCopy.length > 0) {
+        if (this.projectorOverlayLayerListCopy.length > 0) {
           // 默认取第一个
-          // this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy[0];
+          // this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy[0];
           this.layerSelectOptions = [];
-          for (let i = 0; i < this.videoOverlayLayerListCopy.length; i++) {
-            const { id, name } = this.videoOverlayLayerListCopy[i];
+          for (let i = 0; i < this.projectorOverlayLayerListCopy.length; i++) {
+            const { id, name } = this.projectorOverlayLayerListCopy[i];
             this.layerSelectOptions.push({ id, name });
           }
           if (this.currentLayerId) {
-            this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+            this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy.find(
               item => item.id === this.currentLayerId
             );
-            this._initPutVideos();
+            this._initPutProjectors();
           }
         }
       },
       deep: true,
       immediate: true
     },
-    videoList: {
+    projectorList: {
       handler() {
-        this.pagination.total = this.videoList ? this.videoList.length : 0;
+        this.pagination.total = this.projectorList
+          ? this.projectorList.length
+          : 0;
         this.reflush = !this.reflush;
       },
       deep: true,
@@ -289,20 +298,20 @@ export default {
     },
     currentLayerId: {
       handler() {
-        this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+        this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy.find(
           item => item.id === this.currentLayerId
         );
-        this._initPutVideos();
+        this._initPutProjectors();
       },
       immediate: true
     },
-    currentVideoId: {
+    currentProjectorId: {
       handler() {
-        this.currentEditVideo = this.videoList.find(
-          item => item.id === this.currentVideoId
+        this.currentEditProjector = this.projectorList.find(
+          item => item.id === this.currentProjectorId
         );
-        if (this.currentEditVideo) {
-          const { x, y, z } = this.currentEditVideo.params.cameraPosition;
+        if (this.currentEditProjector) {
+          const { x, y, z } = this.currentEditProjector.params.cameraPosition;
           if (x === 0 && y === 0 && z === 0) {
             this.activeKey = "2";
           }
@@ -314,10 +323,10 @@ export default {
   data() {
     return {
       reflush: true,
-      videoOverlayLayerListCopy: [], //图层数组
+      projectorOverlayLayerListCopy: [], //图层数组
       layerSelectOptions: [], //图层选中框信息
-      currentVideoOverlayLayer: {}, //当前选中图层
-      currentEditVideo: null, //当前编辑video对象
+      currentProjectorOverlayLayer: {}, //当前选中图层
+      currentEditProjector: null, //当前编辑projector对象
       tabBarStyle: {
         margin: "0",
         textAlign: "center",
@@ -331,7 +340,7 @@ export default {
       activeKey: "1",
       activeIndex: undefined,
       isBatch: false, //是否批量操作
-      selectedIds: [], //选中video的id集合
+      selectedIds: [], //选中projector的id集合
       pagination: {
         onChange: page => {
           console.log(page);
@@ -372,14 +381,14 @@ export default {
     unmount() {
       this.$emit("unload", this);
     },
-    _initPutVideos() {
+    _initPutProjectors() {
       this.viewer.scene.visualAnalysisManager.removeAll();
-      for (let i = 0; i < this.videoList.length; i++) {
-        const video = this.videoList[i];
-        if (video.isProjected) {
-          this.putVideo(video);
+      for (let i = 0; i < this.projectorList.length; i++) {
+        const projector = this.projectorList[i];
+        if (projector.isProjected) {
+          this.putProjector(projector);
         } else {
-          this.cancelPutVideo(video.id);
+          this.cancelPutProjector(projector.id);
         }
       }
     },
@@ -387,14 +396,14 @@ export default {
      * 修改图层名
      */
     _changeLayerName({ id, dataIndex, value }) {
-      const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
-      let target = videoOverlayLayerList.find(item => item.id === id);
+      const projectorOverlayLayerList = [...this.projectorOverlayLayerListCopy];
+      let target = projectorOverlayLayerList.find(item => item.id === id);
       if (target) {
         target[dataIndex] = value;
-        this.videoOverlayLayerListCopy = videoOverlayLayerList;
+        this.projectorOverlayLayerListCopy = projectorOverlayLayerList;
         this.$emit(
-          "update-videoOverlayLayerList",
-          this.videoOverlayLayerListCopy
+          "update-projectorOverlayLayerList",
+          this.projectorOverlayLayerListCopy
         );
       }
     },
@@ -402,48 +411,48 @@ export default {
      * 添加图层
      */
     _addLayer(newLayer) {
-      this.videoOverlayLayerListCopy.push(newLayer);
+      this.projectorOverlayLayerListCopy.push(newLayer);
       this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
+        "update-projectorOverlayLayerList",
+        this.projectorOverlayLayerListCopy
       );
     },
     /**
      * 删除图层
      */
     _deleteLayer(id) {
-      const videoOverlayLayerList = [...this.videoOverlayLayerListCopy];
-      this.videoOverlayLayerListCopy = videoOverlayLayerList.filter(
+      const projectorOverlayLayerList = [...this.projectorOverlayLayerListCopy];
+      this.projectorOverlayLayerListCopy = projectorOverlayLayerList.filter(
         item => item.id !== id
       );
       if (
-        this.currentVideoOverlayLayer &&
-        Object.keys(this.currentVideoOverlayLayer).length > 0 &&
-        this.currentVideoOverlayLayer.id === id
+        this.currentProjectorOverlayLayer &&
+        Object.keys(this.currentProjectorOverlayLayer).length > 0 &&
+        this.currentProjectorOverlayLayer.id === id
       ) {
-        // currentEditVideo一定在currentVideoOverlayLayer里
-        this.currentVideoOverlayLayer = {};
-        this.currentEditVideo = null;
+        // currentEditProjector一定在currentProjectorOverlayLayer里
+        this.currentProjectorOverlayLayer = {};
+        this.currentEditProjector = null;
       }
       this.$emit(
-        "update-videoOverlayLayerList",
-        this.videoOverlayLayerListCopy
+        "update-projectorOverlayLayerList",
+        this.projectorOverlayLayerListCopy
       );
     },
     /**
      * 更改图层名
      */
     _changeLayer(val) {
-      this.currentVideoOverlayLayer = this.videoOverlayLayerListCopy.find(
+      this.currentProjectorOverlayLayer = this.projectorOverlayLayerListCopy.find(
         item => item.name === val
       );
       this.viewer.scene.visualAnalysisManager.removeAll();
-      for (let i = 0; i < this.videoList.length; i++) {
-        const video = this.videoList[i];
-        if (video.isProjected) {
-          this.putVideo(video);
+      for (let i = 0; i < this.projectorList.length; i++) {
+        const projector = this.projectorList[i];
+        if (projector.isProjected) {
+          this.putProjector(projector);
         } else {
-          this.cancelPutVideo(video.id);
+          this.cancelPutProjector(projector.id);
         }
       }
     },
@@ -453,18 +462,18 @@ export default {
     _tabChange(e) {
       this.activeKey = e;
       if (
-        this.currentEditVideo &&
-        Object.keys(this.currentEditVideo).length > 0
+        this.currentEditProjector &&
+        Object.keys(this.currentEditProjector).length > 0
       ) {
         if (e === "2") {
           // 切换到配置界面，直接投放已选中的视频
-          this.putVideo(this.currentEditVideo);
+          this.putProjector(this.currentEditProjector);
         } else if (e === "1") {
           // 切换到列表界面，恢复投放状态，先取消投放
           // 如果在进入配置界面之前已投放，则重新投放（以确保投放参数与之前投放的参数保持一致）
-          this.cancelPutVideo(this.currentEditVideo.id);
-          if (this.currentEditVideo.isProjected) {
-            this.putVideo(this.currentEditVideo);
+          this.cancelPutProjector(this.currentEditProjector.id);
+          if (this.currentEditProjector.isProjected) {
+            this.putProjector(this.currentEditProjector);
           }
         }
       }
@@ -498,16 +507,16 @@ export default {
      */
     _clickListItem(item, index) {
       this.activeIndex = index;
-      this.currentEditVideo = item;
+      this.currentEditProjector = item;
     },
     /**
-     * 新建video
+     * 新建projector
      */
-    _newVideo() {
+    _newProjector() {
       const guid = newGuid();
-      const newVideo = {
+      const newProjector = {
         id: guid, // 视频id
-        name: "newVideo", // 视频名称
+        name: "newProjector", // 视频名称
         description: "", //描述
         isProjected: false, // 是否开启视频投放
         params: {
@@ -526,38 +535,40 @@ export default {
           hintLineVisible: true // 是否显示投放区域线
         }
       };
-      this.putVideo(newVideo);
-      this.currentEditVideo = newVideo;
+      this.putProjector(newProjector);
+      this.currentEditProjector = newProjector;
       this.activeKey = "2";
     },
     /**
      * 批量删除
      */
-    _deleteVideos() {
-      const videoList = [...this.videoList];
+    _deleteProjectors() {
+      const projectorList = [...this.projectorList];
       const { selectedIds } = this;
-      this.videoList = videoList.filter(item => !selectedIds.includes(item.id));
-      // 取消被删除video的投放
+      this.projectorList = projectorList.filter(
+        item => !selectedIds.includes(item.id)
+      );
+      // 取消被删除projector的投放
       for (let i = 0; i < selectedIds.length; i++) {
-        this.cancelPutVideo(selectedIds[i]);
+        this.cancelPutProjector(selectedIds[i]);
         if (
-          this.currentEditVideo &&
-          this.currentEditVideo.id === selectedIds[i]
+          this.currentEditProjector &&
+          this.currentEditProjector.id === selectedIds[i]
         ) {
-          this.currentEditVideo = null;
+          this.currentEditProjector = null;
         }
       }
       this.selectedIds = [];
     },
     _isProjectedList() {
-      const videoList = [...this.videoList];
-      const list = videoList.filter(item => item.isProjected);
+      const projectorList = [...this.projectorList];
+      const list = projectorList.filter(item => item.isProjected);
       return list || [];
     },
     /**
      * 批量投放
      */
-    _putVideos() {
+    _putProjectors() {
       const length = this._isProjectedList().length;
       const num =
         this.maxProjected - length > 0 ? this.maxProjected - length : 0;
@@ -568,62 +579,64 @@ export default {
           okText: "确认",
           cancelText: "取消",
           onOk() {
-            vm._continuePutVideos();
+            vm._continuePutProjectors();
           }
         });
       } else {
-        this._continuePutVideos();
+        this._continuePutProjectors();
       }
     },
-    _continuePutVideos() {
+    _continuePutProjectors() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
-        const video = this.videoList.find(item => item.id === selectedIds[i]);
-        this.putVideo(video);
+        const projector = this.projectorList.find(
+          item => item.id === selectedIds[i]
+        );
+        this.putProjector(projector);
       }
-      const videoList = [...this.videoList];
-      videoList.map(item => {
+      const projectorList = [...this.projectorList];
+      projectorList.map(item => {
         if (selectedIds.indexOf(item.id) > -1) {
           item.isProjected = true;
           return item;
         }
       });
-      this.videoList = videoList;
+      this.projectorList = projectorList;
     },
     /**
      * 批量取消投放
      */
-    _cancelPutVideos() {
+    _cancelPutProjectors() {
       const { selectedIds } = this;
       for (let i = 0; i < selectedIds.length; i++) {
-        this.cancelPutVideo(selectedIds[i]);
+        this.cancelPutProjector(selectedIds[i]);
       }
-      const videoList = [...this.videoList];
-      videoList.map(item => {
+      const projectorList = [...this.projectorList];
+      projectorList.map(item => {
         if (selectedIds.indexOf(item.id) > -1) {
           item.isProjected = false;
           return item;
         }
       });
-      this.videoList = videoList;
+      this.projectorList = projectorList;
     },
     /**
-     * 跳转到video配置界面
+     * 跳转到projector配置界面
      */
-    _onGotoSetting(video, index) {
+    _onGotoSetting(projector, index) {
       this.activeIndex = index;
       this.activeKey = "2";
-      this.currentEditVideo = video;
+      this.currentEditProjector = projector;
     },
     /**
-     * 更新video参数
+     * 更新projector参数
      */
     _updateSettings(settings) {
-      let target = this.videoList.find(item => item.id === settings.id);
+      let target = this.projectorList.find(item => item.id === settings.id);
       if (target) {
-        const videoList = [...this.videoList];
+        const projectorList = [...this.projectorList];
         // 编辑
-        this.videoList = videoList.map(item => {
+        this.projectorList = projectorList.map(item => {
           if (item.id === settings.id) {
             return settings;
           }
@@ -631,13 +644,13 @@ export default {
         });
       } else {
         // 新建
-        this.videoList.push(settings);
+        this.projectorList.push(settings);
         this.$emit(
-          "update-videoOverlayLayerList",
-          this.videoOverlayLayerListCopy
+          "update-projectorOverlayLayerList",
+          this.projectorOverlayLayerListCopy
         );
       }
-      this.currentEditVideo = settings;
+      this.currentEditProjector = settings;
       this.activeKey = "1";
     },
     /**
@@ -647,29 +660,29 @@ export default {
       this.activeKey = "1";
     },
     /**
-     * 删除video
+     * 删除projector
      */
-    _onDeleteVideo(id) {
-      const videoList = [...this.videoList];
-      this.videoList = videoList.filter(item => item.id !== id);
-      this.cancelPutVideo(id);
-      if (this.currentEditVideo && this.currentEditVideo.id === id) {
-        this.currentEditVideo = null;
+    _onDeleteProjector(id) {
+      const projectorList = [...this.projectorList];
+      this.projectorList = projectorList.filter(item => item.id !== id);
+      this.cancelPutProjector(id);
+      if (this.currentEditProjector && this.currentEditProjector.id === id) {
+        this.currentEditProjector = null;
       }
     },
     /**
      * 单个投放/取消投放
      */
-    _onPutVideo(video) {
+    _onPutProjector(projector) {
       let isProjected = false;
       let scenePro = this.viewer.scene.visualAnalysisManager.getVisualAnalysisByID(
-        video.id
+        projector.id
       );
       if (scenePro) {
         // 视频已经被投放，则取消投放
-        this.cancelPutVideo(video.id);
+        this.cancelPutProjector(projector.id);
         isProjected = false;
-        this._changeIsProjected(isProjected, video.id);
+        this._changeIsProjected(isProjected, projector.id);
       } else {
         // 未投放，则投放
         const length = this._isProjectedList().length;
@@ -682,24 +695,24 @@ export default {
             okText: "确认",
             cancelText: "取消",
             onOk() {
-              vm.putVideo(video);
+              vm.putProjector(projector);
               isProjected = true;
-              vm._changeIsProjected(isProjected, video.id);
+              vm._changeIsProjected(isProjected, projector.id);
             }
           });
         } else {
-          this.putVideo(video);
+          this.putProjector(projector);
           isProjected = true;
-          this._changeIsProjected(isProjected, video.id);
+          this._changeIsProjected(isProjected, projector.id);
         }
       }
     },
     _changeIsProjected(isProjected, id) {
-      const videoList = [...this.videoList];
-      let target = videoList.find(item => item.id === id);
+      const projectorList = [...this.projectorList];
+      let target = projectorList.find(item => item.id === id);
       if (target) {
         target.isProjected = isProjected;
-        this.videoList = videoList;
+        this.projectorList = projectorList;
       }
     },
     /**
@@ -727,14 +740,14 @@ export default {
 </script>
 
 <style scoped>
-.video-layer-select-div {
+.projector-layer-select-div {
   width: 100%;
   padding: 12px;
 }
 .list-pane {
   position: relative;
 }
-.video-list {
+.projector-list {
   max-height: 310px;
   overflow-y: auto;
   width: 100%;

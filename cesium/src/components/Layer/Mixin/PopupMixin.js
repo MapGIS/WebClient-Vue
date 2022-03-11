@@ -267,7 +267,7 @@ export default {
       this.iPinMap = true;
     },
     $_onFlyTo() {},
-    $_getVideoStatus() {},
+    $_getProjectorStatus() {},
     $_handleProjectScreen() {},
   },
 };

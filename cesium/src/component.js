@@ -86,8 +86,8 @@ export { default as Mapgis3dFlood } from "./components/Analysis/Flood";
 export { default as Mapgis3dBufferAnalysis } from "./components/Analysis/Buffer.vue";
 export { default as Mapgis3dOverlayAanalysis } from "./components/Analysis/Overlay.vue";
 export { default as Mapgis3dStratifiedHousehold } from "./components/Analysis/StratifiedHousehold.vue";
-export { default as Mapgis3dVideoManger } from "./components/Analysis/video/VideoManager.vue";
-export { default as Mapgis3dVideoSetting } from "./components/Analysis/video/VideoSetting.vue";
+export { default as Mapgis3dProjectorManger } from "./components/Analysis/scene-projector/ProjectorManager.vue";
+export { default as Mapgis3dProjectorSetting } from "./components/Analysis/scene-projector/ProjectorSetting.vue";
 export { default as Mapgis3dBimComponent } from "./components/Analysis/BIM.vue";
 
 //融合组件
