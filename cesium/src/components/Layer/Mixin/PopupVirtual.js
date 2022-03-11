@@ -110,7 +110,7 @@ export default {
           >
             <mapgis-3d-popup-iot
               properties={feature.properties}
-              getVideoStatus={this.$_getVideoStatus.bind(this)}
+              getProjectorStatus={this.$_getProjectorStatus.bind(this)}
               projectScreen={this.$_handleProjectScreen.bind(this)}
             ></mapgis-3d-popup-iot>
           </mapgis-3d-feature-popup>

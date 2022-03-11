@@ -76,15 +76,15 @@
 </template>
 
 <script>
-import IotDetail from './components/IOTDetail.vue'
+import IotDetail from "./components/IOTDetail.vue";
 
 export default {
   components: { IotDetail },
-  name: 'mapgis-3d-popup-iot',
+  name: "mapgis-3d-popup-iot",
   provide() {
     return {
-      getVideoStatus: this.getVideoStatus
-    }
+      getProjectorStatus: this.getProjectorStatus
+    };
   },
   props: {
     properties: {
@@ -93,13 +93,13 @@ export default {
     },
     dataStoreIp: {
       type: String,
-      default: '192.168.96.101'
+      default: "192.168.96.101"
     },
     dataStorePort: {
       type: String,
-      default: '9014'
+      default: "9014"
     },
-    getVideoStatus: {
+    getProjectorStatus: {
       type: Function,
       default: () => {}
     }
@@ -108,51 +108,51 @@ export default {
     return {
       showModal: false,
       // 目地实体ID列表
-      toType: ''
-    }
+      toType: ""
+    };
   },
   computed: {
     // 根据filedConfigs做一个过滤，去除不可见的
     propertyKeys() {
-      const keys = []
+      const keys = [];
       for (const key in this.properties) {
         // 不展示关联的实体编码
-        if (key !== 'Euid' && key !== 'images') {
-          keys.push(key)
+        if (key !== "Euid" && key !== "images") {
+          keys.push(key);
         }
       }
-      return keys
+      return keys;
     },
     /**
      * 获取实体编码，实体编码存在的时候，展示预览界面
      */
     Euid() {
-      return this.properties.Euid
+      return this.properties.Euid;
     },
     /**
      * 获取轮播图图片
      */
     images() {
       if (this.properties.images) {
-        const arr = this.properties.images.split(';')
-        return arr || []
+        const arr = this.properties.images.split(";");
+        return arr || [];
       }
-      return []
+      return [];
     }
   },
   methods: {
     clickIot(toType) {
-      this.showModal = true
-      this.toType = toType
+      this.showModal = true;
+      this.toType = toType;
     },
     /**
      * 视频投放回调函数
      */
     projectScreen(file) {
-      this.$emit('project-screen', file)
+      this.$emit("project-screen", file);
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -170,7 +170,6 @@ export default {
 .carousel-image-container {
   height: 180px;
 }
-
 
 .table-marker {
   max-height: 130px;
@@ -208,7 +207,7 @@ export default {
 
 .iot-enclosure-title {
   font-size: 15px;
-  color:var(--text-color);
+  color: var(--text-color);
   font-weight: bold;
   margin-top: 10px;
 }
@@ -226,8 +225,7 @@ export default {
 }
 
 .iot-enclosure-container > li:hover {
-  background-color:  var(--shadow-color);
+  background-color: var(--shadow-color);
   cursor: pointer;
 }
-
 </style>

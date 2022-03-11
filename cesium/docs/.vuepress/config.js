@@ -104,7 +104,7 @@ module.exports = {
               ["/api/layer/OGC/CesiumOgcWmtsLayer.md", "WMTS"],
               ["/api/layer/vectortile/vectortile.md", "矢量瓦片"],
 
-              ["/api/layer/m3d/scene.md", "Scene图层"],              
+              ["/api/layer/m3d/scene.md", "Scene图层"],
               ["/api/layer/m3d/m3d.md", "M3D图层"],
               ["/api/layer/Tileset/tileset.md", "3DTiles"],
 
@@ -114,7 +114,7 @@ module.exports = {
               ["/api/layer/Graphic/GraphicLayer.md", "标绘图层"],
               ["/api/layer/Graphic/GraphicLayerService.md", "标绘图层-工具类"],
 
-              ["/api/MapStory/MapStory.md", "地图故事图层"],              
+              ["/api/MapStory/MapStory.md", "地图故事图层"],
 
               {
                 title: "可视化",
@@ -132,7 +132,7 @@ module.exports = {
               },
               ["/api/simulation/CityGrow.md", "城市生长"],
               ["/api/simulation/BuildingGrow.md", "单体建筑生长"],
-              
+
               {
                 title: "空间分析",
                 collapsable: false,
@@ -151,8 +151,8 @@ module.exports = {
               ["/api/analysis/Contour.md", "等值面分析"],
               ["/api/analysis/Household.md", "分层分户"],
               ["/api/analysis/Bim.md", "BIM构建树"],
-              ["/api/analysis/VideoManager.md", "投放管理"],
-              ["/api/analysis/VideoSetting.md", "投放配置"],
+              ["/api/analysis/ProjectorManager.md", "投放管理"],
+              ["/api/analysis/ProjectorSetting.md", "投放配置"],
               // ["/api/analysis/Buffer.md", "缓冲分析"],
               // ["/api/analysis/Buffer.md", "叠加分析"],
             ],

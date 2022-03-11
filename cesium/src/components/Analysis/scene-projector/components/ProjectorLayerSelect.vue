@@ -60,7 +60,7 @@ import EditLayerName from "./EditLayerName.vue";
 import { newGuid } from "../../../Utils/util";
 
 export default {
-  name: "video-layer-select",
+  name: "projector-layer-select",
   components: {
     OperationsItem,
     EditLayerName
@@ -122,7 +122,7 @@ export default {
      * 图层名展示的时候后面加上对应图层视频列表总数
      */
     getLabel(item) {
-      const length = item.videoList ? item.videoList.length : 0;
+      const length = item.projectorList ? item.projectorList.length : 0;
       return `${item.name}(${length})`;
     },
     /**
@@ -162,7 +162,7 @@ export default {
         this.changeName(this.editLayer.id, "name", val);
       } else {
         const id = newGuid();
-        const newLayer = { id, name: val, videoList: [] };
+        const newLayer = { id, name: val, projectorList: [] };
         this.selectOptionsCopy.push(newLayer);
         this.$emit("add-layer", newLayer);
       }

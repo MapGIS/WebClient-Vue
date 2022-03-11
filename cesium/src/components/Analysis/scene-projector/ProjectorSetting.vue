@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot>
-      <div class="mapgis-widget-video">
+      <div class="mapgis-widget-projector">
         <mapgis-ui-group-tab title="基本信息"></mapgis-ui-group-tab>
         <mapgis-ui-setting-form
           :label-width="50"
@@ -24,24 +24,25 @@
             />
           </mapgis-ui-form-item>
         </mapgis-ui-setting-form>
-        <mapgis-ui-group-tab title="视频源" :has-top-margin="false" />
-        <div class="video-style">
+        <mapgis-ui-group-tab title="数据源" :has-top-margin="false" />
+        <div class="projector-style">
           <mapgis-ui-video
-            v-if="showVideoDiv"
+            v-show="showVideoDiv"
             :width="300"
             :height="200"
             :videoUrl="videoSource.videoUrl"
             :protocol="videoSource.protocol"
             @onPlayerReady="_getPlayer"
           ></mapgis-ui-video>
+          <img v-show="showImgDiv" :src="imgUrl" :width="300" :height="200" />
           <mapgis-ui-empty
-            v-else
+            v-show="!showImgDiv && !showVideoDiv"
             :image="emptyImage"
             :image-style="imageStyle"
             class="empty"
           >
             <span slot="description" class="empty-style">
-              请在下方设置视频源
+              请在下方设置数据源
             </span>
           </mapgis-ui-empty>
         </div>
@@ -50,21 +51,37 @@
           :wrapper-width="224"
           class="mapgis-ui-setting-form"
         >
-          <mapgis-ui-form-item label="协议类型">
-            <mapgis-ui-select v-model="videoSource.protocol">
-              <mapgis-ui-select-option v-for="item in protocols" :key="item">
-                {{ item }}
-              </mapgis-ui-select-option>
+          <mapgis-ui-form-item label="数据类型">
+            <mapgis-ui-select v-model="projectorType" :options="projectorTypes">
             </mapgis-ui-select>
           </mapgis-ui-form-item>
-          <mapgis-ui-form-item label="服务地址">
-            <mapgis-ui-textarea
-              v-model="videoSource.videoUrl"
-              class="full-width"
-              autoSize
-              allowClear
-            />
-          </mapgis-ui-form-item>
+          <div v-if="projectorType === 'video'">
+            <mapgis-ui-form-item label="协议类型">
+              <mapgis-ui-select v-model="videoSource.protocol">
+                <mapgis-ui-select-option v-for="item in protocols" :key="item">
+                  {{ item }}
+                </mapgis-ui-select-option>
+              </mapgis-ui-select>
+            </mapgis-ui-form-item>
+            <mapgis-ui-form-item label="服务地址">
+              <mapgis-ui-textarea
+                v-model="videoSource.videoUrl"
+                class="full-width"
+                autoSize
+                allowClear
+              />
+            </mapgis-ui-form-item>
+          </div>
+          <div v-else-if="projectorType === 'image'">
+            <mapgis-ui-form-item label="图片地址">
+              <mapgis-ui-textarea
+                v-model="imgUrl"
+                class="full-width"
+                autoSize
+                allowClear
+              />
+            </mapgis-ui-form-item>
+          </div>
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="摄像头参数"></mapgis-ui-group-tab>
         <mapgis-ui-setting-form
@@ -240,12 +257,12 @@
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
 import emptyImage from "../../../assets/image/empty.png";
-import videoMixins from "./mixins/video-mixins";
+import projectorMixins from "./mixins/projector-mixins";
 
 export default {
-  name: "mapgis-3d-video-setting",
+  name: "mapgis-3d-projector-setting",
   inject: ["Cesium", "vueCesium", "viewer"],
-  mixins: [videoMixins],
+  mixins: [projectorMixins],
   props: {
     ...VueOptions,
     settings: {
@@ -253,10 +270,12 @@ export default {
       default: () => {
         return {
           id: "543-123-987-765", // 视频id
-          name: "layer2Video2", // 视频名称
+          name: "layer2Projector2", // 视频名称
           description: "", //描述
           isProjected: false, // 是否开启视频投放
           params: {
+            projectorType: "video", //投放类型[video,image]
+            imgUrl: "", // 图片地址
             videoSource: {
               protocol: "mp4", // 视频传输协议
               videoUrl: "http://localhost:8895/video/DJI_0008.mp4" // 视频服务地址
@@ -281,15 +300,29 @@ export default {
     settings: {
       handler() {
         this.settingsCopy = JSON.parse(JSON.stringify(this.settings));
-        this.scenePro = this.putVideo(this.settingsCopy);
-        this._changeProtocol();
+        this.scenePro = this.putProjector(this.settingsCopy);
+        this._changeProjectorType();
       },
       deep: true,
       immediate: true
     },
     videoSource: {
       handler() {
-        this._changeVideo();
+        this._changeProjector();
+      },
+      deep: true,
+      immediate: true
+    },
+    imgUrl: {
+      handler() {
+        this._changeProjector();
+      },
+      deep: true,
+      immediate: true
+    },
+    projectorType: {
+      handler() {
+        this._changeProjector();
       },
       deep: true,
       immediate: true
@@ -301,6 +334,22 @@ export default {
     },
     videoSource() {
       return this.settingsCopy.params.videoSource;
+    },
+    projectorType: {
+      get: function() {
+        return this.settingsCopy.params.projectorType;
+      },
+      set: function(params) {
+        this.settingsCopy.params.projectorType = params;
+      }
+    },
+    imgUrl: {
+      get: function() {
+        return this.settingsCopy.params.imgUrl;
+      },
+      set: function(params) {
+        this.settingsCopy.params.imgUrl = params;
+      }
     },
     orientation() {
       return this.settingsCopy.params.orientation;
@@ -315,9 +364,15 @@ export default {
     },
     showVideoDiv() {
       return (
+        this.projectorType === "video" &&
         this.videoSource &&
         this.videoSource.videoUrl &&
         this.videoSource.videoUrl.endsWith(`.${this.videoSource.protocol}`)
+      );
+    },
+    showImgDiv() {
+      return (
+        this.projectorType === "image" && this.imgUrl && this.imgUrl !== ""
       );
     }
   },
@@ -326,6 +381,10 @@ export default {
       settingsCopy: {},
       proType: undefined, //投影类型
       protocols: ["m3u8", "mp4"], // video协议集合
+      projectorTypes: [
+        { value: "video", label: "视频" },
+        { value: "image", label: "图片" }
+      ],
       scenePro: undefined, //投放对象
       isGetCameraPosition: false, //是否获取相机位置
       isGetTargetPosition: false, //是否获取视点位置
@@ -363,7 +422,18 @@ export default {
     unmount() {
       this.$emit("unload", this);
       if (!this.settings.isProjected) {
-        this.cancelPutVideo(this.settings.id);
+        this.cancelPutProjector(this.settings.id);
+      }
+    },
+    /**
+     * 修改投影类型
+     */
+    _changeProjectorType() {
+      const { projectorType } = this;
+      if (projectorType === "image") {
+        this.proType = this.Cesium.SceneProjectorType.IMAGE;
+      } else if (projectorType === "video") {
+        this._changeProtocol();
       }
     },
     /**
@@ -384,13 +454,15 @@ export default {
     /**
      * 更改视频源参数
      */
-    _changeVideo() {
+    _changeProjector() {
       if (!this.scenePro) {
         return;
       }
-      this._changeProtocol();
+      this._changeProjectorType();
       switch (this.proType) {
         case Cesium.SceneProjectorType.IMAGE:
+          this.scenePro.textureSource = this.imgUrl;
+          break;
         case Cesium.SceneProjectorType.VIDEO:
         case Cesium.SceneProjectorType.HLS:
           this.scenePro.textureSource = this.videoSource.videoUrl;
@@ -622,7 +694,7 @@ export default {
     _okClick() {
       // 退出配置前，先恢复投放状态
       if (!this.settings.isProjected) {
-        this.cancelPutVideo(this.settings.id);
+        this.cancelPutProjector(this.settings.id);
       }
       this.$emit("update-settings", this.settingsCopy);
     },
@@ -631,9 +703,9 @@ export default {
      */
     _cancelClick() {
       // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
-      this.cancelPutVideo(this.settings.id);
+      this.cancelPutProjector(this.settings.id);
       if (this.settings.isProjected) {
-        this.putVideo(this.settings);
+        this.putProjector(this.settings);
       }
       this.$emit("cancel");
     }
@@ -641,7 +713,7 @@ export default {
 };
 </script>
 <style scoped>
-.video-style {
+.projector-style {
   text-align: center;
   margin-bottom: 12px;
 }
