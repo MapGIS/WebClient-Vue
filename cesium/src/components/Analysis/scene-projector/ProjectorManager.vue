@@ -139,7 +139,11 @@
               :hideVPInvisible="hideVPInvisible"
               @update-settings="_updateSettings"
               @cancel="_cancelSetting"
-            ></mapgis-3d-projector-setting>
+            >
+              <template slot="imgUpload" slot-scope="slotProps">
+                <slot name="imgUpload" v-bind="slotProps"></slot>
+              </template>
+            </mapgis-3d-projector-setting>
           </mapgis-ui-tab-pane>
           <mapgis-ui-checkbox
             v-show="activeKey === '1'"
