@@ -74,12 +74,11 @@
           </div>
           <div v-else-if="projectorType === 'image'">
             <mapgis-ui-form-item label="图片地址">
-              <mapgis-ui-textarea
-                v-model="imgUrl"
-                class="full-width"
-                autoSize
-                allowClear
-              />
+              <div class="full-width flex">
+                <mapgis-ui-textarea v-model="imgUrl" autoSize allowClear>
+                </mapgis-ui-textarea>
+                <slot name="imgUpload" :click="updateImgUrl"></slot>
+              </div>
             </mapgis-ui-form-item>
           </div>
         </mapgis-ui-setting-form>
@@ -425,6 +424,9 @@ export default {
         this.cancelPutProjector(this.settings.id);
       }
     },
+    updateImgUrl(url) {
+      this.imgUrl = url;
+    },
     /**
      * 修改投影类型
      */
@@ -720,6 +722,10 @@ export default {
 
 .full-width {
   width: 100%;
+}
+
+.flex {
+  display: flex;
 }
 
 .item-left {
