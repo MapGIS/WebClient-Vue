@@ -6,6 +6,7 @@ import Link from "./components/UI/Controls/Link/Link.vue";
 import BaseDraw from "./components/UI/Controls/Draw/Draw";
 import Measure from "./components/UI/Controls/Measure/Measure";
 import Table from "./components/UI/Controls/Table/BaseTable";
+import OutputImage from "./components/UI/Controls/OutputImage/OutputImage";
 
 // 影像
 import ImageryLayer from "./components/Provider/ImageProvider/ImageryLayer.vue";
@@ -38,6 +39,7 @@ export const CesiumLink = Link;
 export const CesiumBaseDraw = BaseDraw;
 export const CesiumMeasure = Measure;
 export const CesiumTable = Table;
+export const CesiumOutputImage = OutputImage;
 
 export const CesiumImageryLayer = ImageryLayer;
 export const CesiumRasterLayer = RasterLayer;
@@ -67,6 +69,7 @@ const Components = [
   CesiumBaseDraw,
   CesiumMeasure,
   CesiumTable,
+  CesiumOutputImage,
 
   CesiumImageryLayer,
   CesiumRasterLayer,
@@ -85,13 +88,13 @@ const Components = [
 
   MapgisGeojsonDatasource,
   MapgisCzmlDatasource,
-  CesiumPopup
+  CesiumPopup,
 
   /* CesiumMapvLayer */
 ];
 
-const install = function(Vue, options) {
-  Components.forEach(com => {
+const install = function (Vue, options) {
+  Components.forEach((com) => {
     Vue.component(com.options ? com.options.name : com.name, com);
   });
 };
@@ -100,5 +103,5 @@ if (typeof window !== "undefined" && window["Vue"]) {
 }
 
 export default {
-  install
+  install,
 };

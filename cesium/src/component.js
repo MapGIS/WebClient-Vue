@@ -11,6 +11,7 @@ export { default as Mapgis3dArcgisLegend } from "./components/UI/Controls/Legend
 export { default as Mapgis3dTable } from "./components/UI/Controls/Table/BaseTable.vue";
 export { default as Mapgis3dLocate } from "./components/UI/Controls/geoLocate/Locate.vue";
 export { default as Mapgis3dDebug } from "./components/UI/Controls/Debug/Debug.vue";
+export { default as Mapgis3dOutputImage } from "./components/UI/Controls/OutputImage/OutputImage.vue";
 
 // 影像
 export { default as Mapgis3dImageryLayer } from "./components/Provider/ImageProvider/ImageryLayer.vue";
