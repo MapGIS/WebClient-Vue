@@ -129,6 +129,22 @@ onChangeSetting(val, tag)
 
 - **Description:** 在 点击取消按钮 时发送该事件
 
+## 插槽
+
+### imgUpload
+
+- **Description:** 图片上传按钮插槽
+- **Param:** click {Function} 主要用来回传上传后图片路径。
+
+```vue
+<template slot="imgUpload" slot-scope="{ click }">
+  <mp-upload-image
+    :uploadUrl="`${baseUrl}/api/local-storage/pictures`"
+    :click="click"
+  ></mp-upload-image>
+</template>
+```
+
 ## 示例
 
 ```vue
