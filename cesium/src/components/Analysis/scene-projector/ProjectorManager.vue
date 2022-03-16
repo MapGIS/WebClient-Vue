@@ -524,6 +524,8 @@ export default {
         description: "", //描述
         isProjected: false, // 是否开启视频投放
         params: {
+          projectorType: "video",
+          imgUrl: "",
           videoSource: {
             protocol: "m3u8", // 视频传输协议
             videoUrl: undefined // 视频服务地址
