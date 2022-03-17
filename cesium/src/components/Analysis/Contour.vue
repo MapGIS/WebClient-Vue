@@ -574,7 +574,7 @@ export default {
         }
 
       }
-      unit.color = color.toCssColorString();
+      unit.color = color ? color.toCssColorString() : '#ff0000';
       return unit;
     },
     /**
