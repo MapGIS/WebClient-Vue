@@ -26,7 +26,11 @@
     </slot>
     <!-- slot for measureMarker -->
     <slot name="measureMarker">
-      <measure-marker />
+      <measure-marker>
+        <template slot="popup" slot-scope="slotProps">
+          <slot name="popup" v-bind="slotProps"></slot>
+        </template>
+      </measure-marker>
     </slot>
   </div>
 </template>
