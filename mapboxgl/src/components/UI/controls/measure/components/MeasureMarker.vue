@@ -1,19 +1,20 @@
 <template>
-  <mapgis-marker
+  <mapgis-popup
     v-if="coordinates.length"
     :coordinates="coordinates"
-    :class="prefixCls"
+    :offset="popupOffset"
     anchor="bottom"
+    :showed="true"
   >
-    <mapgis-popup :coordinates="coordinates" :offset="popupOffset">
+    <div slot="default">
       <slot name="popup">
         <div :class="`${prefixCls}-popup-content`" :style="markerStyle">
           <p>周长：{{ perimeter }}</p>
           <p v-if="area">面积：{{ area }}</p>
         </div>
       </slot>
-    </mapgis-popup>
-  </mapgis-marker>
+    </div>
+  </mapgis-popup>
 </template>
 <script>
 import dep from "../store/dep";
@@ -37,7 +38,7 @@ export default {
     },
     popupOffset() {
       // mapboxgl默认标注图片高度为41px
-      return [0, -21];
+      return [0, 0];
     }
   },
   methods: {
