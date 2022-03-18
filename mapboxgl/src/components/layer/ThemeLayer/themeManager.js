@@ -14,6 +14,9 @@ class ZondyThemeManager {
    * @param layerId 原始图层名称，不是专题图名称
    * */
   initLayerProps(layerId) {
+    if(!window.ZondyThemeManager.hasOwnProperty(this.vueId)){
+      window.ZondyThemeManager[this.vueId] = {};
+    }
     window.ZondyThemeManager[this.vueId][layerId] = {};
   }
 
