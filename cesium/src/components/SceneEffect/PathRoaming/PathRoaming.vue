@@ -126,7 +126,7 @@
                 <mapgis-ui-slider
                   class="slider-body"
                   v-model="rangeCopy"
-                  :min="0"
+                  :min="1"
                   :max="200"
                   :disabled="animationTypeCopy === 1 ? true : false"
                   @change="val => changeRange(val)"
@@ -136,7 +136,7 @@
                 <mapgis-ui-input-number
                   class="slider-number"
                   v-model="rangeCopy"
-                  :min="0"
+                  :min="1"
                   :max="200"
                   :disabled="animationTypeCopy === 1 ? true : false"
                   @change="val => changeRange(val)"
@@ -231,7 +231,7 @@ export default {
     },
     range: {
       type: Number,
-      default: 0
+      default: 1
     },
     animationType: {
       type: Number,
@@ -347,7 +347,7 @@ export default {
       exHeightCopy: 1,
       headingCopy: 90,
       pitchCopy: 0,
-      rangeCopy: 0,
+      rangeCopy: 1, // range<1,信息提示框会闪烁，必须限制大于等于1
       animationTypeCopy: 1,
       interpolationAlgorithmCopy: "LagrangePolynomialApproximation",
       isLoopCopy: true,
@@ -502,7 +502,7 @@ export default {
       if (window.SceneWanderManager.animation.animationType === 3) {
         this.rangeCopy = 200;
       } else {
-        this.rangeCopy = 0;
+        this.rangeCopy = 1;
       }
       window.SceneWanderManager.animation.range = this.rangeCopy;
     },
@@ -538,7 +538,7 @@ export default {
       if (window.SceneWanderManager.animation.animationType === 3) {
         this.rangeCopy = 200;
       } else {
-        this.rangeCopy = 0;
+        this.rangeCopy = 1;
       }
       window.SceneWanderManager.animation.range = this.rangeCopy;
     },
