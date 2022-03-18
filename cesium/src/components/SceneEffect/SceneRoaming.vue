@@ -122,7 +122,7 @@ export default {
     },
     range: {
       type: Number,
-      default: 0
+      default: 1
     },
     animationType: {
       type: Number,
