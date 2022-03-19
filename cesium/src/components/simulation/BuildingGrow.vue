@@ -198,7 +198,7 @@ export default {
             collection: collection,
             primitiveCollection: viewer.scene.primitives.add(collection),
           });
-          // 1.通过构建树隐藏m3d模型
+          // 1.通过构件树隐藏m3d模型
           this.hideRootNode();
           // 2.对获取的树数据中name:时间 进行升序排序
           this.sortDateTime();

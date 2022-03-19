@@ -25,10 +25,14 @@ export default {
     },
   },
 
-  layers: {
+  /** @deprecated
+   * @date 2022/03/19 基础平台-潘卓然
+   * @description 保持单个M3D图层针对一个图层的语义，因此该接口需要废弃
+   **/
+  /* layers: {
     type: [String],
     default: undefined,
-  },
+  }, */
   /**
    * @type Cesium.Resource.headers
    * @example headers: { "szvsud-license-key": '3AE2IROq5nGn5K/+zQlUxSoHoNdjCoS1l5567rK5SKjHfRbQIvhtbInd7S9X6bFl' },

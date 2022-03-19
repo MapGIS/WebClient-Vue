@@ -11,7 +11,7 @@ import VueOptions from "../../../Base/Vue/VueOptions";
 import Mapgis3dStoryPopup from "../../MapStory/ui/storyPanelLarge.vue";
 
 export default {
-  name: "mapgis-3d-m3d-menu-props",
+  name: "mapgis-3d-m3d-menu-popup",
   inject: ["Cesium", "vueCesium", "viewer", "m3ds"],
   components: {
     Mapgis3dStoryPopup
