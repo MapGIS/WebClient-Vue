@@ -373,7 +373,7 @@ export default {
       this.expandedKeys = [];
       this.selectedKeys = [];
     },
-    // 构建树内部逻辑
+    // 构件树内部逻辑
     parseTree(tree) {
       const displaytree = this.findDisplayTree(tree);
       let cbtree = this.loopTreeNode(displaytree, "", undefined);

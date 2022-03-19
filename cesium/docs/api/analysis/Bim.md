@@ -1,4 +1,4 @@
-# BIM 构建树
+# BIM 构件树
 
 > mapgis-3d-bim-component
 
@@ -27,19 +27,19 @@
 - **类型:** `Object`
 - **可选**
 - **非侦听属性**
-- **默认值:** 
-    ``` json
-    {
-        "position": "absolute",
-        "zIndex": 1000,
-        "padding": "0px",
-        "margin": "0px",
-        "height": "600px",
-        "width": "400px",
-        "top": "0px",
-        "left": "0px",
-    }
-    ```
+- **默认值:**
+  ```json
+  {
+    "position": "absolute",
+    "zIndex": 1000,
+    "padding": "0px",
+    "margin": "0px",
+    "height": "600px",
+    "width": "400px",
+    "top": "0px",
+    "left": "0px"
+  }
+  ```
 - **描述:** 自定义对应的包裹样式。
 
 ### `type`
@@ -47,10 +47,10 @@
 - **类型:** `String`
 - **可选**
 - **非侦听属性**
-- **默认值:** `ModelLoaded` 等待数据加载完毕后再请求对应的bim结构树
-- **描述:** 
-- - 1. **ModelLoaded**,必须等视图中的数据加载完毕后才能主动获取bim构建树
-- - 2. **ModelUrl**,向网络异步请求bim构建树数据，目前需要做同步等待处理
+- **默认值:** `ModelLoaded` 等待数据加载完毕后再请求对应的 bim 结构树
+- **描述:**
+- - 1. **ModelLoaded**,必须等视图中的数据加载完毕后才能主动获取 bim 构件树
+- - 2. **ModelUrl**,向网络异步请求 bim 构件树数据，目前需要做同步等待处理
 
 ### `layers`
 
@@ -59,14 +59,16 @@
 - **非侦听属性**
 - **默认值:** `[]`
 - **描述:** 分层分户的图层列表, 每个内部结构是{title, vueIndex}
-``` json
+
+```json
 [
-    {
-        "title": "BIM-3栋",
-        "vueIndex": "test_bim_layer1",
-    }
+  {
+    "title": "BIM-3栋",
+    "vueIndex": "test_bim_layer1"
+  }
 ]
 ```
+
 - ![图层](./images/bim_layers.png)
 
 ### `enablePopup`
@@ -80,9 +82,8 @@
 
 - **类型:** `Object`
 - **非侦听属性**
-- **描述:** popup样式，详情请见[Popup样式](../ui/popupfeature.html#popupOptions)
+- **描述:** popup 样式，详情请见[Popup 样式](../ui/popupfeature.html#popupOptions)
 - **默认值:** `{ popupType: "card" }`
-
 
 ### `enableCollapse`
 
@@ -99,26 +100,23 @@
 
 - **类型:** `Boolean`
 - **非侦听属性**
-- **描述:** 是否允许激活BIM的隔离面板的能力，特别说明，如果数据是通过BIM工具来构建的，此处设置为true,否则只有高亮功能，没有隔离面板的能力。
+- **描述:** 是否允许激活 BIM 的隔离面板的能力，特别说明，如果数据是通过 BIM 工具来构件的，此处设置为 true,否则只有高亮功能，没有隔离面板的能力。
 - **默认值:** `false`
 
 | 激活                                 | 不激活                                  |
 | :----------------------------------- | :-------------------------------------- |
 | ![激活](./images/bim_enable_bim.png) | ![不激活](./images/bim_disable_bim.png) |
-  
 
 ### `enableDynamicQuery`
 
 - **类型:** `Boolean`
 - **非侦听属性**
-- **描述:** 是否允许动态查询,目前走m3d的都不支持动态查询 只有g3d支持动态查询，因此该参数设置无效，后续待支持
+- **描述:** 是否允许动态查询,目前走 m3d 的都不支持动态查询 只有 g3d 支持动态查询，因此该参数设置无效，后续待支持
 - **默认值:** `false`
 
-
-
-
 ## 示例
-``` vue
+
+```vue
 <template>
   <mapgis-web-scene>
     <mapgis-3d-m3d-layer v-bind="m3d" vueIndex="test_bim_layer1" />
@@ -134,31 +132,31 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-        m3d: {
-            enablePopup: true,
-            url: "http://192.168.88.204:8089/M3D/2.0/高级住所模型/高级住所模型.mcj",
+      m3d: {
+        enablePopup: true,
+        url: "http://192.168.88.204:8089/M3D/2.0/高级住所模型/高级住所模型.mcj",
+      },
+      bim: {
+        enableBim: true,
+        enablePopup: true,
+        outStyle: {
+          position: "absolute",
+          zIndex: 1000,
+          padding: "0px",
+          margin: "0px",
+          height: "600px",
+          width: "400px",
+          top: "10px",
         },
-        bim: {
-            enableBim: true,
-            enablePopup: true,
-            outStyle: {
-            position: "absolute",
-            zIndex: 1000,
-            padding: "0px",
-            margin: "0px",
-            height: "600px",
-            width: "400px",
-            top: "10px",
-            },
-            layers: [
-                {
-                    title: "BIM-3栋",
-                    vueIndex: "test_bim_layer1",
-                },
-            ],
-        },
-    }
+        layers: [
+          {
+            title: "BIM-3栋",
+            vueIndex: "test_bim_layer1",
+          },
+        ],
+      },
+    };
   },
-}
+};
 </script>
 ```

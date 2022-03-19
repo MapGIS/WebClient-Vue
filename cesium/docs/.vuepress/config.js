@@ -150,7 +150,7 @@ module.exports = {
               ["/api/analysis/Household.md", "分层分户"],
               ["/api/analysis/Contour.md", "等值面分析"],
               ["/api/analysis/Household.md", "分层分户"],
-              ["/api/analysis/Bim.md", "BIM构建树"],
+              ["/api/analysis/Bim.md", "BIM构件树"],
               ["/api/analysis/ProjectorManager.md", "投放管理"],
               ["/api/analysis/ProjectorSetting.md", "投放配置"],
               // ["/api/analysis/Buffer.md", "缓冲分析"],

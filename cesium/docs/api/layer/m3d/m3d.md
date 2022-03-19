@@ -1,18 +1,19 @@
 # M3D 模型
 
-> mapgis-3d-igs-m3d
+> mapgis-3d-m3d-layer
 
 ## 特别注意
 
-::: tip M3D 2.0版本 已经妥善解决
-2.0版本 Cesium 1.84 + M3D 2.0的mcj格式没有该类问题
+::: tip M3D 2.0 版本 已经妥善解决
+2.0 版本 Cesium 1.84 + M3D 2.0 的 mcj 格式没有该类问题
 :::
 
-::: warning M3D 0.0 1.0版本
-1.0版本 Cesium 1.59 + M3D 0.0/1.0 的M3D
+::: warning M3D 0.0 1.0 版本
+1.0 版本 Cesium 1.59 + M3D 0.0/1.0 的 M3D
+
 1. 不支持点云格式的透明度修改
 2. 不支持元数据查询图层的类型，只能通过数据加载后得知数据的类型
-:::
+   :::
 
 ## 属性
 
@@ -53,7 +54,7 @@
 - **非侦听属性** 非-watch 属性
 - **描述** M3D 的 IGServer 的服务地址 Url
 
-### `layers`
+<!-- ### `layers`
 
 - **类型**: `String`
 - **必传**
@@ -62,7 +63,7 @@
 
 | 图层控制 1                            | 图层控制 2                            | 全图层显示                            |
 | :------------------------------------ | :------------------------------------ | :------------------------------------ |
-| ![控制1](./image/layer_control_1.png) | ![控制2](./image/layer_control_2.png) | ![控制3](./image/layer_control_3.png) |
+| ![控制1](./image/layer_control_1.png) | ![控制2](./image/layer_control_2.png) | ![控制3](./image/layer_control_3.png) | -->
 
 ### `show`
 
@@ -77,14 +78,15 @@
   ```
 
 ### `highlightStyle`
+
 - **类型:** `Object`
 - **非侦听属性**
 - **描述:** 当前图层的点击高亮显示样式
 - **默认值**
-  ``` javascript
+  ```javascript
   import { Style } from "@mapgis/webclient-es6-service";
   const { ModelStyle } = Style;
-  let highlightStyle = new ModelStyle()
+  let highlightStyle = new ModelStyle();
   ```
 
 ### `offset`
