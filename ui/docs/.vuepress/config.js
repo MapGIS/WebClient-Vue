@@ -115,7 +115,11 @@ module.exports = {
           {
             title: "样式&主题",
             collapsable: false,
-            children: [["/style/css/less2scss.md", "Less & Sass"]]
+            children: [
+              ["/style/css/less2scss.md", "Less & Sass"],
+              ["/style/css/less.md", "Less常见问题"],
+              ["/style/css/sass.md", "Sass常见问题"]
+            ]
           },
           {
             title: "组件开发",

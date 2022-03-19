@@ -59,7 +59,7 @@ npm set registry http://192.168.82.89:4873
 
 ```sh
 yarn config set sass-binary-site http://npm.taobao.org/mirrors/node-sass
-yarn add node-sass sass-loader -g
+yarn global add node-sass@4.11.0 sass-loader@10.1.1
 ```
 
 <!-- ::: tip 发布前提示
