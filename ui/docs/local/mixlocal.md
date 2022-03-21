@@ -42,13 +42,13 @@
 
 ## 设置本地源方式
 
-> 内网是 `http://192.168.82.89:4873/`
+> 内网是 `http://192.168.11.130:4873/`
 
 ```sh
 # yarn
-yarn config set registry http://192.168.82.89:4873/
+yarn config set registry http://192.168.11.130:4873/
 # npm
-npm set registry http://192.168.82.89:4873
+npm set registry http://192.168.11.130:4873
 ```
 
 ---
@@ -74,7 +74,7 @@ yarn global add node-sass@4.11.0 sass-loader@10.1.1
 
 2. npm上设置msvs的版本为下载的版本
 ``` sh
-npm config set msvs_version 2017
+npm config set msvs_version 2015
 ```
 
 3. 常见错误

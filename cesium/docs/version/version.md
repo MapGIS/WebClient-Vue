@@ -10,7 +10,7 @@ yarn add @mapgis/webclient-vue-mapboxgl@10.5.5-5
 yarn add @mapgis/webclient-vue-ui@10.5.5-3
 
 # 内网 中地源 内网版本号要超前一些
-yarn config set registry http://192.168.82.89:4873/
+yarn config set registry http://192.168.11.130:4873/
 yarn add @mapgis/webclient-es6-service@10.5.5-3
 yarn add @mapgis/webclient-vue-cesium@10.5.5-3
 yarn add @mapgis/webclient-vue-mapboxgl@10.5.5-8
