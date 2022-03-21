@@ -226,7 +226,9 @@ export default {
       }
 
       //模型压平
-      result.positions.push(result.positions[0]);
+      if(result.positions[0] != result.positions[result.positions.length-1]) {
+        result.positions.push(result.positions[0]);
+      }
       m3d.modelFlatten(result.positions, this.flattenHeight + this.heightOffset);
       window.__graphicsLayer__.removeAllGraphic();
       window.__graphicsLayer__.stopDrawing();
