@@ -21,20 +21,20 @@
 
 ```sh
 # 设置为mapgis内部源
-npm set registry http://192.168.82.89:4873/
+npm set registry http://192.168.11.130:4873/
 
 # 注册用户
-npm adduser --registry http://192.168.82.89:4873/
+npm adduser --registry http://192.168.11.130:4873/
 
 # 查看用户
 npm who am i
 
 # 发布仓库  一定要在对应的发布库的根目录下发布
-npm publish --registry http://192.168.82.89:4873/
+npm publish --registry http://192.168.11.130:4873/
 ```
 
 ::: tip 仓库过大无法发布
-npm config set max_body_size 100mb --registry http://192.168.82.89:4873/
+npm config set max_body_size 100mb --registry http://192.168.11.130:4873/
 :::
 
 ## 发布外网仓库
@@ -74,9 +74,9 @@ npm publish --access public
 使用示例
 
 ```sh
-# npm set registry http://192.168.82.89:4873/
+# npm set registry http://192.168.11.130:4873/
 npm install -g nrm
-nrm add mapgis http://192.168.82.89:4873/
+nrm add mapgis http://192.168.11.130:4873/
 nrm ls
 nrm use mapgis
 nrm ls

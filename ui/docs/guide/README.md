@@ -44,8 +44,8 @@ import mapgisui from "@mapgis/webclient-vue-ui";
 内网仓库建议使用 yarn 安装
 
 ```sh
-npm set registry http://192.168.82.89:4873/   （这里设置yarn的内部仓库源时需要先设置npm的内部，否则容易出问题）
-yarn config set registry http://192.168.82.89:4873/
+npm set registry http://192.168.11.130:4873/   （这里设置yarn的内部仓库源时需要先设置npm的内部，否则容易出问题）
+yarn config set registry http://192.168.11.130:4873/
 yarn add @mapgis/webclient-vue-ui
 # https://github.com/yarnpkg/yarn/issues/4862#issuecomment-368688262
 # npm config set registry https://registry.npm.taobao.org // 还原回公网仓库

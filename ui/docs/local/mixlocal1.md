@@ -50,13 +50,13 @@ yarn add node-sass sass-loader -g
 
 ## 设置本地源
 
-> 内网是 `http://192.168.82.89:4873/`
+> 内网是 `http://192.168.11.130:4873/`
 
 ```sh
 # yarn
-yarn config set registry http://192.168.82.89:4873/
+yarn config set registry http://192.168.11.130:4873/
 # npm
-npm set registry http://192.168.82.89:4873
+npm set registry http://192.168.11.130:4873
 ```
 
 ---
@@ -67,13 +67,13 @@ npm set registry http://192.168.82.89:4873
 
 ```sh
 # 注册用户
-npm adduser --registry http://192.168.82.89:4873/
+npm adduser --registry http://192.168.11.130:4873/
 
 # 查看用户
 npm who am i
 
 # 发布仓库
-npm publish --registry http://192.168.82.89:4873/
+npm publish --registry http://192.168.11.130:4873/
 ```
 
 <!-- ::: tip 发布前提示
@@ -94,15 +94,15 @@ yarn global add less@3.12.2 less-loader@7.0.2
 2. 统一使用下面的方式更新仓库
 
 ```sh
-yarn --registry http://192.168.82.89:4873
+yarn --registry http://192.168.11.130:4873
 ```
 
-3. `每次更新库`或者安装依赖都需要增加后缀 --registry http://192.168.82.89:4873/
+3. `每次更新库`或者安装依赖都需要增加后缀 --registry http://192.168.11.130:4873/
 
 ```sh
-  # yarn --registry http://192.168.82.89:4873/
-  # yarn add xxx --registry http://192.168.82.89:4873/
-  yarn add @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.82.89:4873/
+  # yarn --registry http://192.168.11.130:4873/
+  # yarn add xxx --registry http://192.168.11.130:4873/
+  yarn add @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.11.130:4873/
 ```
 
 4. 每次更新仓库
@@ -111,7 +111,7 @@ yarn --registry http://192.168.82.89:4873
    > ![bug](./yarn/bug.png)
 
 ```sh
-npm publish --registry http://192.168.82.89:4873/
+npm publish --registry http://192.168.11.130:4873/
 ```
 
 ## WebClient-Vue
@@ -120,15 +120,15 @@ npm publish --registry http://192.168.82.89:4873/
 2. 统一使用下面的方式更新仓库
 
 ```sh
-yarn --registry http://192.168.82.89:4873
+yarn --registry http://192.168.11.130:4873
 ```
 
-3. `每次更新库`或者安装依赖都需要增加后缀 --registry http://192.168.82.89:4873/
+3. `每次更新库`或者安装依赖都需要增加后缀 --registry http://192.168.11.130:4873/
 
 ```sh
-  # yarn --registry http://192.168.82.89:4873/
-  # yarn add xxx --registry http://192.168.82.89:4873/
-  yarn add @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.82.89:4873/
+  # yarn --registry http://192.168.11.130:4873/
+  # yarn add xxx --registry http://192.168.11.130:4873/
+  yarn add @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.11.130:4873/
 ```
 
 4. 每次更新仓库
@@ -137,7 +137,7 @@ yarn --registry http://192.168.82.89:4873
    > ![bug](./yarn/bug.png)
 
 ```sh
-npm publish --registry http://192.168.82.89:4873/
+npm publish --registry http://192.168.11.130:4873/
 ```
 
 ## 三方应用
@@ -146,14 +146,14 @@ npm publish --registry http://192.168.82.89:4873/
 2. 统一使用下面的方式更新仓库
 
 ```sh
-yarn --registry http://192.168.82.89:4873
+yarn --registry http://192.168.11.130:4873
 ```
 
-3. `每次更新库`或者安装依赖都需要增加后缀 --registry http://192.168.82.89:4873/
+3. `每次更新库`或者安装依赖都需要增加后缀 --registry http://192.168.11.130:4873/
 
 ```sh
-  # yarn add xxx --registry http://192.168.82.89:4873/
-  yarn add @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.82.89:4873/
+  # yarn add xxx --registry http://192.168.11.130:4873/
+  yarn add @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.11.130:4873/
 
-  yarn upgrade @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.82.89:4873/
+  yarn upgrade @mapgis/webclient-es6-service@10.5.5-3 --registry http://192.168.11.130:4873/
 ```
