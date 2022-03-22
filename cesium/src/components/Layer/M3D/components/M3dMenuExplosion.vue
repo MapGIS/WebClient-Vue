@@ -35,7 +35,7 @@
       </mapgis-ui-row>
     </div>
     <div class="mapgis-3d-m3d-menu-explosion-content">
-      <mapgis-ui-input-number-panel
+      <!-- <mapgis-ui-input-number-panel
         transparent
         size="small"
         label="朝向角度"
@@ -50,7 +50,7 @@
         v-model="angle"
         :range="[-360, 360]"
       >
-      </mapgis-ui-input-number-panel>
+      </mapgis-ui-input-number-panel> -->
       <mapgis-ui-input-number-panel
         transparent
         size="small"
