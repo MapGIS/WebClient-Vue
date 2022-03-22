@@ -287,6 +287,10 @@ export default {
                     },
                     duration: 0.5,
                 });
+
+                let hpRange= new Cesium.HeadingPitchRange(0, 90, 100000000);
+                viewer.camera.lookAt(moonPosition, hpRange);
+
             } else {
                 viewer.camera.flyHome(0.5);
             }
