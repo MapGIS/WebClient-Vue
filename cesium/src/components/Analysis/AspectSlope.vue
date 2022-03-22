@@ -233,7 +233,7 @@ export default {
             const colors = [];
             const ramp = [];
             rampColorsCopy.forEach(({ max, color }) => {
-                ramp.push((max / 360).toFixed(2));
+                ramp.push((max / 90).toFixed(2));
                 colors.push(color);
             });
             const rampColor = this._transformColor(colors);
@@ -251,6 +251,8 @@ export default {
                             slopeRamp: ramp,
                         });
 
+                    aspectSlopeAnalysis.changeColorTable(rampColor,'slope')
+                    aspectSlopeAnalysis.changeColorTableDis(ramp,'slope')
                     aspectSlopeAnalysis.updateMaterial(vm.displayOption);
                     aspectSlopeAnalysis.changeAnalyseArea(result.positions);
                     var cartesian2 = new Cesium.Cartesian2(
