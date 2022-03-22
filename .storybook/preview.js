@@ -25,8 +25,8 @@ Vue.use(MapgisCesiumComponents, {});
   port: "6163",
 }; */
 window.webclient = {
-  ip: "develop.smaryun.com",
-  port: "6163",
+  ip: "192.168.81.177",
+  port: "8089",
 };
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
@@ -37,10 +37,10 @@ window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 //   "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
 
   window.VueCesiumLibPath =
-  "http://192.168.82.89:8086/static/libs/cdn/cesium/Cesium.js";
+  "http://192.168.81.177:8059/static/libs/cdn/cesium/Cesium.js";
   
 window.VueCesiumPluginPath =
-  "http://192.168.82.89:8086/static/libs/cdn/cesium/webclient-cesium-plugin.min.js";
+  "http://192.168.81.177:8059/static/libs/cdn/cesium/webclient-cesium-plugin.min.js";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
