@@ -176,7 +176,8 @@ export default {
       const port = new URL(url).port;
       const pathName = new URL(url).pathname;
       const pathNameArr = pathName.split('/');
-      const docName = pathNameArr[pathNameArr.length - 3];
+      let docName = pathNameArr[pathNameArr.length - 3];
+      docName = decodeURIComponent(docName);
       const layerIndex = Number(pathNameArr[pathNameArr.length - 1]);
       // 二维矢量文档
       let queryStruct = new Zondy.Service.QueryFeatureStruct();
