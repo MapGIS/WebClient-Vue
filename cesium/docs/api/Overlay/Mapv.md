@@ -4,8 +4,6 @@
 
 ## 属性
 
-All common [layers props](/zh/api/Layers/README.md#props)
-
 ### `geojson`
 
 - **类型:** `Object`
@@ -23,7 +21,7 @@ All common [layers props](/zh/api/Layers/README.md#props)
   ```js
   var options = {
     context: "2d",
-    draw: "heatmap"
+    draw: "heatmap",
   };
   ```
 
@@ -39,36 +37,49 @@ All common [layers props](/zh/api/Layers/README.md#props)
 ```vue
 <template>
   <mapgis-web-scene>
-    <mapgis-3d-arcgis-tile-layer :baseUrl="url" :layer-style="layerStyle" :srs="srs"/>
+    <mapgis-3d-arcgis-tile-layer
+      :baseUrl="url"
+      :layer-style="layerStyle"
+      :srs="srs"
+    />
     <mapgis-3d-mapv v-bind="$props"></mapgis-3d-mapv>
   </mapgis-web-scene>
 </template>
 <script>
-import { MapgisWebScene, Mapgis3dArcgisTileLayer, Mapgis3dMapvLayer} from "@mapgis/webclient-vue-cesium";
+import {
+  MapgisWebScene,
+  Mapgis3dArcgisTileLayer,
+  Mapgis3dMapvLayer,
+} from "@mapgis/webclient-vue-cesium";
 import { BaseServer } from "@mapgis/webclient-es6-service";
 
 export default {
-  components: { MapgisWebScene, Mapgis3dArcgisTileLayer, Mapgis3dMapvLayer,BaseServer },
+  components: {
+    MapgisWebScene,
+    Mapgis3dArcgisTileLayer,
+    Mapgis3dMapvLayer,
+    BaseServer,
+  },
   data() {
     return {
-      url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      url: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
       layerStyle: {
         visible: true,
         opacity: 1,
-        zIndex: 2
+        zIndex: 2,
       },
-      srs:"EPSG:4326",
+      srs: "EPSG:4326",
       options: {
-        context: '2d',
-        fillStyle: 'rgba(55, 50, 250, 0.8)',
+        context: "2d",
+        fillStyle: "rgba(55, 50, 250, 0.8)",
         size: 40,
         globalAlpha: 0.5,
         label: {
           show: true,
-          fillStyle: 'white',
-          shadowColor: 'yellow',
-          font: '15px Arial',
-          shadowBlur: 10
+          fillStyle: "white",
+          shadowColor: "yellow",
+          font: "15px Arial",
+          shadowBlur: 10,
         },
         gradient: {
           0: "rgba(49, 54, 149, 0)",
@@ -80,14 +91,14 @@ export default {
           0.7: "rgba(253,174,97,0.7)",
           0.8: "rgba(244,109,67,0.8)",
           0.9: "rgba(215,48,39,0.8)",
-          0.95: "rgba(165, 0, 38,0.8)"
+          0.95: "rgba(165, 0, 38,0.8)",
         },
-        shadowColor: 'rgba(255, 255, 50, 1)',
+        shadowColor: "rgba(255, 255, 50, 1)",
         shadowBlur: 10,
         max: 100,
-        draw: 'grid'
+        draw: "grid",
       },
-      geojson: {}
+      geojson: {},
     };
   },
   mounted() {
@@ -102,18 +113,18 @@ export default {
         data.push({
           geometry: {
             type: "Point",
-            coordinates: [75 + Math.random() * 50, 20.3 + Math.random() * 20]
+            coordinates: [75 + Math.random() * 50, 20.3 + Math.random() * 20],
           },
           properties: {
-            count: 30 * Math.random()
-          }
+            count: 30 * Math.random(),
+          },
         });
       }
       this.geojson = {
-        features: data
+        features: data,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="css">

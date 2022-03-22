@@ -4,8 +4,6 @@
 
 ## 属性
 
-All common [layers props](/zh/api/Layers/README.md#props)
-
 ### `options`
 
 - **类型:** `Object`
@@ -20,15 +18,15 @@ All common [layers props](/zh/api/Layers/README.md#props)
     cesium: {
       //关键地方---1
       // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
-      roam: true
+      roam: true,
     },
     series: [
       {
         //关键地方---2
         // 坐标系
-        coordinateSystem: "cesium"
-      }
-    ]
+        coordinateSystem: "cesium",
+      },
+    ],
   };
   ```
 
@@ -36,13 +34,20 @@ All common [layers props](/zh/api/Layers/README.md#props)
 
 ```vue
 <template>
-  <mapgis-web-scene style="height:60vh" :cameraView = "cameraView">
-    <mapgis-3d-arcgis-tile-layer :baseUrl="url" :layer-style="layerStyle" :srs="srs"/>
+  <mapgis-web-scene style="height:60vh" :cameraView="cameraView">
+    <mapgis-3d-arcgis-tile-layer
+      :baseUrl="url"
+      :layer-style="layerStyle"
+      :srs="srs"
+    />
     <mapgis-3d-echarts-layer :options.sync="option"></mapgis-3d-echarts-layer>
   </mapgis-web-scene>
 </template>
 <script>
-import { MapgisWebScene,Mapgis3dArcgisTileLayer } from "@mapgis/webclient-vue-cesium";
+import {
+  MapgisWebScene,
+  Mapgis3dArcgisTileLayer,
+} from "@mapgis/webclient-vue-cesium";
 import { BaseServer } from "@mapgis/webclient-es6-service";
 import * as echarts from "echarts";
 
@@ -52,25 +57,25 @@ export default {
     return {
       busLines: {},
       option: {},
-      url:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      url: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
       layerStyle: {
         visible: true,
         opacity: 1,
-        zIndex: 2
+        zIndex: 2,
       },
       srs: "EPSG:4326",
-      cameraView:{
+      cameraView: {
         destination: {
           x: -2409221.7854387695,
           y: 4705113.697479787,
-          z: 4500333.6696071755
+          z: 4500333.6696071755,
         },
         orientation: {
           heading: 3.2694614177406143,
           pitch: -1.4832321184766042,
-          roll: 3.1369303868636838
+          roll: 3.1369303868636838,
         },
-      }
+      },
     };
   },
   mounted() {
@@ -79,11 +84,11 @@ export default {
   methods: {
     initData() {
       let vm = this;
-      let onSuccess = function(data) {
+      let onSuccess = function (data) {
         var hStep = 300 / (data.value.length - 1);
         vm.busLines = [].concat.apply(
           [],
-          data.value.map(function(busLine, idx) {
+          data.value.map(function (busLine, idx) {
             var prevPt;
             var points = [];
             for (var i = 0; i < busLine.length; i += 2) {
@@ -102,15 +107,15 @@ export default {
                   color: echarts.color.modifyHSL(
                     "#5A94DF",
                     Math.round(hStep * idx)
-                  )
-                }
-              }
+                  ),
+                },
+              },
             };
           })
         );
         this.initOptions(vm.busLines);
       };
-      let onError = function(e) {
+      let onError = function (e) {
         console.log(e);
       };
       var service = new BaseServer.IgsServiceBase(
@@ -119,8 +124,8 @@ export default {
           eventListeners: {
             scope: this,
             processCompleted: onSuccess,
-            processFailed: onError
-          }
+            processFailed: onError,
+          },
         }
       );
       service.processAsync();
@@ -128,7 +133,7 @@ export default {
     initOptions(busLines) {
       let echartsOptions = {
         cesium: {
-          roam: true
+          roam: true,
         },
         series: [
           {
@@ -141,10 +146,10 @@ export default {
               // color: '#c23531',
               // color: 'rgb(200, 35, 45)',
               opacity: 0.2,
-              width: 1
+              width: 1,
             },
             progressiveThreshold: 500,
-            progressive: 200
+            progressive: 200,
           },
           {
             type: "lines",
@@ -152,21 +157,21 @@ export default {
             polyline: true,
             data: busLines,
             lineStyle: {
-              width: 0
+              width: 0,
             },
             effect: {
               constantSpeed: 20,
               show: true,
               trailLength: 0.1,
-              symbolSize: 1.5
+              symbolSize: 1.5,
             },
-            zlevel: 1
-          }
-        ]
+            zlevel: 1,
+          },
+        ],
       };
       this.option = echartsOptions;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="css">
