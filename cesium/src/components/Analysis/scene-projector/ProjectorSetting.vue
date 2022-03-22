@@ -26,14 +26,15 @@
         </mapgis-ui-setting-form>
         <mapgis-ui-group-tab title="数据源" :has-top-margin="false" />
         <div class="projector-style">
-          <mapgis-ui-video
-            v-show="showVideoDiv"
-            :width="300"
-            :height="200"
-            :videoUrl="videoSource.videoUrl"
-            :protocol="videoSource.protocol"
-            @onPlayerReady="_getPlayer"
-          ></mapgis-ui-video>
+          <div v-show="showVideoDiv">
+            <mapgis-ui-video
+              :width="300"
+              :height="200"
+              :videoUrl="videoSource.videoUrl"
+              :protocol="videoSource.protocol"
+              @onPlayerReady="_getPlayer"
+            ></mapgis-ui-video>
+          </div>
           <img v-show="showImgDiv" :src="imgUrl" :width="300" :height="200" />
           <mapgis-ui-empty
             v-show="!showImgDiv && !showVideoDiv"
@@ -362,7 +363,7 @@ export default {
       }
     },
     showVideoDiv() {
-      return (
+      return !!(
         this.projectorType === "video" &&
         this.videoSource &&
         this.videoSource.videoUrl &&
@@ -370,8 +371,10 @@ export default {
       );
     },
     showImgDiv() {
-      return (
-        this.projectorType === "image" && this.imgUrl && this.imgUrl !== ""
+      return !!(
+        this.projectorType === "image" &&
+        this.imgUrl &&
+        this.imgUrl !== ""
       );
     }
   },

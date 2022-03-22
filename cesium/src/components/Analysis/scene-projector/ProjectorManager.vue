@@ -639,8 +639,8 @@ export default {
      */
     _updateSettings(settings) {
       let target = this.projectorList.find(item => item.id === settings.id);
+      let projectorList = [...this.projectorList];
       if (target) {
-        const projectorList = [...this.projectorList];
         // 编辑
         this.projectorList = projectorList.map(item => {
           if (item.id === settings.id) {
@@ -650,13 +650,13 @@ export default {
         });
       } else {
         // 新建
-        this.projectorList.push(settings);
+        projectorList.push(settings);
         this.$emit(
           "update-projectorOverlayLayerList",
           this.projectorOverlayLayerListCopy
         );
+        this.projectorList = projectorList;
       }
-      this.currentEditProjector = settings;
       this.activeKey = "1";
     },
     /**
