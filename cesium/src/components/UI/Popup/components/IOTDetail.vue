@@ -144,7 +144,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="css" scoped>
 .iot-detail-title {
   width: 100%;
   display: flex;
