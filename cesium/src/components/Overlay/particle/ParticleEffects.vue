@@ -269,7 +269,7 @@ export default {
           this.imgUrl = checkedSymbol[0].image;
           vm.particleListCopy[i].imageUrl = this.imgUrl;
           this.createParticleEffects(viewModel.position, viewModel);
-          if (!vm.particleListCopy[i].isShow){
+          if (!vm.particleListCopy[i].isShow) {
             vm.particleArr[i].remove();
           }
         }
@@ -922,11 +922,17 @@ export default {
       const {selectedIds, pagination} = this;
       const currentPage = pagination.current;
       const pageSize = pagination.pageSize;
+      let indexArr = [];
       // 移除被选中的删除项
       for (let i = 0; i < selectedIds.length; i++) {
         const currentChooseIndex = selectedIds[i] + (currentPage - 1) * pageSize;
+        indexArr.push(currentChooseIndex);
         vm.particleArr[currentChooseIndex].remove();
-        this.particleListCopy.splice(currentChooseIndex, 1);
+      }
+      indexArr = indexArr.sort();
+      for (let j = indexArr.length - 1; j >= 0; j--) {
+        vm.particleListCopy.splice(indexArr[j], 1);
+        vm.particleArr.splice(indexArr[j], 1);
       }
       this.selectedIds = [];
     },

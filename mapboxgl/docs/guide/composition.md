@@ -1,6 +1,6 @@
 # 结构
 
-你可以类似Vue组建的方式使用MapboxGL的特性。 每个组件都可以作为 `<mapgis-web-map>` 组件的子组件。只有 `<mapgis-web-map>` 组件正确加载了，其子组件才会被创建，渲染。
+你可以类似Vue组件的方式使用MapboxGL的特性。 每个组件都可以作为 `<mapgis-web-map>` 组件的子组件。只有 `<mapgis-web-map>` 组件正确加载了，其子组件才会被创建，渲染。
 
 例如，添加地图控制组件
 
@@ -57,7 +57,7 @@ export default {
 </script>
 ```
 
-webclient-vue-mapboxgl的组件照样能再其他的自己写的Vue组件中使用，只要Vue组件在`<mapgis-web-map>`的子组件树下面
+webclient-vue-mapboxgl的组件照样能在其他的自己写的Vue组件中使用，只要Vue组件在`<mapgis-web-map>`的子组件树下面
 
 例如:
 
@@ -116,7 +116,7 @@ export default {
 ```
 
 ::: tip
-weblient-vue-mapboxgl使用独立的注入机制[provide/inject](https://cn.vuejs.org/v2/api/#provide-inject)
+webclient-vue-mapboxgl使用独立的注入机制[provide/inject](https://cn.vuejs.org/v2/api/#provide-inject)
 
 这意味着 所有的在 `<mapgis-web-map>` 结构子树下的组件都能够通过`inject`属性获得： `map`对象, `mapbox`原始对象 and `actions`行为
 :::
