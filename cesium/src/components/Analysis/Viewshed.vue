@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <slot>
   <div class="mapgis-widget-visual-analysis">
     <mapgis-ui-setting-form
       v-model="formData"
@@ -172,6 +174,8 @@
       </mapgis-ui-button>
       <mapgis-ui-button @click="onClickStop">清除</mapgis-ui-button>
     </mapgis-ui-setting-footer>
+  </div>
+    </slot>
   </div>
 </template>
 

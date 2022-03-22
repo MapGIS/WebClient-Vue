@@ -1,5 +1,7 @@
 <template>
-  <div class="mapgis-widget-visibility-analysis">
+  <div>
+    <slot>
+      <div class="mapgis-widget-visibility-analysis">
     <mapgis-ui-setting-form v-model="formData" :wrapper-width="200">
       <mapgis-ui-form-item label="附加高度(米)">
         <mapgis-ui-input
@@ -47,6 +49,8 @@
         :percent="percent"
         :text="maskText"
     ></mapgis-ui-mask>
+  </div>
+    </slot>
   </div>
 </template>
 

@@ -1,5 +1,7 @@
 <template>
-    <div class="mp-widget-shadow-analysis">
+  <div>
+    <slot>
+      <div class="mp-widget-shadow-analysis">
         <mapgis-ui-setting-form
             :model="formData"
             :wrapperWidth="143"
@@ -127,7 +129,9 @@
                 ></PopupContent>
             </Popup>
         </span>
-    </div>
+      </div>
+    </slot>
+  </div>
 </template>
 
 <script>
