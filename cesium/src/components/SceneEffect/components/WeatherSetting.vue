@@ -318,8 +318,8 @@ export default {
             let skyBox = new Cesium.GlobeEffect(viewer, {
                 cloudsDuration: 100000,
             });
-            skyBox.addDefaultSkyBox("skyBox3"); //添加天空盒默认样式1
-            // skyBox.addDefaultSkyBox('skyBox2'); //添加天空盒默认样式2
+            skyBox.addDefaultSkyBox("SkyBox3"); //添加天空盒默认样式1
+            // skyBox.addDefaultSkyBox('SkyBox2'); //添加天空盒默认样式2
 
             window.vueCesium.SettingToolManager.changeOptions(
                 vueKey,
