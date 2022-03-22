@@ -23,7 +23,7 @@
     ]
   },
   "dependencies": {
-    "@mapgis/cesium": "1.59.4",
+    "@mapgis/cesium": "^1.84.0",
     "@mapgis/webclient-es6-service": "^10.5.13",
     "@mapgis/webclient-store": "^10.5.5",
     "@mapgis/webclient-vue-ui": "^10.5.11",
