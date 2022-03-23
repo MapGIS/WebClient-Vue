@@ -3,7 +3,7 @@
        @mouseenter="$_iconEnter(type)"
        @mouseleave="$_iconLeave">
     <svg :style="iconStyle" :width="width" :height="height" v-if="type === 'delete'"
-         :class="{mapgisIconHover : hoverIcon === 'delete'}"
+         :class="{mapgisIconHover : hoverIcon === 'delete', 'mapgis-ui-svg-icon-inverse' : inverse}"
          class="mapgis-ui-svg-icon"
          viewBox="0 0 24 24"
          preserveAspectRatio="xMidYMid meet" focusable="false">
@@ -32,7 +32,7 @@
       </g>
     </svg>
     <svg :style="iconStyle" :width="width" :height="height" v-if="type === 'edit'"
-         :class="{mapgisIconHover : hoverIcon === 'edit'}"
+         :class="{mapgisIconHover : hoverIcon === 'edit', 'mapgis-ui-svg-icon-inverse' : inverse}"
          class="mapgis-ui-svg-icon"
          viewBox="0 0 24 24"
          preserveAspectRatio="xMidYMid meet" focusable="false">
@@ -359,6 +359,10 @@ export default {
     },
     title: {
       type: String
+    },
+    inverse: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

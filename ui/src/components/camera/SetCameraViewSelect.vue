@@ -125,7 +125,7 @@ export default {
           break;
         }
       }
-      this.$emit("selectCamera", this.cameraCopy);
+      this.$emit("selectCamera", newCamera);
     },
     $_showDetail() {
       this.showDetail = !this.showDetail;
@@ -153,6 +153,7 @@ export default {
     },
     $_click() {
       this.currentSelect = "当前视角";
+      this.$message.success('已保存当前视角');
       this.$emit("click");
     }
   }

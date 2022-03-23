@@ -10,8 +10,8 @@
       </div>
       <!--图片高度、图片下边距、区域内边距-->
       <div
-        :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (62) + 'px'}"
-        v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
+          :style="{...carouselStyle,height: parseInt(String(Math.ceil(( imgUrls.length + 1 ) / 2))) * (62) + 'px'}"
+          v-show="currentImgUrl || !enablePreview" class="mapgis-ui-choose-picture-right-carousel">
         <div :key="index"
              class="mapgis-ui-choose-picture-right-img-container"
              v-for="(imgUrl,index) in imgUrls"
@@ -23,29 +23,31 @@
           <div v-show="shapeIndex === index" class="mapgis-ui-choose-picture-right-img-shape">
             <mapgis-ui-svg-icon @click="$_reload(index)"
                                 style="width: 36px;text-align: center;margin-top: 10px;padding-left: 10px"
+                                :inverse="true"
                                 :iconStyle="shapeIcon" type="edit"/>
             <mapgis-ui-svg-icon @click="$_delete(index)"
                                 style="width: 36px;text-align: center;margin-top: 10px;padding-right: 10px"
+                                :inverse="true"
                                 :iconStyle="shapeIcon" type="delete"/>
           </div>
           <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
                class="mapgis-ui-choose-picture-right-img" :src="imgUrl" alt="">
         </div>
         <mapgis-ui-base64-icon
-          title="添加图片"
-          :iconStyle="addIconStyle"
-          :titleStyle="chooseTitleStyle"
-          @click="$_clickSmall"
-          :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
-          class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
-          type="addPicture"/>
+            title="添加图片"
+            :iconStyle="addIconStyle"
+            :titleStyle="chooseTitleStyle"
+            @click="$_clickSmall"
+            :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
+            class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
+            type="addPicture"/>
       </div>
     </mapgis-ui-row>
     <mapgis-ui-row v-show="showAddInternetImg" style="margin-top: 10px;padding-left: 7px;">
-      <mapgis-ui-col span="16">
-        <mapgis-ui-input v-model="internetImg"/>
+      <mapgis-ui-col span="17">
+        <mapgis-ui-input placeholder="请输入图片的Url地址" v-model="internetImg"/>
       </mapgis-ui-col>
-      <mapgis-ui-col span="8" style="padding-left: 12px">
+      <mapgis-ui-col span="7" style="padding-left: 12px">
         <mapgis-ui-button type="primary" @click="$_addInternetImg">确定</mapgis-ui-button>
       </mapgis-ui-col>
     </mapgis-ui-row>
@@ -130,7 +132,8 @@ export default {
       },
       isUpdate: true,
       showAddInternetImg: false,
-      internetImg: undefined
+      internetImg: undefined,
+      reloadInternalImg: false
     }
   },
   watch: {
@@ -206,13 +209,18 @@ export default {
     },
     $_reload(index) {
       let vm = this;
-      if (typeof index === "number") {
-        this.currenImgIndex = index;
+      if (this.useInternetImg) {
+        this.showAddInternetImg = true;
+        this.reloadInternalImg = true;
+      } else {
+        if (typeof index === "number") {
+          this.currenImgIndex = index;
+        }
+        this.$_chooseImg(function (url) {
+          vm.currentImgUrl = url;
+          vm.$set(vm.imgUrls, vm.currenImgIndex, url);
+        });
       }
-      this.$_chooseImg(function (url) {
-        vm.currentImgUrl = url;
-        vm.$set(vm.imgUrls, vm.currenImgIndex, url);
-      });
     },
     $_activeImg(index) {
       this.currenImgIndex = index;
@@ -224,21 +232,32 @@ export default {
       }
     },
     $_addInternetImg() {
-      this.imgUrls.push(this.internetImg);
-      this.currentImgUrl = this.internetImg;
-      this.currenImgIndex = this.imgUrls.length - 1;
+      this.showAddInternetImg = false;
+      if(!this.internetImg){
+        this.$message.warning('请输入非空链接！');
+        return;
+      }
+      if (this.reloadInternalImg) {
+        this.currentImgUrl = this.internetImg;
+        this.imgUrls[this.currenImgIndex] = this.internetImg;
+        this.reloadInternalImg = false;
+      } else {
+        this.imgUrls.push(this.internetImg);
+        this.currentImgUrl = this.internetImg;
+        this.currenImgIndex = this.imgUrls.length - 1;
+      }
+      this.internetImg = "";
+      this.$emit("changeImage", this.imgUrls)
       if (this.imgUrls.length === 1) {
         this.$emit("firstAddPicture");
       }
-      this.showAddInternetImg = false;
-      this.$emit("changeImage", this.imgUrls)
     },
     $_clickSmall() {
-      if (!this.useInternetImg){
+      if (!this.useInternetImg) {
         if (this.currentImgUrl || !this.enablePreview) {
           this.$_chooseImg();
         }
-      }else {
+      } else {
         this.showAddInternetImg = true;
       }
     },

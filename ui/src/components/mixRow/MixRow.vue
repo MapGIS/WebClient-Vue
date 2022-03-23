@@ -124,7 +124,7 @@
           :placeholder="inputProps.placeholder"
           :addonAfter="inputProps.addonAfter"
           :addonBefore="inputProps.addonBefore"
-          :disabled="inputProps.disabled"
+          :disabled="disabled"
           :id="inputProps.id"
           :maxLength="inputProps.maxLength"
           :prefix="inputProps.prefix"
@@ -592,6 +592,13 @@ export default {
           marginBottom: "0"
         };
       }
+    },
+    /**
+     * 是否禁用input
+     * */
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   model: {
