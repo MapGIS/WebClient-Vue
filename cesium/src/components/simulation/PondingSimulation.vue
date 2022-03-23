@@ -113,7 +113,7 @@
 
                 <label class="title-label">积水参数设置</label>
 
-                <mapgis-ui-input-number-panel
+                <!-- <mapgis-ui-input-number-panel
                     label="积水高度(米)"
                     size="small"
                     v-model="maxHeightCopy"
@@ -134,7 +134,7 @@
                     :slider="false"
                     :labelCol="{ span: 12 }"
                     :wrapperCol="{ span: 12 }"
-                />
+                /> -->
 
                 <mapgis-ui-color-pick-panel
                     label="积水颜色"
@@ -319,9 +319,9 @@ export default {
             //积水初始高度
             mHeight: 0,
             //积水上涨高度的上限
-            maxH: undefined,
+            // maxH: undefined,
             //积水上涨高度调整的步长值
-            heightStep: 100,
+            // heightStep: 100,
             
             //计算体积的误差
             VolErr: undefined,
@@ -603,13 +603,10 @@ export default {
             let minH, maxH;
             viewer.terrainProvider.readyPromise
                 .then(function () {
-                    // console.log("viewer.terrainProvider",viewer.terrainProvider);
-                    //将地形的最大高程设置为积水上涨高度的上限
                     maxH = viewer.terrainProvider.range3D.zMax;
-                    vm.maxH = Math.round(maxH * 100) / 100;
+                    // //将地形的最大高程设置为积水上涨高度的上限
+                    // vm.maxH = Math.round(maxH * 100) / 100;
                     minH = viewer.terrainProvider.range3D.zMin;
-                    // //将地形的最小高程设置为积水的起始高度
-                    // vm.startHeightCopy = Math.round(minH * 100) / 100;
                 })
                 .otherwise(function (err) {
                     console.log(err);
@@ -648,9 +645,9 @@ export default {
                 vm.maxHeightCopy = Math.round(midRange * 100) / 100;
                 // //在实际计算出来的积水高度上增加一米以优化积水显示的效果
                 // vm.maxHeightCopy += 1;
-                // console.log("heightflood",vm.maxHeightCopy);
+
                 //积水上涨高度的步长值
-                vm.heightStep = (vm.maxH - vm.startHeightCopy) / 10;
+                // vm.heightStep = (vm.maxHeightCopy - vm.startHeightCopy) / 10;
                 
                 vm.maskShow = false;
                 vm.isSimulation = true;
@@ -761,7 +758,6 @@ export default {
                 let speed =
                     (vm.maxHeightCopy - vm.startHeightCopy) / vm.pondingTime; 
                 vm.floodSpeedCopy = Math.round(speed * 10000000) / 10000000 * vm.multiSpeed;
-                //console.log('speeddddddddd',vm.floodSpeedCopy);
                 
                 vm._removeFlood();
                 setLogarithmicDepthBufferEnable( isLogarithmicDepthBufferSupport(), viewer);
