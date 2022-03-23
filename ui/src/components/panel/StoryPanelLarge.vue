@@ -1,7 +1,9 @@
 <template>
   <div v-if="currentFeature" class="mapgis-ui-story-panel-large"
        :style="{height: height + 'px', width: width + 'px'}">
-    <img v-if="showFullImg" class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
+    <img v-show="showFullImg"
+         :style="{width: fullScreenWidth + 'px', height: fullScreenHeight + 'px',left: fullScreenOffsetLeft + 'px', top:fullScreenOffsetTop + 'px'}"
+         class="mapgis-ui-story-panel-large-full-img" :src="currentImg" alt="">
     <mapgis-ui-svg-icon v-if="showFullImg" @click="$_closeFull" class="mapgis-ui-story-panel-large-full-close"
                         :icon-style="iconStyle"
                         v-show="enableClose"
@@ -9,7 +11,7 @@
     <!--轮播图-->
     <mapgis-ui-carousel
         :afterChange="$_afterChange"
-        :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
+        :style="{height: width * 9 / 16 + 'px'}"
         class="mapgis-ui-story-panel-large-carousel"
         autoplay arrows>
       <div
@@ -23,7 +25,7 @@
         <mapgis-ui-iconfont type="mapgis-right-circle"/>
       </div>
       <div :key="index" v-for="(image,index) in images">
-        <img :style="{height: width * 9 / 16 + 'px', width: width - 6 + 'px'}"
+        <img :style="{height: width * 9 / 16 + 'px'}"
              class="mapgis-ui-story-panel-large-carousel-img" :src="image" alt="">
       </div>
     </mapgis-ui-carousel>
@@ -33,15 +35,17 @@
     </div>
     <!--视角定位图标-->
     <div @click="$_flyTo"
-         :style="{right: width / 400 * 30 + 'px',paddingTop: width / 400 * 12 + 'px', width: width / 400 * 56 + 'px', height: width / 400 * 56 + 'px', top: width * 9 / 16 - ( width / 400 * 56 ) / 2 + 'px'}"
+         :style="{right: width / 400 * 30 + 'px',paddingTop: width / 400 * 8 + 'px', width: width / 400 * 56 + 'px', height: width / 400 * 56 + 'px', top: width * 9 / 16 - ( width / 400 * 56 ) / 2 + 'px'}"
          class="mapgis-ui-story-panel-large-fly">
       <mapgis-ui-base64-icon style="display: block;margin: auto" :width="width / 400 * 28 + 'px'"
                              :height="width / 400 * 28 + 'px'" type="flyToView"/>
     </div>
     <!--关闭图标-->
     <mapgis-ui-svg-icon v-if="enableFullScreen" @click="$_close" :icon-style="iconStyle"
-                        v-show="enableClose"
+                        v-show="enableClose && toggleClose"
                         :container-style="containerStyle" type="close"/>
+    <div class="mapgis-ui-story-panel-large-close-Anchor" @mouseenter="$_toggleCloseIcon"
+         @mouseleave="$_toggleCloseIcon"></div>
     <!--标题-->
     <div class="mapgis-ui-story-panel-large-title">
       {{ currentFeature.title }}
@@ -129,14 +133,19 @@ export default {
         height: "40px",
         lineHeight: "54px",
         borderRadius: "100%",
-        background: "rgb(111,108,107)",
+        background: "rgba(111,108,107,0.3)",
         textAlign: "center"
       },
       iconStyle: {
         opacity: 1
       },
       showContentScroll: false,
-      images: []
+      images: [],
+      toggleClose: false,
+      fullScreenWidth: 1080,
+      fullScreenHeight: 1920,
+      fullScreenOffsetLeft: 0,
+      fullScreenOffsetTop: 0,
     }
   },
   watch: {
@@ -162,13 +171,17 @@ export default {
     this.$_setContent();
   },
   methods: {
+    $_toggleCloseIcon() {
+      this.toggleClose = !this.toggleClose;
+    },
     $_play() {
       this.$emit("play");
     },
     $_setContent() {
       let content = document.getElementById(this.storyContentId);
       if (content) {
-        content.innerHTML = "<div id='" + this.storyContentId + "Div'>" + this.currentFeature.content + "</div>";
+        let contentStr = this.currentFeature.content ? this.currentFeature.content : "无内容";
+        content.innerHTML = "<div id='" + this.storyContentId + "Div'>" + contentStr + "</div>";
         this.$nextTick(function () {
           let contentDiv = document.getElementById(this.storyContentId + "Div");
           if (contentDiv.clientHeight > (this.height - this.width * 9 / 16 - 20 - 30 - 10 - 64)) {
@@ -186,6 +199,12 @@ export default {
       this.currentImgIndex = current;
     },
     $_fullScreen() {
+      let cesiumCanvas = document.getElementsByClassName("cesium-map-wrapper");
+      this.fullScreenWidth = cesiumCanvas[0].offsetWidth;
+      this.fullScreenHeight = cesiumCanvas[0].offsetHeight;
+      this.fullScreenOffsetLeft = cesiumCanvas[0].offsetLeft;
+      this.fullScreenOffsetTop = cesiumCanvas[0].offsetTop;
+      console.log(cesiumCanvas)
       this.currentImg = this.currentFeature.images[this.currentImgIndex];
       this.showFullImg = true;
     },
@@ -245,8 +264,8 @@ export default {
 .mapgis-ui-story-panel-large {
   position: absolute;
   z-index: 2;
-  right: 0;
-  top: 0;
+  right: 10px;
+  top: 10px;
   margin-right: 3px;
   width: 435px;
   height: 900px;
@@ -287,12 +306,13 @@ export default {
 
 .mapgis-ui-story-panel-large-full-screen {
   position: absolute;
-  top: 228px;
+  top: 120px;
   left: 10px;
   width: 42px;
   height: 42px;
   border-radius: 100%;
   padding: 8px;
+  cursor: pointer;
 }
 
 .mapgis-ui-story-panel-large-full-screen:hover {
@@ -340,10 +360,6 @@ export default {
 .mapgis-ui-story-panel-large-full-img {
   position: fixed;
   z-index: 10000000;
-  top: 0;
-  left: 0;
-  width: 1920px;
-  height: 1080px;
 }
 
 .mapgis-ui-story-panel-large-full-close {
@@ -357,5 +373,14 @@ export default {
   float: left;
   margin-top: -2px;
   margin-left: 12px;
+}
+
+.mapgis-ui-story-panel-large-close-Anchor {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
 }
 </style>

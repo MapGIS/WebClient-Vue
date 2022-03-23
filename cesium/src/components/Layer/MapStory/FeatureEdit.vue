@@ -366,6 +366,7 @@ export default {
     //更新轮播图
     $_changeImage(images) {
       this.dataSourceCopy.images = images;
+      this.$emit("change", this.dataSourceCopy);
     },
     //更新漫游时间
     $_setAnimationTime(e) {
