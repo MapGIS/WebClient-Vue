@@ -51,7 +51,8 @@ export const 城市生长 = Template.bind({});
   vectortile: {
     sourceLayer: "白模",
     url:
-      "http://localhost:6163/igs/rest/mrms/tile/动态要素图层/{z}/{y}/{x}?type=cpbf",
+      // "http://localhost:6163/igs/rest/mrms/tile/动态要素图层/{z}/{y}/{x}?type=cpbf",
+      `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/tile/动态要素图层/{z}/{y}/{x}?type=cpbf`,
   },
   field: "height",
   heightScale: 2,

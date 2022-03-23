@@ -42,8 +42,10 @@ const Template = (args, { argTypes }) => ({
             },
           },
         ],
-        sprite: `http://${window.webclient.ip}:6163/igs/rest/mrms/vtiles/sprite`,
-        glyphs: `http://${window.webclient.ip}:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+        // sprite: `http://${window.webclient.ip}:6163/igs/rest/mrms/vtiles/sprite`,
+        sprite: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/sprite`,
+        // glyphs: `http://${window.webclient.ip}:6163/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
+        glyphs: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/vtiles/fonts/{fontstack}/{range}.pbf`,
       },
       china: {
         layerId: "geojson_china_layer",

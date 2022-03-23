@@ -23,7 +23,8 @@ const Template = (args, {argTypes}) => ({
     },
     data() {
         return {
-            m3dUrl: "http://localhost:6163/igs/rest/g3d/BIM模型",
+            // m3dUrl: "http://localhost:6163/igs/rest/g3d/BIM模型",
+            m3dUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
             autoReset: true,
             maximumScreenSpaceError: 8,
             baseUrl:

@@ -15,7 +15,7 @@ export default {
     baseUrl:{
       description: "输入图层的baseUrl",
       table:{
-        defaultValue: { summary: "http://localhost:6163" },
+        defaultValue: { summary: `http://${window.webclient.ip}:${window.webclient.port}` },
       },
       control:'text'
     },
@@ -47,6 +47,7 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   data() {
     return {
+      baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
       finishedResult: false,
       resultLayer: "",
       addResultToLayer: false
@@ -66,7 +67,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-analysis-overlay v-bind="$props" v-on:listenLayer="showLayer" v-on:listenOverlayAdd="showAdd"/>
       </mapgis-ui-card>
-      <mapgis-3d-igs-dynamic-layer v-if="finishedResult && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
+      <mapgis-3d-igs-dynamic-layer v-if="finishedResult && addResultToLayer" :baseUrl="baseUrl" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
     </mapgis-web-scene>
     `,
 });
@@ -75,9 +76,9 @@ export const Overlay = Template.bind({});
 Overlay.args = {
   srcType: "Layer",
   // srcType: "Feature",
-  baseUrl: "http://localhost:6163",
-  srcALayer: "gdbp://MapGISLocalPlus/sample/sfcls/湖北省路网",
-  srcBLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}`,
+  srcALayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
+  srcBLayer: "gdbp://MapGisLocal/专题图数据/sfcls/县城驻地",
   srcAFeature: {
     "type": "FeatureCollection",
     "features": [
