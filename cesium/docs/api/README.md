@@ -45,7 +45,7 @@
 
 - **Type**: `Number`
 - **侦听属性** watch 属性
-- - **Description:** 解决分屏时，cesium无限拉长的问题，要给一个固定高度
+- - **Description:** 解决分屏时，cesium 无限拉长的问题，要给一个固定高度
 
 ### `container`
 
@@ -82,8 +82,9 @@
 [comment]: <> (- - **Description:** 是否显示默认的属性信息框)
 
 ::: tip
-下面基础属性可以参考  Cesium.Viewer.ConstructorOptions
+下面基础属性可以参考 Cesium.Viewer.ConstructorOptions
 :::
+
 ### `animation`
 
 - **Type**: `Boolean`
@@ -159,7 +160,8 @@
 事件载荷由以下三部分组成
 
 - `Cesium` Cesium 原生 js 脚本
-- `CesiumZondy` CesiumZondy 中地数码的 Cesium 增强插件
+- `vueCesium` Cesium 对象存储管理器
+- `CesiumZondy` CesiumZondy 中地数码的 Cesium 增强插件(持续移除，后期不再使用)
 - `component` 发送当前事件的组件
 
 ### `@load`
@@ -167,7 +169,8 @@
 - **Description:** 在地图场景加载完毕后发送该事件
 - **Payload** `{ Cesium, CesiumZondy, component }`
 - - `Cesium` Cesium 原生 js 脚本
-  - `CesiumZondy` CesiumZondy 中地数码的 Cesium 增强插件
+- - `vueCesium` Cesium 对象存储管理器
+  - `CesiumZondy` CesiumZondy 中地数码的 Cesium 增强插件(持续移除，后期不再使用)
   - `component` 发送当前事件的组件
 
 请注意 Cesium`原生的`EventHandle 的事件还是由原生的方式来控制，此处只上传`vue框架`层面的事件

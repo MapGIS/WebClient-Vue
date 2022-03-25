@@ -1,4 +1,4 @@
-# ArcGIS地图
+# ArcGIS 地图
 
 > mapgis-3d-arcgis-map-layer
 
@@ -30,7 +30,7 @@
   show：仅仅显示指定了图层序号的图层；
 - **示例:** `"show:1,2,3"`
 - **注意:** 若不传该参数,则默认显示所有图层。
-  > layers:"", 显示全部图层 <br/>
+  > layers:"" //显示全部图层 <br/>
   > layers:"show:1,2,3"
 
 ### `layerStyle`
@@ -102,13 +102,13 @@ export default {
       layerStyle: {
         visible: true,
         opacity: 1,
-        zIndex: 2
+        zIndex: 2,
       },
       options: {
         tileWidth: 216,
-        tileHeight: 216
+        tileHeight: 216,
       },
-      srs: "EPSG:4326"
+      srs: "EPSG:4326",
     };
   },
   methods: {
@@ -121,8 +121,8 @@ export default {
       } else {
         this.layerStyle.zIndex = 1;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="css">
@@ -158,27 +158,25 @@ export default {
   name: "arcgisMapLayer",
   data() {
     return {
-      url:
-        "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
-      url2:
-        "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
+      url: "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      url2: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer",
       layers: "",
       layerStyle: {
         visible: true,
         opacity: 1,
-        zIndex: 2000
+        zIndex: 2000,
       },
       layerStyle2: {
         visible: true,
         opacity: 1,
-        zIndex: 2001
+        zIndex: 2001,
       },
       options: {
         tileWidth: 256,
-        tileHeight: 256
+        tileHeight: 256,
       },
       id: "2",
-      show: false
+      show: false,
 
       // srs: "EPSG:4326"
     };
@@ -203,8 +201,8 @@ export default {
     },
     changeLayers() {
       this.layers = "1,2,4,6,7,8,10";
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="css">

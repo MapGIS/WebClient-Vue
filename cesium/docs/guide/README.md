@@ -1,57 +1,16 @@
-# 快速上手
+# 安装
 
-```vue
-<template>
-  <div id="app">
-    <mapgis-web-scene @load="handleLoad">
-      <div>地图显示内容</div>
-    </mapgis-web-scene>
-  </div>
-</template>
-<style>
-#app {
-  height: 80px;
-  width: 100%;
-}
-</style>
-<script type="module">
-export default {
-  data() {
-    return {};
-  },
-  methods: {
-    handleMapLoad(payload) {},
-  },
-};
-</script>
-```
+### 方式一：npm 安装
 
-## 安装
-
-### ES6 方式
-
-::: tip 三维默认 UI 是 webclient-vue-ui
-由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui,因此需要同步安装 webclient-vue-ui
+::: tip 三维默认 UI 是 webclient-vue-ui,
+由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui，因此需要同步安装 webclient-vue-ui
 :::
 
 ```bash
-# 安装webclient-vue-cesium webclient-vue-ui
+# npm或yarn安装 webclient-vue-cesium webclient-vue-ui
 npm install --save @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
 # 或者
 yarn add @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
-```
-
-在 main.js 中全局引入组件
-
-```js
-import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
-import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
-
-import MapgisUi from "@mapgis/webclient-vue-ui";
-import Mapgis3d from "@mapgis/webclient-vue-cesium";
-
-Vue.use(MapgisUi);
-Vue.use(Mapgis3d);
 ```
 
 ### Ceisum 库引入
@@ -72,9 +31,9 @@ webclient-vue-cesium 只是一层封装，底层依赖 `@mapgis/cesium`。 除�
 # quasar 的静态资源目录为src/static
 # 常见的静态资源目录为 public
 # 主Cesium主体路径
-$path/cesium/dist/Cesium.js # public/cesium/dist/Cesium.js
+public/cesium/dist/Cesium.js
 # Cesium拓展插件路径
-$path/cesium/dist/webclient-cesium-plugin.min.js # public/cesium/dist/webclient-cesium-plugin.min.js
+public/cesium/dist/webclient-cesium-plugin.min.js
 ```
 
 WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
@@ -83,27 +42,27 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 <template>
   <mapgis-web-scene
     ref="webgloberef"
-    libPath="$path/cesium/dist/Cesium.js"
-    pluginPath="$path/cesium/dist/webclient-cesium-plugin.min.js"
+    libPath="public/cesium/dist/Cesium.js"
+    pluginPath="public/cesium/dist/webclient-cesium-plugin.min.js"
   >
     <mapgis-3d-igs-tile-layer />
   </mapgis-web-scene>
 </template>
 ```
 
-> 如果在浏览器中 访问 `http://localhost:xxxx/$path/cesium/dist/Cesium.js` 成功则说明整个 Cesium 的环境准备已经完毕。
+> 如果在浏览器中 访问 `http://localhost:xxxx/public/cesium/dist/Cesium.js` 成功则说明整个 Cesium 的环境准备已经完毕。
 
 ::: tip 为什么要拷贝@mapgis/cesium
 由于原生的 Cesium 在支持 Webpack 编译的时候也是采取的 copy 插件来执行对应的文件夹拷贝操作。 因此为了统一处理，这里`统一不采取`手动修改 webpack.config 的方式，而是将 cesium 的所有文件放在 public 或者 asset 的某个目录下，自己`手动实现`静态资料的拷贝
 :::
 
-### yarn link 方式`特殊情况下：需要使用组件最新的功能时`
+### 方式二：yarn link`特殊情况下：需要使用组件最新的功能时`
 
-mapgis webclient-vue-cesium 的安装：
+webclient-vue-cesium 的安装：
 
 > 通过在 github 路径中：https://github.com/MapGIS/WebClient-Vue 下载最新的 WebClient-Vue 项目。
 
-1.项目安装完成后，分别有：cesium、mapboxgl、ui 工程，执行相对应文件中的 package.json 的 yarn/npm install 安装项目依赖。
+1.项目安装完成后，分别有：cesium、mapboxgl、ui 工程，执行对应文件中的 package.json 的 yarn/npm install 安装项目依赖。
 
 2.cd 进入 cesium 工程目录下，执行
 
@@ -141,5 +100,5 @@ yarn unlink @mapgis/webclient-vue-cesium
 解除链接。
 
 ::: warning
-~ 纯浏览器端建议还是使用 Cesium 原生的方式，而不是 Vue 组件的方式，真心建议
+~ 纯浏览器端建议还是使用 Cesium 原生的方式，而不是 Vue 组件的方式。
 :::

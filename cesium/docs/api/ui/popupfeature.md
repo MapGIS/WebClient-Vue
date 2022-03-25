@@ -24,7 +24,7 @@
 
 ### `position`
 
-- **\*类型**: `Object`
+- **类型**: `Object`
 - **必传**
 - **侦听属性** watch 属性
 - **默认值**
@@ -37,24 +37,24 @@
    height: 0
   }
   ```
-- - **描述** 显示位置，3 种不同的传参使用方式
-    1. Cesium.Entity 绑定到 Cesium.Entity 上鼠标点击/移入弹出，鼠标移出消失
-    2. Cesium.Cartesian3 绑定到 Cesium.Cartesian3 笛卡尔坐标上
-    3. Cesium.long lat height 绑定到经纬度和高度上
+- **描述** 显示位置，3 种不同的传参使用方式
+  1. Cesium.Entity 绑定到 Cesium.Entity 上鼠标点击/移入弹出，鼠标移出消失
+  2. Cesium.Cartesian3 绑定到 Cesium.Cartesian3 笛卡尔坐标上
+  3. Cesium.long lat height 绑定到经纬度和高度上
 
 ### `visible`
 
-- **\*类型**: `Boolean`
+- **类型**: `Boolean`
 - **v-Model 属性** 双向属性
 - **侦听属性** watch 属性
 - **默认值** `true`
-- - **描述** 是否显示
+- **描述** 是否显示
 
 ### `properties`
 
-- **\*类型**: `Object`
+- **类型**: `Object`
 - **侦听属性** watch 属性
-- - **描述** 属性值
+- **描述** 属性值
 
 ```json
 {
@@ -68,7 +68,7 @@
 
 ### `popupOptions`
 
-- **\*类型**: `Object`
+- **类型**: `Object`
 - **描述** popup 可选样式
 
 ```json

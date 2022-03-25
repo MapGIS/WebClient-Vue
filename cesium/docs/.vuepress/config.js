@@ -49,13 +49,13 @@ module.exports = {
         ],
         sidebar: [
           {
-            title: "指南",
+            title: "开发指南",
             collapsable: false,
             children: [
-              ["/guide/", "快速上手"],
+              ["/guide/", "安装"],
+              ["/guide/quickStart.md", "快速上手"],
               ["/guide/introduction.md", "产品介绍"],
               ["/guide/basemap.md", "基础地图"],
-              ["/guide/wms&map&doc.md", "子图层控制"],
             ],
           },
           {
@@ -67,7 +67,6 @@ module.exports = {
                 collapsable: false,
               },
               ["/api/", "地图场景"],
-
               {
                 title: "场景子组件",
                 collapsable: false,
@@ -83,10 +82,8 @@ module.exports = {
               ["/api/ui/measure.md", "量测"],
               ["/api/ui/statebar.md", "状态栏"],
               ["/api/ui/debug.md", "调试"],
-              // ["/api/sceneeffect/fogeffect.md", "雾组件"],
-              // ["/api/sceneeffect/raineffect.md", "雨组件"],
-              // ["/api/sceneeffect/snoweffect.md", "雪组件"],
-
+              ["/api/sceneeffect/SceneSetting.md", "场景设置"],
+              ["/api/analysis/ViewpointManager.md", "视点管理"],
               {
                 title: "图层",
                 collapsable: false,
@@ -123,6 +120,10 @@ module.exports = {
               ["/api/Overlay/Echarts.md", "Echarts"],
               ["/api/Overlay/Mapv.md", "MapV"],
               ["/api/Overlay/ParticleEffects.md", "粒子特效"],
+              {
+                title: "场景漫游",
+                collapsable: false,
+              },
               ["/api/sceneeffect/pathroaming.md", "单路径"],
               ["/api/sceneeffect/sceneroaming.md", "路径管理"],
 
@@ -132,6 +133,7 @@ module.exports = {
               },
               ["/api/simulation/CityGrow.md", "城市生长"],
               ["/api/simulation/BuildingGrow.md", "单体建筑生长"],
+              ["/api/simulation/PondingSimulation.md", "积水仿真"],
 
               {
                 title: "空间分析",
@@ -143,25 +145,25 @@ module.exports = {
               ["/api/analysis/DynamicCutting.md", "动态剖切"],
               ["/api/analysis/DynamicSection.md", "动态剖切-高级"],
               ["/api/analysis/Excavate.md", "开挖分析"],
-              // ["/api/analysis/Fill.md", "填挖方分析"],
+              ["/api/analysis/Fill.md", "填挖方分析"],
               ["/api/analysis/HeightLimited.md", "限高分析"],
               ["/api/analysis/Shadow.md", "阴影分析"],
               ["/api/analysis/Skyline.md", "天际线分析"],
               ["/api/analysis/Household.md", "分层分户"],
-              ["/api/analysis/Contour.md", "等值面分析"],
+              ["/api/analysis/Contour.md", "等值线面分析"],
               ["/api/analysis/Household.md", "分层分户"],
               ["/api/analysis/Bim.md", "BIM构件树"],
               ["/api/analysis/ProjectorManager.md", "投放管理"],
               ["/api/analysis/ProjectorSetting.md", "投放配置"],
-              // ["/api/analysis/Buffer.md", "缓冲分析"],
+              ["/api/analysis/Buffer.md", "缓冲分析"],
               // ["/api/analysis/Buffer.md", "叠加分析"],
             ],
           },
           {
-            title: "组件开发",
+            title: "自定义组件",
             collapsable: false,
             children: [
-              ["/plugin_components/", "使用组件"],
+              // ["/plugin_components/", "使用组件"],
               [
                 "/plugin_components/plugin_components_development.md",
                 "创建组件",
@@ -169,14 +171,14 @@ module.exports = {
               ["/plugin_components/create_storybook.md", "创建Storybook示例"],
             ],
           },
-          {
-            title: "版本",
-            collapsable: false,
-            children: [
-              ["/version/version.md", "更新说明"],
-              ["/version/diff.md", "版本对比"],
-            ],
-          },
+          // {
+          //   title: "版本",
+          //   collapsable: false,
+          //   children: [
+          //     ["/version/version.md", "更新说明"],
+          //     ["/version/diff.md", "版本对比"],
+          //   ],
+          // },
         ],
       },
     },
