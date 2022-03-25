@@ -26,28 +26,28 @@
       </div>
     </div>
     <mapgis-ui-input-row-left
-      style="margin: 0"
-      v-show="showEditTitle"
-      title="修改标题"
-      :enableButton=true
-      paddingLeft="16px"
-      class="mapgis-ui-graphic-layers-edit-title"
-      @finish="$_finishEditTitle"
-      v-model="currenSelectLayer"
+        style="margin: 0"
+        v-show="showEditTitle"
+        title="修改标题"
+        :enableButton=true
+        paddingLeft="16px"
+        class="mapgis-ui-graphic-layers-edit-title"
+        @finish="$_finishEditTitle"
+        v-model="currenSelectLayer"
     />
     <mapgis-3d-graphic-single-layer
-      v-show="!showSetting"
-      :vueIndex="vueIndex"
-      :models="models"
-      :autoFlyToGraphic="autoFlyToGraphic"
-      :groupGraphicIDs="groupGraphicIDs"
-      ref="graphicLayer"
-      v-model="currentLayer"
-      @saveCamera="$_saveCamera"
-      @change="$_addFeature"
+        v-show="!showSetting"
+        :vueIndex="vueIndex"
+        :models="models"
+        :autoFlyToGraphic="autoFlyToGraphic"
+        :groupGraphicIDs="groupGraphicIDs"
+        ref="graphicLayer"
+        v-model="currentLayer"
+        @saveCamera="$_saveCamera"
+        @change="$_addFeature"
     />
     <div
-      v-show="showSetting"
+        v-show="showSetting"
     >
       <mapgis-ui-row>
         <mapgis-ui-svg-icon @click="$_back" class="mapgis-ui-graphic-layers-setting-back" :iconStyle="editStyle"
@@ -55,12 +55,12 @@
         <span style="margin-left: 33px">配置参数</span>
       </mapgis-ui-row>
       <mapgis-ui-switch-row-left
-        title="进入图层后自动跳转视角"
-        v-model="autoFlyTo"
+          title="进入图层后自动跳转视角"
+          v-model="autoFlyTo"
       />
       <mapgis-ui-switch-row-left
-        title="选择标绘对象后自动跳转视角"
-        v-model="autoFlyToGraphic"
+          title="选择标绘对象后自动跳转视角"
+          v-model="autoFlyToGraphic"
       />
     </div>
   </div>
@@ -213,16 +213,33 @@ export default {
         this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(viewer);
       }
     },
+    $_hasSameTitle(title) {
+      let hasSameTitle = false;
+      for (let i = 0; i < this.dataSourceCopy.length; i++) {
+        if (this.dataSourceCopy[i].name === title) {
+          hasSameTitle = true;
+          break;
+        }
+      }
+      return hasSameTitle;
+    },
     $_finishEditTitle() {
-      this.showEditTitle = false;
-      this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
+      if(this.$_hasSameTitle(this.currenSelectLayer)){
+        this.$message.warning("该图层名称已存在！");
+      }else{
+        this.showEditTitle = false;
+        this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
+      }
     },
     $_clickTool(e, noMessage) {
       switch (e) {
-        //新增标绘图层
+          //新增标绘图层
         case "add":
           //新建空图层数据
           let title = "新建图层_" + (this.dataSourceCopy.length + 1);
+          if(this.$_hasSameTitle(title)){
+            title = title + parseInt(String(Math.random() * 100000000000));
+          }
           let data = {
             "name": title,
             "uuid": parseInt(String(Math.random() * 10000000)),
@@ -233,7 +250,7 @@ export default {
               "features": []
             }
           };
-          if(this.dataSourceCopy.length > 0){
+          if (this.dataSourceCopy.length > 0) {
             this.currenSelectIndex++;
           }
           this.dataSourceCopy.push(data);
@@ -305,9 +322,9 @@ export default {
               this.viewer.camera.flyTo({
                 duration: 1,
                 destination: new Cesium.Cartesian3.fromRadians(
-                  longitude,
-                  latitude,
-                  height
+                    longitude,
+                    latitude,
+                    height
                 ),
                 orientation: {
                   heading: heading,
@@ -429,7 +446,7 @@ export default {
           let {dataSource} = data;
           this.updatable = false;
           this.$refs.graphicLayer.$_fromJson(dataSource);
-          if(this.dataSourceCopy.length > 0){
+          if (this.dataSourceCopy.length > 0) {
             this.currenSelectIndex++;
           }
           this.dataSourceCopy.push(data);
@@ -445,7 +462,7 @@ export default {
               features.push(data.dataSource.features[j]);
             }
           }
-          if(this.enableRelativePath){
+          if (this.enableRelativePath) {
             for (let j = 0; j < data.dataSource.features.length; j++) {
               if (data.dataSource.features[j].type === "model") {
                 data.dataSource.features[j].style.url = this.baseUrl + "/" + data.dataSource.features[j].style.url;
