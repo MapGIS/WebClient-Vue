@@ -924,7 +924,6 @@ export default {
         },
         isContinued: false,
         getSelectedGraphic: function (graphics) {
-          // console.log("-----------", graphics)
         }
       });
     },
@@ -1358,7 +1357,6 @@ export default {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
         let worldPosition = vm.viewer.scene.pickPosition(movement.position);
         if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
-          console.log("new date().getTime()", new Date().getTime())
           vm.clickTime++;
           //如果clickTime等于2，则表明在clickInterval毫秒内，点击了第二次，因此为双击事件，不弹框
           if (vm.clickTime === 2) {

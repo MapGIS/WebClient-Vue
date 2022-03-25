@@ -357,6 +357,7 @@ export default {
               groups: groups
             });
           }
+          this.$message.success("保存成功！");
           this.$emit("save", saveObj);
           break;
         case "import":
