@@ -30,12 +30,13 @@ Vue.use(Mapgis3d);
     ref="webgloberef"
     libPath="statics/cesium/Cesium.js"
     pluginPath="statics/cesium/webclient-cesium-plugin.min.js"
+    @load="handleLoad"
   >
     <mapgis-3d-igs-tile-layer
-      :ip="ip"
-      :port="port"
-      :protocol="protocol"
-      :serverName="serverName"
+      :id="id"
+      :baseUrl="baseUrl"
+      :layerStyle="layerStyle"
+      :tilingScheme="tilingScheme"
     />
   </mapgis-web-scene>
 </template>
@@ -46,10 +47,14 @@ export default {
   data() {
     return {
       webgloberef: "webgloberef" + Math.random(),
-      ip: "develop.smaryun.com",
-      port: "6163",
-      protocol: "http",
-      serverName: "北京市",
+      id: "IGServer-Tle-Layer",
+      baseUrl: `http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市`,
+      layerStyle: {
+        visible: true,
+        opacity: 1,
+        zIndex: 2,
+      },
+      tilingScheme: "EPSG:4326",
     };
   },
   methods: {
@@ -69,4 +74,3 @@ export default {
 ::: tip 目的
 
 > 用于开发 Vue 版本的 Cesium 组件
-> :::

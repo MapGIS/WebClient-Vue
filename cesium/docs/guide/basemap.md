@@ -63,12 +63,14 @@
 # quasar 的静态资源目录为src/static
 # 常见的静态资源目录为 public
 # 主Cesium主体路径 对应 libPath
-path/to/statics/cesium/Cesium.js
+public/statics/cesium/Cesium.js
 # Cesium拓展插件路径 对应 pluginPath
-path/to/statics/cesium/webclient-cesium-plugin.min.js
+public/statics/cesium/webclient-cesium-plugin.min.js
 ```
 
 :::
+
+### Vue 组件
 
 ```vue
 <template>
@@ -95,81 +97,35 @@ export default {
   },
   methods: {
     handleLoad(payload) {
-      const { Cesium, CesiumZondy, component } = payload;
+      const { Cesium, vueCesium, CesiumZondy, component } = payload;
       this.Cesium = Cesium;
+      this.vueCesium = vueCesium;
       this.CesiumZondy = CesiumZondy;
-      let webGlobe = window.webGlobe; // 获取实例化的Cesium场景对象
+      let viewer = window.viewer; // 获取实例化的Cesium场景对象
     },
   },
 };
 </script>
 ```
-
-### Vue 组件
-
-```md
-<template>
-<button class="animated shake infinite" @click="onClick">Click me!</button>
-</template>
-
-<script>
-export default {
-    methods: {
-        onClick: () => { window.alert(1) },
-    },
-}
-</script>
-
-<style>
-button {
-    color: blue;
-}
-</style>
-```
-
-### 结果
-
-```vue
-<template>
-  <button class="animated shake infinite" @click="onClick">Click me!</button>
-</template>
-
-<script>
-export default {
-  methods: {
-    onClick: () => {
-      window.alert(1);
-    },
-  },
-};
-</script>
-
-<style>
-button {
-  color: blue;
-}
-</style>
-```
-
-:::
 
 ### 通过 Props 来交互场景属性
 
 你可以通过 props 来控制地图场景的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
 
-完整的 props 列表请查看[API docs](/zh/api/#props), 注意文字描述中的字段'侦听属性'
+完整的 props 列表请查看[API docs](/api/#props), 注意文字描述中的字段'侦听属性'
 
 ## 场景加载
 
-当地图场景加载完毕,即 map.on(load,callback)事件响应, `mapgis-web-scene`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 CesiumJS `Cesium` 对象、MapGIS `CesiumZondy`对象以及发送当前事件的`mapgis-web-scene`组件。
+当地图场景加载完毕， `mapgis-web-scene`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 CesiumJS `Cesium` 对象、cesium 对象存储管理器 vueCesium、MapGIS `CesiumZondy`对象以及发送当前事件的`mapgis-web-scene`组件。
 
 ```js
-onMapLoaded(payload) {
+handleLoad(payload) {
   // in component
-  const {component, Cesium, CesiumZondy } = payload;
+  const {component, Cesium, CesiumZondy,vueCesium} = payload;
   // component 当前场景组件
   // Cesium 标准Cesium对象
   // CesiumZondy 中地Cesium对象
+  // vueCesium cesium对象存储管理器
 }
 ```
 
@@ -178,11 +134,11 @@ onMapLoaded(payload) {
 ::: warning Vuex 存储 Map 对象
 请注意，除了基本类型和普通对象外，向 Vuex 或组件的“data”添加其他类型的对象通常都不是一个好主意。尤其是类似以下几种情况:
 
-1.  向 vuex 的 store 中添加地图 map，以方便其他组件使用, `强烈不推荐`
+1.  向 vuex 的 store 中添加场景，以方便其他组件使用, `强烈不推荐`
     ```js
-    this.$store.map = map;
+    this.$store.viewer = viewer;
     ```
-2.  向组件的 data 属性添加地图 map,`强烈不推荐`
+2.  向组件的 data 属性添加地图 viewer,`强烈不推荐`
     ```js
       data(){
         return {
@@ -190,15 +146,15 @@ onMapLoaded(payload) {
         }
       },
       // 某处代码....
-      this.map = map;
+      this.viewer = viewer;
     ```
 3.  向全局的对象中添加地图 map，以方便全局使用,实在没办法了可以这样使用
     ```js
-    window.globalMap = window.globalMap || map;
+    window.globalMap = window.globalMap || viewer;
     ```
     > 某种情况来说，采取第 3 种相对容易找到出 bug 的原因，第 1,2 种很容易导致不知名的 bug，如（更新延迟等）且短时间找不到原因 Orz...
 
-Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 Map 对象添加到 Vuex store 或组件 data 中，可能会导致奇怪的 bug。
+Vue 为每个属性添加了 getter 和 setter 方法，所以如果你将 viewer 对象添加到 Vuex store 或组件 data 中，可能会导致奇怪的 bug。
 如果希望存储映射对象，请将其存储为非响应性属性，如下面的示例所示。
 :::
 
@@ -217,10 +173,10 @@ export default {
     onMapLoaded(event) {
       // 组件内部使用，绝大部分场景都可以满足应用场景，
       // 少数场景请使用上面的方案三配合Promise的方式来全局调用
-      this.webGlobe = window.webGlobe;
+      this.viewer = window.viewer;
       // 或者只是存起来，加入全局vuex的状态存储中，以方便其他组件使用map对象，
-      // 强烈禁止,应为很容易在其他地方误触this.$store.map的setter事件
-      this.$store.webGlobe = window.webGlobe;
+      // 强烈禁止,应为很容易在其他地方误触this.$store.viewer的setter事件
+      this.$store.viewer = window.viewer;
     },
   },
 };

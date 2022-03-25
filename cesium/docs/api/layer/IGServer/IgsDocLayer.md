@@ -24,14 +24,36 @@
 ### `layers`
 
 - **类型:** `String`
+- **可选** 不传则显示全部
+- **侦听属性**
+- **描述:** 指定需要被取图的图层序列号数组，编号从 0 开始，多个图层以“,”分隔
+  > 1、show：仅仅显示指定了图层序号的图层。 <br/>
+  > 2、hide ：显示除 hide 参数指定图层外所有的图层。 <br/>
+  > 3、include：除显示默认图层（地图文档内图层状态为可见的图层）外，另追加这些被指定的图层显示，追加的这些图层必须为地图中包含的图层。<br/>
+  > 4、exclude: 从默认图层列表里删除这些被指定的图层后，进行显示。 <br/>
+  > 例如：layers:"show:1,2" //仅显示第 1、2 个图层
+
+### `token`
+
+- **类型:** `Object`
+- **可选**
+- **非侦听属性**
+- **描述:** token 信息
+  > 要传 token 时，请以如下方式传递 <br/>
+  > token:{ <br/>
+  > key: "token", <br/>
+  > value: "9c157e9585486c02edf817d2ecbc7752" <br/>
+  > }
+
+### `layerStyle`
+
+- **类型:** `Object`
 - **可选**
 - **侦听属性**
-- **描述:** 指定需要被取图的图层序列号数组，编号从 0 开始，多个图层以“，”分隔
-  > 1、show：仅仅显示指定了图层序号的图层 <br/>
-  > 2、hide ：显示除 hide 参数指定图层外所有的图层 <br/>
-  > 3、include：除显示默认图层（地图文档内图层状态为可见的图层）外，另追加这些被指定的图层显示，追加的这些图层必须为地图中包含的图层。
-  > 4、exclude: 从默认图层列表里删除这些被指定的图层后，进行显示 <br/>
-  > 例如：layers = show:1,2//仅显示第 1、2 个图层
+- **描述:** 控制地图的显隐、透明度以及顺序，有如下值：
+  > visible Boolean 控制图层显示或隐藏，不会重新加载图层，true：显示图层、fales：隐藏图层 <br/>
+  > opacity Number 控制图层透明度，会重新加载图层，0 - 1 之间的数字，0：隐藏，1：显示 <br/>
+  > zIndex Number 控制图层顺序，会重新加载图层，类似 css 里面的 z-index，从 1 开始的数字 <br/>
 
 ### `vueKey`
 
@@ -51,28 +73,6 @@
 - **描述:**
   > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
 
-### `token`
-
-- **类型:** `Object`
-- **可选**
-- **非侦听属性**
-- **描述:** token 信息
-  > 要传 token 时，请以如下方式传递 <br/>
-  > token:{ <br/>
-  > key: "token", <br/>
-  > value: "9c157e9585486c02edf817d2ecbc7752" <br/>
-  > }
-
-
-### `layerStyle`
-
-- **类型:** `Object`
-- **可选**
-- **侦听属性**
-- **描述:** 控制地图的显隐、透明度以及顺序，有如下值：
-  > visible Boolean 控制图层显示或隐藏，不会重新加载图层，true：显示图层、fales：隐藏图层 <br/>
-  > opacity Number 控制图层透明度，会重新加载图层，0 - 1 之间的数字，0：隐藏，1：显示 <br/>
-  > zIndex Number 控制图层顺序，会重新加载图层，类似 css 里面的 z-index，从 1 开始的数字 <br/>
 ## 示例
 
 ### 加载 4326 地图
@@ -91,9 +91,9 @@ export default {
   data() {
     return {
       //要加载的url
-      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市"
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
     };
-  }
+  },
 };
 </script>
 ```
@@ -116,9 +116,9 @@ export default {
       //要加载的url
       baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
       //动态投影
-      srs: "EPSG: 3857"
+      srs: "EPSG: 3857",
     };
-  }
+  },
 };
 </script>
 ```
@@ -142,10 +142,10 @@ export default {
       layerStyle: {
         opacity: 0.5,
         visible: true,
-        zIndex: 115
-      }
+        zIndex: 115,
+      },
     };
-  }
+  },
 };
 </script>
 ```
@@ -166,9 +166,9 @@ export default {
       //要加载的url
       baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
       //要显示的子图层
-      layers: "show:1,2"
+      layers: "show:1,2",
     };
-  }
+  },
 };
 </script>
 ```
@@ -207,7 +207,7 @@ export default {
       tileMatrixSetIDWmts: "",
       srsWmts: "EPSG:4326",
       layerStyleWmts: {
-        zIndex: 100
+        zIndex: 100,
       },
       //要加载的url
       baseUrlDoc: "http://develop.smaryun.com:6163/igs/rest/mrms/docs/北京市",
@@ -217,8 +217,8 @@ export default {
       vueKey: "vueKeyOne",
       vueKey2: "vueKeyTwo",
       layerStyleDoc: {
-        zIndex: 1000
-      }
+        zIndex: 1000,
+      },
     };
   },
   methods: {
@@ -228,8 +228,8 @@ export default {
       } else {
         this.layerStyleDoc.zIndex = 1000;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 ```
