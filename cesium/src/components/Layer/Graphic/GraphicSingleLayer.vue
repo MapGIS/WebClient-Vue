@@ -2,37 +2,37 @@
   <div class="mapgis-3d-graphic-container" :style="containerStyle">
     <div>
       <mapgis-ui-graphic-icons-panel
-        ref="iconsPanel"
-        :models="models"
-        :containerStyle="iconsPanelStyle"
-        :enableOneMap="enableOneMap"
-        :enableMapStory="enableMapStory"
-        @startDraw="$_startDraw"
-        @startDrawModel="$_startDrawModel"
+          ref="iconsPanel"
+          :models="models"
+          :containerStyle="iconsPanelStyle"
+          :enableOneMap="enableOneMap"
+          :enableMapStory="enableMapStory"
+          @startDraw="$_startDraw"
+          @startDrawModel="$_startDrawModel"
       />
     </div>
     <div>
       <mapgis-ui-graphic-edit-panel
-        ref="editPanel"
-        :editPanelValues="editPanelValues"
-        :editList="editList"
-        :dataSourceCopy="dataSourceCopy"
-        :currentEditType="currentEditType"
-        :graphicGroups="graphicGroups"
-        @change="$_changeEditPanelValues"
-        @changeGroup="$_changeGroup"
-        @stopDrawing="$_stopDraw"
-        @dblclick="$_dbclick"
-        @clickTool="$_clickTool"
-        @changeAttributes="$_changeAttributes"
-        @open="$_open"
-        @editTitle="$_editTitle"
+          ref="editPanel"
+          :editPanelValues="editPanelValues"
+          :editList="editList"
+          :dataSourceCopy="dataSourceCopy"
+          :currentEditType="currentEditType"
+          :graphicGroups="graphicGroups"
+          @change="$_changeEditPanelValues"
+          @changeGroup="$_changeGroup"
+          @stopDrawing="$_stopDraw"
+          @dblclick="$_dbclick"
+          @clickTool="$_clickTool"
+          @changeAttributes="$_changeAttributes"
+          @open="$_open"
+          @editTitle="$_editTitle"
       />
     </div>
     <mapgis-3d-popup
-      v-if="enablePopup"
-      :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
-      :forceRender="true"
+        v-if="enablePopup"
+        :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+        :forceRender="true"
     >
       <div>
         <slot name="content" :popup="popup">
@@ -159,7 +159,8 @@ export default {
       clickInterval: 200,
       //弹出popup的定时器
       firstClickFlag: undefined,
-      currentGroupId: undefined
+      currentGroupId: undefined,
+      isUpdateByEditValues: true
     };
   },
   watch: {
@@ -684,7 +685,7 @@ export default {
           break;
       }
 
-      if(attributes){
+      if (attributes) {
         editPanelValues.attributes = JSON.parse(JSON.stringify(attributes));
       }
 
@@ -700,7 +701,7 @@ export default {
       this.isStartDrawing = true;
       this.drawDistance = drawDistance;
       this.modelUrl = model;
-      if(!model) {
+      if (!model) {
         return;
       }
       switch (drawMode) {
@@ -832,6 +833,9 @@ export default {
       this.$_stopEdit();
     },
     $_changeEditPanelValues(editPanelValues, isEdit) {
+      if (!this.isUpdateByEditValues) {
+        return;
+      }
       this.editPanelValues = editPanelValues;
       if (isEdit) {
         //在绘制中，更改参数时先停止绘制，应用参数，在开始绘制
@@ -1301,13 +1305,17 @@ export default {
           finishEdit: function (e) {
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
               if (vm.dataSourceCopy[i].id === e.id) {
-                if(e.style.extrudedHeight){
+                vm.isUpdateByEditValues = false;
+                if (e.style.extrudedHeight) {
                   vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
-                  vm.dataSourceCopy[i].style.color = [e.style._lastChangeColor.red,e.style._lastChangeColor.green,e.style._lastChangeColor.blue,e.style._lastChangeColor.alpha];
+                  vm.dataSourceCopy[i].style.color = [e.style._lastChangeColor.red, e.style._lastChangeColor.green, e.style._lastChangeColor.blue, e.style._lastChangeColor.alpha];
                 }
-                if(e.style.radius){
+                if (e.style.radius) {
                   vm.dataSourceCopy[i].style.radius = e.style.radius;
                 }
+                vm.$nextTick(function () {
+                  vm.isUpdateByEditValues = true;
+                });
                 break;
               }
             }
@@ -1439,14 +1447,14 @@ export default {
       let properties = JSON.parse(JSON.stringify(this.popup.properties));
       delete properties.title;
       this.popup.container = getPopupHtml("underline",
-        {properties: properties},
-        {
-          fields: Object.keys(properties),
-          title: this.popup.properties.title,
-          style: {
-            containerStyle: {width: "360px"}
-          }
-        });
+          {properties: properties},
+          {
+            fields: Object.keys(properties),
+            title: this.popup.properties.title,
+            style: {
+              containerStyle: {width: "360px"}
+            }
+          });
       this.enablePopup = true;
     },
     onTabChange(key, type) {
