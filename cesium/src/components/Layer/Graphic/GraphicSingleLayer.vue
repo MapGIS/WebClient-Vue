@@ -293,9 +293,9 @@ export default {
           graphic.attributes[key] = attributes[key];
         });
         this.enablePopup = false;
-        // this.$nextTick(function () {
-        //   this.$_setPopUp(graphic, true);
-        // });
+        this.$nextTick(function () {
+          this.$_setPopUp(graphic, true);
+        });
       }
     },
     $_editTitle(flag, title, id) {
@@ -684,6 +684,10 @@ export default {
           break;
       }
 
+      if(attributes){
+        editPanelValues.attributes = JSON.parse(JSON.stringify(attributes));
+      }
+
       return editPanelValues;
     },
     $_startDrawModel(type, model, drawMode, drawDistance, modelRadius, scale) {
@@ -815,6 +819,7 @@ export default {
           ...drawOptions
         });
       }
+      this.enablePopup = false;
     },
     $_stopDraw() {
       this.$refs.iconsPanel.currentIconType = "mouse";
