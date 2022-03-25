@@ -1315,6 +1315,20 @@ export default {
               vm.$refs.editPanel.isUpdatePanel = false;
               vm.dataSourceCopy.splice(index, 1);
             }
+          },
+          revokePoint: function (e) {
+            //撤销点、广告牌、文字的同时，删除标绘列表
+            let index = undefined;
+            for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+              if (vm.dataSourceCopy[i].id === e.id) {
+                index = i;
+                break;
+              }
+            }
+            if (index !== undefined) {
+              vm.$refs.editPanel.isUpdatePanel = false;
+              vm.dataSourceCopy.splice(index, 1);
+            }
           }
         });
       }
