@@ -33,14 +33,15 @@
           <img :class="{imgActive: currenImgIndex === index}" @click="$_activeImg(index)"
                class="mapgis-ui-choose-picture-right-img" :src="imgUrl" alt="">
         </div>
-        <mapgis-ui-base64-icon
+        <mapgis-ui-svg-icon
             title="添加图片"
             :iconStyle="addIconStyle"
             :titleStyle="chooseTitleStyle"
             @click="$_clickSmall"
             :style="{marginLeft: imgUrls.length % 2 === 1 ? 0 : '1%',marginRight: imgUrls.length === 0 ? '4px' : '1%',float: imgUrls.length === 0 ? 'right' : 'left'}"
             class="mapgis-ui-choose-picture-right-upload mapgis-ui-choose-picture-right-img-container"
-            type="addPicture"/>
+            type="picture"/>
+        <span class="mapgis-ui-choose-picture-title">添加图片</span>
       </div>
     </mapgis-ui-row>
     <mapgis-ui-row v-show="showAddInternetImg" style="margin-top: 10px;padding-left: 7px;">
@@ -233,7 +234,7 @@ export default {
     },
     $_addInternetImg() {
       this.showAddInternetImg = false;
-      if(!this.internetImg){
+      if (!this.internetImg) {
         this.$message.warning('请输入非空链接！');
         return;
       }
@@ -367,5 +368,11 @@ export default {
 .mapgis-ui-choose-picture-right-current-img {
   height: 100%;
   width: 90%;
+}
+
+.mapgis-ui-choose-picture-title {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
 }
 </style>

@@ -204,7 +204,6 @@ export default {
       this.fullScreenHeight = cesiumCanvas[0].offsetHeight;
       this.fullScreenOffsetLeft = cesiumCanvas[0].offsetLeft;
       this.fullScreenOffsetTop = cesiumCanvas[0].offsetTop;
-      console.log(cesiumCanvas)
       this.currentImg = this.currentFeature.images[this.currentImgIndex];
       this.showFullImg = true;
     },

@@ -1295,8 +1295,14 @@ export default {
           vueKey: vueKey,
           finishEdit: function (e) {
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
-              if (vm.dataSourceCopy[i].id === e.id && e.style.extrudedHeight) {
-                vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
+              if (vm.dataSourceCopy[i].id === e.id) {
+                if(e.style.extrudedHeight){
+                  vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
+                  vm.dataSourceCopy[i].style.color = [e.style._lastChangeColor.red,e.style._lastChangeColor.green,e.style._lastChangeColor.blue,e.style._lastChangeColor.alpha];
+                }
+                if(e.style.radius){
+                  vm.dataSourceCopy[i].style.radius = e.style.radius;
+                }
                 break;
               }
             }
