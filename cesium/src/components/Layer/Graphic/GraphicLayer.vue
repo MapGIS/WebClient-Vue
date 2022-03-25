@@ -224,9 +224,9 @@ export default {
       return hasSameTitle;
     },
     $_finishEditTitle() {
-      if(this.$_hasSameTitle(this.currenSelectLayer)){
+      if (this.$_hasSameTitle(this.currenSelectLayer)) {
         this.$message.warning("该图层名称已存在！");
-      }else{
+      } else {
         this.showEditTitle = false;
         this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
       }
@@ -237,7 +237,7 @@ export default {
         case "add":
           //新建空图层数据
           let title = "新建图层_" + (this.dataSourceCopy.length + 1);
-          if(this.$_hasSameTitle(title)){
+          if (this.$_hasSameTitle(title)) {
             title = title + parseInt(String(Math.random() * 100000000000));
           }
           let data = {
@@ -281,6 +281,9 @@ export default {
           });
           break;
         case "delete":
+          if (this.dataSourceCopy.length === 0) {
+            return;
+          }
           this.$refs.graphicLayer.$_stopEdit();
           this.$refs.graphicLayer.$_stopDrawing();
           this.$refs.graphicLayer.$_removeAllGraphic();
