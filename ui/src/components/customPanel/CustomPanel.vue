@@ -1,15 +1,15 @@
 <template>
   <div :id="id" class="custom-panel">
-    <div v-for="(rects,index) in optionsCopy" :key="index">
+    <div v-for="(rects, index) in optionsCopy" :key="index">
       <mapgis-ui-mix-row
-          :type="rects.type"
-          :ref="rects.id"
-          :value="rects.value"
-          :dataSource="rects.dataSource"
-          :panelId="id"
-          :props="rects.props"
-          :customProps="rects.customProps"
-          @change="$_change"
+        :type="rects.type"
+        :ref="rects.id"
+        :value="rects.value"
+        :dataSource="rects.dataSource"
+        :panelId="id"
+        :props="rects.props"
+        :customProps="rects.customProps"
+        @change="$_change"
       />
       <!--      <div v-if="rects.type === 'Div'">-->
       <!--        <div v-for="(rect,index) in rects" :key="index" :style="rect.style" :class="rect.className">-->
@@ -262,13 +262,13 @@ export default {
     options: {
       type: Array,
       default() {
-        return []
+        return [];
       }
-    },
+    }
   },
   watch: {
     options: {
-      handler: function () {
+      handler: function() {
         this.optionsCopy = this.options;
       },
       deep: true
@@ -279,7 +279,7 @@ export default {
       optionsCopy: [],
       rowsId: [],
       id: "custom-panel" + parseInt(String(Math.random() * 10000))
-    }
+    };
   },
   created() {
     this.optionsCopy = this.options;
@@ -312,18 +312,22 @@ export default {
                   paddingLeft: "8px"
                 };
                 if (children[m].hasOwnProperty("titleStyle")) {
-                  titleStyle = Object.assign(titleStyle, children[m].titleStyle);
+                  titleStyle = Object.assign(
+                    titleStyle,
+                    children[m].titleStyle
+                  );
                 }
                 children[m].titleStyle = titleStyle;
               }
-              children[m].id = children[m].type + m + parseInt(Math.random() * 10000);
+              children[m].id =
+                children[m].type + m + parseInt(Math.random() * 10000);
             }
           }
           if (rows[k].type === "MapgisUiInput") {
             rows[k]["validateStatus"] = "success";
             let props = {
               titleCol: 6,
-              inputCol: 18,
+              inputCol: 18
             };
             if (!rows[k].hasOwnProperty("props")) {
               rows[k].props = props;
@@ -336,26 +340,25 @@ export default {
     $_getForm(rectId) {
       let forms = {};
       if (rectId) {
-
       } else {
         let rects = this.options;
         for (let i = 0; i < rects.length; i++) {
-          let listProps = this.$refs[rects[i].id][0].listProps
+          let listProps = this.$refs[rects[i].id][0].listProps;
           switch (rects[i].type) {
             case "MapgisUiThemeList":
               forms[rects[i].id] = this.$_formatThemeList({
-                "checkBoxArr": listProps.checkBoxArr,
-                "colors": listProps.colors,
-                "dataSource": listProps.dataSource,
-                "startData": listProps.startData
+                checkBoxArr: listProps.checkBoxArr,
+                colors: listProps.colors,
+                dataSource: listProps.dataSource,
+                startData: listProps.startData
               });
               break;
             case "MapgisUiThemeListSymbol":
               forms[rects[i].id] = this.$_formatThemeListSymbol({
-                "checkBoxArr": listProps.checkBoxArr,
-                "radius": listProps.radius,
-                "dataSource": listProps.dataSource,
-                "startData": listProps.startData
+                checkBoxArr: listProps.checkBoxArr,
+                radius: listProps.radius,
+                dataSource: listProps.dataSource,
+                startData: listProps.startData
               });
               break;
           }
@@ -363,38 +366,52 @@ export default {
       }
       return forms;
     },
-    $_formatThemeListSymbol(data){
+    $_formatThemeListSymbol(data) {
       let dataSource = data.dataSource;
       let checkBoxArr = data.checkBoxArr;
       let radius = data.radius;
       let newData = [];
       if (dataSource && dataSource.length > 0) {
         if (checkBoxArr && checkBoxArr.length > 0) {
-          newData.push( {
-            "min": data.startData,
-            "max": dataSource[0],
-            "radius": radius[0],
-            "checkBox": checkBoxArr[0]
+          newData.push({
+            start: data.startData,
+            end: dataSource[0],
+            style: { radius: radius[0], color: "#FF9933" },
+            checkBox: checkBoxArr[0]
           });
           for (let i = 0; i < dataSource.length; i++) {
-            newData.push( {
-              "min": dataSource[i - 1],
-              "max": dataSource[i],
-              "radius": radius[i],
-              "checkBox": checkBoxArr[i]
+            newData.push({
+              start: dataSource[i - 1],
+              end: dataSource[i],
+              style: { radius: radius[i], color: "#FF9933" },
+              checkBox: checkBoxArr[i]
             });
           }
         } else {
-          newData.push( {
-            "min": data.startData,
-            "max": dataSource[0],
-            "radius": radius[0]
+          /*** 等级符号专题图的格式：
+          styleGroups: [
+            //field字段所对应专题图样式，默认用style
+           {
+            start: 0, //起始值
+            end: 30, //结束值
+            style: {
+             //分段样式，注意不可更改符号
+             radius: 10, //设定符号大小
+             color:'#FF9933' // 兼容三维，目前三维还是以绘制实心圆的方式，表示符号，需要设置color。
+             //  界面上暂时不支持设置color字段，后期等三维专题服务确定后，再处理这块
+            },
+          }]
+          */
+          newData.push({
+            start: data.startData,
+            end: dataSource[0],
+            style: { radius: radius[0], color: "#FF9933" }
           });
           for (let i = 1; i < dataSource.length; i++) {
-            newData.push( {
-              "min": dataSource[i - 1],
-              "max": dataSource[i],
-              "radius": radius[i]
+            newData.push({
+              start: dataSource[i - 1],
+              end: dataSource[i],
+              style: { radius: radius[i], color: "#FF9933" }
             });
           }
         }
@@ -408,31 +425,43 @@ export default {
       let newData = [];
       if (dataSource && dataSource.length > 0) {
         if (checkBoxArr && checkBoxArr.length > 0) {
-          newData.push( {
-            "min": data.startData,
-            "max": dataSource[0],
-            "color": colors[0],
-            "checkBox": checkBoxArr[0]
+          newData.push({
+            min: data.startData,
+            max: dataSource[0],
+            color: colors[0],
+            checkBox: checkBoxArr[0]
           });
           for (let i = 0; i < dataSource.length; i++) {
-            newData.push( {
-              "min": dataSource[i - 1],
-              "max": dataSource[i],
-              "color": colors[i],
-              "checkBox": checkBoxArr[i]
+            newData.push({
+              min: dataSource[i - 1],
+              max: dataSource[i],
+              color: colors[i],
+              checkBox: checkBoxArr[i]
             });
           }
         } else {
-          newData.push( {
-            "min": data.startData,
-            "max": dataSource[0],
-            "color": colors[0]
+          /***分段专题图的格式：
+          styleGroups: [
+           //field字段所对应的专题图分段值样式设置，默认用style
+          {
+            start: 0, //起始值
+            end: 30, //结束值
+            style: {
+              //分段样式
+              color: "#FF0000", //设定填充颜色
+            },
+          }]
+          */
+          newData.push({
+            start: data.startData,
+            end: dataSource[0],
+            style: { color: colors[0] }
           });
           for (let i = 1; i < dataSource.length; i++) {
-            newData.push( {
-              "min": dataSource[i - 1],
-              "max": dataSource[i],
-              "color": colors[i]
+            newData.push({
+              start: dataSource[i - 1],
+              end: dataSource[i],
+              style: { color: colors[i] }
             });
           }
         }
@@ -579,12 +608,12 @@ export default {
       return this.$_getValueById(id, "value");
     }
   }
-}
+};
 </script>
 
 <style scoped>
 .custom-panel {
-  width: 100%;;
+  width: 100%;
   height: 100%;
 }
 
