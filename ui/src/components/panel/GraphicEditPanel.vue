@@ -19,7 +19,7 @@
                               :top="(index < dataSourceCopy.length - 3) || (index < 3)"
                               :enableGroup="row.type === 'group'"
                               :src="icons[row.type + 'Image']" :title="row.attributes.title"/>
-          <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 13px;"
+          <mapgis-ui-input @change="$_changeTitle" style="width: 60%;margin-left: 17px;margin-right: 3px;"
                            v-show="editTitleGraphicId === row.id" v-model="row.attributes.title"/>
           <mapgis-ui-button v-show="editTitleGraphicId === row.id" @click="$_finishEditTitle(row.attributes.title)"
                             style="height: 30px;padding-top: 3px" type="primary">完成修改

@@ -942,6 +942,7 @@ export default {
       this.noTitleKey = "edit";
       this.$refs.iconsPanel.$_resetIconsPanel();
       this.$refs.editPanel.noTitleKey = "edit";
+      this.$refs.editPanel.isEdit = true;
       //停止绘制
       this.$_stopDrawing();
       this.isStartDrawing = false;
