@@ -281,6 +281,7 @@ export default {
           //清空图层数据
           this.currentLayer = [];
           this.currenSelectLayer = data.name;
+          this.$_layerSelect();
           //创建一个新的标绘图层
           this.$nextTick(function () {
             this.$refs.graphicLayer.drawMode = "";
