@@ -160,7 +160,8 @@ export default {
       //弹出popup的定时器
       firstClickFlag: undefined,
       currentGroupId: undefined,
-      isUpdateByEditValues: true
+      isUpdateByEditValues: true,
+      groupName: undefined
     };
   },
   watch: {
@@ -734,15 +735,31 @@ export default {
       }
     },
     $_DrawGroup(type, model, scale, drawDistance, modelRadius) {
-      let str = model.split("/");
+      let str = model.split("/"), vm = this;
       let name = str[str.length - 1];
       this.drawMode = "group";
       name = name.split(".")[0];
       this.groupNum++;
-      let groupName = name + "模型组" + this.groupNum;
+      this.groupName = name + "模型组" + this.groupNum;
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
-      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer);
+      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer, {
+        finishDraw: function () {
+          let groupId = Number((Math.random() * 100000000).toFixed(0));
+          vm.currentGroupId = groupId;
+          vm.dataSourceCopy.push({
+            type: "group",
+            id: groupId,
+            attributes: {
+              title: vm.groupName
+            },
+            style: {
+              scale: scale || 1
+            },
+            dataSource: []
+          });
+        }
+      });
       switch (type) {
         case "polyline":
           DrawTool.DrawModelsByLine({
@@ -752,7 +769,7 @@ export default {
               scale: scale || 1,
               url: model
             },
-            name: groupName
+            name: this.groupName
           });
           break;
         case "polygon":
@@ -763,23 +780,10 @@ export default {
               scale: scale || 1,
               url: model
             },
-            name: groupName
+            name: this.groupName
           });
           break;
       }
-      let groupId = Number((Math.random() * 100000000).toFixed(0));
-      this.currentGroupId = groupId;
-      this.dataSourceCopy.push({
-        type: "group",
-        id: groupId,
-        attributes: {
-          title: groupName
-        },
-        style: {
-          scale: scale || 1
-        },
-        dataSource: []
-      });
     },
     //开始绘制
     $_startDraw(type, chooseMode) {
@@ -1266,6 +1270,7 @@ export default {
             break;
           }
         }
+        vm.$refs.editPanel.noTitleKey = "list";
       } else {
         //通过fromJSON方式导入
         let hasData = false;

@@ -51,7 +51,7 @@ export default {
      * */
     $_newGraphicLayer(options) {
       options = options || {};
-      let {vueIndex, vueKey, viewer, getGraphic, finishEdit, revokeModel, revokePoint} = options;
+      let {vueIndex, vueKey, viewer, getGraphic, finishEdit, revokeModel, revokePoint, finishDraw} = options;
       viewer = viewer || this.viewer;
       vueIndex = vueIndex || this.$_getId();
       vueKey = vueKey || "default";
