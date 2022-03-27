@@ -426,6 +426,7 @@ export default {
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.destroy();
+        window.vueCesium.GraphicsLayerManager.deleteSource(vueKey, vueIndex);
       });
     },
     /**

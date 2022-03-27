@@ -238,8 +238,10 @@ export default {
      * */
     $_showAllGraphics() {
       let graphics = this.$_getAllGraphic();
-      for (let i = 0; i < graphics.length; i++) {
-        graphics[i].show = true;
+      if (graphics) {
+        for (let i = 0; i < graphics.length; i++) {
+          graphics[i].show = true;
+        }
       }
     },
     /**
@@ -247,8 +249,10 @@ export default {
      * */
     $_hideAllGraphics() {
       let graphics = this.$_getAllGraphic();
-      for (let i = 0; i < graphics.length; i++) {
-        graphics[i].show = false;
+      if (graphics) {
+        for (let i = 0; i < graphics.length; i++) {
+          graphics[i].show = false;
+        }
       }
     },
     $_update() {
@@ -922,20 +926,6 @@ export default {
         }
       }
     },
-    test() {
-      let graphicLayer = this.$_getGraphicLayer();
-      let SelectTool = new Cesium.SelectTool(graphicLayer);
-      SelectTool.selectByRectangle({
-        type: 'polygon',
-        style: {
-          color: Cesium.Color.BLUE.withAlpha(0.2),
-          height: 0
-        },
-        isContinued: false,
-        getSelectedGraphic: function (graphics) {
-        }
-      });
-    },
     //双击一条标注列表里的要素，进入到设置面板
     $_dbclick(json, noFly) {
       //显示设置面板
@@ -1217,7 +1207,7 @@ export default {
             vm.$emit("change", vm.dataSourceCopy);
             vm.$emit("addFeature", vm.$_getJsonById(e.id));
           }
-          }
+        }
       } else if (vm.drawMode === "addGraphic") {
         vm.drawMode = "point"
       } else if (vm.drawMode === "addFlashGraphic") {

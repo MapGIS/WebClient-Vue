@@ -323,6 +323,7 @@ export default {
             let index = this.currenSelectIndex < 0 ? 0 : this.currenSelectIndex;
             this.currenSelectLayer = this.dataSourceCopy[index].name;
             this.currentLayer = this.$_cloneArray(this.dataSourceCopy[index].dataSource.features);
+            this.$_selectLayer(this.dataSourceCopy[index].uuid);
           }
           break;
         case "editTitle":
@@ -488,13 +489,14 @@ export default {
             }
           }
           this.groupGraphicIDs = groupGraphicIDs;
+          this.$refs.graphicLayer.addSource = false;
+          this.$refs.graphicLayer.drawMode = "point";
           this.currentLayer = this.$_cloneArray(features);
           this.autoFlyTo = data.autoFlyTo;
           this.autoFlyToGraphic = data.autoFlyToGraphic;
           this.vueIndex = Number(data.uuid);
           this.$refs.graphicLayer.$_hideAllGraphics();
           this.$nextTick(function () {
-            this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
             this.$refs.graphicLayer.currentEditType = "mouse";
             this.$refs.graphicLayer.currentIconType = "mouse";
@@ -567,7 +569,7 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_showAllGraphics();
-            this.currentLayer = this.$_cloneArray(this.dataSourceCopy[i].dataSource.features);
+            this.$refs.graphicLayer.dataSourceCopy = this.$_cloneArray(this.dataSourceCopy[i].dataSource.features);
           });
           const {camera} = this.dataSourceCopy[i];
           if (this.autoFlyTo && camera) {
