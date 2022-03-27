@@ -45,6 +45,7 @@
         v-model="currentLayer"
         @saveCamera="$_saveCamera"
         @change="$_addFeature"
+        @delete="$_deleteFeature"
     />
     <div
         v-show="showSetting"
@@ -205,6 +206,15 @@ export default {
     this.$_init(true);
   },
   methods: {
+    $_deleteFeature(id) {
+      let {dataSource} = this.dataSourceCopy[this.currenSelectIndex];
+      let {features} = dataSource;
+      for (let i = 0; i < features.length; i++) {
+        if (features[i].id === id) {
+          features.splice(i, 1);
+        }
+      }
+    },
     $_addFeature(e) {
       this.dataSourceCopy[this.currenSelectIndex].dataSource.features = e;
     },
@@ -230,6 +240,13 @@ export default {
         this.showEditTitle = false;
         this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
       }
+    },
+    $_cloneArray(array) {
+      let newArray = [];
+      for (let i = 0; i < array.length; i++) {
+        newArray.push(JSON.parse(JSON.stringify(array[i])));
+      }
+      return newArray;
     },
     $_clickTool(e, noMessage) {
       switch (e) {
@@ -304,7 +321,7 @@ export default {
           } else {
             let index = this.currenSelectIndex < 0 ? 0 : this.currenSelectIndex;
             this.currenSelectLayer = this.dataSourceCopy[index].name;
-            this.currentLayer = this.dataSourceCopy[index].dataSource.features;
+            this.currentLayer = this.$_cloneArray(this.dataSourceCopy[index].dataSource.features);
           }
           break;
         case "editTitle":
@@ -439,20 +456,16 @@ export default {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         //uuid相同，更新数据
         if (this.dataSourceCopy[i].uuid === data.uuid) {
-          this.$refs.graphicLayer.$_updateStyleByLayer(data);
-          this.dataSourceCopy[i].dataSource = data.dataSource.features;
-          this.currentLayer = data.dataSource.features;
-          this.autoFlyTo = data.autoFlyTo;
-          this.autoFlyToGraphic = data.autoFlyToGraphic;
+          //先不做处理，工程量比较大
+          this.$message.warning("请勿导入相同图层！");
           break;
         } else {
           //uuid不相同，新增数据
-          let {dataSource} = data;
           this.updatable = false;
-          this.$refs.graphicLayer.$_fromJson(dataSource);
           if (this.dataSourceCopy.length > 0) {
             this.currenSelectIndex++;
           }
+          this.$refs.graphicLayer.$_resetEditPanel();
           this.dataSourceCopy.push(data);
           this.$_layerSelect();
           let groupGraphicIDs = [];
@@ -474,25 +487,23 @@ export default {
             }
           }
           this.groupGraphicIDs = groupGraphicIDs;
-          this.currentLayer = features;
+          this.currentLayer = this.$_cloneArray(features);
           this.autoFlyTo = data.autoFlyTo;
           this.autoFlyToGraphic = data.autoFlyToGraphic;
           this.vueIndex = Number(data.uuid);
+          this.$refs.graphicLayer.$_hideAllGraphics();
           this.$nextTick(function () {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
             this.$refs.graphicLayer.currentEditType = "mouse";
             this.$refs.graphicLayer.currentIconType = "mouse";
-            this.$refs.graphicLayer.$_resetEditPanel();
             this.$refs.graphicLayer.$_resetIconsPanel();
             this.$refs.graphicLayer.$_stopEdit();
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.currentEditType = "mouse";
             this.$refs.graphicLayer.isStartDrawing = false;
-            this.$refs.graphicLayer.$_clearList();
-            this.$refs.graphicLayer.$_init(undefined, this.vueIndex);
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
-            this.$refs.graphicLayer.$_fromJson(data.dataSource);
+            this.$refs.graphicLayer.$_showAllGraphics();
             this.updatable = true;
           });
           break;
@@ -514,7 +525,6 @@ export default {
           this.$refs.graphicLayer.$_stopDrawing();
           this.$refs.graphicLayer.currentEditType = "mouse";
           this.$refs.graphicLayer.isStartDrawing = false;
-          this.$refs.graphicLayer.$_clearList();
           this.$refs.graphicLayer.$_init();
           this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
           this.$refs.graphicLayer.$_fromJson(data.dataSource);
@@ -556,7 +566,7 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_showAllGraphics();
-            this.currentLayer = this.dataSourceCopy[i].dataSource.features;
+            this.currentLayer = this.$_cloneArray(this.dataSourceCopy[i].dataSource.features);
           });
           const {camera} = this.dataSourceCopy[i];
           if (this.autoFlyTo && camera) {
@@ -589,10 +599,10 @@ export default {
     //初始化数据
     $_init(noMessage) {
       //复制数据源
-      this.dataSourceCopy = this.dataSource;
+      this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
       //设置当前图层
       if (this.dataSourceCopy.length > 0) {
-        this.currentLayer = this.dataSourceCopy[0].dataSource.features;
+        this.currentLayer = this.$_cloneArray(this.dataSourceCopy[0].dataSource.features);
         this.vueIndex = this.dataSourceCopy[0].uuid;
         //初始化graphicLayer图层列表
         this.$_layerSelect();

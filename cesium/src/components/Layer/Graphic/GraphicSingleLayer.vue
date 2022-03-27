@@ -16,7 +16,7 @@
           ref="editPanel"
           :editPanelValues="editPanelValues"
           :editList="editList"
-          :dataSourceCopy="dataSourceCopy"
+          :dataSource="dataSourceCopy"
           :currentEditType="currentEditType"
           :graphicGroups="graphicGroups"
           @change="$_changeEditPanelValues"
@@ -369,7 +369,7 @@ export default {
               this.$_removeGraphicByID(groups[i].id);
             }
           }
-          this.$emit("delete", index);
+          this.$emit("delete", row.id);
           this.$nextTick(function () {
             let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
             graphicsLayer.removeGraphicByID(row.id);
@@ -1194,19 +1194,29 @@ export default {
         } else {
           e.attributes.title = e.attributes.title || vm.$_getTitle(type);
           data.attributes.title = e.attributes.title;
-          vm.dataSourceCopy.push(data);
-          if (vm.dataSourceCopy.length === 1) {
-            vm.$emit("saveCamera");
+          let hasData = false, index = 0;
+          for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+            if (vm.dataSourceCopy[i].id === data.id) {
+              hasData = true;
+              index = i;
+              break;
+            }
           }
-          let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
-          vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
-          //数据添加完毕
-          vm.$nextTick(function () {
-            vm.addSource = false;
-          });
-          vm.$emit("change", vm.dataSourceCopy);
-          vm.$emit("addFeature", vm.$_getJsonById(e.id));
-        }
+          if (!hasData) {
+            vm.dataSourceCopy.push(data);
+            if (vm.dataSourceCopy.length === 1) {
+              vm.$emit("saveCamera");
+            }
+            let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+            vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
+            //数据添加完毕
+            vm.$nextTick(function () {
+              vm.addSource = false;
+            });
+            vm.$emit("change", vm.dataSourceCopy);
+            vm.$emit("addFeature", vm.$_getJsonById(e.id));
+          }
+          }
       } else if (vm.drawMode === "addGraphic") {
         vm.drawMode = "point"
       } else if (vm.drawMode === "addFlashGraphic") {

@@ -380,7 +380,7 @@ export default {
     editList: {
       type: Object
     },
-    dataSourceCopy: {
+    dataSource: {
       type: Array,
       default() {
         return [];
@@ -410,9 +410,10 @@ export default {
       },
       deep: true
     },
-    dataSourceCopy: {
+    dataSource: {
       handler: function () {
-        if (this.dataSourceCopy.length > 0 && !this.editTitle) {
+        this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+        if (this.dataSource.length > 0 && !this.editTitle) {
           //获取设置面板显示参数
           if (this.isUpdatePanel) {
             this.editPanelValues = this.$_getEditPanelValuesFromJSON(this.dataSourceCopy[this.dataSourceCopy.length - 1]);
@@ -537,7 +538,8 @@ export default {
       showOutline: false,
       //是否展开北京参数
       showBackground: false,
-      groupId: undefined
+      groupId: undefined,
+      dataSourceCopy: []
     }
   },
   mounted() {
