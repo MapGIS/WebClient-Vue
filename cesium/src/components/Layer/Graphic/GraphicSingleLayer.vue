@@ -979,6 +979,7 @@ export default {
       //定义视角高度
       const {style} = graphic;
       const {offsetHeight, extrudedHeight, radiusX, width, radius} = style;
+      this.destinationHeight = 0;
       //如果有offsetHeight，则加上这个高度
       if (offsetHeight) {
         this.destinationHeight += Number(offsetHeight);
@@ -1004,6 +1005,9 @@ export default {
         this.destinationHeight += Number(graphic.boundingSphere.radius * 4);
       } else {
         this.lastGraphicColor = graphic.style.color;
+      }
+      if(this.destinationHeight < 0) {
+        this.destinationHeight = 100;
       }
       let positions = [[]], center, destination, polygonG, position, lla;
       switch (json.type) {
@@ -1079,9 +1083,9 @@ export default {
           duration: 1,
           destination: destination,
           orientation: {
-            heading: camera.heading,
-            pitch: camera.pitch,
-            roll: camera.roll
+            heading: 6.283185307179586,
+            pitch: -1.5707963267948966,
+            roll: 0
           }
         });
       }
