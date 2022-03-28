@@ -52,6 +52,7 @@ export const 标签 = Template.bind({});
     field: "imei",
     yOffset: 35,
     url: "./img/icon.png",
-    imageScale: 0.5
+    imageScale: 0.5,
+    color: "rgb(79,144,245)"
   }
 };
