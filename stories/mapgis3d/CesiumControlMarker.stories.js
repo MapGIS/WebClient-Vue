@@ -1,12 +1,10 @@
 export default {
   title: "三维/场景子组件/Marker",
   argTypes: {
-    position: {
-      longitude: 110,
-      latitude: 30,
-      height: 0,
-    },
-    showed: true,
+    longitude: 110,
+    latitude: 30,
+    height: 0,
+    iconUrl:""
   },
 };
 
@@ -46,8 +44,6 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ZondyModels`,
-      //天地图地址，请在url地址后面加token
       urlT: "http://t0.tianditu.gov.cn/img_c/wmts",
       //参考系
       tileMatrixSetID: "c",
@@ -57,15 +53,7 @@ const Template = (args, { argTypes }) => ({
       token:{
         key: "tk",
         value: "f5347cab4b28410a6e8ba5143e3d5a35"
-      },
-      longitude: 114.4018,
-      latitude: 30.4673,
-      longitude2: 115,
-      latitude2: 31,
-      height: 0,
-      iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
-      text: "这是测试",
-      heightReference: "clamped",
+      }
     }
   },
   methods: {
@@ -80,10 +68,12 @@ const Template = (args, { argTypes }) => ({
 
 export const Marker = Template.bind({});
 Marker.args = {
-  position: {
-    longitude: 110,
-    latitude: 30,
-    height: 0,
-  },
-  showed: true,
+  longitude: 114.4018,
+  latitude: 30.4673,
+  longitude2: 115,
+  latitude2: 31,
+  height: 0,
+  iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
+  text: "这是测试",
+  heightReference: "clamped",
 };

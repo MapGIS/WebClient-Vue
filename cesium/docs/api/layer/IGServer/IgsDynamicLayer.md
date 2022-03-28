@@ -1,4 +1,4 @@
-# IGS二维矢量
+# IGS 二维矢量
 
 > mapgis-3d-igs-dynamic-layer
 
@@ -66,17 +66,10 @@
 
 ## 示例
 
-::: demo
-
 ```vue
 <template>
-  <mapgis-web-scene
-    @load="handleLoad"
-  >
-    <mapgis-3d-igs-vector-layer
-      :gdbps="gdbps"
-      :baseUrl="baseUrl"
-    >
+  <mapgis-web-scene @load="handleLoad">
+    <mapgis-3d-igs-vector-layer :gdbps="gdbps" :baseUrl="baseUrl">
     </mapgis-3d-igs-vector-layer>
   </mapgis-web-scene>
 </template>
@@ -85,24 +78,20 @@
 export default {
   data() {
     return {
-      gdbps: [
-        "GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市",
-      ],
-      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/layers"
+      gdbps: ["GDBP://MapGISLocalPlus/北京市/ds/行政区/sfcls/北京市"],
+      baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/layers",
     };
   },
   methods: {
     handleLoad(e) {
       const webGlobe = e.component.webGlobe;
       var sceneManager = new CesiumZondy.Manager.SceneManager({
-        viewer: webGlobe.viewer
+        viewer: webGlobe.viewer,
       });
       //视点跳转（经度，纬度，视角高度，跳转持续时间）
       sceneManager.flyTo(116.348, 40.236, 300000);
-    }
-  }
+    },
+  },
 };
 </script>
 ```
-
-:::

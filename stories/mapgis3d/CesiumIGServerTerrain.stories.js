@@ -17,11 +17,11 @@ const Template = (args, { argTypes }) => ({
   components: { MapgisWebScene, Mapgis3dIgsTerrain },
   template: `<mapgis-web-scene style="height:95vh">
     <mapgis-3d-raster-layer url="http://t1.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-3d-igs-terrain v-bind="$props" @terrain-loaded="terrainLoaded"/>
+    <mapgis-3d-igs-terrain v-bind="$props" @terrain-loaded="loaded"/>
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
   methods: {
-    terrainLoaded: (e) => {
+    loaded: (e) => {
       console.log("地形回调", e);
     },
   },

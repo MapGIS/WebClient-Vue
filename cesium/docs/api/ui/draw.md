@@ -23,19 +23,19 @@
 - **默认值:** `top-right`
 - **描述:** 传入的属性 position 改变其按钮控件的位置
 
-
 ### `clampToGround`
 
 - **类型:** `Boolean`
 - **侦听属性**
 - **默认值:** `true`
-- **描述:** 绘制在三维图层上，是否贴地贴模型，true则贴地贴模型。
+- **描述:** 绘制在三维图层上，是否贴地贴模型，true 则贴地贴模型。
 
 ### `drawStyle`
 
 - **类型:** `Object`
 - **非侦听属性**
-- **默认值:** 
+- **默认值:**
+
 ```
   {
     color: '#FF0000',
@@ -47,7 +47,8 @@
     //线宽
     width: 2,
   }
-  ```
+```
+
 - **描述:** 绘制点、线、矩形、多边形、圆图形样式。目前不支持矩形、多边形、圆的边线样式设置。
 
 ### `vueKey`
@@ -109,25 +110,26 @@
 
 ### 简单使用
 
-::: demo
-
 ```vue
 <template>
   <div id="app">
     <mapgis-web-scene>
-      <mapgis-3d-raster-layer 
-              url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-      <mapgis-3d-igs-m3d 
-              :autoReset="autoReset" 
-              :maximumScreenSpaceError="maximumScreenSpaceError" 
-              :url="m3dUrl">
+      <mapgis-3d-raster-layer
+        url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
+      />
+      <mapgis-3d-igs-m3d
+        :autoReset="autoReset"
+        :maximumScreenSpaceError="maximumScreenSpaceError"
+        :url="m3dUrl"
+      >
       </mapgis-3d-igs-m3d>
-      <mapgis-3d-draw 
-              :enableControl="enableControl"
-              :drawStyle="drawStyle"
-              :clampToGround="clampToGround" 
-              :position="position"
-              :infinite="infinite">
+      <mapgis-3d-draw
+        :enableControl="enableControl"
+        :drawStyle="drawStyle"
+        :clampToGround="clampToGround"
+        :position="position"
+        :infinite="infinite"
+      >
       </mapgis-3d-draw>
     </mapgis-web-scene>
   </div>
@@ -140,21 +142,21 @@ export default {
     return {};
   },
   methods: {
-    m3dUrl:"http://develop.smaryun.com:6163/igs/rest/g3d/DaYanTa",
-    autoReset:true,
-    maximumScreenSpaceError:6,
+    m3dUrl: "http://develop.smaryun.com:6163/igs/rest/g3d/DaYanTa",
+    autoReset: true,
+    maximumScreenSpaceError: 6,
     enableControl: true,
-    position:"top-right",
-    drawStyle:{
-      color:'#FF8C00',
-      opacity:0.6,
+    position: "top-right",
+    drawStyle: {
+      color: "#FF8C00",
+      opacity: 0.6,
       // outlineColor:'#FFA500',
       // width:4,
       // outlineWidth:2
     },
-    clampToGround:true,
-    infinite:true
-  }
+    clampToGround: true,
+    infinite: true,
+  },
 };
 </script>
 
@@ -184,5 +186,3 @@ export default {
 }
 </style>
 ```
-
-:::

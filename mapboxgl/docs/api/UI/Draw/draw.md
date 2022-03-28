@@ -1,5 +1,3 @@
-# 绘制
-
 > mapgis-draw
 
 [官方参数](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/API.md)
@@ -354,16 +352,6 @@
 - **非侦听属性:**
 - **默认** false
 - **描述** 绘制圆半径，拖拽圆，实时显示圆半径值和半径的线图层
-
-[comment]: <> (### `expandControl`)
-
-[comment]: <> (- **类型:** `Boolean`)
-
-[comment]: <> (- **非侦听属性:**)
-
-[comment]: <> (- **默认** false)
-
-[comment]: <> (- **描述** 是否默认展开基本功能的按钮控件，需要上面的 enableControl 为 true 才能实现)
 
 ### `editable`
 

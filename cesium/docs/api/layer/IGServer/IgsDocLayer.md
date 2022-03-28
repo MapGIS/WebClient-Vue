@@ -77,8 +77,6 @@
 
 ### 加载 4326 地图
 
-::: demo
-
 ```vue
 <template>
   <mapgis-web-scene>
@@ -97,8 +95,6 @@ export default {
 };
 </script>
 ```
-
-:::
 
 ### 动态投影
 

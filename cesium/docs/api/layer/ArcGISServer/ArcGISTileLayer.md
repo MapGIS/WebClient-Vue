@@ -1,4 +1,4 @@
-# ArcGIS瓦片
+# ArcGIS 瓦片
 
 > mapgis-3d-arcgis-tile-layer
 
@@ -57,8 +57,6 @@
 
 ## 示例
 
-::: demo
-
 ```vue
 <template>
   <mapgis-web-scene class="main">
@@ -73,12 +71,13 @@ export default {
   name: "arcgisTileLayer",
   data() {
     return {
-      baseUrl:"http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
+      baseUrl:
+        "http://map.geoq.cn/arcgis/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
       layerStyle: {
         visible: true,
         opacity: 1,
-        zIndex: 2
-      }
+        zIndex: 2,
+      },
     };
   },
   methods: {
@@ -95,8 +94,8 @@ export default {
       } else {
         this.layerStyle.zIndex = 1;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="css">
@@ -106,5 +105,3 @@ export default {
 }
 </style>
 ```
-
-:::
