@@ -5,7 +5,7 @@
         <mapgis-ui-input
           v-if="editable"
           class="name-input"
-          :value="path.name"
+          :value="name"
           @change="e => _onNameChange(e.target.value)"
         />
         <a @click="onSavePathName">保存</a>
@@ -14,7 +14,7 @@
       </template>
       <template v-else>
         <div class="name" @click="$emit('goto-path')">
-          {{ path.name }}
+          {{ name }}
         </div>
         <div :class="['actions', actionMenuVisible ? 'actions-visible' : '']">
           <mapgis-ui-iconfont type="mapgis-info" :title="path.path.join()" />
@@ -51,13 +51,27 @@ export default {
       default: () => {}
     }
   },
-  computed: {
-    newPathName: function() {
-      return this.path.name;
+  // computed: {
+  //   newPathName: {
+  //     get: function() {
+  //       return this.path.name;
+  //     },
+  //     set: function(val) {
+  //       this.path.name = val;
+  //     }
+  //   }
+  // },
+  watch: {
+    "path.name": {
+      handler() {
+        this.name = this.path.name;
+      },
+      immediate: true
     }
   },
   data() {
     return {
+      name: "",
       actionMenuVisible: false,
       editable: false
     };
@@ -68,14 +82,16 @@ export default {
       this.editable = true;
     },
     _onNameChange(val) {
-      this.newPathName = val;
+      this.name = val;
     },
     onSavePathName() {
       this.editable = false;
-      this.path.name = this.newPathName;
+      this.$emit("change-path-name", this.name);
+      // this.path.name = this.name;
     },
     onCancelRenamePath() {
       this.editable = false;
+      this.name = this.path.name;
     },
     onDeletePath() {
       this.actionMenuVisible = false;
