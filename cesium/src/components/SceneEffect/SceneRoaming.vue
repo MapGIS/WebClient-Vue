@@ -44,12 +44,18 @@
                 :path="item"
                 @goto-path="onGotoPath(item)"
                 @delete-path="onDeletePath(item)"
+                @change-path-name="
+                  val => {
+                    onChangePathName(val, item.id);
+                  }
+                "
               />
             </div>
           </div>
           <div v-else class="path-container">
             <mapgis-ui-group-tab title="路线坐标"> </mapgis-ui-group-tab>
             <mapgis-ui-table
+              v-if="positions && positions.length > 0"
               class="path-list position-list"
               size="small"
               :columns="addedPositionsColumns"
@@ -64,6 +70,11 @@
                 <div class="path-position" :title="text">{{ text }}</div>
               </template>
             </mapgis-ui-table>
+            <mapgis-ui-empty
+              v-else
+              :image="emptyImage"
+              :description="emptyDescription"
+            />
           </div>
         </div>
         <div v-else>
@@ -98,6 +109,7 @@
 import PathItem from "./PathRoaming/PathItem.vue";
 import PathRoaming from "./PathRoaming/PathRoaming.vue";
 import VueOptions from "../Base/Vue/VueOptions";
+import { Empty } from "ant-design-vue";
 export default {
   name: "mapgis-3d-scene-roaming",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -214,7 +226,9 @@ export default {
       ],
       pathsCopy: [],
       linePoints: [],
-      polyline: undefined
+      polyline: undefined,
+      emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
+      emptyDescription: "暂无数据"
     };
   },
   created() {},
@@ -360,6 +374,17 @@ export default {
       const index = this.pathsCopy.indexOf(path);
       if (index > -1) {
         this.pathsCopy.splice(index, 1);
+      }
+    },
+    /**
+     * 修改路径名
+     */
+    onChangePathName(val, id) {
+      const paths = [...this.pathsCopy];
+      let target = paths.find(item => item.id === id);
+      if (target) {
+        target.name = val;
+        this.pathsCopy = paths;
       }
     },
     _stopAdded() {
