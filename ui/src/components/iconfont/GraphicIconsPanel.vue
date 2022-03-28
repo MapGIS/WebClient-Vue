@@ -27,6 +27,7 @@
         <div class="mapgis-ui-graphic-icon-div"
              :key="index"
              v-for="(icon, index) in iconsInfo"
+             @click="$_startDraw(icon.type)"
              :style="{outline: icon.type === currentIconType ? '1px solid #1890FF' : 'none',margin: enableOneMap ? '10px 9px' : enableMapStory ? '10px 13.7px' : '10px 17px'}"
         >
           <img @click="$_startDraw(icon.type)"
@@ -305,6 +306,7 @@ export default {
   height: auto;
   margin: 10px 9px;
   float: left;
+  cursor: pointer;
 }
 
 .mapgis-ui-graphic-dropdown {

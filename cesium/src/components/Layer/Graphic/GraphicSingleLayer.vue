@@ -931,7 +931,7 @@ export default {
       }
     },
     //双击一条标注列表里的要素，进入到设置面板
-    $_dbclick(json, noFly) {
+    $_dbclick(json, noFly, noStartEdit) {
       //显示设置面板
       this.noTitleKey = "edit";
       this.$refs.iconsPanel.$_resetIconsPanel();
@@ -941,10 +941,12 @@ export default {
       this.$_stopDrawing();
       this.isStartDrawing = false;
       //开始编辑
-      this.$nextTick(function () {
-        this.isEdit = true;
-        this.$_startEdit();
-      });
+      if(!noStartEdit){
+        this.$nextTick(function () {
+          this.isEdit = true;
+          this.$_startEdit();
+        });
+      }
       if (!json.hasOwnProperty("style")) {
         json = this.$_getJsonById(json.id);
       }
@@ -1405,7 +1407,7 @@ export default {
           if (pickedFeature.hasOwnProperty("id")) {
             let graphic = vm.$_getGraphicByID(pickedFeature.id);
             if (graphic) {
-              vm.$_dbclick(vm.$_getJsonById(pickedFeature.id), true);
+              vm.$_dbclick(vm.$_getJsonById(pickedFeature.id), true, true);
             }
           }
         }
