@@ -629,6 +629,7 @@ export default {
       }
     },
     $_showCurrentGraphic() {
+      this.$refs.graphicLayer.$_startEdit();
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         if (this.currenSelectLayer === this.dataSourceCopy[i].name) {
           let features = this.dataSourceCopy[i].dataSource.features;
