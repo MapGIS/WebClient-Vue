@@ -795,9 +795,7 @@ export default {
       this.$_stopDrawing();
       //如果选择鼠标，开启编辑模式，否则开始绘制
       if (type === "mouse") {
-        if (this.noTitleKey !== "edit") {
-          this.$_startEdit();
-        }
+        this.$_startEdit();
         //结束绘制
         this.isStartDrawing = false;
       } else {
@@ -941,7 +939,7 @@ export default {
       this.$_stopDrawing();
       this.isStartDrawing = false;
       //开始编辑
-      if(!noStartEdit){
+      if (!noStartEdit) {
         this.$nextTick(function () {
           this.isEdit = true;
           this.$_startEdit();
@@ -1006,7 +1004,7 @@ export default {
       } else {
         this.lastGraphicColor = graphic.style.color;
       }
-      if(this.destinationHeight < 0) {
+      if (this.destinationHeight < 0) {
         this.destinationHeight = 100;
       }
       let positions = [[]], center, destination, polygonG, position, lla;
@@ -1124,6 +1122,9 @@ export default {
         case "cylinder":
         case "circle":
         case "ellipsoid":
+        case "label":
+        case "point":
+        case "text":
           //计算中心点
           position = json.centerPosition;
           lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
@@ -1424,7 +1425,8 @@ export default {
       if (isGraphic) {
         attributes = graphic.attributes;
       } else {
-        attributes = graphic.primitive.attributes;
+        let g = this.$_getGraphicByID(graphic.primitive.id)
+        attributes = g.attributes || undefined;
       }
       //使用点击时的坐标
       if (worldPosition) {
@@ -1439,7 +1441,7 @@ export default {
         if (isGraphic) {
           center = this.$_getCenter(graphic);
         } else {
-          center = this.$_getCenter(graphic.primitive);
+          center = this.$_getCenter(this.$_getGraphicByID(graphic.primitive.id));
         }
         if (!center) {
           return;
@@ -1453,21 +1455,23 @@ export default {
           properties: {}
         };
       }
-      Object.keys(attributes).forEach(function (key) {
-        vm.popup.properties[key] = attributes[key];
-      })
-      let properties = JSON.parse(JSON.stringify(this.popup.properties));
-      delete properties.title;
-      this.popup.container = getPopupHtml("underline",
-          {properties: properties},
-          {
-            fields: Object.keys(properties),
-            title: this.popup.properties.title,
-            style: {
-              containerStyle: {width: "360px"}
-            }
-          });
-      this.enablePopup = true;
+      if (attributes) {
+        Object.keys(attributes).forEach(function (key) {
+          vm.popup.properties[key] = attributes[key];
+        })
+        let properties = JSON.parse(JSON.stringify(this.popup.properties));
+        delete properties.title;
+        this.popup.container = getPopupHtml("underline",
+            {properties: properties},
+            {
+              fields: Object.keys(properties),
+              title: this.popup.properties.title,
+              style: {
+                containerStyle: {width: "360px"}
+              }
+            });
+        this.enablePopup = true;
+      }
     },
     onTabChange(key, type) {
       this[type] = key;
