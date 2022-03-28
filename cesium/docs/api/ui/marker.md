@@ -4,109 +4,21 @@
 
 ## 属性
 
-### `longitude`
-
-- **类型:** `Number`
-- **必填**
-- **侦听属性**
-- **描述:** 经度
-
-### `latitude`
-
-- **类型:** `Number`
-- **必填**
-- **侦听属性**
-- **描述:** 纬度
-
-### `height`
-
-- **类型:** `Number`
-- **必填**
-- **侦听属性**
-- **描述:** 高度
-
-### `iconUrl`
-
-- **类型:** `String`
-- **必填**
-- **侦听属性**
-- **描述:** 图标的 url 地址
-
-### `iconWidth`
-
-- **类型:** `Number`
-- **可选**
-- **侦听属性**
-- **默认值** `50`
-- **描述:** 图标的宽度
-
-### `iconHeight`
-
-- **类型:** `Number`
-- **可选**
-- **侦听属性**
-- **默认值** `50`
-- **描述:** 图标的高度
-
-### `text`
-
-- **类型:** `String`
-- **可选**
-- **侦听属性**
-- **描述:** 标记点的标题文字
-
-### `fontSize`
-
-- **类型:** `String`
-- **可选**
-- **侦听属性**
-- **默认值** `16px`
-- **描述:** 字体大小
-
-### `fontFamily`
-
-- **类型**: `String`
-- **可选**
-- **侦听属性**
-- **默认值** `宋体`
-- **描述** 字体
-
-### `color`
-
-- **类型:** `String`
-- **可选**
-- **侦听属性**
-- **默认值** `#000000`
-- **描述:** 文字颜色，十六进制颜色
-
-### `heightReference`
-
-- **类型:** `String`
-- **可选**
-- **侦听属性**
-- **默认值** `clamped`
-- **描述:** 图标相对地形的位置 <br/>
-  > clamped: 图标完全贴合在地形上
-  > absolute: 自己定义图标高度
-  > above: 图标永远在地形之上
-
-### `vueKey`
-
-- **类型:** `String`
-- **可选**
-- **非侦听属性**
-- **默认值:** `default`
-- **描述:**
-  > mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件， <br/>
-  > 同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。
-
-### `vueIndex`
-
-- **类型:** `Number`
-- **可选**
-- **非侦听属性**
-- **描述:**
-  > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
+| 名称               | 类型   | 默认值    | 描述                                                                                                                                                                                                                          | 是否监听 |
+| ------------------ | ------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| longitude **必传** | Number |           | 经度                                                                                                                                                                                                                          | 是       |
+| latitude **必传**  | Number |           | 纬度                                                                                                                                                                                                                          | 是       |
+| height **必传**    | Number |           | 高度                                                                                                                                                                                                                          | 是       |
+| iconUrl **必传**   | String |           | 图标的 url 地址                                                                                                                                                                                                               | 是       |
+| iconWidth          | Number | 50        | 图标的宽度                                                                                                                                                                                                                    | 是       |
+| iconHeight         | Number | 50        | 图标的高度                                                                                                                                                                                                                    | 是       |
+| text               | String |           | 标记点的标题文字                                                                                                                                                                                                              | 是       |
+| fontSize           | String | '16px'    | 字体大小                                                                                                                                                                                                                      | 是       |
+| fontFamily         | String | '宋体'    | 字体                                                                                                                                                                                                                          | 是       |
+| color              | String | '#000000' | 文字颜色，十六进制颜色                                                                                                                                                                                                        | 是       |
+| heightReference    | String | 'clamped' | 图标相对地形的位置 <br/>clamped: 图标完全贴合在地形上</br> absolute: 自己定义图标高度</br>above: 图标永远在地形之上                                                                                                           | 是       |
+| vueKey             | String | default   | mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件，<br/>同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。 | 否       |
+| vueIndex           | Number |           | 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。                                                                                                                 | 否       |
 
 ## 槽
 
@@ -124,18 +36,18 @@
 
 ### `@mouseEnter`
 
-- **描述** Popup的鼠标移入事件
+- **描述** Popup 的鼠标移入事件
 - **Payload** `{ options, longitude, latitude, height }`
-- `options` Popup的初始化参数
-- `longitude` Popup的经度坐标
-- `latitude` Popup的纬度坐标
-- `height` Popup的高度坐标
+- `options` Popup 的初始化参数
+- `longitude` Popup 的经度坐标
+- `latitude` Popup 的纬度坐标
+- `height` Popup 的高度坐标
 
 ### `@mouseLeave`
 
-- **描述** Popup的鼠标移出事件
+- **描述** Popup 的鼠标移出事件
 - **Payload** `{ options, longitude, latitude, height }`
-- `options` Popup的初始化参数
-- `longitude` Popup的经度坐标
-- `latitude` Popup的纬度坐标
-- `height` Popup的高度坐标
+- `options` Popup 的初始化参数
+- `longitude` Popup 的经度坐标
+- `latitude` Popup 的纬度坐标
+- `height` Popup 的高度坐标

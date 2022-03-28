@@ -80,8 +80,6 @@
 
 ## 示例
 
-::: demo
-
 ```vue
 <template>
   <mapgis-web-scene class="main">
@@ -132,8 +130,6 @@ export default {
 }
 </style>
 ```
-
-:::
 
 ### 控制多张地图显示的 zIndex
 

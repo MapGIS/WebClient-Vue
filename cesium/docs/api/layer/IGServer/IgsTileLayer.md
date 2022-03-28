@@ -87,7 +87,6 @@
      - **默认值** `20`
      - **描述:** 瓦片最大级别
 
-
 ### `layerStyle`
 
 - **类型:** `Object`
@@ -99,8 +98,6 @@
   > zIndex Number 控制图层顺序，会重新加载图层，类似 css 里面的 z-index，从 1 开始的数字 <br/>
 
 ## 示例
-
-::: demo
 
 ```vue
 <template>
@@ -115,11 +112,9 @@ export default {
     return {
       id: "IGServer-瓦片图层",
       baseUrl: "http://develop.smaryun.com:6163/igs/rest/mrms/tile/北京市",
-      srs: "EPSG:4326"
+      srs: "EPSG:4326",
     };
-  }
+  },
 };
 </script>
 ```
-
-:::

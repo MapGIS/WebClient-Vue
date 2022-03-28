@@ -54,8 +54,8 @@ module.exports = {
             children: [
               ["/guide/", "安装"],
               ["/guide/quickStart.md", "快速上手"],
-              ["/guide/introduction.md", "产品介绍"],
-              ["/guide/basemap.md", "基础地图"],
+              ["/guide/introduction.md", "模块说明"],
+              ["/guide/basemap.md", "注意事项"],
             ],
           },
           {

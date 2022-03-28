@@ -1,116 +1,16 @@
-# 基本地图
+# 注意事项
 
-::: demo
+> 建议使用前了解基本的 [Cesium - 向导](https://cesium.com/docs/) 以及 cesium 的开发方式[cesium - API](https://cesium.com/docs/cesiumjs-ref-doc/)
 
-```html
-<template>
-  <mapgis-web-scene class="mapgis-3d-scene">
-    <mapgis-3d-ogc-wmts-layer
-      :baseUrl="baseUrl"
-      :wmtsLayer="wmtsLayer"
-      :tilingScheme="tilingScheme"
-      :tileMatrixSet="tileMatrixSet"
-      :format="format"
-      :layerStyle="layerStyle"
-    >
-    </mapgis-3d-ogc-wmts-layer>
-  </mapgis-web-scene>
-</template>
+## 加载地形
 
-<script>
-  export default {
-    components: {
-      "mapgis-web-scene": window.Mapgis3d.MapgisWebScene,
-      "mapgis-3d-ogc-wmts-layer": window.Mapgis3d.Mapgis3dOgcWmtsLayer,
-    },
-    data: function () {
-      return {
-        baseUrl:
-          "http://t6.tianditu.gov.cn/vec_c/wmts?tk=9c157e9585486c02edf817d2ecbc7752",
-        wmtsLayer: "vec",
-        tileMatrixSet: "c",
-        tilingScheme: "EPSG:4326",
-        format: "tiles",
-        layerStyle: {
-          zIndex: 1,
-        },
-      };
-    },
-    methods: {},
-  };
-</script>
-<style>
-  .mapgis-3d-scene {
-    height: 300px;
-  }
-</style>
-```
+如果开发者使用的地形是 cesium 提供的地形, 需要设置[Cesium ion](https://cesium.com/docs/oauth/). Cesium ion 是一个提供瓦片图和 3D 地理空间数据的平台，Cesium ion 支持把数据添加到用户自己的 CesiumJS 应用中。更多细节请查看[Ion](https://cesium.com/ion).
 
-:::
+如果开发者使用`MapGIS-IGServer`提供的地形数据，则可以忽略上面的参数。
 
-## 添加地图场景组件
+## 通过 Props 来交互场景属性
 
-> 强烈建议使用前了解基本的 cesium 引导[Cesium - 向导](https://cesium.com/docs/) 以及 cesium 的开发方式[cesium - API](https://cesium.com/docs/cesiumjs-ref-doc/)
-
-如果你使用的地形是 cesium 提供的地形, 需要设置[Cesium ion](https://cesium.com/docs/oauth/). 更多细节请查看[Ion](https://cesium.com/ion).
-
-如果你使用`MapGIS-IGServer`提供的地形数据，你可以忽略该参数
-
-::: tip
-上一章节文件`拷贝目录`中的 2 个路径，这里初始化的时候就需要传入`libPath`以及`pluginPath` 如果不传入则从司马云上自动下载对应的网络地址，没有互联网则无法下载
-
-```sh
-# quasar 的静态资源目录为src/static
-# 常见的静态资源目录为 public
-# 主Cesium主体路径 对应 libPath
-public/statics/cesium/Cesium.js
-# Cesium拓展插件路径 对应 pluginPath
-public/statics/cesium/webclient-cesium-plugin.min.js
-```
-
-:::
-
-### Vue 组件
-
-```vue
-<template>
-  <mapgis-web-scene
-    libPath="statics/cesium/Cesium.js"
-    pluginPath="statics/cesium/webclient-cesium-plugin.min.js"
-    @load="handleLoad"
-  />
-</template>
-
-<style lang="css">
-.main {
-  height: 600px;
-  width: 100%;
-}
-</style>
-
-<script>
-import { MapgisWebScene } from "@mapgis/webclient-vue-cesium";
-
-export default {
-  components: {
-    MapgisWebScene,
-  },
-  methods: {
-    handleLoad(payload) {
-      const { Cesium, vueCesium, CesiumZondy, component } = payload;
-      this.Cesium = Cesium;
-      this.vueCesium = vueCesium;
-      this.CesiumZondy = CesiumZondy;
-      let viewer = window.viewer; // 获取实例化的Cesium场景对象
-    },
-  },
-};
-</script>
-```
-
-### 通过 Props 来交互场景属性
-
-你可以通过 props 来控制地图场景的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
+使用者可以通过 props 来控制地图场景的一些参数如 viewerMode(显示模式), animation(动画播放器), timeline(时间线), cameraView(初始化视角)等.
 
 完整的 props 列表请查看[API docs](/api/#props), 注意文字描述中的字段'侦听属性'
 
@@ -129,7 +29,7 @@ handleLoad(payload) {
 }
 ```
 
-所有的`mapgis-web-scene`的内部组件都会在地图完全加载完毕后才加载渲染。
+所有的`mapgis-web-scene`的内部组件都会在地图场景完全加载完毕后才加载渲染。
 
 ::: warning Vuex 存储 Map 对象
 请注意，除了基本类型和普通对象外，向 Vuex 或组件的“data”添加其他类型的对象通常都不是一个好主意。尤其是类似以下几种情况:
@@ -142,7 +42,7 @@ handleLoad(payload) {
     ```js
       data(){
         return {
-          map: undefined
+          viewer: undefined
         }
       },
       // 某处代码....
@@ -183,6 +83,6 @@ export default {
 </script>
 ```
 
-### 事件
+## 事件
 
 全部的地图行为请看 [API](/api/#events) 页面.

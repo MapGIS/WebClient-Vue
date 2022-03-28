@@ -1,4 +1,6 @@
 import MapgisDraw from "../../mapboxgl/src/components/UI/controls/draw/BaseDraw.vue";
+import Markdown from "../../mapboxgl/docs/api/UI/Draw/draw.md"
+
 
 export default {
   title: "二维/地图子组件/绘制",
@@ -78,4 +80,11 @@ export const 绘制 = Template.bind({});
       }
     }
   ]
+};
+绘制.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
 };
