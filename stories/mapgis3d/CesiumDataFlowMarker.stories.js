@@ -26,6 +26,7 @@ export default {
           "15、<span class='storybook-span'>imageScale</span>(选填)：图标放大倍数，默认1<br>" +
           "16、<span class='storybook-span'>width</span>(选填)：图标宽度<br>" +
           "17、<span class='storybook-span'>height</span>(选填)：图标高度<br>" +
+          "18、<span class='storybook-span'>fixNum</span>(选填)：文字显示长度，默认为10<br>" +
           "",
       table:{
         defaultValue: { summary: 'null' },
@@ -53,6 +54,7 @@ export const 标签 = Template.bind({});
     yOffset: 35,
     url: "./img/icon.png",
     imageScale: 0.5,
-    color: "rgb(79,144,245)"
+    color: "rgb(79,144,245)",
+    fixNum: 10
   }
 };
