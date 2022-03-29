@@ -399,7 +399,7 @@ export default {
             vm.popups[i].show = false;
           }
           if (!hasPopup) {
-            let popup = vm.$_cartesian3ToLongLat(pickedFeature.id.position.getValue());
+            let popup = vm.$_cartesian3ToLongLat(pickedFeature.primitive.position);
             popup.height = 50;
             popup.keys = pickedFeature.id.keys;
             popup.show = true;
