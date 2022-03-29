@@ -22,11 +22,11 @@
           style="padding: 12px"
         >
           <basic-setting
-              ref="attr"
-              @updateSpin="changeSpinning"
-              :initialStatebar="initialStatebar"
-              :initialDepthTest="depthTest"
-              :initial-scene-mode="sceneMode"
+            ref="attr"
+            @updateSpin="changeSpinning"
+            :initialStatebar="initialStatebar"
+            :initialDepthTest="depthTest"
+            :initial-scene-mode="sceneMode"
           ></basic-setting>
         </mapgis-ui-tab-pane>
         <mapgis-ui-tab-pane
@@ -102,7 +102,7 @@ export default {
     CameraSetting,
     LightSetting,
     WeatherSetting,
-    EffectSetting,
+    EffectSetting
   },
   mixins: [ServiceLayer],
   props: {
@@ -110,13 +110,13 @@ export default {
      * 面板样式
      */
     panelStyle: {
-      type: Object,
+      type: Object
     },
     //默认状态栏的开启
     initialStatebar: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
@@ -125,13 +125,13 @@ export default {
       tabBarStyle: {
         margin: "0px",
         textAlign: "center",
-        borderBottom: "1px solid #F0F0F0",
+        borderBottom: "1px solid #F0F0F0"
       },
       show: true,
       hover: false,
       spinning: false,
       depthTest: undefined,
-      sceneMode: undefined,
+      sceneMode: undefined
     };
   },
 
@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     mount() {
-      const{ viewer } = this;
+      const { viewer } = this;
 
       this.depthTest = isDepthTestAgainstTerrainEnable(viewer);
       this.sceneMode = viewer.scene.mode !== 3;
@@ -151,7 +151,7 @@ export default {
       this.$emit("loaded", this);
     },
     unmount() {
-      this.$_deleteManger("SettingToolManager", function (manager) {
+      this.$_deleteManger("SettingToolManager", function(manager) {
         console.log("destroyed");
       });
       this.$emit("unload");
@@ -166,65 +166,21 @@ export default {
 
     changeSpinning(e) {
       this.spinning = e;
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
 .setting-control {
-  /* width: 320px; */
-  /* max-width: 320px; */
   height: fit-content;
-  /* position: absolute;
-  top: 30px;
-  left: 30px; */
-  /* padding: 0 10px; */
-  /* box-shadow: 0px 0px 6px 0px rgba(3, 25, 57, 0.2);
-  border-radius: 4px; */
 }
-
-/* .control-header {
-  height: 40px;
-  border-bottom: 1px solid #F0F0F0;
-  line-height: 40px;
-} */
 
 .control-content {
   max-height: 480px;
   overflow: auto;
   padding: 10px;
 }
-
-/* .title {
-  padding-left: 20px;
-  font-size: 16px;
-  color: #333333;
-} */
-
-/* .closeButton2 {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  width: 16px;
-  height: 16px;
-} */
-
-/* .openButton {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-} */
-
-/* .closeButton {
-  width: 33px;
-  height: 33px;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  margin-top: -16.5px;
-  margin-right: -16.5px;
-} */
 
 ::v-deep .mapgis-ui-spin-spinning {
   position: absolute;

@@ -549,33 +549,31 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.mapgis-path-roaming {
-  .roaming-actions {
-    padding: 12px 0;
-    display: flex;
-    justify-content: space-between;
-    .roaming-action {
-      width: calc(50% - 4px);
-    }
-  }
-  .roaming-options {
-    padding-bottom: 12px;
-  }
-  .mapgis-ui-checkbox-wrapper {
-    font-size: 12px;
-  }
-  .roadming-setting {
-    padding-top: 8px;
-    .slider-body {
-      margin-right: 10px;
-    }
-    .slider-number {
-      width: 100%;
-    }
-    .mapgis-ui-input-number {
-      width: 100%;
-    }
-  }
+<style scoped>
+.roaming-actions {
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+}
+.roaming-action {
+  width: calc(50% - 4px);
+}
+.roaming-options {
+  padding-bottom: 12px;
+}
+.mapgis-ui-checkbox-wrapper {
+  font-size: 12px;
+}
+.roadming-setting {
+  padding-top: 8px;
+}
+.slider-body {
+  margin-right: 10px;
+}
+.slider-number {
+  width: 100%;
+}
+.mapgis-ui-input-number {
+  width: 100%;
 }
 </style>

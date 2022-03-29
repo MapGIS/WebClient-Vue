@@ -101,73 +101,66 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.mapgis-ui-card-type-inner .mapgis-ui-card-body {
+<style scoped>
+::v-deep .mapgis-ui-card-type-inner .mapgis-ui-card-body {
   padding: 12px;
 }
 .path-item {
-  margin-bottom: 16px;
-  // background-color: @background-color-light;
-  // box-shadow: 0 1px 1px @shadow-color;
   border-radius: 6px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-  .path-content {
-    display: flex;
-    align-content: center;
-    .name {
-      cursor: pointer;
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .actions {
-      display: none;
-      .anticon {
-        padding-left: 8px;
-        cursor: pointer;
-        &:hover {
-          // color: @primary-color;
-        }
-      }
-    }
-    .name-input {
-      flex: 1;
-      margin: -6px 8px -6px 0;
-    }
-    .name-action-divider {
-      height: unset;
-    }
-  }
-  &:hover {
-    // box-shadow: 0 1px 2px @shadow-color;
-    .path-content {
-      .actions {
-        display: block;
-      }
-    }
-  }
-  .path-content {
-    .actions-visible {
-      display: block;
-    }
-  }
 }
-.scene-roaming-path-item-popover {
-  .mapgis-ui-popover-inner {
-    overflow: hidden;
-    .mapgis-ui-popover-inner-content {
-      padding: 0;
-      .mapgis-ui-list-item {
-        padding: 8px 25px;
-        &:hover {
-          // background-color: @table-row-hover-bg;
-          cursor: pointer;
-        }
-      }
-    }
-  }
+.path-item:last-child {
+  margin-bottom: 0;
+}
+.path-item:hover .path-content .actions {
+  display: block;
+}
+.actions-visible {
+  display: block;
+}
+.path-content {
+  display: flex;
+  align-content: center;
+}
+.name {
+  cursor: pointer;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.actions {
+  display: none;
+}
+.name-input {
+  flex: 1;
+  margin: -6px 8px -6px 0;
+}
+.name-action-divider {
+  height: unset;
+}
+.anticon {
+  padding-left: 8px;
+  cursor: pointer;
+}
+.scene-roaming-path-item-popover .mapgis-ui-popover-inner {
+  overflow: hidden;
+}
+.scene-roaming-path-item-popover
+  .mapgis-ui-popover-inner
+  .mapgis-ui-popover-inner-content {
+  padding: 0;
+}
+.scene-roaming-path-item-popover
+  .mapgis-ui-popover-inner
+  .mapgis-ui-popover-inner-content
+  .mapgis-ui-list-item {
+  padding: 8px 25px;
+}
+
+.scene-roaming-path-item-popover
+  .mapgis-ui-popover-inner
+  .mapgis-ui-popover-inner-content
+  .mapgis-ui-list-item:hover {
+  cursor: pointer;
 }
 </style>
