@@ -1011,8 +1011,8 @@ export default {
       } else {
         this.lastGraphicColor = graphic.style.color;
       }
-      if (this.destinationHeight < 0) {
-        this.destinationHeight = 100;
+      if (this.destinationHeight <= 0) {
+        this.destinationHeight = 10000;
       }
       let positions = [[]], center, destination, polygonG, position, lla;
       switch (json.type) {
