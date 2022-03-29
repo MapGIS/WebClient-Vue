@@ -2,69 +2,70 @@
   <div>
     <slot>
       <div class="mapgis-widget-contour-analysis">
-        <mapgis-ui-group-tab title="参数设置">
-        </mapgis-ui-group-tab>
+        <mapgis-ui-group-tab title="参数设置"> </mapgis-ui-group-tab>
         <mapgis-ui-input-number-panel
-            size="small"
-            class="mapgis-ui-number-style"
-            label="最大分段数"
-            :range="[1,800]"
-            v-model="maxSegmentedValueCopy"/>
+          size="small"
+          class="mapgis-ui-number-style"
+          label="最大分段数"
+          :range="[1, 800]"
+          v-model="maxSegmentedValueCopy"
+        />
         <mapgis-ui-input-number-panel
-            size="small"
-            class="mapgis-ui-number-style"
-            label="等值距(米)"
-            :range="[initSpacing,halfHeight]"
-            v-model="contourSpacingCopy"/>
+          size="small"
+          class="mapgis-ui-number-style"
+          label="等值距(米)"
+          :range="[initSpacing, halfHeight]"
+          v-model="contourSpacingCopy"
+        />
         <mapgis-ui-switch-panel
-            :labelCol="{ span: 8 }"
-            :wrapperCol="{ span: 16 }"
-            layout="horizontal"
-            label="等值线"
-            :height="'154px'"
-            v-if="switchOptions.indexOf('isogram') >= 0"
-            :checked="isogram"
-            @changeChecked="startIsogram"
+          :labelCol="{ span: 8 }"
+          :wrapperCol="{ span: 16 }"
+          layout="horizontal"
+          label="等值线"
+          :height="'154px'"
+          v-if="switchOptions.indexOf('isogram') >= 0"
+          :checked="isogram"
+          @changeChecked="startIsogram"
         >
           <mapgis-ui-form-item label="线宽">
             <mapgis-ui-input
-                size="small"
-                v-model.number="formData1.contourWidthCopy"
-                type="number"
-                min="0"
+              size="small"
+              v-model.number="formData1.contourWidthCopy"
+              type="number"
+              min="0"
             />
           </mapgis-ui-form-item>
           <mapgis-ui-form-item label="线颜色">
             <mapgis-ui-sketch-color-picker
-                :color.sync="formData1.contourColorCopy"
-                :disableAlpha="false"
+              :color.sync="formData1.contourColorCopy"
+              :disableAlpha="false"
             ></mapgis-ui-sketch-color-picker>
           </mapgis-ui-form-item>
         </mapgis-ui-switch-panel>
 
         <mapgis-ui-switch-panel
-            :labelCol="{ span: 8 }"
-            :wrapperCol="{ span: 16 }"
-            :height="'312px'"
-            layout="horizontal"
-            label="等值面"
-            v-if="switchOptions.indexOf('isosurface') >= 0"
-            @changeChecked="startIsosurface"
+          :labelCol="{ span: 8 }"
+          :wrapperCol="{ span: 16 }"
+          :height="'312px'"
+          layout="horizontal"
+          label="等值面"
+          v-if="switchOptions.indexOf('isosurface') >= 0"
+          @changeChecked="startIsosurface"
         >
-
           <mapgis-ui-input-number-panel
-              size="small"
-              class="mapgis-ui-number-style"
-              label="等值面透明度"
-              :range="[0,1]"
-              :step="0.1"
-              v-model="formData2.bandTransparencyCopy"/>
+            size="small"
+            class="mapgis-ui-number-style"
+            label="等值面透明度"
+            :range="[0, 1]"
+            :step="0.1"
+            v-model="formData2.bandTransparencyCopy"
+          />
           <mapgis-ui-collapse>
             <mapgis-ui-collapse-panel header="图例">
               <mapgis-ui-colors-setting
-                  v-model="formData2.bandColorArray"
-                  :rangeField="'高度'"
-                  :singleNumber="true"
+                v-model="formData2.bandColorArray"
+                :rangeField="'高度'"
+                :singleNumber="true"
               >
               </mapgis-ui-colors-setting>
             </mapgis-ui-collapse-panel>
@@ -72,7 +73,7 @@
         </mapgis-ui-switch-panel>
         <mapgis-ui-setting-footer>
           <mapgis-ui-button type="primary" @click="analysis"
-          >分析
+            >分析
           </mapgis-ui-button>
           <mapgis-ui-button @click="remove">清除</mapgis-ui-button>
         </mapgis-ui-setting-footer>
@@ -83,8 +84,18 @@
 
 <script>
 import VueOptions from "../Base/Vue/VueOptions";
-import {colorToCesiumColor} from "../WebGlobe/util";
+import { colorToCesiumColor } from "../WebGlobe/util";
 import * as d3 from "d3-scale-chromatic";
+import {
+  isEnableLighting,
+  setEnableLighting,
+  getLight,
+  setLight,
+  getDynamicAtmosphereLighting,
+  setDynamicAtmosphereLighting,
+  getDynamicAtmosphereLightingFromSun,
+  setDynamicAtmosphereLightingFromSun
+} from "../WebGlobe/util";
 
 export default {
   name: "mapgis-3d-analysis-contour",
@@ -107,9 +118,9 @@ export default {
      * @default 400
      * @description 最大分段数，设置其值可以相对设置等值距的最小值
      */
-    maxSegmentedValue:{
+    maxSegmentedValue: {
       type: Number,
-      default:400
+      default: 400
     },
     /**
      * @type Number
@@ -201,7 +212,7 @@ export default {
     isogram: {
       handler(next) {
         let options = this._findOptions();
-        let {contourAnalysis} = options;
+        let { contourAnalysis } = options;
         if (contourAnalysis) {
           if (next) {
             contourAnalysis.enableContour = true;
@@ -216,7 +227,7 @@ export default {
       handler(next) {
         let vm = this;
         let options = this._findOptions();
-        let {contourAnalysis} = options;
+        let { contourAnalysis } = options;
         if (contourAnalysis) {
           vm.updateContourAnalysis(contourAnalysis);
         }
@@ -228,18 +239,18 @@ export default {
         let vm = this;
         let options = this._findOptions();
         if (options) {
-          let {contourAnalysis} = options;
+          let { contourAnalysis } = options;
           if (contourAnalysis) {
             vm.getHeightAndColor();
-            if (vm.isosurface){
+            if (vm.isosurface) {
               contourAnalysis.selectedShading = "elevationBand";
               contourAnalysis.updateElevationBandMaterial(
-                  vm.bandPositionCopy,
-                  vm.formData2.isGradient,
-                  vm.bandThicknessCopy,
-                  vm.formData2.bandTransparencyCopy,
-                  vm.backgroundTransparency,
-                  vm.colorsArrayCopy
+                vm.bandPositionCopy,
+                vm.formData2.isGradient,
+                vm.bandThicknessCopy,
+                vm.formData2.bandTransparencyCopy,
+                vm.backgroundTransparency,
+                vm.colorsArrayCopy
               );
             }
           }
@@ -247,14 +258,14 @@ export default {
       }
     },
     contourSpacingCopy: {
-      immediate:true,
+      immediate: true,
       handler(next) {
         let vm = this;
         if (next < vm.initSpacing) return;
         vm.bandThicknessCopy = next * 2;
         let options = this._findOptions();
         if (options) {
-          let {contourAnalysis} = options;
+          let { contourAnalysis } = options;
           if (contourAnalysis) {
             vm.updateContourAnalysis(contourAnalysis);
           }
@@ -263,10 +274,10 @@ export default {
         this.calculateHeightAndColor();
       }
     },
-    maxSegmentedValueCopy:{
-      handler(next){
+    maxSegmentedValueCopy: {
+      handler(next) {
         let vm = this;
-        if (vm.zMax){
+        if (vm.zMax) {
           // 根据最大分段值计算可设置的最小等间距
           vm.initSpacing = Math.round(vm.zMax / next);
         }
@@ -282,7 +293,7 @@ export default {
       padVal: undefined,
       padVal1: undefined,
       //最大分段值
-      maxSegmentedValueCopy:100,
+      maxSegmentedValueCopy: 100,
       //等值面开关
       isosurface: false,
       //修改等间距
@@ -305,13 +316,16 @@ export default {
       //等值面背景透明度
       backgroundTransparency: 0.6,
       zMax: undefined,
-      halfHeight:undefined,
-      initSpacing:1,
+      halfHeight: undefined,
+      initSpacing: 1,
+      isEnableLighting: undefined, // 光照是否已开启
+      light: undefined, // 是否有light对象
+      dynamicAtmosphereLighting: undefined,
+      dynamicAtmosphereLightingFromSun: undefined
     };
   },
 
-  created() {
-  },
+  created() {},
   mounted() {
     let vm = this;
     this.mount();
@@ -322,48 +336,47 @@ export default {
   methods: {
     async createCesiumObject() {
       return new Promise(
-          resolve => {
-            resolve();
-          },
-          reject => {
-          }
+        resolve => {
+          resolve();
+        },
+        reject => {}
       );
     },
     mount() {
-      const {viewer, vueCesium, vueKey, vueIndex, Cesium} = this;
+      const { viewer, vueCesium, vueKey, vueIndex, Cesium } = this;
       const vm = this;
       let promise = this.createCesiumObject();
-      promise.then(function (dataSource) {
+      promise.then(function(dataSource) {
         vm.$emit("load", vm);
         vueCesium.ContourAnalysisManager.addSource(
-            vueKey,
-            vueIndex,
-            dataSource,
-            {
-              drawElement: null,
-              contourAnalysis: null
-            }
+          vueKey,
+          vueIndex,
+          dataSource,
+          {
+            drawElement: null,
+            contourAnalysis: null
+          }
         );
       });
-      viewer.scene.globe.enableLighting = true;
-      let utc = Cesium.JulianDate.fromDate(new Date("2019/11/04 15:00:00")); //UTC
-      // 北京时间=UTC+8=GMT+8
-      viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(
-          utc,
-          8,
-          new Cesium.JulianDate()
-      );
+      // viewer.scene.globe.enableLighting = true;
+      // let utc = Cesium.JulianDate.fromDate(new Date("2019/11/04 15:00:00")); //UTC
+      // // 北京时间=UTC+8=GMT+8
+      // viewer.clockViewModel.currentTime = Cesium.JulianDate.addHours(
+      //   utc,
+      //   8,
+      //   new Cesium.JulianDate()
+      // );
       // 获取颜色表
       vm.calculateHeightAndColor();
     },
     unmount() {
-      let {vueCesium, vueKey, vueIndex} = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       viewer.scene.globe.enableLighting = false;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         this.remove();
-        let {options} = find;
-        let {contourAnalysis} = options;
+        let { options } = find;
+        let { contourAnalysis } = options;
 
         // 判断是否已有等值线分析结果
         if (contourAnalysis) {
@@ -373,8 +386,34 @@ export default {
       vueCesium.ContourAnalysisManager.deleteSource(vueKey, vueIndex);
       this.$emit("unload", this);
     },
+    /**
+     * @description 开启光照
+     */
+    _enableBrightness() {
+      // 开启光照，不然放大地图，分析结果显示异常
+
+      this.isEnableLighting = isEnableLighting(this.viewer);
+      if (!this.isEnableLighting) {
+        // 未开启光照，开启
+        setEnableLighting(true, this.viewer);
+      }
+      // 调高亮度
+      const { viewer } = this;
+      this.light = getLight(viewer);
+      this.dynamicAtmosphereLighting = getDynamicAtmosphereLighting(viewer);
+      this.dynamicAtmosphereLightingFromSun = getDynamicAtmosphereLightingFromSun(
+        viewer
+      );
+      const searchLight = new this.Cesium.DirectionalLight({
+        direction: viewer.scene.camera.directionWC, // Updated every frame
+        intensity: 2.0
+      });
+      setLight(searchLight, viewer);
+      setDynamicAtmosphereLighting(false, viewer);
+      setDynamicAtmosphereLightingFromSun(false, viewer);
+    },
     _findOptions() {
-      let {vueCesium, vueKey, vueIndex} = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
       if (find) {
         return find.options;
@@ -384,21 +423,21 @@ export default {
       let vm = this;
       let color = this._edgeColor();
       contourAnalysis.changeContours(
-          vm.contourSpacingCopy,
-          this.formData1.contourWidthCopy,
-          color
+        vm.contourSpacingCopy,
+        this.formData1.contourWidthCopy,
+        color
       );
       if (vm.isogram && !vm.isosurface) {
         contourAnalysis.updateMaterial("none");
       } else if (vm.isosurface) {
         contourAnalysis.selectedShading = "elevationBand";
         contourAnalysis.updateElevationBandMaterial(
-            vm.bandPositionCopy,
-            vm.formData2.isGradient,
-            vm.bandThicknessCopy,
-            vm.formData2.bandTransparencyCopy,
-            vm.backgroundTransparency,
-            vm.colorsArrayCopy
+          vm.bandPositionCopy,
+          vm.formData2.isGradient,
+          vm.bandThicknessCopy,
+          vm.formData2.bandTransparencyCopy,
+          vm.backgroundTransparency,
+          vm.colorsArrayCopy
         );
       }
     },
@@ -420,18 +459,18 @@ export default {
       vm.isosurface = isosurface;
       let options = this._findOptions();
       if (options) {
-        let {contourAnalysis} = options;
+        let { contourAnalysis } = options;
         if (contourAnalysis) {
           if (isosurface) {
             vm.getHeightAndColor();
             contourAnalysis.selectedShading = "elevationBand";
             contourAnalysis.updateElevationBandMaterial(
-                vm.bandPositionCopy,
-                vm.formData2.isGradient,
-                vm.bandThicknessCopy,
-                vm.formData2.bandTransparencyCopy,
-                vm.backgroundTransparency,
-                vm.colorsArrayCopy
+              vm.bandPositionCopy,
+              vm.formData2.isGradient,
+              vm.bandThicknessCopy,
+              vm.formData2.bandTransparencyCopy,
+              vm.backgroundTransparency,
+              vm.colorsArrayCopy
             );
           } else {
             contourAnalysis.selectedShading = "none";
@@ -441,10 +480,10 @@ export default {
       }
     },
     isTerrianReady() {
-      const {viewer} = this;
+      const { viewer } = this;
       return new Promise((resolve, reject) => {
         if (viewer) {
-          let interval = setInterval(function () {
+          let interval = setInterval(function() {
             let range3D = viewer.terrainProvider.range3D;
             if (range3D) {
               clearInterval(interval);
@@ -461,20 +500,20 @@ export default {
      * @description 开始绘制并分析
      */
     analysis() {
-      let {vueCesium, vueKey, vueIndex, Cesium, viewer} = this;
+      let { vueCesium, vueKey, vueIndex, Cesium, viewer } = this;
       let vm = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
-      let {options} = find;
-      let {contourAnalysis, drawElement} = options;
+      let { options } = find;
+      let { contourAnalysis, drawElement } = options;
       // 初始化交互式绘制控件
       drawElement = drawElement || new Cesium.DrawElement(viewer);
       vueCesium.ContourAnalysisManager.changeOptions(
-          vueKey,
-          vueIndex,
-          "drawElement",
-          drawElement
+        vueKey,
+        vueIndex,
+        "drawElement",
+        drawElement
       );
-      const {contourWidthCopy} = this.formData1;
+      const { contourWidthCopy } = this.formData1;
       const color = this._edgeColor();
 
       // 激活交互式绘制工具
@@ -483,52 +522,50 @@ export default {
         callback: result => {
           // 分支判断
           this.remove();
+          this._enableBrightness();
           if (vm.isogram && !vm.isosurface) {
             contourAnalysis =
-                contourAnalysis || new Cesium.TerrainAnalyse(viewer);
+              contourAnalysis || new Cesium.TerrainAnalyse(viewer);
             contourAnalysis.enableContour = true;
             // contourAnalysis.updateMaterial("none");
             contourAnalysis.changeContours(
-                vm.contourSpacingCopy,
-                contourWidthCopy,
-                color
+              vm.contourSpacingCopy,
+              contourWidthCopy,
+              color
             );
             contourAnalysis.changeAnalyseArea(result.positions);
           } else if (vm.isosurface) {
             contourAnalysis =
-                contourAnalysis || new Cesium.TerrainAnalyse(viewer);
-            let {
-              isGradient,
-              bandTransparencyCopy
-            } = vm.formData2;
+              contourAnalysis || new Cesium.TerrainAnalyse(viewer);
+            let { isGradient, bandTransparencyCopy } = vm.formData2;
             // 获取高度数组和颜色数组
             vm.getHeightAndColor();
             if (vm.isogram) {
               contourAnalysis.enableContour = true;
               contourAnalysis.changeContours(
-                  vm.contourSpacingCopy,
-                  contourWidthCopy,
-                  color
+                vm.contourSpacingCopy,
+                contourWidthCopy,
+                color
               );
             }
             contourAnalysis.changeAnalyseArea(result.positions);
             contourAnalysis.selectedShading = "elevationBand";
             contourAnalysis.updateElevationBandMaterial(
-                vm.bandPositionCopy,
-                isGradient,
-                vm.bandThicknessCopy,
-                bandTransparencyCopy,
-                vm.backgroundTransparency,
-                vm.colorsArrayCopy
+              vm.bandPositionCopy,
+              isGradient,
+              vm.bandThicknessCopy,
+              bandTransparencyCopy,
+              vm.backgroundTransparency,
+              vm.colorsArrayCopy
             );
           } else {
             this.$message.warning("请先开启分析类型");
           }
           vueCesium.ContourAnalysisManager.changeOptions(
-              vueKey,
-              vueIndex,
-              "contourAnalysis",
-              contourAnalysis
+            vueKey,
+            vueIndex,
+            "contourAnalysis",
+            contourAnalysis
           );
         }
       });
@@ -541,7 +578,7 @@ export default {
         vm.bandPositionCopy.push(vm.formData2.bandColorArray[i].max);
         // color 转换成Cesium
         let cesiumColor = Cesium.Color.fromCssColorString(
-            vm.formData2.bandColorArray[i].color
+          vm.formData2.bandColorArray[i].color
         );
         vm.colorsArrayCopy.push(cesiumColor);
       }
@@ -554,7 +591,7 @@ export default {
         // 高度差
         vm.zMax = zIndex.zMax;
         vm.initSpacing = Math.round(vm.zMax / vm.maxSegmentedValueCopy);
-        vm.halfHeight = Math.round(vm.zMax/2);
+        vm.halfHeight = Math.round(vm.zMax / 2);
         let heightIntercept = Math.abs(zIndex.zMin - zIndex.zMax);
         let space = vm.contourSpacingCopy;
         let heightUnit = Math.round(heightIntercept / space);
@@ -562,22 +599,15 @@ export default {
           let unit = {};
           if (i === 0) {
             unit.min = Number(zIndex.zMin);
-            unit.max = Number(
-                (zIndex.zMin + space).toFixed(2)
-            );
+            unit.max = Number((zIndex.zMin + space).toFixed(2));
           } else {
-            unit.min = Number(
-                (zIndex.zMin + space * i).toFixed(2)
-            );
-            unit.max = Number(
-                (zIndex.zMin + space * (i + 1)).toFixed(2)
-            );
+            unit.min = Number((zIndex.zMin + space * i).toFixed(2));
+            unit.max = Number((zIndex.zMin + space * (i + 1)).toFixed(2));
           }
           unit = this.calculateColor(unit, i, heightUnit);
           vm.formData2.bandColorArray.push(unit);
         }
       });
-
     },
     /**
      * @description 计算每个高度对应的颜色
@@ -599,28 +629,35 @@ export default {
           //第二段从低高度设置r和b
         } else if (onePoint < i && i <= twoPoint) {
           if (i === index) {
-            color = new this.Cesium.Color((255 - a * (i - onePoint)) / 255, 255 / 255, (a * (i - onePoint)) / 255);
+            color = new this.Cesium.Color(
+              (255 - a * (i - onePoint)) / 255,
+              255 / 255,
+              (a * (i - onePoint)) / 255
+            );
             this.colorsArrayCopy[i] = color;
           }
         } else if (twoPoint < i && i <= heightUnit) {
           if (i === index) {
-            color = new this.Cesium.Color(0, (255 - a * (i - onePoint * 2)) / 255, 255 / 255);
+            color = new this.Cesium.Color(
+              0,
+              (255 - a * (i - onePoint * 2)) / 255,
+              255 / 255
+            );
             this.colorsArrayCopy[i] = color;
           }
         }
-
       }
-      unit.color = color ? color.toCssColorString() : '#ff0000';
+      unit.color = color ? color.toCssColorString() : "#ff0000";
       return unit;
     },
     /**
      * @description 移除等值线分析结果，取消交互式绘制事件激活状态
      */
     remove() {
-      let {vueCesium, vueKey, vueIndex} = this;
+      let { vueCesium, vueKey, vueIndex } = this;
       let find = vueCesium.ContourAnalysisManager.findSource(vueKey, vueIndex);
-      let {options} = find;
-      let {contourAnalysis, drawElement} = options;
+      let { options } = find;
+      let { contourAnalysis, drawElement } = options;
 
       // 判断是否已有等值线分析结果
       if (contourAnalysis) {
@@ -631,10 +668,10 @@ export default {
         contourAnalysis.selectedShading = "none";
 
         vueCesium.ContourAnalysisManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "contourAnalysis",
-            null
+          vueKey,
+          vueIndex,
+          "contourAnalysis",
+          null
         );
       }
 
@@ -642,12 +679,35 @@ export default {
         // 取消交互式绘制矩形事件激活状态
         drawElement.stopDrawing();
         vueCesium.ContourAnalysisManager.changeOptions(
-            vueKey,
-            vueIndex,
-            "drawElement",
-            null
+          vueKey,
+          vueIndex,
+          "drawElement",
+          null
         );
       }
+
+      // 恢复光照设置
+      this._restoreEnableLighting();
+    },
+    /***
+     * 恢复光照设置
+     */
+    _restoreEnableLighting() {
+      const { viewer } = this;
+      // 恢复光照开启状态设置
+      if (this.isEnableLighting !== undefined) {
+        setEnableLighting(this.isEnableLighting, viewer);
+      }
+
+      // 恢复brightness参数设置
+      if (this.light !== undefined) {
+        setLight(this.light, viewer);
+      }
+      setDynamicAtmosphereLighting(this.dynamicAtmosphereLighting, viewer);
+      setDynamicAtmosphereLightingFromSun(
+        this.dynamicAtmosphereLightingFromSun,
+        viewer
+      );
     }
   }
 };
@@ -657,15 +717,22 @@ export default {
   max-height: calc(50vh);
   overflow-y: auto;
 }
-::v-deep .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header{
+::v-deep
+  .mapgis-ui-collapse
+  > .mapgis-ui-collapse-item
+  > .mapgis-ui-collapse-header {
   border-left: unset !important;
   font-size: 13px;
   padding: 7px 27px;
 }
-::v-deep .mapgis-ui-table-body{
+::v-deep .mapgis-ui-table-body {
   max-height: 167px !important;
 }
-::v-deep .mapgis-ui-collapse > .mapgis-ui-collapse-item > .mapgis-ui-collapse-header .mapgis-ui-collapse-arrow{
+::v-deep
+  .mapgis-ui-collapse
+  > .mapgis-ui-collapse-item
+  > .mapgis-ui-collapse-header
+  .mapgis-ui-collapse-arrow {
   left: 10px;
 }
 </style>
