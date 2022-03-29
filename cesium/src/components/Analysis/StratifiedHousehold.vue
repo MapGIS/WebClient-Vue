@@ -396,6 +396,8 @@ export default {
       promise.then(find => {
         if (find && find.options) {
           let { m3ds, g3dLayerIndex } = find.options;
+
+          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           this.g3dLayerIndex = g3dLayerIndex;
           let layerIndexs = g3dLayer.getM3DLayerIndexes();
@@ -575,6 +577,8 @@ export default {
     recordOriginStyle() {
       const { g3dLayerIndex, viewer } = this;
       const { vueKey, innerVueIndex, vueCesium } = this;
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       let originStyles = [];
@@ -595,6 +599,8 @@ export default {
         vueKey,
         innerVueIndex
       );
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
@@ -605,6 +611,8 @@ export default {
     },
     restoreHighlight() {
       const { g3dLayerIndex, viewer } = this;
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let m3ds = g3dLayer.getM3DLayerIndexes();
       m3ds.forEach(index => {
@@ -621,6 +629,8 @@ export default {
         vueKey,
         innerVueIndex
       );
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       if (find && find.options.originStyles) {
         find.options.originStyles.forEach((s, i) => {
@@ -645,6 +655,8 @@ export default {
     enableIsolation(layer) {
       const { g3dLayerIndex, viewer } = this;
       const { layerIndex } = layer;
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       this.featurevisible = false;
@@ -687,6 +699,8 @@ export default {
         vueKey,
         innerVueIndex
       );
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let m3ds = [];
       if (find && find.options) {
@@ -710,6 +724,8 @@ export default {
         innerVueIndex
       );
       let m3ds = [];
+
+      if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
       let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
       let layerIndexs = g3dLayer.getM3DLayerIndexes();
       layerIndexs.forEach(index => {
@@ -846,6 +862,8 @@ export default {
           let lat = Cesium.Math.toDegrees(cartographic.latitude);
           let height = cartographic.height;
           let mapPosition = { x: lng, y: lat, z: height };
+
+          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let layerIndexs = g3dLayer.getM3DLayerIndexes();
           let layerIndex =
@@ -940,6 +958,7 @@ export default {
             height: heightString2
           };
 
+          if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
           let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
           let index = pickedFeature._content._tileset._layerIndex;
           vm.selectLayerIndex = index;
@@ -950,6 +969,8 @@ export default {
             vm.featureproperties = { layerName, gdbpUrl };
             vm.highlightM3d(index);
           } else if (version == "2.0") {
+
+            if (!(typeof g3dLayerIndex === "number") || g3dLayerIndex < 0) return;
             let g3dLayer = viewer.scene.layers.getLayer(g3dLayerIndex);
 
             let oid = viewer.scene.pickOid(movement.position);
