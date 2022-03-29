@@ -1,76 +1,88 @@
 <template>
   <div>
-    <div class="mapgis-3d-graphic-layers-select-container"
-         v-show="!showSetting"
+    <div
+      class="mapgis-3d-graphic-layers-select-container"
+      v-show="!showSetting"
     >
-      <mapgis-ui-select class="mapgis-3d-graphic-layers-select" @change="$_selectLayer" :value="currenSelectLayer">
-        <mapgis-ui-select-option :key="index" v-for="(layer, index) in layerSelect" :value="layer.key">
+      <mapgis-ui-select
+        class="mapgis-3d-graphic-layers-select"
+        @change="$_selectLayer"
+        :value="currenSelectLayer"
+      >
+        <mapgis-ui-select-option
+          :key="index"
+          v-for="(layer, index) in layerSelect"
+          :value="layer.key"
+        >
           {{ layer.value }}
         </mapgis-ui-select-option>
       </mapgis-ui-select>
-      <input style="display: none" type="file" :id="inputId"
-             accept=".json">
+      <input style="display: none" type="file" :id="inputId" accept=".json" />
       <!--      <mapgis-ui-button type="primary" class="mapgis-3d-graphic-layers-export" @click="$_export">导出</mapgis-ui-button>-->
       <!--      <mapgis-ui-button class="mapgis-3d-graphic-layers-import" @click="$_import">导入</mapgis-ui-button>-->
       <!--      <mapgis-ui-more-tool-button @click="$_clickTool" :dataSource="moreTools"-->
       <!--                                  :style="{top: enableOneMap ? '22px' : '10px', right: enableOneMap ? '9px' : '-2px'}"-->
       <!--                                  class="mapgis-ui-graphic-layers-more-tool"/>-->
       <div class="mapgis-ui-graphic-layers-toll-bar">
-        <mapgis-ui-svg-icon :key="index" v-for="(tool, index) in moreTools"
-                            :iconStyle="toolStyle"
-                            :containerStyle="toolContainerStyle"
-                            :title="tool.title"
-                            :type="tool.icon"
-                            @click="$_clickTool(tool.icon)"
+        <mapgis-ui-svg-icon
+          :key="index"
+          v-for="(tool, index) in moreTools"
+          :iconStyle="toolStyle"
+          :containerStyle="toolContainerStyle"
+          :title="tool.title"
+          :type="tool.icon"
+          @click="$_clickTool(tool.icon)"
         />
       </div>
     </div>
     <mapgis-ui-input-row-left
-        style="margin: 0"
-        v-show="showEditTitle"
-        title="修改标题"
-        :enableButton=true
-        paddingLeft="16px"
-        class="mapgis-ui-graphic-layers-edit-title"
-        @finish="$_finishEditTitle"
-        v-model="currenSelectLayer"
+      style="margin: 0"
+      v-show="showEditTitle"
+      title="修改标题"
+      :enableButton="true"
+      paddingLeft="16px"
+      class="mapgis-ui-graphic-layers-edit-title"
+      @finish="$_finishEditTitle"
+      v-model="currenSelectLayer"
     />
     <mapgis-3d-graphic-single-layer
-        v-show="!showSetting"
-        :vueIndex="vueIndex"
-        :models="models"
-        :autoFlyToGraphic="autoFlyToGraphic"
-        :groupGraphicIDs="groupGraphicIDs"
-        ref="graphicLayer"
-        v-model="currentLayer"
-        @saveCamera="$_saveCamera"
-        @change="$_addFeature"
-        @delete="$_deleteFeature"
+      v-show="!showSetting"
+      :vueIndex="vueIndex"
+      :models="models"
+      :autoFlyToGraphic="autoFlyToGraphic"
+      :groupGraphicIDs="groupGraphicIDs"
+      ref="graphicLayer"
+      v-model="currentLayer"
+      @saveCamera="$_saveCamera"
+      @change="$_addFeature"
+      @delete="$_deleteFeature"
     />
-    <div
-        v-show="showSetting"
-    >
+    <div v-show="showSetting">
       <mapgis-ui-row>
-        <mapgis-ui-svg-icon @click="$_back" class="mapgis-ui-graphic-layers-setting-back" :iconStyle="editStyle"
-                            type="back"/>
+        <mapgis-ui-svg-icon
+          @click="$_back"
+          class="mapgis-ui-graphic-layers-setting-back"
+          :iconStyle="editStyle"
+          type="back"
+        />
         <span style="margin-left: 33px">配置参数</span>
       </mapgis-ui-row>
       <mapgis-ui-switch-row-left
-          title="进入图层后自动跳转视角"
-          v-model="autoFlyTo"
+        title="进入图层后自动跳转视角"
+        v-model="autoFlyTo"
       />
       <mapgis-ui-switch-row-left
-          title="选择标绘对象后自动跳转视角"
-          v-model="autoFlyToGraphic"
+        title="选择标绘对象后自动跳转视角"
+        v-model="autoFlyToGraphic"
       />
     </div>
   </div>
 </template>
 
 <script>
-import {saveAs} from "file-saver";
-import {getCamera} from "../../Utils/util";
-import clonedeep from 'lodash.clonedeep';
+import { saveAs } from "file-saver";
+import { getCamera } from "../../Utils/util";
+import clonedeep from "lodash.clonedeep";
 import GraphicLayerService from "./GraphicLayerService";
 
 export default {
@@ -81,13 +93,13 @@ export default {
     dataSource: {
       type: Array,
       default() {
-        return []
+        return [];
       }
     },
     models: {
       type: Object,
       default() {
-        return {}
+        return {};
       }
     },
     enableRelativePath: {
@@ -106,7 +118,7 @@ export default {
   },
   watch: {
     dataSource: {
-      handler: function () {
+      handler: function() {
         if (this.updatable) {
           this.$_init();
         }
@@ -114,7 +126,7 @@ export default {
       deep: true
     },
     dataSourceCopy: {
-      handler: function () {
+      handler: function() {
         // this.$emit("change", this.dataSourceCopy);
       },
       deep: true
@@ -134,15 +146,17 @@ export default {
       dataSourceCopy: [],
       //导入文件按钮id
       inputId: "mapgisPlottingImport" + parseInt(String(Math.random() * 10000)),
-      moreTools: [{
-        event: "add",
-        icon: "add",
-        title: "新增图层"
-      }, {
-        event: "editTitle",
-        icon: "editTitle",
-        title: "编辑标题"
-      },
+      moreTools: [
+        {
+          event: "add",
+          icon: "add",
+          title: "新增图层"
+        },
+        {
+          event: "editTitle",
+          icon: "editTitle",
+          title: "编辑标题"
+        },
         // {
         //   event: "saveCamera",
         //   icon: "camera2",
@@ -166,7 +180,8 @@ export default {
           event: "import",
           icon: "import",
           title: "导入"
-        }, {
+        },
+        {
           event: "export",
           icon: "export",
           title: "导出"
@@ -175,7 +190,8 @@ export default {
           event: "save",
           icon: "save",
           title: "保存"
-        }],
+        }
+      ],
       vueIndex: undefined,
       showEditTitle: false,
       //是否显示配置信息
@@ -196,19 +212,19 @@ export default {
       toolContainerStyle: {
         width: "30px",
         height: "32px",
-        lineHeight: "36px",
+        lineHeight: "36px"
       },
       addLayer: true,
       groupGraphicIDs: []
-    }
+    };
   },
   mounted() {
     this.$_init(true);
   },
   methods: {
     $_deleteFeature(id) {
-      let {dataSource} = this.dataSourceCopy[this.currenSelectIndex];
-      let {features} = dataSource;
+      let { dataSource } = this.dataSourceCopy[this.currenSelectIndex];
+      let { features } = dataSource;
       for (let i = 0; i < features.length; i++) {
         if (features[i].id === id) {
           features.splice(i, 1);
@@ -238,7 +254,9 @@ export default {
         this.$message.warning("该图层名称已存在！");
       } else {
         this.showEditTitle = false;
-        this.dataSourceCopy[this.currenSelectIndex].name = this.currenSelectLayer;
+        this.dataSourceCopy[
+          this.currenSelectIndex
+        ].name = this.currenSelectLayer;
       }
     },
     $_cloneArray(array) {
@@ -250,7 +268,7 @@ export default {
     },
     $_clickTool(e, noMessage) {
       switch (e) {
-          //新增标绘图层
+        //新增标绘图层
         case "add":
           //新建空图层数据
           let title = "新建图层_" + (this.dataSourceCopy.length + 1);
@@ -258,22 +276,24 @@ export default {
             title = title + parseInt(String(Math.random() * 100000000000));
           }
           let data = {
-            "name": title,
-            "uuid": parseInt(String(Math.random() * 10000000)),
-            "autoFlyTo": true,
-            "autoFlyToGraphic": true,
-            "dataSource": {
-              "type": "FeatureCollection",
-              "features": []
+            name: title,
+            uuid: parseInt(String(Math.random() * 10000000)),
+            autoFlyTo: true,
+            autoFlyToGraphic: true,
+            dataSource: {
+              type: "FeatureCollection",
+              features: []
             }
           };
           if (this.dataSourceCopy.length > 0) {
             this.currenSelectIndex++;
           }
-          this.dataSourceCopy.push(data);
-          if (!noMessage) {
+          if (!noMessage && this.dataSourceCopy.length > 0) {
+            // 新建第一个图层，也不需要提示
             this.$message.success(title + "添加成功！");
           }
+          this.dataSourceCopy.push(data);
+
           //如果上一个图层有数据，则隐藏
           if (this.currentLayer.length > 0) {
             this.$refs.graphicLayer.$_hideAllGraphics();
@@ -283,7 +303,7 @@ export default {
           this.currenSelectLayer = data.name;
           this.$_layerSelect();
           //创建一个新的标绘图层
-          this.$nextTick(function () {
+          this.$nextTick(function() {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
             this.$refs.graphicLayer.currentEditType = "mouse";
@@ -308,7 +328,9 @@ export default {
           this.$refs.graphicLayer.$_destroy();
           this.$refs.graphicLayer.$_resetEditPanel();
           this.$refs.graphicLayer.$_resetIconsPanel();
-          this.$message.success(this.dataSourceCopy[this.currenSelectIndex].name + "删除成功！");
+          this.$message.success(
+            this.dataSourceCopy[this.currenSelectIndex].name + "删除成功！"
+          );
           this.dataSourceCopy.splice(this.currenSelectIndex, 1);
           this.layerSelect.splice(this.currenSelectIndex, 1);
           this.currenSelectIndex--;
@@ -322,7 +344,9 @@ export default {
           } else {
             let index = this.currenSelectIndex < 0 ? 0 : this.currenSelectIndex;
             this.currenSelectLayer = this.dataSourceCopy[index].name;
-            this.currentLayer = this.$_cloneArray(this.dataSourceCopy[index].dataSource.features);
+            this.currentLayer = this.$_cloneArray(
+              this.dataSourceCopy[index].dataSource.features
+            );
             this.$_selectLayer(this.dataSourceCopy[index].uuid);
           }
           break;
@@ -331,22 +355,24 @@ export default {
           break;
         case "saveCamera":
           if (this.currenSelectLayer) {
-            this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(viewer);
+            this.dataSourceCopy[this.currenSelectIndex].camera = getCamera(
+              viewer
+            );
           }
           break;
         case "flyTo":
           if (this.currenSelectLayer) {
             let layer = this.dataSourceCopy[this.currenSelectIndex];
-            const {camera} = layer;
+            const { camera } = layer;
             if (camera) {
-              const {positionCartographic, heading, pitch, roll} = camera;
-              const {longitude, latitude, height} = positionCartographic
+              const { positionCartographic, heading, pitch, roll } = camera;
+              const { longitude, latitude, height } = positionCartographic;
               this.viewer.camera.flyTo({
                 duration: 1,
                 destination: new Cesium.Cartesian3.fromRadians(
-                    longitude,
-                    latitude,
-                    height
+                  longitude,
+                  latitude,
+                  height
                 ),
                 orientation: {
                   heading: heading,
@@ -364,7 +390,10 @@ export default {
           let saveObj = [];
           for (let i = 0; i < this.dataSourceCopy.length; i++) {
             let json = this.dataSourceCopy[i];
-            let dataSource = this.$refs.graphicLayer.$_toJSON(json.uuid, "default");
+            let dataSource = this.$refs.graphicLayer.$_toJSON(
+              json.uuid,
+              "default"
+            );
             let groups = this.$refs.graphicLayer.$_getGroups();
             saveObj.push({
               name: json.name,
@@ -391,21 +420,22 @@ export default {
       this.showSetting = !this.showSetting;
     },
     $_import() {
-      let inputFile = document.getElementById(this.inputId), vm = this;
+      let inputFile = document.getElementById(this.inputId),
+        vm = this;
       inputFile.click();
-      inputFile.onchange = function () {
+      inputFile.onchange = function() {
         let File = inputFile.files[0];
         // 使用 FileReader 来读取文件
         let reader = new FileReader();
         // 读取纯文本文件,且编码格式为 utf-8
-        reader.readAsText(File, 'UTF-8');
+        reader.readAsText(File, "UTF-8");
         // 读取文件
-        reader.onload = function (e) {
+        reader.onload = function(e) {
           let fileContent = e.target.result;
           vm.$_updateData(JSON.parse(fileContent));
-          inputFile.value = '';
-        }
-      }
+          inputFile.value = "";
+        };
+      };
     },
     $_getRelativeUrl(url) {
       let rUrl = "";
@@ -431,9 +461,11 @@ export default {
       if (this.enableRelativePath) {
         let features = dataSource.features;
         for (let i = 0; i < features.length; i++) {
-          let {style} = features[i];
+          let { style } = features[i];
           if (style && style.hasOwnProperty("url")) {
-            features[i].style.url = this.$_getRelativeUrl(features[i].style.url);
+            features[i].style.url = this.$_getRelativeUrl(
+              features[i].style.url
+            );
           }
         }
       }
@@ -445,9 +477,9 @@ export default {
         camera: clonedeep(json.camera),
         dataSource: dataSource,
         groups: groups
-      }
+      };
       const blob = new Blob([JSON.stringify(exportJSON)], {
-        type: "application/json;charset=utf-8",
+        type: "application/json;charset=utf-8"
       });
       let title = json.name || "无标题";
       saveAs(blob, title + ".json");
@@ -484,7 +516,8 @@ export default {
           if (this.enableRelativePath) {
             for (let j = 0; j < data.dataSource.features.length; j++) {
               if (data.dataSource.features[j].type === "model") {
-                data.dataSource.features[j].style.url = this.baseUrl + "/" + data.dataSource.features[j].style.url;
+                data.dataSource.features[j].style.url =
+                  this.baseUrl + "/" + data.dataSource.features[j].style.url;
               }
             }
           }
@@ -496,7 +529,7 @@ export default {
           this.autoFlyToGraphic = data.autoFlyToGraphic;
           this.vueIndex = Number(data.uuid);
           this.$refs.graphicLayer.$_hideAllGraphics();
-          this.$nextTick(function () {
+          this.$nextTick(function() {
             this.$refs.graphicLayer.noTitleKey = "list";
             this.$refs.graphicLayer.currentEditType = "mouse";
             this.$refs.graphicLayer.currentIconType = "mouse";
@@ -517,7 +550,7 @@ export default {
         this.vueIndex = Number(data.uuid);
         this.autoFlyTo = data.autoFlyTo;
         this.autoFlyToGraphic = data.autoFlyToGraphic;
-        this.$nextTick(function () {
+        this.$nextTick(function() {
           this.$refs.graphicLayer.drawMode = "";
           this.$refs.graphicLayer.noTitleKey = "list";
           this.$refs.graphicLayer.currentEditType = "mouse";
@@ -534,11 +567,15 @@ export default {
         });
       }
       if (this.autoFlyTo && data.hasOwnProperty("camera")) {
-        const {heading, pitch, roll, positionCartographic} = data.camera;
-        const {longitude, latitude, height} = positionCartographic;
+        const { heading, pitch, roll, positionCartographic } = data.camera;
+        const { longitude, latitude, height } = positionCartographic;
         this.viewer.camera.flyTo({
           duration: 2,
-          destination: Cesium.Cartesian3.fromRadians(longitude, latitude, height),
+          destination: Cesium.Cartesian3.fromRadians(
+            longitude,
+            latitude,
+            height
+          ),
           orientation: {
             heading: heading,
             pitch: pitch,
@@ -558,7 +595,7 @@ export default {
           this.$refs.graphicLayer.$_hideAllGraphics();
           this.vueIndex = Number(this.dataSourceCopy[i].uuid);
           this.currenSelectIndex = i;
-          this.$nextTick(function () {
+          this.$nextTick(function() {
             this.$refs.graphicLayer.drawMode = "";
             this.$refs.graphicLayer.noTitleKey = "list";
             this.$refs.graphicLayer.currentEditType = "mouse";
@@ -569,15 +606,21 @@ export default {
             this.$refs.graphicLayer.$_stopDrawing();
             this.$refs.graphicLayer.$_switchGraphicLayer(this.vueIndex);
             this.$refs.graphicLayer.$_showAllGraphics();
-            this.$refs.graphicLayer.dataSourceCopy = this.$_cloneArray(this.dataSourceCopy[i].dataSource.features);
+            this.$refs.graphicLayer.dataSourceCopy = this.$_cloneArray(
+              this.dataSourceCopy[i].dataSource.features
+            );
           });
-          const {camera} = this.dataSourceCopy[i];
+          const { camera } = this.dataSourceCopy[i];
           if (this.autoFlyTo && camera) {
-            const {heading, pitch, roll, positionCartographic} = camera;
-            const {longitude, latitude, height} = positionCartographic;
+            const { heading, pitch, roll, positionCartographic } = camera;
+            const { longitude, latitude, height } = positionCartographic;
             this.viewer.camera.flyTo({
               duration: 2,
-              destination: Cesium.Cartesian3.fromRadians(longitude, latitude, height),
+              destination: Cesium.Cartesian3.fromRadians(
+                longitude,
+                latitude,
+                height
+              ),
               orientation: {
                 heading: heading,
                 pitch: pitch,
@@ -605,7 +648,9 @@ export default {
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
       //设置当前图层
       if (this.dataSourceCopy.length > 0) {
-        this.currentLayer = this.$_cloneArray(this.dataSourceCopy[0].dataSource.features);
+        this.currentLayer = this.$_cloneArray(
+          this.dataSourceCopy[0].dataSource.features
+        );
         this.vueIndex = this.dataSourceCopy[0].uuid;
         //初始化graphicLayer图层列表
         this.$_layerSelect();
@@ -623,7 +668,10 @@ export default {
       for (let i = 0; i < this.dataSourceCopy.length; i++) {
         let features = this.dataSourceCopy[i].dataSource.features;
         for (let j = 0; j < features.length; j++) {
-          let graphic = this.$_getGraphicByID(features[j].id, this.dataSourceCopy[i].uuid);
+          let graphic = this.$_getGraphicByID(
+            features[j].id,
+            this.dataSourceCopy[i].uuid
+          );
           graphic.show = false;
         }
       }
@@ -634,7 +682,10 @@ export default {
         if (this.currenSelectLayer === this.dataSourceCopy[i].name) {
           let features = this.dataSourceCopy[i].dataSource.features;
           for (let j = 0; j < features.length; j++) {
-            let graphic = this.$_getGraphicByID(features[j].id, this.dataSourceCopy[i].uuid);
+            let graphic = this.$_getGraphicByID(
+              features[j].id,
+              this.dataSourceCopy[i].uuid
+            );
             graphic.show = true;
           }
           break;
@@ -642,7 +693,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
