@@ -69,26 +69,35 @@ export default {
         this.valueCopy = this.value;
       },
       deep: true
-    },
-    valueCopy: {
-      handler: function () {
-        this.$emit("change", this.valueCopy);
-      },
-      deep: true
     }
   },
   methods: {
     $_change(e) {
-      let value;
-      if(!e){
-        value = 0;
-        this.valueCopy = 0;
-      }else if (typeof e === "object") {
-        value = e.target.value;
-      } else {
-        value = Number(e);
+      function getValue(value, type) {
+        let result;
+        if(type === "Number"){
+          if(!(typeof value === "number")){
+            result = 0;
+          }else {
+            result = value;
+          }
+        }else {
+          result = value;
+        }
+        return result;
       }
-      this.$emit("change", value);
+      if(!e){
+        if(this.type === "Number"){
+          this.valueCopy = 0;
+        }else {
+          this.valueCopy = "";
+        }
+      }else if (typeof e === "object") {
+        this.valueCopy = getValue(e.target.value, this.type);
+      }else {
+        this.valueCopy = getValue(e, this.type);
+      }
+      this.$emit("change", this.valueCopy);
     },
     $_finish() {
       this.$emit("finish");
