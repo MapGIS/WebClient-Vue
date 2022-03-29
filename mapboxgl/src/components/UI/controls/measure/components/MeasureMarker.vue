@@ -4,7 +4,8 @@
     :coordinates="coordinates"
     :offset="popupOffset"
     anchor="bottom"
-    :showed="true"
+    showed
+    :closeOnClick="false"
   >
     <div slot="default">
       <slot name="popup">
