@@ -412,43 +412,40 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.mapgis-widget-scene-roaming {
-  .full-width {
-    width: 100%;
-  }
-  .add-path-status {
-    display: flex;
-    justify-content: space-between;
-    .add-path-status-action {
-      width: calc(50% - 4px);
-    }
-  }
-  .path-container .path-list {
-    width: 280px;
-    margin: 0 auto;
-  }
+<style scoped>
+.full-width {
+  width: 100%;
+}
+.add-path-status {
+  display: flex;
+  justify-content: space-between;
+}
+.add-path-status-action {
+  width: calc(50% - 4px);
+}
+.path-container .path-list {
+  width: 280px;
+  margin: 0 auto;
+}
 
-  .header {
-    cursor: pointer;
-    display: flex;
-    align-content: center;
-    .return {
-      // color: @primary-color;
-      margin: 0 10px 0 0;
-    }
-    .name {
-      flex: 1;
-    }
-  }
+.header {
+  cursor: pointer;
+  display: flex;
+  align-content: center;
+}
+.return {
+  margin: 0 10px 0 0;
+}
+.name {
+  flex: 1;
 }
 ::v-deep .mapgis-ui-table {
   font-size: 12px;
-  .path-position {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+}
+.path-position {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 ::v-deep .mapgis-ui-table-pagination.mapgis-ui-pagination {
   margin: 8px 0 0 0;
