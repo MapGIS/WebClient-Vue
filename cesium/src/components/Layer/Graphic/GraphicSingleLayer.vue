@@ -352,9 +352,15 @@ export default {
               roll: 0,//z轴
             };
             this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
+            this.$refs.editPanel.noTitleKey = "edit";
+            this.$refs.editPanel.editType = "batch";
           } else {
             this.$_dbclick(row);
           }
+          break;
+        case "editPopup":
+          this.$refs.editPanel.noTitleKey = "edit";
+          this.$refs.editPanel.editType = "popup";
           break;
         case "delete":
           let index;
@@ -934,6 +940,7 @@ export default {
       this.noTitleKey = "edit";
       this.$refs.iconsPanel.$_resetIconsPanel();
       this.$refs.editPanel.noTitleKey = "edit";
+      this.$refs.editPanel.editType = "edit";
       this.$refs.editPanel.isEdit = true;
       //停止绘制
       this.$_stopDrawing();
@@ -1125,6 +1132,7 @@ export default {
         case "label":
         case "point":
         case "text":
+        case "billboard":
           //计算中心点
           position = json.centerPosition;
           lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));

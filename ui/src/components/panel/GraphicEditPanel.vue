@@ -1,7 +1,6 @@
 <template>
   <div>
     <mapgis-ui-card
-        style="width:100%"
         :tab-list="tabListNoTitle"
         :active-tab-key="noTitleKey"
         :bodyStyle="cardBodyStyle"
@@ -39,7 +38,7 @@
       </div>
       <!--设置面板-->
       <div v-show="noTitleKey === 'edit'" style="min-height: 200px;max-height: 430px;overflow:auto;">
-        <div v-show="editPanelValues" style="margin-bottom: 12px;">
+        <div v-show="editPanelValues && editType === 'edit'" style="margin-bottom: 12px;">
           <mapgis-ui-title-row-left
               title="类型"
               :value="$_formatType(currentEditType)"
@@ -300,10 +299,7 @@
             />
           </div>
         </div>
-      </div>
-      <!--属性面板-->
-      <div class="mapgis-ui-graphic-edit-list" v-show="noTitleKey === 'attributes'">
-        <div>
+        <div v-show="editType === 'popup'">
           <div :key="index" v-for="(value, index) in attributeKeyArray">
             <mapgis-ui-input-row-left
                 v-if="value === 'title'"
@@ -341,10 +337,7 @@
             {{ addAttributeTitle }}
           </mapgis-ui-button>
         </div>
-      </div>
-      <!--批处理面板-->
-      <div v-show="noTitleKey === 'batch'" style="min-height: 200px;max-height: 430px;overflow:auto;">
-        <div v-if="editPanelValues">
+        <div v-if="editPanelValues" v-show="editType === 'batch'">
           <mapgis-ui-input-row-left
               title="比例尺"
               type="Number"
@@ -401,7 +394,7 @@ export default {
     editPanelValues: {
       handler: function () {
         if (this.isUpdatePanel && !this.editTitle) {
-          if (this.noTitleKey === "batch") {
+          if (this.editType === "batch") {
             this.$emit("changeGroup", this.editPanelValues, this.groupId);
           } else {
             this.$emit("change", this.editPanelValues, this.isEdit);
@@ -436,14 +429,6 @@ export default {
         {
           key: 'edit',
           tab: '设置面板',
-        },
-        {
-          key: 'attributes',
-          tab: '属性面板',
-        },
-        {
-          key: 'batch',
-          tab: '批处理面板',
         }
       ],
       //当前显示面板
@@ -539,7 +524,8 @@ export default {
       //是否展开北京参数
       showBackground: false,
       groupId: undefined,
-      dataSourceCopy: []
+      dataSourceCopy: [],
+      editType: "edit"
     }
   },
   mounted() {
@@ -1033,11 +1019,12 @@ export default {
 
 .mapgis-ui-graphic-edit-addAttribute {
   width: 100%;
-  margin: 10px 10px;
+  margin: 10px 0;
+  padding-left: 10px;
 }
 
 .mapgis-ui-graphic-edit-addAttribute-input {
-  width: calc(100% - 80px);
+  width: calc(100% - 70px);
   margin-left: 24px;
 }
 

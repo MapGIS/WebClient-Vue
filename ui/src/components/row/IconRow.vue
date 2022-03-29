@@ -54,7 +54,7 @@ export default {
     },
     width: {
       type: String,
-      default: "110px"
+      default: "140px"
     },
     enableGroup: {
       type: Boolean,
@@ -66,7 +66,11 @@ export default {
         return [{
           event: "edit",
           icon: "edit",
-          title: "修改"
+          title: "修改属性"
+        },{
+          event: "editPopup",
+          icon: "popup",
+          title: "修改弹框属性"
         }, {
           event: "editTitle",
           icon: "editTitle",
