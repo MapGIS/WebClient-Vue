@@ -127,9 +127,10 @@ module.exports = {
             title: "指南",
             collapsable: false,
             children: [
-              ["/guide/", "快速上手"],
+              ["/guide/install", "安装"],
+              ["/guide/quickStart", "快速上手"],
               ["/guide/introduction.md", "产品介绍"],
-              ["/guide/basemap.md", "基础地图"],
+              ["/guide/basemap.md", "注意事项"],
               ["/guide/composition.md", "结构"],
               ["/guide/controls.md", "控制视图"],
               ["/guide/markers&popups.md", "注记视图"],
@@ -235,14 +236,14 @@ module.exports = {
               ],
             ],
           },
-          {
-            title: "版本",
-            collapsable: false,
-            children: [
-              ["/version/version.md", "更新说明"],
-              ["/version/diff.md", "版本对比"],
-            ],
-          },
+          // {
+          //   title: "版本",
+          //   collapsable: false,
+          //   children: [
+          //     ["/version/version.md", "更新说明"],
+          //     ["/version/diff.md", "版本对比"],
+          //   ],
+          // },
           // ['/plugins/', 'Plugins'],
         ],
         // search: false

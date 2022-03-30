@@ -213,8 +213,8 @@ export default {
                             slopeRampColor: rampColor,
                             slopeRamp: ramp,
                         });
-                    aspectSlopeAnalysis.changeColorTableDis(ramp,'slope')
-                    aspectSlopeAnalysis.changeColorTable(rampColor,'slope')
+                    slopeAnalysis.changeColorTableDis(ramp,'slope')
+                    slopeAnalysis.changeColorTable(rampColor,'slope')
                     slopeAnalysis.updateMaterial("slope");
                     slopeAnalysis.changeAnalyseArea(result.positions);
                     // slopeAnalysis.queryInfo(function(e){

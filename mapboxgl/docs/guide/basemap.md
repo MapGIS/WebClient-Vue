@@ -1,4 +1,4 @@
-# 基本地图
+# 注意事项
 
 ## 添加地图组件
 
@@ -6,7 +6,7 @@
 
 > 强烈建议使用前了解基本的 mapboxgl 的开发方式[mapboxgl-中文开发文档](https://www.mapbox.cn/mapbox-gl-js/api/)
 
-如果你使用的是 mapbox 提供的底图或者样式, 需要设置 `access_token`. 更多细节请查看[官方秘钥](https://mapbox.com/help/define-access-token/).
+如果你使用的是 mapbox 提供的底图或者样式, 需要设置 `access_token`。更多细节请查看[官方秘钥](https://mapbox.com/help/define-access-token/).
 
 如果你使用`MapGIS-IGServer`提供的底图或者样式，你可以忽略该参数
 
@@ -99,7 +99,7 @@ import mapboxgl from "@mapgis/mapbox-gl";
 如果该参数没有传入，默认内部使用@mapgis/mapbox-gl
 :::
 
-### 通过 Props 来交互地图属性
+## 通过 Props 来交互地图属性
 
 你可以通过 props 来控制地图的一些参数如 zoom(缩放级别), bearing(方位), pitch(倾斜)等.
 
@@ -110,7 +110,7 @@ import mapboxgl from "@mapgis/mapbox-gl";
 
 完整的 props 列表请查看[API docs](/api/#props), 注意文字描述中的字段'Synced'
 
-## 地图加载
+## 地图加载完成事件
 
 当地图加载完毕,即 map.on(load,callback)事件响应, `mapgis-web-map`组件就会发送 `load` 事件. 整个事件的载荷 payload 会包含 Mapbox GL JS `Map` 对象.
 

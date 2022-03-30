@@ -17,7 +17,7 @@ webclient-vue-cesium 中涵盖以下 vue 的技术点，建议先掌握其使用
 
 ## 引入 webclient-vue-cesium
 
-在 main.js 中全局引入组件，注意：下列四个文件缺一不可。
+在 main.js 中全局引入组件，注意：下列四个引入缺一不可。
 
 ```js
 import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
@@ -38,7 +38,7 @@ webclient-vue-cesium 底层依赖 `@mapgis/cesium`，所以开发者需要拷贝
 
 ![代码结构](./cesium_dist.png)
 
-请将上述 cesium 文件夹统一拷贝到你的 vue 工程对应的 public 文件夹下的某个目录中，记录对应的路径为
+请将上述 cesium 目录拷贝到你的 vue 工程的 public 静态资源文件夹中，记录以下两个文件的路径：
 
 ```sh
 # 主Cesium主体路径
@@ -47,9 +47,7 @@ public/cesium/dist/Cesium.js
 public/cesium/dist/webclient-cesium-plugin.min.js
 ```
 
-> 如果在浏览器中 访问 `http://localhost:xxxx/public/cesium/dist/Cesium.js` 成功则说明整个 Cesium 的环境准备已经完毕。
-> ::: tip
-> 这里初始化的时候就需要传入`libPath`以及`pluginPath` 如果不传入则从司马云上自动下载对应的网络地址，没有互联网则无法下载
+通过在浏览器中 访问 `http://localhost:xxxx/cesium/dist/Cesium.js` 成功即可。
 
 WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 
@@ -65,7 +63,7 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 </template>
 ```
 
-:::
+这里在 mapgis-web-scene 组件初始化的时候就需要传入`libPath`以及`pluginPath` 如果不传入则从司马云上自动下载对应的网络地址，没有互联网则无法下载。
 
 ::: tip 为什么要使用@mapgis/cesium
 由于 cesium 本身`涉及大量的纹理材质以及多线程Worker`， 公司内部修改版实现`M3D格式`， M3D`不是`3dtile，是中地数码自己独特的格式，与开源的 3dtile 不是一种格式。很多高级分析功能`只能作用于M3D`,而不支持 3d tile.
@@ -75,9 +73,9 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 由于原生的 Cesium 在支持 Webpack 编译的时候也是采取的 copy 插件来执行对应的文件夹拷贝操作。 因此为了统一处理，这里`统一不采取`手动修改 webpack.config 的方式，而是将 cesium 的所有文件放在 public 或者 asset 的某个目录下，自己`手动实现`静态资料的拷贝
 :::
 
-### 示例：
+## 示例
 
-通过在 main.js 全局引入组件和样式文件的方式，可以快速使用 webclient-vue-cesium 写出一个 vue 示例：
+通过在 main.js 全局引入组件和样式文件的方式，可以快速使用 webclient-vue-cesium 写出一个 vue 的地图场景示例：
 
 ```vue
 <template>
@@ -108,7 +106,7 @@ export default {
       this.Cesium = Cesium;
       this.vueCesium = vueCesium;
       this.CesiumZondy = CesiumZondy;
-      let viewer = window.viewer; // 获取实例化的Cesium场景对象
+      let viewer = component.viewer; // 获取实例化的Cesium场景对象
     },
   },
 };

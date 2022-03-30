@@ -56,6 +56,7 @@ module.exports = {
               ["/guide/quickStart.md", "快速上手"],
               ["/guide/introduction.md", "模块说明"],
               ["/guide/basemap.md", "注意事项"],
+              ["/guide/customComponent.md", "自定义组件"],
             ],
           },
           {
@@ -159,18 +160,18 @@ module.exports = {
               // ["/api/analysis/Buffer.md", "叠加分析"],
             ],
           },
-          {
-            title: "自定义组件",
-            collapsable: false,
-            children: [
-              // ["/plugin_components/", "使用组件"],
-              [
-                "/plugin_components/plugin_components_development.md",
-                "创建组件",
-              ],
-              ["/plugin_components/create_storybook.md", "创建Storybook示例"],
-            ],
-          },
+          // {
+          //   title: "自定义组件",
+          //   collapsable: false,
+          //   children: [
+          //     // ["/plugin_components/", "使用组件"],
+          //     [
+          //       "/plugin_components/plugin_components_development.md",
+          //       "创建组件",
+          //     ],
+          //     ["/plugin_components/create_storybook.md", "创建Storybook示例"],
+          //   ],
+          // },
           // {
           //   title: "版本",
           //   collapsable: false,

@@ -100,19 +100,19 @@ export const 粒子特效 = Template.bind({});
         {
             guid: "9D09DB87-7955-9295-2E34-61E83C30D3AA",
             name: "火焰",
-            image: `http://localhost:8895/img/fire.png`,
+            image: `./img/fire.png`,
             iconUrl: "mapgis-huoyan",
         },
         {
             guid: "F9FDE880-8F5B-AEDF-CA95-ADC54F02A34F",
             name: "烟雾",
-            image: `http://localhost:8895/img/smoke.png`,
+            image: `./smoke.png`,
             iconUrl: "mapgis-yanwu",
         },
         {
             guid: "A35C78FF-DD27-66C8-DD61-027CAE317145",
             name: "喷泉",
-            image: `http://localhost:8895/img/fountain.png`,
+            image: `./img/fountain.png`,
             iconUrl: "mapgis-penquan"
         }
     ],

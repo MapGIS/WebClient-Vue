@@ -2,72 +2,15 @@
 
 ## 属性
 
-### `infinite`
-
-- **类型:** `Boolean`
-- **侦听属性**
-- **默认值:** `false`
-- **描述:** 是否允许无限绘制。true：允许无限绘制，false：不允许
-
-### `enableControl`
-
-- **类型:** `Boolean`
-- **非侦听属性**
-- **默认值:** `false`
-- **描述:** 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性 position 改变其显示的位置
-
-### `position`
-
-- **类型:** `String`
-- **非侦听属性**
-- **默认值:** `top-right`
-- **描述:** 传入的属性 position 改变其按钮控件的位置
-
-### `clampToGround`
-
-- **类型:** `Boolean`
-- **侦听属性**
-- **默认值:** `true`
-- **描述:** 绘制在三维图层上，是否贴地贴模型，true 则贴地贴模型。
-
-### `drawStyle`
-
-- **类型:** `Object`
-- **非侦听属性**
-- **默认值:**
-
-```
-  {
-    color: '#FF0000',
-    opacity: 1,
-    //点的边线宽度
-    outlineWidth: 1,
-    //点的边线颜色
-    outlineColor: '#FFA500',
-    //线宽
-    width: 2,
-  }
-```
-
-- **描述:** 绘制点、线、矩形、多边形、圆图形样式。目前不支持矩形、多边形、圆的边线样式设置。
-
-### `vueKey`
-
-- **类型:** `String`
-- **可选**
-- **非侦听属性**
-- **默认值:** `default`
-- **描述:**
-  > mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件， <br/>
-  > 同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。
-
-### `vueIndex`
-
-- **类型:** `Number`
-- **可选**
-- **非侦听属性**
-- **描述:**
-  > 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。
+| 名称          | 类型    | 默认值                                                                                                                                                  | 描述                                                                                                                                                                                                                          | 是否监听 |
+| ------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| infinite      | Boolean | false                                                                                                                                                   | 是否允许无限绘制。true：允许无限绘制，false：不允许                                                                                                                                                                           | 是       |
+| enableControl | Boolean | false                                                                                                                                                   | 添加一个自带的能实现基本功能的按钮控件，可通过传入的属性 position 改变其显示的位置                                                                                                                                            | 否       |
+| position      | String  | 'top-right'                                                                                                                                             | 传入的属性 position 改变其按钮控件的位置                                                                                                                                                                                      | 否       |
+| clampToGround | Boolean | true                                                                                                                                                    | 绘制在三维图层上，是否贴地贴模型，true 则贴地贴模型。                                                                                                                                                                         | 是       |
+| drawStyle     | Object  | {<br/> color: '#FF0000',<br/>opacity: 1,<br/>//点的边线宽度 outlineWidth: 1,<br/>//点的边线颜色 <br/>outlineColor: '#FFA500',<br/>//线宽 width: 2<br/>} | 绘制点、线、矩形、多边形、圆图形样式。目前不支持矩形、多边形、圆的边线样式设置。                                                                                                                                              | 否       |
+| vueKey        | String  | default                                                                                                                                                 | mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件，<br/>同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。 | 否       |
+| vueIndex      | Number  | (Math.random() \* 1000000).toFixed(0)                                                                                                                   | 当 mapgis-web-scene 插槽中使用了多个相同组件时，例如多个 mapgis-3d-igs-doc-layer 组件，用来区分组件的标识符。                                                                                                                 | 否       |
 
 ## 槽
 

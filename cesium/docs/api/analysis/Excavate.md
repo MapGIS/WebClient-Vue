@@ -35,7 +35,7 @@ mapgis-web-scene组件的ID，当使用多个mapgis-web-scene组件时，需要�
 - **描述:** 图层样式，有如下值：
 
 ```
-    material String 控制裁剪面的材质颜色，默认值"#00FFFF"
+    material String 控制裁剪面的材质颜色，默认值"#ffffff"
     edgeColor String 控制裁剪时边界线颜色，默认值"#FF8C00"
     edgeWidth Number 控制边界线宽度，默认值 3
 ```
@@ -81,10 +81,10 @@ export default {
       excaveteStyle: {
         material: "#DB2B5A",
         edgeColor: "#DB2B5A",
-        edgeWidth: 5
-      }
+        edgeWidth: 5,
+      },
     };
-  }
+  },
 };
 </script>
 
