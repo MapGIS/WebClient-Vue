@@ -85,7 +85,7 @@ const Template = (args, { argTypes }) => ({
     :token="token"
   ></mapgis-3d-ogc-wmts-layer>
   <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true" />
-  <mapgis-ui-card class="storybook-ui-card" style="zIndex:20002">
+  <mapgis-ui-card class="storybook-ui-card">
     <mapgis-3d-analysis-cut-fill
       :xPaneNum="xPaneNum"
       :yPaneNum="yPaneNum"
