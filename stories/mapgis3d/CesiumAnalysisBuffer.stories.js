@@ -15,7 +15,7 @@ export default {
     baseUrl:{
       description: "输入图层的baseUrl",
       table:{
-        defaultValue: { summary: "http://localhost:6163" },
+        defaultValue: { summary: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers` },
       },
       control:'text'
     },
@@ -66,12 +66,12 @@ const Template = (args, { argTypes }) => ({
       this.addResultToLayer = data
     }
   },
-  template: `
+    template: `
     <mapgis-web-scene style="height: 95vh">
       <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-analysis-buffer v-bind="$props" @listenLayer="showLayer" @listenFeature="showFeature" @listenBufferAdd="showAdd"/>
       </mapgis-ui-card>
-      <mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" baseUrl="http://localhost:6163/igs/rest/mrms/layers" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
+      <mapgis-3d-igs-dynamic-layer v-if="finishedLayer && addResultToLayer" :baseUrl="this.baseUrl" :gdbps="resultLayer"></mapgis-3d-igs-dynamic-layer>
       <mapgis-3d-geojson-layer v-if="finishedFeature && addResultToLayer" :layerStyle="layerStyle" :baseUrl="resultFeature"/>
     </mapgis-web-scene>
     `,
@@ -81,8 +81,8 @@ export const Buffer = Template.bind({});
 Buffer.args = {
   srcType: "Layer",
   // srcType: "Feature",
-  baseUrl: "http://localhost:6163",
-  srcLayer: "gdbp://MapGISLocalPlus/sample/sfcls/武汉市轮廓",
+  baseUrl: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/mrms/layers`,
+  srcLayer: "gdbp://MapGISLocal/Templates/sfcls/湖北省市级区划",
   srcFeature: {
     "type": "FeatureCollection",
     "features": [
