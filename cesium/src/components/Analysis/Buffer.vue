@@ -23,7 +23,7 @@
 					<mapgis-ui-color-pick-panel
 						label="轮廓颜色"
 						:color="colorCopyLine"
-						:wrapperCol="17"
+						:wrapperCol="24"
 						:size="size"
 						:disableAlpha="false"
 						:colorStyle="colorStyle"
@@ -34,7 +34,7 @@
 					<mapgis-ui-color-pick-panel
 						label="填充颜色"
 						:color="colorCopyFill"
-						:wrapperCol="17"
+						:wrapperCol="24"
 						:size="size"
 						:disableAlpha="false"
 						:colorStyle="colorStyle"
@@ -44,13 +44,14 @@
 					>
 					</mapgis-ui-color-pick-panel>
 					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
-					<mapgis-ui-form-model-item label="输出结果">
+					<!-- <mapgis-ui-form-model-item label="输出结果"> -->
+					<mapgis-ui-form-model-item style="margin-top:-8px;">
 						<mapgis-ui-row>
 							<mapgis-ui-col :span=24>
 								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
 							</mapgis-ui-col>				
 						</mapgis-ui-row>
-						<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
+						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
 				<!-- 图层级缓冲区分析UI面板 -->
@@ -68,7 +69,7 @@
 								<mapgis-ui-input addon-before="右" v-model=rightRad ></mapgis-ui-input>
 							</mapgis-ui-col>
 						</mapgis-ui-row>
-						<mapgis-ui-checkbox :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
+						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="半径单位" v-show="!isByAtt">
 						<mapgis-ui-select v-model="selectedUnit" :placeholder=unit[0].name @change="selectCurrentUnit($event)">
@@ -89,13 +90,14 @@
 						</mapgis-ui-radio-group>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
-					<mapgis-ui-form-model-item label="输出结果">
+					<!-- <mapgis-ui-form-model-item label="输出结果"> -->
+					<mapgis-ui-form-model-item style="margin-top:-8px;">
 						<mapgis-ui-row>
 							<mapgis-ui-col :span=24>
 								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
 							</mapgis-ui-col>				
 						</mapgis-ui-row>
-						<mapgis-ui-checkbox :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
+						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
 				<mapgis-ui-setting-footer>
@@ -129,7 +131,7 @@ export default {
      */
 		layout: {
 			type: String,
-			default: "horizontal" // 'horizontal' 'vertical' 'inline'
+			default: "vertical" // 'horizontal' 'vertical' 'inline'
 		},
 		/**
      * @type String
@@ -179,7 +181,7 @@ export default {
       size: "default",
 			colorStyle:{
 				fontSize: '14px',
-				padding:"10px 0",
+				// padding:"0 0 8px",
 			},
 			// 图层级半径缓冲
 			isByAtt: false,
@@ -411,16 +413,17 @@ export default {
 .mapgis-widget-buffer-analysis {
 	height: auto;
 }
-.mapgis-ui-form-item {
+/* .mapgis-ui-form-item {
 	width: 300px;
-}
+} */
 .mapgis-ui-row.mapgis-ui-form-item {
-  margin: 10px 0px 10px 0px;
+	/* margin: 10px 0px 10px 0px; */
+	margin-bottom: 0px;
 }
-.mapgis-ui-form-item-control {
+/* .mapgis-ui-form-item-control {
 	width: 214px;
 	text-align: left;
 	line-height: 40px;
 	overflow: hidden;
-}
+} */
 </style>

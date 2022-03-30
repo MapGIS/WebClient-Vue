@@ -98,7 +98,8 @@
   display: flex;
   align-items: center;
   width: 100%;
-  font-weight: 700;
+  font-weight: bold;
+  line-height: 32px;
 
   &.is-mini {
     font-size: 12px;
@@ -121,10 +122,10 @@
   &.is-default {
     font-size: 14px;
     &.has-top-margin {
-      margin-top: 7px;
+      margin-top: 8px;
     }
     &.has-bottom-margin {
-      margin-bottom: 7px;
+      margin-bottom: 8px;
     }
   }
   &.is-large {

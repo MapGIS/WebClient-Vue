@@ -2,11 +2,12 @@
 @import "../../../util/style/theme/theme.scss";
 
 @include b(setting-footer) {
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 8px;
+  padding-top: 0px;
   border-top: 1px solid $border-color-base;
   &.center {
     justify-content: center;

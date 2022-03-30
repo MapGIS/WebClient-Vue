@@ -1,6 +1,6 @@
 <template>
   <div class="mapgis-ui-group-tab" :class="classes">
-    <hr />
+    <!-- <hr /> -->
     <span class="title">
       <slot name="title">{{ title }}</slot>
     </span>
@@ -19,7 +19,7 @@ export default {
     },
     size: {
       type: String,
-      default: 'mini',
+      default: 'default',
       validator(val) {
         return ['default', 'large', 'small', 'mini'].includes(val)
       }
