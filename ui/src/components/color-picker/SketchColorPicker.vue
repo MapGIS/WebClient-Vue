@@ -25,7 +25,7 @@
         <div
           class="color-container"
           :style="{
-            padding: showBorder ? '9px 8px' : '0',
+            padding: showBorder ? '4px 8px' : '0',
             border: showBorder
               ? 'border: 1px solid $border-color-base;'
               : 'none',
@@ -38,6 +38,7 @@
             :title="color"
             class="color-div"
           ></div>
+          <div style="line-height:22px;">{{color}}</div>
         </div>
       </mapgis-ui-row>
     </mapgis-ui-popover>

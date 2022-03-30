@@ -6,13 +6,18 @@
 
 .mapgis-ui-sketch-color-picker {
   .color-container {
-    padding: 9px 8px;
+    padding: 4px 8px;
     height: 32px;
     border: 1px solid $border-color-base;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
     .color-div {
-      height: 100%;
-      cursor: pointer;
+      height: 16px;
+      width: 16px;
+      border: 1px solid $border-color-base;
+      margin-right: 8px;
     }
   }
 }
