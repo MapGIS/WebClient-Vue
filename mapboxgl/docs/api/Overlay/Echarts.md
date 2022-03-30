@@ -4,8 +4,6 @@
 
 ## 属性
 
-All common [layers props](/api/Layers/README.md#props)
-
 ### `options`
 
 - **类型:** `Object`

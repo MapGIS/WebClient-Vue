@@ -2,16 +2,16 @@
 
 ### 方式一：npm 安装
 
-::: tip 三维默认 UI 是 webclient-vue-ui,
-由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui，因此需要同步安装 webclient-vue-ui
-:::
-
 ```bash
 # npm或yarn安装 webclient-vue-cesium webclient-vue-ui
 npm install --save @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
 # 或者
 yarn add @mapgis/webclient-vue-cesium @mapgis/webclient-vue-ui
 ```
+
+::: tip 为什么要安装 webclient-vue-ui
+由于 webclient-vue-cesium 使用了大量内置的 webclient-vue-ui，因此需要同步安装 webclient-vue-ui
+:::
 
 ### 方式二：yarn link`特殊情况下：需要使用组件最新的功能时`
 

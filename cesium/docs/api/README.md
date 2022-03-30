@@ -11,7 +11,7 @@
 | vueKey     | String                  | default                                                                                      | mapgis-web-scene 组件的 ID，当使用多个 mapgis-web-scene 组件时，需要指定该值，来唯一标识 mapgis-web-scene 组件 <br/> 同时 mapgis-web-scene 插槽中的组件也需要传入相同的 vueKey，让组件知道应该作用于哪一个 mapgis-web-scene。 | 否       |
 | vueIndex   | Number                  | (Math.random() \* 1000000).toFixed(0)                                                        | 当 该 key 的主要作用是用来记录 Cesium 的 Source,primitive,entity 的内存中的引用数组的下标，从而避免 vue 对 cesium 的内存劫持                                                                                                  | 否       |
 | height     | Number                  |                                                                                              | 解决分屏时，cesium 无限拉长的问题，要给一个固定高度                                                                                                                                                                           | 是       |
-| container  | String 或者 HTMLElement | cesium-${("" + Math.random()).split(".")[1]}                                                 | Cesium-viewer 绑定的 Dom 元素对象                                                                                                                                                                                             |
+| container  | String 或者 HTMLElement | cesium-${("" + Math.random()).split(".")[1]}                                                 | Cesium-viewer 绑定的 Dom 元素对象                                                                                                                                                                                             | 否       |
 
 其中 `path/to/cesium`的目录下一般是成对存在
 

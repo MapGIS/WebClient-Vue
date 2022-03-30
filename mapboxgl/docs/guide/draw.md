@@ -2,54 +2,95 @@
 
 绘制视图的属性请看[API](/api/UI/Draw/draw.md).
 
-::: demo
+[comment]: <> (::: demo)
 
-```html
-<template>
-  <mapgis-web-map :crs="crs" class="mapgis-2d-map">
-    <mapgis-rastertile-layer
-      layerId="tdt"
-      url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752"
-    />
-    <mapgis-draw>
-      <div class="custom-draw">
-        自定义槽内容
-      </div>
-    </mapgis-draw>
-  </mapgis-web-map>
-</template>
+[comment]: <> (```html)
 
-<script>
-  export default {
-    components: {
-      "mapgis-web-map": window.Mapgis2d.MapgisWebMap,
-      "mapgis-rastertile-layer": window.Mapgis2d.MapgisRasterLayer,
-      "mapgis-draw": window.Mapgis2d.MapgisDraw
-    },
-    data: function() {
-      return {
-        crs: "EPSG:4326"
-      };
-    },
-    methods: {}
-  };
-</script>
-<style>
-  .mapgis-2d-map {
-    height: 300px;
-  }
-  .custom-draw {
-    position: absolute;
-    z-index: 3000;
-    top: 20px;
-    left: 20px;
-    padding: 12px;
-    border: 1px solid #000;
-  }
-</style>
-```
+[comment]: <> (<template>)
 
-:::
+[comment]: <> (  <mapgis-web-map :crs="crs" class="mapgis-2d-map">)
+
+[comment]: <> (    <mapgis-rastertile-layer)
+
+[comment]: <> (      layerId="tdt")
+
+[comment]: <> (      url="http://t0.tianditu.com/DataServer?T=vec_c&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752")
+
+[comment]: <> (    />)
+
+[comment]: <> (    <mapgis-draw>)
+
+[comment]: <> (      <div class="custom-draw">)
+
+[comment]: <> (        自定义槽内容)
+
+[comment]: <> (      </div>)
+
+[comment]: <> (    </mapgis-draw>)
+
+[comment]: <> (  </mapgis-web-map>)
+
+[comment]: <> (</template>)
+
+[comment]: <> (<script>)
+
+[comment]: <> (  export default {)
+
+[comment]: <> (    components: {)
+
+[comment]: <> (      "mapgis-web-map": window.Mapgis2d.MapgisWebMap,)
+
+[comment]: <> (      "mapgis-rastertile-layer": window.Mapgis2d.MapgisRasterLayer,)
+
+[comment]: <> (      "mapgis-draw": window.Mapgis2d.MapgisDraw)
+
+[comment]: <> (    },)
+
+[comment]: <> (    data: function&#40;&#41; {)
+
+[comment]: <> (      return {)
+
+[comment]: <> (        crs: "EPSG:4326")
+
+[comment]: <> (      };)
+
+[comment]: <> (    },)
+
+[comment]: <> (    methods: {})
+
+[comment]: <> (  };)
+
+[comment]: <> (</script>)
+
+[comment]: <> (<style>)
+
+[comment]: <> (  .mapgis-2d-map {)
+
+[comment]: <> (    height: 300px;)
+
+[comment]: <> (  })
+
+[comment]: <> (  .custom-draw {)
+
+[comment]: <> (    position: absolute;)
+
+[comment]: <> (    z-index: 3000;)
+
+[comment]: <> (    top: 20px;)
+
+[comment]: <> (    left: 20px;)
+
+[comment]: <> (    padding: 12px;)
+
+[comment]: <> (    border: 1px solid #000;)
+
+[comment]: <> (  })
+
+[comment]: <> (</style>)
+
+[comment]: <> (```)
+
+[comment]: <> (:::)
 
 ## 绘制视图
 
@@ -107,7 +148,7 @@ toggleQueryByPolygon(e) {
 ## 自定义控件
 
 ::: danger
-几乎可以肯定的是，官方的绘制控件往往和实际需求**不一致**，因此需要实现一个自己的样式的空间，实现自己的用户鼠标交互
+几乎可以肯定的是，官方的绘制控件往往和实际需求**不一致**，因此需要实现一个自己的样式的空间，实现自己的用户鼠标交互。
 :::
 
 ![自定义视图](./custom_draw.png)
@@ -118,7 +159,7 @@ toggleQueryByPolygon(e) {
 
 1. `<mapgis-draw>`组件监听 @added="handleAdded" 获取整个绘制组件的对象
 1. `<mapgis-draw>`组件监听 @drawCreate="handleCreate" 获取整个绘制图元的对象
-1. 自定义 UI 的 @click="toggleSimple" 触发绘制组建的方法
+1. 自定义 UI 的 @click="toggleSimple" 触发绘制组件的方法
    :::
 
 ```js
