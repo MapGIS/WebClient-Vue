@@ -31,13 +31,15 @@
       <mapgis-ui-button
         type="primary"
         style="float: right;margin-left: 10px;"
-        @click="clearModelFlatten(true)">
+        @click="clearModelFlatten(true)"
+      >
         还原
       </mapgis-ui-button>
       <mapgis-ui-button
         type="primary"
         style="float: right"
-        @click="startModelFlatten">
+        @click="startModelFlatten"
+      >
         开始绘制
       </mapgis-ui-button>
     </div>
@@ -45,7 +47,7 @@
 </template>
 
 <script>
-import BaseMixin from "./BaseLayer"
+import BaseMixin from "./BaseLayer";
 import GraphicLayerService from "../Layer/Graphic/GraphicLayerService";
 
 const Managger = "AnalysisModelFlattenManager";
@@ -83,19 +85,24 @@ export default {
       containerStyle: {
         paddingRight: 0
       },
-      classify: [{
-        key: "1",
-        value: "贴模型"
-      }, {
-        key: "0",
-        value: "贴地"
-      }, {
-        key: "2",
-        value: "贴模型和贴地"
-      }, {
-        key: "-1",
-        value: "都不贴"
-      }],
+      classify: [
+        {
+          key: "1",
+          value: "贴模型"
+        },
+        {
+          key: "0",
+          value: "贴地"
+        },
+        {
+          key: "2",
+          value: "贴模型和贴地"
+        },
+        {
+          key: "-1",
+          value: "都不贴"
+        }
+      ],
       mode: "2",
       isStartDrawing: false,
       flattenHeight: 0,
@@ -105,11 +112,11 @@ export default {
   },
   watch: {
     M3Ds: {
-      handler: function () {
+      handler: function() {
         this.dataSource = this.M3Ds;
       },
       deep: true
-    },
+    }
   },
   mounted() {
     this.$_newGraphicLayer({
@@ -120,6 +127,9 @@ export default {
   },
   destroyed() {
     this.clearModelFlatten();
+    if (!window.__graphicsLayer__) {
+      return;
+    }
     window.__graphicsLayer__.stopDrawing();
     window.__graphicsLayer__.destroy();
     window.__graphicsLayer__ = undefined;
@@ -168,12 +178,15 @@ export default {
       return this.$_getManager(Managger);
     },
     startModelFlatten() {
-      const {vueKey, vueIndex} = this;
+      const { vueKey, vueIndex } = this;
       this.isStartDrawing = true;
       let options = {
         type: "polygon",
         style: {
-          color: Cesium.Color.fromAlpha(Cesium.Color.fromCssColorString("#F04155"), 0.8),
+          color: Cesium.Color.fromAlpha(
+            Cesium.Color.fromCssColorString("#F04155"),
+            0.8
+          ),
           height: 0,
           isPlanePolygon: false,
           classificationType: this.$_getClassificationType(this.mode)
@@ -182,33 +195,41 @@ export default {
       //无法通过manager获取graphicLayer，否则贴地贴模型失效，暂时只能这样
       if (!window.hasOwnProperty("__graphicsLayer__")) {
         window.__graphicsLayer__ = new Cesium.GraphicsLayer(viewer, {
-          getGraphic: this.getDrawResult,
+          getGraphic: this.getDrawResult
         });
       }
       window.__graphicsLayer__.startDrawing(options);
       let m3d = vueCesium.G3DManager.findSource(this.vueKey, this.m3dVueIndex);
       if (m3d) {
         m3d = m3d.options.m3ds[0];
-        const {_arrayLength, _height, _isFlatten, _positionArray} = m3d;
-        window.vueCesium[Managger].addSource(vueKey, vueIndex, {}, {
-          m3d: m3d,
-          origin: {
-            _arrayLength,
-            _height,
-            _isFlatten,
-            _positionArray
+        const { _arrayLength, _height, _isFlatten, _positionArray } = m3d;
+        window.vueCesium[Managger].addSource(
+          vueKey,
+          vueIndex,
+          {},
+          {
+            m3d: m3d,
+            origin: {
+              _arrayLength,
+              _height,
+              _isFlatten,
+              _positionArray
+            }
           }
-        });
+        );
       }
     },
     clearModelFlatten(clearPosition) {
-      const {viewer} = this;
+      const { viewer } = this;
       let find = this.findSource();
       if (clearPosition) {
         window._result_ = undefined;
       }
       if (find && find.source) {
-        let m3d = vueCesium.G3DManager.findSource(this.vueKey, this.m3dVueIndex);
+        let m3d = vueCesium.G3DManager.findSource(
+          this.vueKey,
+          this.m3dVueIndex
+        );
         let origin = find.options.origin;
         m3d = m3d.options.m3ds[0];
         m3d._height = origin._height;
@@ -219,17 +240,22 @@ export default {
       }
     },
     getDrawResult(result) {
-      const {vueCesium} = this;
+      const { vueCesium } = this;
       let m3d = vueCesium.G3DManager.findSource(this.vueKey, this.m3dVueIndex);
       if (m3d) {
         m3d = m3d.options.m3ds[0];
       }
 
       //模型压平
-      if(result.positions[0] != result.positions[result.positions.length-1]) {
+      if (
+        result.positions[0] != result.positions[result.positions.length - 1]
+      ) {
         result.positions.push(result.positions[0]);
       }
-      m3d.modelFlatten(result.positions, this.flattenHeight + this.heightOffset);
+      m3d.modelFlatten(
+        result.positions,
+        this.flattenHeight + this.heightOffset
+      );
       window.__graphicsLayer__.removeAllGraphic();
       window.__graphicsLayer__.stopDrawing();
       window._result_ = result;
