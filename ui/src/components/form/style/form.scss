@@ -358,6 +358,22 @@ form {
 }
 
 //== Inline Form
+@include b(form-inline) {
+  @include b(form-item) {
+    display: inline-block;
+    margin-right: 24px;
+    margin-bottom: 0;
+  }
+}
+
+//== Vertical  Form
+@include b(form-vertical) {
+  @include b(form-item-label) {
+    line-height: 32px;
+    padding: 0px;
+  }
+}
+
 .#{form-prefix-cls}-inline {
   .#{form-prefix-cls}-item {
     display: inline-block;
