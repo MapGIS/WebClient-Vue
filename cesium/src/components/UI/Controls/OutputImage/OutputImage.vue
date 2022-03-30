@@ -117,7 +117,18 @@ export default {
     },
     download() {
       this.viewer.render();
-      const res = this.Cesium.ReImg.fromCanvas(viewer.canvas);
+      let { canvas } = viewer;
+      if (!canvas.clientHeight || !canvas.clientWidth) {
+        // 从viewer上拿到的canvas可能是空的
+        const cesiumWidgets = document.getElementsByClassName("cesium-widget");
+        for (let i = 0; i < cesiumWidgets.length; i++) {
+          canvas = cesiumWidgets[i].getElementsByTagName("canvas")[0];
+          if (canvas.clientHeight && canvas.clientWidth) {
+            break;
+          }
+        }
+      }
+      const res = this.Cesium.ReImg.fromCanvas(canvas);
       //res.downloadPng(this.imgName);
       const base64 = res.toBase64();
       this.downloadFileByBase64(base64, this.imgName);
