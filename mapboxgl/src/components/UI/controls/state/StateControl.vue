@@ -1,10 +1,7 @@
 <template>
   <div class="mapgis-state-bar">
     <!-- slot for popup -->
-    <slot
-      v-if="control"
-      v-bind:state="state"
-    />
+    <slot v-if="control" v-bind:state="state" />
   </div>
 </template>
 
@@ -58,19 +55,19 @@ export default {
   },
 
   computed: {
-    state: function () {
+    state: function() {
       return this.control.value;
     }
   },
 
-  data () {
+  data() {
     return {
       initial: true,
       control: undefined
     };
   },
 
-  created () {
+  created() {
     this.control = new StateControl(this.$props);
     this.$_addControl();
     let events = Object.keys(StateEvents);
@@ -91,7 +88,7 @@ class StateControl {
     };
   }
 
-  initDom (dom) {
+  initDom(dom) {
     dom.className = "mapboxgl-ctrl mapboxgl-state-bar";
     dom.style.display = "flex";
 
@@ -122,7 +119,7 @@ class StateControl {
     });
   }
 
-  bindEvent () {
+  bindEvent() {
     this._map.on("mousemove", this.handleMouseMove.bind(this));
     this._map.on("wheel", this.handleWheel.bind(this));
     /* if (this.option.lng || this.option.lat) {
@@ -133,7 +130,7 @@ class StateControl {
     } */
   }
 
-  unbindEvent () {
+  unbindEvent() {
     this._map.off("mousemove", this.handleMouseMove.bind(this));
     this._map.off("wheel", this.handleWheel.bind(this));
     /* if (this.option.lng || this.option.lat) {
@@ -144,7 +141,7 @@ class StateControl {
     } */
   }
 
-  handleMouseMove (e) {
+  handleMouseMove(e) {
     const { lngLat } = e;
     this.lng.textContent = /* "经度:" + */ lngLat.lng;
     this.lat.textContent = /* "纬度:" + */ lngLat.lat;
@@ -152,7 +149,7 @@ class StateControl {
     this.value.lat = lngLat.lat;
   }
 
-  handleWheel (e) {
+  handleWheel(e) {
     let { target } = e;
     if (!this._map) {
       return;
@@ -174,7 +171,7 @@ class StateControl {
     this.value.level = target.getZoom();
   }
 
-  onAdd (map) {
+  onAdd(map) {
     this._map = map;
     this._container = document.createElement("div");
     this._container.className = "mapboxgl-ctrl";
@@ -183,9 +180,11 @@ class StateControl {
     return this._container;
   }
 
-  onRemove () {
+  onRemove() {
     this.unbindEvent();
-    this._container.parentNode.removeChild(this._container);
+    if (this._container && this._container.parentNode) {
+      this._container.parentNode.removeChild(this._container);
+    }
     this._map = undefined;
   }
 }
