@@ -80,19 +80,22 @@ export default {
         fluid: true // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
       };
       const vm = this;
-      vm.player = videojs(
-        vm.$refs.videoPlayer,
-        options,
-        function onPlayerReady() {
-          vm.$emit("onPlayerReady", vm.player);
-        }
-      );
-      this.addVideo();
+      setTimeout(function() {
+        vm.player = videojs(
+          vm.$refs.videoPlayer,
+          options,
+          function onPlayerReady() {
+            vm.$emit("onPlayerReady", vm.player);
+          }
+        );
+        vm.addVideo();
+      }, 1500);
     },
     addVideo() {
       if (this.videoUrl.length > 0) {
         if (!this.player) {
           this.initPlayer();
+          return;
         }
         this.player.src({
           src: this.videoUrl,
