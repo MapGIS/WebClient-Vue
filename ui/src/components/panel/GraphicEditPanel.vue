@@ -344,7 +344,7 @@
               v-model="editPanelValues.scale"
           />
           <mapgis-ui-input-row-left
-              title="X轴旋转"
+              title="Z轴旋转"
               type="Number"
               v-model="editPanelValues.heading"
           />
@@ -354,7 +354,7 @@
               v-model="editPanelValues.pitch"
           />
           <mapgis-ui-input-row-left
-              title="Z轴旋转"
+              title="X轴旋转"
               type="Number"
               v-model="editPanelValues.roll"
           />

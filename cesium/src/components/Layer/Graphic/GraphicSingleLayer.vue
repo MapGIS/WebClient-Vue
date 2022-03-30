@@ -25,7 +25,6 @@
           @dblclick="$_dbclick"
           @clickTool="$_clickTool"
           @changeAttributes="$_changeAttributes"
-          @open="$_open"
           @editTitle="$_editTitle"
       />
     </div>
@@ -311,20 +310,6 @@ export default {
       }
       this.editTitle = flag;
     },
-    $_open(name) {
-      let graphicLayer = this.$_getGraphicLayer();
-      let graphicGroups = graphicLayer.getGraphicByName(name);
-      let groups = [];
-      for (let i = 0; i < graphicGroups.length; i++) {
-        groups.push({
-          name: graphicGroups[i].name + "_" + (i + 1),
-          attributes: clonedeep(graphicGroups[i].attributes),
-          type: graphicGroups[i].type,
-          id: graphicGroups[i].id
-        });
-      }
-      this.graphicGroups = groups;
-    },
     /**
      * 更多工具里面的按钮的点击事件
      * @param type String 点击事件类型
@@ -347,10 +332,22 @@ export default {
             //获取设置面板显示参数
             this.editPanelValues = {
               scale: row.style.scale,
-              heading: 0,//x轴
+              heading: 0,//z轴
               pitch: 0,//y轴
-              roll: 0,//z轴
+              roll: 0,//x轴
             };
+            let graphicLayer = this.$_getGraphicLayer();
+            let graphicGroups = graphicLayer.getGraphicByName(row.attributes.title);
+            let groups = [];
+            for (let i = 0; i < graphicGroups.length; i++) {
+              groups.push({
+                name: graphicGroups[i].name + "_" + (i + 1),
+                attributes: clonedeep(graphicGroups[i].attributes),
+                type: graphicGroups[i].type,
+                id: graphicGroups[i].id
+              });
+            }
+            this.graphicGroups = groups;
             this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
             this.$refs.editPanel.noTitleKey = "edit";
             this.$refs.editPanel.editType = "batch";
@@ -764,6 +761,7 @@ export default {
             },
             dataSource: []
           });
+          console.log("vm.dataSourceCopy",vm.dataSourceCopy)
         }
       });
       switch (type) {
@@ -780,8 +778,6 @@ export default {
           break;
         case "polygon":
           DrawTool.DrawModelsByArea({
-            intervalDistance: drawDistance,
-            modelRadius: modelRadius,
             style: {
               scale: scale || 1,
               url: model
@@ -919,15 +915,15 @@ export default {
         }
       }
       if (group) {
-        let graphicIDs = group.dataSource;
-        for (let i = 0; i < graphicIDs.length; i++) {
-          let graphic = this.$_getGraphicByID(graphicIDs[i]);
+        for (let j = 0; j < this.graphicGroups.length; j++) {
+          let graphic = this.$_getGraphicByID(this.graphicGroups[j].id);
           if (graphic) {
             Object.keys(editPanelValues).forEach(function (key) {
               if (key === "scale") {
-                graphic.style[key] = editPanelValues[key];
+                graphic[key] = editPanelValues[key];
               } else {
                 graphic[key] = Cesium.Math.toRadians(editPanelValues[key]);
+                graphic.setRotateMatrix();
               }
             });
           }
