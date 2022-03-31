@@ -1418,6 +1418,7 @@ export default {
             if (graphic) {
               vm.$_dbclick(vm.$_getJsonById(pickedFeature.id), true, true);
             }
+            vm.enablePopup = false;
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
