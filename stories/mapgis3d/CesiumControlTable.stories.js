@@ -9,7 +9,6 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
     <mapgis-web-scene style="height: 95vh">
-    <mapgis-3d-igs-m3d :url="url"> </mapgis-3d-igs-m3d>
     <mapgis-3d-table
         :dataSource="dataSource"
         :pagination="pagination"
@@ -28,7 +27,6 @@ const Template = (args, { argTypes }) => ({
   `,
   data(){
     return {
-      url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/ModelM3D`,
       dataSource: undefined,
       // dataSource: '',
       pagination:{
