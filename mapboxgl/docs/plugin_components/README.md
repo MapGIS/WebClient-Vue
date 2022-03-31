@@ -6,7 +6,7 @@
 ## 使用插件组件
 
 使用插件组件相当简单。只需要和正常的组件一样放到`<mapbox-map>`的内部并传递必要的属性就可以使用了。
-以地名编码为例[VueMapbox Geocoder](https://github.com/soal/vue-mapbox-geocoder).
+以地名编码为例[VueMapbox Geocoder](https://github.com/soal/vue-mapbox-geocoder)。
 
 ```vue
 <template>
@@ -46,7 +46,7 @@ export default {
 </script>
 ```
 
-如果中地&开源届封装的组件还是满足不了项目需求，那么下一章自己封装一个组件，相当简单[自定义封装组件](/plugin_components/plugin_components_development.md).
+如果中地&开源届封装的组件还是满足不了项目需求，那么下一章自己封装一个组件，相当简单[自定义封装组件](/plugin_components/plugin_components_development.md)。
 
 ## 目前开源组件
 

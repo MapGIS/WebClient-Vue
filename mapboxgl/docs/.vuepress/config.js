@@ -129,7 +129,7 @@ module.exports = {
             children: [
               ["/guide/install", "安装"],
               ["/guide/quickStart", "快速上手"],
-              ["/guide/introduction.md", "产品介绍"],
+              ["/guide/introduction.md", "模块说明"],
               ["/guide/basemap.md", "注意事项"],
               ["/guide/composition.md", "结构"],
               ["/guide/controls.md", "控制视图"],
