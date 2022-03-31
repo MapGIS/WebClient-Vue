@@ -8,7 +8,7 @@ export default {
     enablePopup: true,
     enableDynamicQuery: false,
     enableStratifiedHouse: true,
-    layers: []
+    layers: [],
   },
 };
 
@@ -18,9 +18,9 @@ const Template = (args, { argTypes }) => ({
   data() {
     return {
       g3d: {
-        url: "http://192.168.88.204:6163/igs/rest/g3d/大楼",
-        vueIndex: "test_g3d_layer1"
-      }
+        url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景图层-分层分户/SceneServer`,
+        vueIndex: "test_g3d_layer1",
+      },
     };
   },
   methods: {
