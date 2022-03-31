@@ -16,22 +16,12 @@ const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     data() {
         return {
-            m3dUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
-            autoReset:true,
-            // m3dUrl2:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
-            m3dUrl2:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
-            maximumScreenSpaceError:1,
-            vueIndex:22,
-            excaveteStyle:{
-                material:"#00FFFF",
-                edgeColor:"#FF8C00",
-                edgeWidth: 3
-            }
+
         }
     },
     template: `
     <mapgis-web-scene style="height: 95vh">
-        <mapgis-3d-m3d-layer :url="m3dUrl2"  :vue-index="vueIndex" :auto-reset="autoReset" :maximum-screen-space-error="maximumScreenSpaceError"></mapgis-3d-m3d-layer>
+        <mapgis-3d-m3d-layer :url="m3dUrl2" :vue-index="vueIndex" :auto-reset="autoReset" :maximum-screen-space-error="maximumScreenSpaceError"></mapgis-3d-m3d-layer>
         <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-excavate :vue-index="vueIndex" :excaveteStyle="excaveteStyle"></mapgis-3d-excavate>
         </mapgis-ui-card>
@@ -42,23 +32,17 @@ const Template = (args, { argTypes }) => ({
 
 export const Excavate = Template.bind({});
 Excavate.args = {
-    excaveteStyle: {
-        material:"#00FFFF",
+    // m3dUrl:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔_2_钻孔模型s`,
+    autoReset:true,
+    // m3dUrl2:"http://develop.smaryun.com:6163/igs/rest/g3d/ZondyModels",
+    m3dUrl2:`http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/钻孔分层点_Sur_000_Ent`,
+    maximumScreenSpaceError:1,
+    vueIndex:22,
+    excaveteStyle:{
+        material:"#ffffff",
         edgeColor:"#FF8C00",
         edgeWidth: 3
-    },
-    // cameraView:{
-    //     destination: {
-    //         x: -2171019.3805624694,
-    //         y: 5101732.101058686,
-    //         z: 3160645.5786078544
-    //     },
-    //     orientation: {
-    //         heading: 0.000026891780798621312,
-    //         pitch: -0.5030691347056888,
-    //         roll: 8.89975675377741e-8
-    //     },
-    // }
+    }
 }
 Excavate.parameters = {
     docs: {

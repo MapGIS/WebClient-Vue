@@ -46,6 +46,7 @@
 
 <script>
 import ServiceLayer from "../UI/Controls/ServiceLayer.js";
+import { makeColor } from "../Utils/util";
 
 export default {
   name: "mapgis-3d-excavate",
@@ -228,10 +229,8 @@ export default {
       let find = vm.$_getObject();
 
       //初始化开挖实例
-      let material = Cesium.Color.fromCssColorString(vm.materialCopy);
-      material = Cesium.Color.fromAlpha(material, 0.7);
-      let edgeColor = Cesium.Color.fromCssColorString(vm.edgeColorCopy);
-      edgeColor = Cesium.Color.fromAlpha(edgeColor, 0.7);
+      let material = makeColor(vm.materialCopy);
+      let edgeColor = makeColor(vm.edgeColorCopy);
 
       let dynaCut = this.createExcavateAnalysis({
         //图层信息
@@ -330,8 +329,13 @@ export default {
       const { vueCesium } = this;
       const planeEntityArray = [];
       const { radius } = tileset.boundingSphere;
-
+      // 先清空viewer.entities的实体
+      let getByIdBox = vm.viewer.entities.getById('onePlane');
+      if (getByIdBox){
+        vm.viewer.entities.remove(getByIdBox);
+      }
       const planeEntity = vm.viewer.entities.add({
+        id:"onePlane",
         position: planeCenter,
         plane: {
           dimensions: new Cesium.Cartesian2(radius * 2.5, radius * 2.5),
