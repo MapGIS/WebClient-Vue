@@ -21,7 +21,7 @@
 
 ## 一、开始
 
-### 1、司马云
+### 1、主页
 [MapGIS Client for JavaScript](http://develop.smaryun.com/)
 
 ### 2、特性
