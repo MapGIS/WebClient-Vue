@@ -250,7 +250,7 @@ export default {
         //开挖坐标
         longitude: vm.centerDegree.longitude,
         latitude: vm.centerDegree.latitude,
-        height: vm.centerDegree.height + vm.depth/2,
+        height: vm.centerDegree.height + vm.depth / 2,
       });
 
       this.$emit("load", vm);
@@ -271,6 +271,7 @@ export default {
      * @param {Number} [options.height] 开挖面定位点高度
      */
     createExcavateAnalysis(options) {
+      const vm = this;
       const { Cesium } = this;
       if (!Cesium.defined(options.tileset) || !Cesium.defined(options.planes)) {
         return undefined;
@@ -292,22 +293,7 @@ export default {
       );
       const { longitude } = options;
       const { latitude } = options;
-      const transformCenter = Cesium.Matrix4.getTranslation(
-          tileset.root.transform,
-          new Cesium.Cartesian3()
-      );
-      const transformCartographic = Cesium.Cartographic.fromCartesian(
-          transformCenter
-      );
-      const boundingSphereCartographic = Cesium.Cartographic.fromCartesian(
-          tileset.boundingSphere.center
-      );
-      let height =
-          boundingSphereCartographic.height -
-          transformCartographic.height;
-      console.log("height",height);
       const height2 = Cesium.defaultValue(options.height, 0.0);
-      console.log("height2",height2);
 
       const { transform } = tileset._root;
       const rotation = new Cesium.Matrix3();
@@ -318,8 +304,21 @@ export default {
       Cesium.Matrix4.getTranslation(transform, center);
       let modelMatrix = transform.clone();
       if (Cesium.defined(longitude) && Cesium.defined(latitude)) {
-        modelMatrix = this.getTransForm(transform, longitude, latitude, height2);
+        modelMatrix = this.getTransForm(
+          transform,
+          longitude,
+          latitude,
+          height2
+        );
       }
+
+      let planeCenter = Cesium.AlgorithmLib.getPointOntoPlane(
+        center,
+        new Cesium.Cartesian3(0.0, 0.0, -vm.planeRatio),
+        tileset.boundingSphere.center,
+        new Cesium.Cartesian3()
+      );
+
       tileset.clippingPlanes = new Cesium.ClippingPlaneCollection({
         modelMatrix,
         planes,
@@ -327,12 +326,13 @@ export default {
         edgeWidth,
         unionClippingRegions,
       });
-      const vm = this;
+
       const { vueCesium } = this;
       const planeEntityArray = [];
       const { radius } = tileset.boundingSphere;
+
       const planeEntity = vm.viewer.entities.add({
-        position: tileset.boundingSphere.center,
+        position: planeCenter,
         plane: {
           dimensions: new Cesium.Cartesian2(radius * 2.5, radius * 2.5),
           material,
