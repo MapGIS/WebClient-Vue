@@ -39,7 +39,7 @@ Excavate.args = {
     maximumScreenSpaceError:1,
     vueIndex:22,
     excaveteStyle:{
-        material:"rgb(200,200,200,0.5)",
+        material:"rgba(200,200,200,0.5)",
         edgeColor:"#FF8C00",
         edgeWidth: 3
     }

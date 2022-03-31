@@ -69,7 +69,7 @@ export default {
       type: Object,
       default() {
         return {
-          material: "#ffffff",
+          material: "rgba(200,200,200,0.5)",
           edgeColor: "#FF8C00",
           edgeWidth: 3,
         };
@@ -87,7 +87,7 @@ export default {
       mindepth: 0,
       boundingSphere: "",
       waitManagerName: "M3DIgsManager",
-      materialCopy: "#00FFFF",
+      materialCopy: "rgba(200,200,200,0.5)",
       edgeColorCopy: "#FF8C00",
       edgeWidthCopy: 3,
       //开挖面对象
