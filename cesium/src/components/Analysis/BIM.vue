@@ -190,11 +190,11 @@ export default {
           icon: "mapgis-highlight",
           active: this.enablePopup,
         },
-        {
+        /* {
           title: "重置图层",
           icon: "mapgis-redo",
           active: false,
-        },
+        }, */
         {
           title: "隐藏面板",
           icon: "mapgis-hide",
