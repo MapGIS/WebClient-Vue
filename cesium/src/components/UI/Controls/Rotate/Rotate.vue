@@ -274,6 +274,7 @@ export default {
      */
     getM3dCenter(value){
       let vm = this;
+      vm.getCenter = true;
       if (value){
           this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
           this.handlerAction.setInputAction(event => {
@@ -301,10 +302,6 @@ export default {
       const vm = this;
       let rotatePointTool = vm.findRotateTool();
       if (vm.value === 1) {
-          // 先移除鼠标监听
-          // if (this.handlerAction){
-          //   this.handlerAction.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-          // }
         rotatePointTool.positions = new Cesium.Cartesian3(0, 0, 0);
         rotatePointTool.start();
       } else {
@@ -315,26 +312,8 @@ export default {
           rotatePointTool.positions = new Cesium.Cartesian3.fromDegrees(position[0],position[1],0);
         }
         rotatePointTool.start();
-        // // 并开启鼠标监听
-        // vm.startEventHandler();
       }
     },
-    // startEventHandler() {
-    //   this.handlerAction = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
-    //   this.handlerAction.setInputAction(event => {
-    //     this.registerMouseMoveEvent(event);
-    //   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-    // },
-    // /**
-    //  * 鼠标移动事件：重新计算场景中心点
-    //  * @param event
-    //  */
-    // registerMouseMoveEvent(event){
-    //   const vm = this;
-    //   let rotatePointTool = vm.findRotateTool;
-    //   let position =  vm.getCenterPosition();
-    //   rotatePointTool.position = position;
-    // },
     stopRotate() {
       const vm = this;
       let rotatePointTool = vm.findRotateTool();
