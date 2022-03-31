@@ -226,7 +226,7 @@ module.exports = {
           //   ]
           // },
           {
-            title: "插件组件",
+            title: "自定义插件组件",
             collapsable: false,
             children: [
               ["/plugin_components/", "使用插件组件"],

@@ -1,4 +1,4 @@
-# 插件组件
+# 自定义插件组件
 
 本框架实现了mapboxgl.js的内核包装。
 其他的三方插件功能，类似[Mapbox Gl JS plugins](https://docs.mapbox.com/mapbox-gl-js/plugins/)没有被封装。但是这些三方的插件也可以被封装成Vue组件的形式。

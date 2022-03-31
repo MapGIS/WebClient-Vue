@@ -6,7 +6,7 @@
 [npm-img]: https://img.shields.io/badge/npm-10.5.0-brightgreen
 [npm-url]: https://www.npmjs.com/package/@mapgis/webclient
 
-<img alt="MapGIS" src="mapboxgl/docs/zh/images/framework/webclient-vue-mapboxgl.png">
+[comment]: <> (<img alt="MapGIS" src="mapboxgl/docs/images/framework/webclient-vue-mapboxgl.png">)
 
 ## 目录
 - [MapGIS WebClient for Vue](#mapgis-webclient-for-vue)
@@ -32,7 +32,7 @@
 ## 二、深入了解
 ### 1、代码结构
 ``` text
- |-- WebClient-JavaSript
+ |-- WebClient-Vue
     |-- cesium                    -- Cesium的代码结构
         |--src                    -- Cesium源代码
         |--docs                   -- Vuepress文档说明
@@ -43,7 +43,7 @@
 
 ### 2、编译
 
-如果您需修改源码，可自行编译打包生成OpenLayers、Leaflet、MapBoxGL、Cesium的地图引擎库、API文档。
+如果您需修改源码，可自行编译打包生成MapBoxGL、Cesium的地图引擎库、API文档。
 
 `以MapboxGL`为例，首先进入对应的目录下
 
@@ -82,9 +82,7 @@
     ```
 
     `得到对应的结果`
-
-    ``` sh
-    ```
+   
 3. 进入自己的项目工程
     ``` sh
     cd /path/to/MyProject
@@ -94,5 +92,3 @@
     npm link @mapgis/webclient-vue-mapboxgl
     ```
     `得到对应的结果`
-    ``` sh
-    ```
