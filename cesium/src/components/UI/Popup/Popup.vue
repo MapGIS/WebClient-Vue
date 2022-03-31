@@ -22,8 +22,7 @@ export default {
       latitude: 0, // 仅用于父级marker动态改变popup的data使用
       height: 0, // 仅用于父级marker动态改变popup的data使用,
       show: true,
-      isPositionChange: false,
-      isVisibleChange: false,
+      isPopupOptionsChange: false,
       slotInnerHTML: "",
     };
   },
@@ -32,20 +31,27 @@ export default {
     position: {
       deep: true,
       handler() {
-        this.isPositionChange = true;
+        this.isPopupOptionsChange = true;
         this.update();
       }
     },
     visible: {
       deep: true,
       handler() {
-        this.isVisibleChange = true;
+        this.isPopupOptionsChange = true;
         this.update();
       }
     },
     show: {
       deep: true,
       handler() {
+        this.update();
+      }
+    },
+    options: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
         this.update();
       }
     }
@@ -82,7 +88,7 @@ export default {
           container =
             this.$slots.default[0].elm || this.$slots.default[0].elm.innerHTML;
           this.slotInnerHTML = container;
-        }  else if (this.isPositionChange || this.isVisibleChange) {
+        }  else if (this.isPopupOptionsChange) {
           container = this.slotInnerHTML;
         }  else if (this.$slots.default[0].context.$children[0].$el) {
           container = this.$slots.default[0].context.$children[0].$el.innerHTML;
