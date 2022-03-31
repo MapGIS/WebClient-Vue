@@ -43,9 +43,9 @@ export default {
         if (
           !this.imgName ||
           this.imgName === "" ||
-          this.outputTypes.includes(this.imgName)
+          this.outputTypes.includes(this.imgName.split("-")[0])
         ) {
-          this.imgName = this.outputType;
+          this.imgName = `${this.outputType}-${new Date().toLocaleString()}`;
         }
       },
       deep: true,
