@@ -9,7 +9,7 @@ export default {
       latitude: 30,
       height: 0,
     },
-    showed: true,
+    visible: true,
   },
 };
 
@@ -31,5 +31,5 @@ export const 自定义槽 = Template.bind({});
     latitude: 30,
     height: 0,
   },
-  showed: true,
+  visible: true,
 };
