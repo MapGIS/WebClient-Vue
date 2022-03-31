@@ -778,6 +778,7 @@ export default {
     },
     $_unbindPickFeature() {
       const { vueKey, innerVueIndex } = this;
+      const vm = this;
       this.featurevisible = false;
       this.restoreHighlight();
       this.restoreM3d();
