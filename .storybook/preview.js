@@ -34,11 +34,11 @@ window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 
 // window.VueCesiumLibPath = "http://localhost:8895/cesium/Cesium.js";
 // window.VueCesiumPluginPath =
-//   "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
+//  "http://192.168.82.89:8086/static/libs/cdn/zondyclient/webclient-cesium-plugin.js";
 
-  window.VueCesiumLibPath =
+window.VueCesiumLibPath =
   "http://192.168.81.177:8059/static/libs/cdn/cesium/Cesium.js";
-  
+
 window.VueCesiumPluginPath =
   "http://192.168.81.177:8059/static/libs/cdn/cesium/webclient-cesium-plugin.min.js";
 
@@ -50,5 +50,5 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  viewMode: "canvas", // docs
+  viewMode: "canvas", // docs canvas
 };
