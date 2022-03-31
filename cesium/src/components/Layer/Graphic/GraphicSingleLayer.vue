@@ -166,7 +166,7 @@ export default {
   watch: {
     dataSource: {
       handler: function () {
-        if (!this.isEdit && !this.addSource && !this.editTitle) {
+        if (!this.isEdit && !this.addSource && !this.editTitle && this.dataSource.length > 0) {
           this.$_init();
         }
       },

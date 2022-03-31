@@ -302,6 +302,7 @@ export default {
           this.currentLayer = [];
           this.currenSelectLayer = data.name;
           this.$_layerSelect();
+          this.vueIndex = Number(data.uuid);
           //创建一个新的标绘图层
           this.$nextTick(function() {
             this.$refs.graphicLayer.drawMode = "";
