@@ -34,6 +34,7 @@ yarn add @mapgis/webclient-vue-cesium
 
 ```js
 import "@mapgis/webclient-vue-ui/dist-libs/webclient-vue-ui.css";
+import "@mapgis/webclient-vue-cesium/dist-libs/webclient-vue-cesium.css";
 
 import MapgisUi from "@mapgis/webclient-vue-ui";
 import Mapgis3d from "@mapgis/webclient-vue-cesium";
@@ -50,16 +51,16 @@ Vue.use(Mapgis3d);
 >
 > ![代码结构](./docs/guide/cesium_dist.png)
 
-将上述 cesium 文件夹统一拷贝到你的 vue 工程对应的 public 文件夹下的某个目录中，记录对应的路径为
+请将上述 cesium 目录拷贝到你的 vue 工程的 public 静态资源文件夹中，记录以下两个文件的路径：
 
 ```sh
-# quasar 的静态资源目录为src/static
-# 常见的静态资源目录为 public
 # 主Cesium主体路径
-$path/cesium/dist/Cesium.js # public/cesium/dist/Cesium.js
+public/cesium/dist/Cesium.js
 # Cesium拓展插件路径
-$path/cesium/dist/webclient-cesium-plugin.min.js # public/cesium/dist/webclient-cesium-plugin.min.js
+public/cesium/dist/webclient-cesium-plugin.min.js
 ```
+
+通过在浏览器中 访问 `http://localhost:xxxx/cesium/dist/Cesium.js` 成功即可。
 
 WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 
@@ -67,27 +68,15 @@ WebClient-Vue-Cesium 组件使用以上两个文件的方式如下所示:
 <template>
   <mapgis-web-scene
     ref="webgloberef"
-    libPath="$path/cesium/dist/Cesium.js"
-    pluginPath="$path/cesium/dist/webclient-cesium-plugin.min.js"
+    libPath="cesium/dist/Cesium.js"
+    pluginPath="cesium/dist/webclient-cesium-plugin.min.js"
   >
     <mapgis-3d-igs-tile-layer />
   </mapgis-web-scene>
 </template>
 ```
 
-如果在浏览器中，访问 `http://localhost:xxxx/$path/cesium/dist/Cesium.js` 成功则说明整个 Cesium 的环境准备已经完毕。
-
-[comment]: <> (::: tip 为什么要使用@mapgis/cesium)
-
-[comment]: <> (由于 cesium 本身`涉及大量的纹理材质以及多线程Worker`， 公司内部修改版实现`M3D格式`， M3D`不是`3dtile，是中地数码自己独特的格式，与开源的 3dtile 不是一种格式。很多高级分析功能`只能作用于M3D`,而不支持 3d tile.)
-
-[comment]: <> (:::)
-
-[comment]: <> (::: tip 为什么要拷贝@mapgis/cesium)
-
-[comment]: <> (由于原生的 Cesium 在支持 Webpack 编译的时候也是采取的 copy 插件来执行对应的文件夹拷贝操作。 因此为了统一处理，这里`统一不采取`手动修改 webpack.config 的方式，而是将 cesium 的所有文件放在 public 或者 asset 的某个目录下，自己`手动实现`静态资料的拷贝)
-
-[comment]: <> (:::)
+这里在 mapgis-web-scene 组件初始化的时候就需要传入`libPath`以及`pluginPath` 如果不传入则从司马云上自动下载对应的网络地址，没有互联网则无法下载。
 
 ---
 
