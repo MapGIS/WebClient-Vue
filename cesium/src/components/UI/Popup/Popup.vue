@@ -21,7 +21,9 @@ export default {
       longitude: 0, // 仅用于父级marker动态改变popup的data使用
       latitude: 0, // 仅用于父级marker动态改变popup的data使用
       height: 0, // 仅用于父级marker动态改变popup的data使用,
-      show: true
+      show: true,
+      isPopupOptionsChange: false,
+      slotInnerHTML: "",
     };
   },
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -29,18 +31,27 @@ export default {
     position: {
       deep: true,
       handler() {
+        this.isPopupOptionsChange = true;
         this.update();
       }
     },
     visible: {
       deep: true,
       handler() {
+        this.isPopupOptionsChange = true;
         this.update();
       }
     },
     show: {
       deep: true,
       handler() {
+        this.update();
+      }
+    },
+    options: {
+      deep: true,
+      handler() {
+        this.isPopupOptionsChange = true;
         this.update();
       }
     }
@@ -76,7 +87,10 @@ export default {
         if (this.$slots.default[0].elm) {
           container =
             this.$slots.default[0].elm || this.$slots.default[0].elm.innerHTML;
-        } else if (this.$slots.default[0].context.$children[0].$el) {
+          this.slotInnerHTML = container;
+        }  else if (this.isPopupOptionsChange) {
+          container = this.slotInnerHTML;
+        }  else if (this.$slots.default[0].context.$children[0].$el) {
           container = this.$slots.default[0].context.$children[0].$el.innerHTML;
         }
       }
