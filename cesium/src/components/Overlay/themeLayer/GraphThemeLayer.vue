@@ -61,14 +61,14 @@ export default {
     }
   },
   watch: {
-    // geojson: {
-    //   deep: true,
-    //   handler() {
-    //     if (this.geojson) {
-    //       this.addGraphLayer();
-    //     }
-    //   }
-    // },
+    geojson: {
+      deep: true,
+      handler() {
+        if (this.geojson) {
+          this.addGraphLayer();
+        }
+      }
+    }
     // type: {
     //   deep: true,
     //   handler() {
