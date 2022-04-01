@@ -2,37 +2,36 @@
   <div class="mapgis-3d-graphic-container" :style="containerStyle">
     <div>
       <mapgis-ui-graphic-icons-panel
-        ref="iconsPanel"
-        :models="models"
-        :containerStyle="iconsPanelStyle"
-        :enableOneMap="enableOneMap"
-        :enableMapStory="enableMapStory"
-        @startDraw="$_startDraw"
-        @startDrawModel="$_startDrawModel"
+          ref="iconsPanel"
+          :models="models"
+          :containerStyle="iconsPanelStyle"
+          :enableOneMap="enableOneMap"
+          :enableMapStory="enableMapStory"
+          @startDraw="$_startDraw"
+          @startDrawModel="$_startDrawModel"
       />
     </div>
     <div>
       <mapgis-ui-graphic-edit-panel
-        ref="editPanel"
-        :editPanelValues="editPanelValues"
-        :editList="editList"
-        :dataSourceCopy="dataSourceCopy"
-        :currentEditType="currentEditType"
-        :graphicGroups="graphicGroups"
-        @change="$_changeEditPanelValues"
-        @changeGroup="$_changeGroup"
-        @stopDrawing="$_stopDraw"
-        @dblclick="$_dbclick"
-        @clickTool="$_clickTool"
-        @changeAttributes="$_changeAttributes"
-        @open="$_open"
-        @editTitle="$_editTitle"
+          ref="editPanel"
+          :editPanelValues="editPanelValues"
+          :editList="editList"
+          :dataSource="dataSourceCopy"
+          :currentEditType="currentEditType"
+          :graphicGroups="graphicGroups"
+          @change="$_changeEditPanelValues"
+          @changeGroup="$_changeGroup"
+          @stopDrawing="$_stopDraw"
+          @dblclick="$_dbclick"
+          @clickTool="$_clickTool"
+          @changeAttributes="$_changeAttributes"
+          @editTitle="$_editTitle"
       />
     </div>
     <mapgis-3d-popup
-      v-if="enablePopup"
-      :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
-      :forceRender="true"
+        v-if="enablePopup"
+        :position='{"longitude":popup.lng,"latitude":popup.lat,"height":popup.alt}'
+        :forceRender="true"
     >
       <div>
         <slot name="content" :popup="popup">
@@ -159,13 +158,15 @@ export default {
       clickInterval: 200,
       //弹出popup的定时器
       firstClickFlag: undefined,
-      currentGroupId: undefined
+      currentGroupId: undefined,
+      isUpdateByEditValues: true,
+      groupName: undefined
     };
   },
   watch: {
     dataSource: {
       handler: function () {
-        if (!this.isEdit && !this.addSource && !this.editTitle) {
+        if (!this.isEdit && !this.addSource && !this.editTitle && this.dataSource.length > 0) {
           this.$_init();
         }
       },
@@ -237,8 +238,10 @@ export default {
      * */
     $_showAllGraphics() {
       let graphics = this.$_getAllGraphic();
-      for (let i = 0; i < graphics.length; i++) {
-        graphics[i].show = true;
+      if (graphics) {
+        for (let i = 0; i < graphics.length; i++) {
+          graphics[i].show = true;
+        }
       }
     },
     /**
@@ -246,8 +249,10 @@ export default {
      * */
     $_hideAllGraphics() {
       let graphics = this.$_getAllGraphic();
-      for (let i = 0; i < graphics.length; i++) {
-        graphics[i].show = false;
+      if (graphics) {
+        for (let i = 0; i < graphics.length; i++) {
+          graphics[i].show = false;
+        }
       }
     },
     $_update() {
@@ -293,9 +298,9 @@ export default {
           graphic.attributes[key] = attributes[key];
         });
         this.enablePopup = false;
-        // this.$nextTick(function () {
-        //   this.$_setPopUp(graphic, true);
-        // });
+        this.$nextTick(function () {
+          this.$_setPopUp(graphic, true);
+        });
       }
     },
     $_editTitle(flag, title, id) {
@@ -304,20 +309,6 @@ export default {
         graphic.attributes.title = title;
       }
       this.editTitle = flag;
-    },
-    $_open(name) {
-      let graphicLayer = this.$_getGraphicLayer();
-      let graphicGroups = graphicLayer.getGraphicByName(name);
-      let groups = [];
-      for (let i = 0; i < graphicGroups.length; i++) {
-        groups.push({
-          name: graphicGroups[i].name + "_" + (i + 1),
-          attributes: clonedeep(graphicGroups[i].attributes),
-          type: graphicGroups[i].type,
-          id: graphicGroups[i].id
-        });
-      }
-      this.graphicGroups = groups;
     },
     /**
      * 更多工具里面的按钮的点击事件
@@ -341,14 +332,32 @@ export default {
             //获取设置面板显示参数
             this.editPanelValues = {
               scale: row.style.scale,
-              heading: 0,//x轴
+              heading: 0,//z轴
               pitch: 0,//y轴
-              roll: 0,//z轴
+              roll: 0,//x轴
             };
+            let graphicLayer = this.$_getGraphicLayer();
+            let graphicGroups = graphicLayer.getGraphicByName(row.attributes.title);
+            let groups = [];
+            for (let i = 0; i < graphicGroups.length; i++) {
+              groups.push({
+                name: graphicGroups[i].name + "_" + (i + 1),
+                attributes: clonedeep(graphicGroups[i].attributes),
+                type: graphicGroups[i].type,
+                id: graphicGroups[i].id
+              });
+            }
+            this.graphicGroups = groups;
             this.$refs.editPanel.$_setEditPanelValues(this.editPanelValues);
+            this.$refs.editPanel.noTitleKey = "edit";
+            this.$refs.editPanel.editType = "batch";
           } else {
             this.$_dbclick(row);
           }
+          break;
+        case "editPopup":
+          this.$refs.editPanel.noTitleKey = "edit";
+          this.$refs.editPanel.editType = "popup";
           break;
         case "delete":
           let index;
@@ -363,18 +372,16 @@ export default {
           this.dataSourceCopy.splice(index, 1);
           if (row.type === "group") {
             let graphicLayer = this.$_getGraphicLayer();
-            let groups = graphicLayer.getGraphicByName(row.attributes.title);
-            for (let i = 0; i < groups.length; i++) {
-              this.$_removeGraphicByID(groups[i].id);
-            }
+           graphicLayer.removeGraphicByGroupName(row.attributes.title);
+          }else {
+            this.$nextTick(function () {
+              let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+              graphicsLayer.removeGraphicByID(row.id);
+              this.$refs.editPanel.isUpdatePanel = true;
+              this.addSource = false;
+            });
           }
-          this.$emit("delete", index);
-          this.$nextTick(function () {
-            let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
-            graphicsLayer.removeGraphicByID(row.id);
-            this.$refs.editPanel.isUpdatePanel = true;
-            this.addSource = false;
-          });
+          this.$emit("delete", row.id);
           break;
       }
     },
@@ -684,6 +691,10 @@ export default {
           break;
       }
 
+      if (attributes) {
+        editPanelValues.attributes = JSON.parse(JSON.stringify(attributes));
+      }
+
       return editPanelValues;
     },
     $_startDrawModel(type, model, drawMode, drawDistance, modelRadius, scale) {
@@ -696,7 +707,7 @@ export default {
       this.isStartDrawing = true;
       this.drawDistance = drawDistance;
       this.modelUrl = model;
-      if(!model) {
+      if (!model) {
         return;
       }
       switch (drawMode) {
@@ -725,52 +736,53 @@ export default {
       }
     },
     $_DrawGroup(type, model, scale, drawDistance, modelRadius) {
-      let str = model.split("/");
+      let str = model.split("/"), vm = this;
       let name = str[str.length - 1];
       this.drawMode = "group";
       name = name.split(".")[0];
       this.groupNum++;
-      let groupName = name + "模型组" + this.groupNum;
+      this.groupName = name + "模型组" + this.groupNum;
       let graphicsLayer, DrawTool;
       graphicsLayer = this.$_getGraphicLayer();
-      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer);
+      DrawTool = new this.Cesium.DrawTool(this.viewer, graphicsLayer, {
+        finishDraw: function () {
+          let groupId = Number((Math.random() * 100000000).toFixed(0));
+          vm.currentGroupId = groupId;
+          vm.dataSourceCopy.push({
+            type: "group",
+            id: groupId,
+            attributes: {
+              title: vm.groupName
+            },
+            style: {
+              scale: scale || 1
+            },
+            dataSource: []
+          });
+          console.log("vm.dataSourceCopy",vm.dataSourceCopy)
+        }
+      });
       switch (type) {
         case "polyline":
           DrawTool.DrawModelsByLine({
             intervalDistance: drawDistance,
-            modelRadius: modelRadius,
+            groupName: vm.groupName,
             style: {
               scale: scale || 1,
               url: model
             },
-            name: groupName
           });
           break;
         case "polygon":
           DrawTool.DrawModelsByArea({
-            intervalDistance: drawDistance,
-            modelRadius: modelRadius,
             style: {
               scale: scale || 1,
               url: model
             },
-            name: groupName
+            groupName: vm.groupName,
           });
           break;
       }
-      let groupId = Number((Math.random() * 100000000).toFixed(0));
-      this.currentGroupId = groupId;
-      this.dataSourceCopy.push({
-        type: "group",
-        id: groupId,
-        attributes: {
-          title: groupName
-        },
-        style: {
-          scale: scale || 1
-        },
-        dataSource: []
-      });
     },
     //开始绘制
     $_startDraw(type, chooseMode) {
@@ -782,9 +794,7 @@ export default {
       this.$_stopDrawing();
       //如果选择鼠标，开启编辑模式，否则开始绘制
       if (type === "mouse") {
-        if (this.noTitleKey !== "edit") {
-          this.$_startEdit();
-        }
+        this.$_startEdit();
         //结束绘制
         this.isStartDrawing = false;
       } else {
@@ -815,6 +825,7 @@ export default {
           ...drawOptions
         });
       }
+      this.enablePopup = false;
     },
     $_stopDraw() {
       this.$refs.iconsPanel.currentIconType = "mouse";
@@ -827,6 +838,9 @@ export default {
       this.$_stopEdit();
     },
     $_changeEditPanelValues(editPanelValues, isEdit) {
+      if (!this.isUpdateByEditValues) {
+        return;
+      }
       this.editPanelValues = editPanelValues;
       if (isEdit) {
         //在绘制中，更改参数时先停止绘制，应用参数，在开始绘制
@@ -898,13 +912,12 @@ export default {
         }
       }
       if (group) {
-        let graphicIDs = group.dataSource;
-        for (let i = 0; i < graphicIDs.length; i++) {
-          let graphic = this.$_getGraphicByID(graphicIDs[i]);
+        for (let j = 0; j < this.graphicGroups.length; j++) {
+          let graphic = this.$_getGraphicByID(this.graphicGroups[j].id);
           if (graphic) {
             Object.keys(editPanelValues).forEach(function (key) {
               if (key === "scale") {
-                graphic.style[key] = editPanelValues[key];
+                graphic.scale = editPanelValues[key];
               } else {
                 graphic[key] = Cesium.Math.toRadians(editPanelValues[key]);
               }
@@ -913,34 +926,24 @@ export default {
         }
       }
     },
-    test() {
-      let graphicLayer = this.$_getGraphicLayer();
-      let SelectTool = new Cesium.SelectTool(graphicLayer);
-      SelectTool.selectByRectangle({
-        type: 'polygon',
-        style: {
-          color: Cesium.Color.BLUE.withAlpha(0.2),
-          height: 0
-        },
-        isContinued: false,
-        getSelectedGraphic: function (graphics) {
-          // console.log("-----------", graphics)
-        }
-      });
-    },
     //双击一条标注列表里的要素，进入到设置面板
-    $_dbclick(json) {
+    $_dbclick(json, noFly, noStartEdit) {
       //显示设置面板
       this.noTitleKey = "edit";
       this.$refs.iconsPanel.$_resetIconsPanel();
+      this.$refs.editPanel.noTitleKey = "edit";
+      this.$refs.editPanel.editType = "edit";
+      this.$refs.editPanel.isEdit = true;
       //停止绘制
       this.$_stopDrawing();
       this.isStartDrawing = false;
       //开始编辑
-      this.$nextTick(function () {
-        this.isEdit = true;
-        this.$_startEdit();
-      });
+      if (!noStartEdit) {
+        this.$nextTick(function () {
+          this.isEdit = true;
+          this.$_startEdit();
+        });
+      }
       if (!json.hasOwnProperty("style")) {
         json = this.$_getJsonById(json.id);
       }
@@ -973,6 +976,7 @@ export default {
       //定义视角高度
       const {style} = graphic;
       const {offsetHeight, extrudedHeight, radiusX, width, radius} = style;
+      this.destinationHeight = 0;
       //如果有offsetHeight，则加上这个高度
       if (offsetHeight) {
         this.destinationHeight += Number(offsetHeight);
@@ -998,6 +1002,9 @@ export default {
         this.destinationHeight += Number(graphic.boundingSphere.radius * 4);
       } else {
         this.lastGraphicColor = graphic.style.color;
+      }
+      if (this.destinationHeight <= 0) {
+        this.destinationHeight = 10000;
       }
       let positions = [[]], center, destination, polygonG, position, lla;
       switch (json.type) {
@@ -1068,14 +1075,14 @@ export default {
           break;
       }
       let camera = viewer.camera;
-      if (this.autoFlyToGraphic) {
+      if (this.autoFlyToGraphic && !noFly) {
         this.viewer.camera.flyTo({
           duration: 1,
           destination: destination,
           orientation: {
-            heading: camera.heading,
-            pitch: camera.pitch,
-            roll: camera.roll
+            heading: 6.283185307179586,
+            pitch: -1.5707963267948966,
+            roll: 0
           }
         });
       }
@@ -1114,6 +1121,10 @@ export default {
         case "cylinder":
         case "circle":
         case "ellipsoid":
+        case "label":
+        case "point":
+        case "text":
+        case "billboard":
           //计算中心点
           position = json.centerPosition;
           lla = this.$_cartesian3ToLongLat(new Cesium.Cartesian3(position.x, position.y, position.z));
@@ -1185,18 +1196,28 @@ export default {
         } else {
           e.attributes.title = e.attributes.title || vm.$_getTitle(type);
           data.attributes.title = e.attributes.title;
-          vm.dataSourceCopy.push(data);
-          if (vm.dataSourceCopy.length === 1) {
-            vm.$emit("saveCamera");
+          let hasData = false, index = 0;
+          for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+            if (vm.dataSourceCopy[i].id === data.id) {
+              hasData = true;
+              index = i;
+              break;
+            }
           }
-          let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
-          vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
-          //数据添加完毕
-          vm.$nextTick(function () {
-            vm.addSource = false;
-          });
-          vm.$emit("change", vm.dataSourceCopy);
-          vm.$emit("addFeature", vm.$_getJsonById(e.id));
+          if (!hasData) {
+            vm.dataSourceCopy.push(data);
+            if (vm.dataSourceCopy.length === 1) {
+              vm.$emit("saveCamera");
+            }
+            let editPanelValues = vm.$_getEditPanelValuesFromJSON(data);
+            vm.$refs.editPanel.$_setEditPanelValues(editPanelValues);
+            //数据添加完毕
+            vm.$nextTick(function () {
+              vm.addSource = false;
+            });
+            vm.$emit("change", vm.dataSourceCopy);
+            vm.$emit("addFeature", vm.$_getJsonById(e.id));
+          }
         }
       } else if (vm.drawMode === "addGraphic") {
         vm.drawMode = "point"
@@ -1256,6 +1277,7 @@ export default {
             break;
           }
         }
+        vm.$refs.editPanel.noTitleKey = "list";
       } else {
         //通过fromJSON方式导入
         let hasData = false;
@@ -1295,8 +1317,18 @@ export default {
           vueKey: vueKey,
           finishEdit: function (e) {
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
-              if (vm.dataSourceCopy[i].id === e.id && e.style.extrudedHeight) {
-                vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
+              if (vm.dataSourceCopy[i].id === e.id) {
+                vm.isUpdateByEditValues = false;
+                if (e.style.extrudedHeight) {
+                  vm.dataSourceCopy[i].style.extrudedHeight = e.style.extrudedHeight;
+                  vm.dataSourceCopy[i].style.color = [e.style._lastChangeColor.red, e.style._lastChangeColor.green, e.style._lastChangeColor.blue, e.style._lastChangeColor.alpha];
+                }
+                if (e.style.radius) {
+                  vm.dataSourceCopy[i].style.radius = e.style.radius;
+                }
+                vm.$nextTick(function () {
+                  vm.isUpdateByEditValues = true;
+                });
                 break;
               }
             }
@@ -1304,6 +1336,20 @@ export default {
           getGraphic: this.$_getGraphic,
           revokeModel: function (e) {
             //撤销模型的同时，删除标绘列表
+            let index = undefined;
+            for (let i = 0; i < vm.dataSourceCopy.length; i++) {
+              if (vm.dataSourceCopy[i].id === e.id) {
+                index = i;
+                break;
+              }
+            }
+            if (index !== undefined) {
+              vm.$refs.editPanel.isUpdatePanel = false;
+              vm.dataSourceCopy.splice(index, 1);
+            }
+          },
+          revokePoint: function (e) {
+            //撤销点、广告牌、文字的同时，删除标绘列表
             let index = undefined;
             for (let i = 0; i < vm.dataSourceCopy.length; i++) {
               if (vm.dataSourceCopy[i].id === e.id) {
@@ -1343,7 +1389,6 @@ export default {
         let pickedFeature = vm.viewer.scene.pick(movement.position);
         let worldPosition = vm.viewer.scene.pickPosition(movement.position);
         if (Cesium.defined(pickedFeature) && !vm.isStartDrawing) {
-          console.log("new date().getTime()", new Date().getTime())
           vm.clickTime++;
           //如果clickTime等于2，则表明在clickInterval毫秒内，点击了第二次，因此为双击事件，不弹框
           if (vm.clickTime === 2) {
@@ -1367,8 +1412,9 @@ export default {
           if (pickedFeature.hasOwnProperty("id")) {
             let graphic = vm.$_getGraphicByID(pickedFeature.id);
             if (graphic) {
-              vm.$refs.editPanel.$_dbclick(undefined, vm.$_getJsonById(pickedFeature.id), true);
+              vm.$_dbclick(vm.$_getJsonById(pickedFeature.id), true, true);
             }
+            vm.enablePopup = false;
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
@@ -1380,7 +1426,8 @@ export default {
       if (isGraphic) {
         attributes = graphic.attributes;
       } else {
-        attributes = graphic.primitive.attributes;
+        let g = this.$_getGraphicByID(graphic.primitive.id)
+        attributes = g.attributes || undefined;
       }
       //使用点击时的坐标
       if (worldPosition) {
@@ -1395,7 +1442,7 @@ export default {
         if (isGraphic) {
           center = this.$_getCenter(graphic);
         } else {
-          center = this.$_getCenter(graphic.primitive);
+          center = this.$_getCenter(this.$_getGraphicByID(graphic.primitive.id));
         }
         if (!center) {
           return;
@@ -1409,21 +1456,23 @@ export default {
           properties: {}
         };
       }
-      Object.keys(attributes).forEach(function (key) {
-        vm.popup.properties[key] = attributes[key];
-      })
-      let properties = JSON.parse(JSON.stringify(this.popup.properties));
-      delete properties.title;
-      this.popup.container = getPopupHtml("underline",
-        {properties: properties},
-        {
-          fields: Object.keys(properties),
-          title: this.popup.properties.title,
-          style: {
-            containerStyle: {width: "360px"}
-          }
-        });
-      this.enablePopup = true;
+      if (attributes) {
+        Object.keys(attributes).forEach(function (key) {
+          vm.popup.properties[key] = attributes[key];
+        })
+        let properties = JSON.parse(JSON.stringify(this.popup.properties));
+        delete properties.title;
+        this.popup.container = getPopupHtml("underline",
+            {properties: properties},
+            {
+              fields: Object.keys(properties),
+              title: this.popup.properties.title,
+              style: {
+                containerStyle: {width: "360px"}
+              }
+            });
+        this.enablePopup = true;
+      }
     },
     onTabChange(key, type) {
       this[type] = key;

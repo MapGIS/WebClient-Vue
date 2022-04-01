@@ -135,7 +135,7 @@ export default {
       //绘制模式，点、线、多边形等
       drawMode: "point",
       //绘制间隔（距离）
-      drawDistance: 500,
+      drawDistance: 100,
       modelRadius: 1000,
       chooseMode: "point",
       drawModes: [
