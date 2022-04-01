@@ -109,7 +109,7 @@
 import PathItem from "./PathRoaming/PathItem.vue";
 import PathRoaming from "./PathRoaming/PathRoaming.vue";
 import VueOptions from "../Base/Vue/VueOptions";
-import { Empty } from "ant-design-vue";
+// import { Empty } from "ant-design-vue";
 export default {
   name: "mapgis-3d-scene-roaming",
   inject: ["Cesium", "vueCesium", "viewer"],
@@ -227,7 +227,7 @@ export default {
       pathsCopy: [],
       linePoints: [],
       polyline: undefined,
-      emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
+      // emptyImage: Empty.PRESENTED_IMAGE_SIMPLE,
       emptyDescription: "暂无数据"
     };
   },

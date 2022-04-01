@@ -1,6 +1,6 @@
 {
   "name": "@mapgis/webclient-vue-mapboxgl",
-  "version": "10.5.14",
+  "version": "10.5.16",
   "description": "中地数码webclient-vue-mapboxgl",
   "main": "dist-libs/webclient-vue-mapboxgl.umd.min.js",
   "module1": "src/main.js",
