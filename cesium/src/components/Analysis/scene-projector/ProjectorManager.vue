@@ -137,6 +137,7 @@
               :modelUrl="modelUrl"
               :modelOffset="modelOffset"
               :hideVPInvisible="hideVPInvisible"
+              :disabled="disabledImageUrlInput"
               @update-settings="_updateSettings"
               @cancel="_cancelSetting"
             >
@@ -225,6 +226,10 @@ export default {
     hintLineVisible: {
       type: Boolean,
       default: true
+    },
+    disabledImageUrlInput: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

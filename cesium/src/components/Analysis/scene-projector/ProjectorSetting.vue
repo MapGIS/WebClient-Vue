@@ -76,7 +76,12 @@
           <div v-else-if="projectorType === 'image'">
             <mapgis-ui-form-item label="图片地址">
               <div class="full-width flex">
-                <mapgis-ui-textarea v-model="imgUrl" autoSize allowClear>
+                <mapgis-ui-textarea
+                  v-model="imgUrl"
+                  autoSize
+                  allowClear
+                  :disabled="disabledImageUrlInput"
+                >
                 </mapgis-ui-textarea>
                 <slot name="imgUpload" :click="updateImgUrl"></slot>
               </div>
@@ -294,6 +299,10 @@ export default {
           prePitch: 0
         };
       }
+    },
+    disabledImageUrlInput: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
