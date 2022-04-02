@@ -141,8 +141,10 @@ export default {
     },
     rotatePeriod: {
       handler(next) {
-        let tool = this.findRotateTool();
-        tool.speed = 360/next;
+        let vm = this;
+        let tool = vm.findRotateTool();
+        vm.speed = 360/next;
+        tool.speed = vm.speed;
       },
     },
     latitude:{
