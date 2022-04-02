@@ -12,6 +12,7 @@
         <mapgis-ui-sketch-color-picker
             :color.sync="record.color"
             :disableAlpha="false"
+            :showColorText="false"
         ></mapgis-ui-sketch-color-picker>
       </template>
       <template slot="max" slot-scope="text, record, index" v-if="showNumber">

@@ -21,6 +21,7 @@
       <mapgis-ui-col :span="wrapperCol">
         <mapgis-ui-sketch-color-picker
           :color="color"
+          :showColorText="showColorText"
           :disableAlpha="disableAlpha"
           @input="inputChange"
           :size="size"
@@ -34,6 +35,10 @@
 export default {
   name: "mapgis-ui-color-pick-panel",
   props: {
+    showColorText: {
+      type: Boolean,
+      default: true
+    },
     label: {
       type: String,
       default: "标题"

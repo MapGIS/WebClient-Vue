@@ -34,11 +34,15 @@
           }"
         >
           <div
-            :style="{ background: pickColor }"
             :title="color"
             class="color-div"
+            :style="{
+              background: pickColor,
+              width: showColorText ? '16px' : '100%',
+              height: '16px'
+            }"
           ></div>
-          <div style="line-height:22px;">{{color}}</div>
+          <div v-if="showColorText" style="line-height:22px;margin-left:8px;">{{color}}</div>
         </div>
       </mapgis-ui-row>
     </mapgis-ui-popover>
@@ -52,6 +56,10 @@ export default {
   name: "mapgis-ui-sketch-color-picker",
   components: { "sketch-picker": Sketch },
   props: {
+    showColorText: {
+      type: Boolean,
+      default: true
+    },
     color: {
       type: String,
       required: true,

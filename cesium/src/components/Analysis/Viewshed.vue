@@ -134,6 +134,7 @@
         <div class="item-left">
           <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
+            :showColorText="false"
             :color="formData.visibleColor"
             addon-before="可视"
             @input="
@@ -145,6 +146,7 @@
         <div class="item-right">
           <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
+            :showColorText="false"
             :color="formData.unVisibleColor"
             addon-before="不可视"
             @input="
@@ -158,6 +160,7 @@
         <div class="item-left">
           <mapgis-ui-sketch-color-picker
             :disableAlpha="false"
+            :showColorText="false"
             :color="formData.maskColor"
             addon-before="可视"
             @input="
