@@ -18,15 +18,21 @@
               <mapgis-ui-iconfont type="mapgis-info-circle" />
             </mapgis-ui-tooltip>
           </div>
+        </mapgis-ui-col>
+        <mapgis-ui-col v-bind="wrapperCol" class="right-range">
+          <div class="right range" v-show="rangeShow">{{ range[0] }} ~ {{ range[1] }}</div>
+        </mapgis-ui-col>
+      </mapgis-ui-row>
+      <mapgis-ui-row>
+        <mapgis-ui-col v-bind="labelCol" class="left">
           <mapgis-ui-slider v-model="number" :min="range[0]" :max="range[1]" :step="step">
           </mapgis-ui-slider>
         </mapgis-ui-col>
         <mapgis-ui-col v-bind="wrapperCol" class="right-panel">
-          <div class="right range" v-show="rangeShow">{{ range[0] }} ~ {{ range[1] }}</div>
+          <!-- <div class="right range" v-show="rangeShow">{{ range[0] }} ~ {{ range[1] }}</div> -->
           <mapgis-ui-input-number
             autoWidth
             class="right"
-            size="small"
             v-model="number"
             :min="range[0]"
             :max="range[1]"
@@ -61,7 +67,6 @@
       <mapgis-ui-col v-bind="wrapperCol">
         <mapgis-ui-input-number
           autoWidth
-          size="small"
           v-model="number"
           :min="range[0]"
           :max="range[1]"
@@ -71,10 +76,10 @@
       </mapgis-ui-col>
     </mapgis-ui-row>
     <mapgis-ui-row v-if="size == 'medium' ">
-      <mapgis-ui-col v-bind="labelCol" >
+      <mapgis-ui-col v-bind="wrapperCol" >
          <div class="label-md"> {{ label }} </div>
       </mapgis-ui-col>
-      <mapgis-ui-col v-bind="wrapperCol">
+      <mapgis-ui-col v-bind="labelCol">
         <mapgis-ui-space>
           <mapgis-ui-slider
               v-model="number"
@@ -88,7 +93,6 @@
               :min="range[0]"
               :max="range[1]"
               :step="step"
-              size="small"
           />
         </mapgis-ui-space>
       </mapgis-ui-col>
