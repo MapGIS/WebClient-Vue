@@ -173,7 +173,7 @@ export default {
       //不想触发数据更新，因此隐藏不包含搜索内容的数据
       if (e.target.value) {
         for (let i = 0; i < this.dataSourceCopy.length; i++) {
-          if (this.dataSourceCopy[i].title.indexOf(e) < 0) {
+          if (this.dataSourceCopy[i].title.indexOf(e.target.value) < 0) {
             hideArr.push(i);
           }
         }
