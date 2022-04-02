@@ -26,9 +26,9 @@
           <mapgis-ui-input-number-panel
               size="small"
               class="mapgis-ui-number-style"
-              label="环绕周期(秒)"
+              label="旋转周期(秒)"
               :range="[1,600]"
-              v-model="speed"/>
+              v-model="rotatePeriod"/>
         </div>
         <div v-show="value === 2">
           <mapgis-ui-input-number-panel
@@ -48,7 +48,7 @@
               class="mapgis-ui-number-style"
               label="环绕周期(秒)"
               :range="[1,600]"
-              v-model="speed"/>
+              v-model="rotatePeriod"/>
           <mapgis-ui-switch-panel
               :labelCol="{ span: 8 }"
               :wrapperCol="{ span: 16 }"
@@ -139,10 +139,10 @@ export default {
         tool.distance = next;
       },
     },
-    speed: {
+    rotatePeriod: {
       handler(next) {
         let tool = this.findRotateTool();
-        tool.speed = next;
+        tool.speed = 360/next;
       },
     },
     latitude:{
@@ -157,7 +157,8 @@ export default {
       value: 1,
       pitch: -30,
       distance: 500,
-      speed: 60,
+      rotatePeriod: 60,
+      speed:6,
       height: 20966848,
       //纬度
       latitude: 38,
@@ -222,7 +223,7 @@ export default {
         heading: 0,
         //绕Y轴旋转，弧度值，可通过纬度值转化，可实时更改。
         pitch: -1*vm.Cesium.Math.toRadians(parseInt(vm.latitude)),
-        //环绕周期，度/秒。
+        //速度，度/秒。
         speed: vm.speed,
         // duration: 20,
         //是否循环动画
