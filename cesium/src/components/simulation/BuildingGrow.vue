@@ -395,7 +395,7 @@ export default {
         let key = parseInt(moment(vm.sortDate[i]).valueOf() / 1000);
         vm.marks[key] = {
           style: {display: 'none'},
-          label: <span>parseInt(moment(vm.sortDate[i]).valueOf() / 1000)}</span>
+          label: <span>parseInt(moment(vm.sortDate[i]).valueOf() / 1000)</span>
         }
       }
       vm.startTimeCopy = vm.sortDate[0];
