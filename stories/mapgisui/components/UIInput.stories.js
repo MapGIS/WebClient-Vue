@@ -137,7 +137,9 @@ const Template6 = (args, { argTypes }) => ({
   components: { MapgisUiInput },
   data() {
     return {
-      value: 3
+      value: 3,
+      leftRad: 123,
+      userName: 321
     };
   },
   methods: {
@@ -149,9 +151,40 @@ const Template6 = (args, { argTypes }) => ({
   <div>
     <mapgis-ui-input-number id="inputNumber" autoWidth v-model="value" :min="1" :max="10" @change="onChange" />
     当前值：{{ value }}
+    <mapgis-ui-input-number-addon id="inputNumberAddon" addon-before="左" addon-after="右" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    
+    ————————————————————————单元测试————————————————————————
+    <mapgis-ui-input-number-addon v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-before="左置" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-after="右置" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon prefix="￥" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-before="左置" addon-after="右置" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-before="左置" prefix="￥" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+      <mapgis-ui-input-number-addon addon-before="左置" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+      <mapgis-ui-input-number-addon addon-after="右置" prefix="￥" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-after="右置" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon prefix="￥" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+      <mapgis-ui-input-number-addon addon-after="右置" prefix="￥" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+      <mapgis-ui-input-number-addon addon-before="左置" prefix="￥" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-before="左置" addon-after="右置" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-before="左置" addon-after="右置" prefix="￥" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    <mapgis-ui-input-number-addon addon-before="左置" addon-after="右置" prefix="￥" suffix="元" v-model="value" autoWidth :min="3" :max="5" @change="onChange" />
+    
+    ————————————————————————分隔线————————————————————————
+    <mapgis-ui-input-number-addon ref="userNameInput" v-model="userName" placeholder="Basic usage">
+      <mapgis-ui-iconfont slot="addonAfter" type="mapgis-yuanzhui" />
+      <mapgis-ui-iconfont slot="addonBefore" type="mapgis-vector" style="color: rgba(0,0,0,.45)" />
+      <mapgis-ui-iconfont slot="prefix" type="mapgis-yuanzhui" />
+      <template #suffix>
+        <mapgis-ui-tooltip title="额外123信息">
+          <mapgis-ui-iconfont type="mapgis-vector" style="color: rgba(0,0,0,.45)" />
+        </mapgis-ui-tooltip>
+      </template>	
+    </mapgis-ui-input-number-addon>
   </div>
   `,
 });
 
-export const InputNumber = Template6.bind({});
-InputNumber.args = {};
+export const InputNumber带前后置或前后缀 = Template6.bind({});
+InputNumber带前后置或前后缀.args = {};

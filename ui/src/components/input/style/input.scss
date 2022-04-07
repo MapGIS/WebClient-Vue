@@ -13,6 +13,30 @@
   @include e(group-addon, '-') {
     background-color: $background-color-light;
   }
+  @include e(group, '-') {
+    .mapgis-ui-input-affix-wrapper:first-child:last-child .mapgis-ui-input-number {
+      border-radius: 4px;
+    }
+    .mapgis-ui-input-affix-wrapper:first-child .mapgis-ui-input-number {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .mapgis-ui-input-affix-wrapper:last-child .mapgis-ui-input-number {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .mapgis-ui-input-affix-wrapper:not(:first-child):not(:last-child) .mapgis-ui-input-number {
+      border-radius: 0;
+    }
+  }
+  @include e(affix-wrapper, '-') {
+    .mapgis-ui-input-number:not(:last-child) {
+      padding-right: 41px;
+    }
+    .mapgis-ui-input-number:not(:first-child) {
+      padding-left: 19px;
+    }
+  }
   @include e(number, '-') {
     @include focus($primary-5, $primary-shadow-color);
     &-focused {
