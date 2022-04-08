@@ -39,6 +39,14 @@ export default {
       type: Boolean,
       default: false
     },
+    useSystemLib:{
+      type: Boolean,
+      default: true
+    },
+    systemLib:{
+      type:String,
+      default:"MapGIS10",
+    },
     vueKey: {
       type: String,
       default: "default"
@@ -117,7 +125,7 @@ export default {
     },
     initOptions(options) {
       const vm = this;
-      let {layers, autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
+      let {layers, autoReset, filter, mapIndex, featureStyle, clampToGround,useSystemLib,systemLib, loadAll, setViewToExisting} = this;
       if (layers) {
         if (layers.indexOf("gdbp") <= -1 && layers.indexOf("layers") <= -1) {
           layers = 'layers=show:' + layers;
@@ -172,6 +180,13 @@ export default {
       }
       if (clampToGround) {
         options.clampToGround = true;
+      }
+      if (useSystemLib) {
+        options.useSystemLib = true;
+      }
+      if(systemLib){
+        debugger
+        options.systemLib = systemLib;
       }
       if (loadAll) {
         options.loadAll = loadAll;
