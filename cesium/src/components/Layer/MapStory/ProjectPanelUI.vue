@@ -125,7 +125,6 @@ export default {
       showEditPanel: false,
       addProject: false,
       currentStory: undefined,
-      storys: [],
       currentProjectIndex: undefined,
       storyFeature: [],
       dataSourceCopy: undefined,
@@ -146,6 +145,13 @@ export default {
         for (let i = 0; i < this.dataSourceCopy.length; i++) {
           if (this.dataSourceCopy[i].uuid === this.currentStory.uuid) {
             this.currentStory = JSON.parse(JSON.stringify(this.dataSourceCopy[i]));
+            //取得相机视角数组
+            let chapters = JSON.parse(JSON.stringify(this.currentStory.chapters))
+            let cameras = [];
+            for (let i = 0; i < chapters.length; i++) {
+              cameras.push(chapters[i].camera);
+            }
+            this.cameras = cameras
           }
         }
       }
@@ -205,12 +211,6 @@ export default {
     //编辑故事
     $_editStory(index) {
       this.currentStory = JSON.parse(JSON.stringify(this.dataSourceCopy[index]));
-      let chapters = this.currentStory.chapters;
-      let cameras = [];
-      for (let i = 0; i < chapters.length; i++) {
-        cameras.push(chapters[i].camera);
-      }
-      this.cameras = cameras
       this.showStoryEdit = true;
     },
     //返回上一级

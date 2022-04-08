@@ -372,16 +372,18 @@ export default {
           this.dataSourceCopy.splice(index, 1);
           if (row.type === "group") {
             let graphicLayer = this.$_getGraphicLayer();
-           graphicLayer.removeGraphicByGroupName(row.attributes.title);
-          }else {
-            this.$nextTick(function () {
-              let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
-              graphicsLayer.removeGraphicByID(row.id);
-              this.$refs.editPanel.isUpdatePanel = true;
-              this.addSource = false;
-            });
+            let groups = graphicLayer.getGraphicByName(row.attributes.title);
+            for (let i = 0; i < groups.length; i++) {
+              this.$_removeGraphicByID(groups[i].id);
+            }
           }
           this.$emit("delete", row.id);
+          this.$nextTick(function () {
+            let graphicsLayer = this.$_getGraphicLayer(this.vueIndex, this.vueKey);
+            graphicsLayer.removeGraphicByID(row.id);
+            this.$refs.editPanel.isUpdatePanel = true;
+            this.addSource = false;
+          });
           break;
       }
     },
@@ -766,11 +768,12 @@ export default {
         case "polyline":
           DrawTool.DrawModelsByLine({
             intervalDistance: drawDistance,
-            groupName: vm.groupName,
+            modelRadius: modelRadius,
             style: {
               scale: scale || 1,
               url: model
             },
+            name: this.groupName
           });
           break;
         case "polygon":
@@ -779,7 +782,7 @@ export default {
               scale: scale || 1,
               url: model
             },
-            groupName: vm.groupName,
+            name: this.groupName
           });
           break;
       }
@@ -917,9 +920,10 @@ export default {
           if (graphic) {
             Object.keys(editPanelValues).forEach(function (key) {
               if (key === "scale") {
-                graphic.scale = editPanelValues[key];
+                graphic[key] = editPanelValues[key];
               } else {
                 graphic[key] = Cesium.Math.toRadians(editPanelValues[key]);
+                graphic.setRotateMatrix();
               }
             });
           }

@@ -1,5 +1,5 @@
 <template>
-  <div :style="{height: panelHeight + 'px'}">
+  <div>
     <mapgis-ui-story-panel-large
       @closePanel="$_closePanel"
       @flyTo="$_flyTo"

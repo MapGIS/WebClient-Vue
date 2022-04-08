@@ -2,7 +2,7 @@
   <mapgis-ui-row class="mapgis-ui-select-row-left">
     <div class="mapgis-ui-select-row-left-title" :style="titleStyle">{{ title }}</div>
     <div class="mapgis-ui-select-row-left-select" :style="selectStyle">
-      <mapgis-ui-select style="width: 100%;" @change="$_change" :default-value="value">
+      <mapgis-ui-select style="width: 100%;" @change="$_change" :value="value">
         <mapgis-ui-select-option :key="index" v-for="(data,index) in dataSource" :value="data.key">
           {{ data.value }}
         </mapgis-ui-select-option>
@@ -37,13 +37,11 @@ export default {
   },
   data() {
     return {
-      valueCopy: undefined
     }
   },
   watch: {
     value: {
       handler: function () {
-        this.valueCopy = this.value;
       },
       deep: true
     }
@@ -54,7 +52,6 @@ export default {
     }
   },
   mounted() {
-    this.valueCopy = this.value;
   }
 }
 </script>

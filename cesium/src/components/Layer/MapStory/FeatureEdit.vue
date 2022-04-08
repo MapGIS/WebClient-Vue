@@ -4,11 +4,11 @@
       <div v-if="dataSourceCopy" :style="{height: height - 85 + 'px'}" class="mapgis-ui-feature-edit-panel">
         <!--标题-->
         <mapgis-ui-input-row-left
-          title="标题"
-          paddingLeft="7px"
-          paddingRight="6px"
-          fontSize="14px"
-          v-model="dataSourceCopy.title"
+            title="标题"
+            paddingLeft="7px"
+            paddingRight="6px"
+            fontSize="14px"
+            v-model="dataSourceCopy.title"
         />
         <!--附加地图-->
         <!--        <mapgis-ui-map-select v-show="!showMoreMap"-->
@@ -26,27 +26,27 @@
                                   :map="dataSourceCopy.map" @addMap="$_addMap" title="附加地图"/>
         <!--设置相机视角-->
         <mapgis-ui-set-camera-view-select
-          :showTitleIcon="false"
-          :cameras="cameras"
-          :titleStyle="cameraTitleStyle"
-          :mainStyle="cameraMainStyle"
-          @click="$_setCamera"
-          @showDetail="$_showCameraDetail"
-          @selectCamera="$_selectCamera"/>
+            :showTitleIcon="false"
+            :cameras="cameras"
+            :titleStyle="cameraTitleStyle"
+            :mainStyle="cameraMainStyle"
+            @click="$_setCamera"
+            @showDetail="$_showCameraDetail"
+            @selectCamera="$_selectCamera"/>
         <mapgis-ui-set-camera-view
-          :showTitle="false"
-          :showButton="false"
-          v-show="showCameraDetail"
-          @click="$_setCamera"
-          v-model="camera"/>
-        <!--动画时间-->
+            :showTitle="false"
+            :showButton="false"
+            :disableInput="true"
+            v-show="showCameraDetail"
+            v-model="camera"/>
+        <!--漫游时间-->
         <mapgis-ui-input-row-left
-          title="动画时间"
-          paddingLeft="7px"
-          paddingRight="5px"
-          fontSize="14px"
-          @change="$_setAnimationTime"
-          v-model="dataSourceCopy.animationTime"
+            title="漫游时间"
+            paddingLeft="7px"
+            paddingRight="5px"
+            fontSize="14px"
+            @change="$_setAnimationTime"
+            v-model="dataSourceCopy.animationTime"
         />
         <!--图片展示-->
         <mapgis-ui-choose-picture-right :showTitleIcon="false"
@@ -56,49 +56,49 @@
                                         v-model="dataSourceCopy.images"/>
         <!--标绘工具-->
         <mapgis-ui-title-row-left
-          title="标绘工具"
-          paddingLeft="7px"
-          paddingRight="0"
-          margin="0"
-          fontSize="14px"
+            title="标绘工具"
+            paddingLeft="7px"
+            paddingRight="0"
+            margin="0"
+            fontSize="14px"
         />
         <mapgis-3d-graphic-single-layer
-          v-if="dataSourceCopy"
-          ref="graphicLayer"
-          :data-source="graphics"
-          :containerStyle="graphicContainerStyle"
-          :iconsPanelStyle="iconsPanelStyle"
-          :enableOneMap="enableOneMap"
-          :enableMapStory="true"
-          :models="models"
-          :vueIndex="dataSourceCopy.mapStoryUUID"
-          :vueKey="dataSourceCopy.mapStoryUUID"
-          @addFeature="$_addGraphic"
-          @saveCamera="$_setCamera"
-          @delete="$_deleteGraphic"
+            v-if="dataSourceCopy"
+            ref="graphicLayer"
+            :data-source="graphics"
+            :containerStyle="graphicContainerStyle"
+            :iconsPanelStyle="iconsPanelStyle"
+            :enableOneMap="enableOneMap"
+            :enableMapStory="true"
+            :models="models"
+            :vueIndex="dataSourceCopy.mapStoryUUID"
+            :vueKey="dataSourceCopy.mapStoryUUID"
+            @addFeature="$_addGraphic"
+            @saveCamera="$_setCamera"
+            @delete="$_deleteGraphic"
         />
         <!--富文本-->
         <mapgis-ui-title-row-left
-          title="富文本编辑"
-          paddingLeft="7px"
-          paddingRight="0"
-          margin="0"
-          fontSize="14px"
-          width="80px"
+            title="富文本编辑"
+            paddingLeft="7px"
+            paddingRight="0"
+            margin="0"
+            fontSize="14px"
+            width="80px"
         />
         <mapgis-ui-row style="width: 100%;padding-left: 8px;padding-right: 9px;">
           <div v-if="editor" style="border: 1px solid #DCDCDC;">
             <editor-menu-bar :editor="editor" v-slot="{ commands }">
               <div style="border-bottom: 1px solid #DCDCDC;">
               <span
-                @click="commands.bold"
+                  @click="commands.bold"
               >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
                                     title="粗体"
                                     type="border"/>
               </span>
                 <span
-                  @click="showImagePrompt(commands.image)"
+                    @click="showImagePrompt(commands.image)"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="pictureStyle"
@@ -106,14 +106,14 @@
                                     type="picture"/>
               </span>
                 <span
-                  @click="commands.italic"
+                    @click="commands.italic"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle" :iconStyle="editButtonStyle"
                                     title="斜体"
                                     type="italic"/>
               </span>
                 <span
-                  @click="commands.strike"
+                    @click="commands.strike"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -121,7 +121,7 @@
                                     type="strike"/>
               </span>
                 <span
-                  @click="commands.underline"
+                    @click="commands.underline"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -129,7 +129,7 @@
                                     type="underline"/>
               </span>
                 <span
-                  @click="commands.bullet_list"
+                    @click="commands.bullet_list"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -137,7 +137,7 @@
                                     type="ul"/>
               </span>
                 <span
-                  @click="commands.ordered_list"
+                    @click="commands.ordered_list"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -145,7 +145,7 @@
                                     type="ol"/>
               </span>
                 <span
-                  @click="commands.blockquote"
+                    @click="commands.blockquote"
                 >
                 <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                     :iconStyle="editButtonStyle"
@@ -153,7 +153,7 @@
                                     type="quote"/>
               </span>
                 <span
-                  @click="commands.code"
+                    @click="commands.code"
                 >
                <mapgis-ui-svg-icon :containerStyle="editButtonContainerStyle"
                                    :iconStyle="editButtonStyle"
@@ -366,8 +366,9 @@ export default {
     //更新轮播图
     $_changeImage(images) {
       this.dataSourceCopy.images = images;
+      this.$emit("change", this.dataSourceCopy);
     },
-    //更新动画时间
+    //更新漫游时间
     $_setAnimationTime(e) {
       this.dataSourceCopy.animationTime = e / 1;
     },
@@ -389,6 +390,7 @@ export default {
       this.isInit = true;
       //复制数据源
       this.dataSourceCopy = JSON.parse(JSON.stringify(this.dataSource));
+      this.camera = this.dataSourceCopy.camera;
       this.$nextTick(function () {
         this.isInit = false;
       });
@@ -411,6 +413,7 @@ export default {
     $_selectCamera(camera) {
       camera.title = this.dataSourceCopy.title;
       camera.uuid = this.dataSourceCopy.uuid;
+      this.camera = camera;
       this.$emit("setCamera", camera);
     },
     //初始化富文本编辑
@@ -447,12 +450,14 @@ export default {
             let contentStr = getHTML();
             contentStr = contentStr.replace("<img", "<img style='width:100%'");
             vm.dataSourceCopy.content = contentStr;
-            vm.$emit("changeEditor", vm.dataSourceCopy);
+            vm.$emit("change", vm.dataSourceCopy);
           },
         });
       } else {
         //否则更新
-        this.editor.setContent(this.dataSourceCopy.content);
+        if(this.dataSourceCopy.content){
+          this.editor.setContent(this.dataSourceCopy.content);
+        }
       }
     },
     //添加底图

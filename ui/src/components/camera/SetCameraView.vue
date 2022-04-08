@@ -21,6 +21,7 @@
           :titleStyle="titleStyle"
           :formStyle="formStyle"
           :mainStyle="mainStyle"
+          :disabled="disableInput"
       />
       <mapgis-ui-mix-row
           title="俯仰角"
@@ -29,6 +30,7 @@
           :titleStyle="titleStyle"
           :formStyle="formStyle"
           :mainStyle="mainStyle"
+          :disabled="disableInput"
       />
       <mapgis-ui-mix-row
           title="滚动角"
@@ -37,6 +39,7 @@
           :titleStyle="titleStyle"
           :formStyle="formStyle"
           :mainStyle="mainStyle"
+          :disabled="disableInput"
       />
       <mapgis-ui-mix-row
           title="经度"
@@ -45,6 +48,7 @@
           :titleStyle="titleStyle"
           :formStyle="formStyle"
           :mainStyle="mainStyle"
+          :disabled="disableInput"
       />
       <mapgis-ui-mix-row
           title="纬度"
@@ -53,6 +57,7 @@
           :titleStyle="titleStyle"
           :formStyle="formStyle"
           :mainStyle="mainStyle"
+          :disabled="disableInput"
       />
       <mapgis-ui-mix-row
           title="高度"
@@ -61,6 +66,7 @@
           :titleStyle="titleStyle"
           :formStyle="formStyle"
           :mainStyle="mainStyle"
+          :disabled="disableInput"
       />
     </div>
   </div>
@@ -86,10 +92,10 @@ export default {
       },
       mainStyle: {
         height: "32px",
-        width: "178px",
+        width: "213px",
       },
       titleStyle: {
-        paddingLeft: "12px"
+        paddingLeft: "9px"
       }
     }
   },
@@ -105,9 +111,9 @@ export default {
       type: Boolean,
       default: true
     },
-    enableModel: {
+    disableInput: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   model: {
@@ -123,9 +129,7 @@ export default {
     },
     cameraCopy: {
       handler: function () {
-        if (this.enableModel) {
-          this.$emit("change", this.cameraCopy);
-        }
+        this.$emit("change", this.cameraCopy);
       },
       deep: true
     }
@@ -157,7 +161,7 @@ export default {
 
 .mapgis-ui-set-camera-set-camera-content {
   width: 100%;
-  height: 262px;
+  height: 225px;
   border-radius: 3px;
   padding-top: 1px;
 }

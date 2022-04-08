@@ -186,7 +186,9 @@ export default {
       websocket: undefined,
       currentType: undefined,
       interval: undefined,
-      layerStyleCopy: {},
+      layerStyleCopy: {
+        fixNum: 10
+      },
     }
   },
   mounted() {
@@ -314,6 +316,9 @@ export default {
           case "marker":
             let markerStyle = new MarkerStyle();
             markerStyle = markerStyle.toCesiumStyle(vm.layerStyleCopy, data, Cesium);
+            if(vm.layerStyleCopy && vm.layerStyleCopy.fixNum && markerStyle.label.text && markerStyle.label.text.length > vm.layerStyleCopy.fixNum){
+              markerStyle.label.text = markerStyle.label.text.substring(0, vm.layerStyleCopy.fixNum);
+            }
             point = vm.viewer.entities.add({
               id: data.properties[vm.UUID],
               position: Cesium.Cartesian3.fromDegrees(data.geometry.coordinates[0], data.geometry.coordinates[1], 20),
@@ -370,7 +375,6 @@ export default {
       let vm = this;
       //定时发送updated事件
       this.interval = setInterval(function () {
-        console.log(vm.features)
         vm.$emit("updated", vm.features);
       }, this.updateInterval);
     },
@@ -395,7 +399,7 @@ export default {
             vm.popups[i].show = false;
           }
           if (!hasPopup) {
-            let popup = vm.$_cartesian3ToLongLat(pickedFeature.id.position.getValue());
+            let popup = vm.$_cartesian3ToLongLat(pickedFeature.primitive.position);
             popup.height = 50;
             popup.keys = pickedFeature.id.keys;
             popup.show = true;

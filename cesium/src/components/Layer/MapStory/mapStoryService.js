@@ -175,13 +175,15 @@ export default {
     },
     //设置视角
     $_setCamera(currentChapter, camera) {
-      if (camera) {
-        currentChapter.camera = camera;
-      } else {
-        currentChapter.camera = this.$_getCamera(currentChapter.uuid);
-        currentChapter.camera.title = currentChapter.title;
+      if(currentChapter) {
+        if (camera) {
+          currentChapter.camera = camera;
+        } else {
+          currentChapter.camera = this.$_getCamera(currentChapter.uuid);
+          currentChapter.camera.title = currentChapter.title;
+        }
+        this.$_setChapter(currentChapter);
       }
-      this.$_setChapter(currentChapter);
     },
     //取得视角
     $_getCamera(uuid) {
@@ -372,6 +374,7 @@ export default {
           break;
         }
       }
+      this.$_save();
     }
   }
 };

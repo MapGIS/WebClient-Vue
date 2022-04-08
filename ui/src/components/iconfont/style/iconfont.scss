@@ -37,6 +37,10 @@
   background: $panel-backgroud;
 }
 
-.mapgis-ui-svg-icon {
+.mapgis-ui-svg-icon, .mapgis-ui-choose-picture-title {
   color: $text-color;
+}
+
+.mapgis-ui-svg-icon-inverse {
+  color: rgb(255, 255, 255);
 }

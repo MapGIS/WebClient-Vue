@@ -6,7 +6,7 @@
       {{ title }}
     </div>
     <div class="mapgis-ui-input-row-left-input"
-         :style="{paddingRight: paddingRight, marginLeft: marginLeft, width: enableButton ? 'calc(100% - 156px)' : 'calc(100% - 85px)'}"
+         :style="{paddingRight: paddingRight, marginLeft: marginLeft, width: enableButton ? 'calc(100% - 156px)' : width}"
     >
       <mapgis-ui-input style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Text'"/>
       <mapgis-ui-input-number style="width: 100%" @change="$_change" v-model="valueCopy" v-if="type === 'Number'"/>
@@ -57,6 +57,10 @@ export default {
       type: String,
       default: "0"
     },
+    width: {
+      type: String,
+      default: "calc(100% - 82px)"
+    }
   },
   data() {
     return {
@@ -69,26 +73,35 @@ export default {
         this.valueCopy = this.value;
       },
       deep: true
-    },
-    valueCopy: {
-      handler: function () {
-        this.$emit("change", this.valueCopy);
-      },
-      deep: true
     }
   },
   methods: {
     $_change(e) {
-      let value;
-      if(!e){
-        value = 0;
-        this.valueCopy = 0;
-      }else if (typeof e === "object") {
-        value = e.target.value;
-      } else {
-        value = Number(e);
+      function getValue(value, type) {
+        let result;
+        if(type === "Number"){
+          if(!(typeof value === "number")){
+            result = 0;
+          }else {
+            result = value;
+          }
+        }else {
+          result = value;
+        }
+        return result;
       }
-      this.$emit("change", value);
+      if(!e){
+        if(this.type === "Number"){
+          this.valueCopy = 0;
+        }else {
+          this.valueCopy = "";
+        }
+      }else if (typeof e === "object") {
+        this.valueCopy = getValue(e.target.value, this.type);
+      }else {
+        this.valueCopy = getValue(e, this.type);
+      }
+      this.$emit("change", this.valueCopy);
     },
     $_finish() {
       this.$emit("finish");
