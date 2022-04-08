@@ -41,6 +41,7 @@ export { default as MapgisUiIconsPanel } from "./components/iconfont/IconsPanel"
 export { default as MapgisUiIconsPanelScrollX } from "./components/iconfont/IconsPanelScrollX";
 export { default as MapgisUiTitleIcon } from "./components/iconfont/TitleIcon";
 export { default as MapgisUiGraphicIconsPanel } from "./components/iconfont/GraphicIconsPanel";
+export { default as MapgisUiUploadImage } from "./components/upload-image/UploadImage.vue";
 
 // Layout
 export { default as MapgisUiDiv } from "./components/div/Div.vue";
