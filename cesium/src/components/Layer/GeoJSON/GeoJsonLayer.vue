@@ -118,6 +118,10 @@ export default {
       const vm = this;
       const { Cesium, layerStyle } = this;
       const { type } = layerStyle;
+      const layerStyleLine = new LineStyle({
+        width: layerStyle.outlineWidth,
+        color: layerStyle.outlineColor,
+      });
 
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
@@ -131,7 +135,7 @@ export default {
             outline: outlineColor,
             material: color,
           });
-        } else if (type == "line" || entity.polyline) {
+        } else if (type == "line" || entity.polyline && !entity.polygon) {
           const style = layerStyle.toCesiumStyle(Cesium);
           const { material, width } = style;
           entity.polyline.material = material;
@@ -141,6 +145,11 @@ export default {
           const { material, outlineColor } = style;
           entity.polygon.material = material;
           entity.polygon.outlineColor = outlineColor;
+
+          const stylePolyline = layerStyleLine.toCesiumStyle(Cesium);
+          const { width } = stylePolyline;
+          entity.polyline.material = stylePolyline.material;
+          entity.polyline.width = width;
         }
       }
     },
@@ -150,6 +159,10 @@ export default {
       const { vueKey, vueIndex, vueCesium } = this;
       const { viewer, Cesium, enablePopup, layerStyle, highlightStyle } = this;
       const { type } = layerStyle;
+      const layerStyleLine = new LineStyle({
+        width: layerStyle.outlineWidth,
+        color: layerStyle.outlineColor,
+      });
       const hpolygon = highlightStyle.polygon;
       const hline = highlightStyle.line;
       const hpoint = highlightStyle.point;
@@ -170,7 +183,7 @@ export default {
               outline: outlineColor,
               material: color,
             });
-          } else if (entity.polyline) {
+          } else if (entity.polyline && !entity.polygon) {
             const style = hline.toCesiumStyle(Cesium);
             const { material, width } = style;
             entity.polyline.material = material;
@@ -213,7 +226,7 @@ export default {
               outline: outlineColor,
               material: color,
             });
-          } else if (type == "line" || entity.polyline) {
+          } else if (type == "line" || entity.polyline && !entity.polygon) {
             const style = layerStyle.toCesiumStyle(Cesium);
             const { material, width } = style;
             entity.polyline.material = material;
@@ -223,6 +236,11 @@ export default {
             const { material, outlineColor } = style;
             entity.polygon.material = material;
             entity.polygon.outlineColor = outlineColor;
+
+            const stylePolyline = layerStyleLine.toCesiumStyle(Cesium);
+            const { width } = stylePolyline;
+            entity.polyline.material = stylePolyline.material;
+            entity.polyline.width = width;
           }
         }
       }
