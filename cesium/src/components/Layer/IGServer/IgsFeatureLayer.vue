@@ -32,6 +32,14 @@ export default {
       type: Boolean,
       default: false
     },
+    useSystemLib: {
+      type: Boolean,
+      default: false
+    },
+    systemLib: {
+      type: String,
+      default: 'MapGIS 10'
+    },
     vueKey: {
       type: String,
       default: "default"
@@ -116,7 +124,7 @@ export default {
     },
     initOptions(options) {
       const {Cesium} = this;
-      let {autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting} = this;
+      let {autoReset, filter, mapIndex, featureStyle, clampToGround, loadAll, setViewToExisting, useSystemLib, systemLib} = this;
       if (autoReset) {
         options.autoReset = autoReset;
       }
@@ -165,6 +173,12 @@ export default {
       }
       if (clampToGround) {
         options.clampToGround = true;
+      }
+      if (useSystemLib) {
+        options.useSystemLib = true;
+      }
+      if (systemLib) {
+        options.systemLib = systemLib;
       }
       if (loadAll) {
         options.loadAll = loadAll;
