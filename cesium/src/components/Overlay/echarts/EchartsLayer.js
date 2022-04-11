@@ -2,6 +2,7 @@ import * as echarts from "echarts";
 import "echarts-gl";
 
 import { MapCoordSys } from "./MapCoordSys";
+import debounce from "lodash/debounce";
 
 window.EchartsIdIndex = 0;
 
@@ -171,29 +172,68 @@ export class EchartsLayer {
         var cesiumMap = window.EchartCesiumMap[window.EchartsIdIndex]; // echarts.cesiumMap;
         var viewportRoot = api.getZr().painter.getViewportRoot();
         var coordSys = mapModel.coordinateSystem;
-        var moveHandler = function (type, target) {
-          if (rendering) {
-            return;
-          }
-          self._unvisible();
-          var offsetEl = self.map.canvas;
+        function moveHandler() {
+          debounce(
+            () => {
+              if (rendering) {
+                return;
+              }
+              self._unvisible();
+              var offsetEl = self.map.canvas;
 
-          var mapOffset = [
-            -parseInt(offsetEl.style.left, 10) || 0,
-            -parseInt(offsetEl.style.top, 10) || 0,
-          ];
-          viewportRoot.style.left = mapOffset[0] + "px";
-          viewportRoot.style.top = mapOffset[1] + "px";
+              var mapOffset = [
+                -parseInt(offsetEl.style.left, 10) || 0,
+                -parseInt(offsetEl.style.top, 10) || 0,
+              ];
+              viewportRoot.style.left = mapOffset[0] + "px";
+              viewportRoot.style.top = mapOffset[1] + "px";
 
-          coordSys.setMapOffset(mapOffset);
+              coordSys.setMapOffset(mapOffset);
 
-          mapModel.__mapOffset = mapOffset;
-          //mapModel.__mapViewRect = cesiumMap.scene.camera.computeViewRectangle();
+              mapModel.__mapOffset = mapOffset;
+              //mapModel.__mapViewRect = cesiumMap.scene.camera.computeViewRectangle();
 
-          api.dispatchAction({
-            type: "CesiumRoma",
-          });
-        };
+              api.dispatchAction({
+                type: "CesiumRoma",
+              });
+            },
+            10,
+            { leading: false }
+          );
+        }
+        // function moveEndHandler() {
+        //   debounce(
+        //       () => {
+        //         if (rendering) {
+        //           return;
+        //         }
+        //         var offsetEl = self.map.canvas;
+        //
+        //         var mapOffset = [
+        //           -parseInt(offsetEl.style.left, 10) || 0,
+        //           -parseInt(offsetEl.style.top, 10) || 0,
+        //         ];
+        //         viewportRoot.style.left = mapOffset[0] + "px";
+        //         viewportRoot.style.top = mapOffset[1] + "px";
+        //
+        //         coordSys.setMapOffset(mapOffset);
+        //         mapModel.__mapOffset = mapOffset;
+        //
+        //         api.dispatchAction({
+        //           type: "CesiumRoma",
+        //           pitch: 0, // self.map.camera.pitch,
+        //           bearing: 0, // self.map,
+        //         });
+        //         self._visible();
+        //       },
+        //       100,
+        //       { leading: true }
+        //   );
+        // }
+
+        // var moveHandler = function (type, target) {
+        //
+        // };
 
         var moveEndHandler = function (type, target) {
           if (rendering) {
@@ -220,22 +260,34 @@ export class EchartsLayer {
         };
 
         function zoomStartHandler() {
-          self._unvisible();
-          if (rendering) {
-            return;
-          }
-          api.dispatchAction({
-            type: "CesiumRoma",
-          });
+          debounce(
+            () => {
+              self._unvisible();
+              if (rendering) {
+                return;
+              }
+              api.dispatchAction({
+                type: "CesiumRoma",
+              });
+            },
+            10,
+            { leading: true }
+          );
         }
 
         function zoomEndHandler() {
+          // debounce(
+          //     () => {
           if (rendering) {
             return;
           }
           api.dispatchAction({
             type: "CesiumRoma",
           });
+          //     },
+          //     100,
+          //     { leading: true }
+          // )
         }
 
         var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
