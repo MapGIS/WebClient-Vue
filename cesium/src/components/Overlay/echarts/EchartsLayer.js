@@ -185,36 +185,30 @@ export class EchartsLayer {
         var viewportRoot = api.getZr().painter.getViewportRoot();
         var coordSys = mapModel.coordinateSystem;
         function moveHandler() {
-          debounce(
-            () => {
-              if (rendering) {
-                return;
-              }
-              self._unvisible();
-              var offsetEl = self.map.canvas;
+          if (rendering) {
+            return;
+          }
+          self._unvisible();
+          var offsetEl = self.map.canvas;
 
-              var mapOffset = [
-                -parseInt(offsetEl.style.left, 10) || 0,
-                -parseInt(offsetEl.style.top, 10) || 0,
-              ];
-              viewportRoot.style.left = mapOffset[0] + "px";
-              viewportRoot.style.top = mapOffset[1] + "px";
+          var mapOffset = [
+            -parseInt(offsetEl.style.left, 10) || 0,
+            -parseInt(offsetEl.style.top, 10) || 0,
+          ];
+          viewportRoot.style.left = mapOffset[0] + "px";
+          viewportRoot.style.top = mapOffset[1] + "px";
 
-              coordSys.setMapOffset(mapOffset);
+          coordSys.setMapOffset(mapOffset);
 
-              mapModel.__mapOffset = mapOffset;
-              //mapModel.__mapViewRect = cesiumMap.scene.camera.computeViewRectangle();
+          mapModel.__mapOffset = mapOffset;
+          //mapModel.__mapViewRect = cesiumMap.scene.camera.computeViewRectangle();
 
-              api.dispatchAction({
-                type: "CesiumRoma",
-              });
-            },
-            10,
-            { leading: false }
-          );
+          api.dispatchAction({
+            type: "CesiumRoma",
+          });
         }
 
-        var moveEndHandler = function (type, target) {
+        function moveEndHandler(type, target) {
           if (rendering) {
             return;
           }
@@ -236,22 +230,16 @@ export class EchartsLayer {
             bearing: 0, // self.map,
           });
           self._visible();
-        };
+        }
 
         function zoomStartHandler() {
-          debounce(
-            () => {
-              self._unvisible();
-              if (rendering) {
-                return;
-              }
-              api.dispatchAction({
-                type: "CesiumRoma",
-              });
-            },
-            10,
-            { leading: true }
-          );
+          self._unvisible();
+          if (rendering) {
+            return;
+          }
+          api.dispatchAction({
+            type: "CesiumRoma",
+          });
         }
 
         function zoomEndHandler() {
@@ -263,15 +251,54 @@ export class EchartsLayer {
           });
         }
 
-        self.postStartEvent = self.postStartEvent.bind(self);
-        self.postEndEvent = self.postEndEvent.bind(self);
+        function postHandler(type, target) {
+          self.postRenderTime >= 1000
+            ? (self.postRenderTime = 0)
+            : self.postRenderTime++;
+          if (self.postRenderTime % self.postRenderFrame !== 0) {
+            return;
+          }
+          if (rendering) {
+            return;
+          }
+          var offsetEl = self.map.canvas;
+
+          var mapOffset = [
+            -parseInt(offsetEl.style.left, 10) || 0,
+            -parseInt(offsetEl.style.top, 10) || 0,
+          ];
+          viewportRoot.style.left = mapOffset[0] + "px";
+          viewportRoot.style.top = mapOffset[1] + "px";
+
+          coordSys.setMapOffset(mapOffset);
+          mapModel.__mapOffset = mapOffset;
+
+          api.dispatchAction({
+            type: "CesiumRoma",
+            pitch: 0, // self.map.camera.pitch,
+            bearing: 0, // self.map,
+          });
+          self._visible();
+        }
 
         if (self.postRender) {
-          // self.scene.camera.moveStart.addEventListener(self.postStartEvent,self);
-          // self.scene.camera.moveEnd.addEventListener(self.postEndEvent,self);
-          // self.scene.postRender.addEventListener(moveEndHandler);
-          //self.scene.camera.moveStart.addEventListener(self.postStartEvent, self);
-          //self.scene.camera.moveEnd.addEventListener(self.postEndEvent, self);
+          var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
+          handler.setInputAction(
+            () => self.scene.postRender.addEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.LEFT_DOWN
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.addEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.RIGHT_DOWN
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.removeEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.LEFT_UP
+          );
+          handler.setInputAction(
+            () => self.scene.postRender.removeEventListener(postHandler),
+            Cesium.ScreenSpaceEventType.RIGHT_UP
+          );
         } else {
           var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
 
@@ -393,24 +420,6 @@ export class EchartsLayer {
       this.canvas.parentElement.removeChild(this.canvas);
     this.map = undefined;
     return this;
-  }
-
-  postStartEvent() {
-    let vm = this;
-    debounce(
-      () => {
-        vm.scene.postRender.addEventListener(vm._reset, vm);
-        vm.show();
-      },
-      100,
-      { leading: true }
-    );
-  }
-
-  postEndEvent() {
-    this.scene.postRender.removeEventListener(this._reset, this);
-    this._reset();
-    this.show();
   }
 
   _reset() {

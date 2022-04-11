@@ -311,7 +311,7 @@ const Template = (args, {argTypes}) => ({
                 cesium: {
                     roam: true,
                     postRender:true,
-                    postRenderFrame:30
+                    postRenderFrame:250
                 }
             };
             this.option = option;
