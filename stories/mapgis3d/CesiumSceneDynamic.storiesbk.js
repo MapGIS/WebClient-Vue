@@ -29,6 +29,6 @@ const Template = (args, { argTypes }) => ({
 
 export const 动态单体化 = Template.bind({});
 动态单体化.args = {
-  url: "http://192.168.88.122:6163/igs/rest/g3d/dth",
+  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/g3d/dth`,
   layers: "show:1,2",
 };

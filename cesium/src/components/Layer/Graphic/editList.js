@@ -745,7 +745,7 @@ let editList = {
     },
     {
       type: "MapgisUiInputNumber",
-      title: "宽度",
+      title: "高度",
       key: "extrudedHeight",
       value: 100
     },

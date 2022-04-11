@@ -2,7 +2,7 @@
 import Mapgis3dBimComponent from "../../cesium/src/components/Analysis/BIM.vue";
 
 export default {
-  title: "三维/分析/BIM构建树",
+  title: "三维/分析/BIM构件树",
   component: Mapgis3dBimComponent,
   argTypes: {
     enableBim: true,

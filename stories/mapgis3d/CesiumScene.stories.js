@@ -37,7 +37,7 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景展示 = Template.bind({});
 场景展示.args = {
-  url: "http://192.168.199.71:8089/igs/rest/services/CIMyanshi/倾斜临时/SceneServer",
+  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景-BIM/SceneServer`,
   layers: "show:0,1",
   maximumScreenSpaceError: 4,
   opacity: 0.5,

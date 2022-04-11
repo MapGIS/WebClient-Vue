@@ -1,7 +1,7 @@
 {
   "webclient": {
     "ip": "develop.smaryun.com",
-    "port": "6163"
+    "port": "8089"
   },
   "VueCesiumLibPath": "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js",
   "VueCesiumPluginPath": "http://develop.smaryun.com/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js"

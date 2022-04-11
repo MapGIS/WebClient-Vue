@@ -51,7 +51,7 @@ export default {
      * */
     $_newGraphicLayer(options) {
       options = options || {};
-      let {vueIndex, vueKey, viewer, getGraphic, finishEdit, revokeModel} = options;
+      let {vueIndex, vueKey, viewer, getGraphic, finishEdit, revokeModel, revokePoint, finishDraw} = options;
       viewer = viewer || this.viewer;
       vueIndex = vueIndex || this.$_getId();
       vueKey = vueKey || "default";
@@ -67,6 +67,7 @@ export default {
         getGraphic: getGraphic,
         finishEdit: finishEdit,
         revokeModel: revokeModel,
+        revokePoint: revokePoint,
       });
       viewer.scene.layers.appendGraphicsLayer(graphicsLayer);
       window.vueCesium.GraphicsLayerManager.addSource(vueKey, vueIndex, graphicsLayer);
@@ -425,6 +426,7 @@ export default {
       let graphicsLayer = this.$_getGraphicLayer(vueIndex, vueKey);
       this.hasObject(graphicsLayer, function (graphicsLayer) {
         graphicsLayer.destroy();
+        window.vueCesium.GraphicsLayerManager.deleteSource(vueKey, vueIndex);
       });
     },
     /**

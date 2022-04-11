@@ -1,5 +1,5 @@
 <template>
-  <div :style="{width: containerWidth, height: containerHeight}" class="mapgis-3d-map-story-container">
+  <div :style="{width: containerWidth}" class="mapgis-3d-map-story-container">
     <project-panel ref="projectPanel"
                    :data-source="dataSourceCopy"
                    :height="height"
@@ -111,6 +111,7 @@ export default {
           break;
         }
       }
+      this.$_save();
     },
     //删除章节
     $_deleteChapter(index, uuid) {
@@ -154,6 +155,7 @@ export default {
         "chapters": []
       };
       this.dataSourceCopy.push(story);
+      this.$_save();
     },
     $_storyPreview(story) {
       if (!this.enableOneMap) {
@@ -234,7 +236,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  /*div点击穿透*/
-  pointer-events: none;
+  /*height设置为0，width设置为canvas宽度，这样既可以触发cesium的点击事件，也方便组件进行位置定位*/
+  height: 0;
 }
 </style>

@@ -13,11 +13,20 @@ const Template = (args, { argTypes }) => ({
       maximumScreenSpaceError: 8,
       vueKey: "default",
       vueIndex: 100,
+      M3DsArr: [],
+      //不嵌入一张图时的ui处理，可忽略
+      noOneMapFlag: true
     };
+  },
+  mounted() {
+    this.M3DsArr = [{
+      key: this.vueIndex,
+      value: "中地大楼"
+    }];
   },
   template: `
     <mapgis-web-scene style="height: 95vh">
-        <mapgis-3d-raster-layer :url="url" />
+<!--        <mapgis-3d-raster-layer :url="url" />-->
         <mapgis-3d-m3d-layer 
             :vueKey="vueKey" 
             :vueIndex="vueIndex" 
@@ -29,6 +38,8 @@ const Template = (args, { argTypes }) => ({
         <mapgis-3d-model-flatten
             :vueKey="vueKey" 
             :vueIndex="vueIndex"
+            :M3Ds="M3DsArr"
+            :noOneMap="noOneMapFlag"
         >
         </mapgis-3d-model-flatten>
     </mapgis-web-scene>
