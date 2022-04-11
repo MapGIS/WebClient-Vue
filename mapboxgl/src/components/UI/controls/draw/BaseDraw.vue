@@ -105,6 +105,10 @@ export default {
   props: {
     editable: {
       type: Boolean,
+      default: false
+    },
+    closeEdit:{
+      type: Boolean,
       default: true
     },
     // expandControl: {
@@ -352,10 +356,15 @@ export default {
           let radiusinkm = Math.round(Math.sqrt(area / Math.PI)) / 1000;
           this.$emit("update-radius", { area, radiusinkm, center });
         }
-      } else if (eventName == "drawCreate" && !this.editable) {
+      } else if (eventName === "drawCreate" && !this.editable && !this.closeEdit) {
         window.setTimeout(() => {
           vm.drawer && vm.drawer.changeMode("simple_select");
-        }, 100);
+        }, 10);
+      } else if (eventName === "drawCreate" && this.closeEdit){
+        window.setTimeout(() => {
+          // vm.map.dragPan.disable();
+          vm.drawer && vm.drawer.changeMode("static");
+        }, 10);
       }
       // if (eventName == "drawCreate" && mode == "direct_select" ) {
       //   this.drawer && this.drawer.changeMode("simple_select");
