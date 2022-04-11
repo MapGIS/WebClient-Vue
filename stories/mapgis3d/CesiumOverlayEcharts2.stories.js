@@ -308,7 +308,11 @@ const Template = (args, {argTypes}) => ({
             let option = {
                 animation: !1,
                 series: series,
-                cesium: {roam: true}
+                cesium: {
+                    roam: true,
+                    postRender:true,
+                    postRenderFrame:30
+                }
             };
             this.option = option;
         }

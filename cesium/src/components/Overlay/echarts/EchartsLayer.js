@@ -12,6 +12,9 @@ window.EchartsIdIndex = 0;
  * @description cesium的echars 4.0的实现。后面接手的人，没看懂echarts源码之前请不要改动下面的代码
  * @param map - {Object} 传入的leaflet的地图对象
  * @param options - {Object} echarts.options
+ * @param options.cesium - options.cesium.
+ * @param {Boolean} [options.cesium.postRender=false] 是否实时渲染
+ * @param {Boolean} [options.cesium.postRenderFrame=30] 每间隔多少帧渲染一次
  * @param container - {Element} 外部传入的div;外接的方式使用mapv<br>
  *
  * @see http://echarts.baidu.com/api.html#echarts
@@ -33,6 +36,15 @@ export class EchartsLayer {
 
     /*         this.container = map.container;
         this.addInnerContainer(); */
+
+    this.postRenderTime = 0;
+
+    let cesiumOpt = options.cesium;
+    if (cesiumOpt) {
+      this.postRender = cesiumOpt.postRender || false;
+      this.postRenderFrame = cesiumOpt.postRenderFrame || 30;
+    }
+
     if (container != undefined) {
       this.container = container;
       container.appendChild(this.canvas);
@@ -201,39 +213,6 @@ export class EchartsLayer {
             { leading: false }
           );
         }
-        // function moveEndHandler() {
-        //   debounce(
-        //       () => {
-        //         if (rendering) {
-        //           return;
-        //         }
-        //         var offsetEl = self.map.canvas;
-        //
-        //         var mapOffset = [
-        //           -parseInt(offsetEl.style.left, 10) || 0,
-        //           -parseInt(offsetEl.style.top, 10) || 0,
-        //         ];
-        //         viewportRoot.style.left = mapOffset[0] + "px";
-        //         viewportRoot.style.top = mapOffset[1] + "px";
-        //
-        //         coordSys.setMapOffset(mapOffset);
-        //         mapModel.__mapOffset = mapOffset;
-        //
-        //         api.dispatchAction({
-        //           type: "CesiumRoma",
-        //           pitch: 0, // self.map.camera.pitch,
-        //           bearing: 0, // self.map,
-        //         });
-        //         self._visible();
-        //       },
-        //       100,
-        //       { leading: true }
-        //   );
-        // }
-
-        // var moveHandler = function (type, target) {
-        //
-        // };
 
         var moveEndHandler = function (type, target) {
           if (rendering) {
@@ -276,50 +255,55 @@ export class EchartsLayer {
         }
 
         function zoomEndHandler() {
-          // debounce(
-          //     () => {
           if (rendering) {
             return;
           }
           api.dispatchAction({
             type: "CesiumRoma",
           });
-          //     },
-          //     100,
-          //     { leading: true }
-          // )
         }
 
-        var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
+        self.postStartEvent = self.postStartEvent.bind(self);
+        self.postEndEvent = self.postEndEvent.bind(self);
 
-        if (self.initStats == false) {
-          self.initStats = true;
-          handler.setInputAction(
-            zoomStartHandler,
-            Cesium.ScreenSpaceEventType.WHEEL
-          );
-          handler.setInputAction(
-            moveHandler,
-            Cesium.ScreenSpaceEventType.LEFT_DOWN
-          );
-          handler.setInputAction(
-            moveEndHandler,
-            Cesium.ScreenSpaceEventType.LEFT_UP
-          );
-          handler.setInputAction(
-            moveHandler,
-            Cesium.ScreenSpaceEventType.RIGHT_DOWN
-          );
-          handler.setInputAction(
-            moveEndHandler,
-            Cesium.ScreenSpaceEventType.RIGHT_UP
-          );
-          self.map.scene.camera.moveEnd.addEventListener(function () {
-            //获取当前相机高度
-            moveEndHandler();
-          });
-          //cesiumMap.scene.camera.moveStart.addEventListener(zoomStartHandler);
-          //cesiumMap.scene.camera.moveEnd.addEventListener(moveEndHandler);
+        if (self.postRender) {
+          // self.scene.camera.moveStart.addEventListener(self.postStartEvent,self);
+          // self.scene.camera.moveEnd.addEventListener(self.postEndEvent,self);
+          // self.scene.postRender.addEventListener(moveEndHandler);
+          //self.scene.camera.moveStart.addEventListener(self.postStartEvent, self);
+          //self.scene.camera.moveEnd.addEventListener(self.postEndEvent, self);
+        } else {
+          var handler = new Cesium.ScreenSpaceEventHandler(self.scene.canvas);
+
+          if (self.initStats == false) {
+            self.initStats = true;
+            handler.setInputAction(
+              zoomStartHandler,
+              Cesium.ScreenSpaceEventType.WHEEL
+            );
+            handler.setInputAction(
+              moveHandler,
+              Cesium.ScreenSpaceEventType.LEFT_DOWN
+            );
+            handler.setInputAction(
+              moveEndHandler,
+              Cesium.ScreenSpaceEventType.LEFT_UP
+            );
+            handler.setInputAction(
+              moveHandler,
+              Cesium.ScreenSpaceEventType.RIGHT_DOWN
+            );
+            handler.setInputAction(
+              moveEndHandler,
+              Cesium.ScreenSpaceEventType.RIGHT_UP
+            );
+            self.map.scene.camera.moveEnd.addEventListener(function () {
+              //获取当前相机高度
+              moveEndHandler();
+            });
+            //cesiumMap.scene.camera.moveStart.addEventListener(zoomStartHandler);
+            //cesiumMap.scene.camera.moveEnd.addEventListener(moveEndHandler);
+          }
         }
 
         this._oldMoveHandler = moveHandler;
@@ -409,5 +393,29 @@ export class EchartsLayer {
       this.canvas.parentElement.removeChild(this.canvas);
     this.map = undefined;
     return this;
+  }
+
+  postStartEvent() {
+    let vm = this;
+    debounce(
+      () => {
+        vm.scene.postRender.addEventListener(vm._reset, vm);
+        vm.show();
+      },
+      100,
+      { leading: true }
+    );
+  }
+
+  postEndEvent() {
+    this.scene.postRender.removeEventListener(this._reset, this);
+    this._reset();
+    this.show();
+  }
+
+  _reset() {
+    this._resizeCanvas();
+
+    // this.resize();
   }
 }
