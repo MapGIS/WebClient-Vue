@@ -3,6 +3,7 @@
 @import 'mixin.scss';
 
 @include b(input) {
+  padding: 4px 8px;
   @include focus($primary-5, $primary-shadow-color);
   &[disabled] {
     @include disabled();

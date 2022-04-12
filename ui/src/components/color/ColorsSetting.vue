@@ -16,24 +16,22 @@
         ></mapgis-ui-sketch-color-picker>
       </template>
       <template slot="max" slot-scope="text, record, index" v-if="showNumber">
-        <mapgis-ui-input
+        <mapgis-ui-input-number-addon
             v-model="record.max"
             size="small"
             :min="record.min"
             :max="getMax(index)"
             :prefix="`${record.min}~`"
             @change="changeMax(record, index)"
-            type="number"
             v-if="!singleNumber"
         />
-        <mapgis-ui-input
+        <mapgis-ui-input-number-addon
             v-else
             v-model="record.max"
             size="small"
             :min="record.min"
             :max="getMax(index)"
             @change="changeMax(record, index)"
-            type="number"
         />
       </template>
       <template slot="operation" slot-scope="text, record, index">

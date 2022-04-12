@@ -108,6 +108,7 @@ export { default as MapgisUiInputSearch } from "./components/input/Search.vue";
 export { default as MapgisUiInputGroup } from "./components/input/Group.vue";
 export { default as MapgisUiInputPassword } from "./components/input/Password.vue";
 export { default as MapgisUiInputNumber } from "./components/input/Number.vue";
+export { default as MapgisUiInputNumberAddon } from "./components/input/NumberAddon.vue";
 export { default as MapgisUiSettingForm } from "./components/form/SettingForm.vue";
 export { default as MapgisUiFormModel } from "./components/form-model/Form.vue";
 export { default as MapgisUiFormModelItem } from "./components/form-model/FormItem.vue";
