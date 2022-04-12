@@ -6,6 +6,7 @@
             v-bind:label="'光照颜色'" 
             v-bind:disableAlpha="false" 
             v-bind:color="lightColor" 
+            v-bind:showColorText="true"
             @input="inputChange"
         >
         </mapgis-ui-color-pick-panel>
@@ -13,6 +14,12 @@
 ```
 
 ## 属性
+### `showColorText`
+
+- **类型:** `Boolean`
+- **非侦听属性**
+- **描述:** 是否在输入框中展示颜色值
+- **默认:** `true`
 
 ### `label`
 

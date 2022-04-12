@@ -87,8 +87,9 @@ module.exports = {
               },
               ["/api/panel/switch.md", "开关"],
               ["/api/panel/inputnumber.md", "数值输入"],
+              ["/api/panel/inputnumberaddon.md", "数值输入-前后缀"],
               ["/api/panel/select.md", "选择器"],
-              ["/api/panel/select.md", "颜色选取"],
+              ["/api/panel/color_pick.md", "颜色选取"],
               ["/api/panel/tab.md", "页面切换"],
               {
                 title: "颜色",
@@ -124,7 +125,10 @@ module.exports = {
           {
             title: "组件开发",
             collapsable: false,
-            children: [["/plugin_components/onemap.md", "移植组件"]]
+            children: [
+              ["/plugin_components/onemap.md", "移植组件"],
+              ["/plugin_components/form_model.md", "弹框表单样式修改规范"]
+            ]
           },
           {
             title: "版本",
