@@ -5,27 +5,27 @@
 .mapgis-ui-border__content {
   .mapgis-ui-switch-panel {
     width: 100%;
-    height: fit-content;
+    // height: fit-content;
   }
 }
 
 @include b(switch-panel) {
   .mapgis-ui-form-item {
     margin: 0;
-    padding: 0 10px;
+    // padding-bottom: 8px;
   }
 
   .mapgis-ui-form-item-control {
     text-align: right;
-    height: 40px;
-    line-height: 40px;
+    // height: 40px;
+    // line-height: 40px;
     overflow: hidden;
   }
 
   .mapgis-ui-form-item-label {
     padding: 0px;
-    line-height: 40px;
-    font-size: 12px;
+    // line-height: 40px;
+    font-size: 14px;
   }
 
   .mapgis-ui-form-item-no-colon {
@@ -36,7 +36,7 @@
     //overflow: hidden;
     //white-space: nowrap;
     //text-overflow: ellipsis;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .mapgis-ui-input-sm {
@@ -60,15 +60,15 @@
   @include e(label, "-") {
     // padding: 0 6px;
     font-size: 14px;
-    line-height: 40px;
+    // line-height: 40px;
   }
 
   @include e(switch, "-") {
     float: right;
-    margin: 9px 0px;
+    // margin: 9px 0px;
     &-sm {
       float: right;
-      margin: 12px 0px;
+      // margin: 12px 0px;
     }
   }
 
@@ -92,7 +92,7 @@
   //background: $panel-inner-color;
   border-radius: 3px;
   // padding: 7px;
-  margin-bottom: 8px;
+  padding-bottom: 8px;
   min-width: 250px;
   // height: 66px;
 
