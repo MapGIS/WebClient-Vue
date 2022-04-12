@@ -271,13 +271,13 @@ export default {
     },
 
     /**
-     * 判断传入的m3d图层是否加载完毕
+     * 判断传入的m3d、Cesium3DTileset图层是否加载完毕
      */
     _m3dIsReady() {
       const { vueKey, checked } = this;
       return new Promise((resolve, reject) => {
         if (checked.length > 0) {
-          this.$_getM3DSetArray(
+          this.$_getAll3DTileSetArray(
             function(m3ds) {
               if (m3ds && m3ds.length > 0) {
                 resolve(m3ds);
@@ -482,10 +482,9 @@ export default {
       const boundingSphere = this.Cesium.AlgorithmLib.mergeLayersBoundingSphere(
         m3dSetArray
       );
-      const layersBoundingSphereCenter = boundingSphere.center;
       for (let i = 0; i < m3dSetArray.length; i++) {
         const m3d = m3dSetArray[i];
-        const range = this._getM3DSetRange(m3d, layersBoundingSphereCenter);
+        const range = this._getM3DSetRange(m3d, boundingSphere);
         if (!range) {
           continue;
         }
@@ -513,10 +512,14 @@ export default {
     /**
      * 获取一个m3d的包围盒范围(以最大包围盒中心点为原点)
      */
-    _getM3DSetRange(m3dSet, layersBoundingSphereCenter) {
+    _getM3DSetRange(m3dSet, boundingSphere) {
       // m3dSet.debugShowBoundingVolume = true;
       // 如果模型未加载完，这里transform为undefined
-      const transform = m3dSet._transform;
+      // const transform = m3dSet._transform;
+      const layersBoundingSphereCenter = boundingSphere.center;
+      const layersBoundingSphereRadius = boundingSphere.radius;
+      const transform = m3dSet._root.computedTransform;
+      let xmin, ymin, xmax, ymax, zmin, zmax;
       if (!transform) {
         return null;
       }
@@ -524,6 +527,22 @@ export default {
         transform,
         new Cesium.Matrix4()
       );
+
+      if (m3dSet.constructor.name == "Cesium3DTileset") {
+        let range = { xmin, ymin, xmax, ymax, zmin, zmax };
+        Object.keys(range).forEach(item => {
+          if (item == "xmin" || item == "ymin")
+            range[item] = -layersBoundingSphereRadius;
+          if (item == "xmax" || item == "ymax")
+            range[item] = layersBoundingSphereRadius;
+          if (item == "zmin")
+            range[item] = -layersBoundingSphereRadius/2;
+          if (item == "zmax")
+            range[item] = layersBoundingSphereRadius/2;
+        })
+        return range;
+      }
+
       // 东北角
       const northeastCornerCartesian =
         m3dSet._root.boundingVolume.northeastCornerCartesian;
@@ -542,8 +561,8 @@ export default {
         southwestCornerCartesian,
         new Cesium.Cartesian3()
       );
-      const zmin = m3dSet._root.boundingVolume.minimumHeight;
-      const zmax = m3dSet._root.boundingVolume.maximumHeight;
+      zmin = m3dSet._root.boundingVolume.minimumHeight;
+      zmax = m3dSet._root.boundingVolume.maximumHeight;
       // 模型中心点本地坐标
       // const centerLocal = {
       //   x: (northeastCornerLocal.x + southwestCornerLocal.x) / 2,
@@ -580,10 +599,10 @@ export default {
         new Cesium.Cartesian3()
       );
 
-      const xmin = southwestCornerLocal.x - layersBoundingSphereCenterLocal.x;
-      const ymin = southwestCornerLocal.y - layersBoundingSphereCenterLocal.y;
-      const xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
-      const ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
+      xmin = southwestCornerLocal.x - layersBoundingSphereCenterLocal.x;
+      ymin = southwestCornerLocal.y - layersBoundingSphereCenterLocal.y;
+      xmax = northeastCornerLocal.x - layersBoundingSphereCenterLocal.x;
+      ymax = northeastCornerLocal.y - layersBoundingSphereCenterLocal.y;
       return { xmin, ymin, xmax, ymax, zmin, zmax };
     }
   }
