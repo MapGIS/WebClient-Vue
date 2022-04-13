@@ -139,7 +139,7 @@ export default {
             outline: outlineColor,
             material: color,
           });
-        } else if (type == "line" || entity.polyline) {
+        } else if (type == "line" || entity.polyline && !entity.polygon) {
           if (layerStyleLength === 0){
             layerStyle = new LineStyle({
               width: 2.0,
@@ -162,6 +162,14 @@ export default {
           const { material, outlineColor } = style;
           entity.polygon.material = material;
           entity.polygon.outlineColor = outlineColor;
+          const layerStyleLine = new LineStyle({
+            width: layerStyle.outlineWidth,
+            color: layerStyle.outlineColor,
+          });
+          const stylePolyline = layerStyleLine.toCesiumStyle(Cesium);
+          const { width } = stylePolyline;
+          entity.polyline.material = stylePolyline.material;
+          entity.polyline.width = width;
         }
       }
     },
@@ -191,7 +199,7 @@ export default {
               outline: outlineColor,
               material: color,
             });
-          } else if (entity.polyline) {
+          } else if (entity.polyline && !entity.polygon) {
             const style = hline.toCesiumStyle(Cesium);
             const { material, width } = style;
             entity.polyline.material = material;
@@ -234,7 +242,7 @@ export default {
               outline: outlineColor,
               material: color,
             });
-          } else if (type == "line" || entity.polyline) {
+          } else if (type == "line" || entity.polyline && !entity.polygon) {
             const style = layerStyle.toCesiumStyle(Cesium);
             const { material, width } = style;
             entity.polyline.material = material;
@@ -244,6 +252,14 @@ export default {
             const { material, outlineColor } = style;
             entity.polygon.material = material;
             entity.polygon.outlineColor = outlineColor;
+            const layerStyleLine = new LineStyle({
+              width: layerStyle.outlineWidth,
+              color: layerStyle.outlineColor,
+            });
+            const stylePolyline = layerStyleLine.toCesiumStyle(Cesium);
+            const { width } = stylePolyline;
+            entity.polyline.material = stylePolyline.material;
+            entity.polyline.width = width;
           }
         }
       }
@@ -264,10 +280,10 @@ export default {
       const vm = this;
       if (typeof data === "string") {
         fetch(data)
-          .then((res) => res.json())
-          .then((geojson) => {
-            vm.parseBBox(geojson);
-          });
+            .then((res) => res.json())
+            .then((geojson) => {
+              vm.parseBBox(geojson);
+            });
       } else {
         vm.parseBBox(data);
       }
