@@ -2,6 +2,8 @@
 
 > mapgis-3d-compare
 
+<font style="color:red;fontsize=5px;"> 注意：</font>由于三维底层支持原因，目前仅支持影像图层，三维m3d模型图层的卷帘功能暂时不支持。
+
 ## 属性
 
 ### `beforeLayers`
