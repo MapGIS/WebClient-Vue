@@ -1,4 +1,4 @@
-import Mapgis3dShadow from "../../cesium/src/components/Analysis/Shadow"
+import Mapgis3dShadow from "../../cesium/src/components/Analysis/Shadow.vue"
 import "../style/card.css";
 import Markdown from "../../cesium/docs/api/analysis/Shadow.md";
 
