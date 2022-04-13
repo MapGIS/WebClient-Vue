@@ -116,8 +116,9 @@ export default {
     changeColor(dataSource) {
       let entities = dataSource.entities.values;
       const vm = this;
-      const { Cesium, layerStyle } = this;
+      let { Cesium, layerStyle } = this;
       const { type } = layerStyle;
+      let layerStyleLength = Object.keys(layerStyle).length;
       const layerStyleLine = new LineStyle({
         width: layerStyle.outlineWidth,
         color: layerStyle.outlineColor,
@@ -127,6 +128,14 @@ export default {
         let entity = entities[i];
         if (type == "point" || entity.billboard) {
           entity.billboard.show = false;
+          if (layerStyleLength === 0){
+            layerStyle = new PointStyle({
+              radius: 48,
+              color: "#4169e1",
+              outlineColor: "#000000",
+              outlineWidth: 2,
+            })
+          }
           const style = layerStyle.toCesiumStyle(Cesium);
           const { color, pixelSize, outlineColor } = style;
           entity.ellipse = new Cesium.EllipseGraphics({
@@ -135,12 +144,26 @@ export default {
             outline: outlineColor,
             material: color,
           });
+        } else if (type == "line" || entity.polyline) {
+          if (layerStyleLength === 0){
+            layerStyle = new LineStyle({
+              width: 2.0,
+              color: "#000000",
+            })
+          }
         } else if (type == "line" || entity.polyline && !entity.polygon) {
           const style = layerStyle.toCesiumStyle(Cesium);
           const { material, width } = style;
           entity.polyline.material = material;
           entity.polyline.width = width;
         } else if (type == "fill" || entity.polygon) {
+          if (layerStyleLength === 0){
+            layerStyle = new FillStyle({
+              color: "#ffff00",
+              outlineColor: "#000000",
+              outlineWidth: 2,
+            })
+          }
           const style = layerStyle.toCesiumStyle(Cesium);
           const { material, outlineColor } = style;
           entity.polygon.material = material;
