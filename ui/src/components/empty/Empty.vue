@@ -1,5 +1,7 @@
 <script>
 import Empty, { EmptyProps } from "ant-design-vue/es/empty/index";
+import DefaultEmptyImg from 'ant-design-vue/es/empty/empty.js';
+import SimpleEmptyImg from 'ant-design-vue/es/empty/simple.js';
 import PropTypes from "../../util/vue-types";
 import AntdMixin from "../../mixin/AntdMixin";
 import ThemeMixin from "../../mixin/ThemeMixin";
@@ -16,6 +18,8 @@ export default {
   wrapperUI: Empty,
   mixins: [AntdMixin, ThemeMixin],
   inheritAttrs: false,
+  PRESENTED_IMAGE_DEFAULT: DefaultEmptyImg,
+  PRESENTED_IMAGE_SIMPLE: SimpleEmptyImg,
   props: emptyProps,
   computed: {
     addProps() {
