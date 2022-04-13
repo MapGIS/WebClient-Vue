@@ -70,6 +70,28 @@
 - **描述:** 字体高度的偏移值
 - **默认值:** 10000
 
+## 事件
+
+### `@load`
+
+- **Description:** 在 Mapgis3dGraphThemeLayer 加载完毕后发送该事件
+- **Payload** Mapgis3dGraphThemeLayer 组件对象
+
+### `@unload`
+
+- **Description:** 关闭 Mapgis3dGraphThemeLayer 组件前发送该事件
+- **Payload** Mapgis3dGraphThemeLayer 组件对象
+
+### `@click`
+
+- **Description:** 左击统计图时 发送该事件
+- **Payload** 点击的统计图所在的 feature 属性
+
+### `@hover`
+
+- **Description:** 鼠标移至统计图上时 发送该事件
+- **Payload** 鼠标经过的统计图所在的 feature 属性
+
 ## 示例
 
 ```vue
@@ -104,7 +126,7 @@ export default {
       addExtrudedHeight: true,
       textFont: "50px Helvetica",
       textColor: "#008000",
-      textHeightOffset: 10000
+      textHeightOffset: 10000,
     };
   },
   mounted() {
@@ -124,8 +146,8 @@ export default {
     load(graphThemeLayer) {
       this.graphThemeLayer = graphThemeLayer;
       this.initData();
-    }
-  }
+    },
+  },
 };
 </script>
 ```

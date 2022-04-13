@@ -80,7 +80,8 @@ export default {
   },
   data() {
     return {
-      thematicMapLayer: undefined
+      thematicMapLayer: undefined,
+      handler: undefined
     };
   },
   created() {
@@ -104,6 +105,10 @@ export default {
     },
     unmount() {
       this.removeGraphLayer();
+      this.handler.removeInputAction(Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+      this.handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+      this.handler.destroy();
+      this.handler = undefined;
       this.$emit("unload", this);
     },
     addGraphLayer() {
@@ -124,6 +129,30 @@ export default {
           this.thematicMapLayer.addExtrudedHeight = this.addExtrudedHeight;
         }
         this.thematicMapLayer.addByGeoJson(this.geojson, this.type);
+        
+        let vm = this;
+        this.handler = this.handler || new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        //增加hover事件
+        this.handler.setInputAction(function (movement) {
+
+          let pickedFeature = viewer.scene.pick(movement.endPosition);
+          if (pickedFeature !== undefined && pickedFeature.id.feature && pickedFeature.id.feature !== undefined) {
+            vm.$emit('hover',pickedFeature.id.feature); 
+          }
+          viewer.scene.requestRender();
+
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+        //增加click事件
+        this.handler.setInputAction(function (movement) {
+
+          let pickedFeature = viewer.scene.pick(movement.position);
+          if (pickedFeature !== undefined && pickedFeature.id.feature && pickedFeature.id.feature !== undefined) {
+            vm.$emit('click',pickedFeature.id.feature); 
+          }
+          viewer.scene.requestRender();
+
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       }
     },
     removeGraphLayer() {

@@ -99,6 +99,13 @@ const Template = (args, { argTypes }) => ({
       this.graphThemeLayer = graphThemeLayer;
       this.initData();
     },
+    click(feature) {
+      console.log('clickfeature',feature);
+      
+    },
+    hover(feature) {
+      // console.log('hover',feature);
+    },
   },
   template: `
       <mapgis-web-scene :style="{height: '95vh'}">
@@ -110,6 +117,8 @@ const Template = (args, { argTypes }) => ({
         :textFont="textFont"
         :textColor="textColor" 
         :textHeightOffset="textHeightOffset"
+        @click="click"
+        @hover="hover"
         @load="load"/>
       </mapgis-web-scene>
     `,
