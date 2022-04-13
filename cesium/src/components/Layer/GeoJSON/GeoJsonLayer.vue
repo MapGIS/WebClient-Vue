@@ -119,11 +119,6 @@ export default {
       let { Cesium, layerStyle } = this;
       const { type } = layerStyle;
       let layerStyleLength = Object.keys(layerStyle).length;
-      const layerStyleLine = new LineStyle({
-        width: layerStyle.outlineWidth,
-        color: layerStyle.outlineColor,
-      });
-
       for (let i = 0; i < entities.length; i++) {
         let entity = entities[i];
         if (type == "point" || entity.billboard) {
@@ -168,7 +163,10 @@ export default {
           const { material, outlineColor } = style;
           entity.polygon.material = material;
           entity.polygon.outlineColor = outlineColor;
-
+          const layerStyleLine = new LineStyle({
+            width: layerStyle.outlineWidth,
+            color: layerStyle.outlineColor,
+          });
           const stylePolyline = layerStyleLine.toCesiumStyle(Cesium);
           const { width } = stylePolyline;
           entity.polyline.material = stylePolyline.material;
@@ -182,10 +180,6 @@ export default {
       const { vueKey, vueIndex, vueCesium } = this;
       const { viewer, Cesium, enablePopup, layerStyle, highlightStyle } = this;
       const { type } = layerStyle;
-      const layerStyleLine = new LineStyle({
-        width: layerStyle.outlineWidth,
-        color: layerStyle.outlineColor,
-      });
       const hpolygon = highlightStyle.polygon;
       const hline = highlightStyle.line;
       const hpoint = highlightStyle.point;
@@ -259,7 +253,10 @@ export default {
             const { material, outlineColor } = style;
             entity.polygon.material = material;
             entity.polygon.outlineColor = outlineColor;
-
+            const layerStyleLine = new LineStyle({
+              width: layerStyle.outlineWidth,
+              color: layerStyle.outlineColor,
+            });
             const stylePolyline = layerStyleLine.toCesiumStyle(Cesium);
             const { width } = stylePolyline;
             entity.polyline.material = stylePolyline.material;
