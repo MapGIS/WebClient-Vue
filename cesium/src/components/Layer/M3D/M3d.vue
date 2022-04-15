@@ -121,11 +121,24 @@ export default {
       } else if (version == "2.0") {
         return new Promise(
           resolve => {
-            let layerIndex = viewer.scene.layers.appendM3DLayer(url, {
-              ...$props,
-              loaded: vm.onM3dLoaded
-            });
-            resolve({ layerIndex: layerIndex });
+            let layerIndex;
+            // 判断服务类型，三维场景服务调用Cesium底层appendSceneLayer，本质是调用appendSceneServer方法
+            if (url.indexOf('SceneServer') !== -1) {
+              viewer.scene.layers.appendSceneLayer(url, {
+                ...$props,
+                loaded: vm.onSceneLoaded
+              });
+              layerIndex = viewer.scene.layers._index;
+              // const sceneLayer = viewer.scene.layers.sceneLayerMap.get(layerIndex);
+              resolve({ layerIndex: layerIndex });
+            } else {
+              // M3D服务调用Cesium底层appendM3DLayer方法
+              layerIndex = viewer.scene.layers.appendM3DLayer(url, {
+                ...$props,
+                loaded: vm.onM3dLoaded
+              });
+              resolve({ layerIndex: layerIndex });
+            };
           },
           reject => {}
         );
@@ -147,6 +160,22 @@ export default {
       return this.version;
     },
     parseM3dVersion() {},
+    // Cesium底层回调，返回加载的tileset，并用vueCesium进行管理
+    onSceneLoaded(tileset) {
+      const vm = this;
+      const { vueIndex, vueKey, vueCesium, url } = this;
+      if (tileset) {
+        let m3ds = [tileset];
+        vm.loopM3d(m3ds, "2.0");
+        vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
+          version: "2.0",
+          url: url
+        });
+        console.log("vueCesium.M3DIgsManager", vueCesium.M3DIgsManager);
+        vm.$emit("loaded", { tileset: tileset, m3ds: m3ds });
+        vm.bindPopupEvent();
+      }
+    },
     onM3dLoaded(e, n) {},
     mount() {
       const vm = this;
@@ -217,15 +246,18 @@ export default {
            * @修改时间 2022/2/22
            */
           vm.layerIndex = layerIndex;
-          let m3dLayer = viewer.scene.layers.m3dLayersMap.get(layerIndex);
-          let m3ds = [m3dLayer];
-          vm.loopM3d(m3ds, "2.0");
-          vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
-            version: "2.0",
-            url: url
-          });
-          vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
-          vm.bindPopupEvent();
+          let m3dLayer;
+          if (url.indexOf('SceneServer') == -1) {
+            m3dLayer = viewer.scene.layers.m3dLayersMap.get(layerIndex);
+            let m3ds = [m3dLayer];
+            vm.loopM3d(m3ds, "2.0");
+            vueCesium.M3DIgsManager.addSource(vueKey, vueIndex, m3ds, {
+              version: "2.0",
+              url: url
+            });
+            vm.$emit("loaded", { tileset: m3dLayer, m3ds: m3ds });
+            vm.bindPopupEvent();
+          }
         }
       });
     },

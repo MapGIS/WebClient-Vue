@@ -41,4 +41,6 @@ BIM.args = {
     title: "oid",
     enableSeparate: true
   },
+  autoReset: true,
+  duration: 2.5
 };
