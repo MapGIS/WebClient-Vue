@@ -18,7 +18,10 @@
         style="width: 100%"
         @change="$_change"
         v-model="valueCopy"
-        v-if="type === 'Text'"
+        v-if="
+          type === 'Text' ||
+            (type === 'Image' && (!uploadUrl || uploadUrl.length == 0))
+        "
       />
       <mapgis-ui-input-number
         style="width: 100%"
