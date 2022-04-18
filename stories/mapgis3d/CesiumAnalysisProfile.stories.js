@@ -102,7 +102,7 @@ const Template = (args, { argTypes }) => ({
           :token="token"
       ></mapgis-3d-ogc-wmts-layer>
       <mapgis-3d-igs-terrain :url="terrainUrl" :requestVertexNormals="true"/>
-      <mapgis-ui-card customPosition="top-right" style="zIndex:20002">
+      <mapgis-ui-card  customPosition="top-left" class="storybook-ui-card">
       <mapgis-3d-analysis-profile 
           :profileType="profileType" 
           :polygonHeight="polygonHeight" 

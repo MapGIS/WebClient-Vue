@@ -1,14 +1,13 @@
 <template>
     <div class="aspect-slope-analysis">
         <mapgis-ui-switch-panel
-            size="small"
+            size="default"
             label="坡度分析"
             v-model="slopeFill"
             class="paddingStyle"
         >
-            <div class="slope-parameter-title">
-                <label>坡度图例设置</label>
-                <mapgis-ui-tooltip placement="bottomRight">
+            <mapgis-ui-group-tab title="坡向图例设置" class="slope-parameter-title" :hasTopMargin="false" :hasBottomMargin="false">
+                <mapgis-ui-tooltip slot="tip" placement="top">
                     <template slot="title">
                         <span>{{ info }}</span>
                     </template>
@@ -17,7 +16,7 @@
                         style="right: 0"
                     ></mapgis-ui-iconfont>
                 </mapgis-ui-tooltip>
-            </div>
+            </mapgis-ui-group-tab>
             <mapgis-ui-colors-setting
                 v-model="rampColorsCopy"
                 :rangeField="'坡度范围'"
@@ -27,15 +26,15 @@
         <div class="dividerWrapper"><div class="divider" /></div>
 
         <mapgis-ui-switch-panel
-            size="small"
+            size="default"
             label="坡向分析"
             v-model="aspectArrow"
             class="paddingStyle"
         >
             <mapgis-ui-input-number-panel
                 v-model="arrowRepeat"
-                size="small"
-                :slider="false"
+                size="large"
+                :slider="true"
                 :range="[1, 10]"
                 label="箭头密度"
             />
@@ -375,19 +374,19 @@ export default {
 
 <style scoped>
 .aspect-slope-analysis {
-    padding: 10px;
+    /* padding: 10px; */
 }
 .paddingStyle {
-    padding: 10px 6px;
+    /* padding: 10px 6px; */
 }
 
 .slope-parameter-title {
-    display: flex;
+    /* display: flex;
     padding: 6px;
     font-size: 12px;
     font-weight: 700;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; */
 }
 
 ::v-deep .mapgis-popup-row-container {
@@ -416,7 +415,7 @@ export default {
 .divider {
     display: block;
     height: 1px;
-    position: absolute;
+    /* position: absolute; */
     left: 16px;
     right: 16px;
     margin: 6px 0;

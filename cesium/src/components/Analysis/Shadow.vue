@@ -4,21 +4,21 @@
       <div class="mp-widget-shadow-analysis">
         <mapgis-ui-setting-form
             :model="formData"
-            :wrapperWidth="143"
-            :labelWidth="100"
+            :layout="layout"
+            size="default"
         >
             <mapgis-ui-form-model-item label="日期">
                 <mapgis-ui-date-picker
+                    autoWidth
                     :default-value="startDate"
-                    size="small"
                     @change="changeDate"
+                    style="width: 100%"
                 />
             </mapgis-ui-form-model-item>
             <div>
                 <mapgis-ui-form-model-item label="开始时间">
                     <mapgis-ui-time-picker
                         :default-value="startTime"
-                        size="small"
                         @change="changeTime($event, 'startTime')"
                         style="width: 100%"
                     />
@@ -26,18 +26,15 @@
                 <mapgis-ui-form-model-item label="结束时间">
                     <mapgis-ui-time-picker
                         :default-value="endTime"
-                        size="small"
                         @change="changeTime($event, 'endTime')"
                         style="width: 100%"
                     />
                 </mapgis-ui-form-model-item>
             </div>
-
+        </mapgis-ui-setting-form>
             <mapgis-ui-input-number-panel
-                size="small"
+                size="large"
                 label="底部高程(米)"
-                :labelCol="{ span: 10 }"
-                :wrapperCol="{ span: 14 }"
                 v-model="formData.minHeight"
                 :range="[0]"
                 :rangeShow="false"
@@ -45,21 +42,17 @@
             />
 
             <mapgis-ui-input-number-panel
-                size="small"
+                size="large"
                 label="拉伸高度(米)"
-                :labelCol="{ span: 10 }"
-                :wrapperCol="{ span: 14 }"
                 v-model="formData.stretchHeight"
                 :range="[0]"
-                :rangeShow="false"
-                :slider="false"
+                :rangeShow="true"
+                :slider="true"
             />
 
             <mapgis-ui-input-number-panel
-                size="small"
+                size="large"
                 label="间隔时间(分钟)"
-                :labelCol="{ span: 10 }"
-                :wrapperCol="{ span: 14 }"
                 v-model="formData.intervalTime"
                 :range="[1]"
                 :rangeShow="false"
@@ -68,9 +61,8 @@
 
             <mapgis-ui-color-pick-panel
                 label="阴影颜色"
-                size="small"
-                :labelCol="10"
-                :wrapperCol="14"
+                :labelCol="24"
+                :wrapperCol="24"
                 :color.sync="formData.shadowColor"
                 :disableAlpha="true"
                 @input="
@@ -80,9 +72,8 @@
             />
             <mapgis-ui-color-pick-panel
                 label="非阴影颜色"
-                size="small"
-                :labelCol="10"
-                :wrapperCol="14"
+                :labelCol="24"
+                :wrapperCol="24"
                 :color.sync="formData.sunColor"
                 :disableAlpha="true"
                 @input="
@@ -90,31 +81,28 @@
                         (formData.sunColor = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
                 "
             />
-        </mapgis-ui-setting-form>
+
         <mapgis-ui-setting-footer class="settingButton">
-            <mapgis-ui-space>
+            <!-- <mapgis-ui-space> -->
                 <mapgis-ui-button
                     :disabled="maskShow"
                     type="primary"
                     @click="shadow"
-                    size="small"
                     >阴影分析
                 </mapgis-ui-button>
                 <mapgis-ui-button
                     :disabled="maskShow"
                     type="primary"
                     @click="sun"
-                    size="small"
                     >日照效果
                 </mapgis-ui-button>
                 <mapgis-ui-button
                     type="primary"
                     @click="removeAll"
-                    size="small"
                 >
                     清除
                 </mapgis-ui-button>
-            </mapgis-ui-space>
+            <!-- </mapgis-ui-space> -->
         </mapgis-ui-setting-footer>
         <mapgis-ui-mask
             :loading="maskShow"
@@ -151,6 +139,15 @@ export default {
     inject: ["Cesium", "vueCesium", "viewer"],
     props: {
         ...VueOptions,
+        /**
+         * @type String
+         * @default "vertical"
+         * @description 表单布局
+         */
+        layout: {
+        type: String,
+        default: "vertical" // 'horizontal' 'vertical' 'inline'
+        },
         /**
          * @type String
          * @default 'rgba(0,255,0,255)'
@@ -691,7 +688,7 @@ export default {
 
 <style scoped>
 .mp-widget-shadow-analysis {
-    padding: 10px;
+    /* padding: 10px; */
     border-radius: 4px;
 }
 

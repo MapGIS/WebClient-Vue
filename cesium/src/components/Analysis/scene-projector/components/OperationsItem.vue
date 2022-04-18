@@ -1,7 +1,7 @@
 <template>
   <div class="operations-row">
     <template>
-      <mapgis-ui-tooltip placement="bottom">
+      <mapgis-ui-tooltip placement="top">
         <template slot="title">
           <span>{{ textCopy }}</span>
         </template>
@@ -180,6 +180,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 28px;
 }
 
 /* 请不要更改后面四个class的顺序 */

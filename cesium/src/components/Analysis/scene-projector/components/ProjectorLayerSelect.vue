@@ -4,7 +4,6 @@
       <mapgis-ui-input
         v-model="selectedLayer"
         class="mapgis-input"
-        size="small"
         placeholder="请选择图层名"
         @focus="showCardDialog = true"
       >
@@ -206,18 +205,22 @@ export default {
 </script>
 <style scoped>
 .data-card {
-  width: 89%;
+  width: 87%;
   margin-bottom: 12px;
   position: absolute;
   z-index: 1000;
 }
 .card-content {
+  line-height: 28px;
   padding: 4px 8px;
   cursor: pointer;
 }
+.card-content:hover {
+  color: var(--primary-color);
+}
 
 .divider {
-  margin: 4px 0;
+  margin: 0px;
 }
 
 ::v-deep .mapgis-ui-card-body {

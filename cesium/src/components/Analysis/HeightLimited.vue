@@ -6,6 +6,8 @@
         :color="colorCopy"
         :size="size"
         :disableAlpha="false"
+        :labelCol="24"
+				:wrapperCol="24"
         style="font-size: 13px"
         @input="val =>
                   (colorCopy = `rgba(${val.rgba.r}, ${val.rgba.g}, ${val.rgba.b}, ${val.rgba.a})`)
@@ -25,14 +27,21 @@
         v-model="heightLimitCopy"
         @change="val => setInput(val)"
         style="font-size: 13px"/>
-    <mapgis-ui-switch-panel label="控高面显示" v-model="enablePolygonCopy" size="small" style="padding:0 6px"></mapgis-ui-switch-panel>
-
+    <!-- <mapgis-ui-switch-panel label="控高面显示" v-model="enablePolygonCopy" size="small" :isTitleBold="false" style="margin:0px;"></mapgis-ui-switch-panel> -->
+    <mapgis-ui-group-tab title="控高面显示" :isTitleBold="true" :hasTopMargin="false" :hasBottomMargin="true">
+      <mapgis-ui-switch
+        slot="handle"
+        v-model="enablePolygonCopy"
+        size="small"
+      >
+      </mapgis-ui-switch>
+    </mapgis-ui-group-tab>
     <mapgis-3d-draw v-on:drawcreate="handleCreate" v-on:load="handleDrawLoad"
                     :drawStyle="drawStyleCopy"
                     :enableControl="enableControl">
       <div class="parent_div">
         <mapgis-ui-group-tab title="分析范围"></mapgis-ui-group-tab>
-        <mapgis-ui-radio-group v-model="radioValue" style="padding: 10px 10px">
+        <mapgis-ui-radio-group v-model="radioValue" style="line-height:32px;padding-bottom:8px;">
           <mapgis-ui-radio
               :value=1
           >
@@ -44,11 +53,11 @@
             输入区域
           </mapgis-ui-radio>
         </mapgis-ui-radio-group>
-        <div style="text-align: left;padding:8px 0px" v-if="radioValue === 1">
+        <div style="text-align: left;padding-bottom:8px;" v-if="radioValue === 1">
           <mapgis-ui-tooltip
               v-for="(item, i) in draws"
               :key="i"
-              placement="bottom"
+              placement="top"
           >
             <template slot="title">
               <span>{{ item.tip }}</span>
@@ -69,28 +78,36 @@
           </mapgis-ui-tooltip>
         </div>
         <div v-if="radioValue === 2">
-          <mapgis-ui-setting-form  :label-width="24" :wrapper-width="224" style="padding: 0 10px" class="mapgis-ui-setting-form">
+          <mapgis-ui-setting-form :layout="layout" size="default" class="mapgis-ui-setting-form">
             <mapgis-ui-form-item label="圆心" style="text-align: center">
-              <mapgis-ui-input
-                  :style="{ width: '48%',padding:'0 5px 0 0' }"
-                  v-model.number="circleCenter.longitude"
-                  :placeholder="inputDefaultVal1"
-                  allow-clear
-              />
-              <mapgis-ui-input
-                  :style="{ width: '48%' }"
-                  v-model.number="circleCenter.latitude"
-                  :placeholder="inputDefaultVal2"
-                  allow-clear
-              />
+              <mapgis-ui-row :gutter="8">
+                <mapgis-ui-col :span="12">	
+                  <mapgis-ui-input-number-addon
+                    v-model.number="circleCenter.longitude"
+                    allow-clear
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" :title="inputDefaultVal1">
+                      <mapgis-ui-iconfont type="mapgis-xzhouyidong"/>
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                </mapgis-ui-col>
+                <mapgis-ui-col :span="12">
+                  <mapgis-ui-input-number-addon
+                    v-model.number="circleCenter.latitude"
+                    allow-clear
+                  >
+                    <mapgis-ui-tooltip slot="addonBefore" :title="inputDefaultVal2">
+                      <mapgis-ui-iconfont type="mapgis-yzhouyidong"/>
+                    </mapgis-ui-tooltip>
+                  </mapgis-ui-input-number-addon>
+                </mapgis-ui-col>
+              </mapgis-ui-row>
             </mapgis-ui-form-item>
             <mapgis-ui-form-item label="半径">
-              <mapgis-ui-input
-                  v-model.number="radius"
-                  type="number"
-                  min="0"
-                  addon-after="(米)"
-                  style="padding: 0 5px"
+              <mapgis-ui-input-number-addon
+                v-model.number="radius"
+                min="0"
+                addon-after="米"
               />
             </mapgis-ui-form-item>
           </mapgis-ui-setting-form>
@@ -116,6 +133,15 @@ export default {
   name: "mapgis-3d-heightlimited",
   mixins: [BaseLayer],
   props: {
+    /**
+     * @type String
+     * @default "vertical"
+     * @description 表单布局
+     */
+    layout: {
+      type: String,
+      default: "vertical" // 'horizontal' 'vertical' 'inline'
+    },
     /**
      * @type Number
      * @default 80
@@ -546,12 +572,12 @@ export default {
 }
 
 ::v-deep .mapgis-ui-form-item {
-  margin-bottom: 12px;
+  /* margin-bottom: 12px; */
 }
 ::v-deep .mapgis-ui-form-item-control{
   text-align: center!important;
 }
 ::v-deep .mapgis-ui-input-number-panel{
-  padding: 0;
+  /* padding: 0; */
 }
 </style>

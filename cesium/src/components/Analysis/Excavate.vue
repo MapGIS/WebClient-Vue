@@ -1,46 +1,39 @@
 <template>
   <div class="mapgis-widget-excavate-analysis">
     <mapgis-ui-group-tab title="参数设置"></mapgis-ui-group-tab>
-    <mapgis-ui-form-item
-      class="mapgis-excavate-form"
-      label="裁剪面材质"
-      :label-col="{ span: 6 }"
-      :wrapper-col="{ span: 18 }"
-      :colon="false"
-    >
+    <mapgis-ui-form :layout="layout">
+    <mapgis-ui-form-item class="mapgis-excavate-form"
+                         label="裁剪面材质"
+                         :colon=false>
       <mapgis-ui-sketch-color-picker
         :color.sync="materialCopy"
         :disableAlpha="false"
       ></mapgis-ui-sketch-color-picker>
     </mapgis-ui-form-item>
-    <mapgis-ui-form-item
-      class="mapgis-excavate-form"
-      label="边界线颜色"
-      :label-col="{ span: 6 }"
-      :wrapper-col="{ span: 18 }"
-      :colon="false"
-    >
+    <mapgis-ui-form-item class="mapgis-excavate-form"
+                         label="边界线颜色"
+                         :colon=false>
       <mapgis-ui-sketch-color-picker
         :color.sync="edgeColorCopy"
         :disableAlpha="false"
       ></mapgis-ui-sketch-color-picker>
     </mapgis-ui-form-item>
-    <mapgis-ui-form-item
-      class="mapgis-excavate-form"
-      label="边界线宽度"
-      :label-col="{ span: 6 }"
-      :wrapper-col="{ span: 18 }"
-      :colon="false"
-    >
-      <mapgis-ui-input v-model.number="edgeWidthCopy" :min="0" type="number" />
+    <mapgis-ui-form-item class="mapgis-excavate-form"
+                         label="边界线宽度"
+                         :colon=false>
+      <mapgis-ui-input
+          v-model.number="edgeWidthCopy"
+          :min="0"
+          type="number"
+      />
     </mapgis-ui-form-item>
-    <mapgis-ui-input-number-panel
-      class="mapgis-excavate-form"
-      size="small"
-      label="开挖深度(米)"
-      :range="[mindepth, maxdepth]"
-      v-model="excavateDepth"
-    />
+      <mapgis-ui-input-number-panel
+          class="mapgis-excavate-form"
+          size="large"
+          label="开挖深度(米)"
+          :range="[mindepth,maxdepth]"
+          v-model="excavateDepth"/>
+    </mapgis-ui-form>
   </div>
 </template>
 
@@ -51,6 +44,10 @@ import { makeColor } from "../Utils/util";
 export default {
   name: "mapgis-3d-excavate",
   props: {
+		layout: {
+			type: String,
+			default: "vertical" // 'horizontal' 'vertical' 'inline'
+		},
     planeRatio: {
       type: Number,
       default: 0.6,
@@ -435,17 +432,18 @@ export default {
 </script>
 
 <style scoped>
-.mapgis-widget-excavate-analysis {
-  font-size: 12px;
-}
-::v-deep .mapgis-ui-form-item {
-  margin-bottom: 4px;
+/* .mapgis-widget-excavate-analysis {
+  font-size: 14px;
+} */
+::v-deep .mapgis-ui-form-item{
+  margin-bottom: 0px;
 }
 
-.mapgis-excavate-form {
+/* .mapgis-excavate-form{
+  font-size: 14px;
+} */
+/* ::v-deep .mapgis-ui-input-number-panel-sm .label-sm{
   font-size: 12px;
-}
-::v-deep .mapgis-ui-input-number-panel-sm .label-sm {
-  font-size: 12px;
-}
+} */
+
 </style>

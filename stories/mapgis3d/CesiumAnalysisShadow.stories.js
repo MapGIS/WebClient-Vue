@@ -57,7 +57,7 @@ const Template = (args, { argTypes }) => ({
       <mapgis-web-scene style="height: 95vh">
       <mapgis-3d-raster-layer :url="url"></mapgis-3d-raster-layer>
       <mapgis-3d-m3d-layer :autoReset="autoReset" :maximumScreenSpaceError="maximumScreenSpaceError" :url="m3dUrl"></mapgis-3d-m3d-layer>
-      <div class="storybook-ui-card">
+      <mapgis-ui-card class="storybook-ui-card">
         <mapgis-3d-shadow
             :shadowColor="shadowColor"
             :sunColor="sunColor"
@@ -67,7 +67,7 @@ const Template = (args, { argTypes }) => ({
             :style="{backgroundColor:'#FFFFFF'}"
         >
         </mapgis-3d-shadow>
-      </div>
+      </mapgis-ui-card>
       </mapgis-web-scene>
     `
 });

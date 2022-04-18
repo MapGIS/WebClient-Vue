@@ -12,28 +12,26 @@
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="容差半径">
-						<mapgis-ui-input v-model="radius"></mapgis-ui-input>
+						<mapgis-ui-input-number autoWidth v-model="radius"></mapgis-ui-input-number>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="图层样式">
 						<mapgis-ui-select v-model="selectedInfoOptType" :placeholder=infoOptType[1].name @change="selectCurrentPar($event)">
 							<mapgis-ui-select-option v-for="(item, index) in infoOptType" :key="index" :value="item.typeValue">{{item.name}}</mapgis-ui-select-option>
 						</mapgis-ui-select>
 					</mapgis-ui-form-model-item>
-					<mapgis-ui-form-model-item id="checkbox-group">
-						<mapgis-ui-checkbox :default-checked="attOptType" v-model="attOptType">进行属性操作</mapgis-ui-checkbox>
-						<br>
-						<mapgis-ui-checkbox :default-checked="isValidReg" v-model="isValidReg">检查区合法性</mapgis-ui-checkbox>
-					</mapgis-ui-form-model-item>
+					<mapgis-ui-checkbox :default-checked="attOptType" v-model="attOptType" style="line-height:32px;">进行属性操作</mapgis-ui-checkbox>
+					<br>
+					<mapgis-ui-checkbox :default-checked="isValidReg" v-model="isValidReg" style="line-height:32px;">检查区合法性</mapgis-ui-checkbox>
 					<!-- 3.输出结果 -->
 					<!-- <mapgis-ui-space>输出结果</mapgis-ui-space> -->
-					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
-					<mapgis-ui-form-model-item label="输出结果">
+					<mapgis-ui-group-tab title="输出结果" id="title-space" :hasBottomMargin="false"/>
+					<mapgis-ui-form-model-item>
 						<mapgis-ui-row>
 							<mapgis-ui-col :span=24>
 								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
 							</mapgis-ui-col>				
 						</mapgis-ui-row>
-						<mapgis-ui-checkbox :default-checked="overlayAdd" @change="sendOverlayAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
+						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="overlayAdd" @change="sendOverlayAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
 				<mapgis-ui-setting-footer>
@@ -54,7 +52,7 @@ export default {
 	props: {
 		layout: {
 			type: String,
-			default: "horizontal" // 'horizontal' 'vertical' 'inline'
+			default: "vertical" // 'horizontal' 'vertical' 'inline'
 		},
 		/**
      * @type String
@@ -274,15 +272,16 @@ export default {
 	height: auto;
 }
 .mapgis-ui-form-item {
-	width: 300px;
+	/* width: 300px; */
+	margin: 0px;
 }
 .mapgis-ui-row.mapgis-ui-form-item {
-  margin: 10px 0px 10px 0px;
+  /* margin: 10px 0px 10px 0px; */
 }
 .mapgis-ui-form-item-control {
-	width: 214px;
+	/* width: 214px;
 	text-align: left;
 	line-height: 40px;
-	overflow: hidden;
+	overflow: hidden; */
 }
 </style>

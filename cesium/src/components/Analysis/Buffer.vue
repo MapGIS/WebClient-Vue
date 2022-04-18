@@ -2,11 +2,12 @@
 	<div>
 		<slot>
 			<div class="mapgis-widget-buffer-analysis">
+				<slot name="selectLayer" />
 				<mapgis-ui-group-tab title="缓冲区参数设置" id="title-space"/>
 				<!-- 要素级缓冲区分析UI面板 -->
 				<mapgis-ui-form-model v-bind="formItemLayout" :layout="layout" labelAlign="left" :colon="false" v-if="srcType == 'Feature'">
 					<mapgis-ui-form-model-item label="设置半径">
-						<mapgis-ui-input v-model=radius></mapgis-ui-input>
+						<mapgis-ui-input-number autoWidth v-model=radius></mapgis-ui-input-number>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-form-model-item label="半径单位">
 						<mapgis-ui-select v-model="selectedUnit" :placeholder=unit[0].name @change="selectCurrentUnit($event)">
@@ -18,11 +19,12 @@
 						<mapgis-ui-input v-model=steps></mapgis-ui-input>
 					</mapgis-ui-form-model-item> -->
 					<mapgis-ui-form-model-item label="轮廓宽度">
-						<mapgis-ui-input v-model=colorLineWidth></mapgis-ui-input>
+						<mapgis-ui-input-number-addon v-model=colorLineWidth></mapgis-ui-input-number-addon>
 					</mapgis-ui-form-model-item>
 					<mapgis-ui-color-pick-panel
 						label="轮廓颜色"
 						:color="colorCopyLine"
+						:labelCol="24"
 						:wrapperCol="24"
 						:size="size"
 						:disableAlpha="false"
@@ -43,9 +45,9 @@
 							colorCopyOpacity = `${val.rgba.a}`)"
 					>
 					</mapgis-ui-color-pick-panel>
-					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
+					<mapgis-ui-group-tab title="输出结果" id="title-space" :hasBottomMargin="false"/>
 					<!-- <mapgis-ui-form-model-item label="输出结果"> -->
-					<mapgis-ui-form-model-item style="margin-top:-8px;">
+					<mapgis-ui-form-model-item>
 						<mapgis-ui-row>
 							<mapgis-ui-col :span=24>
 								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
@@ -63,10 +65,18 @@
 					<mapgis-ui-form-model-item label="设置半径" v-show="!isByAtt">
 						<mapgis-ui-row :gutter="8">
 							<mapgis-ui-col :span="12">	
-								<mapgis-ui-input addon-before="左" v-model=leftRad ></mapgis-ui-input>			
+								<mapgis-ui-input-number-addon v-model=leftRad>
+									<mapgis-ui-tooltip slot="addonBefore" title="左">
+										<mapgis-ui-iconfont type="mapgis-zuo"/>
+									</mapgis-ui-tooltip>
+								</mapgis-ui-input-number-addon>			
 							</mapgis-ui-col>
 							<mapgis-ui-col :span="12">
-								<mapgis-ui-input addon-before="右" v-model=rightRad ></mapgis-ui-input>
+								<mapgis-ui-input-number-addon v-model=rightRad>
+									<mapgis-ui-tooltip slot="addonBefore" title="右">
+										<mapgis-ui-iconfont type="mapgis-you"/>
+									</mapgis-ui-tooltip>
+								</mapgis-ui-input-number-addon>
 							</mapgis-ui-col>
 						</mapgis-ui-row>
 						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="equalLeftRight" v-model="equalLeftRight">左右等距</mapgis-ui-checkbox>
@@ -89,9 +99,9 @@
 						<mapgis-ui-radio-group v-model="isDissolve" :options='[{"label":"合并", "value":true},{"label":"不合并", "value":false}]'>
 						</mapgis-ui-radio-group>
 					</mapgis-ui-form-model-item>
-					<mapgis-ui-group-tab title="输出结果" id="title-space"/>
+					<mapgis-ui-group-tab title="输出结果" id="title-space" :hasBottomMargin="false"/>
 					<!-- <mapgis-ui-form-model-item label="输出结果"> -->
-					<mapgis-ui-form-model-item style="margin-top:-8px;">
+					<mapgis-ui-form-model-item>
 						<mapgis-ui-row>
 							<mapgis-ui-col :span=24>
 								<mapgis-ui-input v-model="destLayer"></mapgis-ui-input>
@@ -100,11 +110,11 @@
 						<mapgis-ui-checkbox style="line-height:32px;" :default-checked="bufferAdd" @change="sendBufferAdd">将结果图层添加到视图中</mapgis-ui-checkbox>
 					</mapgis-ui-form-model-item>
 				</mapgis-ui-form-model>
-				<mapgis-ui-setting-footer>
-					<mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
-					<mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
-				</mapgis-ui-setting-footer>
 			</div>
+			<mapgis-ui-setting-footer>
+				<mapgis-ui-button type="primary" @click="run">分析</mapgis-ui-button>
+				<mapgis-ui-button @click="cancel">重置</mapgis-ui-button>
+			</mapgis-ui-setting-footer>
 		</slot>
 	</div>
 </template>
@@ -411,13 +421,15 @@ export default {
 
 <style scoped>
 .mapgis-widget-buffer-analysis {
-	height: auto;
+	/* height: auto; */
+	max-height: calc(50vh);
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 /* .mapgis-ui-form-item {
 	width: 300px;
 } */
-.mapgis-ui-row.mapgis-ui-form-item {
-	/* margin: 10px 0px 10px 0px; */
+.mapgis-ui-form-item {
 	margin-bottom: 0px;
 }
 /* .mapgis-ui-form-item-control {
