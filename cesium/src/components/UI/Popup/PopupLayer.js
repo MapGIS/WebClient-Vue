@@ -354,7 +354,7 @@ export default class PopupLayer {
   show() {
     this.isShow = true;
     if (this.onShow) {
-      this.onShow(this.isShow);
+      this.onShow(this.isShow, this.popupId);
     }
     let node = window.document.getElementById(this.popupId);
     if (node && node.style) {
