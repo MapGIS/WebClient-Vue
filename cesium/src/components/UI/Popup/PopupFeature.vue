@@ -106,8 +106,8 @@ export default {
       this.iClickPosition = position;
       this.iClickVisible = visible;
     },
-    $_changeVisible(visible) {
-      this.$emit("change", visible);
+    $_changeVisible(visible, popupId) {
+      this.$emit("change", visible, popupId);
     }
   }
 };
