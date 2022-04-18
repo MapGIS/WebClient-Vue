@@ -37,6 +37,7 @@
       <template slot="operation" slot-scope="text, record, index">
         <mapgis-ui-tooltip placement="top" title="删除">
           <mapgis-ui-iconfont
+              class="mapgis-ui-iconfont"
               type="mapgis-delete"
               @click="remove(index)"
           ></mapgis-ui-iconfont>

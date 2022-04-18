@@ -4,7 +4,12 @@
     <span class="title">
       <slot name="title">{{ title }}</slot>
     </span>
-    <slot name="handle"></slot>
+    <span class="tip">
+      <slot name="tip"></slot>
+    </span>
+    <span class="handle">
+      <slot name="handle"></slot>
+    </span>
   </div>
 </template>
 
@@ -31,7 +36,11 @@ export default {
     hasBottomMargin: {
       type: Boolean,
       default: true
-    }
+    },
+    isTitleBold: {
+      type: Boolean,
+      default: true
+    },
   },
   computed: {
     classes() {
@@ -40,7 +49,8 @@ export default {
           'is-background': this.background,
           [`is-${this.size}`]: !!this.size,
           'has-top-margin': this.hasTopMargin,
-          'has-bottom-margin': this.hasBottomMargin
+          'has-bottom-margin': this.hasBottomMargin,
+          'is-title-bold': this.isTitleBold
         }
       ]
     }

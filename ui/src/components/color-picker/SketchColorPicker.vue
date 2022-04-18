@@ -20,8 +20,9 @@
         <span
           v-if="hasAddonBefore"
           class="mapgis-ui-input-group-addon addon-before"
-          >{{ addonBefore }}</span
         >
+          <slot name="addonBefore">{{addonBefore}}</slot>
+        </span>
         <div
           class="color-container"
           :style="{
@@ -97,7 +98,7 @@ export default {
       }
     },
     hasAddonBefore() {
-      return this.addonBefore && this.addonBefore.length > 0;
+      return (this.addonBefore && this.addonBefore.length > 0) || (this.$slots && this.$slots.addonBefore);
     }
   },
   methods: {
@@ -132,6 +133,7 @@ export default {
 
 .addon-before {
   height: 32px;
+  line-height: 32px;
   width: fit-content;
 }
 </style>

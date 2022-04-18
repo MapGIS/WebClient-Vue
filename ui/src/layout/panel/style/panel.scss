@@ -12,6 +12,7 @@
 @include b(switch-panel) {
   .mapgis-ui-form-item {
     margin: 0;
+    padding: 0;
     // padding-bottom: 8px;
   }
 
@@ -103,8 +104,13 @@
   &-sm {
     // height: 48px;
     // padding: 10px 6px;
-    &:hover {
-      background: $primary-2;
+    // &:hover {
+    //   background: $primary-2;
+    // }
+    .sm-hover {
+      &:hover {
+        background: $primary-2;
+      }
     }
     .label-sm {
       height: 32px;
@@ -147,11 +153,11 @@
     }
   }
   &-md {
-    height: 40px;
-    padding: 0 6px;
+    // height: 32px;
+    // padding: 0 6px;
     .mapgis-ui-row {
-      height: 40px;
-      line-height: 40px;
+      height: 32px;
+      line-height: 32px;
       overflow: hidden;
     }
     .label-md {

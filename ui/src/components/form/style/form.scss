@@ -757,9 +757,11 @@ form {
       padding-bottom: 8px;
     }
     .mapgis-ui-slider {
-      margin-top: 0;
+      margin-top: 8px;
+      margin-bottom: 4px;
       &.mapgis-ui-slider-with-marks {
-        margin-top: 0;
+        margin-top: 8px;
+        margin-bottom: 4px;
       }
     }
   }
