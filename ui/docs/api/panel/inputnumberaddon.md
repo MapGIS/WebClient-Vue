@@ -2,10 +2,7 @@
 
 ``` vue
 <div>
-    <mapgis-ui-input-number-addon v-model="userId" placeholder="Basic usage">
-      <mapgis-ui-iconfont slot="addonAfter" type="mapgis-yuanzhui" />
-      <mapgis-ui-iconfont slot="addonBefore" type="mapgis-vector" style="color: rgba(0,0,0,.45)" />
-    </mapgis-ui-input-number-addon>
+    <mapgis-ui-input-number-addon v-model="userId" placeholder="Basic usage" addon-before="高度" addon-after="米" />
     <mapgis-ui-input-number-addon v-model="userId" placeholder="Basic usage">
       <mapgis-ui-iconfont slot="prefix" type="mapgis-yuanzhui" />
       <template #suffix>

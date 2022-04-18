@@ -127,7 +127,8 @@ module.exports = {
             collapsable: false,
             children: [
               ["/plugin_components/onemap.md", "移植组件"],
-              ["/plugin_components/form_model.md", "弹框表单样式修改规范"]
+              ["/plugin_components/form_model.md", "弹框表单样式修改说明"],
+              ["/plugin_components/new_form_model.md", "组件开发样式规范说明"],
             ]
           },
           {
