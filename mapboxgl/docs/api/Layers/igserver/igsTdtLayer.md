@@ -163,7 +163,7 @@ All common layer [events](/api/Layers/#events)
     :center="outerCenter"
     :crs="mapCrs"
   >
-    <mapbox-igs-tdt-layer
+    <mapgis-igs-tdt-layer
       :layer="layer"
       :layerId="layerId"
       :sourceId="sourceId"
@@ -171,7 +171,7 @@ All common layer [events](/api/Layers/#events)
       :token="token"
       :crs="mapCrs"
     >
-    </mapbox-igs-tdt-layer>
+    </mapgis-igs-tdt-layer>
   </mapgis-web-map>
 </template>
 
@@ -180,13 +180,13 @@ import "@mapgis/mapbox-gl/dist/mapbox-gl.css";
 import Mapbox from "@mapgis/mapbox-gl";
 import {
   MapgisWebMap,
-  MapboxIgsTdtLayer
+  MapgisIgsTdtLayer
 } from "@mapgis/webclient-vue-mapboxgl";
 
 export default {
   components: {
     MapgisWebMap,
-    MapboxIgsTdtLayer
+    MapgisIgsTdtLayer
   },
   data() {
     return {

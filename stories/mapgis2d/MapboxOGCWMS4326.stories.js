@@ -1,5 +1,5 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
-import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsWmsLayer.md"
+import Markdown from "../../mapboxgl/docs/api/Layers/OGC/ogcWmsLayer.md"
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
 
 export default {
@@ -36,7 +36,6 @@ export default {
         },
         defaultValue: { summary: 'null' },
       },
-      defaultValue:null,
       control:'text'
     } ,
     version:{

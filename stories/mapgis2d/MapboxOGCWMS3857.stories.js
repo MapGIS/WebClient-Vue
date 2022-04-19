@@ -1,6 +1,6 @@
 import MapgisWebMap from "../../mapboxgl/src/components/map/GlMap.vue";
 import MapgisOgcWmsLayer from "../../mapboxgl/src/components/layer/ogc/OgcWmsLayer.js";
-import Markdown from "../../mapboxgl/docs/api/Layers/igserver/igsWmsLayer.md"
+import Markdown from "../../mapboxgl/docs/api/Layers/OGC/ogcWmsLayer.md"
 
 export default {
   title: "二维/图层/OGC/WMS-3857",
