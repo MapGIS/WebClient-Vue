@@ -86,10 +86,18 @@ export default {
       return commands;
     },
     itemtext() {
-      if (this.strLen(this.textCopy) > 22) {
-        return `${this.subCHString(this.textCopy, 0, 20)}...`;
+      if (this.strLen(this.textCopy) > 20) {
+        return `${this.subCHString(this.textCopy, 0, 18)}...`;
       }
       return this.textCopy;
+    }
+  },
+  watch: {
+    text: {
+      handler() {
+        this.textCopy = this.text;
+      },
+      immediate: true
     }
   },
   data() {
