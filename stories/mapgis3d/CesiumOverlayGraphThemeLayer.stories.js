@@ -100,7 +100,7 @@ const Template = (args, { argTypes }) => ({
       this.initData();
     },
     click(feature) {
-      console.log('clickfeature',feature);
+      console.log('clickfeature',feature.id.feature);
       
     },
     hover(feature) {

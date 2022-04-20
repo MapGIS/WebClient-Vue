@@ -136,8 +136,8 @@ export default {
         this.handler.setInputAction(function (movement) {
 
           let pickedFeature = viewer.scene.pick(movement.endPosition);
-          if (pickedFeature !== undefined && pickedFeature.id.feature && pickedFeature.id.feature !== undefined) {
-            vm.$emit('hover',pickedFeature.id.feature); 
+          if (pickedFeature !== undefined) {
+            vm.$emit('hover',pickedFeature); 
           }
           viewer.scene.requestRender();
 
@@ -147,8 +147,10 @@ export default {
         this.handler.setInputAction(function (movement) {
 
           let pickedFeature = viewer.scene.pick(movement.position);
-          if (pickedFeature !== undefined && pickedFeature.id.feature && pickedFeature.id.feature !== undefined) {
-            vm.$emit('click',pickedFeature.id.feature); 
+          console.log('pickedFeature',pickedFeature);
+          
+          if (pickedFeature !== undefined) {
+            vm.$emit('click',pickedFeature); 
           }
           viewer.scene.requestRender();
 
