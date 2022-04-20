@@ -86,8 +86,8 @@ export default {
       return commands;
     },
     itemtext() {
-      if (this.textCopy.length > 20) {
-        return `${this.textCopy.substring(0, 16)}...`;
+      if (this.strLen(this.textCopy) > 22) {
+        return `${this.subCHString(this.textCopy, 0, 20)}...`;
       }
       return this.textCopy;
     }
@@ -100,6 +100,61 @@ export default {
   methods: {
     onClick(operation) {
       this.$emit(operation);
+    },
+    /**
+     * 计算字符串长度
+     */
+    strLen(str) {
+      let len = 0;
+      for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) > 255 || str.charCodeAt(i) < 0) {
+          len += 2;
+        } else {
+          len++;
+        }
+      }
+      return len;
+    },
+    /**
+     * 判断某个字符是否是汉字
+     */
+    isCHS(str, i) {
+      if (str.charCodeAt(i) > 255 || str.charCodeAt(i) < 0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    /**
+     * 将字符串拆成字符，并存到数组中
+     */
+    strToChars(str) {
+      const chars = new Array();
+      for (let i = 0; i < str.length; i++) {
+        chars[i] = [str.substr(i, 1), this.isCHS(str, i)];
+      }
+      return chars;
+    },
+    /**
+     * 截取字符串（从start字节到end字节）
+     */
+    subCHString(str, start, end) {
+      let len = 0;
+      let subStr = "";
+      const charsArray = this.strToChars(str);
+      for (let i = 0; i < str.length; i++) {
+        if (charsArray[i][1]) {
+          len += 2;
+        } else {
+          len++;
+        }
+        if (end < len) {
+          break;
+        } else if (start < len) {
+          subStr += charsArray[i][0];
+        }
+      }
+      return subStr;
     }
   }
 };
