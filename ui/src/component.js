@@ -179,6 +179,7 @@ export { default as MapgisUiTree } from "./components/tree/Tree.vue";
 export { default as MapgisUiVideo } from "./components/media/Video.vue";
 
 // Feedback
+export { default as MapgisUiAlert } from "./components/alert/Alert.vue";
 export { default as MapgisUiDrawer } from "./components/drawer/Drawer.vue";
 export { default as MapgisUiModal } from "./components/modal";
 export { default as MapgisUiProgress } from "./components/progress/Progress.vue";
