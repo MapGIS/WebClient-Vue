@@ -56,7 +56,7 @@ export default {
     return {
       imgName: "",
       outputType: "tiff",
-      outputTypes: ["tiff", "pdf", "bmp", "png", "gif", "jpg", "ico", "svg"]
+      outputTypes: ["tiff", "pdf", "bmp", "png", "gif", "jpg", "ico"]
     };
   },
 
@@ -79,9 +79,6 @@ export default {
           break;
         case "ico":
           mime = `image/x-icon`;
-          break;
-        case "svg":
-          mime = `image/svg+xml`;
           break;
       }
       return mime;
