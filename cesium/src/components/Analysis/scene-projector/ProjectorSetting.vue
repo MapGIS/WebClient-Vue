@@ -320,21 +320,23 @@ export default {
         this._changeProjector();
       },
       deep: true,
-      immediate: true
+      immediate: false
     },
     imgUrl: {
       handler() {
         this._changeProjector();
       },
       deep: true,
-      immediate: true
+      immediate: false
     },
     projectorType: {
       handler() {
+        this.cancelPutProjector(this.id);
+        this.scenePro = undefined;
         this._changeProjector();
       },
       deep: true,
-      immediate: true
+      immediate: false
     }
   },
   computed: {
@@ -433,7 +435,8 @@ export default {
     unmount() {
       this.$emit("unload", this);
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.settings.id);
+        this.cancelPutProjector(this.id);
+        this.scenePro = undefined;
       }
     },
     updateImgUrl(url) {
@@ -469,19 +472,41 @@ export default {
      * 更改视频源参数
      */
     _changeProjector() {
-      if (!this.scenePro) {
-        return;
-      }
       this._changeProjectorType();
+      // cesium内核目前修改projectorType和textureSource(除设置undefined会生效)，不生效，只能重新投放
       switch (this.proType) {
         case Cesium.SceneProjectorType.IMAGE:
-          this.scenePro.textureSource = this.imgUrl;
+          if (!this.imgUrl || this.imgUrl.length == 0) {
+            // this.scenePro.textureSource = undefined;
+            this.cancelPutProjector(this.id);
+            this.scenePro = undefined;
+          } else {
+            if (!this.scenePro) {
+              this.scenePro = this.putProjector(this.settingsCopy);
+            } else {
+              this.scenePro.textureSource = this.imgUrl;
+            }
+          }
           break;
         case Cesium.SceneProjectorType.VIDEO:
         case Cesium.SceneProjectorType.HLS:
-          this.scenePro.textureSource = this.videoSource.videoUrl;
+          const { videoUrl } = this.videoSource;
+          if (!videoUrl || videoUrl.length == 0) {
+            // this.scenePro.textureSource = undefined;
+            this.cancelPutProjector(this.id);
+            this.scenePro = undefined;
+          } else {
+            if (!this.scenePro) {
+              this.scenePro = this.putProjector(this.settingsCopy);
+            } else {
+              this.scenePro.textureSource = this.videoSource.videoUrl;
+            }
+          }
           break;
         case Cesium.SceneProjectorType.COLOR:
+          if (!this.scenePro) {
+            this.scenePro = this.putProjector(this.settingsCopy);
+          }
           this.scenePro.textureSource = new this.Cesium.Color(1, 0, 0, 1);
           break;
         default:
@@ -708,7 +733,8 @@ export default {
     _okClick() {
       // 退出配置前，先恢复投放状态
       if (!this.settings.isProjected) {
-        this.cancelPutProjector(this.settings.id);
+        this.cancelPutProjector(this.id);
+        this.scenePro = undefined;
       }
       this.$emit("update-settings", this.settingsCopy);
     },
@@ -717,7 +743,8 @@ export default {
      */
     _cancelClick() {
       // 退出配置前，先恢复投放状态,先取消，再恢复投放状态，以确保投放参数是配置之前的参数
-      this.cancelPutProjector(this.settings.id);
+      this.cancelPutProjector(this.id);
+      this.scenePro = undefined;
       if (this.settings.isProjected) {
         this.putProjector(this.settings);
       }
