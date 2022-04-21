@@ -515,6 +515,14 @@ export default {
      * 点击列表项
      */
     _clickListItem(item, index) {
+      if (!item) {
+        return;
+      }
+      // 如果是点击删除按钮触发的，这个item已经被删除，则不需要往后走
+      const projector = this.projectorList.find(pro => pro.id === item.id);
+      if (!projector) {
+        return;
+      }
       this.activeIndex = index;
       this.currentEditProjector = item;
     },
