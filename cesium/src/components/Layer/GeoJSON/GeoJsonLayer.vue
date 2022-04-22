@@ -83,6 +83,9 @@ export default {
         vm.$emit("load", { component: this });
         vm.parseData(baseUrl);
         let clickhandler, hoverhandler;
+        // 增加图层click和hover事件，在组件外部获得对应entity
+        vm.$_bindClickEvent(vm.parseClick);
+        vm.$_bindHoverEvent(vm.parseHover);
         if (enablePopup) {
           clickhandler = vm.$_bindClickEvent(vm.highlight);
         }
@@ -292,6 +295,12 @@ export default {
       this.bbox = bbox(geojson);
       this.$emit("bbox", { bbox: this.bbox });
     },
+    parseClick(payload) {
+      this.$emit("geojsonClick", {entity: payload});
+    },
+    parseHover(payload) {
+      this.$emit("geojsonHover", {entity: payload});
+    }
   },
 };
 </script>
