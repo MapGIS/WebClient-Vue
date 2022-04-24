@@ -48,8 +48,18 @@ export default {
       }
       if (info.file.status === "done") {
         const url = info.file.response.url;
-        const strs = this.uploadUrl.split("//");
-        const baseUrl = `${strs[0]}//${strs[1].split("/")[0]}`;
+        // console.log(this.uploadUrl);
+        let baseUrl;
+        // console.log(this.uploadUrl.indexOf("://"));
+        if (this.uploadUrl.indexOf("://") > -1) {
+          const strs = this.uploadUrl.split("://");
+          // console.log(strs);
+          baseUrl = `${strs[0]}://${strs[1].split("/")[0]}`;
+        } else {
+          // 有可能传入的是一个相对路径
+          baseUrl = window.location.origin;
+        }
+        console.log(`${baseUrl}${url}`);
         if (this.click) {
           this.click(`${baseUrl}${url}`);
         }
