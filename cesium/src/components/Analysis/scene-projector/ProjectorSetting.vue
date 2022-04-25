@@ -261,7 +261,7 @@
 </template>
 <script>
 import VueOptions from "../../Base/Vue/VueOptions";
-import emptyImage from "../../../assets/image/empty.png";
+import { emptyImage } from "../../UI/Base64Image/base64Image";
 import projectorMixins from "./mixins/projector-mixins";
 
 export default {
@@ -401,7 +401,7 @@ export default {
       scenePro: undefined, //投放对象
       isGetCameraPosition: false, //是否获取相机位置
       isGetTargetPosition: false, //是否获取视点位置
-      emptyImage: emptyImage,
+      emptyImage: undefined,
       imageStyle: {
         height: "150px",
         margin: "0 auto"
@@ -411,6 +411,7 @@ export default {
   },
   mounted() {
     this.mount();
+    this.emptyImage = emptyImage();
   },
   destroyed() {
     this.unmount();
