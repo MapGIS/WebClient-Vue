@@ -17,20 +17,20 @@ const Template = (args, { argTypes }) => ({
   components: { Mapgis3dSceneLayer },
   data() {
     return {
-      opacity: 0.25,
+      opacityS: 0.25,
     };
   },
   methods: {
     handleMapload() {
       const vm = this;
       window.setTimeout(() => {
-        vm.opacity = 1;
+        vm.opacityS = 0.6;
       }, 5000);
     },
   },
   template: `<mapgis-web-scene @load="handleMapload" style="height:95vh">
     <mapgis-3d-raster-layer url="http://t0.tianditu.com/DataServer?T=vec_w&L={z}&Y={y}&X={x}&tk=9c157e9585486c02edf817d2ecbc7752" />
-    <mapgis-3d-scene-layer v-bind="$props" />
+    <mapgis-3d-scene-layer v-bind="$props" :opacity="opacityS"/>
     <mapgis-3d-statebar />
   </mapgis-web-scene>`,
 });
@@ -40,7 +40,8 @@ export const 场景展示 = Template.bind({});
   url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景-BIM/SceneServer`,
   layers: "show:0,1",
   maximumScreenSpaceError: 4,
-  opacity: 0.5,
+  // enableControl: true,
+  // enablePopup: true
 };
 
 场景展示.parameters = {

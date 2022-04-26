@@ -1,5 +1,9 @@
+import Mapgis3dMarker from "../../cesium/src/components/UI/Marker/Marker.vue";
+import Markdown from "../../cesium/docs/api/ui/marker.md";
+
 export default {
   title: "三维/场景子组件/Marker",
+  component: Mapgis3dMarker,
   argTypes: {
     longitude: 110,
     latitude: 30,
@@ -12,34 +16,38 @@ const Template = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `
     <mapgis-web-scene style="height: 95vh">
-    <mapgis-3d-ogc-wmts-layer
-        :baseUrl="urlT"
-        :wmtsLayer="layer"
-        :tileMatrixSet="tileMatrixSetID"
-        :format="format"
-        :tilingScheme="srs"
-        :token="token"
-    />
-    <mapgis-3d-marker
+      <mapgis-3d-ogc-wmts-layer
+          :baseUrl="urlT"
+          :wmtsLayer="layer"
+          :tileMatrixSet="tileMatrixSetID"
+          :format="format"
+          :tilingScheme="srs"
+          :token="token"
+      />
+      <template>
+        <mapgis-3d-marker
         :longitude="longitude"
         :latitude="latitude"
         :height="height"
         :text="text"
         :iconUrl="iconUrl"
-        :heightReference="heightReference"
         @mouseEnter="mouseEnter"
         @mouseLeave="mouseLeave"
-    ></mapgis-3d-marker>
-    <mapgis-3d-marker
-        :longitude="longitude2"
-        :latitude="latitude2"
-        :height="height"
-        :text="text"
-        :iconUrl="iconUrl"
-        :heightReference="heightReference"
-        @mouseEnter="mouseEnter"
-        @mouseLeave="mouseLeave"
-    ></mapgis-3d-marker>
+        ></mapgis-3d-marker>
+      </template>
+      <template>
+        <mapgis-3d-marker
+          :key="'primitive'"
+          :usePrimitive="true"
+          :primitiveList="'http://localhost:8895/geojson/cityResource/education.json'"
+          :height="0"
+          :iconUrl="'http://localhost:8895/img/poi-route.png'"
+          :iconWidth="20"
+          :iconHeight="20"
+          @mouseEnter="mouseEnter"
+          @mouseLeave="mouseLeave"
+        ></mapgis-3d-marker>
+      </template>
     </mapgis-web-scene>
   `,
   data(){
@@ -57,11 +65,11 @@ const Template = (args, { argTypes }) => ({
     }
   },
   methods: {
-    mouseEnter(options, longitude, latitude, height){
-      console.log("mouseEnter",options, longitude, latitude, height);
+    mouseEnter(icon){
+      console.log("mouseEnter",icon);
     },
-    mouseLeave(options, longitude, latitude, height){
-      console.log("mouseLeave",options, longitude, latitude, height);
+    mouseLeave(icon){
+      console.log("mouseLeave",icon);
     }
   }
 });
@@ -74,6 +82,12 @@ Marker.args = {
   latitude2: 31,
   height: 0,
   iconUrl: "http://develop.smaryun.com/static/data/picture/icon.png",
-  text: "这是测试",
-  heightReference: "clamped",
+  text: "这是entity测试",
+};
+Marker.parameters = {
+  docs: {
+    description: {
+      component: Markdown,
+    },
+  },
 };
