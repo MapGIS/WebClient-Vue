@@ -1,6 +1,8 @@
 .DS_Store
 storybook
 node_modules
+leaflet/dist-docs
+leaflet/dist-libs
 mapboxgl/dist-docs
 mapboxgl/dist-libs
 mapboxgl/node_modules
