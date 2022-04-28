@@ -37,11 +37,12 @@ const Template = (args, { argTypes }) => ({
 
 export const 场景展示 = Template.bind({});
 场景展示.args = {
-  url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景-BIM/SceneServer`,
+  // url: `http://${window.webclient.ip}:${window.webclient.port}/igs/rest/services/场景-BIM/SceneServer`,
+  url: 'http://localhost:8089/igs/rest/services/分层分户/SceneServer',
   layers: "show:0,1",
   maximumScreenSpaceError: 4,
-  // enableControl: true,
-  // enablePopup: true
+  opacity: 0.5,
+  enablePopup: true
 };
 
 场景展示.parameters = {

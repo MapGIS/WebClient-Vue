@@ -15,17 +15,17 @@ Vue.use(MapgisCesiumComponents, {});
 
 window.webclient = {
   ip: "develop.smaryun.com",
-  port: "8089",
+  port: "6163",
 };
 
 window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
 window.VueCesiumLibPath =
-  "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js";
+  "./Cesium/Cesium.js";
 
 window.VueCesiumPluginPath =
-  "http://develop.smaryun.com/static/libs/cdn/cesium/webclient-cesium-plugin.min.js";
+  "./Cesium/webclient-cesium-plugin.min.js";
 
 async function initConfig() {
   const res = await axios.get("./config.json");
