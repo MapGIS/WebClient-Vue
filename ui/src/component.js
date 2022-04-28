@@ -242,6 +242,7 @@ export { default as MapgisUiPortalServiceresource } from "./view/portal/componen
 
 // DataStore
 export { default as MapgisUiFilePreview } from "./view/datastore/iot/FilePreview.vue";
+export { default as MapgisUiGlobalSocket } from "./view/datastore/stream/GlobalSocket.vue";
 
 // comprehensive-query
 export { default as MapgisUiComprehensiveQuery } from "./view/comprehensive-query/ComprehensiveQuery.vue";
