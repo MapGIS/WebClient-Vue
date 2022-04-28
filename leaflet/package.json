@@ -33,6 +33,7 @@
     "mapv": "^2.0.62",
     "moment": "^2.29.1",
     "resize-detector": "^0.3.0",
+    "v-contextmenu": "^2.9.0",
     "vue-runtime-helpers": "^1.1.2",
     "vuepress": "^1.9.7"
   },

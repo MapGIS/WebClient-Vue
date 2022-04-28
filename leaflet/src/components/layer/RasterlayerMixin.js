@@ -43,11 +43,21 @@ const CommonProps = {
   },
 };
 
+const LayerProps = {
+  layer: {
+    type: Object,
+    default: () => {
+      return { id: (Math.random() * 100000000).toFixed(0) };
+    },
+  },
+};
+
 export default {
   mixins: [withEvents],
   props: {
     ...mapgisCustomProps,
     ...CommonProps,
+    ...LayerProps,
   },
 
   inject: ["leaflet", "map"],
@@ -58,6 +68,7 @@ export default {
     return {
       initial: true,
       layer: undefined,
+      info: this.layer,
     };
   },
 

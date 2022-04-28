@@ -22,10 +22,10 @@ window.glyphs = "igs/rest/mrcs/vtiles/fonts"; //java版igs用这个接口
 // window.glyphs = "igs/rest/mrms/vtiles/fonts";//司马云用这个接口
 
 window.VueCesiumLibPath =
-  "./Cesium/Cesium.js";
+  "http://develop.smaryun.com/static/libs/cdn/cesium/Cesium.js";
 
 window.VueCesiumPluginPath =
-  "./Cesium/webclient-cesium-plugin.min.js";
+  "http://develop.smaryun.com/static/libs/cdn/zondyclient/webclient-cesium-plugin.min.js";
 
 async function initConfig() {
   const res = await axios.get("./config.json");
@@ -33,7 +33,7 @@ async function initConfig() {
   Object.keys(data).forEach((key) => {
     window[key] = data[key];
   });
-  console.log('当前站点的环境配置是:', data);
+  console.log("当前站点的环境配置是:", data);
 }
 
 initConfig();
