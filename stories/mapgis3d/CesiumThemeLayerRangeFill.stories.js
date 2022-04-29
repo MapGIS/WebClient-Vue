@@ -43,65 +43,79 @@ export const 多边形数据 = Template.bind({});
   baseUrl: `http://localhost:8895/geojson/湖北省.json`,
   
   visible: true,
-  renderRule: {
-    type: "range",
-    // field: "name",
-    field: "childrenNum",
-    rangeValueInfos: [
+  type: "range",
+  field: "childrenNum",
+  enableHighlight: false,
+  enablePopup: false,
+  enableTips: false,
+  filter: {
+    fieldName: "name",
+    fieldRange: ["武汉市"]
+  },
+  filterOptions: {
+    layerStyle: {
+      color: '#00ff00',
+      outlineColor: '#ffffff',
+      outlineWidth: 1,
+      opacity: 1,
+    },
+  },
+  themeOptions: {
+    styleGroups: [
       {
-        // range: ['武汉市', '黄石市', '十堰市', '宜昌市', '襄阳市', '鄂州市'],
-        range: ['0', '3'],
-        symbolStyle: new FillStyle({
+        start: 0,
+        end: 3,
+        style: {
           color: '#ff0000',
           outlineColor: '#ff0000',
           outlineWidth: 0,
           opacity: 1,
-        })
+        }
       },
       {
-        // range: ['荆门市', '荆州市'],
-        range: ['3', '6'],
-        symbolStyle: new FillStyle({
+        start: 3,
+        end: 6,
+        style: {
           color: '#ff4b4b',
           outlineColor: '#ff4b4b',
           outlineWidth: 0,
           opacity: 1,
-        })
+        }
       },
       {
-        // range: ['黄冈市', '咸宁市'],
-        range: ['6', '9'],
-        symbolStyle: new FillStyle({
+        start: 6,
+        end: 9,
+        style: {
           color: '#ff8282',
           outlineColor: '#ff8282',
           outlineWidth: 0,
           opacity: 1,
-        })
+        }
       },
       {
-        // range: ['随州市', '仙桃市'],
-        range: ['9', '12'],
-        symbolStyle: new FillStyle({
+        start: 9,
+        end: 12,
+        style: {
           color: '#ffafaf',
           outlineColor: '#ffafaf',
           outlineWidth: 0,
           opacity: 1,
-        })
+        }
       },
       {
-        // range: ['潜江市', '天门市', '孝感市', '神农架林区', '恩施土家族苗族自治州'],
-        range: ['12', '15'],
-        symbolStyle: new FillStyle({
+        start: 12,
+        end: 15,
+        style: {
           color: '#ffdcdc',
           outlineColor: '#ffdcdc',
           outlineWidth: 0,
           opacity: 1,
-        })
+        }
       }
     ]
   }
 };
-分段专题图.parameters = {
+多边形数据.parameters = {
   docs: {
     description: {
       component: Markdown,

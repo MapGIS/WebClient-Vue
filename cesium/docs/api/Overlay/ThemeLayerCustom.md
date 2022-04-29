@@ -28,12 +28,36 @@
 ### `layerId`
 
 - **类型:** `String`
-- **必选:**
+- **可选**
 - **侦听属性**
 - **默认值:**`矢量图层`
 - **描述:** 专题图层的Id。
 
-### `renderRule`
+### `type`
+
+- **类型:** `String`
+- **必选**
+- **侦听属性**
+- **默认值:**`uniform`
+- **描述:** 三维专题图类型，包括`uniform`、`unique`、`range`、`gradual`、`random`。
+
+### `field`
+
+- **类型:** `String`
+- **可选**
+- **侦听属性**
+- **默认值:**``
+- **描述:** 三维专题图字段名称，用于专题图符号化绘制，在统一专题图、随机专题图中可隐藏，在单值专题图、分段专题图、渐变专题图中必须填写。
+
+### `type`
+
+- **类型:** `String`
+- **必选**
+- **非侦听属性**
+- **默认值:**`uniform`
+- **描述:** 三维专题图类型，包括`uniform`、`unique`、`range`、`random`。
+
+### `themeOptions`
 
 - **类型:** `Object`
 - **必选:**
@@ -41,19 +65,45 @@
 - **默认值**
 - **描述:** 必填项，专题图绘制规则。
 
-### `type`
+### `filter`
 
-- **类型:** `String`
-- **必选:**
+- **类型:** `Object`
+- **可选**
 - **侦听属性**
-- **描述:** 专题图类型，可设置为"default", "uniform-value", "unique-value", "range-value"。
+- **默认值**
+- **描述:** 必填项，外部可传入filter，内部监听filter实现交互。
 
-### `field`
+### `filterOptions`
 
-- **类型:** `String`
-- **必选:**
+- **类型:** `Object`
+- **可选**
+- **侦听属性**
+- **默认值**
+- **描述:** 必填项，外部可传入filter，内部监听filterOptions实现样式变化。
+
+### `autoReset`
+
+- **类型:** `Boolean`
+- **可选**
+- **侦听属性**
+- **默认值:**`true`
+- **描述:** 专题图跳转，在加载专题图时，视角会飞行到专题图上，和offsetHeight大小有关。
+
+### `offsetHeight`
+
+- **类型:** `Number`
+- **可选**
 - **非侦听属性**
-- **描述:** 专题图字段，用于符号化显示的属性字段名称（统计字段）
+- **默认值:`4000`**
+- **描述:** 专题图高度，当相机视角高度高于offsetHeight，专题图不可见；低于offsetHeight，专题图显示。
+
+### `enableHighlight`
+
+- **类型:** `Boolean`
+- **可选**
+- **非侦听属性**
+- **默认值:`false`**
+- **描述:** 将专题地图中指定的要素进行高亮显示
 
 ### `highlightStyle`
 
@@ -67,7 +117,7 @@
 - **类型:** `Boolean`
 - **可选:**
 - **非侦听属性**
-- **描述:** 控制专题地图在当前窗口下是否显示
+- **描述:** 控制专题地图是否显示
 - **默认值:** true
 
 ## 事件
@@ -120,7 +170,7 @@ export default {
     return {
       baseUrl: "http://localhost:8895/geojson/420000_full.json",
       visible: true,
-      renderRule: {
+      themeOptions: {
         type: "range-value",
         field: "childrenNum",
         rangeValueInfos: [

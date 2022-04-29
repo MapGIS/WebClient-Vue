@@ -36,17 +36,17 @@ const Template = (args, {argTypes}) => ({
     </mapgis-web-scene>`,
 });
 
-export const 自定义样式 = Template.bind({});
-自定义样式.args = {
+export const 多边形数据 = Template.bind({});
+多边形数据.args = {
   // baseUrl: `http://${window.webclient.ip}/static/data/geojson/省级行政区.geojson`,
   baseUrl: `http://localhost:8895/geojson/湖北省.json`,
   
   visible: true,
-  renderRule: {
-    type: "default",
-    defaultSymbol: new FillStyle({
+  type: "random",
+  themeOptions: {
+    layerStyle: {
       outlineWidth: 1,
       opacity: 1,
-    })
+    }
   }
 }
