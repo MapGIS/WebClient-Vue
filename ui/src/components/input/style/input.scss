@@ -12,7 +12,7 @@
     @include disabled();
   }
   @include e(group-addon, '-') {
-    background-color: $background-color-light;
+    background-color: $input-addon-bg;
   }
   @include e(group, '-') {
     .mapgis-ui-input-affix-wrapper:first-child:last-child .mapgis-ui-input-number {

@@ -21,10 +21,10 @@
     <mapgis-ui-form-item class="mapgis-excavate-form"
                          label="边界线宽度"
                          :colon=false>
-      <mapgis-ui-input
+      <mapgis-ui-input-number
+          autoWidth
           v-model.number="edgeWidthCopy"
           :min="0"
-          type="number"
       />
     </mapgis-ui-form-item>
       <mapgis-ui-input-number-panel

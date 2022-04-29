@@ -4,7 +4,7 @@
     <span class="title">
       <slot name="title">{{ title }}</slot>
     </span>
-    <span class="tip">
+    <span>
       <slot name="tip"></slot>
     </span>
     <span class="handle">

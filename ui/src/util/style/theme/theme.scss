@@ -204,7 +204,7 @@ $div-border-color: var(--div-border-color);
 // The background colors for active and hover states for things like
 // list items or table cells.
 $item-active-bg: $primary-1;
-$item-hover-bg: $primary-1;
+$item-hover-bg: var(--select-item-hover-bg);
 
 // LINK
 $link-color: $primary-6;
@@ -226,6 +226,9 @@ $outline-color: $primary-6;
 $background-color-light: var(--background-light);
 $background-color-base: var(--background-base);
 
+// mention
+$mention-background: var(--mention-background);
+
 // Disabled states
 $disabled-color: var(--disabled-text-color);
 $disabled-bg: var(--disabled-bg-color);
@@ -237,10 +240,10 @@ $shadow-color: var(--shadow-color);
 $primary-shadow-color: var(--primary-shadow-color);
 $danger-shadow-color: var(--danger-shadow-color);
 $shadow-color-inverse: $component-background;
-$shadow-1-up: 0 -2px 7px $shadow-color;
-$shadow-1-down: 0 2px 7px $shadow-color;
-$shadow-1-left: -2px 0 7px $shadow-color;
-$shadow-1-right: 2px 0 7px $shadow-color;
+$shadow-1-up: 0 -2px 8px $shadow-color;
+$shadow-1-down: 0 2px 8px $shadow-color;
+$shadow-1-left: -2px 0 8px $shadow-color;
+$shadow-1-right: 2px 0 8px $shadow-color;
 $shadow-2: 0 4px 12px $shadow-color;
 $box-shadow-base: $shadow-1-down;
 
@@ -249,7 +252,7 @@ $btn-shadow: none;
 $btn-primary-shadow: none;
 $btn-text-shadow: none;
 
-$btn-primary-color: #fff;
+$btn-primary-color: var(--btn-primary-color);
 $btn-primary-bg: $primary-color;
 
 $btn-default-color: $text-color;
@@ -356,31 +359,11 @@ $input-number-handler-active-bg: $background-color-base;
 $input-number-handler-hover-bg: $primary-5;
 $input-number-handler-bg: $component-background;
 $input-number-handler-border-color: $border-color-base;
-$input-addon-bg: $background-color-light;
+$input-addon-bg: var(--input-addon-background);
 $input-disabled-bg: $disabled-bg;
 
-$input-height-base: 32px;
-$input-height-lg: 40px;
-$input-height-sm: 24px;
-$input-padding-horizontal: $control-padding-horizontal - 1px;
-$input-padding-horizontal-base: $input-padding-horizontal;
-$input-padding-horizontal-sm: $control-padding-horizontal-sm - 1px;
-$input-padding-horizontal-lg: $input-padding-horizontal;
-$input-padding-vertical-base: 4px;
-$input-padding-vertical-sm: 1px;
-$input-padding-vertical-lg: 6px;
 $input-placeholder-color: hsv(0, 0, 75%);
-$input-color: $text-color;
-$input-border-color: $border-color-base;
-$input-bg: $component-background;
-$input-number-hover-border-color: $input-hover-border-color;
 $input-number-handler-active-bg: #f4f4f4;
-$input-number-handler-hover-bg: $primary-5;
-$input-number-handler-bg: $component-background;
-$input-number-handler-border-color: $border-color-base;
-$input-addon-bg: $background-color-light;
-$input-hover-border-color: $primary-5;
-$input-disabled-bg: $disabled-bg;
 $input-outline-offset: 0 0;
 
 // Form
@@ -417,11 +400,13 @@ $anchor-border-color: $border-color-split;
 
 // Tooltip
 // Tooltip text color
-$tooltip-color: #fff;
+$tooltip-color: $heading-color;
 // Tooltip background color
 $tooltip-bg: var(--tooltip-background);
 // Tooltip arrow color
 $tooltip-arrow-color: $tooltip-bg;
+// Tooltip shadow color
+$tooltip-shadow-color: var(--tooltip-shadow-color);
 
 // Popover
 // Popover body background color
@@ -464,7 +449,7 @@ $menu-bg: $component-background;
 $menu-popup-bg: $component-background;
 $menu-item-color: $text-color;
 $menu-highlight-color: $primary-6;
-$menu-item-active-bg: $item-active-bg;
+$menu-item-active-bg: $select-item-hover-bg;
 $menu-item-active-border-width: 3px;
 $menu-item-group-title-color: $text-color-secondary;
 $menu-icon-size: $font-size-base;
@@ -488,12 +473,12 @@ $menu-dark-item-hover-bg: transparent;
 $table-background: var(--table-background);
 $table-heading-color: $primary-5;
 $table-header-bg: $background-color-light;
-$table-header-color: $table-heading-color;
+$table-header-color: $heading-color;
 $table-header-sort-bg: $background-color-base;
 $table-body-sort-bg: rgba(0, 0, 0, 0.01);
-$table-row-hover-bg: $primary-2;
+$table-row-hover-bg: $select-item-hover-bg;
 $table-selected-row-color: inherit;
-$table-selected-row-bg: $primary-2;
+$table-selected-row-bg: $background-color-light;
 $table-body-selected-sort-bg: $table-selected-row-bg;
 $table-selected-row-hover-bg: $primary-2;
 $table-expanded-row-bg: #fbfbfb;
@@ -520,7 +505,8 @@ $badge-dot-size: 6px;
 $badge-font-size: $font-size-sm;
 $badge-font-weight: normal;
 $badge-status-size: 6px;
-$badge-text-color: $component-background;
+$badge-text-color: var(--badge-text-color);
+// $badge-text-color: $component-background;
 
 // Statistic
 $statistic-title-font-size: $font-size-base;
@@ -590,7 +576,7 @@ $pagination-item-bg-active: $component-background;
 $page-header-padding: 24px;
 $page-header-padding-vertical: 16px;
 $page-header-padding-breadcrumb: 12px;
-$page-header-back-color: #000;
+$page-header-back-color: $heading-color;
 
 // Breadcrumb
 $breadcrumb-base-color: $text-color-secondary;
@@ -786,7 +772,7 @@ $svg-active-type-color: var(--svg-active-type-color);
 $primary-color: $primary-color;
 $success-color: $success-color;
 $warning-color: $warning-color;
-$error-color: $warning-color;
+$error-color: $error-color;
 $one-map-bg: var(--one-map-bg);
 $map-story-hover: var(--map-story-hover);
 

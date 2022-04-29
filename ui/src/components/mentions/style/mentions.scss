@@ -4,6 +4,13 @@
 
 $mention-prefix-cls: $ant-prefix + "-mentions";
 
+@include b(mentions) {
+  > textarea,
+  &-measure {
+    background-color: $mention-background;
+  }
+}
+
 .#{mention-prefix-cls} {
   // .reset-component;
   // .input;

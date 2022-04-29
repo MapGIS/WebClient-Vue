@@ -230,10 +230,10 @@ export default {
             startTime: "",
             endTime: "",
             percent: 0,
-            layout: {
-                labelCol: { span: 5 },
-                wrapperCol: { span: 16 },
-            },
+            // layout: {
+            //     labelCol: { span: 5 },
+            //     wrapperCol: { span: 16 },
+            // },
             maskShow: false,
             maskText: "正在分析中, 请稍等...0%",
 

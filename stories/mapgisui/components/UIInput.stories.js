@@ -182,6 +182,16 @@ const Template6 = (args, { argTypes }) => ({
         </mapgis-ui-tooltip>
       </template>	
     </mapgis-ui-input-number-addon>
+    <mapgis-ui-input ref="userNameInput" v-model="userName" placeholder="Basic usage">
+      <mapgis-ui-iconfont slot="addonAfter" type="mapgis-yuanzhui" />
+      <mapgis-ui-iconfont slot="addonBefore" type="mapgis-vector" style="color: rgba(0,0,0,.45)" />
+      <mapgis-ui-iconfont slot="prefix" type="mapgis-yuanzhui" />
+      <template #suffix>
+        <mapgis-ui-tooltip title="额外123信息">
+          <mapgis-ui-iconfont type="mapgis-vector" style="color: rgba(0,0,0,.45)" />
+        </mapgis-ui-tooltip>
+      </template>	
+    </mapgis-ui-input>
   </div>
   `,
 });

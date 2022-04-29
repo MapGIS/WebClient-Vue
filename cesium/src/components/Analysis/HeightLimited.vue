@@ -246,7 +246,7 @@ export default {
         latitude: ""
       },
       radius: 0,
-      layout: "horizontal",
+      // layout: "horizontal",
       labelCol: {span: 5},
       wrapperCol: {span: 19},
       lnglat: undefined,
