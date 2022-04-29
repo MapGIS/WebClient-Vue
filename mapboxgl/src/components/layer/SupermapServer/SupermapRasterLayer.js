@@ -73,8 +73,9 @@ export default {
         originy,
       } = this;
       if (this.baseUrl) {
-        this.rasterUrl = `${baseUrl}/tileimage.png?scale={z}&x={x}&y={y}&width=${tileSize}&height=${tileSize}&transparent=${transparent}&redirect=${redirect}&cacheEnabled=${cacheEnabled}&origin={"x":${originx},"y":${originy}}`;
-        // `http://192.168.84.158:31708/iserver/services/map-mongodb-420000_SL_0518_SKY_20200620-3k6ybamafh/rest/maps/420000_SL_0518_SKY_20200620/tileimage.png?scale={z}&x={x}&y={y}&width=256&height=256&transparent=true&redirect=false&cacheEnabled=true&origin={"x":-180,"y":90}`
+        let url = `origin={"x":${originx},"y":${originy}}`;
+        let encode = encodeURIComponent(url);
+        this.rasterUrl = `${baseUrl}/tileimage.png?scale={z}&x={x}&y={y}&width=${tileSize}&height=${tileSize}&transparent=${transparent}&redirect=${redirect}&cacheEnabled=${cacheEnabled}&${encode}`;
       }
     },
     $_transformScale(value) {
