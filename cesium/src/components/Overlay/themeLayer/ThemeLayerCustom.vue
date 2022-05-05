@@ -10,7 +10,7 @@ export default {
   mounted() {
     this.$_mount();
   },
-  destoryed() {
+  beforeDestroy() {
     this.$_unmount();
   },
   data() {
@@ -22,23 +22,30 @@ export default {
     }
   },
   watch: {
+    baseUrl: {
+      handler(value) {
+        this.$_unmount();
+        this.$_mount();
+      },
+      deep: true
+    },
     visible: {
       handler(value) {
-        // const entities = this.
-        // this.$_changeVisible(entities, height);
-      }
+        const cartographic = this.viewer.camera.positionCartographic.height/1000;
+        this.$_changeVisible(this.entities, cartographic);
+      },
+      deep: true
     },
     themeOptions: {
       handler(value) {
-        console.log("监听themeOptions", value);
         this.$_drawTheme(this.entities);
       },
       deep: true
     },
     highlightStyle: {
       handler(value) {
-        console.log("监听highlightStyle", value);
         this.$_drawTheme(this.parseClick);
+        this.$_drawTheme(this.parseHover);
       },
       deep: true
     },
@@ -72,8 +79,8 @@ export default {
         vm.entities = entities;
         
         vm.parseData(baseUrl);
-        const cartographic = viewer.camera.positionCartographic;
-        vm.$_changeVisible(entities, cartographic.height);
+        const cartographic = viewer.camera.positionCartographic.height/1000;
+        vm.$_changeVisible(entities, cartographic);
         vm.$_setHeight(entities);
 
         let clickhandler = vm.$_bindClickEvent(vm.parseClick);

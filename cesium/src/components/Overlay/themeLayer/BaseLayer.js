@@ -115,7 +115,7 @@ export default {
       const { viewer } = this;
       const vm = this;
       viewer.camera.changed.addEventListener(function () {
-        const height = (viewer.camera.positionCartographic.height/1000).toFixed(2);
+        const height = viewer.camera.positionCartographic.height/1000;
         vm.$_changeVisible(entities, height);
       });
     },
@@ -163,6 +163,8 @@ export default {
       this.$emit("themeClick", {entity: payload});
     },
     parseHover(payload) {
+      if (this.enableHighlight)
+        this.highlight(payload);
       if (this.enableTips)
         this.changePopup(payload);
       this.$emit("themeHover", {entity: payload});
